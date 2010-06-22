@@ -423,7 +423,6 @@ public class ImportProcess implements StatusReporter {
       // NB: ImageJ can preserve the color table, so no need to fill indices.
       channelFiller.setFilled(false);
     }
-    else BF.warn(false, "sizeC=" + r.getSizeC() + ", lut8.length=" + lut8.length);
     if (channelFiller.isFilled()) {
       BF.warn(options.isQuiet(), getIdName() + ": index values will be lost");
     }
