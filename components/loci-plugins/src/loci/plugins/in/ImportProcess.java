@@ -419,7 +419,6 @@ public class ImportProcess implements StatusReporter {
     if (channelFiller.isFilled()) {
       BF.warn(options.isQuiet(), "index values will be lost: " + getIdName());
     }
-
     r = channelSeparator = new ChannelSeparator(r);
     r = dimensionSwapper = new DimensionSwapper(r);
     r = minMaxCalculator = new MinMaxCalculator(r);
