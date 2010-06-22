@@ -250,6 +250,16 @@ public class ImageProcessorReader extends ReaderWrapper {
         // this may be a bit faster, but will be less accurate than the
         // averaging approach taken below.
 
+        // TODO: For non-continuous LUTs, this approach does not work well.
+        //
+        // For an example, try:
+        //   'i16&pixelType=uint16&indexed=true&falseColor=true.fake'
+        //
+        // To fully resolve this issue, we would need to redither the image.
+        //
+        // At minimum, we should issue a warning to the ImageJ log whenever
+        // this convertTo8Bit routine is invoked, so the user is informed.
+
         int valuesPerBin = shortTable[c].length / byteTable[c].length;
         double average = 0;
         for (int p=0; p<valuesPerBin; p++) {
