@@ -48,6 +48,14 @@ public class ChannelFiller extends ReaderWrapper {
     return new ChannelFiller(r);
   }
 
+  // -- Fields --
+
+  /**
+   * Whether to fill in the indices.
+   * By default, indices are filled iff data not false color.
+   */
+  protected Boolean filled = null;
+
   // -- Constructors --
 
   /** Constructs a ChannelFiller around a new image reader. */
@@ -60,7 +68,13 @@ public class ChannelFiller extends ReaderWrapper {
 
   /** Returns true if the indices are being factored out. */
   public boolean isFilled() {
-    return reader.isIndexed() && !reader.isFalseColor();
+    if (!reader.isIndexed()) return false; // cannot fill non-indexed color
+    return filled == null ? !reader.isFalseColor() : filled;
+  }
+
+  /** Toggles whether the indices should be factored out. */
+  public void setFilled(boolean filled) {
+    this.filled = filled;
   }
 
   // -- IFormatReader API methods --

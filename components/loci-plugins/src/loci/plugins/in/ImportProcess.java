@@ -415,10 +415,19 @@ public class ImportProcess implements StatusReporter {
     }
     r.setId(options.getId());
 
+    // NB: This test will fail if the LUT is null before calling openBytes.
+    final byte[][] lut8 = r.get8BitLookupTable();
+    final int sizeC = r.getSizeC();
     r = channelFiller = new ChannelFiller(r);
-    if (channelFiller.isFilled()) {
-      BF.warn(options.isQuiet(), "index values will be lost: " + getIdName());
+    if (sizeC == 1 && lut8 != null && lut8.length <= 3) {
+      // NB: ImageJ can preserve the color table, so no need to fill indices.
+      channelFiller.setFilled(false);
     }
+    else BF.warn(false, "sizeC=" + r.getSizeC() + ", lut8.length=" + lut8.length);
+    if (channelFiller.isFilled()) {
+      BF.warn(options.isQuiet(), getIdName() + ": index values will be lost");
+    }
+
     r = channelSeparator = new ChannelSeparator(r);
     r = dimensionSwapper = new DimensionSwapper(r);
     r = minMaxCalculator = new MinMaxCalculator(r);
