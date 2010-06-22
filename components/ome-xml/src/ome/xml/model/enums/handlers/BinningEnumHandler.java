@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-06-11 17:18:07+0100
+ * Created by callan via xsd-fu on 2010-06-22 13:36:18+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -98,7 +98,7 @@ public class BinningEnumHandler implements IEnumerationHandler {
       }
     }
     LOGGER.warn("Could not find enumeration for '{}'({})",
-                value, value.length());
+                value, value == null? -1 : value.length());
     return Binning.OTHER;
   }
 
