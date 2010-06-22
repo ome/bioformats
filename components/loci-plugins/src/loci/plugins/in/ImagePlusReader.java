@@ -25,18 +25,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.plugins.in;
 
-import ij.CompositeImage;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.io.FileInfo;
-import ij.process.ByteProcessor;
-import ij.process.ColorProcessor;
-import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
-import ij.process.LUT;
-import ij.process.ShortProcessor;
 
-import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -51,7 +44,6 @@ import loci.common.StatusReporter;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
-import loci.formats.ChannelMerger;
 import loci.formats.FilePattern;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
@@ -72,6 +64,11 @@ import loci.plugins.util.VirtualImagePlus;
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/in/ImagePlusReader.java">SVN</a></dd></dl>
  */
 public class ImagePlusReader implements StatusReporter {
+
+  // -- Constants --
+
+  /** Special property for storing series number associated with the image. */
+  public static final String PROP_SERIES = "Series";
 
   // -- Fields --
 
@@ -173,58 +170,34 @@ public class ImagePlusReader implements StatusReporter {
   private void readSeries(int s, List<ImagePlus> imps)
     throws FormatException, IOException
   {
-    ImageProcessorReader reader = process.getReader();
-    ImporterOptions options = process.getOptions();
+    final ImageProcessorReader reader = process.getReader();
+    final ImporterOptions options = process.getOptions();
     reader.setSeries(s);
 
-    boolean[] load = getPlanesToLoad(s);
+    final boolean[] load = getPlanesToLoad(s);
     int current = 0, total = 0;
     for (int j=0; j<reader.getImageCount(); j++) if (load[j]) total++;
 
-    FileInfo fi = createFileInfo();
+    final FileInfo fi = createFileInfo();
+    final Region region = process.getCropRegion(s);
 
-    ImageStack stackB = null; // for byte images (8-bit)
-    ImageStack stackS = null; // for short images (16-bit)
-    ImageStack stackF = null; // for floating point images (32-bit)
-    ImageStack stackO = null; // for all other images (24-bit RGB)
-
-    Region region = process.getCropRegion(s);
+    ImageStack stack = null;
 
     if (options.isVirtual()) {
-      // CTR FIXME - clean up this part
-      boolean doMerge = false; //options.isMergeChannels();
-      boolean doColorize = false; //options.isColorize();
-
+      // CTR FIXME: Make virtual stack work with different color modes?
       reader.setSeries(s);
       // NB: ImageJ 1.39+ is required for VirtualStack
-      BFVirtualStack virtualStackB = new BFVirtualStack(options.getId(),
-        reader, doColorize, doMerge, options.isRecord());
-      stackB = virtualStackB;
-      if (doMerge) {
-        for (int j=0; j<reader.getImageCount(); j++) {
-          int[] zct = reader.getZCTCoords(j);
-          if (zct[1] > 0) continue;
-          ChannelMerger channelMerger = new ChannelMerger(reader);
-          int index = channelMerger.getIndex(zct[0], zct[1], zct[2]);
-          String label = constructSliceLabel(index,
-            channelMerger, process.getOMEMetadata(), s,
-            process.getZCount(s), process.getCCount(s), process.getTCount(s));
-          virtualStackB.addSlice(label);
-        }
-      }
-      else {
-        for (int j=0; j<reader.getImageCount(); j++) {
-          String label = constructSliceLabel(j,
-            reader, process.getOMEMetadata(), s,
-            process.getZCount(s), process.getCCount(s), process.getTCount(s));
-          virtualStackB.addSlice(label);
-        }
+      BFVirtualStack virtualStack = new BFVirtualStack(options.getId(),
+        reader, false, false, options.isRecord());
+      stack = virtualStack;
+      for (int j=0; j<reader.getImageCount(); j++) {
+        String label = constructSliceLabel(j,
+          reader, process.getOMEMetadata(), s,
+          process.getZCount(s), process.getCCount(s), process.getTCount(s));
+        virtualStack.addSlice(label);
       }
     }
     else {
-      // CTR CHECK
-      //if (r.isIndexed()) colorModels = new IndexColorModel[r.getSizeC()];
-
       for (int i=0; i<reader.getImageCount(); i++) {
         if (!load[i]) continue;
 
@@ -236,65 +209,24 @@ public class ImagePlusReader implements StatusReporter {
           process.getZCount(s), process.getCCount(s), process.getTCount(s));
 
         // get image processor for ith plane
-        ImageProcessor[] p;
-        p = reader.openProcessors(i, region.x, region.y,
-          region.width, region.height);
-        ImageProcessor ip = p[0];
-        if (p.length > 1) {
-          ip = ImagePlusTools.makeRGB(p).getProcessor();
+        ImageProcessor[] p = reader.openProcessors(i,
+          region.x, region.y, region.width, region.height);
+        if (p == null || p.length == 0) {
+          throw new FormatException("Cannot read plane #" + i);
         }
-        if (ip == null) {
-          throw new FormatException("Cannot read ImageProcessor #" + i);
-        }
-
-        // CTR CHECK
-        //int channel = r.getZCTCoords(i)[1];
-        //if (colorModels != null && p.length == 1) {
-        //  colorModels[channel] = (IndexColorModel) ip.getColorModel();
-        //}
 
         // add plane to image stack
         int w = region.width, h = region.height;
-        if (ip instanceof ByteProcessor) {
-          if (stackB == null) stackB = new ImageStack(w, h);
-          stackB.addSlice(label, ip);
-        }
-        else if (ip instanceof ShortProcessor) {
-          if (stackS == null) stackS = new ImageStack(w, h);
-          stackS.addSlice(label, ip);
-        }
-        else if (ip instanceof FloatProcessor) {
-          // merge image plane into existing stack if possible
-          if (stackB != null) {
-            throw new FormatException(
-              "Found a FloatProcessor, expected a ByteProcessor");
-          }
-          else if (stackS != null) {
-            throw new FormatException(
-              "Found a FloatProcessor, expected a ShortProcessor");
-          }
-          else {
-            if (stackF == null) stackF = new ImageStack(w, h);
-            stackF.addSlice(label, ip);
-          }
-        }
-        else if (ip instanceof ColorProcessor) {
-          if (stackO == null) stackO = new ImageStack(w, h);
-          stackO.addSlice(label, ip);
-        }
+        if (stack == null) stack = new ImageStack(w, h);
+
+        for (ImageProcessor ip : p) stack.addSlice(label, ip);
       }
     }
 
     notifyListeners(new StatusEvent(1, 1, "Creating image"));
 
-    ImagePlus impB = createImage(stackB, s, fi);
-    ImagePlus impS = createImage(stackS, s, fi);
-    ImagePlus impF = createImage(stackF, s, fi);
-    ImagePlus impO = createImage(stackO, s, fi);
-    if (impB != null) imps.add(impB);
-    if (impS != null) imps.add(impS);
-    if (impF != null) imps.add(impF);
-    if (impO != null) imps.add(impO);
+    ImagePlus imp = createImage(stack, s, fi);
+    imps.add(imp);
   }
 
   // -- Helper methods - concatenation --
@@ -308,100 +240,7 @@ public class ImagePlusReader implements StatusReporter {
   // -- Helper methods - colorization --
 
   private List<ImagePlus> applyColors(List<ImagePlus> imps) {
-    final ImporterOptions options = process.getOptions();
-    final ImageProcessorReader reader = process.getReader();
-
-    for (int image=0; image<imps.size(); image++) {
-      ImagePlus imp = imps.get(image);
-      int series = (Integer) imp.getProperty("Series");
-      reader.setSeries(series);
-
-      // CTR FIXME - problems with default color mode
-      int mode = -1;
-      boolean indexed = reader.isIndexed();
-      int sizeC = reader.getEffectiveSizeC();
-      if (sizeC == 1 &&
-        (options.isColorModeColorized() || options.isColorModeCustom()))
-      {
-        LUT lut = makeLUT(options.getDefaultCustomColor(0));
-        if (options.isColorModeCustom()) {
-          lut = makeLUT(series, 0);
-        }
-        imp.getProcessor().setColorModel(lut);
-      }
-      else if (sizeC > 7) {
-        // NB: Cannot use CompositeImage when there are more than
-        // seven channels.
-        // CTR FIXME finish sizeC>7 case
-        loci.plugins.BF.warn(options.isQuiet(), "sizeC > 7");//TEMP
-      }
-      else if (options.isColorModeComposite()) mode = CompositeImage.COMPOSITE;
-      else if (options.isColorModeColorized()) mode = CompositeImage.COLOR;
-      else if (options.isColorModeGrayscale()) mode = CompositeImage.GRAYSCALE;
-      else if (options.isColorModeCustom()) mode = CompositeImage.COLOR;
-      else if (indexed && sizeC > 1) mode = CompositeImage.COLOR;
-
-      if (mode != -1) {
-        CompositeImage compImage = new CompositeImage(imp, mode);
-        LUT[] luts = null;
-        if (options.isColorModeCustom()) luts = makeLUTs(series);
-        else if (indexed) {
-          luts = new LUT[sizeC];
-          for (int i=0; i<luts.length; i++) {
-            byte[][] lut = null;
-            try {
-              int index = reader.getIndex(0, i, 0);
-              reader.openBytes(index, 0, 0, 1, 1);
-              lut = reader.get8BitLookupTable();
-            }
-            catch (FormatException e) { }
-            catch (IOException e) { }
-            if (lut != null) {
-              luts[i] = new LUT(lut[0], lut[1], lut[2]);
-            }
-            else {
-              luts = null;
-              break;
-            }
-          }
-        }
-        if (luts != null) compImage.setLuts(luts);
-        imps.set(image, compImage);
-      }
-    }
-    return imps;
-  }
-
-  private LUT[] makeLUTs(int series) {
-    final ImageProcessorReader reader = process.getReader();
-    reader.setSeries(series);
-    LUT[] luts = new LUT[reader.getSizeC()];
-    for (int c=0; c<luts.length; c++) luts[c] = makeLUT(series, c);
-    return luts;
-  }
-
-  private LUT makeLUT(int series, int channel) {
-    final ImporterOptions options = process.getOptions();
-    Color color = options.getCustomColor(series, channel);
-    if (color == null) color = options.getDefaultCustomColor(channel);
-    return makeLUT(color);
-  }
-
-  private LUT makeLUT(Color color) {
-    final int red = color.getRed();
-    final int green = color.getGreen();
-    final int blue = color.getBlue();
-    final int lutLength = 256;
-    final int lutDivisor = lutLength - 1;
-    byte[] r = new byte[lutLength];
-    byte[] g = new byte[lutLength];
-    byte[] b = new byte[lutLength];
-    for (int i=0; i<lutLength; i++) {
-      r[i] = (byte) (i * red / lutDivisor);
-      g[i] = (byte) (i * green / lutDivisor);
-      b[i] = (byte) (i * blue / lutDivisor);
-    }
-    return new LUT(r, g, b);
+    return new Colorizer(process).applyColors(imps);
   }
 
   // -- Helper methods - window splitting --
@@ -540,7 +379,7 @@ public class ImagePlusReader implements StatusReporter {
     // place metadata key/value pairs in ImageJ's info field
     String metadata = process.getOriginalMetadata().toString();
     imp.setProperty("Info", metadata);
-    imp.setProperty("Series", series);
+    imp.setProperty(PROP_SERIES, series);
 
     // retrieve the spatial calibration information, if available
     ImagePlusTools.applyCalibration(meta, imp, reader.getSeries());

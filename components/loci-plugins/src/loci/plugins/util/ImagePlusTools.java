@@ -61,14 +61,17 @@ public final class ImagePlusTools {
    * Converts the given array of ImageProcessors into a single-slice
    * RGB ImagePlus.
    */
+/* FIXME remove makeRGB methods
   public static ImagePlus makeRGB(ImageProcessor[] p) {
     return makeRGB("", p);
   }
+*/
 
   /**
    * Converts the given array of ImageProcessors into a single-slice
    * RGB ImagePlus.
    */
+/* FIXME remove makeRGB methods
   public static ImagePlus makeRGB(String title, ImageProcessor[] p) {
     if (p.length == 1) return new ImagePlus(title, p[0]);
 
@@ -119,6 +122,7 @@ public final class ImagePlusTools {
 
     return imp;
   }
+*/
 
   /** Applies spatial calibrations to an image stack. */
   public static void applyCalibration(MetadataRetrieve retrieve,

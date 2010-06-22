@@ -155,7 +155,8 @@ public class LociFunctions extends MacroFunctions {
     throws FormatException, IOException
   {
     ImageProcessor[] ip = r.openProcessors(no.intValue());
-    ImagePlusTools.makeRGB(title, ip).show();
+    // CTR FIXME - Ext.openImage
+    //ImagePlusTools.makeRGB(title, ip).show();
   }
 
   public void openSubImage(String title, Double no, Double x, Double y,
@@ -163,7 +164,8 @@ public class LociFunctions extends MacroFunctions {
   {
     ImageProcessor[] ip = r.openProcessors(no.intValue(),
       x.intValue(), y.intValue(), w.intValue(), h.intValue());
-    ImagePlusTools.makeRGB(title, ip).show();
+    // CTR FIXME - Ext.openSubImage
+    //ImagePlusTools.makeRGB(title, ip).show();
   }
 
   public void close() throws IOException { r.close(); }

@@ -56,40 +56,47 @@ public class ChannelFiller extends ReaderWrapper {
   /** Constructs a ChannelFiller with a given reader. */
   public ChannelFiller(IFormatReader r) { super(r); }
 
+  // -- ChannelFiller methods --
+
+  /** Returns true if the indices are being factored out. */
+  public boolean isFilled() {
+    return reader.isIndexed() && !reader.isFalseColor();
+  }
+
   // -- IFormatReader API methods --
 
   /* @see IFormatReader#getSizeC() */
   @Override
   public int getSizeC() {
-    if (passthrough()) return reader.getSizeC();
+    if (!isFilled()) return reader.getSizeC();
     return reader.getSizeC() * getLookupTableComponentCount();
   }
 
   /* @see IFormatReader#isRGB() */
   @Override
   public boolean isRGB() {
-    if (passthrough()) return reader.isRGB();
+    if (!isFilled()) return reader.isRGB();
     return getRGBChannelCount() > 1;
   }
 
   /* @see IFormatReader#isIndexed() */
   @Override
   public boolean isIndexed() {
-    if (passthrough()) return reader.isIndexed();
+    if (!isFilled()) return reader.isIndexed();
     return false;
   }
 
   /* @see IFormatReader#get8BitLookupTable() */
   @Override
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
-    if (passthrough()) return reader.get8BitLookupTable();
+    if (!isFilled()) return reader.get8BitLookupTable();
     return null;
   }
 
   /* @see IFormatReader#get16BitLookupTable() */
   @Override
   public short[][] get16BitLookupTable() throws FormatException, IOException {
-    if (passthrough()) return reader.get16BitLookupTable();
+    if (!isFilled()) return reader.get16BitLookupTable();
     return null;
   }
 
@@ -97,7 +104,7 @@ public class ChannelFiller extends ReaderWrapper {
   @Override
   public int[] getChannelDimLengths() {
     int[] cLengths = reader.getChannelDimLengths();
-    if (passthrough()) return cLengths;
+    if (!isFilled()) return cLengths;
 
     // in the case of a single channel, replace rather than append
     if (cLengths.length == 1 && cLengths[0] == 1) cLengths = new int[0];
@@ -113,7 +120,7 @@ public class ChannelFiller extends ReaderWrapper {
   @Override
   public String[] getChannelDimTypes() {
     String[] cTypes = reader.getChannelDimTypes();
-    if (passthrough()) return cTypes;
+    if (!isFilled()) return cTypes;
 
     // in the case of a single channel, leave type unchanged
     int[] cLengths = reader.getChannelDimLengths();
@@ -155,7 +162,7 @@ public class ChannelFiller extends ReaderWrapper {
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    if (passthrough()) return reader.openBytes(no, buf, x, y, w, h);
+    if (!isFilled()) return reader.openBytes(no, buf, x, y, w, h);
 
     // TODO: The pixel type should change to match the available color table.
     // That is, even if the indices are uint8, if the color table is 16-bit,
@@ -222,11 +229,6 @@ public class ChannelFiller extends ReaderWrapper {
   }
 
   // -- Helper methods --
-
-  /** Whether to hand off all method calls directly to the wrapped reader. */
-  private boolean passthrough() {
-    return !reader.isIndexed() || reader.isFalseColor();
-  }
 
   /** Gets the number of color components in the lookup table. */
   private int getLookupTableComponentCount() {
