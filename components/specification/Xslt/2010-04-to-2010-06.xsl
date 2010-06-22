@@ -39,7 +39,9 @@
 	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2010-04"
 	xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2010-04"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:exsl="http://exslt.org/common"
+	xmlns:xml="http://www.w3.org/XML/1998/namespace"
+	exclude-result-prefixes="OME Bin SPW SA ROI"
+	xmlns:exsl="http://exslt.org/common"
 	extension-element-prefixes="exsl" version="1.0">
 
 	<xsl:variable name="newOMENS">http://www.openmicroscopy.org/Schemas/OME/2010-06</xsl:variable>
@@ -222,10 +224,7 @@
 			xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2010-06"
 			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 			xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2010-06 
-			http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Working/ome.xsd">
-			<!-- TODO:Fix to real location 
-				http://www.openmicroscopy.org/Schemas/OME/2010-06/ome.xsd
-			-->
+			http://www.openmicroscopy.org/Schemas/OME/2010-06/ome.xsd">
 			<xsl:apply-templates/>
 		</OME>
 	</xsl:template>

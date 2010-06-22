@@ -36,7 +36,9 @@
 	xmlns:Bin="http://www.openmicroscopy.org/XMLschemas/BinaryFile/RC1/BinaryFile.xsd"
 	xmlns:CA="http://www.openmicroscopy.org/XMLschemas/CA/RC1/CA.xsd"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:exsl="http://exslt.org/common"
+	xmlns:xml="http://www.w3.org/XML/1998/namespace"
+	exclude-result-prefixes="OME AML CLI MLI STD Bin CA"
+	xmlns:exsl="http://exslt.org/common"
 	extension-element-prefixes="exsl" version="1.0">
 	<!-- xmlns="http://www.openmicroscopy.org/Schemas/OME/2008-09"-->
 	<xsl:variable name="newOMENS">http://www.openmicroscopy.org/Schemas/OME/2008-09</xsl:variable>
