@@ -305,16 +305,18 @@ public class TillVisionReader extends FormatReader {
       // look for appropriate pixels files
 
       String[] files = directory.list(true);
+      String name = currentId.substring(
+        currentId.lastIndexOf(File.separator) + 1, currentId.lastIndexOf("."));
 
       int nextFile = 0;
 
       for (String f : files) {
-        if (f.endsWith(".pst")) {
+        if (checkSuffix(f, "pst") && f.startsWith(name)) {
           Location pst = new Location(directory, f);
           if (pst.isDirectory()) {
             String[] subfiles = pst.list(true);
             for (String q : subfiles) {
-              if (q.endsWith(".pst") && nextFile < nImages) {
+              if (checkSuffix(q, "pst") && nextFile < nImages) {
                 pixelsFile[nextFile++] = f + File.separator + q;
               }
             }
