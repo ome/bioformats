@@ -32,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-06-17 12:33:18+0100
+ * Created by callan via xsd-fu on 2010-06-23 16:19:59+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -62,6 +62,11 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	private OMEModel model;
 
 	private String uuid;
+
+	public OMEXMLMetadataImpl()
+	{
+		createRoot();
+	}
 
 	public void createRoot()
 	{
