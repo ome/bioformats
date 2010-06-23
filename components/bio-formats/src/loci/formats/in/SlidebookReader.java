@@ -282,13 +282,16 @@ public class SlidebookReader extends FormatReader {
 
             while (!found && in.getFilePointer() < in.length()) {
               for (int i=0; i<n-6; i++) {
-                if ((buf[i] == 'h' && buf[i + 1] == 0 &&
-                  buf[i+4] == 'I' && buf[i+5] == 'I') ||
-                  (buf[i] == 0 && buf[i+1] == 'h' &&
-                  buf[i+4] == 'M' && buf[i+5] == 'M'))
+                if (((buf[i] == 'h' || buf[i] == 'i') && buf[i + 1] == 0 &&
+                  buf[i + 4] == 'I' && buf[i + 5] == 'I') ||
+                  (buf[i] == 0 && (buf[i + 1] == 'h' || buf[i + 1] == 'i') &&
+                  buf[i + 4] == 'M' && buf[i + 5] == 'M'))
                 {
                   found = true;
                   in.seek(in.getFilePointer() - n + i - 20);
+                  if (buf[i] == 'i' || buf[i + 1] == 'i') {
+                    pixelOffsets.remove(pixelOffsets.size() - 1);
+                  }
                   break;
                 }
               }
@@ -301,7 +304,9 @@ public class SlidebookReader extends FormatReader {
             }
 
             if (in.getFilePointer() <= in.length()) {
-              pixelLengths.add(new Long(in.getFilePointer() - fp));
+              if (pixelOffsets.size() > pixelLengths.size()) {
+                pixelLengths.add(new Long(in.getFilePointer() - fp));
+              }
             }
             else pixelOffsets.remove(pixelOffsets.size() - 1);
           }
