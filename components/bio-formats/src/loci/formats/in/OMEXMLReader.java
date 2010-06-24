@@ -38,6 +38,7 @@ import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.MetadataTools;
 import loci.formats.MissingLibraryException;
 import loci.formats.codec.Base64Codec;
 import loci.formats.codec.CodecOptions;
@@ -342,11 +343,8 @@ public class OMEXMLReader extends FormatReader {
     // populate assigned metadata store with the
     // contents of the internal OME-XML metadata object
     MetadataStore store = getMetadataStore();
-
-    if (service.isOMEXMLMetadata(store)) {
-      store = omexmlMeta;
-    }
-    else service.convertMetadata(omexmlMeta, store);
+    service.convertMetadata(omexmlMeta, store);
+    MetadataTools.populatePixels(store, this);
   }
 
   // -- Helper class --

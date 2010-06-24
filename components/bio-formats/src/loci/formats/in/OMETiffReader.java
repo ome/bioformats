@@ -141,7 +141,7 @@ public class OMETiffReader extends FormatReader {
     if (ifd == null) return false;
     String comment = ifd.getComment();
     if (comment == null) return false;
-    return comment.trim().endsWith("</OME>");
+    return comment.trim().endsWith("OME>");
   }
 
   /* @see loci.formats.IFormatReader#getDomains() */
@@ -190,8 +190,8 @@ public class OMETiffReader extends FormatReader {
     }
     IFDList ifdList = r.getIFDs();
     if (i >= ifdList.size()) {
-      throw new FormatException(
-        "Error untangling IFDs; the OME-TIFF file may be malformed.");
+      LOGGER.warn("Error untangling IFDs; the OME-TIFF file may be malformed.");
+      return buf;
     }
     IFD ifd = ifdList.get(i);
     RandomAccessInputStream s =
@@ -274,10 +274,7 @@ public class OMETiffReader extends FormatReader {
     }
 
     String currentUUID = meta.getUUID();
-    if (service.isOMEXMLMetadata(metadataStore)) {
-      metadataStore = meta;
-    }
-    else service.convertMetadata(meta, metadataStore);
+    service.convertMetadata(meta, metadataStore);
 
     // determine series count from Image and Pixels elements
     int seriesCount = meta.getImageCount();
@@ -293,9 +290,11 @@ public class OMETiffReader extends FormatReader {
     for (int i=0; i<seriesCount; i++) {
       int tiffDataCount = meta.getTiffDataCount(i);
       for (int td=0; td<tiffDataCount; td++) {
-        // TODO
-        // String uuid = ?
         String uuid = null;
+        try {
+          uuid = meta.getUUIDValue(i, td);
+        }
+        catch (NullPointerException e) { }
         String filename = null;
         if (uuid == null) {
           // no UUID means that TiffData element refers to this file

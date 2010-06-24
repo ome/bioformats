@@ -290,16 +290,16 @@ public final class MetadataConverter {
     int groupCount = src.getGroupCount();
     for (int groupIndex=0; groupIndex<groupCount; groupIndex++) {
     try {
+      String groupIDValue = src.getGroupID(groupIndex);
+      if (groupIDValue != null) dest.setGroupID(groupIDValue, groupIndex);
+    } catch (NullPointerException e) { }
+    try {
       String groupContactValue = src.getGroupContact(groupIndex);
       if (groupContactValue != null) dest.setGroupContact(groupContactValue, groupIndex);
     } catch (NullPointerException e) { }
     try {
       String groupDescriptionValue = src.getGroupDescription(groupIndex);
       if (groupDescriptionValue != null) dest.setGroupDescription(groupDescriptionValue, groupIndex);
-    } catch (NullPointerException e) { }
-    try {
-      String groupIDValue = src.getGroupID(groupIndex);
-      if (groupIDValue != null) dest.setGroupID(groupIDValue, groupIndex);
     } catch (NullPointerException e) { }
     try {
       String groupLeaderValue = src.getGroupLeader(groupIndex);
