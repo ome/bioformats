@@ -36,6 +36,8 @@ import ij.ImageStack;
 import ij.process.LUT;
 
 import loci.formats.ChannelFiller;
+import loci.formats.DimensionSwapper;
+import loci.formats.FormatTools;
 import loci.formats.ImageReader;
 import loci.plugins.BF;
 import loci.plugins.util.ImageProcessorReader;
@@ -66,6 +68,7 @@ public class Colorizer {
   public List<ImagePlus> applyColors(List<ImagePlus> imps) {
     final ImporterOptions options = process.getOptions();
     final ImageProcessorReader reader = process.getReader();
+    final DimensionSwapper dimSwapper = process.getDimensionSwapper();
     final ChannelFiller channelFiller = process.getChannelFiller();
     final ImageReader imageReader = process.getImageReader();
 
@@ -79,11 +82,16 @@ public class Colorizer {
 
       // get each channel's color model
       final ImageStack stack = imp.getStack();
-      final int sizeC = reader.getEffectiveSizeC();
-      final LUT[] channelLUTs = new LUT[sizeC];
+      final String stackOrder = dimSwapper.getDimensionOrder();
+      final int zSize = imp.getNSlices();
+      final int cSize = imp.getNChannels();
+      final int tSize = imp.getNFrames();
+      final int stackSize = imp.getStackSize();
+      final LUT[] channelLUTs = new LUT[cSize];
       boolean hasChannelLUT = false;
-      for (int c=0; c<sizeC; c++) {
-        final int index = reader.getIndex(0, c, 0) + 1;
+      for (int c=0; c<cSize; c++) {
+        final int index = FormatTools.getIndex(stackOrder,
+          zSize, cSize, tSize, stackSize, 0, c, 0) + 1;
         final ColorModel cm = stack.getProcessor(index).getColorModel();
 
         // HACK: ImageProcessorReader always assigns an ij.process.LUT object
@@ -139,7 +147,7 @@ public class Colorizer {
           options.getColorMode());
       }
 
-      final boolean doComposite = mode != -1 && sizeC > 1 && sizeC <= 7;
+      final boolean doComposite = mode != -1 && cSize > 1 && cSize <= 7;
       if (doComposite) {
         CompositeImage compImage = new CompositeImage(imp, mode);
         if (luts != null) compImage.setLuts(luts);
@@ -150,7 +158,7 @@ public class Colorizer {
         if (luts != null && luts.length > 0 && luts[0] != null) {
           imp.getProcessor().setColorModel(luts[0]);
         }
-        if (mode != -1 && sizeC > 1) {
+        if (mode != -1 && cSize > 1) {
           // NB: Cannot use CompositeImage with more than seven channels.
           BF.warn(options.isQuiet(), "Data has too many channels for " +
             options.getColorMode() + " color mode");
