@@ -41,7 +41,7 @@ your combined work must be distributed under the terms of the GPL.
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via JaceHeaderAutogen on Jun 7, 2010 10:59:01 AM CDT
+ * Created by melissa via JaceHeaderAutogen on Jun 25, 2010 9:14:31 AM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -67,6 +67,7 @@ your combined work must be distributed under the terms of the GPL.
 #include "jace/proxy/ome/xml/model/BooleanAnnotation.h"
 #include "jace/proxy/ome/xml/model/Channel.h"
 #include "jace/proxy/ome/xml/model/ChannelRef.h"
+#include "jace/proxy/ome/xml/model/CommentAnnotation.h"
 #include "jace/proxy/ome/xml/model/Contact.h"
 #include "jace/proxy/ome/xml/model/Dataset.h"
 #include "jace/proxy/ome/xml/model/DatasetRef.h"
@@ -141,8 +142,9 @@ your combined work must be distributed under the terms of the GPL.
 #include "jace/proxy/ome/xml/model/Settings.h"
 #include "jace/proxy/ome/xml/model/Shape.h"
 #include "jace/proxy/ome/xml/model/StageLabel.h"
-#include "jace/proxy/ome/xml/model/StringAnnotation.h"
 #include "jace/proxy/ome/xml/model/StructuredAnnotations.h"
+#include "jace/proxy/ome/xml/model/TagAnnotation.h"
+#include "jace/proxy/ome/xml/model/TermAnnotation.h"
 #include "jace/proxy/ome/xml/model/Text.h"
 #include "jace/proxy/ome/xml/model/TiffData.h"
 #include "jace/proxy/ome/xml/model/TimestampAnnotation.h"
@@ -215,8 +217,10 @@ your combined work must be distributed under the terms of the GPL.
 //using namespace jace::proxy::ome::xml::model::enums::handlers;
 
 #include "jace/proxy/ome/xml/model/primitives/NonNegativeInteger.h"
+#include "jace/proxy/ome/xml/model/primitives/NonNegativeLong.h"
 #include "jace/proxy/ome/xml/model/primitives/PercentFraction.h"
 #include "jace/proxy/ome/xml/model/primitives/PositiveInteger.h"
+#include "jace/proxy/ome/xml/model/primitives/PositiveLong.h"
 #include "jace/proxy/ome/xml/model/primitives/PrimitiveType.h"
 //using namespace jace::proxy::ome::xml::model::primitives;
 
