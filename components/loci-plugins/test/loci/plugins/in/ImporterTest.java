@@ -801,7 +801,7 @@ public class ImporterTest {
       ImageStack st = imp.getStack();
       int slice = 0;
       for (int t = 0; t < sizeT; t++) {
-        for (int c = 0; c < sizeC; c++) {
+        for (int c = 0; c < sizeC; c++) { // CT (Z)    -- CZT
           ImageProcessor proc = st.getProcessor(++slice);
           // test the values
           assertEquals(z,zIndex(proc));
@@ -823,7 +823,7 @@ public class ImporterTest {
       ImageStack st = imp.getStack();
       int slice = 0;
       for (int t = 0; t < sizeT; t++) {
-        for (int z = 0; z < sizeZ; z++) {
+        for (int z = 0; z < sizeZ; z++) { //ZT (C)  -- CZT
           ImageProcessor proc = st.getProcessor(++slice);
           // test the values
           assertEquals(z,zIndex(proc));
@@ -835,7 +835,7 @@ public class ImporterTest {
   }
   
   /** tests if images split on T are ordered correctly */
-  private void imagesInTzcOrderTest(ImagePlus[] imps, int sizeX, int sizeY, int sizeZ, int sizeC, int sizeT)
+  private void imagesInTczOrderTest(ImagePlus[] imps, int sizeX, int sizeY, int sizeZ, int sizeC, int sizeT)
   {
     // unwind ZTC loop : T pulled outside, ZC in order
     for (int t = 0; t < sizeT; t++) {
@@ -844,8 +844,8 @@ public class ImporterTest {
       stackTest(imp,sizeZ * sizeC);
       ImageStack st = imp.getStack();
       int slice = 0;
-      for (int c = 0; c < sizeC; c++) {
-        for (int z = 0; z < sizeZ; z++) {
+      for (int z = 0; z < sizeZ; z++) { // ZC (T)  -- CZT
+        for (int c = 0; c < sizeC; c++) {
           ImageProcessor proc = st.getProcessor(++slice);
           // test the values
           assertEquals(z,zIndex(proc));
@@ -916,7 +916,7 @@ public class ImporterTest {
   }
   
   /** tests that a set of images is ordered via T first - used by concatSplit tests */
-  private void imageSeriesInTzcOrderTest(ImagePlus[] imps, int numSeries, int sizeX, int sizeY, int sizeZ, int sizeC, int sizeT)
+  private void imageSeriesInTczOrderTest(ImagePlus[] imps, int numSeries, int sizeX, int sizeY, int sizeZ, int sizeC, int sizeT)
   {
     // from ZCT order: T pulled out, ZC in order
     for (int t = 0; t < sizeT; t++)
@@ -927,8 +927,8 @@ public class ImporterTest {
       ImageStack st = imp.getStack();
       for (int s = 0; s < numSeries; s++) {
         int slice = s*sizeZ*sizeC;
-        for (int c = 0; c < sizeC; c++) {
-          for (int z = 0; z < sizeZ; z++) {
+        for (int z = 0; z < sizeZ; z++) {
+          for (int c = 0; c < sizeC; c++) {
             ImageProcessor proc = st.getProcessor(++slice);
             //System.out.println("index "+index);
             //System.out.println("s z c t "+s+" "+z+" "+c+" "+t);
@@ -1145,7 +1145,15 @@ public class ImporterTest {
     
     impsCountTest(imps,1);
 
-    multipleSeriesInZtcOrderTest(imps[0],s,z,c,t);
+    ImagePlus imp = imps[0];
+    
+    // TODO
+    //   BF right now does not scale one of z/c/t by s. So z*c*t != stacksize. IJ jandles by reordering dimensions as
+    //   1x1xnSlices. Once BF is updated to specify which dimension to concat along then uncomment a modified version
+    //   the next test
+    //xyzctTest(x,y,z,c,t); // this test but one of z,c,t scaled by s
+    
+    multipleSeriesInZtcOrderTest(imp,s,z,c,t);
   }
   
   /** tests BF's options.setAutoscale() */
@@ -1735,7 +1743,7 @@ public class ImporterTest {
     // one image per time point
     impsCountTest(imps,sizeT);
     
-    imageSeriesInTzcOrderTest(imps,series,sizeX,sizeY,sizeZ,sizeC,sizeT);
+    imageSeriesInTczOrderTest(imps,series,sizeX,sizeY,sizeZ,sizeC,sizeT);
   }
   
   /** tests BF's options.setColormode(composite) - alternate, later definition */
@@ -2339,7 +2347,7 @@ public class ImporterTest {
     // one image per time point
     impsCountTest(imps,sizeT);
 
-    imagesInTzcOrderTest(imps,sizeX,sizeY,sizeZ,sizeC,sizeT);
+    imagesInTczOrderTest(imps,sizeX,sizeY,sizeZ,sizeC,sizeT);
   }
 
   @Test
@@ -2540,6 +2548,14 @@ public class ImporterTest {
     System.out.println("1/1/indexed lutLen==2");
     colorColorizedTester(FormatTools.UINT8,1,1,true,false,2);
     
+    // sizeC == 1, rgb == 1, indexed, 16 bit, implicit lut length of 3 - 2nd important test to do, also note can vary lut len
+    System.out.println("1/1 indexed (16-bit)");
+    colorColorizedTester(FormatTools.UINT16,1,1,true,false,-1);
+    System.out.println("1/1 indexed (16-bit) falseColor");
+    colorColorizedTester(FormatTools.UINT16,1,1,true,true,-1);
+    System.out.println("1/1/indexed (16-bit) lutLen==2");
+    colorColorizedTester(FormatTools.UINT16,1,1,true,false,2);
+
     // sizeC = 3 and rgb = 1
     System.out.println("3/1 indexed");
     colorColorizedTester(FormatTools.UINT8,3,1,true,false,-1);
