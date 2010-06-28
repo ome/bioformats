@@ -25,15 +25,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.plugins.util;
 
-import ij.CompositeImage;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.measure.Calibration;
-import ij.process.ByteProcessor;
 import ij.process.ColorProcessor;
-import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
-import ij.process.ShortProcessor;
 
 import java.io.IOException;
 
@@ -56,73 +52,6 @@ public final class ImagePlusTools {
   private ImagePlusTools() { }
 
   // -- Utility methods --
-
-  /**
-   * Converts the given array of ImageProcessors into a single-slice
-   * RGB ImagePlus.
-   */
-/* FIXME remove makeRGB methods
-  public static ImagePlus makeRGB(ImageProcessor[] p) {
-    return makeRGB("", p);
-  }
-*/
-
-  /**
-   * Converts the given array of ImageProcessors into a single-slice
-   * RGB ImagePlus.
-   */
-/* FIXME remove makeRGB methods
-  public static ImagePlus makeRGB(String title, ImageProcessor[] p) {
-    if (p.length == 1) return new ImagePlus(title, p[0]);
-
-    // check that all processors are of the same type and size
-    boolean sameType = true;
-    int width = p[0].getWidth();
-    int height = p[0].getHeight();
-    boolean byteProc = p[0] instanceof ByteProcessor;
-    boolean shortProc = p[0] instanceof ShortProcessor;
-    boolean floatProc = p[0] instanceof FloatProcessor;
-    for (int i=1; i<p.length; i++) {
-      int w = p[i].getWidth();
-      int h = p[i].getHeight();
-      boolean b = p[i] instanceof ByteProcessor;
-      boolean s = p[i] instanceof ShortProcessor;
-      boolean f = p[i] instanceof FloatProcessor;
-      if (w != width || h != height || b != byteProc || s != shortProc ||
-        f != floatProc)
-      {
-        sameType = false;
-        break;
-      }
-    }
-
-    if (!sameType || p.length > 4 || p[0] instanceof ColorProcessor) {
-      return null;
-    }
-
-    ImagePlus imp = null;
-
-    if (p.length < 4 && byteProc) {
-      ColorProcessor cp = new ColorProcessor(width, height);
-      byte[][] bytes = new byte[p.length][];
-      for (int i=0; i<p.length; i++) {
-        bytes[i] = (byte[]) p[i].getPixels();
-      }
-      cp.setRGB(bytes[0], bytes[1], bytes.length == 3 ? bytes[2] :
-        new byte[width * height]);
-      imp = new ImagePlus(title, cp);
-    }
-    else if (p.length <= 7) {
-      ImageStack tmpStack = new ImageStack(width, height);
-      for (int i=0; i<p.length; i++) tmpStack.addSlice("", p[i]);
-
-      ImagePlus ii = new ImagePlus(title, tmpStack);
-      imp = new CompositeImage(ii, CompositeImage.COMPOSITE);
-    }
-
-    return imp;
-  }
-*/
 
   /** Applies spatial calibrations to an image stack. */
   public static void applyCalibration(MetadataRetrieve retrieve,
@@ -167,8 +96,9 @@ public final class ImagePlusTools {
     String type = retrieve.getPixelsType(series).toString();
     int pixelType = FormatTools.pixelTypeFromString(type);
 
+    // NB: INT32 is represented with FloatProcessor, so no need to calibrate.
     boolean signed = pixelType == FormatTools.INT8 ||
-      pixelType == FormatTools.INT16 || pixelType == FormatTools.INT32;
+      pixelType == FormatTools.INT16; // || pixelType == FormatTools.INT32;
 
     // set calibration function, so that both signed and unsigned pixel
     // values are shown
