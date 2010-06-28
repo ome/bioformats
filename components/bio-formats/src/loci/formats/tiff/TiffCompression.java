@@ -92,6 +92,16 @@ public enum TiffCompression implements CodedEnum {
       return JPEG2000CodecOptions.getDefaultOptions(options);
     }
   },
+  ALT_JPEG2000(33005, new JPEG2000Codec(), "JPEG-2000") {
+    @Override
+    public CodecOptions getCompressionCodecOptions(IFD ifd)
+        throws FormatException
+    {
+      CodecOptions options = super.getCompressionCodecOptions(ifd);
+      options.lossless = true;
+      return JPEG2000CodecOptions.getDefaultOptions(options);
+    }
+  },
   ALT_JPEG(33007, new JPEGCodec(), "JPEG"),
   NIKON(34713, new NikonCodec(), "Nikon"),
   LURAWAVE(65535, new LuraWaveCodec(), "LuraWave");
