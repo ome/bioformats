@@ -38,6 +38,7 @@ import java.util.List;
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/in/Concatenator.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/in/Concatenator.java">SVN</a></dd></dl>
  *
+ * @author Curtis Rueden ctrueden at wisc.edu
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class Concatenator {
@@ -45,45 +46,68 @@ public class Concatenator {
   /** Concatenates the list of images as appropriate. */
   public List<ImagePlus> concatenate(List<ImagePlus> imps) {
 
-    List<Integer> widths = new ArrayList<Integer>();
-    List<Integer> heights = new ArrayList<Integer>();
-    List<Integer> types = new ArrayList<Integer>();
-    List<ImagePlus> newImps = new ArrayList<ImagePlus>();
+    // list of output (possibly concatenated) images
+    final List<ImagePlus> outputImps = new ArrayList<ImagePlus>();
 
-    for (int j=0; j<imps.size(); j++) {
-      ImagePlus imp = imps.get(j);
-      int wj = imp.getWidth();
-      int hj = imp.getHeight();
-      int tj = imp.getBitDepth();
+    for (ImagePlus imp : imps) {
+      final int width = imp.getWidth();
+      final int height = imp.getHeight();
+      final int type = imp.getType();
+      final int cSize = imp.getNChannels();
+      final int zSize = imp.getNSlices();
+      final int tSize = imp.getNFrames();
+
       boolean append = false;
-      for (int k=0; k<widths.size(); k++) {
-        int wk = widths.get(k);
-        int hk = heights.get(k);
-        int tk = types.get(k);
+      for (int k=0; k<outputImps.size(); k++) {
+        final ImagePlus outputImp = outputImps.get(k);
+        final int w = outputImp.getWidth();
+        final int h = outputImp.getHeight();
+        final int outType = outputImp.getType();
+        final int c = outputImp.getNChannels();
+        final int z = outputImp.getNSlices();
+        final int t = outputImp.getNFrames();
 
-        if (wj == wk && hj == hk && tj == tk) {
-          ImagePlus oldImp = newImps.get(k);
-          ImageStack is = oldImp.getStack();
-          ImageStack newStack = imp.getStack();
-          for (int s=0; s<newStack.getSize(); s++) {
-            is.addSlice(newStack.getSliceLabel(s + 1),
-              newStack.getProcessor(s + 1));
-          }
-          oldImp.setStack(oldImp.getTitle(), is);
-          newImps.set(k, oldImp);
-          append = true;
-          k = widths.size();
+        // verify that images are compatible
+        if (width != w || height != h) continue; // different XY resolution
+        if (type != outType) continue; // different processor type
+        final boolean canAppendT = cSize == c && zSize == z;
+        final boolean canAppendZ = cSize == c && tSize == t;
+        final boolean canAppendC = zSize == z && tSize == t;
+        if (!canAppendT && !canAppendZ && !canAppendC) {
+          // incompatible dimensions
+          continue;
         }
+
+        // concatenate planes onto this output image
+        final ImageStack outputStack = outputImp.getStack();
+        final ImageStack inputStack = imp.getStack();
+        for (int s=0; s<inputStack.getSize(); s++) {
+          outputStack.addSlice(inputStack.getSliceLabel(s + 1),
+            inputStack.getProcessor(s + 1));
+        }
+        outputImp.setStack(outputImp.getTitle(), outputStack);
+
+        // update image dimensions
+        // NB: For now, we prioritize adding to the time points, then
+        // focal planes, and lastly channels. In some cases, there may be
+        // multiple compatible dimensions; in the future, we may prompt the
+        // user to choose the axis for concatenation.
+        if (canAppendT) outputImp.setDimensions(c, z, t + tSize);
+        else if (canAppendZ) outputImp.setDimensions(c, z + zSize, t);
+        else if (canAppendC) outputImp.setDimensions(c + cSize, z, t);
+        else throw new IllegalStateException("Dimensional mismatch");
+
+        append = true;
+        break;        
       }
       if (!append) {
-        widths.add(new Integer(wj));
-        heights.add(new Integer(hj));
-        types.add(new Integer(tj));
-        newImps.add(imp);
+        // could not concatenate input image to any existing output;
+        // append it to the list of outputs directly instead
+        outputImps.add(imp);
       }
     }
 
-    return newImps;
+    return outputImps;
   }
 
 }
