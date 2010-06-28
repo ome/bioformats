@@ -793,7 +793,7 @@ public class ImporterTest {
   /** tests if images split on Z are ordered correctly */
   private void imagesInZctOrderTest(ImagePlus[] imps, int sizeX, int sizeY, int sizeZ, int sizeC, int sizeT)
   {
-    // unwind ZCT loop : Z pulled outside, CT in order
+    // unwind CZT loop : Z pulled outside, CT in order
     for (int z = 0; z < sizeZ; z++) {
       ImagePlus imp = imps[z];
       xyzctTest(imp,sizeX,sizeY,1,sizeC,sizeT);
@@ -801,7 +801,7 @@ public class ImporterTest {
       ImageStack st = imp.getStack();
       int slice = 0;
       for (int t = 0; t < sizeT; t++) {
-        for (int c = 0; c < sizeC; c++) { // CT (Z)    -- CZT
+        for (int c = 0; c < sizeC; c++) {
           ImageProcessor proc = st.getProcessor(++slice);
           // test the values
           assertEquals(z,zIndex(proc));
@@ -815,7 +815,7 @@ public class ImporterTest {
   /** tests if images split on C are ordered correctly */
   private void imagesInCztOrderTest(ImagePlus[] imps, int sizeX, int sizeY, int sizeZ, int sizeC, int sizeT)
   {
-    // unwind ZCT loop : C pulled outside, ZT in order
+    // unwind CZT loop : C pulled outside, ZT in order
     for (int c = 0; c < sizeC; c++) {
       ImagePlus imp = imps[c];
       xyzctTest(imp,sizeX,sizeY,sizeZ,1,sizeT);
@@ -823,7 +823,7 @@ public class ImporterTest {
       ImageStack st = imp.getStack();
       int slice = 0;
       for (int t = 0; t < sizeT; t++) {
-        for (int z = 0; z < sizeZ; z++) { //ZT (C)  -- CZT
+        for (int z = 0; z < sizeZ; z++) {
           ImageProcessor proc = st.getProcessor(++slice);
           // test the values
           assertEquals(z,zIndex(proc));
@@ -837,14 +837,14 @@ public class ImporterTest {
   /** tests if images split on T are ordered correctly */
   private void imagesInTczOrderTest(ImagePlus[] imps, int sizeX, int sizeY, int sizeZ, int sizeC, int sizeT)
   {
-    // unwind ZTC loop : T pulled outside, ZC in order
+    // unwind CZT loop : T pulled outside, CZ in order
     for (int t = 0; t < sizeT; t++) {
       ImagePlus imp = imps[t];
       xyzctTest(imp,sizeX,sizeY,sizeZ,sizeC,1);
       stackTest(imp,sizeZ * sizeC);
       ImageStack st = imp.getStack();
       int slice = 0;
-      for (int z = 0; z < sizeZ; z++) { // ZC (T)  -- CZT
+      for (int z = 0; z < sizeZ; z++) {
         for (int c = 0; c < sizeC; c++) {
           ImageProcessor proc = st.getProcessor(++slice);
           // test the values
@@ -859,7 +859,7 @@ public class ImporterTest {
   /** tests that a set of images is ordered via Z first - used by concatSplit tests */
   private void imageSeriesInZctOrderTest(ImagePlus[] imps, int numSeries, int sizeX, int sizeY, int sizeZ, int sizeC, int sizeT)
   {
-    // from ZCT order: Z pulled out, CT in order
+    // from CZT order: Z pulled out, CT in order
     for (int z = 0; z < sizeZ; z++)
     {
       ImagePlus imp = imps[z];
@@ -889,7 +889,7 @@ public class ImporterTest {
   /** tests that a set of images is ordered via C first - used by concatSplit tests */
   private void imageSeriesInCztOrderTest(ImagePlus[] imps, int numSeries, int sizeX, int sizeY, int sizeZ, int sizeC, int sizeT)
   {
-    // from ZCT order: C pulled out, ZT in order
+    // from CZT order: C pulled out, ZT in order
     for (int c = 0; c < sizeC; c++)
     {
       ImagePlus imp = imps[c];
@@ -918,7 +918,7 @@ public class ImporterTest {
   /** tests that a set of images is ordered via T first - used by concatSplit tests */
   private void imageSeriesInTczOrderTest(ImagePlus[] imps, int numSeries, int sizeX, int sizeY, int sizeZ, int sizeC, int sizeT)
   {
-    // from ZCT order: T pulled out, ZC in order
+    // from CZT order: T pulled out, CZ in order
     for (int t = 0; t < sizeT; t++)
     {
       ImagePlus imp = imps[t];
@@ -1657,7 +1657,7 @@ public class ImporterTest {
 
     try {
       ImporterOptions options = new ImporterOptions();
-      //options.setOpenAllSeries(true);  // TODO - added to see if needed for passing
+      options.setOpenAllSeries(true);  // TODO - added to see if needed for passing
       options.setConcatenate(true);
       options.setSplitFocalPlanes(true);
       options.setId(path);
@@ -1692,7 +1692,7 @@ public class ImporterTest {
     
     try {
       ImporterOptions options = new ImporterOptions();
-      //options.setOpenAllSeries(true);  // TODO - added to see if needed for passing
+      options.setOpenAllSeries(true);  // TODO - added to see if needed for passing
       options.setConcatenate(true);
       options.setSplitChannels(true);
       options.setId(path);
@@ -1727,7 +1727,7 @@ public class ImporterTest {
     
     try {
       ImporterOptions options = new ImporterOptions();
-      //options.setOpenAllSeries(true);  // TODO - added to see if needed for passing
+      options.setOpenAllSeries(true);  // TODO - added to see if needed for passing
       options.setConcatenate(true);
       options.setSplitTimepoints(true);
       options.setId(path);
