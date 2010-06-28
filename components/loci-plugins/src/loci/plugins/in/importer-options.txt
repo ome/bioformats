@@ -43,8 +43,7 @@ info = <b>Color mode</b> - \
   Visualizes channels according to the specified scheme.                 \
   <br><br>Possible choices are:<ul>                                      \
   <li><b>Default</b> - Display channels as closely as possible           \
-  to how they are stored in the file. For 8-bit indexed color,           \
-  this is the only choice that will preserve the index values.</li>      \
+  to how they are stored in the file.</li>                               \
   <li><b>Composite</b> - Open as a merged composite image. Channels are  \
   colorized according to metadata present in the dataset (if any),       \
   or in the following default order: 1=red, 2=green, 3=blue,             \
@@ -58,15 +57,7 @@ info = <b>Color mode</b> - \
   can explicitly choose how to colorize each channel.</li>               \
   </ul>                                                                  \
   Note that ImageJ can only composite together 7 or fewer channels.      \
-  With more than 7 channels, Bio-Formats will ask how to split them up.  \
-  For example, a 12-channel dataset could be partitioned as:<ul>         \
-  <li>6 planes with 2 channels each</li>                                 \
-  <li>4 planes with 3 channels each</li>                                 \
-  <li>3 planes with 4 channels each</li>                                 \
-  <li>3 planes with 5 channels each</li>                                 \
-  <li>2 planes with 6 channels each</li>                                 \
-  <li>2 planes with 7 channels each</li>                                 \
-  </ul>
+  With more than 7 channels, some of the modes above may not work.
 default = Default
 values = \
   Default,   \
