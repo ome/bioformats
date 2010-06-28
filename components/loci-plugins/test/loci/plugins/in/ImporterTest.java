@@ -1126,7 +1126,7 @@ public class ImporterTest {
   }
   
   /** tests BF's options.setOpenAllSeries() and options.setConcatenate() */
-  private void datasetConcatenateTester(int pixType, int x, int y, int z, int c, int t, int s)
+  private void datasetConcatenateTester(boolean virtual,int pixType, int x, int y, int z, int c, int t, int s)
   {
     assertTrue(s >= 1);  // necessary for this test
     
@@ -1138,6 +1138,7 @@ public class ImporterTest {
     
     try {
       ImporterOptions options = new ImporterOptions();
+      options.setVirtual(virtual);
       options.setId(path);
       options.setOpenAllSeries(true);
       options.setConcatenate(true);
@@ -1941,10 +1942,13 @@ public class ImporterTest {
   @Test
   public void testDatasetConcatenate()
   {
-    // open a dataset that has multiple series and should get back a single series
-    datasetConcatenateTester(FormatTools.UINT8, 82, 47, 1, 1, 1, 1);
-    datasetConcatenateTester(FormatTools.UINT8, 82, 47, 1, 1, 1, 17);
-    datasetConcatenateTester(FormatTools.UINT8, 82, 47, 4, 5, 2, 9);
+    for (boolean virtual : BooleanStates)
+    {
+      // open a dataset that has multiple series and should get back a single series
+      datasetConcatenateTester(virtual,FormatTools.UINT8, 82, 47, 1, 1, 1, 1);
+      datasetConcatenateTester(virtual,FormatTools.UINT8, 82, 47, 1, 1, 1, 17);
+      datasetConcatenateTester(virtual,FormatTools.UINT8, 82, 47, 4, 5, 2, 9);
+    }
   }
 
   // TODO - waiting to hear how this case should behave before implementation
