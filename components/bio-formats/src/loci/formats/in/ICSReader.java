@@ -715,11 +715,7 @@ public class ICSReader extends FormatReader {
 
     offset = in.getFilePointer();
 
-    // extra check is because some of our datasets are labeled as 'gzip', and
-    // have a valid GZIP header, but are actually uncompressed
-    long pixelDataSize = getSizeX() * getSizeY() * (bitsPerPixel / 8) *
-      getImageCount() * getRGBChannelCount();
-    if (gzip && ((in.length() - in.getFilePointer()) < pixelDataSize)) {
+    if (gzip) {
       data = new byte[(int) (in.length() - in.getFilePointer())];
       LOGGER.info("Decompressing pixel data");
       in.read(data);
@@ -734,13 +730,11 @@ public class ICSReader extends FormatReader {
         }
         r.close();
         data = v.getBytes();
-        Location.mapFile("data.gz", null);
       }
       catch (IOException dfe) {
         throw new FormatException("Error uncompressing gzip'ed data", dfe);
       }
     }
-    else gzip = false;
 
     if (bitsPerPixel < 32) core[0].littleEndian = !isLittleEndian();
 
