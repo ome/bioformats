@@ -30,31 +30,61 @@ Type "ant -p" for a list of targets.
     </tstamp>
   </target>
 
-  <target name="init-svn">
-    <!-- determine SVN and version statistics -->
+  <target name="init-version">
+    <!-- check for SVN versioning information -->
     <property name="svn.path" value="${basedir}/.svn/entries"/>
     <available file="${svn.path}" property="svn.present"/>
     <if>
       <isset property="svn.present"/>
       <then>
         <loadfile property="svn.entries" srcFile="${svn.path}"/>
+        <propertyregex property="svn.revision" input="${svn.entries}"
+          regexp="([^\n]*\n){3}([^\n]*)" select="\2"/>
+        <propertyregex property="svn.url" input="${svn.entries}"
+          regexp="([^\n]*\n){4}([^\n]*)" select="\2"/>
+        <propertyregex property="svn.root" input="${svn.entries}"
+          regexp="([^\n]*\n){5}([^\n]*)" select="\2"/>
+        <propertyregex property="svn.date" input="${svn.entries}"
+          regexp="([^\n]*\n){9}([^\n]*)" select="\2"/>
+        <propertyregex property="svn.changed" input="${svn.entries}"
+          regexp="([^\n]*\n){10}([^\n]*)" select="\2"/>
+      </then>
+    </if>
 
-        <propertyregex property="svn.revision"
-          input="${svn.entries}" regexp="([^\n]*\n){3}([^\n]*)" select="\2"/>
-
+    <!-- check for Git versioning information -->
+    <property name="git.path" value="${root.dir}/.git"/>
+    <available file="${git.path}" property="git.present"/>
+    <if>
+      <isset property="git.present"/>
+      <then>
+        <exec executable="git" outputproperty="git.info"
+          failifexecutionfails="false">
+          <arg value="show"/>
+          <arg value="-s"/>
+          <arg value="HEAD"/>
+        </exec>
+        <propertyregex property="git.commit" input="${git.info}"
+          regexp="commit ([a-f0-9]+)" select="\1"/>
+        <propertyregex property="svn.revision" input="${git.info}"
+          regexp=".*git-svn-id: [^@]+@([0-9]+)" select="\1"/>
         <propertyregex property="svn.url"
-          input="${svn.entries}" regexp="([^\n]*\n){4}([^\n]*)" select="\2"/>
-
-        <propertyregex property="svn.root"
-          input="${svn.entries}" regexp="([^\n]*\n){5}([^\n]*)" select="\2"/>
-
+          input="${git.info}" regexp=".*git-svn-id: ([^@]+)" select="\1"/>
+        <propertyregex property="svn.root" input="${svn.url}"
+          regexp="(.*)(/trunk)|(/branches)|(/tags).*" select="\1"/>
         <propertyregex property="svn.date"
-          input="${svn.entries}" regexp="([^\n]*\n){9}([^\n]*)" select="\2"/>
+          input="${git.info}" regexp="Date: +([^\n]*)" select="\1"/>
+        <property name="svn.changed" value="unknown"/>
+      </then>
+    </if>
 
-        <propertyregex property="svn.changed"
-          input="${svn.entries}" regexp="([^\n]*\n){10}([^\n]*)" select="\2"/>
-
-        <propertyregex property="release.version" defaultValue="trunk"
+    <!-- set release version from repository URL -->
+    <property name="release.version" value="unknown"/>
+    <if>
+      <isset property="svn.url"/>
+      <then>
+        <propertyregex property="release.version" override="true"
+          input="${svn.url}" regexp=".*/(trunk).*" replace="\1"/>
+        <propertyregex property="release.version" override="true"
           input="${svn.url}" regexp=".*/branches/([^/]*).*"
           replace="dev \1"/>
         <propertyregex property="release.version" override="true"
