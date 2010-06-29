@@ -34,13 +34,13 @@ import java.util.Arrays;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
+import loci.common.DebugTools;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.gui.AWTImageTools;
 import loci.formats.gui.BufferedImageReader;
 import loci.plugins.BF;
-import loci.plugins.util.WindowTools;
 
 /**
  * Loads thumbnails for Bio-Formats Importer
@@ -145,8 +145,8 @@ public class ThumbLoader implements Runnable {
     catch (FormatException e) { exc = e; }
     catch (IOException e) { exc = e; }
     if (exc != null) {
-      WindowTools.reportException(exc, quiet,
-        "Error loading thumbnail for series #" + (series + 1));
+      BF.warn(quiet, "Error loading thumbnail for series #" + (series + 1));
+      BF.debug(DebugTools.getStackTrace(exc));
     }
   }
 
