@@ -45,6 +45,10 @@ import java.io.InputStream;
  */
 public class lwfDecoder {
 
+  // NB: This field is used to distinguish between this stub class and the
+  // actual lwfDecoder implementation.
+  public static final boolean IS_STUB = true;
+
   /**
 	 * @param stream
    * @param password
