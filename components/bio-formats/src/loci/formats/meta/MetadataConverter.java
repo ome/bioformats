@@ -21,14 +21,6 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-/*-----------------------------------------------------------------------------
- *
- * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via MetadataAutogen on Jun 3, 2010 12:36:59 PM CDT
- *
- *-----------------------------------------------------------------------------
- */
-
 package loci.formats.meta;
 
 import ome.xml.model.enums.*;
@@ -84,8 +76,11 @@ public final class MetadataConverter {
     int datasetCount = src.getDatasetCount();
     for (int datasetIndex=0; datasetIndex<datasetCount; datasetIndex++) {
     try {
-      //String datasetAnnotationRefValue = src.getDatasetAnnotationRef(datasetIndex, annotationRefIndex);
-      //if (datasetAnnotationRefValue != null) dest.setDatasetAnnotationRef(datasetAnnotationRefValue, datasetIndex, annotationRefIndex);
+      for (int annotationRefIndex=0; annotationRefIndex<src.getDatasetAnnotationRefCount(datasetIndex); annotationRefIndex++)
+      {
+        String datasetAnnotationRefValue = src.getDatasetAnnotationRef(datasetIndex, annotationRefIndex);
+        if (datasetAnnotationRefValue != null) dest.setDatasetAnnotationRef(datasetAnnotationRefValue, datasetIndex, annotationRefIndex);
+      } 
     } catch (NullPointerException e) { }
     try {
       String datasetDescriptionValue = src.getDatasetDescription(datasetIndex);
@@ -108,17 +103,18 @@ public final class MetadataConverter {
       if (datasetNameValue != null) dest.setDatasetName(datasetNameValue, datasetIndex);
     } catch (NullPointerException e) { }
     try {
-      //String datasetProjectRefValue = src.getDatasetProjectRef(datasetIndex, projectRefIndex);
-      //if (datasetProjectRefValue != null) dest.setDatasetProjectRef(datasetProjectRefValue, datasetIndex, projectRefIndex);
+      int projectRefCount = src.getProjectRefCount(datasetIndex);
+      for (int projectRefIndex=0; projectRefIndex<projectRefCount; projectRefIndex++)
+      {
+        String datasetProjectRefValue = src.getDatasetProjectRef(datasetIndex, projectRefIndex);
+        if (datasetProjectRefValue != null) dest.setDatasetProjectRef(datasetProjectRefValue, datasetIndex, projectRefIndex);
+      }
     } catch (NullPointerException e) { }
       try {
-      //int annotationRefCount = src.getAnnotationRefCount(datasetIndex);
-      //for (int annotationRefIndex=0; annotationRefIndex<annotationRefCount; annotationRefIndex++) {
-      //}
-      } catch (NullPointerException e) { }
-      try {
-      int projectRefCount = src.getProjectRefCount(datasetIndex);
-      for (int projectRefIndex=0; projectRefIndex<projectRefCount; projectRefIndex++) {
+      int annotationRefCount = src.getDatasetAnnotationRefCount(datasetIndex);
+      for (int annotationRefIndex=0; annotationRefIndex<annotationRefCount; annotationRefIndex++) {
+        String annotationValue = src.getDatasetAnnotationRef(datasetIndex, annotationRefIndex);
+        if (annotationValue != null) dest.setDatasetAnnotationRef(annotationValue, datasetIndex, annotationRefIndex);
       }
       } catch (NullPointerException e) { }
     }
@@ -171,16 +167,18 @@ public final class MetadataConverter {
         if (microbeamManipulationIDValue != null) dest.setMicrobeamManipulationID(microbeamManipulationIDValue, experimentIndex, microbeamManipulationIndex);
       } catch (NullPointerException e) { }
       try {
-        //String microbeamManipulationROIRefValue = src.getMicrobeamManipulationROIRef(experimentIndex, microbeamManipulationIndex, roiRefIndex);
-        //if (microbeamManipulationROIRefValue != null) dest.setMicrobeamManipulationROIRef(microbeamManipulationROIRefValue, experimentIndex, microbeamManipulationIndex, roiRefIndex);
+        int roiRefCount = src.getMicrobeamManipulationROIRefCount(experimentIndex, microbeamManipulationIndex);
+        for (int roiRefIndex=0; roiRefIndex<roiRefCount; roiRefIndex++) {
+          String microbeamManipulationROIRefValue = src.getMicrobeamManipulationROIRef(experimentIndex, microbeamManipulationIndex, roiRefIndex);
+          if (microbeamManipulationROIRefValue != null) dest.setMicrobeamManipulationROIRef(microbeamManipulationROIRefValue, experimentIndex, microbeamManipulationIndex, roiRefIndex);
+        }
       } catch (NullPointerException e) { }
       try {
         MicrobeamManipulationType microbeamManipulationTypeValue = src.getMicrobeamManipulationType(experimentIndex, microbeamManipulationIndex);
         if (microbeamManipulationTypeValue != null) dest.setMicrobeamManipulationType(microbeamManipulationTypeValue, experimentIndex, microbeamManipulationIndex);
       } catch (NullPointerException e) { }
         try {
-        /*
-        int lightSourceSettingsCount = src.getLightSourceSettingsCount(experimentIndex, microbeamManipulationIndex);
+        int lightSourceSettingsCount = src.getMicrobeamManipulationLightSourceSettingsCount(experimentIndex, microbeamManipulationIndex);
         for (int lightSourceSettingsIndex=0; lightSourceSettingsIndex<lightSourceSettingsCount; lightSourceSettingsIndex++) {
         try {
           PercentFraction microbeamManipulationLightSourceSettingsAttenuationValue = src.getMicrobeamManipulationLightSourceSettingsAttenuation(experimentIndex, microbeamManipulationIndex, lightSourceSettingsIndex);
@@ -195,12 +193,6 @@ public final class MetadataConverter {
           if (microbeamManipulationLightSourceSettingsWavelengthValue != null) dest.setMicrobeamManipulationLightSourceSettingsWavelength(microbeamManipulationLightSourceSettingsWavelengthValue, experimentIndex, microbeamManipulationIndex, lightSourceSettingsIndex);
         } catch (NullPointerException e) { }
         }
-        */
-        } catch (NullPointerException e) { }
-        try {
-        //int roiRefCount = src.getROIRefCount(experimentIndex, microbeamManipulationIndex);
-        //for (int roiRefIndex=0; roiRefIndex<roiRefCount; roiRefIndex++) {
-        //}
         } catch (NullPointerException e) { }
       }
       } catch (NullPointerException e) { }
@@ -210,8 +202,12 @@ public final class MetadataConverter {
     int experimenterCount = src.getExperimenterCount();
     for (int experimenterIndex=0; experimenterIndex<experimenterCount; experimenterIndex++) {
     try {
-      //String experimenterAnnotationRefValue = src.getExperimenterAnnotationRef(experimenterIndex, annotationRefIndex);
-      //if (experimenterAnnotationRefValue != null) dest.setExperimenterAnnotationRef(experimenterAnnotationRefValue, experimenterIndex, annotationRefIndex);
+      int annotationRefCount = src.getExperimenterAnnotationRefCount(experimenterIndex);
+      for (int annotationRefIndex=0; annotationRefIndex<annotationRefCount; annotationRefIndex++)
+      {
+        String experimenterAnnotationRefValue = src.getExperimenterAnnotationRef(experimenterIndex, annotationRefIndex);
+        if (experimenterAnnotationRefValue != null) dest.setExperimenterAnnotationRef(experimenterAnnotationRefValue, experimenterIndex, annotationRefIndex);
+      }
     } catch (NullPointerException e) { }
     try {
       String experimenterDisplayNameValue = src.getExperimenterDisplayName(experimenterIndex);
@@ -226,8 +222,11 @@ public final class MetadataConverter {
       if (experimenterFirstNameValue != null) dest.setExperimenterFirstName(experimenterFirstNameValue, experimenterIndex);
     } catch (NullPointerException e) { }
     try {
-      //String experimenterGroupRefValue = src.getExperimenterGroupRef(experimenterIndex, groupRefIndex);
-      //if (experimenterGroupRefValue != null) dest.setExperimenterGroupRef(experimenterGroupRefValue, experimenterIndex, groupRefIndex);
+      int groupRefCount = src.getExperimenterGroupRefCount(experimenterIndex);
+      for (int groupRefIndex=0; groupRefIndex<groupRefCount; groupRefIndex++) {
+        String experimenterGroupRefValue = src.getExperimenterGroupRef(experimenterIndex, groupRefIndex);
+        if (experimenterGroupRefValue != null) dest.setExperimenterGroupRef(experimenterGroupRefValue, experimenterIndex, groupRefIndex);
+      }
     } catch (NullPointerException e) { }
     try {
       String experimenterIDValue = src.getExperimenterID(experimenterIndex);
@@ -250,14 +249,19 @@ public final class MetadataConverter {
       if (experimenterUserNameValue != null) dest.setExperimenterUserName(experimenterUserNameValue, experimenterIndex);
     } catch (NullPointerException e) { }
       try {
-      //int annotationRefCount = src.getAnnotationRefCount(experimenterIndex);
-      //for (int annotationRefIndex=0; annotationRefIndex<annotationRefCount; annotationRefIndex++) {
-      //}
+        int annotationRefCount = src.getExperimenterAnnotationRefCount(experimenterIndex);
+        for (int annotationRefIndex=0; annotationRefIndex<annotationRefCount; annotationRefIndex++) {
+          String annotationRef = src.getExperimenterAnnotationRef(experimenterIndex, annotationRefIndex);
+          if (annotationRef != null) dest.setExperimenterAnnotationRef(annotationRef, experimenterIndex, annotationRefIndex);
+        }
       } catch (NullPointerException e) { }
       try {
-      //int groupRefCount = src.getGroupRefCount(experimenterIndex);
-      //for (int groupRefIndex=0; groupRefIndex<groupRefCount; groupRefIndex++) {
-      //}
+        int groupRefCount = src.getExperimenterGroupRefCount(experimenterIndex);
+        for (int groupRefIndex=0; groupRefIndex<groupRefCount; groupRefIndex++)
+        {
+          String groupRef = src.getExperimenterGroupRef(experimenterIndex, groupRefIndex);
+          if (groupRef != null) dest.setExperimenterGroupRef(groupRef, experimenterIndex, groupRefIndex);
+        }
       } catch (NullPointerException e) { }
     }
     } catch (NullPointerException e) { }
@@ -319,12 +323,20 @@ public final class MetadataConverter {
       if (imageAcquiredDateValue != null) dest.setImageAcquiredDate(imageAcquiredDateValue, imageIndex);
     } catch (NullPointerException e) { }
     try {
-      //String imageAnnotationRefValue = src.getImageAnnotationRef(imageIndex, annotationRefIndex);
-      //if (imageAnnotationRefValue != null) dest.setImageAnnotationRef(imageAnnotationRefValue, imageIndex, annotationRefIndex);
+      int annotationRefCount = src.getImageAnnotationRefCount(imageIndex);
+      for (int annotationRefIndex=0; annotationRefIndex<annotationRefCount; annotationRefIndex++)
+      {
+      String imageAnnotationRefValue = src.getImageAnnotationRef(imageIndex, annotationRefIndex);
+      if (imageAnnotationRefValue != null) dest.setImageAnnotationRef(imageAnnotationRefValue, imageIndex, annotationRefIndex);
+      }
     } catch (NullPointerException e) { }
     try {
-      //String imageDatasetRefValue = src.getImageDatasetRef(imageIndex, datasetRefIndex);
-      //if (imageDatasetRefValue != null) dest.setImageDatasetRef(imageDatasetRefValue, imageIndex, datasetRefIndex);
+      int datasetRefCount = src.getDatasetRefCount(imageIndex);
+      for (int datasetRefIndex=0; datasetRefIndex<datasetRefCount; datasetRefIndex++)
+      {
+        String imageDatasetRefValue = src.getImageDatasetRef(imageIndex, datasetRefIndex);
+        if (imageDatasetRefValue != null) dest.setImageDatasetRef(imageDatasetRefValue, imageIndex, datasetRefIndex);
+      }
     } catch (NullPointerException e) { }
     try {
       String imageDescriptionValue = src.getImageDescription(imageIndex);
@@ -351,8 +363,12 @@ public final class MetadataConverter {
       if (imageInstrumentRefValue != null) dest.setImageInstrumentRef(imageInstrumentRefValue, imageIndex);
     } catch (NullPointerException e) { }
     try {
-      //String imageMicrobeamManipulationRefValue = src.getImageMicrobeamManipulationRef(imageIndex, microbeamManipulationRefIndex);
-      //if (imageMicrobeamManipulationRefValue != null) dest.setImageMicrobeamManipulationRef(imageMicrobeamManipulationRefValue, imageIndex, microbeamManipulationRefIndex);
+      int microbeamManipulationRefCount = src.getMicrobeamManipulationRefCount(imageIndex);
+      for (int microbeamManipulationRefIndex=0; microbeamManipulationRefIndex<microbeamManipulationRefCount; microbeamManipulationRefIndex++)
+      {
+        String imageMicrobeamManipulationRefValue = src.getImageMicrobeamManipulationRef(imageIndex, microbeamManipulationRefIndex);
+        if (imageMicrobeamManipulationRefValue != null) dest.setImageMicrobeamManipulationRef(imageMicrobeamManipulationRefValue, imageIndex, microbeamManipulationRefIndex);
+      }
     } catch (NullPointerException e) { }
     try {
       String imageNameValue = src.getImageName(imageIndex);
@@ -375,14 +391,12 @@ public final class MetadataConverter {
       if (imageObjectiveSettingsRefractiveIndexValue != null) dest.setImageObjectiveSettingsRefractiveIndex(imageObjectiveSettingsRefractiveIndexValue, imageIndex);
     } catch (NullPointerException e) { }
     try {
-      //String imageROIRefValue = src.getImageROIRef(imageIndex, roiRefIndex);
-      //if (imageROIRefValue != null) dest.setImageROIRef(imageROIRefValue, imageIndex, roiRefIndex);
+      int roiRefCount = src.getImageROIRefCount(imageIndex);
+      for (int roiRefIndex=0; roiRefIndex<roiRefCount; roiRefIndex++) {
+        String imageROIRefValue = src.getImageROIRef(imageIndex, roiRefIndex);
+        if (imageROIRefValue != null) dest.setImageROIRef(imageROIRefValue, imageIndex, roiRefIndex);
+      }
     } catch (NullPointerException e) { }
-      try {
-      //int annotationRefCount = src.getAnnotationRefCount(imageIndex);
-      //for (int annotationRefIndex=0; annotationRefIndex<annotationRefCount; annotationRefIndex++) {
-      //}
-      } catch (NullPointerException e) { }
       try {
       int channelCount = src.getChannelCount(imageIndex);
       for (int channelIndex=0; channelIndex<channelCount; channelIndex++) {
@@ -391,8 +405,11 @@ public final class MetadataConverter {
         if (channelAcquisitionModeValue != null) dest.setChannelAcquisitionMode(channelAcquisitionModeValue, imageIndex, channelIndex);
       } catch (NullPointerException e) { }
       try {
-        //String channelAnnotationRefValue = src.getChannelAnnotationRef(imageIndex, channelIndex, annotationRefIndex);
-        //if (channelAnnotationRefValue != null) dest.setChannelAnnotationRef(channelAnnotationRefValue, imageIndex, channelIndex, annotationRefIndex);
+        int annotationRefCount = src.getChannelAnnotationRefCount(imageIndex, channelIndex);
+        for (int annotationRefIndex=0; annotationRefIndex<annotationRefCount; annotationRefIndex++) {
+          String channelAnnotationRefValue = src.getChannelAnnotationRef(imageIndex, channelIndex, annotationRefIndex);
+          if (channelAnnotationRefValue != null) dest.setChannelAnnotationRef(channelAnnotationRefValue, imageIndex, channelIndex, annotationRefIndex);
+        }
       } catch (NullPointerException e) { }
       try {
         Integer channelColorValue = src.getChannelColor(imageIndex, channelIndex);
@@ -463,11 +480,6 @@ public final class MetadataConverter {
         if (channelSamplesPerPixelValue != null) dest.setChannelSamplesPerPixel(channelSamplesPerPixelValue, imageIndex, channelIndex);
       } catch (NullPointerException e) { }
         try {
-        //int annotationRefCount = src.getAnnotationRefCount(imageIndex, channelIndex);
-        //for (int annotationRefIndex=0; annotationRefIndex<annotationRefCount; annotationRefIndex++) {
-        //}
-        } catch (NullPointerException e) { }
-        try {
           Binning detectorSettingsBinningValue = src.getDetectorSettingsBinning(imageIndex, channelIndex);
           if (detectorSettingsBinningValue != null) dest.setDetectorSettingsBinning(detectorSettingsBinningValue, imageIndex, channelIndex);
         } catch (NullPointerException e) { }
@@ -496,22 +508,20 @@ public final class MetadataConverter {
           if (lightPathDichroicRefValue != null) dest.setLightPathDichroicRef(lightPathDichroicRefValue, imageIndex, channelIndex);
         } catch (NullPointerException e) { }
         try {
-          //String lightPathEmissionFilterRefValue = src.getLightPathEmissionFilterRef(imageIndex, channelIndex, emissionFilterRefIndex);
-          //if (lightPathEmissionFilterRefValue != null) dest.setLightPathEmissionFilterRef(lightPathEmissionFilterRefValue, imageIndex, channelIndex, emissionFilterRefIndex);
+          int emissionFilterRefCount = src.getLightPathEmissionFilterRefCount(imageIndex, channelIndex);
+          for (int emissionFilterRefIndex=0; emissionFilterRefIndex<emissionFilterRefCount; emissionFilterRefIndex++)
+          {
+            String lightPathEmissionFilterRefValue = src.getLightPathEmissionFilterRef(imageIndex, channelIndex, emissionFilterRefIndex);
+            if (lightPathEmissionFilterRefValue != null) dest.setLightPathEmissionFilterRef(lightPathEmissionFilterRefValue, imageIndex, channelIndex, emissionFilterRefIndex);
+          }
         } catch (NullPointerException e) { }
         try {
-          //String lightPathExcitationFilterRefValue = src.getLightPathExcitationFilterRef(imageIndex, channelIndex, excitationFilterRefIndex);
-          //if (lightPathExcitationFilterRefValue != null) dest.setLightPathExcitationFilterRef(lightPathExcitationFilterRefValue, imageIndex, channelIndex, excitationFilterRefIndex);
-        } catch (NullPointerException e) { }
-        try {
-        //int emissionFilterRefCount = src.getEmissionFilterRefCount(imageIndex, channelIndex);
-        //for (int emissionFilterRefIndex=0; emissionFilterRefIndex<emissionFilterRefCount; emissionFilterRefIndex++) {
-        //}
-        } catch (NullPointerException e) { }
-        try {
-        //int excitationFilterRefCount = src.getExcitationFilterRefCount(imageIndex, channelIndex);
-        //for (int excitationFilterRefIndex=0; excitationFilterRefIndex<excitationFilterRefCount; excitationFilterRefIndex++) {
-        //}
+          int excitationFilterRefCount = src.getLightPathExcitationFilterRefCount(imageIndex, channelIndex);
+          for (int excitationFilterRefIndex=0; excitationFilterRefIndex<excitationFilterRefCount; excitationFilterRefIndex++)
+          {
+            String lightPathExcitationFilterRefValue = src.getLightPathExcitationFilterRef(imageIndex, channelIndex, excitationFilterRefIndex);
+            if (lightPathExcitationFilterRefValue != null) dest.setLightPathExcitationFilterRef(lightPathExcitationFilterRefValue, imageIndex, channelIndex, excitationFilterRefIndex);
+          }
         } catch (NullPointerException e) { }
       }
       } catch (NullPointerException e) { }
@@ -542,8 +552,12 @@ public final class MetadataConverter {
       }
       } catch (NullPointerException e) { }
       try {
-        //String pixelsAnnotationRefValue = src.getPixelsAnnotationRef(imageIndex, annotationRefIndex);
-        //if (pixelsAnnotationRefValue != null) dest.setPixelsAnnotationRef(pixelsAnnotationRefValue, imageIndex, annotationRefIndex);
+        int annotationRefCount = src.getPixelsAnnotationRefCount(imageIndex);
+        for (int annotationRefIndex=0; annotationRefIndex<annotationRefCount; annotationRefIndex++)
+        {
+          String pixelsAnnotationRefValue = src.getPixelsAnnotationRef(imageIndex, annotationRefIndex);
+          if (pixelsAnnotationRefValue != null) dest.setPixelsAnnotationRef(pixelsAnnotationRefValue, imageIndex, annotationRefIndex);
+        }
       } catch (NullPointerException e) { }
       try {
         DimensionOrder pixelsDimensionOrderValue = src.getPixelsDimensionOrder(imageIndex);
@@ -594,11 +608,6 @@ public final class MetadataConverter {
         if (pixelsTypeValue != null) dest.setPixelsType(pixelsTypeValue, imageIndex);
       } catch (NullPointerException e) { }
       try {
-      //int annotationRefCount = src.getAnnotationRefCount(imageIndex);
-      //for (int annotationRefIndex=0; annotationRefIndex<annotationRefCount; annotationRefIndex++) {
-      //}
-      } catch (NullPointerException e) { }
-      try {
       int binDataCount = src.getPixelsBinDataCount(imageIndex);
       for (int binDataIndex=0; binDataIndex<binDataCount; binDataIndex++) {
       try {
@@ -611,8 +620,12 @@ public final class MetadataConverter {
       int planeCount = src.getPlaneCount(imageIndex);
       for (int planeIndex=0; planeIndex<planeCount; planeIndex++) {
       try {
-        //String planeAnnotationRefValue = src.getPlaneAnnotationRef(imageIndex, planeIndex, annotationRefIndex);
-        //if (planeAnnotationRefValue != null) dest.setPlaneAnnotationRef(planeAnnotationRefValue, imageIndex, planeIndex, annotationRefIndex);
+        int planeAnnotationRefCount = src.getPlaneAnnotationRefCount(imageIndex, planeIndex);
+        for (int annotationRefIndex=0; annotationRefIndex<planeAnnotationRefCount; annotationRefIndex++)
+        {
+          String planeAnnotationRefValue = src.getPlaneAnnotationRef(imageIndex, planeIndex, annotationRefIndex);
+          if (planeAnnotationRefValue != null) dest.setPlaneAnnotationRef(planeAnnotationRefValue, imageIndex, planeIndex, annotationRefIndex);
+        }
       } catch (NullPointerException e) { }
       try {
         Double planeDeltaTValue = src.getPlaneDeltaT(imageIndex, planeIndex);
@@ -650,17 +663,7 @@ public final class MetadataConverter {
         NonNegativeInteger planeTheZValue = src.getPlaneTheZ(imageIndex, planeIndex);
         if (planeTheZValue != null) dest.setPlaneTheZ(planeTheZValue, imageIndex, planeIndex);
       } catch (NullPointerException e) { }
-        try {
-        //int annotationRefCount = src.getAnnotationRefCount(imageIndex, planeIndex);
-        //for (int annotationRefIndex=0; annotationRefIndex<annotationRefCount; annotationRefIndex++) {
-        //}
-        } catch (NullPointerException e) { }
       }
-      } catch (NullPointerException e) { }
-      try {
-      //int roiRefCount = src.getROIRefCount(imageIndex);
-      //for (int roiRefIndex=0; roiRefIndex<roiRefCount; roiRefIndex++) {
-      //}
       } catch (NullPointerException e) { }
       try {
         String stageLabelNameValue = src.getStageLabelName(imageIndex);
@@ -925,12 +928,20 @@ public final class MetadataConverter {
         if (filterSetDichroicRefValue != null) dest.setFilterSetDichroicRef(filterSetDichroicRefValue, instrumentIndex, filterSetIndex);
       } catch (NullPointerException e) { }
       try {
-        //String filterSetEmissionFilterRefValue = src.getFilterSetEmissionFilterRef(instrumentIndex, filterSetIndex, emissionFilterRefIndex);
-        //if (filterSetEmissionFilterRefValue != null) dest.setFilterSetEmissionFilterRef(filterSetEmissionFilterRefValue, instrumentIndex, filterSetIndex, emissionFilterRefIndex);
+        int emissionFilterRefCount = src.getFilterSetEmissionFilterRefCount(instrumentIndex, filterSetIndex);
+        for (int emissionFilterRefIndex=0; emissionFilterRefIndex<emissionFilterRefCount; emissionFilterRefIndex++)
+        {
+          String filterSetEmissionFilterRefValue = src.getFilterSetEmissionFilterRef(instrumentIndex, filterSetIndex, emissionFilterRefIndex);
+          if (filterSetEmissionFilterRefValue != null) dest.setFilterSetEmissionFilterRef(filterSetEmissionFilterRefValue, instrumentIndex, filterSetIndex, emissionFilterRefIndex);
+        }
       } catch (NullPointerException e) { }
       try {
-        //String filterSetExcitationFilterRefValue = src.getFilterSetExcitationFilterRef(instrumentIndex, filterSetIndex, excitationFilterRefIndex);
-        //if (filterSetExcitationFilterRefValue != null) dest.setFilterSetExcitationFilterRef(filterSetExcitationFilterRefValue, instrumentIndex, filterSetIndex, excitationFilterRefIndex);
+        int excitationFilterRefCount = src.getFilterSetExcitationFilterRefCount(instrumentIndex, filterSetIndex);
+        for (int excitationFilterRefIndex=0; excitationFilterRefIndex<excitationFilterRefCount; excitationFilterRefIndex++)
+        {
+          String filterSetExcitationFilterRefValue = src.getFilterSetExcitationFilterRef(instrumentIndex, filterSetIndex, excitationFilterRefIndex);
+          if (filterSetExcitationFilterRefValue != null) dest.setFilterSetExcitationFilterRef(filterSetExcitationFilterRefValue, instrumentIndex, filterSetIndex, excitationFilterRefIndex);
+        }
       } catch (NullPointerException e) { }
       try {
         String filterSetIDValue = src.getFilterSetID(instrumentIndex, filterSetIndex);
@@ -952,16 +963,6 @@ public final class MetadataConverter {
         String filterSetSerialNumberValue = src.getFilterSetSerialNumber(instrumentIndex, filterSetIndex);
         if (filterSetSerialNumberValue != null) dest.setFilterSetSerialNumber(filterSetSerialNumberValue, instrumentIndex, filterSetIndex);
       } catch (NullPointerException e) { }
-        try {
-        //int emissionFilterRefCount = src.getEmissionFilterRefCount(instrumentIndex, filterSetIndex);
-        //for (int emissionFilterRefIndex=0; emissionFilterRefIndex<emissionFilterRefCount; emissionFilterRefIndex++) {
-        //}
-        } catch (NullPointerException e) { }
-        try {
-        //int excitationFilterRefCount = src.getExcitationFilterRefCount(instrumentIndex, filterSetIndex);
-        //for (int excitationFilterRefIndex=0; excitationFilterRefIndex<excitationFilterRefCount; excitationFilterRefIndex++) {
-        //}
-        } catch (NullPointerException e) { }
       }
       } catch (NullPointerException e) { }
       try {
@@ -1198,8 +1199,12 @@ public final class MetadataConverter {
     int listAnnotationCount = src.getListAnnotationCount();
     for (int listAnnotationIndex=0; listAnnotationIndex<listAnnotationCount; listAnnotationIndex++) {
     try {
-      //String listAnnotationAnnotationRefValue = src.getListAnnotationAnnotationRef(listAnnotationIndex, annotationRefIndex);
-      //if (listAnnotationAnnotationRefValue != null) dest.setListAnnotationAnnotationRef(listAnnotationAnnotationRefValue, listAnnotationIndex, annotationRefIndex);
+      //int annotationRefCount = src.getListAnnotationAnnotationRefCount(listAnnotationIndex);
+      //for (int annotationRefIndex=0; annotationRefIndex<annotationRefCount; annotationRefIndex++)
+      //{
+      //  String listAnnotationAnnotationRefValue = src.getListAnnotationAnnotationRef(listAnnotationIndex, annotationRefIndex);
+      //  if (listAnnotationAnnotationRefValue != null) dest.setListAnnotationAnnotationRef(listAnnotationAnnotationRefValue, listAnnotationIndex, annotationRefIndex);
+      //}
     } catch (NullPointerException e) { }
     try {
       String listAnnotationIDValue = src.getListAnnotationID(listAnnotationIndex);
@@ -1209,11 +1214,6 @@ public final class MetadataConverter {
       String listAnnotationNamespaceValue = src.getListAnnotationNamespace(listAnnotationIndex);
       if (listAnnotationNamespaceValue != null) dest.setListAnnotationNamespace(listAnnotationNamespaceValue, listAnnotationIndex);
     } catch (NullPointerException e) { }
-      try {
-      //int annotationRefCount = src.getAnnotationRefCount(listAnnotationIndex);
-      //for (int annotationRefIndex=0; annotationRefIndex<annotationRefCount; annotationRefIndex++) {
-      //}
-      } catch (NullPointerException e) { }
     }
     } catch (NullPointerException e) { }
     try {
@@ -1237,8 +1237,12 @@ public final class MetadataConverter {
     int plateCount = src.getPlateCount();
     for (int plateIndex=0; plateIndex<plateCount; plateIndex++) {
     try {
-      //String plateAnnotationRefValue = src.getPlateAnnotationRef(plateIndex, annotationRefIndex);
-      //if (plateAnnotationRefValue != null) dest.setPlateAnnotationRef(plateAnnotationRefValue, plateIndex, annotationRefIndex);
+      int annotationRefCount = src.getPlateAnnotationRefCount(plateIndex);
+      for (int annotationRefIndex=0; annotationRefIndex<annotationRefCount; annotationRefIndex++)
+      {
+        String plateAnnotationRefValue = src.getPlateAnnotationRef(plateIndex, annotationRefIndex);
+        if (plateAnnotationRefValue != null) dest.setPlateAnnotationRef(plateAnnotationRefValue, plateIndex, annotationRefIndex);
+      }
     } catch (NullPointerException e) { }
     try {
       NamingConvention plateColumnNamingConventionValue = src.getPlateColumnNamingConvention(plateIndex);
@@ -1273,8 +1277,12 @@ public final class MetadataConverter {
       if (plateRowsValue != null) dest.setPlateRows(plateRowsValue, plateIndex);
     } catch (NullPointerException e) { }
     try {
-      //String plateScreenRefValue = src.getPlateScreenRef(plateIndex, screenRefIndex);
-      //if (plateScreenRefValue != null) dest.setPlateScreenRef(plateScreenRefValue, plateIndex, screenRefIndex);
+      int screenRefCount = src.getScreenRefCount(plateIndex);
+      for (int screenRefIndex=0; screenRefIndex<screenRefCount; screenRefIndex++)
+      {
+        String plateScreenRefValue = src.getPlateScreenRef(plateIndex, screenRefIndex);
+        if (plateScreenRefValue != null) dest.setPlateScreenRef(plateScreenRefValue, plateIndex, screenRefIndex);
+      }
     } catch (NullPointerException e) { }
     try {
       String plateStatusValue = src.getPlateStatus(plateIndex);
@@ -1289,16 +1297,15 @@ public final class MetadataConverter {
       if (plateWellOriginYValue != null) dest.setPlateWellOriginY(plateWellOriginYValue, plateIndex);
     } catch (NullPointerException e) { }
       try {
-      //int annotationRefCount = src.getAnnotationRefCount(plateIndex);
-      //for (int annotationRefIndex=0; annotationRefIndex<annotationRefCount; annotationRefIndex++) {
-      //}
-      } catch (NullPointerException e) { }
-      try {
       int plateAcquisitionCount = src.getPlateAcquisitionCount(plateIndex);
       for (int plateAcquisitionIndex=0; plateAcquisitionIndex<plateAcquisitionCount; plateAcquisitionIndex++) {
       try {
-        //String plateAcquisitionAnnotationRefValue = src.getPlateAcquisitionAnnotationRef(plateIndex, plateAcquisitionIndex, annotationRefIndex);
-        //if (plateAcquisitionAnnotationRefValue != null) dest.setPlateAcquisitionAnnotationRef(plateAcquisitionAnnotationRefValue, plateIndex, plateAcquisitionIndex, annotationRefIndex);
+        int annotationRefCount = src.getPlateAcquisitionAnnotationRefCount(plateIndex, plateAcquisitionIndex);
+        for (int annotationRefIndex=0; annotationRefIndex<annotationRefCount; annotationRefIndex++)
+        {
+          String plateAcquisitionAnnotationRefValue = src.getPlateAcquisitionAnnotationRef(plateIndex, plateAcquisitionIndex, annotationRefIndex);
+          if (plateAcquisitionAnnotationRefValue != null) dest.setPlateAcquisitionAnnotationRef(plateAcquisitionAnnotationRefValue, plateIndex, plateAcquisitionIndex, annotationRefIndex);
+        }
       } catch (NullPointerException e) { }
       try {
         String plateAcquisitionDescriptionValue = src.getPlateAcquisitionDescription(plateIndex, plateAcquisitionIndex);
@@ -1325,32 +1332,25 @@ public final class MetadataConverter {
         if (plateAcquisitionStartTimeValue != null) dest.setPlateAcquisitionStartTime(plateAcquisitionStartTimeValue, plateIndex, plateAcquisitionIndex);
       } catch (NullPointerException e) { }
       try {
-        //String plateAcquisitionWellSampleRefValue = src.getPlateAcquisitionWellSampleRef(plateIndex, plateAcquisitionIndex, wellSampleRefIndex);
-        //if (plateAcquisitionWellSampleRefValue != null) dest.setPlateAcquisitionWellSampleRef(plateAcquisitionWellSampleRefValue, plateIndex, plateAcquisitionIndex, wellSampleRefIndex);
-      } catch (NullPointerException e) { }
-        try {
-        //int annotationRefCount = src.getAnnotationRefCount(plateIndex, plateAcquisitionIndex);
-        //for (int annotationRefIndex=0; annotationRefIndex<annotationRefCount; annotationRefIndex++) {
-        //}
-        } catch (NullPointerException e) { }
-        try {
         int wellSampleRefCount = src.getWellSampleRefCount(plateIndex, plateAcquisitionIndex);
-        for (int wellSampleRefIndex=0; wellSampleRefIndex<wellSampleRefCount; wellSampleRefIndex++) {
+        for (int wellSampleRefIndex=0; wellSampleRefIndex<wellSampleRefCount; wellSampleRefIndex++)
+        {
+          String plateAcquisitionWellSampleRefValue = src.getPlateAcquisitionWellSampleRef(plateIndex, plateAcquisitionIndex, wellSampleRefIndex);
+          if (plateAcquisitionWellSampleRefValue != null) dest.setPlateAcquisitionWellSampleRef(plateAcquisitionWellSampleRefValue, plateIndex, plateAcquisitionIndex, wellSampleRefIndex);
         }
-        } catch (NullPointerException e) { }
-      }
       } catch (NullPointerException e) { }
-      try {
-      int screenRefCount = src.getScreenRefCount(plateIndex);
-      for (int screenRefIndex=0; screenRefIndex<screenRefCount; screenRefIndex++) {
       }
       } catch (NullPointerException e) { }
       try {
       int wellCount = src.getWellCount(plateIndex);
       for (int wellIndex=0; wellIndex<wellCount; wellIndex++) {
       try {
-        //String wellAnnotationRefValue = src.getWellAnnotationRef(plateIndex, wellIndex, annotationRefIndex);
-        //if (wellAnnotationRefValue != null) dest.setWellAnnotationRef(wellAnnotationRefValue, plateIndex, wellIndex, annotationRefIndex);
+        int annotationRefCount = src.getWellAnnotationRefCount(plateIndex, wellIndex);
+        for (int annotationRefIndex=0; annotationRefIndex<annotationRefCount; annotationRefIndex++)
+        {
+          String wellAnnotationRefValue = src.getWellAnnotationRef(plateIndex, wellIndex, annotationRefIndex);
+          if (wellAnnotationRefValue != null) dest.setWellAnnotationRef(wellAnnotationRefValue, plateIndex, wellIndex, annotationRefIndex);
+        }
       } catch (NullPointerException e) { }
       try {
         Integer wellColorValue = src.getWellColor(plateIndex, wellIndex);
@@ -1385,16 +1385,15 @@ public final class MetadataConverter {
         if (wellStatusValue != null) dest.setWellStatus(wellStatusValue, plateIndex, wellIndex);
       } catch (NullPointerException e) { }
         try {
-        //int annotationRefCount = src.getAnnotationRefCount(plateIndex, wellIndex);
-        //for (int annotationRefIndex=0; annotationRefIndex<annotationRefCount; annotationRefIndex++) {
-        //}
-        } catch (NullPointerException e) { }
-        try {
         int wellSampleCount = src.getWellSampleCount(plateIndex, wellIndex);
         for (int wellSampleIndex=0; wellSampleIndex<wellSampleCount; wellSampleIndex++) {
         try {
-          //String wellSampleAnnotationRefValue = src.getWellSampleAnnotationRef(plateIndex, wellIndex, wellSampleIndex, annotationRefIndex);
-          //if (wellSampleAnnotationRefValue != null) dest.setWellSampleAnnotationRef(wellSampleAnnotationRefValue, plateIndex, wellIndex, wellSampleIndex, annotationRefIndex);
+          int annotationRefCount = src.getWellSampleAnnotationRefCount(plateIndex, wellIndex, wellSampleIndex);
+          for (int annotationRefIndex=0; annotationRefIndex<annotationRefCount; annotationRefIndex++)
+          {
+            String wellSampleAnnotationRefValue = src.getWellSampleAnnotationRef(plateIndex, wellIndex, wellSampleIndex, annotationRefIndex);
+            if (wellSampleAnnotationRefValue != null) dest.setWellSampleAnnotationRef(wellSampleAnnotationRefValue, plateIndex, wellIndex, wellSampleIndex, annotationRefIndex);
+          }
         } catch (NullPointerException e) { }
         try {
           String wellSampleIDValue = src.getWellSampleID(plateIndex, wellIndex, wellSampleIndex);
@@ -1420,11 +1419,6 @@ public final class MetadataConverter {
           String wellSampleTimepointValue = src.getWellSampleTimepoint(plateIndex, wellIndex, wellSampleIndex);
           if (wellSampleTimepointValue != null) dest.setWellSampleTimepoint(wellSampleTimepointValue, plateIndex, wellIndex, wellSampleIndex);
         } catch (NullPointerException e) { }
-          try {
-          //int annotationRefCount = src.getAnnotationRefCount(plateIndex, wellIndex, wellSampleIndex);
-          //for (int annotationRefIndex=0; annotationRefIndex<annotationRefCount; annotationRefIndex++) {
-          //}
-          } catch (NullPointerException e) { }
         }
         } catch (NullPointerException e) { }
       }
@@ -1435,8 +1429,12 @@ public final class MetadataConverter {
     int projectCount = src.getProjectCount();
     for (int projectIndex=0; projectIndex<projectCount; projectIndex++) {
     try {
-      //String projectAnnotationRefValue = src.getProjectAnnotationRef(projectIndex, annotationRefIndex);
-      //if (projectAnnotationRefValue != null) dest.setProjectAnnotationRef(projectAnnotationRefValue, projectIndex, annotationRefIndex);
+      int annotationRefCount = src.getProjectAnnotationRefCount(projectIndex);
+      for (int annotationRefIndex=0; annotationRefIndex<annotationRefCount; annotationRefIndex++)
+      {
+        String projectAnnotationRefValue = src.getProjectAnnotationRef(projectIndex, annotationRefIndex);
+        if (projectAnnotationRefValue != null) dest.setProjectAnnotationRef(projectAnnotationRefValue, projectIndex, annotationRefIndex);
+      }
     } catch (NullPointerException e) { }
     try {
       String projectDescriptionValue = src.getProjectDescription(projectIndex);
@@ -1458,19 +1456,18 @@ public final class MetadataConverter {
       String projectNameValue = src.getProjectName(projectIndex);
       if (projectNameValue != null) dest.setProjectName(projectNameValue, projectIndex);
     } catch (NullPointerException e) { }
-      try {
-      //int annotationRefCount = src.getAnnotationRefCount(projectIndex);
-      //for (int annotationRefIndex=0; annotationRefIndex<annotationRefCount; annotationRefIndex++) {
-      //}
-      } catch (NullPointerException e) { }
     }
     } catch (NullPointerException e) { }
     try {
     int roiCount = src.getROICount();
     for (int roiIndex=0; roiIndex<roiCount; roiIndex++) {
     try {
-      //String roiAnnotationRefValue = src.getROIAnnotationRef(roiIndex, annotationRefIndex);
-      //if (roiAnnotationRefValue != null) dest.setROIAnnotationRef(roiAnnotationRefValue, roiIndex, annotationRefIndex);
+      int annotationRefCount = src.getROIAnnotationRefCount(roiIndex);
+      for (int annotationRefIndex=0; annotationRefIndex<annotationRefCount; annotationRefIndex++)
+      {
+        String roiAnnotationRefValue = src.getROIAnnotationRef(roiIndex, annotationRefIndex);
+        if (roiAnnotationRefValue != null) dest.setROIAnnotationRef(roiAnnotationRefValue, roiIndex, annotationRefIndex);
+      }
     } catch (NullPointerException e) { }
     try {
       String roiDescriptionValue = src.getROIDescription(roiIndex);
@@ -1489,19 +1486,8 @@ public final class MetadataConverter {
       if (roiNamespaceValue != null) dest.setROINamespace(roiNamespaceValue, roiIndex);
     } catch (NullPointerException e) { }
       try {
-      //int annotationRefCount = src.getAnnotationRefCount(roiIndex);
-      //for (int annotationRefIndex=0; annotationRefIndex<annotationRefCount; annotationRefIndex++) {
-      //}
-      } catch (NullPointerException e) { }
-      try {
-      /*
-      int shapeCount = src.getShapeCount(roiIndex, shapeIndex);
+      int shapeCount = src.getShapeCount(roiIndex);
       for (int shapeIndex=0; shapeIndex<shapeCount; shapeIndex++) {
-        try {
-        int annotationRefCount = src.getAnnotationRefCount(roiIndex, shapeIndex);
-        for (int annotationRefIndex=0; annotationRefIndex<annotationRefCount; annotationRefIndex++) {
-        }
-        } catch (NullPointerException e) { }
         try {
           String ellipseDescriptionValue = src.getEllipseDescription(roiIndex, shapeIndex);
           if (ellipseDescriptionValue != null) dest.setEllipseDescription(ellipseDescriptionValue, roiIndex, shapeIndex);
@@ -1511,7 +1497,7 @@ public final class MetadataConverter {
           if (ellipseFillValue != null) dest.setEllipseFill(ellipseFillValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         try {
-          Integer ellipseFontSizeValue = src.getEllipseFontSize(roiIndex, shapeIndex);
+          NonNegativeInteger ellipseFontSizeValue = src.getEllipseFontSize(roiIndex, shapeIndex);
           if (ellipseFontSizeValue != null) dest.setEllipseFontSize(ellipseFontSizeValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         try {
@@ -1547,15 +1533,15 @@ public final class MetadataConverter {
           if (ellipseStrokeWidthValue != null) dest.setEllipseStrokeWidth(ellipseStrokeWidthValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         try {
-          Integer ellipseTheCValue = src.getEllipseTheC(roiIndex, shapeIndex);
+          NonNegativeInteger ellipseTheCValue = src.getEllipseTheC(roiIndex, shapeIndex);
           if (ellipseTheCValue != null) dest.setEllipseTheC(ellipseTheCValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         try {
-          Integer ellipseTheTValue = src.getEllipseTheT(roiIndex, shapeIndex);
+          NonNegativeInteger ellipseTheTValue = src.getEllipseTheT(roiIndex, shapeIndex);
           if (ellipseTheTValue != null) dest.setEllipseTheT(ellipseTheTValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         try {
-          Integer ellipseTheZValue = src.getEllipseTheZ(roiIndex, shapeIndex);
+          NonNegativeInteger ellipseTheZValue = src.getEllipseTheZ(roiIndex, shapeIndex);
           if (ellipseTheZValue != null) dest.setEllipseTheZ(ellipseTheZValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         try {
@@ -1579,7 +1565,7 @@ public final class MetadataConverter {
           if (lineFillValue != null) dest.setLineFill(lineFillValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         try {
-          Integer lineFontSizeValue = src.getLineFontSize(roiIndex, shapeIndex);
+          NonNegativeInteger lineFontSizeValue = src.getLineFontSize(roiIndex, shapeIndex);
           if (lineFontSizeValue != null) dest.setLineFontSize(lineFontSizeValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         try {
@@ -1607,15 +1593,15 @@ public final class MetadataConverter {
           if (lineStrokeWidthValue != null) dest.setLineStrokeWidth(lineStrokeWidthValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         try {
-          Integer lineTheCValue = src.getLineTheC(roiIndex, shapeIndex);
+          NonNegativeInteger lineTheCValue = src.getLineTheC(roiIndex, shapeIndex);
           if (lineTheCValue != null) dest.setLineTheC(lineTheCValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         try {
-          Integer lineTheTValue = src.getLineTheT(roiIndex, shapeIndex);
+          NonNegativeInteger lineTheTValue = src.getLineTheT(roiIndex, shapeIndex);
           if (lineTheTValue != null) dest.setLineTheT(lineTheTValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         try {
-          Integer lineTheZValue = src.getLineTheZ(roiIndex, shapeIndex);
+          NonNegativeInteger lineTheZValue = src.getLineTheZ(roiIndex, shapeIndex);
           if (lineTheZValue != null) dest.setLineTheZ(lineTheZValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         try {
@@ -1647,7 +1633,7 @@ public final class MetadataConverter {
           if (maskFillValue != null) dest.setMaskFill(maskFillValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         try {
-          Integer maskFontSizeValue = src.getMaskFontSize(roiIndex, shapeIndex);
+          NonNegativeInteger maskFontSizeValue = src.getMaskFontSize(roiIndex, shapeIndex);
           if (maskFontSizeValue != null) dest.setMaskFontSize(maskFontSizeValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         try {
@@ -1675,15 +1661,15 @@ public final class MetadataConverter {
           if (maskStrokeWidthValue != null) dest.setMaskStrokeWidth(maskStrokeWidthValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         try {
-          Integer maskTheCValue = src.getMaskTheC(roiIndex, shapeIndex);
+          NonNegativeInteger maskTheCValue = src.getMaskTheC(roiIndex, shapeIndex);
           if (maskTheCValue != null) dest.setMaskTheC(maskTheCValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         try {
-          Integer maskTheTValue = src.getMaskTheT(roiIndex, shapeIndex);
+          NonNegativeInteger maskTheTValue = src.getMaskTheT(roiIndex, shapeIndex);
           if (maskTheTValue != null) dest.setMaskTheT(maskTheTValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         try {
-          Integer maskTheZValue = src.getMaskTheZ(roiIndex, shapeIndex);
+          NonNegativeInteger maskTheZValue = src.getMaskTheZ(roiIndex, shapeIndex);
           if (maskTheZValue != null) dest.setMaskTheZ(maskTheZValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         try {
@@ -1711,7 +1697,7 @@ public final class MetadataConverter {
           if (pathFillValue != null) dest.setPathFill(pathFillValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         try {
-          Integer pathFontSizeValue = src.getPathFontSize(roiIndex, shapeIndex);
+          NonNegativeInteger pathFontSizeValue = src.getPathFontSize(roiIndex, shapeIndex);
           if (pathFontSizeValue != null) dest.setPathFontSize(pathFontSizeValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         try {
@@ -1739,15 +1725,15 @@ public final class MetadataConverter {
           if (pathStrokeWidthValue != null) dest.setPathStrokeWidth(pathStrokeWidthValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         try {
-          Integer pathTheCValue = src.getPathTheC(roiIndex, shapeIndex);
+          NonNegativeInteger pathTheCValue = src.getPathTheC(roiIndex, shapeIndex);
           if (pathTheCValue != null) dest.setPathTheC(pathTheCValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         try {
-          Integer pathTheTValue = src.getPathTheT(roiIndex, shapeIndex);
+          NonNegativeInteger pathTheTValue = src.getPathTheT(roiIndex, shapeIndex);
           if (pathTheTValue != null) dest.setPathTheT(pathTheTValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         try {
-          Integer pathTheZValue = src.getPathTheZ(roiIndex, shapeIndex);
+          NonNegativeInteger pathTheZValue = src.getPathTheZ(roiIndex, shapeIndex);
           if (pathTheZValue != null) dest.setPathTheZ(pathTheZValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         try {
@@ -1763,7 +1749,7 @@ public final class MetadataConverter {
           if (pointFillValue != null) dest.setPointFill(pointFillValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         try {
-          Integer pointFontSizeValue = src.getPointFontSize(roiIndex, shapeIndex);
+          NonNegativeInteger pointFontSizeValue = src.getPointFontSize(roiIndex, shapeIndex);
           if (pointFontSizeValue != null) dest.setPointFontSize(pointFontSizeValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         try {
@@ -1791,15 +1777,15 @@ public final class MetadataConverter {
           if (pointStrokeWidthValue != null) dest.setPointStrokeWidth(pointStrokeWidthValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         try {
-          Integer pointTheCValue = src.getPointTheC(roiIndex, shapeIndex);
+          NonNegativeInteger pointTheCValue = src.getPointTheC(roiIndex, shapeIndex);
           if (pointTheCValue != null) dest.setPointTheC(pointTheCValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         try {
-          Integer pointTheTValue = src.getPointTheT(roiIndex, shapeIndex);
+          NonNegativeInteger pointTheTValue = src.getPointTheT(roiIndex, shapeIndex);
           if (pointTheTValue != null) dest.setPointTheT(pointTheTValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         try {
-          Integer pointTheZValue = src.getPointTheZ(roiIndex, shapeIndex);
+          NonNegativeInteger pointTheZValue = src.getPointTheZ(roiIndex, shapeIndex);
           if (pointTheZValue != null) dest.setPointTheZ(pointTheZValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         try {
@@ -1827,7 +1813,7 @@ public final class MetadataConverter {
           if (polylineFillValue != null) dest.setPolylineFill(polylineFillValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         try {
-          Integer polylineFontSizeValue = src.getPolylineFontSize(roiIndex, shapeIndex);
+          NonNegativeInteger polylineFontSizeValue = src.getPolylineFontSize(roiIndex, shapeIndex);
           if (polylineFontSizeValue != null) dest.setPolylineFontSize(polylineFontSizeValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         try {
@@ -1859,15 +1845,15 @@ public final class MetadataConverter {
           if (polylineStrokeWidthValue != null) dest.setPolylineStrokeWidth(polylineStrokeWidthValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         try {
-          Integer polylineTheCValue = src.getPolylineTheC(roiIndex, shapeIndex);
+          NonNegativeInteger polylineTheCValue = src.getPolylineTheC(roiIndex, shapeIndex);
           if (polylineTheCValue != null) dest.setPolylineTheC(polylineTheCValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         try {
-          Integer polylineTheTValue = src.getPolylineTheT(roiIndex, shapeIndex);
+          NonNegativeInteger polylineTheTValue = src.getPolylineTheT(roiIndex, shapeIndex);
           if (polylineTheTValue != null) dest.setPolylineTheT(polylineTheTValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         try {
-          Integer polylineTheZValue = src.getPolylineTheZ(roiIndex, shapeIndex);
+          NonNegativeInteger polylineTheZValue = src.getPolylineTheZ(roiIndex, shapeIndex);
           if (polylineTheZValue != null) dest.setPolylineTheZ(polylineTheZValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         try {
@@ -1883,7 +1869,7 @@ public final class MetadataConverter {
           if (rectangleFillValue != null) dest.setRectangleFill(rectangleFillValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         try {
-          Integer rectangleFontSizeValue = src.getRectangleFontSize(roiIndex, shapeIndex);
+          NonNegativeInteger rectangleFontSizeValue = src.getRectangleFontSize(roiIndex, shapeIndex);
           if (rectangleFontSizeValue != null) dest.setRectangleFontSize(rectangleFontSizeValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         try {
@@ -1915,15 +1901,15 @@ public final class MetadataConverter {
           if (rectangleStrokeWidthValue != null) dest.setRectangleStrokeWidth(rectangleStrokeWidthValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         try {
-          Integer rectangleTheCValue = src.getRectangleTheC(roiIndex, shapeIndex);
+          NonNegativeInteger rectangleTheCValue = src.getRectangleTheC(roiIndex, shapeIndex);
           if (rectangleTheCValue != null) dest.setRectangleTheC(rectangleTheCValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         try {
-          Integer rectangleTheTValue = src.getRectangleTheT(roiIndex, shapeIndex);
+          NonNegativeInteger rectangleTheTValue = src.getRectangleTheT(roiIndex, shapeIndex);
           if (rectangleTheTValue != null) dest.setRectangleTheT(rectangleTheTValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         try {
-          Integer rectangleTheZValue = src.getRectangleTheZ(roiIndex, shapeIndex);
+          NonNegativeInteger rectangleTheZValue = src.getRectangleTheZ(roiIndex, shapeIndex);
           if (rectangleTheZValue != null) dest.setRectangleTheZ(rectangleTheZValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         try {
@@ -1951,7 +1937,7 @@ public final class MetadataConverter {
           if (textFillValue != null) dest.setTextFill(textFillValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         try {
-          Integer textFontSizeValue = src.getTextFontSize(roiIndex, shapeIndex);
+          NonNegativeInteger textFontSizeValue = src.getTextFontSize(roiIndex, shapeIndex);
           if (textFontSizeValue != null) dest.setTextFontSize(textFontSizeValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         try {
@@ -1979,15 +1965,15 @@ public final class MetadataConverter {
           if (textStrokeWidthValue != null) dest.setTextStrokeWidth(textStrokeWidthValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         try {
-          Integer textTheCValue = src.getTextTheC(roiIndex, shapeIndex);
+          NonNegativeInteger textTheCValue = src.getTextTheC(roiIndex, shapeIndex);
           if (textTheCValue != null) dest.setTextTheC(textTheCValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         try {
-          Integer textTheTValue = src.getTextTheT(roiIndex, shapeIndex);
+          NonNegativeInteger textTheTValue = src.getTextTheT(roiIndex, shapeIndex);
           if (textTheTValue != null) dest.setTextTheT(textTheTValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         try {
-          Integer textTheZValue = src.getTextTheZ(roiIndex, shapeIndex);
+          NonNegativeInteger textTheZValue = src.getTextTheZ(roiIndex, shapeIndex);
           if (textTheZValue != null) dest.setTextTheZ(textTheZValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         try {
@@ -2007,7 +1993,6 @@ public final class MetadataConverter {
           if (textYValue != null) dest.setTextY(textYValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
       }
-      */
       } catch (NullPointerException e) { }
     }
     } catch (NullPointerException e) { }
@@ -2015,8 +2000,12 @@ public final class MetadataConverter {
     int screenCount = src.getScreenCount();
     for (int screenIndex=0; screenIndex<screenCount; screenIndex++) {
     try {
-      //String screenAnnotationRefValue = src.getScreenAnnotationRef(screenIndex, annotationRefIndex);
-      //if (screenAnnotationRefValue != null) dest.setScreenAnnotationRef(screenAnnotationRefValue, screenIndex, annotationRefIndex);
+      int annotationRefCount = src.getScreenAnnotationRefCount(screenIndex);
+      for (int annotationRefIndex=0; annotationRefIndex<annotationRefCount; annotationRefIndex++)
+      {
+        String screenAnnotationRefValue = src.getScreenAnnotationRef(screenIndex, annotationRefIndex);
+        if (screenAnnotationRefValue != null) dest.setScreenAnnotationRef(screenAnnotationRefValue, screenIndex, annotationRefIndex);
+      }
     } catch (NullPointerException e) { }
     try {
       String screenDescriptionValue = src.getScreenDescription(screenIndex);
@@ -2031,8 +2020,11 @@ public final class MetadataConverter {
       if (screenNameValue != null) dest.setScreenName(screenNameValue, screenIndex);
     } catch (NullPointerException e) { }
     try {
-      //String screenPlateRefValue = src.getScreenPlateRef(screenIndex, plateRefIndex);
-      //if (screenPlateRefValue != null) dest.setScreenPlateRef(screenPlateRefValue, screenIndex, plateRefIndex);
+      int plateRefCount = src.getPlateRefCount(screenIndex);
+      for (int plateRefIndex=0; plateRefIndex<plateRefCount; plateRefIndex++) {
+        String screenPlateRefValue = src.getScreenPlateRef(screenIndex, plateRefIndex);
+        if (screenPlateRefValue != null) dest.setScreenPlateRef(screenPlateRefValue, screenIndex, plateRefIndex);
+      }
     } catch (NullPointerException e) { }
     try {
       String screenProtocolDescriptionValue = src.getScreenProtocolDescription(screenIndex);
@@ -2055,21 +2047,15 @@ public final class MetadataConverter {
       if (screenTypeValue != null) dest.setScreenType(screenTypeValue, screenIndex);
     } catch (NullPointerException e) { }
       try {
-      //int annotationRefCount = src.getAnnotationRefCount(screenIndex);
-      //for (int annotationRefIndex=0; annotationRefIndex<annotationRefCount; annotationRefIndex++) {
-      //}
-      } catch (NullPointerException e) { }
-      try {
-      int plateRefCount = src.getPlateRefCount(screenIndex);
-      for (int plateRefIndex=0; plateRefIndex<plateRefCount; plateRefIndex++) {
-      }
-      } catch (NullPointerException e) { }
-      try {
       int reagentCount = src.getReagentCount(screenIndex);
       for (int reagentIndex=0; reagentIndex<reagentCount; reagentIndex++) {
       try {
-        //String reagentAnnotationRefValue = src.getReagentAnnotationRef(screenIndex, reagentIndex, annotationRefIndex);
-        //if (reagentAnnotationRefValue != null) dest.setReagentAnnotationRef(reagentAnnotationRefValue, screenIndex, reagentIndex, annotationRefIndex);
+        int annotationRefCount = src.getReagentAnnotationRefCount(screenIndex, reagentIndex);
+        for (int annotationRefIndex=0; annotationRefIndex<annotationRefCount; annotationRefIndex++)
+        {
+          String reagentAnnotationRefValue = src.getReagentAnnotationRef(screenIndex, reagentIndex, annotationRefIndex);
+          if (reagentAnnotationRefValue != null) dest.setReagentAnnotationRef(reagentAnnotationRefValue, screenIndex, reagentIndex, annotationRefIndex);
+        }
       } catch (NullPointerException e) { }
       try {
         String reagentDescriptionValue = src.getReagentDescription(screenIndex, reagentIndex);
@@ -2087,11 +2073,6 @@ public final class MetadataConverter {
         String reagentReagentIdentifierValue = src.getReagentReagentIdentifier(screenIndex, reagentIndex);
         if (reagentReagentIdentifierValue != null) dest.setReagentReagentIdentifier(reagentReagentIdentifierValue, screenIndex, reagentIndex);
       } catch (NullPointerException e) { }
-        try {
-        //int annotationRefCount = src.getAnnotationRefCount(screenIndex, reagentIndex);
-        //for (int annotationRefIndex=0; annotationRefIndex<annotationRefCount; annotationRefIndex++) {
-        //}
-        } catch (NullPointerException e) { }
       }
       } catch (NullPointerException e) { }
     }
