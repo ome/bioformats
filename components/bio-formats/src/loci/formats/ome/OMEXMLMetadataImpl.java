@@ -32,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-06-23 16:19:59+0100
+ * Created by callan via xsd-fu on 2010-06-29 13:49:05+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -60,8 +60,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	private OME root;
 
 	private OMEModel model;
-
-	private String uuid;
 
 	public OMEXMLMetadataImpl()
 	{
@@ -688,7 +686,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	/** Gets the UUID associated with this collection of metadata. */
 	public String getUUID()
 	{
-		return uuid;
+		return root.getUUID();
 	}
 
 	//
@@ -5213,7 +5211,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	/** Sets the UUID associated with this collection of metadata. */
 	public void setUUID(String uuid)
 	{
-		this.uuid = uuid;
+		root.setUUID(uuid);
 	}
 
 	//
