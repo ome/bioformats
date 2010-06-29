@@ -51,7 +51,7 @@ public final class LibraryChecker {
   }
 
   /** Minimum version of ImageJ necessary for LOCI plugins. */
-  public static final String IMAGEJ_VERSION = "1.40";
+  public static final String IMAGEJ_VERSION = "1.42";
 
   /** Message to be displayed if ImageJ is too old for LOCI plugins. */
   public static final String IMAGEJ_MSG =
