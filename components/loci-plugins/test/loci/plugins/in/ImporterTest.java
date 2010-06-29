@@ -36,9 +36,6 @@ import loci.plugins.in.ImporterOptions;
 // TODO
 
 // left off
-//   comboConcatSplit bugs: IJ reorders dims cuz stacksize does not match ZxCxT. Curtis implemented default behavior:
-//     if 2 dims match concat on third. if all three compat then concat along T (then Z then C). Fix tests to reflect
-//      this behavior.
 //   expand testing to use virtual stacks everywhere - partially done
 //   expand compositeTestSubcases() to handle more pixTypes and indexed data
 //   finish the colorize tests
@@ -1173,7 +1170,7 @@ public class ImporterTest {
   }
   
   /** tests BF's options.setAutoscale() */
-  private void autoscaleTester(int pixType, boolean wantAutoscale)
+  private void autoscaleTester(boolean virtual, int pixType, boolean wantAutoscale)
   {
     final int sizeZ = 2, sizeC = 3, sizeT = 4, sizeX = 51, sizeY = 16;
     final String path = constructFakeFilename("autoscale",pixType, sizeX, sizeY, sizeZ, sizeC, sizeT, -1, false, -1, false, -1);
@@ -1182,6 +1179,7 @@ public class ImporterTest {
     
     try {
       ImporterOptions options = new ImporterOptions();
+      options.setVirtual(virtual);
       options.setAutoscale(wantAutoscale);
       options.setId(path);
       imps = BF.openImagePlus(options);
@@ -1829,9 +1827,8 @@ public class ImporterTest {
       for (boolean virtual : BooleanStates)
         outputStackOrderTester(virtual,FormatTools.UINT8, order,  82, 47, 2, 3, 4);
   }
-    
-  @Test
-  public void testDatasetGroupFiles()
+
+  private void datasetGroupFilesTester(boolean virtual)
   {
     String path = FAKE_FILES[0];
 
@@ -1839,6 +1836,7 @@ public class ImporterTest {
     
     try {
       ImporterOptions options = new ImporterOptions();
+      options.setVirtual(virtual);
       options.setGroupFiles(true);
       options.setId(path);
       imps = BF.openImagePlus(options);
@@ -1855,9 +1853,15 @@ public class ImporterTest {
   
     groupedFilesTest(imps[0], FAKE_FILES.length, FakePlaneCount);
   }
-
+  
   @Test
-  public void testDatasetOpenFilesIndividually()
+  public void testDatasetGroupFiles()
+  {
+    for (boolean virtual : BooleanStates)
+      datasetGroupFilesTester(virtual);
+  }
+
+  private void datsetOpenFilesIndividuallyTester(boolean virtual)
   {
     // TODO - try to remove file dependency
     
@@ -1912,6 +1916,13 @@ public class ImporterTest {
   }
 
   @Test
+  public void testDatasetOpenFilesIndividually()
+  {
+    for (boolean virtual : BooleanStates)
+      datsetOpenFilesIndividuallyTester(virtual);
+  }
+  
+  @Test
   public void testDatasetSwapDims()
   {
     // TODO: testing only swapping Z&T of XYZTC. Add more option testing.
@@ -1953,6 +1964,7 @@ public class ImporterTest {
     datasetConcatenateTester(FormatTools.UINT8, 82, 47, 4, 5, 2, 9);
   }
 
+  // TODO - make a virtual case when working
   // TODO - waiting to hear how this case should behave before implementation
   @Test
   public void testColorDefault()
@@ -1989,6 +2001,7 @@ public class ImporterTest {
     fail("unfinished");
   }
   
+  // TODO - make a virtual case when working
   // TODO - older unfinished implementation : set aside for now and working on testCompositeSubcases() 
   @Test
   public void testColorComposite()
@@ -2018,6 +2031,7 @@ public class ImporterTest {
                 }
   }
   
+  // TODO - make a virtual case when working
   // TODO - older unfinished implementation : set aside for now and working on testColorizeSubcases() 
   @Test
   public void testColorColorized()
@@ -2025,6 +2039,7 @@ public class ImporterTest {
     colorColorizedTester();
   }
   
+  // TODO - make a virtual case when working
   // TODO - older unfinished implementation. Waiting to adapt the newest colorize testing code when it is working
   @Test
   public void testColorGrayscale()
@@ -2032,6 +2047,7 @@ public class ImporterTest {
     colorGrayscaleTester();
   }
   
+  // TODO - make a virtual case when working
   // TODO - older unfinished implementation. Waiting to adapt the newest colorize testing code when it is working
   @Test
   public void testColorCustom()
@@ -2063,12 +2079,15 @@ public class ImporterTest {
   @Test
   public void testColorAutoscale()
   {
-    for (int pixType : PixelTypes)
+    for (boolean virtual : BooleanStates)
     {
-      for (boolean autoscale : BooleanStates)
+      for (int pixType : PixelTypes)
       {
-        //System.out.println("testColorAutoscale(): pixType = "+FormatTools.getPixelTypeString(pixType)+" autoscale = "+autoscale);
-        autoscaleTester(pixType,autoscale);
+        for (boolean autoscale : BooleanStates)
+        {
+          //System.out.println("testColorAutoscale(): pixType = "+FormatTools.getPixelTypeString(pixType)+" autoscale = "+autoscale);
+          autoscaleTester(virtual,pixType,autoscale);
+        }
       }
     }
   }
