@@ -55,7 +55,7 @@ public class ARFReader extends FormatReader {
   /** Constructs a new ARF reader. */
   public ARFReader() {
     super("ARF", "arf");
-    domains = new String[] {FormatTools.GRAPHICS_DOMAIN};
+    domains = new String[] {FormatTools.UNKNOWN_DOMAIN};
   }
 
   // -- IFormatReader API methods --

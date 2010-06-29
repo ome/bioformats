@@ -67,7 +67,7 @@ public class AmiraReader extends FormatReader {
 
   public AmiraReader() {
     super("Amira", new String[] {"am", "amiramesh", "grey", "hx", "labels"});
-    domains = new String[] {FormatTools.GRAPHICS_DOMAIN};
+    domains = new String[] {FormatTools.UNKNOWN_DOMAIN};
   }
 
   // -- IFormatReader API methods --

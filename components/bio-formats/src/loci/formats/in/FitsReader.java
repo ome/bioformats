@@ -58,7 +58,7 @@ public class FitsReader extends FormatReader {
   public FitsReader() {
     super("Flexible Image Transport System", new String[] {"fits", "fts"});
     domains =
-      new String[] {FormatTools.ASTRONOMY_DOMAIN, FormatTools.GRAPHICS_DOMAIN};
+      new String[] {FormatTools.ASTRONOMY_DOMAIN, FormatTools.UNKNOWN_DOMAIN};
   }
 
   // -- IFormatReader API methods --

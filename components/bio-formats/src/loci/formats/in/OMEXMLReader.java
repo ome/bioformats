@@ -99,7 +99,7 @@ public class OMEXMLReader extends FormatReader {
   /** Constructs a new OME-XML reader. */
   public OMEXMLReader() {
     super("OME-XML", "ome");
-    domains = FormatTools.ALL_DOMAINS;
+    domains = FormatTools.NON_GRAPHICS_DOMAINS;
     suffixNecessary = false;
   }
 
@@ -116,7 +116,7 @@ public class OMEXMLReader extends FormatReader {
   public String[] getDomains() {
     FormatTools.assertId(currentId, true, 1);
     return hasSPW ? new String[] {FormatTools.HCS_DOMAIN} :
-      FormatTools.NON_HCS_DOMAINS;
+      FormatTools.NON_SPECIAL_DOMAINS;
   }
 
   /**

@@ -55,7 +55,7 @@ public class IPLabReader extends FormatReader {
     super("IPLab", "ipl");
     suffixNecessary = false; // allow extensionless IPLab files
     suffixSufficient = false;
-    domains = new String[] {FormatTools.GRAPHICS_DOMAIN};
+    domains = new String[] {FormatTools.UNKNOWN_DOMAIN};
   }
 
   // -- IFormatReader API methods --

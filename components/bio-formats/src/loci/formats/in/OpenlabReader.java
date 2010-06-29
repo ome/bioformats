@@ -114,7 +114,7 @@ public class OpenlabReader extends FormatReader {
   public OpenlabReader() {
     super("Openlab LIFF", "liff");
     suffixNecessary = false;
-    domains = new String[] {FormatTools.GRAPHICS_DOMAIN};
+    domains = new String[] {FormatTools.UNKNOWN_DOMAIN};
   }
 
   // -- IFormatReader API methods --

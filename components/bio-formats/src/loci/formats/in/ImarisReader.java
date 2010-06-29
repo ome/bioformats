@@ -64,7 +64,7 @@ public class ImarisReader extends FormatReader {
   public ImarisReader() {
     super("Bitplane Imaris", "ims");
     suffixSufficient = false;
-    domains = new String[] {FormatTools.GRAPHICS_DOMAIN};
+    domains = new String[] {FormatTools.UNKNOWN_DOMAIN};
   }
 
   // -- IFormatReader API methods --

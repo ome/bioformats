@@ -86,7 +86,7 @@ public class OMETiffReader extends FormatReader {
     super("OME-TIFF", new String[] {"ome.tif", "ome.tiff"});
     suffixNecessary = false;
     suffixSufficient = false;
-    domains = FormatTools.ALL_DOMAINS;
+    domains = FormatTools.NON_GRAPHICS_DOMAINS;
     hasCompanionFiles = true;
   }
 
@@ -148,7 +148,7 @@ public class OMETiffReader extends FormatReader {
   public String[] getDomains() {
     FormatTools.assertId(currentId, true, 1);
     return hasSPW ? new String[] {FormatTools.HCS_DOMAIN} :
-      FormatTools.NON_HCS_DOMAINS;
+      FormatTools.NON_SPECIAL_DOMAINS;
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
@@ -356,8 +356,8 @@ public class OMETiffReader extends FormatReader {
     // process TiffData elements
     Hashtable<String, IFormatReader> readers =
       new Hashtable<String, IFormatReader>();
-    int s = 0;
     for (int i=0; i<seriesCount; i++) {
+      int s = i;
       LOGGER.debug("Image[{}] {", i);
       LOGGER.debug("  id = {}", meta.getImageID(i));
 

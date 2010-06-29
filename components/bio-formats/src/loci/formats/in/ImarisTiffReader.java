@@ -55,7 +55,7 @@ public class ImarisTiffReader extends BaseTiffReader {
     super("Bitplane Imaris 3 (TIFF)", "ims");
     suffixSufficient = false;
     suffixNecessary = true;
-    domains = new String[] {FormatTools.GRAPHICS_DOMAIN};
+    domains = new String[] {FormatTools.UNKNOWN_DOMAIN};
   }
 
   // -- Internal FormatReader API methods --

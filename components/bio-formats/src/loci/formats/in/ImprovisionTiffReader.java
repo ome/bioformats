@@ -58,7 +58,7 @@ public class ImprovisionTiffReader extends BaseTiffReader {
   public ImprovisionTiffReader() {
     super("Improvision TIFF", new String[] {"tif", "tiff"});
     suffixSufficient = false;
-    domains = new String[] {FormatTools.GRAPHICS_DOMAIN};
+    domains = new String[] {FormatTools.UNKNOWN_DOMAIN};
   }
 
   // -- IFormatReader API methods --

@@ -77,7 +77,7 @@ public class IvisionReader extends FormatReader {
     super("IVision", "ipm");
     suffixSufficient = false;
     suffixNecessary = false;
-    domains = new String[] {FormatTools.GRAPHICS_DOMAIN};
+    domains = new String[] {FormatTools.UNKNOWN_DOMAIN};
   }
 
   // -- IFormatReader API methods --

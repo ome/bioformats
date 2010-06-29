@@ -148,7 +148,7 @@ public class ICSReader extends FormatReader {
   public ICSReader() {
     super("Image Cytometry Standard", new String[] {"ics", "ids"});
     domains = new String[] {FormatTools.LM_DOMAIN, FormatTools.FLIM_DOMAIN,
-      FormatTools.GRAPHICS_DOMAIN};
+      FormatTools.UNKNOWN_DOMAIN};
     hasCompanionFiles = true;
   }
 

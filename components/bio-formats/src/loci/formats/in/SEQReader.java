@@ -58,7 +58,7 @@ public class SEQReader extends BaseTiffReader {
   /** Constructs a new Image-Pro SEQ reader. */
   public SEQReader() {
     super("Image-Pro Sequence", "seq");
-    domains = new String[] {FormatTools.GRAPHICS_DOMAIN};
+    domains = new String[] {FormatTools.UNKNOWN_DOMAIN};
   }
 
   // -- IFormatReader API methods --

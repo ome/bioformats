@@ -54,7 +54,7 @@ public class LIMReader extends FormatReader {
   /** Constructs a new LIM reader. */
   public LIMReader() {
     super("Laboratory Imaging", "lim");
-    domains = new String[] {FormatTools.LM_DOMAIN, FormatTools.GRAPHICS_DOMAIN};
+    domains = new String[] {FormatTools.LM_DOMAIN};
   }
 
   // -- IFormatReader API methods --
