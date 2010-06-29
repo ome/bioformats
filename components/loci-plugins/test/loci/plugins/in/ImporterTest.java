@@ -36,9 +36,10 @@ import loci.plugins.in.ImporterOptions;
 // TODO
 
 // left off
-//   comboConcatSplit bugs: IJ reorders dims cuz stacksize does not match ZxCxT. Waiting for Curtis to implement default
-//     concat axis choice behavior and then fix those tests.
-//   expand testing to use virtual stacks everywhere if possible
+//   comboConcatSplit bugs: IJ reorders dims cuz stacksize does not match ZxCxT. Curtis implemented default behavior:
+//     if 2 dims match concat on third. if all three compat then concat along T (then Z then C). Fix tests to reflect
+//      this behavior.
+//   expand testing to use virtual stacks everywhere - partially done
 //   expand compositeTestSubcases() to handle more pixTypes and indexed data
 //   finish the colorize tests
 //   implement more combo tests
@@ -868,7 +869,7 @@ public class ImporterTest {
     for (int z = 0; z < sizeZ; z++)
     {
       ImagePlus imp = imps[z];
-      xyzctTest(imp,sizeX,sizeY,1,sizeC,sizeT);
+      xyzctTest(imp,sizeX,sizeY,1,sizeC,sizeT*numSeries);
       stackTest(imp,numSeries*sizeC*sizeT);
       ImageStack st = imp.getStack();
       for (int s = 0; s < numSeries; s++) {
@@ -877,6 +878,7 @@ public class ImporterTest {
           for (int c = 0; c < sizeC; c++) {
             //System.out.println("index "+index);
             ImageProcessor proc = st.getProcessor(++slice);
+            //printVals(proc);
             //System.out.println("s z c t "+s+" "+z+" "+c+" "+t);
             //System.out.println("z c t "+z+" "+c+" "+t);
             //System.out.println("is iz ic it "+sIndex(proc)+" "+zIndex(proc)+" "+cIndex(proc)+" "+tIndex(proc));
@@ -898,7 +900,7 @@ public class ImporterTest {
     for (int c = 0; c < sizeC; c++)
     {
       ImagePlus imp = imps[c];
-      xyzctTest(imp,sizeX,sizeY,sizeZ,1,sizeT);
+      xyzctTest(imp,sizeX,sizeY,sizeZ,1,sizeT*numSeries);
       stackTest(imp,numSeries*sizeZ*sizeT);
       ImageStack st = imp.getStack();
       for (int s = 0; s < numSeries; s++) {
@@ -920,22 +922,26 @@ public class ImporterTest {
     }
   }
   
+  // this one will be different from the previous two as we concat along T by default for FakeFiles as all dims compat.
+  //   Then we're splitting on T. Logic will need to be different from others.
   /** tests that a set of images is ordered via T first - used by concatSplit tests */
   private void imageSeriesInTczOrderTest(ImagePlus[] imps, int numSeries, int sizeX, int sizeY, int sizeZ, int sizeC, int sizeT)
   {
-    System.out.println("imageSeriesInTczOrderTest(z="+sizeZ+" c="+sizeC+" t="+sizeT+" s="+numSeries+")");
-    // from CZT order: T pulled out, CZ in order
-    for (int t = 0; t < sizeT; t++)
+    int imageNum = 0;
+    for (int s = 0; s < numSeries; s++)
     {
-      ImagePlus imp = imps[t];
-      xyzctTest(imp,sizeX,sizeY,sizeZ,sizeC,1);
-      stackTest(imp,numSeries*sizeZ*sizeC);
-      ImageStack st = imp.getStack();
-      for (int s = 0; s < numSeries; s++) {
-        int slice = s*sizeZ*sizeC;
+      // from CZT order: T pulled out, CZ in order
+      for (int t = 0; t < sizeT; t++)
+      {
+        ImagePlus imp = imps[imageNum++];
+        xyzctTest(imp,sizeX,sizeY,sizeZ,sizeC,1);
+        stackTest(imp,sizeZ*sizeC);
+        ImageStack st = imp.getStack();
+        int slice = 0;
         for (int z = 0; z < sizeZ; z++) {
           for (int c = 0; c < sizeC; c++) {
             ImageProcessor proc = st.getProcessor(++slice);
+            printVals(proc);
             //System.out.println("index "+index);
             //System.out.println("s z c t "+s+" "+z+" "+c+" "+t);
             //System.out.println("iz ic it "+zIndex(proc)+" "+cIndex(proc)+" "+tIndex(proc));
@@ -1126,7 +1132,7 @@ public class ImporterTest {
   }
   
   /** tests BF's options.setOpenAllSeries() and options.setConcatenate() */
-  private void datasetConcatenateTester(boolean virtual,int pixType, int x, int y, int z, int c, int t, int s)
+  private void datasetConcatenateTester(int pixType, int x, int y, int z, int c, int t, int s)
   {
     assertTrue(s >= 1);  // necessary for this test
     
@@ -1138,7 +1144,7 @@ public class ImporterTest {
     
     try {
       ImporterOptions options = new ImporterOptions();
-      options.setVirtual(virtual);
+      //options.setVirtual(virtual);  // NOTE - do not allow this combo
       options.setId(path);
       options.setOpenAllSeries(true);
       options.setConcatenate(true);
@@ -1657,8 +1663,7 @@ public class ImporterTest {
     // take a nontrivial zct set of series
     // run split and concat at same time
 
-    //TODO - restore - final int sizeX = 50, sizeY = 20, sizeZ = 5, sizeC = 3, sizeT = 7, series = 4;
-    final int sizeX = 50, sizeY = 20, sizeZ = 1, sizeC = 1, sizeT = 1, series = 2;
+    final int sizeX = 50, sizeY = 20, sizeZ = 3, sizeC = 5, sizeT = 7, series = 4;
     
     final String path = constructFakeFilename("concatSplitZ",
       FormatTools.UINT8, sizeX, sizeY, sizeZ, sizeC, sizeT, series, false, -1, false, -1);
@@ -1693,8 +1698,7 @@ public class ImporterTest {
     // take a nontrivial zct set of series
     // run split and concat at same time
 
-    // TODO - restore -  final int sizeX = 50, sizeY = 20, sizeZ = 5, sizeC = 3, sizeT = 7, series = 4;
-    final int sizeX = 50, sizeY = 20, sizeZ = 1, sizeC = 1, sizeT = 1, series = 2;
+    final int sizeX = 50, sizeY = 20, sizeZ = 3, sizeC = 5, sizeT = 7, series = 4;
     
     final String path = constructFakeFilename("concatSplitC",
       FormatTools.UINT8, sizeX, sizeY, sizeZ, sizeC, sizeT, series, false, -1, false, -1);
@@ -1729,11 +1733,10 @@ public class ImporterTest {
     // take a nontrivial zct set of series
     // run split and concat at same time
 
-    // TODO - restore - final int sizeX = 50, sizeY = 20, sizeZ = 5, sizeC = 3, sizeT = 7, series = 4;
-    final int sizeX = 50, sizeY = 20, sizeZ = 1, sizeC = 1, sizeT = 1, series = 2;
+    final int sizeX = 50, sizeY = 20, sizeZ = 3, sizeC = 5, sizeT = 7, numSeries = 4;
   
     final String path = constructFakeFilename("concatSplitT",
-      FormatTools.UINT8, sizeX, sizeY, sizeZ, sizeC, sizeT, series, false, -1, false, -1);
+      FormatTools.UINT8, sizeX, sizeY, sizeZ, sizeC, sizeT, numSeries, false, -1, false, -1);
 
     // open image
     ImagePlus[] imps = null;
@@ -1753,10 +1756,10 @@ public class ImporterTest {
       fail(e.getMessage());
     }
     
-    // one image per time point
-    impsCountTest(imps,sizeT);
+    // numSeries images per timepoint
+    impsCountTest(imps,sizeT*numSeries);
     
-    imageSeriesInTczOrderTest(imps,series,sizeX,sizeY,sizeZ,sizeC,sizeT);
+    imageSeriesInTczOrderTest(imps,numSeries,sizeX,sizeY,sizeZ,sizeC,sizeT);
   }
   
   /** tests BF's options.setColormode(composite) - alternate, later definition */
@@ -1942,13 +1945,12 @@ public class ImporterTest {
   @Test
   public void testDatasetConcatenate()
   {
-    for (boolean virtual : BooleanStates)
-    {
-      // open a dataset that has multiple series and should get back a single series
-      datasetConcatenateTester(virtual,FormatTools.UINT8, 82, 47, 1, 1, 1, 1);
-      datasetConcatenateTester(virtual,FormatTools.UINT8, 82, 47, 1, 1, 1, 17);
-      datasetConcatenateTester(virtual,FormatTools.UINT8, 82, 47, 4, 5, 2, 9);
-    }
+    // NOTE: for now we will not use a virtual boolean with datasetConcatenateTester() as that combo not a legal one in BF
+    
+    // open a dataset that has multiple series and should get back a single series
+    datasetConcatenateTester(FormatTools.UINT8, 82, 47, 1, 1, 1, 1);
+    datasetConcatenateTester(FormatTools.UINT8, 82, 47, 1, 1, 1, 17);
+    datasetConcatenateTester(FormatTools.UINT8, 82, 47, 4, 5, 2, 9);
   }
 
   // TODO - waiting to hear how this case should behave before implementation
