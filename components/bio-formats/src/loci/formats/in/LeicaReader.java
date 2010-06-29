@@ -547,7 +547,9 @@ public class LeicaReader extends FormatReader {
         core[i].sizeZ = 1;
         core[i].sizeT = 1;
       }
-      if (getSizeY() == 1) {
+      if (getSizeY() == 1 || getSizeY() == getSizeZ() ||
+        getSizeY() == getSizeT())
+      {
         // XZ or XT scan
         if (getSizeZ() > 1 && getImageCount() == getSizeC() * getSizeT()) {
           core[i].sizeY = getSizeZ();
