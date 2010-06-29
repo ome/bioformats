@@ -275,7 +275,10 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 
 	private OMEModel model;
 
-	private String uuid;
+	public OMEXMLMetadataImpl()
+	{
+		createRoot();
+	}
 
 	public void createRoot()
 	{
@@ -381,7 +384,7 @@ ${counter(k, o, v)}\
 	/** Gets the UUID associated with this collection of metadata. */
 	public String getUUID()
 	{
-		return uuid;
+		return root.getUUID();
 	}
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
@@ -476,7 +479,7 @@ ${getter(k, o, prop, v)}\
 	/** Sets the UUID associated with this collection of metadata. */
 	public void setUUID(String uuid)
 	{
-		this.uuid = uuid;
+		root.setUUID(uuid);
 	}
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
