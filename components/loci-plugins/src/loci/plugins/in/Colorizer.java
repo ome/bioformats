@@ -80,7 +80,7 @@ public class Colorizer {
       int mode = -1;
       LUT[] luts;
 
-      // get each channel's color model
+      // get LUT for each channel
       final ImageStack stack = imp.getStack();
       final String stackOrder = dimSwapper.getDimensionOrder();
       final int zSize = imp.getNSlices();
@@ -91,16 +91,10 @@ public class Colorizer {
       boolean hasChannelLUT = false;
       for (int c=0; c<cSize; c++) {
         final int index = FormatTools.getIndex(stackOrder,
-          zSize, cSize, tSize, stackSize, 0, c, 0) + 1;
-        final ColorModel cm = stack.getProcessor(index).getColorModel();
-
-        // HACK: ImageProcessorReader always assigns an ij.process.LUT object
-        // as the color model. If we don't get one, we know ImageJ created a
-        // default color model instead, which we can discard.
-        if (cm instanceof LUT) {
-          channelLUTs[c] = (LUT) cm;
-          hasChannelLUT = true;
-        }
+          zSize, cSize, tSize, stackSize, 0, c, 0);
+        channelLUTs[c] = (LUT)
+          imp.getProperty(ImagePlusReader.PROP_LUT + index);
+        if (channelLUTs[c] != null) hasChannelLUT = true;
       }
 
       if (options.isColorModeDefault()) {

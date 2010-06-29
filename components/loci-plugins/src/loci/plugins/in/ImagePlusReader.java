@@ -29,7 +29,9 @@ import ij.ImagePlus;
 import ij.ImageStack;
 import ij.io.FileInfo;
 import ij.process.ImageProcessor;
+import ij.process.LUT;
 
+import java.awt.image.ColorModel;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -69,6 +71,9 @@ public class ImagePlusReader implements StatusReporter {
 
   /** Special property for storing series number associated with the image. */
   public static final String PROP_SERIES = "Series";
+
+  /** Special property prefix for storing planar LUTs. */
+  public static final String PROP_LUT = "LUT-";
 
   // -- Fields --
 
@@ -183,10 +188,10 @@ public class ImagePlusReader implements StatusReporter {
 
     ImageStack stack = null;
 
+    final List<LUT> luts = new ArrayList<LUT>();
     if (options.isVirtual()) {
       // CTR FIXME: Make virtual stack work with different color modes?
       reader.setSeries(s);
-      // NB: ImageJ 1.39+ is required for VirtualStack
       BFVirtualStack virtualStack = new BFVirtualStack(options.getId(),
         reader, false, false, options.isRecord());
       stack = virtualStack;
@@ -204,29 +209,46 @@ public class ImagePlusReader implements StatusReporter {
         // limit message update rate
         updateTiming(s, i, current++, total);
 
-        String label = constructSliceLabel(i,
+        final String label = constructSliceLabel(i,
           reader, process.getOMEMetadata(), s,
           process.getZCount(s), process.getCCount(s), process.getTCount(s));
 
         // get image processor for ith plane
-        ImageProcessor[] p = reader.openProcessors(i,
+        final ImageProcessor[] p = reader.openProcessors(i,
           region.x, region.y, region.width, region.height);
         if (p == null || p.length == 0) {
           throw new FormatException("Cannot read plane #" + i);
         }
 
         // add plane to image stack
-        int w = region.width, h = region.height;
+        final int w = region.width, h = region.height;
         if (stack == null) stack = new ImageStack(w, h);
 
-        for (ImageProcessor ip : p) stack.addSlice(label, ip);
+        for (ImageProcessor ip : p) {
+          // HACK: ImageProcessorReader always assigns an ij.process.LUT object
+          // as the color model. If we don't get one, we know ImageJ created a
+          // default color model instead, which we can discard.
+          final ColorModel cm = ip.getColorModel();
+          final LUT lut = cm instanceof LUT ? (LUT) cm : null;
+          luts.add(lut);
+
+          stack.addSlice(label, ip);
+        }
       }
     }
 
     notifyListeners(new StatusEvent(1, 1, "Creating image"));
 
-    ImagePlus imp = createImage(stack, s, fi);
+    final ImagePlus imp = createImage(stack, s, fi);
     imps.add(imp);
+
+    // NB: Save individual planar LUTs as properties, for later access.
+    // This step is necessary because ImageStack.addSlice only extracts the
+    // pixels from the ImageProcessor, and does not preserve the ColorModel.
+    for (int i=0; i<luts.size(); i++) {
+      final LUT lut = luts.get(i);
+      if (lut != null) imp.setProperty(PROP_LUT + i, lut);
+    }
   }
 
   // -- Helper methods - concatenation --
