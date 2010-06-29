@@ -54,7 +54,6 @@ import loci.plugins.in.ImporterOptions;
 // seem broken but don't know status from Curtis
 //   colorized: 1/1/indexed (all indices 0 for all images), 3/1/indexed (iIndex,cIndex) (although w/ falseColor its okay),
 //     6/3/nonindexed (iIndex,cIndex), 12/3/nonindexed (iIndex,cIndex), 3/3/indexed (iIndex,cIndex)
-//   concat and split (returns wrong number of images per imp)
 //   record does not work
 
 // testable code according to my notes
@@ -74,7 +73,6 @@ import loci.plugins.in.ImporterOptions;
 
 // waiting on BF implementations for
 //   - indexed color support
-//   - changes to concat
 
 // must address before release
 
@@ -86,7 +84,7 @@ import loci.plugins.in.ImporterOptions;
 //     grayscale
 //     custom
 //  - add some tests for combination of options
-//      comboConcatSplit() - done but not passing
+//      comboConcatSplit() - done and passing
 //      comboManyOptions - done and passing
 //      other combo tests - rely on color code working. Waiting for BF.
 
@@ -1160,11 +1158,8 @@ public class ImporterTest {
 
     ImagePlus imp = imps[0];
     
-    // TODO
-    //   BF right now does not scale one of z/c/t by s. So z*c*t != stacksize. IJ handles by reordering dimensions as
-    //   1x1xnSlices. Once BF is updated to specify which dimension to concat along then uncomment a modified version
-    //   of the next test.
-    //xyzctTest(x,y,z,c,t); // this test but one of z,c,t scaled by s
+    // with FakeFiles all dims compatible for concat, BF will concat along T. Thus t*s in next test.
+    xyzctTest(imp,x,y,z,c,t*s);
     
     multipleSeriesInZtcOrderTest(imp,s,z,c,t);
   }
@@ -1507,7 +1502,7 @@ public class ImporterTest {
   }
   
   /** tests BF's options.set?Begin(), options.set?End(), and options.set?Step() */
-  private void memorySpecifyRangeTester(int z, int c, int t,
+  private void memorySpecifyRangeTester(boolean virtual, int z, int c, int t,
       int zFrom, int zTo, int zBy,
       int cFrom, int cTo, int cBy,
       int tFrom, int tTo, int tBy)
@@ -1520,6 +1515,7 @@ public class ImporterTest {
 
     try {
       ImporterOptions options = new ImporterOptions();
+      options.setVirtual(virtual);
       options.setId(path);
       
       // only set values when nondefault behavior specified
@@ -1569,7 +1565,7 @@ public class ImporterTest {
   }
   
   /** tests BF's options.setCrop() and options.setCropRegion() */
-  private void memoryCropTester(int x, int y, int ox, int oy, int cropSize)
+  private void memoryCropTester(boolean virtual, int x, int y, int ox, int oy, int cropSize)
   {
     verifyCropInput(x, y, ox, oy, cropSize);  // needed for this test
 
@@ -1580,6 +1576,7 @@ public class ImporterTest {
     
     try {
       ImporterOptions options = new ImporterOptions();
+      options.setVirtual(virtual);
       options.setId(path);
       options.setCrop(true);
       options.setCropRegion(0, new Region(ox, oy, cropSize, cropSize));
@@ -2095,15 +2092,17 @@ public class ImporterTest {
   @Test
   public void testMemoryVirtualStack()
   {
-    memoryVirtualStackTester(false);
-    memoryVirtualStackTester(true);
+    for (boolean virtual : BooleanStates)
+      memoryVirtualStackTester(virtual);
   }
 
   @Test
   public void testMemoryRecordModifications()
   {
-    memoryRecordModificationsTester(false);
-    memoryRecordModificationsTester(true);
+    // recordMemory has virtual always set to true. no need to do any other virtual testing
+    
+    for (boolean rememberChanges : BooleanStates)
+      memoryRecordModificationsTester(rememberChanges);
   }
 
   @Test
@@ -2111,198 +2110,203 @@ public class ImporterTest {
   {
     int z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy;
 
-    // test partial z: from
-    z=8; c=3; t=2; zFrom=2; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=1;
-    memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
-    
-    // test partial z: to
-    z=8; c=3; t=2; zFrom=0; zTo=4; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=1;
-    memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
-
-    // test partial z: by
-    z=8; c=3; t=2; zFrom=0; zTo=z-1; zBy=3; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=1;
-    memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
-
-    // test full z
-    z=8; c=3; t=2; zFrom=2; zTo=7; zBy=3; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=1;
-    memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
-    
-    // test partial c: from
-    z=6; c=14; t=4; zFrom=0; zTo=z-1; zBy=1; cFrom=3; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=1;
-    memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
-    
-    // test partial c: to
-    z=6; c=14; t=4; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=6; cBy=1; tFrom=0; tTo=t-1; tBy=1;
-    memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
-    
-    // test partial c: by
-    z=6; c=14; t=4; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=4; tFrom=0; tTo=t-1; tBy=1;
-    memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
-    
-    // test full c
-    z=6; c=14; t=4; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=12; cBy=4; tFrom=0; tTo=t-1; tBy=1;
-    memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
-    
-    // test partial t: from
-    z=3; c=5; t=13; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=4; tTo=t-1; tBy=1;
-    memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
-    
-    // test partial t: to
-    z=3; c=5; t=13; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=8; tBy=1;
-    memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
-    
-    // test partial t: by
-    z=3; c=5; t=13; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=2;
-    memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
-    
-    // test full t
-    z=3; c=5; t=13; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=4; tTo=13; tBy=2;
-    memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
-    
-    // test edge case combo with an invalid by
-    z=2; c=2; t=2; zFrom=0; zTo=0; zBy=2; cFrom=1; cTo=1; cBy=1; tFrom=0; tTo=1; tBy=1;
-    memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
-
-    // test a combination of zct's
-    z=5; c=4; t=6; zFrom=1; zTo=4; zBy=2; cFrom=1; cTo=3; cBy=1; tFrom=2; tTo=5; tBy=2;
-    memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
-    
-    // test another combination of zct's
-    z=7; c=7; t=7; zFrom=3; zTo=6; zBy=4; cFrom=1; cTo=6; cBy=3; tFrom=0; tTo=2; tBy=2;
-    memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
-    
-    // test bad combination of zct's - choosing beyond ends of ranges
-    
-    // z index before 0 begin
-    try {
-      z=7; c=7; t=7; zFrom=-1; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=1;
-      memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
-      fail();
-    } catch (IllegalArgumentException e) {
-      assertTrue(true);
-    }
-
-    // z index after z-1 end
-    try {
-      z=7; c=7; t=7; zFrom=0; zTo=z; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=1;
-      memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
-      fail();
-    } catch (IllegalArgumentException e) {
-      assertTrue(true);
-    }
-    
-    // z by < 1
-    try {
-      z=7; c=7; t=7; zFrom=0; zTo=z-1; zBy=0; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=1;
-      memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
-      fail();
-    } catch (IllegalArgumentException e) {
-      assertTrue(true);
-    }
-
-    // c index before 0 begin
-    try {
-      z=7; c=7; t=7; zFrom=0; zTo=z-1; zBy=1; cFrom=-1; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=1;
-      memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
-      fail();
-    } catch (IllegalArgumentException e) {
-      assertTrue(true);
-    }
-
-    // c index after c-1 end
-    try {
-      z=7; c=7; t=7; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c; cBy=1; tFrom=0; tTo=t-1; tBy=1;
-      memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
-      fail();
-    } catch (IllegalArgumentException e) {
-      assertTrue(true);
-    }
-
-    // c by < 1
-    try {
-      z=7; c=7; t=7; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=0; tFrom=0; tTo=t-1; tBy=1;
-      memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
-      fail();
-    } catch (IllegalArgumentException e) {
-      assertTrue(true);
-    }
-
-    // t index before 0 begin
-    try {
-      z=7; c=7; t=7; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=-1; tTo=t-1; tBy=1;
-      memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
-      fail();
-    } catch (IllegalArgumentException e) {
-      assertTrue(true);
-    }
-
-    // t index after t-1 end
-    try {
-      z=7; c=7; t=7; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t; tBy=1;
-      memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
-      fail();
-    } catch (IllegalArgumentException e) {
-      assertTrue(true);
-    }
-
-    // t by < 1
-    try {
-      z=7; c=7; t=7; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=0;
-      memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
-      fail();
-    } catch (IllegalArgumentException e) {
-      assertTrue(true);
-    }
-    
-    /* TODO - could replace above code with this uber combo test
-    // comprehensive but probably WAY too much computation to finish in reasonable time
-    z = 6; c = 5; t = 4;
-    for (int zStart = -1; zStart < z+2; zStart++)
-      for (int zEnd = -1; zEnd < z+2; zEnd++)
-        for (int zInc = -1; zInc < z+2; zInc++)
-          for (int cStart = -1; cStart < c+2; cStart++)
-            for (int cEnd = -1; cEnd < c+2; cEnd++)
-              for (int cInc = -1; cInc < c+2; cInc++)
-                for (int tStart = -1; tStart < t+2; tStart++)
-                  for (int tEnd = -1; tEnd < t+2; tEnd++)
-                    for (int tInc = -1; tInc < t+2; tInc++)
-                      // if an invalid index of some kind
-                      if ((zStart < 0) || (zStart >= z) ||
-                          (zEnd < 0) || (zEnd >= z) || // ignored by BF (zEnd < zStart) ||
-                          (zInc < 1) ||
-                          (cStart < 0) || (cStart >= c) ||
-                          (cEnd < 0) || (cEnd >= c) || // ignored by BF (cEnd < cStart) ||
-                          (cInc < 1) ||
-                          (tStart < 0) || (tStart >= t) ||
-                          (tEnd < 0) || (tEnd >= t) || // ignored by BF (tEnd < tStart) ||
-                          (tInc < 1))
-                      {
-                        // expect failure
-                        try {
-                          memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
-                          System.out.println("memorySpecifyRange() test failed: combo = zct "+z+" "+c+" "+t+
-                            " z vals "+zFrom+" "+zTo+" "+zBy+
-                            " c vals "+cFrom+" "+cTo+" "+cBy+
-                            " t vals "+tFrom+" "+tTo+" "+tBy);
-                          fail("BF did not catch bad indexing code");
-                        } catch (IllegalArgumentException e) {
-                          assertTrue(true);
+    for (boolean virtual : BooleanStates)
+    {
+      // test partial z: from
+      z=8; c=3; t=2; zFrom=2; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=1;
+      memorySpecifyRangeTester(virtual,z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+      
+      // test partial z: to
+      z=8; c=3; t=2; zFrom=0; zTo=4; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=1;
+      memorySpecifyRangeTester(virtual,z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+  
+      // test partial z: by
+      z=8; c=3; t=2; zFrom=0; zTo=z-1; zBy=3; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=1;
+      memorySpecifyRangeTester(virtual,z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+  
+      // test full z
+      z=8; c=3; t=2; zFrom=2; zTo=7; zBy=3; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=1;
+      memorySpecifyRangeTester(virtual,z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+      
+      // test partial c: from
+      z=6; c=14; t=4; zFrom=0; zTo=z-1; zBy=1; cFrom=3; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=1;
+      memorySpecifyRangeTester(virtual,z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+      
+      // test partial c: to
+      z=6; c=14; t=4; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=6; cBy=1; tFrom=0; tTo=t-1; tBy=1;
+      memorySpecifyRangeTester(virtual,z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+      
+      // test partial c: by
+      z=6; c=14; t=4; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=4; tFrom=0; tTo=t-1; tBy=1;
+      memorySpecifyRangeTester(virtual,z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+      
+      // test full c
+      z=6; c=14; t=4; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=12; cBy=4; tFrom=0; tTo=t-1; tBy=1;
+      memorySpecifyRangeTester(virtual,z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+      
+      // test partial t: from
+      z=3; c=5; t=13; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=4; tTo=t-1; tBy=1;
+      memorySpecifyRangeTester(virtual,z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+      
+      // test partial t: to
+      z=3; c=5; t=13; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=8; tBy=1;
+      memorySpecifyRangeTester(virtual,z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+      
+      // test partial t: by
+      z=3; c=5; t=13; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=2;
+      memorySpecifyRangeTester(virtual,z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+      
+      // test full t
+      z=3; c=5; t=13; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=4; tTo=13; tBy=2;
+      memorySpecifyRangeTester(virtual,z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+      
+      // test edge case combo with an invalid by
+      z=2; c=2; t=2; zFrom=0; zTo=0; zBy=2; cFrom=1; cTo=1; cBy=1; tFrom=0; tTo=1; tBy=1;
+      memorySpecifyRangeTester(virtual,z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+  
+      // test a combination of zct's
+      z=5; c=4; t=6; zFrom=1; zTo=4; zBy=2; cFrom=1; cTo=3; cBy=1; tFrom=2; tTo=5; tBy=2;
+      memorySpecifyRangeTester(virtual,z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+      
+      // test another combination of zct's
+      z=7; c=7; t=7; zFrom=3; zTo=6; zBy=4; cFrom=1; cTo=6; cBy=3; tFrom=0; tTo=2; tBy=2;
+      memorySpecifyRangeTester(virtual,z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+      
+      // test bad combination of zct's - choosing beyond ends of ranges
+      
+      // z index before 0 begin
+      try {
+        z=7; c=7; t=7; zFrom=-1; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=1;
+        memorySpecifyRangeTester(virtual,z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+        fail();
+      } catch (IllegalArgumentException e) {
+        assertTrue(true);
+      }
+  
+      // z index after z-1 end
+      try {
+        z=7; c=7; t=7; zFrom=0; zTo=z; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=1;
+        memorySpecifyRangeTester(virtual,z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+        fail();
+      } catch (IllegalArgumentException e) {
+        assertTrue(true);
+      }
+      
+      // z by < 1
+      try {
+        z=7; c=7; t=7; zFrom=0; zTo=z-1; zBy=0; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=1;
+        memorySpecifyRangeTester(virtual,z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+        fail();
+      } catch (IllegalArgumentException e) {
+        assertTrue(true);
+      }
+  
+      // c index before 0 begin
+      try {
+        z=7; c=7; t=7; zFrom=0; zTo=z-1; zBy=1; cFrom=-1; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=1;
+        memorySpecifyRangeTester(virtual,z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+        fail();
+      } catch (IllegalArgumentException e) {
+        assertTrue(true);
+      }
+  
+      // c index after c-1 end
+      try {
+        z=7; c=7; t=7; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c; cBy=1; tFrom=0; tTo=t-1; tBy=1;
+        memorySpecifyRangeTester(virtual,z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+        fail();
+      } catch (IllegalArgumentException e) {
+        assertTrue(true);
+      }
+  
+      // c by < 1
+      try {
+        z=7; c=7; t=7; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=0; tFrom=0; tTo=t-1; tBy=1;
+        memorySpecifyRangeTester(virtual,z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+        fail();
+      } catch (IllegalArgumentException e) {
+        assertTrue(true);
+      }
+  
+      // t index before 0 begin
+      try {
+        z=7; c=7; t=7; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=-1; tTo=t-1; tBy=1;
+        memorySpecifyRangeTester(virtual,z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+        fail();
+      } catch (IllegalArgumentException e) {
+        assertTrue(true);
+      }
+  
+      // t index after t-1 end
+      try {
+        z=7; c=7; t=7; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t; tBy=1;
+        memorySpecifyRangeTester(virtual,z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+        fail();
+      } catch (IllegalArgumentException e) {
+        assertTrue(true);
+      }
+  
+      // t by < 1
+      try {
+        z=7; c=7; t=7; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=0;
+        memorySpecifyRangeTester(virtual,z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+        fail();
+      } catch (IllegalArgumentException e) {
+        assertTrue(true);
+      }
+      
+      /* TODO - could replace above code with this uber combo test
+      // comprehensive but probably WAY too much computation to finish in reasonable time
+      z = 6; c = 5; t = 4;
+      for (int zStart = -1; zStart < z+2; zStart++)
+        for (int zEnd = -1; zEnd < z+2; zEnd++)
+          for (int zInc = -1; zInc < z+2; zInc++)
+            for (int cStart = -1; cStart < c+2; cStart++)
+              for (int cEnd = -1; cEnd < c+2; cEnd++)
+                for (int cInc = -1; cInc < c+2; cInc++)
+                  for (int tStart = -1; tStart < t+2; tStart++)
+                    for (int tEnd = -1; tEnd < t+2; tEnd++)
+                      for (int tInc = -1; tInc < t+2; tInc++)
+                        // if an invalid index of some kind
+                        if ((zStart < 0) || (zStart >= z) ||
+                            (zEnd < 0) || (zEnd >= z) || // ignored by BF (zEnd < zStart) ||
+                            (zInc < 1) ||
+                            (cStart < 0) || (cStart >= c) ||
+                            (cEnd < 0) || (cEnd >= c) || // ignored by BF (cEnd < cStart) ||
+                            (cInc < 1) ||
+                            (tStart < 0) || (tStart >= t) ||
+                            (tEnd < 0) || (tEnd >= t) || // ignored by BF (tEnd < tStart) ||
+                            (tInc < 1))
+                        {
+                          // expect failure
+                          try {
+                            memorySpecifyRangeTester(virtual,z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+                            System.out.println("memorySpecifyRange() test failed: combo = zct "+z+" "+c+" "+t+
+                              " z vals "+zFrom+" "+zTo+" "+zBy+
+                              " c vals "+cFrom+" "+cTo+" "+cBy+
+                              " t vals "+tFrom+" "+tTo+" "+tBy);
+                            fail("BF did not catch bad indexing code");
+                          } catch (IllegalArgumentException e) {
+                            assertTrue(true);
+                          }
                         }
-                      }
-                      else
-                        // expect success
-                        memorySpecifyRangeTester(z,c,t,zStart,zEnd,zInc,cStart,cEnd,cInc,tStart,tEnd,tInc);
-    */
-    
+                        else
+                          // expect success
+                          memorySpecifyRangeTester(virtual,z,c,t,zStart,zEnd,zInc,cStart,cEnd,cInc,tStart,tEnd,tInc);
+      */
+    }
   }
   
   @Test
   public void testMemoryCrop()
   {
-    memoryCropTester(203, 255, 55, 20, 3);
-    memoryCropTester(203, 184, 55, 40, 2);
-    memoryCropTester(101, 76, 0, 25, 4);
-    memoryCropTester(100, 122, 0, 15, 3);
+    for (boolean virtual : BooleanStates)
+    {
+      memoryCropTester(virtual, 203, 255, 55, 20, 3);
+      memoryCropTester(virtual, 203, 184, 55, 40, 2);
+      memoryCropTester(virtual, 101, 76, 0, 25, 4);
+      memoryCropTester(virtual, 100, 122, 0, 15, 3);
+    }
   }
   
   @Test
