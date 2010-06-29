@@ -105,16 +105,27 @@ Type "ant -p" for a list of targets.
       </then>
     </if>
     <if>
-      <isset property="svn.revision"/>
+      <isset property="release.version"/>
       <then>
         <echo>
 =========== VERSIONING PROPERTIES ===========
-        svn.revision = ${svn.revision}
-             svn.url = ${svn.url}
-            svn.root = ${svn.root}
-            svn.date = ${svn.date}
-         svn.changed = ${svn.changed}
-     release.version = ${release.version}</echo>
+         release.version = ${release.version}</echo>
+        <if>
+          <isset property="svn.revision"/>
+          <then>
+            <echo>            svn.revision = ${svn.revision}
+                 svn.url = ${svn.url}
+                svn.root = ${svn.root}
+                svn.date = ${svn.date}
+             svn.changed = ${svn.changed}</echo>
+          </then>
+        </if>
+        <if>
+          <isset property="git.commit"/>
+          <then>
+            <echo>              git.commit = ${git.commit}</echo>
+          </then>
+        </if>
       </then>
     </if>
     <if>

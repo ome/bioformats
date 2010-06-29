@@ -168,7 +168,7 @@ your FindBugs installation's lib directory. E.g.:
   <!-- Internal build targets -->
 
   <target name="init"
-    depends="init-title, init-timestamp, init-svn, init-manifest-cp"/>
+    depends="init-title, init-timestamp, init-version, init-manifest-cp"/>
 
   <target name="init-manifest-cp">
     <!-- construct manifest classpath -->

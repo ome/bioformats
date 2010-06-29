@@ -129,7 +129,7 @@ public interface IFormatReader extends IFormatHandler, IMetadataConfigurable {
   /**
    * Returns false if {@link #isIndexed()} is false, or if {@link #isIndexed()}
    * is true and the lookup table represents "real" color data. Returns true
-   * if {@link #isIndexed} is true and the lookup table is only present to aid
+   * if {@link #isIndexed()} is true and the lookup table is only present to aid
    * in visualization.
    */
   boolean isFalseColor();
