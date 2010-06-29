@@ -557,7 +557,7 @@ public class ImporterTest {
     assertTrue(originCropY + sizeCrop <= sizeY);
   }
   
-  /** helper test that verifies the indices of a FakeFile[z,c,t] match passed in values*/
+  /** tests that the indices of a FakeFile[z,c,t] match passed in values*/
   private void indexValuesTest(ImagePlus imp, int z, int c, int t, boolean indexed, boolean falseColor,
                                   int es, int ei, int ez, int ec, int et)
   {
@@ -760,7 +760,7 @@ public class ImporterTest {
         }
   }
 
-  /** for signed integral data tests that the Calibration of an ImagePlus is correct */
+  /** tests that the Calibration of an ImagePlus of signed integer data is correct */
   private void calibrationTest(ImagePlus imp, int pixType)
   {
     // IJ handles BF INT32 as float. So this test is invalid in that case
@@ -917,7 +917,7 @@ public class ImporterTest {
     }
   }
   
-  // this one will be different from the previous two as we concat along T by default for FakeFiles as all dims compat.
+  // this one will be different from the previous two as we concat along T by default for FakeFiles as all dims compatible.
   //   Then we're splitting on T. Logic will need to be different from others.
   /** tests that a set of images is ordered via T first - used by concatSplit tests */
   private void imageSeriesInTczOrderTest(ImagePlus[] imps, int numSeries, int sizeX, int sizeY, int sizeZ, int sizeC, int sizeT)
@@ -936,7 +936,7 @@ public class ImporterTest {
         for (int z = 0; z < sizeZ; z++) {
           for (int c = 0; c < sizeC; c++) {
             ImageProcessor proc = st.getProcessor(++slice);
-            printVals(proc);
+            //printVals(proc);
             //System.out.println("index "+index);
             //System.out.println("s z c t "+s+" "+z+" "+c+" "+t);
             //System.out.println("iz ic it "+zIndex(proc)+" "+cIndex(proc)+" "+tIndex(proc));
@@ -1053,6 +1053,88 @@ public class ImporterTest {
     stackInSpecificOrderTest(imp, chOrder);
   }
 
+  /** tests BF's options.setGroupFiles() */
+  private void datasetGroupFilesTester(boolean virtual)
+  {
+    String path = FAKE_FILES[0];
+
+    ImagePlus[] imps = null;
+    
+    try {
+      ImporterOptions options = new ImporterOptions();
+      options.setVirtual(virtual);
+      options.setGroupFiles(true);
+      options.setId(path);
+      imps = BF.openImagePlus(options);
+      assertEquals(FAKE_PATTERN, options.getId());
+    }
+    catch (IOException e) {
+      fail(e.getMessage());
+    }
+    catch (FormatException e) {
+      fail(e.getMessage());
+    }
+    
+    impsCountTest(imps,1);
+  
+    groupedFilesTest(imps[0], FAKE_FILES.length, FakePlaneCount);
+  }
+  
+  /** tests BF's options.setUngroupFiles() */
+  private void datsetOpenFilesIndividuallyTester(boolean virtual)
+  {
+    // TODO - try to remove file dependency
+    
+    String path = "2channel_stack_raw01.pic";
+    
+    // there is a second file called "2channel_stack_raw02.pic" present in the same directory
+    // if open indiv true should only load one of them, otherwise both
+    
+    // try ungrouped
+    
+    ImagePlus[] imps = null;
+    
+    try {
+      ImporterOptions options = new ImporterOptions();
+      options.setUngroupFiles(true);
+      options.setId(path);
+      imps = BF.openImagePlus(options);
+    }
+    catch (IOException e) {
+      fail(e.getMessage());
+    }
+    catch (FormatException e) {
+      fail(e.getMessage());
+    }
+    
+    // test results
+    
+    impsCountTest(imps,1);
+    
+    stackTest(imps[0],16); // one loaded as one set with 16 slices
+    
+    // try grouped
+    
+    try {
+      ImporterOptions options = new ImporterOptions();
+      options.setUngroupFiles(false);
+      options.setId(path);
+      imps = BF.openImagePlus(options);
+    }
+    catch (IOException e) {
+      fail(e.getMessage());
+    }
+    catch (FormatException e) {
+      fail(e.getMessage());
+    }
+
+    // test results
+    
+    impsCountTest(imps,1);
+    
+    stackTest(imps[0],32); // both loaded as one set of 32 slices
+  }
+
   /** tests BF's options.setSwapDimensions() */
   private void datasetSwapDimsTester(boolean virtual, int pixType, int x, int y, int z, int t)
   {
@@ -1165,7 +1247,7 @@ public class ImporterTest {
   }
   
   /** tests BF's options.setAutoscale() */
-  private void autoscaleTester(boolean virtual, int pixType, boolean wantAutoscale)
+  private void autoscaleTester(int pixType, boolean wantAutoscale)
   {
     final int sizeZ = 2, sizeC = 3, sizeT = 4, sizeX = 51, sizeY = 16;
     final String path = constructFakeFilename("autoscale",pixType, sizeX, sizeY, sizeZ, sizeC, sizeT, -1, false, -1, false, -1);
@@ -1174,7 +1256,6 @@ public class ImporterTest {
     
     try {
       ImporterOptions options = new ImporterOptions();
-      options.setVirtual(virtual);
       options.setAutoscale(wantAutoscale);
       options.setId(path);
       imps = BF.openImagePlus(options);
@@ -1502,7 +1583,7 @@ public class ImporterTest {
   }
   
   /** tests BF's options.set?Begin(), options.set?End(), and options.set?Step() */
-  private void memorySpecifyRangeTester(boolean virtual, int z, int c, int t,
+  private void memorySpecifyRangeTester(int z, int c, int t,
       int zFrom, int zTo, int zBy,
       int cFrom, int cTo, int cBy,
       int tFrom, int tTo, int tBy)
@@ -1515,7 +1596,6 @@ public class ImporterTest {
 
     try {
       ImporterOptions options = new ImporterOptions();
-      options.setVirtual(virtual);
       options.setId(path);
       
       // only set values when nondefault behavior specified
@@ -1565,7 +1645,7 @@ public class ImporterTest {
   }
   
   /** tests BF's options.setCrop() and options.setCropRegion() */
-  private void memoryCropTester(boolean virtual, int x, int y, int ox, int oy, int cropSize)
+  private void memoryCropTester(int x, int y, int ox, int oy, int cropSize)
   {
     verifyCropInput(x, y, ox, oy, cropSize);  // needed for this test
 
@@ -1576,7 +1656,6 @@ public class ImporterTest {
     
     try {
       ImporterOptions options = new ImporterOptions();
-      options.setVirtual(virtual);
       options.setId(path);
       options.setCrop(true);
       options.setCropRegion(0, new Region(ox, oy, cropSize, cropSize));
@@ -1598,6 +1677,96 @@ public class ImporterTest {
     
     // test we got the right pixels
     croppedPixelsTest(imp,ox,cropSize);
+  }
+
+  /** tests BF's options.setSplitChannels() */
+  private void splitChannelsTester()
+  {
+    final int sizeX = 50, sizeY = 20, sizeZ = 5, sizeC = 3, sizeT = 7;
+
+    final String path = constructFakeFilename("splitC",
+      FormatTools.UINT8, sizeX, sizeY, sizeZ, sizeC, sizeT, -1, false, -1, false, -1);
+
+    // open image
+    ImagePlus[] imps = null;
+    
+    try {
+      ImporterOptions options = new ImporterOptions();
+      options.setSplitChannels(true);
+      options.setId(path);
+      imps = BF.openImagePlus(options);
+    }
+    catch (IOException e) {
+      fail(e.getMessage());
+    }
+    catch (FormatException e) {
+      fail(e.getMessage());
+    }
+
+    // one image per channel
+    impsCountTest(imps,sizeC);
+    
+    imagesInCztOrderTest(imps,sizeX,sizeY,sizeZ,sizeC,sizeT);
+  }
+
+  /** tests BF's options.setFocalPlanes() */
+  private void splitFocalPlanesTester()
+  {
+    final int sizeX = 50, sizeY = 20, sizeZ = 5, sizeC = 3, sizeT = 7;
+    
+    final String path = constructFakeFilename("splitZ",
+      FormatTools.UINT8, sizeX, sizeY, sizeZ, sizeC, sizeT, -1, false, -1, false, -1);
+
+    // open image
+    ImagePlus[] imps = null;
+    
+    try {
+      ImporterOptions options = new ImporterOptions();
+      options.setSplitFocalPlanes(true);
+      options.setId(path);
+      imps = BF.openImagePlus(options);
+    }
+    catch (IOException e) {
+      fail(e.getMessage());
+    }
+    catch (FormatException e) {
+      fail(e.getMessage());
+    }
+    
+    // one image per focal plane
+    impsCountTest(imps,sizeZ);
+
+    imagesInZctOrderTest(imps,sizeX,sizeY,sizeZ,sizeC,sizeT);
+  }
+  
+  /** tests BF's options.setSplitTimepoints() */
+  private void splitTimepointsTester()
+  {
+    final int sizeX = 50, sizeY = 20, sizeZ = 5, sizeC = 3, sizeT = 7;
+  
+    final String path = constructFakeFilename("splitT",
+      FormatTools.UINT8, 50, 20, sizeZ, sizeC, sizeT, -1, false, -1, false, -1);
+
+    // open image
+    ImagePlus[] imps = null;
+    
+    try {
+      ImporterOptions options = new ImporterOptions();
+      options.setSplitTimepoints(true);
+      options.setId(path);
+      imps = BF.openImagePlus(options);
+    }
+    catch (IOException e) {
+      fail(e.getMessage());
+    }
+    catch (FormatException e) {
+      fail(e.getMessage());
+    }
+    
+    // one image per time point
+    impsCountTest(imps,sizeT);
+
+    imagesInTczOrderTest(imps,sizeX,sizeY,sizeZ,sizeC,sizeT);
   }
 
   // note - this test needs to rely on crop() to get predictable nonzero minimums
@@ -1825,91 +1994,11 @@ public class ImporterTest {
         outputStackOrderTester(virtual,FormatTools.UINT8, order,  82, 47, 2, 3, 4);
   }
 
-  private void datasetGroupFilesTester(boolean virtual)
-  {
-    String path = FAKE_FILES[0];
-
-    ImagePlus[] imps = null;
-    
-    try {
-      ImporterOptions options = new ImporterOptions();
-      options.setVirtual(virtual);
-      options.setGroupFiles(true);
-      options.setId(path);
-      imps = BF.openImagePlus(options);
-      assertEquals(FAKE_PATTERN, options.getId());
-    }
-    catch (IOException e) {
-      fail(e.getMessage());
-    }
-    catch (FormatException e) {
-      fail(e.getMessage());
-    }
-    
-    impsCountTest(imps,1);
-  
-    groupedFilesTest(imps[0], FAKE_FILES.length, FakePlaneCount);
-  }
-  
   @Test
   public void testDatasetGroupFiles()
   {
     for (boolean virtual : BooleanStates)
       datasetGroupFilesTester(virtual);
-  }
-
-  private void datsetOpenFilesIndividuallyTester(boolean virtual)
-  {
-    // TODO - try to remove file dependency
-    
-    String path = "2channel_stack_raw01.pic";
-    
-    // there is a second file called "2channel_stack_raw02.pic" present in the same directory
-    // if open indiv true should only load one of them, otherwise both
-    
-    // try ungrouped
-    
-    ImagePlus[] imps = null;
-    
-    try {
-      ImporterOptions options = new ImporterOptions();
-      options.setUngroupFiles(true);
-      options.setId(path);
-      imps = BF.openImagePlus(options);
-    }
-    catch (IOException e) {
-      fail(e.getMessage());
-    }
-    catch (FormatException e) {
-      fail(e.getMessage());
-    }
-    
-    // test results
-    
-    impsCountTest(imps,1);
-    
-    stackTest(imps[0],16); // one loaded as one set with 16 slices
-    
-    // try grouped
-    
-    try {
-      ImporterOptions options = new ImporterOptions();
-      options.setUngroupFiles(false);
-      options.setId(path);
-      imps = BF.openImagePlus(options);
-    }
-    catch (IOException e) {
-      fail(e.getMessage());
-    }
-    catch (FormatException e) {
-      fail(e.getMessage());
-    }
-
-    // test results
-    
-    impsCountTest(imps,1);
-    
-    stackTest(imps[0],32); // both loaded as one set of 32 slices
   }
 
   @Test
@@ -2076,15 +2165,14 @@ public class ImporterTest {
   @Test
   public void testColorAutoscale()
   {
-    for (boolean virtual : BooleanStates)
+    // note - can't autoscale a virtualStack. No need to test it.
+    
+    for (int pixType : PixelTypes)
     {
-      for (int pixType : PixelTypes)
+      for (boolean autoscale : BooleanStates)
       {
-        for (boolean autoscale : BooleanStates)
-        {
-          //System.out.println("testColorAutoscale(): pixType = "+FormatTools.getPixelTypeString(pixType)+" autoscale = "+autoscale);
-          autoscaleTester(virtual,pixType,autoscale);
-        }
+        //System.out.println("testColorAutoscale(): pixType = "+FormatTools.getPixelTypeString(pixType)+" autoscale = "+autoscale);
+        autoscaleTester(pixType,autoscale);
       }
     }
   }
@@ -2108,307 +2196,229 @@ public class ImporterTest {
   @Test
   public void testMemorySpecifyRange()
   {
+    // note - can't specify range in a virtualStack - no need to test
+    
     int z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy;
 
-    for (boolean virtual : BooleanStates)
-    {
-      // test partial z: from
-      z=8; c=3; t=2; zFrom=2; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=1;
-      memorySpecifyRangeTester(virtual,z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
-      
-      // test partial z: to
-      z=8; c=3; t=2; zFrom=0; zTo=4; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=1;
-      memorySpecifyRangeTester(virtual,z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
-  
-      // test partial z: by
-      z=8; c=3; t=2; zFrom=0; zTo=z-1; zBy=3; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=1;
-      memorySpecifyRangeTester(virtual,z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
-  
-      // test full z
-      z=8; c=3; t=2; zFrom=2; zTo=7; zBy=3; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=1;
-      memorySpecifyRangeTester(virtual,z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
-      
-      // test partial c: from
-      z=6; c=14; t=4; zFrom=0; zTo=z-1; zBy=1; cFrom=3; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=1;
-      memorySpecifyRangeTester(virtual,z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
-      
-      // test partial c: to
-      z=6; c=14; t=4; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=6; cBy=1; tFrom=0; tTo=t-1; tBy=1;
-      memorySpecifyRangeTester(virtual,z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
-      
-      // test partial c: by
-      z=6; c=14; t=4; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=4; tFrom=0; tTo=t-1; tBy=1;
-      memorySpecifyRangeTester(virtual,z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
-      
-      // test full c
-      z=6; c=14; t=4; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=12; cBy=4; tFrom=0; tTo=t-1; tBy=1;
-      memorySpecifyRangeTester(virtual,z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
-      
-      // test partial t: from
-      z=3; c=5; t=13; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=4; tTo=t-1; tBy=1;
-      memorySpecifyRangeTester(virtual,z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
-      
-      // test partial t: to
-      z=3; c=5; t=13; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=8; tBy=1;
-      memorySpecifyRangeTester(virtual,z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
-      
-      // test partial t: by
-      z=3; c=5; t=13; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=2;
-      memorySpecifyRangeTester(virtual,z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
-      
-      // test full t
-      z=3; c=5; t=13; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=4; tTo=13; tBy=2;
-      memorySpecifyRangeTester(virtual,z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
-      
-      // test edge case combo with an invalid by
-      z=2; c=2; t=2; zFrom=0; zTo=0; zBy=2; cFrom=1; cTo=1; cBy=1; tFrom=0; tTo=1; tBy=1;
-      memorySpecifyRangeTester(virtual,z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
-  
-      // test a combination of zct's
-      z=5; c=4; t=6; zFrom=1; zTo=4; zBy=2; cFrom=1; cTo=3; cBy=1; tFrom=2; tTo=5; tBy=2;
-      memorySpecifyRangeTester(virtual,z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
-      
-      // test another combination of zct's
-      z=7; c=7; t=7; zFrom=3; zTo=6; zBy=4; cFrom=1; cTo=6; cBy=3; tFrom=0; tTo=2; tBy=2;
-      memorySpecifyRangeTester(virtual,z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
-      
-      // test bad combination of zct's - choosing beyond ends of ranges
-      
-      // z index before 0 begin
-      try {
-        z=7; c=7; t=7; zFrom=-1; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=1;
-        memorySpecifyRangeTester(virtual,z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
-        fail();
-      } catch (IllegalArgumentException e) {
-        assertTrue(true);
-      }
-  
-      // z index after z-1 end
-      try {
-        z=7; c=7; t=7; zFrom=0; zTo=z; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=1;
-        memorySpecifyRangeTester(virtual,z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
-        fail();
-      } catch (IllegalArgumentException e) {
-        assertTrue(true);
-      }
-      
-      // z by < 1
-      try {
-        z=7; c=7; t=7; zFrom=0; zTo=z-1; zBy=0; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=1;
-        memorySpecifyRangeTester(virtual,z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
-        fail();
-      } catch (IllegalArgumentException e) {
-        assertTrue(true);
-      }
-  
-      // c index before 0 begin
-      try {
-        z=7; c=7; t=7; zFrom=0; zTo=z-1; zBy=1; cFrom=-1; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=1;
-        memorySpecifyRangeTester(virtual,z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
-        fail();
-      } catch (IllegalArgumentException e) {
-        assertTrue(true);
-      }
-  
-      // c index after c-1 end
-      try {
-        z=7; c=7; t=7; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c; cBy=1; tFrom=0; tTo=t-1; tBy=1;
-        memorySpecifyRangeTester(virtual,z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
-        fail();
-      } catch (IllegalArgumentException e) {
-        assertTrue(true);
-      }
-  
-      // c by < 1
-      try {
-        z=7; c=7; t=7; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=0; tFrom=0; tTo=t-1; tBy=1;
-        memorySpecifyRangeTester(virtual,z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
-        fail();
-      } catch (IllegalArgumentException e) {
-        assertTrue(true);
-      }
-  
-      // t index before 0 begin
-      try {
-        z=7; c=7; t=7; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=-1; tTo=t-1; tBy=1;
-        memorySpecifyRangeTester(virtual,z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
-        fail();
-      } catch (IllegalArgumentException e) {
-        assertTrue(true);
-      }
-  
-      // t index after t-1 end
-      try {
-        z=7; c=7; t=7; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t; tBy=1;
-        memorySpecifyRangeTester(virtual,z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
-        fail();
-      } catch (IllegalArgumentException e) {
-        assertTrue(true);
-      }
-  
-      // t by < 1
-      try {
-        z=7; c=7; t=7; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=0;
-        memorySpecifyRangeTester(virtual,z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
-        fail();
-      } catch (IllegalArgumentException e) {
-        assertTrue(true);
-      }
-      
-      /* TODO - could replace above code with this uber combo test
-      // comprehensive but probably WAY too much computation to finish in reasonable time
-      z = 6; c = 5; t = 4;
-      for (int zStart = -1; zStart < z+2; zStart++)
-        for (int zEnd = -1; zEnd < z+2; zEnd++)
-          for (int zInc = -1; zInc < z+2; zInc++)
-            for (int cStart = -1; cStart < c+2; cStart++)
-              for (int cEnd = -1; cEnd < c+2; cEnd++)
-                for (int cInc = -1; cInc < c+2; cInc++)
-                  for (int tStart = -1; tStart < t+2; tStart++)
-                    for (int tEnd = -1; tEnd < t+2; tEnd++)
-                      for (int tInc = -1; tInc < t+2; tInc++)
-                        // if an invalid index of some kind
-                        if ((zStart < 0) || (zStart >= z) ||
-                            (zEnd < 0) || (zEnd >= z) || // ignored by BF (zEnd < zStart) ||
-                            (zInc < 1) ||
-                            (cStart < 0) || (cStart >= c) ||
-                            (cEnd < 0) || (cEnd >= c) || // ignored by BF (cEnd < cStart) ||
-                            (cInc < 1) ||
-                            (tStart < 0) || (tStart >= t) ||
-                            (tEnd < 0) || (tEnd >= t) || // ignored by BF (tEnd < tStart) ||
-                            (tInc < 1))
-                        {
-                          // expect failure
-                          try {
-                            memorySpecifyRangeTester(virtual,z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
-                            System.out.println("memorySpecifyRange() test failed: combo = zct "+z+" "+c+" "+t+
-                              " z vals "+zFrom+" "+zTo+" "+zBy+
-                              " c vals "+cFrom+" "+cTo+" "+cBy+
-                              " t vals "+tFrom+" "+tTo+" "+tBy);
-                            fail("BF did not catch bad indexing code");
-                          } catch (IllegalArgumentException e) {
-                            assertTrue(true);
-                          }
-                        }
-                        else
-                          // expect success
-                          memorySpecifyRangeTester(virtual,z,c,t,zStart,zEnd,zInc,cStart,cEnd,cInc,tStart,tEnd,tInc);
-      */
+    // test partial z: from
+    z=8; c=3; t=2; zFrom=2; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=1;
+    memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+    
+    // test partial z: to
+    z=8; c=3; t=2; zFrom=0; zTo=4; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=1;
+    memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+
+    // test partial z: by
+    z=8; c=3; t=2; zFrom=0; zTo=z-1; zBy=3; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=1;
+    memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+
+    // test full z
+    z=8; c=3; t=2; zFrom=2; zTo=7; zBy=3; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=1;
+    memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+    
+    // test partial c: from
+    z=6; c=14; t=4; zFrom=0; zTo=z-1; zBy=1; cFrom=3; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=1;
+    memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+    
+    // test partial c: to
+    z=6; c=14; t=4; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=6; cBy=1; tFrom=0; tTo=t-1; tBy=1;
+    memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+    
+    // test partial c: by
+    z=6; c=14; t=4; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=4; tFrom=0; tTo=t-1; tBy=1;
+    memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+    
+    // test full c
+    z=6; c=14; t=4; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=12; cBy=4; tFrom=0; tTo=t-1; tBy=1;
+    memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+    
+    // test partial t: from
+    z=3; c=5; t=13; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=4; tTo=t-1; tBy=1;
+    memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+    
+    // test partial t: to
+    z=3; c=5; t=13; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=8; tBy=1;
+    memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+    
+    // test partial t: by
+    z=3; c=5; t=13; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=2;
+    memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+    
+    // test full t
+    z=3; c=5; t=13; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=4; tTo=13; tBy=2;
+    memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+    
+    // test edge case combo with an invalid by
+    z=2; c=2; t=2; zFrom=0; zTo=0; zBy=2; cFrom=1; cTo=1; cBy=1; tFrom=0; tTo=1; tBy=1;
+    memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+
+    // test a combination of zct's
+    z=5; c=4; t=6; zFrom=1; zTo=4; zBy=2; cFrom=1; cTo=3; cBy=1; tFrom=2; tTo=5; tBy=2;
+    memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+    
+    // test another combination of zct's
+    z=7; c=7; t=7; zFrom=3; zTo=6; zBy=4; cFrom=1; cTo=6; cBy=3; tFrom=0; tTo=2; tBy=2;
+    memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+    
+    // test bad combination of zct's - choosing beyond ends of ranges
+    
+    // z index before 0 begin
+    try {
+      z=7; c=7; t=7; zFrom=-1; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=1;
+      memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+      fail();
+    } catch (IllegalArgumentException e) {
+      assertTrue(true);
     }
+
+    // z index after z-1 end
+    try {
+      z=7; c=7; t=7; zFrom=0; zTo=z; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=1;
+      memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+      fail();
+    } catch (IllegalArgumentException e) {
+      assertTrue(true);
+    }
+    
+    // z by < 1
+    try {
+      z=7; c=7; t=7; zFrom=0; zTo=z-1; zBy=0; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=1;
+      memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+      fail();
+    } catch (IllegalArgumentException e) {
+      assertTrue(true);
+    }
+
+    // c index before 0 begin
+    try {
+      z=7; c=7; t=7; zFrom=0; zTo=z-1; zBy=1; cFrom=-1; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=1;
+      memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+      fail();
+    } catch (IllegalArgumentException e) {
+      assertTrue(true);
+    }
+
+    // c index after c-1 end
+    try {
+      z=7; c=7; t=7; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c; cBy=1; tFrom=0; tTo=t-1; tBy=1;
+      memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+      fail();
+    } catch (IllegalArgumentException e) {
+      assertTrue(true);
+    }
+
+    // c by < 1
+    try {
+      z=7; c=7; t=7; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=0; tFrom=0; tTo=t-1; tBy=1;
+      memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+      fail();
+    } catch (IllegalArgumentException e) {
+      assertTrue(true);
+    }
+
+    // t index before 0 begin
+    try {
+      z=7; c=7; t=7; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=-1; tTo=t-1; tBy=1;
+      memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+      fail();
+    } catch (IllegalArgumentException e) {
+      assertTrue(true);
+    }
+
+    // t index after t-1 end
+    try {
+      z=7; c=7; t=7; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t; tBy=1;
+      memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+      fail();
+    } catch (IllegalArgumentException e) {
+      assertTrue(true);
+    }
+
+    // t by < 1
+    try {
+      z=7; c=7; t=7; zFrom=0; zTo=z-1; zBy=1; cFrom=0; cTo=c-1; cBy=1; tFrom=0; tTo=t-1; tBy=0;
+      memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+      fail();
+    } catch (IllegalArgumentException e) {
+      assertTrue(true);
+    }
+    
+    /* TODO - could replace above code with this uber combo test
+    // comprehensive but probably WAY too much computation to finish in reasonable time
+    z = 6; c = 5; t = 4;
+    for (int zStart = -1; zStart < z+2; zStart++)
+      for (int zEnd = -1; zEnd < z+2; zEnd++)
+        for (int zInc = -1; zInc < z+2; zInc++)
+          for (int cStart = -1; cStart < c+2; cStart++)
+            for (int cEnd = -1; cEnd < c+2; cEnd++)
+              for (int cInc = -1; cInc < c+2; cInc++)
+                for (int tStart = -1; tStart < t+2; tStart++)
+                  for (int tEnd = -1; tEnd < t+2; tEnd++)
+                    for (int tInc = -1; tInc < t+2; tInc++)
+                      // if an invalid index of some kind
+                      if ((zStart < 0) || (zStart >= z) ||
+                          (zEnd < 0) || (zEnd >= z) || // ignored by BF (zEnd < zStart) ||
+                          (zInc < 1) ||
+                          (cStart < 0) || (cStart >= c) ||
+                          (cEnd < 0) || (cEnd >= c) || // ignored by BF (cEnd < cStart) ||
+                          (cInc < 1) ||
+                          (tStart < 0) || (tStart >= t) ||
+                          (tEnd < 0) || (tEnd >= t) || // ignored by BF (tEnd < tStart) ||
+                          (tInc < 1))
+                      {
+                        // expect failure
+                        try {
+                          memorySpecifyRangeTester(z,c,t,zFrom,zTo,zBy,cFrom,cTo,cBy,tFrom,tTo,tBy);
+                          System.out.println("memorySpecifyRange() test failed: combo = zct "+z+" "+c+" "+t+
+                            " z vals "+zFrom+" "+zTo+" "+zBy+
+                            " c vals "+cFrom+" "+cTo+" "+cBy+
+                            " t vals "+tFrom+" "+tTo+" "+tBy);
+                          fail("BF did not catch bad indexing code");
+                        } catch (IllegalArgumentException e) {
+                          assertTrue(true);
+                        }
+                      }
+                      else
+                        // expect success
+                        memorySpecifyRangeTester(z,c,t,zStart,zEnd,zInc,cStart,cEnd,cInc,tStart,tEnd,tInc);
+    */
   }
   
   @Test
   public void testMemoryCrop()
   {
-    for (boolean virtual : BooleanStates)
-    {
-      memoryCropTester(virtual, 203, 255, 55, 20, 3);
-      memoryCropTester(virtual, 203, 184, 55, 40, 2);
-      memoryCropTester(virtual, 101, 76, 0, 25, 4);
-      memoryCropTester(virtual, 100, 122, 0, 15, 3);
-    }
+    // note - can't crop a virtualStack. therefore no need to test it.
+    
+    memoryCropTester(203, 255, 55, 20, 3);
+    memoryCropTester(203, 184, 55, 40, 2);
+    memoryCropTester(101, 76, 0, 25, 4);
+    memoryCropTester(100, 122, 0, 15, 3);
   }
   
   @Test
   public void testSplitChannels()
   {
-    final int sizeX = 50, sizeY = 20, sizeZ = 5, sizeC = 3, sizeT = 7;
-
-    final String path = constructFakeFilename("splitC",
-      FormatTools.UINT8, sizeX, sizeY, sizeZ, sizeC, sizeT, -1, false, -1, false, -1);
-
-    // open image
-    ImagePlus[] imps = null;
-    
-    try {
-      ImporterOptions options = new ImporterOptions();
-      options.setSplitChannels(true);
-      options.setId(path);
-      imps = BF.openImagePlus(options);
-    }
-    catch (IOException e) {
-      fail(e.getMessage());
-    }
-    catch (FormatException e) {
-      fail(e.getMessage());
-    }
-
-    // one image per channel
-    impsCountTest(imps,sizeC);
-    
-    imagesInCztOrderTest(imps,sizeX,sizeY,sizeZ,sizeC,sizeT);
+    // note - can't split channels on a virtual stack. no need to test it.
+    splitChannelsTester();
   }
-  
+
   @Test
   public void testSplitFocalPlanes()
   {
-    final int sizeX = 50, sizeY = 20, sizeZ = 5, sizeC = 3, sizeT = 7;
-    
-    final String path = constructFakeFilename("splitZ",
-      FormatTools.UINT8, sizeX, sizeY, sizeZ, sizeC, sizeT, -1, false, -1, false, -1);
-
-    // open image
-    ImagePlus[] imps = null;
-    
-    try {
-      ImporterOptions options = new ImporterOptions();
-      options.setSplitFocalPlanes(true);
-      options.setId(path);
-      imps = BF.openImagePlus(options);
-    }
-    catch (IOException e) {
-      fail(e.getMessage());
-    }
-    catch (FormatException e) {
-      fail(e.getMessage());
-    }
-    
-    // one image per focal plane
-    impsCountTest(imps,sizeZ);
-
-    imagesInZctOrderTest(imps,sizeX,sizeY,sizeZ,sizeC,sizeT);
+    splitFocalPlanesTester();
   }
-  
+
   @Test
   public void testSplitTimepoints()
   {
-    final int sizeX = 50, sizeY = 20, sizeZ = 5, sizeC = 3, sizeT = 7;
-  
-    final String path = constructFakeFilename("splitT",
-      FormatTools.UINT8, 50, 20, sizeZ, sizeC, sizeT, -1, false, -1, false, -1);
-
-    // open image
-    ImagePlus[] imps = null;
-    
-    try {
-      ImporterOptions options = new ImporterOptions();
-      options.setSplitTimepoints(true);
-      options.setId(path);
-      imps = BF.openImagePlus(options);
-    }
-    catch (IOException e) {
-      fail(e.getMessage());
-    }
-    catch (FormatException e) {
-      fail(e.getMessage());
-    }
-    
-    // one image per time point
-    impsCountTest(imps,sizeT);
-
-    imagesInTczOrderTest(imps,sizeX,sizeY,sizeZ,sizeC,sizeT);
-  }
-
-  @Test
-  public void testMacros()
-  {
-    //IJ.runMacro("Bio-Formats Importer", "open=int8&pixelType=int8&sizeZ=3&sizeC=5&sizeT=7&sizeY=50.fake merge_channels stack_order=Default");
-    fail("unimplemented");
+    splitTimepointsTester();
   }
   
   @Test
   public void testComboCropAutoscale()
   {
+    // note - crop and autoscale both don't work with virtualStacks. No need to test virtual here.
+    
     // try a simple test: single small byte type image 
     comboCropAndAutoscaleTester(FormatTools.UINT8,240,240,1,1,1,70,40,25);
     
@@ -2423,42 +2433,56 @@ public class ImporterTest {
   @Test
   public void testComboConcatColorize()
   {
+    // note - concat doesn't work with virtualStacks. No need to test virtual here.
+    
     fail("unimplemented");
   }
 
   @Test
   public void testComboConcatSplitFocalPlanes()
   {
+    // note - concat and split both don't work with virtualStacks. No need to test virtual here.
+    
     comboConcatSplitFocalPlanesTester();
   }
 
   @Test
   public void testComboConcatSplitChannels()
   {
+    // note - concat and split both don't work with virtualStacks. No need to test virtual here.
+
     comboConcatSplitChannelsTester();
   }
 
   @Test
   public void testComboConcatSplitTimepoints()
   {
+    // note - concat and split both don't work with virtualStacks. No need to test virtual here.
+
     comboConcatSplitTimepointsTester();
   }
 
   @Test
   public void testComboColorizeSplit()
   {
+    // note - split both doesn't work with virtualStacks. No need to test virtual here.
+    
     fail("unimplemented");
   }
   
   @Test
   public void testComboConcatColorizeSplit()
   {
+    // note - concat and split both don't work with virtualStacks. No need to test virtual here.
+   
     fail("unimplemented");
   }
   
   @Test
   public void testComboManyOptions()
   {
+    // note - crop and setTStep both don't work with virtualStacks. No need to test virtual here.
+
     int pixType = FormatTools.UINT16, sizeX = 106, sizeY = 33, sizeZ = 3, sizeC = 5, sizeT = 7;
     int cropOriginX = 0, cropOriginY = 0, cropSizeX = 55, cropSizeY = 16, start = 1, stepBy = 2;
     ChannelOrder swappedOrder = ChannelOrder.CTZ;  // orig is ZCT : this is a deadly swap of all dims
@@ -2582,6 +2606,7 @@ public class ImporterTest {
     //stackInZctOrderTest(imp,sizeZ,expectedSizeC,sizeT,indexed);
   }
 
+  // TODO - make a virtual case when working
   @Test
   public void testColorizeSubcases()
   {
@@ -2656,6 +2681,7 @@ public class ImporterTest {
     fail("Numerous failures : actual tests commented out to see all print statements.");
   }
 
+  // TODO - make a virtual case when working
   @Test
   public void testCompositeSubcases()
   {
