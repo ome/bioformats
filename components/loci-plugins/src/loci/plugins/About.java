@@ -5,8 +5,8 @@
 /*
 LOCI Plugins for ImageJ: a collection of ImageJ plugins including the
 Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
-Data Browser, Stack Colorizer and Stack Slicer. Copyright (C) 2005-@year@
-Melissa Linkert, Curtis Rueden and Christopher Peterson.
+Data Browser and Stack Slicer. Copyright (C) 2005-@year@ Melissa Linkert,
+Curtis Rueden and Christopher Peterson.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -70,16 +70,14 @@ public final class About implements PlugIn {
       "<br>Copyright 2005-@year@ UW-Madison LOCI" +
       "<br><i>" + URL_LOCI_SOFTWARE + "</i>" +
       "<br>" +
-      "<br><b>Bio-Formats Importer</b> and <b>Bio-Formats Exporter</b>" +
-      "<br>Authors: Melissa Linkert, Curtis Rueden" +
+      "<br><b>Bio-Formats Importer</b>, <b>Bio-Formats Exporter</b> " +
+      "and <b>Stack Slicer</b>" +
+      "<br>Authors: Curtis Rueden, Melissa Linkert" +
       "<br><i>" + URL_BIO_FORMATS_IMAGEJ + "</i>" +
       "<br>" +
       "<br><b>Data Browser</b>" +
       "<br>Authors: Curtis Rueden, Melissa Linkert, Chris Peterson" +
-      "<br><i>" + URL_DATA_BROWSER + "</i>" +
-      "<br>" +
-      "<br><b>Stack Colorizer</b> and <b>Stack Slicer</b>" +
-      "<br>Author: Melissa Linkert";
+      "<br><i>" + URL_DATA_BROWSER + "</i>";
     ImageIcon bioFormatsLogo = new ImageIcon(
       IFormatHandler.class.getResource("bio-formats-logo.png"));
     JOptionPane.showMessageDialog(null, msg, "LOCI Plugins for ImageJ",
