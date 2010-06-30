@@ -118,7 +118,9 @@ public class DisplayHandler implements StatusListener {
 
   /** Displays the given images according to the configured options. */
   public void displayImages(ImagePlus[] imps) {
-    for (ImagePlus imp : imps) displayImage(imp);
+    if (imps != null) {
+      for (ImagePlus imp : imps) displayImage(imp);
+    }
   }
 
   /** Displays the given image according to the configured options. */

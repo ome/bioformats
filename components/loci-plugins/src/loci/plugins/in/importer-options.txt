@@ -304,7 +304,7 @@ info = <b>Stack order</b> - \
   <li>C2-Z1-T2</li>                                                    \
   <li>etc.</li>                                                        \
   </ol>
-default = Default
+default = XYCZT
 values = \
   Default, \
   XYZCT,   \
