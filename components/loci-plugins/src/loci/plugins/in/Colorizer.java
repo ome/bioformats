@@ -25,15 +25,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.plugins.in;
 
+import ij.CompositeImage;
+import ij.ImagePlus;
+import ij.process.LUT;
+
 import java.awt.Color;
 import java.awt.image.ColorModel;
 import java.awt.image.IndexColorModel;
 import java.util.List;
-
-import ij.CompositeImage;
-import ij.ImagePlus;
-import ij.ImageStack;
-import ij.process.LUT;
 
 import loci.formats.ChannelFiller;
 import loci.formats.DimensionSwapper;
@@ -77,11 +76,7 @@ public class Colorizer {
       final int series = (Integer) imp.getProperty(ImagePlusReader.PROP_SERIES);
       reader.setSeries(series);
 
-      int mode = -1;
-      LUT[] luts;
-
       // get LUT for each channel
-      final ImageStack stack = imp.getStack();
       final String stackOrder = dimSwapper.getDimensionOrder();
       final int zSize = imp.getNSlices();
       final int cSize = imp.getNChannels();
@@ -97,6 +92,8 @@ public class Colorizer {
         if (channelLUTs[c] != null) hasChannelLUT = true;
       }
 
+      int mode = -1;
+      LUT[] luts;
       if (options.isColorModeDefault()) {
         // NB: Default color mode behavior depends on the situation.
         final boolean isRGB = reader.isRGB() || imageReader.isRGB();
@@ -141,7 +138,8 @@ public class Colorizer {
           options.getColorMode());
       }
 
-      final boolean doComposite = mode != -1 && cSize > 1 && cSize <= 7;
+      final boolean doComposite = !options.isViewStandard() &&
+        mode != -1 && cSize > 1 && cSize <= 7;
       if (doComposite) {
         CompositeImage compImage = new CompositeImage(imp, mode);
         if (luts != null) compImage.setLuts(luts);
@@ -152,7 +150,7 @@ public class Colorizer {
         if (luts != null && luts.length > 0 && luts[0] != null) {
           imp.getProcessor().setColorModel(luts[0]);
         }
-        if (mode != -1 && cSize > 1) {
+        if (mode != -1 && cSize > 7) {
           // NB: Cannot use CompositeImage with more than seven channels.
           BF.warn(options.isQuiet(), "Data has too many channels for " +
             options.getColorMode() + " color mode");
