@@ -152,7 +152,7 @@ public class ChannelSeparator extends ReaderWrapper {
 
     if (reader.isRGB() && !reader.isIndexed()) {
       int c = getSizeC() / reader.getEffectiveSizeC();
-      int source = no / c;
+      int source = getOriginalIndex(no);
       int channel = no % c;
       int series = getSeries();
       int bpp = FormatTools.getBytesPerPixel(getPixelType());
