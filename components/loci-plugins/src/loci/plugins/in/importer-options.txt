@@ -258,6 +258,8 @@ info = <b>View stack with</b> - \
   The type of image viewer to use when displaying the dataset.        \
   <br><br>Possible choices are:<ul>                                   \
   <li><b>Metadata only</b> - Display no pixels, only metadata.</li>   \
+  <li><b>Standard ImageJ</b> - Display the pixels in ImageJ's         \
+  built-in 2D viewer.</li>                                            \
   <li><b>Hyperstack</b> - Display the pixels in ImageJ's              \
   built-in 5D viewer.</li>                                            \
   <li><b>Data Browser</b> - Display the pixels in LOCI's              \
@@ -271,6 +273,7 @@ info = <b>View stack with</b> - \
 default = Hyperstack
 values = \
   Metadata only,   \
+  Standard ImageJ, \
   Hyperstack,      \
   Data Browser,    \
   Image5D,         \
@@ -288,7 +291,7 @@ info = <b>Stack order</b> - \
   stack view modes require a specific rasterization order:<ul>         \
   <li>Hyperstacks must be in XYCZT order.</li>                         \
   <li>Image5D must be in XYCZT order.</li>                             \
-  <li>View5D must be in XYCZT order.</li>                              \
+  <li>View5D must be in XYZCT order.</li>                              \
   </ul><b>Example:</b> For a dataset in XYCZT order with 2 channels,   \
   3 focal planes and 5 time points, the order would be:<ol>            \
   <li>C1-Z1-T1</li>                                                    \

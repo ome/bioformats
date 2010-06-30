@@ -124,6 +124,7 @@ public class DisplayHandler implements StatusListener {
   /** Displays the given image according to the configured options. */
   public void displayImage(ImagePlus imp) {
     if (options.isViewNone()) return;
+    else if (options.isViewStandard()) displayNormal(imp);
     else if (options.isViewHyperstack()) displayNormal(imp);
     else if (options.isViewBrowser()) displayDataBrowser(imp);
     else if (options.isViewImage5D()) displayImage5D(imp);

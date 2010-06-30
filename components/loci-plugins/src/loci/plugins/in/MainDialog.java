@@ -432,6 +432,8 @@ public class MainDialog extends ImporterDialog
     boolean isSplitC = splitCBox.getState();
     String stackFormatValue = stackFormatChoice.getSelectedItem();
     boolean isStackNone = stackFormatValue.equals(ImporterOptions.VIEW_NONE);
+    boolean isStackStandard =
+      stackFormatValue.equals(ImporterOptions.VIEW_STANDARD);
     boolean isStackHyperstack =
       stackFormatValue.equals(ImporterOptions.VIEW_HYPERSTACK);
     boolean isStackBrowser =
@@ -460,7 +462,7 @@ public class MainDialog extends ImporterDialog
     // == Stack viewing ==
 
     // stackOrderChoice
-    stackOrderEnabled = false;
+    stackOrderEnabled = isStackStandard;
     if (src == stackFormatChoice) {
       if (isStackHyperstack || isStackBrowser || isStackImage5D) {
         stackOrderValue = ImporterOptions.ORDER_XYCZT;

@@ -408,7 +408,9 @@ public class ImagePlusReader implements StatusReporter {
     imp.setFileInfo(fi);
     imp.setDimensions(cCount, zCount, tCount);
 
-    imp.setOpenAsHyperStack(true);
+    // open as a hyperstack, as appropriate
+    boolean hyper = !options.isViewStandard();
+    imp.setOpenAsHyperStack(hyper);
 
     // apply intensity scaling
     int pixelType = reader.getPixelType();

@@ -138,7 +138,8 @@ public class Colorizer {
           options.getColorMode());
       }
 
-      final boolean doComposite = mode != -1 && cSize > 1 && cSize <= 7;
+      final boolean doComposite = !options.isViewStandard() &&
+        mode != -1 && cSize > 1 && cSize <= 7;
       if (doComposite) {
         CompositeImage compImage = new CompositeImage(imp, mode);
         if (luts != null) compImage.setLuts(luts);
@@ -149,7 +150,7 @@ public class Colorizer {
         if (luts != null && luts.length > 0 && luts[0] != null) {
           imp.getProcessor().setColorModel(luts[0]);
         }
-        if (mode != -1 && cSize > 1) {
+        if (mode != -1 && cSize > 7) {
           // NB: Cannot use CompositeImage with more than seven channels.
           BF.warn(options.isQuiet(), "Data has too many channels for " +
             options.getColorMode() + " color mode");

@@ -42,7 +42,6 @@ import loci.formats.ImageReader;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.services.OMEXMLService;
 import loci.plugins.util.ImageProcessorReader;
-import loci.plugins.util.ImagePlusTools;
 import loci.plugins.util.LociPrefs;
 
 /**
@@ -164,6 +163,7 @@ public class LociFunctions extends MacroFunctions {
   {
     ImageProcessor[] ip = r.openProcessors(no.intValue(),
       x.intValue(), y.intValue(), w.intValue(), h.intValue());
+    // START HERE - add a method to create an ImagePlus from an ImageProcessor[]
     // CTR FIXME - Ext.openSubImage
     //ImagePlusTools.makeRGB(title, ip).show();
   }

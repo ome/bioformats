@@ -92,6 +92,7 @@ public class ImporterOptions extends OptionsList {
 
   // possible values for stackFormat
   public static final String VIEW_NONE       = "Metadata only";
+  public static final String VIEW_STANDARD   = "Standard ImageJ";
   public static final String VIEW_HYPERSTACK = "Hyperstack";
   public static final String VIEW_BROWSER    = "Data Browser";
   public static final String VIEW_IMAGE_5D   = "Image5D";
@@ -196,17 +197,19 @@ public class ImporterOptions extends OptionsList {
   public void checkObsoleteOptions() {
     String options = Macro.getOptions();
 
+    // NB: It would be nice to remove the Standard ImageJ option someday;
+    // when that happens, the following code provides support for old macros.
     // check obsolete view options
-    String stackFormat = options == null ?
-      null : Macro.getValue(options, "view", null);
-    final String viewStandard = "Standard ImageJ";
-    if (viewStandard.equals(stackFormat)) {
-      // Standard ImageJ -> Hyperstack
-      options = options.replaceFirst(
-        "\\[" + viewStandard + "\\]", VIEW_HYPERSTACK);
-      Macro.setOptions(options);
-      setStackFormat(VIEW_HYPERSTACK);
-    }
+    //String stackFormat = options == null ?
+    //  null : Macro.getValue(options, "view", null);
+    //final String viewStandard = "Standard ImageJ";
+    //if (viewStandard.equals(stackFormat)) {
+    //  // Standard ImageJ -> Hyperstack
+    //  options = options.replaceFirst(
+    //    "\\[" + viewStandard + "\\]", VIEW_HYPERSTACK);
+    //  Macro.setOptions(options);
+    //  setStackFormat(VIEW_HYPERSTACK);
+    //}
 
     // check obsolete color options
     boolean mergeChannels = checkKey(options, "merge_channels");
@@ -348,6 +351,9 @@ public class ImporterOptions extends OptionsList {
   public String getStackFormat() { return getValue(KEY_STACK_FORMAT); }
   public String[] getStackFormats() { return getPossible(KEY_STACK_FORMAT); }
   public boolean isViewNone() { return VIEW_NONE.equals(getStackFormat()); }
+  public boolean isViewStandard() {
+    return VIEW_STANDARD.equals(getStackFormat());
+  }
   public boolean isViewHyperstack() {
     return VIEW_HYPERSTACK.equals(getStackFormat());
   }
