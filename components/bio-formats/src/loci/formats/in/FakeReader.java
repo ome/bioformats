@@ -125,7 +125,7 @@ public class FakeReader extends FormatReader {
     if (floating) min = 0; // floating point types always start at 0
 
     for (int cOffset=0; cOffset<rgb; cOffset++) {
-      int channel = cIndex + cOffset;
+      int channel = rgb * cIndex + cOffset;
       for (int row=0; row<h; row++) {
         int yy = y + row;
         for (int col=0; col<w; col++) {
