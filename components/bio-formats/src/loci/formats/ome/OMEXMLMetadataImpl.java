@@ -32,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-06-29 13:49:05+0100
+ * Created by callan via xsd-fu on 2010-07-01 12:04:50+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -5204,6 +5204,11 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		}
 		BinData o3 = o2.getBinData(binDataIndex);
 		o3.setBigEndian(bigEndian);
+	}
+
+	public void setMaskBinData(byte[] binData, int ROIIndex, int shapeIndex)
+	{
+		// TODO: To implement
 	}
 
 	// -- Entity storage (code generated definitions) --

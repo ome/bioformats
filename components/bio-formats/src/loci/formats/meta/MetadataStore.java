@@ -32,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-06-11 17:48:27+0100
+ * Created by callan via xsd-fu on 2010-07-01 12:04:46+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -93,6 +93,8 @@ public interface MetadataStore
 	// -- Entity storage (manual definitions) --
 
 	void setPixelsBinDataBigEndian(Boolean bigEndian, int imageIndex, int binDataIndex);
+
+	void setMaskBinData(byte[] binData, int ROIIndex, int shapeIndex);
 
 	// -- Entity storage (code generated definitions) --
 

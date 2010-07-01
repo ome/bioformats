@@ -32,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-06-11 17:48:34+0100
+ * Created by callan via xsd-fu on 2010-07-01 12:04:40+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -104,6 +104,11 @@ public class FilterMetadata implements MetadataStore
 	public void setPixelsBinDataBigEndian(Boolean bigEndian, int imageIndex, int binDataIndex)
 	{
 		store.setPixelsBinDataBigEndian(bigEndian, imageIndex, binDataIndex);
+	}
+
+	public void setMaskBinData(byte[] binData, int ROIIndex, int shapeIndex)
+	{
+		store.setMaskBinData(binData, ROIIndex, shapeIndex);
 	}
 
 	// -- Entity storage (code generated definitions) --

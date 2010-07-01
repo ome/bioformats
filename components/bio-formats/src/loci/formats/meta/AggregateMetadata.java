@@ -32,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-06-17 12:34:23+0100
+ * Created by callan via xsd-fu on 2010-07-01 12:04:30+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -9248,6 +9248,19 @@ public class AggregateMetadata implements IMetadata
 			{
 				MetadataStore store = (MetadataStore) o;
 				store.setPixelsBinDataBigEndian(bigEndian, imageIndex, binDataIndex);
+			}
+		}
+	}
+
+	public void setMaskBinData(byte[] binData, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setMaskBinData(binData, ROIIndex, shapeIndex);
 			}
 		}
 	}

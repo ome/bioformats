@@ -32,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-06-17 12:35:01+0100
+ * Created by callan via xsd-fu on 2010-07-01 12:04:37+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -3929,6 +3929,10 @@ public class DummyMetadata implements IMetadata
 	// -- Entity storage (manual definitions) --
 
 	public void setPixelsBinDataBigEndian(Boolean bigEndian, int imageIndex, int binDataIndex)
+	{
+	}
+	
+	public void setMaskBinData(byte[] binData, int ROIIndex, int shapeIndex)
 	{
 	}
 
