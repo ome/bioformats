@@ -80,6 +80,10 @@
 			<xsl:when test="$value = 'Unknown'">
 				<xsl:value-of select="'Other'"/>
 			</xsl:when>
+			<!-- If the input file is valid this case should never happen, but if it does fix it -->
+			<xsl:when test="string-length($value) = 0">
+				<xsl:value-of select="'Other'"/>
+			</xsl:when>
 			<xsl:otherwise>
 				<xsl:value-of select="$value"/>
 			</xsl:otherwise>
