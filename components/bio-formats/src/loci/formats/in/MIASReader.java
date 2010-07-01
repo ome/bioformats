@@ -967,27 +967,22 @@ public class MIASReader extends FormatReader {
     if (!parseMasks) return 0;
     int nOverlays = 0;
     for (int i=0; i<3; i++) {
-      String id = MetadataTools.createLSID("Mask", series, roi + nOverlays, 0);
-      overlayFiles.put(id, overlayTiff);
-      overlayPlanes.put(id, new Integer(i));
+      String roiId = MetadataTools.createLSID("ROI", series, roi + nOverlays);
+      String maskId = MetadataTools.createLSID("Mask", series, roi + nOverlays, 0);
+      overlayFiles.put(maskId, overlayTiff);
+      overlayPlanes.put(maskId, new Integer(i));
 
       boolean validMask = populateMaskPixels(series, roi + nOverlays, 0);
       if (validMask) {
+        store.setROIID(roiId, roi + nOverlays);
         store.setMaskX(new Double(0), roi + nOverlays, 0);
         store.setMaskY(new Double(0), roi + nOverlays, 0);
-        // TODO
-        //store.setMaskWidth(getSizeX(), roi + nOverlays, 0);
-        //store.setMaskHeight(getSizeY(), roi + nOverlays, 0);
-        //store.setMaskBinDataBigEndian(
-        //  new Boolean(!isLittleEndian()), roi + nOverlays, 0, 0);
-        //store.setMaskPixelsSizeX(
-        //  new Integer(getSizeX()), roi + nOverlays, 0);
-        //store.setMaskPixelsSizeY(
-        //  new Integer(getSizeY()), roi + nOverlays, 0);
-        //store.setMaskPixelsExtendedPixelType("bit", roi + nOverlays, 0);
+        store.setMaskWidth(new Double(getSizeX()), roi + nOverlays, 0);
+        store.setMaskHeight(new Double(getSizeY()), roi + nOverlays, 0);
 
-        //String color = String.valueOf(0xff000000 | (0xff << (8 * (2 - i))));
-        //store.setShapeStrokeColor(color, roi + nOverlays, 0);
+        int color = 0xff000000 | (0xff << (8 * (2 - i)));
+        store.setMaskStroke(color, roi + nOverlays, 0);
+        store.setImageROIRef(roiId, series, roi + nOverlays);
         nOverlays++;
       }
     }
@@ -1066,8 +1061,7 @@ public class MIASReader extends FormatReader {
 
     if (validMask) {
       MetadataStore store = makeFilterMetadata();
-      // TODO
-      //store.setMaskPixelsBinData(bits.toByteArray(), roiIndex, shapeIndex);
+      store.setMaskBinData(bits.toByteArray(), roiIndex, shapeIndex);
     }
     else LOGGER.debug("Did not populate MaskPixels.BinData for {}", id);
 
