@@ -359,14 +359,18 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
 
   /** Read bytes from the stream into the given array. */
   public int read(byte[] array) throws IOException {
-    return raf.read(array);
+    int rtn = raf.read(array);
+    if (rtn == 0 && raf.getFilePointer() >= raf.length() - 1) rtn = -1;
+    return rtn;
   }
 
   /**
    * Read n bytes from the stream into the given array at the specified offset.
    */
   public int read(byte[] array, int offset, int n) throws IOException {
-    return raf.read(array, offset, n);
+    int rtn = raf.read(array, offset, n);
+    if (rtn == 0 && raf.getFilePointer() >= raf.length() - 1) rtn = -1;
+    return rtn;
   }
 
   /** Read bytes from the stream into the given buffer. */

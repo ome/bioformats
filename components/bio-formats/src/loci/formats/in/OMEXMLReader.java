@@ -89,7 +89,6 @@ public class OMEXMLReader extends FormatReader {
   private Vector<Long> binDataOffsets;
   private Vector<Long> binDataLengths;
   private Vector<String> compression;
-  private Vector<Boolean> bigEndian;
 
   private String omexml;
   private boolean hasSPW = false;
@@ -244,7 +243,6 @@ public class OMEXMLReader extends FormatReader {
       compression = null;
       binDataOffsets = null;
       binDataLengths = null;
-      bigEndian = null;
       omexml = null;
       hasSPW = false;
     }
@@ -262,11 +260,12 @@ public class OMEXMLReader extends FormatReader {
     binDataOffsets = new Vector<Long>();
     binDataLengths = new Vector<Long>();
     compression = new Vector<String>();
-    bigEndian = new Vector<Boolean>();
 
     DefaultHandler handler = new OMEXMLHandler();
     try {
-      XMLTools.parseXML(in, handler);
+      RandomAccessInputStream s = new RandomAccessInputStream(id);
+      XMLTools.parseXML(s, handler);
+      s.close();
     }
     catch (IOException e) {
       throw new FormatException("Malformed OME-XML", e);
@@ -320,7 +319,7 @@ public class OMEXMLReader extends FormatReader {
         throw new FormatException("Image dimensions not found");
       }
 
-      Boolean endian = bigEndian.get(imageIndex);
+      Boolean endian = omexmlMeta.getPixelsBinDataBigEndian(imageIndex, 0);
       String pixType = omexmlMeta.getPixelsType(i).toString();
       core[i].dimensionOrder = omexmlMeta.getPixelsDimensionOrder(i).toString();
       core[i].sizeX = w.intValue();
@@ -371,12 +370,10 @@ public class OMEXMLReader extends FormatReader {
     }
 
     public void endElement(String uri, String localName, String qName) {
-      if (qName.indexOf("BinData") == -1) {
-        xmlBuffer.append("</");
-        xmlBuffer.append(qName);
-        xmlBuffer.append(">");
-      }
-      else {
+      xmlBuffer.append("</");
+      xmlBuffer.append(qName);
+      xmlBuffer.append(">");
+      if (qName.indexOf("BinData") >= 0) {
         binDataOffsets.add(new Long(nextBinDataOffset - binDataChars));
       }
 
@@ -402,6 +399,16 @@ public class OMEXMLReader extends FormatReader {
         for (int i=0; i<attributes.getLength(); i++) {
           String key = attributes.getQName(i);
           String value = attributes.getValue(i);
+          if (key.equals("BigEndian")) {
+            String endian = value.toLowerCase();
+            if (!endian.equals("true") && !endian.equals("false")) {
+              // hack for files that specify 't' or 'f' instead of
+              // 'true' or 'false'
+              if (endian.startsWith("t")) endian = "true";
+              else if (endian.startsWith("f")) endian = "false";
+            }
+            value = endian;
+          }
           xmlBuffer.append(" ");
           xmlBuffer.append(key);
           xmlBuffer.append("=\"");
@@ -419,8 +426,20 @@ public class OMEXMLReader extends FormatReader {
         String compress = attributes.getValue("Compression");
         compression.add(compress == null ? "" : compress);
         binDataChars = 0;
-        String endian = attributes.getValue("BigEndian");
-        bigEndian.add(new Boolean(endian));
+
+        xmlBuffer.append("<");
+        xmlBuffer.append(qName);
+        for (int i=0; i<attributes.getLength(); i++) {
+          String key = attributes.getQName(i);
+          String value = attributes.getValue(i);
+          if (key.equals("Length")) value = "0";
+          xmlBuffer.append(" ");
+          xmlBuffer.append(key);
+          xmlBuffer.append("=\"");
+          xmlBuffer.append(value);
+          xmlBuffer.append("\"");
+        }
+        xmlBuffer.append(">");
       }
 
       nextBinDataOffset += 2 + qName.length() + 4*attributes.getLength();

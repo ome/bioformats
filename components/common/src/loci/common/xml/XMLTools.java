@@ -246,8 +246,7 @@ public final class XMLTools {
   }
 
   /**
-   * Parses the given XML string into a list of key/value pairs
-   * using the specified XML handler.
+   * Parses the given XML string using the specified XML handler.
    */
   public static void parseXML(String xml, DefaultHandler handler)
     throws IOException
@@ -256,30 +255,38 @@ public final class XMLTools {
   }
 
   /**
-   * Parses the XML string from the given input stream into
-   * a list of key/value pairs using the specified XML handler.
+   * Parses the XML contained in the given input stream into
+   * using the specified XML handler.
+   * Be very careful, as 'stream' <b>will</b> be closed by the SAX parser.
    */
   public static void parseXML(RandomAccessInputStream stream,
     DefaultHandler handler) throws IOException
   {
-    byte[] b = new byte[(int) (stream.length() - stream.getFilePointer())];
-    stream.readFully(b);
-    parseXML(b, handler);
-    b = null;
+    parseXML((InputStream) stream, handler);
   }
 
   /**
-   * Parses the XML string from the given byte array into
-   * a list of key/value pairs using the specified XML handler.
+   * Parses the XML contained in the given byte array into
+   * using the specified XML handler.
    */
   public static void parseXML(byte[] xml, DefaultHandler handler)
     throws IOException
   {
+    parseXML(new ByteArrayInputStream(xml), handler);
+  }
+
+  /**
+   * Parses the XML contained in the given InputStream using the
+   * specified XML handler.
+   */
+  public static void parseXML(InputStream xml, DefaultHandler handler)
+    throws IOException
+  {
     try {
       // Java XML factories are not declared to be thread safe
-      SAXParserFactory factory = SAXParserFactory.newInstance(); 
+      SAXParserFactory factory = SAXParserFactory.newInstance();
       SAXParser parser = factory.newSAXParser();
-      parser.parse(new ByteArrayInputStream(xml), handler);
+      parser.parse(xml, handler);
     }
     catch (ParserConfigurationException exc) {
       IOException e = new IOException();
