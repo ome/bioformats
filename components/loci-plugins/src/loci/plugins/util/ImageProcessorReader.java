@@ -228,10 +228,7 @@ public class ImageProcessorReader extends ReaderWrapper {
     final byte[] r = colors >= 1 ? byteTable[0] : new byte[samples];
     final byte[] g = colors >= 2 ? byteTable[1] : new byte[samples];
     final byte[] b = colors >= 3 ? byteTable[2] : new byte[samples];
-    LUT lut = new LUT(8, samples, r, g, b);
-    lut.min = 0;
-    lut.max = 255;
-    return lut;
+    return new LUT(8, samples, r, g, b);
   }
 
   private byte[][] convertTo8Bit(short[][] shortTable) {

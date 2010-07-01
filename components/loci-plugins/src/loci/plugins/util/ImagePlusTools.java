@@ -110,56 +110,6 @@ public final class ImagePlusTools {
     }
   }
 
-  /**
-   * Autoscales the color range of the given image stack
-   * to match its global minimum and maximum.
-   */
-  public static void adjustColorRange(ImagePlus imp,
-    MinMaxCalculator minMaxCalc)
-  {
-    double min = Double.POSITIVE_INFINITY;
-    double max = Double.NEGATIVE_INFINITY;
-
-    // try to grab min and max values from the MinMaxCalculator
-    if (minMaxCalc != null) {
-      for (int c=0; c<minMaxCalc.getSizeC(); c++) {
-        try {
-          Double cMin = minMaxCalc.getChannelGlobalMinimum(c);
-          Double cMax = minMaxCalc.getChannelGlobalMaximum(c);
-
-          if (cMin != null && cMin.doubleValue() < min) {
-            min = cMin.doubleValue();
-          }
-          if (cMax != null && cMax.doubleValue() > max) {
-            max = cMax.doubleValue();
-          }
-        }
-        catch (FormatException e) { }
-        catch (IOException e) { }
-      }
-    }
-
-    // couldn't find min and max values; determine manually
-    if (min == Double.POSITIVE_INFINITY && max == Double.NEGATIVE_INFINITY) {
-      ImageStack stack = imp.getStack();
-      for (int i=0; i<stack.getSize(); i++) {
-        ImageProcessor p = stack.getProcessor(i + 1);
-        p.resetMinAndMax();
-        if (p.getMin() < min) min = p.getMin();
-        if (p.getMax() > max) max = p.getMax();
-      }
-    }
-
-    // assign min/max range to the active image processor
-    ImageProcessor p = imp.getProcessor();
-    if (p instanceof ColorProcessor) {
-      ((ColorProcessor) p).setMinAndMax(min, max, 3);
-    }
-    else p.setMinAndMax(min, max);
-    // HACK: refresh display
-    //imp.setProcessor(imp.getTitle(), p);
-  }
-
   /** Reorder the given ImagePlus's stack. */
   public static ImagePlus reorder(ImagePlus imp, String origOrder,
     String newOrder)
