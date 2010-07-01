@@ -198,6 +198,11 @@ public class FilterMetadata implements MetadataStore
 		store.setPixelsBinDataBigEndian(bigEndian, imageIndex, binDataIndex);
 	}
 
+	public void setMaskBinData(byte[] binData, int ROIIndex, int shapeIndex)
+	{
+		store.setMaskBinData(binData, ROIIndex, shapeIndex);
+	}
+
 	// -- Entity storage (code generated definitions) --
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\

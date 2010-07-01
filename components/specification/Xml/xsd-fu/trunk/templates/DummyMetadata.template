@@ -292,6 +292,10 @@ ${getter(k, o, prop, v)}\
 	public void setPixelsBinDataBigEndian(Boolean bigEndian, int imageIndex, int binDataIndex)
 	{
 	}
+	
+	public void setMaskBinData(byte[] binData, int ROIIndex, int shapeIndex)
+	{
+	}
 
 	// -- Entity storage (code generated definitions) --
 

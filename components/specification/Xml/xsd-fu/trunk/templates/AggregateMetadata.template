@@ -470,6 +470,19 @@ ${getter(k, o, prop, v)}\
 		}
 	}
 
+	public void setMaskBinData(byte[] binData, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setMaskBinData(binData, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
 	// -- Entity storage (code generated definitions) --
 
 	/** Sets the UUID associated with this collection of metadata. */

@@ -139,6 +139,8 @@ public interface MetadataStore
 
 	void setPixelsBinDataBigEndian(Boolean bigEndian, int imageIndex, int binDataIndex);
 
+	void setMaskBinData(byte[] binData, int ROIIndex, int shapeIndex);
+
 	// -- Entity storage (code generated definitions) --
 
 	/** Sets the UUID associated with this collection of metadata. */

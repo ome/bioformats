@@ -474,6 +474,11 @@ ${getter(k, o, prop, v)}\
 		o3.setBigEndian(bigEndian);
 	}
 
+	public void setMaskBinData(byte[] binData, int ROIIndex, int shapeIndex)
+	{
+		// TODO: To implement
+	}
+
 	// -- Entity storage (code generated definitions) --
 
 	/** Sets the UUID associated with this collection of metadata. */
