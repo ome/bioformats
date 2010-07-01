@@ -2128,6 +2128,40 @@ public final class MetadataConverter {
     } catch (NullPointerException e) { }
     }
     } catch (NullPointerException e) { }
+    try {
+    int tagAnnotationCount = src.getTagAnnotationCount();
+    for (int tagAnnotationIndex=0; tagAnnotationIndex<tagAnnotationCount; tagAnnotationIndex++) {
+    try {
+      String tagAnnotationIDValue = src.getTagAnnotationID(tagAnnotationIndex);
+      if (tagAnnotationIDValue != null) dest.setTagAnnotationID(tagAnnotationIDValue, tagAnnotationIndex);
+    } catch (NullPointerException e) { }
+    try {
+      String tagAnnotationNamespaceValue = src.getTagAnnotationNamespace(tagAnnotationIndex);
+      if (tagAnnotationNamespaceValue != null) dest.setTagAnnotationNamespace(tagAnnotationNamespaceValue, tagAnnotationIndex);
+    } catch (NullPointerException e) { }
+    try {
+      String tagAnnotationValueValue = src.getTagAnnotationValue(tagAnnotationIndex);
+      if (tagAnnotationValueValue != null) dest.setTagAnnotationValue(tagAnnotationValueValue, tagAnnotationIndex);
+    } catch (NullPointerException e) { }
+    }
+    } catch (NullPointerException e) { }
+    try {
+    int termAnnotationCount = src.getTermAnnotationCount();
+    for (int termAnnotationIndex=0; termAnnotationIndex<termAnnotationCount; termAnnotationIndex++) {
+    try {
+      String termAnnotationIDValue = src.getTermAnnotationID(termAnnotationIndex);
+      if (termAnnotationIDValue != null) dest.setTermAnnotationID(termAnnotationIDValue, termAnnotationIndex);
+    } catch (NullPointerException e) { }
+    try {
+      String termAnnotationNamespaceValue = src.getTermAnnotationNamespace(termAnnotationIndex);
+      if (termAnnotationNamespaceValue != null) dest.setTermAnnotationNamespace(termAnnotationNamespaceValue, termAnnotationIndex);
+    } catch (NullPointerException e) { }
+    try {
+      String termAnnotationValueValue = src.getTermAnnotationValue(termAnnotationIndex);
+      if (termAnnotationValueValue != null) dest.setTermAnnotationValue(termAnnotationValueValue, termAnnotationIndex);
+    } catch (NullPointerException e) { }
+    }
+    } catch (NullPointerException e) { }
   }
 
 }
