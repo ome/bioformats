@@ -254,27 +254,27 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="SizeX" use="required" type="xsd:positiveInteger">
+			<xsd:attribute name="SizeX" use="required" type="PositiveInt">
 				<xsd:annotation>
 					<xsd:documentation>Dimensional size of pixel data array [units:none]</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="SizeY" use="required" type="xsd:positiveInteger">
+			<xsd:attribute name="SizeY" use="required" type="PositiveInt">
 				<xsd:annotation>
 					<xsd:documentation>Dimensional size of pixel data array [units:none]</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="SizeZ" use="required" type="xsd:positiveInteger">
+			<xsd:attribute name="SizeZ" use="required" type="PositiveInt">
 				<xsd:annotation>
 					<xsd:documentation>Dimensional size of pixel data array [units:none]</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="SizeC" use="required" type="xsd:positiveInteger">
+			<xsd:attribute name="SizeC" use="required" type="PositiveInt">
 				<xsd:annotation>
 					<xsd:documentation>Dimensional size of pixel data array [units:none]</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="SizeT" use="required" type="xsd:positiveInteger">
+			<xsd:attribute name="SizeT" use="required" type="PositiveInt">
 				<xsd:annotation>
 					<xsd:documentation>Dimensional size of pixel data array [units:none]</xsd:documentation>
 				</xsd:annotation>
@@ -326,7 +326,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 				</xsd:choice>
 				<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded"/>
 			</xsd:sequence>
-			<xsd:attribute name="TheZ" use="required" type="xsd:integer">
+			<xsd:attribute name="TheZ" use="required" type="NonNegativeInt">
 				<xsd:annotation>
 					<xsd:documentation>
 						The Z-section this plane is for. [units:none]
@@ -334,7 +334,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="TheT" use="required" type="xsd:integer">
+			<xsd:attribute name="TheT" use="required" type="NonNegativeInt">
 				<xsd:annotation>
 					<xsd:documentation>
 						The timepoint this plane is for. [units:none]
@@ -342,7 +342,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="TheC" use="required" type="xsd:integer">
+			<xsd:attribute name="TheC" use="required" type="NonNegativeInt">
 				<xsd:annotation>
 					<xsd:documentation>
 						The channel this plane is for. [units:none]
@@ -420,7 +420,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="SamplesPerPixel" use="optional" type="xsd:integer">
+			<xsd:attribute name="SamplesPerPixel" use="optional" type="PositiveInt">
 				<xsd:annotation>
 					<xsd:documentation>
 						The number of samples the detector takes to form each pixel value.
@@ -503,14 +503,14 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					</xsd:restriction>
 				</xsd:simpleType>
 			</xsd:attribute>
-			<xsd:attribute name="ExcitationWavelength" use="optional" type="xsd:positiveInteger">
+			<xsd:attribute name="ExcitationWavelength" use="optional" type="PositiveInt">
 				<xsd:annotation>
 					<xsd:documentation>
 						Excitation wavelength of excitation for a particular channel, in nanometres[nm].
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="EmissionWavelength" use="optional" type="xsd:positiveInteger">
+			<xsd:attribute name="EmissionWavelength" use="optional" type="PositiveInt">
 				<xsd:annotation>
 					<xsd:documentation>
 						Emission wavelength of excitation for a particular channel, in nanometres[nm].
@@ -532,14 +532,14 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>	
-			<xsd:attribute name="PockelCellSetting" use="optional" type="xsd:integer">
+			<xsd:attribute name="PockelCellSetting" use="optional" type="xsd:int">
 				<xsd:annotation>
 					<xsd:documentation>
 						The PockelCellSetting used for this channel. This is the amount the polarization of the beam is rotated by. [units:none]
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="Color" use="optional" type="xsd:integer" default="-2147483648">
+			<xsd:attribute name="Color" use="optional" type="xsd:int" default="-2147483648">
 				<xsd:annotation>
 					<xsd:documentation>
 						A color used render this channel - encoded as RGBA
@@ -593,7 +593,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					</xsd:complexType>
 				</xsd:element>
 			</xsd:sequence>
-			<xsd:attribute name="IFD" type="xsd:integer" default="0" use="optional">
+			<xsd:attribute name="IFD" type="NonNegativeInt" default="0" use="optional">
 				<xsd:annotation>
 					<xsd:documentation>
 						Gives the IFD(s) for which this element is applicable. Indexed from 0. 
@@ -601,7 +601,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="FirstZ" type="xsd:integer" default="0" use="optional">
+			<xsd:attribute name="FirstZ" type="NonNegativeInt" default="0" use="optional">
 				<xsd:annotation>
 					<xsd:documentation>
 						Gives the Z position of the image plane at the specified IFD. Indexed from 0. 
@@ -609,7 +609,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="FirstT" type="xsd:integer" default="0" use="optional">
+			<xsd:attribute name="FirstT" type="NonNegativeInt" default="0" use="optional">
 				<xsd:annotation>
 					<xsd:documentation>
 						Gives the T position of the image plane at the specified IFD. Indexed from 0.
@@ -617,7 +617,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="FirstC" type="xsd:integer" default="0" use="optional">
+			<xsd:attribute name="FirstC" type="NonNegativeInt" default="0" use="optional">
 				<xsd:annotation>
 					<xsd:documentation>
 						Gives the C position of the image plane at the specified IFD. Indexed from 0. 
@@ -625,7 +625,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="PlaneCount" use="optional" type="xsd:integer">
+			<xsd:attribute name="PlaneCount" use="optional" type="NonNegativeInt">
 				<xsd:annotation>
 					<xsd:documentation>
 						Gives the number of IFDs affected. Dimension order of IFDs is given by the enclosing
@@ -801,14 +801,14 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="SizeX" use="required" type="xsd:positiveInteger">
+			<xsd:attribute name="SizeX" use="required" type="PositiveInt">
 				<xsd:annotation>
 					<xsd:documentation>
 						The width of the OTF. [units:none]
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="SizeY" use="required" type="xsd:positiveInteger">
+			<xsd:attribute name="SizeY" use="required" type="PositiveInt">
 				<xsd:annotation>
 					<xsd:documentation>
 						The height of the OTF. [units:none]
@@ -1051,6 +1051,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 								<xsd:enumeration value="FluorescenceLifetime"/><!-- Fluorescence lifetime imaging (FLIM) -->
 								<xsd:enumeration value="SpectralImaging"/>
 								<xsd:enumeration value="Photobleaching"/>
+								<xsd:enumeration value="SPIM"/><!-- Selective or Single Plane Illumination Microscopy -->
 								<xsd:enumeration value="Other"/>
 							</xsd:restriction>
 						</xsd:simpleType>
@@ -1165,6 +1166,36 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 		</xsd:annotation>
 		<xsd:restriction base="xsd:hexBinary">
 			<xsd:length value="20"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="NonNegativeLong">
+		<xsd:annotation>
+			<xsd:documentation>
+				A simple type that restricts the value to an integer between 0 and 9223372036854775807 (inclusive).
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:long">
+			<xsd:minInclusive value="0"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="NonNegativeInt">
+		<xsd:annotation>
+			<xsd:documentation>
+				A simple type that restricts the value to an integer between 0 and 2,147,483,647 (inclusive).
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:int">
+			<xsd:minInclusive value="0"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="PositiveInt">
+		<xsd:annotation>
+			<xsd:documentation>
+				A simple type that restricts the value to an integer between 1 and 2,147,483,647 (inclusive).
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:int">
+			<xsd:minInclusive value="1"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="PercentFraction">
@@ -1289,7 +1320,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
-					<xsd:attribute name="NominalMagnification" use="optional" type="xsd:integer">
+					<xsd:attribute name="NominalMagnification" use="optional" type="PositiveInt">
 						<xsd:annotation>
 							<xsd:documentation>
 								The magnification of the lens as specified by the manufacturer - i.e. '60' is a 60X lens. [units:none]
@@ -1478,28 +1509,28 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
-			<xsd:attribute name="CutIn" use="optional" type="xsd:integer" >
+			<xsd:attribute name="CutIn" use="optional" type="PositiveInt" >
 				<xsd:annotation>
 					<xsd:documentation>
 						CutIn is the wavelength below which there is less than 50% transmittance for a filter. Units: nanometres[nm].
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="CutOut" use="optional" type="xsd:integer" >
+			<xsd:attribute name="CutOut" use="optional" type="PositiveInt" >
 				<xsd:annotation>
 					<xsd:documentation>
 						CutOut is the wavelength above which there is less than 50% transmittance for a filter. Units: nanometres[nm].
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="CutInTolerance" use="optional" type="xsd:integer" >
+			<xsd:attribute name="CutInTolerance" use="optional" type="NonNegativeInt" >
 				<xsd:annotation>
 					<xsd:documentation>
 						CutInTolerance Units: nanometres[nm],
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="CutOutTolerance" use="optional" type="xsd:integer" >
+			<xsd:attribute name="CutOutTolerance" use="optional" type="NonNegativeInt" >
 				<xsd:annotation>
 					<xsd:documentation>
 						CutOutTolerance Units: nanometres[nm],
@@ -1691,14 +1722,14 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					</xsd:restriction>
 				</xsd:simpleType>
 			</xsd:attribute>
-			<xsd:attribute name="Wavelength" use="optional" type="xsd:positiveInteger">
+			<xsd:attribute name="Wavelength" use="optional" type="PositiveInt">
 				<xsd:annotation>
 					<xsd:documentation>
 						The Wavelength of the laser in nanometres[nm]
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="FrequencyMultiplication" use="optional" type="xsd:positiveInteger">
+			<xsd:attribute name="FrequencyMultiplication" use="optional" type="PositiveInt">
 				<xsd:annotation>
 					<xsd:documentation>
 						FrequencyMultiplication that may be specified. [units:none]
@@ -2010,7 +2041,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
-					<xsd:attribute name="Wavelength" use="optional" type="xsd:positiveInteger">
+					<xsd:attribute name="Wavelength" use="optional" type="PositiveInt">
 						<xsd:annotation>
 							<xsd:documentation>
 								The Wavelength of the light source. nanometres[nm]
