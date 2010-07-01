@@ -103,6 +103,11 @@
 			<map from="Uint16" to="uint16"/>
 			<map from="Uint32" to="uint32"/>
 		</mapping>
+		<mapping name="OTFPixelType">
+			<map from="Uint8" to="uint8"/>
+			<map from="Uint16" to="uint16"/>
+			<map from="Uint32" to="uint32"/>
+		</mapping>
 		<mapping name="DetectorType">
 			<map from="Intensified-CCD" to="IntensifiedCCD"/>
 			<map from="Analog-Video" to="AnalogVideo"/>
@@ -309,9 +314,11 @@
 				</xsl:for-each>
 			</xsl:variable>
 			<xsl:apply-templates select="@*"/>
-			<xsl:attribute name="Power">
-				<xsl:value-of select="$power"/>
-			</xsl:attribute>
+      <xsl:if test="$power != ''">
+			  <xsl:attribute name="Power">
+				  <xsl:value-of select="$power"/>
+			  </xsl:attribute>
+      </xsl:if>
 			<xsl:apply-templates select="node()"/>
 		</xsl:element>
 	</xsl:template>
@@ -548,7 +555,7 @@
 	-->
 	<xsl:template match="OME:OTF">
 		<xsl:element name="OTF" namespace="{$newOMENS}">
-			<xsl:for-each select="@* [not(name() = 'OpticalAxisAvrg')]">
+			<xsl:for-each select="@* [not(name() = 'OpticalAxisAvrg' or name() = 'PixelType')]">
 				<xsl:attribute name="{local-name(.)}">
 					<xsl:value-of select="."/>
 				</xsl:attribute>
@@ -556,6 +563,14 @@
 			<xsl:for-each select="@* [name() = 'OpticalAxisAvrg']">
 				<xsl:attribute name="OpticalAxisAveraged">
 					<xsl:value-of select="."/>
+				</xsl:attribute>
+			</xsl:for-each>
+      <xsl:for-each select="@* [name() = 'PixelType']">
+				<xsl:attribute name="{local-name(.)}">
+					<xsl:call-template name="transformEnumerationValue">
+						<xsl:with-param name="mappingName" select="'OTFPixelType'"/>
+						<xsl:with-param name="value"><xsl:value-of select="."/></xsl:with-param>
+					</xsl:call-template>
 				</xsl:attribute>
 			</xsl:for-each>
 			<xsl:apply-templates select="node()"/>

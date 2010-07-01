@@ -86,16 +86,15 @@
 			<xsl:when test="$value = 'Unknown'">
 				<xsl:value-of select="'Other'"/>
 			</xsl:when>
+			<!-- If the input file is valid this case should never happen, but if it does fix it -->
+			<xsl:when test="string-length($value) = 0">
+				<xsl:value-of select="'Other'"/>
+			</xsl:when>
 			<xsl:otherwise>
 				<xsl:value-of select="$value"/>
-				<!-- If the property is optional we don't want to set 
-        "Unknown" if that's our current value. Otherwise use the current value. 
-         <xsl:if test="not($isOptional) or $value != 'Unknown'">
-        <xsl:value-of select="$value"/>
-       </xsl:if>
-        
-        -->
-				<xsl:value-of select="''"/>
+				<!--
+					The isOptional value is not used in this transform
+				-->
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
@@ -392,7 +391,7 @@
 		</xsl:element>
 	</xsl:template>
 
-	<!-- Check the value of the Type attribute -->
+  <!-- Check the value of the Type attribute -->
 	<xsl:template match="OME:Arc">
 		<xsl:element name="Arc" namespace="{$newOMENS}">
 			<xsl:for-each select="@*">
@@ -535,7 +534,7 @@
 
 	</xsl:template>
 
-	<!-- Convert element into Attribute -->
+	<!-- Convert Correction and Immersion elements into Attributes -->
 	<xsl:template match="OME:Objective">
 		<xsl:element name="Objective" namespace="{$newOMENS}">
 			<xsl:for-each select="*">
@@ -543,7 +542,7 @@
 					<xsl:choose>
 						<xsl:when test="local-name(.)='Correction' or local-name(.)='Immersion'">
 							<xsl:call-template name="transformEnumerationValue">
-								<xsl:with-param name="mappingName" select="'ObjectiveStuff'"/>
+								<xsl:with-param name="mappingName" select="'ObjectiveCorrectionOrImmersion'"/>
 								<xsl:with-param name="value">
 									<xsl:value-of select="."/>
 								</xsl:with-param>
