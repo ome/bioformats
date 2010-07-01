@@ -158,16 +158,15 @@
 			<xsl:when test="$value = 'Unknown'">
 				<xsl:value-of select="'Other'"/>
 			</xsl:when>
+			<!-- If the input file is valid this case should never happen, but if it does fix it -->
+			<xsl:when test="string-length($value) = 0">
+				<xsl:value-of select="'Other'"/>
+			</xsl:when>
 			<xsl:otherwise>
 				<xsl:value-of select="$value"/>
-				<!-- If the property is optional we don't want to set 
-        "Unknown" if that's our current value. Otherwise use the current value. 
-         <xsl:if test="not($isOptional) or $value != 'Unknown'">
-        <xsl:value-of select="$value"/>
-       </xsl:if>
-        
-        -->
-				<xsl:value-of select="''"/>
+				<!--
+					The isOptional value is not used in this transform
+				-->
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
