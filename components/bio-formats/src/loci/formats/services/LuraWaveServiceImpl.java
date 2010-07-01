@@ -25,6 +25,7 @@ package loci.formats.services;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 
 import loci.common.services.AbstractService;
 import loci.common.services.DependencyException;
@@ -60,6 +61,9 @@ public class LuraWaveServiceImpl extends AbstractService
   /** Message to display if an invalid LuraWave license code is given. */
   public static final String INVALID_LICENSE_MSG = "Invalid license code: ";
 
+  /** Identifying field in stub class. */
+  public static final String STUB_FIELD = "IS_STUB";
+
   /** LuraWave decoder delegate. */
   private lwfDecoder delegate;
   
@@ -69,9 +73,16 @@ public class LuraWaveServiceImpl extends AbstractService
   /**
    * Default constructor.
    */
-  public LuraWaveServiceImpl() {
+  public LuraWaveServiceImpl() throws DependencyException {
     license = System.getProperty(LICENSE_PROPERTY);
     checkClassDependency(com.luratech.lwf.lwfDecoder.class);
+    try {
+      Field isStub = com.luratech.lwf.lwfDecoder.class.getField(STUB_FIELD);
+      if (isStub != null) {
+        throw new DependencyException(NO_LURAWAVE_MSG);
+      }
+    }
+    catch (NoSuchFieldException e) { }
   }
 
   /* (non-Javadoc)
