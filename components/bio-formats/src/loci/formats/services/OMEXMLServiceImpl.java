@@ -122,15 +122,19 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
     String transformed = null;
     try {
       if (version.equals("2003-FC")) {
+        xml = verifyOMENamespace(xml);
         transformed = XMLTools.transformXML(xml, UPDATE_2003FC);
       }
       else if (version.equals("2006-LO")) {
+        xml = verifyOMENamespace(xml);
         transformed = XMLTools.transformXML(xml, UPDATE_2006LO);
       }
       else if (version.equals("2007-06")) {
+        xml = verifyOMENamespace(xml);
         transformed = XMLTools.transformXML(xml, UPDATE_200706);
       }
       else if (version.equals("2008-02")) {
+        xml = verifyOMENamespace(xml);
         transformed = XMLTools.transformXML(xml, UPDATE_200802);
       }
       else transformed = xml;
@@ -138,15 +142,18 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
       LOGGER.trace("At least 2008-09 dump: {}", transformed);
 
       if (!version.equals("2009-09") && !version.equals("2010-04")) {
+        transformed = verifyOMENamespace(transformed);
         transformed = XMLTools.transformXML(transformed, UPDATE_200809);
       }
       LOGGER.debug("XML updated to at least 2009-09");
       LOGGER.trace("At least 2009-09 dump: {}", transformed);
       if (!version.equals("2010-04")) {
+        transformed = verifyOMENamespace(transformed);
         transformed = XMLTools.transformXML(transformed, UPDATE_200909);
       }
       LOGGER.debug("XML updated to at least 2010-04");
       LOGGER.trace("At least 2010-04 dump: {}", transformed);
+      transformed = verifyOMENamespace(transformed);
       transformed = XMLTools.transformXML(transformed, UPDATE_201004);
       LOGGER.debug("XML updated to at least 2010-06");
       // fix namespaces
@@ -427,6 +434,27 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
    */
   public MetadataRetrieve asRetrieve(MetadataStore meta) {
     return meta instanceof MetadataRetrieve ? (MetadataRetrieve) meta : null;
+  }
+
+  // -- Helper methods --
+
+  /** Ensures that an xmlns:ome element exists. */
+  private String verifyOMENamespace(String xml) {
+    try {
+      Document doc = XMLTools.parseDOM(xml);
+      Element e = doc.getDocumentElement();
+      String omeNamespace = e.getAttribute("xmlns:ome");
+      if (omeNamespace == null || omeNamespace.equals("")) {
+        e.setAttribute("xmlns:ome", e.getAttribute("xmlns"));
+      }
+      return XMLTools.getXML(doc);
+    }
+    catch (ParserConfigurationException pce) { }
+    catch (TransformerConfigurationException tce) { }
+    catch (TransformerException te) { }
+    catch (SAXException se) { }
+    catch (IOException ioe) { }
+    return null;
   }
 
 }
