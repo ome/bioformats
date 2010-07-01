@@ -412,24 +412,6 @@ public class ImagePlusReader implements StatusReporter {
     boolean hyper = !options.isViewStandard();
     imp.setOpenAsHyperStack(hyper);
 
-    // apply intensity scaling
-    int pixelType = reader.getPixelType();
-    // always autoscale floating point image data
-    if (options.isAutoscale() || FormatTools.isFloatingPoint(pixelType)) {
-      ImagePlusTools.adjustColorRange(imp, process.getMinMaxCalculator());
-    }
-    else {
-      // ImageJ may autoscale the images anyway, so we need to manually set
-      // the display range to the min/max values allowed for this pixel type
-      int bitDepth = reader.getBitsPerPixel();
-      // NB: ImageJ does not directly support signed data (it is merely
-      // unsigned data shifted downward by half via a "calibration"),
-      // so the following min and max values also work for signed.
-      double min = 0;
-      double max = Math.pow(2, bitDepth) - 1;
-      imp.setDisplayRange(min, max);
-    }
-
     return imp;
   }
 

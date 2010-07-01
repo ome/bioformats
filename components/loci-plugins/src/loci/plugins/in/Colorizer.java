@@ -27,15 +27,21 @@ package loci.plugins.in;
 
 import ij.CompositeImage;
 import ij.ImagePlus;
+import ij.process.ColorProcessor;
+import ij.process.ImageProcessor;
 import ij.process.LUT;
 
 import java.awt.Color;
 import java.awt.image.ColorModel;
 import java.awt.image.IndexColorModel;
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 import loci.formats.ChannelFiller;
 import loci.formats.DimensionSwapper;
+import loci.formats.FormatException;
+import loci.formats.MinMaxCalculator;
 import loci.formats.FormatTools;
 import loci.formats.ImageReader;
 import loci.plugins.BF;
@@ -72,7 +78,7 @@ public class Colorizer {
     final ImageReader imageReader = process.getImageReader();
 
     for (int i=0; i<imps.size(); i++) {
-      final ImagePlus imp = imps.get(i);
+      ImagePlus imp = imps.get(i);
       final int series = (Integer) imp.getProperty(ImagePlusReader.PROP_SERIES);
       reader.setSeries(series);
 
@@ -92,6 +98,7 @@ public class Colorizer {
         if (channelLUTs[c] != null) hasChannelLUT = true;
       }
 
+      // compute color mode and LUTs to use
       int mode = -1;
       LUT[] luts;
       if (options.isColorModeDefault()) {
@@ -138,12 +145,14 @@ public class Colorizer {
           options.getColorMode());
       }
 
+      // apply color mode and LUTs
       final boolean doComposite = !options.isViewStandard() &&
         mode != -1 && cSize > 1 && cSize <= 7;
       if (doComposite) {
         CompositeImage compImage = new CompositeImage(imp, mode);
         if (luts != null) compImage.setLuts(luts);
         imps.set(i, compImage);
+        imp = compImage;
       }
       else {
         // NB: Cannot use CompositeImage for some reason.
@@ -156,11 +165,89 @@ public class Colorizer {
             options.getColorMode() + " color mode");
         }
       }
+
+      applyDisplayRanges(imp, series);
     }
     return imps;
   }
 
   // -- Helper methods --
+
+  private void applyDisplayRanges(ImagePlus imp, int series) {
+    final ImporterOptions options = process.getOptions();
+    final ImageProcessorReader reader = process.getReader();
+
+    final int pixelType = reader.getPixelType();
+    final boolean autoscale = options.isAutoscale() ||
+      FormatTools.isFloatingPoint(pixelType); // always autoscale float data
+
+    final int cSize = imp.getNChannels();
+    final double[] cMin = new double[cSize];
+    final double[] cMax = new double[cSize];
+    Arrays.fill(cMin, Double.NaN);
+    Arrays.fill(cMax, Double.NaN);
+
+    if (autoscale) {
+      // extract display ranges for autoscaling
+      final MinMaxCalculator minMaxCalc = process.getMinMaxCalculator();
+      final int cBegin = process.getCBegin(series);
+      final int cEnd = process.getCEnd(series);
+      final int cStep = process.getCStep(series);
+      for (int c=0; c<cSize; c++) {
+        final int cIndex = cBegin + c * cStep;
+        Double cMinVal = null, cMaxVal = null;
+        try {
+          cMinVal = minMaxCalc.getChannelGlobalMinimum(cIndex);
+          cMaxVal = minMaxCalc.getChannelGlobalMaximum(cIndex);
+        }
+        catch (FormatException exc) { }
+        catch (IOException exc) { }
+        if (cMinVal != null) cMin[c] = cMinVal;
+        if (cMaxVal != null) cMax[c] = cMaxVal;
+      }
+    }
+
+    // fill in default display ranges as appropriate
+    final int bitDepth = reader.getBitsPerPixel();
+    // NB: ImageJ does not directly support signed data (it is merely
+    // unsigned data shifted downward by half via a "calibration"),
+    // so the following min and max values also work for signed.
+    final double min = 0;
+    final double max = Math.pow(2, bitDepth) - 1;
+    for (int c=0; c<cSize; c++) {
+      if (Double.isNaN(cMin[c])) cMin[c] = min;
+      if (Double.isNaN(cMax[c])) cMax[c] = max;
+    }
+
+    // apply display ranges
+    if (imp instanceof CompositeImage) {
+      // apply channel display ranges
+      final CompositeImage compImage = (CompositeImage) imp;
+      for (int c=0; c<cSize; c++) {
+        LUT lut = compImage.getChannelLut(c + 1);
+        lut.min = cMin[c];
+        lut.max = cMax[c];
+      }
+    }
+    else {
+      // compute global display range from channel display ranges
+      double globalMin = Double.POSITIVE_INFINITY;
+      double globalMax = Double.NEGATIVE_INFINITY;
+      for (int c=0; c<cSize; c++) {
+        if (cMin[c] < globalMin) globalMin = cMin[c];
+        if (cMax[c] > globalMax) globalMax = cMax[c];
+      }
+
+      // apply global display range
+      ImageProcessor proc = imp.getProcessor();
+      if (proc instanceof ColorProcessor) {
+        // NB: Should never occur. ;-)
+        final ColorProcessor colorProc = (ColorProcessor) proc;
+        colorProc.setMinAndMax(min, max, 3);
+      }
+      else proc.setMinAndMax(min, max);
+    }
+  }
 
   private LUT[] makeLUTs(ColorModel[] cm, boolean colorize) {
     final ImporterOptions options = process.getOptions();
@@ -208,8 +295,7 @@ public class Colorizer {
       b[i] = (byte) (i * blue / lutDivisor);
     }
     LUT lut = new LUT(r, g, b);
-    lut.min = 0;
-    lut.max = 255;
     return lut;
   }
+
 }
