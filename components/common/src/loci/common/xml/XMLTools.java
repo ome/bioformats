@@ -32,8 +32,12 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -341,10 +345,39 @@ public final class XMLTools {
     return null;
   }
 
+  /** Replaces NS:tag with NS_tag for undeclared namespaces */
+  public static String avoidUndeclaredNamespaces(String xml) {
+    int gt = xml.indexOf('>');
+    if (gt > 0 && xml.startsWith("<?xml "))
+      gt = xml.indexOf('>', gt + 1);
+    if (gt > 0) {
+      String firstTag = xml.substring(0, gt + 1).toLowerCase();
+      Set namespaces = new HashSet();
+      Pattern pattern = Pattern.compile(" xmlns:(\\w+)");
+      Matcher matcher = pattern.matcher(firstTag);
+      while (matcher.find())
+        namespaces.add(matcher.group(1));
+
+      pattern = Pattern.compile("</?(\\w+):");
+      matcher = pattern.matcher(xml);
+      while (matcher.find()) {
+        String namespace = matcher.group(1);
+        if (!namespace.startsWith("ns") &&
+          !namespaces.contains(namespace.toLowerCase()))
+        {
+          int end = matcher.end();
+          xml = xml.substring(0, end - 1) + "_" + xml.substring(end);
+        }
+      }
+    }
+    return xml;
+  }
+
   /** Transforms the given XML string using the specified XSLT stylesheet. */
   public static String transformXML(String xml, Templates xslt)
     throws IOException
   {
+    xml = avoidUndeclaredNamespaces(xml);
     return transformXML(new StreamSource(new StringReader(xml)), xslt);
   }
 
