@@ -38,8 +38,9 @@ import loci.plugins.in.ImporterOptions;
 // left off
 //   should be able to make colorTests() handle both ImagePluses and CompositeImages. Change lutTest() too. Then can get
 //     rid of ImagePlusLutTest().
-//   the color test methods seem to fail for indexed data
-//   the color test methods seem to fail for virtual=true
+//   the color test methods seem to fail for indexed data (my issue - need to fix indexValuesTest for special cases)
+//     the special case is 1/1/indexed w/lutLen=3. 2/3's of values are all 0. This is correct behavior.
+//   the color test methods seem to fail for virtual=true (no longer seems to be case - something Curtis fixed?)
 //   datasetSwapDims has ugly workaround to handle bad signed data / virtual flag interaction. Need BF fix.
 //   many test methods are only UINT8
 //   expand compositeTestSubcases() to handle more pixTypes and indexed data
@@ -55,13 +56,10 @@ import loci.plugins.in.ImporterOptions;
 //    by IJ. I have verified that the pixel data that is sent to FloatProcessor() is correct. Limitation we'll live
 //    with I guess.
 
-// seem broken but don't know status from Curtis
+// (OLD) seem broken but don't know status from Curtis
 //   colorized: 1/1/indexed (all indices 0 for all images), 3/1/indexed (iIndex,cIndex) (although w/ falseColor its okay),
 //     6/3/nonindexed (iIndex,cIndex), 12/3/nonindexed (iIndex,cIndex), 3/3/indexed (iIndex,cIndex)
 //   record does not work
-
-// testable code according to my notes
-//   composite, gray, custom: working for 2<=sizeC<=7 nonindexed (only Composite is tested for this)
 
 // note
 //   I changed MemoryRecord from "Flip Horizontally" (which could not be found at runtime) to "Invert". Verified
@@ -69,7 +67,7 @@ import loci.plugins.in.ImporterOptions;
 //     thought flip would be easier to use for predicting actual values rather than special case code with invert. As
 //     I'm only doing UINT8 for now this is not a problem.
 
-// waiting on BF implementations for
+// (OLD) waiting on BF implementations for
 //   - indexed color support
 
 // must address before release
@@ -78,7 +76,7 @@ import loci.plugins.in.ImporterOptions;
 //  - add some tests for combination of options
 //      comboConcatSplit() - done and passing
 //      comboManyOptions - done and passing
-//      other combo tests - rely on color code working. Waiting for BF.
+//      other combo tests - rely on color code working. Waiting for BF. (OLD)
 
 // would be nice to address before release
 
@@ -472,7 +470,7 @@ public class ImporterTest {
   {
     int effC = sizeC;
     
-    if (indexed)
+    if (indexed)  // this is from Melissa
     {
       if (falseColor)
         effC /= rgb;
@@ -807,7 +805,7 @@ public class ImporterTest {
           ImageProcessor proc = st.getProcessor(++slice);
           
           // TODO - hack in place to clarify an underlying BF bug. Remove when bug fixed. Also remove virtual & pixType params.
-          if (virtual)
+          if (true)  // TODO - temp until I confirm with Curtis that he has fixed underlying BF bug.
           {
             actualZ = (int)(offset + tIndex(proc)); // Z<->T swapped
             actualC = (int)(offset + cIndex(proc));
@@ -1352,6 +1350,11 @@ public class ImporterTest {
   /** tests BF's options.setAutoscale() */
   private void autoscaleTester(int pixType, boolean wantAutoscale)
   {
+    System.out.println("autoscaleTester() : pix "+FormatTools.getPixelTypeString(pixType)+" scale "+wantAutoscale);
+
+    if ((pixType == FormatTools.UINT8) && (wantAutoscale))
+      System.out.println("  broken case");
+    
     final int sizeZ = 2, sizeC = 3, sizeT = 4, sizeX = 51, sizeY = 16;
     final String path = constructFakeFilename("autoscale",pixType, sizeX, sizeY, sizeZ, sizeC, sizeT, -1, false, -1, false, -1);
     
@@ -1439,13 +1442,14 @@ public class ImporterTest {
   private void colorDefaultTester(boolean virtual, int pixType, boolean indexed, int channels, int chanPerPlane,
                                     boolean falseColor, int numSeries, boolean wantLutDefined)
   {
-    System.out.println("colorDefaultTester(): pixType "+FormatTools.getPixelTypeString(pixType)+" indexed "+indexed+" channels "+channels+" chanPerPlane "+chanPerPlane+" falseColor "+falseColor+" numSeries "+numSeries);
+    System.out.println("colorDefaultTester(): pixType "+FormatTools.getPixelTypeString(pixType)+" indexed "+indexed+" channels "+
+        channels+" chanPerPlane "+chanPerPlane+" falseColor "+falseColor+" numSeries "+numSeries+" defineLut "+wantLutDefined);
     
     int sizeX = 55, sizeY = 71, sizeZ = 3, sizeT = 4;
     
     // reportedly works in BF as long as numSeries*sizeC*3 <= 25
     
-    String path = constructFakeFilename("colorComposite", pixType, sizeX, sizeY, sizeZ, channels, sizeT, numSeries,
+    String path = constructFakeFilename("colorDefault", pixType, sizeX, sizeY, sizeZ, channels, sizeT, numSeries,
         indexed, chanPerPlane, falseColor, -1);
     
     ImagePlus[] imps = null;
@@ -1489,14 +1493,15 @@ public class ImporterTest {
 
       Color[] colorOrder;
       int expectedType;
-      if (chanPerPlane > 1)
+      if (chanPerPlane > 1)  // TODO : apparently need another test here for channelFiller.isFilled() case so 1/1/indexed works
       {
         expectedType = CompositeImage.COMPOSITE;
         colorOrder = DEFAULT_COLOR_ORDER;
       }
-      else if (indexed && wantLutDefined) 
+      else if (indexed && wantLutDefined)
       {
-        // TODO - left working here. this case doesn't work yet. have to figure how BF calcs hasChannelLut so I can set it
+        // TODO - left working here. this case doesn't work yet.
+        //   have to figure how BF calcs hasChannelLut so I can exercise it here
         expectedType = CompositeImage.COLOR;
         colorOrder = new Color[]{Color.PINK,Color.WHITE,Color.WHITE,Color.WHITE,Color.WHITE,Color.WHITE,Color.WHITE,Color.WHITE};
       }
@@ -2331,41 +2336,41 @@ public class ImporterTest {
   }
 
   // TODO - enable virtual case
-  // TODO - only testing UINT8
   @Test
   public void testColorDefault()
   {
-    for (boolean virtual : new boolean[]{false}) { // TODO : broekn for virtual - reenable
-      for (boolean defineLutEntry : BOOLEAN_STATES) {
+    for (int pixType : new int[]{FormatTools.UINT8, FormatTools.UINT16}) {
+      for (boolean virtual : new boolean[]{false,true}) {
+        for (boolean defineLutEntry : BOOLEAN_STATES) {
       // these here to simplify debugging
   
-        // edge cases in number of channels nonindexed in one series
-        colorDefaultTester(virtual,FormatTools.UINT8,NOT_INDEXED,1,1,REAL_COLOR,ONE_SERIES,defineLutEntry);
-        colorDefaultTester(virtual,FormatTools.UINT8,NOT_INDEXED,2,2,REAL_COLOR,ONE_SERIES,defineLutEntry);
-        colorDefaultTester(virtual,FormatTools.UINT8,NOT_INDEXED,7,7,REAL_COLOR,ONE_SERIES,defineLutEntry);
-        colorDefaultTester(virtual,FormatTools.UINT8,NOT_INDEXED,8,8,REAL_COLOR,ONE_SERIES,defineLutEntry);
-    
-        // edge cases in number of channels nonindexed in one series
-        colorDefaultTester(virtual,FormatTools.UINT8,NOT_INDEXED,4,4,REAL_COLOR,ONE_SERIES,defineLutEntry);
-        colorDefaultTester(virtual,FormatTools.UINT8,NOT_INDEXED,6,3,REAL_COLOR,ONE_SERIES,defineLutEntry);
-        colorDefaultTester(virtual,FormatTools.UINT8,NOT_INDEXED,12,3,REAL_COLOR,ONE_SERIES,defineLutEntry);
-    
-        // edge case : standard 3 chan planar layout
-        colorDefaultTester(virtual,FormatTools.UINT8,NOT_INDEXED,3,1,REAL_COLOR,ONE_SERIES,defineLutEntry);
-    
-        // edge case 1 channel indexed
-        // TODO - this one fails. Actual czt vals back from code are all zeroes 2/3 of the time (1 chan goes to 3)
-        //colorDefaultTester(virtual,FormatTools.UINT8,INDEXED,1,1,REAL_COLOR,ONE_SERIES,defineLutEntry);
+          // edge cases in number of channels nonindexed in one series
+          colorDefaultTester(virtual,pixType,NOT_INDEXED,1,1,REAL_COLOR,ONE_SERIES,defineLutEntry);
+          colorDefaultTester(virtual,pixType,NOT_INDEXED,2,2,REAL_COLOR,ONE_SERIES,defineLutEntry);
+          colorDefaultTester(virtual,pixType,NOT_INDEXED,7,7,REAL_COLOR,ONE_SERIES,defineLutEntry);
+          colorDefaultTester(virtual,pixType,NOT_INDEXED,8,8,REAL_COLOR,ONE_SERIES,defineLutEntry);
+      
+          // edge cases in number of channels nonindexed in one series
+          colorDefaultTester(virtual,pixType,NOT_INDEXED,4,4,REAL_COLOR,ONE_SERIES,defineLutEntry);
+          colorDefaultTester(virtual,pixType,NOT_INDEXED,6,3,REAL_COLOR,ONE_SERIES,defineLutEntry);
+          colorDefaultTester(virtual,pixType,NOT_INDEXED,12,3,REAL_COLOR,ONE_SERIES,defineLutEntry);
+      
+          // edge case : standard 3 chan planar layout
+          colorDefaultTester(virtual,pixType,NOT_INDEXED,3,1,REAL_COLOR,ONE_SERIES,defineLutEntry);
+      
+          // edge case 1 channel indexed
+          // TODO - this one fails UINT8 before I used general pixTypes. With gen pix types indexed does not make sense.
+          //colorDefaultTester(virtual,FormatTools.UINT8,INDEXED,1,1,REAL_COLOR,ONE_SERIES,defineLutEntry);
+        }
       }
     }
   }
   
   // TODO - enable virtual case
-  // TODO - only testing UINT8
   @Test
   public void testColorComposite()
   {
-    for (boolean virtual : new boolean[]{false}) {  // TODO : fails when virtual is true for numChannels < 2 or > 7
+    for (boolean virtual : new boolean[]{false,true}) {
       
       // these here to simplify debugging
   
@@ -2429,86 +2434,89 @@ public class ImporterTest {
   }
   
   // TODO - enable virtual case
-  // TODO - only testing UINT8
   @Test
   public void testColorColorized()
   {
-    for (boolean virtual : new boolean[]{false}) { // TODO : broekn for virtual - reenable
-      // these here to simplify debugging
-  
-      // edge cases in number of channels nonindexed in one series
-      colorColorizedTester(virtual,FormatTools.UINT8,NOT_INDEXED,1,1,REAL_COLOR,ONE_SERIES);
-      colorColorizedTester(virtual,FormatTools.UINT8,NOT_INDEXED,2,2,REAL_COLOR,ONE_SERIES);
-      colorColorizedTester(virtual,FormatTools.UINT8,NOT_INDEXED,7,7,REAL_COLOR,ONE_SERIES);
-      colorColorizedTester(virtual,FormatTools.UINT8,NOT_INDEXED,8,8,REAL_COLOR,ONE_SERIES);
-  
-      // edge cases in number of channels nonindexed in one series
-      colorColorizedTester(virtual,FormatTools.UINT8,NOT_INDEXED,4,4,REAL_COLOR,ONE_SERIES);
-      colorColorizedTester(virtual,FormatTools.UINT8,NOT_INDEXED,6,3,REAL_COLOR,ONE_SERIES);
-      colorColorizedTester(virtual,FormatTools.UINT8,NOT_INDEXED,12,3,REAL_COLOR,ONE_SERIES);
-  
-      // edge case : standard 3 chan planar layout
-      colorColorizedTester(virtual,FormatTools.UINT8,NOT_INDEXED,3,1,REAL_COLOR,ONE_SERIES);
-  
-      // edge case 1 channel indexed
-      // TODO - this one fails. Actual czt vals back from code are all zeroes 2/3 of the time (1 chan goes to 3)
-      //colorColorizedTester(FormatTools.UINT8,INDEXED,1,1,REAL_COLOR,ONE_SERIES);
+    for (int pixType : new int[]{FormatTools.UINT8, FormatTools.UINT16}) {
+      for (boolean virtual : new boolean[]{false,true}) {
+        // these here to simplify debugging
+    
+        // edge cases in number of channels nonindexed in one series
+        colorColorizedTester(virtual,pixType,NOT_INDEXED,1,1,REAL_COLOR,ONE_SERIES);
+        colorColorizedTester(virtual,pixType,NOT_INDEXED,2,2,REAL_COLOR,ONE_SERIES);
+        colorColorizedTester(virtual,pixType,NOT_INDEXED,7,7,REAL_COLOR,ONE_SERIES);
+        colorColorizedTester(virtual,pixType,NOT_INDEXED,8,8,REAL_COLOR,ONE_SERIES);
+    
+        // edge cases in number of channels nonindexed in one series
+        colorColorizedTester(virtual,pixType,NOT_INDEXED,4,4,REAL_COLOR,ONE_SERIES);
+        colorColorizedTester(virtual,pixType,NOT_INDEXED,6,3,REAL_COLOR,ONE_SERIES);
+        colorColorizedTester(virtual,pixType,NOT_INDEXED,12,3,REAL_COLOR,ONE_SERIES);
+    
+        // edge case : standard 3 chan planar layout
+        colorColorizedTester(virtual,pixType,NOT_INDEXED,3,1,REAL_COLOR,ONE_SERIES);
+    
+        // edge case 1 channel indexed
+        // TODO - this one fails UINT8 before I used general pixTypes. With gen pix types indexed does not make sense.
+        //colorColorizedTester(virtual,FormatTools.UINT8,INDEXED,1,1,REAL_COLOR,ONE_SERIES);
+      }
     }
   }
   
   // TODO - enable virtual case
-  // TODO - only testing UINT8
   @Test
   public void testColorGrayscale()
   {
-    for (boolean virtual : new boolean[]{false}) { // TODO : broekn for virtual - reenable
-      // these here to simplify debugging
-  
-      // edge cases in number of channels nonindexed in one series
-      colorGrayscaleTester(virtual,FormatTools.UINT8,NOT_INDEXED,1,1,REAL_COLOR,ONE_SERIES);
-      colorGrayscaleTester(virtual,FormatTools.UINT8,NOT_INDEXED,2,2,REAL_COLOR,ONE_SERIES);
-      colorGrayscaleTester(virtual,FormatTools.UINT8,NOT_INDEXED,7,7,REAL_COLOR,ONE_SERIES);
-      colorGrayscaleTester(virtual,FormatTools.UINT8,NOT_INDEXED,8,8,REAL_COLOR,ONE_SERIES);
-  
-      // edge cases in number of channels nonindexed in one series
-      colorGrayscaleTester(virtual,FormatTools.UINT8,NOT_INDEXED,4,4,REAL_COLOR,ONE_SERIES);
-      colorGrayscaleTester(virtual,FormatTools.UINT8,NOT_INDEXED,6,3,REAL_COLOR,ONE_SERIES);
-      colorGrayscaleTester(virtual,FormatTools.UINT8,NOT_INDEXED,12,3,REAL_COLOR,ONE_SERIES);
-  
-      // edge case : standard 3 chan planar layout
-      colorGrayscaleTester(virtual,FormatTools.UINT8,NOT_INDEXED,3,1,REAL_COLOR,ONE_SERIES);
-  
-      // edge case 1 channel indexed
-      // TODO - this one fails. Actual czt vals back from code are all zeroes 2/3 of the time (1 chan goes to 3)
-      //colorGrayscaleTester(FormatTools.UINT8,INDEXED,1,1,REAL_COLOR,ONE_SERIES);
+    for (int pixType : new int[]{FormatTools.UINT8, FormatTools.UINT16}) {
+      for (boolean virtual : new boolean[]{false,true}) {
+        // these here to simplify debugging
+    
+        // edge cases in number of channels nonindexed in one series
+        colorGrayscaleTester(virtual,pixType,NOT_INDEXED,1,1,REAL_COLOR,ONE_SERIES);
+        colorGrayscaleTester(virtual,pixType,NOT_INDEXED,2,2,REAL_COLOR,ONE_SERIES);
+        colorGrayscaleTester(virtual,pixType,NOT_INDEXED,7,7,REAL_COLOR,ONE_SERIES);
+        colorGrayscaleTester(virtual,pixType,NOT_INDEXED,8,8,REAL_COLOR,ONE_SERIES);
+    
+        // edge cases in number of channels nonindexed in one series
+        colorGrayscaleTester(virtual,pixType,NOT_INDEXED,4,4,REAL_COLOR,ONE_SERIES);
+        colorGrayscaleTester(virtual,pixType,NOT_INDEXED,6,3,REAL_COLOR,ONE_SERIES);
+        colorGrayscaleTester(virtual,pixType,NOT_INDEXED,12,3,REAL_COLOR,ONE_SERIES);
+    
+        // edge case : standard 3 chan planar layout
+        colorGrayscaleTester(virtual,pixType,NOT_INDEXED,3,1,REAL_COLOR,ONE_SERIES);
+    
+        // edge case 1 channel indexed
+        // TODO - this one fails UINT8 before I used general pixTypes. With gen pix types indexed does not make sense.
+        //colorGrayscaleTester(FormatTools.UINT8,INDEXED,1,1,REAL_COLOR,ONE_SERIES);
+      }
     }
   }
   
   // TODO - enable virtual case
-  // TODO - only testing UINT8
   @Test
   public void testColorCustom()
   {
-    for (boolean virtual : new boolean[]{false}) { // TODO : broekn for virtual - reenable
-      // these here to simplify debugging
-  
-      // edge cases in number of channels nonindexed in one series
-      colorCustomTester(virtual,FormatTools.UINT8,NOT_INDEXED,1,1,REAL_COLOR,ONE_SERIES);
-      colorCustomTester(virtual,FormatTools.UINT8,NOT_INDEXED,2,2,REAL_COLOR,ONE_SERIES);
-      colorCustomTester(virtual,FormatTools.UINT8,NOT_INDEXED,7,7,REAL_COLOR,ONE_SERIES);
-      colorCustomTester(virtual,FormatTools.UINT8,NOT_INDEXED,8,8,REAL_COLOR,ONE_SERIES);
-  
-      // edge cases in number of channels nonindexed in one series
-      colorCustomTester(virtual,FormatTools.UINT8,NOT_INDEXED,4,4,REAL_COLOR,ONE_SERIES);
-      colorCustomTester(virtual,FormatTools.UINT8,NOT_INDEXED,6,3,REAL_COLOR,ONE_SERIES);
-      colorCustomTester(virtual,FormatTools.UINT8,NOT_INDEXED,12,3,REAL_COLOR,ONE_SERIES);
-  
-      // edge case : standard 3 chan planar layout
-      colorCustomTester(virtual,FormatTools.UINT8,NOT_INDEXED,3,1,REAL_COLOR,ONE_SERIES);
-  
-      // edge case 1 channel indexed
-      // TODO - this one fails. Actual czt vals back from code are all zeroes 2/3 of the time (1 chan goes to 3)
-      //colorCustomTester(FormatTools.UINT8,INDEXED,1,1,REAL_COLOR,ONE_SERIES);
+    for (int pixType : new int[]{FormatTools.UINT8, FormatTools.UINT16}) {
+      for (boolean virtual : new boolean[]{false,true}) {
+        // these here to simplify debugging
+    
+        // edge cases in number of channels nonindexed in one series
+        colorCustomTester(virtual,pixType,NOT_INDEXED,1,1,REAL_COLOR,ONE_SERIES);
+        colorCustomTester(virtual,pixType,NOT_INDEXED,2,2,REAL_COLOR,ONE_SERIES);
+        colorCustomTester(virtual,pixType,NOT_INDEXED,7,7,REAL_COLOR,ONE_SERIES);
+        colorCustomTester(virtual,pixType,NOT_INDEXED,8,8,REAL_COLOR,ONE_SERIES);
+    
+        // edge cases in number of channels nonindexed in one series
+        colorCustomTester(virtual,pixType,NOT_INDEXED,4,4,REAL_COLOR,ONE_SERIES);
+        colorCustomTester(virtual,pixType,NOT_INDEXED,6,3,REAL_COLOR,ONE_SERIES);
+        colorCustomTester(virtual,pixType,NOT_INDEXED,12,3,REAL_COLOR,ONE_SERIES);
+    
+        // edge case : standard 3 chan planar layout
+        colorCustomTester(virtual,pixType,NOT_INDEXED,3,1,REAL_COLOR,ONE_SERIES);
+    
+        // edge case 1 channel indexed
+        // TODO - this one fails UINT8 before I used general pixTypes. With gen pix types indexed does not make sense.
+        //colorCustomTester(FormatTools.UINT8,INDEXED,1,1,REAL_COLOR,ONE_SERIES);
+      }
     }
 
     /* old way    
