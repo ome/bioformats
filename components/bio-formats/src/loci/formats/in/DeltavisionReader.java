@@ -169,11 +169,26 @@ public class DeltavisionReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    if (checkSuffix(id, "dv.log")) {
-      id = id.substring(0, id.lastIndexOf("."));
-    }
-    else if (id.endsWith("_log.txt")) {
-      id = id.substring(0, id.lastIndexOf("_")) + ".dv";
+    if (!checkSuffix(id, "dv")) {
+      if (checkSuffix(id, "dv.log")) {
+        id = id.substring(0, id.lastIndexOf("."));
+      }
+      else if (id.endsWith("_log.txt")) {
+        id = id.substring(0, id.lastIndexOf("_")) + ".dv";
+      }
+      Location file = new Location(id).getAbsoluteFile();
+      if (!file.exists()) {
+        Location dir = file.getParentFile();
+        String[] list = dir.list(true);
+        String name = file.getName();
+        name = name.substring(0, name.lastIndexOf("."));
+        for (String f : list) {
+          if (checkSuffix(f, "dv") && f.startsWith(name)) {
+            id = new Location(dir, f).getAbsolutePath();
+            break;
+          }
+        }
+      }
     }
 
     super.initFile(id);
@@ -336,13 +351,6 @@ public class DeltavisionReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFileOld(String id) throws FormatException, IOException {
-    if (checkSuffix(id, "dv.log")) {
-      id = id.substring(0, id.lastIndexOf("."));
-    }
-    else if (id.endsWith("_log.txt")) {
-      id = id.substring(0, id.lastIndexOf("_")) + ".dv";
-    }
-
     super.initFile(id);
 
     MetadataStore store = makeFilterMetadata();
