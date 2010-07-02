@@ -853,8 +853,8 @@ public class MIASReader extends FormatReader {
     double diam = Double.parseDouble(data[columns.indexOf("Cell Diam.")]);
     double radius = diam / 2;
 
-    store.setEllipseRadiusX(radius, roi, 1);
-    store.setEllipseRadiusY(radius, roi, 1);
+    store.setEllipseRadiusX(radius, roi, 0);
+    store.setEllipseRadiusY(radius, roi, 0);
 
     // NB: other attributes are "Nucleus Area", "Cell Type", and
     // "Mean Nucleus Intens."
