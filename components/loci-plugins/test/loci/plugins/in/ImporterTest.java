@@ -354,7 +354,8 @@ public class ImporterTest {
       case FormatTools.INT32:   return 4294967296L; // expected INTEGER.MAX_VALUE and also off by 1 from unsigned max 
       case FormatTools.UINT8:   return 255; 
       case FormatTools.UINT16:  return 65535; 
-      case FormatTools.UINT32:  return 4294967296L; // off by 1 from unsigned max 
+      case FormatTools.UINT32:  return 4294967295L; // off by 1 from unsigned max
+                                            // TODO : prev line modified to get autoscale working better. Off by 1 not true.
 
       default:
         throw new IllegalArgumentException("maxPixelValue() - unknown pixel type passed in: " + pixType);
@@ -401,7 +402,7 @@ public class ImporterTest {
   
   /** returns the expected max value within a FakeFile plane based on pixel type and if autoscale desired */
   private long expectedMax(int pixType, boolean wantAutoscale, long maxPixVal, long maxIndex)
-  {
+  {                     // TODO - call Math.max() at point of call. Simplify this method to take a maxVal.
     long max;
     
     if (wantAutoscale || (FormatTools.isFloatingPoint(pixType)))
@@ -1581,9 +1582,6 @@ public class ImporterTest {
       fail(e.getMessage());
     }
 
-    // TODO - notice I pass in numSeries but don't test it below : no for loop for it. We're only opening the first series.
-    //  Not sure why I'm enforcing the 25 slider rule then.
-    
     impsCountTest(imps,1);
     
     ImagePlus imp = imps[0];
@@ -2361,7 +2359,6 @@ public class ImporterTest {
     datasetConcatenateTester(FormatTools.UINT8, 82, 47, 4, 5, 2, 9);
   }
 
-  // TODO - enable virtual case
   @Test
   public void testColorDefault()
   {
@@ -2392,7 +2389,6 @@ public class ImporterTest {
     }
   }
   
-  // TODO - enable virtual case
   @Test
   public void testColorComposite()
   {
@@ -2459,7 +2455,6 @@ public class ImporterTest {
     }
   }
   
-  // TODO - enable virtual case
   @Test
   public void testColorColorized()
   {
@@ -2488,7 +2483,6 @@ public class ImporterTest {
     }
   }
   
-  // TODO - enable virtual case
   @Test
   public void testColorGrayscale()
   {
@@ -2517,7 +2511,6 @@ public class ImporterTest {
     }
   }
   
-  // TODO - enable virtual case
   @Test
   public void testColorCustom()
   {
@@ -2576,7 +2569,7 @@ public class ImporterTest {
     
     for (int pixType : PIXEL_TYPES) {
       for (boolean autoscale : BOOLEAN_STATES) {
-        //if (DEBUG) log("testColorAutoscale(): pixType = "+FormatTools.getPixelTypeString(pixType)+" autoscale = "+autoscale);
+        log("testColorAutoscale(): pixType = "+FormatTools.getPixelTypeString(pixType)+" autoscale = "+autoscale);
         autoscaleTester(pixType,autoscale);
       }
     }
@@ -2973,7 +2966,7 @@ public class ImporterTest {
     for (int tIndex = 0; tIndex < imp.getNFrames(); tIndex++) {
       for (int cIndex = 0; cIndex < imp.getNChannels(); cIndex++) {
         for (int zIndex = 0; zIndex < imp.getNSlices(); zIndex++) {
-          setZctPosition(imp,zIndex,cIndex,tIndex);
+          setZctPosition(imp,zIndex,cIndex,tIndex);  // TODO - should change this loop to czt order and use setCztPosition()
           ImageProcessor proc = imp.getProcessor();
           printVals(proc);
         }
@@ -3021,6 +3014,7 @@ public class ImporterTest {
     //stackInZctOrderTest(imp,sizeZ,expectedSizeC,sizeT,indexed);
   }
 
+  // TODO - see if this can go away. How much does testColorColorize() handle this?
   // TODO - make a virtual case when working
   // TODO - enable tests rather thans prints. Its been a while since I worked on this and it may be working better now.
   @Test
@@ -3099,6 +3093,7 @@ public class ImporterTest {
     if (DEBUG) log("testColorizeSubcases() : numerous failures : actual tests commented out to see all print statements.");
   }
 
+  // TODO - see if this can go away. How much does testColorComposite() handle this?
   // TODO - make a virtual case when working
   @Test
   public void testCompositeSubcases()
