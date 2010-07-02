@@ -896,13 +896,23 @@ public class ImporterTest {
   /** tests that an ImagePlus' set of ImageProcessors have their mins and maxes set appropriately */
   private void minMaxTest(ImagePlus imp, long expectedMin, long expectedMax)
   {
-    ImageStack st = imp.getStack();
-    int numSlices = st.getSize();
-    for (int i = 0; i < numSlices; i++)
-    {
-      ImageProcessor proc = st.getProcessor(i+1);
-      assertEquals(expectedMax,proc.getMax(),0.1);
-      assertEquals(expectedMin,proc.getMin(),0.1);
+    if (imp instanceof CompositeImage) {
+      CompositeImage ci = (CompositeImage) imp;
+      for (int c = 0; c < ci.getNChannels(); c++) {
+        LUT lut = ci.getChannelLut(c + 1);
+        assertEquals(expectedMax,lut.max,0.1);
+        assertEquals(expectedMin,lut.min,0.1);
+      }
+    }
+    else {
+      ImageStack st = imp.getStack();
+      int numSlices = st.getSize();
+      for (int i = 0; i < numSlices; i++)
+      {
+        ImageProcessor proc = st.getProcessor(i+1);
+        assertEquals(expectedMax,proc.getMax(),0.1);
+        assertEquals(expectedMin,proc.getMin(),0.1);
+      }
     }
   }
 
