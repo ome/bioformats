@@ -60,7 +60,7 @@ endif(IS_DIRECTORY "${JACE_DIR}")
 ### build Bio-Formats C++ bindings ###
 
 include_directories(include
-  "proxies/include" "${JACE_DIR}/source/c++/include"
+  "proxies/include" "${JACE_DIR}/core/cpp/include"
   "${JAVA_INCLUDE_PATH}" "${JAVA_INCLUDE_PATH2}" "${Boost_INCLUDE_DIR}")
 
 #message("-- Bio-Formats C++ bindings:")

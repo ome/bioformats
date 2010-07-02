@@ -41,11 +41,11 @@ else(IS_DIRECTORY "${JACE_DIR}")
   message(FATAL_ERROR "Cannot build without Jace. Please set JACE_DIR.")
 endif(IS_DIRECTORY "${JACE_DIR}")
 
-include_directories("${JACE_DIR}/source/c++/include"
+include_directories("${JACE_DIR}/core/cpp/include"
   "${JAVA_INCLUDE_PATH}" "${JAVA_INCLUDE_PATH2}"
   "${Boost_INCLUDE_DIR}")
 
-file(GLOB_RECURSE JACE_SRC "${JACE_DIR}/source/c++/source/*.cpp")
+file(GLOB_RECURSE JACE_SRC "${JACE_DIR}/core/cpp/source/*.cpp")
 #message("jace source   : ${JACE_SRC}")
 message(STATUS "")
 
