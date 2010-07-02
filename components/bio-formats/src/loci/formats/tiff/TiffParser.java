@@ -313,10 +313,10 @@ public class TiffParser {
     ifd.put(new Integer(IFD.BIG_TIFF), new Boolean(bigTiff));
 
     // read in directory entries for this IFD
-    LOGGER.debug("getIFDs: seeking IFD at {}", offset);
+    LOGGER.trace("getIFDs: seeking IFD at {}", offset);
     in.seek(offset);
     long numEntries = bigTiff ? in.readLong() : in.readUnsignedShort();
-    LOGGER.debug("getIFDs: {} directory entries to read", numEntries);
+    LOGGER.trace("getIFDs: {} directory entries to read", numEntries);
     if (numEntries == 0 || numEntries == 1) return ifd;
 
     int bytesPerEntry = bigTiff ?
@@ -343,7 +343,7 @@ public class TiffParser {
       if (count * bpe + pointer > inputLen) {
         int oldCount = count;
         count = (int) ((inputLen - pointer) / bpe);
-        LOGGER.debug("getIFDs: truncated {} array elements for tag {}",
+        LOGGER.trace("getIFDs: truncated {} array elements for tag {}",
           (oldCount - count), tag);
       }
       if (count < 0 || count > in.length()) break;
@@ -383,7 +383,7 @@ public class TiffParser {
     int count = entry.getValueCount();
     long offset = entry.getValueOffset();
 
-    LOGGER.debug("Reading entry {} from {}; type={}, count={}",
+    LOGGER.trace("Reading entry {} from {}; type={}, count={}",
       new Object[] {entry.getTag(), offset, type, count});
 
     if (offset != in.getFilePointer()) {
@@ -586,7 +586,7 @@ public class TiffParser {
   public byte[] getSamples(IFD ifd, byte[] buf, int x, int y,
     long width, long height) throws FormatException, IOException
   {
-    LOGGER.debug("parsing IFD entries");
+    LOGGER.trace("parsing IFD entries");
 
     // get internal non-IFD entries
     boolean littleEndian = ifd.isLittleEndian();
@@ -597,7 +597,7 @@ public class TiffParser {
     long tileWidth = ifd.getTileWidth();
     long tileLength = ifd.getTileLength();
     if (tileLength <= 0) {
-      LOGGER.debug("Tile length is {}; setting it to {}", tileLength, height);
+      LOGGER.trace("Tile length is {}; setting it to {}", tileLength, height);
       tileLength = height;
     }
 
@@ -628,7 +628,7 @@ public class TiffParser {
     int numSamples = (int) (width * height);
 
     // read in image strips
-    LOGGER.debug("reading image data (samplesPerPixel={}; numSamples={})",
+    LOGGER.trace("reading image data (samplesPerPixel={}; numSamples={})",
       samplesPerPixel, numSamples);
 
     TiffCompression compression = ifd.getCompression();
@@ -755,7 +755,7 @@ public class TiffParser {
       nChannels = 1;
     }
 
-    LOGGER.debug(
+    LOGGER.trace(
       "unpacking {} samples (startIndex={}; totalBits={}; numBytes={})",
       new Object[] {sampleCount, startIndex, nChannels * bitsPerSample[0],
       bytes.length});
