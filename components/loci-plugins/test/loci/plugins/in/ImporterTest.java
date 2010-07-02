@@ -36,6 +36,8 @@ import loci.plugins.in.ImporterOptions;
 // TODO
 
 // left off
+//   should be able to make colorTests() handle both ImagePluses and CompositeImages. Change lutTest() too. Then can get
+//     rid of ImagePlusLutTest().
 //   the color test methods seem to fail for indexed data
 //   the color test methods seem to fail for virtual=true
 //   datasetSwapDims has ugly workaround to handle bad signed data / virtual flag interaction. Need BF fix.
@@ -562,6 +564,8 @@ public class ImporterTest {
   private boolean indexValuesTest(ImagePlus imp, int z, int c, int t, boolean indexed, boolean falseColor,
                                   int expS, int expI, int expZ, int expC, int expT)
   {
+    // TODO - returns a boolean so we can print out all values before asserting failure. Could be changed if desired.
+    
     int tempS = sIndex(imp, z, c, t, indexed, falseColor);
     int tempI = iIndex(imp, z, c, t, indexed, falseColor);
     int tempZ = zIndex(imp, z, c, t, indexed, falseColor);
@@ -570,9 +574,9 @@ public class ImporterTest {
     
     //System.out.println("actual CZT "+tempC+" "+tempZ+" "+tempT);
     
-    System.out.println("  indices test (I forced to 0)");
-    System.out.println("    expected (sizct): "+expS+" "+0+" "+expZ+" "+expC+" "+expT);
-    System.out.println("    actual (sizct):   "+tempS+" "+0+" "+tempZ+" "+tempC+" "+tempT);
+    //System.out.println("  indices test (I forced to 0)");
+    //System.out.println("    expected (sizct): "+expS+" "+0+" "+expZ+" "+expC+" "+expT);
+    //System.out.println("    actual (sizct):   "+tempS+" "+0+" "+tempZ+" "+tempC+" "+tempT);
     
     //TODO - remove this debugging code
     if ((expS != tempS) || /*(expI != tempI) ||*/ (expZ != tempZ) || (expC != tempC) || (expT != tempT))
@@ -586,7 +590,7 @@ public class ImporterTest {
     else
     {
       assertEquals(expS,tempS);
-      //assertEquals(expI,tempI);
+      //assertEquals(expI,tempI);  // not so important we test this
       assertEquals(expZ,tempZ);
       assertEquals(expC,tempC);
       assertEquals(expT,tempT);
@@ -745,22 +749,22 @@ public class ImporterTest {
   }
   
   /** tests that multiple file groups are pulled into one dataset */
-  private void groupedFilesTest(ImagePlus imp, int numDatasets, int numImagesPerDataset)
+  private void groupedFilesTest(ImagePlus imp, int expNumZ, int expNumC, int expNumT)
   {
-    stackTest(imp,numDatasets*numImagesPerDataset);
+    stackTest(imp,expNumZ*expNumC*expNumT);
     
     ImageStack st = imp.getStack();
     
-    System.out.println("groupedFilesTest");
+    //System.out.println("groupedFilesTest");
     int slice = 0;
-    for (int t = 0; t < FakeTimepointCount; t++) {
-      for (int z = 0; z < FakePlaneCount; z++) {
-        for (int c = 0; c < FakeChannelCount; c++) {
+    for (int t = 0; t < expNumT; t++) {
+      for (int z = 0; z < expNumZ; z++) {
+        for (int c = 0; c < expNumC; c++) {
 
           ImageProcessor proc = st.getProcessor(++slice);
-          printVals(proc);
+          //printVals(proc);
           assertEquals(0,sIndex(proc));
-          assertEquals(z,iIndex(proc));  // TODO: is this correct. it passes but looks wrong.
+          assertEquals(z,iIndex(proc));  // TODO: is this correct? it passes but looks wrong.
           assertEquals(z,zIndex(proc));
           assertEquals(0,cIndex(proc));
           assertEquals(0,tIndex(proc));
@@ -814,7 +818,6 @@ public class ImporterTest {
           }
           //System.out.println("--\nexp CZT "+cIndex+" "+zIndex+" "+tIndex);
           //System.out.println("act CZT "+actualC+" "+actualZ+" "+actualT);
-          // TODO - put back in post debug
           assertEquals(zIndex, actualZ);
           assertEquals(cIndex, actualC);
           assertEquals(tIndex, actualT);
@@ -1170,7 +1173,7 @@ public class ImporterTest {
     
     impsCountTest(imps,1);
   
-    groupedFilesTest(imps[0], FAKE_FILES.length, FakePlaneCount);
+    groupedFilesTest(imps[0], FakePlaneCount, FakeChannelCount, FakeTimepointCount);
   }
   
   /** tests BF's options.setUngroupFiles() */
@@ -1388,7 +1391,10 @@ public class ImporterTest {
       assertEquals(i,data[i]&0xff);
   }
   
-  private void imagePlusLutTest(ImagePlus imp, boolean indexed, boolean falseColor)
+  // TODO : can I replace all calls to this to colorTests() passing numChannels == 1. Another way: modify lutTest() to
+  //   use a standard ImagePlus rather than a CompImg and have it call getColorTable(). Then pass in just RED ramped
+  //   test values.
+  private void imagePlusLutTest(ImagePlus imp, boolean indexed, boolean falseColor, Color color)
   {
     // When numCh < 2 or numCh > 7 the setColorMode() code for Composite and Colorize cannot create a CompositeImage.
     // Therefore it creates a one channel ImagePlus with a LUT that only ramps the red channel. Test this to be
@@ -1396,21 +1402,32 @@ public class ImporterTest {
     
     assertFalse(imp instanceof CompositeImage);
     
+    if (indexed)
+    {
+      fail("imagePlusLutTest() - not yet supporting indexed");
+      if (falseColor)
+        ;
+    }
+    
     LUT lut = getColorTable(imp,0);
     
     byte[] data = new byte[256];
     
-    lut.getReds(data);
-    
-    if (indexed && falseColor)
+    if (color.getRed() > 0)
     {
-      System.out.println("imagePlusLutTest() - indexed and falseColor - 1st 10 lut entries");
-      for (int i = 0; i < 10; i++)
-        System.out.print("  "+data[i]);
-      System.out.println();
-    }
-    else
+      lut.getReds(data);
       ascendingValuesTest(data,256);
+    }
+    if (color.getGreen() > 0)
+    {
+      lut.getGreens(data);
+      ascendingValuesTest(data,256);
+    }
+    if (color.getBlue() > 0)
+    {
+      lut.getBlues(data);
+      ascendingValuesTest(data,256);
+    }
   }
   
   /** tests BF's options.setColorMode(composite) */
@@ -1491,7 +1508,7 @@ public class ImporterTest {
     {
       assertFalse(imp.isComposite());
 
-      imagePlusLutTest(imp,indexed,falseColor);
+      imagePlusLutTest(imp,indexed,falseColor,DefaultColorOrder[0]);
     }
     
     stackInCztOrderTest(imp,sizeZ,expectedSizeC,sizeT,indexed,falseColor,channels,chanPerPlane);
@@ -1552,32 +1569,12 @@ public class ImporterTest {
       assertEquals(CompositeImage.COMPOSITE, ci.getMode());
       
       colorTests(ci,expectedSizeC,DefaultColorOrder);
-
-      // TODO - may need to reenable if commented code below reactivated
-      //ci.reset();  // force the channel processors to get initialized, otherwise nullptr  - TODO : does this point out a IJ bug?
-
-      /*
-      int maxZ = ci.getNSlices();
-      int maxC = ci.getNChannels();
-      int maxT = ci.getNFrames();
-      
-      //System.out.println("Checking index vals");
-      //System.out.println("maxes z c t = "+maxZ+" "+maxC+" "+maxT);
-      
-      // check that each image in the overall series has the correct iIndex value
-      int index = 0;
-      for (int t = 0; t < maxT; t++)
-        for (int c = 0; c < maxC; c++)
-          for (int z = 0; z < maxZ; z++)
-            assertEquals(index++, getIndexValue(ci,z,c,t,indexed));  // expected value from CZT order
-            //indexValuesTest(ci, z, c, t, indexed, 0, index++, z, c, t);
-      */
     }
     else  // expectedSizeC < 2 or > 7 - we should have gotten back a regular ImagePlus
     {
       assertFalse(imp.isComposite());
 
-      imagePlusLutTest(imp,indexed,falseColor);
+      imagePlusLutTest(imp,indexed,falseColor,DefaultColorOrder[0]);
     }
     
     stackInCztOrderTest(imp,sizeZ,expectedSizeC,sizeT,indexed,falseColor,channels,chanPerPlane);
@@ -1689,7 +1686,7 @@ public class ImporterTest {
     {
       assertFalse(imp.isComposite());
 
-      imagePlusLutTest(imp,indexed,falseColor);
+      imagePlusLutTest(imp,indexed,falseColor,DefaultColorOrder[0]);
     }
     
     stackInCztOrderTest(imp,sizeZ,expectedSizeC,sizeT,indexed,falseColor,channels,chanPerPlane);
@@ -1791,7 +1788,7 @@ public class ImporterTest {
     {
       assertFalse(imp.isComposite());
   
-      imagePlusLutTest(imp,indexed,falseColor);
+      imagePlusLutTest(imp,indexed,falseColor,DefaultColorOrder[0]);
     }
   
     stackInCztOrderTest(imp,sizeZ,expectedSizeC,sizeT,indexed,falseColor,channels,chanPerPlane);
@@ -1905,7 +1902,7 @@ public class ImporterTest {
     {
       assertFalse(imp.isComposite());
   
-      imagePlusLutTest(imp,indexed,falseColor);
+      imagePlusLutTest(imp,indexed,falseColor,CustomColorOrder[0]);
     }
   
     stackInCztOrderTest(imp,sizeZ,expectedSizeC,sizeT,indexed,falseColor,channels,chanPerPlane);
@@ -2503,19 +2500,22 @@ public class ImporterTest {
   @Test
   public void testColorComposite()
   {
-    for (boolean virtual : new boolean[]{false}) {  // TODO : fails when virtual is true
+    for (boolean virtual : new boolean[]{false}) {  // TODO : fails when virtual is true for numChannels < 2 or > 7
       
       // these here to simplify debugging
   
       // edge cases in number of channels nonindexed in one series
+      // TODO : next one fails when virtual true
       colorCompositeTester(virtual,FormatTools.UINT8,NotIndexed,1,1,RealColor,OneSeries);
       colorCompositeTester(virtual,FormatTools.UINT8,NotIndexed,2,2,RealColor,OneSeries);
       colorCompositeTester(virtual,FormatTools.UINT8,NotIndexed,7,7,RealColor,OneSeries);
+      // TODO : next one fails when virtual true
       colorCompositeTester(virtual,FormatTools.UINT8,NotIndexed,8,8,RealColor,OneSeries);
   
       // edge cases in number of channels nonindexed in one series
       colorCompositeTester(virtual,FormatTools.UINT8,NotIndexed,4,4,RealColor,OneSeries);
       colorCompositeTester(virtual,FormatTools.UINT8,NotIndexed,6,3,RealColor,OneSeries);
+      // TODO : next one fails when virtual true
       colorCompositeTester(virtual,FormatTools.UINT8,NotIndexed,12,3,RealColor,OneSeries);
   
       // edge case : standard 3 chan planar layout
@@ -2526,7 +2526,7 @@ public class ImporterTest {
       //colorCompositeTester(FormatTools.UINT8,Indexed,1,1,RealColor,OneSeries);
   
       // general test loop
-      int[] pixTypes = new int[] {FormatTools.UINT8};
+      int[] pixTypes = new int[] {FormatTools.UINT8,FormatTools.UINT16};
       int[] channels = new int[] {1,2,3,4,5,6,7,8,9};
       int[] series = new int[] {1,2,3,4};
       int[] channelsPerPlaneVals = new int[]{1,2,3};
