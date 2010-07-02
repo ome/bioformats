@@ -94,39 +94,42 @@ public class ImporterTest {
   
   private enum ChannelOrder {ZCT, ZTC, CZT, CTZ, TZC, TCZ};
   
-  private static final boolean[] BooleanStates = new boolean[] {false, true};
+  private static final boolean[] BOOLEAN_STATES = new boolean[] {false, true};
   
-  private static final int[] PixelTypes = new int[] {
+  private static final int[] PIXEL_TYPES = new int[] {
       FormatTools.FLOAT, FormatTools.DOUBLE,
       FormatTools.UINT8, FormatTools.UINT16, FormatTools.UINT32,
       FormatTools.INT8,  FormatTools.INT16,  FormatTools.INT32
       };
   
-  private static Color[] DefaultColorOrder =
+  private static Color[] DEFAULT_COLOR_ORDER =
     new Color[] {Color.RED, Color.GREEN, Color.BLUE, Color.WHITE, Color.CYAN, Color.MAGENTA, Color.YELLOW};
   
-  private static Color[] CustomColorOrder =
+  private static Color[] CUSTOM_COLOR_ORDER =
     new Color[] {Color.BLUE, Color.RED, Color.GREEN, Color.MAGENTA, Color.YELLOW, Color.CYAN, Color.WHITE};
 
-  private static final boolean NotIndexed = false;
-  private static final boolean Indexed = true;
+  private static final boolean NOT_INDEXED = false;
+  private static final boolean INDEXED = true;
 
-  private static final boolean FalseColor = true;
-  private static final boolean RealColor = false;
+  private static final boolean FALSE_COLOR = true;
+  private static final boolean REAL_COLOR = false;
   
-  private static final int OneSeries = 1;
+  private static final int ONE_SERIES = 1;
 
   private static final String[] FAKE_FILES;
   private static final String FAKE_PATTERN;
 
-  private static final int FakePlaneCount = 7;
-  private static final int FakeChannelCount = 3;
-  private static final int FakeTimepointCount = 5;
+  private static final int FAKE_PLANE_COUNT = 7;
+  private static final int FAKE_CHANNEL_COUNT = 3;
+  private static final int FAKE_TIMEPOINT_COUNT = 5;
+  private static final int FAKE_SIZE_X = 50;
+  private static final int FAKE_SIZE_Y = 50;
   
   static {
 
     //String template = "test_C%s_TP%s&sizeX=50&sizeY=20&sizeZ=7.fake";
-    String template = constructFakeFilename("test_C%s_TP%s", FormatTools.UINT8, 50, 20, FakePlaneCount, 1, 1, -1, false, -1, false, -1);
+    String template = constructFakeFilename("test_C%s_TP%s", FormatTools.UINT8, FAKE_SIZE_X, FAKE_SIZE_Y, FAKE_PLANE_COUNT, 1, 1,
+                        -1, false, -1, false, -1);
     
     FAKE_FILES = new String[] {
       String.format(template, "1", "1"),
@@ -764,7 +767,7 @@ public class ImporterTest {
           ImageProcessor proc = st.getProcessor(++slice);
           //printVals(proc);
           assertEquals(0,sIndex(proc));
-          assertEquals(z,iIndex(proc));  // TODO: is this correct? it passes but looks wrong.
+          assertEquals(z,iIndex(proc));
           assertEquals(z,zIndex(proc));
           assertEquals(0,cIndex(proc));
           assertEquals(0,tIndex(proc));
@@ -1172,8 +1175,10 @@ public class ImporterTest {
     }
     
     impsCountTest(imps,1);
+    
+    xyzctTest(imps[0], FAKE_SIZE_X, FAKE_SIZE_Y, FAKE_PLANE_COUNT, FAKE_CHANNEL_COUNT, FAKE_TIMEPOINT_COUNT);
   
-    groupedFilesTest(imps[0], FakePlaneCount, FakeChannelCount, FakeTimepointCount);
+    groupedFilesTest(imps[0], FAKE_PLANE_COUNT, FAKE_CHANNEL_COUNT, FAKE_TIMEPOINT_COUNT);
   }
   
   /** tests BF's options.setUngroupFiles() */
@@ -1487,7 +1492,7 @@ public class ImporterTest {
       if (chanPerPlane > 1)
       {
         expectedType = CompositeImage.COMPOSITE;
-        colorOrder = DefaultColorOrder;
+        colorOrder = DEFAULT_COLOR_ORDER;
       }
       else if (indexed && wantLutDefined) 
       {
@@ -1498,7 +1503,7 @@ public class ImporterTest {
       else
       {
         expectedType = CompositeImage.GRAYSCALE;
-        colorOrder = DefaultColorOrder;
+        colorOrder = DEFAULT_COLOR_ORDER;
       }
       
       assertEquals(expectedType, ci.getMode());
@@ -1508,7 +1513,7 @@ public class ImporterTest {
     {
       assertFalse(imp.isComposite());
 
-      imagePlusLutTest(imp,indexed,falseColor,DefaultColorOrder[0]);
+      imagePlusLutTest(imp,indexed,falseColor,DEFAULT_COLOR_ORDER[0]);
     }
     
     stackInCztOrderTest(imp,sizeZ,expectedSizeC,sizeT,indexed,falseColor,channels,chanPerPlane);
@@ -1568,70 +1573,20 @@ public class ImporterTest {
 
       assertEquals(CompositeImage.COMPOSITE, ci.getMode());
       
-      colorTests(ci,expectedSizeC,DefaultColorOrder);
+      colorTests(ci,expectedSizeC,DEFAULT_COLOR_ORDER);
     }
     else  // expectedSizeC < 2 or > 7 - we should have gotten back a regular ImagePlus
     {
       assertFalse(imp.isComposite());
 
-      imagePlusLutTest(imp,indexed,falseColor,DefaultColorOrder[0]);
+      imagePlusLutTest(imp,indexed,falseColor,DEFAULT_COLOR_ORDER[0]);
     }
     
     stackInCztOrderTest(imp,sizeZ,expectedSizeC,sizeT,indexed,falseColor,channels,chanPerPlane);
     
     // TODO : i've done no pixel testing
   }
-  
-  /* old code
-  private void colorColorizedTester()
-  {
-    // TODO: temp first attempt: sizeC == 1 and rgb matches
-    
-    int sizeX = 100, sizeY = 120, sizeZ = 1, sizeC = 1, sizeT = 1, rgb = 1;
-    boolean indexed = true, falseColor = false;
-    
-    String path = constructFakeFilename("colorColorized", FormatTools.UINT8, sizeX, sizeY, sizeZ, sizeC, sizeT, -1, indexed, rgb, false, -1);
-    
-    ImagePlus[] imps = null;
-    
-    try {
-      ImporterOptions options = new ImporterOptions();
-      options.setColorMode(ImporterOptions.COLOR_MODE_COLORIZED);
-      options.setId(path);
-      imps = BF.openImagePlus(options);
-    }
-    catch (IOException e) {
-      fail(e.getMessage());
-    }
-    catch (FormatException e) {
-      fail(e.getMessage());
-    }
 
-    impsCountTest(imps,1);
-    
-    ImagePlus imp = imps[0];
-    
-    int lutLen = 3;
-    
-    int expectedSizeC = effectiveC(sizeC, rgb, lutLen, indexed, falseColor);
-
-    xyzctTest(imp,sizeX,sizeY,sizeZ,expectedSizeC,sizeT);
-    
-    assertTrue(imp.isComposite());
-    
-    CompositeImage ci = (CompositeImage)imp;
-    
-    assertFalse(ci.hasCustomLuts());
-
-    assertEquals(CompositeImage.COLOR, ci.getMode());
-    
-    colorTests(ci,expectedSizeC,DefaultColorOrder);
-
-    fail("unfinished");
-  }
-   */
-
-  // NOTE - just copied from colorCompositeTester() and just changed mode test. Need to deepen tests here.
   /** tests BF's options.setColorMode(colorized) */
   private void colorColorizedTester(boolean virtual, int pixType, boolean indexed, int channels, int chanPerPlane,
                                     boolean falseColor, int numSeries)
@@ -1680,13 +1635,13 @@ public class ImporterTest {
 
       assertEquals(CompositeImage.COLOR, ci.getMode());
       
-      colorTests(ci,expectedSizeC,DefaultColorOrder);
+      colorTests(ci,expectedSizeC,DEFAULT_COLOR_ORDER);
     }
     else  // expectedSizeC < 2 or > 7 - we should have gotten back a regular ImagePlus
     {
       assertFalse(imp.isComposite());
 
-      imagePlusLutTest(imp,indexed,falseColor,DefaultColorOrder[0]);
+      imagePlusLutTest(imp,indexed,falseColor,DEFAULT_COLOR_ORDER[0]);
     }
     
     stackInCztOrderTest(imp,sizeZ,expectedSizeC,sizeT,indexed,falseColor,channels,chanPerPlane);
@@ -1694,47 +1649,6 @@ public class ImporterTest {
     // TODO : i've done no pixel testing
   }
 
-/*  old way
-  private void colorGrayscaleTester()
-  {
-    int sizeX = 100, sizeY = 120, sizeZ = 2, sizeC = 7, sizeT = 4;
-    
-    String path = constructFakeFilename("colorGrayscale", FormatTools.UINT8, sizeX, sizeY, sizeZ, sizeC, sizeT, -1, false, -1, false, -1);
-    
-    ImagePlus[] imps = null;
-    
-    try {
-      ImporterOptions options = new ImporterOptions();
-      options.setColorMode(ImporterOptions.COLOR_MODE_GRAYSCALE);
-      options.setId(path);
-      imps = BF.openImagePlus(options);
-    }
-    catch (IOException e) {
-      fail(e.getMessage());
-    }
-    catch (FormatException e) {
-      fail(e.getMessage());
-    }
-
-    impsCountTest(imps,1);
-    
-    ImagePlus imp = imps[0];
-    
-    xyzctTest(imp,sizeX,sizeY,sizeZ,sizeC,sizeT);
-    
-    assertTrue(imp.isComposite());
-    
-    CompositeImage ci = (CompositeImage)imp;
-    
-    assertFalse(ci.hasCustomLuts());
-
-    assertEquals(CompositeImage.GRAYSCALE, ci.getMode());
-
-    colorTests(ci,sizeC,DefaultColorOrder);
-
-    fail("unfinished");
-  }
-*/  
   /** tests BF's options.setColorMode(gray) */
   private void colorGrayscaleTester(boolean virtual, int pixType, boolean indexed, int channels, int chanPerPlane,
       boolean falseColor, int numSeries)
@@ -1782,13 +1696,13 @@ public class ImporterTest {
   
       assertEquals(CompositeImage.GRAYSCALE, ci.getMode());
   
-      colorTests(ci,expectedSizeC,DefaultColorOrder);
+      colorTests(ci,expectedSizeC,DEFAULT_COLOR_ORDER);
     }
     else  // expectedSizeC < 2 or > 7 - we should have gotten back a regular ImagePlus
     {
       assertFalse(imp.isComposite());
   
-      imagePlusLutTest(imp,indexed,falseColor,DefaultColorOrder[0]);
+      imagePlusLutTest(imp,indexed,falseColor,DEFAULT_COLOR_ORDER[0]);
     }
   
     stackInCztOrderTest(imp,sizeZ,expectedSizeC,sizeT,indexed,falseColor,channels,chanPerPlane);
@@ -1796,55 +1710,6 @@ public class ImporterTest {
     // TODO : i've done no pixel testing
   }
 
-  /* old way
-  private void colorCustomTester(int pixType, int sizeX, int sizeY, int sizeZ, int sizeC, int sizeT, int numSeries)
-  {
-    // reportedly works in BF for 2<=sizeC<=7 and also numSeries*sizeC*3 <= 25
-    
-    assertTrue(sizeC >= 2);
-    assertTrue(sizeC <= 7);
-    //assertTrue(numSeries*sizeC*3 <= 25);  // slider limit in IJ
-    
-    String path = constructFakeFilename("colorCustom", pixType, sizeX, sizeY, sizeZ, sizeC, sizeT, numSeries, false, -1, false, -1);
-    
-    ImagePlus[] imps = null;
-    
-    try {
-      ImporterOptions options = new ImporterOptions();
-      options.setColorMode(ImporterOptions.COLOR_MODE_CUSTOM);
-      for (int s = 0; s < numSeries; s++)
-        for (int c = 0; c < sizeC; c++)
-          options.setCustomColor(s, c, CustomColorOrder[c]);
-      options.setId(path);
-      imps = BF.openImagePlus(options);
-    }
-    catch (IOException e) {
-      fail(e.getMessage());
-    }
-    catch (FormatException e) {
-      fail(e.getMessage());
-    }
-
-    // TODO - notice numSeries passed in but never tested against
-    
-    impsCountTest(imps,1);
-    
-    ImagePlus imp = imps[0];
-    
-    xyzctTest(imp,sizeX,sizeY,sizeZ,sizeC,sizeT);
-    
-    assertTrue(imp.isComposite());
-    
-    CompositeImage ci = (CompositeImage)imp;
-    
-    assertFalse(ci.hasCustomLuts());
-
-    assertEquals(CompositeImage.COLOR, ci.getMode());
-
-    colorTests(ci,sizeC,CustomColorOrder);
-  }
-  */
-  
   /** tests BF's options.setColorMode(custom) */
   private void colorCustomTester(boolean virtual, int pixType, boolean indexed, int channels, int chanPerPlane,
       boolean falseColor, int numSeries)
@@ -1865,7 +1730,7 @@ public class ImporterTest {
       int maxChannels = (channels <= 7) ? channels : 7;
       for (int s = 0; s < numSeries; s++)
         for (int c = 0; c < maxChannels; c++)
-          options.setCustomColor(s, c, CustomColorOrder[c]);
+          options.setCustomColor(s, c, CUSTOM_COLOR_ORDER[c]);
       options.setId(path);
       imps = BF.openImagePlus(options);
     }
@@ -1896,13 +1761,13 @@ public class ImporterTest {
   
       assertEquals(CompositeImage.COLOR, ci.getMode());
   
-      colorTests(ci,expectedSizeC,CustomColorOrder);
+      colorTests(ci,expectedSizeC,CUSTOM_COLOR_ORDER);
     }
     else  // expectedSizeC < 2 or > 7 - we should have gotten back a regular ImagePlus
     {
       assertFalse(imp.isComposite());
   
-      imagePlusLutTest(imp,indexed,falseColor,CustomColorOrder[0]);
+      imagePlusLutTest(imp,indexed,falseColor,CUSTOM_COLOR_ORDER[0]);
     }
   
     stackInCztOrderTest(imp,sizeZ,expectedSizeC,sizeT,indexed,falseColor,channels,chanPerPlane);
@@ -2379,7 +2244,7 @@ public class ImporterTest {
 
     assertEquals(CompositeImage.COMPOSITE, ci.getMode());
     
-    colorTests(ci,sizeC,DefaultColorOrder);
+    colorTests(ci,sizeC,DEFAULT_COLOR_ORDER);
       
     stackInZctOrderTest(imp,sizeZ,sizeC,sizeT,indexed,falseColor);
     
@@ -2405,21 +2270,21 @@ public class ImporterTest {
   public void testOutputStackOrder()
   {
     for (ChannelOrder order : ChannelOrder.values())
-      for (boolean virtual : BooleanStates)
+      for (boolean virtual : BOOLEAN_STATES)
         outputStackOrderTester(virtual,FormatTools.UINT8, order,  82, 47, 2, 3, 4);
   }
 
   @Test
   public void testDatasetGroupFiles()
   {
-    for (boolean virtual : BooleanStates)
+    for (boolean virtual : BOOLEAN_STATES)
       datasetGroupFilesTester(virtual);
   }
 
   @Test
   public void testDatasetOpenFilesIndividually()
   {
-    for (boolean virtual : BooleanStates)
+    for (boolean virtual : BOOLEAN_STATES)
       datsetOpenFilesIndividuallyTester(virtual);
   }
   
@@ -2429,7 +2294,7 @@ public class ImporterTest {
     // TODO: testing only swapping Z&T of XYZTC. Add more option testing.
     //   Note that testComboManyOptions() tests another swap order
 
-    for (boolean virtual : BooleanStates)
+    for (boolean virtual : BOOLEAN_STATES)
     {
       datasetSwapDimsTester(virtual,FormatTools.UINT8, 82, 47, 1, 3);
       datasetSwapDimsTester(virtual,FormatTools.UINT16, 82, 47, 3, 1);
@@ -2446,8 +2311,8 @@ public class ImporterTest {
   @Test
   public void testDatasetOpenAllSeries()
   {
-    for (boolean virtual : BooleanStates) {
-      for (boolean openAll : BooleanStates) {
+    for (boolean virtual : BOOLEAN_STATES) {
+      for (boolean openAll : BOOLEAN_STATES) {
         datasetOpenAllSeriesTester(virtual,openAll);
         datasetOpenAllSeriesTester(virtual,openAll);
       }
@@ -2471,26 +2336,26 @@ public class ImporterTest {
   public void testColorDefault()
   {
     for (boolean virtual : new boolean[]{false}) { // TODO : broekn for virtual - reenable
-      for (boolean defineLutEntry : BooleanStates) {
+      for (boolean defineLutEntry : BOOLEAN_STATES) {
       // these here to simplify debugging
   
         // edge cases in number of channels nonindexed in one series
-        colorDefaultTester(virtual,FormatTools.UINT8,NotIndexed,1,1,RealColor,OneSeries,defineLutEntry);
-        colorDefaultTester(virtual,FormatTools.UINT8,NotIndexed,2,2,RealColor,OneSeries,defineLutEntry);
-        colorDefaultTester(virtual,FormatTools.UINT8,NotIndexed,7,7,RealColor,OneSeries,defineLutEntry);
-        colorDefaultTester(virtual,FormatTools.UINT8,NotIndexed,8,8,RealColor,OneSeries,defineLutEntry);
+        colorDefaultTester(virtual,FormatTools.UINT8,NOT_INDEXED,1,1,REAL_COLOR,ONE_SERIES,defineLutEntry);
+        colorDefaultTester(virtual,FormatTools.UINT8,NOT_INDEXED,2,2,REAL_COLOR,ONE_SERIES,defineLutEntry);
+        colorDefaultTester(virtual,FormatTools.UINT8,NOT_INDEXED,7,7,REAL_COLOR,ONE_SERIES,defineLutEntry);
+        colorDefaultTester(virtual,FormatTools.UINT8,NOT_INDEXED,8,8,REAL_COLOR,ONE_SERIES,defineLutEntry);
     
         // edge cases in number of channels nonindexed in one series
-        colorDefaultTester(virtual,FormatTools.UINT8,NotIndexed,4,4,RealColor,OneSeries,defineLutEntry);
-        colorDefaultTester(virtual,FormatTools.UINT8,NotIndexed,6,3,RealColor,OneSeries,defineLutEntry);
-        colorDefaultTester(virtual,FormatTools.UINT8,NotIndexed,12,3,RealColor,OneSeries,defineLutEntry);
+        colorDefaultTester(virtual,FormatTools.UINT8,NOT_INDEXED,4,4,REAL_COLOR,ONE_SERIES,defineLutEntry);
+        colorDefaultTester(virtual,FormatTools.UINT8,NOT_INDEXED,6,3,REAL_COLOR,ONE_SERIES,defineLutEntry);
+        colorDefaultTester(virtual,FormatTools.UINT8,NOT_INDEXED,12,3,REAL_COLOR,ONE_SERIES,defineLutEntry);
     
         // edge case : standard 3 chan planar layout
-        colorDefaultTester(virtual,FormatTools.UINT8,NotIndexed,3,1,RealColor,OneSeries,defineLutEntry);
+        colorDefaultTester(virtual,FormatTools.UINT8,NOT_INDEXED,3,1,REAL_COLOR,ONE_SERIES,defineLutEntry);
     
         // edge case 1 channel indexed
         // TODO - this one fails. Actual czt vals back from code are all zeroes 2/3 of the time (1 chan goes to 3)
-        //colorDefaultTester(virtual,FormatTools.UINT8,Indexed,1,1,RealColor,OneSeries,defineLutEntry);
+        //colorDefaultTester(virtual,FormatTools.UINT8,INDEXED,1,1,REAL_COLOR,ONE_SERIES,defineLutEntry);
       }
     }
   }
@@ -2506,24 +2371,24 @@ public class ImporterTest {
   
       // edge cases in number of channels nonindexed in one series
       // TODO : next one fails when virtual true
-      colorCompositeTester(virtual,FormatTools.UINT8,NotIndexed,1,1,RealColor,OneSeries);
-      colorCompositeTester(virtual,FormatTools.UINT8,NotIndexed,2,2,RealColor,OneSeries);
-      colorCompositeTester(virtual,FormatTools.UINT8,NotIndexed,7,7,RealColor,OneSeries);
+      colorCompositeTester(virtual,FormatTools.UINT8,NOT_INDEXED,1,1,REAL_COLOR,ONE_SERIES);
+      colorCompositeTester(virtual,FormatTools.UINT8,NOT_INDEXED,2,2,REAL_COLOR,ONE_SERIES);
+      colorCompositeTester(virtual,FormatTools.UINT8,NOT_INDEXED,7,7,REAL_COLOR,ONE_SERIES);
       // TODO : next one fails when virtual true
-      colorCompositeTester(virtual,FormatTools.UINT8,NotIndexed,8,8,RealColor,OneSeries);
+      colorCompositeTester(virtual,FormatTools.UINT8,NOT_INDEXED,8,8,REAL_COLOR,ONE_SERIES);
   
       // edge cases in number of channels nonindexed in one series
-      colorCompositeTester(virtual,FormatTools.UINT8,NotIndexed,4,4,RealColor,OneSeries);
-      colorCompositeTester(virtual,FormatTools.UINT8,NotIndexed,6,3,RealColor,OneSeries);
+      colorCompositeTester(virtual,FormatTools.UINT8,NOT_INDEXED,4,4,REAL_COLOR,ONE_SERIES);
+      colorCompositeTester(virtual,FormatTools.UINT8,NOT_INDEXED,6,3,REAL_COLOR,ONE_SERIES);
       // TODO : next one fails when virtual true
-      colorCompositeTester(virtual,FormatTools.UINT8,NotIndexed,12,3,RealColor,OneSeries);
+      colorCompositeTester(virtual,FormatTools.UINT8,NOT_INDEXED,12,3,REAL_COLOR,ONE_SERIES);
   
       // edge case : standard 3 chan planar layout
-      colorCompositeTester(virtual,FormatTools.UINT8,NotIndexed,3,1,RealColor,OneSeries);
+      colorCompositeTester(virtual,FormatTools.UINT8,NOT_INDEXED,3,1,REAL_COLOR,ONE_SERIES);
   
       // edge case 1 channel indexed
       // TODO - this one fails. Actual czt vals back from code are all zeroes 2/3 of the time (1 chan goes to 3)
-      //colorCompositeTester(FormatTools.UINT8,Indexed,1,1,RealColor,OneSeries);
+      //colorCompositeTester(FormatTools.UINT8,INDEXED,1,1,REAL_COLOR,ONE_SERIES);
   
       // general test loop
       int[] pixTypes = new int[] {FormatTools.UINT8,FormatTools.UINT16};
@@ -2535,8 +2400,8 @@ public class ImporterTest {
         for (int chanCount : channels) {
           for (int numSeries : series) {
             for (int channelsPerPlane : channelsPerPlaneVals) {
-              for (boolean indexed : new boolean[]{false}) {  // TODO - indexed not test right now : replace with BooleanStates
-                for (boolean falseColor : BooleanStates) {
+              for (boolean indexed : new boolean[]{false}) {  // TODO - indexed not test right now : replace with BOOLEAN_STATES
+                for (boolean falseColor : BOOLEAN_STATES) {
   
                   //System.out.println(" format "+pixFormat+"indexed "+indexed+" rgb "+rgb+" fasleColor "+falseColor+" c "+c+" s "+s);
                   
@@ -2572,22 +2437,22 @@ public class ImporterTest {
       // these here to simplify debugging
   
       // edge cases in number of channels nonindexed in one series
-      colorColorizedTester(virtual,FormatTools.UINT8,NotIndexed,1,1,RealColor,OneSeries);
-      colorColorizedTester(virtual,FormatTools.UINT8,NotIndexed,2,2,RealColor,OneSeries);
-      colorColorizedTester(virtual,FormatTools.UINT8,NotIndexed,7,7,RealColor,OneSeries);
-      colorColorizedTester(virtual,FormatTools.UINT8,NotIndexed,8,8,RealColor,OneSeries);
+      colorColorizedTester(virtual,FormatTools.UINT8,NOT_INDEXED,1,1,REAL_COLOR,ONE_SERIES);
+      colorColorizedTester(virtual,FormatTools.UINT8,NOT_INDEXED,2,2,REAL_COLOR,ONE_SERIES);
+      colorColorizedTester(virtual,FormatTools.UINT8,NOT_INDEXED,7,7,REAL_COLOR,ONE_SERIES);
+      colorColorizedTester(virtual,FormatTools.UINT8,NOT_INDEXED,8,8,REAL_COLOR,ONE_SERIES);
   
       // edge cases in number of channels nonindexed in one series
-      colorColorizedTester(virtual,FormatTools.UINT8,NotIndexed,4,4,RealColor,OneSeries);
-      colorColorizedTester(virtual,FormatTools.UINT8,NotIndexed,6,3,RealColor,OneSeries);
-      colorColorizedTester(virtual,FormatTools.UINT8,NotIndexed,12,3,RealColor,OneSeries);
+      colorColorizedTester(virtual,FormatTools.UINT8,NOT_INDEXED,4,4,REAL_COLOR,ONE_SERIES);
+      colorColorizedTester(virtual,FormatTools.UINT8,NOT_INDEXED,6,3,REAL_COLOR,ONE_SERIES);
+      colorColorizedTester(virtual,FormatTools.UINT8,NOT_INDEXED,12,3,REAL_COLOR,ONE_SERIES);
   
       // edge case : standard 3 chan planar layout
-      colorColorizedTester(virtual,FormatTools.UINT8,NotIndexed,3,1,RealColor,OneSeries);
+      colorColorizedTester(virtual,FormatTools.UINT8,NOT_INDEXED,3,1,REAL_COLOR,ONE_SERIES);
   
       // edge case 1 channel indexed
       // TODO - this one fails. Actual czt vals back from code are all zeroes 2/3 of the time (1 chan goes to 3)
-      //colorColorizedTester(FormatTools.UINT8,Indexed,1,1,RealColor,OneSeries);
+      //colorColorizedTester(FormatTools.UINT8,INDEXED,1,1,REAL_COLOR,ONE_SERIES);
     }
   }
   
@@ -2600,22 +2465,22 @@ public class ImporterTest {
       // these here to simplify debugging
   
       // edge cases in number of channels nonindexed in one series
-      colorGrayscaleTester(virtual,FormatTools.UINT8,NotIndexed,1,1,RealColor,OneSeries);
-      colorGrayscaleTester(virtual,FormatTools.UINT8,NotIndexed,2,2,RealColor,OneSeries);
-      colorGrayscaleTester(virtual,FormatTools.UINT8,NotIndexed,7,7,RealColor,OneSeries);
-      colorGrayscaleTester(virtual,FormatTools.UINT8,NotIndexed,8,8,RealColor,OneSeries);
+      colorGrayscaleTester(virtual,FormatTools.UINT8,NOT_INDEXED,1,1,REAL_COLOR,ONE_SERIES);
+      colorGrayscaleTester(virtual,FormatTools.UINT8,NOT_INDEXED,2,2,REAL_COLOR,ONE_SERIES);
+      colorGrayscaleTester(virtual,FormatTools.UINT8,NOT_INDEXED,7,7,REAL_COLOR,ONE_SERIES);
+      colorGrayscaleTester(virtual,FormatTools.UINT8,NOT_INDEXED,8,8,REAL_COLOR,ONE_SERIES);
   
       // edge cases in number of channels nonindexed in one series
-      colorGrayscaleTester(virtual,FormatTools.UINT8,NotIndexed,4,4,RealColor,OneSeries);
-      colorGrayscaleTester(virtual,FormatTools.UINT8,NotIndexed,6,3,RealColor,OneSeries);
-      colorGrayscaleTester(virtual,FormatTools.UINT8,NotIndexed,12,3,RealColor,OneSeries);
+      colorGrayscaleTester(virtual,FormatTools.UINT8,NOT_INDEXED,4,4,REAL_COLOR,ONE_SERIES);
+      colorGrayscaleTester(virtual,FormatTools.UINT8,NOT_INDEXED,6,3,REAL_COLOR,ONE_SERIES);
+      colorGrayscaleTester(virtual,FormatTools.UINT8,NOT_INDEXED,12,3,REAL_COLOR,ONE_SERIES);
   
       // edge case : standard 3 chan planar layout
-      colorGrayscaleTester(virtual,FormatTools.UINT8,NotIndexed,3,1,RealColor,OneSeries);
+      colorGrayscaleTester(virtual,FormatTools.UINT8,NOT_INDEXED,3,1,REAL_COLOR,ONE_SERIES);
   
       // edge case 1 channel indexed
       // TODO - this one fails. Actual czt vals back from code are all zeroes 2/3 of the time (1 chan goes to 3)
-      //colorGrayscaleTester(FormatTools.UINT8,Indexed,1,1,RealColor,OneSeries);
+      //colorGrayscaleTester(FormatTools.UINT8,INDEXED,1,1,REAL_COLOR,ONE_SERIES);
     }
   }
   
@@ -2628,22 +2493,22 @@ public class ImporterTest {
       // these here to simplify debugging
   
       // edge cases in number of channels nonindexed in one series
-      colorCustomTester(virtual,FormatTools.UINT8,NotIndexed,1,1,RealColor,OneSeries);
-      colorCustomTester(virtual,FormatTools.UINT8,NotIndexed,2,2,RealColor,OneSeries);
-      colorCustomTester(virtual,FormatTools.UINT8,NotIndexed,7,7,RealColor,OneSeries);
-      colorCustomTester(virtual,FormatTools.UINT8,NotIndexed,8,8,RealColor,OneSeries);
+      colorCustomTester(virtual,FormatTools.UINT8,NOT_INDEXED,1,1,REAL_COLOR,ONE_SERIES);
+      colorCustomTester(virtual,FormatTools.UINT8,NOT_INDEXED,2,2,REAL_COLOR,ONE_SERIES);
+      colorCustomTester(virtual,FormatTools.UINT8,NOT_INDEXED,7,7,REAL_COLOR,ONE_SERIES);
+      colorCustomTester(virtual,FormatTools.UINT8,NOT_INDEXED,8,8,REAL_COLOR,ONE_SERIES);
   
       // edge cases in number of channels nonindexed in one series
-      colorCustomTester(virtual,FormatTools.UINT8,NotIndexed,4,4,RealColor,OneSeries);
-      colorCustomTester(virtual,FormatTools.UINT8,NotIndexed,6,3,RealColor,OneSeries);
-      colorCustomTester(virtual,FormatTools.UINT8,NotIndexed,12,3,RealColor,OneSeries);
+      colorCustomTester(virtual,FormatTools.UINT8,NOT_INDEXED,4,4,REAL_COLOR,ONE_SERIES);
+      colorCustomTester(virtual,FormatTools.UINT8,NOT_INDEXED,6,3,REAL_COLOR,ONE_SERIES);
+      colorCustomTester(virtual,FormatTools.UINT8,NOT_INDEXED,12,3,REAL_COLOR,ONE_SERIES);
   
       // edge case : standard 3 chan planar layout
-      colorCustomTester(virtual,FormatTools.UINT8,NotIndexed,3,1,RealColor,OneSeries);
+      colorCustomTester(virtual,FormatTools.UINT8,NOT_INDEXED,3,1,REAL_COLOR,ONE_SERIES);
   
       // edge case 1 channel indexed
       // TODO - this one fails. Actual czt vals back from code are all zeroes 2/3 of the time (1 chan goes to 3)
-      //colorCustomTester(FormatTools.UINT8,Indexed,1,1,RealColor,OneSeries);
+      //colorCustomTester(FormatTools.UINT8,INDEXED,1,1,REAL_COLOR,ONE_SERIES);
     }
 
     /* old way    
@@ -2675,8 +2540,8 @@ public class ImporterTest {
   {
     // note - can't autoscale a virtualStack. No need to test it.
     
-    for (int pixType : PixelTypes) {
-      for (boolean autoscale : BooleanStates) {
+    for (int pixType : PIXEL_TYPES) {
+      for (boolean autoscale : BOOLEAN_STATES) {
         //System.out.println("testColorAutoscale(): pixType = "+FormatTools.getPixelTypeString(pixType)+" autoscale = "+autoscale);
         autoscaleTester(pixType,autoscale);
       }
@@ -2686,7 +2551,7 @@ public class ImporterTest {
   @Test
   public void testMemoryVirtualStack()
   {
-    for (boolean virtual : BooleanStates)
+    for (boolean virtual : BOOLEAN_STATES)
       memoryVirtualStackTester(virtual);
   }
 
@@ -2697,7 +2562,7 @@ public class ImporterTest {
   {
     // recordMemory has virtual always set to true. no need to do any other virtual testing
     
-    for (boolean rememberChanges : BooleanStates)
+    for (boolean rememberChanges : BOOLEAN_STATES)
       memoryRecordModificationsTester(rememberChanges);
   }
 */
@@ -2935,7 +2800,7 @@ public class ImporterTest {
     comboCropAndAutoscaleTester(FormatTools.UINT8,240,240,4,3,2,51,15,13);
     
     // try various pixTypes
-    for (int pixType : PixelTypes)
+    for (int pixType : PIXEL_TYPES)
       comboCropAndAutoscaleTester(pixType,240,240,2,2,2,225,225,10);
   }
   
@@ -3103,7 +2968,7 @@ public class ImporterTest {
     
       // TODO - falseColor stuff needs to be impl
       if (!falseColor)
-        colorTests(ci,expectedSizeC,DefaultColorOrder);
+        colorTests(ci,expectedSizeC,DEFAULT_COLOR_ORDER);
       
     }
     else
@@ -3133,32 +2998,32 @@ public class ImporterTest {
     
     // sizeC == 1, rgb == 1, indexed, 8 bit, implicit lut length of 3 - KEY test to do, also note can vary lut len
     System.out.println("1/1 indexed");
-    colorizeSubcaseTester(FormatTools.UINT8,1,1,Indexed,RealColor,-1);
+    colorizeSubcaseTester(FormatTools.UINT8,1,1,INDEXED,REAL_COLOR,-1);
     System.out.println("1/1 indexed falseColor");
-    colorizeSubcaseTester(FormatTools.UINT8,1,1,Indexed,FalseColor,-1);
+    colorizeSubcaseTester(FormatTools.UINT8,1,1,INDEXED,FALSE_COLOR,-1);
     System.out.println("1/1/indexed lutLen==2");
-    colorizeSubcaseTester(FormatTools.UINT8,1,1,Indexed,RealColor,2);
+    colorizeSubcaseTester(FormatTools.UINT8,1,1,INDEXED,REAL_COLOR,2);
     
     // sizeC == 1, rgb == 1, indexed, 16 bit, implicit lut length of 3 - 2nd important test to do, also note can vary lut len
     System.out.println("1/1 indexed (16-bit)");
-    colorizeSubcaseTester(FormatTools.UINT16,1,1,Indexed,RealColor,-1);
+    colorizeSubcaseTester(FormatTools.UINT16,1,1,INDEXED,REAL_COLOR,-1);
     System.out.println("1/1 indexed (16-bit) falseColor");
-    colorizeSubcaseTester(FormatTools.UINT16,1,1,Indexed,FalseColor,-1);
+    colorizeSubcaseTester(FormatTools.UINT16,1,1,INDEXED,FALSE_COLOR,-1);
     System.out.println("1/1/indexed (16-bit) lutLen==2");
-    colorizeSubcaseTester(FormatTools.UINT16,1,1,Indexed,RealColor,2);
+    colorizeSubcaseTester(FormatTools.UINT16,1,1,INDEXED,REAL_COLOR,2);
 
     // sizeC = 3 and rgb = 1
     System.out.println("3/1 indexed");
-    colorizeSubcaseTester(FormatTools.UINT8,3,1,Indexed,RealColor,-1);
+    colorizeSubcaseTester(FormatTools.UINT8,3,1,INDEXED,REAL_COLOR,-1);
     System.out.println("3/1 indexed falseColor");
-    colorizeSubcaseTester(FormatTools.UINT8,3,1,Indexed,FalseColor,-1);                            // TODO - might be working
+    colorizeSubcaseTester(FormatTools.UINT8,3,1,INDEXED,FALSE_COLOR,-1);                            // TODO - might be working
 
     // sizeC = 3 and rgb = 3 : interleaved
     System.out.println("3/3 indexed");
-    colorizeSubcaseTester(FormatTools.UINT8,3,3,Indexed,RealColor,-1);
+    colorizeSubcaseTester(FormatTools.UINT8,3,3,INDEXED,REAL_COLOR,-1);
     // TODO - enable this failing test
     //System.out.println("3/3 indexed falseColor");
-    //colorizeSubcaseTester(FormatTools.UINT8,3,3,Indexed,FalseColor,-1);
+    //colorizeSubcaseTester(FormatTools.UINT8,3,3,INDEXED,FALSE_COLOR,-1);
 
     // NOT INDEXED
     
@@ -3168,16 +3033,16 @@ public class ImporterTest {
     // sizeC = 4 and rgb = 4 : interleaved including alpha
     // if indexed == true this combo throws exception in CompositeImage constructor
     System.out.println("4/4 nonindexed");                                                // TODO - might be working
-    colorizeSubcaseTester(FormatTools.UINT8,4,4,NotIndexed,RealColor,-1);
+    colorizeSubcaseTester(FormatTools.UINT8,4,4,NOT_INDEXED,REAL_COLOR,-1);
 
     // sizeC = 6, rgb = 3, indexed = false
     // if indexed == true this combo throws exception in CompositeImage constructor
     System.out.println("6/3 nonindexed");
-    colorizeSubcaseTester(FormatTools.UINT8,6,3,NotIndexed,RealColor,-1);
+    colorizeSubcaseTester(FormatTools.UINT8,6,3,NOT_INDEXED,REAL_COLOR,-1);
    
     // sizeC = 12, rgb = 3, indexed = false
     System.out.println("12/3 nonindexed");
-    colorizeSubcaseTester(FormatTools.UINT8,12,3,NotIndexed,RealColor,-1);
+    colorizeSubcaseTester(FormatTools.UINT8,12,3,NOT_INDEXED,REAL_COLOR,-1);
 
     System.out.println("testColorizeSubcases() - past special cases");
 
@@ -3186,8 +3051,8 @@ public class ImporterTest {
       for (int rgb : new int[] {1,2,3,4})
         if (sizeC % rgb == 0)
           for (int pixType : new int[] {FormatTools.UINT8}) // TODO - add later FormatTools.UINT16
-            for (boolean indexed : BooleanStates)
-              for (boolean falseColor : BooleanStates)
+            for (boolean indexed : BOOLEAN_STATES)
+              for (boolean falseColor : BOOLEAN_STATES)
               {
                 if (!indexed && falseColor)  // if !indexed make sure falseColor is false to avoid illegal combo
                   continue;
@@ -3205,7 +3070,7 @@ public class ImporterTest {
   public void testCompositeSubcases()
   {
     // TODO - handle more cases with falseColor, rgb, etc.
-    for (boolean indexed : BooleanStates)
+    for (boolean indexed : BOOLEAN_STATES)
       for (int channels = 2; channels <= 7; channels++)
         if (!indexed)  // TODO - remove this limitation when BF updated
           compositeSubcaseTester(channels,indexed);
