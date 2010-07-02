@@ -844,14 +844,11 @@ public class MIASReader extends FormatReader {
     store.setROIID(roiID, roi);
     store.setImageROIRef(roiID, series, roi);
 
-    store.setTextTheT(new NonNegativeInteger(tv), roi, 0);
-    store.setTextTheZ(new NonNegativeInteger(zv), roi, 0);
-    store.setTextValue(data[columns.indexOf("Label")], roi, 0);
-
-    store.setEllipseTheT(new NonNegativeInteger(tv), roi, 1);
-    store.setEllipseTheZ(new NonNegativeInteger(zv), roi, 1);
-    store.setEllipseX(new Double(data[columns.indexOf("Col")]), roi, 1);
-    store.setEllipseY(new Double(data[columns.indexOf("Row")]), roi, 1);
+    store.setEllipseTheT(new NonNegativeInteger(tv), roi, 0);
+    store.setEllipseTheZ(new NonNegativeInteger(zv), roi, 0);
+    store.setEllipseX(new Double(data[columns.indexOf("Col")]), roi, 0);
+    store.setEllipseY(new Double(data[columns.indexOf("Row")]), roi, 0);
+    store.setEllipseLabel(data[columns.indexOf("Label")], roi, 0);
 
     double diam = Double.parseDouble(data[columns.indexOf("Cell Diam.")]);
     double radius = diam / 2;
