@@ -40,8 +40,14 @@ import loci.plugins.in.ImporterOptions;
 //     rid of ImagePlusLutTest().
 //   the color test methods seem to fail for indexed data (my issue - need to fix indexValuesTest for special cases)
 //     the special case is 1/1/indexed w/lutLen=3. 2/3's of values are all 0. This is correct behavior.
+//   special note: the colorDefault code has a COLOR case (indexed and wantLutDefined both true) that is not correct.
+//     In fact in the whole method need better case logic to create the three possible modes and then test for them.
+//     I cannot get BF to set hasChannelLut true so far and this kills the COLOR mode. Also with indexed I've gotten
+//     back COMPOSITE when expecting GRAYSCALE (or vice versa, I don't remember at the moment) because I have no test
+//     that matches the channelFiller.isFilled() case in BF.
 //   the color test methods seem to fail for virtual=true (no longer seems to be case - something Curtis fixed?)
 //   datasetSwapDims has ugly workaround to handle bad signed data / virtual flag interaction. Need BF fix.
+//     (Curtis may have fixed. Existing code hacked to work until I know more.)
 //   many test methods are only UINT8
 //   expand compositeTestSubcases() to handle more pixTypes and indexed data
 //   implement more combo tests
@@ -433,6 +439,9 @@ public class ImporterTest {
     //System.out.println("  getting color table from a regular ImagePlus.");
     
     IndexColorModel icm = (IndexColorModel)imp.getProcessor().getColorModel();
+    
+    // TODO - maybe I can cast from IndexColorModel to LUT here - depends what IJ did.
+    // otherwise make a LUT
     
     byte[] reds = new byte[256], greens = new byte[256], blues = new byte[256];
     
