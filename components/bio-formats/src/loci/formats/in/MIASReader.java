@@ -979,6 +979,7 @@ public class MIASReader extends FormatReader {
 
         int color = 0xff000000 | (0xff << (8 * (2 - i)));
         store.setMaskStroke(color, roi + nOverlays, 0);
+        store.setMaskFill(color, roi + nOverlays, 0);
         store.setImageROIRef(roiId, series, roi + nOverlays);
         nOverlays++;
       }
