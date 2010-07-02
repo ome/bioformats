@@ -48,19 +48,19 @@ include(jace/Prerequisites.cmake)
 
 add_subdirectory(jace)
 
-message(STATUS "-- Jace:")
-set(JACE_DIR NOTFOUND CACHE PATH
-  "The path to toplevel directory of your Jace checkout")
-if(IS_DIRECTORY "${JACE_DIR}")
-  message(STATUS "jace root     : ${JACE_DIR}")
-else(IS_DIRECTORY "${JACE_DIR}")
-  message(FATAL_ERROR "Cannot build without Jace. Please set JACE_DIR.")
-endif(IS_DIRECTORY "${JACE_DIR}")
+#message(STATUS "-- Jace:")
+#set(JACE_DIR NOTFOUND CACHE PATH
+#  "The path to toplevel directory of your Jace checkout")
+#if(IS_DIRECTORY "${JACE_DIR}")
+#  message(STATUS "jace root     : ${JACE_DIR}")
+#else(IS_DIRECTORY "${JACE_DIR}")
+#  message(FATAL_ERROR "Cannot build without Jace. Please set JACE_DIR.")
+#endif(IS_DIRECTORY "${JACE_DIR}")
 
 ### build Bio-Formats C++ bindings ###
 
 include_directories(include
-  "proxies/include" "${JACE_DIR}/core/cpp/include"
+  "proxies/include" "${JACE_CPP_DIR}/include"
   "${JAVA_INCLUDE_PATH}" "${JAVA_INCLUDE_PATH2}" "${Boost_INCLUDE_DIR}")
 
 #message("-- Bio-Formats C++ bindings:")

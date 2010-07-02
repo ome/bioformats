@@ -33,19 +33,20 @@ include(Prerequisites.cmake)
 
 ### build Jace C++ library ###
 
-message(STATUS "-- Jace:")
-set(JACE_DIR NOTFOUND CACHE PATH "The path to toplevel directory of your Jace checkout")
-if(IS_DIRECTORY "${JACE_DIR}")
-  message(STATUS "jace root     : ${JACE_DIR}")
-else(IS_DIRECTORY "${JACE_DIR}")
-  message(FATAL_ERROR "Cannot build without Jace. Please set JACE_DIR.")
-endif(IS_DIRECTORY "${JACE_DIR}")
+#message(STATUS "-- Jace:")
+#set(JACE_DIR NOTFOUND CACHE PATH
+#  "The path to toplevel directory of your Jace checkout")
+#if(IS_DIRECTORY "${JACE_DIR}")
+#  message(STATUS "jace root     : ${JACE_DIR}")
+#else(IS_DIRECTORY "${JACE_DIR}")
+#  message(FATAL_ERROR "Cannot build without Jace. Please set JACE_DIR.")
+#endif(IS_DIRECTORY "${JACE_DIR}")
 
-include_directories("${JACE_DIR}/core/cpp/include"
+include_directories("${JACE_CPP_DIR}/include"
   "${JAVA_INCLUDE_PATH}" "${JAVA_INCLUDE_PATH2}"
   "${Boost_INCLUDE_DIR}")
 
-file(GLOB_RECURSE JACE_SRC "${JACE_DIR}/core/cpp/source/*.cpp")
+file(GLOB_RECURSE JACE_SRC "${JACE_CPP_DIR}/source/*.cpp")
 #message("jace source   : ${JACE_SRC}")
 message(STATUS "")
 

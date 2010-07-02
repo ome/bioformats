@@ -86,3 +86,17 @@ message(STATUS "")
 if(WIN32)
   link_directories(${Boost_STRIPPED_LIB_DIR})
 endif(WIN32)
+
+message(STATUS "-- Jace:")
+set(JACE_DIR NOTFOUND CACHE PATH
+  "The path to toplevel directory of your Jace checkout")
+if(IS_DIRECTORY "${JACE_DIR}")
+  message(STATUS "jace root     : ${JACE_DIR}")
+else(IS_DIRECTORY "${JACE_DIR}")
+  message(FATAL_ERROR "Cannot build without Jace. Please set JACE_DIR.")
+endif(IS_DIRECTORY "${JACE_DIR}")
+
+set(JACE_CPP_DIR "${JACE_DIR}/source/c++")
+# For Jace r46 and later, use instead (& see build.properties):
+#set(JACE_CPP_DIR "${JACE_DIR}/core/cpp")
+

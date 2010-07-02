@@ -83,13 +83,18 @@ INSTALLING COMPILE-TIME DEPENDENCIES
 
 Regardless of your platform, you will need to check out the Jace source code:
 
-  svn co https://jace.svn.sourceforge.net/svnroot/jace/trunk /path/to/jace
+  svn co -r 39 https://jace.svn.sourceforge.net/svnroot/jace/trunk /path/to/jace
 
 Where /path/to/jace is the desired location of your Jace source code checkout.
+The "-r 39" matters, since Jace revisions 40 and later may not work with bf-cpp.
 
-As of this writing, the most recent revision was 23, and it was known to work.
-Revisions prior to 23 had problems preventing them from working properly with
-the bf-cpp package.
+As of this writing, the most recent revision was 52, and it does not compile
+on some systems. We currently recommend revision 39.
+
+If you attempt to use revision 46 or later, the Jace directory structure
+is different, and you will need to edit two paths:
+  1. jace-java.dir in build.properties
+  2. JACE_CPP_DIR in jace/Prerequisites.cmake
 
 The above command assumes you have the svn command line tool for Subversion
 installed. It should also work fine to plug in the above information to any
