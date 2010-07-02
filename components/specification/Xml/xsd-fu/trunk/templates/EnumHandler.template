@@ -96,8 +96,8 @@ public class ${klass.javaType}EnumHandler implements IEnumerationHandler {
         }
       }
     }
-    LOGGER.warn("Could not find enumeration for '{}'({})",
-                value, value == null? -1 : value.length());
+    LOGGER.warn("Unknown {} value '{}' will be stored as \"Other\"",
+      "${klass.javaType}", value);
 {% if 'Other' in klass.possibleValues %}\
     return ${klass.javaType}.OTHER;
 {% end %}\
