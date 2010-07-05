@@ -26,8 +26,13 @@ package loci.formats.out;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
+import ome.xml.model.BinData;
+import ome.xml.model.Image;
+import ome.xml.model.OME;
+import ome.xml.model.Pixels;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveInteger;
 
@@ -109,6 +114,19 @@ public class OMETiffWriter extends TiffWriter {
         // throw new FormatException(se);
         throw new RuntimeException(se);
       }
+
+      // remove any BinData elements from the OME-XML
+
+      OME root = (OME) omeMeta.getRoot();
+      List<Image> images = root.copyImageList();
+      for (Image img : images) {
+        Pixels pix = img.getPixels();
+        List<BinData> binData = pix.copyBinDataList();
+        for (BinData bin : binData) {
+          pix.removeBinData(bin);
+        }
+      }
+      omeMeta.setRoot(root);
 
       for (int series=0; series<omeMeta.getImageCount(); series++) {
         String dimensionOrder =
