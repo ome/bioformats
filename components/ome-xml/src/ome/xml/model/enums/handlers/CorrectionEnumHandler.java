@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2010-07-02 09:43:24.066223
+ * Created by callan via xsd-fu on 2010-07-05 15:46:32+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -112,8 +112,8 @@ public class CorrectionEnumHandler implements IEnumerationHandler {
         }
       }
     }
-    LOGGER.warn("Unknown {} value '{}' will be stored as \"Other\"",
-      "Correction", value);
+    LOGGER.warn("Could not find enumeration for '{}'({})",
+                value, value == null? -1 : value.length());
     return Correction.OTHER;
   }
 

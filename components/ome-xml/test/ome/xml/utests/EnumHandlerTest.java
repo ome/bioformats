@@ -70,6 +70,20 @@ public class EnumHandlerTest {
   }
 
   @Test
+  public void testImmersionDRY() throws EnumerationException {
+    ImmersionEnumHandler handler = new ImmersionEnumHandler();
+    Immersion v = (Immersion) handler.getEnumeration("DRY");
+    assertEquals(Immersion.AIR, v);
+  }
+
+  @Test
+  public void testImmersionDRYWithWhitespace() throws EnumerationException {
+    ImmersionEnumHandler handler = new ImmersionEnumHandler();
+    Immersion v = (Immersion) handler.getEnumeration("   DRY  ");
+    assertEquals(Immersion.AIR, v);
+  }
+
+  @Test
   public void testImmersionWl() throws EnumerationException {
     ImmersionEnumHandler handler = new ImmersionEnumHandler();
     Immersion v = (Immersion) handler.getEnumeration("Wl");
