@@ -115,7 +115,7 @@ def updateTypeMaps(namespace):
 	JAVA_TYPE_MAP['MIMEtype'] = 'String'
 	JAVA_TYPE_MAP['Leader'] = 'Experimenter'
 	JAVA_TYPE_MAP['Contact'] = 'Experimenter'
-	JAVA_TYPE_MAP['Pump'] = 'Laser'
+	JAVA_TYPE_MAP['Pump'] = 'LightSource'
 
 	global JAVA_BASE_TYPE_MAP
 	JAVA_BASE_TYPE_MAP = {
