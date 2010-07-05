@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-06-21 18:12:22+0100
+ * Created by callan via xsd-fu on 2010-07-05 17:19:00+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -92,7 +92,7 @@ public class Laser extends LightSource
 	private Double repetitionRate;
 
 	// Property
-	private Laser pump;
+	private LightSource pump;
 
 	// -- Constructors --
 
@@ -211,7 +211,7 @@ public class Laser extends LightSource
 		}
 		if (reference instanceof Pump)
 		{
-			Laser o_casted = (Laser) o;
+			LightSource o_casted = (LightSource) o;
 			pump = o_casted;
 			return true;
 		}
@@ -309,17 +309,17 @@ public class Laser extends LightSource
 	}
 
 	// Reference
-	public Laser getLinkedPump()
+	public LightSource getLinkedPump()
 	{
 		return pump;
 	}
 
-	public void linkPump(Laser o)
+	public void linkPump(LightSource o)
 	{
 		pump = o;
 	}
 
-	public void unlinkPump(Laser o)
+	public void unlinkPump(LightSource o)
 	{
 		if (pump == o)
 		{
