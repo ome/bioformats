@@ -47,6 +47,8 @@ import loci.formats.tiff.IFDList;
 import loci.formats.tiff.TiffConstants;
 import loci.formats.tiff.TiffParser;
 
+import ome.xml.model.enums.Correction;
+import ome.xml.model.enums.Immersion;
 import ome.xml.model.primitives.PositiveInteger;
 
 import org.slf4j.Logger;
@@ -1207,15 +1209,30 @@ public class LeicaReader extends FormatReader {
               immersion = objectiveData[i];
             }
           }
-          if (immersion == null || immersion.trim().equals("")) {
-            immersion = "Unknown";
+
+          if (immersion != null) immersion = immersion.trim();
+          if (correction != null) correction = correction.trim();
+
+          Correction realCorrection = getCorrection(correction);
+          Correction testCorrection = getCorrection(immersion);
+          Immersion realImmersion = getImmersion(immersion);
+          Immersion testImmersion = getImmersion(correction);
+
+          // Correction and Immersion are reversed
+          if ((testCorrection != Correction.OTHER &&
+            realCorrection == Correction.OTHER) ||
+            (testImmersion != Immersion.OTHER &&
+            realImmersion == Immersion.OTHER))
+          {
+            String tmp = correction;
+            correction = immersion;
+            immersion = tmp;
           }
-          if (correction == null) correction = "Unknown";
 
           store.setObjectiveImmersion(
             getImmersion(immersion), series, objective);
           store.setObjectiveCorrection(
-            getCorrection(correction.trim()), series, objective);
+            getCorrection(correction), series, objective);
           store.setObjectiveModel(model.toString().trim(), series, objective);
           store.setObjectiveLensNA(new Double(na), series, objective);
           store.setObjectiveNominalMagnification(new PositiveInteger((int)
