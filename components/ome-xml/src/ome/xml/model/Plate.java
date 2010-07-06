@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-07-05 17:19:00+0100
+ * Created by callan via xsd-fu on 2010-07-06 17:07:47+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -293,7 +293,6 @@ public class Plate extends AbstractOMEModelObject
 		if (reference instanceof ScreenRef)
 		{
 			Screen o_casted = (Screen) o;
-			o_casted.linkPlate(this);
 			screenList.add(o_casted);
 			return true;
 		}
@@ -453,13 +452,11 @@ public class Plate extends AbstractOMEModelObject
 
 	public boolean linkScreen(Screen o)
 	{
-		o.linkPlate(this);
 		return screenList.add(o);
 	}
 
 	public boolean unlinkScreen(Screen o)
 	{
-		o.unlinkPlate(this);
 		return screenList.remove(o);
 	}
 
