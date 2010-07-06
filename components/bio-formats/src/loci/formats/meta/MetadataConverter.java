@@ -1492,506 +1492,632 @@ public final class MetadataConverter {
           String ellipseDescriptionValue = src.getEllipseDescription(roiIndex, shapeIndex);
           if (ellipseDescriptionValue != null) dest.setEllipseDescription(ellipseDescriptionValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           Integer ellipseFillValue = src.getEllipseFill(roiIndex, shapeIndex);
           if (ellipseFillValue != null) dest.setEllipseFill(ellipseFillValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           NonNegativeInteger ellipseFontSizeValue = src.getEllipseFontSize(roiIndex, shapeIndex);
           if (ellipseFontSizeValue != null) dest.setEllipseFontSize(ellipseFontSizeValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           String ellipseIDValue = src.getEllipseID(roiIndex, shapeIndex);
           if (ellipseIDValue != null) dest.setEllipseID(ellipseIDValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           String ellipseLabelValue = src.getEllipseLabel(roiIndex, shapeIndex);
           if (ellipseLabelValue != null) dest.setEllipseLabel(ellipseLabelValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           String ellipseNameValue = src.getEllipseName(roiIndex, shapeIndex);
           if (ellipseNameValue != null) dest.setEllipseName(ellipseNameValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           Double ellipseRadiusXValue = src.getEllipseRadiusX(roiIndex, shapeIndex);
           if (ellipseRadiusXValue != null) dest.setEllipseRadiusX(ellipseRadiusXValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           Double ellipseRadiusYValue = src.getEllipseRadiusY(roiIndex, shapeIndex);
           if (ellipseRadiusYValue != null) dest.setEllipseRadiusY(ellipseRadiusYValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           Integer ellipseStrokeValue = src.getEllipseStroke(roiIndex, shapeIndex);
           if (ellipseStrokeValue != null) dest.setEllipseStroke(ellipseStrokeValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           String ellipseStrokeDashArrayValue = src.getEllipseStrokeDashArray(roiIndex, shapeIndex);
           if (ellipseStrokeDashArrayValue != null) dest.setEllipseStrokeDashArray(ellipseStrokeDashArrayValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           Double ellipseStrokeWidthValue = src.getEllipseStrokeWidth(roiIndex, shapeIndex);
           if (ellipseStrokeWidthValue != null) dest.setEllipseStrokeWidth(ellipseStrokeWidthValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           NonNegativeInteger ellipseTheCValue = src.getEllipseTheC(roiIndex, shapeIndex);
           if (ellipseTheCValue != null) dest.setEllipseTheC(ellipseTheCValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           NonNegativeInteger ellipseTheTValue = src.getEllipseTheT(roiIndex, shapeIndex);
           if (ellipseTheTValue != null) dest.setEllipseTheT(ellipseTheTValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           NonNegativeInteger ellipseTheZValue = src.getEllipseTheZ(roiIndex, shapeIndex);
           if (ellipseTheZValue != null) dest.setEllipseTheZ(ellipseTheZValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           String ellipseTransformValue = src.getEllipseTransform(roiIndex, shapeIndex);
           if (ellipseTransformValue != null) dest.setEllipseTransform(ellipseTransformValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           Double ellipseXValue = src.getEllipseX(roiIndex, shapeIndex);
           if (ellipseXValue != null) dest.setEllipseX(ellipseXValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           Double ellipseYValue = src.getEllipseY(roiIndex, shapeIndex);
           if (ellipseYValue != null) dest.setEllipseY(ellipseYValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           String lineDescriptionValue = src.getLineDescription(roiIndex, shapeIndex);
           if (lineDescriptionValue != null) dest.setLineDescription(lineDescriptionValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           Integer lineFillValue = src.getLineFill(roiIndex, shapeIndex);
           if (lineFillValue != null) dest.setLineFill(lineFillValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           NonNegativeInteger lineFontSizeValue = src.getLineFontSize(roiIndex, shapeIndex);
           if (lineFontSizeValue != null) dest.setLineFontSize(lineFontSizeValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           String lineIDValue = src.getLineID(roiIndex, shapeIndex);
           if (lineIDValue != null) dest.setLineID(lineIDValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           String lineLabelValue = src.getLineLabel(roiIndex, shapeIndex);
           if (lineLabelValue != null) dest.setLineLabel(lineLabelValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           String lineNameValue = src.getLineName(roiIndex, shapeIndex);
           if (lineNameValue != null) dest.setLineName(lineNameValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           Integer lineStrokeValue = src.getLineStroke(roiIndex, shapeIndex);
           if (lineStrokeValue != null) dest.setLineStroke(lineStrokeValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           String lineStrokeDashArrayValue = src.getLineStrokeDashArray(roiIndex, shapeIndex);
           if (lineStrokeDashArrayValue != null) dest.setLineStrokeDashArray(lineStrokeDashArrayValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           Double lineStrokeWidthValue = src.getLineStrokeWidth(roiIndex, shapeIndex);
           if (lineStrokeWidthValue != null) dest.setLineStrokeWidth(lineStrokeWidthValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           NonNegativeInteger lineTheCValue = src.getLineTheC(roiIndex, shapeIndex);
           if (lineTheCValue != null) dest.setLineTheC(lineTheCValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           NonNegativeInteger lineTheTValue = src.getLineTheT(roiIndex, shapeIndex);
           if (lineTheTValue != null) dest.setLineTheT(lineTheTValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           NonNegativeInteger lineTheZValue = src.getLineTheZ(roiIndex, shapeIndex);
           if (lineTheZValue != null) dest.setLineTheZ(lineTheZValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           String lineTransformValue = src.getLineTransform(roiIndex, shapeIndex);
           if (lineTransformValue != null) dest.setLineTransform(lineTransformValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           Double lineX1Value = src.getLineX1(roiIndex, shapeIndex);
           if (lineX1Value != null) dest.setLineX1(lineX1Value, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           Double lineX2Value = src.getLineX2(roiIndex, shapeIndex);
           if (lineX2Value != null) dest.setLineX2(lineX2Value, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           Double lineY1Value = src.getLineY1(roiIndex, shapeIndex);
           if (lineY1Value != null) dest.setLineY1(lineY1Value, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           Double lineY2Value = src.getLineY2(roiIndex, shapeIndex);
           if (lineY2Value != null) dest.setLineY2(lineY2Value, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           String maskDescriptionValue = src.getMaskDescription(roiIndex, shapeIndex);
           if (maskDescriptionValue != null) dest.setMaskDescription(maskDescriptionValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           Integer maskFillValue = src.getMaskFill(roiIndex, shapeIndex);
           if (maskFillValue != null) dest.setMaskFill(maskFillValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           NonNegativeInteger maskFontSizeValue = src.getMaskFontSize(roiIndex, shapeIndex);
           if (maskFontSizeValue != null) dest.setMaskFontSize(maskFontSizeValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           String maskIDValue = src.getMaskID(roiIndex, shapeIndex);
           if (maskIDValue != null) dest.setMaskID(maskIDValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           String maskLabelValue = src.getMaskLabel(roiIndex, shapeIndex);
           if (maskLabelValue != null) dest.setMaskLabel(maskLabelValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           String maskNameValue = src.getMaskName(roiIndex, shapeIndex);
           if (maskNameValue != null) dest.setMaskName(maskNameValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           Integer maskStrokeValue = src.getMaskStroke(roiIndex, shapeIndex);
           if (maskStrokeValue != null) dest.setMaskStroke(maskStrokeValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           String maskStrokeDashArrayValue = src.getMaskStrokeDashArray(roiIndex, shapeIndex);
           if (maskStrokeDashArrayValue != null) dest.setMaskStrokeDashArray(maskStrokeDashArrayValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           Double maskStrokeWidthValue = src.getMaskStrokeWidth(roiIndex, shapeIndex);
           if (maskStrokeWidthValue != null) dest.setMaskStrokeWidth(maskStrokeWidthValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           NonNegativeInteger maskTheCValue = src.getMaskTheC(roiIndex, shapeIndex);
           if (maskTheCValue != null) dest.setMaskTheC(maskTheCValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           NonNegativeInteger maskTheTValue = src.getMaskTheT(roiIndex, shapeIndex);
           if (maskTheTValue != null) dest.setMaskTheT(maskTheTValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           NonNegativeInteger maskTheZValue = src.getMaskTheZ(roiIndex, shapeIndex);
           if (maskTheZValue != null) dest.setMaskTheZ(maskTheZValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           String maskTransformValue = src.getMaskTransform(roiIndex, shapeIndex);
           if (maskTransformValue != null) dest.setMaskTransform(maskTransformValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           Double maskXValue = src.getMaskX(roiIndex, shapeIndex);
           if (maskXValue != null) dest.setMaskX(maskXValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           Double maskYValue = src.getMaskY(roiIndex, shapeIndex);
           if (maskYValue != null) dest.setMaskY(maskYValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           String pathDefinitionValue = src.getPathDefinition(roiIndex, shapeIndex);
           if (pathDefinitionValue != null) dest.setPathDefinition(pathDefinitionValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           String pathDescriptionValue = src.getPathDescription(roiIndex, shapeIndex);
           if (pathDescriptionValue != null) dest.setPathDescription(pathDescriptionValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           Integer pathFillValue = src.getPathFill(roiIndex, shapeIndex);
           if (pathFillValue != null) dest.setPathFill(pathFillValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           NonNegativeInteger pathFontSizeValue = src.getPathFontSize(roiIndex, shapeIndex);
           if (pathFontSizeValue != null) dest.setPathFontSize(pathFontSizeValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           String pathIDValue = src.getPathID(roiIndex, shapeIndex);
           if (pathIDValue != null) dest.setPathID(pathIDValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           String pathLabelValue = src.getPathLabel(roiIndex, shapeIndex);
           if (pathLabelValue != null) dest.setPathLabel(pathLabelValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           String pathNameValue = src.getPathName(roiIndex, shapeIndex);
           if (pathNameValue != null) dest.setPathName(pathNameValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           Integer pathStrokeValue = src.getPathStroke(roiIndex, shapeIndex);
           if (pathStrokeValue != null) dest.setPathStroke(pathStrokeValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           String pathStrokeDashArrayValue = src.getPathStrokeDashArray(roiIndex, shapeIndex);
           if (pathStrokeDashArrayValue != null) dest.setPathStrokeDashArray(pathStrokeDashArrayValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           Double pathStrokeWidthValue = src.getPathStrokeWidth(roiIndex, shapeIndex);
           if (pathStrokeWidthValue != null) dest.setPathStrokeWidth(pathStrokeWidthValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           NonNegativeInteger pathTheCValue = src.getPathTheC(roiIndex, shapeIndex);
           if (pathTheCValue != null) dest.setPathTheC(pathTheCValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           NonNegativeInteger pathTheTValue = src.getPathTheT(roiIndex, shapeIndex);
           if (pathTheTValue != null) dest.setPathTheT(pathTheTValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           NonNegativeInteger pathTheZValue = src.getPathTheZ(roiIndex, shapeIndex);
           if (pathTheZValue != null) dest.setPathTheZ(pathTheZValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           String pathTransformValue = src.getPathTransform(roiIndex, shapeIndex);
           if (pathTransformValue != null) dest.setPathTransform(pathTransformValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           String pointDescriptionValue = src.getPointDescription(roiIndex, shapeIndex);
           if (pointDescriptionValue != null) dest.setPointDescription(pointDescriptionValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           Integer pointFillValue = src.getPointFill(roiIndex, shapeIndex);
           if (pointFillValue != null) dest.setPointFill(pointFillValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           NonNegativeInteger pointFontSizeValue = src.getPointFontSize(roiIndex, shapeIndex);
           if (pointFontSizeValue != null) dest.setPointFontSize(pointFontSizeValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           String pointIDValue = src.getPointID(roiIndex, shapeIndex);
           if (pointIDValue != null) dest.setPointID(pointIDValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           String pointLabelValue = src.getPointLabel(roiIndex, shapeIndex);
           if (pointLabelValue != null) dest.setPointLabel(pointLabelValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           String pointNameValue = src.getPointName(roiIndex, shapeIndex);
           if (pointNameValue != null) dest.setPointName(pointNameValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           Integer pointStrokeValue = src.getPointStroke(roiIndex, shapeIndex);
           if (pointStrokeValue != null) dest.setPointStroke(pointStrokeValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           String pointStrokeDashArrayValue = src.getPointStrokeDashArray(roiIndex, shapeIndex);
           if (pointStrokeDashArrayValue != null) dest.setPointStrokeDashArray(pointStrokeDashArrayValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           Double pointStrokeWidthValue = src.getPointStrokeWidth(roiIndex, shapeIndex);
           if (pointStrokeWidthValue != null) dest.setPointStrokeWidth(pointStrokeWidthValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           NonNegativeInteger pointTheCValue = src.getPointTheC(roiIndex, shapeIndex);
           if (pointTheCValue != null) dest.setPointTheC(pointTheCValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           NonNegativeInteger pointTheTValue = src.getPointTheT(roiIndex, shapeIndex);
           if (pointTheTValue != null) dest.setPointTheT(pointTheTValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           NonNegativeInteger pointTheZValue = src.getPointTheZ(roiIndex, shapeIndex);
           if (pointTheZValue != null) dest.setPointTheZ(pointTheZValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           String pointTransformValue = src.getPointTransform(roiIndex, shapeIndex);
           if (pointTransformValue != null) dest.setPointTransform(pointTransformValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           Double pointXValue = src.getPointX(roiIndex, shapeIndex);
           if (pointXValue != null) dest.setPointX(pointXValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           Double pointYValue = src.getPointY(roiIndex, shapeIndex);
           if (pointYValue != null) dest.setPointY(pointYValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           Boolean polylineClosedValue = src.getPolylineClosed(roiIndex, shapeIndex);
           if (polylineClosedValue != null) dest.setPolylineClosed(polylineClosedValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           String polylineDescriptionValue = src.getPolylineDescription(roiIndex, shapeIndex);
           if (polylineDescriptionValue != null) dest.setPolylineDescription(polylineDescriptionValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           Integer polylineFillValue = src.getPolylineFill(roiIndex, shapeIndex);
           if (polylineFillValue != null) dest.setPolylineFill(polylineFillValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           NonNegativeInteger polylineFontSizeValue = src.getPolylineFontSize(roiIndex, shapeIndex);
           if (polylineFontSizeValue != null) dest.setPolylineFontSize(polylineFontSizeValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           String polylineIDValue = src.getPolylineID(roiIndex, shapeIndex);
           if (polylineIDValue != null) dest.setPolylineID(polylineIDValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           String polylineLabelValue = src.getPolylineLabel(roiIndex, shapeIndex);
           if (polylineLabelValue != null) dest.setPolylineLabel(polylineLabelValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           String polylineNameValue = src.getPolylineName(roiIndex, shapeIndex);
           if (polylineNameValue != null) dest.setPolylineName(polylineNameValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           String polylinePointsValue = src.getPolylinePoints(roiIndex, shapeIndex);
           if (polylinePointsValue != null) dest.setPolylinePoints(polylinePointsValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           Integer polylineStrokeValue = src.getPolylineStroke(roiIndex, shapeIndex);
           if (polylineStrokeValue != null) dest.setPolylineStroke(polylineStrokeValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           String polylineStrokeDashArrayValue = src.getPolylineStrokeDashArray(roiIndex, shapeIndex);
           if (polylineStrokeDashArrayValue != null) dest.setPolylineStrokeDashArray(polylineStrokeDashArrayValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           Double polylineStrokeWidthValue = src.getPolylineStrokeWidth(roiIndex, shapeIndex);
           if (polylineStrokeWidthValue != null) dest.setPolylineStrokeWidth(polylineStrokeWidthValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           NonNegativeInteger polylineTheCValue = src.getPolylineTheC(roiIndex, shapeIndex);
           if (polylineTheCValue != null) dest.setPolylineTheC(polylineTheCValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           NonNegativeInteger polylineTheTValue = src.getPolylineTheT(roiIndex, shapeIndex);
           if (polylineTheTValue != null) dest.setPolylineTheT(polylineTheTValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           NonNegativeInteger polylineTheZValue = src.getPolylineTheZ(roiIndex, shapeIndex);
           if (polylineTheZValue != null) dest.setPolylineTheZ(polylineTheZValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           String polylineTransformValue = src.getPolylineTransform(roiIndex, shapeIndex);
           if (polylineTransformValue != null) dest.setPolylineTransform(polylineTransformValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           String rectangleDescriptionValue = src.getRectangleDescription(roiIndex, shapeIndex);
           if (rectangleDescriptionValue != null) dest.setRectangleDescription(rectangleDescriptionValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           Integer rectangleFillValue = src.getRectangleFill(roiIndex, shapeIndex);
           if (rectangleFillValue != null) dest.setRectangleFill(rectangleFillValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           NonNegativeInteger rectangleFontSizeValue = src.getRectangleFontSize(roiIndex, shapeIndex);
           if (rectangleFontSizeValue != null) dest.setRectangleFontSize(rectangleFontSizeValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           Double rectangleHeightValue = src.getRectangleHeight(roiIndex, shapeIndex);
           if (rectangleHeightValue != null) dest.setRectangleHeight(rectangleHeightValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           String rectangleIDValue = src.getRectangleID(roiIndex, shapeIndex);
           if (rectangleIDValue != null) dest.setRectangleID(rectangleIDValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           String rectangleLabelValue = src.getRectangleLabel(roiIndex, shapeIndex);
           if (rectangleLabelValue != null) dest.setRectangleLabel(rectangleLabelValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           String rectangleNameValue = src.getRectangleName(roiIndex, shapeIndex);
           if (rectangleNameValue != null) dest.setRectangleName(rectangleNameValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           Integer rectangleStrokeValue = src.getRectangleStroke(roiIndex, shapeIndex);
           if (rectangleStrokeValue != null) dest.setRectangleStroke(rectangleStrokeValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           String rectangleStrokeDashArrayValue = src.getRectangleStrokeDashArray(roiIndex, shapeIndex);
           if (rectangleStrokeDashArrayValue != null) dest.setRectangleStrokeDashArray(rectangleStrokeDashArrayValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           Double rectangleStrokeWidthValue = src.getRectangleStrokeWidth(roiIndex, shapeIndex);
           if (rectangleStrokeWidthValue != null) dest.setRectangleStrokeWidth(rectangleStrokeWidthValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           NonNegativeInteger rectangleTheCValue = src.getRectangleTheC(roiIndex, shapeIndex);
           if (rectangleTheCValue != null) dest.setRectangleTheC(rectangleTheCValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           NonNegativeInteger rectangleTheTValue = src.getRectangleTheT(roiIndex, shapeIndex);
           if (rectangleTheTValue != null) dest.setRectangleTheT(rectangleTheTValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           NonNegativeInteger rectangleTheZValue = src.getRectangleTheZ(roiIndex, shapeIndex);
           if (rectangleTheZValue != null) dest.setRectangleTheZ(rectangleTheZValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           String rectangleTransformValue = src.getRectangleTransform(roiIndex, shapeIndex);
           if (rectangleTransformValue != null) dest.setRectangleTransform(rectangleTransformValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           Double rectangleWidthValue = src.getRectangleWidth(roiIndex, shapeIndex);
           if (rectangleWidthValue != null) dest.setRectangleWidth(rectangleWidthValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           Double rectangleXValue = src.getRectangleX(roiIndex, shapeIndex);
           if (rectangleXValue != null) dest.setRectangleX(rectangleXValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           Double rectangleYValue = src.getRectangleY(roiIndex, shapeIndex);
           if (rectangleYValue != null) dest.setRectangleY(rectangleYValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           String textDescriptionValue = src.getTextDescription(roiIndex, shapeIndex);
           if (textDescriptionValue != null) dest.setTextDescription(textDescriptionValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           Integer textFillValue = src.getTextFill(roiIndex, shapeIndex);
           if (textFillValue != null) dest.setTextFill(textFillValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           NonNegativeInteger textFontSizeValue = src.getTextFontSize(roiIndex, shapeIndex);
           if (textFontSizeValue != null) dest.setTextFontSize(textFontSizeValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           String textIDValue = src.getTextID(roiIndex, shapeIndex);
           if (textIDValue != null) dest.setTextID(textIDValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           String textLabelValue = src.getTextLabel(roiIndex, shapeIndex);
           if (textLabelValue != null) dest.setTextLabel(textLabelValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           String textNameValue = src.getTextName(roiIndex, shapeIndex);
           if (textNameValue != null) dest.setTextName(textNameValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           Integer textStrokeValue = src.getTextStroke(roiIndex, shapeIndex);
           if (textStrokeValue != null) dest.setTextStroke(textStrokeValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           String textStrokeDashArrayValue = src.getTextStrokeDashArray(roiIndex, shapeIndex);
           if (textStrokeDashArrayValue != null) dest.setTextStrokeDashArray(textStrokeDashArrayValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           Double textStrokeWidthValue = src.getTextStrokeWidth(roiIndex, shapeIndex);
           if (textStrokeWidthValue != null) dest.setTextStrokeWidth(textStrokeWidthValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           NonNegativeInteger textTheCValue = src.getTextTheC(roiIndex, shapeIndex);
           if (textTheCValue != null) dest.setTextTheC(textTheCValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           NonNegativeInteger textTheTValue = src.getTextTheT(roiIndex, shapeIndex);
           if (textTheTValue != null) dest.setTextTheT(textTheTValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           NonNegativeInteger textTheZValue = src.getTextTheZ(roiIndex, shapeIndex);
           if (textTheZValue != null) dest.setTextTheZ(textTheZValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           String textTransformValue = src.getTextTransform(roiIndex, shapeIndex);
           if (textTransformValue != null) dest.setTextTransform(textTransformValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           String textValueValue = src.getTextValue(roiIndex, shapeIndex);
           if (textValueValue != null) dest.setTextValue(textValueValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           Double textXValue = src.getTextX(roiIndex, shapeIndex);
           if (textXValue != null) dest.setTextX(textXValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
         try {
           Double textYValue = src.getTextY(roiIndex, shapeIndex);
           if (textYValue != null) dest.setTextY(textYValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
+        catch (ClassCastException e) { }
       }
       } catch (NullPointerException e) { }
     }
