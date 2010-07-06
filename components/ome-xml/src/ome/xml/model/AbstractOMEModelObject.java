@@ -91,7 +91,9 @@ public abstract class AbstractOMEModelObject implements OMEModelObject {
   }
 
   /**
-   * Retrieves all the children of an element that have a given tag name.
+   * Retrieves all the children of an element that have a given tag name. If a
+   * tag has a namespace prefix it will be stripped prior to attempting a
+   * name match.
    * @param parent DOM element to retrieve tags based upon.
    * @param name Name of the tags to retrieve.
    * @return List of elements which have the tag <code>name</code>.
@@ -103,10 +105,24 @@ public abstract class AbstractOMEModelObject implements OMEModelObject {
     for (int i = 0; i < children.getLength(); i++) {
       Node child = children.item(i);
       if (child.getNodeType() == Node.ELEMENT_NODE
-          && name.equals(child.getNodeName())) {
+          && name.equals(stripNamespacePrefix(child.getNodeName()))) {
         toReturn.add((Element) child);
       }
     }
     return toReturn;
+  }
+
+  /**
+   * Strips the namespace prefix off of a given tag name.
+   * @param v Tag name to strip the prefix from if it has one.
+   * @return <code>v</code> with the namespace prefix stripped or <code>v</code>
+   * if it has none.
+   */
+  public static String stripNamespacePrefix(String v) {
+    int beginIndex = v.lastIndexOf(':');
+    if (beginIndex != -1) {
+      v = v.substring(beginIndex + 1);
+    }
+    return v;
   }
 }
