@@ -924,26 +924,6 @@ public final class MetadataConverter {
       int filterSetCount = src.getFilterSetCount(instrumentIndex);
       for (int filterSetIndex=0; filterSetIndex<filterSetCount; filterSetIndex++) {
       try {
-        String filterSetDichroicRefValue = src.getFilterSetDichroicRef(instrumentIndex, filterSetIndex);
-        if (filterSetDichroicRefValue != null) dest.setFilterSetDichroicRef(filterSetDichroicRefValue, instrumentIndex, filterSetIndex);
-      } catch (NullPointerException e) { }
-      try {
-        int emissionFilterRefCount = src.getFilterSetEmissionFilterRefCount(instrumentIndex, filterSetIndex);
-        for (int emissionFilterRefIndex=0; emissionFilterRefIndex<emissionFilterRefCount; emissionFilterRefIndex++)
-        {
-          String filterSetEmissionFilterRefValue = src.getFilterSetEmissionFilterRef(instrumentIndex, filterSetIndex, emissionFilterRefIndex);
-          if (filterSetEmissionFilterRefValue != null) dest.setFilterSetEmissionFilterRef(filterSetEmissionFilterRefValue, instrumentIndex, filterSetIndex, emissionFilterRefIndex);
-        }
-      } catch (NullPointerException e) { }
-      try {
-        int excitationFilterRefCount = src.getFilterSetExcitationFilterRefCount(instrumentIndex, filterSetIndex);
-        for (int excitationFilterRefIndex=0; excitationFilterRefIndex<excitationFilterRefCount; excitationFilterRefIndex++)
-        {
-          String filterSetExcitationFilterRefValue = src.getFilterSetExcitationFilterRef(instrumentIndex, filterSetIndex, excitationFilterRefIndex);
-          if (filterSetExcitationFilterRefValue != null) dest.setFilterSetExcitationFilterRef(filterSetExcitationFilterRefValue, instrumentIndex, filterSetIndex, excitationFilterRefIndex);
-        }
-      } catch (NullPointerException e) { }
-      try {
         String filterSetIDValue = src.getFilterSetID(instrumentIndex, filterSetIndex);
         if (filterSetIDValue != null) dest.setFilterSetID(filterSetIDValue, instrumentIndex, filterSetIndex);
       } catch (NullPointerException e) { }
@@ -962,6 +942,26 @@ public final class MetadataConverter {
       try {
         String filterSetSerialNumberValue = src.getFilterSetSerialNumber(instrumentIndex, filterSetIndex);
         if (filterSetSerialNumberValue != null) dest.setFilterSetSerialNumber(filterSetSerialNumberValue, instrumentIndex, filterSetIndex);
+      } catch (NullPointerException e) { }
+      try {
+        String filterSetDichroicRefValue = src.getFilterSetDichroicRef(instrumentIndex, filterSetIndex);
+        if (filterSetDichroicRefValue != null) dest.setFilterSetDichroicRef(filterSetDichroicRefValue, instrumentIndex, filterSetIndex);
+      } catch (NullPointerException e) { }
+      try {
+        int emissionFilterRefCount = src.getFilterSetEmissionFilterRefCount(instrumentIndex, filterSetIndex);
+        for (int emissionFilterRefIndex=0; emissionFilterRefIndex<emissionFilterRefCount; emissionFilterRefIndex++)
+        {
+          String filterSetEmissionFilterRefValue = src.getFilterSetEmissionFilterRef(instrumentIndex, filterSetIndex, emissionFilterRefIndex);
+          if (filterSetEmissionFilterRefValue != null) dest.setFilterSetEmissionFilterRef(filterSetEmissionFilterRefValue, instrumentIndex, filterSetIndex, emissionFilterRefIndex);
+        }
+      } catch (NullPointerException e) { }
+      try {
+        int excitationFilterRefCount = src.getFilterSetExcitationFilterRefCount(instrumentIndex, filterSetIndex);
+        for (int excitationFilterRefIndex=0; excitationFilterRefIndex<excitationFilterRefCount; excitationFilterRefIndex++)
+        {
+          String filterSetExcitationFilterRefValue = src.getFilterSetExcitationFilterRef(instrumentIndex, filterSetIndex, excitationFilterRefIndex);
+          if (filterSetExcitationFilterRefValue != null) dest.setFilterSetExcitationFilterRef(filterSetExcitationFilterRefValue, instrumentIndex, filterSetIndex, excitationFilterRefIndex);
+        }
       } catch (NullPointerException e) { }
       }
       } catch (NullPointerException e) { }
