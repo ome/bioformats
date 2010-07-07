@@ -28,8 +28,12 @@ package loci.plugins.in;
 import ij.ImagePlus;
 import ij.measure.Calibration;
 
+import java.util.Arrays;
+
 import loci.formats.FormatTools;
 import loci.formats.meta.IMetadata;
+import ome.xml.model.primitives.NonNegativeInteger;
+import ome.xml.model.primitives.PositiveInteger;
 
 /**
  * Logic for calibrating images.
@@ -42,7 +46,7 @@ public class Calibrator {
 
   // -- Fields --
 
-  private ImportProcess process;
+  private final ImportProcess process;
 
   // -- Constructor --
 
@@ -69,16 +73,24 @@ public class Calibrator {
     Double td = meta.getPixelsTimeIncrement(series);
     if (td != null) tcal = td.floatValue();
 
-    final boolean xcalPresent = !Double.isNaN(xcal);
-    final boolean ycalPresent = !Double.isNaN(ycal);
-    final boolean zcalPresent = !Double.isNaN(zcal);
-    final boolean tcalPresent = !Double.isNaN(tcal);
+    boolean xcalPresent = !Double.isNaN(xcal);
+    boolean ycalPresent = !Double.isNaN(ycal);
+    boolean zcalPresent = !Double.isNaN(zcal);
+    boolean tcalPresent = !Double.isNaN(tcal);
 
-    // if the physical width or physical height are missing,
-    // assume that the width and height are equal
+    // HACK: If the physical width or height are missing,
+    // assume that the width and height are equal.
     if (xcalPresent && !ycalPresent) ycal = xcal;
     else if (ycalPresent && !xcalPresent) xcal = ycal;
 
+    // HACK: If the time increment is missing,
+    // average any variable time interval values.
+    if (!tcalPresent) tcal = computeVariableTimeInterval(meta, series);
+
+    xcalPresent = !Double.isNaN(xcal);
+    ycalPresent = !Double.isNaN(ycal);
+    zcalPresent = !Double.isNaN(zcal);
+    tcalPresent = !Double.isNaN(tcal);
     final boolean hasSpatial = xcalPresent || ycalPresent || zcalPresent;
     final boolean hasCalibration = hasSpatial || ycalPresent;
 
@@ -108,6 +120,40 @@ public class Calibrator {
       imp.getLocalCalibration().setFunction(Calibration.STRAIGHT_LINE,
         new double[] {min, 1.0}, "gray value");
     }
+  }
+
+  private double computeVariableTimeInterval(IMetadata meta, int series) {
+    // collect variable time interval values
+    final PositiveInteger sizeT = meta.getPixelsSizeT(series);
+    final int tSize = sizeT == null ? 1 : sizeT.getValue();
+    final int planeCount = meta.getPlaneCount(series);
+    final double[] deltas = new double[tSize];
+    Arrays.fill(deltas, Double.NaN);
+    for (int p=0; p<planeCount; p++) {
+      final NonNegativeInteger theZ = meta.getPlaneTheZ(series, p);
+      final NonNegativeInteger theC = meta.getPlaneTheC(series, p);
+      final NonNegativeInteger theT = meta.getPlaneTheT(series, p);
+      if (theZ == null || theC == null || theT == null) continue;
+      if (theZ.getValue() != 0 || theC.getValue() != 0) continue;
+      // store delta T value at appropriate index
+      final int t = theT.getValue();
+      if (t >= tSize) continue;
+      final Double deltaT = meta.getPlaneDeltaT(series, p);
+      if (deltaT == null) continue;
+      deltas[t] = deltaT;
+    }
+    // average delta T differences
+    double tiTotal = 0;
+    int tiCount = 0;
+    for (int t=1; t<tSize; t++) {
+      double delta1 = deltas[t - 1];
+      double delta2 = deltas[t];
+      if (Double.isNaN(delta1) || Double.isNaN(delta2)) continue;
+      tiTotal += delta2 - delta1;
+      tiCount++;
+    }
+    if (tiCount == 0) return Double.NaN;
+    return (float) (tiTotal / tiCount);
   }
 
 }
