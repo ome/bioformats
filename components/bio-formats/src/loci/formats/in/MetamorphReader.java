@@ -100,6 +100,7 @@ public class MetamorphReader extends BaseTiffReader {
   private long[] internalStamps;
   private double[] zDistances, stageX, stageY;
   private double zStart;
+  private Double sizeX = null, sizeY = null;
 
   private int mmPlanes; //number of metamorph planes
 
@@ -225,6 +226,7 @@ public class MetamorphReader extends BaseTiffReader {
       zDistances = stageX = stageY = null;
       canLookForND = true;
       firstSeriesChannels = null;
+      sizeX = sizeY = null;
     }
   }
 
@@ -518,8 +520,12 @@ public class MetamorphReader extends BaseTiffReader {
       store.setImageDescription("", i);
 
       store.setImagingEnvironmentTemperature(handler.getTemperature(), i);
-      store.setPixelsPhysicalSizeX(handler.getPixelSizeX(), i);
-      store.setPixelsPhysicalSizeY(handler.getPixelSizeY(), i);
+
+      if (sizeX == null) sizeX = handler.getPixelSizeX();
+      if (sizeY == null) sizeY = handler.getPixelSizeY();
+
+      store.setPixelsPhysicalSizeX(sizeX, i);
+      store.setPixelsPhysicalSizeY(sizeY, i);
       if (zDistances != null) {
         stepSize = zDistances[0];
       }
@@ -1232,6 +1238,18 @@ public class MetamorphReader extends BaseTiffReader {
 
       if ("Zoom".equals(key) && value != null) {
         zoom = Double.parseDouble(value.toString());
+      }
+      if ("XCalibration".equals(key) && value != null) {
+        if (value instanceof TiffRational) {
+          sizeX = ((TiffRational) value).doubleValue();
+        }
+        else sizeX = new Double(value.toString());
+      }
+      if ("YCalibration".equals(key) && value != null) {
+        if (value instanceof TiffRational) {
+          sizeY = ((TiffRational) value).doubleValue();
+        }
+        else sizeY = new Double(value.toString());
       }
     }
     in.seek(saveLoc);
