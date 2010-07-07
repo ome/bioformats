@@ -120,7 +120,7 @@ public class QuesantReader extends FormatReader {
     }
     else MetadataTools.setDefaultCreationDate(store, id, 0);
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription(comment, 0);
       store.setPixelsPhysicalSizeX((double) xSize / getSizeX(), 0);
       store.setPixelsPhysicalSizeY((double) xSize / getSizeY(), 0);
@@ -131,7 +131,7 @@ public class QuesantReader extends FormatReader {
 
   private void readVariable() throws IOException {
     String code = in.readString(4);
-    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.ALL &&
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.MINIMUM &&
       !code.equals("IMAG"))
     {
       in.skipBytes(4);

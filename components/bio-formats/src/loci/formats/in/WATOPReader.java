@@ -91,7 +91,7 @@ public class WATOPReader extends FormatReader {
     String comment = null;
 
     MetadataLevel level = getMetadataOptions().getMetadataLevel();
-    if (level == MetadataLevel.ALL) {
+    if (level != MetadataLevel.MINIMUM) {
       in.seek(49);
       comment = in.readString(33);
     }
@@ -114,7 +114,7 @@ public class WATOPReader extends FormatReader {
     core[0].sizeX = in.readInt();
     core[0].sizeY = in.readInt();
 
-    if (level == MetadataLevel.ALL) {
+    if (level != MetadataLevel.MINIMUM) {
       double tunnelCurrent = in.readInt() / 1000d;
       double sampleVolts = in.readInt() / 1000d;
 
@@ -147,7 +147,7 @@ public class WATOPReader extends FormatReader {
 
     store.setImageAcquiredDate(date, 0);
 
-    if (level == MetadataLevel.ALL) {
+    if (level != MetadataLevel.MINIMUM) {
       store.setImageDescription(comment, 0);
       store.setPixelsPhysicalSizeX((double) xSize / getSizeX(), 0);
       store.setPixelsPhysicalSizeY((double) ySize / getSizeY(), 0);

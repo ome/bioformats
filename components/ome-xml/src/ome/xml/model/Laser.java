@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2010-06-03 10:29:33.559265
+ * Created by callan via xsd-fu on 2010-07-06 17:07:47+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -58,7 +58,7 @@ public class Laser extends LightSource
 
 	// -- Constants --
 
-	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2010-04";
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2010-06";
 
 	/** Logger for this class. */
 	private static final Logger LOGGER =
@@ -92,7 +92,7 @@ public class Laser extends LightSource
 	private Double repetitionRate;
 
 	// Property
-	private Laser pump;
+	private LightSource pump;
 
 	// -- Constructors --
 
@@ -202,17 +202,21 @@ public class Laser extends LightSource
 
 	// -- Laser API methods --
 
-	public void link(Reference reference, OMEModelObject o)
+	public boolean link(Reference reference, OMEModelObject o)
 	{
+		boolean wasHandledBySuperClass = super.link(reference, o);
+		if (wasHandledBySuperClass)
+		{
+			return true;
+		}
 		if (reference instanceof Pump)
 		{
-			Laser o_casted = (Laser) o;
+			LightSource o_casted = (LightSource) o;
 			pump = o_casted;
-			return;
+			return true;
 		}
-		// TODO: Should be its own Exception
-		throw new RuntimeException(
-				"Unable to handle reference of type: " + reference.getClass());
+		LOGGER.debug("Unable to handle reference of type: {}", reference.getClass());
+		return false;
 	}
 
 
@@ -305,17 +309,17 @@ public class Laser extends LightSource
 	}
 
 	// Reference
-	public Laser getLinkedPump()
+	public LightSource getLinkedPump()
 	{
 		return pump;
 	}
 
-	public void linkPump(Laser o)
+	public void linkPump(LightSource o)
 	{
 		pump = o;
 	}
 
-	public void unlinkPump(Laser o)
+	public void unlinkPump(LightSource o)
 	{
 		if (pump == o)
 		{

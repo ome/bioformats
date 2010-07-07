@@ -52,14 +52,14 @@ public abstract class AbstractOMEModelObject implements OMEModelObject {
   }
 
   /* (non-Javadoc)
-   * @see ome.xml.model.OMEModelObject#update(org.w3c.dom.Element)
+   * @see ome.xml.r201004.OMEModelObject#update(org.w3c.dom.Element)
    */
   public void update(Element element) throws EnumerationException {
     // Nothing to update.
   }
 
   /* (non-Javadoc)
-   * @see ome.xml.model.OMEModelObject#update(org.w3c.dom.Element, ome.xml.model.OMEModel)
+   * @see ome.xml.r201004.OMEModelObject#update(org.w3c.dom.Element, ome.xml.r201004.OMEModel)
    */
   public void update(Element element, OMEModel model)
   throws EnumerationException {
@@ -67,7 +67,7 @@ public abstract class AbstractOMEModelObject implements OMEModelObject {
   }
 
   /* (non-Javadoc)
-   * @see ome.xml.model.OMEModelObject#asXMLElement(org.w3c.dom.Document)
+   * @see ome.xml.r201004.OMEModelObject#asXMLElement(org.w3c.dom.Document)
    */
   public abstract Element asXMLElement(Document document);
   
@@ -84,12 +84,16 @@ public abstract class AbstractOMEModelObject implements OMEModelObject {
   }
 
   /* (non-Javadoc)
-   * @see ome.xml.model.OMEModelObject#link(ome.xml.model.Reference, ome.xml.model.OMEModelObject)
+   * @see ome.xml.r201004.OMEModelObject#link(ome.xml.r201004.Reference, ome.xml.r201004.OMEModelObject)
    */
-  public abstract void link(Reference reference, OMEModelObject o);
+  public boolean link(Reference reference, OMEModelObject o) {
+    return false;
+  }
 
   /**
-   * Retrieves all the children of an element that have a given tag name.
+   * Retrieves all the children of an element that have a given tag name. If a
+   * tag has a namespace prefix it will be stripped prior to attempting a
+   * name match.
    * @param parent DOM element to retrieve tags based upon.
    * @param name Name of the tags to retrieve.
    * @return List of elements which have the tag <code>name</code>.
@@ -101,10 +105,24 @@ public abstract class AbstractOMEModelObject implements OMEModelObject {
     for (int i = 0; i < children.getLength(); i++) {
       Node child = children.item(i);
       if (child.getNodeType() == Node.ELEMENT_NODE
-          && name.equals(child.getNodeName())) {
+          && name.equals(stripNamespacePrefix(child.getNodeName()))) {
         toReturn.add((Element) child);
       }
     }
     return toReturn;
+  }
+
+  /**
+   * Strips the namespace prefix off of a given tag name.
+   * @param v Tag name to strip the prefix from if it has one.
+   * @return <code>v</code> with the namespace prefix stripped or <code>v</code>
+   * if it has none.
+   */
+  public static String stripNamespacePrefix(String v) {
+    int beginIndex = v.lastIndexOf(':');
+    if (beginIndex != -1) {
+      v = v.substring(beginIndex + 1);
+    }
+    return v;
   }
 }

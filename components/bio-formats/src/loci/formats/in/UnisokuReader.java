@@ -144,7 +144,9 @@ public class UnisokuReader extends FormatReader {
           core[0].pixelType =
             FormatTools.pixelTypeFromBytes(bytes, signed, bytes == 4);
         }
-        else if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+        else if (getMetadataOptions().getMetadataLevel() !=
+          MetadataLevel.MINIMUM)
+        {
           if (key.equals(":sample name")) {
             imageName = value;
           }
@@ -187,7 +189,7 @@ public class UnisokuReader extends FormatReader {
     store.setImageName(imageName, 0);
     store.setImageAcquiredDate(date, 0);
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription(remark, 0);
       store.setPixelsPhysicalSizeX(pixelSizeX, 0);
       store.setPixelsPhysicalSizeY(pixelSizeY, 0);

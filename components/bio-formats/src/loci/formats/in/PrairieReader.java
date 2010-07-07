@@ -280,7 +280,7 @@ public class PrairieReader extends FormatReader {
         }
         else MetadataTools.setDefaultCreationDate(store, id, 0);
 
-        if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+        if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
           // link Instrument and Image
           String instrumentID = MetadataTools.createLSID("Instrument", 0);
           store.setInstrumentID(instrumentID, 0);

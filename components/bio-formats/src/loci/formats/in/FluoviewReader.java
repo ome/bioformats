@@ -154,7 +154,7 @@ public class FluoviewReader extends BaseTiffReader {
     RandomAccessInputStream ras = new RandomAccessInputStream(mmheader);
     ras.order(isLittleEndian());
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       put("Header Flag", ras.readShort());
       put("Image Type", ras.read());
 
@@ -190,7 +190,7 @@ public class FluoviewReader extends BaseTiffReader {
       put("Dimension " + (i + 1) + " Units", ras.readString(64));
     }
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       ras.skipBytes(4); // skip pointer to spatial position data
 
       put("Map type", ras.readShort());
@@ -306,7 +306,7 @@ public class FluoviewReader extends BaseTiffReader {
       }
     }
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       // cut up the comment, if necessary
       comment = ifds.get(0).getComment();
 
@@ -332,7 +332,7 @@ public class FluoviewReader extends BaseTiffReader {
       store.setImageAcquiredDate(date, 0);
     }
 
-    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.MINIMUM) {
       return;
     }
 
@@ -467,13 +467,6 @@ public class FluoviewReader extends BaseTiffReader {
       // each stamp is 8 doubles, representing the position on dimensions 3-10
       for (int j=0; j<8; j++) {
         stamps[j][i] = ras.readDouble() / 1000;
-
-        // correct for clock skew?
-        int pow = -1;
-        while (Math.pow(2, pow) < stamps[j][i]) {
-          stamps[j][i] -= (0.032 * (Math.pow(2, pow < 0 ? 0 : pow)));
-          pow++;
-        }
       }
       ras.close();
     }
@@ -483,7 +476,6 @@ public class FluoviewReader extends BaseTiffReader {
     byte[] b = new byte[s.length];
     for (int i=0; i<s.length; i++) {
       b[i] = (byte) s[i];
-      if (b[i] < 0) b[i]++;
     }
     return b;
   }

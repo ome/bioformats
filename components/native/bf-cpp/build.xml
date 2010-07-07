@@ -63,7 +63,7 @@ the Subversion repository using the command:
 <echo>Jace libraries exist; run clean-jace target first to recompile.</echo>
       </then>
       <else>
-        <ant dir="${jace.home}/source/java"/>
+        <ant dir="${jace-java.dir}"/>
       </else>
     </if>
   </target>
@@ -209,7 +209,7 @@ before the executables will run.
 
   <target name="clean-jace" depends="check-jace"
     description="remove Jace build files and libraries">
-    <ant dir="${jace.home}/source/java" target="clean"/>
+    <ant dir="${jace-java.dir}" target="clean"/>
     <delete file="${jace.home}/release/lib/jace.jar"/>
     <delete file="${jace.home}/release/lib/jace-runtime.jar"/>
   </target>

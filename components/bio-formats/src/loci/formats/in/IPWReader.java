@@ -75,7 +75,7 @@ public class IPWReader extends FormatReader {
   /** Constructs a new IPW reader. */
   public IPWReader() {
     super("Image-Pro Workspace", "ipw");
-    domains = new String[] {FormatTools.GRAPHICS_DOMAIN};
+    domains = new String[] {FormatTools.UNKNOWN_DOMAIN};
   }
 
   // -- IFormatReader API methods --
@@ -165,7 +165,7 @@ public class IPWReader extends FormatReader {
       String relativePath =
         name.substring(name.lastIndexOf(File.separator) + 1);
 
-      if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
         if (relativePath.equals("CONTENTS")) {
           addGlobalMeta("Version", new String(poi.getDocumentBytes(name)).trim());
         }

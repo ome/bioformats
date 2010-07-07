@@ -180,7 +180,7 @@ public class HISReader extends FormatReader {
 
       in.skipBytes(50);
       String comment = in.readString(commentBytes);
-      if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
         String[] data = comment.split(";");
         for (String token : data) {
           int eq = token.indexOf("=");
@@ -234,7 +234,7 @@ public class HISReader extends FormatReader {
     String instrumentID = MetadataTools.createLSID("Instrument", 0);
     store.setInstrumentID(instrumentID, 0);
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       for (int i=0; i<nSeries; i++) {
         store.setImageInstrumentRef(instrumentID, i);
         store.setImageAcquiredDate(date[i], i);

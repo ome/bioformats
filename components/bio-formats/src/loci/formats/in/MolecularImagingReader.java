@@ -149,7 +149,7 @@ public class MolecularImagingReader extends FormatReader {
     }
     else MetadataTools.setDefaultCreationDate(store, currentId, 0);
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setPixelsPhysicalSizeX(pixelSizeX, 0);
       store.setPixelsPhysicalSizeY(pixelSizeY, 0);
     }

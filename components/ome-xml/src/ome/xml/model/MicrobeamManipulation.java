@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2010-06-03 10:29:33.559265
+ * Created by callan via xsd-fu on 2010-07-06 17:07:47+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -58,7 +58,7 @@ public class MicrobeamManipulation extends AbstractOMEModelObject
 
 	// -- Constants --
 
-	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2010-04";
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2010-06";
 
 	/** Logger for this class. */
 	private static final Logger LOGGER =
@@ -184,25 +184,29 @@ public class MicrobeamManipulation extends AbstractOMEModelObject
 
 	// -- MicrobeamManipulation API methods --
 
-	public void link(Reference reference, OMEModelObject o)
+	public boolean link(Reference reference, OMEModelObject o)
 	{
+		boolean wasHandledBySuperClass = super.link(reference, o);
+		if (wasHandledBySuperClass)
+		{
+			return true;
+		}
 		if (reference instanceof ROIRef)
 		{
 			ROI o_casted = (ROI) o;
 			o_casted.linkMicrobeamManipulation(this);
 			roiList.add(o_casted);
-			return;
+			return true;
 		}
 		if (reference instanceof ExperimenterRef)
 		{
 			Experimenter o_casted = (Experimenter) o;
 			o_casted.linkMicrobeamManipulation(this);
 			experimenter = o_casted;
-			return;
+			return true;
 		}
-		// TODO: Should be its own Exception
-		throw new RuntimeException(
-				"Unable to handle reference of type: " + reference.getClass());
+		LOGGER.debug("Unable to handle reference of type: {}", reference.getClass());
+		return false;
 	}
 
 

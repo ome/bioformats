@@ -107,7 +107,7 @@ public class MINCReader extends FormatReader {
       throw new MissingLibraryException(e);
     }
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       Vector<String> variableList = netcdf.getVariableList();
 
       for (String variable : variableList) {
@@ -154,7 +154,7 @@ public class MINCReader extends FormatReader {
     MetadataTools.populatePixels(store, this);
     MetadataTools.setDefaultCreationDate(store, id, 0);
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription(netcdf.getAttributeValue("/history"), 0);
     }
   }

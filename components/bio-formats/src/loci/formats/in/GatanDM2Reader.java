@@ -124,7 +124,7 @@ public class GatanDM2Reader extends FormatReader {
     MetadataLevel level = getMetadataOptions().getMetadataLevel();
 
     while (in.getFilePointer() < in.length()) {
-      if (level != MetadataLevel.ALL && date != null &&
+      if (level == MetadataLevel.MINIMUM && date != null &&
         time != null && name != null)
       {
         break;

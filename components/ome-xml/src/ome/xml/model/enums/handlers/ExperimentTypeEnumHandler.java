@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2010-06-03 10:29:36.389772
+ * Created by callan via xsd-fu on 2010-07-05 16:15:25+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -86,6 +86,7 @@ public class ExperimentTypeEnumHandler implements IEnumerationHandler {
     p.put("^\\s*FluorescenceLifetime\\s*", "FluorescenceLifetime");
     p.put("^\\s*SpectralImaging\\s*", "SpectralImaging");
     p.put("^\\s*Photobleaching\\s*", "Photobleaching");
+    p.put("^\\s*SPIM\\s*", "SPIM");
     p.put("^\\s*Other\\s*", "Other");
     return p;
   }
@@ -103,7 +104,8 @@ public class ExperimentTypeEnumHandler implements IEnumerationHandler {
         }
       }
     }
-    LOGGER.warn("Could not find enumeration for {}", value);
+    LOGGER.warn("Unknown {} value '{}' will be stored as \"Other\"",
+      "ExperimentType", value);
     return ExperimentType.OTHER;
   }
 

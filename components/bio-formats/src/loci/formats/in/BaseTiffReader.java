@@ -82,7 +82,7 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
    * overwritten if you do so.
    */
   protected void initStandardMetadata() throws FormatException, IOException {
-    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.MINIMUM) {
       return;
     }
     IFD firstIFD = ifds.get(0);
@@ -394,7 +394,7 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
        MetadataTools.setDefaultCreationDate(store, getCurrentFile(), 0);
     }
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       // populate Experimenter
       String artist = firstIFD.getIFDTextValue(IFD.ARTIST);
 

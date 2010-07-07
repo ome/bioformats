@@ -424,7 +424,7 @@ public class FormatReaderTest {
         // total number of ChannelComponents should match SizeC
         int sizeC = retrieve.getPixelsSizeC(i).getValue().intValue();
         int nChannelComponents = retrieve.getChannelCount(i);
-        int samplesPerPixel = retrieve.getChannelSamplesPerPixel(i, 0);
+        int samplesPerPixel = retrieve.getChannelSamplesPerPixel(i, 0).getValue();
 
         if (sizeC != nChannelComponents * samplesPerPixel) {
           msg = "ChannelComponent";
@@ -439,9 +439,9 @@ public class FormatReaderTest {
         if (retrieve.getPlaneCount(i) > 0) {
           deltaT = retrieve.getPlaneDeltaT(i, 0);
           exposure = retrieve.getPlaneExposureTime(i, 0);
-          z = retrieve.getPlaneTheZ(i, 0);
-          c = retrieve.getPlaneTheC(i, 0);
-          t = retrieve.getPlaneTheT(i, 0);
+          z = retrieve.getPlaneTheZ(i, 0).getValue();
+          c = retrieve.getPlaneTheC(i, 0).getValue();
+          t = retrieve.getPlaneTheT(i, 0).getValue();
         }
 
         if ((deltaT != null || exposure != null) &&
@@ -922,8 +922,20 @@ public class FormatReaderTest {
   /** Initializes the reader and configuration tree. */
   private boolean initFile() {
     if (skip) throw new SkipException(SKIP_MESSAGE);
-    reader = new BufferedImageReader(new FileStitcher());
-    setupReader();
+    if (reader == null) {
+      reader = new BufferedImageReader(new FileStitcher());
+      reader.setNormalized(true);
+      reader.setOriginalMetadataPopulated(true);
+      reader.setMetadataFiltered(true);
+      MetadataStore store = null;
+      try {
+        store = omexmlService.createOMEXMLMetadata();
+      }
+      catch (ServiceException e) {
+        LOGGER.warn("Could not parse OME-XML", e);
+      }
+      reader.setMetadataStore(store);
+    }
     if (id.equals(reader.getCurrentFile())) return true; // already initialized
 
     // skip files that were already tested as part of another file's dataset
@@ -937,13 +949,6 @@ public class FormatReaderTest {
 
     LOGGER.info("Initializing {}: ", id);
     try {
-      // initialize configuration tree
-      if (config != null) config.setId(id);
-      if (config != null && config.noStitching()) {
-        reader = new BufferedImageReader();
-        setupReader();
-      }
-
       reader.setId(id);
       // remove used files
       String[] used = reader.getUsedFiles();
@@ -961,6 +966,9 @@ public class FormatReaderTest {
       if (!base) {
         LOGGER.error("Used files list does not include base file");
       }
+
+      // initialize configuration tree
+      if (config != null) config.setId(id);
     }
     catch (Throwable t) {
       LOGGER.error("", t);

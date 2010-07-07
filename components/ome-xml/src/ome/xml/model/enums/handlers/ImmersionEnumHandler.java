@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2010-06-03 10:29:36.389772
+ * Created by callan via xsd-fu on 2010-07-05 16:15:25+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -79,6 +79,7 @@ public class ImmersionEnumHandler implements IEnumerationHandler {
     p.put("^\\s*Glycerol\\s*", "Glycerol");
     p.put("^\\s*Other\\s*", "Other");
     // BEGIN custom enumeration mappings
+    p.put("^\\s*Dry\\s*", "Air");
     p.put("^\\s*OI\\s*", "Oil");
     p.put(".*Oil.*", "Oil");
     p.put(".*Oel.*", "Oil");
@@ -102,7 +103,8 @@ public class ImmersionEnumHandler implements IEnumerationHandler {
         }
       }
     }
-    LOGGER.warn("Could not find enumeration for {}", value);
+    LOGGER.warn("Unknown {} value '{}' will be stored as \"Other\"",
+      "Immersion", value);
     return Immersion.OTHER;
   }
 

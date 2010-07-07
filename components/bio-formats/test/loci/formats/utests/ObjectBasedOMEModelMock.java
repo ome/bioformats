@@ -38,6 +38,7 @@ import ome.xml.model.Arc;
 import ome.xml.model.BinaryFile;
 import ome.xml.model.BooleanAnnotation;
 import ome.xml.model.Channel;
+import ome.xml.model.CommentAnnotation;
 import ome.xml.model.Detector;
 import ome.xml.model.Dichroic;
 import ome.xml.model.DoubleAnnotation;
@@ -49,8 +50,8 @@ import ome.xml.model.Image;
 import ome.xml.model.Instrument;
 import ome.xml.model.Laser;
 import ome.xml.model.LightEmittingDiode;
+import ome.xml.model.ListAnnotation;
 import ome.xml.model.LongAnnotation;
-import ome.xml.model.MetadataOnly;
 import ome.xml.model.OME;
 import ome.xml.model.OMEModel;
 import ome.xml.model.OTF;
@@ -60,7 +61,6 @@ import ome.xml.model.Pixels;
 import ome.xml.model.Plate;
 import ome.xml.model.ROI;
 import ome.xml.model.Rectangle;
-import ome.xml.model.StringAnnotation;
 import ome.xml.model.StructuredAnnotations;
 import ome.xml.model.TiffData;
 import ome.xml.model.TimestampAnnotation;
@@ -84,8 +84,6 @@ public class ObjectBasedOMEModelMock implements OMEModelMock {
 
   private StructuredAnnotations annotations;
 
-  private OMEModel model;
-
   public ObjectBasedOMEModelMock() {
     ome = new OME();
     annotations = new StructuredAnnotations();
@@ -104,11 +102,16 @@ public class ObjectBasedOMEModelMock implements OMEModelMock {
     // Create <Image/>
     Image image = new Image();
     image.setID(InOut201004Test.IMAGE_ID);
+    ListAnnotation listAnnotation = new ListAnnotation();
+    listAnnotation.setID(InOut201004Test.IMAGE_LIST_ANNOTATION_ID);
+    listAnnotation.setNamespace(InOut201004Test.GENERAL_ANNOTATION_NAMESPACE);
+    annotations.addListAnnotation(listAnnotation);
     BooleanAnnotation annotation = new BooleanAnnotation();
     annotation.setID(InOut201004Test.IMAGE_ANNOTATION_ID);
     annotation.setValue(InOut201004Test.IMAGE_ANNOTATION_VALUE);
     annotation.setNamespace(InOut201004Test.GENERAL_ANNOTATION_NAMESPACE);
-    image.linkAnnotation(annotation);
+    listAnnotation.linkAnnotation(annotation);
+    image.linkAnnotation(listAnnotation);
     annotations.addBooleanAnnotation(annotation);
     // Create <Pixels/>
     Pixels pixels = new Pixels();
@@ -279,8 +282,8 @@ public class ObjectBasedOMEModelMock implements OMEModelMock {
     annotations.addTimestampAnnotation(plateAnnotation);
 
     int wellSampleIndex = 0;
-    for (int row=0; row<InOut201004Test.WELL_ROWS; row++) {
-      for (int col=0; col<InOut201004Test.WELL_COLS; col++) {
+    for (int row=0; row<InOut201004Test.WELL_ROWS.getValue(); row++) {
+      for (int col=0; col<InOut201004Test.WELL_COLS.getValue(); col++) {
         Well well = new Well();
         well.setID(String.format("Well:%d_%d", row, col));
         well.setRow(new NonNegativeInteger(row));
@@ -312,12 +315,12 @@ public class ObjectBasedOMEModelMock implements OMEModelMock {
     ROI roi = new ROI();
     roi.setID(InOut201004Test.ROI_ID);
 
-    StringAnnotation roiAnnotation = new StringAnnotation();
+    CommentAnnotation roiAnnotation = new CommentAnnotation();
     roiAnnotation.setID(InOut201004Test.ROI_ANNOTATION_ID);
     roiAnnotation.setValue(InOut201004Test.ROI_ANNOTATION_VALUE);
     roiAnnotation.setNamespace(InOut201004Test.GENERAL_ANNOTATION_NAMESPACE);
     roi.linkAnnotation(roiAnnotation);
-    annotations.addStringAnnotation(roiAnnotation);
+    annotations.addCommentAnnotation(roiAnnotation);
 
     Union shapeUnion = new Union();
     Rectangle rect = new Rectangle();

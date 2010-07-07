@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2010-06-03 10:29:33.559265
+ * Created by callan via xsd-fu on 2010-07-06 17:07:47+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -58,7 +58,7 @@ public class LightPath extends AbstractOMEModelObject
 
 	// -- Constants --
 
-	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2010-04";
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2010-06";
 
 	/** Logger for this class. */
 	private static final Logger LOGGER =
@@ -154,32 +154,36 @@ public class LightPath extends AbstractOMEModelObject
 
 	// -- LightPath API methods --
 
-	public void link(Reference reference, OMEModelObject o)
+	public boolean link(Reference reference, OMEModelObject o)
 	{
+		boolean wasHandledBySuperClass = super.link(reference, o);
+		if (wasHandledBySuperClass)
+		{
+			return true;
+		}
 		if (reference instanceof ExcitationFilterRef)
 		{
 			Filter o_casted = (Filter) o;
 			o_casted.linkLightPath(this);
 			excitationFilterList.add(o_casted);
-			return;
+			return true;
 		}
 		if (reference instanceof DichroicRef)
 		{
 			Dichroic o_casted = (Dichroic) o;
 			o_casted.linkLightPath(this);
 			dichroic = o_casted;
-			return;
+			return true;
 		}
 		if (reference instanceof EmissionFilterRef)
 		{
 			Filter o_casted = (Filter) o;
 			o_casted.linkLightPath(this);
 			emissionFilterList.add(o_casted);
-			return;
+			return true;
 		}
-		// TODO: Should be its own Exception
-		throw new RuntimeException(
-				"Unable to handle reference of type: " + reference.getClass());
+		LOGGER.debug("Unable to handle reference of type: {}", reference.getClass());
+		return false;
 	}
 
 

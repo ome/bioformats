@@ -34,6 +34,8 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
+import ome.xml.model.primitives.PositiveInteger;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -75,7 +77,7 @@ public class IvisionReader extends FormatReader {
     super("IVision", "ipm");
     suffixSufficient = false;
     suffixNecessary = false;
-    domains = new String[] {FormatTools.GRAPHICS_DOMAIN};
+    domains = new String[] {FormatTools.UNKNOWN_DOMAIN};
   }
 
   // -- IFormatReader API methods --
@@ -206,7 +208,7 @@ public class IvisionReader extends FormatReader {
 
     imageOffset = in.getFilePointer();
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       in.skipBytes(getSizeZ() * getSizeC() * getSizeT() * getSizeX() *
         getSizeY() * FormatTools.getBytesPerPixel(getPixelType()));
 
@@ -242,7 +244,7 @@ public class IvisionReader extends FormatReader {
     }
     else MetadataTools.setDefaultCreationDate(store, currentId, 0);
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       String instrumentID = MetadataTools.createLSID("Instrument", 0);
 
       store.setInstrumentID(instrumentID, 0);
@@ -261,7 +263,8 @@ public class IvisionReader extends FormatReader {
 
       if (lensNA != null) store.setObjectiveLensNA(lensNA, 0, 0);
       if (magnification != null) {
-        store.setObjectiveNominalMagnification(magnification, 0, 0);
+        store.setObjectiveNominalMagnification(
+            new PositiveInteger(magnification), 0, 0);
       }
       if (refractiveIndex != null) {
         store.setImageObjectiveSettingsRefractiveIndex(refractiveIndex, 0);

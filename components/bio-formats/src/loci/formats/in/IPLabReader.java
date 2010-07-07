@@ -55,7 +55,7 @@ public class IPLabReader extends FormatReader {
     super("IPLab", "ipl");
     suffixNecessary = false; // allow extensionless IPLab files
     suffixSufficient = false;
-    domains = new String[] {FormatTools.GRAPHICS_DOMAIN};
+    domains = new String[] {FormatTools.UNKNOWN_DOMAIN};
   }
 
   // -- IFormatReader API methods --
@@ -185,7 +185,7 @@ public class IPLabReader extends FormatReader {
     MetadataTools.populatePixels(store, this, true);
     MetadataTools.setDefaultCreationDate(store, id, 0);
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       in.skipBytes(dataSize);
       parseTags(store);
 
@@ -276,7 +276,9 @@ public class IPLabReader extends FormatReader {
       else if (tag.equals("mmrc")) {
         in.skipBytes(size);
       }
-      else if (tag.equals("roi ")) {
+      else if (tag.equals("roi ") &&
+        getMetadataOptions().getMetadataLevel() != MetadataLevel.NO_OVERLAYS)
+      {
         // read in ROI information
 
         in.skipBytes(4);

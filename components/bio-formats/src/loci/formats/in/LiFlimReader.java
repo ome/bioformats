@@ -278,8 +278,9 @@ public class LiFlimReader extends FormatReader {
     IniTable infoTable = ini.getTable(INFO_TABLE);
     version = infoTable.get(VERSION_KEY);
     compression = infoTable.get(COMPRESSION_KEY);
+    MetadataLevel level = getMetadataOptions().getMetadataLevel();
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (level != MetadataLevel.MINIMUM) {
       // add all INI entries to the global metadata list
       for (IniTable table : ini) {
         String name = table.get(IniTable.HEADER_KEY);
@@ -296,7 +297,9 @@ public class LiFlimReader extends FormatReader {
           else if (metaKey.equals("ROI: INFO - numregions")) {
             numRegions = Integer.parseInt(value);
           }
-          else if (metaKey.startsWith("ROI: ROI")) {
+          else if (metaKey.startsWith("ROI: ROI") &&
+            level != MetadataLevel.NO_OVERLAYS)
+          {
             int start = metaKey.lastIndexOf("ROI") + 3;
             int end = metaKey.indexOf(" ", start);
             Integer index = new Integer(metaKey.substring(start, end));
@@ -408,7 +411,7 @@ public class LiFlimReader extends FormatReader {
       MetadataTools.setDefaultCreationDate(store, currentId, 1);
     }
 
-    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.MINIMUM) {
       return;
     }
 

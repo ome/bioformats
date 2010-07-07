@@ -11,6 +11,7 @@ import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 import loci.formats.meta.IMetadata;
 import loci.formats.services.OMEXMLService;
+import ome.xml.model.primitives.NonNegativeInteger;
 
 /**
  * Uses Bio-Formats to extract timestamp information
@@ -67,9 +68,9 @@ public class PrintTimestamps {
       Double deltaT = meta.getPlaneDeltaT(series, i);
       if (deltaT == null) continue;
       // convert plane ZCT coordinates into image plane index
-      int z = meta.getPlaneTheZ(series, i).intValue();
-      int c = meta.getPlaneTheC(series, i).intValue();
-      int t = meta.getPlaneTheT(series, i).intValue();
+      int z = meta.getPlaneTheZ(series, i).getValue().intValue();
+      int c = meta.getPlaneTheC(series, i).getValue().intValue();
+      int t = meta.getPlaneTheT(series, i).getValue().intValue();
       if (z == 0 && c == 0) {
         System.out.println("\tTimepoint #" + t + " = " + deltaT + " s");
       }
@@ -93,9 +94,9 @@ public class PrintTimestamps {
       Double deltaT = meta.getPlaneDeltaT(series, i);
       if (deltaT == null) continue;
       // convert plane ZCT coordinates into image plane index
-      int z = meta.getPlaneTheZ(series, i).intValue();
-      int c = meta.getPlaneTheC(series, i).intValue();
-      int t = meta.getPlaneTheT(series, i).intValue();
+      int z = meta.getPlaneTheZ(series, i).getValue().intValue();
+      int c = meta.getPlaneTheC(series, i).getValue().intValue();
+      int t = meta.getPlaneTheT(series, i).getValue().intValue();
       System.out.println("\tZ " + z + ", C " + c + ", T " + t + " = " +
         deltaT + " s");
     }

@@ -55,7 +55,7 @@ public class ImarisTiffReader extends BaseTiffReader {
     super("Bitplane Imaris 3 (TIFF)", "ims");
     suffixSufficient = false;
     suffixNecessary = true;
-    domains = new String[] {FormatTools.GRAPHICS_DOMAIN};
+    domains = new String[] {FormatTools.UNKNOWN_DOMAIN};
   }
 
   // -- Internal FormatReader API methods --
@@ -110,7 +110,7 @@ public class ImarisTiffReader extends BaseTiffReader {
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       String description = null, creationDate = null;
       Vector<Integer> emWave = new Vector<Integer>();
       Vector<Integer> exWave = new Vector<Integer>();

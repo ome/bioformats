@@ -93,7 +93,7 @@ public class LEOReader extends BaseTiffReader {
       }
     }
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       // physical sizes stored in meters
       xSize = Double.parseDouble(lines[3]) * 1000000;
 
@@ -117,7 +117,7 @@ public class LEOReader extends BaseTiffReader {
     date = DateTools.formatDate(date, "HH:mm dd-MMM-yyyy");
     store.setImageAcquiredDate(date, 0);
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setPixelsPhysicalSizeX(xSize, 0);
       store.setPixelsPhysicalSizeY(xSize, 0);
       store.setObjectiveWorkingDistance(workingDistance, 0, 0);

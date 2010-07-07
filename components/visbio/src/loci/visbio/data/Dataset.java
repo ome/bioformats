@@ -36,6 +36,8 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 import loci.common.Location;
+import loci.common.StatusEvent;
+import loci.common.StatusListener;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
@@ -50,8 +52,6 @@ import loci.formats.gui.BufferedImageReader;
 import loci.formats.gui.GUITools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.OMEXMLService;
-import loci.visbio.StatusEvent;
-import loci.visbio.StatusListener;
 import loci.visbio.VisBioFrame;
 import loci.visbio.state.Dynamic;
 import loci.visbio.state.SaveException;

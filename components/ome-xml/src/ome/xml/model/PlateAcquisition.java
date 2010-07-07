@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2010-06-03 10:29:33.559265
+ * Created by callan via xsd-fu on 2010-07-06 17:07:47+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -58,7 +58,7 @@ public class PlateAcquisition extends AbstractOMEModelObject
 
 	// -- Constants --
 
-	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/SPW/2010-04";
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/SPW/2010-06";
 
 	/** Logger for this class. */
 	private static final Logger LOGGER =
@@ -68,7 +68,7 @@ public class PlateAcquisition extends AbstractOMEModelObject
 
 
 	// Property
-	private Integer maximumFieldCount;
+	private PositiveInteger maximumFieldCount;
 
 	// Property
 	private String endTime;
@@ -141,7 +141,7 @@ public class PlateAcquisition extends AbstractOMEModelObject
 		if (element.hasAttribute("MaximumFieldCount"))
 		{
 			// Attribute property MaximumFieldCount
-			setMaximumFieldCount(Integer.valueOf(
+			setMaximumFieldCount(PositiveInteger.valueOf(
 					element.getAttribute("MaximumFieldCount")));
 		}
 		if (element.hasAttribute("EndTime"))
@@ -214,35 +214,39 @@ public class PlateAcquisition extends AbstractOMEModelObject
 
 	// -- PlateAcquisition API methods --
 
-	public void link(Reference reference, OMEModelObject o)
+	public boolean link(Reference reference, OMEModelObject o)
 	{
+		boolean wasHandledBySuperClass = super.link(reference, o);
+		if (wasHandledBySuperClass)
+		{
+			return true;
+		}
 		if (reference instanceof WellSampleRef)
 		{
 			WellSample o_casted = (WellSample) o;
 			o_casted.linkPlateAcquisition(this);
 			wellSampleList.add(o_casted);
-			return;
+			return true;
 		}
 		if (reference instanceof AnnotationRef)
 		{
 			Annotation o_casted = (Annotation) o;
 			o_casted.linkPlateAcquisition(this);
 			annotationList.add(o_casted);
-			return;
+			return true;
 		}
-		// TODO: Should be its own Exception
-		throw new RuntimeException(
-				"Unable to handle reference of type: " + reference.getClass());
+		LOGGER.debug("Unable to handle reference of type: {}", reference.getClass());
+		return false;
 	}
 
 
 	// Property
-	public Integer getMaximumFieldCount()
+	public PositiveInteger getMaximumFieldCount()
 	{
 		return maximumFieldCount;
 	}
 
-	public void setMaximumFieldCount(Integer maximumFieldCount)
+	public void setMaximumFieldCount(PositiveInteger maximumFieldCount)
 	{
 		this.maximumFieldCount = maximumFieldCount;
 	}

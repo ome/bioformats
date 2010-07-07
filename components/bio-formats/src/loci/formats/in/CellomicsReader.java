@@ -119,7 +119,7 @@ public class CellomicsReader extends FormatReader {
     in.skipBytes(4);
     int pixelWidth = 0, pixelHeight = 0;
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       pixelWidth = in.readInt();
       pixelHeight = in.readInt();
       int colorUsed = in.readInt();
@@ -156,7 +156,7 @@ public class CellomicsReader extends FormatReader {
     MetadataTools.populatePixels(store, this);
     MetadataTools.setDefaultCreationDate(store, id, 0);
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       // physical dimensions are stored as pixels per meter - we want them
       // in microns per pixel
       double width = pixelWidth == 0 ? 0.0 : 1000000.0 / pixelWidth;

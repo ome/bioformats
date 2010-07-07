@@ -200,10 +200,10 @@ public class DeltavisionReader extends FormatReader {
         initFilePixelsOnly(id);
         break;
       }
-      case ALL: {
+      case NO_OVERLAYS:
+      case ALL:
         initFileOld(id);
         break;
-      }
       default: {
         LOGGER.warn("Unsupported level: " + metadataLevel);
       }
@@ -812,7 +812,7 @@ public class DeltavisionReader extends FormatReader {
 
             try {
               store.setObjectiveNominalMagnification(
-                new Integer(magnification), 0, 0);
+                PositiveInteger.valueOf(magnification), 0, 0);
             }
             catch (NumberFormatException e) {
               LOGGER.warn("Could not parse magnification '{}'", magnification);

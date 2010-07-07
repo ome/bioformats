@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2010-06-03 10:29:33.559265
+ * Created by callan via xsd-fu on 2010-07-06 17:07:47+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -58,7 +58,7 @@ public class TiffData extends AbstractOMEModelObject
 
 	// -- Constants --
 
-	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2010-04";
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2010-06";
 
 	/** Logger for this class. */
 	private static final Logger LOGGER =
@@ -68,19 +68,19 @@ public class TiffData extends AbstractOMEModelObject
 
 
 	// Property
-	private Integer ifd;
+	private NonNegativeInteger ifd;
 
 	// Property
-	private Integer planeCount;
+	private NonNegativeInteger planeCount;
 
 	// Property
-	private Integer firstZ;
+	private NonNegativeInteger firstZ;
 
 	// Property
-	private Integer firstC;
+	private NonNegativeInteger firstC;
 
 	// Property
-	private Integer firstT;
+	private NonNegativeInteger firstT;
 
 	// Property
 	private UUID uuid;
@@ -135,31 +135,31 @@ public class TiffData extends AbstractOMEModelObject
 		if (element.hasAttribute("IFD"))
 		{
 			// Attribute property IFD
-			setIFD(Integer.valueOf(
+			setIFD(NonNegativeInteger.valueOf(
 					element.getAttribute("IFD")));
 		}
 		if (element.hasAttribute("PlaneCount"))
 		{
 			// Attribute property PlaneCount
-			setPlaneCount(Integer.valueOf(
+			setPlaneCount(NonNegativeInteger.valueOf(
 					element.getAttribute("PlaneCount")));
 		}
 		if (element.hasAttribute("FirstZ"))
 		{
 			// Attribute property FirstZ
-			setFirstZ(Integer.valueOf(
+			setFirstZ(NonNegativeInteger.valueOf(
 					element.getAttribute("FirstZ")));
 		}
 		if (element.hasAttribute("FirstC"))
 		{
 			// Attribute property FirstC
-			setFirstC(Integer.valueOf(
+			setFirstC(NonNegativeInteger.valueOf(
 					element.getAttribute("FirstC")));
 		}
 		if (element.hasAttribute("FirstT"))
 		{
 			// Attribute property FirstT
-			setFirstT(Integer.valueOf(
+			setFirstT(NonNegativeInteger.valueOf(
 					element.getAttribute("FirstT")));
 		}
 		List<Element> UUID_nodeList =
@@ -182,65 +182,69 @@ public class TiffData extends AbstractOMEModelObject
 
 	// -- TiffData API methods --
 
-	public void link(Reference reference, OMEModelObject o)
+	public boolean link(Reference reference, OMEModelObject o)
 	{
-		// TODO: Should be its own Exception
-		throw new RuntimeException(
-				"Unable to handle reference of type: " + reference.getClass());
+		boolean wasHandledBySuperClass = super.link(reference, o);
+		if (wasHandledBySuperClass)
+		{
+			return true;
+		}
+		LOGGER.debug("Unable to handle reference of type: {}", reference.getClass());
+		return false;
 	}
 
 
 	// Property
-	public Integer getIFD()
+	public NonNegativeInteger getIFD()
 	{
 		return ifd;
 	}
 
-	public void setIFD(Integer ifd)
+	public void setIFD(NonNegativeInteger ifd)
 	{
 		this.ifd = ifd;
 	}
 
 	// Property
-	public Integer getPlaneCount()
+	public NonNegativeInteger getPlaneCount()
 	{
 		return planeCount;
 	}
 
-	public void setPlaneCount(Integer planeCount)
+	public void setPlaneCount(NonNegativeInteger planeCount)
 	{
 		this.planeCount = planeCount;
 	}
 
 	// Property
-	public Integer getFirstZ()
+	public NonNegativeInteger getFirstZ()
 	{
 		return firstZ;
 	}
 
-	public void setFirstZ(Integer firstZ)
+	public void setFirstZ(NonNegativeInteger firstZ)
 	{
 		this.firstZ = firstZ;
 	}
 
 	// Property
-	public Integer getFirstC()
+	public NonNegativeInteger getFirstC()
 	{
 		return firstC;
 	}
 
-	public void setFirstC(Integer firstC)
+	public void setFirstC(NonNegativeInteger firstC)
 	{
 		this.firstC = firstC;
 	}
 
 	// Property
-	public Integer getFirstT()
+	public NonNegativeInteger getFirstT()
 	{
 		return firstT;
 	}
 
-	public void setFirstT(Integer firstT)
+	public void setFirstT(NonNegativeInteger firstT)
 	{
 		this.firstT = firstT;
 	}

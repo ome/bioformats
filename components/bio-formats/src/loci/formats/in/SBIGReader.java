@@ -185,7 +185,7 @@ public class SBIGReader extends FormatReader {
     }
     else MetadataTools.setDefaultCreationDate(store, currentId, 0);
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setPixelsPhysicalSizeX(sizeX, 0);
       store.setPixelsPhysicalSizeY(sizeY, 0);
       store.setImageDescription(description, 0);

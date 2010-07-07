@@ -446,7 +446,7 @@ public class ScanrReader extends FormatReader {
       store.setImageName(name, i);
     }
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       // populate LogicalChannel data
 
       for (int i=0; i<getSeriesCount(); i++) {

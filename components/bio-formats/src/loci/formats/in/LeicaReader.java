@@ -47,6 +47,8 @@ import loci.formats.tiff.IFDList;
 import loci.formats.tiff.TiffConstants;
 import loci.formats.tiff.TiffParser;
 
+import ome.xml.model.enums.Correction;
+import ome.xml.model.enums.Immersion;
 import ome.xml.model.primitives.PositiveInteger;
 
 import org.slf4j.Logger;
@@ -507,7 +509,7 @@ public class LeicaReader extends FormatReader {
         long offset = ((Long) ifd.get(key)).longValue();
         in.seek(offset);
 
-        if (key.equals(SERIES) && metadataLevel == MetadataLevel.ALL) {
+        if (key.equals(SERIES)) {
           parseSeriesTag();
         }
         else if (key.equals(IMAGES)) {
@@ -516,16 +518,20 @@ public class LeicaReader extends FormatReader {
         else if (key.equals(DIMDESCR)) {
           parseDimensionTag(i);
         }
-        else if (key.equals(TIMEINFO) && metadataLevel == MetadataLevel.ALL) {
+        else if (key.equals(TIMEINFO) && metadataLevel != MetadataLevel.MINIMUM)
+        {
           parseTimeTag(i);
         }
-        else if (key.equals(EXPERIMENT) && metadataLevel == MetadataLevel.ALL) {
+        else if (key.equals(EXPERIMENT) &&
+          metadataLevel != MetadataLevel.MINIMUM)
+        {
           parseExperimentTag();
         }
         else if (key.equals(LUTDESC)) {
           parseLUT(i);
         }
-        else if (key.equals(CHANDESC) && metadataLevel == MetadataLevel.ALL) {
+        else if (key.equals(CHANDESC) && metadataLevel != MetadataLevel.MINIMUM)
+        {
           parseChannelTag();
         }
       }
@@ -1207,19 +1213,34 @@ public class LeicaReader extends FormatReader {
               immersion = objectiveData[i];
             }
           }
-          if (immersion == null || immersion.trim().equals("")) {
-            immersion = "Unknown";
+
+          if (immersion != null) immersion = immersion.trim();
+          if (correction != null) correction = correction.trim();
+
+          Correction realCorrection = getCorrection(correction);
+          Correction testCorrection = getCorrection(immersion);
+          Immersion realImmersion = getImmersion(immersion);
+          Immersion testImmersion = getImmersion(correction);
+
+          // Correction and Immersion are reversed
+          if ((testCorrection != Correction.OTHER &&
+            realCorrection == Correction.OTHER) ||
+            (testImmersion != Immersion.OTHER &&
+            realImmersion == Immersion.OTHER))
+          {
+            String tmp = correction;
+            correction = immersion;
+            immersion = tmp;
           }
-          if (correction == null) correction = "Unknown";
 
           store.setObjectiveImmersion(
             getImmersion(immersion), series, objective);
           store.setObjectiveCorrection(
-            getCorrection(correction.trim()), series, objective);
+            getCorrection(correction), series, objective);
           store.setObjectiveModel(model.toString().trim(), series, objective);
           store.setObjectiveLensNA(new Double(na), series, objective);
-          store.setObjectiveNominalMagnification((int)
-            Double.parseDouble(mag), series, objective);
+          store.setObjectiveNominalMagnification(new PositiveInteger((int)
+            Double.parseDouble(mag)), series, objective);
         }
         else if (tokens[2].equals("OrderNumber")) {
           store.setObjectiveSerialNumber(data, series, objective);
@@ -1256,11 +1277,13 @@ public class LeicaReader extends FormatReader {
             }
 
             if (tokens[3].equals("0") && !cutInPopulated[series][index]) {
-              store.setTransmittanceRangeCutIn(wavelength, series, channel);
+              store.setTransmittanceRangeCutIn(
+                  new PositiveInteger(wavelength), series, channel);
               cutInPopulated[series][index] = true;
             }
             else if (tokens[3].equals("1") && !cutOutPopulated[series][index]) {
-              store.setTransmittanceRangeCutOut(wavelength, series, channel);
+              store.setTransmittanceRangeCutOut(
+                  new PositiveInteger(wavelength), series, channel);
               cutOutPopulated[series][index] = true;
             }
           }

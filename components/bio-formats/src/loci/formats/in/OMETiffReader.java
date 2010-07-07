@@ -31,6 +31,9 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Vector;
 
+import ome.xml.model.primitives.NonNegativeInteger;
+import ome.xml.model.primitives.PositiveInteger;
+
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.services.DependencyException;
@@ -83,7 +86,7 @@ public class OMETiffReader extends FormatReader {
     super("OME-TIFF", new String[] {"ome.tif", "ome.tiff"});
     suffixNecessary = false;
     suffixSufficient = false;
-    domains = FormatTools.ALL_DOMAINS;
+    domains = FormatTools.NON_GRAPHICS_DOMAINS;
     hasCompanionFiles = true;
   }
 
@@ -138,14 +141,14 @@ public class OMETiffReader extends FormatReader {
     if (ifd == null) return false;
     String comment = ifd.getComment();
     if (comment == null) return false;
-    return comment.trim().endsWith("</OME>");
+    return comment.trim().endsWith("OME>");
   }
 
   /* @see loci.formats.IFormatReader#getDomains() */
   public String[] getDomains() {
     FormatTools.assertId(currentId, true, 1);
     return hasSPW ? new String[] {FormatTools.HCS_DOMAIN} :
-      FormatTools.NON_HCS_DOMAINS;
+      FormatTools.NON_SPECIAL_DOMAINS;
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
@@ -187,8 +190,8 @@ public class OMETiffReader extends FormatReader {
     }
     IFDList ifdList = r.getIFDs();
     if (i >= ifdList.size()) {
-      throw new FormatException(
-        "Error untangling IFDs; the OME-TIFF file may be malformed.");
+      LOGGER.warn("Error untangling IFDs; the OME-TIFF file may be malformed.");
+      return buf;
     }
     IFD ifd = ifdList.get(i);
     RandomAccessInputStream s =
@@ -271,10 +274,7 @@ public class OMETiffReader extends FormatReader {
     }
 
     String currentUUID = meta.getUUID();
-    if (service.isOMEXMLMetadata(metadataStore)) {
-      metadataStore = meta;
-    }
-    else service.convertMetadata(meta, metadataStore);
+    service.convertMetadata(meta, metadataStore);
 
     // determine series count from Image and Pixels elements
     int seriesCount = meta.getImageCount();
@@ -290,9 +290,11 @@ public class OMETiffReader extends FormatReader {
     for (int i=0; i<seriesCount; i++) {
       int tiffDataCount = meta.getTiffDataCount(i);
       for (int td=0; td<tiffDataCount; td++) {
-        // TODO
-        // String uuid = ?
         String uuid = null;
+        try {
+          uuid = meta.getUUIDValue(i, td);
+        }
+        catch (NullPointerException e) { }
         String filename = null;
         if (uuid == null) {
           // no UUID means that TiffData element refers to this file
@@ -354,18 +356,18 @@ public class OMETiffReader extends FormatReader {
     // process TiffData elements
     Hashtable<String, IFormatReader> readers =
       new Hashtable<String, IFormatReader>();
-    int s = 0;
     for (int i=0; i<seriesCount; i++) {
+      int s = i;
       LOGGER.debug("Image[{}] {", i);
       LOGGER.debug("  id = {}", meta.getImageID(i));
 
       String order = meta.getPixelsDimensionOrder(i).toString();
 
-      Integer samplesPerPixel = null;
+      PositiveInteger samplesPerPixel = null;
       if (meta.getChannelCount(i) > 0) {
         samplesPerPixel = meta.getChannelSamplesPerPixel(i, 0);
       }
-      int samples = samplesPerPixel == null ?  -1 : samplesPerPixel.intValue();
+      int samples = samplesPerPixel == null ?  -1 : samplesPerPixel.getValue();
       int tiffSamples = firstIFD.getSamplesPerPixel();
       if (samples != tiffSamples) {
         LOGGER.warn("SamplesPerPixel mismatch: OME={}, TIFF={}",
@@ -401,15 +403,15 @@ public class OMETiffReader extends FormatReader {
         } catch (NullPointerException e) {
           LOGGER.debug("Ignoring null UUID object when retrieving value.");
         }
-        Integer tdIFD = meta.getTiffDataIFD(i, td);
-        int ifd = tdIFD == null ? 0 : tdIFD.intValue();
-        Integer numPlanes = meta.getTiffDataPlaneCount(i, td);
-        Integer firstC = meta.getTiffDataFirstC(i, td);
-        Integer firstT = meta.getTiffDataFirstT(i, td);
-        Integer firstZ = meta.getTiffDataFirstZ(i, td);
-        int c = firstC == null ? 0 : firstC.intValue();
-        int t = firstT == null ? 0 : firstT.intValue();
-        int z = firstZ == null ? 0 : firstZ.intValue();
+        NonNegativeInteger tdIFD = meta.getTiffDataIFD(i, td);
+        int ifd = tdIFD == null ? 0 : tdIFD.getValue();
+        NonNegativeInteger numPlanes = meta.getTiffDataPlaneCount(i, td);
+        NonNegativeInteger firstC = meta.getTiffDataFirstC(i, td);
+        NonNegativeInteger firstT = meta.getTiffDataFirstT(i, td);
+        NonNegativeInteger firstZ = meta.getTiffDataFirstZ(i, td);
+        int c = firstC == null ? 0 : firstC.getValue();
+        int t = firstT == null ? 0 : firstT.getValue();
+        int z = firstZ == null ? 0 : firstZ.getValue();
 
         // NB: some writers index FirstC, FirstZ and FirstT from 1
         if (c >= effSizeC) c--;
@@ -418,7 +420,7 @@ public class OMETiffReader extends FormatReader {
 
         int index = FormatTools.getIndex(order,
           sizeZ, effSizeC, sizeT, num, z, c, t);
-        int count = numPlanes == null ? 1 : numPlanes.intValue();
+        int count = numPlanes == null ? 1 : numPlanes.getValue();
         if (count == 0) {
           core[s] = null;
           break;
@@ -564,13 +566,11 @@ public class OMETiffReader extends FormatReader {
           }
         }
 
-        core[s].littleEndian =
-          !meta.getPixelsBinDataBigEndian(i, 0).booleanValue();
-        boolean tiffLittleEndian = firstIFD.isLittleEndian();
-        if (core[s].littleEndian != tiffLittleEndian) {
-          LOGGER.warn("BigEndian mismatch: OME={}, TIFF={}",
-            !core[s].littleEndian, !tiffLittleEndian);
+        if (meta.getPixelsBinDataCount(i) > 1) {
+          LOGGER.warn("OME-TIFF Pixels element contains BinData elements! " +
+                      "Ignoring.");
         }
+        core[s].littleEndian = firstIFD.isLittleEndian();
         core[s].interleaved = false;
         core[s].indexed = photo == PhotoInterp.RGB_PALETTE &&
           firstIFD.getIFDValue(IFD.COLOR_MAP) != null;

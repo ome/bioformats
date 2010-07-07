@@ -27,6 +27,8 @@ import java.awt.image.ColorModel;
 import java.io.IOException;
 import java.util.HashMap;
 
+import ome.xml.model.primitives.PositiveInteger;
+
 import loci.common.DataTools;
 import loci.common.RandomAccessOutputStream;
 import loci.formats.meta.DummyMetadata;
@@ -341,9 +343,9 @@ public abstract class FormatWriter extends FormatHandler
     int pixelType =
       FormatTools.pixelTypeFromString(r.getPixelsType(series).toString());
     int bpp = FormatTools.getBytesPerPixel(pixelType);
-    Integer samples = r.getChannelSamplesPerPixel(series, 0);
-    if (samples == null) samples = 1;
-    int minSize = bpp * w * h * samples;
+    PositiveInteger samples = r.getChannelSamplesPerPixel(series, 0);
+    if (samples == null) samples = new PositiveInteger(1);
+    int minSize = bpp * w * h * samples.getValue();
     if (buf.length < minSize) {
       throw new FormatException("Buffer is too small; expected " + minSize +
         " bytes, got " + buf.length + " bytes.");
@@ -391,11 +393,11 @@ public abstract class FormatWriter extends FormatHandler
   /** Retrieve the number of samples per pixel for the current series. */
   protected int getSamplesPerPixel() {
     MetadataRetrieve r = getMetadataRetrieve();
-    Integer samples = r.getChannelSamplesPerPixel(series, 0);
+    PositiveInteger samples = r.getChannelSamplesPerPixel(series, 0);
     if (samples == null) {
       LOGGER.warn("SamplesPerPixel #0 is null. It is assumed to be 1.");
     }
-    return samples == null ? 1 : samples.intValue();
+    return samples == null ? 1 : samples.getValue();
   }
 
   /** Retrieve the total number of planes in the current series. */

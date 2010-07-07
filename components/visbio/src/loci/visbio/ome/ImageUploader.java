@@ -25,6 +25,8 @@ package loci.visbio.ome;
 
 import java.util.Vector;
 
+import loci.common.StatusEvent;
+import loci.common.StatusListener;
 import loci.common.services.ServiceFactory;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
@@ -33,8 +35,6 @@ import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.OMEXMLService;
 import loci.ome.io.OMEWriter;
-import loci.visbio.StatusEvent;
-import loci.visbio.StatusListener;
 
 /**
  * ImageUploader is a helper class for uploading VisBio datasets

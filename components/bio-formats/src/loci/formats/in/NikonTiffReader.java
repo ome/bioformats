@@ -102,7 +102,9 @@ public class NikonTiffReader extends BaseTiffReader {
   protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
 
-    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.ALL) return;
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.MINIMUM) {
+      return;
+    }
 
     filterModels = new Vector<String>();
     dichroicModels = new Vector<String>();
@@ -210,7 +212,7 @@ public class NikonTiffReader extends BaseTiffReader {
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription("", 0);
 
       store.setPixelsPhysicalSizeX(physicalSizeX, 0);
@@ -224,7 +226,8 @@ public class NikonTiffReader extends BaseTiffReader {
       String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
       store.setObjectiveID(objectiveID, 0, 0);
       store.setImageObjectiveSettingsID(objectiveID, 0);
-      store.setObjectiveNominalMagnification(magnification, 0, 0);
+      store.setObjectiveNominalMagnification(
+          new PositiveInteger(magnification), 0, 0);
 
       if (correction == null) correction = "Other";
       store.setObjectiveCorrection(getCorrection(correction), 0, 0);

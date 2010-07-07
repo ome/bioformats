@@ -58,7 +58,7 @@ public class SEQReader extends BaseTiffReader {
   /** Constructs a new Image-Pro SEQ reader. */
   public SEQReader() {
     super("Image-Pro Sequence", "seq");
-    domains = new String[] {FormatTools.GRAPHICS_DOMAIN};
+    domains = new String[] {FormatTools.UNKNOWN_DOMAIN};
   }
 
   // -- IFormatReader API methods --
@@ -83,7 +83,7 @@ public class SEQReader extends BaseTiffReader {
 
     MetadataLevel level = getMetadataOptions().getMetadataLevel();
     for (IFD ifd : ifds) {
-      if (level == MetadataLevel.ALL) {
+      if (level != MetadataLevel.MINIMUM) {
         short[] tag1 = (short[]) ifd.getIFDValue(IMAGE_PRO_TAG_1);
 
         if (tag1 != null) {

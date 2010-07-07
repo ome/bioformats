@@ -12,7 +12,7 @@ rem If you are a developer working from source and have
 rem the LOCI classes in your CLASSPATH, you can set the
 rem LOCI_DEVEL environment variable to use them instead.
 
-set PROG=loci.plugins.importer.Importer
+set PROG=loci.plugins.in.Importer
 set DIR=%~dp0
 if "%DIR:~1%" == ":\" (
   set DIR1=%DIR%

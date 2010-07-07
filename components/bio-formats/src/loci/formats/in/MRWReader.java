@@ -195,7 +195,7 @@ public class MRWReader extends FormatReader {
         }
       }
       else if (blockName.endsWith("TTW") &&
-        getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL)
+        getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM)
       {
         byte[] b = new byte[len];
         in.read(b);

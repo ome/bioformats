@@ -106,7 +106,7 @@ public class BioRadGelReader extends FormatReader {
     int skip = in.readInt() - 28;
 
     double physicalWidth = 0d, physicalHeight = 0d;
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       in.seek(348 + skip - 8187);
       String scannerName = in.readCString();
       in.skipBytes(8);
@@ -163,7 +163,7 @@ public class BioRadGelReader extends FormatReader {
     MetadataTools.populatePixels(store, this);
 
     store.setImageAcquiredDate(date, 0);
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setPixelsPhysicalSizeX(physicalWidth / getSizeX(), 0);
       store.setPixelsPhysicalSizeY(physicalHeight / getSizeY(), 0);
     }

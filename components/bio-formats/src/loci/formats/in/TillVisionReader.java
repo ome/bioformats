@@ -382,7 +382,7 @@ public class TillVisionReader extends FormatReader {
         int dataType = Integer.parseInt(infoTable.get("Datatype"));
         core[i].pixelType = convertPixelType(dataType);
 
-        if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+        if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
           for (IniTable table : data) {
             for (String key : table.keySet()) {
               addSeriesMeta(key, table.get(key));
@@ -427,7 +427,7 @@ public class TillVisionReader extends FormatReader {
       else MetadataTools.setDefaultCreationDate(store, currentId, i);
     }
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       for (int i=0; i<getSeriesCount(); i++) {
         // populate PlaneTiming data
 

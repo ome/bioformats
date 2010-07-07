@@ -241,11 +241,6 @@ public class NikonReader extends BaseTiffReader {
       }
     }
 
-    if (x == 0 && y == 0 && getSizeX() == w && getSizeY() == h) {
-      return ImageTools.interpolate(pix, buf, colorMap, getSizeX(), getSizeY(),
-        isLittleEndian());
-    }
-
     byte[] b = new byte[FormatTools.getPlaneSize(this)];
     ImageTools.interpolate(pix, b, colorMap, getSizeX(), getSizeY(),
       isLittleEndian());

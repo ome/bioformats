@@ -134,7 +134,7 @@ public class OxfordInstrumentsReader extends FormatReader {
     in.skipBytes(lutSize);
     headerSize = in.getFilePointer();
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       in.skipBytes(FormatTools.getPlaneSize(this));
 
       int nMetadataStrings = in.readInt();

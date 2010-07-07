@@ -49,6 +49,7 @@ import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
 
 import ome.xml.model.primitives.NonNegativeInteger;
+import ome.xml.model.primitives.PositiveInteger;
 
 /**
  * MIASReader is the file format reader for Maia Scientific MIAS-2 datasets.
@@ -603,7 +604,7 @@ public class MIASReader extends FormatReader {
     LOGGER.info("Populating metadata hashtable");
 
     if (resultFile != null &&
-      getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL)
+      getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM)
     {
       String[] cols = null;
       Vector<String> rows = new Vector<String>();
@@ -689,7 +690,9 @@ public class MIASReader extends FormatReader {
       MetadataTools.setDefaultCreationDate(store, id, well);
     }
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    MetadataLevel level = getMetadataOptions().getMetadataLevel();
+
+    if (level != MetadataLevel.MINIMUM) {
       store.setExperimentID("Experiment:" + experiment.getName(), 0);
       store.setExperimentType(getExperimentType("Other"), 0);
 
@@ -712,53 +715,55 @@ public class MIASReader extends FormatReader {
         store.setImageInstrumentRef(instrumentID, well);
       }
 
-      // populate image-level ROIs
-      Integer[] colors = new Integer[getSizeC()];
-      int nextROI = 0;
-      for (AnalysisFile af : analysisFiles) {
-        String file = af.filename;
-        String name = new Location(file).getName();
-        if (!name.startsWith("Well")) continue;
+      if (level != MetadataLevel.NO_OVERLAYS) {
+        // populate image-level ROIs
+        Integer[] colors = new Integer[getSizeC()];
+        int nextROI = 0;
+        for (AnalysisFile af : analysisFiles) {
+          String file = af.filename;
+          String name = new Location(file).getName();
+          if (!name.startsWith("Well")) continue;
 
-        int[] position = getPositionFromFile(file);
-        int well = position[0];
+          int[] position = getPositionFromFile(file);
+          int well = position[0];
 
-        if (name.endsWith("detail.txt")) {
-          String data = DataTools.readFile(file);
-          String[] lines = data.split("\n");
-          int start = 0;
-          while (start < lines.length && !lines[start].startsWith("Label")) {
-            start++;
+          if (name.endsWith("detail.txt")) {
+            String data = DataTools.readFile(file);
+            String[] lines = data.split("\n");
+            int start = 0;
+            while (start < lines.length && !lines[start].startsWith("Label")) {
+              start++;
+            }
+            if (start >= lines.length) continue;
+
+            String[] columns = lines[start].split("\t");
+            List<String> columnNames = Arrays.asList(columns);
+
+            for (int j=start+1; j<lines.length; j++) {
+              populateROI(columnNames, lines[j].split("\t"), well,
+                nextROI++, position[1], position[2], store);
+            }
           }
-          if (start >= lines.length) continue;
+          else if (name.endsWith("AllModesOverlay.tif")) {
+            // original color for each channel is stored in
+            // results/Well<nnnn>_mode<n>_z<nnn>_t<nnn>_AllModesOverlay.tif
+            if (colors[position[3]] != null) continue;
+            try {
+              colors[position[3]] = getChannelColorFromFile(file);
+            }
+            catch (IOException e) { }
+            if (colors[position[3]] == null) continue;
 
-          String[] columns = lines[start].split("\t");
-          List<String> columnNames = Arrays.asList(columns);
-
-          for (int j=start+1; j<lines.length; j++) {
-            populateROI(columnNames, lines[j].split("\t"), well,
-              nextROI++, position[1], position[2], store);
+            for (int s=0; s<getSeriesCount(); s++) {
+              store.setChannelColor(colors[position[3]], s, position[3]);
+            }
+            if (position[3] == 0) {
+              nextROI += parseMasks(store, well, nextROI, file);
+            }
           }
-        }
-        else if (name.endsWith("AllModesOverlay.tif")) {
-          // original color for each channel is stored in
-          // results/Well<nnnn>_mode<n>_z<nnn>_t<nnn>_AllModesOverlay.tif
-          if (colors[position[3]] != null) continue;
-          try {
-            colors[position[3]] = getChannelColorFromFile(file);
-          }
-          catch (IOException e) { }
-          if (colors[position[3]] == null) continue;
-
-          for (int s=0; s<getSeriesCount(); s++) {
-            store.setChannelColor(colors[position[3]], s, position[3]);
-          }
-          if (position[3] == 0) {
+          else if (name.endsWith("overlay.tif")) {
             nextROI += parseMasks(store, well, nextROI, file);
           }
-        }
-        else if (name.endsWith("overlay.tif")) {
-          nextROI += parseMasks(store, well, nextROI, file);
         }
       }
     }
@@ -843,20 +848,17 @@ public class MIASReader extends FormatReader {
     store.setROIID(roiID, roi);
     store.setImageROIRef(roiID, series, roi);
 
-    store.setTextTheT(tv, roi, 0);
-    store.setTextTheZ(zv, roi, 0);
-    store.setTextValue(data[columns.indexOf("Label")], roi, 0);
-
-    store.setEllipseTheT(tv, roi, 1);
-    store.setEllipseTheZ(zv, roi, 1);
-    store.setEllipseX(new Double(data[columns.indexOf("Col")]), roi, 1);
-    store.setEllipseY(new Double(data[columns.indexOf("Row")]), roi, 1);
+    store.setEllipseTheT(new NonNegativeInteger(tv), roi, 0);
+    store.setEllipseTheZ(new NonNegativeInteger(zv), roi, 0);
+    store.setEllipseX(new Double(data[columns.indexOf("Col")]), roi, 0);
+    store.setEllipseY(new Double(data[columns.indexOf("Row")]), roi, 0);
+    store.setEllipseLabel(data[columns.indexOf("Label")], roi, 0);
 
     double diam = Double.parseDouble(data[columns.indexOf("Cell Diam.")]);
     double radius = diam / 2;
 
-    store.setEllipseRadiusX(radius, roi, 1);
-    store.setEllipseRadiusY(radius, roi, 1);
+    store.setEllipseRadiusX(radius, roi, 0);
+    store.setEllipseRadiusY(radius, roi, 0);
 
     // NB: other attributes are "Nucleus Area", "Cell Type", and
     // "Mean Nucleus Intens."
@@ -916,8 +918,8 @@ public class MIASReader extends FormatReader {
           store.setObjectiveModel(value, 0, 0);
         }
         else if (key.equals("Magnification")) {
-          int mag = (int) Double.parseDouble(value);
-          store.setObjectiveNominalMagnification(mag, 0, 0);
+          store.setObjectiveNominalMagnification(
+              new PositiveInteger((int) Double.parseDouble(value)), 0, 0);
         }
         else if (key.startsWith("Mode_")) {
           channelNames.add(value);
@@ -966,27 +968,23 @@ public class MIASReader extends FormatReader {
     if (!parseMasks) return 0;
     int nOverlays = 0;
     for (int i=0; i<3; i++) {
-      String id = MetadataTools.createLSID("Mask", series, roi + nOverlays, 0);
-      overlayFiles.put(id, overlayTiff);
-      overlayPlanes.put(id, new Integer(i));
+      String roiId = MetadataTools.createLSID("ROI", series, roi + nOverlays);
+      String maskId = MetadataTools.createLSID("Mask", series, roi + nOverlays, 0);
+      overlayFiles.put(maskId, overlayTiff);
+      overlayPlanes.put(maskId, new Integer(i));
 
       boolean validMask = populateMaskPixels(series, roi + nOverlays, 0);
       if (validMask) {
+        store.setROIID(roiId, roi + nOverlays);
         store.setMaskX(new Double(0), roi + nOverlays, 0);
         store.setMaskY(new Double(0), roi + nOverlays, 0);
-        // TODO
-        //store.setMaskWidth(getSizeX(), roi + nOverlays, 0);
-        //store.setMaskHeight(getSizeY(), roi + nOverlays, 0);
-        //store.setMaskBinDataBigEndian(
-        //  new Boolean(!isLittleEndian()), roi + nOverlays, 0, 0);
-        //store.setMaskPixelsSizeX(
-        //  new Integer(getSizeX()), roi + nOverlays, 0);
-        //store.setMaskPixelsSizeY(
-        //  new Integer(getSizeY()), roi + nOverlays, 0);
-        //store.setMaskPixelsExtendedPixelType("bit", roi + nOverlays, 0);
+        store.setMaskWidth(new Double(getSizeX()), roi + nOverlays, 0);
+        store.setMaskHeight(new Double(getSizeY()), roi + nOverlays, 0);
 
-        //String color = String.valueOf(0xff000000 | (0xff << (8 * (2 - i))));
-        //store.setShapeStrokeColor(color, roi + nOverlays, 0);
+        int color = 0xff000000 | (0xff << (8 * (2 - i)));
+        store.setMaskStroke(color, roi + nOverlays, 0);
+        store.setMaskFill(color, roi + nOverlays, 0);
+        store.setImageROIRef(roiId, series, roi + nOverlays);
         nOverlays++;
       }
     }
@@ -1065,8 +1063,7 @@ public class MIASReader extends FormatReader {
 
     if (validMask) {
       MetadataStore store = makeFilterMetadata();
-      // TODO
-      //store.setMaskPixelsBinData(bits.toByteArray(), roiIndex, shapeIndex);
+      store.setMaskBinData(bits.toByteArray(), roiIndex, shapeIndex);
     }
     else LOGGER.debug("Did not populate MaskPixels.BinData for {}", id);
 

@@ -105,7 +105,7 @@ public class JPKReader extends BaseTiffReader {
       core[s].falseColor = false;
       core[s].dimensionOrder = "XYCZT";
 
-      if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
         setSeries(s);
         for (Integer key : ifds.get(s).keySet()) {
           if (key >= 32848) {

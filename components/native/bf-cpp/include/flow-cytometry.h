@@ -41,7 +41,7 @@ your combined work must be distributed under the terms of the GPL.
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via JaceHeaderAutogen on Jun 7, 2010 1:51:52 PM CDT
+ * Created by curtis via JaceHeaderAutogen on Jul 2, 2010 5:09:26 PM CDT
  *
  *-----------------------------------------------------------------------------
  */

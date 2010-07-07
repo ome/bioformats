@@ -152,7 +152,7 @@ public class MRCReader extends FormatReader {
 
     double xSize = 0d, ySize = 0d, zSize = 0d;
 
-    if (level == MetadataLevel.ALL) {
+    if (level != MetadataLevel.MINIMUM) {
       int mx = in.readInt();
       int my = in.readInt();
       int mz = in.readInt();
@@ -187,7 +187,7 @@ public class MRCReader extends FormatReader {
 
     extHeaderSize = in.readInt();
 
-    if (level == MetadataLevel.ALL) {
+    if (level != MetadataLevel.MINIMUM) {
       in.skipBytes(64);
 
       int idtype = in.readShort();
@@ -230,7 +230,7 @@ public class MRCReader extends FormatReader {
     MetadataTools.populatePixels(store, this);
     MetadataTools.setDefaultCreationDate(store, id, 0);
 
-    if (level == MetadataLevel.ALL) {
+    if (level != MetadataLevel.MINIMUM) {
       store.setPixelsPhysicalSizeX(xSize, 0);
       store.setPixelsPhysicalSizeY(ySize, 0);
       store.setPixelsPhysicalSizeZ(zSize, 0);

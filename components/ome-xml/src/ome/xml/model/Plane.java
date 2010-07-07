@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2010-06-03 10:29:33.559265
+ * Created by callan via xsd-fu on 2010-07-06 17:07:47+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -58,7 +58,7 @@ public class Plane extends AbstractOMEModelObject
 
 	// -- Constants --
 
-	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2010-04";
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2010-06";
 
 	/** Logger for this class. */
 	private static final Logger LOGGER =
@@ -83,13 +83,13 @@ public class Plane extends AbstractOMEModelObject
 	private Double deltaT;
 
 	// Property
-	private Integer theC;
+	private NonNegativeInteger theC;
 
 	// Property
-	private Integer theZ;
+	private NonNegativeInteger theZ;
 
 	// Property
-	private Integer theT;
+	private NonNegativeInteger theT;
 
 	// Property
 	private String hashSHA1;
@@ -177,19 +177,19 @@ public class Plane extends AbstractOMEModelObject
 		if (element.hasAttribute("TheC"))
 		{
 			// Attribute property TheC
-			setTheC(Integer.valueOf(
+			setTheC(NonNegativeInteger.valueOf(
 					element.getAttribute("TheC")));
 		}
 		if (element.hasAttribute("TheZ"))
 		{
 			// Attribute property TheZ
-			setTheZ(Integer.valueOf(
+			setTheZ(NonNegativeInteger.valueOf(
 					element.getAttribute("TheZ")));
 		}
 		if (element.hasAttribute("TheT"))
 		{
 			// Attribute property TheT
-			setTheT(Integer.valueOf(
+			setTheT(NonNegativeInteger.valueOf(
 					element.getAttribute("TheT")));
 		}
 		List<Element> HashSHA1_nodeList =
@@ -221,18 +221,22 @@ public class Plane extends AbstractOMEModelObject
 
 	// -- Plane API methods --
 
-	public void link(Reference reference, OMEModelObject o)
+	public boolean link(Reference reference, OMEModelObject o)
 	{
+		boolean wasHandledBySuperClass = super.link(reference, o);
+		if (wasHandledBySuperClass)
+		{
+			return true;
+		}
 		if (reference instanceof AnnotationRef)
 		{
 			Annotation o_casted = (Annotation) o;
 			o_casted.linkPlane(this);
 			annotationList.add(o_casted);
-			return;
+			return true;
 		}
-		// TODO: Should be its own Exception
-		throw new RuntimeException(
-				"Unable to handle reference of type: " + reference.getClass());
+		LOGGER.debug("Unable to handle reference of type: {}", reference.getClass());
+		return false;
 	}
 
 
@@ -292,34 +296,34 @@ public class Plane extends AbstractOMEModelObject
 	}
 
 	// Property
-	public Integer getTheC()
+	public NonNegativeInteger getTheC()
 	{
 		return theC;
 	}
 
-	public void setTheC(Integer theC)
+	public void setTheC(NonNegativeInteger theC)
 	{
 		this.theC = theC;
 	}
 
 	// Property
-	public Integer getTheZ()
+	public NonNegativeInteger getTheZ()
 	{
 		return theZ;
 	}
 
-	public void setTheZ(Integer theZ)
+	public void setTheZ(NonNegativeInteger theZ)
 	{
 		this.theZ = theZ;
 	}
 
 	// Property
-	public Integer getTheT()
+	public NonNegativeInteger getTheT()
 	{
 		return theT;
 	}
 
-	public void setTheT(Integer theT)
+	public void setTheT(NonNegativeInteger theT)
 	{
 		this.theT = theT;
 	}

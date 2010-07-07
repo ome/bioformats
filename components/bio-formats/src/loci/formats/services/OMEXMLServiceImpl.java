@@ -94,6 +94,9 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
   private static Templates UPDATE_200909 =
     XMLTools.getStylesheet("/loci/formats/meta/2009-09-to-2010-04.xsl",
     OMEXMLServiceImpl.class);
+  private static Templates UPDATE_201004 =
+    XMLTools.getStylesheet("/loci/formats/meta/2010-04-to-2010-06.xsl",
+    OMEXMLServiceImpl.class);
 
   /**
    * Default constructor.
@@ -113,32 +116,51 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
   public String transformToLatestVersion(String xml) throws ServiceException {
     String version = getOMEXMLVersion(xml);
     if (version.equals(getLatestVersion())) return xml;
+    LOGGER.debug("Attempting to update XML with version: {}", version);
+    LOGGER.trace("Initial dump: {}", xml);
 
     String transformed = null;
     try {
       if (version.equals("2003-FC")) {
+        xml = verifyOMENamespace(xml);
         transformed = XMLTools.transformXML(xml, UPDATE_2003FC);
       }
       else if (version.equals("2006-LO")) {
+        xml = verifyOMENamespace(xml);
         transformed = XMLTools.transformXML(xml, UPDATE_2006LO);
       }
       else if (version.equals("2007-06")) {
+        xml = verifyOMENamespace(xml);
         transformed = XMLTools.transformXML(xml, UPDATE_200706);
       }
       else if (version.equals("2008-02")) {
+        xml = verifyOMENamespace(xml);
         transformed = XMLTools.transformXML(xml, UPDATE_200802);
       }
       else transformed = xml;
+      LOGGER.debug("XML updated to at least 2008-09");
+      LOGGER.trace("At least 2008-09 dump: {}", transformed);
 
-      if (!version.equals("2009-09")) {
+      if (!version.equals("2009-09") && !version.equals("2010-04")) {
+        transformed = verifyOMENamespace(transformed);
         transformed = XMLTools.transformXML(transformed, UPDATE_200809);
       }
-      transformed = XMLTools.transformXML(transformed, UPDATE_200909);
+      LOGGER.debug("XML updated to at least 2009-09");
+      LOGGER.trace("At least 2009-09 dump: {}", transformed);
+      if (!version.equals("2010-04")) {
+        transformed = verifyOMENamespace(transformed);
+        transformed = XMLTools.transformXML(transformed, UPDATE_200909);
+      }
+      LOGGER.debug("XML updated to at least 2010-04");
+      LOGGER.trace("At least 2010-04 dump: {}", transformed);
+      transformed = verifyOMENamespace(transformed);
+      transformed = XMLTools.transformXML(transformed, UPDATE_201004);
+      LOGGER.debug("XML updated to at least 2010-06");
       // fix namespaces
       transformed = transformed.replaceAll("<ns.*?:", "<");
       transformed = transformed.replaceAll("xmlns:ns.*?=", "xmlns:OME=");
       transformed = transformed.replaceAll("</ns.*?:", "</");
-
+      LOGGER.trace("Transformed XML dump: {}", transformed);
       return transformed;
     }
     catch (IOException e) {
@@ -224,21 +246,8 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
    */
   public String getOMEXMLVersion(Object o) {
     if (o == null) return null;
-    String name = o.getClass().getName();
-    if (o instanceof OMEXMLMetadata) {
-      final String prefix = "loci.formats.ome.OMEXML";
-      final String suffix = "Metadata";
-      if (name.startsWith(prefix) && name.endsWith(suffix)) {
-        String numbers =
-          name.substring(prefix.length(), name.length() - suffix.length());
-        if (numbers.length() == 6) {
-          return numbers.substring(0, 4) + "-" +
-            numbers.substring(4, 6).toUpperCase();
-        }
-      }
-    }
-    else if (o instanceof OMEModelObject) {
-      return getLatestVersion();
+    if (o instanceof OMEXMLMetadata || o instanceof OMEModelObject) {
+      return OMEXMLFactory.LATEST_VERSION;
     }
     else if (o instanceof String) {
       String xml = (String) o;
@@ -365,13 +374,13 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
       MetadataTools.createLSID("Annotation", annotationIndex * 3 + 1);
     String valueID =
       MetadataTools.createLSID("Annotation", annotationIndex * 3 + 2);
-    omexmlMeta.setStringAnnotationID(keyID, keyIndex);
-    omexmlMeta.setStringAnnotationID(valueID, valueIndex);
-    omexmlMeta.setStringAnnotationValue(key, keyIndex);
-    omexmlMeta.setStringAnnotationValue(value, valueIndex);
-    omexmlMeta.setStringAnnotationNamespace(
+    omexmlMeta.setCommentAnnotationID(keyID, keyIndex);
+    omexmlMeta.setCommentAnnotationID(valueID, valueIndex);
+    omexmlMeta.setCommentAnnotationValue(key, keyIndex);
+    omexmlMeta.setCommentAnnotationValue(value, valueIndex);
+    omexmlMeta.setCommentAnnotationNamespace(
       StructuredAnnotations.NAMESPACE, keyIndex);
-    omexmlMeta.setStringAnnotationNamespace(
+    omexmlMeta.setCommentAnnotationNamespace(
       StructuredAnnotations.NAMESPACE, valueIndex);
     omexmlMeta.setListAnnotationAnnotationRef(keyID, annotationIndex, 0);
     omexmlMeta.setListAnnotationAnnotationRef(valueID, annotationIndex, 1);
@@ -425,6 +434,27 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
    */
   public MetadataRetrieve asRetrieve(MetadataStore meta) {
     return meta instanceof MetadataRetrieve ? (MetadataRetrieve) meta : null;
+  }
+
+  // -- Helper methods --
+
+  /** Ensures that an xmlns:ome element exists. */
+  private String verifyOMENamespace(String xml) {
+    try {
+      Document doc = XMLTools.parseDOM(xml);
+      Element e = doc.getDocumentElement();
+      String omeNamespace = e.getAttribute("xmlns:ome");
+      if (omeNamespace == null || omeNamespace.equals("")) {
+        e.setAttribute("xmlns:ome", e.getAttribute("xmlns"));
+      }
+      return XMLTools.getXML(doc);
+    }
+    catch (ParserConfigurationException pce) { }
+    catch (TransformerConfigurationException tce) { }
+    catch (TransformerException te) { }
+    catch (SAXException se) { }
+    catch (IOException ioe) { }
+    return null;
   }
 
 }

@@ -27,10 +27,10 @@ import java.awt.Component;
 
 import javax.swing.JOptionPane;
 
+import loci.common.StatusEvent;
+import loci.common.StatusListener;
 import loci.visbio.BioTask;
 import loci.visbio.LogicManager;
-import loci.visbio.StatusEvent;
-import loci.visbio.StatusListener;
 import loci.visbio.TaskManager;
 import loci.visbio.VisBioEvent;
 import loci.visbio.VisBioFrame;

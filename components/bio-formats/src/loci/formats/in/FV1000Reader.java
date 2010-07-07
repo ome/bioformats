@@ -52,6 +52,7 @@ import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 import loci.formats.tiff.TiffParser;
 
+import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveInteger;
 
 /**
@@ -462,7 +463,7 @@ public class FV1000Reader extends FormatReader {
       laser = f.getTable("Laser " + index + " Parameters");
     }
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       index = 1;
       IniTable guiChannel = f.getTable("GUI Channel " + index + " Parameters");
       while (guiChannel != null) {
@@ -635,7 +636,7 @@ public class FV1000Reader extends FormatReader {
         }
       }
 
-      if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
         for (IniTable table : pty) {
           String[] keys = table.keySet().toArray(new String[table.size()]);
           for (String key : keys) {
@@ -825,7 +826,7 @@ public class FV1000Reader extends FormatReader {
       else MetadataTools.setDefaultCreationDate(store, id, i);
     }
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       populateMetadataStore(store, path);
     }
   }
@@ -917,9 +918,9 @@ public class FV1000Reader extends FormatReader {
           }
           try {
             store.setTransmittanceRangeCutIn(
-              new Integer(emValues[0]), 0, channelIndex);
+              PositiveInteger.valueOf(emValues[0]), 0, channelIndex);
             store.setTransmittanceRangeCutOut(
-              new Integer(emValues[1]), 0, channelIndex);
+              PositiveInteger.valueOf(emValues[1]), 0, channelIndex);
           }
           catch (NumberFormatException e) { }
         }
@@ -960,7 +961,7 @@ public class FV1000Reader extends FormatReader {
     store.setObjectiveModel(objectiveName, 0, 0);
     if (magnification != null) {
       int mag = (int) Float.parseFloat(magnification);
-      store.setObjectiveNominalMagnification(mag, 0, 0);
+      store.setObjectiveNominalMagnification(new PositiveInteger(mag), 0, 0);
     }
     if (workingDistance != null) {
       store.setObjectiveWorkingDistance(new Double(workingDistance), 0, 0);
@@ -973,14 +974,16 @@ public class FV1000Reader extends FormatReader {
     store.setObjectiveID(objectiveID, 0, 0);
     store.setImageObjectiveSettingsID(objectiveID, 0);
 
-    int nextROI = -1;
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.NO_OVERLAYS) {
+      int nextROI = -1;
 
-    // populate ROI data - there is one ROI file per plane
-    for (int i=0; i<roiFilenames.size(); i++) {
-      if (i >= getImageCount()) break;
-      String filename = roiFilenames.get(new Integer(i));
-      filename = sanitizeFile(filename, path);
-      nextROI = parseROIFile(filename, store, nextROI, i);
+      // populate ROI data - there is one ROI file per plane
+      for (int i=0; i<roiFilenames.size(); i++) {
+        if (i >= getImageCount()) break;
+        String filename = roiFilenames.get(new Integer(i));
+        filename = sanitizeFile(filename, path);
+        nextROI = parseROIFile(filename, store, nextROI, i);
+      }
     }
   }
 
@@ -1045,9 +1048,10 @@ public class FV1000Reader extends FormatReader {
           }
 
           if (shapeType == POINT) {
-            store.setPointTheZ(zIndex, nextROI, shape);
-            store.setPointTheT(tIndex, nextROI, shape);
-            store.setPointFontSize(fontSize, nextROI, shape);
+            store.setPointTheZ(new NonNegativeInteger(zIndex), nextROI, shape);
+            store.setPointTheT(new NonNegativeInteger(tIndex), nextROI, shape);
+            store.setPointFontSize(
+              new NonNegativeInteger(fontSize), nextROI, shape);
             store.setPointStrokeWidth(new Double(lineWidth), nextROI, shape);
 
             store.setPointX(new Double(xc[0]), nextROI, shape);
@@ -1067,9 +1071,12 @@ public class FV1000Reader extends FormatReader {
                 store.setRectangleWidth(new Double(width), nextROI, shape);
                 store.setRectangleHeight(new Double(height), nextROI, shape);
 
-                store.setRectangleTheZ(zIndex, nextROI, shape);
-                store.setRectangleTheT(tIndex, nextROI, shape);
-                store.setRectangleFontSize(fontSize, nextROI, shape);
+                store.setRectangleTheZ(
+                  new NonNegativeInteger(zIndex), nextROI, shape);
+                store.setRectangleTheT(
+                  new NonNegativeInteger(tIndex), nextROI, shape);
+                store.setRectangleFontSize(
+                  new NonNegativeInteger(fontSize), nextROI, shape);
                 store.setRectangleStrokeWidth(
                   new Double(lineWidth), nextROI, shape);
 
@@ -1089,9 +1096,10 @@ public class FV1000Reader extends FormatReader {
             store.setLineX2(new Double(x + width), nextROI, shape);
             store.setLineY2(new Double(y + height), nextROI, shape);
 
-            store.setLineTheZ(zIndex, nextROI, shape);
-            store.setLineTheT(tIndex, nextROI, shape);
-            store.setLineFontSize(fontSize, nextROI, shape);
+            store.setLineTheZ(new NonNegativeInteger(zIndex), nextROI, shape);
+            store.setLineTheT(new NonNegativeInteger(tIndex), nextROI, shape);
+            store.setLineFontSize(
+              new NonNegativeInteger(fontSize), nextROI, shape);
             store.setLineStrokeWidth(new Double(lineWidth), nextROI, shape);
 
             int centerX = x + (width / 2);
@@ -1108,9 +1116,12 @@ public class FV1000Reader extends FormatReader {
             store.setEllipseRadiusX(rx, nextROI, shape);
             store.setEllipseRadiusY(ry, nextROI, shape);
 
-            store.setEllipseTheZ(zIndex, nextROI, shape);
-            store.setEllipseTheT(tIndex, nextROI, shape);
-            store.setEllipseFontSize(fontSize, nextROI, shape);
+            store.setEllipseTheZ(
+                new NonNegativeInteger(zIndex), nextROI, shape);
+            store.setEllipseTheT(
+                new NonNegativeInteger(tIndex), nextROI, shape);
+            store.setEllipseFontSize(
+                new NonNegativeInteger(fontSize), nextROI, shape);
             store.setEllipseStrokeWidth(new Double(lineWidth), nextROI, shape);
             store.setEllipseTransform(String.format(ROTATION,
               angle, x + rx, y + ry), nextROI, shape);
@@ -1129,9 +1140,12 @@ public class FV1000Reader extends FormatReader {
             store.setPolylineTransform("rotate(" + angle + ")", nextROI, shape);
             store.setPolylineClosed(
               shapeType == POLYGON || shapeType == FREE_SHAPE, nextROI, shape);
-            store.setPolylineTheZ(zIndex, nextROI, shape);
-            store.setPolylineTheT(tIndex, nextROI, shape);
-            store.setPolylineFontSize(fontSize, nextROI, shape);
+            store.setPolylineTheZ(
+                new NonNegativeInteger(zIndex), nextROI, shape);
+            store.setPolylineTheT(
+                new NonNegativeInteger(tIndex), nextROI, shape);
+            store.setPolylineFontSize(
+                new NonNegativeInteger(fontSize), nextROI, shape);
             store.setPolylineStrokeWidth(new Double(lineWidth), nextROI, shape);
           }
           else {
@@ -1409,7 +1423,6 @@ public class FV1000Reader extends FormatReader {
     stream.skipBytes(2);
     String data = stream.readString((int) stream.length() - 2);
     data = DataTools.stripString(data);
-    if (!data.startsWith("[")) data = "[" + data;
     BufferedReader reader = new BufferedReader(new StringReader(data));
     stream.close();
     IniList list = parser.parseINI(reader);

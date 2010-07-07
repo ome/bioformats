@@ -38,7 +38,9 @@
 	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2007-06"
 	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2007-06"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:exsl="http://exslt.org/common"
+	xmlns:xml="http://www.w3.org/XML/1998/namespace"
+	exclude-result-prefixes="OME AML CLI MLI STD Bin CA SPW SA"
+	xmlns:exsl="http://exslt.org/common"
 	extension-element-prefixes="exsl" version="1.0">
 	<!-- xmlns="http://www.openmicroscopy.org/Schemas/OME/2008-09"-->
 	<xsl:variable name="newOMENS">http://www.openmicroscopy.org/Schemas/OME/2008-09</xsl:variable>
@@ -156,16 +158,15 @@
 			<xsl:when test="$value = 'Unknown'">
 				<xsl:value-of select="'Other'"/>
 			</xsl:when>
+			<!-- If the input file is valid this case should never happen, but if it does fix it -->
+			<xsl:when test="string-length($value) = 0">
+				<xsl:value-of select="'Other'"/>
+			</xsl:when>
 			<xsl:otherwise>
 				<xsl:value-of select="$value"/>
-				<!-- If the property is optional we don't want to set 
-        "Unknown" if that's our current value. Otherwise use the current value. 
-         <xsl:if test="not($isOptional) or $value != 'Unknown'">
-        <xsl:value-of select="$value"/>
-       </xsl:if>
-        
-        -->
-				<xsl:value-of select="''"/>
+				<!--
+					The isOptional value is not used in this transform
+				-->
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
@@ -545,6 +546,7 @@
 				</xsl:otherwise>
 			</xsl:choose>
 		</xsl:variable>
+		<xsl:variable name="theShapeIDRoot"><xsl:number value="position()"/>:<xsl:value-of select="$parentID"/></xsl:variable>
 		<xsl:element name="ROI" namespace="{$newOMENS}">
 			<xsl:variable name="shapeEndID"><xsl:number value="position()"/>:<xsl:value-of select="$parentID"/></xsl:variable>
 			<xsl:attribute name="ID">ROI:<xsl:number value="position()"/>:<xsl:value-of select="$parentID"/></xsl:attribute>
@@ -552,9 +554,17 @@
 				<xsl:choose>
 					<xsl:when test="(($theMaxT = $theMinT) and ($theMaxZ = $theMinZ) and not(( $T0 = 'NaN') or ( $Z0 = 'NaN') or ( $T1 = 'NaN') or ( $Z1 = 'NaN') ))">
 						<xsl:element name="Shape" namespace="{$newOMENS}">
-							<xsl:attribute name="ID">Shape:Z<xsl:value-of select="$theMinZ"/>:T<xsl:value-of select="$theMinT"/>:<xsl:value-of select="$parentID"/></xsl:attribute>
-							<xsl:attribute name="theZ"><xsl:value-of select="$theMinZ"/></xsl:attribute>
-							<xsl:attribute name="theT"><xsl:value-of select="$theMinT"/></xsl:attribute>
+							<xsl:attribute name="ID">Shape:SingleRect:<xsl:value-of select="$theShapeIDRoot"/></xsl:attribute>
+							<xsl:choose>
+								<xsl:when test="not( $theMinZ = 'NaN')">
+									<xsl:attribute name="theZ"><xsl:value-of select="$theMinZ"/></xsl:attribute>
+								</xsl:when>
+							</xsl:choose>
+							<xsl:choose>
+								<xsl:when test="not( $theMinT = 'NaN')">
+									<xsl:attribute name="theT"><xsl:value-of select="$theMinT"/></xsl:attribute>
+								</xsl:when>
+							</xsl:choose>
 							<xsl:comment>Converted to single Rect</xsl:comment>
 							<xsl:element name="Rect" namespace="{$newOMENS}">
 								<xsl:attribute name="x"><xsl:value-of select="$startX"/></xsl:attribute>
@@ -568,7 +578,7 @@
 						<xsl:call-template name="ByTZROI">
 							<xsl:with-param name="theTEnd"><xsl:value-of select="$theMaxT"/></xsl:with-param>
 							<xsl:with-param name="theZEnd"><xsl:value-of select="$theMaxZ"/></xsl:with-param>
-							<xsl:with-param name="parentID"><xsl:value-of select="$parentID"/></xsl:with-param>
+							<xsl:with-param name="parentID"><xsl:value-of select="$theShapeIDRoot"/></xsl:with-param>
 							<xsl:with-param name="theZ"><xsl:value-of select="$theMinZ"/></xsl:with-param>
 							<xsl:with-param name="theT"><xsl:value-of select="$theMinT"/></xsl:with-param>
 							<xsl:with-param name="x"><xsl:value-of select="$startX"/></xsl:with-param>
@@ -719,13 +729,7 @@
 			<xsl:apply-templates select="@*|node()"/>
 		</xsl:copy>
 	</xsl:template>
-
-	<xsl:template match="text()|processing-instruction()|comment()">
-		<xsl:copy>
-			<xsl:apply-templates select="node()"/>
-		</xsl:copy>
-	</xsl:template>
-
+	
 	<!-- data management -->
 
 

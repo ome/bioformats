@@ -37,7 +37,7 @@ public class MultiFileExportExample {
         String file = baseFile + "_s" + series + "_z" + z + args[1];
         writer.changeOutputFile(file);
         for (int image=0; image<planesPerFile; image++) {
-          int[] zct = FormatTools.getZCTCoords(reader.getDimensionOrder(),
+          int zct[] = FormatTools.getZCTCoords(reader.getDimensionOrder(),
             1, reader.getEffectiveSizeC(), reader.getSizeT(),
             planesPerFile, image);
           int index = FormatTools.getIndex(reader, z, zct[1], zct[2]);

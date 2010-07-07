@@ -74,7 +74,7 @@ public class ImarisHDFReader extends FormatReader {
   public ImarisHDFReader() {
     super("Bitplane Imaris 5.5 (HDF)", "ims");
     suffixSufficient = false;
-    domains = new String[] {FormatTools.GRAPHICS_DOMAIN};
+    domains = new String[] {FormatTools.UNKNOWN_DOMAIN};
   }
 
   // -- IFormatReader API methods --
@@ -253,7 +253,9 @@ public class ImarisHDFReader extends FormatReader {
       MetadataTools.setDefaultCreationDate(store, id, s);
     }
 
-    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.ALL) return;
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.MINIMUM) {
+      return;
+    }
 
     int cIndex = 0;
     for (int s=0; s<getSeriesCount(); s++) {

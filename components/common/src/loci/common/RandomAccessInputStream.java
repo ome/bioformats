@@ -308,12 +308,14 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
 
   /** Read the next line of text from the input stream. */
   public String readLine() throws IOException {
-    return findString("\n");
+    String line = findString("\n");
+    return line.length() == 0 ? null : line;
   }
 
   /** Read a string of arbitrary length, terminated by a null char. */
   public String readCString() throws IOException {
-    return findString("\0");
+    String line = findString("\0");
+    return line.length() == 0 ? null : line;
   }
 
   /** Read a string of up to length n. */
@@ -357,14 +359,18 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
 
   /** Read bytes from the stream into the given array. */
   public int read(byte[] array) throws IOException {
-    return raf.read(array);
+    int rtn = raf.read(array);
+    if (rtn == 0 && raf.getFilePointer() >= raf.length() - 1) rtn = -1;
+    return rtn;
   }
 
   /**
    * Read n bytes from the stream into the given array at the specified offset.
    */
   public int read(byte[] array, int offset, int n) throws IOException {
-    return raf.read(array, offset, n);
+    int rtn = raf.read(array, offset, n);
+    if (rtn == 0 && raf.getFilePointer() >= raf.length() - 1) rtn = -1;
+    return rtn;
   }
 
   /** Read bytes from the stream into the given buffer. */

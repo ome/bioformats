@@ -214,7 +214,8 @@ public class PCIReader extends FormatReader {
         long date = (long) stream.readDouble() * 1000;
         creationDate = DateTools.convertDate(date, DateTools.COBOL);
       }
-      else if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      else if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM)
+      {
         if (relativePath.equals("Binning")) {
           binning = (int) stream.readDouble();
         }
@@ -284,7 +285,7 @@ public class PCIReader extends FormatReader {
     }
     else MetadataTools.setDefaultCreationDate(store, id, 0);
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setPixelsPhysicalSizeX(scaleFactor, 0);
       store.setPixelsPhysicalSizeY(scaleFactor, 0);
 

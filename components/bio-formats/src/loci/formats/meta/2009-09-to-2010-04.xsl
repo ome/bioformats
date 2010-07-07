@@ -43,7 +43,9 @@
 	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2009-09"
 	xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2009-09"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:exsl="http://exslt.org/common"
+	xmlns:xml="http://www.w3.org/XML/1998/namespace"
+	exclude-result-prefixes="OME CLI MLI STD Bin CA SPW SA ROI"
+	xmlns:exsl="http://exslt.org/common"
 	extension-element-prefixes="exsl" version="1.0">
 	<!-- xmlns="http://www.openmicroscopy.org/Schemas/OME/2009-09"-->
 	<xsl:variable name="newOMENS">http://www.openmicroscopy.org/Schemas/OME/2010-04</xsl:variable>
@@ -93,6 +95,10 @@
 				<xsl:value-of select="$newValue"/>
 			</xsl:when>
 			<xsl:when test="$value = 'Unknown'">
+				<xsl:value-of select="'Other'"/>
+			</xsl:when>
+			<!-- If the input file is valid this case should never happen, but if it does fix it -->
+			<xsl:when test="string-length($value) = 0">
 				<xsl:value-of select="'Other'"/>
 			</xsl:when>
 			<xsl:otherwise>
@@ -431,12 +437,6 @@
 	<xsl:template match="@*|node()">
 		<xsl:copy>
 			<xsl:apply-templates select="@*|node()"/>
-		</xsl:copy>
-	</xsl:template>
-
-	<xsl:template match="text()|processing-instruction()|comment()">
-		<xsl:copy>
-			<xsl:apply-templates select="node()"/>
 		</xsl:copy>
 	</xsl:template>
 

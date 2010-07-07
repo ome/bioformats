@@ -184,17 +184,36 @@ public final class FormatTools {
    */
   public static final String GRAPHICS_DOMAIN = "Graphics";
 
+  /** Identifies an unknown domain. */
+  public static final String UNKNOWN_DOMAIN = "Unknown";
+
+  /** List of non-graphics domains. */
+  public static final String[] NON_GRAPHICS_DOMAINS = new String[] {
+    LM_DOMAIN, EM_DOMAIN, SPM_DOMAIN, SEM_DOMAIN, FLIM_DOMAIN, MEDICAL_DOMAIN,
+    HISTOLOGY_DOMAIN, GEL_DOMAIN, ASTRONOMY_DOMAIN, HCS_DOMAIN, UNKNOWN_DOMAIN
+  };
+
   /** List of non-HCS domains. */
   public static final String[] NON_HCS_DOMAINS = new String[] {
     LM_DOMAIN, EM_DOMAIN, SPM_DOMAIN, SEM_DOMAIN, FLIM_DOMAIN, MEDICAL_DOMAIN,
-    HISTOLOGY_DOMAIN, GEL_DOMAIN, ASTRONOMY_DOMAIN, GRAPHICS_DOMAIN
+    HISTOLOGY_DOMAIN, GEL_DOMAIN, ASTRONOMY_DOMAIN, UNKNOWN_DOMAIN
+  };
+
+  /**
+   * List of domains that do not require special handling.  Domains that
+   * require special handling are {@link #GRAPHICS_DOMAIN} and
+   * {@link #HCS_DOMAIN}.
+   */
+  public static final String[] NON_SPECIAL_DOMAINS = new String[] {
+    LM_DOMAIN, EM_DOMAIN, SPM_DOMAIN, SEM_DOMAIN, FLIM_DOMAIN, MEDICAL_DOMAIN,
+    HISTOLOGY_DOMAIN, GEL_DOMAIN, ASTRONOMY_DOMAIN, UNKNOWN_DOMAIN
   };
 
   /** List of all supported domains. */
   public static final String[] ALL_DOMAINS = new String[] {
     HCS_DOMAIN, LM_DOMAIN, EM_DOMAIN, SPM_DOMAIN, SEM_DOMAIN, FLIM_DOMAIN,
     MEDICAL_DOMAIN, HISTOLOGY_DOMAIN, GEL_DOMAIN, ASTRONOMY_DOMAIN,
-    GRAPHICS_DOMAIN
+    GRAPHICS_DOMAIN, UNKNOWN_DOMAIN
   };
 
   // -- Constants - web pages --

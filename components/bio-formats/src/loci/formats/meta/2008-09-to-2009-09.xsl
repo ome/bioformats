@@ -38,7 +38,9 @@
 	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2008-09"
 	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2008-09"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:exsl="http://exslt.org/common"
+	xmlns:xml="http://www.w3.org/XML/1998/namespace"
+	exclude-result-prefixes="OME AML CLI MLI STD Bin CA SPW SA"
+	xmlns:exsl="http://exslt.org/common"
 	extension-element-prefixes="exsl" version="1.0">
 	<!-- xmlns="http://www.openmicroscopy.org/Schemas/OME/2009-09"-->
 	<xsl:variable name="newOMENS">http://www.openmicroscopy.org/Schemas/OME/2009-09</xsl:variable>
@@ -84,16 +86,15 @@
 			<xsl:when test="$value = 'Unknown'">
 				<xsl:value-of select="'Other'"/>
 			</xsl:when>
+			<!-- If the input file is valid this case should never happen, but if it does fix it -->
+			<xsl:when test="string-length($value) = 0">
+				<xsl:value-of select="'Other'"/>
+			</xsl:when>
 			<xsl:otherwise>
 				<xsl:value-of select="$value"/>
-				<!-- If the property is optional we don't want to set 
-        "Unknown" if that's our current value. Otherwise use the current value. 
-         <xsl:if test="not($isOptional) or $value != 'Unknown'">
-        <xsl:value-of select="$value"/>
-       </xsl:if>
-        
-        -->
-				<xsl:value-of select="''"/>
+				<!--
+					The isOptional value is not used in this transform
+				-->
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
@@ -172,14 +173,15 @@
 	</xsl:template>
 
 	<xsl:template match="SA:List/SA:Link">
+		<xsl:variable name="theLinkValue"><xsl:value-of select="node()"/></xsl:variable>
 		<xsl:choose>
-			<xsl:when test="@ID">
+			<xsl:when test="//SA:StructuredAnnotations/* [@ID=$theLinkValue]">
 				<xsl:element name="SA:AnnotationRef" namespace="{$newSANS}">
-					<xsl:apply-templates select="@*|node()"/>
+					<xsl:attribute name="ID"><xsl:value-of select="$theLinkValue"/></xsl:attribute>
 				</xsl:element>
 			</xsl:when>
 			<xsl:otherwise>
-				<xsl:comment>Link to <xsl:value-of select="node()"/> removed as only annotation links now supported.</xsl:comment>
+				<xsl:comment>Link to <xsl:value-of select="$theLinkValue"/> removed as only annotation links now supported.</xsl:comment>
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
@@ -389,7 +391,7 @@
 		</xsl:element>
 	</xsl:template>
 
-	<!-- Check the value of the Type attribute -->
+  <!-- Check the value of the Type attribute -->
 	<xsl:template match="OME:Arc">
 		<xsl:element name="Arc" namespace="{$newOMENS}">
 			<xsl:for-each select="@*">
@@ -532,7 +534,7 @@
 
 	</xsl:template>
 
-	<!-- Convert element into Attribute -->
+	<!-- Convert Correction and Immersion elements into Attributes -->
 	<xsl:template match="OME:Objective">
 		<xsl:element name="Objective" namespace="{$newOMENS}">
 			<xsl:for-each select="*">
@@ -540,7 +542,7 @@
 					<xsl:choose>
 						<xsl:when test="local-name(.)='Correction' or local-name(.)='Immersion'">
 							<xsl:call-template name="transformEnumerationValue">
-								<xsl:with-param name="mappingName" select="'ObjectiveStuff'"/>
+								<xsl:with-param name="mappingName" select="'ObjectiveCorrectionOrImmersion'"/>
 								<xsl:with-param name="value">
 									<xsl:value-of select="."/>
 								</xsl:with-param>
@@ -657,12 +659,6 @@
 			</xsl:choose>
 		</xsl:for-each>
 
-    <xsl:element name="BinData" namespace="{$newBINNS}">
-      <xsl:attribute name="BigEndian">
-        <xsl:value-of select="$bg"/>
-      </xsl:attribute>
-    </xsl:element>
-
 		<!-- Convert the logical Channels -->
 		<xsl:variable name="pixelsID" select="$pixels/@ID"/>
 		<xsl:for-each select="exsl:node-set($logicalChannels)/*">
@@ -773,6 +769,7 @@
 					</xsl:otherwise>
 				</xsl:choose>
 			</xsl:for-each>
+			<xsl:apply-templates select="*"/>
 		</xsl:element>
 	</xsl:template>
 
@@ -1312,27 +1309,27 @@
 		<xsl:param name="bg"/>
 		<xsl:param name="node"/>
 		<xsl:choose>
-			<xsl:when test="name(.) = 'Bin:BinData'">
-				<xsl:element name="{name(.)}" namespace="{$newBINNS}">
+			<xsl:when test="local-name($node) = 'BinData'">
+				<xsl:element name="{local-name($node)}" namespace="{$newBINNS}">
 					<xsl:attribute name="BigEndian">
 						<xsl:value-of select="$bg"/>
 					</xsl:attribute>
 					<xsl:apply-templates select="@*|node()"/>
 				</xsl:element>
 			</xsl:when>
-			<xsl:when test="name(.)='Plane' or name(.)='TiffData'">
-				<xsl:apply-templates select="current()"/>
+			<xsl:when test="local-name($node)='Plane' or local-name($node)='TiffData'">
+				<xsl:apply-templates select="$node"/>
 			</xsl:when>
 			<xsl:otherwise>
-				<xsl:element name="{local-name(.)}" namespace="{$newOMENS}">
+				<xsl:element name="{local-name($node)}" namespace="{$newOMENS}">
 					<xsl:apply-templates select="@*|node()"/>
 				</xsl:element>
-		  </xsl:otherwise>
+			</xsl:otherwise>
 		</xsl:choose>
-  </xsl:template>
+	</xsl:template>
 
 	<!-- Screen Plate Well -->
-
+	
 	<!-- Add any SA links to Screen -->
 	<xsl:template match="SA:Screen">
 		<xsl:element name="{name()}" namespace="{$newSANS}">
@@ -1561,12 +1558,6 @@
 		</xsl:copy>
 	</xsl:template>
 
-	<xsl:template match="text()|processing-instruction()|comment()">
-		<xsl:copy>
-			<xsl:apply-templates select="node()"/>
-		</xsl:copy>
-	</xsl:template>
-
 	<!-- Follow useful list of functions -->
 	<!--
 	convert the value of the color domain attribute of ChannelComponent.
@@ -1575,10 +1566,10 @@
 	<xsl:template name="convertColorDomain">
 		<xsl:param name="cc"/>
 		<xsl:choose>
-			<xsl:when test="contains($cc,'red') or contains($cc,'r')">16711680</xsl:when>
-			<xsl:when test="contains($cc,'green') or contains($cc,'g')">65280</xsl:when>
-			<xsl:when test="contains($cc,'blue') or contains($cc,'b')">255</xsl:when>
-			<xsl:otherwise>16777215</xsl:otherwise>
+			<xsl:when test="contains($cc,'red') or contains($cc,'r')">4278190335</xsl:when>
+			<xsl:when test="contains($cc,'green') or contains($cc,'g')">16711935</xsl:when>
+			<xsl:when test="contains($cc,'blue') or contains($cc,'b')">65535</xsl:when>
+			<xsl:otherwise>4294967295</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
 

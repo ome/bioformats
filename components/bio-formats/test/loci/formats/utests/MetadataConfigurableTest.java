@@ -34,8 +34,10 @@ import java.util.Arrays;
 import loci.common.DataTools;
 import loci.formats.FormatException;
 import loci.formats.ImageReader;
+import loci.formats.MetadataTools;
 import loci.formats.in.DefaultMetadataOptions;
 import loci.formats.in.MetadataLevel;
+import loci.formats.meta.IMetadata;
 
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -52,6 +54,7 @@ public class MetadataConfigurableTest {
 
   private ImageReader pixelsOnly;
   private ImageReader all;
+  private ImageReader noOverlays;
   private String id;
 
   @BeforeClass
@@ -61,6 +64,9 @@ public class MetadataConfigurableTest {
       new DefaultMetadataOptions(MetadataLevel.MINIMUM));
     all = new ImageReader();
     all.setMetadataOptions(new DefaultMetadataOptions(MetadataLevel.ALL));
+    noOverlays = new ImageReader();
+    noOverlays.setMetadataOptions(
+      new DefaultMetadataOptions(MetadataLevel.NO_OVERLAYS));
     id = System.getProperty(FILENAME_PROPERTY);
   }
 
@@ -81,14 +87,23 @@ public class MetadataConfigurableTest {
     long t2 = System.currentTimeMillis();
     System.err.println(String.format("Pixels only: %d -- All: %d",
       t1 - t0, t2 - t1));
+
+    IMetadata metadata = MetadataTools.createOMEXMLMetadata();
+    noOverlays.setMetadataStore(metadata);
+    noOverlays.setId(id);
+    assertEquals(MetadataLevel.NO_OVERLAYS,
+      noOverlays.getMetadataOptions().getMetadataLevel());
+    assertEquals(metadata.getROICount(), 0);
   }
 
   @Test(dependsOnMethods={"testSetId"})
   public void testDimensions() {
     assertEquals(all.getSeriesCount(), pixelsOnly.getSeriesCount());
+    assertEquals(all.getSeriesCount(), noOverlays.getSeriesCount());
     for (int i=0; i<pixelsOnly.getSeriesCount(); i++) {
       all.setSeries(i);
       pixelsOnly.setSeries(i);
+      noOverlays.setSeries(i);
 
       assertEquals(all.getSizeX(), pixelsOnly.getSizeX());
       assertEquals(all.getSizeY(), pixelsOnly.getSizeY());
@@ -98,6 +113,15 @@ public class MetadataConfigurableTest {
       assertEquals(all.getPixelType(), pixelsOnly.getPixelType());
       assertEquals(all.isLittleEndian(), pixelsOnly.isLittleEndian());
       assertEquals(all.isIndexed(), pixelsOnly.isIndexed());
+
+      assertEquals(all.getSizeX(), noOverlays.getSizeX());
+      assertEquals(all.getSizeY(), noOverlays.getSizeY());
+      assertEquals(all.getSizeZ(), noOverlays.getSizeZ());
+      assertEquals(all.getSizeC(), noOverlays.getSizeC());
+      assertEquals(all.getSizeT(), noOverlays.getSizeT());
+      assertEquals(all.getPixelType(), noOverlays.getPixelType());
+      assertEquals(all.isLittleEndian(), noOverlays.isLittleEndian());
+      assertEquals(all.isIndexed(), noOverlays.isIndexed());
     }
   }
 
@@ -106,16 +130,24 @@ public class MetadataConfigurableTest {
     for (int i=0; i<pixelsOnly.getSeriesCount(); i++) {
       pixelsOnly.setSeries(i);
       all.setSeries(i);
+      noOverlays.setSeries(i);
       assertEquals(all.getImageCount(), pixelsOnly.getImageCount());
+      assertEquals(all.getImageCount(), noOverlays.getImageCount());
       for (int j=0; j<pixelsOnly.getImageCount(); j++) {
         byte[] pixelsOnlyPlane = pixelsOnly.openBytes(j);
         String pixelsOnlySHA1 = sha1(pixelsOnlyPlane);
         byte[] allPlane = all.openBytes(j);
         String allSHA1 = sha1(allPlane);
+        byte[] noOverlaysPlane = noOverlays.openBytes(j);
+        String noOverlaysSHA1 = sha1(noOverlaysPlane);
 
         if (!pixelsOnlySHA1.equals(allSHA1)) {
           fail(String.format("MISMATCH: Series:%d Image:%d PixelsOnly%s All:%s",
             i, j, pixelsOnlySHA1, allSHA1));
+        }
+        if (!noOverlaysSHA1.equals(allSHA1)) {
+          fail(String.format("MISMATCH: Series:%d Image:%d PixelsOnly%s All:%s",
+            i, j, noOverlaysSHA1, allSHA1));
         }
       }
     }
@@ -126,17 +158,22 @@ public class MetadataConfigurableTest {
     for (int i=0; i<pixelsOnly.getSeriesCount(); i++) {
       pixelsOnly.setSeries(i);
       all.setSeries(i);
+      noOverlays.setSeries(i);
 
       String[] pixelsOnlyFiles = pixelsOnly.getSeriesUsedFiles();
       String[] allFiles = all.getSeriesUsedFiles();
+      String[] noOverlaysFiles = noOverlays.getSeriesUsedFiles();
 
       assertEquals(allFiles.length, pixelsOnlyFiles.length);
+      assertEquals(allFiles.length, noOverlaysFiles.length);
 
       Arrays.sort(allFiles);
       Arrays.sort(pixelsOnlyFiles);
+      Arrays.sort(noOverlaysFiles);
 
       for (int j=0; j<pixelsOnlyFiles.length; j++) {
         assertEquals(allFiles[j], pixelsOnlyFiles[j]);
+        assertEquals(allFiles[j], noOverlaysFiles[j]);
       }
     }
   }

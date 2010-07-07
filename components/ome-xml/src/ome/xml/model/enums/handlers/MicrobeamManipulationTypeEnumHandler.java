@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2010-06-03 10:29:36.389772
+ * Created by callan via xsd-fu on 2010-07-05 16:15:25+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -95,7 +95,8 @@ public class MicrobeamManipulationTypeEnumHandler implements IEnumerationHandler
         }
       }
     }
-    LOGGER.warn("Could not find enumeration for {}", value);
+    LOGGER.warn("Unknown {} value '{}' will be stored as \"Other\"",
+      "MicrobeamManipulationType", value);
     return MicrobeamManipulationType.OTHER;
   }
 

@@ -154,7 +154,7 @@ public class APLReader extends FormatReader {
 
     // add full table to metadata hashtable
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       for (int i=1; i<rows.size(); i++) {
         String[] row = rows.get(i);
         for (int q=0; q<row.length; q++) {
@@ -273,7 +273,7 @@ public class APLReader extends FormatReader {
       MetadataTools.setDefaultCreationDate(store, mtb, i);
       store.setImageName(row[imageName], i);
 
-      if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
         // populate Dimensions data
 
         // calculate physical X and Y sizes

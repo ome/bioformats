@@ -35,39 +35,7 @@
 package loci.formats.utests;
 
 import loci.formats.ome.OMEXMLMetadataImpl;
-import ome.xml.model.Arc;
-import ome.xml.model.BinaryFile;
-import ome.xml.model.BooleanAnnotation;
-import ome.xml.model.Channel;
-import ome.xml.model.Detector;
-import ome.xml.model.Dichroic;
-import ome.xml.model.DoubleAnnotation;
-import ome.xml.model.External;
-import ome.xml.model.Filament;
-import ome.xml.model.Filter;
-import ome.xml.model.FilterSet;
-import ome.xml.model.Image;
-import ome.xml.model.Instrument;
-import ome.xml.model.Laser;
-import ome.xml.model.LightEmittingDiode;
-import ome.xml.model.LongAnnotation;
-import ome.xml.model.MetadataOnly;
 import ome.xml.model.OME;
-import ome.xml.model.OMEModel;
-import ome.xml.model.OTF;
-import ome.xml.model.Objective;
-import ome.xml.model.ObjectiveSettings;
-import ome.xml.model.Pixels;
-import ome.xml.model.Plate;
-import ome.xml.model.ROI;
-import ome.xml.model.Rectangle;
-import ome.xml.model.StringAnnotation;
-import ome.xml.model.StructuredAnnotations;
-import ome.xml.model.TimestampAnnotation;
-import ome.xml.model.Union;
-import ome.xml.model.Well;
-import ome.xml.model.WellSample;
-import ome.xml.model.XMLAnnotation;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveInteger;
 
@@ -98,13 +66,18 @@ public class IMetadataBasedOMEModelMock implements OMEModelMock {
   private void makeImage() {
     // Create <Image/>
     store.setImageID(InOut201004Test.IMAGE_ID, 0);
+    store.setListAnnotationID(InOut201004Test.IMAGE_LIST_ANNOTATION_ID, 0);
+    store.setListAnnotationNamespace(
+        InOut201004Test.GENERAL_ANNOTATION_NAMESPACE, 0);
     store.setBooleanAnnotationID(InOut201004Test.IMAGE_ANNOTATION_ID, 0);
     store.setBooleanAnnotationNamespace(
         InOut201004Test.GENERAL_ANNOTATION_NAMESPACE, 0);
+    store.setListAnnotationAnnotationRef(
+        InOut201004Test.IMAGE_ANNOTATION_ID, 0, 0);
     store.setBooleanAnnotationValue(InOut201004Test.IMAGE_ANNOTATION_VALUE, 0);
     store.setBooleanAnnotationNamespace(InOut201004Test.GENERAL_ANNOTATION_NAMESPACE, 0);
     store.setBooleanAnnotationValue(InOut201004Test.IMAGE_ANNOTATION_VALUE, 0);
-    store.setImageAnnotationRef(InOut201004Test.IMAGE_ANNOTATION_ID, 0, 0);
+    store.setImageAnnotationRef(InOut201004Test.IMAGE_LIST_ANNOTATION_ID, 0, 0);
     // Create <Pixels/>
     store.setPixelsID(InOut201004Test.PIXELS_ID, 0);
     store.setPixelsSizeX(new PositiveInteger(InOut201004Test.SIZE_X), 0);
@@ -245,8 +218,8 @@ public class IMetadataBasedOMEModelMock implements OMEModelMock {
 
     int wellSampleIndex = 0;
     int wellCount = 0;
-    for (int row=0; row<InOut201004Test.WELL_ROWS; row++) {
-      for (int col=0; col<InOut201004Test.WELL_COLS; col++) {
+    for (int row=0; row<InOut201004Test.WELL_ROWS.getValue(); row++) {
+      for (int col=0; col<InOut201004Test.WELL_COLS.getValue(); col++) {
 
         store.setWellID(String.format("Well:%d_%d", row, col), 0, wellCount);
         store.setWellRow(new NonNegativeInteger(row), 0, wellCount);
@@ -272,9 +245,9 @@ public class IMetadataBasedOMEModelMock implements OMEModelMock {
   private void makeROI() {
     store.setROIID(InOut201004Test.ROI_ID, 0);
 
-    store.setStringAnnotationID(InOut201004Test.ROI_ANNOTATION_ID, 0);
-    store.setStringAnnotationNamespace(InOut201004Test.GENERAL_ANNOTATION_NAMESPACE, 0);
-    store.setStringAnnotationValue(InOut201004Test.ROI_ANNOTATION_VALUE, 0);
+    store.setCommentAnnotationID(InOut201004Test.ROI_ANNOTATION_ID, 0);
+    store.setCommentAnnotationNamespace(InOut201004Test.GENERAL_ANNOTATION_NAMESPACE, 0);
+    store.setCommentAnnotationValue(InOut201004Test.ROI_ANNOTATION_VALUE, 0);
     
     store.setROIAnnotationRef(InOut201004Test.ROI_ANNOTATION_ID, 0, 0);
 

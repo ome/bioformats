@@ -36,7 +36,9 @@
 	xmlns:Bin="http://www.openmicroscopy.org/XMLschemas/BinaryFile/RC1/BinaryFile.xsd"
 	xmlns:CA="http://www.openmicroscopy.org/XMLschemas/CA/RC1/CA.xsd"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:exsl="http://exslt.org/common"
+	xmlns:xml="http://www.w3.org/XML/1998/namespace"
+	exclude-result-prefixes="OME AML CLI MLI STD Bin CA"
+	xmlns:exsl="http://exslt.org/common"
 	extension-element-prefixes="exsl" version="1.0">
 	<!-- xmlns="http://www.openmicroscopy.org/Schemas/OME/2008-09"-->
 	<xsl:variable name="newOMENS">http://www.openmicroscopy.org/Schemas/OME/2008-09</xsl:variable>
@@ -101,6 +103,11 @@
 			<map from="Uint16" to="uint16"/>
 			<map from="Uint32" to="uint32"/>
 		</mapping>
+		<mapping name="OTFPixelType">
+			<map from="Uint8" to="uint8"/>
+			<map from="Uint16" to="uint16"/>
+			<map from="Uint32" to="uint32"/>
+		</mapping>
 		<mapping name="DetectorType">
 			<map from="Intensified-CCD" to="IntensifiedCCD"/>
 			<map from="Analog-Video" to="AnalogVideo"/>
@@ -157,16 +164,15 @@
 			<xsl:when test="$value = 'Unknown'">
 				<xsl:value-of select="'Other'"/>
 			</xsl:when>
+			<!-- If the input file is valid this case should never happen, but if it does fix it -->
+			<xsl:when test="string-length($value) = 0">
+				<xsl:value-of select="'Other'"/>
+			</xsl:when>
 			<xsl:otherwise>
 				<xsl:value-of select="$value"/>
-				<!-- If the property is optional we don't want to set 
-        "Unknown" if that's our current value. Otherwise use the current value. 
-         <xsl:if test="not($isOptional) or $value != 'Unknown'">
-        <xsl:value-of select="$value"/>
-       </xsl:if>
-        
-        -->
-				<xsl:value-of select="''"/>
+				<!--
+					The isOptional value is not used in this transform
+				-->
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
@@ -308,8 +314,8 @@
 			</xsl:variable>
 			<xsl:apply-templates select="@*"/>
       <xsl:if test="$power != ''">
-  			<xsl:attribute name="Power">
-			  	<xsl:value-of select="$power"/>
+			  <xsl:attribute name="Power">
+				  <xsl:value-of select="$power"/>
 			  </xsl:attribute>
       </xsl:if>
 			<xsl:apply-templates select="node()"/>
@@ -548,7 +554,7 @@
 	-->
 	<xsl:template match="OME:OTF">
 		<xsl:element name="OTF" namespace="{$newOMENS}">
-			<xsl:for-each select="@* [not(name() = 'OpticalAxisAvrg')]">
+			<xsl:for-each select="@* [not(name() = 'OpticalAxisAvrg' or name() = 'PixelType')]">
 				<xsl:attribute name="{local-name(.)}">
 					<xsl:value-of select="."/>
 				</xsl:attribute>
@@ -556,6 +562,14 @@
 			<xsl:for-each select="@* [name() = 'OpticalAxisAvrg']">
 				<xsl:attribute name="OpticalAxisAveraged">
 					<xsl:value-of select="."/>
+				</xsl:attribute>
+			</xsl:for-each>
+      <xsl:for-each select="@* [name() = 'PixelType']">
+				<xsl:attribute name="{local-name(.)}">
+					<xsl:call-template name="transformEnumerationValue">
+						<xsl:with-param name="mappingName" select="'OTFPixelType'"/>
+						<xsl:with-param name="value"><xsl:value-of select="."/></xsl:with-param>
+					</xsl:call-template>
 				</xsl:attribute>
 			</xsl:for-each>
 			<xsl:apply-templates select="node()"/>
@@ -1212,12 +1226,6 @@
 	<xsl:template match="@*|node()">
 		<xsl:copy>
 			<xsl:apply-templates select="@*|node()"/>
-		</xsl:copy>
-	</xsl:template>
-
-	<xsl:template match="text()|processing-instruction()|comment()">
-		<xsl:copy>
-			<xsl:apply-templates select="node()"/>
 		</xsl:copy>
 	</xsl:template>
 

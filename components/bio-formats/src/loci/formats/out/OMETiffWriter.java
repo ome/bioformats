@@ -26,7 +26,15 @@ package loci.formats.out;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
+
+import ome.xml.model.BinData;
+import ome.xml.model.Image;
+import ome.xml.model.OME;
+import ome.xml.model.Pixels;
+import ome.xml.model.primitives.NonNegativeInteger;
+import ome.xml.model.primitives.PositiveInteger;
 
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
@@ -107,6 +115,19 @@ public class OMETiffWriter extends TiffWriter {
         throw new RuntimeException(se);
       }
 
+      // remove any BinData elements from the OME-XML
+
+      OME root = (OME) omeMeta.getRoot();
+      List<Image> images = root.copyImageList();
+      for (Image img : images) {
+        Pixels pix = img.getPixels();
+        List<BinData> binData = pix.copyBinDataList();
+        for (BinData bin : binData) {
+          pix.removeBinData(bin);
+        }
+      }
+      omeMeta.setRoot(root);
+
       for (int series=0; series<omeMeta.getImageCount(); series++) {
         String dimensionOrder =
           omeMeta.getPixelsDimensionOrder(series).toString();
@@ -118,12 +139,12 @@ public class OMETiffWriter extends TiffWriter {
         int ifdCount = seriesMap.size();
 
         if (imageCount == 0) {
-          omeMeta.setTiffDataPlaneCount(new Integer(0), series, 0);
+          omeMeta.setTiffDataPlaneCount(new NonNegativeInteger(0), series, 0);
           continue;
         }
 
-        Integer samplesPerPixel =
-          new Integer((sizeZ * sizeC * sizeT) / imageCount);
+        PositiveInteger samplesPerPixel =
+          new PositiveInteger((sizeZ * sizeC * sizeT) / imageCount);
         for (int c=0; c<omeMeta.getChannelCount(series); c++) {
           omeMeta.setChannelSamplesPerPixel(samplesPerPixel, series, c);
         }
@@ -143,11 +164,15 @@ public class OMETiffWriter extends TiffWriter {
           String uuid = "urn:uuid:" + getUUID(filename);
           omeMeta.setUUIDValue(uuid, series, plane);
           // fill in any non-default TiffData attributes
-          omeMeta.setTiffDataFirstZ(zct[0], series, plane);
-          omeMeta.setTiffDataFirstC(zct[1], series, plane);
-          omeMeta.setTiffDataFirstT(new Integer(zct[2]), series, plane);
-          omeMeta.setTiffDataIFD(ifd, series, plane);
-          omeMeta.setTiffDataPlaneCount(1, series, plane);
+          omeMeta.setTiffDataFirstZ(
+              new NonNegativeInteger(zct[0]), series, plane);
+          omeMeta.setTiffDataFirstC(
+              new NonNegativeInteger(zct[1]), series, plane);
+          omeMeta.setTiffDataFirstT(
+              new NonNegativeInteger(zct[2]), series, plane);
+          omeMeta.setTiffDataIFD(new NonNegativeInteger(ifd), series, plane);
+          omeMeta.setTiffDataPlaneCount(
+              new NonNegativeInteger(1), series, plane);
 
           ifdCounts.put(filename, ifd + 1);
         }
