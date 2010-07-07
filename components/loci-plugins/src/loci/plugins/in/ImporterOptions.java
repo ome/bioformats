@@ -63,7 +63,7 @@ public class ImporterOptions extends OptionsList {
   public static final String KEY_LOCATION        = "location";
   public static final String KEY_OPEN_ALL_SERIES = "openAllSeries";
   public static final String KEY_QUIET           = "quiet";
-  public static final String KEY_RECORD          = "record";
+  //public static final String KEY_RECORD          = "record";
   public static final String KEY_SERIES          = "series";
   public static final String KEY_SHOW_METADATA   = "showMetadata";
   public static final String KEY_SHOW_OME_XML    = "showOMEXML";
@@ -302,9 +302,9 @@ public class ImporterOptions extends OptionsList {
   public void setQuiet(boolean b) { setValue(KEY_QUIET, b); }
 
   // record
-  public String getRecordInfo() { return getInfo(KEY_RECORD); }
-  public boolean isRecord() { return isSet(KEY_RECORD); }
-  public void setRecord(boolean b) { setValue(KEY_RECORD, b); }
+  //public String getRecordInfo() { return getInfo(KEY_RECORD); }
+  //public boolean isRecord() { return isSet(KEY_RECORD); }
+  //public void setRecord(boolean b) { setValue(KEY_RECORD, b); }
 
   // series
   public String getSeriesInfo() { return getInfo(KEY_SERIES); }

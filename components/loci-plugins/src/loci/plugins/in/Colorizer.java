@@ -47,6 +47,7 @@ import loci.formats.ImageReader;
 import loci.formats.MinMaxCalculator;
 import loci.plugins.BF;
 import loci.plugins.util.ImageProcessorReader;
+import loci.plugins.util.VirtualImagePlus;
 
 /**
  * Logic for colorizing images.
@@ -176,6 +177,11 @@ public class Colorizer {
   // -- Helper methods --
 
   private void applyDisplayRanges(ImagePlus imp, int series) {
+    if (imp instanceof VirtualImagePlus) {
+      // virtual stacks handle their own display ranges
+      return;
+    }
+
     final ImporterOptions options = process.getOptions();
     final ImageProcessorReader reader = process.getReader();
 

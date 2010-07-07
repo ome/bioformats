@@ -79,7 +79,7 @@ public class MainDialog extends ImporterDialog
   protected Checkbox groupFilesBox;
   protected Checkbox ungroupFilesBox;
   protected Checkbox openAllSeriesBox;
-  protected Checkbox recordBox;
+  //protected Checkbox recordBox;
   protected Checkbox showMetadataBox;
   protected Checkbox showOMEXMLBox;
   protected Checkbox showROIsBox;
@@ -120,7 +120,7 @@ public class MainDialog extends ImporterDialog
     addCheckbox(gd, ImporterOptions.KEY_UNGROUP_FILES);
     addCheckbox(gd, ImporterOptions.KEY_OPEN_ALL_SERIES);
     addCheckbox(gd, ImporterOptions.KEY_QUIET); // NB: invisible
-    addCheckbox(gd, ImporterOptions.KEY_RECORD);
+    //addCheckbox(gd, ImporterOptions.KEY_RECORD);
     addCheckbox(gd, ImporterOptions.KEY_SHOW_METADATA);
     addCheckbox(gd, ImporterOptions.KEY_SHOW_OME_XML);
     addCheckbox(gd, ImporterOptions.KEY_SHOW_ROIS);
@@ -146,7 +146,7 @@ public class MainDialog extends ImporterDialog
     options.setUngroupFiles(gd.getNextBoolean());
     options.setOpenAllSeries(gd.getNextBoolean());
     options.setQuiet(gd.getNextBoolean()); // NB: invisible
-    options.setRecord(gd.getNextBoolean());
+    //options.setRecord(gd.getNextBoolean());
     options.setShowMetadata(gd.getNextBoolean());
     options.setShowOMEXML(gd.getNextBoolean());
     options.setShowROIs(gd.getNextBoolean());
@@ -238,7 +238,7 @@ public class MainDialog extends ImporterDialog
       ungroupFilesBox   = boxes.get(boxIndex++);
       openAllSeriesBox  = boxes.get(boxIndex++);
       boxIndex++; // quiet
-      recordBox         = boxes.get(boxIndex++);
+      //recordBox         = boxes.get(boxIndex++);
       showMetadataBox   = boxes.get(boxIndex++);
       showOMEXMLBox     = boxes.get(boxIndex++);
       showROIsBox       = boxes.get(boxIndex++);
@@ -268,7 +268,7 @@ public class MainDialog extends ImporterDialog
     infoTable.put(groupFilesBox, options.getGroupFilesInfo());
     infoTable.put(ungroupFilesBox, options.getUngroupFilesInfo());
     infoTable.put(openAllSeriesBox, options.getOpenAllSeriesInfo());
-    infoTable.put(recordBox, options.getRecordInfo());
+    //infoTable.put(recordBox, options.getRecordInfo());
     infoTable.put(showMetadataBox, options.getShowMetadataInfo());
     infoTable.put(showOMEXMLBox, options.getShowOMEXMLInfo());
     infoTable.put(showROIsBox, options.getShowROIsInfo());
@@ -353,8 +353,8 @@ public class MainDialog extends ImporterDialog
     row += 2;
     builder.add(virtualBox, xyw(cc, 5, row, 1));
     row += 2;
-    builder.add(recordBox, xyw(cc, 5, row, 1));
-    row += 2;
+    //builder.add(recordBox, xyw(cc, 5, row, 1));
+    //row += 2;
     builder.add(specifyRangesBox, xyw(cc, 5, row, 1));
     row += 2;
     builder.add(cropBox, xyw(cc, 5, row, 1));
@@ -404,7 +404,7 @@ public class MainDialog extends ImporterDialog
     boolean groupFilesEnabled = groupFilesBox.isEnabled();
     boolean ungroupFilesEnabled = ungroupFilesBox.isEnabled();
     boolean openAllSeriesEnabled = openAllSeriesBox.isEnabled();
-    boolean recordEnabled = recordBox.isEnabled();
+    //boolean recordEnabled = recordBox.isEnabled();
     boolean showMetadataEnabled = showMetadataBox.isEnabled();
     boolean showOMEXMLEnabled = showOMEXMLBox.isEnabled();
     boolean specifyRangesEnabled = specifyRangesBox.isEnabled();
@@ -423,7 +423,7 @@ public class MainDialog extends ImporterDialog
     boolean isGroupFiles = groupFilesBox.getState();
     boolean isUngroupFiles = ungroupFilesBox.getState();
     boolean isOpenAllSeries = openAllSeriesBox.getState();
-    boolean isRecord = recordBox.getState();
+    //boolean isRecord = recordBox.getState();
     boolean isShowMetadata = showMetadataBox.getState();
     boolean isShowOMEXML = showOMEXMLBox.getState();
     boolean isSpecifyRanges = specifyRangesBox.getState();
@@ -505,8 +505,8 @@ public class MainDialog extends ImporterDialog
     else if (src == stackFormatChoice && isStackBrowser) isVirtual = true;
 
     // recordBox
-    recordEnabled = isVirtual;
-    if (!recordEnabled) isRecord = false;
+    //recordEnabled = isVirtual;
+    //if (!recordEnabled) isRecord = false;
 
     // specifyRangesBox
     specifyRangesEnabled = !isStackNone && !isVirtual;
@@ -553,7 +553,7 @@ public class MainDialog extends ImporterDialog
     groupFilesBox.setEnabled(groupFilesEnabled);
     ungroupFilesBox.setEnabled(ungroupFilesEnabled);
     openAllSeriesBox.setEnabled(openAllSeriesEnabled);
-    recordBox.setEnabled(recordEnabled);
+    //recordBox.setEnabled(recordEnabled);
     showMetadataBox.setEnabled(showMetadataEnabled);
     showOMEXMLBox.setEnabled(showOMEXMLEnabled);
     specifyRangesBox.setEnabled(specifyRangesEnabled);
@@ -572,7 +572,7 @@ public class MainDialog extends ImporterDialog
     groupFilesBox.setState(isGroupFiles);
     ungroupFilesBox.setState(isUngroupFiles);
     openAllSeriesBox.setState(isOpenAllSeries);
-    recordBox.setState(isRecord);
+    //recordBox.setState(isRecord);
     showMetadataBox.setState(isShowMetadata);
     showOMEXMLBox.setState(isShowOMEXML);
     specifyRangesBox.setState(isSpecifyRanges);
@@ -596,7 +596,7 @@ public class MainDialog extends ImporterDialog
         groupFilesBox,
         ungroupFilesBox,
         openAllSeriesBox,
-        recordBox,
+        //recordBox,
         showMetadataBox,
         showOMEXMLBox,
         specifyRangesBox,

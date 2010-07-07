@@ -159,19 +159,19 @@ save = false
 label = Quiet mode
 default = false
 
-[record]
-type = boolean
-label = Record_modifications_to_virtual_stack
-info = <b>Record modifications to virtual stack</b> - \
-  <i>BETA FEATURE</i> - Record and reapply changes to virtual stack      \
-  planes.                                                                \
-  <br><br>When viewing as a virtual stack with this option enabled,      \
-  Bio-Formats will attempt to record the operations you perform. When    \
-  you switch to a new image plane, Bio-Formats will \"play back\" those  \
-  same operations, so that the image plane undergoes the same processing \
-  you performed previously. In this way, the image stack should behave   \
-  more like a normal, fully memory-resident image stack.
-default = false
+#[record]
+#type = boolean
+#label = Record_modifications_to_virtual_stack
+#info = <b>Record modifications to virtual stack</b> - \
+#  <i>BETA FEATURE</i> - Record and reapply changes to virtual stack      \
+#  planes.                                                                \
+#  <br><br>When viewing as a virtual stack with this option enabled,      \
+#  Bio-Formats will attempt to record the operations you perform. When    \
+#  you switch to a new image plane, Bio-Formats will \"play back\" those  \
+#  same operations, so that the image plane undergoes the same processing \
+#  you performed previously. In this way, the image stack should behave   \
+#  more like a normal, fully memory-resident image stack.
+#default = false
 
 [series]
 type = string

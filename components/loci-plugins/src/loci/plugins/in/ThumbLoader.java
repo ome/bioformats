@@ -137,7 +137,7 @@ public class ThumbLoader implements Runnable {
     try {
       BufferedImage thumb = thumbReader.openThumbImage(ndx);
       boolean notFloat = thumbReader.getPixelType() != FormatTools.FLOAT;
-      if (autoscale && notFloat) thumb = AWTImageTools.autoscale(thumb);
+      thumb = AWTImageTools.autoscale(thumb);
       ImageIcon icon = new ImageIcon(thumb);
       panel.removeAll();
       panel.add(new JLabel(icon));
