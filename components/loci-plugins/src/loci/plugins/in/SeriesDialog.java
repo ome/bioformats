@@ -131,8 +131,7 @@ public class SeriesDialog extends ImporterDialog implements ActionListener {
         p[i].add(Box.createRigidArea(new Dimension(sx, sy)));
         if (options.isForceThumbnails()) {
           // load thumbnail immediately
-          ThumbLoader.loadThumb(thumbReader,
-            i, p[i], options.isQuiet(), options.isAutoscale());
+          ThumbLoader.loadThumb(thumbReader, i, p[i], options.isQuiet());
         }
       }
     }
@@ -173,7 +172,7 @@ public class SeriesDialog extends ImporterDialog implements ActionListener {
     ThumbLoader loader = null;
     if (thumbReader != null && !options.isForceThumbnails()) {
       // spawn background thumbnail loader
-      loader = new ThumbLoader(thumbReader, p, gd, options.isAutoscale());
+      loader = new ThumbLoader(thumbReader, p, gd);
     }
     gd.showDialog();
     if (loader != null) loader.stop();

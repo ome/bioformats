@@ -36,7 +36,6 @@ import javax.swing.JLabel;
 
 import loci.common.DebugTools;
 import loci.formats.FormatException;
-import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.gui.AWTImageTools;
 import loci.formats.gui.BufferedImageReader;
@@ -57,7 +56,6 @@ public class ThumbLoader implements Runnable {
   private BufferedImageReader ir;
   private Panel[] p;
   private Dialog dialog;
-  private boolean scale;
   private boolean stop;
   private Thread loader;
 
@@ -69,12 +67,10 @@ public class ThumbLoader implements Runnable {
    * @param p the panels upon which to populate the results
    * @param dialog the dialog containing the panels
    */
-  public ThumbLoader(IFormatReader ir, Panel[] p, Dialog dialog, boolean scale)
-  {
+  public ThumbLoader(IFormatReader ir, Panel[] p, Dialog dialog) {
     this.ir = BufferedImageReader.makeBufferedImageReader(ir);
     this.p = p;
     this.dialog = dialog;
-    this.scale = scale;
     loader = new Thread(this, "BioFormats-ThumbLoader");
     loader.start();
   }
@@ -117,7 +113,7 @@ public class ThumbLoader implements Runnable {
     for (int i=0; i<seriesCount; i++) {
       if (stop) return;
       final int ii = info[i].index;
-      loadThumb(ir, ii, p[ii], false, scale);
+      loadThumb(ir, ii, p[ii], false);
       if (dialog != null) dialog.validate();
     }
   }
@@ -125,7 +121,7 @@ public class ThumbLoader implements Runnable {
   // -- Helper methods --
 
   public static void loadThumb(BufferedImageReader thumbReader,
-    int series, Panel panel, boolean quiet, boolean autoscale)
+    int series, Panel panel, boolean quiet)
   {
     BF.status(quiet, "Reading thumbnail for series #" + (series + 1));
     thumbReader.setSeries(series);
@@ -136,7 +132,6 @@ public class ThumbLoader implements Runnable {
     Exception exc = null;
     try {
       BufferedImage thumb = thumbReader.openThumbImage(ndx);
-      boolean notFloat = thumbReader.getPixelType() != FormatTools.FLOAT;
       thumb = AWTImageTools.autoscale(thumb);
       ImageIcon icon = new ImageIcon(thumb);
       panel.removeAll();
