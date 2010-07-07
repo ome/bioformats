@@ -27,6 +27,7 @@ package loci.plugins.in;
 
 import ij.CompositeImage;
 import ij.ImagePlus;
+import ij.measure.Calibration;
 import ij.process.ColorProcessor;
 import ij.process.ImageProcessor;
 import ij.process.LUT;
@@ -41,9 +42,9 @@ import java.util.List;
 import loci.formats.ChannelFiller;
 import loci.formats.DimensionSwapper;
 import loci.formats.FormatException;
-import loci.formats.MinMaxCalculator;
 import loci.formats.FormatTools;
 import loci.formats.ImageReader;
+import loci.formats.MinMaxCalculator;
 import loci.plugins.BF;
 import loci.plugins.util.ImageProcessorReader;
 
@@ -225,8 +226,16 @@ public class Colorizer {
       final CompositeImage compImage = (CompositeImage) imp;
       for (int c=0; c<cSize; c++) {
         LUT lut = compImage.getChannelLut(c + 1);
-        lut.min = cMin[c];
-        lut.max = cMax[c];
+        // NB: Uncalibrate min/max values before assigning to LUT min/max.
+        double minOffset = 0;
+        final Calibration cal = imp.getCalibration();
+        if (cal.getFunction() == Calibration.STRAIGHT_LINE) {
+          // adjust minimum offset for signed data
+          double[] coeffs = cal.getCoefficients();
+          if (coeffs.length > 0) minOffset = coeffs[0];
+        }
+        lut.min = cMin[c] - minOffset;
+        lut.max = cMax[c] - minOffset;
       }
     }
     else {
