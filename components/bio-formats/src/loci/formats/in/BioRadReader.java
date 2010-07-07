@@ -312,7 +312,7 @@ public class BioRadReader extends FormatReader {
     float magFactor = 1f;
     int lens = 0;
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       int merged = in.readShort();
       int color1 = in.readShort();
       int fileId = in.readShort();
@@ -475,7 +475,7 @@ public class BioRadReader extends FormatReader {
     MetadataTools.setDefaultCreationDate(store, id, 0);
     store.setImageName(name, 0);
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       // link Instrument and Image
       String instrumentID = MetadataTools.createLSID("Instrument", 0);
       store.setInstrumentID(instrumentID, 0);
@@ -600,7 +600,7 @@ public class BioRadReader extends FormatReader {
     int nextDetector = 0, nLasers = 0;
     for (int noteIndex=0; noteIndex<noteStrings.size(); noteIndex++) {
       Note n = noteStrings.get(noteIndex);
-      if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
         switch (n.type) {
           case NOTE_TYPE_USER:
             // TODO : this should be an overlay
@@ -949,7 +949,7 @@ public class BioRadReader extends FormatReader {
           }
         }
 
-        if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL &&
+        if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM &&
           values.length > 2)
         {
           switch (axisType) {

@@ -518,16 +518,20 @@ public class LeicaReader extends FormatReader {
         else if (key.equals(DIMDESCR)) {
           parseDimensionTag(i);
         }
-        else if (key.equals(TIMEINFO) && metadataLevel == MetadataLevel.ALL) {
+        else if (key.equals(TIMEINFO) && metadataLevel != MetadataLevel.MINIMUM)
+        {
           parseTimeTag(i);
         }
-        else if (key.equals(EXPERIMENT) && metadataLevel == MetadataLevel.ALL) {
+        else if (key.equals(EXPERIMENT) &&
+          metadataLevel != MetadataLevel.MINIMUM)
+        {
           parseExperimentTag();
         }
         else if (key.equals(LUTDESC)) {
           parseLUT(i);
         }
-        else if (key.equals(CHANDESC) && metadataLevel == MetadataLevel.ALL) {
+        else if (key.equals(CHANDESC) && metadataLevel != MetadataLevel.MINIMUM)
+        {
           parseChannelTag();
         }
       }

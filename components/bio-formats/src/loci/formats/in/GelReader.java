@@ -163,7 +163,7 @@ public class GelReader extends BaseTiffReader {
     String prepDate = firstIFD.getIFDStringValue(MD_PREP_DATE);
     String prepTime = firstIFD.getIFDStringValue(MD_PREP_TIME);
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       String units = firstIFD.getIFDStringValue(MD_FILE_UNITS);
       String lab = firstIFD.getIFDStringValue(MD_LAB_NAME);
 
@@ -193,7 +193,7 @@ public class GelReader extends BaseTiffReader {
       MetadataTools.setDefaultCreationDate(store, getCurrentFile(), 0);
     }
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       Double pixelSize = new Double(scale.doubleValue());
       store.setPixelsPhysicalSizeX(pixelSize, 0);
       store.setPixelsPhysicalSizeY(pixelSize, 0);

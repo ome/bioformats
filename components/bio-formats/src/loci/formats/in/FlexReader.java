@@ -463,7 +463,7 @@ public class FlexReader extends FormatReader {
       store.setWellSampleImageRef(imageID, pos[2], well, pos[0]);
     }
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       String instrumentID = MetadataTools.createLSID("Instrument", 0);
       store.setInstrumentID(instrumentID, 0);
 
@@ -1274,7 +1274,7 @@ public class FlexReader extends FormatReader {
           else if (name.equals("Factor")) factors.add(attributes.getValue(i));
         }
       }
-      else if (qName.equals("LightSource") && level == MetadataLevel.ALL) {
+      else if (qName.equals("LightSource") && level != MetadataLevel.MINIMUM) {
         parentQName = qName;
         String type = attributes.getValue("LightSourceType");
 
@@ -1282,12 +1282,13 @@ public class FlexReader extends FormatReader {
         nextLaser++;
       }
       else if (qName.equals("LightSourceCombination") &&
-        level == MetadataLevel.ALL)
+        level != MetadataLevel.MINIMUM)
       {
         lightSourceID = attributes.getValue("ID");
         lightSourceCombinationIDs.put(lightSourceID, new Vector<String>());
       }
-      else if (qName.equals("LightSourceRef") && level == MetadataLevel.ALL) {
+      else if (qName.equals("LightSourceRef") && level != MetadataLevel.MINIMUM)
+      {
         Vector<String> v = lightSourceCombinationIDs.get(lightSourceID);
         if (v != null) {
           int id = lightSourceIDs.indexOf(attributes.getValue("ID"));
@@ -1296,7 +1297,7 @@ public class FlexReader extends FormatReader {
           lightSourceCombinationIDs.put(lightSourceID, v);
         }
       }
-      else if (qName.equals("Camera") && level == MetadataLevel.ALL) {
+      else if (qName.equals("Camera") && level != MetadataLevel.MINIMUM) {
         parentQName = qName;
         String detectorID = MetadataTools.createLSID("Detector", 0, nextCamera);
         store.setDetectorID(detectorID, 0, nextCamera);
@@ -1310,7 +1311,7 @@ public class FlexReader extends FormatReader {
         cameraIDs.add(attributes.getValue("ID"));
         nextCamera++;
       }
-      else if (qName.equals("Objective") && level == MetadataLevel.ALL) {
+      else if (qName.equals("Objective") && level != MetadataLevel.MINIMUM) {
         parentQName = qName;
         nextObjective++;
 
@@ -1345,7 +1346,7 @@ public class FlexReader extends FormatReader {
         parentQName = qName;
         nextImage++;
 
-        if (level == MetadataLevel.ALL) {
+        if (level != MetadataLevel.MINIMUM) {
           //Implemented for FLEX v1.7 and below
           String x = attributes.getValue("CameraBinningX");
           String y = attributes.getValue("CameraBinningY");
@@ -1366,10 +1367,10 @@ public class FlexReader extends FormatReader {
           wellNumber[0][1] = Integer.parseInt(attributes.getValue("Col")) - 1;
         }
       }
-      else if (qName.equals("Slider") && level == MetadataLevel.ALL) {
+      else if (qName.equals("Slider") && level != MetadataLevel.MINIMUM) {
         sliderName = attributes.getValue("Name");
       }
-      else if (qName.equals("Filter") && level == MetadataLevel.ALL) {
+      else if (qName.equals("Filter") && level != MetadataLevel.MINIMUM) {
         String id = attributes.getValue("ID");
         if (sliderName.endsWith("Dichro")) {
           String dichroicID =
@@ -1388,12 +1389,13 @@ public class FlexReader extends FormatReader {
           nextFilter++;
         }
       }
-      else if (qName.equals("FilterCombination") && level == MetadataLevel.ALL)
+      else if (qName.equals("FilterCombination") &&
+        level != MetadataLevel.MINIMUM)
       {
         filterSet = "FilterSet:" + attributes.getValue("ID");
         filterSetMap.put(filterSet, new FilterGroup());
       }
-      else if (qName.equals("SliderRef") && level == MetadataLevel.ALL) {
+      else if (qName.equals("SliderRef") && level != MetadataLevel.MINIMUM) {
         String filterName = attributes.getValue("Filter");
         String slider = attributes.getValue("ID");
         FilterGroup group = filterSetMap.get(filterSet);

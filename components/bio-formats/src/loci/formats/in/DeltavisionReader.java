@@ -200,10 +200,10 @@ public class DeltavisionReader extends FormatReader {
         initFilePixelsOnly(id);
         break;
       }
-      case ALL: {
+      case NO_OVERLAYS:
+      case ALL:
         initFileOld(id);
         break;
-      }
       default: {
         LOGGER.warn("Unsupported level: " + metadataLevel);
       }

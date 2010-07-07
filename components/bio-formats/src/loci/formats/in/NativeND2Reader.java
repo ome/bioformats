@@ -328,7 +328,9 @@ public class NativeND2Reader extends FormatReader {
           }
           skip = 0;
         }
-        else if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+        else if (getMetadataOptions().getMetadataLevel() !=
+          MetadataLevel.MINIMUM)
+        {
           if (blockType.startsWith("CustomData|A")) {
             customDataOffsets.add(new Long(fp));
             customDataLengths.add(new int[] {lenOne, lenTwo});
@@ -547,7 +549,7 @@ public class NativeND2Reader extends FormatReader {
 
       // read first CustomData block
 
-      if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
         if (customDataOffsets.size() > 0) {
           in.seek(customDataOffsets.get(0).longValue());
           int[] p = customDataLengths.get(0);
@@ -1075,12 +1077,16 @@ public class NativeND2Reader extends FormatReader {
 
     // populate ROI data
 
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.NO_OVERLAYS) {
+      return;
+    }
     for (int r=0; r<rois.size(); r++) {
       Hashtable<String, String> roi = rois.get(r);
       String type = roi.get("ROIType");
 
       if (type.equals("Text")) {
-        store.setTextFontSize(NonNegativeInteger.valueOf(roi.get("fHeight")), r, 0);
+        store.setTextFontSize(
+          NonNegativeInteger.valueOf(roi.get("fHeight")), r, 0);
         store.setTextValue(roi.get("eval-text"), r, 0);
         store.setTextStrokeWidth(new Double(roi.get("line-width")), r, 0);
 

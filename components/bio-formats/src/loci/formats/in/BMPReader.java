@@ -249,7 +249,7 @@ public class BMPReader extends FormatReader {
     }
     core[0].falseColor = false;
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       addGlobalMeta("Indexed color", palette != null);
       addGlobalMeta("Image width", getSizeX());
       addGlobalMeta("Image height", getSizeY());
@@ -282,7 +282,7 @@ public class BMPReader extends FormatReader {
     MetadataTools.populatePixels(store, this);
     MetadataTools.setDefaultCreationDate(store, id, 0);
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       // resolution is stored as pixels per meter; we want to convert to
       // microns per pixel
 

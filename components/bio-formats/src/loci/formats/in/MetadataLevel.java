@@ -34,6 +34,7 @@ package loci.formats.in;
 public enum MetadataLevel {
 
   MINIMUM,
+  NO_OVERLAYS,
   ALL;
 
 }

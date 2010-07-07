@@ -201,7 +201,7 @@ public class BDReader extends FormatReader {
     // parse Experiment metadata
     IniList experiment = readMetaData(id);
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       objective = experiment.getTable("Geometry").get("Name");
       IniTable camera = experiment.getTable("Camera");
       binning = camera.get("BinX") + "x" + camera.get("BinY");
@@ -264,7 +264,7 @@ public class BDReader extends FormatReader {
 
     MetadataStore store = makeFilterMetadata();
     boolean populatePlanes =
-      getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL;
+      getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM;
     MetadataTools.populatePixels(store, this, populatePlanes);
 
     for (int i=0; i<getSeriesCount(); i++) {
@@ -285,7 +285,8 @@ public class BDReader extends FormatReader {
       store.setImageName(name, i);
     }
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    MetadataLevel level = getMetadataOptions().getMetadataLevel();
+    if (level != MetadataLevel.MINIMUM) {
       String instrumentID = MetadataTools.createLSID("Instrument", 0);
       store.setInstrumentID(instrumentID, 0);
 
@@ -345,7 +346,9 @@ public class BDReader extends FormatReader {
       store.setPlateName(plateName, 0);
       store.setPlateDescription(plateDescription, 0);
 
-      parseROIs(store);
+      if (level != MetadataLevel.NO_OVERLAYS) {
+        parseROIs(store);
+      }
     }
   }
 
@@ -380,7 +383,7 @@ public class BDReader extends FormatReader {
       }
       else if (filename.endsWith("RoiSummary.txt")) {
         roiFile = filename;
-        if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+        if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
           RandomAccessInputStream s = new RandomAccessInputStream(filename);
           String line = s.readLine().trim();
           while (!line.endsWith(".adf\"")) {

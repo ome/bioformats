@@ -268,7 +268,7 @@ public class NRRDReader extends FormatReader {
     MetadataTools.populatePixels(store, this);
     MetadataTools.setDefaultCreationDate(store, id, 0);
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       for (int i=0; i<pixelSizes.length; i++) {
         Double d = new Double(pixelSizes[i].trim());
         if (i == 0) store.setPixelsPhysicalSizeX(d, 0);

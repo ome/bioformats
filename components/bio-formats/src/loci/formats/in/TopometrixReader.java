@@ -124,7 +124,7 @@ public class TopometrixReader extends FormatReader {
     double xSize = 0d, ySize = 0d;
     double adc = 0d, dacToWorldZero = 0d;
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       in.skipBytes(10);
       if (version == 5) {
         in.skipBytes(4);
@@ -178,7 +178,7 @@ public class TopometrixReader extends FormatReader {
     store.setImageAcquiredDate(DateTools.formatDate(date,
       new String[] {"MM/dd/yy HH:mm:ss", "MM/dd/yyyy HH:mm:ss"}), 0);
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setPixelsPhysicalSizeX((double) xSize / getSizeX(), 0);
       store.setPixelsPhysicalSizeY((double) ySize / getSizeY(), 0);
       store.setImageDescription(comment, 0);

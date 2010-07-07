@@ -110,7 +110,7 @@ public class ImarisTiffReader extends BaseTiffReader {
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       String description = null, creationDate = null;
       Vector<Integer> emWave = new Vector<Integer>();
       Vector<Integer> exWave = new Vector<Integer>();

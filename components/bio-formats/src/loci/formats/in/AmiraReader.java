@@ -165,7 +165,7 @@ public class AmiraReader extends FormatReader {
 
     // Note that Amira specifies a bounding box, not pixel sizes.
     // The bounding box is the range of the centre of the voxels
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       double pixelWidth = (double) (parameters.x1 - parameters.x0) /
         (parameters.width - 1);
       double pixelHeight = (double) (parameters.y1 - parameters.y0) /

@@ -134,7 +134,7 @@ public class ARFReader extends FormatReader {
     core[0].indexed = false;
     core[0].metadataComplete = true;
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       // populate original metadata
 
       addGlobalMeta("Endianness", little ? "little" : "big");

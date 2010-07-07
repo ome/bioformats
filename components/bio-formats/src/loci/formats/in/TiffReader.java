@@ -120,7 +120,7 @@ public class TiffReader extends BaseTiffReader {
     // which may contain additional metadata
 
     MetadataLevel level = getMetadataOptions().getMetadataLevel();
-    if (level == MetadataLevel.ALL) {
+    if (level != MetadataLevel.MINIMUM) {
       Integer[] tags = ifds.get(0).keySet().toArray(new Integer[0]);
       for (Integer tag : tags) {
         if (tag.intValue() >= 65000) {
@@ -155,11 +155,13 @@ public class TiffReader extends BaseTiffReader {
 
     // check for MetaMorph-style TIFF comment
     boolean metamorph = checkCommentMetamorph(comment);
-    if (metamorph && level == MetadataLevel.ALL) parseCommentMetamorph(comment);
+    if (metamorph && level != MetadataLevel.MINIMUM) {
+      parseCommentMetamorph(comment);
+    }
     put("MetaMorph", metamorph ? "yes" : "no");
 
     // check for other INI-style comment
-    if (!ij && !metamorph && level == MetadataLevel.ALL) {
+    if (!ij && !metamorph && level != MetadataLevel.MINIMUM) {
       parseCommentGeneric(comment);
     }
 

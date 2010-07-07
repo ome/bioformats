@@ -107,7 +107,7 @@ public class BurleighReader extends FormatReader {
 
     pixelsOffset = version == 1 ? 8 : 260;
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       double timePerPixel = 0d;
       int mode = 0, gain = 0, mag = 0;
       double sampleVolts = 0d, tunnelCurrent = 0d;
@@ -175,7 +175,7 @@ public class BurleighReader extends FormatReader {
     MetadataTools.populatePixels(store, this);
     MetadataTools.setDefaultCreationDate(store, id, 0);
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setPixelsPhysicalSizeX(xSize / getSizeX(), 0);
       store.setPixelsPhysicalSizeY(ySize / getSizeY(), 0);
       store.setPixelsPhysicalSizeZ(zSize / getSizeZ(), 0);

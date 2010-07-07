@@ -218,7 +218,7 @@ public class NiftiReader extends FormatReader {
     in.skipBytes(36);
     pixelOffset = (int) in.readFloat();
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       populateExtendedMetadata();
     }
 
@@ -241,7 +241,7 @@ public class NiftiReader extends FormatReader {
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription(description, 0);
       store.setPixelsPhysicalSizeX(new Double(voxelWidth), 0);
       store.setPixelsPhysicalSizeY(new Double(voxelHeight), 0);

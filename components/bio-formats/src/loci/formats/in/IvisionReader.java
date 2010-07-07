@@ -208,7 +208,7 @@ public class IvisionReader extends FormatReader {
 
     imageOffset = in.getFilePointer();
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       in.skipBytes(getSizeZ() * getSizeC() * getSizeT() * getSizeX() *
         getSizeY() * FormatTools.getBytesPerPixel(getPixelType()));
 
@@ -244,7 +244,7 @@ public class IvisionReader extends FormatReader {
     }
     else MetadataTools.setDefaultCreationDate(store, currentId, 0);
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       String instrumentID = MetadataTools.createLSID("Instrument", 0);
 
       store.setInstrumentID(instrumentID, 0);

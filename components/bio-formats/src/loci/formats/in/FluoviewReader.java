@@ -154,7 +154,7 @@ public class FluoviewReader extends BaseTiffReader {
     RandomAccessInputStream ras = new RandomAccessInputStream(mmheader);
     ras.order(isLittleEndian());
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       put("Header Flag", ras.readShort());
       put("Image Type", ras.read());
 
@@ -190,7 +190,7 @@ public class FluoviewReader extends BaseTiffReader {
       put("Dimension " + (i + 1) + " Units", ras.readString(64));
     }
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       ras.skipBytes(4); // skip pointer to spatial position data
 
       put("Map type", ras.readShort());
@@ -306,7 +306,7 @@ public class FluoviewReader extends BaseTiffReader {
       }
     }
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       // cut up the comment, if necessary
       comment = ifds.get(0).getComment();
 
@@ -332,7 +332,7 @@ public class FluoviewReader extends BaseTiffReader {
       store.setImageAcquiredDate(date, 0);
     }
 
-    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.MINIMUM) {
       return;
     }
 

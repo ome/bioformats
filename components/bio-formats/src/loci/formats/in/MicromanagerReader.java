@@ -416,7 +416,7 @@ public class MicromanagerReader extends FormatReader {
     }
     else MetadataTools.setDefaultCreationDate(store, id, 0);
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription(comment, 0);
 
       // link Instrument and Image

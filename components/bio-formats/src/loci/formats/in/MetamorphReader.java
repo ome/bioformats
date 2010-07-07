@@ -512,7 +512,7 @@ public class MetamorphReader extends BaseTiffReader {
 
       store.setImageName(makeImageName(i), i);
 
-      if (getMetadataOptions().getMetadataLevel() != MetadataLevel.ALL) {
+      if (getMetadataOptions().getMetadataLevel() == MetadataLevel.MINIMUM) {
         continue;
       }
       store.setImageDescription("", i);
@@ -657,7 +657,7 @@ public class MetamorphReader extends BaseTiffReader {
     }
     setSeries(0);
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setDetectorID(detectorID, 0, 0);
       store.setDetectorZoom(zoom, 0, 0);
       if (handler != null && handler.getZoom() != 0) {
@@ -685,7 +685,7 @@ public class MetamorphReader extends BaseTiffReader {
       TiffIFDEntry uic4tagEntry = tiffParser.getFirstIFDEntry(UIC4TAG);
       mmPlanes = uic4tagEntry.getValueCount();
       parseUIC2Tags(uic2tagEntry.getValueOffset());
-      if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
         parseUIC4Tags(uic4tagEntry.getValueOffset());
         parseUIC1Tags(uic1tagEntry.getValueOffset(),
           uic1tagEntry.getValueCount());

@@ -687,7 +687,7 @@ public class ZeissZVIReader extends FormatReader {
     }
     else MetadataTools.setDefaultCreationDate(store, getCurrentFile(), 0);
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       // link Instrument and Image
       String instrumentID = MetadataTools.createLSID("Instrument", 0);
       store.setInstrumentID(instrumentID, 0);
@@ -994,7 +994,8 @@ public class ZeissZVIReader extends FormatReader {
   private void parseROIs(int imageNum, String name, MetadataStore store)
     throws IOException
   {
-    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.ALL) {
+    MetadataLevel level = getMetadataOptions().getMetadataLevel();
+    if (level == MetadataLevel.MINIMUM || level == MetadataLevel.NO_OVERLAYS) {
       return;
     }
 

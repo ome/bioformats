@@ -253,7 +253,9 @@ public class ImarisHDFReader extends FormatReader {
       MetadataTools.setDefaultCreationDate(store, id, s);
     }
 
-    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.ALL) return;
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.MINIMUM) {
+      return;
+    }
 
     int cIndex = 0;
     for (int s=0; s<getSeriesCount(); s++) {

@@ -604,7 +604,7 @@ public class MIASReader extends FormatReader {
     LOGGER.info("Populating metadata hashtable");
 
     if (resultFile != null &&
-      getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL)
+      getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM)
     {
       String[] cols = null;
       Vector<String> rows = new Vector<String>();
@@ -690,7 +690,9 @@ public class MIASReader extends FormatReader {
       MetadataTools.setDefaultCreationDate(store, id, well);
     }
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    MetadataLevel level = getMetadataOptions().getMetadataLevel();
+
+    if (level != MetadataLevel.MINIMUM) {
       store.setExperimentID("Experiment:" + experiment.getName(), 0);
       store.setExperimentType(getExperimentType("Other"), 0);
 
@@ -713,53 +715,55 @@ public class MIASReader extends FormatReader {
         store.setImageInstrumentRef(instrumentID, well);
       }
 
-      // populate image-level ROIs
-      Integer[] colors = new Integer[getSizeC()];
-      int nextROI = 0;
-      for (AnalysisFile af : analysisFiles) {
-        String file = af.filename;
-        String name = new Location(file).getName();
-        if (!name.startsWith("Well")) continue;
+      if (level != MetadataLevel.NO_OVERLAYS) {
+        // populate image-level ROIs
+        Integer[] colors = new Integer[getSizeC()];
+        int nextROI = 0;
+        for (AnalysisFile af : analysisFiles) {
+          String file = af.filename;
+          String name = new Location(file).getName();
+          if (!name.startsWith("Well")) continue;
 
-        int[] position = getPositionFromFile(file);
-        int well = position[0];
+          int[] position = getPositionFromFile(file);
+          int well = position[0];
 
-        if (name.endsWith("detail.txt")) {
-          String data = DataTools.readFile(file);
-          String[] lines = data.split("\n");
-          int start = 0;
-          while (start < lines.length && !lines[start].startsWith("Label")) {
-            start++;
+          if (name.endsWith("detail.txt")) {
+            String data = DataTools.readFile(file);
+            String[] lines = data.split("\n");
+            int start = 0;
+            while (start < lines.length && !lines[start].startsWith("Label")) {
+              start++;
+            }
+            if (start >= lines.length) continue;
+
+            String[] columns = lines[start].split("\t");
+            List<String> columnNames = Arrays.asList(columns);
+
+            for (int j=start+1; j<lines.length; j++) {
+              populateROI(columnNames, lines[j].split("\t"), well,
+                nextROI++, position[1], position[2], store);
+            }
           }
-          if (start >= lines.length) continue;
+          else if (name.endsWith("AllModesOverlay.tif")) {
+            // original color for each channel is stored in
+            // results/Well<nnnn>_mode<n>_z<nnn>_t<nnn>_AllModesOverlay.tif
+            if (colors[position[3]] != null) continue;
+            try {
+              colors[position[3]] = getChannelColorFromFile(file);
+            }
+            catch (IOException e) { }
+            if (colors[position[3]] == null) continue;
 
-          String[] columns = lines[start].split("\t");
-          List<String> columnNames = Arrays.asList(columns);
-
-          for (int j=start+1; j<lines.length; j++) {
-            populateROI(columnNames, lines[j].split("\t"), well,
-              nextROI++, position[1], position[2], store);
+            for (int s=0; s<getSeriesCount(); s++) {
+              store.setChannelColor(colors[position[3]], s, position[3]);
+            }
+            if (position[3] == 0) {
+              nextROI += parseMasks(store, well, nextROI, file);
+            }
           }
-        }
-        else if (name.endsWith("AllModesOverlay.tif")) {
-          // original color for each channel is stored in
-          // results/Well<nnnn>_mode<n>_z<nnn>_t<nnn>_AllModesOverlay.tif
-          if (colors[position[3]] != null) continue;
-          try {
-            colors[position[3]] = getChannelColorFromFile(file);
-          }
-          catch (IOException e) { }
-          if (colors[position[3]] == null) continue;
-
-          for (int s=0; s<getSeriesCount(); s++) {
-            store.setChannelColor(colors[position[3]], s, position[3]);
-          }
-          if (position[3] == 0) {
+          else if (name.endsWith("overlay.tif")) {
             nextROI += parseMasks(store, well, nextROI, file);
           }
-        }
-        else if (name.endsWith("overlay.tif")) {
-          nextROI += parseMasks(store, well, nextROI, file);
         }
       }
     }

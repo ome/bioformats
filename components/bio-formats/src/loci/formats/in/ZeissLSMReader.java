@@ -517,7 +517,7 @@ public class ZeissLSMReader extends FormatReader {
         addSeriesMeta("DataType", "8 bit unsigned integer");
     }
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       ras.seek(0);
       addSeriesMeta("MagicNumber ", ras.readInt());
       addSeriesMeta("StructureSize", ras.readInt());
@@ -649,7 +649,7 @@ public class ZeissLSMReader extends FormatReader {
       store.setChannelID(lsid, series, c);
     }
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       int spectralScan = ras.readShort();
       if (spectralScan != 1) {
         addSeriesMeta("SpectralScan", "no spectral scan");
@@ -699,8 +699,11 @@ public class ZeissLSMReader extends FormatReader {
       overlayOffsets[7] = ras.readInt();
       overlayOffsets[8] = ras.readInt();
 
-      for (int i=0; i<overlayOffsets.length; i++) {
-        parseOverlays(series, overlayOffsets[i], overlayKeys[i], store);
+      if (getMetadataOptions().getMetadataLevel() != MetadataLevel.NO_OVERLAYS)
+      {
+        for (int i=0; i<overlayOffsets.length; i++) {
+          parseOverlays(series, overlayOffsets[i], overlayKeys[i], store);
+        }
       }
 
       totalROIs = 0;
@@ -874,7 +877,7 @@ public class ZeissLSMReader extends FormatReader {
 
     imageNames.add(imageName);
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       Double pixX = new Double(pixelSizeX);
       Double pixY = new Double(pixelSizeY);
       Double pixZ = new Double(pixelSizeZ);
@@ -912,7 +915,7 @@ public class ZeissLSMReader extends FormatReader {
     int series)
     throws FormatException
   {
-    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.MINIMUM) {
       return;
     }
 

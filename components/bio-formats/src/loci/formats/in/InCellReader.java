@@ -345,7 +345,7 @@ public class InCellReader extends FormatReader {
 
     MetadataTools.populatePixels(store, this, true);
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       handler = new InCellHandler(store);
       XMLTools.parseXML(b, handler);
     }
@@ -409,7 +409,7 @@ public class InCellReader extends FormatReader {
       }
     }
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       // populate PlaneTiming data
 
       for (int i=0; i<seriesCount; i++) {

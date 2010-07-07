@@ -166,7 +166,7 @@ public class ImprovisionTiffReader extends BaseTiffReader {
           if (cNames[ndx] == null) cNames[ndx] = channelName;
         }
 
-        if (getMetadataOptions().getMetadataLevel() != MetadataLevel.ALL &&
+        if (getMetadataOptions().getMetadataLevel() == MetadataLevel.MINIMUM &&
           coords[i][0] >= 0 && coords[i][1] >= 0 && coords[i][2] >= 0)
         {
           break;
@@ -174,7 +174,7 @@ public class ImprovisionTiffReader extends BaseTiffReader {
       }
     }
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       // determine average time per plane
 
       long sum = 0;
@@ -216,7 +216,7 @@ public class ImprovisionTiffReader extends BaseTiffReader {
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setPixelsPhysicalSizeX(pixelSizeX, 0);
       store.setPixelsPhysicalSizeY(pixelSizeY, 0);
       store.setPixelsPhysicalSizeZ(pixelSizeZ, 0);

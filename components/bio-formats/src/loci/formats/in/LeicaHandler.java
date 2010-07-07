@@ -185,7 +185,7 @@ public class LeicaHandler extends DefaultHandler {
         core.setElementAt(coreMeta, numDatasets);
       }
 
-      if (level == MetadataLevel.ALL) {
+      if (level != MetadataLevel.MINIMUM) {
         int nChannels = coreMeta.rgb ? 0 : numChannels;
 
         for (int c=0; c<nChannels; c++) {
@@ -214,7 +214,7 @@ public class LeicaHandler extends DefaultHandler {
       zPos.clear();
       detectorIndices.clear();
     }
-    else if (qName.equals("Element") && level == MetadataLevel.ALL) {
+    else if (qName.equals("Element") && level != MetadataLevel.MINIMUM) {
       multiBands.clear();
       nextROI = 0;
 
@@ -236,7 +236,7 @@ public class LeicaHandler extends DefaultHandler {
     else if (qName.equals("LDM_Block_Sequential_Master")) {
       canParse = true;
     }
-    else if (qName.equals("Annotation") && level == MetadataLevel.ALL) {
+    else if (qName.equals("Annotation") && level != MetadataLevel.MINIMUM) {
       roi.storeROI(store, numDatasets, nextROI++);
     }
   }
@@ -269,7 +269,7 @@ public class LeicaHandler extends DefaultHandler {
     String suffix = attributes.getValue("Identifier");
     String value = attributes.getValue("Variant");
     if (suffix == null) suffix = attributes.getValue("Description");
-    if (level == MetadataLevel.ALL) {
+    if (level != MetadataLevel.MINIMUM) {
       if (suffix != null && value != null) {
         int index = 1;
         while (h.get(key.toString() + suffix + " " + index) != null) index++;
@@ -294,7 +294,7 @@ public class LeicaHandler extends DefaultHandler {
       collection = elementName;
     }
     else if (qName.equals("Image")) {
-      if (!linkedInstruments && level == MetadataLevel.ALL) {
+      if (!linkedInstruments && level != MetadataLevel.MINIMUM) {
         int c = 0;
         for (Detector d : detectors) {
           String id = MetadataTools.createLSID(
@@ -354,7 +354,7 @@ public class LeicaHandler extends DefaultHandler {
       numChannels = 0;
       extras = 1;
     }
-    else if (qName.equals("Attachment") && level == MetadataLevel.ALL) {
+    else if (qName.equals("Attachment") && level != MetadataLevel.MINIMUM) {
       if ("ContextDescription".equals(attributes.getValue("Name"))) {
         store.setImageDescription(attributes.getValue("Content"), numDatasets);
       }
@@ -457,7 +457,8 @@ public class LeicaHandler extends DefaultHandler {
       }
       count++;
     }
-    else if (qName.equals("ScannerSettingRecord") && level == MetadataLevel.ALL)
+    else if (qName.equals("ScannerSettingRecord") &&
+      level != MetadataLevel.MINIMUM)
     {
       String id = attributes.getValue("Identifier");
       if (id == null) id = "";
@@ -511,7 +512,8 @@ public class LeicaHandler extends DefaultHandler {
         }
       }
     }
-    else if (qName.equals("FilterSettingRecord") && level == MetadataLevel.ALL)
+    else if (qName.equals("FilterSettingRecord") &&
+      level != MetadataLevel.MINIMUM)
     {
       String object = attributes.getValue("ObjectName");
       String attribute = attributes.getValue("Attribute");
@@ -658,7 +660,7 @@ public class LeicaHandler extends DefaultHandler {
         }
       }
     }
-    else if (qName.equals("Detector") && level == MetadataLevel.ALL) {
+    else if (qName.equals("Detector") && level != MetadataLevel.MINIMUM) {
       String v = attributes.getValue("Gain");
       Double gain = v == null ? null : new Double(v);
       v = attributes.getValue("Offset");
@@ -745,7 +747,8 @@ public class LeicaHandler extends DefaultHandler {
         nextChannel++;
       }
     }
-    else if (qName.equals("LaserLineSetting") && level == MetadataLevel.ALL) {
+    else if (qName.equals("LaserLineSetting") && level != MetadataLevel.MINIMUM)
+    {
       Laser l = new Laser();
       String lineIndex = attributes.getValue("LineIndex");
       String qual = attributes.getValue("Qualifier");
@@ -795,7 +798,7 @@ public class LeicaHandler extends DefaultHandler {
         firstStamp = ms;
         store.setPlaneDeltaT(0.0, numDatasets, count);
       }
-      else if (level == MetadataLevel.ALL) {
+      else if (level != MetadataLevel.MINIMUM) {
         CoreMetadata coreMeta = core.get(numDatasets);
         int nImages = coreMeta.sizeZ * coreMeta.sizeT * coreMeta.sizeC;
         if (count < nImages) {
@@ -806,7 +809,7 @@ public class LeicaHandler extends DefaultHandler {
 
       count++;
     }
-    else if (qName.equals("RelTimeStamp") && level == MetadataLevel.ALL) {
+    else if (qName.equals("RelTimeStamp") && level != MetadataLevel.MINIMUM) {
       CoreMetadata coreMeta = core.get(numDatasets);
       int nImages = coreMeta.sizeZ * coreMeta.sizeT * coreMeta.sizeC;
       if (count < nImages) {
@@ -814,7 +817,7 @@ public class LeicaHandler extends DefaultHandler {
         store.setPlaneDeltaT(time, numDatasets, count++);
       }
     }
-    else if (qName.equals("Annotation") && level == MetadataLevel.ALL) {
+    else if (qName.equals("Annotation") && level != MetadataLevel.MINIMUM) {
       roi = new ROI();
       String type = attributes.getValue("type");
       if (type != null) roi.type = Integer.parseInt(type);
@@ -832,7 +835,7 @@ public class LeicaHandler extends DefaultHandler {
       if (linewidth != null) roi.linewidth = Integer.parseInt(linewidth);
       roi.text = attributes.getValue("text");
     }
-    else if (qName.equals("Vertex") && level == MetadataLevel.ALL) {
+    else if (qName.equals("Vertex") && level != MetadataLevel.MINIMUM) {
       String x = attributes.getValue("x");
       String y = attributes.getValue("y");
       if (x != null) {
@@ -847,7 +850,7 @@ public class LeicaHandler extends DefaultHandler {
     else if (qName.equals("ROI")) {
       alternateCenter = true;
     }
-    else if (qName.equals("MultiBand") && level == MetadataLevel.ALL) {
+    else if (qName.equals("MultiBand") && level != MetadataLevel.MINIMUM) {
       MultiBand m = new MultiBand();
       m.dyeName = attributes.getValue("DyeName");
       m.channel = Integer.parseInt(attributes.getValue("Channel"));
@@ -914,6 +917,11 @@ public class LeicaHandler extends DefaultHandler {
     // -- ROI API methods --
 
     public void storeROI(MetadataStore store, int series, int roi) {
+      if (level == MetadataLevel.NO_OVERLAYS || level == MetadataLevel.MINIMUM)
+      {
+        return;
+      }
+
       // keep in mind that vertices are given relative to the center
       // point of the ROI and the transX/transY values are relative to
       // the center point of the image

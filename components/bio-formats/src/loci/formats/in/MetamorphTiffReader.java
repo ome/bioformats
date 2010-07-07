@@ -120,7 +120,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
       DateTools.formatDate(handler.getDate(), DateTools.ISO8601_FORMAT);
     store.setImageAcquiredDate(date, 0);
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       for (int i=0; i<timestamps.size(); i++) {
         long timestamp = DateTools.getTime(timestamps.get(i), DATE_FORMAT);
         addGlobalMeta("timestamp " + i, timestamp);

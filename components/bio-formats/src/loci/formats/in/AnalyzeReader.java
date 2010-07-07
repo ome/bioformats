@@ -168,7 +168,7 @@ public class AnalyzeReader extends FormatReader {
     String description = null;
     double voxelWidth = 0d, voxelHeight = 0d, sliceThickness = 0d, deltaT = 0d;
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       in.skipBytes(6);
 
       voxelWidth = in.readFloat();
@@ -289,7 +289,7 @@ public class AnalyzeReader extends FormatReader {
 
     store.setImageName(imageName, 0);
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription(description, 0);
       store.setPixelsPhysicalSizeX(voxelWidth * 0.001, 0);
       store.setPixelsPhysicalSizeY(voxelHeight * 0.001, 0);

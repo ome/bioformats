@@ -478,7 +478,9 @@ public class ICSReader extends FormatReader {
           // HACK - support for Gray Institute at Oxford's ICS lifetime data
           if (v.equalsIgnoreCase("time resolved")) lifetime = true;
         }
-        else if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+        else if (getMetadataOptions().getMetadataLevel() !=
+          MetadataLevel.MINIMUM)
+        {
           if (k.equalsIgnoreCase("sensor s_params LambdaEm")) {
             String[] waves = v.split(" ");
             emWaves = new Integer[waves.length];
@@ -754,7 +756,7 @@ public class ICSReader extends FormatReader {
     if (date != null) store.setImageAcquiredDate(date, 0);
     else MetadataTools.setDefaultCreationDate(store, id, 0);
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription(description, 0);
 
       // link Instrument and Image

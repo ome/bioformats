@@ -423,7 +423,8 @@ public class OpenlabReader extends FormatReader {
 
         imagesFound++;
       }
-      else if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      else if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM)
+      {
         if (tag == CALIBRATION) {
           in.skipBytes(4);
           short units = in.readShort();
@@ -555,13 +556,13 @@ public class OpenlabReader extends FormatReader {
     MetadataStore store = makeFilterMetadata();
 
     MetadataLevel level = getMetadataOptions().getMetadataLevel();
-    boolean planeInfoNeeded = level == MetadataLevel.ALL &&
+    boolean planeInfoNeeded = level != MetadataLevel.MINIMUM &&
       (xPos != null || yPos != null || zPos != null);
 
     MetadataTools.populatePixels(store, this, planeInfoNeeded);
     MetadataTools.setDefaultCreationDate(store, currentId, 0);
 
-    if (level == MetadataLevel.ALL) {
+    if (level != MetadataLevel.MINIMUM) {
       // populate MetadataStore
 
       store.setPixelsPhysicalSizeX(new Double(xcal), 0);

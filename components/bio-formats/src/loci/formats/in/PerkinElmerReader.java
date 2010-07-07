@@ -535,7 +535,7 @@ public class PerkinElmerReader extends FormatReader {
     }
     else MetadataTools.setDefaultCreationDate(store, id, 0);
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       // populate Dimensions element
       store.setPixelsPhysicalSizeX(pixelSizeX, 0);
       store.setPixelsPhysicalSizeY(pixelSizeY, 0);
@@ -731,7 +731,9 @@ public class PerkinElmerReader extends FormatReader {
   }
 
   private void parseCSVFile(String csvFile) throws IOException {
-    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.ALL) return;
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.MINIMUM) {
+      return;
+    }
     String[] tokens = DataTools.readFile(csvFile).split("\\s");
     Vector<String> tmp = new Vector<String>();
     for (String token : tokens) {
@@ -766,7 +768,9 @@ public class PerkinElmerReader extends FormatReader {
   }
 
   private void parseZpoFile(String zpoFile) throws IOException {
-    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.ALL) return;
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.MINIMUM) {
+      return;
+    }
     String[] tokens = DataTools.readFile(zpoFile).split("\\s");
     for (int t=0; t<tokens.length; t++) {
       addGlobalMeta("Z slice #" + t + " position", tokens[t]);

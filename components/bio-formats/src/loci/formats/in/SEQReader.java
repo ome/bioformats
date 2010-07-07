@@ -83,7 +83,7 @@ public class SEQReader extends BaseTiffReader {
 
     MetadataLevel level = getMetadataOptions().getMetadataLevel();
     for (IFD ifd : ifds) {
-      if (level == MetadataLevel.ALL) {
+      if (level != MetadataLevel.MINIMUM) {
         short[] tag1 = (short[]) ifd.getIFDValue(IMAGE_PRO_TAG_1);
 
         if (tag1 != null) {

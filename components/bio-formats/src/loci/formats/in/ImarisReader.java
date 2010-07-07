@@ -153,7 +153,7 @@ public class ImarisReader extends FormatReader {
     float[] detectorOffsets = new float[getSizeC()];
     float[] pinholes = new float[getSizeC()];
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       for (int i=0; i<getSizeC(); i++) {
         addGlobalMeta("Channel #" + i + " Comment", in.readString(128));
         gains[i] = in.readFloat();
@@ -198,7 +198,7 @@ public class ImarisReader extends FormatReader {
     store.setImageName(imageName, 0);
     MetadataTools.setDefaultCreationDate(store, currentId, 0);
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription(description, 0);
 
       // link Instrument and Image

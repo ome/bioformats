@@ -426,7 +426,7 @@ public class DicomReader extends FormatReader {
 
     in.seek(128);
     if (in.readString(4).equals("DICM")) {
-      if (level == MetadataLevel.ALL) {
+      if (level != MetadataLevel.MINIMUM) {
         // header exists, so we'll read it
         in.seek(0);
         addSeriesMeta("Header information", in.readString(128));
@@ -689,7 +689,7 @@ public class DicomReader extends FormatReader {
       store.setImageName("Series " + i, i);
     }
 
-    if (level == MetadataLevel.ALL) {
+    if (level != MetadataLevel.MINIMUM) {
       for (int i=0; i<core.length; i++) {
         store.setImageDescription(imageType, i);
 

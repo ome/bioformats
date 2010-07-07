@@ -463,7 +463,7 @@ public class FV1000Reader extends FormatReader {
       laser = f.getTable("Laser " + index + " Parameters");
     }
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       index = 1;
       IniTable guiChannel = f.getTable("GUI Channel " + index + " Parameters");
       while (guiChannel != null) {
@@ -636,7 +636,7 @@ public class FV1000Reader extends FormatReader {
         }
       }
 
-      if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
         for (IniTable table : pty) {
           String[] keys = table.keySet().toArray(new String[table.size()]);
           for (String key : keys) {
@@ -826,7 +826,7 @@ public class FV1000Reader extends FormatReader {
       else MetadataTools.setDefaultCreationDate(store, id, i);
     }
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       populateMetadataStore(store, path);
     }
   }
@@ -974,14 +974,16 @@ public class FV1000Reader extends FormatReader {
     store.setObjectiveID(objectiveID, 0, 0);
     store.setImageObjectiveSettingsID(objectiveID, 0);
 
-    int nextROI = -1;
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.NO_OVERLAYS) {
+      int nextROI = -1;
 
-    // populate ROI data - there is one ROI file per plane
-    for (int i=0; i<roiFilenames.size(); i++) {
-      if (i >= getImageCount()) break;
-      String filename = roiFilenames.get(new Integer(i));
-      filename = sanitizeFile(filename, path);
-      nextROI = parseROIFile(filename, store, nextROI, i);
+      // populate ROI data - there is one ROI file per plane
+      for (int i=0; i<roiFilenames.size(); i++) {
+        if (i >= getImageCount()) break;
+        String filename = roiFilenames.get(new Integer(i));
+        filename = sanitizeFile(filename, path);
+        nextROI = parseROIFile(filename, store, nextROI, i);
+      }
     }
   }
 
@@ -1048,7 +1050,8 @@ public class FV1000Reader extends FormatReader {
           if (shapeType == POINT) {
             store.setPointTheZ(new NonNegativeInteger(zIndex), nextROI, shape);
             store.setPointTheT(new NonNegativeInteger(tIndex), nextROI, shape);
-            store.setPointFontSize(new NonNegativeInteger(fontSize), nextROI, shape);
+            store.setPointFontSize(
+              new NonNegativeInteger(fontSize), nextROI, shape);
             store.setPointStrokeWidth(new Double(lineWidth), nextROI, shape);
 
             store.setPointX(new Double(xc[0]), nextROI, shape);
@@ -1068,9 +1071,12 @@ public class FV1000Reader extends FormatReader {
                 store.setRectangleWidth(new Double(width), nextROI, shape);
                 store.setRectangleHeight(new Double(height), nextROI, shape);
 
-                store.setRectangleTheZ(new NonNegativeInteger(zIndex), nextROI, shape);
-                store.setRectangleTheT(new NonNegativeInteger(tIndex), nextROI, shape);
-                store.setRectangleFontSize(new NonNegativeInteger(fontSize), nextROI, shape);
+                store.setRectangleTheZ(
+                  new NonNegativeInteger(zIndex), nextROI, shape);
+                store.setRectangleTheT(
+                  new NonNegativeInteger(tIndex), nextROI, shape);
+                store.setRectangleFontSize(
+                  new NonNegativeInteger(fontSize), nextROI, shape);
                 store.setRectangleStrokeWidth(
                   new Double(lineWidth), nextROI, shape);
 
@@ -1092,7 +1098,8 @@ public class FV1000Reader extends FormatReader {
 
             store.setLineTheZ(new NonNegativeInteger(zIndex), nextROI, shape);
             store.setLineTheT(new NonNegativeInteger(tIndex), nextROI, shape);
-            store.setLineFontSize(new NonNegativeInteger(fontSize), nextROI, shape);
+            store.setLineFontSize(
+              new NonNegativeInteger(fontSize), nextROI, shape);
             store.setLineStrokeWidth(new Double(lineWidth), nextROI, shape);
 
             int centerX = x + (width / 2);

@@ -195,7 +195,7 @@ public class GatanReader extends FormatReader {
     MetadataTools.populatePixels(store, this);
     MetadataTools.setDefaultCreationDate(store, id, 0);
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       if (pixelSizes.size() > 0) {
         store.setPixelsPhysicalSizeX(pixelSizes.get(0), 0);
       }

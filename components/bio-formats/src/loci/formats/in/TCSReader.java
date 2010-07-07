@@ -363,7 +363,7 @@ public class TCSReader extends FormatReader {
 
     String comment = ifds.get(0).getComment();
     if (comment != null && comment.startsWith("[") &&
-      getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL)
+      getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM)
     {
       String[] lines = comment.split("\n");
       for (String line : lines) {

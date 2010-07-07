@@ -82,7 +82,7 @@ public class SeikoReader extends FormatReader {
     String comment = null;
     double xSize = 0d, ySize = 0d;
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       in.seek(40);
       comment = in.readCString();
 
@@ -111,7 +111,7 @@ public class SeikoReader extends FormatReader {
     MetadataTools.populatePixels(store, this);
     MetadataTools.setDefaultCreationDate(store, currentId, 0);
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription(comment, 0);
       store.setPixelsPhysicalSizeX(xSize, 0);
       store.setPixelsPhysicalSizeY(ySize, 0);

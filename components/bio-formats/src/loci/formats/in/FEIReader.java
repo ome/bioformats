@@ -114,7 +114,7 @@ public class FEIReader extends FormatReader {
 
     LOGGER.info("Reading file header");
 
-    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       in.skipBytes(44);
 
       float magnification = in.readFloat();
