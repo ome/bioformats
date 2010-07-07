@@ -445,9 +445,9 @@ public class DataBrowser extends StackWindow {
     super.adjustmentValueChanged(e);
     syncPlane();
   }
-  
+
   // -- MouseWheelListener methods --
-   
+
   public void mouseWheelMoved(MouseWheelEvent event) {
     super.mouseWheelMoved(event);
     syncSliders();
@@ -489,7 +489,7 @@ public class DataBrowser extends StackWindow {
     slice = FormatTools.positionToRaster(dims, pos) + 1;
   }
   */
-  
+
   /** Updates the ImagePlus's displayed plane to match the slider values. */
   private void syncPlane() {
     for (int i=0; i<cSliders.length; i++) {

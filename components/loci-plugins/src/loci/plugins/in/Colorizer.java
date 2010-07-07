@@ -55,6 +55,7 @@ import loci.plugins.util.ImageProcessorReader;
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/in/Colorizer.java">SVN</a></dd></dl>
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
+ * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class Colorizer {
 
@@ -191,7 +192,6 @@ public class Colorizer {
       // extract display ranges for autoscaling
       final MinMaxCalculator minMaxCalc = process.getMinMaxCalculator();
       final int cBegin = process.getCBegin(series);
-      final int cEnd = process.getCEnd(series);
       final int cStep = process.getCStep(series);
       for (int c=0; c<cSize; c++) {
         final int cIndex = cBegin + c * cStep;

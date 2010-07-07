@@ -43,6 +43,7 @@ import loci.formats.DimensionSwapper;
 import loci.formats.FilePattern;
 import loci.formats.FileStitcher;
 import loci.formats.FormatException;
+import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 import loci.formats.MinMaxCalculator;
@@ -63,8 +64,10 @@ import org.apache.log4j.Logger;
 
 /**
  * Manages the import preparation process.
+ *
  * After calling {@link #execute()}, the process will be ready to feed to
- * an {@link ImagePlusReader} to read in the actual {@link ij.ImagePlus} objects.
+ * an {@link ImagePlusReader} to read in the actual {@link ij.ImagePlus}
+ * objects.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/in/ImportProcess.java">Trac</a>,
@@ -119,9 +122,10 @@ public class ImportProcess implements StatusReporter {
   // -- ImportProcess methods --
 
   /**
-   * Performs the import process, notifying status listeners at each step.
+   * Performs the import preparation process,
+   * notifying status listeners at each step.
    *
-   * @return true if the process completed successfully.
+   * @return true if the preparation process completed successfully.
    */
   public boolean execute() throws FormatException, IOException {
     step(ImportStep.READER);
@@ -347,6 +351,35 @@ public class ImportProcess implements StatusReporter {
     assertStep(ImportStep.SERIES);
     if (!options.isSeriesOn(s)) return 0;
     return (getTEnd(s) - getTBegin(s) + getTStep(s)) / getTStep(s);
+  }
+
+  /**
+   * Gets a projection of required memory in bytes.
+   * Valid only after {@link ImportStep#SERIES}.
+   */
+  public long getMemoryUsage() {
+    final int seriesCount = getSeriesCount();
+    long total = 0;
+    for (int s=0; s<seriesCount; s++) {
+      if (!options.isSeriesOn(s)) continue;
+      // determine size of one image plane
+      final Region cropRegion = getCropRegion(s);
+      final int bpp = FormatTools.getBytesPerPixel(reader.getPixelType());
+      final long planeSize = bpp * cropRegion.width * cropRegion.height;
+      // determine total number of image planes
+      final int cCount = getCCount(s);
+      final int zCount = getZCount(s);
+      final int tCount = getTCount(s);
+      final long planeCount = cCount * zCount * tCount;
+      // determine active number of image planes
+      final boolean isVirtual = options.isVirtual();
+      final long activeChannels = options.isColorModeComposite() ? cCount : 1;
+      final long activePlanes = isVirtual ? activeChannels : planeCount;
+      // compute total memory footprint for this series
+      final long seriesSize = planeSize * activePlanes;
+      total += seriesSize;
+    }
+    return total;
   }
 
   // -- ImportProcess methods - post-METADATA --

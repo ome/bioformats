@@ -54,7 +54,6 @@ import loci.formats.meta.IMetadata;
 import loci.formats.services.OMEXMLService;
 import loci.plugins.Slicer;
 import loci.plugins.util.BFVirtualStack;
-import loci.plugins.util.ImagePlusTools;
 import loci.plugins.util.ImageProcessorReader;
 import loci.plugins.util.VirtualImagePlus;
 
@@ -127,34 +126,97 @@ public class ImagePlusReader implements StatusReporter {
     for (StatusListener l : listeners) l.statusUpdated(e);
   }
 
+  // -- Utility methods --
+
+  /**
+   * Creates an {@link ImagePlus} from the given image processors.
+   *
+   * @param title The title for the image.
+   * @param procs List of image processors to compile into an image.
+   */
+  public static ImagePlus createImage(String title, List<ImageProcessor> procs) {
+    final List<LUT> luts = new ArrayList<LUT>();
+    final ImageStack stack = createStack(procs, null, luts);
+    return createImage(title, stack, luts);
+  }
+
+  /**
+   * Creates an {@link ImagePlus} from the given image stack.
+   *
+   * @param title The title for the image.
+   * @param stack The image stack containing the image planes.
+   * @param luts Optional list of plane-specific LUTs
+   *   to store as image properties, for later use.
+   */
+  public static ImagePlus createImage(String title,
+    ImageStack stack, List<LUT> luts)
+  {
+    final ImagePlus imp = new ImagePlus(title, stack);
+
+    // NB: Save individual planar LUTs as properties, for later access.
+    // This step is necessary because ImageStack.addSlice only extracts the
+    // pixels from the ImageProcessor, and does not preserve the ColorModel.
+    // Later, Colorizer can use the LUTs when wrapping into a CompositeImage.
+    for (int i=0; i<luts.size(); i++) {
+      final LUT lut = luts.get(i);
+      if (lut != null) imp.setProperty(PROP_LUT + i, lut);
+    }
+
+    return imp;
+  }
+
+  /**
+   * Creates an image stack from the given image processors.
+   *
+   * @param procs List of image processors to compile into a stack.
+   * @param labels Optional list of labels, one per plane.
+   * @param luts Optional list for storing plane-specific LUTs, for later use.
+   */
+  public static ImageStack createStack(List<ImageProcessor> procs,
+    List<String> labels, List<LUT> luts)
+  {
+    if (procs == null || procs.size() == 0) return null;
+
+    final ImageProcessor ip0 = procs.get(0);
+    final ImageStack stack = new ImageStack(ip0.getWidth(), ip0.getHeight());
+
+    // construct image stack from list of image processors
+    for (int i=0; i<procs.size(); i++) {
+      final ImageProcessor ip = procs.get(i);
+      final String label = labels == null ? null : labels.get(i);
+
+      // HACK: ImageProcessorReader always assigns an ij.process.LUT object
+      // as the color model. If we don't get one, we know ImageJ created a
+      // default color model instead, which we can discard.
+      if (luts != null) {
+        final ColorModel cm = ip.getColorModel();
+        final LUT lut = cm instanceof LUT ? (LUT) cm : null;
+        luts.add(lut);
+      }
+
+      // add plane to image stack
+      stack.addSlice(label, ip);
+    }
+
+    return stack;
+  }
+
   // -- Helper methods - image reading --
 
-  private List<ImagePlus> readImages()
-    throws FormatException, IOException
-  {
+  private List<ImagePlus> readImages() throws FormatException, IOException {
+    final ImageProcessorReader reader = process.getReader();
+    final ImporterOptions options = process.getOptions();
+
     List<ImagePlus> imps = new ArrayList<ImagePlus>();
 
     // beginning timing
     startTiming();
 
-    ImageProcessorReader reader = process.getReader();
-    ImporterOptions options = process.getOptions();
-
-    if (options.isVirtual()) {
-      // set virtual stack's reference count to match # of image windows
-      // in this case, these is one window per enabled image series
-      // when all image windows are closed, the Bio-Formats reader is closed
-      int totalSeries = 0;
-      for (int s=0; s<reader.getSeriesCount(); s++) {
-        if (options.isSeriesOn(s)) totalSeries++;
-      }
-      process.getVirtualReader().setRefCount(totalSeries);
-    }
-
     // read in each image series
     for (int s=0; s<reader.getSeriesCount(); s++) {
       if (!options.isSeriesOn(s)) continue;
-      readSeries(s, imps);
+      final ImagePlus imp = readImage(s);
+      imps.add(imp);
     }
 
     // concatenate compatible images
@@ -166,92 +228,144 @@ public class ImagePlusReader implements StatusReporter {
     // split dimensions, as appropriate
     imps = splitDims(imps);
 
+    // set virtual stack's reference count to match # of image windows
+    // in this case, these is one window per enabled image series
+    // when all image windows are closed, the Bio-Formats reader is closed
+    if (options.isVirtual()) {
+      process.getVirtualReader().setRefCount(imps.size());
+    }
+
     // end timing
     finishTiming();
 
     return imps;
   }
 
-  private void readSeries(int s, List<ImagePlus> imps)
+  private ImagePlus readImage(int s)
+    throws FormatException, IOException
+  {
+    final ImporterOptions options = process.getOptions();
+    final int zCount = process.getZCount(s);
+    final int cCount = process.getCCount(s);
+    final int tCount = process.getTCount(s);
+
+    final List<LUT> luts = new ArrayList<LUT>();
+
+    // create image stack
+    final ImageStack stack;
+    if (options.isVirtual()) stack = createVirtualStack(process, s);
+    else stack = readPlanes(process, s, luts);
+
+    notifyListeners(new StatusEvent(1, 1, "Creating image"));
+
+    // create title
+    final String seriesName = process.getOMEMetadata().getImageName(s);
+    final String file = process.getCurrentFile();
+    final IFormatReader reader = process.getReader();
+    final String title = constructImageTitle(reader,
+      file, seriesName, options.isGroupFiles());
+
+    // create image
+    final ImagePlus imp;
+    if (stack.isVirtual()) {
+      VirtualImagePlus vip = new VirtualImagePlus(title, stack);
+      vip.setReader(reader);
+      imp = vip;
+    }
+    else {
+      imp = createImage(title, stack, luts);
+    }
+  
+    // configure image
+
+    // place metadata key/value pairs in ImageJ's info field
+    final String metadata = process.getOriginalMetadata().toString();
+    imp.setProperty("Info", metadata);
+    imp.setProperty(PROP_SERIES, s);
+
+    // retrieve the spatial calibration information, if available
+    final FileInfo fi = createFileInfo();
+    new Calibrator(process).applyCalibration(imp);
+    imp.setFileInfo(fi);
+    imp.setDimensions(cCount, zCount, tCount);
+
+    // open as a hyperstack, as appropriate
+    final boolean hyper = !options.isViewStandard();
+    imp.setOpenAsHyperStack(hyper);
+
+    return imp;
+  }
+
+  private ImageStack createVirtualStack(ImportProcess process, int s)
     throws FormatException, IOException
   {
     final ImageProcessorReader reader = process.getReader();
     final ImporterOptions options = process.getOptions();
-    reader.setSeries(s);
 
-    final boolean[] load = getPlanesToLoad(s);
-    int current = 0, total = 0;
-    for (int j=0; j<reader.getImageCount(); j++) if (load[j]) total++;
+    final int zCount = process.getZCount(s);
+    final int cCount = process.getCCount(s);
+    final int tCount = process.getTCount(s);
+    final IMetadata meta = process.getOMEMetadata();
+    final int imageCount = reader.getImageCount();
 
-    final FileInfo fi = createFileInfo();
-    final Region region = process.getCropRegion(s);
-
-    ImageStack stack = null;
-
-    final List<LUT> luts = new ArrayList<LUT>();
-    if (options.isVirtual()) {
-      // CTR FIXME: Make virtual stack work with different color modes?
-      reader.setSeries(s);
-      BFVirtualStack virtualStack = new BFVirtualStack(options.getId(),
-        reader, false, false, options.isRecord());
-      stack = virtualStack;
-      for (int j=0; j<reader.getImageCount(); j++) {
-        String label = constructSliceLabel(j,
-          reader, process.getOMEMetadata(), s,
-          process.getZCount(s), process.getCCount(s), process.getTCount(s));
-        virtualStack.addSlice(label);
-      }
+    // CTR FIXME: Make virtual stack work with different color modes?
+    final BFVirtualStack virtualStack = new BFVirtualStack(options.getId(),
+      reader, false, false, options.isRecord());
+    for (int i=0; i<imageCount; i++) {
+      final String label = constructSliceLabel(i,
+        reader, meta, s, zCount, cCount, tCount);
+      virtualStack.addSlice(label);
     }
-    else {
-      for (int i=0; i<reader.getImageCount(); i++) {
-        if (!load[i]) continue;
-
-        // limit message update rate
-        updateTiming(s, i, current++, total);
-
-        final String label = constructSliceLabel(i,
-          reader, process.getOMEMetadata(), s,
-          process.getZCount(s), process.getCCount(s), process.getTCount(s));
-
-        // get image processor for ith plane
-        final ImageProcessor[] p = reader.openProcessors(i,
-          region.x, region.y, region.width, region.height);
-        if (p == null || p.length == 0) {
-          throw new FormatException("Cannot read plane #" + i);
-        }
-
-        // add plane to image stack
-        final int w = region.width, h = region.height;
-        if (stack == null) stack = new ImageStack(w, h);
-
-        for (ImageProcessor ip : p) {
-          // HACK: ImageProcessorReader always assigns an ij.process.LUT object
-          // as the color model. If we don't get one, we know ImageJ created a
-          // default color model instead, which we can discard.
-          final ColorModel cm = ip.getColorModel();
-          final LUT lut = cm instanceof LUT ? (LUT) cm : null;
-          luts.add(lut);
-
-          stack.addSlice(label, ip);
-        }
-      }
-    }
-
-    notifyListeners(new StatusEvent(1, 1, "Creating image"));
-
-    final ImagePlus imp = createImage(stack, s, fi);
-    imps.add(imp);
-
-    // NB: Save individual planar LUTs as properties, for later access.
-    // This step is necessary because ImageStack.addSlice only extracts the
-    // pixels from the ImageProcessor, and does not preserve the ColorModel.
-    for (int i=0; i<luts.size(); i++) {
-      final LUT lut = luts.get(i);
-      if (lut != null) imp.setProperty(PROP_LUT + i, lut);
-    }
+    return virtualStack;
   }
 
-  // -- Helper methods - concatenation --
+  private ImageStack readPlanes(ImportProcess process, int s, List<LUT> luts)
+    throws FormatException, IOException
+  {
+    final ImageProcessorReader reader = process.getReader();
+    reader.setSeries(s);
+
+    final int zCount = process.getZCount(s);
+    final int cCount = process.getCCount(s);
+    final int tCount = process.getTCount(s);
+    final IMetadata meta = process.getOMEMetadata();
+
+    // get list of planes to load
+    final boolean[] load = getPlanesToLoad(s);
+    int current = 0, total = 0;
+    for (int j=0; j<load.length; j++) if (load[j]) total++;
+
+    final List<ImageProcessor> procs = new ArrayList<ImageProcessor>();
+    final List<String> labels = new ArrayList<String>();
+
+    // read applicable image planes
+    final Region region = process.getCropRegion(s);
+    for (int i=0; i<load.length; i++) {
+      if (!load[i]) continue;
+
+      // limit message update rate
+      updateTiming(s, i, current++, total);
+
+      // get image processor for ith plane
+      final ImageProcessor[] p = reader.openProcessors(i,
+        region.x, region.y, region.width, region.height);
+      if (p == null || p.length == 0) {
+        throw new FormatException("Cannot read plane #" + i);
+      }
+      // generate a label for ith plane
+      final String label = constructSliceLabel(i,
+        reader, meta, s, zCount, cCount, tCount);
+
+      for (ImageProcessor ip : p) {
+        procs.add(ip);
+        labels.add(label);
+      }
+    }
+    
+    return createStack(procs, labels, luts);
+  }
+
+  // -- Helper methods - image post processing --
 
   private List<ImagePlus> concatenate(List<ImagePlus> imps) {
     final ImporterOptions options = process.getOptions();
@@ -259,25 +373,22 @@ public class ImagePlusReader implements StatusReporter {
     return imps;
   }
 
-  // -- Helper methods - colorization --
-
   private List<ImagePlus> applyColors(List<ImagePlus> imps) {
     return new Colorizer(process).applyColors(imps);
   }
 
-  // -- Helper methods - window splitting --
-
   private List<ImagePlus> splitDims(List<ImagePlus> imps) {
     final ImporterOptions options = process.getOptions();
 
-    boolean sliceC = options.isSplitChannels();
-    boolean sliceZ = options.isSplitFocalPlanes();
-    boolean sliceT = options.isSplitTimepoints();
+    final boolean sliceC = options.isSplitChannels();
+    final boolean sliceZ = options.isSplitFocalPlanes();
+    final boolean sliceT = options.isSplitTimepoints();
     if (sliceC || sliceZ || sliceT) {
-      String stackOrder = process.getStackOrder();
-      List<ImagePlus> slicedImps = new ArrayList<ImagePlus>();
+      final String stackOrder = process.getStackOrder();
+      final List<ImagePlus> slicedImps = new ArrayList<ImagePlus>();
+      final Slicer slicer = new Slicer();
       for (ImagePlus imp : imps) {
-        ImagePlus[] results = new Slicer().reslice(imp,
+        final ImagePlus[] results = slicer.reslice(imp,
           sliceC, sliceZ, sliceT, stackOrder);
         for (ImagePlus result : results) slicedImps.add(result);
       }
@@ -326,7 +437,7 @@ public class ImagePlusReader implements StatusReporter {
   // -- Helper methods -- miscellaneous --
 
   private FileInfo createFileInfo() {
-    FileInfo fi = new FileInfo();
+    final FileInfo fi = new FileInfo();
 
     // populate common FileInfo fields
     String idDir = process.getIdLocation() == null ?
@@ -350,21 +461,20 @@ public class ImagePlusReader implements StatusReporter {
   }
 
   private boolean[] getPlanesToLoad(int s) {
-    ImageProcessorReader reader = process.getReader();
-    boolean[] load = new boolean[reader.getImageCount()];
-    int cBegin = process.getCBegin(s);
-    int cEnd = process.getCEnd(s);
-    int cStep = process.getCStep(s);
-    int zBegin = process.getZBegin(s);
-    int zEnd = process.getZEnd(s);
-    int zStep = process.getZStep(s);
-    int tBegin = process.getTBegin(s);
-    int tEnd = process.getTEnd(s);
-    int tStep = process.getTStep(s);
+    final ImageProcessorReader reader = process.getReader();
+    final boolean[] load = new boolean[reader.getImageCount()];
+    final int cBegin = process.getCBegin(s);
+    final int cEnd = process.getCEnd(s);
+    final int cStep = process.getCStep(s);
+    final int zBegin = process.getZBegin(s);
+    final int zEnd = process.getZEnd(s);
+    final int zStep = process.getZStep(s);
+    final int tBegin = process.getTBegin(s);
+    final int tEnd = process.getTEnd(s);
+    final int tStep = process.getTStep(s);
     for (int c=cBegin; c<=cEnd; c+=cStep) {
       for (int z=zBegin; z<=zEnd; z+=zStep) {
         for (int t=tBegin; t<=tEnd; t+=tStep) {
-          //int index = r.isOrderCertain() ? r.getIndex(z, c, t) : c;
           int index = reader.getIndex(z, c, t);
           load[index] = true;
         }
@@ -373,51 +483,8 @@ public class ImagePlusReader implements StatusReporter {
     return load;
   }
 
-  /**
-   * Displays the given image stack according to
-   * the specified parameters and import options.
-   */
-  private ImagePlus createImage(ImageStack stack, int series, FileInfo fi) {
-    if (stack == null) return null;
-
-    ImporterOptions options = process.getOptions();
-    String seriesName = process.getOMEMetadata().getImageName(series);
-    String file = process.getCurrentFile();
-    IMetadata meta = process.getOMEMetadata();
-    int cCount = process.getCCount(series);
-    int zCount = process.getZCount(series);
-    int tCount = process.getTCount(series);
-    IFormatReader reader = process.getReader();
-
-    String title = getTitle(reader, file, seriesName, options.isGroupFiles());
-    ImagePlus imp = null;
-    if (options.isVirtual()) {
-      VirtualImagePlus vip = new VirtualImagePlus(title, stack);
-      vip.setReader(reader);
-      imp = vip;
-    }
-    else imp = new ImagePlus(title, stack);
-
-    // place metadata key/value pairs in ImageJ's info field
-    String metadata = process.getOriginalMetadata().toString();
-    imp.setProperty("Info", metadata);
-    imp.setProperty(PROP_SERIES, series);
-
-    // retrieve the spatial calibration information, if available
-    ImagePlusTools.applyCalibration(meta, imp, reader.getSeries());
-    imp.setFileInfo(fi);
-    imp.setDimensions(cCount, zCount, tCount);
-
-    // open as a hyperstack, as appropriate
-    boolean hyper = !options.isViewStandard();
-    imp.setOpenAsHyperStack(hyper);
-
-    return imp;
-  }
-
-  /** Get an appropriate stack title, given the file name. */
-  private String getTitle(IFormatReader r, String file, String seriesName,
-    boolean groupFiles)
+  private String constructImageTitle(IFormatReader r,
+    String file, String seriesName, boolean groupFiles)
   {
     String[] used = r.getUsedFiles();
     String title = file.substring(file.lastIndexOf(File.separator) + 1);
@@ -449,10 +516,12 @@ public class ImagePlusReader implements StatusReporter {
     IMetadata meta, int series, int zCount, int cCount, int tCount)
   {
     r.setSeries(series);
-    int[] zct = r.getZCTCoords(ndx);
-    int[] subC = r.getChannelDimLengths();
-    String[] subCTypes = r.getChannelDimTypes();
-    StringBuffer sb = new StringBuffer();
+
+    final int[] zct = r.getZCTCoords(ndx);
+    final int[] subC = r.getChannelDimLengths();
+    final String[] subCTypes = r.getChannelDimTypes();
+    final StringBuffer sb = new StringBuffer();
+
     boolean first = true;
     if (cCount > 1) {
       if (first) first = false;

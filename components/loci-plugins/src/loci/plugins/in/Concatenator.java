@@ -98,7 +98,7 @@ public class Concatenator {
         else throw new IllegalStateException("Dimensional mismatch");
 
         append = true;
-        break;        
+        break;
       }
       if (!append) {
         // could not concatenate input image to any existing output;

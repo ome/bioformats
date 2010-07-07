@@ -46,21 +46,21 @@ public class CropDialog extends ImporterDialog {
   public CropDialog(ImportProcess process) {
     super(process);
   }
-  
+
   // -- ImporterDialog methods --
 
   @Override
   protected boolean needPrompt() {
     return !process.isWindowless() && options.doCrop();
   }
-  
+
   @Override
   protected GenericDialog constructDialog() {
-    int seriesCount = process.getSeriesCount();
-    IFormatReader r = process.getReader();
-    
+    final int seriesCount = process.getSeriesCount();
+    final IFormatReader r = process.getReader();
+
     // construct dialog
-    GenericDialog gd = new GenericDialog("Bio-Formats Crop Options");
+    final GenericDialog gd = new GenericDialog("Bio-Formats Crop Options");
     for (int s=0; s<seriesCount; s++) {
       if (!options.isSeriesOn(s)) continue;
       r.setSeries(s);
@@ -74,14 +74,14 @@ public class CropDialog extends ImporterDialog {
       gd.addNumericField("Height_" + (s + 1), region.height, 0);
     }
     WindowTools.addScrollBars(gd);
- 
+
     return gd;
   }
-  
+
   @Override
   protected boolean harvestResults(GenericDialog gd) {
-    int seriesCount = process.getSeriesCount();
-    IFormatReader r = process.getReader();
+    final int seriesCount = process.getSeriesCount();
+    final IFormatReader r = process.getReader();
 
     for (int s=0; s<seriesCount; s++) {
       if (!options.isSeriesOn(s)) continue;
@@ -111,5 +111,5 @@ public class CropDialog extends ImporterDialog {
 
     return true;
   }
-  
+
 }

@@ -1,5 +1,5 @@
 //
-// ImagePlusTools.java
+// Calibrator.java
 //
 
 /*
@@ -23,50 +23,50 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package loci.plugins.util;
+package loci.plugins.in;
 
 import ij.ImagePlus;
-import ij.ImageStack;
 import ij.measure.Calibration;
-import ij.process.ColorProcessor;
-import ij.process.ImageProcessor;
 
-import java.io.IOException;
-
-import loci.formats.FormatException;
 import loci.formats.FormatTools;
-import loci.formats.MinMaxCalculator;
-import loci.formats.meta.MetadataRetrieve;
+import loci.formats.meta.IMetadata;
 
 /**
- * Utility methods for working with ImagePlus objects.
+ * Logic for calibrating images.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/util/ImagePlusTools.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/util/ImagePlusTools.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/in/Calibrator.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/in/Calibrator.java">SVN</a></dd></dl>
  */
-public final class ImagePlusTools {
+public class Calibrator {
+
+  // -- Fields --
+
+  private ImportProcess process;
 
   // -- Constructor --
 
-  private ImagePlusTools() { }
+  public Calibrator(ImportProcess process) {
+    this.process = process;
+  }
 
-  // -- Utility methods --
+  // -- Calibrator methods --
 
   /** Applies spatial calibrations to an image stack. */
-  public static void applyCalibration(MetadataRetrieve retrieve,
-    ImagePlus imp, int series)
-  {
+  public void applyCalibration(ImagePlus imp) {
+    final IMetadata meta = process.getOMEMetadata();
+    final int series = (Integer) imp.getProperty(ImagePlusReader.PROP_SERIES);
+
     double xcal = Double.NaN, ycal = Double.NaN;
     double zcal = Double.NaN, tcal = Double.NaN;
 
-    Double xd = retrieve.getPixelsPhysicalSizeX(series);
+    Double xd = meta.getPixelsPhysicalSizeX(series);
     if (xd != null) xcal = xd.floatValue();
-    Double yd = retrieve.getPixelsPhysicalSizeY(series);
+    Double yd = meta.getPixelsPhysicalSizeY(series);
     if (yd != null) ycal = yd.floatValue();
-    Double zd = retrieve.getPixelsPhysicalSizeZ(series);
+    Double zd = meta.getPixelsPhysicalSizeZ(series);
     if (zd != null) zcal = zd.floatValue();
-    Double td = retrieve.getPixelsTimeIncrement(series);
+    Double td = meta.getPixelsTimeIncrement(series);
     if (td != null) tcal = td.floatValue();
 
     final boolean xcalPresent = !Double.isNaN(xcal);
@@ -93,7 +93,7 @@ public final class ImagePlusTools {
       imp.setCalibration(cal);
     }
 
-    String type = retrieve.getPixelsType(series).toString();
+    String type = meta.getPixelsType(series).toString();
     int pixelType = FormatTools.pixelTypeFromString(type);
 
     // NB: INT32 is represented with FloatProcessor, so no need to calibrate.
@@ -108,30 +108,6 @@ public final class ImagePlusTools {
       imp.getLocalCalibration().setFunction(Calibration.STRAIGHT_LINE,
         new double[] {min, 1.0}, "gray value");
     }
-  }
-
-  /** Reorder the given ImagePlus's stack. */
-  public static ImagePlus reorder(ImagePlus imp, String origOrder,
-    String newOrder)
-  {
-    ImageStack s = imp.getStack();
-    ImageStack newStack = new ImageStack(s.getWidth(), s.getHeight());
-
-    int z = imp.getNSlices();
-    int c = imp.getNChannels();
-    int t = imp.getNFrames();
-
-    int stackSize = s.getSize();
-    for (int i=0; i<stackSize; i++) {
-      int ndx = FormatTools.getReorderedIndex(
-        origOrder, newOrder, z, c, t, stackSize, i);
-      newStack.addSlice(s.getSliceLabel(ndx + 1), s.getProcessor(ndx + 1));
-    }
-    ImagePlus p = new ImagePlus(imp.getTitle(), newStack);
-    p.setDimensions(c, z, t);
-    p.setCalibration(imp.getCalibration());
-    p.setFileInfo(imp.getOriginalFileInfo());
-    return p;
   }
 
 }

@@ -38,7 +38,7 @@ import java.lang.reflect.Method;
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
-public class FormatEntry implements Comparable {
+public class FormatEntry implements Comparable<Object> {
 
   // -- Fields --
 
@@ -106,7 +106,7 @@ public class FormatEntry implements Comparable {
   public boolean equals(Object o) {
     if (o == null) return false;
     if (!(o instanceof FormatEntry)) return false;
-    return compareTo((FormatEntry) o) == 0;
+    return compareTo(o) == 0;
   }
 
   public String toString() {

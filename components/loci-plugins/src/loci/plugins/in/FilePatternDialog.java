@@ -46,14 +46,14 @@ public class FilePatternDialog extends ImporterDialog {
   public FilePatternDialog(ImportProcess process) {
     super(process);
   }
-  
+
   // -- ImporterDialog methods --
 
   @Override
   protected boolean needPrompt() {
     return !process.isWindowless() && options.isGroupFiles();
   }
-  
+
   @Override
   protected GenericDialog constructDialog() {
     // CTR - CHECK
@@ -85,7 +85,7 @@ public class FilePatternDialog extends ImporterDialog {
 
     return gd;
   }
-  
+
   @Override
   protected boolean harvestResults(GenericDialog gd) {
     String id = gd.getNextString();

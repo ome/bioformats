@@ -86,7 +86,7 @@ public class UpgradeDialog extends ImporterDialog {
         if (doUpgrade) Updater.install(Updater.STABLE_BUILD);
       }
     }
-  
+
     return true;
   }
 

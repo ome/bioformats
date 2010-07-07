@@ -49,12 +49,12 @@ public class RangeDialog extends ImporterDialog {
   public RangeDialog(ImportProcess process) {
     super(process);
   }
-  
+
   // -- ImporterDialog methods --
 
   protected boolean needPrompt() {
     if (process.isWindowless() || !options.isSpecifyRanges()) return false;
-    
+
     ImageProcessorReader r = process.getReader();
     int seriesCount = process.getSeriesCount();
     for (int s=0; s<seriesCount; s++) {
@@ -62,7 +62,7 @@ public class RangeDialog extends ImporterDialog {
     }
     return false;
   }
-  
+
   protected GenericDialog constructDialog() {
     ImageProcessorReader r = process.getReader();
     int seriesCount = process.getSeriesCount();
@@ -101,7 +101,7 @@ public class RangeDialog extends ImporterDialog {
 
     return gd;
   }
-  
+
   protected boolean harvestResults(GenericDialog gd) {
     ImageProcessorReader r = process.getReader();
     int seriesCount = process.getSeriesCount();
@@ -176,5 +176,5 @@ public class RangeDialog extends ImporterDialog {
 
     return true;
   }
-  
+
 }

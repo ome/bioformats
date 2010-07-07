@@ -451,7 +451,7 @@ public class ConfigWindow extends JFrame
     return textField;
   }
 
-  public static void addEntry(final Comparable c,
+  public static void addEntry(final Comparable<Object> c,
     final DefaultListModel listModel)
   {
     SwingUtilities.invokeLater(new Runnable() {
@@ -477,7 +477,7 @@ public class ConfigWindow extends JFrame
   // -- Helper methods --
 
   private void addProp(HashMap<String, String> props,
-    String key, String value, HashMap versions)
+    String key, String value, HashMap<String, String> versions)
   {
     if (key == null) return;
 
@@ -486,7 +486,7 @@ public class ConfigWindow extends JFrame
 
     if (key.equals("version")) {
       // get actual value from versions hashtable
-      value = (String) versions.get(value);
+      value = versions.get(value);
     }
     if (value != null) props.put(key, value);
   }

@@ -88,13 +88,13 @@ public class FlexWidgets implements DocumentListener, IFormatWidgets {
   // -- DocumentListener API methods --
 
   public void changedUpdate(DocumentEvent e) {
-    documentUpdate(e);
+    documentUpdate();
   }
   public void removeUpdate(DocumentEvent e) {
-    documentUpdate(e);
+    documentUpdate();
   }
   public void insertUpdate(DocumentEvent e) {
-    documentUpdate(e);
+    documentUpdate();
   }
 
   // -- IFormatWidgets API methods --
@@ -109,7 +109,7 @@ public class FlexWidgets implements DocumentListener, IFormatWidgets {
 
   // -- Helper methods --
 
-  private void documentUpdate(DocumentEvent e) {
+  private void documentUpdate() {
     String code = licenseBox.getText();
     Prefs.set(LuraWaveServiceImpl.LICENSE_PROPERTY, code);
   }
