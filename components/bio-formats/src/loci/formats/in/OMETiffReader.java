@@ -141,7 +141,16 @@ public class OMETiffReader extends FormatReader {
     if (ifd == null) return false;
     String comment = ifd.getComment();
     if (comment == null) return false;
-    return comment.trim().endsWith("OME>");
+
+    try {
+      ServiceFactory factory = new ServiceFactory();
+      OMEXMLService service = factory.getInstance(OMEXMLService.class);
+      service.createOMEXMLMetadata(comment.trim());
+      return true;
+    }
+    catch (DependencyException de) { }
+    catch (ServiceException se) { }
+    return false;
   }
 
   /* @see loci.formats.IFormatReader#getDomains() */
