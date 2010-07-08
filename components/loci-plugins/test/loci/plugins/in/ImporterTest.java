@@ -1106,7 +1106,7 @@ public class ImporterTest {
   }
 
   /** tests BF's options.setUngroupFiles() */
-  private void datsetOpenFilesIndividuallyTester(boolean virtual)
+  private void datasetOpenFilesIndividuallyTester(boolean virtual)
   {
     // TODO - try to remove file dependency
 
@@ -2119,7 +2119,7 @@ public class ImporterTest {
   public void testDatasetOpenFilesIndividually()
   {
     for (boolean virtual : BOOLEAN_STATES)
-      datsetOpenFilesIndividuallyTester(virtual);
+      datasetOpenFilesIndividuallyTester(virtual);
   }
 
   @Test
