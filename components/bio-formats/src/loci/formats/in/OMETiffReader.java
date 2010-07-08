@@ -315,7 +315,7 @@ public class OMETiffReader extends FormatReader {
           filename = meta.getUUIDFileName(i, td);
           if (!new Location(dir, filename).exists()) filename = null;
           if (filename == null) {
-            if (uuid.equals(currentUUID)) {
+            if (uuid.equals(currentUUID) || currentUUID == null) {
               // UUID references this file
               filename = id;
             }

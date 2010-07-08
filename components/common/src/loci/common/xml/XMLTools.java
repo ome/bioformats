@@ -352,6 +352,13 @@ public final class XMLTools {
       gt = xml.indexOf('>', gt + 1);
     if (gt > 0) {
       String firstTag = xml.substring(0, gt + 1).toLowerCase();
+
+      // the first tag is a comment; we need to find the first "real" tag
+      while (firstTag.endsWith("-->")) {
+        gt = xml.indexOf('>', gt + 1);
+        firstTag = xml.substring(0, gt + 1).toLowerCase();
+      }
+
       Set namespaces = new HashSet();
       Pattern pattern = Pattern.compile(" xmlns:(\\w+)");
       Matcher matcher = pattern.matcher(firstTag);
