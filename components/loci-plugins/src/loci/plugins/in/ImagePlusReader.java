@@ -204,8 +204,8 @@ public class ImagePlusReader implements StatusReporter {
   // -- Helper methods - image reading --
 
   private List<ImagePlus> readImages() throws FormatException, IOException {
-    final ImageProcessorReader reader = process.getReader();
     final ImporterOptions options = process.getOptions();
+    final ImageProcessorReader reader = process.getReader();
 
     List<ImagePlus> imps = new ArrayList<ImagePlus>();
 
@@ -272,10 +272,8 @@ public class ImagePlusReader implements StatusReporter {
       vip.setReader(reader);
       imp = vip;
     }
-    else {
-      imp = createImage(title, stack, luts);
-    }
-  
+    else imp = createImage(title, stack, luts);
+
     // configure image
 
     // place metadata key/value pairs in ImageJ's info field
@@ -299,9 +297,9 @@ public class ImagePlusReader implements StatusReporter {
   private ImageStack createVirtualStack(ImportProcess process, int s)
     throws FormatException, IOException
   {
-    final ImageProcessorReader reader = process.getReader();
     final ImporterOptions options = process.getOptions();
-
+    final ImageProcessorReader reader = process.getReader();
+    reader.setSeries(s);
     final int zCount = process.getZCount(s);
     final int cCount = process.getCCount(s);
     final int tCount = process.getTCount(s);
@@ -324,7 +322,6 @@ public class ImagePlusReader implements StatusReporter {
   {
     final ImageProcessorReader reader = process.getReader();
     reader.setSeries(s);
-
     final int zCount = process.getZCount(s);
     final int cCount = process.getCCount(s);
     final int tCount = process.getTCount(s);
@@ -361,7 +358,7 @@ public class ImagePlusReader implements StatusReporter {
         labels.add(label);
       }
     }
-    
+
     return createStack(procs, labels, luts);
   }
 

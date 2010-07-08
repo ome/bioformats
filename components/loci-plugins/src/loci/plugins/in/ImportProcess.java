@@ -282,6 +282,7 @@ public class ImportProcess implements StatusReporter {
     assertStep(ImportStep.STACK);
     int cEnd = options.getCEnd(s);
     if (cEnd >= 0) return cEnd;
+    reader.setSeries(s);
     return reader.getEffectiveSizeC() - 1;
   }
   public int getCStep(int s) { return options.getCStep(s); }
@@ -292,6 +293,7 @@ public class ImportProcess implements StatusReporter {
     assertStep(ImportStep.STACK);
     int zEnd = options.getZEnd(s);
     if (zEnd >= 0) return zEnd;
+    reader.setSeries(s);
     return reader.getSizeZ() - 1;
   }
   public int getZStep(int s) { return options.getZStep(s); }
@@ -302,6 +304,7 @@ public class ImportProcess implements StatusReporter {
     assertStep(ImportStep.STACK);
     int tEnd = options.getTEnd(s);
     if (tEnd >= 0) return tEnd;
+    reader.setSeries(s);
     return reader.getSizeT() - 1;
   }
   public int getTStep(int s) { return options.getTStep(s); }
@@ -311,8 +314,8 @@ public class ImportProcess implements StatusReporter {
   public Region getCropRegion(int s) {
     assertStep(ImportStep.STACK);
     Region region = options.doCrop() ? options.getCropRegion(s) : null;
-    ImageProcessorReader r = getReader();
-    int sizeX = r.getSizeX(), sizeY = r.getSizeY();
+    reader.setSeries(s);
+    int sizeX = reader.getSizeX(), sizeY = reader.getSizeY();
     if (region == null) {
       // entire image plane is the default region
       region = new Region(0, 0, sizeX, sizeY);
@@ -361,6 +364,7 @@ public class ImportProcess implements StatusReporter {
     long total = 0;
     for (int s=0; s<seriesCount; s++) {
       if (!options.isSeriesOn(s)) continue;
+      reader.setSeries(s);
       // determine size of one image plane
       final Region cropRegion = getCropRegion(s);
       final int bpp = FormatTools.getBytesPerPixel(reader.getPixelType());
