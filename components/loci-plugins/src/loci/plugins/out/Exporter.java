@@ -44,6 +44,8 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -68,6 +70,7 @@ import loci.plugins.LociExporter;
 import loci.plugins.util.RecordedImageProcessor;
 import loci.plugins.util.WindowTools;
 
+import ome.xml.model.OME;
 import ome.xml.model.enums.DimensionOrder;
 import ome.xml.model.enums.EnumerationException;
 import ome.xml.model.enums.PixelType;
@@ -238,38 +241,51 @@ public class Exporter {
       else if (store.getImageCount() > 1) {
         // the original dataset had multiple series
         // we need to modify the IMetadata to represent the correct series
+
+        ArrayList<Integer> matchingSeries = new ArrayList<Integer>();
         for (int series=0; series<store.getImageCount(); series++) {
           String type = store.getPixelsType(series).toString();
           int pixelType = FormatTools.pixelTypeFromString(type);
           if (pixelType == ptype) {
             String imageName = store.getImageName(series);
-            if (title.indexOf(imageName) != -1) {
-              // found the correct series
+            if (title.indexOf(imageName) >= 0) {
+              matchingSeries.add(series);
+            }
+          }
+        }
 
-              int start = 0, end = 0;
-              StringBuffer newXML = new StringBuffer();
-
-              for (int i=0; i<store.getImageCount(); i++) {
-                start = xml.indexOf("<Image", i == 0 ? 0 : end);
-                String prefix = xml.substring(end, start);
-                end = xml.indexOf("</Image>", start) + 9;
-
-                newXML.append(prefix);
-                if (i == series) {
-                  newXML.append(xml.substring(start, end));
+        int series = 0;
+        if (matchingSeries.size() > 1) {
+          for (int i=0; i<matchingSeries.size(); i++) {
+            int index = matchingSeries.get(i);
+            String name = store.getImageName(index);
+            boolean valid = true;
+            for (int j=0; j<matchingSeries.size(); j++) {
+              if (i != j) {
+                String compName = store.getImageName(matchingSeries.get(j));
+                if (compName.indexOf(name) >= 0) {
+                  valid = false;
+                  break;
                 }
               }
-              newXML.append(xml.substring(end));
-
-              try {
-                store = service.createOMEXMLMetadata(newXML.toString());
-              }
-              catch (ServiceException se) { }
-
+            }
+            if (valid) {
+              series = index;
               break;
             }
           }
         }
+        else if (matchingSeries.size() == 1) series = matchingSeries.get(0);
+
+        OME root = (OME) store.getRoot();
+        ome.xml.model.Image exportImage = root.getImage(series);
+        List<ome.xml.model.Image> allImages = root.copyImageList();
+        for (ome.xml.model.Image img : allImages) {
+          if (!img.equals(exportImage)) {
+            root.removeImage(img);
+          }
+        }
+        store.setRoot(root);
       }
 
       store.setPixelsSizeX(new PositiveInteger(imp.getWidth()), 0);
