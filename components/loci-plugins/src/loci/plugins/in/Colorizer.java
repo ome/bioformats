@@ -214,16 +214,34 @@ public class Colorizer {
       }
     }
 
+    // for calibrated data, the offset from zero
+    final double zeroOffset = getZeroOffset(imp);
+
     // fill in default display ranges as appropriate
-    final int bitDepth = reader.getBitsPerPixel();
-    // NB: ImageJ does not directly support signed data (it is merely
-    // unsigned data shifted downward by half via a "calibration"),
-    // so the following min and max values also work for signed.
-    final double min = 0;
-    final double max = Math.pow(2, bitDepth) - 1;
-    for (int c=0; c<cSize; c++) {
-      if (Double.isNaN(cMin[c])) cMin[c] = min;
-      if (Double.isNaN(cMax[c])) cMax[c] = max;
+    final double min, max;
+    if (FormatTools.isFloatingPoint(pixelType)) {
+      // no defined min and max values for floating point data
+      min = max = Double.NaN;
+    }
+    else {
+      final int bitDepth = reader.getBitsPerPixel();
+      final double halfPow = Math.pow(2, bitDepth - 1);
+      final double fullPow = 2 * halfPow;
+      final boolean signed = FormatTools.isSigned(pixelType);
+      if (signed) {
+        // signed data is centered at 0
+        min = -halfPow;
+        max = halfPow - 1;
+      }
+      else {
+        // unsigned data begins at 0
+        min = 0;
+        max = fullPow - 1;
+      }
+      for (int c=0; c<cSize; c++) {
+        if (Double.isNaN(cMin[c])) cMin[c] = min;
+        if (Double.isNaN(cMax[c])) cMax[c] = max;
+      }
     }
 
     // apply display ranges
@@ -232,16 +250,9 @@ public class Colorizer {
       final CompositeImage compImage = (CompositeImage) imp;
       for (int c=0; c<cSize; c++) {
         LUT lut = compImage.getChannelLut(c + 1);
-        // NB: Uncalibrate min/max values before assigning to LUT min/max.
-        double minOffset = 0;
-        final Calibration cal = imp.getCalibration();
-        if (cal.getFunction() == Calibration.STRAIGHT_LINE) {
-          // adjust minimum offset for signed data
-          double[] coeffs = cal.getCoefficients();
-          if (coeffs.length > 0) minOffset = coeffs[0];
-        }
-        lut.min = cMin[c] - minOffset;
-        lut.max = cMax[c] - minOffset;
+        // NB: Uncalibrate values before assigning to LUT min/max.
+        lut.min = cMin[c] - zeroOffset;
+        lut.max = cMax[c] - zeroOffset;
       }
     }
     else {
@@ -252,15 +263,18 @@ public class Colorizer {
         if (cMin[c] < globalMin) globalMin = cMin[c];
         if (cMax[c] > globalMax) globalMax = cMax[c];
       }
+      // NB: Uncalibrate values before assigning to display range min/max.
+      globalMin -= zeroOffset;
+      globalMax -= zeroOffset;
 
       // apply global display range
       ImageProcessor proc = imp.getProcessor();
       if (proc instanceof ColorProcessor) {
         // NB: Should never occur. ;-)
         final ColorProcessor colorProc = (ColorProcessor) proc;
-        colorProc.setMinAndMax(min, max, 3);
+        colorProc.setMinAndMax(globalMin, globalMax, 3);
       }
-      else proc.setMinAndMax(min, max);
+      else proc.setMinAndMax(globalMin, globalMax);
     }
   }
 
@@ -311,6 +325,14 @@ public class Colorizer {
     }
     LUT lut = new LUT(r, g, b);
     return lut;
+  }
+
+  private static double getZeroOffset(ImagePlus imp) {
+    final Calibration cal = imp.getCalibration();
+    if (cal.getFunction() != Calibration.STRAIGHT_LINE) return 0;
+    final double[] coeffs = cal.getCoefficients();
+    if (coeffs == null || coeffs.length == 0) return 0;
+    return coeffs[0];
   }
 
 }

@@ -9,11 +9,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-
 import ij.CompositeImage;
 import ij.ImagePlus;
 import ij.ImageStack;
-import ij.measure.Calibration;
 import ij.process.ImageProcessor;
 import ij.process.LUT;
 
@@ -89,22 +87,21 @@ import org.junit.Test;
 //    - output stack order - testing of iIndex? should match imagestack number? i.e. 5th plane == 4 - doesn't look so
 //    - improve, comment, and generalize code for increased coverage
 
+/**
+ * A class for testing the Bio-Formats Importer behavior.
+ *
+ * @author Barry DeZonia bdezonia at wisc.edu
+ */
 public class ImporterTest {
+
+  /** Whether to log debugging messages to stdout. */
+  static final boolean DEBUG = false;
 
   private enum Axis {Z,C,T};
 
   private enum ChannelOrder {ZCT, ZTC, CZT, CTZ, TZC, TCZ};
 
-  /** Whether to log debugging messages to stdout. */
-  private static final boolean DEBUG = false;
-
   private static final boolean[] BOOLEAN_STATES = new boolean[] {false, true};
-
-  private static final int[] PIXEL_TYPES = new int[] {
-      FormatTools.FLOAT, FormatTools.DOUBLE,
-      FormatTools.UINT8, FormatTools.UINT16, FormatTools.UINT32,
-      FormatTools.INT8,  FormatTools.INT16,  FormatTools.INT32
-      };
 
   private static Color[] DEFAULT_COLOR_ORDER =
     new Color[] {Color.RED, Color.GREEN, Color.BLUE, Color.WHITE, Color.CYAN, Color.MAGENTA, Color.YELLOW};
@@ -338,28 +335,6 @@ public class ImporterTest {
   /** The number of effective C slices in an ImagePlus */
   private int getEffectiveSizeC(ImagePlus imp) { return getField(imp, "nChannels"); }
 
-  // TODO : this code written to pass tests - looks wrong on a number of pixel types
-  /** returns the maximum pixel value for a given pixel type */
-  private long maxPixelValue(int pixType)
-  {
-    if (FormatTools.isFloatingPoint(pixType))
-      return 4294967296L; // expected Float.MAX_VALUE or maybe Double.MAX_VALUE
-
-    switch (pixType)
-    {
-      case FormatTools.INT8:    return 255; // expected: Byte.MAX_VALUE
-      case FormatTools.INT16:   return 65535;  // expected: Short.MAX_VALUE
-      case FormatTools.INT32:   return 4294967296L; // expected INTEGER.MAX_VALUE and also off by 1 from unsigned max
-      case FormatTools.UINT8:   return 255;
-      case FormatTools.UINT16:  return 65535;
-      case FormatTools.UINT32:  return 4294967295L; // off by 1 from unsigned max
-                                            // TODO : prev line modified to get autoscale working better. Off by 1 not true.
-
-      default:
-        throw new IllegalArgumentException("maxPixelValue() - unknown pixel type passed in: " + pixType);
-    }
-  }
-
   /** returns the minimum pixel value for a given pixel type */
   private long minPixelValue(int pixType)
   {
@@ -381,39 +356,6 @@ public class ImporterTest {
     }
   }
 
-  /** returns the expected min value within a FakeFile plane based on pixel type and if autoscale desired */
-  private long expectedMin(int pixType, boolean wantAutoscale)
-  {
-    long min;
-
-    if (wantAutoscale || (FormatTools.isFloatingPoint(pixType)))
-      min = minPixelValue(pixType);
-    else // not autoscaling - get min/max of pixel type
-      min = 0;
-
-    if (pixType == FormatTools.INT16)  // hack : clamp like IJ does
-      if (min < 0)
-        min = 0;
-
-    return min;
-  }
-
-  /** returns the expected max value within a FakeFile plane based on pixel type and if autoscale desired */
-  private long expectedMax(int pixType, boolean wantAutoscale, long maxPixVal, long maxIndex)
-  {                     // TODO - call Math.max() at point of call. Simplify this method to take a maxVal.
-    long max;
-
-    if (wantAutoscale || (FormatTools.isFloatingPoint(pixType)))
-      max = Math.max( maxPixVal, maxIndex);
-    else // not autoscaling - get min/max of pixel type
-      max = maxPixelValue(pixType);
-
-    if (pixType == FormatTools.INT16)  // hack : clamp like IJ does
-      if (max > 65535)
-        max = 65535;
-
-    return max;
-  }
 
   /** set an ImagePlus' position relative to CZT ordering (matches imp.setPosition()) */
   private void setCztPosition(ImagePlus imp, int z, int c, int t)
@@ -872,49 +814,7 @@ public class ImporterTest {
   }
 
   /** tests that the Calibration of an ImagePlus of signed integer data is correct */
-  private void calibrationTest(ImagePlus imp, int pixType)
-  {
-    // IJ handles BF INT32 as float. So the test is invalid in that case
-    if (pixType == FormatTools.INT32)
-      return;
 
-    if (FormatTools.isSigned(pixType) && !FormatTools.isFloatingPoint(pixType))
-    {
-      Calibration cal = imp.getCalibration();
-      assertEquals(Calibration.STRAIGHT_LINE,cal.getFunction());
-      double[] coeffs = cal.getCoefficients();
-      int bitsPerPix = FormatTools.getBytesPerPixel(pixType) * 8;
-      assertEquals(-(Math.pow(2, (bitsPerPix-1))),coeffs[0],0);
-      assertEquals(1,coeffs[1],0);
-    }
-  }
-
-  /** tests that an ImagePlus' set of ImageProcessors have their mins and maxes set appropriately */
-  private void minMaxTest(ImagePlus imp, long expectedMin, long expectedMax)
-  {
-    if (imp instanceof CompositeImage) {
-      CompositeImage ci = (CompositeImage) imp;
-      for (int c = 0; c < ci.getNChannels(); c++) {
-        LUT lut = ci.getChannelLut(c + 1);
-if (expectedMax != lut.max) {//TEMP
-  log("expected=" + expectedMax +", actual=" + lut.max);//TEMP
-  log("imp=" + imp + ", sizeC=" + imp.getNChannels());//TEMP
-}//TEMP
-        assertEquals(expectedMax,lut.max,0.1);
-        assertEquals(expectedMin,lut.min,0.1);
-      }
-    }
-    else {
-      ImageStack st = imp.getStack();
-      int numSlices = st.getSize();
-      for (int i = 0; i < numSlices; i++)
-      {
-        ImageProcessor proc = st.getProcessor(i+1);
-        assertEquals(expectedMax,proc.getMax(),0.1);
-        assertEquals(expectedMin,proc.getMin(),0.1);
-      }
-    }
-  }
 
   /** tests if images split on Z are ordered correctly */
   private void imagesZInCtOrderTest(ImagePlus[] imps, int sizeX, int sizeY, int sizeZ, int sizeC, int sizeT)
@@ -1373,50 +1273,6 @@ if (expectedMax != lut.max) {//TEMP
     multipleSeriesInCztOrderTest(imp,s,z,c,t);
   }
 
-  /** tests BF's options.setAutoscale() */
-  private void autoscaleTester(int pixType, boolean wantAutoscale)
-  {
-    if (DEBUG) log("autoscaleTester() : pix "+FormatTools.getPixelTypeString(pixType)+" scale "+wantAutoscale);
-
-    if ((pixType == FormatTools.UINT8) && (wantAutoscale))
-      if (DEBUG) log("  broken case");
-
-    final int sizeZ = 2, sizeC = 3, sizeT = 4, sizeX = 51, sizeY = 16;
-    final String path = constructFakeFilename("autoscale",pixType, sizeX, sizeY, sizeZ, sizeC, sizeT, -1, false, -1, false, -1);
-
-    ImagePlus[] imps = null;
-
-    try {
-      ImporterOptions options = new ImporterOptions();
-      options.setAutoscale(wantAutoscale);
-      options.setId(path);
-      imps = BF.openImagePlus(options);
-    }
-    catch (IOException e) {
-      fail(e.getMessage());
-    }
-    catch (FormatException e) {
-      fail(e.getMessage());
-    }
-
-    impsCountTest(imps,1);
-
-    ImagePlus imp = imps[0];
-
-    xyzctTest(imp,sizeX,sizeY,sizeZ,sizeC,sizeT);
-
-    stackTest(imp,sizeZ*sizeC*sizeT);
-
-    calibrationTest(imp,pixType);
-
-    long maxPixVal = minPixelValue(pixType)+sizeX-1;
-    long maxIndex = sizeZ*sizeC*sizeT - 1;
-
-    long expectedMax = expectedMax(pixType,wantAutoscale,maxPixVal,maxIndex);
-    long expectedMin = expectedMin(pixType,wantAutoscale);
-
-    minMaxTest(imp,expectedMin,expectedMax);
-  }
 
   private void ascendingValuesTest(byte[] data, int expectedLength)
   {
@@ -2079,58 +1935,6 @@ if (expectedMax != lut.max) {//TEMP
 
   // note - this test needs to rely on crop() to get predictable nonzero minimums
 
-  /** tests BF's options.setCrop() and options.setCropRegion() with options.setAutoscale() */
-  private void comboCropAndAutoscaleTester(int pixType, int sizeX, int sizeY, int sizeZ, int sizeC, int sizeT,
-      int originCropX, int originCropY, int sizeCrop)
-  {
-    final String path = constructFakeFilename("cropAutoscale",pixType, sizeX, sizeY, sizeZ, sizeC, sizeT, -1, false, -1, false, -1);
-
-    // needed for this test
-    verifyCropInput(sizeX,sizeY,originCropX,originCropY,sizeCrop);
-
-    ImagePlus[] imps = null;
-
-    try {
-      ImporterOptions options = new ImporterOptions();
-      options.setAutoscale(true);
-      options.setCrop(true);
-      options.setCropRegion(0,new Region(originCropX,originCropY,sizeCrop,sizeCrop));
-      options.setId(path);
-      imps = BF.openImagePlus(options);
-    }
-    catch (IOException e) {
-      fail(e.getMessage());
-    }
-    catch (FormatException e) {
-      fail(e.getMessage());
-    }
-
-    impsCountTest(imps,1);
-
-    ImagePlus imp = imps[0];
-
-    xyzctTest(imps[0],sizeCrop,sizeCrop,sizeZ,sizeC,sizeT);
-
-    stackTest(imp,(sizeZ*sizeC*sizeT));
-
-    calibrationTest(imp,pixType);
-
-    long expectedMax = minPixelValue(pixType) + originCropX + sizeCrop - 1;
-    long expectedMin = minPixelValue(pixType) + originCropX;
-
-    if (pixType == FormatTools.INT16)  // hack : clamp like IJ does
-    {
-      if (expectedMin < 0)
-        expectedMin = 0;
-      if (expectedMax > 65535)
-        expectedMax = 65535;
-    }
-
-    // NOTE - the minMaxTest can't work for INT32 as it has more precision than can be represented by IJ's GRAY32 float
-    if (pixType != FormatTools.INT32)
-      minMaxTest(imp,expectedMin,expectedMax);
-  }
-
   /** tests BF's options.setConcatenate() with options.setSplitFocalPlanes() */
   private void comboConcatSplitFocalPlanesTester()
   {
@@ -2566,15 +2370,9 @@ if (expectedMax != lut.max) {//TEMP
   @Test
   public void testColorAutoscale()
   {
-    // note - can't autoscale a virtualStack. No need to test it.
-
-    for (int pixType : PIXEL_TYPES) {
-      for (boolean autoscale : BOOLEAN_STATES) {
-        if (DEBUG) log("testColorAutoscale(): pixType = "+FormatTools.getPixelTypeString(pixType)+" autoscale = "+autoscale);
-        autoscaleTester(pixType,autoscale);
-      }
-    }
+    new AutoscaleTest().testAutoscale();
   }
+
 
   @Test
   public void testMemoryVirtualStack()
@@ -2584,7 +2382,6 @@ if (expectedMax != lut.max) {//TEMP
   }
 
 /* TODO - underlying BF code is not working. Comment out for now
-
   @Test
   public void testMemoryRecordModifications()
   {
@@ -2816,21 +2613,6 @@ if (expectedMax != lut.max) {//TEMP
     splitTimepointsTester();
   }
 
-  @Test
-  public void testComboCropAutoscale()
-  {
-    // note - crop and autoscale both don't work with virtualStacks. No need to test virtual here.
-
-    // try a simple test: single small byte type image
-    comboCropAndAutoscaleTester(FormatTools.UINT8,240,240,1,1,1,70,40,25);
-
-    // try multiple dimensions
-    comboCropAndAutoscaleTester(FormatTools.UINT8,240,240,4,3,2,51,15,13);
-
-    // try various pixTypes
-    for (int pixType : PIXEL_TYPES)
-      comboCropAndAutoscaleTester(pixType,240,240,2,2,2,225,225,10);
-  }
 
   /*
   @Test
