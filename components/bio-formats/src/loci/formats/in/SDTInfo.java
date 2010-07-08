@@ -676,10 +676,10 @@ public class SDTInfo {
         }
 
         // extract dimensional parameters from measure info
-        width = scanX;
-        height = scanY;
-        timeBins = adcRE;
-        channels = scanRX;
+        if (scanX > 0) width = scanX;
+        if (scanY > 0) height = scanY;
+        if (adcRE > 0) timeBins = adcRE;
+        if (scanRX > 0) channels = scanRX;
       }
 
       if (hasMeasStopInfo) {
