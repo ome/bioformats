@@ -58,6 +58,16 @@ public class FakeReader extends FormatReader {
   // -- Constants --
 
   public static final int BOX_SIZE = 10;
+
+  public static final int DEFAULT_SIZE_X = 512;
+  public static final int DEFAULT_SIZE_Y = 512;
+  public static final int DEFAULT_SIZE_Z = 1;
+  public static final int DEFAULT_SIZE_C = 1;
+  public static final int DEFAULT_SIZE_T = 1;
+  public static final int DEFAULT_PIXEL_TYPE = FormatTools.UINT8;
+  public static final int DEFAULT_RGB_CHANNEL_COUNT = 1;
+  public static final String DEFAULT_DIMENSION_ORDER = "XYZCT";
+
   private static final String TOKEN_SEPARATOR = "&";
   private static final long SEED = 0xcafebabe;
 
@@ -208,16 +218,16 @@ public class FakeReader extends FormatReader {
     String[] tokens = noExt.split(TOKEN_SEPARATOR);
 
     String name = null;
-    int sizeX = 512;
-    int sizeY = 512;
-    int sizeZ = 1;
-    int sizeC = 1;
-    int sizeT = 1;
+    int sizeX = DEFAULT_SIZE_X;
+    int sizeY = DEFAULT_SIZE_Y;
+    int sizeZ = DEFAULT_SIZE_Z;
+    int sizeC = DEFAULT_SIZE_C;
+    int sizeT = DEFAULT_SIZE_T;
     int thumbSizeX = 0; // default
     int thumbSizeY = 0; // default
-    int pixelType = FormatTools.UINT8;
-    int rgb = 1;
-    String dimOrder = "XYZCT";
+    int pixelType = DEFAULT_PIXEL_TYPE;
+    int rgb = DEFAULT_RGB_CHANNEL_COUNT;
+    String dimOrder = DEFAULT_DIMENSION_ORDER;
     boolean orderCertain = true;
     boolean little = true;
     boolean interleaved = false;
