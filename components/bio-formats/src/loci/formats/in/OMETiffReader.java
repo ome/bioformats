@@ -150,6 +150,7 @@ public class OMETiffReader extends FormatReader {
     }
     catch (DependencyException de) { }
     catch (ServiceException se) { }
+    catch (NullPointerException e) { }
     return false;
   }
 
