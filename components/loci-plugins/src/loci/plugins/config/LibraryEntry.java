@@ -39,7 +39,7 @@ import java.util.HashMap;
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
-public class LibraryEntry implements Comparable {
+public class LibraryEntry implements Comparable<Object> {
 
   // -- Constants --
 
@@ -70,13 +70,13 @@ public class LibraryEntry implements Comparable {
 
   public LibraryEntry(PrintWriter log, HashMap<String, String> props) {
     this(log,
-      (String) props.get("name"),
-      (String) props.get("type"),
-      (String) props.get("class"),
-      (String) props.get("version"),
-      (String) props.get("url"),
-      (String) props.get("license"),
-      (String) props.get("notes"));
+      props.get("name"),
+      props.get("type"),
+      props.get("class"),
+      props.get("version"),
+      props.get("url"),
+      props.get("license"),
+      props.get("notes"));
   }
 
   public LibraryEntry(PrintWriter log, String name, String type,

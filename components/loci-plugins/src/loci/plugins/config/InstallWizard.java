@@ -34,6 +34,7 @@ import java.net.URL;
 import java.net.URLConnection;
 
 import javax.swing.JFrame;
+import javax.swing.WindowConstants;
 
 /**
  * A wizard for walking users through installation of third party
@@ -54,7 +55,7 @@ public class InstallWizard extends JFrame
 
   public InstallWizard() {
     setTitle("LOCI Plugins Library Installer");
-    setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
     /*
     1. get JAR file associated with a particular FQ Java class;

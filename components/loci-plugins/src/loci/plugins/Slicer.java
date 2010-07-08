@@ -37,7 +37,6 @@ import ij.process.ImageProcessor;
 import ij.process.LUT;
 
 import loci.formats.FormatTools;
-import loci.plugins.util.ImagePlusTools;
 import loci.plugins.util.LibraryChecker;
 
 /**
@@ -62,9 +61,9 @@ public class Slicer implements PlugInFilter {
 
   /** Current image stack. */
   private ImagePlus imp;
-  
+
   // -- Slicer methods --
-  
+
   public ImagePlus[] reslice(ImagePlus imp,
     boolean sliceC, boolean sliceZ, boolean sliceT,
     String stackOrder)
@@ -131,13 +130,37 @@ public class Slicer implements PlugInFilter {
         p.setOpenAsHyperStack(hyperstack);
       }
       if (imp.isComposite() && !sliceC) {
-        p = ImagePlusTools.reorder(p, stackOrder, "XYCZT");
+        p = reorder(p, stackOrder, "XYCZT");
         int mode = ((CompositeImage) imp).getMode();
         newImps[i] = new CompositeImage(p, mode);
       }
       else newImps[i] = p;
     }
     return newImps;
+  }
+
+  /** Reorder the given ImagePlus's stack. */
+  public static ImagePlus reorder(ImagePlus imp, String origOrder,
+    String newOrder)
+  {
+    ImageStack s = imp.getStack();
+    ImageStack newStack = new ImageStack(s.getWidth(), s.getHeight());
+
+    int z = imp.getNSlices();
+    int c = imp.getNChannels();
+    int t = imp.getNFrames();
+
+    int stackSize = s.getSize();
+    for (int i=0; i<stackSize; i++) {
+      int ndx = FormatTools.getReorderedIndex(
+        origOrder, newOrder, z, c, t, stackSize, i);
+      newStack.addSlice(s.getSliceLabel(ndx + 1), s.getProcessor(ndx + 1));
+    }
+    ImagePlus p = new ImagePlus(imp.getTitle(), newStack);
+    p.setDimensions(c, z, t);
+    p.setCalibration(imp.getCalibration());
+    p.setFileInfo(imp.getOriginalFileInfo());
+    return p;
   }
 
   // -- PlugInFilter methods --

@@ -33,7 +33,7 @@ import loci.plugins.prefs.OptionsDialog;
 /**
  * Helper class for presenting the user with dialog boxes
  * for configuring importer options.
- * 
+ *
  * If running as a macro, gets parameter values from macro options;
  * if not, get parameter values from user input from dialog boxes.
  *
@@ -99,6 +99,7 @@ public class ImporterPrompter implements StatusListener {
       case METADATA:
         break;
       case COMPLETE:
+        if (!promptMemory()) process.cancel();
         break;
       default:
     }
@@ -161,4 +162,11 @@ public class ImporterPrompter implements StatusListener {
     ColorDialog dialog = new ColorDialog(process);
     return dialog.showDialog() == OptionsDialog.STATUS_OK;
   }
+
+  /** Prompts for confirmation of memory usage, if necessary. */
+  private boolean promptMemory() {
+    MemoryDialog dialog = new MemoryDialog(process);
+    return dialog.showDialog() == OptionsDialog.STATUS_OK;
+  }
+
 }

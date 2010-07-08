@@ -1091,7 +1091,7 @@ public class RecordedImageProcessor extends ImageProcessor {
     record("xor", new Integer(value), int.class);
     proc.xor(value);
   }
-  
+
   // -- Deprecated methods --
 
   /** @deprecated */

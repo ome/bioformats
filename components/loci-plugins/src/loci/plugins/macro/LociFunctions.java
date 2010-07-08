@@ -26,9 +26,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.plugins.macro;
 
 import ij.IJ;
+import ij.ImagePlus;
 import ij.process.ImageProcessor;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
@@ -41,6 +43,8 @@ import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.services.OMEXMLService;
+import loci.plugins.BF;
+import loci.plugins.in.ImagePlusReader;
 import loci.plugins.util.ImageProcessorReader;
 import loci.plugins.util.LociPrefs;
 
@@ -150,12 +154,26 @@ public class LociFunctions extends MacroFunctions {
     interleaved[0] = r.isInterleaved(subC.intValue()) ? "true" : "false";
   }
 
+  public void openImagePlus(String path) {
+    ImagePlus[] imps = null;
+    try {
+      imps = BF.openImagePlus(path);
+      for (ImagePlus imp : imps) imp.show();
+    }
+    catch (IOException exc) {
+      IJ.handleException(exc);
+    }
+    catch (FormatException exc) {
+      IJ.handleException(exc);
+    }
+  }
+
   public void openImage(String title, Double no)
     throws FormatException, IOException
   {
-    ImageProcessor[] ip = r.openProcessors(no.intValue());
-    // CTR FIXME - Ext.openImage
-    //ImagePlusTools.makeRGB(title, ip).show();
+    final ImageProcessor[] ip = r.openProcessors(no.intValue());
+    final ImagePlus imp = ImagePlusReader.createImage(title, Arrays.asList(ip));
+    imp.show();
   }
 
   public void openSubImage(String title, Double no, Double x, Double y,
@@ -163,9 +181,8 @@ public class LociFunctions extends MacroFunctions {
   {
     ImageProcessor[] ip = r.openProcessors(no.intValue(),
       x.intValue(), y.intValue(), w.intValue(), h.intValue());
-    // START HERE - add a method to create an ImagePlus from an ImageProcessor[]
-    // CTR FIXME - Ext.openSubImage
-    //ImagePlusTools.makeRGB(title, ip).show();
+    final ImagePlus imp = ImagePlusReader.createImage(title, Arrays.asList(ip));
+    imp.show();    
   }
 
   public void close() throws IOException { r.close(); }
@@ -347,6 +364,8 @@ public class LociFunctions extends MacroFunctions {
       IJ.log("");
       IJ.log("-= Usable any time =-");
       IJ.log("");
+      IJ.log("Ext.openImagePlus(path)");
+      IJ.log("-- Opens the image at the given path with the default options.");
       IJ.log("Ext.getFormat(id, format)");
       IJ.log("-- Retrieves the file format of the given id (filename).");
       IJ.log("Ext.setId(id)");

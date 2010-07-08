@@ -27,6 +27,7 @@ package loci.plugins.in;
 
 import ij.CompositeImage;
 import ij.ImagePlus;
+import ij.measure.Calibration;
 import ij.process.ColorProcessor;
 import ij.process.ImageProcessor;
 import ij.process.LUT;
@@ -41,11 +42,12 @@ import java.util.List;
 import loci.formats.ChannelFiller;
 import loci.formats.DimensionSwapper;
 import loci.formats.FormatException;
-import loci.formats.MinMaxCalculator;
 import loci.formats.FormatTools;
 import loci.formats.ImageReader;
+import loci.formats.MinMaxCalculator;
 import loci.plugins.BF;
 import loci.plugins.util.ImageProcessorReader;
+import loci.plugins.util.VirtualImagePlus;
 
 /**
  * Logic for colorizing images.
@@ -55,6 +57,7 @@ import loci.plugins.util.ImageProcessorReader;
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/in/Colorizer.java">SVN</a></dd></dl>
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
+ * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class Colorizer {
 
@@ -174,6 +177,11 @@ public class Colorizer {
   // -- Helper methods --
 
   private void applyDisplayRanges(ImagePlus imp, int series) {
+    if (imp instanceof VirtualImagePlus) {
+      // virtual stacks handle their own display ranges
+      return;
+    }
+
     final ImporterOptions options = process.getOptions();
     final ImageProcessorReader reader = process.getReader();
 
@@ -191,7 +199,6 @@ public class Colorizer {
       // extract display ranges for autoscaling
       final MinMaxCalculator minMaxCalc = process.getMinMaxCalculator();
       final int cBegin = process.getCBegin(series);
-      final int cEnd = process.getCEnd(series);
       final int cStep = process.getCStep(series);
       for (int c=0; c<cSize; c++) {
         final int cIndex = cBegin + c * cStep;
@@ -207,16 +214,34 @@ public class Colorizer {
       }
     }
 
+    // for calibrated data, the offset from zero
+    final double zeroOffset = getZeroOffset(imp);
+
     // fill in default display ranges as appropriate
-    final int bitDepth = reader.getBitsPerPixel();
-    // NB: ImageJ does not directly support signed data (it is merely
-    // unsigned data shifted downward by half via a "calibration"),
-    // so the following min and max values also work for signed.
-    final double min = 0;
-    final double max = Math.pow(2, bitDepth) - 1;
-    for (int c=0; c<cSize; c++) {
-      if (Double.isNaN(cMin[c])) cMin[c] = min;
-      if (Double.isNaN(cMax[c])) cMax[c] = max;
+    final double min, max;
+    if (FormatTools.isFloatingPoint(pixelType)) {
+      // no defined min and max values for floating point data
+      min = max = Double.NaN;
+    }
+    else {
+      final int bitDepth = reader.getBitsPerPixel();
+      final double halfPow = Math.pow(2, bitDepth - 1);
+      final double fullPow = 2 * halfPow;
+      final boolean signed = FormatTools.isSigned(pixelType);
+      if (signed) {
+        // signed data is centered at 0
+        min = -halfPow;
+        max = halfPow - 1;
+      }
+      else {
+        // unsigned data begins at 0
+        min = 0;
+        max = fullPow - 1;
+      }
+      for (int c=0; c<cSize; c++) {
+        if (Double.isNaN(cMin[c])) cMin[c] = min;
+        if (Double.isNaN(cMax[c])) cMax[c] = max;
+      }
     }
 
     // apply display ranges
@@ -225,8 +250,9 @@ public class Colorizer {
       final CompositeImage compImage = (CompositeImage) imp;
       for (int c=0; c<cSize; c++) {
         LUT lut = compImage.getChannelLut(c + 1);
-        lut.min = cMin[c];
-        lut.max = cMax[c];
+        // NB: Uncalibrate values before assigning to LUT min/max.
+        lut.min = cMin[c] - zeroOffset;
+        lut.max = cMax[c] - zeroOffset;
       }
     }
     else {
@@ -237,15 +263,18 @@ public class Colorizer {
         if (cMin[c] < globalMin) globalMin = cMin[c];
         if (cMax[c] > globalMax) globalMax = cMax[c];
       }
+      // NB: Uncalibrate values before assigning to display range min/max.
+      globalMin -= zeroOffset;
+      globalMax -= zeroOffset;
 
       // apply global display range
       ImageProcessor proc = imp.getProcessor();
       if (proc instanceof ColorProcessor) {
         // NB: Should never occur. ;-)
         final ColorProcessor colorProc = (ColorProcessor) proc;
-        colorProc.setMinAndMax(min, max, 3);
+        colorProc.setMinAndMax(globalMin, globalMax, 3);
       }
-      else proc.setMinAndMax(min, max);
+      else proc.setMinAndMax(globalMin, globalMax);
     }
   }
 
@@ -296,6 +325,14 @@ public class Colorizer {
     }
     LUT lut = new LUT(r, g, b);
     return lut;
+  }
+
+  private static double getZeroOffset(ImagePlus imp) {
+    final Calibration cal = imp.getCalibration();
+    if (cal.getFunction() != Calibration.STRAIGHT_LINE) return 0;
+    final double[] coeffs = cal.getCoefficients();
+    if (coeffs == null || coeffs.length == 0) return 0;
+    return coeffs[0];
   }
 
 }

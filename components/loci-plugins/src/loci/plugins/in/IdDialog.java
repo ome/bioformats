@@ -38,7 +38,7 @@ import loci.common.Location;
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/in/IdDialog.java">SVN</a></dd></dl>
  */
 public class IdDialog extends ImporterDialog {
-  
+
   // -- Fields --
 
   private OpenDialog od;
@@ -49,14 +49,14 @@ public class IdDialog extends ImporterDialog {
   public IdDialog(ImportProcess process) {
     super(process);
   }
-  
+
   // -- ImporterDialog methods --
 
   @Override
   protected boolean needPrompt() {
     return !process.isWindowless() && options.getId() == null;
   }
-  
+
   @Override
   protected GenericDialog constructDialog() {
     GenericDialog gd = null;
@@ -66,7 +66,7 @@ public class IdDialog extends ImporterDialog {
     }
     return gd;
   }
-  
+
   /**
    * Asks user whether Bio-Formats should automatically check for upgrades,
    * and if so, checks for an upgrade and prompts user to install it.
@@ -112,9 +112,9 @@ public class IdDialog extends ImporterDialog {
     if (options.isLocal()) {
       String dir = od.getDirectory();
       String name = od.getFileName();
-      if (dir != null || name == null) 
+      if (dir != null || name == null)
       id = dir + name;
-      
+
       // verify validity
       Location idLoc = new Location(id);
       if (!idLoc.exists() && !id.toLowerCase().endsWith(".fake")) {
@@ -126,9 +126,11 @@ public class IdDialog extends ImporterDialog {
       }
     }
     else if (options.isHTTP()) {
-	    id = gd.getNextString();
+      id = gd.getNextString();
       if (id == null) {
-        if (!options.isQuiet()) IJ.error("Bio-Formats", "No URL was specified.");
+        if (!options.isQuiet()) {
+          IJ.error("Bio-Formats", "No URL was specified.");
+        }
         return false;
       }
     }

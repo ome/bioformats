@@ -222,14 +222,14 @@ public class BFVirtualStack extends VirtualStack {
       }
       currentProcessor = new RecordedImageProcessor(ip, pos[1], otherChannels);
       currentProcessor.setDoRecording(record);
-      return currentProcessor;
+      return currentProcessor.getChild();
     }
 
     if (ip != null) {
       currentSlice = n - 1;
       currentProcessor = new RecordedImageProcessor(ip);
       currentProcessor.setDoRecording(record);
-      return currentProcessor;
+      return currentProcessor.getChild();
     }
 
     return null;
