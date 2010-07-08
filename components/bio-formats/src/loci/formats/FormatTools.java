@@ -419,6 +419,8 @@ public final class FormatTools {
    * Converts index from the given dimension order to the reader's native one.
    * This method is useful for shuffling the planar order around
    * (rather than eassigning ZCT sizes as {@link DimensionSwapper} does).
+   *
+   * @throws FormatException Never actually thrown.
    */
   public static int getReorderedIndex(IFormatReader reader,
     String newOrder, int newIndex) throws FormatException
@@ -767,6 +769,10 @@ public final class FormatTools {
 
   // -- Utility methods -- export
 
+  /**
+   * @throws FormatException Never actually thrown.
+   * @throws IOException Never actually thrown.
+   */
   public static String getFilename(int series, int image, IFormatReader r,
     String pattern) throws FormatException, IOException
   {
@@ -811,7 +817,7 @@ public final class FormatTools {
         if (!filenames.contains(filename)) filenames.add(filename);
       }
     }
-    return (String[]) filenames.toArray(new String[0]);
+    return filenames.toArray(new String[0]);
   }
 
   public static int getImagesPerFile(String pattern, IFormatReader r)
