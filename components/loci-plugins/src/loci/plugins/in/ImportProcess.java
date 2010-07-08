@@ -55,7 +55,6 @@ import loci.plugins.util.ImageProcessorReader;
 import loci.plugins.util.LociPrefs;
 import loci.plugins.util.VirtualReader;
 import loci.plugins.util.WindowTools;
-
 import ome.xml.model.enums.DimensionOrder;
 import ome.xml.model.enums.EnumerationException;
 
@@ -283,6 +282,7 @@ public class ImportProcess implements StatusReporter {
     assertStep(ImportStep.STACK);
     int cEnd = options.getCEnd(s);
     if (cEnd >= 0) return cEnd;
+    reader.setSeries(s);
     return reader.getEffectiveSizeC() - 1;
   }
   public int getCStep(int s) { return options.getCStep(s); }
@@ -293,6 +293,7 @@ public class ImportProcess implements StatusReporter {
     assertStep(ImportStep.STACK);
     int zEnd = options.getZEnd(s);
     if (zEnd >= 0) return zEnd;
+    reader.setSeries(s);
     return reader.getSizeZ() - 1;
   }
   public int getZStep(int s) { return options.getZStep(s); }
@@ -303,6 +304,7 @@ public class ImportProcess implements StatusReporter {
     assertStep(ImportStep.STACK);
     int tEnd = options.getTEnd(s);
     if (tEnd >= 0) return tEnd;
+    reader.setSeries(s);
     return reader.getSizeT() - 1;
   }
   public int getTStep(int s) { return options.getTStep(s); }
@@ -312,8 +314,8 @@ public class ImportProcess implements StatusReporter {
   public Region getCropRegion(int s) {
     assertStep(ImportStep.STACK);
     Region region = options.doCrop() ? options.getCropRegion(s) : null;
-    ImageProcessorReader r = getReader();
-    int sizeX = r.getSizeX(), sizeY = r.getSizeY();
+    reader.setSeries(s);
+    int sizeX = reader.getSizeX(), sizeY = reader.getSizeY();
     if (region == null) {
       // entire image plane is the default region
       region = new Region(0, 0, sizeX, sizeY);
@@ -362,6 +364,7 @@ public class ImportProcess implements StatusReporter {
     long total = 0;
     for (int s=0; s<seriesCount; s++) {
       if (!options.isSeriesOn(s)) continue;
+      reader.setSeries(s);
       // determine size of one image plane
       final Region cropRegion = getCropRegion(s);
       final int bpp = FormatTools.getBytesPerPixel(reader.getPixelType());
@@ -413,7 +416,7 @@ public class ImportProcess implements StatusReporter {
   // -- Helper methods - process steps --
 
   /** Performed following ImportStep.READER notification. */
-  private void initializeReader() {
+  private void initializeReader() throws FormatException, IOException {
     computeNameAndLocation();
     createBaseReader();
   }
@@ -533,7 +536,7 @@ public class ImportProcess implements StatusReporter {
    * Initializes an {@link loci.formats.IFormatReader}
    * according to the current configuration.
    */
-  private void createBaseReader() {
+  private void createBaseReader() throws FormatException, IOException {
     if (options.isLocal() || options.isHTTP()) {
       BF.status(options.isQuiet(), "Identifying " + idName);
       imageReader = LociPrefs.makeImageReader();
@@ -541,17 +544,19 @@ public class ImportProcess implements StatusReporter {
       catch (FormatException exc) {
         WindowTools.reportException(exc, options.isQuiet(),
           "Sorry, there was an error reading the file.");
-        return;
+        throw exc;
       }
       catch (IOException exc) {
         WindowTools.reportException(exc, options.isQuiet(),
           "Sorry, there was a I/O problem reading the file.");
-        return;
+        throw exc;
       }
     }
     else {
       WindowTools.reportException(null, options.isQuiet(),
         "Sorry, there has been an internal error: unknown data source");
+      cancel();
+      return;
     }
     Exception exc = null;
     try {
@@ -564,6 +569,7 @@ public class ImportProcess implements StatusReporter {
     if (exc != null) {
         WindowTools.reportException(exc, options.isQuiet(),
           "Sorry, there was a problem constructing the OME-XML metadata store");
+        throw new FormatException(exc);
     }
     baseReader.setMetadataStore(meta);
 
