@@ -55,7 +55,6 @@ import loci.plugins.util.ImageProcessorReader;
 import loci.plugins.util.LociPrefs;
 import loci.plugins.util.VirtualReader;
 import loci.plugins.util.WindowTools;
-
 import ome.xml.model.enums.DimensionOrder;
 import ome.xml.model.enums.EnumerationException;
 
@@ -413,7 +412,7 @@ public class ImportProcess implements StatusReporter {
   // -- Helper methods - process steps --
 
   /** Performed following ImportStep.READER notification. */
-  private void initializeReader() {
+  private void initializeReader() throws FormatException, IOException {
     computeNameAndLocation();
     createBaseReader();
   }
@@ -533,7 +532,7 @@ public class ImportProcess implements StatusReporter {
    * Initializes an {@link loci.formats.IFormatReader}
    * according to the current configuration.
    */
-  private void createBaseReader() {
+  private void createBaseReader() throws FormatException, IOException {
     if (options.isLocal() || options.isHTTP()) {
       BF.status(options.isQuiet(), "Identifying " + idName);
       imageReader = LociPrefs.makeImageReader();
@@ -541,17 +540,19 @@ public class ImportProcess implements StatusReporter {
       catch (FormatException exc) {
         WindowTools.reportException(exc, options.isQuiet(),
           "Sorry, there was an error reading the file.");
-        return;
+        throw exc;
       }
       catch (IOException exc) {
         WindowTools.reportException(exc, options.isQuiet(),
           "Sorry, there was a I/O problem reading the file.");
-        return;
+        throw exc;
       }
     }
     else {
       WindowTools.reportException(null, options.isQuiet(),
         "Sorry, there has been an internal error: unknown data source");
+      cancel();
+      return;
     }
     Exception exc = null;
     try {
@@ -564,6 +565,7 @@ public class ImportProcess implements StatusReporter {
     if (exc != null) {
         WindowTools.reportException(exc, options.isQuiet(),
           "Sorry, there was a problem constructing the OME-XML metadata store");
+        throw new FormatException(exc);
     }
     baseReader.setMetadataStore(meta);
 
