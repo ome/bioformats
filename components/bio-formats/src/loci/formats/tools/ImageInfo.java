@@ -172,6 +172,7 @@ public class ImageInfo {
         else if (args[i].equals("-fast")) fastBlit = true;
         else if (args[i].equals("-autoscale")) autoscale = true;
         else if (args[i].equals("-debug")) {
+          LOGGER.warn("");
           LOGGER.warn("To enable debugging, edit the log4j.properties file,");
           LOGGER.warn("changing log4j.rootCategory from INFO to DEBUG");
           LOGGER.warn("(or TRACE for extreme verbosity).");
@@ -372,6 +373,7 @@ public class ImageInfo {
     if (!normalize && (reader.getPixelType() == FormatTools.FLOAT ||
       reader.getPixelType() == FormatTools.DOUBLE))
     {
+      LOGGER.warn("");
       LOGGER.warn("Java does not support " +
         "display of unnormalized floating point data.");
       LOGGER.warn("Please use the '-normalize' option " +
@@ -379,9 +381,10 @@ public class ImageInfo {
     }
 
     if (reader.isRGB() && reader.getRGBChannelCount() > 4) {
+      LOGGER.warn("");
       LOGGER.warn("Java does not support merging more than 4 channels.");
       LOGGER.warn("Please use the '-separate' option " +
-        "to avoid receiving a cryptic exception.");
+        "to avoid losing channels beyond the 4th.");
     }
   }
 
@@ -751,11 +754,12 @@ public class ImageInfo {
           ImageTools.make24Bits(pix, sizeX, sizeY, false, false, min, max),
           sizeX, sizeY, FormatTools.isSigned(pixelType));
       }
-
+      if (images[i - start] == null) {
+        LOGGER.warn("\t************ Failed to read plane #{} ************", i);
+      }
       if (reader.isIndexed() && reader.get8BitLookupTable() == null &&
         reader.get16BitLookupTable() == null)
       {
-        LOGGER.info(NEWLINE);
         LOGGER.warn("\t************ no LUT for plane #{} ************", i);
       }
 

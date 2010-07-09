@@ -65,7 +65,6 @@ import loci.formats.IFormatReader;
 import loci.formats.ImageTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataRetrieve;
-
 import ome.xml.model.primitives.PositiveInteger;
 
 import org.slf4j.Logger;
@@ -560,11 +559,12 @@ public final class AWTImageTools {
   public static BufferedImage makeRGBImage(byte[] data, int c, int w, int h,
     boolean interleaved)
   {
+    int cc = Math.min(c, 4); // throw away channels beyond 4
     int[] buf = new int[data.length / c];
-    int nBits = (c - 1) * 8;
+    int nBits = (cc - 1) * 8;
 
     for (int i=0; i<buf.length; i++) {
-      for (int q=0; q<c; q++) {
+      for (int q=0; q<cc; q++) {
         if (interleaved) {
           buf[i] |= ((data[i*c + q] & 0xff) << (nBits - q*8));
         }
@@ -575,7 +575,7 @@ public final class AWTImageTools {
     }
 
     DataBuffer buffer = new DataBufferInt(buf, buf.length);
-    return constructImage(c, DataBuffer.TYPE_INT, w, h, false, false, buffer);
+    return constructImage(cc, DataBuffer.TYPE_INT, w, h, false, false, buffer);
   }
 
   public static BufferedImage makeRGBImage(byte[][] data, int w, int h) {
@@ -637,13 +637,19 @@ public final class AWTImageTools {
   public static BufferedImage constructImage(int c, int type, int w,
     int h, boolean interleaved, boolean banded, DataBuffer buffer)
   {
+    if (c > 4) {
+      throw new IllegalArgumentException(
+        "Cannot construct image with " + c + " channels");
+    }
     ColorModel colorModel = makeColorModel(c, type);
     if (colorModel == null) return null;
     if (buffer instanceof UnsignedIntBuffer) {
       try {
         colorModel = new UnsignedIntColorModel(32, type, c);
       }
-      catch (IOException e) { }
+      catch (IOException e) {
+        return null;
+      }
     }
 
     SampleModel model;
@@ -752,6 +758,9 @@ public final class AWTImageTools {
     int bpp = FormatTools.getBytesPerPixel(pixelType);
     BufferedImage b = makeImage(buf, w, h, indexed ? 1 : rgbChanCount,
       interleaved, bpp, false, little, signed);
+    if (b == null) {
+      throw new FormatException("Could not construct BufferedImage");
+    }
 
     if (indexed) {
       if (pixelType == FormatTools.UINT8 || pixelType == FormatTools.INT8) {
@@ -1014,7 +1023,10 @@ public final class AWTImageTools {
    * </ul>
    */
   public static int getPixelType(BufferedImage image) {
-    DataBuffer buffer = image.getRaster().getDataBuffer();
+    final Raster raster = image.getRaster();
+    if (raster == null) return -1;
+    final DataBuffer buffer = raster.getDataBuffer();
+    if (buffer == null) return -1;
 
     if (buffer instanceof SignedByteBuffer) {
       return FormatTools.INT8;

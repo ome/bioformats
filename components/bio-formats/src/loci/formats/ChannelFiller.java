@@ -56,6 +56,9 @@ public class ChannelFiller extends ReaderWrapper {
    */
   protected Boolean filled = null;
 
+  /** Number of LUT components. */
+  protected int lutLength;
+
   // -- Constructors --
 
   /** Constructs a ChannelFiller around a new image reader. */
@@ -69,6 +72,7 @@ public class ChannelFiller extends ReaderWrapper {
   /** Returns true if the indices are being factored out. */
   public boolean isFilled() {
     if (!reader.isIndexed()) return false; // cannot fill non-indexed color
+    if (lutLength < 1) return false; // cannot fill when LUTs are missing
     return filled == null ? !reader.isFalseColor() : filled;
   }
 
@@ -83,7 +87,7 @@ public class ChannelFiller extends ReaderWrapper {
   @Override
   public int getSizeC() {
     if (!isFilled()) return reader.getSizeC();
-    return reader.getSizeC() * getLookupTableComponentCount();
+    return reader.getSizeC() * lutLength;
   }
 
   /* @see IFormatReader#isRGB() */
@@ -125,7 +129,7 @@ public class ChannelFiller extends ReaderWrapper {
 
     // append filled dimension to channel dim lengths
     int[] newLengths = new int[1 + cLengths.length];
-    newLengths[0] = getLookupTableComponentCount();
+    newLengths[0] = lutLength;
     System.arraycopy(cLengths, 0, newLengths, 1, cLengths.length);
     return newLengths;
   }
@@ -238,6 +242,7 @@ public class ChannelFiller extends ReaderWrapper {
   @Override
   public void setId(String id) throws FormatException, IOException {
     super.setId(id);
+    lutLength = getLookupTableComponentCount();
     MetadataStore store = getMetadataStore();
     MetadataTools.populatePixels(store, this, false, false);
   }
@@ -245,16 +250,21 @@ public class ChannelFiller extends ReaderWrapper {
   // -- Helper methods --
 
   /** Gets the number of color components in the lookup table. */
-  private int getLookupTableComponentCount() {
-    try {
-      byte[][] lut8 = reader.get8BitLookupTable();
-      if (lut8 != null) return lut8.length;
-      short[][] lut16 = reader.get16BitLookupTable();
-      if (lut16 != null) return lut16.length;
-    }
-    catch (FormatException exc) { }
-    catch (IOException exc) { }
-    return 3;
+  private int getLookupTableComponentCount()
+    throws FormatException, IOException
+  {
+    byte[][] lut8 = reader.get8BitLookupTable();
+    if (lut8 != null) return lut8.length;
+    short[][] lut16 = reader.get16BitLookupTable();
+    if (lut16 != null) return lut16.length;
+    // NB: For some formats, LUTs are plane-specific and will
+    // only be available after opening a particular image plane.
+    reader.openBytes(0, 0, 0, 1, 1); // read a single pixel, for performance
+    lut8 = reader.get8BitLookupTable();
+    if (lut8 != null) return lut8.length;
+    lut16 = reader.get16BitLookupTable();
+    if (lut16 != null) return lut16.length;
+    return 0; // LUTs are missing
   }
 
 }
