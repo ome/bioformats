@@ -161,7 +161,8 @@ public final class ImageTools {
 
     for (int i=0; i<rtn.length; i++) {
       byte[] a = new byte[4];
-      for (int j=c-1; j>=0; j--) {
+      int maxC = Math.min(c, a.length);
+      for (int j=maxC-1; j>=0; j--) {
         a[j] = b[interleaved ? i + j * w * h : i * c + j];
       }
       if (c == 1) {
