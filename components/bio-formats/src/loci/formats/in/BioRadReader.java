@@ -487,8 +487,10 @@ public class BioRadReader extends FormatReader {
       store.setImageObjectiveSettingsID(objectiveID, 0);
 
       store.setObjectiveLensNA(new Double(lens), 0, 0);
-      store.setObjectiveNominalMagnification(
+      if ((int) magFactor > 0) {
+        store.setObjectiveNominalMagnification(
           new PositiveInteger((int) magFactor), 0, 0);
+      }
       store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
       store.setObjectiveImmersion(getImmersion("Other"), 0, 0);
 
