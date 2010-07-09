@@ -12,11 +12,16 @@ Type "ant -p" for a list of targets.
   <import file="${root.dir}/ant/java.xml"/>
   <property file="build.properties"/>
 
-  <target name="test" depends="jar,test-no-omeio" description="run tests" if="doTests">
+  <target name="test" depends="jar, test-no-omeio" description="run tests">
+    <!-- NOTE: Overrides default "test" target from java.xml -->
     <copy tofile="${build.dir}/testng.xml" overwrite="true"
       file="${tests.dir}/loci/ome/utests/testng.xml"/>
-    <testng
-      classpath="${test-classes.dir}:${classes.dir}:${component.classpath}">
+    <testng>
+      <classpath>
+        <pathelement location="${test-classes.dir}"/>
+        <pathelement location="${classes.dir}"/>
+        <pathelement path="${component.classpath}"/>
+      </classpath>
       <xmlfileset file="${build.dir}/testng.xml"/>
       <jvmarg value="-mx${testng.memory}"/>
     </testng>
@@ -25,7 +30,11 @@ Type "ant -p" for a list of targets.
   <target name="test-no-omeio" depends="compile-tests" description="run missing OME I/O tests" if="doTests">
     <copy tofile="${build.dir}/testng.xml" overwrite="true"
       file="${tests.dir}/loci/ome/utests/testng-no-ome-io.xml"/>
-    <testng classpath="${test-classes.dir}:${component.classpath}">
+    <testng>
+      <classpath>
+        <pathelement location="${test-classes.dir}"/>
+        <pathelement path="${component.classpath}"/>
+      </classpath>
       <xmlfileset file="${build.dir}/testng.xml"/>
       <jvmarg value="-mx${testng.memory}"/>
     </testng>

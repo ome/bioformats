@@ -12,14 +12,18 @@ Type "ant -p" for a list of targets.
   <import file="${root.dir}/ant/java.xml"/>
   <property file="build.properties"/>
 
-  <target name="test"
-    depends="jar,compile-tests,test-no-mdb,test-no-netcdf,test-no-ome-xml,
-    test-no-poi,test-no-jai,test-no-lurawave"
-    description="run tests" if="doTests">
+  <target name="test" depends="jar,compile-tests,test-no-mdb,test-no-netcdf,
+    test-no-ome-xml, test-no-poi,test-no-jai,test-no-lurawave"
+    description="run tests">
+    <!-- NOTE: Overrides default "test" target from java.xml -->
     <copy tofile="${build.dir}/testng.xml" overwrite="true"
       file="${tests.dir}/loci/formats/utests/testng.xml"/>
-    <testng classpath="${test-classes.dir}:${classes.dir}:${component.classpath}"
-      groups="all" testname="${component.name}">
+    <testng haltonfailure="true" groups="all" testname="${component.name}">
+      <classpath>
+        <pathelement location="${test-classes.dir}"/>
+        <pathelement location="${classes.dir}"/>
+        <pathelement path="${component.classpath}"/>
+      </classpath>
       <xmlfileset file="${build.dir}/testng.xml"/>
       <jvmarg value="-mx${testng.memory}"/>
       <jvmarg value="-Dlurawave.license=XXX"/>
@@ -30,9 +34,12 @@ Type "ant -p" for a list of targets.
     description="run missing MDB tools JAR tests" if="doTests">
     <copy tofile="${build.dir}/testng.xml" overwrite="true"
       file="${tests.dir}/loci/formats/utests/testng-no-mdb.xml"/>
-    <testng classpath=
-      "${test-classes.dir}:${classes.dir}:${component.cp.no-mdb}">
-    <!--<testng classpath="${test-classes.dir}:${classes.dir}:${artifact.dir}/loci-common.jar">-->
+    <testng>
+      <classpath>
+        <pathelement location="${test-classes.dir}"/>
+        <pathelement location="${classes.dir}"/>
+        <pathelement path="${component.cp.no-mdb}"/>
+      </classpath>
       <xmlfileset file="${build.dir}/testng.xml"/>
       <jvmarg value="-mx${testng.memory}"/>
     </testng>
@@ -42,8 +49,12 @@ Type "ant -p" for a list of targets.
     description="run missing NetCDF JAR tests" if="doTests">
     <copy tofile="${build.dir}/testng.xml" overwrite="true"
       file="${tests.dir}/loci/formats/utests/testng-no-netcdf.xml"/>
-    <testng classpath=
-      "${test-classes.dir}:${classes.dir}:${component.cp.no-netcdf}">
+    <testng>
+      <classpath>
+        <pathelement location="${test-classes.dir}"/>
+        <pathelement location="${classes.dir}"/>
+        <pathelement path="${component.cp.no-netcdf}"/>
+      </classpath>
       <xmlfileset file="${build.dir}/testng.xml"/>
       <jvmarg value="-mx${testng.memory}"/>
     </testng>
@@ -53,8 +64,12 @@ Type "ant -p" for a list of targets.
     description="run missing OME-XML JAR tests" if="doTests">
     <copy tofile="${build.dir}/testng.xml" overwrite="true"
       file="${tests.dir}/loci/formats/utests/testng-no-ome-xml.xml"/>
-    <testng classpath=
-    "${test-classes.dir}:${classes.dir}:${component.cp.no-xml}">
+    <testng>
+      <classpath>
+        <pathelement location="${test-classes.dir}"/>
+        <pathelement location="${classes.dir}"/>
+        <pathelement path="${component.cp.no-xml}"/>
+      </classpath>
       <xmlfileset file="${build.dir}/testng.xml"/>
       <jvmarg value="-mx${testng.memory}"/>
     </testng>
@@ -64,8 +79,12 @@ Type "ant -p" for a list of targets.
     description="run missing POI JAR tests" if="doTests">
     <copy tofile="${build.dir}/testng.xml" overwrite="true"
       file="${tests.dir}/loci/formats/utests/testng-no-poi.xml"/>
-    <testng classpath=
-      "${test-classes.dir}:${classes.dir}:${component.cp.no-poi}">
+    <testng>
+      <classpath>
+        <pathelement location="${test-classes.dir}"/>
+        <pathelement location="${classes.dir}"/>
+        <pathelement path="${component.cp.no-poi}"/>
+      </classpath>
       <xmlfileset file="${build.dir}/testng.xml"/>
       <jvmarg value="-mx${testng.memory}"/>
     </testng>
@@ -75,8 +94,12 @@ Type "ant -p" for a list of targets.
     description="run missing JAI ImageIO JAR tests" if="doTests">
     <copy tofile="${build.dir}/testng.xml" overwrite="true"
       file="${tests.dir}/loci/formats/utests/testng-no-jai.xml"/>
-    <testng classpath=
-      "${test-classes.dir}:${classes.dir}:${component.cp.no-jai}">
+    <testng>
+      <classpath>
+        <pathelement location="${test-classes.dir}"/>
+        <pathelement location="${classes.dir}"/>
+        <pathelement path="${component.cp.no-jai}"/>
+      </classpath>
       <xmlfileset file="${build.dir}/testng.xml"/>
       <jvmarg value="-mx${testng.memory}"/>
     </testng>
@@ -86,8 +109,12 @@ Type "ant -p" for a list of targets.
     description="run missing LuraWave JAR tests" if="doTests">
     <copy tofile="${build.dir}/testng.xml" overwrite="true"
       file="${tests.dir}/loci/formats/utests/testng-no-lurawave.xml"/>
-    <testng classpath=
-      "${test-classes.dir}:${classes.dir}:${component.cp.no-lurawave}">
+    <testng>
+      <classpath>
+        <pathelement location="${test-classes.dir}"/>
+        <pathelement location="${classes.dir}"/>
+        <pathelement path="${component.cp.no-lurawave}"/>
+      </classpath>
       <xmlfileset file="${build.dir}/testng.xml"/>
       <jvmarg value="-mx${testng.memory}"/>
     </testng>
@@ -95,9 +122,12 @@ Type "ant -p" for a list of targets.
 
   <target name="test-metadata" depends="compile-tests"
     description="test metadata level support for a single file" if="doTests">
-    <testng sourcedir="${test.dir}"
-      classpath="${test-classes.dir}:${classes.dir}:${component.classpath}"
-      testname="Metadata tests">
+    <testng sourcedir="${test.dir}" testname="Metadata tests">
+      <classpath>
+        <pathelement location="${test-classes.dir}"/>
+        <pathelement location="${classes.dir}"/>
+        <pathelement path="${component.classpath}"/>
+      </classpath>
       <classfileset file="${test-classes.dir}/loci/formats/utests/MetadataConfigurableTest.class"/>
       <sysproperty key="testng.filename" value="${testng.filename}"/>
       <jvmarg value="-mx${testng.memory}"/>

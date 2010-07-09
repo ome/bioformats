@@ -30,7 +30,8 @@ Type "ant -p" for a list of targets.
     </javac>
   </target>
 
-  <target name="compile-tests" depends="compile, copy-test-source" description="compile test classes" if="doTests">
+  <target name="compile-tests" depends="compile, copy-test-source"
+    description="compile test classes" if="doTests">
     <javac debug="true" deprecation="${component.deprecation}"
       source="${component.java-version}"
       target="${component.java-version}"
@@ -44,12 +45,43 @@ Type "ant -p" for a list of targets.
       classpath="${classes.dir}:${component.runtime-cp}"/>
   </target>
 
-  <target name="test" depends="jar, compile-tests" description="run tests" if="doTests">
-    <testng classpath="${test-classes.dir}:${classes.dir}:${component.classpath}"
-      groups="all" testname="${component.name}">
-      <xmlfileset file="${testng.xml}"/>
-      <jvmarg value="-mx${testng.memory}"/>
-    </testng>
+  <target name="test" depends="jar, compile-tests"
+    description="run tests" if="doTests">
+    <!-- run JUnit tests -->
+    <if>
+      <equals arg1="${component.junit}" arg2="true"/>
+      <then>
+        <junit haltonfailure="true">
+          <classpath>
+            <pathelement location="${artifact.dir}/junit-4.8.2.jar"/>
+            <pathelement location="${test-classes.dir}"/>
+            <pathelement location="${classes.dir}"/>
+            <pathelement path="${component.runtime-cp}"/>
+          </classpath>
+          <formatter type="brief" usefile="false"/>
+          <batchtest>
+            <fileset dir="${test-classes.dir}">
+              <include name="**/*Test.class"/>
+            </fileset>
+          </batchtest>
+        </junit>
+      </then>
+    </if>
+    <!-- run TestNG tests -->
+    <if>
+      <isset property="testng.xml"/>
+      <then>
+        <testng haltonfailure="true" groups="all" testname="${component.name}">
+          <classpath>
+            <pathelement path="${component.classpath}"/>
+            <pathelement location="${test-classes.dir}"/>
+            <pathelement location="${classes.dir}"/>
+          </classpath>
+          <xmlfileset file="${testng.xml}"/>
+          <jvmarg value="-mx${testng.memory}"/>
+        </testng>
+      </then>
+    </if>
   </target>
 
   <target name="findbugs" depends="jar"

@@ -443,7 +443,7 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="utils-formats" depends="jar-formats"
-    description="compile extra utilities for LOCI Plugins for ImageJ">
+    description="compile extra utilities for Bio-Formats">
     <ant dir="components/bio-formats" target="formats.utils"/>
   </target>
 

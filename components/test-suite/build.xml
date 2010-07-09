@@ -12,16 +12,16 @@ Type "ant -p" for a list of targets.
   <import file="${root.dir}/ant/java.xml"/>
   <property file="build.properties"/>
 
-  <taskdef name="testng" classpath="${component.classpath}"
-    classname="org.testng.TestNGAntTask"/>
-
   <target name="test-convert" depends="compile"
     description="run automated tests on writers">
     <testng sourcedir="${dest.dir}"
-      classpath="${classes.dir}:${component.classpath}"
       annotations="Javadoc" groups="all" testname="Writer tests"
       listener="loci.tests.testng.DotTestListener"
       suitename="LOCI software test suite">
+      <classpath>
+        <pathelement location="${classes.dir}"/>
+        <pathelement path="${component.classpath}"/>
+      </classpath>
       <classfileset file="${classes.dir}/${writer-test.class}"/>
       <sysproperty key="testng.filename" value="${testng.filename}"/>
       <sysproperty key="testng.directory" value="${testng.directory}"/>
@@ -33,10 +33,13 @@ Type "ant -p" for a list of targets.
   <target name="test-all" depends="compile"
     description="run all automated tests">
     <testng sourcedir="${dest.dir}"
-      classpath="${classes.dir}:${component.classpath}"
       annotations="Javadoc" groups="all" testname="All tests"
       listener="loci.tests.testng.DotTestListener"
       suitename="LOCI software test suite">
+      <classpath>
+        <pathelement location="${classes.dir}"/>
+        <pathelement path="${component.classpath}"/>
+      </classpath>
       <classfileset file="${classes.dir}/${reader-test.class}"/>
       <sysproperty key="testng.filename" value="${testng.filename}"/>
       <sysproperty key="testng.directory" value="${testng.directory}"/>
@@ -49,10 +52,13 @@ Type "ant -p" for a list of targets.
   <target name="test-config" depends="compile"
     description="generate config files for automated test suite">
     <testng sourcedir="${dest.dir}"
-      classpath="${classes.dir}:${component.classpath}"
       annotations="Javadoc" groups="config" testname="Config generation"
       listener="loci.tests.testng.DotTestListener"
       suitename="LOCI software test suite">
+      <classpath>
+        <pathelement location="${classes.dir}"/>
+        <pathelement path="${component.classpath}"/>
+      </classpath>
       <classfileset file="${classes.dir}/${reader-test.class}"/>
       <sysproperty key="testng.filename" value="${testng.filename}"/>
       <sysproperty key="testng.directory" value="${testng.directory}"/>
@@ -65,10 +71,13 @@ Type "ant -p" for a list of targets.
   <target name="test-fast" depends="compile"
     description="run automated tests in group 'fast'">
     <testng sourcedir="${dest.dir}"
-      classpath="${classes.dir}:${component.classpath}"
       annotations="Javadoc" groups="fast" testname="Fast tests"
       listener="loci.tests.testng.DotTestListener"
       suitename="LOCI software test suite">
+      <classpath>
+        <pathelement location="${classes.dir}"/>
+        <pathelement path="${component.classpath}"/>
+      </classpath>
       <classfileset file="${classes.dir}/${reader-test.class}"/>
       <sysproperty key="testng.filename" value="${testng.filename}"/>
       <sysproperty key="testng.directory" value="${testng.directory}"/>
@@ -81,10 +90,13 @@ Type "ant -p" for a list of targets.
   <target name="test-pixels" depends="compile"
     description="run automated tests in group 'pixels'">
     <testng sourcedir="${dest.dir}"
-      classpath="${classes.dir}:${component.classpath}"
       annotations="Javadoc" groups="pixels" testname="Pixels tests"
       listener="loci.tests.testng.DotTestListener"
       suitename="LOCI software test suite">
+      <classpath>
+        <pathelement location="${classes.dir}"/>
+        <pathelement path="${component.classpath}"/>
+      </classpath>
       <classfileset file="${classes.dir}/${reader-test.class}"/>
       <sysproperty key="testng.filename" value="${testng.filename}"/>
       <sysproperty key="testng.directory" value="${testng.directory}"/>
@@ -97,10 +109,13 @@ Type "ant -p" for a list of targets.
   <target name="test-xml" depends="compile"
     description="run automated tests in group 'xml'">
     <testng sourcedir="${dest.dir}"
-      classpath="${classes.dir}:${component.classpath}"
       annotations="Javadoc" groups="xml" testname="XML tests"
       listener="loci.tests.testng.DotTestListener"
       suitename="LOCI software test suite">
+      <classpath>
+        <pathelement location="${classes.dir}"/>
+        <pathelement path="${component.classpath}"/>
+      </classpath>
       <classfileset file="${classes.dir}/${reader-test.class}"/>
       <sysproperty key="testng.filename" value="${testng.filename}"/>
       <sysproperty key="testng.directory" value="${testng.directory}"/>

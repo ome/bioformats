@@ -12,17 +12,20 @@ Type "ant -p"  for a list of targets.
   <import file="${root.dir}/ant/java.xml"/>
   <property file="build.properties"/>
 
-  <target name="test" depends="jar, compile-tests"
-    description="run tests" if="doTests">
+  <target name="test" depends="jar, compile-tests" description="run tests">
     <!-- NOTE: Overrides default "test" target from java.xml -->
     <copy tofile="${build.dir}/testng.xml"
       file="${testng.xml.template}" overwrite="true">
       <filterset>
-        <filter token="PARALLEL" value=""/>  <!-- Disable parallelization -->
+        <filter token="PARALLEL" value=""/> <!-- Disable parallelization -->
       </filterset>
     </copy>
-    <testng
-        classpath="${test-classes.dir}:${classes.dir}:${component.runtime-cp}">
+    <testng>
+      <classpath>
+        <pathelement location="${test-classes.dir}"/>
+        <pathelement location="${classes.dir}"/>
+        <pathelement path="${component.runtime-cp}"/>
+      </classpath>
       <xmlfileset file="${build.dir}/testng.xml"/>
       <jvmarg value="-mx${testng.memory}"/>
     </testng>
@@ -36,8 +39,12 @@ Type "ant -p"  for a list of targets.
         <filter token="PARALLEL" value="parallel=&quot;classes&quot;"/>
       </filterset>
     </copy>
-    <testng
-        classpath="${test-classes.dir}:${classes.dir}:${component.runtime-cp}">
+    <testng>
+      <classpath>
+        <pathelement location="${test-classes.dir}"/>
+        <pathelement location="${classes.dir}"/>
+        <pathelement path="${component.runtime-cp}"/>
+      </classpath>
       <xmlfileset file="${build.dir}/testng.xml"/>
       <jvmarg value="-mx${testng.memory}"/>
     </testng>
