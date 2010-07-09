@@ -5,10 +5,11 @@
 	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2010-04"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2010-04 
-	http://www.openmicroscopy.org/Schemas/OME/2010-04/ome.xsd">		
+	http://www.openmicroscopy.org/Schemas/OME/2010-04/ome.xsd">   
+	
 	<!--
 		Work in progress!
-		Proposal 2 - 24th May 2009
+		Proposal 3 - 1st July 2010
 	-->
 	<SPW:Plate 
 		ID="Plate:1" 
@@ -19,73 +20,40 @@
 		Rows="8"
 		>
 		<SPW:Description></SPW:Description>
-		<SPW:ScreenRef ID="Screen:1"/>
 		
-		<!-- repeat SPW:Well for # of wells in the plate -->
+		<!-- repeat SPW:Well for # of wells in the plate that contain images -->
 		<SPW:Well ID="Well:1" Column="0" Row="0">
 			<!-- repeat SPW:WellSample for # of images taken in the well -->
 			<SPW:WellSample ID="WellSample:1" Index="0">
+				<!-- 
+					if there is an image associated with this SPW:WellSample
+					it is linked using an SPW:ImageRef
+				-->
 				<SPW:ImageRef ID="Image:0"/>
 			</SPW:WellSample>
 		</SPW:Well>
 	</SPW:Plate>
 	<!-- plus one more Plate for each Plate in this set -->
 	
-	<SPW:Screen ID="Screen:1" Name="">
-		<SPW:Description></SPW:Description>
-		<SPW:PlateRef ID="Plate:1"/>
-		<!-- plus one more PlateRef for each Plate in the file
-			<SPW:PlateRef ID="Plate:#"/>
-		-->
-	</SPW:Screen>
+	<!-- SPW:Screen is not required -->
 	
-	<OME:Image ID="Image:0" Name="compliant-sample-0">
-		<OME:AcquiredDate>2010-02-23T12:51:30</OME:AcquiredDate>
-		<OME:Description>Description0</OME:Description>
-		<OME:ImagingEnvironment Temperature="0" AirPressure="0" Humidity="0.5" CO2Percent="0.5"/>
-		<OME:StageLabel Name="Name1" X="0" Y="0" Z="0"/>
-		<OME:Pixels DimensionOrder="XYCZT" ID="Pixels:0:0" PhysicalSizeX="10000.0"
-			PhysicalSizeY="10000.0" PhysicalSizeZ="0.0" Type="uint8" SizeC="3" SizeT="1" SizeX="6"
-			SizeY="4" SizeZ="1" TimeIncrement="0">
-			<OME:Channel AcquisitionMode="LaserScanningConfocalMicroscopy" Color="4294967295"
-				ID="Channel:0"
-				Name="Name2" SamplesPerPixel="0"
-				IlluminationType="Transmitted" PinholeSize="0" 
-				ContrastMethod="Brightfield" ExcitationWavelength="50" EmissionWavelength="50"
-				Fluor="Fluor0" NDFilter="0" PockelCellSetting="0"
-			/>
-			<OME:Channel AcquisitionMode="LaserScanningConfocalMicroscopy" Color="4294967295"
-				ID="Channel:1"
-				Name="Name2" SamplesPerPixel="0"
-				IlluminationType="Transmitted" PinholeSize="0" 
-				ContrastMethod="Brightfield" ExcitationWavelength="50" EmissionWavelength="50"
-				Fluor="Fluor0" NDFilter="0" PockelCellSetting="0"
-			/>
-			<OME:Channel AcquisitionMode="MultiPhotonMicroscopy" Color="4294967295" 
-				ID="Channel:2"
-				Name="Name2" SamplesPerPixel="0"
-				IlluminationType="Transmitted" PinholeSize="0" 
-				ContrastMethod="Brightfield" ExcitationWavelength="50" EmissionWavelength="50"
-				Fluor="Fluor0" NDFilter="0" PockelCellSetting="0"
-			/>
-			<BIN:BinData BigEndian="false" Length="32" Compression="none"
-				>/wCrzur//wB5oMPi/wBIbJO3AP8ePGCF</BIN:BinData>
-			<BIN:BinData BigEndian="false" Length="32" Compression="none"
-				>AP+rzuv/AAB5n8Pi/wBHbJO3//8dPGCF</BIN:BinData>
-			<BIN:BinData BigEndian="false" Length="32" Compression="none"
-				>//+szuv/AP95n8PiAABHbZO3AP8dPF+G</BIN:BinData>
-			<OME:Plane TheZ="0" TheT="0" TheC="0" DeltaT="0" ExposureTime="0.001" PositionX="0"
-				PositionY="0" PositionZ="0">
-				<OME:HashSHA1>3031323334353637383930313233343536373839</OME:HashSHA1>
-			</OME:Plane>
-			<OME:Plane TheZ="0" TheT="0" TheC="1" DeltaT="0" ExposureTime="0.001" PositionX="0"
-				PositionY="0" PositionZ="0">
-				<OME:HashSHA1>3031323334353637383930313233343536373839</OME:HashSHA1>
-			</OME:Plane>
-			<OME:Plane TheZ="0" TheT="0" TheC="2" DeltaT="0" ExposureTime="0.001" PositionX="0"
-				PositionY="0" PositionZ="0">
-				<OME:HashSHA1>3031323334353637383930313233343536373839</OME:HashSHA1>
-			</OME:Plane>
+	<!-- The OME:Image element follows the structure for the OME Compliant File Specification -->
+	<OME:Image ID="Image:0" Name="Series 1">
+		<OME:AcquiredDate>2008-02-06T13:43:19</OME:AcquiredDate>
+		<OME:Description>An example OME compliant file, based on Olympus.oib</OME:Description>
+		<OME:Pixels DimensionOrder="XYCZT" ID="Pixels:0" PhysicalSizeX="0.207" PhysicalSizeY="0.207"
+			PhysicalSizeZ="0.0" SizeC="3" SizeT="16" SizeX="1024" SizeY="1024" SizeZ="1"
+			TimeIncrement="120.1302" Type="uint16">
+			<OME:Channel EmissionWavelength="523" ExcitationWavelength="488" ID="Channel:0:0"
+				IlluminationType="Epifluorescence" Name="CH1" SamplesPerPixel="1"
+				PinholeSize="103.5" AcquisitionMode="LaserScanningConfocalMicroscopy"/>
+			<OME:Channel EmissionWavelength="578" ExcitationWavelength="561" ID="Channel:0:1"
+				IlluminationType="Epifluorescence" Name="CH3" SamplesPerPixel="1"
+				PinholeSize="127.24" AcquisitionMode="LaserScanningConfocalMicroscopy"/>
+			<OME:Channel ExcitationWavelength="488" ID="Channel:0:2" IlluminationType="Transmitted"
+				ContrastMethod="DIC" Name="TD1" SamplesPerPixel="1"  
+				AcquisitionMode="LaserScanningConfocalMicroscopy"/>
+			<BIN:BinData BigEndian="false" Length="0"/>
 		</OME:Pixels>
-		</OME:Image>
+	</OME:Image>
 </OME:OME>
