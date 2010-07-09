@@ -1,3 +1,14 @@
+4.2.0 (2010 July 9):
+* Fixed many, many bugs in all aspects of Bio-Formats
+* Reworked ImageJ plugins to be more user- and developer-friendly
+* Added many new unit tests
+* Added support for approximately 25 new file formats, primarily in the SPM domain
+* Rewrote underlying I/O infrastructure to be thread-safe and based on Java NIO
+* Rewrote OME-XML parsing/generation layer; OME-XML 2010-06 is now supported
+* Improved support for exporting large images
+* Improved support for exporting to multiple files
+* Updated logging infrastructure to use slf4j and log4j
+
 4.1.1 (2009 December 3):
 * Fixed many bugs in popular file format readers
 
