@@ -97,6 +97,13 @@ public class ImporterTest {
   /** Whether to log debugging messages to stdout. */
   static final boolean DEBUG = false;
 
+  /**
+   * Whether to run tests with special requirements.
+   * This flag is mainly to disable the testDatasetOpenFilesIndividually test
+   * on systems without the required Bio-Rad PIC sample data available.
+   */
+  static final boolean RUN_SPECIAL_TESTS = false;
+
   private enum Axis {Z,C,T};
 
   private enum ChannelOrder {ZCT, ZTC, CZT, CTZ, TZC, TCZ};
@@ -2118,8 +2125,10 @@ public class ImporterTest {
   @Test
   public void testDatasetOpenFilesIndividually()
   {
-    for (boolean virtual : BOOLEAN_STATES)
-      datasetOpenFilesIndividuallyTester(virtual);
+    if (RUN_SPECIAL_TESTS) {
+      for (boolean virtual : BOOLEAN_STATES)
+        datasetOpenFilesIndividuallyTester(virtual);
+    }
   }
 
   @Test
