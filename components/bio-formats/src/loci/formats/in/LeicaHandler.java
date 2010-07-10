@@ -103,6 +103,8 @@ public class LeicaHandler extends DefaultHandler {
   private Vector<MultiBand> multiBands = new Vector<MultiBand>();
   private Vector<Detector> detectors = new Vector<Detector>();
   private Vector<Laser> lasers = new Vector<Laser>();
+  private Hashtable<String, Channel> channels =
+    new Hashtable<String, Channel>();
 
   private MetadataLevel level;
   private int laserCount = 0;
@@ -207,8 +209,19 @@ public class LeicaHandler extends DefaultHandler {
           String id = MetadataTools.createLSID("Detector", numDatasets, index);
           store.setDetectorSettingsID(id, numDatasets, c);
         }
+
+        String[] keys = channels.keySet().toArray(new String[0]);
+        Arrays.sort(keys);
+        for (int c=0; c<keys.length; c++) {
+          Channel ch = channels.get(keys[c]);
+          store.setDetectorSettingsID(ch.detector, numDatasets, c);
+          store.setChannelExcitationWavelength(ch.exWave, numDatasets, c);
+          store.setChannelName(ch.name, numDatasets, c);
+          store.setDetectorSettingsGain(ch.gain, numDatasets, c);
+        }
       }
 
+      channels.clear();
       xPos.clear();
       yPos.clear();
       zPos.clear();
@@ -489,27 +502,28 @@ public class LeicaHandler extends DefaultHandler {
           c = Integer.parseInt(id.replaceAll("\\D", ""));
         }
         catch (NumberFormatException e) { }
+        Channel channel = channels.get(numDatasets + "-" + c);
+        if (channel == null) channel = new Channel();
         if (id.endsWith("ExposureTime")) {
           store.setPlaneExposureTime(new Double(value), numDatasets, c);
         }
         else if (id.endsWith("Gain")) {
-          store.setDetectorSettingsGain(new Double(value), numDatasets, c);
+          channel.gain = new Double(value);
 
           String detectorID =
             MetadataTools.createLSID("Detector", numDatasets, 0);
-
-          store.setDetectorSettingsID(detectorID, numDatasets, c);
+          channel.detector = detectorID;
           store.setDetectorID(detectorID, numDatasets, 0);
           store.setDetectorType(DetectorType.CCD, numDatasets, 0);
         }
         else if (id.endsWith("WaveLength")) {
-          store.setChannelExcitationWavelength(
-            new PositiveInteger(new Integer(value)), numDatasets, c);
+          channel.exWave = new PositiveInteger(new Integer(value));
         }
         // NB: "UesrDefName" is not a typo.
         else if (id.endsWith("UesrDefName") && !value.equals("None")) {
-          store.setChannelName(value, numDatasets, c);
+          channel.name = value;
         }
+        channels.put(numDatasets + "-" + c, channel);
       }
     }
     else if (qName.equals("FilterSettingRecord") &&
@@ -861,6 +875,10 @@ public class LeicaHandler extends DefaultHandler {
 
       multiBands.add(m);
     }
+    else if (qName.equals("ChannelInfo")) {
+      int index = Integer.parseInt(attributes.getValue("Index"));
+      channels.remove(numDatasets + "-" + index);
+    }
     else count = 0;
     if (numDatasets == oldSeriesCount) storeSeriesHashtable(numDatasets, h);
   }
@@ -1050,6 +1068,13 @@ public class LeicaHandler extends DefaultHandler {
     public double intensity;
     public String id;
     public int index;
+  }
+
+  class Channel {
+    public String detector;
+    public Double gain;
+    public PositiveInteger exWave;
+    public String name;
   }
 
 }
