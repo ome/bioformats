@@ -222,7 +222,7 @@ public class MinimalTiffReader extends FormatReader {
       ifds.get(0).getBitsPerSample()[0] == 24;
 
     if (float16 || float24) {
-      int nPixels = getSizeX() * getSizeY() * getRGBChannelCount();
+      int nPixels = w * h * getRGBChannelCount();
       int nBytes = float16 ? 2 : 3;
       int mantissaBits = float16 ? 10 : 16;
       int exponentBits = float16 ? 5 : 7;
