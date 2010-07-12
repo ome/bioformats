@@ -101,11 +101,9 @@ public class CellWorxReader extends FormatReader {
     int fieldIndex = getSeries() % fieldCount;
 
     String file = getPNLFile(getSeries());
-    RandomAccessInputStream pnl = new RandomAccessInputStream(file);
-
-    long headerLength = pnl.length() - (fieldCount * fieldSize);
-    pnl.seek(headerLength + fieldIndex * fieldSize + no * planeSize);
-    readPlane(pnl, x, y, w, h, buf);
+    DeltavisionReader pnl = new DeltavisionReader();
+    pnl.setId(file);
+    pnl.openBytes(fieldIndex * fieldCount + no, buf, x, y, w, h);
     pnl.close();
     return buf;
   }
@@ -114,6 +112,12 @@ public class CellWorxReader extends FormatReader {
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
+      fieldMap = null;
+      wellFiles = null;
+      logFiles = null;
+      fieldCount = 0;
+      plateLogFile = null;
+      zMapFile = null;
     }
   }
 
@@ -224,39 +228,23 @@ public class CellWorxReader extends FormatReader {
     core = new CoreMetadata[fieldCount * wellCount];
 
     String file = getPNLFile(0);
-    RandomAccessInputStream pnl = new RandomAccessInputStream(file);
-    pnl.order(true);
-    int x = pnl.readInt();
-    int y = pnl.readInt();
-    pnl.skipBytes(4);
-    int pixelType = pnl.readInt();
-    pnl.close();
+    DeltavisionReader pnl = new DeltavisionReader();
+    pnl.setId(file);
 
     for (int i=0; i<core.length; i++) {
       setSeries(i);
       core[i] = new CoreMetadata();
-      core[i].littleEndian = true;
-      core[i].sizeX = x;
-      core[i].sizeY = y;
-
-      switch (pixelType) {
-        case 2:
-          core[i].pixelType = FormatTools.UINT32;
-          break;
-        case 6:
-          core[i].pixelType = FormatTools.UINT16;
-          break;
-        default:
-          throw new FormatException("Unsupported pixel type: " + pixelType);
-      }
-
+      core[i].littleEndian = pnl.isLittleEndian();
+      core[i].sizeX = pnl.getSizeX();
+      core[i].sizeY = pnl.getSizeY();
+      core[i].pixelType = pnl.getPixelType();
       core[i].sizeZ = 1;
       core[i].sizeT = 1;
       core[i].sizeC = wavelengths.length;
       core[i].imageCount = getSizeZ() * getSizeC() * getSizeT();
       core[i].dimensionOrder = "XYCZT";
       core[i].rgb = false;
-      core[i].interleaved = false;
+      core[i].interleaved = pnl.isInterleaved();
     }
 
     MetadataStore store = makeFilterMetadata();
