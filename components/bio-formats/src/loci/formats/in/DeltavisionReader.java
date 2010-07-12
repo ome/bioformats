@@ -113,6 +113,7 @@ public class DeltavisionReader extends FormatReader {
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
   public boolean isThisType(String name, boolean open) {
     if (checkSuffix(name, "dv.log") || name.endsWith("_log.txt")) return true;
+    if (checkSuffix(name, "pnl")) return false;
     return super.isThisType(name, open);
   }
 
