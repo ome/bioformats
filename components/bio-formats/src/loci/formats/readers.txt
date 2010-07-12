@@ -71,6 +71,7 @@ loci.formats.in.ARFReader             # arf
 loci.formats.in.CellomicsReader       # c01
 loci.formats.in.LiFlimReader          # fli
 loci.formats.in.VolocityReader        # mvd2
+loci.formats.in.CellWorxReader        # pnl, htd
 loci.formats.in.FakeReader            # fake
 
 # multi-extension messes
