@@ -224,7 +224,7 @@ public class PSDReader extends FormatReader {
     int blockLen = in.readInt();
 
     if (blockLen == 0) {
-      offset = in.getFilePointer() + 2;
+      offset = in.getFilePointer();
     }
     else {
       int layerLen = in.readInt();
