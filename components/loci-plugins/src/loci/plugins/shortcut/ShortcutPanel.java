@@ -179,13 +179,20 @@ public class ShortcutPanel extends JPanel implements ActionListener, PlugIn {
     runPlugIn(plugins[openerIndex], arg);
   }
 
-  public static void runPlugIn(String className, String arg) {
-    try {
-      IJ.runPlugIn(className, arg);
-    }
-    catch (Throwable t) {
-      WindowTools.reportException(t);
-    }
+  /** Executes the given plugin, in a separate thread. */
+  public static void runPlugIn(final String className, final String arg) {
+    // NB: If we don't run in a separate thread, there are GUI update
+    //     problems with the ImageJ status bar and log window.
+    new Thread() {
+      public void run() {
+        try {
+          IJ.runPlugIn(className, arg);
+        }
+        catch (Throwable t) {
+          WindowTools.reportException(t);
+        }
+      }
+    }.start();
   }
 
   // -- ActionListener API methods --
