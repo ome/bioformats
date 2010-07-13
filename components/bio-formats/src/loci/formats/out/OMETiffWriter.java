@@ -148,6 +148,7 @@ public class OMETiffWriter extends TiffWriter {
         for (int c=0; c<omeMeta.getChannelCount(series); c++) {
           omeMeta.setChannelSamplesPerPixel(samplesPerPixel, series, c);
         }
+        sizeC /= samplesPerPixel.getValue();
 
         HashMap<String, Integer> ifdCounts = new HashMap<String, Integer>();
 
