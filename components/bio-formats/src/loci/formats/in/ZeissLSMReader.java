@@ -165,6 +165,7 @@ public class ZeissLSMReader extends FormatReader {
   private double zoom;
   private Vector<String> imageNames;
   private String binning;
+  private Vector<Double> xCoordinates, yCoordinates;
 
   private int totalROIs = 0;
 
@@ -209,6 +210,8 @@ public class ZeissLSMReader extends FormatReader {
       totalROIs = 0;
       prevPlane = -1;
       prevBuf = null;
+      xCoordinates = null;
+      yCoordinates = null;
     }
   }
 
@@ -339,6 +342,8 @@ public class ZeissLSMReader extends FormatReader {
 
     timestamps = new Vector<Double>();
     imageNames = new Vector<String>();
+    xCoordinates = new Vector<Double>();
+    yCoordinates = new Vector<Double>();
 
     core = new CoreMetadata[lsmFilenames.length];
     ifdsList = new Vector<IFDList>();
@@ -711,11 +716,32 @@ public class ZeissLSMReader extends FormatReader {
       addSeriesMeta("ToolbarFlags", ras.readInt());
 
       int wavelengthOffset = ras.readInt();
+      ras.skipBytes(56);
+      int dimensionP = ras.readInt();
+      int dimensionM = ras.readInt();
+
+      // NB: the Zeiss LSM 5.5 specification indicates that there should be
+      //     15 32-bit integers here; however, there are actually 16 32-bit
+      //     integers before the tile position offset.
+      ras.skipBytes(64);
+
+      int tilePositionOffset = ras.readInt();
 
       // read referenced structures
 
       addSeriesMeta("DimensionZ", getSizeZ());
       addSeriesMeta("DimensionChannels", getSizeC());
+      addSeriesMeta("DimensionM", dimensionM);
+      addSeriesMeta("DimensionP", dimensionP);
+
+      if (tilePositionOffset != 0) {
+        in.seek(tilePositionOffset);
+        int nTiles = in.readInt();
+        for (int i=0; i<nTiles; i++) {
+          xCoordinates.add(in.readDouble());
+          yCoordinates.add(in.readDouble());
+        }
+      }
 
       if (channelColorsOffset != 0) {
         in.seek(channelColorsOffset + 16);
@@ -905,6 +931,9 @@ public class ZeissLSMReader extends FormatReader {
           }
           store.setPlaneExposureTime(nextStamp - thisStamp, series, i);
         }
+        int stage = i / (getImageCount() / xCoordinates.size());
+        store.setPlanePositionX(xCoordinates.get(stage), series, i);
+        store.setPlanePositionY(yCoordinates.get(stage), series, i);
       }
     }
     ras.close();
