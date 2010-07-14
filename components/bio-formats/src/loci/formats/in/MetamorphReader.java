@@ -101,6 +101,8 @@ public class MetamorphReader extends BaseTiffReader {
   private double[] zDistances, stageX, stageY;
   private double zStart;
   private Double sizeX = null, sizeY = null;
+  private double tempZ;
+  private boolean validZ;
 
   private int mmPlanes; //number of metamorph planes
 
@@ -227,6 +229,8 @@ public class MetamorphReader extends BaseTiffReader {
       canLookForND = true;
       firstSeriesChannels = null;
       sizeX = sizeY = null;
+      tempZ = 0d;
+      validZ = false;
     }
   }
 
@@ -655,8 +659,10 @@ public class MetamorphReader extends BaseTiffReader {
           store.setPlanePositionY(stageY[p], i, p);
         }
         if (zDistances != null && p < zDistances.length) {
-          if (zDistances[p] != 0d) distance += zDistances[p];
-          else distance += zDistances[0];
+          if (p > 0) {
+            if (zDistances[p] != 0d) distance += zDistances[p];
+            else distance += zDistances[0];
+          }
           store.setPlanePositionZ(distance, i, p);
         }
       }
@@ -1041,6 +1047,10 @@ public class MetamorphReader extends BaseTiffReader {
     long saveLoc = in.getFilePointer();
     in.seek(uic4offset);
     if (in.getFilePointer() + 2 >= in.length()) return;
+
+    tempZ = 0d;
+    validZ = false;
+
     short id = in.readShort();
     while (id != 0) {
       switch (id) {
@@ -1055,15 +1065,22 @@ public class MetamorphReader extends BaseTiffReader {
           readStageLabels();
           break;
         case 40:
-          readRationals(new String[] {"absoluteZ"});
+          readRationals(new String[] {"UIC4 absoluteZ"});
           break;
         case 41:
           readAbsoluteZValid();
           break;
+        case 46:
+          in.skipBytes(mmPlanes * 8); // TODO
+          break;
+        default:
+          in.skipBytes(4);
       }
       id = in.readShort();
     }
     in.seek(saveLoc);
+
+    if (validZ) zStart = tempZ;
   }
 
   private void readStagePositions() throws IOException {
@@ -1085,8 +1102,8 @@ public class MetamorphReader extends BaseTiffReader {
       pos = intFormatMax(i, mmPlanes);
       for (int q=0; q<labels.length; q++) {
         double v = readRational(in).doubleValue();
-        if (labels[q].equals("absoluteZ") && i == 0) {
-          zStart = v;
+        if (labels[q].endsWith("absoluteZ") && i == 0) {
+          tempZ = v;
         }
         addSeriesMeta(labels[q] + "[" + pos + "]", v);
       }
@@ -1105,8 +1122,11 @@ public class MetamorphReader extends BaseTiffReader {
 
   void readAbsoluteZValid() throws IOException {
     for (int i=0; i<mmPlanes; i++) {
-      addSeriesMeta("absoluteZValid[" + intFormatMax(i, mmPlanes) + "]",
-        in.readInt());
+      int valid = in.readInt();
+      addSeriesMeta("absoluteZValid[" + intFormatMax(i, mmPlanes) + "]", valid);
+      if (i == 0) {
+        validZ = valid == 1;
+      }
     }
   }
 
@@ -1128,6 +1148,9 @@ public class MetamorphReader extends BaseTiffReader {
     int num, denom;
     String thedate, thetime;
     long lastOffset;
+
+    tempZ = 0d;
+    validZ = false;
     for (int i=0; i<uic1count; i++) {
       if (in.getFilePointer() >= in.length()) break;
       currentID = in.readInt();
@@ -1223,7 +1246,7 @@ public class MetamorphReader extends BaseTiffReader {
         case 40:
           if (valOrOffset != 0) {
             in.seek(valOrOffset);
-            readRationals(new String[] {"absoluteZ"});
+            readRationals(new String[] {"UIC1 absoluteZ"});
           }
           break;
         case 41:
@@ -1253,6 +1276,8 @@ public class MetamorphReader extends BaseTiffReader {
       }
     }
     in.seek(saveLoc);
+
+    if (validZ) zStart = tempZ;
   }
 
   // -- Utility methods --
@@ -1332,6 +1357,7 @@ public class MetamorphReader extends BaseTiffReader {
 
   private String getKey(int id) {
     switch (id) {
+      case 0: return "AutoScale";
       case 1: return "MinScale";
       case 2: return "MaxScale";
       case 3: return "Spatial Calibration";
@@ -1353,12 +1379,14 @@ public class MetamorphReader extends BaseTiffReader {
       case 19: return "grayFit";
       case 20: return "grayPointCount";
       case 21: return "grayX";
-      case 22: return "gray";
+      case 22: return "grayY";
       case 23: return "grayMin";
       case 24: return "grayMax";
       case 25: return "grayUnitName";
       case 26: return "StandardLUT";
       case 27: return "Wavelength";
+      case 28: return "StagePosition";
+      case 29: return "CameraChipOffset";
       case 30: return "OverlayMask";
       case 31: return "OverlayCompress";
       case 32: return "Overlay";
@@ -1368,11 +1396,33 @@ public class MetamorphReader extends BaseTiffReader {
       case 36: return "ImageProperty";
       case 38: return "AutoScaleLoInfo";
       case 39: return "AutoScaleHiInfo";
+      case 40: return "AbsoluteZ";
+      case 41: return "AbsoluteZValid";
       case 42: return "Gamma";
       case 43: return "GammaRed";
       case 44: return "GammaGreen";
       case 45: return "GammaBlue";
       case 46: return "CameraBin";
+      case 47: return "NewLUT";
+      case 48: return "ImagePropertyEx";
+      case 49: return "PlaneProperty";
+      case 50: return "UserLutTable";
+      case 51: return "RedAutoScaleInfo";
+      case 52: return "RedAutoScaleLoInfo";
+      case 53: return "RedAutoScaleHiInfo";
+      case 54: return "RedMinScaleInfo";
+      case 55: return "RedMaxScaleInfo";
+      case 56: return "GreenAutoScaleInfo";
+      case 57: return "GreenAutoScaleLoInfo";
+      case 58: return "GreenAutoScaleHiInfo";
+      case 59: return "GreenMinScaleInfo";
+      case 60: return "GreenMaxScaleInfo";
+      case 61: return "BlueAutoScaleInfo";
+      case 62: return "BlueAutoScaleLoInfo";
+      case 63: return "BlueAutoScaleHiInfo";
+      case 64: return "BlueMinScaleInfo";
+      case 65: return "BlueMaxScaleInfo";
+      case 66: return "OverlayPlaneColor";
     }
     return null;
   }
