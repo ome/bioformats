@@ -183,8 +183,8 @@ public class DisplayHandler implements StatusListener {
     Exception exc = null;
     try {
       Class<?> c = Class.forName("view5d.View5D_");
-      Constructor<?> con = c.getConstructor(new Class[] {String.class});
-      con.newInstance(new Object[] {""});
+      Constructor<?> con = c.getConstructor();
+      con.newInstance();
     }
     catch (ClassNotFoundException e) { exc = e; }
     catch (SecurityException e) { exc = e; }
