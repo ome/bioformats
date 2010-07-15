@@ -36,8 +36,17 @@ import ij.plugin.frame.RoiManager;
 import java.awt.Color;
 import java.awt.Rectangle;
 
-import loci.formats.meta.MetadataRetrieve;
+import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataStore;
+import loci.formats.ome.OMEXMLMetadata;
+
+import ome.xml.model.Ellipse;
+import ome.xml.model.Image;
+import ome.xml.model.OME;
+import ome.xml.model.Point;
+import ome.xml.model.Polyline;
+import ome.xml.model.Shape;
+import ome.xml.model.Union;
 
 // TODO: Stored ROIs are not correctly linked to Image.
 
@@ -57,73 +66,76 @@ public class ROIHandler {
   // -- ROIHandler API methods --
 
   /**
-   * Look for ROIs in the given MetadataRetrieve; if any are present, apply
+   * Look for ROIs in the given OMEXMLMetadata; if any are present, apply
    * them to the given images and display them in the ROI manager.
    */
-  public static void openROIs(MetadataRetrieve retrieve, ImagePlus[] images) {
+  public static void openROIs(IMetadata retrieve, ImagePlus[] images) {
+    if (!(retrieve instanceof OMEXMLMetadata)) return;
     int nextRoi = 0;
     RoiManager manager = RoiManager.getInstance();
 
+    OME root = (OME) retrieve.getRoot();
+
     int imageCount = retrieve.getImageCount();
-    for (int image=0; image<imageCount; image++) {
-      // TODO : technically incorrect to apply every ROI to every image;
-      // we should use getROIRefCount(image) instead
-      int roiCount = retrieve.getROICount();
+    for (int imageNum=0; imageNum<imageCount; imageNum++) {
+      Image image = root.getImage(imageNum);
+      int roiCount = image.sizeOfLinkedROIList();
       if (roiCount > 0 && manager == null) {
         manager = new RoiManager();
       }
       for (int roiNum=0; roiNum<roiCount; roiNum++) {
-        int shapeCount = 1;
-        //int shapeCount = retrieve.getShapeCount(image, roiNum);
+        Union shapeSet = image.getLinkedROI(roiNum).getUnion();
+        int shapeCount = shapeSet.sizeOfShapeList();
 
         for (int shape=0; shape<shapeCount; shape++) {
-          // determine the ROI type
-          Double ellipse = retrieve.getEllipseX(roiNum, shape);
-          Double line = retrieve.getLineX1(roiNum, shape);
-          Double point = retrieve.getPointX(roiNum, shape);
-          String polyline = retrieve.getPolylinePoints(roiNum, shape);
-          Double rectangle = retrieve.getRectangleX(roiNum, shape);
+          Shape shapeObject = shapeSet.getShape(shape);
 
           Roi roi = null;
 
-          if (ellipse != null) {
-            int cx = retrieve.getEllipseX(roiNum, shape).intValue();
-            int cy = retrieve.getEllipseY(roiNum, shape).intValue();
-            int rx = retrieve.getEllipseRadiusX(roiNum, shape).intValue();
-            int ry = retrieve.getEllipseRadiusY(roiNum, shape).intValue();
+          if (shapeObject instanceof Ellipse) {
+            Ellipse ellipse = (Ellipse) shapeObject;
+            int cx = ellipse.getX().intValue();
+            int cy = ellipse.getY().intValue();
+            int rx = ellipse.getRadiusX().intValue();
+            int ry = ellipse.getRadiusY().intValue();
             roi = new OvalRoi(cx - rx, cy - ry, rx * 2, ry * 2);
           }
-          else if (line != null) {
-            int x1 = retrieve.getLineX1(roiNum, shape).intValue();
-            int x2 = retrieve.getLineX2(roiNum, shape).intValue();
-            int y1 = retrieve.getLineY1(roiNum, shape).intValue();
-            int y2 = retrieve.getLineY2(roiNum, shape).intValue();
+          else if (shapeObject instanceof ome.xml.model.Line) {
+            ome.xml.model.Line line = (ome.xml.model.Line) shapeObject;
+            int x1 = line.getX1().intValue();
+            int x2 = line.getX2().intValue();
+            int y1 = line.getY1().intValue();
+            int y2 = line.getY2().intValue();
             roi = new Line(x1, y1, x2, y2);
           }
-          else if (point != null) {
-            int x = retrieve.getPointX(roiNum, shape).intValue();
-            int y = retrieve.getPointY(roiNum, shape).intValue();
+          else if (shapeObject instanceof Point) {
+            Point point = (Point) shapeObject;
+            int x = point.getX().intValue();
+            int y = point.getY().intValue();
             roi = new OvalRoi(x, y, 0, 0);
           }
-          else if (polyline != null) {
-            String points = retrieve.getPolylinePoints(roiNum, shape);
+          else if (shapeObject instanceof Polyline) {
+            Polyline polyline = (Polyline) shapeObject;
+            String points = polyline.getPoints();
             int[][] coordinates = parsePoints(points);
-            boolean closed = retrieve.getPolylineClosed(roiNum, shape);
+            boolean closed = polyline.getClosed();
             roi = new PolygonRoi(coordinates[0], coordinates[1],
               coordinates[0].length, closed ? Roi.POLYGON : Roi.POLYLINE);
           }
-          else if (rectangle != null) {
-            int x = retrieve.getRectangleX(roiNum, shape).intValue();
-            int y = retrieve.getRectangleY(roiNum, shape).intValue();
-            int w = retrieve.getRectangleWidth(roiNum, shape).intValue();
-            int h = retrieve.getRectangleHeight(roiNum, shape).intValue();
+          else if (shapeObject instanceof ome.xml.model.Rectangle) {
+            ome.xml.model.Rectangle rectangle =
+              (ome.xml.model.Rectangle) shapeObject;
+            int x = rectangle.getX().intValue();
+            int y = rectangle.getY().intValue();
+            int w = rectangle.getWidth().intValue();
+            int h = rectangle.getHeight().intValue();
             roi = new Roi(x, y, w, h);
           }
 
           if (roi != null) {
             Roi.setColor(Color.WHITE);
-            roi.setImage(images[image]);
-            manager.add(images[image], roi, nextRoi++);
+            roi.setImage(images[imageNum]);
+            manager.add(images[imageNum], roi, nextRoi++);
           }
         }
       }

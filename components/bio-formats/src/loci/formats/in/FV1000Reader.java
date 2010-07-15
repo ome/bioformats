@@ -1045,6 +1045,10 @@ public class FV1000Reader extends FormatReader {
 
           if (shape == 0) {
             nextROI++;
+
+            String roiID = MetadataTools.createLSID("ROI", nextROI);
+            store.setROIID(roiID, nextROI);
+            store.setImageROIRef(roiID, 0, nextROI);
           }
 
           if (shapeType == POINT) {
