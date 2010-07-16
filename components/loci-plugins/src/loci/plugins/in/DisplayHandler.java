@@ -160,9 +160,9 @@ public class DisplayHandler implements StatusListener {
       ru.exec("import i5d.Image5D");
       ru.setVar("title", imp.getTitle());
       ru.setVar("stack", imp.getStack());
-      ru.setVar("sizeC", r.getSizeC());
-      ru.setVar("sizeZ", r.getSizeZ());
-      ru.setVar("sizeT", r.getSizeT());
+      ru.setVar("sizeC", imp.getNChannels());
+      ru.setVar("sizeZ", imp.getNSlices());
+      ru.setVar("sizeT", imp.getNFrames());
       ru.exec("i5d = new Image5D(title, stack, sizeC, sizeZ, sizeT)");
       ru.setVar("cal", imp.getCalibration());
       ru.setVar("fi", imp.getOriginalFileInfo());

@@ -495,8 +495,7 @@ public class MainDialog extends ImporterDialog
     // NB: no other options affect openAllSeriesBox
 
     // concatenateBox
-    concatenateEnabled = !isStackImage5D;
-    if (!concatenateEnabled) isConcatenate = false;
+    // NB: no other options affect concatenateBox
 
     // == Memory management ==
 
