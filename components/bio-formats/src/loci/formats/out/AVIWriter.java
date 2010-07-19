@@ -267,6 +267,7 @@ public class AVIWriter extends FormatWriter {
     String type = meta.getPixelsType(series).toString();
     int pixelType = FormatTools.pixelTypeFromString(type);
     bytesPerPixel = FormatTools.getBytesPerPixel(pixelType);
+    bytesPerPixel *= getSamplesPerPixel();
 
     xPad = 0;
     int xMod = xDim % 4;
