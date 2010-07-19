@@ -387,14 +387,6 @@ public class Exporter {
 
       // convert and save slices
 
-      Class<?> c = null;
-      try {
-        c = Class.forName("ij.CompositeImage");
-      }
-      catch (ClassNotFoundException e) { }
-      boolean fakeRGB = imp.getClass().equals(c);
-      int n = fakeRGB ? imp.getNChannels() : 1;
-
       int size = imp.getImageStackSize();
       ImageStack is = imp.getImageStack();
       boolean doStack = w.canDoStacks() && size > 1;
@@ -407,7 +399,7 @@ public class Exporter {
       w.setInterleaved(false);
 
       int no = 0;
-      for (int i=start; i<end; i+=n) {
+      for (int i=start; i<end; i++) {
         if (doStack) {
           BF.status(false, "Saving plane " + (i + 1) + "/" + size);
           BF.progress(false, i, size);
@@ -423,44 +415,15 @@ public class Exporter {
         int y = proc.getHeight();
 
         if (proc instanceof ByteProcessor) {
-          if (fakeRGB) {
-            plane = new byte[n * x * y];
-            for (int j=0; j<n; j++) {
-              byte[] b = (byte[]) is.getProcessor(i + j + 1).getPixels();
-              System.arraycopy(b, 0, plane, j * x * y, b.length);
-            }
-          }
-          else {
-            plane = (byte[]) proc.getPixels();
-          }
+          plane = (byte[]) proc.getPixels();
         }
         else if (proc instanceof ShortProcessor) {
-          if (fakeRGB) {
-            plane = new byte[n * x * y * 2];
-            for (int j=0; j<n; j++) {
-              byte[] b = DataTools.shortsToBytes(
-                (short[]) is.getProcessor(i + j + 1).getPixels(), littleEndian);
-              System.arraycopy(b, 0, plane, j * x * y * 2, b.length);
-            }
-          }
-          else {
-            plane = DataTools.shortsToBytes(
-              (short[]) proc.getPixels(), littleEndian);
-          }
+          plane = DataTools.shortsToBytes(
+            (short[]) proc.getPixels(), littleEndian);
         }
         else if (proc instanceof FloatProcessor) {
-          if (fakeRGB) {
-            plane = new byte[n * x * y * 4];
-            for (int j=0; j<n; j++) {
-              byte[] b = DataTools.floatsToBytes(
-                (float[]) is.getProcessor(i + j + 1).getPixels(), littleEndian);
-              System.arraycopy(b, 0, plane, j * x * y * 4, b.length);
-            }
-          }
-          else {
-            plane = DataTools.floatsToBytes(
-              (float[]) proc.getPixels(), littleEndian);
-          }
+          plane = DataTools.floatsToBytes(
+            (float[]) proc.getPixels(), littleEndian);
         }
         else if (proc instanceof ColorProcessor) {
           byte[][] pix = new byte[3][x*y];
