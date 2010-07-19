@@ -140,7 +140,7 @@ public class OMETiffReader extends FormatReader {
     IFD ifd = tp.getFirstIFD();
     if (ifd == null) return false;
     String comment = ifd.getComment();
-    if (comment == null) return false;
+    if (comment == null || comment.trim().length() == 0) return false;
 
     try {
       ServiceFactory factory = new ServiceFactory();
