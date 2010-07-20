@@ -37,10 +37,13 @@ import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.OMEXMLService;
 
+import ome.xml.model.BinData;
+import ome.xml.model.OME;
 import ome.xml.model.enums.DimensionOrder;
 import ome.xml.model.enums.EnumerationException;
 import ome.xml.model.enums.PixelType;
 import ome.xml.model.primitives.NonNegativeInteger;
+import ome.xml.model.primitives.NonNegativeLong;
 import ome.xml.model.primitives.PositiveInteger;
 
 import org.slf4j.Logger;
@@ -116,6 +119,21 @@ public final class MetadataTools {
       store.setPixelsSizeC(new PositiveInteger(r.getSizeC()), i);
       store.setPixelsSizeT(new PositiveInteger(r.getSizeT()), i);
       store.setPixelsBinDataBigEndian(new Boolean(!r.isLittleEndian()), i, 0);
+
+      try {
+        OMEXMLService service =
+          new ServiceFactory().getInstance(OMEXMLService.class);
+        if (service.isOMEXMLRoot(store.getRoot())) {
+          OME root = (OME) store.getRoot();
+          BinData bin = root.getImage(i).getPixels().getBinData(0);
+          bin.setLength(new NonNegativeLong(0L));
+          store.setRoot(root);
+        }
+      }
+      catch (DependencyException exc) {
+        LOGGER.debug("Failed to set BinData.Length", exc);
+      }
+
       try {
         store.setPixelsType(PixelType.fromString(
           FormatTools.getPixelTypeString(r.getPixelType())), i);
