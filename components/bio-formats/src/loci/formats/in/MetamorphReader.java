@@ -106,7 +106,7 @@ public class MetamorphReader extends BaseTiffReader {
 
   private int mmPlanes; //number of metamorph planes
 
-  private MetamorphReader stkReader;
+  private MetamorphReader[][] stkReaders;
 
   /** List of STK files in the dataset. */
   private String[][] stks;
@@ -197,23 +197,25 @@ public class MetamorphReader extends BaseTiffReader {
 
     // the original file is a .nd file, so we need to construct a new reader
     // for the constituent STK files
-    if (stkReader == null) {
-      stkReader = new MetamorphReader();
-      stkReader.setCanLookForND(false);
-    }
-    stkReader.setId(file);
+    stkReaders[series][ndx].setId(file);
     int plane = stks[series].length == 1 ? no : coords[0];
-    stkReader.openBytes(plane, buf, x, y, w, h);
-    stkReader.close();
+    stkReaders[series][ndx].openBytes(plane, buf, x, y, w, h);
     return buf;
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
-    if (stkReader != null) stkReader.close(fileOnly);
+    if (stkReaders != null) {
+      for (MetamorphReader[] s : stkReaders) {
+        if (s != null) {
+          for (MetamorphReader reader : s) {
+            if (reader != null) reader.close(fileOnly);
+          }
+        }
+      }
+    }
     if (!fileOnly) {
-      stkReader = null;
       imageName = imageCreationDate = null;
       emWavelength = null;
       stks = null;
@@ -231,6 +233,7 @@ public class MetamorphReader extends BaseTiffReader {
       sizeX = sizeY = null;
       tempZ = 0d;
       validZ = false;
+      stkReaders = null;
     }
   }
 
@@ -487,6 +490,26 @@ public class MetamorphReader extends BaseTiffReader {
           }
         }
         core = newCore;
+      }
+    }
+
+    if (stks == null) {
+      stkReaders = new MetamorphReader[1][1];
+      stkReaders[0][0] = new MetamorphReader();
+      stkReaders[0][0].setCanLookForND(false);
+    }
+    else {
+      stkReaders = new MetamorphReader[stks.length][];
+      for (int i=0; i<stks.length; i++) {
+        stkReaders[i] = new MetamorphReader[stks[i].length];
+        for (int j=0; j<stkReaders[i].length; j++) {
+          stkReaders[i][j] = new MetamorphReader();
+          stkReaders[i][j].setCanLookForND(false);
+          if (j > 0) {
+            stkReaders[i][j].setMetadataOptions(
+              new DefaultMetadataOptions(MetadataLevel.MINIMUM));
+          }
+        }
       }
     }
 
