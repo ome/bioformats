@@ -37,19 +37,27 @@ import org.xml.sax.SAXParseException;
  * @author Chris Allan callan at blackcat.ca
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
-class ValidationErrorHandler implements ErrorHandler {
-  private boolean ok = true;
-  public boolean ok() { return ok; }
+public class ValidationErrorHandler implements ErrorHandler {
+
+  private int errors = 0;
+
+  public boolean ok() { return errors == 0; }
+
+  public int getErrorCount() { return errors; }
+
   public void error(SAXParseException e) {
-    XMLTools.LOGGER.error(e.getMessage(), e);
-    ok = false;
+    XMLTools.LOGGER.error(e.getMessage());
+    errors++;
   }
+
   public void fatalError(SAXParseException e) {
-    XMLTools.LOGGER.error(e.getMessage(), e);
-    ok = false;
+    XMLTools.LOGGER.error(e.getMessage());
+    errors++;
   }
+
   public void warning(SAXParseException e) {
-    XMLTools.LOGGER.warn(e.getMessage(), e);
-    ok = false;
+    XMLTools.LOGGER.warn(e.getMessage());
+    errors++;
   }
+
 }

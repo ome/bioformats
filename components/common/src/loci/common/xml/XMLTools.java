@@ -502,11 +502,12 @@ public final class XMLTools {
     }
     catch (IOException exc) { exception = exc; }
     catch (SAXException exc) { exception = exc; }
-    if (exception != null) {
-      LOGGER.info("Error validating document", exception);
+    final int errors = errorHandler.getErrorCount();
+    if (errors > 0) {
+      LOGGER.info("Error validating document: {} errors found", errors);
       return false;
     }
-    if (errorHandler.ok()) LOGGER.info("No validation errors found.");
+    else LOGGER.info("No validation errors found.");
     return errorHandler.ok();
   }
 
