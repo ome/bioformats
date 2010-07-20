@@ -604,7 +604,7 @@ public class ImportProcess implements StatusReporter {
    */
   private void setId() throws FormatException, IOException {
     boolean first = true;
-    for (int i=0; i<LuraWave.MAX_ATTEMPTS; i++) {
+    for (int i=0; i<LuraWave.MAX_TRIES; i++) {
       String code = LuraWave.initLicenseCode();
       try {
         reader.setId(options.getId());
@@ -618,9 +618,10 @@ public class ImportProcess implements StatusReporter {
         code = LuraWave.promptLicenseCode(code, first);
         if (code == null) throw exc;
         if (first) first = false;
+        reader.close();
       }
     }
-    throw new FormatException(LuraWave.TOO_MANY_ATTEMPTS);
+    throw new FormatException(LuraWave.TOO_MANY_TRIES);
   }
 
   private void computeSeriesLabels(IFormatReader r) {

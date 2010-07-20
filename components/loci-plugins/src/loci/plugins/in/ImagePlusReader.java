@@ -375,7 +375,7 @@ public class ImagePlusReader implements StatusReporter {
     final ImporterOptions options = process.getOptions();
 
     boolean first = true;
-    for (int i=0; i<LuraWave.MAX_ATTEMPTS; i++) {
+    for (int i=0; i<LuraWave.MAX_TRIES; i++) {
       String code = LuraWave.initLicenseCode();
       try {
         return reader.openProcessors(no, r.x, r.y, r.width, r.height);
@@ -390,7 +390,7 @@ public class ImagePlusReader implements StatusReporter {
         if (first) first = false;
       }
     }
-    throw new FormatException(LuraWave.TOO_MANY_ATTEMPTS);
+    throw new FormatException(LuraWave.TOO_MANY_TRIES);
   }
 
   // -- Helper methods - image post processing --

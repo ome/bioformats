@@ -41,8 +41,8 @@ public final class LuraWave {
 
   // -- Constants --
 
-  public static final int MAX_ATTEMPTS = 5;
-  public static final String TOO_MANY_ATTEMPTS =
+  public static final int MAX_TRIES = 5;
+  public static final String TOO_MANY_TRIES =
     "Too many LuraWave license code attempts; giving up.";
 
   // -- Constructor --

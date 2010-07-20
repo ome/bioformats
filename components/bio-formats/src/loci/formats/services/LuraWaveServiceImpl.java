@@ -74,7 +74,6 @@ public class LuraWaveServiceImpl extends AbstractService
    * Default constructor.
    */
   public LuraWaveServiceImpl() throws DependencyException {
-    license = System.getProperty(LICENSE_PROPERTY);
     checkClassDependency(com.luratech.lwf.lwfDecoder.class);
     try {
       Field isStub = com.luratech.lwf.lwfDecoder.class.getField(STUB_FIELD);
@@ -104,9 +103,7 @@ public class LuraWaveServiceImpl extends AbstractService
    */
   public void initialize(InputStream stream)
     throws IOException, DependencyException, ServiceException {
-    if (license == null) {
-      throw new DependencyException(NO_LICENSE_MSG);
-    }
+    initLicense();
     try {
       delegate = new lwfDecoder(stream, null, license);
     }
@@ -157,6 +154,12 @@ public class LuraWaveServiceImpl extends AbstractService
     catch (SecurityException e) {
       throw new ServiceException(e);
     }
+  }
+
+  private void initLicense() throws DependencyException {
+    if (license != null) return; // license already initialized
+    license = System.getProperty(LICENSE_PROPERTY);
+    if (license == null) throw new DependencyException(NO_LICENSE_MSG);
   }
 
 }
