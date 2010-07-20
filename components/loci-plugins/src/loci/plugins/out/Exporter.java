@@ -319,16 +319,13 @@ public class Exporter {
         }
         catch (EnumerationException e) { }
       }
-      if (store.getChannelCount(0) == 0 ||
-        store.getChannelSamplesPerPixel(0, 0) == null)
-      {
-        store.setChannelSamplesPerPixel(new PositiveInteger(channels), 0, 0);
-      }
-      for (int channel=0; channel<store.getChannelCount(0); channel++) {
-        if (store.getChannelID(0, channel) == null) {
-          String lsid = MetadataTools.createLSID("Channel", 0, channel);
-          store.setChannelID(lsid, 0, channel);
+
+      for (int c=0; c<imp.getNChannels(); c++) {
+        if (c >= store.getChannelCount(0) || store.getChannelID(0, c) == null) {
+          String lsid = MetadataTools.createLSID("Channel", 0, c);
+          store.setChannelID(lsid, 0, c);
         }
+        store.setChannelSamplesPerPixel(new PositiveInteger(channels), 0, 0);
       }
 
       Calibration cal = imp.getCalibration();

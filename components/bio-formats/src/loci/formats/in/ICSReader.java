@@ -141,6 +141,7 @@ public class ICSReader extends FormatReader {
 
   private int prevImage;
   private boolean hasInstrumentData = false;
+  private boolean storedRGB = false;
 
   // -- Constructor --
 
@@ -224,7 +225,7 @@ public class ICSReader extends FormatReader {
 
     int sizeC = lifetime ? 1 : getSizeC();
 
-    if (!isRGB() && sizeC > 4 && channelLengths.size() == 1) {
+    if (!isRGB() && sizeC > 4 && channelLengths.size() == 1 && storedRGB) {
       // channels are stored interleaved, but because there are more than we
       // can display as RGB, we need to separate them
       in.seek(offset +
@@ -300,6 +301,7 @@ public class ICSReader extends FormatReader {
       lifetime = false;
       prevImage = 0;
       hasInstrumentData = false;
+      storedRGB = false;
     }
   }
 
@@ -651,6 +653,7 @@ public class ICSReader extends FormatReader {
         if (core[0].sizeC == 0) core[0].sizeC = axisLengths[i];
         else core[0].sizeC *= axisLengths[i];
         channelLengths.add(new Integer(axisLengths[i]));
+        storedRGB = getSizeX() == 0;
         core[0].rgb = getSizeX() == 0 && getSizeC() <= 4 && getSizeC() > 1;
         if (getDimensionOrder().indexOf("C") == -1) {
           core[0].dimensionOrder += "C";
