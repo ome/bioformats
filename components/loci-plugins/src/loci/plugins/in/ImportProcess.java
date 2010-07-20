@@ -53,6 +53,7 @@ import loci.plugins.BF;
 import loci.plugins.util.IJStatusEchoer;
 import loci.plugins.util.ImageProcessorReader;
 import loci.plugins.util.LociPrefs;
+import loci.plugins.util.LuraWave;
 import loci.plugins.util.VirtualReader;
 import loci.plugins.util.WindowTools;
 import ome.xml.model.enums.DimensionOrder;
@@ -467,7 +468,7 @@ public class ImportProcess implements StatusReporter {
     r = minMaxCalculator = new MinMaxCalculator(r);
     r = virtualReader = new VirtualReader(r);
     reader = new ImageProcessorReader(r);
-    reader.setId(options.getId());
+    setId();
 
     computeSeriesLabels(reader);
   }
@@ -540,7 +541,9 @@ public class ImportProcess implements StatusReporter {
     if (options.isLocal() || options.isHTTP()) {
       BF.status(options.isQuiet(), "Identifying " + idName);
       imageReader = LociPrefs.makeImageReader();
-      try { baseReader = imageReader.getReader(options.getId()); }
+      try {
+        baseReader = imageReader.getReader(options.getId());
+      }
       catch (FormatException exc) {
         WindowTools.reportException(exc, options.isQuiet(),
           "Sorry, there was an error reading the file.");
@@ -558,6 +561,8 @@ public class ImportProcess implements StatusReporter {
       cancel();
       return;
     }
+
+    // attach OME-XML metadata store
     Exception exc = null;
     try {
       ServiceFactory factory = new ServiceFactory();
@@ -590,6 +595,33 @@ public class ImportProcess implements StatusReporter {
   }
 
   // -- Helper methods -- ImportStep.STACK --
+
+  /**
+   * HACK: This method mainly exists to prompt the user for a missing
+   * LuraWave license code, in the case of LWF-compressed Flex.
+   *
+   * @see ImagePlusReader#readProcessors(ImportProcess, int, Region)
+   */
+  private void setId() throws FormatException, IOException {
+    boolean first = true;
+    for (int i=0; i<LuraWave.MAX_ATTEMPTS; i++) {
+      String code = LuraWave.initLicenseCode();
+      try {
+        reader.setId(options.getId());
+        return;
+      }
+      catch (FormatException exc) {
+        if (options.isQuiet() || options.isWindowless()) throw exc;
+        if (!LuraWave.isLicenseCodeException(exc)) throw exc;
+
+        // prompt user for LuraWave license code
+        code = LuraWave.promptLicenseCode(code, first);
+        if (code == null) throw exc;
+        if (first) first = false;
+      }
+    }
+    throw new FormatException(LuraWave.TOO_MANY_ATTEMPTS);
+  }
 
   private void computeSeriesLabels(IFormatReader r) {
     final int seriesCount = r.getSeriesCount();

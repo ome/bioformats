@@ -39,6 +39,12 @@ import loci.formats.services.LuraWaveServiceImpl;
  */
 public final class LuraWave {
 
+  // -- Constants --
+
+  public static final int MAX_ATTEMPTS = 5;
+  public static final String TOO_MANY_ATTEMPTS =
+    "Too many LuraWave license code attempts; giving up.";
+
   // -- Constructor --
 
   private LuraWave() { }
@@ -48,7 +54,7 @@ public final class LuraWave {
   /** Reads LuraWave license code from ImageJ preferences, if available. */
   public static String initLicenseCode() {
     String code = Prefs.get(LuraWaveServiceImpl.LICENSE_PROPERTY, null);
-    if (code != null) {
+    if (code != null && code.length() >= 6) {
       System.setProperty(LuraWaveServiceImpl.LICENSE_PROPERTY, code);
     }
     return code;

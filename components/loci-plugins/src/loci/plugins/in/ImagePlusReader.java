@@ -55,6 +55,7 @@ import loci.formats.services.OMEXMLService;
 import loci.plugins.Slicer;
 import loci.plugins.util.BFVirtualStack;
 import loci.plugins.util.ImageProcessorReader;
+import loci.plugins.util.LuraWave;
 import loci.plugins.util.VirtualImagePlus;
 
 /**
@@ -344,8 +345,7 @@ public class ImagePlusReader implements StatusReporter {
       updateTiming(s, i, current++, total);
 
       // get image processor for ith plane
-      final ImageProcessor[] p = reader.openProcessors(i,
-        region.x, region.y, region.width, region.height);
+      final ImageProcessor[] p = readProcessors(process, i, region);
       if (p == null || p.length == 0) {
         throw new FormatException("Cannot read plane #" + i);
       }
@@ -360,6 +360,37 @@ public class ImagePlusReader implements StatusReporter {
     }
 
     return createStack(procs, labels, luts);
+  }
+
+  /**
+   * HACK: This method mainly exists to prompt the user for a missing
+   * LuraWave license code, in the case of LWF-compressed Flex.
+   *
+   * @see ImportProcess#setId()
+   */
+  private ImageProcessor[] readProcessors(ImportProcess process,
+    int no, Region r) throws FormatException, IOException
+  {
+    final ImageProcessorReader reader = process.getReader();
+    final ImporterOptions options = process.getOptions();
+
+    boolean first = true;
+    for (int i=0; i<LuraWave.MAX_ATTEMPTS; i++) {
+      String code = LuraWave.initLicenseCode();
+      try {
+        return reader.openProcessors(no, r.x, r.y, r.width, r.height);
+      }
+      catch (FormatException exc) {
+        if (options.isQuiet() || options.isWindowless()) throw exc;
+        if (!LuraWave.isLicenseCodeException(exc)) throw exc;
+
+        // prompt user for LuraWave license code
+        code = LuraWave.promptLicenseCode(code, first);
+        if (code == null) throw exc;
+        if (first) first = false;
+      }
+    }
+    throw new FormatException(LuraWave.TOO_MANY_ATTEMPTS);
   }
 
   // -- Helper methods - image post processing --
