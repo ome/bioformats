@@ -126,6 +126,7 @@ public class TiffWriter extends FormatWriter {
         // write TIFF header
         tiffSaver.writeHeader();
       }
+      tmp.close();
     }
 
     int width = retrieve.getPixelsSizeX(series).getValue().intValue();
@@ -181,6 +182,7 @@ public class TiffWriter extends FormatWriter {
     tiffSaver.setInputStream(in);
     tiffSaver.writeImage(buf, ifd, no, type, x, y, w, h,
       no == getPlaneCount() - 1);
+    tiffSaver.setInputStream(null);
     in.close();
   }
 
