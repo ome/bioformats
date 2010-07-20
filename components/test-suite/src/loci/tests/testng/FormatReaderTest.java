@@ -650,7 +650,7 @@ public class FormatReaderTest {
   }
 
   /**
-   * @testng.test groups = "all"
+   * @testng.test groups = "all type"
    */
   public void testSaneUsedFiles() {
     if (!initFile()) return;

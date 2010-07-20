@@ -125,4 +125,23 @@ Type "ant -p" for a list of targets.
     </testng>
   </target>
 
+  <target name="test-type" depends="compile"
+    description="run automated tests in group 'type'">
+    <testng sourcedir="${dest.dir}"
+      annotations="Javadoc" groups="type" testname="Type tests"
+      listener="loci.tests.testng.DotTestListener"
+      suitename="LOCI software test suite">
+      <classpath>
+        <pathelement location="${classes.dir}"/>
+        <pathelement path="${component.classpath}"/>
+      </classpath>
+      <classfileset file="${classes.dir}/${reader-test.class}"/>
+      <sysproperty key="testng.filename" value="${testng.filename}"/>
+      <sysproperty key="testng.directory" value="${testng.directory}"/>
+      <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
+      <sysproperty key="lurawave.license" value="${lurawave.license}"/>
+      <jvmarg value="-mx${testng.memory}"/>
+    </testng>
+  </target>
+
 </project>
