@@ -72,6 +72,7 @@ public class ScanrReader extends FormatReader {
   private Hashtable<String, Integer> wellLabels =
     new Hashtable<String, Integer>();
   private String plateName;
+  private Double pixelSize;
 
   private String[] tiffs;
   private MinimalTiffReader reader;
@@ -169,6 +170,7 @@ public class ScanrReader extends FormatReader {
       metadataFiles.clear();
       wellLabels.clear();
       wellCount = 0;
+      pixelSize = null;
     }
   }
 
@@ -453,6 +455,10 @@ public class ScanrReader extends FormatReader {
         for (int c=0; c<getSizeC(); c++) {
           store.setChannelName(channelNames.get(c), i, c);
         }
+        if (pixelSize != null) {
+          store.setPixelsPhysicalSizeX(pixelSize, i);
+          store.setPixelsPhysicalSizeY(pixelSize, i);
+        }
       }
 
       String row = wellRows > 26 ? "Number" : "Letter";
@@ -519,6 +525,9 @@ public class ScanrReader extends FormatReader {
           else {
             wellLabels.put(value, new Integer(wellIndex));
           }
+        }
+        else if (key.equals("conversion factor um/pixel")) {
+          pixelSize = new Double(value);
         }
       }
     }
