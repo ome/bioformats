@@ -25,6 +25,7 @@ package loci.common;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.Enumeration;
 
 /**
  * A utility class with convenience methods for debugging.
@@ -48,6 +49,38 @@ public final class DebugTools {
     ByteArrayOutputStream out = new ByteArrayOutputStream();
     t.printStackTrace(new PrintStream(out));
     return new String(out.toByteArray());
+  }
+
+  /**
+   * Attempts to enable SLF4J logging via log4j
+   * without an external configuration file.
+   *
+   * @param level A string indicating the desired level
+   *   (i.e.: ALL, DEBUG, ERROR, FATAL, INFO, OFF, TRACE, WARN).
+   * @return true iff logging was successfully enabled
+   */
+  public static synchronized boolean enableLogging(String level) {
+    ReflectedUniverse r = new ReflectedUniverse();
+    try {
+      r.exec("import org.apache.log4j.Level");
+      r.exec("import org.apache.log4j.Logger");
+      r.exec("root = Logger.getRootLogger()");
+      r.exec("root.setLevel(Level." + level + ")");
+      Enumeration en = (Enumeration) r.exec("root.getAllAppenders()");
+      if (!en.hasMoreElements()) {
+        // no appenders yet; attach a simple console appender
+        r.exec("import org.apache.log4j.ConsoleAppender");
+        r.exec("import org.apache.log4j.PatternLayout");
+        r.setVar("pattern", "%m%n");
+        r.exec("layout = new PatternLayout(pattern)");
+        r.exec("appender = new ConsoleAppender(layout)");
+        r.exec("root.addAppender(appender)");
+      }
+    }
+    catch (ReflectException exc) {
+      return false;
+    }
+    return true;
   }
 
 }
