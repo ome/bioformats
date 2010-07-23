@@ -140,6 +140,7 @@ for s = 1:numSeries
     result{s, 3} = colorMaps;
     fprintf('\n');
 end
+r.close();
 toc
 
 %{
