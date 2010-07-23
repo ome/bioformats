@@ -10,6 +10,9 @@
 			<Bin:BinData BigEndian="false" Length="32">AP+rzuv/AAB5n8Pi/wBHbJO3//8dPGCF</Bin:BinData>
 			<Bin:BinData BigEndian="false" Length="32">//+szuv/AP95n8PiAABHbZO3AP8dPF+G</Bin:BinData>
 		</Pixels>
+		<ROI:ROIRef ID="ROI:1"/>
+		<ROI:ROIRef ID="ROI:2"/>
+		<ROI:ROIRef ID="ROI:3"/>
 	</Image>
 	<ROI:ROI ID="ROI:1">
 		<ROI:Union>
