@@ -98,7 +98,8 @@ public class DeltavisionReader extends FormatReader {
 
   /** Constructs a new Deltavision reader. */
   public DeltavisionReader() {
-    super("Deltavision", new String[] {"dv", "r3d", "r3d_d3d", "dv.log"});
+    super("Deltavision",
+      new String[] {"dv", "r3d", "r3d_d3d", "dv.log", "r3d.log"});
     suffixSufficient = false;
     suffixNecessary = false;
     domains = new String[] {FormatTools.LM_DOMAIN};
@@ -114,7 +115,11 @@ public class DeltavisionReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
   public boolean isThisType(String name, boolean open) {
-    if (checkSuffix(name, "dv.log") || name.endsWith("_log.txt")) return true;
+    if (checkSuffix(name, "dv.log") || checkSuffix(name, "r3d.log") ||
+      name.endsWith("_log.txt"))
+    {
+      return true;
+    }
     if (checkSuffix(name, "pnl")) return false;
     return super.isThisType(name, open);
   }
@@ -171,7 +176,7 @@ public class DeltavisionReader extends FormatReader {
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     if (!checkSuffix(id, "dv")) {
-      if (checkSuffix(id, "dv.log")) {
+      if (checkSuffix(id, "dv.log") || checkSuffix(id, "r3d.log")) {
         id = id.substring(0, id.lastIndexOf("."));
       }
       else if (id.endsWith("_log.txt")) {

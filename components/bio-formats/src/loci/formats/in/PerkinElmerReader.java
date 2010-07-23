@@ -134,7 +134,7 @@ public class PerkinElmerReader extends FormatReader {
     if (prefix.indexOf(".") != -1) {
       prefix = prefix.substring(0, prefix.lastIndexOf("."));
     }
-    if (prefix.indexOf("_") != -1) {
+    if (prefix.indexOf("_") != -1 && binFile) {
       prefix = prefix.substring(0, prefix.lastIndexOf("_"));
     }
 

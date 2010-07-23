@@ -51,7 +51,7 @@ public class JEOLReader extends FormatReader {
 
   /** Constructs a new JEOL reader. */
   public JEOLReader() {
-    super("JEOL", new String[] {"dat", "img"});
+    super("JEOL", new String[] {"dat", "img", "par"});
     domains = new String[] {FormatTools.SEM_DOMAIN};
     suffixSufficient = false;
   }
@@ -60,6 +60,7 @@ public class JEOLReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(String) */
   public boolean isThisType(String name, boolean open) {
+    if (checkSuffix(name, "par")) return true;
     if (checkSuffix(name, "dat")) {
       try {
         RandomAccessInputStream stream = new RandomAccessInputStream(name);
@@ -115,6 +116,18 @@ public class JEOLReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
+    if (checkSuffix(id, "par")) {
+      String base = new Location(id).getAbsoluteFile().getAbsolutePath();
+      base = base.substring(0, base.lastIndexOf("."));
+      id = base + ".IMG";
+      if (!new Location(id).exists()) {
+        id = base + ".DAT";
+      }
+      if (!new Location(id).exists()) {
+        throw new FormatException("Could not find image file.");
+      }
+    }
+
     super.initFile(id);
     in = new RandomAccessInputStream(id);
     core[0].littleEndian = true;

@@ -68,7 +68,7 @@ public class TillVisionReader extends FormatReader {
   // -- Fields --
 
   private String[] pixelsFiles;
-  private RandomAccessInputStream[] pixelsStream;
+  private RandomAccessInputStream pixelsStream;
   private Hashtable<Integer, Double> exposureTimes;
   private boolean embeddedImages;
   private long embeddedOffset;
@@ -81,7 +81,7 @@ public class TillVisionReader extends FormatReader {
 
   /** Constructs a new TillVision reader. */
   public TillVisionReader() {
-    super("TillVision", "vws");
+    super("TillVision", new String[] {"vws", "pst"});
     domains = new String[] {FormatTools.LM_DOMAIN};
   }
 
@@ -100,9 +100,13 @@ public class TillVisionReader extends FormatReader {
       in.seek(embeddedOffset + no * plane);
       readPlane(in, x, y, w, h, buf);
     }
-    else if ((no + 1) * plane <= pixelsStream[series].length()) {
-      pixelsStream[series].seek(no * plane);
-      readPlane(pixelsStream[series], x, y, w, h, buf);
+    else {
+      pixelsStream = new RandomAccessInputStream(pixelsFiles[series]);
+      if ((no + 1) * plane <= pixelsStream.length()) {
+        pixelsStream.seek(no * plane);
+        readPlane(pixelsStream, x, y, w, h, buf);
+      }
+      pixelsStream.close();
     }
 
     return buf;
@@ -112,11 +116,7 @@ public class TillVisionReader extends FormatReader {
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
-      if (pixelsStream != null) {
-        for (RandomAccessInputStream stream : pixelsStream) {
-          if (stream != null) stream.close();
-        }
-      }
+      if (pixelsStream != null) pixelsStream.close();
       pixelsStream = null;
       pixelsFiles = null;
       embeddedOffset = 0;
@@ -156,6 +156,19 @@ public class TillVisionReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
+    // make sure that we have the .vws file
+
+    if (!checkSuffix(id, "vws")) {
+      Location pst = new Location(id).getAbsoluteFile();
+      String name = pst.getParentFile().getName();
+      Location parent = pst.getParentFile().getParentFile();
+      Location vwsFile = new Location(parent, name.replaceAll(".pst", ".vws"));
+      if (vwsFile.exists()) {
+        id = vwsFile.getAbsolutePath();
+      }
+      else throw new FormatException("Could not find .vws file.");
+    }
+
     super.initFile(id);
 
     exposureTimes = new Hashtable<Integer, Double>();
@@ -193,6 +206,7 @@ public class TillVisionReader extends FormatReader {
           String type = s.readString(len);
           if (!type.equals("CImage")) {
             embeddedImages = false;
+            s.close();
             continue;
           }
 
@@ -212,8 +226,10 @@ public class TillVisionReader extends FormatReader {
           core[0].sizeT = s.readInt();
           core[0].pixelType = convertPixelType(s.readInt());
           embeddedOffset = s.getFilePointer() + 28;
+          in.close();
           in = poi.getDocumentStream(name);
           nImages++;
+          s.close();
           break;
         }
 
@@ -288,6 +304,7 @@ public class TillVisionReader extends FormatReader {
           }
           nImages++;
         }
+        s.close();
       }
     }
 
@@ -333,7 +350,6 @@ public class TillVisionReader extends FormatReader {
 
     Arrays.sort(pixelsFile);
 
-    pixelsStream = new RandomAccessInputStream[getSeriesCount()];
     pixelsFiles = new String[getSeriesCount()];
 
     Object[] metadataKeys = tmpSeriesMetadata.keySet().toArray();
@@ -363,7 +379,6 @@ public class TillVisionReader extends FormatReader {
         }
 
         file = f.getAbsolutePath();
-        pixelsStream[i] = new RandomAccessInputStream(file);
         pixelsFiles[i] = file;
 
         // read key/value pairs from .inf files
@@ -371,7 +386,9 @@ public class TillVisionReader extends FormatReader {
         int dot = file.lastIndexOf(".");
         String inf = file.substring(0, dot) + ".inf";
 
-        IniList data = parser.parseINI(new BufferedReader(new FileReader(inf)));
+        BufferedReader reader = new BufferedReader(new FileReader(inf));
+        IniList data = parser.parseINI(reader);
+        reader.close();
         IniTable infoTable = data.getTable("Info");
 
         core[i].sizeX = Integer.parseInt(infoTable.get("Width"));
