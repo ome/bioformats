@@ -138,7 +138,8 @@ public class MetamorphReader extends BaseTiffReader {
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     TiffParser tp = new TiffParser(stream);
     IFD ifd = tp.getFirstIFD();
-    if (ifd == null || !ifd.containsKey(METAMORPH_ID)) return false;
+    if (ifd == null) return false;
+    if (ifd.containsKey(METAMORPH_ID)) return true;
     String software = ifd.getIFDTextValue(IFD.SOFTWARE);
     return software != null && software.trim().startsWith("Meta");
   }
@@ -155,9 +156,9 @@ public class MetamorphReader extends BaseTiffReader {
     Location l = new Location(id).getAbsoluteFile();
     String[] files = l.getParentFile().list();
 
-    for (int i=0; i<files.length; i++) {
-      if (checkSuffix(files[i], ND_SUFFIX) &&
-       id.startsWith(files[i].substring(0, files[i].lastIndexOf("."))))
+    for (String file : files) {
+      if (checkSuffix(file, ND_SUFFIX) &&
+       l.getName().startsWith(file.substring(0, file.lastIndexOf("."))))
       {
         return FormatTools.MUST_GROUP;
       }
@@ -174,7 +175,13 @@ public class MetamorphReader extends BaseTiffReader {
 
     Vector<String> v = new Vector<String>();
     if (ndFilename != null) v.add(ndFilename);
-    if (!noPixels) v.addAll(Arrays.asList(stks[getSeries()]));
+    if (!noPixels) {
+      for (String stk : stks[getSeries()]) {
+        if (new Location(stk).exists()) {
+          v.add(stk);
+        }
+      }
+    }
     return v.toArray(new String[v.size()]);
   }
 
@@ -275,12 +282,13 @@ public class MetamorphReader extends BaseTiffReader {
     else if (canLookForND) {
       // an STK file was passed to initFile
       // let's check the parent directory for an .nd file
-      Location parent = new Location(id).getAbsoluteFile().getParentFile();
+      Location stk = new Location(id).getAbsoluteFile();
+      Location parent = stk.getParentFile();
       String[] list = parent.list(true);
       for (String f : list) {
         if (checkSuffix(f, ND_SUFFIX)) {
           String prefix = f.substring(0, f.lastIndexOf("."));
-          if (currentId.startsWith(prefix)) {
+          if (stk.getName().startsWith(prefix)) {
             ndfile = new Location(parent, f).getAbsoluteFile();
             break;
           }

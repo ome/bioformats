@@ -61,6 +61,7 @@ public class ScanrReader extends FormatReader {
   private static final String XML_FILE = "experiment_descriptor.xml";
   private static final String EXPERIMENT_FILE = "experiment_descriptor.dat";
   private static final String ACQUISITION_FILE = "AcquisitionLog.dat";
+  private static final String[] METADATA_SUFFIXES = new String[] {"dat", "xml"};
 
   // -- Fields --
 
@@ -245,7 +246,7 @@ public class ScanrReader extends FormatReader {
 
     for (String file : list) {
       Location f = new Location(dir, file);
-      if (!f.isDirectory()) {
+      if (!f.isDirectory() && checkSuffix(file, METADATA_SUFFIXES)) {
         metadataFiles.add(f.getAbsolutePath());
       }
     }

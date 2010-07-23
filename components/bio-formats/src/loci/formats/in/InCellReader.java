@@ -60,6 +60,8 @@ public class InCellReader extends FormatReader {
 
   private static final String[] PIXELS_SUFFIXES =
     new String[] {"tif", "tiff", "im"};
+  private static final String[] METADATA_SUFFIXES =
+    new String[] {"xdce", "xml", "xlog"};
 
   // -- Fields --
 
@@ -93,13 +95,28 @@ public class InCellReader extends FormatReader {
 
   /** Constructs a new InCell 1000 reader. */
   public InCellReader() {
-    super("InCell 1000", new String[] {"xdce", "xml"});
+    super("InCell 1000",
+      new String[] {"xdce", "xml", "tiff", "tif", "xlog", "im"});
     suffixSufficient = false;
     domains = new String[] {FormatTools.HCS_DOMAIN};
     hasCompanionFiles = true;
   }
 
   // -- IFormatReader API methods --
+
+  /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  public boolean isThisType(String name, boolean open) {
+    if (checkSuffix(name, PIXELS_SUFFIXES) || checkSuffix(name, "xlog")) {
+      Location file = new Location(name).getAbsoluteFile().getParentFile();
+      String[] list = file.list(true);
+      for (String f : list) {
+        if (checkSuffix(f, new String[] {"xdce", "xml"})) {
+          return isThisType(new Location(file, f).getAbsolutePath(), open);
+        }
+      }
+    }
+    return super.isThisType(name, open);
+  }
 
   /* @see loci.formats.IFormatReader#isSingleFile(String) */
   public boolean isSingleFile(String id) throws FormatException, IOException {
@@ -175,8 +192,12 @@ public class InCellReader extends FormatReader {
       for (Image[] timepoints : imageFiles[well][field]) {
         for (Image plane : timepoints) {
           if (plane != null && plane.filename != null) {
-            files.add(plane.filename);
-            files.add(plane.thumbnailFile);
+            if (new Location(plane.filename).exists()) {
+              files.add(plane.filename);
+            }
+            if (new Location(plane.thumbnailFile).exists()) {
+              files.add(plane.thumbnailFile);
+            }
           }
         }
       }
@@ -218,6 +239,21 @@ public class InCellReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
+    // make sure that we have the .xdce (or .xml) file
+    if (checkSuffix(id, PIXELS_SUFFIXES) || checkSuffix(id, "xlog")) {
+      Location parent = new Location(id).getAbsoluteFile().getParentFile();
+      String[] list = parent.list(true);
+      for (String f : list) {
+        if (checkSuffix(f, new String[] {"xdce", "xml"})) {
+          String path = new Location(parent, f).getAbsolutePath();
+          if (isThisType(path)) {
+            id = path;
+            break;
+          }
+        }
+      }
+    }
+
     super.initFile(id);
     in = new RandomAccessInputStream(id);
 
@@ -236,7 +272,7 @@ public class InCellReader extends FormatReader {
     Location directory = new Location(id).getAbsoluteFile().getParentFile();
     String[] files = directory.list(true);
     for (String file : files) {
-      if (!checkSuffix(file, PIXELS_SUFFIXES)) {
+      if (checkSuffix(file, METADATA_SUFFIXES)) {
         metadataFiles.add(new Location(directory, file).getAbsolutePath());
       }
     }
