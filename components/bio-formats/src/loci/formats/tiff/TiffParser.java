@@ -160,7 +160,7 @@ public class TiffParser {
     for (long offset : offsets) {
       IFD ifd = getIFD(offset);
       if (ifd == null) continue;
-      ifds.add(ifd);
+      if (ifd.containsKey(IFD.IMAGE_WIDTH)) ifds.add(ifd);
       long[] subOffsets = null;
       try {
         subOffsets = ifd.getIFDLongArray(IFD.SUB_IFD);
