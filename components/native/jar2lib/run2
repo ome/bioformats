@@ -1,0 +1,113 @@
+BASEDIR=${HOME}/tst3
+JNI_PATH=/Users/bselinsky/tst3/jace
+JARSDIR=${BASEDIR}/jars
+JAR2LIBPATH=/Users/bselinsky/svn/trunk/components/native/j2l5
+MYJACEDIR=/Users/bselinsky/svn/trunk/components/native/j2l4/out/src/jace
+# MYJACEDIR=/Users/bselinsky/tst3/jace.39/jace/trunk/release/include/jace
+# MYJACEDIR2=/Users/bselinsky/May7/loci/components/native/bf-cpp/proxies/include/jace/proxy/javax
+JAVAXPATH=/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Classes/classes.jar
+
+EXTRA_FILES=${JARSDIR}/jace1.1.1/source/c++/source/jace/JFieldHelper.cpp:\
+${JARSDIR}/jace1.1.1/source/c++/source/jace/JClassImpl.cpp
+
+MAIN_CLASS_PATH=\
+/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Classes/classes.jar:\
+out/src:\
+${JAR2LIBPATH}:\
+${JARSDIR}/loci-autogen.jar:\
+${JARSDIR}/velocity-dep-1.5.jar:\
+${JARSDIR}/jace1.1.1/source/java/classes:\
+${JARSDIR}/retroweaver-2.0.7.jar:\
+${JARSDIR}/retroweaver-rt-2.0.7.jar:\
+${HOME}/bioFormats_src/trunk/components/native/bf-cpp/build/classes
+
+PASSED_CLASS_PATH=\
+/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Classes/classes.jar:\
+${BASEDIR}/src/trunk/components/bio-formats/build/classes:\
+${BASEDIR}/src/trunk/components/common/build/classes:\
+${BASEDIR}/out/src:\
+${JARSDIR}/bio-formats.jar:\
+${JAVAXPATH}
+
+#
+# Dont change anything after this line
+#
+
+rm -rf ${BASEDIR}/out
+mkdir ${BASEDIR}/out
+mkdir ${BASEDIR}/out/header
+mkdir ${BASEDIR}/out/source
+mkdir ${BASEDIR}/out/src
+mkdir ${BASEDIR}/out/src/include
+mkdir ${BASEDIR}/out/src/source
+mkdir -p ${BASEDIR}/out/src/libout/src
+
+ln -s ${MYJACEDIR} ${BASEDIR}/out/src/include/jace
+
+rm -rf ${BASEDIR}/src
+mkdir ${BASEDIR}/src
+cd ${BASEDIR}/src
+svn co http://skyking.microscopy.wisc.edu/svn/java/trunk
+cd trunk
+ant tools
+cd ${BASEDIR}/src/trunk/components/native/bf-cpp
+ant
+
+cd ${BASEDIR}
+
+
+echo AAAA
+
+cp -r /Users/bselinsky/tst3/src/trunk/components/native/bf-cpp/proxies/source/jace /Users/bselinsky/tst3/out/src/source
+
+ls /Users/bselinsky/tst3/out/src/source/jace/proxy/java/awt/Frame.cpp
+date
+ls -l /Users/bselinsky/tst3/src/trunk/components/native/bf-cpp/proxies/source/jace/proxy/java/awt/Frame.cpp
+echo BBBB
+
+java \
+	-cp ${MAIN_CLASS_PATH} \
+	Jar2Lib \
+	-f fred \
+	-s $1 \
+	-h $1 \
+	-H ${BASEDIR}/out/src \
+	-S ${BASEDIR}/out/src \
+	-C ${PASSED_CLASS_PATH} \
+	-d x=java.lang.String \
+	-c conflicts.txt \
+	-I ${JARSDIR}/jace1.1.1/release/include \
+	-L ${BASEDIR}/jace \
+	-x ${EXTRA_FILES}
+
+echo CCCC
+ls /Users/bselinsky/tst3/out/src/source/jace/proxy/java/awt/Frame.cpp
+date
+ls -l /Users/bselinsky/tst3/src/trunk/components/native/bf-cpp/proxies/source/jace/proxy/java/awt/Frame.cpp
+echo DDDD
+
+	
+
+mkdir ${BASEDIR}/out/src/jace
+cp ${BASEDIR}/jace/Prerequisites.cmake ${BASEDIR}/out/src/jace
+cp ${JNI_PATH}/libjace.* ${BASEDIR}/out/src
+
+mv CMakeLists.txt ${BASEDIR}/out/src
+
+ed - ${BASEDIR}/out/src/jace/proxy/loci/formats/CoreMetadata.cpp <<!
+29
+a
+
+#ifndef JACE_PROXY_JAVA_LANG_STRING_H
+#include "jace/proxy/java/lang/String.h"
+#endif
+.
+w
+q
+!
+
+cd ${BASEDIR}/out/src
+
+/opt/local/bin/cmake .
+
+make VERBOSE=1
