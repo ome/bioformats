@@ -342,8 +342,8 @@ public class OMEXMLReader extends FormatReader {
     // populate assigned metadata store with the
     // contents of the internal OME-XML metadata object
     MetadataStore store = getMetadataStore();
-    service.convertMetadata(omexmlMeta, store);
     MetadataTools.populatePixels(store, this);
+    service.convertMetadata(omexmlMeta, store);
   }
 
   // -- Helper class --
