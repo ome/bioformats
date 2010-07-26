@@ -221,7 +221,9 @@ public class TiffWriter extends FormatWriter {
     if (codec.startsWith(COMPRESSION_J2K) || codec.equals(COMPRESSION_JPEG)) {
       return new int[] {FormatTools.INT8, FormatTools.UINT8};
     }
-    return super.getPixelTypes(codec);
+    return new int[] {FormatTools.INT8, FormatTools.UINT8, FormatTools.INT16,
+      FormatTools.UINT16, FormatTools.INT32, FormatTools.UINT32,
+      FormatTools.FLOAT, FormatTools.DOUBLE};
   }
 
   // -- TiffWriter API methods --

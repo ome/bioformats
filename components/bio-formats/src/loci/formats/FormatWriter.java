@@ -351,7 +351,7 @@ public abstract class FormatWriter extends FormatHandler
         " bytes, got " + buf.length + " bytes.");
     }
 
-    if (!DataTools.containsValue(getPixelTypes(), pixelType)) {
+    if (!DataTools.containsValue(getPixelTypes(compression), pixelType)) {
       throw new FormatException("Unsupported image type '" +
         FormatTools.getPixelTypeString(pixelType) + "'.");
     }
