@@ -100,6 +100,7 @@ public class ImageInfo {
   private boolean fastBlit = false;
   private boolean autoscale = false;
   private boolean preload = false;
+  private boolean ascii = false;
   private String omexmlVersion = null;
   private int start = 0;
   private int end = Integer.MAX_VALUE;
@@ -176,6 +177,7 @@ public class ImageInfo {
           DebugTools.enableLogging("DEBUG");
         }
         else if (args[i].equals("-preload")) preload = true;
+        else if (args[i].equals("-ascii")) ascii = true;
         else if (args[i].equals("-xmlversion")) omexmlVersion = args[++i];
         else if (args[i].equals("-crop")) {
           StringTokenizer st = new StringTokenizer(args[++i], ",");
@@ -794,11 +796,21 @@ public class ImageInfo {
     if (minmax) printMinMaxValues();
 
     // display pixels in image viewer
-    LOGGER.info("");
-    LOGGER.info("Launching image viewer");
-    ImageViewer viewer = new ImageViewer();
-    viewer.setImages(reader, images);
-    viewer.setVisible(true);
+    if (ascii) {
+      for (int i=0; i<images.length; i++) {
+        final BufferedImage img = images[i];
+        LOGGER.info("");
+        LOGGER.info("Image #{}:", i);
+        LOGGER.info(new AsciiImage(img).toString());
+      }
+    }
+    else {
+      LOGGER.info("");
+      LOGGER.info("Launching image viewer");
+      ImageViewer viewer = new ImageViewer();
+      viewer.setImages(reader, images);
+      viewer.setVisible(true);
+    }
   }
 
   public void printGlobalMetadata() {
