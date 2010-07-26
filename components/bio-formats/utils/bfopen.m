@@ -42,7 +42,6 @@ Alternately, you can add the library to MATLAB's static class path:
 
 r = loci.formats.ChannelFiller();
 r = loci.formats.ChannelSeparator(r);
-r = loci.formats.gui.BufferedImageReader(r);
 
 % uncomment the following line to enable grouping of similarly
 % named files into a single dataset based on file numbering
@@ -58,12 +57,16 @@ for s = 1:numSeries
     w = r.getSizeX();
     h = r.getSizeY();
     shape = [w h];
+    pixelType = r.getPixelType();
+    bpp = loci.formats.FormatTools.getBytesPerPixel(pixelType);
+    fp = loci.formats.FormatTools.isFloatingPoint(pixelType);
+    little = r.isLittleEndian();
     numImages = r.getImageCount();
     imageList = cell(numImages, 2);
     colorMaps = cell(numImages);
     for i = 1:numImages
         fprintf('.');
-        img = r.openImage(i - 1);
+        plane = r.openBytes(i - 1);
 
         % retrieve color map data
         nBytes = loci.formats.FormatTools.getBytesPerPixel(r.getPixelType());
@@ -85,13 +88,8 @@ for s = 1:numSeries
         end
         colorMaps{s, i} = newMap;
 
-        % convert Java BufferedImage to MATLAB image
-        pix = img.getData.getPixels(0, 0, w, h, []);
-
-        % TODO: determine how best to retrieve pixel data
-        % Retrieving pixels through the data buffer is faster for large
-        % images, but does not handle signed/unsigned type casting.
-        %pix = img.getData.getDataBuffer().getData();
+        % convert byte array to MATLAB image
+        pix = loci.common.DataTools.makeDataArray(plane, bpp, fp, little);
         arr = reshape(pix, shape)';
         % build an informative title for our figure
         label = id;
