@@ -1,14 +1,35 @@
+# Variables that need to be defined
+
+# The base where everything you control is under
+
 BASEDIR=${HOME}/tst3
+
+# the path to the jni stuff
+
 JNI_PATH=/Users/bselinsky/tst3/jace
+
+# Path to any jars needed
+
 JARSDIR=${BASEDIR}/jars
+
+# Path to the Jar2Lib executable -- Also GetOpt
+
 JAR2LIBPATH=/Users/bselinsky/svn/trunk/components/native/j2l5
+
+# Path to the jace executable
+
 MYJACEDIR=/Users/bselinsky/svn/trunk/components/native/j2l4/out/src/jace
-# MYJACEDIR=/Users/bselinsky/tst3/jace.39/jace/trunk/release/include/jace
-# MYJACEDIR2=/Users/bselinsky/May7/loci/components/native/bf-cpp/proxies/include/jace/proxy/javax
+
+# Path needed for javax/swing/awt
+
 JAVAXPATH=/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Classes/classes.jar
+
+# Any extra cpp files outside those created
 
 EXTRA_FILES=${JARSDIR}/jace1.1.1/source/c++/source/jace/JFieldHelper.cpp:\
 ${JARSDIR}/jace1.1.1/source/c++/source/jace/JClassImpl.cpp
+
+# Class path used to run Jar2Lib
 
 MAIN_CLASS_PATH=\
 /System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Classes/classes.jar:\
@@ -21,6 +42,8 @@ ${JARSDIR}/retroweaver-2.0.7.jar:\
 ${JARSDIR}/retroweaver-rt-2.0.7.jar:\
 ${HOME}/bioFormats_src/trunk/components/native/bf-cpp/build/classes
 
+# Class path passed to Jar2Lib
+
 PASSED_CLASS_PATH=\
 /System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Classes/classes.jar:\
 ${BASEDIR}/src/trunk/components/bio-formats/build/classes:\
@@ -32,6 +55,8 @@ ${JAVAXPATH}
 #
 # Dont change anything after this line
 #
+
+# Clean up old run
 
 rm -rf ${BASEDIR}/out
 mkdir ${BASEDIR}/out
@@ -46,6 +71,9 @@ ln -s ${MYJACEDIR} ${BASEDIR}/out/src/include/jace
 
 rm -rf ${BASEDIR}/src
 mkdir ${BASEDIR}/src
+
+# check out version of bioformats and compile it
+
 cd ${BASEDIR}/src
 svn co http://skyking.microscopy.wisc.edu/svn/java/trunk
 cd trunk
@@ -53,17 +81,12 @@ ant tools
 cd ${BASEDIR}/src/trunk/components/native/bf-cpp
 ant
 
+cp -r ${BASEDIR}/src/trunk/components/native/bf-cpp/proxies/source/jace /Users/bselinsky/tst3/out/src/source
+
+# Run Jar2Lib
+# Actually create the proxies
+
 cd ${BASEDIR}
-
-
-echo AAAA
-
-cp -r /Users/bselinsky/tst3/src/trunk/components/native/bf-cpp/proxies/source/jace /Users/bselinsky/tst3/out/src/source
-
-ls /Users/bselinsky/tst3/out/src/source/jace/proxy/java/awt/Frame.cpp
-date
-ls -l /Users/bselinsky/tst3/src/trunk/components/native/bf-cpp/proxies/source/jace/proxy/java/awt/Frame.cpp
-echo BBBB
 
 java \
 	-cp ${MAIN_CLASS_PATH} \
@@ -80,19 +103,13 @@ java \
 	-L ${BASEDIR}/jace \
 	-x ${EXTRA_FILES}
 
-echo CCCC
-ls /Users/bselinsky/tst3/out/src/source/jace/proxy/java/awt/Frame.cpp
-date
-ls -l /Users/bselinsky/tst3/src/trunk/components/native/bf-cpp/proxies/source/jace/proxy/java/awt/Frame.cpp
-echo DDDD
-
-	
-
 mkdir ${BASEDIR}/out/src/jace
 cp ${BASEDIR}/jace/Prerequisites.cmake ${BASEDIR}/out/src/jace
 cp ${JNI_PATH}/libjace.* ${BASEDIR}/out/src
 
 mv CMakeLists.txt ${BASEDIR}/out/src
+
+# Clean up naming issues
 
 ed - ${BASEDIR}/out/src/jace/proxy/loci/formats/CoreMetadata.cpp <<!
 29
@@ -105,6 +122,8 @@ a
 w
 q
 !
+
+# Do the builds
 
 cd ${BASEDIR}/out/src
 
