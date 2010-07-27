@@ -617,7 +617,7 @@ public final class DataTools {
       return b2;
     }
     else if (bpp == 2) {
-      short[][] s = new short[width][height];
+      short[][] s = new short[height][width];
       for (int y=0; y<height; y++) {
         for (int x=0; x<width; x++) {
           int index = 2*(width*y + x);
@@ -627,7 +627,7 @@ public final class DataTools {
       return s;
     }
     else if (bpp == 4 && fp) {
-      float[][] f = new float[width][height];
+      float[][] f = new float[height][width];
       for (int y=0; y<height; y++) {
         for (int x=0; x<width; x++) {
           int index = 4*(width*y + x);
@@ -637,7 +637,7 @@ public final class DataTools {
       return f;
     }
     else if (bpp == 4) {
-      int[][] i = new int[width][height];
+      int[][] i = new int[height][width];
       for (int y=0; y<height; y++) {
         for (int x=0; x<width; x++) {
           int index = 4*(width*y + x);
@@ -647,7 +647,7 @@ public final class DataTools {
       return i;
     }
     else if (bpp == 8 && fp) {
-      double[][] d = new double[width][height];
+      double[][] d = new double[height][width];
       for (int y=0; y<height; y++) {
         for (int x=0; x<width; x++) {
           int index = 8*(width*y + x);
@@ -657,7 +657,7 @@ public final class DataTools {
       return d;
     }
     else if (bpp == 8) {
-      long[][] l = new long[width][height];
+      long[][] l = new long[height][width];
       for (int y=0; y<height; y++) {
         for (int x=0; x<width; x++) {
           int index = 8*(width*y + x);
