@@ -67,11 +67,25 @@ public class CellWorxReader extends FormatReader {
 
   /** Constructs a new CellWorx reader. */
   public CellWorxReader() {
-    super("CellWorx", new String[] {"pnl", "htd"});
+    super("CellWorx", new String[] {"pnl", "htd", "log"});
     domains = new String[] {FormatTools.HCS_DOMAIN};
   }
 
   // -- IFormatReader API methods --
+
+  /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  public boolean isThisType(String name, boolean open) {
+    if (checkSuffix(name, "pnl") || checkSuffix(name, "htd")) {
+      return super.isThisType(name, open);
+    }
+
+    Location parent = new Location(name).getAbsoluteFile().getParentFile();
+    String[] list = parent.list(true);
+    for (String file : list) {
+      if (checkSuffix(file, "htd")) return true;
+    }
+    return false;
+  }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
   public String[] getSeriesUsedFiles(boolean noPixels) {
@@ -132,6 +146,17 @@ public class CellWorxReader extends FormatReader {
       String base = new Location(id).getAbsolutePath();
       base = base.substring(0, base.lastIndexOf("_"));
       id = base + ".HTD";
+
+      if (!new Location(id).exists()) {
+        Location parent = new Location(id).getAbsoluteFile().getParentFile();
+        String[] list = parent.list(true);
+        for (String f : list) {
+          if (checkSuffix(f, "htd")) {
+            id = new Location(parent, f).getAbsolutePath();
+            break;
+          }
+        }
+      }
     }
 
     super.initFile(id);
@@ -218,7 +243,7 @@ public class CellWorxReader extends FormatReader {
       for (String line : f) {
         if (line.trim().startsWith("Z Map File")) {
           String file = line.substring(line.indexOf(":") + 1);
-          file = file.substring(file.lastIndexOf("/") + 1);
+          file = file.substring(file.lastIndexOf("/") + 1).trim();
           String parent = new Location(id).getAbsoluteFile().getParent();
           zMapFile = new Location(parent, file).getAbsolutePath();
         }
