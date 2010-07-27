@@ -46,6 +46,11 @@ import loci.formats.meta.MetadataStore;
  */
 public class APLReader extends FormatReader {
 
+  // -- Constants --
+
+  private static final String[] METADATA_SUFFIXES =
+    new String[] {"apl", "tnb", "mtb" };
+
   // -- Fields --
 
   private String[] tiffFiles;
@@ -57,11 +62,32 @@ public class APLReader extends FormatReader {
 
   /** Constructs a new APL reader. */
   public APLReader() {
-    super("Olympus APL", new String[] {"apl", "tnb", "mtb"});
+    super("Olympus APL", new String[] {"apl", "tnb", "mtb", "tif"});
     domains = new String[] {FormatTools.LM_DOMAIN};
+    hasCompanionFiles = true;
+    suffixSufficient = false;
   }
 
   // -- IFormatReader API methods --
+
+  /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  public boolean isThisType(String name, boolean open) {
+    if (checkSuffix(name, METADATA_SUFFIXES)) return true;
+    if (checkSuffix(name, "tif")) {
+      Location file = new Location(name).getAbsoluteFile();
+      Location parent = file.getParentFile();
+      if (parent != null) {
+        parent = parent.getParentFile();
+        if (parent != null) {
+          String[] list = parent.list(true);
+          for (String f : list) {
+            if (checkSuffix(f, "mtb")) return true;
+          }
+        }
+      }
+    }
+    return false;
+  }
 
   /* @see loci.formats.IFormatReader#isSingleFile(String) */
   public boolean isSingleFile(String id) throws FormatException, IOException {
@@ -73,8 +99,14 @@ public class APLReader extends FormatReader {
     FormatTools.assertId(currentId, true, 1);
     Vector<String> files = new Vector<String>();
     files.addAll(used);
-    if (getSeries() < xmlFiles.length) files.add(xmlFiles[getSeries()]);
-    if (!noPixels && getSeries() < tiffFiles.length) {
+    if (getSeries() < xmlFiles.length &&
+      new Location(xmlFiles[getSeries()]).exists())
+    {
+      files.add(xmlFiles[getSeries()]);
+    }
+    if (!noPixels && getSeries() < tiffFiles.length &&
+      new Location(tiffFiles[getSeries()]).exists())
+    {
       files.add(tiffFiles[getSeries()]);
     }
     return files.toArray(new String[files.size()]);
@@ -118,17 +150,32 @@ public class APLReader extends FormatReader {
     super.initFile(id);
 
     // find the corresponding .mtb file
-    String name = id.toLowerCase();
-    if (!name.endsWith(".mtb")) {
-      int separator = id.lastIndexOf(File.separator);
-      if (separator < 0) separator = 0;
-      int underscore = id.lastIndexOf("_");
-      if (underscore < separator) underscore = id.lastIndexOf(".");
-      String mtbFile = id.substring(0, underscore) + "_d.mtb";
-      if (!new Location(mtbFile).exists()) {
-        throw new FormatException(".mtb file not found");
+    if (!checkSuffix(id, "mtb")) {
+      if (checkSuffix(id, METADATA_SUFFIXES)) {
+        int separator = id.lastIndexOf(File.separator);
+        if (separator < 0) separator = 0;
+        int underscore = id.lastIndexOf("_");
+        if (underscore < separator) underscore = id.lastIndexOf(".");
+        String mtbFile = id.substring(0, underscore) + "_d.mtb";
+        if (!new Location(mtbFile).exists()) {
+          throw new FormatException(".mtb file not found");
+        }
+        currentId = new Location(mtbFile).getAbsolutePath();
       }
-      currentId = new Location(mtbFile).getAbsolutePath();
+      else {
+        Location parent = new Location(id).getAbsoluteFile().getParentFile();
+        parent = parent.getParentFile();
+        String[] list = parent.list(true);
+        for (String f : list) {
+          if (checkSuffix(f, "mtb")) {
+            currentId = new Location(parent, f).getAbsolutePath();
+            break;
+          }
+        }
+        if (!checkSuffix(currentId, "mtb")) {
+          throw new FormatException(".mtb file not found");
+        }
+      }
     }
 
     String mtb = new Location(currentId).getAbsolutePath();
@@ -149,13 +196,15 @@ public class APLReader extends FormatReader {
     }
 
     used = new Vector<String>();
-    used.add(id);
-    if (!id.equals(mtb)) used.add(mtb);
-    String tnb = id.substring(0, id.lastIndexOf("."));
+    used.add(mtb);
+    String tnb = mtb.substring(0, mtb.lastIndexOf("."));
     if (tnb.lastIndexOf("_") > tnb.lastIndexOf(File.separator)) {
       tnb = tnb.substring(0, tnb.lastIndexOf("_"));
     }
     used.add(tnb + "_1.tnb");
+    used.add(tnb + ".apl");
+    String idPath = new Location(id).getAbsolutePath();
+    if (!used.contains(idPath)) used.add(idPath);
 
     // calculate indexes to relevant metadata
 
