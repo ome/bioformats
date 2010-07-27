@@ -486,6 +486,7 @@ public final class DataTools {
   }
 
   /** @deprecated Use {@link #unpackBytes(long, byte[], int, int, boolean) */
+  @Deprecated
   public static void unpackShort(short value, byte[] buf, int ndx,
     boolean little)
   {
@@ -519,15 +520,16 @@ public final class DataTools {
   }
 
   /**
-   * Convert a byte array to the appropriate primitive type array.
+   * Convert a byte array to the appropriate 1D primitive type array.
+   *
    * @param b Byte array to convert.
    * @param bpp Denotes the number of bytes in the returned primitive type
    *   (e.g. if bpp == 2, we should return an array of type short).
    * @param fp If set and bpp == 4 or bpp == 8, then return floats or doubles.
    * @param little Whether byte array is in little-endian order.
    */
-  public static Object makeDataArray(byte[] b, int bpp, boolean fp,
-    boolean little)
+  public static Object makeDataArray(byte[] b,
+    int bpp, boolean fp, boolean little)
   {
     if (bpp == 1) {
       return b;
@@ -575,10 +577,96 @@ public final class DataTools {
    * @deprecated Use {@link #makeDataArray(byte[], int, boolean, boolean)}
    *   regardless of signedness.
    */
+  @Deprecated
   public static Object makeDataArray(byte[] b,
     int bpp, boolean fp, boolean little, boolean signed)
   {
     return makeDataArray(b, bpp, fp, little);
+  }
+
+  /**
+   * Convert a byte array to the appropriate 2D primitive type array.
+   *
+   * @param b Byte array to convert.
+   * @param bpp Denotes the number of bytes in the returned primitive type
+   *   (e.g. if bpp == 2, we should return an array of type short).
+   * @param fp If set and bpp == 4 or bpp == 8, then return floats or doubles.
+   * @param little Whether byte array is in little-endian order.
+   * @param height The height of the output primitive array (2nd dim length).
+   *
+   * @return a 2D primitive array of appropriate type,
+   *   dimensioned [height][b.length / (bpp * height)]
+   *
+   * @throws IllegalArgumentException if input byte array does not divide
+   *   evenly into height pieces
+   */
+  public static Object makeDataArray2D(byte[] b,
+    int bpp, boolean fp, boolean little, int height)
+  {
+    if (b.length % (bpp * height) != 0) {
+      throw new IllegalArgumentException("Array length mismatch: " +
+        "b.length=" + b.length + "; bpp=" + bpp + "; height=" + height);
+    }
+    final int width = b.length / (bpp * height);
+    if (bpp == 1) {
+      byte[][] b2 = new byte[height][width];
+      for (int y=0; y<height; y++) {
+        int index = width*y;
+        System.arraycopy(b, index, b2[y], 0, width);
+      }
+      return b2;
+    }
+    else if (bpp == 2) {
+      short[][] s = new short[width][height];
+      for (int y=0; y<height; y++) {
+        for (int x=0; x<width; x++) {
+          int index = 2*(width*y + x);
+          s[y][x] = bytesToShort(b, index, 2, little);
+        }
+      }
+      return s;
+    }
+    else if (bpp == 4 && fp) {
+      float[][] f = new float[width][height];
+      for (int y=0; y<height; y++) {
+        for (int x=0; x<width; x++) {
+          int index = 4*(width*y + x);
+          f[y][x] = bytesToFloat(b, index, 4, little);
+        }
+      }
+      return f;
+    }
+    else if (bpp == 4) {
+      int[][] i = new int[width][height];
+      for (int y=0; y<height; y++) {
+        for (int x=0; x<width; x++) {
+          int index = 4*(width*y + x);
+          i[y][x] = bytesToInt(b, index, 4, little);
+        }
+      }
+      return i;
+    }
+    else if (bpp == 8 && fp) {
+      double[][] d = new double[width][height];
+      for (int y=0; y<height; y++) {
+        for (int x=0; x<width; x++) {
+          int index = 8*(width*y + x);
+          d[y][x] = bytesToDouble(b, index, 8, little);
+        }
+      }
+      return d;
+    }
+    else if (bpp == 8) {
+      long[][] l = new long[width][height];
+      for (int y=0; y<height; y++) {
+        for (int x=0; x<width; x++) {
+          int index = 8*(width*y + x);
+          l[y][x] = bytesToLong(b, index, 8, little);
+        }
+      }
+      return l;
+    }
+    return null;
   }
 
   // -- Byte swapping --

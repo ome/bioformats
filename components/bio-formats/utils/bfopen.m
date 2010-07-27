@@ -12,8 +12,7 @@ Portions of this code were adapted from:
 http://www.mathworks.com/support/solutions/data/1-2WPAYR.html?solution=1-2WPAYR
 
 This method is ~1.5x-2.5x slower than Bio-Formats's command line showinf
-tool (MATLAB R14 vs. java 1.6.0_03), due to overhead from reshaping arrays
-and converting pixel types.
+tool (MATLAB R14 vs. java 1.6.0_20), due to overhead from copying arrays.
 
 Thanks to all who offered suggestions and improvements:
     * Ville Rantanen
@@ -21,6 +20,7 @@ Thanks to all who offered suggestions and improvements:
     * Martin Offterdinger
     * Tony Collins
     * Cris Luengo
+    * Arnon Liber
 
 Internet Explorer sometimes erroneously renames the Bio-Formats library
 to loci_tools.zip. If this happens, rename it back to loci_tools.jar.
@@ -54,9 +54,8 @@ result = cell(numSeries, 2);
 for s = 1:numSeries
     fprintf('Reading series #%d', s);
     r.setSeries(s - 1);
-    w = r.getSizeX();
-    h = r.getSizeY();
-    shape = [w h];
+    width = r.getSizeX();
+    height = r.getSizeY();
     pixelType = r.getPixelType();
     bpp = loci.formats.FormatTools.getBytesPerPixel(pixelType);
     fp = loci.formats.FormatTools.isFloatingPoint(pixelType);
@@ -69,28 +68,35 @@ for s = 1:numSeries
         plane = r.openBytes(i - 1);
 
         % retrieve color map data
-        nBytes = loci.formats.FormatTools.getBytesPerPixel(r.getPixelType());
-        if nBytes == 1
-          colorMaps{s, i} = r.get8BitLookupTable()';
+        if bpp == 1
+            colorMaps{s, i} = r.get8BitLookupTable()';
         else
-          colorMaps{s, i} = r.get16BitLookupTable()';
+            colorMaps{s, i} = r.get16BitLookupTable()';
         end
-
-        newMap = zeros(size(colorMaps{s, i}, 1), size(colorMaps{s, i}, 2));
-        for (row = 1:size(colorMaps{s, i}, 1))
-           for (col = 1:size(colorMaps{s, i}, 2))
-              newMap(row, col) = colorMaps{s, i}(row, col);
-              if newMap(row, col) < 0
-                  newMap(row, col) = newMap(row, col) + power(2, nBytes * 8);
-              end
-              newMap(row, col) = newMap(row, col) / (power(2, nBytes * 8) - 1);
-           end
+        rowCount = size(colorMaps{s, i}, 1);
+        colCount = size(colorMaps{s, i}, 2);
+        newMap = zeros(rowCount, colCount);
+        for (row = 1:rowCount)
+            for (col = 1:colCount)
+                newMap(row, col) = colorMaps{s, i}(row, col);
+                pow = power(2, bpp * 8);
+                if newMap(row, col) < 0
+                    newMap(row, col) = newMap(row, col) + pow;
+                end
+                newMap(row, col) = newMap(row, col) / (pow - 1);
+            end
         end
         colorMaps{s, i} = newMap;
 
         % convert byte array to MATLAB image
-        pix = loci.common.DataTools.makeDataArray(plane, bpp, fp, little);
-        arr = reshape(pix, shape)';
+        arr = loci.common.DataTools.makeDataArray2D(plane, ...
+            bpp, fp, little, height);
+        % if using Bio-Formats 4.2 stable rather than trunk,
+        % use the following commands instead of the above line
+        %pix = loci.common.DataTools.makeDataArray(plane, bpp, fp, little);
+        %shape = [width height];
+        %arr = reshape(pix, shape)';
+
         % build an informative title for our figure
         label = id;
         if numSeries > 1
@@ -126,12 +132,15 @@ for s = 1:numSeries
                 label = [label, '; ', lt, '=', qt, '/', int2str(sizeT)];
             end
         end
+
         % save image plane and label into the list
         imageList{i, 1} = arr;
         imageList{i, 2} = label;
     end
+
     % extract metadata table for this series
     metadataList = r.getMetadata();
+
     % save images and metadata into our master series list
     result{s, 1} = imageList;
     result{s, 2} = metadataList;
@@ -167,9 +176,9 @@ series1_label3 = series1{3, 2};
 series1_colorMaps = data{1, 3};
 figure('Name', series1_label1);
 if isempty(series1_colorMaps{1})
-  colormap(gray);
+    colormap(gray);
 else
-  colormap(series1_colorMaps{1});
+    colormap(series1_colorMaps{1});
 end
 imagesc(series1_plane1);
 
