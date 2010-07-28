@@ -305,7 +305,9 @@ public class ZeissLSMReader extends FormatReader {
       int plane = no / getSizeC();
       int c = no % getSizeC();
 
-      if (prevPlane != plane || prevBuf == null) {
+      if (prevPlane != plane || prevBuf == null ||
+        prevBuf.length < buf.length * getSizeC())
+      {
         prevBuf = new byte[buf.length * getSizeC()];
         tiffParser.getSamples(ifds.get(plane), prevBuf, x, y, w, h);
         prevPlane = plane;
