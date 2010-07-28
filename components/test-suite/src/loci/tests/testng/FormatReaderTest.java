@@ -667,20 +667,25 @@ public class FormatReaderTest {
         Arrays.sort(base);
         IFormatReader r =
           config.noStitching() ? new ImageReader() : new FileStitcher();
+
         for (int i=0; i<base.length && success; i++) {
           r.setId(base[i]);
+
           String[] comp = r.getUsedFiles();
           if (comp.length != base.length) {
             success = false;
-            msg = base[i];
+            msg = base[i] + " (file list length was " + comp.length +
+              "; expected " + base.length + ")";
           }
           if (success) Arrays.sort(comp);
           for (int j=0; j<comp.length && success; j++) {
             if (!comp[j].equals(base[j])) {
               success = false;
-              msg = base[i];
+              msg = base[i] + "(file @ " + j + " was '" + comp[j] +
+                "', expected '" + base[j] + "')";
             }
           }
+          r.close();
         }
       }
     }
