@@ -46,6 +46,7 @@ import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.ome.OMEXMLMetadata;
+import loci.formats.ome.OMEXMLMetadataImpl;
 import loci.formats.services.OMEXMLService;
 import loci.formats.tiff.TiffSaver;
 
@@ -103,6 +104,9 @@ public class OMETiffWriter extends TiffWriter {
         ServiceFactory factory = new ServiceFactory();
         service = factory.getInstance(OMEXMLService.class);
         omeMeta = service.getOMEMetadata(retrieve);
+        if (omeMeta instanceof OMEXMLMetadataImpl) {
+          ((OMEXMLMetadataImpl) omeMeta).resolveReferences();
+        }
       }
       catch (DependencyException de) {
         // TODO : Modify close() signature to include FormatException?
