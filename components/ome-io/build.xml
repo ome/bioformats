@@ -16,7 +16,7 @@ Type "ant -p" for a list of targets.
     <!-- NOTE: Overrides default "test" target from java.xml -->
     <copy tofile="${build.dir}/testng.xml" overwrite="true"
       file="${tests.dir}/loci/ome/utests/testng.xml"/>
-    <testng>
+    <testng failureProperty="failedTest">
       <classpath>
         <pathelement location="${test-classes.dir}"/>
         <pathelement location="${classes.dir}"/>
@@ -25,12 +25,13 @@ Type "ant -p" for a list of targets.
       <xmlfileset file="${build.dir}/testng.xml"/>
       <jvmarg value="-mx${testng.memory}"/>
     </testng>
+    <fail if="failedTest"/>
   </target>
 
   <target name="test-no-omeio" depends="compile-tests" description="run missing OME I/O tests" if="doTests">
     <copy tofile="${build.dir}/testng.xml" overwrite="true"
       file="${tests.dir}/loci/ome/utests/testng-no-ome-io.xml"/>
-    <testng>
+    <testng failureProperty="failedTest">
       <classpath>
         <pathelement location="${test-classes.dir}"/>
         <pathelement path="${component.classpath}"/>
@@ -38,6 +39,7 @@ Type "ant -p" for a list of targets.
       <xmlfileset file="${build.dir}/testng.xml"/>
       <jvmarg value="-mx${testng.memory}"/>
     </testng>
+    <fail if="failedTest"/>
   </target>
 
 </project>
