@@ -130,13 +130,17 @@ public class PerkinElmerReader extends FormatReader {
       if (!ext.equals("tif") && !ext.equals("tiff")) binFile = false;
     }
 
-    String prefix = name;
-    if (prefix.indexOf(".") != -1) {
-      prefix = prefix.substring(0, prefix.lastIndexOf("."));
+    Location baseFile = new Location(name).getAbsoluteFile();
+    String prefix = baseFile.getParent() + File.separator;
+
+    String namePrefix = baseFile.getName();
+    if (namePrefix.indexOf(".") != -1) {
+      namePrefix = namePrefix.substring(0, namePrefix.lastIndexOf("."));
     }
-    if (prefix.indexOf("_") != -1 && binFile) {
-      prefix = prefix.substring(0, prefix.lastIndexOf("_"));
+    if (namePrefix.indexOf("_") != -1 && binFile) {
+      namePrefix = namePrefix.substring(0, namePrefix.lastIndexOf("_"));
     }
+    prefix += namePrefix;
 
     Location htmlFile = new Location(prefix + ".htm");
     if (ext.toLowerCase().equals("htm")) {

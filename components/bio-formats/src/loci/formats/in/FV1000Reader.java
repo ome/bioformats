@@ -247,6 +247,7 @@ public class FV1000Reader extends FormatReader {
 
     plane.close();
     plane = null;
+    tp = null;
     return buf;
   }
 
@@ -534,6 +535,7 @@ public class FV1000Reader extends FormatReader {
           TiffParser tp = new TiffParser(preview);
           ifds = tp.getIFDs();
           preview.close();
+          tp = null;
           core[1].imageCount += ifds.size();
         }
         core[1].sizeX = (int) ifds.get(0).getImageWidth();
@@ -653,7 +655,7 @@ public class FV1000Reader extends FormatReader {
     usedFiles = new Vector<String>();
 
     if (tiffPath != null) {
-      usedFiles.add(id);
+      usedFiles.add(isOIB ? id : oifName);
       if (!isOIB) {
         Location dir = new Location(tiffPath);
         if (!dir.exists()) {
@@ -661,7 +663,7 @@ public class FV1000Reader extends FormatReader {
             "Required directory " + tiffPath + " was not found.");
         }
         String[] list = mappedOIF ?
-          Location.getIdMap().keySet().toArray(new String[0]) : dir.list();
+          Location.getIdMap().keySet().toArray(new String[0]) : dir.list(true);
         for (int i=0; i<list.length; i++) {
           if (mappedOIF) usedFiles.add(list[i]);
           else {
@@ -1216,9 +1218,14 @@ public class FV1000Reader extends FormatReader {
     baseFile = current.getName();
     if (baseFile == null || baseFile.indexOf("_") == -1) return null;
     baseFile = baseFile.substring(0, baseFile.lastIndexOf("_"));
-    if (checkSuffix(current.getName(), "roi")) {
-      // ROI files have an extra underscore
-      baseFile = baseFile.substring(0, baseFile.lastIndexOf("_"));
+    if (checkSuffix(current.getName(), new String[] {"roi", "lut"})) {
+      if (!new Location(tmp, baseFile + ".oif").exists() &&
+        !new Location(tmp, baseFile + ".OIF").exists() &&
+        baseFile.indexOf("_") >= 0)
+      {
+        // some metadata files have an extra underscore
+        baseFile = baseFile.substring(0, baseFile.lastIndexOf("_"));
+      }
     }
     baseFile += ".oif";
     tmp = new Location(tmp, baseFile);
@@ -1228,16 +1235,29 @@ public class FV1000Reader extends FormatReader {
       oifFile = oifFile.substring(0, oifFile.lastIndexOf(".")) + ".OIF";
       tmp = new Location(oifFile);
       if (!tmp.exists()) {
-        // check in parent directory
-        if (parent.endsWith(File.separator)) {
-          parent = parent.substring(0, parent.length() - 1);
-        }
-        String dir = parent.substring(parent.lastIndexOf(File.separator));
-        dir = dir.substring(0, dir.lastIndexOf("."));
-        tmp = new Location(parent);
-        oifFile = new Location(tmp, dir).getAbsolutePath();
-        if (!new Location(oifFile).exists()) {
-          throw new FormatException("OIF file not found");
+        baseFile = current.getParent();
+        baseFile = baseFile.substring(0, baseFile.lastIndexOf("."));
+        baseFile = baseFile.substring(0, baseFile.lastIndexOf("."));
+        tmp = new Location(baseFile + ".oif");
+        oifFile = tmp.getAbsolutePath();
+
+        if (!tmp.exists()) {
+          tmp = new Location(tmp.getParent(), tmp.getName().toUpperCase());
+          oifFile = tmp.getAbsolutePath();
+
+          if (!tmp.exists()) {
+            // check in parent directory
+             if (parent.endsWith(File.separator)) {
+              parent = parent.substring(0, parent.length() - 1);
+            }
+            String dir = parent.substring(parent.lastIndexOf(File.separator));
+            dir = dir.substring(0, dir.lastIndexOf("."));
+            tmp = new Location(parent);
+            oifFile = new Location(tmp, dir).getAbsolutePath();
+            if (!new Location(oifFile).exists()) {
+              throw new FormatException("OIF file not found");
+            }
+          }
         }
       }
     }
@@ -1438,6 +1458,7 @@ public class FV1000Reader extends FormatReader {
         table.put(key, sanitizeValue(table.get(key)));
       }
     }
+    reader.close();
     return list;
   }
 

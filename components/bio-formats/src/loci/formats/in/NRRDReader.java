@@ -151,18 +151,25 @@ public class NRRDReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    super.initFile(id);
-
     // make sure we actually have the .nrrd/.nhdr file
     if (!checkSuffix(id, "nhdr") && !checkSuffix(id, "nrrd")) {
       id += ".nhdr";
     }
 
+    super.initFile(id);
+
     in = new RandomAccessInputStream(id);
 
     ClassList<IFormatReader> classes = ImageReader.getDefaultReaderClasses();
-    classes.removeClass(getClass());
-    helper = new ImageReader(classes);
+    Class<? extends IFormatReader>[] classArray = classes.getClasses();
+    ClassList<IFormatReader> newClasses =
+      new ClassList<IFormatReader>(IFormatReader.class);
+    for (Class<? extends IFormatReader> c : classArray) {
+      if (!c.equals(NRRDReader.class)) {
+        newClasses.addClass(c);
+      }
+    }
+    helper = new ImageReader(newClasses);
 
     String key, v;
 

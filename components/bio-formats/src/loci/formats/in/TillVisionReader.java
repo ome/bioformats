@@ -424,6 +424,9 @@ public class TillVisionReader extends FormatReader {
     }
     tmpSeriesMetadata = null;
     populateMetadataStore();
+
+    poi.close();
+    poi = null;
   }
 
   // -- Helper methods --
