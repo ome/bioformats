@@ -143,6 +143,11 @@ public abstract class FormatWriter extends FormatHandler
     this.series = series;
   }
 
+  /* @see IFormatWriter#getSeries() */
+  public int getSeries() {
+    return series;
+  }
+
   /* @see IFormatWriter#setInterleaved(boolean) */
   public void setInterleaved(boolean interleaved) {
     this.interleaved = interleaved;

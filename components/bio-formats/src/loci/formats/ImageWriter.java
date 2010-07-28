@@ -216,6 +216,11 @@ public class ImageWriter implements IFormatWriter {
     getWriter().setSeries(series);
   }
 
+  /* @see IFormatWriter#getSeries() */
+  public int getSeries() {
+    return getWriter().getSeries();
+  }
+
   /* @see IFormatWriter#setInterleaved(boolean) */
   public void setInterleaved(boolean interleaved) {
     for (int i=0; i<writers.length; i++) writers[i].setInterleaved(interleaved);

@@ -41,6 +41,13 @@ import loci.formats.meta.MetadataRetrieve;
  */
 public class BufferedImageWriter extends WriterWrapper {
 
+  // -- Fields --
+
+  /**
+   * Number of planes written.  Only required by deprecated saveImage method.
+   */
+  private int numWritten = 0;
+
   // -- Utility methods --
 
   /**
@@ -62,34 +69,35 @@ public class BufferedImageWriter extends WriterWrapper {
   // -- BufferedImageWriter methods --
 
   /**
-   * @deprecated
    * Saves the given BufferedImage to the current file.
-   * Note that this method will append the image plane to the file; it will not
-   * overwrite previously saved image planes.
-   * If this image plane is the last one in the file, the last flag must be set.
+   *
+   * @param no the image index within the current file, starting from 0.
+   * @param image the BufferedImage to save.
    */
-  public void saveImage(BufferedImage image, boolean last)
+  public void saveImage(int no, BufferedImage image)
     throws FormatException, IOException
   {
-    saveImage(image, 0, last, last);
+    saveImage(no, image, 0, 0, image.getWidth(), image.getHeight());
   }
 
   /**
-   * @deprecated
-   * Saves the given BufferedImage to the given series in the current file.
-   * Note that this method will append the image plane to the file; it will not
-   * overwrite previously saved image planes.
-   * If this image plane is the last one in the series, the lastInSeries flag
-   * must be set.
-   * If this image plane is the last one in the file, the last flag must be set.
+   * Saves the given BufferedImage to the current file.  The BufferedImage
+   * may represent a subsection of the full image to be saved.
+   *
+   * @param no the image index within the current file, starting from 0.
+   * @param image the BufferedImage to save.
+   * @param x the X coordinate of the upper-left corner of the image.
+   * @param y the Y coordinate of the upper-left corner of the image.
+   * @param w the width (in pixels) of the image.
+   * @param h the height (in pixels) of the image.
    */
-  public void saveImage(BufferedImage image, int series,
-    boolean lastInSeries, boolean last) throws FormatException, IOException
+  public void saveImage(int no, BufferedImage image, int x, int y, int w, int h)
+    throws FormatException, IOException
   {
     Class dataType = getNativeDataType();
     if (BufferedImage.class.isAssignableFrom(dataType)) {
       // native data type is compatible with BufferedImage
-      savePlane(image, series, lastInSeries, last);
+      savePlane(no, image, x, y, w, h);
     }
     else {
       // must convert BufferedImage to byte array
@@ -99,7 +107,7 @@ public class BufferedImageWriter extends WriterWrapper {
 
       MetadataRetrieve r = getMetadataRetrieve();
       if (r != null) {
-        Boolean bigEndian = r.getPixelsBinDataBigEndian(series, 0);
+        Boolean bigEndian = r.getPixelsBinDataBigEndian(getSeries(), 0);
         if (bigEndian != null) littleEndian = !bigEndian.booleanValue();
       }
 
@@ -121,8 +129,47 @@ public class BufferedImageWriter extends WriterWrapper {
       }
       pixelBytes = null;
 
-      saveBytes(buf, series, lastInSeries, last);
+      saveBytes(no, buf, x, y, w, h);
     }
+  }
+
+  // -- IFormatHandler API methods --
+
+  /* @see loci.formats.IFormatHandler#close() */
+  public void close() throws IOException {
+    super.close();
+    numWritten = 0;
+  }
+
+  // -- deprecated BufferedImageWriter methods --
+
+  /**
+   * @deprecated Please use saveImage(int, BufferedImage) instead.
+   * Saves the given BufferedImage to the current file.
+   * Note that this method will append the image plane to the file; it will not
+   * overwrite previously saved image planes.
+   * If this image plane is the last one in the file, the last flag must be set.
+   */
+  public void saveImage(BufferedImage image, boolean last)
+    throws FormatException, IOException
+  {
+    saveImage(image, 0, last, last);
+  }
+
+  /**
+   * @deprecated Please use saveImage(int, BufferedImage) instead.
+   * Saves the given BufferedImage to the given series in the current file.
+   * Note that this method will append the image plane to the file; it will not
+   * overwrite previously saved image planes.
+   * If this image plane is the last one in the series, the lastInSeries flag
+   * must be set.
+   * If this image plane is the last one in the file, the last flag must be set.
+   */
+  public void saveImage(BufferedImage image, int series,
+    boolean lastInSeries, boolean last) throws FormatException, IOException
+  {
+    setSeries(series);
+    saveImage(numWritten++, image);
   }
 
 }

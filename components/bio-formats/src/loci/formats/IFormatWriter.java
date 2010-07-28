@@ -95,6 +95,9 @@ public interface IFormatWriter extends IFormatHandler {
    */
   void setSeries(int series) throws FormatException;
 
+  /** Returns the current series. */
+  int getSeries();
+
   /** Sets whether or not the channels in an image are interleaved. */
   void setInterleaved(boolean interleaved);
 
