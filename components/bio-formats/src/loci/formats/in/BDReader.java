@@ -84,6 +84,7 @@ public class BDReader extends FormatReader {
     super("BD Pathway", new String[] {"exp", "tif"});
     domains = new String[] {FormatTools.HCS_DOMAIN};
     suffixSufficient = false;
+    suffixNecessary = false;
   }
 
   // -- IFormatReader API methods --
@@ -130,7 +131,11 @@ public class BDReader extends FormatReader {
     if (!noPixels && tiffs != null) {
       int offset = getSeries() * getImageCount();
       for (int i = 0; i<getImageCount(); i++) {
-        if (tiffs[offset + i] != null) { files.add(tiffs[offset + i]); }
+        if (offset + i < tiffs.length) {
+          if (tiffs[offset + i] != null) {
+            files.add(tiffs[offset + i]);
+          }
+        }
       }
     }
 
