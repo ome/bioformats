@@ -48,6 +48,8 @@ public class OMEReaderWriterServiceImpl extends AbstractService
     checkClassDependency(OMEReader.class);
     checkClassDependency(OMEWriter.class);
     checkClassDependency(OmeroReader.class);
+    checkClassDependency(omero.model.Image.class);
+    checkClassDependency(org.openmicroscopy.ds.dto.Image.class);
   }
 
   /* (non-Javadoc)
