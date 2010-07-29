@@ -20,7 +20,7 @@ Thanks to all who offered suggestions and improvements:
     * Martin Offterdinger
     * Tony Collins
     * Cris Luengo
-    * Arnon Liber
+    * Arnon Lieber
 
 Internet Explorer sometimes erroneously renames the Bio-Formats library
 to loci_tools.zip. If this happens, rename it back to loci_tools.jar.
@@ -34,6 +34,11 @@ Alternately, you can add the library to MATLAB's static class path:
     2. Go to the end of the file, and add the path to your JAR file
        (e.g., C:/Program Files/MATLAB/work/loci_tools.jar).
     3. Save the file and restart MATLAB.
+
+There are advantages to using the static approach over javaaddpath:
+    1. If you use bfopen within a loop, it saves on overhead
+       to avoid calling the javaaddpath command repeatedly.
+    2. Calling 'javaaddpath' may erase certain global parameters.
 %}
 
 % to work with Evotec Flex, fill in your LuraWave license code
