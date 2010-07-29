@@ -707,7 +707,7 @@ public class FormatReaderTest {
       MetadataStore store = reader.getMetadataStore();
       MetadataRetrieve retrieve = omexmlService.asRetrieve(store);
       String xml = omexmlService.getOMEXML(retrieve);
-      success = xml != null && omexmlService.validateOMEXML(xml, true);
+      success = xml != null && omexmlService.validateOMEXML(xml);
     }
     catch (Throwable t) {
       LOGGER.info("", t);

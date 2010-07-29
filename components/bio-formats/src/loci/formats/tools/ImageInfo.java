@@ -854,7 +854,7 @@ public class ImageInfo {
     if (ms instanceof MetadataRetrieve) {
       String xml = service.getOMEXML((MetadataRetrieve) ms);
       LOGGER.info("{}", XMLTools.indentXML(xml, true));
-      service.validateOMEXML(xml, true);
+      service.validateOMEXML(xml);
     }
     else {
       LOGGER.info("The metadata could not be converted to OME-XML.");
