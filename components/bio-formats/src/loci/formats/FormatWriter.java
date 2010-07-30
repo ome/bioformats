@@ -107,8 +107,8 @@ public abstract class FormatWriter extends FormatHandler
   /* @see IFormatWriter#saveBytes(int, byte[]) */
   public void saveBytes(int no, byte[] buf) throws FormatException, IOException
   {
-    int width = metadataRetrieve.getPixelsSizeX(0).getValue();
-    int height = metadataRetrieve.getPixelsSizeY(0).getValue();
+    int width = metadataRetrieve.getPixelsSizeX(getSeries()).getValue();
+    int height = metadataRetrieve.getPixelsSizeY(getSeries()).getValue();
     saveBytes(no, buf, 0, 0, width, height);
   }
 
@@ -116,8 +116,8 @@ public abstract class FormatWriter extends FormatHandler
   public void savePlane(int no, Object plane)
     throws FormatException, IOException
   {
-    int width = metadataRetrieve.getPixelsSizeX(0).getValue();
-    int height = metadataRetrieve.getPixelsSizeY(0).getValue();
+    int width = metadataRetrieve.getPixelsSizeX(getSeries()).getValue();
+    int height = metadataRetrieve.getPixelsSizeY(getSeries()).getValue();
     savePlane(no, plane, 0, 0, width, height);
   }
 
