@@ -185,7 +185,7 @@ public class AVIReader extends FormatReader {
         in.skipBytes(x * (bmpBitsPerPixel / 8));
         in.read(buf, (i - y)*scanline, scanline);
         if (bmpBitsPerPixel == 24) {
-          for (int j=0; j<getSizeX(); j++) {
+          for (int j=0; j<w; j++) {
             byte r = buf[i*scanline + j*3 + 2];
             buf[i*scanline + j*3 + 2] = buf[i*scanline + j*3];
             buf[i*scanline + j*3] = r;
