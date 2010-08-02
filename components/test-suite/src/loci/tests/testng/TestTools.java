@@ -164,7 +164,7 @@ public class TestTools {
         LOGGER.info("\tdirectory");
         getFiles(subs[i], files, config);
       }
-      else {
+      else if (!subs[i].endsWith("readme.txt")) {
         if (typeTester.isThisType(subs[i])) {
           LOGGER.info("\tOK");
           files.add(file.getAbsolutePath());
