@@ -51,6 +51,8 @@ public class DimensionSwapper extends ReaderWrapper {
   /** Core metadata associated with this dimension swapper. */
   private CoreMetadata[] core;
 
+  private String[] outputOrder;
+
   // -- Constructors --
 
   /** Constructs a DimensionSwapper around a new image reader. */
@@ -58,8 +60,6 @@ public class DimensionSwapper extends ReaderWrapper {
 
   /** Constructs a DimensionSwapper with the given reader. */
   public DimensionSwapper(IFormatReader r) { super(r); }
-
-  private String[] outputOrder;
 
   // -- DimensionSwapper API methods --
 
@@ -275,17 +275,12 @@ public class DimensionSwapper extends ReaderWrapper {
 
   /* @see IFormatHandler#setId(String) */
   public void setId(String id) throws FormatException, IOException {
-    String oldFile = getCurrentFile();
     super.setId(id);
-    if (!id.equals(oldFile) || outputOrder == null ||
-      outputOrder.length != getSeriesCount())
-    {
-      outputOrder = new String[getSeriesCount()];
+    outputOrder = new String[getSeriesCount()];
 
-      // NB: Create our own copy of the CoreMetadata,
-      // which we can manipulate safely.
-      core = copyCoreMetadata(reader);
-    }
+    // NB: Create our own copy of the CoreMetadata,
+    // which we can manipulate safely.
+    core = copyCoreMetadata(reader);
   }
 
   // -- Helper methods --
