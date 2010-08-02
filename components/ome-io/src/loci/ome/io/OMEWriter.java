@@ -41,7 +41,6 @@ import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.FormatWriter;
 import loci.formats.ImageTools;
-import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.services.OMEXMLService;
 
@@ -376,12 +375,14 @@ public class OMEWriter extends FormatWriter {
   }
 
   /* @see loci.formats.IFormatWriter#canDoStacks(String) */
-  public boolean canDoStacks() { return true; }
+  @Override
+	public boolean canDoStacks() { return true; }
 
   // -- IFormatHandler API methods --
 
   /* @see loci.formats.IFormatHandler#close() */
-  public void close() throws IOException {
+  @Override
+	public void close() throws IOException {
     try {
       r.exec("rc.logout()");
     }
