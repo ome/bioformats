@@ -376,13 +376,13 @@ public class OMEWriter extends FormatWriter {
 
   /* @see loci.formats.IFormatWriter#canDoStacks(String) */
   @Override
-	public boolean canDoStacks() { return true; }
+  public boolean canDoStacks() { return true; }
 
   // -- IFormatHandler API methods --
 
   /* @see loci.formats.IFormatHandler#close() */
   @Override
-	public void close() throws IOException {
+  public void close() throws IOException {
     try {
       r.exec("rc.logout()");
     }

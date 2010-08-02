@@ -108,12 +108,12 @@ public class OmeroReader extends FormatReader {
     final int[] zct = FormatTools.getZCTCoords(this, no);
 
     final byte[] plane;
-		try {
-			plane = store.getPlane(zct[0], zct[1], zct[2]);
-		}
-		catch (ServerError e) {
-			throw new FormatException(e);
-		}
+    try {
+      plane = store.getPlane(zct[0], zct[1], zct[2]);
+    }
+    catch (ServerError e) {
+      throw new FormatException(e);
+    }
 
     final int len = getSizeX() * getSizeY() *
       FormatTools.getBytesPerPixel(getPixelType());
@@ -182,71 +182,71 @@ public class OmeroReader extends FormatReader {
       throw new FormatException("Invalid pixels ID");
     }
 
-		try {
-	    // authenticate with OMERO server
+    try {
+      // authenticate with OMERO server
 
-	    LOGGER.info("Logging in");
+      LOGGER.info("Logging in");
 
-	    omero.client client = new omero.client(server, port);
-			final ServiceFactoryPrx serviceFactory = client.createSession(user, pass);
+      omero.client client = new omero.client(server, port);
+      final ServiceFactoryPrx serviceFactory = client.createSession(user, pass);
 
-	    // get raw pixels store and pixels
+      // get raw pixels store and pixels
 
-	    store = serviceFactory.createRawPixelsStore();
-	    store.setPixelsId(pid, false);
+      store = serviceFactory.createRawPixelsStore();
+      store.setPixelsId(pid, false);
 
-	    final GatewayPrx gateway = serviceFactory.createGateway();
-	    pix = gateway.getPixels(pid);
-	    final int sizeX = pix.getSizeX().getValue();
-	    final int sizeY = pix.getSizeY().getValue();
-	    final int sizeZ = pix.getSizeZ().getValue();
-	    final int sizeC = pix.getSizeC().getValue();
-	    final int sizeT = pix.getSizeT().getValue();
-	    final String pixelType = pix.getPixelsType().getValue().getValue();
+      final GatewayPrx gateway = serviceFactory.createGateway();
+      pix = gateway.getPixels(pid);
+      final int sizeX = pix.getSizeX().getValue();
+      final int sizeY = pix.getSizeY().getValue();
+      final int sizeZ = pix.getSizeZ().getValue();
+      final int sizeC = pix.getSizeC().getValue();
+      final int sizeT = pix.getSizeT().getValue();
+      final String pixelType = pix.getPixelsType().getValue().getValue();
 
-	    // populate metadata
+      // populate metadata
 
-	    LOGGER.info("Populating metadata");
+      LOGGER.info("Populating metadata");
 
-	    core[0].sizeX = sizeX;
-	    core[0].sizeY = sizeY;
-	    core[0].sizeZ = sizeZ;
-	    core[0].sizeC = sizeC;
-	    core[0].sizeT = sizeT;
-	    core[0].rgb = false;
-	    core[0].littleEndian = false;
-	    core[0].dimensionOrder = "XYZCT";
-	    core[0].imageCount = sizeZ * sizeC * sizeT;
-	    core[0].pixelType = FormatTools.pixelTypeFromString(pixelType);
+      core[0].sizeX = sizeX;
+      core[0].sizeY = sizeY;
+      core[0].sizeZ = sizeZ;
+      core[0].sizeC = sizeC;
+      core[0].sizeT = sizeT;
+      core[0].rgb = false;
+      core[0].littleEndian = false;
+      core[0].dimensionOrder = "XYZCT";
+      core[0].imageCount = sizeZ * sizeC * sizeT;
+      core[0].pixelType = FormatTools.pixelTypeFromString(pixelType);
 
-	    // CTR TODO this is wrong
-	    double px = pix.getSizeX().getValue();
-	    double py = pix.getSizeY().getValue();
-	    double pz = pix.getSizeZ().getValue();
+      // CTR TODO this is wrong
+      double px = pix.getSizeX().getValue();
+      double py = pix.getSizeY().getValue();
+      double pz = pix.getSizeZ().getValue();
 
-	    Image image = pix.getImage();
+      Image image = pix.getImage();
 
-	    String name = image.getName().getValue();
-	    String description = image.getDescription().getValue();
+      String name = image.getName().getValue();
+      String description = image.getDescription().getValue();
 
-	    MetadataStore store = getMetadataStore();
-	    store.setImageName(name, 0);
-	    store.setImageDescription(description, 0);
-	    MetadataTools.populatePixels(store, this);
+      MetadataStore store = getMetadataStore();
+      store.setImageName(name, 0);
+      store.setImageDescription(description, 0);
+      MetadataTools.populatePixels(store, this);
 
-	    store.setPixelsPhysicalSizeX(new Double(px), 0);
-	    store.setPixelsPhysicalSizeY(new Double(py), 0);
-	    store.setPixelsPhysicalSizeZ(new Double(pz), 0);
-		}
-		catch (CannotCreateSessionException e) {
-			throw new FormatException(e);
-		}
-		catch (PermissionDeniedException e) {
-			throw new FormatException(e);
-		}
-		catch (ServerError e) {
-			throw new FormatException(e);
-		}
+      store.setPixelsPhysicalSizeX(new Double(px), 0);
+      store.setPixelsPhysicalSizeY(new Double(py), 0);
+      store.setPixelsPhysicalSizeZ(new Double(pz), 0);
+    }
+    catch (CannotCreateSessionException e) {
+      throw new FormatException(e);
+    }
+    catch (PermissionDeniedException e) {
+      throw new FormatException(e);
+    }
+    catch (ServerError e) {
+      throw new FormatException(e);
+    }
   }
 
   /** A simple command line tool for downloading images from OMERO. */
