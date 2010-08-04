@@ -966,8 +966,10 @@ public class ZeissLSMReader extends FormatReader {
       store.setObjectiveCorrection(
         getCorrection(recording.correction), series, 0);
       store.setObjectiveImmersion(getImmersion(recording.immersion), series, 0);
-      store.setObjectiveNominalMagnification(
+      if (recording.magnification != null && recording.magnification > 0) {
+        store.setObjectiveNominalMagnification(
           new PositiveInteger(recording.magnification), series, 0);
+      }
       store.setObjectiveLensNA(recording.lensNA, series, 0);
       store.setObjectiveIris(recording.iris, series, 0);
       store.setObjectiveID(objectiveID, series, 0);
