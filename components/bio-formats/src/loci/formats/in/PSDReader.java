@@ -63,6 +63,7 @@ public class PSDReader extends FormatReader {
   public PSDReader() {
     super("Adobe Photoshop", "psd");
     domains = new String[] {FormatTools.GRAPHICS_DOMAIN};
+    suffixNecessary = false;
   }
 
   // -- IFormatReader API methods --
@@ -267,8 +268,6 @@ public class PSDReader extends FormatReader {
           }
         }
       }
-
-      in.skipBytes((int) (in.getFilePointer() % 2) + 4);
       while (in.read() != '8');
       in.skipBytes(7);
       int len = in.readInt();
