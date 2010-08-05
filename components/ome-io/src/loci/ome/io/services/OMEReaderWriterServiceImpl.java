@@ -26,7 +26,6 @@ package loci.ome.io.services;
 import loci.common.services.AbstractService;
 import loci.formats.IFormatReader;
 import loci.formats.IFormatWriter;
-import loci.formats.services.OMEReaderWriterService;
 import loci.ome.io.OMEReader;
 import loci.ome.io.OMEWriter;
 import loci.ome.io.OmeroReader;

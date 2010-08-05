@@ -72,7 +72,6 @@ import loci.formats.ImageWriter;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
-import loci.formats.services.OMEReaderWriterService;
 import loci.formats.services.OMEXMLService;
 
 import ome.xml.model.enums.DimensionOrder;
@@ -146,20 +145,6 @@ public class ImageViewer extends JFrame implements ActionListener,
   /** Service for working with OME-XML metadata. */
   protected OMEXMLService omexmlService;
 
-  // -- Fields - OME I/O --
-
-  /** Reader for OME servers. */
-  protected IFormatReader omeReader;
-
-  /** Reader for OMERO servers. */
-  protected IFormatReader omeroReader;
-
-  /** Writer for OME servers. */
-  protected IFormatWriter omeWriter;
-
-  /** Writer for OMERO servers. */
-  protected IFormatWriter omeroWriter;
-
   // -- Constructor --
 
   /** Constructs an image viewer. */
@@ -180,42 +165,6 @@ public class ImageViewer extends JFrame implements ActionListener,
     }
     catch (DependencyException exc) {
       LOGGER.debug("OME-XML service unavailable", exc);
-    }
-    try {
-      // NB: avoid dependencies on optional loci.ome.io package
-      ServiceFactory factory = new ServiceFactory();
-      OMEReaderWriterService omeIOService =
-        factory.getInstance(OMEReaderWriterService.class);
-      // OME server I/O engine
-      try {
-        omeReader = omeIOService.newOMEReader();
-      }
-      catch (Exception exc) {
-        LOGGER.debug("OME reader not available", exc);
-      }
-      try {
-        omeWriter = omeIOService.newOMEWriter();
-      }
-      catch (Exception exc) {
-        LOGGER.debug("OME writer not available", exc);
-      }
-
-      // OMERO server I/O engine
-      try {
-        omeroReader = omeIOService.newOMEROReader();
-      }
-      catch (Exception exc) {
-        LOGGER.debug("OMERO reader not available", exc);
-      }
-      try {
-        omeroWriter = omeIOService.newOMEROWriter();
-      }
-      catch (Exception exc) {
-        LOGGER.debug("OMERO writer not available", exc);
-      }
-    }
-    catch (DependencyException e) {
-      LOGGER.debug("OME and OMERO reader/writer service unavailable", e);
     }
 
     // content pane
@@ -321,22 +270,6 @@ public class ImageViewer extends JFrame implements ActionListener,
     fileExit.setActionCommand("exit");
     fileExit.addActionListener(this);
     file.add(fileExit);
-
-    JMenu ome = new JMenu("OME");
-    ome.setMnemonic('o');
-    menubar.add(ome);
-    JMenuItem omeDownload = new JMenuItem("Download from OMERO...");
-    omeDownload.setMnemonic('d');
-    omeDownload.setActionCommand("download");
-    omeDownload.addActionListener(this);
-    omeDownload.setEnabled(omeroReader != null);
-    ome.add(omeDownload);
-    JMenuItem omeUpload = new JMenuItem("Upload to OMERO...");
-    omeUpload.setMnemonic('u');
-    omeUpload.setActionCommand("upload");
-    omeUpload.addActionListener(this);
-    omeUpload.setEnabled(omeroWriter != null);
-    ome.add(omeUpload);
 
     JMenu options = new JMenu("Options");
     options.setMnemonic('p');
@@ -612,30 +545,6 @@ public class ImageViewer extends JFrame implements ActionListener,
       }
     }
     else if ("exit".equals(cmd)) dispose();
-    else if ("download".equals(cmd)) {
-      // HACK - JOptionPane prevents shutdown on dispose
-      setDefaultCloseOperation(EXIT_ON_CLOSE);
-
-      // TODO - use loci.visbio.ome.OMELoginPane instead,
-      // after updating it and repackaging it to loci.ome.io.gui
-
-      String id = JOptionPane.showInputDialog(this,
-        "Enter OMERO connection string:",
-        "localhost?port=1099&username=omero&password=omero&id=1");
-      open(id, omeroReader);
-    }
-    else if ("upload".equals(cmd)) {
-      // HACK - JOptionPane prevents shutdown on dispose
-      setDefaultCloseOperation(EXIT_ON_CLOSE);
-
-      // TODO - use loci.visbio.ome.OMELoginPane instead,
-      // after updating it and repackaging it to loci.ome.io.gui
-
-      String id = JOptionPane.showInputDialog(this,
-        "Enter OMERO connection string:",
-        "localhost?port=1099&username=omero&password=omero");
-      save(id, omeroWriter);
-    }
     else if ("fps".equals(cmd)) {
       // HACK - JOptionPane prevents shutdown on dispose
       setDefaultCloseOperation(EXIT_ON_CLOSE);

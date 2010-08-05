@@ -3,8 +3,8 @@
 //
 
 /*
-OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
+OME database I/O package for communicating with OME and OMERO servers.
+Copyright (C) 2005-@year@ Melissa Linkert, Curtis Rueden and Philip Huettl.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package loci.formats.services;
+package loci.ome.io.services;
 
 import loci.common.services.Service;
 import loci.formats.IFormatReader;
