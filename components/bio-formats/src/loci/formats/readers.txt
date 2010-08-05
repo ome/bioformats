@@ -111,7 +111,6 @@ loci.formats.in.PCIReader             # cxd [POI]
 loci.formats.in.ImarisHDFReader       # ims [NetCDF]
 
 # TIFF-based readers with unique file extensions
-loci.formats.in.MetamorphReader       # stk
 loci.formats.in.ZeissLSMReader        # lsm, mdb [MDB Tools]
 loci.formats.in.SEQReader             # seq
 loci.formats.in.GelReader             # gel
@@ -129,6 +128,7 @@ loci.formats.in.LeicaReader           # lei, tif
 loci.formats.in.NikonReader           # nef, tif
 loci.formats.in.FluoviewReader        # tif
 loci.formats.in.PrairieReader         # xml, cfg, tif
+loci.formats.in.MetamorphReader       # stk, tif, nd
 loci.formats.in.MicromanagerReader    # txt, tif
 loci.formats.in.ImprovisionTiffReader # tif
 loci.formats.in.MetamorphTiffReader   # tif
