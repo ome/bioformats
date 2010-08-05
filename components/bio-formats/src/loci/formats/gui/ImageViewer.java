@@ -70,6 +70,7 @@ import loci.formats.IFormatReader;
 import loci.formats.IFormatWriter;
 import loci.formats.ImageWriter;
 import loci.formats.MetadataTools;
+import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.OMEXMLService;
@@ -302,11 +303,18 @@ public class ImageViewer extends JFrame implements ActionListener,
     try {
       //Location f = new Location(id);
       //id = f.getAbsolutePath();
-      try {
-        myReader.setMetadataStore(omexmlService.createOMEXMLMetadata());
+      IMetadata meta = null;
+      if (omexmlService != null) {
+        try {
+          meta = omexmlService.createOMEXMLMetadata();
+          myReader.setMetadataStore(meta);
+        }
+        catch (ServiceException exc) {
+          LOGGER.debug("Could not create OME-XML metadata", exc);
+        }
       }
-      catch (ServiceException exc) {
-        LOGGER.info("OME metadata unavailable", exc);
+      if (meta == null) {
+        LOGGER.info("OME metadata unavailable");
       }
       myReader.setId(id);
       int num = myReader.getImageCount();
