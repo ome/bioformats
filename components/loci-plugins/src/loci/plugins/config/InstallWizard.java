@@ -75,7 +75,7 @@ public class InstallWizard extends JFrame
 
     // capabilities:
 
-    // Check for ImageJ 1.40 or newer
+    // Check for ImageJ 1.43 or newer
     // download and install latest ij.jar
     // don't launch ImageJ updater plugin because it might not exist
 
