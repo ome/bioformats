@@ -468,7 +468,7 @@ public class SlidebookReader extends FormatReader {
         }
         else if (n == 'k') {
           in.skipBytes(14);
-          setSeries(nextName - 1);
+          if (nextName > 0) setSeries(nextName - 1);
           addSeriesMeta("Mag. changer", in.readCString());
         }
         else if (isSpool) {
