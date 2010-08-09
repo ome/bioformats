@@ -24,6 +24,8 @@ package loci.formats.utests.tiff;
 
 import java.io.IOException;
 
+import loci.formats.FormatException;
+
 /**
  * @author callan
  *
@@ -34,7 +36,7 @@ import java.io.IOException;
  */
 public class NonUniformRowsPerStripMock extends BaseTiffMock {
 
-  public NonUniformRowsPerStripMock() throws IOException {
+  public NonUniformRowsPerStripMock() throws FormatException, IOException {
     super();
   }
 

@@ -24,6 +24,7 @@ package loci.formats.utests.tiff;
 
 import java.io.IOException;
 
+import loci.formats.FormatException;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDType;
 
@@ -37,18 +38,13 @@ import loci.formats.tiff.IFDType;
  */
 public class RGBTiffMock extends BaseTiffMock {
 
-  public RGBTiffMock() throws IOException {
+  public RGBTiffMock() throws FormatException, IOException {
     super();
   }
 
-  protected long writeBitsPerSample(long offset) throws IOException {
-    return writeIFDEntry((short) IFD.BITS_PER_SAMPLE, IFDType.SHORT,
-                         getBitsPerSample(), offset);
-  }
-
   @Override
-  public short[] getBitsPerSample() {
-    return new short[] { 8, 8, 8 };
+  public int[] getBitsPerSample() {
+    return new int[] { 8, 8, 8 };
   }
 
   @Override

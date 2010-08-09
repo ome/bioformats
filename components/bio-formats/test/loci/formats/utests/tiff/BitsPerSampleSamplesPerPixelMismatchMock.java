@@ -24,6 +24,8 @@ package loci.formats.utests.tiff;
 
 import java.io.IOException;
 
+import loci.formats.FormatException;
+
 /**
  * @author callan
  *
@@ -34,13 +36,15 @@ import java.io.IOException;
  */
 public class BitsPerSampleSamplesPerPixelMismatchMock extends RGBTiffMock {
 
-  public BitsPerSampleSamplesPerPixelMismatchMock() throws IOException {
+  public BitsPerSampleSamplesPerPixelMismatchMock()
+    throws FormatException, IOException
+  {
     super();
   }
 
   @Override
-  public short[] getBitsPerSample() {
-    return new short[] { 8, 8 };
+  public int[] getBitsPerSample() {
+    return new int[] { 8, 8 };
   }
 
 }
