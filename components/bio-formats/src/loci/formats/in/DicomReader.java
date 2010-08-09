@@ -550,6 +550,9 @@ public class DicomReader extends FormatReader {
         case 0x7fe00000:
           in.skipBytes(elementLength);
           break;
+        case 0:
+          in.seek(in.getFilePointer() - 4);
+          break;
         default:
           long oldfp = in.getFilePointer();
           addInfo(tag, s);
