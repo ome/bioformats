@@ -177,7 +177,7 @@ public class MetamorphReader extends BaseTiffReader {
     if (ndFilename != null) v.add(ndFilename);
     if (!noPixels) {
       for (String stk : stks[getSeries()]) {
-        if (new Location(stk).exists()) {
+        if (stk != null && new Location(stk).exists()) {
           v.add(stk);
         }
       }
@@ -633,6 +633,7 @@ public class MetamorphReader extends BaseTiffReader {
 
       int lastFile = -1;
       IFD lastIFD = null;
+      long[] lastOffsets = null;
 
       double distance = zStart;
 
@@ -640,26 +641,34 @@ public class MetamorphReader extends BaseTiffReader {
         int[] coords = getZCTCoords(p);
         Double deltaT = new Double(0);
         Double exposureTime = new Double(0);
+        Double xmlZPosition = null;
 
-        if (coords[2] > 0 && stks != null && lastFile >= 0 &&
-          stks[i][lastFile] != null)
-        {
-          int fileIndex = getIndex(0, 0, coords[2]) / getSizeZ();
-          if (fileIndex != lastFile) {
-            lastFile = fileIndex;
-            RandomAccessInputStream stream =
-              new RandomAccessInputStream(stks[i][lastFile]);
+        int fileIndex = getIndex(0, 0, coords[2]) / getSizeZ();
+        if (fileIndex >= 0) {
+          String file = stks == null ? currentId : stks[i][fileIndex];
+          if (file != null) {
+            RandomAccessInputStream stream = new RandomAccessInputStream(file);
             TiffParser tp = new TiffParser(stream);
-            lastIFD = tp.getFirstIFD();
+            tp.checkHeader();
+            if (fileIndex != lastFile) {
+              lastFile = fileIndex;
+              lastOffsets = tp.getIFDOffsets();
+            }
+
+            lastIFD = tp.getIFD(lastOffsets[p % lastOffsets.length]);
             stream.close();
+            comment = lastIFD.getComment().trim();
+            handler = new MetamorphHandler(getSeriesMetadata());
+            if (comment != null && comment.startsWith("<MetaData>")) {
+              XMLTools.parseXML(comment, handler);
+            }
+            timestamps = handler.getTimestamps();
+            exposureTimes = handler.getExposures();
+            Vector<Double> zPositions = handler.getZPositions();
+            if (zPositions != null && zPositions.size() > 0) {
+              xmlZPosition = zPositions.get(0);
+            }
           }
-          comment = lastIFD.getComment();
-          handler = new MetamorphHandler(getSeriesMetadata());
-          if (comment != null && comment.startsWith("<MetaData>")) {
-            XMLTools.parseXML(comment, handler);
-          }
-          timestamps = handler.getTimestamps();
-          exposureTimes = handler.getExposures();
         }
 
         int index = 0;
@@ -695,6 +704,9 @@ public class MetamorphReader extends BaseTiffReader {
             else distance += zDistances[0];
           }
           store.setPlanePositionZ(distance, i, p);
+        }
+        else if (xmlZPosition != null) {
+          store.setPlanePositionZ(xmlZPosition, i, p);
         }
       }
     }
