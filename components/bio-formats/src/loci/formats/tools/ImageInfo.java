@@ -122,7 +122,7 @@ public class ImageInfo {
 
   // -- ImageInfo methods --
 
-  public void parseArgs(String[] args) {
+  public boolean parseArgs(String[] args) {
     id = null;
     printVersion = false;
     pixels = true;
@@ -152,7 +152,7 @@ public class ImageInfo {
     swapOrder = null;
     shuffleOrder = null;
     map = null;
-    if (args == null) return;
+    if (args == null) return false;
     for (int i=0; i<args.length; i++) {
       if (args[i].startsWith("-")) {
         if (args[i].equals("-nopix")) pixels = false;
@@ -205,13 +205,20 @@ public class ImageInfo {
         }
         else if (args[i].equals("-map")) map = args[++i];
         else if (args[i].equals("-format")) format = args[++i];
-        else LOGGER.warn("Ignoring unknown command flag: {}", args[i]);
+        else {
+          LOGGER.error("Found unknown command flag: {}; exiting.", args[i]);
+          return false;
+        }
       }
       else {
         if (id == null) id = args[i];
-        else LOGGER.warn("Ignoring unknown argument: {}", args[i]);
+        else {
+          LOGGER.error("Found unknown argument: {}; exiting.", args[i]);
+          return false;
+        }
       }
     }
+    return true;
   }
 
   public void printUsage() {
@@ -879,7 +886,8 @@ public class ImageInfo {
     throws FormatException, ServiceException, IOException
   {
     DebugTools.enableLogging("INFO");
-    parseArgs(args);
+    boolean validArgs = parseArgs(args);
+    if (!validArgs) return false;
     if (printVersion) {
       LOGGER.info("Version: {}", FormatTools.VERSION);
       LOGGER.info("SVN revision: {}", FormatTools.SVN_REVISION);

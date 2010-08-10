@@ -24,6 +24,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.tools;
 
 import java.awt.image.IndexColorModel;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.io.IOException;
 
 import loci.common.DebugTools;
@@ -101,12 +103,20 @@ public final class ImageConverter {
             }
             catch (NumberFormatException exc) { }
           }
-          else LOGGER.warn("Ignoring unknown command flag: {}", args[i]);
+          else {
+            LOGGER.error("Found unknown command flag: {}; exiting.", args[i]);
+            return false;
+          }
         }
         else {
           if (in == null) in = args[i];
           else if (out == null) out = args[i];
-          else LOGGER.warn("Ignoring unknown argument: {}", args[i]);
+          else {
+            LOGGER.error("Found unknown argument: {}; exiting.", args[i]);
+            LOGGER.error("You should specify exactly one input file and " +
+              "exactly one output file.");
+            return false;
+          }
         }
       }
     }
@@ -159,6 +169,19 @@ public final class ImageConverter {
       };
       for (int i=0; i<s.length; i++) LOGGER.info(s[i]);
       return false;
+    }
+
+    if (new Location(out).exists()) {
+      LOGGER.warn("Output file {} exists.", out);
+      LOGGER.warn("Do you want to overwrite it? ([y]/n)");
+      BufferedReader r = new BufferedReader(new InputStreamReader(System.in));
+      String choice = r.readLine().trim().toLowerCase();
+      boolean overwrite = !choice.startsWith("n");
+      if (!overwrite) {
+        LOGGER.warn("Exiting; next time, please specify an output file that " +
+          "does not exist.");
+        return false;
+      }
     }
 
     if (map != null) Location.mapId(in, map);
