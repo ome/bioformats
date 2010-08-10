@@ -1071,7 +1071,12 @@ public class ZeissZVIReader extends FormatReader {
       int nPoints = s.readInt();
       s.skipBytes(6);
 
+      String roiID = MetadataTools.createLSID("ROI", imageNum);
+      String shapeID = MetadataTools.createLSID("Shape", imageNum, shapeIndex);
+
       if (roiType == ELLIPSE) {
+        store.setROIID(roiID, imageNum);
+        store.setEllipseID(shapeID, imageNum, shapeIndex);
         store.setEllipseX(new Double(x + (w / 2)), imageNum, shapeIndex);
         store.setEllipseY(new Double(y + (h / 2)), imageNum, shapeIndex);
         store.setEllipseRadiusX(new Double(w / 2), imageNum, shapeIndex);
@@ -1081,6 +1086,7 @@ public class ZeissZVIReader extends FormatReader {
       else if (roiType == CURVE || roiType == OUTLINE ||
         roiType == OUTLINE_SPLINE)
       {
+        store.setROIID(roiID, imageNum);
         StringBuffer points = new StringBuffer();
         for (int p=0; p<nPoints; p++) {
           double px = s.readDouble();
@@ -1091,11 +1097,14 @@ public class ZeissZVIReader extends FormatReader {
           if (p < nPoints - 1) points.append(" ");
         }
 
+        store.setPolylineID(shapeID, imageNum, shapeIndex);
         store.setPolylinePoints(points.toString(), imageNum, shapeIndex);
         store.setPolylineClosed(roiType != CURVE, imageNum, shapeIndex);
         shapeIndex++;
       }
       else if (roiType == RECTANGLE || roiType == TEXT) {
+        store.setROIID(roiID, imageNum);
+        store.setRectangleID(shapeID, imageNum, shapeIndex);
         store.setRectangleX(new Double(x), imageNum, shapeIndex);
         store.setRectangleY(new Double(y), imageNum, shapeIndex);
         store.setRectangleWidth(new Double(w), imageNum, shapeIndex);
@@ -1103,10 +1112,12 @@ public class ZeissZVIReader extends FormatReader {
         shapeIndex++;
       }
       else if (roiType == LINE || roiType == SCALE_BAR) {
+        store.setROIID(roiID, imageNum);
         double x1 = s.readDouble();
         double y1 = s.readDouble();
         double x2 = s.readDouble();
         double y2 = s.readDouble();
+        store.setLineID(shapeID, imageNum, shapeIndex);
         store.setLineX1(x1, imageNum, shapeIndex);
         store.setLineY1(y1, imageNum, shapeIndex);
         store.setLineX2(x2, imageNum, shapeIndex);

@@ -639,8 +639,11 @@ public class BioRadReader extends FormatReader {
                   new PositiveInteger((int) Float.parseFloat(value)), 0, 0);
               }
               else if (key.equals("LENS_MAGNIFICATION")) {
-                store.setObjectiveNominalMagnification(
-                  new PositiveInteger((int) Float.parseFloat(value)), 0, 0);
+                int magnification = (int) Float.parseFloat(value);
+                if (magnification > 0) {
+                  store.setObjectiveNominalMagnification(
+                    new PositiveInteger(magnification), 0, 0);
+                }
               }
               else if (key.startsWith("SETTING")) {
                 if (key.indexOf("_DET_") != -1) {
@@ -892,6 +895,9 @@ public class BioRadReader extends FormatReader {
                   addGlobalMeta("Course", values[1]);
                   addGlobalMeta("Time Course - experiment type", values[2]);
                   addGlobalMeta("Time Course - kd factor", values[3]);
+                  String experimentID =
+                    MetadataTools.createLSID("Experiment", 0);
+                  store.setExperimentID(experimentID, 0);
                   store.setExperimentType(getExperimentType(values[2]), 0);
                   break;
                 case 21:
