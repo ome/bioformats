@@ -161,16 +161,17 @@ public abstract class FormatReader extends FormatHandler
 
     key = key.trim();
 
-    boolean string = value instanceof String;
+    boolean string = value instanceof String || value instanceof Character;
     boolean simple = string ||
       value instanceof Number ||
-      value instanceof Boolean ||
-      value instanceof Character;
+      value instanceof Boolean;
 
     // string value, if passed in value is a string
-    String val = string ? (String) value : null;
+    String val = string ? String.valueOf(value) : null;
 
-    if (filterMetadata) {
+    if (filterMetadata ||
+      (saveOriginalMetadata && (getMetadataStore() instanceof OMEXMLMetadata)))
+    {
       // filter out complex data types
       if (!simple) return;
 
