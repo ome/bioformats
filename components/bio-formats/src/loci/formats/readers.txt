@@ -81,7 +81,6 @@ loci.formats.in.BioRadGelReader       # 1sc
 loci.formats.in.RHKReader             # sm2, sm3
 loci.formats.in.MolecularImagingReader # stp
 loci.formats.in.CellWorxReader        # pnl, htd
-loci.formats.in.CRIReader             # im3
 loci.formats.in.FakeReader            # fake
 
 # multi-extension messes
