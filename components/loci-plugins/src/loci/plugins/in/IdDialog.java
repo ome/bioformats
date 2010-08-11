@@ -54,7 +54,7 @@ public class IdDialog extends ImporterDialog {
 
   @Override
   protected boolean needPrompt() {
-    return !process.isWindowless() && options.getId() == null;
+    return options.getId() == null;
   }
 
   @Override
