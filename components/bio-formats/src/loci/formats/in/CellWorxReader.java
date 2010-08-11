@@ -298,13 +298,13 @@ public class CellWorxReader extends FormatReader {
             if (fieldMap[fieldRow][fieldCol] && wellFiles[row][col] != null) {
               int fieldIndex = fieldRow * fieldMap[fieldRow].length + fieldCol;
 
-              String wellSampleID =
-                MetadataTools.createLSID("WellSample", 0, wellIndex, fieldIndex);
+              String wellSampleID = MetadataTools.createLSID("WellSample",
+                0, wellIndex, fieldIndex);
               store.setWellSampleID(wellSampleID, 0, wellIndex, fieldIndex);
               String imageID = MetadataTools.createLSID("Image", nextImage);
               store.setWellSampleImageRef(imageID, 0, wellIndex, fieldIndex);
-              store.setWellSampleIndex(
-                new NonNegativeInteger(fieldIndex), 0, wellIndex, fieldIndex);
+              store.setWellSampleIndex(new NonNegativeInteger(
+                wellIndex * fieldCount + fieldIndex), 0, wellIndex, fieldIndex);
 
               String well = (char) (row + 'A') + String.format("%02d", col + 1);
               store.setImageName(
@@ -369,6 +369,7 @@ public class CellWorxReader extends FormatReader {
     int seriesIndex = wellIndex * fieldCount;
     int row = getWellRow(seriesIndex);
     int col = getWellColumn(seriesIndex);
+    int well = row * wellFiles[0].length + col;
     String logFile = logFiles[row][col];
     LOGGER.debug("Parsing log file for well {}{}", (char) (row + 'A'), col + 1);
 
@@ -394,9 +395,14 @@ public class CellWorxReader extends FormatReader {
       }
       else if (key.equals("Scan Origin")) {
         String[] axes = value.split(",");
-        for (int field=0; field<fieldCount; field++) {
-          store.setWellSamplePositionX(new Double(axes[0]), 0, wellIndex, field);
-          store.setWellSamplePositionY(new Double(axes[1]), 0, wellIndex, field);
+        for (int fieldRow=0; fieldRow<fieldMap.length; fieldRow++) {
+          for (int fieldCol=0; fieldCol<fieldMap[fieldRow].length; fieldCol++) {
+            if (fieldMap[fieldRow][fieldCol] && wellFiles[row][col] != null) {
+              int field = fieldRow * fieldMap[fieldRow].length + fieldCol;
+              store.setWellSamplePositionX(new Double(axes[0]), 0, well, field);
+              store.setWellSamplePositionY(new Double(axes[1]), 0, well, field);
+            }
+          }
         }
       }
       else if (key.equals("Scan Area")) {
@@ -406,8 +412,9 @@ public class CellWorxReader extends FormatReader {
           Double xSize = new Double(value.substring(0, s).trim());
           Double ySize = new Double(value.substring(s + 1, end).trim());
           for (int field=0; field<fieldCount; field++) {
-            store.setPixelsPhysicalSizeX(xSize / getSizeX(), seriesIndex + field);
-            store.setPixelsPhysicalSizeY(ySize / getSizeY(), seriesIndex + field);
+            int index = seriesIndex + field;
+            store.setPixelsPhysicalSizeX(xSize / getSizeX(), index);
+            store.setPixelsPhysicalSizeY(ySize / getSizeY(), index);
           }
         }
       }

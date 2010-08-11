@@ -62,16 +62,26 @@ public final class MetadataConverter {
   public static void convertMetadata(MetadataRetrieve src, MetadataStore dest) {
     int datasetCount = src.getDatasetCount();
     for (int datasetIndex=0; datasetIndex<datasetCount; datasetIndex++) {
+    try {
+      String datasetIDValue = src.getDatasetID(datasetIndex);
+      if (datasetIDValue != null) dest.setDatasetID(datasetIDValue, datasetIndex);
+    } catch (NullPointerException e) { }
+    try {
+      for (int annotationRefIndex=0; annotationRefIndex<src.getDatasetAnnotationRefCount(datasetIndex); annotationRefIndex++)
+      {
+        String datasetAnnotationRefValue = src.getDatasetAnnotationRef(datasetIndex, annotationRefIndex);
+        if (datasetAnnotationRefValue != null) dest.setDatasetAnnotationRef(datasetAnnotationRefValue, datasetIndex, annotationRefIndex);
+      } 
+    } catch (NullPointerException e) { }
+    try {
       String datasetDescriptionValue = src.getDatasetDescription(datasetIndex);
       if (datasetDescriptionValue != null) dest.setDatasetDescription(datasetDescriptionValue, datasetIndex);
       String datasetExperimenterRefValue = src.getDatasetExperimenterRef(datasetIndex);
       if (datasetExperimenterRefValue != null) dest.setDatasetExperimenterRef(datasetExperimenterRefValue, datasetIndex);
       String datasetGroupRefValue = src.getDatasetGroupRef(datasetIndex);
       if (datasetGroupRefValue != null) dest.setDatasetGroupRef(datasetGroupRefValue, datasetIndex);
-      String datasetIDValue = src.getDatasetID(datasetIndex);
-      if (datasetIDValue != null) dest.setDatasetID(datasetIDValue, datasetIndex);
-      Boolean datasetLockedValue = src.getDatasetLocked(datasetIndex);
-      if (datasetLockedValue != null) dest.setDatasetLocked(datasetLockedValue, datasetIndex);
+    } catch (NullPointerException e) { }
+    try {
       String datasetNameValue = src.getDatasetName(datasetIndex);
       if (datasetNameValue != null) dest.setDatasetName(datasetNameValue, datasetIndex);
       int projectRefCount = src.getProjectRefCount(datasetIndex);
@@ -801,14 +811,27 @@ public final class MetadataConverter {
     }
     int projectCount = src.getProjectCount();
     for (int projectIndex=0; projectIndex<projectCount; projectIndex++) {
+    try {
+      String projectIDValue = src.getProjectID(projectIndex);
+      if (projectIDValue != null) dest.setProjectID(projectIDValue, projectIndex);
+    } catch (NullPointerException e) { }
+    try {
+      int annotationRefCount = src.getProjectAnnotationRefCount(projectIndex);
+      for (int annotationRefIndex=0; annotationRefIndex<annotationRefCount; annotationRefIndex++)
+      {
+        String projectAnnotationRefValue = src.getProjectAnnotationRef(projectIndex, annotationRefIndex);
+        if (projectAnnotationRefValue != null) dest.setProjectAnnotationRef(projectAnnotationRefValue, projectIndex, annotationRefIndex);
+      }
+    } catch (NullPointerException e) { }
+    try {
       String projectDescriptionValue = src.getProjectDescription(projectIndex);
       if (projectDescriptionValue != null) dest.setProjectDescription(projectDescriptionValue, projectIndex);
       String projectExperimenterRefValue = src.getProjectExperimenterRef(projectIndex);
       if (projectExperimenterRefValue != null) dest.setProjectExperimenterRef(projectExperimenterRefValue, projectIndex);
       String projectGroupRefValue = src.getProjectGroupRef(projectIndex);
       if (projectGroupRefValue != null) dest.setProjectGroupRef(projectGroupRefValue, projectIndex);
-      String projectIDValue = src.getProjectID(projectIndex);
-      if (projectIDValue != null) dest.setProjectID(projectIDValue, projectIndex);
+    } catch (NullPointerException e) { }
+    try {
       String projectNameValue = src.getProjectName(projectIndex);
       if (projectNameValue != null) dest.setProjectName(projectNameValue, projectIndex);
     }
