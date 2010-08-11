@@ -54,6 +54,7 @@ import loci.formats.gui.AWTImageTools;
 import loci.formats.gui.BufferedImageReader;
 import loci.formats.in.BioRadReader;
 import loci.formats.in.NRRDReader;
+import loci.formats.in.OMETiffReader;
 import loci.formats.in.TiffReader;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
@@ -386,10 +387,17 @@ public class FormatReaderTest {
         {
           msg = "SizeT";
         }
-        if (reader.isLittleEndian() ==
-          retrieve.getPixelsBinDataBigEndian(i, 0).booleanValue())
-        {
-          msg = "BigEndian";
+
+        // NB: OME-TIFF files do not have a BinData element under Pixels
+        IFormatReader r = reader.unwrap();
+        if (r instanceof FileStitcher) r = ((FileStitcher) r).getReader();
+        if (r instanceof ReaderWrapper) r = ((ReaderWrapper) r).unwrap();
+        if (!(r instanceof OMETiffReader)) {
+          if (reader.isLittleEndian() ==
+            retrieve.getPixelsBinDataBigEndian(i, 0).booleanValue())
+          {
+            msg = "BigEndian";
+          }
         }
         if (!reader.getDimensionOrder().equals(
           retrieve.getPixelsDimensionOrder(i).toString()))

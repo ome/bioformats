@@ -31,9 +31,11 @@ import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.ImageTools;
+import loci.formats.MetadataTools;
 import loci.formats.codec.BitBuffer;
 import loci.formats.codec.NikonCodec;
 import loci.formats.codec.NikonCodecOptions;
+import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 import loci.formats.tiff.PhotoInterp;
@@ -418,6 +420,9 @@ public class NikonReader extends BaseTiffReader {
     if (ifds.get(0).getSamplesPerPixel() == 1) {
       core[0].interleaved = true;
     }
+
+    MetadataStore store = makeFilterMetadata();
+    MetadataTools.populatePixels(store, this);
   }
 
   // -- Helper methods --

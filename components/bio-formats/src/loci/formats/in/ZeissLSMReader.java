@@ -413,6 +413,7 @@ public class ZeissLSMReader extends FormatReader {
     }
     MetadataTools.populatePixels(store, this, true);
     for (int series=0; series<ifdsList.size(); series++) {
+      setSeries(series);
       store.setImageName(imageNames.get(series), series);
       store.setPixelsBinDataBigEndian(!isLittleEndian(), series, 0);
     }
@@ -1134,6 +1135,9 @@ public class ZeissLSMReader extends FormatReader {
       boolean moveable = in.readInt() == 0;
       in.skipBytes(34);
 
+      String roiID = MetadataTools.createLSID("ROI", i);
+      String shapeID = MetadataTools.createLSID("Shape", i, 0);
+
       switch (type) {
         case TEXT:
           double x = in.readDouble();
@@ -1142,6 +1146,8 @@ public class ZeissLSMReader extends FormatReader {
           store.setTextValue(text, i, 0);
           store.setTextFontSize(new NonNegativeInteger(fontHeight), i, 0);
           store.setTextStrokeWidth(lineWidth, i, 0);
+          store.setROIID(roiID, i);
+          store.setTextID(shapeID, i, 0);
           break;
         case LINE:
           in.skipBytes(4);
@@ -1156,6 +1162,8 @@ public class ZeissLSMReader extends FormatReader {
           store.setLineY2(endY, i, 0);
           store.setLineFontSize(new NonNegativeInteger(fontHeight), i, 0);
           store.setLineStrokeWidth(lineWidth, i, 0);
+          store.setROIID(roiID, i);
+          store.setLineID(shapeID, i, 0);
           break;
         case SCALE_BAR:
         case OPEN_ARROW:
@@ -1181,6 +1189,8 @@ public class ZeissLSMReader extends FormatReader {
           store.setRectangleHeight(height, i, 0);
           store.setRectangleFontSize(new NonNegativeInteger(fontHeight), i, 0);
           store.setRectangleStrokeWidth(lineWidth, i, 0);
+          store.setROIID(roiID, i);
+          store.setRectangleID(shapeID, i, 0);
 
           break;
         case ELLIPSE:
@@ -1237,6 +1247,8 @@ public class ZeissLSMReader extends FormatReader {
           store.setEllipseRadiusY(ry, i, 0);
           store.setEllipseFontSize(new NonNegativeInteger(fontHeight), i, 0);
           store.setEllipseStrokeWidth(lineWidth, i, 0);
+          store.setROIID(roiID, i);
+          store.setEllipseID(shapeID, i, 0);
 
           break;
         case CIRCLE:
@@ -1255,6 +1267,8 @@ public class ZeissLSMReader extends FormatReader {
           store.setEllipseRadiusY(radius, i, 0);
           store.setEllipseFontSize(new NonNegativeInteger(fontHeight), i, 0);
           store.setEllipseStrokeWidth(lineWidth, i, 0);
+          store.setROIID(roiID, i);
+          store.setEllipseID(shapeID, i, 0);
 
           break;
         case CIRCLE_3POINT:
@@ -1290,6 +1304,8 @@ public class ZeissLSMReader extends FormatReader {
           store.setEllipseRadiusY(r, i, 0);
           store.setEllipseFontSize(new NonNegativeInteger(fontHeight), i, 0);
           store.setEllipseStrokeWidth(lineWidth, i, 0);
+          store.setROIID(roiID, i);
+          store.setEllipseID(shapeID, i, 0);
 
           break;
         case ANGLE:
@@ -1312,6 +1328,8 @@ public class ZeissLSMReader extends FormatReader {
           store.setPolylinePoints(p.toString(), i, 0);
           store.setPolylineFontSize(new NonNegativeInteger(fontHeight), i, 0);
           store.setPolylineStrokeWidth(lineWidth, i, 0);
+          store.setROIID(roiID, i);
+          store.setPolylineID(shapeID, i, 0);
 
           break;
         case CLOSED_POLYLINE:
@@ -1337,6 +1355,8 @@ public class ZeissLSMReader extends FormatReader {
           store.setPolylineClosed(type == CLOSED_POLYLINE, i, 0);
           store.setPolylineFontSize(new NonNegativeInteger(fontHeight), i, 0);
           store.setPolylineStrokeWidth(lineWidth, i, 0);
+          store.setROIID(roiID, i);
+          store.setPolylineID(shapeID, i, 0);
 
           break;
         case CLOSED_BEZIER:
@@ -1362,6 +1382,8 @@ public class ZeissLSMReader extends FormatReader {
           store.setPolylineClosed(type != OPEN_BEZIER, i, 0);
           store.setPolylineFontSize(new NonNegativeInteger(fontHeight), i, 0);
           store.setPolylineStrokeWidth(lineWidth, i, 0);
+          store.setROIID(roiID, i);
+          store.setPolylineID(shapeID, i, 0);
 
           break;
         default:

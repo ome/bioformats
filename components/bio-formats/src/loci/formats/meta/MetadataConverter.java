@@ -76,6 +76,10 @@ public final class MetadataConverter {
     int datasetCount = src.getDatasetCount();
     for (int datasetIndex=0; datasetIndex<datasetCount; datasetIndex++) {
     try {
+      String datasetIDValue = src.getDatasetID(datasetIndex);
+      if (datasetIDValue != null) dest.setDatasetID(datasetIDValue, datasetIndex);
+    } catch (NullPointerException e) { }
+    try {
       for (int annotationRefIndex=0; annotationRefIndex<src.getDatasetAnnotationRefCount(datasetIndex); annotationRefIndex++)
       {
         String datasetAnnotationRefValue = src.getDatasetAnnotationRef(datasetIndex, annotationRefIndex);
@@ -93,10 +97,6 @@ public final class MetadataConverter {
     try {
       String datasetGroupRefValue = src.getDatasetGroupRef(datasetIndex);
       if (datasetGroupRefValue != null) dest.setDatasetGroupRef(datasetGroupRefValue, datasetIndex);
-    } catch (NullPointerException e) { }
-    try {
-      String datasetIDValue = src.getDatasetID(datasetIndex);
-      if (datasetIDValue != null) dest.setDatasetID(datasetIDValue, datasetIndex);
     } catch (NullPointerException e) { }
     try {
       String datasetNameValue = src.getDatasetName(datasetIndex);
@@ -1429,6 +1429,10 @@ public final class MetadataConverter {
     int projectCount = src.getProjectCount();
     for (int projectIndex=0; projectIndex<projectCount; projectIndex++) {
     try {
+      String projectIDValue = src.getProjectID(projectIndex);
+      if (projectIDValue != null) dest.setProjectID(projectIDValue, projectIndex);
+    } catch (NullPointerException e) { }
+    try {
       int annotationRefCount = src.getProjectAnnotationRefCount(projectIndex);
       for (int annotationRefIndex=0; annotationRefIndex<annotationRefCount; annotationRefIndex++)
       {
@@ -1447,10 +1451,6 @@ public final class MetadataConverter {
     try {
       String projectGroupRefValue = src.getProjectGroupRef(projectIndex);
       if (projectGroupRefValue != null) dest.setProjectGroupRef(projectGroupRefValue, projectIndex);
-    } catch (NullPointerException e) { }
-    try {
-      String projectIDValue = src.getProjectID(projectIndex);
-      if (projectIDValue != null) dest.setProjectID(projectIDValue, projectIndex);
     } catch (NullPointerException e) { }
     try {
       String projectNameValue = src.getProjectName(projectIndex);

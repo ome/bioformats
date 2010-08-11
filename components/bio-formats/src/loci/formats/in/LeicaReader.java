@@ -164,6 +164,8 @@ public class LeicaReader extends FormatReader {
   private boolean[][] cutOutPopulated;
   private boolean[][] filterRefPopulated;
 
+  private Double detectorOffset, detectorVoltage;
+
   // -- Constructor --
 
   /** Constructs a new Leica reader. */
@@ -1161,17 +1163,19 @@ public class LeicaReader extends FormatReader {
         if (tokens[1].startsWith("PMT")) {
           try {
             if (tokens[2].equals("VideoOffset")) {
-              store.setDetectorOffset(new Double(data), series, nextDetector);
+              detectorOffset = new Double(data);
             }
             else if (tokens[2].equals("HighVoltage")) {
-              store.setDetectorVoltage(new Double(data), series, nextDetector);
+              detectorVoltage = new Double(data);
               nextDetector++;
             }
             else if (tokens[2].equals("State")) {
-              store.setDetectorType(
-                getDetectorType("PMT"), series, nextDetector);
               // link Detector to Image, if the detector was actually used
               if (data.equals("Active")) {
+                store.setDetectorOffset(detectorOffset, series, nextDetector);
+                store.setDetectorVoltage(detectorVoltage, series, nextDetector);
+                store.setDetectorType(
+                  getDetectorType("PMT"), series, nextDetector);
                 String index = tokens[1].substring(tokens[1].indexOf(" ") + 1);
                 int channelIndex = -1;
                 try {

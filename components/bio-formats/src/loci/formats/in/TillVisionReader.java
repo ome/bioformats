@@ -226,7 +226,7 @@ public class TillVisionReader extends FormatReader {
           core[0].sizeT = s.readInt();
           core[0].pixelType = convertPixelType(s.readInt());
           embeddedOffset = s.getFilePointer() + 28;
-          in.close();
+          if (in != null) in.close();
           in = poi.getDocumentStream(name);
           nImages++;
           s.close();
@@ -328,9 +328,9 @@ public class TillVisionReader extends FormatReader {
       int nextFile = 0;
 
       for (String f : files) {
-        if (checkSuffix(f, "pst") && f.startsWith(name)) {
+        if (checkSuffix(f, "pst")) {
           Location pst = new Location(directory, f);
-          if (pst.isDirectory()) {
+          if (pst.isDirectory() && f.startsWith(name)) {
             String[] subfiles = pst.list(true);
             for (String q : subfiles) {
               if (checkSuffix(q, "pst") && nextFile < nImages) {

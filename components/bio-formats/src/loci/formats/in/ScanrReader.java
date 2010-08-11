@@ -425,6 +425,8 @@ public class ScanrReader extends FormatReader {
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
 
+    store.setPlateID(MetadataTools.createLSID("Plate", 0), 0);
+
     int nFields = fieldRows * fieldColumns;
 
     for (int i=0; i<getSeriesCount(); i++) {
@@ -436,9 +438,13 @@ public class ScanrReader extends FormatReader {
       int wellRow = well / wellColumns;
       int wellCol = well % wellColumns;
 
+      store.setWellID(MetadataTools.createLSID("Well", 0, well), 0, well);
       store.setWellColumn(new NonNegativeInteger(wellCol), 0, well);
       store.setWellRow(new NonNegativeInteger(wellRow), 0, well);
 
+      String wellSample =
+        MetadataTools.createLSID("WellSample", 0, well, field);
+      store.setWellSampleID(wellSample, 0, well, field);
       store.setWellSampleIndex(new NonNegativeInteger(i), 0, well, field);
       String imageID = MetadataTools.createLSID("Image", i);
       store.setWellSampleImageRef(imageID, 0, well, field);
