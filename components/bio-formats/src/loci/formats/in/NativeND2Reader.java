@@ -1337,6 +1337,12 @@ public class NativeND2Reader extends FormatReader {
     if (value.indexOf(separator) == -1) {
       char usedSeparator = separator == '.' ? ',' : '.';
       value = value.replace(usedSeparator, separator);
+      try {
+        Double.parseDouble(value);
+      }
+      catch (Exception e) {
+        value = value.replace(separator, usedSeparator);
+      }
     }
     return value;
   }
