@@ -160,7 +160,10 @@ public class Colorizer {
       else {
         // NB: Cannot use CompositeImage for some reason.
         if (luts != null && luts.length > 0 && luts[0] != null) {
-          imp.getProcessor().setColorModel(luts[0]);
+          if (imp instanceof VirtualImagePlus) {
+            ((VirtualImagePlus) imp).setLUTs(luts);
+          }
+          else imp.getProcessor().setColorModel(luts[0]);
         }
         if (mode != -1 && cSize > 7) {
           // NB: Cannot use CompositeImage with more than seven channels.
