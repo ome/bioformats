@@ -118,20 +118,29 @@ public final class MetadataTools {
       store.setPixelsSizeZ(new PositiveInteger(r.getSizeZ()), i);
       store.setPixelsSizeC(new PositiveInteger(r.getSizeC()), i);
       store.setPixelsSizeT(new PositiveInteger(r.getSizeT()), i);
-      store.setPixelsBinDataBigEndian(new Boolean(!r.isLittleEndian()), i, 0);
 
+      int tiffDataCount = 0;
+      OMEXMLService service = null;
       try {
-        OMEXMLService service =
-          new ServiceFactory().getInstance(OMEXMLService.class);
+        service = new ServiceFactory().getInstance(OMEXMLService.class);
         if (service.isOMEXMLRoot(store.getRoot())) {
+          OME root = (OME) store.getRoot();
+          tiffDataCount = root.getImage(i).getPixels().sizeOfTiffDataList();
+        }
+      }
+      catch (DependencyException exc) {
+        LOGGER.debug("Failed to set BinData.Length", exc);
+      }
+
+      if (tiffDataCount == 0) {
+        store.setPixelsBinDataBigEndian(new Boolean(!r.isLittleEndian()), i, 0);
+
+        if (service != null && service.isOMEXMLRoot(store.getRoot())) {
           OME root = (OME) store.getRoot();
           BinData bin = root.getImage(i).getPixels().getBinData(0);
           bin.setLength(new NonNegativeLong(0L));
           store.setRoot(root);
         }
-      }
-      catch (DependencyException exc) {
-        LOGGER.debug("Failed to set BinData.Length", exc);
       }
 
       try {

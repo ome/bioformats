@@ -44,6 +44,7 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
+import loci.formats.MetadataTools;
 import loci.formats.MissingLibraryException;
 import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.services.OMEXMLService;
@@ -607,6 +608,8 @@ public class OMETiffReader extends FormatReader {
     }
     core = series.toArray(new CoreMetadata[series.size()]);
     info = planeInfo.toArray(new OMETiffPlane[0][0]);
+
+    MetadataTools.populatePixels(metadataStore, this);
   }
 
   // -- Helper methods --

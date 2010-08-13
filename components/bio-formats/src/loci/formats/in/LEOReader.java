@@ -29,6 +29,7 @@ import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
+import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
@@ -120,6 +121,12 @@ public class LEOReader extends BaseTiffReader {
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setPixelsPhysicalSizeX(xSize, 0);
       store.setPixelsPhysicalSizeY(xSize, 0);
+
+      String instrument = MetadataTools.createLSID("Instrument", 0);
+      store.setInstrumentID(instrument, 0);
+      store.setImageInstrumentRef(instrument, 0);
+
+      store.setObjectiveID(MetadataTools.createLSID("Objective", 0, 0), 0, 0);
       store.setObjectiveWorkingDistance(workingDistance, 0, 0);
       store.setObjectiveImmersion(getImmersion("Other"), 0, 0);
       store.setObjectiveCorrection(getCorrection("Other"), 0, 0);

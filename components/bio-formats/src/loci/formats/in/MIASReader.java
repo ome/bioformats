@@ -677,10 +677,13 @@ public class MIASReader extends FormatReader {
       int wellCol = (wellIndex % wellColumns) + 1;
       char wellRow = (char) ('A' + row);
 
+      store.setWellID(MetadataTools.createLSID("Well", 0, well), 0, well);
       store.setWellRow(new NonNegativeInteger(row), 0, well);
       store.setWellColumn(new NonNegativeInteger(wellCol - 1), 0, well);
 
       String imageID = MetadataTools.createLSID("Image", well);
+      String wellSampleID = MetadataTools.createLSID("WellSample", 0, well, 0);
+      store.setWellSampleID(wellSampleID, 0, well, 0);
       store.setWellSampleIndex(new NonNegativeInteger(well), 0, well, 0);
 
       store.setImageID(imageID, well);
@@ -693,10 +696,13 @@ public class MIASReader extends FormatReader {
     MetadataLevel level = getMetadataOptions().getMetadataLevel();
 
     if (level != MetadataLevel.MINIMUM) {
-      store.setExperimentID("Experiment:" + experiment.getName(), 0);
+      String experimentID = MetadataTools.createLSID("Experiment", 0);
+      store.setExperimentID(experimentID, 0);
       store.setExperimentType(getExperimentType("Other"), 0);
+      store.setExperimentDescription(experiment.getName(), 0);
 
       // populate SPW metadata
+      store.setPlateID(MetadataTools.createLSID("Plate", 0), 0);
       store.setPlateColumnNamingConvention(getNamingConvention("Number"), 0);
       store.setPlateRowNamingConvention(getNamingConvention("Letter"), 0);
 
@@ -708,7 +714,7 @@ public class MIASReader extends FormatReader {
 
       for (int well=0; well<nWells; well++) {
         // populate Image/Pixels metadata
-        store.setImageExperimentRef("Experiment:" + experiment.getName(), well);
+        store.setImageExperimentRef(experimentID, well);
 
         String instrumentID = MetadataTools.createLSID("Instrument", 0);
         store.setInstrumentID(instrumentID, 0);
@@ -848,6 +854,7 @@ public class MIASReader extends FormatReader {
     store.setROIID(roiID, roi);
     store.setImageROIRef(roiID, series, roi);
 
+    store.setEllipseID(MetadataTools.createLSID("Shape", roi, 0), roi, 0);
     store.setEllipseTheT(new NonNegativeInteger(tv), roi, 0);
     store.setEllipseTheZ(new NonNegativeInteger(zv), roi, 0);
     store.setEllipseX(new Double(data[columns.indexOf("Col")]), roi, 0);
@@ -915,6 +922,8 @@ public class MIASReader extends FormatReader {
           physicalSizeY = new Double(value);
         }
         else if (key.equals("Objective_ID")) {
+          store.setObjectiveID(
+            MetadataTools.createLSID("Objective", 0, 0), 0, 0);
           store.setObjectiveModel(value, 0, 0);
         }
         else if (key.equals("Magnification")) {
@@ -969,13 +978,17 @@ public class MIASReader extends FormatReader {
     int nOverlays = 0;
     for (int i=0; i<3; i++) {
       String roiId = MetadataTools.createLSID("ROI", series, roi + nOverlays);
-      String maskId = MetadataTools.createLSID("Mask", series, roi + nOverlays, 0);
+      String maskId =
+        MetadataTools.createLSID("Mask", series, roi + nOverlays, 0);
       overlayFiles.put(maskId, overlayTiff);
       overlayPlanes.put(maskId, new Integer(i));
 
       boolean validMask = populateMaskPixels(series, roi + nOverlays, 0);
       if (validMask) {
         store.setROIID(roiId, roi + nOverlays);
+
+        String maskID = MetadataTools.createLSID("Shape", roi + nOverlays, 0);
+        store.setMaskID(maskID, roi + nOverlays, 0);
         store.setMaskX(new Double(0), roi + nOverlays, 0);
         store.setMaskY(new Double(0), roi + nOverlays, 0);
         store.setMaskWidth(new Double(getSizeX()), roi + nOverlays, 0);
