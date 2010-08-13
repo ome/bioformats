@@ -98,7 +98,7 @@ public class ServiceFactory {
           Class.forName((String) entry.getKey());
       }
       catch (Throwable t) {
-        LOGGER.warn("CLASSPATH missing interface: {}", interfaceName, t);
+        LOGGER.debug("CLASSPATH missing interface: {}", interfaceName, t);
         continue;
       }
       try {
