@@ -255,8 +255,10 @@ public class PhotoshopTiffReader extends BaseTiffReader {
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
     store.setImageName("Merged", 0);
-    for (int layer=0; layer<layerNames.length; layer++) {
-      store.setImageName(layerNames[layer], layer + 1);
+    if (layerNames != null) {
+      for (int layer=0; layer<layerNames.length; layer++) {
+        store.setImageName(layerNames[layer], layer + 1);
+      }
     }
   }
 
