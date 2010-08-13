@@ -28,6 +28,7 @@ package loci.plugins.util;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.process.ImageStatistics;
+import ij.process.LUT;
 
 import java.io.IOException;
 import java.util.List;
@@ -50,6 +51,7 @@ public class VirtualImagePlus extends ImagePlus {
   // -- Fields --
 
   private IFormatReader r;
+  private LUT[] luts;
 
   // -- Constructor --
 
@@ -64,6 +66,10 @@ public class VirtualImagePlus extends ImagePlus {
 
   public void setReader(IFormatReader r) {
     this.r = r;
+  }
+
+  public void setLUTs(LUT[] luts) {
+    this.luts = luts;
   }
 
   // -- ImagePlus API methods --
@@ -82,6 +88,10 @@ public class VirtualImagePlus extends ImagePlus {
       // if we call setProcessor(getTitle(), proc), the type will be set
       // to GRAY32 (regardless of the actual processor type)
       setProcessor(getTitle(), proc.getChild());
+      int channel = getChannel() - 1;
+      if (channel >= 0 && luts != null && channel < luts.length) {
+        getProcessor().setColorModel(luts[channel]);
+      }
       this.ip = proc;
     }
   }
