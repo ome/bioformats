@@ -61,6 +61,7 @@ public class LEOReader extends BaseTiffReader {
   public LEOReader() {
     super("LEO", "sxm");
     domains = new String[] {FormatTools.EM_DOMAIN};
+    suffixSufficient = false;
   }
 
   // -- IFormatReader API methods --

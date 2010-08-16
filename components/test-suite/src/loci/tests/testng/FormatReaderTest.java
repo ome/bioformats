@@ -458,13 +458,13 @@ public class FormatReaderTest {
           msg = "PlaneTiming";
         }
 
-        // if CreationDate is before 1995, it's probably invalid
+        // if CreationDate is before 1990, it's probably invalid
         String date = retrieve.getImageAcquiredDate(i);
         if (date != null) {
           date = date.trim();
           long acquiredDate = DateTools.getTime(date, DateTools.ISO8601_FORMAT);
           long saneDate =
-            DateTools.getTime("1995-01-01T00:00:00", DateTools.ISO8601_FORMAT);
+            DateTools.getTime("1990-01-01T00:00:00", DateTools.ISO8601_FORMAT);
           long fileDate = new Location(
             reader.getCurrentFile()).getAbsoluteFile().lastModified();
           if (acquiredDate < saneDate && fileDate >= saneDate) {

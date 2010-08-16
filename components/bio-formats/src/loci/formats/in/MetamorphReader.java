@@ -657,7 +657,8 @@ public class MetamorphReader extends BaseTiffReader {
 
             lastIFD = tp.getIFD(lastOffsets[p % lastOffsets.length]);
             stream.close();
-            comment = lastIFD.getComment().trim();
+            comment = lastIFD.getComment();
+            if (comment != null) comment = comment.trim();
             handler = new MetamorphHandler(getSeriesMetadata());
             if (comment != null && comment.startsWith("<MetaData>")) {
               XMLTools.parseXML(comment, handler);

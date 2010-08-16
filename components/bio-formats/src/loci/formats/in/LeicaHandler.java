@@ -944,7 +944,10 @@ public class LeicaHandler extends DefaultHandler {
       // point of the ROI and the transX/transY values are relative to
       // the center point of the image
 
-      if (text != null) store.setTextValue(text, roi, 0);
+      store.setROIID(MetadataTools.createLSID("ROI", roi), roi);
+      store.setTextID(MetadataTools.createLSID("Shape", roi, 0), roi, 0);
+      if (text == null) text = "";
+      store.setTextValue(text, roi, 0);
       if (fontSize != null) {
         store.setTextFontSize(
             new NonNegativeInteger((int) Double.parseDouble(fontSize)), roi, 0);
@@ -955,6 +958,9 @@ public class LeicaHandler extends DefaultHandler {
 
       double cornerX = x.get(0).doubleValue();
       double cornerY = y.get(0).doubleValue();
+
+      store.setTextX(cornerX, roi, 0);
+      store.setTextY(cornerY, roi, 0);
 
       int centerX = (core.get(series).sizeX / 2) - 1;
       int centerY = (core.get(series).sizeY / 2) - 1;
@@ -969,6 +975,7 @@ public class LeicaHandler extends DefaultHandler {
 
       // TODO : rotation/scaling not populated
 
+      String shapeID = MetadataTools.createLSID("Shape", roi, 1);
       switch (type) {
         case POLYGON:
           StringBuffer points = new StringBuffer();
@@ -978,12 +985,14 @@ public class LeicaHandler extends DefaultHandler {
             points.append(y.get(i).doubleValue() + roiY);
             if (i < x.size() - 1) points.append(" ");
           }
+          store.setPolylineID(shapeID, roi, 1);
           store.setPolylinePoints(points.toString(), roi, 1);
           store.setPolylineClosed(Boolean.TRUE, roi, 1);
 
           break;
         case TEXT:
         case RECTANGLE:
+          store.setRectangleID(shapeID, roi, 1);
           store.setRectangleX(roiX - Math.abs(cornerX), roi, 1);
           store.setRectangleY(roiY - Math.abs(cornerY), roi, 1);
           double width = 2 * Math.abs(cornerX);
@@ -995,6 +1004,7 @@ public class LeicaHandler extends DefaultHandler {
         case SCALE_BAR:
         case ARROW:
         case LINE:
+          store.setLineID(shapeID, roi, 1);
           store.setLineX1(roiX + x.get(0), roi, 1);
           store.setLineY1(roiY + y.get(0), roi, 1);
           store.setLineX2(roiX + x.get(1), roi, 1);

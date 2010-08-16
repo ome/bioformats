@@ -30,6 +30,8 @@ import java.util.Vector;
 
 import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceFactory;
 import loci.common.xml.XMLTools;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
@@ -38,6 +40,11 @@ import loci.formats.FormatTools;
 import loci.formats.ImageTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+import loci.formats.services.OMEXMLService;
+
+import ome.xml.model.Channel;
+import ome.xml.model.OME;
+import ome.xml.model.Pixels;
 
 /**
  * LIFReader is the file format reader for Leica LIF files.
@@ -377,6 +384,26 @@ public class LIFReader extends FormatReader {
     }
 
     MetadataTools.populatePixels(store, this, true, false);
+
+    // remove any Channels that do not have an ID
+
+    OMEXMLService service = null;
+    try {
+      service = new ServiceFactory().getInstance(OMEXMLService.class);
+      if (service.isOMEXMLRoot(store.getRoot())) {
+        OME root = (OME) store.getRoot();
+        for (int i=0; i<getSeriesCount(); i++) {
+          Pixels img = root.getImage(i).getPixels();
+          for (int c=0; c<img.sizeOfChannelList(); c++) {
+            Channel channel = img.getChannel(c);
+            if (channel.getID() == null) img.removeChannel(channel);
+          }
+        }
+      }
+    }
+    catch (DependencyException e) {
+      LOGGER.trace("Failed to remove channels", e);
+    }
   }
 
 }

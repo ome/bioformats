@@ -436,6 +436,7 @@ public class FlexReader extends FormatReader {
     for (int row=0; row<wellRows; row++) {
       for (int col=0; col<wellColumns; col++) {
         int well = row * wellColumns + col;
+        store.setWellID(MetadataTools.createLSID("Well", 0, well), 0, well);
         store.setWellRow(new NonNegativeInteger(row), 0, well);
         store.setWellColumn(new NonNegativeInteger(col), 0, well);
       }
@@ -459,6 +460,9 @@ public class FlexReader extends FormatReader {
         store.setWellRow(row, pos[2], pos[1]);
         store.setWellColumn(col, pos[2], pos[1]);
       }
+      String wellSample =
+        MetadataTools.createLSID("WellSample", pos[2], well, pos[0]);
+      store.setWellSampleID(wellSample, pos[2], well, pos[0]);
       store.setWellSampleIndex(new NonNegativeInteger(i), pos[2], well, pos[0]);
       store.setWellSampleImageRef(imageID, pos[2], well, pos[0]);
     }
@@ -469,6 +473,7 @@ public class FlexReader extends FormatReader {
 
       if (plateName == null) plateName = currentFile.getParentFile().getName();
       if (plateBarcode != null) plateName = plateBarcode + " " + plateName;
+      store.setPlateID(MetadataTools.createLSID("Plate", 0), 0);
       store.setPlateName(plateName, 0);
       store.setPlateRowNamingConvention(getNamingConvention("Letter"), 0);
       store.setPlateColumnNamingConvention(getNamingConvention("Number"), 0);
