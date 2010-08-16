@@ -45,6 +45,8 @@ public class BioRadGelReader extends FormatReader {
   // -- Constants --
 
   private static final long PIXEL_OFFSET = 59654;
+  private static final long BIG_ENDIAN_OFFSET = 348;
+  private static final long LITTLE_ENDIAN_OFFSET = 268;
 
   // -- Fields --
 
@@ -76,10 +78,15 @@ public class BioRadGelReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
+    int planeSize = FormatTools.getPlaneSize(this);
+
     if (offset > PIXEL_OFFSET) {
       in.seek(offset + 1285);
     }
-    else in.seek(PIXEL_OFFSET);
+    else if (PIXEL_OFFSET + planeSize <= in.length()) {
+      in.seek(PIXEL_OFFSET);
+    }
+    else in.seek(in.length() - planeSize);
 
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
     int pixel = bpp * getSizeC();
@@ -102,12 +109,21 @@ public class BioRadGelReader extends FormatReader {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
 
-    in.seek(348);
+    String check = in.readString(48);
+    if (check.indexOf("Intel Format") != -1) {
+      in.order(true);
+    }
+
+    long headerOffset =
+      in.isLittleEndian() ? LITTLE_ENDIAN_OFFSET : BIG_ENDIAN_OFFSET;
+
+    in.seek(headerOffset);
     int skip = in.readInt() - 28;
+    headerOffset = BIG_ENDIAN_OFFSET;
 
     double physicalWidth = 0d, physicalHeight = 0d;
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      in.seek(348 + skip - 8187);
+      in.seek(headerOffset + skip - 8187);
       String scannerName = in.readCString();
       in.skipBytes(8);
       in.readCString();
@@ -128,11 +144,11 @@ public class BioRadGelReader extends FormatReader {
       }
     }
 
-    in.seek(348 + skip - 273);
+    in.seek(headerOffset + skip - 273);
     String date = in.readCString();
     date = DateTools.formatDate(date, "dd-MMM-yyyy HH:mm");
 
-    in.seek(348 + skip);
+    in.seek(headerOffset + skip);
 
     core[0].sizeX = in.readShort() & 0xffff;
     core[0].sizeY = in.readShort() & 0xffff;
