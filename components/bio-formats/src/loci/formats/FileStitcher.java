@@ -824,6 +824,12 @@ public class FileStitcher implements IFormatReader {
     return reader.getMetadataValue(field);
   }
 
+  /* @see IFormatReader#getSeriesMetadataValue(String) */
+  public Object getSeriesMetadataValue(String field) {
+    FormatTools.assertId(currentId, true, 2);
+    return reader.getSeriesMetadataValue(field);
+  }
+
   /* @see IFormatReader#getGlobalMetadata() */
   public Hashtable<String, Object> getGlobalMetadata() {
     FormatTools.assertId(currentId, true, 2);

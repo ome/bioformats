@@ -397,6 +397,14 @@ public interface IFormatReader extends IFormatHandler, IMetadataConfigurable {
   Object getMetadataValue(String field);
 
   /**
+   * Obtains the specified metadata field's value for the current series
+   * in the current file.
+   * @param field the name associated with the metadata field
+   * @return the value, or null if the field doesn't exist
+   */
+  Object getSeriesMetadataValue(String field);
+
+  /**
    * Obtains the hashtable containing the metadata field/value pairs from
    * the current file.
    * @return the hashtable containing all non-series-specific metadata
