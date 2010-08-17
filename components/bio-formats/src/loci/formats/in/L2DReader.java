@@ -79,10 +79,28 @@ public class L2DReader extends FormatReader {
     Location parent = new Location(name).getAbsoluteFile().getParentFile();
     String[] list = parent.list();
 
+    boolean hasScan = false, hasRootFile = false;
+
     for (String file : list) {
-      if (checkSuffix(file, "scn")) return true;
+      if (checkSuffix(file, "scn")) {
+        hasScan = true;
+        break;
+      }
     }
-    return false;
+
+    parent = parent.getParentFile();
+    if (parent == null) return false;
+    list = parent.list();
+    if (list == null) return false;
+
+    for (String file : list) {
+      if (checkSuffix(file, "l2d")) {
+        hasRootFile = true;
+        break;
+      }
+    }
+
+    return hasScan && hasRootFile;
   }
 
   /* @see loci.formats.IFormatReader#isSingleFile(String) */
@@ -170,7 +188,11 @@ public class L2DReader extends FormatReader {
         if (key.equals("ScanNames")) {
           StringTokenizer names = new StringTokenizer(value, ",");
           while (names.hasMoreTokens()) {
-            scans.add(names.nextToken().trim());
+            String name = names.nextToken().trim();
+            Location scanDir = new Location(parent, name);
+            if (scanDir.exists() && scanDir.isDirectory()) {
+              scans.add(name);
+            }
           }
         }
       }
