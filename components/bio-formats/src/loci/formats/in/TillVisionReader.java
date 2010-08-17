@@ -28,6 +28,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Vector;
 
@@ -400,11 +401,8 @@ public class TillVisionReader extends FormatReader {
         core[i].pixelType = convertPixelType(dataType);
 
         if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-          for (IniTable table : data) {
-            for (String key : table.keySet()) {
-              addSeriesMeta(key, table.get(key));
-            }
-          }
+          HashMap<String, String> iniMap = data.flattenIntoHashMap();
+          core[i].seriesMetadata.putAll(iniMap);
         }
       }
 

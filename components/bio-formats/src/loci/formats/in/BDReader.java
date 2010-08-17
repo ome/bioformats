@@ -28,7 +28,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Vector;
 
 import loci.common.DataTools;
@@ -250,6 +252,22 @@ public class BDReader extends FormatReader {
     boolean littleEndian = reader.isLittleEndian();
 
     reader.close();
+
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
+      IniParser parser = new IniParser();
+      for (String metadataFile : metadataFiles) {
+        String filename = new Location(metadataFile).getName();
+        if (!checkSuffix(metadataFile, "txt")) {
+          String data = DataTools.readFile(metadataFile);
+          IniList ini =
+            parser.parseINI(new BufferedReader(new StringReader(data)));
+          HashMap<String, String> h = ini.flattenIntoHashMap();
+          for (String key : h.keySet()) {
+            addGlobalMeta(filename + " " + key, h.get(key));
+          }
+        }
+      }
+    }
 
     for (int i=0; i<getSeriesCount(); i++) {
       core[i] = new CoreMetadata();

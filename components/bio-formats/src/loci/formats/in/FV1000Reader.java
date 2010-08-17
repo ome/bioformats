@@ -28,6 +28,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Vector;
 
@@ -504,13 +505,8 @@ public class FV1000Reader extends FormatReader {
         channel = f.getTable("Channel " + index + " Parameters");
       }
 
-      for (IniTable table : f) {
-        String tableName = table.get(IniTable.HEADER_KEY);
-        String[] keys = table.keySet().toArray(new String[table.size()]);
-        for (String key : keys) {
-          addGlobalMeta(tableName + " " + key, table.get(key));
-        }
-      }
+      HashMap<String, String> iniMap = f.flattenIntoHashMap();
+      metadata.putAll(iniMap);
     }
 
     LOGGER.info("Initializing helper readers");

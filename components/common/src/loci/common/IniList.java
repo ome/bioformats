@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.common;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * A data structure containing a parsed list of INI key/value tables.
@@ -45,6 +46,23 @@ public class IniList extends ArrayList<IniTable> {
       if (tableName.equals(header)) return table;
     }
     return null;
+  }
+
+  /**
+   * Flattens all of the INI tables into a single HashMap whose keys are
+   * of the format "[table name] table key".
+   */
+  public HashMap<String, String> flattenIntoHashMap() {
+    HashMap<String, String> h = new HashMap<String, String>();
+    for (IniTable table : this) {
+      String tableName = table.get(IniTable.HEADER_KEY);
+      for (String key : table.keySet()) {
+        if (!key.equals(IniTable.HEADER_KEY)) {
+          h.put("[" + tableName + "] " + key, table.get(key));
+        }
+      }
+    }
+    return h;
   }
 
 }
