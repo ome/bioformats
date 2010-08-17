@@ -551,6 +551,17 @@ public class OMETiffReader extends FormatReader {
         }
         core[s].imageCount = num;
         core[s].dimensionOrder = meta.getPixelsDimensionOrder(i).toString();
+
+        // hackish workaround for files exported by OMERO that have an
+        // incorrect dimension order
+        if (meta.getChannelName(i, 0) == null &&
+          meta.getUUIDFileName(i, 0).indexOf("__omero_export") != -1)
+        {
+          int zIndex = core[s].dimensionOrder.indexOf("Z");
+          int tIndex = core[s].dimensionOrder.indexOf("T");
+          core[s].dimensionOrder = zIndex < tIndex ? "XYCZT" : "XYCTZ";
+        }
+
         core[s].orderCertain = true;
         PhotoInterp photo = firstIFD.getPhotometricInterpretation();
         core[s].rgb = samples > 1 || photo == PhotoInterp.RGB;
