@@ -1333,6 +1333,7 @@ public class NativeND2Reader extends FormatReader {
   }
 
   private String sanitizeDouble(String value) {
+    value = value.replaceAll("[^0-9,\\.]", "");
     char separator = new DecimalFormatSymbols().getDecimalSeparator();
     if (value.indexOf(separator) == -1) {
       char usedSeparator = separator == '.' ? ',' : '.';
