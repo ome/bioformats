@@ -82,10 +82,28 @@ public class L2DReader extends FormatReader {
     String[] list = parent.list();
     if (list == null) return false;
 
+    boolean hasScan = false, hasRootFile = false;
+
     for (String file : list) {
-      if (checkSuffix(file, "scn")) return true;
+      if (checkSuffix(file, "scn")) {
+        hasScan = true;
+        break;
+      }
     }
-    return false;
+
+    parent = parent.getParentFile();
+    if (parent == null) return false;
+    list = parent.list();
+    if (list == null) return false;
+
+    for (String file : list) {
+      if (checkSuffix(file, "l2d")) {
+        hasRootFile = true;
+        break;
+      }
+    }
+
+    return hasScan && hasRootFile;
   }
 
   /* @see loci.formats.IFormatReader#isSingleFile(String) */
@@ -180,6 +198,16 @@ public class L2DReader extends FormatReader {
     super.initFile(id);
 
     String[] scans = getScanNames();
+    Location parent = new Location(id).getAbsoluteFile().getParentFile();
+
+    // remove scan names that do not correspond to existing directories
+
+    Vector<String> validScans = new Vector<String>();
+    for (String s : scans) {
+      Location scanDir = new Location(parent, s);
+      if (scanDir.exists() && scanDir.isDirectory()) validScans.add(s);
+    }
+    scans = validScans.toArray(new String[validScans.size()]);
 
     // read metadata from each scan
 
@@ -193,7 +221,6 @@ public class L2DReader extends FormatReader {
     String[] dates = new String[scans.length];
     String model = null;
 
-    Location parent = new Location(id).getAbsoluteFile().getParentFile();
     for (int i=0; i<scans.length; i++) {
       setSeries(i);
       core[i] = new CoreMetadata();
