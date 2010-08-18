@@ -182,9 +182,13 @@ public class BMPReader extends FormatReader {
     core[0].sizeX = in.readInt();
     core[0].sizeY = in.readInt();
 
-    if (getSizeX() < 1 || getSizeY() < 1) {
-      throw new FormatException("Invalid image dimensions: " +
-        getSizeX() + " x " + getSizeY());
+    if (getSizeX() < 1) {
+      LOGGER.trace("Invalid width: {}; using the absolute value", getSizeX());
+      core[0].sizeX = Math.abs(getSizeX());
+    }
+    if (getSizeY() < 1) {
+      LOGGER.trace("Invalid height: {}; using the absolute value", getSizeY());
+      core[0].sizeY = Math.abs(getSizeY());
     }
 
     addGlobalMeta("Color planes", in.readShort());
