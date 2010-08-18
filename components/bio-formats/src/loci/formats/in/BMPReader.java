@@ -71,6 +71,8 @@ public class BMPReader extends FormatReader {
   /** Offset to image data. */
   private long global;
 
+  private boolean invertY = false;
+
   // -- Constructor --
 
   /** Constructs a new BMP reader. */
@@ -107,7 +109,7 @@ public class BMPReader extends FormatReader {
         " not supported");
     }
 
-    int rowsToSkip = getSizeY() - (h + y);
+    int rowsToSkip = invertY ? y : getSizeY() - (h + y);
     int rowLength = getSizeX() * (isIndexed() ? 1 : getSizeC());
     in.seek(global + rowsToSkip * rowLength);
 
@@ -129,12 +131,13 @@ public class BMPReader extends FormatReader {
     BitBuffer bb = new BitBuffer(rawPlane);
 
     int effectiveC = palette != null && palette[0].length > 0 ? 1 : getSizeC();
-    for (int row=h-1; row>=y; row--) {
+    for (int row=h-1; row>=0; row--) {
+      int rowIndex = invertY ? h - 1 - row : row;
       bb.skipBits(x * bpp * effectiveC);
       for (int i=0; i<w*effectiveC; i++) {
-        buf[row * w * effectiveC + i] = (byte) (bb.getBits(bpp) & 0xff);
+        buf[rowIndex * w * effectiveC + i] = (byte) (bb.getBits(bpp) & 0xff);
       }
-      if (row > y) {
+      if (row > 0) {
         bb.skipBits((getSizeX() - w - x) * bpp * effectiveC + pad*8);
       }
     }
@@ -152,6 +155,7 @@ public class BMPReader extends FormatReader {
       bpp = compression = 0;
       global = 0;
       palette = null;
+      invertY = false;
     }
   }
 
@@ -189,6 +193,7 @@ public class BMPReader extends FormatReader {
     if (getSizeY() < 1) {
       LOGGER.trace("Invalid height: {}; using the absolute value", getSizeY());
       core[0].sizeY = Math.abs(getSizeY());
+      invertY = true;
     }
 
     addGlobalMeta("Color planes", in.readShort());
