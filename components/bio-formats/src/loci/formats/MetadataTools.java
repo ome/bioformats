@@ -35,6 +35,7 @@ import loci.common.services.ServiceFactory;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
+import loci.formats.ome.OMEXMLMetadataImpl;
 import loci.formats.services.OMEXMLService;
 
 import ome.xml.model.BinData;
@@ -118,29 +119,25 @@ public final class MetadataTools {
       store.setPixelsSizeZ(new PositiveInteger(r.getSizeZ()), i);
       store.setPixelsSizeC(new PositiveInteger(r.getSizeC()), i);
       store.setPixelsSizeT(new PositiveInteger(r.getSizeT()), i);
+      store.setPixelsBinDataBigEndian(new Boolean(!r.isLittleEndian()), i, 0);
 
-      int tiffDataCount = 0;
-      OMEXMLService service = null;
       try {
-        service = new ServiceFactory().getInstance(OMEXMLService.class);
+        OMEXMLService service =
+          new ServiceFactory().getInstance(OMEXMLService.class);
         if (service.isOMEXMLRoot(store.getRoot())) {
-          OME root = (OME) store.getRoot();
-          tiffDataCount = root.getImage(i).getPixels().sizeOfTiffDataList();
-        }
-      }
-      catch (DependencyException exc) {
-        LOGGER.debug("Failed to set BinData.Length", exc);
-      }
+          MetadataStore baseStore = r.getMetadataStore();
+          if (service.isOMEXMLMetadata(baseStore)) {
+            ((OMEXMLMetadataImpl) baseStore).resolveReferences();
+          }
 
-      if (tiffDataCount == 0) {
-        store.setPixelsBinDataBigEndian(new Boolean(!r.isLittleEndian()), i, 0);
-
-        if (service != null && service.isOMEXMLRoot(store.getRoot())) {
           OME root = (OME) store.getRoot();
           BinData bin = root.getImage(i).getPixels().getBinData(0);
           bin.setLength(new NonNegativeLong(0L));
           store.setRoot(root);
         }
+      }
+      catch (DependencyException exc) {
+        LOGGER.debug("Failed to set BinData.Length", exc);
       }
 
       try {
@@ -156,7 +153,8 @@ public final class MetadataTools {
         Integer sampleCount = new Integer(r.getRGBChannelCount());
         for (int c=0; c<r.getEffectiveSizeC(); c++) {
           store.setChannelID(createLSID("Channel", i, c), i, c);
-          store.setChannelSamplesPerPixel(new PositiveInteger(sampleCount), i, c);
+          store.setChannelSamplesPerPixel(
+            new PositiveInteger(sampleCount), i, c);
         }
       }
       if (doPlane) {
