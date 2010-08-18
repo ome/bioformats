@@ -387,14 +387,8 @@ public class ScanrReader extends FormatReader {
       case FormatTools.INT8:
         pixelType = FormatTools.UINT8;
         break;
-      case FormatTools.UINT8:
-        pixelType = FormatTools.INT8;
-        break;
       case FormatTools.INT16:
         pixelType = FormatTools.UINT16;
-        break;
-      case FormatTools.UINT16:
-        pixelType = FormatTools.INT16;
         break;
     }
 
