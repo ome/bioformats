@@ -554,7 +554,8 @@ public class OMETiffReader extends FormatReader {
 
         // hackish workaround for files exported by OMERO that have an
         // incorrect dimension order
-        if (meta.getChannelName(i, 0) == null &&
+        if (meta.getChannelCount(i) > 0 && meta.getChannelName(i, 0) == null &&
+          meta.getTiffDataCount(i) > 0 &&
           meta.getUUIDFileName(i, 0).indexOf("__omero_export") != -1)
         {
           int zIndex = core[s].dimensionOrder.indexOf("Z");
