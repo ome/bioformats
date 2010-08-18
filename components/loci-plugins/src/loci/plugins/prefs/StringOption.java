@@ -138,10 +138,11 @@ public class StringOption extends Option {
 
   /* @see Option#parseOption(String arg) */
   public void parseOption(String arg) {
-    value = Macro.getValue(arg, key, value);
-    if (value == null && label != null) {
+    String keyValue = Macro.getValue(arg, key, value);
+    if ((value == null || keyValue.equals(value)) && label != null) {
       value = Macro.getValue(arg, label, value);
     }
+    else value = keyValue;
   }
 
   /* @see Option#loadOption() */
