@@ -652,7 +652,16 @@ public class LeicaHandler extends DefaultHandler {
         String id =
           MetadataTools.createLSID("Detector", numDatasets, nextChannel);
 
-        if (m != null) {
+        /* debug */
+        System.out.println("nextChannel = " + nextChannel);
+        System.out.println("  channel = " + channel);
+        System.out.println("  numChannels = " + numChannels);
+        System.out.println("  core.sizeC = " + core.get(numDatasets).sizeC);
+        /* end debug */
+
+        boolean validChannel = numChannels <= 0 || nextChannel < numChannels;
+
+        if (m != null && validChannel) {
           store.setLogicalChannelName(m.dyeName, numDatasets, nextChannel);
 
           String filter =
@@ -673,7 +682,7 @@ public class LeicaHandler extends DefaultHandler {
           store.setDetectorSettingsDetector(id, numDatasets, nextChannel);
         }
 
-        if (detector != null) {
+        if (detector != null && validChannel) {
           store.setDetectorID(id, numDatasets, nextChannel);
           store.setDetectorSettingsGain(gain, numDatasets, nextChannel);
           store.setDetectorSettingsOffset(offset, numDatasets, nextChannel);
@@ -686,7 +695,7 @@ public class LeicaHandler extends DefaultHandler {
             nextChannel);
         }
 
-        if (laser != null && laser.intensity > 0) {
+        if (laser != null && laser.intensity > 0 && validChannel) {
           store.setLightSourceSettingsLightSource(laser.id, numDatasets,
             nextChannel);
           store.setLightSourceSettingsAttenuation(
