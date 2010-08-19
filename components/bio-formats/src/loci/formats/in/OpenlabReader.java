@@ -48,7 +48,7 @@ import loci.formats.meta.MetadataStore;
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/in/OpenlabReader.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/in/OpenlabReader.java">SVN</a></dd></dl>
  *
- * @author Melissa Linkert linkert at wisc.edu
+ * @author Melissa Linkert melissa at glencoesoftware.com
  * @author Eric Kjellman egkjellman at wisc.edu
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Jim Paris jim at jtan.com
@@ -129,9 +129,7 @@ public class OpenlabReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
   public byte[][] get8BitLookupTable() {
-    byte[][] lut = luts.get(planeOffsets[series][lastPlane]);
-    if (lut == null) return null;
-    return lut;
+    return luts.get(planeOffsets[series][lastPlane]);
   }
 
   /**
@@ -144,10 +142,12 @@ public class OpenlabReader extends FormatReader {
 
     lastPlane = no;
 
+    if (no >= planeOffsets[series].length) return buf;
     int index = planeOffsets[series][no];
 
     long first = planes[index].planeOffset;
-    long last = no == getImageCount() - 1 ? in.length() :
+    long last = no == planeOffsets[series].length - 1 ||
+      planeOffsets[series][no + 1] >= planes.length ? in.length() :
       planes[planeOffsets[series][no + 1]].planeOffset;
     in.seek(first);
 
@@ -305,7 +305,6 @@ public class OpenlabReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    debug("OpenlabReader.initFile(" + id + ")");
     super.initFile(id);
     in = new RandomAccessInputStream(id);
 
@@ -425,64 +424,27 @@ public class OpenlabReader extends FormatReader {
 
         imagesFound++;
       }
-      else if (tag == CALIBRATION) {
-        in.skipBytes(4);
-        short units = in.readShort();
-        in.skipBytes(12);
+      else {
+        if (tag == CALIBRATION) {
+          in.skipBytes(4);
+          short units = in.readShort();
+          float scaling = units == 3 ? 0.001f : 1.0f;
+          in.skipBytes(12);
 
-        xcal = in.readFloat();
-        ycal = in.readFloat();
+          xcal = in.readFloat() * scaling;
+          ycal = in.readFloat() * scaling;
+        }
+        else if (tag == USER) {
+          String className = in.readCString();
 
-        float scaling = units == 3 ? 0.001f : 1.0f;
+          if (className.equals("CVariableList")) {
+            char achar = in.readChar();
 
-        xcal *= scaling;
-        ycal *= scaling;
-      }
-      else if (tag == USER) {
-        String className = in.readCString();
-
-        if (className.equals("CVariableList")) {
-          char achar = in.readChar();
-
-          if (achar == 1) {
-            int numVars = in.readShort();
-            for (int i=0; i<numVars; i++) {
-              className = in.readCString();
-
-              String name = "", value = "";
-
-              int derivedClassVersion = in.read();
-              if (derivedClassVersion != 1) {
-                throw new FormatException("Invalid revision");
+            if (achar == 1) {
+              int numVars = in.readShort();
+              for (int i=0; i<numVars; i++) {
+                readVariable();
               }
-
-              if (className.equals("CStringVariable")) {
-                int strSize = in.readInt();
-                value = in.readString(strSize);
-                in.skipBytes(1);
-              }
-              else if (className.equals("CFloatVariable")) {
-                value = String.valueOf(in.readDouble());
-              }
-
-              int baseClassVersion = in.read();
-              if (baseClassVersion == 1 || baseClassVersion == 2) {
-                int strSize = in.readInt();
-                name = in.readString(strSize);
-                in.skipBytes(baseClassVersion * 2 + 1);
-              }
-              else {
-                throw new FormatException("Invalid revision: " +
-                  baseClassVersion);
-              }
-
-              addGlobalMeta(name, value);
-
-              if (name.equals("Gain")) gain = value;
-              else if (name.equals("Offset")) detectorOffset = value;
-              else if (name.equals("X-Y Stage: X Position")) xPos = value;
-              else if (name.equals("X-Y Stage: Y Position")) yPos = value;
-              else if (name.equals("ZPosition")) zPos = value;
             }
           }
         }
@@ -516,42 +478,34 @@ public class OpenlabReader extends FormatReader {
       tmpOffsets.clear();
       names.clear();
     }
-    setSeries(0);
 
     // populate core metadata
 
     for (int i=0; i<nSeries; i++) {
+      setSeries(i);
       core[i].indexed = false;
       core[i].sizeX = planes[planeOffsets[i][0]].width;
       core[i].sizeY = planes[planeOffsets[i][0]].height;
       core[i].imageCount = planeOffsets[i].length;
+      core[i].sizeC = 1;
 
       switch (planes[planeOffsets[i][0]].volumeType) {
         case MAC_1_BIT:
         case MAC_4_GREYS:
         case MAC_256_GREYS:
           core[i].pixelType = FormatTools.UINT8;
-          core[i].rgb = false;
-          core[i].sizeC = 1;
-          core[i].interleaved = false;
           core[i].indexed = planes[planeOffsets[i][0]].pict;
           break;
         case MAC_256_COLORS:
           core[i].pixelType = FormatTools.UINT8;
-          core[i].rgb = false;
-          core[i].sizeC = 1;
-          core[i].interleaved = false;
           core[i].indexed = true;
           break;
         case MAC_16_COLORS:
         case MAC_16_BIT_COLOR:
         case MAC_24_BIT_COLOR:
           core[i].pixelType = FormatTools.UINT8;
-          core[i].rgb = true;
           core[i].sizeC = 3;
-          core[i].interleaved = version == 5;
           break;
-        case MAC_16_GREYS:
         case DEEP_GREY_9:
         case DEEP_GREY_10:
         case DEEP_GREY_11:
@@ -559,25 +513,30 @@ public class OpenlabReader extends FormatReader {
         case DEEP_GREY_13:
         case DEEP_GREY_14:
         case DEEP_GREY_15:
+        case MAC_16_GREYS:
         case DEEP_GREY_16:
           core[i].pixelType = FormatTools.UINT16;
-          core[i].rgb = false;
-          core[i].sizeC = 1;
-          core[i].interleaved = false;
           break;
         default:
           throw new FormatException("Unsupported plane type: " +
             planes[planeOffsets[i][0]].volumeType);
       }
 
+      core[i].rgb = getSizeC() > 1;
+      core[i].interleaved = isRGB() && version == 5;
       core[i].sizeT = 1;
-      core[i].sizeZ = core[i].imageCount;
+      core[i].sizeZ = getImageCount();
       core[i].dimensionOrder = "XYCZT";
       core[i].littleEndian = false;
       core[i].falseColor = false;
       core[i].metadataComplete = true;
-      //core[i].seriesMetadata = getMetadata();
     }
+
+    for (int s=0; s<getSeriesCount(); s++) {
+      setSeries(s);
+      parseImageNames(s);
+    }
+    setSeries(0);
 
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
@@ -598,7 +557,9 @@ public class OpenlabReader extends FormatReader {
     store.setImageInstrumentRef(instrumentID, 0);
 
     try {
-      if (gain != null) store.setDetectorSettingsGain(new Float(gain), 0, 0);
+      if (gain != null) {
+        store.setDetectorSettingsGain(new Float(gain), 0, 0);
+      }
     }
     catch (NumberFormatException e) { }
     try {
@@ -613,7 +574,7 @@ public class OpenlabReader extends FormatReader {
     store.setDetectorID(detectorID, 0, 0);
     store.setDetectorSettingsDetector(detectorID, 0, 0);
 
-    store.setDetectorType("Unknown", 0, 0);
+    store.setDetectorType("Other", 0, 0);
 
     Float stageX = xPos == null ? null : new Float(xPos);
     Float stageY = yPos == null ? null : new Float(yPos);
@@ -647,6 +608,118 @@ public class OpenlabReader extends FormatReader {
 
     fmt = in.readString(4);
     in.skipBytes(version == 2 ? 4 : 8);
+  }
+
+  private void readVariable() throws FormatException, IOException {
+    String className = in.readCString();
+
+    String name = "", value = "";
+
+    int derivedClassVersion = in.read();
+    if (derivedClassVersion != 1) {
+      throw new FormatException("Invalid revision");
+    }
+
+    if (className.equals("CStringVariable")) {
+      int strSize = in.readInt();
+      value = in.readString(strSize);
+      in.skipBytes(1);
+    }
+    else if (className.equals("CFloatVariable")) {
+      value = String.valueOf(in.readDouble());
+    }
+
+    int baseClassVersion = in.read();
+    if (baseClassVersion == 1 || baseClassVersion == 2) {
+      int strSize = in.readInt();
+      name = in.readString(strSize);
+      in.skipBytes(baseClassVersion * 2 + 1);
+    }
+    else {
+      throw new FormatException("Invalid revision: " + baseClassVersion);
+    }
+
+    addGlobalMeta(name, value);
+
+    if (name.equals("Gain")) gain = value;
+    else if (name.equals("Offset")) detectorOffset = value;
+    else if (name.equals("X-Y Stage: X Position")) xPos = value;
+    else if (name.equals("X-Y Stage: Y Position")) yPos = value;
+    else if (name.equals("ZPosition")) zPos = value;
+  }
+
+  private void parseImageNames(int s) {
+    Vector<String> uniqueT = new Vector<String>();
+    Vector<String> uniqueC = new Vector<String>();
+    Vector<String> uniqueZ = new Vector<String>();
+    String[] axes = new String[] {"Z", "C", "T"};
+
+    core[s].dimensionOrder = "XY";
+    for (PlaneInfo plane : planes) {
+      if (plane == null) continue;
+      if (plane.series == s) {
+        String name = plane.planeName;
+        for (String axis : axes) {
+          Vector<String> unique = null;
+          if (axis.equals("Z")) unique = uniqueZ;
+          else if (axis.equals("C")) unique = uniqueC;
+          else if (axis.equals("T")) unique = uniqueT;
+
+          int index = name.indexOf(axis + "=");
+          if (index == -1) index = name.indexOf(axis + " =");
+          if (index != -1) {
+            int nextEqual = name.indexOf("=", index + 3);
+            if (nextEqual < 0) {
+              nextEqual = (int) Math.min(index + 3, name.length());
+            }
+            int end = name.lastIndexOf(" ", nextEqual);
+            if (end < index) end = name.length();
+
+            String i = name.substring(name.indexOf("=", index), end);
+            if (!unique.contains(i)) {
+              unique.add(i);
+              if (unique.size() > 1 &&
+                core[s].dimensionOrder.indexOf(axis) == -1)
+              {
+                core[s].dimensionOrder += axis;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    if (core[s].rgb && uniqueC.size() <= 1) {
+      core[s].dimensionOrder = core[s].dimensionOrder.replaceAll("C", "");
+      core[s].dimensionOrder = "XYC" + core[s].dimensionOrder.substring(2);
+    }
+
+    for (String axis : axes) {
+      if (core[s].dimensionOrder.indexOf(axis) == -1) {
+        core[s].dimensionOrder += axis;
+      }
+    }
+    if (uniqueC.size() > 1) {
+      core[s].sizeC *= uniqueC.size();
+      core[s].sizeZ /= uniqueC.size();
+    }
+    if (uniqueT.size() > 1) {
+      core[s].sizeT = uniqueT.size();
+      core[s].sizeZ /= core[s].sizeT;
+    }
+
+    int newCount = getSizeZ() * getSizeT();
+    if (!isRGB()) newCount *= getSizeC();
+
+    if (newCount < getImageCount()) {
+      char firstAxis = getDimensionOrder().charAt(2);
+      if (firstAxis == 'Z') core[s].sizeZ++;
+      else if (firstAxis == 'C' && !isRGB()) core[s].sizeC++;
+      else core[s].sizeT++;
+      core[s].imageCount = getSizeZ() * getSizeT();
+      if (!isRGB()) core[s].imageCount *= getSizeC();
+    }
+    else if (newCount > getImageCount()) core[s].imageCount = newCount;
   }
 
   // -- Helper classes --
