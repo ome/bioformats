@@ -393,12 +393,16 @@ public class LIFReader extends FormatReader {
       if (service.isOMEXMLRoot(store.getRoot())) {
         OME root = (OME) store.getRoot();
         for (int i=0; i<getSeriesCount(); i++) {
+          setSeries(i);
           Pixels img = root.getImage(i).getPixels();
           for (int c=0; c<img.sizeOfChannelList(); c++) {
             Channel channel = img.getChannel(c);
-            if (channel.getID() == null) img.removeChannel(channel);
+            if (channel.getID() == null || c >= getEffectiveSizeC()) {
+              img.removeChannel(channel);
+            }
           }
         }
+        setSeries(0);
       }
     }
     catch (DependencyException e) {
