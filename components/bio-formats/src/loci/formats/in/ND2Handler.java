@@ -27,9 +27,15 @@ import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
+import loci.common.DateTools;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
+import loci.formats.MetadataTools;
+import loci.formats.meta.MetadataStore;
+
+import ome.xml.model.primitives.NonNegativeInteger;
+import ome.xml.model.primitives.PositiveInteger;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
@@ -42,6 +48,10 @@ import org.xml.sax.helpers.DefaultHandler;
  * <a href="http://loci.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/in/ND2Handler.java">SVN</a></dd></dl>
  */
 public class ND2Handler extends DefaultHandler {
+
+  // -- Constants --
+
+  private static final String DATE_FORMAT = "dd/MM/yyyy  HH:mm:ss";
 
   // -- Fields --
 
@@ -80,6 +90,7 @@ public class ND2Handler extends DefaultHandler {
 
   private String cameraModel;
   private int fieldIndex = 0;
+  private String date;
 
   // -- Constructor --
 
@@ -89,6 +100,56 @@ public class ND2Handler extends DefaultHandler {
   }
 
   // -- ND2Handler API methods --
+
+  public void populateROIs(MetadataStore store) {
+    for (int r=0; r<rois.size(); r++) {
+      Hashtable<String, String> roi = rois.get(r);
+      String type = roi.get("ROIType");
+
+      if (type.equals("Text")) {
+        store.setROIID(MetadataTools.createLSID("ROI", r), r);
+        store.setTextID(MetadataTools.createLSID("Shape", r, 0), r, 0);
+        store.setTextFontSize(
+          NonNegativeInteger.valueOf(roi.get("fHeight")), r, 0);
+        store.setTextValue(roi.get("eval-text"), r, 0);
+        store.setTextStrokeWidth(new Double(roi.get("line-width")), r, 0);
+
+        String rectangle = roi.get("rectangle");
+        String[] p = rectangle.split(",");
+        double[] points = new double[p.length];
+        for (int i=0; i<p.length; i++) {
+          points[i] = Double.parseDouble(p[i]);
+        }
+
+        store.setRectangleID(MetadataTools.createLSID("Shape", r, 1), r, 1);
+        store.setRectangleX(points[0], r, 1);
+        store.setRectangleY(points[1], r, 1);
+        store.setRectangleWidth(points[2] - points[0], r, 1);
+        store.setRectangleHeight(points[3] - points[1], r, 1);
+      }
+      else if (type.equals("HorizontalLine") || type.equals("VerticalLine")) {
+        store.setROIID(MetadataTools.createLSID("ROI", r), r);
+
+        String segments = roi.get("segments");
+        segments = segments.replaceAll("\\[\\]", "");
+        String[] points = segments.split("\\)");
+
+        StringBuffer sb = new StringBuffer();
+        for (int i=0; i<points.length; i++) {
+          points[i] = points[i].substring(points[i].indexOf(":") + 1);
+          sb.append(points[i]);
+          if (i < points.length - 1) sb.append(" ");
+        }
+
+        store.setPolylineID(MetadataTools.createLSID("Shape", r, 0), r, 0);
+        store.setPolylinePoints(sb.toString(), r, 0);
+      }
+    }
+  }
+
+  public String getDate() {
+    return date;
+  }
 
   public Hashtable<String, Object> getMetadata() {
     return metadata;
@@ -339,7 +400,9 @@ public class ND2Handler extends DefaultHandler {
     else if (key.endsWith("dRefractIndex1")) {
       refractiveIndex = new Double(sanitizeDouble(value));
     }
-    else if (key.equals("sObjective") || key.equals("wsObjectiveName")) {
+    else if (key.equals("sObjective") || key.equals("wsObjectiveName") ||
+      key.equals("sOptics"))
+    {
       String[] tokens = value.split(" ");
       int magIndex = -1;
       for (int i=0; i<tokens.length; i++) {
@@ -535,6 +598,15 @@ public class ND2Handler extends DefaultHandler {
           }
         }
       }
+    }
+    else if (key.equals("CameraUniqueName")) {
+      cameraModel = value;
+    }
+    else if (key.equals("ExposureTime")) {
+      exposureTime.add(new Double(value) / 1000d);
+    }
+    else if (key.equals("sDate")) {
+      date = DateTools.formatDate(value, DATE_FORMAT);
     }
   }
 

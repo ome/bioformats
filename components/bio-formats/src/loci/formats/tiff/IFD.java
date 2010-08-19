@@ -343,7 +343,7 @@ public class IFD extends HashMap<Integer, Object> {
         if (!Character.isISOControl((char) s)) {
           sb.append((char) s);
         }
-        else sb.append("\n");
+        else if (s != 0) sb.append("\n");
       }
       value = sb.toString();
     }

@@ -137,6 +137,7 @@ loci.formats.in.OMETiffReader         # tif
 loci.formats.in.PhotoshopTiffReader   # tif
 loci.formats.in.FEITiffReader         # tif
 loci.formats.in.SimplePCITiffReader   # tif
+loci.formats.in.NikonElementsTiffReader # tif
 
 # standard TIFF reader must go last (it accepts any TIFF)
 loci.formats.in.TiffDelegateReader    # tif, tiff

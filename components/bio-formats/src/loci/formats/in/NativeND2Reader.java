@@ -969,43 +969,7 @@ public class NativeND2Reader extends FormatReader {
     if (getMetadataOptions().getMetadataLevel() == MetadataLevel.NO_OVERLAYS) {
       return;
     }
-    for (int r=0; r<rois.size(); r++) {
-      Hashtable<String, String> roi = rois.get(r);
-      String type = roi.get("ROIType");
-
-      if (type.equals("Text")) {
-        store.setTextFontSize(
-          NonNegativeInteger.valueOf(roi.get("fHeight")), r, 0);
-        store.setTextValue(roi.get("eval-text"), r, 0);
-        store.setTextStrokeWidth(new Double(roi.get("line-width")), r, 0);
-
-        String rectangle = roi.get("rectangle");
-        String[] p = rectangle.split(",");
-        double[] points = new double[p.length];
-        for (int i=0; i<p.length; i++) {
-          points[i] = Double.parseDouble(p[i]);
-        }
-
-        store.setRectangleX(points[0], r, 1);
-        store.setRectangleY(points[1], r, 1);
-        store.setRectangleWidth(points[2] - points[0], r, 1);
-        store.setRectangleHeight(points[3] - points[1], r, 1);
-      }
-      else if (type.equals("HorizontalLine") || type.equals("VerticalLine")) {
-        String segments = roi.get("segments");
-        segments = segments.replaceAll("\\[", "");
-        segments = segments.replaceAll("\\]", "");
-        String[] points = segments.split("\\)");
-
-        StringBuffer sb = new StringBuffer();
-        for (int i=0; i<points.length; i++) {
-          points[i] = points[i].substring(points[i].indexOf(":") + 1);
-          sb.append(points[i]);
-          if (i < points.length - 1) sb.append(" ");
-        }
-        store.setPolylinePoints(sb.toString(), r, 0);
-      }
-    }
+    handler.populateROIs(store);
   }
 
   private Codec createCodec(boolean isJPEG) {
