@@ -109,6 +109,19 @@ public class ZeissZVIReader extends FormatReader {
   private Hashtable<Integer, Integer> tiles = new Hashtable<Integer, Integer>();
   private boolean isMeanderScan;
 
+  private Hashtable<Integer, Double> detectorGain =
+    new Hashtable<Integer, Double>();
+  private Hashtable<Integer, Double> detectorOffset =
+    new Hashtable<Integer, Double>();
+  private Hashtable<Integer, PositiveInteger> emWavelength =
+    new Hashtable<Integer, PositiveInteger>();
+  private Hashtable<Integer, PositiveInteger> exWavelength =
+    new Hashtable<Integer, PositiveInteger>();
+  private Hashtable<Integer, String> channelName =
+    new Hashtable<Integer, String>();
+  private double physicalSizeX, physicalSizeY, physicalSizeZ;
+  private String imageDescription;
+
   // -- Constructor --
 
   /** Constructs a new ZeissZVI reader. */
@@ -418,6 +431,13 @@ public class ZeissZVIReader extends FormatReader {
       lastPlane = 0;
       tiles.clear();
       isMeanderScan = false;
+      detectorGain.clear();
+      detectorOffset.clear();
+      emWavelength.clear();
+      exWavelength.clear();
+      channelName.clear();
+      physicalSizeX = physicalSizeY = physicalSizeZ = 0d;
+      imageDescription = null;
     }
   }
 
@@ -692,6 +712,13 @@ public class ZeissZVIReader extends FormatReader {
       String instrumentID = MetadataTools.createLSID("Instrument", 0);
       store.setInstrumentID(instrumentID, 0);
       store.setImageInstrumentRef(instrumentID, 0);
+      if (imageDescription != null) {
+        store.setImageDescription(imageDescription, 0);
+      }
+
+      store.setPixelsPhysicalSizeX(physicalSizeX, 0);
+      store.setPixelsPhysicalSizeY(physicalSizeY, 0);
+      store.setPixelsPhysicalSizeZ(physicalSizeZ, 0);
 
       for (int plane=0; plane<getImageCount(); plane++) {
         int[] zct = getZCTCoords(plane);
@@ -719,6 +746,12 @@ public class ZeissZVIReader extends FormatReader {
         store.setDetectorID(detectorID, 0, i);
         store.setDetectorSettingsID(detectorID, 0, i);
         store.setDetectorType(getDetectorType("Other"), 0, i);
+        store.setDetectorSettingsGain(detectorGain.get(i), 0, i);
+        store.setDetectorSettingsOffset(detectorOffset.get(i), 0, i);
+
+        store.setChannelName(channelName.get(i), 0, i);
+        store.setChannelEmissionWavelength(emWavelength.get(i), 0, i);
+        store.setChannelExcitationWavelength(exWavelength.get(i), 0, i);
       }
 
       // link Objective to Image
@@ -866,21 +899,19 @@ public class ZeissZVIReader extends FormatReader {
           }
         }
         else if (key.startsWith("Scale Factor for X")) {
-          store.setPixelsPhysicalSizeX(new Double(value), 0);
+          physicalSizeX = Double.parseDouble(value);
         }
         else if (key.startsWith("Scale Factor for Y")) {
-          store.setPixelsPhysicalSizeY(new Double(value), 0);
+          physicalSizeY = Double.parseDouble(value);
         }
         else if (key.startsWith("Scale Factor for Z")) {
-          store.setPixelsPhysicalSizeZ(new Double(value), 0);
+          physicalSizeZ = Double.parseDouble(value);
         }
         else if (key.startsWith("Emission Wavelength")) {
           if (cIndex != -1 && nextEmWave < effectiveSizeC) {
             Integer wave = new Integer(value);
             if (wave.intValue() > 0) {
-              store.setChannelEmissionWavelength(
-                new PositiveInteger(wave), 0, nextEmWave);
-              nextEmWave++;
+              emWavelength.put(nextEmWave++, new PositiveInteger(wave));
             }
           }
         }
@@ -888,16 +919,13 @@ public class ZeissZVIReader extends FormatReader {
           if (cIndex != -1 && nextExWave < effectiveSizeC) {
             Integer wave = new Integer(value);
             if (wave.intValue() > 0) {
-              store.setChannelExcitationWavelength(
-                new PositiveInteger(wave), 0, nextExWave);
-              nextExWave++;
+              exWavelength.put(nextExWave++, new PositiveInteger(wave));
             }
           }
         }
         else if (key.startsWith("Channel Name")) {
           if (cIndex != -1 && nextChName < effectiveSizeC) {
-            store.setChannelName(value, 0, nextChName);
-            nextChName++;
+            channelName.put(nextChName++, value);
           }
         }
         else if (key.startsWith("Exposure Time [ms]")) {
@@ -967,13 +995,13 @@ public class ZeissZVIReader extends FormatReader {
           stageY = Double.parseDouble(value);
         }
         else if (key.startsWith("Orca Analog Gain")) {
-          store.setDetectorSettingsGain(new Double(value), 0, cIndex);
+          detectorGain.put(cIndex, new Double(value));
         }
         else if (key.startsWith("Orca Analog Offset")) {
-          store.setDetectorSettingsOffset(new Double(value), 0, cIndex);
+          detectorOffset.put(cIndex, new Double(value));
         }
         else if (key.startsWith("Comments")) {
-          store.setImageDescription(value, 0);
+          imageDescription = value;
         }
         else if (key.startsWith("Acquisition Date")) {
           if (image >= 0) {
