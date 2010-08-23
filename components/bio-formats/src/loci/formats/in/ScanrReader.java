@@ -24,9 +24,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.IOException;
+import java.nio.ByteOrder;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import loci.common.ByteArrayHandle;
 import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
@@ -188,6 +190,20 @@ public class ScanrReader extends FormatReader {
       reader.setId(tiffs[index]);
       reader.openBytes(0, buf, x, y, w, h);
       reader.close();
+
+      // mask out the sign bit
+      ByteArrayHandle pixels = new ByteArrayHandle(buf);
+      pixels.setOrder(
+        isLittleEndian() ? ByteOrder.LITTLE_ENDIAN : ByteOrder.BIG_ENDIAN);
+      for (int i=0; i<buf.length; i+=2) {
+        pixels.seek(i);
+        short value = pixels.readShort();
+        value = (short) (value & 0xfff);
+        pixels.seek(i);
+        pixels.writeShort(value);
+      }
+      buf = pixels.getBytes();
+      pixels.close();
     }
 
     return buf;
@@ -414,6 +430,7 @@ public class ScanrReader extends FormatReader {
       core[i].littleEndian = littleEndian;
       core[i].dimensionOrder = "XYCTZ";
       core[i].imageCount = nSlices * nTimepoints * nChannels;
+      core[i].bitsPerPixel = 12;
     }
 
     MetadataStore store = makeFilterMetadata();
