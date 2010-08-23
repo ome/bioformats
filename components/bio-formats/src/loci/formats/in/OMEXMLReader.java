@@ -304,7 +304,6 @@ public class OMEXMLReader extends FormatReader {
 
     int oldSeries = getSeries();
 
-    int imageIndex = 0;
     for (int i=0; i<numDatasets; i++) {
       setSeries(i);
 
@@ -319,7 +318,7 @@ public class OMEXMLReader extends FormatReader {
         throw new FormatException("Image dimensions not found");
       }
 
-      Boolean endian = omexmlMeta.getPixelsBinDataBigEndian(imageIndex, 0);
+      Boolean endian = omexmlMeta.getPixelsBinDataBigEndian(i, 0);
       String pixType = omexmlMeta.getPixelsType(i).toString();
       core[i].dimensionOrder = omexmlMeta.getPixelsDimensionOrder(i).toString();
       core[i].sizeX = w.intValue();
@@ -335,7 +334,6 @@ public class OMEXMLReader extends FormatReader {
       core[i].falseColor = true;
       core[i].pixelType = FormatTools.pixelTypeFromString(pixType);
       core[i].orderCertain = true;
-      imageIndex += core[i].imageCount;
     }
     setSeries(oldSeries);
 
