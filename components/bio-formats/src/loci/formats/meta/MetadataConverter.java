@@ -724,41 +724,6 @@ public final class MetadataConverter {
       if (instrumentIDValue != null) dest.setInstrumentID(instrumentIDValue, instrumentIndex);
     } catch (NullPointerException e) { }
       try {
-      /*
-      int arcCount = src.getArcCount(instrumentIndex);
-      for (int arcIndex=0; arcIndex<arcCount; arcIndex++) {
-      try {
-        String arcIDValue = src.getArcID(instrumentIndex, arcIndex);
-        if (arcIDValue != null) dest.setArcID(arcIDValue, instrumentIndex, arcIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String arcLotNumberValue = src.getArcLotNumber(instrumentIndex, arcIndex);
-        if (arcLotNumberValue != null) dest.setArcLotNumber(arcLotNumberValue, instrumentIndex, arcIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String arcManufacturerValue = src.getArcManufacturer(instrumentIndex, arcIndex);
-        if (arcManufacturerValue != null) dest.setArcManufacturer(arcManufacturerValue, instrumentIndex, arcIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String arcModelValue = src.getArcModel(instrumentIndex, arcIndex);
-        if (arcModelValue != null) dest.setArcModel(arcModelValue, instrumentIndex, arcIndex);
-      } catch (NullPointerException e) { }
-      try {
-        Double arcPowerValue = src.getArcPower(instrumentIndex, arcIndex);
-        if (arcPowerValue != null) dest.setArcPower(arcPowerValue, instrumentIndex, arcIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String arcSerialNumberValue = src.getArcSerialNumber(instrumentIndex, arcIndex);
-        if (arcSerialNumberValue != null) dest.setArcSerialNumber(arcSerialNumberValue, instrumentIndex, arcIndex);
-      } catch (NullPointerException e) { }
-      try {
-        ArcType arcTypeValue = src.getArcType(instrumentIndex, arcIndex);
-        if (arcTypeValue != null) dest.setArcType(arcTypeValue, instrumentIndex, arcIndex);
-      } catch (NullPointerException e) { }
-      }
-      */
-      } catch (NullPointerException e) { }
-      try {
       int detectorCount = src.getDetectorCount(instrumentIndex);
       for (int detectorIndex=0; detectorIndex<detectorCount; detectorIndex++) {
       try {
@@ -831,41 +796,6 @@ public final class MetadataConverter {
         if (dichroicSerialNumberValue != null) dest.setDichroicSerialNumber(dichroicSerialNumberValue, instrumentIndex, dichroicIndex);
       } catch (NullPointerException e) { }
       }
-      } catch (NullPointerException e) { }
-      try {
-      /*
-      int filamentCount = src.getFilamentCount(instrumentIndex);
-      for (int filamentIndex=0; filamentIndex<filamentCount; filamentIndex++) {
-      try {
-        String filamentIDValue = src.getFilamentID(instrumentIndex, filamentIndex);
-        if (filamentIDValue != null) dest.setFilamentID(filamentIDValue, instrumentIndex, filamentIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String filamentLotNumberValue = src.getFilamentLotNumber(instrumentIndex, filamentIndex);
-        if (filamentLotNumberValue != null) dest.setFilamentLotNumber(filamentLotNumberValue, instrumentIndex, filamentIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String filamentManufacturerValue = src.getFilamentManufacturer(instrumentIndex, filamentIndex);
-        if (filamentManufacturerValue != null) dest.setFilamentManufacturer(filamentManufacturerValue, instrumentIndex, filamentIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String filamentModelValue = src.getFilamentModel(instrumentIndex, filamentIndex);
-        if (filamentModelValue != null) dest.setFilamentModel(filamentModelValue, instrumentIndex, filamentIndex);
-      } catch (NullPointerException e) { }
-      try {
-        Double filamentPowerValue = src.getFilamentPower(instrumentIndex, filamentIndex);
-        if (filamentPowerValue != null) dest.setFilamentPower(filamentPowerValue, instrumentIndex, filamentIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String filamentSerialNumberValue = src.getFilamentSerialNumber(instrumentIndex, filamentIndex);
-        if (filamentSerialNumberValue != null) dest.setFilamentSerialNumber(filamentSerialNumberValue, instrumentIndex, filamentIndex);
-      } catch (NullPointerException e) { }
-      try {
-        FilamentType filamentTypeValue = src.getFilamentType(instrumentIndex, filamentIndex);
-        if (filamentTypeValue != null) dest.setFilamentType(filamentTypeValue, instrumentIndex, filamentIndex);
-      } catch (NullPointerException e) { }
-      }
-      */
       } catch (NullPointerException e) { }
       try {
       int filterCount = src.getFilterCount(instrumentIndex);
@@ -964,104 +894,6 @@ public final class MetadataConverter {
         }
       } catch (NullPointerException e) { }
       }
-      } catch (NullPointerException e) { }
-      try {
-      /*
-      int laserCount = src.getLaserCount(instrumentIndex);
-      for (int laserIndex=0; laserIndex<laserCount; laserIndex++) {
-      try {
-        PositiveInteger laserFrequencyMultiplicationValue = src.getLaserFrequencyMultiplication(instrumentIndex, laserIndex);
-        if (laserFrequencyMultiplicationValue != null) dest.setLaserFrequencyMultiplication(laserFrequencyMultiplicationValue, instrumentIndex, laserIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String laserIDValue = src.getLaserID(instrumentIndex, laserIndex);
-        if (laserIDValue != null) dest.setLaserID(laserIDValue, instrumentIndex, laserIndex);
-      } catch (NullPointerException e) { }
-      try {
-        LaserMedium laserLaserMediumValue = src.getLaserLaserMedium(instrumentIndex, laserIndex);
-        if (laserLaserMediumValue != null) dest.setLaserLaserMedium(laserLaserMediumValue, instrumentIndex, laserIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String laserLotNumberValue = src.getLaserLotNumber(instrumentIndex, laserIndex);
-        if (laserLotNumberValue != null) dest.setLaserLotNumber(laserLotNumberValue, instrumentIndex, laserIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String laserManufacturerValue = src.getLaserManufacturer(instrumentIndex, laserIndex);
-        if (laserManufacturerValue != null) dest.setLaserManufacturer(laserManufacturerValue, instrumentIndex, laserIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String laserModelValue = src.getLaserModel(instrumentIndex, laserIndex);
-        if (laserModelValue != null) dest.setLaserModel(laserModelValue, instrumentIndex, laserIndex);
-      } catch (NullPointerException e) { }
-      try {
-        Boolean laserPockelCellValue = src.getLaserPockelCell(instrumentIndex, laserIndex);
-        if (laserPockelCellValue != null) dest.setLaserPockelCell(laserPockelCellValue, instrumentIndex, laserIndex);
-      } catch (NullPointerException e) { }
-      try {
-        Double laserPowerValue = src.getLaserPower(instrumentIndex, laserIndex);
-        if (laserPowerValue != null) dest.setLaserPower(laserPowerValue, instrumentIndex, laserIndex);
-      } catch (NullPointerException e) { }
-      try {
-        Pulse laserPulseValue = src.getLaserPulse(instrumentIndex, laserIndex);
-        if (laserPulseValue != null) dest.setLaserPulse(laserPulseValue, instrumentIndex, laserIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String laserPumpValue = src.getLaserPump(instrumentIndex, laserIndex);
-        if (laserPumpValue != null) dest.setLaserPump(laserPumpValue, instrumentIndex, laserIndex);
-      } catch (NullPointerException e) { }
-      try {
-        Double laserRepetitionRateValue = src.getLaserRepetitionRate(instrumentIndex, laserIndex);
-        if (laserRepetitionRateValue != null) dest.setLaserRepetitionRate(laserRepetitionRateValue, instrumentIndex, laserIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String laserSerialNumberValue = src.getLaserSerialNumber(instrumentIndex, laserIndex);
-        if (laserSerialNumberValue != null) dest.setLaserSerialNumber(laserSerialNumberValue, instrumentIndex, laserIndex);
-      } catch (NullPointerException e) { }
-      try {
-        Boolean laserTuneableValue = src.getLaserTuneable(instrumentIndex, laserIndex);
-        if (laserTuneableValue != null) dest.setLaserTuneable(laserTuneableValue, instrumentIndex, laserIndex);
-      } catch (NullPointerException e) { }
-      try {
-        LaserType laserTypeValue = src.getLaserType(instrumentIndex, laserIndex);
-        if (laserTypeValue != null) dest.setLaserType(laserTypeValue, instrumentIndex, laserIndex);
-      } catch (NullPointerException e) { }
-      try {
-        PositiveInteger laserWavelengthValue = src.getLaserWavelength(instrumentIndex, laserIndex);
-        if (laserWavelengthValue != null) dest.setLaserWavelength(laserWavelengthValue, instrumentIndex, laserIndex);
-      } catch (NullPointerException e) { }
-      }
-      */
-      } catch (NullPointerException e) { }
-      try {
-      /*
-      int lightEmittingDiodeCount = src.getLightEmittingDiodeCount(instrumentIndex);
-      for (int lightEmittingDiodeIndex=0; lightEmittingDiodeIndex<lightEmittingDiodeCount; lightEmittingDiodeIndex++) {
-      try {
-        String lightEmittingDiodeIDValue = src.getLightEmittingDiodeID(instrumentIndex, lightEmittingDiodeIndex);
-        if (lightEmittingDiodeIDValue != null) dest.setLightEmittingDiodeID(lightEmittingDiodeIDValue, instrumentIndex, lightEmittingDiodeIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String lightEmittingDiodeLotNumberValue = src.getLightEmittingDiodeLotNumber(instrumentIndex, lightEmittingDiodeIndex);
-        if (lightEmittingDiodeLotNumberValue != null) dest.setLightEmittingDiodeLotNumber(lightEmittingDiodeLotNumberValue, instrumentIndex, lightEmittingDiodeIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String lightEmittingDiodeManufacturerValue = src.getLightEmittingDiodeManufacturer(instrumentIndex, lightEmittingDiodeIndex);
-        if (lightEmittingDiodeManufacturerValue != null) dest.setLightEmittingDiodeManufacturer(lightEmittingDiodeManufacturerValue, instrumentIndex, lightEmittingDiodeIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String lightEmittingDiodeModelValue = src.getLightEmittingDiodeModel(instrumentIndex, lightEmittingDiodeIndex);
-        if (lightEmittingDiodeModelValue != null) dest.setLightEmittingDiodeModel(lightEmittingDiodeModelValue, instrumentIndex, lightEmittingDiodeIndex);
-      } catch (NullPointerException e) { }
-      try {
-        Double lightEmittingDiodePowerValue = src.getLightEmittingDiodePower(instrumentIndex, lightEmittingDiodeIndex);
-        if (lightEmittingDiodePowerValue != null) dest.setLightEmittingDiodePower(lightEmittingDiodePowerValue, instrumentIndex, lightEmittingDiodeIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String lightEmittingDiodeSerialNumberValue = src.getLightEmittingDiodeSerialNumber(instrumentIndex, lightEmittingDiodeIndex);
-        if (lightEmittingDiodeSerialNumberValue != null) dest.setLightEmittingDiodeSerialNumber(lightEmittingDiodeSerialNumberValue, instrumentIndex, lightEmittingDiodeIndex);
-      } catch (NullPointerException e) { }
-      }
-      */
       } catch (NullPointerException e) { }
       try {
         String microscopeLotNumberValue = src.getMicroscopeLotNumber(instrumentIndex);
@@ -1193,6 +1025,7 @@ public final class MetadataConverter {
       } catch (NullPointerException e) { }
       }
       } catch (NullPointerException e) { }
+      convertLightSources(src, dest, instrumentIndex);
     }
     } catch (NullPointerException e) { }
     try {
@@ -2288,6 +2121,326 @@ public final class MetadataConverter {
     } catch (NullPointerException e) { }
     }
     } catch (NullPointerException e) { }
+  }
+
+  // -- Helper methods --
+
+  private static void convertLightSources(MetadataRetrieve src,
+    MetadataStore dest, int instrumentIndex)
+  {
+    int lightSourceCount = src.getLightSourceCount(instrumentIndex);
+
+    for (int lightSource=0; lightSource<lightSourceCount; lightSource++) {
+      String type = src.getLightSourceType(instrumentIndex, lightSource);
+      if (type.equals("Arc")) {
+        try {
+          String id = src.getArcID(instrumentIndex, lightSource);
+          if (id != null) dest.setArcID(id, instrumentIndex, lightSource);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String lotNumber = src.getArcLotNumber(instrumentIndex, lightSource);
+          if (lotNumber != null) {
+            dest.setArcLotNumber(lotNumber, instrumentIndex, lightSource);
+          }
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String manufacturer =
+            src.getArcManufacturer(instrumentIndex, lightSource);
+          if (manufacturer != null) {
+            dest.setArcManufacturer(manufacturer, instrumentIndex, lightSource);
+          }
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String model = src.getArcModel(instrumentIndex, lightSource);
+          if (model != null) {
+            dest.setArcModel(model, instrumentIndex, lightSource);
+          }
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          Double power = src.getArcPower(instrumentIndex, lightSource);
+          if (power != null) {
+            dest.setArcPower(power, instrumentIndex, lightSource);
+          }
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String serialNumber =
+            src.getArcSerialNumber(instrumentIndex, lightSource);
+          if (serialNumber != null) {
+            dest.setArcSerialNumber(serialNumber, instrumentIndex, lightSource);
+          }
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          ArcType arcType = src.getArcType(instrumentIndex, lightSource);
+          if (arcType != null) {
+            dest.setArcType(arcType, instrumentIndex, lightSource);
+          }
+        }
+        catch (NullPointerException e) { }
+      }
+      else if (type.equals("Filament")) {
+        try {
+          String id = src.getFilamentID(instrumentIndex, lightSource);
+          if (id != null) dest.setFilamentID(id, instrumentIndex, lightSource);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String lotNumber =
+            src.getFilamentLotNumber(instrumentIndex, lightSource);
+          if (lotNumber != null) {
+            dest.setFilamentLotNumber(lotNumber, instrumentIndex, lightSource);
+          }
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String manufacturer =
+            src.getFilamentManufacturer(instrumentIndex, lightSource);
+          if (manufacturer != null) {
+            dest.setFilamentManufacturer(
+              manufacturer, instrumentIndex, lightSource);
+          }
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String model = src.getFilamentModel(instrumentIndex, lightSource);
+          if (model != null) {
+            dest.setFilamentModel(model, instrumentIndex, lightSource);
+          }
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          Double power = src.getFilamentPower(instrumentIndex, lightSource);
+          if (power != null) {
+            dest.setFilamentPower(power, instrumentIndex, lightSource);
+          }
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String serialNumber =
+            src.getFilamentSerialNumber(instrumentIndex, lightSource);
+          if (serialNumber != null) {
+            dest.setFilamentSerialNumber(
+              serialNumber, instrumentIndex, lightSource);
+          }
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          FilamentType filamentType =
+            src.getFilamentType(instrumentIndex, lightSource);
+          if (filamentType != null) {
+            dest.setFilamentType(filamentType, instrumentIndex, lightSource);
+          }
+        }
+        catch (NullPointerException e) { }
+      }
+      else if (type.equals("Laser")) {
+        try {
+          String id = src.getLaserID(instrumentIndex, lightSource);
+          if (id != null) dest.setLaserID(id, instrumentIndex, lightSource);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String lotNumber =
+            src.getLaserLotNumber(instrumentIndex, lightSource);
+          if (lotNumber != null) {
+            dest.setLaserLotNumber(lotNumber, instrumentIndex, lightSource);
+          }
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String manufacturer =
+            src.getLaserManufacturer(instrumentIndex, lightSource);
+          if (manufacturer != null) {
+            dest.setLaserManufacturer(
+              manufacturer, instrumentIndex, lightSource);
+          }
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String model = src.getLaserModel(instrumentIndex, lightSource);
+          if (model != null) {
+            dest.setLaserModel(model, instrumentIndex, lightSource);
+          }
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          Double power = src.getLaserPower(instrumentIndex, lightSource);
+          if (power != null) {
+            dest.setLaserPower(power, instrumentIndex, lightSource);
+          }
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String serialNumber =
+            src.getLaserSerialNumber(instrumentIndex, lightSource);
+          if (serialNumber != null) {
+            dest.setLaserSerialNumber(
+              serialNumber, instrumentIndex, lightSource);
+          }
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          LaserType laserType = src.getLaserType(instrumentIndex, lightSource);
+          if (laserType != null) {
+            dest.setLaserType(laserType, instrumentIndex, lightSource);
+          }
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          PositiveInteger frequencyMultiplication =
+            src.getLaserFrequencyMultiplication(instrumentIndex, lightSource);
+          if (frequencyMultiplication != null) {
+            dest.setLaserFrequencyMultiplication(
+              frequencyMultiplication, instrumentIndex, lightSource);
+          }
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          LaserMedium medium =
+            src.getLaserLaserMedium(instrumentIndex, lightSource);
+          if (medium != null) {
+            dest.setLaserLaserMedium(medium, instrumentIndex, lightSource);
+          }
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          Boolean pockelCell =
+            src.getLaserPockelCell(instrumentIndex, lightSource);
+          if (pockelCell != null) {
+            dest.setLaserPockelCell(pockelCell, instrumentIndex, lightSource);
+          }
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          Pulse pulse = src.getLaserPulse(instrumentIndex, lightSource);
+          if (pulse != null) {
+            dest.setLaserPulse(pulse, instrumentIndex, lightSource);
+          }
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String pump = src.getLaserPump(instrumentIndex, lightSource);
+          if (pump != null) {
+            dest.setLaserPump(pump, instrumentIndex, lightSource);
+          }
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          Double repetitionRate =
+            src.getLaserRepetitionRate(instrumentIndex, lightSource);
+          if (repetitionRate != null) {
+            dest.setLaserRepetitionRate(
+              repetitionRate, instrumentIndex, lightSource);
+          }
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          Boolean tuneable = src.getLaserTuneable(instrumentIndex, lightSource);
+          if (tuneable != null) {
+            dest.setLaserTuneable(tuneable, instrumentIndex, lightSource);
+          }
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          PositiveInteger wavelength =
+            src.getLaserWavelength(instrumentIndex, lightSource);
+          if (wavelength != null) {
+            dest.setLaserWavelength(wavelength, instrumentIndex, lightSource);
+          }
+        }
+        catch (NullPointerException e) { }
+      }
+      else if (type.equals("LightEmittingDiode")) {
+        try {
+          String id = src.getLightEmittingDiodeID(instrumentIndex, lightSource);
+          if (id != null) {
+            dest.setLightEmittingDiodeID(id, instrumentIndex, lightSource);
+          }
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String lotNumber =
+            src.getLightEmittingDiodeLotNumber(instrumentIndex, lightSource);
+          if (lotNumber != null) {
+            dest.setLightEmittingDiodeLotNumber(
+              lotNumber, instrumentIndex, lightSource);
+          }
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String manufacturer =
+            src.getLightEmittingDiodeManufacturer(instrumentIndex, lightSource);
+          if (manufacturer != null) {
+            dest.setLightEmittingDiodeManufacturer(
+              manufacturer, instrumentIndex, lightSource);
+          }
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String model =
+            src.getLightEmittingDiodeModel(instrumentIndex, lightSource);
+          if (model != null) {
+            dest.setLightEmittingDiodeModel(
+              model, instrumentIndex, lightSource);
+          }
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          Double power =
+            src.getLightEmittingDiodePower(instrumentIndex, lightSource);
+          if (power != null) {
+            dest.setLightEmittingDiodePower(
+              power, instrumentIndex, lightSource);
+          }
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String serialNumber =
+            src.getLightEmittingDiodeSerialNumber(instrumentIndex, lightSource);
+          if (serialNumber != null) {
+            dest.setLightEmittingDiodeSerialNumber(
+              serialNumber, instrumentIndex, lightSource);
+          }
+        }
+        catch (NullPointerException e) { }
+      }
+    }
   }
 
 }

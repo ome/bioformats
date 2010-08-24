@@ -114,8 +114,9 @@ public class SPWModelReaderTest {
   public void testSetIdWithNoLightSources() throws Exception {
     readerWithNoLightSources = new MinMaxCalculator(new ImageReader());
     metadataWithNoLightSources = new OMEXMLMetadataImpl();
-    readerWithNoLightSources.setMetadataStore(metadata);
-    readerWithNoLightSources.setId(temporaryFile.getAbsolutePath());
+    readerWithNoLightSources.setMetadataStore(metadataWithNoLightSources);
+    readerWithNoLightSources.setId(
+      temporaryFileWithNoLightSources.getAbsolutePath());
   }
 
   @Test(dependsOnMethods={"testSetId"})
@@ -166,7 +167,7 @@ public class SPWModelReaderTest {
   @Test(dependsOnMethods={"testSetId"})
   public void testHasLightSources() {
     assertEquals(1, metadata.getInstrumentCount());
-    assertEquals(4, metadata.getLightSourceCount(0));
+    assertEquals(5, metadata.getLightSourceCount(0));
   }
 
   @Test(dependsOnMethods={"testSetIdWithNoLightSources"})

@@ -329,7 +329,7 @@ public class SPWModelMock {
     detector.setModel(DETECTOR_MODEL);
     instrument.addDetector(detector);
 
-    if (!makeLightSources) {
+    if (makeLightSources) {
       // Create <Laser/> under <Instrument/>
       Laser laser = new Laser();
       laser.setID(LIGHTSOURCE_LASER_ID);
