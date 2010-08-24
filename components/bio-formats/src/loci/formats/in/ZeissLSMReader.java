@@ -166,6 +166,8 @@ public class ZeissLSMReader extends FormatReader {
   private Vector<String> imageNames;
   private String binning;
   private Vector<Double> xCoordinates, yCoordinates;
+  private int dimensionM, dimensionP;
+  private Hashtable<String, Integer> seriesCounts;
 
   private int totalROIs = 0;
 
@@ -212,6 +214,9 @@ public class ZeissLSMReader extends FormatReader {
       prevBuf = null;
       xCoordinates = null;
       yCoordinates = null;
+      dimensionM = 0;
+      dimensionP = 0;
+      seriesCounts = null;
     }
   }
 
@@ -239,7 +244,7 @@ public class ZeissLSMReader extends FormatReader {
     if (lsmFilenames.length == 1 && currentId.equals(lsmFilenames[0])) {
       return lsmFilenames;
     }
-    return new String[] {currentId, lsmFilenames[getSeries()]};
+    return new String[] {currentId, getLSMFileFromSeries(getSeries())};
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
@@ -292,7 +297,7 @@ public class ZeissLSMReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    in = new RandomAccessInputStream(lsmFilenames[getSeries()]);
+    in = new RandomAccessInputStream(getLSMFileFromSeries(getSeries()));
     in.order(!isLittleEndian());
 
     tiffParser = new TiffParser(in);
@@ -314,7 +319,9 @@ public class ZeissLSMReader extends FormatReader {
       }
       ImageTools.splitChannels(prevBuf, buf, c, getSizeC(), bpp, false, false);
     }
-    else tiffParser.getSamples(ifds.get(no), buf, x, y, w, h);
+    else {
+      tiffParser.getSamples(ifds.get(no), buf, x, y, w, h);
+    }
     in.close();
     return buf;
   }
@@ -346,28 +353,52 @@ public class ZeissLSMReader extends FormatReader {
     imageNames = new Vector<String>();
     xCoordinates = new Vector<Double>();
     yCoordinates = new Vector<Double>();
+    seriesCounts = new Hashtable<String, Integer>();
 
-    core = new CoreMetadata[lsmFilenames.length];
+    int seriesCount = 0;
+
+    for (String filename : lsmFilenames) {
+      int extraSeries = getExtraSeries(filename);
+      seriesCounts.put(filename, extraSeries);
+      seriesCount += extraSeries;
+    }
+
+    core = new CoreMetadata[seriesCount];
     ifdsList = new Vector<IFDList>();
     ifdsList.setSize(core.length);
-    for (int i=0; i<core.length; i++) {
-      core[i] = new CoreMetadata();
-      RandomAccessInputStream s = new RandomAccessInputStream(lsmFilenames[i]);
-      core[i].littleEndian = s.read() == TiffConstants.LITTLE;
-      s.order(isLittleEndian());
-      s.seek(0);
-      // calling tp.getNonThumbnailIFDs() would give us the same IFDList, but
-      // assuming that every other IFD is a thumbnail reduces the parsing time
-      TiffParser tp = new TiffParser(s);
+
+    int realSeries = 0;
+    for (int i=0; i<lsmFilenames.length; i++) {
+      RandomAccessInputStream stream =
+        new RandomAccessInputStream(lsmFilenames[i]);
+      int count = seriesCounts.get(lsmFilenames[i]);
+      boolean littleEndian = stream.read() == TiffConstants.LITTLE;
+      stream.order(littleEndian);
+
+      TiffParser tp = new TiffParser(stream);
       long[] ifdOffsets = tp.getIFDOffsets();
-      IFDList ifds = new IFDList();
-      for (int offset=0; offset<ifdOffsets.length;) {
-        ifds.add(tp.getIFD(ifdOffsets[offset]));
-        if (ifds.get(0).containsKey(ZEISS_ID)) offset += 2;
-        else offset++;
+      int ifdsPerSeries = (ifdOffsets.length / 2) / count;
+
+      int offset = 0;
+      Object zeissTag = null;
+      for (int s=0; s<count; s++, realSeries++) {
+        core[realSeries] = new CoreMetadata();
+        core[realSeries].littleEndian = littleEndian;
+
+        IFDList ifds = new IFDList();
+        while (ifds.size() < ifdsPerSeries) {
+          IFD ifd = tp.getIFD(ifdOffsets[offset]);
+          if (offset == 0) zeissTag = ifd.get(ZEISS_ID);
+          if (offset > 0 && ifds.size() == 0) {
+            ifd.putIFDValue(ZEISS_ID, zeissTag);
+          }
+          ifds.add(ifd);
+          if (zeissTag != null) offset += 2;
+          else offset++;
+        }
+        ifdsList.set(realSeries, ifds);
       }
-      ifdsList.set(i, ifds);
-      s.close();
+      stream.close();
     }
 
     MetadataStore store = makeFilterMetadata();
@@ -383,6 +414,8 @@ public class ZeissLSMReader extends FormatReader {
       }
 
       // fix the offsets for > 4 GB files
+      RandomAccessInputStream s =
+        new RandomAccessInputStream(getLSMFileFromSeries(series));
       for (int i=1; i<ifds.size(); i++) {
         long[] stripOffsets = ifds.get(i).getStripOffsets();
         long[] previousStripOffsets = ifds.get(i - 1).getStripOffsets();
@@ -408,13 +441,21 @@ public class ZeissLSMReader extends FormatReader {
           }
         }
       }
+      s.close();
 
       initMetadata(series);
     }
+
+    for (int i=0; i<getSeriesCount(); i++) {
+      core[i].imageCount = core[i].sizeZ * core[i].sizeC * core[i].sizeT;
+    }
+
     MetadataTools.populatePixels(store, this, true);
     for (int series=0; series<ifdsList.size(); series++) {
       setSeries(series);
-      store.setImageName(imageNames.get(series), series);
+      if (series < imageNames.size()) {
+        store.setImageName(imageNames.get(series), series);
+      }
       store.setPixelsBinDataBigEndian(!isLittleEndian(), series, 0);
     }
     setSeries(0);
@@ -443,12 +484,80 @@ public class ZeissLSMReader extends FormatReader {
     return null;
   }
 
+  private int getEffectiveSeries(int currentSeries) {
+    int seriesCount = 0;
+    for (int i=0; i<lsmFilenames.length; i++) {
+      Integer count = seriesCounts.get(lsmFilenames[i]);
+      if (count == null) count = 1;
+      seriesCount += count;
+      if (seriesCount > currentSeries) return i;
+    }
+    return -1;
+  }
+
+  private String getLSMFileFromSeries(int currentSeries) {
+    int effectiveSeries = getEffectiveSeries(currentSeries);
+    return effectiveSeries < 0 ? null : lsmFilenames[effectiveSeries];
+  }
+
+  private int getExtraSeries(String file) throws FormatException, IOException {
+    in = new RandomAccessInputStream(file);
+    boolean littleEndian = in.read() == TiffConstants.LITTLE;
+    in.order(littleEndian);
+
+    tiffParser = new TiffParser(in);
+    IFD ifd = tiffParser.getFirstIFD();
+    RandomAccessInputStream ras = getCZTag(ifd);
+    if (ras == null) return 1;
+    ras.order(littleEndian);
+
+    ras.seek(264);
+    dimensionP = ras.readInt();
+    dimensionM = ras.readInt();
+    ras.close();
+
+    int nSeries = dimensionM * dimensionP;
+    return nSeries <= 0 ? 1 : nSeries;
+  }
+
+  private int getPosition(int currentSeries) {
+    int effectiveSeries = getEffectiveSeries(currentSeries);
+    int firstPosition = 0;
+    for (int i=0; i<effectiveSeries; i++) {
+      firstPosition += seriesCounts.get(lsmFilenames[i]);
+    }
+    return currentSeries - firstPosition;
+  }
+
+  private RandomAccessInputStream getCZTag(IFD ifd)
+    throws FormatException, IOException
+  {
+    // get TIF_CZ_LSMINFO structure
+    short[] s = ifd.getIFDShortArray(ZEISS_ID);
+    if (s == null) {
+      LOGGER.warn("Invalid Zeiss LSM file. Tag {} not found.", ZEISS_ID);
+      TiffReader reader = new TiffReader();
+      reader.setId(getLSMFileFromSeries(series));
+      core[getSeries()] = reader.getCoreMetadata()[0];
+      reader.close();
+      return null;
+    }
+    byte[] cz = new byte[s.length];
+    for (int i=0; i<s.length; i++) {
+      cz[i] = (byte) s[i];
+    }
+
+    RandomAccessInputStream ras = new RandomAccessInputStream(cz);
+    ras.order(isLittleEndian());
+    return ras;
+  }
+
   protected void initMetadata(int series) throws FormatException, IOException {
     setSeries(series);
     IFDList ifds = ifdsList.get(series);
     IFD ifd = ifds.get(0);
 
-    in = new RandomAccessInputStream(lsmFilenames[series]);
+    in = new RandomAccessInputStream(getLSMFileFromSeries(series));
     in.order(isLittleEndian());
 
     tiffParser = new TiffParser(in);
@@ -470,7 +579,9 @@ public class ZeissLSMReader extends FormatReader {
 
     MetadataStore store = makeFilterMetadata();
 
-    String imageName = lsmFilenames[series];
+    int instrument = getEffectiveSeries(series);
+
+    String imageName = getLSMFileFromSeries(series);
     if (imageName.indexOf(".") != -1) {
       imageName = imageName.substring(0, imageName.lastIndexOf("."));
     }
@@ -478,31 +589,21 @@ public class ZeissLSMReader extends FormatReader {
       imageName =
         imageName.substring(imageName.lastIndexOf(File.separator) + 1);
     }
+    if (lsmFilenames.length != getSeriesCount()) {
+      imageName += " #" + (getPosition(series) + 1);
+    }
 
     // link Instrument and Image
     store.setImageID(MetadataTools.createLSID("Image", series), series);
-    String instrumentID = MetadataTools.createLSID("Instrument", series);
-    store.setInstrumentID(instrumentID, series);
+    String instrumentID = MetadataTools.createLSID("Instrument", instrument);
+    store.setInstrumentID(instrumentID, instrument);
     store.setImageInstrumentRef(instrumentID, series);
 
-    // get TIF_CZ_LSMINFO structure
-    short[] s = ifd.getIFDShortArray(ZEISS_ID);
-    if (s == null) {
-      LOGGER.warn("Invalid Zeiss LSM file. Tag {} not found.", ZEISS_ID);
-      TiffReader reader = new TiffReader();
-      reader.setId(lsmFilenames[series]);
-      core[series] = reader.getCoreMetadata()[0];
-      reader.close();
+    RandomAccessInputStream ras = getCZTag(ifd);
+    if (ras == null) {
       imageNames.add(imageName);
       return;
     }
-    byte[] cz = new byte[s.length];
-    for (int i=0; i<s.length; i++) {
-      cz[i] = (byte) s[i];
-    }
-
-    RandomAccessInputStream ras = new RandomAccessInputStream(cz);
-    ras.order(isLittleEndian());
 
     ras.seek(16);
 
@@ -549,7 +650,7 @@ public class ZeissLSMReader extends FormatReader {
       addSeriesMeta("OriginY", ras.readDouble());
       addSeriesMeta("OriginZ", ras.readDouble());
     }
-    else ras.seek(56);
+    else ras.seek(88);
 
     int scanType = ras.readShort();
     switch (scanType) {
@@ -645,17 +746,10 @@ public class ZeissLSMReader extends FormatReader {
     if (getSizeZ() == 0) core[series].sizeZ = getImageCount();
     if (getSizeT() == 0) core[series].sizeT = getImageCount() / getSizeZ();
 
-    MetadataTools.setDefaultCreationDate(store, getCurrentFile(), series);
-    if (getSizeC() > 1) {
-      if (!splitPlanes) splitPlanes = isRGB();
-      core[series].rgb = false;
-      if (splitPlanes) core[series].imageCount *= getSizeC();
-    }
-
-    for (int c=0; c<getEffectiveSizeC(); c++) {
-      String lsid = MetadataTools.createLSID("Channel", series, c);
-      store.setChannelID(lsid, series, c);
-    }
+    long channelColorsOffset = 0;
+    long timeStampOffset = 0;
+    long eventListOffset = 0;
+    long scanInformationOffset = 0;
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       int spectralScan = ras.readShort();
@@ -685,14 +779,14 @@ public class ZeissLSMReader extends FormatReader {
       overlayOffsets[1] = ras.readInt();
       overlayOffsets[2] = ras.readInt();
 
-      long channelColorsOffset = ras.readInt();
+      channelColorsOffset = ras.readInt();
 
       addSeriesMeta("TimeInterval", ras.readDouble());
       ras.skipBytes(4);
-      long scanInformationOffset = ras.readInt();
+      scanInformationOffset = ras.readInt();
       ras.skipBytes(4);
-      long timeStampOffset = ras.readInt();
-      long eventListOffset = ras.readInt();
+      timeStampOffset = ras.readInt();
+      eventListOffset = ras.readInt();
       overlayOffsets[3] = ras.readInt();
       overlayOffsets[4] = ras.readInt();
       ras.skipBytes(4);
@@ -719,13 +813,27 @@ public class ZeissLSMReader extends FormatReader {
       addSeriesMeta("ToolbarFlags", ras.readInt());
 
       int wavelengthOffset = ras.readInt();
-      ras.skipBytes(56);
-      int dimensionP = ras.readInt();
-      int dimensionM = ras.readInt();
+      ras.skipBytes(64);
+    }
+    else ras.skipBytes(182);
 
+    MetadataTools.setDefaultCreationDate(store, getCurrentFile(), series);
+    if (getSizeC() > 1) {
+      if (!splitPlanes) splitPlanes = isRGB();
+      core[series].rgb = false;
+      if (splitPlanes) core[series].imageCount *= getSizeC();
+    }
+
+    for (int c=0; c<getEffectiveSizeC(); c++) {
+      String lsid = MetadataTools.createLSID("Channel", series, c);
+      store.setChannelID(lsid, series, c);
+    }
+
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       // NB: the Zeiss LSM 5.5 specification indicates that there should be
       //     15 32-bit integers here; however, there are actually 16 32-bit
       //     integers before the tile position offset.
+      //     We have confirmed with Zeiss that this is correct.
       ras.skipBytes(64);
 
       int tilePositionOffset = ras.readInt();
@@ -935,7 +1043,9 @@ public class ZeissLSMReader extends FormatReader {
           store.setPlaneExposureTime(nextStamp - thisStamp, series, i);
         }
         if (xCoordinates.size() > 0) {
-          int stage = i / (getImageCount() / xCoordinates.size());
+          double planesPerStage =
+            (double) getImageCount() / xCoordinates.size();
+          int stage = (int) (i / planesPerStage);
           store.setPlanePositionX(xCoordinates.get(stage), series, i);
           store.setPlanePositionY(yCoordinates.get(stage), series, i);
         }
@@ -953,11 +1063,13 @@ public class ZeissLSMReader extends FormatReader {
       return;
     }
 
+    int instrument = getEffectiveSeries(series);
+
     // NB: block.acquire can be false.  If that is the case, Instrument data
     // is the only thing that should be populated.
     if (block instanceof Recording) {
       Recording recording = (Recording) block;
-      String objectiveID = MetadataTools.createLSID("Objective", series, 0);
+      String objectiveID = MetadataTools.createLSID("Objective", instrument, 0);
       if (recording.acquire) {
         store.setImageDescription(recording.description, series);
         store.setImageAcquiredDate(recording.startTime, series);
@@ -965,31 +1077,32 @@ public class ZeissLSMReader extends FormatReader {
         binning = recording.binning;
       }
       store.setObjectiveCorrection(
-        getCorrection(recording.correction), series, 0);
-      store.setObjectiveImmersion(getImmersion(recording.immersion), series, 0);
+        getCorrection(recording.correction), instrument, 0);
+      store.setObjectiveImmersion(
+        getImmersion(recording.immersion), instrument, 0);
       if (recording.magnification != null && recording.magnification > 0) {
         store.setObjectiveNominalMagnification(
-          new PositiveInteger(recording.magnification), series, 0);
+          new PositiveInteger(recording.magnification), instrument, 0);
       }
-      store.setObjectiveLensNA(recording.lensNA, series, 0);
-      store.setObjectiveIris(recording.iris, series, 0);
-      store.setObjectiveID(objectiveID, series, 0);
+      store.setObjectiveLensNA(recording.lensNA, instrument, 0);
+      store.setObjectiveIris(recording.iris, instrument, 0);
+      store.setObjectiveID(objectiveID, instrument, 0);
     }
     else if (block instanceof Laser) {
       Laser laser = (Laser) block;
       if (laser.medium != null) {
         store.setLaserLaserMedium(getLaserMedium(laser.medium),
-          series, nextLaser);
+          instrument, nextLaser);
       }
       if (laser.type != null) {
-        store.setLaserType(getLaserType(laser.type), series, nextLaser);
+        store.setLaserType(getLaserType(laser.type), instrument, nextLaser);
       }
       if (laser.model != null) {
-        store.setLaserModel(laser.model, series, nextLaser);
+        store.setLaserModel(laser.model, instrument, nextLaser);
       }
       String lightSourceID =
-        MetadataTools.createLSID("LightSource", series, nextLaser);
-      store.setLaserID(lightSourceID, series, nextLaser);
+        MetadataTools.createLSID("LightSource", instrument, nextLaser);
+      store.setLaserID(lightSourceID, instrument, nextLaser);
       nextLaser++;
     }
     else if (block instanceof Track) {
@@ -1014,12 +1127,13 @@ public class ZeissLSMReader extends FormatReader {
         store.setChannelPinholeSize(channel.pinhole, series, nextDetectChannel);
       }
       if (channel.filter != null) {
-        String id = MetadataTools.createLSID("Filter", series, nextFilter);
+        String id = MetadataTools.createLSID("Filter", instrument, nextFilter);
         if (channel.acquire && nextDetectChannel < getSizeC()) {
-          store.setLightPathEmissionFilterRef(id, series, nextDetectChannel, 0);
+          store.setLightPathEmissionFilterRef(
+            id, instrument, nextDetectChannel, 0);
         }
-        store.setFilterID(id, series, nextFilter);
-        store.setFilterModel(channel.filter, series, nextFilter);
+        store.setFilterID(id, instrument, nextFilter);
+        store.setFilterModel(channel.filter, instrument, nextFilter);
 
         int space = channel.filter.indexOf(" ");
         if (space != -1) {
@@ -1027,19 +1141,19 @@ public class ZeissLSMReader extends FormatReader {
           if (type.equals("BP")) type = "BandPass";
           else if (type.equals("LP")) type = "LongPass";
 
-          store.setFilterType(getFilterType(type), series, nextFilter);
+          store.setFilterType(getFilterType(type), instrument, nextFilter);
 
           String transmittance = channel.filter.substring(space + 1).trim();
           String[] v = transmittance.split("-");
           try {
             store.setTransmittanceRangeCutIn(
-                PositiveInteger.valueOf(v[0].trim()), series, nextFilter);
+              PositiveInteger.valueOf(v[0].trim()), instrument, nextFilter);
           }
           catch (NumberFormatException e) { }
           if (v.length > 1) {
             try {
               store.setTransmittanceRangeCutOut(
-                  PositiveInteger.valueOf(v[1].trim()), series, nextFilter);
+                PositiveInteger.valueOf(v[1].trim()), instrument, nextFilter);
             }
             catch (NumberFormatException e) { }
           }
@@ -1049,8 +1163,8 @@ public class ZeissLSMReader extends FormatReader {
       }
       if (channel.channelName != null) {
         String detectorID =
-          MetadataTools.createLSID("Detector", series, nextDetector);
-        store.setDetectorID(detectorID, series, nextDetector);
+          MetadataTools.createLSID("Detector", instrument, nextDetector);
+        store.setDetectorID(detectorID, instrument, nextDetector);
         if (channel.acquire && nextDetector < getSizeC()) {
           store.setDetectorSettingsID(detectorID, series, nextDetector);
           store.setDetectorSettingsBinning(
@@ -1058,14 +1172,14 @@ public class ZeissLSMReader extends FormatReader {
         }
       }
       if (channel.amplificationGain != null) {
-        store.setDetectorAmplificationGain(channel.amplificationGain, series,
-          nextDetector);
+        store.setDetectorAmplificationGain(
+          channel.amplificationGain, instrument, nextDetector);
       }
       if (channel.gain != null) {
-        store.setDetectorGain(channel.gain, series, nextDetector);
+        store.setDetectorGain(channel.gain, instrument, nextDetector);
       }
-      store.setDetectorType(getDetectorType("PMT"), series, nextDetector);
-      store.setDetectorZoom(zoom, series, nextDetector);
+      store.setDetectorType(getDetectorType("PMT"), instrument, nextDetector);
+      store.setDetectorZoom(zoom, instrument, nextDetector);
       nextDetectChannel++;
       nextDetector++;
     }
@@ -1073,10 +1187,10 @@ public class ZeissLSMReader extends FormatReader {
       BeamSplitter beamSplitter = (BeamSplitter) block;
       if (beamSplitter.filterSet != null) {
         if (beamSplitter.filter != null) {
-          String id =
-            MetadataTools.createLSID("Dichroic", series, nextDichroic);
-          store.setDichroicID(id, series, nextDichroic);
-          store.setDichroicModel(beamSplitter.filter, series, nextDichroic);
+          String id = MetadataTools.createLSID(
+            "Dichroic", instrument, nextDichroic);
+          store.setDichroicID(id, instrument, nextDichroic);
+          store.setDichroicModel(beamSplitter.filter, instrument, nextDichroic);
           if (nextDichroicChannel < getEffectiveSizeC()) {
             store.setLightPathDichroicRef(id, series, nextDichroicChannel);
           }
