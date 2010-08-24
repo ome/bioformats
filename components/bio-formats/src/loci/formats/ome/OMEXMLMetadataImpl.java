@@ -32,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-07-01 12:04:50+0100
+ * Created by callan via xsd-fu on 2010-08-24 16:58:15+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -104,6 +104,14 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	public int getPixelsBinDataCount(int imageIndex)
 	{
 		return root.getImage(imageIndex).getPixels().sizeOfBinDataList();
+	}
+
+	public String getLightSourceType(int instrumentIndex, int lightSourceIndex)
+	{
+		LightSource o = root.getInstrument(instrumentIndex).getLightSource(lightSourceIndex);
+		String className = o.getClass().getName();
+		return className.substring(
+			className.lastIndexOf('.') + 1, className.length());
 	}
 
 	// -- Entity counting (code generated definitions) --

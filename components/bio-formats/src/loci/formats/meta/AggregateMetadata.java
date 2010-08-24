@@ -32,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-07-01 12:04:30+0100
+ * Created by callan via xsd-fu on 2010-08-24 16:48:47+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -129,6 +129,20 @@ public class AggregateMetadata implements IMetadata
 			}
 		}
 		return -1;
+	}
+
+	public String getLightSourceType(int instrumentIndex, int lightSourceIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				return retrieve.getLightSourceType(instrumentIndex, lightSourceIndex);
+			}
+		}
+		return null;
 	}
 
 	// -- Entity counting (code generated definitions) --

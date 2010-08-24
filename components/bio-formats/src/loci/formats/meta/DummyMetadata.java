@@ -32,14 +32,12 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-07-01 12:04:37+0100
+ * Created by callan via xsd-fu on 2010-08-24 16:50:49+0100
  *
  *-----------------------------------------------------------------------------
  */
 
 package loci.formats.meta;
-
-import java.util.Iterator;
 
 import ome.xml.model.enums.*;
 import ome.xml.model.primitives.*;
@@ -78,6 +76,11 @@ public class DummyMetadata implements IMetadata
 	public int getPixelsBinDataCount(int imageIndex)
 	{
 		return -1;
+	}
+
+	public String getLightSourceType(int instrumentIndex, int lightSourceIndex)
+	{
+		return null;
 	}
 
 	// -- Entity counting (code generated definitions) --
