@@ -139,8 +139,6 @@
 
 package loci.formats.meta;
 
-import java.util.Iterator;
-
 import ome.xml.model.enums.*;
 import ome.xml.model.primitives.*;
 
@@ -178,6 +176,11 @@ public class DummyMetadata implements IMetadata
 	public int getPixelsBinDataCount(int imageIndex)
 	{
 		return -1;
+	}
+
+	public String getLightSourceType(int instrumentIndex, int lightSourceIndex)
+	{
+		return null;
 	}
 
 	// -- Entity counting (code generated definitions) --

@@ -320,6 +320,14 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.getImage(imageIndex).getPixels().sizeOfBinDataList();
 	}
 
+	public String getLightSourceType(int instrumentIndex, int lightSourceIndex)
+	{
+		LightSource o = root.getInstrument(instrumentIndex).getLightSource(lightSourceIndex);
+		String className = o.getClass().getName();
+		return className.substring(
+			className.lastIndexOf('.') + 1, className.length());
+	}
+
 	// -- Entity counting (code generated definitions) --
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\

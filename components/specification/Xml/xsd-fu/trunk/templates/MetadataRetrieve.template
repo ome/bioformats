@@ -121,6 +121,8 @@ public interface MetadataRetrieve {
 
 	int getPixelsBinDataCount(int imageIndex);
 
+	String getLightSourceType(int instrumentIndex, int lightSourceIndex);
+
 	// -- Entity counting (code generated definitions) --
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\

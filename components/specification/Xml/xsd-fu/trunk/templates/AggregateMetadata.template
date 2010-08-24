@@ -308,6 +308,20 @@ public class AggregateMetadata implements IMetadata
 		return -1;
 	}
 
+	public String getLightSourceType(int instrumentIndex, int lightSourceIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				return retrieve.getLightSourceType(instrumentIndex, lightSourceIndex);
+			}
+		}
+		return null;
+	}
+
 	// -- Entity counting (code generated definitions) --
 
 {% for o in sorted(model.objects.values(), lambda x, y: cmp(x.name, y.name)) %}\
