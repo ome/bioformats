@@ -230,20 +230,6 @@ public final class ImageConverter {
       new Object[] {reader.getFormat(), out, format});
     long mid = System.currentTimeMillis();
 
-    if (format.equals("OME-TIFF") &&
-      (out.indexOf(FormatTools.SERIES_NUM) > 0 ||
-      out.indexOf(FormatTools.SERIES_NAME) > 0 ||
-      out.indexOf(FormatTools.CHANNEL_NUM) > 0 ||
-      out.indexOf(FormatTools.CHANNEL_NAME) > 0 ||
-      out.indexOf(FormatTools.Z_NUM) > 0 ||
-      out.indexOf(FormatTools.T_NUM) > 0))
-    {
-      // FIXME
-      LOGGER.info(
-        "Sorry, conversion to multiple OME-TIFF files is not yet supported.");
-      return false;
-    }
-
     int total = 0;
     int num = writer.canDoStacks() ? reader.getSeriesCount() : 1;
     long read = 0, write = 0;
