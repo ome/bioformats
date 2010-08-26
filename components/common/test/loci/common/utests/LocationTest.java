@@ -73,26 +73,25 @@ public class LocationTest {
       new Location(validFile.getAbsolutePath()),
       new Location(invalidPath),
       new Location(System.getProperty("java.io.tmpdir")),
-      new Location("http://www.kernel.org/pub/linux/"),
       new Location("http://loci.wisc.edu/software/bio-formats"),
       new Location("http://openmicroscopy.org/software/bio-formats"),
       new Location(hiddenFile)
     };
 
     exists = new boolean[] {
-      true, false, true, true, true, false, true
+      true, false, true, true, false, true
     };
 
     isDirectory = new boolean[] {
-      false, false, true, true, false, false, false
+      false, false, true, false, false, false
     };
 
     isHidden = new boolean[] {
-      false, false, false, false, false, false, true
+      false, false, false, false, false, true
     };
 
     mode = new String[] {
-      "rw", "", "rw", "r", "r", "", "rw"
+      "rw", "", "rw", "r", "", "rw"
     };
 
   }
