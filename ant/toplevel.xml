@@ -150,7 +150,8 @@ Type "ant -p" for a list of targets.
     <delete>
       <fileset dir="${toplevel-utils.dir}" includes="*.class"/>
     </delete>
-    <javac debug="true" deprecation="true" source="1.5" target="1.5"
+    <javac debug="true" includeantruntime="false"
+      deprecation="true" source="1.5" target="1.5"
       srcdir="${toplevel-utils.dir}" includes="*.java">
       <classpath>
         <fileset dir="${artifact.dir}">
