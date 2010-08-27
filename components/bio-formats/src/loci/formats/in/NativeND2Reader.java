@@ -812,14 +812,17 @@ public class NativeND2Reader extends FormatReader {
     }
 
     // populate Dimensions data
-    for (int i=0; i<getSeriesCount(); i++) {
-      store.setPixelsPhysicalSizeX(handler.getPixelSizeX(), i);
-      store.setPixelsPhysicalSizeY(handler.getPixelSizeY(), i);
-      store.setPixelsPhysicalSizeZ(handler.getPixelSizeZ(), i);
+    if (handler != null) {
+      for (int i=0; i<getSeriesCount(); i++) {
+        store.setPixelsPhysicalSizeX(handler.getPixelSizeX(), i);
+        store.setPixelsPhysicalSizeY(handler.getPixelSizeY(), i);
+        store.setPixelsPhysicalSizeZ(handler.getPixelSizeZ(), i);
+      }
     }
 
     // populate PlaneTiming and StagePosition data
-    ArrayList<Double> exposureTime = handler.getExposureTimes();
+    ArrayList<Double> exposureTime = null;
+    if (handler != null) handler.getExposureTimes();
     for (int i=0; i<getSeriesCount(); i++) {
       if (tsT.size() > 0) {
         setSeries(i);
@@ -831,38 +834,52 @@ public class NativeND2Reader extends FormatReader {
           store.setPlaneDeltaT(stamp, i, n);
 
           int index = i * getSizeC() + coords[1];
-          if (index < exposureTime.size()) {
+          if (exposureTime != null && index < exposureTime.size()) {
             store.setPlaneExposureTime(exposureTime.get(index), i, n);
           }
         }
       }
 
-      if (posX == null) posX = handler.getXPositions();
-      if (posY == null) posY = handler.getYPositions();
-      if (posZ == null) posZ = handler.getZPositions();
+      if (handler != null) {
+        if (posX == null) posX = handler.getXPositions();
+        if (posY == null) posY = handler.getYPositions();
+        if (posZ == null) posZ = handler.getZPositions();
+      }
 
+      String pos = "for position #" + (i + 1);
       for (int n=0; n<getImageCount(); n++) {
         int index = i * getImageCount() + n;
-        if (index >= posX.size()) index = i;
-        if (index < posX.size()) {
-          store.setPlanePositionX(posX.get(index), i, n);
-          addSeriesMeta("X position " + (i + 1), posX.get(index));
-          addGlobalMeta("X position for position #" + (i + 1), posX.get(index));
+        if (posX != null) {
+          if (index >= posX.size()) index = i;
+          if (index < posX.size()) {
+            String key = "X position ";
+            store.setPlanePositionX(posX.get(index), i, n);
+            addSeriesMeta(key + (i + 1), posX.get(index));
+            addGlobalMeta(key + pos, posX.get(index));
+          }
         }
-        if (index < posY.size()) {
-          store.setPlanePositionY(posY.get(index), i, n);
-          addSeriesMeta("Y position " + (i + 1), posY.get(index));
-          addGlobalMeta("Y position for position #" + (i + 1), posY.get(index));
+        if (posY != null) {
+          if (index < posY.size()) {
+            String key = "Y position ";
+            store.setPlanePositionY(posY.get(index), i, n);
+            addSeriesMeta(key + (i + 1), posY.get(index));
+            addGlobalMeta(key + pos, posY.get(index));
+          }
         }
-        if (index < posZ.size()) {
-          store.setPlanePositionZ(posZ.get(index), i, n);
-          String key =
-            "Z position for position #" + (i + 1) + ", plane #" + (n + 1);
-          addSeriesMeta(key, posZ.get(index));
-          addGlobalMeta(key, posZ.get(index));
+        if (posZ != null) {
+          if (index < posZ.size()) {
+            store.setPlanePositionZ(posZ.get(index), i, n);
+            String key = "Z position " + pos + ", plane #" + (n + 1);
+            addSeriesMeta(key, posZ.get(index));
+            addGlobalMeta(key, posZ.get(index));
+          }
         }
-
       }
+    }
+
+    if (handler == null) {
+      setSeries(0);
+      return;
     }
 
     String detectorID = MetadataTools.createLSID("Detector", 0, 0);
