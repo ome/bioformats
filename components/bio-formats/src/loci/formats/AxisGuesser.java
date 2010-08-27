@@ -313,21 +313,21 @@ public class AxisGuesser {
     Location file = args.length < 1 ?
       new Location(System.getProperty("user.dir")).listFiles()[0] :
       new Location(args[0]);
-    LOGGER.debug("File = {}", file.getAbsoluteFile());
+    LOGGER.info("File = {}", file.getAbsoluteFile());
     String pat = FilePattern.findPattern(file);
-    if (pat == null) LOGGER.debug("No pattern found.");
+    if (pat == null) LOGGER.info("No pattern found.");
     else {
-      LOGGER.debug("Pattern = {}", pat);
+      LOGGER.info("Pattern = {}", pat);
       FilePattern fp = new FilePattern(pat);
       if (fp.isValid()) {
-        LOGGER.debug("Pattern is valid.");
+        LOGGER.info("Pattern is valid.");
         String id = fp.getFiles()[0];
         if (!new Location(id).exists()) {
-          LOGGER.debug("File '{}' does not exist.", id);
+          LOGGER.info("File '{}' does not exist.", id);
         }
         else {
           // read dimensional information from first file
-          LOGGER.debug("Reading first file ");
+          LOGGER.info("Reading first file ");
           ImageReader reader = new ImageReader();
           reader.setId(id);
           String dimOrder = reader.getDimensionOrder();
@@ -336,12 +336,12 @@ public class AxisGuesser {
           int sizeC = reader.getSizeC();
           boolean certain = reader.isOrderCertain();
           reader.close();
-          LOGGER.debug("[done]");
-          LOGGER.debug("\tdimOrder = {} ({})",
+          LOGGER.info("[done]");
+          LOGGER.info("\tdimOrder = {} ({})",
             dimOrder, certain ? "certain" : "uncertain");
-          LOGGER.debug("\tsizeZ = {}", sizeZ);
-          LOGGER.debug("\tsizeT = {}", sizeT);
-          LOGGER.debug("\tsizeC = {}", sizeC);
+          LOGGER.info("\tsizeZ = {}", sizeZ);
+          LOGGER.info("\tsizeT = {}", sizeT);
+          LOGGER.info("\tsizeC = {}", sizeC);
 
           // guess axes
           AxisGuesser ag = new AxisGuesser(fp,
@@ -353,7 +353,7 @@ public class AxisGuesser {
           int[] axes = ag.getAxisTypes();
           String newOrder = ag.getAdjustedOrder();
           boolean isCertain = ag.isCertain();
-          LOGGER.debug("Axis types:");
+          LOGGER.info("Axis types:");
           for (int i=0; i<blocks.length; i++) {
             String axis;
             switch (axes[i]) {
@@ -369,16 +369,16 @@ public class AxisGuesser {
               default:
                 axis = "?";
             }
-            LOGGER.debug("\t{}\t{} (prefix = {})",
+            LOGGER.info("\t{}\t{} (prefix = {})",
               new Object[] {blocks[i], axis, prefixes[i]});
           }
           if (!dimOrder.equals(newOrder)) {
-            LOGGER.debug("Adjusted dimension order = {} ({})",
+            LOGGER.info("Adjusted dimension order = {} ({})",
               newOrder, isCertain ? "certain" : "uncertain");
           }
         }
       }
-      else LOGGER.debug("Pattern is invalid: {}", fp.getErrorMessage());
+      else LOGGER.info("Pattern is invalid: {}", fp.getErrorMessage());
     }
   }
 
