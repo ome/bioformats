@@ -205,7 +205,10 @@ public class MetamorphHandler extends DefaultHandler {
         value = value.substring(0, value.indexOf(" "));
       }
       // exposure times are stored in milliseconds, we want them in seconds
-      exposures.add(new Float(Float.parseFloat(value) / 1000));
+      try {
+        exposures.add(new Float(Float.parseFloat(value) / 1000));
+      }
+      catch (NumberFormatException e) { }
     }
   }
 
