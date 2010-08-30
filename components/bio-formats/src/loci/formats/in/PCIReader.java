@@ -100,7 +100,7 @@ public class PCIReader extends FormatReader {
 
     if (tp.isValidHeader()) {
       IFD ifd = tp.getFirstIFD();
-      tp.getSamples(ifd, buf);
+      tp.getSamples(ifd, buf, x, y, w, h);
     }
     else {
       s.seek(0);
