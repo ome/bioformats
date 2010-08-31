@@ -167,7 +167,7 @@ default = false
 #  planes.                                                                \
 #  <br><br>When viewing as a virtual stack with this option enabled,      \
 #  Bio-Formats will attempt to record the operations you perform. When    \
-#  you switch to a new image plane, Bio-Formats will \"play back\" those  \
+#  you switch to a new image plane, Bio-Formats will "play back" those    \
 #  same operations, so that the image plane undergoes the same processing \
 #  you performed previously. In this way, the image stack should behave   \
 #  more like a normal, fully memory-resident image stack.
@@ -184,7 +184,7 @@ label = Display_metadata
 info = <b>Display metadata</b> - \
   Reads metadata that may be contained within the file format and      \
   displays it. You can save it as a text file or copy it from the File \
-  and Edit menus specific to the \"Original Metadata\" window.         \
+  and Edit menus specific to the "Original Metadata" window.           \
   Readability depends upon the manner in which metadata is formatted   \
   in the data source.
 default = false
