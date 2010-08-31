@@ -180,13 +180,13 @@ default = 0
 
 [showMetadata]
 type = boolean
-label = Display_metadata in results window
-info = <b>Display metadata in results window</b> - \
+label = Display_metadata
+info = <b>Display metadata</b> - \
   Reads metadata that may be contained within the file format and      \
   displays it. You can save it as a text file or copy it from the File \
-  and Edit menus specific to the ImageJ Results window. Readability    \
-  depends upon the manner in which metadata is formatted in the data   \
-  source.
+  and Edit menus specific to the \"Original Metadata\" window.         \
+  Readability depends upon the manner in which metadata is formatted   \
+  in the data source.
 default = false
 
 [showOMEXML]
