@@ -419,24 +419,8 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
 
       // set the X and Y pixel dimensions
 
-      int resolutionUnit = firstIFD.getIFDIntValue(IFD.RESOLUTION_UNIT);
-      TiffRational xResolution = firstIFD.getIFDRationalValue(IFD.X_RESOLUTION);
-      TiffRational yResolution = firstIFD.getIFDRationalValue(IFD.Y_RESOLUTION);
-      double pixX = xResolution == null ? 0 : 1 / xResolution.doubleValue();
-      double pixY = yResolution == null ? 0 : 1 / yResolution.doubleValue();
-
-      switch (resolutionUnit) {
-        case 2:
-          // resolution is expressed in pixels per inch
-          pixX *= 25400;
-          pixY *= 25400;
-          break;
-        case 3:
-          // resolution is expressed in pixels per centimeter
-          pixX *= 10000;
-          pixY *= 10000;
-          break;
-      }
+      double pixX = firstIFD.getXResolution();
+      double pixY = firstIFD.getYResolution();
 
       store.setPixelsPhysicalSizeX(pixX, 0);
       store.setPixelsPhysicalSizeY(pixY, 0);
