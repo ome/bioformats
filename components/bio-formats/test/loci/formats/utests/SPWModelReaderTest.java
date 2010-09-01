@@ -84,7 +84,14 @@ public class SPWModelReaderTest {
     writeMockToFile(mockWithNoLightSources, temporaryFileWithNoLightSources);
   }
 
-  private void writeMockToFile(SPWModelMock mock, File file) throws Exception {
+  /**
+   * Writes a model mock to a file as XML.
+   * @param mock Mock to build a DOM tree of and serialize to XML.
+   * @param file File to write serialized XML to.
+   * @throws Exception If there is an error writing the XML to the file.
+   */
+  public static void writeMockToFile(ModelMock mock, File file)
+  throws Exception {
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     DocumentBuilder parser = factory.newDocumentBuilder();
     Document document = parser.newDocument();
@@ -134,7 +141,15 @@ public class SPWModelReaderTest {
     assertTrue(canReadEveryPlane(readerWithNoLightSources));
   }
 
-  private boolean canReadEveryPlane(IFormatReader reader) throws Exception {
+  /**
+   * Checks to see if every plane of an initialized reader can be read.
+   * @param reader Reader to read all planes from.
+   * @return <code>true</code> if all planes can be read, <code>false</code>
+   * otherwise.
+   * @throws Exception If there is an error reading data.
+   */
+  public static boolean canReadEveryPlane(IFormatReader reader)
+  throws Exception {
     int sizeX = reader.getSizeX();
     int sizeY = reader.getSizeY();
     int pixelType = reader.getPixelType();
@@ -159,6 +174,7 @@ public class SPWModelReaderTest {
           // This better not happen. :)
           throw new RuntimeException(e);
         }
+        System.err.println(String.format("%d/%d", i, j));
       }
     }
     return true;
@@ -180,7 +196,7 @@ public class SPWModelReaderTest {
    * Retrieves how many bytes per pixel the current plane or section has.
    * @return the number of bytes per pixel.
    */
-  private int getBytesPerPixel(int type) {
+  public static int getBytesPerPixel(int type) {
     switch(type) {
     case 0:
     case 1:

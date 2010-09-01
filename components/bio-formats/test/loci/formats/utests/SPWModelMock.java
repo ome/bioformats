@@ -99,7 +99,7 @@ import ome.xml.model.primitives.PositiveInteger;
  * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/test/ome/xml/utests/SPWModelMock.java">Trac</a>,
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/test/ome/xml/utests/SPWModelMock.java">SVN</a></dd></dl>
  */
-public class SPWModelMock {
+public class SPWModelMock implements ModelMock {
 
   private OME ome;
 
@@ -207,7 +207,7 @@ public class SPWModelMock {
   public static final NamingConvention WELL_ROW = NamingConvention.LETTER;
 
   public static final NamingConvention WELL_COL = NamingConvention.NUMBER;
-  
+
   public static final String PLANE =
     "ZrXEfwslJ9N1nDrbtxxWh4fRHo4w8nZ2N0I74Lgj9oIKN9qrPbBK24z+w+9zYzRQ" +
     "WJXfEwwAKXgV4Z1jCPhE9woGjJaarHTsFwy21nF2IoJDkd3L/zSWMSVk508+jpxV" +
@@ -236,7 +236,7 @@ public class SPWModelMock {
 
   /** XML namespace. */
   public static final String XML_NS =
-    "http://www.openmicroscopy.org/Schemas/OME/2010-04";
+    "http://www.openmicroscopy.org/Schemas/OME/2010-06";
 
   /** XSI namespace. */
   public static final String XSI_NS =
@@ -244,7 +244,7 @@ public class SPWModelMock {
 
   /** XML schema location. */
   public static final String SCHEMA_LOCATION =
-    "http://www.openmicroscopy.org/Schemas/OME/2010-04/ome.xsd";
+    "http://www.openmicroscopy.org/Schemas/OME/2010-06/ome.xsd";
 
   public SPWModelMock(boolean makeLightSources) {
     ome = new OME();
