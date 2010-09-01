@@ -186,7 +186,8 @@ info = <b>Display metadata</b> - \
   displays it. You can save it as a text file or copy it from the File \
   and Edit menus specific to the "Original Metadata" window.           \
   Readability depends upon the manner in which metadata is formatted   \
-  in the data source.
+  in the data source. The metadata can also be displayed by pressing   \
+  "i" (Image &gt; Show Info) when the imported image is active.
 default = false
 
 [showOMEXML]
