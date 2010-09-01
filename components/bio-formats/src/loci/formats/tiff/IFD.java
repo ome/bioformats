@@ -814,6 +814,38 @@ public class IFD extends HashMap<Integer, Object> {
     return rowsPerStrip;
   }
 
+  /**
+   * Retrieve the X resolution (TIFF tag XResolution) from this IFD.
+   * The resolution will be normalized to microns per pixel.
+   *
+   * @return the X resolution, in microns per pixel
+   * @throws FormatException if there is a problem parsing the IFD metadata.
+   */
+  public double getXResolution() throws FormatException {
+    TiffRational xResolution = getIFDRationalValue(X_RESOLUTION);
+    double x = xResolution == null ? 0 : 1 / xResolution.doubleValue();
+
+    int resolutionUnit = getIFDIntValue(RESOLUTION_UNIT);
+    int multiplier = resolutionUnit == 2 ? 25400 : 10000;
+    return x * multiplier;
+  }
+
+  /**
+   * Retrieve the Y resolution (TIFF tag YResolution) from this IFD.
+   * The resolution will be normalized to microns per pixel.
+   *
+   * @return the Y resolution, in microns per pixel
+   * @throws FormatException if there is a problem parsing the IFD metadata.
+   */
+  public double getYResolution() throws FormatException {
+    TiffRational yResolution = getIFDRationalValue(Y_RESOLUTION);
+    double y = yResolution == null ? 0 : 1 / yResolution.doubleValue();
+
+    int resolutionUnit = getIFDIntValue(RESOLUTION_UNIT);
+    int multiplier = resolutionUnit == 2 ? 25400 : 10000;
+    return y * multiplier;
+  }
+
   // -- IFD population methods --
 
   /** Adds a directory entry to this IFD. */
