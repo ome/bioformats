@@ -360,30 +360,14 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
   {
     int annotationIndex = 0;
     try {
-      annotationIndex = omexmlMeta.getListAnnotationCount();
+      annotationIndex = omexmlMeta.getCommentAnnotationCount();
     }
     catch (NullPointerException e) { }
-    String listID = MetadataTools.createLSID("Annotation", annotationIndex * 3);
-    omexmlMeta.setListAnnotationID(listID, annotationIndex);
-    omexmlMeta.setListAnnotationNamespace(
-      StructuredAnnotations.NAMESPACE, annotationIndex);
 
-    int keyIndex = annotationIndex * 2;
-    int valueIndex = annotationIndex * 2 + 1;
-    String keyID =
-      MetadataTools.createLSID("Annotation", annotationIndex * 3 + 1);
-    String valueID =
-      MetadataTools.createLSID("Annotation", annotationIndex * 3 + 2);
-    omexmlMeta.setCommentAnnotationID(keyID, keyIndex);
-    omexmlMeta.setCommentAnnotationID(valueID, valueIndex);
-    omexmlMeta.setCommentAnnotationValue(key, keyIndex);
-    omexmlMeta.setCommentAnnotationValue(value, valueIndex);
-    omexmlMeta.setCommentAnnotationNamespace(
-      StructuredAnnotations.NAMESPACE, keyIndex);
-    omexmlMeta.setCommentAnnotationNamespace(
-      StructuredAnnotations.NAMESPACE, valueIndex);
-    omexmlMeta.setListAnnotationAnnotationRef(keyID, annotationIndex, 0);
-    omexmlMeta.setListAnnotationAnnotationRef(valueID, annotationIndex, 1);
+    String id = MetadataTools.createLSID("Annotation", annotationIndex);
+    omexmlMeta.setCommentAnnotationID(id, annotationIndex);
+    omexmlMeta.setCommentAnnotationDescription(key, annotationIndex);
+    omexmlMeta.setCommentAnnotationValue(value, annotationIndex);
   }
 
   /* (non-Javadoc)

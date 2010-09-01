@@ -564,6 +564,9 @@ public class FV1000Reader extends FormatReader {
 
     core[0].dimensionOrder = "XY";
 
+    Hashtable<String, String> values = new Hashtable<String, String>();
+    Vector<String> baseKeys = new Vector<String>();
+
     for (int i=0, ii=0; ii<getImageCount(); i++, ii++) {
       String file = filenames.get(new Integer(i));
       while (file == null) file = filenames.get(new Integer(++i));
@@ -638,8 +641,30 @@ public class FV1000Reader extends FormatReader {
         for (IniTable table : pty) {
           String[] keys = table.keySet().toArray(new String[table.size()]);
           for (String key : keys) {
-            addGlobalMeta("Image " + ii + " : " + key, table.get(key));
+            values.put("Image " + ii + " : " + key, table.get(key));
+            if (!baseKeys.contains(key)) baseKeys.add(key);
           }
+        }
+      }
+    }
+
+    for (String key : baseKeys) {
+      if (key.equals("DataName") || key.indexOf("FileName") >= 0) break;
+      boolean equal = true;
+      String first = values.get("Image 0 : " + key);
+      for (int i=1; i<getImageCount(); i++) {
+        if (!first.equals(values.get("Image " + i + " : " + key))) {
+          equal = false;
+          break;
+        }
+      }
+      if (equal) {
+        addGlobalMeta(key, first);
+      }
+      else {
+        for (int i=0; i<getImageCount(); i++) {
+          String k = "Image " + i + " : " + key;
+          addGlobalMeta(k, values.get(k));
         }
       }
     }
