@@ -147,8 +147,6 @@ public class OMEXMLReader extends FormatReader {
     int n = in.read(check, 0, overlap);
 
     while (!foundBinData) {
-      System.err.println(String.format(
-          "in.read(..., %d, %d)", overlap, check.length - overlap));
       int r = in.read(check, overlap, check.length - overlap);
       if (r <= 0) throw new IOException("Cannot read from input stream");
       n += r;
