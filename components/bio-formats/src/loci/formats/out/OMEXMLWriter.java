@@ -68,7 +68,7 @@ public class OMEXMLWriter extends FormatWriter {
   public OMEXMLWriter() {
     super("OME-XML", "ome");
     compressionTypes =
-      new String[] {"Uncompressed", "zlib", "J2K", "JPEG"};
+      new String[] {"Uncompressed", "zlib"};
     compression = compressionTypes[0];
   }
 
