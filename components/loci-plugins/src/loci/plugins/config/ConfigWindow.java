@@ -325,7 +325,7 @@ public class ConfigWindow extends JFrame
 
     String qtVersion = null;
     try {
-      Class<?> qtToolsClass = Class.forName("loci.formats.LegacyQTTools");
+      Class<?> qtToolsClass = Class.forName("loci.formats.gui.LegacyQTTools");
       Object qtTools = qtToolsClass.newInstance();
       Method getQTVersion = qtToolsClass.getMethod("getQTVersion");
       qtVersion = (String) getQTVersion.invoke(qtTools);
