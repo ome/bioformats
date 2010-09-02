@@ -312,6 +312,7 @@ public class NativeND2Reader extends FormatReader {
 
       isLossless = handler.isLossless();
       fieldIndex = handler.getFieldIndex();
+      core = handler.getCoreMetadata();
       Hashtable<String, Object> globalMetadata = handler.getMetadata();
       for (String key : globalMetadata.keySet()) {
         addGlobalMeta(key, globalMetadata.get(key));
@@ -703,6 +704,7 @@ public class NativeND2Reader extends FormatReader {
       zs = handler.getZSections();
       ts = handler.getTimepoints();
       numSeries = handler.getSeriesCount();
+      core = handler.getCoreMetadata();
       Hashtable<String, Object> globalMetadata = handler.getMetadata();
       for (String key : globalMetadata.keySet()) {
         addGlobalMeta(key, globalMetadata.get(key));

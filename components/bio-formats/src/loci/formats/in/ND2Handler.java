@@ -101,6 +101,10 @@ public class ND2Handler extends DefaultHandler {
 
   // -- ND2Handler API methods --
 
+  public CoreMetadata[] getCoreMetadata() {
+    return core;
+  }
+
   public void populateROIs(MetadataStore store) {
     for (int r=0; r<rois.size(); r++) {
       Hashtable<String, String> roi = rois.get(r);
