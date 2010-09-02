@@ -78,6 +78,8 @@ public class OMETiffWriter extends TiffWriter {
   private boolean wroteLast;
   private String[][] imageLocations;
   private int totalPlanes = 0;
+  private OMEXMLMetadata omeMeta;
+  private OMEXMLService service;
 
   // -- Constructor --
 
@@ -89,150 +91,55 @@ public class OMETiffWriter extends TiffWriter {
 
   /* @see loci.formats.IFormatHandler#close() */
   public void close() throws IOException {
-    if (currentId != null) {
-      if (!wroteLast) {
-        super.close();
-        return;
-      }
+    try {
+      if (currentId != null && wroteLast) {
+        setupServiceAndMetadata();
 
-      // extract OME-XML string from metadata object
-      MetadataRetrieve retrieve = getMetadataRetrieve();
+        // remove any BinData elements from the OME-XML
+        removeBinData(omeMeta);
 
-      OMEXMLMetadata omeMeta;
-      OMEXMLService service;
-      try {
-        ServiceFactory factory = new ServiceFactory();
-        service = factory.getInstance(OMEXMLService.class);
-        omeMeta = service.getOMEMetadata(retrieve);
-        if (omeMeta instanceof OMEXMLMetadataImpl) {
-          ((OMEXMLMetadataImpl) omeMeta).resolveReferences();
-        }
-      }
-      catch (DependencyException de) {
-        // TODO : Modify close() signature to include FormatException?
-        // throw new MissingLibraryException(OMETiffReader.NO_OME_XML_JAR, de);
-        throw new RuntimeException(de);
-      }
-      catch (ServiceException se) {
-        // TODO : Modify close() signature to include FormatException?
-        // throw new FormatException(se);
-        throw new RuntimeException(se);
-      }
-
-      // remove any BinData elements from the OME-XML
-
-      OME root = (OME) omeMeta.getRoot();
-      List<Image> images = root.copyImageList();
-      for (Image img : images) {
-        Pixels pix = img.getPixels();
-        List<BinData> binData = pix.copyBinDataList();
-        for (BinData bin : binData) {
-          pix.removeBinData(bin);
-        }
-      }
-      omeMeta.setRoot(root);
-
-      for (int series=0; series<omeMeta.getImageCount(); series++) {
-        String dimensionOrder =
-          omeMeta.getPixelsDimensionOrder(series).toString();
-        int sizeZ = omeMeta.getPixelsSizeZ(series).getValue().intValue();
-        int sizeC = omeMeta.getPixelsSizeC(series).getValue().intValue();
-        int sizeT = omeMeta.getPixelsSizeT(series).getValue().intValue();
-
-        int imageCount = getPlaneCount();
-        int ifdCount = seriesMap.size();
-
-        if (imageCount == 0) {
-          omeMeta.setTiffDataPlaneCount(new NonNegativeInteger(0), series, 0);
-          continue;
+        for (int series=0; series<omeMeta.getImageCount(); series++) {
+          populateImage(omeMeta, series);
         }
 
-        PositiveInteger samplesPerPixel =
-          new PositiveInteger((sizeZ * sizeC * sizeT) / imageCount);
-        for (int c=0; c<omeMeta.getChannelCount(series); c++) {
-          omeMeta.setChannelSamplesPerPixel(samplesPerPixel, series, c);
-        }
-        sizeC /= samplesPerPixel.getValue();
+        ArrayList<String> files = new ArrayList<String>();
+        for (String[] s : imageLocations) {
+          for (String f : s) {
+            if (!files.contains(f)) {
+              files.add(f);
 
-        HashMap<String, Integer> ifdCounts = new HashMap<String, Integer>();
+              String xml = getOMEXML(f);
 
-        for (int plane=0; plane<imageCount; plane++) {
-          int[] zct = FormatTools.getZCTCoords(dimensionOrder,
-            sizeZ, sizeC, sizeT, imageCount, plane);
-          String filename =
-            new Location(imageLocations[series][plane]).getName();
-
-          Integer ifdIndex = ifdCounts.get(filename);
-          int ifd = ifdIndex == null ? 0 : ifdIndex.intValue();
-
-          omeMeta.setUUIDFileName(filename, series, plane);
-          String uuid = "urn:uuid:" + getUUID(filename);
-          omeMeta.setUUIDValue(uuid, series, plane);
-          // fill in any non-default TiffData attributes
-          omeMeta.setTiffDataFirstZ(
-              new NonNegativeInteger(zct[0]), series, plane);
-          omeMeta.setTiffDataFirstC(
-              new NonNegativeInteger(zct[1]), series, plane);
-          omeMeta.setTiffDataFirstT(
-              new NonNegativeInteger(zct[2]), series, plane);
-          omeMeta.setTiffDataIFD(new NonNegativeInteger(ifd), series, plane);
-          omeMeta.setTiffDataPlaneCount(
-              new NonNegativeInteger(1), series, plane);
-
-          ifdCounts.put(filename, ifd + 1);
-        }
-      }
-
-      ArrayList<String> files = new ArrayList<String>();
-      for (String[] s : imageLocations) {
-        for (String f : s) {
-          if (!files.contains(f)) files.add(f);
-        }
-      }
-
-      for (String file : files) {
-        // generate UUID and add to OME element
-        String uuid = "urn:uuid:" + getUUID(new Location(file).getName());
-        omeMeta.setUUID(uuid);
-
-        String xml;
-        try {
-          xml = service.getOMEXML(omeMeta);
-        }
-        catch (ServiceException se) {
-          // FIXME: Modify close() signature to include FormatException?
-          // throw new FormatException(se);
-          throw new RuntimeException(se);
-        }
-
-        // insert warning comment
-        String prefix = xml.substring(0, xml.indexOf(">") + 1);
-        String suffix = xml.substring(xml.indexOf(">") + 1);
-        xml = prefix + WARNING_COMMENT + suffix;
-
-        if (out != null) out.close();
-        out = new RandomAccessOutputStream(file);
-
-        // write OME-XML to the first IFD's comment
-        try {
-          TiffSaver saver = new TiffSaver(out);
-          RandomAccessInputStream in = new RandomAccessInputStream(file);
-          saver.overwriteLastIFDOffset(in);
-          saver.overwriteComment(in, xml);
-          in.close();
-        }
-        catch (FormatException exc) {
-          IOException io = new IOException("Unable to append OME-XML comment");
-          io.initCause(exc);
-          throw io;
+              // write OME-XML to the first IFD's comment
+              saveComment(f, xml);
+            }
+          }
         }
       }
     }
-    super.close();
-    seriesMap = null;
-    imageLocations = null;
-    wroteLast = false;
-    totalPlanes = 0;
+    catch (DependencyException de) {
+      throw new RuntimeException(de);
+    }
+    catch (ServiceException se) {
+      throw new RuntimeException(se);
+    }
+    catch (FormatException fe) {
+      throw new RuntimeException(fe);
+    }
+    catch (IllegalArgumentException iae) {
+      throw new RuntimeException(iae);
+    }
+    finally {
+      super.close();
+      if (wroteLast) {
+        seriesMap = null;
+        imageLocations = null;
+        wroteLast = false;
+        totalPlanes = 0;
+        omeMeta = null;
+        service = null;
+      }
+    }
   }
 
   // -- IFormatWriter API methods --
@@ -294,6 +201,125 @@ public class OMETiffWriter extends TiffWriter {
       }
     }
     return uuid;
+  }
+
+  private void setupServiceAndMetadata()
+    throws DependencyException, ServiceException
+  {
+    // extract OME-XML string from metadata object
+    MetadataRetrieve retrieve = getMetadataRetrieve();
+
+    ServiceFactory factory = new ServiceFactory();
+    service = factory.getInstance(OMEXMLService.class);
+    omeMeta = service.getOMEMetadata(retrieve);
+    if (omeMeta instanceof OMEXMLMetadataImpl) {
+      ((OMEXMLMetadataImpl) omeMeta).resolveReferences();
+    }
+  }
+
+  private String getOMEXML(String file) throws FormatException, IOException {
+    // generate UUID and add to OME element
+    String uuid = "urn:uuid:" + getUUID(new Location(file).getName());
+    omeMeta.setUUID(uuid);
+
+    String xml;
+    try {
+      xml = service.getOMEXML(omeMeta);
+    }
+    catch (ServiceException se) {
+      throw new FormatException(se);
+    }
+
+    // insert warning comment
+    String prefix = xml.substring(0, xml.indexOf(">") + 1);
+    String suffix = xml.substring(xml.indexOf(">") + 1);
+    return prefix + WARNING_COMMENT + suffix;
+  }
+
+  private void saveComment(String file, String xml) throws IOException {
+    if (out != null) out.close();
+    out = new RandomAccessOutputStream(file);
+    RandomAccessInputStream in = null;
+    try {
+      TiffSaver saver = new TiffSaver(out);
+      in = new RandomAccessInputStream(file);
+      saver.overwriteLastIFDOffset(in);
+      saver.overwriteComment(in, xml);
+      in.close();
+    }
+    catch (FormatException exc) {
+      IOException io = new IOException("Unable to append OME-XML comment");
+      io.initCause(exc);
+      throw io;
+    }
+    finally {
+      if (out != null) out.close();
+      if (in != null) in.close();
+    }
+  }
+
+  private void removeBinData(OMEXMLMetadata omeMeta) {
+    OME root = (OME) omeMeta.getRoot();
+    List<Image> images = root.copyImageList();
+    for (Image img : images) {
+      Pixels pix = img.getPixels();
+      List<BinData> binData = pix.copyBinDataList();
+      for (BinData bin : binData) {
+        pix.removeBinData(bin);
+      }
+    }
+    omeMeta.setRoot(root);
+  }
+
+  private void populateTiffData(OMEXMLMetadata omeMeta, int[] zct,
+    int ifd, int series, int plane)
+  {
+    omeMeta.setTiffDataFirstZ(new NonNegativeInteger(zct[0]), series, plane);
+    omeMeta.setTiffDataFirstC(new NonNegativeInteger(zct[1]), series, plane);
+    omeMeta.setTiffDataFirstT(new NonNegativeInteger(zct[2]), series, plane);
+    omeMeta.setTiffDataIFD(new NonNegativeInteger(ifd), series, plane);
+    omeMeta.setTiffDataPlaneCount(new NonNegativeInteger(1), series, plane);
+  }
+
+  private void populateImage(OMEXMLMetadata omeMeta, int series) {
+    String dimensionOrder = omeMeta.getPixelsDimensionOrder(series).toString();
+    int sizeZ = omeMeta.getPixelsSizeZ(series).getValue().intValue();
+    int sizeC = omeMeta.getPixelsSizeC(series).getValue().intValue();
+    int sizeT = omeMeta.getPixelsSizeT(series).getValue().intValue();
+
+    int imageCount = getPlaneCount();
+    int ifdCount = seriesMap.size();
+
+    if (imageCount == 0) {
+      omeMeta.setTiffDataPlaneCount(new NonNegativeInteger(0), series, 0);
+      return;
+    }
+
+    PositiveInteger samplesPerPixel =
+      new PositiveInteger((sizeZ * sizeC * sizeT) / imageCount);
+    for (int c=0; c<omeMeta.getChannelCount(series); c++) {
+      omeMeta.setChannelSamplesPerPixel(samplesPerPixel, series, c);
+    }
+    sizeC /= samplesPerPixel.getValue();
+
+    HashMap<String, Integer> ifdCounts = new HashMap<String, Integer>();
+
+    for (int plane=0; plane<imageCount; plane++) {
+      int[] zct = FormatTools.getZCTCoords(dimensionOrder,
+        sizeZ, sizeC, sizeT, imageCount, plane);
+      String filename = new Location(imageLocations[series][plane]).getName();
+
+      Integer ifdIndex = ifdCounts.get(filename);
+      int ifd = ifdIndex == null ? 0 : ifdIndex.intValue();
+
+      omeMeta.setUUIDFileName(filename, series, plane);
+      String uuid = "urn:uuid:" + getUUID(filename);
+      omeMeta.setUUIDValue(uuid, series, plane);
+
+      // fill in any non-default TiffData attributes
+      populateTiffData(omeMeta, zct, ifd, series, plane);
+      ifdCounts.put(filename, ifd + 1);
+    }
   }
 
 }
