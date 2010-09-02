@@ -29,6 +29,7 @@ import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
+import ij.Macro;
 import ij.gui.GenericDialog;
 
 import java.awt.Button;
@@ -41,7 +42,6 @@ import java.awt.Insets;
 import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.StringTokenizer;
 
 import javax.swing.Box;
 import javax.swing.JPanel;
@@ -62,6 +62,7 @@ public class SeriesDialog extends ImporterDialog implements ActionListener {
 
   public static final int MAX_COMPONENTS = 256;
   public static final int MAX_SERIES_THUMBS = 200;
+  public static final int MAX_SERIES_TOGGLES = MAX_SERIES_THUMBS;
 
   // -- Fields --
 
@@ -80,40 +81,12 @@ public class SeriesDialog extends ImporterDialog implements ActionListener {
 
   @Override
   protected boolean needPrompt() {
-    // CTR FIXME - eliminate weird handling of series string here
-    String seriesString = options.getSeries();
-    if (process.isWindowless()) {
-      if (seriesString != null) {
-        if (seriesString.startsWith("[")) {
-          seriesString = seriesString.substring(1, seriesString.length() - 2);
-        }
-
-        // default all series to false
-        final int seriesCount = process.getSeriesCount();
-        for (int s=0; s<seriesCount; s++) options.setSeriesOn(s, false);
-
-        // extract enabled series values from series string
-        StringTokenizer tokens = new StringTokenizer(seriesString, " ");
-        while (tokens.hasMoreTokens()) {
-          String token = tokens.nextToken().trim();
-          int n = Integer.parseInt(token);
-          if (n < seriesCount) options.setSeriesOn(n, true);
-        }
-      }
-      options.setSeries(seriesString);
-      return false;
-    }
-
-    return process.getSeriesCount() > 1 &&
+    return !process.isWindowless() && process.getSeriesCount() > 1 &&
       !options.openAllSeries() && !options.isViewNone();
   }
 
   @Override
   protected GenericDialog constructDialog() {
-    // -- CTR FIXME - refactor series-related options into SeriesOptions class
-    // has a normalize(IFormatReader) method
-    // call both before and after the dialog here...
-
     final int seriesCount = process.getSeriesCount();
 
     // NB: Load thumbnails only when series count is modest.
@@ -138,31 +111,44 @@ public class SeriesDialog extends ImporterDialog implements ActionListener {
 
     GenericDialog gd = new GenericDialog("Bio-Formats Series Options");
 
-    // NB: We need to add the checkboxes in groups, to prevent an
-    // exception from being thrown if there are more than 512 series.
-    // See also:
-    //   https://skyking.microscopy.wisc.edu/trac/java/ticket/408 and
-    //   http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=5107980
+    // NB: Provide individual checkboxes only when series count is manageable.
+    if (seriesCount < MAX_SERIES_TOGGLES) {
+      // NB: We need to add the checkboxes in groups, to prevent an
+      // exception from being thrown if there are more than 512 series.
+      // See also:
+      //   https://skyking.microscopy.wisc.edu/trac/java/ticket/408 and
+      //   http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=5107980
 
-    final int nGroups = (seriesCount + MAX_COMPONENTS - 1) / MAX_COMPONENTS;
-    int nextSeries = 0;
-    for (int i=0; i<nGroups; i++) {
-      final int nRows = Math.min(MAX_COMPONENTS, seriesCount - nextSeries);
-      final String[] labels = new String[nRows];
-      final boolean[] defaultValues = new boolean[nRows];
-      for (int row=0; row<nRows; row++) {
-        labels[row] = process.getSeriesLabel(nextSeries);
-        defaultValues[row] = options.isSeriesOn(nextSeries);
-        nextSeries++;
+      final int nGroups = (seriesCount + MAX_COMPONENTS - 1) / MAX_COMPONENTS;
+      int nextSeries = 0;
+      for (int i=0; i<nGroups; i++) {
+        final int nRows = Math.min(MAX_COMPONENTS, seriesCount - nextSeries);
+        final String[] labels = new String[nRows];
+        final boolean[] defaultValues = new boolean[nRows];
+        for (int row=0; row<nRows; row++) {
+          labels[row] = process.getSeriesLabel(nextSeries);
+          defaultValues[row] = options.isSeriesOn(nextSeries);
+          nextSeries++;
+        }
+        gd.addCheckboxGroup(nRows, 1, labels, defaultValues);
       }
-      gd.addCheckboxGroup(nRows, 1, labels, defaultValues);
+
+      // extract checkboxes, for "Select All" and "Deselect All" functions
+      boxes = WindowTools.getCheckboxes(gd).toArray(new Checkbox[0]);
+
+      // rebuild dialog so that the thumbnails and checkboxes line up correctly
+      rebuildDialog(gd, nGroups);
     }
-
-    // extract checkboxes, for "Select All" and "Deselect All" functions
-    boxes = WindowTools.getCheckboxes(gd).toArray(new Checkbox[0]);
-
-    // rebuild dialog so that the thumbnails and checkboxes line up correctly
-    rebuildDialog(gd, nGroups);
+    else {
+      // too many series; display a simple text field for specifying series
+      gd.addMessage(
+        "Please specify the image series you wish to import.\n" +
+        "Use commas to list multiple series. You can also use\n" +
+        "a dash to represent a range of series. For example,\n" +
+        "to import series 1, 3, 4, 5, 7, 8, 9, 12, 15 & 16,\n" +
+        "you could write: 1, 3-5, 7-9, 12, 15-16");
+      gd.addStringField("Series_list: ", "1");
+    }
 
     return gd;
   }
@@ -182,21 +168,43 @@ public class SeriesDialog extends ImporterDialog implements ActionListener {
   @Override
   protected boolean harvestResults(GenericDialog gd) {
     final int seriesCount = process.getSeriesCount();
-    String seriesString = "[";
-    for (int i=0; i<seriesCount; i++) {
-      boolean on = gd.getNextBoolean();
-      options.setSeriesOn(i, on);
-      if (on) seriesString += i + " ";
+    options.clearSeries();
+
+    // examine series key regardless of number of series
+    final String macroOptions = Macro.getOptions();
+    final String macroSeriesList = macroOptions == null ? null :
+      Macro.getValue(macroOptions, "series_list", null);
+    if (macroSeriesList != null) process.setSeriesList(macroSeriesList);
+
+    if (seriesCount < MAX_SERIES_TOGGLES) {
+      // harvest individual checkbox values
+      for (int i=0; i<seriesCount; i++) {
+        final boolean on = gd.getNextBoolean();
+        if (on) options.setSeriesOn(i, on);
+      }
     }
-    seriesString += "]";
-    options.setSeries(seriesString);
+    else {
+      // harvest series string
+      final String seriesList = gd.getNextString();
+      process.setSeriesList(seriesList);
+    }
+
+    // examine series_XX keys regardless of number of series
+    if (macroOptions != null) {
+      for (int i=0; i<seriesCount; i++) {
+        final String seriesKey = "series_" + (i + 1);
+        final boolean on = options.checkKey(macroOptions, seriesKey);
+        if (on) options.setSeriesOn(i, on);
+      }
+    }
+
     return true;
   }
 
   // -- ActionListener methods --
 
   public void actionPerformed(ActionEvent e) {
-    String cmd = e.getActionCommand();
+    final String cmd = e.getActionCommand();
     if ("select".equals(cmd)) {
       for (int i=0; i<boxes.length; i++) boxes[i].setState(true);
       updateIfGlitched();
@@ -218,7 +226,7 @@ public class SeriesDialog extends ImporterDialog implements ActionListener {
   }
 
   private void rebuildDialog(GenericDialog gd, int buttonRow) {
-    // rebuild dialog using FormLayout to organize things more nicely
+    // rebuild dialog to organize things more nicely
 
     final String cols = p == null ? "pref" : "pref, 3dlu, pref";
 

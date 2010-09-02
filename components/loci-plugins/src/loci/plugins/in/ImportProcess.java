@@ -28,6 +28,7 @@ package loci.plugins.in;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import loci.common.Location;
 import loci.common.Region;
@@ -179,6 +180,47 @@ public class ImportProcess implements StatusReporter {
   public boolean isWindowless() {
     if (options.isWindowless()) return true; // globally windowless
     return baseReader != null && LociPrefs.isWindowless(baseReader);
+  }
+
+  public void setSeriesList(String seriesList) {
+    final int seriesCount = getSeriesCount();
+    options.clearSeries();
+
+    // remove illegal characters
+    seriesList = seriesList.replaceAll("[^\\d,\\-]", "");
+
+    // parse series list
+    StringTokenizer st = new StringTokenizer(seriesList, ",");
+    while (st.hasMoreTokens()) {
+      final String token = st.nextToken();
+      int dash = token.indexOf("-");
+      if (dash < 0) {
+        // single number
+        try {
+          final int s = Integer.parseInt(token) - 1;
+          options.setSeriesOn(s, true);
+        }
+        catch (NumberFormatException exc) {
+          // skip invalid series number
+        }
+      }
+      else {
+        // numerical range
+        final String firstString = token.substring(0, dash);
+        final String lastString = token.substring(dash + 1);
+        try {
+          final int first = Integer.parseInt(firstString) - 1;
+          final int last = Integer.parseInt(lastString) - 1;
+          for (int s = first; s <= last; s++) {
+            if (s >= seriesCount) break; // skip out of bounds series
+            options.setSeriesOn(s, true);
+          }
+        }
+        catch (NumberFormatException exc) {
+          // skip invalid numerical range
+        }
+      }
+    }
   }
 
   // -- ImportProcess methods - post-READER --

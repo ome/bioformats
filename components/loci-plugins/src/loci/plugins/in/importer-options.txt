@@ -173,11 +173,6 @@ default = false
 #  more like a normal, fully memory-resident image stack.
 #default = false
 
-[series]
-type = string
-label = series
-default = 0
-
 [showMetadata]
 type = boolean
 label = Display_metadata

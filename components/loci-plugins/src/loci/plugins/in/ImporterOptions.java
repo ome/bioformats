@@ -64,7 +64,6 @@ public class ImporterOptions extends OptionsList {
   public static final String KEY_OPEN_ALL_SERIES = "openAllSeries";
   public static final String KEY_QUIET           = "quiet";
   //public static final String KEY_RECORD          = "record";
-  public static final String KEY_SERIES          = "series";
   public static final String KEY_SHOW_METADATA   = "showMetadata";
   public static final String KEY_SHOW_OME_XML    = "showOMEXML";
   public static final String KEY_SHOW_ROIS       = "showROIs";
@@ -195,26 +194,26 @@ public class ImporterOptions extends OptionsList {
 
   /** Handles obsolete macro keys, for backward compatibility. */
   public void checkObsoleteOptions() {
-    String options = Macro.getOptions();
+    final String macroOptions = Macro.getOptions();
 
     // NB: It would be nice to remove the Standard ImageJ option someday;
     // when that happens, the following code provides support for old macros.
     // check obsolete view options
-    //String stackFormat = options == null ?
-    //  null : Macro.getValue(options, "view", null);
+    //String stackFormat = macroOptions == null ?
+    //  null : Macro.getValue(macroOptions, "view", null);
     //final String viewStandard = "Standard ImageJ";
     //if (viewStandard.equals(stackFormat)) {
     //  // Standard ImageJ -> Hyperstack
-    //  options = options.replaceFirst(
+    //  macroOptions = macroOptions.replaceFirst(
     //    "\\[" + viewStandard + "\\]", VIEW_HYPERSTACK);
-    //  Macro.setOptions(options);
+    //  Macro.setOptions(macroOptions);
     //  setStackFormat(VIEW_HYPERSTACK);
     //}
 
     // check obsolete color options
-    boolean mergeChannels = checkKey(options, "merge_channels");
-    boolean rgbColorize = checkKey(options, "rgb_colorize");
-    boolean customColorize = checkKey(options, "custom_colorize");
+    final boolean mergeChannels = checkKey(macroOptions, "merge_channels");
+    final boolean rgbColorize = checkKey(macroOptions, "rgb_colorize");
+    final boolean customColorize = checkKey(macroOptions, "custom_colorize");
     if (mergeChannels) setColorMode(COLOR_MODE_COMPOSITE);
     else if (rgbColorize) setColorMode(COLOR_MODE_COLORIZED);
     else if (customColorize) setColorMode(COLOR_MODE_CUSTOM);
@@ -305,11 +304,6 @@ public class ImporterOptions extends OptionsList {
   //public String getRecordInfo() { return getInfo(KEY_RECORD); }
   //public boolean isRecord() { return isSet(KEY_RECORD); }
   //public void setRecord(boolean b) { setValue(KEY_RECORD, b); }
-
-  // series
-  public String getSeriesInfo() { return getInfo(KEY_SERIES); }
-  public String getSeries() { return getValue(KEY_SERIES); }
-  public void setSeries(String s) { setValue(KEY_SERIES, s); }
 
   // showMetadata
   public String getShowMetadataInfo() { return getInfo(KEY_SHOW_METADATA); }
@@ -404,6 +398,9 @@ public class ImporterOptions extends OptionsList {
   public void setSeriesOn(int s, boolean value) {
     set(seriesOn, s, value, false);
   }
+  public void clearSeries() {
+    seriesOn.clear();
+  }
 
   // swap options
   public String getInputOrder(int s) { return get(inputOrder, s, null); }
@@ -485,7 +482,7 @@ public class ImporterOptions extends OptionsList {
   }
 
   /** Tests whether the given boolean key is set in the specified options. */
-  private boolean checkKey(String options, String key) {
+  protected boolean checkKey(String options, String key) {
     if (options == null) return false;
 
     // delete anything inside square brackets, for simplicity
