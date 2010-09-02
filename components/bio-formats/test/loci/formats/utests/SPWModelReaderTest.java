@@ -174,7 +174,6 @@ public class SPWModelReaderTest {
           // This better not happen. :)
           throw new RuntimeException(e);
         }
-        System.err.println(String.format("%d/%d", i, j));
       }
     }
     return true;
