@@ -25,9 +25,6 @@ package loci.formats;
 
 import java.io.IOException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -42,11 +39,6 @@ import loci.formats.meta.MetadataStore;
  * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/ChannelFiller.java">SVN</a></dd></dl>
  */
 public class ChannelFiller extends ReaderWrapper {
-
-  // -- Constants --
-
-  private static final Logger LOGGER =
-    LoggerFactory.getLogger(ChannelFiller.class);
 
   // -- Utility methods --
 
@@ -267,11 +259,7 @@ public class ChannelFiller extends ReaderWrapper {
     if (lut16 != null) return lut16.length;
     // NB: For some formats, LUTs are plane-specific and will
     // only be available after opening a particular image plane.
-    try {
-      reader.openBytes(0, 0, 0, 1, 1); // read a single pixel, for performance
-    } catch (Exception e) {
-      LOGGER.warn("Unable to read initial single pixel.", e);
-    }
+    reader.openBytes(0, 0, 0, 1, 1); // read a single pixel, for performance
     lut8 = reader.get8BitLookupTable();
     if (lut8 != null) return lut8.length;
     lut16 = reader.get16BitLookupTable();

@@ -153,6 +153,13 @@ public class OMEXMLReader extends FormatReader {
     options.interleaved = isInterleaved();
 
     byte[] pixels = new Base64Codec().decompress(in, options);
+
+    // return a blank plane if no pixel data was stored
+    if (pixels.length == 0) {
+      LOGGER.debug("No pixel data for plane #{}", no);
+      return buf;
+    }
+
     // TODO: Create a method uncompress to handle all compression methods
     if (compress.equals("bzip2")) {
       byte[] tempPixels = pixels;
