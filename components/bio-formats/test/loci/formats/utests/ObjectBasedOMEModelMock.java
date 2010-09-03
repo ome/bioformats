@@ -53,7 +53,6 @@ import ome.xml.model.LightEmittingDiode;
 import ome.xml.model.ListAnnotation;
 import ome.xml.model.LongAnnotation;
 import ome.xml.model.OME;
-import ome.xml.model.OMEModel;
 import ome.xml.model.OTF;
 import ome.xml.model.Objective;
 import ome.xml.model.ObjectiveSettings;

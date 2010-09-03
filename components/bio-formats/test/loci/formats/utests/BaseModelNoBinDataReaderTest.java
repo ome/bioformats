@@ -1,5 +1,5 @@
 //
-// BaseModelReaderTest.java
+// BaseModelNoBinDataReaderTest.java
 //
 
 /*
@@ -45,10 +45,10 @@ import org.testng.annotations.Test;
  *
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/test/loci/formats/utests/BaseModelReaderTest.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/test/loci/formats/utests/BaseModelReaderTest.java">SVN</a></dd></dl>
+ * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/test/loci/formats/utests/BaseModelNoBinDataReaderTest.java">Trac</a>,
+ * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/test/loci/formats/utests/BaseModelNoBinDataReaderTest.java">SVN</a></dd></dl>
  */
-public class BaseModelReaderTest {
+public class BaseModelNoBinDataReaderTest {
 
   private BaseModelMock mock;
   
@@ -62,7 +62,7 @@ public class BaseModelReaderTest {
   public void setUp() throws Exception {
     mock = new BaseModelMock();
     temporaryFile = File.createTempFile(this.getClass().getName(), ".ome");
-    SPWModelReaderTest.writeMockToFile(mock, temporaryFile, true);
+    SPWModelReaderTest.writeMockToFile(mock, temporaryFile, false);
   }
 
   @AfterClass
@@ -82,11 +82,6 @@ public class BaseModelReaderTest {
   @Test(dependsOnMethods={"testSetId"})
   public void testSeriesCount() {
     assertEquals(1, reader.getSeriesCount());
-  }
-
-  @Test(dependsOnMethods={"testSetId"})
-  public void testCanReadEveryPlane() throws Exception {
-    assertTrue(SPWModelReaderTest.canReadEveryPlane(reader));
   }
 
 }

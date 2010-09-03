@@ -35,27 +35,14 @@
 package loci.formats.utests;
 
 
-import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import ome.xml.model.BinData;
 import ome.xml.model.Channel;
@@ -180,35 +167,6 @@ public class BaseModelMock implements ModelMock {
     return image;
   }
 
-  public String asString(Document document)
-  throws TransformerException, UnsupportedEncodingException {
-    TransformerFactory transformerFactory =
-      TransformerFactory.newInstance();
-    Transformer transformer = transformerFactory.newTransformer();
-    //Setup indenting to "pretty print"
-    transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-    transformer.setOutputProperty(
-        "{http://xml.apache.org/xslt}indent-amount", "4");
-    Source source = new DOMSource(document);
-    ByteArrayOutputStream os = new ByteArrayOutputStream();
-    Result result = new StreamResult(new OutputStreamWriter(os, "utf-8"));
-    transformer.transform(source, result);
-    return os.toString();
-  }
-
-  public void postProcess(Element root, Document document) {
-    root.setAttribute("xmlns", XML_NS);
-    root.setAttribute("xmlns:xsi", XSI_NS);
-    root.setAttribute("xsi:schemaLocation", XML_NS + " " + SCHEMA_LOCATION);
-    document.appendChild(root);
-    // Put the planar data into each <BinData/>
-    NodeList binDataNodes = document.getElementsByTagName("BinData");
-    for (int i = 0; i < binDataNodes.getLength(); i++) {
-      Node binDataNode = binDataNodes.item(i);
-      binDataNode.setTextContent(PLANE);
-    }
-  }
-
   public static void main(String[] args) throws Exception {
     BaseModelMock mock = new BaseModelMock();
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -216,10 +174,10 @@ public class BaseModelMock implements ModelMock {
     Document document = parser.newDocument();
     // Produce a valid OME DOM element hierarchy
     Element root = mock.ome.asXMLElement(document);
-    mock.postProcess(root, document);
+    SPWModelMock.postProcess(root, document, true);
     // Produce string XML
     OutputStream outputStream = new FileOutputStream(args[0]);
-    outputStream.write(mock.asString(document).getBytes());
+    outputStream.write(SPWModelMock.asString(document).getBytes());
   }
 
 }

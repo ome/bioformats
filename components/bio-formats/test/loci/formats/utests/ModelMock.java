@@ -35,13 +35,6 @@
 package loci.formats.utests;
 
 
-import java.io.UnsupportedEncodingException;
-
-import javax.xml.transform.TransformerException;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
 import ome.xml.model.OME;
 
 /**
@@ -54,10 +47,5 @@ import ome.xml.model.OME;
 public interface ModelMock {
 
   public OME getRoot();
-
-  public void postProcess(Element root, Document document);
-
-  public String asString(Document document)
-  throws TransformerException, UnsupportedEncodingException;
 
 }

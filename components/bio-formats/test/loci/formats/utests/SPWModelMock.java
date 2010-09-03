@@ -437,7 +437,7 @@ public class SPWModelMock implements ModelMock {
     return plate;
   }
 
-  public String asString(Document document)
+  public static String asString(Document document)
   throws TransformerException, UnsupportedEncodingException {
     TransformerFactory transformerFactory =
       TransformerFactory.newInstance();
@@ -453,16 +453,19 @@ public class SPWModelMock implements ModelMock {
     return os.toString();
   }
 
-  public void postProcess(Element root, Document document) {
+  public static void postProcess(Element root, Document document,
+                                 boolean withBinData) {
     root.setAttribute("xmlns", XML_NS);
     root.setAttribute("xmlns:xsi", XSI_NS);
     root.setAttribute("xsi:schemaLocation", XML_NS + " " + SCHEMA_LOCATION);
     document.appendChild(root);
     // Put the planar data into each <BinData/>
-    NodeList binDataNodes = document.getElementsByTagName("BinData");
-    for (int i = 0; i < binDataNodes.getLength(); i++) {
-      Node binDataNode = binDataNodes.item(i);
-      binDataNode.setTextContent(PLANE);
+    if (withBinData) {
+      NodeList binDataNodes = document.getElementsByTagName("BinData");
+      for (int i = 0; i < binDataNodes.getLength(); i++) {
+        Node binDataNode = binDataNodes.item(i);
+        binDataNode.setTextContent(PLANE);
+      }
     }
   }
 
@@ -473,10 +476,10 @@ public class SPWModelMock implements ModelMock {
     Document document = parser.newDocument();
     // Produce a valid OME DOM element hierarchy
     Element root = mock.ome.asXMLElement(document);
-    mock.postProcess(root, document);
+    SPWModelMock.postProcess(root, document, true);
     // Produce string XML
     OutputStream outputStream = new FileOutputStream(args[0]);
-    outputStream.write(mock.asString(document).getBytes());
+    outputStream.write(SPWModelMock.asString(document).getBytes());
   }
 
 }

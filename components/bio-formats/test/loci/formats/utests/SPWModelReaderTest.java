@@ -35,6 +35,8 @@ import java.security.NoSuchAlgorithmException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import loci.formats.ChannelFiller;
+import loci.formats.ChannelSeparator;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 import loci.formats.MinMaxCalculator;
@@ -80,27 +82,29 @@ public class SPWModelReaderTest {
     temporaryFile = File.createTempFile(this.getClass().getName(), ".ome");
     temporaryFileWithNoLightSources = 
       File.createTempFile(this.getClass().getName(), ".ome");
-    writeMockToFile(mock, temporaryFile);
-    writeMockToFile(mockWithNoLightSources, temporaryFileWithNoLightSources);
+    writeMockToFile(mock, temporaryFile, true);
+    writeMockToFile(mockWithNoLightSources, temporaryFileWithNoLightSources,
+                    true);
   }
 
   /**
    * Writes a model mock to a file as XML.
    * @param mock Mock to build a DOM tree of and serialize to XML.
    * @param file File to write serialized XML to.
+   * @param withBinData Whether or not to do BinData post processing.
    * @throws Exception If there is an error writing the XML to the file.
    */
-  public static void writeMockToFile(ModelMock mock, File file)
-  throws Exception {
+  public static void writeMockToFile(ModelMock mock, File file,
+  boolean withBinData) throws Exception {
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     DocumentBuilder parser = factory.newDocumentBuilder();
     Document document = parser.newDocument();
     // Produce a valid OME DOM element hierarchy
     Element root = mock.getRoot().asXMLElement(document);
-    mock.postProcess(root, document);
+    SPWModelMock.postProcess(root, document, withBinData);
     // Write the OME DOM to the requested file
     OutputStream stream = new FileOutputStream(file);
-    stream.write(mock.asString(document).getBytes());
+    stream.write(SPWModelMock.asString(document).getBytes());
   }
 
   @AfterClass
@@ -111,7 +115,8 @@ public class SPWModelReaderTest {
 
   @Test
   public void testSetId() throws Exception {
-    reader = new MinMaxCalculator(new ImageReader());
+    reader = new MinMaxCalculator(new ChannelSeparator(
+        new ChannelFiller(new ImageReader())));
     metadata = new OMEXMLMetadataImpl();
     reader.setMetadataStore(metadata);
     reader.setId(temporaryFile.getAbsolutePath());
@@ -119,7 +124,8 @@ public class SPWModelReaderTest {
 
   @Test
   public void testSetIdWithNoLightSources() throws Exception {
-    readerWithNoLightSources = new MinMaxCalculator(new ImageReader());
+    readerWithNoLightSources = new MinMaxCalculator(new ChannelSeparator(
+        new ChannelFiller(new ImageReader())));
     metadataWithNoLightSources = new OMEXMLMetadataImpl();
     readerWithNoLightSources.setMetadataStore(metadataWithNoLightSources);
     readerWithNoLightSources.setId(

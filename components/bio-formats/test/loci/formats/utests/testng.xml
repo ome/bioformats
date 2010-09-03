@@ -78,6 +78,7 @@
       <classes>
         <class name="loci.formats.utests.SPWModelReaderTest"/>
         <class name="loci.formats.utests.BaseModelReaderTest"/>
+        <class name="loci.formats.utests.BaseModelNoBinDataReaderTest"/>
       </classes>
     </test>
 </suite>
