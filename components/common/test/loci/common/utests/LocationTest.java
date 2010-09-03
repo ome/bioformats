@@ -101,15 +101,16 @@ public class LocationTest {
   @Test
   public void testReadWriteMode() {
     for (int i=0; i<files.length; i++) {
-      assertEquals(files[i].canRead(), mode[i].indexOf("r") != -1);
-      assertEquals(files[i].canWrite(), mode[i].indexOf("w") != -1);
+      String msg = files[i].getName();
+      assertEquals(msg, files[i].canRead(), mode[i].indexOf("r") != -1);
+      assertEquals(msg, files[i].canWrite(), mode[i].indexOf("w") != -1);
     }
   }
 
   @Test
   public void testAbsolute() {
     for (Location file : files) {
-      assertEquals(file.getAbsolutePath(),
+      assertEquals(file.getName(), file.getAbsolutePath(),
         file.getAbsoluteFile().getAbsolutePath());
     }
   }
@@ -117,14 +118,14 @@ public class LocationTest {
   @Test
   public void testExists() {
     for (int i=0; i<files.length; i++) {
-      assertEquals(files[i].exists(), exists[i]);
+      assertEquals(files[i].getName(), files[i].exists(), exists[i]);
     }
   }
 
   @Test
   public void testCanonical() throws IOException {
     for (Location file : files) {
-      assertEquals(file.getCanonicalPath(),
+      assertEquals(file.getName(), file.getCanonicalPath(),
         file.getCanonicalFile().getAbsolutePath());
     }
   }
@@ -132,28 +133,30 @@ public class LocationTest {
   @Test
   public void testParent() {
     for (Location file : files) {
-      assertEquals(file.getParent(), file.getParentFile().getAbsolutePath());
+      assertEquals(file.getName(), file.getParent(),
+        file.getParentFile().getAbsolutePath());
     }
   }
 
   @Test
   public void testIsDirectory() {
     for (int i=0; i<files.length; i++) {
-      assertEquals(files[i].isDirectory(), isDirectory[i]);
+      assertEquals(files[i].getName(), files[i].isDirectory(), isDirectory[i]);
     }
   }
 
   @Test
   public void testIsFile() {
     for (int i=0; i<files.length; i++) {
-      assertEquals(files[i].isFile(), !isDirectory[i] && exists[i]);
+      assertEquals(files[i].getName(), files[i].isFile(),
+        !isDirectory[i] && exists[i]);
     }
   }
 
   @Test
   public void testIsHidden() {
     for (int i=0; i<files.length; i++) {
-      assertEquals(files[i].isHidden(), isHidden[i]);
+      assertEquals(files[i].getName(), files[i].isHidden(), isHidden[i]);
     }
   }
 
@@ -165,22 +168,24 @@ public class LocationTest {
       Location[] fileList = files[i].listFiles();
 
       if (!files[i].isDirectory()) {
-        assertEquals(completeList, null);
-        assertEquals(unhiddenList, null);
-        assertEquals(fileList, null);
+        assertEquals(files[i].getName(), completeList, null);
+        assertEquals(files[i].getName(), unhiddenList, null);
+        assertEquals(files[i].getName(), fileList, null);
         continue;
       }
 
-      assertEquals(completeList.length, fileList.length);
+      assertEquals(files[i].getName(), completeList.length, fileList.length);
 
       List<String> complete = Arrays.asList(completeList);
       for (String child : unhiddenList) {
-        assertEquals(complete.contains(child), true);
-        assertEquals(new Location(files[i], child).isHidden(), false);
+        assertEquals(files[i].getName(), complete.contains(child), true);
+        assertEquals(files[i].getName(),
+          new Location(files[i], child).isHidden(), false);
       }
 
       for (int f=0; f<fileList.length; f++) {
-        assertEquals(fileList[f].getName(), completeList[f]);
+        assertEquals(files[i].getName(),
+          fileList[f].getName(), completeList[f]);
       }
     }
   }
@@ -195,14 +200,14 @@ public class LocationTest {
       if (file.isDirectory() && !path.endsWith(File.separator)) {
         path += File.separator;
       }
-      assertEquals(file.toURL(), new URL(path));
+      assertEquals(file.getName(), file.toURL(), new URL(path));
     }
   }
 
   @Test
   public void testToString() {
     for (Location file : files) {
-      assertEquals(file.toString(), file.getAbsolutePath());
+      assertEquals(file.getName(), file.toString(), file.getAbsolutePath());
     }
   }
 
