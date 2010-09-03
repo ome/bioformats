@@ -1529,8 +1529,6 @@ public class FlexReader extends FormatReader {
         serverMap.remove(alias);
       }
       else {
-        Location server = new Location(realName);
-
         LOGGER.debug("Finding base server name...");
         if (realName.endsWith(File.separator)) {
           realName = realName.substring(0, realName.length() - 1);
