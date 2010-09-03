@@ -245,6 +245,7 @@ public class TiffSaver {
       strips[strip] = stripBuf[strip].toByteArray();
       TiffCompression.difference(strips[strip], ifd);
       CodecOptions options = compression.getCompressionCodecOptions(ifd);
+      options.height = rowsPerStrip;
       strips[strip] = compression.compress(strips[strip], options);
     }
 
