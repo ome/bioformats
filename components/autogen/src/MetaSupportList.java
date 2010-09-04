@@ -39,8 +39,8 @@ import loci.formats.IFormatHandler;
  * for each format handler (readers and writers).
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/bio-formats/auto/MetaSupportList.java">Trac</a>,
- * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/bio-formats/auto/MetaSupportList.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/autogen/src/MetaSupportList.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/autogen/src/MetaSupportList.java">SVN</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */

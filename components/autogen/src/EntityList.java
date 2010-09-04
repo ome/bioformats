@@ -114,8 +114,8 @@ import loci.common.IniTable;
  * </pre>
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/bio-formats/auto/EntityList.java">Trac</a>,
- * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/bio-formats/auto/EntityList.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/autogen/src/EntityList.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/autogen/src/EntityList.java">SVN</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */

@@ -39,8 +39,8 @@ import org.apache.velocity.app.VelocityEngine;
  * Uses data from the entities.txt and versions.txt files.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/bio-formats/auto/MetadataAutogen.java">Trac</a>,
- * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/bio-formats/auto/MetadataAutogen.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/autogen/src/MetadataAutogen.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/autogen/src/MetadataAutogen.java">SVN</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
