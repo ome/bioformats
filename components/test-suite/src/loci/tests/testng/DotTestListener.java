@@ -42,8 +42,8 @@ import org.testng.ITestResult;
  * on the TestNG web site.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/test-suite/src/loci/tests/testng/DotTestListener.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/test-suite/src/loci/tests/testng/DotTestListener.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/test-suite/src/loci/tests/testng/DotTestListener.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/test-suite/src/loci/tests/testng/DotTestListener.java">SVN</a></dd></dl>
  */
 public class DotTestListener implements ITestListener {
 

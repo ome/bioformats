@@ -53,8 +53,8 @@ import java.util.Vector;
  * not available by default on Windows systems.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/native/bf-cpp/src/StringReplace.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/native/bf-cpp/src/StringReplace.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/native/bf-cpp/src/StringReplace.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/native/bf-cpp/src/StringReplace.java">SVN</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */

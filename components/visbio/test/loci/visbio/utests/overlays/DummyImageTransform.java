@@ -31,8 +31,8 @@ import loci.visbio.data.DataTransform;
  * DummyImageTransform is a fake ImageTransform.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/visbio/test/loci/visbio/utests/overlays/DummyImageTransform.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/visbio/test/loci/visbio/utests/overlays/DummyImageTransform.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/visbio/test/loci/visbio/utests/overlays/DummyImageTransform.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/visbio/test/loci/visbio/utests/overlays/DummyImageTransform.java">SVN</a></dd></dl>
  */
 public class DummyImageTransform extends ImageTransform{
 

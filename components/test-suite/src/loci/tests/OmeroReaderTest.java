@@ -48,8 +48,8 @@ import org.apache.log4j.PatternLayout;
  * pixels and metadata from an OMERO database.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/test-suite/src/loci/tests/OmeroReaderTest.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/test-suite/src/loci/tests/OmeroReaderTest.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/test-suite/src/loci/tests/OmeroReaderTest.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/test-suite/src/loci/tests/OmeroReaderTest.java">SVN</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */

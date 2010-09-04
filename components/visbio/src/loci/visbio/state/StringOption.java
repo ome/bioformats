@@ -40,8 +40,8 @@ import com.jgoodies.forms.layout.FormLayout;
  * StringOption is a user-supplied string option in the VisBio Options dialog.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/visbio/src/loci/visbio/state/StringOption.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/visbio/src/loci/visbio/state/StringOption.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/visbio/src/loci/visbio/state/StringOption.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/visbio/src/loci/visbio/state/StringOption.java">SVN</a></dd></dl>
  */
 public class StringOption extends BioOption {
 

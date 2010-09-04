@@ -41,8 +41,8 @@ import com.jgoodies.forms.layout.FormLayout;
  * An application splash screen.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/visbio/src/loci/visbio/util/SplashScreen.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/visbio/src/loci/visbio/util/SplashScreen.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/visbio/src/loci/visbio/util/SplashScreen.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/visbio/src/loci/visbio/util/SplashScreen.java">SVN</a></dd></dl>
  */
 public class SplashScreen extends JWindow {
 

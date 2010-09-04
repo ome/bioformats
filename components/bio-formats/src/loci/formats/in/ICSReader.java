@@ -47,11 +47,11 @@ import ome.xml.model.primitives.PositiveInteger;
  * files. More information on ICS can be found at http://libics.sourceforge.net
  *
  * TODO : remove sub-C logic once N-dimensional support is in place
- *        see https://skyking.microscopy.wisc.edu/trac/java/ticket/398
+ *        see http://dev.loci.wisc.edu/trac/java/ticket/398
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/in/ICSReader.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/in/ICSReader.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/in/ICSReader.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/in/ICSReader.java">SVN</a></dd></dl>
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */

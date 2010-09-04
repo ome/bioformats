@@ -38,8 +38,8 @@ import org.testng.annotations.Test;
  * Unit tests for the loci.common.URLHandle class.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/common/test/loci/common/utests/URLHandleTest.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/common/test/loci/common/utests/URLHandleTest.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/common/test/loci/common/utests/URLHandleTest.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/common/test/loci/common/utests/URLHandleTest.java">SVN</a></dd></dl>
  *
  * @see loci.common.URLHandle
  */
@@ -49,7 +49,7 @@ public class URLHandleTest {
 
   /** The contents are "hello, world!". */
   private static final String WEBSITE =
-    "http://skyking.microscopy.wisc.edu/melissa/test";
+    "http://dev.loci.wisc.edu/hello-world";
 
   // -- Fields --
 

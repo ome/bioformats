@@ -38,8 +38,8 @@ import org.slf4j.LoggerFactory;
  * Utility methods for retrieving data from an OME database.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/ome-io/src/loci/ome/io/OMEUtils.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/ome-io/src/loci/ome/io/OMEUtils.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/ome-io/src/loci/ome/io/OMEUtils.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/ome-io/src/loci/ome/io/OMEUtils.java">SVN</a></dd></dl>
  */
 public final class OMEUtils {
 
@@ -47,7 +47,7 @@ public final class OMEUtils {
 
   /** URL of OMERO JAR downloads. */
   public static final String URL_OMERO_JARS =
-    "http://skyking.microscopy.wisc.edu/svn/java/trunk/jar/";
+    "http://dev.loci.wisc.edu/svn/java/trunk/jar/";
 
   /** URL of OME-Java web page. */
   public static final String URL_OME_JAVA = "http://www.openmicroscopy.org/" +

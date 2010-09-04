@@ -37,8 +37,8 @@ import loci.formats.meta.MetadataStore;
  * JEOLReader is the file format reader for JEOL files.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/in/JEOLReader.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/in/JEOLReader.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/in/JEOLReader.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/in/JEOLReader.java">SVN</a></dd></dl>
  */
 public class JEOLReader extends FormatReader {
 

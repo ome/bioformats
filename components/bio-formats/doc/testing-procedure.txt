@@ -14,7 +14,7 @@ times: once on Mac OS X, once on Linux, and once on Windows.
 
 It is assumed that you have a checkout of LOCI codebase:
 
-  svn co https://skyking.microscopy.wisc.edu/svn/java/trunk $LOCI_CHECKOUT
+  svn co http://dev.loci.wisc.edu/svn/java/trunk $LOCI_CHECKOUT
 
 where $LOCI_CHECKOUT is the path to your working copy.
 
@@ -33,8 +33,8 @@ third-party software:
  * MATLAB (for some manual tests)
 
 Finally, you will need to have access to one of the OME data repositories.
-For simplicity, this document assumes that you are using the skyking repository
-and that it is mounted at /mnt/skyking/.
+For simplicity, this document assumes that you are using the LOCI dev data
+repository and that it is mounted at /mnt/data/.
 
                                Automated testing
                               -------------------
@@ -50,9 +50,9 @@ repository.
      cd $LOCI_CHECKOUT
      ant clean jars tools
      cd components/test-suite
-     ant -Dtestng.directory=/mnt/skyking/$FORMAT/ test-all
+     ant -Dtestng.directory=/mnt/data/$FORMAT/ test-all
 
-   where $FORMAT is one of the directories in /mnt/skyking/.
+   where $FORMAT is one of the directories in /mnt/data/.
 
    Results of this test will be written to
    $LOCI_CHECKOUT/components/test-suite/test-output/ and a .log file in
@@ -66,9 +66,9 @@ repository.
      cd $LOCI_CHECKOUT
      ant clean jars tools
      cd components/test-suite
-     ant -Dtestng.directory=/mnt/skyking/$FORMAT/ test-convert
+     ant -Dtestng.directory=/mnt/data/$FORMAT/ test-convert
 
-   where $FORMAT is one of the directories in /mnt/skyking/.
+   where $FORMAT is one of the directories in /mnt/data/.
 
    Results of this test will be written to
    $LOCI_CHECKOUT/components/test-suite/test-output/ and a .log file in
@@ -83,9 +83,9 @@ repository.
      ./build.py
      ant test-compile
      cd components/tools/OmeroImporter/target
-     ./metadata-validator /mnt/skyking/$FORMAT/**/*
+     ./metadata-validator /mnt/data/$FORMAT/**/*
 
-   where $FORMAT is one of the directories in /mnt/skyking/.
+   where $FORMAT is one of the directories in /mnt/data/.
 
    Results of this test will be written to
    $OMERO_CHECKOUT/components/tools/OmeroImporter/target/test-output/.
@@ -97,7 +97,7 @@ repository.
 
 Due to the size of the data repository, ImageJ testing is only done on a small
 subset of files.  This set contains one file in each of the supported file
-formats; you will find it in /mnt/skyking/manual-test-data/.
+formats; you will find it in /mnt/data/manual-test-data/.
 
 First, build and install the LOCI plugins:
 
@@ -271,7 +271,7 @@ Once the test files pass, the following plugin features should be tested:
 
 Due to the size of the data repository, command line testing is only done on a
 small subset of files.  This set contains one file in each of the supported file
-formats; you will find it in /mnt/skyking/manual-test-data/.
+formats; you will find it in /mnt/data/manual-test-data/.
 
 1) Verify that the example code compiles and runs.
 

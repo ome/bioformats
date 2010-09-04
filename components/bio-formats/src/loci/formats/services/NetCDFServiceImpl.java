@@ -45,8 +45,8 @@ import ucar.nc2.Variable;
  * call the NetCDF Java library.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/services/NetCDFServiceImpl.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/services/NetCDFServiceImpl.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/services/NetCDFServiceImpl.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/services/NetCDFServiceImpl.java">SVN</a></dd></dl>
  */
 public class NetCDFServiceImpl extends AbstractService
   implements NetCDFService {

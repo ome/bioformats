@@ -13,8 +13,8 @@ import loci.formats.services.OMEXMLService;
  * using a separate thread for each.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/utils/ParallelRead.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/utils/ParallelRead.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/bio-formats/utils/ParallelRead.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/bio-formats/utils/ParallelRead.java">SVN</a></dd></dl>
  */
 public class ParallelRead implements Runnable {
   private String id;

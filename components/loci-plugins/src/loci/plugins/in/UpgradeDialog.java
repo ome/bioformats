@@ -34,8 +34,8 @@ import loci.plugins.Updater;
  * Bio-Formats Importer upgrade checker dialog box.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/in/UpgradeDialog.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/in/UpgradeDialog.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/in/UpgradeDialog.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/in/UpgradeDialog.java">SVN</a></dd></dl>
  */
 public class UpgradeDialog extends ImporterDialog {
 

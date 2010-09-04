@@ -47,8 +47,8 @@ import omero.model.Pixels;
  * for use in export from an OMERO Beta 4.2.x database.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/ome-io/src/loci/ome/io/OmeroReader.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/ome-io/src/loci/ome/io/OmeroReader.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/ome-io/src/loci/ome/io/OmeroReader.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/ome-io/src/loci/ome/io/OmeroReader.java">SVN</a></dd></dl>
  */
 public class OmeroReader extends FormatReader {
 

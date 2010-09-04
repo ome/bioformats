@@ -51,8 +51,8 @@ import java.io.IOException;
 * for any of LOCI's Java components.
 *
 * <dl><dt><b>Source code:</b></dt>
-* <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/native/jar2lib/Jar2Lib.java">Trac</a>,
-* <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/native/jar2lib/Jar2Lib.java">SVN</a></dd></dl>
+* <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/native/jar2lib/Jar2Lib.java">Trac</a>,
+* <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/native/jar2lib/Jar2Lib.java">SVN</a></dd></dl>
 *
 * @author Brian Selinsky bselinsky at wisc.edu
 */

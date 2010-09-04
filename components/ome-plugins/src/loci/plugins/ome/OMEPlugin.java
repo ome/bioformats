@@ -61,8 +61,8 @@ import loci.plugins.util.WindowTools;
  * OME and OMERO servers.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/ome-plugins/src/loci/plugins/ome/OMEPlugin.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/ome-plugins/src/loci/plugins/ome/OMEPlugin.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/ome-plugins/src/loci/plugins/ome/OMEPlugin.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/ome-plugins/src/loci/plugins/ome/OMEPlugin.java">SVN</a></dd></dl>
  *
  * @author Philip Huettl pmhuettl at wisc.edu
  * @author Melissa Linkert melissa at glencoesoftware.com

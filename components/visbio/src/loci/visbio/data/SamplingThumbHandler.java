@@ -33,8 +33,8 @@ import visad.VisADException;
  * Provides logic for handling data sampling thumbnails.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/visbio/src/loci/visbio/data/SamplingThumbHandler.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/visbio/src/loci/visbio/data/SamplingThumbHandler.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/visbio/src/loci/visbio/data/SamplingThumbHandler.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/visbio/src/loci/visbio/data/SamplingThumbHandler.java">SVN</a></dd></dl>
  */
 public class SamplingThumbHandler extends ThumbnailHandler {
 

@@ -28,8 +28,8 @@ package loci.slim.fit;
  * CurveReporter is the interface for reporting curve events to listeners.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/slim-plotter/src/loci/slim/fit/CurveReporter.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/slim-plotter/src/loci/slim/fit/CurveReporter.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/slim-plotter/src/loci/slim/fit/CurveReporter.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/slim-plotter/src/loci/slim/fit/CurveReporter.java">SVN</a></dd></dl>
  */
 public interface CurveReporter {
 

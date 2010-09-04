@@ -48,8 +48,8 @@ import com.jgoodies.forms.layout.FormLayout;
  * SpectralWidget is a set of GUI controls for a spectral mapping transform.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/visbio/src/loci/visbio/data/SpectralWidget.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/visbio/src/loci/visbio/data/SpectralWidget.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/visbio/src/loci/visbio/data/SpectralWidget.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/visbio/src/loci/visbio/data/SpectralWidget.java">SVN</a></dd></dl>
  */
 public class SpectralWidget extends JPanel implements ActionListener {
 

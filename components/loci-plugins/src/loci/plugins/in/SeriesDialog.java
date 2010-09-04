@@ -53,8 +53,8 @@ import loci.plugins.util.WindowTools;
  * Bio-Formats Importer series chooser dialog box.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/in/SeriesDialog.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/in/SeriesDialog.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/in/SeriesDialog.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/in/SeriesDialog.java">SVN</a></dd></dl>
  */
 public class SeriesDialog extends ImporterDialog implements ActionListener {
 
@@ -116,7 +116,7 @@ public class SeriesDialog extends ImporterDialog implements ActionListener {
       // NB: We need to add the checkboxes in groups, to prevent an
       // exception from being thrown if there are more than 512 series.
       // See also:
-      //   https://skyking.microscopy.wisc.edu/trac/java/ticket/408 and
+      //   http://dev.loci.wisc.edu/trac/java/ticket/408 and
       //   http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=5107980
 
       final int nGroups = (seriesCount + MAX_COMPONENTS - 1) / MAX_COMPONENTS;

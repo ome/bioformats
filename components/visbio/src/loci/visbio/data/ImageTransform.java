@@ -51,8 +51,8 @@ import visad.VisADException;
  * ImageTransform is a DataTransform superclass that provides image data.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/visbio/src/loci/visbio/data/ImageTransform.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/visbio/src/loci/visbio/data/ImageTransform.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/visbio/src/loci/visbio/data/ImageTransform.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/visbio/src/loci/visbio/data/ImageTransform.java">SVN</a></dd></dl>
  */
 public abstract class ImageTransform extends DataTransform {
 

@@ -73,8 +73,8 @@ import org.xml.sax.helpers.DefaultHandler;
  * A utility class for working with XML.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/common/src/loci/common/xml/XMLTools.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/common/src/loci/common/xml/XMLTools.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/common/src/loci/common/xml/XMLTools.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/common/src/loci/common/xml/XMLTools.java">SVN</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Chris Allan callan at blackcat.ca

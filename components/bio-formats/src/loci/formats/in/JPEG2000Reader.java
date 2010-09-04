@@ -38,8 +38,8 @@ import loci.formats.meta.MetadataStore;
  * JPEG2000Reader is the file format reader for JPEG-2000 images.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/in/JPEG2000Reader.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/in/JPEG2000Reader.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/in/JPEG2000Reader.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/in/JPEG2000Reader.java">SVN</a></dd></dl>
  */
 public class JPEG2000Reader extends FormatReader {
 

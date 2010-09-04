@@ -17,8 +17,8 @@ import loci.formats.tiff.TiffParser;
  * Stitches the first plane from a collection of TIFFs into a single file.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/utils/SewTiffs.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/utils/SewTiffs.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/bio-formats/utils/SewTiffs.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/bio-formats/utils/SewTiffs.java">SVN</a></dd></dl>
  */
 public class SewTiffs {
 

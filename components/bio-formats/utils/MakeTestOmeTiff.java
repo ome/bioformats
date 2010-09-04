@@ -17,8 +17,8 @@ import loci.formats.tiff.TiffSaver;
  * Creates a sample OME-TIFF dataset according to the given parameters.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/utils/MakeTestOmeTiff.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/utils/MakeTestOmeTiff.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/bio-formats/utils/MakeTestOmeTiff.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/bio-formats/utils/MakeTestOmeTiff.java">SVN</a></dd></dl>
  */
 public class MakeTestOmeTiff {
 

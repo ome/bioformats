@@ -29,8 +29,8 @@ import java.io.IOException;
  * A wrapper for buffered NIO logic that implements the IRandomAccess interface.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/common/src/loci/common/AbstractNIOHandle.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/common/src/loci/common/AbstractNIOHandle.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/common/src/loci/common/AbstractNIOHandle.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/common/src/loci/common/AbstractNIOHandle.java">SVN</a></dd></dl>
  *
  * @see IRandomAccess
  * @see java.io.RandomAccessFile

@@ -40,8 +40,8 @@ import org.testng.annotations.Test;
  * Tests for writing bytes to a loci.common.IRandomAccess.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/common/test/loci/common/utests/WriteUTFTest.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/common/test/loci/common/utests/WriteUTFTest.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/common/test/loci/common/utests/WriteUTFTest.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/common/test/loci/common/utests/WriteUTFTest.java">SVN</a></dd></dl>
  *
  * @see loci.common.IRandomAccess
  */

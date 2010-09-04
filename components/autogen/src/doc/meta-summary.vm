@@ -50,7 +50,7 @@
 #set ($noCount = $noList.size())
 #set ($missingCount = $missingList.size())
     <tr>
-      <td><a href="https://skyking.microscopy.wisc.edu/trac/java/wiki/$handler">$handler</a></td>
+      <td><a href="http://dev.loci.wisc.edu/trac/java/wiki/$handler">$handler</a></td>
       <td>$yesCount</td>
       <td>$noCount</td>
       <td>$partialCount</td>

@@ -45,8 +45,8 @@ import javax.swing.text.Document;
  * Swing component in its own frame (instead of to a console window).
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/visbio/src/loci/visbio/util/OutputConsole.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/visbio/src/loci/visbio/util/OutputConsole.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/visbio/src/loci/visbio/util/OutputConsole.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/visbio/src/loci/visbio/util/OutputConsole.java">SVN</a></dd></dl>
  */
 public class OutputConsole extends OutputStream {
 

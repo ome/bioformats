@@ -40,8 +40,8 @@ import com.jgoodies.forms.layout.FormLayout;
  * PanelManager is the manager encapsulating VisBio's control panel logic.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/visbio/src/loci/visbio/PanelManager.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/visbio/src/loci/visbio/PanelManager.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/visbio/src/loci/visbio/PanelManager.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/visbio/src/loci/visbio/PanelManager.java">SVN</a></dd></dl>
  */
 public class PanelManager extends LogicManager {
 

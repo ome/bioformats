@@ -11,8 +11,8 @@ import java.io.FileReader;
  * Try 'java Binary bits.txt' for an example.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/utils/Binary.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/utils/Binary.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/utils/Binary.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/utils/Binary.java">SVN</a></dd></dl>
  */
 public class Binary {
 

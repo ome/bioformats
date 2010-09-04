@@ -35,8 +35,8 @@ import javax.swing.table.TableCellRenderer;
  * when the cell is not being edited.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/legacy/ome-editor/src/loci/ome/editor/VariableComboRenderer.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/legacy/ome-editor/src/loci/ome/editor/VariableComboRenderer.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/legacy/ome-editor/src/loci/ome/editor/VariableComboRenderer.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/legacy/ome-editor/src/loci/ome/editor/VariableComboRenderer.java">SVN</a></dd></dl>
  *
  * @author Christopher Peterson crpeterson2 at wisc.edu
  */

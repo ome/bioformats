@@ -42,8 +42,8 @@ import org.slf4j.LoggerFactory;
  * {@link FormatWriterTest} based on the image files found.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/test-suite/src/loci/tests/testng/FormatWriterTestFactory.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/test-suite/src/loci/tests/testng/FormatWriterTestFactory.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/test-suite/src/loci/tests/testng/FormatWriterTestFactory.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/test-suite/src/loci/tests/testng/FormatWriterTestFactory.java">SVN</a></dd></dl>
  */
 public class FormatWriterTestFactory {
 

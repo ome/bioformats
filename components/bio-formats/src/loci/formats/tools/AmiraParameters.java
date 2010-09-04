@@ -38,8 +38,8 @@ import loci.formats.FormatException;
  * AmiraParameters handles parsing and writing of AmiraMesh headers.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/tools/AmiraParameters.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/tools/AmiraParameters.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/tools/AmiraParameters.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/tools/AmiraParameters.java">SVN</a></dd></dl>
  *
  * @author Gregory Jefferis jefferis at gmail.com
  * @author Johannes Schindelin johannes.schindelin at gmx.de

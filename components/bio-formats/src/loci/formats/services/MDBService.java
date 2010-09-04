@@ -32,8 +32,8 @@ import loci.common.services.Service;
  * Interface defining methods for parsing MDB database files.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/services/MDBService.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-format/src/loci/formats/services/MDBService.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/services/MDBService.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/bio-format/src/loci/formats/services/MDBService.java">SVN</a></dd></dl>
  */
 public interface MDBService extends Service {
 
