@@ -519,7 +519,7 @@ public class MainDialog extends ImporterDialog
     // == Color options ==
 
     // colorModeChoice
-    colorModeEnabled = !isStackImage5D && !isStackView5D;
+    colorModeEnabled = !isStackImage5D && !isStackView5D && !isStackStandard;
     if (!colorModeEnabled) colorModeValue = ImporterOptions.COLOR_MODE_DEFAULT;
 
     // autoscaleBox
