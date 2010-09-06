@@ -39,6 +39,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Properties;
 
 import javax.imageio.spi.IIORegistry;
 import javax.swing.DefaultListModel;
@@ -292,6 +293,14 @@ public class ConfigWindow extends JFrame
   /** Populate configuration information in a separate thread. */
   public void run() {
     log.println("LOCI Plugins configuration - " + new Date());
+
+    // list system properties
+    log.println();
+    log.println("-- System properties --");
+    Properties sysProps = System.getProperties();
+    for (Object name : sysProps.keySet()) {
+      log.println(name + " = " + sysProps.getProperty(name.toString()));
+    }
 
     // generate list of formats
     log.println();
