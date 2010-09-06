@@ -297,15 +297,19 @@ public class ScanrReader extends FormatReader {
     wellRows = uniqueRows.size();
     wellColumns = uniqueColumns.size();
 
-    if (wellRows * wellColumns == 0) {
-      if (wellCount <= 96) {
+    if (wellRows * wellColumns != wellCount) {
+      if (wellCount <= 8) {
+        wellColumns = 2;
+        wellRows = 4;
+      }
+      else if (wellCount <= 96) {
         wellColumns = 12;
+        wellRows = 8;
       }
       else if (wellCount <= 384) {
         wellColumns = 24;
+        wellRows = 16;
       }
-      wellRows = wellCount / wellColumns;
-      if (wellRows * wellColumns < wellCount) wellRows++;
     }
 
     int nChannels = getSizeC() == 0 ? channelNames.size() : getSizeC();
@@ -364,7 +368,7 @@ public class ScanrReader extends FormatReader {
         }
         if (posIndex != next) realPosCount++;
       }
-      if (next == originalIndex) {
+      if (next == originalIndex && well < keys.length) {
         wellLabels.remove(keys[well]);
       }
     }
@@ -519,6 +523,9 @@ public class ScanrReader extends FormatReader {
         }
         else if (key.equals("timeloop real")) {
           core[0].sizeT = Integer.parseInt(value);
+        }
+        else if (key.equals("timeloop count")) {
+          core[0].sizeT = Integer.parseInt(value) + 1;
         }
         else if (key.equals("name")) {
           channelNames.add(value);
