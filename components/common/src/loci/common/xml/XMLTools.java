@@ -154,7 +154,7 @@ public final class XMLTools {
         s = s.replace(c, ' ');
       }
     }
-    return s;
+    return s.replaceAll("&#", "");
   }
 
   /** Indents XML to be more readable. */
