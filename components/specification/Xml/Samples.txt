@@ -1,0 +1,2 @@
+Sample OME-XML and OME-TIFF files are located in the folder
+[SVN-ROOT]/Documentation/Samples/OmeFiles/
