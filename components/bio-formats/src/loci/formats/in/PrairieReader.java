@@ -42,6 +42,8 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
 
+import ome.xml.model.primitives.PositiveInteger;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -81,11 +83,23 @@ public class PrairieReader extends FormatReader {
   private String xmlFile, cfgFile;
   private boolean readXML = false, readCFG = false;
 
-  private int zt;
   private Vector<String> f, gains, offsets;
-  private boolean isZ;
   private double pixelSizeX, pixelSizeY;
   private String date, laserPower;
+
+  private String microscopeModel;
+  private String objectiveManufacturer;
+  private PositiveInteger magnification;
+  private String immersion;
+  private Double lensNA;
+
+  private Vector<Double> deltaT = new Vector<Double>();
+  private Vector<Double> positionX = new Vector<Double>();
+  private Vector<Double> positionY = new Vector<Double>();
+  private Vector<Double> positionZ = new Vector<Double>();
+  private Vector<String> channels = new Vector<String>();
+
+  private Double zoom;
 
   // -- Constructor --
 
@@ -200,11 +214,20 @@ public class PrairieReader extends FormatReader {
       files = null;
       readXML = false;
       readCFG = false;
-      isZ = false;
-      zt = 0;
       f = gains = offsets = null;
       pixelSizeX = pixelSizeY = 0;
       date = laserPower = null;
+      microscopeModel = null;
+      objectiveManufacturer = null;
+      magnification = null;
+      immersion = null;
+      lensNA = null;
+      deltaT.clear();
+      positionX.clear();
+      positionY.clear();
+      positionZ.clear();
+      channels.clear();
+      zoom = null;
     }
   }
 
@@ -237,9 +260,8 @@ public class PrairieReader extends FormatReader {
       f = new Vector<String>();
       gains = new Vector<String>();
       offsets = new Vector<String>();
-      zt = 0;
 
-      String xml = DataTools.readFile(id);
+      String xml = XMLTools.sanitizeXML(DataTools.readFile(id)).trim();
 
       if (checkSuffix(id, XML_SUFFIX)) {
         core[0].imageCount = 0;
@@ -247,6 +269,8 @@ public class PrairieReader extends FormatReader {
 
       DefaultHandler handler = new PrairieHandler();
       XMLTools.parseXML(xml, handler);
+
+      core[0].sizeT = getImageCount() / (getSizeZ() * getSizeC());
 
       if (checkSuffix(id, XML_SUFFIX)) {
         files = new String[f.size()];
@@ -258,12 +282,10 @@ public class PrairieReader extends FormatReader {
 
         LOGGER.info("Populating metadata");
 
-        if (zt == 0) zt = 1;
+        if (getSizeZ() == 0) core[0].sizeZ = 1;
+        if (getSizeT() == 0) core[0].sizeT = 1;
 
-        core[0].sizeZ = isZ ? zt : 1;
-        core[0].sizeT = isZ ? 1 : zt;
-        core[0].sizeC = getImageCount() / (getSizeZ() * getSizeT());
-        core[0].dimensionOrder = "XYC" + (isZ ? "ZT" : "TZ");
+        core[0].dimensionOrder = "XYCZT";
         core[0].pixelType = FormatTools.UINT16;
         core[0].rgb = false;
         core[0].interleaved = false;
@@ -271,8 +293,11 @@ public class PrairieReader extends FormatReader {
         core[0].indexed = tiff.isIndexed();
         core[0].falseColor = false;
 
+        boolean minimumMetadata =
+          getMetadataOptions().getMetadataLevel() == MetadataLevel.MINIMUM;
+
         MetadataStore store = makeFilterMetadata();
-        MetadataTools.populatePixels(store, this);
+        MetadataTools.populatePixels(store, this, !minimumMetadata);
 
         if (date != null) {
           date = DateTools.formatDate(date, "MM/dd/yyyy h:mm:ss a");
@@ -280,7 +305,7 @@ public class PrairieReader extends FormatReader {
         }
         else MetadataTools.setDefaultCreationDate(store, id, 0);
 
-        if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
+        if (!minimumMetadata) {
           // link Instrument and Image
           String instrumentID = MetadataTools.createLSID("Instrument", 0);
           store.setInstrumentID(instrumentID, 0);
@@ -304,13 +329,41 @@ public class PrairieReader extends FormatReader {
             store.setDetectorID(detectorID, 0, i);
             store.setDetectorSettingsID(detectorID, 0, i);
             store.setDetectorType(getDetectorType("Other"), 0, i);
+            store.setDetectorZoom(zoom, 0, i);
+
+            if (i < channels.size()) {
+              store.setChannelName(channels.get(i), 0, i);
+            }
           }
 
-          /* TODO : check if this is correct
+          for (int i=0; i<getImageCount(); i++) {
+            int[] zct = getZCTCoords(i);
+            int index = FormatTools.getIndex(getDimensionOrder(), getSizeZ(),
+              1, getSizeT(), getImageCount() / getSizeC(), zct[0], 0, zct[2]);
+            store.setPlanePositionX(positionX.get(index), 0, i);
+            store.setPlanePositionY(positionY.get(index), 0, i);
+            store.setPlanePositionZ(positionZ.get(index), 0, i);
+          }
+
+          if (microscopeModel != null) {
+            store.setMicroscopeModel(microscopeModel, 0);
+          }
+
+          String objective = MetadataTools.createLSID("Objective", 0, 0);
+          store.setObjectiveID(objective, 0, 0);
+          store.setImageObjectiveSettingsID(objective, 0);
+
+          store.setObjectiveNominalMagnification(magnification, 0, 0);
+          store.setObjectiveManufacturer(objectiveManufacturer, 0, 0);
+          store.setObjectiveImmersion(getImmersion(immersion), 0, 0);
+          store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
+          store.setObjectiveLensNA(lensNA, 0, 0);
+
           if (laserPower != null) {
+            String laser = MetadataTools.createLSID("LightSource", 0 ,0);
+            store.setLaserID(laser, 0, 0);
             store.setLaserPower(new Double(laserPower), 0, 0);
           }
-          */
         }
       }
 
@@ -374,9 +427,12 @@ public class PrairieReader extends FormatReader {
       if (qName.equals("PVScan")) {
         date = attributes.getValue("date");
       }
-      else if (qName.equals("Frame")) zt++;
-      else if (qName.equals("Sequence")) {
-        isZ = attributes.getValue("type").equals("ZSeries");
+      else if (qName.equals("Frame")) {
+        String index = attributes.getValue("index");
+        if (index != null) {
+          int zIndex = Integer.parseInt(index);
+          if (zIndex > getSizeZ()) core[0].sizeZ++;
+        }
       }
       else if (qName.equals("File")) {
         core[0].imageCount++;
@@ -387,6 +443,17 @@ public class PrairieReader extends FormatReader {
           dir = dir.substring(0, dir.lastIndexOf(File.separator) + 1);
         }
         f.add(dir + attributes.getValue("filename"));
+
+        String ch = attributes.getValue("channel");
+        String channelName = attributes.getValue("channelName");
+        if (channelName == null) channelName = ch;
+        if (ch != null) {
+          int cIndex = Integer.parseInt(ch);
+          if (cIndex > getSizeC() && !channels.contains(channelName)) {
+            core[0].sizeC++;
+            channels.add(channelName);
+          }
+        }
       }
       else if (qName.equals("Key")) {
         String key = attributes.getValue("key");
@@ -405,9 +472,43 @@ public class PrairieReader extends FormatReader {
         else if (key.equals("micronsPerPixel_YAxis")) {
           pixelSizeY = Double.parseDouble(value);
         }
+        else if (key.equals("objectiveLens")) {
+          String[] tokens = value.split(" ");
+          if (tokens.length > 0) {
+            objectiveManufacturer = tokens[0];
+          }
+          if (tokens.length > 1) {
+            String mag = tokens[1].toLowerCase().replaceAll("x", "");
+            magnification = new PositiveInteger(new Integer(mag));
+          }
+          if (tokens.length > 2) {
+            immersion = tokens[2];
+          }
+        }
+        else if (key.equals("objectiveLensNA")) {
+          lensNA = new Double(value);
+        }
+        else if (key.equals("imagingDevice")) {
+          microscopeModel = value;
+        }
         else if (key.startsWith("pmtGain_")) gains.add(value);
         else if (key.startsWith("pmtOffset_")) offsets.add(value);
         else if (key.equals("laserPower_0")) laserPower = value;
+        else if (key.equals("positionCurrent_XAxis")) {
+          positionX.add(new Double(value));
+        }
+        else if (key.equals("positionCurrent_YAxis")) {
+          positionY.add(new Double(value));
+        }
+        else if (key.equals("positionCurrent_ZAxis")) {
+          positionZ.add(new Double(value));
+        }
+        else if (key.equals("opticalZoom")) {
+          zoom = new Double(value);
+        }
+        else if (key.equals("bitDepth")) {
+          core[0].bitsPerPixel = Integer.parseInt(value);
+        }
       }
     }
   }
