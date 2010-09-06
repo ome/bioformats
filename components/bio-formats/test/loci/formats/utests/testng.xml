@@ -73,4 +73,10 @@
         <class name="loci.formats.utests.WrapperTest"/>
       </classes>
     </test>
+    <test name="SPWModel">
+      <groups/>
+      <classes>
+        <class name="loci.formats.utests.SPWModelReaderTest"/>
+      </classes>
+    </test>
 </suite>

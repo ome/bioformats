@@ -32,7 +32,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-07-01 12:04:44+0100
+ * Created by callan via xsd-fu on 2010-08-24 16:48:27+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -75,6 +75,8 @@ public interface MetadataRetrieve {
 	// -- Entity counting (manual definitions) --
 
 	int getPixelsBinDataCount(int imageIndex);
+
+	String getLightSourceType(int instrumentIndex, int lightSourceIndex);
 
 	// -- Entity counting (code generated definitions) --
 

@@ -27,11 +27,14 @@ import java.nio.ByteOrder;
 
 import loci.common.ByteArrayHandle;
 import loci.common.RandomAccessInputStream;
+import loci.common.RandomAccessOutputStream;
+import loci.formats.FormatException;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDType;
 import loci.formats.tiff.PhotoInterp;
 import loci.formats.tiff.TiffParser;
 import loci.formats.tiff.TiffRational;
+import loci.formats.tiff.TiffSaver;
 
 /**
  * @author callan
@@ -47,7 +50,11 @@ public class BaseTiffMock {
   
   private RandomAccessInputStream in;
 
+  private RandomAccessOutputStream out;
+
   private TiffParser tiffParser;
+
+  private TiffSaver tiffSaver;
 
   private static byte[] TIFF_HEADER = new byte[] {
     0x49, 0x49, 0x2A, 0x00, 0x08, 0x00, 0x00, 0x00,
@@ -55,112 +62,34 @@ public class BaseTiffMock {
 
   private static final int ENTRY_VALUE_BEGIN_OFFSET = 65535;
 
-  public BaseTiffMock() throws IOException {
-    handle = new ByteArrayHandle(TIFF_HEADER);
-    handle.seek(TIFF_HEADER.length);
+  public BaseTiffMock() throws FormatException, IOException {
+    handle = new ByteArrayHandle();
     handle.setOrder(ByteOrder.LITTLE_ENDIAN);
-    long next = ENTRY_VALUE_BEGIN_OFFSET;
-    // IFD entry count
-    handle.writeShort(getEntryCount());
-    // IMAGE_WIDTH
-    writeIFDEntry((short) IFD.IMAGE_WIDTH, IFDType.SHORT, getImageWidth());
-    // IMAGE_LENGTH
-    writeIFDEntry((short) IFD.IMAGE_LENGTH, IFDType.SHORT, getImageLength());
-    // BITS_PER_SAMPLE
-    next = writeBitsPerSample(next);
-    // COMPRESSION
-    writeIFDEntry((short) IFD.COMPRESSION, IFDType.SHORT,
-                  getCompression());
-    // PHOTOMETRIC_INTERPRETATION
-    writeIFDEntry((short) IFD.PHOTOMETRIC_INTERPRETATION, IFDType.SHORT,
-                  PhotoInterp.RGB.getCode());
-    // STRIP_OFFSETS
-    next = writeIFDEntry((short) IFD.STRIP_OFFSETS, IFDType.LONG,
-                         getStripOffsets(), next);
-    // SAMPLES_PER_PIXEL
-    writeIFDEntry((short) IFD.SAMPLES_PER_PIXEL, IFDType.SHORT,
-                   getSamplesPerPixel());
-    // ROWS_PER_STRIP
-    next = writeIFDEntry((short) IFD.ROWS_PER_STRIP, IFDType.LONG,
-                         getRowsPerStrip(), next);
-    // X_RESOLUTION
-    next = writeIFDEntry((short) IFD.X_RESOLUTION, IFDType.RATIONAL,
-                         getXResolution(), next);
-    // Y_RESOLUTION
-    next = writeIFDEntry((short) IFD.Y_RESOLUTION, IFDType.RATIONAL,
-                         getYResolution(), next);
-    // RESOLUTION_UNIT
-    writeIFDEntry((short) IFD.RESOLUTION_UNIT, IFDType.SHORT,
-                  getResolutionUnit());
-    // Terminating IFD offset
-    handle.writeInt(0);
+    out = new RandomAccessOutputStream(handle);
+    tiffSaver = new TiffSaver(out);
+    tiffSaver.writeHeader();
+
+    IFD ifd = new IFD();
+    ifd.put(IFD.IMAGE_WIDTH, getImageWidth());
+    ifd.put(IFD.IMAGE_LENGTH, getImageLength());
+    ifd.put(IFD.BITS_PER_SAMPLE, getBitsPerSample());
+    ifd.put(IFD.COMPRESSION, getCompression());
+    ifd.put(IFD.PHOTOMETRIC_INTERPRETATION, PhotoInterp.RGB.getCode());
+    ifd.put(IFD.STRIP_OFFSETS, getStripOffsets());
+    ifd.put(IFD.SAMPLES_PER_PIXEL, getSamplesPerPixel());
+    ifd.put(IFD.ROWS_PER_STRIP, getRowsPerStrip());
+    ifd.put(IFD.X_RESOLUTION, getXResolution());
+    ifd.put(IFD.Y_RESOLUTION, getYResolution());
+    ifd.put(IFD.RESOLUTION_UNIT, getResolutionUnit());
+
+    tiffSaver.writeIFD(ifd, 0);
+
     in = new RandomAccessInputStream(handle);
     tiffParser = new TiffParser(in);
   }
 
-  protected void writeIFDEntry(short tag, IFDType type, int value)
-                               throws IOException {
-    handle.writeShort(tag);  // IFD entry tag
-    handle.writeShort(type.getCode());  // IFD entry type
-    handle.writeInt(1);  // IFD entry value count
-    handle.writeInt(value);  // The actual value
-  }
-
-  protected long writeIFDEntry(short tag, IFDType type, int[] values,
-                               long offset) throws IOException {
-    handle.writeShort(tag);  // IFD entry tag
-    handle.writeShort(type.getCode());  // IFD entry type
-    handle.writeInt(values.length);  // IFD entry value count
-    handle.writeInt((int) offset); // The offset to the value
-    long before = handle.getFilePointer();
-    handle.seek(offset);
-    for (int value : values) {
-      handle.writeInt(value);
-    }
-    long after = handle.getFilePointer();
-    handle.seek(before);
-    return after;
-  }
-
-  protected long writeIFDEntry(short tag, IFDType type, short[] values,
-                               long offset) throws IOException {
-    handle.writeShort(tag);  // IFD entry tag
-    handle.writeShort(type.getCode());  // IFD entry type
-    handle.writeInt(values.length);  // IFD entry value count
-    handle.writeInt((int) offset); // The offset to the value
-    long before = handle.getFilePointer();
-    handle.seek(offset);
-    for (int value : values) {
-      handle.writeShort(value);
-    }
-    long after = handle.getFilePointer();
-    handle.seek(before);
-    return after;
-  }
-
-  protected long writeIFDEntry(short tag, IFDType type, TiffRational values,
-                               long offset) throws IOException {
-    handle.writeShort(tag);  // IFD entry tag
-    handle.writeShort(type.getCode());  // IFD entry type
-    handle.writeInt(1);  // IFD entry value count
-    handle.writeInt((int) offset); // The offset to the value
-    long before = handle.getFilePointer();
-    handle.seek(offset);
-    handle.writeInt((int) values.getNumerator());
-    handle.writeInt((int) values.getDenominator());
-    long after = handle.getFilePointer();
-    handle.seek(before);
-    return after;
-  }
-
   protected int getEntryCount() {
     return 11;
-  }
-
-  protected long writeBitsPerSample(long offset) throws IOException {
-    writeIFDEntry((short) IFD.BITS_PER_SAMPLE, IFDType.SHORT,
-                  getBitsPerSample()[0]);
-    return offset;
   }
 
   public TiffParser getTiffParser() {
@@ -175,8 +104,8 @@ public class BaseTiffMock {
     return 4;
   }
 
-  public short[] getBitsPerSample() {
-    return new short[] { 8 };
+  public int[] getBitsPerSample() {
+    return new int[] { 8 };
   }
 
   public int getCompression() {

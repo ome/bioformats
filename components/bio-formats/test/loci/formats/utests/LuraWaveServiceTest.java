@@ -44,17 +44,18 @@ import org.testng.annotations.Test;
  */
 public class LuraWaveServiceTest {
 
+  private ServiceFactory sf;
   private LuraWaveService service;
 
   @BeforeMethod
   public void setUp() throws DependencyException {
-    ServiceFactory sf = new ServiceFactory();
-    service = sf.getInstance(LuraWaveService.class);
+    sf = new ServiceFactory();
   }
 
   @Test(expectedExceptions={DependencyException.class})
   public void testInitialize()
     throws IOException, DependencyException, ServiceException {
+    service = sf.getInstance(LuraWaveService.class);
     service.initialize(new ByteArrayInputStream(new byte[0]));
   }
 

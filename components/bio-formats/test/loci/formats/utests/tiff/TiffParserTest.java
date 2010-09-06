@@ -98,10 +98,10 @@ public class TiffParserTest {
     int[] bitsPerSample = tiffParser.getFirstIFD().getBitsPerSample();
     assertNotNull(bitsPerSample);
     assertEquals(mock.getSamplesPerPixel(), bitsPerSample.length);
-    short[] BITS_PER_SAMPLE = mock.getBitsPerSample();
+    int[] BITS_PER_SAMPLE = mock.getBitsPerSample();
     for (int i = 0; i < BITS_PER_SAMPLE.length; i++) {
       int a = BITS_PER_SAMPLE[i];
-      long b = bitsPerSample[i]; 
+      long b = bitsPerSample[i];
       if (a != b) {
         fail(String.format(
             "Bits per sample offset %d not equivilent: %d != %d", i, a, b));
@@ -176,12 +176,18 @@ public class TiffParserTest {
     tiffParser.getFirstIFD().getRowsPerStrip();
   }
 
-  @Test(expectedExceptions={ FormatException.class })
+  @Test
   public void testBitsPerSampleMismatch() throws IOException, FormatException {
     mock = new BitsPerSampleSamplesPerPixelMismatchMock();
     tiffParser = mock.getTiffParser();
     assertTrue(tiffParser.checkHeader());
-    tiffParser.getFirstIFD().getBitsPerSample();
+    IFD ifd = tiffParser.getFirstIFD();
+    int[] bitsPerSample = ifd.getBitsPerSample();
+    int[] mockBitsPerSample = mock.getBitsPerSample();
+    assertEquals(bitsPerSample.length, ifd.getSamplesPerPixel());
+    for (int i=0; i<mockBitsPerSample.length; i++) {
+      assertEquals(bitsPerSample[i], mockBitsPerSample[i]);
+    }
   }
 
   // TODO: Test wrong type exceptions
