@@ -1047,7 +1047,10 @@ public class FV1000Reader extends FormatReader {
             nextROI++;
           }
 
+          String shapeID = MetadataTools.createLSID("Shape", nextROI, shape);
+
           if (shapeType == POINT) {
+            store.setPointID(shapeID, nextROI, shape);
             store.setPointTheZ(new NonNegativeInteger(zIndex), nextROI, shape);
             store.setPointTheT(new NonNegativeInteger(tIndex), nextROI, shape);
             store.setPointFontSize(
@@ -1066,6 +1069,8 @@ public class FV1000Reader extends FormatReader {
                 double realX = x + col * width;
                 double realY = y + row * height;
 
+                shapeID = MetadataTools.createLSID("Shape", nextROI, shape);
+                store.setRectangleID(shapeID, nextROI, shape);
                 store.setRectangleX(realX, nextROI, shape);
                 store.setRectangleY(realY, nextROI, shape);
                 store.setRectangleWidth(new Double(width), nextROI, shape);
@@ -1091,6 +1096,7 @@ public class FV1000Reader extends FormatReader {
             }
           }
           else if (shapeType == LINE) {
+            store.setLineID(shapeID, nextROI, shape);
             store.setLineX1(new Double(x), nextROI, shape);
             store.setLineY1(new Double(y), nextROI, shape);
             store.setLineX2(new Double(x + width), nextROI, shape);
@@ -1111,6 +1117,7 @@ public class FV1000Reader extends FormatReader {
           else if (shapeType == CIRCLE || shapeType == ELLIPSE) {
             double rx = width / 2;
             double ry = shapeType == CIRCLE ? rx : height / 2;
+            store.setEllipseID(shapeID, nextROI, shape);
             store.setEllipseX(x + rx, nextROI, shape);
             store.setEllipseY(y + ry, nextROI, shape);
             store.setEllipseRadiusX(rx, nextROI, shape);
@@ -1136,6 +1143,7 @@ public class FV1000Reader extends FormatReader {
               points.append(yc[point]);
               if (point < xc.length - 1) points.append(" ");
             }
+            store.setPolylineID(shapeID, nextROI, shape);
             store.setPolylinePoints(points.toString(), nextROI, shape);
             store.setPolylineTransform("rotate(" + angle + ")", nextROI, shape);
             store.setPolylineClosed(
@@ -1420,8 +1428,8 @@ public class FV1000Reader extends FormatReader {
     throws FormatException, IOException
   {
     RandomAccessInputStream stream = getFile(filename);
-    stream.skipBytes(2);
-    String data = stream.readString((int) stream.length() - 2);
+    String data = stream.readString((int) stream.length());
+    if (!data.startsWith("[")) data = data.substring(2, data.length());
     data = DataTools.stripString(data);
     BufferedReader reader = new BufferedReader(new StringReader(data));
     stream.close();

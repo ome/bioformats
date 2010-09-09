@@ -288,6 +288,7 @@ public class IPLabReader extends FormatReader {
         int roiBottom = in.readInt();
         int numRoiPts = in.readInt();
 
+        store.setRectangleID(MetadataTools.createLSID("Shape", 0, 0), 0, 0);
         store.setRectangleX(new Double(roiLeft), 0, 0);
         store.setRectangleY(new Double(roiTop), 0, 0);
         store.setRectangleWidth(new Double(roiRight - roiLeft), 0, 0);

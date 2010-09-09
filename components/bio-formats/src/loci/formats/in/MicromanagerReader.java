@@ -410,8 +410,7 @@ public class MicromanagerReader extends FormatReader {
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this, true);
     if (time != null) {
-      long stamp = DateTools.getTime(time, DATE_FORMAT);
-      String date = DateTools.convertDate(stamp, DateTools.UNIX);
+      String date = DateTools.formatDate(time, DATE_FORMAT);
       store.setImageAcquiredDate(date, 0);
     }
     else MetadataTools.setDefaultCreationDate(store, id, 0);
@@ -439,13 +438,8 @@ public class MicromanagerReader extends FormatReader {
         }
       }
 
-      if (detectorID == null) {
-        detectorID = MetadataTools.createLSID("Detector", 0, 0);
-      }
-      else {
-        detectorID = detectorID.substring(detectorID.lastIndexOf(":") + 1);
-        detectorID = "Detector:" + detectorID.trim();
-      }
+      String serialNumber = detectorID;
+      detectorID = MetadataTools.createLSID("Detector", 0, 0);
 
       for (int i=0; i<channels.length; i++) {
         store.setDetectorSettingsBinning(getBinning(binning), 0, i);
@@ -459,6 +453,10 @@ public class MicromanagerReader extends FormatReader {
       store.setDetectorID(detectorID, 0, 0);
       if (detectorModel != null) {
         store.setDetectorModel(detectorModel, 0, 0);
+      }
+
+      if (serialNumber != null) {
+        store.setDetectorSerialNumber(serialNumber, 0, 0);
       }
 
       if (detectorManufacturer != null) {

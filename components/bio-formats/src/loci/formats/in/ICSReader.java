@@ -221,7 +221,7 @@ public class ICSReader extends FormatReader {
     int[] coordinates = getZCTCoords(no);
     int[] prevCoordinates = getZCTCoords(prevImage);
 
-    in.seek(offset + no * (long) len);
+    if (!gzip) in.seek(offset + no * (long) len);
 
     int sizeC = lifetime ? 1 : getSizeC();
 
@@ -720,12 +720,15 @@ public class ICSReader extends FormatReader {
 
     offset = in.getFilePointer();
 
+    int bytes = bitsPerPixel / 8;
+
     if (gzip) {
       data = new byte[(int) (in.length() - in.getFilePointer())];
       LOGGER.info("Decompressing pixel data");
       in.read(data);
       byte[] buf = new byte[8192];
-      ByteArrayHandle v = new ByteArrayHandle();
+      int nBytes = getImageCount() * getSizeX() * getSizeY() * bytes;
+      ByteArrayHandle v = new ByteArrayHandle(nBytes);
       try {
         GZIPInputStream r = new GZIPInputStream(new ByteArrayInputStream(data));
         int n = r.read(buf, 0, buf.length);
@@ -735,16 +738,17 @@ public class ICSReader extends FormatReader {
         }
         r.close();
         data = v.getBytes();
+        v.close();
       }
       catch (IOException dfe) {
         throw new FormatException("Error uncompressing gzip'ed data", dfe);
       }
+      buf = null;
     }
 
     if (bitsPerPixel < 32) core[0].littleEndian = !isLittleEndian();
 
     boolean fp = rFormat.equals("real");
-    int bytes = bitsPerPixel / 8;
     core[0].pixelType = FormatTools.pixelTypeFromBytes(bytes, signed, fp);
 
     LOGGER.info("Populating OME metadata");
@@ -820,6 +824,7 @@ public class ICSReader extends FormatReader {
 
       Integer[] lasers = wavelengths.keySet().toArray(new Integer[0]);
       for (int i=0; i<lasers.length; i++) {
+        store.setLaserID(MetadataTools.createLSID("LightSource", 0, i), 0, i);
         store.setLaserWavelength(
           new PositiveInteger(wavelengths.get(lasers[i])), 0, i);
         store.setLaserType(getLaserType("Other"), 0, i);
@@ -858,7 +863,12 @@ public class ICSReader extends FormatReader {
 
       // populate Experimenter data
 
-      if (lastName != null) store.setExperimenterLastName(lastName, 0);
+      if (lastName != null) {
+        String experimenterID = MetadataTools.createLSID("Experimenter", 0);
+        store.setExperimenterID(experimenterID, 0);
+        store.setExperimenterLastName(lastName, 0);
+        store.setExperimenterDisplayName(lastName, 0);
+      }
 
       // populate StagePosition data
 
