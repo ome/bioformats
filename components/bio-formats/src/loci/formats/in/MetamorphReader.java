@@ -416,7 +416,11 @@ public class MetamorphReader extends BaseTiffReader {
             if (j < waveNames.size() && waveNames.get(j) != null) {
               stks[seriesNdx][pt[seriesNdx]] += "_w" + (j + 1);
               if (useWaveNames) {
-                stks[seriesNdx][pt[seriesNdx]] += waveNames.get(j);
+                String waveName = waveNames.get(j);
+                // If there are underscores in the wavelength name, translate
+                // them to hyphens. (See #558)
+                waveName = waveName.replace('_', '-');
+                stks[seriesNdx][pt[seriesNdx]] += waveName;
               }
             }
             if (nstages > 0) {
