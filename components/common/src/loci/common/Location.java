@@ -196,7 +196,7 @@ public class Location {
         handle = new NIOFileHandle(mapId, writable ? "rw" : "r");
       }
     }
-    LOGGER.debug("Location.getHandle: {} -> {}", id, handle);
+    LOGGER.trace("Location.getHandle: {} -> {}", id, handle);
     return handle;
   }
 
