@@ -76,6 +76,22 @@ public class OMETiffWriter extends TiffWriter {
   public void close() throws IOException {
     if (out != null) out.close();
     out = null;
+    try {
+      doClose();
+    }
+    finally {
+      super.close();
+      seriesMap = null;
+      wroteLast = false;
+    }
+  }
+
+  /**
+   * Performs the actual close operation so that it can be wrapped in a
+   * try/finally block to ensure that file handles are released.
+   * @throws IOException If there is an error writing to the output file.
+   */
+  private void doClose() throws IOException {
     if (currentId != null) {
       if (!wroteLast) {
         // FIXME
@@ -176,9 +192,6 @@ public class OMETiffWriter extends TiffWriter {
         throw io;
       }
     }
-    super.close();
-    seriesMap = null;
-    wroteLast = false;
   }
 
   // -- IFormatWriter API methods --

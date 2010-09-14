@@ -331,14 +331,13 @@ public class TiffSaver {
    * if the old data is already at the end of the file, it overwrites the old
    * data in place.
    */
-  public static void overwriteIFDValue(String file,
+  public static void overwriteIFDValue(RandomAccessInputStream raf, String file,
     int ifd, int tag, Object value) throws FormatException, IOException
   {
     LogTools.debug("overwriteIFDValue (ifd=" + ifd + "; tag=" + tag +
       "; value=" + value + ")");
     byte[] header = new byte[4];
 
-    RandomAccessInputStream raf = new RandomAccessInputStream(file);
     raf.seek(0);
     raf.readFully(header);
     if (!TiffTools.isValidHeader(header)) {
@@ -441,19 +440,23 @@ public class TiffSaver {
         raf.close();
 
         RandomAccessOutputStream out = new RandomAccessOutputStream(file);
-
-        // overwrite old entry
-        out.seek(filePointer - (bigTiff ? 18 : 10)); // jump back
-        DataTools.writeShort(out, newType, little);
-        if (bigTiff) DataTools.writeLong(out, newCount, little);
-        else DataTools.writeInt(out, newCount, little);
-        if (bigTiff) DataTools.writeLong(out, newOffset, little);
-        else DataTools.writeInt(out, (int) newOffset, little);
-        if (extra.length > 0) {
-          out.seek(newOffset);
-          out.write(extra);
+        try {
+          // overwrite old entry
+          out.seek(filePointer - (bigTiff ? 18 : 10)); // jump back
+          DataTools.writeShort(out, newType, little);
+          if (bigTiff) DataTools.writeLong(out, newCount, little);
+          else DataTools.writeInt(out, newCount, little);
+          if (bigTiff) DataTools.writeLong(out, newOffset, little);
+          else DataTools.writeInt(out, (int) newOffset, little);
+          if (extra.length > 0) {
+            out.seek(newOffset);
+            out.write(extra);
+          }
+          return;
         }
-        return;
+        finally {
+          out.close();
+        }
       }
     }
 
@@ -464,7 +467,13 @@ public class TiffSaver {
   public static void overwriteComment(String id, Object value)
     throws FormatException, IOException
   {
-    overwriteIFDValue(id, 0, IFD.IMAGE_DESCRIPTION, value);
+    RandomAccessInputStream raf = new RandomAccessInputStream(id);
+    try {
+      overwriteIFDValue(raf, id, 0, IFD.IMAGE_DESCRIPTION, value);
+    }
+    finally {
+      raf.close();
+    }
   }
 
 }
