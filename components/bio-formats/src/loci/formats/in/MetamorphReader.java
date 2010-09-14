@@ -284,7 +284,10 @@ public class MetamorphReader extends BaseTiffReader {
 
       while (!line.equals("\"EndFile\"")) {
         int comma = line.indexOf(",");
-        if (comma <= 0) continue;
+        if (comma <= 0) {
+          line = ndStream.readLine().trim();
+          continue;
+        }
         String key = line.substring(1, comma - 1).trim();
         String value = line.substring(comma + 1).trim();
 
