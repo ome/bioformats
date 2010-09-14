@@ -283,8 +283,10 @@ public class MetamorphReader extends BaseTiffReader {
       boolean useWaveNames = true;
 
       while (!line.equals("\"EndFile\"")) {
-        String key = line.substring(1, line.indexOf(",") - 1).trim();
-        String value = line.substring(line.indexOf(",") + 1).trim();
+        int comma = line.indexOf(",");
+        if (comma <= 0) continue;
+        String key = line.substring(1, comma - 1).trim();
+        String value = line.substring(comma + 1).trim();
 
         addGlobalMeta(key, value);
         if (key.equals("NZSteps")) z = value;
