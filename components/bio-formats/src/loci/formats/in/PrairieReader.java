@@ -92,6 +92,7 @@ public class PrairieReader extends FormatReader {
   private PositiveInteger magnification;
   private String immersion;
   private Double lensNA;
+  private Double waitTime;
 
   private Vector<Double> deltaT = new Vector<Double>();
   private Vector<Double> positionX = new Vector<Double>();
@@ -228,6 +229,7 @@ public class PrairieReader extends FormatReader {
       positionZ.clear();
       channels.clear();
       zoom = null;
+      waitTime = null;
     }
   }
 
@@ -272,6 +274,10 @@ public class PrairieReader extends FormatReader {
 
       core[0].sizeT = getImageCount() / (getSizeZ() * getSizeC());
 
+      boolean minimumMetadata =
+        getMetadataOptions().getMetadataLevel() == MetadataLevel.MINIMUM;
+      MetadataStore store = makeFilterMetadata();
+
       if (checkSuffix(id, XML_SUFFIX)) {
         files = new String[f.size()];
         f.copyInto(files);
@@ -292,18 +298,13 @@ public class PrairieReader extends FormatReader {
         core[0].littleEndian = tiff.isLittleEndian();
         core[0].indexed = tiff.isIndexed();
         core[0].falseColor = false;
-
-        boolean minimumMetadata =
-          getMetadataOptions().getMetadataLevel() == MetadataLevel.MINIMUM;
-
-        MetadataStore store = makeFilterMetadata();
-        MetadataTools.populatePixels(store, this, !minimumMetadata);
-
         if (date != null) {
           date = DateTools.formatDate(date, "MM/dd/yyyy h:mm:ss a");
           if (date != null) store.setImageAcquiredDate(date, 0);
         }
         else MetadataTools.setDefaultCreationDate(store, id, 0);
+
+        MetadataTools.populatePixels(store, this, !minimumMetadata);
 
         if (!minimumMetadata) {
           // link Instrument and Image
@@ -365,6 +366,9 @@ public class PrairieReader extends FormatReader {
             store.setLaserPower(new Double(laserPower), 0, 0);
           }
         }
+      }
+      else if (checkSuffix(id, CFG_SUFFIX)) {
+        store.setPixelsTimeIncrement(waitTime, 0);
       }
 
       if (!readXML || !readCFG) {
@@ -509,6 +513,9 @@ public class PrairieReader extends FormatReader {
         else if (key.equals("bitDepth")) {
           core[0].bitsPerPixel = Integer.parseInt(value);
         }
+      }
+      else if (qName.equals("PVTSeriesElementWait")) {
+        waitTime = new Double(attributes.getValue("waitTime"));
       }
     }
   }
