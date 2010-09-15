@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.common.services;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
@@ -86,6 +87,14 @@ public class ServiceFactory {
       LOGGER.debug("Loaded properties from: {}", path);
     } catch (Throwable t) {
       throw new DependencyException(t);
+    }
+    finally {
+      try {
+        stream.close();
+      }
+      catch (IOException e) {
+        LOGGER.warn("Error closing properties file stream.", e);
+      }
     }
     Set<Entry<Object, Object>> entries = properties.entrySet();
     for (Entry<Object, Object> entry : entries) {
