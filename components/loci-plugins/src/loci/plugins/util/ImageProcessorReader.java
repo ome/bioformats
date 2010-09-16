@@ -94,28 +94,7 @@ public class ImageProcessorReader extends ReaderWrapper {
     throws FormatException, IOException
   {
     // read byte array
-    byte[] b = null;
-    boolean first = true;
-    while (true) {
-      // TODO: This is the wrong place to prompt for the LuraWave code.
-      // This logic should be moved to a higher, GUI-specific level.
-
-      // read LuraWave license code, if available
-      String code = LuraWave.initLicenseCode();
-      try {
-        b = openBytes(no, x, y, w, h);
-        break;
-      }
-      catch (FormatException exc) {
-        if (LuraWave.isLicenseCodeException(exc)) {
-          // prompt user for LuraWave license code
-          code = LuraWave.promptLicenseCode(code, first);
-          if (code == null) return null;
-          if (first) first = false;
-        }
-        else throw exc;
-      }
-    }
+    byte[] b = openBytes(no, x, y, w, h);
 
     int c = getRGBChannelCount();
     int type = getPixelType();
