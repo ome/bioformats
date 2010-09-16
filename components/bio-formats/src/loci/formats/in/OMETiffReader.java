@@ -621,7 +621,7 @@ public class OMETiffReader extends FormatReader {
     core = series.toArray(new CoreMetadata[series.size()]);
     info = planeInfo.toArray(new OMETiffPlane[0][0]);
 
-    MetadataTools.populatePixels(metadataStore, this);
+    MetadataTools.populatePixels(metadataStore, this, false, false);
   }
 
   // -- Helper methods --
