@@ -100,7 +100,7 @@ public class MIASReader extends FormatReader {
 
   /** Constructs a new MIAS reader. */
   public MIASReader() {
-    super("MIAS", new String[] {"tif", "tiff"});
+    super("MIAS", new String[] {"tif", "tiff", "txt"});
     suffixSufficient = false;
     domains = new String[] {FormatTools.HCS_DOMAIN};
     hasCompanionFiles = true;
@@ -119,6 +119,14 @@ public class MIASReader extends FormatReader {
 
     Location baseFile = new Location(filename).getAbsoluteFile();
     Location wellDir = baseFile.getParentFile();
+    String wellName = wellDir.getName();
+
+    if (checkSuffix(filename, "txt")) {
+      String name = baseFile.getName();
+      return wellName.equals("results") || wellName.equals("Batchresults") ||
+        name.equals("Nugenesistemplate.txt") || name.startsWith("mode");
+    }
+
     Location experiment = null;
     try {
       experiment = wellDir.getParentFile().getParentFile();
@@ -127,7 +135,6 @@ public class MIASReader extends FormatReader {
 
     if (experiment == null) return false;
 
-    String wellName = wellDir.getName();
     boolean validName =
       wellName.startsWith("Well") || wellName.equals("results") ||
       (wellName.length() == 1 && wellName.replaceAll("\\d", "").length() == 0);
@@ -232,7 +239,7 @@ public class MIASReader extends FormatReader {
     FormatTools.assertId(currentId, true, 1);
     Vector<String> files = new Vector<String>();
 
-    if (!noPixels) {
+    if (!noPixels && tiffs != null) {
       String[] f = new String[tiffs[getSeries()].length];
       System.arraycopy(tiffs[getSeries()], 0, f, 0, f.length);
       Arrays.sort(f);
@@ -285,6 +292,42 @@ public class MIASReader extends FormatReader {
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
+
+    if (checkSuffix(id, "txt")) {
+      // first need to find a relevant TIFF file
+
+      Location base = new Location(id).getAbsoluteFile();
+      Location plate = null;
+      if (base.getParentFile().getName().equals("Batchresults")) {
+        Location experiment = base.getParentFile().getParentFile();
+        String[] plates = experiment.list(true);
+        Arrays.sort(plates);
+        plate = new Location(experiment, plates[0]);
+      }
+      else {
+        plate = base.getParentFile();
+        if (plate.getName().equals("results")) plate = plate.getParentFile();
+      }
+
+      String[] list = plate.list(true);
+      for (String f : list) {
+        if (f.startsWith("Well")) {
+          Location well = new Location(plate, f);
+          String[] wellList = well.list(true);
+          for (String file : wellList) {
+            String path = new Location(well, file).getAbsolutePath();
+            if (isThisType(path) &&
+              checkSuffix(path, new String[] {"tif", "tiff"}))
+            {
+              initFile(path);
+              return;
+            }
+          }
+        }
+      }
+
+      throw new FormatException("Could not locate an appropriate TIFF file.");
+    }
 
     if (!isGroupFiles()) {
       tiffs = new String[][] {{id}};
