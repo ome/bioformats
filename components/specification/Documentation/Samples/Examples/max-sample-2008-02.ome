@@ -25,7 +25,7 @@
         <ca:CustomAttributes>
         </ca:CustomAttributes>
     </ome:Dataset>
-    <ome:Experiment Type="FRET TimeLapse FourDPlus" ID="Experiment:a">
+    <ome:Experiment Type="FRET" ID="Experiment:a">
         <ome:Description>
         </ome:Description>
         <ome:ExperimenterRef ID="Experimenter:a"/>
@@ -377,7 +377,7 @@
         <ca:CustomAttributes>
         </ca:CustomAttributes>
         <ome:ROI X0="0" Y0="0" Z0="0" T0="0" X1="0" Y1="0" Z1="0" T1="0" ID="ROI:a"/>
-        <ome:MicrobeamManipulation ID="MicrobeamManipulation:a" Type="Photoactivation OpticalTrapping Other">
+        <ome:MicrobeamManipulation ID="MicrobeamManipulation:a" Type="Photoactivation">
             <ome:ROIRef ID="ROI:a"/>
             <ome:ROIRef ID="ROI:a"/>
             <ome:ROIRef ID="ROI:a"/>
