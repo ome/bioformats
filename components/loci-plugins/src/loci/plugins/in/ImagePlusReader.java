@@ -154,15 +154,7 @@ public class ImagePlusReader implements StatusReporter {
   {
     final ImagePlus imp = new ImagePlus(title, stack);
 
-    // NB: Save individual planar LUTs as properties, for later access.
-    // This step is necessary because ImageStack.addSlice only extracts the
-    // pixels from the ImageProcessor, and does not preserve the ColorModel.
-    // Later, Colorizer can use the LUTs when wrapping into a CompositeImage.
-    for (int i=0; i<luts.size(); i++) {
-      final LUT lut = luts.get(i);
-      if (lut != null) imp.setProperty(PROP_LUT + i, lut);
-    }
-
+    saveLUTs(imp, luts);
     return imp;
   }
 
@@ -254,7 +246,7 @@ public class ImagePlusReader implements StatusReporter {
 
     // create image stack
     final ImageStack stack;
-    if (options.isVirtual()) stack = createVirtualStack(process, s);
+    if (options.isVirtual()) stack = createVirtualStack(process, s, luts);
     else stack = readPlanes(process, s, luts);
 
     notifyListeners(new StatusEvent(1, 1, "Creating image"));
@@ -272,6 +264,7 @@ public class ImagePlusReader implements StatusReporter {
       VirtualImagePlus vip = new VirtualImagePlus(title, stack);
       vip.setReader(reader);
       imp = vip;
+      saveLUTs(imp, luts);
     }
     else imp = createImage(title, stack, luts);
 
@@ -295,8 +288,8 @@ public class ImagePlusReader implements StatusReporter {
     return imp;
   }
 
-  private ImageStack createVirtualStack(ImportProcess process, int s)
-    throws FormatException, IOException
+  private ImageStack createVirtualStack(ImportProcess process, int s,
+    List<LUT> luts) throws FormatException, IOException
   {
     final ImporterOptions options = process.getOptions();
     final ImageProcessorReader reader = process.getReader();
@@ -315,6 +308,17 @@ public class ImagePlusReader implements StatusReporter {
         reader, meta, s, zCount, cCount, tCount);
       virtualStack.addSlice(label);
     }
+
+    if (luts != null) {
+      for (int c=0; c<cCount; c++) {
+        int index = reader.getIndex(0, c, 0);
+        ImageProcessor ip = reader.openProcessors(index)[0];
+        final ColorModel cm = ip.getColorModel();
+        final LUT lut = cm instanceof LUT ? (LUT) cm : null;
+        luts.add(lut);
+      }
+    }
+
     return virtualStack;
   }
 
@@ -588,6 +592,19 @@ public class ImagePlusReader implements StatusReporter {
       sb.append(imageName);
     }
     return sb.toString();
+  }
+
+  private static void saveLUTs(ImagePlus imp, List<LUT> luts) {
+    // NB: Save individual planar LUTs as properties, for later access.
+    // This step is necessary because ImageStack.addSlice only extracts the
+    // pixels from the ImageProcessor, and does not preserve the ColorModel.
+    // Later, Colorizer can use the LUTs when wrapping into a CompositeImage.
+    for (int i=0; i<luts.size(); i++) {
+      final LUT lut = luts.get(i);
+      if (lut != null) {
+        imp.setProperty(PROP_LUT + i, lut);
+      }
+    }
   }
 
 }
