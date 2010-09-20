@@ -333,6 +333,9 @@ public class ND2Handler extends DefaultHandler {
         fieldIndex = core[0].dimensionOrder.length();
         numSeries++;
       }
+      else if (v < numSeries && fieldIndex < core[0].dimensionOrder.length()) {
+        fieldIndex = core[0].dimensionOrder.length();
+      }
     }
     else if (qName.equals("uiCompCount")) {
       int v = Integer.parseInt(value);
