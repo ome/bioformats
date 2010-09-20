@@ -114,14 +114,12 @@ public class CellWorxReader extends FormatReader {
     throws FormatException, IOException
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
-    int planeSize = FormatTools.getPlaneSize(this);
-    int fieldSize = getImageCount() * planeSize;
     int fieldIndex = getSeries() % fieldCount;
 
     String file = getPNLFile(getSeries());
     DeltavisionReader pnl = new DeltavisionReader();
     pnl.setId(file);
-    pnl.openBytes(fieldIndex * fieldCount + no, buf, x, y, w, h);
+    pnl.openBytes(fieldIndex * getImageCount() + no, buf, x, y, w, h);
     pnl.close();
     return buf;
   }
