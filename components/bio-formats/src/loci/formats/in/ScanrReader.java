@@ -74,6 +74,8 @@ public class ScanrReader extends FormatReader {
   private Vector<String> channelNames = new Vector<String>();
   private Hashtable<String, Integer> wellLabels =
     new Hashtable<String, Integer>();
+  private Hashtable<Integer, Integer> wellNumbers =
+    new Hashtable<Integer, Integer>();
   private String plateName;
   private Double pixelSize;
 
@@ -172,6 +174,7 @@ public class ScanrReader extends FormatReader {
       wellRows = wellColumns = 0;
       metadataFiles.clear();
       wellLabels.clear();
+      wellNumbers.clear();
       wellCount = 0;
       pixelSize = null;
     }
@@ -298,25 +301,14 @@ public class ScanrReader extends FormatReader {
     wellColumns = uniqueColumns.size();
 
     if (wellRows * wellColumns != wellCount) {
-      if (wellCount <= 8) {
-        wellColumns = 2;
-        wellRows = 4;
-      }
-      else if (wellCount <= 96) {
-        wellColumns = 12;
-        wellRows = 8;
-      }
-      else if (wellCount <= 384) {
-        wellColumns = 24;
-        wellRows = 16;
-      }
+      adjustWellDimensions();
     }
 
     int nChannels = getSizeC() == 0 ? channelNames.size() : getSizeC();
     if (nChannels == 0) nChannels = 1;
     int nSlices = getSizeZ() == 0 ? 1 : getSizeZ();
     int nTimepoints = getSizeT();
-    int nWells = wellRows * wellColumns;
+    int nWells = wellCount;
     int nPos = fieldRows * fieldColumns;
     if (nPos == 0) nPos = 1;
 
@@ -340,7 +332,8 @@ public class ScanrReader extends FormatReader {
     String[] keys = wellLabels.keySet().toArray(new String[wellLabels.size()]);
     int realPosCount = 0;
     for (int well=0; well<nWells; well++) {
-      String wellPos = getBlock(well + 1, "W");
+      int wellIndex = wellNumbers.get(well);
+      String wellPos = getBlock(wellIndex, "W");
       int originalIndex = next;
 
       for (int pos=0; pos<nPos; pos++) {
@@ -386,9 +379,8 @@ public class ScanrReader extends FormatReader {
         }
       }
 
-      wellRows = uniqueRows.size();
-      wellColumns = uniqueColumns.size();
-      nWells = wellRows * wellColumns;
+      nWells = uniqueRows.size() * uniqueColumns.size();
+      adjustWellDimensions();
     }
     if (realPosCount < nPos) {
       nPos = realPosCount;
@@ -449,9 +441,10 @@ public class ScanrReader extends FormatReader {
 
       int field = i % nFields;
       int well = i / nFields;
+      int wellIndex = wellNumbers.get(well) - 1;
 
-      int wellRow = well / wellColumns;
-      int wellCol = well % wellColumns;
+      int wellRow = wellIndex / wellColumns;
+      int wellCol = wellIndex % wellColumns;
 
       store.setWellID(MetadataTools.createLSID("Well", 0, well), 0, well);
       store.setWellColumn(new NonNegativeInteger(wellCol), 0, well);
@@ -465,8 +458,8 @@ public class ScanrReader extends FormatReader {
       store.setWellSampleImageRef(imageID, 0, well, field);
       store.setImageID(imageID, i);
 
-      String name = "Well " + (well + 1) + ", Field " + (field +1) + " (Spot " +
-        (i + 1) + ")";
+      String name = "Well " + (wellIndex + 1) + ", Field " + (field + 1) +
+        " (Spot " + (i + 1) + ")";
       store.setImageName(name, i);
     }
 
@@ -525,7 +518,8 @@ public class ScanrReader extends FormatReader {
           core[0].sizeT = Integer.parseInt(value);
         }
         else if (key.equals("timeloop count")) {
-          core[0].sizeT = Integer.parseInt(value) + 1;
+          core[0].sizeT = Integer.parseInt(value);
+          if (getSizeT() == 0) core[0].sizeT = 1;
         }
         else if (key.equals("name")) {
           channelNames.add(value);
@@ -545,6 +539,7 @@ public class ScanrReader extends FormatReader {
         else if (key.equals("well selection table + cDNA")) {
           if (Character.isDigit(value.charAt(0))) {
             wellIndex = value;
+            wellNumbers.put(new Integer(wellCount), new Integer(value));
             wellCount++;
           }
           else {
@@ -571,6 +566,21 @@ public class ScanrReader extends FormatReader {
     String b = String.valueOf(index);
     while (b.length() < 5) b = "0" + b;
     return axis + b;
+  }
+
+  private void adjustWellDimensions() {
+    if (wellCount <= 8) {
+      wellColumns = 2;
+      wellRows = 4;
+    }
+    else if (wellCount <= 96) {
+      wellColumns = 12;
+      wellRows = 8;
+    }
+    else if (wellCount <= 384) {
+      wellColumns = 24;
+      wellRows = 16;
+    }
   }
 
 }
