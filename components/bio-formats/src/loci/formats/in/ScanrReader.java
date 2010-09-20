@@ -321,7 +321,9 @@ public class ScanrReader extends FormatReader {
       list = dir.list(true);
     }
     else dir = dataDir;
-    if (nTimepoints == 0) {
+    if (nTimepoints == 0 ||
+      list.length < nTimepoints * nChannels * nSlices * nWells * nPos)
+    {
       nTimepoints = list.length / (nChannels * nWells * nPos * nSlices);
       if (nTimepoints == 0) nTimepoints = 1;
     }
@@ -518,8 +520,7 @@ public class ScanrReader extends FormatReader {
           core[0].sizeT = Integer.parseInt(value);
         }
         else if (key.equals("timeloop count")) {
-          core[0].sizeT = Integer.parseInt(value);
-          if (getSizeT() == 0) core[0].sizeT = 1;
+          core[0].sizeT = Integer.parseInt(value) + 1;
         }
         else if (key.equals("name")) {
           channelNames.add(value);
