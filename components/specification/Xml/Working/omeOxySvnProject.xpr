@@ -104,17 +104,6 @@
                         <scenarioAssociation-array>
                             <scenarioAssociation>
                                 <field name="name">
-                                    <String xml:space="preserve">TEI P5(experimental) HTML</String>
-                                </field>
-                                <field name="type">
-                                    <String xml:space="preserve">XSL</String>
-                                </field>
-                                <field name="url">
-                                    <String xml:space="preserve">Markdown/custom-annotations/tmpl_custom_ann.html</String>
-                                </field>
-                            </scenarioAssociation>
-                            <scenarioAssociation>
-                                <field name="name">
                                     <String xml:space="preserve">2008-09 to 2009-09</String>
                                 </field>
                                 <field name="type">
@@ -122,6 +111,17 @@
                                 </field>
                                 <field name="url">
                                     <String xml:space="preserve">../Validator/Backend/samples/tiny2009-09-V1.ome</String>
+                                </field>
+                            </scenarioAssociation>
+                            <scenarioAssociation>
+                                <field name="name">
+                                    <String xml:space="preserve">TEI P5(experimental) HTML</String>
+                                </field>
+                                <field name="type">
+                                    <String xml:space="preserve">XSL</String>
+                                </field>
+                                <field name="url">
+                                    <String xml:space="preserve">Markdown/custom-annotations/tmpl_custom_ann.html</String>
                                 </field>
                             </scenarioAssociation>
                         </scenarioAssociation-array>
