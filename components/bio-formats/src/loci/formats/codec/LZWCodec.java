@@ -336,6 +336,7 @@ public class LZWCodec extends BaseCodec {
           int outLength = lengths[currCode];
           int i = currOutPos + outLength;
           int tablePos = currCode;
+          if (i > output.length) break;
           while (i > currOutPos) {
             output[--i] = newBytes[tablePos];
             tablePos = anotherCodes[tablePos];
