@@ -24,8 +24,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.StringTokenizer;
 
+import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
@@ -54,6 +57,9 @@ public class ImprovisionTiffReader extends BaseTiffReader {
   private int pixelSizeT;
   private float pixelSizeX, pixelSizeY, pixelSizeZ;
 
+  private String[] files;
+  private MinimalTiffReader[] readers;
+
   // -- Constructor --
 
   public ImprovisionTiffReader() {
@@ -79,7 +85,32 @@ public class ImprovisionTiffReader extends BaseTiffReader {
       cNames = null;
       pixelSizeT = 1;
       pixelSizeX = pixelSizeY = pixelSizeZ = 0;
+      if (readers != null) {
+        for (MinimalTiffReader reader : readers) {
+          if (reader != null) reader.close();
+        }
+      }
+      readers = null;
+      files = null;
     }
+  }
+
+  /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  public String[] getSeriesUsedFiles(boolean noPixels) {
+    FormatTools.assertId(currentId, true, 1);
+    return noPixels ? null : files;
+  }
+
+  /* @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int) */
+  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
+    throws FormatException, IOException
+  {
+    FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
+
+    int file = no % files.length;
+    int plane = no / files.length;
+
+    return readers[file].openBytes(plane, buf, x, y, w, h);
   }
 
   // -- Internal BaseTiffReader API methods --
@@ -133,6 +164,7 @@ public class ImprovisionTiffReader extends BaseTiffReader {
     if (getSizeZ() * getSizeC() * getSizeT() < getImageCount()) {
       core[0].sizeC *= getImageCount();
     }
+    else core[0].imageCount = getSizeZ() * getSizeT() * Integer.parseInt(tc);
 
     // parse each of the comments to determine axis ordering
 
@@ -140,6 +172,8 @@ public class ImprovisionTiffReader extends BaseTiffReader {
     int[][] coords = new int[ifds.size()][3];
 
     cNames = new String[getSizeC()];
+
+    boolean multipleFiles = false;
 
     for (int i=0; i<ifds.size(); i++) {
       comment = ifds.get(i).getComment();
@@ -171,8 +205,39 @@ public class ImprovisionTiffReader extends BaseTiffReader {
           int ndx = Integer.parseInt(value);
           if (cNames[ndx] == null) cNames[ndx] = channelName;
         }
+        else if (key.equals("MultiFileTIFF")) {
+          multipleFiles = value.equalsIgnoreCase("yes");
+        }
       }
     }
+
+    if (multipleFiles) {
+      // look for other TIFF files that belong to this dataset
+
+      String currentUUID = getUUID(currentId);
+
+      Location parent = new Location(currentId).getAbsoluteFile().getParentFile();
+      String[] list = parent.list(true);
+      Arrays.sort(list);
+      ArrayList<String> matchingFiles = new ArrayList<String>();
+      for (String f : list) {
+        String path = new Location(parent, f).getAbsolutePath();
+        if (isThisType(path) && getUUID(path).equals(currentUUID)) {
+          matchingFiles.add(path);
+        }
+      }
+
+      files = matchingFiles.toArray(new String[matchingFiles.size()]);
+    }
+    else {
+      files = new String[] {currentId};
+    }
+    readers = new MinimalTiffReader[files.length];
+    for (int i=0; i<readers.length; i++) {
+      readers[i] = new MinimalTiffReader();
+      readers[i].setId(files[i]);
+    }
+
     // determine average time per plane
 
     long sum = 0;
@@ -218,6 +283,25 @@ public class ImprovisionTiffReader extends BaseTiffReader {
     store.setDimensionsPhysicalSizeY(new Float(pixelSizeY), 0, 0);
     store.setDimensionsPhysicalSizeZ(new Float(pixelSizeZ), 0, 0);
     store.setDimensionsTimeIncrement(new Float(pixelSizeT / 1000000.0), 0, 0);
+  }
+
+  // -- Helper methods --
+
+  private String getUUID(String path) throws FormatException, IOException {
+    RandomAccessInputStream s = new RandomAccessInputStream(path);
+    TiffParser parser = new TiffParser(s);
+    String comment = parser.getComment();
+
+    comment = comment.replaceAll("\r\n", "\n");
+    comment = comment.replaceAll("\r", "\n");
+    String[] lines = comment.split("\n");
+    for (String line : lines) {
+      line = line.trim();
+      if (line.startsWith("SampleUUID=")) {
+        return line.substring(line.indexOf("=") + 1).trim();
+      }
+    }
+    return "";
   }
 
 }
