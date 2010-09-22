@@ -327,6 +327,7 @@ public class LZWCodec extends BaseCodec {
           if (currCode == EOI_CODE) break;
             // write string[curr_code] to output
             // -- but here we are sure that string consists of a single byte
+            if (currOutPos >= output.length - 1) break;
             output[currOutPos++] = newBytes[currCode];
             oldCode = currCode;
         }
@@ -355,12 +356,14 @@ public class LZWCodec extends BaseCodec {
           int outLength = lengths[oldCode];
           int i = currOutPos + outLength;
           int tablePos = oldCode;
+          if (i > output.length) break;
           while (i > currOutPos) {
             output[--i] = newBytes[tablePos];
             tablePos = anotherCodes[tablePos];
           }
           currOutPos += outLength;
           // 2) Write firstByte(string[old_code]) to output
+          if (currOutPos >= output.length - 1) break;
           output[currOutPos++] = output[i];
           // 3) Add string[old_code]+firstByte(string[old_code]) to the table
           anotherCodes[nextCode] = oldCode;
