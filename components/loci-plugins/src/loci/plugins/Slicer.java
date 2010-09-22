@@ -109,8 +109,11 @@ public class Slicer implements PlugInFilter {
         sliceC ? sizeC : 1, sliceT ? sizeT : 1, newStacks.length, i);
 
       if (imp.isComposite()) {
-        LUT lut = ((CompositeImage) imp).getChannelLut(zct[1] + 1);
-        newStacks[i].setColorModel(lut);
+        CompositeImage composite = (CompositeImage) imp;
+        if (composite.getMode() == CompositeImage.COLOR) {
+          LUT lut = composite.getChannelLut(zct[1] + 1);
+          newStacks[i].setColorModel(lut);
+        }
       }
 
       String title = imp.getTitle();
