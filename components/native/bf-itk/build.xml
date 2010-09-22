@@ -235,4 +235,6 @@ or unsetting the ITK_AUTOLOAD_PATH variable respectively.
 </echo>
   </target>
 
+  <target name="init"/>
+
 </project>
