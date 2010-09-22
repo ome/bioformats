@@ -78,7 +78,7 @@ public class UpgradeDialog extends ImporterDialog {
     }
 
     if (options.doUpgradeCheck()) {
-      BF.status(false, "Checking for new version...");
+      BF.status(false, "Checking for new stable version...");
       if (Updater.newVersionAvailable()) {
         boolean doUpgrade = IJ.showMessageWithCancel("",
           "A new stable version of Bio-Formats is available.\n" +
