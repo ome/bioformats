@@ -41,7 +41,7 @@ your combined work must be distributed under the terms of the GPL.
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by curtis via JaceHeaderAutogen on Jul 2, 2010 5:09:24 PM CDT
+ * Created by hinerm via JaceHeaderAutogen on Sep 22, 2010 1:03:43 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -168,12 +168,15 @@ your combined work must be distributed under the terms of the GPL.
 #include "jace/proxy/loci/formats/in/BioRadGelReader.h"
 #include "jace/proxy/loci/formats/in/BioRadReader.h"
 #include "jace/proxy/loci/formats/in/BurleighReader.h"
+#include "jace/proxy/loci/formats/in/CellWorxReader.h"
 #include "jace/proxy/loci/formats/in/CellomicsReader.h"
 #include "jace/proxy/loci/formats/in/DefaultMetadataOptions.h"
 #include "jace/proxy/loci/formats/in/DeltavisionReader.h"
 #include "jace/proxy/loci/formats/in/DicomReader.h"
 #include "jace/proxy/loci/formats/in/EPSReader.h"
+#include "jace/proxy/loci/formats/in/Ecat7Reader.h"
 #include "jace/proxy/loci/formats/in/FEIReader.h"
+#include "jace/proxy/loci/formats/in/FEITiffReader.h"
 #include "jace/proxy/loci/formats/in/FV1000Reader.h"
 #include "jace/proxy/loci/formats/in/FakeReader.h"
 #include "jace/proxy/loci/formats/in/FitsReader.h"
@@ -223,11 +226,13 @@ your combined work must be distributed under the terms of the GPL.
 #include "jace/proxy/loci/formats/in/MinimalTiffReader.h"
 #include "jace/proxy/loci/formats/in/MolecularImagingReader.h"
 #include "jace/proxy/loci/formats/in/NAFReader.h"
+#include "jace/proxy/loci/formats/in/ND2Handler.h"
 #include "jace/proxy/loci/formats/in/ND2Reader.h"
 #include "jace/proxy/loci/formats/in/NRRDReader.h"
 #include "jace/proxy/loci/formats/in/NativeND2Reader.h"
 #include "jace/proxy/loci/formats/in/NativeQTReader.h"
 #include "jace/proxy/loci/formats/in/NiftiReader.h"
+#include "jace/proxy/loci/formats/in/NikonElementsTiffReader.h"
 #include "jace/proxy/loci/formats/in/NikonReader.h"
 #include "jace/proxy/loci/formats/in/NikonTiffReader.h"
 #include "jace/proxy/loci/formats/in/OMETiffReader.h"
@@ -237,6 +242,7 @@ your combined work must be distributed under the terms of the GPL.
 #include "jace/proxy/loci/formats/in/OxfordInstrumentsReader.h"
 #include "jace/proxy/loci/formats/in/PCIReader.h"
 #include "jace/proxy/loci/formats/in/PCXReader.h"
+#include "jace/proxy/loci/formats/in/PDSReader.h"
 #include "jace/proxy/loci/formats/in/PGMReader.h"
 #include "jace/proxy/loci/formats/in/PSDReader.h"
 #include "jace/proxy/loci/formats/in/PerkinElmerReader.h"
@@ -254,6 +260,7 @@ your combined work must be distributed under the terms of the GPL.
 #include "jace/proxy/loci/formats/in/SVSReader.h"
 #include "jace/proxy/loci/formats/in/ScanrReader.h"
 #include "jace/proxy/loci/formats/in/SeikoReader.h"
+#include "jace/proxy/loci/formats/in/SimplePCITiffReader.h"
 #include "jace/proxy/loci/formats/in/SlidebookReader.h"
 #include "jace/proxy/loci/formats/in/TCSReader.h"
 #include "jace/proxy/loci/formats/in/TargaReader.h"
@@ -266,6 +273,7 @@ your combined work must be distributed under the terms of the GPL.
 #include "jace/proxy/loci/formats/in/UBMReader.h"
 #include "jace/proxy/loci/formats/in/UnisokuReader.h"
 #include "jace/proxy/loci/formats/in/VGSAMReader.h"
+#include "jace/proxy/loci/formats/in/VarianFDFReader.h"
 #include "jace/proxy/loci/formats/in/VisitechReader.h"
 #include "jace/proxy/loci/formats/in/WATOPReader.h"
 #include "jace/proxy/loci/formats/in/ZeissLSMReader.h"
@@ -313,7 +321,6 @@ your combined work must be distributed under the terms of the GPL.
 #include "jace/proxy/loci/formats/services/MDBServiceImpl.h"
 #include "jace/proxy/loci/formats/services/NetCDFService.h"
 #include "jace/proxy/loci/formats/services/NetCDFServiceImpl.h"
-#include "jace/proxy/loci/formats/services/OMEReaderWriterService.h"
 #include "jace/proxy/loci/formats/services/OMEXMLService.h"
 #include "jace/proxy/loci/formats/services/OMEXMLServiceImpl.h"
 #include "jace/proxy/loci/formats/services/POIService.h"
@@ -333,6 +340,7 @@ your combined work must be distributed under the terms of the GPL.
 //using namespace jace::proxy::loci::formats::tiff;
 
 #include "jace/proxy/loci/formats/tools/AmiraParameters.h"
+#include "jace/proxy/loci/formats/tools/AsciiImage.h"
 #include "jace/proxy/loci/formats/tools/CacheConsole.h"
 #include "jace/proxy/loci/formats/tools/EditTiffG.h"
 #include "jace/proxy/loci/formats/tools/ImageConverter.h"
