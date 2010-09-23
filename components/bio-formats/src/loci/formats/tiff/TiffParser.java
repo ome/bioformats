@@ -87,7 +87,12 @@ public class TiffParser {
   public TiffParser(RandomAccessInputStream in) {
     this.in = in;
     doCaching = true;
-    isValidHeader();
+    try {
+      long fp = in.getFilePointer();
+      checkHeader();
+      in.seek(fp);
+    }
+    catch (IOException e) { }
   }
 
   // -- TiffParser methods --
