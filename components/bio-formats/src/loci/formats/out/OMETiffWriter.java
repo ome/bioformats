@@ -97,7 +97,7 @@ public class OMETiffWriter extends TiffWriter {
         setupServiceAndMetadata();
 
         // remove any BinData elements from the OME-XML
-        removeBinData(omeMeta);
+        service.removeBinData(omeMeta);
 
         for (int series=0; series<omeMeta.getImageCount(); series++) {
           populateImage(omeMeta, series);
@@ -258,19 +258,6 @@ public class OMETiffWriter extends TiffWriter {
       if (out != null) out.close();
       if (in != null) in.close();
     }
-  }
-
-  private void removeBinData(OMEXMLMetadata omeMeta) {
-    OME root = (OME) omeMeta.getRoot();
-    List<Image> images = root.copyImageList();
-    for (Image img : images) {
-      Pixels pix = img.getPixels();
-      List<BinData> binData = pix.copyBinDataList();
-      for (BinData bin : binData) {
-        pix.removeBinData(bin);
-      }
-    }
-    omeMeta.setRoot(root);
   }
 
   private void populateTiffData(OMEXMLMetadata omeMeta, int[] zct,

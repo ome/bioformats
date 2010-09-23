@@ -44,6 +44,7 @@ import loci.formats.IFormatWriter;
 import loci.formats.ImageReader;
 import loci.formats.ImageWriter;
 import loci.formats.MissingLibraryException;
+import loci.formats.ReaderWrapper;
 import loci.formats.in.OMETiffReader;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
@@ -211,6 +212,21 @@ public final class ImageConverter {
     reader.setId(in);
 
     MetadataStore store = reader.getMetadataStore();
+    IFormatReader base = reader; 
+
+    if (base instanceof ReaderWrapper) {
+      base = ((ReaderWrapper) base).unwrap();
+    }
+    if (base instanceof FileStitcher) {
+      base = ((FileStitcher) base).getReader();
+    }
+    if (base instanceof ImageReader) {
+      base = ((ImageReader) base).getReader();
+    }
+    if (base instanceof OMETiffReader) {
+      store = ((OMETiffReader) base).getMetadataStoreForConversion();
+    }
+
     if (store instanceof MetadataRetrieve) {
       writer.setMetadataRetrieve((MetadataRetrieve) store);
     }

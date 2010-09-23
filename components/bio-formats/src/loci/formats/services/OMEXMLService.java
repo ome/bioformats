@@ -183,6 +183,17 @@ public interface OMEXMLService extends Service {
    */
   public void convertMetadata(MetadataRetrieve src, MetadataStore dest);
 
+  /**
+   * Remove all of the BinData elements from the given OME-XML metadata object.
+   */
+  public void removeBinData(OMEXMLMetadata omexmlMeta);
+
+  /**
+   * Insert a MetadataOnly element under the Image specified by 'index' in the
+   * given OME-XML metadata object.
+   */
+  public void addMetadataOnly(OMEXMLMetadata omexmlMeta, int image);
+
   // -- Utility methods - casting --
 
   /**
