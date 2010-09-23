@@ -60,6 +60,9 @@ public class TiffWriter extends FormatWriter {
   /** Whether or not the output file is a BigTIFF file. */
   protected boolean isBigTiff;
 
+  /** Whether or not we are writing planes sequentially. */
+  protected boolean sequential;
+
   /** The TiffSaver that will do most of the writing. */
   protected TiffSaver tiffSaver;
 
@@ -115,6 +118,7 @@ public class TiffWriter extends FormatWriter {
       false : !bigEndian.booleanValue();
 
     tiffSaver = new TiffSaver(out);
+    tiffSaver.setWritingSequentially(sequential);
     tiffSaver.setLittleEndian(littleEndian);
     tiffSaver.setBigTiff(isBigTiff);
 
@@ -179,9 +183,19 @@ public class TiffWriter extends FormatWriter {
     out.seek(out.length());
     ifd.putIFDValue(IFD.PLANAR_CONFIGURATION, interleaved ? 1 : 2);
     RandomAccessInputStream in = new RandomAccessInputStream(currentId);
+    in.order(littleEndian);
     tiffSaver.setInputStream(in);
-    tiffSaver.writeImage(buf, ifd, no, type, x, y, w, h,
-      no == getPlaneCount() - 1);
+
+    int index = no;
+    int realSeries = getSeries();
+    for (int i=0; i<realSeries; i++) {
+      setSeries(i);
+      index += getPlaneCount();
+    }
+    setSeries(realSeries);
+
+    tiffSaver.writeImage(buf, ifd, index, type, x, y, w, h,
+      no == getPlaneCount() - 1 && getSeries() == retrieve.getImageCount() - 1);
     tiffSaver.setInputStream(null);
     in.close();
   }
@@ -235,6 +249,15 @@ public class TiffWriter extends FormatWriter {
   public void setBigTiff(boolean bigTiff) {
     FormatTools.assertId(currentId, false, 1);
     isBigTiff = bigTiff;
+  }
+
+  /**
+   * Sets whether or not we know that planes will be written sequentially.
+   * If planes are written sequentially and this flag is set, then performance
+   * will be slightly improved.
+   */
+  public void setWriteSequentially(boolean sequential) {
+    this.sequential = sequential;
   }
 
 }

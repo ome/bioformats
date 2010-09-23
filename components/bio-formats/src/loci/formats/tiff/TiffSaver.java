@@ -67,6 +67,7 @@ public class TiffSaver {
 
   /** Whether or not to write BigTIFF data. */
   private boolean bigTiff = false;
+  private boolean sequentialWrite = false;
 
   // -- Constructors --
 
@@ -84,6 +85,15 @@ public class TiffSaver {
   }
 
   // -- TiffSaver methods --
+
+  /**
+   * Sets whether or not we know that the planes will be written sequentially.
+   * If we are writing planes sequentially and set this flag, then performance
+   * is slightly improved.
+   */
+  public void setWritingSequentially(boolean sequential) {
+    sequentialWrite = sequential;
+  }
 
   /** Sets the input stream. */
   public void setInputStream(RandomAccessInputStream in) {
@@ -249,11 +259,13 @@ public class TiffSaver {
       strips[strip] = compression.compress(strips[strip], options);
     }
 
-    TiffParser parser = new TiffParser(in);
-    long[] ifdOffsets = parser.getIFDOffsets();
-    if (no < ifdOffsets.length) {
-      out.seek(ifdOffsets[no]);
-      ifd = parser.getIFD(ifdOffsets[no]);
+    if (!sequentialWrite) {
+      TiffParser parser = new TiffParser(in);
+      long[] ifdOffsets = parser.getIFDOffsets();
+      if (no < ifdOffsets.length) {
+        out.seek(ifdOffsets[no]);
+        ifd = parser.getIFD(ifdOffsets[no]);
+      }
     }
 
     // record strip byte counts and offsets
@@ -322,6 +334,7 @@ public class TiffSaver {
       Object value = ifd.get(key);
       writeIFDValue(extraStream, ifdBytes + fp, key.intValue(), value);
     }
+    if (bigTiff) out.seek(out.getFilePointer() - 8);
     writeIntValue(out, nextOffset);
     out.write(extra.getBytes(), 0, (int) extra.length());
   }

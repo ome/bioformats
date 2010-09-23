@@ -87,6 +87,7 @@ public class TiffParser {
   public TiffParser(RandomAccessInputStream in) {
     this.in = in;
     doCaching = true;
+    isValidHeader();
   }
 
   // -- TiffParser methods --
