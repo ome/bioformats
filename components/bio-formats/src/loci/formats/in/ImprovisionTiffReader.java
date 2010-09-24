@@ -99,13 +99,17 @@ public class ImprovisionTiffReader extends BaseTiffReader {
     return noPixels ? null : files;
   }
 
-  /* @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int) */
+  /**
+   * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
+   */ 
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    int file = no % files.length;
+    int[] zct = getZCTCoords(no);
+    int file = FormatTools.getIndex("XYZCT", getSizeZ(), getEffectiveSizeC(),
+      getSizeT(), getImageCount(), zct[0], zct[1], zct[2]) % files.length;
     int plane = no / files.length;
 
     return readers[file].openBytes(plane, buf, x, y, w, h);
@@ -215,7 +219,8 @@ public class ImprovisionTiffReader extends BaseTiffReader {
 
       String currentUUID = getUUID(currentId);
 
-      Location parent = new Location(currentId).getAbsoluteFile().getParentFile();
+      Location parent =
+        new Location(currentId).getAbsoluteFile().getParentFile();
       String[] list = parent.list(true);
       Arrays.sort(list);
       ArrayList<String> matchingFiles = new ArrayList<String>();
@@ -251,6 +256,7 @@ public class ImprovisionTiffReader extends BaseTiffReader {
     // determine dimension order
 
     core[0].dimensionOrder = "XY";
+    if (isRGB()) core[0].dimensionOrder += "C";
     for (int i=1; i<coords.length; i++) {
       int zDiff = coords[i][0] - coords[i - 1][0];
       int cDiff = coords[i][1] - coords[i - 1][1];
