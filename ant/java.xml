@@ -75,7 +75,7 @@ Type "ant -p" for a list of targets.
       <then>
         <testng haltonfailure="true" groups="all" testname="${component.name}">
           <classpath>
-            <pathelement path="${component.classpath}"/>
+            <pathelement path="${component.runtime-cp}"/>
             <pathelement location="${test-classes.dir}"/>
             <pathelement location="${classes.dir}"/>
           </classpath>
