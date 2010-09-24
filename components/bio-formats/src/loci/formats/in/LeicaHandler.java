@@ -511,7 +511,10 @@ public class LeicaHandler extends DefaultHandler {
           store.setDetectorType(DetectorType.CCD, numDatasets, 0);
         }
         else if (id.endsWith("WaveLength")) {
-          channel.exWave = new PositiveInteger(new Integer(value));
+          Integer exWave = new Integer(value);
+          if (exWave > 0) {
+            channel.exWave = new PositiveInteger(exWave);
+          }
         }
         // NB: "UesrDefName" is not a typo.
         else if (id.endsWith("UesrDefName") && !value.equals("None")) {
