@@ -207,7 +207,7 @@ public class TwoDPane extends JPanel
       }
     }
     final DataReferenceImpl curveRef = new DataReferenceImpl("curve");
-    RealTupleType xy = new RealTupleType(types.xType, types.yType);
+    //RealTupleType xy = new RealTupleType(types.xType, types.yType);
     UnionSet dummyCurve = new UnionSet(new Gridded2DSet[] {
       new Gridded2DSet(types.xy, new float[][] {{0}, {0}}, 1)
     });

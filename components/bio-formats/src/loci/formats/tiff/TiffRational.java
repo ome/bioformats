@@ -98,8 +98,9 @@ public class TiffRational extends Number implements Comparable<TiffRational> {
   // -- Object API methods --
 
   /** Indicates whether some other object is "equal to" this one. */
-  public boolean equals(TiffRational o) {
-    return o != null && compareTo(o) == 0;
+  public boolean equals(Object o) {
+    return o != null && o instanceof TiffRational &&
+      compareTo((TiffRational) o) == 0;
   }
 
   /** Reasonable hash value for use with hashtables. */
