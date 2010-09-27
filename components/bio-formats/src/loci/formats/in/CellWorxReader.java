@@ -240,6 +240,8 @@ public class CellWorxReader extends FormatReader {
 
     plateLogFile = plateName + "scan.log";
 
+    String serialNumber = null;
+
     if (new Location(plateLogFile).exists()) {
       String[] f = DataTools.readFile(plateLogFile).split("\n");
       for (String line : f) {
@@ -248,6 +250,9 @@ public class CellWorxReader extends FormatReader {
           file = file.substring(file.lastIndexOf("/") + 1).trim();
           String parent = new Location(id).getAbsoluteFile().getParent();
           zMapFile = new Location(parent, file).getAbsolutePath();
+        }
+        else if (line.trim().startsWith("Scanner SN")) {
+          serialNumber = line.substring(line.indexOf(":") + 1).trim();
         }
       }
     }
@@ -315,6 +320,10 @@ public class CellWorxReader extends FormatReader {
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
+      if (serialNumber != null) {
+        store.setMicroscopeSerialNumber(serialNumber, 0);
+      }
+
       for (int well=0; well<wellCount; well++) {
         parseWellLogFile(well, store);
       }
@@ -436,7 +445,8 @@ public class CellWorxReader extends FormatReader {
             for (int field=0; field<fieldCount; field++) {
               store.setImageInstrumentRef(instrumentID, seriesIndex + field);
               store.setDetectorSettingsGain(gain, seriesIndex + field, index);
-              store.setDetectorSettingsID(detectorID, seriesIndex + field, index);
+              store.setDetectorSettingsID(detectorID,
+                seriesIndex + field, index);
             }
           }
           else if (token.startsWith("EX")) {
