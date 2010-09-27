@@ -152,7 +152,7 @@ public class LeicaHandler extends DefaultHandler {
       }
 
       if (coreMeta.sizeX == 0 && coreMeta.sizeY == 0) {
-        numDatasets--;
+        if (numDatasets > 0) numDatasets--;
       }
       else {
         if (coreMeta.sizeX == 0) coreMeta.sizeX = 1;
@@ -231,16 +231,18 @@ public class LeicaHandler extends DefaultHandler {
       multiBands.clear();
       nextROI = 0;
 
-      int nChannels = core.get(numDatasets).rgb ? 1 : numChannels;
+      if (numDatasets >= 0) {
+        int nChannels = core.get(numDatasets).rgb ? 1 : numChannels;
 
-      for (int c=0; c<detectorIndices.size(); c++) {
-        int index = detectorIndices.get(c).intValue();
-        if (c >= nChannels || index >= nChannels || index >= 0) break;
-        String id = MetadataTools.createLSID("Detector", numDatasets, index);
-        store.setDetectorSettingsID(id, numDatasets, index);
-      }
-      for (int c=0; c<nChannels; c++) {
-        store.setChannelPinholeSize(pinhole, numDatasets, c);
+        for (int c=0; c<detectorIndices.size(); c++) {
+          int index = detectorIndices.get(c).intValue();
+          if (c >= nChannels || index >= nChannels || index >= 0) break;
+          String id = MetadataTools.createLSID("Detector", numDatasets, index);
+          store.setDetectorSettingsID(id, numDatasets, index);
+        }
+        for (int c=0; c<nChannels; c++) {
+          store.setChannelPinholeSize(pinhole, numDatasets, c);
+        }
       }
     }
     else if (qName.equals("Image")) {
