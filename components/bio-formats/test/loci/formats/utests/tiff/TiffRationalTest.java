@@ -43,7 +43,7 @@ public class TiffRationalTest {
     TiffRational a = new TiffRational(1, 4);
     TiffRational b = new TiffRational(1, 4);
     assertTrue(a.equals(b));
-    assertTrue(!(a.equals((Object) b)));
+    assertTrue(a.equals((Object) b));
     assertEquals(0, a.compareTo(b));
   }
   
