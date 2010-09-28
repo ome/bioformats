@@ -1,5 +1,5 @@
 //
-// ValidationErrorHandler.java
+// ParserErrorHandler.java
 //
 
 /*
@@ -27,37 +27,26 @@ import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXParseException;
 
 /**
- * Used by validateXML to handle XML validation errors.
+ * Used by various XMLTools methods to handle XML parsing errors.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/common/src/loci/common/xml/ValidationErrorHandler.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/common/src/loci/common/xml/ValidationErrorHandler.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/common/src/loci/common/xml/ParserErrorHandler.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/common/src/loci/common/xml/ParserErrorHandler.java">SVN</a></dd></dl>
  *
- * @author Curtis Rueden ctrueden at wisc.edu
- * @author Chris Allan callan at blackcat.ca
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
-public class ValidationErrorHandler implements ErrorHandler {
-
-  private int errors = 0;
-
-  public boolean ok() { return errors == 0; }
-
-  public int getErrorCount() { return errors; }
+public class ParserErrorHandler implements ErrorHandler {
 
   public void error(SAXParseException e) {
-    XMLTools.LOGGER.error(e.getMessage());
-    errors++;
+    XMLTools.LOGGER.debug(e.getMessage());
   }
 
   public void fatalError(SAXParseException e) {
-    XMLTools.LOGGER.error(e.getMessage());
-    errors++;
+    XMLTools.LOGGER.debug(e.getMessage());
   }
 
   public void warning(SAXParseException e) {
-    XMLTools.LOGGER.warn(e.getMessage());
-    errors++;
+    XMLTools.LOGGER.debug(e.getMessage());
   }
 
 }
