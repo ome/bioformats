@@ -63,8 +63,8 @@ import visad.util.VisADSlider;
  * An application for weighted spectral mapping.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/legacy/multi-lut/src/loci/apps/MultiLUT.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/legacy/multi-lut/src/loci/apps/MultiLUT.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/legacy/multi-lut/src/loci/apps/MultiLUT.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/legacy/multi-lut/src/loci/apps/MultiLUT.java">SVN</a></dd></dl>
  */
 public class MultiLUT extends Object implements ActionListener {
 

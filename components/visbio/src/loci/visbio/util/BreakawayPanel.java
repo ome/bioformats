@@ -41,8 +41,8 @@ import javax.swing.JScrollPane;
  * its parent container it borders, or whether it floats in a separate window.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/visbio/src/loci/visbio/util/BreakawayPanel.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/visbio/src/loci/visbio/util/BreakawayPanel.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/visbio/src/loci/visbio/util/BreakawayPanel.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/visbio/src/loci/visbio/util/BreakawayPanel.java">SVN</a></dd></dl>
  */
 public class BreakawayPanel extends JPanel implements ActionListener {
 

@@ -38,8 +38,8 @@ import loci.formats.meta.MetadataRetrieve;
  * Abstract superclass of all biological file format writers.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/FormatWriter.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/FormatWriter.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/FormatWriter.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/FormatWriter.java">SVN</a></dd></dl>
  */
 public abstract class FormatWriter extends FormatHandler
   implements IFormatWriter
@@ -107,8 +107,8 @@ public abstract class FormatWriter extends FormatHandler
   /* @see IFormatWriter#saveBytes(int, byte[]) */
   public void saveBytes(int no, byte[] buf) throws FormatException, IOException
   {
-    int width = metadataRetrieve.getPixelsSizeX(series).getValue();
-    int height = metadataRetrieve.getPixelsSizeY(series).getValue();
+    int width = metadataRetrieve.getPixelsSizeX(getSeries()).getValue();
+    int height = metadataRetrieve.getPixelsSizeY(getSeries()).getValue();
     saveBytes(no, buf, 0, 0, width, height);
   }
 
@@ -116,8 +116,8 @@ public abstract class FormatWriter extends FormatHandler
   public void savePlane(int no, Object plane)
     throws FormatException, IOException
   {
-    int width = metadataRetrieve.getPixelsSizeX(series).getValue();
-    int height = metadataRetrieve.getPixelsSizeY(series).getValue();
+    int width = metadataRetrieve.getPixelsSizeX(getSeries()).getValue();
+    int height = metadataRetrieve.getPixelsSizeY(getSeries()).getValue();
     savePlane(no, plane, 0, 0, width, height);
   }
 

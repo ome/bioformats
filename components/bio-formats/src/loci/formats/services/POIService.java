@@ -35,8 +35,8 @@ import loci.common.services.Service;
  * LOCI's fork of Apache POI.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/services/POIService.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-format/src/loci/formats/services/POIService.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/services/POIService.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/bio-format/src/loci/formats/services/POIService.java">SVN</a></dd></dl>
  */
 public interface POIService extends Service {
 

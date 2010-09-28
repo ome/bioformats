@@ -20,7 +20,8 @@ Type "ant -p" for a list of targets.
   <!-- Main build targets -->
 
   <target name="compile" depends="copy-source" description="compile classes">
-    <javac debug="true" deprecation="${component.deprecation}"
+    <javac debug="true" includeantruntime="false"
+      deprecation="${component.deprecation}"
       source="${component.java-version}"
       target="${component.java-version}"
       srcdir="${dest.dir}" destdir="${classes.dir}"
@@ -30,8 +31,10 @@ Type "ant -p" for a list of targets.
     </javac>
   </target>
 
-  <target name="compile-tests" depends="compile, copy-test-source" description="compile test classes" if="doTests">
-    <javac debug="true" deprecation="${component.deprecation}"
+  <target name="compile-tests" depends="compile, copy-test-source"
+    description="compile test classes" if="doTests">
+    <javac debug="true" includeantruntime="false"
+      deprecation="${component.deprecation}"
       source="${component.java-version}"
       target="${component.java-version}"
       srcdir="${test.dir}" destdir="${test-classes.dir}"
@@ -44,12 +47,43 @@ Type "ant -p" for a list of targets.
       classpath="${classes.dir}:${component.runtime-cp}"/>
   </target>
 
-  <target name="test" depends="jar, compile-tests" description="run tests" if="doTests">
-    <testng classpath="${test-classes.dir}:${classes.dir}:${component.classpath}"
-      groups="all" testname="${component.name}">
-      <xmlfileset file="${testng.xml}"/>
-      <jvmarg value="-mx${testng.memory}"/>
-    </testng>
+  <target name="test" depends="jar, compile-tests"
+    description="run tests" if="doTests">
+    <!-- run JUnit tests -->
+    <if>
+      <equals arg1="${component.junit}" arg2="true"/>
+      <then>
+        <junit haltonfailure="true">
+          <classpath>
+            <pathelement location="${artifact.dir}/junit-4.8.2.jar"/>
+            <pathelement location="${test-classes.dir}"/>
+            <pathelement location="${classes.dir}"/>
+            <pathelement path="${component.runtime-cp}"/>
+          </classpath>
+          <formatter type="brief" usefile="false"/>
+          <batchtest>
+            <fileset dir="${test-classes.dir}">
+              <include name="**/*Test.class"/>
+            </fileset>
+          </batchtest>
+        </junit>
+      </then>
+    </if>
+    <!-- run TestNG tests -->
+    <if>
+      <isset property="testng.xml"/>
+      <then>
+        <testng haltonfailure="true" groups="all" testname="${component.name}">
+          <classpath>
+            <pathelement path="${component.runtime-cp}"/>
+            <pathelement location="${test-classes.dir}"/>
+            <pathelement location="${classes.dir}"/>
+          </classpath>
+          <xmlfileset file="${testng.xml}"/>
+          <jvmarg value="-mx${testng.memory}"/>
+        </testng>
+      </then>
+    </if>
   </target>
 
   <target name="findbugs" depends="jar"
@@ -117,7 +151,8 @@ your FindBugs installation's lib directory. E.g.:
     <delete>
       <fileset dir="${utils.dir}" includes="*.class"/>
     </delete>
-    <javac debug="true" deprecation="true" source="1.5" target="1.5"
+    <javac debug="true" includeantruntime="false"
+      deprecation="true" source="1.5" target="1.5"
       srcdir="${utils.dir}" includes="*.java"
       classpath="${artifact.dir}/${component.jar}">
       <!--<compilerarg value="-Xlint:unchecked"/>-->

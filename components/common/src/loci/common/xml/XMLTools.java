@@ -73,8 +73,8 @@ import org.xml.sax.helpers.DefaultHandler;
  * A utility class for working with XML.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/common/src/loci/common/xml/XMLTools.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/common/src/loci/common/xml/XMLTools.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/common/src/loci/common/xml/XMLTools.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/common/src/loci/common/xml/XMLTools.java">SVN</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Chris Allan callan at blackcat.ca
@@ -149,13 +149,17 @@ public final class XMLTools {
 
   /** Remove invalid characters from an XML string. */
   public static String sanitizeXML(String s) {
+    final char[] c = s.toCharArray();
     for (int i=0; i<s.length(); i++) {
-      char c = s.charAt(i);
-      if (Character.isISOControl(c) || !Character.isDefined(c) || c > '~') {
-        s = s.replace(c, ' ');
+      if (Character.isISOControl(c[i]) ||
+        !Character.isDefined(c[i]) || c[i] > '~')
+      {
+        c[i] = ' ';
       }
+      // eliminate invalid &# sequences
+      if (i > 0 && c[i - 1] == '&' && c[i] == '#') c[i - 1] = ' ';
     }
-    return s.replaceAll("&#", "");
+    return new String(c);
   }
 
   /** Indents XML to be more readable. */

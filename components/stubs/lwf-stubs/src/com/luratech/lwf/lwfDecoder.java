@@ -40,8 +40,8 @@ import java.io.InputStream;
  * NOTE: This class contains <b>NO</b> real implementation.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/stubs/lwf-stubs/src/com/luratech/lwf/lwfDecoder.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/stubs/lwf-stubs/src/com/luratech/lwf/lwfDecoder.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/stubs/lwf-stubs/src/com/luratech/lwf/lwfDecoder.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/stubs/lwf-stubs/src/com/luratech/lwf/lwfDecoder.java">SVN</a></dd></dl>
  */
 public class lwfDecoder {
 

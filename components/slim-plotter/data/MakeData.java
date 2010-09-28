@@ -29,8 +29,8 @@ import java.util.Random;
  * Utility for synthesizing test data for use with curve fitting algorithms.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/slim-plotter/data/MakeData.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/slim-plotter/data/MakeData.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/slim-plotter/data/MakeData.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/slim-plotter/data/MakeData.java">SVN</a></dd></dl>
  *
  * @author Eric Kjellman egkjellman at wisc.edu
  */

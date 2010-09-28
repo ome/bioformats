@@ -59,8 +59,8 @@ import org.slf4j.LoggerFactory;
  * package, and optional ome-xml.jar library, to be present at runtime.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/MetadataTools.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/MetadataTools.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/MetadataTools.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/MetadataTools.java">SVN</a></dd></dl>
  */
 public final class MetadataTools {
 
@@ -119,11 +119,11 @@ public final class MetadataTools {
       store.setPixelsSizeZ(new PositiveInteger(r.getSizeZ()), i);
       store.setPixelsSizeC(new PositiveInteger(r.getSizeC()), i);
       store.setPixelsSizeT(new PositiveInteger(r.getSizeT()), i);
+      store.setPixelsBinDataBigEndian(new Boolean(!r.isLittleEndian()), i, 0);
 
-      int tiffDataCount = 0;
-      OMEXMLService service = null;
       try {
-        service = new ServiceFactory().getInstance(OMEXMLService.class);
+        OMEXMLService service =
+          new ServiceFactory().getInstance(OMEXMLService.class);
         if (service.isOMEXMLRoot(store.getRoot())) {
           MetadataStore baseStore = r.getMetadataStore();
           if (service.isOMEXMLMetadata(baseStore)) {
@@ -131,22 +131,13 @@ public final class MetadataTools {
           }
 
           OME root = (OME) store.getRoot();
-          tiffDataCount = root.getImage(i).getPixels().sizeOfTiffDataList();
-        }
-      }
-      catch (DependencyException exc) {
-        LOGGER.debug("Failed to set BinData.Length", exc);
-      }
-
-      if (tiffDataCount == 0) {
-        store.setPixelsBinDataBigEndian(new Boolean(!r.isLittleEndian()), i, 0);
-
-        if (service != null && service.isOMEXMLRoot(store.getRoot())) {
-          OME root = (OME) store.getRoot();
           BinData bin = root.getImage(i).getPixels().getBinData(0);
           bin.setLength(new NonNegativeLong(0L));
           store.setRoot(root);
         }
+      }
+      catch (DependencyException exc) {
+        LOGGER.debug("Failed to set BinData.Length", exc);
       }
 
       try {

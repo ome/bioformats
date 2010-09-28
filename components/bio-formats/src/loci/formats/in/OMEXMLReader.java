@@ -57,8 +57,8 @@ import org.xml.sax.helpers.DefaultHandler;
  * OMEXMLReader is the file format reader for OME-XML files.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/in/OMEXMLReader.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/in/OMEXMLReader.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/in/OMEXMLReader.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/in/OMEXMLReader.java">SVN</a></dd></dl>
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
@@ -153,6 +153,13 @@ public class OMEXMLReader extends FormatReader {
     options.interleaved = isInterleaved();
 
     byte[] pixels = new Base64Codec().decompress(in, options);
+
+    // return a blank plane if no pixel data was stored
+    if (pixels.length == 0) {
+      LOGGER.debug("No pixel data for plane #{}", no);
+      return buf;
+    }
+
     // TODO: Create a method uncompress to handle all compression methods
     if (compress.equals("bzip2")) {
       byte[] tempPixels = pixels;

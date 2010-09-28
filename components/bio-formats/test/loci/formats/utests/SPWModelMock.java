@@ -96,10 +96,10 @@ import ome.xml.model.primitives.PositiveInteger;
  * @author Chris Allan <callan at blackcat dot ca>
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/test/ome/xml/utests/SPWModelMock.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/test/ome/xml/utests/SPWModelMock.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/bio-formats/test/ome/xml/utests/SPWModelMock.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/bio-formats/test/ome/xml/utests/SPWModelMock.java">SVN</a></dd></dl>
  */
-public class SPWModelMock {
+public class SPWModelMock implements ModelMock {
 
   private OME ome;
 
@@ -207,7 +207,7 @@ public class SPWModelMock {
   public static final NamingConvention WELL_ROW = NamingConvention.LETTER;
 
   public static final NamingConvention WELL_COL = NamingConvention.NUMBER;
-  
+
   public static final String PLANE =
     "ZrXEfwslJ9N1nDrbtxxWh4fRHo4w8nZ2N0I74Lgj9oIKN9qrPbBK24z+w+9zYzRQ" +
     "WJXfEwwAKXgV4Z1jCPhE9woGjJaarHTsFwy21nF2IoJDkd3L/zSWMSVk508+jpxV" +
@@ -236,7 +236,7 @@ public class SPWModelMock {
 
   /** XML namespace. */
   public static final String XML_NS =
-    "http://www.openmicroscopy.org/Schemas/OME/2010-04";
+    "http://www.openmicroscopy.org/Schemas/OME/2010-06";
 
   /** XSI namespace. */
   public static final String XSI_NS =
@@ -244,7 +244,7 @@ public class SPWModelMock {
 
   /** XML schema location. */
   public static final String SCHEMA_LOCATION =
-    "http://www.openmicroscopy.org/Schemas/OME/2010-04/ome.xsd";
+    "http://www.openmicroscopy.org/Schemas/OME/2010-06/ome.xsd";
 
   public SPWModelMock(boolean makeLightSources) {
     ome = new OME();
@@ -437,7 +437,7 @@ public class SPWModelMock {
     return plate;
   }
 
-  public String asString(Document document)
+  public static String asString(Document document)
   throws TransformerException, UnsupportedEncodingException {
     TransformerFactory transformerFactory =
       TransformerFactory.newInstance();
@@ -453,16 +453,19 @@ public class SPWModelMock {
     return os.toString();
   }
 
-  public void postProcess(Element root, Document document) {
+  public static void postProcess(Element root, Document document,
+                                 boolean withBinData) {
     root.setAttribute("xmlns", XML_NS);
     root.setAttribute("xmlns:xsi", XSI_NS);
     root.setAttribute("xsi:schemaLocation", XML_NS + " " + SCHEMA_LOCATION);
     document.appendChild(root);
     // Put the planar data into each <BinData/>
-    NodeList binDataNodes = document.getElementsByTagName("BinData");
-    for (int i = 0; i < binDataNodes.getLength(); i++) {
-      Node binDataNode = binDataNodes.item(i);
-      binDataNode.setTextContent(PLANE);
+    if (withBinData) {
+      NodeList binDataNodes = document.getElementsByTagName("BinData");
+      for (int i = 0; i < binDataNodes.getLength(); i++) {
+        Node binDataNode = binDataNodes.item(i);
+        binDataNode.setTextContent(PLANE);
+      }
     }
   }
 
@@ -473,10 +476,10 @@ public class SPWModelMock {
     Document document = parser.newDocument();
     // Produce a valid OME DOM element hierarchy
     Element root = mock.ome.asXMLElement(document);
-    mock.postProcess(root, document);
+    SPWModelMock.postProcess(root, document, true);
     // Produce string XML
     OutputStream outputStream = new FileOutputStream(args[0]);
-    outputStream.write(mock.asString(document).getBytes());
+    outputStream.write(SPWModelMock.asString(document).getBytes());
   }
 
 }

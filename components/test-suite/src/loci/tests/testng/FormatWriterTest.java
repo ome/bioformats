@@ -63,8 +63,8 @@ import org.slf4j.LoggerFactory;
  * ant -Dtestng.directory="/path" -Dtestng.multiplier="1.0" test-all
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/test-suite/src/loci/tests/testng/FormatWriterTest.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/test-suite/src/loci/tests/testng/FormatWriterTest.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/test-suite/src/loci/tests/testng/FormatWriterTest.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/test-suite/src/loci/tests/testng/FormatWriterTest.java">SVN</a></dd></dl>
  */
 public class FormatWriterTest {
 

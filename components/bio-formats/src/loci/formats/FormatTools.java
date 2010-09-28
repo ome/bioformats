@@ -37,8 +37,8 @@ import loci.formats.meta.MetadataStore;
  * A utility class for format reader and writer implementations.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/FormatTools.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/FormatTools.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/FormatTools.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/FormatTools.java">SVN</a></dd></dl>
  */
 public final class FormatTools {
 
@@ -419,6 +419,8 @@ public final class FormatTools {
    * Converts index from the given dimension order to the reader's native one.
    * This method is useful for shuffling the planar order around
    * (rather than eassigning ZCT sizes as {@link DimensionSwapper} does).
+   *
+   * @throws FormatException Never actually thrown.
    */
   public static int getReorderedIndex(IFormatReader reader,
     String newOrder, int newIndex) throws FormatException
@@ -767,6 +769,10 @@ public final class FormatTools {
 
   // -- Utility methods -- export
 
+  /**
+   * @throws FormatException Never actually thrown.
+   * @throws IOException Never actually thrown.
+   */
   public static String getFilename(int series, int image, IFormatReader r,
     String pattern) throws FormatException, IOException
   {
@@ -811,7 +817,7 @@ public final class FormatTools {
         if (!filenames.contains(filename)) filenames.add(filename);
       }
     }
-    return (String[]) filenames.toArray(new String[0]);
+    return filenames.toArray(new String[0]);
   }
 
   public static int getImagesPerFile(String pattern, IFormatReader r)

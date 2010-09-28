@@ -35,6 +35,8 @@ import java.security.NoSuchAlgorithmException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import loci.formats.ChannelFiller;
+import loci.formats.ChannelSeparator;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 import loci.formats.MinMaxCalculator;
@@ -52,8 +54,8 @@ import org.w3c.dom.Element;
  *
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/test/loci/formats/utests/SPWModelReaderTest.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/test/loci/formats/utests/SPWModelReaderTest.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/bio-formats/test/loci/formats/utests/SPWModelReaderTest.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/bio-formats/test/loci/formats/utests/SPWModelReaderTest.java">SVN</a></dd></dl>
  */
 public class SPWModelReaderTest {
 
@@ -80,20 +82,29 @@ public class SPWModelReaderTest {
     temporaryFile = File.createTempFile(this.getClass().getName(), ".ome");
     temporaryFileWithNoLightSources = 
       File.createTempFile(this.getClass().getName(), ".ome");
-    writeMockToFile(mock, temporaryFile);
-    writeMockToFile(mockWithNoLightSources, temporaryFileWithNoLightSources);
+    writeMockToFile(mock, temporaryFile, true);
+    writeMockToFile(mockWithNoLightSources, temporaryFileWithNoLightSources,
+                    true);
   }
 
-  private void writeMockToFile(SPWModelMock mock, File file) throws Exception {
+  /**
+   * Writes a model mock to a file as XML.
+   * @param mock Mock to build a DOM tree of and serialize to XML.
+   * @param file File to write serialized XML to.
+   * @param withBinData Whether or not to do BinData post processing.
+   * @throws Exception If there is an error writing the XML to the file.
+   */
+  public static void writeMockToFile(ModelMock mock, File file,
+  boolean withBinData) throws Exception {
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     DocumentBuilder parser = factory.newDocumentBuilder();
     Document document = parser.newDocument();
     // Produce a valid OME DOM element hierarchy
     Element root = mock.getRoot().asXMLElement(document);
-    mock.postProcess(root, document);
+    SPWModelMock.postProcess(root, document, withBinData);
     // Write the OME DOM to the requested file
     OutputStream stream = new FileOutputStream(file);
-    stream.write(mock.asString(document).getBytes());
+    stream.write(SPWModelMock.asString(document).getBytes());
   }
 
   @AfterClass
@@ -104,7 +115,8 @@ public class SPWModelReaderTest {
 
   @Test
   public void testSetId() throws Exception {
-    reader = new MinMaxCalculator(new ImageReader());
+    reader = new MinMaxCalculator(new ChannelSeparator(
+        new ChannelFiller(new ImageReader())));
     metadata = new OMEXMLMetadataImpl();
     reader.setMetadataStore(metadata);
     reader.setId(temporaryFile.getAbsolutePath());
@@ -112,7 +124,8 @@ public class SPWModelReaderTest {
 
   @Test
   public void testSetIdWithNoLightSources() throws Exception {
-    readerWithNoLightSources = new MinMaxCalculator(new ImageReader());
+    readerWithNoLightSources = new MinMaxCalculator(new ChannelSeparator(
+        new ChannelFiller(new ImageReader())));
     metadataWithNoLightSources = new OMEXMLMetadataImpl();
     readerWithNoLightSources.setMetadataStore(metadataWithNoLightSources);
     readerWithNoLightSources.setId(
@@ -134,7 +147,15 @@ public class SPWModelReaderTest {
     assertTrue(canReadEveryPlane(readerWithNoLightSources));
   }
 
-  private boolean canReadEveryPlane(IFormatReader reader) throws Exception {
+  /**
+   * Checks to see if every plane of an initialized reader can be read.
+   * @param reader Reader to read all planes from.
+   * @return <code>true</code> if all planes can be read, <code>false</code>
+   * otherwise.
+   * @throws Exception If there is an error reading data.
+   */
+  public static boolean canReadEveryPlane(IFormatReader reader)
+  throws Exception {
     int sizeX = reader.getSizeX();
     int sizeY = reader.getSizeY();
     int pixelType = reader.getPixelType();
@@ -180,7 +201,7 @@ public class SPWModelReaderTest {
    * Retrieves how many bytes per pixel the current plane or section has.
    * @return the number of bytes per pixel.
    */
-  private int getBytesPerPixel(int type) {
+  public static int getBytesPerPixel(int type) {
     switch(type) {
     case 0:
     case 1:

@@ -30,8 +30,8 @@ import loci.visbio.overlays.*;
  * Test some critical methods of the OverlayNodedObject class.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/visbio/test/loci/visbio/utests/overlays/OverlayNodedObjectTest.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/visbio/test/loci/visbio/utests/overlays/OverlayNodedObjectTest.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/visbio/test/loci/visbio/utests/overlays/OverlayNodedObjectTest.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/visbio/test/loci/visbio/utests/overlays/OverlayNodedObjectTest.java">SVN</a></dd></dl>
  */
 public class OverlayNodedObjectTest extends TestCase {
 

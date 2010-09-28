@@ -119,9 +119,11 @@
             <class name="loci.common.utests.LocationTest"/>
         </classes>
     </test>
+    <!-- TODO : uncomment this once we have a better way of testing URLs
     <test name="URLHandleTest">
         <classes>
           <class name="loci.common.utests.URLHandleTest"/>
         </classes>
     </test>
+    -->
 </suite>

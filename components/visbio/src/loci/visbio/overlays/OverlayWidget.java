@@ -87,8 +87,8 @@ import com.jgoodies.forms.layout.FormLayout;
  * OverlayWidget is a set of GUI controls for an overlay transform.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/visbio/src/loci/visbio/overlays/OverlayWidget.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/visbio/src/loci/visbio/overlays/OverlayWidget.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/visbio/src/loci/visbio/overlays/OverlayWidget.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/visbio/src/loci/visbio/overlays/OverlayWidget.java">SVN</a></dd></dl>
  */
 public class OverlayWidget extends JPanel implements ActionListener,
   DocumentListener, ListSelectionListener, Runnable, TransformListener

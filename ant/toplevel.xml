@@ -150,7 +150,8 @@ Type "ant -p" for a list of targets.
     <delete>
       <fileset dir="${toplevel-utils.dir}" includes="*.class"/>
     </delete>
-    <javac debug="true" deprecation="true" source="1.5" target="1.5"
+    <javac debug="true" includeantruntime="false"
+      deprecation="true" source="1.5" target="1.5"
       srcdir="${toplevel-utils.dir}" includes="*.java">
       <classpath>
         <fileset dir="${artifact.dir}">
@@ -443,7 +444,7 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="utils-formats" depends="jar-formats"
-    description="compile extra utilities for LOCI Plugins for ImageJ">
+    description="compile extra utilities for Bio-Formats">
     <ant dir="components/bio-formats" target="formats.utils"/>
   </target>
 

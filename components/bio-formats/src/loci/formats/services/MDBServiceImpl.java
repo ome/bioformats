@@ -45,8 +45,8 @@ import mdbtools.libmdb.mem;
  * Implementation of {@link MDBService} for parsing MDB database files.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/services/MDBServiceImpl.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/services/MDBServiceImpl.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/services/MDBServiceImpl.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/services/MDBServiceImpl.java">SVN</a></dd></dl>
  */
 public class MDBServiceImpl extends AbstractService implements MDBService {
 

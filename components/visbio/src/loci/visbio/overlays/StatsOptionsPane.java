@@ -45,8 +45,8 @@ import com.jgoodies.forms.layout.FormLayout;
  * A tabbed pane full of checkboxes.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/visbio/src/loci/visbio/overlays/StatsOptionsPane.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/visbio/src/loci/visbio/overlays/StatsOptionsPane.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/visbio/src/loci/visbio/overlays/StatsOptionsPane.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/visbio/src/loci/visbio/overlays/StatsOptionsPane.java">SVN</a></dd></dl>
  */
 public class StatsOptionsPane extends JPanel implements ActionListener {
 

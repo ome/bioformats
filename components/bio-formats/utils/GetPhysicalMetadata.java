@@ -17,8 +17,8 @@ import loci.formats.services.OMEXMLService;
  * (format-independent) metadata.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/utils/GetPhysicalMetadata.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/utils/GetPhysicalMetadata.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/bio-formats/utils/GetPhysicalMetadata.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/bio-formats/utils/GetPhysicalMetadata.java">SVN</a></dd></dl>
  */
 public class GetPhysicalMetadata {
 

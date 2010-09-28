@@ -15,8 +15,8 @@ import java.util.Arrays;
  * Also checks for tabs and end-of-line spaces.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/utils/LineLength.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/utils/LineLength.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/utils/LineLength.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/utils/LineLength.java">SVN</a></dd></dl>
  */
 public class LineLength implements FileFilter {
 
@@ -24,8 +24,8 @@ public class LineLength implements FileFilter {
   private static final int TABWIDTH = 2;
 
   private static final String[] LOCI_HACKS = {
-    " * <dd><a href=\"https://skyking.microscopy.wisc.edu/trac/",
-    " * <a href=\"https://skyking.microscopy.wisc.edu/svn/java/trunk/"
+    " * <dd><a href=\"http://dev.loci.wisc.edu/trac/",
+    " * <a href=\"http://dev.loci.wisc.edu/svn/java/trunk/"
   };
 
   public static void main(String[] args) throws IOException {

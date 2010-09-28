@@ -47,8 +47,8 @@ import ome.xml.model.primitives.*;
  * {@link loci.formats.meta.IMetadata} objects.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats-ice/src/loci/ice/formats/IMetadataI.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats-ice/src/loci/ice/formats/IMetadataI.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/bio-formats-ice/src/loci/ice/formats/IMetadataI.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/bio-formats-ice/src/loci/ice/formats/IMetadataI.java">SVN</a></dd></dl>
  *
  * @author Hidayath Ansari mansari at wisc.edu
  * @author Curtis Rueden ctrueden at wisc.edu

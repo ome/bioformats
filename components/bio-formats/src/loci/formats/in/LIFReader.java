@@ -50,8 +50,8 @@ import ome.xml.model.Pixels;
  * LIFReader is the file format reader for Leica LIF files.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/in/LIFReader.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/in/LIFReader.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/in/LIFReader.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/in/LIFReader.java">SVN</a></dd></dl>
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
@@ -393,12 +393,16 @@ public class LIFReader extends FormatReader {
       if (service.isOMEXMLRoot(store.getRoot())) {
         OME root = (OME) store.getRoot();
         for (int i=0; i<getSeriesCount(); i++) {
+          setSeries(i);
           Pixels img = root.getImage(i).getPixels();
           for (int c=0; c<img.sizeOfChannelList(); c++) {
             Channel channel = img.getChannel(c);
-            if (channel.getID() == null) img.removeChannel(channel);
+            if (channel.getID() == null || c >= getEffectiveSizeC()) {
+              img.removeChannel(channel);
+            }
           }
         }
+        setSeries(0);
       }
     }
     catch (DependencyException e) {

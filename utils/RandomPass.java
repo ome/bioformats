@@ -6,8 +6,8 @@
  * Generates random passwords.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/utils/RandomPass.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/utils/RandomPass.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/utils/RandomPass.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/utils/RandomPass.java">SVN</a></dd></dl>
  */
 public class RandomPass {
 

@@ -56,8 +56,8 @@ import loci.visbio.util.ObjectUtil;
  * Utility methods for saving and loading overlays to and from disk.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/visbio/src/loci/visbio/overlays/OverlayIO.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/visbio/src/loci/visbio/overlays/OverlayIO.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/visbio/src/loci/visbio/overlays/OverlayIO.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/visbio/src/loci/visbio/overlays/OverlayIO.java">SVN</a></dd></dl>
  */
 public final class OverlayIO {
 
