@@ -24,9 +24,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.IOException;
+import java.nio.ByteOrder;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import loci.common.ByteArrayHandle;
 import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
@@ -49,8 +51,8 @@ import org.xml.sax.helpers.DefaultHandler;
  * ScanrReader is the file format reader for Olympus ScanR datasets.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/in/ScanrReader.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/in/ScanrReader.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/in/ScanrReader.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/in/ScanrReader.java">SVN</a></dd></dl>
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
@@ -61,6 +63,7 @@ public class ScanrReader extends FormatReader {
   private static final String XML_FILE = "experiment_descriptor.xml";
   private static final String EXPERIMENT_FILE = "experiment_descriptor.dat";
   private static final String ACQUISITION_FILE = "AcquisitionLog.dat";
+  private static final String[] METADATA_SUFFIXES = new String[] {"dat", "xml"};
 
   // -- Fields --
 
@@ -71,7 +74,10 @@ public class ScanrReader extends FormatReader {
   private Vector<String> channelNames = new Vector<String>();
   private Hashtable<String, Integer> wellLabels =
     new Hashtable<String, Integer>();
+  private Hashtable<Integer, Integer> wellNumbers =
+    new Hashtable<Integer, Integer>();
   private String plateName;
+  private Double pixelSize;
 
   private String[] tiffs;
   private MinimalTiffReader reader;
@@ -168,7 +174,9 @@ public class ScanrReader extends FormatReader {
       wellRows = wellColumns = 0;
       metadataFiles.clear();
       wellLabels.clear();
+      wellNumbers.clear();
       wellCount = 0;
+      pixelSize = null;
     }
   }
 
@@ -185,6 +193,20 @@ public class ScanrReader extends FormatReader {
       reader.setId(tiffs[index]);
       reader.openBytes(0, buf, x, y, w, h);
       reader.close();
+
+      // mask out the sign bit
+      ByteArrayHandle pixels = new ByteArrayHandle(buf);
+      pixels.setOrder(
+        isLittleEndian() ? ByteOrder.LITTLE_ENDIAN : ByteOrder.BIG_ENDIAN);
+      for (int i=0; i<buf.length; i+=2) {
+        pixels.seek(i);
+        short value = pixels.readShort();
+        value = (short) (value & 0xfff);
+        pixels.seek(i);
+        pixels.writeShort(value);
+      }
+      buf = pixels.getBytes();
+      pixels.close();
     }
 
     return buf;
@@ -243,7 +265,7 @@ public class ScanrReader extends FormatReader {
 
     for (String file : list) {
       Location f = new Location(dir, file);
-      if (!f.isDirectory()) {
+      if (!f.isDirectory() && checkSuffix(file, METADATA_SUFFIXES)) {
         metadataFiles.add(f.getAbsolutePath());
       }
     }
@@ -278,22 +300,15 @@ public class ScanrReader extends FormatReader {
     wellRows = uniqueRows.size();
     wellColumns = uniqueColumns.size();
 
-    if (wellRows * wellColumns == 0) {
-      if (wellCount <= 96) {
-        wellColumns = 12;
-      }
-      else if (wellCount <= 384) {
-        wellColumns = 24;
-      }
-      wellRows = wellCount / wellColumns;
-      if (wellRows * wellColumns < wellCount) wellRows++;
+    if (wellRows * wellColumns != wellCount) {
+      adjustWellDimensions();
     }
 
     int nChannels = getSizeC() == 0 ? channelNames.size() : getSizeC();
     if (nChannels == 0) nChannels = 1;
     int nSlices = getSizeZ() == 0 ? 1 : getSizeZ();
     int nTimepoints = getSizeT();
-    int nWells = wellRows * wellColumns;
+    int nWells = wellCount;
     int nPos = fieldRows * fieldColumns;
     if (nPos == 0) nPos = 1;
 
@@ -306,7 +321,9 @@ public class ScanrReader extends FormatReader {
       list = dir.list(true);
     }
     else dir = dataDir;
-    if (nTimepoints == 0) {
+    if (nTimepoints == 0 ||
+      list.length < nTimepoints * nChannels * nSlices * nWells * nPos)
+    {
       nTimepoints = list.length / (nChannels * nWells * nPos * nSlices);
       if (nTimepoints == 0) nTimepoints = 1;
     }
@@ -317,7 +334,8 @@ public class ScanrReader extends FormatReader {
     String[] keys = wellLabels.keySet().toArray(new String[wellLabels.size()]);
     int realPosCount = 0;
     for (int well=0; well<nWells; well++) {
-      String wellPos = getBlock(well + 1, "W");
+      int wellIndex = wellNumbers.get(well);
+      String wellPos = getBlock(wellIndex, "W");
       int originalIndex = next;
 
       for (int pos=0; pos<nPos; pos++) {
@@ -345,7 +363,7 @@ public class ScanrReader extends FormatReader {
         }
         if (posIndex != next) realPosCount++;
       }
-      if (next == originalIndex) {
+      if (next == originalIndex && well < keys.length) {
         wellLabels.remove(keys[well]);
       }
     }
@@ -363,9 +381,8 @@ public class ScanrReader extends FormatReader {
         }
       }
 
-      wellRows = uniqueRows.size();
-      wellColumns = uniqueColumns.size();
-      nWells = wellRows * wellColumns;
+      nWells = uniqueRows.size() * uniqueColumns.size();
+      adjustWellDimensions();
     }
     if (realPosCount < nPos) {
       nPos = realPosCount;
@@ -384,14 +401,8 @@ public class ScanrReader extends FormatReader {
       case FormatTools.INT8:
         pixelType = FormatTools.UINT8;
         break;
-      case FormatTools.UINT8:
-        pixelType = FormatTools.INT8;
-        break;
       case FormatTools.INT16:
         pixelType = FormatTools.UINT16;
-        break;
-      case FormatTools.UINT16:
-        pixelType = FormatTools.INT16;
         break;
     }
 
@@ -417,6 +428,7 @@ public class ScanrReader extends FormatReader {
       core[i].littleEndian = littleEndian;
       core[i].dimensionOrder = "XYCTZ";
       core[i].imageCount = nSlices * nTimepoints * nChannels;
+      core[i].bitsPerPixel = 12;
     }
 
     MetadataStore store = makeFilterMetadata();
@@ -431,9 +443,10 @@ public class ScanrReader extends FormatReader {
 
       int field = i % nFields;
       int well = i / nFields;
+      int wellIndex = wellNumbers.get(well) - 1;
 
-      int wellRow = well / wellColumns;
-      int wellCol = well % wellColumns;
+      int wellRow = wellIndex / wellColumns;
+      int wellCol = wellIndex % wellColumns;
 
       store.setWellID(MetadataTools.createLSID("Well", 0, well), 0, well);
       store.setWellColumn(new NonNegativeInteger(wellCol), 0, well);
@@ -447,8 +460,8 @@ public class ScanrReader extends FormatReader {
       store.setWellSampleImageRef(imageID, 0, well, field);
       store.setImageID(imageID, i);
 
-      String name = "Well " + (well + 1) + ", Field " + (field +1) + " (Spot " +
-        (i + 1) + ")";
+      String name = "Well " + (wellIndex + 1) + ", Field " + (field + 1) +
+        " (Spot " + (i + 1) + ")";
       store.setImageName(name, i);
     }
 
@@ -458,6 +471,10 @@ public class ScanrReader extends FormatReader {
       for (int i=0; i<getSeriesCount(); i++) {
         for (int c=0; c<getSizeC(); c++) {
           store.setChannelName(channelNames.get(c), i, c);
+        }
+        if (pixelSize != null) {
+          store.setPixelsPhysicalSizeX(pixelSize, i);
+          store.setPixelsPhysicalSizeY(pixelSize, i);
         }
       }
 
@@ -502,6 +519,9 @@ public class ScanrReader extends FormatReader {
         else if (key.equals("timeloop real")) {
           core[0].sizeT = Integer.parseInt(value);
         }
+        else if (key.equals("timeloop count")) {
+          core[0].sizeT = Integer.parseInt(value) + 1;
+        }
         else if (key.equals("name")) {
           channelNames.add(value);
         }
@@ -520,11 +540,15 @@ public class ScanrReader extends FormatReader {
         else if (key.equals("well selection table + cDNA")) {
           if (Character.isDigit(value.charAt(0))) {
             wellIndex = value;
+            wellNumbers.put(new Integer(wellCount), new Integer(value));
             wellCount++;
           }
           else {
             wellLabels.put(value, new Integer(wellIndex));
           }
+        }
+        else if (key.equals("conversion factor um/pixel")) {
+          pixelSize = new Double(value);
         }
       }
     }
@@ -543,6 +567,21 @@ public class ScanrReader extends FormatReader {
     String b = String.valueOf(index);
     while (b.length() < 5) b = "0" + b;
     return axis + b;
+  }
+
+  private void adjustWellDimensions() {
+    if (wellCount <= 8) {
+      wellColumns = 2;
+      wellRows = 4;
+    }
+    else if (wellCount <= 96) {
+      wellColumns = 12;
+      wellRows = 8;
+    }
+    else if (wellCount <= 384) {
+      wellColumns = 24;
+      wellRows = 16;
+    }
   }
 
 }
