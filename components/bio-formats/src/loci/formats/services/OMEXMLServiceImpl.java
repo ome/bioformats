@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.services;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Templates;
@@ -41,10 +42,14 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.ome.OMEXMLMetadataImpl;
 import ome.xml.OMEXMLFactory;
+import ome.xml.model.BinData;
+import ome.xml.model.Image;
+import ome.xml.model.MetadataOnly;
 import ome.xml.model.OME;
 import ome.xml.model.OMEModel;
 import ome.xml.model.OMEModelImpl;
 import ome.xml.model.OMEModelObject;
+import ome.xml.model.Pixels;
 import ome.xml.model.StructuredAnnotations;
 
 import org.slf4j.Logger;
@@ -401,9 +406,8 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
         throw new IllegalArgumentException(
             "Expecting OMEXMLMetadata instance.");
       }
-      // FIXME: What's below was in the ReflectedUniverse, the method no
-      // longer exists or has changed.
-      //((OMEXMLMetadata) dest).createRoot(xml);
+
+      dest.setRoot(ome);
     }
     else {
       // metadata store is incompatible; create an OME-XML
@@ -418,6 +422,29 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
    */
   public void convertMetadata(MetadataRetrieve src, MetadataStore dest) {
     MetadataConverter.convertMetadata(src, dest);
+  }
+
+  /* @see OMEXMLService#removeBinData(OMEXMLMetadata) */
+  public void removeBinData(OMEXMLMetadata omexmlMeta) {
+    OME root = (OME) omexmlMeta.getRoot();
+    List<Image> images = root.copyImageList();
+    for (Image img : images) {
+      Pixels pix = img.getPixels();
+      List<BinData> binData = pix.copyBinDataList();
+      for (BinData bin : binData) {
+        pix.removeBinData(bin);
+      }
+    }
+    omexmlMeta.setRoot(root);
+  }
+
+  /* @see OMEXMLService#addMetadataOnly(OMEXMLMetadata, int) */
+  public void addMetadataOnly(OMEXMLMetadata omexmlMeta, int image) {
+    MetadataOnly meta = new MetadataOnly();
+    OME root = (OME) omexmlMeta.getRoot();
+    Pixels pix = root.getImage(image).getPixels();
+    pix.setMetadataOnly(meta);
+    omexmlMeta.setRoot(root);
   }
 
   // -- Utility methods - casting --

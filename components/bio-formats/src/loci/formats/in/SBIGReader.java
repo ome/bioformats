@@ -67,9 +67,10 @@ public class SBIGReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    final int blockLen = 32;
+    final int blockLen = (int) HEADER_SIZE;
+    final int checkLen = 32;
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
-    return stream.readString(blockLen).indexOf("Image") > 0;
+    return stream.readString(checkLen).indexOf("Image") > 0;
   }
 
   /**

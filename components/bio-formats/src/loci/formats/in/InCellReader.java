@@ -435,6 +435,9 @@ public class InCellReader extends FormatReader {
       if (timepoint < 0) timepoint = 0;
       int sampleIndex = (field - 1) * totalTimepoints + timepoint;
 
+      String wellSampleID =
+        MetadataTools.createLSID("WellSample", 0, well, sampleIndex);
+      store.setWellSampleID(wellSampleID, 0 ,well, sampleIndex);
       store.setWellSampleIndex(new NonNegativeInteger(i), 0, well, sampleIndex);
       store.setWellSampleImageRef(imageID, 0, well, sampleIndex);
       if (field < posX.size()) {
@@ -503,6 +506,7 @@ public class InCellReader extends FormatReader {
       String colNaming =
         Character.isDigit(colName.charAt(0)) ? "Number" : "Letter";
 
+      store.setPlateID(MetadataTools.createLSID("Plate", 0), 0);
       store.setPlateRowNamingConvention(getNamingConvention(rowNaming), 0);
       store.setPlateColumnNamingConvention(getNamingConvention(colNaming), 0);
       store.setPlateWellOriginX(0.5, 0);
@@ -872,6 +876,8 @@ public class InCellReader extends FormatReader {
         for (int r=0; r<wellRows; r++) {
           for (int c=0; c<wellCols; c++) {
             int well = r * wellCols + c;
+            String wellID = MetadataTools.createLSID("Well", nextPlate, well);
+            store.setWellID(wellID, nextPlate, well);
             store.setWellRow(new NonNegativeInteger(r), nextPlate, well);
             store.setWellColumn(new NonNegativeInteger(c), nextPlate, well);
           }

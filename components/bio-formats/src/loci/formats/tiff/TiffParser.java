@@ -30,6 +30,7 @@ import java.util.Vector;
 import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
 import loci.common.Region;
+import loci.common.enumeration.EnumException;
 import loci.formats.FormatException;
 import loci.formats.codec.BitBuffer;
 import loci.formats.codec.CodecOptions;
@@ -326,7 +327,14 @@ public class TiffParser {
     for (int i=0; i<numEntries; i++) {
       in.seek(offset + baseOffset + bytesPerEntry * i);
 
-      TiffIFDEntry entry = readTiffIFDEntry();
+      TiffIFDEntry entry = null;
+      try {
+        entry = readTiffIFDEntry();
+      }
+      catch (EnumException e) {
+        LOGGER.debug("", e);
+      }
+      if (entry == null) break;
       int count = entry.getValueCount();
       int tag = entry.getTag();
       long pointer = entry.getValueOffset();

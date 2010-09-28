@@ -188,6 +188,15 @@ public class GatanDM2Reader extends FormatReader {
 
       if (label.equals("Acquisition Date")) {
         date = value.toString();
+        if (date != null && date.indexOf("/") != -1) {
+          // if the year is stored as a single digit, then it will be parsed
+          // literally, e.g. '7' -> '0007', when we want '7' -> '2007'
+          String year = date.substring(date.lastIndexOf("/") + 1);
+          if (year.length() < 2) {
+            year = "0" + year;
+          }
+          date = date.substring(0, date.lastIndexOf("/") + 1) + year;
+        }
       }
       else if (label.equals("Acquisition Time")) {
         time = value.toString();
@@ -207,6 +216,7 @@ public class GatanDM2Reader extends FormatReader {
         if (experimenterName.length > 1) {
           store.setExperimenterLastName(experimenterName[1], 0);
         }
+        store.setExperimenterDisplayName(value.toString(), 0);
         String expID = MetadataTools.createLSID("Experimenter", 0);
         store.setExperimenterID(expID, 0);
         store.setImageExperimenterRef(expID, 0);

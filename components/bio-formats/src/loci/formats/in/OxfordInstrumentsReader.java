@@ -188,7 +188,7 @@ public class OxfordInstrumentsReader extends FormatReader {
     in.skipBytes(4);
 
     float scanTime = in.readInt() / 100f;
-    dateTime.append(String.valueOf((int) scanTime));
+    dateTime.append(String.format("%02d", (int) scanTime));
     addGlobalMeta("Scan time (s)", scanTime);
     return dateTime.toString();
   }

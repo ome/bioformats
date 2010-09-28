@@ -458,12 +458,18 @@ public class FormatReaderTest {
           msg = "PlaneTiming";
         }
 
-        // if CreationDate is before 1995, it's probably invalid
+        // if CreationDate is before 1990, it's probably invalid
         String date = retrieve.getImageAcquiredDate(i);
-        if (date != null && DateTools.getTime(date, DateTools.ISO8601_FORMAT) <
-          DateTools.getTime("1995-01-01T00:00:00", DateTools.ISO8601_FORMAT))
-        {
-          msg = "CreationDate";
+        if (date != null) {
+          date = date.trim();
+          long acquiredDate = DateTools.getTime(date, DateTools.ISO8601_FORMAT);
+          long saneDate =
+            DateTools.getTime("1990-01-01T00:00:00", DateTools.ISO8601_FORMAT);
+          long fileDate = new Location(
+            reader.getCurrentFile()).getAbsoluteFile().lastModified();
+          if (acquiredDate < saneDate && fileDate >= saneDate) {
+            msg = "CreationDate";
+          }
         }
       }
     }
@@ -710,7 +716,7 @@ public class FormatReaderTest {
       MetadataStore store = reader.getMetadataStore();
       MetadataRetrieve retrieve = omexmlService.asRetrieve(store);
       String xml = omexmlService.getOMEXML(retrieve);
-      success = xml != null && omexmlService.validateOMEXML(xml, true);
+      success = xml != null && omexmlService.validateOMEXML(xml);
     }
     catch (Throwable t) {
       LOGGER.info("", t);
@@ -933,7 +939,6 @@ public class FormatReaderTest {
     if (reader == null) {
       reader = new BufferedImageReader(new FileStitcher());
       reader.setNormalized(true);
-      reader.setOriginalMetadataPopulated(true);
       reader.setMetadataFiltered(true);
       MetadataStore store = null;
       try {

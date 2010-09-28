@@ -452,6 +452,8 @@ public class LiFlimReader extends FormatReader {
     Arrays.sort(roiIndices);
     for (int roi=0; roi<roiIndices.length; roi++) {
       ROI r = rois.get(roiIndices[roi]);
+      String polylineID = MetadataTools.createLSID("Shape", roi, 0);
+      store.setPolylineID(polylineID, roi, 0);
       store.setPolylinePoints(r.pointsToString(), roi, 0);
       store.setPolylineClosed(Boolean.TRUE, roi, 0);
       String roiID = MetadataTools.createLSID("ROI", roi);

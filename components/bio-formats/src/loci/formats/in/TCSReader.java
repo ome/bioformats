@@ -415,6 +415,22 @@ public class TCSReader extends FormatReader {
       if (c == 0) c = 1;
       core[0].sizeT = (ifds.size() * tiffReaders.length) / c;
       core[0].imageCount = getSizeT() * c;
+      if (getSizeT() == 0) {
+        core[0].sizeT = 1;
+        core[0].imageCount = ifds.size() * tiffReaders.length;
+      }
+    }
+
+    if (getImageCount() == ifds.size() * getSizeZ() * getSizeT() &&
+      ifds.size() > 1)
+    {
+      if (getSizeZ() == 1) {
+        core[0].sizeZ = ifds.size();
+      }
+      else if (getSizeT() == 1) {
+        core[0].sizeT = ifds.size();
+      }
+      else core[0].sizeZ *= ifds.size();
     }
 
     if (xmlFile != null) {
@@ -470,7 +486,7 @@ public class TCSReader extends FormatReader {
     //  * the files have the same number of bytes
 
     Location current = new Location(currentId).getAbsoluteFile();
-    if (checkSuffix(currentId, TiffReader.TIFF_SUFFIXES)) {
+    if (!checkSuffix(currentId, XML_SUFFIX)) {
       tiffs.add(current.getAbsolutePath());
     }
     if (!isGroupFiles()) return;

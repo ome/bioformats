@@ -279,9 +279,12 @@ public class BDReader extends FormatReader {
       String row = name.substring(0, 1);
       Integer col = Integer.parseInt(name.substring(1));
 
+      store.setWellID(MetadataTools.createLSID("Well", 0, i), 0, i);
       store.setWellColumn(new NonNegativeInteger(col - 1), 0, i);
       store.setWellRow(new NonNegativeInteger(row.charAt(0) - 'A'), 0, i);
 
+      String wellSampleID = MetadataTools.createLSID("WellSample", 0, i, 0);
+      store.setWellSampleID(wellSampleID, 0, i, 0);
       store.setWellSampleIndex(new NonNegativeInteger(i), 0, i, 0);
 
       String imageID = MetadataTools.createLSID("Image", i);
@@ -346,6 +349,7 @@ public class BDReader extends FormatReader {
         }
       }
 
+      store.setPlateID(MetadataTools.createLSID("Plate", 0), 0);
       store.setPlateRowNamingConvention(getNamingConvention("Letter"), 0);
       store.setPlateColumnNamingConvention(getNamingConvention("Number"), 0);
       store.setPlateName(plateName, 0);
@@ -523,6 +527,8 @@ public class BDReader extends FormatReader {
       if (cols.length < 6) break;
 
       if (cols[2].trim().length() > 0) {
+        String rectangleID = MetadataTools.createLSID("Shape", i - firstRow, 0);
+        store.setRectangleID(rectangleID, i - firstRow, 0);
         store.setRectangleX(new Double(cols[2]), i - firstRow, 0);
         store.setRectangleY(new Double(cols[3]), i - firstRow, 0);
         store.setRectangleWidth(new Double(cols[4]), i - firstRow, 0);

@@ -127,6 +127,7 @@ public class GatanReader extends FormatReader {
       timestamp = 0;
       gamma = mag = voltage = 0;
       info = null;
+      adjustEndianness = true;
     }
   }
 
