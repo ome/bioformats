@@ -87,6 +87,12 @@ public class TiffParser {
   public TiffParser(RandomAccessInputStream in) {
     this.in = in;
     doCaching = true;
+    try {
+      long fp = in.getFilePointer();
+      checkHeader();
+      in.seek(fp);
+    }
+    catch (IOException e) { }
   }
 
   // -- TiffParser methods --
@@ -567,7 +573,7 @@ public class TiffParser {
     in.seek(stripOffsets[tileNumber]);
     in.read(tile);
 
-    options.maxBytes = size;
+    options.maxBytes = (int) Math.max(size, tile.length);
 
     if (jpegTable != null) {
       byte[] q = new byte[jpegTable.length + tile.length - 4];

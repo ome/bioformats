@@ -80,6 +80,7 @@ public class OMETiffWriter extends TiffWriter {
   private int totalPlanes = 0;
   private OMEXMLMetadata omeMeta;
   private OMEXMLService service;
+  private HashMap<String, Integer> ifdCounts = new HashMap<String, Integer>();
 
   // -- Constructor --
 
@@ -138,6 +139,7 @@ public class OMETiffWriter extends TiffWriter {
         totalPlanes = 0;
         omeMeta = null;
         service = null;
+        ifdCounts.clear();
       }
     }
   }
@@ -288,8 +290,6 @@ public class OMETiffWriter extends TiffWriter {
       omeMeta.setChannelSamplesPerPixel(samplesPerPixel, series, c);
     }
     sizeC /= samplesPerPixel.getValue();
-
-    HashMap<String, Integer> ifdCounts = new HashMap<String, Integer>();
 
     for (int plane=0; plane<imageCount; plane++) {
       int[] zct = FormatTools.getZCTCoords(dimensionOrder,
