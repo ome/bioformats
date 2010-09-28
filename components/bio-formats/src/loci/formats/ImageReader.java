@@ -456,6 +456,11 @@ public class ImageReader implements IFormatReader {
     return getReader().getMetadataValue(field);
   }
 
+  /* @see IFormatReader#getSeriesMetadataValue(String) */
+  public Object getSeriesMetadataValue(String field) {
+    return getReader().getSeriesMetadataValue(field);
+  }
+
   /* @see IFormatReader#getGlobalMetadata() */
   public Hashtable<String, Object> getGlobalMetadata() {
     return getReader().getGlobalMetadata();

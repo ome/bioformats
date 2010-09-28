@@ -284,6 +284,11 @@ public class LociFunctions extends MacroFunctions {
     value[0] = o == null ? null : o.toString();
   }
 
+  public void getSeriesMetadataValue(String field, String[] value) {
+    Object o = r.getSeriesMetadataValue(field);
+    value[0] = o == null ? null : o.toString();
+  }
+
   public void setMetadataFiltered(String metadataFiltered) {
     r.setMetadataFiltered("true".equalsIgnoreCase(metadataFiltered));
   }

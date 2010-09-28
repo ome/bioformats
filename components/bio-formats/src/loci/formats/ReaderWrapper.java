@@ -398,6 +398,10 @@ public abstract class ReaderWrapper implements IFormatReader {
     return reader.getMetadataValue(field);
   }
 
+  public Object getSeriesMetadataValue(String field) {
+    return reader.getSeriesMetadataValue(field);
+  }
+
   public Hashtable<String, Object> getGlobalMetadata() {
     return reader.getGlobalMetadata();
   }

@@ -170,6 +170,10 @@ public abstract class WriterWrapper implements IFormatWriter {
     writer.setSeries(series);
   }
 
+  public int getSeries() {
+    return writer.getSeries();
+  }
+
   public void setInterleaved(boolean interleaved) {
     writer.setInterleaved(interleaved);
   }

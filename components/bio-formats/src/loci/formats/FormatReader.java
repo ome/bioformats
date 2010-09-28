@@ -951,6 +951,12 @@ public abstract class FormatReader extends FormatHandler
     return getGlobalMeta(field);
   }
 
+  /* @see IFormatReader#getSeriesMetadataValue(String) */
+  public Object getSeriesMetadataValue(String field) {
+    FormatTools.assertId(currentId, true, 1);
+    return getSeriesMeta(field);
+  }
+
   /* @see IFormatReader#getGlobalMetadata() */
   public Hashtable<String, Object> getGlobalMetadata() {
     FormatTools.assertId(currentId, true, 1);
