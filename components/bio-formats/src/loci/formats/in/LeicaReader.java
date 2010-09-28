@@ -170,7 +170,7 @@ public class LeicaReader extends FormatReader {
 
   /** Constructs a new Leica reader. */
   public LeicaReader() {
-    super("Leica", new String[] {"lei", "tif", "tiff"});
+    super("Leica", new String[] {"lei", "tif", "tiff", "raw"});
     domains = new String[] {FormatTools.LM_DOMAIN};
     hasCompanionFiles = true;
   }
@@ -185,7 +185,11 @@ public class LeicaReader extends FormatReader {
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
   public boolean isThisType(String name, boolean open) {
     if (checkSuffix(name, LEI_SUFFIX)) return true;
-    if (!checkSuffix(name, TiffReader.TIFF_SUFFIXES)) return false;
+    if (!checkSuffix(name, TiffReader.TIFF_SUFFIXES) &&
+      !checkSuffix(name, "raw"))
+    {
+      return false;
+    }
 
     if (!open) return false; // not allowed to touch the file system
 
@@ -291,7 +295,11 @@ public class LeicaReader extends FormatReader {
     Vector<String> v = new Vector<String>();
     if (leiFilename != null) v.add(leiFilename);
     if (!noPixels && files != null) {
-      v.addAll(files[getSeries()]);
+      for (Object file : files[getSeries()]) {
+        if (file != null && new Location((String) file).exists()) {
+          v.add((String) file);
+        }
+      }
     }
     return v.toArray(new String[v.size()]);
   }
@@ -722,6 +730,23 @@ public class LeicaReader extends FormatReader {
           }
         }
       }
+    }
+    else if (checkSuffix(baseFile, "raw") && isGroupFiles()) {
+      // check for that there is an .lei file in the same directory
+      String prefix = baseFile;
+      if (prefix.indexOf(".") != -1) {
+        prefix = prefix.substring(0, prefix.lastIndexOf("."));
+      }
+      Location lei = new Location(prefix + ".lei");
+      if (!lei.exists()) {
+        lei = new Location(prefix + ".LEI");
+        while (!lei.exists() && prefix.indexOf("_") != -1) {
+          prefix = prefix.substring(0, prefix.lastIndexOf("_"));
+          lei = new Location(prefix + ".lei");
+          if (!lei.exists()) lei = new Location(prefix + ".LEI");
+        }
+      }
+      if (lei.exists()) return lei.getAbsolutePath();
     }
     return null;
   }

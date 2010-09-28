@@ -44,6 +44,10 @@ import loci.formats.meta.MetadataStore;
  */
 public class AnalyzeReader extends FormatReader {
 
+  // -- Constants --
+
+  private static final int MAGIC = 0x15c;
+
   // -- Fields --
 
   /** Offset to the pixel data in the .img file. */
@@ -68,14 +72,39 @@ public class AnalyzeReader extends FormatReader {
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
   public boolean isThisType(String name, boolean open) {
     if (!super.isThisType(name, open)) return false;
+    String headerFile = checkSuffix(name, "hdr") ? name : null;
     String extension = name.substring(name.lastIndexOf(".") + 1);
     name = name.substring(0, name.lastIndexOf("."));
     if (extension.equals("img")) extension = "hdr";
     else if (extension.equals("IMG")) extension = "HDR";
     else if (extension.equals("hdr")) extension = "img";
     else if (extension.equals("HDR")) extension = "IMG";
+    if (extension.equalsIgnoreCase("hdr")) {
+      headerFile = name + "." + extension;
+    }
 
-    return new Location(name + "." + extension).exists();
+    boolean validHeader = false;
+    try {
+      RandomAccessInputStream headerStream =
+        new RandomAccessInputStream(headerFile);
+      validHeader = isThisType(headerStream);
+      headerStream.close();
+    }
+    catch (IOException e) { }
+
+    return new Location(name + "." + extension).exists() && validHeader;
+  }
+
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
+    final int blockLen = 4;
+    if (!FormatTools.validStream(stream, blockLen, false)) return false;
+    stream.order(true);
+    int checkLittleEndian = stream.readInt();
+    stream.seek(stream.getFilePointer() - 4);
+    stream.order(false);
+    int checkBigEndian = stream.readInt();
+    return checkLittleEndian == MAGIC || checkBigEndian == MAGIC;
   }
 
   /* @see loci.formats.IFormatReader#isSingleFile(String) */
