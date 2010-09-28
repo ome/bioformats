@@ -30,6 +30,7 @@ import java.util.StringTokenizer;
 
 import loci.common.ByteArrayHandle;
 import loci.common.DataTools;
+import loci.common.DebugTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.services.DependencyException;
@@ -172,10 +173,7 @@ public class ImageInfo {
         else if (args[i].equals("-fast")) fastBlit = true;
         else if (args[i].equals("-autoscale")) autoscale = true;
         else if (args[i].equals("-debug")) {
-          LOGGER.warn("");
-          LOGGER.warn("To enable debugging, edit the log4j.properties file,");
-          LOGGER.warn("changing log4j.rootCategory from INFO to DEBUG");
-          LOGGER.warn("(or TRACE for extreme verbosity).");
+          DebugTools.enableLogging("DEBUG");
         }
         else if (args[i].equals("-preload")) preload = true;
         else if (args[i].equals("-xmlversion")) omexmlVersion = args[++i];
@@ -863,7 +861,9 @@ public class ImageInfo {
    * and displaying the results in a simple display.
    */
   public boolean testRead(String[] args)
-    throws FormatException, ServiceException, IOException {
+    throws FormatException, ServiceException, IOException
+  {
+    DebugTools.enableLogging("INFO");
     parseArgs(args);
     if (printVersion) {
       LOGGER.info("Version: {}", FormatTools.VERSION);

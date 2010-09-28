@@ -26,6 +26,7 @@ package loci.formats.tools;
 import java.awt.image.IndexColorModel;
 import java.io.IOException;
 
+import loci.common.DebugTools;
 import loci.common.Location;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
@@ -74,6 +75,7 @@ public final class ImageConverter {
   public static boolean testConvert(IFormatWriter writer, String[] args)
     throws FormatException, IOException
   {
+    DebugTools.enableLogging("INFO");
     String in = null, out = null;
     String map = null;
     String compression = null;
@@ -84,9 +86,7 @@ public final class ImageConverter {
       for (int i=0; i<args.length; i++) {
         if (args[i].startsWith("-") && args.length > 1) {
           if (args[i].equals("-debug")) {
-            LOGGER.warn("To enable debugging, edit the log4j.properties file,");
-            LOGGER.warn("changing log4j.rootCategory from INFO to DEBUG");
-            LOGGER.warn("(or TRACE for extreme verbosity).");
+            DebugTools.enableLogging("DEBUG");
           }
           else if (args[i].equals("-stitch")) stitch = true;
           else if (args[i].equals("-separate")) separate = true;

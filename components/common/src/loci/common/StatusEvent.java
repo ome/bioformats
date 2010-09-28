@@ -85,4 +85,17 @@ public class StatusEvent {
   /** Returns whether or not this is a warning event. */
   public boolean isWarning() { return warning; }
 
+  // -- Object API methods --
+
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append("Status");
+    sb.append(": progress=" + progress);
+    sb.append(", maximum=" + maximum);
+    sb.append(", warning=" + warning);
+    sb.append(", status='" + status + "'");
+    return sb.toString();
+  }
+
 }
