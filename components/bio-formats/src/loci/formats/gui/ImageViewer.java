@@ -69,10 +69,19 @@ import loci.formats.IFormatHandler;
 import loci.formats.IFormatReader;
 import loci.formats.IFormatWriter;
 import loci.formats.ImageWriter;
+import loci.formats.MetadataTools;
+import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.OMEReaderWriterService;
 import loci.formats.services.OMEXMLService;
+
+import ome.xml.model.enums.DimensionOrder;
+import ome.xml.model.enums.EnumerationException;
+import ome.xml.model.enums.PixelType;
+import ome.xml.model.enums.handlers.DimensionOrderEnumHandler;
+import ome.xml.model.enums.handlers.PixelTypeEnumHandler;
+import ome.xml.model.primitives.PositiveInteger;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -361,11 +370,18 @@ public class ImageViewer extends JFrame implements ActionListener,
     try {
       //Location f = new Location(id);
       //id = f.getAbsolutePath();
-      try {
-        myReader.setMetadataStore(omexmlService.createOMEXMLMetadata());
+      IMetadata meta = null;
+      if (omexmlService != null) {
+        try {
+          meta = omexmlService.createOMEXMLMetadata();
+          myReader.setMetadataStore(meta);
+        }
+        catch (ServiceException exc) {
+          LOGGER.debug("Could not create OME-XML metadata", exc);
+        }
       }
-      catch (ServiceException exc) {
-        LOGGER.info("OME metadata unavailable", exc);
+      if (meta == null) {
+        LOGGER.info("OME metadata unavailable");
       }
       myReader.setId(id);
       int num = myReader.getImageCount();
@@ -406,6 +422,39 @@ public class ImageViewer extends JFrame implements ActionListener,
     if (images == null) return;
     wait(true);
     try {
+      if (omeMeta == null) {
+        omeMeta = omexmlService.createOMEXMLMetadata();
+        omeMeta.setImageID(MetadataTools.createLSID("Image", 0), 0);
+        omeMeta.setPixelsID(MetadataTools.createLSID("Pixels", 0), 0);
+        omeMeta.setPixelsBinDataBigEndian(false, 0, 0);
+
+        String order = "XYCZT";
+        if (in != null) order = in.getDimensionOrder();
+
+        omeMeta.setPixelsDimensionOrder((DimensionOrder)
+          new DimensionOrderEnumHandler().getEnumeration(order), 0);
+        int type = AWTImageTools.getPixelType(images[0]);
+        String pixelType = FormatTools.getPixelTypeString(type);
+        omeMeta.setPixelsType(
+          (PixelType) new PixelTypeEnumHandler().getEnumeration(pixelType), 0);
+
+        int nBands = images[0].getRaster().getNumBands();
+        int rgbChannelCount = (sizeC * sizeZ * sizeT) / nBands;
+        int realChannelCount = sizeC / rgbChannelCount;
+
+        for (int i=0; i<realChannelCount; i++) {
+          omeMeta.setChannelID(MetadataTools.createLSID("Channel", i, 0), i, 0);
+          omeMeta.setChannelSamplesPerPixel(
+            new PositiveInteger(rgbChannelCount), i, 0);
+        }
+
+        omeMeta.setPixelsSizeX(new PositiveInteger(images[0].getWidth()), 0);
+        omeMeta.setPixelsSizeY(new PositiveInteger(images[0].getHeight()), 0);
+        omeMeta.setPixelsSizeC(new PositiveInteger(sizeC), 0);
+        omeMeta.setPixelsSizeZ(new PositiveInteger(sizeZ), 0);
+        omeMeta.setPixelsSizeT(new PositiveInteger(sizeT), 0);
+      }
+      myWriter.setMetadataRetrieve(omexmlService.asRetrieve(omeMeta));
       myWriter.setId(id);
       boolean stack = myWriter.canDoStacks();
       ProgressMonitor progress = new ProgressMonitor(this,
@@ -415,7 +464,7 @@ public class ImageViewer extends JFrame implements ActionListener,
         for (int i=0; i<images.length; i++) {
           progress.setProgress(i);
           boolean canceled = progress.isCanceled();
-          myWriter.savePlane(i, images[i]);
+          myWriter.saveImage(i, images[i]);
           if (canceled) break;
         }
         progress.setProgress(images.length);
@@ -429,6 +478,8 @@ public class ImageViewer extends JFrame implements ActionListener,
     }
     catch (FormatException exc) { LOGGER.info("", exc); }
     catch (IOException exc) { LOGGER.info("", exc); }
+    catch (ServiceException exc) { LOGGER.info("", exc); }
+    catch (EnumerationException exc) { LOGGER.info("", exc); }
     wait(false);
   }
 
