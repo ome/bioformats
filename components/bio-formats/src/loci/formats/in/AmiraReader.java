@@ -396,6 +396,7 @@ public class AmiraReader extends FormatReader {
     long[] offsets;
     int[] internalOffsets;
     int currentNo, maxOffsetIndex, planeSize;
+    long lastCodeOffset = 0;
 
     HxRLE(int sliceCount, long compressedSize) {
       this.compressedSize = compressedSize;
@@ -410,6 +411,7 @@ public class AmiraReader extends FormatReader {
     void read(byte[] buf, int len) throws FormatException, IOException {
       int off = 0;
       while (len > 0 && in.getFilePointer() < in.length()) {
+        lastCodeOffset = in.getFilePointer();
         int insn = in.readByte();
         if (insn < 0) {
           insn = (insn & 0x7f);
@@ -426,11 +428,12 @@ public class AmiraReader extends FormatReader {
         }
         else {
           if (insn > len) {
-            internalOffsets[currentNo] = insn - len;
+            internalOffsets[currentNo] = len;
             insn = len;
           }
-          if (off == 0 && internalOffsets[currentNo - 1] > 0) {
-            insn = internalOffsets[currentNo - 1];
+          else if (insn == len) lastCodeOffset += 2;
+          if (off == 0 && currentNo > 0 && internalOffsets[currentNo - 1] > 0) {
+            insn -= internalOffsets[currentNo - 1];
           }
           Arrays.fill(buf, off, off + insn, in.readByte());
           len -= insn;
@@ -441,23 +444,19 @@ public class AmiraReader extends FormatReader {
 
     public byte[] read(int no, byte[] buf) throws FormatException, IOException {
       if (maxOffsetIndex < no) {
-        if (currentNo != maxOffsetIndex) {
-          in.seek(offsets[maxOffsetIndex]);
-        }
-        currentNo = no + 1;
+        in.seek(offsets[maxOffsetIndex]);
         while (maxOffsetIndex < no) {
           read(buf, planeSize);
-          offsets[++maxOffsetIndex] = in.getFilePointer();
+          currentNo = no + 1;
+          offsets[++maxOffsetIndex] = lastCodeOffset;
         }
       }
       else {
-        if (currentNo != no) {
-          in.seek(offsets[no]);
-        }
-        currentNo = no + 1;
+        in.seek(offsets[no]);
         read(buf, planeSize);
+        currentNo = no + 1;
         if (maxOffsetIndex == no) {
-          offsets[++maxOffsetIndex] = in.getFilePointer();
+          offsets[++maxOffsetIndex] = lastCodeOffset;
         }
       }
       return buf;
