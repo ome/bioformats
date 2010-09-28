@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 
 // HACK: for scan-deps.pl: The following packages are not actually "optional":
 // optional org.apache.log4j, optional org.slf4j.impl,
-// optional org.apache.xalan, optional org.apache.xml.serializer 
+// optional org.apache.xalan, optional org.apache.xml.serializer
 
 /**
  * Abstract superclass of all biological file format readers and writers.

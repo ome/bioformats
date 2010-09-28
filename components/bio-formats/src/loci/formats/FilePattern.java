@@ -587,7 +587,7 @@ public class FilePattern {
     if (args.length > 0) {
       // test file pattern detection based on the given file on disk
       Location file = new Location(args[0]);
-      LOGGER.debug("File = {}", file.getAbsoluteFile());
+      LOGGER.info("File = {}", file.getAbsoluteFile());
       pat = findPattern(file);
     }
     else {
@@ -608,19 +608,19 @@ public class FilePattern {
       }
       pat = findPattern(nameList[1], null, nameList);
     }
-    if (pat == null) LOGGER.debug("No pattern found.");
+    if (pat == null) LOGGER.info("No pattern found.");
     else {
-      LOGGER.debug("Pattern = {}", pat);
+      LOGGER.info("Pattern = {}", pat);
       FilePattern fp = new FilePattern(pat);
       if (fp.isValid()) {
-        LOGGER.debug("Pattern is valid.");
-        LOGGER.debug("Files:");
+        LOGGER.info("Pattern is valid.");
+        LOGGER.info("Files:");
         String[] ids = fp.getFiles();
         for (int i=0; i<ids.length; i++) {
-          LOGGER.debug("  #{}: {}", i, ids[i]);
+          LOGGER.info("  #{}: {}", i, ids[i]);
         }
       }
-      else LOGGER.debug("Pattern is invalid: {}", fp.getErrorMessage());
+      else LOGGER.info("Pattern is invalid: {}", fp.getErrorMessage());
     }
   }
 
