@@ -81,6 +81,8 @@ loci.formats.in.BioRadGelReader       # 1sc
 loci.formats.in.RHKReader             # sm2, sm3
 loci.formats.in.MolecularImagingReader # stp
 loci.formats.in.CellWorxReader        # pnl, htd
+loci.formats.in.Ecat7Reader           # v
+loci.formats.in.VarianFDFReader       # fdf
 loci.formats.in.FakeReader            # fake
 
 # multi-extension messes
@@ -95,6 +97,7 @@ loci.formats.in.AmiraReader           # am, amiramesh, grey, hx, labels, ...
 loci.formats.in.ScanrReader           # dat, xml, tif
 loci.formats.in.BDReader              # exp, tif
 loci.formats.in.UnisokuReader         # dat, hdr
+loci.formats.in.PDSReader             # hdr, img
 
 # standard PIC reader must go last (it accepts any PIC)
 loci.formats.in.BioRadReader          # pic
@@ -133,6 +136,8 @@ loci.formats.in.MetamorphTiffReader   # tif
 loci.formats.in.NikonTiffReader       # tif
 loci.formats.in.OMETiffReader         # tif
 loci.formats.in.PhotoshopTiffReader   # tif
+loci.formats.in.FEITiffReader         # tif
+loci.formats.in.SimplePCITiffReader   # tif
 
 # standard TIFF reader must go last (it accepts any TIFF)
 loci.formats.in.TiffDelegateReader    # tif, tiff

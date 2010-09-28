@@ -65,7 +65,7 @@ public class PCIReader extends FormatReader {
   private HashMap<Integer, Double> timestamps;
   private String creationDate;
   private int binning;
-  private boolean hasZ = false;
+  private Vector<Double> uniqueZ;
 
   // -- Constructor --
 
@@ -123,7 +123,7 @@ public class PCIReader extends FormatReader {
       poi = null;
       binning = 0;
       creationDate = null;
-      hasZ = false;
+      uniqueZ = null;
     }
   }
 
@@ -135,6 +135,7 @@ public class PCIReader extends FormatReader {
 
     imageFiles = new HashMap<Integer, String>();
     timestamps = new HashMap<Integer, Double>();
+    uniqueZ = new Vector<Double>();
 
     try {
       ServiceFactory factory = new ServiceFactory();
@@ -153,6 +154,8 @@ public class PCIReader extends FormatReader {
       throw new FormatException(
         "No files were found - the .cxd may be corrupt.");
     }
+
+    double firstZ = 0d, secondZ = 0d;
 
     for (String name : allFiles) {
       int separator = name.lastIndexOf(File.separator);
@@ -208,7 +211,10 @@ public class PCIReader extends FormatReader {
         timestamps.put(getTimestampIndex(parent), stream.readDouble());
       }
       else if (relativePath.indexOf("Position_Z") != -1) {
-        hasZ = true;
+        double zPos = stream.readDouble();
+        if (!uniqueZ.contains(zPos)) uniqueZ.add(zPos);
+        if (name.indexOf("Field 1/") != -1) firstZ = zPos;
+        else if (name.indexOf("Field 2/") != -1) secondZ = zPos;
       }
       else if (relativePath.equals("First Field Date & Time")) {
         long date = (long) stream.readDouble() * 1000;
@@ -242,17 +248,19 @@ public class PCIReader extends FormatReader {
       stream.close();
     }
 
+    boolean zFirst = !new Double(firstZ).equals(new Double(secondZ));
+
     if (getSizeC() == 0) core[0].sizeC = 1;
 
-    core[0].sizeZ = getImageCount();
-    core[0].sizeT = 1;
+    core[0].sizeZ = uniqueZ.size() == 0 ? 1 : uniqueZ.size();
+    core[0].sizeT = getImageCount() / getSizeZ();
     core[0].rgb = getSizeC() > 1;
     if (imageFiles.size() > getImageCount() && getSizeC() == 1) {
       core[0].sizeC = imageFiles.size() / getImageCount();
       core[0].imageCount *= getSizeC();
     }
     core[0].interleaved = false;
-    core[0].dimensionOrder = "XYCTZ";
+    core[0].dimensionOrder = zFirst ? "XYCZT" : "XYCTZ";
     core[0].littleEndian = true;
     core[0].indexed = false;
     core[0].falseColor = false;
@@ -264,17 +272,6 @@ public class PCIReader extends FormatReader {
       int separator = file.lastIndexOf(File.separator);
       String parent = file.substring(0, separator);
       imageFiles.put(getImageIndex(parent), file);
-    }
-
-    if (timestamps.size() >= 3 && !hasZ) {
-      double one = timestamps.get(0);
-      double two = timestamps.get(1);
-      double three = timestamps.get(2);
-
-      if ((int) (three - two) == (int) (two - one)) {
-        core[0].sizeT = getSizeZ();
-        core[0].sizeZ = 1;
-      }
     }
 
     MetadataStore store = makeFilterMetadata();
