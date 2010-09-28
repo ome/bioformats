@@ -56,8 +56,8 @@ import loci.plugins.util.WindowTools;
  * Bio-Formats Importer general options dialog box.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/in/MainDialog.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/in/MainDialog.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/in/MainDialog.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/in/MainDialog.java">SVN</a></dd></dl>
  */
 public class MainDialog extends ImporterDialog
   implements FocusListener, ItemListener, MouseListener
@@ -519,7 +519,7 @@ public class MainDialog extends ImporterDialog
     // == Color options ==
 
     // colorModeChoice
-    colorModeEnabled = !isStackImage5D && !isStackView5D;
+    colorModeEnabled = !isStackImage5D && !isStackView5D && !isStackStandard;
     if (!colorModeEnabled) colorModeValue = ImporterOptions.COLOR_MODE_DEFAULT;
 
     // autoscaleBox

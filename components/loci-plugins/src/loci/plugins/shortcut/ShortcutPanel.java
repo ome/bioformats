@@ -55,8 +55,8 @@ import loci.plugins.util.WindowTools;
  * Bio-Formats Importer plugin.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/ShortcutPanel.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/ShortcutPanel.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/ShortcutPanel.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/ShortcutPanel.java">SVN</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
@@ -179,13 +179,20 @@ public class ShortcutPanel extends JPanel implements ActionListener, PlugIn {
     runPlugIn(plugins[openerIndex], arg);
   }
 
-  public static void runPlugIn(String className, String arg) {
-    try {
-      IJ.runPlugIn(className, arg);
-    }
-    catch (Throwable t) {
-      WindowTools.reportException(t);
-    }
+  /** Executes the given plugin, in a separate thread. */
+  public static void runPlugIn(final String className, final String arg) {
+    // NB: If we don't run in a separate thread, there are GUI update
+    //     problems with the ImageJ status bar and log window.
+    new Thread() {
+      public void run() {
+        try {
+          IJ.runPlugIn(className, arg);
+        }
+        catch (Throwable t) {
+          WindowTools.reportException(t);
+        }
+      }
+    }.start();
   }
 
   // -- ActionListener API methods --

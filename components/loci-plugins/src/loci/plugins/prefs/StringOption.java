@@ -36,8 +36,8 @@ import java.util.Vector;
  * A string option for one of the LOCI plugins.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/prefs/StringOption.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/prefs/StringOption.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/prefs/StringOption.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/prefs/StringOption.java">SVN</a></dd></dl>
  */
 public class StringOption extends Option {
 
@@ -138,10 +138,11 @@ public class StringOption extends Option {
 
   /* @see Option#parseOption(String arg) */
   public void parseOption(String arg) {
-    value = Macro.getValue(arg, key, value);
-    if (value == null && label != null) {
+    String keyValue = Macro.getValue(arg, key, value);
+    if ((value == null || keyValue.equals(value)) && label != null) {
       value = Macro.getValue(arg, label, value);
     }
+    else value = keyValue;
   }
 
   /* @see Option#loadOption() */

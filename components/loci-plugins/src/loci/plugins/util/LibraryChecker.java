@@ -35,8 +35,8 @@ import java.util.Iterator;
  * are present and versions are correct.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/util/LibraryChecker.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/util/LibraryChecker.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/util/LibraryChecker.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/util/LibraryChecker.java">SVN</a></dd></dl>
  */
 public final class LibraryChecker {
 
@@ -51,7 +51,7 @@ public final class LibraryChecker {
   }
 
   /** Minimum version of ImageJ necessary for LOCI plugins. */
-  public static final String IMAGEJ_VERSION = "1.42";
+  public static final String IMAGEJ_VERSION = "1.43";
 
   /** Message to be displayed if ImageJ is too old for LOCI plugins. */
   public static final String IMAGEJ_MSG =

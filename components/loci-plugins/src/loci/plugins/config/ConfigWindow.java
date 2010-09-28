@@ -39,6 +39,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Properties;
 
 import javax.imageio.spi.IIORegistry;
 import javax.swing.DefaultListModel;
@@ -69,8 +70,8 @@ import loci.plugins.util.WindowTools;
  * A window for managing configuration of the LOCI plugins.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/config/ConfigWindow.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/config/ConfigWindow.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/config/ConfigWindow.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/config/ConfigWindow.java">SVN</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
@@ -293,6 +294,14 @@ public class ConfigWindow extends JFrame
   public void run() {
     log.println("LOCI Plugins configuration - " + new Date());
 
+    // list system properties
+    log.println();
+    log.println("-- System properties --");
+    Properties sysProps = System.getProperties();
+    for (Object name : sysProps.keySet()) {
+      log.println(name + " = " + sysProps.getProperty(name.toString()));
+    }
+
     // generate list of formats
     log.println();
     log.println("-- Formats --");
@@ -325,7 +334,7 @@ public class ConfigWindow extends JFrame
 
     String qtVersion = null;
     try {
-      Class<?> qtToolsClass = Class.forName("loci.formats.LegacyQTTools");
+      Class<?> qtToolsClass = Class.forName("loci.formats.gui.LegacyQTTools");
       Object qtTools = qtToolsClass.newInstance();
       Method getQTVersion = qtToolsClass.getMethod("getQTVersion");
       qtVersion = (String) getQTVersion.invoke(qtTools);

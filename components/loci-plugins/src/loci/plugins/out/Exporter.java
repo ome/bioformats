@@ -5,8 +5,8 @@
 /*
 LOCI Plugins for ImageJ: a collection of ImageJ plugins including the
 Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
-Data Browser and Stack Slicer. Copyright (C) 2005-@year@ Melissa Linkert,
-Curtis Rueden and Christopher Peterson.
+Data Browser, Stack Colorizer and Stack Slicer. Copyright (C) 2005-@year@
+Melissa Linkert, Curtis Rueden and Christopher Peterson.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -80,8 +80,8 @@ import ome.xml.model.primitives.PositiveInteger;
  * Core logic for the Bio-Formats Exporter ImageJ plugin.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/out/Exporter.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/out/Exporter.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/out/Exporter.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/out/Exporter.java">SVN</a></dd></dl>
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */

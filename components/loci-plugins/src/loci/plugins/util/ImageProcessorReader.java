@@ -46,8 +46,8 @@ import loci.formats.ReaderWrapper;
  * see {@link loci.plugins.in.ImagePlusReader} instead.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/util/ImageProcessorReader.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/util/ImageProcessorReader.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/util/ImageProcessorReader.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/util/ImageProcessorReader.java">SVN</a></dd></dl>
  */
 public class ImageProcessorReader extends ReaderWrapper {
 
@@ -225,6 +225,16 @@ public class ImageProcessorReader extends ReaderWrapper {
         // Another option would be to scale every 256th value in the 16-bit LUT;
         // this may be a bit faster, but will be less accurate than the
         // averaging approach taken below.
+
+        // TODO: For non-continuous LUTs, this approach does not work well.
+        //
+        // For an example, try:
+        //   'i16&pixelType=uint16&indexed=true&falseColor=true.fake'
+        //
+        // To fully resolve this issue, we would need to redither the image.
+        //
+        // At minimum, we should issue a warning to the ImageJ log whenever
+        // this convertTo8Bit routine is invoked, so the user is informed.
 
         int valuesPerBin = shortTable[c].length / byteTable[c].length;
         double average = 0;

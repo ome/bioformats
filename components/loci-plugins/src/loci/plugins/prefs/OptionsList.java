@@ -37,8 +37,8 @@ import loci.common.IniTable;
  * Base class for ImageJ preferences for LOCI plugins.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/prefs/OptionsList.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/prefs/OptionsList.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/prefs/OptionsList.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/prefs/OptionsList.java">SVN</a></dd></dl>
  */
 public class OptionsList {
 
@@ -187,6 +187,46 @@ public class OptionsList {
     Option o = options.get(key);
     if (o instanceof StringOption) return (StringOption) o;
     throw new IllegalArgumentException("Not a string key: " + key);
+  }
+
+  // -- Object API methods --
+
+  /* @see java.lang.Object#equals(Object) */
+  public boolean equals(Object o) {
+    if (o == null || !(o instanceof OptionsList)) return false;
+    OptionsList optionsList = (OptionsList) o;
+    if (options.size() != optionsList.options.size()) {
+      return false;
+    }
+    for (String key : options.keySet()) {
+      Option a = options.get(key);
+      Option b = optionsList.options.get(key);
+      if ((a != null && b == null) || (a == null && b != null)) {
+        return false;
+      }
+      else if (a == null && b == null) continue;
+
+      if ((a instanceof BooleanOption) && (b instanceof BooleanOption)) {
+        if (((BooleanOption) a).getValue() != ((BooleanOption) b).getValue()) {
+          return false;
+        }
+      }
+      else if ((a instanceof StringOption) && (b instanceof StringOption)) {
+        String aValue = ((StringOption) a).getValue();
+        String bValue = ((StringOption) b).getValue();
+        if (aValue == null && bValue == null) continue;
+        if (aValue == null) {
+          return false;
+        }
+        if (aValue == null || !aValue.equals(bValue)) {
+          return false;
+        }
+      }
+      else {
+        return false;
+      }
+    }
+    return true;
   }
 
 }

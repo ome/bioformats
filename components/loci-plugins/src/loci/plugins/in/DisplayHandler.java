@@ -57,8 +57,8 @@ import org.xml.sax.SAXException;
  * Logic for displaying images and metadata onscreen using ImageJ.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/in/DisplayHandler.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/in/DisplayHandler.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/in/DisplayHandler.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/in/DisplayHandler.java">SVN</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  * @author Melissa Linkert melissa at glencoesoftware.com
@@ -160,9 +160,9 @@ public class DisplayHandler implements StatusListener {
       ru.exec("import i5d.Image5D");
       ru.setVar("title", imp.getTitle());
       ru.setVar("stack", imp.getStack());
-      ru.setVar("sizeC", r.getSizeC());
-      ru.setVar("sizeZ", r.getSizeZ());
-      ru.setVar("sizeT", r.getSizeT());
+      ru.setVar("sizeC", imp.getNChannels());
+      ru.setVar("sizeZ", imp.getNSlices());
+      ru.setVar("sizeT", imp.getNFrames());
       ru.exec("i5d = new Image5D(title, stack, sizeC, sizeZ, sizeT)");
       ru.setVar("cal", imp.getCalibration());
       ru.setVar("fi", imp.getOriginalFileInfo());
@@ -183,8 +183,8 @@ public class DisplayHandler implements StatusListener {
     Exception exc = null;
     try {
       Class<?> c = Class.forName("view5d.View5D_");
-      Constructor<?> con = c.getConstructor(new Class[] {String.class});
-      con.newInstance(new Object[] {""});
+      Constructor<?> con = c.getConstructor();
+      con.newInstance();
     }
     catch (ClassNotFoundException e) { exc = e; }
     catch (SecurityException e) { exc = e; }

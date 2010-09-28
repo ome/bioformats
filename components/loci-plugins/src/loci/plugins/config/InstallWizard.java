@@ -41,8 +41,8 @@ import javax.swing.WindowConstants;
  * libraries and plugins used by the LOCI plugins.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/config/InstallWizard.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/config/InstallWizard.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/config/InstallWizard.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/config/InstallWizard.java">SVN</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
@@ -75,7 +75,7 @@ public class InstallWizard extends JFrame
 
     // capabilities:
 
-    // Check for ImageJ 1.40 or newer
+    // Check for ImageJ 1.43 or newer
     // download and install latest ij.jar
     // don't launch ImageJ updater plugin because it might not exist
 
