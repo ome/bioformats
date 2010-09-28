@@ -343,7 +343,7 @@ public class SlidebookReader extends FormatReader {
 
     // determine total number of pixel bytes
 
-    float pixelSize = 1;
+    Vector<Float> pixelSize = new Vector<Float>();
     String objective = null;
     Vector<Double> pixelSizeZ = new Vector<Double>();
 
@@ -456,7 +456,7 @@ public class SlidebookReader extends FormatReader {
           long fp = in.getFilePointer();
           objective = in.readCString();
           in.seek(fp + 144);
-          pixelSize = in.readFloat();
+          pixelSize.add(in.readFloat());
         }
         else if (n == 'e') {
           in.skipBytes(174);
@@ -468,7 +468,7 @@ public class SlidebookReader extends FormatReader {
         }
         else if (n == 'k') {
           in.skipBytes(14);
-          setSeries(nextName - 1);
+          if (nextName > 0) setSeries(nextName - 1);
           addSeriesMeta("Mag. changer", in.readCString());
         }
         else if (isSpool) {
@@ -544,8 +544,10 @@ public class SlidebookReader extends FormatReader {
       // populate Dimensions data
 
       for (int i=0; i<getSeriesCount(); i++) {
-        store.setPixelsPhysicalSizeX(new Double(pixelSize), i);
-        store.setPixelsPhysicalSizeY(new Double(pixelSize), i);
+        if (i < pixelSize.size()) {
+          store.setPixelsPhysicalSizeX(new Double(pixelSize.get(i)), i);
+          store.setPixelsPhysicalSizeY(new Double(pixelSize.get(i)), i);
+        }
         int idx = 0;
         for (int q=0; q<i; q++) {
           idx += core[q].sizeC;

@@ -44,11 +44,16 @@ public class BioRadGelReader extends FormatReader {
 
   // -- Constants --
 
+  private static final int MAGIC_BYTES = 0xafaf;
+
   private static final long PIXEL_OFFSET = 59654;
+  private static final long START_OFFSET = 160;
+  private static final long BASE_OFFSET = 352;
 
   // -- Fields --
 
   private long offset;
+  private long diff;
 
   // -- Constructor --
 
@@ -65,7 +70,7 @@ public class BioRadGelReader extends FormatReader {
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     final int blockLen = 2;
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
-    return (stream.readShort() & 0xffff) == 0xafaf;
+    return (stream.readShort() & 0xffff) == MAGIC_BYTES;
   }
 
   /**
@@ -76,10 +81,15 @@ public class BioRadGelReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    if (offset > PIXEL_OFFSET) {
-      in.seek(offset + 1285);
+    int planeSize = FormatTools.getPlaneSize(this);
+
+    if (PIXEL_OFFSET + planeSize < in.length()) {
+      if (diff < 0) {
+        in.seek(0x379d1);
+      }
+      else in.seek(PIXEL_OFFSET);
     }
-    else in.seek(PIXEL_OFFSET);
+    else in.seek(in.length() - planeSize);
 
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
     int pixel = bpp * getSizeC();
@@ -102,37 +112,70 @@ public class BioRadGelReader extends FormatReader {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
 
-    in.seek(348);
-    int skip = in.readInt() - 28;
+    String check = in.readString(48);
+    if (check.indexOf("Intel Format") != -1) {
+      in.order(true);
+    }
 
-    double physicalWidth = 0d, physicalHeight = 0d;
-    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      in.seek(348 + skip - 8187);
-      String scannerName = in.readCString();
-      in.skipBytes(8);
-      in.readCString();
-      in.skipBytes(8);
-      String imageArea = in.readCString();
+    in.seek(START_OFFSET);
 
-      scannerName = scannerName.substring(scannerName.indexOf(":") + 1).trim();
-      addGlobalMeta("Scanner name", scannerName);
+    boolean codeFound = false;
+    int skip = 0;
 
-      imageArea = imageArea.substring(imageArea.indexOf(":") + 1).trim();
-      int xIndex = imageArea.indexOf("x");
-      if (xIndex > 0) {
-        String width = imageArea.substring(1, imageArea.indexOf(" "));
-        String height =
-          imageArea.substring(xIndex + 1, imageArea.indexOf(" ", xIndex + 2));
-        physicalWidth = Double.parseDouble(width.trim()) * 1000;
-        physicalHeight = Double.parseDouble(height.trim()) * 1000;
+    while (!codeFound) {
+      short code = in.readShort();
+      if (code == 0x81) codeFound = true;
+      short length = in.readShort();
+
+      in.skipBytes(2 + 2 * length);
+      if (codeFound) {
+        skip = (in.readShort() & 0xffff) - 32;
+      }
+      else {
+        if (length == 1) in.skipBytes(12);
+        else if (length == 2) in.skipBytes(10);
       }
     }
 
-    in.seek(348 + skip - 273);
-    String date = in.readCString();
-    date = DateTools.formatDate(date, "dd-MMM-yyyy HH:mm");
+    long baseFP = in.getFilePointer();
+    diff = BASE_OFFSET - baseFP;
+    skip += diff;
 
-    in.seek(348 + skip);
+    double physicalWidth = 0d, physicalHeight = 0d;
+    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
+      if (baseFP + skip - 8187 > 0) {
+        in.seek(baseFP + skip - 8187);
+        String scannerName = in.readCString();
+        in.skipBytes(8);
+        in.readCString();
+        in.skipBytes(8);
+        String imageArea = in.readCString();
+
+        imageArea = imageArea.substring(imageArea.indexOf(":") + 1).trim();
+        int xIndex = imageArea.indexOf("x");
+        if (xIndex > 0) {
+          int space = imageArea.indexOf(" ");
+          if (space >= 0) {
+            String width = imageArea.substring(1, space);
+            int nextSpace = imageArea.indexOf(" ", xIndex + 2);
+            if (nextSpace > xIndex) {
+              String height = imageArea.substring(xIndex + 1, nextSpace);
+              physicalWidth = Double.parseDouble(width.trim()) * 1000;
+              physicalHeight = Double.parseDouble(height.trim()) * 1000;
+            }
+          }
+        }
+      }
+    }
+
+    in.seek(baseFP + skip - 298);
+    String date = in.readString(17);
+    date = DateTools.formatDate(date, "dd-MMM-yyyy HH:mm");
+    in.skipBytes(73);
+    String scannerName = in.readCString();
+    addGlobalMeta("Scanner name", scannerName);
+
+    in.seek(baseFP + skip);
 
     core[0].sizeX = in.readShort() & 0xffff;
     core[0].sizeY = in.readShort() & 0xffff;

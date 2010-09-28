@@ -152,7 +152,7 @@ public class LeicaHandler extends DefaultHandler {
       }
 
       if (coreMeta.sizeX == 0 && coreMeta.sizeY == 0) {
-        numDatasets--;
+        if (numDatasets > 0) numDatasets--;
       }
       else {
         if (coreMeta.sizeX == 0) coreMeta.sizeX = 1;
@@ -231,16 +231,18 @@ public class LeicaHandler extends DefaultHandler {
       multiBands.clear();
       nextROI = 0;
 
-      int nChannels = core.get(numDatasets).rgb ? 1 : numChannels;
+      if (numDatasets >= 0) {
+        int nChannels = core.get(numDatasets).rgb ? 1 : numChannels;
 
-      for (int c=0; c<detectorIndices.size(); c++) {
-        int index = detectorIndices.get(c).intValue();
-        if (c >= nChannels || index >= nChannels || index >= 0) break;
-        String id = MetadataTools.createLSID("Detector", numDatasets, index);
-        store.setDetectorSettingsID(id, numDatasets, index);
-      }
-      for (int c=0; c<nChannels; c++) {
-        store.setChannelPinholeSize(pinhole, numDatasets, c);
+        for (int c=0; c<detectorIndices.size(); c++) {
+          int index = detectorIndices.get(c).intValue();
+          if (c >= nChannels || index >= nChannels || index >= 0) break;
+          String id = MetadataTools.createLSID("Detector", numDatasets, index);
+          store.setDetectorSettingsID(id, numDatasets, index);
+        }
+        for (int c=0; c<nChannels; c++) {
+          store.setChannelPinholeSize(pinhole, numDatasets, c);
+        }
       }
     }
     else if (qName.equals("Image")) {
@@ -284,18 +286,12 @@ public class LeicaHandler extends DefaultHandler {
     if (suffix == null) suffix = attributes.getValue("Description");
     if (level != MetadataLevel.MINIMUM) {
       if (suffix != null && value != null) {
-        int index = 1;
-        while (h.get(key.toString() + suffix + " " + index) != null) index++;
-        h.put(key.toString() + suffix + " " + index, value);
+        storeKeyValue(h, key.toString() + suffix, value);
       }
       else {
         for (int i=0; i<attributes.getLength(); i++) {
-          int index = 1;
           String name = attributes.getQName(i);
-          while (h.get(key.toString() + name + " " + index) != null) {
-            index++;
-          }
-          h.put(key.toString() + name + " " + index, attributes.getValue(i));
+          storeKeyValue(h, key.toString() + name, attributes.getValue(i));
         }
       }
     }
@@ -895,6 +891,19 @@ public class LeicaHandler extends DefaultHandler {
 
   private void storeSeriesHashtable(int series, Hashtable h) {
     if (series < 0) return;
+
+    Object[] keys = h.keySet().toArray(new Object[h.size()]);
+    for (Object key : keys) {
+      Object value = h.get(key);
+      if (value instanceof Vector) {
+        Vector v = (Vector) value;
+        for (int o=0; o<v.size(); o++) {
+          h.put(key + " " + (o + 1), v.get(o));
+        }
+        h.remove(key);
+      }
+    }
+
     CoreMetadata coreMeta = core.get(series);
     coreMeta.seriesMetadata = h;
     core.setElementAt(coreMeta, series);
@@ -1055,6 +1064,26 @@ public class LeicaHandler extends DefaultHandler {
       return Double.parseDouble(number);
     }
     return 0;
+  }
+
+  private void storeKeyValue(Hashtable h, String key, String value) {
+    if (h.get(key) == null) {
+      h.put(key, value);
+    }
+    else {
+      Object oldValue = h.get(key);
+      if (oldValue instanceof Vector) {
+        Vector values = (Vector) oldValue;
+        values.add(value);
+        h.put(key, values);
+      }
+      else {
+        Vector values = new Vector();
+        values.add(oldValue);
+        values.add(value);
+        h.put(key, values);
+      }
+    }
   }
 
   // -- Helper classes --

@@ -50,6 +50,7 @@ import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.services.OMEXMLService;
 
 import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
@@ -86,8 +87,8 @@ public class OMEXMLReader extends FormatReader {
   // -- Fields --
 
   // compression value and offset for each BinData element
+  private Vector<BinData> binData;
   private Vector<Long> binDataOffsets;
-  private Vector<Long> binDataLengths;
   private Vector<String> compression;
 
   private String omexml;
@@ -135,58 +136,9 @@ public class OMEXMLReader extends FormatReader {
     }
 
     long offset = binDataOffsets.get(index).longValue();
-    long length = binDataLengths.get(index).longValue();
     String compress = compression.get(index);
 
-    in.seek(offset - 64);
-
-    // offset is approximate, we will need to skip a few bytes
-    boolean foundBinData = false;
-    byte[] check = new byte[8192];
-    int overlap = 14;
-    int n = in.read(check, 0, overlap);
-
-    while (!foundBinData) {
-      int r = in.read(check, overlap, check.length - overlap);
-      if (r <= 0) throw new IOException("Cannot read from input stream");
-      n += r;
-      String checkString = new String(check);
-      int pos = 0;
-      while (checkString.indexOf("BinData", pos) != -1 &&
-        pos < checkString.length() && pos >= 0)
-      {
-        int idx = checkString.indexOf("BinData", pos) + 7;
-        pos = idx + 1;
-        boolean foundBeginning = false;
-        int openBracket = idx;
-        while (!foundBeginning && openBracket >= 1) {
-          openBracket--;
-          foundBeginning = checkString.charAt(openBracket) == '<';
-        }
-        if (checkString.charAt(openBracket + 1) == '/') continue;
-        foundBinData = true;
-        in.seek(in.getFilePointer() - n + idx);
-        while (true) {
-          r = in.read();
-          if (r <= 0) {
-            throw new IOException("EOF looking for terminating > character");
-          }
-          if (r == '>') break;
-        }
-        if (foundBinData) break;
-      }
-      if (!foundBinData) {
-        System.arraycopy(check, check.length - overlap, check, 0, overlap);
-        n = overlap;
-      }
-    }
-
-    if (length < 0 && index + 1 < binDataOffsets.size()) {
-      length = binDataOffsets.get(index + 1).longValue() - offset;
-    }
-    else if (length < 0) {
-      length = in.length() - offset;
-    }
+    in.seek(offset);
 
     int depth = FormatTools.getBytesPerPixel(getPixelType());
     int planeSize = getSizeX() * getSizeY() * depth;
@@ -242,7 +194,7 @@ public class OMEXMLReader extends FormatReader {
     if (!fileOnly) {
       compression = null;
       binDataOffsets = null;
-      binDataLengths = null;
+      binData = null;
       omexml = null;
       hasSPW = false;
     }
@@ -257,8 +209,8 @@ public class OMEXMLReader extends FormatReader {
 
     in = new RandomAccessInputStream(id);
 
+    binData = new Vector<BinData>();
     binDataOffsets = new Vector<Long>();
-    binDataLengths = new Vector<Long>();
     compression = new Vector<String>();
 
     DefaultHandler handler = new OMEXMLHandler();
@@ -269,6 +221,18 @@ public class OMEXMLReader extends FormatReader {
     }
     catch (IOException e) {
       throw new FormatException("Malformed OME-XML", e);
+    }
+
+    int lineNumber = 1;
+    for (BinData bin : binData) {
+      int line = bin.getRow();
+      int col = bin.getColumn();
+
+      while (lineNumber < line) {
+        in.readLine();
+        lineNumber++;
+      }
+      binDataOffsets.add(in.getFilePointer() + col - 1);
     }
 
     if (binDataOffsets.size() == 0) {
@@ -348,47 +312,28 @@ public class OMEXMLReader extends FormatReader {
 
   class OMEXMLHandler extends DefaultHandler {
     private StringBuffer xmlBuffer;
-    private long nextBinDataOffset;
     private String currentQName;
-    private boolean hadCharData;
-    private int binDataChars;
+    private Locator locator;
 
     public OMEXMLHandler() {
       xmlBuffer = new StringBuffer();
-      nextBinDataOffset = 0;
     }
 
     public void characters(char[] ch, int start, int length) {
-      if (currentQName.indexOf("BinData") != -1) {
-        binDataChars += length;
+      if (currentQName.indexOf("BinData") < 0) {
+        xmlBuffer.append(new String(ch, start, length));
       }
-      else xmlBuffer.append(new String(ch, start, length));
-      nextBinDataOffset += length;
-      hadCharData = true;
     }
 
     public void endElement(String uri, String localName, String qName) {
       xmlBuffer.append("</");
       xmlBuffer.append(qName);
       xmlBuffer.append(">");
-      if (qName.indexOf("BinData") >= 0) {
-        binDataOffsets.add(new Long(nextBinDataOffset - binDataChars));
-      }
-
-      nextBinDataOffset += 2;
-      if (!qName.equals(currentQName) || hadCharData) {
-        nextBinDataOffset += qName.length();
-      }
-    }
-
-    public void ignorableWhitespace(char[] ch, int start, int length) {
-      nextBinDataOffset += length;
     }
 
     public void startElement(String ur, String localName, String qName,
       Attributes attributes)
     {
-      hadCharData = false;
       currentQName = qName;
 
       if (qName.indexOf("BinData") == -1) {
@@ -416,14 +361,10 @@ public class OMEXMLReader extends FormatReader {
         xmlBuffer.append(">");
       }
       else {
-        String length = attributes.getValue("Length");
-        if (length == null) {
-          binDataLengths.add(new Long(-1));
-        }
-        else binDataLengths.add(new Long(length));
+        binData.add(
+          new BinData(locator.getLineNumber(), locator.getColumnNumber()));
         String compress = attributes.getValue("Compression");
         compression.add(compress == null ? "" : compress);
-        binDataChars = 0;
 
         xmlBuffer.append("<");
         xmlBuffer.append(qName);
@@ -439,18 +380,28 @@ public class OMEXMLReader extends FormatReader {
         }
         xmlBuffer.append(">");
       }
-
-      nextBinDataOffset += 2 + qName.length() + 4*attributes.getLength();
-      for (int i=0; i<attributes.getLength(); i++) {
-        nextBinDataOffset += attributes.getQName(i).length();
-        nextBinDataOffset += attributes.getValue(i).length();
-      }
     }
 
     public void endDocument() {
       omexml = xmlBuffer.toString();
     }
 
+    public void setDocumentLocator(Locator locator) {
+      this.locator = locator;
+    }
+  }
+
+  class BinData {
+    private int row;
+    private int column;
+
+    public BinData(int row, int column) {
+      this.row = row;
+      this.column = column;
+    }
+
+    public int getRow() { return row; }
+    public int getColumn() { return column; }
   }
 
 }

@@ -392,6 +392,25 @@ public class OMETiffReader extends FormatReader {
       for (int no=0; no<num; no++) planes[no] = new OMETiffPlane();
 
       int tiffDataCount = meta.getTiffDataCount(i);
+      boolean zOneIndexed = false;
+      boolean cOneIndexed = false;
+      boolean tOneIndexed = false;
+
+      // pre-scan TiffData indices to see if any of them are indexed from 1
+
+      for (int td=0; td<tiffDataCount; td++) {
+        NonNegativeInteger firstC = meta.getTiffDataFirstC(i, td);
+        NonNegativeInteger firstT = meta.getTiffDataFirstT(i, td);
+        NonNegativeInteger firstZ = meta.getTiffDataFirstZ(i, td);
+        int c = firstC == null ? 0 : firstC.getValue();
+        int t = firstT == null ? 0 : firstT.getValue();
+        int z = firstZ == null ? 0 : firstZ.getValue();
+
+        if (c >= effSizeC) cOneIndexed = true;
+        if (z >= sizeZ) zOneIndexed = true;
+        if (t >= sizeT) tOneIndexed = true;
+      }
+
       for (int td=0; td<tiffDataCount; td++) {
         LOGGER.debug("    TiffData[{}] {", td);
         // extract TiffData parameters
@@ -418,9 +437,9 @@ public class OMETiffReader extends FormatReader {
         int z = firstZ == null ? 0 : firstZ.getValue();
 
         // NB: some writers index FirstC, FirstZ and FirstT from 1
-        if (c >= effSizeC) c--;
-        if (z >= sizeZ) z--;
-        if (t >= sizeT) t--;
+        if (cOneIndexed) c--;
+        if (zOneIndexed) z--;
+        if (tOneIndexed) t--;
 
         int index = FormatTools.getIndex(order,
           sizeZ, effSizeC, sizeT, num, z, c, t);
@@ -544,6 +563,18 @@ public class OMETiffReader extends FormatReader {
         }
         core[s].imageCount = num;
         core[s].dimensionOrder = meta.getPixelsDimensionOrder(i).toString();
+
+        // hackish workaround for files exported by OMERO that have an
+        // incorrect dimension order
+        if (meta.getChannelCount(i) > 0 && meta.getChannelName(i, 0) == null &&
+          meta.getTiffDataCount(i) > 0 &&
+          meta.getUUIDFileName(i, 0).indexOf("__omero_export") != -1)
+        {
+          int zIndex = core[s].dimensionOrder.indexOf("Z");
+          int tIndex = core[s].dimensionOrder.indexOf("T");
+          core[s].dimensionOrder = zIndex < tIndex ? "XYCZT" : "XYCTZ";
+        }
+
         core[s].orderCertain = true;
         PhotoInterp photo = firstIFD.getPhotometricInterpretation();
         core[s].rgb = samples > 1 || photo == PhotoInterp.RGB;
@@ -602,7 +633,7 @@ public class OMETiffReader extends FormatReader {
     core = series.toArray(new CoreMetadata[series.size()]);
     info = planeInfo.toArray(new OMETiffPlane[0][0]);
 
-    MetadataTools.populatePixels(metadataStore, this);
+    MetadataTools.populatePixels(metadataStore, this, false, false);
     metadataStore = getMetadataStoreForDisplay();
   }
 

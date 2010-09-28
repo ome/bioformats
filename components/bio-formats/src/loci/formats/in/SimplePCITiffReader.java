@@ -27,6 +27,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import loci.common.DateTools;
 import loci.common.IniList;
@@ -180,14 +181,8 @@ public class SimplePCITiffReader extends BaseTiffReader {
     core[0].rgb = false;
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      for (IniTable table : ini) {
-        String tableName = table.get(IniTable.HEADER_KEY);
-        for (String key : table.keySet()) {
-          if (!key.equals(IniTable.HEADER_KEY)) {
-            addGlobalMeta("[" + tableName + "] " + key, table.get(key));
-          }
-        }
-      }
+      HashMap<String, String> iniMap = ini.flattenIntoHashMap();
+      metadata.putAll(iniMap);
     }
   }
 
