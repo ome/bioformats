@@ -114,8 +114,6 @@ public class ImageInfo {
   private DimensionSwapper dimSwapper;
   private BufferedImageReader biReader;
 
-  private String seriesLabel = null;
-
   private Double[] preGlobalMin = null, preGlobalMax = null;
   private Double[] preKnownMin = null, preKnownMax = null;
   private Double[] prePlaneMin = null, prePlaneMax = null;
@@ -261,7 +259,12 @@ public class ImageInfo {
     for (int i=0; i<s.length; i++) LOGGER.info(s[i]);
   }
 
+  public void setReader(IFormatReader reader) {
+    this.reader = reader;
+  }
+
   public void createReader() {
+    if (reader != null) return; // reader was set programmatically
     if (format != null) {
       // create reader of a specific format type
       try {

@@ -32,7 +32,7 @@ import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
 import loci.formats.IFormatReader;
 import loci.formats.IFormatWriter;
-import loci.formats.services.OMEReaderWriterService;
+import loci.ome.io.services.OMEReaderWriterService;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
