@@ -26,6 +26,7 @@ package loci.formats.in;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Vector;
 
 import loci.common.DataTools;
@@ -395,14 +396,17 @@ public class LIFReader extends FormatReader {
         for (int i=0; i<getSeriesCount(); i++) {
           setSeries(i);
           Pixels img = root.getImage(i).getPixels();
-          for (int c=0; c<img.sizeOfChannelList(); c++) {
-            Channel channel = img.getChannel(c);
+          List<Channel> channels = img.copyChannelList();
+
+          for (int c=0; c<channels.size(); c++) {
+            Channel channel = channels.get(c);
             if (channel.getID() == null || c >= getEffectiveSizeC()) {
               img.removeChannel(channel);
             }
           }
         }
         setSeries(0);
+        store.setRoot(root);
       }
     }
     catch (DependencyException e) {
