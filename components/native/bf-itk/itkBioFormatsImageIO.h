@@ -55,7 +55,7 @@ http://www.itk.org/Wiki/Plugin_IO_mechanisms
 #include "loci-common.h"
 using jace::JNIException;
 using jace::proxy::java::lang::Exception;
-using jace::proxy::loci::common::Log;
+using jace::proxy::loci::common::DebugTools;
 #include "bio-formats.h"
 using jace::proxy::loci::formats::ChannelFiller;
 using jace::proxy::loci::formats::FormatTools;
