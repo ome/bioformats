@@ -58,11 +58,14 @@ public class OMEModelImpl implements OMEModel {
   public OMEModelObject removeModelObject(String id) {
     return modelObjects.remove(id);
   }
-  
+
   /* (non-Javadoc)
    * @see ome.xml.model.OMEModel#addModelObject(java.lang.String, ome.xml.model.OMEModelObject)
    */
   public OMEModelObject addModelObject(String id, OMEModelObject object) {
+    if (Reference.class.isAssignableFrom(object.getClass())) {
+      return object;
+    }
     return modelObjects.put(id, object);
   }
 
