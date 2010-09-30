@@ -272,6 +272,7 @@ public class SPWModelMock implements ModelMock {
     commentAnnotation.setNamespace(GENERAL_ANNOTATION_NAMESPACE);
     commentAnnotation.setValue("Image:" + index + " annotation.");
     annotations.addCommentAnnotation(commentAnnotation);
+    image.linkAnnotation(commentAnnotation);
     // Create <Pixels/>
     Pixels pixels = new Pixels();
     pixels.setID("Pixels:" + index);
