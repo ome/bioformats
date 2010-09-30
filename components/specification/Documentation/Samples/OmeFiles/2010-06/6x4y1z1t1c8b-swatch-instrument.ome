@@ -37,7 +37,7 @@
 		<InstrumentRef ID="Instrument:0"/>
 		<Pixels DimensionOrder="XYCZT" ID="Pixels:0:0" PhysicalSizeX="10000.0" PhysicalSizeY="10000.0" PhysicalSizeZ="0.0" Type="uint8" SizeC="1" SizeT="1" SizeX="6" SizeY="4" SizeZ="1">
 			<OME:Channel xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2010-06" Color="-2147483648" ID="Channel:0:1">
-				<LightSourceSettings ID="LightSource:1" Attenuation="0.8" Wavelength="510"/>
+				<LightSourceSettings ID="LightSource:0" Attenuation="0.8" Wavelength="510"/>
 				<DetectorSettings ID="Detector:0" Binning="2x2" Gain="1.2" Offset="0.7" ReadOutRate="3200" Voltage="120"/>
 				<LightPath>
 					<ExcitationFilterRef ID="Filter:3"/>
