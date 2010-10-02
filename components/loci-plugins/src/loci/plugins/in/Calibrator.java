@@ -73,6 +73,18 @@ public class Calibrator {
     Double td = meta.getPixelsTimeIncrement(series);
     if (td != null) tcal = td.floatValue();
 
+    double xPosition = Double.NaN;
+    double yPosition = Double.NaN;
+    double zPosition = Double.NaN;
+    if (meta.getPlaneCount(series) > 0) {
+      Double posX = meta.getPlanePositionX(series, 0);
+      Double posY = meta.getPlanePositionY(series, 0);
+      Double posZ = meta.getPlanePositionZ(series, 0);
+      if (posX != null) xPosition = posX.doubleValue();
+      if (posY != null) yPosition = posY.doubleValue();
+      if (posZ != null) zPosition = posZ.doubleValue();
+    }
+
     boolean xcalPresent = !Double.isNaN(xcal);
     boolean ycalPresent = !Double.isNaN(ycal);
     boolean zcalPresent = !Double.isNaN(zcal);
@@ -92,7 +104,9 @@ public class Calibrator {
     zcalPresent = !Double.isNaN(zcal);
     tcalPresent = !Double.isNaN(tcal);
     final boolean hasSpatial = xcalPresent || ycalPresent || zcalPresent;
-    final boolean hasCalibration = hasSpatial || ycalPresent;
+    final boolean hasStageData =
+      !Double.isNaN(xPosition) || !Double.isNaN(yPosition);
+    final boolean hasCalibration = hasSpatial || ycalPresent || hasStageData;
 
     if (hasCalibration) {
       // set calibration only if at least one value is present
@@ -102,6 +116,15 @@ public class Calibrator {
       if (ycalPresent) cal.pixelHeight = ycal;
       if (zcalPresent) cal.pixelDepth = zcal;
       if (tcalPresent) cal.frameInterval = tcal;
+      if (!Double.isNaN(xPosition) && xcalPresent) {
+        cal.xOrigin = xPosition * (1 / xcal);
+      }
+      if (!Double.isNaN(yPosition) && ycalPresent) {
+        cal.yOrigin = yPosition * (1 / ycal);
+      }
+      if (!Double.isNaN(zPosition) && zcalPresent) {
+        cal.zOrigin = zPosition * (1 / zcal);
+      }
       imp.setCalibration(cal);
     }
 
