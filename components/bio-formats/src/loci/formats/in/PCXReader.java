@@ -56,6 +56,7 @@ public class PCXReader extends FormatReader {
   private int bytesPerLine;
 
   private int nColorPlanes;
+  private byte[][] lut;
 
   // -- Constructor --
 
@@ -72,6 +73,12 @@ public class PCXReader extends FormatReader {
     final int blockLen = 1;
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
     return stream.read() == PCX_MAGIC_BYTE;
+  }
+
+  /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  public byte[][] get8BitLookupTable() {
+    FormatTools.assertId(currentId, true, 1);
+    return lut;
   }
 
   /**
@@ -103,9 +110,13 @@ public class PCXReader extends FormatReader {
       else b[pt++] = (byte) (val & 0xff);
     }
 
+    int src = y * nColorPlanes * bytesPerLine;
     for (int row=0; row<h; row++) {
-      System.arraycopy(b, (row*nColorPlanes + y) * bytesPerLine + x,
-        buf, row * w, w);
+      int rowOffset = row * nColorPlanes * bytesPerLine;
+      for (int c=0; c<nColorPlanes; c++) {
+        System.arraycopy(b, src + rowOffset + x, buf, c * w * h + row * w, w);
+        rowOffset += bytesPerLine;
+      }
     }
 
     return buf;
@@ -118,6 +129,7 @@ public class PCXReader extends FormatReader {
       offset = 0;
       bytesPerLine = 0;
       nColorPlanes = 0;
+      lut = null;
     }
   }
 
@@ -152,15 +164,27 @@ public class PCXReader extends FormatReader {
 
     offset = in.getFilePointer() + 58;
 
+    if (version == 5 && nColorPlanes == 1) {
+      in.seek(in.length() - 768);
+      lut = new byte[3][256];
+      for (int i=0; i<lut[0].length; i++) {
+        for (int j=0; j<lut.length; j++) {
+          lut[j][i] = in.readByte();
+        }
+      }
+      core[0].indexed = true;
+    }
+
     addGlobalMeta("Palette type", paletteType);
 
     core[0].sizeZ = 1;
     core[0].sizeT = 1;
-    core[0].sizeC = 1;
-    core[0].rgb = false;
+    core[0].sizeC = nColorPlanes;
+    core[0].rgb = nColorPlanes > 1;
     core[0].imageCount = 1;
     core[0].pixelType = FormatTools.UINT8;
     core[0].dimensionOrder = "XYCZT";
+    core[0].interleaved = false;
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
