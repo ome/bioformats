@@ -59,20 +59,25 @@ public class LocationTest {
 
   @BeforeMethod
   public void setup() throws IOException {
-    File hiddenFile = File.createTempFile(".hiddenTest", null);
+    File tmpDirectory = new File(System.getProperty("java.io.tmpdir"),
+      System.currentTimeMillis() + "-location-test");
+    boolean success = tmpDirectory.mkdirs();
+    tmpDirectory.deleteOnExit();
+
+    File hiddenFile = File.createTempFile(".hiddenTest", null, tmpDirectory);
     hiddenFile.deleteOnExit();
 
-    File invalidFile = File.createTempFile("invalidTest", null);
+    File invalidFile = File.createTempFile("invalidTest", null, tmpDirectory);
     String invalidPath = invalidFile.getAbsolutePath();
     invalidFile.delete();
 
-    File validFile = File.createTempFile("validTest", null);
+    File validFile = File.createTempFile("validTest", null, tmpDirectory);
     validFile.deleteOnExit();
 
     files = new Location[] {
       new Location(validFile.getAbsolutePath()),
       new Location(invalidPath),
-      new Location(System.getProperty("java.io.tmpdir")),
+      new Location(tmpDirectory),
       new Location("http://loci.wisc.edu/software/bio-formats"),
       new Location("http://openmicroscopy.org/software/bio-formats"),
       new Location(hiddenFile)
