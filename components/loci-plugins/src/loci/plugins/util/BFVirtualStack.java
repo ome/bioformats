@@ -77,7 +77,6 @@ public class BFVirtualStack extends VirtualStack {
   protected static int getWidth(IFormatReader r, String path, int series)
     throws FormatException, IOException
   {
-    r.setId(path);
     r.setSeries(series);
     return r.getSizeX();
   }
@@ -85,7 +84,6 @@ public class BFVirtualStack extends VirtualStack {
   protected static int getHeight(IFormatReader r, String path, int series)
     throws FormatException, IOException
   {
-    r.setId(path);
     r.setSeries(series);
     return r.getSizeY();
   }

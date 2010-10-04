@@ -500,7 +500,7 @@ public class FilePattern {
   public static String[] findSeriesPatterns(String base, String dir,
     String[] nameList)
   {
-    String baseSuffix = new Location(base).getName();
+    String baseSuffix = base.substring(base.lastIndexOf(File.separator) + 1);
     baseSuffix = baseSuffix.substring(baseSuffix.indexOf(".") + 1);
 
     ArrayList<String> patterns = new ArrayList<String>();

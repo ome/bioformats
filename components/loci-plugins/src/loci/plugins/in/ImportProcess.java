@@ -489,6 +489,10 @@ public class ImportProcess implements StatusReporter {
     }
     r.setId(options.getId());
 
+    if (options.isGroupFiles()) {
+      options.setId(fileStitcher.getFilePattern().getPattern());
+    }
+
     // NB: This test will fail if the LUT is null before calling openBytes.
     final byte[][] lut8 = r.get8BitLookupTable();
     final int sizeC = r.getSizeC();
