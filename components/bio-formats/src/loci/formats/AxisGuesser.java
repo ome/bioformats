@@ -301,6 +301,26 @@ public class AxisGuesser {
     return num;
   }
 
+  // -- Static API methods --
+
+  /** Returns a best guess of the given label's axis type. */
+  public static int getAxisType(String label) {
+    String lowerLabel = label.toLowerCase();
+    for (String p : Z) {
+      if (p.equals(lowerLabel) || lowerLabel.endsWith(p)) return Z_AXIS;
+    }
+    for (String p : C) {
+      if (p.equals(lowerLabel) || lowerLabel.endsWith(p)) return C_AXIS;
+    }
+    for (String p : T) {
+      if (p.equals(lowerLabel) || lowerLabel.endsWith(p)) return T_AXIS;
+    }
+    for (String p : S) {
+      if (p.equals(lowerLabel) || lowerLabel.endsWith(p)) return S_AXIS;
+    }
+    return UNKNOWN_AXIS;
+  }
+
   // -- Main method --
 
   /** Method for testing pattern guessing logic. */

@@ -199,9 +199,8 @@ public class DicomReader extends FormatReader {
       fileList.toArray(new String[fileList.size()]);
   }
 
-  /* @see loci.formats.IFormatReader#fileGroupOption(String) */
   public int fileGroupOption(String id) throws FormatException, IOException {
-    return MUST_GROUP;
+    return CAN_GROUP;
   }
 
   /**

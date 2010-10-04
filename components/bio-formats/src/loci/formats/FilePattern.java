@@ -28,6 +28,7 @@ import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Vector;
 
+import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.LogTools;
 
@@ -341,6 +342,22 @@ public class FilePattern {
    * @param nameList The names through which to search for matching files.
    */
   public static String findPattern(String name, String dir, String[] nameList) {
+    return findPattern(name, dir, nameList, null);
+  }
+
+  /**
+   * Identifies the group pattern from a given file within that group.
+   * @param name The filename to use as a template for the match.
+   * @param dir The directory prefix to use for matching files.
+   * @param nameList The names through which to search for matching files.
+   * @param excludeAxes The list of axis types which should be excluded from the
+   *  pattern.
+   */
+  public static String findPattern(String name, String dir, String[] nameList,
+    int[] excludeAxes)
+  {
+    if (excludeAxes == null) excludeAxes = new int[0];
+
     if (dir == null) dir = ""; // current directory
     else if (!dir.equals("") && !dir.endsWith(File.separator)) {
       dir += File.separator;
@@ -382,7 +399,14 @@ public class FilePattern {
 
     for (int i=0; i<q; i++) {
       int last = i > 0 ? endList[i - 1] : 0;
-      sb.append(name.substring(last, indexList[i]));
+      String prefix = name.substring(last, indexList[i]);
+      int axisType = AxisGuesser.getAxisType(prefix);
+      if (DataTools.containsValue(excludeAxes, axisType)) {
+        sb.append(name.substring(last, endList[i]));
+        continue;
+      }
+
+      sb.append(prefix);
       String pre = name.substring(0, indexList[i]);
       String post = name.substring(endList[i]);
 
@@ -395,8 +419,8 @@ public class FilePattern {
         continue;
       }
       boolean fix = true;
-      for (int j=0; j<list.length; j++) {
-        if (list[j].length() != len) {
+      for (String s : list) {
+        if (s.length() != len) {
           fix = false;
           break;
         }
@@ -411,8 +435,8 @@ public class FilePattern {
           same[j] = true;
           int jx = indexList[i] + j;
           char c = name.charAt(jx);
-          for (int k=0; k<list.length; k++) {
-            if (list[k].charAt(jx) != c) {
+          for (String s : list) {
+            if (s.charAt(jx) != c) {
               same[j] = false;
               break;
             }
@@ -456,24 +480,40 @@ public class FilePattern {
       }
     }
     sb.append(q > 0 ? name.substring(endList[q - 1]) : name);
-    String pat = sb.toString();
+    return sb.toString();
+  }
 
-    // NB: Due to variations in axis length, the file pattern detected can
-    // depend on the file name given as the basis of detection.
-    //
-    // To work around this problem, we redetect the pattern using the first
-    // file in the pattern if it differs from the current base file name.
-    //
-    // For details, see Trac ticket #19:
-    // https://skyking.microscopy.wisc.edu/trac/java/ticket/19
-    String first = pat.substring(dir.length());
-    first = first.replaceAll("<([0-9]+)-[0-9]+(:[0-9]+)?>", "$1");
-    if (!name.equals(first)) {
-      String pattern = findPattern(first, dir, nameList);
-      if (pattern != null) return pattern;
+  public static String[] findSeriesPatterns(String base) {
+    Location file = new Location(base).getAbsoluteFile();
+    Location parent = file.getParentFile();
+    String[] list = parent.list(true);
+    return findSeriesPatterns(base, parent.getAbsolutePath(), list);
+  }
+
+  public static String[] findSeriesPatterns(String base, String dir,
+    String[] nameList)
+  {
+    String baseSuffix = new Location(base).getName();
+    baseSuffix = baseSuffix.substring(baseSuffix.indexOf(".") + 1);
+
+    ArrayList<String> patterns = new ArrayList<String>();
+    int[] exclude = new int[] {AxisGuesser.S_AXIS};
+    for (String name : nameList) {
+      String pattern = findPattern(name, dir, nameList, exclude);
+      int start = pattern.lastIndexOf(File.separator) + 1;
+      if (start < 0) start = 0;
+      String patternSuffix = pattern.substring(start);
+      patternSuffix = patternSuffix.substring(patternSuffix.indexOf(".") + 1);
+
+      if (!patterns.contains(pattern) && (!new Location(pattern).exists() ||
+        base.equals(pattern)) && patternSuffix.equals(baseSuffix))
+      {
+        patterns.add(pattern);
+      }
     }
-
-    return pat;
+    String[] s = patterns.toArray(new String[patterns.size()]);
+    Arrays.sort(s);
+    return s;
   }
 
   // -- Utility helper methods --
