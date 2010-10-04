@@ -484,10 +484,6 @@ public class ImportProcess implements StatusReporter {
 
       // overwrite base filename with file pattern
       String id = options.getId();
-      if (id == null) id = getCurrentFile();
-      FilePattern fp = fileStitcher.findPattern(id);
-      if (fp.isValid()) id = fp.getPattern();
-      else id = getCurrentFile();
       options.setId(id);
       fileStitcher.setUsingPatternIds(true);
     }

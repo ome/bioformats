@@ -74,17 +74,19 @@ public class BFVirtualStack extends VirtualStack {
 
   // -- Static utility methods --
 
-  protected static int getWidth(IFormatReader r, String path)
+  protected static int getWidth(IFormatReader r, String path, int series)
     throws FormatException, IOException
   {
     r.setId(path);
+    r.setSeries(series);
     return r.getSizeX();
   }
 
-  protected static int getHeight(IFormatReader r, String path)
+  protected static int getHeight(IFormatReader r, String path, int series)
     throws FormatException, IOException
   {
     r.setId(path);
+    r.setSeries(series);
     return r.getSizeY();
   }
 
@@ -94,7 +96,8 @@ public class BFVirtualStack extends VirtualStack {
     boolean merge, boolean record)
     throws FormatException, IOException, CacheException
   {
-    super(getWidth(r, path), getHeight(r, path), null, path);
+    super(getWidth(r, path, r.getSeries()), getHeight(r, path, r.getSeries()),
+      null, path);
     reader = new ImageProcessorReader(r);
     id = path;
 
