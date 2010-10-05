@@ -111,10 +111,12 @@ namespace itk {
 
     try {
       itkDebugMacro("Creating Bio-Formats objects...");
-      reader = new ChannelFiller;
+      reader = imageReader = new ImageReader;
+      reader = channelFiller = new ChannelFiller(*reader);
+      //reader = channelSeparator = new ChannelSeparator(reader);
+      channelSeparator = NULL;
+      reader = channelMerger = new ChannelMerger(*reader);
       writer = new ImageWriter;
-       //reader = new ChannelSeparator(reader);
-       //reader = new ChannelMerger(reader);
       itkDebugMacro("Created reader and writer.");
     }
     catch (Exception& e) {
@@ -129,8 +131,16 @@ namespace itk {
   } // end constructor
 
   BioFormatsImageIO::~BioFormatsImageIO() {
-    delete reader;
-    delete writer;
+    if (imageReader != NULL) delete imageReader;
+    imageReader = NULL;
+    if (channelFiller != NULL) delete channelFiller;
+    channelFiller = NULL;
+    if (channelSeparator != NULL) delete channelSeparator;
+    channelSeparator = NULL;
+    if (channelMerger != NULL) delete channelMerger;
+    channelMerger = NULL;
+    if (writer != NULL) delete writer;
+    writer = NULL;
   } // end destructor
 
   bool BioFormatsImageIO::CanReadFile(const char* FileNameToRead) {
@@ -146,7 +156,7 @@ namespace itk {
     bool isType = 0;
     try {
       // call Bio-Formats to check file type
-      isType = reader->isThisType(filename);
+      isType = ((IFormatHandler*) reader)->isThisType(filename);
       itkDebugMacro("isType = " << isType);
     }
     catch (Exception& e) {
@@ -366,27 +376,56 @@ namespace itk {
 
       int imageCount = reader->getImageCount();
 
+      // allocate temporary array
+      bool canDoDirect = rgbChannelCount == 1;
+      jbyte* tmpData = NULL;
+      if (!canDoDirect) tmpData = new jbyte[bytesPerPlane];
+
       jbyte* jData = (jbyte*) pData;
       ByteArray buf(bytesPerPlane); // pre-allocate buffer
-      for (int c=cStart; c<cCount; c++) {
-        for (int t=tStart; t<tCount; t++) {
-          for (int z=zStart; z<zCount; z++) {
+      for (int c=cStart; c<cStart+cCount; c++) {
+        for (int t=tStart; t<tStart+tCount; t++) {
+          for (int z=zStart; z<zStart+zCount; z++) {
             int no = reader->getIndex(z, c, t);
             itkDebugMacro("Reading image plane " << no
               << " (Z=" << z << ", T=" << t << ", C=" << c << ")"
               << " of " << imageCount << " available planes)");
             reader->openBytes(no, buf, xStart, yStart, xCount, yCount);
 
-            // copy raw byte array
             JNIEnv* env = jace::helper::attach();
             jbyteArray jArray = static_cast<jbyteArray>(buf.getJavaJniArray());
-            env->GetByteArrayRegion(jArray, 0, bytesPerPlane, jData);
+            if (canDoDirect) {
+              env->GetByteArrayRegion(jArray, 0, bytesPerPlane, jData);
+            }
+            else {
+              // need to reorganize byte array after copy
+              env->GetByteArrayRegion(jArray, 0, bytesPerPlane, tmpData);
+
+              // reorganize elements
+              int pos = 0;
+              for (int x=0; x<xCount; x++) {
+                for (int y=0; y<yCount; y++) {
+                  for (int i=0; i<rgbChannelCount; i++) {
+                    for (int b=0; b<bpp; b++) {
+                      int index = yCount * (xCount * (rgbChannelCount * b + i) + x) + y;
+                      jData[pos++] = tmpData[index];
+                    }
+                  }
+                }
+              }
+            }
             jData += bytesPerPlane;
           }
         }
       }
 
-      reader->close();
+      // delete temporary array
+      if (tmpData != NULL) {
+        delete tmpData;
+        tmpData = NULL;
+      }
+
+      ((IFormatHandler*)reader)->close();
     }
     catch (Exception& e) {
       itkDebugMacro("A Java error occurred: " << DebugTools::getStackTrace(e));
