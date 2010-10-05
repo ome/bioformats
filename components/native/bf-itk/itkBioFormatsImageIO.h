@@ -58,7 +58,12 @@ using jace::proxy::java::lang::Exception;
 using jace::proxy::loci::common::DebugTools;
 #include "bio-formats.h"
 using jace::proxy::loci::formats::ChannelFiller;
+using jace::proxy::loci::formats::ChannelMerger;
+using jace::proxy::loci::formats::ChannelSeparator;
 using jace::proxy::loci::formats::FormatTools;
+using jace::proxy::loci::formats::IFormatHandler;
+using jace::proxy::loci::formats::IFormatReader;
+using jace::proxy::loci::formats::ImageReader;
 using jace::proxy::loci::formats::ImageWriter;
 using jace::proxy::loci::formats::MetadataTools;
 using jace::proxy::loci::formats::meta::IMetadata;
@@ -110,7 +115,11 @@ namespace itk
     ~BioFormatsImageIO();
 
   private:
-    ChannelFiller* reader;
+    IFormatReader* reader;
+    ImageReader* imageReader;
+    ChannelFiller* channelFiller;
+    ChannelSeparator* channelSeparator;
+    ChannelMerger* channelMerger;
     ImageWriter* writer;
   };
 
