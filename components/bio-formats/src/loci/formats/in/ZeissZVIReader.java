@@ -103,6 +103,7 @@ public class ZeissZVIReader extends FormatReader {
   private Vector<String> tagsToParse;
   private int nextEmWave = 0, nextExWave = 0, nextChName = 0;
   private double stageX = 0, stageY = 0;
+  private int timepoint = 0;
 
   private int[] channelColors;
   private int lastPlane;
@@ -119,7 +120,7 @@ public class ZeissZVIReader extends FormatReader {
     new Hashtable<Integer, PositiveInteger>();
   private Hashtable<Integer, String> channelName =
     new Hashtable<Integer, String>();
-  private double physicalSizeX, physicalSizeY, physicalSizeZ;
+  private Double physicalSizeX, physicalSizeY, physicalSizeZ;
   private String imageDescription;
 
   // -- Constructor --
@@ -436,8 +437,9 @@ public class ZeissZVIReader extends FormatReader {
       emWavelength.clear();
       exWavelength.clear();
       channelName.clear();
-      physicalSizeX = physicalSizeY = physicalSizeZ = 0d;
+      physicalSizeX = physicalSizeY = physicalSizeZ = null;
       imageDescription = null;
+      timepoint = 0;
     }
   }
 
@@ -723,6 +725,9 @@ public class ZeissZVIReader extends FormatReader {
       for (int plane=0; plane<getImageCount(); plane++) {
         int[] zct = getZCTCoords(plane);
         String exposure = exposureTime.get(new Integer(zct[1]));
+        if (exposure == null && exposureTime.size() == 1) {
+          exposure = exposureTime.get(exposureTime.keys().nextElement());
+        }
         Double exp = new Double(0.0);
         try { exp = new Double(exposure); }
         catch (NumberFormatException e) { }
@@ -746,6 +751,7 @@ public class ZeissZVIReader extends FormatReader {
         store.setDetectorID(detectorID, 0, i);
         store.setDetectorSettingsID(detectorID, 0, i);
         store.setDetectorType(getDetectorType("Other"), 0, i);
+
         store.setDetectorSettingsGain(detectorGain.get(i), 0, i);
         store.setDetectorSettingsOffset(detectorOffset.get(i), 0, i);
 
@@ -898,17 +904,20 @@ public class ZeissZVIReader extends FormatReader {
             channelColors[cIndex] = Integer.parseInt(value);
           }
         }
-        else if (key.startsWith("Scale Factor for X")) {
+        else if (key.startsWith("Scale Factor for X") && physicalSizeX == null)
+        {
           physicalSizeX = Double.parseDouble(value);
         }
-        else if (key.startsWith("Scale Factor for Y")) {
+        else if (key.startsWith("Scale Factor for Y") && physicalSizeY == null)
+        {
           physicalSizeY = Double.parseDouble(value);
         }
-        else if (key.startsWith("Scale Factor for Z")) {
+        else if (key.startsWith("Scale Factor for Z") && physicalSizeZ == null)
+        {
           physicalSizeZ = Double.parseDouble(value);
         }
         else if (key.startsWith("Emission Wavelength")) {
-          if (cIndex != -1 && nextEmWave < effectiveSizeC) {
+          if (cIndex != -1 && nextEmWave <= effectiveSizeC) {
             Integer wave = new Integer(value);
             if (wave.intValue() > 0) {
               emWavelength.put(nextEmWave++, new PositiveInteger(wave));
@@ -916,7 +925,7 @@ public class ZeissZVIReader extends FormatReader {
           }
         }
         else if (key.startsWith("Excitation Wavelength")) {
-          if (cIndex != -1 && nextExWave < effectiveSizeC) {
+          if (cIndex != -1 && nextExWave <= effectiveSizeC) {
             Integer wave = new Integer(value);
             if (wave.intValue() > 0) {
               exWavelength.put(nextExWave++, new PositiveInteger(wave));
@@ -924,12 +933,12 @@ public class ZeissZVIReader extends FormatReader {
           }
         }
         else if (key.startsWith("Channel Name")) {
-          if (cIndex != -1 && nextChName < effectiveSizeC) {
+          if (cIndex != -1 && nextChName <= effectiveSizeC) {
             channelName.put(nextChName++, value);
           }
         }
         else if (key.startsWith("Exposure Time [ms]")) {
-          if (cIndex != -1) {
+          if (exposureTime.get(new Integer(cIndex)) == null) {
             double exp = Double.parseDouble(value) / 1000;
             exposureTime.put(new Integer(cIndex), String.valueOf(exp));
           }
@@ -1004,10 +1013,11 @@ public class ZeissZVIReader extends FormatReader {
           imageDescription = value;
         }
         else if (key.startsWith("Acquisition Date")) {
-          if (image >= 0) {
-            timestamps.put(new Integer(image), value);
-            addGlobalMeta("Timestamp " + image, value);
+          if (timepoint > 0) {
+            timestamps.put(new Integer(timepoint - 1), value);
+            addGlobalMeta("Timestamp " + timepoint, value);
           }
+          timepoint++;
         }
       }
       catch (NumberFormatException e) { }
