@@ -279,23 +279,6 @@ public abstract class FormatReader extends FormatHandler
       if (string) value = val;
     }
 
-    if (saveOriginalMetadata && simple && meta.equals(metadata)) {
-      MetadataStore store = getMetadataStore();
-      if (store instanceof OMEXMLMetadata) {
-        try {
-          if (factory == null) factory = new ServiceFactory();
-          if (service == null) {
-            service = factory.getInstance(OMEXMLService.class);
-          }
-          service.populateOriginalMetadata(
-            (OMEXMLMetadata) store, key, value.toString());
-        }
-        catch (DependencyException e) {
-          LOGGER.warn("OMEXMLService not available.", e);
-        }
-      }
-    }
-
     meta.put(key, val == null ? value : val);
   }
 
@@ -1071,7 +1054,26 @@ public abstract class FormatReader extends FormatHandler
 
   /* @see IFormatHandler#setId(String) */
   public void setId(String id) throws FormatException, IOException {
-    if (!id.equals(currentId)) initFile(id);
+    if (!id.equals(currentId)) {
+      initFile(id);
+
+      if (saveOriginalMetadata) {
+        MetadataStore store = getMetadataStore();
+        if (store instanceof OMEXMLMetadata) {
+          try {
+            if (factory == null) factory = new ServiceFactory();
+            if (service == null) {
+              service = factory.getInstance(OMEXMLService.class);
+            }
+            service.populateOriginalMetadata(
+              (OMEXMLMetadata) store, metadata);
+          }
+          catch (DependencyException e) {
+            LOGGER.warn("OMEXMLService not available.", e);
+          }
+        }
+      }
+    }
   }
 
   /* @see IFormatHandler#close() */
