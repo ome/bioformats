@@ -165,9 +165,11 @@ public class ZeissLSMReader extends FormatReader {
   private double zoom;
   private Vector<String> imageNames;
   private String binning;
-  private Vector<Double> xCoordinates, yCoordinates;
+  private Vector<Double> xCoordinates, yCoordinates, zCoordinates;
   private int dimensionM, dimensionP;
   private Hashtable<String, Integer> seriesCounts;
+
+  private double originX, originY, originZ;
 
   private int totalROIs = 0;
 
@@ -214,9 +216,11 @@ public class ZeissLSMReader extends FormatReader {
       prevBuf = null;
       xCoordinates = null;
       yCoordinates = null;
+      zCoordinates = null;
       dimensionM = 0;
       dimensionP = 0;
       seriesCounts = null;
+      originX = originY = originZ = 0d;
     }
   }
 
@@ -353,6 +357,7 @@ public class ZeissLSMReader extends FormatReader {
     imageNames = new Vector<String>();
     xCoordinates = new Vector<Double>();
     yCoordinates = new Vector<Double>();
+    zCoordinates = new Vector<Double>();
     seriesCounts = new Hashtable<String, Integer>();
 
     int seriesCount = 0;
@@ -646,9 +651,13 @@ public class ZeissLSMReader extends FormatReader {
       addSeriesMeta("VoxelSizeY", new Double(pixelSizeY));
       addSeriesMeta("VoxelSizeZ", new Double(pixelSizeZ));
 
-      addSeriesMeta("OriginX", ras.readDouble());
-      addSeriesMeta("OriginY", ras.readDouble());
-      addSeriesMeta("OriginZ", ras.readDouble());
+      originX = ras.readDouble() * 1000000;
+      originY = ras.readDouble() * 1000000;
+      originZ = ras.readDouble() * 1000000;
+
+      addSeriesMeta("OriginX", originX);
+      addSeriesMeta("OriginY", originY);
+      addSeriesMeta("OriginZ", originZ);
     }
     else ras.seek(88);
 
@@ -833,10 +842,15 @@ public class ZeissLSMReader extends FormatReader {
       // NB: the Zeiss LSM 5.5 specification indicates that there should be
       //     15 32-bit integers here; however, there are actually 16 32-bit
       //     integers before the tile position offset.
-      //     We have confirmed with Zeiss that this is correct.
+      //     We have confirmed with Zeiss that this is correct, and the 6.0
+      //     specification was updated to contain the correct information.
       ras.skipBytes(64);
 
       int tilePositionOffset = ras.readInt();
+
+      ras.skipBytes(36);
+
+      int positionOffset = ras.readInt();
 
       // read referenced structures
 
@@ -845,12 +859,26 @@ public class ZeissLSMReader extends FormatReader {
       addSeriesMeta("DimensionM", dimensionM);
       addSeriesMeta("DimensionP", dimensionP);
 
+      if (positionOffset != 0) {
+        in.seek(positionOffset);
+        int nPositions = in.readInt();
+        for (int i=0; i<nPositions; i++) {
+          double xPos = originX + in.readDouble() * 1000000;
+          double yPos = originY + in.readDouble() * 1000000;
+          double zPos = originZ + in.readDouble() * 1000000;
+          xCoordinates.add(xPos);
+          yCoordinates.add(yPos);
+          zCoordinates.add(zPos);
+        }
+      }
+
       if (tilePositionOffset != 0) {
         in.seek(tilePositionOffset);
         int nTiles = in.readInt();
         for (int i=0; i<nTiles; i++) {
-          xCoordinates.add(in.readDouble());
-          yCoordinates.add(in.readDouble());
+          xCoordinates.add(originX + in.readDouble() * 1000000);
+          yCoordinates.add(originY + in.readDouble() * 1000000);
+          zCoordinates.add(originZ + in.readDouble() * 1000000);
         }
       }
 
@@ -1048,6 +1076,7 @@ public class ZeissLSMReader extends FormatReader {
           int stage = (int) (i / planesPerStage);
           store.setPlanePositionX(xCoordinates.get(stage), series, i);
           store.setPlanePositionY(yCoordinates.get(stage), series, i);
+          store.setPlanePositionZ(zCoordinates.get(stage), series, i);
         }
       }
     }
