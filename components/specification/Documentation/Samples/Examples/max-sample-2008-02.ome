@@ -232,7 +232,7 @@
                 <ome:Correction>UV</ome:Correction>
                 <ome:Immersion>Oil</ome:Immersion>
                 <ome:LensNA>3.14159E0</ome:LensNA>
-                <ome:NominalMagnification>0</ome:NominalMagnification>
+                <ome:NominalMagnification>1</ome:NominalMagnification>
                 <ome:CalibratedMagnification>3.14159E0</ome:CalibratedMagnification>
                 <ome:WorkingDistance>3.14159E0</ome:WorkingDistance>
         </ome:Objective>
@@ -240,7 +240,7 @@
                 <ome:Correction>UV</ome:Correction>
                 <ome:Immersion>Oil</ome:Immersion>
                 <ome:LensNA>3.14159E0</ome:LensNA>
-                <ome:NominalMagnification>0</ome:NominalMagnification>
+                <ome:NominalMagnification>1</ome:NominalMagnification>
                 <ome:CalibratedMagnification>3.14159E0</ome:CalibratedMagnification>
                 <ome:WorkingDistance>3.14159E0</ome:WorkingDistance>
         </ome:Objective>
@@ -248,7 +248,7 @@
                 <ome:Correction>UV</ome:Correction>
                 <ome:Immersion>Oil</ome:Immersion>
                 <ome:LensNA>3.14159E0</ome:LensNA>
-                <ome:NominalMagnification>0</ome:NominalMagnification>
+                <ome:NominalMagnification>1</ome:NominalMagnification>
                 <ome:CalibratedMagnification>3.14159E0</ome:CalibratedMagnification>
                 <ome:WorkingDistance>3.14159E0</ome:WorkingDistance>
         </ome:Objective>
