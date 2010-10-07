@@ -35,6 +35,7 @@ import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.ImageTools;
 import loci.formats.MetadataTools;
 import loci.formats.codec.Codec;
 import loci.formats.codec.CodecOptions;
@@ -90,6 +91,11 @@ public class NativeND2Reader extends FormatReader {
   private ArrayList<Double> posY;
   private ArrayList<Double> posZ;
 
+  private Hashtable<String, Integer> channelColors;
+  private boolean split = false;
+  private int lastChannel;
+  private int[] colors;
+
   // -- Constructor --
 
   /** Constructs a new ND2 reader. */
@@ -110,6 +116,66 @@ public class NativeND2Reader extends FormatReader {
     return magic1 == ND2_MAGIC_BYTES_1 || magic2 == ND2_MAGIC_BYTES_2;
   }
 
+  /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  public byte[][] get8BitLookupTable() {
+    if (FormatTools.getBytesPerPixel(getPixelType()) != 1 ||
+      !isIndexed() || lastChannel < 0 || lastChannel >= colors.length)
+    {
+      return null;
+    }
+
+    int color = colors[lastChannel];
+    byte[][] lut = new byte[3][256];
+
+    int index = -1;
+    if (color > 0 && color < 256) index = 0;
+    else if (color >= 256 && color < 65280) index = 1;
+    else if (color > 65280 && color <= 16711680) index = 2;
+
+    for (int i=0; i<256; i++) {
+      if (index == -1) {
+        lut[0][i] = (byte) i;
+        lut[1][i] = (byte) i;
+        lut[2][i] = (byte) i;
+      }
+      else {
+        lut[index][i] = (byte) i;
+      }
+    }
+
+    return lut;
+  }
+
+  /* @see loci.formats.IFormatReader#get16BitLookupTable() */
+  public short[][] get16BitLookupTable() {
+    if (FormatTools.getBytesPerPixel(getPixelType()) != 2 ||
+      !isIndexed() || lastChannel < 0 || lastChannel >= colors.length)
+    {
+      return null;
+    }
+
+    int color = colors[lastChannel];
+    short[][] lut = new short[3][65536];
+
+    int index = -1;
+    if (color > 0 && color < 256) index = 0;
+    else if (color >= 256 && color <= 65280) index = 1;
+    else if (color > 65280 && color <= 16711680) index = 2;
+
+    for (int i=0; i<65536; i++) {
+      if (index == -1) {
+        lut[0][i] = (short) i;
+        lut[1][i] = (short) i;
+        lut[2][i] = (short) i;
+      }
+      else {
+        lut[index][i] = (short) i;
+      }
+    }
+
+    return lut;
+  }
+
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
@@ -118,13 +184,18 @@ public class NativeND2Reader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    in.seek(offsets[series][no]);
+    lastChannel = split ? no % getSizeC() : 0;
+    int planeIndex = split ? no / getSizeC() : no;
+    in.seek(offsets[series][planeIndex]);
 
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
     int pixel = bpp * getRGBChannelCount();
+    if (split) pixel *= getSizeC();
 
-    long maxFP = no == getImageCount() - 1 ?
-      in.length() : offsets[series][no + 1];
+    int totalPlanes = split ? getImageCount() / getSizeC() : getImageCount();
+
+    long maxFP = planeIndex == totalPlanes - 1 ?
+      in.length() : offsets[series][planeIndex + 1];
 
     CodecOptions options = new CodecOptions();
     options.littleEndian = isLittleEndian();
@@ -136,14 +207,23 @@ public class NativeND2Reader extends FormatReader {
     if (isJPEG || isLossless) {
       if (codec == null) codec = createCodec(isJPEG);
       byte[] t = codec.decompress(in, options);
+      byte[] pix = new byte[(buf.length / bpp) * pixel];
       int effectiveX = getSizeX() + scanlinePad;
       for (int row=0; row<h; row++) {
         int offset = (row + y) * effectiveX * pixel + x * pixel;
         if (offset + w * pixel <= t.length) {
-          System.arraycopy(t, offset, buf, row * w * pixel, w * pixel);
+          System.arraycopy(t, offset, pix, row * w * pixel, w * pixel);
         }
       }
       t = null;
+
+      copyPixels(x, y, w, h, bpp, scanlinePad, pix, buf);
+    }
+    else if (split) {
+      byte[] pix = new byte[(getSizeX() + scanlinePad) * getSizeY() * pixel];
+      in.read(pix);
+      copyPixels(x, y, w, h, bpp, scanlinePad, pix, buf);
+      pix = null;
     }
     else {
       // plane is not compressed
@@ -165,6 +245,8 @@ public class NativeND2Reader extends FormatReader {
       fieldIndex = 0;
       xOffset = yOffset = zOffset = 0;
       posX = posY = posZ = null;
+      channelColors = null;
+      split = false;
     }
   }
 
@@ -175,6 +257,8 @@ public class NativeND2Reader extends FormatReader {
     super.initFile(id);
 
     in = new RandomAccessInputStream(id);
+
+    channelColors = new Hashtable<String, Integer>();
 
     if (in.read() == -38 && in.read() == -50) {
       // newer version of ND2 - doesn't use JPEG2000
@@ -248,7 +332,9 @@ public class NativeND2Reader extends FormatReader {
           imageNames.add(name.toString());
           name = name.delete(0, name.length());
         }
-        else if (blockType.startsWith("Image")) {
+        else if (blockType.startsWith("Image") ||
+          blockType.startsWith("CustomDataVa"))
+        {
           int length = lenOne + lenTwo - 12;
           byte[] b = new byte[length];
           in.read(b);
@@ -310,6 +396,7 @@ public class NativeND2Reader extends FormatReader {
       ND2Handler handler = new ND2Handler(core);
       XMLTools.parseXML(xmlString, handler);
 
+      channelColors = handler.getChannelColors();
       isLossless = handler.isLossless();
       fieldIndex = handler.getFieldIndex();
       core = handler.getCoreMetadata();
@@ -493,15 +580,15 @@ public class NativeND2Reader extends FormatReader {
         }
       }
 
+      split = getSizeC() > 1;
       for (int i=0; i<getSeriesCount(); i++) {
-        core[i].rgb = getSizeC() > 1;
+        core[i].rgb = false;
         core[i].littleEndian = true;
-        core[i].interleaved = true;
-        core[i].indexed = false;
-        core[i].falseColor = false;
+        core[i].interleaved = false;
+        core[i].indexed = channelColors.size() > 0;
+        core[i].falseColor = true;
         core[i].metadataComplete = true;
-        core[i].imageCount = core[i].sizeZ * core[i].sizeT;
-        if (!core[i].rgb) core[i].imageCount *= core[i].sizeC;
+        core[i].imageCount = core[i].sizeZ * core[i].sizeT * core[i].sizeC;
       }
 
       // read first CustomData block
@@ -900,6 +987,8 @@ public class NativeND2Reader extends FormatReader {
     ArrayList<Integer> power = handler.getPowers();
     ArrayList<Hashtable<String, String>> rois = handler.getROIs();
 
+    colors = new int[getEffectiveSizeC()];
+
     for (int i=0; i<getSeriesCount(); i++) {
       for (int c=0; c<getEffectiveSizeC(); c++) {
         int index = i * getSizeC() + c;
@@ -908,7 +997,11 @@ public class NativeND2Reader extends FormatReader {
           store.setChannelPinholeSize(pinholeSize, i, c);
         }
         if (index < channelNames.size()) {
-          store.setChannelName(channelNames.get(index), i, c);
+          String channelName = channelNames.get(index);
+          store.setChannelName(channelName, i, c);
+
+          Integer channelColor = channelColors.get(channelName);
+          colors[c] = channelColor == null ? 0 : channelColor.intValue();
         }
         if (index < modality.size()) {
           store.setChannelAcquisitionMode(
@@ -993,6 +1086,17 @@ public class NativeND2Reader extends FormatReader {
 
   private Codec createCodec(boolean isJPEG) {
     return isJPEG ? new JPEG2000Codec() : new ZlibCodec();
+  }
+
+  private void copyPixels(int x, int y, int w, int h, int bpp, int scanlinePad,
+    byte[] pix, byte[] buf)
+    throws IOException
+  {
+    pix = ImageTools.splitChannels(pix, lastChannel, getEffectiveSizeC(), bpp,
+      false, true);
+    RandomAccessInputStream s = new RandomAccessInputStream(pix);
+    readPlane(s, x, y, w, h, scanlinePad, buf);
+    s.close();
   }
 
 }

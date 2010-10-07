@@ -92,6 +92,11 @@ public class ND2Handler extends DefaultHandler {
   private int fieldIndex = 0;
   private String date;
 
+  private Hashtable<String, Integer> colors = new Hashtable<String, Integer>();
+  private Hashtable<String, String> dyes = new Hashtable<String, String>();
+  private Hashtable<String, Integer> realColors =
+    new Hashtable<String, Integer>();
+
   // -- Constructor --
 
   public ND2Handler(CoreMetadata[] core) {
@@ -283,6 +288,10 @@ public class ND2Handler extends DefaultHandler {
     return fieldIndex;
   }
 
+  public Hashtable<String, Integer> getChannelColors() {
+    return realColors;
+  }
+
   // -- DefaultHandler API methods --
 
   public void endElement(String uri, String localName, String qName,
@@ -369,6 +378,13 @@ public class ND2Handler extends DefaultHandler {
       pinholeSize = new Double(sanitizeDouble(value));
       metadata.put("Pinhole size", value);
     }
+    else if (qName.endsWith("ChannelColor")) {
+      String name = qName.substring(0, qName.indexOf("Channel"));
+      colors.put(name, new Integer(value));
+    }
+    else if (qName.endsWith("DyeName")) {
+      dyes.put(qName.substring(0, qName.indexOf("Channel")), value);
+    }
     else {
       StringBuffer sb = new StringBuffer();
       if (prefix != null) {
@@ -380,6 +396,14 @@ public class ND2Handler extends DefaultHandler {
     }
 
     prevRuntype = attributes.getValue("runtype");
+  }
+
+  public void endDocument() {
+    for (String name : colors.keySet()) {
+      String chName = dyes.get(name);
+      if (chName == null) chName = name;
+      realColors.put(chName, colors.get(name));
+    }
   }
 
   // -- Helper methods --
