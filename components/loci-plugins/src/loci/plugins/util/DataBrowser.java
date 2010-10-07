@@ -341,10 +341,8 @@ public class DataBrowser extends StackWindow {
               int t = imp.getFrame() + 1;
               int sizeT = tSlider.getMaximum() - 1;
               if (t > sizeT) t = 1;
-              setPosition(c, z, t);
               imp.setPosition(c, z, t);
               syncSliders();
-//              updateSlice();
               int fps = ((Number) fpsSpin.getValue()).intValue();
               ms = 1000 / fps;
             }
@@ -499,7 +497,7 @@ public class DataBrowser extends StackWindow {
     int z = zScroll == null ? 1 : zScroll.getValue();
     int t = tScroll == null ? 1 : tScroll.getValue();
     setPosition(c, z, t);
-//    updateSlice();
+    imp.setPosition(c, z, t);
   }
 
   /** Updates the slider values to match the ImagePlus's displayed plane. */
