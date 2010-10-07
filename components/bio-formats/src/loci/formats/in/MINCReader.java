@@ -28,6 +28,7 @@ import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import loci.common.DataTools;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
@@ -71,11 +72,13 @@ public class MINCReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
+    int bpp = FormatTools.getBytesPerPixel(getPixelType());
+
     if (no < pixelData.length) {
       for (int row=y; row<y+h; row++) {
         if (row < pixelData[no].length && x + w <= pixelData[no][row].length) {
-          System.arraycopy(pixelData[no][row], x, buf,
-            (h - row + y - 1) * w, w);
+          System.arraycopy(pixelData[no][row], x * bpp, buf,
+            (h - row + y - 1) * w * bpp, w * bpp);
         }
       }
     }
@@ -130,7 +133,62 @@ public class MINCReader extends FormatReader {
     }
 
     try {
-      pixelData = (byte[][][]) netcdf.getVariableValue("/image");
+      Object pixels = netcdf.getVariableValue("/image");
+      if (pixels instanceof byte[][][]) {
+        core[0].pixelType = FormatTools.UINT8;
+        pixelData = (byte[][][]) pixels;
+      }
+      else if (pixels instanceof short[][][]) {
+        core[0].pixelType = FormatTools.UINT16;
+
+        short[][][] s = (short[][][]) pixels;
+        pixelData = new byte[s.length][][];
+        for (int i=0; i<s.length; i++) {
+          pixelData[i] = new byte[s[i].length][];
+          for (int j=0; j<s[i].length; j++) {
+            pixelData[i][j] =
+              DataTools.shortsToBytes(s[i][j], isLittleEndian());
+          }
+        }
+      }
+      else if (pixels instanceof int[][][]) {
+        core[0].pixelType = FormatTools.UINT32;
+
+        int[][][] s = (int[][][]) pixels;
+        pixelData = new byte[s.length][][];
+        for (int i=0; i<s.length; i++) {
+          pixelData[i] = new byte[s[i].length][];
+          for (int j=0; j<s[i].length; j++) {
+            pixelData[i][j] = DataTools.intsToBytes(s[i][j], isLittleEndian());
+          }
+        }
+      }
+      else if (pixels instanceof float[][][]) {
+        core[0].pixelType = FormatTools.FLOAT;
+
+        float[][][] s = (float[][][]) pixels;
+        pixelData = new byte[s.length][][];
+        for (int i=0; i<s.length; i++) {
+          pixelData[i] = new byte[s[i].length][];
+          for (int j=0; j<s[i].length; j++) {
+            pixelData[i][j] =
+              DataTools.floatsToBytes(s[i][j], isLittleEndian());
+          }
+        }
+      }
+      else if (pixels instanceof double[][][]) {
+        core[0].pixelType = FormatTools.DOUBLE;
+
+        double[][][] s = (double[][][]) pixels;
+        pixelData = new byte[s.length][][];
+        for (int i=0; i<s.length; i++) {
+          pixelData[i] = new byte[s[i].length][];
+          for (int j=0; j<s[i].length; j++) {
+            pixelData[i][j] =
+              DataTools.doublesToBytes(s[i][j], isLittleEndian());
+          }
+        }
+      }
     }
     catch (ServiceException e) {
       throw new FormatException(e);
@@ -146,7 +204,6 @@ public class MINCReader extends FormatReader {
     core[0].rgb = false;
     core[0].indexed = false;
     core[0].dimensionOrder = "XYZCT";
-    core[0].pixelType = FormatTools.UINT8;
 
     addGlobalMeta("Comment", netcdf.getAttributeValue("/history"));
 
