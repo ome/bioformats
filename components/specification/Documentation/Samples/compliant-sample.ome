@@ -3,7 +3,8 @@ Sample structure one:
 {{{
 #!xml
 <?xml version="1.0" encoding="UTF-8"?>
-<OME:OME xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2010-04"
+<OME:OME  xmlns="http://www.openmicroscopy.org/Schemas/OME/2010-04"
+	xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2010-04"
 	xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2010-04"
 	xmlns:BIN="http://www.openmicroscopy.org/Schemas/BinaryFile/2010-04"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -37,7 +38,8 @@ Sample structure two:
 {{{
 #!xml
 <?xml version="1.0" encoding="UTF-8"?>
-<OME:OME xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2010-04"
+<OME:OME  xmlns="http://www.openmicroscopy.org/Schemas/OME/2010-04"
+	xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2010-04"
 	xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2010-04"
 	xmlns:BIN="http://www.openmicroscopy.org/Schemas/BinaryFile/2010-04"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
