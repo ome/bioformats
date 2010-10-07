@@ -1070,13 +1070,10 @@ public class ZeissLSMReader extends FormatReader {
           }
           store.setPlaneExposureTime(nextStamp - thisStamp, series, i);
         }
-        if (xCoordinates.size() > 0) {
-          double planesPerStage =
-            (double) getImageCount() / xCoordinates.size();
-          int stage = (int) (i / planesPerStage);
-          store.setPlanePositionX(xCoordinates.get(stage), series, i);
-          store.setPlanePositionY(yCoordinates.get(stage), series, i);
-          store.setPlanePositionZ(zCoordinates.get(stage), series, i);
+        if (xCoordinates.size() > series) {
+          store.setPlanePositionX(xCoordinates.get(series), series, i);
+          store.setPlanePositionY(yCoordinates.get(series), series, i);
+          store.setPlanePositionZ(zCoordinates.get(series), series, i);
         }
       }
     }
