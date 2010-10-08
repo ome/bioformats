@@ -176,7 +176,7 @@ public class PictReader extends FormatReader {
       core[0].sizeY = strips.size();
     }
 
-    int plane = getSizeX() * getSizeY();
+    int plane = w * h;
 
     if (lookup != null) {
       // 8 bit data
@@ -198,24 +198,24 @@ public class PictReader extends FormatReader {
       byte[] c1 = null;
       byte[] c2 = null;
 
-      for (int i=0; i<getSizeY(); i++) {
+      for (int i=y; i<h + y; i++) {
         c0 = (byte[]) strips.get(i * nc + nc - 3);
         c1 = (byte[]) strips.get(i * nc + nc - 2);
         c2 = (byte[]) strips.get(i * nc + nc - 1);
-        int baseOffset = i * getSizeX();
-        System.arraycopy(c0, 0, buf, baseOffset, getSizeX());
-        System.arraycopy(c1, 0, buf, plane + baseOffset, getSizeX());
-        System.arraycopy(c2, 0, buf, 2*plane + baseOffset, getSizeX());
+        int baseOffset = (i - y) * w;
+        System.arraycopy(c0, x, buf, baseOffset, w);
+        System.arraycopy(c1, x, buf, plane + baseOffset, w);
+        System.arraycopy(c2, x, buf, 2*plane + baseOffset, w);
       }
     }
     else {
       // RGB value is packed into a single short: xRRR RRGG GGGB BBBB
       int[] row = null;
-      for (int i=0; i<getSizeY(); i++) {
+      for (int i=y; i<h + y; i++) {
         row = (int[]) strips.get(i);
 
-        for (int j=0; j<row.length; j++) {
-          int base = i * row.length + j;
+        for (int j=x; j<w + x; j++) {
+          int base = (i - y) * w + (j - x);
           buf[base] = (byte) ((row[j] & 0x7c00) >> 10);
           buf[plane + base] = (byte) ((row[j] & 0x3e0) >> 5);
           buf[2 * plane + base] = (byte) (row[j] & 0x1f);
