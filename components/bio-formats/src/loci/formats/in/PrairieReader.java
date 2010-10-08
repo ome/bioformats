@@ -272,13 +272,13 @@ public class PrairieReader extends FormatReader {
       DefaultHandler handler = new PrairieHandler();
       XMLTools.parseXML(xml, handler);
 
-      core[0].sizeT = getImageCount() / (getSizeZ() * getSizeC());
-
       boolean minimumMetadata =
         getMetadataOptions().getMetadataLevel() == MetadataLevel.MINIMUM;
       MetadataStore store = makeFilterMetadata();
 
       if (checkSuffix(id, XML_SUFFIX)) {
+        core[0].sizeT = getImageCount() / (getSizeZ() * getSizeC());
+
         files = new String[f.size()];
         f.copyInto(files);
         if (tiff == null) {
