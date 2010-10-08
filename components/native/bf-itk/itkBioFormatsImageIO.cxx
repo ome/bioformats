@@ -91,8 +91,10 @@ namespace itk {
       namePtr = name;
       char* path;
       path = getenv(name);
-      std::string dir(path);
-
+      std::string dir("");
+      if( path != NULL) {
+        dir.assign(path);
+      }
       list.push_back(jace::ClassPath(
 
  // To solve issue where JARs must live in current working directory:
