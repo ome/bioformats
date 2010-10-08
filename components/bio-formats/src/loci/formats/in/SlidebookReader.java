@@ -25,6 +25,8 @@ package loci.formats.in;
 
 import java.io.EOFException;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Hashtable;
 import java.util.Vector;
 
 import loci.common.RandomAccessInputStream;
@@ -42,16 +44,18 @@ import loci.formats.meta.MetadataStore;
  * have very little information on the Slidebook format.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/in/SlidebookReader.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/in/SlidebookReader.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/in/SlidebookReader.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/in/SlidebookReader.java">SVN</a></dd></dl>
  *
- * @author Melissa Linkert linkert at wisc.edu
+ * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class SlidebookReader extends FormatReader {
 
   // -- Constants --
 
-  public static final long SLD_MAGIC_BYTES = 0x6c000001494900L;
+  public static final long SLD_MAGIC_BYTES_1 = 0x6c000001L;
+  public static final long SLD_MAGIC_BYTES_2 = 0xf5010201L;
+  public static final long SLD_MAGIC_BYTES_3 = 0xf6010101L;
 
   // -- Fields --
 
@@ -60,11 +64,15 @@ public class SlidebookReader extends FormatReader {
   private Vector<Long> pixelLengths;
   private Vector<Float> ndFilters;
 
+  private boolean adjust = true;
+  private boolean isSpool;
+  private Hashtable<Integer, Integer> metadataInPlanes;
+
   // -- Constructor --
 
   /** Constructs a new Slidebook reader. */
   public SlidebookReader() {
-    super("Olympus Slidebook", "sld");
+    super("Olympus Slidebook", new String[] {"sld", "spl"});
     domains = new String[] {FormatTools.LM_DOMAIN};
   }
 
@@ -74,7 +82,8 @@ public class SlidebookReader extends FormatReader {
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     final int blockLen = 8;
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
-    return stream.readLong() == SLD_MAGIC_BYTES;
+    long magicBytes = stream.readInt();
+    return magicBytes == SLD_MAGIC_BYTES_1 || magicBytes == SLD_MAGIC_BYTES_2;
   }
 
   /**
@@ -89,6 +98,26 @@ public class SlidebookReader extends FormatReader {
     long offset = pixelOffsets.get(series).longValue() + plane * no;
     in.seek(offset);
 
+    // if this is a spool file, there may be an extra metadata block here
+    if (isSpool) {
+      Integer[] keys = metadataInPlanes.keySet().toArray(new Integer[0]);
+      Arrays.sort(keys);
+      for (int key : keys) {
+        if (key < no) {
+          in.skipBytes(256);
+        }
+      }
+
+      in.order(false);
+      long magicBytes = (long) in.readInt() & 0xffffffffL;
+      in.order(isLittleEndian());
+      if (magicBytes == SLD_MAGIC_BYTES_3 && !metadataInPlanes.contains(no)) {
+        metadataInPlanes.put(no, 0);
+        in.skipBytes(252);
+      }
+      else in.seek(in.getFilePointer() - 4);
+    }
+
     readPlane(in, x, y, w, h, buf);
     return buf;
   }
@@ -99,6 +128,9 @@ public class SlidebookReader extends FormatReader {
     if (!fileOnly) {
       metadataOffsets = pixelOffsets = pixelLengths = null;
       ndFilters = null;
+      isSpool = false;
+      metadataInPlanes = null;
+      adjust = true;
     }
   }
 
@@ -109,6 +141,10 @@ public class SlidebookReader extends FormatReader {
     debug("SlidebookReader.initFile(" + id + ")");
     super.initFile(id);
     in = new RandomAccessInputStream(id);
+    isSpool = checkSuffix(id, "spl");
+    if (isSpool) {
+      metadataInPlanes = new Hashtable<Integer, Integer>();
+    }
 
     status("Finding offsets to pixel data");
 
@@ -150,12 +186,14 @@ public class SlidebookReader extends FormatReader {
     // gather offsets to metadata and pixel data blocks
 
     while (in.getFilePointer() < in.length() - 8) {
+      debug("Looking for block at " + in.getFilePointer());
       in.skipBytes(4);
       int checkOne = in.read();
       int checkTwo = in.read();
       if ((checkOne == 'I' && checkTwo == 'I') ||
         (checkOne == 'M' && checkTwo == 'M'))
       {
+        debug("Found metadata offset: " + (in.getFilePointer() - 6));
         metadataOffsets.add(new Long(in.getFilePointer() - 6));
         in.skipBytes(in.readShort() - 8);
       }
@@ -170,6 +208,7 @@ public class SlidebookReader extends FormatReader {
             {
               foundBlock = true;
               in.seek(in.getFilePointer() - block.length + i - 2);
+              debug("Found metadata offset: " + (in.getFilePointer() - 2));
               metadataOffsets.add(new Long(in.getFilePointer() - 2));
               in.skipBytes(in.readShort() - 5);
               break;
@@ -237,6 +276,7 @@ public class SlidebookReader extends FormatReader {
           }
           else in.seek(fp);
 
+          debug("Found pixel offset at " + fp);
           pixelOffsets.add(new Long(fp));
           try {
             byte[] buf = new byte[8192];
@@ -245,13 +285,16 @@ public class SlidebookReader extends FormatReader {
 
             while (!found && in.getFilePointer() < in.length()) {
               for (int i=0; i<n-6; i++) {
-                if ((buf[i] == 'h' && buf[i + 1] == 0 &&
-                  buf[i+4] == 'I' && buf[i+5] == 'I') ||
-                  (buf[i] == 0 && buf[i+1] == 'h' &&
-                  buf[i+4] == 'M' && buf[i+5] == 'M'))
+                if (((buf[i] == 'h' || buf[i] == 'i') && buf[i + 1] == 0 &&
+                  buf[i + 4] == 'I' && buf[i + 5] == 'I') ||
+                  (buf[i] == 0 && (buf[i + 1] == 'h' || buf[i + 1] == 'i') &&
+                  buf[i + 4] == 'M' && buf[i + 5] == 'M'))
                 {
                   found = true;
                   in.seek(in.getFilePointer() - n + i - 20);
+                  if (buf[i] == 'i' || buf[i + 1] == 'i') {
+                    pixelOffsets.remove(pixelOffsets.size() - 1);
+                  }
                   break;
                 }
               }
@@ -264,7 +307,14 @@ public class SlidebookReader extends FormatReader {
             }
 
             if (in.getFilePointer() <= in.length()) {
-              pixelLengths.add(new Long(in.getFilePointer() - fp));
+              if (pixelOffsets.size() > pixelLengths.size()) {
+                long length = in.getFilePointer() - fp;
+                if (((length / 2) % 2) == 1) {
+                  pixelOffsets.setElementAt(fp + 2, pixelOffsets.size() - 1);
+                  length -= 2;
+                }
+                pixelLengths.add(new Long(length));
+              }
             }
             else pixelOffsets.remove(pixelOffsets.size() - 1);
           }
@@ -279,7 +329,9 @@ public class SlidebookReader extends FormatReader {
       long length = pixelLengths.get(i).longValue();
       long offset = pixelOffsets.get(i).longValue();
 
-      if (length + offset + 6 >= in.length()) {
+      int padding = isSpool ? 0 : 7;
+
+      if (length + offset + padding > in.length()) {
         pixelOffsets.remove(i);
         pixelLengths.remove(i);
         i--;
@@ -299,7 +351,7 @@ public class SlidebookReader extends FormatReader {
 
     // determine total number of pixel bytes
 
-    float pixelSize = 1;
+    Vector<Float> pixelSize = new Vector<Float>();
     String objective = null;
     Vector<Float> pixelSizeZ = new Vector<Float>();
 
@@ -387,15 +439,28 @@ public class SlidebookReader extends FormatReader {
             if (nextName < imageNames.length) {
               imageNames[nextName++] = in.readCString().trim();
             }
-            if (core[nextName - 1].sizeX == 0 || core[nextName - 1].sizeY == 0)
+
+            long fp = in.getFilePointer();
+            if ((in.getFilePointer() % 2) == 1) in.skipBytes(1);
+            while (in.readShort() == 0);
+            in.skipBytes(18);
+            if (in.getFilePointer() - fp > 123 && (fp % 2) == 0) {
+              in.seek(fp + 123);
+            }
+
+            int x = in.readInt();
+            int y = in.readInt();
+            int div = in.readShort();
+            x /= (div == 0 ? 1 : div);
+            div = in.readShort();
+            y /= (div == 0 ? 1 : div);
+            if (x > 16 && (x < core[nextName - 1].sizeX ||
+              core[nextName - 1].sizeX == 0) && y > 16 &&
+              (y < core[nextName - 1].sizeY || core[nextName - 1].sizeY == 0))
             {
-              in.skipBytes(123);
-              core[nextName - 1].sizeX = in.readInt();
-              core[nextName - 1].sizeY = in.readInt();
-              int div = in.readInt();
-              core[nextName - 1].sizeX /= (div == 0 ? 1 : div);
-              div = in.readInt();
-              core[nextName - 1].sizeY /= (div == 0 ? 1 : div);
+              core[nextName - 1].sizeX = x;
+              core[nextName - 1].sizeY = y;
+              adjust = false;
             }
           }
         }
@@ -412,7 +477,7 @@ public class SlidebookReader extends FormatReader {
           long fp = in.getFilePointer();
           objective = in.readCString();
           in.seek(fp + 144);
-          pixelSize = in.readFloat();
+          pixelSize.add(in.readFloat());
         }
         else if (n == 'e') {
           in.skipBytes(174);
@@ -424,8 +489,21 @@ public class SlidebookReader extends FormatReader {
         }
         else if (n == 'k') {
           in.skipBytes(14);
-          setSeries(nextName - 1);
+          if (nextName > 0) setSeries(nextName - 1);
           addSeriesMeta("Mag. changer", in.readCString());
+        }
+        else if (isSpool) {
+          // spool files don't necessarily have block identifiers
+          for (int j=0; j<pixelOffsets.size(); j++) {
+            long end = j == pixelOffsets.size() - 1 ? in.length() :
+              pixelOffsets.get(j + 1).longValue();
+            if (in.getFilePointer() < end) {
+              in.skipBytes(16);
+              core[j].sizeX = in.readShort();
+              core[j].sizeY = in.readShort();
+              break;
+            }
+          }
         }
       }
     }
@@ -434,15 +512,32 @@ public class SlidebookReader extends FormatReader {
       setSeries(i);
       long pixels = pixelLengths.get(i).longValue() / 2;
       boolean x = true;
-      while (getSizeX() * getSizeY() * getSizeC() * getSizeZ() > pixels) {
-        if (x) core[i].sizeX /= 2;
-        else core[i].sizeY /= 2;
-        x = !x;
-      }
+
       if (getSizeC() == 0) core[i].sizeC = 1;
       if (getSizeZ() == 0) core[i].sizeZ = 1;
+
+      long plane = pixels / (getSizeC() * getSizeZ());
+
+      if (adjust) {
+        boolean widthGreater = getSizeX() > getSizeY();
+        while (getSizeX() * getSizeY() > plane) {
+          if (x) core[i].sizeX /= 2;
+          else core[i].sizeY /= 2;
+          x = !x;
+        }
+        while (getSizeX() * getSizeY() < plane ||
+          (getSizeX() < getSizeY() && widthGreater))
+        {
+          core[i].sizeX++;
+          core[i].sizeY = (int) (plane / getSizeX());
+        }
+      }
+
       int nPlanes = getSizeZ() * getSizeC();
       core[i].sizeT = (int) (pixels / (getSizeX() * getSizeY() * nPlanes));
+      while (getSizeX() * getSizeY() * nPlanes * getSizeT() > pixels) {
+        core[i].sizeT--;
+      }
       if (getSizeT() == 0) core[i].sizeT = 1;
       core[i].imageCount = nPlanes * getSizeT();
       core[i].pixelType = FormatTools.UINT16;
@@ -456,6 +551,13 @@ public class SlidebookReader extends FormatReader {
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     MetadataTools.populatePixels(store, this);
+
+    // populate Image data
+
+    for (int i=0; i<getSeriesCount(); i++) {
+      if (imageNames[i] != null) store.setImageName(imageNames[i], i);
+      MetadataTools.setDefaultCreationDate(store, id, i);
+    }
 
     // link Instrument and Image
     String instrumentID = MetadataTools.createLSID("Instrument", 0);
@@ -474,18 +576,13 @@ public class SlidebookReader extends FormatReader {
     store.setObjectiveID(objectiveID, 0, 0);
     store.setObjectiveSettingsObjective(objectiveID, 0);
 
-    // populate Image data
-
-    for (int i=0; i<getSeriesCount(); i++) {
-      if (imageNames[i] != null) store.setImageName(imageNames[i], i);
-      MetadataTools.setDefaultCreationDate(store, id, i);
-    }
-
     // populate Dimensions data
 
     for (int i=0; i<getSeriesCount(); i++) {
-      store.setDimensionsPhysicalSizeX(new Float(pixelSize), i, 0);
-      store.setDimensionsPhysicalSizeY(new Float(pixelSize), i, 0);
+      if (i < pixelSize.size()) {
+        store.setDimensionsPhysicalSizeX(new Float(pixelSize.get(i)), i, 0);
+        store.setDimensionsPhysicalSizeY(new Float(pixelSize.get(i)), i, 0);
+      }
       int idx = 0;
       for (int q=0; q<i; q++) {
         idx += core[q].sizeC;
