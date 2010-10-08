@@ -110,6 +110,10 @@ public class MINCReader extends FormatReader {
       throw new MissingLibraryException(e);
     }
 
+    Double physicalX = null;
+    Double physicalY = null;
+    Double physicalZ = null;
+
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       Vector<String> variableList = netcdf.getVariableList();
 
@@ -127,6 +131,21 @@ public class MINCReader extends FormatReader {
               sb.append(q.toString());
             }
             addGlobalMeta(variable + " " + key, sb.toString());
+          }
+          else {
+            addGlobalMeta(variable + " " + key, attributes.get(key));
+
+            if (key.equals("step")) {
+              if (variable.equals("/xspace")) {
+                physicalX = new Double(attributes.get(key).toString());
+              }
+              else if (variable.equals("/yspace")) {
+                physicalY = new Double(attributes.get(key).toString());
+              }
+              else if (variable.equals("/zspace")) {
+                physicalZ = new Double(attributes.get(key).toString());
+              }
+            }
           }
         }
       }
@@ -213,6 +232,10 @@ public class MINCReader extends FormatReader {
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription(netcdf.getAttributeValue("/history"), 0);
+
+      if (physicalX != null) store.setPixelsPhysicalSizeX(physicalX, 0);
+      if (physicalY != null) store.setPixelsPhysicalSizeY(physicalY, 0);
+      if (physicalZ != null) store.setPixelsPhysicalSizeZ(physicalZ, 0);
     }
   }
 
