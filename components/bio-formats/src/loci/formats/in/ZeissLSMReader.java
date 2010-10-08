@@ -869,6 +869,10 @@ public class ZeissLSMReader extends FormatReader {
           xCoordinates.add(xPos);
           yCoordinates.add(yPos);
           zCoordinates.add(zPos);
+
+          addGlobalMeta("X position for position #" + (i + 1), xPos);
+          addGlobalMeta("Y position for position #" + (i + 1), yPos);
+          addGlobalMeta("Z position for position #" + (i + 1), zPos);
         }
       }
 
@@ -876,9 +880,16 @@ public class ZeissLSMReader extends FormatReader {
         in.seek(tilePositionOffset);
         int nTiles = in.readInt();
         for (int i=0; i<nTiles; i++) {
-          xCoordinates.add(originX + in.readDouble() * 1000000);
-          yCoordinates.add(originY + in.readDouble() * 1000000);
-          zCoordinates.add(originZ + in.readDouble() * 1000000);
+          double xPos = originX + in.readDouble() * 1000000;
+          double yPos = originY + in.readDouble() * 1000000;
+          double zPos = originZ + in.readDouble() * 1000000;
+          xCoordinates.add(xPos);
+          yCoordinates.add(yPos);
+          zCoordinates.add(zPos);
+
+          addGlobalMeta("X position for position #" + (i + 1), xPos);
+          addGlobalMeta("Y position for position #" + (i + 1), yPos);
+          addGlobalMeta("Z position for position #" + (i + 1), zPos);
         }
       }
 

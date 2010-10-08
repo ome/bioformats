@@ -661,9 +661,18 @@ public class OpenlabReader extends FormatReader {
 
     if (name.equals("Gain")) gain = value;
     else if (name.equals("Offset")) detectorOffset = value;
-    else if (name.equals("X-Y Stage: X Position")) xPos = value;
-    else if (name.equals("X-Y Stage: Y Position")) yPos = value;
-    else if (name.equals("ZPosition")) zPos = value;
+    else if (name.equals("X-Y Stage: X Position")) {
+      xPos = value;
+      addGlobalMeta("X position for position #1", xPos);
+    }
+    else if (name.equals("X-Y Stage: Y Position")) {
+      yPos = value;
+      addGlobalMeta("Y position for position #1", yPos);
+    }
+    else if (name.equals("ZPosition")) {
+      zPos = value;
+      addGlobalMeta("Z position for position #1", zPos);
+    }
   }
 
   private void parseImageNames(int s) {

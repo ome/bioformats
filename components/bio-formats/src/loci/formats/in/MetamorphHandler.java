@@ -193,9 +193,11 @@ public class MetamorphHandler extends DefaultHandler {
     }
     else if (key.equals("stage-position-x")) {
       positionX = Double.parseDouble(value);
+      metadata.put("X position for position #1", positionX);
     }
     else if (key.equals("stage-position-y")) {
       positionY = Double.parseDouble(value);
+      metadata.put("Y position for position #1", positionY);
     }
     else if (key.equals("Speed")) {
       readOutRate = Double.parseDouble(value);

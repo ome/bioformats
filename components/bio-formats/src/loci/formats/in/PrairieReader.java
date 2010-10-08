@@ -500,12 +500,15 @@ public class PrairieReader extends FormatReader {
         else if (key.equals("laserPower_0")) laserPower = value;
         else if (key.equals("positionCurrent_XAxis")) {
           positionX.add(new Double(value));
+          addGlobalMeta("X position for position #" + positionX.size(), value);
         }
         else if (key.equals("positionCurrent_YAxis")) {
           positionY.add(new Double(value));
+          addGlobalMeta("Y position for position #" + positionY.size(), value);
         }
         else if (key.equals("positionCurrent_ZAxis")) {
           positionZ.add(new Double(value));
+          addGlobalMeta("Z position for position #" + positionZ.size(), value);
         }
         else if (key.equals("opticalZoom")) {
           zoom = new Double(value);

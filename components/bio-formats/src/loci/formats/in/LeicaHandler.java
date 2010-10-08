@@ -195,6 +195,10 @@ public class LeicaHandler extends DefaultHandler {
         }
 
         for (int i=0; i<xPos.size(); i++) {
+          int pos = i + 1;
+          globalMetadata.put("X position for position #" + pos, xPos.get(i));
+          globalMetadata.put("Y position for position #" + pos, yPos.get(i));
+          globalMetadata.put("Z position for position #" + pos, zPos.get(i));
           for (int image=0; image<coreMeta.imageCount; image++) {
             store.setPlanePositionX(xPos.get(i), numDatasets, image);
             store.setPlanePositionY(yPos.get(i), numDatasets, image);

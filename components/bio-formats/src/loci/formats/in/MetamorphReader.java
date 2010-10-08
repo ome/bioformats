@@ -1141,6 +1141,8 @@ public class MetamorphReader extends BaseTiffReader {
       stageY[i] = readRational(in).doubleValue();
       addSeriesMeta("stageX[" + pos + "]", stageX[i]);
       addSeriesMeta("stageY[" + pos + "]", stageY[i]);
+      addGlobalMeta("X position for position #" + (getSeries() + 1), stageX[i]);
+      addGlobalMeta("Y position for position #" + (getSeries() + 1), stageY[i]);
     }
   }
 

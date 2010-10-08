@@ -238,12 +238,15 @@ public class VarianFDFReader extends FormatReader {
         String[] values = parseArray(value);
         if (values.length > 0) {
           originX = computePhysicalSize(1, values[0], units[0]);
+          addGlobalMeta("X position for position #1", originX);
         }
         if (values.length > 1) {
           originY = computePhysicalSize(1, values[1], units[1]);
+          addGlobalMeta("Y position for position #1", originY);
         }
         if (values.length > 2) {
           originZ = computePhysicalSize(1, values[2], units[2]);
+          addGlobalMeta("Z position for position #1", originZ);
         }
       }
       else if (var.equals("*abscissa[]")) {

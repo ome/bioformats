@@ -669,6 +669,10 @@ public class DeltavisionReader extends FormatReader {
       String prefix = "Extended header Z" + z + " W" + w + " T" + t;
       addGlobalMeta(prefix, hdr);
 
+      addGlobalMeta("X position for position #1", hdr.stageXCoord);
+      addGlobalMeta("Y position for position #1", hdr.stageYCoord);
+      addGlobalMeta("Z position for position #1", hdr.stageZCoord);
+
       // -- record OME metadata --
 
       // plane timing
