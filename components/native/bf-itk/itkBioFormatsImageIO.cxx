@@ -85,6 +85,14 @@ namespace itk {
       itkDebugMacro("Creating JVM...");
       jace::StaticVmLoader loader(JNI_VERSION_1_4);
       jace::OptionList list;
+
+      const char name[] = "ITK_AUTOLOAD_PATH";
+      const char* namePtr;
+      namePtr = name;
+      char* path;
+      path = getenv(name);
+      std::string dir(path);
+
       list.push_back(jace::ClassPath(
 
  // To solve issue where JARs must live in current working directory:
@@ -95,7 +103,7 @@ namespace itk {
  // so, we want a string variable "dir" containing that folder name.
  // Then, can pass classpath elements with that prefix.
  //        dir+"jace-runtime.jar:"+dir+"bio-formats.jar:"+dir+"loci_tools.jar"
-       "jace-runtime.jar:bio-formats.jar:loci_tools.jar"
+      dir+"jace-runtime.jar:"+dir+"bio-formats.jar:"+dir+"loci_tools.jar"
       ));
       list.push_back(jace::CustomOption("-Xcheck:jni"));
       list.push_back(jace::CustomOption("-Xmx256m"));
