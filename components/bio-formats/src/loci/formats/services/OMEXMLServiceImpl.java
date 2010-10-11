@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.services;
 
 import java.io.IOException;
+import java.util.Hashtable;
 import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -51,6 +52,7 @@ import ome.xml.model.OMEModelImpl;
 import ome.xml.model.OMEModelObject;
 import ome.xml.model.Pixels;
 import ome.xml.model.StructuredAnnotations;
+import ome.xml.model.XMLAnnotation;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -357,6 +359,29 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
     return XMLTools.validateXML(xml, "OME-XML");
   }
 
+  /**
+   * @see loci.formats.ome.OMEXMLService#populateOriginalMetadata(loci.formats.ome.OMEXMLMetadata, Hashtable<String, Object>)
+   */
+  public void populateOriginalMetadata(OMEXMLMetadata omexmlMeta,
+    Hashtable<String, Object> metadata)
+  {
+    OME root = (OME) omexmlMeta.getRoot();
+    StructuredAnnotations annotations = root.getStructuredAnnotations();
+    if (annotations == null) annotations = new StructuredAnnotations();
+    int annotationIndex = annotations.sizeOfXMLAnnotationList();
+
+    for (String key : metadata.keySet()) {
+      XMLAnnotation annotation = new XMLAnnotation();
+      annotation.setID(MetadataTools.createLSID("Annotation", annotationIndex));
+      annotation.setValue(makeOriginalMetadata(key, metadata.get(key)));
+      annotations.addXMLAnnotation(annotation);
+      annotationIndex++;
+    }
+
+    root.setStructuredAnnotations(annotations);
+    omexmlMeta.setRoot(root);
+  }
+
   /* (non-Javadoc)
    * @see loci.formats.ome.OMEXMLService#populateOriginalMetadata(loci.formats.ome.OMEXMLMetadata, java.lang.String, java.lang.String)
    */
@@ -365,30 +390,14 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
   {
     int annotationIndex = 0;
     try {
-      annotationIndex = omexmlMeta.getListAnnotationCount();
+      annotationIndex = omexmlMeta.getXMLAnnotationCount();
     }
     catch (NullPointerException e) { }
-    String listID = MetadataTools.createLSID("Annotation", annotationIndex * 3);
-    omexmlMeta.setListAnnotationID(listID, annotationIndex);
-    omexmlMeta.setListAnnotationNamespace(
-      StructuredAnnotations.NAMESPACE, annotationIndex);
 
-    int keyIndex = annotationIndex * 2;
-    int valueIndex = annotationIndex * 2 + 1;
-    String keyID =
-      MetadataTools.createLSID("Annotation", annotationIndex * 3 + 1);
-    String valueID =
-      MetadataTools.createLSID("Annotation", annotationIndex * 3 + 2);
-    omexmlMeta.setCommentAnnotationID(keyID, keyIndex);
-    omexmlMeta.setCommentAnnotationID(valueID, valueIndex);
-    omexmlMeta.setCommentAnnotationValue(key, keyIndex);
-    omexmlMeta.setCommentAnnotationValue(value, valueIndex);
-    omexmlMeta.setCommentAnnotationNamespace(
-      StructuredAnnotations.NAMESPACE, keyIndex);
-    omexmlMeta.setCommentAnnotationNamespace(
-      StructuredAnnotations.NAMESPACE, valueIndex);
-    omexmlMeta.setListAnnotationAnnotationRef(keyID, annotationIndex, 0);
-    omexmlMeta.setListAnnotationAnnotationRef(valueID, annotationIndex, 1);
+    String id = MetadataTools.createLSID("Annotation", annotationIndex);
+    omexmlMeta.setXMLAnnotationID(id, annotationIndex);
+    String xml = makeOriginalMetadata(key, value);
+    omexmlMeta.setXMLAnnotationValue(xml, annotationIndex);
   }
 
   /* (non-Javadoc)
@@ -482,6 +491,12 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
     catch (SAXException se) { }
     catch (IOException ioe) { }
     return null;
+  }
+
+  /** Create an XML annotation for the given OriginalMetadata key/value pair. */
+  private String makeOriginalMetadata(String key, Object value) {
+    return "<OriginalMetadata><Key>" + key + "</Key><Value>" + value +
+      "</Value></OriginalMetadata>";
   }
 
 }

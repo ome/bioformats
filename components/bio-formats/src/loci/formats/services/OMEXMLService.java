@@ -23,12 +23,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.services;
 
+import java.util.Hashtable;
+
 import loci.common.services.Service;
 import loci.common.services.ServiceException;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 import loci.formats.ome.OMEXMLMetadata;
-
 
 /**
  * 
@@ -156,6 +157,16 @@ public interface OMEXMLService extends Service {
    * @return true if the XML successfully validates.
    */
   public boolean validateOMEXML(String xml, boolean pixelsHack);
+
+  /**
+   * Adds the key/value pairs in the specified Hashtable as new
+   * OriginalMetadata annotations in the given OME-XML metadata object.
+   * @param omexmlMeta An object of type
+   *   {@link loci.formats.ome.OMEXMLMetadata}.
+   * @param metadata A hashtable containing metadata key/value pairs.
+   */
+  public void populateOriginalMetadata(OMEXMLMetadata omexmlMeta,
+    Hashtable<String, Object> metadata);
 
   /**
    * Adds the specified key/value pair as a new OriginalMetadata node
