@@ -187,7 +187,7 @@ public class BioRadReader extends FormatReader {
   public int fileGroupOption(String id) throws FormatException, IOException {
     Location thisFile = new Location(id).getAbsoluteFile();
     Location parent = thisFile.getParentFile();
-    String[] list = parent.list();
+    String[] list = parent.list(true);
     for (String f : list) {
       if (checkSuffix(f, "raw") || checkSuffix(f, "xml")) {
         return FormatTools.MUST_GROUP;
@@ -263,7 +263,7 @@ public class BioRadReader extends FormatReader {
     if (!checkSuffix(id, PIC_SUFFIX)) {
       Location dir = new Location(id).getAbsoluteFile().getParentFile();
 
-      String[] list = dir.list();
+      String[] list = dir.list(true);
       for (int i=0; i<list.length; i++) {
         if (checkSuffix(list[i], PIC_SUFFIX)) {
           id = new Location(dir.getAbsolutePath(), list[i]).getAbsolutePath();
@@ -277,6 +277,8 @@ public class BioRadReader extends FormatReader {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
     in.order(true);
+
+    /* debug */ System.out.println("initializing .pic file: " + id);
 
     offset = new Vector<Double>();
     gain = new Vector<Double>();
