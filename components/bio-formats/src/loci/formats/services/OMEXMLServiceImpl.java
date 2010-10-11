@@ -371,9 +371,10 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
     int annotationIndex = annotations.sizeOfXMLAnnotationList();
 
     for (String key : metadata.keySet()) {
-      XMLAnnotation annotation = new XMLAnnotation();
+      OriginalMetadataAnnotation annotation = new OriginalMetadataAnnotation();
       annotation.setID(MetadataTools.createLSID("Annotation", annotationIndex));
-      annotation.setValue(makeOriginalMetadata(key, metadata.get(key)));
+      annotation.setKey(key);
+      annotation.setValue(metadata.get(key).toString());
       annotations.addXMLAnnotation(annotation);
       annotationIndex++;
     }
@@ -388,16 +389,19 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
   public void populateOriginalMetadata(OMEXMLMetadata omexmlMeta,
     String key, String value)
   {
-    int annotationIndex = 0;
-    try {
-      annotationIndex = omexmlMeta.getXMLAnnotationCount();
-    }
-    catch (NullPointerException e) { }
+    OME root = (OME) omexmlMeta.getRoot();
+    StructuredAnnotations annotations = root.getStructuredAnnotations();
+    if (annotations == null) annotations = new StructuredAnnotations();
+    int annotationIndex = annotations.sizeOfXMLAnnotationList();
 
-    String id = MetadataTools.createLSID("Annotation", annotationIndex);
-    omexmlMeta.setXMLAnnotationID(id, annotationIndex);
-    String xml = makeOriginalMetadata(key, value);
-    omexmlMeta.setXMLAnnotationValue(xml, annotationIndex);
+    OriginalMetadataAnnotation annotation = new OriginalMetadataAnnotation();
+    annotation.setID(MetadataTools.createLSID("Annotation", annotationIndex));
+    annotation.setKey(key);
+    annotation.setValue(value);
+    annotations.addXMLAnnotation(annotation);
+
+    root.setStructuredAnnotations(annotations);
+    omexmlMeta.setRoot(root);
   }
 
   /* (non-Javadoc)
@@ -493,10 +497,53 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
     return null;
   }
 
-  /** Create an XML annotation for the given OriginalMetadata key/value pair. */
-  private String makeOriginalMetadata(String key, Object value) {
-    return "<OriginalMetadata><Key>" + key + "</Key><Value>" + value +
-      "</Value></OriginalMetadata>";
+  // -- Helper class --
+
+  class OriginalMetadataAnnotation extends XMLAnnotation {
+    private static final String ORIGINAL_METADATA_NS =
+      "openmicroscopy.org/OriginalMetadata";
+
+    private String key, value;
+
+    // -- OriginalMetadataAnnotation methods --
+
+    public void setKey(String key) {
+      this.key = key;
+    }
+
+    public void setValue(String value) {
+      this.value = value;
+    }
+
+    // -- XMLAnnotation methods --
+
+    /* @see ome.xml.model.XMLAnnotation#asXMLElement(Document, Element) */
+    protected Element asXMLElement(Document document, Element element) {
+      if (element == null) {
+        element =
+          document.createElementNS(XMLAnnotation.NAMESPACE, "XMLAnnotation");
+      }
+
+      Element keyElement =
+        document.createElementNS(ORIGINAL_METADATA_NS, "Key");
+      Element valueElement =
+        document.createElementNS(ORIGINAL_METADATA_NS, "Value");
+      keyElement.setTextContent(key);
+      valueElement.setTextContent(value);
+
+      Element originalMetadata =
+        document.createElementNS(ORIGINAL_METADATA_NS, "OriginalMetadata");
+      originalMetadata.appendChild(keyElement);
+      originalMetadata.appendChild(valueElement);
+
+      Element annotationValue =
+        document.createElementNS(XMLAnnotation.NAMESPACE, "Value");
+      annotationValue.appendChild(originalMetadata);
+
+      element.appendChild(annotationValue);
+      return super.asXMLElement(document, element);
+    }
+
   }
 
 }
