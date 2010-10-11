@@ -102,7 +102,8 @@ public class ZeissZVIReader extends FormatReader {
 
   private Vector<String> tagsToParse;
   private int nextEmWave = 0, nextExWave = 0, nextChName = 0;
-  private double stageX = 0, stageY = 0;
+  private Vector<Double> stageX = new Vector<Double>();
+  private Vector<Double> stageY = new Vector<Double>();
   private int timepoint = 0;
 
   private int[] channelColors;
@@ -427,7 +428,8 @@ public class ZeissZVIReader extends FormatReader {
       nextEmWave = nextExWave = nextChName = 0;
       firstImageTile = secondImageTile = null;
       tileWidth = tileHeight = realWidth = realHeight = 0;
-      stageX = stageY = 0;
+      stageX.clear();
+      stageY.clear();
       channelColors = null;
       lastPlane = 0;
       tiles.clear();
@@ -741,8 +743,12 @@ public class ZeissZVIReader extends FormatReader {
           store.setPlaneDeltaT(new Double(stamp / 1600000), 0, plane);
         }
 
-        store.setPlanePositionX(stageX, 0, plane);
-        store.setPlanePositionY(stageY, 0, plane);
+        if (plane < stageX.size()) {
+          store.setPlanePositionX(stageX.get(plane), 0, plane);
+        }
+        if (plane < stageY.size()) {
+          store.setPlanePositionY(stageY.get(plane), 0, plane);
+        }
       }
 
       // link DetectorSettings to an actual Detector
@@ -998,11 +1004,11 @@ public class ZeissZVIReader extends FormatReader {
           store.setObjectiveImmersion(getImmersion(immersion), 0, 0);
         }
         else if (key.indexOf("Stage Position X") != -1) {
-          stageX = Double.parseDouble(value);
+          stageX.add(new Double(value));
           addGlobalMeta("X position for position #1", stageX);
         }
         else if (key.indexOf("Stage Position Y") != -1) {
-          stageY = Double.parseDouble(value);
+          stageY.add(new Double(value));
           addGlobalMeta("Y position for position #1", stageY);
         }
         else if (key.startsWith("Orca Analog Gain")) {
