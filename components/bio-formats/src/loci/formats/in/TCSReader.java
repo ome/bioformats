@@ -276,25 +276,22 @@ public class TCSReader extends FormatReader {
         new FilePattern(new Location(currentId).getAbsoluteFile());
       AxisGuesser guesser =
         new AxisGuesser(fp, "XYTZC", 1, ifds.size(), 1, true);
-      BigInteger[] first = fp.getFirst();
-      BigInteger[] last = fp.getLast();
-      BigInteger[] step = fp.getStep();
 
       int[] axisTypes = guesser.getAxisTypes();
+      int[] count = fp.getCount();
 
       for (int i=axisTypes.length-1; i>=0; i--) {
-        int size = last[i].subtract(first[i]).divide(step[i]).intValue() + 1;
         if (axisTypes[i] == AxisGuesser.Z_AXIS) {
           if (getDimensionOrder().indexOf("Z") == -1) {
             core[0].dimensionOrder += "Z";
           }
-          core[0].sizeZ *= size;
+          core[0].sizeZ *= count[i];
         }
         else if (axisTypes[i] == AxisGuesser.C_AXIS) {
           if (getDimensionOrder().indexOf("C") == -1) {
             core[0].dimensionOrder += "C";
           }
-          core[0].sizeC *= size;
+          core[0].sizeC *= count[i];
         }
       }
     }
