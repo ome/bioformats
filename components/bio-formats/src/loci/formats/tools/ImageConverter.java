@@ -183,6 +183,9 @@ public final class ImageConverter {
           "does not exist.");
         return false;
       }
+      else {
+        new Location(out).delete();
+      }
     }
 
     if (map != null) Location.mapId(in, map);
