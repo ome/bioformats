@@ -356,10 +356,12 @@ public class FluoviewReader extends BaseTiffReader {
     }
 
     // populate Dimensions
-    store.setPixelsPhysicalSizeX(voxelX, 0);
-    store.setPixelsPhysicalSizeY(voxelY, 0);
-    store.setPixelsPhysicalSizeZ(voxelZ, 0);
-    store.setPixelsTimeIncrement(voxelT, 0);
+    for (int i=0; i<getSeriesCount(); i++) {
+      store.setPixelsPhysicalSizeX(voxelX, i);
+      store.setPixelsPhysicalSizeY(voxelY, i);
+      store.setPixelsPhysicalSizeZ(voxelZ, i);
+      store.setPixelsTimeIncrement(voxelT, i);
+    }
 
     // populate LogicalChannel data
 
