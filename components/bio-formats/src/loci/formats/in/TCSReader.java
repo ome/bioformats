@@ -282,17 +282,27 @@ public class TCSReader extends FormatReader {
 
     core[0].dimensionOrder = isRGB() ? "XYC" : "XY";
 
-    for (int i=axisTypes.length-1; i>=0; i--) {
-      int size = last[i].subtract(first[i]).divide(step[i]).intValue() + 1;
-      if (axisTypes[i] == AxisGuesser.Z_AXIS) {
-        if (getDimensionOrder().indexOf("Z") == -1) {
-          core[0].dimensionOrder += "Z";
+    if (isGroupFiles()) {
+      FilePattern fp =
+        new FilePattern(new Location(currentId).getAbsoluteFile());
+      AxisGuesser guesser =
+        new AxisGuesser(fp, "XYTZC", 1, ifds.size(), 1, true);
+
+      int[] axisTypes = guesser.getAxisTypes();
+      int[] count = fp.getCount();
+
+      for (int i=axisTypes.length-1; i>=0; i--) {
+        if (axisTypes[i] == AxisGuesser.Z_AXIS) {
+          if (getDimensionOrder().indexOf("Z") == -1) {
+            core[0].dimensionOrder += "Z";
+          }
+          core[0].sizeZ *= count[i];
         }
-        core[0].sizeZ *= size;
-      }
-      else if (axisTypes[i] == AxisGuesser.C_AXIS) {
-        if (getDimensionOrder().indexOf("C") == -1) {
-          core[0].dimensionOrder += "C";
+        else if (axisTypes[i] == AxisGuesser.C_AXIS) {
+          if (getDimensionOrder().indexOf("C") == -1) {
+            core[0].dimensionOrder += "C";
+          }
+          core[0].sizeC *= count[i];
         }
         core[0].sizeC *= size;
       }

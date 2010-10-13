@@ -213,6 +213,11 @@ public class FileStitcher extends ReaderWrapper {
     }
     patternIds = false;
     String[] patterns = findPatterns(new FilePattern(id).getFiles()[0]);
+    if (patterns.length == 0) patterns = new String[] {id};
+    else {
+      FilePattern test = new FilePattern(patterns[0]);
+      if (test.getFiles().length == 0) patterns = new String[] {id};
+    }
     patternIds = true;
     return patterns;
   }
@@ -970,9 +975,16 @@ public class FileStitcher extends ReaderWrapper {
 
     AxisGuesser ag = s.getAxisGuesser();
     int[] axes = ag.getAxisTypes();
+
     int numZ = ag.getAxisCountZ();
     int numC = ag.getAxisCountC();
     int numT = ag.getAxisCountT();
+
+    if (axes.length == 0 && s.getFiles().length > 1) {
+      axes = new int[] {AxisGuesser.T_AXIS};
+      count = new int[] {s.getFiles().length};
+      numT++;
+    }
 
     core[sno].sizeZ = sizeZ[sno];
     core[sno].sizeC = sizeC[sno];

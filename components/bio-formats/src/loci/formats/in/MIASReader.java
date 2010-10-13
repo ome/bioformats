@@ -455,44 +455,39 @@ public class MIASReader extends FormatReader {
       FilePattern fp = new FilePattern(
         firstTiff.getName(), firstTiff.getParentFile().getAbsolutePath());
       String[] blocks = fp.getPrefixes();
-      BigInteger[] firstNumber = fp.getFirst();
-      BigInteger[] lastNumber = fp.getLast();
-      BigInteger[] step = fp.getStep();
 
       order[j] = "XY";
+
+      int[] count = fp.getCount();
 
       for (int block=blocks.length - 1; block>=0; block--) {
         blocks[block] = blocks[block].toLowerCase();
         blocks[block] =
           blocks[block].substring(blocks[block].lastIndexOf("_") + 1);
 
-        BigInteger tmp = lastNumber[block].subtract(firstNumber[block]);
-        tmp = tmp.add(BigInteger.ONE).divide(step[block]);
-        int count = tmp.intValue();
-
         if (blocks[block].equals("z")) {
-          zCount[j] = count;
+          zCount[j] = count[block];
           order[j] += "Z";
         }
         else if (blocks[block].equals("t")) {
-          tCount[j] = count;
+          tCount[j] = count[block];
           order[j] += "T";
         }
         else if (blocks[block].equals("mode")) {
-          cCount[j] = count;
+          cCount[j] = count[block];
           order[j] += "C";
         }
-        else if (blocks[block].equals("im")) tileRows = count;
-        else if (blocks[block].equals("")) tileCols = count;
+        else if (blocks[block].equals("im")) tileRows = count[block];
+        else if (blocks[block].equals("")) tileCols = count[block];
         else if (blocks[block].replaceAll("\\d", "").length() == 0) {
-          if (block == 3) tileRows = count;
-          else if (block == 2) tileCols = count;
+          if (block == 3) tileRows = count[block];
+          else if (block == 2) tileCols = count[block];
           else if (block == 0) {
-            zCount[j] = count;
+            zCount[j] = count[block];
             order[j] += "Z";
           }
           else if (block == 1) {
-            tCount[j] = count;
+            tCount[j] = count[block];
             order[j] += "T";
           }
         }
