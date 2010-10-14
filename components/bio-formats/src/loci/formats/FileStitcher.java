@@ -798,14 +798,7 @@ public class FileStitcher extends ReaderWrapper {
   protected void initFile(String id) throws FormatException, IOException {
     LogTools.debug("initFile: " + id);
 
-    String[] patterns = findPatterns(id);
-    externals = new ExternalSeries[patterns.length];
-
-    for (int i=0; i<externals.length; i++) {
-      externals[i] = new ExternalSeries(new FilePattern(patterns[i]));
-    }
-
-    FilePattern fp = new FilePattern(patterns[0]);
+    FilePattern fp = new FilePattern(id);
 
     boolean mustGroup = false;
     if (patternIds) {
@@ -825,6 +818,16 @@ public class FileStitcher extends ReaderWrapper {
       else reader.setId(id);
       return;
     }
+
+    String[] patterns = findPatterns(id);
+    if (patterns.length == 0) patterns = new String[] {id};
+    externals = new ExternalSeries[patterns.length];
+
+    for (int i=0; i<externals.length; i++) {
+      externals[i] = new ExternalSeries(new FilePattern(patterns[i]));
+    }
+    fp = new FilePattern(patterns[0]);
+
     reader.close();
     reader.setGroupFiles(false);
 
@@ -944,7 +947,7 @@ public class FileStitcher extends ReaderWrapper {
     // populate metadata store
     store = reader.getMetadataStore();
     // don't overwrite pixel info if files aren't actually grouped
-    if (!noStitch && externals.length > 1) {
+    if (!noStitch) {
       MetadataTools.populatePixels(store, this);
       for (int i=0; i<getSeriesCount(); i++) {
         store.setImageName(externals[i].getFilePattern().getPattern(), i);

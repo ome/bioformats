@@ -154,6 +154,10 @@ public class FilePattern {
     files = new String[v.size()];
     v.copyInto(files);
 
+    if (files.length == 0 && new Location(pattern).exists()) {
+      files = new String[] {pattern};
+    }
+
     valid = true;
   }
 
@@ -439,8 +443,15 @@ public class FilePattern {
   public static String[] findSeriesPatterns(String base, String dir,
     String[] nameList)
   {
+<<<<<<< HEAD
     String baseSuffix = new Location(base).getName();
     baseSuffix = baseSuffix.substring(baseSuffix.indexOf(".") + 1);
+=======
+    String baseSuffix = base.substring(base.lastIndexOf(File.separator) + 1);
+    int dot = baseSuffix.indexOf(".");
+    if (dot < 0) baseSuffix = "";
+    else baseSuffix = baseSuffix.substring(dot + 1);
+>>>>>>> 79a11c9... * Fixed various file stitching bugs.
 
     ArrayList<String> patterns = new ArrayList<String>();
     int[] exclude = new int[] {AxisGuesser.S_AXIS};
@@ -449,10 +460,16 @@ public class FilePattern {
       int start = pattern.lastIndexOf(File.separator) + 1;
       if (start < 0) start = 0;
       String patternSuffix = pattern.substring(start);
-      patternSuffix = patternSuffix.substring(patternSuffix.indexOf(".") + 1);
+      dot = patternSuffix.indexOf(".");
+      if (dot < 0) patternSuffix = "";
+      else patternSuffix = patternSuffix.substring(dot + 1);
+
+      String checkPattern = findPattern(name, dir, nameList);
+      String[] checkFiles = new FilePattern(checkPattern).getFiles();
 
       if (!patterns.contains(pattern) && (!new Location(pattern).exists() ||
-        base.equals(pattern)) && patternSuffix.equals(baseSuffix))
+        base.equals(pattern)) && patternSuffix.equals(baseSuffix) &&
+        DataTools.indexOf(checkFiles, base) >= 0)
       {
         patterns.add(pattern);
       }
