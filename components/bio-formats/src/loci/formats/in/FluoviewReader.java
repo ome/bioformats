@@ -69,6 +69,8 @@ public class FluoviewReader extends BaseTiffReader {
   private String dimensionOrder;
   private String date = null;
   private int timeIndex = -1;
+  private int fieldIndex = -1;
+  private int montageIndex = -1;
 
   /** Timestamps for each plane, in seconds. */
   private double[][] stamps = null;
@@ -76,6 +78,9 @@ public class FluoviewReader extends BaseTiffReader {
   // hardware settings
   private String[] gains, voltages, offsets, channelNames, lensNA;
   private String mag, detectorManufacturer, objectiveManufacturer, comment;
+
+  private double[][] montageOffsets;
+  private double[][] fieldOffsets;
 
   // -- Constructor --
 
@@ -130,6 +135,10 @@ public class FluoviewReader extends BaseTiffReader {
       date = null;
       timeIndex = -1;
       stamps = null;
+      fieldIndex = -1;
+      montageIndex = -1;
+      fieldOffsets = null;
+      montageOffsets = null;
     }
   }
 
@@ -269,6 +278,9 @@ public class FluoviewReader extends BaseTiffReader {
       else {
         if (dimensionOrder.indexOf("S") == -1) dimensionOrder += "S";
         seriesCount *= size;
+
+        if (name.equals("montage")) montageIndex = i - 2;
+        else if (name.equals("xy")) fieldIndex = i - 2;
       }
     }
 
@@ -361,6 +373,28 @@ public class FluoviewReader extends BaseTiffReader {
       store.setPixelsPhysicalSizeY(voxelY, i);
       store.setPixelsPhysicalSizeZ(voxelZ, i);
       store.setPixelsTimeIncrement(voxelT, i);
+
+      int montage = getMontage(i);
+      int field = getField(i);
+
+      double posX = 0d, posY = 0d, posZ = 0d;
+
+      if (montageOffsets != null) {
+        posX += montageOffsets[montage][0];
+        posY += montageOffsets[montage][1];
+        posZ += montageOffsets[montage][2];
+      }
+      if (fieldOffsets != null) {
+        posX += fieldOffsets[field][0];
+        posY += fieldOffsets[field][1];
+        posZ += fieldOffsets[field][2];
+      }
+
+      for (int image=0; image<getImageCount(); image++) {
+        store.setPlanePositionX(posX, i, image);
+        store.setPlanePositionY(posY, i, image);
+        store.setPlanePositionZ(posZ, i, image);
+      }
     }
 
     // populate LogicalChannel data
@@ -556,6 +590,26 @@ public class FluoviewReader extends BaseTiffReader {
           else if (key.equals("Time")) {
             date += " " + value;
           }
+          else if (key.equals("MontageOffsets")) {
+            String[] offsets = value.split("\t");
+            montageOffsets = new double[offsets.length - 1][3];
+            for (int i=1; i<offsets.length; i++) {
+              String[] v = offsets[i].trim().split(",");
+              for (int j=0; j<v.length; j++) {
+                montageOffsets[i - 1][j] = Double.parseDouble(v[j].trim());
+              }
+            }
+          }
+          else if (key.equals("XYFields")) {
+            String[] offsets = value.split("\t");
+            fieldOffsets = new double[offsets.length - 1][3];
+            for (int i=1; i<offsets.length; i++) {
+              String[] v = offsets[i].trim().split(",");
+              for (int j=0; j<v.length; j++) {
+                fieldOffsets[i - 1][j] = Double.parseDouble(v[j].trim());
+              }
+            }
+          }
         }
         else if (token.startsWith("Z") && token.indexOf(" um ") != -1) {
           // looking for "Z - x um in y planes"
@@ -595,6 +649,31 @@ public class FluoviewReader extends BaseTiffReader {
       }
       else comment = "";
     }
+  }
+
+  private int getMontage(int seriesIndex) {
+    if (montageOffsets == null && fieldOffsets == null) return 0;
+    int[] pos = getPos(seriesIndex);
+    return montageIndex < fieldIndex ? pos[0] : pos[1];
+  }
+
+  private int getField(int seriesIndex) {
+    if (montageOffsets == null && fieldOffsets == null) return 0;
+    int[] pos = getPos(seriesIndex);
+    return montageIndex < fieldIndex ? pos[1] : pos[0];
+  }
+
+  private int[] getPos(int seriesIndex) {
+    int[] lengths = new int[2];
+    if (montageIndex < fieldIndex) {
+      lengths[0] = montageOffsets == null ? 1 : montageOffsets.length;
+      lengths[1] = fieldOffsets == null ? 1 : fieldOffsets.length;
+    }
+    else {
+      lengths[1] = montageOffsets == null ? 1 : montageOffsets.length;
+      lengths[0] = fieldOffsets == null ? 1 : fieldOffsets.length;
+    }
+    return FormatTools.rasterToPosition(lengths, seriesIndex);
   }
 
 }
