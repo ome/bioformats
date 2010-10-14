@@ -941,8 +941,17 @@ public class FormatReaderTest {
   /** Initializes the reader and configuration tree. */
   private boolean initFile() {
     if (skip) throw new SkipException(SKIP_MESSAGE);
+
+    // initialize configuration tree
+    if (config != null) config.setId(id);
+
     if (reader == null) {
-      reader = new BufferedImageReader(new FileStitcher());
+      if (config.noStitching()) {
+        reader = new BufferedImageReader();
+      }
+      else {
+        reader = new BufferedImageReader(new FileStitcher());
+      }
       reader.setNormalized(true);
       reader.setMetadataFiltered(true);
       MetadataStore store = null;
@@ -984,9 +993,6 @@ public class FormatReaderTest {
       if (!base) {
         LOGGER.error("Used files list does not include base file");
       }
-
-      // initialize configuration tree
-      if (config != null) config.setId(id);
     }
     catch (Throwable t) {
       LOGGER.error("", t);
