@@ -950,7 +950,8 @@ public class FileStitcher extends ReaderWrapper {
     if (!noStitch) {
       MetadataTools.populatePixels(store, this);
       for (int i=0; i<getSeriesCount(); i++) {
-        store.setImageName(externals[i].getFilePattern().getPattern(), i);
+        int index = getExternalSeries(i);
+        store.setImageName(externals[index].getFilePattern().getPattern(), i);
       }
     }
   }
