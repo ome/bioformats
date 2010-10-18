@@ -73,6 +73,7 @@ public class AxisGuesser {
   /** Prefix endings indicating series dimension. */
   protected static final String[] S = {"s", "series", "sp"};
 
+  protected static final String ONE = "1";
   protected static final String TWO = "2";
   protected static final String THREE = "3";
 
@@ -180,12 +181,17 @@ public class AxisGuesser {
       }
       if (axisTypes[i] != UNKNOWN_AXIS) continue;
 
-      // check special case: <2-3> (Bio-Rad PIC)
-      if (elements[i].length == 2 && elements[i][0].equals(TWO) &&
-        elements[i][1].equals(THREE) && suffix.equalsIgnoreCase(".pic"))
+      // check special case: <2-3>, <1-3> (Bio-Rad PIC)
+      if (suffix.equalsIgnoreCase(".pic") && i == axisTypes.length - 1 &&
+        ((elements[i].length == 2 &&
+        (elements[i][0].equals(ONE) || elements[i][0].equals(TWO)) &&
+        (elements[i][1].equals(TWO) || elements[i][1].equals(THREE))) ||
+        (elements[i].length == 3 &&
+        elements[i][0].equals(ONE) && elements[i][1].equals(TWO) &&
+        elements[i][2].equals(THREE))))
       {
         axisTypes[i] = C_AXIS;
-        break;
+        continue;
       }
       else if (elements[i].length == 2 || elements[i].length == 3) {
         char first = elements[i][0].toLowerCase().charAt(0);
@@ -198,7 +204,7 @@ public class AxisGuesser {
           (first == 'b' || second == 'b' || third == 'b'))
         {
           axisTypes[i] = C_AXIS;
-          break;
+          continue;
         }
       }
     }

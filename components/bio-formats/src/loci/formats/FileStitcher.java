@@ -457,7 +457,7 @@ public class FileStitcher extends ReaderWrapper {
 
   /* @see IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws IOException {
-    if (reader != null) reader.close(fileOnly);
+    super.close(fileOnly);
     if (externals != null) {
       for (ExternalSeries s : externals) {
         for (DimensionSwapper r : s.getReaders()) {
@@ -473,6 +473,7 @@ public class FileStitcher extends ReaderWrapper {
       core = null;
       series = 0;
       store = null;
+      patternIds = false;
     }
   }
 
@@ -799,6 +800,7 @@ public class FileStitcher extends ReaderWrapper {
     LogTools.debug("initFile: " + id);
 
     FilePattern fp = new FilePattern(id);
+    if (!patternIds) patternIds = fp.isValid() && fp.getFiles().length > 1;
 
     boolean mustGroup = false;
     if (patternIds) {
@@ -812,6 +814,9 @@ public class FileStitcher extends ReaderWrapper {
     if (mustGroup) {
       // reader subclass is handling file grouping
       noStitch = true;
+      reader.close();
+      reader.setGroupFiles(true);
+
       if (patternIds && fp.isValid()) {
         reader.setId(fp.getFiles()[0]);
       }
