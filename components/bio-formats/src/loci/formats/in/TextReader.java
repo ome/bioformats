@@ -99,6 +99,7 @@ public class TextReader extends FormatReader {
   /** Constructs a new text reader. */
   public TextReader() {
     super("Text", new String[] {"txt", "csv"});
+    suffixSufficient = false;
   }
 
   // -- TextReader methods --
@@ -110,6 +111,16 @@ public class TextReader extends FormatReader {
   }
 
   // -- IFormatReader methods --
+
+  /* @see IFormatReader#isThisType(RandomAccessInputStream) */
+  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
+    final int blockLen = 8192;
+    if (!FormatTools.validStream(stream, blockLen, false)) return false;
+    String data = stream.readString(blockLen);
+    List<String> lines = Arrays.asList(data.split("\n"));
+    String[] line = getNextLine(lines);
+    return line != null;
+  }
 
   /* @see IFormatReader#openBytes(int, byte[], int, int, int, int) */
   @Override
@@ -154,6 +165,7 @@ public class TextReader extends FormatReader {
       xIndex = yIndex = -1;
       channels = null;
       sizeX = sizeY = 0;
+      row = 0;
     }
   }
 
