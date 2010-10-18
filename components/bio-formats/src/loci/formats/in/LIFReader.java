@@ -32,6 +32,7 @@ import java.util.Vector;
 import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
 import loci.common.services.DependencyException;
+import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
 import loci.common.xml.XMLTools;
 import loci.formats.CoreMetadata;
@@ -334,7 +335,18 @@ public class LIFReader extends FormatReader {
 
   /** Parses a string of XML and puts the values in a Hashtable. */
   private void initMetadata(String xml) throws FormatException, IOException {
-    IMetadata omexml = MetadataTools.createOMEXMLMetadata();
+    IMetadata omexml = null;
+    try {
+      ServiceFactory factory = new ServiceFactory();
+      OMEXMLService service = factory.getInstance(OMEXMLService.class);
+      omexml = service.createOMEXMLMetadata();
+    }
+    catch (DependencyException exc) {
+      throw new FormatException("Could not create OME-XML store.", exc);
+    }
+    catch (ServiceException exc) {
+      throw new FormatException("Could not create OME-XML store.", exc);
+    }
     MetadataStore store = makeFilterMetadata();
     MetadataLevel level = getMetadataOptions().getMetadataLevel();
     LeicaHandler handler = new LeicaHandler(omexml, level);
