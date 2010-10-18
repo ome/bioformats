@@ -365,7 +365,8 @@ public class FV1000Reader extends FormatReader {
       oifPath.substring(0, oifPath.lastIndexOf(File.separator) + 1);
 
     try {
-      getFile(oifName);
+      RandomAccessInputStream s = getFile(oifName);
+      s.close();
     }
     catch (IOException e) {
       oifName = oifName.replaceAll(".oif", ".OIF");
