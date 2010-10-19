@@ -200,29 +200,19 @@ public class DeltavisionReader extends FormatReader {
     super.initFile(id);
     findLogFiles();
 
+    in = new RandomAccessInputStream(currentId);
+    initPixels();
+
     MetadataLevel metadataLevel = metadataOptions.getMetadataLevel();
-    switch (metadataLevel) {
-      case MINIMUM: {
-        initFilePixelsOnly(id);
-        break;
-      }
-      case NO_OVERLAYS:
-      case ALL:
-        initFileOld(id);
-        break;
-      default: {
-        LOGGER.warn("Unsupported level: " + metadataLevel);
-      }
+    if (metadataLevel != MetadataLevel.MINIMUM) {
+      initExtraMetadata();
     }
   }
 
-  protected void initFilePixelsOnly(String id)
-    throws FormatException, IOException {
+  protected void initPixels() throws FormatException, IOException {
     LOGGER.info("Reading header");
 
     MetadataStore store = makeFilterMetadata();
-
-    in = new RandomAccessInputStream(id);
 
     in.seek(96);
     in.order(true);
@@ -251,23 +241,7 @@ public class DeltavisionReader extends FormatReader {
 
     // --- compute some secondary values ---
 
-    String imageSequence;
-    switch (sequence) {
-      case 0:
-        imageSequence = "ZTW";
-        break;
-      case 1:
-        imageSequence = "WZT";
-        break;
-      case 2:
-        imageSequence = "ZWT";
-        break;
-      case 65536:
-        imageSequence = "WZT";
-        break;
-      default:
-        imageSequence = "ZTW";
-    }
+    String imageSequence = getImageSequence(sequence);
 
     int sizeZ = imageCount / (sizeC * sizeT);
 
@@ -280,41 +254,35 @@ public class DeltavisionReader extends FormatReader {
     core[0].sizeY = sizeY;
     core[0].imageCount = imageCount;
 
-    String pixel;
-    switch (filePixelType) {
-      case 0:
-        pixel = "8 bit unsigned integer";
-        core[0].pixelType = FormatTools.UINT8;
-        break;
-      case 1:
-        pixel = "16 bit signed integer";
-        core[0].pixelType = FormatTools.INT16;
-        break;
-      case 2:
-        pixel = "32 bit floating point";
-        core[0].pixelType = FormatTools.FLOAT;
-        break;
-      case 3:
-        pixel = "16 bit complex";
-        core[0].pixelType = FormatTools.INT16;
-        break;
-      case 4:
-        pixel = "64 bit complex";
-        core[0].pixelType = FormatTools.FLOAT;
-        break;
-      case 6:
-        pixel = "16 bit unsigned integer";
-        core[0].pixelType = FormatTools.UINT16;
-        break;
-      default:
-        pixel = "unknown";
-        core[0].pixelType = FormatTools.UINT8;
-    }
-
-    core[0].sizeT = sizeT;
+    String pixel = getPixelString(filePixelType);
+    core[0].pixelType = getPixelType(filePixelType);
 
     core[0].dimensionOrder = "XY" + imageSequence.replaceAll("W", "C");
 
+    int planeSize =
+      getSizeX() * getSizeY() * FormatTools.getBytesPerPixel(getPixelType());
+    int realPlaneCount =
+      (int) ((in.length() - HEADER_LENGTH - extSize) / planeSize);
+    if (realPlaneCount < getImageCount()) {
+      LOGGER.debug("Truncated file");
+      core[0].imageCount = realPlaneCount;
+      if (sizeZ == 1) {
+        sizeT = realPlaneCount / sizeC;
+      }
+      else if (sizeT == 1) {
+        sizeZ = realPlaneCount / sizeC;
+      }
+      else if (getDimensionOrder().indexOf("Z") <
+        getDimensionOrder().indexOf("T"))
+      {
+        sizeZ = realPlaneCount / (sizeC * sizeT);
+      }
+      else {
+        sizeT = realPlaneCount / (sizeC * sizeZ);
+      }
+    }
+
+    core[0].sizeT = sizeT;
     core[0].sizeC = sizeC;
     core[0].sizeZ = sizeZ;
 
@@ -347,7 +315,7 @@ public class DeltavisionReader extends FormatReader {
 
     MetadataTools.populatePixels(store, this, true);
 
-    MetadataTools.setDefaultCreationDate(store, id, 0);
+    MetadataTools.setDefaultCreationDate(store, currentId, 0);
 
     // link Instrument and Image
     String instrumentID = MetadataTools.createLSID("Instrument", 0);
@@ -355,29 +323,14 @@ public class DeltavisionReader extends FormatReader {
     store.setImageInstrumentRef(instrumentID, 0);
   }
 
-  /* @see loci.formats.FormatReader#initFile(String) */
-  protected void initFileOld(String id) throws FormatException, IOException {
-    super.initFile(id);
-
+  protected void initExtraMetadata() throws FormatException, IOException {
     MetadataStore store = makeFilterMetadata();
 
     // --- read in the image header data ---
 
     LOGGER.info("Reading header");
 
-    in = new RandomAccessInputStream(id);
-
-    in.seek(96);
-    in.order(true);
-
-    boolean little = in.readShort() == LITTLE_ENDIAN;
-    in.order(little);
-    in.seek(0);
-
-    int sizeX = in.readInt();
-    int sizeY = in.readInt();
-    int imageCount = in.readInt();
-    int filePixelType = in.readInt();
+    in.skipBytes(16);
 
     int subImageStartX = in.readInt();
     int subImageStartY = in.readInt();
@@ -405,8 +358,6 @@ public class DeltavisionReader extends FormatReader {
     float meanIntensity = in.readFloat();
     int spaceGroupNumber = in.readInt();
 
-    extSize = in.readInt();
-
     in.seek(128);
     numIntsPerSection = in.readShort();
     numFloatsPerSection = in.readShort();
@@ -427,8 +378,7 @@ public class DeltavisionReader extends FormatReader {
     minWave[4] = in.readFloat();
     maxWave[4] = in.readFloat();
 
-    int rawSizeT = in.readShort();
-    int sizeT = rawSizeT == 0 ? 1 : rawSizeT;
+    in.skipBytes(2);
 
     int sequence = in.readShort();
 
@@ -436,8 +386,7 @@ public class DeltavisionReader extends FormatReader {
     float yTiltAngle = in.readFloat();
     float zTiltAngle = in.readFloat();
 
-    int rawSizeC = in.readShort();
-    int sizeC = rawSizeC == 0 ? 1 : rawSizeC;
+    in.skipBytes(2);
 
     short[] waves = new short[5];
     for (int i=0; i<waves.length; i++) {
@@ -461,91 +410,13 @@ public class DeltavisionReader extends FormatReader {
     String imageType =
       type < IMAGE_TYPES.length ? IMAGE_TYPES[type] : "unknown";
 
-    String imageSequence;
-    switch (sequence) {
-      case 0:
-        imageSequence = "ZTW";
-        break;
-      case 1:
-        imageSequence = "WZT";
-        break;
-      case 2:
-        imageSequence = "ZWT";
-        break;
-      case 65536:
-        imageSequence = "WZT";
-        break;
-      default:
-        imageSequence = "ZTW";
-    }
-
-    int sizeZ = imageCount / (sizeC * sizeT);
-
     String imageDesc = title[0];
     if (imageDesc != null && imageDesc.length() == 0) imageDesc = null;
-
-    // --- populate core metadata ---
-
-    LOGGER.info("Populating core metadata");
-
-    core[0].littleEndian = little;
-    core[0].sizeX = sizeX;
-    core[0].sizeY = sizeY;
-    core[0].imageCount = imageCount;
-
-    String pixel;
-    switch (filePixelType) {
-      case 0:
-        pixel = "8 bit unsigned integer";
-        core[0].pixelType = FormatTools.UINT8;
-        break;
-      case 1:
-        pixel = "16 bit signed integer";
-        core[0].pixelType = FormatTools.INT16;
-        break;
-      case 2:
-        pixel = "32 bit floating point";
-        core[0].pixelType = FormatTools.FLOAT;
-        break;
-      case 3:
-        pixel = "16 bit complex";
-        core[0].pixelType = FormatTools.INT16;
-        break;
-      case 4:
-        pixel = "64 bit complex";
-        core[0].pixelType = FormatTools.FLOAT;
-        break;
-      case 6:
-        pixel = "16 bit unsigned integer";
-        core[0].pixelType = FormatTools.UINT16;
-        break;
-      default:
-        pixel = "unknown";
-        core[0].pixelType = FormatTools.UINT8;
-    }
-
-    core[0].sizeT = sizeT;
-
-    core[0].dimensionOrder = "XY" + imageSequence.replaceAll("W", "C");
-
-    core[0].sizeC = sizeC;
-    core[0].sizeZ = sizeZ;
-
-    core[0].rgb = false;
-    core[0].interleaved = false;
-    core[0].metadataComplete = true;
-    core[0].indexed = false;
-    core[0].falseColor = false;
 
     // --- populate original metadata ---
 
     LOGGER.info("Populating original metadata");
 
-    addGlobalMeta("ImageWidth", sizeX);
-    addGlobalMeta("ImageHeight", sizeY);
-    addGlobalMeta("NumberOfImages", imageCount);
-
-    addGlobalMeta("PixelType", pixel);
     addGlobalMeta("Sub-image starting point (X)", subImageStartX);
     addGlobalMeta("Sub-image starting point (Y)", subImageStartY);
     addGlobalMeta("Sub-image starting point (Z)", subImageStartZ);
@@ -566,16 +437,9 @@ public class DeltavisionReader extends FormatReader {
     addGlobalMeta("Image Type", imageType);
     addGlobalMeta("Lens ID Number", lensID);
 
-    addGlobalMeta("Number of timepoints", rawSizeT);
-
-    addGlobalMeta("Image sequence", imageSequence);
-
     addGlobalMeta("X axis tilt angle", xTiltAngle);
     addGlobalMeta("Y axis tilt angle", yTiltAngle);
     addGlobalMeta("Z axis tilt angle", zTiltAngle);
-
-    addGlobalMeta("Number of wavelengths", rawSizeC);
-    addGlobalMeta("Number of focal planes", sizeZ);
 
     for (int i=0; i<waves.length; i++) {
       addGlobalMeta("Wavelength " + (i + 1) + " (in nm)", waves[i]);
@@ -604,15 +468,6 @@ public class DeltavisionReader extends FormatReader {
 
     LOGGER.info("Populating OME metadata");
 
-    MetadataTools.populatePixels(store, this, true);
-
-    MetadataTools.setDefaultCreationDate(store, id, 0);
-
-    // link Instrument and Image
-    String instrumentID = MetadataTools.createLSID("Instrument", 0);
-    store.setInstrumentID(instrumentID, 0);
-    store.setImageInstrumentRef(instrumentID, 0);
-
     if (store instanceof IMinMaxStore) {
       IMinMaxStore minMaxStore = (IMinMaxStore) store;
       for (int i=0; i<minWave.length; i++) {
@@ -636,10 +491,10 @@ public class DeltavisionReader extends FormatReader {
 
     LOGGER.info("Reading extended header");
 
-    setOffsetInfo(sequence, sizeZ, sizeC, sizeT);
-    extHdrFields = new DVExtHdrFields[sizeZ][sizeC][sizeT];
+    setOffsetInfo(sequence, getSizeZ(), getSizeC(), getSizeT());
+    extHdrFields = new DVExtHdrFields[getSizeZ()][getSizeC()][getSizeT()];
 
-    ndFilters = new Double[sizeC];
+    ndFilters = new Double[getSizeC()];
 
     // if matching log file exists, extract key/value pairs from it
     boolean logFound = isGroupFiles() ? parseLogFile(store) : false;
@@ -648,7 +503,7 @@ public class DeltavisionReader extends FormatReader {
     // Run through every image and fill in the
     // Extended Header information array for that image
     int offset = HEADER_LENGTH + numIntsPerSection * 4;
-    for (int i=0; i<imageCount; i++) {
+    for (int i=0; i<getImageCount(); i++) {
       int[] coords = getZCTCoords(i);
       int z = coords[0];
       int w = coords[1];
@@ -689,7 +544,7 @@ public class DeltavisionReader extends FormatReader {
       }
     }
 
-    for (int w=0; w<sizeC; w++) {
+    for (int w=0; w<getSizeC(); w++) {
       DVExtHdrFields hdrC = extHdrFields[0][w][0];
       if ((int) waves[w] > 0) {
         store.setChannelEmissionWavelength(
@@ -705,6 +560,59 @@ public class DeltavisionReader extends FormatReader {
   }
 
   // -- Helper methods --
+
+  /** Get a descriptive string representing the pixel type. */
+  private String getPixelString(int filePixelType) {
+     switch (filePixelType) {
+      case 0:
+        return "8 bit unsigned integer";
+      case 1:
+        return "16 bit signed integer";
+      case 2:
+        return "32 bit floating point";
+      case 3:
+        return "16 bit complex";
+      case 4:
+        return "64 bit complex";
+      case 6:
+        return "16 bit unsigned integer";
+    }
+    return "unknown";
+  }
+
+  /** Get the OME pixel type from the pixel type stored in the file. */
+  private int getPixelType(int filePixelType) {
+     switch (filePixelType) {
+      case 0:
+        return FormatTools.UINT8;
+      case 1:
+        return FormatTools.INT16;
+      case 2:
+        return FormatTools.FLOAT;
+      case 3:
+        return FormatTools.INT16;
+      case 4:
+        return FormatTools.FLOAT;
+      case 6:
+        return FormatTools.UINT16;
+    }
+    return FormatTools.UINT8;
+  }
+
+  /** Get the image sequence string. */
+  private String getImageSequence(int imageSequence) {
+    switch (imageSequence) {
+      case 0:
+        return "ZTW";
+      case 1:
+        return "WZT";
+      case 2:
+        return "ZWT";
+      case 65536:
+        return "WZT";
+    }
+    return "ZTW";
+  }
 
   /**
    * This method calculates the size of a w, t, z section depending on which
