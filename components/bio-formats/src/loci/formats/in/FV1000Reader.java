@@ -1023,6 +1023,10 @@ public class FV1000Reader extends FormatReader {
       LOGGER.debug("Could not parse ROI file {}", filename, e);
       return nextROI;
     }
+    catch (IOException e) {
+      LOGGER.debug("Could not parse ROI file {}", filename, e);
+      return nextROI;
+    }
 
     boolean validROI = false;
     int shape = -1;
