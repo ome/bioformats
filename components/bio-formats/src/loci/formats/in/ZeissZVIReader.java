@@ -960,8 +960,11 @@ public class ZeissZVIReader extends FormatReader {
           store.setExperimenterInstitution(value, 0);
         }
         else if (key.startsWith("Objective Magnification")) {
-          store.setObjectiveNominalMagnification(
-              new PositiveInteger((int) Double.parseDouble(value)), 0, 0);
+          int magnification = (int) Double.parseDouble(value);
+          if (magnification > 0) {
+            store.setObjectiveNominalMagnification(
+              new PositiveInteger(magnification), 0, 0);
+          }
         }
         else if (key.startsWith("Objective ID")) {
           store.setObjectiveID("Objective:" + value, 0, 0);
