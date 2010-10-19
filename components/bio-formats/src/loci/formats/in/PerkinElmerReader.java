@@ -163,6 +163,22 @@ public class PerkinElmerReader extends FormatReader {
     return FormatTools.MUST_GROUP;
   }
 
+  /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  public byte[][] get8BitLookupTable() throws FormatException, IOException {
+    if (isTiff && tiff != null) {
+      return tiff.get8BitLookupTable();
+    }
+    return null;
+  }
+
+  /* @see loci.formats.IFormatReader#get16BitLookupTable() */
+  public short[][] get16BitLookupTable() throws FormatException, IOException {
+    if (isTiff && tiff != null) {
+      return tiff.get16BitLookupTable();
+    }
+    return null;
+  }
+
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
