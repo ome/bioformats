@@ -235,7 +235,6 @@ public class MetamorphReader extends BaseTiffReader {
       waveNames = stageNames = null;
       internalStamps = null;
       zDistances = stageX = stageY = null;
-      canLookForND = true;
       firstSeriesChannels = null;
       sizeX = sizeY = null;
       tempZ = 0d;
@@ -260,7 +259,13 @@ public class MetamorphReader extends BaseTiffReader {
       LOGGER.info("Looking for STK file in {}", parent.getAbsolutePath());
       String[] dirList = parent.list(true);
       for (String f : dirList) {
-        if (f.indexOf(stkFile) != -1 && checkSuffix(f, STK_SUFFIX))
+        int underscore = f.indexOf("_");
+        if (underscore < 0) underscore = f.indexOf(".");
+        if (underscore < 0) underscore = f.length();
+        String prefix = f.substring(0, underscore);
+
+        if ((f.indexOf(stkFile) != -1 || stkFile.startsWith(prefix)) &&
+          checkSuffix(f, STK_SUFFIX))
         {
           stkFile = new Location(parent.getAbsolutePath(), f).getAbsolutePath();
           break;
@@ -283,12 +288,17 @@ public class MetamorphReader extends BaseTiffReader {
       // an STK file was passed to initFile
       // let's check the parent directory for an .nd file
       Location stk = new Location(id).getAbsoluteFile();
+      String stkName = stk.getName();
+      String stkPrefix = stkName;
+      if (stkPrefix.indexOf("_") >= 0) {
+        stkPrefix = stkPrefix.substring(0, stkPrefix.indexOf("_"));
+      }
       Location parent = stk.getParentFile();
       String[] list = parent.list(true);
       for (String f : list) {
         if (checkSuffix(f, ND_SUFFIX)) {
           String prefix = f.substring(0, f.lastIndexOf("."));
-          if (stk.getName().startsWith(prefix)) {
+          if (stkName.startsWith(prefix) || prefix.startsWith(stkPrefix)) {
             ndfile = new Location(parent, f).getAbsoluteFile();
             break;
           }
@@ -966,6 +976,22 @@ public class MetamorphReader extends BaseTiffReader {
     if (l.exists()) return l.getAbsolutePath();
     String name = l.getName();
     String parent = l.getParent();
+
+    if (name.indexOf("_") > 0) {
+      String prefix = name.substring(0, name.indexOf("_"));
+      String suffix = name.substring(name.indexOf("_"));
+
+      String basePrefix = new Location(currentId).getName();
+      int end = basePrefix.indexOf("_");
+      if (end < 0) end = basePrefix.indexOf(".");
+      basePrefix = basePrefix.substring(0, end);
+
+      if (!basePrefix.equals(prefix)) {
+        name = basePrefix + suffix;
+        Location p = new Location(parent, name);
+        if (p.exists()) return p.getAbsolutePath();
+      }
+    }
 
     // '%' can be converted to '-'
     if (name.indexOf("%") != -1) {
