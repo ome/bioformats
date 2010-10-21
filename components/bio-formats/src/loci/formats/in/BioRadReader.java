@@ -278,8 +278,6 @@ public class BioRadReader extends FormatReader {
     in = new RandomAccessInputStream(id);
     in.order(true);
 
-    /* debug */ System.out.println("initializing .pic file: " + id);
-
     offset = new Vector<Double>();
     gain = new Vector<Double>();
 

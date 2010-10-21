@@ -91,6 +91,7 @@ public class L2DReader extends FormatReader {
       }
     }
 
+    if (parent.getParent() == null) return false;
     parent = parent.getParentFile();
     if (parent == null) return false;
     list = parent.list();

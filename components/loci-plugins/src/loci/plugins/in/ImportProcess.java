@@ -484,14 +484,14 @@ public class ImportProcess implements StatusReporter {
 
       // overwrite base filename with file pattern
       String id = options.getId();
-      if (id == null) id = getCurrentFile();
-      FilePattern fp = fileStitcher.findPattern(id);
-      if (fp.isValid()) id = fp.getPattern();
-      else id = getCurrentFile();
       options.setId(id);
       fileStitcher.setUsingPatternIds(true);
     }
     r.setId(options.getId());
+
+    if (options.isGroupFiles()) {
+      options.setId(fileStitcher.getFilePattern().getPattern());
+    }
 
     // NB: This test will fail if the LUT is null before calling openBytes.
     final byte[][] lut8 = r.get8BitLookupTable();

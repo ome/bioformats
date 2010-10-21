@@ -28,7 +28,11 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
+import loci.common.DataTools;
 import loci.common.Location;
 
 import org.slf4j.Logger;
@@ -76,23 +80,8 @@ public class FilePattern {
   /** Indices into the pattern indicating the end of a numerical block. */
   private int[] endIndex;
 
-  /** First number of each numerical block. */
-  private BigInteger[] begin;
-
-  /** Last number of each numerical block. */
-  private BigInteger[] end;
-
-  /** Step size of each numerical block. */
-  private BigInteger[] step;
-
-  /** Total numbers withins each numerical block. */
-  private int[] count;
-
-  /** Whether each numerical block is fixed width. */
-  private boolean[] fixed;
-
-  /** The number of leading zeroes for each numerical block. */
-  private int[] zeroes;
+  /** List of pattern blocks for this file pattern. */
+  private FilePatternBlock[] blocks;
 
   /** File listing for this file pattern. */
   private String[] files;
@@ -125,13 +114,13 @@ public class FilePattern {
     List<Integer> gt = new ArrayList<Integer>(len);
     int left = -1;
     while (true) {
-      left = pattern.indexOf("<", left + 1);
+      left = pattern.indexOf(FilePatternBlock.BLOCK_START, left + 1);
       if (left < 0) break;
       lt.add(new Integer(left));
     }
     int right = -1;
     while (true) {
-      right = pattern.indexOf(">", right + 1);
+      right = pattern.indexOf(FilePatternBlock.BLOCK_END, right + 1);
       if (right < 0) break;
       gt.add(new Integer(right));
     }
@@ -160,63 +149,21 @@ public class FilePattern {
     }
 
     // parse numerical blocks
-    begin = new BigInteger[num];
-    end = new BigInteger[num];
-    step = new BigInteger[num];
-    count = new int[num];
-    fixed = new boolean[num];
-    zeroes = new int[num];
+    blocks = new FilePatternBlock[num];
     for (int i=0; i<num; i++) {
       String block = pattern.substring(startIndex[i], endIndex[i]);
-      int dash = block.indexOf("-");
-      String b, e, s;
-      if (dash < 0) {
-        // no range; assume entire block is a single number (e.g., <15>)
-        b = e = block.substring(1, block.length() - 1);
-        s = "1";
-      }
-      else {
-        int colon = block.indexOf(":");
-        b = block.substring(1, dash);
-        if (colon < 0) {
-          e = block.substring(dash + 1, block.length() - 1);
-          s = "1";
-        }
-        else {
-          e = block.substring(dash + 1, colon);
-          s = block.substring(colon + 1, block.length() - 1);
-        }
-      }
-      try {
-        begin[i] = new BigInteger(b);
-        end[i] = new BigInteger(e);
-        if (begin[i].compareTo(end[i]) > 0) {
-          msg = "Begin value cannot be greater than ending value.";
-          return;
-        }
-        step[i] = new BigInteger(s);
-        if (step[i].compareTo(BigInteger.ONE) < 0) {
-          msg = "Step value must be at least one.";
-          return;
-        }
-        count[i] = end[i].subtract(begin[i]).divide(step[i]).intValue() + 1;
-        fixed[i] = b.length() == e.length();
-        int z = 0;
-        for (z=0; z<e.length(); z++) {
-          if (e.charAt(z) != '0') break;
-        }
-        zeroes[i] = z;
-      }
-      catch (NumberFormatException exc) {
-        msg = "Invalid numerical range values.";
-        return;
-      }
+      blocks[i] = new FilePatternBlock(block);
     }
+
 
     // build file listing
     List<String> fileList = new ArrayList<String>();
     buildFiles("", num, fileList);
     files = fileList.toArray(new String[0]);
+
+    if (files.length == 0 && new Location(pattern).exists()) {
+      files = new String[] {pattern};
+    }
 
     valid = true;
   }
@@ -232,20 +179,24 @@ public class FilePattern {
   /** Gets the file pattern error message, if any. */
   public String getErrorMessage() { return msg; }
 
-  /** Gets the first number of each numerical block. */
-  public BigInteger[] getFirst() { return begin; }
-
-  /** Gets the last number of each numerical block. */
-  public BigInteger[] getLast() { return end; }
-
-  /** Gets the step increment of each numerical block. */
-  public BigInteger[] getStep() { return step; }
-
-  /** Gets the total count of each numerical block. */
-  public int[] getCount() { return count; }
-
   /** Gets a listing of all files matching the given file pattern. */
   public String[] getFiles() { return files; }
+
+  public String[][] getElements() {
+    String[][] elements = new String[blocks.length][];
+    for (int i=0; i<elements.length; i++) {
+      elements[i] = blocks[i].getElements();
+    }
+    return elements;
+  }
+
+  public int[] getCount() {
+    int[] count = new int[blocks.length];
+    for (int i=0; i<count.length; i++) {
+      count[i] = blocks[i].getElements().length;
+    }
+    return count;
+  }
 
   /** Gets the specified numerical block. */
   public String getBlock(int i) {
@@ -348,6 +299,22 @@ public class FilePattern {
    * @param nameList The names through which to search for matching files.
    */
   public static String findPattern(String name, String dir, String[] nameList) {
+    return findPattern(name, dir, nameList, null);
+  }
+
+  /**
+   * Identifies the group pattern from a given file within that group.
+   * @param name The filename to use as a template for the match.
+   * @param dir The directory prefix to use for matching files.
+   * @param nameList The names through which to search for matching files.
+   * @param excludeAxes The list of axis types which should be excluded from the
+   *  pattern.
+   */
+  public static String findPattern(String name, String dir, String[] nameList,
+    int[] excludeAxes)
+  {
+    if (excludeAxes == null) excludeAxes = new int[0];
+
     if (dir == null) dir = ""; // current directory
     else if (!dir.equals("") && !dir.endsWith(File.separator)) {
       dir += File.separator;
@@ -389,7 +356,14 @@ public class FilePattern {
 
     for (int i=0; i<q; i++) {
       int last = i > 0 ? endList[i - 1] : 0;
-      sb.append(name.substring(last, indexList[i]));
+      String prefix = name.substring(last, indexList[i]);
+      int axisType = AxisGuesser.getAxisType(prefix);
+      if (DataTools.containsValue(excludeAxes, axisType)) {
+        sb.append(name.substring(last, endList[i]));
+        continue;
+      }
+
+      sb.append(prefix);
       String pre = name.substring(0, indexList[i]);
       String post = name.substring(endList[i]);
 
@@ -402,8 +376,8 @@ public class FilePattern {
         continue;
       }
       boolean fix = true;
-      for (int j=0; j<list.length; j++) {
-        if (list[j].length() != len) {
+      for (String s : list) {
+        if (s.length() != len) {
           fix = false;
           break;
         }
@@ -418,8 +392,8 @@ public class FilePattern {
           same[j] = true;
           int jx = indexList[i] + j;
           char c = name.charAt(jx);
-          for (int k=0; k<list.length; k++) {
-            if (list[k].charAt(jx) != c) {
+          for (String s : list) {
+            if (s.charAt(jx) != c) {
               same[j] = false;
               break;
             }
@@ -463,24 +437,48 @@ public class FilePattern {
       }
     }
     sb.append(q > 0 ? name.substring(endList[q - 1]) : name);
-    String pat = sb.toString();
+    return sb.toString();
+  }
 
-    // NB: Due to variations in axis length, the file pattern detected can
-    // depend on the file name given as the basis of detection.
-    //
-    // To work around this problem, we redetect the pattern using the first
-    // file in the pattern if it differs from the current base file name.
-    //
-    // For details, see Trac ticket #19:
-    // http://dev.loci.wisc.edu/trac/java/ticket/19
-    String first = pat.substring(dir.length());
-    first = first.replaceAll("<([0-9]+)-[0-9]+(:[0-9]+)?>", "$1");
-    if (!name.equals(first)) {
-      String pattern = findPattern(first, dir, nameList);
-      if (pattern != null) return pattern;
+  public static String[] findSeriesPatterns(String base) {
+    Location file = new Location(base).getAbsoluteFile();
+    Location parent = file.getParentFile();
+    String[] list = parent.list(true);
+    return findSeriesPatterns(base, parent.getAbsolutePath(), list);
+  }
+
+  public static String[] findSeriesPatterns(String base, String dir,
+    String[] nameList)
+  {
+    String baseSuffix = base.substring(base.lastIndexOf(File.separator) + 1);
+    int dot = baseSuffix.indexOf(".");
+    if (dot < 0) baseSuffix = "";
+    else baseSuffix = baseSuffix.substring(dot + 1);
+
+    ArrayList<String> patterns = new ArrayList<String>();
+    int[] exclude = new int[] {AxisGuesser.S_AXIS};
+    for (String name : nameList) {
+      String pattern = findPattern(name, dir, nameList, exclude);
+      int start = pattern.lastIndexOf(File.separator) + 1;
+      if (start < 0) start = 0;
+      String patternSuffix = pattern.substring(start);
+      dot = patternSuffix.indexOf(".");
+      if (dot < 0) patternSuffix = "";
+      else patternSuffix = patternSuffix.substring(dot + 1);
+
+      String checkPattern = findPattern(name, dir, nameList);
+      String[] checkFiles = new FilePattern(checkPattern).getFiles();
+
+      if (!patterns.contains(pattern) && (!new Location(pattern).exists() ||
+        base.equals(pattern)) && patternSuffix.equals(baseSuffix) &&
+        DataTools.indexOf(checkFiles, base) >= 0)
+      {
+        patterns.add(pattern);
+      }
     }
-
-    return pat;
+    String[] s = patterns.toArray(new String[patterns.size()]);
+    Arrays.sort(s);
+    return s;
   }
 
   // -- Utility helper methods --
@@ -558,23 +556,49 @@ public class FilePattern {
 
   /** Recursive method for building filenames for the file listing. */
   private void buildFiles(String prefix, int ndx, List<String> fileList) {
-    // compute bounds for constant (non-block) pattern fragment
-    int num = startIndex.length;
-    int n1 = ndx == 0 ? 0 : endIndex[ndx - 1];
-    int n2 = ndx == num ? pattern.length() : startIndex[ndx];
-    String pre = pattern.substring(n1, n2);
+    if (blocks.length == 0) {
+      // regex pattern
 
-    if (ndx == 0) fileList.add(pre + prefix);
+      String[] files = null;
+      int end = pattern.lastIndexOf(File.separator) + 1;
+      String dir = pattern.substring(0, end);
+      if (dir.equals("") || !new Location(dir).exists()) {
+        files = Location.getIdMap().keySet().toArray(new String[0]);
+        if (files.length == 0) {
+          dir = ".";
+          files = new Location(dir).list(true);
+        }
+      }
+      else {
+        files = new Location(dir).list(true);
+      }
+
+      Arrays.sort(files);
+
+      Pattern regex = Pattern.compile(pattern);
+
+      for (String f : files) {
+        if (regex.matcher(f).matches()) {
+          Location path = new Location(dir, f);
+          if (path.exists()) fileList.add(path.getAbsolutePath());
+          else fileList.add(f);
+        }
+      }
+    }
     else {
-      // for (int i=begin[ndx]; i<end[ndx]; i+=step[ndx])
-      BigInteger bi = begin[--ndx];
-      while (bi.compareTo(end[ndx]) <= 0) {
-        String s = bi.toString();
-        int z = zeroes[ndx];
-        if (fixed[ndx]) z += end[ndx].toString().length() - s.length();
-        for (int j=0; j<z; j++) s = "0" + s;
-        buildFiles(s + pre + prefix, ndx, fileList);
-        bi = bi.add(step[ndx]);
+      // compute bounds for constant (non-block) pattern fragment
+      int num = startIndex.length;
+      int n1 = ndx == 0 ? 0 : endIndex[ndx - 1];
+      int n2 = ndx == num ? pattern.length() : startIndex[ndx];
+      String pre = pattern.substring(n1, n2);
+
+      if (ndx == 0) fileList.add(pre + prefix);
+      else {
+        FilePatternBlock block = blocks[--ndx];
+        String[] blockElements = block.getElements();
+        for (String element : blockElements) {
+          buildFiles(element + pre + prefix, ndx, fileList);
+        }
       }
     }
   }

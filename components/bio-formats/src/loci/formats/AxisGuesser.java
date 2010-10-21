@@ -78,8 +78,9 @@ public class AxisGuesser {
   /** Prefix endings indicating series dimension. */
   protected static final String[] S = {"s", "series", "sp"};
 
-  protected static final BigInteger TWO = new BigInteger("2");
-  protected static final BigInteger THREE = new BigInteger("3");
+  protected static final String ONE = "1";
+  protected static final String TWO = "2";
+  protected static final String THREE = "3";
 
   // -- Fields --
 
@@ -124,11 +125,8 @@ public class AxisGuesser {
     newOrder = dimOrder;
     String[] prefixes = fp.getPrefixes();
     String suffix = fp.getSuffix();
-    BigInteger[] first = fp.getFirst();
-    BigInteger[] last = fp.getLast();
-    BigInteger[] step = fp.getStep();
-    int[] count = fp.getCount();
-    axisTypes = new int[count.length];
+    String[][] elements = fp.getElements();
+    axisTypes = new int[elements.length];
     boolean foundZ = false, foundT = false;
 
     // -- 1) fill in "known" axes based on known patterns and conventions --
@@ -188,12 +186,31 @@ public class AxisGuesser {
       }
       if (axisTypes[i] != UNKNOWN_AXIS) continue;
 
-      // check special case: <2-3> (Bio-Rad PIC)
-      if (first[i].equals(TWO) && last[i].equals(THREE) &&
-        step[i].equals(BigInteger.ONE) && suffix.equalsIgnoreCase(".pic"))
+      // check special case: <2-3>, <1-3> (Bio-Rad PIC)
+      if (suffix.equalsIgnoreCase(".pic") && i == axisTypes.length - 1 &&
+        ((elements[i].length == 2 &&
+        (elements[i][0].equals(ONE) || elements[i][0].equals(TWO)) &&
+        (elements[i][1].equals(TWO) || elements[i][1].equals(THREE))) ||
+        (elements[i].length == 3 &&
+        elements[i][0].equals(ONE) && elements[i][1].equals(TWO) &&
+        elements[i][2].equals(THREE))))
       {
         axisTypes[i] = C_AXIS;
-        break;
+        continue;
+      }
+      else if (elements[i].length == 2 || elements[i].length == 3) {
+        char first = elements[i][0].toLowerCase().charAt(0);
+        char second = elements[i][1].toLowerCase().charAt(0);
+        char third = elements[i].length == 2 ? 'b' :
+          elements[i][2].toLowerCase().charAt(0);
+
+        if ((first == 'r' || second == 'r' || third == 'r') &&
+          (first == 'g' || second == 'g' || third == 'g') &&
+          (first == 'b' || second == 'b' || third == 'b'))
+        {
+          axisTypes[i] = C_AXIS;
+          continue;
+        }
       }
     }
 
@@ -304,6 +321,26 @@ public class AxisGuesser {
       if (axisTypes[i] == axisType) num++;
     }
     return num;
+  }
+
+  // -- Static API methods --
+
+  /** Returns a best guess of the given label's axis type. */
+  public static int getAxisType(String label) {
+    String lowerLabel = label.toLowerCase();
+    for (String p : Z) {
+      if (p.equals(lowerLabel) || lowerLabel.endsWith(p)) return Z_AXIS;
+    }
+    for (String p : C) {
+      if (p.equals(lowerLabel) || lowerLabel.endsWith(p)) return C_AXIS;
+    }
+    for (String p : T) {
+      if (p.equals(lowerLabel) || lowerLabel.endsWith(p)) return T_AXIS;
+    }
+    for (String p : S) {
+      if (p.equals(lowerLabel) || lowerLabel.endsWith(p)) return S_AXIS;
+    }
+    return UNKNOWN_AXIS;
   }
 
   // -- Main method --

@@ -28,6 +28,7 @@ import static org.testng.AssertJUnit.assertNotNull;
 
 import java.io.IOException;
 
+import loci.common.Location;
 import loci.formats.ChannelFiller;
 import loci.formats.ChannelMerger;
 import loci.formats.ChannelSeparator;
@@ -55,6 +56,7 @@ public class WrapperTest {
 
   @DataProvider(name = "wrappers")
   public Object[][] createWrappers() {
+    Location.mapId(TEST_FILE, TEST_FILE);
     Object[][] wrappers = new Object[][] {
       {new ChannelFiller()},
       {new ChannelMerger()},
