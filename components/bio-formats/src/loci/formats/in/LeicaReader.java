@@ -1333,16 +1333,25 @@ public class LeicaReader extends FormatReader {
         if (tokens[2].equals("XPos")) {
           for (int q=0; q<core[series].imageCount; q++) {
             store.setPlanePositionX(new Double(data), series, q);
+            if (q == 0) {
+              addGlobalMeta("X position for position #" + (series + 1), data);
+            }
           }
         }
         else if (tokens[2].equals("YPos")) {
           for (int q=0; q<core[series].imageCount; q++) {
             store.setPlanePositionY(new Double(data), series, q);
+            if (q == 0) {
+              addGlobalMeta("Y position for position #" + (series + 1), data);
+            }
           }
         }
         else if (tokens[2].equals("ZPos")) {
           for (int q=0; q<core[series].imageCount; q++) {
             store.setPlanePositionZ(new Double(data), series, q);
+            if (q == 0) {
+              addGlobalMeta("Z position for position #" + (series + 1), data);
+            }
           }
         }
       }

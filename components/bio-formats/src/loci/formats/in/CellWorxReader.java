@@ -408,6 +408,9 @@ public class CellWorxReader extends FormatReader {
               int field = fieldRow * fieldMap[fieldRow].length + fieldCol;
               store.setWellSamplePositionX(new Double(axes[0]), 0, well, field);
               store.setWellSamplePositionY(new Double(axes[1]), 0, well, field);
+
+              addGlobalMeta("X position for position #" + (field + 1), axes[0]);
+              addGlobalMeta("Y position for position #" + (field + 1), axes[1]);
             }
           }
         }

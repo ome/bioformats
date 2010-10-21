@@ -895,8 +895,14 @@ public class InCellReader extends FormatReader {
         exposure = new Double(exp / 1000);
       }
       else if (qName.equals("offset_point")) {
-        posX.add(new Double(attributes.getValue("x")));
-        posY.add(new Double(attributes.getValue("y")));
+        String x = attributes.getValue("x");
+        String y = attributes.getValue("y");
+
+        posX.add(new Double(x));
+        posY.add(new Double(y));
+
+        addGlobalMeta("X position for position #" + posX.size(), x);
+        addGlobalMeta("Y position for position #" + posY.size(), y);
       }
     }
   }

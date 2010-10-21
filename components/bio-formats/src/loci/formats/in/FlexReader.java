@@ -1237,14 +1237,17 @@ public class FlexReader extends FormatReader {
         else if (qName.equals("PositionX")) {
           Double v = new Double(Double.parseDouble(value) * 1000000);
           store.setPlanePositionX(v, currentSeries, currentImage);
+          addGlobalMeta("X position for position #" + (currentSeries + 1), v);
         }
         else if (qName.equals("PositionY")) {
           Double v = new Double(Double.parseDouble(value) * 1000000);
           store.setPlanePositionY(v, currentSeries, currentImage);
+          addGlobalMeta("Y position for position #" + (currentSeries + 1), v);
         }
         else if (qName.equals("PositionZ")) {
           Double v = new Double(Double.parseDouble(value) * 1000000);
           store.setPlanePositionZ(v, currentSeries, currentImage);
+          addGlobalMeta("Z position for position #" + (currentSeries + 1), v);
         }
         else if (qName.equals("TimepointOffsetUsed")) {
           store.setPlaneDeltaT(new Double(value), currentSeries, currentImage);

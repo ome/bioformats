@@ -198,9 +198,11 @@ public class PDSReader extends FormatReader {
       }
       else if (key.equals("XPOS")) {
         xPos = new Double(value);
+        addGlobalMeta("X position for position #1", xPos);
       }
       else if (key.equals("YPOS")) {
         yPos = new Double(value);
+        addGlobalMeta("Y position for position #1", yPos);
       }
       else if (key.equals("SIGNX")) {
         reverseX = value.replaceAll("'", "").trim().equals("-");

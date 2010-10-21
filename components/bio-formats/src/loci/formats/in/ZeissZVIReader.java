@@ -1008,9 +1008,11 @@ public class ZeissZVIReader extends FormatReader {
         }
         else if (key.indexOf("Stage Position X") != -1) {
           stageX.add(new Double(value));
+          addGlobalMeta("X position for position #1", stageX);
         }
         else if (key.indexOf("Stage Position Y") != -1) {
           stageY.add(new Double(value));
+          addGlobalMeta("Y position for position #1", stageY);
         }
         else if (key.startsWith("Orca Analog Gain")) {
           detectorGain.put(cIndex, new Double(value));

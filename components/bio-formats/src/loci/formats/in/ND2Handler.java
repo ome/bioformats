@@ -329,12 +329,15 @@ public class ND2Handler extends DefaultHandler {
     }
     else if ("dPosX".equals(prevElement) && qName.startsWith("item_")) {
       posX.add(new Double(sanitizeDouble(value)));
+      metadata.put("X position for position #" + posX.size(), value);
     }
     else if ("dPosY".equals(prevElement) && qName.startsWith("item_")) {
       posY.add(new Double(sanitizeDouble(value)));
+      metadata.put("Y position for position #" + posY.size(), value);
     }
     else if ("dPosZ".equals(prevElement) && qName.startsWith("item_")) {
       posZ.add(new Double(sanitizeDouble(value)));
+      metadata.put("Z position for position #" + posZ.size(), value);
     }
     else if (qName.startsWith("item_")) {
       int v = Integer.parseInt(qName.substring(qName.indexOf("_") + 1));

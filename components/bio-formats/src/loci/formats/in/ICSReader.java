@@ -876,12 +876,15 @@ public class ICSReader extends FormatReader {
         for (int i=0; i<getImageCount(); i++) {
           if (stagePos.length > 0) {
             store.setPlanePositionX(stagePos[0], 0, i);
+            addGlobalMeta("X position for position #1", stagePos[0]);
           }
           if (stagePos.length > 1) {
             store.setPlanePositionY(stagePos[1], 0, i);
+            addGlobalMeta("Y position for position #1", stagePos[1]);
           }
           if (stagePos.length > 2) {
             store.setPlanePositionZ(stagePos[2], 0, i);
+            addGlobalMeta("Z position for position #1", stagePos[2]);
           }
         }
       }
