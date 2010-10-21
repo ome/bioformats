@@ -85,8 +85,27 @@ namespace itk {
       itkDebugMacro("Creating JVM...");
       jace::StaticVmLoader loader(JNI_VERSION_1_4);
       jace::OptionList list;
+
+      const char name[] = "ITK_AUTOLOAD_PATH";
+      const char* namePtr;
+      namePtr = name;
+      char* path;
+      path = getenv(name);
+      std::string dir("");
+      if( path != NULL) {
+        dir.assign(path);
+      }
       list.push_back(jace::ClassPath(
-        "jace-runtime.jar:bio-formats.jar:loci_tools.jar"
+
+ // To solve issue where JARs must live in current working directory:
+ // somehow discover my own origin directory
+ // e.g.: I am part of libBioFormatsIOPlugin.dylib
+ // and I live in folder:
+ //   /Users/hinerm/loci/bioformats/components/native/bf-itk/build/dist/bf-itk
+ // so, we want a string variable "dir" containing that folder name.
+ // Then, can pass classpath elements with that prefix.
+ //        dir+"jace-runtime.jar:"+dir+"bio-formats.jar:"+dir+"loci_tools.jar"
+      dir+"jace-runtime.jar:"+dir+"bio-formats.jar:"+dir+"loci_tools.jar"
       ));
       list.push_back(jace::CustomOption("-Xcheck:jni"));
       list.push_back(jace::CustomOption("-Xmx256m"));
@@ -102,12 +121,16 @@ namespace itk {
 
     try {
       itkDebugMacro("Creating Bio-Formats objects...");
-      reader = new ChannelFiller;
+      reader = imageReader = new ImageReader;
+      reader = channelFiller = new ChannelFiller(*reader);
+      //reader = channelSeparator = new ChannelSeparator(reader);
+      channelSeparator = NULL;
+      reader = channelMerger = new ChannelMerger(*reader);
       writer = new ImageWriter;
       itkDebugMacro("Created reader and writer.");
     }
     catch (Exception& e) {
-      itkDebugMacro("A Java error occurred: " << Log::getStackTrace(e));
+     itkDebugMacro("A Java error occurred: " << DebugTools::getStackTrace(e));
     }
     catch (JNIException& jniException) {
       itkDebugMacro("A JNI error occurred: " << jniException.what());
@@ -118,8 +141,16 @@ namespace itk {
   } // end constructor
 
   BioFormatsImageIO::~BioFormatsImageIO() {
-    delete reader;
-    delete writer;
+    if (imageReader != NULL) delete imageReader;
+    imageReader = NULL;
+    if (channelFiller != NULL) delete channelFiller;
+    channelFiller = NULL;
+    if (channelSeparator != NULL) delete channelSeparator;
+    channelSeparator = NULL;
+    if (channelMerger != NULL) delete channelMerger;
+    channelMerger = NULL;
+    if (writer != NULL) delete writer;
+    writer = NULL;
   } // end destructor
 
   bool BioFormatsImageIO::CanReadFile(const char* FileNameToRead) {
@@ -135,11 +166,11 @@ namespace itk {
     bool isType = 0;
     try {
       // call Bio-Formats to check file type
-      isType = reader->isThisType(filename);
+      isType = ((IFormatHandler*) reader)->isThisType(filename);
       itkDebugMacro("isType = " << isType);
     }
     catch (Exception& e) {
-      itkDebugMacro("A Java error occurred: " << Log::getStackTrace(e));
+     itkDebugMacro("A Java error occurred: " << DebugTools::getStackTrace(e));
     }
     catch (JNIException& jniException) {
       itkDebugMacro("A JNI error occurred: " << jniException.what());
@@ -258,8 +289,8 @@ namespace itk {
       double physX = 1, physY = 1;
       // CTR - avoid invalid memory access error on some systems (OS X 10.5)
       //MetadataRetrieve retrieve = MetadataTools::asRetrieve(omeMeta);
-      //physX = retrieve.getDimensionsPhysicalSizeX(0, 0).doubleValue();
-      //physY = retrieve.getDimensionsPhysicalSizeY(0, 0).doubleValue();
+      //physX = retrieve.getPixelsPhysicalSizeX(0).doubleValue();
+      //physY = retrieve.getPixelsPhysicalSizeY(0).doubleValue();
       m_Spacing[0] = physX;
       m_Spacing[1] = physY;
       if (imageCount > 1) m_Spacing[2] = 1;
@@ -267,7 +298,7 @@ namespace itk {
       itkDebugMacro("Physical resolution = " << physX << " x " << physY);
     }
     catch (Exception& e) {
-      itkDebugMacro("A Java error occurred: " << Log::getStackTrace(e));
+      itkDebugMacro("A Java error occurred: " << DebugTools::getStackTrace(e));
     }
     catch (JNIException& jniException) {
       itkDebugMacro("A JNI error occurred: " << jniException.what());
@@ -299,11 +330,12 @@ namespace itk {
       int tStart = 0, tCount = 1;
       int cStart = 0, cCount = 1;
 
-      int sizeZ = reader->getSizeZ();
-      int sizeT = reader->getSizeT();
-      int effSizeC = reader->getEffectiveSizeC();
+      //int sizeZ = reader->getSizeZ();
+      //int sizeT = reader->getSizeT();
+      //int effSizeC = reader->getEffectiveSizeC();
 
       int xIndex = 0, yIndex = 1, zIndex = 2, tIndex = 3, cIndex = 4;
+      /*  Currently unnecessary, as images are assumed to be 5D
       if (sizeZ == 1) {
         zIndex = -1;
         tIndex--;
@@ -316,6 +348,7 @@ namespace itk {
       if (effSizeC == 1) {
         cIndex = -1;
       }
+      */
       for (int dim = 0; dim < regionDim; dim++) {
         int index = region.GetIndex(dim);
         int size = region.GetSize(dim);
@@ -353,31 +386,60 @@ namespace itk {
 
       int imageCount = reader->getImageCount();
 
+      // allocate temporary array
+      bool canDoDirect = rgbChannelCount == 1;
+      jbyte* tmpData = NULL;
+      if (!canDoDirect) tmpData = new jbyte[bytesPerPlane];
+
       jbyte* jData = (jbyte*) pData;
       ByteArray buf(bytesPerPlane); // pre-allocate buffer
-      for (int c=cStart; c<cCount; c++) {
-        for (int t=tStart; t<tCount; t++) {
-          for (int z=zStart; z<zCount; z++) {
+      for (int c=cStart; c<cStart+cCount; c++) {
+        for (int t=tStart; t<tStart+tCount; t++) {
+          for (int z=zStart; z<zStart+zCount; z++) {
             int no = reader->getIndex(z, c, t);
             itkDebugMacro("Reading image plane " << no
               << " (Z=" << z << ", T=" << t << ", C=" << c << ")"
               << " of " << imageCount << " available planes)");
             reader->openBytes(no, buf, xStart, yStart, xCount, yCount);
 
-            // copy raw byte array
             JNIEnv* env = jace::helper::attach();
             jbyteArray jArray = static_cast<jbyteArray>(buf.getJavaJniArray());
-            env->GetByteArrayRegion(jArray, 0, bytesPerPlane, jData);
+            if (canDoDirect) {
+              env->GetByteArrayRegion(jArray, 0, bytesPerPlane, jData);
+            }
+            else {
+              // need to reorganize byte array after copy
+              env->GetByteArrayRegion(jArray, 0, bytesPerPlane, tmpData);
+
+              // reorganize elements
+              int pos = 0;
+              for (int x=0; x<xCount; x++) {
+                for (int y=0; y<yCount; y++) {
+                  for (int i=0; i<rgbChannelCount; i++) {
+                    for (int b=0; b<bpp; b++) {
+                      int index = yCount * (xCount * (rgbChannelCount * b + i) + x) + y;
+                      jData[pos++] = tmpData[index];
+                    }
+                  }
+                }
+              }
+            }
             jData += bytesPerPlane;
           }
         }
       }
 
-      reader->close();
+      // delete temporary array
+      if (tmpData != NULL) {
+        delete tmpData;
+        tmpData = NULL;
+      }
+
+      ((IFormatHandler*)reader)->close();
     }
     catch (Exception& e) {
-      itkDebugMacro("A Java error occurred: " << Log::getStackTrace(e));
-    }
+      itkDebugMacro("A Java error occurred: " << DebugTools::getStackTrace(e));
+    }	
     catch (JNIException& jniException) {
       itkDebugMacro(
         "A JNI error occurred: " << jniException.what());
@@ -405,7 +467,7 @@ namespace itk {
       itkDebugMacro("isType = " << isType);
     }
     catch (Exception& e) {
-      itkDebugMacro("A Java error occurred: " << Log::getStackTrace(e));
+      itkDebugMacro("A Java error occurred: " << DebugTools::getStackTrace(e));
     }
     catch (JNIException& jniException) {
       itkDebugMacro("A JNI error occurred: " << jniException.what());
