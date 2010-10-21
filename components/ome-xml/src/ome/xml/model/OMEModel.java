@@ -41,11 +41,11 @@ public interface OMEModel {
   OMEModelObject removeModelObject(String id);
 
   OMEModelObject getModelObject(String id);
-  
+
   Map<String, OMEModelObject> getModelObjects();
 
   boolean addReference(OMEModelObject a, Reference b);
-  
+
   Map<OMEModelObject, List<Reference>> getReferences();
 
   int resolveReferences();

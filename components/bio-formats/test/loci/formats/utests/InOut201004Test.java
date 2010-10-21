@@ -633,6 +633,7 @@ public class InOut201004Test {
 
   @Test(dependsOnMethods={"testValidInstrumentNode"})
   public void testValidOTF() {
+    assertEquals(1, ome.getInstrument(0).sizeOfOTFList());
     OTF otf = ome.getInstrument(0).getOTF(0);
     assertNotNull(otf);
     assertEquals(OTF_ID, otf.getID());
