@@ -249,7 +249,7 @@ namespace itk {
         << "\tSizeC = " << sizeC << std::endl
         << "\tSizeT = " << sizeT << std::endl
         << "\tRGB Channel Count = " << rgbChannelCount << std::endl
-        << "\tEffective SizeC = " << rgbChannelCount << std::endl
+        << "\tEffective SizeC = " << effSizeC << std::endl
         << "\tImage Count = " << imageCount);
 
       // NB: Always return 5D, to be unambiguous.
@@ -374,6 +374,7 @@ namespace itk {
         }
       }
       int bytesPerPlane = xCount * yCount * bpp * rgbChannelCount;
+      bool isInterleaved = reader->isInterleaved();
 
       itkDebugMacro("Region extents:" << std::endl
         << "\tRegion dimension = " << regionDim << std::endl
@@ -382,12 +383,14 @@ namespace itk {
         << "\tZ: start = " << zStart << ", count = " << zCount << std::endl
         << "\tT: start = " << tStart << ", count = " << tCount << std::endl
         << "\tC: start = " << cStart << ", count = " << cCount << std::endl
-        << "\tBytes per plane = " << bytesPerPlane);
+        << "\tBytes per plane = " << bytesPerPlane << std::endl
+        << "\tIsInterleaved = " << isInterleaved);
+
 
       int imageCount = reader->getImageCount();
 
       // allocate temporary array
-      bool canDoDirect = rgbChannelCount == 1;
+      bool canDoDirect = (rgbChannelCount == 1 || isInterleaved);
       jbyte* tmpData = NULL;
       if (!canDoDirect) tmpData = new jbyte[bytesPerPlane];
 
@@ -397,7 +400,7 @@ namespace itk {
         for (int t=tStart; t<tStart+tCount; t++) {
           for (int z=zStart; z<zStart+zCount; z++) {
             int no = reader->getIndex(z, c, t);
-            itkDebugMacro("Reading image plane " << no
+            itkDebugMacro("Reading image plane " << no + 1
               << " (Z=" << z << ", T=" << t << ", C=" << c << ")"
               << " of " << imageCount << " available planes)");
             reader->openBytes(no, buf, xStart, yStart, xCount, yCount);
