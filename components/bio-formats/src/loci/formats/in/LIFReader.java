@@ -40,6 +40,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.ImageTools;
 import loci.formats.MetadataTools;
+import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.OMEXMLService;
 
@@ -333,9 +334,10 @@ public class LIFReader extends FormatReader {
 
   /** Parses a string of XML and puts the values in a Hashtable. */
   private void initMetadata(String xml) throws FormatException, IOException {
+    IMetadata omexml = MetadataTools.createOMEXMLMetadata();
     MetadataStore store = makeFilterMetadata();
     MetadataLevel level = getMetadataOptions().getMetadataLevel();
-    LeicaHandler handler = new LeicaHandler(store, level);
+    LeicaHandler handler = new LeicaHandler(omexml, level);
 
     // the XML blocks stored in a LIF file are invalid,
     // because they don't have a root node
@@ -384,15 +386,13 @@ public class LIFReader extends FormatReader {
       }
     }
 
-    MetadataTools.populatePixels(store, this, true, false);
-
     // remove any Channels that do not have an ID
 
     OMEXMLService service = null;
     try {
       service = new ServiceFactory().getInstance(OMEXMLService.class);
-      if (service.isOMEXMLRoot(store.getRoot())) {
-        OME root = (OME) store.getRoot();
+      if (service.isOMEXMLRoot(omexml.getRoot())) {
+        OME root = (OME) omexml.getRoot();
         for (int i=0; i<getSeriesCount(); i++) {
           setSeries(i);
           Pixels img = root.getImage(i).getPixels();
@@ -406,12 +406,15 @@ public class LIFReader extends FormatReader {
           }
         }
         setSeries(0);
-        store.setRoot(root);
+        omexml.setRoot(root);
+        service.convertMetadata(omexml, store);
       }
     }
     catch (DependencyException e) {
       LOGGER.trace("Failed to remove channels", e);
     }
+
+    MetadataTools.populatePixels(store, this, true, false);
   }
 
 }
