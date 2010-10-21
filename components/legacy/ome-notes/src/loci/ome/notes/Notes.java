@@ -452,16 +452,12 @@ public class Notes extends JFrame implements ActionListener {
         if (name == null) return;
         if (!name.endsWith(".ome")) name += ".ome";
 
-        java.util.List delegates = metadata.getDelegates();
         String xml = null;
-        for (int i=0; i<delegates.size(); i++) {
-          try {
-            if (service.isOMEXMLMetadata(delegates.get(i))) {
-              xml = service.getOMEXML((MetadataRetrieve) delegates.get(i));
-            }
-          }
-          catch (ServiceException exc) { }
+        try {
+          xml = service.getOMEXML((MetadataRetrieve) metadata);
         }
+        catch (ServiceException exc) { }
+
         File f = new File(name);
         FileWriter writer = new FileWriter(f);
         writer.write(xml);
@@ -616,14 +612,14 @@ public class Notes extends JFrame implements ActionListener {
     reader.setOriginalMetadataPopulated(true);
     progress.setString("Reading " + currentFile);
 
-    metadata = new AggregateMetadata(new ArrayList());
+    ArrayList delegates = new ArrayList();
 
     if (currentFile.endsWith(".ome")) {
       RandomAccessInputStream s = new RandomAccessInputStream(currentFile);
       String xml = s.readString((int) s.length());
       s.close();
       try {
-        metadata.addDelegate(service.createOMEXMLMetadata(xml));
+        delegates.add(service.createOMEXMLMetadata(xml));
       }
       catch (ServiceException e) { }
     }
@@ -656,15 +652,15 @@ public class Notes extends JFrame implements ActionListener {
         progress.setString("Merging companion and original file...");
 
         if (currentTemplate.preferCompanion()) {
-          metadata.addDelegate(companionStore);
-          metadata.addDelegate(readerStore);
+          delegates.add(companionStore);
+          delegates.add(readerStore);
         }
         else {
-          metadata.addDelegate(readerStore);
-          metadata.addDelegate(companionStore);
+          delegates.add(readerStore);
+          delegates.add(companionStore);
         }
       }
-      else metadata.addDelegate(readerStore);
+      else delegates.add(readerStore);
 
       // grab thumbnails
 
@@ -675,6 +671,7 @@ public class Notes extends JFrame implements ActionListener {
 
       reader.close();
     }
+    metadata = new AggregateMetadata(delegates);
 
     progress.setString("Populating fields...");
     currentTemplate.initializeFields(metadata);
