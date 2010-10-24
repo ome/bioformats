@@ -551,6 +551,12 @@ public class LeicaReader extends FormatReader {
       core[i].falseColor = true;
       core[i].metadataComplete = true;
       core[i].interleaved = false;
+
+      String filename = (String) files[i].get(0);
+      tiff.setId(filename);
+
+      core[i].sizeX = tiff.getSizeX();
+      core[i].sizeY = tiff.getSizeY();
     }
 
     for (int i=0; i<numSeries; i++) {

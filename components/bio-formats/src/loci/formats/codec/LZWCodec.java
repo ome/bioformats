@@ -344,6 +344,7 @@ public class LZWCodec extends BaseCodec {
           }
           currOutPos += outLength;
           // 2) Add string[old_code]+firstByte(string[curr_code]) to the table
+          if (nextCode >= anotherCodes.length) break; 
           anotherCodes[nextCode] = oldCode;
           newBytes[nextCode] = output[i];
           lengths[nextCode] = lengths[oldCode] + 1;
