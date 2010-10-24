@@ -71,7 +71,7 @@ public class BDReader extends FormatReader {
   private Vector<String> channelNames = new Vector<String>();
   private Vector<String> wellLabels = new Vector<String>();
   private String plateName, plateDescription;
-  private String[] tiffs;
+  private String[][] tiffs;
   private MinimalTiffReader reader;
 
   private String roiFile;
@@ -131,13 +131,8 @@ public class BDReader extends FormatReader {
     }
 
     if (!noPixels && tiffs != null) {
-      int offset = getSeries() * getImageCount();
-      for (int i = 0; i<getImageCount(); i++) {
-        if (offset + i < tiffs.length) {
-          if (tiffs[offset + i] != null) {
-            files.add(tiffs[offset + i]);
-          }
-        }
+      for (int i = 0; i<tiffs[getSeries()].length; i++) {
+        files.add(tiffs[getSeries()][i]);
       }
     }
 
@@ -177,9 +172,10 @@ public class BDReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    int index = getSeries() * getImageCount() + no;
-    if (tiffs[index] != null) {
-      reader.setId(tiffs[index]);
+    String file = getFilename(getSeries(), no);
+
+    if (file != null) {
+      reader.setId(file);
       reader.openBytes(0, buf, x, y, w, h);
       reader.close();
     }
@@ -241,7 +237,7 @@ public class BDReader extends FormatReader {
     tiffs = getTiffs(dir.getAbsolutePath());
 
     reader = new MinimalTiffReader();
-    reader.setId(tiffs[0]);
+    reader.setId(tiffs[0][0]);
 
     int sizeX = reader.getSizeX();
     int sizeY = reader.getSizeY();
@@ -441,7 +437,9 @@ public class BDReader extends FormatReader {
       plateType.get("Brand") + " " + plateType.get("Description");
 
     Location dir = new Location(id).getAbsoluteFile().getParentFile();
-    for (String filename : dir.list()) {
+    String[] wellList = dir.list();
+    Arrays.sort(wellList);
+    for (String filename : wellList) {
       if (filename.startsWith("Well ")) {
         wellLabels.add(filename.split("\\s|\\.")[1]);
       }
@@ -472,10 +470,15 @@ public class BDReader extends FormatReader {
     core[0].sizeT = 0;
     Location well = new Location(dir.getAbsolutePath(),
       "Well " + wellLabels.get(1));
-    for (String filename : well.list()) {
-      if (filename.startsWith(channelNames.get(0)) && filename.endsWith(".tif"))
-      {
-        core[0].sizeT++;
+    for (String channelName : channelNames) {
+      int timepoints = 0;
+      for (String filename : well.list()) {
+        if (filename.startsWith(channelName) && filename.endsWith(".tif")) {
+          timepoints++;
+        }
+      }
+      if (timepoints > getSizeT()) {
+        core[0].sizeT = timepoints;
       }
     }
     return exp;
@@ -511,23 +514,32 @@ public class BDReader extends FormatReader {
     }
   }
 
-  private String[] getTiffs(String dir) {
+  private String[][] getTiffs(String dir) {
     Location f = new Location(dir);
-    Vector<String> files = new Vector<String>();
+    Vector<Vector<String>> files = new Vector<Vector<String>>();
 
-    for (String filename : f.list(true)) {
+    String[] wells = f.list(true);
+    Arrays.sort(wells);
+
+    for (String filename : wells) {
       Location file = new Location(f, filename).getAbsoluteFile();
       if (file.isDirectory() && filename.startsWith("Well ")) {
-        for (String tiff : file.list(true)) {
+        String[] list = file.list(true);
+        Vector<String> tiffList = new Vector<String>();
+        Arrays.sort(list);
+        for (String tiff : list) {
           if (tiff.matches(".* - n\\d\\d\\d\\d\\d\\d\\.tif")) {
-            files.add(new Location(file, tiff).getAbsolutePath());
+            tiffList.add(new Location(file, tiff).getAbsolutePath());
           }
         }
+        files.add(tiffList);
       }
     }
 
-    String[] tiffFiles = files.toArray(new String[files.size()]);
-    Arrays.sort(tiffFiles);
+    String[][] tiffFiles = new String[files.size()][];
+    for (int i=0; i<tiffFiles.length; i++) {
+      tiffFiles[i] = files.get(i).toArray(new String[0]);
+    }
     return tiffFiles;
   }
 
@@ -556,6 +568,24 @@ public class BDReader extends FormatReader {
         store.setImageROIRef(roiID, 0, i - firstRow);
       }
     }
+  }
+
+  private String getFilename(int series, int no) {
+    int[] zct = getZCTCoords(no);
+    String channel = channelNames.get(zct[1]);
+
+    for (int i=0; i<tiffs[series].length; i++) {
+      String name = tiffs[series][i];
+      name = name.substring(name.lastIndexOf(File.separator) + 1);
+      name = name.substring(0, name.lastIndexOf("."));
+
+      String index = name.substring(name.lastIndexOf("n") + 1);
+
+      if (name.startsWith(channel) && Integer.parseInt(index) == zct[2]) {
+        return tiffs[series][i];
+      }
+    }
+    return null;
   }
 
 }
