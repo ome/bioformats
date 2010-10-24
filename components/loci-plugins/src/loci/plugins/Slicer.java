@@ -104,6 +104,7 @@ public class Slicer implements PlugInFilter {
     }
 
     ImagePlus[] newImps = new ImagePlus[newStacks.length];
+    double maxValue = Math.pow(2, imp.getBytesPerPixel() * 8) - 1;
     for (int i=0; i<newStacks.length; i++) {
       int[] zct = FormatTools.getZCTCoords(stackOrder, sliceZ ? sizeZ : 1,
         sliceC ? sizeC : 1, sliceT ? sizeT : 1, newStacks.length, i);
@@ -138,6 +139,16 @@ public class Slicer implements PlugInFilter {
         newImps[i] = new CompositeImage(p, mode);
       }
       else newImps[i] = p;
+
+      double max = imp.getDisplayRangeMax();
+      double min = imp.getDisplayRangeMin();
+
+      if (min > 0d || max < maxValue) {
+        newImps[i].resetDisplayRange();
+      }
+      else {
+        newImps[i].setDisplayRange(min, max);
+      }
     }
     return newImps;
   }
