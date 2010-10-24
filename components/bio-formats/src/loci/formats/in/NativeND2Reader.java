@@ -202,27 +202,18 @@ public class NativeND2Reader extends FormatReader {
     options.interleaved = isInterleaved();
     options.maxBytes = (int) maxFP;
 
-    int scanlinePad = isJPEG ? 0 : getSizeX() % 2;
+    int scanlinePad = (isJPEG || !isLossless) ? 0 : getSizeX() % 2;
 
     if (isJPEG || isLossless) {
       if (codec == null) codec = createCodec(isJPEG);
       byte[] t = codec.decompress(in, options);
-      byte[] pix = new byte[(buf.length / bpp) * pixel];
-      int effectiveX = getSizeX() + scanlinePad;
-      for (int row=0; row<h; row++) {
-        int offset = (row + y) * effectiveX * pixel + x * pixel;
-        if (offset + w * pixel <= t.length) {
-          System.arraycopy(t, offset, pix, row * w * pixel, w * pixel);
-        }
-      }
+      copyPixels(x, y, w, h, bpp, scanlinePad, t, buf, split);
       t = null;
-
-      copyPixels(x, y, w, h, bpp, scanlinePad, pix, buf);
     }
     else if (split) {
       byte[] pix = new byte[(getSizeX() + scanlinePad) * getSizeY() * pixel];
       in.read(pix);
-      copyPixels(x, y, w, h, bpp, scanlinePad, pix, buf);
+      copyPixels(x, y, w, h, bpp, scanlinePad, pix, buf, split);
       pix = null;
     }
     else {
@@ -1089,11 +1080,13 @@ public class NativeND2Reader extends FormatReader {
   }
 
   private void copyPixels(int x, int y, int w, int h, int bpp, int scanlinePad,
-    byte[] pix, byte[] buf)
+    byte[] pix, byte[] buf, boolean split)
     throws IOException
   {
-    pix = ImageTools.splitChannels(pix, lastChannel, getEffectiveSizeC(), bpp,
-      false, true);
+    if (split) {
+      pix = ImageTools.splitChannels(pix, lastChannel, getEffectiveSizeC(), bpp,
+        false, true);
+    }
     RandomAccessInputStream s = new RandomAccessInputStream(pix);
     readPlane(s, x, y, w, h, scanlinePad, buf);
     s.close();

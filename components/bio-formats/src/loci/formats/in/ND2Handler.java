@@ -386,7 +386,9 @@ public class ND2Handler extends DefaultHandler {
       colors.put(name, new Integer(value));
     }
     else if (qName.endsWith("DyeName")) {
-      dyes.put(qName.substring(0, qName.indexOf("Channel")), value);
+      int channelIndex = qName.indexOf("Channel");
+      if (channelIndex < 0) channelIndex = 0;
+      dyes.put(qName.substring(0, channelIndex), value);
     }
     else {
       StringBuffer sb = new StringBuffer();
@@ -421,7 +423,12 @@ public class ND2Handler extends DefaultHandler {
     else if (key.endsWith("dZStep")) {
       pixelSizeZ = Double.parseDouble(sanitizeDouble(value));
     }
-    else if (key.endsWith("Gain")) gain.add(new Double(sanitizeDouble(value)));
+    else if (key.endsWith("Gain")) {
+      value = sanitizeDouble(value);
+      if (!value.equals("")) {
+        gain.add(new Double(value));
+      }
+    }
     else if (key.endsWith("dLampVoltage")) {
       voltage = new Double(sanitizeDouble(value));
     }
@@ -452,7 +459,10 @@ public class ND2Handler extends DefaultHandler {
       correction = s.toString();
       if (magIndex >= 0) {
         String m = tokens[magIndex].substring(0, tokens[magIndex].indexOf("x"));
-        mag = new Double(sanitizeDouble(m));
+        m = sanitizeDouble(m);
+        if (m.length() > 0) {
+          mag = new Double(m);
+        }
       }
       if (magIndex + 1 < tokens.length) immersion = tokens[magIndex + 1];
     }
