@@ -73,6 +73,7 @@ public class TillVisionReader extends FormatReader {
   private Hashtable<Integer, Double> exposureTimes;
   private boolean embeddedImages;
   private long embeddedOffset;
+  private String[] infFiles;
 
   private Vector<String> imageNames = new Vector<String>();
   private Vector<String> types = new Vector<String>();
@@ -120,6 +121,7 @@ public class TillVisionReader extends FormatReader {
       if (pixelsStream != null) pixelsStream.close();
       pixelsStream = null;
       pixelsFiles = null;
+      infFiles = null;
       embeddedOffset = 0;
       embeddedImages = false;
       exposureTimes = null;
@@ -141,9 +143,12 @@ public class TillVisionReader extends FormatReader {
     Vector<String> files = new Vector<String>();
     files.add(currentId);
     if (!noPixels) {
-      for (String file : pixelsFiles) {
-        if (file != null) files.add(file);
+      if (pixelsFiles[getSeries()] != null) {
+        files.add(pixelsFiles[getSeries()]);
       }
+    }
+    if (infFiles[getSeries()] != null) {
+      files.add(infFiles[getSeries()]);
     }
     return files.toArray(new String[files.size()]);
   }
@@ -339,19 +344,24 @@ public class TillVisionReader extends FormatReader {
               }
             }
           }
-          else if (nextFile < nImages) {
-            pixelsFile[nextFile++] = f;
-          }
         }
       }
       if (nextFile == 0) {
-        throw new FormatException("No image files found.");
+        for (String f : files) {
+          if (checkSuffix(f, "pst")) {
+            pixelsFile[nextFile++] =
+              new Location(directory, f).getAbsolutePath();
+          }
+        }
+
+        if (nextFile == 0) throw new FormatException("No image files found.");
       }
     }
 
     Arrays.sort(pixelsFile);
 
     pixelsFiles = new String[getSeriesCount()];
+    infFiles = new String[getSeriesCount()];
 
     Object[] metadataKeys = tmpSeriesMetadata.keySet().toArray();
     IniParser parser = new IniParser();
@@ -386,6 +396,7 @@ public class TillVisionReader extends FormatReader {
 
         int dot = file.lastIndexOf(".");
         String inf = file.substring(0, dot) + ".inf";
+        infFiles[i] = inf;
 
         BufferedReader reader = new BufferedReader(new FileReader(inf));
         IniList data = parser.parseINI(reader);

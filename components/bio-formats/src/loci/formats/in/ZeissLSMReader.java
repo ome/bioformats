@@ -301,6 +301,7 @@ public class ZeissLSMReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
+    in.close();
     in = new RandomAccessInputStream(getLSMFileFromSeries(getSeries()));
     in.order(!isLittleEndian());
 
@@ -506,6 +507,7 @@ public class ZeissLSMReader extends FormatReader {
   }
 
   private int getExtraSeries(String file) throws FormatException, IOException {
+    if (in != null) in.close();
     in = new RandomAccessInputStream(file);
     boolean littleEndian = in.read() == TiffConstants.LITTLE;
     in.order(littleEndian);
@@ -562,6 +564,7 @@ public class ZeissLSMReader extends FormatReader {
     IFDList ifds = ifdsList.get(series);
     IFD ifd = ifds.get(0);
 
+    in.close();
     in = new RandomAccessInputStream(getLSMFileFromSeries(series));
     in.order(isLittleEndian());
 
@@ -1604,7 +1607,7 @@ public class ZeissLSMReader extends FormatReader {
       return referencedLSMs.toArray(new String[0]);
     }
 
-    String[] fileList = parent.list();
+    String[] fileList = parent.list(true);
     for (int i=0; i<fileList.length; i++) {
       if (checkSuffix(fileList[i], new String[] {"lsm"}) &&
         !fileList[i].startsWith("."))
