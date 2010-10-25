@@ -933,6 +933,7 @@ public class FileStitcher extends ReaderWrapper {
       core[i].seriesMetadata = rr.getSeriesMetadata();
       core[i].indexed = rr.isIndexed();
       core[i].falseColor = rr.isFalseColor();
+      core[i].bitsPerPixel = rr.getBitsPerPixel();
       sizeZ[i] = rr.getSizeZ();
       sizeC[i] = rr.getSizeC();
       sizeT[i] = rr.getSizeT();
@@ -1026,6 +1027,8 @@ public class FileStitcher extends ReaderWrapper {
             i + ": " + axes[i]);
       }
     }
+    core[sno].imageCount = core[sno].sizeZ * core[sno].sizeT;
+    if (!isRGB()) core[sno].imageCount *= core[sno].sizeC;
 
     int[] cLengths = reader.getChannelDimLengths();
     String[] cTypes = reader.getChannelDimTypes();
@@ -1092,6 +1095,9 @@ public class FileStitcher extends ReaderWrapper {
       if (axes[i] == AxisGuesser.Z_AXIS) pos[i] = posZ[z++];
       else if (axes[i] == AxisGuesser.C_AXIS) pos[i] = posC[c++];
       else if (axes[i] == AxisGuesser.T_AXIS) pos[i] = posT[t++];
+      else if (axes[i] == AxisGuesser.S_AXIS) {
+        pos[i] = 0;
+      }
       else {
         throw new FormatException("Unknown axis type for axis #" +
           i + ": " + axes[i]);
