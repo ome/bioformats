@@ -206,6 +206,11 @@ public class TCSReader extends FormatReader {
     super.close(fileOnly);
     if (!fileOnly) {
       tiffs = null;
+      if (tiffReaders != null) {
+        for (TiffReader r : tiffReaders) {
+          if (r != null) r.close();
+        }
+      }
       tiffReaders = null;
       tiffParser = null;
       datestamp = 0;
@@ -509,12 +514,12 @@ public class TCSReader extends FormatReader {
         if (date != null) {
           long stamp = DateTools.getTime(date, "yyyy:MM:dd HH:mm:ss");
 
-          rais.close();
           String software = ifd.getIFDStringValue(IFD.SOFTWARE);
           if (software != null && software.trim().startsWith("TCS")) {
             timestamps.put(file, new Long(stamp));
           }
         }
+        rais.close();
       }
     }
 
