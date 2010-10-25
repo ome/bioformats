@@ -379,15 +379,27 @@ public class FluoviewReader extends BaseTiffReader {
 
       double posX = 0d, posY = 0d, posZ = 0d;
 
-      if (montageOffsets != null) {
-        posX += montageOffsets[montage][0];
-        posY += montageOffsets[montage][1];
-        posZ += montageOffsets[montage][2];
+      if (montageOffsets != null && montage < montageOffsets.length) {
+        if (montageOffsets[montage].length > 0) {
+          posX += montageOffsets[montage][0];
+        }
+        if (montageOffsets[montage].length > 1) {
+          posY += montageOffsets[montage][1];
+        }
+        if (montageOffsets[montage].length > 2) {
+          posZ += montageOffsets[montage][2];
+        }
       }
-      if (fieldOffsets != null) {
-        posX += fieldOffsets[field][0];
-        posY += fieldOffsets[field][1];
-        posZ += fieldOffsets[field][2];
+      if (fieldOffsets != null && field < fieldOffsets.length) {
+        if (fieldOffsets[field].length > 0) {
+          posX += fieldOffsets[field][0];
+        }
+        if (fieldOffsets[field].length > 1) {
+          posY += fieldOffsets[field][1];
+        }
+        if (fieldOffsets[field].length > 2) {
+          posZ += fieldOffsets[field][2];
+        }
       }
 
       for (int image=0; image<getImageCount(); image++) {
@@ -606,7 +618,10 @@ public class FluoviewReader extends BaseTiffReader {
             for (int i=1; i<offsets.length; i++) {
               String[] v = offsets[i].trim().split(",");
               for (int j=0; j<v.length; j++) {
-                fieldOffsets[i - 1][j] = Double.parseDouble(v[j].trim());
+                try {
+                  fieldOffsets[i - 1][j] = Double.parseDouble(v[j].trim());
+                }
+                catch (NumberFormatException e) { }
               }
             }
           }
@@ -673,6 +688,8 @@ public class FluoviewReader extends BaseTiffReader {
       lengths[1] = montageOffsets == null ? 1 : montageOffsets.length;
       lengths[0] = fieldOffsets == null ? 1 : fieldOffsets.length;
     }
+    if (lengths[0] == 0) lengths[0] = 1;
+    if (lengths[1] == 0) lengths[1] = 1;
     return FormatTools.rasterToPosition(lengths, seriesIndex);
   }
 
