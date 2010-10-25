@@ -102,8 +102,8 @@ public class ZeissZVIReader extends FormatReader {
 
   private Vector<String> tagsToParse;
   private int nextEmWave = 0, nextExWave = 0, nextChName = 0;
-  private Vector<Double> stageX = new Vector<Double>();
-  private Vector<Double> stageY = new Vector<Double>();
+  private Hashtable<Integer, Double> stageX = new Hashtable<Integer, Double>();
+  private Hashtable<Integer, Double> stageY = new Hashtable<Integer, Double>();
   private int timepoint = 0;
 
   private int[] channelColors;
@@ -603,7 +603,8 @@ public class ZeissZVIReader extends FormatReader {
     LOGGER.info("Populating metadata");
 
     for (String name : tagsToParse) {
-      parseTags(-1, name, store);
+      int imageNum = getImageNumber(name, -1);
+      parseTags(imageNum, name, store);
     }
 
     core[0].sizeZ = zIndices.size();
@@ -743,10 +744,10 @@ public class ZeissZVIReader extends FormatReader {
           store.setPlaneDeltaT(new Double(stamp / 1600000), 0, plane);
         }
 
-        if (plane < stageX.size()) {
+        if (stageX.get(plane) != null) {
           store.setPlanePositionX(stageX.get(plane), 0, plane);
         }
-        if (plane < stageY.size()) {
+        if (stageY.get(plane) != null) {
           store.setPlanePositionY(stageY.get(plane), 0, plane);
         }
       }
@@ -1007,12 +1008,12 @@ public class ZeissZVIReader extends FormatReader {
           store.setObjectiveImmersion(getImmersion(immersion), 0, 0);
         }
         else if (key.indexOf("Stage Position X") != -1) {
-          stageX.add(new Double(value));
-          addGlobalMeta("X position for position #1", stageX);
+          stageX.put(image, new Double(value));
+          addGlobalMeta("X position for position #1", value);
         }
         else if (key.indexOf("Stage Position Y") != -1) {
-          stageY.add(new Double(value));
-          addGlobalMeta("Y position for position #1", stageY);
+          stageY.put(image, new Double(value));
+          addGlobalMeta("Y position for position #1", value);
         }
         else if (key.startsWith("Orca Analog Gain")) {
           detectorGain.put(cIndex, new Double(value));
