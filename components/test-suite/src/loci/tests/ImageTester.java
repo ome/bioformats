@@ -52,7 +52,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A class for testing the {@link loci.formats.AWTImageTools#makeImage} methods.
+ * A class for testing the {@link loci.formats.gui.AWTImageTools#makeImage}
+ * methods.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/test-suite/src/loci/formats/test/ImageTester.java">Trac</a>,
