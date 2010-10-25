@@ -215,7 +215,7 @@ public final class ImageConverter {
     reader.setId(in);
 
     MetadataStore store = reader.getMetadataStore();
-    IFormatReader base = reader; 
+    IFormatReader base = reader;
 
     if (base instanceof ReaderWrapper) {
       base = ((ReaderWrapper) base).unwrap();
@@ -225,9 +225,6 @@ public final class ImageConverter {
     }
     if (base instanceof ImageReader) {
       base = ((ImageReader) base).getReader();
-    }
-    if (base instanceof OMETiffReader) {
-      store = ((OMETiffReader) base).getMetadataStoreForConversion();
     }
 
     if (store instanceof MetadataRetrieve) {

@@ -639,7 +639,7 @@ public class OMETiffReader extends FormatReader {
     info = planeInfo.toArray(new OMETiffPlane[0][0]);
 
     MetadataTools.populatePixels(metadataStore, this, false, false);
-    metadataStore = getMetadataStoreForDisplay();
+    metadataStore = getMetadataStoreForConversion();
   }
 
   // -- OMETiffReader API methods --
