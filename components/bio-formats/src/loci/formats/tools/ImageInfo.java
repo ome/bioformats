@@ -111,6 +111,7 @@ public class ImageInfo {
   private String format = null;
 
   private IFormatReader reader;
+  private IFormatReader baseReader;
   private MinMaxCalculator minMaxCalc;
   private DimensionSwapper dimSwapper;
   private BufferedImageReader biReader;
@@ -294,6 +295,7 @@ public class ImageInfo {
       }
     }
     if (reader == null) reader = new ImageReader();
+    baseReader = reader;
   }
 
   public void mapLocation() throws IOException {
@@ -848,6 +850,14 @@ public class ImageInfo {
   public void printOMEXML() throws MissingLibraryException, ServiceException {
     LOGGER.info("");
     MetadataStore ms = reader.getMetadataStore();
+
+    if (baseReader instanceof ImageReader) {
+      baseReader = ((ImageReader) baseReader).getReader();
+    }
+    if (baseReader instanceof OMETiffReader) {
+      ms = ((OMETiffReader) baseReader).getMetadataStoreForDisplay();
+    }
+
     OMEXMLService service;
     try {
       ServiceFactory factory = new ServiceFactory();
