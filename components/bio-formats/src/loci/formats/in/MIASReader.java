@@ -828,6 +828,7 @@ public class MIASReader extends FormatReader {
     TiffParser tp = new TiffParser(s);
     IFD ifd = tp.getFirstIFD();
     s.close();
+    if (ifd == null) return null;
     int[] colorMap = ifd.getIFDIntArray(IFD.COLOR_MAP);
     if (colorMap == null) return null;
 

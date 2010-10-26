@@ -77,6 +77,7 @@ public class TCSReader extends FormatReader {
 
   private TiffParser tiffParser;
 
+  private int lastPlane;
   private long datestamp;
   private String xmlFile;
 
@@ -161,13 +162,13 @@ public class TCSReader extends FormatReader {
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    return tiffReaders[0].get8BitLookupTable();
+    return tiffReaders[lastPlane].get8BitLookupTable();
   }
 
   /* @see loci.formats.IFormatReader#get16BitLookupTable() */
   public short[][] get16BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    return tiffReaders[0].get16BitLookupTable();
+    return tiffReaders[lastPlane].get16BitLookupTable();
   }
 
   /**
@@ -186,7 +187,13 @@ public class TCSReader extends FormatReader {
     if (tiffReaders.length == 1) {
       return tiffReaders[0].openBytes(n, buf, x, y, w, h);
     }
-    return tiffReaders[n].openBytes(0, buf, x, y, w, h);
+    int plane = 0;
+    if (tiffReaders[0].getImageCount() > 1) {
+      n /= tiffReaders.length;
+      plane = n % tiffReaders.length;
+    }
+    lastPlane = n;
+    return tiffReaders[n].openBytes(plane, buf, x, y, w, h);
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
@@ -215,6 +222,7 @@ public class TCSReader extends FormatReader {
       tiffParser = null;
       datestamp = 0;
       xmlFile = null;
+      lastPlane = 0;
     }
   }
 
