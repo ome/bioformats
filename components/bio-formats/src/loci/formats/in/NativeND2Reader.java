@@ -601,7 +601,8 @@ public class NativeND2Reader extends FormatReader {
 
           for (int series=0; series<getSeriesCount(); series++) {
             setSeries(series);
-            for (int plane=0; plane<getImageCount(); plane++) {
+            int count = split ? getImageCount() / getSizeC() : getImageCount();
+            for (int plane=0; plane<count; plane++) {
               // timestamps are stored in ms; we want them in seconds
               double time = in.readDouble() / 1000;
               tsT.add(new Double(time));
