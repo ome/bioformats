@@ -106,7 +106,7 @@ public class AVIReader extends FormatReader {
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
   public byte[][] get8BitLookupTable() {
     FormatTools.assertId(currentId, true, 1);
-    return lut;
+    return isRGB() ? null : lut;
   }
 
   /**

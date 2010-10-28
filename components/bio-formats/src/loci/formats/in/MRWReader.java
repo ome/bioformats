@@ -151,8 +151,7 @@ public class MRWReader extends FormatReader {
       colorMap[3] = 1;
     }
 
-    return ImageTools.interpolate(s, buf, colorMap, getSizeX(), getSizeY(),
-      isLittleEndian());
+    return ImageTools.interpolate(s, buf, colorMap, w, h, isLittleEndian());
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */

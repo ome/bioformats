@@ -560,6 +560,12 @@ public final class ImageTools {
   public static byte[] interpolate(short[] s, byte[] buf, int[] bayerPattern,
     int width, int height, boolean littleEndian)
   {
+    if (width == 1 && height == 1) {
+      for (int i=0; i<buf.length; i++) {
+        buf[i] = (byte) s[0];
+      }
+      return buf;
+    }
     // use linear interpolation to fill in missing components
 
     int plane = width * height;
