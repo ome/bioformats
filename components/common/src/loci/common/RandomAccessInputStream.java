@@ -420,6 +420,8 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
 
   /** Read a string of length n. */
   public String readString(int n) throws IOException {
+    int avail = available();
+    if (n > avail) n = avail;
     byte[] b = new byte[n];
     readFully(b);
     return new String(b);
@@ -452,6 +454,7 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
 
   /** Skip n bytes within the stream. */
   public int skipBytes(int n) throws IOException {
+    if (n < 0) return 0;
     afp += n;
     return n;
   }
@@ -539,10 +542,9 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
 
   public int available() throws IOException {
     if (Boolean.FALSE.equals(fileCache.get(this))) reopen();
-    int available = dis != null ? dis.available() + ext :
-      (int) (length() - getFilePointer());
-    if (available < 0) available = Integer.MAX_VALUE;
-    return available;
+    long remain = length() - getFilePointer();
+    if (remain > Integer.MAX_VALUE) remain = Integer.MAX_VALUE;
+    return (int) remain;
   }
 
   public void mark(int readLimit) {
