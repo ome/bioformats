@@ -463,6 +463,9 @@ public class NativeND2Reader extends FormatReader {
       if (getDimensionOrder().equals("T")) {
         fieldIndex = 0;
       }
+      else if (getDimensionOrder().equals("ZT") && fieldIndex == 2) {
+        fieldIndex--;
+      }
 
       if (getSizeC() > 1 && getDimensionOrder().indexOf("C") == -1) {
         core[0].dimensionOrder = "C" + getDimensionOrder();
