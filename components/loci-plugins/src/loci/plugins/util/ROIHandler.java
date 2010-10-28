@@ -76,15 +76,14 @@ public class ROIHandler {
 
     OME root = (OME) retrieve.getRoot();
 
-    int imageCount = retrieve.getImageCount();
+    int imageCount = images.length;
     for (int imageNum=0; imageNum<imageCount; imageNum++) {
-      Image image = root.getImage(imageNum);
-      int roiCount = image.sizeOfLinkedROIList();
+      int roiCount = root.sizeOfROIList();
       if (roiCount > 0 && manager == null) {
         manager = new RoiManager();
       }
       for (int roiNum=0; roiNum<roiCount; roiNum++) {
-        Union shapeSet = image.getLinkedROI(roiNum).getUnion();
+        Union shapeSet = root.getROI(roiNum).getUnion();
         int shapeCount = shapeSet.sizeOfShapeList();
 
         for (int shape=0; shape<shapeCount; shape++) {
