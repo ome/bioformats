@@ -66,6 +66,9 @@ public class TiffWriter extends FormatWriter {
   /** The TiffSaver that will do most of the writing. */
   protected TiffSaver tiffSaver;
 
+  /** Whether or not to check the parameters passed to saveBytes. */
+  private boolean checkParams = true;
+
   // -- Constructors --
 
   public TiffWriter() {
@@ -111,7 +114,7 @@ public class TiffWriter extends FormatWriter {
   public void saveBytes(int no, byte[] buf, IFD ifd, int x, int y, int w, int h)
     throws IOException, FormatException
   {
-    checkParams(no, buf, x, y, w, h);
+    if (checkParams) checkParams(no, buf, x, y, w, h);
     MetadataRetrieve retrieve = getMetadataRetrieve();
     Boolean bigEndian = retrieve.getPixelsBinDataBigEndian(series, 0);
     boolean littleEndian = bigEndian == null ?
@@ -148,12 +151,19 @@ public class TiffWriter extends FormatWriter {
 
     if (bytesPerPixel > 1 && c != 1 && c != 3) {
       // split channels
+      checkParams = false;
+
+      if (no == 0) {
+        initialized[series] = new boolean[initialized[series].length * c];
+      }
+
       for (int i=0; i<c; i++) {
         byte[] b = ImageTools.splitChannels(buf, i, c, bytesPerPixel,
           false, interleaved);
 
-        saveBytes(no, b, ifd, x, y, w, h);
+        saveBytes(no + i, b, ifd, x, y, w, h);
       }
+      checkParams = true;
       return;
     }
 
@@ -198,6 +208,14 @@ public class TiffWriter extends FormatWriter {
       no == getPlaneCount() - 1 && getSeries() == retrieve.getImageCount() - 1);
     tiffSaver.setInputStream(null);
     in.close();
+  }
+
+  // -- FormatWriter API methods --
+
+  protected int getPlaneCount() {
+    int c = getSamplesPerPixel();
+    if (c == 1 || c == 3) return super.getPlaneCount();
+    return c * super.getPlaneCount();
   }
 
   // -- IFormatWriter API methods --

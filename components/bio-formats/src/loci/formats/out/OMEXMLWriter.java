@@ -97,15 +97,12 @@ public class OMEXMLWriter extends FormatWriter {
     XMLTools.parseXML(xml, new OMEHandler());
 
     xmlFragments.add(currentFragment);
-    if (out.length() == 0) {
-      out.writeBytes(xmlFragments.get(0));
-    }
   }
 
   /* @see loci.formats.IFormatHandler#close() */
   public void close() throws IOException {
     if (out != null) {
-      out.writeBytes(xmlFragments.get(series + 1));
+      out.writeBytes(xmlFragments.get(xmlFragments.size() - 1));
     }
     super.close();
     xmlFragments = null;
@@ -125,6 +122,10 @@ public class OMEXMLWriter extends FormatWriter {
         "OMEXMLWriter does not yet support saving image tiles.");
     }
     MetadataRetrieve retrieve = getMetadataRetrieve();
+
+    if (no == 0) {
+      out.writeBytes(xmlFragments.get(series));
+    }
 
     String type = retrieve.getPixelsType(series).toString();
     int pixelType = FormatTools.pixelTypeFromString(type);
