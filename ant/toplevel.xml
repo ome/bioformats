@@ -13,6 +13,28 @@ Type "ant -p" for a list of targets.
 
   <!-- Global build targets -->
 
+  <target name="compile"
+    depends="compile-autogen,
+      compile-checks,
+      compile-common,
+      compile-flow,
+      compile-formats,
+      compile-jai,
+      compile-jvmlink,
+      compile-loci-plugins,
+      compile-lwf-stubs,
+      compile-mdbtools,
+      compile-multi-lut,
+      compile-ome-editor,
+      compile-ome-io,
+      compile-ome-plugins,
+      compile-ome-xml,
+      compile-poi-loci,
+      compile-slim,
+      compile-tests,
+      compile-visbio"
+    description="compile LOCI software packages"/>
+
   <target name="jars"
     depends="copy-jars,
       jar-autogen,
