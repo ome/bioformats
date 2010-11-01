@@ -75,9 +75,7 @@ public class OMETiffWriter extends TiffWriter {
   // -- Fields --
 
   private ArrayList<Integer> seriesMap;
-  private boolean wroteLast;
   private String[][] imageLocations;
-  private int totalPlanes = 0;
   private OMEXMLMetadata omeMeta;
   private OMEXMLService service;
   private HashMap<String, Integer> ifdCounts = new HashMap<String, Integer>();
@@ -93,7 +91,7 @@ public class OMETiffWriter extends TiffWriter {
   /* @see loci.formats.IFormatHandler#close() */
   public void close() throws IOException {
     try {
-      if (currentId != null && wroteLast) {
+      if (currentId != null) {
         setupServiceAndMetadata();
 
         // remove any BinData elements from the OME-XML
@@ -107,7 +105,7 @@ public class OMETiffWriter extends TiffWriter {
         ArrayList<String> files = new ArrayList<String>();
         for (String[] s : imageLocations) {
           for (String f : s) {
-            if (!files.contains(f)) {
+            if (!files.contains(f) && f != null) {
               files.add(f);
 
               String xml = getOMEXML(f);
@@ -133,15 +131,11 @@ public class OMETiffWriter extends TiffWriter {
     }
     finally {
       super.close();
-      if (wroteLast) {
-        seriesMap = null;
-        imageLocations = null;
-        wroteLast = false;
-        totalPlanes = 0;
-        omeMeta = null;
-        service = null;
-        ifdCounts.clear();
-      }
+      seriesMap = null;
+      imageLocations = null;
+      omeMeta = null;
+      service = null;
+      ifdCounts.clear();
     }
   }
 
@@ -160,7 +154,7 @@ public class OMETiffWriter extends TiffWriter {
 
     super.saveBytes(no, buf, x, y, w, h);
 
-    int index = totalPlanes;
+    int index = no;
     int currentSeries = series;
     for (int s=0; s<currentSeries; s++) {
       setSeries(s);
@@ -169,9 +163,6 @@ public class OMETiffWriter extends TiffWriter {
     setSeries(currentSeries);
 
     imageLocations[series][index] = currentId;
-    totalPlanes++;
-
-    wroteLast = series == r.getImageCount() - 1 && index == planeCount() - 1;
   }
 
   // -- IFormatHandler API methods --
@@ -301,8 +292,9 @@ public class OMETiffWriter extends TiffWriter {
         planeIndex /= (imageCount / imageLocations[series].length);
       }
 
-      String filename =
-        new Location(imageLocations[series][planeIndex]).getName();
+      String filename = imageLocations[series][planeIndex];
+      if (filename == null) filename = currentId;
+      filename = new Location(filename).getName();
 
       Integer ifdIndex = ifdCounts.get(filename);
       int ifd = ifdIndex == null ? 0 : ifdIndex.intValue();
