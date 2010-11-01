@@ -100,6 +100,7 @@ public class OMETiffWriter extends TiffWriter {
         service.removeBinData(omeMeta);
 
         for (int series=0; series<omeMeta.getImageCount(); series++) {
+          setSeries(series);
           populateImage(omeMeta, series);
         }
 
@@ -163,14 +164,14 @@ public class OMETiffWriter extends TiffWriter {
     int currentSeries = series;
     for (int s=0; s<currentSeries; s++) {
       setSeries(s);
-      index -= getPlaneCount();
+      index -= planeCount();
     }
     setSeries(currentSeries);
 
     imageLocations[series][index] = currentId;
     totalPlanes++;
 
-    wroteLast = series == r.getImageCount() - 1 && index == getPlaneCount() - 1;
+    wroteLast = series == r.getImageCount() - 1 && index == planeCount() - 1;
   }
 
   // -- IFormatHandler API methods --
@@ -184,7 +185,7 @@ public class OMETiffWriter extends TiffWriter {
       imageLocations = new String[r.getImageCount()][];
       for (int i=0; i<imageLocations.length; i++) {
         setSeries(i);
-        imageLocations[i] = new String[getPlaneCount()];
+        imageLocations[i] = new String[planeCount()];
       }
       setSeries(0);
     }
@@ -294,7 +295,14 @@ public class OMETiffWriter extends TiffWriter {
     for (int plane=0; plane<imageCount; plane++) {
       int[] zct = FormatTools.getZCTCoords(dimensionOrder,
         sizeZ, sizeC, sizeT, imageCount, plane);
-      String filename = new Location(imageLocations[series][plane]).getName();
+
+      int planeIndex = plane;
+      if (imageLocations[series].length < imageCount) {
+        planeIndex /= (imageCount / imageLocations[series].length);
+      }
+
+      String filename =
+        new Location(imageLocations[series][planeIndex]).getName();
 
       Integer ifdIndex = ifdCounts.get(filename);
       int ifd = ifdIndex == null ? 0 : ifdIndex.intValue();
@@ -307,6 +315,14 @@ public class OMETiffWriter extends TiffWriter {
       populateTiffData(omeMeta, zct, ifd, series, plane);
       ifdCounts.put(filename, ifd + 1);
     }
+  }
+
+  private int planeCount() {
+    MetadataRetrieve r = getMetadataRetrieve();
+    int z = r.getPixelsSizeZ(series).getValue().intValue();
+    int t = r.getPixelsSizeT(series).getValue().intValue();
+    int c = r.getChannelCount(series);
+    return z * c * t;
   }
 
 }
