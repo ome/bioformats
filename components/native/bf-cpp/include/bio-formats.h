@@ -41,7 +41,7 @@ your combined work must be distributed under the terms of the GPL.
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by hinerm via JaceHeaderAutogen on Sep 22, 2010 1:03:43 PM CDT
+ * Created by melissa via JaceHeaderAutogen on Nov 3, 2010 12:12:02 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -61,6 +61,7 @@ your combined work must be distributed under the terms of the GPL.
 #include "jace/proxy/loci/formats/DimensionSwapper.h"
 #include "jace/proxy/loci/formats/FileInfo.h"
 #include "jace/proxy/loci/formats/FilePattern.h"
+#include "jace/proxy/loci/formats/FilePatternBlock.h"
 #include "jace/proxy/loci/formats/FileStitcher.h"
 #include "jace/proxy/loci/formats/FormatException.h"
 #include "jace/proxy/loci/formats/FormatHandler.h"
