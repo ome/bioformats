@@ -863,7 +863,10 @@
 					</xsl:when>
 
 					<xsl:when test="local-name(.) = 'Pixels'">
-						<xsl:if test="@ID=$requiredPixels">
+						<xsl:if test="@ID=$requiredPixels or $requiredPixels=''">
+              <xsl:variable name="requiredPixels">
+                <xsl:value-of select="@ID"/>
+              </xsl:variable>
 							<!-- add controls to make sure we only copy one. -->
 							<xsl:element name="{local-name(.)}" namespace="{$newOMENS}">
 								<xsl:call-template name="convertPixels">

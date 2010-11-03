@@ -366,6 +366,10 @@ public class Exporter {
         thisType = FormatTools.UINT8;
       }
 
+      if (!proc.isDefaultLut()) {
+        w.setColorModel(proc.getColorModel());
+      }
+
       boolean notSupportedType = !w.isSupportedType(thisType);
       if (notSupportedType) {
         IJ.error("Pixel type (" + FormatTools.getPixelTypeString(thisType) +

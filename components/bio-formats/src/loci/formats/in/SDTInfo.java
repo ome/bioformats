@@ -541,17 +541,9 @@ public class SDTInfo {
       hasMeasHISTInfo = measDescBlockLength >= 211 + 60 + 38 + 26 + 24;
 
       if (hasMeasureInfo) {
-        byte[] timeBytes = new byte[9];
-        in.readFully(timeBytes);
-        time = new String(timeBytes);
-
-        byte[] dateBytes = new byte[11];
-        in.readFully(dateBytes);
-        date = new String(dateBytes);
-
-        byte[] modSerNoBytes = new byte[16];
-        in.readFully(modSerNoBytes);
-        modSerNo = new String(modSerNoBytes);
+        time = in.readString(9).trim();
+        date = in.readString(11).trim();
+        modSerNo = in.readString(16).trim();
 
         measMode = in.readShort();
         cfdLL = in.readFloat();
@@ -582,9 +574,7 @@ public class SDTInfo {
         incr = in.readShort();
         memBank = in.readShort();
 
-        byte[] modTypeBytes = new byte[16];
-        in.readFully(modTypeBytes);
-        modType = new String(modTypeBytes);
+        modType = in.readString(16).trim();
 
         synTH = in.readFloat();
         deadTimeComp = in.readShort();

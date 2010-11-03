@@ -154,15 +154,7 @@ public class OMETiffWriter extends TiffWriter {
 
     super.saveBytes(no, buf, x, y, w, h);
 
-    int index = no;
-    int currentSeries = series;
-    for (int s=0; s<currentSeries; s++) {
-      setSeries(s);
-      index -= planeCount();
-    }
-    setSeries(currentSeries);
-
-    imageLocations[series][index] = currentId;
+    imageLocations[series][no] = currentId;
   }
 
   // -- IFormatHandler API methods --

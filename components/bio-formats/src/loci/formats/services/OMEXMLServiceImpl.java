@@ -247,8 +247,9 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
       try {
         Element e = XMLTools.parseDOM(xml).getDocumentElement();
         String namespace = e.getAttribute("xmlns");
-        if (namespace == null || namespace.equals(""))
+        if (namespace == null || namespace.equals("")) {
           namespace = e.getAttribute("xmlns:ome");
+        }
 
         return namespace.endsWith("ome.xsd") ? "2003-FC" :
           namespace.substring(namespace.lastIndexOf("/") + 1);
