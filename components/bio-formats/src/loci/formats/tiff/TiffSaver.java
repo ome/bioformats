@@ -274,13 +274,19 @@ public class TiffSaver {
     long[] stripOffsets = new long[nStrips];
 
     if (ifd.containsKey(IFD.STRIP_BYTE_COUNTS)) {
-      stripByteCounts = ifd.getStripByteCounts();
+      long[] newStripByteCounts = ifd.getStripByteCounts();
+      if (newStripByteCounts.length == nStrips) {
+        stripByteCounts = newStripByteCounts;
+      }
     }
     if (ifd.containsKey(IFD.STRIP_OFFSETS)) {
-      stripOffsets = ifd.getStripOffsets();
+      long[] newStripOffsets = ifd.getStripOffsets();
+      if (newStripOffsets.length == nStrips) {
+        stripOffsets = newStripOffsets;
+      }
     }
 
-    for (int i=0; i<nStrips; i++) {
+    for (int i=0; i<stripByteCounts.length; i++) {
       if (stripByteCounts[i] == 0) {
         stripByteCounts[i] = strips[i].length;
       }

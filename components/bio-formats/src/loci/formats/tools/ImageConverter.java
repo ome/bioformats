@@ -43,6 +43,7 @@ import loci.formats.IFormatReader;
 import loci.formats.IFormatWriter;
 import loci.formats.ImageReader;
 import loci.formats.ImageWriter;
+import loci.formats.MetadataTools;
 import loci.formats.MissingLibraryException;
 import loci.formats.ReaderWrapper;
 import loci.formats.in.OMETiffReader;
@@ -226,6 +227,7 @@ public final class ImageConverter {
     if (base instanceof ImageReader) {
       base = ((ImageReader) base).getReader();
     }
+    MetadataTools.populatePixels(store, reader, false, false);
 
     if (store instanceof MetadataRetrieve) {
       writer.setMetadataRetrieve((MetadataRetrieve) store);

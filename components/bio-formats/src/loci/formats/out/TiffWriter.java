@@ -192,6 +192,11 @@ public class TiffWriter extends FormatWriter {
     ifd.put(new Integer(IFD.LITTLE_ENDIAN), new Boolean(littleEndian));
     out.seek(out.length());
     ifd.putIFDValue(IFD.PLANAR_CONFIGURATION, interleaved ? 1 : 2);
+
+    int sampleFormat = 1;
+    if (FormatTools.isSigned(type)) sampleFormat = 2;
+    if (FormatTools.isFloatingPoint(type)) sampleFormat = 3;
+    ifd.putIFDValue(IFD.SAMPLE_FORMAT, sampleFormat);
     RandomAccessInputStream in = new RandomAccessInputStream(currentId);
     in.order(littleEndian);
     tiffSaver.setInputStream(in);

@@ -410,7 +410,8 @@ public abstract class FormatWriter extends FormatHandler
     MetadataRetrieve r = getMetadataRetrieve();
     int z = r.getPixelsSizeZ(series).getValue().intValue();
     int t = r.getPixelsSizeT(series).getValue().intValue();
-    int c = r.getChannelCount(series);
+    int c = r.getPixelsSizeC(series).getValue().intValue();
+    c /= r.getChannelSamplesPerPixel(series, 0).getValue().intValue();
     return z * c * t;
   }
 
