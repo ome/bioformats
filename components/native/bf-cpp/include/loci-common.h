@@ -41,7 +41,7 @@ your combined work must be distributed under the terms of the GPL.
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by hinerm via JaceHeaderAutogen on Sep 22, 2010 1:03:44 PM CDT
+ * Created by melissa via JaceHeaderAutogen on Nov 3, 2010 12:20:31 PM CDT
  *
  *-----------------------------------------------------------------------------
  */
@@ -96,6 +96,7 @@ your combined work must be distributed under the terms of the GPL.
 //using namespace jace::proxy::loci::common::services;
 
 #include "jace/proxy/loci/common/xml/MetadataHandler.h"
+#include "jace/proxy/loci/common/xml/ParserErrorHandler.h"
 #include "jace/proxy/loci/common/xml/ValidationErrorHandler.h"
 #include "jace/proxy/loci/common/xml/ValidationSAXHandler.h"
 #include "jace/proxy/loci/common/xml/XMLTools.h"
