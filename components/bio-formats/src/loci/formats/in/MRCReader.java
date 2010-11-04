@@ -52,7 +52,8 @@ public class MRCReader extends FormatReader {
   // works for modern .mrc files, because older IMOD versions did not put that
   // there, according to: http://bio3d.colorado.edu/imod/doc/mrc_format.txt
 
-  private static final String[] MRC_SUFFIXES = {"mrc", "st", "ali", "map"};
+  private static final String[] MRC_SUFFIXES =
+    {"mrc", "st", "ali", "map", "rec"};
 
   private static final int HEADER_SIZE = 1024;
   private static final int ENDIANNESS_OFFSET = 212;
@@ -68,9 +69,15 @@ public class MRCReader extends FormatReader {
   public MRCReader() {
     super("Medical Research Council", MRC_SUFFIXES);
     domains = new String[] {FormatTools.MEDICAL_DOMAIN, FormatTools.LM_DOMAIN};
+    suffixSufficient = false;
   }
 
   // -- IFormatReader API methods --
+
+  /** @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
+    return FormatTools.validStream(stream, HEADER_SIZE, false);
+  }
 
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
