@@ -49,6 +49,11 @@ public class MRCReader extends FormatReader {
   private static final String[] TYPES =
     new String[] {"mono", "tilt", "tilts", "lina", "lins"};
 
+  private static final String[] MRC_SUFFIXES =
+    {"mrc", "st", "ali", "map", "rec"};
+
+  private static final int HEADER_SIZE = 1024;
+
   // -- Fields --
 
   /** Number of bytes per pixel */
@@ -64,11 +69,17 @@ public class MRCReader extends FormatReader {
 
   /** Constructs a new MRC reader. */
   public MRCReader() {
-    super("Medical Research Council", "mrc");
+    super("Medical Research Council", MRC_SUFFIXES);
     domains = new String[] {FormatTools.MEDICAL_DOMAIN, FormatTools.LM_DOMAIN};
+    suffixSufficient = false;
   }
 
   // -- IFormatReader API methods --
+
+  /** @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
+    return FormatTools.validStream(stream, HEADER_SIZE, false);
+  }
 
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
