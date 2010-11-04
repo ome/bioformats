@@ -516,9 +516,16 @@ public class FlexReader extends FormatReader {
             }
             if (index < filterSets.size()) {
               FilterGroup group = filterSetMap.get(filterSets.get(index));
-              store.setLightPathEmissionFilterRef(group.emission, i, c, 0);
-              store.setLightPathExcitationFilterRef(group.excitation, i, c, 0);
-              store.setLightPathDichroicRef(group.dichroic, i, c);
+              if (group.emission != null) {
+                store.setLightPathEmissionFilterRef(group.emission, i, c, 0);
+              }
+              if (group.excitation != null) {
+                store.setLightPathExcitationFilterRef(
+                  group.excitation, i, c, 0);
+              }
+              if (group.dichroic != null) {
+                store.setLightPathDichroicRef(group.dichroic, i, c);
+              }
             }
           }
         }
