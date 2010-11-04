@@ -36,6 +36,7 @@ import loci.formats.gui.AWTImageTools;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffCompression;
+import loci.formats.tiff.TiffParser;
 import loci.formats.tiff.TiffSaver;
 
 /**
@@ -232,6 +233,12 @@ public class TiffWriter extends FormatWriter {
     throws FormatException, IOException
   {
     IFD ifd = new IFD();
+    TiffParser parser = new TiffParser(currentId);
+    long[] ifdOffsets = parser.getIFDOffsets();
+    if (no < ifdOffsets.length) {
+      ifd = parser.getIFD(ifdOffsets[no]);
+    }
+
     if (compression == null) compression = "";
     TiffCompression compressType = TiffCompression.UNCOMPRESSED;
     if (compression.equals(COMPRESSION_LZW)) {
@@ -246,7 +253,9 @@ public class TiffWriter extends FormatWriter {
     else if (compression.equals(COMPRESSION_JPEG)) {
       compressType = TiffCompression.JPEG;
     }
-    ifd.put(new Integer(IFD.COMPRESSION), compressType.getCode());
+    if (ifd.getCompression() == null) {
+      ifd.put(new Integer(IFD.COMPRESSION), compressType.getCode());
+    }
     saveBytes(no, buf, ifd, x, y, w, h);
   }
 
