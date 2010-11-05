@@ -505,7 +505,10 @@ public class LeicaHandler extends DefaultHandler {
         Channel channel = channels.get(numDatasets + "-" + c);
         if (channel == null) channel = new Channel();
         if (id.endsWith("ExposureTime")) {
-          store.setPlaneExposureTime(new Double(value), numDatasets, c);
+          try {
+            store.setPlaneExposureTime(new Double(value), numDatasets, c);
+          }
+          catch (IndexOutOfBoundsException e) { }
         }
         else if (id.endsWith("Gain")) {
           channel.gain = new Double(value);
