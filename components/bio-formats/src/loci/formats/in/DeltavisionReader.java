@@ -271,11 +271,23 @@ public class DeltavisionReader extends FormatReader {
       }
       else if (sizeT == 1) {
         sizeZ = realPlaneCount / sizeC;
+        if ((realPlaneCount % sizeC) != 0) {
+          sizeZ++;
+          core[0].imageCount = sizeZ * sizeC;
+        }
       }
       else if (getDimensionOrder().indexOf("Z") <
         getDimensionOrder().indexOf("T"))
       {
         sizeZ = realPlaneCount / (sizeC * sizeT);
+        if (sizeZ == 0) {
+          sizeT = 1;
+          sizeZ = realPlaneCount / sizeC;
+          if ((realPlaneCount % sizeC) != 0) {
+            sizeZ++;
+            core[0].imageCount = sizeZ * sizeC;
+          }
+        }
       }
       else {
         sizeT = realPlaneCount / (sizeC * sizeZ);
