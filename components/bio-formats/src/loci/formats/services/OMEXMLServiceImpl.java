@@ -44,6 +44,7 @@ import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.ome.OMEXMLMetadataImpl;
 import ome.xml.OMEXMLFactory;
 import ome.xml.model.BinData;
+import ome.xml.model.Channel;
 import ome.xml.model.Image;
 import ome.xml.model.MetadataOnly;
 import ome.xml.model.OME;
@@ -425,6 +426,21 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
       List<BinData> binData = pix.copyBinDataList();
       for (BinData bin : binData) {
         pix.removeBinData(bin);
+      }
+    }
+    omexmlMeta.setRoot(root);
+  }
+
+  /** @see OMEXMLService#removeChannels(OMEXMLMetadata, int, int) */
+  public void removeChannels(OMEXMLMetadata omexmlMeta, int image, int sizeC) {
+    OME root = (OME) omexmlMeta.getRoot();
+    Pixels img = root.getImage(image).getPixels();
+    List<Channel> channels = img.copyChannelList();
+
+    for (int c=0; c<channels.size(); c++) {
+      Channel channel = channels.get(c);
+      if (channel.getID() == null || c >= sizeC) {
+        img.removeChannel(channel);
       }
     }
     omexmlMeta.setRoot(root);
