@@ -267,6 +267,11 @@ public class OMETiffReader extends FormatReader {
 
     hasSPW = meta.getPlateCount() > 0;
 
+    for (int i=0; i<meta.getImageCount(); i++) {
+      int sizeC = meta.getPixelsSizeC(i).getValue().intValue();
+      service.removeChannels(meta, i, sizeC);
+    }
+
     // TODO
     //Hashtable originalMetadata = meta.getOriginalMetadata();
     //if (originalMetadata != null) metadata = originalMetadata;

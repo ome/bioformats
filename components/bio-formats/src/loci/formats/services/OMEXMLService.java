@@ -200,6 +200,12 @@ public interface OMEXMLService extends Service {
   public void removeBinData(OMEXMLMetadata omexmlMeta);
 
   /**
+   * Remove all but the first sizeC valid Channel elements from the given
+   * OME-XML metadata object.
+   */
+  public void removeChannels(OMEXMLMetadata omexmlMeta, int image, int sizeC);
+
+  /**
    * Insert a MetadataOnly element under the Image specified by 'index' in the
    * given OME-XML metadata object.
    */
