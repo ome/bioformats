@@ -115,11 +115,28 @@ public class MetamorphReader extends BaseTiffReader {
 
   /** Constructs a new Metamorph reader. */
   public MetamorphReader() {
-    super("Metamorph STK", new String[] {"stk", "nd"});
+    super("Metamorph STK", new String[] {"stk", "nd", "tif", "tiff"});
     domains = new String[] {FormatTools.LM_DOMAIN};
+    suffixSufficient = false;
   }
 
   // -- IFormatReader API methods --
+
+  /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  public boolean isThisType(String name, boolean open) {
+    if (checkSuffix(name, "nd")) return true;
+    return super.isThisType(name, open);
+  }
+
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
+    TiffParser tp = new TiffParser(stream);
+    IFD ifd = tp.getFirstIFD();
+    if (ifd == null) return false;
+    if (ifd.containsKey(METAMORPH_ID)) return true;
+    String software = ifd.getIFDTextValue(IFD.SOFTWARE);
+    return software != null && software.trim().startsWith("Meta");
+  }
 
   /* @see loci.formats.IFormatReader#isSingleFile(String) */
   public boolean isSingleFile(String id) throws FormatException, IOException {
