@@ -95,7 +95,7 @@
 		<xsl:param name="colorValue"/>
 		<xsl:choose>
 			<xsl:when test="$colorValue > 2147483647">
-				<xsl:value-of select="0 - ( $colorValue - 2147483647 )"/>
+				<xsl:value-of select="0 - ( 4294967296 - $colorValue )"/>
 			</xsl:when>
 			<xsl:otherwise>
 				<xsl:value-of select="$colorValue"/>
