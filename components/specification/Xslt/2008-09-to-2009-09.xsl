@@ -68,6 +68,9 @@
 		<mapping name="DetectorType">
 			<map from="EM-CCD" to="EMCCD"/>
 		</mapping>
+		<mapping name="LaserMedium">
+			<map from="Unknown" to="Other"/>
+		</mapping>
 	</xsl:variable>
 
 	<!-- Transform the value coming from an enumeration -->
@@ -376,6 +379,14 @@
 						<xsl:when test="local-name(.) ='Type'">
 							<xsl:call-template name="transformEnumerationValue">
 								<xsl:with-param name="mappingName" select="'LightSourceType'"/>
+								<xsl:with-param name="value">
+									<xsl:value-of select="."/>
+								</xsl:with-param>
+							</xsl:call-template>
+						</xsl:when>
+						<xsl:when test="local-name(.) ='LaserMedium'">
+							<xsl:call-template name="transformEnumerationValue">
+								<xsl:with-param name="mappingName" select="'LaserMedium'"/>
 								<xsl:with-param name="value">
 									<xsl:value-of select="."/>
 								</xsl:with-param>
