@@ -796,7 +796,9 @@ public class MetamorphReader extends BaseTiffReader {
         if (!uniqueWavelengths.contains(v)) uniqueWavelengths.add(v);
       }
 
-      core[0].sizeC *= uniqueWavelengths.size();
+      if (getSizeC() == 1) {
+        core[0].sizeC = uniqueWavelengths.size();
+      }
 
       IFDList tempIFDs = new IFDList();
 
