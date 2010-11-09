@@ -95,6 +95,7 @@ public class ImporterMetadata extends HashMap<String, Object> {
       put(pad + s + "LittleEndian", new Boolean(r.isLittleEndian()));
       put(pad + s + "DimensionOrder", r.getDimensionOrder());
       put(pad + s + "IsInterleaved", new Boolean(r.isInterleaved()));
+      put(pad + s + "BitsPerPixel", new Integer(r.getBitsPerPixel()));
     }
     r.setSeries(oldSeries);
   }
