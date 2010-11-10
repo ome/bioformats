@@ -143,7 +143,7 @@ install(TARGETS ${lib_name}
 # factories (which improves the speed at which plugins run).
 
 if(NOT DEFINED BioFormatsImageIO_INSTALL_ITKFACTORIES_DIR)
-  set(BioFormatsImageIO_INSTALL_ITKFACTORIES_DIR lib/ITKFactories)
+  set(BioFormatsImageIO_INSTALL_ITKFACTORIES_DIR lib/)
 endif(NOT DEFINED BioFormatsImageIO_INSTALL_ITKFACTORIES_DIR)
 
 add_library(BioFormatsIOPlugin SHARED
