@@ -225,9 +225,13 @@ usage and/or distribution.
 If you compiled ITK with BUILD_EXAMPLES set to ON,
 you can test the plugin with the following commands:
 
-  export ITK_AUTOLOAD_PATH="${build.dir}/lib/ITKFactories"
+  export ITK_AUTOLOAD_PATH="${build.dir}/lib/"
   cd "${itk-bin.dir}"
   ./ImageHistogram1 /path/to/sample/dataset
+
+If you run the ant dist target, use this command instead:
+
+  export ITK_AUTOLOAD_PATH="${build.dir}/dist/bf-itk/"
 
 If you use a TIFF file, you can compare the histogram results between
 the Bio-Formats importer and the built-in ITK TIFF reader by setting
