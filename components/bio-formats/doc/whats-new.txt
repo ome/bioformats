@@ -1,3 +1,17 @@
+4.2.1 (2010 November 11):
+* Many, many bug fixes
+* Added support for 7 new formats:
+  - CellWorX .pnl
+  - ECAT7
+  - Varian FDF
+  - Perkin Elmer Densitometer
+  - FEI TIFF
+  - Compix/SimplePCI TIFF
+  - Nikon Elements TIFF
+* Updated Zeiss LSM metadata parsing, with generous assistance from Zeiss, FMI, and MPI-CBG
+* Lots of work to ensure that converted OME-XML validates
+* Improved file stitching functionality; non-numerical file patterns and limited regular expression-style patterns are now supported
+
 4.2.0 (2010 July 9):
 * Fixed many, many bugs in all aspects of Bio-Formats
 * Reworked ImageJ plugins to be more user- and developer-friendly
