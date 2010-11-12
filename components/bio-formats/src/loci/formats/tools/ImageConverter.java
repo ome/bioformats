@@ -36,6 +36,7 @@ import loci.common.services.ServiceFactory;
 import loci.formats.ChannelFiller;
 import loci.formats.ChannelMerger;
 import loci.formats.ChannelSeparator;
+import loci.formats.FilePattern;
 import loci.formats.FileStitcher;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
@@ -194,7 +195,11 @@ public final class ImageConverter {
     long start = System.currentTimeMillis();
     LOGGER.info(in);
     IFormatReader reader = new ImageReader();
-    if (stitch) reader = new FileStitcher(reader);
+    if (stitch) {
+      reader = new FileStitcher(reader);
+      String pat = FilePattern.findPattern(new Location(in));
+      if (pat != null) in = pat;
+    }
     if (separate) reader = new ChannelSeparator(reader);
     if (merge) reader = new ChannelMerger(reader);
     if (fill) reader = new ChannelFiller(reader);
@@ -216,17 +221,7 @@ public final class ImageConverter {
     reader.setId(in);
 
     MetadataStore store = reader.getMetadataStore();
-    IFormatReader base = reader;
 
-    if (base instanceof ReaderWrapper) {
-      base = ((ReaderWrapper) base).unwrap();
-    }
-    if (base instanceof FileStitcher) {
-      base = ((FileStitcher) base).getReader();
-    }
-    if (base instanceof ImageReader) {
-      base = ((ImageReader) base).getReader();
-    }
     MetadataTools.populatePixels(store, reader, false, false);
 
     if (store instanceof MetadataRetrieve) {
