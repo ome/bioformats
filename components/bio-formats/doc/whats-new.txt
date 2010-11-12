@@ -1,4 +1,4 @@
-4.2.1 (2010 November 11):
+4.2.1 (2010 November 12):
 * Many, many bug fixes
 * Added support for 7 new formats:
   - CellWorX .pnl
