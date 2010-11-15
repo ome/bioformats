@@ -747,23 +747,39 @@ public class MetamorphReader extends BaseTiffReader {
     core[0].sizeT = 0;
     int rgbChannels = getSizeC();
 
+    // Now that the base TIFF standard metadata has been parsed, we need to
+    // parse out the STK metadata from the UIC4TAG.
+
+    TiffIFDEntry uic1tagEntry = null;
+    TiffIFDEntry uic2tagEntry = null;
+    TiffIFDEntry uic4tagEntry = null;
+
     try {
-      // Now that the base TIFF standard metadata has been parsed, we need to
-      // parse out the STK metadata from the UIC4TAG.
-      TiffIFDEntry uic1tagEntry = tiffParser.getFirstIFDEntry(UIC1TAG);
-      TiffIFDEntry uic2tagEntry = tiffParser.getFirstIFDEntry(UIC2TAG);
-      TiffIFDEntry uic4tagEntry = tiffParser.getFirstIFDEntry(UIC4TAG);
-      mmPlanes = uic4tagEntry.getValueCount();
-      parseUIC2Tags(uic2tagEntry.getValueOffset());
-      if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-        parseUIC4Tags(uic4tagEntry.getValueOffset());
-        parseUIC1Tags(uic1tagEntry.getValueOffset(),
-          uic1tagEntry.getValueCount());
-      }
-      in.seek(uic4tagEntry.getValueOffset());
+      uic1tagEntry = tiffParser.getFirstIFDEntry(UIC1TAG);
+      uic2tagEntry = tiffParser.getFirstIFDEntry(UIC2TAG);
+      uic4tagEntry = tiffParser.getFirstIFDEntry(UIC4TAG);
     }
     catch (IllegalArgumentException exc) {
       LOGGER.debug("Unknown tag", exc);
+    }
+
+    try {
+      if (uic4tagEntry != null) {
+        mmPlanes = uic4tagEntry.getValueCount();
+      }
+      if (uic2tagEntry != null) {
+        parseUIC2Tags(uic2tagEntry.getValueOffset());
+      }
+      if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
+        if (uic4tagEntry != null) {
+          parseUIC4Tags(uic4tagEntry.getValueOffset());
+        }
+        if (uic1tagEntry != null) {
+          parseUIC1Tags(uic1tagEntry.getValueOffset(),
+            uic1tagEntry.getValueCount());
+        }
+      }
+      in.seek(uic4tagEntry.getValueOffset());
     }
     catch (NullPointerException exc) {
       LOGGER.debug("", exc);
