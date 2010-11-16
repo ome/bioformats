@@ -146,7 +146,8 @@ public class SeriesDialog extends ImporterDialog implements ActionListener {
         "Use commas to list multiple series. You can also use\n" +
         "a dash to represent a range of series. For example,\n" +
         "to import series 1, 3, 4, 5, 7, 8, 9, 12, 15 & 16,\n" +
-        "you could write: 1, 3-5, 7-9, 12, 15-16");
+        "you could write: 1, 3-5, 7-9, 12, 15-16\n \n" +
+        "There are " + seriesCount + " total series.");
       gd.addStringField("Series_list: ", "1");
     }
 
