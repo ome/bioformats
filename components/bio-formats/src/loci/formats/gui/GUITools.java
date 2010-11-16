@@ -37,6 +37,7 @@ import loci.formats.IFormatWriter;
 import loci.formats.ImageReader;
 import loci.formats.ImageWriter;
 import loci.formats.ReaderWrapper;
+import loci.formats.WriterWrapper;
 
 /**
  * A utility class for working with graphical user interfaces.
@@ -71,6 +72,9 @@ public final class GUITools {
       }
       else if (handler instanceof FileStitcher) {
         handler = ((FileStitcher) handler).getReader();
+      }
+      else if (handler instanceof WriterWrapper) {
+        handler = ((WriterWrapper) handler).getWriter();
       }
       else break;
     }
