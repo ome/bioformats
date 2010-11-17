@@ -371,14 +371,13 @@ public class ImageViewer extends JFrame implements ActionListener,
         omeMeta.setPixelsType(
           (PixelType) new PixelTypeEnumHandler().getEnumeration(pixelType), 0);
 
-        int nBands = images[0].getRaster().getNumBands();
-        int rgbChannelCount = (sizeC * sizeZ * sizeT) / nBands;
+        int rgbChannelCount = images[0].getRaster().getNumBands();
         int realChannelCount = sizeC / rgbChannelCount;
 
         for (int i=0; i<realChannelCount; i++) {
-          omeMeta.setChannelID(MetadataTools.createLSID("Channel", i, 0), i, 0);
+          omeMeta.setChannelID(MetadataTools.createLSID("Channel", i, 0), 0, i);
           omeMeta.setChannelSamplesPerPixel(
-            new PositiveInteger(rgbChannelCount), i, 0);
+            new PositiveInteger(rgbChannelCount), 0, i);
         }
 
         omeMeta.setPixelsSizeX(new PositiveInteger(images[0].getWidth()), 0);
