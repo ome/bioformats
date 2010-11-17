@@ -34,6 +34,7 @@ import loci.formats.ImageTools;
 import loci.formats.MetadataTools;
 import loci.formats.codec.BitBuffer;
 import loci.formats.codec.CodecOptions;
+import loci.formats.codec.JPEGCodec;
 import loci.formats.codec.MSRLECodec;
 import loci.formats.codec.MSVideoCodec;
 import loci.formats.meta.FilterMetadata;
@@ -59,6 +60,7 @@ public class AVIReader extends FormatReader {
   private static final int MSRLE = 1;
   private static final int MS_VIDEO = 1296126531;
   //private static final int CINEPAK = 1684633187;
+  private static final int JPEG = 1196444237;
 
   // -- Fields --
 
@@ -250,7 +252,18 @@ public class AVIReader extends FormatReader {
     core[0].littleEndian = true;
     core[0].interleaved = bmpBitsPerPixel != 16;
 
-    if (bmpBitsPerPixel == 32) {
+    if (bmpCompression == JPEG) {
+      long fileOff = offsets.get(0).longValue();
+      in.seek(fileOff);
+      int nBytes = uncompress(0, null).length / (getSizeX() * getSizeY());
+
+      if (bmpBitsPerPixel == 16) {
+        nBytes /= 2;
+      }
+      core[0].sizeC = nBytes;
+      core[0].rgb = getSizeC() > 1;
+    }
+    else if (bmpBitsPerPixel == 32) {
       core[0].sizeC = 4;
       core[0].rgb = true;
     }
@@ -298,6 +311,8 @@ public class AVIReader extends FormatReader {
     options.height = getSizeY();
     options.previousImage = (lastImageNo == no - 1) ? lastImage : null;
     options.bitsPerSample = bmpBitsPerPixel;
+    options.interleaved = isInterleaved();
+    options.littleEndian = isLittleEndian();
 
     if (bmpCompression == MSRLE) {
       byte[] b = new byte[(int) lengths.get(no).longValue()];
@@ -312,6 +327,10 @@ public class AVIReader extends FormatReader {
       buf = codec.decompress(in, options);
       lastImage = buf;
       lastImageNo = no;
+    }
+    else if (bmpCompression == JPEG) {
+      JPEGCodec codec = new JPEGCodec();
+      buf = codec.decompress(in, options);
     }
     /*
     else if (bmpCompression == CINEPAK) {
@@ -482,7 +501,7 @@ public class AVIReader extends FormatReader {
                 }
 
                 if (bmpCompression != MSRLE && bmpCompression != 0 &&
-                  bmpCompression != MS_VIDEO/* && bmpCompression != CINEPAK*/)
+                  bmpCompression != MS_VIDEO && bmpCompression != JPEG)
                 {
                   throw new FormatException("Unsupported compression type " +
                     bmpCompression);
@@ -585,6 +604,11 @@ public class AVIReader extends FormatReader {
                     readTypeAndSize();
                   }
                   check = type.substring(2);
+                  if (check.equals("0d")) {
+                    in.seek(spos + 1);
+                    readTypeAndSize();
+                    check = type.substring(2);
+                  }
                 }
                 in.seek(spos);
                 if (!oldType.startsWith("ix") && !foundPixels) {
