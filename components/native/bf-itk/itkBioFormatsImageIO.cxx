@@ -95,6 +95,11 @@ namespace itk {
       if( path != NULL) {
         dir.assign(path);
       }
+
+      if( dir.at(dir.length() - 1) != '/' ) {
+        dir.append(1,'/');
+      }
+
       list.push_back(jace::ClassPath(
 
  // To solve issue where JARs must live in current working directory:

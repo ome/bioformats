@@ -177,6 +177,10 @@ usage and/or distribution.
       <fileset dir="${bf-cpp.dir}" includes="*.dylib"/>
       <fileset dir="${bf-cpp.dir}" includes="*.jnilib"/>
       <fileset dir="${bf-cpp.dir}" includes="*.dll"/>
+      <fileset dir="${bf-cpp.dir}/jace" includes="*.so"/>
+      <fileset dir="${bf-cpp.dir}/jace" includes="*.dylib"/>
+      <fileset dir="${bf-cpp.dir}/jace" includes="*.jnilib"/>
+      <fileset dir="${bf-cpp.dir}/jace" includes="*.dll"/>
     </copy>
 
     <echo/>
