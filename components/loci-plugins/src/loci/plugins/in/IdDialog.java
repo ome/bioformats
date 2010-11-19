@@ -42,6 +42,7 @@ public class IdDialog extends ImporterDialog {
   // -- Fields --
 
   private OpenDialog od;
+  private String name;
 
   // -- Constructor --
 
@@ -97,7 +98,8 @@ public class IdDialog extends ImporterDialog {
 
       String idLabel = options.getLabel(ImporterOptions.KEY_ID);
       od = new OpenDialog(idLabel, options.getId());
-      if (od.getFileName() == null) return false;
+      name = od.getFileName();
+      if (name == null) return false;
     }
     else if (options.isHTTP()) {
       gd.showDialog();
@@ -111,9 +113,12 @@ public class IdDialog extends ImporterDialog {
     String id = null;
     if (options.isLocal()) {
       String dir = od.getDirectory();
-      String name = od.getFileName();
-      if (dir != null || name == null)
-      id = dir + name;
+      // NB: do not use od.getFileName() here.  That method has been called
+      // above, so the macro recorder will record the file path twice if we
+      // call od.getFileName() again.  See ticket #596.
+      if (dir != null || name == null) {
+        id = dir + name;
+      }
 
       // verify validity
       Location idLoc = new Location(id);
