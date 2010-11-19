@@ -175,7 +175,8 @@ public class BMPReader extends FormatReader {
     addGlobalMeta("Magic identifier", in.readString(2));
 
     addGlobalMeta("File size (in bytes)", in.readInt());
-    in.skipBytes(8); // reserved
+    in.skipBytes(4);
+    global = in.readInt();
 
     // read the second header - 40 bytes
 
@@ -223,8 +224,6 @@ public class BMPReader extends FormatReader {
       }
     }
     else if (nColors != 0) in.skipBytes(nColors * 4);
-
-    global = in.getFilePointer();
 
     LOGGER.info("Populating metadata");
 
