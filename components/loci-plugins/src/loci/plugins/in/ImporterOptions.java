@@ -34,6 +34,7 @@ import java.util.List;
 
 import loci.common.Location;
 import loci.common.Region;
+import loci.plugins.prefs.DoubleOption;
 import loci.plugins.prefs.OptionsList;
 import loci.plugins.prefs.StringOption;
 import loci.plugins.util.LibraryChecker;
@@ -144,7 +145,8 @@ public class ImporterOptions extends OptionsList {
   private List<Region> cropRegion = new ArrayList<Region>();
 
   // color mode options
-  private List<List<Color>> customColors = new ArrayList<List<Color>>();
+  private List<List<DoubleOption>> customColors =
+    new ArrayList<List<DoubleOption>>();
 
   // -- Constructor --
 
@@ -451,20 +453,38 @@ public class ImporterOptions extends OptionsList {
 
   // color mode options
   public Color getCustomColor(int s, int c) {
-    List<Color> list = get(customColors, s, null);
-    if (list == null) return null;
-    return get(list, c, null);
+    List<DoubleOption> list = get(customColors, s, null);
+    int defaultColor = getDefaultCustomColor(c).getRGB();
+    DoubleOption color = null;
+    if (list != null) {
+      color = get(list, c, null);
+    }
+    if (color == null) {
+      color =
+        new DoubleOption(getCustomColorKey(s, c), true, "", "", defaultColor);
+      color.loadOption();
+    }
+    return new Color((int) color.getValue());
   }
   public void setCustomColor(int s, int c, Color color) {
-    List<Color> list = get(customColors, s, null);
+    List<DoubleOption> list = get(customColors, s, null);
     if (list == null) {
-      list = new ArrayList<Color>();
+      list = new ArrayList<DoubleOption>();
       set(customColors, s, list, null);
     }
-    set(list, c, color, null);
+    DoubleOption colorOption = get(list, c, null);
+    if (colorOption == null) {
+      colorOption = new DoubleOption(getCustomColorKey(s, c), true, "", "", 0);
+    }
+    colorOption.setValue(color.getRGB());
+    set(list, c, colorOption, null);
+    colorOption.saveOption();
   }
   public Color getDefaultCustomColor(int c) {
     return DEFAULT_COLORS[c % DEFAULT_COLORS.length];
+  }
+  public String getCustomColorKey(int s, int c) {
+    return s + "_" + c;
   }
 
   // -- Helper methods --
