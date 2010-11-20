@@ -264,7 +264,9 @@ public class TiffWriter extends FormatWriter {
 
   /* @see loci.formats.IFormatWriter#getPixelTypes(String) */
   public int[] getPixelTypes(String codec) {
-    if (codec.startsWith(COMPRESSION_J2K) || codec.equals(COMPRESSION_JPEG)) {
+    if (codec != null && (codec.startsWith(COMPRESSION_J2K) ||
+      codec.equals(COMPRESSION_JPEG)))
+    {
       return new int[] {FormatTools.INT8, FormatTools.UINT8};
     }
     return new int[] {FormatTools.INT8, FormatTools.UINT8, FormatTools.INT16,

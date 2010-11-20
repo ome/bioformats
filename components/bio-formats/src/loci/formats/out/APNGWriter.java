@@ -96,8 +96,8 @@ public class APNGWriter extends FormatWriter {
   /* @see loci.formats.IFormatWriter#canDoStacks() */
   public boolean canDoStacks() { return true; }
 
-  /* @see loci.formats.IFormatWriter#getPixelTypes() */
-  public int[] getPixelTypes() {
+  /* @see loci.formats.IFormatWriter#getPixelTypes(String) */
+  public int[] getPixelTypes(String codec) {
     return new int[] {FormatTools.INT8, FormatTools.UINT8, FormatTools.INT16,
       FormatTools.UINT16};
   }
