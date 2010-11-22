@@ -234,9 +234,17 @@ public class TiffWriter extends FormatWriter {
   {
     IFD ifd = new IFD();
     TiffParser parser = new TiffParser(currentId);
-    long[] ifdOffsets = parser.getIFDOffsets();
-    if (no < ifdOffsets.length) {
-      ifd = parser.getIFD(ifdOffsets[no]);
+    try {
+      long[] ifdOffsets = parser.getIFDOffsets();
+      if (no < ifdOffsets.length) {
+        ifd = parser.getIFD(ifdOffsets[no]);
+      }
+    }
+    finally {
+      RandomAccessInputStream tiffParserStream = parser.getStream();
+      if (tiffParserStream != null) {
+        tiffParserStream.close();
+      }
     }
 
     if (compression == null) compression = "";
