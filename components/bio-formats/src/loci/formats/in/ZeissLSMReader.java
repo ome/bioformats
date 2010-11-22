@@ -886,9 +886,18 @@ public class ZeissLSMReader extends FormatReader {
           double xPos = originX + in.readDouble() * 1000000;
           double yPos = originY + in.readDouble() * 1000000;
           double zPos = originZ + in.readDouble() * 1000000;
-          xCoordinates.add(xPos);
-          yCoordinates.add(yPos);
-          zCoordinates.add(zPos);
+          if (xCoordinates.size() > i) {
+            xPos += xCoordinates.get(i);
+            xCoordinates.setElementAt(xPos, i);
+          }
+          if (yCoordinates.size() > i) {
+            yPos += yCoordinates.get(i);
+            yCoordinates.setElementAt(yPos, i);
+          }
+          if (zCoordinates.size() > i) {
+            zPos += zCoordinates.get(i);
+            zCoordinates.setElementAt(zPos, i);
+          }
 
           addGlobalMeta("X position for position #" + (i + 1), xPos);
           addGlobalMeta("Y position for position #" + (i + 1), yPos);
