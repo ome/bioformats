@@ -31,8 +31,8 @@ import java.util.Map.Entry;
 
 import loci.common.RandomAccessInputStream;
 import loci.common.services.ServiceFactory;
+import loci.formats.ImageWriter;
 import loci.formats.ome.OMEXMLMetadata;
-import loci.formats.out.TiffWriter;
 import loci.formats.services.OMEXMLService;
 
 import ome.xml.model.enums.DimensionOrder;
@@ -108,7 +108,7 @@ public class OMETiffWriterTest {
 
   @Test
   public void testFileHandleClosure() throws Exception {
-    TiffWriter writer = new TiffWriter();
+    ImageWriter writer = new ImageWriter();
     writer.setMetadataRetrieve(ms);
     writer.setId(target.getAbsolutePath());
     for (int i = 0; i < (SIZE_Z * SIZE_C * SIZE_T); i++) {
@@ -132,7 +132,6 @@ public class OMETiffWriterTest {
      */
     public void addFilter(Filter arg0) {
       // TODO Auto-generated method stub
-      
     }
 
     /* (non-Javadoc)
@@ -140,7 +139,6 @@ public class OMETiffWriterTest {
      */
     public void clearFilters() {
       // TODO Auto-generated method stub
-      
     }
 
     /* (non-Javadoc)
@@ -148,7 +146,6 @@ public class OMETiffWriterTest {
      */
     public void close() {
       // TODO Auto-generated method stub
-      
     }
 
     /* (non-Javadoc)
@@ -208,7 +205,6 @@ public class OMETiffWriterTest {
      */
     public void setErrorHandler(ErrorHandler handler) {
       // TODO Auto-generated method stub
-      
     }
 
     /* (non-Javadoc)
@@ -216,7 +212,6 @@ public class OMETiffWriterTest {
      */
     public void setLayout(Layout layout) {
       // TODO Auto-generated method stub
-      
     }
 
     /* (non-Javadoc)
@@ -224,8 +219,7 @@ public class OMETiffWriterTest {
      */
     public void setName(String name) {
       // TODO Auto-generated method stub
-      
     }
-    
+
   }
 }
