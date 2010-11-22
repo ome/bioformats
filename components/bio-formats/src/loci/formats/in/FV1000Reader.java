@@ -471,8 +471,10 @@ public class FV1000Reader extends FormatReader {
       IniTable guiChannel = f.getTable("GUI Channel " + index + " Parameters");
       while (guiChannel != null) {
         ChannelData channel = new ChannelData();
-        channel.gain = new Double(guiChannel.get("AnalogPMTGain"));
-        channel.voltage = new Double(guiChannel.get("AnalogPMTVoltage"));
+        String gain = guiChannel.get("AnalogPMTGain");
+        if (gain != null) channel.gain = new Double(gain);
+        String voltage = guiChannel.get("AnalogPMTVoltage");
+        if (voltage != null) channel.voltage = new Double(voltage);
         channel.barrierFilter = guiChannel.get("BF Name");
         channel.active = Integer.parseInt(guiChannel.get("CH Activate")) != 0;
         channel.name = guiChannel.get("CH Name");
