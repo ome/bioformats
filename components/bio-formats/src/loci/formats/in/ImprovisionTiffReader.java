@@ -58,6 +58,8 @@ public class ImprovisionTiffReader extends BaseTiffReader {
   private String[] files;
   private MinimalTiffReader[] readers;
 
+  private int lastFile = 0;
+
   // -- Constructor --
 
   public ImprovisionTiffReader() {
@@ -90,6 +92,7 @@ public class ImprovisionTiffReader extends BaseTiffReader {
       }
       readers = null;
       files = null;
+      lastFile = 0;
     }
   }
 
@@ -97,6 +100,28 @@ public class ImprovisionTiffReader extends BaseTiffReader {
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
     return noPixels ? null : files;
+  }
+
+  /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  public byte[][] get8BitLookupTable() throws FormatException, IOException {
+    FormatTools.assertId(currentId, true, 1);
+    if (readers == null || lastFile < 0 || lastFile >= readers.length ||
+      readers[lastFile] == null)
+    {
+      return super.get8BitLookupTable();
+    }
+    return readers[lastFile].get8BitLookupTable();
+  }
+
+  /* @see loci.formats.IFormatReader#get16BitLookupTable() */
+  public short[][] get16BitLookupTable() throws FormatException, IOException {
+    FormatTools.assertId(currentId, true, 1);
+    if (readers == null || lastFile < 0 || lastFile >= readers.length ||
+      readers[lastFile] == null)
+    {
+      return super.get16BitLookupTable();
+    }
+    return readers[lastFile].get16BitLookupTable();
   }
 
   /**
@@ -111,6 +136,7 @@ public class ImprovisionTiffReader extends BaseTiffReader {
     int file = FormatTools.getIndex("XYZCT", getSizeZ(), getEffectiveSizeC(),
       getSizeT(), getImageCount(), zct[0], zct[1], zct[2]) % files.length;
     int plane = no / files.length;
+    lastFile = file;
 
     return readers[file].openBytes(plane, buf, x, y, w, h);
   }
