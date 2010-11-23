@@ -67,6 +67,7 @@ public class FileStitcher extends ReaderWrapper {
   private int series;
 
   private boolean noStitch;
+  private boolean group = true;
 
   private MetadataStore store;
 
@@ -499,14 +500,12 @@ public class FileStitcher extends ReaderWrapper {
 
   /* @see IFormatReader#setGroupFiles(boolean) */
   public void setGroupFiles(boolean group) {
-    reader.setGroupFiles(group);
-    if (externals != null) {
-      for (ExternalSeries s : externals) {
-        for (DimensionSwapper r : s.getReaders()) {
-          r.setGroupFiles(group);
-        }
-      }
-    }
+    this.group = group;
+  }
+
+  /* @see IFormatReader#isGroupFiles(boolean) */
+  public boolean isGroupFiles() {
+    return group;
   }
 
   /* @see IFormatReader#setNormalized(boolean) */
@@ -811,7 +810,7 @@ public class FileStitcher extends ReaderWrapper {
       mustGroup = reader.fileGroupOption(id) == FormatTools.MUST_GROUP;
     }
 
-    if (mustGroup) {
+    if (mustGroup || !group) {
       // reader subclass is handling file grouping
       noStitch = true;
       reader.close();
