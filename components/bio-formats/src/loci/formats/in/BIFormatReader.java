@@ -26,6 +26,7 @@ package loci.formats.in;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
+import loci.common.DataTools;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -66,8 +67,18 @@ public abstract class BIFormatReader extends FormatReader {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
     BufferedImage data = (BufferedImage) openPlane(no, x, y, w, h);
-    byte[] t = AWTImageTools.getBytes(data, false);
-    System.arraycopy(t, 0, buf, 0, (int) Math.min(t.length, buf.length));
+    switch (data.getColorModel().getComponentSize(0)) {
+      case 8:
+        byte[] t = AWTImageTools.getBytes(data, false);
+        System.arraycopy(t, 0, buf, 0, (int) Math.min(t.length, buf.length));
+        break;
+      case 16:
+        short[] ts = AWTImageTools.getShorts(data)[0];
+        for (int i=0; i<ts.length && i < buf.length*2; i++) {
+          DataTools.unpackBytes(ts[i], buf, i * 2, 2, isLittleEndian());
+        }
+        break;
+    }
     return buf;
   }
 

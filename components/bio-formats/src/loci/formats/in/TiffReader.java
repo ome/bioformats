@@ -135,11 +135,14 @@ public class TiffReader extends BaseTiffReader {
             if (metadata.indexOf("xml") != -1) {
               metadata = metadata.substring(metadata.indexOf("<"));
               metadata = "<root>" + XMLTools.sanitizeXML(metadata) + "</root>";
-              Hashtable<String, String> xmlMetadata =
-                XMLTools.parseXML(metadata);
-              for (String key : xmlMetadata.keySet()) {
-                addGlobalMeta(key, xmlMetadata.get(key));
+              try {
+                Hashtable<String, String> xmlMetadata =
+                  XMLTools.parseXML(metadata);
+                for (String key : xmlMetadata.keySet()) {
+                  addGlobalMeta(key, xmlMetadata.get(key));
+                }
               }
+              catch (IOException e) { }
             }
             else {
               addGlobalMeta(tag.toString(), metadata);
