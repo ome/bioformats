@@ -81,44 +81,39 @@ namespace itk {
     m_FileType = Binary;
 
     try {
-      // initialize the Java virtual machine
-      itkDebugMacro("Creating JVM...");
-      jace::StaticVmLoader loader(JNI_VERSION_1_4);
-      jace::OptionList list;
+      jace::StaticVmLoader* tmpLoader = (jace::StaticVmLoader*)jace::helper::getVmLoader();
+      if(tmpLoader == NULL) {
 
-      const char name[] = "ITK_AUTOLOAD_PATH";
-      const char* namePtr;
-      namePtr = name;
-      char* path;
-      path = getenv(name);
-      std::string dir("");
-      if( path != NULL) {
-        dir.assign(path);
+        // initialize the Java virtual machine
+        itkDebugMacro("Creating JVM...");
+        jace::OptionList list;
+        jace::StaticVmLoader loader(JNI_VERSION_1_4);
+
+        const char name[] = "ITK_AUTOLOAD_PATH";
+        const char* namePtr;
+        namePtr = name;
+        char* path;
+        path = getenv(name);
+        std::string dir("");
+        if( path != NULL) {
+          dir.assign(path);
+              }
+
+        if( dir.at(dir.length() - 1) != '/' ) {
+          dir.append(1,'/');
+        
+
+        list.push_back(jace::ClassPath(
+        dir+"jace-runtime.jar:"+dir+"bio-formats.jar:"+dir+"loci_tools.jar"
+        ));
+        list.push_back(jace::CustomOption("-Xcheck:jni"));
+        list.push_back(jace::CustomOption("-Xmx256m"));
+        list.push_back(jace::CustomOption("-Djava.awt.headless=true"));
+        //list.push_back(jace::CustomOption("-verbose"));
+        //list.push_back(jace::CustomOption("-verbose:jni"));
+        jace::helper::createVm(loader, list, false);
+        itkDebugMacro("JVM created.");
       }
-
-      if( dir.at(dir.length() - 1) != '/' ) {
-        dir.append(1,'/');
-      }
-
-      list.push_back(jace::ClassPath(
-
- // To solve issue where JARs must live in current working directory:
- // somehow discover my own origin directory
- // e.g.: I am part of libBioFormatsIOPlugin.dylib
- // and I live in folder:
- //   /Users/hinerm/loci/bioformats/components/native/bf-itk/build/dist/bf-itk
- // so, we want a string variable "dir" containing that folder name.
- // Then, can pass classpath elements with that prefix.
- //        dir+"jace-runtime.jar:"+dir+"bio-formats.jar:"+dir+"loci_tools.jar"
-      dir+"jace-runtime.jar:"+dir+"bio-formats.jar:"+dir+"loci_tools.jar"
-      ));
-      list.push_back(jace::CustomOption("-Xcheck:jni"));
-      list.push_back(jace::CustomOption("-Xmx256m"));
-      list.push_back(jace::CustomOption("-Djava.awt.headless=true"));
-      //list.push_back(jace::CustomOption("-verbose"));
-      //list.push_back(jace::CustomOption("-verbose:jni"));
-      jace::helper::createVm(loader, list, false);
-      itkDebugMacro("JVM created.");
     }
     catch (JNIException& jniException) {
       itkDebugMacro("Exception creating JVM: " << jniException.what());
