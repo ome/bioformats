@@ -37,6 +37,7 @@ import loci.formats.meta.MetadataRetrieve;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffCompression;
 import loci.formats.tiff.TiffParser;
+import loci.formats.tiff.TiffRational;
 import loci.formats.tiff.TiffSaver;
 
 /**
@@ -181,6 +182,19 @@ public class TiffWriter extends FormatWriter {
 
     ifd.put(new Integer(IFD.IMAGE_WIDTH), new Integer(width));
     ifd.put(new Integer(IFD.IMAGE_LENGTH), new Integer(height));
+
+    Double physicalSizeX = retrieve.getPixelsPhysicalSizeX(series);
+    if (physicalSizeX == null) physicalSizeX = 0d;
+    else physicalSizeX = 1d / physicalSizeX;
+    Double physicalSizeY = retrieve.getPixelsPhysicalSizeY(series);
+    if (physicalSizeY == null) physicalSizeY = 0d;
+    else physicalSizeY = 1d / physicalSizeY;
+
+    ifd.put(IFD.RESOLUTION_UNIT, 3);
+    ifd.put(IFD.X_RESOLUTION,
+      new TiffRational((long) (physicalSizeX * 1000 * 10000), 1000));
+    ifd.put(IFD.Y_RESOLUTION,
+      new TiffRational((long) (physicalSizeY * 1000 * 10000), 1000));
 
     if (!isBigTiff) {
       isBigTiff = (out.length() + 2 * plane) >= 4294967296L;
