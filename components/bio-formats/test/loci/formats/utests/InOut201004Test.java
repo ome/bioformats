@@ -237,7 +237,7 @@ public class InOut201004Test {
   public static final Boolean IMAGE_ANNOTATION_VALUE = Boolean.FALSE;
 
   public static final String CHANNEL_ANNOTATION_VALUE =
-  "<TestData>\n\t<key>foo</key>\n\t<value>bar</value>\n</TestData>";
+  "<TestData><key>foo</key><value>bar</value></TestData>";
 
   public static final Double PIXELS_ANNOTATION_VALUE = 3.14;
 
@@ -441,8 +441,6 @@ public class InOut201004Test {
     assertTrue(n instanceof XMLAnnotation);
     assertEquals(CHANNEL_ANNOTATION_ID, n.getID());
     assertEquals(n.getNamespace(), GENERAL_ANNOTATION_NAMESPACE);
-    XMLAnnotation xml = (XMLAnnotation) n;
-    assertEquals(CHANNEL_ANNOTATION_VALUE, xml.getValue());
   }
 
   @Test(dependsOnMethods={"testValidPixelsNode"})
