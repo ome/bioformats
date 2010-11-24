@@ -175,6 +175,11 @@ ${customContent}\
 {% end %}\
 {% for prop in klass.properties.values() %}\
 {% choose %}\
+{% when prop.name in customPropertyContent %}\
+		// -- BEGIN custom content from ${prop.name} property template --
+${customPropertyContent[prop.name]}
+		// -- END custom content from ${prop.name} property template --
+{% end %}\
 {% when prop.isReference %}\
 		// Element reference ${prop.name}
 		List<Element> ${prop.name}_nodeList =

@@ -34,6 +34,7 @@ from util import odict
 from genshi.template import NewTextTemplate
 from configobj import ConfigObj
 from getopt import getopt, GetoptError
+from glob import glob
 from xml import sax
 
 def baseUsage(error):
@@ -136,17 +137,32 @@ def main(args):
 	base, filename = os.path.split(CLASS_TEMPLATE)
 	name, extension = os.path.splitext(filename)
 	for obj in model.objects.values():
-		CUSTOM_CLASS_TEMPLATE = os.path.join(base, '%s_%s%s' % (name, obj.name, extension))
+		CUSTOM_CLASS_TEMPLATE = os.path.join(
+				base, '%s_%s%s' % (name, obj.name, extension))
 		customContent = ''
 		if os.path.exists(CUSTOM_CLASS_TEMPLATE):
-       			customTemplate = NewTextTemplate(open(CUSTOM_CLASS_TEMPLATE))
+			customTemplate = NewTextTemplate(open(CUSTOM_CLASS_TEMPLATE))
 			customContent = customTemplate.generate(
 				fu=fu, klass=obj, parents=parents, model=model)
 			customContent = customContent.render()
+		customTemplates = glob(os.path.join(
+				base, "%s_%s_*%s" % (name, obj.name, extension)))
+		customPropertyContent = dict()
+		for customTemplate in customTemplates:
+			start = customTemplate.rfind("_") + 1
+			end = customTemplate.rfind(".")
+			name = customTemplate[start:end]
+			customTemplate = NewTextTemplate(open(customTemplate))
+			content = customTemplate.generate(
+				fu=fu, klass=obj, parents=parents, model=model)
+			content = content.render()
+			customPropertyContent[name] = content
 		parents = resolve_parents(model, obj.name)
 		f = open(os.path.join(outputDirectory, "%s.java" % obj.name), "w")
 		classContent = template.generate(
-				fu=fu, klass=obj, parents=parents, model=model, customContent=customContent)
+				fu=fu, klass=obj, parents=parents, model=model,
+				customContent=customContent,
+				customPropertyContent=customPropertyContent)
 		classContent = classContent.render()
 		f.write(classContent)
 		f.close()
