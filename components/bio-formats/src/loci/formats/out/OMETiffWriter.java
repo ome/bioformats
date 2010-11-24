@@ -197,9 +197,12 @@ public class OMETiffWriter extends TiffWriter {
 
     ServiceFactory factory = new ServiceFactory();
     service = factory.getInstance(OMEXMLService.class);
-    omeMeta = service.getOMEMetadata(retrieve);
-    if (omeMeta instanceof OMEXMLMetadataImpl) {
-      ((OMEXMLMetadataImpl) omeMeta).resolveReferences();
+    OMEXMLMetadata originalOMEMeta = service.getOMEMetadata(retrieve);
+    if (originalOMEMeta instanceof OMEXMLMetadataImpl) {
+      ((OMEXMLMetadataImpl) originalOMEMeta).resolveReferences();
+
+      String omexml = service.getOMEXML(originalOMEMeta);
+      omeMeta = service.createOMEXMLMetadata(omexml);
     }
   }
 
