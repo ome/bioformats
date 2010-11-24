@@ -201,6 +201,7 @@ public class ImprovisionTiffReader extends BaseTiffReader {
     for (int i=0; i<ifds.size(); i++) {
       Arrays.fill(coords[i], -1);
       comment = ifds.get(i).getComment();
+      // TODO : can use loci.common.IniParser to parse the comments
       comment = comment.replaceAll("\r\n", "\n");
       comment = comment.replaceAll("\r", "\n");
       String channelName = null;
@@ -217,16 +218,14 @@ public class ImprovisionTiffReader extends BaseTiffReader {
         else if (key.equals("ZPlane")) coords[i][0] = Integer.parseInt(value);
         else if (key.equals("ChannelNo")) {
           coords[i][1] = Integer.parseInt(value);
+          int ndx = Integer.parseInt(value) - 1;
+          if (cNames[ndx] == null) cNames[ndx] = channelName;
         }
         else if (key.equals("TimepointName")) {
           coords[i][2] = Integer.parseInt(value);
         }
         else if (key.equals("ChannelName")) {
           channelName = value;
-        }
-        else if (key.equals("ChannelNo")) {
-          int ndx = Integer.parseInt(value);
-          if (cNames[ndx] == null) cNames[ndx] = channelName;
         }
         else if (key.equals("MultiFileTIFF")) {
           multipleFiles = value.equalsIgnoreCase("yes");
