@@ -207,6 +207,7 @@ public class ImprovisionTiffReader extends BaseTiffReader {
 
     for (int i=0; i<ifds.size(); i++) {
       comment = ifds.get(i).getComment();
+      // TODO : can use loci.common.IniParser to parse the comments
       comment = comment.replaceAll("\r\n", "\n");
       comment = comment.replaceAll("\r", "\n");
       StringTokenizer st = new StringTokenizer(comment, "\n");
@@ -224,16 +225,14 @@ public class ImprovisionTiffReader extends BaseTiffReader {
         else if (key.equals("ZPlane")) coords[i][0] = Integer.parseInt(value);
         else if (key.equals("ChannelNo")) {
           coords[i][1] = Integer.parseInt(value);
+          int ndx = Integer.parseInt(value) - 1;
+          if (cNames[ndx] == null) cNames[ndx] = channelName;
         }
         else if (key.equals("TimepointName")) {
           coords[i][2] = Integer.parseInt(value);
         }
         else if (key.equals("ChannelName")) {
           channelName = value;
-        }
-        else if (key.equals("ChannelNo")) {
-          int ndx = Integer.parseInt(value);
-          if (cNames[ndx] == null) cNames[ndx] = channelName;
         }
         else if (key.equals("MultiFileTIFF")) {
           multipleFiles = value.equalsIgnoreCase("yes");
@@ -315,6 +314,12 @@ public class ImprovisionTiffReader extends BaseTiffReader {
     store.setDimensionsPhysicalSizeY(new Float(pixelSizeY), 0, 0);
     store.setDimensionsPhysicalSizeZ(new Float(pixelSizeZ), 0, 0);
     store.setDimensionsTimeIncrement(new Float(pixelSizeT / 1000000.0), 0, 0);
+
+    for (int i=0; i<getEffectiveSizeC(); i++) {
+      if (i < cNames.length && cNames[i] != null) {
+        store.setLogicalChannelName(cNames[i], 0, i);
+      }
+    }
   }
 
   // -- Helper methods --
