@@ -500,6 +500,7 @@ public class SlidebookReader extends FormatReader {
               in.skipBytes(16);
               core[j].sizeX = in.readShort();
               core[j].sizeY = in.readShort();
+              adjust = false;
               break;
             }
           }
