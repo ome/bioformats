@@ -108,6 +108,7 @@ import ome.xml.model.primitives.NonNegativeLong;
 import ome.xml.model.primitives.PositiveInteger;
 
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 import org.w3c.dom.Document;
@@ -300,7 +301,10 @@ public class InOut201004Test {
 
   @Parameters({"mockClassName"})
   @BeforeClass
-  public void setUp(String mockClassName) throws Exception {
+  public void setUp(@Optional String mockClassName) throws Exception {
+    if (mockClassName == null) {
+      mockClassName = "loci.formats.utests.ObjectBasedOMEModelMock";
+    }
     Class mockClass = Class.forName(mockClassName);
     Constructor constructor = mockClass.getDeclaredConstructor();
     mock = (OMEModelMock) constructor.newInstance();
@@ -437,8 +441,6 @@ public class InOut201004Test {
     assertTrue(n instanceof XMLAnnotation);
     assertEquals(CHANNEL_ANNOTATION_ID, n.getID());
     assertEquals(n.getNamespace(), GENERAL_ANNOTATION_NAMESPACE);
-    XMLAnnotation xml = (XMLAnnotation) n;
-    assertEquals(xml.getValue(), CHANNEL_ANNOTATION_VALUE);
   }
 
   @Test(dependsOnMethods={"testValidPixelsNode"})
@@ -786,7 +788,7 @@ public class InOut201004Test {
   @Test(groups={"disabled"})
   public static void main(String[] args) throws Exception {
     InOut201004Test t = new InOut201004Test();
-    t.setUp("ome.xml.utests.ObjectBasedOMEModelMock");
+    t.setUp("loci.formats.utests.ObjectBasedOMEModelMock");
     System.out.println("###\n### XML\n###");
     System.out.println(t.asString);
     t.testValidOMENode();

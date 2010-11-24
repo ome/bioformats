@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-07-06 17:07:47+0100
+ * Created by callan via xsd-fu on 2010-11-24 13:01:13+0000
  *
  *-----------------------------------------------------------------------------
  */
@@ -117,6 +117,7 @@ public class XMLAnnotation extends Annotation
 		{
 			LOGGER.debug("Expecting node name of XMLAnnotation got {}", tagName);
 		}
+		// -- BEGIN custom content from Value property template --
 		List<Element> Value_nodeList =
 				getChildrenByTagName(element, "Value");
 		if (Value_nodeList.size() > 1)
@@ -130,9 +131,36 @@ public class XMLAnnotation extends Annotation
 		{
 			// Element property Value which is not complex (has no
 			// sub-elements)
-			setValue(
-					String.valueOf(Value_nodeList.get(0).getTextContent()));
+			java.io.StringWriter sw = new java.io.StringWriter();
+			javax.xml.transform.stream.StreamResult sr = 
+				new javax.xml.transform.stream.StreamResult(sw);
+			javax.xml.transform.TransformerFactory tf =
+				javax.xml.transform.TransformerFactory.newInstance();
+
+			try
+			{
+				javax.xml.transform.Transformer t = tf.newTransformer(
+					new javax.xml.transform.stream.StreamSource(
+						this.getClass().getResourceAsStream("StripWhitespace.xsl")));
+				t.setOutputProperty(
+					javax.xml.transform.OutputKeys.OMIT_XML_DECLARATION, "yes");
+				t.setOutputProperty(
+					javax.xml.transform.OutputKeys.INDENT, "no");
+				NodeList childNodeList = Value_nodeList.get(0).getChildNodes();
+				for (int i = 0; i < childNodeList.getLength(); i++)
+				{
+					t.transform(new javax.xml.transform.dom.DOMSource(
+						childNodeList.item(i)), sr);
+				}
+				setValue(sw.toString().trim());
+			}
+			catch (Exception e)
+			{
+				throw new RuntimeException(e);
+			}
 		}
+
+		// -- END custom content from Value property template --
 	}
 
 	// -- XMLAnnotation API methods --

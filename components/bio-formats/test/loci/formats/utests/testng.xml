@@ -88,4 +88,10 @@
         <class name="loci.formats.utests.PumpWithLightSourceSettingsTest"/>
       </classes>
     </test>
+    <test name="XMLAnnotation">
+      <groups/>
+      <classes>
+        <class name="loci.formats.utests.XMLAnnotationTest"/>
+      </classes>
+    </test>
 </suite>
