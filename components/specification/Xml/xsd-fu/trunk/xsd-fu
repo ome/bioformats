@@ -146,27 +146,44 @@ def main(args):
 				fu=fu, klass=obj, parents=parents, model=model)
 			customContent = customContent.render()
 		customTemplates = glob(os.path.join(
-				base, "%s_%s_*%s" % (name, obj.name, extension)))
-		customPropertyContent = dict()
+				base, "%s_%s_update_*%s" % (name, obj.name, extension)))
+		# BEGIN Custom templates for update()
+		customUpdatePropertyContent = dict()
 		for customTemplate in customTemplates:
 			start = customTemplate.rfind("_") + 1
 			end = customTemplate.rfind(".")
-			name = customTemplate[start:end]
+			propertyName = customTemplate[start:end]
 			customTemplate = NewTextTemplate(open(customTemplate))
 			content = customTemplate.generate(
 				fu=fu, klass=obj, parents=parents, model=model)
 			content = content.render()
-			customPropertyContent[name] = content
+			customUpdatePropertyContent[propertyName] = content
+		# END Custom templates for update()
+		# BEGIN Custom templates for asXMLElement()
+		customTemplates = glob(os.path.join(
+				base, "%s_%s_asXMLElement_*%s" % (name, obj.name, extension)))
+		customAsXMLElementPropertyContent = dict()
+		for customTemplate in customTemplates:
+			start = customTemplate.rfind("_") + 1
+			end = customTemplate.rfind(".")
+			propertyName = customTemplate[start:end]
+			customTemplate = NewTextTemplate(open(customTemplate))
+			content = customTemplate.generate(
+				fu=fu, klass=obj, parents=parents, model=model)
+			content = content.render()
+			customAsXMLElementPropertyContent[propertyName] = content
+		# END Custom templates for asXMLElment()
 		parents = resolve_parents(model, obj.name)
 		f = open(os.path.join(outputDirectory, "%s.java" % obj.name), "w")
 		classContent = template.generate(
 				fu=fu, klass=obj, parents=parents, model=model,
 				customContent=customContent,
-				customPropertyContent=customPropertyContent)
+				customUpdatePropertyContent=customUpdatePropertyContent,
+				customAsXMLElementPropertyContent=customAsXMLElementPropertyContent)
 		classContent = classContent.render()
 		f.write(classContent)
 		f.close()
-		
+
 def enum_value_name(value):
 	"""
 	Returns a valid Java enumeration name for an OME XML enumeration value.

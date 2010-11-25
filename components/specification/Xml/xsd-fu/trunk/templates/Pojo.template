@@ -175,9 +175,9 @@ ${customContent}\
 {% end %}\
 {% for prop in klass.properties.values() %}\
 {% choose %}\
-{% when prop.name in customPropertyContent %}\
+{% when prop.name in customUpdatePropertyContent %}\
 		// -- BEGIN custom content from ${prop.name} property template --
-${customPropertyContent[prop.name]}
+${customUpdatePropertyContent[prop.name]}
 		// -- END custom content from ${prop.name} property template --
 {% end %}\
 {% when prop.isReference %}\
@@ -499,6 +499,11 @@ ${customPropertyContent[prop.name]}
 		if (${prop.javaInstanceVariableName} != null)
 		{
 {% choose %}\
+{% when prop.name in customAsXMLElementPropertyContent %}\
+			// -- BEGIN custom content from ${prop.name} property template --
+${customAsXMLElementPropertyContent[prop.name]}
+			// -- END custom content from ${prop.name} property template --
+{% end %}\
 {% when prop.isReference and prop.maxOccurs > 1 %}\
 			// Reference property ${prop.name} which occurs more than once
 			for (${prop.javaType} ${prop.javaInstanceVariableName}_value : ${prop.javaInstanceVariableName})
