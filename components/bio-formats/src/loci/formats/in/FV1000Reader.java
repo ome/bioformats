@@ -1489,9 +1489,13 @@ public class FV1000Reader extends FormatReader {
 
     // most of the values will be wrapped in double quotes
     for (IniTable table : list) {
+      LOGGER.debug("");
+      LOGGER.debug("[" + table.get(IniTable.HEADER_KEY) + "]");
       String[] keys = table.keySet().toArray(new String[table.size()]);
       for (String key : keys) {
-        table.put(key, sanitizeValue(table.get(key)));
+        String value = sanitizeValue(table.get(key));
+        LOGGER.debug(key + " = " + value);
+        table.put(key, value);
       }
     }
     reader.close();
