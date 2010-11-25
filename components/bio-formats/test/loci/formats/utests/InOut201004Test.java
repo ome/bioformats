@@ -441,6 +441,7 @@ public class InOut201004Test {
     assertTrue(n instanceof XMLAnnotation);
     assertEquals(CHANNEL_ANNOTATION_ID, n.getID());
     assertEquals(n.getNamespace(), GENERAL_ANNOTATION_NAMESPACE);
+    assertEquals(CHANNEL_ANNOTATION_VALUE, ((XMLAnnotation)n).getValue());
   }
 
   @Test(dependsOnMethods={"testValidPixelsNode"})

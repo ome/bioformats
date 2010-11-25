@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-11-24 13:01:13+0000
+ * Created by callan via xsd-fu on 2010-11-25 11:31:54+0000
  *
  *-----------------------------------------------------------------------------
  */
@@ -205,12 +205,34 @@ public class XMLAnnotation extends Annotation
 
 		if (value != null)
 		{
-			// Element property Value which is not complex (has no
-			// sub-elements)
+			// -- BEGIN custom content from Value property template --
+			Document Value_document = null;
+			try
+			{
+				javax.xml.parsers.DocumentBuilderFactory factory =
+					javax.xml.parsers.DocumentBuilderFactory.newInstance();
+				factory.setNamespaceAware(true);
+				javax.xml.parsers.DocumentBuilder parser =
+					factory.newDocumentBuilder();
+				org.xml.sax.InputSource is = new org.xml.sax.InputSource();
+				is.setCharacterStream(new java.io.StringReader(value));
+				Value_document = parser.parse(is);
+			}
+			catch (Exception e)
+			{
+				throw new RuntimeException(e);
+			}
 			Element value_element = 
 					document.createElementNS(NAMESPACE, "Value");
-			value_element.setTextContent(value.toString());
+			NodeList Value_subNodes = Value_document.getChildNodes();
+			for (int i = 0; i < Value_subNodes.getLength(); i++)
+			{
+				Node Value_subNode = Value_subNodes.item(i);
+				Value_subNode = document.importNode(Value_subNode, true);
+				value_element.appendChild(Value_subNode);
+			}
 			XMLAnnotation_element.appendChild(value_element);
+			// -- END custom content from Value property template --
 		}
 		return super.asXMLElement(document, XMLAnnotation_element);
 	}
