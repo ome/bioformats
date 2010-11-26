@@ -30,6 +30,7 @@ import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.File;
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.List;
 
@@ -115,6 +116,9 @@ public class ShortcutTransferHandler extends TransferHandler {
         else {
           // convert "file://" URLs into path names
           ids[i] = id.replaceAll("^file:/*", "/");
+          if (!new File(ids[i]).exists()) {
+            ids[i] = URLDecoder.decode(ids[i]);
+          }
         }
       }
 
