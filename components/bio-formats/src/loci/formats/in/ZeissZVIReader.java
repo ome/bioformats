@@ -520,7 +520,12 @@ public class ZeissZVIReader extends FormatReader {
       else if (dirName.equals("Shapes") && name.indexOf("Item") != -1) {
         int imageNum = getImageNumber(name, -1);
         if (imageNum != -1) {
-          parseROIs(imageNum, name, store);
+          try {
+            parseROIs(imageNum, name, store);
+          }
+          catch (IOException e) {
+            LOGGER.debug("Could not parse all ROIs.", e);
+          }
         }
       }
       else if (dirName.equals("Image") ||
