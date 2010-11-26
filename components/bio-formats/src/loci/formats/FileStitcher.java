@@ -1027,7 +1027,7 @@ public class FileStitcher extends ReaderWrapper {
       }
     }
     core[sno].imageCount = core[sno].sizeZ * core[sno].sizeT;
-    if (!isRGB()) core[sno].imageCount *= core[sno].sizeC;
+    core[sno].imageCount *= reader.getEffectiveSizeC();
 
     int[] cLengths = reader.getChannelDimLengths();
     String[] cTypes = reader.getChannelDimTypes();
