@@ -761,8 +761,8 @@ public class ImageInfo {
             pix = DataTools.normalizeDoubles((double[]) pix);
           }
         }
-        images[i - start] = AWTImageTools.makeImage(
-          ImageTools.make24Bits(pix, sizeX, sizeY, false, false, min, max),
+        images[i - start] = AWTImageTools.makeImage(ImageTools.make24Bits(pix,
+          sizeX, sizeY, reader.isInterleaved(), false, min, max),
           sizeX, sizeY, FormatTools.isSigned(pixelType));
       }
       if (images[i - start] == null) {

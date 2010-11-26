@@ -163,7 +163,7 @@ public final class ImageTools {
       byte[] a = new byte[4];
       int maxC = Math.min(c, a.length);
       for (int j=maxC-1; j>=0; j--) {
-        a[j] = b[interleaved ? i + j * w * h : i * c + j];
+        a[j] = b[interleaved ? i * c + j : i + j * w * h];
       }
       if (c == 1) {
         for (int j=1; j<a.length; j++) {
