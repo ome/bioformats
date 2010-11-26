@@ -73,9 +73,13 @@ public abstract class BIFormatReader extends FormatReader {
         System.arraycopy(t, 0, buf, 0, (int) Math.min(t.length, buf.length));
         break;
       case 16:
-        short[] ts = AWTImageTools.getShorts(data)[0];
-        for (int i=0; i<ts.length && i < buf.length*2; i++) {
-          DataTools.unpackBytes(ts[i], buf, i * 2, 2, isLittleEndian());
+        short[][] ts = AWTImageTools.getShorts(data);
+        for (int c=0; c<ts.length; c++) {
+          int offset = c * ts[c].length * 2;
+          for (int i=0; i<ts[c].length && offset < buf.length; i++) {
+            DataTools.unpackBytes(ts[c][i], buf, offset, 2, isLittleEndian());
+            offset += 2;
+          }
         }
         break;
     }
