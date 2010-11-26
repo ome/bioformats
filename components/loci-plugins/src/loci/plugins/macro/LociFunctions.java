@@ -32,6 +32,7 @@ import ij.process.ImageProcessor;
 import java.io.IOException;
 import java.util.Arrays;
 
+import loci.common.Region;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
@@ -44,7 +45,10 @@ import loci.formats.ImageReader;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.services.OMEXMLService;
 import loci.plugins.BF;
+import loci.plugins.in.Calibrator;
 import loci.plugins.in.ImagePlusReader;
+import loci.plugins.in.ImportProcess;
+import loci.plugins.in.ImporterOptions;
 import loci.plugins.util.ImageProcessorReader;
 import loci.plugins.util.LociPrefs;
 
@@ -185,17 +189,39 @@ public class LociFunctions extends MacroFunctions {
   public void openImage(String title, Double no)
     throws FormatException, IOException
   {
-    final ImageProcessor[] ip = r.openProcessors(no.intValue());
-    final ImagePlus imp = ImagePlusReader.createImage(title, Arrays.asList(ip));
-    imp.show();
+    openSubImage(title, no, 0d, 0d,
+      new Double(r.getSizeX()), new Double(r.getSizeY()));
   }
 
   public void openSubImage(String title, Double no, Double x, Double y,
     Double w, Double h) throws FormatException, IOException
   {
-    ImageProcessor[] ip = r.openProcessors(no.intValue(),
-      x.intValue(), y.intValue(), w.intValue(), h.intValue());
-    final ImagePlus imp = ImagePlusReader.createImage(title, Arrays.asList(ip));
+    ImporterOptions options = new ImporterOptions();
+    options.setWindowless(true);
+    options.setId(r.getCurrentFile());
+    options.setCrop(true);
+    options.setSpecifyRanges(true);
+    options.setSeriesOn(r.getSeries(), true);
+
+    int[] zct = r.getZCTCoords(no.intValue());
+    options.setCBegin(r.getSeries(), zct[1]);
+    options.setZBegin(r.getSeries(), zct[0]);
+    options.setTBegin(r.getSeries(), zct[2]);
+    options.setCEnd(r.getSeries(), zct[1]);
+    options.setZEnd(r.getSeries(), zct[0]);
+    options.setTEnd(r.getSeries(), zct[2]);
+
+    Region region =
+      new Region(x.intValue(), y.intValue(), w.intValue(), h.intValue());
+    options.setCropRegion(r.getSeries(), region);
+
+    ImportProcess process = new ImportProcess(options);
+    process.execute();
+
+    ImagePlusReader reader = new ImagePlusReader(process);
+    final ImagePlus imp = reader.openImagePlus()[0];
+    Calibrator calibrator = new Calibrator(process);
+    calibrator.applyCalibration(imp);
     imp.show();
   }
 
