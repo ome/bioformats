@@ -9,8 +9,8 @@ data model so that you can work with a particular piece of metadata (e.g.,
 physical width of the image in microns) in a format-independent way.
 
 Of the 433 fields documented below:
-  * The file format itself supports 95 of them (21%).
-  * Of those, Bio-Formats fully or partially converts 95 (100%).
+  * The file format itself supports 100 of them (23%).
+  * Of those, Bio-Formats fully or partially converts 100 (100%).
 
 == Supported fields ==
 These fields are fully supported by the
@@ -31,6 +31,7 @@ Bio-Formats Olympus FV1000 format reader:
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Dichroic Dichroic]: ID
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Dichroic Dichroic]: Model
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Ellipse Ellipse]: FontSize
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Ellipse Ellipse]: ID
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Ellipse Ellipse]: RadiusX
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Ellipse Ellipse]: RadiusY
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Ellipse Ellipse]: StrokeWidth
@@ -55,6 +56,7 @@ Bio-Formats Olympus FV1000 format reader:
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_LightPath LightPath]: DichroicRef
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_LightPath LightPath]: EmissionFilterRef
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Line Line]: FontSize
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Line Line]: ID
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Line Line]: StrokeWidth
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Line Line]: TheT
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Line Line]: TheZ
@@ -86,6 +88,7 @@ Bio-Formats Olympus FV1000 format reader:
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Plane Plane]: TheT
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Plane Plane]: TheZ
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Point Point]: FontSize
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Point Point]: ID
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Point Point]: StrokeWidth
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Point Point]: TheT
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Point Point]: TheZ
@@ -93,6 +96,7 @@ Bio-Formats Olympus FV1000 format reader:
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Point Point]: Y
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Polyline Polyline]: Closed
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Polyline Polyline]: FontSize
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Polyline Polyline]: ID
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Polyline Polyline]: Points
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Polyline Polyline]: StrokeWidth
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Polyline Polyline]: TheT
@@ -101,6 +105,7 @@ Bio-Formats Olympus FV1000 format reader:
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_ROI ROI]: ID
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Rectangle Rectangle]: FontSize
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Rectangle Rectangle]: Height
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Rectangle Rectangle]: ID
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Rectangle Rectangle]: StrokeWidth
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Rectangle Rectangle]: TheT
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Rectangle Rectangle]: TheZ
@@ -110,7 +115,7 @@ Bio-Formats Olympus FV1000 format reader:
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Rectangle Rectangle]: Y
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_TransmittanceRange TransmittanceRange]: CutIn
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_TransmittanceRange TransmittanceRange]: CutOut
-=== Total supported: 95 ===
+=== Total supported: 100 ===
 
 == Unknown or missing fields ==
 As far as we are aware, these fields are not supported by the Olympus FV1000
@@ -164,7 +169,6 @@ lack of documentation or sample data.
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_DoubleAnnotation DoubleAnnotation]: Value
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Ellipse Ellipse]: Description
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Ellipse Ellipse]: Fill
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Ellipse Ellipse]: ID
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Ellipse Ellipse]: Label
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Ellipse Ellipse]: Name
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Ellipse Ellipse]: Stroke
@@ -248,7 +252,6 @@ lack of documentation or sample data.
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_LightPath LightPath]: ExcitationFilterRef
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Line Line]: Description
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Line Line]: Fill
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Line Line]: ID
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Line Line]: Label
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Line Line]: Name
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Line Line]: Stroke
@@ -351,7 +354,6 @@ lack of documentation or sample data.
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_PlateAcquisition PlateAcquisition]: WellSampleRef
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Point Point]: Description
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Point Point]: Fill
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Point Point]: ID
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Point Point]: Label
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Point Point]: Name
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Point Point]: Stroke
@@ -360,7 +362,6 @@ lack of documentation or sample data.
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Point Point]: Transform
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Polyline Polyline]: Description
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Polyline Polyline]: Fill
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Polyline Polyline]: ID
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Polyline Polyline]: Label
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Polyline Polyline]: Name
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Polyline Polyline]: Stroke
@@ -383,7 +384,6 @@ lack of documentation or sample data.
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Reagent Reagent]: ReagentIdentifier
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Rectangle Rectangle]: Description
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Rectangle Rectangle]: Fill
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Rectangle Rectangle]: ID
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Rectangle Rectangle]: Label
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Rectangle Rectangle]: Name
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Rectangle Rectangle]: Stroke
@@ -454,4 +454,4 @@ lack of documentation or sample data.
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_XMLAnnotation XMLAnnotation]: ID
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_XMLAnnotation XMLAnnotation]: Namespace
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_XMLAnnotation XMLAnnotation]: Value
-=== Total unknown or missing: 338 ===
+=== Total unknown or missing: 333 ===

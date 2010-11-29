@@ -9,8 +9,8 @@ data model so that you can work with a particular piece of metadata (e.g.,
 physical width of the image in microns) in a format-independent way.
 
 Of the 433 fields documented below:
-  * The file format itself supports 27 of them (6%).
-  * Of those, Bio-Formats fully or partially converts 27 (100%).
+  * The file format itself supports 28 of them (6%).
+  * Of those, Bio-Formats fully or partially converts 28 (100%).
 
 == Supported fields ==
 These fields are fully supported by the
@@ -39,10 +39,11 @@ Bio-Formats IPLab format reader:
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Plane Plane]: TheZ
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_ROI ROI]: ID
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Rectangle Rectangle]: Height
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Rectangle Rectangle]: ID
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Rectangle Rectangle]: Width
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Rectangle Rectangle]: X
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Rectangle Rectangle]: Y
-=== Total supported: 27 ===
+=== Total supported: 28 ===
 
 == Unknown or missing fields ==
 As far as we are aware, these fields are not supported by the IPLab
@@ -377,7 +378,6 @@ lack of documentation or sample data.
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Rectangle Rectangle]: Description
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Rectangle Rectangle]: Fill
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Rectangle Rectangle]: FontSize
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Rectangle Rectangle]: ID
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Rectangle Rectangle]: Label
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Rectangle Rectangle]: Name
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Rectangle Rectangle]: Stroke
@@ -454,4 +454,4 @@ lack of documentation or sample data.
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_XMLAnnotation XMLAnnotation]: ID
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_XMLAnnotation XMLAnnotation]: Namespace
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_XMLAnnotation XMLAnnotation]: Value
-=== Total unknown or missing: 406 ===
+=== Total unknown or missing: 405 ===

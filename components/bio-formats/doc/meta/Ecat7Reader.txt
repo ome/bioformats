@@ -9,8 +9,8 @@ data model so that you can work with a particular piece of metadata (e.g.,
 physical width of the image in microns) in a format-independent way.
 
 Of the 433 fields documented below:
-  * The file format itself supports 16 of them (3%).
-  * Of those, Bio-Formats fully or partially converts 16 (100%).
+  * The file format itself supports 20 of them (4%).
+  * Of those, Bio-Formats fully or partially converts 20 (100%).
 
 == Supported fields ==
 These fields are fully supported by the
@@ -18,10 +18,14 @@ Bio-Formats ECAT7 format reader:
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Channel Channel]: ID
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Channel Channel]: SamplesPerPixel
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Image Image]: AcquiredDate
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Image Image]: Description
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Image Image]: ID
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Image Image]: Name
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Pixels Pixels]: DimensionOrder
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Pixels Pixels]: ID
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Pixels Pixels]: PhysicalSizeX
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Pixels Pixels]: PhysicalSizeY
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Pixels Pixels]: PhysicalSizeZ
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Pixels Pixels]: SizeC
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Pixels Pixels]: SizeT
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Pixels Pixels]: SizeX
@@ -31,7 +35,7 @@ Bio-Formats ECAT7 format reader:
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Plane Plane]: TheC
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Plane Plane]: TheT
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Plane Plane]: TheZ
-=== Total supported: 16 ===
+=== Total supported: 20 ===
 
 == Unknown or missing fields ==
 As far as we are aware, these fields are not supported by the ECAT7
@@ -161,7 +165,6 @@ lack of documentation or sample data.
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Group Group]: Name
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Image Image]: AnnotationRef
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Image Image]: DatasetRef
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Image Image]: Description
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Image Image]: ExperimentRef
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Image Image]: ExperimenterRef
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Image Image]: GroupRef
@@ -291,9 +294,6 @@ lack of documentation or sample data.
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Path Path]: TheZ
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Path Path]: Transform
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Pixels Pixels]: AnnotationRef
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Pixels Pixels]: PhysicalSizeX
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Pixels Pixels]: PhysicalSizeY
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Pixels Pixels]: PhysicalSizeZ
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Pixels Pixels]: TimeIncrement
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_BinData PixelsBinData]: BigEndian
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Plane Plane]: AnnotationRef
@@ -454,4 +454,4 @@ lack of documentation or sample data.
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_XMLAnnotation XMLAnnotation]: ID
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_XMLAnnotation XMLAnnotation]: Namespace
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_XMLAnnotation XMLAnnotation]: Value
-=== Total unknown or missing: 417 ===
+=== Total unknown or missing: 413 ===

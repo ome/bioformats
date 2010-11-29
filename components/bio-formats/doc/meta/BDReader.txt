@@ -9,8 +9,8 @@ data model so that you can work with a particular piece of metadata (e.g.,
 physical width of the image in microns) in a format-independent way.
 
 Of the 433 fields documented below:
-  * The file format itself supports 46 of them (10%).
-  * Of those, Bio-Formats fully or partially converts 46 (100%).
+  * The file format itself supports 50 of them (11%).
+  * Of those, Bio-Formats fully or partially converts 50 (100%).
 
 == Supported fields ==
 These fields are fully supported by the
@@ -50,18 +50,22 @@ Bio-Formats BD Pathway format reader:
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Plane Plane]: TheZ
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Plate Plate]: ColumnNamingConvention
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Plate Plate]: Description
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Plate Plate]: ID
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Plate Plate]: Name
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Plate Plate]: RowNamingConvention
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_ROI ROI]: ID
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Rectangle Rectangle]: Height
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Rectangle Rectangle]: ID
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Rectangle Rectangle]: Width
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Rectangle Rectangle]: X
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Rectangle Rectangle]: Y
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Well Well]: Column
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Well Well]: ID
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Well Well]: Row
+  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_WellSample WellSample]: ID
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_WellSample WellSample]: ImageRef
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_WellSample WellSample]: Index
-=== Total supported: 46 ===
+=== Total supported: 50 ===
 
 == Unknown or missing fields ==
 As far as we are aware, these fields are not supported by the BD Pathway
@@ -319,7 +323,6 @@ lack of documentation or sample data.
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Plate Plate]: AnnotationRef
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Plate Plate]: Columns
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Plate Plate]: ExternalIdentifier
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Plate Plate]: ID
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Plate Plate]: Rows
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Plate Plate]: ScreenRef
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Plate Plate]: Status
@@ -381,7 +384,6 @@ lack of documentation or sample data.
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Rectangle Rectangle]: Description
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Rectangle Rectangle]: Fill
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Rectangle Rectangle]: FontSize
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Rectangle Rectangle]: ID
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Rectangle Rectangle]: Label
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Rectangle Rectangle]: Name
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Rectangle Rectangle]: Stroke
@@ -443,15 +445,13 @@ lack of documentation or sample data.
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Well Well]: Color
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Well Well]: ExternalDescription
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Well Well]: ExternalIdentifier
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Well Well]: ID
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Well Well]: ReagentRef
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_Well Well]: Status
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_WellSample WellSample]: AnnotationRef
-  * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_WellSample WellSample]: ID
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_WellSample WellSample]: PositionX
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_WellSample WellSample]: PositionY
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_WellSample WellSample]: Timepoint
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_XMLAnnotation XMLAnnotation]: ID
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_XMLAnnotation XMLAnnotation]: Namespace
   * [http://cvs.openmicroscopy.org.uk/svn/specification/Documentation/Generated/OME-2010-06/ome.xsd.html#element_XMLAnnotation XMLAnnotation]: Value
-=== Total unknown or missing: 387 ===
+=== Total unknown or missing: 383 ===

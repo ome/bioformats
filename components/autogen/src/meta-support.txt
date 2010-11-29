@@ -44,6 +44,28 @@
 # Dimensions = Yes since r2351
 # Objective.NominalMagnification = Yes added on 2008 Jan 8
 # ImagingEnvironment.Temperature = Partial see ticket #167 for details
+[AIMReader]
+Channel.ID = Yes
+Channel.SamplesPerPixel = Yes
+Image.AcquiredDate = Yes
+Image.ID = Yes
+Image.Name = Yes
+Pixels.BinDataBigEndian = Yes
+Pixels.DimensionOrder = Yes
+Pixels.ID = Yes
+Pixels.PhysicalSizeX = Yes
+Pixels.PhysicalSizeY = Yes
+Pixels.PhysicalSizeZ = Yes
+Pixels.SizeC = Yes
+Pixels.SizeT = Yes
+Pixels.SizeX = Yes
+Pixels.SizeY = Yes
+Pixels.SizeZ = Yes
+Pixels.Type = Yes
+Plane.TheC = Yes
+Plane.TheT = Yes
+Plane.TheZ = Yes
+
 [AliconaReader]
 Channel.ID = Yes
 Channel.SamplesPerPixel = Yes
