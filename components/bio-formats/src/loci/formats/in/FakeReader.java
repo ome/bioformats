@@ -226,6 +226,7 @@ public class FakeReader extends FormatReader {
     int thumbSizeX = 0; // default
     int thumbSizeY = 0; // default
     int pixelType = DEFAULT_PIXEL_TYPE;
+    int bitsPerPixel = 0; // default
     int rgb = DEFAULT_RGB_CHANNEL_COUNT;
     String dimOrder = DEFAULT_DIMENSION_ORDER;
     boolean orderCertain = true;
@@ -272,6 +273,7 @@ public class FakeReader extends FormatReader {
       else if (key.equals("pixelType")) {
         pixelType = FormatTools.pixelTypeFromString(value);
       }
+      else if (key.equals("bitsPerPixel")) bitsPerPixel = intValue;
       else if (key.equals("rgb")) rgb = intValue;
       else if (key.equals("dimOrder")) dimOrder = value.toUpperCase();
       else if (key.equals("orderCertain")) orderCertain = boolValue;
@@ -326,7 +328,7 @@ public class FakeReader extends FormatReader {
       core[s].thumbSizeX = thumbSizeX;
       core[s].thumbSizeY = thumbSizeY;
       core[s].pixelType = pixelType;
-
+      core[s].bitsPerPixel = bitsPerPixel;
       core[s].imageCount = sizeZ * effSizeC * sizeT;
       core[s].rgb = rgb > 1;
       core[s].dimensionOrder = dimOrder;
