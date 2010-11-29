@@ -27,13 +27,18 @@
 type = boolean
 label = Autoscale
 info = <b>Autoscale</b> - \
-  Stretches the histogram of the image planes to fit the data range.    \
-  Does not alter underlying values in the image. If selected, histogram \
-  is stretched for each stack based upon the global minimum and maximum \
-  value throughout the stack.                                           \
-  <br><br>Note that you can use the Brightness &amp; Contrast or        \
-  Window/Level controls to adjust the contrast range regardless of      \
-  whether this option is used.
+  Stretches the channel histograms to each channel's                   \
+  global minimum and maximum value throughout the stack.               \
+  Does not alter underlying values in the image.                       \
+  <br><br>If unselected, all channel histograms are scaled to the      \
+  image's digitization bit depth.                                      \
+  Note that this range may be narrow than the bit depth of the file.   \
+  For example, a 16-bit file may contain intensities digitized to      \
+  16-bits (0-65,535), to 12-bits (0-4,095), to 10-bits (0-1,024), etc. \
+  <br><br>Note that you can use the Brightness &amp; Contrast or       \
+  Window/Level controls to adjust the contrast range regardless of     \
+  whether this option is used.                                         \
+  The histogram will provide min/max values in the stack.
 default = true
 
 [colorMode]
