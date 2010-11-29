@@ -128,7 +128,7 @@ public class FEITiffReader extends BaseTiffReader {
 
         microscopeModel = ini.getTable("System").get("SystemType");
 
-        IniTable beamTable = ini.getTable("EBeam");
+        IniTable beamTable = ini.getTable(ini.getTable("Beam").get("Beam"));
         stageX = new Double(beamTable.get("StageX"));
         stageY = new Double(beamTable.get("StageY"));
         stageZ = new Double(beamTable.get("StageZ"));
