@@ -32,7 +32,7 @@ info = <b>Autoscale</b> - \
   Does not alter underlying values in the image.                       \
   <br><br>If unselected, all channel histograms are scaled to the      \
   image's digitization bit depth.                                      \
-  Note that this range may be narrow than the bit depth of the file.   \
+  Note that this range may be narrower than the bit depth of the file. \
   For example, a 16-bit file may contain intensities digitized to      \
   16-bits (0-65,535), to 12-bits (0-4,095), to 10-bits (0-1,024), etc. \
   <br><br>Note that you can use the Brightness &amp; Contrast or       \
