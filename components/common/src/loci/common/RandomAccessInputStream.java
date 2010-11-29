@@ -30,6 +30,9 @@ import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  *
  * <dl><dt><b>Source code:</b></dt>
@@ -45,6 +48,10 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
 
   /** Maximum size of the buffer used by the DataInputStream. */
   protected static final int MAX_OVERHEAD = 1048576;
+
+  /** Logger for this class. */
+  private static final Logger LOGGER =
+    LoggerFactory.getLogger(RandomAccessInputStream.class);
 
   /**
    * Block size to use when searching through the stream.
@@ -74,6 +81,9 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
 
   /** Constructs a random access stream around the given handle. */
   public RandomAccessInputStream(IRandomAccess handle) throws IOException {
+    if (LOGGER.isTraceEnabled()) {
+      LOGGER.trace("RandomAccessInputStream {} OPEN", hashCode());
+    }
     raf = handle;
     raf.setOrder(ByteOrder.BIG_ENDIAN);
     seek(0);
@@ -103,6 +113,9 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
 
   /** Closes the streams. */
   public void close() throws IOException {
+    if (LOGGER.isTraceEnabled()) {
+      LOGGER.trace("RandomAccessInputStream {} CLOSE", hashCode());
+    }
     if (Location.getMappedFile(file) != null) return;
     if (raf != null) raf.close();
     raf = null;
