@@ -126,6 +126,7 @@ public class FV1000Reader extends FormatReader {
   private Vector<String> previewNames;
 
   private String pixelSizeX, pixelSizeY;
+  private int validBits;
   private Vector<String> illuminations;
   private Vector<Integer> wavelengths;
   private String pinholeSize;
@@ -304,6 +305,7 @@ public class FV1000Reader extends FormatReader {
       pixelSize = null;
       imageDepth = 0;
       pixelSizeX = pixelSizeY = null;
+      validBits = 0;
       pinholeSize = null;
       magnification = lensNA = objectiveName = workingDistance = null;
       creationDate = null;
@@ -447,6 +449,10 @@ public class FV1000Reader extends FormatReader {
     imageDepth = Integer.parseInt(referenceParams.get("ImageDepth"));
     pixelSizeX = referenceParams.get("WidthConvertValue");
     pixelSizeY = referenceParams.get("HeightConvertValue");
+    String ripValidBitCounts = referenceParams.get("ValidBitCounts");
+    if (ripValidBitCounts != null) {
+      validBits = Integer.parseInt(ripValidBitCounts);
+    }
 
     int index = 0;
 
@@ -626,6 +632,7 @@ public class FV1000Reader extends FormatReader {
           }
         }
       }
+      core[0].bitsPerPixel = validBits;
 
       IniTable acquisition = pty.getTable("Acquisition Parameters Common");
       if (acquisition != null) {
@@ -1489,9 +1496,13 @@ public class FV1000Reader extends FormatReader {
 
     // most of the values will be wrapped in double quotes
     for (IniTable table : list) {
+      LOGGER.debug("");
+      LOGGER.debug("[" + table.get(IniTable.HEADER_KEY) + "]");
       String[] keys = table.keySet().toArray(new String[table.size()]);
       for (String key : keys) {
-        table.put(key, sanitizeValue(table.get(key)));
+        String value = sanitizeValue(table.get(key));
+        LOGGER.debug(key + " = " + value);
+        table.put(key, value);
       }
     }
     reader.close();
