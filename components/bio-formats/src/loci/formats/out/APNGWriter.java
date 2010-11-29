@@ -117,6 +117,7 @@ public class APNGWriter extends FormatWriter {
       int nChannels = getSamplesPerPixel();
       boolean indexed =
         getColorModel() != null && (getColorModel() instanceof IndexColorModel);
+      littleEndian = !r.getPixelsBinDataBigEndian(series, 0);
 
       // write 8-byte PNG signature
       out.write(PNG_SIG);
@@ -255,7 +256,16 @@ public class APNGWriter extends FormatWriter {
     for (int i=0; i<height; i++) {
       deflater.write(0);
       if (interleaved) {
-        System.arraycopy(stream, i * rowLen, rowBuf, 0, rowLen);
+        if (littleEndian) {
+          for (int col=0; col<width*sizeC; col++) {
+            int offset = (i * sizeC * width + col) * bytesPerPixel;
+            int pixel = DataTools.bytesToInt(stream, offset,
+              bytesPerPixel, littleEndian);
+            DataTools.unpackBytes(pixel, rowBuf, col * bytesPerPixel,
+              bytesPerPixel, false);
+          }
+        }
+        else System.arraycopy(stream, i * rowLen, rowBuf, 0, rowLen);
       }
       else {
         int max = (int) Math.pow(2, bytesPerPixel * 8 - 1);
