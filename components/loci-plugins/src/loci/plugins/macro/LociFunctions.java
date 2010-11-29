@@ -32,6 +32,7 @@ import ij.process.ImageProcessor;
 import java.io.IOException;
 import java.util.Arrays;
 
+import loci.common.Region;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
@@ -44,7 +45,10 @@ import loci.formats.ImageReader;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.services.OMEXMLService;
 import loci.plugins.BF;
+import loci.plugins.in.Calibrator;
 import loci.plugins.in.ImagePlusReader;
+import loci.plugins.in.ImportProcess;
+import loci.plugins.in.ImporterOptions;
 import loci.plugins.util.ImageProcessorReader;
 import loci.plugins.util.LociPrefs;
 
@@ -84,6 +88,20 @@ public class LociFunctions extends MacroFunctions {
     }
     catch (DependencyException de) { }
     catch (ServiceException se) { }
+  }
+
+  // -- LociFunctions API methods - version numbers --
+
+  public void getRevision(String[] revision) {
+    revision[0] = FormatTools.SVN_REVISION;
+  }
+
+  public void getBuildDate(String[] date) {
+    date[0] = FormatTools.DATE;
+  }
+
+  public void getVersionNumber(String[] version) {
+    version[0] = FormatTools.VERSION;
   }
 
   // -- LociFunctions API methods - loci.formats.IFormatReader --
@@ -171,18 +189,40 @@ public class LociFunctions extends MacroFunctions {
   public void openImage(String title, Double no)
     throws FormatException, IOException
   {
-    final ImageProcessor[] ip = r.openProcessors(no.intValue());
-    final ImagePlus imp = ImagePlusReader.createImage(title, Arrays.asList(ip));
-    imp.show();
+    openSubImage(title, no, 0d, 0d,
+      new Double(r.getSizeX()), new Double(r.getSizeY()));
   }
 
   public void openSubImage(String title, Double no, Double x, Double y,
     Double w, Double h) throws FormatException, IOException
   {
-    ImageProcessor[] ip = r.openProcessors(no.intValue(),
-      x.intValue(), y.intValue(), w.intValue(), h.intValue());
-    final ImagePlus imp = ImagePlusReader.createImage(title, Arrays.asList(ip));
-    imp.show();    
+    ImporterOptions options = new ImporterOptions();
+    options.setWindowless(true);
+    options.setId(r.getCurrentFile());
+    options.setCrop(true);
+    options.setSpecifyRanges(true);
+    options.setSeriesOn(r.getSeries(), true);
+
+    int[] zct = r.getZCTCoords(no.intValue());
+    options.setCBegin(r.getSeries(), zct[1]);
+    options.setZBegin(r.getSeries(), zct[0]);
+    options.setTBegin(r.getSeries(), zct[2]);
+    options.setCEnd(r.getSeries(), zct[1]);
+    options.setZEnd(r.getSeries(), zct[0]);
+    options.setTEnd(r.getSeries(), zct[2]);
+
+    Region region =
+      new Region(x.intValue(), y.intValue(), w.intValue(), h.intValue());
+    options.setCropRegion(r.getSeries(), region);
+
+    ImportProcess process = new ImportProcess(options);
+    process.execute();
+
+    ImagePlusReader reader = new ImagePlusReader(process);
+    final ImagePlus imp = reader.openImagePlus()[0];
+    Calibrator calibrator = new Calibrator(process);
+    calibrator.applyCalibration(imp);
+    imp.show();
   }
 
   public void close() throws IOException { r.close(); }
@@ -350,6 +390,35 @@ public class LociFunctions extends MacroFunctions {
     exposureTime[0] = val == null ? new Double(Double.NaN) : val;
   }
 
+  public void getPixelsPhysicalSizeX(Double[] sizeX) {
+    int imageIndex = r.getSeries();
+    MetadataRetrieve retrieve = (MetadataRetrieve) r.getMetadataStore();
+    sizeX[0] = retrieve.getPixelsPhysicalSizeX(imageIndex);
+    if (sizeX[0] == null) sizeX[0] = new Double(Double.NaN);
+  }
+
+  public void getPixelsPhysicalSizeY(Double[] sizeY) {
+    int imageIndex = r.getSeries();
+    MetadataRetrieve retrieve = (MetadataRetrieve) r.getMetadataStore();
+    sizeY[0] = retrieve.getPixelsPhysicalSizeY(imageIndex);
+    if (sizeY[0] == null) sizeY[0] = new Double(Double.NaN);
+  }
+
+  public void getPixelsPhysicalSizeZ(Double[] sizeZ) {
+    int imageIndex = r.getSeries();
+    MetadataRetrieve retrieve = (MetadataRetrieve) r.getMetadataStore();
+    sizeZ[0] = retrieve.getPixelsPhysicalSizeZ(imageIndex);
+    if (sizeZ[0] == null) sizeZ[0] = new Double(Double.NaN);
+  }
+
+  public void getPixelsTimeIncrement(Double[] sizeT) {
+    int imageIndex = r.getSeries();
+    MetadataRetrieve retrieve = (MetadataRetrieve) r.getMetadataStore();
+    sizeT[0] = retrieve.getPixelsTimeIncrement(imageIndex);
+    if (sizeT[0] == null) sizeT[0] = new Double(Double.NaN);
+  }
+
+
   // -- PlugIn API methods --
 
   public void run(String arg) {
@@ -392,6 +461,15 @@ public class LociFunctions extends MacroFunctions {
       IJ.log("-- Returns a code indicating the file grouping policy for");
       IJ.log("-- for the current dataset. Possible values are:");
       IJ.log("--   must, can, cannot, unknown");
+      IJ.log("Ext.getVersionNumber(version)");
+      IJ.log("-- Returns the version number of the currently installed");
+      IJ.log("-- version of Bio-Formats.");
+      IJ.log("Ext.getRevision(revision)");
+      IJ.log("-- Returns the SVN revision number of the currently");
+      IJ.log("-- installed version of Bio-Formats.");
+      IJ.log("Ext.getBuildDate(date)");
+      IJ.log("-- Returns the build date of the currently installed");
+      IJ.log("-- version of Bio-Formats.");
       IJ.log("");
       IJ.log("-= Usable before initializing a file =-");
       IJ.log("");
@@ -524,6 +602,18 @@ public class LociFunctions extends MacroFunctions {
       IJ.log("Ext.getPlaneTimingExposureTime(exposureTime, no)");
       IJ.log("-- Obtains the exposure time (in seconds) for the no'th");
       IJ.log("-- plane, or NaN if none.");
+      IJ.log("Ext.getPixelsPhysicalSizeX(sizeX)");
+      IJ.log("-- Obtains the width of a pixel in microns, or NaN if the");
+      IJ.log("-- the width is not stored in the original file.");
+      IJ.log("Ext.getPixelsPhysicalSizeY(sizeY)");
+      IJ.log("-- Obtains the height of a pixel in microns, or NaN if the");
+      IJ.log("-- the height is not stored in the original file.");
+      IJ.log("Ext.getPixelsPhysicalSizeZ(sizeZ)");
+      IJ.log("-- Obtains the spacing between Z sections in microns, or NaN");
+      IJ.log("-- if the spacing is not stored in the original file.");
+      IJ.log("Ext.getPixelsTimeIncrement(sizeT)");
+      IJ.log("-- Obtains the spacing between time points in seconds, or");
+      IJ.log("-- NaN if the spacing is not stored in the original file.");
       IJ.log("");
       IJ.log("For more information, see the online Javadocs");
       IJ.log("for the loci.formats.IFormatReader and ");
