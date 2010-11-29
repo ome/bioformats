@@ -363,11 +363,19 @@ public class ZeissLSMReader extends FormatReader {
 
     int seriesCount = 0;
 
+    Vector<String> validFiles = new Vector<String>();
     for (String filename : lsmFilenames) {
-      int extraSeries = getExtraSeries(filename);
-      seriesCounts.put(filename, extraSeries);
-      seriesCount += extraSeries;
+      try {
+        int extraSeries = getExtraSeries(filename);
+        seriesCounts.put(filename, extraSeries);
+        seriesCount += extraSeries;
+        validFiles.add(filename);
+      }
+      catch (IOException e) {
+        LOGGER.debug("Failed to parse " + filename, e);
+      }
     }
+    lsmFilenames = validFiles.toArray(new String[validFiles.size()]);
 
     core = new CoreMetadata[seriesCount];
     ifdsList = new Vector<IFDList>();
@@ -1014,7 +1022,9 @@ public class ZeissLSMReader extends FormatReader {
               blocks.add(block);
             }
           }
-          else if (dataSize + in.getFilePointer() <= in.length()) {
+          else if (dataSize + in.getFilePointer() <= in.length() &&
+            dataSize > 0)
+          {
             in.skipBytes(dataSize);
           }
           else break;
