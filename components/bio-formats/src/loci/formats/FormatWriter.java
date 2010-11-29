@@ -209,14 +209,14 @@ public abstract class FormatWriter extends FormatHandler
 
   /* @see IFormatWriter#getPixelTypes() */
   public int[] getPixelTypes() {
-    return new int[] {FormatTools.INT8, FormatTools.UINT8, FormatTools.INT16,
-      FormatTools.UINT16, FormatTools.INT32, FormatTools.UINT32,
-      FormatTools.FLOAT};
+    return getPixelTypes(getCompression());
   }
 
   /* @see IFormatWriter#getPixelTypes(String) */
   public int[] getPixelTypes(String codec) {
-    return getPixelTypes();
+    return new int[] {FormatTools.INT8, FormatTools.UINT8, FormatTools.INT16,
+      FormatTools.UINT16, FormatTools.INT32, FormatTools.UINT32,
+      FormatTools.FLOAT};
   }
 
   /* @see IFormatWriter#isSupportedType(int) */

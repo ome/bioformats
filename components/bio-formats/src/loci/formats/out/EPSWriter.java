@@ -120,8 +120,8 @@ public class EPSWriter extends FormatWriter {
     out.writeBytes("\nshowpage\n");
   }
 
-  /* @see loci.formats.IFormatWriter#getPixelTypes() */
-  public int[] getPixelTypes() {
+  /* @see loci.formats.IFormatWriter#getPixelTypes(String) */
+  public int[] getPixelTypes(String codec) {
     return new int[] {FormatTools.UINT8};
   }
 

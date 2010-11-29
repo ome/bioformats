@@ -104,8 +104,8 @@ public abstract class ImageIOWriter extends FormatWriter {
     ImageIO.write(img, kind, out);
   }
 
-  /* @see loci.formats.IFormatWriter#getPixelTypes() */
-  public int[] getPixelTypes() {
+  /* @see loci.formats.IFormatWriter#getPixelTypes(String) */
+  public int[] getPixelTypes(String codec) {
     return new int[] {FormatTools.UINT8, FormatTools.UINT16};
   }
 

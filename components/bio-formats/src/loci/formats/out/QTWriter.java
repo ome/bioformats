@@ -251,7 +251,7 @@ public class QTWriter extends FormatWriter {
   public boolean canDoStacks() { return true; }
 
   /* @see loci.formats.IFormatWriter#getPixelTypes(String) */
-  public int[] getPixelTypes() {
+  public int[] getPixelTypes(String codec) {
     return new int[] {FormatTools.UINT8};
   }
 

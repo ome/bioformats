@@ -43,7 +43,7 @@ public class JPEGWriter extends ImageIOWriter {
   // -- IFormatWriter API methods --
 
   /* @see loci.formats.IFormatWriter#getPixelTypes(String) */
-  public int[] getPixelTypes() {
+  public int[] getPixelTypes(String codec) {
     return new int[] {FormatTools.UINT8};
   }
 
