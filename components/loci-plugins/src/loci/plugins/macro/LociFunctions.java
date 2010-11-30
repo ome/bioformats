@@ -222,6 +222,7 @@ public class LociFunctions extends MacroFunctions {
     final ImagePlus imp = reader.openImagePlus()[0];
     Calibrator calibrator = new Calibrator(process);
     calibrator.applyCalibration(imp);
+    process.getReader().close();
     imp.show();
   }
 
