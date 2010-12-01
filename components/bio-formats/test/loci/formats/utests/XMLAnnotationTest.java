@@ -1,5 +1,5 @@
 //
-// PumpWithLightSourceSettingsTest.java
+// XMLAnnotationTest.java
 //
 
 /*
@@ -51,8 +51,8 @@ import org.w3c.dom.Document;
  *
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/bio-formats/test/loci/formats/utests/PumpWithLightSourceSettingsTest.java">Trac</a>,
- * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/bio-formats/test/loci/formats/utests/PumpWithLightSourceSettingsTest.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/bio-formats/test/loci/formats/utests/XMLAnnotationTest.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/bio-formats/test/loci/formats/utests/XMLAnnotationTest.java">SVN</a></dd></dl>
  */
 public class XMLAnnotationTest {
 
