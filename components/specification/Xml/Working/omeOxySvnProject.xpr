@@ -55,14 +55,6 @@
                             </editorPageAssociation>
                             <editorPageAssociation>
                                 <field name="contentType">
-                                    <String xml:space="preserve">text/nrl</String>
-                                </field>
-                                <field name="editorPage">
-                                    <String xml:space="preserve">Text</String>
-                                </field>
-                            </editorPageAssociation>
-                            <editorPageAssociation>
-                                <field name="contentType">
                                     <String xml:space="preserve">text/nvdl</String>
                                 </field>
                                 <field name="editorPage">
@@ -2006,6 +1998,16 @@
             <file name="roi-sa-sample-2009.xml"/>
             <file name="sample-updated.ome.xml"/>
             <file name="spw-sample.xml"/>
+        </folder>
+        <folder name="test-ome-samples">
+            <file name="test-ome-samples/ome.xsd"/>
+            <file name="test-ome-samples/sample-2003-FC.ome"/>
+            <file name="test-ome-samples/sample-2007-06.ome"/>
+            <file name="test-ome-samples/sample-2008-02.ome"/>
+            <file name="test-ome-samples/sample-2008-09.ome"/>
+            <file name="test-ome-samples/sample-2009-09.ome"/>
+            <file name="test-ome-samples/sample-2010-04.ome"/>
+            <file name="test-ome-samples/sample-updated.ome.xml"/>
         </folder>
         <folder path="../../../Java/xslt/"/>
         <folder path="../../Documentation/Samples/"/>
