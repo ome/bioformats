@@ -1349,6 +1349,10 @@ public class MetamorphReader extends BaseTiffReader {
             readAbsoluteZValid();
           }
           break;
+        case 49:
+          in.seek(valOrOffset);
+          readPlaneData();
+          break;
       }
       addSeriesMeta(key, value);
       in.seek(lastOffset);
@@ -1447,6 +1451,44 @@ public class MetamorphReader extends BaseTiffReader {
   private void setCanLookForND(boolean v) {
     FormatTools.assertId(currentId, false, 1);
     canLookForND = v;
+  }
+
+  private void readPlaneData() throws IOException {
+    in.skipBytes(4);
+    int keyLength = in.read();
+    String key = in.readString(keyLength);
+    in.skipBytes(4);
+
+    int type = in.read();
+    int index = 0;
+
+    switch (type) {
+      case 1:
+        in.skipBytes(1);
+        while (getGlobalMeta("Channel #" + index + " " + key) != null) {
+          index++;
+        }
+        addGlobalMeta("Channel #" + index + " " + key, in.readDouble());
+        break;
+      case 2:
+        int valueLength = in.read();
+        String value = in.readString(valueLength);
+        if (valueLength == 0) {
+          in.skipBytes(4);
+          valueLength = in.read();
+          value = in.readString(valueLength);
+        }
+        while (getGlobalMeta("Channel #" + index + " " + key) != null) {
+          index++;
+        }
+        addGlobalMeta("Channel #" + index + " " + key, value);
+
+        if (key.equals("_IllumSetting_")) {
+          if (waveNames == null) waveNames = new Vector<String>();
+          waveNames.add(value);
+        }
+        break;
+    }
   }
 
   private String getKey(int id) {
