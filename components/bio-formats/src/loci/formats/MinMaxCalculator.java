@@ -341,7 +341,7 @@ public class MinMaxCalculator extends ReaderWrapper {
         planeMax[series][pBase + c] = chanMax[series][cBase + c];
       }
     }
-    minMaxDone[series]++;
+    minMaxDone[series] = Math.max(minMaxDone[series], ndx + 1);
 
     if (minMaxDone[getSeries()] == getImageCount() && minMaxStore != null) {
       for (int c=0; c<getSizeC(); c++) {

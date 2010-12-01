@@ -23,17 +23,19 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.utests;
 
-import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.AssertJUnit.assertNotNull;
+import static org.testng.AssertJUnit.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import loci.common.Location;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.MinMaxCalculator;
 import loci.formats.in.FakeReader;
+import loci.formats.meta.IMinMaxStore;
 
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -59,6 +61,8 @@ public class MinMaxCalculatorTest {
 
   private MinMaxCalculator minMaxCalculator;
 
+  private TestMinMaxStore minMaxStore;
+
   private static int fullPlaneCallIndex;
 
   private int sizeX;
@@ -75,18 +79,52 @@ public class MinMaxCalculatorTest {
     Location.mapId(TEST_FILE, TEST_FILE);
     reader = new MinMaxCalculatorTestReader();
     reader.setId(TEST_FILE);
+    minMaxStore = new TestMinMaxStore();
     minMaxCalculator = new MinMaxCalculator(reader);
+    minMaxCalculator.setMinMaxStore(minMaxStore);
     sizeX = reader.getSizeX();
     sizeY = reader.getSizeY();
     bpp = FormatTools.getBytesPerPixel(reader.getPixelType());
     planeSize = sizeY * sizeY * bpp;
-
   }
 
   @AfterMethod
   public void tearDown() throws Exception {
     minMaxCalculator.close();
     reader.close();
+  }
+
+  private void assertMinMax(double minimum, double maximum) throws Exception {
+    Double[] min = minMaxCalculator.getPlaneMinimum(0);
+    Double[] max = minMaxCalculator.getPlaneMaximum(0);
+    Double globalMin = minMaxCalculator.getChannelGlobalMinimum(0);
+    Double globalMax = minMaxCalculator.getChannelGlobalMaximum(0);
+    Double knownGlobalMin = minMaxCalculator.getChannelKnownMinimum(0);
+    Double knownGlobalMax = minMaxCalculator.getChannelKnownMaximum(0);
+    assertTrue(minMaxCalculator.isMinMaxPopulated());
+    assertNotNull(min);
+    assertNotNull(max);
+    assertNotNull(globalMin);
+    assertNotNull(globalMax);
+    assertNotNull(knownGlobalMin);
+    assertNotNull(knownGlobalMax);
+    assertEquals(1, min.length);
+    assertEquals(1, max.length);
+    assertEquals(minimum, min[0]);
+    assertEquals(maximum, max[0]);
+    assertEquals(minimum, globalMin);
+    assertEquals(maximum, globalMax);
+    assertEquals(minimum, knownGlobalMin);
+    assertEquals(maximum, knownGlobalMax);
+    List<List<double[]>> seriesGlobalMinimaMaxima = 
+      minMaxStore.seriesGlobalMinimaMaxima;
+    assertEquals(1, seriesGlobalMinimaMaxima.size());
+    List<double[]> channelGlobalMinimaMaxima = 
+      seriesGlobalMinimaMaxima.get(0);
+    assertEquals(1, channelGlobalMinimaMaxima.size());
+    double[] channelGlobalMinMax = channelGlobalMinimaMaxima.get(0);
+    channelGlobalMinMax[0] = minimum;
+    channelGlobalMinMax[1] = maximum;
   }
 
   @Test
@@ -105,28 +143,14 @@ public class MinMaxCalculatorTest {
   @Test
   public void testValidMinMax() throws Exception {
     minMaxCalculator.openBytes(0);
-    Double[] min = minMaxCalculator.getPlaneMinimum(0);
-    Double[] max = minMaxCalculator.getPlaneMaximum(0);
-    assertNotNull(min);
-    assertNotNull(max);
-    assertEquals(1, min.length);
-    assertEquals(1, max.length);
-    assertEquals(-2.0, min[0]);
-    assertEquals(101.0, max[0]);
+    assertMinMax(-2.0, 101.0);
   }
-  
+
   @Test
   public void testValidMinMaxDoesntRecalculateOnFullPlane() throws Exception {
     minMaxCalculator.openBytes(0);
     minMaxCalculator.openBytes(0);
-    Double[] min = minMaxCalculator.getPlaneMinimum(0);
-    Double[] max = minMaxCalculator.getPlaneMaximum(0);
-    assertNotNull(min);
-    assertNotNull(max);
-    assertEquals(1, min.length);
-    assertEquals(1, max.length);
-    assertEquals(-2.0, min[0]);
-    assertEquals(101.0, max[0]);
+    assertMinMax(-2.0, 101.0);
   }
 
   @Test
@@ -134,14 +158,7 @@ public class MinMaxCalculatorTest {
     byte[] buf = new byte[planeSize / 2];
     int halfway = sizeY / 2;
     minMaxCalculator.openBytes(0, buf, 0, 0, sizeX, halfway);
-    Double[] min = minMaxCalculator.getPlaneMinimum(0);
-    Double[] max = minMaxCalculator.getPlaneMaximum(0);
-    assertNotNull(min);
-    assertNotNull(max);
-    assertEquals(1, min.length);
-    assertEquals(1, max.length);
-    assertEquals(-1.0, min[0]);
-    assertEquals(1.0, max[0]);
+    assertMinMax(-1.0, 1.0);
   }
 
   @Test
@@ -149,14 +166,7 @@ public class MinMaxCalculatorTest {
     byte[] buf = new byte[planeSize / 2];
     int halfway = sizeY / 2;
     minMaxCalculator.openBytes(0, buf, 0, halfway, sizeX, halfway);
-    Double[] min = minMaxCalculator.getPlaneMinimum(0);
-    Double[] max = minMaxCalculator.getPlaneMaximum(0);
-    assertNotNull(min);
-    assertNotNull(max);
-    assertEquals(1, min.length);
-    assertEquals(1, max.length);
-    assertEquals(-2.0, min[0]);
-    assertEquals(2.0, max[0]);
+    assertMinMax(-2.0, 2.0);
   }
 
   @Test
@@ -165,14 +175,7 @@ public class MinMaxCalculatorTest {
     int halfway = sizeY / 2;
     minMaxCalculator.openBytes(0, buf, 0, 0, sizeX, halfway);
     minMaxCalculator.openBytes(0, buf, 0, halfway, sizeX, halfway);
-    Double[] min = minMaxCalculator.getPlaneMinimum(0);
-    Double[] max = minMaxCalculator.getPlaneMaximum(0);
-    assertNotNull(min);
-    assertNotNull(max);
-    assertEquals(1, min.length);
-    assertEquals(1, max.length);
-    assertEquals(-2.0, min[0]);
-    assertEquals(2.0, max[0]);
+    assertMinMax(-2.0, 2.0);
   }
 
   @Test
@@ -181,14 +184,39 @@ public class MinMaxCalculatorTest {
     int halfway = sizeY / 2;
     minMaxCalculator.openBytes(0, buf, 0, halfway, sizeX, halfway);
     minMaxCalculator.openBytes(0, buf, 0, 0, sizeX, halfway);
-    Double[] min = minMaxCalculator.getPlaneMinimum(0);
-    Double[] max = minMaxCalculator.getPlaneMaximum(0);
-    assertNotNull(min);
-    assertNotNull(max);
-    assertEquals(1, min.length);
-    assertEquals(1, max.length);
-    assertEquals(-2.0, min[0]);
-    assertEquals(2.0, max[0]);
+    assertMinMax(-2.0, 2.0);
+  }
+
+  /**
+   * A testing implementation of {@link loci.formats.meta.IMinMaxStore} that
+   * we'll use to ensure that the various methods are called with the correct
+   * parameters.
+   * 
+   * @author Chris Allan <callan at blackcat dot ca>
+   *
+   */
+  class TestMinMaxStore implements IMinMaxStore {
+
+    public List<List<double[]>> seriesGlobalMinimaMaxima = 
+      new ArrayList<List<double[]>>();
+
+    /**
+     * @see loci.formats.meta.IMinMaxStore#setChannelGlobalMinMax(int, double, double, int)
+     */
+    public void setChannelGlobalMinMax(int channel, double minimum,
+                                       double maximum, int series) {
+      if (seriesGlobalMinimaMaxima.size() == series) {
+        seriesGlobalMinimaMaxima.add(new ArrayList<double[]>());
+      }
+      List<double[]> channelGlobalMinimaMaxima = 
+        seriesGlobalMinimaMaxima.get(series);
+      if (channelGlobalMinimaMaxima.size() == channel) {
+        channelGlobalMinimaMaxima.add(new double[2]);
+      }
+      double[] channelGlobalMinMax = channelGlobalMinimaMaxima.get(channel);
+      channelGlobalMinMax[0] = minimum;
+      channelGlobalMinMax[1] = maximum;
+    }
   }
 
   /**
