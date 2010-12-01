@@ -253,6 +253,8 @@ public class AVIReader extends FormatReader {
     core[0].littleEndian = true;
     core[0].interleaved = bmpBitsPerPixel != 16;
 
+    addGlobalMeta("Compression", getCodecName(bmpCompression));
+
     if (bmpCompression == JPEG) {
       long fileOff = offsets.get(0).longValue();
       in.seek(fileOff);
@@ -631,6 +633,23 @@ public class AVIReader extends FormatReader {
         if (type.equals("idx1")) break;
       }
       pos = in.getFilePointer();
+    }
+  }
+
+  private String getCodecName(final int bmpCompression) {
+    switch (bmpCompression) {
+      case 0:
+        return "Raw (uncompressed)";
+      case MSRLE:
+        return "Microsoft Run-Length Encoding (MSRLE)";
+      case MS_VIDEO:
+        return "Microsoft Video (MSV1)";
+      case JPEG:
+        return "JPEG";
+      //case CINEPAK:
+      //  return "Cinepak";
+      default:
+        return "Unknown";
     }
   }
 
