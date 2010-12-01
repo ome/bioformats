@@ -196,7 +196,7 @@ public class AVIReader extends FormatReader {
             buf[i*scanline + j*3] = r;
           }
         }
-        in.skipBytes(skip);
+        if (i > 0) in.skipBytes(skip);
       }
     }
 
