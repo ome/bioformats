@@ -285,8 +285,13 @@ public class MinMaxCalculator extends ReaderWrapper {
 
     int numRGB = getRGBChannelCount();
     int series = getSeries();
+    int pixelType = getPixelType();
+    int planeSize = getSizeX() * getSizeY();
+    planeSize *= FormatTools.getBytesPerPixel(pixelType);
     // check whether min/max values have already been computed for this plane
-    if (!Double.isNaN(planeMin[series][ndx * numRGB])) return;
+    // and that the buffer requested is actually the entire plane
+    if (b.length >= planeSize
+        && !Double.isNaN(planeMin[series][ndx * numRGB])) return;
 
     boolean little = isLittleEndian();
     int bytes = FormatTools.getBytesPerPixel(getPixelType());
@@ -300,8 +305,6 @@ public class MinMaxCalculator extends ReaderWrapper {
       planeMin[series][pBase + c] = Double.POSITIVE_INFINITY;
       planeMax[series][pBase + c] = Double.NEGATIVE_INFINITY;
     }
-
-    int pixelType = getPixelType();
 
     boolean signed = FormatTools.isSigned(pixelType);
 
