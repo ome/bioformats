@@ -35,6 +35,7 @@ import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.common.Region;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceFactory;
 import loci.formats.CoreMetadata;
@@ -175,6 +176,7 @@ public class ZeissLSMReader extends FormatReader {
 
   private int prevPlane = -1;
   private byte[] prevBuf = null;
+  private Region prevRegion = null;
 
   // -- Constructor --
 
@@ -214,6 +216,7 @@ public class ZeissLSMReader extends FormatReader {
       totalROIs = 0;
       prevPlane = -1;
       prevBuf = null;
+      prevRegion = null;
       xCoordinates = null;
       yCoordinates = null;
       zCoordinates = null;
@@ -314,13 +317,15 @@ public class ZeissLSMReader extends FormatReader {
       int bpp = FormatTools.getBytesPerPixel(getPixelType());
       int plane = no / getSizeC();
       int c = no % getSizeC();
+      Region region = new Region(x, y, w, h);
 
       if (prevPlane != plane || prevBuf == null ||
-        prevBuf.length < buf.length * getSizeC())
+        prevBuf.length < w * h * bpp * getSizeC() || !region.equals(prevRegion))
       {
-        prevBuf = new byte[buf.length * getSizeC()];
+        prevBuf = new byte[w * h * bpp * getSizeC()];
         tiffParser.getSamples(ifds.get(plane), prevBuf, x, y, w, h);
         prevPlane = plane;
+        prevRegion = region;
       }
       ImageTools.splitChannels(prevBuf, buf, c, getSizeC(), bpp, false, false);
     }
