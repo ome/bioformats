@@ -68,6 +68,14 @@ http://www.itk.org/Wiki/Plugin_IO_mechanisms
 #include <stdio.h>
 #include <stdlib.h>
 
+#if defined (_WIN32)
+#define PATHSTEP ';'
+#define SLASH '\'
+#else
+#define PATHSTEP ':'
+#define SLASH '/'
+#endif
+
 //--------------------------------------
 //
 // BioFormatsImageIO
@@ -99,16 +107,17 @@ namespace itk {
           dir.assign(path);
         }
 
-        if( dir.at(dir.length() - 1) != '/' ) {
-          dir.append(1,'/');
+        if( dir.at(dir.length() - 1) != SLASH ) {
+          dir.append(1,SLASH);
         } 
 
         list.push_back(jace::ClassPath(
-        dir+"jace-runtime.jar:"+dir+"bio-formats.jar:"+dir+"loci_tools.jar"
+        dir+"jace-runtime.jar"+PATHSTEP+dir+"bio-formats.jar"+PATHSTEP+dir+"loci_tools.jar"
         ));
         list.push_back(jace::CustomOption("-Xcheck:jni"));
         list.push_back(jace::CustomOption("-Xmx256m"));
         list.push_back(jace::CustomOption("-Djava.awt.headless=true"));
+        list.push_back(jace::CustomOption("-Djava.library.path=" + dir));
         //list.push_back(jace::CustomOption("-verbose"));
         //list.push_back(jace::CustomOption("-verbose:jni"));
         jace::helper::createVm(loader, list, false);
@@ -286,16 +295,21 @@ namespace itk {
       SetNumberOfComponents(rgbChannelCount); // m_NumberOfComponents
 
       // get physical resolution
-      double physX = 1, physY = 1;
+      double physX = 1, physY = 1, physZ = 1, timeIncrement = 1;
       // CTR - avoid invalid memory access error on some systems (OS X 10.5)
       //MetadataRetrieve retrieve = MetadataTools::asRetrieve(omeMeta);
       //physX = retrieve.getPixelsPhysicalSizeX(0).doubleValue();
       //physY = retrieve.getPixelsPhysicalSizeY(0).doubleValue();
+      //physZ = retrieve.getPixelsPhysicalSizeZ(0).doubleValue();
+      //timeIncrement = retrieve.getPixelsTimeIncrement(0).doubleValue();
       m_Spacing[0] = physX;
       m_Spacing[1] = physY;
-      if (imageCount > 1) m_Spacing[2] = 1;
+      // TODO: verify m_Spacing.length > 2
+      if (imageCount > 1) m_Spacing[2] = physZ;
+      m_Spacing[3] = timeIncrement;
 
-      itkDebugMacro("Physical resolution = " << physX << " x " << physY);
+      itkDebugMacro("Physical resolution = " << physX << " x " << physY
+        << " x " << physZ << " x " << timeIncrement);
     }
     catch (Exception& e) {
       itkDebugMacro("A Java error occurred: " << DebugTools::getStackTrace(e));
