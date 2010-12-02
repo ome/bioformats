@@ -258,7 +258,8 @@ public class MinMaxCalculator extends ReaderWrapper {
   {
     FormatTools.assertId(getCurrentFile(), true, 2);
     super.openBytes(no, buf, x, y, w, h);
-    updateMinMax(buf, no);
+    
+    updateMinMax(no, buf, FormatTools.getBytesPerPixel(getPixelType()) * w * h);
     return buf;
   }
 
@@ -276,31 +277,37 @@ public class MinMaxCalculator extends ReaderWrapper {
 
   // -- Helper methods --
 
-  /** Updates min/max values based on the given byte array. */
-  protected void updateMinMax(byte[] b, int ndx)
+  /**
+   * Updates min/max values based on the given byte array.
+   * @param no the image index within the file.
+   * @param buf a pre-allocated buffer.
+   * @param len as <code>buf</code> may be larger than the actual pixel count
+   * having been written to it, the length (in bytes) of the those pixels.
+   */
+  protected void updateMinMax(int no, byte[] buf, int len)
     throws FormatException, IOException
   {
-    if (b == null) return;
+    if (buf == null) return;
     initMinMax();
 
     int numRGB = getRGBChannelCount();
     int series = getSeries();
     int pixelType = getPixelType();
-    int planeSize = getSizeX() * getSizeY();
-    planeSize *= FormatTools.getBytesPerPixel(pixelType);
+    int bpp = FormatTools.getBytesPerPixel(pixelType);
+    int planeSize = getSizeX() * getSizeY() * bpp;
     // check whether min/max values have already been computed for this plane
     // and that the buffer requested is actually the entire plane
-    if (b.length >= planeSize
-        && !Double.isNaN(planeMin[series][ndx * numRGB])) return;
+    if (len == planeSize
+        && !Double.isNaN(planeMin[series][no * numRGB])) return;
 
     boolean little = isLittleEndian();
-    int bytes = FormatTools.getBytesPerPixel(getPixelType());
-    int pixels = b.length / (bytes * numRGB);
+    
+    int pixels = len / (bpp * numRGB);
     boolean interleaved = isInterleaved();
 
-    int[] coords = getZCTCoords(ndx);
+    int[] coords = getZCTCoords(no);
     int cBase = coords[1] * numRGB;
-    int pBase = ndx * numRGB;
+    int pBase = no * numRGB;
     for (int c=0; c<numRGB; c++) {
       planeMin[series][pBase + c] = Double.POSITIVE_INFINITY;
       planeMax[series][pBase + c] = Double.NEGATIVE_INFINITY;
@@ -308,11 +315,11 @@ public class MinMaxCalculator extends ReaderWrapper {
 
     boolean signed = FormatTools.isSigned(pixelType);
 
-    long threshold = (long) Math.pow(2, bytes * 8 - 1);
+    long threshold = (long) Math.pow(2, bpp * 8 - 1);
     for (int i=0; i<pixels; i++) {
       for (int c=0; c<numRGB; c++) {
-        int idx = bytes * (interleaved ? i * numRGB + c : c * pixels + i);
-        long bits = DataTools.bytesToLong(b, idx, bytes, little);
+        int idx = bpp * (interleaved ? i * numRGB + c : c * pixels + i);
+        long bits = DataTools.bytesToLong(buf, idx, bpp, little);
         if (signed) {
           if (bits >= threshold) bits -= 2*threshold;
         }
@@ -341,7 +348,7 @@ public class MinMaxCalculator extends ReaderWrapper {
         planeMax[series][pBase + c] = chanMax[series][cBase + c];
       }
     }
-    minMaxDone[series] = Math.max(minMaxDone[series], ndx + 1);
+    minMaxDone[series] = Math.max(minMaxDone[series], no + 1);
 
     if (minMaxDone[getSeries()] == getImageCount() && minMaxStore != null) {
       for (int c=0; c<getSizeC(); c++) {

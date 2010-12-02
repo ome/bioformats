@@ -147,6 +147,14 @@ public class MinMaxCalculatorTest {
   }
 
   @Test
+  public void testValidMinMaxNoOutOfBufferInspection() throws Exception {
+    byte[] buf = new byte[planeSize * 2];
+    buf[buf.length - 1] = 120;  // This should not be calculated against
+    minMaxCalculator.openBytes(0, buf, 0, 0, sizeX, sizeY);
+    assertMinMax(-2.0, 101.0);
+  }
+
+  @Test
   public void testValidMinMaxDoesntRecalculateOnFullPlane() throws Exception {
     minMaxCalculator.openBytes(0);
     minMaxCalculator.openBytes(0);
