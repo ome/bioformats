@@ -88,6 +88,7 @@ public class OmeroOpenBytesTest
     sizeZ = reader.getSizeZ();
     sizeC = reader.getSizeC();
     sizeT = reader.getSizeT();
+    imageCount = reader.getImageCount();
     bpp = FormatTools.getBytesPerPixel(reader.getPixelType());
     planeSize = sizeX * sizeY * bpp;
   }
@@ -135,7 +136,7 @@ public class OmeroOpenBytesTest
       }
     }
   }
-  
+
   @AfterClass
   public void tearDown() throws Exception {
     reader.close();
