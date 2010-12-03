@@ -215,7 +215,13 @@ public class FV1000Reader extends FormatReader {
 
     if (filename == null) return buf;
 
-    RandomAccessInputStream plane = getFile(filename);
+    RandomAccessInputStream plane = null;
+    try {
+      plane = getFile(filename);
+    }
+    catch (IOException e) { }
+
+    if (plane == null) return buf;
     TiffParser tp = new TiffParser(plane);
     IFDList ifds = tp.getIFDs();
     if (image >= ifds.size()) return buf;
@@ -1129,9 +1135,15 @@ public class FV1000Reader extends FormatReader {
       String filename = roiFilenames.get(new Integer(i));
       filename = sanitizeFile(filename, path);
 
-      RandomAccessInputStream stream = getFile(filename);
-      String data = stream.readString((int) stream.length());
-      stream.close();
+      String data = null;
+      try {
+        RandomAccessInputStream stream = getFile(filename);
+        data = stream.readString((int) stream.length());
+        stream.close();
+      }
+      catch (IOException e) {
+        continue;
+      }
 
       String[] lines = data.split("\n");
 
