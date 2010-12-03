@@ -317,12 +317,12 @@
 			Namespace="ome-xml.org:additions:post2010-06:objective">
 			<SA:Description>Extra attribute values for the objective objects.</SA:Description>
 			<SA:Value>
-				<OME-Extra:SpimPositions
+				<OME-Extra:ObjectiveAttributes
 					xmlns:OME-Extra="http://www.openmicroscopy.org/Schemas/Additions/2010-10">
 					<ObjectiveAdditions ID="Objective:TubeLens:1" FocalLength="120" SlitAperture="6"
 						LightSheetWidth="0.8"/>
 					<ObjectiveAdditions ID="Objective:Illumation:1" FocalLength="25"/>
-				</OME-Extra:SpimPositions>
+				</OME-Extra:ObjectiveAttributes>
 			</SA:Value>
 		</SA:XMLAnnotation>
 
