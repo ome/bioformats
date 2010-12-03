@@ -361,6 +361,9 @@ public class LeicaHandler extends DefaultHandler {
       String name = elementName;
       if (collection != null) name = collection + "/" + name;
       store.setImageName(name, numDatasets);
+      h = getSeriesHashtable(numDatasets);
+      storeKeyValue(h, "Image name", name);
+      storeSeriesHashtable(numDatasets, h);
       String instrumentID = MetadataTools.createLSID("Instrument", numDatasets);
       store.setInstrumentID(instrumentID, numDatasets);
       store.setImageInstrumentRef(instrumentID, numDatasets);
