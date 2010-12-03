@@ -1,0 +1,168 @@
+#!/usr/bin/env python
+# encoding: utf-8
+"""
+Generate TestNG XML files and run test cases for openBytes().
+"""
+
+#  
+#  Copyright (c) 2009 University of Dundee. All rights reserved.
+#
+#  Redistribution and use in source and binary forms, with or without
+#  modification, are permitted provided that the following conditions
+#  are met:
+#  1. Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+#  2. Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+#  THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND
+#  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+#  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+#  ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
+#  FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+#  DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+#  OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+#  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+#  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+#  OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+#  SUCH DAMAGE.
+
+import glob
+import sys
+import os
+import re
+
+from xml.sax.saxutils import escape
+from tempfile import NamedTemporaryFile
+from getopt import getopt, GetoptError
+
+# Handle Python 2.5 built-in ElementTree
+try:
+        from xml.etree.ElementTree import XML, Element, SubElement, ElementTree, dump
+except ImportError:
+        from elementtree.ElementTree import XML, Element, SubElement, ElementTree, dump
+
+
+# Configuration options
+JAVA_ARGS = "-Xmx2048M"
+START_CLASS = "org.testng.TestNG"
+TEST_CLASS = "loci.tests.testng.OmeroOpenBytesTest"
+DOCTYPE = '<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">'
+
+def usage(error):
+    """Prints usage so that we don't have to. :)"""
+    cmd = sys.argv[0]
+    print """%s
+Usage: %s [-f file] [target...]
+Runs the OMERO openBytes() tests on a given set of targets.
+
+Options:
+  -f            Reads targets from a file ("-" reads from STDIN)
+  -t            Number of parallel threads for TestNG to use (default 2)
+  --hudson      Prepares the TestNG XML for use by Hudson
+
+Examples:
+  %s -f ~/regular_test_files ~/testimages/foo.tiff
+  find -name '*.tif' | %s -f -
+
+Report bugs to ome-devel@lists.openmicroscopy.org.uk""" % (error, cmd, cmd, cmd)
+    sys.exit(2)
+
+def create_testng_xml_file(targets, revision, hudson, thread_count):
+    """Creates a temporary file with TestNG XML content for each target."""
+    root = Element("suite")
+    root.set("name", "omero-open-bytes")
+    root.set("parallel", "tests")
+    root.set("thread-count", str(thread_count))
+    if revision is not None:
+        parameter = Element("parameter")
+        parameter.set("name", "bioformats_revision")
+        parameter.set("value", revision)
+        root.append(parameter)
+    # Add each target to the TestNG XML file
+    for target in targets:
+        target = target.strip().lstrip()
+        test_name = escape(target.replace("/", "_"))
+        klass = Element("class")
+        klass.set("name", TEST_CLASS)
+        klasses = Element("classes")
+        klasses.append(klass)
+        parameter = Element("parameter")
+        parameter.set("name", "id")
+        parameter.set("value", target)
+        # Add our exclusion group to the test for this target
+        groups = Element("groups")
+        run = Element("run")
+        exclude = Element("exclude")
+        exclude.set("name", "disabled")
+        run.append(exclude)
+        groups.append(run)
+        test = Element("test")
+        test.set("verbose", "2")
+        test.set("name", test_name)
+        test.set("annotations", "JDK")
+        test.append(parameter)
+        test.append(groups)
+        test.append(klasses)
+        root.append(test)
+    if hudson:
+        xml_file = open('testng.xml', 'w')
+    else:
+        xml_file = NamedTemporaryFile(suffix=".xml")
+    xml_file.write(DOCTYPE)
+    ElementTree(root).write(xml_file)
+    xml_file.write("\n")
+    xml_file.flush()
+    return xml_file
+
+if __name__ == '__main__':
+    try:
+        options, args = getopt(sys.argv[1:], "f:t:", ['hudson'])
+    except GetoptError, (msg, opt):
+        usage(msg)
+
+    targets = list()
+    hudson = False
+    thread_count = 1
+    for option, argument in options:
+        if option == "-f":
+            if argument == "-":
+                f = sys.stdin
+            else:
+                f = open(argument)
+            targets += f.readlines()
+        if option == "-t":
+            thread_count = int(argument)
+        if option == "--hudson":
+            hudson = True
+
+    targets += args
+    if len(targets) == 0:
+        usage("Expecting at least one target from file or argument")
+
+    program_dir = os.path.dirname(sys.argv[0])
+    os.chdir(program_dir)
+
+    classpath = ""
+    try:
+        classpath = os.environ['CLASSPATH']
+    except KeyError:
+        pass
+    classpath = "%s:./build/classes" % classpath
+    for f in glob.glob("../../artifacts/*.jar"):
+        classpath += ":%s" % f
+
+    revision = None
+    try:
+        revision = os.environ['SVN_REVISION']
+    except:
+        pass
+
+    xml_file = create_testng_xml_file(targets, revision,
+                                      hudson, thread_count)
+    cmd = 'java %s -cp "%s" %s %s' % (JAVA_ARGS, classpath, START_CLASS, \
+                                      xml_file.name)
+    print cmd
+    os.system(cmd)
+    xml_file.close()
