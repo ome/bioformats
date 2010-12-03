@@ -190,7 +190,8 @@ public final class ImageTools {
   public static byte[] splitChannels(byte[] array, int index, int c, int bytes,
     boolean reverse, boolean interleaved)
   {
-    return splitChannels(array, null, index, c, bytes, reverse, interleaved);
+    return splitChannels(array, null, index, c, bytes, reverse, interleaved,
+      array.length / c);
   }
 
   /**
@@ -198,17 +199,24 @@ public final class ImageTools {
    * The "reverse" parameter is false if channels are in RGB order, true if
    * channels are in BGR order.  If the 'rtn' parameter is not null, the
    * specified channel will be copied into 'rtn'.
+   *
+   * The 'channelLength' parameter specifies the number of bytes that are
+   * expected to be in a single channel.  In many cases, this will match
+   * the value of 'rtn.length', but specifying it separately allows 'rtn' to
+   * be larger than the size of a single channel.
    */
   public static byte[] splitChannels(byte[] array, byte[] rtn, int index, int c,
-    int bytes, boolean reverse, boolean interleaved)
+    int bytes, boolean reverse, boolean interleaved, int channelLength)
   {
     if (c == 1) return array;
-    if (rtn == null) rtn = new byte[array.length / c];
+    if (rtn == null) {
+      rtn = new byte[array.length / c];
+    }
 
     if (reverse) index = c - index - 1;
 
     if (!interleaved) {
-      System.arraycopy(array, rtn.length * index, rtn, 0, rtn.length);
+      System.arraycopy(array, channelLength * index, rtn, 0, channelLength);
     }
     else {
       int next = 0;

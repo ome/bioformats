@@ -327,7 +327,8 @@ public class ZeissLSMReader extends FormatReader {
         prevPlane = plane;
         prevRegion = region;
       }
-      ImageTools.splitChannels(prevBuf, buf, c, getSizeC(), bpp, false, false);
+      ImageTools.splitChannels(
+        prevBuf, buf, c, getSizeC(), bpp, false, false, w * h * bpp);
     }
     else {
       tiffParser.getSamples(ifds.get(no), buf, x, y, w, h);

@@ -87,7 +87,7 @@ public class AmiraReader extends FormatReader {
       }
 
       // plane readers can only read whole planes, so we need to blit
-      int bytesPerPixel = FormatTools.getBytesPerPixel(core[series].pixelType);
+      int bytesPerPixel = FormatTools.getBytesPerPixel(getPixelType());
       byte[] planeBuf = new byte[planeSize];
       planeReader.read(no, planeBuf);
       for (int j = y; j < y + h; j++) {

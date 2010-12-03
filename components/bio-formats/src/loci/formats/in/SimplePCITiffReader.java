@@ -104,7 +104,7 @@ public class SimplePCITiffReader extends BaseTiffReader {
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
     int c = getZCTCoords(no)[1];
     ImageTools.splitChannels(
-      b, buf, c, getSizeC(), bpp, false, isInterleaved());
+      b, buf, c, getSizeC(), bpp, false, isInterleaved(), w * h * bpp);
     return buf;
   }
 

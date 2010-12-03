@@ -120,7 +120,7 @@ public class ChannelSeparator extends ReaderWrapper {
   /* @see IFormatReader#isRGB() */
   public boolean isRGB() {
     FormatTools.assertId(getCurrentFile(), true, 2);
-    return isIndexed() && !isFalseColor();
+    return isIndexed() && !isFalseColor() && getSizeC() > 1;
   }
 
   /* @see IFormatReader#openBytes(int) */
@@ -192,7 +192,7 @@ public class ChannelSeparator extends ReaderWrapper {
           }
 
           ImageTools.splitChannels(lastImage, strip, channel, c, bpp,
-            false, isInterleaved());
+            false, isInterleaved(), strip.length);
           if (strips != 1) {
             System.arraycopy(strip, 0, buf, i * stripHeight * w * bpp,
               strip.length);
@@ -201,7 +201,7 @@ public class ChannelSeparator extends ReaderWrapper {
       }
       else {
         ImageTools.splitChannels(lastImage, buf, channel, c, bpp,
-          false, isInterleaved());
+          false, isInterleaved(), w * h * bpp);
       }
 
       return buf;
