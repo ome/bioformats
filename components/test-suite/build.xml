@@ -12,6 +12,13 @@ Type "ant -p" for a list of targets.
   <import file="${root.dir}/ant/java.xml"/>
   <property file="build.properties"/>
 
+  <target name="test-omero-open-bytes" depends="compile"
+    description="run tests for opening planes as in OMERO">
+    <exec executable="${basedir}/omero-openbytes-test">
+      <arg value="${filename}"/>
+    </exec>
+  </target>
+
   <target name="test-convert" depends="compile"
     description="run automated tests on writers">
     <testng sourcedir="${dest.dir}"
