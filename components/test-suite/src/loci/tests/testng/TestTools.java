@@ -76,6 +76,45 @@ public class TestTools {
     return DateTools.convertDate(System.currentTimeMillis(), DateTools.UNIX);
   }
 
+  /** Calculate the SHA-1 of a byte array. */
+  public static String sha1(byte[] b, int offset, int len) {
+    try {
+      MessageDigest md = MessageDigest.getInstance("SHA-1");
+      md.reset();
+      md.update(b, offset, len);
+      byte[] digest = md.digest();
+      return DataTools.bytesToHex(digest);
+    }
+    catch (NoSuchAlgorithmException e) { }
+    return null;
+  }
+
+  /** Calculate the SHA-1 of a byte array. */
+  public static String sha1(byte[] b) {
+    try {
+      MessageDigest md = MessageDigest.getInstance("SHA-1");
+      md.reset();
+      md.update(b);
+      byte[] digest = md.digest();
+      return DataTools.bytesToHex(digest);
+    }
+    catch (NoSuchAlgorithmException e) { }
+    return null;
+  }
+
+  /** Calculate the MD5 of a byte array. */
+  public static String md5(byte[] b, int offset, int len) {
+    try {
+      MessageDigest md = MessageDigest.getInstance("MD5");
+      md.reset();
+      md.update(b, offset, len);
+      byte[] digest = md.digest();
+      return DataTools.bytesToHex(digest);
+    }
+    catch (NoSuchAlgorithmException e) { }
+    return null;
+  }
+
   /** Calculate the MD5 of a byte array. */
   public static String md5(byte[] b) {
     try {
