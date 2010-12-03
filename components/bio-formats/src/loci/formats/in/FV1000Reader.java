@@ -235,7 +235,13 @@ public class FV1000Reader extends FormatReader {
 
     if (filename == null) return buf;
 
-    RandomAccessInputStream plane = getFile(filename);
+    RandomAccessInputStream plane = null;
+    try {
+      plane = getFile(filename);
+    }
+    catch (IOException e) { }
+
+    if (plane == null) return buf;
     TiffParser tp = new TiffParser(plane);
     IFDList ifds = tp.getIFDs();
     if (image >= ifds.size()) return buf;
