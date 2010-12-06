@@ -75,6 +75,10 @@ public class OmeroOpenBytesTest
 
   private int planeSize;
 
+  private int topHalfSize;
+
+  private int bottomHalfSize;
+
   @Parameters({"id"})
   @BeforeClass
   public void parse(String id) throws Exception {
@@ -91,6 +95,8 @@ public class OmeroOpenBytesTest
     imageCount = reader.getImageCount();
     bpp = FormatTools.getBytesPerPixel(reader.getPixelType());
     planeSize = sizeX * sizeY * bpp;
+    topHalfSize = (sizeY / 2) * sizeX * bpp;
+    bottomHalfSize = (sizeY - (sizeY / 2)) * sizeX * bpp;
   }
 
   private void assertBlock(int blockSize) throws Exception {
@@ -153,22 +159,24 @@ public class OmeroOpenBytesTest
   @Test
   public void testOpenBytesHalfPlane() throws Exception {
     byte[] plane = new byte[planeSize];
-    byte[] halfPlane = new byte[planeSize / 2];
+    byte[] topHalfPlane = new byte[topHalfSize];
+    byte[] bottomHalfPlane = new byte[bottomHalfSize];
     String planeDigest, halfPlaneDigest;
     for (int i = 0; i < imageCount; i++) {
       // Check the digest for the first half of the plane against a full plane
       reader.openBytes(i, plane);
-      reader.openBytes(i, halfPlane, 0, 0, sizeX, sizeY / 2);
-      planeDigest = TestTools.md5(plane, 0, planeSize / 2);
-      halfPlaneDigest = TestTools.md5(halfPlane, 0, planeSize / 2);
+      reader.openBytes(i, topHalfPlane, 0, 0, sizeX, sizeY / 2);
+      planeDigest = TestTools.md5(plane, 0, topHalfSize);
+      halfPlaneDigest = TestTools.md5(topHalfPlane, 0, topHalfSize);
       if (!planeDigest.equals(halfPlaneDigest)) {
         fail(String.format("First half MD5:%d %s != %s",
             i, planeDigest, halfPlaneDigest));
       }
       // Check the digest for the second half of the plane against a full plane
-      reader.openBytes(i, halfPlane, 0, sizeY / 2, sizeX, sizeY / 2);
-      planeDigest = TestTools.md5(plane, planeSize / 2, planeSize / 2);
-      halfPlaneDigest = TestTools.md5(halfPlane, 0, planeSize / 2);
+      reader.openBytes(i, bottomHalfPlane, 0, sizeY / 2, sizeX,
+        sizeY - (sizeY / 2));
+      planeDigest = TestTools.md5(plane, topHalfSize, bottomHalfSize);
+      halfPlaneDigest = TestTools.md5(bottomHalfPlane, 0, bottomHalfSize);
       if (!planeDigest.equals(halfPlaneDigest)) {
         fail(String.format("Second half MD5:%d %s != %s",
             i, planeDigest, halfPlaneDigest));
