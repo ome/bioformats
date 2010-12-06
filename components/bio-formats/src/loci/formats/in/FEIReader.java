@@ -79,19 +79,24 @@ public class FEIReader extends FormatReader {
     in.seek(headerSize);
 
     byte[] segment = new byte[getSizeX() / 2];
+    byte[] plane = new byte[FormatTools.getPlaneSize(this)];
     // interlace frames - there are four rows of two columns
     int halfRow = getSizeX() / 2;
     for (int q=0; q<4; q++) {
-      for (int row=q; row<h; row+=4) {
+      for (int row=q; row<getSizeY(); row+=4) {
         for (int s=0; s<2; s++) {
           in.read(segment);
           in.skipBytes(INVALID_PIXELS / 2);
-          for (int col=s; col<w; col+=2) {
-            buf[row*w + col] = segment[col / 2];
+          for (int col=s; col<getSizeX(); col+=2) {
+            plane[row*getSizeX() + col] = segment[col / 2];
           }
         }
       }
     }
+
+    RandomAccessInputStream pixels = new RandomAccessInputStream(plane);
+    readPlane(pixels, x, y, w, h, buf);
+    pixels.close();
 
     return buf;
   }
