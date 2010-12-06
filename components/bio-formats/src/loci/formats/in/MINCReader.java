@@ -75,10 +75,13 @@ public class MINCReader extends FormatReader {
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
 
     if (no < pixelData.length) {
-      for (int row=y; row<y+h; row++) {
-        if (row < pixelData[no].length && x + w <= pixelData[no][row].length) {
-          System.arraycopy(pixelData[no][row], x * bpp, buf,
-            (h - row + y - 1) * w * bpp, w * bpp);
+      for (int row=0; row<h; row++) {
+        int srcRow = getSizeY() - (row + y) - 1;
+        if (srcRow < pixelData[no].length &&
+          x + w <= pixelData[no][srcRow].length)
+        {
+          System.arraycopy(pixelData[no][srcRow], x * bpp, buf,
+            row * w * bpp, w * bpp);
         }
       }
     }
