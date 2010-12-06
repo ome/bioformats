@@ -1,3 +1,13 @@
+4.2.2 (2010 December 6):
+* Several bug fixes, notably:
+  - Metadata parsing fixes for Zeiss LSM, Metamorph STK, and FV1000
+  - Prevented leaked file handles when exporting to TIFF/OME-TIFF
+  - Fixed how BufferedImages are converted to byte arrays
+* Proper support for OME-XML XML annotations
+* Added support for SCANCO Medical .aim files
+* Minor improvements to ImageJ plugins
+* Added support for reading JPEG-compressed AVI files
+
 4.2.1 (2010 November 12):
 * Many, many bug fixes
 * Added support for 7 new formats:
