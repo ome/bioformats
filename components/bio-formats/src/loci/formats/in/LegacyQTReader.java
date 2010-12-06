@@ -94,7 +94,8 @@ public class LegacyQTReader extends BIFormatReader {
     catch (ReflectException re) {
       throw new FormatException("Open movie failed", re);
     }
-    return AWTImageTools.makeBuffered(image).getSubimage(x, y, w, h);
+    return AWTImageTools.getSubimage(AWTImageTools.makeBuffered(image),
+      isLittleEndian(), x, y, w, h);
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */

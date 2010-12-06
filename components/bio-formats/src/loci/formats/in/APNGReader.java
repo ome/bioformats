@@ -94,7 +94,8 @@ public class APNGReader extends BIFormatReader {
       in.seek(0);
       DataInputStream dis =
         new DataInputStream(new BufferedInputStream(in, 4096));
-      return ImageIO.read(dis).getSubimage(x, y, w, h);
+      return AWTImageTools.getSubimage(ImageIO.read(dis), isLittleEndian(),
+        x, y, w, h);
     }
 
     ByteArrayOutputStream stream = new ByteArrayOutputStream();

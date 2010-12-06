@@ -83,7 +83,7 @@ public class TiffJAIReader extends BIFormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, -1, x, y, w, h);
     BufferedImage img = openBufferedImage(no);
-    return img.getSubimage(x, y, w, h);
+    return AWTImageTools.getSubimage(img, isLittleEndian(), x, y, w, h);
   }
 
   // -- Internal FormatReader API methods --

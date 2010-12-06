@@ -85,20 +85,11 @@ public class MNGReader extends BIFormatReader {
     in.seek(offset);
     long end = info.lengths.get(no);
     BufferedImage img = readImage(end);
-    img = img.getSubimage(x, y, w, h);
 
     // reconstruct the image to use an appropriate raster
     // ImageIO often returns images that cannot be scaled because a
     // BytePackedRaster is used
-    int pixelType = getPixelType();
-    boolean little = isLittleEndian();
-    byte[][] pix = AWTImageTools.getPixelBytes(img, little);
-    img = AWTImageTools.makeImage(pix, w, h,
-      FormatTools.getBytesPerPixel(pixelType),
-      FormatTools.isFloatingPoint(pixelType), little,
-      FormatTools.isSigned(pixelType));
-
-    return img;
+    return AWTImageTools.getSubimage(img, isLittleEndian(), x, y, w, h);
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */

@@ -77,7 +77,7 @@ public abstract class ImageIOReader extends BIFormatReader {
     BufferedImage b = ImageIO.read(dis);
     ras.close();
     dis.close();
-    return b.getSubimage(x, y, w, h);
+    return AWTImageTools.getSubimage(b, isLittleEndian(), x, y, w, h);
   }
 
   // -- Internal FormatReader API methods --

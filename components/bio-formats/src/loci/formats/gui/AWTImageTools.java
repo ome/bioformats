@@ -937,75 +937,98 @@ public final class AWTImageTools {
    * will have width * height * 2 bytes.
    */
   public static byte[][] getPixelBytes(BufferedImage img, boolean little) {
+    return getPixelBytes(img, little, 0, 0, img.getWidth(), img.getHeight());
+  }
+
+  /**
+   * Return a 2D array of bytes representing the image.  If the transfer type
+   * is something other than DataBuffer.TYPE_BYTE, then each pixel value is
+   * converted to the appropriate number of bytes.  In other words, if we
+   * are given an image with 16-bit data, each channel of the resulting array
+   * will have width * height * 2 bytes.
+   */
+  public static byte[][] getPixelBytes(BufferedImage img, boolean little,
+    int x, int y, int w, int h)
+  {
     Object pixels = getPixels(img);
     int imageType = img.getType();
+    byte[][] pixelBytes = null;
 
     if (pixels instanceof byte[][]) {
-      return (byte[][]) pixels;
+      pixelBytes = (byte[][]) pixels;
     }
     else if (pixels instanceof short[][]) {
       short[][] s = (short[][]) pixels;
-      byte[][] b = new byte[s.length][s[0].length * 2];
-      for (int i=0; i<b.length; i++) {
+      pixelBytes = new byte[s.length][s[0].length * 2];
+      for (int i=0; i<pixelBytes.length; i++) {
         for (int j=0; j<s[0].length; j++) {
-          DataTools.unpackBytes(s[i][j], b[i], j * 2, 2, little);
+          DataTools.unpackBytes(s[i][j], pixelBytes[i], j * 2, 2, little);
         }
       }
-      return b;
     }
     else if (pixels instanceof int[][]) {
-      byte[][] b = null;
       int[][] in = (int[][]) pixels;
 
       if (imageType == BufferedImage.TYPE_INT_RGB ||
         imageType == BufferedImage.TYPE_INT_BGR ||
         imageType == BufferedImage.TYPE_INT_ARGB)
       {
-        b = new byte[in.length][in[0].length];
+        pixelBytes = new byte[in.length][in[0].length];
         for (int c=0; c<in.length; c++) {
           for (int i=0; i<in[0].length; i++) {
             if (imageType != BufferedImage.TYPE_INT_BGR) {
-              b[c][i] = (byte) (in[c][i] & 0xff);
+              pixelBytes[c][i] = (byte) (in[c][i] & 0xff);
             }
             else {
-              b[in.length - c - 1][i] = (byte) (in[c][i] & 0xff);
+              pixelBytes[in.length - c - 1][i] = (byte) (in[c][i] & 0xff);
             }
           }
         }
       }
       else {
-        b = new byte[in.length][in[0].length * 4];
-        for (int i=0; i<b.length; i++) {
+        pixelBytes = new byte[in.length][in[0].length * 4];
+        for (int i=0; i<pixelBytes.length; i++) {
           for (int j=0; j<in[0].length; j++) {
-            DataTools.unpackBytes(in[i][j], b[i], j * 4, 4, little);
+            DataTools.unpackBytes(in[i][j], pixelBytes[i], j * 4, 4, little);
           }
         }
       }
-      return b;
     }
     else if (pixels instanceof float[][]) {
       float[][] in = (float[][]) pixels;
-      byte[][] b = new byte[in.length][in[0].length * 4];
-      for (int i=0; i<b.length; i++) {
+      pixelBytes = new byte[in.length][in[0].length * 4];
+      for (int i=0; i<pixelBytes.length; i++) {
         for (int j=0; j<in[0].length; j++) {
           int v = Float.floatToIntBits(in[i][j]);
-          DataTools.unpackBytes(v, b[i], j * 4, 4, little);
+          DataTools.unpackBytes(v, pixelBytes[i], j * 4, 4, little);
         }
       }
-      return b;
     }
     else if (pixels instanceof double[][]) {
       double[][] in = (double[][]) pixels;
-      byte[][] b = new byte[in.length][in[0].length * 8];
-      for (int i=0; i<b.length; i++) {
+      pixelBytes = new byte[in.length][in[0].length * 8];
+      for (int i=0; i<pixelBytes.length; i++) {
         for (int j=0; j<in[0].length; j++) {
           long v = Double.doubleToLongBits(in[i][j]);
-          DataTools.unpackBytes(v, b[i], j * 8, 8, little);
+          DataTools.unpackBytes(v, pixelBytes[i], j * 8, 8, little);
         }
       }
-      return b;
     }
-    return null;
+
+    if (x == 0 && y == 0 && w == img.getWidth() && h == img.getHeight()) {
+      return pixelBytes;
+    }
+
+    int bpp = FormatTools.getBytesPerPixel(getPixelType(img));
+    byte[][] croppedBytes = new byte[pixelBytes.length][w * h * bpp];
+    for (int c=0; c<croppedBytes.length; c++) {
+      for (int row=0; row<h; row++) {
+        int src = (row + y) * img.getWidth() * bpp + x * bpp;
+        int dest = row * w * bpp;
+        System.arraycopy(pixelBytes[c], src, croppedBytes[c], dest, w * bpp);
+      }
+    }
+    return croppedBytes;
   }
 
   /**
@@ -1163,6 +1186,17 @@ public final class AWTImageTools {
   }
 
   // -- Image manipulation --
+
+  /** Returns a subimage of the specified image. */
+  public static BufferedImage getSubimage(BufferedImage image,
+    boolean littleEndian, int x, int y, int w, int h)
+  {
+    int pixelType = getPixelType(image);
+    byte[][] pix = getPixelBytes(image, littleEndian, x, y, w, h);
+    return makeImage(pix, w, h, FormatTools.getBytesPerPixel(pixelType),
+      FormatTools.isFloatingPoint(pixelType), littleEndian,
+      FormatTools.isSigned(pixelType));
+  }
 
   /** Splits the given multi-channel image into single-channel images. */
   public static BufferedImage[] splitChannels(BufferedImage image) {
