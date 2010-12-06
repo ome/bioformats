@@ -116,14 +116,16 @@ public class BMPReader extends FormatReader {
     int pad = ((rowLength * bpp) / 8) % 2;
     if (pad == 0) pad = ((rowLength * bpp) / 8) % 4;
     else pad *= getSizeC();
-    int planeSize = getSizeX() * getSizeC() * getSizeY();
+    int planeSize = getSizeX() * getSizeC() * h;
     if (bpp >= 8) planeSize *= (bpp / 8);
     else planeSize /= (8 / bpp);
-    planeSize += pad * getSizeY();
+    planeSize += pad * h;
     if (planeSize + in.getFilePointer() > in.length()) {
-      planeSize -= (pad * getSizeY());
+      planeSize -= (pad * h);
       pad = 0;
     }
+
+    in.skipBytes(rowsToSkip * pad);
 
     byte[] rawPlane = new byte[planeSize];
     in.read(rawPlane);
