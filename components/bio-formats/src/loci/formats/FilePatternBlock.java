@@ -61,6 +61,8 @@ public class FilePatternBlock {
   /** String representation of this block. */
   private String block;
 
+  private BigInteger begin = null, end = null, step = null;
+
   // -- Constructor --
 
   public FilePatternBlock(String block) {
@@ -80,6 +82,18 @@ public class FilePatternBlock {
 
   public boolean isFixed() {
     return fixed;
+  }
+
+  public BigInteger getFirst() {
+    return begin;
+  }
+
+  public BigInteger getLast() {
+    return end;
+  }
+
+  public BigInteger getStep() {
+    return step;
   }
 
   // -- Helper methods --
@@ -113,9 +127,6 @@ public class FilePatternBlock {
       }
     }
 
-    BigInteger begin = null;
-    BigInteger end = null;
-    BigInteger step = null;
     boolean numeric = true;
 
     try {

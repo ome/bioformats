@@ -649,6 +649,35 @@ public class FilePattern {
     }
   }
 
+  // -- Deprecated methods --
+
+  /* @deprecated */
+  public BigInteger[] getFirst() {
+    BigInteger[] first = new BigInteger[blocks.length];
+    for (int i=0; i<first.length; i++) {
+      first[i] = blocks[i].getFirst();
+    }
+    return first;
+  }
+
+  /* @deprecated */
+  public BigInteger[] getLast() {
+    BigInteger[] last = new BigInteger[blocks.length];
+    for (int i=0; i<last.length; i++) {
+      last[i] = blocks[i].getLast();
+    }
+    return last;
+  }
+
+  /* @deprecated */
+  public BigInteger[] getStep() {
+    BigInteger[] step = new BigInteger[blocks.length];
+    for (int i=0; i<step.length; i++) {
+      step[i] = blocks[i].getStep();
+    }
+    return step;
+  }
+
 }
 
 // -- Notes --
