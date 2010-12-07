@@ -177,7 +177,8 @@ public class NativeQTReader extends FormatReader {
     canUsePrevious = (prevPixels != null) && (prevPlane == no - 1) &&
       !code.equals(altCodec);
 
-    byte[] t = uncompress(pixs, code);
+    byte[] t = prevPlane == no && prevPixels != null && !code.equals(altCodec) ?
+      prevPixels : uncompress(pixs, code);
     if (code.equals("rpza")) {
       for (int i=0; i<t.length; i++) {
         t[i] = (byte) (255 - t[i]);
@@ -225,7 +226,7 @@ public class NativeQTReader extends FormatReader {
     for (int row=0; row<h; row++) {
       if (bitsPerPixel == 32) {
         for (int col=0; col<w; col++) {
-          int src = row * getSizeX() * bpp * 4 + (x + col) * bpp * 4 + 1;
+          int src = (row + y) * getSizeX() * bpp * 4 + (x + col) * bpp * 4 + 1;
           int dst = row * destRowLen + col * bpp * 3;
           if (src + 3 <= t.length && dst + 3 <= buf.length) {
             System.arraycopy(t, src, buf, dst, 3);
