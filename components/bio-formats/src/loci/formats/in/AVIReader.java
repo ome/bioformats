@@ -136,7 +136,8 @@ public class AVIReader extends FormatReader {
       int rowLen = FormatTools.getPlaneSize(this, w, 1);
       int inputRowLen = FormatTools.getPlaneSize(this, getSizeX(), 1);
       for (int row=0; row<h; row++) {
-        System.arraycopy(b, (row + y) * inputRowLen, buf, row * rowLen, rowLen);
+        System.arraycopy(b, (row + y) * inputRowLen + x * bytes, buf,
+          row * rowLen, rowLen);
       }
       b = null;
       return buf;
@@ -309,6 +310,10 @@ public class AVIReader extends FormatReader {
   private byte[] uncompress(int no, byte[] buf)
     throws FormatException, IOException
   {
+    if (lastImageNo == no) {
+      buf = lastImage;
+      return buf;
+    }
     CodecOptions options = new CodecOptions();
     options.width = getSizeX();
     options.height = getSizeY();
