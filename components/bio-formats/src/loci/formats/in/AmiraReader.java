@@ -72,7 +72,7 @@ public class AmiraReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
-  /* (non-Javadoc)
+  /**
    * @see loci.formats.FormatReader#openBytes(int, byte[], int, int, int, int)
    */
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
@@ -82,17 +82,16 @@ public class AmiraReader extends FormatReader {
 
     int planeSize = FormatTools.getPlaneSize(this);
     if (planeReader != null) {
-      if (x == 0 && y == 0 && w == parameters.width && h == parameters.height) {
-        return planeReader.read(no, buf);
-      }
-
       // plane readers can only read whole planes, so we need to blit
       int bytesPerPixel = FormatTools.getBytesPerPixel(getPixelType());
       byte[] planeBuf = new byte[planeSize];
       planeReader.read(no, planeBuf);
+      int srcWidth = parameters.width * bytesPerPixel;
+      int destWidth = w * bytesPerPixel;
       for (int j = y; j < y + h; j++) {
-        System.arraycopy(planeBuf, (x + j * parameters.width) * bytesPerPixel,
-          buf, (j - y) * w * bytesPerPixel, w * bytesPerPixel);
+        int src = j * srcWidth + x * bytesPerPixel;
+        int dest = (j - y) * destWidth;
+        System.arraycopy(planeBuf, src, buf, dest, destWidth);
       }
     }
     else {
@@ -387,9 +386,6 @@ public class AmiraReader extends FormatReader {
 
   /**
    * This is the reader for RLE-compressed AmiraMeshes.
-   *
-   * Amira expects the RLE-compressed stream to be aligned with the slices.
-   * In other words, the RLE stream must restart at each slice start.
    */
   class HxRLE implements PlaneReader {
     long compressedSize;
@@ -446,15 +442,15 @@ public class AmiraReader extends FormatReader {
       if (maxOffsetIndex < no) {
         in.seek(offsets[maxOffsetIndex]);
         while (maxOffsetIndex < no) {
+          currentNo = no;
           read(buf, planeSize);
-          currentNo = no + 1;
           offsets[++maxOffsetIndex] = lastCodeOffset;
         }
       }
       else {
         in.seek(offsets[no]);
+        currentNo = no;
         read(buf, planeSize);
-        currentNo = no + 1;
         if (maxOffsetIndex == no) {
           offsets[++maxOffsetIndex] = lastCodeOffset;
         }
