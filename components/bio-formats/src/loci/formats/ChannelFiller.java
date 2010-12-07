@@ -238,6 +238,11 @@ public class ChannelFiller extends ReaderWrapper {
 
   // -- IFormatHandler API methods --
 
+  /* @see IFormatHandler#getNativeDataType() */
+  public Class<?> getNativeDataType() {
+    return byte[].class;
+  }
+
   /* @see IFormatHandler#setId(String) */
   @Override
   public void setId(String id) throws FormatException, IOException {

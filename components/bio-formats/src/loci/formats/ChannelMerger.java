@@ -161,4 +161,11 @@ public class ChannelMerger extends ReaderWrapper {
     return FormatTools.getZCTCoords(this, index);
   }
 
+  // -- IFormatHandler API methods --
+
+  /* @see IFormatHandler#getNativeDataType() */
+  public Class<?> getNativeDataType() {
+    return byte[].class;
+  }
+
 }

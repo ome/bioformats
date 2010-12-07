@@ -169,7 +169,7 @@ public class ChannelSeparator extends ReaderWrapper {
         Runtime rt = Runtime.getRuntime();
         long availableMemory = rt.freeMemory();
 
-        if (availableMemory < FormatTools.getPlaneSize(reader)) {
+        if (availableMemory < w * h * bpp * c) {
           strips = (int) Math.sqrt(h);
         }
 
@@ -192,7 +192,7 @@ public class ChannelSeparator extends ReaderWrapper {
           }
 
           ImageTools.splitChannels(lastImage, strip, channel, c, bpp,
-            false, isInterleaved(), strip.length);
+            false, isInterleaved(), strips == 1 ? w * h * bpp : strip.length);
           if (strips != 1) {
             System.arraycopy(strip, 0, buf, i * stripHeight * w * bpp,
               strip.length);
@@ -232,6 +232,11 @@ public class ChannelSeparator extends ReaderWrapper {
   }
 
   // -- IFormatHandler API methods --
+
+  /* @see IFormatHandler#getNativeDataType() */
+  public Class<?> getNativeDataType() {
+    return byte[].class;
+  }
 
   /* @see IFormatHandler#setId(String) */
   public void setId(String id) throws FormatException, IOException {

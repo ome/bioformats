@@ -275,6 +275,13 @@ public class MinMaxCalculator extends ReaderWrapper {
     }
   }
 
+  // -- IFormatHandler API methods --
+
+  /* @see IFormatHandler#getNativeDataType() */
+  public Class<?> getNativeDataType() {
+    return byte[].class;
+  }
+
   // -- Helper methods --
 
   /**
