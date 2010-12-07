@@ -339,9 +339,6 @@ public class DicomReader extends FormatReader {
     }
     else {
       // plane is not compressed
-      int c = isIndexed() ? 1 : getSizeC();
-      in.skipBytes(y * c * bpp * getSizeX());
-
       readPlane(in, x, y, w, h, buf);
     }
 
