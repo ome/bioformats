@@ -50,10 +50,17 @@ public class VisitechReader extends FormatReader {
 
   public static final String[] HTML_SUFFIX = {"html"};
 
+  public static final String HEADER_MARKER = "[USE SAME FILE]";
+  public static final byte[] PIXELS_MARKER = new byte[] {
+    0, 0, 0, 0, 0, 0, (byte) 0xf0, 0x3f, 0, 0, 0, 0, 0, 0, (byte) 0xf0, 0x3f
+  };
+
   // -- Fields --
 
   /** Files in this dataset. */
   private Vector<String> files;
+
+  private long[] pixelOffsets;
 
   // -- Constructor --
 
@@ -103,19 +110,13 @@ public class VisitechReader extends FormatReader {
 
     String file = files.get(fileIndex);
     RandomAccessInputStream s = new RandomAccessInputStream(file);
-    s.seek(374);
-    while (s.read() != (byte) 0xf0);
-    s.skipBytes(1);
+    s.order(isLittleEndian());
+    s.seek(pixelOffsets[fileIndex]);
 
     int paddingBytes =
       (int) (s.length() - s.getFilePointer() - div * plane) / (div - 1);
-
-    if (s.readInt() == 0) {
-      s.skipBytes(4 + ((plane + paddingBytes) * planeIndex));
-    }
-    else {
-      if (planeIndex == 0) s.seek(s.getFilePointer() - 4);
-      else s.skipBytes((plane + paddingBytes) * planeIndex - 4);
+    if (planeIndex > 0) {
+      s.skipBytes((plane + paddingBytes) * planeIndex);
     }
 
     readPlane(s, x, y, w, h, buf);
@@ -131,7 +132,10 @@ public class VisitechReader extends FormatReader {
     if (!noPixels && files != null) {
       int nFiles = getSizeC();
       for (int i=0; i<nFiles; i++) {
-        v.add(files.get(getSeries() * nFiles + i));
+        int index = getSeries() * nFiles + i;
+        if (index < files.size()) {
+          v.add(files.get(index));
+        }
       }
     }
     return v.toArray(new String[v.size()]);
@@ -140,7 +144,10 @@ public class VisitechReader extends FormatReader {
   /* @see loci.formats.IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
-    if (!fileOnly) files = null;
+    if (!fileOnly) {
+      files = null;
+      pixelOffsets = null;
+    }
   }
 
   // -- Internal FormatReader API methods --
@@ -303,6 +310,10 @@ public class VisitechReader extends FormatReader {
       core[i].metadataComplete = true;
     }
 
+    pixelOffsets = new long[files.size() - 1];
+    for (int i=0; i<pixelOffsets.length; i++) {
+      pixelOffsets[i] = findPixelsOffset(i);
+    }
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
@@ -310,6 +321,28 @@ public class VisitechReader extends FormatReader {
       store.setImageName("Position " + (i + 1), i);
       MetadataTools.setDefaultCreationDate(store, id, i);
     }
+  }
+
+  // -- Helper methods --
+
+  private long findPixelsOffset(int fileIndex) throws IOException {
+    String file = files.get(fileIndex);
+    RandomAccessInputStream s = new RandomAccessInputStream(file);
+    s.order(isLittleEndian());
+    s.findString(false, HEADER_MARKER);
+
+    int plane = FormatTools.getPlaneSize(this);
+    int planeCount = getSizeZ() * getSizeT();
+
+    long skip =
+      (s.length() - s.getFilePointer() - (planeCount * plane)) / planeCount;
+    long fp = s.getFilePointer() + skip - HEADER_MARKER.length();
+    s.seek(fp);
+    if (s.readByte() == PIXELS_MARKER[PIXELS_MARKER.length - 1]) {
+      fp++;
+    }
+    s.close();
+    return fp;
   }
 
 }
