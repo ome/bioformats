@@ -28,6 +28,7 @@ package loci.plugins.util;
 import loci.plugins.BF;
 
 import org.apache.log4j.AppenderSkeleton;
+import org.apache.log4j.Level;
 import org.apache.log4j.spi.LoggingEvent;
 
 /**
@@ -42,7 +43,12 @@ public class IJStatusEchoer extends AppenderSkeleton {
   // -- AppenderSkeleton API methods --
 
   protected void append(LoggingEvent event) {
-    BF.status(false, event.getMessage().toString());
+    if (event.getLevel().isGreaterOrEqual(Level.INFO)) {
+      BF.status(false, event.getMessage().toString());
+    }
+    else {
+      BF.debug(event.getMessage().toString());
+    }
   }
 
   public boolean requiresLayout() {

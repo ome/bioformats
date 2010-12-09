@@ -623,7 +623,7 @@ public class ImportProcess implements StatusReporter {
     BF.status(options.isQuiet(), "");
 
     Logger root = Logger.getRootLogger();
-    root.setLevel(Level.INFO);
+    root.setLevel(Level.DEBUG);
     root.addAppender(new IJStatusEchoer());
   }
 

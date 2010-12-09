@@ -1494,7 +1494,9 @@ public class FV1000Reader extends FormatReader {
   {
     RandomAccessInputStream stream = getFile(filename);
     String data = stream.readString((int) stream.length());
-    if (!data.startsWith("[")) data = data.substring(2, data.length());
+    if (!data.startsWith("[")) {
+      data = data.substring(data.indexOf("["), data.length());
+    }
     data = DataTools.stripString(data);
     BufferedReader reader = new BufferedReader(new StringReader(data));
     stream.close();

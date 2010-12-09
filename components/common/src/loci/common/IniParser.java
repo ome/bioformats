@@ -27,6 +27,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * A simple parser for INI configuration files. Supports pound (#) as comments,
  * and backslash (\) to continue values across multiple lines.
@@ -38,6 +41,9 @@ import java.io.InputStreamReader;
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class IniParser {
+
+  /** Logger for this class. */
+  private static final Logger LOGGER = LoggerFactory.getLogger(IniParser.class);
 
   private String commentDelimiter = "#";
 
@@ -80,6 +86,7 @@ public class IniParser {
       int num = readLine(in, sb);
       if (num == 0) break; // eof
       String line = sb.toString();
+      LOGGER.debug("Line {}: {}", no, line);
 
       // ignore blank lines
       if (line.equals("")) {
