@@ -31,10 +31,12 @@ import java.util.Vector;
 
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.formats.ClassList;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
@@ -59,6 +61,7 @@ public class ScreenReader extends FormatReader {
 
   private ImageReader[][] readers;
   private boolean[][][] plateMaps;
+  private ClassList<IFormatReader> validReaders;
 
   // -- Constructor --
 
@@ -67,6 +70,15 @@ public class ScreenReader extends FormatReader {
     super("Screen", "");
     suffixSufficient = false;
     domains = new String[] {FormatTools.HCS_DOMAIN};
+
+    ClassList<IFormatReader> classes = ImageReader.getDefaultReaderClasses();
+    Class<? extends IFormatReader>[] classArray = classes.getClasses();
+    validReaders = new ClassList<IFormatReader>(IFormatReader.class);
+    for (Class<? extends IFormatReader> c : classArray) {
+      if (!c.equals(ScreenReader.class)) {
+        validReaders.addClass(c);
+      }
+    }
   }
 
   // -- IFormatReader API methods --
@@ -79,7 +91,20 @@ public class ScreenReader extends FormatReader {
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
   public boolean isThisType(String filename, boolean open) {
     if (!open) return super.isThisType(filename, open); // no file system access
-    return false;
+
+    String parent = new Location(filename).getParent();
+    boolean validNames = isValidWellName(filename) && isValidPlateName(parent);
+
+    ImageReader r = new ImageReader(validReaders);
+    boolean validFormat = r.isThisType(filename);
+    boolean singleFiles = false;
+    try {
+      singleFiles = r.isSingleFile(filename);
+    }
+    catch (FormatException e) { }
+    catch (IOException e) { }
+
+    return validNames && validFormat && singleFiles;
   }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
@@ -228,7 +253,7 @@ public class ScreenReader extends FormatReader {
     int nextCore = 0;
     for (int plate=0; plate<files.length; plate++) {
       for (int well=0; well<files[plate].length; well++) {
-        readers[plate][well] = new ImageReader();
+        readers[plate][well] = new ImageReader(validReaders);
         readers[plate][well].setId(files[plate][well]);
         core[nextCore++] = readers[plate][well].getCoreMetadata()[0];
 
