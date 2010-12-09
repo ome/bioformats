@@ -91,14 +91,18 @@ public class NikonElementsTiffReader extends BaseTiffReader {
 
     String xml = ifds.get(0).getIFDTextValue(NIKON_XML_TAG);
     xml = "<NIKON>" + xml.substring(xml.indexOf("<")) + "</NIKON>";
+    xml = XMLTools.sanitizeXML(xml);
 
     handler = new ND2Handler(core);
-    XMLTools.parseXML(xml, handler);
+    try {
+      XMLTools.parseXML(xml, handler);
 
-    Hashtable<String, Object> globalMetadata = handler.getMetadata();
-    for (String key : globalMetadata.keySet()) {
-      addGlobalMeta(key, globalMetadata.get(key));
+      Hashtable<String, Object> globalMetadata = handler.getMetadata();
+      for (String key : globalMetadata.keySet()) {
+        addGlobalMeta(key, globalMetadata.get(key));
+      }
     }
+    catch (IOException e) { }
   }
 
   /* @see BaseTiffReader#initMetadataStore() */
