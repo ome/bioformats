@@ -103,6 +103,24 @@ public class TestTools {
   }
 
   /** Calculate the MD5 of a byte array. */
+  public static String md5(byte[] b, int sizeX, int sizeY, int posX, int posY,
+                           int width, int height, int bpp) {
+    try {
+      MessageDigest md = MessageDigest.getInstance("MD5");
+      md.reset();
+      int offset = 0;
+      for (int i = 0; i < height; i++) {
+        offset = (((posY + i) * sizeX) + posX) * bpp;
+        md.update(b, offset, width * bpp);
+      }
+      byte[] digest = md.digest();
+      return DataTools.bytesToHex(digest);
+    }
+    catch (NoSuchAlgorithmException e) { }
+    return null;
+  }
+
+  /** Calculate the MD5 of a byte array. */
   public static String md5(byte[] b, int offset, int len) {
     try {
       MessageDigest md = MessageDigest.getInstance("MD5");
