@@ -23,6 +23,9 @@
 # available to Bio-Formats, and the order in which they should be used.
 # Please do not edit unless you know what you are doing (see reader-guide.txt).
 
+# generic reader for HCS data
+loci.formats.in.ScreenReader
+
 # readers for compressed/archive files
 loci.formats.in.ZipReader             # zip
 
