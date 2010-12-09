@@ -113,7 +113,7 @@ public class OmeroOpenBytesTest
       }
       catch (Exception e) {
         throw new RuntimeException(String.format(
-            "openBytes(i:%d, buf.length:%d, x:%d, y:%d, w:%d, h:%d) " +
+            "openBytes(series:%d i:%d, buf.length:%d, x:%d, y:%d, w:%d, h:%d) " +
             "[sizeX: %d sizeY:%d bpp:%d] threw exception!",
             i, buf.length, posX, posY, width, height, sizeX, sizeY, bpp), e);
       }
@@ -157,16 +157,17 @@ public class OmeroOpenBytesTest
           }
           catch (Exception e) {
             throw new RuntimeException(String.format(
-                "openBytes(i:%d, buf.length:%d, x:%d, y:%d, w:%d, h:%d) " +
-                "[sizeX: %d sizeY:%d bpp:%d] threw exception!",
-                i, buf.length, posX, posY, width, height, sizeX, sizeY, bpp), e);
+                "openBytes(series:%d i:%d, buf.length:%d, x:%d, y:%d, w:%d, " +
+                "h:%d) [sizeX: %d sizeY:%d bpp:%d] threw exception!",
+                series, i, buf.length, posX, posY, width, height, sizeX, sizeY,
+                bpp), e);
           }
           // Compare hash digests
           planeDigest = TestTools.md5(plane, offset, actualBufSize);
           bufDigest = TestTools.md5(buf, 0, actualBufSize);
           if (!planeDigest.equals(bufDigest)) {
-            fail(String.format("MD5:%d offset:%d len:%d %s != %s",
-                i, offset, actualBufSize, planeDigest, bufDigest));
+            fail(String.format("MD5:%s;%d offset:%d len:%d %s != %s",
+                series, i, offset, actualBufSize, planeDigest, bufDigest));
           }
           // Update offsets, etc.
           offset += actualBufSize;
@@ -229,8 +230,8 @@ public class OmeroOpenBytesTest
         planeDigest = TestTools.md5(plane, 0, topHalfSize);
         halfPlaneDigest = TestTools.md5(topHalfPlane, 0, topHalfSize);
         if (!planeDigest.equals(halfPlaneDigest)) {
-          fail(String.format("First half MD5:%d %s != %s",
-              i, planeDigest, halfPlaneDigest));
+          fail(String.format("First half MD5:%d;%d %s != %s",
+              series, i, planeDigest, halfPlaneDigest));
         }
         // Check the digest for the second half of the plane against a full
         // plane
@@ -239,8 +240,8 @@ public class OmeroOpenBytesTest
         planeDigest = TestTools.md5(plane, topHalfSize, bottomHalfSize);
         halfPlaneDigest = TestTools.md5(bottomHalfPlane, 0, bottomHalfSize);
         if (!planeDigest.equals(halfPlaneDigest)) {
-          fail(String.format("Second half MD5:%d %s != %s",
-              i, planeDigest, halfPlaneDigest));
+          fail(String.format("Second half MD5:%d;%d %s != %s",
+              series, i, planeDigest, halfPlaneDigest));
         }
       }
     }
