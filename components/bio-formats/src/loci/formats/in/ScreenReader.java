@@ -26,6 +26,7 @@ package loci.formats.in;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Vector;
 
 import loci.common.Location;
@@ -174,6 +175,21 @@ public class ScreenReader extends FormatReader {
     String[][] files = new String[plates.length][];
     plateMaps = new boolean[plates.length][][];
 
+    Comparator<String> c = new Comparator<String>() {
+      public int compare(String s1, String s2) {
+        int row1 = (int) (getRow(s1).charAt(0) - 'A');
+        int row2 = (int) (getRow(s2).charAt(0) - 'A');
+
+        if (row1 != row2) {
+          return row1 - row2;
+        }
+
+        int col1 = Integer.parseInt(getColumn(s1)) - 1;
+        int col2 = Integer.parseInt(getColumn(s2)) - 1;
+        return col1 - col2;
+      }
+    };
+
     // build the list of well files for each plate
     Vector<String> tmpWells = new Vector<String>();
     int coreLength = 0;
@@ -196,7 +212,8 @@ public class ScreenReader extends FormatReader {
         }
       }
       files[plate] = tmpWells.toArray(new String[tmpWells.size()]);
-      Arrays.sort(files[plate]);
+
+      Arrays.sort(files[plate], c);
       readers[plate] = new ImageReader[files[plate].length];
       coreLength += files[plate].length;
 
@@ -237,7 +254,6 @@ public class ScreenReader extends FormatReader {
       String plateID = MetadataTools.createLSID("Plate", plate);
       store.setPlateID(plateID, plate);
       store.setScreenPlateRef(plateID, 0, plate);
-      store.setPlateScreenRef(screenID, plate, 0);
 
       store.setPlateName(new Location(plates[plate]).getName(), plate);
       store.setPlateRows(new PositiveInteger(plateMaps[plate].length), plate);
@@ -246,23 +262,30 @@ public class ScreenReader extends FormatReader {
       store.setPlateRowNamingConvention(NamingConvention.LETTER, plate);
       store.setPlateColumnNamingConvention(NamingConvention.NUMBER, plate);
 
-      for (int well=0; well<files[plate].length; well++) {
-        int seriesIndex = getSeriesIndex(plate, well);
+      int realWell = 0;
+      for (int row=0; row<plateMaps[plate].length; row++) {
+        for (int col=0; col<plateMaps[plate][row].length; col++) {
+          int well = row * plateMaps[plate][row].length + col;
+          String wellID = MetadataTools.createLSID("Well", plate, well);
+          store.setWellID(wellID, plate, well);
+          store.setWellColumn(new NonNegativeInteger(row), plate, well);
+          store.setWellRow(new NonNegativeInteger(col), plate, well);
 
-        int[] rowAndColumn = getRowAndColumn(plate, well);
-        String wellID = MetadataTools.createLSID("Well", plate, well);
-        store.setWellID(wellID, plate, well);
-        store.setWellColumn(
-          new NonNegativeInteger(rowAndColumn[1]), plate, well);
-        store.setWellRow(new NonNegativeInteger(rowAndColumn[0]), plate, well);
-
-        String imageID = MetadataTools.createLSID("Image", seriesIndex);
-        String wellSampleID =
-          MetadataTools.createLSID("WellSample", plate, well, 0);
-        store.setWellSampleID(wellSampleID, plate, well, 0);
-        store.setWellSampleImageRef(imageID, plate, well, 0);
-        store.setWellSampleIndex(
-          new NonNegativeInteger(seriesIndex), plate, well, 0);
+          if (plateMaps[plate][row][col]) {
+            int seriesIndex = getSeriesIndex(plate, realWell);
+            String imageID = MetadataTools.createLSID("Image", seriesIndex);
+            store.setImageID(imageID, seriesIndex);
+            store.setImageName("Well " + ((char) (row + 'A')) + (col + 1),
+              seriesIndex);
+            String wellSampleID =
+              MetadataTools.createLSID("WellSample", plate, well, 0);
+            store.setWellSampleID(wellSampleID, plate, well, 0);
+            store.setWellSampleImageRef(imageID, plate, well, 0);
+            store.setWellSampleIndex(
+              new NonNegativeInteger(seriesIndex), plate, well, 0);
+            realWell++;
+          }
+        }
       }
     }
   }
