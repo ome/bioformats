@@ -293,8 +293,8 @@ public class ScreenReader extends FormatReader {
           int well = row * plateMaps[plate][row].length + col;
           String wellID = MetadataTools.createLSID("Well", plate, well);
           store.setWellID(wellID, plate, well);
-          store.setWellColumn(new NonNegativeInteger(row), plate, well);
-          store.setWellRow(new NonNegativeInteger(col), plate, well);
+          store.setWellColumn(new NonNegativeInteger(col), plate, well);
+          store.setWellRow(new NonNegativeInteger(row), plate, well);
 
           if (plateMaps[plate][row][col]) {
             int seriesIndex = getSeriesIndex(plate, realWell);
