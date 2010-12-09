@@ -97,6 +97,7 @@ public class OmeroOpenBytesTest
     reader = new ChannelSeparator(reader);
     reader = new MinMaxCalculator(reader);
     reader.setId(id);
+    seriesCount = reader.getSeriesCount();
   }
 
   private void assertBlock(int blockSize, int posX, int posY,
@@ -115,7 +116,8 @@ public class OmeroOpenBytesTest
         throw new RuntimeException(String.format(
             "openBytes(series:%d i:%d, buf.length:%d, x:%d, y:%d, w:%d, h:%d) " +
             "[sizeX: %d sizeY:%d bpp:%d] threw exception!",
-            i, buf.length, posX, posY, width, height, sizeX, sizeY, bpp), e);
+            reader.getSeries(), i, buf.length, posX, posY, width, height,
+            sizeX, sizeY, bpp), e);
       }
       // Compare hash digests
       planeDigest = TestTools.md5(
@@ -125,8 +127,6 @@ public class OmeroOpenBytesTest
         fail(String.format("MD5:%d len:%d %s != %s",
             i, blockSize, planeDigest, bufDigest));
       }
-      // Update offsets, etc.
-      posY += height;
     }
   }
 
@@ -186,7 +186,6 @@ public class OmeroOpenBytesTest
     sizeC = reader.getSizeC();
     sizeT = reader.getSizeT();
     imageCount = reader.getImageCount();
-    seriesCount = reader.getSeriesCount();
     bpp = FormatTools.getBytesPerPixel(reader.getPixelType());
     planeSize = sizeX * sizeY * bpp;
     topHalfSize = (sizeY / 2) * sizeX * bpp;
