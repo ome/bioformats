@@ -107,6 +107,7 @@ public class OpenlabReader extends FormatReader {
   private int lastPlane;
 
   private String gain, detectorOffset, xPos, yPos, zPos;
+  private boolean specialPlateNames = false;
 
   // -- Constructor --
 
@@ -141,18 +142,23 @@ public class OpenlabReader extends FormatReader {
 
     lastPlane = no;
 
-    if (no >= planeOffsets[series].length) return buf;
-    int index = planeOffsets[series][no];
+    PlaneInfo planeInfo = null;
+    if (specialPlateNames) {
+      planeInfo = getPlane(getZCTCoords(no));
+    }
+    else if (no < planeOffsets[series].length) {
+      int index = planeOffsets[series][no];
+      planeInfo = planes[index];
+    }
+    if (planeInfo == null) return buf;
 
-    long first = planes[index].planeOffset;
-    long last = no == planeOffsets[series].length - 1 ||
-      planeOffsets[series][no + 1] >= planes.length ? in.length() :
-      planes[planeOffsets[series][no + 1]].planeOffset;
+    long first = planeInfo.planeOffset;
+    long last = first + FormatTools.getPlaneSize(this) * 2;
     in.seek(first);
 
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
 
-    if (!planes[index].pict) {
+    if (!planeInfo.pict) {
       if (version == 2) {
         readPlane(in, x, y, w, h, buf);
       }
@@ -187,8 +193,8 @@ public class OpenlabReader extends FormatReader {
         }
         b = null;
       }
-      if (planes[index].volumeType == MAC_256_GREYS ||
-        planes[index].volumeType == MAC_256_COLORS)
+      if (planeInfo.volumeType == MAC_256_GREYS ||
+        planeInfo.volumeType == MAC_256_COLORS)
       {
         for (int i=0; i<buf.length; i++) {
           buf[i] = (byte) (~buf[i] & 0xff);
@@ -228,7 +234,7 @@ public class OpenlabReader extends FormatReader {
       if (exc != null) {
         r.close();
         LOGGER.debug("", exc);
-        in.seek(planes[index].planeOffset - 298);
+        in.seek(planeInfo.planeOffset - 298);
 
         if (in.readByte() == 1) in.skipBytes(128);
         in.skipBytes(169);
@@ -297,6 +303,7 @@ public class OpenlabReader extends FormatReader {
       planeOffsets = null;
       gain = detectorOffset = null;
       xPos = yPos = zPos = null;
+      specialPlateNames = false;
     }
   }
 
@@ -683,9 +690,44 @@ public class OpenlabReader extends FormatReader {
 
     core[s].dimensionOrder = "XY";
     for (PlaneInfo plane : planes) {
-      if (plane == null) continue;
-      if (plane.series == s) {
-        String name = plane.planeName;
+      if (plane == null || plane.series != s) continue;
+
+      String name = plane.planeName;
+
+      // check for a specific name format:
+      // <channel name><optional timepoint>_<plate>_<well>_<Z section>
+
+      String[] tokens = name.split("_");
+      if (tokens.length == 4) {
+        specialPlateNames = true;
+
+        if (!uniqueZ.contains(tokens[3])) {
+          uniqueZ.add(tokens[3]);
+        }
+        plane.channelName = tokens[0];
+        int endIndex = 0;
+        while (endIndex < plane.channelName.length() &&
+          !Character.isDigit(plane.channelName.charAt(endIndex)))
+        {
+          endIndex++;
+        }
+        String timepoint = plane.channelName.substring(endIndex);
+        if (timepoint.equals("")) timepoint = "1";
+        plane.channelName = plane.channelName.substring(0, endIndex);
+
+        if (!uniqueC.contains(plane.channelName)) {
+          uniqueC.add(plane.channelName);
+        }
+        if (!uniqueT.contains(timepoint)) {
+          uniqueT.add(timepoint);
+        }
+
+        core[s].dimensionOrder = "XYCTZ";
+        plane.wavelength = uniqueC.indexOf(plane.channelName);
+        plane.timepoint = uniqueT.indexOf(timepoint);
+        plane.zPosition = uniqueZ.indexOf(tokens[3]);
+      }
+      else {
         for (String axis : axes) {
           Vector<String> unique = null;
           if (axis.equals("Z")) unique = uniqueZ;
@@ -714,6 +756,14 @@ public class OpenlabReader extends FormatReader {
           }
         }
       }
+    }
+
+    if (specialPlateNames) {
+      core[s].sizeC *= uniqueC.size();
+      core[s].sizeT = uniqueT.size();
+      core[s].sizeZ = uniqueZ.size();
+      core[s].imageCount = core[s].sizeC * core[s].sizeZ * core[s].sizeT;
+      return;
     }
 
     if (core[s].rgb && uniqueC.size() <= 1) {
@@ -749,6 +799,18 @@ public class OpenlabReader extends FormatReader {
     else if (newCount > getImageCount()) core[s].imageCount = newCount;
   }
 
+  private PlaneInfo getPlane(int[] zct) {
+    for (PlaneInfo plane : planes) {
+      if (plane != null && plane.zPosition == zct[0] &&
+        plane.wavelength == zct[1] && plane.timepoint == zct[2] &&
+        plane.series == getSeries())
+      {
+        return plane;
+      }
+    }
+    return null;
+  }
+
   // -- Helper classes --
 
   /** Helper class for storing plane info. */
@@ -756,6 +818,7 @@ public class OpenlabReader extends FormatReader {
     protected long planeOffset;
     protected int zPosition;
     protected int wavelength;
+    protected int timepoint;
     protected String planeName;
     protected long timestamp;
     protected boolean pict;
@@ -764,6 +827,7 @@ public class OpenlabReader extends FormatReader {
     protected int width;
     protected int height;
     protected int series = -1;
+    protected String channelName;
   }
 
 }
