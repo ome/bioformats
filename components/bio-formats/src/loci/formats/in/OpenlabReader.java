@@ -85,7 +85,7 @@ public class OpenlabReader extends FormatReader {
   // -- Static fields --
 
   /** Helper reader to read PICT data. */
-  private static PictReader pict = new PictReader();
+  private PictReader pict = new PictReader();
 
   // -- Fields --
 
