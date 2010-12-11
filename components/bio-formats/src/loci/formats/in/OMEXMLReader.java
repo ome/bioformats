@@ -48,6 +48,7 @@ import loci.formats.codec.ZlibCodec;
 import loci.formats.meta.MetadataStore;
 import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.services.OMEXMLService;
+import loci.formats.services.OMEXMLServiceImpl;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
@@ -64,12 +65,6 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class OMEXMLReader extends FormatReader {
 
-  // -- Constants --
-
-  public static final String NO_OME_XML_MSG =
-    "The Java OME-XML library is required to read OME-XML files. Please " +
-    "obtain ome-xml.jar from " + FormatTools.URL_BIO_FORMATS_LIBRARIES;
-
   // -- Static fields --
 
   private static boolean noOME = false;
@@ -80,7 +75,7 @@ public class OMEXMLReader extends FormatReader {
     }
     catch (Throwable t) {
       noOME = true;
-      LOGGER.debug(NO_OME_XML_MSG, t);
+      LOGGER.debug(OMEXMLServiceImpl.NO_OME_XML_MSG, t);
     }
   }
 
@@ -211,7 +206,9 @@ public class OMEXMLReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    if (noOME) throw new MissingLibraryException(NO_OME_XML_MSG);
+    if (noOME) {
+      throw new MissingLibraryException(OMEXMLServiceImpl.NO_OME_XML_MSG);
+    }
     super.initFile(id);
 
     in = new RandomAccessInputStream(id);
@@ -256,7 +253,7 @@ public class OMEXMLReader extends FormatReader {
       omexmlMeta = service.createOMEXMLMetadata(omexml);
     }
     catch (DependencyException de) {
-      throw new MissingLibraryException(NO_OME_XML_MSG, de);
+      throw new MissingLibraryException(OMEXMLServiceImpl.NO_OME_XML_MSG, de);
     }
     catch (ServiceException se) {
       throw new FormatException(se);

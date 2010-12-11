@@ -61,6 +61,7 @@ import loci.formats.in.OMETiffReader;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.OMEXMLService;
+import loci.formats.services.OMEXMLServiceImpl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -330,7 +331,7 @@ public class ImageInfo {
             service.createOMEXMLMetadata(null, omexmlVersion));
       }
       catch (DependencyException de) {
-        throw new MissingLibraryException(OMETiffReader.NO_OME_XML_MSG, de);
+        throw new MissingLibraryException(OMEXMLServiceImpl.NO_OME_XML_MSG, de);
       }
       catch (ServiceException se) {
         throw new FormatException(se);
@@ -863,7 +864,7 @@ public class ImageInfo {
       service = factory.getInstance(OMEXMLService.class);
     }
     catch (DependencyException de) {
-      throw new MissingLibraryException(OMETiffReader.NO_OME_XML_MSG, de);
+      throw new MissingLibraryException(OMEXMLServiceImpl.NO_OME_XML_MSG, de);
     }
     String version = service.getOMEXMLVersion(ms);
     if (version == null) LOGGER.info("Generating OME-XML");

@@ -49,6 +49,7 @@ import loci.formats.MissingLibraryException;
 import loci.formats.meta.MetadataStore;
 import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.services.OMEXMLService;
+import loci.formats.services.OMEXMLServiceImpl;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 import loci.formats.tiff.PhotoInterp;
@@ -63,12 +64,6 @@ import loci.formats.tiff.TiffParser;
  * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/in/OMETiffReader.java">SVN</a></dd></dl>
  */
 public class OMETiffReader extends FormatReader {
-
-  // -- Constants --
-
-  public static final String NO_OME_XML_MSG =
-    "ome-xml.jar is required to read OME-TIFF files.  " +
-    "Please download it from " + FormatTools.URL_BIO_FORMATS_LIBRARIES;
 
   // -- Fields --
 
@@ -699,7 +694,7 @@ public class OMETiffReader extends FormatReader {
       service = factory.getInstance(OMEXMLService.class);
     }
     catch (DependencyException de) {
-      throw new MissingLibraryException(NO_OME_XML_MSG, de);
+      throw new MissingLibraryException(OMEXMLServiceImpl.NO_OME_XML_MSG, de);
     }
   }
 

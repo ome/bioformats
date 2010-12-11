@@ -52,6 +52,7 @@ import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 import loci.formats.out.TiffWriter;
 import loci.formats.services.OMEXMLService;
+import loci.formats.services.OMEXMLServiceImpl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -212,7 +213,7 @@ public final class ImageConverter {
       reader.setMetadataStore(service.createOMEXMLMetadata());
     }
     catch (DependencyException de) {
-      throw new MissingLibraryException(OMETiffReader.NO_OME_XML_MSG, de);
+      throw new MissingLibraryException(OMEXMLServiceImpl.NO_OME_XML_MSG, de);
     }
     catch (ServiceException se) {
       throw new FormatException(se);

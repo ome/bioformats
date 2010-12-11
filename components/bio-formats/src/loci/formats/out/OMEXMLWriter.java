@@ -45,6 +45,7 @@ import loci.formats.codec.ZlibCodec;
 import loci.formats.in.OMETiffReader;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.services.OMEXMLService;
+import loci.formats.services.OMEXMLServiceImpl;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
@@ -86,7 +87,7 @@ public class OMEXMLWriter extends FormatWriter {
       xml = service.getOMEXML(retrieve);
     }
     catch (DependencyException de) {
-      throw new MissingLibraryException(OMETiffReader.NO_OME_XML_MSG, de);
+      throw new MissingLibraryException(OMEXMLServiceImpl.NO_OME_XML_MSG, de);
     }
     catch (ServiceException se) {
       throw new FormatException(se);

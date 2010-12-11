@@ -35,6 +35,7 @@ import javax.xml.transform.TransformerException;
 import loci.common.services.AbstractService;
 import loci.common.services.ServiceException;
 import loci.common.xml.XMLTools;
+import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataConverter;
@@ -73,6 +74,10 @@ import org.xml.sax.SAXException;
  */
 public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
 {
+
+  public static final String NO_OME_XML_MSG =
+    "ome-xml.jar is required to read OME-TIFF files.  " +
+    "Please download it from " + FormatTools.URL_BIO_FORMATS_LIBRARIES;
 
   /** Logger for this class. */
   private static final Logger LOGGER =
