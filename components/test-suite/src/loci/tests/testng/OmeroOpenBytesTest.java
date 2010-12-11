@@ -124,8 +124,8 @@ public class OmeroOpenBytesTest
           plane, sizeX, sizeY, posX, posY, width, height, bpp);
       bufDigest = TestTools.md5(buf, 0, width * height * bpp);
       if (!planeDigest.equals(bufDigest)) {
-        fail(String.format("MD5:%d len:%d %s != %s",
-            i, blockSize, planeDigest, bufDigest));
+        fail(String.format("MD5:%d;%d len:%d %s != %s",
+            reader.getSeries(), i, blockSize, planeDigest, bufDigest));
       }
     }
   }
