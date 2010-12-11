@@ -92,6 +92,18 @@ public class ImaconReader extends BaseTiffReader {
     }
   }
 
+  /**
+   * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
+   */
+  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
+    throws FormatException, IOException
+  {
+    FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
+
+    tiffParser.getSamples(ifds.get(getSeries()), buf, x, y, w, h);
+    return buf;
+  }
+
   // -- Internal BaseTiffReader API methods --
 
   /* @see BaseTiffReader#initStandardMetadata() */
@@ -121,7 +133,7 @@ public class ImaconReader extends BaseTiffReader {
       core[i].pixelType = ifd.getPixelType();
       core[i].indexed = photo == PhotoInterp.RGB_PALETTE;
       core[i].dimensionOrder = "XYCZT";
-      core[i].interleaved = ifd.getPlanarConfiguration() == 2;
+      core[i].interleaved = false;
     }
 
     IFD firstIFD = ifds.get(0);
