@@ -44,7 +44,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
- * InCellReader is the file format reader for InCell 1000 datasets.
+ * InCellReader is the file format reader for InCell 1000/2000 datasets.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/in/InCellReader.java">Trac</a>,
@@ -56,7 +56,7 @@ public class InCellReader extends FormatReader {
 
   // -- Constants --
 
-  public static final String INCELL_MAGIC_STRING = "IN Cell Analyzer 1000";
+  public static final String INCELL_MAGIC_STRING = "IN Cell Analyzer";
 
   private static final String[] PIXELS_SUFFIXES =
     new String[] {"tif", "tiff", "im"};
@@ -93,9 +93,9 @@ public class InCellReader extends FormatReader {
 
   // -- Constructor --
 
-  /** Constructs a new InCell 1000 reader. */
+  /** Constructs a new InCell 1000/2000 reader. */
   public InCellReader() {
-    super("InCell 1000",
+    super("InCell 1000/2000",
       new String[] {"xdce", "xml", "tiff", "tif", "xlog", "im"});
     suffixSufficient = false;
     domains = new String[] {FormatTools.HCS_DOMAIN};
