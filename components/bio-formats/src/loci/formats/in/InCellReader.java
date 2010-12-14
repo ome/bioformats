@@ -72,8 +72,8 @@ public class InCellReader extends FormatReader {
   private int totalImages;
   private int imageWidth, imageHeight;
   private String creationDate;
-  private String rowName, colName;
-  private int startRow, startCol;
+  private String rowName = "A", colName = "1";
+  private int startRow = 0, startCol = 0;
   private int fieldCount;
 
   private int wellRows, wellCols;
@@ -226,7 +226,8 @@ public class InCellReader extends FormatReader {
       exclude = null;
       metadataFiles = null;
       imageWidth = imageHeight = 0;
-      rowName = colName = null;
+      rowName = "A";
+      colName = "1";
       firstRow = firstCol = 0;
       lastCol = 0;
       channelsPerTimepoint = null;
@@ -558,10 +559,24 @@ public class InCellReader extends FormatReader {
 
     public void endElement(String uri, String localName, String qName) {
       if (qName.equals("PlateMap")) {
-        imageFiles = new Image[wellRows * wellCols][fieldCount][getSizeT()][];
+        int sizeT = getSizeT();
+        if (sizeT == 0) {
+          // There has been no <TimeSchedule> in the <PlateMap> defined to
+          // populate channelsPerTimepoint so we have to assume that there is
+          // only one timepoint otherwise the imageFiles array below will not
+          // be correctly initialized.
+          sizeT = 1;
+        }
+        if (channelsPerTimepoint.size() == 0) {
+          // There has been no <TimeSchedule> in the <PlateMap> defined to
+          // populate channelsPerTimepoint so we have to assume that all
+          // channels are being acquired.
+          channelsPerTimepoint.add(core[0].sizeC);
+        }
+        imageFiles = new Image[wellRows * wellCols][fieldCount][sizeT][];
         for (int well=0; well<wellRows*wellCols; well++) {
           for (int field=0; field<fieldCount; field++) {
-            for (int t=0; t<getSizeT(); t++) {
+            for (int t=0; t<sizeT; t++) {
               int channels = channelsPerTimepoint.get(t).intValue();
               imageFiles[well][field][t] = new Image[channels * getSizeZ()];
             }
@@ -855,7 +870,11 @@ public class InCellReader extends FormatReader {
         setSeries(0);
       }
       else if (qName.equals("Gain")) {
-        Double gain = new Double(attributes.getValue("value"));
+        String value = attributes.getValue("value");
+        if (value == null) {
+          return;
+        }
+        Double gain = new Double(value);
         for (int i=0; i<getSeriesCount(); i++) {
           setSeries(i);
           for (int q=0; q<getSizeC(); q++) {
