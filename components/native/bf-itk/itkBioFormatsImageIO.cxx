@@ -70,7 +70,7 @@ http://www.itk.org/Wiki/Plugin_IO_mechanisms
 
 #if defined (_WIN32)
 #define PATHSTEP ';'
-#define SLASH '\'
+#define SLASH '\\'
 #else
 #define PATHSTEP ':'
 #define SLASH '/'

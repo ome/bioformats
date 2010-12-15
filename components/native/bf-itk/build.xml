@@ -160,27 +160,31 @@ usage and/or distribution.
     <if>
       <isset property="isWindows"/>
       <then>
-        <property name="bf-cpp.dir" value="${bf-cpp.dir.windows}"/>
+        <property name="bf-cpp.build" value="${bf-cpp.build.windows}"/>
+        <property name="jace.build" value="${jace.build.windows}"/>
+        <property name="bf-itk.build" value="${bf-itk.build.windows}"/> 
       </then>
       <else>
-        <property name="bf-cpp.dir" value="${bf-cpp.dir.other}"/>
+        <property name="bf-cpp.build" value="${bf-cpp.build.other}"/>
+        <property name="jace.build" value="${jace.build.other}"/>
+        <property name="bf-itk.build" value="${bf-itk.build.other}"/>
       </else>
     </if>
-    <copy file="${bf-cpp.dir}/loci_tools.jar" todir="${bf-itk.dist.dir}"/>
-    <copy file="${bf-cpp.dir}/jace-runtime.jar" todir="${bf-itk.dist.dir}"/>
+    <copy file="${bf-cpp.build}/loci_tools.jar" todir="${bf-itk.dist.dir}"/>
+    <copy file="${bf-cpp.build}/jace-runtime.jar" todir="${bf-itk.dist.dir}"/>
 
     <echo/>
     <echo>-- Copying Bio-Formats C++ shared libraries --</echo>
     <echo/>
     <copy todir="${bf-itk.dist.dir}">
-      <fileset dir="${bf-cpp.dir}" includes="*.so"/>
-      <fileset dir="${bf-cpp.dir}" includes="*.dylib"/>
-      <fileset dir="${bf-cpp.dir}" includes="*.jnilib"/>
-      <fileset dir="${bf-cpp.dir}" includes="*.dll"/>
-      <fileset dir="${bf-cpp.dir}/jace" includes="*.so"/>
-      <fileset dir="${bf-cpp.dir}/jace" includes="*.dylib"/>
-      <fileset dir="${bf-cpp.dir}/jace" includes="*.jnilib"/>
-      <fileset dir="${bf-cpp.dir}/jace" includes="*.dll"/>
+      <fileset dir="${bf-cpp.build}" includes="*.so"/>
+      <fileset dir="${bf-cpp.build}" includes="*.dylib"/>
+      <fileset dir="${bf-cpp.build}" includes="*.jnilib"/>
+      <fileset dir="${bf-cpp.build}" includes="*.dll"/>
+      <fileset dir="${jace.build}" includes="*.so"/>
+      <fileset dir="${jace.build}" includes="*.dylib"/>
+      <fileset dir="${jace.build}" includes="*.jnilib"/>
+      <fileset dir="${jace.build}" includes="*.dll"/>
     </copy>
 
     <echo/>
@@ -194,7 +198,7 @@ usage and/or distribution.
     <echo>-- Copying Bio-Formats ITK plugin --</echo>
     <echo/>
     <copy todir="${bf-itk.dist.dir}">
-      <fileset dir="${build.dir}/lib"/>
+      <fileset dir="${bf-itk.build}"/>
     </copy>
 
     <echo/>
