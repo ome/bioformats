@@ -129,6 +129,8 @@ public class AVIReader extends FormatReader {
     }
 
     long fileOff = offsets.get(no).longValue();
+    long end = no < offsets.size() - 1 ? offsets.get(no + 1) : in.length();
+    long maxBytes = end - fileOff;
     in.seek(fileOff);
 
     if (bmpCompression != 0) {
@@ -166,7 +168,7 @@ public class AVIReader extends FormatReader {
       return buf;
     }
 
-    int pad = (bmpScanLineSize / getRGBChannelCount()) - getSizeX()*bytes;
+    int pad = (bmpScanLineSize / getRGBChannelCount()) - getSizeX() * bytes;
     int scanline = w * bytes * (isInterleaved() ? getRGBChannelCount() : 1);
 
     in.skipBytes((getSizeX() + pad) * bytes * (getSizeY() - h - y));
@@ -187,6 +189,9 @@ public class AVIReader extends FormatReader {
     }
     else {
       int skip = FormatTools.getPlaneSize(this, getSizeX() - w - x + pad, 1);
+      if ((getSizeX() + pad) * getSizeY() * getRGBChannelCount() > maxBytes) {
+        skip /= getRGBChannelCount();
+      }
       for (int i=h - 1; i>=0; i--) {
         in.skipBytes(x * (bmpBitsPerPixel / 8));
         in.read(buf, (i - y)*scanline, scanline);
