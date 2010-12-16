@@ -182,6 +182,10 @@ public abstract class WriterWrapper implements IFormatWriter {
     return writer.isInterleaved();
   }
 
+  public void setValidBitsPerPixel(int bits) {
+    writer.setValidBitsPerPixel(bits);
+  }
+
   public boolean canDoStacks() {
     return writer.canDoStacks();
   }

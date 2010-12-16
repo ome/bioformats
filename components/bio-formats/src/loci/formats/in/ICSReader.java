@@ -440,6 +440,9 @@ public class ICSReader extends FormatReader {
             axes[n] = t.nextToken().trim();
           }
         }
+        else if (k.equalsIgnoreCase("layout significant_bits")) {
+          core[0].bitsPerPixel = Integer.parseInt(v);
+        }
         else if (k.equalsIgnoreCase("representation byte_order")) {
           byteOrder = v;
         }

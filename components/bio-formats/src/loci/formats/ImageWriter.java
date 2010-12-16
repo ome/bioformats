@@ -232,6 +232,13 @@ public class ImageWriter implements IFormatWriter {
     return writers[0].isInterleaved();
   }
 
+  /* @see IFormatWriter#setValidBitsPerPixel(int) */
+  public void setValidBitsPerPixel(int bits) {
+    for (IFormatWriter writer : writers) {
+      writer.setValidBitsPerPixel(bits);
+    }
+  }
+
   /* @see IFormatWriter#canDoStacks() */
   public boolean canDoStacks() {
     return getWriter().canDoStacks();

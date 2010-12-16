@@ -140,6 +140,10 @@ public class ICSWriter extends FormatWriter {
       int[] sizes = overwriteDimensions(meta);
       dimensionLength = (int) (out.getFilePointer() - dimensionOffset);
 
+      if (validBits != 0) {
+        out.writeBytes("layout\tsignificant_bits\t" + validBits + "\n");
+      }
+
       boolean signed = FormatTools.isSigned(pixelType);
       boolean littleEndian =
         !meta.getPixelsBinDataBigEndian(series, 0).booleanValue();
@@ -160,24 +164,24 @@ public class ICSWriter extends FormatWriter {
       }
 
       out.writeBytes("\nparameter\tscale\t1.000000\t");
-      String order = meta.getPixelsDimensionOrder(series).toString();
+      String order = meta.getPixelsDimensionOrder(series).getValue();
       StringBuffer units = new StringBuffer();
       for (int i=0; i<order.length(); i++) {
         char dim = order.charAt(i);
         Number value = 1.0;
-        if (dim == 'x') {
+        if (dim == 'X') {
           value = meta.getPixelsPhysicalSizeX(0);
           units.append("micrometers\t");
         }
-        else if (dim == 'y') {
+        else if (dim == 'Y') {
           value = meta.getPixelsPhysicalSizeY(0);
           units.append("micrometers\t");
         }
-        else if (dim == 'z') {
+        else if (dim == 'Z') {
           value = meta.getPixelsPhysicalSizeZ(0);
           units.append("micrometers\t");
         }
-        else if (dim == 't') {
+        else if (dim == 'T') {
           value = meta.getPixelsTimeIncrement(0);
           units.append("seconds\t");
         }

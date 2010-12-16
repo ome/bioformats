@@ -68,6 +68,9 @@ public abstract class FormatWriter extends FormatHandler
   /** Whether the channels in an RGB image are interleaved. */
   protected boolean interleaved;
 
+  /** The number of valid bits per pixel. */
+  protected int validBits;
+
   /** Current series. */
   protected int series;
 
@@ -156,6 +159,11 @@ public abstract class FormatWriter extends FormatHandler
   /* @see IFormatWriter#isInterleaved() */
   public boolean isInterleaved() {
     return interleaved;
+  }
+
+  /* @see IFormatWriter#setValidBitsPerPixel(int) */
+  public void setValidBitsPerPixel(int bits) {
+    validBits = bits;
   }
 
   /* @see IFormatWriter#canDoStacks() */

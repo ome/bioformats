@@ -101,6 +101,9 @@ public interface IFormatWriter extends IFormatHandler {
   /** Sets whether or not the channels in an image are interleaved. */
   void setInterleaved(boolean interleaved);
 
+  /** Sets the number of valid bits per pixel. */
+  void setValidBitsPerPixel(int bits);
+
   /** Gets whether or not the channels in an image are interleaved. */
   boolean isInterleaved();
 

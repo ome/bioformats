@@ -256,6 +256,7 @@ public final class ImageConverter {
       reader.setSeries(q);
       writer.setSeries(q);
       writer.setInterleaved(reader.isInterleaved());
+      writer.setValidBitsPerPixel(reader.getBitsPerPixel());
       int numImages = writer.canDoStacks() ? reader.getImageCount() : 1;
       total += numImages;
       for (int i=0; i<numImages; i++) {

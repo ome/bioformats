@@ -353,6 +353,23 @@ public class Exporter {
 
       w.setMetadataRetrieve(store);
 
+      String imageInfo = imp.getProperty("Info").toString();
+      if (imageInfo != null) {
+        String[] lines = imageInfo.split("\n");
+        for (String line : lines) {
+          int eq = line.lastIndexOf("=");
+          if (eq > 0) {
+            String key = line.substring(0, eq).trim();
+            String value = line.substring(eq + 1).trim();
+
+            if (key.endsWith("BitsPerPixel")) {
+              w.setValidBitsPerPixel(Integer.parseInt(value));
+              break;
+            }
+          }
+        }
+      }
+
       w.setId(outfile);
 
       // prompt for options
