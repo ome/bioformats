@@ -356,7 +356,7 @@ public class ZeissLSMReader extends FormatReader {
     }
     else lsmFilenames = new String[] {id};
 
-    if (lsmFilenames.length == 0) {
+    if (lsmFilenames == null || lsmFilenames.length == 0) {
       throw new FormatException("LSM files were not found.");
     }
 
@@ -494,6 +494,7 @@ public class ZeissLSMReader extends FormatReader {
         if (file.isDirectory()) continue;
         // make sure that the .mdb references this .lsm
         String[] lsms = parseMDB(file.getAbsolutePath());
+        if (lsms == null) return null;
         for (String lsm : lsms) {
           if (id.endsWith(lsm) || lsm.endsWith(id)) {
             return file.getAbsolutePath();
@@ -1593,7 +1594,12 @@ public class ZeissLSMReader extends FormatReader {
       throw new FormatException("MDB Tools Java library not found", de);
     }
 
-    mdbService.initialize(mdbFile);
+    try {
+      mdbService.initialize(mdbFile);
+    }
+    catch (Exception e) {
+      return null;
+    }
     Vector<Vector<String[]>> tables = mdbService.parseDatabase();
     Vector<String> referencedLSMs = new Vector<String>();
 
