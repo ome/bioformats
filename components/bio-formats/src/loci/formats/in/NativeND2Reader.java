@@ -883,6 +883,23 @@ public class NativeND2Reader extends FormatReader {
       MetadataTools.setDefaultCreationDate(store, currentId, i);
     }
 
+    colors = new int[getEffectiveSizeC()];
+
+    ArrayList<String> channelNames = null;
+    if (handler != null) {
+      channelNames = handler.getChannelNames();
+      for (int i=0; i<getSeriesCount(); i++) {
+        for (int c=0; c<getEffectiveSizeC(); c++) {
+          int index = i * getSizeC() + c;
+          if (index < channelNames.size()) {
+            String channelName = channelNames.get(index);
+            Integer channelColor = channelColors.get(channelName);
+            colors[c] = channelColor == null ? 0 : channelColor.intValue();
+          }
+        }
+      }
+    }
+
     if (getMetadataOptions().getMetadataLevel() == MetadataLevel.MINIMUM) {
       return;
     }
@@ -971,7 +988,6 @@ public class NativeND2Reader extends FormatReader {
     store.setDetectorModel(handler.getCameraModel(), 0, 0);
     store.setDetectorType(getDetectorType("Other"), 0, 0);
 
-    ArrayList<String> channelNames = handler.getChannelNames();
     ArrayList<String> modality = handler.getModalities();
     ArrayList<String> binning = handler.getBinnings();
     ArrayList<Double> speed = handler.getSpeeds();
@@ -981,8 +997,6 @@ public class NativeND2Reader extends FormatReader {
     ArrayList<Integer> emWave = handler.getEmissionWavelengths();
     ArrayList<Integer> power = handler.getPowers();
     ArrayList<Hashtable<String, String>> rois = handler.getROIs();
-
-    colors = new int[getEffectiveSizeC()];
 
     for (int i=0; i<getSeriesCount(); i++) {
       for (int c=0; c<getEffectiveSizeC(); c++) {
@@ -994,9 +1008,6 @@ public class NativeND2Reader extends FormatReader {
         if (index < channelNames.size()) {
           String channelName = channelNames.get(index);
           store.setChannelName(channelName, i, c);
-
-          Integer channelColor = channelColors.get(channelName);
-          colors[c] = channelColor == null ? 0 : channelColor.intValue();
         }
         if (index < modality.size()) {
           store.setChannelAcquisitionMode(
