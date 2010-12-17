@@ -31,6 +31,9 @@ import java.util.Vector;
 
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceException;
+import loci.common.services.ServiceFactory;
 import loci.formats.ClassList;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
@@ -39,8 +42,15 @@ import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 import loci.formats.MetadataTools;
+import loci.formats.MissingLibraryException;
 import loci.formats.meta.MetadataStore;
+import loci.formats.ome.OMEXMLMetadata;
+import loci.formats.ome.OMEXMLMetadataImpl;
+import loci.formats.services.OMEXMLService;
+import loci.formats.services.OMEXMLServiceImpl;
 
+import ome.xml.model.Image;
+import ome.xml.model.OME;
 import ome.xml.model.enums.NamingConvention;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveInteger;
@@ -249,11 +259,26 @@ public class ScreenReader extends FormatReader {
 
     // initialize each of the well files
 
+    OMEXMLMetadata omexmlMeta;
+    OMEXMLService service;
+    try {
+      ServiceFactory factory = new ServiceFactory();
+      service = factory.getInstance(OMEXMLService.class);
+      omexmlMeta = service.createOMEXMLMetadata();
+    }
+    catch (DependencyException de) {
+      throw new MissingLibraryException(OMEXMLServiceImpl.NO_OME_XML_MSG, de);
+    }
+    catch (ServiceException se) {
+      throw new FormatException(se);
+    }
+
     core = new CoreMetadata[coreLength];
     int nextCore = 0;
     for (int plate=0; plate<files.length; plate++) {
       for (int well=0; well<files[plate].length; well++) {
         readers[plate][well] = new ImageReader(validReaders);
+        readers[plate][well].setMetadataStore(omexmlMeta);
         readers[plate][well].setId(files[plate][well]);
         core[nextCore++] = readers[plate][well].getCoreMetadata()[0];
 
@@ -266,9 +291,18 @@ public class ScreenReader extends FormatReader {
       }
     }
 
+    OME root = (OME) omexmlMeta.getRoot();
+    Image img = root.getImage(0);
+    for (int i=1; i<core.length; i++) {
+      root.addImage(img);
+    }
+    ((OMEXMLMetadataImpl) omexmlMeta).resolveReferences();
+    omexmlMeta.setRoot(root);
+
     // populate HCS metadata
 
     MetadataStore store = makeFilterMetadata();
+    service.convertMetadata(omexmlMeta, store);
     MetadataTools.populatePixels(store, this);
 
     String screenID = MetadataTools.createLSID("Screen", 0);
