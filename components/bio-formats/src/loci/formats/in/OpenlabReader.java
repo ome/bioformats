@@ -579,13 +579,17 @@ public class OpenlabReader extends FormatReader {
     // link DetectorSettings to an actual Detector
     String detectorID = MetadataTools.createLSID("Detector", 0, 0);
     store.setDetectorID(detectorID, 0, 0);
-    store.setDetectorSettingsDetector(detectorID, 0, 0);
 
     store.setDetectorType("Other", 0, 0);
 
     Float stageX = xPos == null ? null : new Float(xPos);
     Float stageY = yPos == null ? null : new Float(yPos);
     Float stageZ = zPos == null ? null : new Float(zPos);
+    for (int c=0; c<getEffectiveSizeC(); c++) {
+      PlaneInfo plane = getPlane(new int[] {0, c, 0});
+      store.setChannelName(plane.channelName, 0, c);
+      store.setDetectorSettingsID(detectorID, 0, c);
+    }
 
     for (int series=0; series<getSeriesCount(); series++) {
       setSeries(series);
