@@ -390,6 +390,23 @@ public class ND2Handler extends DefaultHandler {
       if (channelIndex < 0) channelIndex = 0;
       dyes.put(qName.substring(0, channelIndex), value);
     }
+    else if (qName.equals("uiSequenceCount")) {
+      int imageCount = Integer.parseInt(value);
+      if (core.length > 0) imageCount /= core.length;
+      if (core[0].sizeZ * core[0].sizeT != core[0].imageCount &&
+        core[0].sizeZ * core[0].sizeC * core[0].sizeT != core[0].imageCount)
+      {
+        if (core[0].sizeZ > 1) {
+          core[0].sizeZ = core[0].imageCount;
+          core[0].sizeT = 1;
+        }
+        else if (core[0].sizeT > 1) {
+          core[0].sizeT = core[0].imageCount;
+          core[0].sizeZ = 1;
+        }
+      }
+      metadata.put(qName, value);
+    }
     else {
       StringBuffer sb = new StringBuffer();
       if (prefix != null) {
