@@ -722,7 +722,9 @@ public abstract class FormatReader extends FormatHandler
         }
       }
     }
-    setSeries(oldSeries);
+    if (getSeriesCount() > 0) {
+      setSeries(oldSeries);
+    }
     return files.toArray(new String[files.size()]);
   }
 
