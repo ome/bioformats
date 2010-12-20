@@ -151,7 +151,7 @@ public class ZeissLSMReader extends FormatReader {
   // -- Fields --
 
   private double pixelSizeX, pixelSizeY, pixelSizeZ;
-  private byte[][] lut = null;
+  private byte[][][] lut = null;
   private Vector<Double> timestamps;
   private int validChannels;
 
@@ -175,6 +175,7 @@ public class ZeissLSMReader extends FormatReader {
   private int totalROIs = 0;
 
   private int prevPlane = -1;
+  private int prevChannel = 0;
   private byte[] prevBuf = null;
   private Region prevRegion = null;
 
@@ -215,6 +216,7 @@ public class ZeissLSMReader extends FormatReader {
       binning = null;
       totalROIs = 0;
       prevPlane = -1;
+      prevChannel = 0;
       prevBuf = null;
       prevRegion = null;
       xCoordinates = null;
@@ -262,12 +264,12 @@ public class ZeissLSMReader extends FormatReader {
     {
       return null;
     }
-    byte[][] b = new byte[3][256];
-    for (int i=2; i>=3-validChannels; i--) {
-      for (int j=0; j<256; j++) {
-        b[i][j] = (byte) j;
-      }
-    }
+
+    byte[][] b = new byte[3][];
+    b[0] = lut[getSeries()][prevChannel * 3];
+    b[1] = lut[getSeries()][prevChannel * 3 + 1];
+    b[2] = lut[getSeries()][prevChannel * 3 + 2];
+
     return b;
   }
 
@@ -329,9 +331,11 @@ public class ZeissLSMReader extends FormatReader {
       }
       ImageTools.splitChannels(
         prevBuf, buf, c, getSizeC(), bpp, false, false, w * h * bpp);
+      prevChannel = c;
     }
     else {
       tiffParser.getSamples(ifds.get(no), buf, x, y, w, h);
+      prevChannel = getZCTCoords(no)[1];
     }
     in.close();
     return buf;
@@ -422,6 +426,8 @@ public class ZeissLSMReader extends FormatReader {
     }
 
     MetadataStore store = makeFilterMetadata();
+
+    lut = new byte[ifdsList.size()][][];
 
     for (int series=0; series<ifdsList.size(); series++) {
       IFDList ifds = ifdsList.get(series);
@@ -730,10 +736,8 @@ public class ZeissLSMReader extends FormatReader {
         core[series].dimensionOrder = "XYZCT";
     }
 
-    core[series].indexed =
-      lut != null && lut[series] != null && getSizeC() == 1;
+    core[series].indexed = lut != null && lut[series] != null;
     if (isIndexed()) {
-      core[series].sizeC = 1;
       core[series].rgb = false;
     }
     if (getSizeC() == 0) core[series].sizeC = 1;
@@ -921,13 +925,34 @@ public class ZeissLSMReader extends FormatReader {
       }
 
       if (channelColorsOffset != 0) {
-        in.seek(channelColorsOffset + 16);
+        in.seek(channelColorsOffset + 12);
+        int colorsOffset = in.readInt();
         int namesOffset = in.readInt();
+
+        // read the color of each channel
+
+        if (colorsOffset > 0) {
+          in.seek(channelColorsOffset + colorsOffset);
+          lut[getSeries()] = new byte[getSizeC() * 3][256];
+          core[getSeries()].indexed = true;
+          for (int i=0; i<getSizeC(); i++) {
+            int color = in.readInt();
+            int red = color & 0xff;
+            int green = (color & 0xff00) >> 8;
+            int blue = (color & 0xff0000) >> 16;
+
+            for (int j=0; j<256; j++) {
+              lut[getSeries()][i * 3][j] = (byte) ((red / 255.0) * j);
+              lut[getSeries()][i * 3 + 1][j] = (byte) ((green / 255.0) * j);
+              lut[getSeries()][i * 3 + 2][j] = (byte) ((blue / 255.0) * j);
+            }
+          }
+        }
 
         // read the name of each channel
 
         if (namesOffset > 0) {
-          in.skipBytes(namesOffset - 16);
+          in.seek(channelColorsOffset + namesOffset + 4);
 
           for (int i=0; i<getSizeC(); i++) {
             if (in.getFilePointer() >= in.length() - 1) break;
