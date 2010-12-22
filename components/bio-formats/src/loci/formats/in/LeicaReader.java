@@ -992,6 +992,9 @@ public class LeicaReader extends FormatReader {
       }
       else if (dimType.equals("z")) {
         core[seriesIndex].sizeZ = size;
+        if (getDimensionOrder().indexOf("Z") == -1) {
+          core[seriesIndex].dimensionOrder += "Z";
+        }
         physicalSizes[seriesIndex][2] = physical;
       }
       else {
