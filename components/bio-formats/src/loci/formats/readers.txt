@@ -87,6 +87,7 @@ loci.formats.in.CellWorxReader        # pnl, htd
 loci.formats.in.Ecat7Reader           # v
 loci.formats.in.VarianFDFReader       # fdf
 loci.formats.in.AIMReader             # aim
+loci.formats.in.InCell3000Reader      # frm
 loci.formats.in.FakeReader            # fake
 
 # multi-extension messes
