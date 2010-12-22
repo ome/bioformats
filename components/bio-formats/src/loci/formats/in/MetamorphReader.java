@@ -254,8 +254,7 @@ public class MetamorphReader extends BaseTiffReader {
       if (stkFile.indexOf(File.separator) != -1) {
         stkFile = stkFile.substring(stkFile.lastIndexOf(File.separator) + 1);
       }
-      String parentPath = id.substring(0, id.lastIndexOf(File.separator) + 1);
-      Location parent = new Location(parentPath).getAbsoluteFile();
+      Location parent = new Location(id).getAbsoluteFile().getParentFile();
       LOGGER.info("Looking for STK file in {}", parent.getAbsolutePath());
       String[] dirList = parent.list(true);
       for (String f : dirList) {
@@ -264,7 +263,7 @@ public class MetamorphReader extends BaseTiffReader {
         if (underscore < 0) underscore = f.length();
         String prefix = f.substring(0, underscore);
 
-        if ((f.indexOf(stkFile) != -1 || stkFile.startsWith(prefix)) &&
+        if ((f.equals(stkFile) || stkFile.startsWith(prefix)) &&
           checkSuffix(f, STK_SUFFIX))
         {
           stkFile = new Location(parent.getAbsolutePath(), f).getAbsolutePath();
@@ -291,14 +290,14 @@ public class MetamorphReader extends BaseTiffReader {
       String stkName = stk.getName();
       String stkPrefix = stkName;
       if (stkPrefix.indexOf("_") >= 0) {
-        stkPrefix = stkPrefix.substring(0, stkPrefix.indexOf("_"));
+        stkPrefix = stkPrefix.substring(0, stkPrefix.indexOf("_") + 1);
       }
       Location parent = stk.getParentFile();
       String[] list = parent.list(true);
       for (String f : list) {
         if (checkSuffix(f, ND_SUFFIX)) {
           String prefix = f.substring(0, f.lastIndexOf("."));
-          if (stkName.startsWith(prefix) || prefix.startsWith(stkPrefix)) {
+          if (stkName.startsWith(prefix) || prefix.equals(stkPrefix)) {
             ndfile = new Location(parent, f).getAbsoluteFile();
             break;
           }
