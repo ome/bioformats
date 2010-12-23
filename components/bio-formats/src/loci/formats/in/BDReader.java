@@ -177,10 +177,21 @@ public class BDReader extends FormatReader {
     if (file != null) {
       reader.setId(file);
       reader.openBytes(0, buf, x, y, w, h);
-      reader.close();
     }
 
     return buf;
+  }
+
+  /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
+  public int getOptimalTileWidth() {
+    FormatTools.assertId(currentId, true, 1);
+    return reader.getOptimalTileWidth();
+  }
+
+  /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
+  public int getOptimalTileHeight() {
+    FormatTools.assertId(currentId, true, 1);
+    return reader.getOptimalTileHeight();
   }
 
   // -- Internal FormatReader API methods --
@@ -246,8 +257,6 @@ public class BDReader extends FormatReader {
     boolean interleaved = reader.isInterleaved();
     boolean indexed = reader.isIndexed();
     boolean littleEndian = reader.isLittleEndian();
-
-    reader.close();
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       IniParser parser = new IniParser();

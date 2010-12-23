@@ -470,6 +470,12 @@ public interface IFormatReader extends IFormatHandler, IMetadataConfigurable {
   /** Returns true if this format supports multi-file datasets. */
   boolean hasCompanionFiles();
 
+  /** Returns the optimal sub-image width for use with openBytes. */
+  int getOptimalTileWidth();
+
+  /** Returns the optimal sub-image height for use with openBytes. */
+  int getOptimalTileHeight();
+
   // -- Deprecated methods --
 
   /**

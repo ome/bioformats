@@ -458,6 +458,14 @@ public abstract class ReaderWrapper implements IFormatReader {
     return reader.getDomains();
   }
 
+  public int getOptimalTileWidth() {
+    return reader.getOptimalTileWidth();
+  }
+
+  public int getOptimalTileHeight() {
+    return reader.getOptimalTileHeight();
+  }
+
   // -- IFormatHandler API methods --
 
   public boolean isThisType(String name) {

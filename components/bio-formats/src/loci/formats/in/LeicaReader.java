@@ -166,6 +166,8 @@ public class LeicaReader extends FormatReader {
 
   private Double detectorOffset, detectorVoltage;
 
+  private int[] tileWidth, tileHeight;
+
   // -- Constructor --
 
   /** Constructs a new Leica reader. */
@@ -332,6 +334,18 @@ public class LeicaReader extends FormatReader {
     }
   }
 
+  /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
+  public int getOptimalTileWidth() {
+    FormatTools.assertId(currentId, true, 1);
+    return tileWidth[getSeries()];
+  }
+
+  /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
+  public int getOptimalTileHeight() {
+    FormatTools.assertId(currentId, true, 1);
+    return tileHeight[getSeries()];
+  }
+
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
@@ -422,6 +436,9 @@ public class LeicaReader extends FormatReader {
     }
 
     numSeries = headerIFDs.size();
+
+    tileWidth = new int[numSeries];
+    tileHeight = new int[numSeries];
 
     core = new CoreMetadata[numSeries];
     for (int i=0; i<numSeries; i++) {
@@ -557,6 +574,8 @@ public class LeicaReader extends FormatReader {
 
       core[i].sizeX = tiff.getSizeX();
       core[i].sizeY = tiff.getSizeY();
+      tileWidth[i] = tiff.getOptimalTileWidth();
+      tileHeight[i] = tiff.getOptimalTileHeight();
     }
 
     for (int i=0; i<numSeries; i++) {

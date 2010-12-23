@@ -278,6 +278,30 @@ public class MinimalTiffReader extends FormatReader {
     }
   }
 
+  /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
+  public int getOptimalTileWidth() {
+    FormatTools.assertId(currentId, true, 1);
+    try {
+      return (int) ifds.get(0).getTileWidth();
+    }
+    catch (FormatException e) {
+      LOGGER.debug("Could not retrieve tile width", e);
+    }
+    return super.getOptimalTileWidth();
+  }
+
+  /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
+  public int getOptimalTileHeight() {
+    FormatTools.assertId(currentId, true, 1);
+    try {
+      return (int) ifds.get(0).getTileLength();
+    }
+    catch (FormatException e) {
+      LOGGER.debug("Could not retrieve tile height", e);
+    }
+    return super.getOptimalTileHeight();
+  }
+
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */

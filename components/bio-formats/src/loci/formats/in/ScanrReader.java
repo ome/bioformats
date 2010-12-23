@@ -79,6 +79,9 @@ public class ScanrReader extends FormatReader {
   private String plateName;
   private Double pixelSize;
 
+  private int tileWidth = 0;
+  private int tileHeight = 0;
+
   private String[] tiffs;
   private MinimalTiffReader reader;
 
@@ -177,6 +180,8 @@ public class ScanrReader extends FormatReader {
       wellNumbers.clear();
       wellCount = 0;
       pixelSize = null;
+      tileWidth = 0;
+      tileHeight = 0;
     }
   }
 
@@ -210,6 +215,18 @@ public class ScanrReader extends FormatReader {
     }
 
     return buf;
+  }
+
+  /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
+  public int getOptimalTileWidth() {
+    FormatTools.assertId(currentId, true, 1);
+    return tileWidth;
+  }
+
+  /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
+  public int getOptimalTileHeight() {
+    FormatTools.assertId(currentId, true, 1);
+    return tileHeight;
   }
 
   // -- Internal FormatReader API methods --
@@ -393,6 +410,9 @@ public class ScanrReader extends FormatReader {
     int sizeX = reader.getSizeX();
     int sizeY = reader.getSizeY();
     int pixelType = reader.getPixelType();
+
+    tileWidth = reader.getOptimalTileWidth();
+    tileHeight = reader.getOptimalTileHeight();
 
     // we strongly suspect that ScanR incorrectly records the
     // signedness of the pixels

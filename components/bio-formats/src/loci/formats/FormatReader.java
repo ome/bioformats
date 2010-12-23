@@ -1043,6 +1043,18 @@ public abstract class FormatReader extends FormatHandler
     return domains;
   }
 
+  /* @see IFormatReader#getOptimalTileWidth() */
+  public int getOptimalTileWidth() {
+    FormatTools.assertId(currentId, true, 1);
+    return getSizeX();
+  }
+
+  /* @see IFormatReader#getOptimalTileHeight() */
+  public int getOptimalTileHeight() {
+    FormatTools.assertId(currentId, true, 1);
+    return 1;
+  }
+
   // -- IFormatHandler API methods --
 
   /* @see IFormatHandler#isThisType(String) */

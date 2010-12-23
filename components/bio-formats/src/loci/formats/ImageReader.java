@@ -613,6 +613,16 @@ public class ImageReader implements IFormatReader {
     return getReader().getDomains();
   }
 
+  /* @see IFormatReader#getOptimalTileWidth() */
+  public int getOptimalTileWidth() {
+    return getReader().getOptimalTileWidth();
+  }
+
+  /* @see IFormatReader#getOptimalTileHeight() */
+  public int getOptimalTileHeight() {
+    return getReader().getOptimalTileHeight();
+  }
+
   // -- IFormatHandler API methods --
 
   /* @see IFormatHandler#isThisType(String) */

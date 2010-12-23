@@ -240,6 +240,24 @@ public class PerkinElmerReader extends FormatReader {
     }
   }
 
+  /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
+  public int getOptimalTileWidth() {
+    FormatTools.assertId(currentId, true, 1);
+    if (isTiff) {
+      return tiff.getOptimalTileWidth();
+    }
+    return super.getOptimalTileWidth();
+  }
+
+  /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
+  public int getOptimalTileHeight() {
+    FormatTools.assertId(currentId, true, 1);
+    if (isTiff) {
+      return tiff.getOptimalTileHeight();
+    }
+    return super.getOptimalTileHeight();
+  }
+
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */

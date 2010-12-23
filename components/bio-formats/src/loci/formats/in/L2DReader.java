@@ -61,6 +61,7 @@ public class L2DReader extends FormatReader {
   private Vector[] metadataFiles;
 
   private MinimalTiffReader reader;
+  private int[] tileWidth, tileHeight;
 
   // -- Constructor --
 
@@ -153,7 +154,21 @@ public class L2DReader extends FormatReader {
       tiffs = null;
       reader = null;
       metadataFiles = null;
+      tileWidth = null;
+      tileHeight = null;
     }
+  }
+
+  /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
+  public int getOptimalTileWidth() {
+    FormatTools.assertId(currentId, true, 1);
+    return tileWidth[getSeries()];
+  }
+
+  /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
+  public int getOptimalTileHeight() {
+    FormatTools.assertId(currentId, true, 1);
+    return tileHeight[getSeries()];
   }
 
   // -- Internal FormatReader API methods --
@@ -222,6 +237,9 @@ public class L2DReader extends FormatReader {
     String[] dates = new String[scans.length];
     String model = null;
 
+    tileWidth = new int[scans.length];
+    tileHeight = new int[scans.length];
+
     for (int i=0; i<scans.length; i++) {
       setSeries(i);
       core[i] = new CoreMetadata();
@@ -288,6 +306,8 @@ public class L2DReader extends FormatReader {
       core[i].indexed = reader.isIndexed();
       core[i].littleEndian = reader.isLittleEndian();
       core[i].pixelType = reader.getPixelType();
+      tileWidth[i] = reader.getOptimalTileWidth();
+      tileHeight[i] = reader.getOptimalTileHeight();
     }
 
     MetadataTools.populatePixels(store, this);

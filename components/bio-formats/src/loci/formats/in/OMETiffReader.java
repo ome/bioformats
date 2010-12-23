@@ -76,6 +76,9 @@ public class OMETiffReader extends FormatReader {
   private int lastPlane;
   private boolean hasSPW;
 
+  private int[] tileWidth;
+  private int[] tileHeight;
+
   private OMEXMLService service;
 
   // -- Constructor --
@@ -231,7 +234,21 @@ public class OMETiffReader extends FormatReader {
       info = null;
       used = null;
       lastPlane = 0;
+      tileWidth = null;
+      tileHeight = null;
     }
+  }
+
+  /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
+  public int getOptimalTileWidth() {
+    FormatTools.assertId(currentId, true, 1);
+    return tileWidth[getSeries()];
+  }
+
+  /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
+  public int getOptimalTileHeight() {
+    FormatTools.assertId(currentId, true, 1);
+    return tileHeight[getSeries()];
   }
 
   // -- Internal FormatReader API methods --
@@ -287,6 +304,9 @@ public class OMETiffReader extends FormatReader {
       core[i] = new CoreMetadata();
     }
     info = new OMETiffPlane[seriesCount][];
+
+    tileWidth = new int[seriesCount];
+    tileHeight = new int[seriesCount];
 
     // compile list of file/UUID mappings
     Hashtable<String, String> files = new Hashtable<String, String>();
@@ -538,6 +558,10 @@ public class OMETiffReader extends FormatReader {
       // populate core metadata
       info[s] = planes;
       try {
+        info[s][0].reader.setId(info[s][0].id);
+        tileWidth[s] = info[s][0].reader.getOptimalTileWidth();
+        tileHeight[s] = info[s][0].reader.getOptimalTileHeight();
+
         core[s].sizeX = meta.getPixelsSizeX(i).getValue().intValue();
         int tiffWidth = (int) firstIFD.getImageWidth();
         if (core[s].sizeX != tiffWidth) {
