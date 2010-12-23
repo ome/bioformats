@@ -64,15 +64,17 @@ public class PGMReader extends FormatReader {
   public PGMReader() {
     super("Portable Gray Map", "pgm");
     domains = new String[] {FormatTools.GRAPHICS_DOMAIN};
+    suffixNecessary = false;
   }
 
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    final int blockLen = 1;
+    final int blockLen = 2;
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
-    return stream.read() == PGM_MAGIC_CHAR;
+    return stream.read() == PGM_MAGIC_CHAR &&
+      Character.isDigit((char) stream.read());
   }
 
   /**
@@ -139,8 +141,7 @@ public class PGMReader extends FormatReader {
     core[0].sizeC = (magic.equals("P3") || magic.equals("P6")) ? 3 : 1;
     isBlackAndWhite = magic.equals("P1") || magic.equals("P4");
 
-    String line = in.readLine().trim();
-    while (line.startsWith("#") || line.length() == 0) line = in.readLine();
+    String line = readNextLine();
 
     line = line.replaceAll("[^0-9]", " ");
     int space = line.indexOf(" ");
@@ -148,7 +149,7 @@ public class PGMReader extends FormatReader {
     core[0].sizeY = Integer.parseInt(line.substring(space + 1).trim());
 
     if (!isBlackAndWhite) {
-      int max = Integer.parseInt(in.readLine().trim());
+      int max = Integer.parseInt(readNextLine());
       if (max > 255) core[0].pixelType = FormatTools.UINT16;
       else core[0].pixelType = FormatTools.UINT8;
     }
@@ -171,6 +172,16 @@ public class PGMReader extends FormatReader {
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
     MetadataTools.setDefaultCreationDate(store, id, 0);
+  }
+
+  // -- Helper methods --
+
+  private String readNextLine() throws IOException {
+    String line = in.readLine().trim();
+    while (line.startsWith("#") || line.length() == 0) {
+      line = in.readLine().trim();
+    }
+    return line;
   }
 
 }
