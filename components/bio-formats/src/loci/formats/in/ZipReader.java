@@ -26,9 +26,10 @@ package loci.formats.in;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 
 import loci.common.Location;
+import loci.common.RandomAccessInputStream;
 import loci.common.ZipHandle;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -100,10 +101,12 @@ public class ZipReader extends FormatReader {
     reader.setNormalized(isNormalized());
     reader.setMetadataStore(getMetadataStore());
 
-    ZipFile zip = new ZipFile(id);
-    Enumeration<? extends ZipEntry> e = zip.entries();
-    while (e.hasMoreElements()) {
-      ZipEntry ze = e.nextElement();
+    in = new RandomAccessInputStream(id);
+
+    ZipInputStream zip = new ZipInputStream(in);
+    while (true) {
+      ZipEntry ze = zip.getNextEntry();
+      if (ze == null) break;
       ZipHandle handle = new ZipHandle(id, ze);
       Location.mapFile(ze.getName(), handle);
     }

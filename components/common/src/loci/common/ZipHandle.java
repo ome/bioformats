@@ -30,7 +30,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 
 /**
  * StreamHandle implementation for reading from Zip-compressed files
@@ -48,14 +48,19 @@ public class ZipHandle extends StreamHandle {
 
   // -- Fields --
 
-  private ZipFile zip;
+  private RandomAccessInputStream in;
+  private ZipInputStream zip;
   private ZipEntry entry;
+  private int entryCount = 0;
+  private String file;
 
   // -- Constructor --
 
   public ZipHandle(String file) throws IOException {
     super();
-    zip = new ZipFile(file);
+    this.file = file;
+    in = new RandomAccessInputStream(getHandle(file));
+    zip = new ZipInputStream(in);
 
     // strip off .zip extension and directory prefix
     String innerFile = file.substring(0, file.length() - 4);
@@ -65,21 +70,27 @@ public class ZipHandle extends StreamHandle {
 
     // look for Zip entry with same prefix as the original Zip file
     entry = null;
-    Enumeration<? extends ZipEntry> e = zip.entries();
-    while (e.hasMoreElements()) {
-      ZipEntry ze = e.nextElement();
+
+    while (true) {
+      ZipEntry ze = zip.getNextEntry();
+      if (ze == null) break;
+      entryCount++;
+    }
+    resetStream();
+
+    while (true) {
+      ZipEntry ze = zip.getNextEntry();
+      if (ze == null) break;
+      if (entry == null) entry = ze;
       if (ze.getName().startsWith(innerFile)) {
         // found entry with matching name
         entry = ze;
         break;
       }
     }
-    if (entry == null) {
-      entry = zip.entries().nextElement();
-    }
 
-    length = entry.getSize();
     resetStream();
+    populateLength();
   }
 
   /**
@@ -90,10 +101,14 @@ public class ZipHandle extends StreamHandle {
    */
   public ZipHandle(String file, ZipEntry entry) throws IOException {
     super();
-    zip = new ZipFile(file);
+    this.file = file;
+    in = new RandomAccessInputStream(getHandle(file));
+    zip = new ZipInputStream(in);
+    while (!entry.getName().equals(zip.getNextEntry().getName()));
+    entryCount = 1;
     this.entry = entry;
-    length = entry.getSize();
     resetStream();
+    populateLength();
   }
 
   // -- ZipHandle API methods --
@@ -102,10 +117,10 @@ public class ZipHandle extends StreamHandle {
   public static boolean isZipFile(String file) throws IOException {
     if (!file.toLowerCase().endsWith(".zip")) return false;
 
-    FileInputStream f = new FileInputStream(file);
+    IRandomAccess handle = getHandle(file);
     byte[] b = new byte[2];
-    f.read(b);
-    f.close();
+    handle.read(b);
+    handle.close();
     return new String(b).equals("PK");
   }
 
@@ -121,7 +136,7 @@ public class ZipHandle extends StreamHandle {
 
   /** Returns the number of entries. */
   public int getEntryCount() {
-    return zip.size();
+    return entryCount;
   }
 
   // -- IRandomAccess API methods --
@@ -132,6 +147,9 @@ public class ZipHandle extends StreamHandle {
       super.close();
       zip = null;
       entry = null;
+      if (in != null) in.close();
+      in = null;
+      entryCount = 0;
     }
   }
 
@@ -140,8 +158,34 @@ public class ZipHandle extends StreamHandle {
   /* @see StreamHandle#resetStream() */
   protected void resetStream() throws IOException {
     if (stream != null) stream.close();
+    if (in != null) {
+      in.close();
+      in = new RandomAccessInputStream(getHandle(file));
+    }
+    if (zip != null) zip.close();
+    zip = new ZipInputStream(in);
+    if (entry != null) {
+      while (!entry.getName().equals(zip.getNextEntry().getName()));
+    }
     stream = new DataInputStream(new BufferedInputStream(
-      zip.getInputStream(entry), RandomAccessInputStream.MAX_OVERHEAD));
+      zip, RandomAccessInputStream.MAX_OVERHEAD * 10));
+    stream.mark(RandomAccessInputStream.MAX_OVERHEAD * 10);
+  }
+
+  // -- Helper methods --
+
+  private void populateLength() throws IOException {
+    length = -1;
+    while (stream.available() > 0) {
+      stream.skip(1);
+      length++;
+    }
+    resetStream();
+  }
+
+  private static IRandomAccess getHandle(String file) throws IOException {
+    return file.startsWith("http://") ?
+      new URLHandle(file) : new NIOFileHandle(file, "r");
   }
 
 }
