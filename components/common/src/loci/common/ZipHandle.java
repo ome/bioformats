@@ -119,7 +119,9 @@ public class ZipHandle extends StreamHandle {
 
     IRandomAccess handle = getHandle(file);
     byte[] b = new byte[2];
-    handle.read(b);
+    if (handle.length() >= 2) {
+      handle.read(b);
+    }
     handle.close();
     return new String(b).equals("PK");
   }
