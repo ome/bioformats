@@ -214,6 +214,7 @@ public class MinimalTiffReader extends FormatReader {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
     lastPlane = no;
+    tiffParser.fillInIFD(ifds.get(no));
     tiffParser.getSamples(ifds.get(no), buf, x, y, w, h);
 
     boolean float16 = getPixelType() == FormatTools.FLOAT &&
@@ -309,6 +310,7 @@ public class MinimalTiffReader extends FormatReader {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
     tiffParser = new TiffParser(in);
+    tiffParser.setDoCaching(false);
     Boolean littleEndian = tiffParser.checkHeader();
     if (littleEndian == null) {
       throw new FormatException("Invalid TIFF file");
@@ -330,6 +332,7 @@ public class MinimalTiffReader extends FormatReader {
     core[0].imageCount = ifds.size();
 
     IFD firstIFD = ifds.get(0);
+    tiffParser.fillInIFD(firstIFD);
 
     PhotoInterp photo = firstIFD.getPhotometricInterpretation();
     int samples = firstIFD.getSamplesPerPixel();
