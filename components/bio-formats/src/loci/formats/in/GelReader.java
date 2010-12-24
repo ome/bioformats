@@ -141,6 +141,7 @@ public class GelReader extends BaseTiffReader {
         ifds.add(ifd);
         ifd.putAll(tmpIFDs.get(i*2 + 1));
         ifd.putAll(tmpIFDs.get(i*2));
+        tiffParser.fillInIFD(ifd);
       }
     }
 

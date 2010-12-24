@@ -142,6 +142,19 @@ public class TrestleReader extends BaseTiffReader {
     super.initStandardMetadata();
 
     ifds = tiffParser.getIFDs();
+    for (IFD ifd : ifds) {
+      tiffParser.fillInIFD(ifd);
+    }
+
+    String comment = ifds.get(0).getComment();
+    String[] values = comment.split(";");
+    for (String v : values) {
+      int eq = v.indexOf("=");
+      if (eq < 0) continue;
+      String key = v.substring(0, eq).trim();
+      String value = v.substring(eq + 1).trim();
+      addGlobalMeta(key, value);
+    }
 
     core = new CoreMetadata[ifds.size()];
 

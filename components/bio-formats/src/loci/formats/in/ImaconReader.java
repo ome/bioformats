@@ -117,6 +117,7 @@ public class ImaconReader extends BaseTiffReader {
       core[i] = new CoreMetadata();
       core[i].imageCount = 1;
       IFD ifd = ifds.get(i);
+      tiffParser.fillInIFD(ifd);
       ifd.remove(PIXELS_TAG);
 
       PhotoInterp photo = ifd.getPhotometricInterpretation();

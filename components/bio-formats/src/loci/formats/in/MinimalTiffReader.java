@@ -214,7 +214,6 @@ public class MinimalTiffReader extends FormatReader {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
     lastPlane = no;
-    tiffParser.fillInIFD(ifds.get(no));
     tiffParser.getSamples(ifds.get(no), buf, x, y, w, h);
 
     boolean float16 = getPixelType() == FormatTools.FLOAT &&
@@ -331,8 +330,11 @@ public class MinimalTiffReader extends FormatReader {
 
     core[0].imageCount = ifds.size();
 
+    for (IFD ifd : ifds) {
+      tiffParser.fillInIFD(ifd);
+    }
+
     IFD firstIFD = ifds.get(0);
-    tiffParser.fillInIFD(firstIFD);
 
     PhotoInterp photo = firstIFD.getPhotometricInterpretation();
     int samples = firstIFD.getSamplesPerPixel();

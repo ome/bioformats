@@ -86,6 +86,7 @@ public class JPKReader extends BaseTiffReader {
     for (int s=0; s<core.length; s++) {
       core[s] = new CoreMetadata();
       IFD ifd = ifds.get(s);
+      tiffParser.fillInIFD(ifd);
       PhotoInterp p = ifd.getPhotometricInterpretation();
       int samples = ifd.getSamplesPerPixel();
       core[s].rgb = samples > 1 || p == PhotoInterp.RGB;

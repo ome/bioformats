@@ -95,6 +95,7 @@ public class SVSReader extends BaseTiffReader {
     for (int i=0; i<core.length; i++) {
       setSeries(i);
       core[i] = new CoreMetadata();
+      tiffParser.fillInIFD(ifds.get(i));
 
       if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
         String comment = ifds.get(i).getComment();
