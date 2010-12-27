@@ -600,8 +600,10 @@ public class OpenlabReader extends FormatReader {
 
       for (int c=0; c<getEffectiveSizeC(); c++) {
         PlaneInfo plane = getPlane(new int[] {0, c, 0});
-        store.setChannelName(plane.channelName, 0, c);
-        store.setDetectorSettingsID(detectorID, 0, c);
+        if (plane != null) {
+          store.setChannelName(plane.channelName, 0, c);
+          store.setDetectorSettingsID(detectorID, 0, c);
+        }
       }
 
       Double stageX = xPos == null ? null : new Double(xPos);
