@@ -578,7 +578,6 @@ public class OpenlabReader extends FormatReader {
     // link DetectorSettings to an actual Detector
     String detectorID = MetadataTools.createLSID("Detector", 0, 0);
     store.setDetectorID(detectorID, 0, 0);
-
     store.setDetectorType("Other", 0, 0);
 
     Float stageX = xPos == null ? null : new Float(xPos);
