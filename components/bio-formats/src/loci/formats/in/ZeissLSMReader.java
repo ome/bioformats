@@ -114,6 +114,7 @@ public class ZeissLSMReader extends FormatReader {
   private static final int CHANNEL_ACQUIRE = 0x7000000b;
   private static final int CHANNEL_NAME = 0x70000014;
 
+  private static final int ILLUM_CHANNEL_NAME = 0x90000001;
   private static final int ILLUM_CHANNEL_ATTENUATION = 0x90000002;
   private static final int ILLUM_CHANNEL_WAVELENGTH = 0x90000003;
   private static final int ILLUM_CHANNEL_ACQUIRE = 0x90000004;
@@ -169,6 +170,7 @@ public class ZeissLSMReader extends FormatReader {
   private Vector<Double> xCoordinates, yCoordinates, zCoordinates;
   private int dimensionM, dimensionP;
   private Hashtable<String, Integer> seriesCounts;
+  private String userName;
 
   private double originX, originY, originZ;
 
@@ -226,6 +228,7 @@ public class ZeissLSMReader extends FormatReader {
       dimensionP = 0;
       seriesCounts = null;
       originX = originY = originZ = 0d;
+      userName = null;
     }
   }
 
@@ -781,6 +784,7 @@ public class ZeissLSMReader extends FormatReader {
     long timeStampOffset = 0;
     long eventListOffset = 0;
     long scanInformationOffset = 0;
+    long channelWavelengthOffset = 0;
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       int spectralScan = ras.readShort();
@@ -843,7 +847,7 @@ public class ZeissLSMReader extends FormatReader {
 
       addSeriesMeta("ToolbarFlags", ras.readInt());
 
-      int wavelengthOffset = ras.readInt();
+      channelWavelengthOffset = ras.readInt();
       ras.skipBytes(64);
     }
     else ras.skipBytes(182);
@@ -1108,6 +1112,13 @@ public class ZeissLSMReader extends FormatReader {
     imageNames.add(imageName);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
+      if (userName != null) {
+        String experimenterID = MetadataTools.createLSID("Experimenter", 0);
+        store.setExperimenterID(experimenterID, 0);
+        store.setExperimenterUserName(userName, 0);
+        store.setExperimenterDisplayName(userName, 0);
+      }
+
       Double pixX = new Double(pixelSizeX);
       Double pixY = new Double(pixelSizeY);
       Double pixZ = new Double(pixelSizeZ);
@@ -1288,6 +1299,13 @@ public class ZeissLSMReader extends FormatReader {
           nextDichroic++;
         }
         nextDichroicChannel++;
+      }
+    }
+    else if (block instanceof IlluminationChannel) {
+      IlluminationChannel channel = (IlluminationChannel) block;
+      if (channel.acquire && channel.wavelength != null) {
+        store.setChannelEmissionWavelength(
+          new PositiveInteger(channel.wavelength), series, nextIllumChannel++);
       }
     }
   }
@@ -1933,6 +1951,9 @@ public class ZeissLSMReader extends FormatReader {
             core[getSeries()].bitsPerPixel =
               Integer.parseInt(blockData.get(key).toString());
           }
+          else if (metadataKeys.get(key).equals("User")) {
+            userName = blockData.get(key).toString();
+          }
         }
       }
       addGlobalMeta(prefix + " Acquire", new Boolean(acquire));
@@ -2074,12 +2095,19 @@ public class ZeissLSMReader extends FormatReader {
   class IlluminationChannel extends SubBlock {
     public Integer wavelength;
     public Double attenuation;
+    public String name;
 
     protected void read() throws IOException {
       super.read();
       wavelength = new Integer(getIntValue(ILLUM_CHANNEL_WAVELENGTH));
       attenuation = new Double(getDoubleValue(ILLUM_CHANNEL_ATTENUATION));
       acquire = getIntValue(ILLUM_CHANNEL_ACQUIRE) != 0;
+
+      name = getStringValue(ILLUM_CHANNEL_NAME);
+      try {
+        wavelength = new Integer(name);
+      }
+      catch (NumberFormatException e) { }
     }
   }
 
