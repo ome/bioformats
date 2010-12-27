@@ -108,6 +108,7 @@ public class ZeissLSMReader extends FormatReader {
   private static final int CHANNEL_ACQUIRE = 0x7000000b;
   private static final int CHANNEL_NAME = 0x70000014;
 
+  private static final int ILLUM_CHANNEL_NAME = 0x90000001;
   private static final int ILLUM_CHANNEL_ATTENUATION = 0x90000002;
   private static final int ILLUM_CHANNEL_WAVELENGTH = 0x90000003;
   private static final int ILLUM_CHANNEL_ACQUIRE = 0x90000004;
@@ -160,6 +161,7 @@ public class ZeissLSMReader extends FormatReader {
   private double zoom;
   private Vector<String> imageNames;
   private String binning;
+  private String userName;
 
   private int totalROIs = 0;
 
@@ -218,6 +220,7 @@ public class ZeissLSMReader extends FormatReader {
       imageNames = null;
       binning = null;
       totalROIs = 0;
+      userName = null;
     }
   }
 
@@ -998,6 +1001,13 @@ public class ZeissLSMReader extends FormatReader {
         nextFilterSet++;
       }
     }
+    else if (block instanceof IlluminationChannel) {
+      IlluminationChannel channel = (IlluminationChannel) block;
+      if (channel.acquire && channel.wavelength != null) {
+        store.setLogicalChannelEmWave(
+          channel.wavelength, series, nextIllumChannel++);
+      }
+    }
   }
 
   /** Parses overlay-related fields. */
@@ -1593,6 +1603,10 @@ public class ZeissLSMReader extends FormatReader {
         if (metadataKeys.get(key) != null) {
           addSeriesMeta(prefix + " " + metadataKeys.get(key),
             blockData.get(key));
+
+          if (metadataKeys.get(key).equals("User")) {
+            userName = blockData.get(key).toString();
+          }
         }
       }
       addGlobalMeta(prefix + " Acquire", new Boolean(acquire));
@@ -1733,12 +1747,19 @@ public class ZeissLSMReader extends FormatReader {
   class IlluminationChannel extends SubBlock {
     public Integer wavelength;
     public Float attenuation;
+    public String name;
 
     protected void read() throws IOException {
       super.read();
       wavelength = new Integer(getIntValue(ILLUM_CHANNEL_WAVELENGTH));
       attenuation = new Float(getFloatValue(ILLUM_CHANNEL_ATTENUATION));
       acquire = getIntValue(ILLUM_CHANNEL_ACQUIRE) != 0;
+
+      name = getStringValue(ILLUM_CHANNEL_NAME);
+      try {
+        wavelength = new Integer(name);
+      }
+      catch (NumberFormatException e) { }
     }
   }
 
