@@ -277,7 +277,11 @@ public class Colorizer {
         final ColorProcessor colorProc = (ColorProcessor) proc;
         colorProc.setMinAndMax(globalMin, globalMax, 3);
       }
-      else proc.setMinAndMax(globalMin, globalMax);
+      else {
+        ColorModel model = proc.getColorModel();
+        proc.setMinAndMax(globalMin, globalMax);
+        proc.setColorModel(model);
+      }
     }
   }
 
