@@ -148,6 +148,7 @@ public class GelReader extends BaseTiffReader {
     super.initStandardMetadata();
 
     IFD firstIFD = ifds.get(0);
+    tiffParser.fillInIFD(firstIFD);
 
     fmt = firstIFD.getIFDLongValue(MD_FILETAG, LINEAR);
     if (fmt == SQUARE_ROOT) core[0].pixelType = FormatTools.FLOAT;
