@@ -99,7 +99,14 @@ public class EPSReader extends FormatReader {
       for (int i=0; i<b.length; i++) {
         int ndx = b[i] & 0xff;
         for (int j=0; j<getSizeC(); j++) {
-          buf[i*getSizeC() + j] = (byte) map[ndx + j*256];
+          if (j < 3) {
+            buf[i*getSizeC() + j] = (byte) map[ndx + j*256];
+          }
+          else {
+            boolean zero =
+              map[ndx] == 0 && map[ndx + 256] == 0 && map[ndx + 512] == 0;
+            buf[i * getSizeC() + j] = zero ? (byte) 0 : (byte) 255;
+          }
         }
       }
 
@@ -187,6 +194,7 @@ public class EPSReader extends FormatReader {
       core[0].sizeZ = 1;
       core[0].sizeT = 1;
       core[0].sizeC = firstIFD.getSamplesPerPixel();
+      if (getSizeC() == 2) core[0].sizeC = 4;
       core[0].littleEndian = firstIFD.isLittleEndian();
       core[0].interleaved = true;
       core[0].rgb = getSizeC() > 1;
