@@ -72,6 +72,8 @@ public class BFVirtualStack extends VirtualStack {
 
   private int[] len;
 
+  private int[] planeIndexes;
+
   // -- Static utility methods --
 
   protected static int getWidth(IFormatReader r, String path, int series)
@@ -139,6 +141,10 @@ public class BFVirtualStack extends VirtualStack {
     return null;
   }
 
+  public void setPlaneIndexes(int[] planeIndexes) {
+    this.planeIndexes = planeIndexes;
+  }
+
   // -- VirtualStack API methods --
 
   public synchronized ImageProcessor getProcessor(int n) {
@@ -151,9 +157,10 @@ public class BFVirtualStack extends VirtualStack {
         methodStacks.get(currentSlice).addAll(currentStack);
       }
     }
-    int[] pos = reader.getZCTCoords(n - 1);
-    if (merge) pos = new ChannelMerger(reader).getZCTCoords(n - 1);
-    int[] cachePos = FormatTools.rasterToPosition(len, n - 1);
+    int sliceIndex = planeIndexes == null ? n - 1 : planeIndexes[n - 1];
+    int[] pos = reader.getZCTCoords(sliceIndex);
+    if (merge) pos = new ChannelMerger(reader).getZCTCoords(sliceIndex);
+    int[] cachePos = FormatTools.rasterToPosition(len, sliceIndex);
     ImageProcessor ip = null;
 
     try {
@@ -250,7 +257,7 @@ public class BFVirtualStack extends VirtualStack {
     if (reader.getCurrentFile() == null) return 0;
     reader.setSeries(series);
     if (merge) return new ChannelMerger(reader).getImageCount();
-    return reader.getImageCount();
+    return planeIndexes == null ? reader.getImageCount() : planeIndexes.length;
   }
 
 }

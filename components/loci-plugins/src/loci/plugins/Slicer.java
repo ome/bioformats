@@ -36,8 +36,15 @@ import ij.plugin.filter.PlugInFilter;
 import ij.process.ImageProcessor;
 import ij.process.LUT;
 
+import java.io.IOException;
+
+import loci.formats.FormatException;
 import loci.formats.FormatTools;
+import loci.plugins.util.BFVirtualStack;
+import loci.plugins.util.ImageProcessorReader;
 import loci.plugins.util.LibraryChecker;
+import loci.plugins.util.VirtualImagePlus;
+import loci.plugins.util.WindowTools;
 
 /**
  * A plugin for splitting an image stack into separate
@@ -71,10 +78,6 @@ public class Slicer implements PlugInFilter {
     ImageStack stack = imp.getImageStack();
     boolean hyperstack = imp.isHyperStack();
 
-    if (stack.isVirtual()) {
-      throw new IllegalArgumentException("Cannot reslice virtual stacks");
-    }
-
     Calibration calibration = imp.getCalibration();
 
     int sizeZ = imp.getNSlices();
@@ -86,28 +89,55 @@ public class Slicer implements PlugInFilter {
     if (sliceC) slicesPerStack /= sizeC;
     if (sliceT) slicesPerStack /= sizeT;
 
-    ImageStack[] newStacks =
-      new ImageStack[stack.getSize() / slicesPerStack];
-    for (int i=0; i<newStacks.length; i++) {
-      newStacks[i] = new ImageStack(stack.getWidth(), stack.getHeight());
+    int realSizeZ = sliceZ ? 1 : sizeZ;
+    int realSizeC = sliceC ? 1 : sizeC;
+    int realSizeT = sliceT ? 1 : sizeT;
+
+    BFVirtualStack virtualStack = null;
+    if (stack instanceof BFVirtualStack) {
+      virtualStack = (BFVirtualStack) stack;
     }
 
+    ImageStack[] newStacks = new ImageStack[stack.getSize() / slicesPerStack];
+    for (int i=0; i<newStacks.length; i++) {
+      newStacks[i] = makeStack(stack);
+      if (newStacks[i] == null) return null;
+    }
+
+    int stackZ = sliceZ ? sizeZ : 1;
+    int stackC = sliceC ? sizeC : 1;
+    int stackT = sliceT ? sizeT : 1;
+
+    int[][] planeIndexes = new int[newStacks.length][slicesPerStack];
     for (int i=0; i<sizeZ*sizeC*sizeT; i++) {
       int[] zct = FormatTools.getZCTCoords(stackOrder, sizeZ, sizeC, sizeT,
         stack.getSize(), i);
-      int stackNdx = FormatTools.getIndex(stackOrder, sliceZ ? sizeZ : 1,
-        sliceC ? sizeC : 1, sliceT ? sizeT : 1, newStacks.length,
-        sliceZ ? zct[0] : 0, sliceC ? zct[1] : 0, sliceT ? zct[2] : 0);
+      int stackNdx = FormatTools.getIndex(stackOrder, stackZ, stackC, stackT,
+        newStacks.length, sliceZ ? zct[0] : 0, sliceC ? zct[1] : 0,
+        sliceT ? zct[2] : 0);
+      String label = stack.getSliceLabel(i + 1);
 
-      newStacks[stackNdx].addSlice(stack.getSliceLabel(i + 1),
-        stack.getProcessor(i + 1));
+      if (virtualStack != null) {
+        ((BFVirtualStack) newStacks[stackNdx]).addSlice(label);
+        int sliceNdx = FormatTools.getIndex(stackOrder, realSizeZ, realSizeC,
+          realSizeT, slicesPerStack, sliceZ ? 0 : zct[0], sliceC ? 0 : zct[1],
+          sliceT ? 0 : zct[2]);
+        planeIndexes[stackNdx][sliceNdx] = i;
+      }
+      else {
+        newStacks[stackNdx].addSlice(label, stack.getProcessor(i + 1));
+      }
     }
 
     ImagePlus[] newImps = new ImagePlus[newStacks.length];
     double maxValue = Math.pow(2, imp.getBytesPerPixel() * 8) - 1;
     for (int i=0; i<newStacks.length; i++) {
-      int[] zct = FormatTools.getZCTCoords(stackOrder, sliceZ ? sizeZ : 1,
-        sliceC ? sizeC : 1, sliceT ? sizeT : 1, newStacks.length, i);
+      if (virtualStack != null) {
+        ((BFVirtualStack) newStacks[i]).setPlaneIndexes(planeIndexes[i]);
+      }
+
+      int[] zct = FormatTools.getZCTCoords(stackOrder, stackZ, stackC, stackT,
+        newStacks.length, i);
 
       if (imp.isComposite()) {
         CompositeImage composite = (CompositeImage) imp;
@@ -124,10 +154,18 @@ public class Slicer implements PlugInFilter {
       if (sliceT) title += " T=" + zct[2];
       if (sliceC) title += " C=" + zct[1];
 
-      ImagePlus p = new ImagePlus(title, newStacks[i]);
+      ImagePlus p = null;
+
+      if (virtualStack != null) {
+        p = new VirtualImagePlus(title, newStacks[i]);
+        ((VirtualImagePlus) p).setReader(virtualStack.getReader());
+      }
+      else {
+        p = new ImagePlus(title, newStacks[i]);
+      }
+
       p.setProperty("Info", imp.getProperty("Info"));
-      p.setDimensions(sliceC ? 1 : sizeC, sliceZ ? 1 : sizeZ,
-        sliceT ? 1 : sizeT);
+      p.setDimensions(realSizeC, realSizeZ, realSizeT);
       p.setCalibration(calibration);
       p.setFileInfo(imp.getOriginalFileInfo());
       if (!p.isComposite()) {
@@ -241,6 +279,28 @@ public class Slicer implements PlugInFilter {
   /** Gets the value of the given macro key as a boolean. */
   private boolean getBooleanValue(String key) {
     return Boolean.valueOf(Macro.getValue(arg, key, "false"));
+  }
+
+  /** Returns a new ImageStack using the given ImageStack as a template. */
+  private ImageStack makeStack(ImageStack stack) {
+    if (!(stack instanceof BFVirtualStack)) {
+      return new ImageStack(stack.getWidth(), stack.getHeight());
+    }
+
+    BFVirtualStack virtualStack = (BFVirtualStack) stack;
+    String path = virtualStack.getPath();
+    ImageProcessorReader reader = virtualStack.getReader();
+
+    try {
+      return new BFVirtualStack(path, reader, false, false, false);
+    }
+    catch (FormatException e) {
+      WindowTools.reportException(e);
+    }
+    catch (IOException e) {
+      WindowTools.reportException(e);
+    }
+    return null;
   }
 
 }

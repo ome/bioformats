@@ -529,8 +529,8 @@ public class MainDialog extends ImporterDialog
     // == Split into separate windows ==
 
     boolean splitEnabled = !isStackNone && !isStackBrowser &&
-      !isStackImage5D && !isStackView5D && !isVirtual;
-    // TODO: Make splitting work with Data Browser & virtual stacks.
+      !isStackImage5D && !isStackView5D;
+    // TODO: Make splitting work with Data Browser.
 
     // splitCBox
     splitCEnabled = splitEnabled;
