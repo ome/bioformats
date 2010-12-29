@@ -69,6 +69,9 @@ public class ScreenReader extends FormatReader {
 
   // -- Fields --
 
+  private String[] screenMetadataFiles;
+  private String[][] plateMetadataFiles;
+
   private ImageReader[][] readers;
   private boolean[][][] plateMaps;
   private ClassList<IFormatReader> validReaders;
@@ -164,7 +167,25 @@ public class ScreenReader extends FormatReader {
     FormatTools.assertId(currentId, true, 1);
 
     int[] spwIndexes = getSPWIndexes(getSeries());
-    return readers[spwIndexes[0]][spwIndexes[1]].getSeriesUsedFiles(noPixels);
+    int plate = spwIndexes[0];
+    int well = spwIndexes[1];
+
+    Vector<String> files = new Vector<String>();
+    if (screenMetadataFiles != null) {
+      for (String f : screenMetadataFiles) {
+        files.add(f);
+      }
+    }
+    if (plateMetadataFiles[plate] != null) {
+      for (String f : plateMetadataFiles[plate]) {
+        files.add(f);
+      }
+    }
+    String[] readerFiles = readers[plate][well].getSeriesUsedFiles(noPixels);
+    for (String f : readerFiles) {
+      files.add(f);
+    }
+    return files.toArray(new String[files.size()]);
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
@@ -180,6 +201,8 @@ public class ScreenReader extends FormatReader {
     if (!fileOnly) {
       readers = null;
       plateMaps = null;
+      plateMetadataFiles = null;
+      screenMetadataFiles = null;
     }
   }
 
@@ -198,6 +221,7 @@ public class ScreenReader extends FormatReader {
     else throw new FormatException(id + " is not a valid well name.");
 
     // build the list of plate directories
+    Vector<String> metadataFiles = new Vector<String>();
     Vector<String> tmpPlates = new Vector<String>();
     String[] screenList = screen.list(true);
     for (String f : screenList) {
@@ -207,7 +231,14 @@ public class ScreenReader extends FormatReader {
       {
         tmpPlates.add(plateFile.getAbsolutePath());
       }
+      else if (!plateFile.isDirectory()) {
+        metadataFiles.add(plateFile.getAbsolutePath());
+      }
     }
+    screenMetadataFiles =
+      metadataFiles.toArray(new String[metadataFiles.size()]);
+    metadataFiles.clear();
+
     String[] plates = tmpPlates.toArray(new String[tmpPlates.size()]);
     Arrays.sort(plates);
 
@@ -229,6 +260,8 @@ public class ScreenReader extends FormatReader {
         return col1 - col2;
       }
     };
+
+    plateMetadataFiles = new String[plates.length][];
 
     // build the list of well files for each plate
     Vector<String> tmpWells = new Vector<String>();
@@ -263,6 +296,9 @@ public class ScreenReader extends FormatReader {
             uniqueCols.add(col);
           }
         }
+        else if (!wellFile.isDirectory()) {
+          metadataFiles.add(wellFile.getAbsolutePath());
+        }
       }
       files[plate] = tmpWells.toArray(new String[tmpWells.size()]);
 
@@ -271,8 +307,11 @@ public class ScreenReader extends FormatReader {
       coreLength += files[plate].length;
 
       plateMaps[plate] = new boolean[uniqueRows.size()][uniqueCols.size()];
+      plateMetadataFiles[plate] =
+        metadataFiles.toArray(new String[metadataFiles.size()]);
 
       tmpWells.clear();
+      metadataFiles.clear();
     }
 
     // initialize each of the well files
