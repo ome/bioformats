@@ -122,7 +122,7 @@ public class AxisGuesser {
     String suffix = fp.getSuffix();
     String[][] elements = fp.getElements();
     axisTypes = new int[elements.length];
-    boolean foundZ = false, foundT = false;
+    boolean foundZ = false, foundT = false, foundC = false;
 
     // -- 1) fill in "known" axes based on known patterns and conventions --
 
@@ -167,6 +167,7 @@ public class AxisGuesser {
       for (int j=0; j<C.length; j++) {
         if (p.equals(C[j])) {
           axisTypes[i] = C_AXIS;
+          foundC = true;
           break;
         }
       }
@@ -232,6 +233,7 @@ public class AxisGuesser {
 
     boolean canBeZ = !foundZ && sizeZ == 1;
     boolean canBeT = !foundT && sizeT == 1;
+    boolean canBeC = !foundC && sizeC == 1;
 
     certain = isCertain;
 
@@ -247,7 +249,20 @@ public class AxisGuesser {
         axisTypes[i] = T_AXIS;
         canBeT = false;
       }
-      else axisTypes[i] = C_AXIS;
+      else if (canBeC) {
+        axisTypes[i] = C_AXIS;
+        canBeC = false;
+      }
+      else {
+        char lastAxis = newOrder.charAt(newOrder.length() - 1);
+        if (lastAxis == 'C') {
+          axisTypes[i] = C_AXIS;
+        }
+        else if (lastAxis == 'Z') {
+          axisTypes[i] = Z_AXIS;
+        }
+        else axisTypes[i] = T_AXIS;
+      }
     }
   }
 

@@ -841,9 +841,7 @@ public class FileStitcher extends ReaderWrapper {
     reader.setId(fp.getFiles()[0]);
 
     String msg = " Please rename your files or disable file stitching.";
-    if (reader.getSeriesCount() > 1 &&
-      (externals.length > 1 || fp.getFiles().length > 1))
-    {
+    if (reader.getSeriesCount() > 1 && externals.length > 1) {
       throw new FormatException("Unsupported grouping: File pattern contains " +
         "multiple files and each file contains multiple series." + msg);
     }
