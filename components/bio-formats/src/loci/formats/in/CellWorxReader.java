@@ -84,6 +84,7 @@ public class CellWorxReader extends FormatReader {
 
     Location parent = new Location(name).getAbsoluteFile().getParentFile();
     String[] list = parent.list(true);
+    if (list == null) return false;
     for (String file : list) {
       if (checkSuffix(file, "htd")) foundHTD = true;
       if (checkSuffix(file, "pnl")) foundPNL = true;
