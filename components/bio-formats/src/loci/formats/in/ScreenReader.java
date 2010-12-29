@@ -268,8 +268,7 @@ public class ScreenReader extends FormatReader {
     int coreLength = 0;
     for (int plate=0; plate<plates.length; plate++) {
       String[] plateList = new Location(plates[plate]).list(true);
-      Vector<String> uniqueRows = new Vector<String>();
-      Vector<String> uniqueCols = new Vector<String>();
+      int maxRow = 0, maxCol = 0;
       for (String well : plateList) {
         Location wellFile = new Location(plates[plate], well);
         if (isValidWellName(wellFile.getAbsolutePath())) {
@@ -289,11 +288,11 @@ public class ScreenReader extends FormatReader {
 
           tmpWells.add(wellFile.getAbsolutePath());
 
-          if (!uniqueRows.contains(row)) {
-            uniqueRows.add(row);
+          if ((row.charAt(0) - 'A') > maxRow) {
+            maxRow = row.charAt(0) - 'A';
           }
-          if (!uniqueCols.contains(col)) {
-            uniqueCols.add(col);
+          if (Integer.parseInt(col) - 1 > maxCol) {
+            maxCol = Integer.parseInt(col) - 1;
           }
         }
         else if (!wellFile.isDirectory()) {
@@ -306,7 +305,7 @@ public class ScreenReader extends FormatReader {
       readers[plate] = new ImageReader[files[plate].length];
       coreLength += files[plate].length;
 
-      plateMaps[plate] = new boolean[uniqueRows.size()][uniqueCols.size()];
+      plateMaps[plate] = new boolean[maxRow + 1][maxCol + 1];
       plateMetadataFiles[plate] =
         metadataFiles.toArray(new String[metadataFiles.size()]);
 
