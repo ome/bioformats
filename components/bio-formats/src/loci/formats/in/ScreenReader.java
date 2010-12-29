@@ -102,8 +102,10 @@ public class ScreenReader extends FormatReader {
   public boolean isThisType(String filename, boolean open) {
     if (!open) return super.isThisType(filename, open); // no file system access
 
-    String parent = new Location(filename).getAbsoluteFile().getParent();
-    boolean validNames = isValidWellName(filename) && isValidPlateName(parent);
+    Location file = new Location(filename).getAbsoluteFile();
+    String parent = file.getParent();
+    boolean validNames =
+      isValidWellName(file.getAbsolutePath()) && isValidPlateName(parent);
 
     ImageReader r = new ImageReader(validReaders);
     boolean validFormat = r.isThisType(filename);
