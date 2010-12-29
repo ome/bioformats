@@ -102,7 +102,7 @@ public class ScreenReader extends FormatReader {
   public boolean isThisType(String filename, boolean open) {
     if (!open) return super.isThisType(filename, open); // no file system access
 
-    String parent = new Location(filename).getParent();
+    String parent = new Location(filename).getAbsoluteFile().getParent();
     boolean validNames = isValidWellName(filename) && isValidPlateName(parent);
 
     ImageReader r = new ImageReader(validReaders);
@@ -199,8 +199,11 @@ public class ScreenReader extends FormatReader {
     Vector<String> tmpPlates = new Vector<String>();
     String[] screenList = screen.list(true);
     for (String f : screenList) {
-      if (isValidPlateName(f)) {
-        tmpPlates.add(new Location(screen, f).getAbsolutePath());
+      Location plateFile = new Location(screen, f).getAbsoluteFile();
+      if (isValidPlateName(plateFile.getAbsolutePath()) &&
+        hasValidWells(plateFile))
+      {
+        tmpPlates.add(plateFile.getAbsolutePath());
       }
     }
     String[] plates = tmpPlates.toArray(new String[tmpPlates.size()]);
@@ -233,10 +236,23 @@ public class ScreenReader extends FormatReader {
       Vector<String> uniqueRows = new Vector<String>();
       Vector<String> uniqueCols = new Vector<String>();
       for (String well : plateList) {
-        if (isValidWellName(well)) {
-          tmpWells.add(new Location(plates[plate], well).getAbsolutePath());
+        Location wellFile = new Location(plates[plate], well);
+        if (isValidWellName(wellFile.getAbsolutePath())) {
           String row = getRow(well);
           String col = getColumn(well);
+
+          boolean canAdd = true;
+          for (String tmpWell : tmpWells) {
+            String tmpRow = getRow(tmpWell);
+            String tmpCol = getColumn(tmpWell);
+            if (tmpRow.equals(row) && tmpCol.equals(col)) {
+              canAdd = false;
+              break;
+            }
+          }
+          if (!canAdd) continue;
+
+          tmpWells.add(wellFile.getAbsolutePath());
 
           if (!uniqueRows.contains(row)) {
             uniqueRows.add(row);
@@ -352,6 +368,7 @@ public class ScreenReader extends FormatReader {
   // -- Helper methods --
 
   private boolean isValidWellName(String filename) {
+    if (new Location(filename).getAbsoluteFile().isDirectory()) return false;
     String row = getRow(filename);
     String col = getColumn(filename);
 
@@ -365,7 +382,7 @@ public class ScreenReader extends FormatReader {
   }
 
   private boolean isValidPlateName(String filename) {
-    return true;
+    return new Location(filename).isDirectory();
   }
 
   private int getSeriesIndex(int plate, int well) {
@@ -430,14 +447,38 @@ public class ScreenReader extends FormatReader {
     return new int[] {-1, -1};
   }
 
+  private boolean hasValidWells(Location plate) {
+    if (!plate.isDirectory()) return false;
+    String[] wells = plate.list(true);
+    for (String well : wells) {
+      if (isValidWellName(new Location(plate, well).getAbsolutePath())) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   private String getRow(String well) {
     String wellName = well.substring(well.lastIndexOf(File.separator) + 1);
+    char firstChar = Character.toUpperCase(wellName.charAt(0));
+    while (wellName.indexOf("_") > 0 && (firstChar < 'A' || firstChar > 'P')) {
+      wellName = wellName.substring(wellName.indexOf("_") + 1);
+      firstChar = Character.toUpperCase(wellName.charAt(0));
+    }
     return wellName.substring(0, 1).toUpperCase();
   }
 
   private String getColumn(String well) {
     String wellName = well.substring(well.lastIndexOf(File.separator) + 1);
-    return wellName.substring(1);
+    char firstChar = Character.toUpperCase(wellName.charAt(0));
+    while (wellName.indexOf("_") > 0 && (firstChar < 'A' || firstChar > 'P')) {
+      wellName = wellName.substring(wellName.indexOf("_") + 1);
+      firstChar = Character.toUpperCase(wellName.charAt(0));
+    }
+    int end = wellName.lastIndexOf("_");
+    if (end < 0) end = wellName.lastIndexOf(".");
+    if (end < 0) end = wellName.length();
+    return wellName.substring(1, end);
   }
 
 }
