@@ -647,10 +647,13 @@ public class TiffParser {
 
     TiffCompression compression = ifd.getCompression();
 
+    long imageLength = ifd.getImageLength();
+
     // special case: if we only need one tile, and that tile doesn't need
     // any special handling, then we can just read it directly and return
     if ((x % tileWidth) == 0 && (y % tileLength) == 0 && width == tileWidth &&
-      samplesPerPixel == 1 && (ifd.getBitsPerSample()[0] % 8) == 0 &&
+      height == imageLength && samplesPerPixel == 1 &&
+      (ifd.getBitsPerSample()[0] % 8) == 0 &&
       photoInterp != PhotoInterp.WHITE_IS_ZERO &&
       photoInterp != PhotoInterp.CMYK && photoInterp != PhotoInterp.Y_CB_CR &&
       compression == TiffCompression.UNCOMPRESSED)
@@ -660,16 +663,17 @@ public class TiffParser {
 
       int firstTile = (int) ((y / tileLength) * numTileCols + (x / tileWidth));
       int lastTile =
-        (int) ((height / tileLength) * numTileCols + (x / tileWidth));
-
-      if (stripByteCounts[firstTile] == numSamples && pixel > 1) {
-        stripByteCounts[firstTile] *= pixel;
-      }
+        (int) (((y + height) / tileLength) * numTileCols + (x / tileWidth));
+      lastTile = (int) Math.min(lastTile, stripOffsets.length - 1);
 
       int offset = 0;
-      for (int tile=firstTile; tile<lastTile; tile++) {
+      for (int tile=firstTile; tile<=lastTile; tile++) {
+        if (stripByteCounts[tile] == numSamples && pixel > 1) {
+          stripByteCounts[tile] *= pixel;
+        }
+
         in.seek(stripOffsets[tile]);
-        int len = (int) Math.min(buf.length, stripByteCounts[tile]);
+        int len = (int) Math.min(buf.length - offset, stripByteCounts[tile]);
         in.read(buf, offset, len);
         offset += len;
       }
