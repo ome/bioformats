@@ -132,6 +132,7 @@ public class Updater implements PlugIn {
 
     try {
       URLConnection conn = new URL(query.toString()).openConnection();
+      conn.setConnectTimeout(5000);
       conn.setUseCaches(false);
       conn.addRequestProperty("User-Agent", "OMERO.imagej");
       conn.connect();
