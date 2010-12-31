@@ -62,9 +62,6 @@ public class TiffWriter extends FormatWriter {
   /** Whether or not the output file is a BigTIFF file. */
   protected boolean isBigTiff;
 
-  /** Whether or not we are writing planes sequentially. */
-  protected boolean sequential;
-
   /** The TiffSaver that will do most of the writing. */
   protected TiffSaver tiffSaver;
 
@@ -247,17 +244,19 @@ public class TiffWriter extends FormatWriter {
     throws FormatException, IOException
   {
     IFD ifd = new IFD();
-    TiffParser parser = new TiffParser(currentId);
-    try {
-      long[] ifdOffsets = parser.getIFDOffsets();
-      if (no < ifdOffsets.length) {
-        ifd = parser.getIFD(ifdOffsets[no]);
+    if (!sequential) {
+      TiffParser parser = new TiffParser(currentId);
+      try {
+        long[] ifdOffsets = parser.getIFDOffsets();
+        if (no < ifdOffsets.length) {
+          ifd = parser.getIFD(ifdOffsets[no]);
+        }
       }
-    }
-    finally {
-      RandomAccessInputStream tiffParserStream = parser.getStream();
-      if (tiffParserStream != null) {
-        tiffParserStream.close();
+      finally {
+        RandomAccessInputStream tiffParserStream = parser.getStream();
+        if (tiffParserStream != null) {
+          tiffParserStream.close();
+        }
       }
     }
 
@@ -305,15 +304,6 @@ public class TiffWriter extends FormatWriter {
   public void setBigTiff(boolean bigTiff) {
     FormatTools.assertId(currentId, false, 1);
     isBigTiff = bigTiff;
-  }
-
-  /**
-   * Sets whether or not we know that planes will be written sequentially.
-   * If planes are written sequentially and this flag is set, then performance
-   * will be slightly improved.
-   */
-  public void setWriteSequentially(boolean sequential) {
-    this.sequential = sequential;
   }
 
 }

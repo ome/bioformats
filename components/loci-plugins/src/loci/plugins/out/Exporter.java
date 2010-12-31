@@ -219,6 +219,7 @@ public class Exporter {
       String title = imp.getTitle();
 
       IFormatWriter w = new ImageWriter().getWriter(outfile);
+      w.setWriteSequentially(true);
       FileInfo fi = imp.getOriginalFileInfo();
       String xml = fi == null ? null : fi.description == null ? null :
         fi.description.indexOf("xml") == -1 ? null : fi.description;

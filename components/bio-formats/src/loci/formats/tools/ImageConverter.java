@@ -228,16 +228,15 @@ public final class ImageConverter {
     if (store instanceof MetadataRetrieve) {
       writer.setMetadataRetrieve((MetadataRetrieve) store);
     }
+    writer.setWriteSequentially(true);
 
     if (writer instanceof TiffWriter) {
       ((TiffWriter) writer).setBigTiff(bigtiff);
-      ((TiffWriter) writer).setWriteSequentially(true);
     }
     else if (writer instanceof ImageWriter) {
       IFormatWriter w = ((ImageWriter) writer).getWriter(out);
       if (w instanceof TiffWriter) {
         ((TiffWriter) w).setBigTiff(bigtiff);
-        ((TiffWriter) w).setWriteSequentially(true);
       }
     }
 

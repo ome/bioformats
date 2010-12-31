@@ -238,6 +238,10 @@ public abstract class WriterWrapper implements IFormatWriter {
     return writer.getCompression();
   }
 
+  public void setWriteSequentially(boolean sequential) {
+    writer.setWriteSequentially(sequential);
+  }
+
   // -- Deprecated IFormatWriter methods --
 
   /** @deprecated */

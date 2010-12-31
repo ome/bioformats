@@ -157,6 +157,13 @@ public interface IFormatWriter extends IFormatHandler {
   /** Switch the output file for the current dataset. */
   void changeOutputFile(String id) throws FormatException, IOException;
 
+  /**
+   * Sets whether or not we know that planes will be written sequentially.
+   * If planes are written sequentially and this flag is set, then performance
+   * will be slightly improved.
+   */
+  void setWriteSequentially(boolean sequential);
+
   // -- Deprecated methods --
 
   /** @deprecated Please use saveBytes(int, byte[]) instead. */

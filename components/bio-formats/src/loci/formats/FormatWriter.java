@@ -74,6 +74,9 @@ public abstract class FormatWriter extends FormatHandler
   /** Current series. */
   protected int series;
 
+  /** Whether or not we are writing planes sequentially. */
+  protected boolean sequential;
+
   /**
    * Current metadata retrieval object. Should <b>never</b> be accessed
    * directly as the semantics of {@link #getMetadataRetrieve()}
@@ -234,6 +237,11 @@ public abstract class FormatWriter extends FormatHandler
       if (type == types[i]) return true;
     }
     return false;
+  }
+
+  /* @see IFormatWriter#setWriteSequentially(boolean) */
+  public void setWriteSequentially(boolean sequential) {
+    this.sequential = sequential;
   }
 
   // -- Deprecated IFormatWriter API methods --

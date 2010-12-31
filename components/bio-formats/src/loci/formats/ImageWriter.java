@@ -330,6 +330,13 @@ public class ImageWriter implements IFormatWriter {
     return getWriter().getCompression();
   }
 
+  /* @see IFormatWriter#setWriteSequentially(boolean) */
+  public void setWriteSequentially(boolean sequential) {
+    for (IFormatWriter writer : writers) {
+      writer.setWriteSequentially(sequential);
+    }
+  }
+
   // -- Deprecated IFormatWriter API methods --
 
   /**
