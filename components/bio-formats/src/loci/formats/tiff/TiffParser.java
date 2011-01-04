@@ -359,6 +359,7 @@ public class TiffParser {
         count = (int) ((inputLen - pointer) / bpe);
         LOGGER.trace("getIFDs: truncated {} array elements for tag {}",
           (oldCount - count), tag);
+        if (count < 0) count = oldCount;
       }
       if (count < 0 || count > in.length()) break;
 
@@ -399,6 +400,10 @@ public class TiffParser {
 
     LOGGER.trace("Reading entry {} from {}; type={}, count={}",
       new Object[] {entry.getTag(), offset, type, count});
+
+    if (offset >= in.length()) {
+      return null;
+    }
 
     if (offset != in.getFilePointer()) {
       in.seek(offset);
@@ -661,21 +666,24 @@ public class TiffParser {
       long[] stripOffsets = ifd.getStripOffsets();
       long[] stripByteCounts = ifd.getStripByteCounts();
 
-      int firstTile = (int) ((y / tileLength) * numTileCols + (x / tileWidth));
-      int lastTile =
-        (int) (((y + height) / tileLength) * numTileCols + (x / tileWidth));
-      lastTile = (int) Math.min(lastTile, stripOffsets.length - 1);
+      if (stripOffsets != null && stripByteCounts != null) {
+        long column = x / tileWidth;
+        int firstTile = (int) ((y / tileLength) * numTileCols + column);
+        int lastTile =
+          (int) (((y + height) / tileLength) * numTileCols + column);
+        lastTile = (int) Math.min(lastTile, stripOffsets.length - 1);
 
-      int offset = 0;
-      for (int tile=firstTile; tile<=lastTile; tile++) {
-        if (stripByteCounts[tile] == numSamples && pixel > 1) {
-          stripByteCounts[tile] *= pixel;
+        int offset = 0;
+        for (int tile=firstTile; tile<=lastTile; tile++) {
+          if (stripByteCounts[tile] == numSamples && pixel > 1) {
+            stripByteCounts[tile] *= pixel;
+          }
+
+          in.seek(stripOffsets[tile]);
+          int len = (int) Math.min(buf.length - offset, stripByteCounts[tile]);
+          in.read(buf, offset, len);
+          offset += len;
         }
-
-        in.seek(stripOffsets[tile]);
-        int len = (int) Math.min(buf.length - offset, stripByteCounts[tile]);
-        in.read(buf, offset, len);
-        offset += len;
       }
       return buf;
     }
