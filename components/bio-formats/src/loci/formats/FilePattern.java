@@ -437,6 +437,14 @@ public class FilePattern {
       }
     }
     sb.append(q > 0 ? name.substring(endList[q - 1]) : name);
+
+    for (int i=0; i<sb.length(); i++) {
+      if (sb.charAt(i) == '\\') {
+        sb.insert(i, '\\');
+        i++;
+      }
+    }
+
     return sb.toString();
   }
 
@@ -559,6 +567,11 @@ public class FilePattern {
   private void buildFiles(String prefix, int ndx, List<String> fileList) {
     if (blocks.length == 0) {
       // regex pattern
+
+      if (new Location(pattern).exists()) {
+        fileList.add(pattern);
+        return;
+      }
 
       String[] files = null;
       int end = pattern.lastIndexOf(File.separator) + 1;
