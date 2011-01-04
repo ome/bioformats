@@ -712,6 +712,7 @@ public class IFD extends HashMap<Integer, Object> {
     if (isTiled() && offsets == null) {
       offsets = getIFDLongArray(STRIP_OFFSETS, false);
     }
+    if (offsets == null) return null;
 
     if (isTiled()) return offsets;
     long rowsPerStrip = getRowsPerStrip()[0];
@@ -747,6 +748,7 @@ public class IFD extends HashMap<Integer, Object> {
       // don't rely on RowsPerStrip, since it's likely that if the file doesn't
       // have the StripByteCounts tag, it also won't have the RowsPerStrip tag
       long[] offsets = getStripOffsets();
+      if (offsets == null) return null;
       int bytesPerSample = getBytesPerSample()[0];
       long imageWidth = getImageWidth();
       long imageLength = getImageLength();
@@ -850,7 +852,10 @@ public class IFD extends HashMap<Integer, Object> {
       sb.append(getIFDTagName(tags[entry].intValue()));
       sb.append("=");
       Object value = get(tags[entry]);
-      if ((value instanceof Boolean) || (value instanceof Number) ||
+      if (value == null) {
+        sb.append("null");
+      }
+      else if ((value instanceof Boolean) || (value instanceof Number) ||
         (value instanceof String))
       {
         sb.append(value);
