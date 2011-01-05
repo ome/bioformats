@@ -57,6 +57,22 @@ public class Location {
   /** Map from given filenames to actual filenames. */
   private static HashMap<String, Object> idMap = new HashMap<String, Object>();
 
+  private static boolean cacheListings = false;
+
+  // By default, cache for one hour.
+  private static long cacheNanos = 60L * 60L * 1000L * 1000L * 1000L;
+
+  protected class ListingsResult {
+    public final String [] listing;
+    public final long time;
+    ListingsResult(String [] listing, long time) {
+      this.listing = listing;
+      this.time = time;
+    }
+  }
+  private static HashMap<String, ListingsResult> fileListings =
+    new HashMap<String, ListingsResult>();
+
   // -- Fields --
 
   private boolean isURL = true;
@@ -92,6 +108,61 @@ public class Location {
   }
 
   // -- Location API methods --
+
+  /**
+   * Turn cacheing of directory listings on or off.
+   * Cacheing is turned off by default.
+   *
+   * Reasons to cache - directory listings over network shares
+   * can be very expensive, especially in HCS experiments with thousands
+   * of files in the same directory. Technically, if you use a directory
+   * listing and then go and access the file, you are using stale information.
+   * Unlike a database, there's no transactional integrity to file system
+   * operations, so the directory could change by the time you access the file.
+   *
+   * Reasons not to cache - the contents of the directories might change
+   * during the program invocation.
+   *
+   * @param cache - true to turn cacheing on, false to leave it off.
+   */
+  public static void cacheDirectoryListings(boolean cache) {
+    cacheListings = cache;
+  }
+
+  /**
+   * Cache directory listings for this many seconds before relisting.
+   *
+   * @param sec - use the cache if a directory list was done within this many
+   * seconds.
+   */
+  public static void setCacheDirectoryTimeout(double sec) {
+    cacheNanos = (long)(sec * 1000. * 1000. * 1000.);
+  }
+
+  /**
+   * Clear the directory listings cache.
+   *
+   * Do this if directory contents might have changed in a significant way.
+   */
+  public static void clearDirectoryListingsCache() {
+    fileListings = new HashMap<String, ListingsResult>();
+  }
+
+  /**
+   * Remove any cached directory listings that have expired.
+   */
+  public static void cleanStaleCacheEntries() {
+    long t = System.nanoTime() - cacheNanos;
+    ArrayList<String> staleKeys = new ArrayList();
+    for (String key : fileListings.keySet()) {
+      if (fileListings.get(key).time < t) {
+        staleKeys.add(key);
+      }
+    }
+    for (String key : staleKeys) {
+      fileListings.remove(key);
+    }
+  }
 
   /**
    * Maps the given id to an actual filename on disk. Typically actual
@@ -207,6 +278,15 @@ public class Location {
    * @see java.io.File#list()
    */
   public String[] list(boolean noHiddenFiles) {
+    String key = getAbsolutePath() + Boolean.toString(noHiddenFiles);
+    String [] result = null;
+    if (cacheListings) {
+      cleanStaleCacheEntries();
+      ListingsResult listingsResult = fileListings.get(key);
+      if (listingsResult != null) {
+        return listingsResult.listing;
+      }
+    }
     ArrayList<String> files = new ArrayList<String>();
     if (isURL) {
       try {
@@ -254,7 +334,11 @@ public class Location {
         }
       }
     }
-    return files.toArray(new String[files.size()]);
+    result = files.toArray(new String[files.size()]);
+    if (cacheListings) {
+      fileListings.put(key, new ListingsResult(result, System.nanoTime()));
+    }
+    return result;
   }
 
   // -- File API methods --
