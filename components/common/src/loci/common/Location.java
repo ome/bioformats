@@ -31,6 +31,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,8 +71,8 @@ public class Location {
       this.time = time;
     }
   }
-  private static HashMap<String, ListingsResult> fileListings =
-    new HashMap<String, ListingsResult>();
+  private static ConcurrentHashMap<String, ListingsResult> fileListings =
+    new ConcurrentHashMap<String, ListingsResult>();
 
   // -- Fields --
 
@@ -145,7 +146,7 @@ public class Location {
    * Do this if directory contents might have changed in a significant way.
    */
   public static void clearDirectoryListingsCache() {
-    fileListings = new HashMap<String, ListingsResult>();
+    fileListings = new ConcurrentHashMap<String, ListingsResult>();
   }
 
   /**
