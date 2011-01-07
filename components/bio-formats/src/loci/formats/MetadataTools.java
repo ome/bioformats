@@ -112,6 +112,9 @@ public final class MetadataTools {
     IMetadata meta = null;
     ReflectedUniverse r = new ReflectedUniverse();
     try {
+      if (xml != null) {
+        xml = XMLTools.sanitizeXML(xml);
+      }
       ome = createOMEXMLRoot(xml);
       if (version == null) {
         if (ome == null) {
