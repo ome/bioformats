@@ -25,6 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.plugins.util;
 
+import ij.IJ;
 import ij.process.ByteProcessor;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
@@ -39,6 +40,7 @@ import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.ImageTools;
 import loci.formats.ReaderWrapper;
+import loci.plugins.BF;
 
 /**
  * A low-level reader for {@link ij.process.ImageProcessor} objects.
@@ -239,12 +241,47 @@ public class ImageProcessorReader extends ReaderWrapper {
         int valuesPerBin = shortTable[c].length / byteTable[c].length;
         double average = 0;
         for (int p=0; p<valuesPerBin; p++) {
-          average += shortTable[c][i * valuesPerBin + p];
+          final int index = i * valuesPerBin + p;
+          final int value = 0xffff & shortTable[c][index];
+          average += value;
         }
         average /= valuesPerBin;
         byteTable[c][i] = (byte) (255 * (average / 65535.0));
       }
     }
+
+    if (IJ.debugMode) {
+      final StringBuilder sb = new StringBuilder();
+      BF.debug("Downsampled 16-bit LUT to 8-bit:");
+
+      BF.debug("shortTable = {");
+      for (int i=0; i<shortTable.length; i++) {
+        sb.setLength(0);
+        sb.append("\t{");
+        for (int j=0; j<shortTable[i].length; j++) {
+          sb.append(" ");
+          sb.append(shortTable[i][j]);
+        }
+        sb.append(" }");
+        BF.debug(sb.toString());
+      }
+      BF.debug("}");
+
+      BF.debug("byteTable = {");
+      for (int i=0; i<byteTable.length; i++) {
+        sb.setLength(0);
+        sb.append("\t{");
+        for (int j=0; j<byteTable[i].length; j++) {
+          sb.append(" ");
+          sb.append(byteTable[i][j]);
+        }
+        sb.append(" }");
+        BF.debug(sb.toString());
+      }
+      BF.debug("}");
+
+    }
+
     return byteTable;
   }
 
