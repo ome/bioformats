@@ -183,8 +183,17 @@ public class ImagePlusReader implements StatusReporter {
       // default color model instead, which we can discard.
       if (luts != null) {
         final ColorModel cm = ip.getColorModel();
-        final LUT lut = cm instanceof LUT ? (LUT) cm : null;
-        luts.add(lut);
+        if (cm instanceof LUT) {
+          // plane has custom LUT attached; save it to the list
+          final LUT lut = (LUT) cm;
+          luts.add(lut);
+          // discard custom LUT from ImageProcessor
+          ip.setColorModel(ip.getDefaultColorModel());
+        }
+        else {
+          // no LUT attached; save a placeholder
+          luts.add(null);
+        }
       }
 
       // add plane to image stack
