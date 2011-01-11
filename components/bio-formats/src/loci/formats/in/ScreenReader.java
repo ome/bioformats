@@ -182,8 +182,10 @@ public class ScreenReader extends FormatReader {
       }
     }
     String[] readerFiles = readers[plate][well].getSeriesUsedFiles(noPixels);
-    for (String f : readerFiles) {
-      files.add(f);
+    if (readerFiles != null) {
+      for (String f : readerFiles) {
+        files.add(f);
+      }
     }
     return files.toArray(new String[files.size()]);
   }
