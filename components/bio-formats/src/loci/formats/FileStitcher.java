@@ -951,10 +951,12 @@ public class FileStitcher extends ReaderWrapper {
     store = reader.getMetadataStore();
     // don't overwrite pixel info if files aren't actually grouped
     if (!noStitch) {
-      MetadataTools.populatePixels(store, this);
-      for (int i=0; i<getSeriesCount(); i++) {
-        int index = getExternalSeries(i);
-        store.setImageName(externals[index].getFilePattern().getPattern(), i);
+      MetadataTools.populatePixels(store, this, false, false);
+      if (reader.getSeriesCount() == 1 && getSeriesCount() > 1) {
+        for (int i=0; i<getSeriesCount(); i++) {
+          int index = getExternalSeries(i);
+          store.setImageName(externals[index].getFilePattern().getPattern(), i);
+        }
       }
     }
   }
