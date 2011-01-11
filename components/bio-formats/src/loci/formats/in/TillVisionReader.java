@@ -61,6 +61,8 @@ public class TillVisionReader extends FormatReader {
 
   private static final byte[] MARKER_0 = new byte[] {(byte) 0x80, 3, 0};
   private static final byte[] MARKER_1 = new byte[] {(byte) 0x81, 3, 0};
+  private static final byte[] MARKER_2 =
+    new byte[] {0x43, 0x49, 0x6d, 0x61, 0x67, 0x65, 0x03, 0x00};
 
   private static final String[] DATE_FORMATS = new String[] {
     "mm/dd/yy HH:mm:ss aa", "mm/dd/yy HH:mm:ss.SSS aa", "mm/dd/yy",
@@ -239,24 +241,19 @@ public class TillVisionReader extends FormatReader {
           break;
         }
 
-        byte[] marker = getMarker(s);
-        if (marker == null) {
-          throw new FormatException("Could not find known marker.");
-        }
-        LOGGER.debug("Marker: {}, {}, {}",
-          new Object[] {marker[0], marker[1], marker[2]});
         s.seek(0);
 
         while (s.getFilePointer() < s.length() - 2) {
           LOGGER.debug("  Looking for image at {}", s.getFilePointer());
           s.order(false);
-          int nextOffset = findNextOffset(s, marker);
+          int nextOffset = findNextOffset(s);
           if (nextOffset < 0 || nextOffset >= s.length()) break;
           s.seek(nextOffset);
           s.skipBytes(3);
           int len = s.readShort();
           if (len <= 0) continue;
           imageNames.add(s.readString(len));
+          if (s.getFilePointer() + 8 >= s.length()) break;
           s.skipBytes(6);
           s.order(true);
           len = s.readShort();
@@ -480,13 +477,28 @@ public class TillVisionReader extends FormatReader {
     return FormatTools.pixelTypeFromBytes(bytes, signed, false);
   }
 
-  private byte[] getMarker(RandomAccessInputStream s) throws IOException {
-    s.seek(0);
-    int offset = findNextOffset(s, MARKER_0);
-    if (offset != -1) return MARKER_0;
-    s.seek(0);
-    offset = findNextOffset(s, MARKER_1);
-    return offset == -1 ? null : MARKER_1;
+  private int findNextOffset(RandomAccessInputStream s) throws IOException {
+    long fp = s.getFilePointer();
+    int offset0 = findNextOffset(s, MARKER_0);
+    s.seek(fp);
+    int offset1 = findNextOffset(s, MARKER_1);
+    s.seek(fp);
+    int offset2 = findNextOffset(s, MARKER_2);
+
+    if (offset0 < 0) offset0 = Integer.MAX_VALUE;
+    if (offset1 < 0) offset1 = Integer.MAX_VALUE;
+    if (offset2 < 0) offset2 = Integer.MAX_VALUE;
+
+    if (offset0 < offset1 && offset0 < offset2) {
+      return offset0;
+    }
+    if (offset1 < offset0 && offset1 < offset2) {
+      return offset1;
+    }
+    if (offset2 < offset1 && offset2 < offset0) {
+      return offset2;
+    }
+    return -1;
   }
 
   private int findNextOffset(RandomAccessInputStream s, byte[] marker)
