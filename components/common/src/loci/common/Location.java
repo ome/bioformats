@@ -58,10 +58,10 @@ public class Location {
   /** Map from given filenames to actual filenames. */
   private static HashMap<String, Object> idMap = new HashMap<String, Object>();
 
-  private static boolean cacheListings = false;
+  private static volatile boolean cacheListings = false;
 
   // By default, cache for one hour.
-  private static long cacheNanos = 60L * 60L * 1000L * 1000L * 1000L;
+  private static volatile long cacheNanos = 60L * 60L * 1000L * 1000L * 1000L;
 
   protected class ListingsResult {
     public final String [] listing;
