@@ -310,6 +310,10 @@ public class FluoviewReader extends BaseTiffReader {
     }
     core[0].dimensionOrder = dimensionOrder.replaceAll("S", "");
 
+    if (getPixelType() == FormatTools.UINT32) {
+      core[0].pixelType = FormatTools.FLOAT;
+    }
+
     if (seriesCount > 1) {
       CoreMetadata oldCore = core[0];
       core = new CoreMetadata[seriesCount];
