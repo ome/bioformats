@@ -355,7 +355,7 @@ public class ImagePlusReader implements StatusReporter {
       if (!load[i]) continue;
 
       // limit message update rate
-      updateTiming(s, i, current++, total);
+      updateTiming(s, current, current++, total);
 
       // get image processor for ith plane
       final ImageProcessor[] p = readProcessors(process, i, region);
