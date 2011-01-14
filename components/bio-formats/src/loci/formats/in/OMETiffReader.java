@@ -641,7 +641,7 @@ public class OMETiffReader extends FormatReader {
         if (core[s].indexed) {
           core[s].rgb = false;
         }
-        core[s].falseColor = false;
+        core[s].falseColor = true;
         core[s].metadataComplete = true;
       }
       catch (NullPointerException exc) {
