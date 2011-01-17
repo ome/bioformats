@@ -561,6 +561,11 @@ public class SlidebookReader extends FormatReader {
         }
       }
 
+      if ((long) getSizeX() * getSizeY() > plane) {
+        core[i].sizeX = (int) Math.sqrt(plane);
+        core[i].sizeY = getSizeX();
+      }
+
       int nPlanes = getSizeZ() * getSizeC();
       core[i].sizeT = (int) (pixels / (getSizeX() * getSizeY() * nPlanes));
       while (getSizeX() * getSizeY() * nPlanes * getSizeT() > pixels) {
