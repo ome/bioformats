@@ -284,17 +284,27 @@ public class SlidebookReader extends FormatReader {
 
             while (!found && in.getFilePointer() < in.length()) {
               for (int i=0; i<n-6; i++) {
-                if (((buf[i] == 'h' || buf[i] == 'i') && buf[i + 1] == 0 &&
-                  buf[i + 4] == 'I' && buf[i + 5] == 'I') ||
-                  (buf[i] == 0 && (buf[i + 1] == 'h' || buf[i + 1] == 'i') &&
-                  buf[i + 4] == 'M' && buf[i + 5] == 'M'))
+                if ((buf[i + 4] == 'I' && buf[i + 5] == 'I') ||
+                  (buf[i + 4] == 'M' && buf[i + 5] == 'M'))
                 {
-                  found = true;
-                  in.seek(in.getFilePointer() - n + i - 20);
-                  if (buf[i] == 'i' || buf[i + 1] == 'i') {
-                    pixelOffsets.remove(pixelOffsets.size() - 1);
+                  if (((buf[i] == 'h' || buf[i] == 'i') && buf[i + 1] == 0) ||
+                    (buf[i] == 0 && (buf[i + 1] == 'h' || buf[i + 1] == 'i')))
+                  {
+                    found = true;
+                    in.seek(in.getFilePointer() - n + i - 20);
+                    if (buf[i] == 'i' || buf[i + 1] == 'i') {
+                      pixelOffsets.remove(pixelOffsets.size() - 1);
+                    }
+                    break;
                   }
-                  break;
+                  else if (((buf[i] == 'j' || buf[i] == 'k' || buf[i] == 'n') &&
+                    buf[i + 1] == 0) || (buf[i] == 0 && (buf[i + 1] == 'j' ||
+                    buf[i + 1] == 'k' || buf[i + 1] == 'n')))
+                  {
+                    found = true;
+                    pixelOffsets.remove(pixelOffsets.size() - 1);
+                    break;
+                  }
                 }
               }
               if (!found) {
@@ -312,7 +322,10 @@ public class SlidebookReader extends FormatReader {
                   pixelOffsets.setElementAt(fp + 2, pixelOffsets.size() - 1);
                   length -= 2;
                 }
-                pixelLengths.add(new Long(length));
+                if (length >= 1024) {
+                  pixelLengths.add(new Long(length));
+                }
+                else pixelOffsets.remove(pixelOffsets.size() - 1);
               }
             }
             else pixelOffsets.remove(pixelOffsets.size() - 1);
@@ -379,11 +392,17 @@ public class SlidebookReader extends FormatReader {
 
       // if there are more than 100 blocks, we probably found a pixel block
       // by accident (but we'll check the first block anyway)
-      if (totalBlocks > 100) totalBlocks = 1;
+      //if (totalBlocks > 100) totalBlocks = 100;
       for (int q=0; q<totalBlocks; q++) {
-        if (withinPixels(off + q * 128)) break;
+        if (withinPixels(off + q * 128)) {
+          continue;
+        }
         in.seek(off + q * 128);
         char n = (char) in.readShort();
+        while (n == 0 && in.getFilePointer() < off + (q + 1) * 128) {
+          n = (char) in.readShort();
+        }
+        if (in.getFilePointer() >= in.length() - 2) break;
         if (n == 'i') {
           iCount++;
           in.skipBytes(94);
@@ -433,6 +452,7 @@ public class SlidebookReader extends FormatReader {
           in.skipBytes(2);
           String check = in.readString(2);
           if (check.equals("II") || check.equals("MM")) {
+            long pointer = in.getFilePointer();
             // this block should contain an image name
             in.skipBytes(10);
             if (nextName < imageNames.length) {
@@ -461,6 +481,12 @@ public class SlidebookReader extends FormatReader {
               core[nextName - 1].sizeY = y;
               adjust = false;
             }
+
+            in.seek(pointer + 214);
+            int validBits = in.readShort();
+            if (core[nextName - 1].bitsPerPixel == 0 && validBits <= 16) {
+              core[nextName - 1].bitsPerPixel = validBits;
+            }
           }
         }
         else if (n == 'm') {
@@ -482,9 +508,11 @@ public class SlidebookReader extends FormatReader {
           in.skipBytes(174);
           ndFilters.add(new Double(in.readFloat()));
           in.skipBytes(40);
-          setSeries(nextName);
-          addSeriesMeta("channel " + ndFilters.size() + " intensification",
-            in.readShort());
+          if (nextName < getSeriesCount()) {
+            setSeries(nextName);
+            addSeriesMeta("channel " + ndFilters.size() + " intensification",
+              in.readShort());
+          }
         }
         else if (n == 'k') {
           in.skipBytes(14);
