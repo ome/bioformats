@@ -58,8 +58,14 @@
 
 	<!-- The Enumeration terms to be modified. -->
 	<xsl:variable name="enumeration-maps">
-		<mapping name="theAtribute">
-			<map from="oldName" to="newName"/>
+		<mapping name="LogicalChannelMode">
+			<map from="LaserScanningConfocalMicroscopy" to="LaserScanningConfocal"/>
+			<map from="PALM" to="Other"/>
+			<map from="STORM" to="Other"/>
+			<map from="STED" to="Other"/>
+			<map from="TIRF" to="Other"/>
+			<map from="FSM" to="Other"/>
+			<map from="LCM" to="Other"/>
 		</mapping>
 	</xsl:variable>
 
@@ -88,25 +94,11 @@
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
-
-	<!-- Transform the value from the unsigned int color range to the signed int color range -->
-	<xsl:template name="transformColorToSignedValue">
-		<xsl:param name="colorValue"/>
-		<xsl:choose>
-			<xsl:when test="$colorValue > 2147483647">
-				<xsl:value-of select="0 - ( 4294967296 - $colorValue )"/>
-			</xsl:when>
-			<xsl:otherwise>
-				<xsl:value-of select="$colorValue"/>
-			</xsl:otherwise>
-		</xsl:choose>
-	</xsl:template>
 	
 	<!-- Actual schema changes -->
+<!--
 	<xsl:template match="SPW:Description"/>
 	<xsl:template match="SPW:PlateAcquisition"/>
-	<xsl:template match="OME:Channel"/>
-	
 	<xsl:template match="SPW:Reagent">		
 		<xsl:element name="{name()}" namespace="{$newSPWNS}">
 			<xsl:apply-templates select="@*"/>
@@ -121,43 +113,53 @@
 			<xsl:apply-templates select="*"/>
 		</xsl:element>
 	</xsl:template>
-
+-->
 	<xsl:template match="OME:AcquiredDate">
 		<xsl:element name="CreationDate" namespace="{$newOMENS}">
-			<xsl:apply-templates select="@*|node()"/>
+			<xsl:apply-templates select="node()"/>
 		</xsl:element>
 	</xsl:template>
 	
 	<xsl:template match="OME:Image">
 		<xsl:element name="{name()}" namespace="{$newOMENS}">
-			<xsl:apply-templates select="@*"/>
+			<xsl:for-each select="@* [not(name(.) = 'ID')]">
+				<xsl:attribute name="{local-name(.)}">
+					<xsl:value-of select="."/>
+				</xsl:attribute>
+			</xsl:for-each>
+			<xsl:for-each select="@* [name(.) = 'ID']">
+				<xsl:attribute name="ID"><xsl:value-of select="."/></xsl:attribute>
+			</xsl:for-each>
 			<xsl:attribute name="DefaultPixels">
-				<xsl:variable name="firstPixels">
-					<xsl:for-each select="* [name(.) = 'Pixels'][1]">
-						<xsl:value-of select="@ID"/>
-					</xsl:for-each>
+				<xsl:variable name="firstPixels"><xsl:for-each select="* [name(.) = 'Pixels'][1]">
+					<xsl:value-of select="@ID"/>
+				</xsl:for-each>
 				</xsl:variable>
 				<xsl:value-of select="$firstPixels"/>
 			</xsl:attribute>
-			<xsl:apply-templates select="* [not(name(.) = 'Pixels')]"/>
+			
+			<xsl:apply-templates select="* [name(.) = 'AcquiredDate']"/>
+			
 			<xsl:for-each select=" descendant::OME:Channel">
 				<xsl:element name="LogicalChannel" namespace="{$newOMENS}">
-					<xsl:for-each select="@* [not(name(.) = 'ID' or name(.) = 'Color')]">
-						<xsl:attribute name="{local-name(.)}">
-							<xsl:value-of select="."/>
-						</xsl:attribute>
-					</xsl:for-each>
 					<xsl:for-each select="@* [name(.) = 'ID']">
 						<xsl:attribute name="ID">LogicalChannel:XSLT:<xsl:value-of select="."/></xsl:attribute>
 					</xsl:for-each>
-					<xsl:apply-templates select="*"/>
-					<xsl:element name="ChannelComponent" namespace="{$newOMENS}">
-						<xsl:attribute name="Pixels">
-							<xsl:for-each select=" parent::node()">
-								<xsl:value-of select="@ID"/>
-							</xsl:for-each>
+					<xsl:for-each select="@* [name(.) = 'AcquisitionMode']">
+						<xsl:attribute name="Mode">
+							<xsl:call-template name="transformEnumerationValue">
+								<xsl:with-param name="mappingName" select="'LogicalChannelMode'"/>
+								<xsl:with-param name="value"><xsl:value-of select="."/></xsl:with-param>
+							</xsl:call-template>
 						</xsl:attribute>
-						<xsl:attribute name="Index"><xsl:value-of select="position()"/></xsl:attribute>					
+					</xsl:for-each>
+					
+					<xsl:element name="ChannelComponent" namespace="{$newOMENS}">
+						<xsl:attribute name="Pixels"><xsl:for-each select=" parent::node()">
+							<xsl:value-of select="@ID"/>
+						</xsl:for-each>
+						</xsl:attribute>
+						<xsl:attribute name="Index"><xsl:value-of select="position()"/></xsl:attribute>
 					</xsl:element>
 				</xsl:element>
 			</xsl:for-each>
@@ -165,29 +167,41 @@
 			
 		</xsl:element>
 	</xsl:template>
-
+	
 	<xsl:template match="OME:Pixels">
 		<xsl:element name="{name()}" namespace="{$newOMENS}">
-			<xsl:for-each select="@* [not(name(.) = 'Type')]">
+			<xsl:for-each select="@* [name(.) = 'ID']">
+				<xsl:attribute name="ID"><xsl:value-of select="."/></xsl:attribute>
+			</xsl:for-each>
+			<xsl:for-each select="@* [name(.) = 'Type']">
+				<xsl:attribute name="PixelType">
+					<xsl:call-template name="transformEnumerationValue">
+						<xsl:with-param name="mappingName" select="'PixelsPixelType'"/>
+						<xsl:with-param name="value"><xsl:value-of select="."/></xsl:with-param>
+					</xsl:call-template>
+				</xsl:attribute>
+			</xsl:for-each>
+			<xsl:attribute name="BigEndian">
+				<xsl:variable name="valueBigEndian">
+					<xsl:for-each select="* [local-name(.) = 'BinData'][1]">
+						<xsl:value-of select="@BigEndian"/>
+					</xsl:for-each>
+				</xsl:variable>
+				<xsl:value-of select="$valueBigEndian"/>
+			</xsl:attribute>
+			
+			<xsl:for-each select="@* [name(.) = 'DimensionOrder' or name(.) = 'SizeC' or name(.) = 'SizeT' or name(.) = 'SizeX' or name(.) = 'SizeY' or name(.) = 'SizeZ']">
 				<xsl:attribute name="{local-name(.)}">
 					<xsl:value-of select="."/>
 				</xsl:attribute>
 			</xsl:for-each>
-			<xsl:for-each select="@* [name(.) = 'Type']">
-				<xsl:attribute name="PixelType">
-					<xsl:value-of select="."/>
-				</xsl:attribute>
-			</xsl:for-each>
-			
-			<xsl:attribute name="BigEndian">
-					<xsl:for-each select="* [local-name(.) = 'BinData']">
-						<xsl:value-of select="@BigEndian"/>
-					</xsl:for-each>
-			</xsl:attribute>
-			<xsl:apply-templates select="*"/>
+			<xsl:apply-templates select="* [local-name(.) = 'BinData']"/>
 		</xsl:element>
 	</xsl:template>
 	
+	<!-- 
+		In Bin:BinData add Length attribute.
+	-->
 	<xsl:template match="Bin:BinData">
 		<xsl:element name="{name()}" namespace="{$newBINNS}">
 			<xsl:for-each select="@* [not(name(.) = 'BigEndian')]">
@@ -200,7 +214,8 @@
 	</xsl:template>
 	
 	<xsl:template match="ROI:*"/>
-		
+	<xsl:template match="SA:*"/>
+	<xsl:template match="SPW:*"/>
 	
 	<!-- Rewriting all namespaces -->
 
@@ -224,18 +239,6 @@
 
 	<xsl:template match="Bin:*">
 		<xsl:element name="{name()}" namespace="{$newBINNS}">
-			<xsl:apply-templates select="@*|node()"/>
-		</xsl:element>
-	</xsl:template>
-
-	<xsl:template match="SA:*">
-		<xsl:element name="{name()}" namespace="{$newSANS}">
-			<xsl:apply-templates select="@*|node()"/>
-		</xsl:element>
-	</xsl:template>
-
-	<xsl:template match="SPW:*">
-		<xsl:element name="{name()}" namespace="{$newSPWNS}">
 			<xsl:apply-templates select="@*|node()"/>
 		</xsl:element>
 	</xsl:template>
