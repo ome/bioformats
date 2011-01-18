@@ -145,30 +145,6 @@
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
-
-	<!-- Transform the value from the unsigned int color range to the signed int color range -->
-	<xsl:template name="transformColorToSignedValue">
-		<xsl:param name="colorValue"/>
-		<xsl:choose>
-			<xsl:when test="$colorValue > 2147483647">
-				<xsl:value-of select="0 - ( 4294967296 - $colorValue )"/>
-			</xsl:when>
-			<xsl:otherwise>
-				<xsl:value-of select="$colorValue"/>
-			</xsl:otherwise>
-		</xsl:choose>
-	</xsl:template>
-	
-	<!-- 
-	<Image ID="" Name="">
-		<ChannelInfo ID="">
-			<ChannelComponent Pixels="" Index=""/>
-		</ChannelInfo>
-		
-			<Bin:BinData/>
-		</Pixels>
-	</Image>
-	-->
 	
 	<!-- Actual schema changes -->	
 	<xsl:template match="OME:AcquiredDate">
