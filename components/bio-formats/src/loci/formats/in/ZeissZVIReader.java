@@ -607,11 +607,6 @@ public class ZeissZVIReader extends FormatReader {
 
     LOGGER.info("Populating metadata");
 
-    for (String name : tagsToParse) {
-      int imageNum = getImageNumber(name, -1);
-      parseTags(imageNum, name, store);
-    }
-
     core[0].sizeZ = zIndices.size();
     core[0].sizeT = tIndices.size();
     core[0].sizeC = cIndices.size();
@@ -624,6 +619,11 @@ public class ZeissZVIReader extends FormatReader {
     core[0].imageCount = getSizeZ() * getSizeT() * getSizeC();
     core[0].rgb = (bpp % 3) == 0;
     if (isRGB()) core[0].sizeC *= 3;
+
+    for (String name : tagsToParse) {
+      int imageNum = getImageNumber(name, -1);
+      parseTags(imageNum, name, store);
+    }
 
     // calculate tile dimensions and number of tiles
     if (isTiled) {
@@ -929,24 +929,24 @@ public class ZeissZVIReader extends FormatReader {
           physicalSizeZ = Double.parseDouble(value);
         }
         else if (key.startsWith("Emission Wavelength")) {
-          if (cIndex != -1 && nextEmWave <= effectiveSizeC) {
+          if (cIndex != -1) {
             Integer wave = new Integer(value);
             if (wave.intValue() > 0) {
-              emWavelength.put(nextEmWave++, new PositiveInteger(wave));
+              emWavelength.put(cIndex, new PositiveInteger(wave));
             }
           }
         }
         else if (key.startsWith("Excitation Wavelength")) {
-          if (cIndex != -1 && nextExWave <= effectiveSizeC) {
-            Integer wave = new Integer(value);
+          if (cIndex != -1) {
+            Integer wave = new Integer((int) Double.parseDouble(value));
             if (wave.intValue() > 0) {
-              exWavelength.put(nextExWave++, new PositiveInteger(wave));
+              exWavelength.put(cIndex, new PositiveInteger(wave));
             }
           }
         }
         else if (key.startsWith("Channel Name")) {
-          if (cIndex != -1 && nextChName <= effectiveSizeC) {
-            channelName.put(nextChName++, value);
+          if (cIndex != -1) {
+            channelName.put(cIndex, value);
           }
         }
         else if (key.startsWith("Exposure Time [ms]")) {
