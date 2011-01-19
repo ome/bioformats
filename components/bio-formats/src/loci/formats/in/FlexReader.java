@@ -413,10 +413,6 @@ public class FlexReader extends FormatReader {
           flex.add(new Location(dir, file).getAbsolutePath());
           LOGGER.debug("Added {} to dataset.", flex.get(flex.size() - 1));
         }
-        else {
-          doGrouping = false;
-          break;
-        }
       }
     }
 
@@ -512,6 +508,9 @@ public class FlexReader extends FormatReader {
             }
             else if (c > 0 && lightSources != null && lightSources.size() == 1)
             {
+              lightSourceCombo =
+                lightSourceCombinationRefs.get(seriesIndex + c);
+              lightSources = lightSourceCombinationIDs.get(lightSourceCombo);
               store.setChannelLightSourceSettingsID(lightSources.get(0), i, c);
             }
             if (index < filterSets.size()) {
@@ -1071,6 +1070,7 @@ public class FlexReader extends FormatReader {
               offsets[row][col][i] =  offsets[row][col][i - 1] + size;
             }
           }
+          parseFlexFile(currentWell, row, col, firstFile, store);
         }
         if (currentWell != 0) s.close();
         if (firstFile) firstFile = false;
