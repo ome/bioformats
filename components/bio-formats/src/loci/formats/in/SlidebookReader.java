@@ -63,6 +63,8 @@ public class SlidebookReader extends FormatReader {
   private Vector<Long> pixelLengths;
   private Vector<Double> ndFilters;
 
+  private long[][] planeOffset;
+
   private boolean adjust = true;
   private boolean isSpool;
   private Hashtable<Integer, Integer> metadataInPlanes;
@@ -93,8 +95,7 @@ public class SlidebookReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    int plane = FormatTools.getPlaneSize(this);
-    long offset = pixelOffsets.get(series).longValue() + plane * no;
+    long offset = planeOffset[getSeries()][no];
     in.seek(offset);
 
     // if this is a spool file, there may be an extra metadata block here
@@ -130,6 +131,7 @@ public class SlidebookReader extends FormatReader {
       isSpool = false;
       metadataInPlanes = null;
       adjust = true;
+      planeOffset = null;
     }
   }
 
@@ -337,6 +339,10 @@ public class SlidebookReader extends FormatReader {
       }
     }
 
+    Vector<Long> orderedSeries = new Vector<Long>();
+    Hashtable<Long, Vector<Integer>> uniqueSeries =
+      new Hashtable<Long, Vector<Integer>>();
+
     for (int i=0; i<pixelOffsets.size(); i++) {
       long length = pixelLengths.get(i).longValue();
       long offset = pixelOffsets.get(i).longValue();
@@ -348,11 +354,21 @@ public class SlidebookReader extends FormatReader {
         pixelLengths.remove(i);
         i--;
       }
+      else {
+        Vector<Integer> v = uniqueSeries.get(length);
+        if (v == null) {
+          orderedSeries.add(length);
+          v = new Vector<Integer>();
+        }
+
+        v.add(i);
+        uniqueSeries.put(length, v);
+      }
     }
 
     if (pixelOffsets.size() > 1) {
       boolean little = isLittleEndian();
-      core = new CoreMetadata[pixelOffsets.size()];
+      core = new CoreMetadata[uniqueSeries.size()];
       for (int i=0; i<getSeriesCount(); i++) {
         core[i] = new CoreMetadata();
         core[i].littleEndian = little;
@@ -375,6 +391,11 @@ public class SlidebookReader extends FormatReader {
     String[] imageNames = new String[getSeriesCount()];
     Vector<String> channelNames = new Vector<String>();
     int nextName = 0;
+
+    int[] sizeX = new int[pixelOffsets.size()];
+    int[] sizeY = new int[pixelOffsets.size()];
+    int[] sizeZ = new int[pixelOffsets.size()];
+    int[] sizeC = new int[pixelOffsets.size()];
 
     // try to find the width and height
     int iCount = 0;
@@ -413,36 +434,36 @@ public class SlidebookReader extends FormatReader {
             long end = j == pixelOffsets.size() - 1 ? in.length() :
               pixelOffsets.get(j + 1).longValue();
             if (in.getFilePointer() < end) {
-              if (core[j].sizeX == 0) {
-                core[j].sizeX = in.readShort();
-                core[j].sizeY = in.readShort();
+              if (sizeX[j] == 0) {
+                sizeX[j] = in.readShort();
+                sizeY[j] = in.readShort();
                 int checkX = in.readShort();
                 int checkY = in.readShort();
                 int div = in.readShort();
-                core[j].sizeX /= (div == 0 ? 1 : div);
+                sizeX[j] /= (div == 0 ? 1 : div);
                 div = in.readShort();
-                core[j].sizeY /= (div == 0 ? 1 : div);
+                sizeY[j] /= (div == 0 ? 1 : div);
               }
               if (prevSeries != j) {
                 iCount = 1;
               }
               prevSeries = j;
-              core[j].sizeC = iCount;
+              sizeC[j] = iCount;
               break;
             }
           }
         }
         else if (n == 'u') {
           uCount++;
-          for (int j=0; j<pixelOffsets.size(); j++) {
-            long end = j == pixelOffsets.size() - 1 ? in.length() :
+          for (int j=0; j<getSeriesCount(); j++) {
+            long end = j == getSeriesCount() - 1 ? in.length() :
               pixelOffsets.get(j + 1).longValue();
             if (in.getFilePointer() < end) {
               if (prevSeriesU != j) {
                 uCount = 1;
               }
               prevSeriesU = j;
-              core[j].sizeZ = uCount;
+              sizeZ[j] = uCount;
               break;
             }
           }
@@ -473,12 +494,12 @@ public class SlidebookReader extends FormatReader {
             x /= (div == 0 ? 1 : div);
             div = in.readShort();
             y /= (div == 0 ? 1 : div);
-            if (x > 16 && (x < core[nextName - 1].sizeX ||
-              core[nextName - 1].sizeX == 0) && y > 16 &&
-              (y < core[nextName - 1].sizeY || core[nextName - 1].sizeY == 0))
+            if (x > 16 && (x < sizeX[nextName - 1] ||
+              sizeX[nextName - 1] == 0) && y > 16 &&
+              (y < sizeY[nextName - 1] || sizeY[nextName - 1] == 0))
             {
-              core[nextName - 1].sizeX = x;
-              core[nextName - 1].sizeY = y;
+              sizeX[nextName - 1] = x;
+              sizeY[nextName - 1] = y;
               adjust = false;
             }
 
@@ -526,8 +547,8 @@ public class SlidebookReader extends FormatReader {
               pixelOffsets.get(j + 1).longValue();
             if (in.getFilePointer() < end) {
               in.skipBytes(16);
-              core[j].sizeX = in.readShort();
-              core[j].sizeY = in.readShort();
+              sizeX[j] = in.readShort();
+              sizeY[j] = in.readShort();
               adjust = false;
               break;
             }
@@ -536,10 +557,21 @@ public class SlidebookReader extends FormatReader {
       }
     }
 
+    planeOffset = new long[getSeriesCount()][];
+
     for (int i=0; i<getSeriesCount(); i++) {
       setSeries(i);
-      long pixels = pixelLengths.get(i).longValue() / 2;
+
+      Vector<Integer> pixelIndexes = uniqueSeries.get(orderedSeries.get(i));
+      int index = pixelIndexes.get(0);
+
+      long pixels = pixelLengths.get(index).longValue() / 2;
       boolean x = true;
+
+      core[i].sizeX = sizeX[index];
+      core[i].sizeY = sizeY[index];
+      core[i].sizeC = sizeC[index];
+      core[i].sizeZ = sizeZ[index];
 
       if (getSizeC() == 0) core[i].sizeC = 1;
       if (getSizeZ() == 0) core[i].sizeZ = 1;
@@ -572,12 +604,27 @@ public class SlidebookReader extends FormatReader {
         core[i].sizeT--;
       }
       if (getSizeT() == 0) core[i].sizeT = 1;
+
+      int nBlocks = uniqueSeries.get(orderedSeries.get(i)).size();
+      core[i].sizeT *= nBlocks;
       core[i].imageCount = nPlanes * getSizeT();
       core[i].pixelType = FormatTools.UINT16;
-      core[i].dimensionOrder = "XYZTC";
+      core[i].dimensionOrder = nBlocks > 1 ? "XYZCT" : "XYZTC";
       core[i].indexed = false;
       core[i].falseColor = false;
       core[i].metadataComplete = true;
+
+      planeOffset[i] = new long[getImageCount()];
+      int nextImage = 0;
+      for (Integer pixelIndex : pixelIndexes) {
+        long offset = pixelOffsets.get(pixelIndex);
+        long length = pixelLengths.get(pixelIndex);
+        int planeSize = getSizeX() * getSizeY() * 2;
+        int planes = (int) (length / planeSize);
+        for (int p=0; p<planes; p++, nextImage++) {
+          planeOffset[i][nextImage] = offset + p * planeSize;
+        }
+      }
     }
     setSeries(0);
 
