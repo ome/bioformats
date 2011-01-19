@@ -177,7 +177,8 @@ public class FileStitcher extends ReaderWrapper {
   /** Gets the file pattern object used to build the list of files. */
   public FilePattern getFilePattern() {
     FormatTools.assertId(getCurrentFile(), true, 2);
-    return externals[getExternalSeries()].getFilePattern();
+    return noStitch ? findPattern(getCurrentFile()) :
+      externals[getExternalSeries()].getFilePattern();
   }
 
   /**
