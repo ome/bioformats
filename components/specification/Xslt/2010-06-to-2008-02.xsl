@@ -96,7 +96,8 @@
 	</xsl:template>
 	
 	<!-- Actual schema changes -->
-<!--
+<!-- This version strips all SPW data. It would need updated to handle PlateRef V ScreenRef conflict.
+	
 	<xsl:template match="SPW:Description"/>
 	<xsl:template match="SPW:PlateAcquisition"/>
 	<xsl:template match="SPW:Reagent">		
