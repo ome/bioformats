@@ -145,14 +145,12 @@ usage and/or distribution.
     </if>
   </target>
 
-  <target name="dist" depends="check-itk"
+  <target name="dist"
     description="bundle binaries for distribution">
     <!-- CTR TODO - check whether all binaries actually exist -->
 
     <property name="bf-itk.dist.dir" value="${dist.dir}/bf-itk"/>
     <mkdir dir="${bf-itk.dist.dir}"/>
-
-    <property name="itk-bin.dir" value="${itk.home}/bin"/>
 
     <echo/>
     <echo>-- Copying Bio-Formats Java libraries --</echo>
@@ -201,17 +199,13 @@ usage and/or distribution.
     </copy>
 
     <echo/>
-    <echo>-- Copying distribution --</echo>
-    <echo/>
-    <copy todir="${itk.home}/bin">
-      <fileset dir="${bf-itk.dist.dir}"/>
-    </copy>
-
-    <echo/>
     <echo>-- Copying Bio-Formats ITK plugin --</echo>
     <echo/>
     <copy todir="${bf-itk.dist.dir}">
-      <fileset dir="${bf-itk.lib}"/>
+      <fileset dir="${bf-itk.lib}" includes="*.so"/>
+      <fileset dir="${bf-itk.lib}" includes="*.dylib"/>
+      <fileset dir="${bf-itk.lib}" includes="*.jnilib"/>
+      <fileset dir="${bf-itk.lib}" includes="*.dll"/>
     </copy>
 
     <echo/>
@@ -245,14 +239,27 @@ usage and/or distribution.
 
 If you compiled ITK with BUILD_EXAMPLES set to ON,
 you can test the plugin with the following commands:
-
-  export ITK_AUTOLOAD_PATH="${build.dir}/lib/"
-  cd "${itk-bin.dir}"
-  ./ImageHistogram1 /path/to/sample/dataset
-
-If you run the ant dist target, use this command instead:
-
-  export ITK_AUTOLOAD_PATH="${build.dir}/dist/bf-itk/"
+</echo>
+    <if>
+      <isset property="isWindows"/>
+      <then>
+<echo>
+  set ITK_EXAMPLES="\path\to\itk\examples"
+  set ITK_AUTOLOAD_PATH="${build.dir}\dist\bf-itk"
+  cd %ITK_AUTOLOAD_PATH%
+  %ITK_EXAMPLES%\ImageHistogram1.exe \path\to\sample\dataset
+</echo>
+      </then>
+      <else>
+<echo>
+  export ITK_EXAMPLES="/path/to/itk/examples"
+  export ITK_AUTOLOAD_PATH="${build.dir}/dist/bf-itk"
+  cd $ITK_AUTOLOAD_PATH
+  $ITK_EXAMPLES/ImageHistogram1 /path/to/sample/dataset
+</echo>
+      </else>
+    </if>
+<echo>
 
 If you use a TIFF file, you can compare the histogram results between
 the Bio-Formats importer and the built-in ITK TIFF reader by setting
