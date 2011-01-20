@@ -177,6 +177,74 @@ the Subversion repository using the command:
     </if>
   </target>
 
+
+  <target name="dist"
+    description="bundle binaries for distribution">
+    <!-- CTR TODO - check whether all binaries actually exist -->
+
+    <property name="bf-cpp.dist.dir" value="${dist.dir}/bf-cpp"/>
+    <mkdir dir="${bf-cpp.dist.dir}"/>
+
+    <echo/>
+    <echo>-- Copying Bio-Formats Java libraries --</echo>
+    <echo/>
+    <if>
+      <isset property="isWindows"/>
+      <then>
+        <property name="bf-cpp.build" value="${bf-cpp.build.windows}"/>
+        <property name="jace.build" value="${jace.build.windows}"/>
+      </then>
+      <else>
+        <property name="bf-cpp.build" value="${bf-cpp.build.other}"/>
+        <property name="jace.build" value="${jace.build.other}"/>
+      </else>
+    </if>
+    <copy file="${bf-cpp.build}/loci_tools.jar" todir="${bf-cpp.dist.dir}"/>
+    <copy file="${bf-cpp.build}/jace-runtime.jar" todir="${bf-cpp.dist.dir}"/>
+
+    <echo/>
+    <echo>-- Copying Bio-Formats C++ shared libraries --</echo>
+    <echo/>
+    <copy todir="${bf-cpp.dist.dir}">
+      <fileset dir="${bf-cpp.build}" includes="*.so"/>
+      <fileset dir="${bf-cpp.build}" includes="*.dylib"/>
+      <fileset dir="${bf-cpp.build}" includes="*.jnilib"/>
+      <fileset dir="${bf-cpp.build}" includes="*.dll"/>
+      <fileset dir="${bf-cpp.build}" includes="*.jar"/>
+      <fileset dir="${jace.build}" includes="*.so"/>
+      <fileset dir="${jace.build}" includes="*.dylib"/>
+      <fileset dir="${jace.build}" includes="*.jnilib"/>
+      <fileset dir="${jace.build}" includes="*.dll"/>
+    </copy>
+
+    <echo/>
+    <echo>-- Creating distribution archive --</echo>
+    <echo/>
+    <if>
+      <isset property="isWindows"/>
+      <then>
+        <!-- make a zip archive -->
+        <zip destfile="${dist.dir}/bf-cpp.zip" basedir="${bf-cpp.dist.dir}"/>
+      </then>
+      <else>
+        <!-- make a tar.gz archive -->
+        <!--<tar destfile="${dist.dir}/bf-cpp.tar.gz"
+          basedir="${bf-cpp.dist.dir}" compression="gzip"/>-->
+        <!-- HACK - tar does not preserve permissions; use exec instead -->
+        <echo>Building tar: bf-cpp.tar.gz</echo>
+        <exec executable="tar">
+          <arg value="czf"/>
+          <arg value="${dist.dir}/bf-cpp.tar.gz"/>
+          <arg value="-C"/>
+          <arg value="${dist.dir}"/>
+          <arg value="bf-cpp"/>
+        </exec>
+      </else>
+    </if>
+  </target>
+
+
+
   <target name="compile-proxies" depends="gen-makefile, copy-libs"
     description="build Bio-Formats C++ library">
     <if>
@@ -191,7 +259,6 @@ the Subversion repository using the command:
 Please use Visual Studio to complete the build.
 In Visual Studio, press F7, or select
 "Build solution" from the "Build" menu.
-
 After the build is complete, you will need to
 copy jace.dll from ${build.dir}\jace\Debug to ${build.dir}\Debug
 before the executables will run.
