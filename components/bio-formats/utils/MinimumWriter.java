@@ -30,9 +30,9 @@ public class MinimumWriter {
 
     // create blank 512x512 image
     System.out.println("Creating random image...");
-    int w = 512, h = 512;
+    int w = 512, h = 512, c = 1;
     int pixelType = FormatTools.UINT16;
-    byte[] img = new byte[w * h * FormatTools.getBytesPerPixel(pixelType)];
+    byte[] img = new byte[w * h * c * FormatTools.getBytesPerPixel(pixelType)];
 
     // fill with random data
     for (int i=0; i<img.length; i++) img[i] = (byte) (256 * Math.random());
@@ -54,10 +54,10 @@ public class MinimumWriter {
     meta.setPixelsSizeX(new PositiveInteger(w), 0);
     meta.setPixelsSizeY(new PositiveInteger(h), 0);
     meta.setPixelsSizeZ(new PositiveInteger(1), 0);
-    meta.setPixelsSizeC(new PositiveInteger(1), 0);
+    meta.setPixelsSizeC(new PositiveInteger(c), 0);
     meta.setPixelsSizeT(new PositiveInteger(1), 0);
     meta.setChannelID("Channel:0:0", 0, 0);
-    meta.setChannelSamplesPerPixel(new PositiveInteger(1), 0, 0);
+    meta.setChannelSamplesPerPixel(new PositiveInteger(c), 0, 0);
 
     // write image plane to disk
     System.out.println("Writing image to '" + id + "'...");
