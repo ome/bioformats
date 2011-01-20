@@ -141,7 +141,8 @@ public class MetamorphReader extends BaseTiffReader {
     if (ifd == null) return false;
     if (ifd.containsKey(METAMORPH_ID)) return true;
     String software = ifd.getIFDTextValue(IFD.SOFTWARE);
-    return software != null && software.trim().startsWith("Meta");
+    return software != null &&
+      software.trim().toLowerCase().startsWith("metamorph");
   }
 
   /* @see loci.formats.IFormatReader#isSingleFile(String) */
