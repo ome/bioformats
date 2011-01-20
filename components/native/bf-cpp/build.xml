@@ -122,12 +122,20 @@ the Subversion repository using the command:
           </else>
         </if>
         <!-- Escape certain constants to dodge global namespace conflicts. -->
-        <java fork="true" classname="${component.main-class}"
+        <java fork="true" classname="FixProxies"
           classpath="${classes.dir}:${component.runtime-cp}">
           <arg value="${proxies.dir}"/>
         </java>
+        <!-- Generate Bio-Formats suffix list to a handy file. -->
+        <java fork="true" classname="BioFormatsExtensionPrinter"
+          classpath="${classes.dir}:${component.runtime-cp}"/>
       </else>
     </if>
+  </target>
+
+
+  <target name="clean-all" depends="clean, clean-proxies"
+    description="deletes the bf-cpp build and all generated proxies">
   </target>
 
   <target name="gen-makefile" depends="check-jace, gen-proxies"
