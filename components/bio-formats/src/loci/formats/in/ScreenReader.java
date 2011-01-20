@@ -416,7 +416,7 @@ public class ScreenReader extends FormatReader {
 
     try {
       Integer.parseInt(col);
-      return Character.isLetter(row.charAt(0));
+      return col.length() <= 2 && Character.isLetter(row.charAt(0));
     }
     catch (NumberFormatException e) { }
 
