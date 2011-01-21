@@ -79,6 +79,8 @@ public class BDReader extends FormatReader {
   private double[] gain, offset, exposure;
   private String binning, objective;
 
+  private int wellRows, wellCols;
+
   // -- Constructor --
 
   /** Constructs a new ScanR reader. */
@@ -151,6 +153,8 @@ public class BDReader extends FormatReader {
       channelNames.clear();
       metadataFiles.clear();
       wellLabels.clear();
+      wellRows = 0;
+      wellCols = 0;
     }
   }
 
@@ -295,6 +299,16 @@ public class BDReader extends FormatReader {
       getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM;
     MetadataTools.populatePixels(store, this, populatePlanes);
 
+    for (int row=0; row<wellRows; row++) {
+      for (int col=0; col<wellCols; col++) {
+        int index = row * wellCols + col;
+
+        store.setWellID(MetadataTools.createLSID("Well", 0, index), 0, index);
+        store.setWellRow(new NonNegativeInteger(row), 0, index);
+        store.setWellColumn(new NonNegativeInteger(col), 0, index);
+      }
+    }
+
     for (int i=0; i<getSeriesCount(); i++) {
       MetadataTools.setDefaultCreationDate(store, id, i);
 
@@ -302,16 +316,14 @@ public class BDReader extends FormatReader {
       String row = name.substring(0, 1);
       Integer col = Integer.parseInt(name.substring(1));
 
-      store.setWellID(MetadataTools.createLSID("Well", 0, i), 0, i);
-      store.setWellColumn(new NonNegativeInteger(col - 1), 0, i);
-      store.setWellRow(new NonNegativeInteger(row.charAt(0) - 'A'), 0, i);
+      int index = (row.charAt(0) - 'A') * wellCols + col - 1;
 
-      String wellSampleID = MetadataTools.createLSID("WellSample", 0, i, 0);
-      store.setWellSampleID(wellSampleID, 0, i, 0);
-      store.setWellSampleIndex(new NonNegativeInteger(i), 0, i, 0);
+      String wellSampleID = MetadataTools.createLSID("WellSample", 0, index, 0);
+      store.setWellSampleID(wellSampleID, 0, index, 0);
+      store.setWellSampleIndex(new NonNegativeInteger(i), 0, index, 0);
 
       String imageID = MetadataTools.createLSID("Image", i);
-      store.setWellSampleImageRef(imageID, 0, i, 0);
+      store.setWellSampleImageRef(imageID, 0, index, 0);
       store.setImageID(imageID, i);
       store.setImageName(name, i);
     }
@@ -336,7 +348,8 @@ public class BDReader extends FormatReader {
           }
         }
 
-        store.setObjectiveNominalMagnification(PositiveInteger.valueOf(mag), 0, 0);
+        store.setObjectiveNominalMagnification(
+          PositiveInteger.valueOf(mag), 0, 0);
         if (na != null) {
           na = na.substring(0, 1) + "." + na.substring(1);
           store.setObjectiveLensNA(new Double(na), 0, 0);
@@ -444,6 +457,16 @@ public class BDReader extends FormatReader {
     }
     plateDescription =
       plateType.get("Brand") + " " + plateType.get("Description");
+
+    int nWells = Integer.parseInt(plateType.get("Wells"));
+    if (nWells == 96) {
+      wellRows = 8;
+      wellCols = 12;
+    }
+    else if (nWells == 384) {
+      wellRows = 16;
+      wellCols = 24;
+    }
 
     Location dir = new Location(id).getAbsoluteFile().getParentFile();
     String[] wellList = dir.list();
@@ -558,8 +581,11 @@ public class BDReader extends FormatReader {
     String[] lines = roiData.split("\r\n");
 
     int firstRow = 0;
-    while (!lines[firstRow].startsWith("ROI")) firstRow++;
+    while (firstRow < lines.length && !lines[firstRow].startsWith("ROI")) {
+      firstRow++;
+    }
     firstRow += 2;
+    if (firstRow >= lines.length) return;
 
     for (int i=firstRow; i<lines.length; i++) {
       String[] cols = lines[i].split("\t");
