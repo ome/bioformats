@@ -213,7 +213,8 @@ public class MetamorphTiffReader extends BaseTiffReader {
 
     MetamorphHandler handler = new MetamorphHandler(getGlobalMetadata());
     for (IFD ifd : ifds) {
-      XMLTools.parseXML(ifd.getComment(), handler);
+      String xml = XMLTools.sanitizeXML(ifd.getComment());
+      XMLTools.parseXML(xml, handler);
     }
 
     Vector<Integer> wavelengths = handler.getWavelengths();
@@ -419,7 +420,8 @@ public class MetamorphTiffReader extends BaseTiffReader {
     RandomAccessInputStream s = new RandomAccessInputStream(tiff);
     TiffParser parser = new TiffParser(s);
     IFD firstIFD = parser.getFirstIFD();
-    XMLTools.parseXML(firstIFD.getComment(), handler);
+    String xml = XMLTools.sanitizeXML(firstIFD.getComment());
+    XMLTools.parseXML(xml, handler);
     s.close();
   }
 
