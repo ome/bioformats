@@ -57,8 +57,14 @@ public class MetamorphHandler extends DefaultHandler {
   private double readOutRate, zoom;
   private double positionX, positionY;
   private Vector<Double> exposures;
+  private String channelName;
+  private String stageLabel;
 
   // -- Constructor --
+
+  public MetamorphHandler() {
+    this(null);
+  }
 
   public MetamorphHandler(Hashtable metadata) {
     super();
@@ -70,6 +76,10 @@ public class MetamorphHandler extends DefaultHandler {
   }
 
   // -- MetamorphHandler API methods --
+
+  public String getChannelName() { return channelName; }
+
+  public String getStageLabel() { return stageLabel; }
 
   public Vector<String> getTimestamps() { return timestamps; }
 
@@ -109,7 +119,7 @@ public class MetamorphHandler extends DefaultHandler {
     String delim = "&#13;&#10;";
     if (id != null && value != null) {
       if (id.equals("Description")) {
-        metadata.remove("Comment");
+        if (metadata != null) metadata.remove("Comment");
 
         String k = null, v = null;
 
@@ -132,7 +142,7 @@ public class MetamorphHandler extends DefaultHandler {
             if (colon != -1) {
               k = line.substring(0, colon).trim();
               v = line.substring(colon + 1).trim();
-              metadata.put(k, v);
+              if (metadata != null) metadata.put(k, v);
               checkKey(k, v);
             }
           }
@@ -144,7 +154,7 @@ public class MetamorphHandler extends DefaultHandler {
             int space = value.lastIndexOf(" ", value.indexOf(":", colon + 1));
             if (space == -1) space = value.length();
             v = value.substring(colon + 1, space).trim();
-            metadata.put(k, v);
+            if (metadata != null) metadata.put(k, v);
             value = value.substring(space).trim();
             colon = value.indexOf(":");
             checkKey(k, v);
@@ -152,7 +162,7 @@ public class MetamorphHandler extends DefaultHandler {
         }
       }
       else {
-        metadata.put(id, value);
+        if (metadata != null) metadata.put(id, value);
         checkKey(id, value);
       }
     }
@@ -193,11 +203,15 @@ public class MetamorphHandler extends DefaultHandler {
     }
     else if (key.equals("stage-position-x")) {
       positionX = Double.parseDouble(value);
-      metadata.put("X position for position #1", positionX);
+      if (metadata != null) {
+        metadata.put("X position for position #1", positionX);
+      }
     }
     else if (key.equals("stage-position-y")) {
       positionY = Double.parseDouble(value);
-      metadata.put("Y position for position #1", positionY);
+      if (metadata != null) {
+        metadata.put("Y position for position #1", positionY);
+      }
     }
     else if (key.equals("Speed")) {
       readOutRate = Double.parseDouble(value);
@@ -211,6 +225,12 @@ public class MetamorphHandler extends DefaultHandler {
         exposures.add(new Double(Double.parseDouble(value) / 1000));
       }
       catch (NumberFormatException e) { }
+    }
+    else if (key.equals("_IllumSetting_")) {
+      channelName = value;
+    }
+    else if (key.equals("stage-label")) {
+      stageLabel = value;
     }
   }
 
