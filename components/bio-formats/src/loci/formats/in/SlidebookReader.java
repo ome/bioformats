@@ -622,7 +622,9 @@ public class SlidebookReader extends FormatReader {
         int planeSize = getSizeX() * getSizeY() * 2;
         int planes = (int) (length / planeSize);
         for (int p=0; p<planes; p++, nextImage++) {
-          planeOffset[i][nextImage] = offset + p * planeSize;
+          if (nextImage < planeOffset[i].length) {
+            planeOffset[i][nextImage] = offset + p * planeSize;
+          }
         }
       }
     }
