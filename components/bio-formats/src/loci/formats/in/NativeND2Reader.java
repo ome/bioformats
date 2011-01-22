@@ -24,11 +24,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.IOException;
-import java.text.DecimalFormatSymbols;
+import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.StringTokenizer;
-import java.util.Vector;
 
+import loci.common.ByteArrayHandle;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.XMLTools;
@@ -36,16 +35,14 @@ import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.ImageTools;
 import loci.formats.MetadataTools;
-import loci.formats.codec.ByteVector;
+import loci.formats.codec.Codec;
 import loci.formats.codec.CodecOptions;
 import loci.formats.codec.JPEG2000Codec;
 import loci.formats.codec.ZlibCodec;
 import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
-
-import org.xml.sax.Attributes;
-import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * NativeND2Reader is the file format reader for Nikon ND2 files.
@@ -58,8 +55,8 @@ import org.xml.sax.helpers.DefaultHandler;
  * Thanks to Tom Caswell for additions to the ND2 metadata parsing logic.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/in/NativeND2Reader.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/in/NativeND2Reader.java">SVN</a></dd></dl>
+ * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/in/NativeND2Reader.java">Trac</a>,
+ * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/in/NativeND2Reader.java">SVN</a></dd></dl>
  */
 public class NativeND2Reader extends FormatReader {
 
@@ -76,28 +73,26 @@ public class NativeND2Reader extends FormatReader {
   /** Whether or not the pixel data is compressed using JPEG 2000. */
   private boolean isJPEG;
 
+  /** Codec to use when decompressing pixel data. */
+  private Codec codec;
+
   /** Whether or not the pixel data is losslessly compressed. */
   private boolean isLossless;
 
-  private Vector<Long> zs = new Vector<Long>();
-  private Vector<Long> ts = new Vector<Long>();
-  private Vector<Float> tsT = new Vector<Float>();
-
-  private int numSeries;
-
-  private float pixelSizeX, pixelSizeY, pixelSizeZ;
-  private Float pinholeSize;
-  private String voltage, mag, na, objectiveModel, immersion, correction;
-
-  private Vector<String> channelNames, modality, binning;
-  private Vector<Float> speed, gain, temperature, exposureTime;
-  private Vector<Integer> exWave, emWave, power;
-  private Vector<Hashtable<String, String>> rois;
-  private Vector<Float> posX, posY, posZ;
-
-  private String cameraModel;
+  private ArrayList<Double> tsT = new ArrayList<Double>();
 
   private int fieldIndex;
+
+  private long xOffset, yOffset, zOffset;
+
+  private ArrayList<Double> posX;
+  private ArrayList<Double> posY;
+  private ArrayList<Double> posZ;
+
+  private Hashtable<String, Integer> channelColors;
+  private boolean split = false;
+  private int lastChannel;
+  private int[] colors;
 
   // -- Constructor --
 
@@ -119,6 +114,66 @@ public class NativeND2Reader extends FormatReader {
     return magic1 == ND2_MAGIC_BYTES_1 || magic2 == ND2_MAGIC_BYTES_2;
   }
 
+  /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  public byte[][] get8BitLookupTable() {
+    if (FormatTools.getBytesPerPixel(getPixelType()) != 1 ||
+      !isIndexed() || lastChannel < 0 || lastChannel >= colors.length)
+    {
+      return null;
+    }
+
+    int color = colors[lastChannel];
+    byte[][] lut = new byte[3][256];
+
+    int index = -1;
+    if (color > 0 && color < 256) index = 0;
+    else if (color >= 256 && color < 65280) index = 1;
+    else if (color > 65280 && color <= 16711680) index = 2;
+
+    for (int i=0; i<256; i++) {
+      if (index == -1) {
+        lut[0][i] = (byte) i;
+        lut[1][i] = (byte) i;
+        lut[2][i] = (byte) i;
+      }
+      else {
+        lut[index][i] = (byte) i;
+      }
+    }
+
+    return lut;
+  }
+
+  /* @see loci.formats.IFormatReader#get16BitLookupTable() */
+  public short[][] get16BitLookupTable() {
+    if (FormatTools.getBytesPerPixel(getPixelType()) != 2 ||
+      !isIndexed() || lastChannel < 0 || lastChannel >= colors.length)
+    {
+      return null;
+    }
+
+    int color = colors[lastChannel];
+    short[][] lut = new short[3][65536];
+
+    int index = -1;
+    if (color > 0 && color < 256) index = 0;
+    else if (color >= 256 && color <= 65280) index = 1;
+    else if (color > 65280 && color <= 16711680) index = 2;
+
+    for (int i=0; i<65536; i++) {
+      if (index == -1) {
+        lut[0][i] = (short) i;
+        lut[1][i] = (short) i;
+        lut[2][i] = (short) i;
+      }
+      else {
+        lut[index][i] = (short) i;
+      }
+    }
+
+    return lut;
+  }
+
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
@@ -127,45 +182,41 @@ public class NativeND2Reader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    in.seek(offsets[series][no]);
+    lastChannel = split ? no % getSizeC() : 0;
+    int planeIndex = split ? no / getSizeC() : no;
+    in.seek(offsets[series][planeIndex]);
 
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
     int pixel = bpp * getRGBChannelCount();
+    if (split) pixel *= getSizeC();
 
-    long maxFP = no == getImageCount() - 1 ?
-      in.length() : offsets[series][no + 1];
+    int totalPlanes = split ? getImageCount() / getSizeC() : getImageCount();
+
+    long maxFP = planeIndex == totalPlanes - 1 ?
+      in.length() : offsets[series][planeIndex + 1];
 
     CodecOptions options = new CodecOptions();
     options.littleEndian = isLittleEndian();
     options.interleaved = isInterleaved();
     options.maxBytes = (int) maxFP;
 
-    if (isJPEG) {
-      byte[] tmp = new JPEG2000Codec().decompress(in, options);
-      for (int row=y; row<h+y; row++) {
-        System.arraycopy(tmp, pixel * row * getSizeX(), buf,
-          pixel * w * (row - y), pixel * w);
-      }
-      System.arraycopy(tmp, 0, buf, 0, (int) Math.min(tmp.length, buf.length));
-      tmp = null;
+    int scanlinePad = (isJPEG || !isLossless) ? 0 : getSizeX() % 2;
+
+    if (isJPEG || isLossless) {
+      if (codec == null) codec = createCodec(isJPEG);
+      byte[] t = codec.decompress(in, options);
+      copyPixels(x, y, w, h, bpp, scanlinePad, t, buf, split);
+      t = null;
     }
-    else if (isLossless) {
-      // plane is compressed using ZLIB
-
-      int effectiveX = getSizeX();
-      if ((getSizeX() % 2) != 0) effectiveX++;
-      byte[] t = new ZlibCodec().decompress(in, options);
-
-      for (int row=0; row<h; row++) {
-        int offset = (row + y) * effectiveX * pixel + x * pixel;
-        if (offset + w * pixel <= t.length) {
-          System.arraycopy(t, offset, buf, row * w * pixel, w * pixel);
-        }
-      }
+    else if (split) {
+      byte[] pix = new byte[(getSizeX() + scanlinePad) * getSizeY() * pixel];
+      in.read(pix);
+      copyPixels(x, y, w, h, bpp, scanlinePad, pix, buf, split);
+      pix = null;
     }
     else {
       // plane is not compressed
-      readPlane(in, x, y, w, h, buf);
+      readPlane(in, x, y, w, h, scanlinePad, buf);
     }
 
     return buf;
@@ -176,29 +227,15 @@ public class NativeND2Reader extends FormatReader {
     super.close(fileOnly);
     if (!fileOnly) {
       offsets = null;
-      zs.clear();
-      ts.clear();
       isJPEG = isLossless = false;
-      numSeries = 0;
+      codec = null;
       tsT.clear();
 
-      pixelSizeX = pixelSizeY = pixelSizeZ = 0f;
-      voltage = mag = na = objectiveModel = immersion = correction = null;
-      channelNames = null;
-      binning = null;
-      speed = null;
-      gain = null;
-      temperature = null;
-      exposureTime = null;
-      modality = null;
-      exWave = null;
-      emWave = null;
-      power = null;
-      cameraModel = null;
-      posX = posY = posZ = null;
       fieldIndex = 0;
-      rois = null;
-      pinholeSize = null;
+      xOffset = yOffset = zOffset = 0;
+      posX = posY = posZ = null;
+      channelColors = null;
+      split = false;
     }
   }
 
@@ -208,22 +245,9 @@ public class NativeND2Reader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
 
-    channelNames = new Vector<String>();
-    binning = new Vector<String>();
-    speed = new Vector<Float>();
-    gain = new Vector<Float>();
-    temperature = new Vector<Float>();
-    exposureTime = new Vector<Float>();
-    modality = new Vector<String>();
-    exWave = new Vector<Integer>();
-    emWave = new Vector<Integer>();
-    power = new Vector<Integer>();
-    rois = new Vector<Hashtable<String, String>>();
-    posX = new Vector<Float>();
-    posY = new Vector<Float>();
-    posZ = new Vector<Float>();
-
     in = new RandomAccessInputStream(id);
+
+    channelColors = new Hashtable<String, Integer>();
 
     if (in.read() == -38 && in.read() == -50) {
       // newer version of ND2 - doesn't use JPEG2000
@@ -235,19 +259,41 @@ public class NativeND2Reader extends FormatReader {
 
       // assemble offsets to each block
 
-      Vector<Long> imageOffsets = new Vector<Long>();
-      Vector<int[]> imageLengths = new Vector<int[]>();
-      Vector<Long> xmlOffsets = new Vector<Long>();
-      Vector<int[]> xmlLengths = new Vector<int[]>();
-      Vector<Long> customDataOffsets = new Vector<Long>();
-      Vector<int[]> customDataLengths = new Vector<int[]>();
+      ArrayList<String> imageNames = new ArrayList<String>();
+      ArrayList<Long> imageOffsets = new ArrayList<Long>();
+      ArrayList<int[]> imageLengths = new ArrayList<int[]>();
+      ArrayList<Long> customDataOffsets = new ArrayList<Long>();
+      ArrayList<int[]> customDataLengths = new ArrayList<int[]>();
+
+      ByteArrayHandle xml = new ByteArrayHandle();
+      StringBuffer name = new StringBuffer();
 
       // search for blocks
       byte[] sigBytes = {-38, -50, -66, 10}; // 0xDACEBE0A
-      final String sig = new String(sigBytes);
       while (in.getFilePointer() < in.length() - 1 && in.getFilePointer() >= 0)
       {
-        in.findString(false, 1024, sig); // empirically, 1KB blocks work well
+        byte[] buf = new byte[1024];
+        int foundIndex = -1;
+        in.read(buf, 0, sigBytes.length);
+        while (foundIndex == -1 && in.getFilePointer() < in.length()) {
+          int n = in.read(buf, sigBytes.length, buf.length - sigBytes.length);
+          for (int i=0; i<buf.length-sigBytes.length; i++) {
+            for (int j=0; j<sigBytes.length; j++) {
+              if (buf[i + j] != sigBytes[j]) break;
+              if (j == sigBytes.length - 1) foundIndex = i;
+            }
+            if (foundIndex != -1) break;
+          }
+          if (foundIndex == -1) {
+            System.arraycopy(buf, buf.length - sigBytes.length - 1,
+              buf, 0, sigBytes.length);
+          }
+          else in.seek(in.getFilePointer() - n + foundIndex);
+        }
+        if (in.getFilePointer() >= in.length() || foundIndex == -1) {
+          break;
+        }
+
         if (in.getFilePointer() > in.length() - 24) break;
 
         int lenOne = in.readInt();
@@ -263,66 +309,89 @@ public class NativeND2Reader extends FormatReader {
 
         int skip = len - 12 - lenOne * 2;
         if (skip <= 0) skip += lenOne * 2;
-        in.skipBytes(skip);
 
         if (blockType.startsWith("ImageDataSeq")) {
           imageOffsets.add(new Long(fp));
           imageLengths.add(new int[] {lenOne, lenTwo});
+          char b = (char) in.readByte();
+          while (b != '!') {
+            name.append(b);
+            b = (char) in.readByte();
+          }
+          imageNames.add(name.toString());
+          name = name.delete(0, name.length());
         }
-        else if (blockType.startsWith("Image")) {
-          xmlOffsets.add(new Long(fp));
-          xmlLengths.add(new int[] {lenOne, lenTwo});
+        else if (blockType.startsWith("Image") ||
+          blockType.startsWith("CustomDataVa"))
+        {
+          int length = lenOne + lenTwo - 12;
+          byte[] b = new byte[length];
+          in.read(b);
+
+          // strip out invalid characters
+          int off = 0;
+          for (int j=0; j<length; j++) {
+            char c = (char) b[j];
+            if ((off == 0 && c == '!') || c == 0) off = j + 1;
+            if (Character.isISOControl(c) || !Character.isDefined(c)) {
+              b[j] = (byte) ' ';
+            }
+          }
+
+          if (length - off >= 5 && b[off] == '<' && b[off + 1] == '?' &&
+            b[off + 2] == 'x' && b[off + 3] == 'm' && b[off + 4] == 'l')
+          {
+            boolean endBracketFound = false;
+            while (!endBracketFound) {
+              if (b[off++] == '>') {
+                endBracketFound = true;
+              }
+            }
+            xml.write(b, off, b.length - off);
+          }
+          skip = 0;
         }
-        else if (blockType.startsWith("CustomData|A")) {
+        if (blockType.startsWith("CustomData|A")) {
           customDataOffsets.add(new Long(fp));
           customDataLengths.add(new int[] {lenOne, lenTwo});
         }
+        else if (blockType.startsWith("CustomData|Z")) {
+          int nDoubles = (lenOne + lenTwo) / 8;
+          zOffset = fp + 8 * (nDoubles - imageOffsets.size());
+        }
+        else if (blockType.startsWith("CustomData|X")) {
+          int nDoubles = (lenOne + lenTwo) / 8;
+          xOffset = fp + 8 * (nDoubles - imageOffsets.size());
+        }
+        else if (blockType.startsWith("CustomData|Y")) {
+          int nDoubles = (lenOne + lenTwo) / 8;
+          yOffset = fp + 8 * (nDoubles - imageOffsets.size());
+        }
+        in.skipBytes(skip);
       }
 
       // parse XML blocks
 
-      DefaultHandler handler = new ND2Handler();
-      ByteVector xml = new ByteVector();
-
-      for (int i=0; i<xmlOffsets.size(); i++) {
-        long offset = xmlOffsets.get(i).longValue();
-        int[] p = xmlLengths.get(i);
-        int length = p[0] + p[1];
-
-        byte[] b = new byte[length];
-        in.seek(offset);
-        in.read(b);
-
-        // strip out invalid characters
-        int off = 0;
-        for (int j=0; j<length; j++) {
-          char c = (char) b[j];
-          if ((off == 0 && c == '!') || c == 0) off = j + 1;
-          if (Character.isISOControl(c) || !Character.isDefined(c)) {
-            b[j] = (byte) ' ';
-          }
-        }
-
-        if (length - off >= 5 && b[off] == '<' && b[off + 1] == '?' &&
-          b[off + 2] == 'x' && b[off + 3] == 'm' && b[off + 4] == 'l')
-        {
-          boolean endBracketFound = false;
-          while (!endBracketFound) {
-            if (b[off++] == '>') {
-              endBracketFound = true;
-            }
-          }
-          xml.add(b, off, b.length - off);
-        }
-      }
-
-      String xmlString = new String(xml.toByteArray());
+      String xmlString = new String(xml.getBytes(), 0, (int) xml.length());
       xmlString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><ND2>" +
         xmlString + "</ND2>";
+      xmlString = XMLTools.sanitizeXML(xmlString);
 
       core[0].dimensionOrder = "";
 
+      ND2Handler handler = new ND2Handler(core);
       XMLTools.parseXML(xmlString, handler);
+
+      channelColors = handler.getChannelColors();
+      isLossless = handler.isLossless();
+      fieldIndex = handler.getFieldIndex();
+      core = handler.getCoreMetadata();
+      Hashtable<String, Object> globalMetadata = handler.getMetadata();
+      for (String key : globalMetadata.keySet()) {
+        addGlobalMeta(key, globalMetadata.get(key));
+      }
+
+      int numSeries = handler.getSeriesCount();
 
       // rearrange image data offsets
 
@@ -389,6 +458,9 @@ public class NativeND2Reader extends FormatReader {
       if (getDimensionOrder().equals("T")) {
         fieldIndex = 0;
       }
+      else if (getDimensionOrder().equals("ZT") && fieldIndex == 2) {
+        fieldIndex--;
+      }
 
       if (getSizeC() > 1 && getDimensionOrder().indexOf("C") == -1) {
         core[0].dimensionOrder = "C" + getDimensionOrder();
@@ -422,18 +494,6 @@ public class NativeND2Reader extends FormatReader {
         int[] p = imageLengths.get(i);
         int length = p[0] + p[1];
 
-        in.seek(offset);
-        byte[] b = new byte[p[0]];
-        in.read(b);
-
-        StringBuffer sb = new StringBuffer();
-        int pt = 13;
-        while (b[pt] != '!') {
-          sb.append((char) b[pt++]);
-        }
-        b = null;
-        int ndx = Integer.parseInt(sb.toString());
-
         if (getSizeC() == 0) {
           int sizeC = length / (getSizeX() * getSizeY() *
             FormatTools.getBytesPerPixel(getPixelType()));
@@ -441,6 +501,9 @@ public class NativeND2Reader extends FormatReader {
             core[q].sizeC = sizeC;
           }
         }
+
+        String imageName = imageNames.get(i);
+        int ndx = Integer.parseInt(imageName.replaceAll("\\D", ""));
 
         int[] pos = FormatTools.rasterToPosition(lengths, ndx);
         int seriesIndex = pos[fieldIndex];
@@ -453,7 +516,7 @@ public class NativeND2Reader extends FormatReader {
         }
       }
 
-      Vector<long[]> tmpOffsets = new Vector<long[]>();
+      ArrayList<long[]> tmpOffsets = new ArrayList<long[]>();
       for (int i=0; i<offsets.length; i++) {
         if (offsets[i][0] > 0) tmpOffsets.add(offsets[i]);
       }
@@ -503,18 +566,22 @@ public class NativeND2Reader extends FormatReader {
         }
       }
 
+      split = getSizeC() > 1;
       for (int i=0; i<getSeriesCount(); i++) {
-        core[i].rgb = getSizeC() > 1;
+        core[i].rgb = false;
         core[i].littleEndian = true;
-        core[i].interleaved = true;
-        core[i].indexed = false;
-        core[i].falseColor = false;
+        core[i].interleaved = false;
+        core[i].indexed = channelColors.size() > 0;
+        core[i].falseColor = true;
         core[i].metadataComplete = true;
-        core[i].imageCount = core[i].sizeZ * core[i].sizeT;
-        if (!core[i].rgb) core[i].imageCount *= core[i].sizeC;
+        core[i].imageCount = core[i].sizeZ * core[i].sizeT * core[i].sizeC;
       }
 
       // read first CustomData block
+
+      posX = handler.getXPositions();
+      posY = handler.getYPositions();
+      posZ = handler.getZPositions();
 
       if (customDataOffsets.size() > 0) {
         in.seek(customDataOffsets.get(0).longValue());
@@ -528,17 +595,37 @@ public class NativeND2Reader extends FormatReader {
 
         for (int series=0; series<getSeriesCount(); series++) {
           setSeries(series);
-          for (int plane=0; plane<getImageCount(); plane++) {
+          int count = split ? getImageCount() / getSizeC() : getImageCount();
+          for (int plane=0; plane<count; plane++) {
             // timestamps are stored in ms; we want them in seconds
             double time = in.readDouble() / 1000;
-            tsT.add(new Float(time));
+            tsT.add(new Double(time));
             addSeriesMeta("timestamp " + plane, time);
           }
         }
         setSeries(0);
       }
 
-      populateMetadataStore();
+      if (posX.size() == 0 && xOffset != 0) {
+        in.seek(xOffset);
+        for (int i=0; i<imageOffsets.size(); i++) {
+          posX.add(new Double(in.readDouble()));
+        }
+      }
+      if (posY.size() == 0 && yOffset != 0) {
+        in.seek(yOffset);
+        for (int i=0; i<imageOffsets.size(); i++) {
+          posY.add(new Double(in.readDouble()));
+        }
+      }
+      if (posZ.size() == 0 && zOffset != 0) {
+        in.seek(zOffset);
+        for (int i=0; i<imageOffsets.size(); i++) {
+          posZ.add(new Double(in.readDouble()));
+        }
+      }
+
+      populateMetadataStore(handler);
       return;
     }
     else in.seek(0);
@@ -549,7 +636,7 @@ public class NativeND2Reader extends FormatReader {
 
     status("Calculating image offsets");
 
-    Vector<Long> vs = new Vector<Long>();
+    ArrayList<Long> vs = new ArrayList<Long>();
 
     long pos = in.getFilePointer();
     boolean lastBoxFound = false;
@@ -623,6 +710,11 @@ public class NativeND2Reader extends FormatReader {
 
     status("Parsing XML");
 
+    ArrayList<Long> zs = new ArrayList<Long>();
+    ArrayList<Long> ts = new ArrayList<Long>();
+
+    int numSeries = 0;
+    ND2Handler handler = null;
     if (off > 0 && off < in.length() - 5 && (in.length() - off - 5) > 14) {
       in.seek(off + 4);
 
@@ -660,8 +752,6 @@ public class NativeND2Reader extends FormatReader {
 
       status("Finished assembling XML string");
 
-      DefaultHandler handler = new ND2Handler();
-
       // strip out invalid characters
       int offset = 0;
       int len = sb.length();
@@ -677,8 +767,20 @@ public class NativeND2Reader extends FormatReader {
       core[0].dimensionOrder = "";
 
       String xml = sb.toString().substring(offset, len - offset);
+      handler = new ND2Handler(core);
       XMLTools.parseXML(xml, handler);
       xml = null;
+
+      isLossless = handler.isLossless();
+      fieldIndex = handler.getFieldIndex();
+      zs = handler.getZSections();
+      ts = handler.getTimepoints();
+      numSeries = handler.getSeriesCount();
+      core = handler.getCoreMetadata();
+      Hashtable<String, Object> globalMetadata = handler.getMetadata();
+      for (String key : globalMetadata.keySet()) {
+        addGlobalMeta(key, globalMetadata.get(key));
+      }
     }
 
     status("Populating metadata");
@@ -755,145 +857,60 @@ public class NativeND2Reader extends FormatReader {
       }
     }
 
-    populateMetadataStore();
-  }
-
-  // -- Helper class --
-
-  /** SAX handler for parsing XML. */
-  class ND2Handler extends DefaultHandler {
-    private String prefix = null;
-    private String prevRuntype = null;
-    private String prevElement = null;
-
-    public void endElement(String uri, String localName, String qName,
-      Attributes attributes)
-    {
-      if (qName.equals("CalibrationSeq") || qName.equals("MetadataSeq")) {
-        prefix = null;
-      }
-      if (qName.equals(prevElement)) {
-        prevElement = null;
-      }
-    }
-
-    public void startElement(String uri, String localName, String qName,
-      Attributes attributes)
-    {
-      if ("CLxListVariant".equals(attributes.getValue("runtype"))) {
-        prevElement = qName;
-      }
-
-      String value = attributes.getValue("value");
-      if (qName.equals("uiWidth")) {
-        core[0].sizeX = Integer.parseInt(value);
-      }
-      else if (qName.equals("uiWidthBytes") || qName.equals("uiBpcInMemory")) {
-        int div = qName.equals("uiWidthBytes") ? getSizeX() : 8;
-        int bytes = Integer.parseInt(value) / div;
-
-        switch (bytes) {
-          case 2:
-            core[0].pixelType = FormatTools.UINT16;
-            break;
-          case 4:
-            core[0].pixelType = FormatTools.UINT32;
-            break;
-          default:
-            core[0].pixelType = FormatTools.UINT8;
-        }
-        parseKeyAndValue(qName, value, prevRuntype);
-      }
-      else if ("dPosX".equals(prevElement) && qName.startsWith("item_")) {
-        posX.add(new Float(sanitizeFloat(value)));
-      }
-      else if ("dPosY".equals(prevElement) && qName.startsWith("item_")) {
-        posY.add(new Float(sanitizeFloat(value)));
-      }
-      else if ("dPosZ".equals(prevElement) && qName.startsWith("item_")) {
-        posZ.add(new Float(sanitizeFloat(value)));
-      }
-      else if (qName.startsWith("item_")) {
-        int v = Integer.parseInt(qName.substring(qName.indexOf("_") + 1));
-        if (v == numSeries) {
-          fieldIndex = getDimensionOrder().length();
-          numSeries++;
-        }
-      }
-      else if (qName.equals("uiCompCount")) {
-        int v = Integer.parseInt(value);
-        core[0].sizeC = (int) Math.max(getSizeC(), v);
-      }
-      else if (qName.equals("uiHeight")) {
-        core[0].sizeY = Integer.parseInt(value);
-      }
-      else if (qName.startsWith("TextInfo")) {
-        parseKeyAndValue(qName, attributes.getValue("Text"), prevRuntype);
-        parseKeyAndValue(qName, value, prevRuntype);
-      }
-      else if (qName.equals("dCompressionParam")) {
-        isLossless = Integer.parseInt(value) > 0;
-        parseKeyAndValue(qName, value, prevRuntype);
-      }
-      else if (qName.equals("CalibrationSeq") || qName.equals("MetadataSeq")) {
-        prefix = qName + " " + attributes.getValue("_SEQUENCE_INDEX");
-      }
-      else if (qName.equals("HorizontalLine") || qName.equals("VerticalLine") ||
-        qName.equals("Text"))
-      {
-        Hashtable<String, String> roi = new Hashtable<String, String>();
-        roi.put("ROIType", qName);
-        for (int q=0; q<attributes.getLength(); q++) {
-          roi.put(attributes.getQName(q), attributes.getValue(q));
-        }
-        rois.add(roi);
-      }
-      else if (qName.equals("dPinholeRadius")) {
-        pinholeSize = new Float(sanitizeFloat(value));
-        addGlobalMeta("Pinhole size", value);
-      }
-      else {
-        StringBuffer sb = new StringBuffer();
-        if (prefix != null) {
-          sb.append(prefix);
-          sb.append(" ");
-        }
-        sb.append(qName);
-        parseKeyAndValue(sb.toString(), value, prevRuntype);
-      }
-
-      prevRuntype = attributes.getValue("runtype");
-    }
+    populateMetadataStore(handler);
   }
 
   // -- Helper methods --
 
-  private void populateMetadataStore() {
+  private void populateMetadataStore(ND2Handler handler) throws FormatException
+  {
     MetadataStore store =
       new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     MetadataTools.populatePixels(store, this, true);
 
-    String instrumentID = MetadataTools.createLSID("Instrument", 0);
-    store.setInstrumentID(instrumentID, 0);
-
-    // populate Image data
     String filename = new Location(getCurrentFile()).getName();
     for (int i=0; i<getSeriesCount(); i++) {
       store.setImageName(filename + " (series " + (i + 1) + ")", i);
       MetadataTools.setDefaultCreationDate(store, currentId, i);
+    }
 
+    colors = new int[getEffectiveSizeC()];
+
+    ArrayList<String> channelNames = null;
+    if (handler != null) {
+      channelNames = handler.getChannelNames();
+      for (int i=0; i<getSeriesCount(); i++) {
+        for (int c=0; c<getEffectiveSizeC(); c++) {
+          int index = i * getSizeC() + c;
+          if (index < channelNames.size()) {
+            String channelName = channelNames.get(index);
+            Integer channelColor = channelColors.get(channelName);
+            colors[c] = channelColor == null ? 0 : channelColor.intValue();
+          }
+        }
+      }
+    }
+
+    String instrumentID = MetadataTools.createLSID("Instrument", 0);
+    store.setInstrumentID(instrumentID, 0);
+
+    for (int i=0; i<getSeriesCount(); i++) {
       // link Instrument and Image
       store.setImageInstrumentRef(instrumentID, i);
     }
 
     // populate Dimensions data
-    for (int i=0; i<getSeriesCount(); i++) {
-      store.setDimensionsPhysicalSizeX(new Float(pixelSizeX), i, 0);
-      store.setDimensionsPhysicalSizeY(new Float(pixelSizeY), i, 0);
-      store.setDimensionsPhysicalSizeZ(new Float(pixelSizeZ), i, 0);
+    if (handler != null) {
+      for (int i=0; i<getSeriesCount(); i++) {
+        store.setDimensionsPhysicalSizeX((float) handler.getPixelSizeX(), i, 0);
+        store.setDimensionsPhysicalSizeY((float) handler.getPixelSizeY(), i, 0);
+        store.setDimensionsPhysicalSizeZ((float) handler.getPixelSizeZ(), i, 0);
+      }
     }
 
     // populate PlaneTiming and StagePosition data
+    ArrayList<Double> exposureTime = null;
+    if (handler != null) handler.getExposureTimes();
     for (int i=0; i<getSeriesCount(); i++) {
       if (tsT.size() > 0) {
         setSeries(i);
@@ -901,48 +918,87 @@ public class NativeND2Reader extends FormatReader {
           int[] coords = getZCTCoords(n);
           int stampIndex = coords[2] + i * getSizeT();
           if (tsT.size() == getImageCount()) stampIndex = n;
-          double stamp = tsT.get(stampIndex).doubleValue();
-          store.setPlaneTimingDeltaT(new Float(stamp), i, 0, n);
+          float stamp = tsT.get(stampIndex).floatValue();
+          store.setPlaneTimingDeltaT(stamp, i, 0, n);
 
           int index = i * getSizeC() + coords[1];
-          if (index < exposureTime.size()) {
-            store.setPlaneTimingExposureTime(exposureTime.get(index), i, 0, n);
+          if (exposureTime != null && index < exposureTime.size()) {
+            store.setPlaneTimingExposureTime(
+              exposureTime.get(index).floatValue(), i, 0, n);
           }
         }
       }
-      for (int n=0; n<getImageCount(); n++) {
-        if (i < posX.size()) {
-          store.setStagePositionPositionX(posX.get(i), i, 0, n);
-          addSeriesMeta("X position", posX.get(i));
-          addGlobalMeta("X position for position #" + (i + 1), posX.get(i));
-        }
-        if (i < posY.size()) {
-          store.setStagePositionPositionY(posY.get(i), i, 0, n);
-          addSeriesMeta("Y position" + (i + 1), posY.get(i));
-          addGlobalMeta("X position for position #" + (i + 1), posX.get(i));
-        }
-        if (i < posZ.size()) {
-          store.setStagePositionPositionZ(posZ.get(i), i, 0, n);
-          addSeriesMeta("Z position" + (i + 1), posZ.get(i));
-          addGlobalMeta("X position for position #" + (i + 1), posX.get(i));
-        }
 
+      if (handler != null) {
+        if (posX == null) posX = handler.getXPositions();
+        if (posY == null) posY = handler.getYPositions();
+        if (posZ == null) posZ = handler.getZPositions();
       }
+
+      String pos = "for position #" + (i + 1);
+      for (int n=0; n<getImageCount(); n++) {
+        int index = i * getImageCount() + n;
+        if (posX != null) {
+          if (index >= posX.size()) index = i;
+          if (index < posX.size()) {
+            String key = "X position ";
+            store.setStagePositionPositionX(
+              posX.get(index).floatValue(), i, 0, n);
+            addSeriesMeta(key + (i + 1), posX.get(index));
+            addGlobalMeta(key + pos, posX.get(index));
+          }
+        }
+        if (posY != null) {
+          if (index < posY.size()) {
+            String key = "Y position ";
+            store.setStagePositionPositionY(
+              posY.get(index).floatValue(), i, 0, n);
+            addSeriesMeta(key + (i + 1), posY.get(index));
+            addGlobalMeta(key + pos, posY.get(index));
+          }
+        }
+        if (posZ != null) {
+          if (index < posZ.size()) {
+            store.setStagePositionPositionZ(
+              posZ.get(index).floatValue(), i, 0, n);
+            String key = "Z position " + pos + ", plane #" + (n + 1);
+            addSeriesMeta(key, posZ.get(index));
+            addGlobalMeta(key, posZ.get(index));
+          }
+        }
+      }
+    }
+
+    if (handler == null) {
+      setSeries(0);
+      return;
     }
 
     String detectorID = MetadataTools.createLSID("Detector", 0, 0);
     store.setDetectorID(detectorID, 0, 0);
-    store.setDetectorModel(cameraModel, 0, 0);
-    store.setDetectorType("Unknown", 0, 0);
+    store.setDetectorModel(handler.getCameraModel(), 0, 0);
+    store.setDetectorType("Other", 0, 0);
+
+    ArrayList<String> modality = handler.getModalities();
+    ArrayList<String> binning = handler.getBinnings();
+    ArrayList<Double> speed = handler.getSpeeds();
+    ArrayList<Double> gain = handler.getGains();
+    ArrayList<Double> temperature = handler.getTemperatures();
+    ArrayList<Integer> exWave = handler.getExcitationWavelengths();
+    ArrayList<Integer> emWave = handler.getEmissionWavelengths();
+    ArrayList<Integer> power = handler.getPowers();
+    ArrayList<Hashtable<String, String>> rois = handler.getROIs();
 
     for (int i=0; i<getSeriesCount(); i++) {
       for (int c=0; c<getEffectiveSizeC(); c++) {
         int index = i * getSizeC() + c;
+        Float pinholeSize = handler.getPinholeSize().floatValue();
         if (pinholeSize != null) {
           store.setLogicalChannelPinholeSize(pinholeSize, i, c);
         }
         if (index < channelNames.size()) {
-          store.setLogicalChannelName(channelNames.get(index), i, c);
+          String channelName = channelNames.get(index);
+          store.setLogicalChannelName(channelName, i, c);
         }
         if (index < modality.size()) {
           store.setLogicalChannelMode(modality.get(index), i, c);
@@ -957,10 +1013,11 @@ public class NativeND2Reader extends FormatReader {
           store.setDetectorSettingsBinning(binning.get(index), i, c);
         }
         if (index < gain.size()) {
-          store.setDetectorSettingsGain(gain.get(index), i, c);
+          store.setDetectorSettingsGain(gain.get(index).floatValue(), i, c);
         }
         if (index < speed.size()) {
-          store.setDetectorSettingsReadOutRate(speed.get(index), i, c);
+          store.setDetectorSettingsReadOutRate(
+            speed.get(index).floatValue(), i, c);
         }
         store.setDetectorSettingsDetector(detectorID, i, c);
       }
@@ -968,295 +1025,72 @@ public class NativeND2Reader extends FormatReader {
 
     for (int i=0; i<getSeriesCount(); i++) {
       if (i * getSizeC() < temperature.size()) {
-        Float temp = temperature.get(i * getSizeC());
+        Float temp = temperature.get(i * getSizeC()).floatValue();
         store.setImagingEnvironmentTemperature(temp, i);
       }
     }
 
     // populate DetectorSettings
+    Double voltage = handler.getVoltage();
     if (voltage != null) {
-      voltage = sanitizeFloat(voltage);
-      store.setDetectorSettingsVoltage(new Float(voltage), 0, 0);
+      store.setDetectorSettingsVoltage(voltage.floatValue(), 0, 0);
     }
 
     // populate Objective
+    Double na = handler.getNumericalAperture();
     if (na != null) {
-      na = sanitizeFloat(na);
-      store.setObjectiveLensNA(new Float(na), 0, 0);
+      store.setObjectiveLensNA(na.floatValue(), 0, 0);
     }
+    Double mag = handler.getMagnification();
     if (mag != null) {
-      mag = sanitizeFloat(mag);
-      store.setObjectiveCalibratedMagnification(new Float(mag), 0, 0);
+      store.setObjectiveCalibratedMagnification(mag.floatValue(), 0, 0);
     }
-    if (objectiveModel != null) {
-      store.setObjectiveModel(objectiveModel, 0, 0);
-    }
-    if (immersion == null) immersion = "Unknown";
+    store.setObjectiveModel(handler.getObjectiveModel(), 0, 0);
+
+    String immersion = handler.getImmersion();
+    if (immersion == null) immersion = "Other";
     store.setObjectiveImmersion(immersion, 0, 0);
-    if (correction == null || correction.length() == 0) correction = "Unknown";
+
+    String correction = handler.getCorrection();
+    if (correction == null || correction.length() == 0) correction = "Other";
     store.setObjectiveCorrection(correction, 0, 0);
 
     // link Objective to Image
     String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
     store.setObjectiveID(objectiveID, 0, 0);
+
+    Double refractiveIndex = handler.getRefractiveIndex();
+
     for (int i=0; i<getSeriesCount(); i++) {
-      store.setObjectiveSettingsObjective(objectiveID, 0);
+      store.setObjectiveSettingsObjective(objectiveID, i);
+      if (refractiveIndex != null) {
+        store.setObjectiveSettingsRefractiveIndex(
+          refractiveIndex.floatValue(), i);
+      }
     }
 
     setSeries(0);
 
     // populate ROI data
 
-    for (int r=0; r<rois.size(); r++) {
-      Hashtable<String, String> roi = rois.get(r);
-      String type = roi.get("ROIType");
-
-      store.setShapeLocked(new Boolean(roi.get("locked")), 0, r, 0);
-      store.setShapeStrokeWidth(new Integer(roi.get("line-width")), 0, r, 0);
-      store.setShapeVisibility(new Boolean(roi.get("visible")), 0, r, 0);
-      store.setShapeStrokeColor(roi.get("color"), 0, r, 0);
-
-      if (type.equals("Text")) {
-        store.setShapeFontFamily(roi.get("fFaceName"), 0, r, 0);
-        store.setShapeFontSize(new Integer(roi.get("fHeight")), 0, r, 0);
-        store.setShapeText(roi.get("eval-text"), 0, r, 0);
-        store.setShapeFontWeight(roi.get("fWeight"), 0, r, 0);
-
-        boolean italic = Integer.parseInt(roi.get("fItalic")) != 0;
-        boolean underline = Integer.parseInt(roi.get("fUnderline")) != 0;
-        boolean strikeOut = Integer.parseInt(roi.get("fStrikeOut")) != 0;
-        store.setShapeFontStyle(italic ? "italic" : "normal", 0, r, 0);
-        store.setShapeTextDecoration(underline ? "underline" : strikeOut ?
-          "line-through" : "normal", 0, r, 0);
-
-        String rectangle = roi.get("rectangle");
-        String[] p = rectangle.split(",");
-        double[] points = new double[p.length];
-        for (int i=0; i<p.length; i++) {
-          points[i] = Double.parseDouble(p[i]);
-        }
-
-        store.setRectX(p[0], 0, r, 0);
-        store.setRectY(p[1], 0, r, 0);
-        store.setRectWidth(String.valueOf(points[2] - points[0]), 0, r, 0);
-        store.setRectHeight(String.valueOf(points[3] - points[1]), 0, r, 0);
-      }
-      else if (type.equals("HorizontalLine") || type.equals("VerticalLine")) {
-        String segments = roi.get("segments");
-        segments = segments.replaceAll("\\[", "");
-        segments = segments.replaceAll("\\]", "");
-        String[] points = segments.split("\\)");
-
-        StringBuffer sb = new StringBuffer();
-        for (int i=0; i<points.length; i++) {
-          points[i] = points[i].substring(points[i].indexOf(":") + 1);
-          sb.append(points[i]);
-          if (i < points.length - 1) sb.append(" ");
-        }
-        store.setPolylinePoints(sb.toString(), 0, r, 0);
-      }
-    }
+    handler.populateROIs(store);
   }
 
-  private void parseKeyAndValue(String key, String value, String runtype) {
-    if (key == null || value == null) return;
-    addGlobalMeta(key, value);
-    if (key.endsWith("dCalibration")) {
-      pixelSizeX = Float.parseFloat(sanitizeFloat(value));
-      pixelSizeY = pixelSizeX;
-    }
-    else if (key.endsWith("dZStep")) {
-      pixelSizeZ = Float.parseFloat(sanitizeFloat(value));
-    }
-    else if (key.endsWith("Gain")) gain.add(new Float(sanitizeFloat(value)));
-    else if (key.endsWith("dLampVoltage")) voltage = value;
-    else if (key.endsWith("dObjectiveMag") && mag == null) mag = value;
-    else if (key.endsWith("dObjectiveNA")) na = value;
-    else if (key.equals("sObjective") || key.equals("wsObjectiveName")) {
-      String[] tokens = value.split(" ");
-      int magIndex = -1;
-      for (int i=0; i<tokens.length; i++) {
-        if (tokens[i].indexOf("x") != -1) {
-          magIndex = i;
-          break;
-        }
-      }
-      StringBuffer s = new StringBuffer();
-      for (int i=0; i<magIndex; i++) {
-        s.append(tokens[i]);
-      }
-      correction = s.toString();
-      if (magIndex >= 0) {
-        mag = tokens[magIndex].substring(0, tokens[magIndex].indexOf("x"));
-      }
-      if (magIndex + 1 < tokens.length) immersion = tokens[magIndex + 1];
-    }
-    else if (key.endsWith("dTimeMSec")) {
-      long v = (long) Float.parseFloat(sanitizeFloat(value));
-      if (!ts.contains(new Long(v))) {
-        ts.add(new Long(v));
-        addGlobalMeta("number of timepoints", ts.size());
-      }
-    }
-    else if (key.endsWith("dZPos")) {
-      long v = (long) Float.parseFloat(sanitizeFloat(value));
-      if (!zs.contains(new Long(v))) {
-        zs.add(new Long(v));
-      }
-    }
-    else if (key.endsWith("uiCount")) {
-      if (runtype != null) {
-        if (runtype.endsWith("ZStackLoop")) {
-          if (getSizeZ() == 0) {
-            core[0].sizeZ = Integer.parseInt(value);
-            if (getDimensionOrder().indexOf("Z") == -1) {
-              core[0].dimensionOrder = "Z" + getDimensionOrder();
-            }
-          }
-        }
-        else if (runtype.endsWith("TimeLoop")) {
-          if (getSizeT() == 0) {
-            core[0].sizeT = Integer.parseInt(value);
-            if (getDimensionOrder().indexOf("T") == -1) {
-              core[0].dimensionOrder = "T" + getDimensionOrder();
-            }
-          }
-        }
-      }
-    }
-    else if (key.equals("VirtualComponents")) {
-      if (getSizeC() == 0) {
-        core[0].sizeC = Integer.parseInt(value);
-        if (getDimensionOrder().indexOf("C") == -1) {
-          core[0].dimensionOrder += "C" + getDimensionOrder();
-        }
-      }
-    }
-    else if (key.startsWith("TextInfoItem") || key.endsWith("TextInfoItem")) {
-      metadata.remove(key);
-      value = value.replaceAll("&#x000d;&#x000a;", "\n");
-      StringTokenizer tokens = new StringTokenizer(value, "\n");
-      while (tokens.hasMoreTokens()) {
-        String t = tokens.nextToken().trim();
-        if (t.startsWith("Dimensions:")) {
-          t = t.substring(11);
-          StringTokenizer dims = new StringTokenizer(t, " x ");
-
-          core[0].sizeZ = 1;
-          core[0].sizeT = 1;
-          core[0].sizeC = 1;
-
-          while (dims.hasMoreTokens()) {
-            String dim = dims.nextToken().trim();
-            int v = Integer.parseInt(dim.replaceAll("\\D", ""));
-            v = (int) Math.max(v, 1);
-            if (dim.startsWith("XY")) {
-              numSeries = v;
-              if (numSeries > 1) {
-                int x = getSizeX();
-                int y = getSizeY();
-                int z = getSizeZ();
-                int tSize = getSizeT();
-                int c = getSizeC();
-                String order = getDimensionOrder();
-                core = new CoreMetadata[numSeries];
-                for (int i=0; i<numSeries; i++) {
-                  core[i] = new CoreMetadata();
-                  core[i].sizeX = x;
-                  core[i].sizeY = y;
-                  core[i].sizeZ = z == 0 ? 1 : z;
-                  core[i].sizeC = c == 0 ? 1 : c;
-                  core[i].sizeT = tSize == 0 ? 1 : tSize;
-                  core[i].dimensionOrder = order;
-                }
-              }
-            }
-            else if (dim.startsWith("T")) core[0].sizeT = v;
-            else if (dim.startsWith("Z")) core[0].sizeZ = v;
-            else {
-              core[0].sizeC = v;
-            }
-          }
-
-          core[0].imageCount = getSizeZ() * getSizeC() * getSizeT();
-        }
-        else if (t.startsWith("Number of Picture Planes")) {
-          core[0].sizeC = Integer.parseInt(t.replaceAll("\\D", ""));
-        }
-        else {
-          String[] v = t.split(":");
-          if (v.length == 2) {
-            v[1] = v[1].trim();
-            if (v[0].equals("Name")) {
-              channelNames.add(v[1]);
-            }
-            else if (v[0].equals("Modality")) {
-              modality.add(v[1]);
-            }
-            else if (v[0].equals("Camera Type")) {
-              cameraModel = v[1];
-            }
-            else if (v[0].equals("Binning")) {
-              binning.add(v[1]);
-            }
-            else if (v[0].equals("Readout Speed")) {
-              int last = v[1].lastIndexOf(" ");
-              if (last != -1) v[1] = v[1].substring(0, last);
-              speed.add(new Float(sanitizeFloat(v[1])));
-            }
-            else if (v[0].equals("Temperature")) {
-              String temp = v[1].replaceAll("[\\D&&[^-.]]", "");
-              temperature.add(new Float(sanitizeFloat(temp)));
-            }
-            else if (v[0].equals("Exposure")) {
-              String[] s = v[1].trim().split(" ");
-              try {
-                float time = Float.parseFloat(sanitizeFloat(s[0]));
-                // TODO: check for other units
-                if (s[1].equals("ms")) time /= 1000;
-                exposureTime.add(new Float(time));
-              }
-              catch (NumberFormatException e) { }
-            }
-          }
-          else if (v[0].startsWith("- Step")) {
-            int space = v[0].indexOf(" ", v[0].indexOf("Step") + 1);
-            int last = v[0].indexOf(" ", space + 1);
-            if (last == -1) last = v[0].length();
-            pixelSizeZ =
-              Float.parseFloat(sanitizeFloat(v[0].substring(space, last)));
-          }
-          else if (v[0].equals("Line")) {
-            String[] values = t.split(";");
-            for (int q=0; q<values.length; q++) {
-              int colon = values[q].indexOf(":");
-              if (colon < 0) continue;
-              String nextKey = values[q].substring(0, colon).trim();
-              String nextValue = values[q].substring(colon + 1).trim();
-              if (nextKey.equals("Emission wavelength")) {
-                emWave.add(new Integer(nextValue));
-              }
-              else if (nextKey.equals("Excitation wavelength")) {
-                exWave.add(new Integer(nextValue));
-              }
-              else if (nextKey.equals("Power")) {
-                nextValue = sanitizeFloat(nextValue);
-                power.add(new Integer((int) Float.parseFloat(nextValue)));
-              }
-            }
-          }
-        }
-      }
-    }
+  private Codec createCodec(boolean isJPEG) {
+    return isJPEG ? new JPEG2000Codec() : new ZlibCodec();
   }
 
-  private String sanitizeFloat(String value) {
-    char separator = new DecimalFormatSymbols().getDecimalSeparator();
-    if (value.indexOf(separator) == -1) {
-      char usedSeparator = separator == '.' ? ',' : '.';
-      value = value.replace(usedSeparator, separator);
+  private void copyPixels(int x, int y, int w, int h, int bpp, int scanlinePad,
+    byte[] pix, byte[] buf, boolean split)
+    throws IOException
+  {
+    if (split) {
+      pix = ImageTools.splitChannels(pix, lastChannel, getEffectiveSizeC(), bpp,
+        false, true);
     }
-    return value;
+    RandomAccessInputStream s = new RandomAccessInputStream(pix);
+    readPlane(s, x, y, w, h, scanlinePad, buf);
+    s.close();
   }
 
 }

@@ -316,12 +316,21 @@ public abstract class FormatReader extends FormatHandler
   protected byte[] readPlane(RandomAccessInputStream s, int x, int y,
     int w, int h, byte[] buf) throws IOException
   {
+    return readPlane(s, x, y, w, h, 0, buf);
+  }
+
+  /** Reads a raw plane from disk. */
+  protected byte[] readPlane(RandomAccessInputStream s, int x, int y,
+    int w, int h, int scanlinePad, byte[] buf) throws IOException
+  {
     int c = getRGBChannelCount();
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
-    if (x == 0 && y == 0 && w == getSizeX() && h == getSizeY()) {
+    if (x == 0 && y == 0 && w == getSizeX() && h == getSizeY() &&
+      scanlinePad == 0)
+    {
       s.read(buf);
     }
-    else if (x == 0 && w == getSizeX()) {
+    else if (x == 0 && w == getSizeX() && scanlinePad == 0) {
       if (isInterleaved()) {
         s.skipBytes(y * w * bpp * c);
         s.read(buf, 0, h * w * bpp * c);
@@ -336,25 +345,26 @@ public abstract class FormatReader extends FormatHandler
       }
     }
     else {
+      int scanlineWidth = getSizeX() + scanlinePad;
       if (isInterleaved()) {
-        s.skipBytes(y * getSizeX() * bpp * c);
+        s.skipBytes(y * scanlineWidth * bpp * c);
         for (int row=0; row<h; row++) {
           s.skipBytes(x * bpp * c);
           s.read(buf, row * w * bpp * c, w * bpp * c);
-          s.skipBytes(bpp * c * (getSizeX() - w - x));
+          s.skipBytes(bpp * c * (scanlineWidth - w - x));
         }
       }
       else {
         for (int channel=0; channel<c; channel++) {
-          s.skipBytes(y * getSizeX() * bpp);
+          s.skipBytes(y * scanlineWidth * bpp);
           for (int row=0; row<h; row++) {
             s.skipBytes(x * bpp);
             s.read(buf, channel * w * h * bpp + row * w * bpp, w * bpp);
-            s.skipBytes(bpp * (getSizeX() - w - x));
+            s.skipBytes(bpp * (scanlineWidth - w - x));
           }
-          s.skipBytes(getSizeX() * bpp * (getSizeY() - y - h));
+          s.skipBytes(scanlineWidth * bpp * (getSizeY() - y - h));
         }
-      }
+     }
     }
     return buf;
   }
