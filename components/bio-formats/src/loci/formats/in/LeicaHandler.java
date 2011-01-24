@@ -507,7 +507,7 @@ public class LeicaHandler extends DefaultHandler {
         catch (NumberFormatException e) { }
         Channel channel = channels.get(numDatasets + "-" + c);
         if (channel == null) channel = new Channel();
-        if (id.endsWith("ExposureTime")) {
+        if (id.endsWith("ExposureTime") && c < numChannels) {
           try {
             store.setPlaneExposureTime(new Double(value), numDatasets, c);
           }
