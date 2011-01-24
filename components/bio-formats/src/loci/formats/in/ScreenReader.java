@@ -520,6 +520,7 @@ public class ScreenReader extends FormatReader {
     int end = wellName.lastIndexOf("_");
     if (end < 0) end = wellName.lastIndexOf(".");
     if (end < 0) end = wellName.length();
+    if (end <= 1) return null;
     return wellName.substring(1, end);
   }
 
