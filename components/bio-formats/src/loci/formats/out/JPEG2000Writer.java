@@ -43,10 +43,16 @@ import loci.formats.meta.MetadataRetrieve;
  */
 public class JPEG2000Writer extends FormatWriter {
 
+  // -- Constants --
+
+  private static final String LOSSY = "Lossy";
+  private static final String LOSSLESS = "Lossless";
+
   // -- Constructor --
 
   public JPEG2000Writer() {
     super("JPEG-2000", "jp2");
+    compressionTypes = new String[] {LOSSY, LOSSLESS};
   }
 
   // -- IFormatWriter API methods --
@@ -79,6 +85,7 @@ public class JPEG2000Writer extends FormatWriter {
     options.bitsPerSample = bytesPerPixel * 8;
     options.littleEndian = littleEndian;
     options.interleaved = interleaved;
+    options.lossless = compression == null || compression.equals(LOSSLESS);
 
     out.write(new JPEG2000Codec().compress(buf, options));
   }
