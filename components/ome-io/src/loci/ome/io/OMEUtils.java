@@ -69,6 +69,8 @@ public final class OMEUtils {
   private static ReflectedUniverse r = createReflectedUniverse();
   private static ReflectedUniverse createReflectedUniverse() {
     r = new ReflectedUniverse();
+    // NB: avoid dependencies on optional ome.api packages
+    // NB: avoid dependencies on optional ome.system packages
     try {
       r.exec("import ome.api.IQuery");
       r.exec("import ome.api.RawPixelsStore");

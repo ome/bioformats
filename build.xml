@@ -30,32 +30,11 @@ Bio-Formats
     Project deps:  LOCI Common, OME-XML Java library, JAI Image I/O Tools,
                    MDB Tools (Java port), Apache Jakarta POI,
                    Luratech LuraWave stubs
-    Library deps:  JGoodies Forms, NetCDF, Simple Logging Facade for Java API,
-                   TestNG
-    Optional:      OME I/O, Apache log4j,
-                   Simple Logging Facade for Java log4j Binding,
+    Library deps:  JGoodies Forms, Apache log4j, NetCDF,
+                   Simple Logging Facade for Java API, TestNG
+    Optional:      Simple Logging Facade for Java log4j Binding,
                    Xalan Serializer, Xalan
     License:       GPL
-
-WiscScan Flow Cytometry
-    Server application for flow cytometry with WiscScan using JVMLink
-    -=-
-    JAR file:      flow-cytometry.jar
-    Path:          components/flow-cytometry
-    Project deps:  Bio-Formats, LOCI Common, OME-XML Java library
-    Library deps:  ImageJ, VisAD
-    Optional:      (none)
-    License:       BSD
-
-LOCI Checkstyle checks
-    LOCI's Checkstyle extensions, for checking source code style
-    -=-
-    JAR file:      loci-checks.jar
-    Path:          components/checkstyle
-    Project deps:  (none)
-    Library deps:  Checkstyle
-    Optional:      (none)
-    License:       Public domain
 
 LOCI Common
     A library containing common I/O and reflection classes
@@ -85,9 +64,8 @@ OME I/O
     JAR file:      ome-io.jar
     Path:          components/ome-io
     Project deps:  Bio-Formats, LOCI Common
-    Library deps:  Apache log4j, Simple Logging Facade for Java API,
-                   OMERO Client, OMERO Common, TestNG
-    Optional:      OME-Java
+    Library deps:  Apache log4j, Simple Logging Facade for Java API, TestNG
+    Optional:      OME-Java, OMERO Client, OMERO Common
     License:       GPL
 
 OME Plugins for ImageJ
@@ -109,18 +87,7 @@ OME-XML Java library
     Path:          components/ome-xml
     Project deps:  (none)
     Library deps:  Simple Logging Facade for Java API, TestNG
-    Optional:      (none)
-    License:       GPL
-
-SLIM Plotter
-    An application and curve fitting library for visualization and analysis of
-    combined spectral lifetime data
-    -=-
-    JAR file:      SlimPlotter.jar
-    Path:          components/slim-plotter
-    Project deps:  Bio-Formats, LOCI Common, VisBio
-    Library deps:  L-M Fit, VisAD
-    Optional:      (none)
+    Optional:      Apache log4j, Simple Logging Facade for Java log4j Binding
     License:       GPL
 
 LOCI testing framework
@@ -133,39 +100,8 @@ LOCI testing framework
     Optional:      (none)
     License:       BSD
 
-VisBio
-    A multi-purpose biological analysis tool
-    -=-
-    JAR file:      visbio.jar
-    Path:          components/visbio
-    Project deps:  Bio-Formats, LOCI Common, OME I/O, OME-XML Java library,
-                   Apache Jakarta POI
-    Library deps:  Apple eAWT stubs, JGoodies Forms, ImageJ, JUnit,
-                   JGoodies Looks, VisAD
-    Optional:      (none)
-    License:       GPL
-
 ===============================================================================
 The following components are considered "legacy" but still available:
-
-JVMLink
-    A library for communicating between a Java Virtual Machine and other
-    programs (e.g., C++ applications) via IP over localhost (or remotely)
-    -=-
-    JAR file:      jvmlink.jar
-    Path:          components/legacy/jvmlink
-    Project deps:  LOCI Common
-    Optional:      (none)
-    License:       BSD
-
-Multi-LUT
-    A demo application for visually exploring multi-spectral image data
-    -=-
-    JAR file:      MultiLUT.jar
-    Path:          components/legacy/multi-lut
-    Project deps:  (none)
-    Optional:      (none)
-    License:       Public domain
 
 OME Metadata Editor
     An application for exploration and editing of OME-XML and OME-TIFF metadata
@@ -238,13 +174,6 @@ Luratech LuraWave stubs
 
 ===============================================================================
 The following external dependencies (in the jar folder) may be required:
-Apple eAWT stubs
-    JAR file:  AppleJavaExtensions.jar
-    URL:       http://developer.apple.com/samplecode/AppleJavaExtensions/
-    Notes:     required to compile Mac-specific functionality on non-Mac OS X
-               machines
-    License:   BSD
-
 Ant-Contrib
     JAR file:  ant-contrib-1.0b3.jar
     URL:       http://ant-contrib.sourceforge.net/
@@ -281,12 +210,6 @@ JGoodies Forms
     Notes:     used for layout by VisBio, Data Browser and OME Notes
     License:   BSD
 
-Ice
-    JAR file:  Ice-3.3.1.jar
-    URL:       http://www.zeroc.com/ice.html
-    Notes:     used by Bio-Formats Ice framework
-    License:   GPL
-
 ImageJ
     JAR file:  ij.jar
     URL:       http://rsb.info.nih.gov/ij/
@@ -302,29 +225,16 @@ JAI ImageIO wrapper
     License:   BSD
 
 JUnit
-    JAR file:  junit.jar
+    JAR file:  junit-4.8.2.jar
     URL:       http://www.junit.org/
     Notes:     unit testing framework used for a few VisBio unit tests
     License:   Common Public License
-
-L-M Fit
-    JAR file:  lma.jar
-    URL:       http://users.utu.fi/jaolho/
-    Notes:     Levenberg-Marquardt algorithm for exponential curve fitting,
-               used by SLIM Plotter
-    License:   LGPL
 
 Apache log4j
     JAR file:  log4j-1.2.15.jar
     URL:       http://logging.apache.org/log4j/
     Notes:     required by SLF4J implementation
     License:   Apache
-
-JGoodies Looks
-    JAR file:  looks-2.3.1.jar
-    URL:       http://www.jgoodies.com/freeware/looks/index.html
-    Notes:     used for a nicer Look & Feel by VisBio and OME Metadata Editor
-    License:   BSD
 
 NetCDF
     JAR file:  netcdf-4.0.jar
@@ -374,12 +284,6 @@ Xalan Serializer
     Notes:     used for OME-XML transformations
     License:   Apache
 
-Skin Look and Feel
-    JAR file:  skinlf.jar
-    URL:       http://skinlf.l2fprod.com/
-    Notes:     not used (may be used in the future for flexible skinning)
-    License:   Custom (BSD-like)
-
 TestNG
     JAR file:  testng-5.11-jdk15.jar
     URL:       http://testng.org/
@@ -392,13 +296,6 @@ Apache Velocity
     Notes:     used to autogenerate the loci.formats.meta and loci.formats.ome
                Bio-Formats packages
     License:   Apache
-
-VisAD
-    JAR file:  visad-lite.jar
-    URL:       http://www.ssec.wisc.edu/~billh/visad.html
-    Notes:     stripped down VisAD library used by VisBio and SLIM Plotter for
-               interactive visualization
-    License:   LGPL
 
 Xalan
     JAR file:  xalan-2.7.1.jar

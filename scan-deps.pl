@@ -397,19 +397,6 @@ ZZ
   VERSION => "1.2.15"
 );
 
-my %looks = (
-  NAME    => "looks",
-  TITLE   => "JGoodies Looks",
-  JAR     => "looks-2.3.1.jar",
-  PACKAGE => "com.jgoodies.looks",
-  LICENSE => "BSD",
-  URL     => "http://www.jgoodies.com/freeware/looks/index.html",
-  NOTES   => <<ZZ,
-used for a nicer Look & Feel by VisBio and OME Metadata Editor
-ZZ
-  VERSION => "2.3.1"
-);
-
 my %netcdf = (
   NAME    => "netcdf",
   TITLE   => "NetCDF",
@@ -452,40 +439,27 @@ ZZ
 my %omeroClient = (
   NAME    => "omero-client",
   TITLE   => "OMERO Client",
-  JAR     => "omero-client-4.1.1.jar",
+  JAR     => "omero-client-4.2.0.jar",
   PACKAGE => "ome.system",
   LICENSE => "GPL",
   URL     => "http://trac.openmicroscopy.org.uk/omero/wiki/MilestoneDownloads",
   NOTES   => <<ZZ,
 used by OME I/O to connect to OMERO servers
 ZZ
-  VERSION => "4.1.1"
+  VERSION => "4.2.0"
 );
 
 my %omeroCommon = (
   NAME    => "omero-common",
   TITLE   => "OMERO Common",
-  JAR     => "omero-common-4.1.1.jar",
+  JAR     => "omero-common-4.2.0.jar",
   PACKAGE => "ome.api",
   LICENSE => "GPL",
   URL     => "http://trac.openmicroscopy.org.uk/omero/wiki/MilestoneDownloads",
   NOTES   => <<ZZ,
 used by OME I/O to connect to OMERO servers
 ZZ
-  VERSION => "4.1.1"
-);
-
-my %skinlf = (
-  NAME    => "skinlf",
-  TITLE   => "Skin Look and Feel",
-  JAR     => "skinlf.jar",
-  PACKAGE => "com.l2fprod",
-  LICENSE => "Custom (BSD-like)",
-  URL     => "http://skinlf.l2fprod.com/",
-  NOTES   => <<ZZ,
-not used (may be used in the future for flexible skinning)
-ZZ
-  VERSION => "6.7"
+  VERSION => "4.2.0"
 );
 
 my %slf4j_api = (
@@ -539,19 +513,6 @@ used to autogenerate the loci.formats.meta and loci.formats.ome Bio-Formats
 packages
 ZZ
   VERSION => "1.6.3"
-);
-
-my %visad = (
-  NAME    => "visad",
-  TITLE   => "VisAD",
-  JAR     => "visad-lite.jar",
-  PACKAGE => "visad",
-  LICENSE => "LGPL",
-  URL     => "http://www.ssec.wisc.edu/~billh/visad.html",
-  NOTES   => <<ZZ,
-stripped down VisAD library used by VisBio and SLIM Plotter for interactive
-visualization
-ZZ
 );
 
 my %xmlrpc = (
@@ -632,20 +593,16 @@ my @components = (@active, @legacy, @forks, @stubs);
 
 # List of external libraries
 my @libs = (
-  \%appleJavaExtensions,
   \%antContrib,
   \%checkstyle,
   \%commonsHTTPClient,
   \%commonsLogging,
   \%findbugs,
   \%forms,
-  \%ice,
   \%ij,
   \%jiio,
   \%junit,
-  \%lma,
   \%log4j,
-  \%looks,
   \%netcdf,
   \%slf4j_api,
   \%slf4j_impl,
@@ -654,10 +611,8 @@ my @libs = (
   \%omeroClient,
   \%omeroCommon,
   \%serializer,
-  \%skinlf,
   \%testng,
   \%velocity,
-  \%visad,
   \%xalan,
   \%xmlrpc,
 );
@@ -814,7 +769,7 @@ foreach my $c (@components) {
 
 # -- DATA VERIFICATION --
 
-print STDERR "--== VERIFYING CLASSPATH MATCHES ==--\n\n";
+print STDERR "--== VERIFYING CLASSPATH MATCHES ==--\n";
 foreach my $c (@components) {
   my @projDeps = @{$$c{PROJ_DEPS}};
   my @libDeps = @{$$c{LIB_DEPS}};
@@ -822,7 +777,6 @@ foreach my $c (@components) {
   my @libOpt = @{$$c{LIB_OPT}};
   my $name = $$c{TITLE};
   my $path = $$c{PATH};
-  my @deps;
 
   # verify compile-time classpath
   my @compile = ();
@@ -836,7 +790,7 @@ foreach my $c (@components) {
   my @cp = @{$$c{COMPILE}};
   my $compileError = 0;
   if (@compile != @cp) {
-    print STDERR "Dependency mismatch for $name compile time classpath:\n";
+    print STDERR "\nDependency mismatch for $name compile time classpath:\n";
     $compileError = 1;
   }
   else {
@@ -844,7 +798,8 @@ foreach my $c (@components) {
       my $depJar = $compile[$i];
       my $cpJar = $cp[$i];
       if ($cpJar ne $depJar) {
-        print STDERR "Dependency mismatch for $name compile time classpath:\n";
+        print STDERR "\nDependency mismatch for $name " .
+          "compile time classpath:\n";
         print STDERR "  #$i: $depJar != $cpJar\n";
         $compileError = 1;
         last;
@@ -854,7 +809,7 @@ foreach my $c (@components) {
   if ($compileError) {
     print STDERR "  component.classpath:\n";
     print STDERR "    Actual    = @cp\n";
-    print STDERR "    Synthetic = @deps\n";
+    print STDERR "    Synthetic = @compile\n";
     print STDERR "\n";
     print STDERR "  project deps =";
     foreach my $q (@projDeps) {
@@ -870,7 +825,7 @@ foreach my $c (@components) {
   }
 
   # verify Eclipse classpath
-  @deps = ();
+  my @deps = ();
   push(@deps, "src");
   if (-e "$path/test") {
     push(@deps, "test");
@@ -895,7 +850,7 @@ foreach my $c (@components) {
   @cp = @{$$c{ECLIPSE}};
   my $eclipseError = 0;
   if (@deps != @cp) {
-    print STDERR "Dependency mismatch for $name Eclipse classpath:\n";
+    print STDERR "\nDependency mismatch for $name Eclipse classpath:\n";
     $eclipseError = 1;
   }
   else {
@@ -903,7 +858,7 @@ foreach my $c (@components) {
       my $depEntry = $deps[$i];
       my $cpEntry = $cp[$i];
       if ($cpEntry ne $depEntry) {
-        print STDERR "Dependency mismatch for $name Eclipse classpath:\n";
+        print STDERR "\nDependency mismatch for $name Eclipse classpath:\n";
         print STDERR "  #$i: $depEntry != $cpEntry\n";
         $eclipseError = 1;
         last;
@@ -941,7 +896,7 @@ foreach my $c (@components) {
   @cp = @{$$c{RUNTIME}};
   my $runtimeError = 0;
   if (@deps != @cp) {
-    print STDERR "Dependency mismatch for $name runtime classpath:\n";
+    print STDERR "\nDependency mismatch for $name runtime classpath:\n";
     $runtimeError = 1;
   }
   else {
@@ -949,7 +904,7 @@ foreach my $c (@components) {
       my $depJar = $deps[$i];
       my $cpJar = $cp[$i];
       if ($cpJar ne $depJar) {
-        print STDERR "Dependency mismatch for $name runtime classpath:\n";
+        print STDERR "\nDependency mismatch for $name runtime classpath:\n";
         print STDERR "  #$i: $depJar != $cpJar\n";
         $runtimeError = 1;
         last;
@@ -980,6 +935,7 @@ foreach my $c (@components) {
     foreach my $q (@libOpt) {
       print STDERR " $$q{NAME}";
     }
+    print STDERR "\n";
     $programErrors++;
   }
 }
@@ -990,7 +946,7 @@ if ($skipSummary) {
 
 # -- FORMATTED DATA OUTPUT --
 
-print STDERR "--== DUMPING RESULTS TO STDOUT ==--\n\n";
+print STDERR "\n--== DUMPING RESULTS TO STDOUT ==--\n\n";
 
 my $div = <<ZZ;
 ===============================================================================

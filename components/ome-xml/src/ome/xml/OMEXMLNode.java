@@ -43,6 +43,9 @@ import java.util.Hashtable;
 import java.util.Vector;
 import org.w3c.dom.*;
 
+// HACK: for scan-deps.pl: The following packages are not actually "optional":
+// optional org.apache.log4j, optional org.slf4j.impl
+
 /**
  * OMEXMLNode is the superclass of all OME-XML nodes. These nodes are
  * similar to, but more sophisticated than, the nodes obtained from a direct
