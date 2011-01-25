@@ -87,7 +87,8 @@ public class BioRadGelReader extends FormatReader {
       if (diff < 0) {
         in.seek(0x379d1);
       }
-      else in.seek(PIXEL_OFFSET);
+      else if (diff == 0) in.seek(PIXEL_OFFSET);
+      else in.seek(in.length() - planeSize);
     }
     else in.seek(in.length() - planeSize);
 
