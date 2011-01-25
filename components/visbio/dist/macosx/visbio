@@ -1,2 +1,0 @@
-#!/bin/sh
-java -mx512m -jar VisBio.app/Contents/Resources/Java/visbio.jar $*

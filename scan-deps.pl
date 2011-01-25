@@ -48,19 +48,6 @@ ZZ
   LICENSE => "GPL",
 );
 
-my %bfIce = (
-  NAME    => "bf-ice",
-  TITLE   => "Bio-Formats Ice framework",
-  PATH    => "components/bf-ice",
-  JAR     => "bf-ice.jar",
-  PACKAGE => "loci.ice.formats",
-  DESC    => <<ZZ,
-Bindings for Bio-Formats client/server communication enabling cross-language
-interoperability
-ZZ
-  LICENSE => "GPL",
-);
-
 my %bioFormats = (
   NAME    => "bio-formats",
   TITLE   => "Bio-Formats",
@@ -71,30 +58,6 @@ my %bioFormats = (
 A library for reading and writing popular microscopy file formats
 ZZ
   LICENSE => "GPL",
-);
-
-my %flowCytometry = (
-  NAME    => "flow-cytometry",
-  TITLE   => "WiscScan Flow Cytometry",
-  PATH    => "components/flow-cytometry",
-  JAR     => "flow-cytometry.jar",
-  PACKAGE => "loci.apps.flow",
-  DESC    => <<ZZ,
-Server application for flow cytometry with WiscScan using JVMLink
-ZZ
-  LICENSE => "BSD",
-);
-
-my %lociChecks = (
-  NAME    => "loci-checks",
-  TITLE   => "LOCI Checkstyle checks",
-  PATH    => "components/checkstyle",
-  JAR     => "loci-checks.jar",
-  PACKAGE => "loci.checks",
-  DESC    => <<ZZ,
-LOCI's Checkstyle extensions, for checking source code style
-ZZ
-  LICENSE => "Public domain",
 );
 
 my %lociCommon = (
@@ -160,19 +123,6 @@ ZZ
   LICENSE => "GPL",
 );
 
-my %slimPlotter = (
-  NAME    => "slim-plotter",
-  TITLE   => "SLIM Plotter",
-  PATH    => "components/slim-plotter",
-  JAR     => "SlimPlotter.jar",
-  PACKAGE => "loci.slim",
-  DESC    => <<ZZ,
-An application and curve fitting library for visualization and analysis of
-combined spectral lifetime data
-ZZ
-  LICENSE => "GPL",
-);
-
 my %testSuite = (
   NAME    => "test-suite",
   TITLE   => "LOCI testing framework",
@@ -185,44 +135,7 @@ ZZ
   LICENSE => "BSD",
 );
 
-my %visbio = (
-  NAME    => "visbio",
-  TITLE   => "VisBio",
-  PATH    => "components/visbio",
-  JAR     => "visbio.jar",
-  PACKAGE => "loci.visbio",
-  DESC    => <<ZZ,
-A multi-purpose biological analysis tool
-ZZ
-  LICENSE => "GPL",
-);
-
 # -- COMPONENT DEFINITIONS - LEGACY --
-
-my %jvmlink = (
-  NAME    => "jvmlink",
-  TITLE   => "JVMLink",
-  PATH    => "components/legacy/jvmlink",
-  JAR     => "jvmlink.jar",
-  PACKAGE => "loci.jvmlink",
-  DESC    => <<ZZ,
-A library for communicating between a Java Virtual Machine and other programs
-(e.g., C++ applications) via IP over localhost (or remotely)
-ZZ
-  LICENSE => "BSD",
-);
-
-my %multiLUT = (
-  NAME    => "multi-lut",
-  TITLE   => "Multi-LUT",
-  PATH    => "components/legacy/multi-lut",
-  JAR     => "MultiLUT.jar",
-  PACKAGE => "loci.apps",
-  DESC    => <<ZZ,
-A demo application for visually exploring  multi-spectral image data
-ZZ
-  LICENSE => "Public domain",
-);
 
 my %omeEditor = (
   NAME    => "ome-editor",
@@ -471,19 +384,6 @@ ZZ
   VERSION => "4.8.2"
 );
 
-my %lma = (
-  NAME    => "lma",
-  TITLE   => "L-M Fit",
-  JAR     => "lma.jar",
-  PACKAGE => "jaolho.data.lma",
-  LICENSE => "LGPL",
-  URL     => "http://users.utu.fi/jaolho/",
-  NOTES   => <<ZZ,
-Levenberg-Marquardt algorithm for exponential curve fitting, used by SLIM
-Plotter
-ZZ
-);
-
 my %log4j = (
   NAME    => "log4j",
   TITLE   => "Apache log4j",
@@ -700,24 +600,17 @@ ZZ
 # List of active LOCI software components
 my @active = (
   \%autogen,
-#  \%bfIce,
   \%bioFormats,
-  \%flowCytometry,
-  \%lociChecks,
   \%lociCommon,
   \%lociPlugins,
   \%omeIO,
   \%omePlugins,
   \%omeXML,
-  \%slimPlotter,
   \%testSuite,
-  \%visbio,
 );
 
 # List of legacy components (no longer supported)
 my @legacy = (
-  \%jvmlink,
-  \%multiLUT,
   \%omeEditor,
 #  \%omeNotes,
 );

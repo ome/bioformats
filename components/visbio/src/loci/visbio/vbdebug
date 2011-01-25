@@ -1,2 +1,0 @@
-#!/bin/bash
-java -mx1024m -Dvisbio.debug=true -verbose loci.visbio.VisBio $* > debug.txt
