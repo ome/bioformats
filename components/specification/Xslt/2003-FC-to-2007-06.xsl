@@ -67,8 +67,8 @@
 			<map from="FRAP" to="Photobleaching"/>
 			<map from="Photoablation" to="Photobleaching"/>
 			<map from="Photoactivation" to="FRET"/>
-			<map from="Uncaging" to="???"/>
-			<map from="Optical-Trapping" to="???"/>
+			<map from="Uncaging" to="Other"/>
+			<map from="Optical-Trapping" to="Other"/>
 			<map from="Fluorescence-Lifetime" to="FluorescenceLifetime"/>
 			<map from="Spectral-Imaging" to="SpectralImaging"/>
 		</mapping>
@@ -103,11 +103,6 @@
 			<map from="Uint16" to="uint16"/>
 			<map from="Uint32" to="uint32"/>
 		</mapping>
-		<mapping name="OTFPixelType">
-			<map from="Uint8" to="uint8"/>
-			<map from="Uint16" to="uint16"/>
-			<map from="Uint32" to="uint32"/>
-		</mapping>
 		<mapping name="DetectorType">
 			<map from="Intensified-CCD" to="IntensifiedCCD"/>
 			<map from="Analog-Video" to="AnalogVideo"/>
@@ -127,7 +122,6 @@
 			<map from="Free Electron" to="FreeElectron"/>
 		</mapping>
 		<mapping name="LaserMedium">
-			<map from="Metal Vapor" to="MetalVapor"/>
 			<map from="Nitrogen" to="N"/>
 			<map from="Argon" to="Ar"/>
 			<map from="Krypton" to="Kr"/>

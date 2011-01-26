@@ -59,9 +59,12 @@
 	<!-- default value for non-numerical value when transforming the attribute of concrete shape -->
 	<xsl:variable name="numberDefault" select="1"/>
 
-	<!-- The Enumeration terms to be modified. -->
+	<!-- The Enumeration terms to be modified. 
+	
+	??? Most of these are unnecessary!
+	-->
 	<xsl:variable name="enumeration-maps">
-		<mapping name="ExperimentType">
+		<mapping name="ExperimentType" unsure="Other">
 			<map from="Time-lapse" to="TimeLapse"/>
 			<map from="4-D+" to="FourDPlus"/>
 			<map from="Ion-Imaging" to="IonImaging"/>
@@ -69,15 +72,15 @@
 			<map from="FRAP" to="Photobleaching"/>
 			<map from="Photoablation" to="Photobleaching"/>
 			<map from="Photoactivation" to="FRET"/>
-			<map from="Uncaging" to="???"/>
-			<map from="Optical-Trapping" to="???"/>
+			<map from="Uncaging" to="Other"/>
+			<map from="Optical-Trapping" to="Other"/>
 			<map from="Fluorescence-Lifetime" to="FluorescenceLifetime"/>
 			<map from="Spectral-Imaging" to="SpectralImaging"/>
 		</mapping>
-		<mapping name="LogicalChannelPhotometricInterpretation">
+		<mapping name="LogicalChannelPhotometricInterpretation" optional="true">
 			<map from="monochrome" to="Monochrome"/>
 		</mapping>
-		<mapping name="LogicalChannelMode">
+		<mapping name="LogicalChannelMode" unsure="Other">
 			<map from="Wide-field" to="WideField"/>
 			<map from="Laser Scanning Microscopy" to="LaserScanningMicroscopy"/>
 			<map from="Laser Scanning Confocal" to="LaserScanningConfocal"/>
@@ -95,7 +98,7 @@
 				to="NearFieldScanningOpticalMicroscopy"/>
 			<map from="Second Harmonic Generation Imaging" to="SecondHarmonicGenerationImaging"/>
 		</mapping>
-		<mapping name="LogicalChannelContractMethod">
+		<mapping name="LogicalChannelContractMethod" optional="true">
 			<map from="Hoffman Modulation" to="HoffmanModulation"/>
 			<map from="Oblique Illumination" to="ObliqueIllumination"/>
 			<map from="Polarized Light" to="PolarizedLight"/>
@@ -105,26 +108,25 @@
 			<map from="Uint16" to="uint16"/>
 			<map from="Uint32" to="uint32"/>
 		</mapping>
-		<mapping name="DetectorType">
+		<mapping name="DetectorType" unsure="Unknown">
 			<map from="Intensified-CCD" to="IntensifiedCCD"/>
 			<map from="Analog-Video" to="AnalogVideo"/>
 			<map from="Life-time-Imaging" to="LifetimeImaging"/>
 			<map from="Correlation-Spectroscopy" to="CorrelationSpectroscopy"/>
 		</mapping>
-		<mapping name="ArcType">
+		<mapping name="ArcType" unsure="Unknown">
 			<map from="Hg-Xe" to="HgXe"/>
 		</mapping>
 		<mapping name="LaserPulse">
 			<map from="Q-Switched" to="QSwitched"/>
 			<map from="Mode-Locked" to="ModeLocked"/>
 		</mapping>
-		<mapping name="LaserType">
+		<mapping name="LaserType" unsure="Unknown">
 			<map from="Metal Vapor" to="MetalVapor"/>
 			<map from="Solid State" to="SolidState"/>
 			<map from="Free Electron" to="FreeElectron"/>
 		</mapping>
-		<mapping name="LaserMedium">
-			<map from="Metal Vapor" to="MetalVapor"/>
+		<mapping name="LaserMedium" unsure="Unknown">
 			<map from="Nitrogen" to="N"/>
 			<map from="Argon" to="Ar"/>
 			<map from="Krypton" to="Kr"/>
@@ -151,16 +153,14 @@
 			select="exsl:node-set($enumeration-maps)/mapping[@name=$mappingName]"/>
 		<xsl:variable name="newValue" select="($mappingNode)/map[@from=$value]/@to"/>
 		<xsl:variable name="isOptional" select="($mappingNode)/@optional"/>
+		<xsl:variable name="newUnsureValue" select="($mappingNode)/@unsure"/>
 		<xsl:choose>
 			<xsl:when test="string-length($newValue) > 0">
 				<xsl:value-of select="$newValue"/>
 			</xsl:when>
-			<xsl:when test="$value = 'Unknown'">
-				<xsl:value-of select="'Other'"/>
-			</xsl:when>
 			<!-- If the input file is valid this case should never happen, but if it does fix it -->
 			<xsl:when test="string-length($value) = 0">
-				<xsl:value-of select="'Other'"/>
+				<xsl:value-of select="$newUnsureValue"/>
 			</xsl:when>
 			<xsl:otherwise>
 				<xsl:value-of select="$value"/>
