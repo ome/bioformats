@@ -68,10 +68,6 @@ public class OMETiffWriter extends TiffWriter {
     "before doing so. For more information, see the OME-TIFF web site: " +
     FormatTools.URL_OME_TIFF + ". -->";
 
-  // -- Static fields --
-
-  private static HashMap<String, String> uuids = new HashMap<String, String>();
-
   // -- Fields --
 
   private ArrayList<Integer> seriesMap;
@@ -79,6 +75,8 @@ public class OMETiffWriter extends TiffWriter {
   private OMEXMLMetadata omeMeta;
   private OMEXMLService service;
   private HashMap<String, Integer> ifdCounts = new HashMap<String, Integer>();
+
+  private HashMap<String, String> uuids = new HashMap<String, String>();
 
   // -- Constructor --
 
@@ -177,14 +175,11 @@ public class OMETiffWriter extends TiffWriter {
   // -- Helper methods --
 
   /** Gets the UUID corresponding to the given filename. */
-  private static String getUUID(String filename) {
-    String uuid;
-    synchronized (uuids) {
-      uuid = uuids.get(filename);
-      if (uuid == null) {
-        uuid = UUID.randomUUID().toString();
-        uuids.put(filename, uuid);
-      }
+  private String getUUID(String filename) {
+    String uuid = uuids.get(filename);
+    if (uuid == null) {
+      uuid = UUID.randomUUID().toString();
+      uuids.put(filename, uuid);
     }
     return uuid;
   }
