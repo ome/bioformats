@@ -870,7 +870,7 @@ public class InCellReader extends FormatReader {
       else if (qName.equals("EmissionFilter")) {
         String wave = attributes.getValue("wavelength");
         if (wave != null) emWaves.add(new Integer(wave));
-        channelNames.add(channelName + " " + attributes.getValue("name"));
+        channelNames.add(attributes.getValue("name"));
       }
       else if (qName.equals("Camera")) {
         store.setDetectorModel(attributes.getValue("name"), 0, 0);
