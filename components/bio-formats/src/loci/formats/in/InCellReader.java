@@ -65,6 +65,8 @@ public class InCellReader extends FormatReader {
 
   // -- Fields --
 
+  private boolean[][] plateMap;
+
   private Image[][][][] imageFiles;
   private MinimalTiffReader tiffReader;
   private Vector<Integer> emWaves, exWaves;
@@ -73,15 +75,11 @@ public class InCellReader extends FormatReader {
   private int imageWidth, imageHeight;
   private String creationDate;
   private String rowName = "A", colName = "1";
-  private int startRow = 0, startCol = 0;
   private int fieldCount;
 
   private int wellRows, wellCols;
   private Hashtable<Integer, int[]> wellCoordinates;
   private Vector<Double> posX, posY;
-
-  private int firstRow, firstCol;
-  private int lastCol;
 
   private boolean[][] exclude;
 
@@ -221,18 +219,16 @@ public class InCellReader extends FormatReader {
       posY = null;
       creationDate = null;
       wellRows = wellCols = 0;
-      startRow = startCol = 0;
       fieldCount = 0;
       exclude = null;
       metadataFiles = null;
       imageWidth = imageHeight = 0;
       rowName = "A";
       colName = "1";
-      firstRow = firstCol = 0;
-      lastCol = 0;
       channelsPerTimepoint = null;
       oneTimepointPerSeries = false;
       totalChannels = 0;
+      plateMap = null;
     }
   }
 
@@ -275,10 +271,6 @@ public class InCellReader extends FormatReader {
 
     super.initFile(id);
     in = new RandomAccessInputStream(id);
-
-    firstRow = Integer.MAX_VALUE;
-    firstCol = Integer.MAX_VALUE;
-    lastCol = Integer.MIN_VALUE;
 
     channelNames = new Vector<String>();
     emWaves = new Vector<Integer>();
@@ -562,9 +554,20 @@ public class InCellReader extends FormatReader {
   private int getWellFromSeries(int series) {
     if (oneTimepointPerSeries) series /= channelsPerTimepoint.size();
     int well = series / fieldCount;
-    int wellRow = well / (lastCol - firstCol + 1);
-    int wellCol = well % (lastCol - firstCol + 1);
-    return (wellRow + firstRow) * wellCols + wellCol + firstCol;
+
+    int counter = -1;
+
+    for (int row=0; row<plateMap.length; row++) {
+      for (int col=0; col<plateMap[row].length; col++) {
+        if (plateMap[row][col]) {
+          counter++;
+        }
+        if (counter == well) {
+          return row * wellCols + col;
+        }
+      }
+    }
+    return -1;
   }
 
   // -- Helper classes --
@@ -624,6 +627,7 @@ public class InCellReader extends FormatReader {
       if (qName.equals("Plate")) {
         wellRows = Integer.parseInt(attributes.getValue("rows"));
         wellCols = Integer.parseInt(attributes.getValue("columns"));
+        plateMap = new boolean[wellRows][wellCols];
       }
       else if (qName.equals("Exclude")) {
         if (exclude == null) exclude = new boolean[wellRows][wellCols];
@@ -688,12 +692,10 @@ public class InCellReader extends FormatReader {
       }
       else if (qName.equals("Row")) {
         wellRow = Integer.parseInt(attributes.getValue("number")) - 1;
-        firstRow = (int) Math.min(firstRow, wellRow);
       }
       else if (qName.equals("Column")) {
         wellCol = Integer.parseInt(attributes.getValue("number")) - 1;
-        firstCol = (int) Math.min(firstCol, wellCol);
-        lastCol = (int) Math.max(lastCol, wellCol);
+        plateMap[wellRow][wellCol] = true;
       }
       else if (qName.equals("Size")) {
         imageWidth = Integer.parseInt(attributes.getValue("width"));
@@ -701,21 +703,9 @@ public class InCellReader extends FormatReader {
       }
       else if (qName.equals("NamingRows")) {
         rowName = attributes.getValue("begin");
-        try {
-          startRow = Integer.parseInt(rowName);
-        }
-        catch (NumberFormatException e) {
-          startRow = rowName.charAt(0) - 'A' + 1;
-        }
       }
       else if (qName.equals("NamingColumns")) {
         colName = attributes.getValue("begin");
-        try {
-          startCol = Integer.parseInt(colName);
-        }
-        catch (NumberFormatException e) {
-          startCol = colName.charAt(0) - 'A' + 1;
-        }
       }
     }
   }
@@ -854,7 +844,7 @@ public class InCellReader extends FormatReader {
       else if (qName.equals("EmissionFilter")) {
         String wave = attributes.getValue("wavelength");
         if (wave != null) emWaves.add(new Integer(wave));
-        channelNames.add(channelName + " " + attributes.getValue("name"));
+        channelNames.add(attributes.getValue("name"));
       }
       else if (qName.equals("Camera")) {
         store.setDetectorModel(attributes.getValue("name"), 0, 0);
