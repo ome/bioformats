@@ -65,6 +65,8 @@ public class InCellReader extends FormatReader {
 
   // -- Fields --
 
+  private boolean[][] plateMap;
+
   private Image[][][][] imageFiles;
   private MinimalTiffReader tiffReader;
   private Vector<Integer> emWaves, exWaves;
@@ -233,6 +235,7 @@ public class InCellReader extends FormatReader {
       channelsPerTimepoint = null;
       oneTimepointPerSeries = false;
       totalChannels = 0;
+      plateMap = null;
     }
   }
 
@@ -562,9 +565,20 @@ public class InCellReader extends FormatReader {
   private int getWellFromSeries(int series) {
     if (oneTimepointPerSeries) series /= channelsPerTimepoint.size();
     int well = series / fieldCount;
-    int wellRow = well / (lastCol - firstCol + 1);
-    int wellCol = well % (lastCol - firstCol + 1);
-    return (wellRow + firstRow) * wellCols + wellCol + firstCol;
+
+    int counter = -1;
+
+    for (int row=0; row<plateMap.length; row++) {
+      for (int col=0; col<plateMap[row].length; col++) {
+        if (plateMap[row][col]) {
+          counter++;
+        }
+        if (counter == well) {
+          return row * wellCols + col;
+        }
+      }
+    }
+    return -1;
   }
 
   // -- Helper classes --
@@ -624,6 +638,7 @@ public class InCellReader extends FormatReader {
       if (qName.equals("Plate")) {
         wellRows = Integer.parseInt(attributes.getValue("rows"));
         wellCols = Integer.parseInt(attributes.getValue("columns"));
+        plateMap = new boolean[wellRows][wellCols];
       }
       else if (qName.equals("Exclude")) {
         if (exclude == null) exclude = new boolean[wellRows][wellCols];
@@ -694,6 +709,7 @@ public class InCellReader extends FormatReader {
         wellCol = Integer.parseInt(attributes.getValue("number")) - 1;
         firstCol = (int) Math.min(firstCol, wellCol);
         lastCol = (int) Math.max(lastCol, wellCol);
+        plateMap[wellRow][wellCol] = true;
       }
       else if (qName.equals("Size")) {
         imageWidth = Integer.parseInt(attributes.getValue("width"));
