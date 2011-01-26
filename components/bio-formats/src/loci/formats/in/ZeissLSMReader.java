@@ -147,7 +147,7 @@ public class ZeissLSMReader extends FormatReader {
 
   // -- Static fields --
 
-  private static Hashtable<Integer, String> metadataKeys = createKeys();
+  private static final Hashtable<Integer, String> METADATA_KEYS = createKeys();
 
   // -- Fields --
 
@@ -1943,15 +1943,15 @@ public class ZeissLSMReader extends FormatReader {
       prefix += index;
       Integer[] keys = blockData.keySet().toArray(new Integer[0]);
       for (Integer key : keys) {
-        if (metadataKeys.get(key) != null) {
-          addSeriesMeta(prefix + " " + metadataKeys.get(key),
+        if (METADATA_KEYS.get(key) != null) {
+          addSeriesMeta(prefix + " " + METADATA_KEYS.get(key),
             blockData.get(key));
 
-          if (metadataKeys.get(key).equals("Bits Per Sample")) {
+          if (METADATA_KEYS.get(key).equals("Bits Per Sample")) {
             core[getSeries()].bitsPerPixel =
               Integer.parseInt(blockData.get(key).toString());
           }
-          else if (metadataKeys.get(key).equals("User")) {
+          else if (METADATA_KEYS.get(key).equals("User")) {
             userName = blockData.get(key).toString();
           }
         }

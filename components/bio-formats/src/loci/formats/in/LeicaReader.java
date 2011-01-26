@@ -114,9 +114,7 @@ public class LeicaReader extends FormatReader {
     return h;
   }
 
-  // -- Static fields --
-
-  private static Hashtable<Integer, String> dimensionNames =
+  private static final Hashtable<Integer, String> DIMENSION_NAMES =
     makeDimensionTable();
 
   // -- Fields --
@@ -977,7 +975,7 @@ public class LeicaReader extends FormatReader {
     len = in.readInt();
     for (int j=0; j<len; j++) {
       int dimId = in.readInt();
-      String dimType = dimensionNames.get(new Integer(dimId));
+      String dimType = DIMENSION_NAMES.get(new Integer(dimId));
       if (dimType == null) dimType = "";
 
       int size = in.readInt();
