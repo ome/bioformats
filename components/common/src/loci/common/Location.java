@@ -111,6 +111,17 @@ public class Location {
   // -- Location API methods --
 
   /**
+   * Clear all caches and reset cache-related bookkeeping variables to their
+   * original values.
+   */
+  public static void reset() {
+    cacheListings = false;
+    cacheNanos = 60L * 60L * 1000L * 1000L * 1000L;
+    fileListings.clear();
+    idMap.clear();
+  }
+
+  /**
    * Turn cacheing of directory listings on or off.
    * Cacheing is turned off by default.
    *
