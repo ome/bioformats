@@ -30,6 +30,8 @@ import loci.ome.io.OMEReader;
 import loci.ome.io.OMEWriter;
 import loci.ome.io.OmeroReader;
 
+import org.openmicroscopy.ds.dto.Image;
+
 /**
  * @author callan
  *
@@ -48,7 +50,7 @@ public class OMEReaderWriterServiceImpl extends AbstractService
     checkClassDependency(OMEWriter.class);
     checkClassDependency(OmeroReader.class);
     checkClassDependency(omero.model.Image.class);
-    checkClassDependency(org.openmicroscopy.ds.dto.Image.class);
+    checkClassDependency(Image.class);
   }
 
   /* (non-Javadoc)

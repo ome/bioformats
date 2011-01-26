@@ -440,7 +440,7 @@ my %omeroClient = (
   NAME    => "omero-client",
   TITLE   => "OMERO Client",
   JAR     => "omero-client-4.2.0.jar",
-  PACKAGE => "ome.system",
+  PACKAGE => "ome\\(.system\\|ro.api\\)",
   LICENSE => "GPL",
   URL     => "http://trac.openmicroscopy.org.uk/omero/wiki/MilestoneDownloads",
   NOTES   => <<ZZ,
@@ -708,7 +708,7 @@ foreach my $c (@components) {
   my @runtime = ();
   foreach my $line (@lines) {
     $line = rtrim($line);
-    if ($line =~ /^component.classpath/) {
+    if ($line =~ /^component.classpath /) {
       # found the compile-time classpath variable
       $inCompile = 1;
     }
