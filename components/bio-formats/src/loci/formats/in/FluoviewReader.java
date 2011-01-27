@@ -34,6 +34,7 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
+import loci.formats.tiff.TiffRational;
 
 /**
  * FluoviewReader is the file format reader for
@@ -53,10 +54,35 @@ public class FluoviewReader extends BaseTiffReader {
 
   /** String identifying a Fluoview file. */
   private static final String FLUOVIEW_MAGIC_STRING = "FLUOVIEW";
+  private static final String ANDOR_MAGIC_STRING = "Andor";
 
   /** Private TIFF tags */
   private static final int MMHEADER = 34361;
   private static final int MMSTAMP = 34362;
+
+  private static final int TEMPERATURE = 4869;
+  private static final int EXPOSURE_TIME = 4876;
+  private static final int KINETIC_CYCLE_TIME = 4878;
+  private static final int N_ACCUMULATIONS = 4879;
+  private static final int ACQUISITION_CYCLE_TIME = 4881;
+  private static final int READOUT_TIME = 4882;
+  private static final int EM_DAC = 4885;
+  private static final int N_FRAMES = 4890;
+  private static final int HORIZONTAL_FLIP = 4896;
+  private static final int VERTICAL_FLIP = 4897;
+  private static final int CLOCKWISE = 4898;
+  private static final int COUNTER_CLOCKWISE = 4899;
+  private static final int VERTICAL_CLOCK_VOLTAGE = 4904;
+  private static final int VERTICAL_SHIFT_SPEED = 4905;
+  private static final int PRE_AMP_SETTING = 4907;
+  private static final int CAMERA_SERIAL_SETTING = 4908;
+  private static final int ACTUAL_TEMPERATURE = 4911;
+  private static final int BASELINE_CLAMP = 4912;
+  private static final int PRESCANS = 4913;
+  private static final int MODEL = 4914;
+  private static final int CHIP_SIZE_X = 4915;
+  private static final int CHIP_SIZE_Y = 4916;
+  private static final int BASELINE_OFFSET = 4944;
 
   /** Date format */
   private static final String DATE_FORMAT = "MM/dd/yyyy HH:mm:ss.SSS";
@@ -79,6 +105,9 @@ public class FluoviewReader extends BaseTiffReader {
   private String[] gains, voltages, offsets, channelNames, lensNA;
   private String mag, detectorManufacturer, objectiveManufacturer, comment;
 
+  private Float temperature, exposureTime, readoutTime;
+  private String model;
+
   private double[][] montageOffsets;
   private double[][] fieldOffsets;
 
@@ -100,9 +129,10 @@ public class FluoviewReader extends BaseTiffReader {
     if (ifd == null) return false;
     String com = ifd.getComment();
     if (com == null) com = "";
-    return com.indexOf(FLUOVIEW_MAGIC_STRING) != -1 &&
+    return (com.indexOf(FLUOVIEW_MAGIC_STRING) != -1 &&
       ifd.containsKey(new Integer(MMHEADER)) ||
-      ifd.containsKey(new Integer(MMSTAMP));
+      ifd.containsKey(new Integer(MMSTAMP))) ||
+      com.indexOf(ANDOR_MAGIC_STRING) != -1;
   }
 
   /**
@@ -139,6 +169,10 @@ public class FluoviewReader extends BaseTiffReader {
       montageIndex = -1;
       fieldOffsets = null;
       montageOffsets = null;
+      model = null;
+      temperature = null;
+      exposureTime = null;
+      readoutTime = null;
     }
   }
 
@@ -155,8 +189,8 @@ public class FluoviewReader extends BaseTiffReader {
 
     short[] s = ifds.get(0).getIFDShortArray(MMHEADER);
     if (s == null) {
-      throw new FormatException("Invalid Fluoview/Andor TIFF. Tag " +
-        MMHEADER + " not found.");
+      initAlternateMetadata();
+      return;
     }
     byte[] mmheader = shortArrayToBytes(s);
 
@@ -352,6 +386,11 @@ public class FluoviewReader extends BaseTiffReader {
       return;
     }
 
+    if (ifds.get(0).get(MMHEADER) == null) {
+      initAlternateMetadataStore();
+      return;
+    }
+
     store.setImageDescription(comment, 0);
 
     // link Instrument and Image
@@ -415,22 +454,24 @@ public class FluoviewReader extends BaseTiffReader {
 
     // populate LogicalChannel data
 
-    for (int i=0; i<getSizeC(); i++) {
-      if (channelNames[i] != null) {
-        store.setChannelName(channelNames[i].trim(), 0, i);
+    if (channelNames != null) {
+      for (int i=0; i<getSizeC(); i++) {
+        if (channelNames[i] != null) {
+          store.setChannelName(channelNames[i].trim(), 0, i);
+        }
       }
     }
 
     // populate Detector data
 
     for (int i=0; i<getSizeC(); i++) {
-      if (voltages[i] != null) {
+      if (voltages != null && voltages[i] != null) {
         store.setDetectorSettingsVoltage(new Double(voltages[i]), 0, i);
       }
-      if (gains[i] != null) {
+      if (gains != null && gains[i] != null) {
         store.setDetectorSettingsGain(new Double(gains[i]), 0, i);
       }
-      if (offsets[i] != null) {
+      if (offsets != null && offsets[i] != null) {
         store.setDetectorSettingsOffset(new Double(offsets[i]), 0, i);
       }
       store.setDetectorType(getDetectorType("Other"), 0, i);
@@ -466,9 +507,11 @@ public class FluoviewReader extends BaseTiffReader {
       store.setObjectiveCalibratedMagnification(new Double(mag), 0, 0);
     }
 
-    for (int i=0; i<getSizeC(); i++) {
-      if (lensNA[i] != null) {
-        store.setObjectiveLensNA(new Double(lensNA[i]), 0, i);
+    if (lensNA != null) {
+      for (int i=0; i<getSizeC(); i++) {
+        if (lensNA[i] != null) {
+          store.setObjectiveLensNA(new Double(lensNA[i]), 0, i);
+        }
       }
     }
 
@@ -479,6 +522,85 @@ public class FluoviewReader extends BaseTiffReader {
   }
 
   // -- Helper methods --
+
+  private void initAlternateMetadata() throws FormatException, IOException {
+    IFD firstIFD = ifds.get(0);
+
+    temperature = (Float) firstIFD.getIFDValue(TEMPERATURE);
+    exposureTime = (Float) firstIFD.getIFDValue(EXPOSURE_TIME);
+    Float kineticCycleTime = (Float) firstIFD.getIFDValue(KINETIC_CYCLE_TIME);
+    Double nAccumulations = (Double) firstIFD.getIFDValue(N_ACCUMULATIONS);
+    Float acquisitionCycleTime =
+      (Float) firstIFD.getIFDValue(ACQUISITION_CYCLE_TIME);
+    readoutTime = (Float) firstIFD.getIFDValue(READOUT_TIME);
+    Double emDAC = (Double) firstIFD.getIFDValue(EM_DAC);
+    Double nFrames = (Double) firstIFD.getIFDValue(N_FRAMES);
+    Double horizontalFlip = (Double) firstIFD.getIFDValue(HORIZONTAL_FLIP);
+    Double verticalFlip = (Double) firstIFD.getIFDValue(VERTICAL_FLIP);
+    Double clockwise = (Double) firstIFD.getIFDValue(CLOCKWISE);
+    Double counterClockwise = (Double) firstIFD.getIFDValue(COUNTER_CLOCKWISE);
+    Double verticalClockVoltage =
+      (Double) firstIFD.getIFDValue(VERTICAL_CLOCK_VOLTAGE);
+    Float verticalShiftSpeed =
+      (Float) firstIFD.getIFDValue(VERTICAL_SHIFT_SPEED);
+    Float preamp = (Float) firstIFD.getIFDValue(PRE_AMP_SETTING);
+    Double serialSetting = (Double) firstIFD.getIFDValue(CAMERA_SERIAL_SETTING);
+    Float actualTemperature = (Float) firstIFD.getIFDValue(ACTUAL_TEMPERATURE);
+    Double baselineClamp = (Double) firstIFD.getIFDValue(BASELINE_CLAMP);
+    Double prescans = (Double) firstIFD.getIFDValue(PRESCANS);
+    model = firstIFD.getIFDTextValue(MODEL);
+    Double chipSizeX = (Double) firstIFD.getIFDValue(CHIP_SIZE_X);
+    Double chipSizeY = (Double) firstIFD.getIFDValue(CHIP_SIZE_Y);
+    Double baselineOffset = (Double) firstIFD.getIFDValue(BASELINE_OFFSET);
+
+    addGlobalMeta("Temperature", temperature);
+    addGlobalMeta("Exposure time (in seconds)", exposureTime);
+    addGlobalMeta("Kinetic cycle time", kineticCycleTime);
+    addGlobalMeta("Number of accumulations", nAccumulations);
+    addGlobalMeta("Acquisition cycle time", acquisitionCycleTime);
+    addGlobalMeta("Readout time", readoutTime);
+    addGlobalMeta("EM DAC", emDAC);
+    addGlobalMeta("Number of frames", nFrames);
+    addGlobalMeta("Horizontal flip", horizontalFlip);
+    addGlobalMeta("Vertical flip", verticalFlip);
+    addGlobalMeta("Clockwise rotation", clockwise);
+    addGlobalMeta("Counter-clockwise rotation", counterClockwise);
+    addGlobalMeta("Vertical clock voltage", verticalClockVoltage);
+    addGlobalMeta("Vertical shift speed", verticalShiftSpeed);
+    addGlobalMeta("Pre-amp", preamp);
+    addGlobalMeta("Camera serial setting", serialSetting);
+    addGlobalMeta("Actual temperature", actualTemperature);
+    addGlobalMeta("Baseline clamp", baselineClamp);
+    addGlobalMeta("Prescans", prescans);
+    addGlobalMeta("Camera model", model);
+    addGlobalMeta("Chip size X", chipSizeX);
+    addGlobalMeta("Chip size Y", chipSizeY);
+    addGlobalMeta("Baseline offset", baselineOffset);
+  }
+
+  private void initAlternateMetadataStore() throws FormatException {
+    MetadataStore store = makeFilterMetadata();
+    store.setImagingEnvironmentTemperature(
+      new Double(temperature.floatValue()), 0);
+
+    String instrumentID = MetadataTools.createLSID("Instrument", 0);
+    String detectorID = MetadataTools.createLSID("Detector", 0, 0);
+    store.setInstrumentID(instrumentID, 0);
+    store.setDetectorID(detectorID, 0, 0);
+    store.setDetectorModel(model, 0, 0);
+
+    store.setImageInstrumentRef(instrumentID, 0);
+
+    for (int i=0; i<getImageCount(); i++) {
+      store.setPlaneExposureTime(new Double(exposureTime.floatValue()), 0, i);
+    }
+
+    for (int i=0; i<getEffectiveSizeC(); i++) {
+      store.setDetectorSettingsID(detectorID, 0, i);
+      store.setDetectorSettingsReadOutRate(
+        new Double(readoutTime.floatValue()), 0, i);
+    }
+  }
 
   private int getImageIndex(int no) {
     // the 'series' axis can be in any position relative to Z, C and T
