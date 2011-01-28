@@ -211,6 +211,9 @@ the Subversion repository using the command:
       <fileset dir="${bf-cpp.build}" includes="*.jnilib"/>
       <fileset dir="${bf-cpp.build}" includes="*.dll"/>
       <fileset dir="${bf-cpp.build}" includes="*.jar"/>
+      <fileset dir="${bf-cpp.build}" includes="*.exe"/>
+      <fileset dir="${bf-cpp.build}" includes="showinf"/>
+      <fileset dir="${bf-cpp.build}" includes="minimum_writer"/>
       <fileset dir="${jace.build}" includes="*.so"/>
       <fileset dir="${jace.build}" includes="*.dylib"/>
       <fileset dir="${jace.build}" includes="*.jnilib"/>
