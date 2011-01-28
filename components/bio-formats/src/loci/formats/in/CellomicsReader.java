@@ -24,14 +24,21 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 
+import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.codec.ZlibCodec;
 import loci.formats.meta.MetadataStore;
+
+import ome.xml.model.enums.NamingConvention;
+import ome.xml.model.primitives.NonNegativeInteger;
 
 /**
  * Reader for Cellomics C01 files.
@@ -45,6 +52,10 @@ public class CellomicsReader extends FormatReader {
   // -- Constants --
 
   public static final int C01_MAGIC_BYTES = 16;
+
+  // -- Fields --
+
+  private String[] files;
 
   // -- Constructor --
 
@@ -77,11 +88,23 @@ public class CellomicsReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
+    String file = files[getSeries()];
+    RandomAccessInputStream s = getDecompressedStream(file);
+
     int planeSize = FormatTools.getPlaneSize(this);
-    in.seek(52 + no * planeSize);
-    readPlane(in, x, y, w, h, buf);
+    s.seek(52 + no * planeSize);
+    readPlane(s, x, y, w, h, buf);
+    s.close();
 
     return buf;
+  }
+
+  /* @see loci.formats.IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws IOException {
+    super.close(fileOnly);
+    if (!fileOnly) {
+      files = null;
+    }
   }
 
   // -- Internal FormatReader API methods --
@@ -89,17 +112,54 @@ public class CellomicsReader extends FormatReader {
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
-    in = new RandomAccessInputStream(id);
 
-    if (checkSuffix(id, "c01")) {
-      LOGGER.info("Decompressing file");
-      in.seek(4);
-      ZlibCodec codec = new ZlibCodec();
-      byte[] file = codec.decompress(in, null);
-      in.close();
+    // look for files with similar names
+    Location baseFile = new Location(id).getAbsoluteFile();
+    Location parent = baseFile.getParentFile();
+    String[] list = parent.list(true);
+    ArrayList<String> pixelFiles = new ArrayList<String>();
 
-      in = new RandomAccessInputStream(file);
+    String plateName = getPlateName(baseFile.getName());
+
+    for (String f : list) {
+      if (plateName.equals(getPlateName(f)) &&
+        (checkSuffix(f, "c01") || checkSuffix(f, "dib")))
+      {
+        pixelFiles.add(new Location(parent, f).getAbsolutePath());
+      }
     }
+    files = pixelFiles.toArray(new String[pixelFiles.size()]);
+    Arrays.sort(files);
+
+    int wellRows = 0;
+    int wellColumns = 0;
+    int fields = 0;
+
+    ArrayList<String> uniqueRows = new ArrayList<String>();
+    ArrayList<String> uniqueCols = new ArrayList<String>();
+    ArrayList<String> uniqueFields = new ArrayList<String>();
+    for (String f : files) {
+      String wellRow = getWellRow(f);
+      String wellCol = getWellColumn(f);
+      String field = getField(f);
+
+      if (!uniqueRows.contains(wellRow)) uniqueRows.add(wellRow);
+      if (!uniqueCols.contains(wellCol)) uniqueCols.add(wellCol);
+      if (!uniqueFields.contains(field)) uniqueFields.add(field);
+    }
+
+    fields = uniqueFields.size();
+    wellRows = uniqueRows.size();
+    wellColumns = uniqueCols.size();
+
+    core = new CoreMetadata[files.length];
+
+    for (int i=0; i<core.length; i++) {
+      core[i] = new CoreMetadata();
+    }
+
+    in = getDecompressedStream(id);
+
     LOGGER.info("Reading header data");
 
     in.order(true);
@@ -140,15 +200,18 @@ public class CellomicsReader extends FormatReader {
 
     LOGGER.info("Populating core metadata");
 
-    core[0].sizeX = x;
-    core[0].sizeY = y;
-    core[0].sizeZ = nPlanes;
-    core[0].sizeT = 1;
-    core[0].sizeC = 1;
-    core[0].imageCount = getSizeZ();
-    core[0].littleEndian = true;
-    core[0].dimensionOrder = "XYCZT";
-    core[0].pixelType = FormatTools.pixelTypeFromBytes(nBits / 8, false, false);
+    for (int i=0; i<getSeriesCount(); i++) {
+      core[i].sizeX = x;
+      core[i].sizeY = y;
+      core[i].sizeZ = nPlanes;
+      core[i].sizeT = 1;
+      core[i].sizeC = 1;
+      core[i].imageCount = getSizeZ();
+      core[i].littleEndian = true;
+      core[i].dimensionOrder = "XYCZT";
+      core[i].pixelType =
+        FormatTools.pixelTypeFromBytes(nBits / 8, false, false);
+    }
 
     LOGGER.info("Populating metadata store");
 
@@ -156,15 +219,112 @@ public class CellomicsReader extends FormatReader {
     MetadataTools.populatePixels(store, this);
     MetadataTools.setDefaultCreationDate(store, id, 0);
 
+    store.setPlateID(MetadataTools.createLSID("Plate", 0), 0);
+    store.setPlateName(plateName, 0);
+    store.setPlateRowNamingConvention(NamingConvention.LETTER, 0);
+    store.setPlateColumnNamingConvention(NamingConvention.NUMBER, 0);
+
+    int realRows = wellRows;
+    int realCols = wellColumns;
+
+    if (realRows <= 8 && realCols <= 12) {
+      realRows = 8;
+      realCols = 12;
+    }
+    else {
+      realRows = 16;
+      realCols = 24;
+    }
+
+    for (int row=0; row<realRows; row++) {
+      for (int col=0; col<realCols; col++) {
+        int well = row * realCols + col;
+
+        store.setWellID(MetadataTools.createLSID("Well", 0, well), 0, well);
+        store.setWellRow(new NonNegativeInteger(row), 0, well);
+        store.setWellColumn(new NonNegativeInteger(col), 0, well);
+      }
+    }
+
+    for (int i=0; i<getSeriesCount(); i++) {
+      String file = files[i];
+
+      String field = getField(file);
+      String wellRow = getWellRow(file);
+      String wellColumn = getWellColumn(file);
+
+      int row = wellRow.charAt(0) - 'A';
+      int col = Integer.parseInt(wellColumn) - 1;
+
+      int wellIndex = row * realCols + col;
+
+      int fieldIndex = Integer.parseInt(field);
+
+      String wellSampleID =
+        MetadataTools.createLSID("WellSample", 0, wellIndex, fieldIndex);
+      store.setWellSampleID(wellSampleID, 0, wellIndex, fieldIndex);
+      store.setWellSampleIndex(
+        new NonNegativeInteger(fieldIndex), 0, wellIndex, fieldIndex);
+
+      String imageID = MetadataTools.createLSID("Image", i);
+      store.setImageID(imageID, i);
+      store.setWellSampleImageRef(imageID, 0, wellIndex, fieldIndex);
+
+      store.setImageName(
+        "Well " + wellRow + wellColumn + ", Field #" + field, i);
+    }
+
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       // physical dimensions are stored as pixels per meter - we want them
       // in microns per pixel
       double width = pixelWidth == 0 ? 0.0 : 1000000.0 / pixelWidth;
       double height = pixelHeight == 0 ? 0.0 : 1000000.0 / pixelHeight;
 
-      store.setPixelsPhysicalSizeX(width, 0);
-      store.setPixelsPhysicalSizeY(height, 0);
+      for (int i=0; i<getSeriesCount(); i++) {
+        store.setPixelsPhysicalSizeX(width, 0);
+        store.setPixelsPhysicalSizeY(height, 0);
+      }
     }
+  }
+
+  // -- Helper methods --
+
+  private String getPlateName(String filename) {
+    return filename.substring(0, filename.lastIndexOf("_"));
+  }
+
+  private String getWellName(String filename) {
+    return filename.substring(filename.lastIndexOf("_") + 1);
+  }
+
+  private String getWellRow(String filename) {
+    return getWellName(filename).substring(0, 1);
+  }
+
+  private String getWellColumn(String filename) {
+    return getWellName(filename).substring(1, 3);
+  }
+
+  private String getField(String filename) {
+    String well = getWellName(filename);
+    return well.substring(well.indexOf("f") + 1, well.indexOf("d"));
+  }
+
+  private RandomAccessInputStream getDecompressedStream(String filename)
+    throws FormatException, IOException
+  {
+    RandomAccessInputStream s = new RandomAccessInputStream(filename);
+    if (checkSuffix(filename, "c01")) {
+      LOGGER.info("Decompressing file");
+
+      s.seek(4);
+      ZlibCodec codec = new ZlibCodec();
+      byte[] file = codec.decompress(s, null);
+      s.close();
+
+      return new RandomAccessInputStream(file);
+    }
+    return s;
   }
 
 }
