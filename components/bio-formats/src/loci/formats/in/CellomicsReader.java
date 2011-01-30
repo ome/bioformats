@@ -77,7 +77,7 @@ public class CellomicsReader extends FormatReader {
   /* @see loci.formats.IFormatReader#getDomains() */
   public String[] getDomains() {
     FormatTools.assertId(currentId, true, 1);
-    return new String[] {FormatTools.LM_DOMAIN};
+    return new String[] {FormatTools.HCS_DOMAIN};
   }
 
   /**
@@ -121,13 +121,17 @@ public class CellomicsReader extends FormatReader {
 
     String plateName = getPlateName(baseFile.getName());
 
-    for (String f : list) {
-      if (plateName.equals(getPlateName(f)) &&
-        (checkSuffix(f, "c01") || checkSuffix(f, "dib")))
-      {
-        pixelFiles.add(new Location(parent, f).getAbsolutePath());
+    if (plateName != null) {
+      for (String f : list) {
+        if (plateName.equals(getPlateName(f)) &&
+          (checkSuffix(f, "c01") || checkSuffix(f, "dib")))
+        {
+          pixelFiles.add(new Location(parent, f).getAbsolutePath());
+        }
       }
     }
+    else pixelFiles.add(id);
+
     files = pixelFiles.toArray(new String[pixelFiles.size()]);
     Arrays.sort(files);
 
@@ -258,7 +262,7 @@ public class CellomicsReader extends FormatReader {
 
       int wellIndex = row * realCols + col;
 
-      int fieldIndex = Integer.parseInt(field);
+      int fieldIndex = i % fields;
 
       String wellSampleID =
         MetadataTools.createLSID("WellSample", 0, wellIndex, fieldIndex);
@@ -290,11 +294,19 @@ public class CellomicsReader extends FormatReader {
   // -- Helper methods --
 
   private String getPlateName(String filename) {
-    return filename.substring(0, filename.lastIndexOf("_"));
+    int underscore = filename.lastIndexOf("_");
+    if (underscore < 0) return null;
+    return filename.substring(0, underscore);
   }
 
   private String getWellName(String filename) {
-    return filename.substring(filename.lastIndexOf("_") + 1);
+    String wellName = filename.substring(filename.lastIndexOf("_") + 1);
+    while (!Character.isLetter(wellName.charAt(0)) ||
+      !Character.isDigit(wellName.charAt(1)))
+    {
+      wellName = wellName.substring(1, wellName.length());
+    }
+    return wellName;
   }
 
   private String getWellRow(String filename) {
@@ -307,7 +319,9 @@ public class CellomicsReader extends FormatReader {
 
   private String getField(String filename) {
     String well = getWellName(filename);
-    return well.substring(well.indexOf("f") + 1, well.indexOf("d"));
+    int start = well.indexOf("f") + 1;
+    int end = start + 2;
+    return well.substring(start, end);
   }
 
   private RandomAccessInputStream getDecompressedStream(String filename)
