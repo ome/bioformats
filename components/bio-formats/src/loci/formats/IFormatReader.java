@@ -53,7 +53,8 @@ public interface IFormatReader extends IFormatHandler, IMetadataConfigurable {
    * @param open If true, and the file extension is insufficient to determine
    *   the file type, the file may be opened for further analysis, or other
    *   relatively expensive file system operations (such as file existence
-   *   tests and directory listings) may be performed.
+   *   tests and directory listings) may be performed.  If false, file system
+   *   access is not allowed.
    */
   boolean isThisType(String name, boolean open);
 

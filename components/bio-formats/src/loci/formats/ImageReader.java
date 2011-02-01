@@ -97,6 +97,8 @@ public class ImageReader implements IFormatReader {
   /** Current form index. */
   private int current;
 
+  private boolean allowOpen = true;
+
   // -- Constructors --
 
   /**
@@ -131,6 +133,14 @@ public class ImageReader implements IFormatReader {
 
   // -- ImageReader API methods --
 
+  /**
+   * Toggles whether or not file system access is allowed when doing type
+   * detection.  By default, file system access is allowed.
+   */
+  public void setAllowOpenFiles(boolean allowOpen) {
+    this.allowOpen = allowOpen;
+  }
+
   /** Gets a string describing the file format for the given file. */
   public String getFormat(String id) throws FormatException, IOException {
     return getReader(id).getFormat();
@@ -151,7 +161,7 @@ public class ImageReader implements IFormatReader {
       // initialize file
       boolean success = false;
       for (int i=0; i<readers.length; i++) {
-        if (readers[i].isThisType(id)) {
+        if (readers[i].isThisType(id, allowOpen)) {
           current = i;
           currentId = id;
           success = true;
