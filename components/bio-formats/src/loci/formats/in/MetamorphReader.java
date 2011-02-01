@@ -198,7 +198,10 @@ public class MetamorphReader extends BaseTiffReader {
     int ndx = no / getSizeZ();
     if (stks[series].length == 1) ndx = 0;
     String file = stks[series][ndx];
-    if (file == null) return buf;
+    if (file == null) {
+      Arrays.fill(buf, (byte) 0);
+      return buf;
+    }
 
     // the original file is a .nd file, so we need to construct a new reader
     // for the constituent STK files
