@@ -85,7 +85,7 @@ public class FormatReaderTestFactory {
         LOGGER.error("   ant -D{}=\"/path/to/data\" test-all", baseDirProp);
         return new Object[0];
       }
-      FormatReaderTest.config = new ConfigurationTree(baseDir);
+      FormatReaderTest.configTree = new ConfigurationTree(baseDir);
 
       // create log file
       TestTools.createLogFile();
@@ -114,7 +114,7 @@ public class FormatReaderTestFactory {
       // scan for files
       System.out.println("Scanning for files...");
       long start = System.currentTimeMillis();
-      TestTools.getFiles(baseDir, files, FormatReaderTest.config);
+      TestTools.getFiles(baseDir, files, FormatReaderTest.configTree);
       long end = System.currentTimeMillis();
       double time = (end - start) / 1000.0;
       LOGGER.info(TestTools.DIVIDER);
