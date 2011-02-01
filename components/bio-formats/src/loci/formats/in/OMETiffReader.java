@@ -230,6 +230,20 @@ public class OMETiffReader extends FormatReader {
   /* @see loci.formats.IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
+    if (info != null) {
+      for (OMETiffPlane[] dimension : info) {
+        for (OMETiffPlane plane : dimension) {
+          if (plane.reader != null) {
+            try {
+              plane.reader.close();
+            }
+            catch (Exception e) {
+              LOGGER.error("Plane closure failure!", e);
+            }
+          }
+        }
+      }
+    }
     if (!fileOnly) {
       info = null;
       used = null;
