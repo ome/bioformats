@@ -548,15 +548,19 @@ public class OMETiffReader extends FormatReader {
             meta.getImageID(i), no);
           TiffReader r = new TiffReader();
           r.setId(currentId);
-          planes = new OMETiffPlane[r.getImageCount()];
-          for (int plane=0; plane<planes.length; plane++) {
-            planes[plane] = new OMETiffPlane();
-            planes[plane].id = currentId;
-            planes[plane].reader = r;
-            planes[plane].ifd = plane;
+          try {
+            planes = new OMETiffPlane[r.getImageCount()];
+            for (int plane=0; plane<planes.length; plane++) {
+              planes[plane] = new OMETiffPlane();
+              planes[plane].id = currentId;
+              planes[plane].reader = r;
+              planes[plane].ifd = plane;
+            }
+            num = planes.length;
           }
-          num = planes.length;
-          r.close();
+          finally {
+            r.close();
+          }
         }
       }
       LOGGER.debug("  }");
