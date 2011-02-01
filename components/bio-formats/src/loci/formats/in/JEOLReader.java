@@ -61,7 +61,7 @@ public class JEOLReader extends FormatReader {
   /* @see loci.formats.IFormatReader#isThisType(String) */
   public boolean isThisType(String name, boolean open) {
     if (checkSuffix(name, "par")) return true;
-    if (checkSuffix(name, "dat")) {
+    if (checkSuffix(name, "dat") && open) {
       try {
         RandomAccessInputStream stream = new RandomAccessInputStream(name);
         if (stream.length() == (1024 * 1024)) return true;

@@ -72,6 +72,8 @@ public class AnalyzeReader extends FormatReader {
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
   public boolean isThisType(String name, boolean open) {
     if (!super.isThisType(name, open)) return false;
+    if (!open) return false;
+
     String headerFile = checkSuffix(name, "hdr") ? name : null;
     String extension = name.substring(name.lastIndexOf(".") + 1);
     name = name.substring(0, name.lastIndexOf("."));

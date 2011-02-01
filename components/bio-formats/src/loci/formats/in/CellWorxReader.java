@@ -78,6 +78,7 @@ public class CellWorxReader extends FormatReader {
     if (checkSuffix(name, "pnl") || checkSuffix(name, "htd")) {
       return super.isThisType(name, open);
     }
+    if (!open) return false;
 
     boolean foundHTD = false;
     boolean foundPNL = false;

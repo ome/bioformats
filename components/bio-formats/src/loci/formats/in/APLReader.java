@@ -75,7 +75,7 @@ public class APLReader extends FormatReader {
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
   public boolean isThisType(String name, boolean open) {
     if (checkSuffix(name, METADATA_SUFFIXES)) return true;
-    if (checkSuffix(name, "tif")) {
+    if (checkSuffix(name, "tif") && open) {
       Location file = new Location(name).getAbsoluteFile();
       Location parent = file.getParentFile();
       if (parent != null) {

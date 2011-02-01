@@ -86,6 +86,7 @@ public class NRRDReader extends FormatReader {
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
   public boolean isThisType(String name, boolean open) {
     if (super.isThisType(name, open)) return true;
+    if (!open) return false;
 
     // look for a matching .nhdr file
     return new Location(name + ".nhdr").exists();

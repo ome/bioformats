@@ -104,7 +104,8 @@ public class InCellReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
   public boolean isThisType(String name, boolean open) {
-    if (checkSuffix(name, PIXELS_SUFFIXES) || checkSuffix(name, "xlog")) {
+    if (checkSuffix(name, PIXELS_SUFFIXES) || checkSuffix(name, "xlog") && open)
+    {
       Location file = new Location(name).getAbsoluteFile().getParentFile();
       String[] list = file.list(true);
       for (String f : list) {
