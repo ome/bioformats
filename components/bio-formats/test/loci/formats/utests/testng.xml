@@ -100,4 +100,10 @@
         <class name="loci.formats.utests.ScreenDetectionTest"/>
       </classes>
     </test>
+    <test name="IsThisType">
+      <groups/>
+      <classes>
+        <class name="loci.formats.utests.IsThisTypeTests"/>
+      </classes>
+    </test>
 </suite>
