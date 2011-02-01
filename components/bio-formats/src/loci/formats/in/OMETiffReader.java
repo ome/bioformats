@@ -230,6 +230,20 @@ public class OMETiffReader extends FormatReader {
   /* @see loci.formats.IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
+    if (info != null) {
+      for (OMETiffPlane[] dimension : info) {
+        for (OMETiffPlane plane : dimension) {
+          if (plane.reader != null) {
+            try {
+              plane.reader.close();
+            }
+            catch (Exception e) {
+              LOGGER.error("Plane closure failure!", e);
+            }
+          }
+        }
+      }
+    }
     if (!fileOnly) {
       info = null;
       used = null;
@@ -263,10 +277,16 @@ public class OMETiffReader extends FormatReader {
     // parse and populate OME-XML metadata
     String fileName = new Location(id).getAbsoluteFile().getAbsolutePath();
     RandomAccessInputStream ras = new RandomAccessInputStream(fileName);
-    TiffParser tp = new TiffParser(ras);
-    IFD firstIFD = tp.getFirstIFD();
-    ras.close();
-    String xml = firstIFD.getComment();
+    String xml;
+    IFD firstIFD;
+    try {
+      TiffParser tp = new TiffParser(ras);
+      firstIFD = tp.getFirstIFD();
+      xml = firstIFD.getComment();
+    }
+    finally {
+      ras.close();
+    }
 
     if (service == null) setupService();
     OMEXMLMetadata meta;
@@ -542,15 +562,19 @@ public class OMETiffReader extends FormatReader {
             meta.getImageID(i), no);
           TiffReader r = new TiffReader();
           r.setId(currentId);
-          planes = new OMETiffPlane[r.getImageCount()];
-          for (int plane=0; plane<planes.length; plane++) {
-            planes[plane] = new OMETiffPlane();
-            planes[plane].id = currentId;
-            planes[plane].reader = r;
-            planes[plane].ifd = plane;
+          try {
+            planes = new OMETiffPlane[r.getImageCount()];
+            for (int plane=0; plane<planes.length; plane++) {
+              planes[plane] = new OMETiffPlane();
+              planes[plane].id = currentId;
+              planes[plane].reader = r;
+              planes[plane].ifd = plane;
+            }
+            num = planes.length;
           }
-          num = planes.length;
-          r.close();
+          finally {
+            r.close();
+          }
         }
       }
       LOGGER.debug("  }");
