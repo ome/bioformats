@@ -1128,6 +1128,19 @@ public class FormatReaderTest {
   /**
    * @testng.test groups = "all fast"
    */
+  public void testIsThisTypeConsistent() {
+    String testName = "testIsThisTypeConsistent";
+    if (!initFile()) result(testName, false, "initFile");
+
+    String file = reader.getCurrentFile();
+    boolean isThisTypeOpen = reader.isThisType(file, false);
+    boolean isThisTypeNotOpen = reader.isThisType(file, true);
+    result(testName, isThisTypeOpen == isThisTypeNotOpen);
+  }
+
+  /**
+   * @testng.test groups = "all fast"
+   */
   public void testIsThisType() {
     String testName = "testIsThisType";
     if (!initFile()) result(testName, false, "initFile");
