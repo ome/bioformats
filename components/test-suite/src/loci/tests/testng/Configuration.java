@@ -210,7 +210,7 @@ public class Configuration {
   }
 
   public String getImageName() {
-    return currentTable.get(IMAGE_NAME);
+    return currentTable.get(NAME);
   }
 
   public void setSeries(int series) {

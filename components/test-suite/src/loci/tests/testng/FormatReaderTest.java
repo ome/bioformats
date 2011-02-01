@@ -724,7 +724,9 @@ public class FormatReaderTest {
       reader.setSeries(i);
       config.setSeries(i);
 
-      if (reader.getPixelType() != config.getPixelType()) {
+      if (reader.getPixelType() !=
+        FormatTools.pixelTypeFromString(config.getPixelType()))
+      {
         result(testName, false, "Series " + i);
       }
     }
@@ -877,6 +879,7 @@ public class FormatReaderTest {
   /**
    * @testng.test groups = "all fast"
    */
+  /*
   public void testEmissionWavelengths() {
     if (config == null) throw new SkipException("No config tree");
     String testName = "EmissionWavelengths";
@@ -896,10 +899,12 @@ public class FormatReaderTest {
     }
     result(testName, true);
   }
+  */
 
   /**
    * @testng.test groups = "all fast"
    */
+  /*
   public void testExcitationWavelengths() {
     if (config == null) throw new SkipException("No config tree");
     String testName = "ExcitationWavelengths";
@@ -919,6 +924,7 @@ public class FormatReaderTest {
     }
     result(testName, true);
   }
+  */
 
   /**
    * @testng.test groups = "all fast"
@@ -945,6 +951,7 @@ public class FormatReaderTest {
   /**
    * @testng.test groups = "all fast"
    */
+  /*
   public void testImageNames() {
     if (config == null) throw new SkipException("No config tree");
     String testName = "ImageNames";
@@ -960,6 +967,7 @@ public class FormatReaderTest {
     }
     result(testName, true);
   }
+  */
 
   /**
    * @testng.test groups = "all"
@@ -1034,7 +1042,7 @@ public class FormatReaderTest {
       else {
         Arrays.sort(base);
         IFormatReader r =
-          config.noStitching() ? new ImageReader() : new FileStitcher();
+          /*config.noStitching() ? new ImageReader() :*/ new FileStitcher();
 
         for (int i=0; i<base.length && success; i++) {
           r.setId(base[i]);
@@ -1300,16 +1308,18 @@ public class FormatReaderTest {
 
     // initialize configuration tree
     if (config == null) {
-      config = configTree.get(id);
+      //config = configTree.get(id);
     }
 
     if (reader == null) {
+      /*
       if (config.noStitching()) {
         reader = new BufferedImageReader();
       }
       else {
+      */
         reader = new BufferedImageReader(new FileStitcher());
-      }
+      //}
       reader.setNormalized(true);
       reader.setMetadataFiltered(true);
       MetadataStore store = null;
