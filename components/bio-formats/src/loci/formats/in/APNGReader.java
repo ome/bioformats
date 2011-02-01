@@ -228,7 +228,9 @@ public class APNGReader extends BIFormatReader {
       }
       else in.skipBytes(length);
 
-      in.skipBytes(4); // skip the CRC
+      if (in.getFilePointer() < in.length() - 4) {
+        in.skipBytes(4); // skip the CRC
+      }
     }
 
     if (core[0].imageCount == 0) core[0].imageCount = 1;

@@ -88,12 +88,10 @@ public class ExtensionFileFilter extends FileFilter
   public boolean accept(File f) {
     if (f.isDirectory()) return true;
 
-    String name = f.getName();
-    int index = name.lastIndexOf('.');
-    String ext = index < 0 ? "" : name.substring(index + 1);
+    String name = f.getName().toLowerCase();
 
     for (int i=0; i<exts.length; i++) {
-      if (ext.equalsIgnoreCase(exts[i])) return true;
+      if (name.endsWith(exts[i].toLowerCase())) return true;
     }
 
     return false;

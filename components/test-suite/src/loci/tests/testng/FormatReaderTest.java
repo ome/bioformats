@@ -56,6 +56,7 @@ import loci.formats.in.BioRadReader;
 import loci.formats.in.NRRDReader;
 import loci.formats.in.OMETiffReader;
 import loci.formats.in.TiffReader;
+import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.OMEXMLService;
@@ -92,7 +93,7 @@ public class FormatReaderTest {
   // -- Static fields --
 
   /** Configuration tree structure containing dataset metadata. */
-  public static ConfigurationTree config;
+  public static ConfigurationTree configTree;
 
   /** List of files to skip. */
   private static List<String> skipFiles = new LinkedList<String>();
@@ -104,6 +105,7 @@ public class FormatReaderTest {
 
   private String id;
   private boolean skip = false;
+  private Configuration config;
 
   /**
    * Multiplier for use adjusting timing values. Slower machines take longer to
@@ -480,132 +482,492 @@ public class FormatReaderTest {
     result(testName, msg == null, msg);
   }
 
+  // -- Consistency tests --
 
   /**
    * @testng.test groups = "all fast"
    */
-  public void testConsistent() {
+  public void testSizeX() {
     if (config == null) throw new SkipException("No config tree");
-    String testName = "testConsistent";
+    String testName = "SizeX";
     if (!initFile()) result(testName, false, "initFile");
-    boolean success = true;
-    String msg = null;
-    try {
-      int numSeries = config.getNumSeries();
-      if (numSeries == 0) {
-        success = false;
-        msg = "no configuration";
-      }
-      else if (reader.getSeriesCount() != numSeries) {
-        success = false;
-        msg = "series counts differ: was " +
-          reader.getSeriesCount() + ", expected " + numSeries;
-      }
 
-      for (int i=0; i<numSeries && success; i++) {
-        reader.setSeries(i);
-        config.setSeries(i);
+    for (int i=0; i<reader.getSeriesCount(); i++) {
+      reader.setSeries(i);
+      config.setSeries(i);
 
-        int actualX = reader.getSizeX();
-        int expectedX = config.getX();
-        boolean passX = actualX == expectedX;
-        if (!passX) msg = "SizeX: was " + actualX + ", expected " + expectedX;
-
-        int actualY = reader.getSizeY();
-        int expectedY = config.getY();
-        boolean passY = actualY == expectedY;
-        if (!passY) msg = "SizeY: was " + actualY + ", expected " + expectedY;
-
-        int actualZ = reader.getSizeZ();
-        int expectedZ = config.getZ();
-        boolean passZ = actualZ == expectedZ;
-        if (!passZ) msg = "SizeZ: was " + actualZ + ", expected " + expectedZ;
-
-        int actualC = reader.getSizeC();
-        int expectedC = config.getC();
-        boolean passC = actualC == expectedC;
-        if (!passC) msg = "SizeC: was " + actualC + ", expected " + expectedC;
-
-        int actualT = reader.getSizeT();
-        int expectedT = config.getT();
-        boolean passT = actualT == expectedT;
-        if (!passT) msg = "SizeT: was " + actualT + ", expected " + expectedT;
-
-        String actualDim = reader.getDimensionOrder();
-        String expectedDim = config.getOrder();
-        boolean passDim = expectedDim.equals(actualDim);
-        if (!passDim) {
-          msg = "DimensionOrder: was " + actualDim +
-            ", expected " + expectedDim;
-        }
-
-        boolean actualInt = reader.isInterleaved();
-        boolean expectedInt = config.isInterleaved();
-        boolean passInt = actualInt == expectedInt;
-        if (!passInt) {
-          msg = "interleaved: was " + actualInt + ", expected " + expectedInt;
-        }
-
-        boolean actualRGB = reader.isRGB();
-        boolean expectedRGB = config.isRGB();
-        boolean passRGB = actualRGB == expectedRGB;
-        if (!passRGB) {
-          msg = "RGB: was " + actualRGB + ", expected " + expectedRGB;
-        }
-
-        int actualTX = reader.getThumbSizeX();
-        int expectedTX = config.getThumbX();
-        boolean passTX = actualTX == expectedTX;
-        if (!passTX) {
-          msg = "ThumbSizeX: was " + actualTX + ", expected " + expectedTX;
-        }
-
-        int actualTY = reader.getThumbSizeY();
-        int expectedTY = config.getThumbY();
-        boolean passTY = actualTY == expectedTY;
-        if (!passTY) {
-          msg = "ThumbSizeY: was " + actualTY + ", expected " + expectedTY;
-        }
-
-        int actualType = reader.getPixelType();
-        int expectedType = config.getPixelType();
-        boolean passType = actualType == expectedType;
-        if (!passType) {
-          msg = "PixelType: was " + actualType + ", expected " + expectedType;
-        }
-
-        boolean actualLE = reader.isLittleEndian();
-        boolean expectedLE = config.isLittleEndian();
-        boolean passLE = actualLE == expectedLE;
-        if (!passLE) {
-          msg = "little-endian: was " + actualLE + ", expected " + expectedLE;
-        }
-
-        boolean passIndexed = config.isIndexed() == reader.isIndexed();
-        if (!passIndexed) {
-          msg = "Indexed: was " + reader.isIndexed() + ", expected " +
-            config.isIndexed();
-        }
-
-        boolean passFalseColor =
-          config.isFalseColor() == reader.isFalseColor();
-
-        if (!passFalseColor) {
-          msg = "FalseColor: was " + reader.isFalseColor() + ", expected " +
-            config.isFalseColor();
-        }
-
-        success = passX && passY && passZ && passC && passT && passDim &&
-          passInt && passRGB && passTX && passTY && passType && passLE &&
-          passIndexed && passFalseColor;
+      if (reader.getSizeX() != config.getSizeX()) {
+        result(testName, false, "Series " + i);
       }
     }
-    catch (Throwable t) {
-      LOGGER.info("", t);
-      success = false;
-    }
-    result(testName, success, msg);
+    result(testName, true);
   }
+
+  /**
+   * @testng.test groups = "all fast"
+   */
+  public void testSizeY() {
+    if (config == null) throw new SkipException("No config tree");
+    String testName = "SizeY";
+    if (!initFile()) result(testName, false, "initFile");
+
+    for (int i=0; i<reader.getSeriesCount(); i++) {
+      reader.setSeries(i);
+      config.setSeries(i);
+
+      if (reader.getSizeY() != config.getSizeY()) {
+        result(testName, false, "Series " + i);
+      }
+    }
+    result(testName, true);
+  }
+
+  /**
+   * @testng.test groups = "all fast"
+   */
+  public void testSizeZ() {
+    if (config == null) throw new SkipException("No config tree");
+    String testName = "SizeZ";
+    if (!initFile()) result(testName, false, "initFile");
+
+    for (int i=0; i<reader.getSeriesCount(); i++) {
+      reader.setSeries(i);
+      config.setSeries(i);
+
+      if (reader.getSizeZ() != config.getSizeZ()) {
+        result(testName, false, "Series " + i);
+      }
+    }
+    result(testName, true);
+  }
+
+  /**
+   * @testng.test groups = "all fast"
+   */
+  public void testSizeC() {
+    if (config == null) throw new SkipException("No config tree");
+    String testName = "SizeC";
+    if (!initFile()) result(testName, false, "initFile");
+
+    for (int i=0; i<reader.getSeriesCount(); i++) {
+      reader.setSeries(i);
+      config.setSeries(i);
+
+      if (reader.getSizeC() != config.getSizeC()) {
+        result(testName, false, "Series " + i);
+      }
+    }
+    result(testName, true);
+  }
+
+  /**
+   * @testng.test groups = "all fast"
+   */
+  public void testSizeT() {
+    if (config == null) throw new SkipException("No config tree");
+    String testName = "SizeT";
+    if (!initFile()) result(testName, false, "initFile");
+
+    for (int i=0; i<reader.getSeriesCount(); i++) {
+      reader.setSeries(i);
+      config.setSeries(i);
+
+      if (reader.getSizeT() != config.getSizeT()) {
+        result(testName, false, "Series " + i);
+      }
+    }
+    result(testName, true);
+  }
+
+  /**
+   * @testng.test groups = "all fast"
+   */
+  public void testDimensionOrder() {
+    if (config == null) throw new SkipException("No config tree");
+    String testName = "DimensionOrder";
+    if (!initFile()) result(testName, false, "initFile");
+
+    for (int i=0; i<reader.getSeriesCount(); i++) {
+      reader.setSeries(i);
+      config.setSeries(i);
+
+      if (reader.getDimensionOrder() != config.getDimensionOrder()) {
+        result(testName, false, "Series " + i);
+      }
+    }
+    result(testName, true);
+  }
+
+  /**
+   * @testng.test groups = "all fast"
+   */
+  public void testIsInterleaved() {
+    if (config == null) throw new SkipException("No config tree");
+    String testName = "Interleaved";
+    if (!initFile()) result(testName, false, "initFile");
+
+    for (int i=0; i<reader.getSeriesCount(); i++) {
+      reader.setSeries(i);
+      config.setSeries(i);
+
+      if (reader.isInterleaved() != config.isInterleaved()) {
+        result(testName, false, "Series " + i);
+      }
+    }
+    result(testName, true);
+  }
+
+  /**
+   * @testng.test groups = "all fast"
+   */
+  public void testIndexed() {
+    if (config == null) throw new SkipException("No config tree");
+    String testName = "Indexed";
+    if (!initFile()) result(testName, false, "initFile");
+
+    for (int i=0; i<reader.getSeriesCount(); i++) {
+      reader.setSeries(i);
+      config.setSeries(i);
+
+      if (reader.isIndexed() != config.isIndexed()) {
+        result(testName, false, "Series " + i);
+      }
+    }
+    result(testName, true);
+  }
+
+  /**
+   * @testng.test groups = "all fast"
+   */
+  public void testFalseColor() {
+    if (config == null) throw new SkipException("No config tree");
+    String testName = "FalseColor";
+    if (!initFile()) result(testName, false, "initFile");
+
+    for (int i=0; i<reader.getSeriesCount(); i++) {
+      reader.setSeries(i);
+      config.setSeries(i);
+
+      if (reader.isFalseColor() != config.isFalseColor()) {
+        result(testName, false, "Series " + i);
+      }
+    }
+    result(testName, true);
+  }
+
+  /**
+   * @testng.test groups = "all fast"
+   */
+  public void testRGB() {
+    if (config == null) throw new SkipException("No config tree");
+    String testName = "RGB";
+    if (!initFile()) result(testName, false, "initFile");
+
+    for (int i=0; i<reader.getSeriesCount(); i++) {
+      reader.setSeries(i);
+      config.setSeries(i);
+
+      if (reader.isRGB() != config.isRGB()) {
+        result(testName, false, "Series " + i);
+      }
+    }
+    result(testName, true);
+  }
+
+  /**
+   * @testng.test groups = "all fast"
+   */
+  public void testThumbSizeX() {
+    if (config == null) throw new SkipException("No config tree");
+    String testName = "ThumbSizeX";
+    if (!initFile()) result(testName, false, "initFile");
+
+    for (int i=0; i<reader.getSeriesCount(); i++) {
+      reader.setSeries(i);
+      config.setSeries(i);
+
+      if (reader.getThumbSizeX() != config.getThumbSizeX()) {
+        result(testName, false, "Series " + i);
+      }
+    }
+    result(testName, true);
+  }
+
+  /**
+   * @testng.test groups = "all fast"
+   */
+  public void testThumbSizeY() {
+    if (config == null) throw new SkipException("No config tree");
+    String testName = "ThumbSizeY";
+    if (!initFile()) result(testName, false, "initFile");
+
+    for (int i=0; i<reader.getSeriesCount(); i++) {
+      reader.setSeries(i);
+      config.setSeries(i);
+
+      if (reader.getThumbSizeY() != config.getThumbSizeY()) {
+        result(testName, false, "Series " + i);
+      }
+    }
+    result(testName, true);
+  }
+
+  /**
+   * @testng.test groups = "all fast"
+   */
+  public void testPixelType() {
+    if (config == null) throw new SkipException("No config tree");
+    String testName = "PixelType";
+    if (!initFile()) result(testName, false, "initFile");
+
+    for (int i=0; i<reader.getSeriesCount(); i++) {
+      reader.setSeries(i);
+      config.setSeries(i);
+
+      if (reader.getPixelType() !=
+        FormatTools.pixelTypeFromString(config.getPixelType()))
+      {
+        result(testName, false, "Series " + i);
+      }
+    }
+    result(testName, true);
+  }
+
+  /**
+   * @testng.test groups = "all fast"
+   */
+  public void testLittleEndian() {
+    if (config == null) throw new SkipException("No config tree");
+    String testName = "LittleEndian";
+    if (!initFile()) result(testName, false, "initFile");
+
+    for (int i=0; i<reader.getSeriesCount(); i++) {
+      reader.setSeries(i);
+      config.setSeries(i);
+
+      if (reader.isLittleEndian() != config.isLittleEndian()) {
+        result(testName, false, "Series " + i);
+      }
+    }
+    result(testName, true);
+  }
+
+  /**
+   * @testng.test groups = "all fast"
+   */
+  public void testPhysicalSizeX() {
+    if (config == null) throw new SkipException("No config tree");
+    String testName = "PhysicalSizeX";
+    if (!initFile()) result(testName, false, "initFile");
+    IMetadata retrieve = (IMetadata) reader.getMetadataStore();
+
+    for (int i=0; i<reader.getSeriesCount(); i++) {
+      config.setSeries(i);
+
+      if (!config.getPhysicalSizeX().equals(retrieve.getPixelsPhysicalSizeX(i)))
+      {
+        result(testName, false, "Series " + i);
+      }
+    }
+    result(testName, true);
+  }
+
+  /**
+   * @testng.test groups = "all fast"
+   */
+  public void testPhysicalSizeY() {
+    if (config == null) throw new SkipException("No config tree");
+    String testName = "PhysicalSizeY";
+    if (!initFile()) result(testName, false, "initFile");
+    IMetadata retrieve = (IMetadata) reader.getMetadataStore();
+
+    for (int i=0; i<reader.getSeriesCount(); i++) {
+      config.setSeries(i);
+
+      if (!config.getPhysicalSizeY().equals(retrieve.getPixelsPhysicalSizeY(i)))
+      {
+        result(testName, false, "Series " + i);
+      }
+    }
+    result(testName, true);
+  }
+
+  /**
+   * @testng.test groups = "all fast"
+   */
+  public void testPhysicalSizeZ() {
+    if (config == null) throw new SkipException("No config tree");
+    String testName = "PhysicalSizeZ";
+    if (!initFile()) result(testName, false, "initFile");
+    IMetadata retrieve = (IMetadata) reader.getMetadataStore();
+
+    for (int i=0; i<reader.getSeriesCount(); i++) {
+      config.setSeries(i);
+
+      if (!config.getPhysicalSizeZ().equals(retrieve.getPixelsPhysicalSizeZ(i)))
+      {
+        result(testName, false, "Series " + i);
+      }
+    }
+    result(testName, true);
+  }
+
+  /**
+   * @testng.test groups = "all fast"
+   */
+  public void testTimeIncrement() {
+    if (config == null) throw new SkipException("No config tree");
+    String testName = "TimeIncrement";
+    if (!initFile()) result(testName, false, "initFile");
+    IMetadata retrieve = (IMetadata) reader.getMetadataStore();
+
+    for (int i=0; i<reader.getSeriesCount(); i++) {
+      config.setSeries(i);
+
+      if (!config.getTimeIncrement().equals(retrieve.getPixelsTimeIncrement(i)))
+      {
+        result(testName, false, "Series " + i);
+      }
+    }
+    result(testName, true);
+  }
+
+  /**
+   * @testng.test groups = "all fast"
+   */
+  public void testLightSources() {
+    if (config == null) throw new SkipException("No config tree");
+    String testName = "LightSources";
+    if (!initFile()) result(testName, false, "initFile");
+    IMetadata retrieve = (IMetadata) reader.getMetadataStore();
+
+    for (int i=0; i<reader.getSeriesCount(); i++) {
+      config.setSeries(i);
+
+      for (int c=0; c<config.getChannelCount(); c++) {
+        if (!config.getLightSource(c).equals(
+          retrieve.getChannelLightSourceSettingsID(i, c)))
+        {
+          result(testName, false, "Series " + i + " channel " + c);
+        }
+      }
+    }
+    result(testName, true);
+  }
+
+  /**
+   * @testng.test groups = "all fast"
+   */
+  public void testChannelNames() {
+    if (config == null) throw new SkipException("No config tree");
+    String testName = "ChannelNames";
+    if (!initFile()) result(testName, false, "initFile");
+    IMetadata retrieve = (IMetadata) reader.getMetadataStore();
+
+    for (int i=0; i<reader.getSeriesCount(); i++) {
+      config.setSeries(i);
+
+      for (int c=0; c<config.getChannelCount(); c++) {
+        if (!config.getChannelName(c).equals(retrieve.getChannelName(i, c))) {
+          result(testName, false, "Series " + i + " channel " + c);
+        }
+      }
+    }
+    result(testName, true);
+  }
+
+  /**
+   * @testng.test groups = "all fast"
+   */
+  /*
+  public void testEmissionWavelengths() {
+    if (config == null) throw new SkipException("No config tree");
+    String testName = "EmissionWavelengths";
+    if (!initFile()) result(testName, false, "initFile");
+    IMetadata retrieve = (IMetadata) reader.getMetadataStore();
+
+    for (int i=0; i<reader.getSeriesCount(); i++) {
+      config.setSeries(i);
+
+      for (int c=0; c<config.getChannelCount(); c++) {
+        if (!config.getEmissionWavelength(c).equals(
+          retrieve.getChannelEmissionWavelength(i, c)))
+        {
+          result(testName, false, "Series " + i + " channel " + c);
+        }
+      }
+    }
+    result(testName, true);
+  }
+  */
+
+  /**
+   * @testng.test groups = "all fast"
+   */
+  /*
+  public void testExcitationWavelengths() {
+    if (config == null) throw new SkipException("No config tree");
+    String testName = "ExcitationWavelengths";
+    if (!initFile()) result(testName, false, "initFile");
+    IMetadata retrieve = (IMetadata) reader.getMetadataStore();
+
+    for (int i=0; i<reader.getSeriesCount(); i++) {
+      config.setSeries(i);
+
+      for (int c=0; c<config.getChannelCount(); c++) {
+        if (!config.getExcitationWavelength(c).equals(
+          retrieve.getChannelExcitationWavelength(i, c)))
+        {
+          result(testName, false, "Series " + i + " channel " + c);
+        }
+      }
+    }
+    result(testName, true);
+  }
+  */
+
+  /**
+   * @testng.test groups = "all fast"
+   */
+  public void testDetectors() {
+    if (config == null) throw new SkipException("No config tree");
+    String testName = "Detectors";
+    if (!initFile()) result(testName, false, "initFile");
+    IMetadata retrieve = (IMetadata) reader.getMetadataStore();
+
+    for (int i=0; i<reader.getSeriesCount(); i++) {
+      config.setSeries(i);
+
+      for (int c=0; c<config.getChannelCount(); c++) {
+        if (!config.getDetector(c).equals(retrieve.getDetectorSettingsID(i, c)))
+        {
+          result(testName, false, "Series " + i + " channel " + c);
+        }
+      }
+    }
+    result(testName, true);
+  }
+
+  /**
+   * @testng.test groups = "all fast"
+   */
+  /*
+  public void testImageNames() {
+    if (config == null) throw new SkipException("No config tree");
+    String testName = "ImageNames";
+    if (!initFile()) result(testName, false, "initFile");
+    IMetadata retrieve = (IMetadata) reader.getMetadataStore();
+
+    for (int i=0; i<reader.getSeriesCount(); i++) {
+      config.setSeries(i);
+
+      if (!config.getImageName().equals(retrieve.getImageName(i))) {
+        result(testName, false, "Series " + i);
+      }
+    }
+    result(testName, true);
+  }
+  */
 
   /**
    * @testng.test groups = "all"
@@ -617,8 +979,8 @@ public class FormatReaderTest {
     boolean success = true;
     String msg = null;
     try {
-      int properMem = config.getMemoryUse();
-      double properTime = config.getTimePerPlane();
+      int properMem = config.getMemory();
+      double properTime = config.getAccessTimeMillis();
       if (properMem == 0 || properTime == 0) {
         success = false;
         msg = "no configuration";
@@ -680,7 +1042,7 @@ public class FormatReaderTest {
       else {
         Arrays.sort(base);
         IFormatReader r =
-          config.noStitching() ? new ImageReader() : new FileStitcher();
+          /*config.noStitching() ? new ImageReader() :*/ new FileStitcher();
 
         for (int i=0; i<base.length && success; i++) {
           r.setId(base[i]);
@@ -746,11 +1108,13 @@ public class FormatReaderTest {
         config.setSeries(i);
 
         String md5 = TestTools.md5(reader.openBytes(0));
-        String expected = config.getMD5();
+        String expected1 = config.getMD5();
+        String expected2 = config.getAlternateMD5();
 
-        if (!md5.equals(expected)) {
+        if (!md5.equals(expected1) && !md5.equals(expected2)) {
           success = false;
-          msg = expected == null ? "no configuration" : "series " + i;
+          msg = expected1 == null && expected2 == null ? "no configuration" :
+            "series " + i;
         }
       }
     }
@@ -943,15 +1307,19 @@ public class FormatReaderTest {
     if (skip) throw new SkipException(SKIP_MESSAGE);
 
     // initialize configuration tree
-    if (config != null) config.setId(id);
+    if (config == null) {
+      //config = configTree.get(id);
+    }
 
     if (reader == null) {
+      /*
       if (config.noStitching()) {
         reader = new BufferedImageReader();
       }
       else {
+      */
         reader = new BufferedImageReader(new FileStitcher());
-      }
+      //}
       reader.setNormalized(true);
       reader.setMetadataFiltered(true);
       MetadataStore store = null;
