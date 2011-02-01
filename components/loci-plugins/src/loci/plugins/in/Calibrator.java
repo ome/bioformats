@@ -98,10 +98,10 @@ public class Calibrator {
       // set calibration only if at least one value is present
       Calibration cal = new Calibration();
       if (hasSpatial) cal.setUnit("micron");
-      if (xcalPresent) cal.pixelWidth = xcal;
-      if (ycalPresent) cal.pixelHeight = ycal;
-      if (zcalPresent) cal.pixelDepth = zcal;
-      if (tcalPresent) cal.frameInterval = tcal;
+      if (xcalPresent) cal.pixelWidth = xcal == 0 ? 1 : xcal;
+      if (ycalPresent) cal.pixelHeight = ycal == 0 ? 1 : ycal;
+      if (zcalPresent) cal.pixelDepth = zcal == 0 ? 1 : zcal;
+      if (tcalPresent) cal.frameInterval = tcal == 0 ? 1 : tcal;
       imp.setCalibration(cal);
     }
 
