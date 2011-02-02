@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.in;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Vector;
@@ -518,7 +519,13 @@ public class InCellReader extends FormatReader {
       String colNaming =
         Character.isDigit(colName.charAt(0)) ? "Number" : "Letter";
 
+      String plateName = currentId;
+      int begin = plateName.lastIndexOf(File.separator) + 1;
+      int end = plateName.lastIndexOf(".");
+      plateName = plateName.substring(begin, end);
+
       store.setPlateID(MetadataTools.createLSID("Plate", 0), 0);
+      store.setPlateName(plateName, 0);
       store.setPlateRowNamingConvention(getNamingConvention(rowNaming), 0);
       store.setPlateColumnNamingConvention(getNamingConvention(colNaming), 0);
       store.setPlateWellOriginX(0.5, 0);
@@ -899,8 +906,6 @@ public class InCellReader extends FormatReader {
         }
       }
       else if (qName.equals("Plate")) {
-        store.setPlateName(attributes.getValue("name"), nextPlate);
-
         for (int r=0; r<wellRows; r++) {
           for (int c=0; c<wellCols; c++) {
             int well = r * wellCols + c;
