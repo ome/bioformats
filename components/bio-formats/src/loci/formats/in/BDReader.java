@@ -80,6 +80,8 @@ public class BDReader extends FormatReader {
   private String binning, objective;
 
   private int wellRows, wellCols;
+  private int fieldRows;
+  private int fieldCols;
 
   // -- Constructor --
 
@@ -136,8 +138,9 @@ public class BDReader extends FormatReader {
     }
 
     if (!noPixels && tiffs != null) {
-      for (int i = 0; i<tiffs[getSeries()].length; i++) {
-        files.add(tiffs[getSeries()][i]);
+      int well = getSeries() / (fieldRows * fieldCols);
+      for (int i = 0; i<tiffs[well].length; i++) {
+        files.add(tiffs[well][i]);
       }
     }
 
@@ -158,6 +161,8 @@ public class BDReader extends FormatReader {
       wellLabels.clear();
       wellRows = 0;
       wellCols = 0;
+      fieldRows = 0;
+      fieldCols = 0;
     }
   }
 
@@ -180,10 +185,22 @@ public class BDReader extends FormatReader {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
     String file = getFilename(getSeries(), no);
+    int field = getSeries() % (fieldRows * fieldCols);
+    int fieldRow = field / fieldCols;
+    int fieldCol = field % fieldCols;
 
     if (file != null) {
       reader.setId(file);
-      reader.openBytes(0, buf, x, y, w, h);
+      if (fieldRows * fieldCols == 1) {
+        reader.openBytes(0, buf, x, y, w, h);
+      }
+      else {
+        // fields are stored together in a single image,
+        // so we need to split them up
+        int fx = x + (fieldCol * getSizeX());
+        int fy = y + (fieldRow * getSizeY());
+        reader.openBytes(0, buf, fx, fy, w, h);
+      }
     }
 
     return buf;
@@ -286,8 +303,8 @@ public class BDReader extends FormatReader {
       core[i].sizeC = nChannels;
       core[i].sizeZ = nSlices;
       core[i].sizeT = nTimepoints;
-      core[i].sizeX = sizeX;
-      core[i].sizeY = sizeY;
+      core[i].sizeX = sizeX / fieldCols;
+      core[i].sizeY = sizeY / fieldRows;
       core[i].pixelType = pixelType;
       core[i].rgb = rgb;
       core[i].interleaved = interleaved;
@@ -315,20 +332,24 @@ public class BDReader extends FormatReader {
     for (int i=0; i<getSeriesCount(); i++) {
       MetadataTools.setDefaultCreationDate(store, id, i);
 
-      String name = wellLabels.get(i);
+      int well = i / (fieldRows * fieldCols);
+      int field = i % (fieldRows * fieldCols);
+
+      String name = wellLabels.get(well);
       String row = name.substring(0, 1);
       Integer col = Integer.parseInt(name.substring(1));
 
       int index = (row.charAt(0) - 'A') * wellCols + col - 1;
 
-      String wellSampleID = MetadataTools.createLSID("WellSample", 0, index, 0);
-      store.setWellSampleID(wellSampleID, 0, index, 0);
-      store.setWellSampleIndex(new NonNegativeInteger(i), 0, index, 0);
+      String wellSampleID =
+        MetadataTools.createLSID("WellSample", 0, index, field);
+      store.setWellSampleID(wellSampleID, 0, index, field);
+      store.setWellSampleIndex(new NonNegativeInteger(i), 0, index, field);
 
       String imageID = MetadataTools.createLSID("Image", i);
-      store.setWellSampleImageRef(imageID, 0, index, 0);
+      store.setWellSampleImageRef(imageID, 0, index, field);
       store.setImageID(imageID, i);
-      store.setImageName(name, i);
+      store.setImageName(name + " Field #" + (field + 1), i);
     }
 
     MetadataLevel level = getMetadataOptions().getMetadataLevel();
@@ -480,7 +501,18 @@ public class BDReader extends FormatReader {
       }
     }
 
-    core = new CoreMetadata[wellLabels.size()];
+    IniTable imageTable = exp.getTable("Image");
+    boolean montage = imageTable.get("Montaged").equals("1");
+    if (montage) {
+      fieldRows = Integer.parseInt(imageTable.get("TilesY"));
+      fieldCols = Integer.parseInt(imageTable.get("TilesX"));
+    }
+    else {
+      fieldRows = 1;
+      fieldCols = 1;
+    }
+
+    core = new CoreMetadata[wellLabels.size() * fieldRows * fieldCols];
 
     core[0] = new CoreMetadata();
 
@@ -516,6 +548,7 @@ public class BDReader extends FormatReader {
         core[0].sizeT = timepoints;
       }
     }
+
     return exp;
   }
 
@@ -612,15 +645,17 @@ public class BDReader extends FormatReader {
     int[] zct = getZCTCoords(no);
     String channel = channelNames.get(zct[1]);
 
-    for (int i=0; i<tiffs[series].length; i++) {
-      String name = tiffs[series][i];
+    int well = series / (fieldRows * fieldCols);
+
+    for (int i=0; i<tiffs[well].length; i++) {
+      String name = tiffs[well][i];
       name = name.substring(name.lastIndexOf(File.separator) + 1);
       name = name.substring(0, name.lastIndexOf("."));
 
       String index = name.substring(name.lastIndexOf("n") + 1);
 
       if (name.startsWith(channel) && Integer.parseInt(index) == zct[2]) {
-        return tiffs[series][i];
+        return tiffs[well][i];
       }
     }
     return null;
