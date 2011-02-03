@@ -132,7 +132,7 @@ public class FluoviewReader extends BaseTiffReader {
     return (com.indexOf(FLUOVIEW_MAGIC_STRING) != -1 &&
       ifd.containsKey(new Integer(MMHEADER)) ||
       ifd.containsKey(new Integer(MMSTAMP))) ||
-      com.indexOf(ANDOR_MAGIC_STRING) != -1;
+      com.startsWith(ANDOR_MAGIC_STRING);
   }
 
   /**
