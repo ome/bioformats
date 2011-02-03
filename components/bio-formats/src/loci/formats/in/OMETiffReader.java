@@ -46,6 +46,7 @@ import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.MetadataTools;
 import loci.formats.MissingLibraryException;
+import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.services.OMEXMLService;
@@ -142,7 +143,10 @@ public class OMETiffReader extends FormatReader {
 
     try {
       if (service == null) setupService();
-      service.createOMEXMLMetadata(comment.trim());
+      IMetadata meta = service.createOMEXMLMetadata(comment.trim());
+      for (int i=0; i<meta.getImageCount(); i++) {
+        MetadataTools.verifyMinimumPopulated(meta, i);
+      }
       return true;
     }
     catch (ServiceException se) { }
