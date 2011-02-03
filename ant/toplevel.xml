@@ -1,7 +1,7 @@
 <!--
 toplevel.xml
 
-Toplevel targets for LOCI Software builds.
+Toplevel targets for Bio-Formats builds.
 Download Apache Ant from http://ant.apache.org/.
 Type "ant -p" for a list of targets.
 -->
@@ -145,8 +145,8 @@ Type "ant -p" for a list of targets.
       destdir="${merged-docs.dir}/api"
       maxmemory="${merged-docs.memory}"
       failonerror="true" author="true" version="true" use="true"
-      nodeprecated="true" windowtitle="LOCI Software API">
-      <doctitle><![CDATA[<h1>LOCI Software</h1>]]></doctitle>
+      nodeprecated="true" windowtitle="Bio-Formats API">
+      <doctitle><![CDATA[<h1>Bio-Formats</h1>]]></doctitle>
       <bottom><![CDATA[${copyright.begin} ${YEAR} ${copyright.end}]]></bottom>
       <link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
       <link href="http://hudson.openmicroscopy.org.uk/job/OMEJAVA/javadoc/"/>
