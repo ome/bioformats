@@ -26,9 +26,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.plugins.in;
 
 import ij.IJ;
+import ij.Prefs;
 import ij.gui.GenericDialog;
 import loci.plugins.BF;
 import loci.plugins.Updater;
+import loci.plugins.prefs.Option;
 
 /**
  * Bio-Formats Importer upgrade checker dialog box.
@@ -38,6 +40,11 @@ import loci.plugins.Updater;
  * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/in/UpgradeDialog.java">SVN</a></dd></dl>
  */
 public class UpgradeDialog extends ImporterDialog {
+
+  // -- Static fields --
+
+  /** Whether an upgrade check has already been performed this session. */
+  private static boolean checkPerformed = false;
 
   // -- Constructor --
 
@@ -64,6 +71,8 @@ public class UpgradeDialog extends ImporterDialog {
    */
   @Override
   protected boolean displayDialog(GenericDialog gd) {
+    if (checkPerformed) return true;
+
     if (!options.isQuiet() && options.isFirstTime()) {
       // present user with one-time dialog box
       gd = new GenericDialog("Bio-Formats Upgrade Checker");
@@ -75,9 +84,15 @@ public class UpgradeDialog extends ImporterDialog {
       addCheckbox(gd, ImporterOptions.KEY_UPGRADE_CHECK);
       gd.showDialog();
       if (gd.wasCanceled()) return false;
+
+      // save choice
+      final boolean checkForUpgrades = gd.getNextBoolean();
+      options.setUpgradeCheck(checkForUpgrades);
+      if (!checkForUpgrades) return true;
     }
 
     if (options.doUpgradeCheck()) {
+      checkPerformed = true;
       BF.status(false, "Checking for new stable version...");
       if (Updater.newVersionAvailable()) {
         boolean doUpgrade = IJ.showMessageWithCancel("",

@@ -79,7 +79,11 @@ public class L2DReader extends FormatReader {
     if (checkSuffix(name, "l2d") || checkSuffix(name, "scn")) return true;
     if (!open) return false;
 
-    Location parent = new Location(name).getAbsoluteFile().getParentFile();
+    Location location = new Location(name);
+    if (!location.exists()) {
+        return false;
+    }
+    Location parent = location.getAbsoluteFile().getParentFile();
     String[] list = parent.list();
     if (list == null) return false;
 

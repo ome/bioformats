@@ -25,6 +25,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.plugins.config;
 
+import ij.Prefs;
+
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -63,7 +65,6 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import loci.plugins.in.ImporterOptions;
 import loci.plugins.util.WindowTools;
 
 /**
@@ -82,6 +83,7 @@ public class ConfigWindow extends JFrame
   // -- Constants --
 
   private static final int PAD = 5;
+  private static final String UPGRADE_CHECK_KEY = "bioformats.upgradeCheck";
 
   // -- Fields --
 
@@ -90,8 +92,6 @@ public class ConfigWindow extends JFrame
   private JPanel formatInfo;
   private JTextField extensions;
   private JCheckBox enabledBox, windowlessBox, upgradeBox;
-
-  private ImporterOptions options;
 
   private DefaultListModel libsListModel;
   private JList libsList;
@@ -200,15 +200,8 @@ public class ConfigWindow extends JFrame
       new JLabel("Automatically check for new versions of the LOCI plugins");
     upgradePanel.add(upgradeLabel);
 
-    try {
-      // TODO: remove dependency on importer package
-      options = new ImporterOptions();
-    }
-    catch (IOException exc) {
-      WindowTools.reportException(exc);
-    }
-    options.loadOptions();
-    upgradeBox = new JCheckBox("", options.doUpgradeCheck());
+    final boolean checkForUpgrades = Prefs.get(UPGRADE_CHECK_KEY, true);
+    upgradeBox = new JCheckBox("", checkForUpgrades);
     upgradeBox.addItemListener(this);
     upgradePanel.add(upgradeBox);
 
@@ -247,8 +240,7 @@ public class ConfigWindow extends JFrame
     Object src = e.getSource();
 
     if (src == upgradeBox) {
-      options.setUpgradeCheck(upgradeBox.isSelected());
-      options.saveOptions();
+      Prefs.set(UPGRADE_CHECK_KEY, upgradeBox.isSelected());
       return;
     }
 

@@ -152,6 +152,7 @@ public class OMETiffReader extends FormatReader {
     catch (ServiceException se) { }
     catch (NullPointerException e) { }
     catch (FormatException e) { }
+    catch (IndexOutOfBoundsException e) { }
     return false;
   }
 
