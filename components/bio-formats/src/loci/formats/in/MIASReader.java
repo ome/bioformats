@@ -720,6 +720,12 @@ public class MIASReader extends FormatReader {
       }
     }
 
+    store.setPlateID(MetadataTools.createLSID("Plate", 0), 0);
+
+    String plateAcqId = MetadataTools.createLSID("PlateAcquisition", 0, 0);
+    store.setPlateAcquisitionID(plateAcqId, 0, 0);
+    store.setPlateAcquisitionMaximumFieldCount(new PositiveInteger(1), 0, 0);
+
     for (int well=0; well<nWells; well++) {
       int wellIndex = wellNumber[well];
 
@@ -740,6 +746,8 @@ public class MIASReader extends FormatReader {
       store.setImageName("Well " + wellRow + wellCol, well);
       store.setWellSampleImageRef(imageID, 0, well, 0);
 
+      store.setPlateAcquisitionWellSampleRef(wellSampleID, 0, 0, well);
+
       MetadataTools.setDefaultCreationDate(store, id, well);
     }
 
@@ -752,7 +760,6 @@ public class MIASReader extends FormatReader {
       store.setExperimentDescription(experiment.getName(), 0);
 
       // populate SPW metadata
-      store.setPlateID(MetadataTools.createLSID("Plate", 0), 0);
       store.setPlateColumnNamingConvention(getNamingConvention("Number"), 0);
       store.setPlateRowNamingConvention(getNamingConvention("Letter"), 0);
 
