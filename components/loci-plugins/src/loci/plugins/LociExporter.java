@@ -31,6 +31,7 @@ import ij.process.ImageProcessor;
 
 import java.util.HashSet;
 
+import loci.common.DebugTools;
 import loci.plugins.out.Exporter;
 import loci.plugins.util.LibraryChecker;
 
@@ -65,6 +66,7 @@ public class LociExporter implements PlugInFilter {
 
   /** Executes the plugin. */
   public void run(ImageProcessor ip) {
+    DebugTools.enableLogging("INFO");
     if (!LibraryChecker.checkJava() || !LibraryChecker.checkImageJ()) return;
     HashSet<String> missing = new HashSet<String>();
     LibraryChecker.checkLibrary(LibraryChecker.Library.BIO_FORMATS, missing);
