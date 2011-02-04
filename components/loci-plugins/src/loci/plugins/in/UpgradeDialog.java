@@ -39,6 +39,11 @@ import loci.plugins.Updater;
  */
 public class UpgradeDialog extends ImporterDialog {
 
+  // -- Static fields --
+
+  /** Whether an upgrade check has already been performed this session. */
+  private static boolean checkPerformed = false;
+
   // -- Constructor --
 
   /** Creates an upgrade checker dialog for the Bio-Formats Importer. */
@@ -64,6 +69,8 @@ public class UpgradeDialog extends ImporterDialog {
    */
   @Override
   protected boolean displayDialog(GenericDialog gd) {
+    if (checkPerformed) return true;
+
     if (!options.isQuiet() && options.isFirstTime()) {
       // present user with one-time dialog box
       gd = new GenericDialog("Bio-Formats Upgrade Checker");
@@ -78,6 +85,7 @@ public class UpgradeDialog extends ImporterDialog {
     }
 
     if (options.doUpgradeCheck()) {
+      checkPerformed = true;
       BF.status(false, "Checking for new stable version...");
       if (Updater.newVersionAvailable()) {
         boolean doUpgrade = IJ.showMessageWithCancel("",
