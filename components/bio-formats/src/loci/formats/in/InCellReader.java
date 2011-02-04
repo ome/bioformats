@@ -399,6 +399,36 @@ public class InCellReader extends FormatReader {
       XMLTools.parseXML(b, handler);
     }
 
+    String rowNaming =
+      Character.isDigit(rowName.charAt(0)) ? "Number" : "Letter";
+    String colNaming =
+      Character.isDigit(colName.charAt(0)) ? "Number" : "Letter";
+
+    String plateName = currentId;
+    int begin = plateName.lastIndexOf(File.separator) + 1;
+    int end = plateName.lastIndexOf(".");
+    plateName = plateName.substring(begin, end);
+
+    store.setPlateID(MetadataTools.createLSID("Plate", 0), 0);
+    store.setPlateName(plateName, 0);
+    store.setPlateRowNamingConvention(getNamingConvention(rowNaming), 0);
+    store.setPlateColumnNamingConvention(getNamingConvention(colNaming), 0);
+
+    for (int r=0; r<wellRows; r++) {
+      for (int c=0; c<wellCols; c++) {
+        int well = r * wellCols + c;
+        String wellID = MetadataTools.createLSID("Well", 0, well);
+        store.setWellID(wellID, 0, well);
+        store.setWellRow(new NonNegativeInteger(r), 0, well);
+        store.setWellColumn(new NonNegativeInteger(c), 0, well);
+      }
+    }
+
+    String plateAcqID = MetadataTools.createLSID("PlateAcquisition", 0, 0);
+    store.setPlateAcquisitionID(plateAcqID, 0, 0);
+    store.setPlateAcquisitionMaximumFieldCount(
+      new PositiveInteger(fieldCount), 0, 0);
+
     // populate Image data
 
     String instrumentID = MetadataTools.createLSID("Instrument", 0);
@@ -450,7 +480,7 @@ public class InCellReader extends FormatReader {
 
       String wellSampleID =
         MetadataTools.createLSID("WellSample", 0, well, sampleIndex);
-      store.setWellSampleID(wellSampleID, 0 ,well, sampleIndex);
+      store.setWellSampleID(wellSampleID, 0, well, sampleIndex);
       store.setWellSampleIndex(new NonNegativeInteger(i), 0, well, sampleIndex);
       store.setWellSampleImageRef(imageID, 0, well, sampleIndex);
       if (field < posX.size()) {
@@ -459,6 +489,8 @@ public class InCellReader extends FormatReader {
       if (field < posY.size()) {
         store.setWellSamplePositionY(posY.get(field), 0, well, sampleIndex);
       }
+
+      store.setPlateAcquisitionWellSampleRef(wellSampleID, 0, 0, i);
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
@@ -514,41 +546,8 @@ public class InCellReader extends FormatReader {
 
       // populate Plate data
 
-      String rowNaming =
-        Character.isDigit(rowName.charAt(0)) ? "Number" : "Letter";
-      String colNaming =
-        Character.isDigit(colName.charAt(0)) ? "Number" : "Letter";
-
-      String plateName = currentId;
-      int begin = plateName.lastIndexOf(File.separator) + 1;
-      int end = plateName.lastIndexOf(".");
-      plateName = plateName.substring(begin, end);
-
-      store.setPlateID(MetadataTools.createLSID("Plate", 0), 0);
-      store.setPlateName(plateName, 0);
-      store.setPlateRowNamingConvention(getNamingConvention(rowNaming), 0);
-      store.setPlateColumnNamingConvention(getNamingConvention(colNaming), 0);
       store.setPlateWellOriginX(0.5, 0);
       store.setPlateWellOriginY(0.5, 0);
-
-      // populate Well data
-
-      for (int i=0; i<seriesCount; i++) {
-        int well = getWellFromSeries(i);
-        int field = getFieldFromSeries(i);
-        int totalTimepoints =
-          oneTimepointPerSeries ? channelsPerTimepoint.size() : 1;
-        int timepoint = i % totalTimepoints;
-
-        int sampleIndex = field * totalTimepoints + timepoint;
-
-        String imageID = MetadataTools.createLSID("Image", i);
-        store.setWellSampleIndex(
-          new NonNegativeInteger(i), 0, well, sampleIndex);
-        store.setWellSampleImageRef(imageID, 0, well, sampleIndex);
-        store.setWellSamplePositionX(posX.get(field), 0, well, sampleIndex);
-        store.setWellSamplePositionY(posY.get(field), 0, well, sampleIndex);
-      }
     }
   }
 
@@ -906,15 +905,6 @@ public class InCellReader extends FormatReader {
         }
       }
       else if (qName.equals("Plate")) {
-        for (int r=0; r<wellRows; r++) {
-          for (int c=0; c<wellCols; c++) {
-            int well = r * wellCols + c;
-            String wellID = MetadataTools.createLSID("Well", nextPlate, well);
-            store.setWellID(wellID, nextPlate, well);
-            store.setWellRow(new NonNegativeInteger(r), nextPlate, well);
-            store.setWellColumn(new NonNegativeInteger(c), nextPlate, well);
-          }
-        }
         nextPlate++;
       }
       else if (qName.equals("Row")) {
