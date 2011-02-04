@@ -43,6 +43,7 @@ import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
 
 import ome.xml.model.primitives.NonNegativeInteger;
+import ome.xml.model.primitives.PositiveInteger;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
@@ -456,7 +457,13 @@ public class ScanrReader extends FormatReader {
 
     store.setPlateID(MetadataTools.createLSID("Plate", 0), 0);
 
+    String plateAcqID = MetadataTools.createLSID("PlateAcquisition", 0, 0);
+    store.setPlateAcquisitionID(plateAcqID, 0, 0);
+
     int nFields = fieldRows * fieldColumns;
+
+    store.setPlateAcquisitionMaximumFieldCount(
+      new PositiveInteger(nFields), 0, 0);
 
     for (int i=0; i<getSeriesCount(); i++) {
       MetadataTools.setDefaultCreationDate(store, id, i);
@@ -483,6 +490,8 @@ public class ScanrReader extends FormatReader {
       String name = "Well " + (wellIndex + 1) + ", Field " + (field + 1) +
         " (Spot " + (i + 1) + ")";
       store.setImageName(name, i);
+
+      store.setPlateAcquisitionWellSampleRef(wellSample, 0, 0, i);
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
