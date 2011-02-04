@@ -309,11 +309,12 @@ public class ZeissLSMReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    in.close();
-    in = new RandomAccessInputStream(getLSMFileFromSeries(getSeries()));
-    in.order(!isLittleEndian());
-
-    tiffParser = new TiffParser(in);
+    if (getSeriesCount() > 1) {
+      in.close();
+      in = new RandomAccessInputStream(getLSMFileFromSeries(getSeries()));
+      in.order(!isLittleEndian());
+      tiffParser = new TiffParser(in);
+    }
 
     IFDList ifds = ifdsList.get(getSeries());
 
@@ -340,7 +341,7 @@ public class ZeissLSMReader extends FormatReader {
       tiffParser.getSamples(ifds.get(no), buf, x, y, w, h);
       prevChannel = getZCTCoords(no)[1];
     }
-    in.close();
+    if (getSeriesCount() > 1) in.close();
     return buf;
   }
 

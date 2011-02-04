@@ -29,6 +29,7 @@ import ij.plugin.PlugIn;
 
 import java.util.HashSet;
 
+import loci.common.DebugTools;
 import loci.plugins.in.Importer;
 import loci.plugins.util.LibraryChecker;
 
@@ -66,6 +67,7 @@ public class LociImporter implements PlugIn {
 
   /** Executes the plugin. */
   public void run(String arg) {
+    DebugTools.enableLogging("INFO");
     canceled = false;
     success = false;
     if (!LibraryChecker.checkJava() || !LibraryChecker.checkImageJ()) return;
