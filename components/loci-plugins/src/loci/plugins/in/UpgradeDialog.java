@@ -26,9 +26,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.plugins.in;
 
 import ij.IJ;
+import ij.Prefs;
 import ij.gui.GenericDialog;
 import loci.plugins.BF;
 import loci.plugins.Updater;
+import loci.plugins.prefs.Option;
 
 /**
  * Bio-Formats Importer upgrade checker dialog box.
@@ -82,6 +84,11 @@ public class UpgradeDialog extends ImporterDialog {
       addCheckbox(gd, ImporterOptions.KEY_UPGRADE_CHECK);
       gd.showDialog();
       if (gd.wasCanceled()) return false;
+
+      // save choice
+      final boolean checkForUpgrades = gd.getNextBoolean();
+      options.setUpgradeCheck(checkForUpgrades);
+      if (!checkForUpgrades) return true;
     }
 
     if (options.doUpgradeCheck()) {
