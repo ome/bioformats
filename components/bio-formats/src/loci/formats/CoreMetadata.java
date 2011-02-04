@@ -118,7 +118,7 @@ public class CoreMetadata {
   public boolean indexed;
 
   /** Indicates whether or not we can ignore the color map (if present). */
-  public boolean falseColor;
+  public boolean falseColor = true;
 
   /**
    * Indicates whether or not we are confident that all of the metadata stored
