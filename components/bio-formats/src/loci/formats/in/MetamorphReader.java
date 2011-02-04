@@ -130,6 +130,10 @@ public class MetamorphReader extends BaseTiffReader {
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
   public boolean isThisType(String name, boolean open) {
+    Location location = new Location(name);
+    if (!location.exists()) {
+        return false;
+    }
     if (checkSuffix(name, "nd")) return true;
     return super.isThisType(name, open);
   }
