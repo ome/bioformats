@@ -24,7 +24,8 @@
 # Please do not edit unless you know what you are doing (see reader-guide.txt).
 
 # generic reader for HCS data
-loci.formats.in.ScreenReader
+# disabled for now, as it has been causing no end of problems outside of OMERO
+#loci.formats.in.ScreenReader
 
 # readers for compressed/archive files
 loci.formats.in.ZipReader             # zip
