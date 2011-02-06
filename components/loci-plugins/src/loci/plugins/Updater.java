@@ -57,8 +57,8 @@ public class Updater implements PlugIn {
   // -- Constants --
 
   public static final String TRUNK_BUILD =
-    "http://hudson.openmicroscopy.org.uk/job/LOCI/lastSuccessfulBuild/" +
-    "artifact/trunk/artifacts/loci_tools.jar";
+    "http://dev.loci.wisc.edu:8080/job/Bio-Formats/lastSuccessfulBuild/" +
+    "artifact/artifacts/loci_tools.jar";
   public static final String TODAYS_BUILD =
     "http://loci.wisc.edu/software/daily/loci_tools.jar";
   public static final String YESTERDAYS_BUILD =
