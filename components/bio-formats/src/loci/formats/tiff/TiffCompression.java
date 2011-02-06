@@ -121,13 +121,16 @@ public enum TiffCompression implements CodedEnum {
   private String codecName;
 
   /** Reverse lookup of code to TIFF compression enumerate value. */
-  private static Map<Integer, TiffCompression> lookup =
-    new HashMap<Integer, TiffCompression>();
+  private static final Map<Integer, TiffCompression> lookup =
+    getCompressionMap();
 
-  static {
+  private static Map<Integer, TiffCompression> getCompressionMap() {
+    Map<Integer, TiffCompression> lookup =
+      new HashMap<Integer, TiffCompression>();
     for (TiffCompression v : EnumSet.allOf(TiffCompression.class)) {
       lookup.put(v.getCode(), v);
     }
+    return lookup;
   }
 
   // -- TiffCompression methods --

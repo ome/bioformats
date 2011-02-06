@@ -69,9 +69,10 @@ public final class FormatTools {
   public static final int DOUBLE = 7;
 
   /** Human readable pixel type. */
-  private static String[] pixelTypes;
-  static {
-    pixelTypes = new String[8];
+  private static final String[] pixelTypes = makePixelTypes();
+
+  static String[] makePixelTypes() {
+    String[] pixelTypes = new String[8];
     pixelTypes[INT8] = "int8";
     pixelTypes[UINT8] = "uint8";
     pixelTypes[INT16] = "int16";
@@ -80,6 +81,7 @@ public final class FormatTools {
     pixelTypes[UINT32] = "uint32";
     pixelTypes[FLOAT] = "float";
     pixelTypes[DOUBLE] = "double";
+    return pixelTypes;
   }
 
   // -- Constants - dimensional labels --
