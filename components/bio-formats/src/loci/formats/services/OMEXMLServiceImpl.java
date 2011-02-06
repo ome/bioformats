@@ -84,30 +84,30 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
     LoggerFactory.getLogger(OMEXMLService.class);
 
   /** Reordering stylesheet. */
-  private static Templates reorderXSLT =
+  private static final Templates reorderXSLT =
     XMLTools.getStylesheet("/loci/formats/meta/reorder-2008-09.xsl",
     OMEXMLServiceImpl.class);
 
   /** Stylesheets for updating from previous schema releases. */
-  private static Templates UPDATE_2003FC =
+  private static final Templates UPDATE_2003FC =
     XMLTools.getStylesheet("/loci/formats/meta/2003-FC-to-2008-09.xsl",
     OMEXMLServiceImpl.class);
-  private static Templates UPDATE_2006LO =
+  private static final Templates UPDATE_2006LO =
     XMLTools.getStylesheet("/loci/formats/meta/2006-LO-to-2008-09.xsl",
     OMEXMLServiceImpl.class);
-  private static Templates UPDATE_200706 =
+  private static final Templates UPDATE_200706 =
     XMLTools.getStylesheet("/loci/formats/meta/2007-06-to-2008-09.xsl",
     OMEXMLServiceImpl.class);
-  private static Templates UPDATE_200802 =
+  private static final Templates UPDATE_200802 =
     XMLTools.getStylesheet("/loci/formats/meta/2008-02-to-2008-09.xsl",
     OMEXMLServiceImpl.class);
-  private static Templates UPDATE_200809 =
+  private static final Templates UPDATE_200809 =
     XMLTools.getStylesheet("/loci/formats/meta/2008-09-to-2009-09.xsl",
     OMEXMLServiceImpl.class);
-  private static Templates UPDATE_200909 =
+  private static final Templates UPDATE_200909 =
     XMLTools.getStylesheet("/loci/formats/meta/2009-09-to-2010-04.xsl",
     OMEXMLServiceImpl.class);
-  private static Templates UPDATE_201004 =
+  private static final Templates UPDATE_201004 =
     XMLTools.getStylesheet("/loci/formats/meta/2010-04-to-2010-06.xsl",
     OMEXMLServiceImpl.class);
 
