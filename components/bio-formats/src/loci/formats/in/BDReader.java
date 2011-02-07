@@ -319,6 +319,11 @@ public class BDReader extends FormatReader {
       getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM;
     MetadataTools.populatePixels(store, this, populatePlanes);
 
+    String plateAcqID = MetadataTools.createLSID("PlateAcquisition", 0, 0);
+    store.setPlateAcquisitionID(plateAcqID, 0, 0);
+    store.setPlateAcquisitionMaximumFieldCount(
+      new PositiveInteger(fieldRows * fieldCols), 0, 0);
+
     for (int row=0; row<wellRows; row++) {
       for (int col=0; col<wellCols; col++) {
         int index = row * wellCols + col;
@@ -350,6 +355,8 @@ public class BDReader extends FormatReader {
       store.setWellSampleImageRef(imageID, 0, index, field);
       store.setImageID(imageID, i);
       store.setImageName(name + " Field #" + (field + 1), i);
+
+      store.setPlateAcquisitionWellSampleRef(wellSampleID, 0, 0, i);
     }
 
     MetadataLevel level = getMetadataOptions().getMetadataLevel();
