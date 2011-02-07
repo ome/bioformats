@@ -89,8 +89,10 @@ public class ConfigurationTree {
 
   /** Retrieves the Configuration object corresponding to the given file. */
   public Configuration get(String id) throws IOException {
-    DefaultMutableTreeNode pos = findNode(id, false);
-    return (Configuration) pos.getUserObject();
+    DefaultMutableTreeNode pos = findNode(id, false, null);
+    if (pos == null) return null;
+    Hashtable table = (Hashtable) pos.getUserObject();
+    return (Configuration) table.get("configuration");
   }
 
   public void parseConfigFile(String configFile) throws IOException {
@@ -99,26 +101,26 @@ public class ConfigurationTree {
     String dir = file.getParentFile().getAbsolutePath();
 
     IniParser parser = new IniParser();
-    IniList iniList = parser.parseINI(configFile);
+    IniList iniList =
+      parser.parseINI(new BufferedReader(new FileReader(configFile)));
     for (IniTable table : iniList) {
       String id = table.get(IniTable.HEADER_KEY);
       id = id.substring(0, id.lastIndexOf(" "));
 
-      DefaultMutableTreeNode node = findNode(id, true);
+      DefaultMutableTreeNode node = findNode(id, true, configFile);
       if (node == null) {
         LOGGER.warn("config file '{}' has invalid filename '{}'",
           configFile, id);
         continue;
       }
-
-      node.setUserObject(new Configuration(configFile, id));
     }
   }
 
   // -- Helper methods --
 
   /** Gets the tree node associated with the given file. */
-  private DefaultMutableTreeNode findNode(String id, boolean create) {
+  private DefaultMutableTreeNode findNode(String id, boolean create, String configFile) {
+    String baseID = id;
     if (!id.startsWith(rootDir)) return null;
     id = id.substring(rootDir.length());
     StringTokenizer st = new StringTokenizer(id, "\\/");
@@ -130,18 +132,23 @@ public class ConfigurationTree {
       while (en.hasMoreElements()) {
         DefaultMutableTreeNode child =
           (DefaultMutableTreeNode) en.nextElement();
-        Configuration c = (Configuration) child.getUserObject();
-        /*
+        Hashtable table = (Hashtable) child.getUserObject();
         if (token.equals(table.get("name"))) {
           next = child;
           break;
         }
-        */
       }
       if (next == null) {
         // create node, if applicable
         if (!create) return null;
         next = new DefaultMutableTreeNode();
+        Hashtable table = new Hashtable();
+        table.put("name", token);
+        try {
+          table.put("configuration", new Configuration(baseID, configFile));
+        }
+        catch (IOException e) { }
+        next.setUserObject(table);
         node.add(next);
       }
       node = next;

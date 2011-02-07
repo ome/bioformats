@@ -70,10 +70,6 @@ public class Configuration {
   public Configuration(String dataFile, String configFile) throws IOException {
     this.dataFile = dataFile;
     this.configFile = configFile;
-    /* debug */
-    System.out.println("dataFile = " + dataFile);
-    System.out.println("configFile = " + configFile);
-    /* end debug */
 
     BufferedReader reader = new BufferedReader(new FileReader(this.configFile));
     IniParser parser = new IniParser();
@@ -90,6 +86,10 @@ public class Configuration {
   // -- Configuration API methods --
 
   // -- Global metadata --
+
+  public String getFile() {
+    return dataFile;
+  }
 
   public long getAccessTimeMillis() {
     return Long.parseLong(globalTable.get(ACCESS_TIME));
@@ -178,19 +178,23 @@ public class Configuration {
   }
 
   public Double getPhysicalSizeX() {
-    return new Double(currentTable.get(PHYSICAL_SIZE_X));
+    String physicalSize = currentTable.get(PHYSICAL_SIZE_X);
+    return physicalSize == null ? null : new Double(physicalSize);
   }
 
   public Double getPhysicalSizeY() {
-    return new Double(currentTable.get(PHYSICAL_SIZE_Y));
+    String physicalSize = currentTable.get(PHYSICAL_SIZE_Y);
+    return physicalSize == null ? null : new Double(physicalSize);
   }
 
   public Double getPhysicalSizeZ() {
-    return new Double(currentTable.get(PHYSICAL_SIZE_Z));
+    String physicalSize = currentTable.get(PHYSICAL_SIZE_Z);
+    return physicalSize == null ? null : new Double(physicalSize);
   }
 
   public Double getTimeIncrement() {
-    return new Double(currentTable.get(TIME_INCREMENT));
+    String physicalSize = currentTable.get(TIME_INCREMENT);
+    return physicalSize == null ? null : new Double(physicalSize);
   }
 
   public int getChannelCount() {
@@ -205,12 +209,14 @@ public class Configuration {
     return currentTable.get(CHANNEL_NAME + channel);
   }
 
-  public int getEmissionWavelength(int channel) {
-    return Integer.parseInt(currentTable.get(EMISSION_WAVELENGTH + channel));
+  public Integer getEmissionWavelength(int channel) {
+    String wavelength = currentTable.get(EMISSION_WAVELENGTH + channel);
+    return wavelength == null ? null : new Integer(wavelength);
   }
 
-  public int getExcitationWavelength(int channel) {
-    return Integer.parseInt(currentTable.get(EXCITATION_WAVELENGTH + channel));
+  public Integer getExcitationWavelength(int channel) {
+    String wavelength = currentTable.get(EXCITATION_WAVELENGTH + channel);
+    return wavelength == null ? null : new Integer(wavelength);
   }
 
   public String getDetector(int channel) {
@@ -382,6 +388,10 @@ public class Configuration {
       String tableName = table.get(IniTable.HEADER_KEY);
       if (tableName.startsWith(dataFile)) {
         newIni.add(table);
+
+        if (tableName.endsWith("global")) {
+          globalTable = table;
+        }
       }
     }
     ini = newIni;

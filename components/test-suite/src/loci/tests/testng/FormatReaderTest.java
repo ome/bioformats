@@ -61,6 +61,8 @@ import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.OMEXMLService;
 
+import ome.xml.model.primitives.PositiveInteger;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -591,7 +593,7 @@ public class FormatReaderTest {
       reader.setSeries(i);
       config.setSeries(i);
 
-      if (reader.getDimensionOrder() != config.getDimensionOrder()) {
+      if (!reader.getDimensionOrder().equals(config.getDimensionOrder())) {
         result(testName, false, "Series " + i);
       }
     }
@@ -804,7 +806,11 @@ public class FormatReaderTest {
     for (int i=0; i<reader.getSeriesCount(); i++) {
       config.setSeries(i);
 
-      if (!config.getPhysicalSizeZ().equals(retrieve.getPixelsPhysicalSizeZ(i)))
+      Double expectedSize = config.getPhysicalSizeZ();
+      Double realSize = retrieve.getPixelsPhysicalSizeZ(i);
+
+      if (!(expectedSize == null && realSize == null) &&
+        !expectedSize.equals(realSize))
       {
         result(testName, false, "Series " + i);
       }
@@ -824,7 +830,11 @@ public class FormatReaderTest {
     for (int i=0; i<reader.getSeriesCount(); i++) {
       config.setSeries(i);
 
-      if (!config.getTimeIncrement().equals(retrieve.getPixelsTimeIncrement(i)))
+      Double expectedIncrement = config.getTimeIncrement();
+      Double realIncrement = retrieve.getPixelsTimeIncrement(i);
+
+      if (!(expectedIncrement == null && realIncrement == null) &&
+        !expectedIncrement.equals(realIncrement))
       {
         result(testName, false, "Series " + i);
       }
@@ -845,8 +855,15 @@ public class FormatReaderTest {
       config.setSeries(i);
 
       for (int c=0; c<config.getChannelCount(); c++) {
-        if (!config.getLightSource(c).equals(
-          retrieve.getChannelLightSourceSettingsID(i, c)))
+        String expectedLightSource = config.getLightSource(c);
+        String realLightSource = null;
+        try {
+          realLightSource = retrieve.getChannelLightSourceSettingsID(i, c);
+        }
+        catch (NullPointerException e) { }
+
+        if (!(expectedLightSource == null && realLightSource == null) &&
+          !expectedLightSource.equals(realLightSource))
         {
           result(testName, false, "Series " + i + " channel " + c);
         }
@@ -868,7 +885,12 @@ public class FormatReaderTest {
       config.setSeries(i);
 
       for (int c=0; c<config.getChannelCount(); c++) {
-        if (!config.getChannelName(c).equals(retrieve.getChannelName(i, c))) {
+        String realName = retrieve.getChannelName(i, c);
+        String expectedName = config.getChannelName(c);
+
+        if (!expectedName.equals(realName) &&
+          (realName == null && !expectedName.equals("null")))
+        {
           result(testName, false, "Series " + i + " channel " + c);
         }
       }
@@ -879,7 +901,6 @@ public class FormatReaderTest {
   /**
    * @testng.test groups = "all fast"
    */
-  /*
   public void testEmissionWavelengths() {
     if (config == null) throw new SkipException("No config tree");
     String testName = "EmissionWavelengths";
@@ -890,8 +911,12 @@ public class FormatReaderTest {
       config.setSeries(i);
 
       for (int c=0; c<config.getChannelCount(); c++) {
-        if (!config.getEmissionWavelength(c).equals(
-          retrieve.getChannelEmissionWavelength(i, c)))
+        PositiveInteger realWavelength =
+          retrieve.getChannelEmissionWavelength(i, c);
+        Integer expectedWavelength = config.getEmissionWavelength(c);
+
+        if (!(realWavelength == null && expectedWavelength == null) &&
+          !expectedWavelength.equals(realWavelength.getValue()))
         {
           result(testName, false, "Series " + i + " channel " + c);
         }
@@ -899,12 +924,10 @@ public class FormatReaderTest {
     }
     result(testName, true);
   }
-  */
 
   /**
    * @testng.test groups = "all fast"
    */
-  /*
   public void testExcitationWavelengths() {
     if (config == null) throw new SkipException("No config tree");
     String testName = "ExcitationWavelengths";
@@ -915,8 +938,12 @@ public class FormatReaderTest {
       config.setSeries(i);
 
       for (int c=0; c<config.getChannelCount(); c++) {
-        if (!config.getExcitationWavelength(c).equals(
-          retrieve.getChannelExcitationWavelength(i, c)))
+        PositiveInteger realWavelength =
+          retrieve.getChannelExcitationWavelength(i, c);
+        Integer expectedWavelength = config.getExcitationWavelength(c);
+
+        if (!(realWavelength == null && expectedWavelength == null) &&
+          !expectedWavelength.equals(realWavelength.getValue()))
         {
           result(testName, false, "Series " + i + " channel " + c);
         }
@@ -924,7 +951,6 @@ public class FormatReaderTest {
     }
     result(testName, true);
   }
-  */
 
   /**
    * @testng.test groups = "all fast"
@@ -939,7 +965,16 @@ public class FormatReaderTest {
       config.setSeries(i);
 
       for (int c=0; c<config.getChannelCount(); c++) {
-        if (!config.getDetector(c).equals(retrieve.getDetectorSettingsID(i, c)))
+        String expectedDetector = config.getDetector(c);
+        String realDetector = null;
+
+        try {
+          realDetector = retrieve.getDetectorSettingsID(i, c);
+        }
+        catch (NullPointerException e) { }
+
+        if (!(expectedDetector == null && realDetector == null) &&
+          !expectedDetector.equals(realDetector))
         {
           result(testName, false, "Series " + i + " channel " + c);
         }
@@ -951,7 +986,6 @@ public class FormatReaderTest {
   /**
    * @testng.test groups = "all fast"
    */
-  /*
   public void testImageNames() {
     if (config == null) throw new SkipException("No config tree");
     String testName = "ImageNames";
@@ -967,7 +1001,6 @@ public class FormatReaderTest {
     }
     result(testName, true);
   }
-  */
 
   /**
    * @testng.test groups = "all"

@@ -219,6 +219,7 @@ public class TestTools {
         catch (IOException exc) {
           LOGGER.info("", exc);
         }
+        catch (Exception e) { }
       }
       else if (isIgnoredFile(subs[i], config)) {
         LOGGER.info("\tignored");
@@ -245,9 +246,11 @@ public class TestTools {
 
     try {
       Configuration c = config.get(file);
+      if (c == null) return false;
       if (!c.doTest()) return true;
     }
     catch (IOException e) { }
+    catch (Exception e) { }
 
     // HACK - heuristics to speed things up
     if (file.endsWith(".oif.files")) return true; // ignore .oif folders
