@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.Vector;
 
 import loci.common.DataTools;
+import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.NIOFileHandle;
 import loci.common.RandomAccessInputStream;
@@ -117,6 +118,8 @@ public class FlexReader extends FormatReader {
   private String plateName, plateBarcode;
   private int nRows = 0, nCols = 0;
   private RandomAccessInputStream firstStream;
+
+  private String plateAcqStartTime;
 
   /**
    * List of .flex files belonging to this dataset.
@@ -291,10 +294,12 @@ public class FlexReader extends FormatReader {
   /** Initialize the dataset from a .res file. */
   private void initResFile(String id) throws FormatException, IOException {
     LOGGER.debug("initResFile({})", id);
+
+    parseResFile(id);
+
     Location thisFile = new Location(id).getAbsoluteFile();
     Location parent = thisFile.getParentFile();
-    LOGGER.debug("  Looking for an .mea file in {}",
-      parent.getAbsolutePath());
+    LOGGER.debug("  Looking for an .mea file in {}", parent.getAbsolutePath());
     String[] list = parent.list();
     for (String file : list) {
       if (checkSuffix(file, MEA_SUFFIX)) {
@@ -341,15 +346,15 @@ public class FlexReader extends FormatReader {
           "Did you forget to specify the server names?");
       }
     }
-    else {
-      LOGGER.info("Looking for corresponding .res file");
-      String[] files = findFiles(file, new String[] {RES_SUFFIX});
-      if (files != null) {
-        for (String f : files) {
-          if (!measurementFiles.contains(f)) {
-            measurementFiles.add(f);
-          }
+
+    LOGGER.info("Looking for corresponding .res file");
+    String[] files = findFiles(file, new String[] {RES_SUFFIX});
+    if (files != null) {
+      for (String f : files) {
+        if (!measurementFiles.contains(f)) {
+          measurementFiles.add(f);
         }
+        parseResFile(f);
       }
     }
 
@@ -433,6 +438,16 @@ public class FlexReader extends FormatReader {
     Location currentFile = new Location(getCurrentFile()).getAbsoluteFile();
     int[] lengths = new int[] {fieldCount, wellCount, plateCount};
 
+    store.setPlateID(MetadataTools.createLSID("Plate", 0), 0);
+    String plateAcqID = MetadataTools.createLSID("PlateAcquisition", 0, 0);
+    store.setPlateAcquisitionID(plateAcqID, 0, 0);
+    store.setPlateAcquisitionMaximumFieldCount(
+      new PositiveInteger(fieldCount), 0, 0);
+
+    plateAcqStartTime =
+      DateTools.formatDate(plateAcqStartTime, "dd.MM.yyyy  HH:mm:ss");
+
+    store.setPlateAcquisitionStartTime(plateAcqStartTime, 0, 0);
 
     for (int row=0; row<wellRows; row++) {
       for (int col=0; col<wellColumns; col++) {
@@ -466,6 +481,8 @@ public class FlexReader extends FormatReader {
       store.setWellSampleID(wellSample, pos[2], well, pos[0]);
       store.setWellSampleIndex(new NonNegativeInteger(i), pos[2], well, pos[0]);
       store.setWellSampleImageRef(imageID, pos[2], well, pos[0]);
+
+      store.setPlateAcquisitionWellSampleRef(wellSample, 0, 0, i);
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
@@ -474,7 +491,6 @@ public class FlexReader extends FormatReader {
 
       if (plateName == null) plateName = currentFile.getParentFile().getName();
       if (plateBarcode != null) plateName = plateBarcode + " " + plateName;
-      store.setPlateID(MetadataTools.createLSID("Plate", 0), 0);
       store.setPlateName(plateName, 0);
       store.setPlateRowNamingConvention(getNamingConvention("Letter"), 0);
       store.setPlateColumnNamingConvention(getNamingConvention("Number"), 0);
@@ -551,6 +567,12 @@ public class FlexReader extends FormatReader {
         }
       }
     }
+  }
+
+  private void parseResFile(String id) throws IOException {
+    ResHandler handler = new ResHandler();
+    String resXML = DataTools.readFile(id);
+    XMLTools.parseXML(resXML, handler);
   }
 
   /**
@@ -1486,6 +1508,21 @@ public class FlexReader extends FormatReader {
         }
       }
     }
+  }
+
+  /** SAX handler for parsing XML from .res files. */
+  public class ResHandler extends DefaultHandler {
+
+    // -- DefaultHandler API methods --
+
+    public void startElement(String uri,
+      String localName, String qName, Attributes attributes)
+    {
+      if (qName.equals("AnalysisResults")) {
+        plateAcqStartTime = attributes.getValue("date");
+      }
+    }
+
   }
 
   /** Stores a grouping of filters. */
