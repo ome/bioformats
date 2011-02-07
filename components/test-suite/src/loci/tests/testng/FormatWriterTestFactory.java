@@ -85,7 +85,7 @@ public class FormatWriterTestFactory {
         LOGGER.error("   ant -D{}=\"/path/to/data\" test-all", baseDirProp);
         return new Object[0];
       }
-      FormatWriterTest.config = new ConfigurationTree(baseDir);
+      FormatWriterTest.configTree = new ConfigurationTree(baseDir);
 
       // create log file
       TestTools.createLogFile();
@@ -114,7 +114,7 @@ public class FormatWriterTestFactory {
       // scan for files
       System.out.println("Scanning for files...");
       long start = System.currentTimeMillis();
-      TestTools.getFiles(baseDir, files, FormatWriterTest.config);
+      TestTools.getFiles(baseDir, files, FormatWriterTest.configTree);
       long end = System.currentTimeMillis();
       double time = (end - start) / 1000.0;
       LOGGER.info(TestTools.DIVIDER);

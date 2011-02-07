@@ -61,6 +61,8 @@ import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.OMEXMLService;
 
+import ome.xml.model.primitives.PositiveInteger;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -591,7 +593,7 @@ public class FormatReaderTest {
       reader.setSeries(i);
       config.setSeries(i);
 
-      if (reader.getDimensionOrder() != config.getDimensionOrder()) {
+      if (!reader.getDimensionOrder().equals(config.getDimensionOrder())) {
         result(testName, false, "Series " + i);
       }
     }
@@ -804,7 +806,11 @@ public class FormatReaderTest {
     for (int i=0; i<reader.getSeriesCount(); i++) {
       config.setSeries(i);
 
-      if (!config.getPhysicalSizeZ().equals(retrieve.getPixelsPhysicalSizeZ(i)))
+      Double expectedSize = config.getPhysicalSizeZ();
+      Double realSize = retrieve.getPixelsPhysicalSizeZ(i);
+
+      if (!(expectedSize == null && realSize == null) &&
+        !expectedSize.equals(realSize))
       {
         result(testName, false, "Series " + i);
       }
@@ -824,7 +830,11 @@ public class FormatReaderTest {
     for (int i=0; i<reader.getSeriesCount(); i++) {
       config.setSeries(i);
 
-      if (!config.getTimeIncrement().equals(retrieve.getPixelsTimeIncrement(i)))
+      Double expectedIncrement = config.getTimeIncrement();
+      Double realIncrement = retrieve.getPixelsTimeIncrement(i);
+
+      if (!(expectedIncrement == null && realIncrement == null) &&
+        !expectedIncrement.equals(realIncrement))
       {
         result(testName, false, "Series " + i);
       }
@@ -845,8 +855,15 @@ public class FormatReaderTest {
       config.setSeries(i);
 
       for (int c=0; c<config.getChannelCount(); c++) {
-        if (!config.getLightSource(c).equals(
-          retrieve.getChannelLightSourceSettingsID(i, c)))
+        String expectedLightSource = config.getLightSource(c);
+        String realLightSource = null;
+        try {
+          realLightSource = retrieve.getChannelLightSourceSettingsID(i, c);
+        }
+        catch (NullPointerException e) { }
+
+        if (!(expectedLightSource == null && realLightSource == null) &&
+          !expectedLightSource.equals(realLightSource))
         {
           result(testName, false, "Series " + i + " channel " + c);
         }
@@ -868,7 +885,12 @@ public class FormatReaderTest {
       config.setSeries(i);
 
       for (int c=0; c<config.getChannelCount(); c++) {
-        if (!config.getChannelName(c).equals(retrieve.getChannelName(i, c))) {
+        String realName = retrieve.getChannelName(i, c);
+        String expectedName = config.getChannelName(c);
+
+        if (!expectedName.equals(realName) &&
+          (realName == null && !expectedName.equals("null")))
+        {
           result(testName, false, "Series " + i + " channel " + c);
         }
       }
@@ -879,7 +901,6 @@ public class FormatReaderTest {
   /**
    * @testng.test groups = "all fast"
    */
-  /*
   public void testEmissionWavelengths() {
     if (config == null) throw new SkipException("No config tree");
     String testName = "EmissionWavelengths";
@@ -890,8 +911,12 @@ public class FormatReaderTest {
       config.setSeries(i);
 
       for (int c=0; c<config.getChannelCount(); c++) {
-        if (!config.getEmissionWavelength(c).equals(
-          retrieve.getChannelEmissionWavelength(i, c)))
+        PositiveInteger realWavelength =
+          retrieve.getChannelEmissionWavelength(i, c);
+        Integer expectedWavelength = config.getEmissionWavelength(c);
+
+        if (!(realWavelength == null && expectedWavelength == null) &&
+          !expectedWavelength.equals(realWavelength.getValue()))
         {
           result(testName, false, "Series " + i + " channel " + c);
         }
@@ -899,12 +924,10 @@ public class FormatReaderTest {
     }
     result(testName, true);
   }
-  */
 
   /**
    * @testng.test groups = "all fast"
    */
-  /*
   public void testExcitationWavelengths() {
     if (config == null) throw new SkipException("No config tree");
     String testName = "ExcitationWavelengths";
@@ -915,8 +938,12 @@ public class FormatReaderTest {
       config.setSeries(i);
 
       for (int c=0; c<config.getChannelCount(); c++) {
-        if (!config.getExcitationWavelength(c).equals(
-          retrieve.getChannelExcitationWavelength(i, c)))
+        PositiveInteger realWavelength =
+          retrieve.getChannelExcitationWavelength(i, c);
+        Integer expectedWavelength = config.getExcitationWavelength(c);
+
+        if (!(realWavelength == null && expectedWavelength == null) &&
+          !expectedWavelength.equals(realWavelength.getValue()))
         {
           result(testName, false, "Series " + i + " channel " + c);
         }
@@ -924,7 +951,6 @@ public class FormatReaderTest {
     }
     result(testName, true);
   }
-  */
 
   /**
    * @testng.test groups = "all fast"
@@ -939,7 +965,16 @@ public class FormatReaderTest {
       config.setSeries(i);
 
       for (int c=0; c<config.getChannelCount(); c++) {
-        if (!config.getDetector(c).equals(retrieve.getDetectorSettingsID(i, c)))
+        String expectedDetector = config.getDetector(c);
+        String realDetector = null;
+
+        try {
+          realDetector = retrieve.getDetectorSettingsID(i, c);
+        }
+        catch (NullPointerException e) { }
+
+        if (!(expectedDetector == null && realDetector == null) &&
+          !expectedDetector.equals(realDetector))
         {
           result(testName, false, "Series " + i + " channel " + c);
         }
@@ -951,7 +986,6 @@ public class FormatReaderTest {
   /**
    * @testng.test groups = "all fast"
    */
-  /*
   public void testImageNames() {
     if (config == null) throw new SkipException("No config tree");
     String testName = "ImageNames";
@@ -967,7 +1001,6 @@ public class FormatReaderTest {
     }
     result(testName, true);
   }
-  */
 
   /**
    * @testng.test groups = "all"
@@ -1220,81 +1253,13 @@ public class FormatReaderTest {
     String file = reader.getCurrentFile();
     LOGGER.info("Generating configuration: {}", file);
     try {
-      StringBuffer line = new StringBuffer();
-      line.append("\"");
-      line.append(new Location(file).getName());
-      line.append("\" total_series=");
-      line.append(reader.getSeriesCount());
-      int seriesCount = reader.getSeriesCount();
-      for (int i=0; i<seriesCount; i++) {
-        reader.setSeries(i);
-        line.append(" [series=");
-        line.append(i);
-        line.append(" x=" + reader.getSizeX());
-        line.append(" y=" + reader.getSizeY());
-        line.append(" z=" + reader.getSizeZ());
-        line.append(" c=" + reader.getSizeC());
-        line.append(" t=" + reader.getSizeT());
-        line.append(" order=" + reader.getDimensionOrder());
-        line.append(" interleave=" + reader.isInterleaved());
-        line.append(" rgb=" + reader.isRGB());
-        line.append(" thumbx=" + reader.getThumbSizeX());
-        line.append(" thumby=" + reader.getThumbSizeY());
-        line.append(" type=" +
-          FormatTools.getPixelTypeString(reader.getPixelType()));
-        line.append(" little=" + reader.isLittleEndian());
-        line.append(" indexed=" + reader.isIndexed());
-        line.append(" falseColor=" + reader.isFalseColor());
-        line.append(" md5=" + TestTools.md5(reader.openBytes(0)));
-        line.append("]");
-      }
-      line.append(" no_stitch=true");
-
-      // evaluate performance
-      Runtime r = Runtime.getRuntime();
-      System.gc(); // clean memory before we start
-      long m1 = r.totalMemory() - r.freeMemory();
-      long t1 = System.currentTimeMillis();
-      int totalPlanes = 0;
-      for (int i=0; i<seriesCount; i++) {
-        reader.setSeries(i);
-        int imageCount = reader.getImageCount();
-        totalPlanes += imageCount;
-        try {
-          for (int j=0; j<imageCount; j++) reader.openImage(j);
-        }
-        catch (IOException e) {
-          LOGGER.info("", e);
-        }
-      }
-      long t2 = System.currentTimeMillis();
-      long m2 = r.totalMemory() - r.freeMemory();
-      double actualTime = (double) (t2 - t1) / totalPlanes;
-      int actualMem = (int) ((m2 - m1) >> 20);
-
-      line.append(" access=");
-      line.append(actualTime);
-      line.append(" mem=");
-      line.append(actualMem);
-      line.append(" test=true\n");
-
       File f = new File(new Location(file).getParent(), ".bioformats");
-      BufferedWriter w = new BufferedWriter(new FileWriter(f, true));
-      w.write(line.toString());
-      w.close();
+      Configuration newConfig = new Configuration(reader, f.getAbsolutePath());
+      newConfig.saveToFile();
     }
     catch (Throwable t) {
-      try {
-        LOGGER.info("", t);
-        File f = new File(new Location(file).getParent(), ".bioformats");
-        BufferedWriter w = new BufferedWriter(new FileWriter(f, true));
-        w.write("\"" + new Location(file).getName() + "\" test=false\n");
-        w.close();
-      }
-      catch (Throwable t2) {
-        LOGGER.info("", t2);
-        assert false;
-      }
+      LOGGER.info("", t);
+      assert false;
     }
   }
 
@@ -1321,7 +1286,10 @@ public class FormatReaderTest {
 
     // initialize configuration tree
     if (config == null) {
-      //config = configTree.get(id);
+      try {
+        config = configTree.get(id);
+      }
+      catch (IOException e) { }
     }
 
     if (reader == null) {

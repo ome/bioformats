@@ -146,6 +146,13 @@ public class TestTools {
     return null;
   }
 
+  /** Gets the quantity of used memory, in MB. */
+  public static long getUsedMemory() {
+    Runtime r = Runtime.getRuntime();
+    long mem = r.totalMemory() - r.freeMemory();
+    return mem >> 20;
+  }
+
   /** Gets the class name sans package for the given object. */
   public static String shortClassName(Object o) {
     String name = o.getClass().getName();
@@ -212,6 +219,7 @@ public class TestTools {
         catch (IOException exc) {
           LOGGER.info("", exc);
         }
+        catch (Exception e) { }
       }
       else if (isIgnoredFile(subs[i], config)) {
         LOGGER.info("\tignored");
@@ -236,8 +244,13 @@ public class TestTools {
   public static boolean isIgnoredFile(String file, ConfigurationTree config) {
     if (file.indexOf(File.separator + ".") >= 0) return true; // hidden file
 
-    config.setId(file);
-    if (!config.isTestable()) return true;
+    try {
+      Configuration c = config.get(file);
+      if (c == null) return false;
+      if (!c.doTest()) return true;
+    }
+    catch (IOException e) { }
+    catch (Exception e) { }
 
     // HACK - heuristics to speed things up
     if (file.endsWith(".oif.files")) return true; // ignore .oif folders

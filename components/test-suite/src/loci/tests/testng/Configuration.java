@@ -11,7 +11,11 @@ import loci.common.IniWriter;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
+import loci.formats.ImageReader;
+import loci.formats.ReaderWrapper;
 import loci.formats.meta.IMetadata;
+
+import ome.xml.model.primitives.PositiveInteger;
 
 public class Configuration {
 
@@ -82,6 +86,10 @@ public class Configuration {
   // -- Configuration API methods --
 
   // -- Global metadata --
+
+  public String getFile() {
+    return dataFile;
+  }
 
   public long getAccessTimeMillis() {
     return Long.parseLong(globalTable.get(ACCESS_TIME));
@@ -170,19 +178,23 @@ public class Configuration {
   }
 
   public Double getPhysicalSizeX() {
-    return new Double(currentTable.get(PHYSICAL_SIZE_X));
+    String physicalSize = currentTable.get(PHYSICAL_SIZE_X);
+    return physicalSize == null ? null : new Double(physicalSize);
   }
 
   public Double getPhysicalSizeY() {
-    return new Double(currentTable.get(PHYSICAL_SIZE_Y));
+    String physicalSize = currentTable.get(PHYSICAL_SIZE_Y);
+    return physicalSize == null ? null : new Double(physicalSize);
   }
 
   public Double getPhysicalSizeZ() {
-    return new Double(currentTable.get(PHYSICAL_SIZE_Z));
+    String physicalSize = currentTable.get(PHYSICAL_SIZE_Z);
+    return physicalSize == null ? null : new Double(physicalSize);
   }
 
   public Double getTimeIncrement() {
-    return new Double(currentTable.get(TIME_INCREMENT));
+    String physicalSize = currentTable.get(TIME_INCREMENT);
+    return physicalSize == null ? null : new Double(physicalSize);
   }
 
   public int getChannelCount() {
@@ -197,12 +209,14 @@ public class Configuration {
     return currentTable.get(CHANNEL_NAME + channel);
   }
 
-  public int getEmissionWavelength(int channel) {
-    return Integer.parseInt(currentTable.get(EMISSION_WAVELENGTH + channel));
+  public Integer getEmissionWavelength(int channel) {
+    String wavelength = currentTable.get(EMISSION_WAVELENGTH + channel);
+    return wavelength == null ? null : new Integer(wavelength);
   }
 
-  public int getExcitationWavelength(int channel) {
-    return Integer.parseInt(currentTable.get(EXCITATION_WAVELENGTH + channel));
+  public Integer getExcitationWavelength(int channel) {
+    String wavelength = currentTable.get(EXCITATION_WAVELENGTH + channel);
+    return wavelength == null ? null : new Integer(wavelength);
   }
 
   public String getDetector(int channel) {
@@ -248,10 +262,32 @@ public class Configuration {
     int seriesCount = reader.getSeriesCount();
 
     globalTable.put(SERIES_COUNT, String.valueOf(seriesCount));
-    globalTable.put("reader", "");
-    globalTable.put("test", "true");
-    globalTable.put("mem_mb", "");
-    globalTable.put("access_ms", "");
+
+    IFormatReader r = reader;
+    if (r instanceof ImageReader) {
+      r = ((ImageReader) r).getReader();
+    }
+    else if (r instanceof ReaderWrapper) {
+      try {
+        r = ((ReaderWrapper) r).unwrap();
+      }
+      catch (FormatException e) { }
+      catch (IOException e) { }
+    }
+
+    globalTable.put(READER, TestTools.shortClassName(r));
+    globalTable.put(TEST, "true");
+    globalTable.put(MEMORY, String.valueOf(TestTools.getUsedMemory()));
+
+    long t0 = System.currentTimeMillis();
+    try {
+      reader.openBytes(0);
+    }
+    catch (FormatException e) { }
+    catch (IOException e) { }
+    long t1 = System.currentTimeMillis();
+
+    globalTable.put(ACCESS_TIME, String.valueOf(t1 - t0));
 
     ini.add(globalTable);
 
@@ -294,28 +330,46 @@ public class Configuration {
 
       seriesTable.put(NAME, retrieve.getImageName(series));
 
-      String physicalX = retrieve.getPixelsPhysicalSizeX(series).toString();
-      seriesTable.put(PHYSICAL_SIZE_X, physicalX);
-      String physicalY = retrieve.getPixelsPhysicalSizeY(series).toString();
-      seriesTable.put(PHYSICAL_SIZE_Y, physicalY);
-      String physicalZ = retrieve.getPixelsPhysicalSizeZ(series).toString();
-      seriesTable.put(PHYSICAL_SIZE_Z, physicalZ);
-      String timeIncrement = retrieve.getPixelsTimeIncrement(series).toString();
-      seriesTable.put(TIME_INCREMENT, timeIncrement);
+      Double physicalX = retrieve.getPixelsPhysicalSizeX(series);
+      if (physicalX != null) {
+        seriesTable.put(PHYSICAL_SIZE_X, physicalX.toString());
+      }
+      Double physicalY = retrieve.getPixelsPhysicalSizeY(series);
+      if (physicalY != null) {
+        seriesTable.put(PHYSICAL_SIZE_Y, physicalY.toString());
+      }
+      Double physicalZ = retrieve.getPixelsPhysicalSizeZ(series);
+      if (physicalZ != null) {
+        seriesTable.put(PHYSICAL_SIZE_Z, physicalZ.toString());
+      }
+      Double timeIncrement = retrieve.getPixelsTimeIncrement(series);
+      if (timeIncrement != null) {
+        seriesTable.put(TIME_INCREMENT, timeIncrement.toString());
+      }
 
       for (int c=0; c<retrieve.getChannelCount(series); c++) {
         seriesTable.put(CHANNEL_NAME + c, retrieve.getChannelName(series, c));
-        seriesTable.put(LIGHT_SOURCE + c,
-          retrieve.getChannelLightSourceSettingsID(series, c));
+        try {
+          seriesTable.put(LIGHT_SOURCE + c,
+            retrieve.getChannelLightSourceSettingsID(series, c));
+        }
+        catch (NullPointerException e) { }
 
-        String emWavelength =
-          retrieve.getChannelEmissionWavelength(series, c).toString();
-        seriesTable.put(EMISSION_WAVELENGTH + c, emWavelength);
-        String exWavelength =
-          retrieve.getChannelExcitationWavelength(series, c).toString();
-        seriesTable.put(EXCITATION_WAVELENGTH + c, exWavelength);
-        seriesTable.put(DETECTOR + c,
-          retrieve.getDetectorSettingsID(series, c));
+        PositiveInteger emWavelength =
+          retrieve.getChannelEmissionWavelength(series, c);
+        if (emWavelength != null) {
+          seriesTable.put(EMISSION_WAVELENGTH + c, emWavelength.toString());
+        }
+        PositiveInteger exWavelength =
+          retrieve.getChannelExcitationWavelength(series, c);
+        if (exWavelength != null) {
+          seriesTable.put(EXCITATION_WAVELENGTH + c, exWavelength.toString());
+        }
+        try {
+          seriesTable.put(DETECTOR + c,
+            retrieve.getDetectorSettingsID(series, c));
+        }
+        catch (NullPointerException e) { }
       }
 
       ini.add(seriesTable);
@@ -334,6 +388,10 @@ public class Configuration {
       String tableName = table.get(IniTable.HEADER_KEY);
       if (tableName.startsWith(dataFile)) {
         newIni.add(table);
+
+        if (tableName.endsWith("global")) {
+          globalTable = table;
+        }
       }
     }
     ini = newIni;

@@ -41,6 +41,9 @@ import java.util.StringTokenizer;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import loci.common.IniList;
+import loci.common.IniParser;
+import loci.common.IniTable;
 import loci.formats.FormatTools;
 
 import org.slf4j.Logger;
@@ -71,18 +74,6 @@ public class ConfigurationTree {
    */
   private DefaultMutableTreeNode root;
 
-  /** Current file within the tree structure. */
-  private String currentId;
-
-  /** Current position within the tree structure. */
-  private DefaultMutableTreeNode pos;
-
-  /** Series-independent hashtable for current file. */
-  private Hashtable globalTable;
-
-  /** Series-specific hashtable for current file's active series. */
-  private Hashtable seriesTable;
-
   // -- Constructor --
 
   /**
@@ -96,202 +87,40 @@ public class ConfigurationTree {
 
   // -- ConfigurationTree API methods --
 
-  /** Parses the given Bio-Formats configuration file. */
+  /** Retrieves the Configuration object corresponding to the given file. */
+  public Configuration get(String id) throws IOException {
+    DefaultMutableTreeNode pos = findNode(id, false, null);
+    if (pos == null) return null;
+    Hashtable table = (Hashtable) pos.getUserObject();
+    return (Configuration) table.get("configuration");
+  }
+
   public void parseConfigFile(String configFile) throws IOException {
     File file = new File(configFile);
     configFile = file.getAbsolutePath();
     String dir = file.getParentFile().getAbsolutePath();
 
-    int count = 0;
-    BufferedReader in = new BufferedReader(new FileReader(configFile));
-    while (true) {
-      String line = in.readLine();
-      if (line == null) break;
-      line = line.trim();
-      count++;
-      if (line.startsWith("#")) continue; // ignore comments
+    IniParser parser = new IniParser();
+    IniList iniList =
+      parser.parseINI(new BufferedReader(new FileReader(configFile)));
+    for (IniTable table : iniList) {
+      String id = table.get(IniTable.HEADER_KEY);
+      id = id.substring(0, id.lastIndexOf(" "));
 
-      // parse filename
-      int start = 0, mid = -1, end = -1;
-      if (line.startsWith("\"")) {
-        start = 1;
-        mid = line.indexOf("\"", 1);
-        end = mid + 1;
-      }
-      if (mid < 0) {
-        mid = line.indexOf(" ");
-        end = mid + 1;
-      }
-      if (mid < 0) mid = end = line.length();
-      String id = line.substring(start, mid);
-      id = new File(dir, id).getAbsolutePath();
-
-      DefaultMutableTreeNode node = findNode(id, true);
+      DefaultMutableTreeNode node = findNode(id, true, configFile);
       if (node == null) {
-        LOGGER.warn("config file '{}' has invalid filename on line {}",
-          configFile, count);
+        LOGGER.warn("config file '{}' has invalid filename '{}'",
+          configFile, id);
         continue;
       }
-      Hashtable global = (Hashtable) node.getUserObject();
-
-      Hashtable local = null;
-
-      StringTokenizer st = new StringTokenizer(line.substring(end));
-      while (st.hasMoreTokens()) {
-        String token = st.nextToken();
-
-        boolean left = token.startsWith("[");
-        boolean right = token.endsWith("]");
-        if (left && right) token = token.substring(1, token.length() - 1);
-        else if (left) token = token.substring(1);
-        else if (right) token = token.substring(0, token.length() - 1);
-
-        if (left) {
-          // begin series context
-          if (local != null) {
-            LOGGER.warn("config file '{}' has unmatched [ on line {}",
-              configFile, count);
-          }
-          local = new Hashtable();
-        }
-
-        int equals = token.indexOf("=");
-        if (token.equals("")) { } // ignore blank tokens
-        else if (equals < 0) {
-          // ignore invalid tokens
-          LOGGER.warn("config file '{}' has invalid token on line {}: {}",
-            new Object[] {configFile, count, token});
-        }
-        else {
-          // store key/value pair into the proper context
-          String key = token.substring(0, equals);
-          String value = token.substring(equals + 1);
-          if (local == null) global.put(key, value);
-          else local.put(key, value);
-        }
-
-        if (right) {
-          // end series context
-          if (local == null) {
-            LOGGER.warn("config file '{}' has unmatched ] on line {}",
-              configFile, count);
-          }
-          else {
-            // save local context results
-            String series = (String) local.get("series");
-            if (series == null) {
-              LOGGER.warn(
-                "config file '{}' is missing a series number on line {}",
-                configFile, count);
-            }
-            else {
-              int index = toInt(series);
-              if (index < 0) {
-                LOGGER.warn(
-                  "config file '{}' has invalid series block on line {}",
-                  configFile, count);
-              }
-              else getChild(node, index).setUserObject(local);
-            }
-            local = null;
-          }
-        }
-      }
     }
-    in.close();
-  }
-
-  /** Sets the current file. */
-  public void setId(String id) {
-    if (id.equals(currentId)) return;
-    currentId = id;
-    pos = findNode(id, false);
-    if (pos == null) globalTable = null;
-    else globalTable = (Hashtable) pos.getUserObject();
-    seriesTable = null;
-  }
-
-  /** Sets the active series. */
-  public void setSeries(int series) {
-    if (pos == null) return; // file has no configuration
-    if (series >= pos.getChildCount()) {
-      LOGGER.warn("invalid series for file '{}': {}", currentId, series);
-      seriesTable = null;
-      return;
-    }
-    DefaultMutableTreeNode child =
-      (DefaultMutableTreeNode) pos.getChildAt(series);
-    seriesTable = (Hashtable) child.getUserObject();
-  }
-
-  // - Convenience methods for accessing specific key values -
-
-  public boolean noStitching() {
-    String noStitch = getValue("no_stitch");
-    return noStitch != null && noStitch.equals("true");
-  }
-
-  public int getNumSeries() { return toInt(getValue("total_series")); }
-
-  public int getX() { return toInt(getSeriesValue("x")); }
-  public int getY() { return toInt(getSeriesValue("y")); }
-  public int getZ() { return toInt(getSeriesValue("z")); }
-  public int getC() { return toInt(getSeriesValue("c")); }
-  public int getT() { return toInt(getSeriesValue("t")); }
-
-  public String getOrder() { return getSeriesValue("order"); }
-
-  public boolean isInterleaved() {
-    return toBoolean(getSeriesValue("interleave"));
-  }
-
-  public boolean isRGB() {
-    return toBoolean(getSeriesValue("rgb"));
-  }
-
-  public int getThumbX() {
-    return toInt(getSeriesValue("thumbx"));
-  }
-
-  public int getThumbY() {
-    return toInt(getSeriesValue("thumby"));
-  }
-
-  public int getPixelType() {
-    String type = getSeriesValue("type");
-    return type == null ? -1 : FormatTools.pixelTypeFromString(type);
-  }
-
-  public boolean isLittleEndian() {
-    return toBoolean(getSeriesValue("little"));
-  }
-
-  public boolean isIndexed() {
-    return toBoolean(getSeriesValue("indexed"));
-  }
-
-  public boolean isFalseColor() {
-    return toBoolean(getSeriesValue("falseColor"));
-  }
-
-  public String getMD5() { return getSeriesValue("md5"); }
-
-  public float getTimePerPlane() {
-    return toFloat(getValue("access"));
-  }
-
-  public int getMemoryUse() {
-    return toInt(getValue("mem"));
-  }
-
-  public boolean isTestable() {
-    return toBoolean(getValue("test"));
   }
 
   // -- Helper methods --
 
   /** Gets the tree node associated with the given file. */
-  private DefaultMutableTreeNode findNode(String id, boolean create) {
+  private DefaultMutableTreeNode findNode(String id, boolean create, String configFile) {
+    String baseID = id;
     if (!id.startsWith(rootDir)) return null;
     id = id.substring(rootDir.length());
     StringTokenizer st = new StringTokenizer(id, "\\/");
@@ -314,67 +143,17 @@ public class ConfigurationTree {
         if (!create) return null;
         next = new DefaultMutableTreeNode();
         Hashtable table = new Hashtable();
-        next.setUserObject(table);
         table.put("name", token);
+        try {
+          table.put("configuration", new Configuration(baseID, configFile));
+        }
+        catch (IOException e) { }
+        next.setUserObject(table);
         node.add(next);
       }
       node = next;
     }
     return node;
-  }
-
-  /** Gets a value associated with the current file. */
-  private String getValue(String key) {
-    return globalTable == null ? null : (String) globalTable.get(key);
-  }
-
-  /** Gets a value associated with the current file and active series. */
-  private String getSeriesValue(String key) {
-    return seriesTable == null ? null : (String) seriesTable.get(key);
-  }
-
-  /** Converts a String to a boolean. */
-  private boolean toBoolean(String s) {
-    return s == null || !s.equals("false");
-  }
-
-  /** Converts a String to a float. */
-  private float toFloat(String s) {
-    float result = Float.NaN;
-    if (s != null) {
-      try {
-        result = Float.parseFloat(s);
-      }
-      catch (NumberFormatException exc) { }
-    }
-    return result;
-  }
-
-  /** Converts a String to an int. */
-  private int toInt(String s) {
-    int result = 0;
-    if (s != null) {
-      try {
-        result = Integer.parseInt(s);
-      }
-      catch (NumberFormatException exc) { }
-    }
-    return result;
-  }
-
-  // -- Utility methods --
-
-  /**
-   * Gets the child at the specified index in the given node's child array,
-   * creating child nodes if necessary.
-   */
-  private static DefaultMutableTreeNode getChild(DefaultMutableTreeNode node,
-    int index)
-  {
-    for (int i=node.getChildCount(); i<=index; i++) {
-      node.add(new DefaultMutableTreeNode());
-    }
-    return (DefaultMutableTreeNode) node.getChildAt(index);
   }
 
 }

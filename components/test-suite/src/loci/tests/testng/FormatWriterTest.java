@@ -40,6 +40,7 @@ import java.util.Vector;
 import loci.common.DataTools;
 import loci.common.services.ServiceFactory;
 import loci.formats.FormatException;
+import loci.formats.FormatTools;
 import loci.formats.IFormatWriter;
 import loci.formats.ImageWriter;
 import loci.formats.gui.BufferedImageReader;
@@ -77,7 +78,7 @@ public class FormatWriterTest {
   // -- Static fields --
 
   /** Configuration tree structure containing dataset metadata. */
-  public static ConfigurationTree config;
+  public static ConfigurationTree configTree;
 
   /** List of files to skip. */
   public static List skipFiles = new LinkedList();
@@ -87,6 +88,8 @@ public class FormatWriterTest {
 
   /** Reader for converted files. */
   private static BufferedImageReader convertedReader;
+
+  private static Configuration config;
 
   // -- Fields --
 
@@ -173,7 +176,7 @@ public class FormatWriterTest {
         return;
       }
 
-      config.setId(id);
+      config = configTree.get(id);
 
       String prefix = id.substring(id.lastIndexOf(File.separator) + 1,
         id.lastIndexOf("."));
@@ -209,11 +212,11 @@ public class FormatWriterTest {
       convertedReader.setId(convertedFile);
 
       boolean seriesMatch =
-        convertedReader.getSeriesCount() == config.getNumSeries();
+        convertedReader.getSeriesCount() == config.getSeriesCount();
 
       boolean expectRGB = config.isRGB();
-      int expectedCount =
-        config.getZ() * config.getT() * (expectRGB ? 1 : config.getC());
+      int expectedCount = config.getSizeZ() * config.getSizeT() *
+        (expectRGB ? 1 : config.getSizeC());
       boolean imageMatch = convertedReader.getImageCount() == expectedCount;
 
       if (!seriesMatch && writer.canDoStacks()) {
@@ -227,7 +230,7 @@ public class FormatWriterTest {
           success = false;
           msg = "Series counts do not match (found " +
             convertedReader.getSeriesCount() + ", expected " +
-            config.getNumSeries() + ")";
+            config.getSeriesCount() + ")";
         }
         else imageMatch = true;
       }
@@ -239,8 +242,8 @@ public class FormatWriterTest {
           convertedReader.setSeries(series);
           config.setSeries(series);
 
-          int expectedX = config.getX();
-          int expectedY = config.getY();
+          int expectedX = config.getSizeX();
+          int expectedY = config.getSizeY();
           expectRGB = config.isRGB();
           if (TestTools.shortClassName(writer).equals("OMEXMLWriter")) {
             expectRGB = false;
@@ -249,9 +252,10 @@ public class FormatWriterTest {
             expectRGB = expectRGB || config.isIndexed();
           }
 
-          int expectedPixelType = config.getPixelType();
-          expectedCount =
-            config.getZ() * config.getT() * (expectRGB ? 1 : config.getC());
+          int expectedPixelType =
+            FormatTools.pixelTypeFromString(config.getPixelType());
+          expectedCount = config.getSizeZ() * config.getSizeT() *
+            (expectRGB ? 1 : config.getSizeC());
 
           String expectedMD5 = config.getMD5();
 
