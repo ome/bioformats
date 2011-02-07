@@ -33,7 +33,9 @@ import loci.common.Location;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
+import loci.formats.ClassList;
 import loci.formats.FormatException;
+import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 import loci.formats.in.ScreenReader;
 import loci.formats.ome.OMEXMLMetadata;
@@ -89,10 +91,23 @@ public class ScreenDetectionTest {
     ServiceFactory factory = new ServiceFactory();
     OMEXMLService service = factory.getInstance(OMEXMLService.class);
 
+    ClassList<IFormatReader> readerClasses =
+      ImageReader.getDefaultReaderClasses();
+    Class<IFormatReader>[] c =
+      (Class<IFormatReader>[]) readerClasses.getClasses();
+
+    ClassList<IFormatReader> validReaderClasses =
+      new ClassList<IFormatReader>(IFormatReader.class);
+    validReaderClasses.addClass(ScreenReader.class);
+    for (Class<IFormatReader> readerClass : c) {
+      validReaderClasses.addClass(readerClass);
+    }
+
     for (int i=0; i<SCREENS.length; i++) {
       setupScreen(SCREENS[i]);
 
-      readers[i] = new ImageReader();
+      readers[i] = new ImageReader(validReaderClasses);
+
       omexml[i] = service.createOMEXMLMetadata();
       readers[i].setMetadataStore(omexml[i]);
       readers[i].setId(SCREENS[i][0]);
