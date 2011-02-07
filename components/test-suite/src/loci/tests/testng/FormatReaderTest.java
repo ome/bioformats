@@ -1220,81 +1220,13 @@ public class FormatReaderTest {
     String file = reader.getCurrentFile();
     LOGGER.info("Generating configuration: {}", file);
     try {
-      StringBuffer line = new StringBuffer();
-      line.append("\"");
-      line.append(new Location(file).getName());
-      line.append("\" total_series=");
-      line.append(reader.getSeriesCount());
-      int seriesCount = reader.getSeriesCount();
-      for (int i=0; i<seriesCount; i++) {
-        reader.setSeries(i);
-        line.append(" [series=");
-        line.append(i);
-        line.append(" x=" + reader.getSizeX());
-        line.append(" y=" + reader.getSizeY());
-        line.append(" z=" + reader.getSizeZ());
-        line.append(" c=" + reader.getSizeC());
-        line.append(" t=" + reader.getSizeT());
-        line.append(" order=" + reader.getDimensionOrder());
-        line.append(" interleave=" + reader.isInterleaved());
-        line.append(" rgb=" + reader.isRGB());
-        line.append(" thumbx=" + reader.getThumbSizeX());
-        line.append(" thumby=" + reader.getThumbSizeY());
-        line.append(" type=" +
-          FormatTools.getPixelTypeString(reader.getPixelType()));
-        line.append(" little=" + reader.isLittleEndian());
-        line.append(" indexed=" + reader.isIndexed());
-        line.append(" falseColor=" + reader.isFalseColor());
-        line.append(" md5=" + TestTools.md5(reader.openBytes(0)));
-        line.append("]");
-      }
-      line.append(" no_stitch=true");
-
-      // evaluate performance
-      Runtime r = Runtime.getRuntime();
-      System.gc(); // clean memory before we start
-      long m1 = r.totalMemory() - r.freeMemory();
-      long t1 = System.currentTimeMillis();
-      int totalPlanes = 0;
-      for (int i=0; i<seriesCount; i++) {
-        reader.setSeries(i);
-        int imageCount = reader.getImageCount();
-        totalPlanes += imageCount;
-        try {
-          for (int j=0; j<imageCount; j++) reader.openImage(j);
-        }
-        catch (IOException e) {
-          LOGGER.info("", e);
-        }
-      }
-      long t2 = System.currentTimeMillis();
-      long m2 = r.totalMemory() - r.freeMemory();
-      double actualTime = (double) (t2 - t1) / totalPlanes;
-      int actualMem = (int) ((m2 - m1) >> 20);
-
-      line.append(" access=");
-      line.append(actualTime);
-      line.append(" mem=");
-      line.append(actualMem);
-      line.append(" test=true\n");
-
       File f = new File(new Location(file).getParent(), ".bioformats");
-      BufferedWriter w = new BufferedWriter(new FileWriter(f, true));
-      w.write(line.toString());
-      w.close();
+      Configuration newConfig = new Configuration(reader, f.getAbsolutePath());
+      newConfig.saveToFile();
     }
     catch (Throwable t) {
-      try {
-        LOGGER.info("", t);
-        File f = new File(new Location(file).getParent(), ".bioformats");
-        BufferedWriter w = new BufferedWriter(new FileWriter(f, true));
-        w.write("\"" + new Location(file).getName() + "\" test=false\n");
-        w.close();
-      }
-      catch (Throwable t2) {
-        LOGGER.info("", t2);
-        assert false;
-      }
+      LOGGER.info("", t);
+      assert false;
     }
   }
 
@@ -1321,7 +1253,10 @@ public class FormatReaderTest {
 
     // initialize configuration tree
     if (config == null) {
-      //config = configTree.get(id);
+      try {
+        config = configTree.get(id);
+      }
+      catch (IOException e) { }
     }
 
     if (reader == null) {
