@@ -722,6 +722,8 @@ public class TiffParser {
           tileBounds.y = (int) ((row % nrows) * tileLength);
         }
 
+        if (!imageBounds.intersects(tileBounds)) continue;
+
         getTile(ifd, cachedTileBuffer, row, col);
 
         // adjust tile bounds, if necessary
@@ -740,8 +742,6 @@ public class TiffParser {
 
         realX *= pixel;
         realY *= rowLen;
-
-        if (!imageBounds.intersects(tileBounds)) continue;
 
         for (int q=0; q<effectiveChannels; q++) {
           int src = (int) (q * tileSize) + realX + realY;
