@@ -31,26 +31,6 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="init-version">
-    <!-- check for SVN versioning information -->
-    <property name="svn.path" value="${basedir}/.svn/entries"/>
-    <available file="${svn.path}" property="svn.present"/>
-    <if>
-      <isset property="svn.present"/>
-      <then>
-        <loadfile property="svn.entries" srcFile="${svn.path}"/>
-        <propertyregex property="svn.revision" input="${svn.entries}"
-          regexp="([^\n]*\n){3}([^\n]*)" select="\2"/>
-        <propertyregex property="svn.url" input="${svn.entries}"
-          regexp="([^\n]*\n){4}([^\n]*)" select="\2"/>
-        <propertyregex property="svn.root" input="${svn.entries}"
-          regexp="([^\n]*\n){5}([^\n]*)" select="\2"/>
-        <propertyregex property="svn.date" input="${svn.entries}"
-          regexp="([^\n]*\n){9}([^\n]*)" select="\2"/>
-        <propertyregex property="svn.changed" input="${svn.entries}"
-          regexp="([^\n]*\n){10}([^\n]*)" select="\2"/>
-      </then>
-    </if>
-
     <!-- check for Git versioning information -->
     <property name="git.path" value="${root.dir}/.git"/>
     <available file="${git.path}" property="git.present"/>
@@ -63,36 +43,15 @@ Type "ant -p" for a list of targets.
           <arg value="-s"/>
           <arg value="HEAD"/>
         </exec>
-        <propertyregex property="git.commit" input="${git.info}"
+        <propertyregex property="vcs.commit" input="${git.info}"
           regexp="commit ([a-f0-9]+)" select="\1"/>
-        <propertyregex property="svn.revision" input="${git.info}"
-          regexp=".*git-svn-id: [^@]+@([0-9]+)" select="\1"/>
-        <propertyregex property="svn.url"
-          input="${git.info}" regexp=".*git-svn-id: ([^@]+)" select="\1"/>
-        <propertyregex property="svn.root" input="${svn.url}"
-          regexp="(.*)(/trunk)|(/branches)|(/tags).*" select="\1"/>
-        <propertyregex property="svn.date"
+        <propertyregex property="vcs.date"
           input="${git.info}" regexp="Date: +([^\n]*)" select="\1"/>
-        <property name="svn.changed" value="unknown"/>
       </then>
     </if>
 
     <!-- set release version from repository URL -->
-    <property name="release.version" value="unknown"/>
-    <if>
-      <isset property="svn.url"/>
-      <then>
-        <propertyregex property="release.version" override="true"
-          input="${svn.url}" regexp=".*/(trunk).*" replace="\1"/>
-        <propertyregex property="release.version" override="true"
-          input="${svn.url}" regexp=".*/branches/([^/]*).*"
-          replace="dev \1"/>
-        <propertyregex property="release.version" override="true"
-          defaultValue="${release.version}"
-          input="${svn.url}" regexp=".*/tags/loci-tools-([^/]*).*"
-          replace="stable \1"/>
-      </then>
-    </if>
+    <property name="release.version" value="4.3"/>
   </target>
 
 </project>
