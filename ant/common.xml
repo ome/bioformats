@@ -41,6 +41,7 @@ Type "ant -p" for a list of targets.
           failifexecutionfails="false">
           <arg value="show"/>
           <arg value="-s"/>
+          <arg value="--abbrev-commit"/>
           <arg value="HEAD"/>
         </exec>
         <propertyregex property="vcs.revision" input="${git.info}"
@@ -51,7 +52,7 @@ Type "ant -p" for a list of targets.
     </if>
 
     <!-- set release version from repository URL -->
-    <property name="release.version" value="4.3"/>
+    <property name="release.version" value="4.3-DEV"/>
   </target>
 
 </project>
