@@ -43,7 +43,7 @@ Type "ant -p" for a list of targets.
           <arg value="-s"/>
           <arg value="HEAD"/>
         </exec>
-        <propertyregex property="vcs.commit" input="${git.info}"
+        <propertyregex property="vcs.revision" input="${git.info}"
           regexp="commit ([a-f0-9]+)" select="\1"/>
         <propertyregex property="vcs.date"
           input="${git.info}" regexp="Date: +([^\n]*)" select="\1"/>
