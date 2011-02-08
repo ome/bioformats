@@ -139,8 +139,15 @@ public final class FormatTools {
 
   // -- Constants - versioning --
 
-  /** Current SVN revision. */
-  public static final String SVN_REVISION = "@svn.revision@";
+  /**
+   * Current SVN revision.
+   * @deprecated After Git move, deprecated in favour of {@link VCS_REVISION}.
+   */
+  @Deprecated
+  public static final String SVN_REVISION = "@vcs.revision@";
+
+  /** Current VCS revision. */
+  public static final String VCS_REVISION = "@vcs.revision@";
 
   /** Date on which this release was built. */
   public static final String DATE = "@date@";

@@ -53,7 +53,7 @@ public final class About {
 
   public static void about() {
     System.out.println("OME-XML Java library, " +
-      "revision @svn.revision@, built @date@");
+      "revision @vcs.revision@, built @date@");
     System.out.println("Copyright 2005-@year@ Open Microscopy Environment");
     System.out.println(URL_OME_XML_LIBRARY);
     System.out.println("Authors: Curtis Rueden, Chris Allan");
