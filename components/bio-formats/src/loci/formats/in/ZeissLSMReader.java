@@ -919,13 +919,22 @@ public class ZeissLSMReader extends FormatReader {
             xPos += xCoordinates.get(i);
             xCoordinates.setElementAt(xPos, i);
           }
+          else if (xCoordinates.size() == i - 1) {
+            xCoordinates.add(xPos);
+          }
           if (yCoordinates.size() > i) {
             yPos += yCoordinates.get(i);
             yCoordinates.setElementAt(yPos, i);
           }
+          else if (yCoordinates.size() == i - 1) {
+            yCoordinates.add(yPos);
+          }
           if (zCoordinates.size() > i) {
             zPos += zCoordinates.get(i);
             zCoordinates.setElementAt(zPos, i);
+          }
+          else if (zCoordinates.size() == i - 1) {
+            zCoordinates.add(zPos);
           }
 
           addGlobalMeta("X position for position #" + (i + 1), xPos);
