@@ -552,8 +552,10 @@ public class SlidebookReader extends FormatReader {
               in.skipBytes(16);
               int x = in.readShort();
               int y = in.readShort();
-              if (x != 0) sizeX[j] = x;
-              if (y != 0) sizeY[j] = y;
+              if (x > 16 && y > 16) {
+                sizeX[j] = x;
+                sizeY[j] = y;
+              }
               /* debug */ System.out.println("@555, X = " + sizeX[j] + ", Y = " + sizeY[j]);
               adjust = false;
               break;
@@ -566,6 +568,7 @@ public class SlidebookReader extends FormatReader {
     planeOffset = new long[getSeriesCount()][];
 
     for (int i=0; i<getSeriesCount(); i++) {
+      /* debug */ System.out.println("*** SERIES #" + i + " ***");
       setSeries(i);
 
       Vector<Integer> pixelIndexes = uniqueSeries.get(orderedSeries.get(i));
