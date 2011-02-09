@@ -97,9 +97,11 @@ public class SlidebookReader extends FormatReader {
 
     long offset = planeOffset[getSeries()][no];
     in.seek(offset);
+    /* debug */ System.out.println("reading plane #" + no + " in series #" + getSeries() + " from " + offset);
 
     // if this is a spool file, there may be an extra metadata block here
     if (isSpool) {
+      /* debug */ System.out.println(" *** spool");
       Integer[] keys = metadataInPlanes.keySet().toArray(new Integer[0]);
       Arrays.sort(keys);
       for (int key : keys) {
@@ -263,6 +265,7 @@ public class SlidebookReader extends FormatReader {
         else {
           if ((fp % 2) == 1) fp -= 2;
           in.seek(fp);
+          /* debug */ System.out.println("original fp = " + fp);
 
           // make sure there isn't another block nearby
 
@@ -278,6 +281,7 @@ public class SlidebookReader extends FormatReader {
           else in.seek(fp);
 
           LOGGER.debug("Found pixel offset at {}", fp);
+          /* debug */ System.out.println("adding offset #" + pixelOffsets.size() + " @ " + fp);
           pixelOffsets.add(new Long(fp));
           try {
             byte[] buf = new byte[8192];
@@ -301,10 +305,13 @@ public class SlidebookReader extends FormatReader {
                   }
                   else if (((buf[i] == 'j' || buf[i] == 'k' || buf[i] == 'n') &&
                     buf[i + 1] == 0) || (buf[i] == 0 && (buf[i + 1] == 'j' ||
-                    buf[i + 1] == 'k' || buf[i + 1] == 'n')))
+                    buf[i + 1] == 'k' || buf[i + 1] == 'n')) ||
+                    (buf[i] == 'o' && buf[i + 1] == 'n'))
                   {
                     found = true;
                     pixelOffsets.remove(pixelOffsets.size() - 1);
+                    /* debug */ System.out.println("n = " + n + ", i = " + i);
+                    in.seek(in.getFilePointer() - n + i - 20);
                     break;
                   }
                 }
@@ -616,15 +623,18 @@ public class SlidebookReader extends FormatReader {
       }
       plane = pixels / (getSizeC() * getSizeZ());
 
-      /* debug */
-      System.out.println("plane = " + plane);
-      System.out.println("check = " + (getSizeX() * getSizeY()));
-      System.out.println("adjust = " + adjust);
-      System.out.println("sizeX = " + core[i].sizeX);
-      System.out.println("sizeY = " + core[i].sizeY);
-      /* end debug */
+      long diff =
+        2 * (pixels - (getSizeX() * getSizeY() * getSizeC() * getSizeZ()));
+      if ((pixelLengths.get(index).longValue() % 2) == 1) {
+        diff++;
+      }
+      if (i == 0) {
+        diff = 0;
+      }
 
-      if (adjust) {
+      /* debug */ System.out.println("diff = " + diff);
+
+      if (adjust && diff == 0) {
         boolean widthGreater = getSizeX() > getSizeY();
         while (getSizeX() * getSizeY() > plane) {
           if (x) core[i].sizeX /= 2;
@@ -663,13 +673,18 @@ public class SlidebookReader extends FormatReader {
       planeOffset[i] = new long[getImageCount()];
       int nextImage = 0;
       for (Integer pixelIndex : pixelIndexes) {
-        long offset = pixelOffsets.get(pixelIndex);
+        long offset = pixelOffsets.get(pixelIndex) + diff;
         long length = pixelLengths.get(pixelIndex);
         int planeSize = getSizeX() * getSizeY() * 2;
         int planes = (int) (length / planeSize);
         for (int p=0; p<planes; p++, nextImage++) {
           if (nextImage < planeOffset[i].length) {
             planeOffset[i][nextImage] = offset + p * planeSize;
+            /* debug */
+            if (nextImage == 0) {
+              System.out.println("planeOffset[" + i + "][0] = " + planeOffset[i][0] + " (" + Long.toHexString(planeOffset[i][0]) + ")");
+            }
+            /* end debug */
           }
         }
       }
