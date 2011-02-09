@@ -135,7 +135,7 @@ your FindBugs installation's lib directory. E.g.:
     <bundle outputDir="${artifact.dir}"
       bundleName="${component.name}"
       bundleSymbolicName="${domain.prefix}.${component.name}"
-      bundleVersion="${component.version}.${svn.revision}"
+      bundleVersion="${component.version}.${vcs.revision}"
       classpath="${classes.dir}"
       exportPackage="*;version=&quot;${component.version}&quot;"
       filename="${component.name}">
@@ -235,11 +235,8 @@ your FindBugs installation's lib directory. E.g.:
       <filterset>
         <filter token="date" value="${DATE}"/>
         <filter token="year" value="${YEAR}"/>
-        <filter token="svn.revision" value="${svn.revision}"/>
-        <filter token="svn.url" value="${svn.url}"/>
-        <filter token="svn.root" value="${svn.root}"/>
-        <filter token="svn.date" value="${svn.date}"/>
-        <filter token="svn.changed" value="${svn.changed}"/>
+        <filter token="vcs.revision" value="${vcs.revision}"/>
+        <filter token="vcs.date" value="${vcs.date}"/>
         <filter token="release.version" value="${release.version}"/>
         <filter token="visbio.version" value="${visbio.version}"/>
       </filterset>

@@ -111,19 +111,10 @@ Type "ant -p" for a list of targets.
 =========== VERSIONING PROPERTIES ===========
          release.version = ${release.version}</echo>
         <if>
-          <isset property="svn.revision"/>
+          <isset property="vcs.revision"/>
           <then>
-            <echo>            svn.revision = ${svn.revision}
-                 svn.url = ${svn.url}
-                svn.root = ${svn.root}
-                svn.date = ${svn.date}
-             svn.changed = ${svn.changed}</echo>
-          </then>
-        </if>
-        <if>
-          <isset property="git.commit"/>
-          <then>
-            <echo>              git.commit = ${git.commit}</echo>
+            <echo>            vcs.revision = ${vcs.revision}
+                vcs.date = ${vcs.date}</echo>
           </then>
         </if>
       </then>

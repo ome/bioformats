@@ -93,7 +93,7 @@ public class LociFunctions extends MacroFunctions {
   // -- LociFunctions API methods - version numbers --
 
   public void getRevision(String[] revision) {
-    revision[0] = FormatTools.SVN_REVISION;
+    revision[0] = FormatTools.VCS_REVISION;
   }
 
   public void getBuildDate(String[] date) {
