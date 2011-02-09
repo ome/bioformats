@@ -33,9 +33,10 @@ package loci.tests.testng;
 
 import static org.testng.AssertJUnit.*;
 
+import org.perf4j.StopWatch;
+import org.perf4j.log4j.Log4JStopWatch;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
@@ -117,18 +118,45 @@ public class OpenBytesPerformanceTest
   }
 
   @Test(dependsOnMethods={"setId"})
-  public void testOpenBytesSingleTile() throws Exception {
+  public void testOpenBytesAllTilesNewBuffer() throws Exception {
     assertSeries(0);
-    optimalTileHeight = reader.getOptimalTileHeight();
     optimalTileWidth = reader.getOptimalTileWidth();
-    System.out.println("Optimal tile width: " + optimalTileWidth);
-    System.out.println("Optimal tile height: " + optimalTileHeight);
-    System.out.println(String.format("Reading %dx%d at %dx%d", 
-        optimalTileWidth, optimalTileHeight, 0, 0));
-    long t0 = System.currentTimeMillis();
-    reader.openBytes(0, 0, 0, optimalTileWidth, optimalTileHeight);
-    System.err.println(String.format("Tile elapsed time: %dms", 
-        System.currentTimeMillis() - t0));
+    optimalTileHeight = reader.getOptimalTileHeight();
+    int tilesWide = (int) Math.ceil(sizeX / optimalTileWidth);
+    int tilesHigh = (int) Math.ceil(sizeY / optimalTileHeight);
+    int x, y = 0;
+    StopWatch stopWatch;
+    for (int tileX = 0; tileX < tilesWide; tileX++) {
+      for (int tileY = 0; tileY < tilesHigh; tileY++) {
+        x = tileX * optimalTileWidth;
+        y = tileY * optimalTileHeight;
+        stopWatch = new Log4JStopWatch("alloc_tile");
+        reader.openBytes(0, x, y, optimalTileWidth, optimalTileHeight);
+        stopWatch.stop();
+      }
+    }
+  }
+
+  @Test(dependsOnMethods={"setId"})
+  public void testOpenBytesAllTilesPreAllocatedBuffer() throws Exception {
+    assertSeries(0);
+    optimalTileWidth = reader.getOptimalTileWidth();
+    optimalTileHeight = reader.getOptimalTileHeight();
+    int tilesWide = (int) Math.ceil(sizeX / optimalTileWidth);
+    int tilesHigh = (int) Math.ceil(sizeY / optimalTileHeight);
+    int x, y = 0;
+    StopWatch stopWatch;
+    byte[] buf = new byte[optimalTileWidth * optimalTileHeight
+                          * reader.getBitsPerPixel() / 8];
+    for (int tileX = 0; tileX < tilesWide; tileX++) {
+      for (int tileY = 0; tileY < tilesHigh; tileY++) {
+        x = tileX * optimalTileWidth;
+        y = tileY * optimalTileHeight;
+        stopWatch = new Log4JStopWatch("prealloc_tile");
+        reader.openBytes(0, buf, x, y, optimalTileWidth, optimalTileHeight);
+        stopWatch.stop();
+      }
+    }
   }
 
 }
