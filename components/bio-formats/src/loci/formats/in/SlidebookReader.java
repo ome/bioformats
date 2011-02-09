@@ -437,12 +437,14 @@ public class SlidebookReader extends FormatReader {
               if (sizeX[j] == 0) {
                 sizeX[j] = in.readShort();
                 sizeY[j] = in.readShort();
+                /* debug */ System.out.println("@440, X = " + sizeX[j] + ", Y = " + sizeY[j]);
                 int checkX = in.readShort();
                 int checkY = in.readShort();
                 int div = in.readShort();
                 sizeX[j] /= (div == 0 ? 1 : div);
                 div = in.readShort();
                 sizeY[j] /= (div == 0 ? 1 : div);
+                /* debug */ System.out.println("@447, X = " + sizeX[j] + ", Y = " + sizeY[j]);
               }
               if (prevSeries != j) {
                 iCount = 1;
@@ -500,6 +502,7 @@ public class SlidebookReader extends FormatReader {
             {
               sizeX[nextName - 1] = x;
               sizeY[nextName - 1] = y;
+                /* debug */ System.out.println("@505, X = " + sizeX[nextName - 1] + ", Y = " + sizeY[nextName - 1]);
               adjust = false;
             }
 
@@ -547,8 +550,11 @@ public class SlidebookReader extends FormatReader {
               pixelOffsets.get(j + 1).longValue();
             if (in.getFilePointer() < end) {
               in.skipBytes(16);
-              sizeX[j] = in.readShort();
-              sizeY[j] = in.readShort();
+              int x = in.readShort();
+              int y = in.readShort();
+              if (x != 0) sizeX[j] = x;
+              if (y != 0) sizeY[j] = y;
+              /* debug */ System.out.println("@555, X = " + sizeX[j] + ", Y = " + sizeY[j]);
               adjust = false;
               break;
             }
@@ -568,6 +574,8 @@ public class SlidebookReader extends FormatReader {
       long pixels = pixelLengths.get(index).longValue() / 2;
       boolean x = true;
 
+      /* debug */ System.out.println("pixels = " + pixels);
+
       core[i].sizeX = sizeX[index];
       core[i].sizeY = sizeY[index];
       core[i].sizeC = sizeC[index];
@@ -576,7 +584,25 @@ public class SlidebookReader extends FormatReader {
       if (getSizeC() == 0) core[i].sizeC = 1;
       if (getSizeZ() == 0) core[i].sizeZ = 1;
 
+      /* debug */
+      System.out.println("Z = " + getSizeZ());
+      System.out.println("C = " + getSizeC());
+      /* end debug */
+
       long plane = pixels / (getSizeC() * getSizeZ());
+      if (getSizeX() * getSizeY() == pixels) {
+        core[i].sizeC = 1;
+        core[i].sizeZ = 1;
+        plane = pixels;
+      }
+
+      /* debug */
+      System.out.println("plane = " + plane);
+      System.out.println("check = " + (getSizeX() * getSizeY()));
+      System.out.println("adjust = " + adjust);
+      System.out.println("sizeX = " + core[i].sizeX);
+      System.out.println("sizeY = " + core[i].sizeY);
+      /* end debug */
 
       if (adjust) {
         boolean widthGreater = getSizeX() > getSizeY();
