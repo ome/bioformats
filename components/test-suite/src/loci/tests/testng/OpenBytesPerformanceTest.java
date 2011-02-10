@@ -33,6 +33,8 @@ package loci.tests.testng;
 
 import static org.testng.AssertJUnit.*;
 
+import java.io.File;
+
 import org.perf4j.StopWatch;
 import org.perf4j.log4j.Log4JStopWatch;
 import org.testng.annotations.AfterClass;
@@ -84,6 +86,8 @@ public class OpenBytesPerformanceTest
 
   private int planeSize;
 
+  private String filename;
+
   private void assertSeries(int series) {
     reader.setSeries(series);
     sizeX = reader.getSizeX();
@@ -100,6 +104,7 @@ public class OpenBytesPerformanceTest
   @BeforeClass
   public void init(String id) throws Exception {
     this.id = id;
+    filename = new File(id).getName();
   }
 
   @AfterClass
@@ -130,7 +135,7 @@ public class OpenBytesPerformanceTest
       for (int tileY = 0; tileY < tilesHigh; tileY++) {
         x = tileX * optimalTileWidth;
         y = tileY * optimalTileHeight;
-        stopWatch = new Log4JStopWatch("alloc_tile");
+        stopWatch = new Log4JStopWatch(filename + "_alloc_tile");
         reader.openBytes(0, x, y, optimalTileWidth, optimalTileHeight);
         stopWatch.stop();
       }
@@ -152,7 +157,7 @@ public class OpenBytesPerformanceTest
       for (int tileY = 0; tileY < tilesHigh; tileY++) {
         x = tileX * optimalTileWidth;
         y = tileY * optimalTileHeight;
-        stopWatch = new Log4JStopWatch("prealloc_tile");
+        stopWatch = new Log4JStopWatch(filename + "_prealloc_tile");
         reader.openBytes(0, buf, x, y, optimalTileWidth, optimalTileHeight);
         stopWatch.stop();
       }
