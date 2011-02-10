@@ -164,6 +164,7 @@ public class OpenBytesPerformanceTest
     StopWatch stopWatch;
     byte[] buf = new byte[optimalTileWidth * optimalTileHeight
                           * reader.getBitsPerPixel() / 8];
+    LOGGER.info("Allocated buffer size: {}", buf.length);
     for (int tileX = 0; tileX < tilesWide; tileX++) {
       for (int tileY = 0; tileY < tilesHigh; tileY++) {
         x = tileX * optimalTileWidth;
