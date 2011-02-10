@@ -130,49 +130,62 @@ public class OpenBytesPerformanceTest
 
   @Test(dependsOnMethods={"setId"})
   public void testOpenBytesAllTilesNewBuffer() throws Exception {
-    assertSeries(0);
-    optimalTileWidth = reader.getOptimalTileWidth();
-    optimalTileHeight = reader.getOptimalTileHeight();
-    LOGGER.info("Optimal tile {}x{}", optimalTileWidth, optimalTileHeight);
-    int tilesWide = (int) Math.ceil(sizeX / optimalTileWidth);
-    int tilesHigh = (int) Math.ceil(sizeY / optimalTileHeight);
-    LOGGER.info("Tile counts {}x{}", tilesWide, tilesHigh);
-    int x, y = 0;
-    StopWatch stopWatch;
-    for (int tileX = 0; tileX < tilesWide; tileX++) {
-      for (int tileY = 0; tileY < tilesHigh; tileY++) {
-        x = tileX * optimalTileWidth;
-        y = tileY * optimalTileHeight;
-        LOGGER.info("Reading tile at {}x{}", x, y);
-        stopWatch = new Log4JStopWatch(filename + "_alloc_tile");
-        reader.openBytes(0, x, y, optimalTileWidth, optimalTileHeight);
-        stopWatch.stop();
+    for (int series = 0; series < seriesCount; series++) {
+      assertSeries(series);
+      for (int image = 0; image < imageCount; image++) {
+        LOGGER.info("Reading from series {} image {}", series, image);
+        optimalTileWidth = reader.getOptimalTileWidth();
+        optimalTileHeight = reader.getOptimalTileHeight();
+        LOGGER.info("Optimal tile {}x{}", optimalTileWidth, optimalTileHeight);
+        int tilesWide = (int) Math.ceil(sizeX / optimalTileWidth);
+        int tilesHigh = (int) Math.ceil(sizeY / optimalTileHeight);
+        LOGGER.info("Tile counts {}x{}", tilesWide, tilesHigh);
+        int x, y = 0;
+        StopWatch stopWatch;
+        for (int tileX = 0; tileX < tilesWide; tileX++) {
+          for (int tileY = 0; tileY < tilesHigh; tileY++) {
+            x = tileX * optimalTileWidth;
+            y = tileY * optimalTileHeight;
+            LOGGER.info("Reading tile at {}x{}", x, y);
+            stopWatch = new Log4JStopWatch(String.format(
+                "%s[%d:%d]_alloc_tile", filename, series, image));
+            reader.openBytes(0, x, y, optimalTileWidth, optimalTileHeight);
+            stopWatch.stop();
+          }
+        }
       }
     }
   }
 
   @Test(dependsOnMethods={"setId"})
   public void testOpenBytesAllTilesPreAllocatedBuffer() throws Exception {
-    assertSeries(0);
-    optimalTileWidth = reader.getOptimalTileWidth();
-    optimalTileHeight = reader.getOptimalTileHeight();
-    LOGGER.info("Optimal tile {}x{}", optimalTileWidth, optimalTileHeight);
-    int tilesWide = (int) Math.ceil(sizeX / optimalTileWidth);
-    int tilesHigh = (int) Math.ceil(sizeY / optimalTileHeight);
-    LOGGER.info("Tile counts {}x{}", tilesWide, tilesHigh);
-    int x, y = 0;
-    StopWatch stopWatch;
-    byte[] buf = new byte[optimalTileWidth * optimalTileHeight *
-      FormatTools.getBytesPerPixel(reader.getPixelType())];
-    LOGGER.info("Allocated buffer size: {}", buf.length);
-    for (int tileX = 0; tileX < tilesWide; tileX++) {
-      for (int tileY = 0; tileY < tilesHigh; tileY++) {
-        x = tileX * optimalTileWidth;
-        y = tileY * optimalTileHeight;
-        LOGGER.info("Reading tile at {}x{}", x, y);
-        stopWatch = new Log4JStopWatch(filename + "_prealloc_tile");
-        reader.openBytes(0, buf, x, y, optimalTileWidth, optimalTileHeight);
-        stopWatch.stop();
+    for (int series = 0; series < seriesCount; series++) {
+      assertSeries(series);
+      for (int image = 0; image < imageCount; image++) {
+        LOGGER.info("Reading from series {} image {}", series, image);
+        optimalTileWidth = reader.getOptimalTileWidth();
+        optimalTileHeight = reader.getOptimalTileHeight();
+        LOGGER.info("Optimal tile {}x{}", optimalTileWidth, optimalTileHeight);
+        int tilesWide = (int) Math.ceil(sizeX / optimalTileWidth);
+        int tilesHigh = (int) Math.ceil(sizeY / optimalTileHeight);
+        LOGGER.info("Tile counts {}x{}", tilesWide, tilesHigh);
+        int x, y = 0;
+        StopWatch stopWatch;
+        byte[] buf = new byte[optimalTileWidth * optimalTileHeight *
+          FormatTools.getBytesPerPixel(reader.getPixelType())];
+        LOGGER.info("Allocated buffer size: {}", buf.length);
+        for (int tileX = 0; tileX < tilesWide; tileX++) {
+          for (int tileY = 0; tileY < tilesHigh; tileY++) {
+            x = tileX * optimalTileWidth;
+            y = tileY * optimalTileHeight;
+            LOGGER.info("Reading tile at {}x{}", x, y);
+            stopWatch = new Log4JStopWatch(String.format(
+                "%s[%d:%d]_prealloc_tile", filename, series, image));
+            reader.openBytes(image, buf, x, y, optimalTileWidth,
+                             optimalTileHeight);
+            stopWatch.stop();
+          }
+        }
       }
     }
   }
