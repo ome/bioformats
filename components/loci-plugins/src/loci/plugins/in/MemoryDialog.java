@@ -61,6 +61,10 @@ public class MemoryDialog extends ImporterDialog {
   @Override
   protected boolean needPrompt() {
     if (process.isWindowless()) return false;
+    if (process.getOptions().getStackFormat().equals(ImporterOptions.VIEW_NONE))
+    {
+      return false;
+    }
     needMem = process.getMemoryUsage();
     availMem = getAvailableMemory();
     // NB: Prompt if dataset will leave too little memory available.
