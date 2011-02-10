@@ -49,6 +49,9 @@ import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 import loci.formats.MinMaxCalculator;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Performs various <code>openBytes()</code> performance tests.
  * 
@@ -60,6 +63,9 @@ import loci.formats.MinMaxCalculator;
  */
 public class OpenBytesPerformanceTest
 {
+  private static final Logger LOGGER =
+      LoggerFactory.getLogger(OpenBytesPerformanceTest.class);
+
   private String id;
 
   private IFormatReader reader;
@@ -127,14 +133,17 @@ public class OpenBytesPerformanceTest
     assertSeries(0);
     optimalTileWidth = reader.getOptimalTileWidth();
     optimalTileHeight = reader.getOptimalTileHeight();
+    LOGGER.info("Optimal tile {}x{}", optimalTileWidth, optimalTileHeight);
     int tilesWide = (int) Math.ceil(sizeX / optimalTileWidth);
     int tilesHigh = (int) Math.ceil(sizeY / optimalTileHeight);
+    LOGGER.info("Tile counts {}x{}", tilesWide, tilesHigh);
     int x, y = 0;
     StopWatch stopWatch;
     for (int tileX = 0; tileX < tilesWide; tileX++) {
       for (int tileY = 0; tileY < tilesHigh; tileY++) {
         x = tileX * optimalTileWidth;
         y = tileY * optimalTileHeight;
+        LOGGER.info("Reading tile at {}x{}", x, y);
         stopWatch = new Log4JStopWatch(filename + "_alloc_tile");
         reader.openBytes(0, x, y, optimalTileWidth, optimalTileHeight);
         stopWatch.stop();
@@ -147,8 +156,10 @@ public class OpenBytesPerformanceTest
     assertSeries(0);
     optimalTileWidth = reader.getOptimalTileWidth();
     optimalTileHeight = reader.getOptimalTileHeight();
+    LOGGER.info("Optimal tile {}x{}", optimalTileWidth, optimalTileHeight);
     int tilesWide = (int) Math.ceil(sizeX / optimalTileWidth);
     int tilesHigh = (int) Math.ceil(sizeY / optimalTileHeight);
+    LOGGER.info("Tile counts {}x{}", tilesWide, tilesHigh);
     int x, y = 0;
     StopWatch stopWatch;
     byte[] buf = new byte[optimalTileWidth * optimalTileHeight
@@ -157,6 +168,7 @@ public class OpenBytesPerformanceTest
       for (int tileY = 0; tileY < tilesHigh; tileY++) {
         x = tileX * optimalTileWidth;
         y = tileY * optimalTileHeight;
+        LOGGER.info("Reading tile at {}x{}", x, y);
         stopWatch = new Log4JStopWatch(filename + "_prealloc_tile");
         reader.openBytes(0, buf, x, y, optimalTileWidth, optimalTileHeight);
         stopWatch.stop();
