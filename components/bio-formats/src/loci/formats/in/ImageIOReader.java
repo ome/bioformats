@@ -65,6 +65,12 @@ public abstract class ImageIOReader extends BIFormatReader {
 
   // -- IFormatReader API methods --
 
+  /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
+  public int getOptimalTileHeight() {
+    FormatTools.assertId(currentId, true, 1);
+    return getSizeY();
+  }
+
   /* @see loci.formats.IFormatReader#openPlane(int, int, int, int, int int) */
   public Object openPlane(int no, int x, int y, int w, int h)
     throws FormatException, IOException

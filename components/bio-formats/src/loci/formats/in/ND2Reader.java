@@ -52,4 +52,12 @@ public class ND2Reader extends DelegateReader {
     domains = new String[] {FormatTools.LM_DOMAIN};
   }
 
+  // -- IFormatReader API methods --
+
+  /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
+  public int getOptimalTileHeight() {
+    FormatTools.assertId(currentId, true, 1);
+    return getSizeY();
+  }
+
 }
