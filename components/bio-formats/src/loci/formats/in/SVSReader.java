@@ -143,6 +143,7 @@ public class SVSReader extends BaseTiffReader {
       core[s].interleaved = false;
       core[s].falseColor = false;
       core[s].dimensionOrder = "XYCZT";
+      core[s].thumbnail = s != 0;
     }
   }
 
