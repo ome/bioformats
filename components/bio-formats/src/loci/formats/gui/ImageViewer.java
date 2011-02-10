@@ -575,7 +575,7 @@ public class ImageViewer extends JFrame implements ActionListener,
         "<br>Copyright (C) 2005-@year@ " +
         "UW-Madison LOCI and Glencoe Software, Inc." +
         "<br><i>" + FormatTools.URL_BIO_FORMATS + "</i>" +
-        "<br>Revision @svn.revision@, built @date@";
+        "<br>Revision @vcs.revision@, built @date@";
       ImageIcon bioFormatsLogo = new ImageIcon(
           IFormatHandler.class.getResource("bio-formats-logo.png"));
       JOptionPane.showMessageDialog(null, msg, "Bio-Formats",

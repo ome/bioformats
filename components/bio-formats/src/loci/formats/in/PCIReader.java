@@ -164,6 +164,18 @@ public class PCIReader extends FormatReader {
       RandomAccessInputStream stream = poi.getDocumentStream(name);
       stream.order(true);
 
+      if (stream.length() == 8) {
+        double value = stream.readDouble();
+        stream.seek(0);
+
+        String key = name.replace(File.separatorChar, ' ');
+        key = key.replaceAll("Root Entry ", "");
+        key = key.replaceAll("Field Data ", "");
+        key = key.replaceAll("Details ", "");
+
+        addGlobalMeta(key, value);
+      }
+
       if (relativePath.equals("Field Count")) {
         core[0].imageCount = stream.readInt();
       }

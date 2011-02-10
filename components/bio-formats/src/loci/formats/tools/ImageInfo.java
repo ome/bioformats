@@ -900,7 +900,7 @@ public class ImageInfo {
     if (!validArgs) return false;
     if (printVersion) {
       LOGGER.info("Version: {}", FormatTools.VERSION);
-      LOGGER.info("SVN revision: {}", FormatTools.SVN_REVISION);
+      LOGGER.info("VCS revision: {}", FormatTools.VCS_REVISION);
       LOGGER.info("Build date: {}", FormatTools.DATE);
       return true;
     }

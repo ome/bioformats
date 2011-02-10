@@ -165,8 +165,12 @@ if __name__ == '__main__':
 
     xml_file = create_testng_xml_file(test_class, targets, revision,
                                       hudson, thread_count)
-    cmd = 'java %s -cp "%s" %s %s' % (JAVA_ARGS, classpath, START_CLASS, \
-                                      xml_file.name)
+    l4j_props = 'log4j-target-test-runner.properties'
+    l4j_props = os.path.join(os.path.dirname(__file__), l4j_props)
+    l4j_props = os.path.abspath(l4j_props)
+    l4j_props = '-Dlog4j.configuration=file:///%s' % l4j_props
+    cmd = 'java %s -cp "%s" %s %s %s' % (JAVA_ARGS, classpath, l4j_props, \
+                                         START_CLASS, xml_file.name)
     print cmd
     os.system(cmd)
     xml_file.close()
