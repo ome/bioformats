@@ -145,6 +145,7 @@ public class OMETiffReader extends FormatReader {
       if (service == null) setupService();
       IMetadata meta = service.createOMEXMLMetadata(comment.trim());
       for (int i=0; i<meta.getImageCount(); i++) {
+        meta.setPixelsBinDataBigEndian(Boolean.TRUE, i, 0);
         MetadataTools.verifyMinimumPopulated(meta, i);
       }
       return true;
@@ -616,6 +617,20 @@ public class OMETiffReader extends FormatReader {
         }
         core[s].imageCount = num;
         core[s].dimensionOrder = meta.getPixelsDimensionOrder(i).toString();
+
+        // hackish workaround for files exported by OMERO that have an
+        // incorrect dimension order
+        String uuidFileName = "";
+        try {
+          uuidFileName = meta.getUUIDFileName(i, 0);
+        }
+        catch (NullPointerException e) { }
+        if (meta.getChannelCount(i) > 0 && meta.getChannelName(i, 0) == null &&
+          meta.getTiffDataCount(i) > 0 &&
+          uuidFileName.indexOf("__omero_export") != -1)
+        {
+          core[s].dimensionOrder = "XYZCT";
+        }
 
         core[s].orderCertain = true;
         PhotoInterp photo = firstIFD.getPhotometricInterpretation();
