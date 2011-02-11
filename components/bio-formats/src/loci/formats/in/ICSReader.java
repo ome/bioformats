@@ -25,6 +25,7 @@ package loci.formats.in;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -66,7 +67,8 @@ public class ICSReader extends FormatReader {
     "EEEE, MMMM dd, yyyy HH:mm:ss",
     "EEE dd MMMM yyyy HH:mm:ss",
     "EEE MMM dd HH:mm:ss yyyy",
-    "EE dd MMM yyyy HH:mm:ss z"
+    "EE dd MMM yyyy HH:mm:ss z",
+    "HH:mm:ss dd\\MM\\yy"
   };
 
   /** Metadata field categories. */
@@ -89,11 +91,11 @@ public class ICSReader extends FormatReader {
     "dead time comp", "polarity", "line compressio", "scan flyback",
     "scan borders", "pixel time", "pixel clock", "trigger", "scan pixels x",
     "scan pixels y", "routing chan x", "routing chan y", "detector type",
-    "channel.*", "filter.*", "wavelength.*", "black level.*", "ht.*",
+    "channel.*", "filter.*", "wavelength.*", "black.level.*", "ht.*",
     "scan resolution", "scan speed", "scan zoom", "scan pattern", "scan pos x",
     "scan pos y", "transmission", "x amplitude", "y amplitude", "x offset",
     "y offset", "x delay", "y delay", "beam zoom", "mirror .*", "direct turret",
-    "desc exc turret", "desc emm turret", "cube", "stage_xyzum",
+    "desc exc turret", "desc emm turret", "cube", "Stage_XYZum",
     "cube descriptio", "camera", "exposure", "bits/pixel", "binning", "left",
     "top", "cols", "rows", "significant_channels", "allowedlinemodes",
     "real_significant_bits", "sample_width", "range", "ch", "lower_limit",
@@ -106,7 +108,13 @@ public class ICSReader extends FormatReader {
     "Saturation", "Gamma", "IntZoom", "Live", "Synchronize", "ShowIndex",
     "AutoResize", "UseUnits", "Zoom", "IgnoreAspect", "ShowCursor", "ShowAll",
     "Axis", "Order", "Tile", "DimViewOption", "channels", "pinholeradius",
-    "refrinxmedium", "numaperture", "refrinxlensmedium"
+    "refrinxmedium", "numaperture", "refrinxlensmedium", "image", "microscope",
+    "stage", "filterset", "dichroic", "exc", "emm", "manufacturer",
+    "experiment", "experimenter", "study", "metadata", "format", "icsviewer",
+    "illumination", "exposure_time", "model", "ver", "creation", "date",
+    "bpp", "bigendian", "size.", "physical_size.", "controller", "firmware",
+    "pos", "position.", "mag", "na", "nm", "lamp", "built", "on", "rep", "rate",
+    "Exposure", "Wavelength\\*"
   };
 
   // -- Fields --
@@ -380,12 +388,26 @@ public class ICSReader extends FormatReader {
     Hashtable<Integer, Integer> wavelengths = new Hashtable<Integer, Integer>();
     Hashtable<Integer, String> channelNames = new Hashtable<Integer, String>();
 
+    String laserModel = null;
+    String laserManufacturer = null;
+    Double laserPower = null;
+    Double laserRepetitionRate = null;
+    String detectorManufacturer = null;
+    String detectorModel = null;
+    String microscopeModel = null;
+    String microscopeManufacturer = null;
+    String experimentType = null;
+    Double exposureTime = null;
+
+    String filterSetModel = null;
+    String dichroicModel = null;
+    String excitationModel = null;
+    String emissionModel = null;
+
     while (line != null && !line.trim().equals("end") &&
       reader.getFilePointer() < reader.length() - 1)
     {
-      String[] tokens = null;
-      if (line.indexOf("\t") != -1) tokens = line.split("\t");
-      else tokens = line.split(" ");
+      String[] tokens = line.split("[ \t]");
       StringBuffer key = new StringBuffer();
       for (int q=0; q<tokens.length; q++) {
         tokens[q] = tokens[q].trim();
@@ -479,9 +501,17 @@ public class ICSReader extends FormatReader {
           date = v.substring(0, v.lastIndexOf(" "));
           date = DateTools.formatDate(date, DATE_FORMATS);
         }
+        else if (k.equalsIgnoreCase("history creation date")) {
+          date = DateTools.formatDate(v, DATE_FORMATS);
+        }
         else if (k.equalsIgnoreCase("history type")) {
           // HACK - support for Gray Institute at Oxford's ICS lifetime data
-          if (v.equalsIgnoreCase("time resolved")) lifetime = true;
+          if (v.equalsIgnoreCase("time resolved") ||
+            v.equalsIgnoreCase("FluorescenceLifetime"))
+          {
+            lifetime = true;
+          }
+          experimentType = v;
         }
         else if (getMetadataOptions().getMetadataLevel() !=
           MetadataLevel.MINIMUM)
@@ -537,7 +567,31 @@ public class ICSReader extends FormatReader {
               LOGGER.debug("Could not parse wavelength", e);
             }
           }
-          else if (k.equalsIgnoreCase("history objective type")) {
+          else if (k.equalsIgnoreCase("history Wavelength*")) {
+            String[] waves = v.split(" ");
+            for (int i=0; i<waves.length; i++) {
+              wavelengths.put(new Integer(i), new Integer(waves[i]));
+            }
+          }
+          else if (k.equalsIgnoreCase("history laser manufacturer")) {
+            laserManufacturer = v;
+          }
+          else if (k.equalsIgnoreCase("history laser model")) {
+            laserModel = v;
+          }
+          else if (k.equalsIgnoreCase("history laser power")) {
+            laserPower = new Double(v);
+          }
+          else if (k.equalsIgnoreCase("history laser rep rate")) {
+            String repRate = v;
+            if (repRate.indexOf(" ") != -1) {
+              repRate = repRate.substring(0, repRate.lastIndexOf(" "));
+            }
+            laserRepetitionRate = new Double(repRate);
+          }
+          else if (k.equalsIgnoreCase("history objective type") ||
+            k.equalsIgnoreCase("history objective"))
+          {
             objectiveModel = v;
           }
           else if (k.equalsIgnoreCase("history objective immersion")) {
@@ -549,8 +603,16 @@ public class ICSReader extends FormatReader {
           else if (k.equalsIgnoreCase("history objective WorkingDistance")) {
             workingDistance = doubleValue;
           }
-          else if (k.equalsIgnoreCase("history objective magnification")) {
+          else if (k.equalsIgnoreCase("history objective magnification") ||
+            k.equalsIgnoreCase("history objective mag"))
+          {
             magnification = doubleValue;
+          }
+          else if (k.equalsIgnoreCase("history camera manufacturer")) {
+            detectorManufacturer = v;
+          }
+          else if (k.equalsIgnoreCase("history camera model")) {
+            detectorModel = v;
           }
           else if (k.equalsIgnoreCase("sensor s_params PinholeRadius")) {
             String[] pins = v.split(" ");
@@ -565,7 +627,11 @@ public class ICSReader extends FormatReader {
               }
             }
           }
-          else if (k.equalsIgnoreCase("history author")) lastName = v;
+          else if (k.equalsIgnoreCase("history author") ||
+            k.equalsIgnoreCase("history experimenter"))
+          {
+            lastName = v;
+          }
           else if (k.equalsIgnoreCase("history extents")) {
             String[] lengths = v.split(" ");
             sizes = new double[lengths.length];
@@ -590,6 +656,24 @@ public class ICSReader extends FormatReader {
               }
             }
           }
+          else if (k.equalsIgnoreCase("history stage positionx")) {
+            if (stagePos == null) {
+              stagePos = new Double[3];
+            }
+            stagePos[0] = new Double(v);
+          }
+          else if (k.equalsIgnoreCase("history stage positiony")) {
+            if (stagePos == null) {
+              stagePos = new Double[3];
+            }
+            stagePos[1] = new Double(v);
+          }
+          else if (k.equalsIgnoreCase("history stage positionz")) {
+            if (stagePos == null) {
+              stagePos = new Double[3];
+            }
+            stagePos[2] = new Double(v);
+          }
           else if (k.equalsIgnoreCase("history other text")) {
             description = v;
           }
@@ -602,6 +686,46 @@ public class ICSReader extends FormatReader {
             for (int n=0; n<names.length; n++) {
               channelNames.put(new Integer(n), names[n].trim());
             }
+          }
+          else if (k.equalsIgnoreCase("history cube")) {
+            channelNames.put(new Integer(channelNames.size()), v);
+          }
+          else if (k.equalsIgnoreCase("history cube emm nm")) {
+            if (emWaves == null) {
+              emWaves = new Integer[1];
+            }
+            emWaves[0] = new Integer(v.split(" ")[1].trim());
+          }
+          else if (k.equalsIgnoreCase("history cube exc nm")) {
+            if (exWaves == null) {
+              exWaves = new Integer[1];
+            }
+            exWaves[0] = new Integer(v.split(" ")[1].trim());
+          }
+          else if (k.equalsIgnoreCase("history microscope")) {
+            microscopeModel = v;
+          }
+          else if (k.equalsIgnoreCase("history manufacturer")) {
+            microscopeManufacturer = v;
+          }
+          else if (k.equalsIgnoreCase("history Exposure")) {
+            String expTime = v;
+            if (expTime.indexOf(" ") != -1) {
+              expTime = expTime.substring(0, expTime.indexOf(" "));
+            }
+            exposureTime = new Double(expTime);
+          }
+          else if (k.equalsIgnoreCase("history filterset")) {
+            filterSetModel = v;
+          }
+          else if (k.equalsIgnoreCase("history filterset dichroic name")) {
+            dichroicModel = v;
+          }
+          else if (k.equalsIgnoreCase("history filterset exc name")) {
+            excitationModel = v;
+          }
+          else if (k.equalsIgnoreCase("history filterset emm name")) {
+            emissionModel = v;
           }
         }
       }
@@ -757,7 +881,7 @@ public class ICSReader extends FormatReader {
     LOGGER.info("Populating OME metadata");
 
     MetadataStore store = makeFilterMetadata();
-    MetadataTools.populatePixels(store, this);
+    MetadataTools.populatePixels(store, this, true);
 
     // populate Image data
 
@@ -772,7 +896,13 @@ public class ICSReader extends FormatReader {
       // link Instrument and Image
       String instrumentID = MetadataTools.createLSID("Instrument", 0);
       store.setInstrumentID(instrumentID, 0);
+      store.setMicroscopeModel(microscopeModel, 0);
+      store.setMicroscopeManufacturer(microscopeManufacturer, 0);
+
       store.setImageInstrumentRef(instrumentID, 0);
+
+      store.setExperimentID(MetadataTools.createLSID("Experiment", 0), 0);
+      store.setExperimentType(getExperimentType(experimentType), 0);
 
       // populate Dimensions data
 
@@ -826,12 +956,51 @@ public class ICSReader extends FormatReader {
       // populate Laser data
 
       Integer[] lasers = wavelengths.keySet().toArray(new Integer[0]);
+      Arrays.sort(lasers);
       for (int i=0; i<lasers.length; i++) {
         store.setLaserID(MetadataTools.createLSID("LightSource", 0, i), 0, i);
         store.setLaserWavelength(
           new PositiveInteger(wavelengths.get(lasers[i])), 0, i);
         store.setLaserType(getLaserType("Other"), 0, i);
         store.setLaserLaserMedium(getLaserMedium("Other"), 0, i);
+
+        store.setLaserManufacturer(laserManufacturer, 0, i);
+        store.setLaserModel(laserModel, 0, i);
+        store.setLaserPower(laserPower, 0, i);
+        store.setLaserRepetitionRate(laserRepetitionRate, 0, i);
+      }
+
+      if (lasers.length == 0 && laserManufacturer != null) {
+        store.setLaserID(MetadataTools.createLSID("LightSource", 0, 0), 0, 0);
+        store.setLaserType(getLaserType("Other"), 0, 0);
+        store.setLaserLaserMedium(getLaserMedium("Other"), 0, 0);
+        store.setLaserManufacturer(laserManufacturer, 0, 0);
+        store.setLaserModel(laserModel, 0, 0);
+        store.setLaserPower(laserPower, 0, 0);
+        store.setLaserRepetitionRate(laserRepetitionRate, 0, 0);
+      }
+
+      // populate FilterSet data
+
+      if (filterSetModel != null) {
+        store.setFilterSetID(MetadataTools.createLSID("FilterSet", 0, 0), 0, 0);
+        store.setFilterSetModel(filterSetModel, 0, 0);
+
+        String dichroicID = MetadataTools.createLSID("Dichroic", 0, 0);
+        String emFilterID = MetadataTools.createLSID("Filter", 0, 0);
+        String exFilterID = MetadataTools.createLSID("Filter", 0, 1);
+
+        store.setDichroicID(dichroicID, 0, 0);
+        store.setDichroicModel(dichroicModel, 0, 0);
+        store.setFilterSetDichroicRef(dichroicID, 0, 0);
+
+        store.setFilterID(emFilterID, 0, 0);
+        store.setFilterModel(emissionModel, 0, 0);
+        store.setFilterSetEmissionFilterRef(emFilterID, 0, 0, 0);
+
+        store.setFilterID(exFilterID, 0, 1);
+        store.setFilterModel(excitationModel, 0, 1);
+        store.setFilterSetExcitationFilterRef(exFilterID, 0, 0, 0);
       }
 
       // populate Objective data
@@ -853,13 +1022,18 @@ public class ICSReader extends FormatReader {
       store.setObjectiveID(objectiveID, 0, 0);
       store.setImageObjectiveSettingsID(objectiveID, 0);
 
+      // populate Detector data
+
+      String detectorID = MetadataTools.createLSID("Detector", 0, 0);
+      store.setDetectorID(detectorID, 0, 0);
+      store.setDetectorManufacturer(detectorManufacturer, 0, 0);
+      store.setDetectorModel(detectorModel, 0, 0);
+      store.setDetectorType(getDetectorType("Other"), 0, 0);
+
       for (Integer key : gains.keySet()) {
         int index = key.intValue();
         if (index < getEffectiveSizeC()) {
           store.setDetectorSettingsGain(gains.get(key), 0, index);
-          store.setDetectorType(getDetectorType("Other"), 0, index);
-          String detectorID = MetadataTools.createLSID("Detector", 0, index);
-          store.setDetectorID(detectorID, 0, index);
           store.setDetectorSettingsID(detectorID, 0, index);
         }
       }
@@ -889,6 +1063,12 @@ public class ICSReader extends FormatReader {
             store.setPlanePositionZ(stagePos[2], 0, i);
             addGlobalMeta("Z position for position #1", stagePos[2]);
           }
+        }
+      }
+
+      if (exposureTime != null) {
+        for (int i=0; i<getImageCount(); i++) {
+          store.setPlaneExposureTime(exposureTime, 0, i);
         }
       }
     }
