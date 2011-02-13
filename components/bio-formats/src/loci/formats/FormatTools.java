@@ -141,7 +141,7 @@ public final class FormatTools {
 
   /**
    * Current SVN revision.
-   * @deprecated After Git move, deprecated in favour of {@link VCS_REVISION}.
+   * @deprecated After Git move, deprecated in favour of {@link #VCS_REVISION}.
    */
   @Deprecated
   public static final String SVN_REVISION = "@vcs.revision@";

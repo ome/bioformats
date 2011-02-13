@@ -47,9 +47,8 @@ import loci.formats.services.JAIIIOServiceImpl;
  *
  * <dl>
  * <dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/codec/JPEG2000Codec.java"
- * >Trac</a>, <a href="http://dev.loci.wisc.edu/svn/java/trunk/loci/formats/codec/JPEGCodec.java"
- * >SVN</a></dd>
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/codec/JPEG2000Codec.java">Trac</a>,
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/codec/JPEGCodec.java;hb=HEAD">Gitweb</a></dd></dl>
  * </dl>
  */
 public class JPEG2000Codec extends BaseCodec {

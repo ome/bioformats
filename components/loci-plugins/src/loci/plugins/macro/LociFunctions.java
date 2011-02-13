@@ -466,7 +466,7 @@ public class LociFunctions extends MacroFunctions {
       IJ.log("-- Returns the version number of the currently installed");
       IJ.log("-- version of Bio-Formats.");
       IJ.log("Ext.getRevision(revision)");
-      IJ.log("-- Returns the SVN revision number of the currently");
+      IJ.log("-- Returns the revision number of the currently");
       IJ.log("-- installed version of Bio-Formats.");
       IJ.log("Ext.getBuildDate(date)");
       IJ.log("-- Returns the build date of the currently installed");

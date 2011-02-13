@@ -91,6 +91,10 @@ import org.junit.Test;
  * A class for testing the Bio-Formats Importer behavior.
  *
  * @author Barry DeZonia bdezonia at wisc.edu
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/loci-plugins/test/loci/plugins/in/ImporterTest.java">Trac</a>,
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/loci-plugins/test/loci/plugins/in/ImporterTest.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class ImporterTest {
 

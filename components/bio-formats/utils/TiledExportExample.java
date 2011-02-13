@@ -1,8 +1,17 @@
+//
+// TiledExportExample.java
+//
+
 import loci.formats.ImageReader;
 import loci.formats.ImageWriter;
 import loci.formats.MetadataTools;
 import loci.formats.meta.IMetadata;
 
+/**
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/utils/TiledExportExample.java">Trac</a>,
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/utils/TiledExportExample.java;hb=HEAD">Gitweb</a></dd></dl>
+ */
 public class TiledExportExample {
   public static void main(String[] args) throws Exception {
     if (args.length < 2) {

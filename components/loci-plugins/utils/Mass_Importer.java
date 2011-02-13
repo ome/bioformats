@@ -17,6 +17,10 @@ import loci.plugins.LociImporter;
  * Processes all image files in the chosen directory,
  * grouping files with similar names.
  *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/loci-plugins/utils/Mass_Importer.java">Trac</a>,
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/loci-plugins/utils/Mass_Importer.java;hb=HEAD">Gitweb</a></dd></dl>
+ *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class Mass_Importer implements PlugIn {
