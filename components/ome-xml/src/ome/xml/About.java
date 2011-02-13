@@ -1,7 +1,3 @@
-//
-// About.java
-//
-
 /*
  * ome.xml.About
  *

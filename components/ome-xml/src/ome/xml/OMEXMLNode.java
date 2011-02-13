@@ -59,6 +59,10 @@ import org.w3c.dom.*;
  *
  * Subclasses of OMEXMLNode provide OME-specific functionality such as more
  * intuitive traversal of OME structures.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/ome-xml/src/ome/xml/OMEXMLNode.java">Trac</a>,
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/ome-xml/src/ome/xml/OMEXMLNode.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public abstract class OMEXMLNode {
 

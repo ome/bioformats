@@ -40,8 +40,13 @@ package ome.xml;
 import org.w3c.dom.Element;
 
 /**
- * CustomNode is the default node type for elements with no specific node type,
- * typically used to wrap custom semantic types within a CustomAttributes block.
+ * CustomNode is the default node type for elements with no specific node
+ * type, typically used to wrap custom semantic types within a
+ * CustomAttributes block.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/ome-xml/src/ome/xml/CustomNode.java">Trac</a>,
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/ome-xml/src/ome/xml/CustomNode.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class CustomNode extends OMEXMLNode {
 

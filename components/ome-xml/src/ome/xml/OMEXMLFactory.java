@@ -46,7 +46,13 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
-/** OMEXMLFactory is a factory for creating OME-XML node hierarchies. */
+/**
+ * OMEXMLFactory is a factory for creating OME-XML node hierarchies.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/ome-xml/src/ome/xml/OMEXMLFactory.java">Trac</a>,
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/ome-xml/src/ome/xml/OMEXMLFactory.java;hb=HEAD">Gitweb</a></dd></dl>
+ */
 public final class OMEXMLFactory {
 
   // -- Constants --
