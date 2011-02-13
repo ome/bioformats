@@ -62,8 +62,8 @@ import loci.plugins.util.VirtualImagePlus;
  * A high-level reader for {@link ij.ImagePlus} objects.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/in/ImagePlusReader.java">Trac</a>,
- * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/in/ImagePlusReader.java">SVN</a></dd></dl>
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/loci-plugins/src/loci/plugins/in/ImagePlusReader.java">Trac</a>,
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/loci-plugins/src/loci/plugins/in/ImagePlusReader.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class ImagePlusReader implements StatusReporter {
 

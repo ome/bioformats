@@ -35,8 +35,8 @@ import loci.ome.io.OMEReader;
  * Displays a small information dialog about the OME Plugins package.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/ome-plugins/src/loci/plugins/ome/About.java">Trac</a>,
- * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/ome-plugins/src/loci/plugins/ome/About.java">SVN</a></dd></dl>
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/ome-plugins/src/loci/plugins/ome/About.java">Trac</a>,
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/ome-plugins/src/loci/plugins/ome/About.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public final class About implements PlugIn {
 

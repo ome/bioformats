@@ -28,8 +28,8 @@ package loci.common;
  * goes wrong performing a reflected operation with ReflectedUniverse.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/common/src/loci/common/ReflectException.java">Trac</a>,
- * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/common/src/loci/common/ReflectException.java">SVN</a></dd></dl>
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/ReflectException.java">Trac</a>,
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/common/src/loci/common/ReflectException.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class ReflectException extends Exception {
 

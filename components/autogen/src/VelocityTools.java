@@ -37,8 +37,8 @@ import org.apache.velocity.app.VelocityEngine;
  * Useful methods for working with Apache Velocity.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/autogen/src/VelocityTools.java">Trac</a>,
- * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/autogen/src/VelocityTools.java">SVN</a></dd></dl>
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/autogen/src/VelocityTools.java">Trac</a>,
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/autogen/src/VelocityTools.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */

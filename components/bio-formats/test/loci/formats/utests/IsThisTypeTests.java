@@ -36,7 +36,7 @@ import org.testng.annotations.Test;
  * IFormatReader.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/bio-formats/test/loci/formats/utests/IsThisTypeTests.java">Trac</a>
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/test/loci/formats/utests/IsThisTypeTests.java">Trac</a>
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */

@@ -42,8 +42,8 @@ import loci.formats.meta.IMetadata;
  * A plugin for opening life sciences files in MIPAV using Bio-Formats.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/utils/mipav/PlugInBioFormats.java">Trac</a>,
- * <a href="http://dev.loci.wisc.edu/svn/java/trunk/utils/mipav/PlugInBioFormats.java">SVN</a></dd></dl>
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/utils/mipav/PlugInBioFormats.java">Trac</a>,
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=utils/mipav/PlugInBioFormats.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */

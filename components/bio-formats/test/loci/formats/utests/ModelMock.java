@@ -41,8 +41,8 @@ import ome.xml.model.OME;
  * @author Chris Allan <callan at blackcat dot ca>
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/bio-formats/test/ome/xml/utests/ModelMock.java">Trac</a>,
- * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/bio-formats/test/ome/xml/utests/ModelMock.java">SVN</a></dd></dl>
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/test/ome/xml/utests/ModelMock.java">Trac</a>,
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/test/ome/xml/utests/ModelMock.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public interface ModelMock {
 
