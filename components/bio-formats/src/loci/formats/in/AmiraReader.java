@@ -72,6 +72,12 @@ public class AmiraReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
+  /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
+  public int getOptimalTileHeight() {
+    FormatTools.assertId(currentId, true, 1);
+    return getSizeY();
+  }
+
   /**
    * @see loci.formats.FormatReader#openBytes(int, byte[], int, int, int, int)
    */
