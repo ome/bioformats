@@ -49,8 +49,8 @@ import ome.xml.model.primitives.PositiveInteger;
  * SimplePCI software.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://loci.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/in/SimplePCITiffReader.java">Trac</a>,
- * <a href="http://loci.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/in/SimplePCITiffReader.java">SVN</a></dd></dl>
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/SimplePCITiffReader.java">Trac</a>,
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/SimplePCITiffReader.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class SimplePCITiffReader extends BaseTiffReader {
 
