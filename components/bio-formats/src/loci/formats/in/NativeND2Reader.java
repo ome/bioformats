@@ -423,12 +423,16 @@ public class NativeND2Reader extends FormatReader {
       int planeSize = getSizeX() * getSizeY() * getSizeC() *
         FormatTools.getBytesPerPixel(getPixelType());
       if (isLossless) planeSize /= 4;
+      long availableBytes = secondOffset - firstOffset;
 
-      if (secondOffset - firstOffset < planeSize) {
+      if (availableBytes < planeSize) {
         LOGGER.debug("Correcting SizeC: was {}", getSizeC());
         LOGGER.debug("plane size = {}", planeSize);
-        LOGGER.debug("available bytes = {}", (secondOffset - firstOffset));
-        core[0].sizeC = 1;
+        LOGGER.debug("available bytes = {}", availableBytes);
+        core[0].sizeC = (int) (availableBytes / (planeSize / getSizeC()));
+        if (getSizeC() == 0) {
+          core[0].sizeC = 1;
+        }
       }
 
       // calculate the image count

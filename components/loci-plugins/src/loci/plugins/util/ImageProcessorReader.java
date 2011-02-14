@@ -215,8 +215,13 @@ public class ImageProcessorReader extends ReaderWrapper {
   private byte[][] convertTo8Bit(short[][] shortTable) {
     if (shortTable == null) return null;
     byte[][] byteTable = new byte[shortTable.length][256];
+
+    double max = Math.pow(2, getBitsPerPixel()) - 1;
+
     for (int c=0; c<byteTable.length; c++) {
       int len = Math.min(byteTable[c].length, shortTable[c].length);
+      int valuesPerBin = shortTable[c].length / byteTable[c].length;
+      int adjustPerBin = (int) ((max + 1) / byteTable[c].length);
 
       for (int i=0; i<len; i++) {
         // NB: you could generate the 8-bit LUT by casting the first 256 samples
@@ -238,15 +243,14 @@ public class ImageProcessorReader extends ReaderWrapper {
         // At minimum, we should issue a warning to the ImageJ log whenever
         // this convertTo8Bit routine is invoked, so the user is informed.
 
-        int valuesPerBin = shortTable[c].length / byteTable[c].length;
         double average = 0;
         for (int p=0; p<valuesPerBin; p++) {
           final int index = i * valuesPerBin + p;
           final int value = 0xffff & shortTable[c][index];
           average += value;
         }
-        average /= valuesPerBin;
-        byteTable[c][i] = (byte) (255 * (average / 65535.0));
+        average /= adjustPerBin;
+        byteTable[c][i] = (byte) (255 * (average / max));
       }
     }
 
