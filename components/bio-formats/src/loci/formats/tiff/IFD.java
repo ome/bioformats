@@ -817,6 +817,22 @@ public class IFD extends HashMap<Integer, Object> {
   }
 
   /**
+   * Retrieve the value by which to multiply the X and Y resolution so that
+   * the resolutions are in microns per pixel.
+   */
+  public int getResolutionMultiplier() {
+    int resolutionUnit = getIFDIntValue(RESOLUTION_UNIT);
+    int multiplier = 1;
+    if (resolutionUnit == 2) {
+      multiplier = 25400;
+    }
+    else if (resolutionUnit == 3) {
+      multiplier = 10000;
+    }
+    return multiplier;
+  }
+
+  /**
    * Retrieve the X resolution (TIFF tag XResolution) from this IFD.
    * The resolution will be normalized to microns per pixel.
    *
@@ -827,8 +843,7 @@ public class IFD extends HashMap<Integer, Object> {
     TiffRational xResolution = getIFDRationalValue(X_RESOLUTION);
     double x = xResolution == null ? 0 : 1 / xResolution.doubleValue();
 
-    int resolutionUnit = getIFDIntValue(RESOLUTION_UNIT);
-    int multiplier = resolutionUnit == 2 ? 25400 : 10000;
+    int multiplier = getResolutionMultiplier();
     return x * multiplier;
   }
 
@@ -844,7 +859,7 @@ public class IFD extends HashMap<Integer, Object> {
     double y = yResolution == null ? 0 : 1 / yResolution.doubleValue();
 
     int resolutionUnit = getIFDIntValue(RESOLUTION_UNIT);
-    int multiplier = resolutionUnit == 2 ? 25400 : 10000;
+    int multiplier = getResolutionMultiplier();
     return y * multiplier;
   }
 
