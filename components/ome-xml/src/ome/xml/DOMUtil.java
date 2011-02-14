@@ -1,3 +1,7 @@
+//
+// DOMUtil.java
+//
+
 /*
  * ome.xml.DOMUtil
  *
@@ -46,7 +50,13 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.transform.dom.DOMSource;
 import org.w3c.dom.*;
 
-/** DOMUtil contains useful functions for traversing and manipulating a DOM. */
+/**
+ * DOMUtil contains useful functions for traversing and manipulating a DOM.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/ome-xml/src/ome/xml/DOMUtil.java">Trac</a>,
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/ome-xml/src/ome/xml/DOMUtil.java;hb=HEAD">Gitweb</a></dd></dl>
+ */
 public final class DOMUtil {
 
   // -- Constructor --

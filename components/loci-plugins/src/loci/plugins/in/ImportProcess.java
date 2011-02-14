@@ -71,8 +71,8 @@ import org.apache.log4j.Logger;
  * objects.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/in/ImportProcess.java">Trac</a>,
- * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/in/ImportProcess.java">SVN</a></dd></dl>
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/loci-plugins/src/loci/plugins/in/ImportProcess.java">Trac</a>,
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/loci-plugins/src/loci/plugins/in/ImportProcess.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class ImportProcess implements StatusReporter {
 

@@ -50,8 +50,8 @@ import java.util.ArrayList;
  * with various Java constants. See conflicts.txt for a list.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/native/bf-cpp/src/FixProxies.java">Trac</a>,
- * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/native/bf-cpp/src/FixProxies.java">SVN</a></dd></dl>
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/native/bf-cpp/src/FixProxies.java">Trac</a>,
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/native/bf-cpp/src/FixProxies.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */

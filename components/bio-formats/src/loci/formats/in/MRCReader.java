@@ -38,8 +38,8 @@ import loci.formats.meta.MetadataStore;
  * http://bio3d.colorado.edu/imod/doc/mrc_format.txt
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/in/MRCReader.java">Trac</a>,
- * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/in/MRCReader.java">SVN</a></dd></dl>
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/MRCReader.java">Trac</a>,
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/MRCReader.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class MRCReader extends FormatReader {
 

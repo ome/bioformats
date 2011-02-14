@@ -30,8 +30,8 @@ import java.util.Map;
  * Factory for providing instances of IRandomAccessProvider.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/common/test/loci/common/utests/providers/IRandomAccessProviderFactory.java">Trac</a>,
- * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/common/test/loci/common/utests/providers/IRandomAccessProviderFactory.java">SVN</a></dd></dl>
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/test/loci/common/utests/providers/IRandomAccessProviderFactory.java">Trac</a>,
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/common/test/loci/common/utests/providers/IRandomAccessProviderFactory.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @see IRandomAccessProvider
  */

@@ -44,8 +44,8 @@ import loci.formats.meta.MetadataStore;
  * OpenlabReader is the file format reader for Openlab LIFF files.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/in/OpenlabReader.java">Trac</a>,
- * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/in/OpenlabReader.java">SVN</a></dd></dl>
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/OpenlabReader.java">Trac</a>,
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/OpenlabReader.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  * @author Eric Kjellman egkjellman at wisc.edu
@@ -119,6 +119,12 @@ public class OpenlabReader extends FormatReader {
   }
 
   // -- IFormatReader API methods --
+
+  /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
+  public int getOptimalTileHeight() {
+    FormatTools.assertId(currentId, true, 1);
+    return getSizeY();
+  }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {

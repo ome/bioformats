@@ -37,8 +37,8 @@ import loci.formats.meta.MetadataStore;
  * A utility class for format reader and writer implementations.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/FormatTools.java">Trac</a>,
- * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/FormatTools.java">SVN</a></dd></dl>
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/FormatTools.java">Trac</a>,
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/FormatTools.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public final class FormatTools {
 
@@ -141,7 +141,7 @@ public final class FormatTools {
 
   /**
    * Current SVN revision.
-   * @deprecated After Git move, deprecated in favour of {@link VCS_REVISION}.
+   * @deprecated After Git move, deprecated in favour of {@link #VCS_REVISION}.
    */
   @Deprecated
   public static final String SVN_REVISION = "@vcs.revision@";

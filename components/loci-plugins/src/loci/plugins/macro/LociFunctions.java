@@ -59,8 +59,8 @@ import loci.plugins.util.LociPrefs;
  * functions to control the type of format reader used.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/loci-plugins/src/loci/plugins/macro/LociFunctions.java">Trac</a>,
- * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/loci-plugins/src/loci/plugins/macro/LociFunctions.java">SVN</a></dd></dl>
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/loci-plugins/src/loci/plugins/macro/LociFunctions.java">Trac</a>,
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/loci-plugins/src/loci/plugins/macro/LociFunctions.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
@@ -466,7 +466,7 @@ public class LociFunctions extends MacroFunctions {
       IJ.log("-- Returns the version number of the currently installed");
       IJ.log("-- version of Bio-Formats.");
       IJ.log("Ext.getRevision(revision)");
-      IJ.log("-- Returns the SVN revision number of the currently");
+      IJ.log("-- Returns the revision number of the currently");
       IJ.log("-- installed version of Bio-Formats.");
       IJ.log("Ext.getBuildDate(date)");
       IJ.log("-- Returns the build date of the currently installed");

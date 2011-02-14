@@ -82,8 +82,8 @@ import com.jgoodies.forms.layout.RowSpec;
  * Main notes window.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://dev.loci.wisc.edu/trac/java/browser/trunk/components/legacy/ome-notes/src/loci/ome/notes/Notes.java">Trac</a>,
- * <a href="http://dev.loci.wisc.edu/svn/java/trunk/components/legacy/ome-notes/src/loci/ome/notes/Notes.java">SVN</a></dd></dl>
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/legacy/ome-notes/src/loci/ome/notes/Notes.java">Trac</a>,
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/legacy/ome-notes/src/loci/ome/notes/Notes.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class Notes extends JFrame implements ActionListener {
 

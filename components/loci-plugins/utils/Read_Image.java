@@ -17,7 +17,13 @@ import loci.formats.IFormatReader;
 import loci.plugins.util.ImageProcessorReader;
 import loci.plugins.util.LociPrefs;
 
-/** A very simple example of using Bio-Formats in an ImageJ plugin. */
+/**
+ * A very simple example of using Bio-Formats in an ImageJ plugin.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/loci-plugins/utils/Read_Image.java">Trac</a>,
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/loci-plugins/utils/Read_Image.java;hb=HEAD">Gitweb</a></dd></dl>
+ */
 public class Read_Image implements PlugIn {
   public void run(String arg) {
     OpenDialog od = new OpenDialog("Open Image File...", arg);
