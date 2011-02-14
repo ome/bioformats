@@ -27,12 +27,11 @@ import java.io.IOException;
 import loci.formats.FormatException;
 
 /**
- * @author callan
- *
- *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/test/loci/formats/utests/tiff/BitsPerSampleSamplesPerPixelMismatchMock.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/utests/tiff/BitsPerSampleSamplesPerPixelMismatchMock.java;hb=HEAD">Gitweb</a></dd></dl>
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/test/loci/formats/utests/tiff/BitsPerSampleSamplesPerPixelMismatchMock.java;hb=HEAD">Gitweb</a></dd></dl>
+ *
+ * @author callan
  */
 public class BitsPerSampleSamplesPerPixelMismatchMock extends RGBTiffMock {
 

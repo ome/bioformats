@@ -33,12 +33,11 @@ import loci.ome.io.OmeroReader;
 import org.openmicroscopy.ds.dto.Image;
 
 /**
- * @author callan
- *
- *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/ome-io/src/loci/ome/io/services/OMEReaderWriterServiceImpl.java">Trac</a>,
  * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/ome-io/src/loci/ome/io/services/OMEReaderWriterServiceImpl.java;hb=HEAD">Gitweb</a></dd></dl>
+ *
+ * @author callan
  */
 public class OMEReaderWriterServiceImpl extends AbstractService
   implements OMEReaderWriterService

@@ -34,12 +34,11 @@ import loci.common.services.ServiceException;
 import com.luratech.lwf.lwfDecoder;
 
 /**
- * @author callan
- *
- *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/services/LuraWaveServiceImpl.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/services/LuraWaveService.java;hb=HEAD">Gitweb</a></dd></dl>
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/services/LuraWaveServiceImpl.java;hb=HEAD">Gitweb</a></dd></dl>
+ *
+ * @author callan
  */
 public class LuraWaveServiceImpl extends AbstractService
   implements LuraWaveService {

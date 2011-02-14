@@ -32,11 +32,11 @@ import java.io.IOException;
  * StreamHandle implementation for reading from BZip2-compressed files
  * or byte arrays.  Instances of BZip2Handle are read-only.
  *
- * @see StreamHandle
- *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/BZip2Handle.java">Trac</a>,
  * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/common/src/loci/common/BZip2Handle.java;hb=HEAD">Gitweb</a></dd></dl>
+ *
+ * @see StreamHandle
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */

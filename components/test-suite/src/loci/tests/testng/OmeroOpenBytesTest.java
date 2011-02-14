@@ -48,12 +48,12 @@ import loci.formats.MinMaxCalculator;
 /**
  * Tests various permutations of <code>openBytes()</code> in an OMERO like
  * manner.
- * 
- * @author Chris Allan <callan at blackcat dot ca>
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/test-suite/src/loci/tests/testng/OmeroOpenBytesTest.java">Trac</a>,
  * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/test-suite/src/loci/tests/testng/OmeroOpenBytesTest.java;hb=HEAD">Gitweb</a></dd></dl>
+ *
+ * @author Chris Allan <callan at blackcat dot ca>
  */
 public class OmeroOpenBytesTest
 {

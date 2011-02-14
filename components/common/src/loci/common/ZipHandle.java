@@ -36,11 +36,11 @@ import java.util.zip.ZipInputStream;
  * StreamHandle implementation for reading from Zip-compressed files
  * or byte arrays.  Instances of ZipHandle are read-only.
  *
- * @see StreamHandle
- *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/ZipHandle.java">Trac</a>,
  * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/common/src/loci/common/ZipHandle.java;hb=HEAD">Gitweb</a></dd></dl>
+ *
+ * @see StreamHandle
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */

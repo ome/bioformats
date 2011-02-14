@@ -1,3 +1,7 @@
+//
+// CustomNode.java
+//
+
 /*
  * ome.xml.CustomNode
  *

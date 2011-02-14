@@ -31,15 +31,14 @@ import loci.common.services.Service;
 import loci.common.services.ServiceException;
 
 /**
- * @author callan
- *
- *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/services/LuraWaveService.java">Trac</a>,
  * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/services/LuraWaveService.java;hb=HEAD">Gitweb</a></dd></dl>
+ *
+ * @author callan
  */
 public interface LuraWaveService extends Service {
-  
+
   /**
    * Overrides the license code to use when initializing the LuraWave decoder.
    * By default the license code is loaded from the "lurawave.license" system
@@ -47,7 +46,7 @@ public interface LuraWaveService extends Service {
    * @param license String license code.
    */
   public void setLicenseCode(String license);
-  
+
   /**
    * Retrieves the current license code as a string.
    * @return See above.

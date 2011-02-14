@@ -1,5 +1,5 @@
 //
-// FilePatternDialog.java
+// ImporterDialog.java
 //
 
 /*
@@ -33,8 +33,8 @@ import loci.plugins.prefs.OptionsDialog;
  * Abstract superclass of importer dialogs.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/loci-plugins/src/loci/plugins/in/FilePatternDialog.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/loci-plugins/src/loci/plugins/in/FilePatternDialog.java;hb=HEAD">Gitweb</a></dd></dl>
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/loci-plugins/src/loci/plugins/in/ImporterDialog.java">Trac</a>,
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/loci-plugins/src/loci/plugins/in/ImporterDialog.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public abstract class ImporterDialog extends OptionsDialog {
 

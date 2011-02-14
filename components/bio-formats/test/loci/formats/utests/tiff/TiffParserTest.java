@@ -1,5 +1,5 @@
 //
-// TiffParserGrayscaleTest.java
+// TiffParserTest.java
 //
 
 /*
@@ -41,12 +41,11 @@ import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 /**
- * @author callan
- *
- *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/test/loci/formats/utests/tiff/TiffParserGrayscaleTest.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/test/loci/formats/utests/tiff/TiffParserGrayscaleTest.java;hb=HEAD">Gitweb</a></dd></dl>
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/test/loci/formats/utests/tiff/TiffParserTest.java">Trac</a>,
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/test/loci/formats/utests/tiff/TiffParserTest.java;hb=HEAD">Gitweb</a></dd></dl>
+ *
+ * @author callan
  */
 @Test(groups={ "tiffParserTests" })
 public class TiffParserTest {

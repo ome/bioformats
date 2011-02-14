@@ -30,12 +30,12 @@ import loci.formats.DelegateReader;
  * It does not read files directly, but chooses which TIFF reader
  * is more appropriate.
  *
- * @see TiffReader
- * @see TiffJAIReader
- *
  * <dl><dt><b>Source code:</b</dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/TiffDelegateReader.java">Trac</a>,
  * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/TiffDelegateReader.java;hb=HEAD">Gitweb</a></dd></dl>
+ *
+ * @see TiffReader
+ * @see TiffJAIReader
  */
 public class TiffDelegateReader extends DelegateReader {
 

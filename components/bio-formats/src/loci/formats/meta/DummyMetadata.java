@@ -1,3 +1,6 @@
+//
+// DummyMetadata.java
+//
 
 /*
  * loci.formats.meta.DummyMetadata

@@ -36,7 +36,7 @@ import loci.common.services.Service;
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/services/POIService.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-format/src/loci/formats/services/POIService.java;hb=HEAD">Gitweb</a></dd></dl>
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/services/POIService.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public interface POIService extends Service {
 

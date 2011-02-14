@@ -21,28 +21,61 @@ for my $f (@src) {
 
   my $tracActual = '';
   my $gitwebActual = '';
+  my $tagIndex = 0;
+  my $codeIndex = 0;
+  my $lineNo = 0;
   for my $line (@lines) {
     chop $line;
+    $lineNo++;
     if ($line =~ />Trac</) {
       $tracActual = $line;
       $tracActual =~ s/.*(http:.*)".*/$1/;
+      $codeIndex = $lineNo;
     }
     elsif ($line =~ />Gitweb</) {
       $gitwebActual = $line;
       $gitwebActual =~ s/.*(http:.*)".*/$1/;
+      $codeIndex = $lineNo;
+    }
+    elsif ($line =~ /^ \* @/ && $tagIndex == 0) {
+      $tagIndex = $lineNo;
     }
   }
 
-  my $tracExpected = 'http://trac.openmicroscopy.org.uk/' .
-    'ome/browser/bioformats.git/' . $f;
-  my $gitwebExpected = 'http://git.openmicroscopy.org/' .
-    '?p=bioformats.git;a=blob;f=' . $f . ';hb=HEAD';
+  # check header
+  my $headerOK = 1;
+  my $filename = $f;
+  $filename =~ s/.*\///;
+  my $headerExpected = "// $filename";
+  my $headerActual = $headerExpected;
+  if ($lines[0] ne '//' || $lines[1] ne $headerExpected || $lines[2] ne '//') {
+    $headerOK = 0;
+  }
 
-  if ($tracActual ne $tracExpected || $gitwebActual ne $gitwebExpected) {
+  # check comment annotations
+  my $commentOK = 1;
+  if ($tagIndex > 0 && $tagIndex < $codeIndex) {
+    $commentOK = 0;
+  }
+
+  my $tracExpected = "http://trac.openmicroscopy.org.uk/" .
+    "ome/browser/bioformats.git/$f";
+  my $gitwebExpected = "http://git.openmicroscopy.org/" .
+    "?p=bioformats.git;a=blob;f=$f;hb=HEAD";
+
+  if (!$headerOK || !$commentOK || $tracActual ne $tracExpected ||
+    $gitwebActual ne $gitwebExpected)
+  {
     print "$f:\n";
     $allOK = 0;
   }
 
+  if (!$headerOK) {
+    print "  incorrect header\n";
+  }
+  if (!$commentOK) {
+    print "  misplaced comment annotation\n";
+  }
   if ($tracActual eq '') {
     print "  no Trac link (should be $tracExpected)\n";
   }
@@ -58,5 +91,5 @@ for my $f (@src) {
 }
 
 if ($allOK) {
-  print "All source files OK!";
+  print "All source files OK!\n";
 }

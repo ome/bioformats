@@ -1,3 +1,7 @@
+//
+// OMEXMLNode.java
+//
+
 /*
  * ome.xml.OMEXMLNode
  *

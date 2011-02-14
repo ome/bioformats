@@ -41,11 +41,11 @@ import org.slf4j.LoggerFactory;
  *   <li>http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6417205</li>
  * </ul>
  *
- * @author Chris Allan <callan at blackcat dot ca>
- *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/NIOByteBufferProvider.java">Trac</a>,
  * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/common/src/loci/common/NIOByteBufferProvider.java;hb=HEAD">Gitweb</a></dd></dl>
+ *
+ * @author Chris Allan <callan at blackcat dot ca>
  */
 public class NIOByteBufferProvider {
 

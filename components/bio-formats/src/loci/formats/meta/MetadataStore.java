@@ -1,3 +1,6 @@
+//
+// MetadataStore.java
+//
 
 /*
  * loci.formats.meta.MetadataStore

@@ -1,3 +1,6 @@
+//
+// FilterMetadata.java
+//
 
 /*
  * loci.formats.meta.FilterMetadata

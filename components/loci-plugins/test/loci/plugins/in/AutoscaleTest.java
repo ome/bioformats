@@ -26,11 +26,11 @@ import org.junit.Test;
  * A class for testing the Bio-Formats Importer's
  * autoscaling behavior in various cases.
  *
- * @author Curtis Rueden ctrueden at wisc.edu
- *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/loci-plugins/test/loci/plugins/in/AutoscaleTest.java">Trac</a>,
  * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/loci-plugins/test/loci/plugins/in/AutoscaleTest.java;hb=HEAD">Gitweb</a></dd></dl>
+ *
+ * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class AutoscaleTest {
 

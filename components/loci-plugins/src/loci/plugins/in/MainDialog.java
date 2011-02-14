@@ -1,5 +1,5 @@
 //
-// ImporterDialog.java
+// MainDialog.java
 //
 
 /*

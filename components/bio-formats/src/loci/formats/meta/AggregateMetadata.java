@@ -1,3 +1,6 @@
+//
+// AggregateMetadata.java
+//
 
 /*
  * loci.formats.meta.AggregateMetadata
