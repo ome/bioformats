@@ -85,6 +85,7 @@ public class FileConvert {
       // set up the writer and associate it with the output file
       writer = new ImageWriter();
       writer.setMetadataRetrieve(omexml);
+      writer.setInterleaved(reader.isInterleaved());
       writer.setId(outputFile);
     }
     catch (FormatException e) {
