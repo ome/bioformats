@@ -40,6 +40,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -72,6 +73,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.testng.SkipException;
+import org.testng.annotations.AfterClass;
 
 /**
  * TestNG tester for Bio-Formats file format readers.
@@ -140,6 +142,16 @@ public class FormatReaderTest {
     catch (DependencyException e) {
       LOGGER.warn("OMEXMLService not available", e);
     }
+  }
+
+  // -- Setup/teardown methods --
+
+  @AfterClass
+  public void close() throws IOException {
+    reader.close();
+    HashMap<String, Object> idMap = Location.getIdMap();
+    idMap.clear();
+    Location.setIdMap(idMap);
   }
 
   // -- Tests --
@@ -1335,9 +1347,9 @@ public class FormatReaderTest {
     try {
       boolean reallyInMemory = false;
       if (inMemory) {
-        if (reader.getCurrentFile() != null) {
-          Location.mapFile(reader.getCurrentFile(), null);
-        }
+        HashMap<String, Object> idMap = Location.getIdMap();
+        idMap.clear();
+        Location.setIdMap(idMap);
 
         reallyInMemory = mapFile(id);
       }
