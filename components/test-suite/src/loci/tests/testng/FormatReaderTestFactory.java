@@ -106,6 +106,12 @@ public class FormatReaderTestFactory {
     }
     LOGGER.info("testng.multiplier = {}", multiplier);
 
+    // detect whether or not the map the files into memory
+    final String inMemoryProp = "testng.in-memory";
+    String inMemoryValue = System.getProperty(inMemoryProp);
+    boolean inMemory = Boolean.parseBoolean(inMemoryValue);
+    LOGGER.info("testng.in-memory = {}", inMemory);
+
     // detect maximum heap size
     long maxMemory = Runtime.getRuntime().maxMemory() >> 20;
     LOGGER.info("Maximum heap size = {} MB", maxMemory);
@@ -133,7 +139,7 @@ public class FormatReaderTestFactory {
     Object[] tests = new Object[files.size()];
     for (int i=0; i<tests.length; i++) {
       String id = (String) files.get(i);
-      tests[i] = new FormatReaderTest(id, multiplier);
+      tests[i] = new FormatReaderTest(id, multiplier, inMemory);
     }
     if (tests.length == 1) System.out.println("Ready to test " + files.get(0));
     else System.out.println("Ready to test " + tests.length + " files");

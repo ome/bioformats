@@ -40,8 +40,10 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import loci.common.ByteArrayHandle;
 import loci.common.DateTools;
 import loci.common.Location;
+import loci.common.RandomAccessInputStream;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
@@ -118,13 +120,16 @@ public class FormatReaderTest {
    */
   private float timeMultiplier = 1;
 
+  private boolean inMemory = false;
+
   private OMEXMLService omexmlService = null;
 
   // -- Constructor --
 
-  public FormatReaderTest(String filename, float multiplier) {
+  public FormatReaderTest(String filename, float multiplier, boolean inMemory) {
     id = filename;
     timeMultiplier = multiplier;
+    this.inMemory = inMemory;
     try {
       ServiceFactory factory = new ServiceFactory();
       omexmlService = factory.getInstance(OMEXMLService.class);
@@ -1325,6 +1330,17 @@ public class FormatReaderTest {
 
     LOGGER.info("Initializing {}: ", id);
     try {
+      if (inMemory) {
+        if (reader.getCurrentFile() != null) {
+          Location.mapFile(reader.getCurrentFile(), null);
+        }
+        RandomAccessInputStream stream = new RandomAccessInputStream(id);
+        byte[] buf = new byte[(int) stream.length()];
+        stream.readFully(buf);
+        stream.close();
+        ByteArrayHandle handle = new ByteArrayHandle(buf);
+        Location.mapFile(id, handle);
+      }
       reader.setId(id);
       // remove used files
       String[] used = reader.getUsedFiles();
