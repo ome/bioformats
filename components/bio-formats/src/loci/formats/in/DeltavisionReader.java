@@ -153,8 +153,11 @@ public class DeltavisionReader extends FormatReader {
 
     // read the image plane's pixel data
     long planeOffset = (long) FormatTools.getPlaneSize(this) * no;
-    in.seek(HEADER_LENGTH + extSize + planeOffset);
-    readPlane(in, x, y, w, h, buf);
+    long offset = planeOffset + HEADER_LENGTH + extSize;
+    if (offset < in.length()) {
+      in.seek(HEADER_LENGTH + extSize + planeOffset);
+      readPlane(in, x, y, w, h, buf);
+    }
 
     return buf;
   }
@@ -287,6 +290,12 @@ public class DeltavisionReader extends FormatReader {
             sizeZ++;
             core[0].imageCount = sizeZ * sizeC;
           }
+        }
+        if (getImageCount() > (sizeZ * sizeC * sizeT)) {
+          core[0].imageCount = imageCount;
+          sizeC = rawSizeC == 0 ? 1 : rawSizeC;
+          sizeT = rawSizeT == 0 ? 1 : rawSizeT;
+          sizeZ = getImageCount() / (sizeC * sizeT);
         }
       }
       else {
