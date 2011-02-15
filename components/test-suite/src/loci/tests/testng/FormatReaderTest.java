@@ -34,8 +34,11 @@ package loci.tests.testng;
 import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -1330,16 +1333,13 @@ public class FormatReaderTest {
 
     LOGGER.info("Initializing {}: ", id);
     try {
+      boolean reallyInMemory = false;
       if (inMemory) {
         if (reader.getCurrentFile() != null) {
           Location.mapFile(reader.getCurrentFile(), null);
         }
-        RandomAccessInputStream stream = new RandomAccessInputStream(id);
-        byte[] buf = new byte[(int) stream.length()];
-        stream.readFully(buf);
-        stream.close();
-        ByteArrayHandle handle = new ByteArrayHandle(buf);
-        Location.mapFile(id, handle);
+
+        reallyInMemory = mapFile(id);
       }
       reader.setId(id);
       // remove used files
@@ -1351,6 +1351,9 @@ public class FormatReaderTest {
           continue;
         }
         skipFiles.add(used[i]);
+        if (reallyInMemory) {
+          mapFile(used[i]);
+        }
       }
       boolean single = used.length == 1;
       if (single && base) LOGGER.info("OK");
@@ -1380,6 +1383,25 @@ public class FormatReaderTest {
       success ? "PASSED" : "FAILED", msg == null ? "" : msg});
     if (msg == null) assert success;
     else assert success : msg;
+  }
+
+  private static boolean mapFile(String id) throws IOException {
+    RandomAccessInputStream stream = new RandomAccessInputStream(id);
+    Runtime rt = Runtime.getRuntime();
+    long maxMem = rt.freeMemory();
+    long length = stream.length();
+    if (length < Integer.MAX_VALUE && length < maxMem) {
+      stream.close();
+      FileInputStream fis = new FileInputStream(id);
+      FileChannel channel = fis.getChannel();
+      ByteBuffer buf = channel.map(FileChannel.MapMode.READ_ONLY, 0, length);
+      ByteArrayHandle handle = new ByteArrayHandle(buf);
+      Location.mapFile(id, handle);
+      fis.close();
+      return true;
+    }
+    stream.close();
+    return false;
   }
 
 }

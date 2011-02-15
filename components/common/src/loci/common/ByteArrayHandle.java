@@ -63,6 +63,10 @@ public class ByteArrayHandle extends AbstractNIOHandle {
     buffer = ByteBuffer.wrap(bytes);
   }
 
+  public ByteArrayHandle(ByteBuffer bytes) {
+    buffer = bytes;
+  }
+
   /**
    * Creates a random access byte stream to read from, and write to.
    * @param capacity Number of bytes to initially allocate.
