@@ -102,6 +102,7 @@ public class ImageInfo {
   private boolean autoscale = false;
   private boolean preload = false;
   private boolean ascii = false;
+  private boolean usedFiles = true;
   private String omexmlVersion = null;
   private int start = 0;
   private int end = Integer.MAX_VALUE;
@@ -143,6 +144,7 @@ public class ImageInfo {
     fastBlit = false;
     autoscale = false;
     preload = false;
+    usedFiles = true;
     omexmlVersion = null;
     start = 0;
     end = Integer.MAX_VALUE;
@@ -178,6 +180,7 @@ public class ImageInfo {
         }
         else if (args[i].equals("-preload")) preload = true;
         else if (args[i].equals("-ascii")) ascii = true;
+        else if (args[i].equals("-nousedfiles")) usedFiles = false;
         else if (args[i].equals("-xmlversion")) omexmlVersion = args[++i];
         else if (args[i].equals("-crop")) {
           StringTokenizer st = new StringTokenizer(args[++i], ",");
@@ -409,31 +412,33 @@ public class ImageInfo {
     LOGGER.info("{} = {}", stitch ? "File pattern" : "Filename",
       stitch ? id : reader.getCurrentFile());
     if (map != null) LOGGER.info("Mapped filename = {}", map);
-    String[] used = reader.getUsedFiles();
-    boolean usedValid = used != null && used.length > 0;
-    if (usedValid) {
-      for (int u=0; u<used.length; u++) {
-        if (used[u] == null) {
-          usedValid = false;
-          break;
+    if (usedFiles) {
+      String[] used = reader.getUsedFiles();
+      boolean usedValid = used != null && used.length > 0;
+      if (usedValid) {
+        for (int u=0; u<used.length; u++) {
+          if (used[u] == null) {
+            usedValid = false;
+            break;
+          }
         }
       }
-    }
-    if (!usedValid) {
-      LOGGER.warn("************ invalid used files list ************");
-    }
-    if (used == null) {
-      LOGGER.info("Used files = null");
-    }
-    else if (used.length == 0) {
-      LOGGER.info("Used files = []");
-    }
-    else if (used.length > 1) {
-      LOGGER.info("Used files:");
-      for (int u=0; u<used.length; u++) LOGGER.info("\t{}", used[u]);
-    }
-    else if (!id.equals(used[0])) {
-      LOGGER.info("Used files = [{}]", used[0]);
+      if (!usedValid) {
+        LOGGER.warn("************ invalid used files list ************");
+      }
+      if (used == null) {
+        LOGGER.info("Used files = null");
+      }
+      else if (used.length == 0) {
+       LOGGER.info("Used files = []");
+      }
+      else if (used.length > 1) {
+        LOGGER.info("Used files:");
+        for (int u=0; u<used.length; u++) LOGGER.info("\t{}", used[u]);
+      }
+      else if (!id.equals(used[0])) {
+        LOGGER.info("Used files = [{}]", used[0]);
+      }
     }
     int seriesCount = reader.getSeriesCount();
     LOGGER.info("Series count = {}", seriesCount);
