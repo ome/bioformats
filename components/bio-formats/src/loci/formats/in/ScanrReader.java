@@ -25,6 +25,7 @@ package loci.formats.in;
 
 import java.io.IOException;
 import java.nio.ByteOrder;
+import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Vector;
 
@@ -347,6 +348,8 @@ public class ScanrReader extends FormatReader {
     }
 
     tiffs = new String[nChannels * nWells * nPos * nTimepoints * nSlices];
+    Arrays.sort(list);
+    int lastListIndex = 0;
 
     int next = 0;
     String[] keys = wellLabels.keySet().toArray(new String[wellLabels.size()]);
@@ -367,12 +370,16 @@ public class ScanrReader extends FormatReader {
             String tPos = getBlock(t, "T");
 
             for (int c=0; c<nChannels; c++) {
-              for (String file : list) {
+              for (int i=lastListIndex; i<list.length; i++) {
+                String file = list[i];
                 if (file.indexOf(wellPos) != -1 && file.indexOf(zPos) != -1 &&
                   file.indexOf(posPos) != -1 && file.indexOf(tPos) != -1 &&
                   file.indexOf(channelNames.get(c)) != -1)
                 {
                   tiffs[next++] = new Location(dir, file).getAbsolutePath();
+                  if (c == nChannels - 1) {
+                    lastListIndex = i;
+                  }
                   break;
                 }
               }
