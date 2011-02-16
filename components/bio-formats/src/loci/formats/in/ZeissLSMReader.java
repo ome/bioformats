@@ -897,6 +897,12 @@ public class ZeissLSMReader extends FormatReader {
       addSeriesMeta("DimensionM", dimensionM);
       addSeriesMeta("DimensionP", dimensionP);
 
+      if (lsmFilenames.length == 1) {
+        xCoordinates.clear();
+        yCoordinates.clear();
+        zCoordinates.clear();
+      }
+
       if (positionOffset != 0) {
         in.seek(positionOffset);
         int nPositions = in.readInt();
@@ -925,21 +931,21 @@ public class ZeissLSMReader extends FormatReader {
             xPos += xCoordinates.get(i);
             xCoordinates.setElementAt(xPos, i);
           }
-          else if (xCoordinates.size() == i - 1) {
+          else if (xCoordinates.size() == i) {
             xCoordinates.add(xPos);
           }
           if (yCoordinates.size() > i) {
             yPos += yCoordinates.get(i);
             yCoordinates.setElementAt(yPos, i);
           }
-          else if (yCoordinates.size() == i - 1) {
+          else if (yCoordinates.size() == i) {
             yCoordinates.add(yPos);
           }
           if (zCoordinates.size() > i) {
             zPos += zCoordinates.get(i);
             zCoordinates.setElementAt(zPos, i);
           }
-          else if (zCoordinates.size() == i - 1) {
+          else if (zCoordinates.size() == i) {
             zCoordinates.add(zPos);
           }
 
