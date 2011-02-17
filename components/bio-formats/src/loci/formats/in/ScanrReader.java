@@ -89,6 +89,7 @@ public class ScanrReader extends FormatReader {
 
   private double[] fieldPositionX;
   private double[] fieldPositionY;
+  private Vector<Double> exposures = new Vector<Double>();
 
   // -- Constructor --
 
@@ -189,6 +190,7 @@ public class ScanrReader extends FormatReader {
       tileHeight = 0;
       fieldPositionX = null;
       fieldPositionY = null;
+      exposures.clear();
     }
   }
 
@@ -524,8 +526,11 @@ public class ScanrReader extends FormatReader {
           store.setWellSamplePositionX(fieldPositionX[field], 0, well, field);
           store.setWellSamplePositionY(fieldPositionY[field], 0, well, field);
           for (int image=0; image<getImageCount(); image++) {
+            int c = getZCTCoords(image)[1];
+
             store.setPlanePositionX(fieldPositionX[field], i, image);
             store.setPlanePositionY(fieldPositionY[field], i, image);
+            store.setPlaneExposureTime(exposures.get(c), i, image);
           }
         }
       }
@@ -596,6 +601,9 @@ public class ScanrReader extends FormatReader {
         else if (key.equals("plate name")) {
           plateName = value;
         }
+        else if (key.equals("exposure time")) {
+          exposures.add(new Double(value));
+        }
         else if (key.equals("idle") && validChannel) {
           int lastIndex = channelNames.size() - 1;
           if (value.equals("0") &&
@@ -603,7 +611,10 @@ public class ScanrReader extends FormatReader {
           {
             core[0].sizeC++;
           }
-          else channelNames.remove(lastIndex);
+          else {
+            channelNames.remove(lastIndex);
+            exposures.remove(lastIndex);
+          }
         }
         else if (key.equals("well selection table + cDNA")) {
           if (Character.isDigit(value.charAt(0))) {
