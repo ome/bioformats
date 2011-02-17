@@ -425,7 +425,7 @@ public class SlidebookReader extends FormatReader {
         if (withinPixels(off + q * 128)) {
           continue;
         }
-        in.seek(off + q * 128);
+        in.seek(off + (long) q * 128);
         char n = (char) in.readShort();
         while (n == 0 && in.getFilePointer() < off + (q + 1) * 128) {
           n = (char) in.readShort();
@@ -561,14 +561,15 @@ public class SlidebookReader extends FormatReader {
             long end = j == pixelOffsets.size() - 1 ? in.length() :
               pixelOffsets.get(j + 1).longValue();
             if (in.getFilePointer() < end) {
-              in.skipBytes(16);
+              in.skipBytes(14);
+              int check = in.readShort();
               int x = in.readShort();
               int y = in.readShort();
-              if (x > 16 && y > 16) {
+              if (check == 0 && x > 16 && y > 16) {
                 sizeX[j] = x;
                 sizeY[j] = y;
+                /* debug */ System.out.println("@555, X = " + sizeX[j] + ", Y = " + sizeY[j]);
               }
-              /* debug */ System.out.println("@555, X = " + sizeX[j] + ", Y = " + sizeY[j]);
               adjust = false;
               break;
             }
