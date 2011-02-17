@@ -442,16 +442,21 @@ public class SlidebookReader extends FormatReader {
               pixelOffsets.get(j + 1).longValue();
             if (in.getFilePointer() < end) {
               if (sizeX[j] == 0) {
-                sizeX[j] = in.readShort();
-                sizeY[j] = in.readShort();
-                /* debug */ System.out.println("@440, X = " + sizeX[j] + ", Y = " + sizeY[j]);
-                int checkX = in.readShort();
-                int checkY = in.readShort();
-                int div = in.readShort();
-                sizeX[j] /= (div == 0 ? 1 : div);
-                div = in.readShort();
-                sizeY[j] /= (div == 0 ? 1 : div);
-                /* debug */ System.out.println("@447, X = " + sizeX[j] + ", Y = " + sizeY[j]);
+                int x = in.readShort();
+                int y = in.readShort();
+                if (x != 0 && y != 0) {
+                  sizeX[j] = x;
+                  sizeY[j] = y;
+                  /* debug */ System.out.println("@440, X = " + sizeX[j] + ", Y = " + sizeY[j]);
+                  int checkX = in.readShort();
+                  int checkY = in.readShort();
+                  int div = in.readShort();
+                  sizeX[j] /= (div == 0 ? 1 : div);
+                  div = in.readShort();
+                  sizeY[j] /= (div == 0 ? 1 : div);
+                  /* debug */ System.out.println("@447, X = " + sizeX[j] + ", Y = " + sizeY[j]);
+                }
+                else in.skipBytes(8);
               }
               if (prevSeries != j) {
                 iCount = 1;
@@ -649,10 +654,10 @@ public class SlidebookReader extends FormatReader {
         }
       }
 
-      if ((long) getSizeX() * getSizeY() > plane) {
-        core[i].sizeX = (int) Math.sqrt(plane);
-        core[i].sizeY = getSizeX();
-      }
+      /* debug */
+      System.out.println("intermediate sizeX = " + core[i].sizeX);
+      System.out.println("intermediate sizeY = " + core[i].sizeY);
+      /* end debug */
 
       int nPlanes = getSizeZ() * getSizeC();
       core[i].sizeT = (int) (pixels / (getSizeX() * getSizeY() * nPlanes));
