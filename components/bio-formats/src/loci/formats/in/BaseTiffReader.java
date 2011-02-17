@@ -86,6 +86,11 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
     if (getMetadataOptions().getMetadataLevel() == MetadataLevel.MINIMUM) {
       return;
     }
+
+    for (int i=0; i<ifds.size(); i++) {
+      put("PageName #" + i, ifds.get(i), IFD.PAGE_NAME);
+    }
+
     IFD firstIFD = ifds.get(0);
     put("ImageWidth", firstIFD, IFD.IMAGE_WIDTH);
     put("ImageLength", firstIFD, IFD.IMAGE_LENGTH);

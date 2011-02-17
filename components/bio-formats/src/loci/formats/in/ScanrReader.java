@@ -25,6 +25,7 @@ package loci.formats.in;
 
 import java.io.IOException;
 import java.nio.ByteOrder;
+import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Vector;
 
@@ -85,6 +86,10 @@ public class ScanrReader extends FormatReader {
 
   private String[] tiffs;
   private MinimalTiffReader reader;
+
+  private double[] fieldPositionX;
+  private double[] fieldPositionY;
+  private Vector<Double> exposures = new Vector<Double>();
 
   // -- Constructor --
 
@@ -183,6 +188,9 @@ public class ScanrReader extends FormatReader {
       pixelSize = null;
       tileWidth = 0;
       tileHeight = 0;
+      fieldPositionX = null;
+      fieldPositionY = null;
+      exposures.clear();
     }
   }
 
@@ -347,6 +355,8 @@ public class ScanrReader extends FormatReader {
     }
 
     tiffs = new String[nChannels * nWells * nPos * nTimepoints * nSlices];
+    Arrays.sort(list);
+    int lastListIndex = 0;
 
     int next = 0;
     String[] keys = wellLabels.keySet().toArray(new String[wellLabels.size()]);
@@ -367,12 +377,16 @@ public class ScanrReader extends FormatReader {
             String tPos = getBlock(t, "T");
 
             for (int c=0; c<nChannels; c++) {
-              for (String file : list) {
+              for (int i=lastListIndex; i<list.length; i++) {
+                String file = list[i];
                 if (file.indexOf(wellPos) != -1 && file.indexOf(zPos) != -1 &&
                   file.indexOf(posPos) != -1 && file.indexOf(tPos) != -1 &&
                   file.indexOf(channelNames.get(c)) != -1)
                 {
                   tiffs[next++] = new Location(dir, file).getAbsolutePath();
+                  if (c == nChannels - 1) {
+                    lastListIndex = i;
+                  }
                   break;
                 }
               }
@@ -453,7 +467,7 @@ public class ScanrReader extends FormatReader {
     }
 
     MetadataStore store = makeFilterMetadata();
-    MetadataTools.populatePixels(store, this);
+    MetadataTools.populatePixels(store, this, true);
 
     store.setPlateID(MetadataTools.createLSID("Plate", 0), 0);
 
@@ -505,6 +519,20 @@ public class ScanrReader extends FormatReader {
           store.setPixelsPhysicalSizeX(pixelSize, i);
           store.setPixelsPhysicalSizeY(pixelSize, i);
         }
+
+        if (fieldPositionX != null && fieldPositionY != null) {
+          int field = i % nFields;
+          int well = i / nFields;
+          store.setWellSamplePositionX(fieldPositionX[field], 0, well, field);
+          store.setWellSamplePositionY(fieldPositionY[field], 0, well, field);
+          for (int image=0; image<getImageCount(); image++) {
+            int c = getZCTCoords(image)[1];
+
+            store.setPlanePositionX(fieldPositionX[field], i, image);
+            store.setPlanePositionY(fieldPositionY[field], i, image);
+            store.setPlaneExposureTime(exposures.get(c), i, image);
+          }
+        }
       }
 
       String row = wellRows > 26 ? "Number" : "Letter";
@@ -524,6 +552,11 @@ public class ScanrReader extends FormatReader {
 
     private String wellIndex;
 
+    private boolean validChannel = false;
+    private boolean foundPositions = false;
+    private int nextXPos = 0;
+    private int nextYPos = 0;
+
     // -- DefaultHandler API methods --
 
     public void characters(char[] ch, int start, int length) {
@@ -531,6 +564,17 @@ public class ScanrReader extends FormatReader {
       if (v.trim().length() == 0) return;
       if (qName.equals("Name")) {
         key = v;
+
+        if (v.equals("subposition list")) {
+          foundPositions = true;
+        }
+      }
+      else if (qName.equals("Dimsize") && foundPositions &&
+        fieldPositionX == null)
+      {
+        int nPositions = Integer.parseInt(v);
+        fieldPositionX = new double[nPositions];
+        fieldPositionY = new double[nPositions];
       }
       else if (qName.equals("Val")) {
         value = v.trim();
@@ -551,20 +595,26 @@ public class ScanrReader extends FormatReader {
         else if (key.equals("timeloop count")) {
           core[0].sizeT = Integer.parseInt(value) + 1;
         }
-        else if (key.equals("name")) {
+        else if (key.equals("name") && validChannel) {
           channelNames.add(value);
         }
         else if (key.equals("plate name")) {
           plateName = value;
         }
-        else if (key.equals("idle")) {
+        else if (key.equals("exposure time")) {
+          exposures.add(new Double(value));
+        }
+        else if (key.equals("idle") && validChannel) {
           int lastIndex = channelNames.size() - 1;
           if (value.equals("0") &&
             !channelNames.get(lastIndex).equals("Autofocus"))
           {
             core[0].sizeC++;
           }
-          else channelNames.remove(lastIndex);
+          else {
+            channelNames.remove(lastIndex);
+            exposures.remove(lastIndex);
+          }
         }
         else if (key.equals("well selection table + cDNA")) {
           if (Character.isDigit(value.charAt(0))) {
@@ -579,6 +629,18 @@ public class ScanrReader extends FormatReader {
         else if (key.equals("conversion factor um/pixel")) {
           pixelSize = new Double(value);
         }
+        else if (foundPositions) {
+          if (nextXPos == nextYPos) {
+            if (nextXPos < fieldPositionX.length) {
+              fieldPositionX[nextXPos++] = Double.parseDouble(value);
+            }
+          }
+          else {
+            if (nextYPos < fieldPositionY.length) {
+              fieldPositionY[nextYPos++] = Double.parseDouble(value);
+            }
+          }
+        }
       }
     }
 
@@ -586,6 +648,15 @@ public class ScanrReader extends FormatReader {
       Attributes attributes)
     {
       this.qName = qName;
+      if (qName.equals("Array")) {
+        validChannel = true;
+      }
+    }
+
+    public void endElement(String uri, String localName, String qName) {
+      if (qName.equals("Array")) {
+        validChannel = false;
+      }
     }
 
   }
