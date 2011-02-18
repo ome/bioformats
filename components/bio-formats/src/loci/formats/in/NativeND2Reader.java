@@ -381,6 +381,7 @@ public class NativeND2Reader extends FormatReader {
       String xmlString = new String(xml.getBytes(), 0, (int) xml.length());
       xmlString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><ND2>" +
         xmlString + "</ND2>";
+      xmlString = XMLTools.sanitizeXML(xmlString);
 
       core[0].dimensionOrder = "";
 
@@ -782,7 +783,7 @@ public class NativeND2Reader extends FormatReader {
 
       String xml = sb.toString().substring(offset, len - offset);
       handler = new ND2Handler(core);
-      XMLTools.parseXML(xml, handler);
+      XMLTools.parseXML(XMLTools.sanitizeXML(xml), handler);
       xml = null;
 
       isLossless = handler.isLossless();
