@@ -54,14 +54,21 @@ import com.sun.media.imageioimpl.plugins.jpeg2000.J2KImageWriterSpi;
  * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/services/JAIIIOServiceImpl.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class JAIIIOServiceImpl extends AbstractService
-  implements JAIIIOService {
+  implements JAIIIOService
+{
+
+  // -- Constants --
 
   public static final String NO_J2K_MSG =
     "The JAI Image I/O Tools are required to read JPEG-2000 files. Please " +
     "obtain jai_imageio.jar from http://loci.wisc.edu/ome/formats-library.html";
 
+  // -- Fields --
+
+  private J2KImageReader reader;
+
   // -- JAIIIOService API methods --
-  
+
   /**
    * Default constructor.
    */
@@ -109,16 +116,22 @@ public class JAIIIOServiceImpl extends AbstractService
   public BufferedImage readImage(InputStream in)
     throws IOException, ServiceException
   {
+    setupReader();
     MemoryCacheImageInputStream mciis = new MemoryCacheImageInputStream(in);
+    reader.setInput(mciis);
+    return reader.read(0);
+  }
+
+  /** Set up the JPEG-2000 image reader. */
+  private void setupReader() {
+    if (reader != null) return;
     IIORegistry registry = IIORegistry.getDefaultInstance();
     Iterator<J2KImageReaderSpi> iter =
       ServiceRegistry.lookupProviders(J2KImageReaderSpi.class);
     registry.registerServiceProviders(iter);
-    J2KImageReaderSpi spi = 
+    J2KImageReaderSpi spi =
       registry.getServiceProviderByClass(J2KImageReaderSpi.class);
-    J2KImageReader reader = new J2KImageReader(spi);
-    reader.setInput(mciis);
-    return reader.read(0);
+    reader = new J2KImageReader(spi);
   }
 
 }

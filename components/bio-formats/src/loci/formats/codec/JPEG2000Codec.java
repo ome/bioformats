@@ -160,6 +160,32 @@ public class JPEG2000Codec extends BaseCodec {
   public byte[] decompress(RandomAccessInputStream in, CodecOptions options)
     throws FormatException, IOException
   {
+    if (options == null) {
+      options = CodecOptions.getDefaultOptions();
+    }
+
+    byte[] buf = null;
+    long fp = in.getFilePointer();
+    if (options.maxBytes == 0) {
+      buf = new byte[(int) (in.length() - fp)];
+    }
+    else {
+      buf = new byte[(int) (options.maxBytes - fp)];
+    }
+    in.read(buf);
+    return decompress(buf, options);
+  }
+
+  /**
+   * The CodecOptions parameter should have the following fields set:
+   * {@link CodecOptions#interleaved interleaved}
+   * {@link CodecOptions#littleEndian littleEndian}
+   *
+   * @see Codec#decompress(byte[], CodecOptions)
+   */
+  public byte[] decompress(byte[] buf, CodecOptions options)
+    throws FormatException
+  {
     initialize();
 
     if (options == null) {
@@ -168,15 +194,6 @@ public class JPEG2000Codec extends BaseCodec {
 
     byte[][] single = null;
     BufferedImage b = null;
-    long fp = in.getFilePointer();
-    byte[] buf = null;
-    if (options.maxBytes == 0) {
-      buf = new byte[(int) (in.length() - fp)];
-    }
-    else {
-      buf = new byte[(int) (options.maxBytes - fp)];
-    }
-    in.read(buf);
 
     try {
       ByteArrayInputStream bis = new ByteArrayInputStream(buf);
