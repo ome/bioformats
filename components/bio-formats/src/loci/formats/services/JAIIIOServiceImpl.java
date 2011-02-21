@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.services;
 
 import java.awt.image.BufferedImage;
+import java.awt.image.Raster;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -118,8 +119,16 @@ public class JAIIIOServiceImpl extends AbstractService
   {
     setupReader();
     MemoryCacheImageInputStream mciis = new MemoryCacheImageInputStream(in);
-    reader.setInput(mciis);
+    reader.setInput(mciis, false, true);
     return reader.read(0);
+  }
+
+  public Raster readRaster(InputStream in) throws IOException, ServiceException
+  {
+    setupReader();
+    MemoryCacheImageInputStream mciis = new MemoryCacheImageInputStream(in);
+    reader.setInput(mciis, false, true);
+    return reader.readRaster(0, null);
   }
 
   /** Set up the JPEG-2000 image reader. */
