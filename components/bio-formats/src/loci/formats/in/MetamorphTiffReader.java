@@ -139,6 +139,8 @@ public class MetamorphTiffReader extends BaseTiffReader {
 
     Vector<String> uniqueChannels = new Vector<String>();
     Vector<Double> uniqueZs = new Vector<Double>();
+    Vector<Double> stageX = new Vector<Double>();
+    Vector<Double> stageY = new Vector<Double>();
 
     String filename = id.substring(id.lastIndexOf(File.separator) + 1);
     filename = filename.substring(0, filename.indexOf("."));
@@ -257,6 +259,21 @@ public class MetamorphTiffReader extends BaseTiffReader {
       }
     }
 
+    for (int s=0; s<wellCount * fieldRowCount * fieldColumnCount; s++) {
+      int[] lengths = new int[] {getSizeZ(), getEffectiveSizeC(),
+        fieldColumnCount, fieldRowCount, wellCount, getSizeT()};
+
+      Well well = getWell(s);
+      int[] position =
+        new int[] {0, 0, well.fieldCol, well.fieldRow, well.well, 0};
+
+      int fileIndex = FormatTools.positionToRaster(lengths, position);
+      parseFile(files[fileIndex], handler);
+
+      stageX.add(handler.getStagePositionX());
+      stageY.add(handler.getStagePositionY());
+    }
+
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this, true);
 
@@ -331,6 +348,13 @@ public class MetamorphTiffReader extends BaseTiffReader {
           }
           if (i < exposures.size()) {
             store.setPlaneExposureTime(exposures.get(i), s, i);
+          }
+
+          if (s < stageX.size()) {
+            store.setPlanePositionX(stageX.get(s), s, i);
+          }
+          if (s < stageY.size()) {
+            store.setPlanePositionY(stageY.get(s), s, i);
           }
         }
 
