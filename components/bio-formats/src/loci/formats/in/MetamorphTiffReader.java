@@ -66,9 +66,9 @@ public class MetamorphTiffReader extends BaseTiffReader {
   // -- Fields --
 
   private String[] files;
-  private int fieldCount = 0;
-  private int wellRowCount = 0;
-  private int wellColumnCount = 0;
+  private int wellCount = 0;
+  private int fieldRowCount = 0;
+  private int fieldColumnCount = 0;
 
   // -- Constructor --
 
@@ -113,13 +113,13 @@ public class MetamorphTiffReader extends BaseTiffReader {
   {
     if (getSeriesCount() == 1) return super.openBytes(no, buf, x, y, w, h);
 
-    int[] lengths = new int[] {getSizeZ(), getEffectiveSizeC(), fieldCount,
-      wellColumnCount, wellRowCount, getSizeT()};
+    int[] lengths = new int[] {getSizeZ(), getEffectiveSizeC(),
+      fieldColumnCount, fieldRowCount, wellCount, getSizeT()};
 
     int[] zct = getZCTCoords(no);
     Well well = getWell(getSeries());
-    int[] position = new int[] {zct[0], zct[1], well.field, well.wellCol,
-      well.wellRow, zct[2]};
+    int[] position = new int[] {zct[0], zct[1], well.fieldCol,
+      well.fieldRow, well.well, zct[2]};
 
     int fileIndex = FormatTools.positionToRaster(lengths, position);
     RandomAccessInputStream s = new RandomAccessInputStream(files[fileIndex]);
@@ -192,20 +192,20 @@ public class MetamorphTiffReader extends BaseTiffReader {
       int lastWellColumn = getWellColumn(lastStageLabel);
 
       int field = getField(stageLabel);
-      int wellRow = getWellRow(stageLabel);
-      int wellColumn = getWellColumn(stageLabel);
+      int fieldRow = getWellRow(stageLabel);
+      int fieldColumn = getWellColumn(stageLabel);
 
-      fieldCount = lastField - field + 1;
-      wellRowCount = lastWellRow - wellRow + 1;
-      wellColumnCount = lastWellColumn - wellColumn + 1;
+      wellCount = lastField - field + 1;
+      fieldRowCount = lastWellRow - fieldRow + 1;
+      fieldColumnCount = lastWellColumn - fieldColumn + 1;
       core[0].sizeC = uniqueChannels.size();
       core[0].sizeZ = uniqueZs.size();
     }
     else {
       files = new String[] {id};
-      fieldCount = 1;
-      wellRowCount = 1;
-      wellColumnCount = 1;
+      wellCount = 1;
+      fieldRowCount = 1;
+      fieldColumnCount = 1;
       core[0].sizeC = 0;
     }
 
@@ -244,11 +244,11 @@ public class MetamorphTiffReader extends BaseTiffReader {
     int totalPlanes = files.length * ifds.size();
     effectiveC = getSizeC() / samples;
     core[0].sizeT = totalPlanes /
-      (fieldCount * wellRowCount * wellColumnCount * getSizeZ() * effectiveC);
+      (wellCount * fieldRowCount * fieldColumnCount * getSizeZ() * effectiveC);
     if (getSizeT() == 0) core[0].sizeT = 1;
     core[0].imageCount = getSizeZ() * getSizeT() * effectiveC;
 
-    int seriesCount = fieldCount * wellRowCount * wellColumnCount;
+    int seriesCount = wellCount * fieldRowCount * fieldColumnCount;
     if (seriesCount > 1) {
       CoreMetadata oldCore = core[0];
       core = new CoreMetadata[seriesCount];
@@ -264,26 +264,24 @@ public class MetamorphTiffReader extends BaseTiffReader {
     store.setPlateRowNamingConvention(NamingConvention.LETTER, 0);
     store.setPlateColumnNamingConvention(NamingConvention.NUMBER, 0);
 
-    for (int row=0; row<wellRowCount; row++) {
-      for (int col=0; col<wellColumnCount; col++) {
-        int wellIndex = row * wellColumnCount + col;
+    for (int well=0; well<wellCount; well++) {
+      store.setWellID(MetadataTools.createLSID("Well", 0, well), 0, well);
+      store.setWellRow(new NonNegativeInteger(0), 0, well);
+      store.setWellColumn(new NonNegativeInteger(well), 0, well);
 
-        store.setWellID(
-          MetadataTools.createLSID("Well", 0, wellIndex), 0, wellIndex);
-        store.setWellRow(new NonNegativeInteger(row), 0, wellIndex);
-        store.setWellColumn(new NonNegativeInteger(col), 0, wellIndex);
-
-        for (int field=0; field<fieldCount; field++) {
+      for (int row=0; row<fieldRowCount; row++) {
+        for (int col=0; col<fieldColumnCount; col++) {
+          int field = row * fieldColumnCount + col;
           String wellSampleID =
-            MetadataTools.createLSID("WellSample", 0, wellIndex, field);
-          store.setWellSampleID(wellSampleID, 0, wellIndex, field);
+            MetadataTools.createLSID("WellSample", 0, well, field);
+          store.setWellSampleID(wellSampleID, 0, well, field);
 
-          int seriesIndex = getSeriesIndex(row, col, field);
+          int seriesIndex = getSeriesIndex(row, col, well);
           String imageID = MetadataTools.createLSID("Image", seriesIndex);
           store.setImageID(imageID, seriesIndex);
-          store.setWellSampleImageRef(imageID, 0, wellIndex, field);
+          store.setWellSampleImageRef(imageID, 0, well, field);
           store.setWellSampleIndex(
-            new NonNegativeInteger(seriesIndex), 0, wellIndex, field);
+            new NonNegativeInteger(seriesIndex), 0, well, field);
         }
       }
     }
@@ -294,8 +292,8 @@ public class MetamorphTiffReader extends BaseTiffReader {
 
       String name = handler.getImageName();
       if (seriesCount > 1) {
-        name = "Field #" + (well.field + 1) + ", Well " +
-          (char) (well.wellRow + 'A') + (well.wellCol + 1) + ": " + name;
+        name = "Field " + (char) (well.fieldRow + 'A') + (well.fieldCol + 1) +
+          ", Well " + (well.well + 1) + ": " + name;
       }
 
       store.setImageName(name, s);
@@ -352,15 +350,15 @@ public class MetamorphTiffReader extends BaseTiffReader {
 
   // -- Helper methods --
 
-  private int getSeriesIndex(int wellRow, int wellColumn, int field) {
+  private int getSeriesIndex(int fieldRow, int fieldColumn, int well) {
     return FormatTools.positionToRaster(
-      new int[] {fieldCount, wellColumnCount, wellRowCount},
-      new int[] {field, wellColumn, wellRow});
+      new int[] {fieldColumnCount, fieldRowCount, wellCount},
+      new int[] {fieldColumn, fieldRow, well});
   }
 
   private Well getWell(int seriesIndex) {
     int[] coordinates = FormatTools.rasterToPosition(
-      new int[] {fieldCount, wellColumnCount, wellRowCount}, seriesIndex);
+      new int[] {fieldColumnCount, fieldRowCount, wellCount}, seriesIndex);
     return new Well(coordinates[2], coordinates[1], coordinates[0]);
   }
 
@@ -428,26 +426,26 @@ public class MetamorphTiffReader extends BaseTiffReader {
   // -- Helper classes --
 
   class Well {
-    public int field;
-    public int wellRow;
-    public int wellCol;
+    public int well;
+    public int fieldRow;
+    public int fieldCol;
 
-    public Well(int wellRow, int wellCol, int field) {
-      this.wellRow = wellRow;
-      this.wellCol = wellCol;
-      this.field = field;
+    public Well(int fieldRow, int fieldCol, int well) {
+      this.fieldRow = fieldRow;
+      this.fieldCol = fieldCol;
+      this.well = well;
     }
 
     public boolean equals(Object o) {
       if (!(o instanceof Well)) return false;
       Well w = (Well) o;
 
-      return w.field == this.field && w.wellRow == this.wellRow &&
-        w.wellCol == this.wellCol;
+      return w.well == this.well && w.fieldRow == this.fieldRow &&
+        w.fieldCol == this.fieldCol;
     }
 
     public int hashCode() {
-      return (field << 16) | (wellRow << 8) | wellCol;
+      return (well << 16) | (fieldRow << 8) | fieldCol;
     }
   }
 
