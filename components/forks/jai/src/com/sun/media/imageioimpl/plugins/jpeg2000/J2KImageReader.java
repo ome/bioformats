@@ -501,6 +501,10 @@ public class J2KImageReader extends ImageReader implements MsgLogger {
                              ImageReadParam param) throws IOException {
         checkIndex(imageIndex);
         processImageStarted(imageIndex);
+
+        if (param == null) {
+            param = getDefaultReadParam();
+        }
         param = new J2KImageReadParamJava(param);
 
         if (!ignoreMetadata) {
