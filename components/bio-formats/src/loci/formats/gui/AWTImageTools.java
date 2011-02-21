@@ -637,18 +637,28 @@ public final class AWTImageTools {
   public static BufferedImage constructImage(int c, int type, int w,
     int h, boolean interleaved, boolean banded, DataBuffer buffer)
   {
+    return constructImage(c, type, w, h, interleaved, banded, buffer, null);
+  }
+
+  /** Creates an image with the given DataBuffer. */
+  public static BufferedImage constructImage(int c, int type, int w,
+    int h, boolean interleaved, boolean banded, DataBuffer buffer,
+    ColorModel colorModel)
+  {
     if (c > 4) {
       throw new IllegalArgumentException(
         "Cannot construct image with " + c + " channels");
     }
-    ColorModel colorModel = makeColorModel(c, type);
-    if (colorModel == null) return null;
-    if (buffer instanceof UnsignedIntBuffer) {
-      try {
-        colorModel = new UnsignedIntColorModel(32, type, c);
-      }
-      catch (IOException e) {
-        return null;
+    if (colorModel == null) {
+      colorModel = makeColorModel(c, type);
+      if (colorModel == null) return null;
+      if (buffer instanceof UnsignedIntBuffer) {
+        try {
+          colorModel = new UnsignedIntColorModel(32, type, c);
+        }
+        catch (IOException e) {
+          return null;
+        }
       }
     }
 

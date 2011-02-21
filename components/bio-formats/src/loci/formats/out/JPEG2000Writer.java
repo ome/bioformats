@@ -86,6 +86,7 @@ public class JPEG2000Writer extends FormatWriter {
     options.littleEndian = littleEndian;
     options.interleaved = interleaved;
     options.lossless = compression == null || compression.equals(LOSSLESS);
+    options.colorModel = getColorModel();
 
     out.write(new JPEG2000Codec().compress(buf, options));
   }

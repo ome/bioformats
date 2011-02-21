@@ -110,7 +110,8 @@ public class JPEG2000Codec extends BaseCodec {
       }
       DataBuffer buffer = new DataBufferByte(b, plane);
       img = AWTImageTools.constructImage(b.length, DataBuffer.TYPE_BYTE,
-        j2kOptions.width, j2kOptions.height, false, true, buffer);
+        j2kOptions.width, j2kOptions.height, false, true, buffer,
+        j2kOptions.colorModel);
     }
     else if (j2kOptions.bitsPerSample == 16) {
       short[][] s = new short[j2kOptions.channels][plane];
@@ -134,7 +135,8 @@ public class JPEG2000Codec extends BaseCodec {
       }
       DataBuffer buffer = new DataBufferUShort(s, plane);
       img = AWTImageTools.constructImage(s.length, DataBuffer.TYPE_USHORT,
-        j2kOptions.width, j2kOptions.height, false, true, buffer);
+        j2kOptions.width, j2kOptions.height, false, true, buffer,
+        j2kOptions.colorModel);
     }
 
     try {

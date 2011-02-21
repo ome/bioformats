@@ -23,6 +23,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.codec;
 
+import java.awt.image.ColorModel;
+
 /**
  * Options for compressing and decompressing data.
  *
@@ -68,6 +70,9 @@ public class CodecOptions {
    */
   public boolean lossless;
 
+  /** Color model to use when constructing an image. */
+  public ColorModel colorModel;
+
   // -- Constructors --
 
   /** Construct a new CodecOptions. */
@@ -85,6 +90,7 @@ public class CodecOptions {
     this.maxBytes = options.maxBytes;
     this.previousImage = options.previousImage;
     this.lossless = options.lossless;
+    this.colorModel = options.colorModel;
   }
 
   // -- Static methods --
