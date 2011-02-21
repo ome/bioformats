@@ -587,6 +587,7 @@ public class SlidebookReader extends FormatReader {
       setSeries(i);
 
       Vector<Integer> pixelIndexes = uniqueSeries.get(orderedSeries.get(i));
+      int nBlocks = pixelIndexes.size();
       int index = pixelIndexes.get(0);
 
       long pixels = pixelLengths.get(index).longValue() / 2;
@@ -598,6 +599,9 @@ public class SlidebookReader extends FormatReader {
       core[i].sizeY = sizeY[index];
       core[i].sizeC = sizeC[index];
       core[i].sizeZ = sizeZ[index];
+      if (core[i].sizeZ % nBlocks == 0) {
+        core[i].sizeZ /= nBlocks;
+      }
 
       if (divByTwo) core[i].sizeX /= 2;
 
@@ -686,7 +690,6 @@ public class SlidebookReader extends FormatReader {
       }
       if (getSizeT() == 0) core[i].sizeT = 1;
 
-      int nBlocks = uniqueSeries.get(orderedSeries.get(i)).size();
       core[i].sizeT *= nBlocks;
       core[i].imageCount = nPlanes * getSizeT();
       core[i].pixelType = FormatTools.UINT16;

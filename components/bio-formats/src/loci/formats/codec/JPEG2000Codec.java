@@ -27,6 +27,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferByte;
 import java.awt.image.DataBufferUShort;
+import java.awt.image.WritableRaster;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -160,16 +161,12 @@ public class JPEG2000Codec extends BaseCodec {
   public byte[] decompress(RandomAccessInputStream in, CodecOptions options)
     throws FormatException, IOException
   {
-    initialize();
-
     if (options == null) {
       options = CodecOptions.getDefaultOptions();
     }
 
-    byte[][] single = null;
-    BufferedImage b = null;
-    long fp = in.getFilePointer();
     byte[] buf = null;
+    long fp = in.getFilePointer();
     if (options.maxBytes == 0) {
       buf = new byte[(int) (in.length() - fp)];
     }
@@ -177,10 +174,31 @@ public class JPEG2000Codec extends BaseCodec {
       buf = new byte[(int) (options.maxBytes - fp)];
     }
     in.read(buf);
+    return decompress(buf, options);
+  }
+
+  /**
+   * The CodecOptions parameter should have the following fields set:
+   * {@link CodecOptions#interleaved interleaved}
+   * {@link CodecOptions#littleEndian littleEndian}
+   *
+   * @see Codec#decompress(byte[], CodecOptions)
+   */
+  public byte[] decompress(byte[] buf, CodecOptions options)
+    throws FormatException
+  {
+    initialize();
+
+    if (options == null) {
+      options = CodecOptions.getDefaultOptions();
+    }
+
+    byte[][] single = null;
+    WritableRaster b = null;
 
     try {
       ByteArrayInputStream bis = new ByteArrayInputStream(buf);
-      b = service.readImage(bis);
+      b = (WritableRaster) service.readRaster(bis);
       single = AWTImageTools.getPixelBytes(b, options.littleEndian);
 
       bis.close();
