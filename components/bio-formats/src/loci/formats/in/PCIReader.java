@@ -104,8 +104,6 @@ public class PCIReader extends FormatReader {
     }
     else {
       s.seek(0);
-      int planeSize = FormatTools.getPlaneSize(this);
-      s.skipBytes((int) (s.length() - planeSize));
       readPlane(s, x, y, w, h, buf);
     }
     s.close();
