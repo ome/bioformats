@@ -135,6 +135,13 @@ public class MetamorphReader extends BaseTiffReader {
         return false;
     }
     if (checkSuffix(name, "nd")) return true;
+    if (open) {
+      Location parent = location.getParentFile();
+      String[] list = parent.list(true);
+      for (String f : list) {
+        if (checkSuffix(f, "nd")) return true;
+      }
+    }
     return super.isThisType(name, open);
   }
 
