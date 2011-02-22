@@ -275,7 +275,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
     }
 
     MetadataStore store = makeFilterMetadata();
-    MetadataTools.populatePixels(store, this, true);
+    MetadataTools.populatePixels(store, this);
 
     store.setPlateID(MetadataTools.createLSID("Plate", 0), 0);
     store.setPlateRowNamingConvention(NamingConvention.LETTER, 0);
@@ -339,22 +339,29 @@ public class MetamorphTiffReader extends BaseTiffReader {
 
         store.setImageDescription("", s);
 
-        for (int i=0; i<getImageCount(); i++) {
-          int[] coords = getZCTCoords(i);
-          if (coords[2] < timestamps.size()) {
-            String stamp = timestamps.get(coords[2]);
-            long ms = DateTools.getTime(stamp, DATE_FORMAT);
-            store.setPlaneDeltaT((ms - startDate) / 1000.0, s, i);
-          }
-          if (i < exposures.size()) {
-            store.setPlaneExposureTime(exposures.get(i), s, i);
-          }
+        int image = 0;
+        for (int c=0; c<getEffectiveSizeC(); c++) {
+          for (int t=0; t<getSizeT(); t++) {
+            store.setPlaneTheZ(new NonNegativeInteger(0), s, image);
+            store.setPlaneTheC(new NonNegativeInteger(c), s, image);
+            store.setPlaneTheT(new NonNegativeInteger(t), s, image);
 
-          if (s < stageX.size()) {
-            store.setPlanePositionX(stageX.get(s), s, i);
-          }
-          if (s < stageY.size()) {
-            store.setPlanePositionY(stageY.get(s), s, i);
+            if (t < timestamps.size()) {
+              String stamp = timestamps.get(t);
+              long ms = DateTools.getTime(stamp, DATE_FORMAT);
+              store.setPlaneDeltaT((ms - startDate) / 1000.0, s, image);
+            }
+            if (image < exposures.size()) {
+              store.setPlaneExposureTime(exposures.get(image), s, image);
+            }
+
+            if (s < stageX.size()) {
+              store.setPlanePositionX(stageX.get(s), s, image);
+            }
+            if (s < stageY.size()) {
+              store.setPlanePositionY(stageY.get(s), s, image);
+            }
+            image++;
           }
         }
 
