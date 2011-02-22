@@ -390,7 +390,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
   private Well getWell(int seriesIndex) {
     int[] coordinates = FormatTools.rasterToPosition(
       new int[] {fieldColumnCount, fieldRowCount, wellCount}, seriesIndex);
-    return new Well(coordinates[2], coordinates[1], coordinates[0]);
+    return new Well(coordinates[1], coordinates[0], coordinates[2]);
   }
 
   private int getField(String stageLabel) {
