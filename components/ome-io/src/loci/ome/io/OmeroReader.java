@@ -26,7 +26,8 @@ package loci.ome.io;
 import Glacier2.CannotCreateSessionException;
 import Glacier2.PermissionDeniedException;
 
-import java.io.Console;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.io.IOException;
 
 import loci.formats.FormatException;
@@ -252,15 +253,25 @@ public class OmeroReader extends FormatReader {
   /** A simple command line tool for downloading images from OMERO. */
   public static void main(String[] args) throws Exception {
     // parse OMERO credentials
-    final Console con = System.console();
-    final String server = con.readLine("Server? ");
-    final String portString = con.readLine("Port [%d]? ", DEFAULT_PORT);
+    BufferedReader con = new BufferedReader(new InputStreamReader(System.in));
+
+    System.out.print("Server? ");
+    final String server = con.readLine();
+
+    System.out.printf("Port [%d]? ", DEFAULT_PORT);
+    final String portString = con.readLine();
     final int port = portString.equals("") ? DEFAULT_PORT :
       Integer.parseInt(portString);
-    final String user = con.readLine("Username? ");
-    final String pass = new String(con.readPassword("Password? "));
-    final int pixelsId = Integer.parseInt(con.readLine("Pixels ID? "));
-    con.writer().write("\n\n");
+
+    System.out.print("Username? ");
+    final String user = con.readLine();
+
+    System.out.print("Password? ");
+    final String pass = new String(con.readLine());
+
+    System.out.print("Pixels ID? ");
+    final int pixelsId = Integer.parseInt(con.readLine());
+    System.out.print("\n\n");
 
     // construct the OMERO reader
     final OmeroReader omeroReader = new OmeroReader();
