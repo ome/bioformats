@@ -135,6 +135,13 @@ public class MetamorphReader extends BaseTiffReader {
         return false;
     }
     if (checkSuffix(name, "nd")) return true;
+    if (open) {
+      Location parent = location.getParentFile();
+      String[] list = parent.list(true);
+      for (String f : list) {
+        if (checkSuffix(f, "nd")) return true;
+      }
+    }
     return super.isThisType(name, open);
   }
 
@@ -212,6 +219,7 @@ public class MetamorphReader extends BaseTiffReader {
     stkReaders[series][ndx].setId(file);
     int plane = stks[series].length == 1 ? no : coords[0];
     stkReaders[series][ndx].openBytes(plane, buf, x, y, w, h);
+    stkReaders[series][ndx].close();
     return buf;
   }
 
