@@ -56,7 +56,12 @@ public class Location {
   // -- Static fields --
 
   /** Map from given filenames to actual filenames. */
-  private static HashMap<String, Object> idMap = new HashMap<String, Object>();
+  private static ThreadLocal<HashMap<String, Object>> idMap =
+    new ThreadLocal<HashMap<String, Object>>() {
+      protected HashMap<String, Object> initialValue() {
+        return new HashMap<String, Object>();
+      }
+  };
 
   private static volatile boolean cacheListings = false;
 
@@ -118,7 +123,7 @@ public class Location {
     cacheListings = false;
     cacheNanos = 60L * 60L * 1000L * 1000L * 1000L;
     fileListings.clear();
-    idMap.clear();
+    getIdMap().clear();
   }
 
   /**
@@ -188,16 +193,16 @@ public class Location {
    */
   public static void mapId(String id, String filename) {
     if (id == null) return;
-    if (filename == null) idMap.remove(id);
-    else idMap.put(id, filename);
+    if (filename == null) getIdMap().remove(id);
+    else getIdMap().put(id, filename);
     LOGGER.debug("Location.mapId: {} -> {}", id, filename);
   }
 
   /** Maps the given id to the given IRandomAccess object. */
   public static void mapFile(String id, IRandomAccess ira) {
     if (id == null) return;
-    if (ira == null) idMap.remove(id);
-    else idMap.put(id, ira);
+    if (ira == null) getIdMap().remove(id);
+    else getIdMap().put(id, ira);
     LOGGER.debug("Location.mapFile: {} -> {}", id, ira);
   }
 
@@ -211,26 +216,26 @@ public class Location {
    * @see #mapId(String, String)
    */
   public static String getMappedId(String id) {
-    if (idMap == null) return id;
+    if (getIdMap() == null) return id;
     String filename = null;
-    if (id != null && (idMap.get(id) instanceof String)) {
-      filename = (String) idMap.get(id);
+    if (id != null && (getIdMap().get(id) instanceof String)) {
+      filename = (String) getIdMap().get(id);
     }
     return filename == null ? id : filename;
   }
 
   /** Gets the random access handle for the given id. */
   public static IRandomAccess getMappedFile(String id) {
-    if (idMap == null) return null;
+    if (getIdMap() == null) return null;
     IRandomAccess ira = null;
-    if (id != null && (idMap.get(id) instanceof IRandomAccess)) {
-      ira = (IRandomAccess) idMap.get(id);
+    if (id != null && (getIdMap().get(id) instanceof IRandomAccess)) {
+      ira = (IRandomAccess) getIdMap().get(id);
     }
     return ira;
   }
 
   /** Return the id mapping. */
-  public static HashMap<String, Object> getIdMap() { return idMap; }
+  public static HashMap<String, Object> getIdMap() { return idMap.get(); }
 
   /**
    * Set the id mapping using the given HashMap.
@@ -239,7 +244,7 @@ public class Location {
    */
   public static void setIdMap(HashMap<String, Object> map) {
     if (map == null) throw new IllegalArgumentException("map cannot be null");
-    idMap = map;
+    idMap.set(map);
   }
 
   /**
