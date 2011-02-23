@@ -61,13 +61,21 @@ public class ServiceFactory {
     services =
       new HashMap<Class<? extends Service>, Class<? extends Service>>();
 
+  /** Default service factory. */
+  private static ServiceFactory defaultFactory;
+
   /**
    * Constructor loading service configuration from the default location.
    * @throws DependencyException If there is an error locating or reading from
    * the default configuration location.
    */
   public ServiceFactory() throws DependencyException {
-    this(DEFAULT_PROPERTIES_FILE);
+    if (defaultFactory == null) {
+      defaultFactory = new ServiceFactory(DEFAULT_PROPERTIES_FILE);
+    }
+    synchronized (defaultFactory) {
+      this.services.putAll(defaultFactory.services);
+    }
   }
 
   /**
