@@ -111,6 +111,44 @@ public class IPWReader extends FormatReader {
     return null;
   }
 
+  /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
+  public int getOptimalTileWidth() {
+    FormatTools.assertId(currentId, true, 1);
+    try {
+      RandomAccessInputStream stream = poi.getDocumentStream(imageFiles.get(0));
+      TiffParser tp = new TiffParser(stream);
+      IFD ifd = tp.getFirstIFD();
+      stream.close();
+      return (int) ifd.getTileWidth();
+    }
+    catch (FormatException e) {
+      LOGGER.debug("Could not retrieve tile width", e);
+    }
+    catch (IOException e) {
+      LOGGER.debug("Could not retrieve tile height", e);
+    }
+    return super.getOptimalTileWidth();
+  }
+
+  /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
+  public int getOptimalTileHeight() {
+    FormatTools.assertId(currentId, true, 1);
+    try {
+      RandomAccessInputStream stream = poi.getDocumentStream(imageFiles.get(0));
+      TiffParser tp = new TiffParser(stream);
+      IFD ifd = tp.getFirstIFD();
+      stream.close();
+      return (int) ifd.getTileLength();
+    }
+    catch (FormatException e) {
+      LOGGER.debug("Could not retrieve tile height", e);
+    }
+    catch (IOException e) {
+      LOGGER.debug("Could not retrieve tile length", e);
+    }
+    return super.getOptimalTileHeight();
+  }
+
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */

@@ -176,6 +176,54 @@ public class FlexReader extends FormatReader {
     return files.toArray(new String[files.size()]);
   }
 
+  /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
+  public int getOptimalTileWidth() {
+    FormatTools.assertId(currentId, true, 1);
+
+    int[] lengths = new int[] {fieldCount, wellCount, plateCount};
+    int[] pos = FormatTools.rasterToPosition(lengths, getSeries());
+
+    int wellRow = wellNumber[pos[1]][0];
+    int wellCol = wellNumber[pos[1]][1];
+    if (wellCount == 1) {
+      wellRow = 0;
+      wellCol = 0;
+    }
+
+    IFD ifd = ifds[wellRow][wellCol].get(0);
+    try {
+      return (int) ifd.getTileWidth();
+    }
+    catch (FormatException e) {
+      LOGGER.debug("Could not retrieve tile width", e);
+    }
+    return super.getOptimalTileWidth();
+  }
+
+  /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
+  public int getOptimalTileHeight() {
+    FormatTools.assertId(currentId, true, 1);
+
+    int[] lengths = new int[] {fieldCount, wellCount, plateCount};
+    int[] pos = FormatTools.rasterToPosition(lengths, getSeries());
+
+    int wellRow = wellNumber[pos[1]][0];
+    int wellCol = wellNumber[pos[1]][1];
+    if (wellCount == 1) {
+      wellRow = 0;
+      wellCol = 0;
+    }
+
+    IFD ifd = ifds[wellRow][wellCol].get(0);
+    try {
+      return (int) ifd.getTileLength();
+    }
+    catch (FormatException e) {
+      LOGGER.debug("Could not retrieve tile height", e);
+    }
+    return super.getOptimalTileHeight();
+  }
+
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */

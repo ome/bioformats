@@ -84,6 +84,52 @@ public class PCIReader extends FormatReader {
     return stream.readInt() == PCI_MAGIC_BYTES;
   }
 
+  /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
+  public int getOptimalTileWidth() {
+    FormatTools.assertId(currentId, true, 1);
+    String file = imageFiles.get(0);
+    try {
+      RandomAccessInputStream s = poi.getDocumentStream(file);
+      TiffParser tp = new TiffParser(s);
+      if (tp.isValidHeader()) {
+        IFD ifd = tp.getFirstIFD();
+        s.close();
+        return (int) ifd.getTileWidth();
+      }
+      s.close();
+    }
+    catch (FormatException e) {
+      LOGGER.debug("Could not retrieve tile width", e);
+    }
+    catch (IOException e) {
+      LOGGER.debug("Could not retrieve tile width", e);
+    }
+    return super.getOptimalTileWidth();
+  }
+
+  /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
+  public int getOptimalTileHeight() {
+    FormatTools.assertId(currentId, true, 1);
+    String file = imageFiles.get(0);
+    try {
+      RandomAccessInputStream s = poi.getDocumentStream(file);
+      TiffParser tp = new TiffParser(s);
+      if (tp.isValidHeader()) {
+        IFD ifd = tp.getFirstIFD();
+        s.close();
+        return (int) ifd.getTileLength();
+      }
+      s.close();
+    }
+    catch (FormatException e) {
+      LOGGER.debug("Could not retrieve tile height", e);
+    }
+    catch (IOException e) {
+      LOGGER.debug("Could not retrieve tile height", e);
+    }
+    return super.getOptimalTileHeight();
+  }
+
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
