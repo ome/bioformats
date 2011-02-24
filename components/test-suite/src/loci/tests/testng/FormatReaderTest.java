@@ -61,7 +61,7 @@ import loci.formats.gui.BufferedImageReader;
 import loci.formats.in.BioRadReader;
 import loci.formats.in.NRRDReader;
 import loci.formats.in.OMETiffReader;
-import loci.formats.in.TiffReader;
+import loci.formats.in.TiffDelegateReader;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
@@ -1223,7 +1223,7 @@ public class FormatReaderTest {
             boolean result = readers[j].isThisType(used[i]);
 
             // TIFF reader is allowed to redundantly green-light files
-            if (result && readers[j] instanceof TiffReader) continue;
+            if (result && readers[j] instanceof TiffDelegateReader) continue;
 
             // Bio-Rad reader is allowed to redundantly
             // green-light PIC files from NRRD datasets

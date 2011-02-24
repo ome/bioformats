@@ -136,6 +136,7 @@ public class MetamorphReader extends BaseTiffReader {
     }
     if (checkSuffix(name, "nd")) return true;
     if (open) {
+      location = location.getAbsoluteFile();
       Location parent = location.getParentFile();
       String[] list = parent.list(true);
       for (String f : list) {
