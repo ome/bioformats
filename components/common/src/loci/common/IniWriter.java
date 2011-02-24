@@ -46,9 +46,19 @@ public class IniWriter {
 
   // -- IniWriter API methods --
 
-  /** Saves the given IniList to the given file. */
+  /**
+   * Saves the given IniList to the given file.
+   * If the given file already exists, then the IniList will be appended.
+   */
   public void saveINI(IniList ini, String path) throws IOException {
-    BufferedWriter out = new BufferedWriter(new FileWriter(path));
+    saveINI(ini, path, true);
+  }
+
+  /** Saves the given IniList to the given file. */
+  public void saveINI(IniList ini, String path, boolean append)
+    throws IOException
+  {
+    BufferedWriter out = new BufferedWriter(new FileWriter(path, append));
 
     for (IniTable table : ini) {
       String header = table.get(IniTable.HEADER_KEY);
