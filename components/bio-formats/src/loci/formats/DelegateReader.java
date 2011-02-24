@@ -194,6 +194,22 @@ public abstract class DelegateReader extends FormatReader {
     }
   }
 
+  /* @see IFormatReader#getOptimalTileWidth() */
+  public int getOptimalTileWidth() {
+    if (useLegacy || (legacyReaderInitialized && !nativeReaderInitialized)) {
+      return legacyReader.getOptimalTileWidth();
+    }
+    return nativeReader.getOptimalTileWidth();
+  }
+
+  /* @see IFormatReader#getOptimalTileHeight() */
+  public int getOptimalTileHeight() {
+    if (useLegacy || (legacyReaderInitialized && !nativeReaderInitialized)) {
+      return legacyReader.getOptimalTileHeight();
+    }
+    return nativeReader.getOptimalTileHeight();
+  }
+
   // -- IFormatHandler API methods --
 
   /* @see IFormatHandler#setId(String) */

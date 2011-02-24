@@ -80,6 +80,30 @@ public class SVSReader extends BaseTiffReader {
     }
   }
 
+  /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
+  public int getOptimalTileWidth() {
+    FormatTools.assertId(currentId, true, 1);
+    try {
+      return (int) ifds.get(getSeries()).getTileWidth();
+    }
+    catch (FormatException e) {
+      LOGGER.debug("", e);
+    }
+    return super.getOptimalTileWidth();
+  }
+
+  /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
+  public int getOptimalTileHeight() {
+    FormatTools.assertId(currentId, true, 1);
+    try {
+      return (int) ifds.get(getSeries()).getTileLength();
+    }
+    catch (FormatException e) {
+      LOGGER.debug("", e);
+    }
+    return super.getOptimalTileHeight();
+  }
+
   // -- Internal BaseTiffReader API methods --
 
   /* @see loci.formats.BaseTiffReader#initStandardMetadata() */
