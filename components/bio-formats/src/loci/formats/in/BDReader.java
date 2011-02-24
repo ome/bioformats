@@ -335,10 +335,10 @@ public class BDReader extends FormatReader {
     }
 
     for (int i=0; i<getSeriesCount(); i++) {
-      MetadataTools.setDefaultCreationDate(store, id, i);
-
       int well = i / (fieldRows * fieldCols);
       int field = i % (fieldRows * fieldCols);
+
+      MetadataTools.setDefaultCreationDate(store, tiffs[well][0], i);
 
       String name = wellLabels.get(well);
       String row = name.substring(0, 1);
