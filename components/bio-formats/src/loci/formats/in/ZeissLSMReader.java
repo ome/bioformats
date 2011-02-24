@@ -192,10 +192,28 @@ public class ZeissLSMReader extends FormatReader {
 
   // -- IFormatReader API methods --
 
+  /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
+  public int getOptimalWidth() {
+    FormatTools.assertId(currentId, true, 1);
+    try {
+      return (int) ifdsList.get(getSeries()).get(0).getTileWidth();
+    }
+    catch (FormatException e) {
+      LOGGER.debug("Could not retrieve tile width", e);
+    }
+    return super.getOptimalTileWidth();
+  }
+
   /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
-    return getSizeY();
+    try {
+      return (int) ifdsList.get(getSeries()).get(0).getTileLength();
+    }
+    catch (FormatException e) {
+      LOGGER.debug("Could not retrieve tile height", e);
+    }
+    return super.getOptimalTileHeight();
   }
 
   /* @see loci.formats.IFormatReader#isSingleFile(String) */

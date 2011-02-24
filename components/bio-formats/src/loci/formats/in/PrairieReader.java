@@ -194,6 +194,18 @@ public class PrairieReader extends FormatReader {
     return s.toArray(new String[s.size()]);
   }
 
+  /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
+  public int getOptimalTileWidth() {
+    FormatTools.assertId(currentId, true, 1);
+    return tiff.getOptimalTileWidth();
+  }
+
+  /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
+  public int getOptimalTileHeight() {
+    FormatTools.assertId(currentId, true, 1);
+    return tiff.getOptimalTileHeight();
+  }
+
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */

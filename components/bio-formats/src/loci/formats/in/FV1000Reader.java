@@ -159,10 +159,44 @@ public class FV1000Reader extends FormatReader {
 
   // -- IFormatReader API methods --
 
+  /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
+  public int getOptimalTileWidth() {
+    FormatTools.assertId(currentId, true, 1);
+    RandomAccessInputStream plane = getPlane(getSeries(), 0);
+    if (plane == null) return super.getOptimalTileWidth();
+    try {
+      TiffParser tp = new TiffParser(plane);
+      IFD ifd = tp.getFirstIFD();
+      plane.close();
+      return (int) ifd.getTileWidth();
+    }
+    catch (FormatException e) {
+      LOGGER.debug("Could not retrieve tile width", e);
+    }
+    catch (IOException e) {
+      LOGGER.debug("Could not retrieve tile width", e);
+    }
+    return super.getOptimalTileWidth();
+  }
+
   /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
-    return getSizeY();
+    RandomAccessInputStream plane = getPlane(getSeries(), 0);
+    if (plane == null) return super.getOptimalTileHeight();
+    try {
+      TiffParser tp = new TiffParser(plane);
+      IFD ifd = tp.getFirstIFD();
+      plane.close();
+      return (int) ifd.getTileLength();
+    }
+    catch (FormatException e) {
+      LOGGER.debug("Could not retrieve tile height", e);
+    }
+    catch (IOException e) {
+      LOGGER.debug("Could not retrieve tile height", e);
+    }
+    return super.getOptimalTileHeight();
   }
 
   /* @see loci.formats.IFormatReader#isSingleFile(String) */
@@ -219,33 +253,13 @@ public class FV1000Reader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    int file = no;
-    int image = 0;
-    String filename = null;
-
-    if (series == 0) {
-      file = no / (getImageCount() / tiffs.size());
-      image = no % (getImageCount() / tiffs.size());
-      if (file < tiffs.size()) filename = tiffs.get(file);
-    }
-    else {
-      file = no / (getImageCount() / previewNames.size());
-      image = no % (getImageCount() / previewNames.size());
-      if (file < previewNames.size()) {
-        filename = previewNames.get(file);
-      }
-    }
+    int nFiles = getSeries() == 0 ? tiffs.size() : previewNames.size();
+    int image = no % (getImageCount() / nFiles);
 
     int[] coords = getZCTCoords(image);
     lastChannel = coords[1];
 
-    if (filename == null) return buf;
-
-    RandomAccessInputStream plane = null;
-    try {
-      plane = getFile(filename);
-    }
-    catch (IOException e) { }
+    RandomAccessInputStream plane = getPlane(getSeries(), no);
 
     if (plane == null) return buf;
     TiffParser tp = new TiffParser(plane);
@@ -1420,6 +1434,24 @@ public class FV1000Reader extends FormatReader {
       return poi.getDocumentStream(realName);
     }
     else return new RandomAccessInputStream(name);
+  }
+
+  private RandomAccessInputStream getPlane(int seriesIndex, int planeIndex) {
+    int file = planeIndex;
+    if (seriesIndex == 0) {
+      file = planeIndex / (getImageCount() / tiffs.size());
+    }
+    else file = planeIndex / (getImageCount() / previewNames.size());
+
+    String filename =
+      seriesIndex == 0 ? tiffs.get(file) : previewNames.get(file);
+    RandomAccessInputStream plane = null;
+    try {
+      plane = getFile(filename);
+    }
+    catch (FormatException e) { }
+    catch (IOException e) { }
+    return plane;
   }
 
   private boolean isPreviewName(String name) {

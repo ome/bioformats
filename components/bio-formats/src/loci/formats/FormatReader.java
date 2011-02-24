@@ -1052,7 +1052,9 @@ public abstract class FormatReader extends FormatHandler
   /* @see IFormatReader#getOptimalTileHeight() */
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
-    return 1;
+     int bpp = FormatTools.getBytesPerPixel(getPixelType());
+     int maxHeight = (1024 * 1024) / (getSizeX() * getRGBChannelCount() * bpp);
+     return (int) Math.min(maxHeight, getSizeY());
   }
 
   // -- IFormatHandler API methods --
