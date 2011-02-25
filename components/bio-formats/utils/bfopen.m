@@ -117,6 +117,9 @@ canTypecast = versionCheck(version, 7, 1);
 bioFormatsVersion = char(loci.formats.FormatTools.VERSION);
 isBioFormatsTrunk = versionCheck(bioFormatsVersion, 5, 0);
 
+% initialize logging
+loci.common.DebugTools.enableLogging('INFO');
+
 r = loci.formats.ChannelFiller();
 r = loci.formats.ChannelSeparator(r);
 if stitchFiles
