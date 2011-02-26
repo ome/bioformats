@@ -111,7 +111,10 @@ public final class MetadataTools {
     for (int i=0; i<r.getSeriesCount(); i++) {
       r.setSeries(i);
       store.setImageID(createLSID("Image", i), i);
-      if (doImageName) store.setImageName(r.getCurrentFile(), i);
+      if (doImageName) {
+        Location f = new Location(r.getCurrentFile());
+        store.setImageName(f.getName(), i);
+      }
       String pixelsID = createLSID("Pixels", i);
       store.setPixelsID(pixelsID, i);
       store.setPixelsSizeX(new PositiveInteger(r.getSizeX()), i);

@@ -107,6 +107,8 @@ public class ConfigurationTree {
       String id = table.get(IniTable.HEADER_KEY);
       id = id.substring(0, id.lastIndexOf(" "));
 
+      id = new File(file.getParent(), id).getAbsolutePath();
+
       DefaultMutableTreeNode node = findNode(id, true, configFile);
       if (node == null) {
         LOGGER.warn("config file '{}' has invalid filename '{}'",

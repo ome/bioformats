@@ -39,6 +39,7 @@ import loci.common.IniList;
 import loci.common.IniParser;
 import loci.common.IniTable;
 import loci.common.IniWriter;
+import loci.common.Location;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
@@ -264,7 +265,8 @@ public class Configuration {
   }
 
   public void setSeries(int series) {
-    currentTable = ini.getTable(dataFile + SERIES + series);
+    Location file = new Location(dataFile);
+    currentTable = ini.getTable(file.getName() + SERIES + series);
   }
 
   public void saveToFile() throws IOException {
@@ -415,14 +417,16 @@ public class Configuration {
 
   private void putTableName(IniTable table, IFormatReader reader, String suffix)
   {
-    table.put(IniTable.HEADER_KEY, reader.getCurrentFile() + suffix);
+    Location file = new Location(reader.getCurrentFile());
+    table.put(IniTable.HEADER_KEY, file.getName() + suffix);
   }
 
   private void pruneINI() {
     IniList newIni = new IniList();
     for (IniTable table : ini) {
       String tableName = table.get(IniTable.HEADER_KEY);
-      if (tableName.startsWith(dataFile)) {
+      Location file = new Location(dataFile);
+      if (tableName.startsWith(file.getName())) {
         newIni.add(table);
 
         if (tableName.endsWith("global")) {
