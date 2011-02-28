@@ -203,7 +203,7 @@
 				<xsd:simpleType>
 					<xsd:annotation>
 						<xsd:documentation>
-							The style applied to the text.  [enumeration]
+							The style and weight applied to the text.  [enumeration]
 						</xsd:documentation>
 					</xsd:annotation>
 					<xsd:restriction base="xsd:string">
