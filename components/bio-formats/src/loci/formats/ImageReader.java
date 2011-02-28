@@ -54,7 +54,7 @@ public class ImageReader implements IFormatReader {
 
   // -- Static helper methods --
 
-  private static ClassList getDefaultReaderClasses() {
+  public static ClassList getDefaultReaderClasses() {
     if (defaultClasses == null) {
       // load built-in reader classes from readers.txt file
       try {

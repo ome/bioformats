@@ -45,7 +45,7 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.ome.OMEXMLMetadata;
 
 import ome.xml.DOMUtil;
-import ome.xml.OMEXMLNode;
+import ome.xml.r200809.ome.OMENode;
 
 import org.w3c.dom.Element;
 
@@ -83,7 +83,10 @@ public class ScreenReader extends FormatReader {
     validReaders = new ClassList(IFormatReader.class);
     for (Class<? extends IFormatReader> c : classArray) {
       if (!c.equals(ScreenReader.class)) {
-        validReaders.addClass(c);
+        try {
+          validReaders.addClass(c);
+        }
+        catch (FormatException e) { }
       }
     }
   }
@@ -332,13 +335,13 @@ public class ScreenReader extends FormatReader {
       }
     }
 
-    OMEXMLNode root = (OMEXMLNode) omexmlMeta.getRoot();
+    OMENode root = (OMENode) omexmlMeta.getRoot();
     Element rootElement = root.getDOMElement();
     Element img = DOMUtil.getChildElement("Image", rootElement);
     for (int i=1; i<core.length; i++) {
-      rootElement.appendChild(img);
+      rootElement.appendChild(img.cloneNode(true));
     }
-    omexmlMeta.setRoot(new OMEXMLNode(rootElement));
+    omexmlMeta.setRoot(new OMENode(rootElement));
 
     // populate HCS metadata
 
