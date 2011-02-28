@@ -31,9 +31,6 @@ import java.util.Vector;
 
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
-import loci.common.services.DependencyException;
-import loci.common.services.ServiceException;
-import loci.common.services.ServiceFactory;
 import loci.formats.ClassList;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
@@ -42,18 +39,15 @@ import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 import loci.formats.MetadataTools;
-import loci.formats.MissingLibraryException;
+import loci.formats.meta.FilterMetadata;
+import loci.formats.meta.MetadataConverter;
 import loci.formats.meta.MetadataStore;
 import loci.formats.ome.OMEXMLMetadata;
-import loci.formats.ome.OMEXMLMetadataImpl;
-import loci.formats.services.OMEXMLService;
-import loci.formats.services.OMEXMLServiceImpl;
 
-import ome.xml.model.Image;
-import ome.xml.model.OME;
-import ome.xml.model.enums.NamingConvention;
-import ome.xml.model.primitives.NonNegativeInteger;
-import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.DOMUtil;
+import ome.xml.OMEXMLNode;
+
+import org.w3c.dom.Element;
 
 /**
  * ScreenReader is a generic reader for files in non-HCS formats that have been
@@ -74,7 +68,7 @@ public class ScreenReader extends FormatReader {
 
   private ImageReader[][] readers;
   private boolean[][][] plateMaps;
-  private ClassList<IFormatReader> validReaders;
+  private ClassList validReaders;
 
   // -- Constructor --
 
@@ -84,9 +78,9 @@ public class ScreenReader extends FormatReader {
     suffixSufficient = false;
     domains = new String[] {FormatTools.HCS_DOMAIN};
 
-    ClassList<IFormatReader> classes = ImageReader.getDefaultReaderClasses();
+    ClassList classes = ImageReader.getDefaultReaderClasses();
     Class<? extends IFormatReader>[] classArray = classes.getClasses();
-    validReaders = new ClassList<IFormatReader>(IFormatReader.class);
+    validReaders = new ClassList(IFormatReader.class);
     for (Class<? extends IFormatReader> c : classArray) {
       if (!c.equals(ScreenReader.class)) {
         validReaders.addClass(c);
@@ -317,19 +311,8 @@ public class ScreenReader extends FormatReader {
 
     // initialize each of the well files
 
-    OMEXMLMetadata omexmlMeta;
-    OMEXMLService service;
-    try {
-      ServiceFactory factory = new ServiceFactory();
-      service = factory.getInstance(OMEXMLService.class);
-      omexmlMeta = service.createOMEXMLMetadata();
-    }
-    catch (DependencyException de) {
-      throw new MissingLibraryException(OMEXMLServiceImpl.NO_OME_XML_MSG, de);
-    }
-    catch (ServiceException se) {
-      throw new FormatException(se);
-    }
+    OMEXMLMetadata omexmlMeta =
+      (OMEXMLMetadata) MetadataTools.createOMEXMLMetadata();
 
     core = new CoreMetadata[coreLength];
     int nextCore = 0;
@@ -349,18 +332,19 @@ public class ScreenReader extends FormatReader {
       }
     }
 
-    OME root = (OME) omexmlMeta.getRoot();
-    Image img = root.getImage(0);
+    OMEXMLNode root = (OMEXMLNode) omexmlMeta.getRoot();
+    Element rootElement = root.getDOMElement();
+    Element img = DOMUtil.getChildElement("Image", rootElement);
     for (int i=1; i<core.length; i++) {
-      root.addImage(img);
+      rootElement.appendChild(img);
     }
-    ((OMEXMLMetadataImpl) omexmlMeta).resolveReferences();
-    omexmlMeta.setRoot(root);
+    omexmlMeta.setRoot(new OMEXMLNode(rootElement));
 
     // populate HCS metadata
 
-    MetadataStore store = makeFilterMetadata();
-    service.convertMetadata(omexmlMeta, store);
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataConverter.convertMetadata(omexmlMeta, store);
     MetadataTools.populatePixels(store, this);
 
     String screenID = MetadataTools.createLSID("Screen", 0);
@@ -370,14 +354,10 @@ public class ScreenReader extends FormatReader {
     for (int plate=0; plate<files.length; plate++) {
       String plateID = MetadataTools.createLSID("Plate", plate);
       store.setPlateID(plateID, plate);
-      store.setScreenPlateRef(plateID, 0, plate);
 
       store.setPlateName(new Location(plates[plate]).getName(), plate);
-      store.setPlateRows(new PositiveInteger(plateMaps[plate].length), plate);
-      store.setPlateColumns(new PositiveInteger(plateMaps[plate][0].length),
-        plate);
-      store.setPlateRowNamingConvention(NamingConvention.LETTER, plate);
-      store.setPlateColumnNamingConvention(NamingConvention.NUMBER, plate);
+      store.setPlateRowNamingConvention("Letter", plate);
+      store.setPlateColumnNamingConvention("Number", plate);
 
       int realWell = 0;
       for (int row=0; row<plateMaps[plate].length; row++) {
@@ -385,8 +365,8 @@ public class ScreenReader extends FormatReader {
           int well = row * plateMaps[plate][row].length + col;
           String wellID = MetadataTools.createLSID("Well", plate, well);
           store.setWellID(wellID, plate, well);
-          store.setWellColumn(new NonNegativeInteger(col), plate, well);
-          store.setWellRow(new NonNegativeInteger(row), plate, well);
+          store.setWellColumn(col, plate, well);
+          store.setWellRow(row, plate, well);
 
           if (plateMaps[plate][row][col]) {
             int seriesIndex = getSeriesIndex(plate, realWell);
@@ -398,8 +378,7 @@ public class ScreenReader extends FormatReader {
               MetadataTools.createLSID("WellSample", plate, well, 0);
             store.setWellSampleID(wellSampleID, plate, well, 0);
             store.setWellSampleImageRef(imageID, plate, well, 0);
-            store.setWellSampleIndex(
-              new NonNegativeInteger(seriesIndex), plate, well, 0);
+            store.setWellSampleIndex(seriesIndex, plate, well, 0);
             realWell++;
           }
         }

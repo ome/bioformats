@@ -585,8 +585,8 @@ public class OpenlabReader extends FormatReader {
     Float stageZ = zPos == null ? null : new Float(zPos);
     for (int c=0; c<getEffectiveSizeC(); c++) {
       PlaneInfo plane = getPlane(new int[] {0, c, 0});
-      store.setChannelName(plane.channelName, 0, c);
-      store.setDetectorSettingsID(detectorID, 0, c);
+      store.setLogicalChannelName(plane.channelName, 0, c);
+      store.setDetectorSettingsDetector(detectorID, 0, c);
     }
 
     if (stageX != null || stageY != null || stageZ != null) {
@@ -594,13 +594,13 @@ public class OpenlabReader extends FormatReader {
         setSeries(series);
         for (int plane=0; plane<getImageCount(); plane++) {
           if (stageX != null) {
-            store.setPlanePositionX(stageX, series, plane);
+            store.setStagePositionPositionX(stageX, series, 0, plane);
           }
           if (stageY != null) {
-            store.setPlanePositionY(stageY, series, plane);
+            store.setStagePositionPositionY(stageY, series, 0, plane);
           }
           if (stageZ != null) {
-            store.setPlanePositionZ(stageZ, series, plane);
+            store.setStagePositionPositionZ(stageZ, series, 0, plane);
           }
         }
       }
