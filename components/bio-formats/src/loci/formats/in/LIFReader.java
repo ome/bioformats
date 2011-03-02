@@ -23,13 +23,20 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.in;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Stack;
+import java.util.StringTokenizer;
 import java.util.Vector;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import loci.common.DataTools;
+import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
@@ -45,9 +52,20 @@ import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.OMEXMLService;
 
-import ome.xml.model.Channel;
-import ome.xml.model.OME;
-import ome.xml.model.Pixels;
+import ome.xml.model.enums.DetectorType;
+import ome.xml.model.enums.LaserMedium;
+import ome.xml.model.enums.LaserType;
+import ome.xml.model.primitives.NonNegativeInteger;
+import ome.xml.model.primitives.PercentFraction;
+import ome.xml.model.primitives.PositiveInteger;
+
+import org.xml.sax.SAXException;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * LIFReader is the file format reader for Leica LIF files.
@@ -65,11 +83,11 @@ public class LIFReader extends FormatReader {
   public static final byte LIF_MAGIC_BYTE = 0x70;
   public static final byte LIF_MEMORY_BYTE = 0x2a;
 
-  private static final Hashtable<String, Integer> CHANNEL_PRIORITIES =
+  private static final HashMap<String, Integer> CHANNEL_PRIORITIES =
     createChannelPriorities();
 
-  private static Hashtable<String, Integer> createChannelPriorities() {
-    Hashtable<String, Integer> h = new Hashtable<String, Integer>();
+  private static HashMap<String, Integer> createChannelPriorities() {
+    HashMap<String, Integer> h = new HashMap<String, Integer>();
 
     h.put("red", new Integer(0));
     h.put("green", new Integer(1));
@@ -168,6 +186,31 @@ public class LIFReader extends FormatReader {
   private int[][] realChannel;
   private int lastChannel = 0;
 
+  private Vector<String> lutNames = new Vector<String>();
+  private Vector<Double> physicalSizeXs = new Vector<Double>();
+  private Vector<Double> physicalSizeYs = new Vector<Double>();
+
+  private String[] descriptions, microscopeModels, serialNumber;
+  private Double[] pinholes, zooms, zSteps, tSteps, lensNA;
+  private Double[][] expTimes, gains;
+  private Vector[] detectorOffsets;
+  private String[][] channelNames;
+  private Vector[] detectorModels, voltages;
+  private Integer[][] exWaves;
+  private Vector[] activeDetector;
+
+  private String[] immersions, corrections, objectiveModels;
+  private Integer[] magnification;
+  private Double[] posX, posY, posZ;
+  private Double[] refractiveIndex;
+  private Vector[] cutIns, cutOuts, filterModels;
+  private double[][] timestamps;
+  private Vector[] laserWavelength, laserIntensity;
+  private ROI[][] imageROIs;
+  private boolean alternateCenter = false;
+  private String[] imageNames;
+  private double[] acquiredDate;
+
   // -- Constructor --
 
   /** Constructs a new Leica LIF reader. */
@@ -260,6 +303,30 @@ public class LIFReader extends FormatReader {
       offsets = null;
       realChannel = null;
       lastChannel = 0;
+      lutNames.clear();
+      physicalSizeXs.clear();
+      physicalSizeYs.clear();
+      descriptions = microscopeModels = serialNumber = null;
+      pinholes = zooms = lensNA = null;
+      zSteps = tSteps = null;
+      expTimes = gains = null;
+      detectorOffsets = null;
+      channelNames = null;
+      detectorModels = voltages = null;
+      exWaves = null;
+      activeDetector = null;
+      immersions = corrections = null;
+      magnification = null;
+      objectiveModels = null;
+      posX = posY = posZ = null;
+      refractiveIndex = null;
+      cutIns = cutOuts = filterModels = null;
+      timestamps = null;
+      laserWavelength = laserIntensity = null;
+      imageROIs = null;
+      alternateCenter = false;
+      imageNames = null;
+      acquiredDate = null;
     }
   }
 
@@ -355,7 +422,6 @@ public class LIFReader extends FormatReader {
     }
     MetadataStore store = makeFilterMetadata();
     MetadataLevel level = getMetadataOptions().getMetadataLevel();
-    LeicaHandler handler = new LeicaHandler(omexml, level);
 
     // the XML blocks stored in a LIF file are invalid,
     // because they don't have a root node
@@ -364,15 +430,14 @@ public class LIFReader extends FormatReader {
       "</LEICA>";
 
     xml = XMLTools.sanitizeXML(xml);
-    try {
-      XMLTools.parseXML(xml, handler);
+
+    translateMetadata(getMetadataRoot(xml));
+
+    for (int i=0; i<imageNames.length; i++) {
+      setSeries(i);
+      addSeriesMeta("Image name", imageNames[i]);
     }
-    catch (IOException e) { }
-
-    metadata = handler.getGlobalMetadata();
-    Vector<String> lutNames = handler.getLutNames();
-
-    core = handler.getCoreMetadata().toArray(new CoreMetadata[0]);
+    setSeries(0);
 
     // set up mapping to rearrange channels
     // for instance, the green channel may be #0, and the red channel may be #1
@@ -404,35 +469,1094 @@ public class LIFReader extends FormatReader {
       }
     }
 
-    // remove any Channels that do not have an ID
+    MetadataTools.populatePixels(store, this, true, false);
 
-    OMEXMLService service = null;
-    try {
-      service = new ServiceFactory().getInstance(OMEXMLService.class);
-      if (service.isOMEXMLRoot(omexml.getRoot())) {
-        OME root = (OME) omexml.getRoot();
-        for (int i=0; i<getSeriesCount(); i++) {
-          setSeries(i);
-          Pixels img = root.getImage(i).getPixels();
-          List<Channel> channels = img.copyChannelList();
+    for (int i=0; i<getSeriesCount(); i++) {
+      setSeries(i);
 
-          for (int c=0; c<channels.size(); c++) {
-            Channel channel = channels.get(c);
-            if (channel.getID() == null || c >= getEffectiveSizeC()) {
-              img.removeChannel(channel);
+      String instrumentID = MetadataTools.createLSID("Instrument", i);
+      store.setInstrumentID(instrumentID, i);
+
+      store.setMicroscopeModel(microscopeModels[i], i);
+      store.setMicroscopeType(getMicroscopeType("Unknown"), i);
+
+      String objectiveID = MetadataTools.createLSID("Objective", i, 0);
+      store.setObjectiveID(objectiveID, i, 0);
+      store.setObjectiveLensNA(lensNA[i], i, 0);
+      store.setObjectiveSerialNumber(serialNumber[i], i, 0);
+      if (magnification[i] != null && magnification[i] > 0) {
+        store.setObjectiveNominalMagnification(
+          new PositiveInteger(magnification[i]), i, 0);
+      }
+      store.setObjectiveImmersion(getImmersion(immersions[i]), i, 0);
+      store.setObjectiveCorrection(getCorrection(corrections[i]), i, 0);
+      store.setObjectiveModel(objectiveModels[i], i, 0);
+
+      if (cutIns[i] != null) {
+        for (int filter=0; filter<cutIns[i].size(); filter++) {
+          String filterID = MetadataTools.createLSID("Filter", i, filter);
+          store.setFilterID(filterID, i, filter);
+          if (filter < filterModels[i].size()) {
+            store.setFilterModel(
+              (String) filterModels[i].get(filter), i, filter);
+          }
+          int channel = filter - (cutIns[i].size() - getEffectiveSizeC());
+          if (channel >= 0 && channel < getEffectiveSizeC()) {
+            store.setLightPathEmissionFilterRef(filterID, i, channel, 0);
+          }
+          store.setTransmittanceRangeCutIn(
+            (PositiveInteger) cutIns[i].get(filter), i, filter);
+          store.setTransmittanceRangeCutOut(
+            (PositiveInteger) cutOuts[i].get(filter), i, filter);
+        }
+      }
+
+      Vector lasers = laserWavelength[i];
+      Vector laserIntensities = laserIntensity[i];
+      int nextChannel = getEffectiveSizeC() - 1;
+      if (lasers != null) {
+        for (int laser=0; laser<lasers.size(); laser++) {
+          String id = MetadataTools.createLSID("LightSource", i, laser);
+          store.setLaserID(id, i, laser);
+          store.setLaserType(LaserType.OTHER, i, laser);
+          store.setLaserLaserMedium(LaserMedium.OTHER, i, laser);
+          Integer wavelength = (Integer) lasers.get(laser);
+          if (wavelength > 0) {
+            store.setLaserWavelength(new PositiveInteger(wavelength), i, laser);
+          }
+
+          double intensity = (Double) laserIntensities.get(laser);
+          if (intensity < 100 && nextChannel >= 0 && wavelength != 0) {
+            store.setChannelLightSourceSettingsID(id, i, nextChannel);
+            store.setChannelLightSourceSettingsAttenuation(
+              new PercentFraction((float) intensity / 100f), i, nextChannel);
+            store.setChannelExcitationWavelength(
+              new PositiveInteger(wavelength), i, nextChannel);
+
+            nextChannel--;
+          }
+        }
+      }
+
+      store.setImageInstrumentRef(instrumentID, i);
+      store.setImageObjectiveSettingsID(objectiveID, i);
+      store.setImageObjectiveSettingsRefractiveIndex(refractiveIndex[i], i);
+
+      store.setImageDescription(descriptions[i], i);
+      if (acquiredDate[i] > 0) {
+        store.setImageAcquiredDate(DateTools.convertDate(
+          (long) (acquiredDate[i] * 1000), DateTools.COBOL), i);
+      }
+      store.setImageName(imageNames[i], i);
+
+      store.setPixelsPhysicalSizeX(physicalSizeXs.get(i), i);
+      store.setPixelsPhysicalSizeY(physicalSizeYs.get(i), i);
+      store.setPixelsPhysicalSizeZ(zSteps[i], i);
+      store.setPixelsTimeIncrement(tSteps[i], i);
+
+      Vector detectors = detectorModels[i];
+      if (detectors != null) {
+        nextChannel = 0;
+        for (int detector=0; detector<detectors.size(); detector++) {
+          String detectorID = MetadataTools.createLSID("Detector", i, detector);
+          store.setDetectorID(detectorID, i, detector);
+          store.setDetectorModel((String) detectors.get(detector), i, detector);
+
+          store.setDetectorZoom(zooms[i], i, detector);
+          store.setDetectorType(DetectorType.PMT, i, detector);
+          if (voltages[i] != null && detector < voltages[i].size()) {
+            store.setDetectorVoltage(
+              (Double) voltages[i].get(detector), i, detector);
+          }
+
+          if (activeDetector[i] != null) {
+            if ((Boolean) activeDetector[i].get(detector) &&
+              detectorOffsets[i] != null &&
+              nextChannel < detectorOffsets[i].size())
+            {
+              store.setDetectorOffset(
+                (Double) detectorOffsets[i].get(nextChannel++), i, detector);
             }
           }
         }
-        setSeries(0);
-        omexml.setRoot(root);
-        service.convertMetadata(omexml, store);
+      }
+
+      Vector activeDetectors = activeDetector[i];
+      int nextDetector = 0;
+
+      for (int c=0; c<getEffectiveSizeC(); c++) {
+        if (activeDetectors != null) {
+          while (nextDetector < activeDetectors.size() &&
+            !(Boolean) activeDetectors.get(nextDetector))
+          {
+            nextDetector++;
+          }
+          String detectorID =
+            MetadataTools.createLSID("Detector", i, nextDetector);
+          store.setDetectorSettingsID(detectorID, i, c);
+          nextDetector++;
+        }
+        if (detectorOffsets[i] != null) {
+          store.setDetectorSettingsOffset(
+            (Double) detectorOffsets[i].get(c), i, c);
+        }
+
+        if (gains[i] != null) {
+          store.setDetectorSettingsGain(gains[i][c], i, c);
+        }
+
+        if (channelNames[i] != null) {
+          store.setChannelName(channelNames[i][c], i, c);
+        }
+        store.setChannelPinholeSize(pinholes[i], i, c);
+        if (exWaves[i] != null && exWaves[i][c] != null && exWaves[i][c] > 0) {
+          store.setChannelExcitationWavelength(
+            new PositiveInteger(exWaves[i][c]), i, c);
+        }
+        if (expTimes[i] != null) {
+          store.setPlaneExposureTime(expTimes[i][c], i, c);
+        }
+      }
+
+      for (int image=0; image<getImageCount(); image++) {
+        store.setPlanePositionX(posX[i], i, image);
+        store.setPlanePositionY(posY[i], i, image);
+        store.setPlanePositionZ(posZ[i], i, image);
+        if (timestamps[i] != null) {
+          double timestamp = timestamps[i][image];
+          if (timestamps[i][0] == acquiredDate[i]) {
+            timestamp -= acquiredDate[i];
+          }
+          store.setPlaneDeltaT(timestamp, i, image);
+        }
+      }
+
+      if (imageROIs[i] != null) {
+        for (int roi=0; roi<imageROIs[i].length; roi++) {
+          if (imageROIs[i][roi] != null) {
+            imageROIs[i][roi].storeROI(store, i, roi);
+          }
+        }
       }
     }
-    catch (DependencyException e) {
-      LOGGER.trace("Failed to remove channels", e);
+  }
+
+  private Element getMetadataRoot(String xml)
+    throws FormatException, IOException
+  {
+    try {
+      DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+      DocumentBuilder parser = factory.newDocumentBuilder();
+      ByteArrayInputStream s = new ByteArrayInputStream(xml.getBytes());
+      Element root = parser.parse(s).getDocumentElement();
+      s.close();
+      return root;
+    }
+    catch (ParserConfigurationException e) {
+      throw new FormatException(e);
+    }
+    catch (SAXException e) {
+      throw new FormatException(e);
+    }
+  }
+
+  private void translateMetadata(Element root) throws FormatException {
+    Element realRoot = (Element) root.getChildNodes().item(0);
+
+    NodeList toPrune = getNodes(realRoot, "LDM_Block_Sequential_Master");
+    for (int i=0; i<toPrune.getLength(); i++) {
+      Element prune = (Element) toPrune.item(i);
+      Element parent = (Element) prune.getParentNode();
+      parent.removeChild(prune);
     }
 
-    MetadataTools.populatePixels(store, this, true, false);
+    NodeList imageNodes = getNodes(realRoot, "Image");
+
+    core = new CoreMetadata[imageNodes.getLength()];
+    acquiredDate = new double[imageNodes.getLength()];
+    descriptions = new String[imageNodes.getLength()];
+    laserWavelength = new Vector[imageNodes.getLength()];
+    laserIntensity = new Vector[imageNodes.getLength()];
+    timestamps = new double[imageNodes.getLength()][];
+    activeDetector = new Vector[imageNodes.getLength()];
+    voltages = new Vector[imageNodes.getLength()];
+    detectorOffsets = new Vector[imageNodes.getLength()];
+    serialNumber = new String[imageNodes.getLength()];
+    lensNA = new Double[imageNodes.getLength()];
+    magnification = new Integer[imageNodes.getLength()];
+    immersions = new String[imageNodes.getLength()];
+    corrections = new String[imageNodes.getLength()];
+    objectiveModels = new String[imageNodes.getLength()];
+    posX = new Double[imageNodes.getLength()];
+    posY = new Double[imageNodes.getLength()];
+    posZ = new Double[imageNodes.getLength()];
+    refractiveIndex = new Double[imageNodes.getLength()];
+    cutIns = new Vector[imageNodes.getLength()];
+    cutOuts = new Vector[imageNodes.getLength()];
+    filterModels = new Vector[imageNodes.getLength()];
+    microscopeModels = new String[imageNodes.getLength()];
+    detectorModels = new Vector[imageNodes.getLength()];
+    zSteps = new Double[imageNodes.getLength()];
+    tSteps = new Double[imageNodes.getLength()];
+    pinholes = new Double[imageNodes.getLength()];
+    zooms = new Double[imageNodes.getLength()];
+
+    expTimes = new Double[imageNodes.getLength()][];
+    gains = new Double[imageNodes.getLength()][];
+    channelNames = new String[imageNodes.getLength()][];
+    exWaves = new Integer[imageNodes.getLength()][];
+    imageROIs = new ROI[imageNodes.getLength()][];
+    imageNames = new String[imageNodes.getLength()];
+
+    for (int i=0; i<imageNodes.getLength(); i++) {
+      Element image = (Element) imageNodes.item(i);
+      setSeries(i);
+
+      translateImageNames(image, i);
+      translateImageNodes(image, i);
+      translateAttachmentNodes(image, i);
+      translateScannerSettings(image, i);
+      translateFilterSettings(image, i);
+      translateTimestamps(image, i);
+      translateLaserLines(image, i);
+      translateROIs(image, i);
+      translateDetectors(image, i);
+
+      Stack<String> nameStack = new Stack<String>();
+      populateOriginalMetadata(image, nameStack);
+    }
+    setSeries(0);
+  }
+
+  private void populateOriginalMetadata(Element root, Stack<String> nameStack) {
+    String name = root.getNodeName();
+    if (root.hasAttributes() && !name.equals("Element") &&
+      !name.equals("Attachment") && !name.equals("LMSDataContainerHeader"))
+    {
+      nameStack.push(name);
+
+      String suffix = root.getAttribute("Identifier");
+      String value = root.getAttribute("Variant");
+      if (suffix == null) {
+        suffix = root.getAttribute("Description");
+      }
+      StringBuffer key = new StringBuffer();
+      for (String k : nameStack) {
+        key.append(k);
+        key.append("|");
+      }
+      if (suffix != null && value != null && suffix.length() > 0 &&
+        value.length() > 0)
+      {
+        int index = 0;
+        String storedKey = key.toString() + suffix + " ";
+        while (getSeriesMeta(storedKey + index) != null) {
+          index++;
+        }
+        addSeriesMeta(storedKey + index, value);
+      }
+      else {
+        NamedNodeMap attributes = root.getAttributes();
+        for (int i=0; i<attributes.getLength(); i++) {
+          Attr attr = (Attr) attributes.item(i);
+          String storedKey = key.toString() + attr.getName() + " ";
+          int index = 0;
+          while (getSeriesMeta(storedKey + index) != null) {
+            index++;
+          }
+          addSeriesMeta(storedKey + index, attr.getValue());
+        }
+      }
+    }
+
+    NodeList children = root.getChildNodes();
+    for (int i=0; i<children.getLength(); i++) {
+      Object child = children.item(i);
+      if (child instanceof Element) {
+        populateOriginalMetadata((Element) child, nameStack);
+      }
+    }
+
+    if (root.hasAttributes() && !name.equals("Element") &&
+      !name.equals("Attachment") && !name.equals("LMSDataContainerHeader"))
+    {
+      nameStack.pop();
+    }
+  }
+
+  private void translateImageNames(Element imageNode, int image) {
+    Vector<String> names = new Vector<String>();
+    Element parent = imageNode;
+    while (true) {
+      parent = (Element) parent.getParentNode();
+      if (parent == null || parent.getNodeName().equals("LEICA")) {
+        break;
+      }
+      if (parent.getNodeName().equals("Element")) {
+        names.add(parent.getAttribute("Name"));
+      }
+    }
+    imageNames[image] = "";
+    for (int i=names.size() - 2; i>=0; i--) {
+      imageNames[image] += names.get(i);
+      if (i > 0) imageNames[image] += "/";
+    }
+  }
+
+  private void translateDetectors(Element imageNode, int image)
+    throws FormatException
+  {
+    NodeList detectors = getNodes(imageNode, "Detector");
+    if (detectors == null) return;
+
+    int nextChannel = 0;
+    for (int d=0; d<detectors.getLength(); d++) {
+      Element detector = (Element) detectors.item(d);
+      Element grandparent = (Element) detector.getParentNode().getParentNode();
+      NodeList multibands = getNodes(grandparent, "MultiBand");
+
+      String v = detector.getAttribute("Gain");
+      Double gain = v == null ? null : new Double(v);
+      v = detector.getAttribute("Offset");
+      Double offset = v == null ? null : new Double(v);
+
+      boolean active = "1".equals(detector.getAttribute("IsActive"));
+
+      if (active) {
+        String c = detector.getAttribute("Channel");
+        int channel = c == null ? 0 : Integer.parseInt(c);
+
+        Element multiband = null;
+
+        for (int i=0; i<multibands.getLength(); i++) {
+          Element mb = (Element) multibands.item(i);
+          if (channel == Integer.parseInt(mb.getAttribute("Channel"))) {
+            multiband = mb;
+            break;
+          }
+        }
+
+        if (multiband != null) {
+          if (nextChannel < channelNames[image].length) {
+            channelNames[image][nextChannel] =
+              multiband.getAttribute("DyeName");
+          }
+
+          double leftWorld = new Double(multiband.getAttribute("LeftWorld"));
+          double rightWorld = new Double(multiband.getAttribute("RightWorld"));
+          cutIns[image].add(new PositiveInteger((int) Math.round(leftWorld)));
+          cutOuts[image].add(new PositiveInteger((int) Math.round(rightWorld)));
+        }
+
+        if (nextChannel < getEffectiveSizeC()) {
+          gains[image][nextChannel] = gain;
+          detectorOffsets[image].add(offset);
+        }
+
+        nextChannel++;
+      }
+    }
+  }
+
+  private void translateROIs(Element imageNode, int image)
+    throws FormatException
+  {
+    NodeList rois = getNodes(imageNode, "Annotation");
+    if (rois == null) return;
+    imageROIs[image] = new ROI[rois.getLength()];
+
+    for (int r=0; r<rois.getLength(); r++) {
+      Element roiNode = (Element) rois.item(r);
+
+      ROI roi = new ROI();
+
+      String type = roiNode.getAttribute("type");
+      if (type != null) {
+        roi.type = Integer.parseInt(type);
+      }
+      String color = roiNode.getAttribute("color");
+      if (color != null) {
+        roi.color = Integer.parseInt(color);
+      }
+      roi.name = roiNode.getAttribute("name");
+      roi.fontName = roiNode.getAttribute("fontName");
+      roi.fontSize = roiNode.getAttribute("fontSize");
+      roi.transX = parseDouble(roiNode.getAttribute("transTransX"));
+      roi.transY = parseDouble(roiNode.getAttribute("transTransY"));
+      roi.scaleX = parseDouble(roiNode.getAttribute("transScalingX"));
+      roi.scaleY = parseDouble(roiNode.getAttribute("transScalingY"));
+      roi.rotation = parseDouble(roiNode.getAttribute("transRotation"));
+      String linewidth = roiNode.getAttribute("linewidth");
+      if (linewidth != null) {
+        roi.linewidth = Integer.parseInt(linewidth);
+      }
+      roi.text = roiNode.getAttribute("text");
+
+      NodeList vertices = getNodes(roiNode, "Vertex");
+
+      for (int v=0; v<vertices.getLength(); v++) {
+        Element vertex = (Element) vertices.item(v);
+        String xx = vertex.getAttribute("x");
+        String yy = vertex.getAttribute("y");
+
+        if (xx != null) {
+          roi.x.add(parseDouble(xx));
+        }
+        if (yy != null) {
+          roi.y.add(parseDouble(yy));
+        }
+      }
+      imageROIs[image][r] = roi;
+
+      if (getNodes(imageNode, "ROI") != null) {
+        alternateCenter = true;
+      }
+    }
+  }
+
+  private void translateLaserLines(Element imageNode, int image)
+    throws FormatException
+  {
+    NodeList laserLines = getNodes(imageNode, "LaserLineSetting");
+    if (laserLines == null) return;
+
+    laserWavelength[image] = new Vector<Integer>();
+    laserIntensity[image] = new Vector<Double>();
+
+    for (int laser=0; laser<laserLines.getLength(); laser++) {
+      Element laserLine = (Element) laserLines.item(laser);
+
+      String lineIndex = laserLine.getAttribute("LineIndex");
+      String qual = laserLine.getAttribute("Qualifier");
+      int index = lineIndex == null ? 0 : Integer.parseInt(lineIndex);
+      int qualifier = qual == null ? 0: Integer.parseInt(qual);
+
+      index += (2 - (qualifier / 10));
+      if (index < 0) index = 0;
+
+      Integer wavelength = new Integer(laserLine.getAttribute("LaserLine"));
+      if (index < laserWavelength[image].size()) {
+        laserWavelength[image].setElementAt(wavelength, index);
+      }
+      else {
+        for (int i=laserWavelength[image].size(); i<index; i++) {
+          laserWavelength[image].add(new Integer(0));
+        }
+        laserWavelength[image].add(wavelength);
+      }
+
+      String intensity = laserLine.getAttribute("IntensityDev");
+      double realIntensity = intensity == null ? 0d : new Double(intensity);
+      if (realIntensity > 0) {
+        realIntensity = 100d - realIntensity;
+
+        if (index < laserIntensity[image].size()) {
+          laserIntensity[image].setElementAt(realIntensity, index);
+        }
+        else {
+          for (int i=laserIntensity[image].size(); i<index; i++) {
+            laserIntensity[image].add(new Double(0));
+          }
+          laserIntensity[image].add(realIntensity);
+        }
+      }
+    }
+  }
+
+  private void translateTimestamps(Element imageNode, int image)
+    throws FormatException
+  {
+    NodeList timestampNodes = getNodes(imageNode, "TimeStamp");
+    if (timestampNodes == null) return;
+
+    timestamps[image] = new double[getImageCount()];
+
+    if (timestampNodes != null) {
+      for (int stamp=0; stamp<timestampNodes.getLength(); stamp++) {
+        if (stamp < getImageCount()) {
+          Element timestamp = (Element) timestampNodes.item(stamp);
+          String stampHigh = timestamp.getAttribute("HighInteger");
+          String stampLow = timestamp.getAttribute("LowInteger");
+          long high = stampHigh == null ? 0 : Long.parseLong(stampHigh);
+          long low = stampLow == null ? 0 : Long.parseLong(stampLow);
+
+          long ms = DateTools.getMillisFromTicks(high, low);
+
+          timestamps[image][stamp] = ms / 1000.0;
+        }
+      }
+    }
+    acquiredDate[image] = timestamps[image][0];
+
+    NodeList relTimestampNodes = getNodes(imageNode, "RelTimeStamp");
+    if (relTimestampNodes != null) {
+      for (int stamp=0; stamp<relTimestampNodes.getLength(); stamp++) {
+        if (stamp < getImageCount()) {
+          Element timestamp = (Element) relTimestampNodes.item(stamp);
+          timestamps[image][stamp] =
+            new Double(timestamp.getAttribute("Time"));
+        }
+      }
+    }
+  }
+
+  private void translateFilterSettings(Element imageNode, int image)
+    throws FormatException
+  {
+    NodeList filterSettings = getNodes(imageNode, "FilterSettingRecord");
+    if (filterSettings == null) return;
+
+    activeDetector[image] = new Vector<Boolean>();
+    voltages[image] = new Vector<Double>();
+    detectorOffsets[image] = new Vector<Double>();
+    cutIns[image] = new Vector<PositiveInteger>();
+    cutOuts[image] = new Vector<PositiveInteger>();
+    filterModels[image] = new Vector<String>();
+
+    for (int i=0; i<filterSettings.getLength(); i++) {
+      Element filterSetting = (Element) filterSettings.item(i);
+
+      String object = filterSetting.getAttribute("ObjectName");
+      String attribute = filterSetting.getAttribute("Attribute");
+      String objectClass = filterSetting.getAttribute("ClassName");
+      String variant = filterSetting.getAttribute("Variant");
+
+      if (attribute.equals("NumericalAperture")) {
+        lensNA[image] = new Double(variant);
+      }
+      else if (attribute.equals("OrderNumber")) {
+        serialNumber[image] = variant;
+      }
+      else if (objectClass.equals("CDetectionUnit")) {
+        if (attribute.equals("State")) {
+          int channel = getChannelIndex(filterSetting);
+          if (channel < 0) continue;
+
+          detectorModels[image].add(object);
+          activeDetector[image].add(variant.equals("Active"));
+        }
+        else if (attribute.equals("HighVoltage")) {
+          int channel = getChannelIndex(filterSetting);
+          if (channel < 0) continue;
+          if (channel < voltages[image].size()) {
+            voltages[image].setElementAt(new Double(variant), channel);
+          }
+          else {
+            while (channel > voltages[image].size()) {
+              voltages[image].add(new Double(0));
+            }
+            voltages[image].add(new Double(variant));
+          }
+        }
+        else if (attribute.equals("VideoOffset")) {
+          int channel = getChannelIndex(filterSetting);
+          if (channel < 0) continue;
+          detectorOffsets[image].add(new Double(variant));
+        }
+      }
+      else if (attribute.equals("Objective")) {
+        StringTokenizer tokens = new StringTokenizer(variant, " ");
+        boolean foundMag = false;
+        StringBuffer model = new StringBuffer();
+        while (!foundMag) {
+          String token = tokens.nextToken();
+          int x = token.indexOf("x");
+          if (x != -1) {
+            foundMag = true;
+
+            int mag = (int) Double.parseDouble(token.substring(0, x));
+            String na = token.substring(x + 1);
+
+            magnification[image] = mag;
+            lensNA[image] = new Double(na);
+          }
+          else {
+            model.append(token);
+            model.append(" ");
+          }
+        }
+
+        String immersion = "Other";
+        if (tokens.hasMoreTokens()) {
+          immersion = tokens.nextToken();
+          if (immersion == null || immersion.trim().equals("")) {
+            immersion = "Other";
+          }
+        }
+        immersions[image] = immersion;
+
+        String correction = "Other";
+        if (tokens.hasMoreTokens()) {
+          correction = tokens.nextToken();
+          if (correction == null || correction.trim().equals("")) {
+            correction = "Other";
+          }
+        }
+        corrections[image] = correction;
+
+        objectiveModels[image] = model.toString().trim();
+      }
+      else if (attribute.equals("RefractionIndex")) {
+        refractiveIndex[image] = new Double(variant);
+      }
+      else if (attribute.equals("XPos")) {
+        posX[image] = new Double(variant);
+      }
+      else if (attribute.equals("YPos")) {
+        posY[image] = new Double(variant);
+      }
+      else if (attribute.equals("ZPos")) {
+        posZ[image] = new Double(variant);
+      }
+      else if (objectClass.equals("CSpectrophotometerUnit")) {
+        Integer v = null;
+        try {
+          v = new Integer((int) Double.parseDouble(variant));
+        }
+        catch (NumberFormatException e) { }
+        String description = filterSetting.getAttribute("Description");
+        if (description.endsWith("(left)")) {
+          filterModels[image].add(object);
+          if (v != null) {
+            cutIns[image].add(new PositiveInteger(v));
+          }
+        }
+        else if (description.endsWith("(right)")) {
+          if (v != null) {
+            cutOuts[image].add(new PositiveInteger(v));
+          }
+        }
+      }
+    }
+  }
+
+  private void translateScannerSettings(Element imageNode, int image)
+    throws FormatException
+  {
+    NodeList scannerSettings = getNodes(imageNode, "ScannerSettingRecord");
+    if (scannerSettings == null) return;
+
+    expTimes[image] = new Double[getEffectiveSizeC()];
+    gains[image] = new Double[getEffectiveSizeC()];
+    channelNames[image] = new String[getEffectiveSizeC()];
+    exWaves[image] = new Integer[getEffectiveSizeC()];
+    detectorModels[image] = new Vector<String>();
+
+    for (int i=0; i<scannerSettings.getLength(); i++) {
+      Element scannerSetting = (Element) scannerSettings.item(i);
+      String id = scannerSetting.getAttribute("Identifier");
+      if (id == null) id = "";
+      String suffix = scannerSetting.getAttribute("Identifier");
+      String value = scannerSetting.getAttribute("Variant");
+
+      if (id.equals("SystemType")) {
+        microscopeModels[image] = value;
+      }
+      else if (id.equals("dblPinhole")) {
+        pinholes[image] = Double.parseDouble(value) * 1000000;
+      }
+      else if (id.equals("dblZoom")) {
+        zooms[image] = new Double(value);
+      }
+      else if (id.equals("dblStepSize")) {
+        zSteps[image] = Double.parseDouble(value) * 1000000;
+      }
+      else if (id.equals("nDelayTime_s")) {
+        tSteps[image] = new Double(value);
+      }
+      else if (id.equals("CameraName")) {
+        detectorModels[image].add(value);
+      }
+      else if (id.indexOf("WFC") == 1) {
+        int c = 0;
+        try {
+          c = Integer.parseInt(id.replaceAll("\\D", ""));
+        }
+        catch (NumberFormatException e) { }
+        if (c < 0 || c >= getEffectiveSizeC()) {
+          continue;
+        }
+
+        if (id.endsWith("ExposureTime")) {
+          expTimes[image][c] = new Double(value);
+        }
+        else if (id.endsWith("Gain")) {
+          gains[image][c] = new Double(value);
+        }
+        else if (id.endsWith("WaveLength")) {
+          Integer exWave = new Integer(value);
+          if (exWave > 0) {
+            exWaves[image][c] = exWave;
+          }
+        }
+        // NB: "UesrDefName" is not a typo.
+        else if (id.endsWith("UesrDefName") && !value.equals("None")) {
+          channelNames[image][c] = value;
+        }
+      }
+    }
+  }
+
+  private void translateAttachmentNodes(Element imageNode, int image)
+    throws FormatException
+  {
+    NodeList attachmentNodes = getNodes(imageNode, "Attachment");
+    if (attachmentNodes == null) return;
+    for (int i=0; i<attachmentNodes.getLength(); i++) {
+      Element attachment = (Element) attachmentNodes.item(i);
+      if ("ContextDescription".equals(attachment.getAttribute("Name"))) {
+        descriptions[image] = attachment.getAttribute("Content");
+      }
+    }
+  }
+
+  private void translateImageNodes(Element imageNode, int i)
+    throws FormatException
+  {
+    core[i] = new CoreMetadata();
+    core[i].orderCertain = true;
+    core[i].metadataComplete = true;
+    core[i].littleEndian = true;
+    core[i].falseColor = true;
+
+    NodeList channels = getChannelDescriptionNodes(imageNode);
+    NodeList dimensions = getDimensionDescriptionNodes(imageNode);
+
+    HashMap<Integer, String> bytesPerAxis = new HashMap<Integer, String>();
+
+    Double physicalSizeX = null;
+    Double physicalSizeY = null;
+
+    core[i].sizeC = channels.getLength();
+    for (int ch=0; ch<channels.getLength(); ch++) {
+      Element channel = (Element) channels.item(ch);
+
+      lutNames.add(channel.getAttribute("LUTName"));
+      String bytesInc = channel.getAttribute("BytesInc");
+      int bytes = bytesInc == null ? 0 : Integer.parseInt(bytesInc);
+      if (bytes > 0) {
+        bytesPerAxis.put(bytes, "C");
+      }
+    }
+
+    int extras = 1;
+
+    for (int dim=0; dim<dimensions.getLength(); dim++) {
+      Element dimension = (Element) dimensions.item(dim);
+
+      int id = Integer.parseInt(dimension.getAttribute("DimID"));
+      int len = Integer.parseInt(dimension.getAttribute("NumberOfElements"));
+      int nBytes = Integer.parseInt(dimension.getAttribute("BytesInc"));
+      Double physicalLen = new Double(dimension.getAttribute("Length"));
+      String unit = dimension.getAttribute("Unit");
+
+      physicalLen /= len;
+      if (unit.equals("Ks")) {
+        physicalLen /= 1000;
+      }
+      else if (unit.equals("m")) {
+        physicalLen *= 1000000;
+      }
+
+      switch (id) {
+        case 1: // X axis
+          core[i].sizeX = len;
+          core[i].rgb = (nBytes % 3) == 0;
+          if (core[i].rgb) nBytes /= 3;
+          core[i].pixelType =
+            FormatTools.pixelTypeFromBytes(nBytes, false, true);
+          physicalSizeX = physicalLen;
+          break;
+        case 2: // Y axis
+          if (core[i].sizeY != 0) {
+            if (core[i].sizeZ == 1) {
+              core[i].sizeZ = len;
+              bytesPerAxis.put(nBytes, "Z");
+            }
+            else if (core[i].sizeT == 1) {
+              core[i].sizeT = len;
+              bytesPerAxis.put(nBytes, "T");
+            }
+          }
+          else {
+            core[i].sizeY = len;
+            physicalSizeY = physicalLen;
+          }
+          break;
+        case 3: // Z axis
+          if (core[i].sizeY == 0) {
+            // XZ scan - swap Y and Z
+            core[i].sizeY = len;
+            core[i].sizeZ = 1;
+            bytesPerAxis.put(nBytes, "Y");
+            physicalSizeY = physicalLen;
+          }
+          else {
+            core[i].sizeZ = len;
+            bytesPerAxis.put(nBytes, "Z");
+          }
+          break;
+        case 4: // T axis
+          if (core[i].sizeY == 0) {
+            // XT scan - swap Y and T
+            core[i].sizeY = len;
+            core[i].sizeT = 1;
+            bytesPerAxis.put(nBytes, "Y");
+            physicalSizeY = physicalLen;
+          }
+          else {
+            core[i].sizeT = len;
+            bytesPerAxis.put(nBytes, "T");
+          }
+          break;
+        default:
+          extras *= len;
+      }
+    }
+
+    physicalSizeXs.add(physicalSizeX);
+    physicalSizeYs.add(physicalSizeY);
+
+    if (extras > 1) {
+      if (core[i].sizeZ == 1) core[i].sizeZ = extras;
+      else {
+        if (core[i].sizeT == 0) core[i].sizeT = extras;
+        else core[i].sizeT *= extras;
+      }
+    }
+
+    if (core[i].sizeC == 0) core[i].sizeC = 1;
+    if (core[i].sizeZ == 0) core[i].sizeZ = 1;
+    if (core[i].sizeT == 0) core[i].sizeT = 1;
+
+    core[i].interleaved = core[i].rgb;
+    core[i].indexed = !core[i].rgb;
+    core[i].imageCount = core[i].sizeZ * core[i].sizeT;
+    if (!core[i].rgb) core[i].imageCount *= core[i].sizeC;
+
+    Integer[] bytes = bytesPerAxis.keySet().toArray(new Integer[0]);
+    Arrays.sort(bytes);
+    core[i].dimensionOrder = "XY";
+    for (Integer nBytes : bytes) {
+      String axis = bytesPerAxis.get(nBytes);
+      if (core[i].dimensionOrder.indexOf(axis) == -1) {
+        core[i].dimensionOrder += axis;
+      }
+    }
+
+    if (core[i].dimensionOrder.indexOf("Z") == -1) {
+      core[i].dimensionOrder += "Z";
+    }
+    if (core[i].dimensionOrder.indexOf("C") == -1) {
+      core[i].dimensionOrder += "C";
+    }
+    if (core[i].dimensionOrder.indexOf("T") == -1) {
+      core[i].dimensionOrder += "T";
+    }
+  }
+
+  private NodeList getNodes(Element root, String nodeName) {
+    NodeList nodes = root.getElementsByTagName(nodeName);
+    if (nodes.getLength() == 0) {
+      NodeList children = root.getChildNodes();
+      for (int i=0; i<children.getLength(); i++) {
+        Object child = children.item(i);
+        if (child instanceof Element) {
+          NodeList childNodes = getNodes((Element) child, nodeName);
+          if (childNodes != null) {
+            return childNodes;
+          }
+        }
+      }
+      return null;
+    }
+    else return nodes;
+  }
+
+  private Element getImageDescription(Element root) {
+    return (Element) root.getElementsByTagName("ImageDescription").item(0);
+  }
+
+  private NodeList getChannelDescriptionNodes(Element root) {
+    Element imageDescription = getImageDescription(root);
+    Element channels =
+      (Element) imageDescription.getElementsByTagName("Channels").item(0);
+    return channels.getElementsByTagName("ChannelDescription");
+  }
+
+  private NodeList getDimensionDescriptionNodes(Element root) {
+    Element imageDescription = getImageDescription(root);
+    Element channels =
+      (Element) imageDescription.getElementsByTagName("Dimensions").item(0);
+    return channels.getElementsByTagName("DimensionDescription");
+  }
+
+  private int getChannelIndex(Element filterSetting) {
+    String data = filterSetting.getAttribute("data");
+    if (data == null || data.equals("")) {
+      data = filterSetting.getAttribute("Data");
+    }
+    int channel = data == null || data.equals("") ? 0 : Integer.parseInt(data);
+    if (channel < 0) return -1;
+    return channel - 1;
+  }
+
+  // -- Helper class --
+
+  class ROI {
+    // -- Constants --
+
+    public static final int TEXT = 512;
+    public static final int SCALE_BAR = 8192;
+    public static final int POLYGON = 32;
+    public static final int RECTANGLE = 16;
+    public static final int LINE = 256;
+    public static final int ARROW = 2;
+
+    // -- Fields --
+    public int type;
+
+    public Vector<Double> x = new Vector<Double>();
+    public Vector<Double> y = new Vector<Double>();
+
+    // center point of the ROI
+    public double transX, transY;
+
+    // transformation parameters
+    public double scaleX, scaleY;
+    public double rotation;
+
+    public int color;
+    public int linewidth;
+
+    public String text;
+    public String fontName;
+    public String fontSize;
+    public String name;
+
+    private boolean normalized = false;
+
+    // -- ROI API methods --
+
+    public void storeROI(MetadataStore store, int series, int roi) {
+      MetadataLevel level = getMetadataOptions().getMetadataLevel();
+      if (level == MetadataLevel.NO_OVERLAYS || level == MetadataLevel.MINIMUM)
+      {
+        return;
+      }
+
+      // keep in mind that vertices are given relative to the center
+      // point of the ROI and the transX/transY values are relative to
+      // the center point of the image
+
+      store.setROIID(MetadataTools.createLSID("ROI", roi), roi);
+      store.setTextID(MetadataTools.createLSID("Shape", roi, 0), roi, 0);
+      if (text == null) text = "";
+      store.setTextValue(text, roi, 0);
+      if (fontSize != null) {
+        store.setTextFontSize(
+            new NonNegativeInteger((int) Double.parseDouble(fontSize)), roi, 0);
+      }
+      store.setTextStrokeWidth(new Double(linewidth), roi, 0);
+
+      if (!normalized) normalize();
+
+      double cornerX = x.get(0).doubleValue();
+      double cornerY = y.get(0).doubleValue();
+
+      store.setTextX(cornerX, roi, 0);
+      store.setTextY(cornerY, roi, 0);
+
+      int centerX = (core[series].sizeX / 2) - 1;
+      int centerY = (core[series].sizeY / 2) - 1;
+
+      double roiX = centerX + transX;
+      double roiY = centerY + transY;
+
+      if (alternateCenter) {
+        roiX = transX - 2 * cornerX;
+        roiY = transY - 2 * cornerY;
+      }
+
+      // TODO : rotation/scaling not populated
+
+      String shapeID = MetadataTools.createLSID("Shape", roi, 1);
+      switch (type) {
+        case POLYGON:
+          StringBuffer points = new StringBuffer();
+          for (int i=0; i<x.size(); i++) {
+            points.append(x.get(i).doubleValue() + roiX);
+            points.append(",");
+            points.append(y.get(i).doubleValue() + roiY);
+            if (i < x.size() - 1) points.append(" ");
+          }
+          store.setPolylineID(shapeID, roi, 1);
+          store.setPolylinePoints(points.toString(), roi, 1);
+          store.setPolylineClosed(Boolean.TRUE, roi, 1);
+
+          break;
+        case TEXT:
+        case RECTANGLE:
+          store.setRectangleID(shapeID, roi, 1);
+          store.setRectangleX(roiX - Math.abs(cornerX), roi, 1);
+          store.setRectangleY(roiY - Math.abs(cornerY), roi, 1);
+          double width = 2 * Math.abs(cornerX);
+          double height = 2 * Math.abs(cornerY);
+          store.setRectangleWidth(width, roi, 1);
+          store.setRectangleHeight(height, roi, 1);
+
+        break;
+        case SCALE_BAR:
+        case ARROW:
+        case LINE:
+          store.setLineID(shapeID, roi, 1);
+          store.setLineX1(roiX + x.get(0), roi, 1);
+          store.setLineY1(roiY + y.get(0), roi, 1);
+          store.setLineX2(roiX + x.get(1), roi, 1);
+          store.setLineY2(roiY + y.get(1), roi, 1);
+          break;
+      }
+    }
+
+    // -- Helper methods --
+
+    /**
+     * Vertices and transformation values are not stored in pixel coordinates.
+     * We need to convert them from physical coordinates to pixel coordinates
+     * so that they can be stored in a MetadataStore.
+     */
+    private void normalize() {
+      if (normalized) return;
+
+      // coordinates are in meters
+
+      transX *= 1000000;
+      transY *= 1000000;
+      transX *= 1;
+      transY *= 1;
+
+      for (int i=0; i<x.size(); i++) {
+        double coordinate = x.get(i).doubleValue() * 1000000;
+        coordinate *= 1;
+        x.setElementAt(coordinate, i);
+      }
+
+      for (int i=0; i<y.size(); i++) {
+        double coordinate = y.get(i).doubleValue() * 1000000;
+        coordinate *= 1;
+        y.setElementAt(coordinate, i);
+      }
+
+      normalized = true;
+    }
+  }
+
+  private double parseDouble(String number) {
+    if (number != null) {
+      number = number.replaceAll(",", ".");
+      return Double.parseDouble(number);
+    }
+    return 0;
   }
 
 }
