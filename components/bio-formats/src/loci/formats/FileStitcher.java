@@ -462,8 +462,10 @@ public class FileStitcher extends ReaderWrapper {
     super.close(fileOnly);
     if (externals != null) {
       for (ExternalSeries s : externals) {
-        for (DimensionSwapper r : s.getReaders()) {
-          if (r != null) r.close(fileOnly);
+        if (s != null && s.getReaders() != null) {
+          for (DimensionSwapper r : s.getReaders()) {
+            if (r != null) r.close(fileOnly);
+          }
         }
       }
     }
