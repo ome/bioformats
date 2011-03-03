@@ -32,6 +32,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
 import java.io.File;
@@ -97,7 +99,7 @@ import org.xml.sax.SAXException;
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class ImageViewer extends JFrame implements ActionListener,
-  ChangeListener, KeyListener, MouseMotionListener, Runnable
+  ChangeListener, KeyListener, MouseMotionListener, Runnable, WindowListener
 {
 
   // -- Constants --
@@ -152,6 +154,7 @@ public class ImageViewer extends JFrame implements ActionListener,
   public ImageViewer() {
     super(TITLE);
     setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+    addWindowListener(this);
 
     // image I/O engine
     fileReader = new ChannelMerger(new FileStitcher());
@@ -667,6 +670,24 @@ public class ImageViewer extends JFrame implements ActionListener,
         LOGGER.debug("", exc);
       }
     }
+  }
+
+  // -- WindowListener API methods --
+
+  public void windowClosing(WindowEvent e) { }
+  public void windowActivated(WindowEvent e) { }
+  public void windowDeactivated(WindowEvent e) { }
+  public void windowOpened(WindowEvent e) { }
+  public void windowIconified(WindowEvent e) { }
+  public void windowDeiconified(WindowEvent e) { }
+
+  public void windowClosed(WindowEvent e) {
+    try {
+      myReader.close();
+      myWriter.close();
+      in.close();
+    }
+    catch (IOException io) { }
   }
 
   // -- Helper methods --
