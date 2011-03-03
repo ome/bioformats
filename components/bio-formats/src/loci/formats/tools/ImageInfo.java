@@ -945,6 +945,10 @@ public class ImageInfo {
     // output and validate OME-XML
     if (omexml) printOMEXML();
 
+    if (!pixels) {
+      reader.close();
+    }
+
     return true;
   }
 
