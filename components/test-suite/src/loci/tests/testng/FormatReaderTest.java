@@ -174,6 +174,8 @@ public class FormatReaderTest {
         int c = reader.getRGBChannelCount();
         int type = reader.getPixelType();
 
+        if (c > 4) continue;
+
         int num = reader.getImageCount();
         if (num > 3) num = 3; // test first three image planes only, for speed
         for (int j=0; j<num && success; j++) {
@@ -267,6 +269,10 @@ public class FormatReaderTest {
         int c = reader.getRGBChannelCount();
         int type = reader.getPixelType();
 
+        if (c > 4 || type == FormatTools.FLOAT || type == FormatTools.DOUBLE) {
+          continue;
+        }
+
         BufferedImage b = reader.openThumbImage(0);
 
         int actualX = b.getWidth();
@@ -324,7 +330,12 @@ public class FormatReaderTest {
         int x = reader.getThumbSizeX();
         int y = reader.getThumbSizeY();
         int c = reader.isIndexed() ? 1 : reader.getRGBChannelCount();
-        int bytes = FormatTools.getBytesPerPixel(reader.getPixelType());
+        int type = reader.getPixelType();
+        int bytes = FormatTools.getBytesPerPixel(type);
+
+        if (c > 4 || type == FormatTools.FLOAT || type == FormatTools.DOUBLE) {
+          continue;
+        }
 
         int expected = x * y * c * bytes;
 
