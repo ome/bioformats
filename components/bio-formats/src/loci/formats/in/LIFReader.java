@@ -570,7 +570,8 @@ public class LIFReader extends FormatReader {
           }
 
           if (activeDetector[i] != null) {
-            if ((Boolean) activeDetector[i].get(detector) &&
+            if (detector < activeDetector[i].size() &&
+              (Boolean) activeDetector[i].get(detector) &&
               detectorOffsets[i] != null &&
               nextChannel < detectorOffsets[i].size())
             {
@@ -596,7 +597,7 @@ public class LIFReader extends FormatReader {
           store.setDetectorSettingsID(detectorID, i, c);
           nextDetector++;
         }
-        if (detectorOffsets[i] != null) {
+        if (detectorOffsets[i] != null && c < detectorOffsets[i].size()) {
           store.setDetectorSettingsOffset(
             (Double) detectorOffsets[i].get(c), i, c);
         }
@@ -664,10 +665,12 @@ public class LIFReader extends FormatReader {
     Element realRoot = (Element) root.getChildNodes().item(0);
 
     NodeList toPrune = getNodes(realRoot, "LDM_Block_Sequential_Master");
-    for (int i=0; i<toPrune.getLength(); i++) {
-      Element prune = (Element) toPrune.item(i);
-      Element parent = (Element) prune.getParentNode();
-      parent.removeChild(prune);
+    if (toPrune != null) {
+      for (int i=0; i<toPrune.getLength(); i++) {
+        Element prune = (Element) toPrune.item(i);
+        Element parent = (Element) prune.getParentNode();
+        parent.removeChild(prune);
+      }
     }
 
     NodeList imageNodes = getNodes(realRoot, "Image");
