@@ -174,6 +174,8 @@ public class FormatReaderTest {
         int c = reader.getRGBChannelCount();
         int type = reader.getPixelType();
 
+        if (c > 4) continue;
+
         int num = reader.getImageCount();
         if (num > 3) num = 3; // test first three image planes only, for speed
         for (int j=0; j<num && success; j++) {
@@ -267,6 +269,10 @@ public class FormatReaderTest {
         int c = reader.getRGBChannelCount();
         int type = reader.getPixelType();
 
+        if (c > 4 || type == FormatTools.FLOAT || type == FormatTools.DOUBLE) {
+          continue;
+        }
+
         BufferedImage b = reader.openThumbImage(0);
 
         int actualX = b.getWidth();
@@ -324,7 +330,12 @@ public class FormatReaderTest {
         int x = reader.getThumbSizeX();
         int y = reader.getThumbSizeY();
         int c = reader.isIndexed() ? 1 : reader.getRGBChannelCount();
-        int bytes = FormatTools.getBytesPerPixel(reader.getPixelType());
+        int type = reader.getPixelType();
+        int bytes = FormatTools.getBytesPerPixel(type);
+
+        if (c > 4 || type == FormatTools.FLOAT || type == FormatTools.DOUBLE) {
+          continue;
+        }
 
         int expected = x * y * c * bytes;
 
@@ -1034,7 +1045,7 @@ public class FormatReaderTest {
     try {
       int properMem = config.getMemory();
       double properTime = config.getAccessTimeMillis();
-      if (properMem == 0 || properTime == 0) {
+      if (properMem < 0 || properTime < 0) {
         success = false;
         msg = "no configuration";
       }
@@ -1267,9 +1278,9 @@ public class FormatReaderTest {
    * @testng.test groups = "config"
    */
   public void writeConfigFile() {
-    reader = new BufferedImageReader();
+    reader = new BufferedImageReader(new FileStitcher());
     setupReader();
-    if (!initFile()) return;
+    if (!initFile(false)) return;
     String file = reader.getCurrentFile();
     LOGGER.info("Generating configuration: {}", file);
     try {
@@ -1302,6 +1313,10 @@ public class FormatReaderTest {
 
   /** Initializes the reader and configuration tree. */
   private boolean initFile() {
+    return initFile(true);
+  }
+
+  private boolean initFile(boolean removeDuplicateFiles) {
     if (skip) throw new SkipException(SKIP_MESSAGE);
 
     // initialize configuration tree
@@ -1336,7 +1351,7 @@ public class FormatReaderTest {
 
     // skip files that were already tested as part of another file's dataset
     int ndx = skipFiles.indexOf(id);
-    if (ndx >= 0) {
+    if (ndx >= 0 && removeDuplicateFiles) {
       LOGGER.info("Skipping {}", id);
       skipFiles.remove(ndx);
       skip = true;
