@@ -129,11 +129,15 @@ public class Configuration {
   }
 
   public long getAccessTimeMillis() {
-    return Long.parseLong(globalTable.get(ACCESS_TIME));
+    String millis = globalTable.get(ACCESS_TIME);
+    if (millis == null) return -1;
+    return Long.parseLong(millis);
   }
 
   public int getMemory() {
-    return Integer.parseInt(globalTable.get(MEMORY));
+    String memory = globalTable.get(MEMORY);
+    if (memory == null) return -1;
+    return Integer.parseInt(memory);
   }
 
   public boolean doTest() {

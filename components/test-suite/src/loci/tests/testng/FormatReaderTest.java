@@ -1034,7 +1034,7 @@ public class FormatReaderTest {
     try {
       int properMem = config.getMemory();
       double properTime = config.getAccessTimeMillis();
-      if (properMem == 0 || properTime == 0) {
+      if (properMem < 0 || properTime < 0) {
         success = false;
         msg = "no configuration";
       }
