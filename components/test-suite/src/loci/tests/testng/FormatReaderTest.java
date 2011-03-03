@@ -1267,9 +1267,9 @@ public class FormatReaderTest {
    * @testng.test groups = "config"
    */
   public void writeConfigFile() {
-    reader = new BufferedImageReader();
+    reader = new BufferedImageReader(new FileStitcher());
     setupReader();
-    if (!initFile()) return;
+    if (!initFile(false)) return;
     String file = reader.getCurrentFile();
     LOGGER.info("Generating configuration: {}", file);
     try {
@@ -1302,6 +1302,10 @@ public class FormatReaderTest {
 
   /** Initializes the reader and configuration tree. */
   private boolean initFile() {
+    return initFile(true);
+  }
+
+  private boolean initFile(boolean removeDuplicateFiles) {
     if (skip) throw new SkipException(SKIP_MESSAGE);
 
     // initialize configuration tree
@@ -1336,7 +1340,7 @@ public class FormatReaderTest {
 
     // skip files that were already tested as part of another file's dataset
     int ndx = skipFiles.indexOf(id);
-    if (ndx >= 0) {
+    if (ndx >= 0 && removeDuplicateFiles) {
       LOGGER.info("Skipping {}", id);
       skipFiles.remove(ndx);
       skip = true;
