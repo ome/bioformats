@@ -605,6 +605,7 @@ public class FluoviewReader extends BaseTiffReader {
   private int getImageIndex(int no) {
     // the 'series' axis can be in any position relative to Z, C and T
     // we need to convert the plane number within the series into an IFD number
+    if (getSeriesCount() == 1) return no;
     int[] lengths = new int[4];
     int[] pos = getZCTCoords(no);
     int[] realPos = new int[4];
