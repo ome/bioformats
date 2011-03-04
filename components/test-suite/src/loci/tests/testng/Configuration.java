@@ -110,6 +110,7 @@ public class Configuration {
 
     BufferedReader reader = new BufferedReader(new FileReader(this.configFile));
     IniParser parser = new IniParser();
+    parser.setCommentDelimiter(null);
     ini = parser.parseINI(reader);
     pruneINI();
   }
