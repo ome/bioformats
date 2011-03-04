@@ -94,6 +94,9 @@ public class APNGReader extends BIFormatReader {
       in.seek(0);
       DataInputStream dis =
         new DataInputStream(new BufferedInputStream(in, 4096));
+      if (x == 0 && y == 0 && w == getSizeX() && h == getSizeY()) {
+        return ImageIO.read(dis);
+      }
       return AWTImageTools.getSubimage(ImageIO.read(dis), isLittleEndian(),
         x, y, w, h);
     }
@@ -108,7 +111,8 @@ public class APNGReader extends BIFormatReader {
 
     for (PNGBlock block : blocks) {
       if (!block.type.equals("IDAT") && !block.type.equals("fdAT") &&
-        !block.type.equals("acTL") && !block.type.equals("fcTL"))
+        !block.type.equals("acTL") && !block.type.equals("fcTL") &&
+        block.length > 0)
       {
         byte[] b = new byte[block.length + 12];
         DataTools.unpackBytes(block.length, b, 0, 4, isLittleEndian());
