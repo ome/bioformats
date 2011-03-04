@@ -405,9 +405,10 @@ public class LiFlimReader extends FormatReader {
     MetadataTools.setDefaultCreationDate(store, currentId, 0);
 
     // image data
-    store.setImageName(getCurrentFile() + " Primary Image", 0);
+    String path = new Location(getCurrentFile()).getName();
+    store.setImageName(path + " Primary Image", 0);
     if (getSeriesCount() > 1) {
-      store.setImageName(getCurrentFile() + " Background Image", 1);
+      store.setImageName(path + " Background Image", 1);
       MetadataTools.setDefaultCreationDate(store, currentId, 1);
     }
 
