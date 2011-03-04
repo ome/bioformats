@@ -125,6 +125,8 @@ public class NativeND2Reader extends FormatReader {
     }
 
     int color = colors[lastChannel];
+    if (color == 0) return null;
+
     byte[][] lut = new byte[3][256];
 
     int index = -1;
@@ -155,6 +157,8 @@ public class NativeND2Reader extends FormatReader {
     }
 
     int color = colors[lastChannel];
+    if (color == 0) return null;
+
     short[][] lut = new short[3][65536];
 
     int index = -1;
