@@ -101,6 +101,7 @@ public class ConfigurationTree {
     String dir = file.getParentFile().getAbsolutePath();
 
     IniParser parser = new IniParser();
+    parser.setCommentDelimiter(null);
     IniList iniList =
       parser.parseINI(new BufferedReader(new FileReader(configFile)));
     for (IniTable table : iniList) {
