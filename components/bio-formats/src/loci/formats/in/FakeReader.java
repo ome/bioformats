@@ -215,7 +215,10 @@ public class FakeReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
 
-    String path = new Location(id).getName();
+    String path = id;
+    if (new Location(id).exists()) {
+      path = new Location(id).getAbsoluteFile().getName();
+    }
     String noExt = path.substring(0, path.lastIndexOf("."));
     String[] tokens = noExt.split(TOKEN_SEPARATOR);
 
