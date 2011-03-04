@@ -183,14 +183,41 @@ public class MRCReader extends FormatReader {
       in.skipBytes(12);
 
       // min, max and mean pixel values
-
-      addGlobalMeta("Minimum pixel value", in.readFloat());
-      addGlobalMeta("Maximum pixel value", in.readFloat());
-      addGlobalMeta("Mean pixel value", in.readFloat());
-
-      in.skipBytes(4);
     }
-    else in.skipBytes(64);
+    else in.skipBytes(48);
+
+    double minValue = in.readFloat();
+    double maxValue = in.readFloat();
+
+    addGlobalMeta("Minimum pixel value", minValue);
+    addGlobalMeta("Maximum pixel value", maxValue);
+    addGlobalMeta("Mean pixel value", in.readFloat());
+
+    int bytes = FormatTools.getBytesPerPixel(getPixelType());
+    double range = Math.pow(2, bytes * 8) - 1;
+    double pixelTypeMin = 0;
+    boolean signed = FormatTools.isSigned(getPixelType());
+    if (signed) {
+      pixelTypeMin -= (range / 2);
+    }
+    double pixelTypeMax = pixelTypeMin + range;
+
+    if (pixelTypeMax < maxValue || pixelTypeMin > minValue && signed) {
+      // make the pixel type unsigned
+      switch (getPixelType()) {
+        case FormatTools.INT8:
+          core[0].pixelType = FormatTools.UINT8;
+          break;
+        case FormatTools.INT16:
+          core[0].pixelType = FormatTools.UINT16;
+          break;
+        case FormatTools.INT32:
+          core[0].pixelType = FormatTools.UINT32;
+          break;
+      }
+    }
+
+    in.skipBytes(4);
 
     extHeaderSize = in.readInt();
 
