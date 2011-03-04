@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.util.Random;
 
 import loci.common.DataTools;
+import loci.common.Location;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -214,7 +215,8 @@ public class FakeReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
 
-    String noExt = id.substring(0, id.lastIndexOf("."));
+    String path = new Location(id).getName();
+    String noExt = path.substring(0, path.lastIndexOf("."));
     String[] tokens = noExt.split(TOKEN_SEPARATOR);
 
     String name = null;
