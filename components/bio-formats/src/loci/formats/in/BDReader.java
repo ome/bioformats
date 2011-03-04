@@ -34,6 +34,7 @@ import java.util.HashMap;
 import java.util.Vector;
 
 import loci.common.DataTools;
+import loci.common.DateTools;
 import loci.common.IniList;
 import loci.common.IniParser;
 import loci.common.IniTable;
@@ -46,6 +47,7 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
+import loci.formats.tiff.TiffIFDEntry;
 import loci.formats.tiff.TiffParser;
 
 import ome.xml.model.primitives.NonNegativeInteger;
@@ -416,7 +418,7 @@ public class BDReader extends FormatReader {
           store.setPlaneExposureTime(exposure[zct[1]], i, p);
           String file = getFilename(i, p);
           if (file != null) {
-            long plane = new Location(file).lastModified();
+            long plane = getTimestamp(file);
             if (p == 0) {
               firstPlane = plane;
             }
@@ -676,6 +678,22 @@ public class BDReader extends FormatReader {
       }
     }
     return null;
+  }
+
+  private long getTimestamp(String file) throws FormatException, IOException {
+    RandomAccessInputStream s = new RandomAccessInputStream(file);
+    TiffParser parser = new TiffParser(s);
+    parser.setDoCaching(false);
+    IFD firstIFD = parser.getFirstIFD();
+    TiffIFDEntry timestamp = (TiffIFDEntry) firstIFD.get(IFD.DATE_TIME);
+    if (timestamp != null) {
+      String stamp = parser.getIFDValue(timestamp).toString();
+      s.close();
+      stamp = DateTools.formatDate(stamp, BaseTiffReader.DATE_FORMATS);
+      return DateTools.getTime(stamp, DateTools.ISO8601_FORMAT);
+    }
+    s.close();
+    return new Location(file).lastModified();
   }
 
 }
