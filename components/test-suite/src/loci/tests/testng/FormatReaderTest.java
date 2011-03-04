@@ -930,7 +930,8 @@ public class FormatReaderTest {
         if (!expectedName.equals(realName) &&
           (realName == null && !expectedName.equals("null")))
         {
-          result(testName, false, "Series " + i + " channel " + c);
+          result(testName, false, "Series " + i + " channel " + c +
+            " (got '" + realName + "', expected '" + expectedName + "')");
         }
       }
     }
@@ -1034,8 +1035,12 @@ public class FormatReaderTest {
     for (int i=0; i<reader.getSeriesCount(); i++) {
       config.setSeries(i);
 
-      if (!config.getImageName().equals(retrieve.getImageName(i))) {
-        result(testName, false, "Series " + i);
+      String realName = retrieve.getImageName(i);
+      String expectedName = config.getImageName();
+
+      if (!expectedName.equals(realName)) {
+        result(testName, false, "Series " + i + " (got '" + realName +
+          "', expected '" + expectedName + "')");
       }
     }
     result(testName, true);
@@ -1205,9 +1210,10 @@ public class FormatReaderTest {
     if (!initFile()) result(testName, false, "initFile");
 
     String file = reader.getCurrentFile();
-    boolean isThisTypeOpen = reader.isThisType(file, false);
-    boolean isThisTypeNotOpen = reader.isThisType(file, true);
-    result(testName, isThisTypeOpen == isThisTypeNotOpen);
+    boolean isThisTypeOpen = reader.isThisType(file, true);
+    boolean isThisTypeNotOpen = reader.isThisType(file, false);
+    result(testName, isThisTypeOpen == isThisTypeNotOpen,
+      "open = " + isThisTypeOpen + ", !open = " + isThisTypeNotOpen);
   }
 
   /**
