@@ -25,6 +25,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.plugins.in;
 
+import ij.IJ;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -623,6 +625,10 @@ public class ImportProcess implements StatusReporter {
     BF.status(options.isQuiet(), "");
 
     Logger root = Logger.getRootLogger();
+    if (IJ.debugMode) {
+      root.setLevel(Level.DEBUG);
+    }
+    else root.setLevel(Level.INFO);
     root.addAppender(new IJStatusEchoer());
   }
 
