@@ -162,6 +162,8 @@ public class APLReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
 
+    LOGGER.debug("Initializing {}", id);
+
     // find the corresponding .mtb file
     if (!checkSuffix(id, "mtb")) {
       if (checkSuffix(id, METADATA_SUFFIXES)) {
@@ -192,6 +194,7 @@ public class APLReader extends FormatReader {
     }
 
     String mtb = new Location(currentId).getAbsolutePath();
+    LOGGER.debug("Reading .mtb file '{}'", mtb);
 
     MDBService mdb = null;
     try {
@@ -251,13 +254,18 @@ public class APLReader extends FormatReader {
 
     // look for the directory that contains TIFF and XML files
 
+    LOGGER.debug("Searching {} for a directory with TIFFs", parentDirectory);
+
     Location dir = new Location(parentDirectory);
     String[] list = dir.list(true);
     String topDirectory = null;
     for (String f : list) {
+      LOGGER.debug("  '{}'", f);
       Location file = new Location(dir, f);
-      if (file.isDirectory() && f.endsWith("_DocumentFiles")) {
+      if (file.isDirectory() && f.indexOf("_DocumentFiles") > 0) {
+        LOGGER.debug("Found {}", topDirectory);
         topDirectory = file.getAbsolutePath();
+        break;
       }
     }
     if (topDirectory == null) {
