@@ -371,6 +371,19 @@ ZZ
   VERSION => "1.1"
 );
 
+my %jimi = (
+  NAME    => "jimi",
+  TITLE   => "Jimi",
+  JAR     => "JimiProClasses.zip",
+  PACKAGE => "com.sun.jimi.core",
+  LICENSE => "JIMI SDK",
+  URL     => "http://java.sun.com/products/jimi/",
+  NOTES   => <<ZZ,
+used by Bio-Formats to read tiles from very large JPEG images
+ZZ
+  VERSION => "1.0"
+);
+
 my %junit = (
   NAME    => "junit",
   TITLE   => "JUnit",

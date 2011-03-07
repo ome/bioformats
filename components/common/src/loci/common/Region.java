@@ -97,4 +97,12 @@ public class Region {
     return "x=" + x + ", y=" + y + ", w=" + width + ", h=" + height;
   }
 
+  public boolean equals(Object o) {
+    if (!(o instanceof Region)) return false;
+
+    Region that = (Region) o;
+    return this.x == that.x && this.y == that.y && this.width == that.width &&
+      this.height == that.height;
+  }
+
 }
