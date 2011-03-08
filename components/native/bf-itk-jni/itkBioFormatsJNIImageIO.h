@@ -51,50 +51,35 @@ http://www.itk.org/Wiki/Plugin_IO_mechanisms
 #ifndef H_ITK_IMAGE_IO_H
 #define H_ITK_IMAGE_IO_H
 
-// for Bio-Formats C++ bindings
-#include "loci-common.h"
-using jace::JNIException;
-using jace::proxy::java::lang::Exception;
-using jace::proxy::loci::common::DebugTools;
-#include "bio-formats.h"
-using jace::proxy::loci::formats::ChannelFiller;
-using jace::proxy::loci::formats::ChannelMerger;
-using jace::proxy::loci::formats::ChannelSeparator;
-using jace::proxy::loci::formats::FormatTools;
-using jace::proxy::loci::formats::IFormatHandler;
-using jace::proxy::loci::formats::IFormatReader;
-using jace::proxy::loci::formats::ImageReader;
-using jace::proxy::loci::formats::ImageWriter;
-using jace::proxy::loci::formats::MetadataTools;
-using jace::proxy::loci::formats::meta::IMetadata;
-using jace::proxy::loci::formats::meta::MetadataRetrieve;
-
-#undef Byte
-
-// STL includes
-
-// ITK includes
 #include "itkImageIOBase.h"
 #include "itkMatrix.h"
 
 #include <itk_zlib.h>
 
-//#include "itkBioFormatsIOWin32Header.h"
+#include <iostream>
+using std::cout;
+using std::endl;
+
+#include <string>
+using std::string;
+
+#include <stdlib.h>
+#include <jni.h>
 
 namespace itk
 {
 
-  class  BioFormatsImageIO : public ImageIOBase
+  class  BioFormatsJNIImageIO : public ImageIOBase
   {
   public:
-    typedef BioFormatsImageIO       Self;
+    typedef BioFormatsJNIImageIO              Self;
     typedef ImageIOBase             Superclass;
     typedef SmartPointer<Self>      Pointer;
 
     /** Method for creation through the object factory **/
     itkNewMacro(Self);
     /** RTTI (and related methods) **/
-    itkTypeMacro(BioFormatsImageIO, Superclass);
+    itkTypeMacro(BioFormatsJNI, Superclass);
 
     /**--------------- Read the data----------------- **/
     virtual bool CanReadFile(const char* FileNameToRead);
@@ -111,16 +96,14 @@ namespace itk
     virtual void Write(const void* buffer);
 
   protected:
-    BioFormatsImageIO();
-    ~BioFormatsImageIO();
+    BioFormatsJNIImageIO();
+    ~BioFormatsJNIImageIO();
 
   private:
-    IFormatReader* reader;
-    ImageReader* imageReader;
-    ChannelFiller* channelFiller;
-    ChannelSeparator* channelSeparator;
-    ChannelMerger* channelMerger;
-    ImageWriter* writer;
+    JavaVM *jvm;
+    JNIEnv *env;
+    jobject BFITKBridge;
+    bool init;
   };
 
 }

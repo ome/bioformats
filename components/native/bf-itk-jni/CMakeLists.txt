@@ -1,4 +1,3 @@
-#
 # CMakeLists.txt
 #
 
@@ -43,6 +42,8 @@
 # http://www.itk.org/Wiki/Plugin_IO_mechanisms
 
 project(BioFormatsImageIO)
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -framework JavaVM")
 
 if(WIN32)
   cmake_minimum_required(VERSION 2.8)
@@ -111,13 +112,12 @@ install(FILES
 # Sources
 
 set(BioFormatsImageIO_SRCS
-  itkBioFormatsImageIO.cxx
+  itkBioFormatsJNIImageIO.cxx
   itkBioFormatsImageIOFactory.cxx
 )
 
 # --------------------------------------------------------------------------
 # Build and install the library
-
 set(lib_name BioFormatsIO)
 add_library(${lib_name}
   ${BioFormatsImageIO_SRCS}

@@ -50,7 +50,7 @@ http://www.itk.org/Wiki/Plugin_IO_mechanisms
 
 #include "itkBioFormatsImageIOFactory.h"
 #include "itkCreateObjectFunction.h"
-#include "itkBioFormatsImageIO.h"
+#include "itkBioFormatsJNIImageIO.h"
 #include "itkVersion.h"
 
 namespace itk
@@ -59,10 +59,10 @@ namespace itk
   BioFormatsImageIOFactory::BioFormatsImageIOFactory()
   {
     this->RegisterOverride("itkImageIOBase",
-      "itkBioFormatsImageIO",
+      "itkBioFormatsJNIImageIO",
       "BioFormats Image IO",
       1,
-      CreateObjectFunction<BioFormatsImageIO>::New());
+      CreateObjectFunction<BioFormatsJNIImageIO>::New());
   }
 
   BioFormatsImageIOFactory::~BioFormatsImageIOFactory()
