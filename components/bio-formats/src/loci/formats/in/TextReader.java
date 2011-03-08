@@ -119,7 +119,13 @@ public class TextReader extends FormatReader {
     String data = stream.readString(blockLen);
     List<String> lines = Arrays.asList(data.split("\n"));
     String[] line = getNextLine(lines);
-    return line != null;
+    if (line == null) return false;
+    int headerRows = 0;
+    try {
+      headerRows = parseFileHeader(lines);
+    }
+    catch (FormatException e) { }
+    return headerRows > 0;
   }
 
   /* @see IFormatReader#openBytes(int, byte[], int, int, int, int) */
