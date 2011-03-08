@@ -190,7 +190,16 @@ public class MinimalTiffReader extends FormatReader {
     if (thumbnailIFDs == null || thumbnailIFDs.size() <= no) {
       return super.openThumbBytes(no);
     }
-    int[] bps = thumbnailIFDs.get(no).getBitsPerSample();
+    int[] bps = null;
+    try {
+      bps = thumbnailIFDs.get(no).getBitsPerSample();
+    }
+    catch (FormatException e) { }
+
+    if (bps == null) {
+      return super.openThumbBytes(no);
+    }
+
     int b = bps[0];
     while ((b % 8) != 0) b++;
     b /= 8;
