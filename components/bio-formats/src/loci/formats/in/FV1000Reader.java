@@ -213,7 +213,7 @@ public class FV1000Reader extends FormatReader {
     try {
       Location oif = new Location(findOIFFile(name));
       return oif.exists() && !oif.isDirectory() &&
-        checkSuffix(oif.getAbsolutePath(), "oif");
+        checkSuffix(oif.getAbsolutePath(), "oif") && !checkSuffix(name, "bmp");
     }
     catch (IndexOutOfBoundsException e) { }
     catch (NullPointerException e) { }

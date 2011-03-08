@@ -592,6 +592,9 @@ public class LIFReader extends FormatReader {
           {
             nextDetector++;
           }
+          if (nextDetector >= activeDetectors.size()) {
+            continue;
+          }
           String detectorID =
             MetadataTools.createLSID("Detector", i, nextDetector);
           store.setDetectorSettingsID(detectorID, i, c);

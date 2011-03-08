@@ -151,7 +151,6 @@ public class MetamorphReader extends BaseTiffReader {
     TiffParser tp = new TiffParser(stream);
     IFD ifd = tp.getFirstIFD();
     if (ifd == null) return false;
-    if (ifd.containsKey(METAMORPH_ID)) return true;
     String software = ifd.getIFDTextValue(IFD.SOFTWARE);
     return software != null &&
       software.trim().toLowerCase().startsWith("metamorph");
