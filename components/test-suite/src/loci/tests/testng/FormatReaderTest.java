@@ -641,8 +641,12 @@ public class FormatReaderTest {
       reader.setSeries(i);
       config.setSeries(i);
 
-      if (!reader.getDimensionOrder().equals(config.getDimensionOrder())) {
-        result(testName, false, "Series " + i);
+      String realOrder = reader.getDimensionOrder();
+      String expectedOrder = config.getDimensionOrder();
+
+      if (!realOrder.equals(expectedOrder)) {
+        result(testName, false, "Series " + i + " (got " + realOrder +
+          ", expected " + expectedOrder + ")");
       }
     }
     result(testName, true);
