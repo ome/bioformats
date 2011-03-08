@@ -834,11 +834,13 @@ public class LIFReader extends FormatReader {
 
         Element multiband = null;
 
-        for (int i=0; i<multibands.getLength(); i++) {
-          Element mb = (Element) multibands.item(i);
-          if (channel == Integer.parseInt(mb.getAttribute("Channel"))) {
-            multiband = mb;
-            break;
+        if (multibands != null) {
+          for (int i=0; i<multibands.getLength(); i++) {
+            Element mb = (Element) multibands.item(i);
+            if (channel == Integer.parseInt(mb.getAttribute("Channel"))) {
+              multiband = mb;
+              break;
+            }
           }
         }
 
