@@ -1727,10 +1727,16 @@ public class ZeissLSMReader extends FormatReader {
 
     String[] fileList = parent.list(true);
     for (int i=0; i<fileList.length; i++) {
+      String absolutePath = new Location(parent, fileList[i]).getAbsolutePath();
       if (checkSuffix(fileList[i], new String[] {"lsm"}) &&
         !fileList[i].startsWith("."))
       {
-        referencedLSMs.add(new Location(parent, fileList[i]).getAbsolutePath());
+        referencedLSMs.add(absolutePath);
+      }
+      else if (checkSuffix(fileList[i], "mdb") && !absolutePath.equals(mdbFile))
+      {
+        referencedLSMs.clear();
+        break;
       }
     }
     return referencedLSMs.toArray(new String[0]);
