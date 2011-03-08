@@ -173,8 +173,11 @@ public class FormatReaderTest {
         int y = reader.getSizeY();
         int c = reader.getRGBChannelCount();
         int type = reader.getPixelType();
+        int bytes = FormatTools.getBytesPerPixel(type);
 
-        if (c > 4) continue;
+        if (c > 4 || !TestTools.canFitInMemory(x * y * c * bytes)) {
+          continue;
+        }
 
         int num = reader.getImageCount();
         if (num > 3) num = 3; // test first three image planes only, for speed
@@ -233,6 +236,10 @@ public class FormatReaderTest {
 
         int expected = x * y * c * bytes;
 
+        if (!TestTools.canFitInMemory(expected)) {
+          continue;
+        }
+
         int num = reader.getImageCount();
         if (num > 3) num = 3; // test first three planes only, for speed
         for (int j=0; j<num && success; j++) {
@@ -268,8 +275,14 @@ public class FormatReaderTest {
         int y = reader.getThumbSizeY();
         int c = reader.getRGBChannelCount();
         int type = reader.getPixelType();
+        int bytes = FormatTools.getBytesPerPixel(type);
 
-        if (c > 4 || type == FormatTools.FLOAT || type == FormatTools.DOUBLE) {
+        int fx = reader.getSizeX();
+        int fy = reader.getSizeY();
+
+        if (c > 4 || type == FormatTools.FLOAT || type == FormatTools.DOUBLE ||
+          !TestTools.canFitInMemory(fx * fy * c * bytes))
+        {
           continue;
         }
 
@@ -332,12 +345,16 @@ public class FormatReaderTest {
         int c = reader.isIndexed() ? 1 : reader.getRGBChannelCount();
         int type = reader.getPixelType();
         int bytes = FormatTools.getBytesPerPixel(type);
+        int expected = x * y * c * bytes;
 
-        if (c > 4 || type == FormatTools.FLOAT || type == FormatTools.DOUBLE) {
+        int fx = reader.getSizeX();
+        int fy = reader.getSizeY();
+
+        if (c > 4 || type == FormatTools.FLOAT || type == FormatTools.DOUBLE ||
+          !TestTools.canFitInMemory(fx * fy * c * bytes))
+        {
           continue;
         }
-
-        int expected = x * y * c * bytes;
 
         byte[] b = reader.openThumbBytes(0);
         success = b.length == expected;

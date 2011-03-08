@@ -146,6 +146,13 @@ public class TestTools {
     return null;
   }
 
+  /** Returns true if a byte buffer of the given size will fit in memory. */
+  public static boolean canFitInMemory(int bufferSize) {
+    Runtime r = Runtime.getRuntime();
+    long mem = r.freeMemory();
+    return bufferSize < mem;
+  }
+
   /** Gets the quantity of used memory, in MB. */
   public static long getUsedMemory() {
     Runtime r = Runtime.getRuntime();
