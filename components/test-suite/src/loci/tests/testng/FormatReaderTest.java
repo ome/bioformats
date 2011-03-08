@@ -476,6 +476,12 @@ public class FormatReaderTest {
     if (!initFile()) result(testName, false, "initFile");
     String msg = null;
     try {
+      String format = config.getReader();
+      if (format.equals("OMETiffReader") || format.equals("OMEXMLReader")) {
+        result(testName, true);
+        return;
+      }
+
       MetadataRetrieve retrieve = (MetadataRetrieve) reader.getMetadataStore();
       boolean success = omexmlService.isOMEXMLMetadata(retrieve);
       if (!success) msg = TestTools.shortClassName(retrieve);
@@ -484,7 +490,8 @@ public class FormatReaderTest {
         // total number of ChannelComponents should match SizeC
         int sizeC = retrieve.getPixelsSizeC(i).getValue().intValue();
         int nChannelComponents = retrieve.getChannelCount(i);
-        int samplesPerPixel = retrieve.getChannelSamplesPerPixel(i, 0).getValue();
+        int samplesPerPixel =
+          retrieve.getChannelSamplesPerPixel(i, 0).getValue();
 
         if (sizeC != nChannelComponents * samplesPerPixel) {
           msg = "ChannelComponent";
