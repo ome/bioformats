@@ -1233,7 +1233,8 @@ public class FormatReaderTest {
     String file = reader.getCurrentFile();
     boolean isThisTypeOpen = reader.isThisType(file, true);
     boolean isThisTypeNotOpen = reader.isThisType(file, false);
-    result(testName, isThisTypeOpen == isThisTypeNotOpen,
+    result(testName, (isThisTypeOpen == isThisTypeNotOpen) ||
+      (isThisTypeOpen && !isThisTypeNotOpen),
       "open = " + isThisTypeOpen + ", !open = " + isThisTypeNotOpen);
   }
 
