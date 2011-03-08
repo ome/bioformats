@@ -52,6 +52,7 @@ import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
 import loci.formats.FileStitcher;
+import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
@@ -1102,7 +1103,17 @@ public class FormatReaderTest {
           int imageCount = reader.getImageCount();
           totalPlanes += imageCount;
           byte[] buf = new byte[FormatTools.getPlaneSize(reader)];
-          for (int j=0; j<imageCount; j++) reader.openBytes(j, buf);
+          for (int j=0; j<imageCount; j++) {
+            try {
+              reader.openBytes(j, buf);
+            }
+            catch (FormatException e) {
+              LOGGER.info("", e);
+            }
+            catch (IOException e) {
+              LOGGER.info("", e);
+            }
+          }
         }
         long t2 = System.currentTimeMillis();
         System.gc();
