@@ -261,6 +261,12 @@ public class LIFReader extends FormatReader {
       lastChannel = realChannel[series][pos[1]];
     }
 
+    if (series >= offsets.size()) {
+      // truncate file; imitate LAS AF and return black planes
+      Arrays.fill(buf, (byte) 0);
+      return buf;
+    }
+
     long offset = offsets.get(series).longValue();
     int bytes = FormatTools.getBytesPerPixel(getPixelType());
     int bpp = bytes * getRGBChannelCount();
@@ -525,15 +531,17 @@ public class LIFReader extends FormatReader {
             store.setLaserWavelength(new PositiveInteger(wavelength), i, laser);
           }
 
-          double intensity = (Double) laserIntensities.get(laser);
-          if (intensity < 100 && nextChannel >= 0 && wavelength != 0) {
-            store.setChannelLightSourceSettingsID(id, i, nextChannel);
-            store.setChannelLightSourceSettingsAttenuation(
-              new PercentFraction((float) intensity / 100f), i, nextChannel);
-            store.setChannelExcitationWavelength(
-              new PositiveInteger(wavelength), i, nextChannel);
+          if (laser < laserIntensities.size()) {
+            double intensity = (Double) laserIntensities.get(laser);
+            if (intensity < 100 && nextChannel >= 0 && wavelength != 0) {
+              store.setChannelLightSourceSettingsID(id, i, nextChannel);
+              store.setChannelLightSourceSettingsAttenuation(
+                new PercentFraction((float) intensity / 100f), i, nextChannel);
+              store.setChannelExcitationWavelength(
+                new PositiveInteger(wavelength), i, nextChannel);
 
-            nextChannel--;
+              nextChannel--;
+            }
           }
         }
       }
