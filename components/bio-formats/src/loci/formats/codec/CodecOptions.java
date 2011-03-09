@@ -125,6 +125,7 @@ public class CodecOptions {
     this.previousImage = options.previousImage;
     this.lossless = options.lossless;
     this.colorModel = options.colorModel;
+    this.quality = options.quality;
     this.tileWidth = options.tileWidth;
     this.tileHeight = options.tileHeight;
     this.tileGridXOffset = options.tileGridXOffset;
