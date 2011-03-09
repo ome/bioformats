@@ -42,6 +42,7 @@ import loci.common.services.AbstractService;
 import loci.common.services.ServiceException;
 import loci.formats.codec.JPEG2000CodecOptions;
 
+import com.sun.media.imageio.plugins.jpeg2000.J2KImageReadParam;
 import com.sun.media.imageio.plugins.jpeg2000.J2KImageWriteParam;
 import com.sun.media.imageioimpl.plugins.jpeg2000.J2KImageReader;
 import com.sun.media.imageioimpl.plugins.jpeg2000.J2KImageReaderSpi;
@@ -79,6 +80,7 @@ public class JAIIIOServiceImpl extends AbstractService
     checkClassDependency(J2KImageWriteParam.class);
     checkClassDependency(J2KImageWriter.class);
     checkClassDependency(J2KImageWriterSpi.class);
+    checkClassDependency(J2KImageReadParam.class);
     checkClassDependency(J2KImageReader.class);
     checkClassDependency(J2KImageReaderSpi.class);
   }
@@ -114,6 +116,10 @@ public class JAIIIOServiceImpl extends AbstractService
       param.setTiling(options.tileWidth, options.tileHeight,
                       options.tileGridXOffset, options.tileGridYOffset);
     }
+    if (options.numDecompositionLevels != null) {
+      param.setNumDecompositionLevels(
+          options.numDecompositionLevels.intValue());
+    }
     writer.write(null, iioImage, param);
     ios.close();
   }
@@ -128,6 +134,20 @@ public class JAIIIOServiceImpl extends AbstractService
     options.codeBlockSize = codeBlockSize;
     options.quality = quality;
     writeImage(out, img, options);
+  }
+
+  /* @see JAIIIOService#readImage(InputStream, JPEG2000CodecOptions) */
+  public BufferedImage readImage(InputStream in, JPEG2000CodecOptions options)
+    throws IOException, ServiceException
+  {
+    setupReader();
+    MemoryCacheImageInputStream mciis = new MemoryCacheImageInputStream(in);
+    reader.setInput(mciis, false, true);
+    J2KImageReadParam param = (J2KImageReadParam) reader.getDefaultReadParam();
+    if (options.resolution != null) {
+      param.setResolution(options.resolution.intValue());
+    }
+    return reader.read(0, param);
   }
 
   /* @see JAIIIOService#readImage(InputStream) */

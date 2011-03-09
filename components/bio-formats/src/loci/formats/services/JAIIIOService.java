@@ -72,6 +72,27 @@ public interface JAIIIOService extends Service {
   public void writeImage(OutputStream out, BufferedImage img, boolean lossless,
    int[] codeBlockSize, double quality) throws IOException, ServiceException;
 
+  /**
+   * Reads an image using JAI Image I/O using the JPEG 2000 codec.
+   * @param in Target input stream.
+   * @param options Options for the JPEG 2000 codec.
+   * @throws IOException Thrown if there is an error reading from or writing
+   * to one of the target streams / buffers.
+   * @throws ServiceException Thrown if there is an error initializing or
+   * interacting with the dependencies of the service.
+   */
+  public BufferedImage readImage(InputStream in, JPEG2000CodecOptions options)
+    throws IOException, ServiceException;
+
+  /**
+   * Reads an image using JAI Image I/O using the JPEG 2000 codec.
+   * @param in Target input stream.
+   * @throws IOException Thrown if there is an error reading from or writing
+   * to one of the target streams / buffers.
+   * @throws ServiceException Thrown if there is an error initializing or
+   * interacting with the dependencies of the service.
+   * @see #readImage(InputStream, JPEG2000CodecOptions)
+   */
   public BufferedImage readImage(InputStream in)
     throws IOException, ServiceException;
 
