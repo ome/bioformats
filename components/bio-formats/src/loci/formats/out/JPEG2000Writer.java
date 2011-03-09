@@ -32,6 +32,7 @@ import loci.formats.FormatWriter;
 import loci.formats.MetadataTools;
 import loci.formats.codec.CodecOptions;
 import loci.formats.codec.JPEG2000Codec;
+import loci.formats.codec.JPEG2000CodecOptions;
 import loci.formats.meta.MetadataRetrieve;
 
 /**
@@ -47,6 +48,12 @@ public class JPEG2000Writer extends FormatWriter {
 
   private static final String LOSSY = "Lossy";
   private static final String LOSSLESS = "Lossless";
+
+  // -- Fields --
+
+  /** Default JPEG 2000 codec options. */
+  private JPEG2000CodecOptions options = 
+    JPEG2000CodecOptions.getDefaultOptions();
 
   // -- Constructor --
 
@@ -78,7 +85,7 @@ public class JPEG2000Writer extends FormatWriter {
       retrieve.getPixelsType(series).toString()));
     int nChannels = getSamplesPerPixel();
 
-    CodecOptions options = new CodecOptions();
+    options = new JPEG2000CodecOptions(options);
     options.width = width;
     options.height = height;
     options.channels = nChannels;
@@ -100,4 +107,19 @@ public class JPEG2000Writer extends FormatWriter {
       FormatTools.UINT16};
   }
 
+  /**
+   * Sets the default JPEG 2000 codec options.
+   * @param options The codec options to set.
+   */
+  public void setDefaultJPEG2000CodecOptions(JPEG2000CodecOptions options) {
+    this.options = options;
+  }
+
+  /**
+   * Retrieves the current default JPEG 2000 codec options.
+   * @return See above.
+   */
+  public JPEG2000CodecOptions getDefaultJPEG2000CodecOptions() {
+    return options;
+  }
 }

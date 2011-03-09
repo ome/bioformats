@@ -56,6 +56,30 @@ public class CodecOptions {
   public boolean signed;
 
   /**
+   * Tile width as it would be provided to:
+   * {@link javax.imageio.ImageWriteParam#setTiling(int, int, int, int)}.
+   */
+  public int tileWidth;
+
+  /**
+   * Tile height as it would be provided to:
+   * {@link javax.imageio.ImageWriteParam#setTiling(int, int, int, int)}.
+   */
+  public int tileHeight;
+
+  /**
+   * Horizontal offset of the tile grid as it would be provided to:
+   * {@link javax.imageio.ImageWriteParam#setTiling(int, int, int, int)}.
+   */
+  public int tileGridXOffset;
+
+  /**
+   * Vertical offset of the tile grid as it would be provided to:
+   * {@link javax.imageio.ImageWriteParam#setTiling(int, int, int, int)}.
+   */
+  public int tileGridYOffset;
+
+  /**
    * If compressing, this is the maximum number of raw bytes to compress.
    * If decompressing, this is the maximum number of raw bytes to return.
    */
@@ -91,6 +115,10 @@ public class CodecOptions {
     this.previousImage = options.previousImage;
     this.lossless = options.lossless;
     this.colorModel = options.colorModel;
+    this.tileWidth = options.tileWidth;
+    this.tileHeight = options.tileHeight;
+    this.tileGridXOffset = options.tileGridXOffset;
+    this.tileGridYOffset = options.tileGridYOffset;
   }
 
   // -- Static methods --

@@ -40,6 +40,7 @@ import javax.imageio.stream.MemoryCacheImageInputStream;
 
 import loci.common.services.AbstractService;
 import loci.common.services.ServiceException;
+import loci.formats.codec.JPEG2000CodecOptions;
 
 import com.sun.media.imageio.plugins.jpeg2000.J2KImageWriteParam;
 import com.sun.media.imageioimpl.plugins.jpeg2000.J2KImageReader;
@@ -82,9 +83,9 @@ public class JAIIIOServiceImpl extends AbstractService
     checkClassDependency(J2KImageReaderSpi.class);
   }
 
-  /* @see JAIIIOService#writeImage(OutputStream, BufferedImage) */
-  public void writeImage(OutputStream out, BufferedImage img, boolean lossless,
-    int[] codeBlockSize, double quality) throws IOException, ServiceException
+  /* @see JAIIIOService#writeImage(OutputStream, BufferedImage, JPEG2000CodecOptions) */
+  public void writeImage(OutputStream out, BufferedImage img,
+      JPEG2000CodecOptions options) throws IOException, ServiceException
   {
     ImageOutputStream ios = ImageIO.createImageOutputStream(out);
 
@@ -97,7 +98,7 @@ public class JAIIIOServiceImpl extends AbstractService
     J2KImageWriter writer = new J2KImageWriter(spi);
     writer.setOutput(ios);
 
-    String filter = lossless ? J2KImageWriteParam.FILTER_53 :
+    String filter = options.lossless ? J2KImageWriteParam.FILTER_53 :
       J2KImageWriteParam.FILTER_97;
 
     IIOImage iioImage = new IIOImage(img, null, null);
@@ -105,12 +106,24 @@ public class JAIIIOServiceImpl extends AbstractService
       (J2KImageWriteParam) writer.getDefaultWriteParam();
     param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
     param.setCompressionType("JPEG2000");
-    param.setLossless(lossless);
+    param.setLossless(options.lossless);
     param.setFilter(filter);
-    param.setCodeBlockSize(codeBlockSize);
-    param.setEncodingRate(quality);
+    param.setCodeBlockSize(options.codeBlockSize);
+    param.setEncodingRate(options.quality);
     writer.write(null, iioImage, param);
     ios.close();
+  }
+
+  /* @see JAIIIOService#writeImage(OutputStream, BufferedImage) */
+  public void writeImage(OutputStream out, BufferedImage img, boolean lossless,
+    int[] codeBlockSize, double quality) throws IOException, ServiceException
+  {
+    JPEG2000CodecOptions options =
+      JPEG2000CodecOptions.getDefaultOptions();
+    options.lossless = lossless;
+    options.codeBlockSize = codeBlockSize;
+    options.quality = quality;
+    writeImage(out, img, options);
   }
 
   /* @see JAIIIOService#readImage(InputStream) */
