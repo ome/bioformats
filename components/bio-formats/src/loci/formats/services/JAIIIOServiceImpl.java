@@ -110,6 +110,10 @@ public class JAIIIOServiceImpl extends AbstractService
     param.setFilter(filter);
     param.setCodeBlockSize(options.codeBlockSize);
     param.setEncodingRate(options.quality);
+    if (options.tileWidth > 0 && options.tileHeight > 0) {
+      param.setTiling(options.tileWidth, options.tileHeight,
+                      options.tileGridXOffset, options.tileGridYOffset);
+    }
     writer.write(null, iioImage, param);
     ios.close();
   }

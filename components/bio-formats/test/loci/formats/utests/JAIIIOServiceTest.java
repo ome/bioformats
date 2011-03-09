@@ -66,7 +66,6 @@ public class JAIIIOServiceTest {
     service = sf.getInstance(JAIIIOService.class);
   }
 
-  @Test
   public ByteArrayOutputStream testWriteImageLossy()
     throws IOException, ServiceException {
     BufferedImage image = new BufferedImage(SIZE_X, SIZE_Y, IMAGE_TYPE);
@@ -81,7 +80,6 @@ public class JAIIIOServiceTest {
     return stream;
   }
 
-  @Test
   public ByteArrayOutputStream testWriteImageLossless()
     throws IOException, ServiceException {
     BufferedImage image = new BufferedImage(SIZE_X, SIZE_Y, IMAGE_TYPE);
@@ -94,6 +92,42 @@ public class JAIIIOServiceTest {
     service.writeImage(stream, image, options);
     assertTrue(stream.size() > 0);
     return stream;
+  }
+
+  @Test
+  public void testWriteTiledImageLossy()
+    throws IOException, ServiceException {
+    BufferedImage image = new BufferedImage(SIZE_X, SIZE_Y, IMAGE_TYPE);
+    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+    // Code block size minimum is 4x4
+    JPEG2000CodecOptions options = JPEG2000CodecOptions.getDefaultOptions();
+    options.lossless = false;
+    options.codeBlockSize = CODE_BLOCK;
+    options.quality = 1.0f;
+    options.tileWidth = 32;
+    options.tileHeight = 32;
+    options.tileGridXOffset = 0;
+    options.tileGridYOffset = 0;
+    service.writeImage(stream, image, options);
+    assertTrue(stream.size() > 0);
+  }
+
+  @Test
+  public void testWriteTiledImageLossless()
+    throws IOException, ServiceException {
+    BufferedImage image = new BufferedImage(SIZE_X, SIZE_Y, IMAGE_TYPE);
+    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+    // Code block size minimum is 4x4
+    JPEG2000CodecOptions options = JPEG2000CodecOptions.getDefaultOptions();
+    options.lossless = true;
+    options.codeBlockSize = CODE_BLOCK;
+    options.quality = 1.0f;
+    options.tileWidth = 32;
+    options.tileHeight = 32;
+    options.tileGridXOffset = 0;
+    options.tileGridYOffset = 0;
+    service.writeImage(stream, image, options);
+    assertTrue(stream.size() > 0);
   }
 
   @Test
