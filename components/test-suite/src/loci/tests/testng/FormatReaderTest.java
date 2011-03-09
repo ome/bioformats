@@ -1341,6 +1341,7 @@ public class FormatReaderTest {
       File f = new File(new Location(file).getParent(), ".bioformats");
       Configuration newConfig = new Configuration(reader, f.getAbsolutePath());
       newConfig.saveToFile();
+      reader.close();
     }
     catch (Throwable t) {
       LOGGER.info("", t);
