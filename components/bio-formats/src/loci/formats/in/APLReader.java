@@ -257,7 +257,7 @@ public class APLReader extends FormatReader {
     LOGGER.debug("Searching {} for a directory with TIFFs", parentDirectory);
 
     Location dir = new Location(parentDirectory);
-    String[] list = dir.list(true);
+    String[] list = dir.list();
     String topDirectory = null;
     for (String f : list) {
       LOGGER.debug("  '{}'", f);
