@@ -35,6 +35,7 @@ import java.io.IOException;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
+import loci.formats.codec.JPEG2000CodecOptions;
 import loci.formats.services.JAIIIOService;
 
 import org.testng.annotations.BeforeMethod;
@@ -71,7 +72,11 @@ public class JAIIIOServiceTest {
     BufferedImage image = new BufferedImage(SIZE_X, SIZE_Y, IMAGE_TYPE);
     ByteArrayOutputStream stream = new ByteArrayOutputStream();
     // Code block size minimum is 4x4
-    service.writeImage(stream, image, false, CODE_BLOCK, 1.0);
+    JPEG2000CodecOptions options = JPEG2000CodecOptions.getDefaultOptions();
+    options.lossless = false;
+    options.codeBlockSize = CODE_BLOCK;
+    options.quality = 1.0f;
+    service.writeImage(stream, image, options);
     assertTrue(stream.size() > 0);
     return stream;
   }
@@ -82,7 +87,11 @@ public class JAIIIOServiceTest {
     BufferedImage image = new BufferedImage(SIZE_X, SIZE_Y, IMAGE_TYPE);
     ByteArrayOutputStream stream = new ByteArrayOutputStream();
     // Code block size minimum is 4x4
-    service.writeImage(stream, image, true, CODE_BLOCK, 1.0);
+    JPEG2000CodecOptions options = JPEG2000CodecOptions.getDefaultOptions();
+    options.lossless = true;
+    options.codeBlockSize = CODE_BLOCK;
+    options.quality = 1.0f;
+    service.writeImage(stream, image, options);
     assertTrue(stream.size() > 0);
     return stream;
   }
