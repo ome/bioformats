@@ -77,8 +77,14 @@ public class JPEG2000Codec extends BaseCodec {
   {
     initialize();
 
-    JPEG2000CodecOptions j2kOptions =
-      JPEG2000CodecOptions.getDefaultOptions(options);
+    JPEG2000CodecOptions j2kOptions;
+    if (options instanceof JPEG2000CodecOptions) {
+      j2kOptions = (JPEG2000CodecOptions) options;
+    }
+    else {
+      j2kOptions = (JPEG2000CodecOptions)
+        JPEG2000CodecOptions.getDefaultOptions(options);
+    }
 
     ByteArrayOutputStream out = new ByteArrayOutputStream();
     BufferedImage img = null;
@@ -140,8 +146,7 @@ public class JPEG2000Codec extends BaseCodec {
     }
 
     try {
-      service.writeImage(out, img, j2kOptions.lossless,
-        j2kOptions.codeBlockSize, j2kOptions.quality);
+      service.writeImage(out, img, j2kOptions);
     }
     catch (IOException e) {
       throw new FormatException("Could not compress JPEG-2000 data.", e);
