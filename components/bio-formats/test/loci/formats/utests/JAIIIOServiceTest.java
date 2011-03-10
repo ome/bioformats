@@ -54,6 +54,7 @@ public class JAIIIOServiceTest {
 
   private static final int SIZE_Y = 96;
 
+  //Code block size minimum is 4x4
   private static final int[] CODE_BLOCK = new int[] { 4, 4 };
 
   private static final int IMAGE_TYPE = BufferedImage.TYPE_INT_ARGB;
@@ -65,31 +66,33 @@ public class JAIIIOServiceTest {
     ServiceFactory sf = new ServiceFactory();
     service = sf.getInstance(JAIIIOService.class);
   }
-
-  public ByteArrayOutputStream testWriteImageLossy()
+  
+  private ByteArrayOutputStream writeImage(JPEG2000CodecOptions options)
     throws IOException, ServiceException {
     BufferedImage image = new BufferedImage(SIZE_X, SIZE_Y, IMAGE_TYPE);
     ByteArrayOutputStream stream = new ByteArrayOutputStream();
-    // Code block size minimum is 4x4
+    service.writeImage(stream, image, options);
+    return stream;
+  }
+
+  public ByteArrayOutputStream testWriteImageLossy()
+    throws IOException, ServiceException {
     JPEG2000CodecOptions options = JPEG2000CodecOptions.getDefaultOptions();
     options.lossless = false;
     options.codeBlockSize = CODE_BLOCK;
     options.quality = 1.0f;
-    service.writeImage(stream, image, options);
+    ByteArrayOutputStream stream = writeImage(options);
     assertTrue(stream.size() > 0);
     return stream;
   }
 
   public ByteArrayOutputStream testWriteImageLossless()
     throws IOException, ServiceException {
-    BufferedImage image = new BufferedImage(SIZE_X, SIZE_Y, IMAGE_TYPE);
-    ByteArrayOutputStream stream = new ByteArrayOutputStream();
-    // Code block size minimum is 4x4
     JPEG2000CodecOptions options = JPEG2000CodecOptions.getDefaultOptions();
     options.lossless = true;
     options.codeBlockSize = CODE_BLOCK;
     options.quality = 1.0f;
-    service.writeImage(stream, image, options);
+    ByteArrayOutputStream stream = writeImage(options);
     assertTrue(stream.size() > 0);
     return stream;
   }
@@ -97,9 +100,6 @@ public class JAIIIOServiceTest {
   @Test
   public void testWriteTiledImageLossy()
     throws IOException, ServiceException {
-    BufferedImage image = new BufferedImage(SIZE_X, SIZE_Y, IMAGE_TYPE);
-    ByteArrayOutputStream stream = new ByteArrayOutputStream();
-    // Code block size minimum is 4x4
     JPEG2000CodecOptions options = JPEG2000CodecOptions.getDefaultOptions();
     options.lossless = false;
     options.codeBlockSize = CODE_BLOCK;
@@ -108,16 +108,13 @@ public class JAIIIOServiceTest {
     options.tileHeight = 32;
     options.tileGridXOffset = 0;
     options.tileGridYOffset = 0;
-    service.writeImage(stream, image, options);
+    ByteArrayOutputStream stream = writeImage(options);
     assertTrue(stream.size() > 0);
   }
 
   @Test
   public void testWriteTiledImageLossless()
     throws IOException, ServiceException {
-    BufferedImage image = new BufferedImage(SIZE_X, SIZE_Y, IMAGE_TYPE);
-    ByteArrayOutputStream stream = new ByteArrayOutputStream();
-    // Code block size minimum is 4x4
     JPEG2000CodecOptions options = JPEG2000CodecOptions.getDefaultOptions();
     options.lossless = true;
     options.codeBlockSize = CODE_BLOCK;
@@ -126,7 +123,7 @@ public class JAIIIOServiceTest {
     options.tileHeight = 32;
     options.tileGridXOffset = 0;
     options.tileGridYOffset = 0;
-    service.writeImage(stream, image, options);
+    ByteArrayOutputStream stream = writeImage(options);
     assertTrue(stream.size() > 0);
   }
 
@@ -147,6 +144,68 @@ public class JAIIIOServiceTest {
     ByteArrayInputStream inputStream = 
       new ByteArrayInputStream(outputStream.toByteArray());
     BufferedImage image = service.readImage(inputStream);
+    assertNotNull(image);
+    assertEquals(SIZE_X, image.getWidth());
+    assertEquals(SIZE_Y, image.getHeight());
+  }
+  
+  @Test
+  public void testReadImageLevel0Lossy() throws IOException, ServiceException {
+    ByteArrayOutputStream outputStream = testWriteImageLossy();
+    ByteArrayInputStream inputStream = 
+      new ByteArrayInputStream(outputStream.toByteArray());
+    JPEG2000CodecOptions options = JPEG2000CodecOptions.getDefaultOptions();
+    options.resolution = 0;
+    BufferedImage image = service.readImage(inputStream, options);
+    assertNotNull(image);
+    assertEquals(2, image.getWidth());
+    assertEquals(3, image.getHeight());
+  }
+
+  @Test
+  public void testReadImageLevel0Lossless() throws IOException, ServiceException {
+    ByteArrayOutputStream outputStream = testWriteImageLossless();
+    ByteArrayInputStream inputStream = 
+      new ByteArrayInputStream(outputStream.toByteArray());
+    JPEG2000CodecOptions options = JPEG2000CodecOptions.getDefaultOptions();
+    options.resolution = 0;
+    BufferedImage image = service.readImage(inputStream, options);
+    assertNotNull(image);
+    assertEquals(2, image.getWidth());
+    assertEquals(3, image.getHeight());
+  }
+
+  @Test
+  public void testNumDecompositionLevelsLossy()
+    throws IOException, ServiceException {
+    JPEG2000CodecOptions options = JPEG2000CodecOptions.getDefaultOptions();
+    options.numDecompositionLevels = 2;
+    options.resolution = 2;
+    options.lossless = false;
+    options.codeBlockSize = CODE_BLOCK;
+    options.quality = 1.0f;
+    ByteArrayOutputStream outputStream = writeImage(options);
+    ByteArrayInputStream inputStream = 
+      new ByteArrayInputStream(outputStream.toByteArray());
+    BufferedImage image = service.readImage(inputStream, options);
+    assertNotNull(image);
+    assertEquals(SIZE_X, image.getWidth());
+    assertEquals(SIZE_Y, image.getHeight());
+  }
+
+  @Test
+  public void testNumDecompositionLevelsLossless()
+    throws IOException, ServiceException {
+    JPEG2000CodecOptions options = JPEG2000CodecOptions.getDefaultOptions();
+    options.numDecompositionLevels = 2;
+    options.resolution = 2;
+    options.lossless = true;
+    options.codeBlockSize = CODE_BLOCK;
+    options.quality = 1.0f;
+    ByteArrayOutputStream outputStream = writeImage(options);
+    ByteArrayInputStream inputStream = 
+      new ByteArrayInputStream(outputStream.toByteArray());
+    BufferedImage image = service.readImage(inputStream, options);
     assertNotNull(image);
     assertEquals(SIZE_X, image.getWidth());
     assertEquals(SIZE_Y, image.getHeight());
