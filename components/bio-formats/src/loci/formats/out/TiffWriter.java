@@ -26,12 +26,11 @@ package loci.formats.out;
 import java.io.IOException;
 
 import loci.common.RandomAccessInputStream;
-import loci.common.RandomAccessOutputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.FormatWriter;
 import loci.formats.ImageTools;
-import loci.formats.MetadataTools;
+import loci.formats.codec.CompressionType;
 import loci.formats.gui.AWTImageTools;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.tiff.IFD;
@@ -51,11 +50,16 @@ public class TiffWriter extends FormatWriter {
 
   // -- Constants --
 
-  public static final String COMPRESSION_UNCOMPRESSED = "Uncompressed";
-  public static final String COMPRESSION_LZW = "LZW";
-  public static final String COMPRESSION_J2K = "J2K";
-  public static final String COMPRESSION_J2K_LOSSY = "J2K-Lossy";
-  public static final String COMPRESSION_JPEG = "JPEG";
+  public static final String COMPRESSION_UNCOMPRESSED = 
+    CompressionType.UNCOMPRESSED.getCompression();
+  public static final String COMPRESSION_LZW = 
+    CompressionType.LZW.getCompression();
+  public static final String COMPRESSION_J2K = 
+    CompressionType.J2K.getCompression();
+  public static final String COMPRESSION_J2K_LOSSY = 
+    CompressionType.J2K_LOSSY.getCompression();
+  public static final String COMPRESSION_JPEG = 
+    CompressionType.JPEG.getCompression();
 
   // -- Fields --
 

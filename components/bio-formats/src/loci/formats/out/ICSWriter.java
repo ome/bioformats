@@ -26,10 +26,8 @@ package loci.formats.out;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.StringTokenizer;
 
 import loci.common.RandomAccessInputStream;
-import loci.common.RandomAccessOutputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.FormatWriter;

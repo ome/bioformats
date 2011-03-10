@@ -26,7 +26,6 @@ package loci.formats.out;
 import java.io.IOException;
 import java.util.Vector;
 
-import loci.common.RandomAccessOutputStream;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
@@ -35,14 +34,13 @@ import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.FormatWriter;
 import loci.formats.ImageTools;
-import loci.formats.MetadataTools;
 import loci.formats.MissingLibraryException;
 import loci.formats.codec.Base64Codec;
 import loci.formats.codec.CodecOptions;
+import loci.formats.codec.CompressionType;
 import loci.formats.codec.JPEG2000Codec;
 import loci.formats.codec.JPEGCodec;
 import loci.formats.codec.ZlibCodec;
-import loci.formats.in.OMETiffReader;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.services.OMEXMLService;
 import loci.formats.services.OMEXMLServiceImpl;
@@ -69,7 +67,8 @@ public class OMEXMLWriter extends FormatWriter {
   public OMEXMLWriter() {
     super("OME-XML", "ome");
     compressionTypes =
-      new String[] {"Uncompressed", "zlib"};
+      new String[] {CompressionType.UNCOMPRESSED.getCompression(), 
+        CompressionType.ZLIB.getCompression()};
     compression = compressionTypes[0];
   }
 
