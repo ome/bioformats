@@ -745,6 +745,18 @@ public class LeicaReader extends FormatReader {
         return lei;
       }
       else {
+        if (!lei.endsWith("lei") && !lei.endsWith("LEI")) {
+          lei = lei.substring(0, lei.lastIndexOf(".") + 1);
+          String test = lei + "lei";
+          if (new Location(test).exists()) {
+            return test;
+          }
+          test = lei + "LEI";
+          if (new Location(test).exists()) {
+            return test;
+          }
+        }
+
         l = l.getParentFile();
         String[] list = l.list();
         for (int i=0; i<list.length; i++) {
