@@ -28,6 +28,8 @@ import java.io.IOException;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.ImageReader;
+import loci.formats.FormatTools;
+import loci.formats.FormatException;
 
 /**
  * Java bridge connecting Bio-Formats to ITK via JNI.
@@ -45,7 +47,6 @@ public class BioFormatsItkBridge {
   }
 
   public static boolean canReadFile(String id) {
-    System.out.println("In BFITKBridge\nid: " + id);
     boolean h = false;
     try {
       h = reader.isThisType(id);
@@ -53,7 +54,6 @@ public class BioFormatsItkBridge {
       e.printStackTrace();
     }
 
-    System.out.println("h is: " + h);
     return h;
   }
 
@@ -124,7 +124,37 @@ public class BioFormatsItkBridge {
     return returnValues;
   }
 
-  public static void readPlane(int p) {
+  public static void readPlane(int z, int c, int t, byte[] buf, int xStart, int yStart, int xCount, int yCount) {
+	  int no = reader.getIndex(z, c, t);
+	  
+	  try {
+		  reader.openBytes(no, buf, xStart, yStart, xCount, yCount);
+	  } catch (FormatException e) {
+	      // TODO Auto-generated catch block
+	      e.printStackTrace();
+	  } catch (IOException e) {
+	      e.printStackTrace();
+	  }
+  }
+  
+  public static void close() {
+	  try {
+		  reader.close();
+	  } catch (IOException e) {
+		  e.printStackTrace();
+	  }
+  }
+  
+  public static boolean getIsInterleaved() {
+	  return reader.isInterleaved();
+  }
+  
+  public static int getImageCount() {
+	  return reader.getImageCount();
+  }
+  
+  public static int getBytesPerPixel() {
+	  return FormatTools.getBytesPerPixel(reader.getPixelType());
   }
 
   public void quit() {
