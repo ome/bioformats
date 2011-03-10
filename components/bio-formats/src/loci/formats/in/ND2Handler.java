@@ -515,6 +515,13 @@ public class ND2Handler extends DefaultHandler {
             }
           }
         }
+        else if (runtype.endsWith("XYPosLoop") && core.length == 1) {
+          CoreMetadata oldCore = core[0];
+          core = new CoreMetadata[Integer.parseInt(value)];
+          for (int i=0; i<core.length; i++) {
+            core[i] = oldCore;
+          }
+        }
       }
     }
     else if (key.endsWith("uiBpcSignificant")) {
