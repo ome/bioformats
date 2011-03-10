@@ -28,6 +28,7 @@ import static org.testng.AssertJUnit.assertNotNull;
 import static org.testng.AssertJUnit.assertTrue;
 
 import java.awt.image.BufferedImage;
+import java.awt.image.Raster;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -148,7 +149,29 @@ public class JAIIIOServiceTest {
     assertEquals(SIZE_X, image.getWidth());
     assertEquals(SIZE_Y, image.getHeight());
   }
-  
+
+  @Test
+  public void testReadRasterLossy() throws IOException, ServiceException {
+    ByteArrayOutputStream outputStream = testWriteImageLossy();
+    ByteArrayInputStream inputStream = 
+      new ByteArrayInputStream(outputStream.toByteArray());
+    Raster image = service.readRaster(inputStream);
+    assertNotNull(image);
+    assertEquals(SIZE_X, image.getWidth());
+    assertEquals(SIZE_Y, image.getHeight());
+  }
+
+  @Test
+  public void testReadRasterLossless() throws IOException, ServiceException {
+    ByteArrayOutputStream outputStream = testWriteImageLossless();
+    ByteArrayInputStream inputStream = 
+      new ByteArrayInputStream(outputStream.toByteArray());
+    Raster image = service.readRaster(inputStream);
+    assertNotNull(image);
+    assertEquals(SIZE_X, image.getWidth());
+    assertEquals(SIZE_Y, image.getHeight());
+  }
+
   @Test
   public void testReadImageLevel0Lossy() throws IOException, ServiceException {
     ByteArrayOutputStream outputStream = testWriteImageLossy();
@@ -170,6 +193,32 @@ public class JAIIIOServiceTest {
     JPEG2000CodecOptions options = JPEG2000CodecOptions.getDefaultOptions();
     options.resolution = 0;
     BufferedImage image = service.readImage(inputStream, options);
+    assertNotNull(image);
+    assertEquals(2, image.getWidth());
+    assertEquals(3, image.getHeight());
+  }
+
+  @Test
+  public void testReadRasterLevel0Lossy() throws IOException, ServiceException {
+    ByteArrayOutputStream outputStream = testWriteImageLossy();
+    ByteArrayInputStream inputStream = 
+      new ByteArrayInputStream(outputStream.toByteArray());
+    JPEG2000CodecOptions options = JPEG2000CodecOptions.getDefaultOptions();
+    options.resolution = 0;
+    Raster image = service.readRaster(inputStream, options);
+    assertNotNull(image);
+    assertEquals(2, image.getWidth());
+    assertEquals(3, image.getHeight());
+  }
+
+  @Test
+  public void testReadRasterLevel0Lossless() throws IOException, ServiceException {
+    ByteArrayOutputStream outputStream = testWriteImageLossless();
+    ByteArrayInputStream inputStream = 
+      new ByteArrayInputStream(outputStream.toByteArray());
+    JPEG2000CodecOptions options = JPEG2000CodecOptions.getDefaultOptions();
+    options.resolution = 0;
+    Raster image = service.readRaster(inputStream, options);
     assertNotNull(image);
     assertEquals(2, image.getWidth());
     assertEquals(3, image.getHeight());
