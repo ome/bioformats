@@ -154,10 +154,7 @@ public class JAIIIOServiceImpl extends AbstractService
   public BufferedImage readImage(InputStream in)
     throws IOException, ServiceException
   {
-    setupReader();
-    MemoryCacheImageInputStream mciis = new MemoryCacheImageInputStream(in);
-    reader.setInput(mciis, false, true);
-    return reader.read(0, null);
+    return readImage(in, JPEG2000CodecOptions.getDefaultOptions());
   }
 
   /* @see JAIIIOService#readRaster(InputStream, JPEG2000CodecOptions) */
