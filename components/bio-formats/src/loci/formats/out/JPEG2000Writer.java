@@ -24,13 +24,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.out;
 
 import java.io.IOException;
-
-import loci.common.RandomAccessOutputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.FormatWriter;
-import loci.formats.MetadataTools;
-import loci.formats.codec.CodecOptions;
+import loci.formats.codec.CompressionType;
 import loci.formats.codec.JPEG2000Codec;
 import loci.formats.codec.JPEG2000CodecOptions;
 import loci.formats.meta.MetadataRetrieve;
@@ -44,11 +41,6 @@ import loci.formats.meta.MetadataRetrieve;
  */
 public class JPEG2000Writer extends FormatWriter {
 
-  // -- Constants --
-
-  private static final String LOSSY = "Lossy";
-  private static final String LOSSLESS = "Lossless";
-
   // -- Fields --
 
   /** Default JPEG 2000 codec options. */
@@ -59,7 +51,8 @@ public class JPEG2000Writer extends FormatWriter {
 
   public JPEG2000Writer() {
     super("JPEG-2000", "jp2");
-    compressionTypes = new String[] {LOSSY, LOSSLESS};
+    compressionTypes = new String[] {CompressionType.LOSSY.getCompression(), 
+        CompressionType.LOSSLESS.getCompression()};
   }
 
   // -- IFormatWriter API methods --
@@ -92,7 +85,8 @@ public class JPEG2000Writer extends FormatWriter {
     options.bitsPerSample = bytesPerPixel * 8;
     options.littleEndian = littleEndian;
     options.interleaved = interleaved;
-    options.lossless = compression == null || compression.equals(LOSSLESS);
+    options.lossless = compression == null || 
+    compression.equals(CompressionType.LOSSLESS.getCompression());
     options.colorModel = getColorModel();
 
     out.write(new JPEG2000Codec().compress(buf, options));

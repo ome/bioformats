@@ -25,12 +25,9 @@ package loci.formats.out;
 
 import java.io.IOException;
 
-import loci.common.DataTools;
-import loci.common.RandomAccessOutputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.FormatWriter;
-import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataRetrieve;
 
 /**

@@ -28,11 +28,9 @@ import java.io.IOException;
 import java.util.Date;
 
 import loci.common.DataTools;
-import loci.common.RandomAccessOutputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.FormatWriter;
-import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataRetrieve;
 
 /**

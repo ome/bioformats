@@ -30,11 +30,9 @@ import java.util.zip.CRC32;
 import java.util.zip.DeflaterOutputStream;
 
 import loci.common.DataTools;
-import loci.common.RandomAccessOutputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.FormatWriter;
-import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataRetrieve;
 
 /**

@@ -154,18 +154,27 @@ public class JAIIIOServiceImpl extends AbstractService
   public BufferedImage readImage(InputStream in)
     throws IOException, ServiceException
   {
-    setupReader();
-    MemoryCacheImageInputStream mciis = new MemoryCacheImageInputStream(in);
-    reader.setInput(mciis, false, true);
-    return reader.read(0);
+    return readImage(in, JPEG2000CodecOptions.getDefaultOptions());
   }
 
-  public Raster readRaster(InputStream in) throws IOException, ServiceException
+  /* @see JAIIIOService#readRaster(InputStream, JPEG2000CodecOptions) */
+  public Raster readRaster(InputStream in, JPEG2000CodecOptions options)
+    throws IOException, ServiceException
   {
     setupReader();
     MemoryCacheImageInputStream mciis = new MemoryCacheImageInputStream(in);
     reader.setInput(mciis, false, true);
-    return reader.readRaster(0, null);
+    J2KImageReadParam param = (J2KImageReadParam) reader.getDefaultReadParam();
+    if (options.resolution != null) {
+      param.setResolution(options.resolution.intValue());
+    }
+    return reader.readRaster(0, param);
+  }
+
+  /* @see JAIIIOService#readRaster(InputStream) */
+  public Raster readRaster(InputStream in) throws IOException, ServiceException
+  {
+    return readRaster(in, JPEG2000CodecOptions.getDefaultOptions());
   }
 
   /** Set up the JPEG-2000 image reader. */

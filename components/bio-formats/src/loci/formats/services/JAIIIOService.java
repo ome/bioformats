@@ -47,6 +47,7 @@ public interface JAIIIOService extends Service {
    * @param out Target output stream.
    * @param img Source buffered image.
    * @param options Options for the JPEG 2000 codec.
+   * @returns An AWT buffered image.
    * @throws IOException Thrown if there is an error reading from or writing
    * to one of the target streams / buffers.
    * @throws ServiceException Thrown if there is an error initializing or
@@ -62,6 +63,7 @@ public interface JAIIIOService extends Service {
    * @param lossless Whether or not to compress losslessly.
    * @param codeBlockSize JPEG 2000 code block size.
    * @param quality JPEG 2000 quality level.
+   * @returns An AWT buffered image.
    * @throws IOException Thrown if there is an error reading from or writing
    * to one of the target streams / buffers.
    * @throws ServiceException Thrown if there is an error initializing or
@@ -76,6 +78,7 @@ public interface JAIIIOService extends Service {
    * Reads an image using JAI Image I/O using the JPEG 2000 codec.
    * @param in Target input stream.
    * @param options Options for the JPEG 2000 codec.
+   * @returns An AWT buffered image.
    * @throws IOException Thrown if there is an error reading from or writing
    * to one of the target streams / buffers.
    * @throws ServiceException Thrown if there is an error initializing or
@@ -87,6 +90,7 @@ public interface JAIIIOService extends Service {
   /**
    * Reads an image using JAI Image I/O using the JPEG 2000 codec.
    * @param in Target input stream.
+   * @returns An AWT buffered image.
    * @throws IOException Thrown if there is an error reading from or writing
    * to one of the target streams / buffers.
    * @throws ServiceException Thrown if there is an error initializing or
@@ -96,6 +100,29 @@ public interface JAIIIOService extends Service {
   public BufferedImage readImage(InputStream in)
     throws IOException, ServiceException;
 
+  /**
+   * Reads an image into a raster using JAI Image I/O using the JPEG 2000 codec.
+   * @param in Target input stream.
+   * @param options Options for the JPEG 2000 codec.
+   * @returns An AWT image raster.
+   * @throws IOException Thrown if there is an error reading from or writing
+   * to one of the target streams / buffers.
+   * @throws ServiceException Thrown if there is an error initializing or
+   * interacting with the dependencies of the service.
+   */
+  public Raster readRaster(InputStream in, JPEG2000CodecOptions options)
+    throws IOException, ServiceException;
+
+  /**
+   * Reads an image into a raster using JAI Image I/O using the JPEG 2000 codec.
+   * @param in Target input stream.
+   * @returns An AWT image raster.
+   * @throws IOException Thrown if there is an error reading from or writing
+   * to one of the target streams / buffers.
+   * @throws ServiceException Thrown if there is an error initializing or
+   * interacting with the dependencies of the service.
+   * @see #readRaster(InputStream, JPEG2000CodecOptions)
+   */
   public Raster readRaster(InputStream in) throws IOException, ServiceException;
 
 }

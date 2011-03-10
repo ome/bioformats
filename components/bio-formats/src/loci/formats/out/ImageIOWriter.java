@@ -29,7 +29,6 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import loci.common.RandomAccessOutputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.FormatWriter;

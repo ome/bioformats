@@ -27,11 +27,11 @@ import java.io.IOException;
 import java.util.Vector;
 
 import loci.common.RandomAccessInputStream;
-import loci.common.RandomAccessOutputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.FormatWriter;
 import loci.formats.MetadataTools;
+import loci.formats.codec.CompressionType;
 import loci.formats.gui.LegacyQTTools;
 import loci.formats.meta.MetadataRetrieve;
 
@@ -124,13 +124,19 @@ public class QTWriter extends FormatWriter {
     LegacyQTTools tools = new LegacyQTTools();
     if (tools.canDoQT()) {
       compressionTypes = new String[] {
-        "Uncompressed",
+          CompressionType.UNCOMPRESSED.getCompression(),
         // NB: Writing to Motion JPEG-B with QTJava seems to be broken.
         /*"Motion JPEG-B",*/
-        "Cinepak", "Animation", "H.263", "Sorenson", "Sorenson 3", "MPEG 4"
+          CompressionType.CINEPAK.getCompression(), 
+          CompressionType.ANIMATION.getCompression(), 
+          CompressionType.H_263.getCompression(), 
+          CompressionType.SORENSON.getCompression(), 
+          CompressionType.SORENSON_3.getCompression(), 
+          CompressionType.MPEG_4.getCompression()
       };
     }
-    else compressionTypes = new String[] {"Uncompressed"};
+    else compressionTypes = new String[] {
+        CompressionType.UNCOMPRESSED.getCompression()};
   }
 
   // -- QTWriter API methods --
@@ -138,7 +144,7 @@ public class QTWriter extends FormatWriter {
   /**
    * Sets the encoded movie's codec.
    * @param codec Codec value:<ul>
-   *   <li>QTWriter.CODEC_CINEPAK</li>
+   *   <li>QTWriterCODEC_CINEPAK</li>
    *   <li>QTWriter.CODEC_ANIMATION</li>
    *   <li>QTWriter.CODEC_H_263</li>
    *   <li>QTWriter.CODEC_SORENSON</li>
