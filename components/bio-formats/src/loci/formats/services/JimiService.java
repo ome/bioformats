@@ -26,6 +26,7 @@ package loci.formats.services;
 import java.io.IOException;
 import java.io.InputStream;
 
+import loci.common.RandomAccessInputStream;
 import loci.common.services.DependencyException;
 import loci.common.services.Service;
 import loci.common.services.ServiceException;
@@ -40,6 +41,12 @@ public interface JimiService extends Service {
 
   /** Initialize the given file. */
   public void initialize(String id);
+
+  /** Initialize the given file. */
+  public void initialize(RandomAccessInputStream in);
+
+  /** Initialize the given file. */
+  public void initialize(RandomAccessInputStream in, int y, int h);
 
   /**
    * Return the scanline for row 'y' from the currently initialized file.

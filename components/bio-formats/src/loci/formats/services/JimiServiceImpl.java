@@ -67,18 +67,32 @@ public class JimiServiceImpl implements JimiService {
 
   /* @see loci.formats.services.JimiService#initialize(String) */
   public void initialize(String id) {
-    tiles = new TileCache();
-
     try {
-      in = new RandomAccessInputStream(id);
-      ImageProducer producer = Jimi.getImageProducer(in);
-      consumer = new JimiConsumer(producer);
-      producer.startProduction(consumer);
-      while (producer.isConsumer(consumer));
+      initialize(new RandomAccessInputStream(id));
     }
     catch (IOException e) {
       LOGGER.debug("", e);
     }
+  }
+
+  /**
+   * @see loci.formats.services.JimiService#initialize(RandomAccessInputStream)
+   */
+  public void initialize(RandomAccessInputStream in) {
+    initialize(in, 0, 0);
+  }
+
+  /**
+   * @see loci.formats.services.JimiService#initialize(RandomAccessInputStream)
+   */
+  public void initialize(RandomAccessInputStream in, int y, int h) {
+    this.in = in;
+    tiles = new TileCache();
+
+    ImageProducer producer = Jimi.getImageProducer(this.in);
+    consumer = new JimiConsumer(producer, y, h);
+    producer.startProduction(consumer);
+    while (producer.isConsumer(consumer));
   }
 
   /* @see loci.formats.services.JimiServices#getScanline(int) */
@@ -108,7 +122,9 @@ public class JimiServiceImpl implements JimiService {
   /* @see loci.formats.services.JimiService#close() */
   public void close() {
     try {
-      in.close();
+      if (in != null) {
+        in.close();
+      }
     }
     catch (IOException e) {
       LOGGER.debug("", e);
@@ -122,9 +138,16 @@ public class JimiServiceImpl implements JimiService {
   class JimiConsumer implements ImageConsumer {
     private int width, height;
     private ImageProducer producer;
+    private int yy = 0, hh = 0;
 
     public JimiConsumer(ImageProducer producer) {
       this.producer = producer;
+    }
+
+    public JimiConsumer(ImageProducer producer, int y, int h) {
+      this(producer);
+      this.yy = y;
+      this.hh = h;
     }
 
     // -- JimiConsumer API methods --
@@ -146,11 +169,19 @@ public class JimiServiceImpl implements JimiService {
     public void setDimensions(int width, int height) {
       this.width = width;
       this.height = height;
+      if (hh <= 0) hh = height;
     }
 
     public void setPixels(int x, int y, int w, int h, ColorModel model,
       byte[] pixels, int off, int scanSize)
     {
+      LOGGER.debug("Storing row {} of {} ({}%)", new Object[] {y, height,
+        ((double) y / height) * 100.0});
+      if (y >= (yy + hh)) {
+        imageComplete(0);
+        return;
+      }
+      else if (y < yy) return;
       try {
         tiles.add(pixels, x, y, w, h);
       }
@@ -165,6 +196,13 @@ public class JimiServiceImpl implements JimiService {
     public void setPixels(int x, int y, int w, int h, ColorModel model,
       int[] pixels, int off, int scanSize)
     {
+      LOGGER.debug("Storing row {} of {} ({}%)", new Object[] {y, (yy + hh),
+        ((double) y / (yy + hh)) * 100.0});
+      if (y >= (yy + hh)) {
+        imageComplete(0);
+        return;
+      }
+      else if (y < yy) return;
       try {
         tiles.add(pixels, x, y, w, h);
       }
