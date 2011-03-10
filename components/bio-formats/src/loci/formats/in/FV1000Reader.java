@@ -337,6 +337,9 @@ public class FV1000Reader extends FormatReader {
       creationDate = null;
       lut = null;
       channels = null;
+      if (lutNames != null) {
+        lutNames.clear();
+      }
     }
   }
 
