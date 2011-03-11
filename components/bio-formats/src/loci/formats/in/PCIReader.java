@@ -174,9 +174,8 @@ public class PCIReader extends FormatReader {
         }
       }
       else if (relativePath.indexOf("Image_Depth") != -1) {
-        boolean firstBits = core[0].bitsPerPixel == 0;
-        int bits = (int) stream.readDouble();
-        core[0].bitsPerPixel = bits;
+        byte[] b = poi.getDocumentBytes(name, 8);
+        int bits = (int) DataTools.bytesToDouble(b, true);
         while (bits % 8 != 0 || bits == 0) bits++;
         switch (bits) {
           case 8:
@@ -184,6 +183,9 @@ public class PCIReader extends FormatReader {
             break;
           case 16:
             core[0].pixelType = FormatTools.UINT16;
+            break;
+          case 24:
+            core[0].pixelType = FormatTools.UINT8;
             break;
           case 32:
             core[0].pixelType = FormatTools.UINT32;
@@ -194,11 +196,9 @@ public class PCIReader extends FormatReader {
           default:
             throw new FormatException("Unsupported bits per pixel : " + bits);
         }
-        bits /= 8;
-        core[0].pixelType = FormatTools.pixelTypeFromBytes(bits, false, false);
-        if (getSizeC() > 1 && firstBits) {
-          core[0].sizeC /= bits;
-        }
+
+        core[0].sizeC =
+          bits / (FormatTools.getBytesPerPixel(getPixelType()) * 8);
       }
       else if (relativePath.indexOf("Image_Height") != -1 && getSizeY() == 0) {
         byte[] b = poi.getDocumentBytes(name, 8);
@@ -209,7 +209,9 @@ public class PCIReader extends FormatReader {
         core[0].sizeX = (int) DataTools.bytesToDouble(b, true);
       }
       else if (relativePath.indexOf("Time_From_Start") != -1) {
-        timestamps.put(getTimestampIndex(parent), stream.readDouble());
+        byte[] b = poi.getDocumentBytes(name, 8);
+        double stamp = (int) DataTools.bytesToDouble(b, true);
+        timestamps.put(getTimestampIndex(parent), stamp);
       }
       else if (relativePath.indexOf("Position_Z") != -1) {
         hasZ = true;
