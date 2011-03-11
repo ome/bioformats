@@ -25,13 +25,18 @@ package loci.formats.in;
 
 import java.io.IOException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.codec.CodecOptions;
+import loci.formats.codec.JPEG2000BoxType;
 import loci.formats.codec.JPEG2000Codec;
+import loci.formats.codec.JPEG2000SegmentMarker;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -42,6 +47,17 @@ import loci.formats.meta.MetadataStore;
  * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/JPEG2000Reader.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class JPEG2000Reader extends FormatReader {
+
+  // -- Constants --
+
+  /** Logger for this class. */
+  private static final Logger LOGGER =
+    LoggerFactory.getLogger(JPEG2000Reader.class);
+
+  // -- Fields --
+
+  /** The number of JPEG 2000 resolution levels the file has. */
+  private Integer resolutionLevels;
 
   // -- Constructor --
 
@@ -61,7 +77,7 @@ public class JPEG2000Reader extends FormatReader {
     boolean validStart = (stream.readShort() & 0xffff) == 0xff4f;
     if (!validStart) {
       stream.skipBytes(2);
-      validStart = stream.readInt() == 0x6a502020;
+      validStart = stream.readInt() == JPEG2000BoxType.SIGNATURE.getCode();
     }
     stream.seek(stream.length() - 2);
     boolean validEnd = (stream.readShort() & 0xffff) == 0xffd9;
@@ -96,44 +112,7 @@ public class JPEG2000Reader extends FormatReader {
 
     in = new RandomAccessInputStream(id);
 
-    long pos = in.getFilePointer();
-    int length = 0, box = 0;
-    boolean lastBoxFound = false;
-
-    while (pos < in.length() && !lastBoxFound) {
-      pos = in.getFilePointer();
-      length = in.readInt();
-      long nextPos = pos + length;
-      if (nextPos < 0 || nextPos >= in.length() || length == 0) {
-        lastBoxFound = true;
-      }
-      box = in.readInt();
-      pos = in.getFilePointer();
-      length -= 8;
-
-      if (box == 0x6a703268) {
-        in.skipBytes(4);
-        String s = in.readString(4);
-        if (s.equals("ihdr")) {
-          core[0].sizeY = in.readInt();
-          core[0].sizeX = in.readInt();
-          core[0].sizeC = in.readShort();
-          int type = in.readInt();
-          core[0].pixelType = convertPixelType(type);
-          lastBoxFound = true;
-        }
-      }
-      else if ((length + 8) == 0xff4fff51) {
-        core[0].sizeX = in.readInt();
-        core[0].sizeY = in.readInt();
-        in.skipBytes(24);
-        core[0].sizeC = in.readShort();
-        int type = in.readInt();
-        core[0].pixelType = convertPixelType(type);
-        lastBoxFound = true;
-      }
-      if (!lastBoxFound) in.seek(pos + length);
-    }
+    parseBoxes();
 
     core[0].sizeZ = 1;
     core[0].sizeT = 1;
@@ -149,6 +128,179 @@ public class JPEG2000Reader extends FormatReader {
   }
 
   // -- Helper methods --
+
+  /**
+   * Parses the JPEG 2000 JP2 metadata boxes.
+   * @throws IOException Thrown if there is an error reading from the file.
+   */
+  private void parseBoxes() throws IOException {
+    long pos = in.getFilePointer(), nextPos = 0;
+    LOGGER.info("Parsing JPEG 2000 boxes at {}", pos);
+    int length = 0, boxCode;
+    JPEG2000BoxType boxType;
+
+    while (pos < in.length()) {
+      pos = in.getFilePointer();
+      length = in.readInt();
+      nextPos = pos + length;
+      boxCode = in.readInt();
+      boxType = JPEG2000BoxType.get(boxCode);
+      length -= 8;
+      if (boxType == null) {
+        LOGGER.warn("Unknown JPEG 2000 box {} at {}", boxCode, pos);
+        if (pos == 0) {
+          in.seek(0);
+          if (JPEG2000SegmentMarker.get(in.readUnsignedShort()) != null) {
+            LOGGER.info("File is a raw codestream not a JP2.");
+            in.seek(0);
+            parseContiguousCodestream(in.length(), true);
+          }
+        }
+      }
+      else {
+        LOGGER.debug("Found JPEG 2000 '{}' box at {}", boxType.getName(), pos);
+        switch (boxType) {
+          case CONTIGUOUS_CODESTREAM: {
+            try {
+              parseContiguousCodestream(length, false);
+            }
+            catch (Exception e) {
+              LOGGER.warn("Could not parse contiguous codestream.", e);
+            }
+            break;
+          }
+          case HEADER: {
+            in.skipBytes(4);
+            String s = in.readString(4);
+            if (s.equals("ihdr")) {
+              core[0].sizeY = in.readInt();
+              core[0].sizeX = in.readInt();
+              core[0].sizeC = in.readShort();
+              int type = in.readInt();
+              core[0].pixelType = convertPixelType(type);
+            }
+            parseBoxes();
+            break;
+          }
+          default: {
+            if ((length + 8) == 0xff4fff51) {
+              core[0].sizeX = in.readInt();
+              core[0].sizeY = in.readInt();
+              in.skipBytes(24);
+              core[0].sizeC = in.readShort();
+              int type = in.readInt();
+              core[0].pixelType = convertPixelType(type);
+            }
+          }
+        }
+      }
+      // Exit or seek to the next metadata box
+      if (nextPos < 0 || nextPos >= in.length() || length == 0) {
+        LOGGER.debug("Exiting box parser loop.");
+        break;
+      }
+      LOGGER.debug("Seeking to next box at {}", nextPos);
+      in.seek(nextPos);
+    }
+  }
+
+  /**
+   * Parses the JPEG 2000 codestream metadata.
+   * @param length Total length of the codestream block.
+   * @param overrideSize Whether or not to override existing dimensions set
+   * potentially by JP2 metadata boxes.
+   * @throws IOException Thrown if there is an error reading from the file.
+   */
+  private void parseContiguousCodestream(long length, boolean overrideSize)
+    throws IOException {
+    JPEG2000SegmentMarker segmentMarker;
+    int segmentMarkerCode = 0, segmentLength = 0;
+    long pos = in.getFilePointer(), nextPos = 0;
+    LOGGER.info("Parsing JPEG 2000 contiguous codestream at {}", pos);
+    boolean terminate = false;
+    while (pos < length && !terminate) {
+      segmentMarkerCode = in.readUnsignedShort();
+      segmentMarker = JPEG2000SegmentMarker.get(segmentMarkerCode);
+      pos = in.getFilePointer();
+      if (segmentMarker == JPEG2000SegmentMarker.SOC
+          || segmentMarker == JPEG2000SegmentMarker.SOD
+          || segmentMarker == JPEG2000SegmentMarker.EPH
+          || segmentMarker == JPEG2000SegmentMarker.EOC
+          || (segmentMarkerCode >= JPEG2000SegmentMarker.RESERVED_DELIMITER_MARKER_MIN.getCode()
+              && segmentMarkerCode <= JPEG2000SegmentMarker.RESERVED_DELIMITER_MARKER_MAX.getCode())) {
+        // Delimiter marker; no segment.
+        segmentLength = 0;
+      }
+      else {
+        segmentLength = in.readUnsignedShort();
+      }
+      nextPos = pos + segmentLength;
+      if (segmentMarker == null) {
+        LOGGER.warn("Unknown JPEG 2000 segment marker {} at {}",
+            segmentMarkerCode, pos);
+      }
+      else {
+        LOGGER.debug("Found JPEG 2000 segment marker '{}' at {}",
+            segmentMarker.getName(), pos);
+        switch (segmentMarker) {
+          case EOC: {
+            terminate = true;
+            break;
+          }
+          case SIZ: {
+            if (!overrideSize) {
+              break;
+            }
+            // Skipping:
+            //  * Capability (uint16)
+            in.skipBytes(2);
+            core[0].sizeX = in.readInt();
+            LOGGER.debug("Read reference grid width {} at {}", core[0].sizeX,
+                in.getFilePointer());
+            core[0].sizeY = in.readInt();
+            LOGGER.debug("Read reference grid height {} at {}", core[0].sizeY,
+                in.getFilePointer());
+            // Skipping:
+            //  * Horizontal image offset (uint32)
+            //  * Vertical image offset (uint32)
+            //  * Tile width (uint32)
+            //  * Tile height (uint32)
+            //  * Horizontal tile offset (uint32)
+            //  * Vertical tile offset (uint32)
+            in.skipBytes(24);
+            core[0].sizeC = in.readShort();
+            LOGGER.debug("Read total components {} at {}",
+                core[0].sizeC, in.getFilePointer());
+            int type = in.readInt();
+            core[0].pixelType = convertPixelType(type);
+            LOGGER.debug("Read codestream pixel type {} at {}",
+                core[0].pixelType, in.getFilePointer());
+            break;
+          }
+          case COD: {
+            // Skipping:
+            //  * Segment coding style (uint8)
+            //  * Progression order (uint8)
+            //  * Total quality layers (uint16)
+            //  * Multiple component transform (uint8)
+            in.skipBytes(5);
+            resolutionLevels = in.readUnsignedByte();
+            LOGGER.debug("Found number of resolution levels {} at {} ", 
+                resolutionLevels, in.getFilePointer());
+            terminate = true;
+            break;
+          }
+        }
+      }
+      // Exit or seek to the next metadata box
+      if (nextPos < 0 || nextPos >= length || terminate) {
+        LOGGER.debug("Exiting segment marker parse loop.");
+        break;
+      }
+      LOGGER.debug("Seeking to next segment marker at {}", nextPos);
+      in.seek(nextPos);
+    }
+  }
 
   private int convertPixelType(int type) {
     if (type == 0xf070100 || type == 0xf070000) {
