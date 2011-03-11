@@ -26,13 +26,8 @@ package loci.formats.out;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.UUID;
 
-import ome.xml.model.BinData;
-import ome.xml.model.Image;
-import ome.xml.model.OME;
-import ome.xml.model.Pixels;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveInteger;
 

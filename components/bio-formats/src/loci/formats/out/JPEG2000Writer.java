@@ -64,23 +64,47 @@ public class JPEG2000Writer extends FormatWriter {
     throws FormatException, IOException
   {
     checkParams(no, buf, x, y, w, h);
+    
+    /*
     if (!isFullPlane(x, y, w, h)) {
       throw new FormatException(
         "JPEG2000Writer does not yet support saving image tiles.");
     }
+    */
+    MetadataRetrieve retrieve = getMetadataRetrieve();
+    //int width = retrieve.getPixelsSizeX(series).getValue().intValue();
+    //int height = retrieve.getPixelsSizeY(series).getValue().intValue();
+   
+    out.write(compressBuffer(no, buf, x, y, w, h));
+  }
+
+  /**
+   * Compresses the buffer.
+   * 
+   * @param no the image index within the current file, starting from 0.
+   * @param buf the byte array that represents the image tile.
+   * @param x the X coordinate of the upper-left corner of the image tile.
+   * @param y the Y coordinate of the upper-left corner of the image tile.
+   * @param w the width (in pixels) of the image tile.
+   * @param h the height (in pixels) of the image tile.
+   * @throws FormatException if one of the parameters is invalid.
+   * @throws IOException if there was a problem writing to the file.
+   */
+  public byte[] compressBuffer(int no, byte[] buf, int x, int y, int w, int h)
+    throws FormatException, IOException
+  {
+    checkParams(no, buf, x, y, w, h);
     MetadataRetrieve retrieve = getMetadataRetrieve();
     boolean littleEndian =
       !retrieve.getPixelsBinDataBigEndian(series, 0).booleanValue();
-    int width = retrieve.getPixelsSizeX(series).getValue().intValue();
-    int height = retrieve.getPixelsSizeY(series).getValue().intValue();
     int bytesPerPixel = FormatTools.getBytesPerPixel(
       FormatTools.pixelTypeFromString(
       retrieve.getPixelsType(series).toString()));
     int nChannels = getSamplesPerPixel();
 
     options = new JPEG2000CodecOptions(options);
-    options.width = width;
-    options.height = height;
+    options.width = w;
+    options.height = h;
     options.channels = nChannels;
     options.bitsPerSample = bytesPerPixel * 8;
     options.littleEndian = littleEndian;
@@ -89,9 +113,9 @@ public class JPEG2000Writer extends FormatWriter {
     compression.equals(CompressionType.LOSSLESS.getCompression());
     options.colorModel = getColorModel();
 
-    out.write(new JPEG2000Codec().compress(buf, options));
+    return new JPEG2000Codec().compress(buf, options);
   }
-
+    
   /* @see loci.formats.IFormatWriter#canDoStacks() */
   public boolean canDoStacks() { return false; }
 
