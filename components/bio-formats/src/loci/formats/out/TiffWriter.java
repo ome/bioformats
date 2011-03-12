@@ -123,12 +123,12 @@ public class TiffWriter extends FormatWriter {
     boolean littleEndian = bigEndian == null ?
       false : !bigEndian.booleanValue();
 
-    tiffSaver = new TiffSaver(out);
+    if (tiffSaver == null) tiffSaver = new TiffSaver(out); //test
     tiffSaver.setWritingSequentially(sequential);
     tiffSaver.setLittleEndian(littleEndian);
     tiffSaver.setBigTiff(isBigTiff);
 
-    if (!initialized[series][no]) {
+    if (no < initialized[series].length && !initialized[series][no]) {
       initialized[series][no] = true;
 
       RandomAccessInputStream tmp = new RandomAccessInputStream(currentId);
@@ -184,6 +184,8 @@ public class TiffWriter extends FormatWriter {
     ifd.put(new Integer(IFD.IMAGE_WIDTH), new Integer(width));
     ifd.put(new Integer(IFD.IMAGE_LENGTH), new Integer(height));
 
+   
+    
     Double physicalSizeX = retrieve.getPixelsPhysicalSizeX(series);
     if (physicalSizeX == null) physicalSizeX = 0d;
     else physicalSizeX = 1d / physicalSizeX;
@@ -224,7 +226,6 @@ public class TiffWriter extends FormatWriter {
       index += getPlaneCount();
     }
     setSeries(realSeries);
-
     tiffSaver.writeImage(buf, ifd, index, type, x, y, w, h,
       no == getPlaneCount() - 1 && getSeries() == retrieve.getImageCount() - 1);
     tiffSaver.setInputStream(null);
@@ -292,7 +293,7 @@ public class TiffWriter extends FormatWriter {
     if (codec != null && (codec.startsWith(COMPRESSION_J2K) ||
       codec.equals(COMPRESSION_JPEG)))
     {
-      return new int[] {FormatTools.INT8, FormatTools.UINT8};
+      return new int[] {FormatTools.INT8, FormatTools.UINT8};//, FormatTools.INT16, FormatTools.UINT16};//Question to ask
     }
     return new int[] {FormatTools.INT8, FormatTools.UINT8, FormatTools.INT16,
       FormatTools.UINT16, FormatTools.INT32, FormatTools.UINT32,

@@ -36,8 +36,8 @@ public class CompressionTypeTest {
 
   @Test
   public void testLookupName() {
-    CompressionType type = CompressionType.get(1);
-    assertEquals(CompressionType.LOSSLESS, type);
+    CompressionType type = CompressionType.get(2);
+    assertEquals(CompressionType.UNCOMPRESSED, type);
   }
 
   @Test(expectedExceptions={ EnumException.class })

@@ -51,8 +51,8 @@ public class JPEG2000Writer extends FormatWriter {
 
   public JPEG2000Writer() {
     super("JPEG-2000", "jp2");
-    compressionTypes = new String[] {CompressionType.LOSSY.getCompression(), 
-        CompressionType.LOSSLESS.getCompression()};
+    compressionTypes = new String[] {CompressionType.J2K_LOSSY.getCompression(), 
+        CompressionType.J2K.getCompression()};
   }
 
   // -- IFormatWriter API methods --
@@ -110,7 +110,7 @@ public class JPEG2000Writer extends FormatWriter {
     options.littleEndian = littleEndian;
     options.interleaved = interleaved;
     options.lossless = compression == null || 
-    compression.equals(CompressionType.LOSSLESS.getCompression());
+    compression.equals(CompressionType.J2K.getCompression());
     options.colorModel = getColorModel();
 
     return new JPEG2000Codec().compress(buf, options);
