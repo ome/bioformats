@@ -80,8 +80,6 @@ public class TiffWriter extends FormatWriter {
   private void formatCompression(IFD ifd)
     throws FormatException
   {
-    TiffCompression comp = ifd.getCompression();
-    if (comp != null) return;
     if (compression == null) compression = "";
     TiffCompression compressType = TiffCompression.UNCOMPRESSED;
     if (compression.equals(COMPRESSION_LZW)) {
@@ -96,7 +94,9 @@ public class TiffWriter extends FormatWriter {
     else if (compression.equals(COMPRESSION_JPEG)) {
       compressType = TiffCompression.JPEG;
     }
-    ifd.put(new Integer(IFD.COMPRESSION), compressType.getCode());
+    Object v = ifd.get(new Integer(IFD.COMPRESSION));
+    if (v == null)
+      ifd.put(new Integer(IFD.COMPRESSION), compressType.getCode());
   }
   
   // -- Constructors --
@@ -151,7 +151,7 @@ public class TiffWriter extends FormatWriter {
       false : !bigEndian.booleanValue();
 
     //if (tiffSaver == null) 
-    tiffSaver = new TiffSaver(out); //test
+    tiffSaver = new TiffSaver(out); 
     tiffSaver.setWritingSequentially(sequential);
     tiffSaver.setLittleEndian(littleEndian);
     tiffSaver.setBigTiff(isBigTiff);
