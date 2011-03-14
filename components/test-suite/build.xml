@@ -19,7 +19,7 @@ Type "ant -p" for a list of targets.
       <arg value="${filename}"/>
     </exec>
   </target>
-  
+
   <target name="test-open-bytes-performance" depends="compile"
     description="run tests for open bytes performance">
     <exec executable="${basedir}/target-test-runner">
@@ -54,7 +54,7 @@ Type "ant -p" for a list of targets.
       annotations="Javadoc" groups="all" testname="All tests"
       listener="loci.tests.testng.DotTestListener"
       suitename="LOCI software test suite"
-      failureProperty="failedTest">
+      failureProperty="failedTest" useDefaultListeners="false">
       <classpath>
         <pathelement location="${classes.dir}"/>
         <pathelement path="${component.classpath}"/>
