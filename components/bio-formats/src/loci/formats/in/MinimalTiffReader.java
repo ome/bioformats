@@ -276,7 +276,6 @@ public class MinimalTiffReader extends FormatReader {
       core[0].rgb = false;
     }
     if (getSizeC() == 1 && !isIndexed()) core[0].rgb = false;
-    core[0].falseColor = false;
     core[0].dimensionOrder = "XYCZT";
   }
 
