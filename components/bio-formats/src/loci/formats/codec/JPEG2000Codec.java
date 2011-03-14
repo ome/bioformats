@@ -199,10 +199,8 @@ public class JPEG2000Codec extends BaseCodec {
     if (options == null) {
       options = JPEG2000CodecOptions.getDefaultOptions();
     }
-    if (!(options instanceof JPEG2000CodecOptions)) {
-      throw new IllegalArgumentException(
-          "Codec options of type " + options.getClass().getName() +
-          " not supported.");
+    else {
+      options = new JPEG2000CodecOptions(options);
     }
 
     byte[][] single = null;
