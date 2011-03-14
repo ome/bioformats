@@ -72,6 +72,33 @@ public class TiffWriter extends FormatWriter {
   /** Whether or not to check the parameters passed to saveBytes. */
   private boolean checkParams = true;
 
+  /**
+   * Sets the compression code for the specified IFD.
+   * 
+   * @param ifd The IFD table to handle.
+   */
+  private void formatCompression(IFD ifd)
+    throws FormatException
+  {
+    TiffCompression comp = ifd.getCompression();
+    if (comp != null) return;
+    if (compression == null) compression = "";
+    TiffCompression compressType = TiffCompression.UNCOMPRESSED;
+    if (compression.equals(COMPRESSION_LZW)) {
+      compressType = TiffCompression.LZW;
+    }
+    else if (compression.equals(COMPRESSION_J2K)) {
+      compressType = TiffCompression.JPEG_2000;
+    }
+    else if (compression.equals(COMPRESSION_J2K_LOSSY)) {
+      compressType = TiffCompression.JPEG_2000_LOSSY;
+    }
+    else if (compression.equals(COMPRESSION_JPEG)) {
+      compressType = TiffCompression.JPEG;
+    }
+    ifd.put(new Integer(IFD.COMPRESSION), compressType.getCode());
+  }
+  
   // -- Constructors --
 
   public TiffWriter() {
@@ -123,7 +150,8 @@ public class TiffWriter extends FormatWriter {
     boolean littleEndian = bigEndian == null ?
       false : !bigEndian.booleanValue();
 
-    if (tiffSaver == null) tiffSaver = new TiffSaver(out); //test
+    //if (tiffSaver == null) 
+    tiffSaver = new TiffSaver(out); //test
     tiffSaver.setWritingSequentially(sequential);
     tiffSaver.setLittleEndian(littleEndian);
     tiffSaver.setBigTiff(isBigTiff);
@@ -170,6 +198,8 @@ public class TiffWriter extends FormatWriter {
       return;
     }
 
+    if (ifd == null) ifd = new IFD();
+    formatCompression(ifd);
     byte[][] lut = AWTImageTools.get8BitLookupTable(cm);
     if (lut != null) {
       int[] colorMap = new int[lut.length * lut[0].length];
@@ -265,23 +295,7 @@ public class TiffWriter extends FormatWriter {
       }
     }
 
-    if (compression == null) compression = "";
-    TiffCompression compressType = TiffCompression.UNCOMPRESSED;
-    if (compression.equals(COMPRESSION_LZW)) {
-      compressType = TiffCompression.LZW;
-    }
-    else if (compression.equals(COMPRESSION_J2K)) {
-      compressType = TiffCompression.JPEG_2000;
-    }
-    else if (compression.equals(COMPRESSION_J2K_LOSSY)) {
-      compressType = TiffCompression.JPEG_2000_LOSSY;
-    }
-    else if (compression.equals(COMPRESSION_JPEG)) {
-      compressType = TiffCompression.JPEG;
-    }
-    if (ifd.getCompression() == null) {
-      ifd.put(new Integer(IFD.COMPRESSION), compressType.getCode());
-    }
+    formatCompression(ifd);
     saveBytes(no, buf, ifd, x, y, w, h);
   }
 
@@ -293,7 +307,7 @@ public class TiffWriter extends FormatWriter {
     if (codec != null && (codec.startsWith(COMPRESSION_J2K) ||
       codec.equals(COMPRESSION_JPEG)))
     {
-      return new int[] {FormatTools.INT8, FormatTools.UINT8};//, FormatTools.INT16, FormatTools.UINT16};//Question to ask
+      return new int[] {FormatTools.INT8, FormatTools.UINT8, FormatTools.INT16, FormatTools.UINT16};//Question to ask
     }
     return new int[] {FormatTools.INT8, FormatTools.UINT8, FormatTools.INT16,
       FormatTools.UINT16, FormatTools.INT32, FormatTools.UINT32,
