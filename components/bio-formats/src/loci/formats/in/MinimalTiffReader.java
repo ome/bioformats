@@ -369,7 +369,6 @@ public class MinimalTiffReader extends FormatReader {
       }
     }
     if (getSizeC() == 1 && !isIndexed()) core[0].rgb = false;
-    core[0].falseColor = false;
     core[0].dimensionOrder = "XYCZT";
     core[0].bitsPerPixel = firstIFD.getBitsPerSample()[0];
   }
