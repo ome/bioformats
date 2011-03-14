@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -36,6 +37,7 @@ import loci.formats.MetadataTools;
 import loci.formats.codec.CodecOptions;
 import loci.formats.codec.JPEG2000BoxType;
 import loci.formats.codec.JPEG2000Codec;
+import loci.formats.codec.JPEG2000CodecOptions;
 import loci.formats.codec.JPEG2000SegmentMarker;
 import loci.formats.meta.MetadataStore;
 
@@ -92,9 +94,10 @@ public class JPEG2000Reader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    CodecOptions options = new CodecOptions();
+    JPEG2000CodecOptions options = new JPEG2000CodecOptions();
     options.interleaved = isInterleaved();
     options.littleEndian = isLittleEndian();
+    options.resolution = Math.abs(series - resolutionLevels);
 
     in.seek(0);
     byte[] plane = new JPEG2000Codec().decompress(in, options);
@@ -121,6 +124,19 @@ public class JPEG2000Reader extends FormatReader {
     core[0].rgb = getSizeC() > 1;
     core[0].interleaved = true;
     core[0].littleEndian = false;
+
+    // New core metadata now that we know how many sub-resolutions we have.
+    if (resolutionLevels != null) {
+      CoreMetadata[] newCore = new CoreMetadata[resolutionLevels + 1];
+      newCore[0] = core[0];
+      for (int i = 1; i < newCore.length; i++) {
+        newCore[i] = new CoreMetadata(this, 0);
+        newCore[i].sizeX = newCore[i - 1].sizeX / 2;
+        newCore[i].sizeY = newCore[i - 1].sizeY / 2;
+        newCore[i].thumbnail = true;
+      }
+      core = newCore;
+    }
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this, true);
