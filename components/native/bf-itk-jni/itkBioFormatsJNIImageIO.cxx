@@ -77,83 +77,114 @@ http://www.itk.org/Wiki/Plugin_IO_mechanisms
 namespace itk {
 
 	BioFormatsJNIImageIO::BioFormatsJNIImageIO() {
-      cout << "init is " << init << endl;
-      if(jvm == NULL)
-        cout << "the jvm is null" << endl;
+    //cout << endl;
+    //cout << "Constructing BioFormatsJNIIMageIO" << endl;
+    itkDebugMacro("Constructing BioFormatsJNIIMageIO");
 
-      if(env == NULL)
-        cout << "env is null" << endl;
+      jint numVms = 0;
+      jsize vm = 0;
+      jsize *nVMs = &vm;
 
-      if(BFITKBridge == NULL)
-        cout << "BFITKBridge is null" << endl;
-
-      if(init == false) {
-		  // NB: This program requires loci_tools.jar in the same directory.
-		  string classpath = "-Djava.class.path";
-		  const int numJars = 1;
-
-      const char name[] = "ITK_AUTOLOAD_PATH";
-      const char* namePtr;
-      namePtr = name;
-      char* path;
-      path = getenv(name);
-      std::string dir("");
-      if( path != NULL) {
-        dir.assign(path);
+      //cout << "nVMs: " << *nVMs << endl;
+      numVms = -1;
+      //cout << "Getting created JVMs..." << endl;
+      try{
+        numVms = JNI_GetCreatedJavaVMs(&jvm, 1, nVMs);
+      } catch (std::exception& e) {
+        itkDebugMacro( "Error counting created JVMs: " << e.what());
       }
 
-      if( dir.at(dir.length() - 1) != SLASH ) {
-        dir.append(1,SLASH);
+      //cout << "nVMs: " << *nVMs << endl;
+
+      //cout << "jvm: " << jvm << endl;
+      //cout << "env: " << env << endl;
+      //cout << "BFITKBridge: " << BFITKBridge << endl;
+
+
+      if(*nVMs == 0) {
+   		  // NB: This program requires loci_tools.jar in the same directory.
+  		  string classpath = "-Djava.class.path";
+  		  const int numJars = 1;
+
+        const char name[] = "ITK_AUTOLOAD_PATH";
+        const char* namePtr;
+        namePtr = name;
+        char* path;
+        path = getenv(name);
+        std::string dir("");
+        if( path != NULL) {
+          dir.assign(path);
+        }
+
+        if( dir.at(dir.length() - 1) != SLASH ) {
+          dir.append(1,SLASH);
+        }
+
+  		  string jars[numJars] = {
+    			(dir + "loci_tools.jar")
+  		  };
+  		  for (int i=0; i<numJars; i++) {
+    			classpath += i == 0 ? "=" : PATHSEP;
+    			classpath += jars[i];
+  		  }
+  		  //cout << "Classpath = " << classpath << endl;
+
+  		  // get the default initialization arguments and set the class path
+  		  JavaVMInitArgs vm_args;
+  		  //JNI_GetDefaultJavaVMInitArgs(&vm_args);
+  		  const int numOptions = 4;
+  		  JavaVMOption options[numOptions];
+  		  options[0].optionString = (char*) classpath.c_str();
+        options[1].optionString = "-Xcheck:jni";
+        options[2].optionString = "-Xmx256m";
+        options[3].optionString = "-Djava.awt.headless=true";
+  		  //options[1].optionString = "-verbose:jni";
+  		  vm_args.version = JNI_VERSION_1_6; // VM version 1.4
+  		  vm_args.options = options;
+  		  vm_args.nOptions = numOptions;
+  		  // load and initialize a Java VM, return a JNI interface pointer in env
+        itkDebugMacro("Creating JVM...");
+        int success = JNI_CreateJavaVM(&jvm, (void**) &env, &vm_args);
+        //cout << "success: " << success << endl;
+
+        //cout << "Done Constructing" << endl;
+  		  //if (JNI_CreateJavaVM(&jvm, (void**) &env, &vm_args)) {
+  			//  cout << "Failed to create the JVM" << endl;
+  			//exit(1);
+  		  //}
       }
-
-		  string jars[numJars] = {
-			(dir + "loci_tools.jar")
-		  };
-		  for (int i=0; i<numJars; i++) {
-			classpath += i == 0 ? "=" : PATHSEP;
-			classpath += jars[i];
-		  }
-		  cout << "Classpath = " << classpath << endl;
-
-		  // get the default initialization arguments and set the class path
-		  JavaVMInitArgs vm_args;
-		  //JNI_GetDefaultJavaVMInitArgs(&vm_args);
-		  const int numOptions = 4;
-		  JavaVMOption options[numOptions];
-		  options[0].optionString = (char*) classpath.c_str();
-      options[1].optionString = "-Xcheck:jni";
-      options[2].optionString = "-Xmx256m";
-      options[3].optionString = "-Djava.awt.headless=true";
-		  //options[1].optionString = "-verbose:jni";
-		  vm_args.version = JNI_VERSION_1_6; // VM version 1.4
-		  vm_args.options = options;
-		  vm_args.nOptions = numOptions;
-
-		  // load and initialize a Java VM, return a JNI interface pointer in env
-		  if (JNI_CreateJavaVM(&jvm, (void**) &env, &vm_args)) {
-			cout << "Failed to create the JVM" << endl;
-			exit(1);
-		  }
-      init = true;
+      else {
+        int attach = jvm->AttachCurrentThread((void**) &env, NULL);
+        //cout << "attach: " << attach << endl;
       }
-
       // construct BFITK bridge object
- 	    jclass itkBridgeClass = env->FindClass("loci/formats/BioFormatsItkBridge");
-	    cout << "Got itkBridge class: " << itkBridgeClass << endl;
+ 	    jclass itkBridgeClass = env->FindClass("loci/formats/tools/BioFormatsItkBridge");
+	    itkDebugMacro( "Got itkBridge class: " << itkBridgeClass );
       if (env->ExceptionOccurred()) {
         env->ExceptionDescribe();
       }
 
    	  jmethodID mid = env->GetMethodID(itkBridgeClass,
   	    "<init>", "()V");
-  	  cout << "Got constructor method: " << mid << endl;
+  	  //cout << "Got constructor method: " << mid << endl;
 
-      BFITKBridge = env->NewObject(itkBridgeClass, mid); 
-
+      BFITKBridge = env->NewObject(itkBridgeClass, mid);
+      //cout << "jvm: " << jvm << endl;
+      //cout << "env: " << env << endl;
+      //cout << "BFITKBridge: " << BFITKBridge << endl;
 	} // end constructor
 
 	BioFormatsJNIImageIO::~BioFormatsJNIImageIO() {
+    itkDebugMacro("Destructing"); 
+    //cout << "jvm: " << jvm << endl;
+    //cout << "env: " << env << endl;
+    //cout << "BFITKBridge: " << BFITKBridge << endl;
+
 	  //jvm->DestroyJavaVM();
+    jvm = NULL;
+    env = NULL;
+    BFITKBridge = NULL;
+    //cout << "Done destructing" << endl;
 	} // end destructor
 
 	bool BioFormatsJNIImageIO::CanReadFile(const char* FileNameToRead) {
@@ -166,28 +197,28 @@ namespace itk {
 	  }
 
 	  jclass itkBridgeClass = env->GetObjectClass(BFITKBridge);
-	  cout << "Got itkBridge class: " << itkBridgeClass << endl;
+	  //cout << "Got itkBridge class: " << itkBridgeClass << endl;
     if (env->ExceptionOccurred()) {
       env->ExceptionDescribe();
     }
 
 	  jmethodID mid = env->GetStaticMethodID(itkBridgeClass,
 	    "canReadFile", "(Ljava/lang/String;)Z");
-	  cout << "Got canReadFile method: " << mid << endl;
+	  //cout << "Got canReadFile method: " << mid << endl;
 
 	  jclass stringClass = env->FindClass("java/lang/String");
-	  cout << "Got String class: " << stringClass << endl;
+	  //cout << "Got String class: " << stringClass << endl;
 
 	  jobjectArray args = env->NewObjectArray(1, stringClass, 0);
 	  jstring arg = env->NewStringUTF(FileNameToRead);
-    cout << "File name: " << arg << endl;
+    //cout << "File name: " << arg << endl;
     env->SetObjectArrayElement(args, 0, arg);
 
 	  bool isType = 0;
 	  try {
 		// call Bio-Formats to check file type
 		isType = env->CallStaticBooleanMethod(itkBridgeClass, mid, arg);
-    cout << "istype: " << isType << endl;
+    //cout << "istype: " << isType << endl;
 		itkDebugMacro("isType = " << isType);
 	  }
 	  catch (std::exception& e) {
@@ -201,14 +232,14 @@ namespace itk {
 	      "BioFormatsImageIO::ReadImageInformation: m_FileName = " << m_FileName);
 
 	  jclass itkBridgeClass = env->GetObjectClass(BFITKBridge);
-		cout << "Got itkBridge class: " << itkBridgeClass << endl;
+		//cout << "Got itkBridge class: " << itkBridgeClass << endl;
 
 		jmethodID mid = env->GetStaticMethodID(itkBridgeClass,
 		"readImageInfo", "(Ljava/lang/String;)[I");
-		cout << "Got readImageInfo method: " << mid << endl;
+		//cout << "Got readImageInfo method: " << mid << endl;
 
 		jclass stringClass = env->FindClass("java/lang/String");
-		cout << "Got String class: " << stringClass << endl;
+		//cout << "Got String class: " << stringClass << endl;
 
 		jobjectArray args = env->NewObjectArray(1, stringClass, 0);
 		jstring arg = env->NewStringUTF(m_FileName.c_str());
@@ -217,7 +248,7 @@ namespace itk {
 		jint imageInfo [13];
 		jintArray imageInfoArr = (jintArray)env->CallStaticObjectMethod(itkBridgeClass, mid, arg);
 		env->GetIntArrayRegion(imageInfoArr, 0, 13, imageInfo);
-    cout << "Image info: " << imageInfo << endl;
+    //cout << "Image info: " << imageInfo << endl;
 	    try {
 	      int seriesCount = imageInfo[1];
 	      itkDebugMacro("Series count = " << seriesCount);
@@ -282,22 +313,11 @@ namespace itk {
 
 	      // NB: Always return 5D, to be unambiguous.
 	      int numDims = 5;
-	      /*
-	      int numDims = 2; // X and Y
-	      if (sizeZ > 1) numDims++; // multiple focal planes
-	      if (sizeT > 1) numDims++; // multiple time points
-	      if (effSizeC > 1) numDims++; // multiple independent channels
-	      */
 
 	      SetNumberOfDimensions(numDims);
 	      m_Dimensions[0] = sizeX;
 	      m_Dimensions[1] = sizeY;
-	      /*
-	      int dim = 2;
-	      if (sizeZ > 1) m_Dimensions[dim++] = sizeZ;
-	      if (sizeT > 1) m_Dimensions[dim++] = sizeT;
-	      if (effSizeC > 1) m_Dimensions[dim++] = effSizeC;
-	      */
+
 	      m_Dimensions[2] = sizeZ;
 	      m_Dimensions[3] = sizeT;
 	      m_Dimensions[4] = effSizeC;
@@ -334,155 +354,161 @@ namespace itk {
 	      itkDebugMacro("A C++ error occurred: " << e.what());
 	    }
 
-      cout << "Done setting image info" << endl;
+      //cout << "Done setting image info" << endl;
 	} // end ReadImageInformation function
 
 	void BioFormatsJNIImageIO::Read(void* pData) {
-		/*
-		   itkDebugMacro("BioFormatsImageIO::Read");
+    //cout << "BioFormatsImageIO::Read" << endl;
+		try {
 
-		    try {
-		      int pixelType = reader->getPixelType();
-		      int bpp = FormatTools::getBytesPerPixel(pixelType);
-		      int rgbChannelCount = reader->getRGBChannelCount();
-
-		      itkDebugMacro("Pixel type:" << std::endl
-		        << "Pixel type code = " << pixelType << std::endl
-		        << "Bytes per pixel = " << bpp << std::endl
-		        << "RGB channel count = " << rgbChannelCount);
-
-		      // check IO region to identify the planar extents desired
-		      ImageIORegion region = GetIORegion();
-		      int regionDim = region.GetImageDimension();
-		      int xStart = 0, xCount = 1;
-		      int yStart = 0, yCount = 1;
-		      int zStart = 0, zCount = 1;
-		      int tStart = 0, tCount = 1;
-		      int cStart = 0, cCount = 1;
-
-		      //int sizeZ = reader->getSizeZ();
-		      //int sizeT = reader->getSizeT();
-		      //int effSizeC = reader->getEffectiveSizeC();
-
-		      int xIndex = 0, yIndex = 1, zIndex = 2, tIndex = 3, cIndex = 4;
-		      //  Currently unnecessary, as images are assumed to be 5D
-		      //if (sizeZ == 1) {
-		      //  zIndex = -1;
-		      //  tIndex--;
-		      //  cIndex--;
-		      //}
-		      //if (sizeT == 1) {
-		      //  tIndex = -1;
-		      //  cIndex--;
-		      //}
-		      //if (effSizeC == 1) {
-		      //  cIndex = -1;
-		      //}
-
-		      for (int dim = 0; dim < regionDim; dim++) {
-		        int index = region.GetIndex(dim);
-		        int size = region.GetSize(dim);
-		        if (dim == xIndex) {
-		          xStart = index;
-		          xCount = size;
-		        }
-		        else if (dim == yIndex) {
-		          yStart = index;
-		          yCount = size;
-		        }
-		        else if (dim == zIndex) {
-		          zStart = index;
-		          zCount = size;
-		        }
-		        else if (dim == tIndex) {
-		          tStart = index;
-		          tCount = size;
-		        }
-		        else if (dim == cIndex) {
-		          cStart = index;
-		          cCount = size;
-		        }
-		      }
-		      int bytesPerPlane = xCount * yCount * bpp * rgbChannelCount;
-		      bool isInterleaved = reader->isInterleaved();
-
-		      itkDebugMacro("Region extents:" << std::endl
-		        << "\tRegion dimension = " << regionDim << std::endl
-		        << "\tX: start = " << xStart << ", count = " << xCount << std::endl
-		        << "\tY: start = " << yStart << ", count = " << yCount << std::endl
-		        << "\tZ: start = " << zStart << ", count = " << zCount << std::endl
-		        << "\tT: start = " << tStart << ", count = " << tCount << std::endl
-		        << "\tC: start = " << cStart << ", count = " << cCount << std::endl
-		        << "\tBytes per plane = " << bytesPerPlane << std::endl
-		        << "\tIsInterleaved = " << isInterleaved);
+		   jclass itkBridgeClass = env->GetObjectClass(BFITKBridge);
+	     //cout << "Got itkBridge class: " << itkBridgeClass << endl;
+		   jmethodID mid = env->GetStaticMethodID(itkBridgeClass,
+		   "getBytesPerPixel", "()I");
+		   //cout << "Got getBytesPerPixel method: " << mid << endl;
+       int bpp = env->CallStaticIntMethod(itkBridgeClass, mid);
 
 
-		      int imageCount = reader->getImageCount();
+		   int pixelType = m_PixelType;
+		   int rgbChannelCount = m_NumberOfComponents;
 
-		      // allocate temporary array
-		      bool canDoDirect = (rgbChannelCount == 1 || isInterleaved);
-		      jbyte* tmpData = NULL;
-		      if (!canDoDirect) tmpData = new jbyte[bytesPerPlane];
+		   itkDebugMacro("Pixel type:" << std::endl
+		     << "Pixel type code = " << pixelType << std::endl
+		     << "Bytes per pixel = " << bpp << std::endl
+		     << "RGB channel count = " << rgbChannelCount);
 
-		      jbyte* jData = (jbyte*) pData;
-		      ByteArray buf(bytesPerPlane); // pre-allocate buffer
-		      for (int c=cStart; c<cStart+cCount; c++) {
-		        for (int t=tStart; t<tStart+tCount; t++) {
-		          for (int z=zStart; z<zStart+zCount; z++) {
-		            int no = reader->getIndex(z, c, t);
-		            itkDebugMacro("Reading image plane " << no + 1
-		              << " (Z=" << z << ", T=" << t << ", C=" << c << ")"
-		              << " of " << imageCount << " available planes)");
-		            reader->openBytes(no, buf, xStart, yStart, xCount, yCount);
+		   // check IO region to identify the planar extents desired
+		   ImageIORegion region = GetIORegion();
+		   int regionDim = region.GetImageDimension();
+		   int xStart = 0, xCount = 1;
+		   int yStart = 0, yCount = 1;
+		   int zStart = 0, zCount = 1;
+		   int tStart = 0, tCount = 1;
+		   int cStart = 0, cCount = 1;
 
-		            JNIEnv* env = jace::helper::attach();
-		            jbyteArray jArray = static_cast<jbyteArray>(buf.getJavaJniArray());
-		            if (canDoDirect) {
-		              env->GetByteArrayRegion(jArray, 0, bytesPerPlane, jData);
-		            }
-		            else {
-		              // need to reorganize byte array after copy
-		              env->GetByteArrayRegion(jArray, 0, bytesPerPlane, tmpData);
+		   //int sizeZ = reader->getSizeZ();
+		   //int sizeT = reader->getSizeT();
+		   //int effSizeC = reader->getEffectiveSizeC();
 
-		              // reorganize elements
-		              int pos = 0;
-		              for (int x=0; x<xCount; x++) {
-		                for (int y=0; y<yCount; y++) {
-		                  for (int i=0; i<rgbChannelCount; i++) {
-		                    for (int b=0; b<bpp; b++) {
-		                      int index = yCount * (xCount * (rgbChannelCount * b + i) + x) + y;
-		                      jData[pos++] = tmpData[index];
-		                    }
-		                  }
-		                }
-		              }
-		            }
-		            jData += bytesPerPlane;
-		          }
-		        }
-		      }
+		   int xIndex = 0, yIndex = 1, zIndex = 2, tIndex = 3, cIndex = 4;
+		   //  Currently unnecessary, as images are assumed to be 5D
+		   //if (sizeZ == 1) {
+		   //  zIndex = -1;
+		   //  tIndex--;
+		   //  cIndex--;
+		   //}
+		   //if (sizeT == 1) {
+		   //  tIndex = -1;
+		   //  cIndex--;
+		   //}
+		   //if (effSizeC == 1) {
+		   //  cIndex = -1;
+		   //}
 
-		      // delete temporary array
-		      if (tmpData != NULL) {
-		        delete tmpData;
-		        tmpData = NULL;
-		      }
+		   for (int dim = 0; dim < regionDim; dim++) {
+		     int index = region.GetIndex(dim);
+		     int size = region.GetSize(dim);
+		     if (dim == xIndex) {
+		       xStart = index;
+		       xCount = size;
+		     }
+		     else if (dim == yIndex) {
+		       yStart = index;
+		       yCount = size;
+		     }
+		     else if (dim == zIndex) {
+		       zStart = index;
+		       zCount = size;
+		     }
+		     else if (dim == tIndex) {
+		       tStart = index;
+		       tCount = size;
+		     }
+		     else if (dim == cIndex) {
+		       cStart = index;
+		       cCount = size;
+		     }
+		   }
+		   int bytesPerPlane = xCount * yCount * bpp * rgbChannelCount;
 
-		      ((IFormatHandler*)reader)->close();
-		    }
-		    catch (Exception& e) {
-		      itkDebugMacro("A Java error occurred: " << DebugTools::getStackTrace(e));
-		    }
-		    catch (JNIException& jniException) {
-		      itkDebugMacro(
-		        "A JNI error occurred: " << jniException.what());
-		    }
-		    catch (std::exception& e) {
-		      itkDebugMacro("A C++ error occurred: " << e.what());
-		    }
-		    itkDebugMacro("Done.");
-		    */
-	} // end Read function
+		   mid = env->GetStaticMethodID(itkBridgeClass,
+		   "getIsInterleaved", "()Z");
+		   //cout << "Got getIsInterleaved method: " << mid << endl;
+       bool isInterleaved = env->CallStaticBooleanMethod(itkBridgeClass, mid);
+
+     itkDebugMacro("Region extents:" << std::endl
+       << "\tRegion dimension = " << regionDim << std::endl
+       << "\tX: start = " << xStart << ", count = " << xCount << std::endl
+       << "\tY: start = " << yStart << ", count = " << yCount << std::endl
+       << "\tZ: start = " << zStart << ", count = " << zCount << std::endl
+       << "\tT: start = " << tStart << ", count = " << tCount << std::endl
+       << "\tC: start = " << cStart << ", count = " << cCount << std::endl
+       << "\tBytes per plane = " << bytesPerPlane << std::endl
+       << "\tIsInterleaved = " << isInterleaved);
+
+		   mid = env->GetStaticMethodID(itkBridgeClass,
+		   "getImageCount", "()I");
+		   //cout << "Got getImageCount method: " << mid << endl;
+       int imageCount = env->CallStaticIntMethod(itkBridgeClass, mid);
+      //cout << "image count: " << imageCount << endl;
+     mid = env->GetStaticMethodID(itkBridgeClass, "readPlane", "(III[BIIII)V");
+     //cout << "Got readPlane method: " << mid << endl;
+
+     // allocate temporary array
+     bool canDoDirect = (rgbChannelCount == 1 || isInterleaved);
+     jbyte* tmpData = NULL;
+     if (!canDoDirect) tmpData = new jbyte[bytesPerPlane];
+
+     jbyte* jData = (jbyte*) pData;
+     jbyteArray buf = env->NewByteArray(bytesPerPlane); // pre-allocate buffer
+
+     for (int c=cStart; c<cStart+cCount; c++) {
+       for (int t=tStart; t<tStart+tCount; t++) {
+         for (int z=zStart; z<zStart+zCount; z++) {
+
+           itkDebugMacro( "reading plane...");
+           env->CallStaticVoidMethod(itkBridgeClass, mid,(jint) z,(jint) c, (jint)t, buf, (jint)xStart, (jint)yStart, (jint)xCount, (jint)yCount);
+           //cout << "plane read" << endl;
+
+           if (canDoDirect) {
+             env->GetByteArrayRegion(buf, 0, bytesPerPlane, jData);
+           }
+           else {
+             // need to reorganize byte array after copy
+             env->GetByteArrayRegion(buf, 0, bytesPerPlane, tmpData);
+
+             // reorganize elements
+             int pos = 0;
+             for (int x=0; x<xCount; x++) {
+               for (int y=0; y<yCount; y++) {
+                 for (int i=0; i<rgbChannelCount; i++) {
+                   for (int b=0; b<bpp; b++) {
+                     int index = yCount * (xCount * (rgbChannelCount * b + i) + x) + y;
+                     jData[pos++] = tmpData[index];
+                   }
+                 }
+               }
+             }
+           }
+           jData += bytesPerPlane;
+         }
+       }
+     }
+
+     // delete temporary array
+     if (tmpData != NULL) {
+       delete tmpData;
+       tmpData = NULL;
+     }
+
+     mid = env->GetStaticMethodID(itkBridgeClass, "close", "()V");
+     env->CallStaticVoidMethod(itkBridgeClass, mid);
+   }
+   catch (std::exception& e) {
+     itkDebugMacro("A C++ error occurred: " << e.what());
+   }
+   itkDebugMacro("Done.");
+ }// end Read function
 
 	bool BioFormatsJNIImageIO::CanWriteFile(const char* name) {
 		// TODO

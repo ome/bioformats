@@ -65,26 +65,12 @@ endif(NOT DEFINED BUILD_SHARED_LIBS)
 # --------------------------------------------------------------------------
 # Include dirs
 
-set(BF_CPP_DIR ${PROJECT_SOURCE_DIR}/../bf-cpp)
-
-include(${BF_CPP_DIR}/jace/Prerequisites.cmake)
-
-message(STATUS "-- Jace:")
-set(JACE_DIR NOTFOUND CACHE PATH
-  "The path to toplevel directory of your Jace checkout")
-if(IS_DIRECTORY "${JACE_DIR}")
-  message(STATUS "jace root     : ${JACE_DIR}")
-else(IS_DIRECTORY "${JACE_DIR}")
-  message(FATAL_ERROR "Cannot build without Jace. Please set JACE_DIR.")
-endif(IS_DIRECTORY "${JACE_DIR}")
+find_package(JNI REQUIRED)
 
 set(include_dirs
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
-  ${JAVA_INCLUDE_PATH} ${JAVA_INCLUDE_PATH2} ${Boost_INCLUDE_DIR}
-  ${JACE_DIR}/source/c++/include
-  ${BF_CPP_DIR}/include
-  ${BF_CPP_DIR}/proxies/include
+  ${JAVA_INCLUDE_PATH} ${JAVA_INCLUDE_PATH2}
 )
 
 #if(EXISTS "${ITK_DIR}/CMakeCache.txt")
@@ -93,8 +79,6 @@ set(include_dirs
 #endif(EXISTS "${ITK_DIR}/CMakeCache.txt")
 
 include_directories(${include_dirs})
-
-link_directories(${BF_CPP_DIR}/build ${BF_CPP_DIR}/build/jace)
 
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/itkBioFormatsImageIOConfigure.h.in
@@ -125,8 +109,6 @@ add_library(${lib_name}
 
 target_link_libraries(${lib_name}
   ITKIO
-  bfcpp
-  jace
   ${JAVA_JVM_LIBRARY}
 )
 
@@ -160,8 +142,6 @@ set_target_properties(BioFormatsIOPlugin
 )
 target_link_libraries(BioFormatsIOPlugin
   ${lib_name}
-  bfcpp
-  jace
   ${JAVA_JVM_LIBRARY}
 )
 
@@ -189,3 +169,13 @@ if(APPLE)
     DESTINATION ${BioFormatsImageIO_INSTALL_ITKFACTORIES_DIR}
   )
 endif(APPLE)
+
+#add_custom_command(
+#  TARGET BioFormatsIOPlugin
+#  DEPENDS "${CMAKE_BINARY_DIR}/libBioFormatsIOPlugin.dylib"
+#  POST_BUILD
+#  COMMAND ${CMAKE_COMMAND} -E make_directory
+#  COMMAND ${CMAKE_COMMAND} copy
+#  "${CMAKE_BINARY_DIR}/libBioFormatsIOPlugin.dylib"
+#  "${CMAKE_BINARY_DIR}/dist/bf-itk/libBioFormatsIOPlugin.dylib"
+#)

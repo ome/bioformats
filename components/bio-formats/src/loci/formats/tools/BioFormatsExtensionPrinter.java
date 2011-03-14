@@ -38,12 +38,13 @@ As such, if you wish to distribute this software with Bio-Formats itself,
 your combined work must be distributed under the terms of the GPL.
 */
 
+package loci.formats.tools;
+
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.io.IOException;
-
 /**
  * This class is used to generate a text file containing all of the
  * image file extensions supported by Bio-Formats.

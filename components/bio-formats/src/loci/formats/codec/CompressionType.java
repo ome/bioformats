@@ -39,8 +39,8 @@ import loci.common.enumeration.EnumException;
  */
 public enum CompressionType implements CodedEnum {
 
-  LOSSY(0, "Lossy"),
-  LOSSLESS(1, "Lossless"),
+  //LOSSY(0, "Lossy"),
+  //LOSSLESS(1, "Lossless"),
   UNCOMPRESSED(2, "Uncompressed"),
   ZLIB(3, "zlib"),
   CINEPAK(4, "Cinepak"),
@@ -50,8 +50,8 @@ public enum CompressionType implements CodedEnum {
   SORENSON_3(8, "Sorenson 3"),
   MPEG_4(9, "MPEG 4"),
   LZW(10, "LZW"),
-  J2K(11, "J2K"),
-  J2K_LOSSY(12, "J2K-Lossy"),
+  J2K(11, "JPEG-2000"),
+  J2K_LOSSY(12, "JPEG-2000 Lossy"),
   JPEG(13, "JPEG");
   
   /** Code for the compression. */

@@ -52,6 +52,7 @@ public class NikonElementsTiffReader extends BaseTiffReader {
   // -- Constants --
 
   private static final int NIKON_XML_TAG = 65332;
+  private static final int NIKON_XML_TAG_2 = 65333;
 
   // -- Fields --
 
@@ -89,8 +90,15 @@ public class NikonElementsTiffReader extends BaseTiffReader {
   protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
 
-    String xml = ifds.get(0).getIFDTextValue(NIKON_XML_TAG);
-    xml = "<NIKON>" + xml.substring(xml.indexOf("<")) + "</NIKON>";
+    String xml = ifds.get(0).getIFDTextValue(NIKON_XML_TAG).trim();
+    if (xml.length() == 0) {
+      xml = ifds.get(0).getIFDTextValue(NIKON_XML_TAG_2).trim();
+    }
+    int open = xml.indexOf("<");
+    if (open >= 0) {
+      xml = xml.substring(open);
+    }
+    xml = "<NIKON>" + xml + "</NIKON>";
     xml = XMLTools.sanitizeXML(xml);
 
     handler = new ND2Handler(core);

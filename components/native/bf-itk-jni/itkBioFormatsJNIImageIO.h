@@ -103,7 +103,6 @@ namespace itk
     JavaVM *jvm;
     JNIEnv *env;
     jobject BFITKBridge;
-    bool init;
   };
 
 }

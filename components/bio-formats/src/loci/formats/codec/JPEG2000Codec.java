@@ -169,7 +169,7 @@ public class JPEG2000Codec extends BaseCodec {
     throws FormatException, IOException
   {
     if (options == null) {
-      options = CodecOptions.getDefaultOptions();
+      options = JPEG2000CodecOptions.getDefaultOptions();
     }
 
     byte[] buf = null;
@@ -197,7 +197,10 @@ public class JPEG2000Codec extends BaseCodec {
     initialize();
 
     if (options == null) {
-      options = CodecOptions.getDefaultOptions();
+      options = JPEG2000CodecOptions.getDefaultOptions();
+    }
+    else {
+      options = new JPEG2000CodecOptions(options);
     }
 
     byte[][] single = null;
@@ -205,7 +208,8 @@ public class JPEG2000Codec extends BaseCodec {
 
     try {
       ByteArrayInputStream bis = new ByteArrayInputStream(buf);
-      b = (WritableRaster) service.readRaster(bis);
+      b = (WritableRaster) service.readRaster(
+          bis, (JPEG2000CodecOptions) options);
       single = AWTImageTools.getPixelBytes(b, options.littleEndian);
 
       bis.close();
