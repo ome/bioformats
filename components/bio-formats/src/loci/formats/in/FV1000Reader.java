@@ -1023,7 +1023,9 @@ public class FV1000Reader extends FormatReader {
     store.setObjectiveModel(objectiveName, 0, 0);
     if (magnification != null) {
       int mag = (int) Float.parseFloat(magnification);
-      store.setObjectiveNominalMagnification(new PositiveInteger(mag), 0, 0);
+      if (mag > 0) {
+        store.setObjectiveNominalMagnification(new PositiveInteger(mag), 0, 0);
+      }
     }
     if (workingDistance != null) {
       store.setObjectiveWorkingDistance(new Double(workingDistance), 0, 0);
