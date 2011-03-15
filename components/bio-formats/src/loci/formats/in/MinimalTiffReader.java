@@ -389,22 +389,24 @@ public class MinimalTiffReader extends FormatReader {
           JPEG2000MetadataParser metadataParser =
             new JPEG2000MetadataParser(in, stripOffset + stripByteCounts[0]);
           resolutionLevels = metadataParser.getResolutionLevels();
-          LOGGER.debug("JPEG 2000 resolution levels: {}", resolutionLevels);
-          for (int level = 1; level <= resolutionLevels; level++) {
-            IFD newIFD = new IFD(ifd);
-            long factor = (long) Math.pow(2, level);
-            long newImageWidth = ifd.getImageWidth() / factor;
-            long newImageLength = ifd.getImageLength() / factor;
-            int resolutionLevel = Math.abs(level - resolutionLevels);
-            newIFD.put(IFD.RESOLUTION_LEVEL, resolutionLevel);
-            newIFD.put(IFD.IMAGE_WIDTH, newImageWidth);
-            newIFD.put(IFD.IMAGE_LENGTH, newImageLength);
-            if (LOGGER.isDebugEnabled()) {
-              LOGGER.debug(String.format(
-                  "Added JPEG 2000 sub-resolution IFD level %d: %dx%d",
-                  resolutionLevel, newImageWidth, newImageLength));
+          if (resolutionLevels != null) {
+            LOGGER.debug("JPEG 2000 resolution levels: {}", resolutionLevels);
+            for (int level = 1; level <= resolutionLevels; level++) {
+              IFD newIFD = new IFD(ifd);
+              long factor = (long) Math.pow(2, level);
+              long newImageWidth = ifd.getImageWidth() / factor;
+              long newImageLength = ifd.getImageLength() / factor;
+              int resolutionLevel = Math.abs(level - resolutionLevels);
+              newIFD.put(IFD.RESOLUTION_LEVEL, resolutionLevel);
+              newIFD.put(IFD.IMAGE_WIDTH, newImageWidth);
+              newIFD.put(IFD.IMAGE_LENGTH, newImageLength);
+              if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug(String.format(
+                    "Added JPEG 2000 sub-resolution IFD level %d: %dx%d",
+                    resolutionLevel, newImageWidth, newImageLength));
+              }
+              subResolutionIFDs.add(newIFD);
             }
-            subResolutionIFDs.add(newIFD);
           }
         }
         else {
