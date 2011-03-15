@@ -25,6 +25,9 @@ package loci.formats.in;
 
 import java.io.IOException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import loci.common.DateTools;
 import loci.formats.FormatException;
 import loci.formats.MetadataTools;
@@ -49,6 +52,10 @@ import loci.formats.tiff.TiffRational;
 public abstract class BaseTiffReader extends MinimalTiffReader {
 
   // -- Constants --
+
+  /** Logger for this class. */
+  private static final Logger LOGGER =
+    LoggerFactory.getLogger(BaseTiffReader.class);
 
   public static final String[] DATE_FORMATS = {
     "yyyy:MM:dd HH:mm:ss",

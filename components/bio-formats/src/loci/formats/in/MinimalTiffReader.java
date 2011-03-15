@@ -24,15 +24,23 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.codec.JPEG2000CodecOptions;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 import loci.formats.tiff.PhotoInterp;
+import loci.formats.tiff.TiffCompression;
 import loci.formats.tiff.TiffParser;
 
 /**
@@ -47,6 +55,12 @@ import loci.formats.tiff.TiffParser;
  */
 public class MinimalTiffReader extends FormatReader {
 
+  // -- Constants --
+
+  /** Logger for this class. */
+  private static final Logger LOGGER =
+    LoggerFactory.getLogger(MinimalTiffReader.class);
+
   // -- Fields --
 
   /** List of IFDs for the current TIFF. */
@@ -58,6 +72,15 @@ public class MinimalTiffReader extends FormatReader {
   protected TiffParser tiffParser;
 
   private int lastPlane;
+
+  /** Number of JPEG 2000 resolution levels. */
+  private Integer resolutionLevels;
+
+  /** What a given series resolution level is. */
+  private Map<Integer, Integer> resolutionLevel;
+
+  /** Codec options to use when decoding JPEG 2000 data. */
+  private JPEG2000CodecOptions j2kCodecOptions;
 
   // -- Constructors --
 
@@ -222,7 +245,16 @@ public class MinimalTiffReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
+    IFD firstIFD = ifds.get(0);
     lastPlane = no;
+    if (firstIFD.getCompression() == TiffCompression.JPEG_2000
+        || firstIFD.getCompression() == TiffCompression.JPEG_2000_LOSSY) {
+      j2kCodecOptions.resolution = resolutionLevel.get(series);
+      LOGGER.info("Using JPEG 2000 resolution level {}",
+          j2kCodecOptions.resolution);
+      tiffParser.setCodecOptions(j2kCodecOptions);
+    }
+
     tiffParser.getSamples(ifds.get(no), buf, x, y, w, h);
 
     boolean float16 = getPixelType() == FormatTools.FLOAT &&
@@ -284,6 +316,9 @@ public class MinimalTiffReader extends FormatReader {
       thumbnailIFDs = null;
       lastPlane = 0;
       tiffParser = null;
+      resolutionLevels = null;
+      resolutionLevel = new HashMap<Integer, Integer>();
+      j2kCodecOptions = JPEG2000CodecOptions.getDefaultOptions();
     }
   }
 
@@ -339,8 +374,43 @@ public class MinimalTiffReader extends FormatReader {
 
     core[0].imageCount = ifds.size();
 
+    IFDList subResolutionIFDs = new IFDList();
     for (IFD ifd : ifds) {
       tiffParser.fillInIFD(ifd);
+      if (ifd.getCompression() == TiffCompression.JPEG_2000
+          || ifd.getCompression() == TiffCompression.JPEG_2000_LOSSY) {
+        LOGGER.debug("Found IFD with JPEG 2000 compression");
+        long[] stripOffsets = ifd.getStripOffsets();
+        long[] stripByteCounts = ifd.getStripByteCounts();
+
+        if (stripOffsets.length > 0) {
+          long stripOffset = stripOffsets[0];
+          in.seek(stripOffset);
+          JPEG2000MetadataParser metadataParser =
+            new JPEG2000MetadataParser(in, stripOffset + stripByteCounts[0]);
+          resolutionLevels = metadataParser.getResolutionLevels();
+          LOGGER.debug("JPEG 2000 resolution levels: {}", resolutionLevels);
+          for (int level = 1; level <= resolutionLevels; level++) {
+            IFD newIFD = new IFD(ifd);
+            long factor = (long) Math.pow(2, level);
+            long newImageWidth = ifd.getImageWidth() / factor;
+            long newImageLength = ifd.getImageLength() / factor;
+            int resolutionLevel = Math.abs(level - resolutionLevels);
+            newIFD.put(IFD.RESOLUTION_LEVEL, resolutionLevel);
+            newIFD.put(IFD.IMAGE_WIDTH, newImageWidth);
+            newIFD.put(IFD.IMAGE_LENGTH, newImageLength);
+            if (LOGGER.isDebugEnabled()) {
+              LOGGER.debug(String.format(
+                  "Added JPEG 2000 sub-resolution IFD level %d: %dx%d",
+                  resolutionLevel, newImageWidth, newImageLength));
+            }
+            subResolutionIFDs.add(newIFD);
+          }
+        }
+        else {
+          LOGGER.warn("IFD has no strip offsets!");
+        }
+      }
     }
 
     IFD firstIFD = ifds.get(0);
@@ -371,6 +441,22 @@ public class MinimalTiffReader extends FormatReader {
     if (getSizeC() == 1 && !isIndexed()) core[0].rgb = false;
     core[0].dimensionOrder = "XYCZT";
     core[0].bitsPerPixel = firstIFD.getBitsPerSample()[0];
+
+    // New core metadata now that we know how many sub-resolutions we have.
+    if (resolutionLevels != null) {
+      CoreMetadata[] newCore = new CoreMetadata[subResolutionIFDs.size() + 1];
+      newCore[0] = core[0];
+      int i = 1;
+      for (IFD ifd : subResolutionIFDs) {
+        newCore[i] = new CoreMetadata(this, 0);
+        newCore[i].sizeX = (int) ifd.getImageWidth();
+        newCore[i].sizeY = (int) ifd.getImageLength();
+        newCore[i].thumbnail = true;
+        resolutionLevel.put(i, (Integer) ifd.get(IFD.RESOLUTION_LEVEL));
+        i++;
+      }
+      core = newCore;
+    }
   }
 
 }

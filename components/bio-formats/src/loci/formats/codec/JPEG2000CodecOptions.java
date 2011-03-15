@@ -68,13 +68,12 @@ public class JPEG2000CodecOptions extends CodecOptions {
 
   public JPEG2000CodecOptions(CodecOptions options) {
     super(options);
-  }
-
-  public JPEG2000CodecOptions(JPEG2000CodecOptions options) {
-    super(options);
-    codeBlockSize = options.codeBlockSize;
-    numDecompositionLevels = options.numDecompositionLevels;
-    resolution = options.resolution;
+    if (options instanceof JPEG2000CodecOptions) {
+      JPEG2000CodecOptions j2kOptions = (JPEG2000CodecOptions) options;
+      codeBlockSize = j2kOptions.codeBlockSize;
+      numDecompositionLevels = j2kOptions.numDecompositionLevels;
+      resolution = j2kOptions.resolution;
+    }
   }
 
   // -- Static methods --

@@ -27,6 +27,9 @@ import java.io.IOException;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
@@ -47,6 +50,12 @@ import ome.xml.model.primitives.PositiveInteger;
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class ImarisTiffReader extends BaseTiffReader {
+
+  // -- Constants --
+
+  /** Logger for this class. */
+  private static final Logger LOGGER =
+    LoggerFactory.getLogger(ImarisTiffReader.class);
 
   // -- Constructor --
 

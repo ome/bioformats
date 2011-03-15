@@ -30,6 +30,9 @@ import java.util.Calendar;
 import java.util.TimeZone;
 import java.util.Vector;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
@@ -64,6 +67,10 @@ import ome.xml.model.primitives.PositiveInteger;
 public class MetamorphReader extends BaseTiffReader {
 
   // -- Constants --
+
+  /** Logger for this class. */
+  private static final Logger LOGGER =
+    LoggerFactory.getLogger(MetamorphReader.class);
 
   public static final String SHORT_DATE_FORMAT = "yyyyMMdd HH:mm:ss";
   public static final String MEDIUM_DATE_FORMAT = "yyyyMMdd HH:mm:ss.SSS";

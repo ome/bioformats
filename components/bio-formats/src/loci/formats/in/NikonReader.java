@@ -27,6 +27,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
@@ -55,6 +58,10 @@ import loci.formats.tiff.TiffRational;
 public class NikonReader extends BaseTiffReader {
 
   // -- Constants --
+
+  /** Logger for this class. */
+  private static final Logger LOGGER =
+    LoggerFactory.getLogger(NikonReader.class);
 
   public static final String[] NEF_SUFFIX = {"nef"};
 
