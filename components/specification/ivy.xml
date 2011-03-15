@@ -1,0 +1,13 @@
+<ivy-module version="1.0">
+  <info
+      organisation="omero"
+      module="specification"
+      status="integration"/>
+  <configurations>
+    <conf name="build"/>
+  </configurations>
+  <publications>
+    <artifact name="specification" type="jar"/>
+  </publications>
+  <dependencies/>
+</ivy-module>

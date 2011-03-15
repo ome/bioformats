@@ -1,0 +1,15 @@
+<ivy-module version="1.0">
+  <info
+      organisation="omero"
+      module="xsd-fu"
+      status="integration"/>
+  <configurations>
+    <conf name="build"/>
+  </configurations>
+  <publications>
+    <artifact name="xsd-fu" type="egg"/>
+  </publications>
+  <dependencies>
+    <dependency name="specification" rev="${omero.version}" changing="true"/>
+  </dependencies>
+</ivy-module>
