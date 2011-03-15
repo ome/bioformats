@@ -396,15 +396,21 @@ public class ND2Handler extends DefaultHandler {
       if (core[0].sizeZ * core[0].sizeT != imageCount &&
         core[0].sizeZ * core[0].sizeC * core[0].sizeT != imageCount)
       {
-        if (core[0].sizeZ > 1) {
+        if (core[0].sizeZ > 1 && core[0].sizeT <= 1) {
           core[0].sizeZ = imageCount;
           core[0].sizeT = 1;
+          core[0].imageCount = imageCount;
         }
-        else if (core[0].sizeT > 1) {
+        else if (core[0].sizeT > 1 && core[0].sizeZ <= 1) {
           core[0].sizeT = imageCount;
           core[0].sizeZ = 1;
+          core[0].imageCount = imageCount;
         }
-        core[0].imageCount = imageCount;
+        else if (imageCount == 0) {
+          core[0].sizeT = 0;
+          core[0].sizeZ = 0;
+          core[0].imageCount = 0;
+        }
       }
       metadata.put(qName, value);
     }
@@ -537,7 +543,10 @@ public class ND2Handler extends DefaultHandler {
     }
     else if (key.startsWith("TextInfoItem") || key.endsWith("TextInfoItem")) {
       metadata.remove(key);
-      value = value.replaceAll("&#x000d;&#x000a;", "\n");
+      value = value.replaceAll("&#x000d;", "");
+      value = value.replaceAll("#x000d;", "");
+      value = value.replaceAll("&#x000a;", "\n");
+      value = value.replaceAll("#x000a;", "\n");
       String[] tokens = value.split("\n");
       for (String t : tokens) {
         t = t.trim();
