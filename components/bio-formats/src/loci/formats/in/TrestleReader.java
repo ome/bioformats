@@ -26,6 +26,9 @@ package loci.formats.in;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
@@ -48,6 +51,12 @@ import loci.formats.tiff.TiffParser;
  * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/TrestleReader.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class TrestleReader extends BaseTiffReader {
+
+  // -- Constants --
+
+  /** Logger for this class. */
+  private static final Logger LOGGER =
+    LoggerFactory.getLogger(TrestleReader.class);
 
   // -- Fields --
 

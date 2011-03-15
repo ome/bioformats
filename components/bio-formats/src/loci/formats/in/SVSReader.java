@@ -25,6 +25,9 @@ package loci.formats.in;
 
 import java.io.IOException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
@@ -40,6 +43,12 @@ import loci.formats.tiff.PhotoInterp;
  * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/SVSReader.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class SVSReader extends BaseTiffReader {
+
+  // -- Constants --
+
+  /** Logger for this class. */
+  private static final Logger LOGGER =
+    LoggerFactory.getLogger(SVSReader.class);
 
   // -- Fields --
 

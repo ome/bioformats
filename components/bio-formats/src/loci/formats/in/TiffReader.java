@@ -27,6 +27,9 @@ import java.io.IOException;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.xml.XMLTools;
@@ -51,6 +54,10 @@ import loci.formats.tiff.TiffCompression;
 public class TiffReader extends BaseTiffReader {
 
   // -- Constants --
+
+  /** Logger for this class. */
+  private static final Logger LOGGER =
+    LoggerFactory.getLogger(TiffReader.class);
 
   public static final String[] TIFF_SUFFIXES =
     {"tif", "tiff", "tf2", "tf8", "btf"};

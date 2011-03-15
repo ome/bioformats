@@ -76,6 +76,9 @@ public class TiffParser {
   /** Cached first IFD in the current file. */
   private IFD firstIFD;
 
+  /** Codec options to be used when decoding compressed pixel data. */
+  private CodecOptions codecOptions = CodecOptions.getDefaultOptions();
+
   // -- Constructors --
 
   /** Constructs a new TIFF parser from the given file name. */
@@ -96,6 +99,23 @@ public class TiffParser {
   }
 
   // -- TiffParser methods --
+
+  /**
+   * Sets the codec options to be used when decompressing pixel data.
+   * @param codecOptions Codec options to use.
+   */
+  public void setCodecOptions(CodecOptions codecOptions) {
+    this.codecOptions = codecOptions;
+  }
+
+  /**
+   * Retrieves the current set of codec options being used to decompress pixel
+   * data.
+   * @return See above.
+   */
+  public CodecOptions getCodecOptions() {
+    return codecOptions;
+  }
 
   /** Sets whether or not IFD entries should be cached. */
   public void setDoCaching(boolean doCaching) {
@@ -542,9 +562,8 @@ public class TiffParser {
   {
     byte[] jpegTable = (byte[]) ifd.getIFDValue(IFD.JPEG_TABLES);
 
-    CodecOptions options = new CodecOptions();
-    options.interleaved = true;
-    options.littleEndian = ifd.isLittleEndian();
+    codecOptions.interleaved = true;
+    codecOptions.littleEndian = ifd.isLittleEndian();
 
     long tileWidth = ifd.getTileWidth();
     long tileLength = ifd.getTileLength();
@@ -578,15 +597,15 @@ public class TiffParser {
     in.seek(stripOffsets[tileNumber]);
     in.read(tile);
 
-    options.maxBytes = (int) Math.max(size, tile.length);
+    codecOptions.maxBytes = (int) Math.max(size, tile.length);
 
     if (jpegTable != null) {
       byte[] q = new byte[jpegTable.length + tile.length - 4];
       System.arraycopy(jpegTable, 0, q, 0, jpegTable.length - 2);
       System.arraycopy(tile, 2, q, jpegTable.length - 2, tile.length - 2);
-      tile = compression.decompress(q, options);
+      tile = compression.decompress(q, codecOptions);
     }
-    else tile = compression.decompress(tile, options);
+    else tile = compression.decompress(tile, codecOptions);
 
     TiffCompression.undifference(tile, ifd);
     unpackBytes(buf, 0, tile, ifd);

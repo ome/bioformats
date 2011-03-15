@@ -55,6 +55,7 @@ public class IFD extends HashMap<Integer, Object> {
   // non-IFD tags (for internal use)
   public static final int LITTLE_ENDIAN = 0;
   public static final int BIG_TIFF = 1;
+  public static final int RESOLUTION_LEVEL = 2;
 
   // IFD tags
   public static final int NEW_SUBFILE_TYPE = 254;
