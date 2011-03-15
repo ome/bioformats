@@ -1238,7 +1238,7 @@ public class LIFReader extends FormatReader {
     NodeList channels = getChannelDescriptionNodes(imageNode);
     NodeList dimensions = getDimensionDescriptionNodes(imageNode);
 
-    HashMap<Integer, String> bytesPerAxis = new HashMap<Integer, String>();
+    HashMap<Long, String> bytesPerAxis = new HashMap<Long, String>();
 
     Double physicalSizeX = null;
     Double physicalSizeY = null;
@@ -1249,7 +1249,7 @@ public class LIFReader extends FormatReader {
 
       lutNames.add(channel.getAttribute("LUTName"));
       String bytesInc = channel.getAttribute("BytesInc");
-      int bytes = bytesInc == null ? 0 : Integer.parseInt(bytesInc);
+      long bytes = bytesInc == null ? 0 : Long.parseLong(bytesInc);
       if (bytes > 0) {
         bytesPerAxis.put(bytes, "C");
       }
@@ -1262,7 +1262,7 @@ public class LIFReader extends FormatReader {
 
       int id = Integer.parseInt(dimension.getAttribute("DimID"));
       int len = Integer.parseInt(dimension.getAttribute("NumberOfElements"));
-      int nBytes = Integer.parseInt(dimension.getAttribute("BytesInc"));
+      long nBytes = Long.parseLong(dimension.getAttribute("BytesInc"));
       Double physicalLen = new Double(dimension.getAttribute("Length"));
       String unit = dimension.getAttribute("Unit");
 
@@ -1280,7 +1280,7 @@ public class LIFReader extends FormatReader {
           core[i].rgb = (nBytes % 3) == 0;
           if (core[i].rgb) nBytes /= 3;
           core[i].pixelType =
-            FormatTools.pixelTypeFromBytes(nBytes, false, true);
+            FormatTools.pixelTypeFromBytes((int) nBytes, false, true);
           physicalSizeX = physicalLen;
           break;
         case 2: // Y axis
@@ -1350,10 +1350,10 @@ public class LIFReader extends FormatReader {
     core[i].imageCount = core[i].sizeZ * core[i].sizeT;
     if (!core[i].rgb) core[i].imageCount *= core[i].sizeC;
 
-    Integer[] bytes = bytesPerAxis.keySet().toArray(new Integer[0]);
+    Long[] bytes = bytesPerAxis.keySet().toArray(new Long[0]);
     Arrays.sort(bytes);
     core[i].dimensionOrder = "XY";
-    for (Integer nBytes : bytes) {
+    for (Long nBytes : bytes) {
       String axis = bytesPerAxis.get(nBytes);
       if (core[i].dimensionOrder.indexOf(axis) == -1) {
         core[i].dimensionOrder += axis;
