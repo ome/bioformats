@@ -58,6 +58,8 @@ public class Configuration {
 
   // -- Constants --
 
+  public static final int TILE_SIZE = 512;
+
   private static final String ACCESS_TIME = "access_ms";
   private static final String MEMORY = "mem_mb";
   private static final String TEST = "test";
@@ -80,6 +82,8 @@ public class Configuration {
   private static final String IS_LITTLE_ENDIAN = "LittleEndian";
   private static final String MD5 = "MD5";
   private static final String ALTERNATE_MD5 = "Alternate_MD5";
+  private static final String TILE_MD5 = "Tile_MD5";
+  private static final String TILE_ALTERNATE_MD5 = "Tile_Alternate_MD5";
   private static final String PHYSICAL_SIZE_X = "PhysicalSizeX";
   private static final String PHYSICAL_SIZE_Y = "PhysicalSizeY";
   private static final String PHYSICAL_SIZE_Z = "PhysicalSizeZ";
@@ -219,6 +223,14 @@ public class Configuration {
     return currentTable.get(ALTERNATE_MD5);
   }
 
+  public String getTileMD5() {
+    return currentTable.get(TILE_MD5);
+  }
+
+  public String getTileAlternateMD5() {
+    return currentTable.get(TILE_ALTERNATE_MD5);
+  }
+
   public Double getPhysicalSizeX() {
     String physicalSize = currentTable.get(PHYSICAL_SIZE_X);
     return physicalSize == null ? null : new Double(physicalSize);
@@ -322,12 +334,18 @@ public class Configuration {
     globalTable.put(TEST, "true");
     globalTable.put(MEMORY, String.valueOf(TestTools.getUsedMemory()));
 
+    int planeSize = FormatTools.getPlaneSize(reader);
+    boolean canOpenImages =
+      planeSize > 0 && TestTools.canFitInMemory(planeSize);
+
     long t0 = System.currentTimeMillis();
-    try {
-      reader.openBytes(0);
+    if (canOpenImages) {
+      try {
+        reader.openBytes(0);
+      }
+      catch (FormatException e) { }
+      catch (IOException e) { }
     }
-    catch (FormatException e) { }
-    catch (IOException e) { }
     long t1 = System.currentTimeMillis();
 
     globalTable.put(ACCESS_TIME, String.valueOf(t1 - t0));
@@ -360,9 +378,28 @@ public class Configuration {
       seriesTable.put(CHANNEL_COUNT,
         String.valueOf(retrieve.getChannelCount(series)));
 
+      planeSize = FormatTools.getPlaneSize(reader);
+      canOpenImages = planeSize > 0 && TestTools.canFitInMemory(planeSize);
+
+      if (canOpenImages) {
+        try {
+          byte[] plane = reader.openBytes(0);
+          seriesTable.put(MD5, TestTools.md5(plane));
+        }
+        catch (FormatException e) {
+          // TODO
+        }
+        catch (IOException e) {
+          // TODO
+        }
+      }
+
       try {
-        byte[] plane = reader.openBytes(0);
-        seriesTable.put(MD5, TestTools.md5(plane));
+        int w = (int) Math.min(TILE_SIZE, reader.getSizeX());
+        int h = (int) Math.min(TILE_SIZE, reader.getSizeY());
+
+        byte[] tile = reader.openBytes(0, 0, 0, w, h);
+        seriesTable.put(TILE_MD5, TestTools.md5(tile));
       }
       catch (FormatException e) {
         // TODO
