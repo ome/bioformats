@@ -304,7 +304,7 @@ public class ZeissLSMReader extends FormatReader {
   public short[][] get16BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
     if (lut == null || lut[getSeries()] == null ||
-      getPixelType() != FormatTools.UINT16)
+      getPixelType() != FormatTools.UINT16 || validChannels == 0)
     {
       return null;
     }
