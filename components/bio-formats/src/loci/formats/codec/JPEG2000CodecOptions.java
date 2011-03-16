@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.codec;
 
 /**
- * Options for compression and decompressiong JPEG-2000 data.
+ * Options for compressing and decompressing JPEG-2000 data.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/codec/JPEG2000CodecOptions.java">Trac</a>,
@@ -62,10 +62,15 @@ public class JPEG2000CodecOptions extends CodecOptions {
 
   // -- Constructors --
 
+  /** Creates a new instance. */
   public JPEG2000CodecOptions() {
     super();
   }
 
+  /**
+   * Creates a new instance with options.
+   * @param options The option to set.
+   */
   public JPEG2000CodecOptions(CodecOptions options) {
     super(options);
     if (options instanceof JPEG2000CodecOptions) {
@@ -86,6 +91,7 @@ public class JPEG2000CodecOptions extends CodecOptions {
 
   /**
    * Return JPEG2000CodecOptions using the given CodecOptions as the default.
+   * @param options The specified options.
    */
   public static JPEG2000CodecOptions getDefaultOptions(CodecOptions options) {
     JPEG2000CodecOptions j2kOptions = new JPEG2000CodecOptions(options);
@@ -95,4 +101,5 @@ public class JPEG2000CodecOptions extends CodecOptions {
 
     return j2kOptions;
   }
+  
 }

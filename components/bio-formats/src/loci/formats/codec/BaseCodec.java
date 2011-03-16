@@ -193,6 +193,8 @@ public abstract class BaseCodec implements Codec {
   public byte[] decompress(byte[][] data, CodecOptions options)
     throws FormatException
   {
+    if (data == null)
+      throw new IllegalArgumentException("No data to decompress.");
     int len = 0;
     for (int i = 0; i < data.length; i++) {
       len += data[i].length;

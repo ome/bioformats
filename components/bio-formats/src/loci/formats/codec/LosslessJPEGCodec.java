@@ -107,6 +107,9 @@ public class LosslessJPEGCodec extends BaseCodec {
   public byte[] decompress(RandomAccessInputStream in, CodecOptions options)
     throws FormatException, IOException
   {
+    if (in == null) 
+      throw new IllegalArgumentException("No data to decompress.");
+    if (options == null) options = CodecOptions.getDefaultOptions();
     byte[] buf = new byte[0];
 
     int width = 0, height = 0;

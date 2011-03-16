@@ -110,10 +110,12 @@ public class CodecOptions {
   // -- Constructors --
 
   /** Construct a new CodecOptions. */
-  public CodecOptions() { }
+  public CodecOptions() {}
 
   /** Construct a new CodecOptions using the given CodecOptions. */
   public CodecOptions(CodecOptions options) {
+    if (options == null) 
+      throw new IllegalArgumentException("No Codec options specified.");
     this.width = options.width;
     this.height = options.height;
     this.channels = options.channels;

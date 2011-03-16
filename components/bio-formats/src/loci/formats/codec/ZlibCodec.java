@@ -46,6 +46,8 @@ public class ZlibCodec extends BaseCodec {
   public byte[] compress(byte[] data, CodecOptions options)
     throws FormatException
   {
+    if (data == null || data.length == 0)
+      throw new IllegalArgumentException("No data to compress");
     Deflater deflater = new Deflater();
     deflater.setInput(data);
     deflater.finish();

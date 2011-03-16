@@ -60,6 +60,9 @@ public class TargaRLECodec extends BaseCodec {
   public byte[] decompress(RandomAccessInputStream in, CodecOptions options)
     throws FormatException, IOException
   {
+    if (in == null) 
+      throw new IllegalArgumentException("No data to decompress.");
+    if (options == null) options = CodecOptions.getDefaultOptions();
     long fp = in.getFilePointer();
     ByteArrayOutputStream output = new ByteArrayOutputStream(options.maxBytes);
     int nread = 0;
