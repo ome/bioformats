@@ -114,24 +114,24 @@ public class CodecOptions {
 
   /** Construct a new CodecOptions using the given CodecOptions. */
   public CodecOptions(CodecOptions options) {
-    if (options == null) 
-      throw new IllegalArgumentException("No Codec options specified.");
-    this.width = options.width;
-    this.height = options.height;
-    this.channels = options.channels;
-    this.bitsPerSample = options.bitsPerSample;
-    this.littleEndian = options.littleEndian;
-    this.interleaved = options.interleaved;
-    this.signed = options.signed;
-    this.maxBytes = options.maxBytes;
-    this.previousImage = options.previousImage;
-    this.lossless = options.lossless;
-    this.colorModel = options.colorModel;
-    this.quality = options.quality;
-    this.tileWidth = options.tileWidth;
-    this.tileHeight = options.tileHeight;
-    this.tileGridXOffset = options.tileGridXOffset;
-    this.tileGridYOffset = options.tileGridYOffset;
+    if (options != null) {
+      this.width = options.width;
+      this.height = options.height;
+      this.channels = options.channels;
+      this.bitsPerSample = options.bitsPerSample;
+      this.littleEndian = options.littleEndian;
+      this.interleaved = options.interleaved;
+      this.signed = options.signed;
+      this.maxBytes = options.maxBytes;
+      this.previousImage = options.previousImage;
+      this.lossless = options.lossless;
+      this.colorModel = options.colorModel;
+      this.quality = options.quality;
+      this.tileWidth = options.tileWidth;
+      this.tileHeight = options.tileHeight;
+      this.tileGridXOffset = options.tileGridXOffset;
+      this.tileGridYOffset = options.tileGridYOffset;
+    }
   }
 
   // -- Static methods --

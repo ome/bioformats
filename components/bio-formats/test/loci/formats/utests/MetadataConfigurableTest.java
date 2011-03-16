@@ -32,12 +32,14 @@ import java.security.MessageDigest;
 import java.util.Arrays;
 
 import loci.common.DataTools;
+import loci.common.services.ServiceFactory;
 import loci.formats.FormatException;
 import loci.formats.ImageReader;
 import loci.formats.MetadataTools;
 import loci.formats.in.DefaultMetadataOptions;
 import loci.formats.in.MetadataLevel;
 import loci.formats.meta.IMetadata;
+import loci.formats.services.OMEXMLService;
 
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -87,8 +89,16 @@ public class MetadataConfigurableTest {
     System.err.println(String.format("Pixels only: %d -- All: %d",
       t1 - t0, t2 - t1));
 
-    IMetadata metadata = MetadataTools.createOMEXMLMetadata();
-    noOverlays.setMetadataStore(metadata);
+    IMetadata metadata = null;
+    try {
+      ServiceFactory factory = new ServiceFactory();
+      OMEXMLService service = factory.getInstance(OMEXMLService.class);
+      metadata = service.createOMEXMLMetadata();
+      noOverlays.setMetadataStore(metadata);
+    } catch (Exception e) {
+      throw new FormatException("Cannot initialize OMEXML metadata store");
+    }
+  
     noOverlays.setId(id);
     assertEquals(MetadataLevel.NO_OVERLAYS,
       noOverlays.getMetadataOptions().getMetadataLevel());

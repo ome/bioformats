@@ -26,6 +26,7 @@ package loci.formats;
 import java.awt.image.ColorModel;
 import java.io.IOException;
 
+import loci.formats.codec.CodecOptions;
 import loci.formats.meta.MetadataRetrieve;
 
 /**
@@ -151,6 +152,12 @@ public interface IFormatWriter extends IFormatHandler {
   /** Sets the current compression type. */
   void setCompression(String compress) throws FormatException;
 
+  /**
+   * Sets the codec options.
+   * @param options The options to set.
+   */
+  void setCodecOptions(CodecOptions options) ;
+  
   /** Gets the current compression type. */
   String getCompression();
 

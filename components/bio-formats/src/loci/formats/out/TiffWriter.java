@@ -155,6 +155,7 @@ public class TiffWriter extends FormatWriter {
     tiffSaver.setWritingSequentially(sequential);
     tiffSaver.setLittleEndian(littleEndian);
     tiffSaver.setBigTiff(isBigTiff);
+    tiffSaver.setCodecOptions(options);
 
     if (no < initialized[series].length && !initialized[series][no]) {
       initialized[series][no] = true;

@@ -217,6 +217,11 @@ public abstract class FormatWriter extends FormatHandler
     throw new FormatException("Invalid compression type: " + compress);
   }
 
+  /* @see IFormatWriter#setCodecOptions(CodecOptions) */
+  public void setCodecOptions(CodecOptions options) {
+    this.options = options;
+  }
+  
   /* @see IFormatWriter#getCompression() */
   public String getCompression() {
     return compression;
@@ -326,14 +331,6 @@ public abstract class FormatWriter extends FormatHandler
     initialized = null;
   }
 
-  /**
-   * Sets the codec options.
-   * @param options The options to set.
-   */
-  public void setCodecOptions(CodecOptions options) {
-    this.options = options;
-  }
-  
   // -- Helper methods --
 
   /**

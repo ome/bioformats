@@ -30,6 +30,7 @@ import java.io.IOException;
 
 import loci.formats.FormatException;
 import loci.formats.codec.CodecOptions;
+import loci.formats.codec.JPEG2000CodecOptions;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffCompression;
 
@@ -179,5 +180,14 @@ public class TiffCompressionCompressTest {
     TiffCompression compression = TiffCompression.LURAWAVE;
     CodecOptions options = compression.getCompressionCodecOptions(ifd);
     compression.compress(data, options);
+  }
+  
+  @Test
+  public void testJPEG_2000_ResetQuality() throws FormatException, IOException {
+    TiffCompression compression = TiffCompression.JPEG_2000;
+    JPEG2000CodecOptions opt = JPEG2000CodecOptions.getDefaultOptions();
+    opt.quality = 5;
+    CodecOptions options = compression.getCompressionCodecOptions(ifd, opt);
+    assertEquals(options.quality, opt.quality);
   }
 }

@@ -75,7 +75,9 @@ public class JPEG2000CodecOptions extends CodecOptions {
     super(options);
     if (options instanceof JPEG2000CodecOptions) {
       JPEG2000CodecOptions j2kOptions = (JPEG2000CodecOptions) options;
-      codeBlockSize = j2kOptions.codeBlockSize;
+      if (j2kOptions.codeBlockSize != null) {
+        codeBlockSize = j2kOptions.codeBlockSize;
+      }
       numDecompositionLevels = j2kOptions.numDecompositionLevels;
       resolution = j2kOptions.resolution;
     }

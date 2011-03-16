@@ -35,6 +35,7 @@ import loci.common.RandomAccessOutputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.codec.CodecOptions;
+import loci.formats.codec.JPEG2000CodecOptions;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,6 +70,9 @@ public class TiffSaver {
   private boolean bigTiff = false;
   private boolean sequentialWrite = false;
 
+  /** The codec options if set. */
+  private CodecOptions options;
+  
   // -- Constructors --
 
   /** Constructs a new TIFF saver from the given output source. */
@@ -128,6 +132,14 @@ public class TiffSaver {
   /** Returns whether or not we are writing BigTIFF data. */
   public boolean isBigTiff() { return bigTiff; }
 
+  /**
+   * Sets the codec options.
+   * @param options The value to set.
+   */
+  public void setCodecOptions(CodecOptions options) {
+    this.options = options;
+  }
+  
   /** Writes the TIFF file header. */
   public void writeHeader() throws IOException {
     // write endianness indicator
@@ -280,9 +292,10 @@ public class TiffSaver {
     for (int strip=0; strip<nStrips; strip++) {
       strips[strip] = stripBuf[strip].toByteArray();
       TiffCompression.difference(strips[strip], ifd);
-      CodecOptions options = compression.getCompressionCodecOptions(ifd);
-      options.height = rowsPerStrip;
-      strips[strip] = compression.compress(strips[strip], options);
+      CodecOptions codecOptions = compression.getCompressionCodecOptions(
+          ifd, options);
+      codecOptions.height = rowsPerStrip;
+      strips[strip] = compression.compress(strips[strip], codecOptions);
     }
 
     if (!sequentialWrite) {
