@@ -158,7 +158,7 @@ namespace itk {
         //cout << "attach: " << attach << endl;
       }
       // construct BFITK bridge object
- 	    jclass itkBridgeClass = env->FindClass("loci/formats/tools/BioFormatsItkBridge");
+ 	    jclass itkBridgeClass = env->FindClass("loci/formats/itk/ITKBridgeJNI");
 	    itkDebugMacro( "Got itkBridge class: " << itkBridgeClass );
       if (env->ExceptionOccurred()) {
         env->ExceptionDescribe();
