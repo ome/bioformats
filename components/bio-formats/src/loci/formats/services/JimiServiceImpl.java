@@ -38,6 +38,7 @@ import loci.common.services.DependencyException;
 import loci.common.services.Service;
 import loci.common.services.ServiceException;
 import loci.formats.FormatException;
+import loci.formats.codec.ByteVector;
 import loci.formats.codec.CodecOptions;
 import loci.formats.codec.JPEGCodec;
 
@@ -220,10 +221,18 @@ public class JimiServiceImpl implements JimiService {
   }
 
   class TileCache {
+    private static final int ROW_COUNT = 256;
+
     private Hashtable<Region, byte[]> compressedTiles =
       new Hashtable<Region, byte[]>();
     private JPEGCodec codec = new JPEGCodec();
     private CodecOptions options = new CodecOptions();
+
+    private ByteVector toCompress = new ByteVector();
+    private int row = 0;
+
+    private Region lastRegion = null;
+    private byte[] lastTile = null;
 
     public TileCache() {
       options.interleaved = true;
@@ -233,26 +242,26 @@ public class JimiServiceImpl implements JimiService {
     public void add(byte[] pixels, int x, int y, int w, int h)
       throws FormatException, IOException
     {
-      Region r = new Region(x, y, w, h);
-      options.width = w;
-      options.height = h;
-      options.channels = 1;
-      options.bitsPerSample = 8;
-      options.signed = false;
-      byte[] compressed = codec.compress(pixels, options);
-      compressedTiles.put(r, compressed);
+      toCompress.add(pixels);
+      row++;
+
+      if ((y % ROW_COUNT) == ROW_COUNT - 1 || y == getHeight() - 1) {
+        Region r = new Region(x, y - row + 1, w, row);
+        options.width = w;
+        options.height = row;
+        options.channels = 1;
+        options.bitsPerSample = 8;
+        options.signed = false;
+
+        byte[] compressed = codec.compress(toCompress.toByteArray(), options);
+        compressedTiles.put(r, compressed);
+        toCompress.clear();
+      }
     }
 
     public void add(int[] pixels, int x, int y, int w, int h)
       throws FormatException, IOException
     {
-      Region r = new Region(x, y, w, h);
-      options.width = w;
-      options.height = h;
-      options.channels = 3;
-      options.bitsPerSample = 8;
-      options.signed = false;
-
       byte[] buf = new byte[pixels.length * 3];
       for (int i=0; i<pixels.length; i++) {
         buf[i * 3] = (byte) ((pixels[i] & 0xff0000) >> 16);
@@ -260,8 +269,22 @@ public class JimiServiceImpl implements JimiService {
         buf[i * 3 + 2] = (byte) (pixels[i] & 0xff);
       }
 
-      byte[] compressed = codec.compress(buf, options);
-      compressedTiles.put(r, compressed);
+      toCompress.add(buf);
+      row++;
+
+      if ((y % ROW_COUNT) == ROW_COUNT - 1 || y == getHeight() - 1) {
+        Region r = new Region(x, y - row + 1, w, row);
+        options.width = w;
+        options.height = row;
+        options.channels = 3;
+        options.bitsPerSample = 8;
+        options.signed = false;
+
+        byte[] compressed = codec.compress(toCompress.toByteArray(), options);
+        compressedTiles.put(r, compressed);
+        toCompress.clear();
+        row = 0;
+      }
     }
 
     public byte[] get(int x, int y, int w, int h)
@@ -270,15 +293,27 @@ public class JimiServiceImpl implements JimiService {
       Region[] keys = compressedTiles.keySet().toArray(new Region[0]);
       Region r = new Region(x, y, w, h);
       for (Region key : keys) {
-        if (key.equals(r)) {
+        if (key.intersects(r)) {
           r = key;
         }
       }
-      byte[] compressed = null;
-      compressed = compressedTiles.get(r);
-      if (compressed == null) return null;
+      if (!r.equals(lastRegion)) {
+        lastRegion = r;
+        byte[] compressed = null;
+        compressed = compressedTiles.get(r);
+        if (compressed == null) return null;
+        lastTile = codec.decompress(compressed, options);
+      }
 
-      return codec.decompress(compressed, options);
+      int pixel = options.channels * (options.bitsPerSample / 8);
+      byte[] buf = new byte[w * h * pixel];
+
+      for (int i=0; i<h; i++) {
+        System.arraycopy(lastTile, r.width * pixel * (i + y - r.y) + (x - r.x),
+          buf, i * w * pixel, pixel * w);
+      }
+
+      return buf;
     }
   }
 

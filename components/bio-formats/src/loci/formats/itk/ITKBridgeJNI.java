@@ -1,5 +1,5 @@
 //
-// BioFormatsItkBridge.java
+// ITKBridgeJNI.java
 //
 
 /*
@@ -21,12 +21,12 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package loci.formats.tools;
+package loci.formats.itk;
 
 import java.io.IOException;
 
 import loci.formats.FormatException;
-import loci.formats.FormatTools;
+//import loci.formats.FormatTools;
 import loci.formats.ImageReader;
 import loci.formats.FormatTools;
 import loci.formats.FormatException;
@@ -35,14 +35,14 @@ import loci.formats.FormatException;
  * Java bridge connecting Bio-Formats to ITK via JNI.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/tools/BioFormatsItkBridge.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/tools/BioFormatsItkBridge.java;hb=HEAD">Gitweb</a></dd></dl>
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/itk/ITKBridgeJNI.java">Trac</a>,
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/itk/ITKBridgeJNI.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Mark Hiner hiner at wisc.edu
  */
-public class BioFormatsItkBridge {
+public class ITKBridgeJNI {
   private static ImageReader reader;
-  public BioFormatsItkBridge() {
+  public ITKBridgeJNI() {
     reader = new ImageReader();
   }
 

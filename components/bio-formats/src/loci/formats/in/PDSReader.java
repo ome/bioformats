@@ -167,7 +167,10 @@ public class PDSReader extends FormatReader {
     if (!checkSuffix(id, "hdr")) {
       String headerFile = id.substring(0, id.lastIndexOf(".")) + ".hdr";
       if (!new Location(headerFile).exists()) {
-        throw new FormatException("Could not find matching .hdr file.");
+        headerFile = id.substring(0, id.lastIndexOf(".")) + ".HDR";
+        if (!new Location(headerFile).exists()) {
+          throw new FormatException("Could not find matching .hdr file.");
+        }
       }
 
       initFile(headerFile);
@@ -249,7 +252,11 @@ public class PDSReader extends FormatReader {
     core[0].pixelType = FormatTools.UINT16;
     core[0].littleEndian = true;
 
-    pixelsFile = currentId.substring(0, currentId.lastIndexOf(".")) + ".IMG";
+    String base = currentId.substring(0, currentId.lastIndexOf("."));
+    pixelsFile = base + ".IMG";
+    if (!new Location(pixelsFile).exists()) {
+      pixelsFile = base + ".img";
+    }
 
     boolean minimumMetadata =
       getMetadataOptions().getMetadataLevel() == MetadataLevel.MINIMUM;

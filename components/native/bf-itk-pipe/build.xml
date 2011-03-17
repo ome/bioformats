@@ -14,45 +14,6 @@ Type "ant -p" for a list of targets.
   <import file="${root.dir}/ant/common.xml"/>
   <property file="build.properties"/>
 
-  <target name="check-jace">
-    <available file="${jace.home}/release/lib" property="jaceFound"/>
-    <if>
-      <isset property="jaceFound"/>
-      <else>
-<echo>
-This component requires Jace, available from:
-  http://sourceforge.net/projects/jace/
-
-Please set the jace.home property to point to
-your Jace installation directory. E.g.:
-</echo>
-        <!-- HACK - Document need for forward slashes even on Windows. -->
-        <if>
-          <isset property="isWindows"/>
-          <then>
-<echo>
-  ant -Djace.home=C:/jace
-</echo>
-          </then>
-          <else>
-<echo>
-  ant -Djace.home=${user.home}/jace
-</echo>
-          </else>
-        </if>
-<echo>
-Please use an absolute path, not a relative one,
-and use forward slashes (/), not backslashes (\).
-
-You can check out the latest Jace code from
-the Subversion repository using the command:
-  svn co https://jace.svn.sourceforge.net/svnroot/jace/trunk jace
-</echo>
-        <fail message="Jace not found."/>
-      </else>
-    </if>
-  </target>
-
   <target name="check-itk">
     <available file="${itk.home}/ITKConfig.cmake" property="itkFound"/>
     <if>
@@ -92,7 +53,7 @@ the CVS repository by following the instructions at:
     </if>
   </target>
 
-  <target name="gen-makefile" depends="check-jace, check-itk"
+  <target name="gen-makefile"
     description="generate build system for Bio-Formats ITK plugin">
     <mkdir dir="${build.dir}"/>
     <if>
@@ -106,7 +67,6 @@ the CVS repository by following the instructions at:
     </if>
     <exec executable="cmake" dir="${build.dir}" failonerror="true">
       <arg value="-G${cmake.generator}"/>
-      <arg value="-DJACE_DIR=${jace.home}"/>
       <arg value="-DITK_DIR=${itk.home}"/>
       <arg value=".."/>
     </exec>
@@ -150,6 +110,7 @@ usage and/or distribution.
     <!-- CTR TODO - check whether all binaries actually exist -->
 
     <property name="bf-itk.dist.dir" value="${dist.dir}/bf-itk"/>
+    <property name="bf.class.dir" value="../../bio-formats/build/classes/"/>
     <mkdir dir="${bf-itk.dist.dir}"/>
 
     <echo/>
@@ -158,35 +119,15 @@ usage and/or distribution.
     <if>
       <isset property="isWindows"/>
       <then>
-        <property name="bf-cpp.build" value="${bf-cpp.build.windows}"/>
-        <property name="jace.build" value="${jace.build.windows}"/>
         <property name="bf-itk.lib" value="${bf-itk.lib.windows}"/>
         <property name="bf-itk.build" value="${bf-itk.build.windows}"/>
       </then>
       <else>
-        <property name="bf-cpp.build" value="${bf-cpp.build.other}"/>
-        <property name="jace.build" value="${jace.build.other}"/>
         <property name="bf-itk.lib" value="${bf-itk.lib.other}"/>
         <property name="bf-itk.build" value="${bf-itk.build.other}"/>
       </else>
     </if>
-    <copy file="${bf-cpp.build}/loci_tools.jar" todir="${bf-itk.dist.dir}"/>
-    <copy file="${bf-cpp.build}/jace-runtime.jar" todir="${bf-itk.dist.dir}"/>
-    <copy file="${bf-cpp.build}/BioFormatsSuffixes.txt" todir="${bf-itk.dist.dir}"/>
-
-    <echo/>
-    <echo>-- Copying Bio-Formats C++ shared libraries --</echo>
-    <echo/>
-    <copy todir="${bf-itk.dist.dir}">
-      <fileset dir="${bf-cpp.build}" includes="*.so"/>
-      <fileset dir="${bf-cpp.build}" includes="*.dylib"/>
-      <fileset dir="${bf-cpp.build}" includes="*.jnilib"/>
-      <fileset dir="${bf-cpp.build}" includes="*.dll"/>
-      <fileset dir="${jace.build}" includes="*.so"/>
-      <fileset dir="${jace.build}" includes="*.dylib"/>
-      <fileset dir="${jace.build}" includes="*.jnilib"/>
-      <fileset dir="${jace.build}" includes="*.dll"/>
-    </copy>
+    <copy file="${artifact.dir}/loci_tools.jar" todir="${bf-itk.dist.dir}"/>
 
     <echo/>
     <echo>-- Copying Bio-Formats IO library --</echo>
@@ -232,6 +173,18 @@ usage and/or distribution.
         </exec>
       </else>
     </if>
+
+    <echo/>
+    <echo>-- Creating Suffixes List --</echo>
+    <echo/>
+    <exec executable="java">
+      <arg value="-cp"/>
+      <arg value="${artifact.dir}/loci_tools.jar"/>
+      <arg value="loci.formats.tools.BioFormatsExtensionPrinter"/>
+    </exec>
+
+
+    <copy file="${bf-itk.build}/BioFormatsSuffixes.txt" todir="${bf-itk.dist.dir}"/>
 
     <!-- give some instructions on how to proceed -->
 <echo>
