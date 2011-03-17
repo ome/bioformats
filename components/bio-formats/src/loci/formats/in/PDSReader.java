@@ -33,14 +33,15 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
+import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
 /**
  * PDSReader is the file format reader for Perkin Elmer densitometer files.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://loci.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/in/PDSReader.java">Trac</a>,
- * <a href="http://loci.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/in/PDSReader.java">SVN</a></dd></dl>
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/PDSReader.java">Trac</a>,
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/PDSReader.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class PDSReader extends FormatReader {
 
@@ -180,8 +181,8 @@ public class PDSReader extends FormatReader {
     super.initFile(id);
 
     String[] headerData = DataTools.readFile(id).split("\r\n");
-    Double xPos = null, yPos = null;
-    Double deltaX = null, deltaY = null;
+    Float xPos = null, yPos = null;
+    Float deltaX = null, deltaY = null;
     String date = null;
 
     for (String line : headerData) {
@@ -200,10 +201,12 @@ public class PDSReader extends FormatReader {
         core[0].sizeY = Integer.parseInt(value);
       }
       else if (key.equals("XPOS")) {
-        xPos = new Double(value);
+        xPos = new Float(value);
+        addGlobalMeta("X position for position #1", xPos);
       }
       else if (key.equals("YPOS")) {
-        yPos = new Double(value);
+        yPos = new Float(value);
+        addGlobalMeta("Y position for position #1", yPos);
       }
       else if (key.equals("SIGNX")) {
         reverseX = value.replaceAll("'", "").trim().equals("-");
@@ -212,10 +215,10 @@ public class PDSReader extends FormatReader {
         reverseY = value.replaceAll("'", "").trim().equals("-");
       }
       else if (key.equals("DELTAX")) {
-        deltaX = new Double(value);
+        deltaX = new Float(value);
       }
       else if (key.equals("DELTAY")) {
-        deltaY = new Double(value);
+        deltaY = new Float(value);
       }
       else if (key.equals("COLOR")) {
         int color = Integer.parseInt(value);
@@ -256,26 +259,22 @@ public class PDSReader extends FormatReader {
       pixelsFile = base + ".img";
     }
 
-    boolean minimumMetadata =
-      getMetadataOptions().getMetadataLevel() == MetadataLevel.MINIMUM;
-
-    MetadataStore store = makeFilterMetadata();
-    MetadataTools.populatePixels(store, this, !minimumMetadata);
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataTools.populatePixels(store, this, true);
 
     if (date == null) {
       MetadataTools.setDefaultCreationDate(store, currentId, 0);
     }
-    else store.setImageAcquiredDate(date, 0);
+    else store.setImageCreationDate(date, 0);
 
-    if (!minimumMetadata) {
-      store.setPlanePositionX(xPos, 0, 0);
-      store.setPlanePositionY(yPos, 0, 0);
-      if (deltaX != null) {
-        store.setPixelsPhysicalSizeX(deltaX, 0);
-      }
-      if (deltaY != null) {
-        store.setPixelsPhysicalSizeY(deltaY, 0);
-      }
+    store.setStagePositionPositionX(xPos, 0, 0, 0);
+    store.setStagePositionPositionY(yPos, 0, 0, 0);
+    if (deltaX != null) {
+      store.setDimensionsPhysicalSizeX(deltaX, 0, 0);
+    }
+    if (deltaY != null) {
+      store.setDimensionsPhysicalSizeY(deltaY, 0, 0);
     }
   }
 
