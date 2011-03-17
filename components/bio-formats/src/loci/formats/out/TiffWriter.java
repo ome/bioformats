@@ -150,7 +150,7 @@ public class TiffWriter extends FormatWriter {
     boolean littleEndian = bigEndian == null ?
       false : !bigEndian.booleanValue();
 
-    //if (tiffSaver == null) 
+
     tiffSaver = new TiffSaver(out); 
     tiffSaver.setWritingSequentially(sequential);
     tiffSaver.setLittleEndian(littleEndian);
@@ -163,6 +163,7 @@ public class TiffWriter extends FormatWriter {
       RandomAccessInputStream tmp = new RandomAccessInputStream(currentId);
       if (tmp.length() == 0) {
         // write TIFF header
+        System.err.println("header");
         tiffSaver.writeHeader();
       }
       tmp.close();

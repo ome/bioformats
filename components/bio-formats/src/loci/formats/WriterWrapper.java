@@ -27,6 +27,7 @@ import java.awt.image.ColorModel;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
+import loci.formats.codec.CodecOptions;
 import loci.formats.meta.MetadataRetrieve;
 
 /**
@@ -234,6 +235,11 @@ public abstract class WriterWrapper implements IFormatWriter {
     writer.setCompression(compress);
   }
 
+  /* @see IFormatWriter#setCodecOptions(CodecOptions) */
+  public void setCodecOptions(CodecOptions options) {
+    writer.setCodecOptions(options);
+  }
+  
   public String getCompression() {
     return writer.getCompression();
   }
