@@ -88,6 +88,8 @@ public final class ImageConverter {
     boolean stitch = false, separate = false, merge = false, fill = false;
     boolean bigtiff = false;
     int series = -1;
+    int firstPlane = 0;
+    int lastPlane = Integer.MAX_VALUE;
     if (args != null) {
       for (int i=0; i<args.length; i++) {
         if (args[i].startsWith("-") && args.length > 1) {
@@ -104,6 +106,13 @@ public final class ImageConverter {
           else if (args[i].equals("-series")) {
             try {
               series = Integer.parseInt(args[++i]);
+            }
+            catch (NumberFormatException exc) { }
+          }
+          else if (args[i].equals("-range")) {
+            try {
+              firstPlane = Integer.parseInt(args[++i]);
+              lastPlane = Integer.parseInt(args[++i]) + 1;
             }
             catch (NumberFormatException exc) { }
           }
@@ -129,7 +138,7 @@ public final class ImageConverter {
         "To convert a file between formats, run:",
         "  bfconvert [-debug] [-stitch] [-separate] [-merge] [-expand]",
         "    [-bigtiff] [-compression codec] [-series series] [-map id]",
-        "    in_file out_file",
+        "    [-range start end] in_file out_file",
         "",
         "      -debug: turn on debugging output",
         "     -stitch: stitch input files with similar names",
@@ -140,6 +149,7 @@ public final class ImageConverter {
         "-compression: specify the codec to use when saving images",
         "     -series: specify which image series to convert",
         "        -map: specify file on disk to which name should be mapped",
+        "      -range: specify range of planes to convert (inclusive)",
         "",
         "If any of the following patterns are present in out_file, they will",
         "be replaced with the indicated metadata value from the input file.",
@@ -257,8 +267,14 @@ public final class ImageConverter {
       writer.setInterleaved(reader.isInterleaved());
       writer.setValidBitsPerPixel(reader.getBitsPerPixel());
       int numImages = writer.canDoStacks() ? reader.getImageCount() : 1;
+
+      int startPlane = (int) Math.max(0, firstPlane);
+      int endPlane = (int) Math.min(numImages, lastPlane);
+      numImages = endPlane - startPlane;
+
       total += numImages;
-      for (int i=0; i<numImages; i++) {
+
+      for (int i=startPlane; i<endPlane; i++) {
         writer.setId(FormatTools.getFilename(q, i, reader, out));
         if (compression != null) writer.setCompression(compression);
 
@@ -271,14 +287,14 @@ public final class ImageConverter {
           writer.setColorModel(model);
         }
         long m = System.currentTimeMillis();
-        writer.saveBytes(i, buf);
+        writer.saveBytes(i - startPlane, buf);
         long e = System.currentTimeMillis();
         read += m - s;
         write += e - m;
 
         // log number of planes processed every second or so
         if (i == numImages - 1 || (e - timeLastLogged) / 1000 > 0) {
-          int current = i + 1;
+          int current = (i - startPlane) + 1;
           int percent = 100 * current / numImages;
           StringBuilder sb = new StringBuilder();
           sb.append("\t");
