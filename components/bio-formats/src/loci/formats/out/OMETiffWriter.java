@@ -26,6 +26,8 @@ package loci.formats.out;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import ome.xml.model.primitives.NonNegativeInteger;
@@ -43,6 +45,7 @@ import loci.formats.meta.MetadataRetrieve;
 import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.ome.OMEXMLMetadataImpl;
 import loci.formats.services.OMEXMLService;
+import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffSaver;
 
 /**
@@ -65,13 +68,13 @@ public class OMETiffWriter extends TiffWriter {
 
   // -- Fields --
 
-  private ArrayList<Integer> seriesMap;
+  private List<Integer> seriesMap;
   private String[][] imageLocations;
   private OMEXMLMetadata omeMeta;
   private OMEXMLService service;
-  private HashMap<String, Integer> ifdCounts = new HashMap<String, Integer>();
+  private Map<String, Integer> ifdCounts = new HashMap<String, Integer>();
 
-  private HashMap<String, String> uuids = new HashMap<String, String>();
+  private Map<String, String> uuids = new HashMap<String, String>();
 
   // -- Constructor --
 
@@ -95,7 +98,7 @@ public class OMETiffWriter extends TiffWriter {
           populateImage(omeMeta, series);
         }
 
-        ArrayList<String> files = new ArrayList<String>();
+        List<String> files = new ArrayList<String>();
         for (String[] s : imageLocations) {
           for (String f : s) {
             if (!files.contains(f) && f != null) {
@@ -140,16 +143,25 @@ public class OMETiffWriter extends TiffWriter {
   public void saveBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
+    saveBytes(no, buf, null, x, y, w, h);
+  }
+
+  /**
+   * @see loci.formats.IFormatWriter#saveBytes(int, byte[], IFD, int, int, int, int)
+   */
+  public void saveBytes(int no, byte[] buf, IFD ifd, int x, int y, int w, int h)
+    throws FormatException, IOException
+  {
     if (seriesMap == null) seriesMap = new ArrayList<Integer>();
-    seriesMap.add(new Integer(series));
-
-    MetadataRetrieve r = getMetadataRetrieve();
-
-    super.saveBytes(no, buf, x, y, w, h);
+    if (!seriesMap.contains(series)) {
+      seriesMap.add(new Integer(series));
+    }
+    
+    super.saveBytes(no, buf, ifd, x, y, w, h);
 
     imageLocations[series][no] = currentId;
   }
-
+  
   // -- IFormatHandler API methods --
 
   /* @see IFormatHandler#setId(String) */
