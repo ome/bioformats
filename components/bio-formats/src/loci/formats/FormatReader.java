@@ -1079,8 +1079,24 @@ public abstract class FormatReader extends FormatHandler
             if (service == null) {
               service = factory.getInstance(OMEXMLService.class);
             }
+
+            Hashtable<String, Object> allMetadata =
+              new Hashtable<String, Object>();
+            allMetadata.putAll(metadata);
+
+            for (int series=0; series<getSeriesCount(); series++) {
+              String name = "Series " + series;
+              String realName = ((IMetadata) store).getImageName(series);
+              if (realName != null && realName.trim().length() != 0) {
+                name = realName;
+              }
+              setSeries(series);
+              MetadataTools.merge(getSeriesMetadata(), allMetadata, name + " ");
+            }
+            setSeries(0);
+
             service.populateOriginalMetadata(
-              (OMEXMLMetadata) store, metadata);
+              (OMEXMLMetadata) store, allMetadata);
           }
           catch (DependencyException e) {
             LOGGER.warn("OMEXMLService not available.", e);
