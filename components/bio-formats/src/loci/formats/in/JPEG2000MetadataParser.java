@@ -28,6 +28,7 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatTools;
 import loci.formats.codec.JPEG2000BoxType;
@@ -112,7 +113,15 @@ public class JPEG2000MetadataParser {
     throws IOException {
     this.in = in;
     this.maximumReadOffset = maximumReadOffset;
-    parseBoxes();
+    boolean isLittleEndian = in.isLittleEndian();
+    try {
+      // Parse boxes may need to change the endianness of the input stream so
+      // we're going to reset it when we're done.
+      parseBoxes();
+    }
+    finally {
+      in.order(isLittleEndian);
+    }
   }
 
   /**
@@ -120,7 +129,8 @@ public class JPEG2000MetadataParser {
    * @throws IOException Thrown if there is an error reading from the file.
    */
   private void parseBoxes() throws IOException {
-    long pos = in.getFilePointer(), nextPos = 0;
+    long originalPos = in.getFilePointer(), nextPos = 0;
+    long pos = originalPos;
     LOGGER.info("Parsing JPEG 2000 boxes at {}", pos);
     int length = 0, boxCode;
     JPEG2000BoxType boxType;
@@ -128,19 +138,24 @@ public class JPEG2000MetadataParser {
     while (pos < maximumReadOffset) {
       pos = in.getFilePointer();
       length = in.readInt();
-      nextPos = pos + length;
       boxCode = in.readInt();
       boxType = JPEG2000BoxType.get(boxCode);
+      if (boxType == JPEG2000BoxType.SIGNATURE_WRONG_ENDIANNESS) {
+        LOGGER.debug("Swapping endianness during box parsing.");
+        in.order(!in.isLittleEndian());
+        length = DataTools.swap(length);
+      }
+      nextPos = pos + length;
       length -= 8;
       if (boxType == null) {
         LOGGER.warn("Unknown JPEG 2000 box 0x{} at {}",
             Integer.toHexString(boxCode), pos);
-        if (pos == 0) {
-          in.seek(0);
+        if (pos == originalPos) {
+          in.seek(originalPos);
           if (JPEG2000SegmentMarker.get(in.readUnsignedShort()) != null) {
             LOGGER.info("File is a raw codestream not a JP2.");
             isRawCodestream = true;
-            in.seek(0);
+            in.seek(originalPos);
             parseContiguousCodestream(in.length());
           }
         }
@@ -197,9 +212,15 @@ public class JPEG2000MetadataParser {
     long maximumReadOffset = pos + length;
     boolean terminate = false;
     while (pos < maximumReadOffset && !terminate) {
+      pos = in.getFilePointer();
       segmentMarkerCode = in.readUnsignedShort();
       segmentMarker = JPEG2000SegmentMarker.get(segmentMarkerCode);
-      pos = in.getFilePointer();
+      if (segmentMarker == JPEG2000SegmentMarker.SOC_WRONG_ENDIANNESS) {
+        LOGGER.debug("Swapping endianness during segment marker parsing.");
+        in.order(!in.isLittleEndian());
+        segmentMarkerCode = JPEG2000SegmentMarker.SOC.getCode();
+        segmentMarker = JPEG2000SegmentMarker.SOC;
+      }
       if (segmentMarker == JPEG2000SegmentMarker.SOC
           || segmentMarker == JPEG2000SegmentMarker.SOD
           || segmentMarker == JPEG2000SegmentMarker.EPH
@@ -212,7 +233,7 @@ public class JPEG2000MetadataParser {
       else {
         segmentLength = in.readUnsignedShort();
       }
-      nextPos = pos + segmentLength;
+      nextPos = pos + segmentLength + 2;
       if (segmentMarker == null) {
         LOGGER.warn("Unknown JPEG 2000 segment marker 0x{} at {}",
             Integer.toHexString(segmentMarkerCode), pos);
