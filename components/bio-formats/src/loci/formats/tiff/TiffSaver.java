@@ -35,7 +35,6 @@ import loci.common.RandomAccessOutputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.codec.CodecOptions;
-import loci.formats.codec.JPEG2000CodecOptions;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -265,10 +264,12 @@ public class TiffSaver {
     }
     int[] bps = ifd.getBitsPerSample();
 
+    int ww = 1;
+    if (h == height) ww = vv;
     int off;
     // write pixel strips to output buffers
     for (int row=0; row<h; row++) {
-      int strip = (row+vv*y+x) / rowsPerStrip;
+      int strip = (row+vv*y+ww*x) / rowsPerStrip;
       for (int col=0; col<w; col++) {
         int ndx = ((row+y) * width + col +x) * bytesPerPixel;
         for (int c=0; c<nChannels; c++) {
