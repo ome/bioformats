@@ -163,7 +163,6 @@ public class TiffWriter extends FormatWriter {
       RandomAccessInputStream tmp = new RandomAccessInputStream(currentId);
       if (tmp.length() == 0) {
         // write TIFF header
-        System.err.println("header");
         tiffSaver.writeHeader();
       }
       tmp.close();

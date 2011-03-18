@@ -153,10 +153,10 @@ public class OMETiffWriter extends TiffWriter {
     throws FormatException, IOException
   {
     if (seriesMap == null) seriesMap = new ArrayList<Integer>();
-    if (!seriesMap.contains(series)) {
+    if (!ifd.containsKey(IFD.REUSE)) {
       seriesMap.add(new Integer(series));
     }
-    
+
     super.saveBytes(no, buf, ifd, x, y, w, h);
 
     imageLocations[series][no] = currentId;

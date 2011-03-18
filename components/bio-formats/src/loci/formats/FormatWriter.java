@@ -59,7 +59,7 @@ public abstract class FormatWriter extends FormatHandler
 
   /** Current compression type. */
   protected String compression;
-  
+
   /** The options if required. */
   protected CodecOptions options;
 
@@ -221,7 +221,7 @@ public abstract class FormatWriter extends FormatHandler
   public void setCodecOptions(CodecOptions options) {
     this.options = options;
   }
-  
+
   /* @see IFormatWriter#getCompression() */
   public String getCompression() {
     return compression;
@@ -331,6 +331,14 @@ public abstract class FormatWriter extends FormatHandler
     initialized = null;
   }
 
+  /**
+   * Sets the codec options.
+   * @param options The options to set.
+   */
+  public void setCodecOptions(CodecOptions options) {
+    this.options = options;
+  }
+  
   // -- Helper methods --
 
   /**
