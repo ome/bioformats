@@ -40,6 +40,7 @@ import loci.common.enumeration.EnumException;
 public enum JPEG2000BoxType implements CodedEnum {
 
   SIGNATURE(0x6A502020, "Signature"),
+  SIGNATURE_WRONG_ENDIANNESS(0x2020506A, "Signature (Wrong endianness)"),
   FILE(0x66747970, "File"),
   HEADER(0x6A703268, "Header"),
   IMAGE_HEADER(0x69686472, "Image header"),

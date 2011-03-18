@@ -42,6 +42,7 @@ public enum JPEG2000SegmentMarker implements CodedEnum {
   RESERVED_DELIMITER_MARKER_MIN(0xFF30, "Reserved delimiter marker minimum"),
   RESERVED_DELIMITER_MARKER_MAX(0xFF3F, "Reserved delimiter marker maximum"),
   SOC(0xFF4F, "Start of codestream"),
+  SOC_WRONG_ENDIANNESS(0x4FFF, "Start of codestream (Wrong endianness)"),
   SOT(0xFF90, "Start of tile"),
   SOD(0xFF93, "Start of data"),
   EOC(0xFFD9, "End of codestream"),
