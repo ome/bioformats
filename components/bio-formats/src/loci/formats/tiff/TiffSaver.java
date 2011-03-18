@@ -286,10 +286,16 @@ public class TiffSaver {
       }
     }
 
+    // The strip we're actually to compress based on the number of
+    // tiles/strips that we've configured and the dimensions of the data we've
+    // been given.
+    int thisStrip = (y / h) * (width / w) + (x / w);
     // compress strips according to given differencing and compression schemes
-
     byte[][] strips = new byte[nStrips][];
     for (int strip=0; strip<nStrips; strip++) {
+      if (strip != thisStrip) {
+        continue;
+      }
       strips[strip] = stripBuf[strip].toByteArray();
       TiffCompression.difference(strips[strip], ifd);
       CodecOptions codecOptions = compression.getCompressionCodecOptions(
@@ -326,7 +332,7 @@ public class TiffSaver {
     }
 
     for (int i=0; i<stripByteCounts.length; i++) {
-      if (stripByteCounts[i] == 0) {
+      if (stripByteCounts[i] == 0 && strips[i] != null) {
         stripByteCounts[i] = strips[i].length;
       }
     }
@@ -338,10 +344,12 @@ public class TiffSaver {
     writeIFD(ifd, 0);
 
     for (int i=0; i<strips.length; i++) {
-      if (stripOffsets[i] > 0 && strips[i].length == 0) {
+      if (stripOffsets[i] > 0 && stripByteCounts[i] != 0) {
+        LOGGER.debug("Strip {} seeking to {}",
+            i, stripOffsets[i] + stripByteCounts[i]);
         out.seek(stripOffsets[i] + stripByteCounts[i]);
       }
-      else {
+      else if (strips[i] != null) {
         stripOffsets[i] = out.getFilePointer();
         out.write(strips[i]);
       }
@@ -349,8 +357,15 @@ public class TiffSaver {
     ifd.putIFDValue(IFD.STRIP_BYTE_COUNTS, stripByteCounts);
     ifd.putIFDValue(IFD.STRIP_OFFSETS, stripOffsets);
     long endFP = out.getFilePointer();
+    if (LOGGER.isDebugEnabled()) {
+      LOGGER.debug("Offset before IFD write: {} Seeking to: {}",
+          out.getFilePointer(), fp);
+    }
     out.seek(fp);
     writeIFD(ifd, last ? 0 : endFP);
+    if (LOGGER.isDebugEnabled()) {
+      LOGGER.debug("Offset after IFD write: {}", out.getFilePointer());
+    }
   }
 
   public void writeIFD(IFD ifd, long nextOffset)

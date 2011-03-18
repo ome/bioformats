@@ -594,6 +594,8 @@ public class TiffParser {
       return buf;
     }
     byte[] tile = new byte[(int) stripByteCounts[tileNumber]];
+    LOGGER.debug("Reading tile Length {} Offset {}",
+        tile.length, stripOffsets[tileNumber]);
     in.seek(stripOffsets[tileNumber]);
     in.read(tile);
 
