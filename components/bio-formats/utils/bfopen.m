@@ -127,6 +127,7 @@ if stitchFiles
 end
 
 tic
+r.setMetadataStore(loci.formats.MetadataTools.createOMEXMLMetadata());
 r.setId(id);
 numSeries = r.getSeriesCount();
 result = cell(numSeries, 2);
@@ -270,6 +271,7 @@ for s = 1:numSeries
     result{s, 1} = imageList;
     result{s, 2} = metadataList;
     result{s, 3} = colorMaps;
+    result{s, 4} = r.getMetadataStore();
     fprintf('\n');
 end
 r.close();
