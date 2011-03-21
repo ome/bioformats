@@ -88,11 +88,13 @@ public enum TiffCompression implements CodedEnum {
       options.lossless = true;
       JPEG2000CodecOptions j2k = JPEG2000CodecOptions.getDefaultOptions(options);
       if (opt instanceof JPEG2000CodecOptions) {
-        JPEG2000CodecOptions o = (JPEG2000CodecOptions) j2k;
+        JPEG2000CodecOptions o = (JPEG2000CodecOptions) opt;
         j2k.numDecompositionLevels = o.numDecompositionLevels;
         j2k.resolution = o.resolution;
         if (o.codeBlockSize != null)
           j2k.codeBlockSize = o.codeBlockSize;
+        if (o.quality > 0)
+          j2k.quality = o.quality;
       }
       return j2k;
     }
@@ -111,11 +113,13 @@ public enum TiffCompression implements CodedEnum {
       options.lossless = false;
       JPEG2000CodecOptions j2k = JPEG2000CodecOptions.getDefaultOptions(options);
       if (opt instanceof JPEG2000CodecOptions) {
-        JPEG2000CodecOptions o = (JPEG2000CodecOptions) j2k;
+        JPEG2000CodecOptions o = (JPEG2000CodecOptions) opt;
         j2k.numDecompositionLevels = o.numDecompositionLevels;
         j2k.resolution = o.resolution;
         if (o.codeBlockSize != null)
           j2k.codeBlockSize = o.codeBlockSize;
+        if (o.quality > 0)
+          j2k.quality = o.quality;
       }
       return j2k;
     }
@@ -135,11 +139,13 @@ public enum TiffCompression implements CodedEnum {
       options.lossless = true;
       JPEG2000CodecOptions j2k = JPEG2000CodecOptions.getDefaultOptions(options);
       if (opt instanceof JPEG2000CodecOptions) {
-        JPEG2000CodecOptions o = (JPEG2000CodecOptions) j2k;
+        JPEG2000CodecOptions o = (JPEG2000CodecOptions) opt;
         j2k.numDecompositionLevels = o.numDecompositionLevels;
         j2k.resolution = o.resolution;
         if (o.codeBlockSize != null)
           j2k.codeBlockSize = o.codeBlockSize;
+        if (o.quality > 0)
+          j2k.quality = o.quality;
       }
       return j2k;
     }

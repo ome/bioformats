@@ -1,5 +1,5 @@
 //
-// OmeroOpenBytesTest.java
+// TiffWriterTest.java
 //
 
 /*
@@ -69,7 +69,7 @@ public class TiffWriterTest {
 
   /** The metadata store. */
   private IMetadata metadata;
-  
+
   /** Service to create the metadata store. */
   private OMEXMLService service;
 
@@ -100,7 +100,7 @@ public class TiffWriterTest {
     writer.setInterleaved(true);
     return writer;
   }
-  
+
   /**
    * Tests the writing of the tiles.
    * @param output The output where to write the data.
@@ -109,7 +109,7 @@ public class TiffWriterTest {
    * @param m The value by which to divide the height of the image
    */
   private void assertTiles(String output, String compression, int n, int m) 
-  throws Exception {
+    throws Exception {
     TiffWriter writer = initializeWriter(output, compression);
     byte[] plane;
     int x, y;
@@ -190,7 +190,7 @@ public class TiffWriterTest {
     }
     outputReader.close();
   }
-  
+
   @Parameters({"id"})
   @BeforeClass
   public void parse(String id) throws Exception {
@@ -201,12 +201,12 @@ public class TiffWriterTest {
     reader.setMetadataStore(metadata);
     reader.setId(id);
   }
-  
+
   @AfterClass
   public void tearDown() throws Exception {
     reader.close();
   }
-  
+
   /**
    * Tests the writing of the full size image as JPEG200 stream.
    * @throws Exception Throw if an error occurred while writing.
@@ -219,7 +219,7 @@ public class TiffWriterTest {
       assertTiles(f.getAbsolutePath(), COMPRESSION[i], 1, 1);
     }
   }
-  
+
   /**
    * Tests the writing of the image divided in 4 blocks.
    * @throws Exception Throw if an error occurred while writing.
@@ -233,7 +233,7 @@ public class TiffWriterTest {
       assertTiles(f.getAbsolutePath(), COMPRESSION[i], 2, 2);
     }
   }
-  
+
   /**
    * Tests the writing of the image divided in 16 blocks.
    * @throws Exception Throw if an error occurred while writing.
@@ -247,6 +247,7 @@ public class TiffWriterTest {
       assertTiles(f.getAbsolutePath(), COMPRESSION[i], 4, 4);
     }
   }
+
   /**
    * Tests the writing of the image with 2 tiles with full width.
    * @throws Exception Throw if an error occurred while writing.
@@ -260,7 +261,7 @@ public class TiffWriterTest {
       assertTiles(f.getAbsolutePath(), COMPRESSION[i], 1, 2);
     }
   }
-  
+
   /**
    * Tests the writing of the image with 4 tiles with full width.
    * @throws Exception Throw if an error occurred while writing.
@@ -274,7 +275,7 @@ public class TiffWriterTest {
       assertTiles(f.getAbsolutePath(), COMPRESSION[i], 1, 4);
     }
   }
-  
+
   /**
    * Tests the writing of the image with 2 tiles with full height.
    * @throws Exception Throw if an error occurred while writing.
@@ -288,7 +289,7 @@ public class TiffWriterTest {
       assertTiles(f.getAbsolutePath(), COMPRESSION[i], 2, 1);
     }
   }
-  
+
   /**
    * Tests the writing of the image with 4 tiles with full height.
    * @throws Exception Throw if an error occurred while writing.
@@ -302,5 +303,5 @@ public class TiffWriterTest {
       assertTiles(f.getAbsolutePath(), COMPRESSION[i], 4, 1);
     }
   }
-  
+
 }

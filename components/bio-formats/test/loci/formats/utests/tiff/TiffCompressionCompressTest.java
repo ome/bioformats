@@ -25,6 +25,7 @@ package loci.formats.utests.tiff;
 
 import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertNotNull;
+import static org.testng.AssertJUnit.assertTrue;
 
 import java.io.IOException;
 
@@ -182,12 +183,71 @@ public class TiffCompressionCompressTest {
     compression.compress(data, options);
   }
 
-  @Test(enabled=false)
+  @Test(enabled=true)
   public void testJPEG_2000_ResetQuality() throws FormatException, IOException {
     TiffCompression compression = TiffCompression.JPEG_2000;
     JPEG2000CodecOptions opt = JPEG2000CodecOptions.getDefaultOptions();
-    opt.quality = 5;
+    opt.quality = 1.0f;
     CodecOptions options = compression.getCompressionCodecOptions(ifd, opt);
     assertEquals(options.quality, opt.quality);
+    compression = TiffCompression.JPEG_2000_LOSSY;
+    options = compression.getCompressionCodecOptions(ifd, opt);
+    assertEquals(options.quality, opt.quality);
+    compression = TiffCompression.ALT_JPEG2000;
+    options = compression.getCompressionCodecOptions(ifd, opt);
+    assertEquals(options.quality, opt.quality);
   }
+
+  @Test(enabled=true)
+  public void testJPEG_2000_ResetBlockSize() throws FormatException, IOException {
+    TiffCompression compression = TiffCompression.JPEG_2000;
+    JPEG2000CodecOptions opt = JPEG2000CodecOptions.getDefaultOptions();
+    int v = 16;
+    opt.codeBlockSize = new int[] {v, v};
+    CodecOptions options = compression.getCompressionCodecOptions(ifd, opt);
+    assertTrue(options instanceof JPEG2000CodecOptions);
+    JPEG2000CodecOptions j2k = (JPEG2000CodecOptions) options;
+    assertEquals(j2k.codeBlockSize.length, opt.codeBlockSize.length);
+    for (int i = 0; i < j2k.codeBlockSize.length; i++) {
+      assertEquals(j2k.codeBlockSize[i], opt.codeBlockSize[i]);
+    }
+    compression = TiffCompression.JPEG_2000_LOSSY;
+    options = compression.getCompressionCodecOptions(ifd, opt);
+    assertTrue(options instanceof JPEG2000CodecOptions);
+    j2k = (JPEG2000CodecOptions) options;
+    assertEquals(j2k.codeBlockSize.length, opt.codeBlockSize.length);
+    for (int i = 0; i < j2k.codeBlockSize.length; i++) {
+      assertEquals(j2k.codeBlockSize[i], opt.codeBlockSize[i]);
+    }
+    compression = TiffCompression.ALT_JPEG2000;
+    options = compression.getCompressionCodecOptions(ifd, opt);
+    j2k = (JPEG2000CodecOptions) options;
+    assertEquals(j2k.codeBlockSize.length, opt.codeBlockSize.length);
+    for (int i = 0; i < j2k.codeBlockSize.length; i++) {
+      assertEquals(j2k.codeBlockSize[i], opt.codeBlockSize[i]);
+    }
+  }
+
+  @Test(enabled=true)
+  public void testJPEG_2000_ResetNumberDecompositionLevel() 
+    throws FormatException, IOException {
+    TiffCompression compression = TiffCompression.JPEG_2000;
+    JPEG2000CodecOptions opt = JPEG2000CodecOptions.getDefaultOptions();
+    int v = 16;
+    opt.numDecompositionLevels = v;
+    CodecOptions options = compression.getCompressionCodecOptions(ifd, opt);
+    assertTrue(options instanceof JPEG2000CodecOptions);
+    JPEG2000CodecOptions j2k = (JPEG2000CodecOptions) options;
+    assertEquals(j2k.numDecompositionLevels, opt.numDecompositionLevels);
+    compression = TiffCompression.JPEG_2000_LOSSY;
+    options = compression.getCompressionCodecOptions(ifd, opt);
+    assertTrue(options instanceof JPEG2000CodecOptions);
+    j2k = (JPEG2000CodecOptions) options;
+    assertEquals(j2k.numDecompositionLevels, opt.numDecompositionLevels);
+    compression = TiffCompression.ALT_JPEG2000;
+    options = compression.getCompressionCodecOptions(ifd, opt);
+    j2k = (JPEG2000CodecOptions) options;
+    assertEquals(j2k.numDecompositionLevels, opt.numDecompositionLevels);
+  }
+
 }
