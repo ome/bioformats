@@ -72,14 +72,15 @@ public class TiffWriterTest {
   
   /** Service to create the metadata store. */
   private OMEXMLService service;
-  
+
   /** The compression levels to test. */
   private final static String[] COMPRESSION;
   static {
-    COMPRESSION = new String[1];
-    COMPRESSION[0] = CompressionType.UNCOMPRESSED.getCompression();
+    COMPRESSION = new String[2];
+    COMPRESSION[0] = CompressionType.J2K.getCompression();
+    COMPRESSION[1] = CompressionType.UNCOMPRESSED.getCompression();
   }
-  
+
   /**
    * Initializes the writer.
    * @param output The file where to write the compressed data.
@@ -190,15 +191,15 @@ public class TiffWriterTest {
     outputReader.close();
   }
   
-  @Parameters({"fileName"})
+  @Parameters({"id"})
   @BeforeClass
-  public void parse(String fileName) throws Exception {
+  public void parse(String id) throws Exception {
     ServiceFactory factory = new ServiceFactory();
     service = factory.getInstance(OMEXMLService.class);
     metadata = service.createOMEXMLMetadata();
     reader = new ImageReader();
     reader.setMetadataStore(metadata);
-    reader.setId(fileName);
+    reader.setId(id);
   }
   
   @AfterClass
@@ -264,7 +265,7 @@ public class TiffWriterTest {
    * Tests the writing of the image with 4 tiles with full width.
    * @throws Exception Throw if an error occurred while writing.
    */
-  @Test
+  @Test(enabled = true)
   public void testWriteImageSplitHorizontalFour() throws Exception {
     File f;
     for (int i = 0; i < COMPRESSION.length; i++) {

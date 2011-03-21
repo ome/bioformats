@@ -78,9 +78,23 @@ public enum TiffCompression implements CodedEnum {
     @Override
     public CodecOptions getCompressionCodecOptions(IFD ifd)
         throws FormatException {
-      CodecOptions options = super.getCompressionCodecOptions(ifd);
+      return getCompressionCodecOptions(ifd, null);
+    }
+
+    @Override
+    public CodecOptions getCompressionCodecOptions(IFD ifd, CodecOptions opt)
+    throws FormatException {
+      CodecOptions options = super.getCompressionCodecOptions(ifd, opt);
       options.lossless = true;
-      return JPEG2000CodecOptions.getDefaultOptions(options);
+      JPEG2000CodecOptions j2k = JPEG2000CodecOptions.getDefaultOptions(options);
+      if (opt instanceof JPEG2000CodecOptions) {
+        JPEG2000CodecOptions o = (JPEG2000CodecOptions) j2k;
+        j2k.numDecompositionLevels = o.numDecompositionLevels;
+        j2k.resolution = o.resolution;
+        if (o.codeBlockSize != null)
+          j2k.codeBlockSize = o.codeBlockSize;
+      }
+      return j2k;
     }
   },
   JPEG_2000_LOSSY(33004, new JPEG2000Codec(), "JPEG-2000 Lossy") {
@@ -271,6 +285,7 @@ public enum TiffCompression implements CodedEnum {
     throws FormatException{
     if (ifd == null)
       throw new IllegalArgumentException("No IFD speficied.");
+    if (opt == null) opt = CodecOptions.getDefaultOptions();
     CodecOptions options = new CodecOptions(opt);
     options.width = (int) ifd.getImageWidth();
     options.height = (int) ifd.getImageLength();

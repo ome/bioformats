@@ -331,14 +331,6 @@ public abstract class FormatWriter extends FormatHandler
     initialized = null;
   }
 
-  /**
-   * Sets the codec options.
-   * @param options The options to set.
-   */
-  public void setCodecOptions(CodecOptions options) {
-    this.options = options;
-  }
-  
   // -- Helper methods --
 
   /**

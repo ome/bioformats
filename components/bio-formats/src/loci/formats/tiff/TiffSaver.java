@@ -201,7 +201,7 @@ public class TiffSaver {
 
   /**
    * Writes any rectangle form the passed image.
-   * 
+   *
    * @param buf The byte array that represents the image the full image.
    * @param ifd The Image File Directories. Mustn't be <code>null</code>.
    * @param no  The image index within the current file, starting from 0.
@@ -210,7 +210,7 @@ public class TiffSaver {
    * @param y   The Y-coordinate of the top-left corner.
    * @param w   The width of the rectangle.
    * @param h   The height of the rectangle.
-   * @param last Pass <code>true</code> if it is the last image, 
+   * @param last Pass <code>true</code> if it is the last image,
    *             <code>false</code> otherwise.
    * @throws FormatException
    * @throws IOException
@@ -279,7 +279,7 @@ public class TiffSaver {
               stripOut[strip].writeByte(buf[off]);
             }
             else {
-              off = c * plane + ndx + n;  
+              off = c * plane + ndx + n;
               stripOut[c * (nStrips / nChannels) + strip].writeByte(buf[off]);
             }
           }
@@ -718,7 +718,7 @@ public class TiffSaver {
 
   /**
    * Makes a valid IFD.
-   * 
+   *
    * @param ifd The IFD to handle.
    * @param pixelType The pixel type.
    * @param nChannels The number of channels.
