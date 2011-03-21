@@ -83,7 +83,7 @@ public class APNGWriter extends FormatWriter {
 
     if (!initialized[series][no]) {
       writeFCTL(width, height);
-      if (no == 0) writePLTE();
+      if (numFrames == 0) writePLTE();
       initialized[series][no] = true;
     }
 
