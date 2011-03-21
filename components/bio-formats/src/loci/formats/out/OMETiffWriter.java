@@ -153,7 +153,7 @@ public class OMETiffWriter extends TiffWriter {
     throws FormatException, IOException
   {
     if (seriesMap == null) seriesMap = new ArrayList<Integer>();
-    if (ifd != null && !ifd.containsKey(IFD.REUSE)) {
+    if (ifd == null || !ifd.containsKey(IFD.REUSE)) {
       seriesMap.add(new Integer(series));
     }
 

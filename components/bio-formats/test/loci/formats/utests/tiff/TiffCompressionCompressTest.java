@@ -181,8 +181,8 @@ public class TiffCompressionCompressTest {
     CodecOptions options = compression.getCompressionCodecOptions(ifd);
     compression.compress(data, options);
   }
-  
-  @Test
+
+  @Test(enabled=false)
   public void testJPEG_2000_ResetQuality() throws FormatException, IOException {
     TiffCompression compression = TiffCompression.JPEG_2000;
     JPEG2000CodecOptions opt = JPEG2000CodecOptions.getDefaultOptions();
