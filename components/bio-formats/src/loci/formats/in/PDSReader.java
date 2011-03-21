@@ -180,6 +180,9 @@ public class PDSReader extends FormatReader {
     super.initFile(id);
 
     String[] headerData = DataTools.readFile(id).split("\r\n");
+    if (headerData.length == 1) {
+      headerData = headerData[0].split("\r");
+    }
     Double xPos = null, yPos = null;
     Double deltaX = null, deltaY = null;
     String date = null;
