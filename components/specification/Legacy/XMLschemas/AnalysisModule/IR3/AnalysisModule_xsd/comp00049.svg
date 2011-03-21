@@ -1,0 +1,129 @@
+<?xml version = "1.0"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<svg width = "563pt" height = "145pt" viewBox = "0 0 563 145" xmlns = "http://www.w3.org/2000/svg" xmlns:xlink = "http://www.w3.org/1999/xlink">
+	<defs>
+		<style type = "text/css"><![CDATA[
+rect.attrGroup { fill: ivory ; stroke: black; stroke-width: 1 }
+rect.element { fill: ivory ; stroke: black; stroke-width: 1 }
+rect.elTypeBkgnd { fill: lightgray ; stroke: none }
+text.elName { font-family: helvetica ; font-size : 10 }
+text.elType { font-family: helvetica ; font-size : 7 }
+text.occurLarge { font-family: helvetica ; font-size : 9; fill : blue }
+text.occurSmall { font-family: helvetica ; font-size : 7; fill : blue }
+rect.typeIconDark { fill : darkslategray }
+circle.occurs { stroke : black ; stroke-width: 1; fill : white }
+circle.ellipsis { fill : black }
+path.typeIconDark { stroke : lightgray ; stroke-width: 1 }
+path.connector { stroke : red ; stroke-width: 1 ; fill: none; }
+path.modelGroup { stroke : black ; stroke-width: 1 ; fill: lightgray; }
+polyline.connector { stroke : red ; stroke-width: 1 ; fill: none; }
+.nodeStyle { fill : blue }
+]]></style>
+	</defs>
+	<rect x = "134" y = "5" width = "424" height = "69" class = "attrGroup" rx = "5" ry = "5"/>
+	<rect x = "139" y = "10" width = "74" height = "27" class = "element" rx = "5" ry = "5"/>
+	<circle class = "nodeStyle" cx = "145" cy = "16" r = "4"/>
+	<text x = "150" y = "21" class = "elName">ProgramID</text>
+	<rect x = "140" y = "11" width = "72" height = "25" class = "elTypeBkgnd" rx = "5" ry = "5" clip-path = "url(#e:AnalysisModule/a:ProgramID)"/>
+	<defs/>
+	<clipPath id = "e:AnalysisModule/a:ProgramID">
+		<rect x = "139" y = "25" width = "74" height = "11"/>
+	</clipPath>
+	<text x = "140" y = "33" class = "elType">string</text>
+	<image xlink:href = "../dgmDtString.gif" width = "10" height = "10" x = "203" y = "20"/>
+	<circle class = "occurs" cx = "354" cy = "23" r = "6"/>
+	<text x = "351" y = "26" class = "occurLarge">?</text>
+	<rect x = "360" y = "10" width = "67" height = "27" class = "element" rx = "5" ry = "5"/>
+	<circle class = "nodeStyle" cx = "366" cy = "16" r = "4"/>
+	<text x = "371" y = "21" class = "elName">Category</text>
+	<rect x = "361" y = "11" width = "65" height = "25" class = "elTypeBkgnd" rx = "5" ry = "5" clip-path = "url(#e:AnalysisModule/a:Category)"/>
+	<defs/>
+	<clipPath id = "e:AnalysisModule/a:Category">
+		<rect x = "360" y = "25" width = "67" height = "11"/>
+	</clipPath>
+	<image xlink:href = "../dgmDtString.gif" width = "10" height = "10" x = "417" y = "20"/>
+	<rect x = "139" y = "42" width = "82" height = "27" class = "element" rx = "5" ry = "5"/>
+	<circle class = "nodeStyle" cx = "145" cy = "48" r = "4"/>
+	<text x = "150" y = "53" class = "elName">ModuleType</text>
+	<rect x = "140" y = "43" width = "80" height = "25" class = "elTypeBkgnd" rx = "5" ry = "5" clip-path = "url(#e:AnalysisModule/a:ModuleType)"/>
+	<defs/>
+	<clipPath id = "e:AnalysisModule/a:ModuleType">
+		<rect x = "139" y = "57" width = "82" height = "11"/>
+	</clipPath>
+	<image xlink:href = "../dgmDtString.gif" width = "10" height = "10" x = "211" y = "52"/>
+	<rect x = "340" y = "42" width = "87" height = "27" class = "element" rx = "5" ry = "5"/>
+	<circle class = "nodeStyle" cx = "346" cy = "48" r = "4"/>
+	<text x = "351" y = "53" class = "elName">ModuleName</text>
+	<rect x = "341" y = "43" width = "85" height = "25" class = "elTypeBkgnd" rx = "5" ry = "5" clip-path = "url(#e:AnalysisModule/a:ModuleName)"/>
+	<defs/>
+	<clipPath id = "e:AnalysisModule/a:ModuleName">
+		<rect x = "340" y = "57" width = "87" height = "11"/>
+	</clipPath>
+	<image xlink:href = "../dgmDtString.gif" width = "10" height = "10" x = "417" y = "52"/>
+	<circle class = "occurs" cx = "438" cy = "55" r = "6"/>
+	<text x = "435" y = "58" class = "occurLarge">?</text>
+	<rect x = "444" y = "42" width = "78" height = "27" class = "element" rx = "5" ry = "5"/>
+	<circle class = "nodeStyle" cx = "450" cy = "48" r = "4"/>
+	<text x = "455" y = "53" class = "elName">Description</text>
+	<rect x = "445" y = "43" width = "76" height = "25" class = "elTypeBkgnd" rx = "5" ry = "5" clip-path = "url(#e:AnalysisModule/a:Description)"/>
+	<defs/>
+	<clipPath id = "e:AnalysisModule/a:Description">
+		<rect x = "444" y = "57" width = "78" height = "11"/>
+	</clipPath>
+	<text x = "445" y = "65" class = "elType">string</text>
+	<image xlink:href = "../dgmDtString.gif" width = "10" height = "10" x = "512" y = "52"/>
+	<circle class = "occurs" cx = "232" cy = "55" r = "6"/>
+	<text x = "229" y = "58" class = "occurLarge">?</text>
+	<rect x = "238" y = "42" width = "97" height = "27" class = "element" rx = "5" ry = "5"/>
+	<circle class = "nodeStyle" cx = "244" cy = "48" r = "4"/>
+	<text x = "249" y = "53" class = "elName">FeatureIterator</text>
+	<rect x = "239" y = "43" width = "95" height = "25" class = "elTypeBkgnd" rx = "5" ry = "5" clip-path = "url(#e:AnalysisModule/a:FeatureIterator)"/>
+	<defs/>
+	<clipPath id = "e:AnalysisModule/a:FeatureIterator">
+		<rect x = "238" y = "57" width = "97" height = "11"/>
+	</clipPath>
+	<image xlink:href = "../dgmDtString.gif" width = "10" height = "10" x = "325" y = "52"/>
+	<circle class = "occurs" cx = "438" cy = "23" r = "6"/>
+	<text x = "435" y = "26" class = "occurLarge">?</text>
+	<rect x = "444" y = "10" width = "109" height = "27" class = "element" rx = "5" ry = "5"/>
+	<circle class = "nodeStyle" cx = "450" cy = "16" r = "4"/>
+	<text x = "455" y = "21" class = "elName">NewFeatureName</text>
+	<rect x = "445" y = "11" width = "107" height = "25" class = "elTypeBkgnd" rx = "5" ry = "5" clip-path = "url(#e:AnalysisModule/a:NewFeatureName)"/>
+	<defs/>
+	<clipPath id = "e:AnalysisModule/a:NewFeatureName">
+		<rect x = "444" y = "25" width = "109" height = "11"/>
+	</clipPath>
+	<image xlink:href = "../dgmDtString.gif" width = "10" height = "10" x = "543" y = "20"/>
+	<circle class = "occurs" cx = "224" cy = "23" r = "6"/>
+	<text x = "221" y = "26" class = "occurLarge">D</text>
+	<rect x = "230" y = "10" width = "113" height = "27" class = "element" rx = "5" ry = "5"/>
+	<circle class = "nodeStyle" cx = "236" cy = "16" r = "4"/>
+	<text x = "241" y = "21" class = "elName">isStreamAlgorithm</text>
+	<rect x = "231" y = "11" width = "111" height = "25" class = "elTypeBkgnd" rx = "5" ry = "5" clip-path = "url(#e:AnalysisModule/a:isStreamAlgorithm)"/>
+	<defs/>
+	<clipPath id = "e:AnalysisModule/a:isStreamAlgorithm">
+		<rect x = "230" y = "25" width = "113" height = "11"/>
+	</clipPath>
+	<text x = "231" y = "33" class = "elType">boolean</text>
+	<image xlink:href = "../dgmDtBoolean.gif" width = "10" height = "10" x = "333" y = "20"/>
+	<rect x = "5" y = "96" width = "99" height = "27" class = "element"/>
+	<polygon class = "nodeStyle" points = "11,98 7,102 11,106 15,102"/>
+	<text x = "16" y = "107" class = "elName">AnalysisModule</text>
+	<rect x = "6" y = "111" width = "97" height = "11" class = "elTypeBkgnd"/>
+	<image xlink:href = "../dgmTypeComplex.gif" width = "10" height = "10" x = "94" y = "106"/>
+	<polyline class = "connector" points = "134,92 114,92 114,109 104,109 114,109 114,126 134,126"/>
+	<polyline class = "connector" points = "104,107 112,107 112,39 134,39"/>
+	<polyline class = "connector" points = "134,92 146,92"/>
+	<rect x = "146" y = "79" width = "79" height = "27" class = "element"/>
+	<polygon class = "nodeStyle" points = "152,81 148,85 152,89 156,85"/>
+	<text x = "157" y = "90" class = "elName">Declaration</text>
+	<rect x = "147" y = "94" width = "77" height = "11" class = "elTypeBkgnd"/>
+	<image xlink:href = "../dgmTypeComplex.gif" width = "10" height = "10" x = "215" y = "89"/>
+	<circle class = "occurs" cx = "140" cy = "126" r = "6"/>
+	<text x = "137" y = "129" class = "occurLarge">?</text>
+	<rect x = "146" y = "113" width = "127" height = "27" class = "element"/>
+	<polygon class = "nodeStyle" points = "152,115 148,119 152,123 156,119"/>
+	<text x = "157" y = "124" class = "elName">ExecutionInstructions</text>
+	<rect x = "147" y = "128" width = "125" height = "11" class = "elTypeBkgnd"/>
+	<image xlink:href = "../dgmTypeAny.gif" width = "10" height = "10" x = "263" y = "123"/>
+</svg>

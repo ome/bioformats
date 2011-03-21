@@ -1,0 +1,98 @@
+<?xml version = "1.0"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<svg width = "288pt" height = "215pt" viewBox = "0 0 288 215" xmlns = "http://www.w3.org/2000/svg" xmlns:xlink = "http://www.w3.org/1999/xlink">
+	<defs>
+		<style type = "text/css"><![CDATA[
+rect.attrGroup { fill: ivory ; stroke: black; stroke-width: 1 }
+rect.element { fill: ivory ; stroke: black; stroke-width: 1 }
+rect.elTypeBkgnd { fill: lightgray ; stroke: none }
+text.elName { font-family: helvetica ; font-size : 10 }
+text.elType { font-family: helvetica ; font-size : 7 }
+text.occurLarge { font-family: helvetica ; font-size : 9; fill : blue }
+text.occurSmall { font-family: helvetica ; font-size : 7; fill : blue }
+rect.typeIconDark { fill : darkslategray }
+circle.occurs { stroke : black ; stroke-width: 1; fill : white }
+circle.ellipsis { fill : black }
+path.typeIconDark { stroke : lightgray ; stroke-width: 1 }
+path.connector { stroke : red ; stroke-width: 1 ; fill: none; }
+path.modelGroup { stroke : black ; stroke-width: 1 ; fill: lightgray; }
+polyline.connector { stroke : red ; stroke-width: 1 ; fill: none; }
+.nodeStyle { fill : blue }
+]]></style>
+	</defs>
+	<rect x = "96" y = "5" width = "187" height = "37" class = "attrGroup" rx = "5" ry = "5"/>
+	<rect x = "101" y = "10" width = "47" height = "27" class = "element" rx = "5" ry = "5"/>
+	<circle class = "nodeStyle" cx = "107" cy = "16" r = "4"/>
+	<text x = "112" y = "21" class = "elName">ID</text>
+	<rect x = "102" y = "11" width = "45" height = "25" class = "elTypeBkgnd" rx = "5" ry = "5" clip-path = "url(#e:Dataset/a:ID)"/>
+	<defs/>
+	<clipPath id = "e:Dataset/a:ID">
+		<rect x = "101" y = "25" width = "47" height = "11"/>
+	</clipPath>
+	<text x = "102" y = "33" class = "elType">DatasetID</text>
+	<image xlink:href = "../dgmDtString.gif" width = "10" height = "10" x = "138" y = "20"/>
+	<rect x = "227" y = "10" width = "51" height = "27" class = "element" rx = "5" ry = "5"/>
+	<circle class = "nodeStyle" cx = "233" cy = "16" r = "4"/>
+	<text x = "238" y = "21" class = "elName">Name</text>
+	<rect x = "228" y = "11" width = "49" height = "25" class = "elTypeBkgnd" rx = "5" ry = "5" clip-path = "url(#e:Dataset/a:Name)"/>
+	<defs/>
+	<clipPath id = "e:Dataset/a:Name">
+		<rect x = "227" y = "25" width = "51" height = "11"/>
+	</clipPath>
+	<text x = "228" y = "33" class = "elType">string</text>
+	<image xlink:href = "../dgmDtString.gif" width = "10" height = "10" x = "268" y = "20"/>
+	<circle class = "occurs" cx = "159" cy = "23" r = "6"/>
+	<text x = "156" y = "26" class = "occurLarge">D</text>
+	<rect x = "165" y = "10" width = "57" height = "27" class = "element" rx = "5" ry = "5"/>
+	<circle class = "nodeStyle" cx = "171" cy = "16" r = "4"/>
+	<text x = "176" y = "21" class = "elName">Locked</text>
+	<rect x = "166" y = "11" width = "55" height = "25" class = "elTypeBkgnd" rx = "5" ry = "5" clip-path = "url(#e:Dataset/a:Locked)"/>
+	<defs/>
+	<clipPath id = "e:Dataset/a:Locked">
+		<rect x = "165" y = "25" width = "57" height = "11"/>
+	</clipPath>
+	<text x = "166" y = "33" class = "elType">boolean</text>
+	<image xlink:href = "../dgmDtBoolean.gif" width = "10" height = "10" x = "212" y = "20"/>
+	<rect x = "5" y = "115" width = "61" height = "27" class = "element"/>
+	<polygon class = "nodeStyle" points = "11,117 7,121 11,125 15,121"/>
+	<text x = "16" y = "126" class = "elName">Dataset</text>
+	<rect x = "6" y = "130" width = "59" height = "11" class = "elTypeBkgnd"/>
+	<image xlink:href = "../dgmTypeComplex.gif" width = "10" height = "10" x = "56" y = "125"/>
+	<polyline class = "connector" points = "96,60 76,60 76,128 66,128 76,128 76,196 96,196"/>
+	<polyline class = "connector" points = "66,126 74,126 74,23 96,23"/>
+	<circle class = "occurs" cx = "102" cy = "60" r = "6"/>
+	<text x = "99" y = "63" class = "occurLarge">?</text>
+	<rect x = "108" y = "47" width = "78" height = "27" class = "element"/>
+	<polygon class = "nodeStyle" points = "114,49 110,53 114,57 118,53"/>
+	<text x = "119" y = "58" class = "elName">Description</text>
+	<rect x = "109" y = "62" width = "76" height = "11" class = "elTypeBkgnd"/>
+	<image xlink:href = "../dgmTypeAny.gif" width = "10" height = "10" x = "176" y = "57"/>
+	<circle class = "occurs" cx = "102" cy = "94" r = "6"/>
+	<text x = "99" y = "97" class = "occurLarge">?</text>
+	<rect x = "108" y = "81" width = "104" height = "27" class = "element"/>
+	<polygon class = "nodeStyle" points = "114,83 110,87 114,91 118,87"/>
+	<text x = "119" y = "92" class = "elName">ExperimenterRef</text>
+	<rect x = "109" y = "96" width = "102" height = "11" class = "elTypeBkgnd"/>
+	<image xlink:href = "../dgmTypeComplex.gif" width = "10" height = "10" x = "202" y = "91"/>
+	<circle class = "occurs" cx = "102" cy = "128" r = "6"/>
+	<text x = "99" y = "131" class = "occurLarge">?</text>
+	<rect x = "108" y = "115" width = "68" height = "27" class = "element"/>
+	<polygon class = "nodeStyle" points = "114,117 110,121 114,125 118,121"/>
+	<text x = "119" y = "126" class = "elName">GroupRef</text>
+	<rect x = "109" y = "130" width = "66" height = "11" class = "elTypeBkgnd"/>
+	<image xlink:href = "../dgmTypeComplex.gif" width = "10" height = "10" x = "166" y = "125"/>
+	<circle class = "occurs" cx = "102" cy = "162" r = "6"/>
+	<text x = "99" y = "165" class = "occurLarge">*</text>
+	<rect x = "108" y = "149" width = "73" height = "27" class = "element"/>
+	<polygon class = "nodeStyle" points = "114,151 110,155 114,159 118,155"/>
+	<text x = "119" y = "160" class = "elName">ProjectRef</text>
+	<rect x = "109" y = "164" width = "71" height = "11" class = "elTypeBkgnd"/>
+	<image xlink:href = "../dgmTypeComplex.gif" width = "10" height = "10" x = "171" y = "159"/>
+	<circle class = "occurs" cx = "102" cy = "196" r = "6"/>
+	<text x = "99" y = "199" class = "occurLarge">?</text>
+	<rect x = "108" y = "183" width = "109" height = "27" class = "element"/>
+	<polygon class = "nodeStyle" points = "114,185 110,189 114,193 118,189"/>
+	<text x = "119" y = "194" class = "elName">CustomAttributes</text>
+	<rect x = "109" y = "198" width = "107" height = "11" class = "elTypeBkgnd"/>
+	<image xlink:href = "../dgmTypeComplex.gif" width = "10" height = "10" x = "207" y = "193"/>
+</svg>

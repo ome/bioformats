@@ -1,0 +1,72 @@
+<?xml version = "1.0"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<svg width = "267pt" height = "147pt" viewBox = "0 0 267 147" xmlns = "http://www.w3.org/2000/svg" xmlns:xlink = "http://www.w3.org/1999/xlink">
+	<defs>
+		<style type = "text/css"><![CDATA[
+rect.attrGroup { fill: ivory ; stroke: black; stroke-width: 1 }
+rect.element { fill: ivory ; stroke: black; stroke-width: 1 }
+rect.elTypeBkgnd { fill: lightgray ; stroke: none }
+text.elName { font-family: helvetica ; font-size : 10 }
+text.elType { font-family: helvetica ; font-size : 7 }
+text.occurLarge { font-family: helvetica ; font-size : 9; fill : blue }
+text.occurSmall { font-family: helvetica ; font-size : 7; fill : blue }
+rect.typeIconDark { fill : darkslategray }
+circle.occurs { stroke : black ; stroke-width: 1; fill : white }
+circle.ellipsis { fill : black }
+path.typeIconDark { stroke : lightgray ; stroke-width: 1 }
+path.connector { stroke : red ; stroke-width: 1 ; fill: none; }
+path.modelGroup { stroke : black ; stroke-width: 1 ; fill: lightgray; }
+polyline.connector { stroke : red ; stroke-width: 1 ; fill: none; }
+.nodeStyle { fill : blue }
+]]></style>
+	</defs>
+	<rect x = "125" y = "5" width = "137" height = "37" class = "attrGroup" rx = "5" ry = "5"/>
+	<rect x = "130" y = "10" width = "51" height = "27" class = "element" rx = "5" ry = "5"/>
+	<circle class = "nodeStyle" cx = "136" cy = "16" r = "4"/>
+	<text x = "141" y = "21" class = "elName">Name</text>
+	<rect x = "131" y = "11" width = "49" height = "25" class = "elTypeBkgnd" rx = "5" ry = "5" clip-path = "url(#e:SemanticType/a:Name)"/>
+	<defs/>
+	<clipPath id = "e:SemanticType/a:Name">
+		<rect x = "130" y = "25" width = "51" height = "11"/>
+	</clipPath>
+	<image xlink:href = "../dgmDtString.gif" width = "10" height = "10" x = "171" y = "20"/>
+	<rect x = "186" y = "10" width = "71" height = "27" class = "element" rx = "5" ry = "5"/>
+	<circle class = "nodeStyle" cx = "192" cy = "16" r = "4"/>
+	<text x = "197" y = "21" class = "elName">AppliesTo</text>
+	<rect x = "187" y = "11" width = "69" height = "25" class = "elTypeBkgnd" rx = "5" ry = "5" clip-path = "url(#e:SemanticType/a:AppliesTo)"/>
+	<defs/>
+	<clipPath id = "e:SemanticType/a:AppliesTo">
+		<rect x = "186" y = "25" width = "71" height = "11"/>
+	</clipPath>
+	<image xlink:href = "../dgmDtString.gif" width = "10" height = "10" x = "247" y = "20"/>
+	<rect x = "5" y = "81" width = "90" height = "27" class = "element"/>
+	<polygon class = "nodeStyle" points = "11,83 7,87 11,91 15,87"/>
+	<text x = "16" y = "92" class = "elName">SemanticType</text>
+	<rect x = "6" y = "96" width = "88" height = "11" class = "elTypeBkgnd"/>
+	<image xlink:href = "../dgmTypeComplex.gif" width = "10" height = "10" x = "85" y = "91"/>
+	<polyline class = "connector" points = "125,60 105,60 105,94 95,94 105,94 105,128 125,128"/>
+	<polyline class = "connector" points = "95,92 103,92 103,23 125,23"/>
+	<circle class = "occurs" cx = "131" cy = "60" r = "6"/>
+	<text x = "128" y = "63" class = "occurLarge">*</text>
+	<rect x = "137" y = "47" width = "49" height = "27" class = "element"/>
+	<polygon class = "nodeStyle" points = "143,49 139,53 143,57 147,53"/>
+	<text x = "148" y = "58" class = "elName">Label</text>
+	<rect x = "138" y = "62" width = "47" height = "11" class = "elTypeBkgnd"/>
+	<text x = "138" y = "70" class = "elType">string</text>
+	<image xlink:href = "../dgmDtString.gif" width = "10" height = "10" x = "176" y = "57"/>
+	<circle class = "occurs" cx = "131" cy = "94" r = "6"/>
+	<text x = "128" y = "97" class = "occurLarge">*</text>
+	<rect x = "137" y = "81" width = "78" height = "27" class = "element"/>
+	<polygon class = "nodeStyle" points = "143,83 139,87 143,91 147,87"/>
+	<text x = "148" y = "92" class = "elName">Description</text>
+	<rect x = "138" y = "96" width = "76" height = "11" class = "elTypeBkgnd"/>
+	<text x = "138" y = "104" class = "elType">string</text>
+	<image xlink:href = "../dgmDtString.gif" width = "10" height = "10" x = "205" y = "91"/>
+	<circle class = "occurs" cx = "131" cy = "128" r = "6"/>
+	<text x = "128" y = "131" class = "occurLarge">+</text>
+	<rect x = "137" y = "115" width = "62" height = "27" class = "element"/>
+	<polygon class = "nodeStyle" points = "143,117 139,121 143,125 147,121"/>
+	<text x = "148" y = "126" class = "elName">Element</text>
+	<rect x = "138" y = "130" width = "60" height = "11" class = "elTypeBkgnd"/>
+	<image xlink:href = "../dgmTypeComplex.gif" width = "10" height = "10" x = "189" y = "125"/>
+</svg>

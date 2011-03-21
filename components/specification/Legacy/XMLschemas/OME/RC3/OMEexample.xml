@@ -1,0 +1,72 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<OME xmlns = "http://www.openmicroscopy.org/XMLschemas/OME/RC3/ome.xsd" xmlns:xsi = "http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation = "http://www.openmicroscopy.org/XMLschemas/OME/RC3/ ome.xsd">
+	<Project Name = "myProject" ProjectID = "123">
+		<Description>any combination of text and elements</Description>
+		<ExperimenterRef ExperimenterID = "123"/>
+	</Project>
+	<Screen ExternRef = "optional" ScreenID = "132" Name = "string">
+		<Description>any combination of text and elements</Description>
+		<Plate PlateID = "123" Name = "My Plate" ExternRef = "123asd123"/>
+	</Screen>
+	<Experimenter ExperimenterID = "123">
+		<FirstName>John</FirstName>
+		<LastName>Doe</LastName>
+		<email>who@where.org</email>
+		<Institution>NIH</Institution>
+		<OMEname>foobar</OMEname>
+	</Experimenter>
+	<Group Name = "Sorgerlab" GroupID = "123">
+		<Leader>
+			<FirstName>Peter</FirstName>
+			<LastName>Sorger</LastName>
+			<email>smobody@somewhere.org</email>
+			<Institution>MIT</Institution>
+		</Leader>
+		<Contact>
+			<ExperimenterRef ExperimenterID = "123"/>
+		</Contact>
+	</Group>
+	<Instrument InstrumentID = "123">
+		<Microscope Manufacturer = "ffdg" Model = "sdf" SerialNumber = "qaedf435"/>
+		<LightSource Type = "string" LightSourceID = "14321" Manufacturer = "lbjjuyh56" Model = "bikyog" SerialNumber = "byuiop76f"/>
+		<Camera Gain = "9.9e9" Voltage = "9.9e9" Offset = "9.9e9" Manufacturer = "l78o7" Model = "hjkb78og" SerialNumber = "hjbil78g"/>
+		<Objective Manufacturer = "ghjkv7yi" Model = "hjvbiy7t" SerialNumber = "jhlvbity">
+			<LensNA>9.9e9</LensNA>
+			<Magnification>9.9e9</Magnification>
+		</Objective>
+		<Filter FilterID = "4568">
+			<FilterSet Manufacturer = "cdw2" Model = "edqw4" SerialNumber = "2rt4"/>
+		</Filter>
+		<OTF FilterID = "123" BitsPerPixel = "16" OpticalAxisAvrg = "false" SizeX = "123" SizeY = "456">
+			<BinData>gyuibygfigibyoUIGYBIFGftyiv7f6t79978987897tugyifVGHUVIGHtyifgvyuvuhvgyiTjkla</BinData>
+		</OTF>
+	</Instrument>
+	<Image GUID = "ABCDEF1234567890ABCDEF1234567890ABCDEF12" Name = "string" ImageType = "string" SizeX = "123123" SizeY = "12345" SizeZ = "1243456" NumWaves = "5" NumTimes = "65" PixelSizeX = "9.9e9" PixelSizeY = "9.9e9" PixelSizeZ = "9.9e9" TimeIncrement = "9.9e9" WaveStart = "124" WaveIncrement = "124">
+		<CreationDate>1988-04-07T18:39:09</CreationDate>
+		<Description>any combination of text and elements</Description>
+		<ExperimenterRef ExperimenterID = "123"/>
+		<GroupRef GroupID = "123"/>
+		<ProjectRef ProjectID = "123"/>
+		<InstrumentRef InstrumentID = "123"/>
+		<Thumbnail href = "www.extensibility.com" MIMEtype = "required"/>
+		<XYinfo Zsection = "124" WaveNumber = "124" TimePoint = "124">
+			<DeltaTime>9.9e9</DeltaTime>
+			<ExpTime>9.9e9</ExpTime>
+			<Stats Min = "124" Max = "124" Mean = "9.9e9" GeoMean = "9.9e9" Sigma = "9.9e9"/>
+		</XYinfo>
+		<XYZinfo WaveNumber = "124" TimePoint = "124">
+			<DeltaTime>9.9e9</DeltaTime>
+			<Stats Min = "124" Max = "124" Mean = "9.9e9" GeoMean = "9.9e9" Sigma = "9.9e9"/>
+		</XYZinfo>
+		<WavelengthInfo WaveNumber = "124" FilterID = "213">
+			<ExWave>124</ExWave>
+			<EmWave>124</EmWave>
+			<Fluor>string</Fluor>
+			<NDfilter>0.5</NDfilter>
+		</WavelengthInfo>
+		<StageLabel>string</StageLabel>
+		<Data DimensionOrder = "XYZWT" BitsPerPixel = "16" BigEndian = "true">
+			<External href = "www.extensibility.com" Offset = "124" SHA1 = "ABCDEF1234567890ABCDEF1234567890ABCDEF12" Compression = "gzip"/>
+		</Data>
+	</Image>
+</OME>

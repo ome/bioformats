@@ -1,0 +1,132 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<OME xmlns = "http://www.openmicroscopy.org/XMLschemas/OME/RC4/ome.xsd" xmlns:xsi = "http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation = "http://www.openmicroscopy.org/XMLschemas/OME/RC4/ome.xsd    http://www.openmicroscopy.org/XMLschemas/OME/RC4/ome.xsd">
+	<DocumentGroup DocumentGroupID = "1234ABCD">
+		<DocumentRef href = "File2.ome" SHA1 = "01234567890ABCDEF0123456789ABCDEF0123456"/>
+	</DocumentGroup>
+	<Project Name = "Stress Response Pathway" ProjectID = "123">
+		<Description/>
+		<ExperimenterRef ExperimenterID = "123"/>
+		<GroupRef GroupID = "123"/>
+	</Project>
+	<Dataset Name = "Controls" DatasetID = "123" Locked = "true">
+		<Description/>
+		<ExperimenterRef ExperimenterID = "123"/>
+		<GroupRef GroupID = "123"/>
+		<ProjectRef ProjectID = "123"/>
+	</Dataset>
+	<Plate PlateID = "123" Name = "SRP001" ExternRef = "PID.SRP001">
+		<ScreenRef ScreenID = "123"/>
+	</Plate>
+	<Screen ScreenID = "123" Name = "Stress Response Pathway Controls" ExternRef = "SID.SRPC001">
+		<Description/>
+	</Screen>
+	<Experimenter ExperimenterID = "123">
+		<FirstName>Ilya</FirstName>
+		<LastName>Goldberg</LastName>
+		<email>igg@nih.gov</email>
+		<Institution>NIA - IRP, NIH</Institution>
+		<OMEname>igg</OMEname>
+		<GroupRef GroupID = "123"/>
+	</Experimenter>
+	<Group GroupID = "123" Name = "IICBU">
+		<Leader>
+			<ExperimenterRef ExperimenterID = "123"/>
+		</Leader>
+		<Contact>
+			<ExperimenterRef ExperimenterID = "123"/>
+		</Contact>
+	</Group>
+	<Instrument InstrumentID = "123">
+		<Microscope Manufacturer = "Olympus" Model = "AxioVert" SerialNumber = "123aasdlfkjhsd12312345"/>
+		<LightSource LightSourceID = "123" Type = "Mercury Arc 100W" Manufacturer = "Olympus" Model = "Realy Bright Lite" SerialNumber = "123skdjhf1234"/>
+		<Detector Manufacturer = "Kodak" Model = "Instamatic" SerialNumber = "fnuiprf89uh123498" DetectorID = "123"/>
+		<Objective ObjectiveID = "123" Manufacturer = "Olympus" Model = "PLAN-APO" SerialNumber = "anxcoas123">
+			<LensNA>1.4</LensNA>
+			<Magnification>60.0</Magnification>
+		</Objective>
+		<Objective ObjectiveID = "456" Manufacturer = "Olympus" Model = "SPlanL" SerialNumber = "456anxcoas123">
+			<LensNA>2.4</LensNA>
+			<Magnification>40.0</Magnification>
+		</Objective>
+		<Filter FilterID = "123">
+			<FilterSet Manufacturer = "Omega" Model = "SuperGFP" LotNumber = "123LJKHG123"/>
+		</Filter>
+		<OTF OTFID = "123" FilterID = "123" BitsPerPixel = "16" OpticalAxisAvrg = "true" SizeX = "512" SizeY = "512" ObjectiveID = "456">
+			<External href = "OTF123.otf" Offset = "0" SHA1 = "01234567890ABCDEF0123456789ABCDEF0123456" Compression = "bzip2"/>
+		</OTF>
+	</Instrument>
+	<Image GUID = "01234567890ABCDEF0123456789ABCDEF0123456" ImageType = "OME" Name = "P1W1S1" SizeX = "512" SizeY = "512" SizeZ = "1" NumWaves = "1" NumTimes = "1" PixelSizeX = "0.2" PixelSizeY = "0.2" PixelSizeZ = "0.2">
+		<CreationDate>1988-04-07T18:39:09</CreationDate>
+		<Description/>
+		<ExperimenterRef ExperimenterID = "123"/>
+		<GroupRef GroupID = "123"/>
+		<DatasetRef DatasetID = "123"/>
+		<InstrumentRef InstrumentID = "123" ObjectiveID = "123"/>
+		<Thumbnail href = "http://ome.nia.gov/GetThumbnail?GUID=01234567890ABCDEF0123456789ABCDEF0123456" MIMEtype = "image/jpeg"/>
+		<WavelengthInfo WaveNumber = "0" FilterID = "123" LightSourceID = "123" OTFID = "123" DetectorID = "123">
+			<ExWave>490</ExWave>
+			<EmWave>528</EmWave>
+			<Fluor>GFP</Fluor>
+			<NDfilter>0.0</NDfilter>
+		</WavelengthInfo>
+		<CustomAttributes>
+			<XY_IMAGE_INFO THE_Z = "0" THE_W = "0" THE_T = "0" MIN = "100" MAX = "3245" MEAN = "297" GEOMEAN = "342" SIGMA = "124.5" CENTROID_X = "200.42" CENTROID_Y = "300.1"/>
+		</CustomAttributes>
+		<Data DimensionOrder = "XYZWT" BitsPerPixel = "16" BigEndian = "true">
+			<External href = "P1W1S1.raw" Offset = "0" SHA1 = "01234567890ABCDEF0123456789ABCDEF0123456" Compression = "bzip2"/>
+		</Data>
+	</Image>
+	<SemanticTypeDefinitions>
+		<SemanticType Name = "XYPlaneMin" RecordName = "XY_IMAGE_INFO" Description = "Minimum pixel intensity in an XY plane">
+			<SemanticElement Name = "Min" FieldName = "MIN" Description = "Minimum pixel intensity"/>
+			<SemanticElement Name = "theZ" FieldName = "THE_Z" Description = "Z index describing the XY Plane"/>
+			<SemanticElement Name = "theW" FieldName = "THE_W" Description = "Wavenumber index describing the XY Plane"/>
+			<SemanticElement Name = "theT" FieldName = "THE_T" Description = "Timepoint index describing the XY Plane"/>
+		</SemanticType>
+		<SemanticType Name = "XYPlaneMax" RecordName = "XY_IMAGE_INFO" Description = "Maximum pixel intensity in an XY plane">
+			<SemanticElement Name = "Max" FieldName = "MAX" Description = "Maximum pixel intensity"/>
+			<SemanticElement Name = "theZ" FieldName = "THE_Z" Description = "Z index"/>
+			<SemanticElement Name = "theW" FieldName = "THE_W" Description = "Wavenumber index describing the XY Plane"/>
+			<SemanticElement Name = "theT" FieldName = "THE_T" Description = "Timepoint index describing the XY Plane"/>
+		</SemanticType>
+		<SemanticType Name = "XYPlaneMean" RecordName = "XY_IMAGE_INFO" Description = "Mean of pixel intensities in an XY plane">
+			<SemanticElement Name = "Mean" FieldName = "MEAN" Description = "Mean of pixel intensities"/>
+			<SemanticElement Name = "theZ" FieldName = "THE_Z" Description = "Z index"/>
+			<SemanticElement Name = "theW" FieldName = "THE_W" Description = "Wavenumber index describing the XY Plane"/>
+			<SemanticElement Name = "theT" FieldName = "THE_T" Description = "Timepoint index describing the XY Plane"/>
+		</SemanticType>
+		<SemanticType Name = "XYPlaneGeoMean" RecordName = "XY_IMAGE_INFO" Description = "Geometric mean of pixel intensities in an XY plane">
+			<SemanticElement Name = "Geomean" FieldName = "GEOMEAN" Description = "Geometric mean of pixel intensities"/>
+			<SemanticElement Name = "theZ" FieldName = "THE_Z" Description = "Z index"/>
+			<SemanticElement Name = "theW" FieldName = "THE_W" Description = "Wavenumber index describing the XY Plane"/>
+			<SemanticElement Name = "theT" FieldName = "THE_T" Description = "Timepoint index describing the XY Plane"/>
+		</SemanticType>
+		<SemanticType Name = "XYPlaneSigma" RecordName = "XY_IMAGE_INFO" Description = "Standard deviation of pixel intensities in an XY plane">
+			<SemanticElement Name = "Sigma" FieldName = "SIGMA" Description = "Standard Deviation of pixel intensities"/>
+			<SemanticElement Name = "theZ" FieldName = "THE_Z" Description = "Z index"/>
+			<SemanticElement Name = "theW" FieldName = "THE_W" Description = "Wavenumber index describing the XY Plane"/>
+			<SemanticElement Name = "theT" FieldName = "THE_T" Description = "Timepoint index describing the XY Plane"/>
+		</SemanticType>
+		<SemanticType Name = "XYPlaneCentroid" RecordName = "XY_IMAGE_INFO" Description = "x coordinate in pixels of center of pixel intensity for the plane">
+			<SemanticElement Name = "Centroid_X" FieldName = "CENTROID_X" Description = "x, in pixels, of center of intensity"/>
+			<SemanticElement Name = "Centroid_Y" FieldName = "CENTROID_Y" Description = "y, in pixels, of center of intensity"/>
+			<SemanticElement Name = "theZ" FieldName = "THE_Z" Description = "Z index"/>
+			<SemanticElement Name = "theW" FieldName = "THE_W" Description = "Wavenumber index describing the XY Plane"/>
+			<SemanticElement Name = "theT" FieldName = "THE_T" Description = "Timepoint index describing the XY Plane"/>
+		</SemanticType>
+	</SemanticTypeDefinitions>
+	<DataDefinitions>
+		<Record AppliesTo = "I" RecordName = "XY_IMAGE_INFO" Description = "General image XY plane attributes.">
+			<Field FieldName = "THE_Z" DataType = "integer" Description = "Z index"/>
+			<Field FieldName = "THE_W" DataType = "integer" Description = "Wavenumber index"/>
+			<Field FieldName = "THE_T" DataType = "integer" Description = "Timepoint index"/>
+			<Field FieldName = "MIN" DataType = "integer" Description = "Minimum value"/>
+			<Field FieldName = "MAX" DataType = "integer" Description = "Maximum value"/>
+			<Field FieldName = "MEAN" DataType = "float" Description = "Arithmetic Mean"/>
+			<Field FieldName = "GEOMEAN" DataType = "float" Description = "Geometric Mean"/>
+			<Field FieldName = "SIGMA" DataType = "float" Description = "Standard Deviation"/>
+			<Field FieldName = "CENTROID_X" DataType = "float" Description = "x, in pixels, of center of intensity"/>
+			<Field FieldName = "CENTROID_Y" DataType = "float" Description = "y, in pixels, of center of intensity"/>
+		</Record>
+	</DataDefinitions>
+</OME>

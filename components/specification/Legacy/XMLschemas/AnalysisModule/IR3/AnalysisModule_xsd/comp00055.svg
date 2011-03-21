@@ -1,0 +1,49 @@
+<?xml version = "1.0"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<svg width = "217pt" height = "79pt" viewBox = "0 0 217 79" xmlns = "http://www.w3.org/2000/svg" xmlns:xlink = "http://www.w3.org/1999/xlink">
+	<defs>
+		<style type = "text/css"><![CDATA[
+rect.attrGroup { fill: ivory ; stroke: black; stroke-width: 1 }
+rect.element { fill: ivory ; stroke: black; stroke-width: 1 }
+rect.elTypeBkgnd { fill: lightgray ; stroke: none }
+text.elName { font-family: helvetica ; font-size : 10 }
+text.elType { font-family: helvetica ; font-size : 7 }
+text.occurLarge { font-family: helvetica ; font-size : 9; fill : blue }
+text.occurSmall { font-family: helvetica ; font-size : 7; fill : blue }
+rect.typeIconDark { fill : darkslategray }
+circle.occurs { stroke : black ; stroke-width: 1; fill : white }
+circle.ellipsis { fill : black }
+path.typeIconDark { stroke : lightgray ; stroke-width: 1 }
+path.connector { stroke : red ; stroke-width: 1 ; fill: none; }
+path.modelGroup { stroke : black ; stroke-width: 1 ; fill: lightgray; }
+polyline.connector { stroke : red ; stroke-width: 1 ; fill: none; }
+.nodeStyle { fill : blue }
+]]></style>
+	</defs>
+	<rect x = "130" y = "5" width = "79" height = "37" class = "attrGroup" rx = "5" ry = "5"/>
+	<circle class = "occurs" cx = "141" cy = "23" r = "6"/>
+	<text x = "138" y = "26" class = "occurLarge">?</text>
+	<rect x = "147" y = "10" width = "57" height = "27" class = "element" rx = "5" ry = "5"/>
+	<circle class = "nodeStyle" cx = "153" cy = "16" r = "4"/>
+	<text x = "158" y = "21" class = "elName">Format</text>
+	<rect x = "148" y = "11" width = "55" height = "25" class = "elTypeBkgnd" rx = "5" ry = "5" clip-path = "url(#e:InstallationFile/a:Format)"/>
+	<defs/>
+	<clipPath id = "e:InstallationFile/a:Format">
+		<rect x = "147" y = "25" width = "57" height = "11"/>
+	</clipPath>
+	<text x = "148" y = "33" class = "elType">string</text>
+	<image xlink:href = "../dgmDtString.gif" width = "10" height = "10" x = "194" y = "20"/>
+	<rect x = "5" y = "47" width = "95" height = "27" class = "element"/>
+	<polygon class = "nodeStyle" points = "11,49 7,53 11,57 15,53"/>
+	<text x = "16" y = "58" class = "elName">InstallationFile</text>
+	<rect x = "6" y = "62" width = "93" height = "11" class = "elTypeBkgnd"/>
+	<image xlink:href = "../dgmTypeComplex.gif" width = "10" height = "10" x = "90" y = "57"/>
+	<polyline class = "connector" points = "100,60 130,60"/>
+	<polyline class = "connector" points = "100,58 108,58 108,23 130,23"/>
+	<polyline class = "connector" points = "130,60 142,60"/>
+	<rect x = "142" y = "47" width = "70" height = "27" class = "element"/>
+	<polygon class = "nodeStyle" points = "148,49 144,53 148,57 152,53"/>
+	<text x = "153" y = "58" class = "elName">BinaryFile</text>
+	<rect x = "143" y = "62" width = "68" height = "11" class = "elTypeBkgnd"/>
+	<image xlink:href = "../dgmTypeComplex.gif" width = "10" height = "10" x = "202" y = "57"/>
+</svg>

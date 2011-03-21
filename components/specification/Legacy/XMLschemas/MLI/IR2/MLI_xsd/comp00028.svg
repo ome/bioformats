@@ -1,0 +1,51 @@
+<?xml version = "1.0"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<svg width = "184pt" height = "147pt" viewBox = "0 0 184 147" xmlns = "http://www.w3.org/2000/svg" xmlns:xlink = "http://www.w3.org/1999/xlink">
+	<defs>
+		<style type = "text/css"><![CDATA[
+rect.attrGroup { fill: ivory ; stroke: black; stroke-width: 1 }
+rect.element { fill: ivory ; stroke: black; stroke-width: 1 }
+rect.elTypeBkgnd { fill: lightgray ; stroke: none }
+text.elName { font-family: helvetica ; font-size : 10 }
+text.elType { font-family: helvetica ; font-size : 7 }
+text.occurLarge { font-family: helvetica ; font-size : 9; fill : blue }
+text.occurSmall { font-family: helvetica ; font-size : 7; fill : blue }
+rect.typeIconDark { fill : darkslategray }
+circle.occurs { stroke : black ; stroke-width: 1; fill : white }
+circle.ellipsis { fill : black }
+path.typeIconDark { stroke : lightgray ; stroke-width: 1 }
+path.connector { stroke : red ; stroke-width: 1 ; fill: none; }
+path.modelGroup { stroke : black ; stroke-width: 1 ; fill: lightgray; }
+polyline.connector { stroke : red ; stroke-width: 1 ; fill: none; }
+.nodeStyle { fill : blue }
+]]></style>
+	</defs>
+	<rect x = "5" y = "59" width = "56" height = "29" class = "element"/>
+	<polygon class = "nodeStyle" points = "11,61 7,65 11,69 15,65"/>
+	<text x = "16" y = "70" class = "elName">Output</text>
+	<rect x = "6" y = "75" width = "54" height = "12" class = "elTypeBkgnd"/>
+	<image xlink:href = "../dgmTypeComplex.gif" width = "10" height = "10" x = "51" y = "70"/>
+	<polyline class = "connector" points = "91,19 71,73 61,73 71,73 91,127"/>
+	<polyline class = "connector" points = "91,19 103,19"/>
+	<rect x = "103" y = "5" width = "76" height = "29" class = "element"/>
+	<polygon class = "nodeStyle" points = "109,7 105,11 109,15 113,11"/>
+	<text x = "114" y = "16" class = "elName">PixelsArray</text>
+	<rect x = "104" y = "21" width = "74" height = "12" class = "elTypeBkgnd"/>
+	<image xlink:href = "../dgmTypeEmpty.gif" width = "10" height = "10" x = "169" y = "16"/>
+	<rect x = "103" y = "41" width = "52" height = "29" class = "element"/>
+	<polygon class = "nodeStyle" points = "109,43 105,47 109,51 113,47"/>
+	<text x = "114" y = "52" class = "elName">Scalar</text>
+	<rect x = "104" y = "57" width = "50" height = "12" class = "elTypeBkgnd"/>
+	<image xlink:href = "../dgmTypeEmpty.gif" width = "10" height = "10" x = "145" y = "52"/>
+	<rect x = "103" y = "77" width = "52" height = "29" class = "element"/>
+	<polygon class = "nodeStyle" points = "109,79 105,83 109,87 113,83"/>
+	<text x = "114" y = "88" class = "elName">Struct</text>
+	<rect x = "104" y = "93" width = "50" height = "12" class = "elTypeBkgnd"/>
+	<image xlink:href = "../dgmTypeEmpty.gif" width = "10" height = "10" x = "145" y = "88"/>
+	<polyline class = "connector" points = "91,127 103,127"/>
+	<rect x = "103" y = "113" width = "55" height = "29" class = "element"/>
+	<polygon class = "nodeStyle" points = "109,115 105,119 109,123 113,119"/>
+	<text x = "114" y = "124" class = "elName">Vector</text>
+	<rect x = "104" y = "129" width = "53" height = "12" class = "elTypeBkgnd"/>
+	<image xlink:href = "../dgmTypeEmpty.gif" width = "10" height = "10" x = "148" y = "124"/>
+</svg>

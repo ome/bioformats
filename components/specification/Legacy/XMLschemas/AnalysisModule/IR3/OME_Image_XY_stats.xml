@@ -1,0 +1,183 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<AnalysisModuleLibrary
+	xmlns:xsi = "http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:noNamespaceSchemaLocation = "http://openmicroscopy.org/XMLschemas/AnalysisModule/IR3/AnalysisModule.xsd">
+<AnalysisModule Category = "Statistics" ModuleName = "Plane statistics" 
+	ModuleType = "OME::Analysis::CLIHandler" ProgramID = "/OME/bin/OME_Image_XY_stats" 
+	Description = "Calculate pixel statistics for each XY plane. Produced from XML specification.">
+	<Declaration>
+		<FormalOutput Name = "Plane minimum" SemanticTypeName = "XYPlaneMin" Description = ""/>
+		<FormalOutput Name = "Plane maximum" SemanticTypeName = "XYPlaneMax" Description = ""/>
+		<FormalOutput Name = "Plane mean" SemanticTypeName = "XYPlaneMean" Description = ""/>
+		<FormalOutput Name = "Plane geomean" SemanticTypeName = "XYPlaneGeoMean" Description = ""/>
+		<FormalOutput Name = "Plane sigma" SemanticTypeName = "XYPlaneSigma" Description = ""/>
+		<FormalOutput Name = "Plane centroid X" SemanticTypeName = "XYPlaneCentroid_X" Description = ""/>
+		<FormalOutput Name = "Plane centroid Y" SemanticTypeName = "XYPlaneCentroid_Y" Description = ""/>
+	</Declaration>
+	<ExecutionInstructions ExecutionPoint = "precalculateImage" MakesNewFeature = "false" 
+		xmlns:xsi = "http://www.w3.org/2001/XMLSchema-instance" 
+		xsi:noNamespaceSchemaLocation = "http://openmicroscopy.org/XMLschemas/AnalysisModule/IR3/CLIExecutionInstructions.xsd">
+		<CommandLine>
+			<InputSubString>
+				<RawText>Path=</RawText>
+			</InputSubString>
+			<InputSubString>
+				<RawImageFilePath/>
+			</InputSubString>
+			<InputSubString>
+				<RawText> Dims=</RawText>
+			</InputSubString>
+			<InputSubString>
+				<sizeX/>
+			</InputSubString>
+			<InputSubString>
+				<RawText>,</RawText>
+			</InputSubString>
+			<InputSubString>
+				<sizeY/>
+			</InputSubString>
+			<InputSubString>
+				<RawText>,</RawText>
+			</InputSubString>
+			<InputSubString>
+				<sizeZ/>
+			</InputSubString>
+			<InputSubString>
+				<RawText>,</RawText>
+			</InputSubString>
+			<InputSubString>
+				<sizeW/>
+			</InputSubString>
+			<InputSubString>
+				<RawText>,</RawText>
+			</InputSubString>
+			<InputSubString>
+				<sizeT/>
+			</InputSubString>
+			<InputSubString>
+				<RawText>,</RawText>
+			</InputSubString>
+			<InputSubString>
+				<BytesPerPixel/>
+			</InputSubString>
+		</CommandLine>
+		<STDOUT>
+			<OutputRecord RepeatCount = "1">
+				<pat>^.*?\n</pat>
+			</OutputRecord>
+			<!-- That eats a line. The first line of the output is column headers -->
+			<OutputRecord>
+				<pat>^(\d+)\t(\d+)\t(\d+)\t(\d+)\t(\d+)\t(\d+\.?\d*|\.\d+)\t(\d+\.?\d*|\.\d+)\t(\d+\.?\d*|\.\d+)\t(\d+\.?\d*|\.\d+)\t(\d+\.?\d*|\.\d+)\n</pat>
+				<Output AccessBy = "1">
+					<OutputTo SemanticElementName = "theW" FormalOutputName = "Plane minimum"/>
+					<OutputTo SemanticElementName = "theW" FormalOutputName = "Plane maximum"/>
+					<OutputTo SemanticElementName = "theW" FormalOutputName = "Plane mean"/>
+					<OutputTo SemanticElementName = "theW" FormalOutputName = "Plane geomean"/>
+					<OutputTo SemanticElementName = "theW" FormalOutputName = "Plane sigma"/>
+					<OutputTo SemanticElementName = "theW" FormalOutputName = "Plane centroid X"/>
+					<OutputTo SemanticElementName = "theW" FormalOutputName = "Plane centroid Y"/>
+				</Output>
+				<Output AccessBy = "2">
+					<OutputTo SemanticElementName = "theT" FormalOutputName = "Plane minimum"/>
+					<OutputTo SemanticElementName = "theT" FormalOutputName = "Plane maximum"/>
+					<OutputTo SemanticElementName = "theT" FormalOutputName = "Plane mean"/>
+					<OutputTo SemanticElementName = "theT" FormalOutputName = "Plane geomean"/>
+					<OutputTo SemanticElementName = "theT" FormalOutputName = "Plane sigma"/>
+					<OutputTo SemanticElementName = "theT" FormalOutputName = "Plane centroid X"/>
+					<OutputTo SemanticElementName = "theT" FormalOutputName = "Plane centroid Y"/>
+				</Output>
+				<Output AccessBy = "3">
+					<OutputTo SemanticElementName = "theZ" FormalOutputName = "Plane minimum"/>
+					<OutputTo SemanticElementName = "theZ" FormalOutputName = "Plane maximum"/>
+					<OutputTo SemanticElementName = "theZ" FormalOutputName = "Plane mean"/>
+					<OutputTo SemanticElementName = "theZ" FormalOutputName = "Plane geomean"/>
+					<OutputTo SemanticElementName = "theZ" FormalOutputName = "Plane sigma"/>
+					<OutputTo SemanticElementName = "theZ" FormalOutputName = "Plane centroid X"/>
+					<OutputTo SemanticElementName = "theZ" FormalOutputName = "Plane centroid Y"/>
+				</Output>
+				<Output AccessBy = "4">
+					<OutputTo SemanticElementName = "Min" FormalOutputName = "Plane minimum"/>
+				</Output>
+				<Output AccessBy = "5">
+					<OutputTo SemanticElementName = "Max" FormalOutputName = "Plane maximum"/>
+				</Output>
+				<Output AccessBy = "6">
+					<OutputTo SemanticElementName = "Mean" FormalOutputName = "Plane mean"/>
+				</Output>
+				<Output AccessBy = "7">
+					<OutputTo SemanticElementName = "Geomean" FormalOutputName = "Plane geomean"/>
+				</Output>
+				<Output AccessBy = "8">
+					<OutputTo SemanticElementName = "Sigma" FormalOutputName = "Plane sigma"/>
+				</Output>
+				<Output AccessBy = "9">
+					<OutputTo SemanticElementName = "Centroid_X" FormalOutputName = "Plane centroid X"/>
+				</Output>
+				<Output AccessBy = "10">
+					<OutputTo SemanticElementName = "Centroid_Y" FormalOutputName = "Plane centroid Y"/>
+				</Output>
+			</OutputRecord>
+			<!-- That reads a line of output and repeats until it has reached the end of the stream. -->
+		</STDOUT>
+	</ExecutionInstructions>
+</AnalysisModule>
+<SemanticTypeDefinitions>
+	<DataTypes>
+		<Table Granularity = "I" TableName = "XY_IMAGE_INFO" 
+			Description = "General image XY slice attributes. Produced from XML.">
+			<Column ColumnName = "THE_Z" SQL_DataType = "integer" Description = "Z index"/>
+			<Column ColumnName = "THE_W" SQL_DataType = "integer" Description = "Wavenumber index"/>
+			<Column ColumnName = "THE_T" SQL_DataType = "integer" Description = "Timepoint index"/>
+			<Column ColumnName = "MIN" SQL_DataType = "integer" Description = "Minimum value"/>
+			<Column ColumnName = "MAX" SQL_DataType = "integer" Description = "Maximum value"/>
+			<Column ColumnName = "MEAN" SQL_DataType = "float" Description = "Arithmetic Mean"/>
+			<Column ColumnName = "GEOMEAN" SQL_DataType = "float" Description = "Geometric Mean"/>
+			<Column ColumnName = "SIGMA" SQL_DataType = "float" Description = "Standard Deviation"/>
+			<Column ColumnName = "CENTROID_X" SQL_DataType = "float" Description = "X cooridinate of plane centroid calculated by intensity"/>
+			<Column ColumnName = "CENTROID_Y" SQL_DataType = "float" Description = "Y cooridinate of plane centroid calculated by intensity"/>
+		</Table>
+	</DataTypes>
+	<SemanticType Name = "XYPlaneMin" Description = "Minimum pixel intensity in an XY plane">
+		<SemanticElement Name = "Min" TableName = "XY_IMAGE_INFO" ColumnName = "MIN" Description = "Minimum pixel intensity"/>
+		<SemanticElement Name = "theZ" TableName = "XY_IMAGE_INFO" ColumnName = "THE_Z" Description = "Z index describing the XY Plane"/>
+		<SemanticElement Name = "theW" TableName = "XY_IMAGE_INFO" ColumnName = "THE_W" Description = "Wavenumber index describing the XY Plane"/>
+		<SemanticElement Name = "theT" TableName = "XY_IMAGE_INFO" ColumnName = "THE_T" Description = "Timepoint index describing the XY Plane"/>
+	</SemanticType>
+	<SemanticType Name = "XYPlaneMax" Description = "Maximum pixel intensity in an XY plane">
+		<SemanticElement Name = "Max" TableName = "XY_IMAGE_INFO" ColumnName = "MAX" Description = "Maximum pixel intensity"/>
+		<SemanticElement Name = "theZ" TableName = "XY_IMAGE_INFO" ColumnName = "THE_Z" Description = "Z index"/>
+		<SemanticElement Name = "theW" TableName = "XY_IMAGE_INFO" ColumnName = "THE_W" Description = "Wavenumber index describing the XY Plane"/>
+		<SemanticElement Name = "theT" TableName = "XY_IMAGE_INFO" ColumnName = "THE_T" Description = "Timepoint index describing the XY Plane"/>
+	</SemanticType>
+	<SemanticType Name = "XYPlaneMean" Description = "Mean of pixel intensities in an XY plane">
+		<SemanticElement Name = "Mean" TableName = "XY_IMAGE_INFO" ColumnName = "MEAN" Description = "Mean of pixel intensities"/>
+		<SemanticElement Name = "theZ" TableName = "XY_IMAGE_INFO" ColumnName = "THE_Z" Description = "Z index"/>
+		<SemanticElement Name = "theW" TableName = "XY_IMAGE_INFO" ColumnName = "THE_W" Description = "Wavenumber index describing the XY Plane"/>
+		<SemanticElement Name = "theT" TableName = "XY_IMAGE_INFO" ColumnName = "THE_T" Description = "Timepoint index describing the XY Plane"/>
+	</SemanticType>
+	<SemanticType Name = "XYPlaneGeoMean" Description = "Geometric mean of pixel intensities in an XY plane">
+		<SemanticElement Name = "Geomean" TableName = "XY_IMAGE_INFO" ColumnName = "GEOMEAN" Description = "Geometric mean of pixel intensities"/>
+		<SemanticElement Name = "theZ" TableName = "XY_IMAGE_INFO" ColumnName = "THE_Z" Description = "Z index"/>
+		<SemanticElement Name = "theW" TableName = "XY_IMAGE_INFO" ColumnName = "THE_W" Description = "Wavenumber index describing the XY Plane"/>
+		<SemanticElement Name = "theT" TableName = "XY_IMAGE_INFO" ColumnName = "THE_T" Description = "Timepoint index describing the XY Plane"/>
+	</SemanticType>
+	<SemanticType Name = "XYPlaneSigma" Description = "Standard deviation of pixel intensities in an XY plane">
+		<SemanticElement Name = "Sigma" TableName = "XY_IMAGE_INFO" ColumnName = "SIGMA" Description = "Standard Deviation of pixel intensities"/>
+		<SemanticElement Name = "theZ" TableName = "XY_IMAGE_INFO" ColumnName = "THE_Z" Description = "Z index"/>
+		<SemanticElement Name = "theW" TableName = "XY_IMAGE_INFO" ColumnName = "THE_W" Description = "Wavenumber index describing the XY Plane"/>
+		<SemanticElement Name = "theT" TableName = "XY_IMAGE_INFO" ColumnName = "THE_T" Description = "Timepoint index describing the XY Plane"/>
+	</SemanticType>
+	<SemanticType Name = "XYPlaneCentroid_X" Description = "x coordinate in pixels of center of pixel intensity for the plane">
+		<SemanticElement Name = "Centroid_X" TableName = "XY_IMAGE_INFO" ColumnName = "CENTROID_X" Description = "x, in pixels, of center of intensity"/>
+		<SemanticElement Name = "theZ" TableName = "XY_IMAGE_INFO" ColumnName = "THE_Z" Description = "Z index"/>
+		<SemanticElement Name = "theW" TableName = "XY_IMAGE_INFO" ColumnName = "THE_W" Description = "Wavenumber index describing the XY Plane"/>
+		<SemanticElement Name = "theT" TableName = "XY_IMAGE_INFO" ColumnName = "THE_T" Description = "Timepoint index describing the XY Plane"/>
+	</SemanticType>
+	<SemanticType Name = "XYPlaneCentroid_Y" Description = "y coordinate in pixels of center of pixel intensity for the plane">
+		<SemanticElement Name = "Centroid_Y" TableName = "XY_IMAGE_INFO" ColumnName = "CENTROID_Y" Description = "y, in pixels, of center of intensity"/>
+		<SemanticElement Name = "theZ" TableName = "XY_IMAGE_INFO" ColumnName = "THE_Z" Description = "Z index"/>
+		<SemanticElement Name = "theW" TableName = "XY_IMAGE_INFO" ColumnName = "THE_W" Description = "Wavenumber index describing the XY Plane"/>
+		<SemanticElement Name = "theT" TableName = "XY_IMAGE_INFO" ColumnName = "THE_T" Description = "Timepoint index describing the XY Plane"/>
+	</SemanticType>
+</SemanticTypeDefinitions>
+</AnalysisModuleLibrary>

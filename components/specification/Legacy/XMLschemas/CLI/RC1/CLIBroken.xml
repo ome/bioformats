@@ -1,0 +1,52 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<ExecutionInstructions 
+	 ExecutionPoint = "precalculateImage" MakesNewFeature = "false"
+	 xmlns = "http://www.openmicroscopy.org/XMLschemas/CLI/RC1/CLI.xsd" 
+	 xmlns:AML = "http://www.openmicroscopy.org/XMLschemas/AnalysisModule/RC1/AnalysisModule.xsd"
+	 xmlns:xsi = "http://www.w3.org/2001/XMLSchema-instance" 
+	 xsi:schemaLocation = "http://www.openmicroscopy.org/XMLschemas/CLI/RC1/CLI.xsd http://www.openmicroscopy.org/XMLschemas/CLI/RC1/CLI.xsd http://www.openmicroscopy.org/XMLschemas/AnalysisModule/RC1/AnalysisModule.xsd http://www.openmicroscopy.org/XMLschemas/AnalysisModule/RC1/AnalysisModule.xsd">
+	<CommandLine>
+		<InputSubString>
+			<XYPlane XYPlaneID = "Plane1" Format = "TIFF">
+				<theZ>
+					<AutoIterate>
+						<OutputTo SemanticElementName = "theZ" AML:FormalOutputName = "XYPlaneCrossCorrelation"/>
+					</AutoIterate>
+				</theZ>
+				<theT>
+					<AutoIterate>
+						<OutputTo SemanticElementName = "theT" AML:FormalOutputName = "XYPlaneCrossCorrelation"/>
+					</AutoIterate>
+				</theT>
+				<theW>
+					<UseValue SemanticElementName = "theW" AML:FormalInputName = "Wavenumber 1"/>
+				</theW>
+			</XYPlane>
+		</InputSubString>
+		<InputSubString>
+			<RawText> 
+			</RawText>
+		</InputSubString>
+		<InputSubString>
+			<XYPlane XYPlaneID = "Plane1" Format = "TIFF">
+				<theZ>
+					<Match XYPlaneID = "Plane1"/>
+				</theZ>
+				<theT>
+					<Match XYPlaneID = "ThisPlaneDoesNotExist"/>
+				</theT>
+				<theW>
+					<UseValue SemanticElementName = "theW" AML:FormalInputName = "Wavenumber 2"/>
+				</theW>
+			</XYPlane>
+		</InputSubString>
+	</CommandLine>
+	<STDOUT>
+		<OutputRecord>
+			<pat>^(\d+\.?\d*|\.\d+)</pat>
+			<Output AccessBy = "1">
+				<OutputTo SemanticElementName = "CC" AML:FormalOutputName = "XYPlaneCrossCorrelation"/>
+			</Output>
+		</OutputRecord>
+	</STDOUT>
+</ExecutionInstructions>

@@ -1,0 +1,1135 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<!--
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#
+# Copyright (C) 2003 Open Microscopy Environment
+#       Massachusetts Institue of Technology,
+#       National Institutes of Health,
+#       University of Dundee
+#
+#
+#
+#    This library is free software; you can redistribute it and/or
+#    modify it under the terms of the GNU Lesser General Public
+#    License as published by the Free Software Foundation; either
+#    version 2.1 of the License, or (at your option) any later version.
+#
+#    This library is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+#    Lesser General Public License for more details.
+#
+#    You should have received a copy of the GNU Lesser General Public
+#    License along with this library; if not, write to the Free Software
+#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-->
+
+
+
+
+<!--
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Written by:  Douglas Creager <dcreager@alum.mit.edu>
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-->
+
+
+
+<OME
+  xmlns=
+    "http://www.openmicroscopy.org/XMLschemas/OME/FC/ome.xsd"
+  xmlns:xsi=
+    "http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:STD=
+    "http://www.openmicroscopy.org/XMLschemas/STD/RC2/STD.xsd"
+  xsi:schemaLocation = "
+    http://www.openmicroscopy.org/XMLschemas/OME/FC/ome.xsd
+      http://www.openmicroscopy.org/XMLschemas/OME/FC/ome.xsd
+    http://www.openmicroscopy.org/XMLschemas/STD/RC2/STD.xsd
+      http://www.openmicroscopy.org/XMLschemas/STD/RC2/STD.xsd">
+
+  <SemanticTypeDefinitions xmlns="http://www.openmicroscopy.org/XMLschemas/STD/RC2/STD.xsd" xsi:schemaLocation="http://www.openmicroscopy.org/XMLschemas/STD/RC2/STD.xsd http://www.openmicroscopy.org/XMLschemas/STD/RC2/STD.xsd">
+<!-- TODO: (DC-04/14/2003)
+       - Lookup tables (from XML spec)
+-->
+
+		<SemanticType
+			Name = "Repository"
+			AppliesTo = "G">
+
+			<Description>
+              A repository is a portion of the server-side file system
+              devoted to OME.  It is used primarily to store the
+              pixels of OME images.
+            </Description>
+
+            <Element
+               Name="IsLocal"
+               DBLocation="REPOSITORIES.IS_LOCAL"
+               DataType="boolean"/>
+            <Element
+               Name="Path"
+               DBLocation="REPOSITORIES.PATH"
+               DataType="string"/>
+            <Element
+               Name="ImageServerURL"
+               DBLocation="REPOSITORIES.IMAGE_SERVER_URL"
+               DataType="string"/>
+
+		</SemanticType>
+
+        <SemanticType
+           Name="OriginalFile"
+           AppliesTo="G">
+
+          <Description>
+            An original proprietary or XML file.
+          </Description>
+
+          <Element
+             Name="Repository"
+             DBLocation="ORIGINAL_FILES.REPOSITORY"
+             DataType="reference"
+             RefersTo="Repository">
+            <Description>
+              If the original file was in the server's filesystem at
+              the time of import, this element will be NULL.  If the
+              original file was transmitted to the server from a
+              client before import, then the original file will be
+              stored in the Repository specified by this entry.
+            </Description>
+          </Element>
+          <Element
+             Name="Path"
+             DBLocation="ORIGINAL_FILES.PATH"
+             DataType="string">
+            <Description>
+              If the original file was in the server's filesystem at
+              the time of import, then this is the absolute path to
+              that file.  If the original file was transmitted to the
+              server from a client before import, then the original
+              file will be stored in a Repository, and this element
+              will be that file's relative path into the Repository.
+            </Description>
+          </Element>
+          <Element
+             Name="FileID"
+             DBLocation="ORIGINAL_FILES.FILE_ID"
+             DataType="bigint">
+            <Description>
+            </Description>
+          </Element>
+          <Element
+             Name="SHA1"
+             DBLocation="ORIGINAL_FILES.SHA1"
+             DataType="string">
+            <Description>
+              Contains the SHA-1 digest of this file.  This digest is
+              used to prevent images from being imported more than
+              once.
+            </Description>
+          </Element>
+          <Element
+             Name="Format"
+             DBLocation="ORIGINAL_FILES.FORMAT"
+             DataType="string">
+            <Description>
+              The file format of the original file
+            </Description>
+          </Element>
+
+        </SemanticType>
+
+		<SemanticType
+			Name= "Experimenter"
+			AppliesTo = "G">
+			<Description>Defines the people who perform imaging experimenters.  Each experimenter may belong to one or more groups.  The ExperimenterGroup ST defines the relationships between Groups and Experimenters</Description>
+			<Element
+				Name= "FirstName"
+				DBLocation = "EXPERIMENTERS.FIRSTNAME"
+				DataType = "string"/>
+			<Element
+				Name= "LastName"
+				DBLocation = "EXPERIMENTERS.LASTNAME"
+				DataType = "string"/>
+			<Element
+				Name= "Email"
+				DBLocation = "EXPERIMENTERS.EMAIL"
+				DataType = "string"/>
+			<Element
+				Name= "Institution"
+				DBLocation = "EXPERIMENTERS.INSTITUTION"
+				DataType = "string"/>
+			<!-- These are private
+			<Element
+				Name= "OMEName"
+				DBLocation = "EXPERIMENTERS.OME_NAME"
+				DataType = "string"/>
+			<Element
+				Name= "Password"
+				DBLocation = "EXPERIMENTERS.PASSWORD"
+				DataType = "string"/>
+			-->
+			<Element
+				Name= "DataDirectory"
+				DBLocation = "EXPERIMENTERS.DATA_DIR"
+				DataType = "string"/>
+			<!-- This is a reversion to the old one group per experimenter
+				until we get the rest of the code to deal with multiple groups per experimenter.
+				The ExperimenterGroup map is commented out for now also.
+			-->
+			<Element
+				Name= "Group"
+				DBLocation = "EXPERIMENTERS.GROUP_ID"
+				DataType = "reference"
+				RefersTo = "Group"/>
+		</SemanticType>
+
+		<SemanticType
+			Name= "Group"
+			AppliesTo = "G">
+			<Description>Defines groups of experimenters.  This can be a lab or a project group.  It is not meant to represent an institution or a company.</Description>
+			<Element
+				Name= "Name"
+				DBLocation = "GROUPS.NAME"
+				DataType = "string"/>
+			<Element
+				Name= "Leader"
+				DBLocation = "GROUPS.LEADER"
+				DataType = "reference"
+				RefersTo = "Experimenter"/>
+			<Element
+				Name= "Contact"
+				DBLocation = "GROUPS.CONTACT"
+				DataType = "reference"
+				RefersTo = "Experimenter"/>
+		</SemanticType>
+
+		<SemanticType
+			Name= "ExperimenterGroup"
+			AppliesTo = "G">
+			<Description>Defines the relationship between Experimenters and Groups.</Description>
+			<Element
+				Name= "Experimenter"
+				DBLocation = "EXPERIMENTER_GROUP_MAP.EXPERIMENTER_ID"
+				DataType = "reference"
+				RefersTo = "Experimenter"/>
+			<Element
+				Name= "Group"
+				DBLocation = "EXPERIMENTER_GROUP_MAP.GROUP_ID"
+				DataType = "reference"
+				RefersTo = "Group"/>
+		</SemanticType>
+
+		<SemanticType
+			Name= "Plate"
+			AppliesTo = "G">
+			<Description>Stores information about the plates that make up a high-throughput screen.  Plates may belong to more than one screen, and have a many-to-many relationship to screens.</Description>
+			<Element
+				Name= "Name"
+				DBLocation = "PLATES.NAME"
+				DataType = "string"/>
+			<Element
+				Name= "ExternalReference"
+				DBLocation = "PLATES.EXTERNAL_REFERENCE"
+				DataType = "string"/>
+			<Element
+				Name= "Screen"
+				DBLocation = "PLATES.SCREEN"
+				DataType = "reference"
+				RefersTo = "Screen"/>
+		</SemanticType>
+
+		<SemanticType
+			Name= "Screen"
+			AppliesTo = "G">
+			<Description>Stores information about a high-throughput screen.</Description>
+			<Element
+				Name= "Name"
+				DBLocation = "SCREENS.NAME"
+				DataType = "string"/>
+			<Element
+				Name= "Description"
+				DBLocation = "SCREENS.DESCRIPTION"
+				DataType = "string"/>
+			<Element
+				Name= "ExternalReference"
+				DBLocation = "SCREENS.EXTERNAL_REFERENCE"
+				DataType = "string"/>
+		</SemanticType>
+
+		<SemanticType
+			Name= "PlateScreen"
+			AppliesTo = "G">
+			<Description>Defines the relationship between Plates and Screens.</Description>
+			<Element
+				Name= "Plate"
+				DBLocation = "PLATE_SCREEN_MAP.PLATE"
+				DataType = "reference"
+				RefersTo = "Plate"/>
+			<Element
+				Name= "Screen"
+				DBLocation = "PLATE_SCREEN_MAP.SCREEN"
+				DataType = "reference"
+				RefersTo = "Screen"/>
+		</SemanticType>
+
+		<SemanticType
+			Name= "Experiment"
+			AppliesTo = "G">
+			<Element
+				Name= "Type"
+				DBLocation = "EXPERIMENTS.TYPE"
+				DataType = "string"/>
+			<Element
+				Name= "Description"
+				DBLocation = "EXPERIMENTS.DESCRIPTION"
+				DataType = "string"/>
+			<Element
+				Name= "Experimenter"
+				DBLocation = "EXPERIMENTS.EXPERIMENTER"
+				DataType = "reference"
+				RefersTo = "Experimenter"/>
+		</SemanticType>
+
+		<SemanticType
+			Name= "Instrument"
+			AppliesTo = "G">
+			<Description>Describes a microscope.  Mainly acts as a container for the components that constitute it - e.g., Objectives, Filters, etc.</Description>
+			<Element
+				Name= "Manufacturer"
+				DBLocation = "INSTRUMENTS.MANUFACTURER"
+				DataType = "string"/>
+			<Element
+				Name= "Model"
+				DBLocation = "INSTRUMENTS.MODEL"
+				DataType = "string"/>
+			<Element
+				Name= "SerialNumber"
+				DBLocation = "INSTRUMENTS.SERIAL_NUMBER"
+				DataType = "string"/>
+			<Element
+				Name= "Type"
+				DBLocation = "INSTRUMENTS.ORIENTATION"
+				DataType = "string"/>
+		</SemanticType>
+
+		<SemanticType
+			Name= "LightSource"
+			AppliesTo = "G">
+			<Element
+				Name= "Manufacturer"
+				DBLocation = "LIGHT_SOURCES.MANUFACTURER"
+				DataType = "string"/>
+			<Element
+				Name= "Model"
+				DBLocation = "LIGHT_SOURCES.MODEL"
+				DataType = "string"/>
+			<Element
+				Name= "SerialNumber"
+				DBLocation = "LIGHT_SOURCES.SERIAL_NUMBER"
+				DataType = "string"/>
+			<Element
+				Name= "Instrument"
+				DBLocation = "LIGHT_SOURCES.INSTRUMENT"
+				DataType = "reference"
+				RefersTo = "Instrument"/>
+		</SemanticType>
+
+		<SemanticType
+			Name= "Laser"
+			AppliesTo = "G">
+			<Description>Laser types are specified using two attributes - the Type and the lasing medium (Medium). Additionally, the Wavelength (in nm), and whether or not the laser is FrequencyDoubled or Tunable may be specified. The Laser may optionally contain a Pump which refers to a LightSource used as a laser pump.</Description>
+			<Element
+				Name= "Type"
+				DBLocation = "LASERS.TYPE"
+				DataType = "string">
+				<Description>Recognized values for this element are 'Excimer', 'Gas', 'Metal Vapor', 'Solid State', 'Dye', 'Semiconductor', or 'Free Electron'.</Description>
+			</Element>
+			<Element
+				Name= "Medium"
+				DBLocation = "LASERS.MEDIUM"
+				DataType = "string">
+				<Description>This element specifies the actual lasing medium
+for a given laser type (for example, 'Nd-YAG').</Description>
+			</Element>
+			<Element
+				Name= "Wavelength"
+				DBLocation = "LASERS.WAVELENGTH"
+				DataType = "integer">
+				<Description>Measured in nm.</Description>
+			</Element>
+			<Element
+				Name= "FrequencyDoubled"
+				DBLocation = "LASERS.FREQ_DBLD"
+				DataType = "boolean"/>
+			<Element
+				Name= "Tunable"
+				DBLocation = "LASERS.TUNABLE"
+				DataType = "boolean"/>
+			<Element
+				Name= "Pulse"
+				DBLocation = "LASERS.PULSE"
+				DataType = "string">
+				<Description>Recognized values for this element are 'CW' (Continuous Wave),', 'Single', 'Q-Switched', 'Repetitive', and 'Mode-Locked'.</Description>
+			</Element>
+			<Element
+				Name= "Power"
+				DBLocation = "LASERS.POWER"
+				DataType = "float">
+				<Description>This specifies the nominal laser power in watts.</Description>
+			</Element>
+			<Element
+				Name= "LightSource"
+				DBLocation = "LASERS.LIGHT_SOURCE"
+				DataType = "reference"
+				RefersTo = "LightSource"/>
+			<Element
+				Name= "Pump"
+				DBLocation = "LASERS.PUMP"
+				DataType = "reference"
+				RefersTo = "LightSource">
+				<Description>Refers to a LightSource used as a laser pump.</Description>
+			</Element>	
+		</SemanticType>
+
+		<SemanticType
+			Name= "Filament"
+			AppliesTo = "G">
+			<Element
+				Name= "Type"
+				DBLocation = "FILAMENTS.TYPE"
+				DataType = "string"/>
+			<Element
+				Name= "Power"
+				DBLocation = "FILAMENTS.POWER"
+				DataType = "float"/>
+			<Element
+				Name= "LightSource"
+				DBLocation = "FILAMENTS.LIGHT_SOURCE"
+				DataType = "reference"
+				RefersTo = "LightSource"/>
+		</SemanticType>
+
+		<SemanticType
+			Name= "Arc"
+			AppliesTo = "G">
+			<Element
+				Name= "Type"
+				DBLocation = "ARCS.TYPE"
+				DataType = "string"/>
+			<Element
+				Name= "Power"
+				DBLocation = "ARCS.POWER"
+				DataType = "float"/>
+			<Element
+				Name= "LightSource"
+				DBLocation = "ARCS.LIGHT_SOURCE"
+				DataType = "reference"
+				RefersTo = "LightSource"/>
+		</SemanticType>
+
+		<SemanticType
+			Name= "Detector"
+			AppliesTo = "G">
+			<Element
+				Name= "Manufacturer"
+				DBLocation = "DETECTORS.MANUFACTURER"
+				DataType = "string"/>
+			<Element
+				Name= "Model"
+				DBLocation = "DETECTORS.MODEL"
+				DataType = "string"/>
+			<Element
+				Name= "SerialNumber"
+				DBLocation = "DETECTORS.SERIAL_NUMBER"
+				DataType = "string"/>
+			<Element
+				Name= "Type"
+				DBLocation = "DETECTORS.TYPE"
+				DataType = "string"/>
+			<Element
+				Name= "Gain"
+				DBLocation = "DETECTORS.GAIN"
+				DataType = "float"/>
+			<Element
+				Name= "Voltage"
+				DBLocation = "DETECTORS.VOLTAGE"
+				DataType = "float"/>
+			<Element
+				Name= "Offset"
+				DBLocation = "DETECTORS.D_OFFSET"
+				DataType = "float"/>
+			<Element
+				Name= "Instrument"
+				DBLocation = "DETECTORS.INSTRUMENT"
+				DataType = "reference"
+				RefersTo = "Instrument"/>
+		</SemanticType>
+
+		<SemanticType
+			Name= "Objective"
+			AppliesTo = "G">
+			<Element
+				Name= "Manufacturer"
+				DBLocation = "OBJECTIVES.MANUFACTURER"
+				DataType = "string"/>
+			<Element
+				Name= "Model"
+				DBLocation = "OBJECTIVES.MODEL"
+				DataType = "string"/>
+			<Element
+				Name= "SerialNumber"
+				DBLocation = "OBJECTIVES.SERIAL_NUMBER"
+				DataType = "string"/>
+			<Element
+				Name= "LensNA"
+				DBLocation = "OBJECTIVES.LENS_NA"
+				DataType = "float"/>
+			<Element
+				Name= "Magnification"
+				DBLocation = "OBJECTIVES.MAGNIFICATION"
+				DataType = "float"/>
+			<Element
+				Name= "Instrument"
+				DBLocation = "OBJECTIVES.INSTRUMENT"
+				DataType = "reference"
+				RefersTo = "Instrument"/>
+		</SemanticType>
+
+		<SemanticType
+			Name= "Filter"
+			AppliesTo = "G">
+			<Element
+				Name= "Instrument"
+				DBLocation = "FILTER.INSTRUMENT"
+				DataType = "reference"
+				RefersTo = "Instrument"/>
+		</SemanticType>
+
+		<SemanticType
+			Name= "ExcitationFilter"
+			AppliesTo = "G">
+			<Element
+				Name= "Manufacturer"
+				DBLocation = "EXCITATION_FILTERS.MANUFACTURER"
+				DataType = "string"/>
+			<Element
+				Name= "Model"
+				DBLocation = "EXCITATION_FILTERS.MODEL"
+				DataType = "string"/>
+			<Element
+				Name= "LotNumber"
+				DBLocation = "EXCITATION_FILTERS.LOT_NUMBER"
+				DataType = "string"/>
+			<Element
+				Name= "Type"
+				DBLocation = "EXCITATION_FILTERS.TYPE"
+				DataType = "string"/>
+			<Element
+				Name= "Filter"
+				DBLocation = "EXCITATION_FILTERS.FILTER"
+				DataType = "reference"
+				RefersTo = "Filter"/>
+		</SemanticType>
+
+		<SemanticType
+			Name= "Dichroic"
+			AppliesTo = "G">
+			<Element
+				Name= "Manufacturer"
+				DBLocation = "DICHROICS.MANUFACTURER"
+				DataType = "string"/>
+			<Element
+				Name= "Model"
+				DBLocation = "DICHROICS.MODEL"
+				DataType = "string"/>
+			<Element
+				Name= "LotNumber"
+				DBLocation = "DICHROICS.LOT_NUMBER"
+				DataType = "string"/>
+			<Element
+				Name= "Filter"
+				DBLocation = "DICHROICS.FILTER"
+				DataType = "reference"
+				RefersTo = "Filter"/>
+		</SemanticType>
+
+		<SemanticType
+			Name= "EmissionFilter"
+			AppliesTo = "G">
+			<Element
+				Name= "Manufacturer"
+				DBLocation = "EMISSION_FILTERS.MANUFACTURER"
+				DataType = "string"/>
+			<Element
+				Name= "Model"
+				DBLocation = "EMISSION_FILTERS.MODEL"
+				DataType = "string"/>
+			<Element
+				Name= "LotNumber"
+				DBLocation = "EMISSION_FILTERS.LOT_NUMBER"
+				DataType = "string"/>
+			<Element
+				Name= "Type"
+				DBLocation = "EMISSION_FILTERS.TYPE"
+				DataType = "string"/>
+			<Element
+				Name= "Filter"
+				DBLocation = "EMISSION_FILTERS.FILTER"
+				DataType = "reference"
+				RefersTo = "Filter"/>
+		</SemanticType>
+
+		<SemanticType
+			Name= "FilterSet"
+			AppliesTo = "G">
+			<Element
+				Name= "Manufacturer"
+				DBLocation = "FILTER_SETS.MANUFACTURER"
+				DataType = "string"/>
+			<Element
+				Name= "Model"
+				DBLocation = "FILTER_SETS.MODEL"
+				DataType = "string"/>
+			<Element
+				Name= "LotNumber"
+				DBLocation = "FILTER_SETS.LOT_NUMBER"
+				DataType = "string"/>
+			<Element
+				Name= "Filter"
+				DBLocation = "FILTER_SETS.FILTER"
+				DataType = "reference"
+				RefersTo = "Filter"/>
+		</SemanticType>
+
+		<SemanticType
+			Name= "OTF"
+			AppliesTo = "G">
+			<Element
+				Name= "Objective"
+				DBLocation = "OTFS.OBJECTIVE"
+				DataType = "reference"
+				RefersTo = "Objective"/>
+			<Element
+				Name= "Filter"
+				DBLocation = "OTFS.FILTER"
+				DataType = "reference"
+				RefersTo = "Filter"/>
+			<Element
+				Name= "SizeX"
+				DBLocation = "OTFS.SIZE_X"
+				DataType = "integer"/>
+			<Element
+				Name= "SizeY"
+				DBLocation = "OTFS.SIZE_Y"
+				DataType = "integer"/>
+			<Element
+				Name= "PixelType"
+				DBLocation = "OTFS.PIXEL_TYPE"
+				DataType = "string"/>
+			<Element
+				Name= "Repository"
+				DBLocation = "OTFS.REPOSITORY"
+				DataType = "reference"
+				RefersTo = "Repository"/>
+			<Element
+				Name= "Path"
+				DBLocation = "OTFS.PATH"
+				DataType = "string"/>
+			<Element
+				Name= "OpticalAxisAverage"
+				DBLocation = "OTFS.OPTICAL_AXIS_AVERAGE"
+				DataType = "boolean"/>
+			<Element
+				Name= "Instrument"
+				DBLocation = "OTFS.Instrument"
+				DataType = "reference"
+				RefersTo = "Instrument"/>
+		</SemanticType>
+
+		<SemanticType
+			Name= "Dimensions"
+			AppliesTo = "I">
+			<Description>Describes the physical size of each dimension of the pixels in an image in microns</Description>
+
+			<Element
+				Name= "PixelSizeX"
+				DBLocation = "IMAGE_DIMENSIONS.PIXEL_SIZE_X"
+				DataType = "float">
+				<Description>in microns</Description>
+			</Element>
+			<Element
+				Name= "PixelSizeY"
+				DBLocation = "IMAGE_DIMENSIONS.PIXEL_SIZE_Y"
+				DataType = "float">
+				<Description>in microns</Description>
+			</Element>
+			<Element
+				Name= "PixelSizeZ"
+				DBLocation = "IMAGE_DIMENSIONS.PIXEL_SIZE_Z"
+				DataType = "float">
+				<Description>in microns</Description>
+			</Element>
+			<Element
+				Name= "PixelSizeC"
+				DBLocation = "IMAGE_DIMENSIONS.PIXEL_SIZE_C"
+				DataType = "float">
+				<Description>in nanometers</Description>
+			</Element>
+			<Element
+				Name= "PixelSizeT"
+				DBLocation = "IMAGE_DIMENSIONS.PIXEL_SIZE_T"
+				DataType = "float">
+				<Description>in seconds</Description>
+			</Element>
+		</SemanticType>
+
+		<SemanticType
+			Name= "ImageExperiment"
+			AppliesTo = "I">
+			<Description>This specifies the Experiment an Image belongs to</Description>
+			<Element
+				Name= "Experiment"
+				DBLocation = "IMAGE_INFO.EXPERIMENT"
+				DataType = "reference"
+				RefersTo = "Experiment"/>
+		</SemanticType>
+
+		<SemanticType
+			Name= "ImageGroup"
+			AppliesTo = "I">
+			<Description>This specifies the Group that the Image belongs to (these are Groups of Experimenters)</Description>
+			<Element
+				Name= "Group"
+				DBLocation = "IMAGE_INFO.GROUP_ID"
+				DataType = "reference"
+				RefersTo = "Group"/>
+		</SemanticType>
+
+		<SemanticType
+			Name= "ImageInstrument"
+			AppliesTo = "I">
+			<Description>This specifies the Instrument associated with an Image</Description>
+			<Element
+				Name= "Instrument"
+				DBLocation = "IMAGE_INFO.INSTRUMENT"
+				DataType = "reference"
+				RefersTo = "Instrument"/>
+			<Element
+				Name= "Objective"
+				DBLocation = "IMAGE_INFO.OBJECTIVE"
+				DataType = "reference"
+				RefersTo = "Objective"/>
+		</SemanticType>
+
+		<SemanticType
+			Name= "ImagingEnvironment"
+			AppliesTo = "I">
+			<Description>Various environmental conditions at the time of image acquisition.</Description>
+			<Element
+				Name= "Temperature"
+				DBLocation = "IMAGING_ENVIRONMENTS.TEMPERATURE"
+				DataType = "float"/>
+			<Element
+				Name= "AirPressure"
+				DBLocation = "IMAGING_ENVIRONMENTS.AIR_PRESSURE"
+				DataType = "float"/>
+			<Element
+				Name= "Humidity"
+				DBLocation = "IMAGING_ENVIRONMENTS.HUMIDITY"
+				DataType = "float"/>
+			<Element
+				Name= "CO2Percent"
+				DBLocation = "IMAGING_ENVIRONMENTS.CO2_PERCENT"
+				DataType = "float"/>
+		</SemanticType>
+
+		<SemanticType
+			Name= "Thumbnail"
+			AppliesTo = "I">
+			<Description>A thumbnail is used to display a quick small representation of the image to the user.</Description>
+			<Element
+				Name= "MimeType"
+				DBLocation = "THUMBNAILS.MIME_TYPE"
+				DataType = "string"/>
+			<Element
+				Name= "Repository"
+				DBLocation = "THUMBNAILS.REPOSITORY"
+				DataType = "reference"
+				RefersTo = "Repository"/>
+			<Element
+				Name= "Path"
+				DBLocation = "THUMBNAILS.PATH"
+				DataType = "string"/>
+		</SemanticType>
+
+		<SemanticType
+			Name= "PixelChannelComponent"
+			AppliesTo = "I">
+			<Description>This describes how each channel in the pixel array relates to LogicalChannels</Description>
+			<Element
+				Name= "Pixels"
+				DBLocation = "CHANNEL_COMPONENTS.PIXELS_ID"
+				DataType = "reference"
+				RefersTo = "Pixels"/>
+			<Element
+				Name= "Index"
+				DBLocation = "CHANNEL_COMPONENTS.INDEX"
+				DataType = "integer"/>
+			<Element
+				Name= "ColorDomain"
+				DBLocation = "CHANNEL_COMPONENTS.COLOR_DOMAIN"
+				DataType = "string"/>
+			<Element
+				Name= "LogicalChannel"
+				DBLocation = "CHANNEL_COMPONENTS.LOGICAL_CHANNEL"
+				DataType = "reference"
+				RefersTo = "LogicalChannel"/>
+		</SemanticType>
+
+		<SemanticType
+			Name= "LogicalChannel"
+			AppliesTo = "I">
+			<Description>Various pieces of information pertaining to each logical channel in an image</Description>
+			<Element
+				Name= "Name"
+				DBLocation = "LOGICAL_CHANNELS.NAME"
+				DataType = "string"/>
+			<Element
+				Name= "SamplesPerPixel"
+				DBLocation = "LOGICAL_CHANNELS.SAMPLES_PER_PIXEL"
+				DataType = "integer"/>
+			<Element
+				Name= "Filter"
+				DBLocation = "LOGICAL_CHANNELS.FILTER"
+				DataType = "reference"
+				RefersTo = "Filter"/>
+			<Element
+				Name= "LightSource"
+				DBLocation = "LOGICAL_CHANNELS.LIGHT_SOURCE"
+				DataType = "reference"
+				RefersTo = "LightSource"/>
+			<Element
+				Name= "LightAttenuation"
+				DBLocation = "LOGICAL_CHANNELS.LIGHT_ATTENUATION"
+				DataType = "float"/>
+			<Element
+				Name= "LightWavelength"
+				DBLocation = "LOGICAL_CHANNELS.LIGHT_WAVELENGTH"
+				DataType = "integer"/>
+			<Element
+				Name= "OTF"
+				DBLocation = "LOGICAL_CHANNELS.OTF"
+				DataType = "reference"
+				RefersTo = "OTF"/>
+			<Element
+				Name= "Detector"
+				DBLocation = "LOGICAL_CHANNELS.DETECTOR"
+				DataType = "reference"
+				RefersTo = "Detector"/>
+			<Element
+				Name= "DetectorOffset"
+				DBLocation = "LOGICAL_CHANNELS.DETECTOR_OFFSET"
+				DataType = "float"/>
+			<Element
+				Name= "DetectorGain"
+				DBLocation = "LOGICAL_CHANNELS.DETECTOR_GAIN"
+				DataType = "float"/>
+			<Element
+				Name= "IlluminationType"
+				DBLocation = "LOGICAL_CHANNELS.ILLUMINATION_TYPE"
+				DataType = "string"/>
+			<Element
+				Name= "PinholeSize"
+				DBLocation = "LOGICAL_CHANNELS.PINHOLE_SIZE"
+				DataType = "integer"/>
+			<Element
+				Name= "PhotometricInterpretation"
+				DBLocation = "LOGICAL_CHANNELS.PHOTOMETRIC_INTERPRETATION"
+				DataType = "string"/>
+			<Element
+				Name= "Mode"
+				DBLocation = "LOGICAL_CHANNELS.MODE"
+				DataType = "string"/>
+			<Element
+				Name= "ContrastMethod"
+				DBLocation = "LOGICAL_CHANNELS.CONTRAST_METHOD"
+				DataType = "string"/>
+			<Element
+				Name= "AuxLightSource"
+				DBLocation = "LOGICAL_CHANNELS.AUX_LIGHT_SOURCE"
+				DataType = "reference"
+				RefersTo = "LightSource"/>
+			<Element
+				Name= "AuxLightAttenuation"
+				DBLocation = "LOGICAL_CHANNELS.AUX_LIGHT_ATTENUATION"
+				DataType = "float"/>
+			<Element
+				Name= "AuxTechnique"
+				DBLocation = "LOGICAL_CHANNELS.AUX_TECHNIQUE"
+				DataType = "string"/>
+			<Element
+				Name= "AuxLightWavelength"
+				DBLocation = "LOGICAL_CHANNELS.AUX_LIGHT_WAVELENGTH"
+				DataType = "integer"/>
+			<Element
+				Name= "ExcitationWavelength"
+				DBLocation = "LOGICAL_CHANNELS.EX_WAVE"
+				DataType = "integer"/>
+			<Element
+				Name= "EmissionWavelength"
+				DBLocation = "LOGICAL_CHANNELS.EM_WAVE"
+				DataType = "integer"/>
+			<Element
+				Name= "Fluor"
+				DBLocation = "LOGICAL_CHANNELS.FLUOR"
+				DataType = "string"/>
+			<Element
+				Name= "NDFilter"
+				DBLocation = "LOGICAL_CHANNELS.ND_FILTER"
+				DataType = "float"/>
+		</SemanticType>
+
+		<SemanticType
+			Name= "DisplayChannel"
+			AppliesTo = "I">
+			<Description>A specification for displaying a logical channel</Description>
+			<Element
+				Name= "ChannelNumber"
+				DBLocation = "DISPLAY_CHANNELS.CHANNEL_NUMBER"
+				DataType = "integer"/>
+			<Element
+				Name= "BlackLevel"
+				DBLocation = "DISPLAY_CHANNELS.BLACK_LEVEL"
+				DataType = "double"/>
+			<Element
+				Name= "WhiteLevel"
+				DBLocation = "DISPLAY_CHANNELS.WHITE_LEVEL"
+				DataType = "double"/>
+			<Element
+				Name= "Gamma"
+				DBLocation = "DISPLAY_CHANNELS.GAMMA"
+				DataType = "float"/>
+		</SemanticType>
+
+		<SemanticType
+			Name= "DisplayOptions"
+			AppliesTo = "I">
+			<Description>Parameters for viewers to optimally display an image</Description>
+			<Element
+				Name= "Pixels"
+				DBLocation = "DISPLAY_OPTIONS.Pixels"
+				DataType = "reference"
+				RefersTo = "Pixels"/>
+			<Element
+				Name= "Zoom"
+				DBLocation = "DISPLAY_OPTIONS.ZOOM"
+				DataType = "float"/>
+			<Element
+				Name= "RedChannel"
+				DBLocation = "DISPLAY_OPTIONS.RED_CHANNEL"
+				DataType = "reference"
+				RefersTo = "DisplayChannel"/>
+			<Element
+				Name= "RedChannelOn"
+				DBLocation = "DISPLAY_OPTIONS.RED_ON"
+				DataType = "boolean"/>
+			<Element
+				Name= "GreenChannel"
+				DBLocation = "DISPLAY_OPTIONS.GREEN_CHANNEL"
+				DataType = "reference"
+				RefersTo = "DisplayChannel"/>
+			<Element
+				Name= "GreenChannelOn"
+				DBLocation = "DISPLAY_OPTIONS.GREEN_ON"
+				DataType = "boolean"/>
+			<Element
+				Name= "BlueChannel"
+				DBLocation = "DISPLAY_OPTIONS.BLUE_CHANNEL"
+				DataType = "reference"
+				RefersTo = "DisplayChannel"/>
+			<Element
+				Name= "BlueChannelOn"
+				DBLocation = "DISPLAY_OPTIONS.BLUE_ON"
+				DataType = "boolean"/>
+			<Element
+				Name= "DisplayRGB"
+				DBLocation = "DISPLAY_OPTIONS.DISPLAY_RGB"
+				DataType = "boolean"/>
+			<Element
+				Name= "GreyChannel"
+				DBLocation = "DISPLAY_OPTIONS.GREY_CHANNEL"
+				DataType = "reference"
+				RefersTo = "DisplayChannel"/>
+			<Element
+				Name= "ColorMap"
+				DBLocation = "DISPLAY_OPTIONS.COLOR_MAP"
+				DataType = "string"/>
+			<Element
+				Name= "ZStart"
+				DBLocation = "DISPLAY_OPTIONS.Z_START"
+				DataType = "integer"/>
+			<Element
+				Name= "ZStop"
+				DBLocation = "DISPLAY_OPTIONS.Z_STOP"
+				DataType = "integer"/>
+			<Element
+				Name= "TStart"
+				DBLocation = "DISPLAY_OPTIONS.T_START"
+				DataType = "integer"/>
+			<Element
+				Name= "TStop"
+				DBLocation = "DISPLAY_OPTIONS.T_STOP"
+				DataType = "integer"/>
+		</SemanticType>
+
+		<SemanticType
+			Name= "DisplayROI"
+			AppliesTo = "I">
+			<Description>A region of interest within the image for display purposes</Description>
+			<Element
+				Name= "X0"
+				DBLocation = "DISPLAY_ROI.X0"
+				DataType = "integer"/>
+			<Element
+				Name= "Y0"
+				DBLocation = "DISPLAY_ROI.Y0"
+				DataType = "integer"/>
+			<Element
+				Name= "Z0"
+				DBLocation = "DISPLAY_ROI.Z0"
+				DataType = "integer"/>
+			<Element
+				Name= "X1"
+				DBLocation = "DISPLAY_ROI.X1"
+				DataType = "integer"/>
+			<Element
+				Name= "Y1"
+				DBLocation = "DISPLAY_ROI.Y1"
+				DataType = "integer"/>
+			<Element
+				Name= "Z1"
+				DBLocation = "DISPLAY_ROI.Z1"
+				DataType = "integer"/>
+			<Element
+				Name= "T0"
+				DBLocation = "DISPLAY_ROI.T0"
+				DataType = "integer"/>
+			<Element
+				Name= "T1"
+				DBLocation = "DISPLAY_ROI.T1"
+				DataType = "integer"/>
+			<Element
+				Name= "DisplayOptions"
+				DBLocation = "DISPLAY_ROI.DISPLAY_OPTIONS"
+				DataType = "reference"
+				RefersTo = "DisplayOptions"/>
+		</SemanticType>
+
+		<SemanticType
+			Name= "StageLabel"
+			AppliesTo = "I">
+			<Description>Stage labels are stage coordinates and a label to recall a microscope stage location</Description>
+			<Element
+				Name= "Name"
+				DBLocation = "STAGE_LABELS.NAME"
+				DataType = "string"/>
+			<Element
+				Name= "X"
+				DBLocation = "STAGE_LABELS.X"
+				DataType = "float"/>
+			<Element
+				Name= "Y"
+				DBLocation = "STAGE_LABELS.Y"
+				DataType = "float"/>
+			<Element
+				Name= "Z"
+				DBLocation = "STAGE_LABELS.Z"
+				DataType = "float"/>
+		</SemanticType>
+
+		<SemanticType
+			Name= "ImagePlate"
+			AppliesTo = "I">
+			<Element
+				Name= "Plate"
+				DBLocation = "IMAGE_PLATES.PLATE"
+				DataType = "reference"
+				RefersTo = "Plate"/>
+			<Element
+				Name= "Sample"
+				DBLocation = "IMAGE_PLATES.SAMPLE"
+				DataType = "integer"/>
+			<Element
+				Name= "Well"
+				DBLocation = "IMAGE_PLATES.WELL"
+				DataType = "string"/>
+		</SemanticType>
+
+		<SemanticType
+			Name= "Pixels"
+			AppliesTo = "I">
+			<Description>Storage location and data type of the image pixels, including the extent of each dimension in the 5-D array.</Description>
+		
+			<Element
+				Name= "SizeX"
+				DBLocation = "IMAGE_PIXELS.SIZE_X"
+				DataType = "integer">
+				<Description>Number of pixels on the X axis.</Description>
+			</Element>
+			<Element
+				Name= "SizeY"
+				DBLocation = "IMAGE_PIXELS.SIZE_Y"
+				DataType = "integer">
+				<Description>Number of pixels on the Y axis.</Description>
+			</Element>
+			<Element
+				Name= "SizeZ"
+				DBLocation = "IMAGE_PIXELS.SIZE_Z"
+				DataType = "integer">
+				<Description>Number of pixels on the Z axis.</Description>
+			</Element>
+			<Element
+				Name= "SizeC"
+				DBLocation = "IMAGE_PIXELS.SIZE_C"
+				DataType = "integer">
+				<Description>Number of channel components in all logical channels.</Description>
+			</Element>
+			<Element
+				Name= "SizeT"
+				DBLocation = "IMAGE_PIXELS.SIZE_T"
+				DataType = "integer">
+				<Description>Number of time points</Description>
+			</Element>
+			<Element
+				Name= "BitsPerPixel"
+				DBLocation = "IMAGE_PIXELS.BITS_PER_PIXEL"
+				DataType = "integer"/>
+			<Element
+				Name= "PixelType"
+				DBLocation = "IMAGE_PIXELS.PIXEL_TYPE"
+				DataType = "string"/>
+			<Element
+				Name= "FileSHA1"
+				DBLocation = "IMAGE_PIXELS.FILE_SHA1"
+				DataType = "string"/>
+			<Element
+				Name= "Repository"
+				DBLocation = "IMAGE_PIXELS.REPOSITORY"
+				DataType = "reference"
+				RefersTo = "Repository"/>
+			<Element
+				Name= "Path"
+				DBLocation = "IMAGE_PIXELS.PATH"
+				DataType = "string"/>
+            <Element
+               Name="ImageServerID"
+               DBLocation="IMAGE_PIXELS.IMAGE_SERVER_ID"
+               DataType="bigint"/>
+		</SemanticType>
+
+	</SemanticTypeDefinitions>
+</OME>

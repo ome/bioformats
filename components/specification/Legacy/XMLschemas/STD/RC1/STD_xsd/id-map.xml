@@ -1,0 +1,22 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<id-map>
+	<entry path = "e:SemanticType/a:Description" id = "comp00001" width = "100" height = "37"/>
+	<entry path = "e:SemanticType/a:SemanticTypeName" id = "comp00002" width = "128" height = "37"/>
+	<entry path = "e:SemanticElement/a:Description" id = "comp00003" width = "100" height = "37"/>
+	<entry path = "e:SemanticElement/a:FieldID" id = "comp00004" width = "66" height = "37"/>
+	<entry path = "e:SemanticElement/a:Name" id = "comp00005" width = "61" height = "37"/>
+	<entry path = "e:Record/a:Name" id = "comp00006" width = "61" height = "37"/>
+	<entry path = "e:Record/a:AppliesTo" id = "comp00007" width = "81" height = "37"/>
+	<entry path = "e:Record/a:Description" id = "comp00008" width = "100" height = "37"/>
+	<entry path = "e:Field/a:Name" id = "comp00009" width = "61" height = "37"/>
+	<entry path = "e:Field/a:DataType" id = "comp00010" width = "79" height = "37"/>
+	<entry path = "e:Field/a:Description" id = "comp00011" width = "100" height = "37"/>
+	<entry path = "e:Field/a:FieldID" id = "comp00012" width = "66" height = "37"/>
+	<entry path = "e:Field" id = "comp00013" width = "377" height = "47"/>
+	<entry path = "e:Record" id = "comp00014" width = "328" height = "79"/>
+	<entry path = "e:SemanticElement" id = "comp00015" width = "363" height = "47"/>
+	<entry path = "e:SemanticType" id = "comp00016" width = "353" height = "79"/>
+	<entry path = "e:SemanticTypeDefinitions" id = "comp00017" width = "294" height = "71"/>
+	<entry path = "e:DataDefinitions" id = "comp00018" width = "207" height = "37"/>
+	<entry path = "a:SemanticTypeName" id = "comp00019" width = "140" height = "37"/>
+</id-map>

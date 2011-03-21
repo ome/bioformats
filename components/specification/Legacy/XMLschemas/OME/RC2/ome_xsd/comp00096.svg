@@ -1,0 +1,70 @@
+<?xml version = "1.0"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<svg width = "248pt" height = "181pt" viewBox = "0 0 248 181" xmlns = "http://www.w3.org/2000/svg" xmlns:xlink = "http://www.w3.org/1999/xlink">
+	<defs>
+		<style type = "text/css"><![CDATA[
+rect.attrGroup { fill: ivory ; stroke: black; stroke-width: 1 }
+rect.element { fill: ivory ; stroke: black; stroke-width: 1 }
+rect.elTypeBkgnd { fill: lightgray ; stroke: none }
+text.elName { font-family: helvetica ; font-size : 10 }
+text.elType { font-family: helvetica ; font-size : 7 }
+text.occurLarge { font-family: helvetica ; font-size : 9; fill : blue }
+text.occurSmall { font-family: helvetica ; font-size : 7; fill : blue }
+rect.typeIconDark { fill : darkslategray }
+circle.occurs { stroke : black ; stroke-width: 1; fill : white }
+circle.ellipsis { fill : black }
+path.typeIconDark { stroke : lightgray ; stroke-width: 1 }
+path.connector { stroke : red ; stroke-width: 1 ; fill: none; }
+path.modelGroup { stroke : black ; stroke-width: 1 ; fill: lightgray; }
+polyline.connector { stroke : red ; stroke-width: 1 ; fill: none; }
+.nodeStyle { fill : blue }
+]]></style>
+	</defs>
+	<rect x = "123" y = "5" width = "120" height = "37" class = "attrGroup" rx = "5" ry = "5"/>
+	<circle class = "occurs" cx = "134" cy = "23" r = "6"/>
+	<text x = "131" y = "26" class = "occurLarge">?</text>
+	<rect x = "140" y = "10" width = "98" height = "27" class = "element" rx = "5" ry = "5"/>
+	<circle class = "nodeStyle" cx = "146" cy = "16" r = "4"/>
+	<text x = "151" y = "21" class = "elName">ExperimenterID</text>
+	<rect x = "141" y = "11" width = "96" height = "25" class = "elTypeBkgnd" rx = "5" ry = "5" clip-path = "url(#t:ExperimenterType/a:ExperimenterID)"/>
+	<defs/>
+	<clipPath id = "t:ExperimenterType/a:ExperimenterID">
+		<rect x = "140" y = "25" width = "98" height = "11"/>
+	</clipPath>
+	<text x = "141" y = "33" class = "elType">positiveInteger</text>
+	<image xlink:href = "../dgmDtInteger.gif" width = "10" height = "10" x = "228" y = "20"/>
+	<rect x = "5" y = "98" width = "88" height = "27" class = "element"/>
+	<polygon class = "nodeStyle" points = "11,100 7,104 11,108 15,104"/>
+	<text x = "16" y = "109" class = "elName">Experimenter</text>
+	<rect x = "6" y = "113" width = "86" height = "11" class = "elTypeBkgnd"/>
+	<text x = "6" y = "121" class = "elType">ExperimenterType</text>
+	<image xlink:href = "../dgmTypeComplex.gif" width = "10" height = "10" x = "83" y = "108"/>
+	<polyline class = "connector" points = "123,60 103,60 103,111 93,111 103,111 103,162 123,162"/>
+	<polyline class = "connector" points = "93,109 101,109 101,23 123,23"/>
+	<polyline class = "connector" points = "123,60 135,60"/>
+	<rect x = "135" y = "47" width = "72" height = "27" class = "element"/>
+	<polygon class = "nodeStyle" points = "141,49 137,53 141,57 145,53"/>
+	<text x = "146" y = "58" class = "elName">FirstName</text>
+	<rect x = "136" y = "62" width = "70" height = "11" class = "elTypeBkgnd"/>
+	<text x = "136" y = "70" class = "elType">string</text>
+	<image xlink:href = "../dgmDtString.gif" width = "10" height = "10" x = "197" y = "57"/>
+	<rect x = "135" y = "81" width = "71" height = "27" class = "element"/>
+	<polygon class = "nodeStyle" points = "141,83 137,87 141,91 145,87"/>
+	<text x = "146" y = "92" class = "elName">LastName</text>
+	<rect x = "136" y = "96" width = "69" height = "11" class = "elTypeBkgnd"/>
+	<text x = "136" y = "104" class = "elType">string</text>
+	<image xlink:href = "../dgmDtString.gif" width = "10" height = "10" x = "196" y = "91"/>
+	<rect x = "135" y = "115" width = "50" height = "27" class = "element"/>
+	<polygon class = "nodeStyle" points = "141,117 137,121 141,125 145,121"/>
+	<text x = "146" y = "126" class = "elName">email</text>
+	<rect x = "136" y = "130" width = "48" height = "11" class = "elTypeBkgnd"/>
+	<text x = "136" y = "138" class = "elType">string</text>
+	<image xlink:href = "../dgmDtString.gif" width = "10" height = "10" x = "175" y = "125"/>
+	<polyline class = "connector" points = "123,162 135,162"/>
+	<rect x = "135" y = "149" width = "72" height = "27" class = "element"/>
+	<polygon class = "nodeStyle" points = "141,151 137,155 141,159 145,155"/>
+	<text x = "146" y = "160" class = "elName">OMEname</text>
+	<rect x = "136" y = "164" width = "70" height = "11" class = "elTypeBkgnd"/>
+	<text x = "136" y = "172" class = "elType">string</text>
+	<image xlink:href = "../dgmDtString.gif" width = "10" height = "10" x = "197" y = "159"/>
+</svg>

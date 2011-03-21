@@ -1,0 +1,91 @@
+<?xml version = "1.0"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<svg width = "443pt" height = "113pt" viewBox = "0 0 443 113" xmlns = "http://www.w3.org/2000/svg" xmlns:xlink = "http://www.w3.org/1999/xlink">
+	<defs>
+		<style type = "text/css"><![CDATA[
+rect.attrGroup { fill: ivory ; stroke: black; stroke-width: 1 }
+rect.element { fill: ivory ; stroke: black; stroke-width: 1 }
+rect.elTypeBkgnd { fill: lightgray ; stroke: none }
+text.elName { font-family: helvetica ; font-size : 10 }
+text.elType { font-family: helvetica ; font-size : 7 }
+text.occurLarge { font-family: helvetica ; font-size : 9; fill : blue }
+text.occurSmall { font-family: helvetica ; font-size : 7; fill : blue }
+rect.typeIconDark { fill : darkslategray }
+circle.occurs { stroke : black ; stroke-width: 1; fill : white }
+circle.ellipsis { fill : black }
+path.typeIconDark { stroke : lightgray ; stroke-width: 1 }
+path.connector { stroke : red ; stroke-width: 1 ; fill: none; }
+path.modelGroup { stroke : black ; stroke-width: 1 ; fill: lightgray; }
+polyline.connector { stroke : red ; stroke-width: 1 ; fill: none; }
+.nodeStyle { fill : blue }
+]]></style>
+	</defs>
+	<rect x = "104" y = "5" width = "334" height = "37" class = "attrGroup" rx = "5" ry = "5"/>
+	<rect x = "109" y = "10" width = "53" height = "27" class = "element" rx = "5" ry = "5"/>
+	<circle class = "nodeStyle" cx = "115" cy = "16" r = "4"/>
+	<text x = "120" y = "21" class = "elName">Model</text>
+	<rect x = "110" y = "11" width = "51" height = "25" class = "elTypeBkgnd" rx = "5" ry = "5" clip-path = "url(#t:ManufactSpec/a:Model)"/>
+	<defs/>
+	<clipPath id = "t:ManufactSpec/a:Model">
+		<rect x = "109" y = "25" width = "53" height = "11"/>
+	</clipPath>
+	<text x = "110" y = "33" class = "elType">string</text>
+	<image xlink:href = "../dgmDtString.gif" width = "10" height = "10" x = "152" y = "20"/>
+	<rect x = "261" y = "10" width = "79" height = "27" class = "element" rx = "5" ry = "5"/>
+	<circle class = "nodeStyle" cx = "267" cy = "16" r = "4"/>
+	<text x = "272" y = "21" class = "elName">ObjectiveID</text>
+	<rect x = "262" y = "11" width = "77" height = "25" class = "elTypeBkgnd" rx = "5" ry = "5" clip-path = "url(#e:Objective/a:ObjectiveID)"/>
+	<defs/>
+	<clipPath id = "e:Objective/a:ObjectiveID">
+		<rect x = "261" y = "25" width = "79" height = "11"/>
+	</clipPath>
+	<text x = "262" y = "33" class = "elType">positiveInteger</text>
+	<image xlink:href = "../dgmDtInteger.gif" width = "10" height = "10" x = "330" y = "20"/>
+	<rect x = "345" y = "10" width = "88" height = "27" class = "element" rx = "5" ry = "5"/>
+	<circle class = "nodeStyle" cx = "351" cy = "16" r = "4"/>
+	<text x = "356" y = "21" class = "elName">SerialNumber</text>
+	<rect x = "346" y = "11" width = "86" height = "25" class = "elTypeBkgnd" rx = "5" ry = "5" clip-path = "url(#t:ManufactSpec/a:SerialNumber)"/>
+	<defs/>
+	<clipPath id = "t:ManufactSpec/a:SerialNumber">
+		<rect x = "345" y = "25" width = "88" height = "11"/>
+	</clipPath>
+	<text x = "346" y = "33" class = "elType">string</text>
+	<image xlink:href = "../dgmDtString.gif" width = "10" height = "10" x = "423" y = "20"/>
+	<rect x = "167" y = "10" width = "89" height = "27" class = "element" rx = "5" ry = "5"/>
+	<circle class = "nodeStyle" cx = "173" cy = "16" r = "4"/>
+	<text x = "178" y = "21" class = "elName">Manufacturer</text>
+	<rect x = "168" y = "11" width = "87" height = "25" class = "elTypeBkgnd" rx = "5" ry = "5" clip-path = "url(#t:ManufactSpec/a:Manufacturer)"/>
+	<defs/>
+	<clipPath id = "t:ManufactSpec/a:Manufacturer">
+		<rect x = "167" y = "25" width = "89" height = "11"/>
+	</clipPath>
+	<text x = "168" y = "33" class = "elType">string</text>
+	<image xlink:href = "../dgmDtString.gif" width = "10" height = "10" x = "246" y = "20"/>
+	<rect x = "5" y = "64" width = "69" height = "27" class = "element"/>
+	<polygon class = "nodeStyle" points = "11,66 7,70 11,74 15,70"/>
+	<text x = "16" y = "75" class = "elName">Objective</text>
+	<rect x = "6" y = "79" width = "67" height = "11" class = "elTypeBkgnd"/>
+	<image xlink:href = "../dgmTypeComplex.gif" width = "10" height = "10" x = "64" y = "74"/>
+	<polyline class = "connector" points = "74,77 104,77"/>
+	<polyline class = "connector" points = "74,75 82,75 82,23 104,23"/>
+	<circle class = "occurs" cx = "110" cy = "77" r = "6"/>
+	<text x = "107" y = "80" class = "occurLarge">1</text>
+	<polyline class = "connector" points = "116,77 146,77"/>
+	<circle class = "occurs" cx = "152" cy = "77" r = "6"/>
+	<text x = "149" y = "80" class = "occurLarge">1</text>
+	<polyline class = "connector" points = "188,60 168,60 168,77 158,77 168,77 168,94 188,94"/>
+	<polyline class = "connector" points = "188,60 200,60"/>
+	<rect x = "200" y = "47" width = "59" height = "27" class = "element"/>
+	<polygon class = "nodeStyle" points = "206,49 202,53 206,57 210,53"/>
+	<text x = "211" y = "58" class = "elName">LensNA</text>
+	<rect x = "201" y = "62" width = "57" height = "11" class = "elTypeBkgnd"/>
+	<text x = "201" y = "70" class = "elType">float</text>
+	<image xlink:href = "../dgmDtFloat.gif" width = "10" height = "10" x = "249" y = "57"/>
+	<polyline class = "connector" points = "188,94 200,94"/>
+	<rect x = "200" y = "81" width = "90" height = "27" class = "element"/>
+	<polygon class = "nodeStyle" points = "206,83 202,87 206,91 210,87"/>
+	<text x = "211" y = "92" class = "elName">Magnification</text>
+	<rect x = "201" y = "96" width = "88" height = "11" class = "elTypeBkgnd"/>
+	<text x = "201" y = "104" class = "elType">float</text>
+	<image xlink:href = "../dgmDtFloat.gif" width = "10" height = "10" x = "280" y = "91"/>
+</svg>

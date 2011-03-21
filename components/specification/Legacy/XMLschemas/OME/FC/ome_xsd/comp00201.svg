@@ -1,0 +1,116 @@
+<?xml version = "1.0"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<svg width = "437pt" height = "111pt" viewBox = "0 0 437 111" xmlns = "http://www.w3.org/2000/svg" xmlns:xlink = "http://www.w3.org/1999/xlink">
+	<defs>
+		<style type = "text/css"><![CDATA[
+rect.attrGroup { fill: ivory ; stroke: black; stroke-width: 1 }
+rect.element { fill: ivory ; stroke: black; stroke-width: 1 }
+rect.elTypeBkgnd { fill: lightgray ; stroke: none }
+text.elName { font-family: helvetica ; font-size : 10 }
+text.elType { font-family: helvetica ; font-size : 7 }
+text.occurLarge { font-family: helvetica ; font-size : 9; fill : blue }
+text.occurSmall { font-family: helvetica ; font-size : 7; fill : blue }
+rect.typeIconDark { fill : darkslategray }
+circle.occurs { stroke : black ; stroke-width: 1; fill : white }
+circle.ellipsis { fill : black }
+path.typeIconDark { stroke : lightgray ; stroke-width: 1 }
+path.connector { stroke : red ; stroke-width: 1 ; fill: none; }
+path.modelGroup { stroke : black ; stroke-width: 1 ; fill: lightgray; }
+polyline.connector { stroke : red ; stroke-width: 1 ; fill: none; }
+.nodeStyle { fill : blue }
+]]></style>
+	</defs>
+	<rect x = "84" y = "5" width = "348" height = "69" class = "attrGroup" rx = "5" ry = "5"/>
+	<rect x = "89" y = "10" width = "46" height = "27" class = "element" rx = "5" ry = "5"/>
+	<circle class = "nodeStyle" cx = "95" cy = "16" r = "4"/>
+	<text x = "100" y = "21" class = "elName">Type</text>
+	<rect x = "90" y = "11" width = "44" height = "25" class = "elTypeBkgnd" rx = "5" ry = "5" clip-path = "url(#e:Laser/a:Type)"/>
+	<defs/>
+	<clipPath id = "e:Laser/a:Type">
+		<rect x = "89" y = "25" width = "46" height = "11"/>
+	</clipPath>
+	<image xlink:href = "../dgmDtString.gif" width = "10" height = "10" x = "125" y = "20"/>
+	<circle class = "occurs" cx = "275" cy = "23" r = "6"/>
+	<text x = "272" y = "26" class = "occurLarge">?</text>
+	<rect x = "281" y = "10" width = "49" height = "27" class = "element" rx = "5" ry = "5"/>
+	<circle class = "nodeStyle" cx = "287" cy = "16" r = "4"/>
+	<text x = "292" y = "21" class = "elName">Pulse</text>
+	<rect x = "282" y = "11" width = "47" height = "25" class = "elTypeBkgnd" rx = "5" ry = "5" clip-path = "url(#e:Laser/a:Pulse)"/>
+	<defs/>
+	<clipPath id = "e:Laser/a:Pulse">
+		<rect x = "281" y = "25" width = "49" height = "11"/>
+	</clipPath>
+	<image xlink:href = "../dgmDtString.gif" width = "10" height = "10" x = "320" y = "20"/>
+	<rect x = "89" y = "42" width = "62" height = "27" class = "element" rx = "5" ry = "5"/>
+	<circle class = "nodeStyle" cx = "95" cy = "48" r = "4"/>
+	<text x = "100" y = "53" class = "elName">Medium</text>
+	<rect x = "90" y = "43" width = "60" height = "25" class = "elTypeBkgnd" rx = "5" ry = "5" clip-path = "url(#e:Laser/a:Medium)"/>
+	<defs/>
+	<clipPath id = "e:Laser/a:Medium">
+		<rect x = "89" y = "57" width = "62" height = "11"/>
+	</clipPath>
+	<text x = "90" y = "65" class = "elType">LaserMedia</text>
+	<image xlink:href = "../dgmDtString.gif" width = "10" height = "10" x = "141" y = "52"/>
+	<circle class = "occurs" cx = "241" cy = "55" r = "6"/>
+	<text x = "238" y = "58" class = "occurLarge">?</text>
+	<rect x = "247" y = "42" width = "53" height = "27" class = "element" rx = "5" ry = "5"/>
+	<circle class = "nodeStyle" cx = "253" cy = "48" r = "4"/>
+	<text x = "258" y = "53" class = "elName">Power</text>
+	<rect x = "248" y = "43" width = "51" height = "25" class = "elTypeBkgnd" rx = "5" ry = "5" clip-path = "url(#e:Laser/a:Power)"/>
+	<defs/>
+	<clipPath id = "e:Laser/a:Power">
+		<rect x = "247" y = "57" width = "53" height = "11"/>
+	</clipPath>
+	<text x = "248" y = "65" class = "elType">float</text>
+	<image xlink:href = "../dgmDtFloat.gif" width = "10" height = "10" x = "290" y = "52"/>
+	<circle class = "occurs" cx = "162" cy = "55" r = "6"/>
+	<text x = "159" y = "58" class = "occurLarge">?</text>
+	<rect x = "168" y = "42" width = "62" height = "27" class = "element" rx = "5" ry = "5"/>
+	<circle class = "nodeStyle" cx = "174" cy = "48" r = "4"/>
+	<text x = "179" y = "53" class = "elName">Tunable</text>
+	<rect x = "169" y = "43" width = "60" height = "25" class = "elTypeBkgnd" rx = "5" ry = "5" clip-path = "url(#e:Laser/a:Tunable)"/>
+	<defs/>
+	<clipPath id = "e:Laser/a:Tunable">
+		<rect x = "168" y = "57" width = "62" height = "11"/>
+	</clipPath>
+	<text x = "169" y = "65" class = "elType">boolean</text>
+	<image xlink:href = "../dgmDtBoolean.gif" width = "10" height = "10" x = "220" y = "52"/>
+	<circle class = "occurs" cx = "341" cy = "23" r = "6"/>
+	<text x = "338" y = "26" class = "occurLarge">?</text>
+	<rect x = "347" y = "10" width = "80" height = "27" class = "element" rx = "5" ry = "5"/>
+	<circle class = "nodeStyle" cx = "353" cy = "16" r = "4"/>
+	<text x = "358" y = "21" class = "elName">Wavelength</text>
+	<rect x = "348" y = "11" width = "78" height = "25" class = "elTypeBkgnd" rx = "5" ry = "5" clip-path = "url(#e:Laser/a:Wavelength)"/>
+	<defs/>
+	<clipPath id = "e:Laser/a:Wavelength">
+		<rect x = "347" y = "25" width = "80" height = "11"/>
+	</clipPath>
+	<text x = "348" y = "33" class = "elType">positiveInteger</text>
+	<image xlink:href = "../dgmDtInteger.gif" width = "10" height = "10" x = "417" y = "20"/>
+	<circle class = "occurs" cx = "146" cy = "23" r = "6"/>
+	<text x = "143" y = "26" class = "occurLarge">?</text>
+	<rect x = "152" y = "10" width = "112" height = "27" class = "element" rx = "5" ry = "5"/>
+	<circle class = "nodeStyle" cx = "158" cy = "16" r = "4"/>
+	<text x = "163" y = "21" class = "elName">FrequencyDoubled</text>
+	<rect x = "153" y = "11" width = "110" height = "25" class = "elTypeBkgnd" rx = "5" ry = "5" clip-path = "url(#e:Laser/a:FrequencyDoubled)"/>
+	<defs/>
+	<clipPath id = "e:Laser/a:FrequencyDoubled">
+		<rect x = "152" y = "25" width = "112" height = "11"/>
+	</clipPath>
+	<text x = "153" y = "33" class = "elType">boolean</text>
+	<image xlink:href = "../dgmDtBoolean.gif" width = "10" height = "10" x = "254" y = "20"/>
+	<rect x = "5" y = "79" width = "49" height = "27" class = "element"/>
+	<polygon class = "nodeStyle" points = "11,81 7,85 11,89 15,85"/>
+	<text x = "16" y = "90" class = "elName">Laser</text>
+	<rect x = "6" y = "94" width = "47" height = "11" class = "elTypeBkgnd"/>
+	<image xlink:href = "../dgmTypeComplex.gif" width = "10" height = "10" x = "44" y = "89"/>
+	<polyline class = "connector" points = "54,92 84,92"/>
+	<polyline class = "connector" points = "54,90 62,90 62,39 84,39"/>
+	<circle class = "occurs" cx = "90" cy = "92" r = "6"/>
+	<text x = "87" y = "95" class = "occurLarge">?</text>
+	<rect x = "96" y = "79" width = "50" height = "27" class = "element"/>
+	<polygon class = "nodeStyle" points = "102,81 98,85 102,89 106,85"/>
+	<text x = "107" y = "90" class = "elName">Pump</text>
+	<rect x = "97" y = "94" width = "48" height = "11" class = "elTypeBkgnd"/>
+	<image xlink:href = "../dgmTypeComplex.gif" width = "10" height = "10" x = "136" y = "89"/>
+</svg>

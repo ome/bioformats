@@ -1,0 +1,84 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<AnalysisModuleLibrary
+	xmlns:xsi = "http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:noNamespaceSchemaLocation = "http://openmicroscopy.org/XMLschemas/AnalysisModule/IR3/AnalysisModule.xsd">
+<AnalysisModule Category = "Wavelength comparison" ModuleName = "Cross Correlation" 
+	ModuleType = "OME::Analysis::CLIHandler" ProgramID = "/OME/bin/ome_cccp" 
+	Description = "Calculate integrated correlation between pixel values across wavelengths. Produced from XML specification.">
+	<Declaration>
+		<FormalInput Name = "ChannelNumber 1" SemanticTypeName = "ChannelNumber" Description = "" UserDefined = "true"/>
+		<FormalInput Name = "ChannelNumber 2" SemanticTypeName = "ChannelNumber" Description = "" UserDefined = "true"/>
+		<FormalOutput Name = "XYPlaneCrossCorrelation" SemanticTypeName = "XYPlaneCrossCorrelation" 
+			Description = "Cross Correlation for an XY plane"/>
+	</Declaration>
+	<ExecutionInstructions ExecutionPoint = "precalculateImage" MakesNewFeature = "false" 
+		xmlns:xsi = "http://www.w3.org/2001/XMLSchema-instance" 
+		xsi:noNamespaceSchemaLocation = "http://openmicroscopy.org/XMLschemas/AnalysisModule/IR3/CLIExecutionInstructions.xsd">
+		<CommandLine>
+			<InputSubString>
+				<XYPlane XYPlaneID = "Plane1" Format = "TIFF">
+					<theZ>
+						<AutoIterate>
+							<OutputTo SemanticElementName = "theZ" FormalOutputName = "XYPlaneCrossCorrelation"/>
+						</AutoIterate>
+					</theZ>
+					<theT>
+						<AutoIterate>
+							<OutputTo SemanticElementName = "theT" FormalOutputName = "XYPlaneCrossCorrelation"/>
+						</AutoIterate>
+					</theT>
+					<theW>
+						<UseValue SemanticElementName = "theW" FormalInputName = "ChannelNumber 1"/>
+					</theW>
+				</XYPlane>
+			</InputSubString>
+			<InputSubString>
+				<RawText> </RawText>
+			</InputSubString>
+			<InputSubString>
+				<XYPlane Format = "TIFF">
+					<theZ>
+						<Match XYPlaneID = "Plane1"/>
+					</theZ>
+					<theT>
+						<Match XYPlaneID = "Plane1"/>
+					</theT>
+					<theW>
+						<UseValue SemanticElementName = "theW" FormalInputName = "ChannelNumber 2"/>
+					</theW>
+				</XYPlane>
+			</InputSubString>
+		</CommandLine>
+		<STDOUT>
+			<OutputRecord>
+				<pat>^(\d+\.?\d*|\.\d+)</pat>
+				<Output AccessBy = "1">
+					<OutputTo SemanticElementName = "CC" FormalOutputName = "XYPlaneCrossCorrelation"/>
+				</Output>
+			</OutputRecord>
+		</STDOUT>
+	</ExecutionInstructions>
+</AnalysisModule>
+
+<STD:SemanticTypeDefinitions 
+  xmlns=
+	"http://openmicroscopy.org/XMLschemas/STD/RC2/STD.xsd"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation = "
+	http://openmicroscopy.org/XMLschemas/STD/RC2/STD.xsd
+	  http://openmicroscopy.org/XMLschemas/STD/RC2/STD.xsd">
+
+	<SemanticType Name="ChannelNumber" AppliesTo="I" Description="A Channel Index">
+        <Element Name="theW" DBLocation="CHANNELNUMBER.THE_W" DataType="integer"/>
+	</SemanticType>
+	<SemanticType Name="XYPlaneCrossCorrelation" AppliesTo="F" Description="Cross Correlation for an XY plane">
+        <Element Name="theZ" DBLocation="XY_CROSS_CORRELATION.THE_Z"			 DataType="integer"
+			Description = "Z coordinate describing the XY Plane"/>
+        <Element Name="theT" DBLocation="XY_CROSS_CORRELATION.THE_T"			 DataType="integer"
+			Description = "Timepoint describing the XY Plane"/>
+        <Element Name="CC"   DBLocation="XY_CROSS_CORRELATION.CROSS_CORRELATION" DataType="float"
+			Description = "Cross Correlation Coefficient"/>
+	</SemanticType>
+</STD:SemanticTypeDefinitions>
+
+</AnalysisModuleLibrary>

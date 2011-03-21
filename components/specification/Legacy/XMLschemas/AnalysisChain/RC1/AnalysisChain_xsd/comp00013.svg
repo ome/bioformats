@@ -1,0 +1,74 @@
+<?xml version = "1.0"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<svg width = "464pt" height = "47pt" viewBox = "0 0 464 47" xmlns = "http://www.w3.org/2000/svg" xmlns:xlink = "http://www.w3.org/1999/xlink">
+	<defs>
+		<style type = "text/css"><![CDATA[
+rect.attrGroup { fill: ivory ; stroke: black; stroke-width: 1 }
+rect.element { fill: ivory ; stroke: black; stroke-width: 1 }
+rect.elTypeBkgnd { fill: lightgray ; stroke: none }
+text.elName { font-family: helvetica ; font-size : 10 }
+text.elType { font-family: helvetica ; font-size : 7 }
+text.occurLarge { font-family: helvetica ; font-size : 9; fill : blue }
+text.occurSmall { font-family: helvetica ; font-size : 7; fill : blue }
+rect.typeIconDark { fill : darkslategray }
+circle.occurs { stroke : black ; stroke-width: 1; fill : white }
+circle.ellipsis { fill : black }
+path.typeIconDark { stroke : lightgray ; stroke-width: 1 }
+path.connector { stroke : red ; stroke-width: 1 ; fill: none; }
+path.modelGroup { stroke : black ; stroke-width: 1 ; fill: lightgray; }
+polyline.connector { stroke : red ; stroke-width: 1 ; fill: none; }
+.nodeStyle { fill : blue }
+]]></style>
+	</defs>
+	<rect x = "5" y = "10" width = "48" height = "27" class = "element"/>
+	<polygon class = "nodeStyle" points = "11,12 7,16 11,20 15,16"/>
+	<text x = "16" y = "21" class = "elName">Node</text>
+	<rect x = "6" y = "25" width = "46" height = "11" class = "elTypeBkgnd"/>
+	<image xlink:href = "../dgmTypeEmpty.gif" width = "10" height = "10" x = "43" y = "20"/>
+	<polyline class = "connector" points = "53,23 83,23"/>
+	<rect x = "83" y = "5" width = "376" height = "37" class = "attrGroup" rx = "5" ry = "5"/>
+	<rect x = "88" y = "10" width = "58" height = "27" class = "element" rx = "5" ry = "5"/>
+	<circle class = "nodeStyle" cx = "94" cy = "16" r = "4"/>
+	<text x = "99" y = "21" class = "elName">NodeID</text>
+	<rect x = "89" y = "11" width = "56" height = "25" class = "elTypeBkgnd" rx = "5" ry = "5" clip-path = "url(#e:Node/a:NodeID)"/>
+	<defs/>
+	<clipPath id = "e:Node/a:NodeID">
+		<rect x = "88" y = "25" width = "58" height = "11"/>
+	</clipPath>
+	<text x = "89" y = "33" class = "elType">string</text>
+	<image xlink:href = "../dgmDtString.gif" width = "10" height = "10" x = "136" y = "20"/>
+	<circle class = "occurs" cx = "273" cy = "23" r = "6"/>
+	<text x = "270" y = "26" class = "occurLarge">?</text>
+	<rect x = "279" y = "10" width = "78" height = "27" class = "element" rx = "5" ry = "5"/>
+	<circle class = "nodeStyle" cx = "285" cy = "16" r = "4"/>
+	<text x = "290" y = "21" class = "elName">IteratorTag</text>
+	<rect x = "280" y = "11" width = "76" height = "25" class = "elTypeBkgnd" rx = "5" ry = "5" clip-path = "url(#e:Node/a:IteratorTag)"/>
+	<defs/>
+	<clipPath id = "e:Node/a:IteratorTag">
+		<rect x = "279" y = "25" width = "78" height = "11"/>
+	</clipPath>
+	<text x = "280" y = "33" class = "elType">string</text>
+	<image xlink:href = "../dgmDtString.gif" width = "10" height = "10" x = "347" y = "20"/>
+	<rect x = "362" y = "10" width = "92" height = "27" class = "element" rx = "5" ry = "5"/>
+	<circle class = "nodeStyle" cx = "368" cy = "16" r = "4"/>
+	<text x = "373" y = "21" class = "elName">ProgramName</text>
+	<rect x = "363" y = "11" width = "90" height = "25" class = "elTypeBkgnd" rx = "5" ry = "5" clip-path = "url(#e:Node/a:ProgramName)"/>
+	<defs/>
+	<clipPath id = "e:Node/a:ProgramName">
+		<rect x = "362" y = "25" width = "92" height = "11"/>
+	</clipPath>
+	<text x = "363" y = "33" class = "elType">string</text>
+	<image xlink:href = "../dgmDtString.gif" width = "10" height = "10" x = "444" y = "20"/>
+	<circle class = "occurs" cx = "157" cy = "23" r = "6"/>
+	<text x = "154" y = "26" class = "occurLarge">?</text>
+	<rect x = "163" y = "10" width = "99" height = "27" class = "element" rx = "5" ry = "5"/>
+	<circle class = "nodeStyle" cx = "169" cy = "16" r = "4"/>
+	<text x = "174" y = "21" class = "elName">NewFeatureTag</text>
+	<rect x = "164" y = "11" width = "97" height = "25" class = "elTypeBkgnd" rx = "5" ry = "5" clip-path = "url(#e:Node/a:NewFeatureTag)"/>
+	<defs/>
+	<clipPath id = "e:Node/a:NewFeatureTag">
+		<rect x = "163" y = "25" width = "99" height = "11"/>
+	</clipPath>
+	<text x = "164" y = "33" class = "elType">string</text>
+	<image xlink:href = "../dgmDtString.gif" width = "10" height = "10" x = "252" y = "20"/>
+</svg>

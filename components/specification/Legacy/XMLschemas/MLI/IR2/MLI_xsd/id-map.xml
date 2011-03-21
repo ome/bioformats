@@ -1,0 +1,34 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<id-map>
+	<entry path = "e:VectorDecoder/e:Element/a:OutputLocation" id = "comp00001" width = "107" height = "39"/>
+	<entry path = "e:VectorDecoder/e:Element/a:Index" id = "comp00002" width = "58" height = "39"/>
+	<entry path = "e:VectorDecoder/e:Element/a:UseTemplate" id = "comp00003" width = "108" height = "39"/>
+	<entry path = "e:VectorDecoder/e:Element/a:ID" id = "comp00004" width = "54" height = "39"/>
+	<entry path = "e:Output/e:Vector/a:DecodeWith" id = "comp00005" width = "90" height = "39"/>
+	<entry path = "e:Output/e:Struct/a:FormalOutput" id = "comp00006" width = "99" height = "39"/>
+	<entry path = "e:Output/e:Struct/a:ID" id = "comp00007" width = "54" height = "39"/>
+	<entry path = "e:Output/e:Scalar/a:UseTemplate" id = "comp00008" width = "108" height = "39"/>
+	<entry path = "e:Output/e:Scalar/a:OutputLocation" id = "comp00009" width = "107" height = "39"/>
+	<entry path = "e:Output/e:PixelsArray/a:FormalOutput" id = "comp00010" width = "99" height = "39"/>
+	<entry path = "e:Output/e:PixelsArray/a:ID" id = "comp00011" width = "54" height = "39"/>
+	<entry path = "e:Output/e:PixelsArray/a:ConvertToDatatype" id = "comp00012" width = "141" height = "39"/>
+	<entry path = "e:Input/e:Scalar/a:InputLocation" id = "comp00013" width = "98" height = "39"/>
+	<entry path = "e:Input/e:PixelsArray/a:FormalInput" id = "comp00014" width = "90" height = "39"/>
+	<entry path = "e:Input/e:PixelsArray/a:ID" id = "comp00015" width = "54" height = "39"/>
+	<entry path = "e:Input/e:PixelsArray/a:ConvertToDatatype" id = "comp00016" width = "141" height = "39"/>
+	<entry path = "e:ExecutionInstructions/a:ExecutionGranularity" id = "comp00017" width = "132" height = "39"/>
+	<entry path = "e:ExecutionInstructions" id = "comp00018" width = "296" height = "155"/>
+	<entry path = "e:FunctionInputs" id = "comp00019" width = "192" height = "39"/>
+	<entry path = "e:FunctionOutputs" id = "comp00020" width = "210" height = "39"/>
+	<entry path = "e:Input/e:PixelsArray" id = "comp00021" width = "391" height = "49"/>
+	<entry path = "e:Input/e:Scalar" id = "comp00022" width = "190" height = "49"/>
+	<entry path = "e:Input" id = "comp00023" width = "175" height = "75"/>
+	<entry path = "e:Output/e:PixelsArray" id = "comp00024" width = "400" height = "49"/>
+	<entry path = "e:Output/e:Scalar" id = "comp00025" width = "302" height = "49"/>
+	<entry path = "e:Output/e:Struct" id = "comp00026" width = "240" height = "49"/>
+	<entry path = "e:Output/e:Vector" id = "comp00027" width = "185" height = "49"/>
+	<entry path = "e:Output" id = "comp00028" width = "184" height = "147"/>
+	<entry path = "e:Templates" id = "comp00029" width = "83" height = "39"/>
+	<entry path = "e:VectorDecoder/e:Element" id = "comp00030" width = "414" height = "49"/>
+	<entry path = "e:VectorDecoder" id = "comp00031" width = "209" height = "39"/>
+</id-map>
