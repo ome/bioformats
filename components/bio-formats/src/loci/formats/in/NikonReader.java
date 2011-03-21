@@ -173,7 +173,7 @@ public class NikonReader extends BaseTiffReader {
     if (vPredictor != null) {
       options.vPredictor = new int[vPredictor.length];
     }
-    options.lossy = lossyCompression;
+    options.lossless = !lossyCompression;
     options.split = split;
 
     for (int i=0; i<byteCounts.length; i++) {

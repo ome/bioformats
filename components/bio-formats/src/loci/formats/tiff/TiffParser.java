@@ -594,6 +594,8 @@ public class TiffParser {
       return buf;
     }
     byte[] tile = new byte[(int) stripByteCounts[tileNumber]];
+    LOGGER.debug("Reading tile Length {} Offset {}",
+        tile.length, stripOffsets[tileNumber]);
     in.seek(stripOffsets[tileNumber]);
     in.read(tile);
 
@@ -690,7 +692,12 @@ public class TiffParser {
       samplesPerPixel, numSamples);
 
     TiffCompression compression = ifd.getCompression();
-
+    if (compression == TiffCompression.JPEG_2000 || 
+        compression == TiffCompression.JPEG_2000_LOSSY)
+      codecOptions = compression.getCompressionCodecOptions(ifd, codecOptions);
+    else codecOptions = compression.getCompressionCodecOptions(ifd);
+    codecOptions.interleaved = true;
+    codecOptions.littleEndian = ifd.isLittleEndian();
     long imageLength = ifd.getImageLength();
 
     // special case: if we only need one tile, and that tile doesn't need

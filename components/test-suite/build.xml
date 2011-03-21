@@ -28,6 +28,14 @@ Type "ant -p" for a list of targets.
     </exec>
   </target>
 
+  <target name="test-tiff-writer" depends="compile"
+    description="run tests for TIFF writing (conversion)">
+    <exec executable="${basedir}/target-test-runner">
+      <arg value="loci.tests.testng.TiffWriterTest"/>
+      <arg value="${filename}"/>
+    </exec>
+  </target>
+
   <target name="test-convert" depends="compile"
     description="run automated tests on writers">
     <testng sourcedir="${dest.dir}"

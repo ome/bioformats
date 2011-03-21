@@ -171,7 +171,7 @@ public class TiffCompressionDecompressTest {
     options.maxBytes = OPTIONS.maxBytes;
     options.curve = new int[] { 1 };
     options.vPredictor = new int[] { 1 };
-    options.lossy = false;
+    options.lossless = true;
     options.split = 1;
     assertNotNull(compression.decompress(DATA, options));
   }

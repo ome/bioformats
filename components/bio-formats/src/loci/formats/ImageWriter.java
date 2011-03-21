@@ -30,6 +30,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
+import loci.formats.codec.CodecOptions;
 import loci.formats.meta.MetadataRetrieve;
 
 import org.slf4j.Logger;
@@ -335,6 +336,11 @@ public class ImageWriter implements IFormatWriter {
     for (IFormatWriter writer : writers) {
       writer.setWriteSequentially(sequential);
     }
+  }
+  
+  /* @see IFormatWriter#setCodecOptions(CodecOptions) */
+  public void setCodecOptions(CodecOptions options) {
+    getWriter().setCodecOptions(options);
   }
 
   // -- Deprecated IFormatWriter API methods --

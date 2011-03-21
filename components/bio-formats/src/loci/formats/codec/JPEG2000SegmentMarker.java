@@ -28,7 +28,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import loci.common.enumeration.CodedEnum;
-import loci.common.enumeration.EnumException;
 
 /**
  * An enumeration of JPEG 2000 segment markers.

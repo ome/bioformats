@@ -76,6 +76,7 @@ public class Base64Codec extends BaseCodec {
   public byte[] compress(byte[] input, CodecOptions options)
     throws FormatException
   {
+    if (input == null || input.length == 0) return null;
     int dataBits = input.length * 8;
     int fewerThan24 = dataBits % 24;
     int numTriples = dataBits / 24;
@@ -143,7 +144,8 @@ public class Base64Codec extends BaseCodec {
   public byte[] decompress(RandomAccessInputStream in, CodecOptions options)
     throws FormatException, IOException
   {
-    // TODO: Add checks for invalid data.
+    if (in == null)
+      throw new IllegalArgumentException("No data to decompress.");
     if (in.length() == 0) return new byte[0];
 
     byte b3 = 0, b4 = 0, marker0 = 0, marker1 = 0;

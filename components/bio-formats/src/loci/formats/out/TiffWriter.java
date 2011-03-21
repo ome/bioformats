@@ -150,11 +150,12 @@ public class TiffWriter extends FormatWriter {
     boolean littleEndian = bigEndian == null ?
       false : !bigEndian.booleanValue();
 
-    //if (tiffSaver == null) 
+
     tiffSaver = new TiffSaver(out); 
     tiffSaver.setWritingSequentially(sequential);
     tiffSaver.setLittleEndian(littleEndian);
     tiffSaver.setBigTiff(isBigTiff);
+    tiffSaver.setCodecOptions(options);
 
     if (no < initialized[series].length && !initialized[series][no]) {
       initialized[series][no] = true;
@@ -238,7 +239,13 @@ public class TiffWriter extends FormatWriter {
 
     // write the image
     ifd.put(new Integer(IFD.LITTLE_ENDIAN), new Boolean(littleEndian));
-    out.seek(out.length());
+    if (!ifd.containsKey(IFD.REUSE)) {
+      ifd.put(IFD.REUSE, out.length());
+      out.seek(out.length());
+    }
+    else {
+      out.seek((Long) ifd.get(IFD.REUSE));
+    }
     ifd.putIFDValue(IFD.PLANAR_CONFIGURATION, interleaved ? 1 : 2);
 
     int sampleFormat = 1;
