@@ -215,8 +215,6 @@ public class TiffWriter extends FormatWriter {
     ifd.put(new Integer(IFD.IMAGE_WIDTH), new Integer(width));
     ifd.put(new Integer(IFD.IMAGE_LENGTH), new Integer(height));
 
-   
-    
     Double physicalSizeX = retrieve.getPixelsPhysicalSizeX(series);
     if (physicalSizeX == null) physicalSizeX = 0d;
     else physicalSizeX = 1d / physicalSizeX;
@@ -302,7 +300,6 @@ public class TiffWriter extends FormatWriter {
       }
     }
 
-    formatCompression(ifd);
     saveBytes(no, buf, ifd, x, y, w, h);
   }
 

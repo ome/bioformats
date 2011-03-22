@@ -250,7 +250,7 @@ public class TiffSaver {
 
     int rowsPerStrip = (int) ifd.getRowsPerStrip()[0];
     int stripSize = rowsPerStrip * w * bytesPerPixel;
-    int nStrips = (height + rowsPerStrip - 1) / rowsPerStrip;
+    int nStrips = height/rowsPerStrip;//(height + rowsPerStrip-1) / rowsPerStrip;
     int vv = width/w;
     nStrips *= vv;
     if (interleaved) stripSize *= nChannels;
@@ -264,33 +264,37 @@ public class TiffSaver {
     }
     int[] bps = ifd.getBitsPerSample();
 
-    int ww = 1;
-    if (h == height) ww = vv;
     int off;
+    // The strip we're actually to compress based on the number of
+    // tiles/strips that we've configured and the dimensions of the data we've
+    // been given.
+    int thisStrip = (y / h) * (width / w) + (x / w);
     // write pixel strips to output buffers
-    for (int row=0; row<h; row++) {
-      int strip = (row+vv*y+ww*x) / rowsPerStrip;
-      for (int col=0; col<w; col++) {
-        int ndx = ((row+y) * width + col +x) * bytesPerPixel;
-        for (int c=0; c<nChannels; c++) {
-          for (int n=0; n<bps[c]/8; n++) {
-            if (interleaved) {
-              off = ndx * nChannels + c * bytesPerPixel + n;
-              stripOut[strip].writeByte(buf[off]);
-            }
-            else {
-              off = c * plane + ndx + n;
-              stripOut[c * (nStrips / nChannels) + strip].writeByte(buf[off]);
+    for (int strip = 0; strip < nStrips; strip++) {
+      if (strip != thisStrip) {
+        continue;
+      }
+      for (int row=0; row<h; row++) {
+        //int strip = (row+vv*y+ww*x) / rowsPerStrip;
+        for (int col=0; col<w; col++) {
+          int ndx = ((row+y) * width + col +x) * bytesPerPixel;
+          for (int c=0; c<nChannels; c++) {
+            for (int n=0; n<bps[c]/8; n++) {
+              if (interleaved) {
+                off = ndx * nChannels + c * bytesPerPixel + n;
+                stripOut[strip].writeByte(buf[off]);
+              }
+              else {
+                off = c * plane + ndx + n;
+                stripOut[c * (nStrips / nChannels) + strip].writeByte(buf[off]);
+              }
             }
           }
         }
       }
     }
 
-    // The strip we're actually to compress based on the number of
-    // tiles/strips that we've configured and the dimensions of the data we've
-    // been given.
-    int thisStrip = (y / h) * (width / w) + (x / w);
+
     // compress strips according to given differencing and compression schemes
     byte[][] strips = new byte[nStrips][];
     for (int strip=0; strip<nStrips; strip++) {
@@ -302,6 +306,7 @@ public class TiffSaver {
       CodecOptions codecOptions = compression.getCompressionCodecOptions(
           ifd, options);
       codecOptions.height = rowsPerStrip;
+      codecOptions.width = w;
       strips[strip] = compression.compress(strips[strip], codecOptions);
     }
 

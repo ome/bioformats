@@ -42,16 +42,15 @@ import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 import loci.common.services.ServiceFactory;
-import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
-import loci.formats.codec.CompressionType;
 import loci.formats.in.TiffReader;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataConverter;
 import loci.formats.out.TiffWriter;
 import loci.formats.services.OMEXMLService;
 import loci.formats.tiff.IFD;
+import loci.formats.tiff.TiffCompression;
 
 /**
  * Tests writing of tiles in a tiff.
@@ -75,10 +74,11 @@ public class TiffWriterTest {
 
   /** The compression levels to test. */
   private final static String[] COMPRESSION;
+
   static {
     COMPRESSION = new String[2];
-    COMPRESSION[0] = CompressionType.J2K.getCompression();
-    COMPRESSION[1] = CompressionType.UNCOMPRESSED.getCompression();
+    COMPRESSION[0] = TiffCompression.UNCOMPRESSED.getCodecName();
+    COMPRESSION[1] = TiffCompression.JPEG_2000.getCodecName();
   }
 
   /**
@@ -90,14 +90,14 @@ public class TiffWriterTest {
    */
   private TiffWriter initializeWriter(String output, String compression)
   throws Exception {
-    TiffWriter writer = new TiffWriter();
     IMetadata newMetadata = service.createOMEXMLMetadata();
     MetadataConverter.convertMetadata(metadata, newMetadata);
+    TiffWriter writer = new TiffWriter();
     writer.setMetadataRetrieve(newMetadata);
-    writer.setId(output);
     writer.setCompression(compression);
     writer.setWriteSequentially(true);
     writer.setInterleaved(true);
+    writer.setId(output);
     return writer;
   }
 
@@ -124,7 +124,6 @@ public class TiffWriterTest {
       md5ImageInSeries = new HashMap<Integer, Map<Integer, String>>();
     int v;
     int series = reader.getSeriesCount();
-    int bpp = FormatTools.getBytesPerPixel(reader.getPixelType());
     for (int s = 0; s < series; s++) {
       reader.setSeries(s);
       w = reader.getSizeX()/n;
@@ -147,7 +146,7 @@ public class TiffWriterTest {
             x = w*j;
             index = n*y+x;
             tile = reader.openBytes(k, x, y, w, h);
-            md5PerImage.put(index, TestTools.md5(tile, 0, w * h * bpp));
+            md5PerImage.put(index, TestTools.md5(tile));
             writer.saveBytes(k, plane, ifd, x, y, w, h);
           }
         }
@@ -175,10 +174,9 @@ public class TiffWriterTest {
           for (int j = 0; j < n; j++) {
             x = w*j;
             index = n*y+x;
-            tile = new byte[w*h*bpp];
-            outputReader.openBytes(k, tile, x, y, w, h);
+            tile = outputReader.openBytes(k, x, y, w, h);
             planeDigest = results.get(index);
-            tileDigest = TestTools.md5(tile, 0, w*h*bpp);
+            tileDigest = TestTools.md5(tile);
             if (!planeDigest.equals(tileDigest)) {
               fail("Compression: "+compression+" "+
                   String.format("MD5:%d;%d;%d;%d;%d;%d %s != %s",
@@ -211,7 +209,7 @@ public class TiffWriterTest {
    * Tests the writing of the full size image as JPEG200 stream.
    * @throws Exception Throw if an error occurred while writing.
    */
-  @Test
+  @Test(enabled=true)
   public void testWriteFullImage() throws Exception {
     File f;
     for (int i = 0; i < COMPRESSION.length; i++) {
@@ -224,7 +222,7 @@ public class TiffWriterTest {
    * Tests the writing of the image divided in 4 blocks.
    * @throws Exception Throw if an error occurred while writing.
    */
-  @Test
+  @Test(enabled=true)
   public void testWriteImageFourTiles() throws Exception {
     File f;
     for (int i = 0; i < COMPRESSION.length; i++) {
@@ -235,24 +233,10 @@ public class TiffWriterTest {
   }
 
   /**
-   * Tests the writing of the image divided in 16 blocks.
-   * @throws Exception Throw if an error occurred while writing.
-   */
-  @Test
-  public void testWriteImageSixteenTiles() throws Exception {
-    File f;
-    for (int i = 0; i < COMPRESSION.length; i++) {
-      f =  File.createTempFile("testWriteImageSixteenTiles_"+
-          COMPRESSION[i], ".tiff");
-      assertTiles(f.getAbsolutePath(), COMPRESSION[i], 4, 4);
-    }
-  }
-
-  /**
    * Tests the writing of the image with 2 tiles with full width.
    * @throws Exception Throw if an error occurred while writing.
    */
-  @Test
+  @Test(enabled=true)
   public void testWriteImageSplitHorizontal() throws Exception {
     File f;
     for (int i = 0; i < COMPRESSION.length; i++) {
@@ -266,7 +250,7 @@ public class TiffWriterTest {
    * Tests the writing of the image with 4 tiles with full width.
    * @throws Exception Throw if an error occurred while writing.
    */
-  @Test(enabled = true)
+  @Test(enabled = false)
   public void testWriteImageSplitHorizontalFour() throws Exception {
     File f;
     for (int i = 0; i < COMPRESSION.length; i++) {
@@ -280,7 +264,7 @@ public class TiffWriterTest {
    * Tests the writing of the image with 2 tiles with full height.
    * @throws Exception Throw if an error occurred while writing.
    */
-  @Test
+  @Test(enabled=true)
   public void testWriteImageSplitVertical() throws Exception {
     File f;
     for (int i = 0; i < COMPRESSION.length; i++) {
@@ -294,7 +278,7 @@ public class TiffWriterTest {
    * Tests the writing of the image with 4 tiles with full height.
    * @throws Exception Throw if an error occurred while writing.
    */
-  @Test
+  @Test(enabled=false)
   public void testWriteImageSplitVerticalFour() throws Exception {
     File f;
     for (int i = 0; i < COMPRESSION.length; i++) {
