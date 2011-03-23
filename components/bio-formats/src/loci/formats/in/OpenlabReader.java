@@ -135,7 +135,12 @@ public class OpenlabReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
   public byte[][] get8BitLookupTable() {
-    return luts.get(planeOffsets[series][lastPlane]);
+    if (luts != null && series < planeOffsets.length &&
+      lastPlane < planeOffsets[series].length)
+    {
+      return luts.get(planeOffsets[series][lastPlane]);
+    }
+    return null;
   }
 
   /**
@@ -559,7 +564,8 @@ public class OpenlabReader extends FormatReader {
       core[i].metadataComplete = true;
     }
 
-    for (int s=0; s<getSeriesCount(); s++) {
+    int seriesCount = getSeriesCount();
+    for (int s=0; s<seriesCount; s++) {
       setSeries(s);
       parseImageNames(s);
     }
@@ -697,9 +703,10 @@ public class OpenlabReader extends FormatReader {
   }
 
   private void parseImageNames(int s) {
-    Vector<String> uniqueT = new Vector<String>();
+    Vector<String> uniqueF = new Vector<String>();
     Vector<String> uniqueC = new Vector<String>();
     Vector<String> uniqueZ = new Vector<String>();
+    Vector<String> uniqueT = new Vector<String>();
     String[] axes = new String[] {"Z", "C", "T"};
 
     core[s].dimensionOrder = "XY";
@@ -709,14 +716,14 @@ public class OpenlabReader extends FormatReader {
       String name = plane.planeName;
 
       // check for a specific name format:
-      // <channel name><optional timepoint>_<plate>_<well>_<Z section>
+      // <channel name><optional Z section>_<plate>_<well>_<field>
 
       String[] tokens = name.split("_");
       if (tokens.length == 4) {
         specialPlateNames = true;
 
-        if (!uniqueZ.contains(tokens[3])) {
-          uniqueZ.add(tokens[3]);
+        if (!uniqueF.contains(tokens[3])) {
+          uniqueF.add(tokens[3]);
         }
         plane.channelName = tokens[0];
         int endIndex = 0;
@@ -725,21 +732,22 @@ public class OpenlabReader extends FormatReader {
         {
           endIndex++;
         }
-        String timepoint = plane.channelName.substring(endIndex);
-        if (timepoint.equals("")) timepoint = "1";
+        String zSection = plane.channelName.substring(endIndex);
+        if (zSection.equals("")) zSection = "1";
         plane.channelName = plane.channelName.substring(0, endIndex);
 
         if (!uniqueC.contains(plane.channelName)) {
           uniqueC.add(plane.channelName);
         }
-        if (!uniqueT.contains(timepoint)) {
-          uniqueT.add(timepoint);
+        if (!uniqueZ.contains(zSection)) {
+          uniqueZ.add(zSection);
         }
 
         core[s].dimensionOrder = "XYCTZ";
         plane.wavelength = uniqueC.indexOf(plane.channelName);
-        plane.timepoint = uniqueT.indexOf(timepoint);
-        plane.zPosition = uniqueZ.indexOf(tokens[3]);
+        plane.timepoint = 0;
+        plane.zPosition = uniqueZ.indexOf(zSection);
+        plane.series = uniqueF.indexOf(tokens[3]);
       }
       else {
         for (String axis : axes) {
@@ -775,8 +783,17 @@ public class OpenlabReader extends FormatReader {
     if (specialPlateNames) {
       core[s].sizeC *= uniqueC.size();
       core[s].sizeT = uniqueT.size();
+      if (core[s].sizeT == 0) core[s].sizeT = 1;
       core[s].sizeZ = uniqueZ.size();
+      if (core[s].sizeZ == 0) core[s].sizeZ = 1;
       core[s].imageCount = core[s].sizeC * core[s].sizeZ * core[s].sizeT;
+      if (uniqueF.size() > core.length) {
+        CoreMetadata currentSeries = core[s];
+        core = new CoreMetadata[uniqueF.size()];
+        for (int i=0; i<core.length; i++) {
+          core[i] = currentSeries;
+        }
+      }
       return;
     }
 
