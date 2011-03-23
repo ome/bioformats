@@ -247,12 +247,23 @@ public class TiffSaver {
     // create pixel output buffers
 
     TiffCompression compression = ifd.getCompression();
-
+    /*
     int rowsPerStrip = (int) ifd.getRowsPerStrip()[0];
     int stripSize = rowsPerStrip * w * bytesPerPixel;
     int nStrips = height/rowsPerStrip;//(height + rowsPerStrip-1) / rowsPerStrip;
     int vv = width/w;
     nStrips *= vv;
+    if (interleaved) stripSize *= nChannels;
+    else nStrips *= nChannels;
+     */
+    int tileWidth = (int) ifd.getTileWidth(); //make sure this is
+    int tileHeight = (int) ifd.getTileLength();
+    int rowsPerStrip = (int) ifd.getRowsPerStrip()[0];
+    if (rowsPerStrip > h) rowsPerStrip = h;
+    int stripSize = rowsPerStrip * w * bytesPerPixel;
+
+    int nStrips = (int) (ifd.getTilesPerRow()*ifd.getTilesPerColumn());
+
     if (interleaved) stripSize *= nChannels;
     else nStrips *= nChannels;
 
@@ -268,14 +279,17 @@ public class TiffSaver {
     // The strip we're actually to compress based on the number of
     // tiles/strips that we've configured and the dimensions of the data we've
     // been given.
-    int thisStrip = (y / h) * (width / w) + (x / w);
+    //int thisStrip = (y / h) * (width / w) + (x / w);
+    int kk = 0;
+    if (h < tileHeight) kk = 1;
+    int thisStrip = (y / tileHeight + kk) * (width / tileWidth) + (x / tileWidth);
+
     // write pixel strips to output buffers
     for (int strip = 0; strip < nStrips; strip++) {
       if (strip != thisStrip) {
         continue;
       }
       for (int row=0; row<h; row++) {
-        //int strip = (row+vv*y+ww*x) / rowsPerStrip;
         for (int col=0; col<w; col++) {
           int ndx = ((row+y) * width + col +x) * bytesPerPixel;
           for (int c=0; c<nChannels; c++) {
