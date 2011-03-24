@@ -93,10 +93,11 @@ namespace itk {
   template <typename ReturnType>
   ReturnType valueOfString( const std::string &s )
   {
-    std::stringstream ss;
-    ss << s;
     ReturnType res;
-    ss >> res;
+    if( !(std::istringstream(s) >> res) )
+      {
+      itkGenericExceptionMacro(<<"BioFormatsImageIO: error while converting: " << s );
+      }
     return res;
   }
 
