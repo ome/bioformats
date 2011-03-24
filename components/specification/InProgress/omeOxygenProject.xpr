@@ -1855,42 +1855,40 @@
             </serialized>
         </options>
     </meta>
-    <projectTree name="omeOxySvnProject.xpr">
+    <projectTree name="omeOxygenProject.xpr">
         <folder name="Released-Schema">
             <folder name="2003-FC">
-                <folder name="V2">
-                    <file name="../Release/2003-FC/V2/ome.xsd"/>
-                </folder>
+                <folder name="V2"/>
             </folder>
             <folder name="2007-06">
-                <folder name="Samples">
-                    <file
-                        name="../Released-Schema/2007-06/Samples/completesampleChanged.xml"/>
-                    <file
-                        name="../Released-Schema/2007-06/Samples/completesample-local.xml"
-                    />
-                </folder>
+                <folder name="Samples"/>
                 <folder name="V1">
-                    <file name="../Released-Schema/2007-06/V1/AnalysisChain.xsd"/>
+                    <file
+                        name="../Released-Schema/2007-06/V1/AnalysisChain.xsd"/>
                     <file
                         name="../Released-Schema/2007-06/V1/AnalysisModule.xsd"/>
-                    <file name="../Released-Schema/2007-06/V1/BinaryFile.xsd"/>
+                    <file
+                        name="../Released-Schema/2007-06/V1/BinaryFile.xsd"/>
                     <file name="../Released-Schema/2007-06/V1/CA.xsd"/>
                     <file name="../Released-Schema/2007-06/V1/CLI.xsd"/>
-                    <file name="../Released-Schema/2007-06/V1/DataHistory.xsd"/>
+                    <file
+                        name="../Released-Schema/2007-06/V1/DataHistory.xsd"/>
                     <file name="../Released-Schema/2007-06/V1/MLI.xsd"/>
                     <file name="../Released-Schema/2007-06/V1/ome.xsd"/>
                     <file name="../Released-Schema/2007-06/V1/SPW.xsd"/>
                     <file name="../Released-Schema/2007-06/V1/STD.xsd"/>
                 </folder>
                 <folder name="V2">
-                    <file name="../Released-Schema/2007-06/V2/AnalysisChain.xsd"/>
+                    <file
+                        name="../Released-Schema/2007-06/V2/AnalysisChain.xsd"/>
                     <file
                         name="../Released-Schema/2007-06/V2/AnalysisModule.xsd"/>
-                    <file name="../Released-Schema/2007-06/V2/BinaryFile.xsd"/>
+                    <file
+                        name="../Released-Schema/2007-06/V2/BinaryFile.xsd"/>
                     <file name="../Released-Schema/2007-06/V2/CA.xsd"/>
                     <file name="../Released-Schema/2007-06/V2/CLI.xsd"/>
-                    <file name="../Released-Schema/2007-06/V2/DataHistory.xsd"/>
+                    <file
+                        name="../Released-Schema/2007-06/V2/DataHistory.xsd"/>
                     <file name="../Released-Schema/2007-06/V2/MLI.xsd"/>
                     <file name="../Released-Schema/2007-06/V2/ome.xsd"/>
                     <file name="../Released-Schema/2007-06/V2/SPW.xsd"/>
@@ -1899,26 +1897,32 @@
             </folder>
             <folder name="2008-02">
                 <folder name="V1">
-                    <file name="../Released-Schema/2008-02/V1/AnalysisChain.xsd"/>
+                    <file
+                        name="../Released-Schema/2008-02/V1/AnalysisChain.xsd"/>
                     <file
                         name="../Released-Schema/2008-02/V1/AnalysisModule.xsd"/>
-                    <file name="../Released-Schema/2008-02/V1/BinaryFile.xsd"/>
+                    <file
+                        name="../Released-Schema/2008-02/V1/BinaryFile.xsd"/>
                     <file name="../Released-Schema/2008-02/V1/CA.xsd"/>
                     <file name="../Released-Schema/2008-02/V1/CLI.xsd"/>
-                    <file name="../Released-Schema/2008-02/V1/DataHistory.xsd"/>
+                    <file
+                        name="../Released-Schema/2008-02/V1/DataHistory.xsd"/>
                     <file name="../Released-Schema/2008-02/V1/MLI.xsd"/>
                     <file name="../Released-Schema/2008-02/V1/ome.xsd"/>
                     <file name="../Released-Schema/2008-02/V1/SPW.xsd"/>
                     <file name="../Released-Schema/2008-02/V1/STD.xsd"/>
                 </folder>
                 <folder name="V2">
-                    <file name="../Released-Schema/2008-02/V2/AnalysisChain.xsd"/>
+                    <file
+                        name="../Released-Schema/2008-02/V2/AnalysisChain.xsd"/>
                     <file
                         name="../Released-Schema/2008-02/V2/AnalysisModule.xsd"/>
-                    <file name="../Released-Schema/2008-02/V2/BinaryFile.xsd"/>
+                    <file
+                        name="../Released-Schema/2008-02/V2/BinaryFile.xsd"/>
                     <file name="../Released-Schema/2008-02/V2/CA.xsd"/>
                     <file name="../Released-Schema/2008-02/V2/CLI.xsd"/>
-                    <file name="../Released-Schema/2008-02/V2/DataHistory.xsd"/>
+                    <file
+                        name="../Released-Schema/2008-02/V2/DataHistory.xsd"/>
                     <file name="../Released-Schema/2008-02/V2/MLI.xsd"/>
                     <file name="../Released-Schema/2008-02/V2/ome.xsd"/>
                     <file name="../Released-Schema/2008-02/V2/SPW.xsd"/>
@@ -1927,13 +1931,16 @@
             </folder>
             <folder name="2008-09">
                 <folder name="V1">
-                    <file name="../Released-Schema/2008-09/V1/AnalysisChain.xsd"/>
+                    <file
+                        name="../Released-Schema/2008-09/V1/AnalysisChain.xsd"/>
                     <file
                         name="../Released-Schema/2008-09/V1/AnalysisModule.xsd"/>
-                    <file name="../Released-Schema/2008-09/V1/BinaryFile.xsd"/>
+                    <file
+                        name="../Released-Schema/2008-09/V1/BinaryFile.xsd"/>
                     <file name="../Released-Schema/2008-09/V1/CA.xsd"/>
                     <file name="../Released-Schema/2008-09/V1/CLI.xsd"/>
-                    <file name="../Released-Schema/2008-09/V1/DataHistory.xsd"/>
+                    <file
+                        name="../Released-Schema/2008-09/V1/DataHistory.xsd"/>
                     <file name="../Released-Schema/2008-09/V1/MLI.xsd"/>
                     <file name="../Released-Schema/2008-09/V1/ome.xsd"/>
                     <file name="../Released-Schema/2008-09/V1/OMERO.xsd"/>
@@ -1944,13 +1951,16 @@
             </folder>
             <folder name="2009-09">
                 <folder name="V1">
-                    <file name="../Released-Schema/2009-09/V1/AnalysisChain.xsd"/>
+                    <file
+                        name="../Released-Schema/2009-09/V1/AnalysisChain.xsd"/>
                     <file
                         name="../Released-Schema/2009-09/V1/AnalysisModule.xsd"/>
-                    <file name="../Released-Schema/2009-09/V1/BinaryFile.xsd"/>
+                    <file
+                        name="../Released-Schema/2009-09/V1/BinaryFile.xsd"/>
                     <file name="../Released-Schema/2009-09/V1/CA.xsd"/>
                     <file name="../Released-Schema/2009-09/V1/CLI.xsd"/>
-                    <file name="../Released-Schema/2009-09/V1/DataHistory.xsd"/>
+                    <file
+                        name="../Released-Schema/2009-09/V1/DataHistory.xsd"/>
                     <file name="../Released-Schema/2009-09/V1/MLI.xsd"/>
                     <file name="../Released-Schema/2009-09/V1/ome.xsd"/>
                     <file name="../Released-Schema/2009-09/V1/OMERO.xsd"/>
@@ -1962,7 +1972,8 @@
             </folder>
             <folder name="2010-04">
                 <folder name="V1">
-                    <file name="../Released-Schema/2010-04/V1/BinaryFile.xsd"/>
+                    <file
+                        name="../Released-Schema/2010-04/V1/BinaryFile.xsd"/>
                     <file name="../Released-Schema/2010-04/V1/ome.xsd"/>
                     <file name="../Released-Schema/2010-04/V1/OMERO.xsd"/>
                     <file name="../Released-Schema/2010-04/V1/ROI.xsd"/>
@@ -1972,7 +1983,8 @@
             </folder>
             <folder name="2010-06">
                 <folder name="V1">
-                    <file name="../Released-Schema/2010-06/V1/BinaryFile.xsd"/>
+                    <file
+                        name="../Released-Schema/2010-06/V1/BinaryFile.xsd"/>
                     <file name="../Released-Schema/2010-06/V1/ome.xsd"/>
                     <file name="../Released-Schema/2010-06/V1/OMERO.xsd"/>
                     <file name="../Released-Schema/2010-06/V1/ROI.xsd"/>
@@ -1991,7 +2003,6 @@
             <file name="min-sample.xml"/>
             <file name="min-sa-sample-lsid.xml"/>
             <file name="min-sa-sample-mo.xml"/>
-            <file name="objective-sample.xml"/>
             <file name="ProposedChanges.txt"/>
             <file name="roi-sa-sample.xml"/>
             <file name="roi-sample.xml"/>
@@ -2009,6 +2020,7 @@
             <file name="test-ome-samples/sample-2010-04.ome"/>
             <file name="test-ome-samples/sample-updated.ome.xml"/>
         </folder>
+        <folder path="../Samples/"/>
         <folder path="../../xsd-fu/"/>
         <folder path="../Xslt/"/>
         <file name="BinaryFile.xsd"/>
