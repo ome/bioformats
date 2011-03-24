@@ -449,6 +449,50 @@ void BioFormatsImageIO::ReadImageInformation()
 void BioFormatsImageIO::Read(void* pData)
 {
   itkDebugMacro("BioFormatsImageIO::Read");
+  /* currently unused - potential multidimension image with reordering implementation
+  ImageIORegion region = GetIORegion();
+  int regionDim = region.GetImageDimension();
+  int xStart = 0, xCount = 1;
+  int yStart = 0, yCount = 1;
+  int zStart = 0, zCount = 1;
+  int tStart = 0, tCount = 1;
+  int cStart = 0, cCount = 1;
+
+  int xIndex = 0, yIndex = 1, zIndex = 2, tIndex = 3, cIndex = 4;
+
+  for (int dim = 0; dim < regionDim; dim++)
+  {
+    int index = region.GetIndex(dim);
+    int size = region.GetSize(dim);
+    if (dim == xIndex)
+    {
+      xStart = index;
+      xCount = size;
+    }
+    else if (dim == yIndex)
+    {
+      yStart = index;
+      yCount = size;
+    }
+    else if (dim == zIndex)
+    {
+      zStart = index;
+      zCount = size;
+    }
+    else if (dim == tIndex)
+    {
+      tStart = index;
+      tCount = size;
+    }
+    else if (dim == cIndex)
+    {
+      cStart = index;
+      cCount = size;
+    }
+  }
+
+  std::stringstream out;
+  */
 
   std::vector< std::string > args;
   args.push_back( m_JavaCommand );
@@ -457,7 +501,29 @@ void BioFormatsImageIO::Read(void* pData)
   args.push_back( "loci.formats.itk.ITKBridgePipes" );
   args.push_back( m_FileName );
   args.push_back( "read" );
-  // convert to something usable by itksys
+  /*
+  out << xStart;
+  args.push_back( out.str() );
+  out << xCount;
+  args.push_back( out.str() );
+  out << yStart;
+  args.push_back( out.str() );
+  out << yCount;
+  args.push_back( out.str() );
+  out << zStart;
+  args.push_back( out.str() );
+  out << zCount;
+  args.push_back( out.str() );
+  out << tStart;
+  args.push_back( out.str() );
+  out << tCount;
+  args.push_back( out.str() );
+  out << cStart;
+  args.push_back( out.str() );
+  out << cCount;
+  args.push_back( out.str() );
+  */
+  // convert t  something usable by itksys
   char **argv = toCArray(args);
 
   char * data = (char *)pData;

@@ -66,7 +66,8 @@ public final class ITKBridgePipes {
     else reader.setMetadataStore(store);
 
     reader.setGroupFiles(false); // avoid grouping all the .lsm when a .mdb is there
-    reader.setId(args[0]);
+    String fname = args[0];
+    reader.setId(fname);
     reader.setSeries(0);
 
      store = reader.getMetadataStore();
@@ -146,16 +147,89 @@ public final class ITKBridgePipes {
     IFormatReader reader = new ImageReader();
     reader.setMetadataOptions(new DefaultMetadataOptions(MetadataLevel.MINIMUM));
     reader.setGroupFiles(false); // avoid grouping all the .lsm when a .mdb is there
-    reader.setId(args[0]);
+    String fname = args[0];
+    reader.setId(fname);
     reader.setSeries(0);
+    
+    BufferedOutputStream out = new BufferedOutputStream(System.out);
+    for( int c = 0; c < reader.getSizeC(); c++) {
+    	for (int t = 0; t < reader.getSizeT(); t++) {
+    	    for( int z=0; z < reader.getSizeZ(); z++ ) {
+    	      byte[] image = reader.openBytes( reader.getIndex(z, c, t) );
+    	      out.write(image);
+    	     }
+    	}
+    }
+
+    
+    /* attempts at multidimensional reading
+    int pixelType = reader.getPixelType();
+    int bpp = FormatTools.getBytesPerPixel(pixelType);
+    int rgbChannelCount = reader.getRGBChannelCount();
+    
+    int xStart = Integer.valueOf(args[2]);
+    int xCount = Integer.valueOf(args[3]);
+    int yStart = Integer.valueOf(args[4]);
+    int yCount = Integer.valueOf(args[5]);
+    int zStart = Integer.valueOf(args[6]);
+    int zCount = Integer.valueOf(args[7]);
+    int tStart = Integer.valueOf(args[8]);
+    int tCount = Integer.valueOf(args[9]);
+    int cStart = Integer.valueOf(args[10]);
+    int cCount = Integer.valueOf(args[11]);
+    
+    int imageCount = reader.getImageCount();
+    
+    int bytesPerPlane = xCount * yCount * bpp * rgbChannelCount;
+    boolean isInterleaved = reader.isInterleaved();
+    
+    boolean canDoDirect = false;
+    
+    if( (rgbChannelCount == 1) || isInterleaved )
+    	canDoDirect = true;
+    
+    byte[] tmpData = null;
+    
+    if(!canDoDirect)
+    	tmpData = new byte[bytesPerPlane];
 
     BufferedOutputStream out = new BufferedOutputStream(System.out);
+    
+    byte[] buf = new byte[bytesPerPlane];
 
-    for( int z=0; z<reader.getSizeZ(); z++ )
+    for( int c = cStart; c < (cStart + cCount); c++ )
+    {
+      for (int t = tStart; t < (tStart + tCount); t++ )
       {
-      byte[] image = reader.openBytes( reader.getIndex(z, 0, 0) );
-      out.write(image);
+        for (int z = zStart; z < (zStart + zCount); z++ )
+        {
+        	int no = reader.getIndex(z, c, t);
+        	reader.openBytes(no, buf, xStart, yStart, xCount, yCount);
+        	
+        	if (canDoDirect)
+        	{
+        		out.write(buf);
+        	}
+        	else
+        	{
+        		int pos = 0;
+        		for(int x = 0; x < xCount; x++) {
+        			for(int y = 0; y < yCount; y++) {
+        				for(int i = 0; i < rgbChannelCount; i++) {
+        					for(int b = 0; b < bpp; b++) {
+        						int index = yCount * (xCount * (rgbChannelCount * b + i) + x) + y;
+        						tmpData[pos++] = buf[index];
+        					}
+        				}
+        					
+        			}
+        		}
+        		out.write(tmpData);	
+        	}
+        }
       }
+    }
+    */
     out.close();
     System.out.close();
     return true;
