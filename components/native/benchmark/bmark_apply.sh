@@ -4,8 +4,8 @@
 #The program is then applied to the image three times and outputs the time each run took, via the time command. 
 #Usage: bash bmrk_apply.sh <program> <image>
 
-echo "Program: " $1 >> benchmark_out.txt
-echo "File: " $2 >> benchmark_out.txt
+#echo "Program: " $1 >> benchmark_out.txt
+#echo "File: " $2 >> benchmark_out.txt
 
 for trial in 1 2 3
   do
