@@ -830,9 +830,10 @@ public class LIFReader extends FormatReader {
       NodeList multibands = getNodes(grandparent, "MultiBand");
 
       String v = detector.getAttribute("Gain");
-      Double gain = v == null ? null : new Double(v);
+      Double gain = v == null || v.trim().length() == 0 ? null : new Double(v);
       v = detector.getAttribute("Offset");
-      Double offset = v == null ? null : new Double(v);
+      Double offset =
+        v == null || v.trim().length() == 0 ? null : new Double(v);
 
       boolean active = "1".equals(detector.getAttribute("IsActive"));
 
