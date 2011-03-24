@@ -1086,10 +1086,13 @@ public abstract class FormatReader extends FormatHandler
 
             for (int series=0; series<getSeriesCount(); series++) {
               String name = "Series " + series;
-              String realName = ((IMetadata) store).getImageName(series);
-              if (realName != null && realName.trim().length() != 0) {
-                name = realName;
+              try {
+                String realName = ((IMetadata) store).getImageName(series);
+                if (realName != null && realName.trim().length() != 0) {
+                  name = realName;
+                }
               }
+              catch (Exception e) { }
               setSeries(series);
               MetadataTools.merge(getSeriesMetadata(), allMetadata, name + " ");
             }
