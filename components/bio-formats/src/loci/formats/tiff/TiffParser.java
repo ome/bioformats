@@ -745,7 +745,6 @@ public class TiffParser {
     int endY = (int) height + y;
 
     long w = tileWidth;
-    if (width < w) w = width;
     long h = tileLength;
     if (height < h) h = height;
     int rowLen = pixel * (int) w;//tileWidth;
@@ -759,7 +758,7 @@ public class TiffParser {
     int bpp = ifd.getBytesPerSample()[0];
     int bufferSize = (int) tileWidth * (int) tileLength *
       bufferSizeSamplesPerPixel * bpp;
-    
+
     if (cachedTileBuffer == null || cachedTileBuffer.length != bufferSize) {
       cachedTileBuffer = new byte[bufferSize];
     }
