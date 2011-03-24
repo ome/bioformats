@@ -36,8 +36,6 @@ public class NikonCodecOptions extends CodecOptions {
 
   public int[] vPredictor;
 
-  public boolean lossy;
-
   public int split;
 
 }

@@ -16,49 +16,54 @@ BF_PATH=/Users/hinerm/loci/bioformats/components/native
 JNI_PATH=$BF_PATH/bf-itk-jni/build/dist/bf-itk
 PIPE_PATH=$BF_PATH/bf-itk-pipe/build/dist/bf-itk
 JACE_PATH=$BF_PATH/bf-itk-jace/build/dist/bf-itk
+EXPECTED_ARGS=2
+E_BARDARGS=65
 
-echo "***** JNI IMPLEMENTATION *****" > benchmark_out.txt
-echo >> benchmark_out.txt
-export ITK_AUTOLOAD_PATH=$JNI_PATH
-export DYLD_LIBRARY_PATH=$ITK_AUTOLOAD_PATH:$LIB_PATH
 
-for program in $1
-  do
-    for image in $2
-      do
-         bash bmark_apply.sh $program $image
-         echo >> benchmark_out.txt
-      done
-  done
+if [ $# -ne $EXPECTED_ARGS ]
+  then
+     echo "Usage: bash \"program1 program2 ... programN\" \"image1 image2 ... imageNi\""
+     echo "This script takes a list of programs and performs a cross-application against a list of images, outputting the times for each application."
+     exit $E_BADARGS
+fi
 
+echo "Time Analysis" > benchmark_out.txt
 echo >> benchmark_out.txt
-echo >> benchmark_out.txt
-echo "***** PIPE IMPLEMENTATION *****" >> benchmark_out.txt
-echo >> benchmark_out.txt
-export ITK_AUTOLOAD_PATH=$PIPE_PATH
-export DYLD_LIBRARY_PATH=$ITK_AUTOLOAD_PATH:$LIB_PATH
 
 for program in $1
   do
     for image in $2
       do
+         echo "Program: " $program >> benchmark_out.txt
+         echo "Image: " $image >> benchmark_out.txt
+         echo >> benchmark_out.txt
+
+         echo "***** JNI IMPLEMENTATION *****" >> benchmark_out.txt
+         echo >> benchmark_out.txt
+         export ITK_AUTOLOAD_PATH=$JNI_PATH
+         export DYLD_LIBRARY_PATH=$ITK_AUTOLOAD_PATH:$LIB_PATH
          bash bmark_apply.sh $program $image
          echo >> benchmark_out.txt
-      done
-  done
+         echo >> benchmark_out.txt
+         echo >> benchmark_out.txt
 
-echo >> benchmark_out.txt
-echo >> benchmark_out.txt
-echo "***** JACE IMPLEMENTATION *****" >> benchmark_out.txt
-echo >> benchmark_out.txt
-export ITK_AUTOLOAD_PATH=$JACE_PATH
-export DYLD_LIBRARY_PATH=$ITK_AUTOLOAD_PATH:$LIB_PATH
-
-for program in $1
-  do
-    for image in $2
-      do
+         echo "***** PIPE IMPLEMENTATION *****" >> benchmark_out.txt
+         echo >> benchmark_out.txt
+         export ITK_AUTOLOAD_PATH=$PIPE_PATH
+         export DYLD_LIBRARY_PATH=$ITK_AUTOLOAD_PATH:$LIB_PATH
          bash bmark_apply.sh $program $image
          echo >> benchmark_out.txt
-      done
+         echo >> benchmark_out.txt
+         echo >> benchmark_out.txt
+
+         echo "***** JACE IMPLEMENTATION *****" >> benchmark_out.txt
+         echo >> benchmark_out.txt
+         export ITK_AUTOLOAD_PATH=$JACE_PATH
+         export DYLD_LIBRARY_PATH=$ITK_AUTOLOAD_PATH:$LIB_PATH
+         bash bmark_apply.sh $program $image
+         echo >> benchmark_out.txt
+         echo "*************************" >> benchmark_out.txt
+         echo >> benchmark_out.txt
+         echo >> benchmark_out.txt
+    done
   done

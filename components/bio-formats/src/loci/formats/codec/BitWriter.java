@@ -65,6 +65,7 @@ public class BitWriter {
 
   /** Writes the given value using the given number of bits. */
   public void write(int value, int numBits) {
+    if (numBits <= 0) return;
     byte[] bits = new byte[numBits];
     for (int i=0; i<numBits; i++) {
       bits[i] = (byte) (value & 0x0001);
@@ -94,6 +95,8 @@ public class BitWriter {
    *   '0' and '1' appear in the string.
    */
   public void write(String bitString) {
+    if (bitString == null) 
+      throw new IllegalArgumentException("The string cannot be null.");
     for (int i = 0; i < bitString.length(); i++) {
       if ('1' == bitString.charAt(i)) {
         int b = 1 << (7 - bit);

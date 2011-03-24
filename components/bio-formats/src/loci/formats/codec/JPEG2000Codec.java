@@ -75,6 +75,7 @@ public class JPEG2000Codec extends BaseCodec {
   public byte[] compress(byte[] data, CodecOptions options)
     throws FormatException
   {
+    if (data == null || data.length == 0) return data;
     initialize();
 
     JPEG2000CodecOptions j2kOptions;
@@ -168,7 +169,9 @@ public class JPEG2000Codec extends BaseCodec {
   public byte[] decompress(RandomAccessInputStream in, CodecOptions options)
     throws FormatException, IOException
   {
-    if (options == null) {
+    if (in == null) 
+      throw new IllegalArgumentException("No data to decompress.");
+    if (options == null || !(options instanceof JPEG2000CodecOptions)) {
       options = JPEG2000CodecOptions.getDefaultOptions();
     }
 
@@ -196,7 +199,7 @@ public class JPEG2000Codec extends BaseCodec {
   {
     initialize();
 
-    if (options == null) {
+    if (options == null || !(options instanceof JPEG2000CodecOptions)) {
       options = JPEG2000CodecOptions.getDefaultOptions();
     }
     else {

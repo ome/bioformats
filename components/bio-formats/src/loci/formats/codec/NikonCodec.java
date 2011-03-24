@@ -152,8 +152,7 @@ public class NikonCodec extends BaseCodec {
   public byte[] decompress(RandomAccessInputStream in, CodecOptions options)
     throws FormatException, IOException
   {
-    if (options == null) options = CodecOptions.getDefaultOptions();
-    if (!(options instanceof NikonCodecOptions)) {
+   if (options == null || !(options instanceof NikonCodecOptions)) {
       throw new FormatException("Options must be an instanceof " +
         "loci.formats.codec.NikonCodecOptions.");
     }
@@ -164,7 +163,7 @@ public class NikonCodec extends BaseCodec {
     huffman.maxBytes = nikon.maxBytes;
 
 
-    if (nikon.lossy) {
+    if (!nikon.lossless) {
       if (nikon.bitsPerSample == 12) {
         huffman.table = LOSSY_DECODER_CONFIGURATION_12;
       }
@@ -195,7 +194,7 @@ public class NikonCodec extends BaseCodec {
 
     for (int row=0; row<nikon.height; row++) {
       if (row == nikon.split) {
-        if (nikon.lossy) {
+        if (!nikon.lossless) {
           if (nikon.bitsPerSample == 12) {
             huffman.table = SPLIT_LOSSY_DECODER_CONFIGURATION_12;
           }

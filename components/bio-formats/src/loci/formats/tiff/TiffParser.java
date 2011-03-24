@@ -587,6 +587,7 @@ public class TiffParser {
       stripByteCounts[tileNumber] *= pixel;
     }
     int size = (int) (tileWidth * tileLength * pixel * effectiveChannels);
+   
     if (buf == null) buf = new byte[size];
     if (stripByteCounts[tileNumber] == 0 ||
       stripOffsets[tileNumber] >= in.length())
@@ -594,6 +595,9 @@ public class TiffParser {
       return buf;
     }
     byte[] tile = new byte[(int) stripByteCounts[tileNumber]];
+
+    LOGGER.debug("Reading tile Length {} Offset {}",
+        tile.length, stripOffsets[tileNumber]);
     in.seek(stripOffsets[tileNumber]);
     in.read(tile);
 
@@ -606,7 +610,6 @@ public class TiffParser {
       tile = compression.decompress(q, codecOptions);
     }
     else tile = compression.decompress(tile, codecOptions);
-
     TiffCompression.undifference(tile, ifd);
     unpackBytes(buf, 0, tile, ifd);
 
@@ -690,7 +693,12 @@ public class TiffParser {
       samplesPerPixel, numSamples);
 
     TiffCompression compression = ifd.getCompression();
-
+    if (compression == TiffCompression.JPEG_2000 || 
+        compression == TiffCompression.JPEG_2000_LOSSY)
+      codecOptions = compression.getCompressionCodecOptions(ifd, codecOptions);
+    else codecOptions = compression.getCompressionCodecOptions(ifd);
+    codecOptions.interleaved = true;
+    codecOptions.littleEndian = ifd.isLittleEndian();
     long imageLength = ifd.getImageLength();
 
     // special case: if we only need one tile, and that tile doesn't need
@@ -736,8 +744,12 @@ public class TiffParser {
     int endX = (int) width + x;
     int endY = (int) height + y;
 
-    int rowLen = pixel * (int) tileWidth;
-    int tileSize = (int) (rowLen * tileLength);
+    long w = tileWidth;
+    long h = tileLength;
+    if (height < h) h = height;
+    int rowLen = pixel * (int) w;//tileWidth;
+    int tileSize = (int) (rowLen * h);//tileLength);
+
     int planeSize = (int) (width * height * pixel);
     int outputRowLen = (int) (pixel * width);
 
@@ -746,6 +758,7 @@ public class TiffParser {
     int bpp = ifd.getBytesPerSample()[0];
     int bufferSize = (int) tileWidth * (int) tileLength *
       bufferSizeSamplesPerPixel * bpp;
+
     if (cachedTileBuffer == null || cachedTileBuffer.length != bufferSize) {
       cachedTileBuffer = new byte[bufferSize];
     }
@@ -774,7 +787,6 @@ public class TiffParser {
 
         int twidth = (int) Math.min(endX - tileX, tileWidth - realX);
         int theight = (int) Math.min(endY - tileY, tileLength - realY);
-
         // copy appropriate portion of the tile to the output buffer
 
         int copy = pixel * twidth;

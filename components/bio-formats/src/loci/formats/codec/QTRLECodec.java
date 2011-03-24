@@ -49,6 +49,8 @@ public class QTRLECodec extends BaseCodec {
   public byte[] decompress(RandomAccessInputStream in, CodecOptions options)
     throws FormatException, IOException
   {
+    if (in == null) 
+      throw new IllegalArgumentException("No data to decompress.");
     byte[] b = new byte[(int) (in.length() - in.getFilePointer())];
     in.read(b);
     return decompress(b, options);
@@ -67,7 +69,8 @@ public class QTRLECodec extends BaseCodec {
     throws FormatException
   {
     if (options == null) options = CodecOptions.getDefaultOptions();
-
+    if (data == null || data.length == 0)
+      throw new IllegalArgumentException("No data to decompress.");
     int numLines = options.height;
 
     if (data.length < 8) return options.previousImage;

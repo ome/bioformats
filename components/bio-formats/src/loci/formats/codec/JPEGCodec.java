@@ -60,6 +60,7 @@ public class JPEGCodec extends BaseCodec {
   public byte[] compress(byte[] data, CodecOptions options)
     throws FormatException
   {
+    if (data == null || data.length == 0) return data;
     if (options == null) options = CodecOptions.getDefaultOptions();
 
     if (options.bitsPerSample > 8) {

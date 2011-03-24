@@ -161,17 +161,40 @@ public final class ITKBridgePipes {
     return true;
   }
 
+
+  /** A utility method to determine if a file can be read by BioFormats. */
+  public static boolean canRead(String[] args)
+    throws FormatException, IOException
+  {
+    boolean h = false;
+    IFormatReader reader = new ImageReader();
+
+    try {
+      h = reader.isThisType(args[0]);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+    System.out.println(h);
+    System.out.close();
+    return true;
+  }
+
   // -- Main method --
 
   public static void main(String[] args) throws FormatException, IOException {
-	if(args[1].equals("info"))
-	{
-	    if (!readImageInfo(args)) System.exit(1);
-	}
-	else if(args[1].equals("read"))
-	{
-		if (!read(args)) System.exit(1);
-	}
+	  if(args[1].equals("info"))
+	  {
+	     if (!readImageInfo(args)) System.exit(1);
+	  }
+	  else if(args[1].equals("read"))
+  	{
+  		if (!read(args)) System.exit(1);
+  	}
+    else if(args[1].equals("canRead"))
+    {
+      if (!canRead(args)) System.exit(1);
+    }
   }
 
 }

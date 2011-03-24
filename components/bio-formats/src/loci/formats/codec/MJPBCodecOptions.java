@@ -32,6 +32,7 @@ package loci.formats.codec;
  */
 public class MJPBCodecOptions extends CodecOptions {
 
+  /** Indicates whether or not channels are interlaced. (READ/WRITE) */
   public boolean interlaced;
 
 }

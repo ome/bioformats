@@ -36,7 +36,7 @@ public class CompressionTypeTest {
 
   @Test
   public void testLookupName() {
-    CompressionType type = CompressionType.get(2);
+    CompressionType type = CompressionType.get(1);
     assertEquals(CompressionType.UNCOMPRESSED, type);
   }
 

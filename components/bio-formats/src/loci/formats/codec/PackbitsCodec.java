@@ -59,6 +59,9 @@ public class PackbitsCodec extends BaseCodec {
   public byte[] decompress(RandomAccessInputStream in, CodecOptions options)
     throws FormatException, IOException
   {
+    if (options == null) options = CodecOptions.getDefaultOptions();
+    if (in == null) 
+      throw new IllegalArgumentException("No data to decompress.");
     long fp = in.getFilePointer();
     // Adapted from the TIFF 6.0 specification, page 42.
     ByteArrayOutputStream output = new ByteArrayOutputStream(1024);

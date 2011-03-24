@@ -31,6 +31,7 @@ import ome.xml.model.primitives.PositiveInteger;
 
 import loci.common.DataTools;
 import loci.common.RandomAccessOutputStream;
+import loci.formats.codec.CodecOptions;
 import loci.formats.meta.DummyMetadata;
 import loci.formats.meta.MetadataRetrieve;
 
@@ -58,6 +59,9 @@ public abstract class FormatWriter extends FormatHandler
 
   /** Current compression type. */
   protected String compression;
+
+  /** The options if required. */
+  protected CodecOptions options;
 
   /**
    * Whether each plane in each series of the current file has been
@@ -211,6 +215,11 @@ public abstract class FormatWriter extends FormatHandler
       }
     }
     throw new FormatException("Invalid compression type: " + compress);
+  }
+
+  /* @see IFormatWriter#setCodecOptions(CodecOptions) */
+  public void setCodecOptions(CodecOptions options) {
+    this.options = options;
   }
 
   /* @see IFormatWriter#getCompression() */

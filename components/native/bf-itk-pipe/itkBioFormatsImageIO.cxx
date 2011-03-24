@@ -89,6 +89,33 @@ See slicer-license.txt for Slicer3's licensing information.
 //
 
 namespace itk {
+ 
+  template <typename ReturnType>
+  ReturnType valueOfString( const std::string &s )
+  {
+    std::stringstream ss;
+    ss << s;
+    ReturnType res;
+    ss >> res;
+    return res;
+  }
+
+  template<>
+  bool valueOfString<bool>( const std::string &s )
+  {
+    std::stringstream ss;
+    ss << s;
+    bool res = false;
+    ss >> res;
+    if( ss.fail() )
+    {
+      ss.clear();
+      ss >> std::boolalpha >> res;
+    }
+    return res;
+  }
+
+
 
 BioFormatsImageIO::BioFormatsImageIO()
 {
@@ -133,19 +160,115 @@ bool BioFormatsImageIO::CanReadFile( const char* FileNameToRead )
   args.push_back( m_JavaCommand );
   args.push_back( "-cp" );
   args.push_back( m_ClassPath );
-  args.push_back( "CanReadFile" );
+  args.push_back( "loci.formats.itk.ITKBridgePipes" );
   args.push_back( FileNameToRead );
+  args.push_back( "canRead" );
   // convert to something usable by itksys
   char ** argv = toCArray(args);
+
+  std::string imgInfo;
+  std::string errorMessage;
+  char * pipedata;
+  int pipedatalength = 1000;
 
   itksysProcess *process = itksysProcess_New();
   itksysProcess_SetCommand(process, argv);
   itksysProcess_Execute(process);
+
+  int retcode = -1;
+  while( retcode = itksysProcess_WaitForData(process, &pipedata, &pipedatalength, NULL) )
+    {
+    // itkDebugMacro( "BioFormatsImageIO::ReadImageInformation: reading " << pipedatalength << " bytes.");
+    if( retcode == itksysProcess_Pipe_STDOUT )
+      {
+      // append that data to our img information to parse it much easily later
+      imgInfo += std::string( pipedata, pipedatalength );
+      }
+    else
+      {
+      errorMessage += std::string( pipedata, pipedatalength );
+      }
+    }
+
   itksysProcess_WaitForExit(process, NULL);
-  int retcode = itksysProcess_GetExitValue(process);
-  itksysProcess_Delete(process);
-  delete argv;
-  return retcode == 0;
+
+  // we don't need that anymore
+  delete[] argv;
+
+  int state = itksysProcess_GetState(process);
+  switch( state )
+    {
+    case itksysProcess_State_Exited:
+      {
+      int retCode = itksysProcess_GetExitValue(process);
+      itksysProcess_Delete(process);
+      itkDebugMacro("BioFormatsImageIO::ReadImageInformation: retCode = " << retCode);
+      if ( retCode != 0 )
+        {
+        itkExceptionMacro(<<"BioFormatsImageIO: ITKReadImageInformation exited with return value: " << retCode << std::endl
+                          << errorMessage);
+        }
+      break;
+      }
+    case itksysProcess_State_Error:
+      {
+      std::string msg = itksysProcess_GetErrorString(process);
+      itksysProcess_Delete(process);
+      itkExceptionMacro(<<"BioFormatsImageIO: ITKReadImageInformation error:" << std::endl << msg);
+      break;
+      }
+    case itksysProcess_State_Exception:
+      {
+      std::string msg = itksysProcess_GetExceptionString(process);
+      itksysProcess_Delete(process);
+      itkExceptionMacro(<<"BioFormatsImageIO: ITKReadImageInformation exception:" << std::endl << msg);
+      break;
+      }
+    case itksysProcess_State_Executing:
+      {
+      itksysProcess_Delete(process);
+      itkExceptionMacro(<<"BioFormatsImageIO: internal error: ITKReadImageInformation is still running.");
+      break;
+      }
+    case itksysProcess_State_Expired:
+      {
+      itksysProcess_Delete(process);
+      itkExceptionMacro(<<"BioFormatsImageIO: internal error: ITKReadImageInformation expired.");
+      break;
+      }
+    case itksysProcess_State_Killed:
+      {
+      itksysProcess_Delete(process);
+      itkExceptionMacro(<<"BioFormatsImageIO: internal error: ITKReadImageInformation killed.");
+      break;
+      }
+    case itksysProcess_State_Disowned:
+      {
+      itksysProcess_Delete(process);
+      itkExceptionMacro(<<"BioFormatsImageIO: internal error: ITKReadImageInformation disowned.");
+      break;
+      }
+//     case kwsysProcess_State_Starting:
+//       {
+//       break;
+//       }
+    default:
+      {
+      itksysProcess_Delete(process);
+      itkExceptionMacro(<<"BioFormatsImageIO: internal error: ITKReadImageInformation is in unknown state.");
+      break;
+      }
+    }
+
+  // we have one thing per line
+  int p0 = 0;
+  int p1 = 0;
+  std::string canRead;
+  // can read?
+  p1 = imgInfo.find("\n", p0);
+  canRead = imgInfo.substr( p0, p1 );
+
+  return valueOfString<bool>(canRead);
 }
 
 void BioFormatsImageIO::ReadImageInformation()
@@ -156,7 +279,7 @@ void BioFormatsImageIO::ReadImageInformation()
   args.push_back( m_JavaCommand );
   args.push_back( "-cp" );
   args.push_back( m_ClassPath );
-  args.push_back( "ITKBridgePipes" );
+  args.push_back( "loci.formats.itk.ITKBridgePipes" );
   args.push_back( m_FileName );
   args.push_back( "info" );
   // convert to something usable by itksys
@@ -264,7 +387,7 @@ void BioFormatsImageIO::ReadImageInformation()
   // is little endian?
   p1 = imgInfo.find("\n", p0);
   line = imgInfo.substr( p0, p1 );
-  if( valueOf<bool>(line) )
+  if( valueOfString<bool>(line) )
     {
     SetByteOrderToLittleEndian(); // m_ByteOrder
     }
@@ -276,7 +399,7 @@ void BioFormatsImageIO::ReadImageInformation()
   p0 = p1+1;
   p1 = imgInfo.find("\n", p0);
   line = imgInfo.substr( p0, p1 );
-  int componentType = valueOf<int>(line);
+  int componentType = valueOfString<int>(line);
   if( componentType == UNKNOWNCOMPONENTTYPE)
     {
     itkExceptionMacro("Unknown pixel type:");
@@ -288,13 +411,13 @@ void BioFormatsImageIO::ReadImageInformation()
     p0 = p1+1;
     p1 = imgInfo.find("\n", p0);
     line = imgInfo.substr( p0, p1 );
-    this->SetDimensions( i, valueOf<int>(line) );
+    this->SetDimensions( i, valueOfString<int>(line) );
     }
   // number of components
   p0 = p1+1;
   p1 = imgInfo.find("\n", p0);
   line = imgInfo.substr( p0, p1 );
-  int nbOfComponents = valueOf<int>(line);
+  int nbOfComponents = valueOfString<int>(line);
   if( nbOfComponents == 1 )
     {
     SetPixelType( SCALAR );
@@ -314,7 +437,7 @@ void BioFormatsImageIO::ReadImageInformation()
     p0 = p1+1;
     p1 = imgInfo.find("\n", p0);
     line = imgInfo.substr( p0, p1 );
-    double s = valueOf<double>(line);
+    double s = valueOfString<double>(line);
     if( s == 0.0 )
       {
       s = 1.0;
@@ -331,7 +454,7 @@ void BioFormatsImageIO::Read(void* pData)
   args.push_back( m_JavaCommand );
   args.push_back( "-cp" );
   args.push_back( m_ClassPath );
-  args.push_back( "ITKBridgePipes" );
+  args.push_back( "loci.formats.itk.ITKBridgePipes" );
   args.push_back( m_FileName );
   args.push_back( "read" );
   // convert to something usable by itksys

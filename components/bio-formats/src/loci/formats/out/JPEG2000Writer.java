@@ -43,16 +43,15 @@ public class JPEG2000Writer extends FormatWriter {
 
   // -- Fields --
 
-  /** Default JPEG 2000 codec options. */
-  private JPEG2000CodecOptions options = 
-    JPEG2000CodecOptions.getDefaultOptions();
-
   // -- Constructor --
 
+  /** Creates a new instance. */
   public JPEG2000Writer() {
     super("JPEG-2000", "jp2");
     compressionTypes = new String[] {CompressionType.J2K_LOSSY.getCompression(), 
         CompressionType.J2K.getCompression()};
+    //The default codec options
+    options = JPEG2000CodecOptions.getDefaultOptions();
   }
 
   // -- IFormatWriter API methods --
@@ -71,7 +70,7 @@ public class JPEG2000Writer extends FormatWriter {
         "JPEG2000Writer does not yet support saving image tiles.");
     }
     */
-    MetadataRetrieve retrieve = getMetadataRetrieve();
+    //MetadataRetrieve retrieve = getMetadataRetrieve();
     //int width = retrieve.getPixelsSizeX(series).getValue().intValue();
     //int height = retrieve.getPixelsSizeY(series).getValue().intValue();
    
@@ -102,6 +101,8 @@ public class JPEG2000Writer extends FormatWriter {
       retrieve.getPixelsType(series).toString()));
     int nChannels = getSamplesPerPixel();
 
+    //To be on the save-side
+    if (options == null) options = JPEG2000CodecOptions.getDefaultOptions();
     options = new JPEG2000CodecOptions(options);
     options.width = w;
     options.height = h;
@@ -116,28 +117,19 @@ public class JPEG2000Writer extends FormatWriter {
     return new JPEG2000Codec().compress(buf, options);
   }
     
-  /* @see loci.formats.IFormatWriter#canDoStacks() */
+  /**
+   * Overridden to indicate that stacks are not supported. 
+   * @see loci.formats.IFormatWriter#canDoStacks() 
+   */
   public boolean canDoStacks() { return false; }
 
-  /* @see loci.formats.IFormatWriter#getPixelTypes(String) */
+  /**
+   * Overridden to return the formats supported by the writer.
+   * @see loci.formats.IFormatWriter#getPixelTypes(String) 
+   */
   public int[] getPixelTypes(String codec) {
     return new int[] {FormatTools.INT8, FormatTools.UINT8, FormatTools.INT16,
       FormatTools.UINT16};
   }
 
-  /**
-   * Sets the default JPEG 2000 codec options.
-   * @param options The codec options to set.
-   */
-  public void setDefaultJPEG2000CodecOptions(JPEG2000CodecOptions options) {
-    this.options = options;
-  }
-
-  /**
-   * Retrieves the current default JPEG 2000 codec options.
-   * @return See above.
-   */
-  public JPEG2000CodecOptions getDefaultJPEG2000CodecOptions() {
-    return options;
-  }
 }

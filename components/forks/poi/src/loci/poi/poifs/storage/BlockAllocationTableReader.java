@@ -190,7 +190,8 @@ public class BlockAllocationTableReader
         List blocks       = new ArrayList();
         int  currentBlock = startBlock;
 
-        while (currentBlock != POIFSConstants.END_OF_CHAIN)
+        while (currentBlock != POIFSConstants.END_OF_CHAIN &&
+          currentBlock >= 0 && currentBlock < _entries.size())
         {
             blocks.add(blockList.remove(currentBlock));
             currentBlock = _entries.get(currentBlock);

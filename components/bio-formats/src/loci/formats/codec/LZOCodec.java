@@ -55,6 +55,8 @@ public class LZOCodec extends BaseCodec {
   public byte[] decompress(RandomAccessInputStream in, CodecOptions options)
     throws FormatException, IOException
   {
+    if (in == null) 
+      throw new IllegalArgumentException("No data to decompress.");
     // Adapted from LZO for Java, available at
     // http://www.oberhumer.com/opensource/lzo/
     ByteVector dst = new ByteVector();
