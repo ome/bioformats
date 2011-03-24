@@ -89,7 +89,6 @@ public:
   typedef ImageIOBase                 Superclass;
   typedef SmartPointer<Self>          Pointer;
   typedef SmartPointer<const Self>    ConstPointer;
-
   /** Method for creation through the object factory **/
   itkNewMacro(Self);
   /** RTTI (and related methods) **/
@@ -114,17 +113,19 @@ protected:
   ~BioFormatsImageIO();
 
 private:
-  std::string m_JavaCommand;
-  std::string m_ClassPath;
-
+/* 
   template <typename ReturnType>
-  ReturnType valueOf( const std::string &s )
+  ReturnType valueOfString( const std::string &s )
   {
+    std::stringstream ss;
+    ss << s;
     ReturnType res;
-    std::istringstream(s) >> res;
+    ss >> res;
     return res;
   }
-
+*/
+ std::string m_JavaCommand;
+  std::string m_ClassPath;
   char ** toCArray( std::vector< std::string > & args )
   {
     char **argv = new char *[args.size() + 1];
@@ -138,6 +139,22 @@ private:
   }
 
 };
+/*
+  template<>
+  bool BioFormatsImageIO::valueOfString<bool>( const std::string &s )
+  {
+    std::stringstream ss;
+    ss << s;
+    bool res = false;
+    ss >> res;
+    if( ss.fail() )
+    {
+      ss.clear();
+      ss >> std::boolalpha >> res;
+    }
+    return res;
+  }
+*/
 
 }
 
