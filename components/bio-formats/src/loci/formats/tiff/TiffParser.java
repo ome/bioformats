@@ -746,7 +746,6 @@ public class TiffParser {
 
     long w = tileWidth;
     long h = tileLength;
-    if (height < h) h = height;
     int rowLen = pixel * (int) w;//tileWidth;
     int tileSize = (int) (rowLen * h);//tileLength);
 
