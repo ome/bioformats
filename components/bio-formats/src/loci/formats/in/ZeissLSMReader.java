@@ -1015,8 +1015,9 @@ public class ZeissLSMReader extends FormatReader {
       }
 
       if (timeStampOffset != 0) {
-        in.seek(timeStampOffset + 8);
-        for (int i=0; i<getSizeT(); i++) {
+        in.seek(timeStampOffset + 4);
+        int nStamps = in.readInt();
+        for (int i=0; i<nStamps; i++) {
           double stamp = in.readDouble();
           addSeriesMeta("TimeStamp" + i, stamp);
           timestamps.add(new Double(stamp));
