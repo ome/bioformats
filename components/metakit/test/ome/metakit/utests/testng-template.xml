@@ -1,0 +1,17 @@
+<suite name="Metakit_Tests">
+    <test name="Table">
+      <classes>
+        <class name="ome.metakit.utests.TableTest"/>
+      </classes>
+    </test>
+    <test name="Column">
+      <classes>
+        <class name="ome.metakit.utests.ColumnTest"/>
+      </classes>
+    </test>
+    <test name="Row">
+      <classes>
+        <class name="ome.metakit.utests.RowTest"/>
+      </classes>
+    </test>
+</suite>
