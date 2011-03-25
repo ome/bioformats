@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="test"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.testng.TESTNG_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/common"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/jai"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ome-xml"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/External libraries"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/lwf-stubs"/>
+	<classpathentry kind="output" path="build-eclipse"/>
+</classpath>
