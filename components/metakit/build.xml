@@ -27,26 +27,7 @@ Type "ant -p"  for a list of targets.
         <pathelement path="${component.runtime-cp}"/>
       </classpath>
       <xmlfileset file="${build.dir}/testng.xml"/>
-      <jvmarg value="-mx${testng.memory}"/>
-    </testng>
-    <fail if="failedTest"/>
-  </target>
-
-  <target name="test-parallel" depends="compile-tests"
-    description="run parallel tests" if="doTests">
-    <copy tofile="${build.dir}/testng.xml"
-      file="${testng.xml.template}" overwrite="true">
-      <filterset>
-        <filter token="PARALLEL" value="parallel=&quot;classes&quot;"/>
-      </filterset>
-    </copy>
-    <testng failureProperty="failedTest">
-      <classpath>
-        <pathelement location="${test-classes.dir}"/>
-        <pathelement location="${classes.dir}"/>
-        <pathelement path="${component.runtime-cp}"/>
-      </classpath>
-      <xmlfileset file="${build.dir}/testng.xml"/>
+      <sysproperty key="filename" value="${filename}"/>
       <jvmarg value="-mx${testng.memory}"/>
     </testng>
     <fail if="failedTest"/>
