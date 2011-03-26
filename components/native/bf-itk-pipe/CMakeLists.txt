@@ -130,3 +130,13 @@ install(TARGETS BioFormatsIOPlugin
   LIBRARY DESTINATION ${BioFormatsImageIO_INSTALL_ITKFACTORIES_DIR} COMPONENT RuntimeLibraries
   ARCHIVE DESTINATION lib/${PROJECT_NAME} COMPONENT Development
 )
+
+# add some tests
+add_executable(itkBioFormatsImageIOTest itkBioFormatsImageIOTest.cxx)
+target_link_libraries(itkBioFormatsImageIOTest BioFormatsIO)
+
+add_executable(itkRGBBioFormatsImageIOTest itkRGBBioFormatsImageIOTest.cxx)
+target_link_libraries(itkRGBBioFormatsImageIOTest BioFormatsIO)
+
+add_executable(itkVectorImageBioFormatsImageIOTest itkVectorImageBioFormatsImageIOTest.cxx)
+target_link_libraries(itkVectorImageBioFormatsImageIOTest BioFormatsIO)
