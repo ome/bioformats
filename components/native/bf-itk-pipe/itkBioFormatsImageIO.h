@@ -65,7 +65,7 @@ See slicer-license.txt for Slicer3's licensing information.
 #define __itkBioFormatsImageIO_h
 
 // ITK includes
-#include "itkImageIOBase.h"
+#include "itkStreamingImageIOBase.h"
 #include <sstream>
 #include <iostream>
 
@@ -82,7 +82,7 @@ namespace itk
  * \warning Note that the Bio-Format Java library is distributed under a GPLv2
  * license. For details, see http://www.loci.wisc.edu/software/bio-formats
  */
-class BioFormatsImageIO : public ImageIOBase
+class BioFormatsImageIO : public StreamingImageIOBase
 {
 public:
   typedef BioFormatsImageIO           Self;
@@ -111,6 +111,8 @@ public:
 protected:
   BioFormatsImageIO();
   ~BioFormatsImageIO();
+
+  virtual SizeType GetHeaderSize() const { return 0; }
 
 private:
 /* 

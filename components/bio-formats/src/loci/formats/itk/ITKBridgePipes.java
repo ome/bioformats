@@ -29,8 +29,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.Map;
+import java.util.HashMap;
 
-import loci.formats.ChannelSeparator;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
@@ -83,20 +86,30 @@ public class ITKBridgePipes {
   public boolean executeCommand(String commandLine)
     throws FormatException, IOException
   {
-    final int space = commandLine.indexOf(" ");
-    if (space < 0) {
+    String[] args = commandLine.split("\t");
+    if ( args.length < 2 ) {
       System.err.println("Invalid command line: " + commandLine);
       return false;
     }
 
-    final String command = commandLine.substring(0, space).trim();
-    final String filePath = commandLine.substring(space + 1).trim();
+    final String command = args[0].trim();
+    final String filePath = args[1].trim();
 
     if (command.equals("info")) {
        return readImageInfo(filePath);
     }
     else if (command.equals("read")) {
-      return read(filePath);
+      int xBegin = Integer.parseInt( args[2] );
+      int xEnd =   Integer.parseInt( args[3] ) + xBegin - 1;
+      int yBegin = Integer.parseInt( args[4] );
+      int yEnd =   Integer.parseInt( args[5] ) + yBegin - 1;
+      int zBegin = Integer.parseInt( args[6] );
+      int zEnd =   Integer.parseInt( args[7] ) + zBegin - 1;
+      int tBegin = Integer.parseInt( args[8] );
+      int tEnd =   Integer.parseInt( args[9] ) + tBegin - 1;
+      int cBegin = Integer.parseInt( args[10] );
+      int cEnd =   Integer.parseInt( args[11] ) + cBegin - 1;
+      return read(filePath, xBegin, xEnd, yBegin, yEnd, zBegin, zEnd, tBegin, tEnd, cBegin, cEnd);
     }
     else if (command.equals("canRead")) {
       return canRead(filePath);
@@ -123,11 +136,12 @@ public class ITKBridgePipes {
 
     final MetadataStore store = reader.getMetadataStore();
     IMetadata meta = (IMetadata) store;
-
+    
+    
    // now print the informations
 
    // little endian?
-    System.out.println(reader.isLittleEndian()? 1:0);
+    System.out.println( "LittleEndian(bool): " + (reader.isLittleEndian()? 1:0) );
 
     // component type
     // set ITK component type
@@ -161,29 +175,77 @@ public class ITKBridgePipes {
       default:
         itkComponentType = 0;
     }
-    System.out.println(itkComponentType);
+    System.out.println( "PixelType(enum): " + itkComponentType );
 
     // x, y, z, t, c
-    System.out.println(reader.getSizeX());
-    System.out.println(reader.getSizeY());
-    System.out.println(reader.getSizeZ());
-    System.out.println(reader.getSizeT());
-    System.out.println(reader.getEffectiveSizeC()); // reader.getSizeC()
+    System.out.println( "SizeX(int): " + reader.getSizeX() );
+    System.out.println( "SizeY(int): " + reader.getSizeY() );
+    System.out.println( "SizeZ(int): " + reader.getSizeZ() );
+    System.out.println( "SizeT(int): " + reader.getSizeT() );
+    System.out.println( "SizeC(int): " + reader.getEffectiveSizeC() ); // reader.getSizeC()
 
     // number of components
-    System.out.println(reader.getRGBChannelCount());
+    System.out.println( "RGBChannelCount(int): " + reader.getRGBChannelCount() );
 
     // spacing
-    System.out.println(meta.getPixelsPhysicalSizeX(0));
-    System.out.println(meta.getPixelsPhysicalSizeY(0));
-    System.out.println(meta.getPixelsPhysicalSizeZ(0));
-    System.out.println(meta.getPixelsTimeIncrement(0));
-    // should we give something more useful for channel spacing?
-    System.out.println(1.0);
+    System.out.println( "PixelsPhysicalSizeX(real): " + (meta.getPixelsPhysicalSizeX(0)==null? 1.0: meta.getPixelsPhysicalSizeX(0)) );
+    System.out.println( "PixelsPhysicalSizeY(real): " + (meta.getPixelsPhysicalSizeY(0)==null? 1.0: meta.getPixelsPhysicalSizeY(0)) );
+    System.out.println( "PixelsPhysicalSizeZ(real): " + (meta.getPixelsPhysicalSizeZ(0)==null? 1.0: meta.getPixelsPhysicalSizeZ(0)) );
+    System.out.println( "PixelsPhysicalSizeT(real): " + (meta.getPixelsTimeIncrement(0)==null? 1.0: meta.getPixelsTimeIncrement(0)) );
+    // should we give something more useful for this one?
+    System.out.println( "PixelsPhysicalSizeC(real): " + 1.0 );
+
+    HashMap<String, Object> metadata = new HashMap<String, Object>();
+    metadata.putAll( reader.getGlobalMetadata() );
+    metadata.putAll( reader.getSeriesMetadata() );
+    Set entries = metadata.entrySet();
+    Iterator it = entries.iterator();
+    while (it.hasNext()) {
+      Map.Entry entry = (Map.Entry) it.next();
+
+      String key = (String)entry.getKey();
+      Object value = entry.getValue();
+
+      // clean up the key name
+      key = key.replace('(', ' ');
+      key = key.replace(')', ' ');
+      key = key.replace(':', ' ');
+
+      String type;
+      if( value instanceof Double ) {
+        type = "real";
+      }
+      else if( value instanceof Long ) {
+        type = "int";
+      }
+      else if( value instanceof Integer ) {
+        type = "int";
+      }
+      else if( value instanceof Boolean ) {
+        type = "bool";
+        // don't print false or true, but 0 or 1
+        if( ((Boolean)value).booleanValue() ) {
+          value = new Integer(1);
+        }
+        else {
+          value = new Integer(0);
+        }
+      }
+      else if( value instanceof String ) {
+        // remove the line return
+        value = ((String)value).replace("\\", "\\\\").replace("\n", "\\n");
+        type = "string";
+      }
+      else {
+        // defaults to string
+        type = "string";
+      }
+      System.out.println( entry.getKey() + "("+type+"): " + value );
+    }
 
     // reader hash code
     final int hashCode = reader.hashCode();
-    System.out.println(HASH_PREFIX + hashCode);
+    System.out.println("ReaderHash(string): " + HASH_PREFIX + hashCode);
     readers.put(hashCode, reader);
 
     System.out.flush();
@@ -200,23 +262,58 @@ public class ITKBridgePipes {
    *   second time with a fresh reader object. Regardless, after reading the
    *   file, the reader closes the file handle, and invalidates its hash token.
    */
-  public boolean read(String filePath)
+  public boolean read(String filePath,
+       int xBegin, int xEnd,
+       int yBegin, int yEnd,
+       int zBegin, int zEnd,
+       int tBegin, int tEnd,
+       int cBegin, int cEnd)
     throws FormatException, IOException
   {
     final IFormatReader reader = createReader(filePath);
 
+    int rgbChannelCount = reader.getRGBChannelCount();
+    int bpp = FormatTools.getBytesPerPixel( reader.getPixelType() );
+    int xCount = reader.getSizeX();
+    int yCount = reader.getSizeY();
+    boolean isInterleaved = reader.isInterleaved();
+    boolean canDoDirect = xBegin == 0 && yBegin == 0 && xEnd == xCount-1 && yEnd == yCount-1 && rgbChannelCount == 1;
+
     BufferedOutputStream out = new BufferedOutputStream(System.out);
-    for (int c = 0; c < reader.getSizeC(); c++) {
-      for (int t = 0; t < reader.getSizeT(); t++) {
-        for (int z=0; z < reader.getSizeZ(); z++) {
-          byte[] image = reader.openBytes(reader.getIndex(z, c, t));
-          out.write(image);
+
+    for( int c=cBegin; c<=cEnd; c++ )
+      {
+      for( int t=tBegin; t<=tEnd; t++ )
+        {
+        for( int z=zBegin; z<=zEnd; z++ )
+          {
+          byte[] image = reader.openBytes( reader.getIndex(z, c, t) );
+          if( canDoDirect )
+            {
+            out.write(image);
+            }
+          else
+            {
+            for( int y=yBegin; y<=yEnd; y++ )
+              {
+              for( int x=xBegin; x<=xEnd; x++ )
+                {
+                for( int i=0; i<rgbChannelCount; i++ )
+                  {
+                  for( int b=0; b<bpp; b++ )
+                    {
+                    int index = xCount * (yCount * (rgbChannelCount * b + i) + y) + x;
+                    out.write( image[index] );
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
       }
-    }
-
     out.close();
-    System.out.flush();
+    System.out.close();
 
     // close file handle, and invalidate hash token, if any
     reader.close();
@@ -252,7 +349,7 @@ public class ITKBridgePipes {
     }
     if (reader == null) {
       // no hash code; initialize a fresh reader
-      reader = new ChannelSeparator();
+      reader = new ImageReader();
 
       reader.setMetadataFiltered(true);
       reader.setOriginalMetadataPopulated(true);
@@ -277,7 +374,32 @@ public class ITKBridgePipes {
   // -- Main method --
 
   public static void main(String[] args) throws FormatException, IOException {
-    new ITKBridgePipes().waitForInput();
+    if(args[0].equals("info")) {
+      if (!new ITKBridgePipes().readImageInfo(args[1])) System.exit(1);
+    }
+    else if(args[0].equals("read")) {
+      int xBegin = Integer.parseInt( args[2] );
+      int xEnd =   Integer.parseInt( args[3] ) + xBegin - 1;
+      int yBegin = Integer.parseInt( args[4] );
+      int yEnd =   Integer.parseInt( args[5] ) + yBegin - 1;
+      int zBegin = Integer.parseInt( args[6] );
+      int zEnd =   Integer.parseInt( args[7] ) + zBegin - 1;
+      int tBegin = Integer.parseInt( args[8] );
+      int tEnd =   Integer.parseInt( args[9] ) + tBegin - 1;
+      int cBegin = Integer.parseInt( args[10] );
+      int cEnd =   Integer.parseInt( args[11] ) + cBegin - 1;
+      if (!new ITKBridgePipes().read(args[1], xBegin, xEnd, yBegin, yEnd, zBegin, zEnd, tBegin, tEnd, cBegin, cEnd)) System.exit(1);
+    }
+    else if(args[0].equals("canRead")) {
+      if (!new ITKBridgePipes().canRead(args[1])) System.exit(1);
+    }
+    else if(args[0].equals("waitForInput")) {
+      new ITKBridgePipes().waitForInput();
+    }
+    else {
+      System.err.println("Error: unknown command: "+args[0]);
+      System.exit(1);
+    }
   }
 
 }
