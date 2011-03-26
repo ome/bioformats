@@ -68,6 +68,7 @@ See slicer-license.txt for Slicer3's licensing information.
 #include "itkBioFormatsImageIO.h"
 #include "itkIOCommon.h"
 #include "itkExceptionObject.h"
+#include "itkMetaDataObject.h"
 #include "itksys/Process.h"
 
 #include <cmath>
@@ -116,6 +117,14 @@ namespace itk {
     return res;
   }
 
+  template<typename T>
+  std::string toString( const T & Value )
+  {
+    std::ostringstream oss;
+    oss << Value;
+    return oss.str();
+  }
+
 
 
 BioFormatsImageIO::BioFormatsImageIO()
@@ -146,7 +155,7 @@ BioFormatsImageIO::BioFormatsImageIO()
 
   m_JavaCommand = "/usr/bin/java"; // todo: let the user choose the java executable
 
-  itkDebugMacro("BioFormatsImageIO base command: "+m_JavaCommand+" -cp "+classpath);
+  itkDebugMacro("BioFormatsImageIO base command: "+m_JavaCommand+" -Xmx256m -Djava.awt.headless=true -cp "+classpath);
 }
 
 BioFormatsImageIO::~BioFormatsImageIO()
@@ -159,11 +168,13 @@ bool BioFormatsImageIO::CanReadFile( const char* FileNameToRead )
 
   std::vector< std::string > args;
   args.push_back( m_JavaCommand );
+  args.push_back( "-Xmx256m" );
+  args.push_back( "-Djava.awt.headless=true" );
   args.push_back( "-cp" );
   args.push_back( m_ClassPath );
   args.push_back( "loci.formats.itk.ITKBridgePipes" );
-  args.push_back( FileNameToRead );
   args.push_back( "canRead" );
+  args.push_back( FileNameToRead );
   // convert to something usable by itksys
   char ** argv = toCArray(args);
 
@@ -278,11 +289,13 @@ void BioFormatsImageIO::ReadImageInformation()
 
   std::vector< std::string > args;
   args.push_back( m_JavaCommand );
+  args.push_back( "-Xmx256m" );
+  args.push_back( "-Djava.awt.headless=true" );
   args.push_back( "-cp" );
   args.push_back( m_ClassPath );
   args.push_back( "loci.formats.itk.ITKBridgePipes" );
-  args.push_back( m_FileName );
   args.push_back( "info" );
+  args.push_back( m_FileName );
   // convert to something usable by itksys
   char **argv = toCArray(args);
 
@@ -381,150 +394,181 @@ void BioFormatsImageIO::ReadImageInformation()
 
   this->SetNumberOfDimensions(5);
 
+  // fill the metadata dictionary
+  MetaDataDictionary & dict = this->GetMetaDataDictionary();
+
   // we have one thing per line
-  int p0 = 0;
-  int p1 = 0;
+  size_t p0 = 0;
+  size_t p1 = 0;
   std::string line;
-  // is little endian?
-  p1 = imgInfo.find("\n", p0);
-  line = imgInfo.substr( p0, p1 );
-  if( valueOfString<bool>(line) )
+  while( p0 < imgInfo.size() )
     {
-    SetByteOrderToLittleEndian(); // m_ByteOrder
-    }
-  else
-    {
-    SetByteOrderToBigEndian(); // m_ByteOrder
-    }
-  // component type
-  p0 = p1+1;
-  p1 = imgInfo.find("\n", p0);
-  line = imgInfo.substr( p0, p1 );
-  int componentType = valueOfString<int>(line);
-  if( componentType == UNKNOWNCOMPONENTTYPE)
-    {
-    itkExceptionMacro("Unknown pixel type:");
-    }
-  SetComponentType( (itk::ImageIOBase::IOComponentType)componentType );
-  // x, y, z, t, c
-  for( int i=0; i<5; i++ )
-    {
-    p0 = p1+1;
+    // get the current line
     p1 = imgInfo.find("\n", p0);
-    line = imgInfo.substr( p0, p1 );
-    this->SetDimensions( i, valueOfString<int>(line) );
-    }
-  // number of components
-  p0 = p1+1;
-  p1 = imgInfo.find("\n", p0);
-  line = imgInfo.substr( p0, p1 );
-  int nbOfComponents = valueOfString<int>(line);
-  if( nbOfComponents == 1 )
-    {
-    SetPixelType( SCALAR );
-    }
-  else if( nbOfComponents == 3 )
-    {
-    SetPixelType( RGB );
-    }
-  else
-    {
-    SetPixelType( VECTOR );
-    }
-  SetNumberOfComponents( nbOfComponents ); // m_NumberOfComponents
-  // spacing
-  for( int i=0; i<5; i++ )
-    {
-    p0 = p1+1;
-    p1 = imgInfo.find("\n", p0);
-    line = imgInfo.substr( p0, p1 );
-    double s = valueOfString<double>(line);
-    if( s == 0.0 )
+    line = imgInfo.substr( p0, p1-p0 );
+
+    // get the 3 parts of the line
+    int sep1 = line.find("(");
+    int sep2 = line.find("):");
+    std::string key = line.substr( 0, sep1 );
+    std::string type = line.substr( sep1+1, sep2-sep1-1 );
+    std::string value = line.substr( sep2+3, line.size()-sep2-1 );
+    // std::cout << "===" << name << "=" << type << "=" << value << "===" << std::endl;
+
+    // store the values in the dictionary
+    if( dict.HasKey(key) )
       {
-      s = 1.0;
+      itkDebugMacro("BioFormatsImageIO::ReadImageInformation metadata " << key << " = " << value << " ignored because the key is already defined.");
       }
-    this->SetSpacing( i, s );
+    else
+      {
+      if( type == "string" )
+        {
+        std::string tmp;
+        // we have to unescape \\ and \n
+        size_t lp0 = 0;
+        size_t lp1 = 0;
+        while( lp0 < value.size() )
+          {
+          lp1 = value.find( "\\", lp0 );
+          if( lp1 == std::string::npos )
+            {
+            tmp += value.substr( lp0, value.size()-lp0 );
+            lp0 = value.size();
+            }
+          else
+            {
+            tmp += value.substr( lp0, lp1-lp0 );
+            if( lp1 < value.size() - 1 )
+              {
+              if( value[lp1+1] == '\\' )
+                {
+                tmp += '\\';
+                }
+              else if( value[lp1+1] == 'n' )
+                {
+                tmp += '\n';
+                }
+              }
+            lp0 = lp1 + 2;
+            }
+          }
+        EncapsulateMetaData< std::string >( dict, key, tmp );
+        }
+      else if( type == "bool" )
+        {
+        EncapsulateMetaData< bool >( dict, key, valueOfString<bool>(value) );
+        }
+      else if( type == "int" )
+        {
+        EncapsulateMetaData< long >( dict, key, valueOfString<long>(value) );
+        }
+      else if( type == "real" )
+        {
+        EncapsulateMetaData< double >( dict, key, valueOfString<double>(value) );
+        }
+      else if( type == "enum" )
+        {
+//         itkDebugMacro("BioFormatsImageIO::ReadImageInformation adding enum metadata " << key << " = " << value);
+        EncapsulateMetaData< long >( dict, key, valueOfString<long>(value) );
+        }
+      }
+
+    // go to the next line
+    p0 = p1+1;
     }
+
+  // set the values needed by the reader
+  std::string s;
+  bool b;
+  long i;
+  double r;
+
+  // is little endian?
+  ExposeMetaData<bool>( dict, "LittleEndian", b );
+  if( b )
+    {
+    SetByteOrderToLittleEndian();
+    }
+  else
+    {
+    SetByteOrderToBigEndian();
+    }
+
+  // component type
+  itkAssertOrThrowMacro( dict.HasKey("PixelType"), "PixelType is not in the metadata dictionary!");
+  ExposeMetaData<long>( dict, "PixelType", i );
+  if( i == UNKNOWNCOMPONENTTYPE)
+    {
+    itkExceptionMacro("Unknown pixel type: "<< i);
+    }
+  SetComponentType( (itk::ImageIOBase::IOComponentType)i );
+
+  // x, y, z, t, c
+  ExposeMetaData<long>( dict, "SizeX", i );
+  this->SetDimensions( 0, i );
+  ExposeMetaData<long>( dict, "SizeY", i );
+  this->SetDimensions( 1, i );
+  ExposeMetaData<long>( dict, "SizeZ", i );
+  this->SetDimensions( 2, i );
+  ExposeMetaData<long>( dict, "SizeT", i );
+  this->SetDimensions( 3, i );
+  ExposeMetaData<long>( dict, "SizeC", i );
+  this->SetDimensions( 4, i );
+
+  // number of components
+  ExposeMetaData<long>( dict, "RGBChannelCount", i );
+  if( i == 1 )
+    {
+    this->SetPixelType( SCALAR );
+    }
+  else if( i == 3 )
+    {
+    this->SetPixelType( RGB );
+    }
+  else
+    {
+    this->SetPixelType( VECTOR );
+    }
+  this->SetNumberOfComponents( i );
+
+  // spacing
+  ExposeMetaData<double>( dict, "PixelsPhysicalSizeX", r );
+  this->SetSpacing( 0, r );
+  ExposeMetaData<double>( dict, "PixelsPhysicalSizeY", r );
+  this->SetSpacing( 1, r );
+  ExposeMetaData<double>( dict, "PixelsPhysicalSizeZ", r );
+  this->SetSpacing( 2, r );
+  ExposeMetaData<double>( dict, "PixelsPhysicalSizeT", r );
+  this->SetSpacing( 3, r );
+  ExposeMetaData<double>( dict, "PixelsPhysicalSizeC", r );
+  this->SetSpacing( 4, r );
+
 }
 
 void BioFormatsImageIO::Read(void* pData)
 {
   itkDebugMacro("BioFormatsImageIO::Read");
-  /* currently unused - potential multidimension image with reordering implementation
-  ImageIORegion region = GetIORegion();
-  int regionDim = region.GetImageDimension();
-  int xStart = 0, xCount = 1;
-  int yStart = 0, yCount = 1;
-  int zStart = 0, zCount = 1;
-  int tStart = 0, tCount = 1;
-  int cStart = 0, cCount = 1;
-
-  int xIndex = 0, yIndex = 1, zIndex = 2, tIndex = 3, cIndex = 4;
-
-  for (int dim = 0; dim < regionDim; dim++)
-  {
-    int index = region.GetIndex(dim);
-    int size = region.GetSize(dim);
-    if (dim == xIndex)
-    {
-      xStart = index;
-      xCount = size;
-    }
-    else if (dim == yIndex)
-    {
-      yStart = index;
-      yCount = size;
-    }
-    else if (dim == zIndex)
-    {
-      zStart = index;
-      zCount = size;
-    }
-    else if (dim == tIndex)
-    {
-      tStart = index;
-      tCount = size;
-    }
-    else if (dim == cIndex)
-    {
-      cStart = index;
-      cCount = size;
-    }
-  }
-
-  std::stringstream out;
-  */
+  const ImageIORegion & region = this->GetIORegion();
 
   std::vector< std::string > args;
   args.push_back( m_JavaCommand );
   args.push_back( "-cp" );
   args.push_back( m_ClassPath );
-  args.push_back( "loci.formats.itk.ITKBridgePipes" );
+  args.push_back( "ITKRead" );
   args.push_back( m_FileName );
-  args.push_back( "read" );
-  /*
-  out << xStart;
-  args.push_back( out.str() );
-  out << xCount;
-  args.push_back( out.str() );
-  out << yStart;
-  args.push_back( out.str() );
-  out << yCount;
-  args.push_back( out.str() );
-  out << zStart;
-  args.push_back( out.str() );
-  out << zCount;
-  args.push_back( out.str() );
-  out << tStart;
-  args.push_back( out.str() );
-  out << tCount;
-  args.push_back( out.str() );
-  out << cStart;
-  args.push_back( out.str() );
-  out << cCount;
-  args.push_back( out.str() );
-  */
-  // convert t  something usable by itksys
+  for( int d=0; d<region.GetImageDimension(); d++ )
+    {
+    args.push_back( toString(region.GetIndex(d)) );
+    args.push_back( toString(region.GetSize(d)) );
+    }
+  for( int d=region.GetImageDimension(); d<5; d++ )
+    {
+    args.push_back( "0" );
+    args.push_back( "1" );
+    }
+
+  // convert to something usable by itksys
   char **argv = toCArray(args);
 
   char * data = (char *)pData;
@@ -543,6 +587,10 @@ void BioFormatsImageIO::Read(void* pData)
     {
     if( retcode == itksysProcess_Pipe_STDOUT )
       {
+//      if( pos + pipedatalength > region.GetNumberOfPixels() )
+//        {
+//        itkExceptionMacro(<<"BioFormatsImageIO: internal error: ITKRead sent more data (" << pos + pipedatalength << ") than expected (" << region.GetNumberOfPixels() << ")" << std::endl );
+//        }
       // std::cout << "pos: " << pos << "  reading: " << pipedatalength << std::endl;
       for( long i=0; i<pipedatalength; i++, pos++ )
         {
@@ -626,7 +674,6 @@ void BioFormatsImageIO::Read(void* pData)
       break;
       }
     }
-
 }
 
 bool BioFormatsImageIO::CanWriteFile(const char* name)
