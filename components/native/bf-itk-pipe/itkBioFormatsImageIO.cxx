@@ -553,9 +553,12 @@ void BioFormatsImageIO::Read(void* pData)
 
   std::vector< std::string > args;
   args.push_back( m_JavaCommand );
+  args.push_back( "-Xmx256m" );
+  args.push_back( "-Djava.awt.headless=true" );
   args.push_back( "-cp" );
   args.push_back( m_ClassPath );
-  args.push_back( "ITKRead" );
+  args.push_back( "loci.formats.itk.ITKBridgePipes" );
+  args.push_back( "read" );
   args.push_back( m_FileName );
   for( int d=0; d<region.GetImageDimension(); d++ )
     {
