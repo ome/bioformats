@@ -60,8 +60,8 @@ public class ITKBridgePipes {
 
   private static final String HASH_PREFIX = "hash:";
 
-  private Hashtable<Integer, IFormatReader> readers =
-    new Hashtable<Integer, IFormatReader>();
+  private Hashtable<String, IFormatReader> readers =
+    new Hashtable<String, IFormatReader>();
 
   /** Enters an input loop, waiting for commands, until EOF is reached. */
   public void waitForInput() throws FormatException, IOException {
@@ -86,19 +86,20 @@ public class ITKBridgePipes {
   public boolean executeCommand(String commandLine)
     throws FormatException, IOException
   {
+    System.err.println(commandLine);
     String[] args = commandLine.split("\t");
-    if ( args.length < 2 ) {
-      System.err.println("Invalid command line: " + commandLine);
-      return false;
-    }
 
     final String command = args[0].trim();
-    final String filePath = args[1].trim();
 
     if (command.equals("info")) {
-       return readImageInfo(filePath);
+       final String filePath = args[1].trim();
+       boolean res = readImageInfo(filePath);
+       // add an extra \n to mark the end of the output
+       System.out.println();
+       return res;
     }
     else if (command.equals("read")) {
+      final String filePath = args[1].trim();
       int xBegin = Integer.parseInt( args[2] );
       int xEnd =   Integer.parseInt( args[3] ) + xBegin - 1;
       int yBegin = Integer.parseInt( args[4] );
@@ -112,7 +113,17 @@ public class ITKBridgePipes {
       return read(filePath, xBegin, xEnd, yBegin, yEnd, zBegin, zEnd, tBegin, tEnd, cBegin, cEnd);
     }
     else if (command.equals("canRead")) {
-      return canRead(filePath);
+      final String filePath = args[1].trim();
+      boolean res = canRead(filePath);
+      // add an extra \n to mark the end of the output
+      System.out.println();
+      return res;
+    }
+    else if (command.equals("exit")) {
+      boolean res = exit();
+      // add an extra \n to mark the end of the output
+      System.out.println();
+      return res;
     }
     else {
       System.err.println("Unknown command: " + command);
@@ -242,13 +253,9 @@ public class ITKBridgePipes {
       }
       System.out.println( entry.getKey() + "("+type+"): " + value );
     }
-
-    // reader hash code
-    final int hashCode = reader.hashCode();
-    System.out.println("ReaderHash(string): " + HASH_PREFIX + hashCode);
-    readers.put(hashCode, reader);
-
     System.out.flush();
+
+    readers.put(filePath, reader);
     return true;
   }
 
@@ -312,13 +319,7 @@ public class ITKBridgePipes {
           }
         }
       }
-    out.close();
-    System.out.close();
-
-    // close file handle, and invalidate hash token, if any
-    reader.close();
-    readers.remove(reader.hashCode());
-
+    out.flush();
     return true;
   }
 
@@ -336,18 +337,9 @@ public class ITKBridgePipes {
   private IFormatReader createReader(final String filePath)
     throws FormatException, IOException
   {
-    IFormatReader reader = null;
-    if (filePath.startsWith(HASH_PREFIX)) {
-      // file path is actually a reader hash code; reuse it
-      try {
-        final int hashCode = Integer.parseInt(filePath.substring(5));
-        reader = readers.get(hashCode);
-      }
-      catch (NumberFormatException exc) {
-        // invalid hash code; ignore and continue
-      }
-    }
+    IFormatReader reader = readers.get(filePath);
     if (reader == null) {
+      System.err.println("Creating new reader for "+filePath);
       // no hash code; initialize a fresh reader
       reader = new ImageReader();
 
@@ -369,6 +361,14 @@ public class ITKBridgePipes {
     }
 
     return reader;
+  }
+
+  public boolean exit()
+    throws FormatException, IOException
+  {
+    // TODO: close the readers
+    System.exit(0);
+    return true;
   }
 
   // -- Main method --

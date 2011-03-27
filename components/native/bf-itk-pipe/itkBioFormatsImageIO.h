@@ -68,6 +68,7 @@ See slicer-license.txt for Slicer3's licensing information.
 #include "itkStreamingImageIOBase.h"
 #include <sstream>
 #include <iostream>
+#include "itksys/Process.h"
 
 namespace itk
 {
@@ -115,19 +116,6 @@ protected:
   virtual SizeType GetHeaderSize() const { return 0; }
 
 private:
-/* 
-  template <typename ReturnType>
-  ReturnType valueOfString( const std::string &s )
-  {
-    std::stringstream ss;
-    ss << s;
-    ReturnType res;
-    ss >> res;
-    return res;
-  }
-*/
- std::string m_JavaCommand;
-  std::string m_ClassPath;
   char ** toCArray( std::vector< std::string > & args )
   {
     char **argv = new char *[args.size() + 1];
@@ -139,24 +127,12 @@ private:
     argv[args.size()] = NULL;
     return argv;
   }
-
+  
+  std::vector< std::string >   m_Args;
+  char **                      m_Argv;
+  itksysProcess_Pipe_Handle    m_Pipe[2];
+  itksysProcess *              m_Process;
 };
-/*
-  template<>
-  bool BioFormatsImageIO::valueOfString<bool>( const std::string &s )
-  {
-    std::stringstream ss;
-    ss << s;
-    bool res = false;
-    ss >> res;
-    if( ss.fail() )
-    {
-      ss.clear();
-      ss >> std::boolalpha >> res;
-    }
-    return res;
-  }
-*/
 
 }
 
