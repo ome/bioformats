@@ -69,7 +69,6 @@ See slicer-license.txt for Slicer3's licensing information.
 #include "itkIOCommon.h"
 #include "itkExceptionObject.h"
 #include "itkMetaDataObject.h"
-#include "itksys/Process.h"
 
 #include <cmath>
 
@@ -151,112 +150,66 @@ BioFormatsImageIO::BioFormatsImageIO()
     }
   std::string classpath = dir+"loci_tools.jar";
   classpath += PATHSTEP+dir;
-  m_ClassPath = classpath;
 
-  m_JavaCommand = "/usr/bin/java"; // todo: let the user choose the java executable
+  std::string javaCommand = "/usr/bin/java"; // todo: let the user choose the java executable
 
-  itkDebugMacro("BioFormatsImageIO base command: "+m_JavaCommand+" -Xmx256m -Djava.awt.headless=true -cp "+classpath);
-}
+  itkDebugMacro("BioFormatsImageIO base command: "+javaCommand+" -Xmx256m -Djava.awt.headless=true -cp "+classpath);
 
-BioFormatsImageIO::~BioFormatsImageIO()
-{
-}
-
-bool BioFormatsImageIO::CanReadFile( const char* FileNameToRead )
-{
-  itkDebugMacro( "BioFormatsImageIO::CanReadFile: FileNameToRead = " << FileNameToRead);
-
-  std::vector< std::string > args;
-  args.push_back( m_JavaCommand );
-  args.push_back( "-Xmx256m" );
-  args.push_back( "-Djava.awt.headless=true" );
-  args.push_back( "-cp" );
-  args.push_back( m_ClassPath );
-  args.push_back( "loci.formats.itk.ITKBridgePipes" );
-  args.push_back( "canRead" );
-  args.push_back( FileNameToRead );
+  m_Args.push_back( javaCommand );
+  m_Args.push_back( "-Xmx256m" );
+  m_Args.push_back( "-Djava.awt.headless=true" );
+  m_Args.push_back( "-cp" );
+  m_Args.push_back( classpath );
+  m_Args.push_back( "loci.formats.itk.ITKBridgePipes" );
+  m_Args.push_back( "waitForInput" );
   // convert to something usable by itksys
-  char ** argv = toCArray(args);
+  m_Argv = toCArray( m_Args );
 
-  std::string imgInfo;
-  std::string errorMessage;
-  char * pipedata;
-  int pipedatalength = 1000;
+  pipe( m_Pipe );
+  
+  m_Process = itksysProcess_New();
+  itksysProcess_SetCommand( m_Process, m_Argv );
+  itksysProcess_SetPipeNative( m_Process, itksysProcess_Pipe_STDIN, m_Pipe );
+  itksysProcess_Execute( m_Process );
 
-  itksysProcess *process = itksysProcess_New();
-  itksysProcess_SetCommand(process, argv);
-  itksysProcess_Execute(process);
-
-  int retcode = -1;
-  while( retcode = itksysProcess_WaitForData(process, &pipedata, &pipedatalength, NULL) )
-    {
-    // itkDebugMacro( "BioFormatsImageIO::ReadImageInformation: reading " << pipedatalength << " bytes.");
-    if( retcode == itksysProcess_Pipe_STDOUT )
-      {
-      // append that data to our img information to parse it much easily later
-      imgInfo += std::string( pipedata, pipedatalength );
-      }
-    else
-      {
-      errorMessage += std::string( pipedata, pipedatalength );
-      }
-    }
-
-  itksysProcess_WaitForExit(process, NULL);
-
-  // we don't need that anymore
-  delete[] argv;
-
-  int state = itksysProcess_GetState(process);
+  int state = itksysProcess_GetState( m_Process );
   switch( state )
     {
     case itksysProcess_State_Exited:
       {
-      int retCode = itksysProcess_GetExitValue(process);
-      itksysProcess_Delete(process);
-      itkDebugMacro("BioFormatsImageIO::ReadImageInformation: retCode = " << retCode);
-      if ( retCode != 0 )
-        {
-        itkExceptionMacro(<<"BioFormatsImageIO: ITKReadImageInformation exited with return value: " << retCode << std::endl
-                          << errorMessage);
-        }
+      int retCode = itksysProcess_GetExitValue( m_Process );
+      itkExceptionMacro(<<"BioFormatsImageIO: ITKReadImageInformation exited with return value: " << retCode);
       break;
       }
     case itksysProcess_State_Error:
       {
-      std::string msg = itksysProcess_GetErrorString(process);
-      itksysProcess_Delete(process);
+      std::string msg = itksysProcess_GetErrorString( m_Process );
       itkExceptionMacro(<<"BioFormatsImageIO: ITKReadImageInformation error:" << std::endl << msg);
       break;
       }
     case itksysProcess_State_Exception:
       {
-      std::string msg = itksysProcess_GetExceptionString(process);
-      itksysProcess_Delete(process);
+      std::string msg = itksysProcess_GetExceptionString( m_Process );
       itkExceptionMacro(<<"BioFormatsImageIO: ITKReadImageInformation exception:" << std::endl << msg);
       break;
       }
     case itksysProcess_State_Executing:
       {
-      itksysProcess_Delete(process);
-      itkExceptionMacro(<<"BioFormatsImageIO: internal error: ITKReadImageInformation is still running.");
+      // this is the expected state
       break;
       }
     case itksysProcess_State_Expired:
       {
-      itksysProcess_Delete(process);
       itkExceptionMacro(<<"BioFormatsImageIO: internal error: ITKReadImageInformation expired.");
       break;
       }
     case itksysProcess_State_Killed:
       {
-      itksysProcess_Delete(process);
       itkExceptionMacro(<<"BioFormatsImageIO: internal error: ITKReadImageInformation killed.");
       break;
       }
     case itksysProcess_State_Disowned:
       {
-      itksysProcess_Delete(process);
       itkExceptionMacro(<<"BioFormatsImageIO: internal error: ITKReadImageInformation disowned.");
       break;
       }
@@ -266,9 +219,65 @@ bool BioFormatsImageIO::CanReadFile( const char* FileNameToRead )
 //       }
     default:
       {
-      itksysProcess_Delete(process);
       itkExceptionMacro(<<"BioFormatsImageIO: internal error: ITKReadImageInformation is in unknown state.");
       break;
+      }
+    }
+}
+
+BioFormatsImageIO::~BioFormatsImageIO()
+{
+  // send the command to the java process
+  std::string command = "exit\n";
+  itkDebugMacro("BioFormatsImageIO::~BioFormatsImageIO command: " << command);
+  write( m_Pipe[1], command.c_str(), command.size() );
+  // fflush( m_Pipe[1] );
+  itksysProcess_WaitForExit( m_Process, NULL );
+
+  itksysProcess_Delete( m_Process );
+  delete m_Argv;
+  close( m_Pipe[1] );
+}
+
+bool BioFormatsImageIO::CanReadFile( const char* FileNameToRead )
+{
+  itkDebugMacro( "BioFormatsImageIO::CanReadFile: FileNameToRead = " << FileNameToRead);
+
+  // send the command to the java process
+  std::string command = "canRead\t";
+  command += FileNameToRead;
+  command += "\n";
+  itkDebugMacro("BioFormatsImageIO::CanRead command: " << command);
+  write( m_Pipe[1], command.c_str(), command.size() );
+  // fflush( m_Pipe[1] );
+
+  // and read its reply
+  std::string imgInfo;
+  std::string errorMessage;
+  char * pipedata;
+  int pipedatalength = 1000;
+
+  bool keepReading = true;
+  while( keepReading )
+    {
+    int retcode = itksysProcess_WaitForData( m_Process, &pipedata, &pipedatalength, NULL );
+    // itkDebugMacro( "BioFormatsImageIO::ReadImageInformation: reading " << pipedatalength << " bytes.");
+    if( retcode == itksysProcess_Pipe_STDOUT )
+      {
+      imgInfo += std::string( pipedata, pipedatalength );
+      // if the two last char are "\n\n", then we're done
+      if( imgInfo.size() >= 2 && imgInfo.substr( imgInfo.size()-2, 2 ) == "\n\n" )
+        {
+        keepReading = false;
+        }
+      }
+    else if( retcode == itksysProcess_Pipe_STDERR )
+      {
+      errorMessage += std::string( pipedata, pipedatalength );
+      }
+    else
+      {
+      itkExceptionMacro(<<"BioFormatsImageIO: ITKBridgePipe exited abnormally. " << errorMessage);
       }
     }
 
@@ -287,108 +296,40 @@ void BioFormatsImageIO::ReadImageInformation()
 {
   itkDebugMacro( "BioFormatsImageIO::ReadImageInformation: m_FileName = " << m_FileName);
 
-  std::vector< std::string > args;
-  args.push_back( m_JavaCommand );
-  args.push_back( "-Xmx256m" );
-  args.push_back( "-Djava.awt.headless=true" );
-  args.push_back( "-cp" );
-  args.push_back( m_ClassPath );
-  args.push_back( "loci.formats.itk.ITKBridgePipes" );
-  args.push_back( "info" );
-  args.push_back( m_FileName );
-  // convert to something usable by itksys
-  char **argv = toCArray(args);
+  // send the command to the java process
+  std::string command = "info\t";
+  command += m_FileName;
+  command += "\n";
+  itkDebugMacro("BioFormatsImageIO::ReadImageInformation command: " << command);
+  write( m_Pipe[1], command.c_str(), command.size() );
+  // fflush( m_Pipe[1] );
 
   std::string imgInfo;
   std::string errorMessage;
   char * pipedata;
   int pipedatalength = 1000;
 
-  itksysProcess *process = itksysProcess_New();
-  itksysProcess_SetCommand(process, argv);
-  itksysProcess_Execute(process);
-
-  while( int retcode = itksysProcess_WaitForData(process, &pipedata, &pipedatalength, NULL) )
+  bool keepReading = true;
+  while( keepReading )
     {
+    int retcode = itksysProcess_WaitForData( m_Process, &pipedata, &pipedatalength, NULL );
     // itkDebugMacro( "BioFormatsImageIO::ReadImageInformation: reading " << pipedatalength << " bytes.");
     if( retcode == itksysProcess_Pipe_STDOUT )
       {
-      // append that data to our img information to parse it much easily later
       imgInfo += std::string( pipedata, pipedatalength );
+      // if the two last char are "\n\n", then we're done
+      if( imgInfo.size() >= 2 && imgInfo.substr( imgInfo.size()-2, 2 ) == "\n\n" )
+        {
+        keepReading = false;
+        }
       }
-    else
+    else if( retcode == itksysProcess_Pipe_STDERR )
       {
       errorMessage += std::string( pipedata, pipedatalength );
       }
-    }
-
-  itksysProcess_WaitForExit(process, NULL);
-
-  // we don't need that anymore
-  delete[] argv;
-
-  int state = itksysProcess_GetState(process);
-  switch( state )
-    {
-    case itksysProcess_State_Exited:
+    else
       {
-      int retCode = itksysProcess_GetExitValue(process);
-      itksysProcess_Delete(process);
-      itkDebugMacro("BioFormatsImageIO::ReadImageInformation: retCode = " << retCode);
-      if ( retCode != 0 )
-        {
-        itkExceptionMacro(<<"BioFormatsImageIO: ITKReadImageInformation exited with return value: " << retCode << std::endl
-                          << errorMessage);
-        }
-      break;
-      }
-    case itksysProcess_State_Error:
-      {
-      std::string msg = itksysProcess_GetErrorString(process);
-      itksysProcess_Delete(process);
-      itkExceptionMacro(<<"BioFormatsImageIO: ITKReadImageInformation error:" << std::endl << msg);
-      break;
-      }
-    case itksysProcess_State_Exception:
-      {
-      std::string msg = itksysProcess_GetExceptionString(process);
-      itksysProcess_Delete(process);
-      itkExceptionMacro(<<"BioFormatsImageIO: ITKReadImageInformation exception:" << std::endl << msg);
-      break;
-      }
-    case itksysProcess_State_Executing:
-      {
-      itksysProcess_Delete(process);
-      itkExceptionMacro(<<"BioFormatsImageIO: internal error: ITKReadImageInformation is still running.");
-      break;
-      }
-    case itksysProcess_State_Expired:
-      {
-      itksysProcess_Delete(process);
-      itkExceptionMacro(<<"BioFormatsImageIO: internal error: ITKReadImageInformation expired.");
-      break;
-      }
-    case itksysProcess_State_Killed:
-      {
-      itksysProcess_Delete(process);
-      itkExceptionMacro(<<"BioFormatsImageIO: internal error: ITKReadImageInformation killed.");
-      break;
-      }
-    case itksysProcess_State_Disowned:
-      {
-      itksysProcess_Delete(process);
-      itkExceptionMacro(<<"BioFormatsImageIO: internal error: ITKReadImageInformation disowned.");
-      break;
-      }
-//     case kwsysProcess_State_Starting:
-//       {
-//       break;
-//       }
-    default:
-      {
-      itksysProcess_Delete(process);
-      itkExceptionMacro(<<"BioFormatsImageIO: internal error: ITKReadImageInformation is in unknown state.");
-      break;
+      itkExceptionMacro(<<"BioFormatsImageIO: ITKBridgePipe exited abnormally. " << errorMessage);
       }
     }
 
@@ -406,6 +347,14 @@ void BioFormatsImageIO::ReadImageInformation()
     // get the current line
     p1 = imgInfo.find("\n", p0);
     line = imgInfo.substr( p0, p1-p0 );
+
+    // ignore the empty lines
+    if( line == "" )
+      {
+      // go to the next line
+      p0 = p1+1;
+      continue;
+      }
 
     // get the 3 parts of the line
     int sep1 = line.find("(");
@@ -551,49 +500,39 @@ void BioFormatsImageIO::Read(void* pData)
   itkDebugMacro("BioFormatsImageIO::Read");
   const ImageIORegion & region = this->GetIORegion();
 
-  std::vector< std::string > args;
-  args.push_back( m_JavaCommand );
-  args.push_back( "-Xmx256m" );
-  args.push_back( "-Djava.awt.headless=true" );
-  args.push_back( "-cp" );
-  args.push_back( m_ClassPath );
-  args.push_back( "loci.formats.itk.ITKBridgePipes" );
-  args.push_back( "read" );
-  args.push_back( m_FileName );
-  for( int d=0; d<region.GetImageDimension(); d++ )
+  // send the command to the java process
+  std::string command = "read\t";
+  command += m_FileName;
+  for( unsigned int d=0; d<region.GetImageDimension(); d++ )
     {
-    args.push_back( toString(region.GetIndex(d)) );
-    args.push_back( toString(region.GetSize(d)) );
+    command += "\t";
+    command += toString(region.GetIndex(d));
+    command += "\t";
+    command += toString(region.GetSize(d));
     }
   for( int d=region.GetImageDimension(); d<5; d++ )
     {
-    args.push_back( "0" );
-    args.push_back( "1" );
+    command += "\t0\t1";
     }
+  command += "\n";
+  itkDebugMacro("BioFormatsImageIO::Read command: " << command);
+  write( m_Pipe[1], command.c_str(), command.size() );
+  // fflush( m_Pipe[1] );
 
-  // convert to something usable by itksys
-  char **argv = toCArray(args);
-
+  // and read the image
   char * data = (char *)pData;
-  long pos = 0;
+  size_t pos = 0;
   std::string errorMessage;
   char * pipedata;
   int pipedatalength;
 
-  itksysProcess *process = itksysProcess_New();
-  itksysProcess_SetPipeShared(process, itksysProcess_Pipe_STDIN, 0);
-//  itksysProcess_SetPipeShared(process, itksysProcess_Pipe_STDERR, 1);
-  itksysProcess_SetCommand(process, argv);
-  itksysProcess_Execute(process);
-
-  while( int retcode = itksysProcess_WaitForData(process, &pipedata, &pipedatalength, NULL) )
+  size_t byteCount = this->GetPixelSize() * region.GetNumberOfPixels();
+  while( pos < byteCount )
     {
+    int retcode = itksysProcess_WaitForData( m_Process, &pipedata, &pipedatalength, NULL );
+    // itkDebugMacro( "BioFormatsImageIO::ReadImageInformation: reading " << pipedatalength << " bytes.");
     if( retcode == itksysProcess_Pipe_STDOUT )
       {
-//      if( pos + pipedatalength > region.GetNumberOfPixels() )
-//        {
-//        itkExceptionMacro(<<"BioFormatsImageIO: internal error: ITKRead sent more data (" << pos + pipedatalength << ") than expected (" << region.GetNumberOfPixels() << ")" << std::endl );
-//        }
       // std::cout << "pos: " << pos << "  reading: " << pipedatalength << std::endl;
       for( long i=0; i<pipedatalength; i++, pos++ )
         {
@@ -602,79 +541,11 @@ void BioFormatsImageIO::Read(void* pData)
       }
     else if( retcode == itksysProcess_Pipe_STDERR )
       {
-      std::string error = std::string( pipedata, pipedatalength );
-      itkDebugMacro("BioFormatsImageIO::Read error = " << error);
-      errorMessage += error;
+      errorMessage += std::string( pipedata, pipedatalength );
       }
-    }
-
-  itksysProcess_WaitForExit(process, NULL);
-
-  // we don't need that anymore
-  delete[] argv;
-
-  int state = itksysProcess_GetState(process);
-  switch( state )
-    {
-    case itksysProcess_State_Exited:
+    else
       {
-      int retCode = itksysProcess_GetExitValue(process);
-      itksysProcess_Delete(process);
-      itkDebugMacro("BioFormatsImageIO::Read: retCode = " << retCode);
-      if ( retCode != 0 )
-        {
-        itkExceptionMacro(<<"BioFormatsImageIO: ITKRead exited with return value: " << retCode << std::endl
-                          << errorMessage);
-        }
-      break;
-      }
-    case itksysProcess_State_Error:
-      {
-      std::string msg = itksysProcess_GetErrorString(process);
-      itksysProcess_Delete(process);
-      itkExceptionMacro(<<"BioFormatsImageIO: ITKRead error:" << std::endl << msg);
-      break;
-      }
-    case itksysProcess_State_Exception:
-      {
-      std::string msg = itksysProcess_GetExceptionString(process);
-      itksysProcess_Delete(process);
-      itkExceptionMacro(<<"BioFormatsImageIO: ITKRead exception:" << std::endl << msg);
-      break;
-      }
-    case itksysProcess_State_Executing:
-      {
-      itksysProcess_Delete(process);
-      itkExceptionMacro(<<"BioFormatsImageIO: internal error: ITKRead is still running.");
-      break;
-      }
-    case itksysProcess_State_Expired:
-      {
-      itksysProcess_Delete(process);
-      itkExceptionMacro(<<"BioFormatsImageIO: internal error: ITKRead expired.");
-      break;
-      }
-    case itksysProcess_State_Killed:
-      {
-      itksysProcess_Delete(process);
-      itkExceptionMacro(<<"BioFormatsImageIO: internal error: ITKRead killed.");
-      break;
-      }
-    case itksysProcess_State_Disowned:
-      {
-      itksysProcess_Delete(process);
-      itkExceptionMacro(<<"BioFormatsImageIO: internal error: ITKRead disowned.");
-      break;
-      }
-//     case kwsysProcess_State_Starting:
-//       {
-//       break;
-//       }
-    default:
-      {
-      itksysProcess_Delete(process);
-      itkExceptionMacro(<<"BioFormatsImageIO: internal error: ITKRead is in unknown state.");
-      break;
+      itkExceptionMacro(<<"BioFormatsImageIO: ITKBridgePipe exited abnormally. " << errorMessage);
       }
     }
 }
