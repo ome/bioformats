@@ -1409,7 +1409,10 @@ public class LeicaReader extends FormatReader {
         physicalSizes[series][1] = Double.parseDouble(data);
       }
       else if (contentID.equals("dblStepSize")) {
-        physicalSizes[series][2] = Double.parseDouble(data);
+        double size = Double.parseDouble(data);
+        if (size > 0) {
+          physicalSizes[series][2] = size;
+        }
       }
       else if (contentID.equals("dblPinhole")) {
         // pinhole is stored in meters
