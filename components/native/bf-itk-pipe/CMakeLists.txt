@@ -43,8 +43,6 @@
 
 project(BioFormatsImageIO)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -framework JavaVM")
-
 if(WIN32)
   cmake_minimum_required(VERSION 2.8)
 else(WIN32)
@@ -58,26 +56,10 @@ endif(COMMAND cmake_policy)
 find_package(ITK REQUIRED)
 include(${ITK_USE_FILE})
 
-if(NOT DEFINED BUILD_SHARED_LIBS)
- option(BUILD_SHARED_LIBS "Build with shared libraries." ON)
-endif(NOT DEFINED BUILD_SHARED_LIBS)
-
-# --------------------------------------------------------------------------
-# Include dirs
-
-find_package(JNI REQUIRED)
-
 set(include_dirs
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
-  ${JAVA_INCLUDE_PATH} ${JAVA_INCLUDE_PATH2}
 )
-
-#if(EXISTS "${ITK_DIR}/CMakeCache.txt")
-#  set(include_dirs ${include_dirs} "${ITK_DIR}/Utilities/zlib")
-#else(EXISTS "${ITK_DIR}/CMakeCache.txt")
-#endif(EXISTS "${ITK_DIR}/CMakeCache.txt")
-
 include_directories(${include_dirs})
 
 configure_file(
@@ -108,8 +90,9 @@ add_library(${lib_name}
 )
 
 target_link_libraries(${lib_name}
+#  ${ITK_LIBRARIES}
   ITKIO
-  ${JAVA_JVM_LIBRARY}
+  ITKIOReview
 )
 
 install(TARGETS ${lib_name}
@@ -128,7 +111,7 @@ if(NOT DEFINED BioFormatsImageIO_INSTALL_ITKFACTORIES_DIR)
   set(BioFormatsImageIO_INSTALL_ITKFACTORIES_DIR lib/)
 endif(NOT DEFINED BioFormatsImageIO_INSTALL_ITKFACTORIES_DIR)
 
-add_library(BioFormatsIOPlugin SHARED
+add_library(BioFormatsIOPlugin MODULE
   itkBioFormatsIOPlugin.cxx
 )
 set_target_properties(BioFormatsIOPlugin
@@ -142,7 +125,6 @@ set_target_properties(BioFormatsIOPlugin
 )
 target_link_libraries(BioFormatsIOPlugin
   ${lib_name}
-  ${JAVA_JVM_LIBRARY}
 )
 
 install(TARGETS BioFormatsIOPlugin
@@ -151,31 +133,12 @@ install(TARGETS BioFormatsIOPlugin
   ARCHIVE DESTINATION lib/${PROJECT_NAME} COMPONENT Development
 )
 
-# make a copy named '.so' for compatibility with the expectations
-# of the ITK Factory mechanism on macs
+# add some tests
+add_executable(itkBioFormatsImageIOTest itkBioFormatsImageIOTest.cxx)
+target_link_libraries(itkBioFormatsImageIOTest BioFormatsIO)
 
-if(APPLE)
-  add_custom_command(
-    TARGET BioFormatsIOPlugin
-    DEPENDS "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_INSTALL_ITKFACTORIES_DIR}/libBioFormatsIOPlugin.dylib"
-    POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy
-    "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_INSTALL_ITKFACTORIES_DIR}/libBioFormatsIOPlugin.dylib"
-    "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_INSTALL_ITKFACTORIES_DIR}/libBioFormatsIOPlugin.so"
-    VERBATIM
-  )
-  install(FILES
-    "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_INSTALL_ITKFACTORIES_DIR}/libBioFormatsIOPlugin.so"
-    DESTINATION ${BioFormatsImageIO_INSTALL_ITKFACTORIES_DIR}
-  )
-endif(APPLE)
+add_executable(itkRGBBioFormatsImageIOTest itkRGBBioFormatsImageIOTest.cxx)
+target_link_libraries(itkRGBBioFormatsImageIOTest BioFormatsIO)
 
-#add_custom_command(
-#  TARGET BioFormatsIOPlugin
-#  DEPENDS "${CMAKE_BINARY_DIR}/libBioFormatsIOPlugin.dylib"
-#  POST_BUILD
-#  COMMAND ${CMAKE_COMMAND} -E make_directory
-#  COMMAND ${CMAKE_COMMAND} copy
-#  "${CMAKE_BINARY_DIR}/libBioFormatsIOPlugin.dylib"
-#  "${CMAKE_BINARY_DIR}/dist/bf-itk/libBioFormatsIOPlugin.dylib"
-#)
+add_executable(itkVectorImageBioFormatsImageIOTest itkVectorImageBioFormatsImageIOTest.cxx)
+target_link_libraries(itkVectorImageBioFormatsImageIOTest BioFormatsIO)
