@@ -61,13 +61,14 @@ public class OMEXMLWriter extends FormatWriter {
 
   private Vector<String> xmlFragments;
   private String currentFragment;
+  private OMEXMLService service;
 
   // -- Constructor --
 
   public OMEXMLWriter() {
     super("OME-XML", "ome");
     compressionTypes =
-      new String[] {CompressionType.UNCOMPRESSED.getCompression(), 
+      new String[] {CompressionType.UNCOMPRESSED.getCompression(),
         CompressionType.ZLIB.getCompression()};
     compression = compressionTypes[0];
   }
@@ -82,7 +83,7 @@ public class OMEXMLWriter extends FormatWriter {
     String xml;
     try {
       ServiceFactory factory = new ServiceFactory();
-      OMEXMLService service = factory.getInstance(OMEXMLService.class);
+      service = factory.getInstance(OMEXMLService.class);
       xml = service.getOMEXML(retrieve);
     }
     catch (DependencyException de) {
@@ -106,6 +107,7 @@ public class OMEXMLWriter extends FormatWriter {
     }
     super.close();
     xmlFragments = null;
+    service = null;
   }
 
   // -- IFormatWriter API methods --
@@ -136,12 +138,18 @@ public class OMEXMLWriter extends FormatWriter {
     int planeSize = sizeX * sizeY * bytes;
     boolean bigEndian = retrieve.getPixelsBinDataBigEndian(series, 0);
 
+    String namespace =
+      "xmlns=\"http://www.openmicroscopy.org/Schemas/BinaryFile/" +
+      service.getLatestVersion() + "\"";
+
     for (int i=0; i<nChannels; i++) {
       byte[] b = ImageTools.splitChannels(buf, i, nChannels, bytes, false,
         interleaved);
       byte[] encodedPix = compress(b);
 
-      StringBuffer plane = new StringBuffer("\n<BinData Length=\"");
+      StringBuffer plane = new StringBuffer("\n<BinData ");
+      plane.append(namespace);
+      plane.append(" Length=\"");
       plane.append(planeSize);
       plane.append("\"");
       plane.append(" BigEndian=\"");
@@ -225,14 +233,14 @@ public class OMEXMLWriter extends FormatWriter {
       }
       toAppend.append(">");
       currentFragment += toAppend.toString();
-      if (qName.equals("Pixels")) {
-        xmlFragments.add(currentFragment);
-        currentFragment = "";
-      }
     }
 
     public void endElement(String uri, String localName, String qName) {
       currentFragment += "</" + qName + ">";
+      if (qName.equals("Channel")) {
+        xmlFragments.add(currentFragment);
+        currentFragment = "";
+      }
     }
 
   }
