@@ -25,6 +25,7 @@ package ome.metakit;
 
 import java.io.IOException;
 
+import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
 
 /**
@@ -42,15 +43,23 @@ public class MetakitReader {
 
   private RandomAccessInputStream stream;
 
+  private String[] tableNames;
+  private Column[][] columns;
+
   // -- Constructors --
 
-  public MetakitReader(String file) throws IOException {
+  public MetakitReader(String file) throws IOException, MetakitException {
     this(new RandomAccessInputStream(file));
   }
 
-  public MetakitReader(RandomAccessInputStream stream) {
+  public MetakitReader(RandomAccessInputStream stream) throws MetakitException {
     this.stream = stream;
-
+    try {
+      initialize();
+    }
+    catch (IOException e) {
+      throw new MetakitException(e);
+    }
   }
 
   // -- MetakitReader API methods --
@@ -59,8 +68,7 @@ public class MetakitReader {
    * Retrieve the number of tables in this database file.
    */
   public int getTableCount() {
-    // TODO
-    return -1;
+    return tableNames.length;
   }
 
   /**
@@ -68,8 +76,7 @@ public class MetakitReader {
    * The length of the returned array is equivalent to {@link getTableCount()}.
    */
   public String[] getTableNames() {
-    // TODO
-    return null;
+    return tableNames;
   }
 
   /**
@@ -77,16 +84,18 @@ public class MetakitReader {
    * Tables are indexed from 0 to <code>{@link getTableCount()} - 1</code>.
    */
   public String[] getColumnNames(int tableIndex) {
-    // TODO
-    return null;
+    String[] columnNames = new String[columns[tableIndex].length];
+    for (int i=0; i<columnNames.length; i++) {
+      columnNames[i] = columns[tableIndex][i].getName();
+    }
+    return columnNames;
   }
 
   /**
    * Retrieve the name of every column in the named table.
    */
   public String[] getColumnNames(String tableName) {
-    // TODO
-    return null;
+    return getColumnNames(DataTools.indexOf(tableNames, tableName));
   }
 
   /**
@@ -98,8 +107,11 @@ public class MetakitReader {
    * Class in the Class[] returned by this method.
    */
   public Class[] getColumnTypes(int tableIndex) {
-    // TODO
-    return null;
+    Class[] types = new Class[columns[tableIndex].length];
+    for (int i=0; i<types.length; i++) {
+      types[i] = columns[tableIndex][i].getType();
+    }
+    return types;
   }
 
   /**
@@ -110,8 +122,7 @@ public class MetakitReader {
    * Class in the Class[] returned by this method.
    */
   public Class[] getColumnTypes(String tableName) {
-    // TODO
-    return null;
+    return getColumnTypes(DataTools.indexOf(tableNames, tableName));
   }
 
   /**
@@ -126,7 +137,7 @@ public class MetakitReader {
    * Retrieve the number of rows in the named table.
    */
   public int getRowCount(String tableName) {
-    return -1;
+    return getRowCount(DataTools.indexOf(tableNames, tableName));
   }
 
   /**
@@ -146,8 +157,7 @@ public class MetakitReader {
    * @see getColumnTypes(String)
    */
   public Object[][] getTableData(String tableName) {
-    // TODO
-    return null;
+    return getTableData(DataTools.indexOf(tableNames, tableName));
   }
 
   /**
@@ -167,8 +177,97 @@ public class MetakitReader {
    * @see getColumnTypes(String)
    */
   public Object[] getRowData(int rowIndex, String tableName) {
-    // TODO
-    return null;
+    return getRowData(rowIndex, DataTools.indexOf(tableNames, tableName));
+  }
+
+  // -- Helper methods --
+
+  private void initialize() throws IOException, MetakitException {
+    String magic = stream.readString(2);
+
+    if (magic.equals("LJ")) {
+      stream.order(true);
+    }
+    else if (!magic.equals("JL")) {
+      throw new MetakitException("Invalid magic string; got " + magic);
+    }
+
+    boolean valid = stream.read() == 26;
+    if (!valid) {
+      throw new MetakitException("'valid' flag was set to 'false'");
+    }
+
+    int headerType = stream.read();
+    if (headerType != 0) {
+      throw new MetakitException(
+        "Header type " + headerType + " is not valid.");
+    }
+
+    long footerPointer = stream.readInt() - 16;
+
+    stream.seek(footerPointer);
+    readFooter();
+  }
+
+  private void readFooter() throws IOException, MetakitException {
+    stream.skipBytes(4);
+
+    long headerLocation = stream.readInt();
+    stream.skipBytes(4);
+
+    long tocLocation = stream.readInt();
+
+    stream.seek(tocLocation);
+    readTOC();
+  }
+
+  private void readTOC() throws IOException, MetakitException {
+    int tocMarker = readBpInt();
+    String structureDefinition = readPString();
+
+    String[] tables = structureDefinition.split("],");
+    tableNames = new String[tables.length];
+
+    columns = new Column[tables.length][];
+
+    for (int i=0; i<tables.length; i++) {
+      String table = tables[i];
+      int openBracket = table.indexOf("[");
+      tableNames[i] = table.substring(0, openBracket);
+      String columnList = table.substring(openBracket + 1);
+      columnList = columnList.substring(columnList.indexOf("[") + 1);
+      String[] cols = columnList.split(",");
+      columns[i] = new Column[cols.length];
+
+      for (int col=0; col<cols.length; col++) {
+        columns[i][col] = new Column(cols[col]);
+      }
+    }
+  }
+
+
+  // -- File I/O helper methods --
+
+  private String readPString() throws IOException {
+    int stringLength = readBpInt();
+    return stream.readString(stringLength);
+  }
+
+  private int readBpInt() throws IOException {
+    int signByte = stream.read();
+    boolean negative = signByte == 0;
+    int dataByte = !negative ? signByte : stream.read();
+    int stopByte = dataByte;
+    if ((dataByte & 0x80) == 0) {
+      stopByte = stream.read();
+    }
+    else dataByte = 0;
+
+    int value = ((dataByte << 7) & 0xffff) | (stopByte & 0x7f);
+    if (negative) {
+      value = ~value;
+    }
+    return value & 0xffff;
   }
 
 }
