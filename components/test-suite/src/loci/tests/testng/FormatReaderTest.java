@@ -1440,7 +1440,9 @@ public class FormatReaderTest {
       }
       reader.setMetadataStore(store);
     }
-    if (id.equals(reader.getCurrentFile())) return true; // already initialized
+    if (id.equals(reader.getCurrentFile())) {
+      return config != null; // already initialized
+    }
 
     // skip files that were already tested as part of another file's dataset
     int ndx = skipFiles.indexOf(id);
@@ -1486,7 +1488,7 @@ public class FormatReaderTest {
       LOGGER.error("", t);
       return false;
     }
-    return true;
+    return config != null;
   }
 
   /** Outputs test result and generates appropriate assertion. */
