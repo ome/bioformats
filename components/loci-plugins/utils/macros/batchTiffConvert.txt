@@ -13,6 +13,8 @@ oneFilePerSlice = true;
 directory = getDirectory("Choose input files");
 fileList = getFileList(directory);
 
+outputDirectory = getDirectory("Choose output directory");
+
 run("Bio-Formats Macro Extensions");
 setBatchMode(true);
 
@@ -24,7 +26,7 @@ for (i=0; i<fileList.length; i++) {
 
     for (image=0; image<imageCount; image++) {
       Ext.openImage("", image);
-      outFile = file + "-" + image + ".tiff";
+      outFile = outputDirectory + fileList[i] + "-" + image + ".tiff";
       saveFile(outFile);
       close();
     }
@@ -32,7 +34,7 @@ for (i=0; i<fileList.length; i++) {
   }
   else {
     Ext.openImagePlus(file);
-    outFile = file + ".tiff";
+    outFile = outputDirectory + fileList[i] + ".tiff";
     saveFile(outFile);
     close();
   }
