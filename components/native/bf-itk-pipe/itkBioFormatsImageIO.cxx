@@ -165,6 +165,27 @@ BioFormatsImageIO::BioFormatsImageIO()
   // convert to something usable by itksys
   m_Argv = toCArray( m_Args );
 
+  m_Process = NULL;
+}
+
+void BioFormatsImageIO::CreateJavaProcess()
+{
+  if( m_Process )
+    {
+    // process is still there
+    if( itksysProcess_GetState( m_Process ) == itksysProcess_State_Executing )
+      {
+      // already created and running - just return
+      return;
+      }
+    else
+      {
+      // still there but not running.
+      // destroy it cleanly and continue with the creation process
+      DestroyJavaProcess();
+      }
+    }
+
   pipe( m_Pipe );
   
   m_Process = itksysProcess_New();
@@ -227,21 +248,37 @@ BioFormatsImageIO::BioFormatsImageIO()
 
 BioFormatsImageIO::~BioFormatsImageIO()
 {
-  // send the command to the java process
-  std::string command = "exit\n";
-  itkDebugMacro("BioFormatsImageIO::~BioFormatsImageIO command: " << command);
-  write( m_Pipe[1], command.c_str(), command.size() );
-  // fflush( m_Pipe[1] );
-  itksysProcess_WaitForExit( m_Process, NULL );
-
-  itksysProcess_Delete( m_Process );
+  itkDebugMacro( "BioFormatsImageIO::~BioFormatsImageIO");
+  DestroyJavaProcess();
   delete m_Argv;
+}
+
+void BioFormatsImageIO::DestroyJavaProcess()
+{
+  if( m_Process == NULL )
+    {
+    // nothing to destroy
+    return;
+    }
+
+  if( itksysProcess_GetState( m_Process ) == itksysProcess_State_Executing )
+    {
+    itkDebugMacro("BioFormatsImageIO::DestroyJavaProcess killing java process");
+    itksysProcess_Kill( m_Process );
+    itksysProcess_WaitForExit( m_Process, NULL );
+    }
+
+  itkDebugMacro("BioFormatsImageIO::DestroyJavaProcess destroying java process");
+  itksysProcess_Delete( m_Process );
+  m_Process = NULL;
   close( m_Pipe[1] );
 }
 
 bool BioFormatsImageIO::CanReadFile( const char* FileNameToRead )
 {
   itkDebugMacro( "BioFormatsImageIO::CanReadFile: FileNameToRead = " << FileNameToRead);
+
+  CreateJavaProcess();
 
   // send the command to the java process
   std::string command = "canRead\t";
@@ -277,9 +314,12 @@ bool BioFormatsImageIO::CanReadFile( const char* FileNameToRead )
       }
     else
       {
-      itkExceptionMacro(<<"BioFormatsImageIO: ITKBridgePipe exited abnormally. " << errorMessage);
+      DestroyJavaProcess();
+      itkExceptionMacro(<<"BioFormatsImageIO: 'ITKBridgePipe canRead' exited abnormally. " << errorMessage);
       }
     }
+
+  itkDebugMacro("BioFormatsImageIO::CanRead error output: " << errorMessage);
 
   // we have one thing per line
   int p0 = 0;
@@ -295,6 +335,8 @@ bool BioFormatsImageIO::CanReadFile( const char* FileNameToRead )
 void BioFormatsImageIO::ReadImageInformation()
 {
   itkDebugMacro( "BioFormatsImageIO::ReadImageInformation: m_FileName = " << m_FileName);
+
+  CreateJavaProcess();
 
   // send the command to the java process
   std::string command = "info\t";
@@ -329,9 +371,12 @@ void BioFormatsImageIO::ReadImageInformation()
       }
     else
       {
-      itkExceptionMacro(<<"BioFormatsImageIO: ITKBridgePipe exited abnormally. " << errorMessage);
+      DestroyJavaProcess();
+      itkExceptionMacro(<<"BioFormatsImageIO: 'ITKBridgePipe info' exited abnormally. " << errorMessage);
       }
     }
+
+  itkDebugMacro("BioFormatsImageIO::ReadImageInformation error output: " << errorMessage);
 
   this->SetNumberOfDimensions(5);
 
@@ -500,6 +545,8 @@ void BioFormatsImageIO::Read(void* pData)
   itkDebugMacro("BioFormatsImageIO::Read");
   const ImageIORegion & region = this->GetIORegion();
 
+  CreateJavaProcess();
+
   // send the command to the java process
   std::string command = "read\t";
   command += m_FileName;
@@ -545,9 +592,12 @@ void BioFormatsImageIO::Read(void* pData)
       }
     else
       {
-      itkExceptionMacro(<<"BioFormatsImageIO: ITKBridgePipe exited abnormally. " << errorMessage);
+      DestroyJavaProcess();
+      itkExceptionMacro(<<"BioFormatsImageIO: 'ITKBridgePipe read' exited abnormally. " << errorMessage);
       }
     }
+
+  itkDebugMacro("BioFormatsImageIO::Read error output: " << errorMessage);
 }
 
 bool BioFormatsImageIO::CanWriteFile(const char* name)
