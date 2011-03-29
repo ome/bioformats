@@ -284,7 +284,8 @@ public class ITKBridgePipes {
     boolean isInterleaved = reader.isInterleaved();
     boolean canDoDirect = xBegin == 0 && yBegin == 0 && xEnd == xCount-1 && yEnd == yCount-1 && rgbChannelCount == 1;
 
-    BufferedOutputStream out = new BufferedOutputStream(System.out);
+    BufferedOutputStream out = new BufferedOutputStream(System.out, 100*1024*1024);
+    // System.err.println("canDoDirect = "+canDoDirect);
 
     for( int c=cBegin; c<=cEnd; c++ )
       {

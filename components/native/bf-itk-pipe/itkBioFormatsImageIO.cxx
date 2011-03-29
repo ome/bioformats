@@ -581,10 +581,8 @@ void BioFormatsImageIO::Read(void* pData)
     if( retcode == itksysProcess_Pipe_STDOUT )
       {
       // std::cout << "pos: " << pos << "  reading: " << pipedatalength << std::endl;
-      for( long i=0; i<pipedatalength; i++, pos++ )
-        {
-        data[pos] = pipedata[i];
-        }
+      memcpy( data + pos, pipedata, pipedatalength );
+      pos += pipedatalength;
       }
     else if( retcode == itksysProcess_Pipe_STDERR )
       {
