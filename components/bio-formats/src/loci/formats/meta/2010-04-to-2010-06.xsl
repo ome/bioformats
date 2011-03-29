@@ -210,14 +210,37 @@
 			<xsl:apply-templates select="node()"/>
 		</xsl:element>
 	</xsl:template>
-	
+
+  <xsl:template match="OME:Objective">
+    <xsl:element name="OME:Objective" namespace="{$newOMENS}">
+      <xsl:for-each select="@*">
+        <xsl:choose>
+          <xsl:when test="name() = 'NominalMagnification'">
+            <xsl:param name='mag'>
+              <xsl:value-of select="."/>
+            </xsl:param>
+            <xsl:if test="$mag > '0'">
+              <xsl:attribute name='NominalMagnification'>
+                <xsl:value-of select="."/>
+              </xsl:attribute>
+            </xsl:if>
+          </xsl:when>
+          <xsl:otherwise>
+						<xsl:attribute name="{local-name(.)}">
+							<xsl:value-of select="."/>
+						</xsl:attribute>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:for-each>
+    </xsl:element>
+  </xsl:template>
+
 	<xsl:template match="SA:StringAnnotation">
 		<xsl:element name="SA:CommentAnnotation" namespace="{$newSANS}">
 			<xsl:apply-templates select="@*|node()"/>
 		</xsl:element>
 	</xsl:template>
-	
-	
+
 	<!-- Rewriting all namespaces -->
 
 	<xsl:template match="OME:OME">
