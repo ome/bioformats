@@ -109,6 +109,9 @@ public:
   /* Write the data to the disk from the provided memory buffer */
   virtual void Write(const void* buffer);
 
+  void CreateJavaProcess();
+  void DestroyJavaProcess();
+
 protected:
   BioFormatsImageIO();
   ~BioFormatsImageIO();
