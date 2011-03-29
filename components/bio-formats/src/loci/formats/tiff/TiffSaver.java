@@ -274,15 +274,16 @@ public class TiffSaver {
       stripOut[strip] = new DataOutputStream(stripBuf[strip]);
     }
     int[] bps = ifd.getBitsPerSample();
-
     int off;
     // The strip we're actually to compress based on the number of
     // tiles/strips that we've configured and the dimensions of the data we've
     // been given.
     //int thisStrip = (y / h) * (width / w) + (x / w);
-    int kk = 0;
-    if (h < tileHeight) kk = 1;
-    int thisStrip = (y / tileHeight + kk) * (width / tileWidth) + (x / tileWidth);
+    int wn = width/tileWidth;
+    int diff = width-(wn*tileWidth);
+    int yR = y/tileHeight;
+    int thisStrip = (y / tileHeight) * (width / tileWidth) + (x / tileWidth);
+    if (diff > 0) thisStrip = thisStrip+yR; 
 
     // write pixel strips to output buffers
     for (int strip = 0; strip < nStrips; strip++) {

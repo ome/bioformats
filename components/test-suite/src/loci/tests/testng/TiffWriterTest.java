@@ -193,8 +193,11 @@ public class TiffWriterTest {
    * Tests the writing of the tiles.
    * @param output The output where to write the data.
    * @param compression The compression to use.
+   * @param blockWidth The width of block to write.
+   * @param blockHeight The height of block to write.
    */
-  private void assertUnevenTiles(String output, String compression) 
+  private void assertUnevenTiles(String output, String compression, 
+      int blockWidth, int blockHeight) 
     throws Exception {
     TiffWriter writer = initializeWriter(output, compression);
     byte[] plane;
@@ -209,15 +212,32 @@ public class TiffWriterTest {
     Map<Integer, Map<Integer, String>> 
       md5ImageInSeries = new HashMap<Integer, Map<Integer, String>>();
     int v;
+    int sizeX, sizeY;
+    int n, m;
+    int diffWidth, diffHeight;
     int series = reader.getSeriesCount();
-    int gapVertical = 20;
-    int gapHorizontal = 10;
     for (int s = 0; s < series; s++) {
       reader.setSeries(s);
-      w = reader.getSizeX()-gapHorizontal;
-      h = reader.getSizeY()-gapVertical;
+      sizeX = reader.getSizeX();
+      sizeY = reader.getSizeY();
+      if (blockWidth <= 0) blockWidth = sizeX;
+      if (blockHeight <= 0) blockHeight = sizeY;
+      n = sizeX/blockWidth;
+      m = sizeY/blockHeight;
+      if (n == 0) {
+        blockWidth = sizeX;
+        n = 1;
+      }
+      if (m == 1) {
+        blockHeight = sizeY;
+        m = 1;
+      }
+      diffWidth = sizeX-n*blockWidth;
+      diffHeight = sizeY-m*blockHeight;
+      if (diffWidth > 0) n++;
+      if (diffHeight > 0) m++;
       rowPerStrip = new long[1];
-      rowPerStrip[0] = h;
+      rowPerStrip[0] = blockHeight;
       count = reader.getImageCount();
       for (int k = 0; k < count; k++) {
         x = 0;
@@ -226,30 +246,34 @@ public class TiffWriterTest {
         v = s*series+k;
         md5ImageInSeries.put(v, md5PerImage);
         ifd = new IFD();
-        ifd.put(IFD.TILE_WIDTH, w);
-        ifd.put(IFD.TILE_LENGTH, h);
+        ifd.put(IFD.TILE_WIDTH, blockWidth);
+        ifd.put(IFD.TILE_LENGTH, blockHeight);
         ifd.put(IFD.ROWS_PER_STRIP, rowPerStrip);
         plane = reader.openBytes(k); //read the plane.
         index = 0;
-        tile = reader.openBytes(k, x, y, w, h);
-        md5PerImage.put(index, TestTools.md5(tile));
-        writer.saveBytes(k, plane, ifd, x, y, w, h);
-        index++;
-        x = w;
-        tile = reader.openBytes(k, x, y, gapHorizontal, h);
-        md5PerImage.put(index, TestTools.md5(tile));
-        writer.saveBytes(k, plane, ifd, x, y, gapHorizontal, h);
-        index++;
-        x = 0;
-        y = h;
-        tile = reader.openBytes(k, x, y, w, gapVertical);
-        md5PerImage.put(index, TestTools.md5(tile));
-        writer.saveBytes(k, plane, ifd, x, y, w, gapVertical);
-        index++;
-        x = w;
-        tile = reader.openBytes(k, x, y, gapHorizontal, gapVertical);
-        md5PerImage.put(index, TestTools.md5(tile));
-        writer.saveBytes(k, plane, ifd, x, y, gapHorizontal, gapVertical);
+        for (int i = 0; i < m; i++) {
+          if (diffHeight > 0 && i == (m-1)) {
+            y = sizeY-diffHeight;
+            h = diffHeight;
+          } else {
+            y = blockHeight*i;
+            h = blockHeight;
+          }
+          for (int j = 0; j < n; j++) {
+            if (diffWidth > 0 && j == (n-1)) {
+              x = sizeX-diffWidth;
+              w = diffWidth;
+            } else {
+              x = blockWidth*j;
+              w = blockWidth;
+            }
+            tile = reader.openBytes(k, x, y, w, h);
+            String value = TestTools.md5(tile);
+            writer.saveBytes(0, plane, ifd, x, y, w, h);
+            md5PerImage.put(index, value);
+            index++;
+          }
+        }
       }
     }
     writer.close();
@@ -264,52 +288,44 @@ public class TiffWriterTest {
     for (int s = 0; s < series; s++) {
       outputReader.setSeries(s);
       count = outputReader.getImageCount();
-      h = outputReader.getSizeY()-gapVertical;
-      w = outputReader.getSizeX()-gapHorizontal;
       for (int k = 0; k < count; k++) {
         v = s*series+k;
         results = md5ImageInSeries.get(v);
         index = 0;
-        x = 0;
-        y = 0;
-        tile = outputReader.openBytes(k, x, y, w, h);
-        planeDigest = results.get(index);
-        tileDigest = TestTools.md5(tile);
-        if (!planeDigest.equals(tileDigest)) {
-          fail("Compression: "+compression+" "+
-              String.format("MD5:%d;%d;%d;%d;%d;%d %s != %s",
-              s, k, x, y, w, h, planeDigest, tileDigest));
-        }
-        index++;
-        x = w;
-        tile = outputReader.openBytes(k, x, y, gapHorizontal, h);
-        planeDigest = results.get(index);
-        tileDigest = TestTools.md5(tile);
-        if (!planeDigest.equals(tileDigest)) {
-          fail("Compression: "+compression+" "+
-              String.format("MD5:%d;%d;%d;%d;%d;%d %s != %s",
-              s, k, x, y, gapHorizontal, h, planeDigest, tileDigest));
-        }
-        index++;
-        y = h;
-        x = 0;
-        tile = outputReader.openBytes(k, x, y, w, gapVertical);
-        planeDigest = results.get(index);
-        tileDigest = TestTools.md5(tile);
-        if (!planeDigest.equals(tileDigest)) {
-          fail("Compression: "+compression+" "+
-              String.format("MD5:%d;%d;%d;%d;%d;%d %s != %s",
-              s, k, x, y, w, gapVertical, planeDigest, tileDigest));
-        }
-        index++;
-        x = w;
-        tile = outputReader.openBytes(k, x, y, gapHorizontal, gapVertical);
-        planeDigest = results.get(index);
-        tileDigest = TestTools.md5(tile);
-        if (!planeDigest.equals(tileDigest)) {
-          fail("Compression: "+compression+" "+
-              String.format("MD5:%d;%d;%d;%d;%d;%d %s != %s",
-              s, k, x, y, gapHorizontal, gapVertical, planeDigest, tileDigest));
+        sizeX = outputReader.getSizeX();
+        sizeY = outputReader.getSizeY();
+        n = sizeX/blockWidth;
+        m = sizeY/blockHeight;
+        diffWidth = sizeX-n*blockWidth;
+        diffHeight = sizeY-m*blockHeight;
+        if (diffWidth > 0) n++;
+        if (diffHeight > 0) m++;
+        for (int i = 0; i < m; i++) {
+          if (diffHeight > 0 && i == (m-1)) {
+            y = sizeY-diffHeight;
+            h = diffHeight;
+          } else {
+            y = blockHeight*i;
+            h = blockHeight;
+          }
+          for (int j = 0; j < n; j++) {
+            if (diffWidth > 0 && j == (n-1)) {
+              x = sizeX-diffWidth;
+              w = diffWidth;
+            } else {
+              x = blockWidth*j;
+              w = blockWidth;
+            }
+            tile = outputReader.openBytes(0, x, y, w, h);
+            planeDigest = results.get(index);
+            tileDigest = TestTools.md5(tile);
+            if (!planeDigest.equals(tileDigest)) {
+              fail("Compression: "+compression+" "+
+                  String.format("MD5:%d;%d;%d;%d;%d;%d %s != %s",
+                  s, k, x, y, w, h, planeDigest, tileDigest));
+            }
+            index++;
+          }
         }
       }
     }
@@ -416,16 +432,67 @@ public class TiffWriterTest {
   }
 
   /**
+   * Tests the writing of blocks of a given size.
+   * @throws Exception Throw if an error occurred while writing.
+   */
+  @Test(enabled=true)
+  public void testWriteUnevenTilesImage50x50Blocks() throws Exception {
+    File f;
+    for (int i = 0; i < COMPRESSION.length; i++) {
+      f =  File.createTempFile("testWriteFullImage_"+COMPRESSION[i], ".tiff");
+      assertUnevenTiles(f.getAbsolutePath(), COMPRESSION[i], 50, 50);
+    }
+  }
+  
+  /**
    * Tests the writing of the full size image as JPEG200 stream.
    * @throws Exception Throw if an error occurred while writing.
    */
   @Test(enabled=true)
-  public void testWriteUnevenTilesImage() throws Exception {
+  public void testWriteUnevenTilesImage30x50Block() throws Exception {
     File f;
     for (int i = 0; i < COMPRESSION.length; i++) {
       f =  File.createTempFile("testWriteFullImage_"+COMPRESSION[i], ".tiff");
-      assertUnevenTiles(f.getAbsolutePath(), COMPRESSION[i]);
+      assertUnevenTiles(f.getAbsolutePath(), COMPRESSION[i], 30, 50);
     }
   }
   
+  /**
+   * Tests the writing of the full size image as JPEG200 stream.
+   * @throws Exception Throw if an error occurred while writing.
+   */
+  @Test(enabled=true)
+  public void testWriteUnevenTilesImage50x30Block() throws Exception {
+    File f;
+    for (int i = 0; i < COMPRESSION.length; i++) {
+      f =  File.createTempFile("testWriteFullImage_"+COMPRESSION[i], ".tiff");
+      assertUnevenTiles(f.getAbsolutePath(), COMPRESSION[i], 50, 30);
+    }
+  }
+  
+  /**
+   * Tests the writing of the full size image as JPEG200 stream.
+   * @throws Exception Throw if an error occurred while writing.
+   */
+  @Test(enabled=true)
+  public void testWriteUnevenTilesImageWidthx30Block() throws Exception {
+    File f;
+    for (int i = 0; i < COMPRESSION.length; i++) {
+      f =  File.createTempFile("testWriteFullImage_"+COMPRESSION[i], ".tiff");
+      assertUnevenTiles(f.getAbsolutePath(), COMPRESSION[i], 0, 50);
+    }
+  }
+  
+  /**
+   * Tests the writing of the full size image as JPEG200 stream.
+   * @throws Exception Throw if an error occurred while writing.
+   */
+  @Test(enabled=true)
+  public void testWriteUnevenTilesImage50xHeightBlock() throws Exception {
+    File f;
+    for (int i = 0; i < COMPRESSION.length; i++) {
+      f =  File.createTempFile("testWriteFullImage_"+COMPRESSION[i], ".tiff");
+      assertUnevenTiles(f.getAbsolutePath(), COMPRESSION[i], 50, 0);
+    }
+  }
 }
