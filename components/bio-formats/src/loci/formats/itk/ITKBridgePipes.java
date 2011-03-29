@@ -28,7 +28,6 @@ import java.io.BufferedReader;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.Map;
@@ -60,8 +59,8 @@ public class ITKBridgePipes {
 
   private static final String HASH_PREFIX = "hash:";
 
-  private Hashtable<String, IFormatReader> readers =
-    new Hashtable<String, IFormatReader>();
+  private IFormatReader reader = null;
+  private String readerPath = "";
 
   /** Enters an input loop, waiting for commands, until EOF is reached. */
   public void waitForInput() throws FormatException, IOException {
@@ -143,7 +142,7 @@ public class ITKBridgePipes {
   public boolean readImageInfo(String filePath)
     throws FormatException, IOException
   {
-    final IFormatReader reader = createReader(filePath);
+    createReader(filePath);
 
     final MetadataStore store = reader.getMetadataStore();
     IMetadata meta = (IMetadata) store;
@@ -255,7 +254,6 @@ public class ITKBridgePipes {
     }
     System.out.flush();
 
-    readers.put(filePath, reader);
     return true;
   }
 
@@ -277,7 +275,7 @@ public class ITKBridgePipes {
        int cBegin, int cEnd)
     throws FormatException, IOException
   {
-    final IFormatReader reader = createReader(filePath);
+    createReader(filePath);
 
     int rgbChannelCount = reader.getRGBChannelCount();
     int bpp = FormatTools.getBytesPerPixel( reader.getPixelType() );
@@ -327,7 +325,7 @@ public class ITKBridgePipes {
   public boolean canRead(String filePath)
     throws FormatException, IOException
   {
-    final IFormatReader reader = createReader(null);
+    createReader(null);
     final boolean canRead = reader.isThisType(filePath);
     System.out.println(canRead);
     System.out.flush();
@@ -337,27 +335,42 @@ public class ITKBridgePipes {
   private IFormatReader createReader(final String filePath)
     throws FormatException, IOException
   {
-    IFormatReader reader = readers.get(filePath);
-    if (reader == null) {
-      System.err.println("Creating new reader for "+filePath);
-      // no hash code; initialize a fresh reader
-      reader = new ImageReader();
-
-      reader.setMetadataFiltered(true);
-      reader.setOriginalMetadataPopulated(true);
-      final MetadataStore store = MetadataTools.createOMEXMLMetadata();
-      if (store == null) System.err.println("OME-Java library not found.");
-      else reader.setMetadataStore(store);
-      reader.setMetadataOptions(
-        new DefaultMetadataOptions(MetadataLevel.MINIMUM));
-
-      // avoid grouping all the .lsm when a .mdb is there
-      reader.setGroupFiles(false);
-
-      if (filePath != null) {
-        reader.setId(filePath);
-        reader.setSeries(0);
+    if( readerPath == null ) {
+      // use the not yet used reader
+      reader.setId(filePath);
+      reader.setSeries(0);
+      return reader;
       }
+
+    if(readerPath.equals( filePath )) {
+      // just use the existing reader
+      return reader;
+    }
+
+    if (reader != null) {
+      reader.close();
+    }
+    System.err.println("Creating new reader for "+filePath);
+    // initialize a fresh reader
+    reader = new ImageReader();
+    readerPath = filePath;
+
+    reader.setMetadataFiltered(true);
+    reader.setOriginalMetadataPopulated(true);
+    final MetadataStore store = MetadataTools.createOMEXMLMetadata();
+    if (store == null) System.err.println("OME-Java library not found.");
+    else reader.setMetadataStore(store);
+
+    // TODO: should we really do that?
+    reader.setMetadataOptions(
+      new DefaultMetadataOptions(MetadataLevel.MINIMUM));
+
+    // avoid grouping all the .lsm when a .mdb is there
+    reader.setGroupFiles(false);
+
+    if (filePath != null) {
+      reader.setId(filePath);
+      reader.setSeries(0);
     }
 
     return reader;
@@ -366,7 +379,7 @@ public class ITKBridgePipes {
   public boolean exit()
     throws FormatException, IOException
   {
-    // TODO: close the readers
+    reader.close();
     System.exit(0);
     return true;
   }
