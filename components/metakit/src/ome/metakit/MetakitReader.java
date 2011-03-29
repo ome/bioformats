@@ -45,6 +45,9 @@ public class MetakitReader {
 
   private String[] tableNames;
   private Column[][] columns;
+  private int[] rowCount;
+
+  private Object[][][] data;
 
   // -- Constructors --
 
@@ -130,7 +133,7 @@ public class MetakitReader {
    * Tables are indexed from 0 to <code>{@link getTableCount()} - 1</code>.
    */
   public int getRowCount(int tableIndex) {
-    return -1;
+    return rowCount[tableIndex];
   }
 
   /**
@@ -147,8 +150,20 @@ public class MetakitReader {
    * @see getColumnTypes(int)
    */
   public Object[][] getTableData(int tableIndex) {
-    // TODO
-    return null;
+    Object[][] table = data[tableIndex];
+
+    // table is stored in [column][row] order; reverse it for convenience
+    Object[][] newTable = new Object[table[0].length][table.length];
+
+    for (int row=0; row<newTable.length; row++) {
+      for (int col=0; col<newTable[row].length; col++) {
+        if (col < table.length && row < table[col].length) {
+          newTable[row][col] = table[col][row];
+        }
+      }
+    }
+
+    return newTable;
   }
 
   /**
@@ -167,8 +182,11 @@ public class MetakitReader {
    * @see getColumnTypes(int)
    */
   public Object[] getRowData(int rowIndex, int tableIndex) {
-    // TODO
-    return null;
+    Object[] row = new Object[data[tableIndex].length];
+    for (int col=0; col<data[tableIndex].length; col++) {
+      row[col] = data[tableIndex][col][rowIndex];
+    }
+    return row;
   }
 
   /**
@@ -222,8 +240,8 @@ public class MetakitReader {
   }
 
   private void readTOC() throws IOException, MetakitException {
-    int tocMarker = readBpInt();
-    String structureDefinition = readPString();
+    int tocMarker = MetakitTools.readBpInt(stream);
+    String structureDefinition = MetakitTools.readPString(stream);
 
     String[] tables = structureDefinition.split("],");
     tableNames = new String[tables.length];
@@ -243,31 +261,28 @@ public class MetakitReader {
         columns[i][col] = new Column(cols[col]);
       }
     }
-  }
 
+    rowCount = new int[tables.length];
 
-  // -- File I/O helper methods --
-
-  private String readPString() throws IOException {
-    int stringLength = readBpInt();
-    return stream.readString(stringLength);
-  }
-
-  private int readBpInt() throws IOException {
-    int signByte = stream.read();
-    boolean negative = signByte == 0;
-    int dataByte = !negative ? signByte : stream.read();
-    int stopByte = dataByte;
-    if ((dataByte & 0x80) == 0) {
-      stopByte = stream.read();
+    for (int i=0; i<rowCount.length; i++) {
+      rowCount[i] = MetakitTools.readBpInt(stream);
+      /* debug */ System.out.println("# rows for table " + i + " = " + rowCount[i]);
     }
-    else dataByte = 0;
+    /* debug */ MetakitTools.readBpInt(stream);
 
-    int value = ((dataByte << 7) & 0xffff) | (stopByte & 0x7f);
-    if (negative) {
-      value = ~value;
-    }
-    return value & 0xffff;
+    data = new Object[tables.length][][];
+
+    int table = 0;
+    //for (int table=0; table<tables.length; table++) {
+      data[table] = new Object[columns[table].length][];
+      if (rowCount[table] > 0) {
+        for (int col=0; col<columns[table].length; col++) {
+          ColumnMap map =
+            new ColumnMap(columns[table][col], stream, rowCount[table]);
+          data[table][col] = map.getValues();
+        }
+      }
+    //}
   }
 
 }
