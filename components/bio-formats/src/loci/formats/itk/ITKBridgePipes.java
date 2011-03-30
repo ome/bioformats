@@ -362,10 +362,6 @@ public class ITKBridgePipes {
     if (store == null) System.err.println("OME-Java library not found.");
     else reader.setMetadataStore(store);
 
-    // TODO: should we really do that?
-    reader.setMetadataOptions(
-      new DefaultMetadataOptions(MetadataLevel.MINIMUM));
-
     // avoid grouping all the .lsm when a .mdb is there
     reader.setGroupFiles(false);
 
