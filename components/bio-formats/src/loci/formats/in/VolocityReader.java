@@ -26,6 +26,7 @@ package loci.formats.in;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import loci.common.ByteArrayHandle;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.formats.CoreMetadata;
@@ -53,7 +54,10 @@ public class VolocityReader extends FormatReader {
 
   private String[] pixelsFiles;
   private String[] lutFiles;
+  private String[] timestampFiles;
   private ArrayList<String> extraFiles;
+
+  private int[] planePadding;
 
   // -- Constructor --
 
@@ -73,6 +77,7 @@ public class VolocityReader extends FormatReader {
     files.addAll(extraFiles);
     files.add(pixelsFiles[getSeries()]);
     files.add(lutFiles[getSeries()]);
+    files.add(timestampFiles[getSeries()]);
     return files.toArray(new String[files.size()]);
   }
 
@@ -94,7 +99,8 @@ public class VolocityReader extends FormatReader {
 
     RandomAccessInputStream pix =
       new RandomAccessInputStream(pixelsFiles[getSeries()]);
-    pix.seek(HEADER_SIZE + no * FormatTools.getPlaneSize(this));
+    int planeSize = FormatTools.getPlaneSize(this) + planePadding[getSeries()];
+    pix.seek(HEADER_SIZE + no * planeSize);
     readPlane(pix, x, y, w, h, buf);
     pix.close();
     return buf;
@@ -107,6 +113,8 @@ public class VolocityReader extends FormatReader {
       pixelsFiles = null;
       lutFiles = null;
       extraFiles = null;
+      timestampFiles = null;
+      planePadding = null;
     }
   }
 
@@ -128,6 +136,7 @@ public class VolocityReader extends FormatReader {
     String[] files = dir.list(true);
     ArrayList<String> pixels = new ArrayList<String>();
     ArrayList<String> luts = new ArrayList<String>();
+    ArrayList<String> timestamps = new ArrayList<String>();
 
     for (String f : files) {
       String path = new Location(dir, f).getAbsolutePath();
@@ -137,6 +146,9 @@ public class VolocityReader extends FormatReader {
       else if (checkSuffix(f, "aisf")) {
         pixels.add(path);
       }
+      else if (checkSuffix(f, "atsf")) {
+        timestamps.add(path);
+      }
       else {
         extraFiles.add(path);
       }
@@ -144,12 +156,58 @@ public class VolocityReader extends FormatReader {
 
     pixelsFiles = pixels.toArray(new String[pixels.size()]);
     lutFiles = luts.toArray(new String[luts.size()]);
+    timestampFiles = timestamps.toArray(new String[timestamps.size()]);
 
     core = new CoreMetadata[pixelsFiles.length];
+    planePadding = new int[core.length];
+
+    double[][][] stamps = new double[core.length][][];
 
     for (int i=0; i<core.length; i++) {
       core[i] = new CoreMetadata();
+
+      setSeries(i);
+
+      core[i].littleEndian = true;
+
+      RandomAccessInputStream s =
+        new RandomAccessInputStream(timestampFiles[i]);
+      s.seek(17);
+      s.order(isLittleEndian());
+      core[i].sizeT = s.readInt();
+      stamps[i] = new double[getSizeT()][2];
+      s.order(isLittleEndian());
+      for (int t=0; t<getSizeT(); t++) {
+        //stamps[i][t][0] = s.readFloat() / s.readFloat();
+        //stamps[i][t][1] = s.readFloat() / s.readFloat();
+        stamps[i][t][0] = s.readDouble();
+        stamps[i][t][1] = s.readDouble();
+      }
+      s.close();
+
+      core[i].sizeZ = 1;
+      core[i].sizeC = 1;
+      core[i].rgb = false;
+      core[i].imageCount = getSizeZ() * getSizeC() * getSizeT();
+
+      int planeSize = FormatTools.getPlaneSize(this);
+      s = new RandomAccessInputStream(pixelsFiles[i]);
+      int bytesPerPlane = (int) ((s.length() - HEADER_SIZE) / getImageCount());
+      s.close();
+
+      int bytesPerPixel = 0;
+      while (bytesPerPlane >= planeSize) {
+        bytesPerPixel++;
+        bytesPerPlane -= planeSize;
+      }
+
+      core[i].pixelType =
+        FormatTools.pixelTypeFromBytes(bytesPerPixel, false, false);
+
+      // planes are padded to have a multiple of 256 bytes
+      planePadding[i] = 256 - (FormatTools.getPlaneSize(this) % 256);
     }
+    setSeries(0);
   }
 
 }
