@@ -393,7 +393,7 @@ public class TiffWriterTest {
    * Tests the writing of the image with 4 tiles with full width.
    * @throws Exception Throw if an error occurred while writing.
    */
-  @Test(enabled = false)
+  @Test(enabled = true)
   public void testWriteImageSplitHorizontalFour() throws Exception {
     File f;
     for (int i = 0; i < COMPRESSION.length; i++) {
@@ -421,7 +421,7 @@ public class TiffWriterTest {
    * Tests the writing of the image with 4 tiles with full height.
    * @throws Exception Throw if an error occurred while writing.
    */
-  @Test(enabled=false)
+  @Test(enabled=true)
   public void testWriteImageSplitVerticalFour() throws Exception {
     File f;
     for (int i = 0; i < COMPRESSION.length; i++) {
@@ -432,67 +432,46 @@ public class TiffWriterTest {
   }
 
   /**
-   * Tests the writing of blocks of a given size.
+   * Tests the writing of blocks of 64x64. Tiles should be square and size
+   * multiple of 16.
    * @throws Exception Throw if an error occurred while writing.
    */
   @Test(enabled=true)
-  public void testWriteUnevenTilesImage50x50Blocks() throws Exception {
+  public void testWriteUnevenTilesImage32x32Blocks() throws Exception {
     File f;
     for (int i = 0; i < COMPRESSION.length; i++) {
       f =  File.createTempFile("testWriteFullImage_"+COMPRESSION[i], ".tiff");
-      assertUnevenTiles(f.getAbsolutePath(), COMPRESSION[i], 50, 50);
+      assertUnevenTiles(f.getAbsolutePath(), COMPRESSION[i], 32, 32);
     }
   }
   
   /**
-   * Tests the writing of the full size image as JPEG200 stream.
+   * Tests the writing of blocks of 64x64. Tiles should be square and size
+   * multiple of 16.
    * @throws Exception Throw if an error occurred while writing.
    */
   @Test(enabled=true)
-  public void testWriteUnevenTilesImage30x50Block() throws Exception {
+  public void testWriteUnevenTilesImage64x64Blocks() throws Exception {
     File f;
     for (int i = 0; i < COMPRESSION.length; i++) {
       f =  File.createTempFile("testWriteFullImage_"+COMPRESSION[i], ".tiff");
-      assertUnevenTiles(f.getAbsolutePath(), COMPRESSION[i], 30, 50);
+      assertUnevenTiles(f.getAbsolutePath(), COMPRESSION[i], 64, 64);
     }
   }
   
   /**
-   * Tests the writing of the full size image as JPEG200 stream.
+   * Tests the writing of blocks of 256x256. Tiles should be square and size
+   * multiple of 16.
    * @throws Exception Throw if an error occurred while writing.
    */
   @Test(enabled=true)
-  public void testWriteUnevenTilesImage50x30Block() throws Exception {
+  public void testWriteUnevenTilesImage256x256Block() throws Exception {
     File f;
     for (int i = 0; i < COMPRESSION.length; i++) {
       f =  File.createTempFile("testWriteFullImage_"+COMPRESSION[i], ".tiff");
-      assertUnevenTiles(f.getAbsolutePath(), COMPRESSION[i], 50, 30);
+      assertUnevenTiles(f.getAbsolutePath(), COMPRESSION[i], 256, 256);
     }
   }
+
   
-  /**
-   * Tests the writing of the full size image as JPEG200 stream.
-   * @throws Exception Throw if an error occurred while writing.
-   */
-  @Test(enabled=true)
-  public void testWriteUnevenTilesImageWidthx30Block() throws Exception {
-    File f;
-    for (int i = 0; i < COMPRESSION.length; i++) {
-      f =  File.createTempFile("testWriteFullImage_"+COMPRESSION[i], ".tiff");
-      assertUnevenTiles(f.getAbsolutePath(), COMPRESSION[i], 0, 50);
-    }
-  }
-  
-  /**
-   * Tests the writing of the full size image as JPEG200 stream.
-   * @throws Exception Throw if an error occurred while writing.
-   */
-  @Test(enabled=true)
-  public void testWriteUnevenTilesImage50xHeightBlock() throws Exception {
-    File f;
-    for (int i = 0; i < COMPRESSION.length; i++) {
-      f =  File.createTempFile("testWriteFullImage_"+COMPRESSION[i], ".tiff");
-      assertUnevenTiles(f.getAbsolutePath(), COMPRESSION[i], 50, 0);
-    }
-  }
 }
