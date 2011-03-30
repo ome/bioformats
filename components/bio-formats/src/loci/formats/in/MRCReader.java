@@ -125,6 +125,17 @@ public class MRCReader extends FormatReader {
     core[0].sizeY = in.readInt();
     core[0].sizeZ = in.readInt();
 
+    if (getSizeX() < 0 || getSizeY() < 0 || getSizeZ() < 0 ||
+      (getSizeX() * getSizeY() * getSizeZ() > in.length()))
+    {
+      core[0].littleEndian = !isLittleEndian();
+      in.seek(0);
+      in.order(isLittleEndian());
+      core[0].sizeX = in.readInt();
+      core[0].sizeY = in.readInt();
+      core[0].sizeZ = in.readInt();
+    }
+
     core[0].sizeC = 1;
 
     int mode = in.readInt();
