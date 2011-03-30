@@ -53,8 +53,27 @@ int main( int argc, char * argv [] )
   ReaderType::Pointer reader = ReaderType::New();
   std::cout << "reader->GetUseStreaming(): " << reader->GetUseStreaming() << std::endl;
 
-  reader->SetFileName(argv[1]);
+  reader->SetFileName("fileNotFound");
   reader->SetImageIO(io);
+
+  // should get an exception
+  bool catched = false;
+  try
+    {
+    reader->Update();
+    }
+  catch (itk::ExceptionObject &e)
+    {
+    std::cerr << e << std::endl;
+    catched = true;
+    }
+  if( !catched )
+    {
+    std::cerr << "exception not catched for wrong path" << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  reader->SetFileName(argv[1]);
 
   typedef itk::StreamingImageFilter<ImageType, ImageType> StreamingFilter;
   StreamingFilter::Pointer streamer = StreamingFilter::New();
