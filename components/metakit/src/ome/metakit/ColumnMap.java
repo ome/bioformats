@@ -50,13 +50,13 @@ public class ColumnMap {
     /* debug */ System.out.println("reading ColumnMap from " + stream.getFilePointer());
     if (isFixedMap()) {
       // read a single IVecRef
-      int ivecSize = MetakitTools.readBpInt(stream);
+      int ivecSize = MetakitTools.readBpInt(stream) / 2; // in nybbles?
       /* debug */ System.out.println("  fixed, with size = " + ivecSize + " bytes");
       if (ivecSize > 0) {
         int ivecLocation = MetakitTools.readBpInt(stream);
         long fp = stream.getFilePointer();
         /* debug */ System.out.println("  pointer = " + ivecLocation);
-        stream.seek(fp + ivecLocation);
+        stream.seek(ivecLocation - 6);
 
         for (int i=0; i<rowCount; i++) {
           values.add(readElement(ivecSize));
@@ -82,7 +82,7 @@ public class ColumnMap {
       case 'L':
         return new Long(stream.readLong());
       case 'I':
-        int bits = vectorSize / rowCount;
+        int bits = (vectorSize * 8) / rowCount;
         switch (bits) {
           case 1:
             break;
