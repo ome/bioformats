@@ -45,6 +45,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import loci.common.ByteArrayHandle;
+import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
@@ -1412,14 +1413,6 @@ public class FormatReaderTest {
   private boolean initFile(boolean removeDuplicateFiles) {
     if (skip) throw new SkipException(SKIP_MESSAGE);
 
-    // initialize configuration tree
-    if (config == null) {
-      try {
-        config = configTree.get(id);
-      }
-      catch (IOException e) { }
-    }
-
     if (reader == null) {
       /*
       if (config.noStitching()) {
@@ -1440,8 +1433,9 @@ public class FormatReaderTest {
       }
       reader.setMetadataStore(store);
     }
+
     if (id.equals(reader.getCurrentFile())) {
-      return config != null; // already initialized
+      return true; // already initialized
     }
 
     // skip files that were already tested as part of another file's dataset
@@ -1488,6 +1482,15 @@ public class FormatReaderTest {
       LOGGER.error("", t);
       return false;
     }
+
+    // initialize configuration tree
+    if (config == null) {
+      try {
+        config = configTree.get(reader.getCurrentFile());
+      }
+      catch (IOException e) { }
+    }
+
     return config != null;
   }
 
