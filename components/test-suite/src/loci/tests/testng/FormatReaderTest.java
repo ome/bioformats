@@ -1413,6 +1413,14 @@ public class FormatReaderTest {
   private boolean initFile(boolean removeDuplicateFiles) {
     if (skip) throw new SkipException(SKIP_MESSAGE);
 
+    // initialize configuration tree
+    if (config == null) {
+      try {
+        config = configTree.get(id);
+      }
+      catch (IOException e) { }
+    }
+
     if (reader == null) {
       /*
       if (config.noStitching()) {
@@ -1434,9 +1442,7 @@ public class FormatReaderTest {
       reader.setMetadataStore(store);
     }
 
-    if (id.equals(reader.getCurrentFile())) {
-      return true; // already initialized
-    }
+    if (id.equals(reader.getCurrentFile())) return true; // already initialized
 
     // skip files that were already tested as part of another file's dataset
     int ndx = skipFiles.indexOf(id);
@@ -1483,15 +1489,7 @@ public class FormatReaderTest {
       return false;
     }
 
-    // initialize configuration tree
-    if (config == null) {
-      try {
-        config = configTree.get(reader.getCurrentFile());
-      }
-      catch (IOException e) { }
-    }
-
-    return config != null;
+    return true;
   }
 
   /** Outputs test result and generates appropriate assertion. */
