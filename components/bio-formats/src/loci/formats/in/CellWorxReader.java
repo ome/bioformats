@@ -283,7 +283,17 @@ public class CellWorxReader extends FormatReader {
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
 
-    store.setPlateID(MetadataTools.createLSID("Plate", 0), 0);
+    String plateID = MetadataTools.createLSID("Plate", 0);
+    String screenID = MetadataTools.createLSID("Screen", 0);
+
+    store.setScreenID(screenID, 0);
+    Location plate = new Location(id).getAbsoluteFile().getParentFile();
+    Location screen = plate.getParentFile();
+    store.setScreenName(screen.getName(), 0);
+    store.setScreenPlateRef(plateID, 0, 0);
+
+    store.setPlateID(plateID, 0);
+    store.setPlateScreenRef(screenID, 0, 0);
     for (int i=0; i<core.length; i++) {
       store.setImageID(MetadataTools.createLSID("Image", i), i);
     }
