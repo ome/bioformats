@@ -139,6 +139,12 @@ public class FormatReaderTestFactory {
     Object[] tests = new Object[files.size()];
     for (int i=0; i<tests.length; i++) {
       String id = (String) files.get(i);
+      try {
+        if (FormatReaderTest.configTree.get(id) == null) {
+          LOGGER.warn("{} not configured.", id);
+        }
+      }
+      catch (Exception e) { }
       tests[i] = new FormatReaderTest(id, multiplier, inMemory);
     }
     if (tests.length == 1) System.out.println("Ready to test " + files.get(0));
