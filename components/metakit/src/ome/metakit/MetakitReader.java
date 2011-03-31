@@ -49,6 +49,8 @@ public class MetakitReader {
 
   private Object[][][] data;
 
+  private boolean littleEndian = false;
+
   // -- Constructors --
 
   public MetakitReader(String file) throws IOException, MetakitException {
@@ -203,10 +205,10 @@ public class MetakitReader {
   private void initialize() throws IOException, MetakitException {
     String magic = stream.readString(2);
 
-    if (magic.equals("LJ")) {
-      stream.order(true);
+    if (magic.equals("JL")) {
+      littleEndian = true;
     }
-    else if (!magic.equals("JL")) {
+    else if (!magic.equals("LJ")) {
       throw new MetakitException("Invalid magic string; got " + magic);
     }
 
@@ -268,21 +270,20 @@ public class MetakitReader {
       rowCount[i] = MetakitTools.readBpInt(stream);
       /* debug */ System.out.println("# rows for table " + i + " = " + rowCount[i]);
     }
-    /* debug */ MetakitTools.readBpInt(stream);
 
     data = new Object[tables.length][][];
 
-    int table = 0;
-    //for (int table=0; table<tables.length; table++) {
+    for (int table=0; table<tables.length; table++) {
       data[table] = new Object[columns[table].length][];
       if (rowCount[table] > 0) {
         for (int col=0; col<columns[table].length; col++) {
+          stream.order(littleEndian);
           ColumnMap map =
             new ColumnMap(columns[table][col], stream, rowCount[table]);
           data[table][col] = map.getValues();
         }
       }
-    //}
+    }
   }
 
 }
