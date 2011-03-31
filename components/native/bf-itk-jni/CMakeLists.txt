@@ -62,6 +62,8 @@ if(NOT DEFINED BUILD_SHARED_LIBS)
  option(BUILD_SHARED_LIBS "Build with shared libraries." ON)
 endif(NOT DEFINED BUILD_SHARED_LIBS)
 
+find_package(Java REQUIRED)
+
 # --------------------------------------------------------------------------
 # Include dirs
 
@@ -86,11 +88,11 @@ configure_file(
 )
 
 file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
-install(FILES
-  ${headers}
-  "${CMAKE_CURRENT_BINARY_DIR}/itkBioFormatsImageIOConfigure.h"
-  DESTINATION include/${PROJECT_NAME} COMPONENT Development
-)
+#install(FILES
+#  ${headers}
+#  "${CMAKE_CURRENT_BINARY_DIR}/itkBioFormatsImageIOConfigure.h"
+#  DESTINATION include/${PROJECT_NAME} COMPONENT Development
+#)
 
 # --------------------------------------------------------------------------
 # Sources
@@ -112,11 +114,11 @@ target_link_libraries(${lib_name}
   ${JAVA_JVM_LIBRARY}
 )
 
-install(TARGETS ${lib_name}
-  RUNTIME DESTINATION bin COMPONENT RuntimeLibraries
-  LIBRARY DESTINATION lib/${PROJECT_NAME} COMPONENT RuntimeLibraries
-  ARCHIVE DESTINATION lib/${PROJECT_NAME} COMPONENT Development
-)
+#install(TARGETS ${lib_name}
+#  RUNTIME DESTINATION bin COMPONENT RuntimeLibraries
+#  LIBRARY DESTINATION lib/${PROJECT_NAME} COMPONENT RuntimeLibraries
+#  ARCHIVE DESTINATION lib/${PROJECT_NAME} COMPONENT Development
+#)
 
 # Shared library that when placed in ITK_AUTOLOAD_PATH, will add
 # BioFormatsImageIO as an ImageIOFactory.  Need to have separate shared
@@ -127,6 +129,14 @@ install(TARGETS ${lib_name}
 if(NOT DEFINED BioFormatsImageIO_INSTALL_ITKFACTORIES_DIR)
   set(BioFormatsImageIO_INSTALL_ITKFACTORIES_DIR lib/)
 endif(NOT DEFINED BioFormatsImageIO_INSTALL_ITKFACTORIES_DIR)
+
+if(NOT DEFINED BioFormatsImageIO_ARTIFACT_DIR)
+  set(BioFormatsImageIO_ARTIFACT_DIR ../../../../artifacts)
+endif(NOT DEFINED BioFormatsImageIO_ARTIFACT_DIR)
+
+if(NOT DEFINED BioFormatsImageIO_DIST_DIR)
+  set(BioFormatsImageIO_DIST_DIR /dist/bf-itk)
+endif(NOT DEFINED BioFormatsImageIO_DIST_DIR)
 
 add_library(BioFormatsIOPlugin SHARED
   itkBioFormatsIOPlugin.cxx
@@ -145,11 +155,11 @@ target_link_libraries(BioFormatsIOPlugin
   ${JAVA_JVM_LIBRARY}
 )
 
-install(TARGETS BioFormatsIOPlugin
-  RUNTIME DESTINATION ${BioFormatsImageIO_INSTALL_ITKFACTORIES_DIR} COMPONENT RuntimeLibraries
-  LIBRARY DESTINATION ${BioFormatsImageIO_INSTALL_ITKFACTORIES_DIR} COMPONENT RuntimeLibraries
-  ARCHIVE DESTINATION lib/${PROJECT_NAME} COMPONENT Development
-)
+#install(TARGETS BioFormatsIOPlugin
+#  RUNTIME DESTINATION ${BioFormatsImageIO_INSTALL_ITKFACTORIES_DIR} COMPONENT RuntimeLibraries
+#  LIBRARY DESTINATION ${BioFormatsImageIO_INSTALL_ITKFACTORIES_DIR} COMPONENT RuntimeLibraries
+#  ARCHIVE DESTINATION lib/${PROJECT_NAME} COMPONENT Development
+#)
 
 # make a copy named '.so' for compatibility with the expectations
 # of the ITK Factory mechanism on macs
@@ -164,18 +174,87 @@ if(APPLE)
     "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_INSTALL_ITKFACTORIES_DIR}/libBioFormatsIOPlugin.so"
     VERBATIM
   )
-  install(FILES
-    "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_INSTALL_ITKFACTORIES_DIR}/libBioFormatsIOPlugin.so"
-    DESTINATION ${BioFormatsImageIO_INSTALL_ITKFACTORIES_DIR}
-  )
+
+add_custom_command(
+  TARGET BioFormatsIOPlugin
+  DEPENDS "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_INSTALL_ITKFACTORIES_DIR}/libBioFormatsIOPlugin.so"
+  POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E copy
+  "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_INSTALL_ITKFACTORIES_DIR}/libBioFormatsIOPlugin.so"
+  "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_DIST_DIR}/libBioFormatsIOPlugin.so"
+  VERBATIM
+)
+install(FILES
+  "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_DIST_DIR}/libBioFormatsIOPlugin.so"
+  DESTINATION "build/${BioFormatsImageIO_DIST_DIR}"
+)
 endif(APPLE)
 
-#add_custom_command(
-#  TARGET BioFormatsIOPlugin
-#  DEPENDS "${CMAKE_BINARY_DIR}/libBioFormatsIOPlugin.dylib"
-#  POST_BUILD
-#  COMMAND ${CMAKE_COMMAND} -E make_directory
-#  COMMAND ${CMAKE_COMMAND} copy
-#  "${CMAKE_BINARY_DIR}/libBioFormatsIOPlugin.dylib"
-#  "${CMAKE_BINARY_DIR}/dist/bf-itk/libBioFormatsIOPlugin.dylib"
-#)
+add_custom_command(
+  TARGET BioFormatsIOPlugin
+  DEPENDS "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_INSTALL_ITKFACTORIES_DIR}/libBioFormatsIOPlugin.dylib"
+  POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E copy
+  "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_INSTALL_ITKFACTORIES_DIR}/libBioFormatsIOPlugin.dylib"
+  "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_DIST_DIR}/libBioFormatsIOPlugin.dylib"
+  VERBATIM
+)
+install(FILES
+  "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_DIST_DIR}/libBioFormatsIOPlugin.dylib"
+  DESTINATION "build/${BioFormatsImageIO_DIST_DIR}"
+)
+
+add_custom_command(
+  TARGET BioFormatsIOPlugin
+  DEPENDS "${CMAKE_BINARY_DIR}/libBioFormatsIO.dylib"
+  POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E copy
+  "${CMAKE_BINARY_DIR}/libBioFormatsIO.dylib"
+  "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_DIST_DIR}/libBioFormatsIO.dylib"
+  VERBATIM
+)
+install(FILES
+  "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_DIST_DIR}/libBioFormatsIO.dylib"
+  DESTINATION "build/${BioFormatsImageIO_DIST_DIR}"
+)
+
+add_custom_command(
+  TARGET BioFormatsIOPlugin
+  DEPENDS "${BioFormatsImageIO_ARTIFACT_DIR}/loci_tools.jar"
+  POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E copy
+  "${BioFormatsImageIO_ARTIFACT_DIR}/loci_tools.jar"
+  "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_DIST_DIR}/loci_tools.jar"
+  VERBATIM
+)
+install(FILES
+  "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_DIST_DIR}/loci_tools.jar"
+  DESTINATION "build/${BioFormatsImageIO_DIST_DIR}"
+)
+
+add_custom_command(
+  TARGET BioFormatsIOPlugin
+  DEPENDS "${BioFormatsImageIO_ARTIFACT_DIR}/loci_tools.jar"
+  POST_BUILD
+  COMMAND ${Java_JAVA_EXECUTABLE} -cp ${BioFormatsImageIO_ARTIFACT_DIR}/loci_tools.jar
+  "loci.formats.tools.BioFormatsExtensionPrinter"
+  VERBATIM
+)
+
+add_custom_command(
+  TARGET BioFormatsIOPlugin
+  DEPENDS "${CMAKE_BINARY_DIR}/BioFormatsSuffixes.txt"
+  POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E copy
+  "${CMAKE_BINARY_DIR}/BioFormatsSuffixes.txt"
+  "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_DIST_DIR}/BioFormatsSuffixes.txt"
+  VERBATIM
+)
+install(FILES
+  "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_DIST_DIR}/BioFormatsSuffixes.txt"
+  DESTINATION "build/${BioFormatsImageIO_DIST_DIR}"
+)
+
+SET(CPACK_PACKAGE_FILE_NAME "bf-itk")
+SET(CPACK_GENERATOR "TGZ;ZIP")
+INCLUDE( Cpack )

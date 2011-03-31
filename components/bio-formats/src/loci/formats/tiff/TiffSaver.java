@@ -258,9 +258,9 @@ public class TiffSaver {
      */
     int tileWidth = (int) ifd.getTileWidth(); //make sure this is
     int tileHeight = (int) ifd.getTileLength();
-    int rowsPerStrip = (int) ifd.getRowsPerStrip()[0];
-    if (rowsPerStrip > h) rowsPerStrip = h;
-    int stripSize = rowsPerStrip * w * bytesPerPixel;
+    int rowsPerStrip = (int) ifd.getRowsPerStrip()[0]; //should = tileHeight
+    //if (rowsPerStrip > h) rowsPerStrip = h;
+    int stripSize = rowsPerStrip * tileWidth * bytesPerPixel; //w
 
     int nStrips = (int) (ifd.getTilesPerRow()*ifd.getTilesPerColumn());
 
@@ -290,18 +290,27 @@ public class TiffSaver {
       if (strip != thisStrip) {
         continue;
       }
-      for (int row=0; row<h; row++) {
-        for (int col=0; col<w; col++) {
+      for (int row=0; row<tileHeight; row++) {
+        for (int col=0; col<tileWidth; col++) {
           int ndx = ((row+y) * width + col +x) * bytesPerPixel;
           for (int c=0; c<nChannels; c++) {
             for (int n=0; n<bps[c]/8; n++) {
               if (interleaved) {
                 off = ndx * nChannels + c * bytesPerPixel + n;
-                stripOut[strip].writeByte(buf[off]);
+                if (row >= h || col >= w) {
+                  stripOut[strip].writeByte(0);
+                } else {
+                  stripOut[strip].writeByte(buf[off]);
+                }
               }
               else {
                 off = c * plane + ndx + n;
-                stripOut[c * (nStrips / nChannels) + strip].writeByte(buf[off]);
+                if (row >= h || col >= w) {
+                  stripOut[strip].writeByte(0);
+                } else {
+                  stripOut[c * (nStrips / nChannels) + strip].writeByte(
+                      buf[off]);
+                }
               }
             }
           }
@@ -320,8 +329,8 @@ public class TiffSaver {
       TiffCompression.difference(strips[strip], ifd);
       CodecOptions codecOptions = compression.getCompressionCodecOptions(
           ifd, options);
-      codecOptions.height = rowsPerStrip;
-      codecOptions.width = w;
+      codecOptions.height = tileHeight;//rowsPerStrip;
+      codecOptions.width = tileWidth;//w;
       strips[strip] = compression.compress(strips[strip], codecOptions);
     }
 

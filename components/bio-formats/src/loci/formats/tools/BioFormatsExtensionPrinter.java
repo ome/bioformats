@@ -64,7 +64,7 @@ public class BioFormatsExtensionPrinter {
 
 		PrintWriter fo = null;
 
-		fo = new PrintWriter(new FileWriter("build/BioFormatsSuffixes.txt"));
+		fo = new PrintWriter(new FileWriter("BioFormatsSuffixes.txt"));
 
 		for (String s : suffixes) fo.println("*." + s);
 
