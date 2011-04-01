@@ -471,6 +471,32 @@ public class FormatReaderTest {
   }
 
   /**
+   * @testng.test groups = "all fast"
+   */
+  public void testConsistentReader() {
+    String testName = "testConsistentReader";
+    if (!initFile()) result(testName, false, "initFile");
+
+    String format = config.getReader();
+
+    IFormatReader r = reader;
+    if (r instanceof ImageReader) {
+      r = ((ImageReader) r).getReader();
+    }
+    else if (r instanceof ReaderWrapper) {
+      try {
+        r = ((ReaderWrapper) r).unwrap();
+      }
+      catch (FormatException e) { }
+      catch (IOException e) { }
+    }
+
+    String realFormat = TestTools.shortClassName(r);
+
+    result(testName, realFormat.equals(format), realFormat);
+  }
+
+  /**
    * @testng.test groups = "all xml"
    */
   public void testSaneOMEXML() {
