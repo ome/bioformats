@@ -216,9 +216,9 @@
       <xsl:for-each select="@*">
         <xsl:choose>
           <xsl:when test="name() = 'NominalMagnification'">
-            <xsl:param name='mag'>
+            <xsl:variable name='mag'>
               <xsl:value-of select="."/>
-            </xsl:param>
+            </xsl:variable>
             <xsl:if test="$mag > '0'">
               <xsl:attribute name='NominalMagnification'>
                 <xsl:value-of select="."/>
@@ -232,6 +232,7 @@
           </xsl:otherwise>
         </xsl:choose>
       </xsl:for-each>
+			<xsl:apply-templates select="node()"/>
     </xsl:element>
   </xsl:template>
 
