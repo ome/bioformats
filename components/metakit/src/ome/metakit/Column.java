@@ -11,6 +11,7 @@ public class Column {
   // -- Constructors --
 
   public Column(String definition) {
+    /* debug */ System.out.println("new Column(" + definition + ")");
     int separator = definition.indexOf(":");
     name = definition.substring(0, separator);
     typeString = definition.substring(separator + 1);

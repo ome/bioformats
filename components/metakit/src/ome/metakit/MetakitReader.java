@@ -243,7 +243,9 @@ public class MetakitReader {
 
   private void readTOC() throws IOException, MetakitException {
     int tocMarker = MetakitTools.readBpInt(stream);
+    /* debug */ System.out.println("reading structure definition from " + stream.getFilePointer());
     String structureDefinition = MetakitTools.readPString(stream);
+    /* debug */ System.out.println(structureDefinition);
 
     String[] tables = structureDefinition.split("],");
     tableNames = new String[tables.length];
@@ -266,14 +268,19 @@ public class MetakitReader {
 
     rowCount = new int[tables.length];
 
-    for (int i=0; i<rowCount.length; i++) {
-      rowCount[i] = MetakitTools.readBpInt(stream);
-      /* debug */ System.out.println("# rows for table " + i + " = " + rowCount[i]);
-    }
+    MetakitTools.readBpInt(stream);
 
     data = new Object[tables.length][][];
 
     for (int table=0; table<tables.length; table++) {
+      MetakitTools.readBpInt(stream);
+    /* debug */ System.out.println("reading pointer from " + stream.getFilePointer());
+      int pointer = MetakitTools.readBpInt(stream);
+      long fp = stream.getFilePointer();
+      stream.seek(pointer + 1);
+
+      rowCount[table] = MetakitTools.readBpInt(stream);
+      /* debug */ System.out.println("# rows for table " + table + " = " + rowCount[table]);
       data[table] = new Object[columns[table].length][];
       if (rowCount[table] > 0) {
         for (int col=0; col<columns[table].length; col++) {
@@ -283,6 +290,7 @@ public class MetakitReader {
           data[table][col] = map.getValues();
         }
       }
+      stream.seek(fp);
     }
   }
 
