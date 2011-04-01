@@ -296,7 +296,9 @@ public class TiffSaver {
           for (int c=0; c<nChannels; c++) {
             for (int n=0; n<bps[c]/8; n++) {
               if (interleaved) {
-                off = ndx * nChannels + c * bytesPerPixel + n;
+                //off = ndx * nChannels + c * bytesPerPixel + n;
+                //off = ndx + c * bytesPerPixel + n;
+                off = ndx + c * plane + n;
                 if (row >= h || col >= w) {
                   stripOut[strip].writeByte(0);
                 } else {

@@ -430,32 +430,18 @@ public class TiffWriterTest {
       assertTiles(f.getAbsolutePath(), COMPRESSION[i], 4, 1);
     }
   }
-
-  /**
-   * Tests the writing of blocks of 64x64. Tiles should be square and size
-   * multiple of 16.
-   * @throws Exception Throw if an error occurred while writing.
-   */
-  @Test(enabled=true)
-  public void testWriteUnevenTilesImage32x32Blocks() throws Exception {
-    File f;
-    for (int i = 0; i < COMPRESSION.length; i++) {
-      f =  File.createTempFile("testWriteFullImage_"+COMPRESSION[i], ".tiff");
-      assertUnevenTiles(f.getAbsolutePath(), COMPRESSION[i], 32, 32);
-    }
-  }
   
   /**
-   * Tests the writing of blocks of 64x64. Tiles should be square and size
+   * Tests the writing of blocks of 256x256. Tiles should be square and size
    * multiple of 16.
    * @throws Exception Throw if an error occurred while writing.
    */
   @Test(enabled=true)
-  public void testWriteUnevenTilesImage64x64Blocks() throws Exception {
+  public void testWriteUnevenTilesImage128x128Block() throws Exception {
     File f;
     for (int i = 0; i < COMPRESSION.length; i++) {
       f =  File.createTempFile("testWriteFullImage_"+COMPRESSION[i], ".tiff");
-      assertUnevenTiles(f.getAbsolutePath(), COMPRESSION[i], 64, 64);
+      assertUnevenTiles(f.getAbsolutePath(), COMPRESSION[i], 256, 256);
     }
   }
   
