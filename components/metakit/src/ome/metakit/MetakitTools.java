@@ -1,6 +1,7 @@
 package ome.metakit;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import loci.common.RandomAccessInputStream;
 
@@ -19,16 +20,24 @@ public class MetakitTools {
     boolean negative = signByte == 0;
     int dataByte = !negative ? signByte : stream.read();
     int stopByte = dataByte;
-    if ((dataByte & 0x80) == 0) {
+    ArrayList<Integer> dataBytes = new ArrayList<Integer>();
+    while ((stopByte & 0x80) == 0) {
+      dataBytes.add(stopByte);
       stopByte = stream.read();
     }
-    else dataByte = 0;
 
-    int value = ((dataByte << 7) & 0xffff) | (stopByte & 0x7f);
+    int value = 0;
+    for (int i=0; i<dataBytes.size(); i++) {
+      int shift = (dataBytes.size() - i) * 8 - 1;
+      value |= (dataBytes.get(i) << shift);
+    }
+
+    value |= (stopByte & 0x7f);
+
     if (negative) {
       value = ~value;
     }
-    return value & 0xffff;
+    return value & 0xffffffff;
   }
 
 }

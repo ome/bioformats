@@ -40,8 +40,8 @@ public class ColumnMap {
   }
 
   public boolean isFixedMap() {
-    String type = col.getTypeString();
-    return !type.equals("S") && !type.equals("B");
+    char type = col.getTypeString().charAt(0);
+    return type != 'S' && type != 'B';
   }
 
   // -- Helper methods --
@@ -49,25 +49,56 @@ public class ColumnMap {
   private void setup() throws IOException {
     /* debug */ System.out.println("reading ColumnMap from " + stream.getFilePointer());
     if (isFixedMap()) {
+      /* debug */ System.out.println("reading fixed map");
       // read a single IVecRef
-      int ivecSize = MetakitTools.readBpInt(stream) / 2; // in nybbles?
-      /* debug */ System.out.println("  fixed, with size = " + ivecSize + " bytes");
+
+      int ivecSize = MetakitTools.readBpInt(stream);
+      int ivecPointer = MetakitTools.readBpInt(stream);
       if (ivecSize > 0) {
-        int ivecLocation = MetakitTools.readBpInt(stream);
         long fp = stream.getFilePointer();
-        /* debug */ System.out.println("  pointer = " + ivecLocation);
-        stream.seek(ivecLocation - 6);
+        stream.seek(ivecPointer);
 
         for (int i=0; i<rowCount; i++) {
           values.add(readElement(ivecSize));
         }
         stream.seek(fp);
       }
+      else {
+        for (int i=0; i<rowCount; i++) {
+          values.add(null);
+        }
+      }
     }
     else {
-      // IVecRef -> IVecBinaryData
-      // IVecRef -> IVecIntData (item sizes for IVecBinaryData)
-      // IVecRef -> IVecCatalogData
+      /* debug */ System.out.println("reading variable map");
+      int ivecSize = MetakitTools.readBpInt(stream); // total bytes
+      int ivecPointer = MetakitTools.readBpInt(stream);
+
+      int mapIvecSize = MetakitTools.readBpInt(stream);
+      int mapIvecPointer = MetakitTools.readBpInt(stream);
+
+      int catalogIvecSize = MetakitTools.readBpInt(stream);
+      int catalogIvecPointer = MetakitTools.readBpInt(stream);
+
+      long fp = stream.getFilePointer();
+
+      stream.seek(mapIvecPointer);
+      int[] byteCounts = new int[rowCount];
+
+      for (int i=0; i<rowCount; i++) {
+        byteCounts[i] = readBits(mapIvecSize, (mapIvecSize * 8) / rowCount, i);
+        /* debug */ System.out.println("  byteCounts[" + i + "] = " + byteCounts[i]);
+      }
+
+      stream.seek(ivecPointer);
+      for (int i=0; i<rowCount; i++) {
+        byte[] buf = new byte[byteCounts[i]];
+        stream.read(buf);
+        char type = col.getTypeString().charAt(0);
+        values.add(type == 'B' ? buf : new String(buf));
+      }
+
+      stream.seek(fp);
     }
   }
 
@@ -96,10 +127,50 @@ public class ColumnMap {
             return new Integer(stream.readShort());
           case 32:
             return new Integer(stream.readInt());
+          default:
+            return new Integer(stream.readInt());
         }
     }
 
     return null;
+  }
+
+  private int readBits(int nBytes, int bits, int index) throws IOException {
+    if (bits == 8) {
+      return stream.read();
+    }
+    else if (bits == 16) {
+      return stream.readShort() & 0xffff;
+    }
+    else if (bits == 32) {
+      return stream.readInt();
+    }
+
+    /* debug */
+    System.out.println("    nBytes = " + nBytes);
+    System.out.println("    bits = " + bits);
+    System.out.println("    index = " + index);
+    System.out.println("    littleEndian = " + stream.isLittleEndian());
+    /* end debug */
+
+    long fp = stream.getFilePointer();
+    int realIndex = index;
+    if (stream.isLittleEndian()) {
+      realIndex = ((nBytes * 8) / bits) - index - 1;
+    }
+    stream.skipBytes((realIndex * bits) / 8);
+    int b = stream.read();
+    /* debug */ System.out.println("    b = " + b);
+    int mask = (int) Math.pow(2, bits) - 1;
+    /* debug */ System.out.println("    mask = " + mask);
+
+    int bitIndex = index % (8 / bits);
+    /* debug */ System.out.println("    bitIndex = " + bitIndex);
+
+    int value = b & (mask << (bitIndex * bits));
+
+    stream.seek(fp);
+    return value;
   }
 
 }
