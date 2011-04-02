@@ -394,6 +394,7 @@ public class TiffSaver {
           out.getFilePointer(), fp);
     }
     out.seek(fp);
+
     writeIFD(ifd, last ? 0 : endFP);
     if (LOGGER.isDebugEnabled()) {
       LOGGER.debug("Offset after IFD write: {}", out.getFilePointer());
@@ -408,6 +409,7 @@ public class TiffSaver {
 
     if (ifd.containsKey(new Integer(IFD.LITTLE_ENDIAN))) keyCount--;
     if (ifd.containsKey(new Integer(IFD.BIG_TIFF))) keyCount--;
+    if (ifd.containsKey(new Integer(IFD.REUSE))) keyCount--;
 
     long fp = out.getFilePointer();
     int bytesPerEntry = bigTiff ? TiffConstants.BIG_TIFF_BYTES_PER_ENTRY :
@@ -421,7 +423,8 @@ public class TiffSaver {
     RandomAccessOutputStream extraStream = new RandomAccessOutputStream(extra);
 
     for (Integer key : keys) {
-      if (key.equals(IFD.LITTLE_ENDIAN) || key.equals(IFD.BIG_TIFF)) continue;
+      if (key.equals(IFD.LITTLE_ENDIAN) || key.equals(IFD.BIG_TIFF) ||
+          key.equals(IFD.REUSE)) continue;
 
       Object value = ifd.get(key);
       writeIFDValue(extraStream, ifdBytes + fp, key.intValue(), value);
