@@ -153,9 +153,11 @@ public class MetakitReader {
    */
   public Object[][] getTableData(int tableIndex) {
     Object[][] table = data[tableIndex];
+    if (table == null) return null;
 
     // table is stored in [column][row] order; reverse it for convenience
-    Object[][] newTable = new Object[table[0].length][table.length];
+    int rowCount = table[0] == null ? 0 : table[0].length;
+    Object[][] newTable = new Object[rowCount][table.length];
 
     for (int row=0; row<newTable.length; row++) {
       for (int col=0; col<newTable[row].length; col++) {
@@ -243,21 +245,24 @@ public class MetakitReader {
 
   private void readTOC() throws IOException, MetakitException {
     int tocMarker = MetakitTools.readBpInt(stream);
-    /* debug */ System.out.println("reading structure definition from " + stream.getFilePointer());
     String structureDefinition = MetakitTools.readPString(stream);
-    /* debug */ System.out.println(structureDefinition);
 
     String[] tables = structureDefinition.split("],");
     tableNames = new String[tables.length];
 
     columns = new Column[tables.length][];
+    boolean[] hasSubviews = new boolean[tables.length];
 
     for (int i=0; i<tables.length; i++) {
       String table = tables[i];
       int openBracket = table.indexOf("[");
       tableNames[i] = table.substring(0, openBracket);
       String columnList = table.substring(openBracket + 1);
-      columnList = columnList.substring(columnList.indexOf("[") + 1);
+
+      openBracket = columnList.indexOf("[");
+      hasSubviews[i] = openBracket >= 0;
+
+      columnList = columnList.substring(openBracket + 1);
       String[] cols = columnList.split(",");
       columns[i] = new Column[cols.length];
 
@@ -274,13 +279,26 @@ public class MetakitReader {
 
     for (int table=0; table<tables.length; table++) {
       MetakitTools.readBpInt(stream);
-    /* debug */ System.out.println("reading pointer from " + stream.getFilePointer());
       int pointer = MetakitTools.readBpInt(stream);
       long fp = stream.getFilePointer();
       stream.seek(pointer + 1);
 
       rowCount[table] = MetakitTools.readBpInt(stream);
-      /* debug */ System.out.println("# rows for table " + table + " = " + rowCount[table]);
+      if (hasSubviews[table]) {
+        int subviewCount = rowCount[table];
+
+        // read an IVecRef
+
+        int size = MetakitTools.readBpInt(stream);
+        long subviewPointer = MetakitTools.readBpInt(stream);
+
+        stream.seek(subviewPointer);
+
+        MetakitTools.readBpInt(stream); // 0x80
+
+        rowCount[table] = MetakitTools.readBpInt(stream);
+      }
+
       data[table] = new Object[columns[table].length][];
       if (rowCount[table] > 0) {
         for (int col=0; col<columns[table].length; col++) {
