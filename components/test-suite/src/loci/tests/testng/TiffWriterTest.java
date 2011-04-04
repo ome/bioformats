@@ -243,7 +243,7 @@ public class TiffWriterTest {
         blockWidth = sizeX;
         n = 1;
       }
-      if (m == 1) {
+      if (m == 0) {
         blockHeight = sizeY;
         m = 1;
       }
@@ -257,8 +257,8 @@ public class TiffWriterTest {
       for (int k = 0; k < count; k++) {
         x = 0;
         y = 0;
-        md5PerImage = new HashMap<Integer, String>();
         v = s*series+k;
+        md5PerImage = new HashMap<Integer, String>();
         md5ImageInSeries.put(v, md5PerImage);
         ifd = new IFD();
         ifd.put(IFD.TILE_WIDTH, blockWidth);
@@ -331,7 +331,7 @@ public class TiffWriterTest {
               x = blockWidth*j;
               w = blockWidth;
             }
-            tile = outputReader.openBytes(0, x, y, w, h);
+            tile = outputReader.openBytes(k, x, y, w, h);
             planeDigest = results.get(index);
             tileDigest = TestTools.md5(tile);
             if (!planeDigest.equals(tileDigest)) {
@@ -349,7 +349,7 @@ public class TiffWriterTest {
 
   @Parameters({"id"})
   @BeforeClass
-  public void parse(String id) throws Exception {
+  public void parse( String id) throws Exception {
     ServiceFactory factory = new ServiceFactory();
     service = factory.getInstance(OMEXMLService.class);
     metadata = service.createOMEXMLMetadata();
@@ -449,7 +449,7 @@ public class TiffWriterTest {
     File f;
     for (int i = 0; i < COMPRESSION.length; i++) {
       for (int j = 0; j < BIG_TIFF.length; j++) {
-        f =  File.createTempFile("testWriteFullImage_"+j+"_"+
+        f =  File.createTempFile("testWriteUnevenTilesImage256x256Block_"+j+"_"+
             COMPRESSION[i], ".tiff");
         assertUnevenTiles(f.getAbsolutePath(), COMPRESSION[i], 256, 256, 
             BIG_TIFF[j]);
