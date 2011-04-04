@@ -47,19 +47,17 @@ public class ColumnMap {
   // -- Helper methods --
 
   private void setup() throws IOException {
-    /* debug */ System.out.println("reading ColumnMap from " + stream.getFilePointer());
     if (isFixedMap()) {
-      /* debug */ System.out.println("reading fixed map");
       // read a single IVecRef
 
       int ivecSize = MetakitTools.readBpInt(stream);
-      int ivecPointer = MetakitTools.readBpInt(stream);
       if (ivecSize > 0) {
+        int ivecPointer = MetakitTools.readBpInt(stream);
         long fp = stream.getFilePointer();
         stream.seek(ivecPointer);
 
         for (int i=0; i<rowCount; i++) {
-          values.add(readElement(ivecSize));
+          values.add(readElement(ivecSize, i));
         }
         stream.seek(fp);
       }
@@ -70,7 +68,6 @@ public class ColumnMap {
       }
     }
     else {
-      /* debug */ System.out.println("reading variable map");
       int ivecSize = MetakitTools.readBpInt(stream); // total bytes
       int ivecPointer = MetakitTools.readBpInt(stream);
 
@@ -78,7 +75,10 @@ public class ColumnMap {
       int mapIvecPointer = MetakitTools.readBpInt(stream);
 
       int catalogIvecSize = MetakitTools.readBpInt(stream);
-      int catalogIvecPointer = MetakitTools.readBpInt(stream);
+      int catalogIvecPointer = 0;
+      if (catalogIvecSize > 0) {
+        catalogIvecPointer = MetakitTools.readBpInt(stream);
+      }
 
       long fp = stream.getFilePointer();
 
@@ -87,7 +87,6 @@ public class ColumnMap {
 
       for (int i=0; i<rowCount; i++) {
         byteCounts[i] = readBits(mapIvecSize, (mapIvecSize * 8) / rowCount, i);
-        /* debug */ System.out.println("  byteCounts[" + i + "] = " + byteCounts[i]);
       }
 
       stream.seek(ivecPointer);
@@ -102,7 +101,7 @@ public class ColumnMap {
     }
   }
 
-  private Object readElement(int vectorSize) throws IOException {
+  private Object readElement(int vectorSize, int index) throws IOException {
     char type = col.getTypeString().charAt(0);
 
     switch (type) {
@@ -116,11 +115,11 @@ public class ColumnMap {
         int bits = (vectorSize * 8) / rowCount;
         switch (bits) {
           case 1:
-            break;
+            return readBits(vectorSize, 1, index);
           case 2:
-            break;
+            return readBits(vectorSize, 2, index);
           case 4:
-            break;
+            return readBits(vectorSize, 4, index);
           case 8:
             return new Integer(stream.read());
           case 16:
@@ -146,28 +145,14 @@ public class ColumnMap {
       return stream.readInt();
     }
 
-    /* debug */
-    System.out.println("    nBytes = " + nBytes);
-    System.out.println("    bits = " + bits);
-    System.out.println("    index = " + index);
-    System.out.println("    littleEndian = " + stream.isLittleEndian());
-    /* end debug */
-
     long fp = stream.getFilePointer();
-    int realIndex = index;
-    if (stream.isLittleEndian()) {
-      realIndex = ((nBytes * 8) / bits) - index - 1;
-    }
-    stream.skipBytes((realIndex * bits) / 8);
+    stream.skipBytes((index * bits) / 8);
     int b = stream.read();
-    /* debug */ System.out.println("    b = " + b);
     int mask = (int) Math.pow(2, bits) - 1;
-    /* debug */ System.out.println("    mask = " + mask);
 
     int bitIndex = index % (8 / bits);
-    /* debug */ System.out.println("    bitIndex = " + bitIndex);
-
     int value = b & (mask << (bitIndex * bits));
+    value >>= ((8 - (bitIndex * bits)) % 8);
 
     stream.seek(fp);
     return value;
