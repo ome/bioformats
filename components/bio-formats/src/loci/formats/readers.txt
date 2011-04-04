@@ -117,6 +117,7 @@ loci.formats.in.ImprovisionTiffReader # tif
 loci.formats.in.MetamorphTiffReader   # tif
 loci.formats.in.NikonTiffReader       # tif
 loci.formats.in.OMETiffReader         # tif
+loci.formats.in.SISReader             # tif
 
 # standard TIFF reader must go last (it accepts any TIFF)
 loci.formats.in.TiffReader            # tif, tiff
