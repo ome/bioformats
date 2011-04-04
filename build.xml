@@ -413,7 +413,7 @@ Apache XML-RPC
 
   <target name="jars"
     depends="copy-jars, jar-common, jar-ome-xml,
-      jar-jai, jar-poi-loci, jar-mdbtools,
+      jar-jai, jar-poi-loci, jar-mdbtools, jar-metakit,
       jar-formats, jar-autogen, jar-bf-ice,
       jar-loci-plugins, jar-ome-io, jar-ome-plugins,
       jar-visbio, jar-slim, jar-flow,
@@ -444,7 +444,7 @@ Apache XML-RPC
 
   <target name="clean"
     depends="clean-common, clean-ome-xml,
-      clean-jai, clean-poi-loci, clean-mdbtools,
+      clean-jai, clean-poi-loci, clean-mdbtools, clean-metakit,
       clean-formats, clean-autogen, clean-bf-ice,
       clean-loci-plugins, clean-ome-io, clean-ome-plugins,
       clean-visbio, clean-slim, clean-flow,
@@ -598,6 +598,28 @@ Apache XML-RPC
     <ant dir="components/forks/mdbtools" target="mdbtools.clean"/>
   </target>
 
+  <!-- Metakit Java library -->
+
+  <target name="compile-metakit"
+    description="compile classes for Metakit Java library">
+    <ant dir="components/metakit" target="metakit.compile"/>
+  </target>
+
+  <target name="jar-metakit"
+    description="generate JAR file for Metakit Java library">
+    <ant dir="components/metakit" target="metakit.jar"/>
+  </target>
+
+  <target name="findbugs-metakit"
+    description="run findbugs on Metakit Java library">
+    <ant dir="components/metakit" target="metakit.findbugs"/>
+  </target>
+
+  <target name="clean-metakit"
+    description="remove build files for Metakit Java library">
+    <ant dir="components/metakit" target="metakit.clean"/>
+  </target>
+
   <!-- OME-XML Java library -->
 
   <target name="compile-ome-xml"
@@ -623,13 +645,13 @@ Apache XML-RPC
   <!-- Bio-Formats -->
 
   <target name="compile-formats"
-    depends="compile-common, compile-ome-xml"
+    depends="compile-common, compile-metakit, compile-ome-xml"
     description="compile classes for Bio-Formats">
     <ant dir="components/bio-formats" target="formats.compile"/>
   </target>
 
   <target name="jar-formats"
-    depends="jar-common, jar-ome-xml"
+    depends="jar-common, jar-metakit, jar-ome-xml"
     description="generate JAR file for Bio-Formats">
     <ant dir="components/bio-formats" target="formats.jar"/>
   </target>
@@ -640,7 +662,7 @@ Apache XML-RPC
   </target>
 
   <target name="clean-formats"
-    depends="clean-common, clean-ome-xml"
+    depends="clean-common, clean-metakit, clean-ome-xml"
     description="remove build files for Bio-Formats">
     <ant dir="components/bio-formats" target="formats.clean"/>
   </target>

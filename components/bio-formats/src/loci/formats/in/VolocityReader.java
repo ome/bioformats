@@ -36,6 +36,9 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
+import ome.metakit.MetakitException;
+import ome.metakit.MetakitReader;
+
 /**
  * VolocityReader is the file format reader for Volocity library files.
  *
@@ -123,7 +126,6 @@ public class VolocityReader extends FormatReader {
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
-    in = new RandomAccessInputStream(id);
 
     extraFiles = new ArrayList<String>();
 
@@ -132,6 +134,34 @@ public class VolocityReader extends FormatReader {
 
     Location parent = file.getParentFile();
     Location dir = new Location(parent, DATA_DIR);
+
+    Object[][] sampleTable = null, stringTable = null;
+
+    try {
+      MetakitReader reader = new MetakitReader(id);
+      sampleTable = reader.getTableData(1);
+      stringTable = reader.getTableData(2);
+    }
+    catch (MetakitException e) {
+      throw new FormatException(e);
+    }
+
+    for (int i=0; i<sampleTable.length; i++) {
+      Integer stringID = (Integer) sampleTable[i][11] - 1;
+      String name = stringTable[stringID][1].toString();
+      String fileLink = sampleTable[i][14].toString();
+      byte[] data = null;
+      if (fileLink.equals("0")) {
+        data = (byte[]) sampleTable[i][13];
+      }
+      else {
+        fileLink = new Location(dir, fileLink + ".dat").getAbsolutePath();
+        RandomAccessInputStream s = new RandomAccessInputStream(fileLink);
+        data = new byte[(int) s.length()];
+        s.read(data);
+        s.close();
+      }
+    }
 
     String[] files = dir.list(true);
     ArrayList<String> pixels = new ArrayList<String>();
