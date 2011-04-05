@@ -28,7 +28,7 @@ public class MetakitTools {
 
     int value = 0;
     for (int i=0; i<dataBytes.size(); i++) {
-      int shift = (dataBytes.size() - i) * 8 - 1;
+      int shift = (dataBytes.size() - i) * 7;
       value |= (dataBytes.get(i) << shift);
     }
 

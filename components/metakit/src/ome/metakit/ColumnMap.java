@@ -85,8 +85,9 @@ public class ColumnMap {
       stream.seek(mapIvecPointer);
       int[] byteCounts = new int[rowCount];
 
+      int bits = (mapIvecSize * 8) / rowCount;
       for (int i=0; i<rowCount; i++) {
-        byteCounts[i] = readBits(mapIvecSize, (mapIvecSize * 8) / rowCount, i);
+        byteCounts[i] = readBits(mapIvecSize, bits, i);
       }
 
       stream.seek(ivecPointer);
@@ -141,7 +142,7 @@ public class ColumnMap {
     else if (bits == 16) {
       return stream.readShort() & 0xffff;
     }
-    else if (bits == 32) {
+    else if (bits >= 32) {
       return stream.readInt();
     }
 
