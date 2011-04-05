@@ -474,6 +474,7 @@ public class FormatReaderTest {
    * @testng.test groups = "all fast"
    */
   public void testConsistentReader() {
+    if (config == null) throw new SkipException("No config tree");
     String testName = "testConsistentReader";
     if (!initFile()) result(testName, false, "initFile");
 
@@ -1221,6 +1222,11 @@ public class FormatReaderTest {
   public void testValidXML() {
     String testName = "testValidXML";
     if (!initFile()) result(testName, false, "initFile");
+    String format = config.getReader();
+    if (format.equals("OMETiffReader") || format.equals("OMEXMLReader")) {
+      result(testName, true);
+      return;
+    }
     boolean success = true;
     try {
       MetadataStore store = reader.getMetadataStore();
