@@ -75,20 +75,29 @@ public class TiffWriterTest {
   /** The compression levels to test. */
   private final static String[] COMPRESSION;
 
+  /** The big tiff flags. */
+  private final static Boolean[] BIG_TIFF;
+  
   static {
     COMPRESSION = new String[2];
     COMPRESSION[0] = TiffCompression.UNCOMPRESSED.getCodecName();
     COMPRESSION[1] = TiffCompression.JPEG_2000.getCodecName();
+    BIG_TIFF = new Boolean[1];
+    BIG_TIFF[0] = Boolean.valueOf(false);
+    //BIG_TIFF[1] = Boolean.valueOf(true);
   }
 
   /**
    * Initializes the writer.
    * @param output The file where to write the compressed data.
    * @param compression The compression to use.
+   * @param bigTiff Pass <code>true</code> to set the <code>bigTiff</code> flag,
+   *                <code>false</code> otherwise.
    * @return See above.
    * @throws Exception Thrown if an error occurred.
    */
-  private TiffWriter initializeWriter(String output, String compression)
+  private TiffWriter initializeWriter(String output, String compression, boolean
+      bigTiff)
   throws Exception {
     IMetadata newMetadata = service.createOMEXMLMetadata();
     MetadataConverter.convertMetadata(metadata, newMetadata);
@@ -97,6 +106,7 @@ public class TiffWriterTest {
     writer.setCompression(compression);
     writer.setWriteSequentially(true);
     writer.setInterleaved(true);
+    writer.setBigTiff(bigTiff);
     writer.setId(output);
     return writer;
   }
@@ -105,12 +115,15 @@ public class TiffWriterTest {
    * Tests the writing of the tiles.
    * @param output The output where to write the data.
    * @param compression The compression to use.
-   * @param n The value by which to divide the width of the image
-   * @param m The value by which to divide the height of the image
+   * @param n The value by which to divide the width of the image.
+   * @param m The value by which to divide the height of the image.
+   * @param bigTiff Pass <code>true</code> to set the <code>bigTiff</code> flag,
+   *                <code>false</code> otherwise.
    */
-  private void assertTiles(String output, String compression, int n, int m) 
+  private void assertTiles(String output, String compression, int n, int m, 
+      boolean bigTiff) 
     throws Exception {
-    TiffWriter writer = initializeWriter(output, compression);
+    TiffWriter writer = initializeWriter(output, compression, bigTiff);
     byte[] plane;
     int x, y;
     byte[] tile;
@@ -195,11 +208,13 @@ public class TiffWriterTest {
    * @param compression The compression to use.
    * @param blockWidth The width of block to write.
    * @param blockHeight The height of block to write.
+   * @param bigTiff Pass <code>true</code> to set the <code>bigTiff</code> flag,
+   *                <code>false</code> otherwise.
    */
   private void assertUnevenTiles(String output, String compression, 
-      int blockWidth, int blockHeight) 
+      int blockWidth, int blockHeight, boolean bigTiff) 
     throws Exception {
-    TiffWriter writer = initializeWriter(output, compression);
+    TiffWriter writer = initializeWriter(output, compression, bigTiff);
     byte[] plane;
     int x, y;
     byte[] tile;
@@ -228,7 +243,7 @@ public class TiffWriterTest {
         blockWidth = sizeX;
         n = 1;
       }
-      if (m == 1) {
+      if (m == 0) {
         blockHeight = sizeY;
         m = 1;
       }
@@ -242,8 +257,8 @@ public class TiffWriterTest {
       for (int k = 0; k < count; k++) {
         x = 0;
         y = 0;
-        md5PerImage = new HashMap<Integer, String>();
         v = s*series+k;
+        md5PerImage = new HashMap<Integer, String>();
         md5ImageInSeries.put(v, md5PerImage);
         ifd = new IFD();
         ifd.put(IFD.TILE_WIDTH, blockWidth);
@@ -316,7 +331,7 @@ public class TiffWriterTest {
               x = blockWidth*j;
               w = blockWidth;
             }
-            tile = outputReader.openBytes(0, x, y, w, h);
+            tile = outputReader.openBytes(k, x, y, w, h);
             planeDigest = results.get(index);
             tileDigest = TestTools.md5(tile);
             if (!planeDigest.equals(tileDigest)) {
@@ -334,7 +349,7 @@ public class TiffWriterTest {
 
   @Parameters({"id"})
   @BeforeClass
-  public void parse(String id) throws Exception {
+  public void parse( String id) throws Exception {
     ServiceFactory factory = new ServiceFactory();
     service = factory.getInstance(OMEXMLService.class);
     metadata = service.createOMEXMLMetadata();
@@ -356,8 +371,11 @@ public class TiffWriterTest {
   public void testWriteFullImage() throws Exception {
     File f;
     for (int i = 0; i < COMPRESSION.length; i++) {
-      f =  File.createTempFile("testWriteFullImage_"+COMPRESSION[i], ".tiff");
-      assertTiles(f.getAbsolutePath(), COMPRESSION[i], 1, 1);
+      for (int j = 0; j < BIG_TIFF.length; j++) {
+        f =  File.createTempFile("testWriteFullImage_"+j+"_"+
+            COMPRESSION[i], ".tiff");
+        assertTiles(f.getAbsolutePath(), COMPRESSION[i], 1, 1, BIG_TIFF[j]);
+      }
     }
   }
 
@@ -371,7 +389,7 @@ public class TiffWriterTest {
     for (int i = 0; i < COMPRESSION.length; i++) {
       f =  File.createTempFile("testWriteImageFourTiles_"+
           COMPRESSION[i], ".tiff");
-      assertTiles(f.getAbsolutePath(), COMPRESSION[i], 2, 2);
+      assertTiles(f.getAbsolutePath(), COMPRESSION[i], 2, 2, false);
     }
   }
 
@@ -385,21 +403,7 @@ public class TiffWriterTest {
     for (int i = 0; i < COMPRESSION.length; i++) {
       f =  File.createTempFile("testWriteImageSplitHorizontal_"+
           COMPRESSION[i], ".tiff");
-      assertTiles(f.getAbsolutePath(), COMPRESSION[i], 1, 2);
-    }
-  }
-
-  /**
-   * Tests the writing of the image with 4 tiles with full width.
-   * @throws Exception Throw if an error occurred while writing.
-   */
-  @Test(enabled = true)
-  public void testWriteImageSplitHorizontalFour() throws Exception {
-    File f;
-    for (int i = 0; i < COMPRESSION.length; i++) {
-      f =  File.createTempFile("testWriteImageSplitHorizontalFour_"+
-          COMPRESSION[i], ".tiff");
-      assertTiles(f.getAbsolutePath(), COMPRESSION[i], 1, 4);
+      assertTiles(f.getAbsolutePath(), COMPRESSION[i], 1, 2, false);
     }
   }
 
@@ -413,49 +417,25 @@ public class TiffWriterTest {
     for (int i = 0; i < COMPRESSION.length; i++) {
       f =  File.createTempFile("testWriteImageSplitVertical_"+
           COMPRESSION[i], ".tiff");
-      assertTiles(f.getAbsolutePath(), COMPRESSION[i], 2, 1);
+      assertTiles(f.getAbsolutePath(), COMPRESSION[i], 2, 1, false);
     }
   }
 
   /**
-   * Tests the writing of the image with 4 tiles with full height.
-   * @throws Exception Throw if an error occurred while writing.
-   */
-  @Test(enabled=true)
-  public void testWriteImageSplitVerticalFour() throws Exception {
-    File f;
-    for (int i = 0; i < COMPRESSION.length; i++) {
-      f =  File.createTempFile("testWriteImageSplitVerticalFour_"+
-          COMPRESSION[i], ".tiff");
-      assertTiles(f.getAbsolutePath(), COMPRESSION[i], 4, 1);
-    }
-  }
-
-  /**
-   * Tests the writing of blocks of 64x64. Tiles should be square and size
+   * Tests the writing of blocks of 256x256. Tiles should be square and size
    * multiple of 16.
    * @throws Exception Throw if an error occurred while writing.
    */
   @Test(enabled=true)
-  public void testWriteUnevenTilesImage32x32Blocks() throws Exception {
+  public void testWriteUnevenTilesImage128x128Block() throws Exception {
     File f;
     for (int i = 0; i < COMPRESSION.length; i++) {
-      f =  File.createTempFile("testWriteFullImage_"+COMPRESSION[i], ".tiff");
-      assertUnevenTiles(f.getAbsolutePath(), COMPRESSION[i], 32, 32);
-    }
-  }
-  
-  /**
-   * Tests the writing of blocks of 64x64. Tiles should be square and size
-   * multiple of 16.
-   * @throws Exception Throw if an error occurred while writing.
-   */
-  @Test(enabled=true)
-  public void testWriteUnevenTilesImage64x64Blocks() throws Exception {
-    File f;
-    for (int i = 0; i < COMPRESSION.length; i++) {
-      f =  File.createTempFile("testWriteFullImage_"+COMPRESSION[i], ".tiff");
-      assertUnevenTiles(f.getAbsolutePath(), COMPRESSION[i], 64, 64);
+      for (int j = 0; j < BIG_TIFF.length; j++) {
+        f =  File.createTempFile("testWriteUnevenTilesImage128x128Block_"+j+"_"+
+            COMPRESSION[i], ".tiff");
+        assertUnevenTiles(f.getAbsolutePath(), COMPRESSION[i], 128, 128, 
+            BIG_TIFF[j]);
+      }
     }
   }
   
@@ -468,10 +448,13 @@ public class TiffWriterTest {
   public void testWriteUnevenTilesImage256x256Block() throws Exception {
     File f;
     for (int i = 0; i < COMPRESSION.length; i++) {
-      f =  File.createTempFile("testWriteFullImage_"+COMPRESSION[i], ".tiff");
-      assertUnevenTiles(f.getAbsolutePath(), COMPRESSION[i], 256, 256);
+      for (int j = 0; j < BIG_TIFF.length; j++) {
+        f =  File.createTempFile("testWriteUnevenTilesImage256x256Block_"+j+"_"+
+            COMPRESSION[i], ".tiff");
+        assertUnevenTiles(f.getAbsolutePath(), COMPRESSION[i], 256, 256, 
+            BIG_TIFF[j]);
+      }
     }
   }
 
-  
 }
