@@ -39,6 +39,9 @@ import loci.formats.meta.MetadataStore;
 import ome.metakit.MetakitException;
 import ome.metakit.MetakitReader;
 
+import ome.xml.model.primitives.PositiveInteger;
+
+
 /**
  * VolocityReader is the file format reader for Volocity library files.
  *
@@ -79,7 +82,9 @@ public class VolocityReader extends FormatReader {
 
     ArrayList<String> files = new ArrayList<String>();
     files.addAll(extraFiles);
-    files.add(pixelsFiles[getSeries()]);
+    for (int c=0; c<getSizeC(); c++) {
+      files.add(pixelsFiles[getIndex(getSeries(), c)]);
+    }
     files.add(timestampFiles[getSeries()]);
     return files.toArray(new String[files.size()]);
   }
@@ -100,8 +105,11 @@ public class VolocityReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
+    int[] zct = getZCTCoords(no);
+    int fileIndex = getIndex(getSeries(), zct[1]);
+
     RandomAccessInputStream pix =
-      new RandomAccessInputStream(pixelsFiles[getSeries()]);
+      new RandomAccessInputStream(pixelsFiles[fileIndex]);
     int planeSize = FormatTools.getPlaneSize(this) + planePadding[getSeries()];
     pix.seek(BLOCK_SIZE + no * planeSize);
     readPlane(pix, x, y, w, h, buf);
@@ -145,10 +153,25 @@ public class VolocityReader extends FormatReader {
       throw new FormatException(e);
     }
 
+    ArrayList<Integer> stackIDs = new ArrayList<Integer>();
+    ArrayList<Integer> timestampIDs = new ArrayList<Integer>();
+    ArrayList<String> stackNames = new ArrayList<String>();
+    ArrayList<Integer> xs = new ArrayList<Integer>();
+    ArrayList<Integer> ys = new ArrayList<Integer>();
+    ArrayList<Integer> channelCounts = new ArrayList<Integer>();
+    ArrayList<Integer> channelIDs = new ArrayList<Integer>();
+    ArrayList<String> channelNames = new ArrayList<String>();
+    ArrayList<Double> physicalX = new ArrayList<Double>();
+    ArrayList<Double> physicalY = new ArrayList<Double>();
+    ArrayList<Double> physicalZ = new ArrayList<Double>();
+    ArrayList<Double> magnification = new ArrayList<Double>();
+    ArrayList<String> detectorModel = new ArrayList<String>();
+
     for (int i=0; i<sampleTable.length; i++) {
       Integer stringID = (Integer) sampleTable[i][11] - 1;
       String name = stringTable[stringID][1].toString().trim();
-      String fileLink = sampleTable[i][14].toString().trim();
+      Object o = sampleTable[i][14];
+      String fileLink = o == null ? "0" : o.toString().trim();
       RandomAccessInputStream data = null;
       if (fileLink.equals("0")) {
         data = new RandomAccessInputStream((byte[]) sampleTable[i][13]);
@@ -158,49 +181,84 @@ public class VolocityReader extends FormatReader {
         data = new RandomAccessInputStream(fileLink);
       }
 
-      data.skipBytes(SIGNATURE_SIZE);
       data.order(true);
+
+      if (i > 0 && (Integer) sampleTable[i][2] == 1) {
+        stackNames.add(name);
+      }
+      else if (name.equals("Channels")) {
+        data.seek(10);
+        channelCounts.add(data.read());
+        channelIDs.add((Integer) sampleTable[i][0]);
+      }
+      else if (channelIDs.size() > 0 &&
+        sampleTable[i][1].equals(channelIDs.get(channelIDs.size() - 1)))
+      {
+        data.seek(22);
+        stackIDs.add(data.readInt());
+        channelNames.add(name);
+      }
+      else if (name.equals("Timepoint times stream") &&
+        (Integer) sampleTable[i][1] > 1)
+      {
+        data.seek(22);
+        timestampIDs.add(data.readInt());
+      }
+
+      data.skipBytes(SIGNATURE_SIZE);
 
       if (name.equals("Thumbnail")) {
         data.seek(74);
         byte[] b = new byte[(int) (data.length() - data.getFilePointer())];
         data.read(b);
         Location.mapFile("thumb.jpg", new ByteArrayHandle(b));
-        JPEGReader thumbReader = new JPEGReader();
-        thumbReader.setId("thumb.jpg");
-        core[0].sizeX = thumbReader.getSizeX();
-        core[0].sizeY = thumbReader.getSizeY();
-        thumbReader.close();
-        Location.mapFile("thumb.jpg", null);
+        try {
+          JPEGReader thumbReader = new JPEGReader();
+          thumbReader.setId("thumb.jpg");
+          xs.add(thumbReader.getSizeX());
+          ys.add(thumbReader.getSizeY());
+          thumbReader.close();
+        }
+        catch (FormatException e) { }
+        catch (IOException e) { }
+        finally {
+          Location.mapFile("thumb.jpg", null);
+        }
+      }
+      else if (name.equals("um/pixel (X)")) {
+        physicalX.add(data.readDouble());
+      }
+      else if (name.equals("um/pixel (Y)")) {
+        physicalY.add(data.readDouble());
+      }
+      else if (name.equals("um/pixel (Z)")) {
+        physicalZ.add(data.readDouble());
+      }
+      else if (name.equals("Microscope Objective")) {
+        magnification.add(data.readDouble());
+      }
+      else if (name.equals("Camera/Detector")) {
+        int len = data.readInt();
+        detectorModel.add(data.readString(len));
       }
 
       data.close();
     }
 
     String[] files = dir.list(true);
-    ArrayList<String> pixels = new ArrayList<String>();
-    ArrayList<String> luts = new ArrayList<String>();
-    ArrayList<String> timestamps = new ArrayList<String>();
+    pixelsFiles = new String[stackIDs.size()];
+    timestampFiles = new String[timestampIDs.size()];
 
-    for (String f : files) {
-      String path = new Location(dir, f).getAbsolutePath();
-      if (checkSuffix(f, "aisf")) {
-        pixels.add(path);
-      }
-      else if (checkSuffix(f, "atsf")) {
-        timestamps.add(path);
-      }
-      else {
-        extraFiles.add(path);
-      }
+    for (int i=0; i<pixelsFiles.length; i++) {
+      Integer stackID = stackIDs.get(i);
+      pixelsFiles[i] = new Location(dir, stackID + ".aisf").getAbsolutePath();
     }
 
-    pixelsFiles = pixels.toArray(new String[pixels.size()]);
-    timestampFiles = timestamps.toArray(new String[timestamps.size()]);
-
-    if (pixelsFiles.length > 1) {
-      core = new CoreMetadata[pixelsFiles.length];
+    for (int i=0; i<timestampFiles.length; i++) {
+      timestampFiles[i] =
+        new Location(dir, timestampIDs.get(i) + ".atsf").getAbsolutePath();
     }
+
     planePadding = new int[core.length];
 
     double[][][] stamps = new double[core.length][][];
@@ -212,6 +270,10 @@ public class VolocityReader extends FormatReader {
 
       setSeries(i);
 
+      core[i].sizeX = xs.get(i);
+      core[i].sizeY = ys.get(i);
+      core[i].sizeC = channelCounts.get(i);
+
       core[i].littleEndian = true;
 
       RandomAccessInputStream s =
@@ -220,13 +282,11 @@ public class VolocityReader extends FormatReader {
       s.order(isLittleEndian());
       core[i].sizeT = s.readInt();
       stamps[i] = new double[getSizeT()][2];
-      s.order(isLittleEndian());
-      for (int t=0; t<getSizeT(); t++) {
-        //stamps[i][t][0] = s.readFloat() / s.readFloat();
-        //stamps[i][t][1] = s.readFloat() / s.readFloat();
-        stamps[i][t][0] = s.readDouble();
-        stamps[i][t][1] = s.readDouble();
-      }
+      //s.order(isLittleEndian());
+      //for (int t=0; t<getSizeT(); t++) {
+        //stamps[i][t][0] = s.readDouble();
+        //stamps[i][t][1] = s.readDouble();
+      //}
       s.close();
 
       core[i].sizeZ = 1;
@@ -236,7 +296,7 @@ public class VolocityReader extends FormatReader {
       core[i].dimensionOrder = "XYCZT";
 
       int planeSize = FormatTools.getPlaneSize(this);
-      s = new RandomAccessInputStream(pixelsFiles[i]);
+      s = new RandomAccessInputStream(pixelsFiles[getIndex(i, 0)]);
       int bytesPerPlane = (int) ((s.length() - BLOCK_SIZE) / getImageCount());
       s.close();
 
@@ -250,9 +310,60 @@ public class VolocityReader extends FormatReader {
         FormatTools.pixelTypeFromBytes(bytesPerPixel, false, false);
 
       // planes are padded to have a multiple of 256 bytes
-      planePadding[i] = BLOCK_SIZE - (FormatTools.getPlaneSize(this) % BLOCK_SIZE);
+      planePadding[i] =
+        BLOCK_SIZE - (FormatTools.getPlaneSize(this) % BLOCK_SIZE);
     }
     setSeries(0);
+
+    MetadataStore store = makeFilterMetadata();
+    MetadataTools.populatePixels(store, this);
+
+    String instrument = MetadataTools.createLSID("Instrument", 0);
+    store.setInstrumentID(instrument, 0);
+
+    for (int i=0; i<getSeriesCount(); i++) {
+      store.setImageInstrumentRef(instrument, i);
+
+      setSeries(i);
+      store.setImageName(stackNames.get(i), i);
+      for (int c=0; c<getSizeC(); c++) {
+        store.setChannelName(channelNames.get(getIndex(i, c)), i, c);
+      }
+      store.setPixelsPhysicalSizeX(physicalX.get(i), i);
+      store.setPixelsPhysicalSizeY(physicalY.get(i), i);
+      store.setPixelsPhysicalSizeZ(physicalZ.get(i), i);
+
+      String objective = MetadataTools.createLSID("Objective", 0, i);
+      store.setObjectiveID(objective, 0, i);
+      store.setObjectiveNominalMagnification(
+        new PositiveInteger(magnification.get(i).intValue()), 0, i);
+      store.setObjectiveCorrection(getCorrection("Other"), 0, i);
+      store.setObjectiveImmersion(getImmersion("Other"), 0, i);
+      store.setImageObjectiveSettingsID(objective, i);
+
+      String detector = MetadataTools.createLSID("Detector", 0, i);
+      store.setDetectorID(detector, 0, i);
+      store.setDetectorModel(detectorModel.get(i), 0, i);
+
+      for (int c=0; c<getSizeC(); c++) {
+        store.setDetectorSettingsID(detector, i, c);
+      }
+    }
+    setSeries(0);
+  }
+
+  private int getIndex(int seriesIndex, int channelIndex) {
+    int oldSeries = getSeries();
+
+    int index = 0;
+    for (int i=0; i<seriesIndex; i++) {
+      setSeries(i);
+      index += getSizeC();
+    }
+    index += channelIndex;
+
+    setSeries(oldSeries);
+    return index;
   }
 
 }
