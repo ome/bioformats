@@ -74,6 +74,10 @@ install(FILES
   DESTINATION include/${PROJECT_NAME} COMPONENT Development
 )
 
+if(NOT DEFINED BUILD_SHARED_LIBS)
+  option(BUILD_SHARED_LIBS "Build with shared libraries." ON)
+endif(NOT DEFINED BUILD_SHARED_LIBS)
+
 # --------------------------------------------------------------------------
 # Sources
 
