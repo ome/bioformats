@@ -294,6 +294,7 @@ public class CellWorxReader extends FormatReader {
 
     store.setPlateID(plateID, 0);
     store.setPlateScreenRef(screenID, 0, 0);
+    store.setPlateName(plate.getName(), 0);
     for (int i=0; i<core.length; i++) {
       store.setImageID(MetadataTools.createLSID("Image", i), i);
     }
