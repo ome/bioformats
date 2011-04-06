@@ -112,12 +112,36 @@ public class VolocityReader extends FormatReader {
 
     RandomAccessInputStream pix =
       new RandomAccessInputStream(pixelsFiles[getSeries()][zct[1]]);
+
     int planeSize = FormatTools.getPlaneSize(this);
+    int planesInFile = (int) (pix.length() / planeSize);
     int planeIndex = no / getEffectiveSizeC();
+    if (planesInFile == getSizeT()) {
+      planeIndex = zct[2];
+    }
+
     int padding = zct[2] * planePadding[getSeries()];
-    pix.seek(blockSize[getSeries()] + planeIndex * planeSize + padding);
+
+    long offset =
+      (long) blockSize[getSeries()] + planeIndex * planeSize + padding;
+    if (offset >= pix.length()) {
+      return buf;
+    }
+    pix.seek(offset);
     readPlane(pix, x, y, w, h, buf);
     pix.close();
+
+    if (getRGBChannelCount() == 4) {
+      // stored as ARGB, need to swap to RGBA
+      for (int i=0; i<buf.length/4; i++) {
+        byte a = buf[i * 4];
+        buf[i * 4] = buf[i * 4 + 1];
+        buf[i * 4 + 1] = buf[i * 4 + 2];
+        buf[i * 4 + 2] = buf[i * 4 + 3];
+        buf[i * 4 + 3] = a;
+      }
+    }
+
     return buf;
   }
 
@@ -169,12 +193,26 @@ public class VolocityReader extends FormatReader {
       Integer stringID = (Integer) sampleTable[i][11];
       String name = getString(stringID);
 
-      if (i > 0 && (Integer) sampleTable[i][1] == 1 &&
-        (Integer) sampleTable[i][2] == 1 &&
-        getChildIndex((Integer) sampleTable[i][0], "Channels") >= 0)
+      int channelIndex = getChildIndex((Integer) sampleTable[i][0], "Channels");
+
+      if (i > 0 && (Integer) sampleTable[i][2] == 1 && (channelIndex >= 0 ||
+        (sampleTable[i][14] != null && !sampleTable[i][14].equals(0))))
       {
-        stackNames.add(name);
-        parentIDs.add((Integer) sampleTable[i][0]);
+        if (channelIndex < 0) {
+          RandomAccessInputStream s = getStream(i);
+          s.seek(22);
+          int x = s.readInt();
+          int y = s.readInt();
+          int z = s.readInt();
+          if (x * y * z != 0 && x * y * z < s.length()) {
+            stackNames.add(name);
+            parentIDs.add((Integer) sampleTable[i][0]);
+          }
+        }
+        else {
+          stackNames.add(name);
+          parentIDs.add((Integer) sampleTable[i][0]);
+        }
       }
     }
 
@@ -195,30 +233,50 @@ public class VolocityReader extends FormatReader {
       Integer parent = parentIDs.get(i);
 
       int channelIndex = getChildIndex(parent, "Channels");
-      Integer[] channels =
-        getAllChildren((Integer) sampleTable[channelIndex][0]);
-      core[i].sizeC = channels.length;
-      pixelsFiles[i] = new String[core[i].sizeC];
+      if (channelIndex >= 0) {
+        Integer[] channels =
+          getAllChildren((Integer) sampleTable[channelIndex][0]);
+        core[i].sizeC = channels.length;
+        pixelsFiles[i] = new String[core[i].sizeC];
 
-      channelNames[i] = new String[channels.length];
-      for (int c=0; c<channels.length; c++) {
-        channelNames[i][c] = getString((Integer) sampleTable[channels[c]][11]);
+        channelNames[i] = new String[channels.length];
+        for (int c=0; c<channels.length; c++) {
+          channelNames[i][c] =
+            getString((Integer) sampleTable[channels[c]][11]);
 
-        RandomAccessInputStream data = getStream(channels[c]);
-        data.seek(22);
-        int stackID = data.readInt();
-        pixelsFiles[i][c] =
-          new Location(dir, stackID + ".aisf").getAbsolutePath();
-        data.close();
+          RandomAccessInputStream data = getStream(channels[c]);
+          data.seek(22);
+          int stackID = data.readInt();
+          pixelsFiles[i][c] =
+            new Location(dir, stackID + ".aisf").getAbsolutePath();
+          data.close();
+        }
+      }
+      else {
+        pixelsFiles[i] = new String[1];
+        for (int row=0; row<sampleTable.length; row++) {
+          if (parent.equals(sampleTable[row][0])) {
+            Object o = sampleTable[row][14];
+            if (o != null) {
+              String fileLink = o.toString().trim() + ".dat";
+              pixelsFiles[i][0] = new Location(dir, fileLink).getAbsolutePath();
+            }
+            break;
+          }
+        }
       }
 
+      RandomAccessInputStream data = null;
+
       int timestampIndex = getChildIndex(parent, "Timepoint times stream");
-      RandomAccessInputStream data = getStream(timestampIndex);
-      data.seek(22);
-      int timestampID = data.readInt();
-      timestampFiles[i] =
-        new Location(dir, timestampID + ".atsf").getAbsolutePath();
-      data.close();
+      if (timestampIndex >= 0) {
+        data = getStream(timestampIndex);
+        data.seek(22);
+        int timestampID = data.readInt();
+        timestampFiles[i] =
+          new Location(dir, timestampID + ".atsf").getAbsolutePath();
+        data.close();
+      }
 
       int xIndex = getChildIndex(parent, "um/pixel (X)");
       if (xIndex >= 0) {
@@ -281,59 +339,80 @@ public class VolocityReader extends FormatReader {
 
       core[i].littleEndian = true;
 
-      RandomAccessInputStream s =
-        new RandomAccessInputStream(timestampFiles[i]);
-      s.seek(17);
-      s.order(isLittleEndian());
-      core[i].sizeT = s.readInt();
-      s.close();
+      if (timestampFiles[i] != null) {
+        RandomAccessInputStream s =
+          new RandomAccessInputStream(timestampFiles[i]);
+        s.seek(17);
+        s.order(isLittleEndian());
+        core[i].sizeT = s.readInt();
+        s.close();
+      }
+      else {
+        core[i].sizeT = 1;
+      }
 
       core[i].rgb = false;
       core[i].interleaved = true;
       core[i].dimensionOrder = "XYCZT";
 
-      s = new RandomAccessInputStream(pixelsFiles[i][0]);
+      RandomAccessInputStream s =
+        new RandomAccessInputStream(pixelsFiles[i][0]);
       s.order(isLittleEndian());
-      s.seek(18);
-      blockSize[i] = s.readShort() * 256;
-      s.skipBytes(5);
-      int x = s.readInt();
-      int y = s.readInt();
-      s.skipBytes(4);
-      int w = s.readInt();
-      int h = s.readInt();
 
-      core[i].sizeX = w - x;
-      core[i].sizeY = h - y;
-      core[i].sizeZ = s.readInt();
-      core[i].imageCount = getSizeZ() * getSizeC() * getSizeT();
+      if (checkSuffix(pixelsFiles[i][0], "aisf")) {
+        s.seek(18);
+        blockSize[i] = s.readShort() * 256;
+        s.skipBytes(5);
+        int x = s.readInt();
+        int y = s.readInt();
+        int zStart = s.readInt();
+        int w = s.readInt();
+        int h = s.readInt();
 
-      int planesPerFile = getSizeZ() * getSizeT();
-      int planeSize = FormatTools.getPlaneSize(this);
-      int bytesPerPlane = (int) ((s.length() - blockSize[i]) / planesPerFile);
-      s.close();
+        core[i].sizeX = w - x;
+        core[i].sizeY = h - y;
+        core[i].sizeZ = s.readInt() - zStart;
+        core[i].imageCount = getSizeZ() * getSizeC() * getSizeT();
 
-      int bytesPerPixel = 0;
-      while (bytesPerPlane >= planeSize) {
-        bytesPerPixel++;
-        bytesPerPlane -= planeSize;
+        int planesPerFile = getSizeZ() * getSizeT();
+        int planeSize = FormatTools.getPlaneSize(this);
+        int bytesPerPlane = (int) ((s.length() - blockSize[i]) / planesPerFile);
+
+        int bytesPerPixel = 0;
+        while (bytesPerPlane >= planeSize) {
+          bytesPerPixel++;
+          bytesPerPlane -= planeSize;
+        }
+
+        if ((bytesPerPixel % 3) == 0) {
+          core[i].sizeC *= 3;
+          core[i].rgb = true;
+          bytesPerPixel /= 3;
+        }
+
+        core[i].pixelType =
+          FormatTools.pixelTypeFromBytes(bytesPerPixel, false, false);
+
+        // full timepoints are padded to have a multiple of 256 bytes
+        int timepoint = FormatTools.getPlaneSize(this) * getSizeZ();
+        planePadding[i] = blockSize[i] - (timepoint % blockSize[i]);
+        if (planePadding[i] == blockSize[i]) {
+          planePadding[i] = 0;
+        }
       }
-
-      if ((bytesPerPixel % 3) == 0) {
-        core[i].sizeC *= 3;
+      else {
+        s.seek(22);
+        core[i].sizeX = s.readInt();
+        core[i].sizeY = s.readInt();
+        core[i].sizeZ = s.readInt();
+        core[i].sizeC = 4;
+        core[i].imageCount = getSizeZ() * getSizeT();
         core[i].rgb = true;
-        bytesPerPixel /= 3;
-      }
-
-      core[i].pixelType =
-        FormatTools.pixelTypeFromBytes(bytesPerPixel, false, false);
-
-      // full timepoints are padded to have a multiple of 256 bytes
-      int timepoint = FormatTools.getPlaneSize(this) * getSizeZ();
-      planePadding[i] = blockSize[i] - (timepoint % blockSize[i]);
-      if (planePadding[i] == blockSize[i]) {
+        core[i].pixelType = FormatTools.UINT8;
+        blockSize[i] = 99;
         planePadding[i] = 0;
       }
+      s.close();
     }
     setSeries(0);
 
@@ -349,8 +428,10 @@ public class VolocityReader extends FormatReader {
       setSeries(i);
       store.setImageName(stackNames.get(i), i);
       store.setImageDescription(description[i], i);
-      for (int c=0; c<getEffectiveSizeC(); c++) {
-        store.setChannelName(channelNames[i][c], i, c);
+      if (channelNames[i] != null) {
+        for (int c=0; c<getEffectiveSizeC(); c++) {
+          store.setChannelName(channelNames[i][c], i, c);
+        }
       }
       store.setPixelsPhysicalSizeX(physicalX[i], i);
       store.setPixelsPhysicalSizeY(physicalY[i], i);
