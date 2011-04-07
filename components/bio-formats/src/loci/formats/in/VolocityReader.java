@@ -29,15 +29,17 @@ import java.util.ArrayList;
 import loci.common.ByteArrayHandle;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceException;
+import loci.common.services.ServiceFactory;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
+import loci.formats.MissingLibraryException;
 import loci.formats.meta.MetadataStore;
-
-import ome.metakit.MetakitException;
-import ome.metakit.MetakitReader;
+import loci.formats.services.MetakitService;
 
 import ome.xml.model.primitives.PositiveInteger;
 
@@ -178,12 +180,14 @@ public class VolocityReader extends FormatReader {
     }
 
     try {
-      MetakitReader reader = new MetakitReader(id);
+      ServiceFactory factory = new ServiceFactory();
+      MetakitService reader = factory.getInstance(MetakitService.class);
+      reader.initialize(id);
       sampleTable = reader.getTableData(1);
       stringTable = reader.getTableData(2);
     }
-    catch (MetakitException e) {
-      throw new FormatException(e);
+    catch (DependencyException e) {
+      throw new MissingLibraryException("Could not find Metakit library", e);
     }
 
     ArrayList<String> stackNames = new ArrayList<String>();
