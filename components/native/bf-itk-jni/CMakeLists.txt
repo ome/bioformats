@@ -138,23 +138,70 @@ if(NOT DEFINED BioFormatsImageIO_DIST_DIR)
   set(BioFormatsImageIO_DIST_DIR /dist/bf-itk)
 endif(NOT DEFINED BioFormatsImageIO_DIST_DIR)
 
+if(NOT DEFINED BF_BUILD_TYPE)
+  set(BF_BUILD_TYPE "")
+endif(NOT DEFINED BF_BUILD_TYPE)
+
+if(NOT DEFINED BF_LIB_PREFIX)
+  set(BF_LIB_PREFIX lib)
+endif(NOT DEFINED BF_LIB_PREFIX)
+
+
+
 if(APPLE)
+  
   if(NOT DEFINED BF_SUFFIX)
+    
     set(BF_SUFFIX .dylib)
+  
   endif(NOT DEFINED BF_SUFFIX)
+
 endif(APPLE)
 
+
 if(UNIX)
+ 
   if(NOT DEFINED BF_SUFFIX)
+
     set(BF_SUFFIX .so)
+
   endif(NOT DEFINED BF_SUFFIX)
+
 endif(UNIX)
 
+
+
 if(WIN32)
+  set(BF_LIB_PREFIX "")
+  set(BF_BUILD_TYPE /Release)
+
+# Building in Debug mode is not currently supported in this script
+#  set(BF_BUILD TYPE /Debug)
+
+
   if(NOT DEFINED BF_SUFFIX)
-    set(BF_SUFFIX .dylib)
+
+    set(BF_SUFFIX .dll)
+
   endif(NOT DEFINED BF_SUFFIX)
+
 endif(WIN32)
+
+
+if(WIN64)
+  set(BF_LIB_PREFIX "")
+  set(BF_BUILD_TYPE /Release)
+
+#  Builing with Debug mode on Windows is not currently supported in this script.
+#  set(BF_BUILD TYPE /Debug)
+
+  if(NOT DEFINED BF_SUFFIX)
+
+    set(BF_SUFFIX .dll)
+
+  endif(NOT DEFINED BF_SUFFIX)
+
+endif(WIN64)
 
 add_library(BioFormatsIOPlugin SHARED
   itkBioFormatsIOPlugin.cxx
@@ -185,54 +232,54 @@ target_link_libraries(BioFormatsIOPlugin
 if(APPLE)
   add_custom_command(
     TARGET BioFormatsIOPlugin
-    DEPENDS "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_INSTALL_ITKFACTORIES_DIR}/libBioFormatsIOPlugin${BF_SUFFIX}"
+    DEPENDS "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_INSTALL_ITKFACTORIES_DIR}/${BF_LIB_PREFIX}BioFormatsIOPlugin${BF_SUFFIX}"
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy
-    "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_INSTALL_ITKFACTORIES_DIR}/libBioFormatsIOPlugin${BF_SUFFIX}"
-    "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_INSTALL_ITKFACTORIES_DIR}/libBioFormatsIOPlugin.so"
+    "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_INSTALL_ITKFACTORIES_DIR}${BF_BUILD_TYPE}/${BF_LIB_PREFIX}BioFormatsIOPlugin${BF_SUFFIX}"
+    "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_INSTALL_ITKFACTORIES_DIR}${BF_BUILD_TYPE}/${BF_LIB_PREFIX}BioFormatsIOPlugin.so"
     VERBATIM
   )
 
-add_custom_command(
-  TARGET BioFormatsIOPlugin
-  DEPENDS "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_INSTALL_ITKFACTORIES_DIR}/libBioFormatsIOPlugin.so"
-  POST_BUILD
-  COMMAND ${CMAKE_COMMAND} -E copy
-  "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_INSTALL_ITKFACTORIES_DIR}/libBioFormatsIOPlugin.so"
-  "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_DIST_DIR}/libBioFormatsIOPlugin.so"
-  VERBATIM
-)
-install(FILES
-  "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_DIST_DIR}/libBioFormatsIOPlugin.so"
-  DESTINATION "build/${BioFormatsImageIO_DIST_DIR}"
-)
+  add_custom_command(
+    TARGET BioFormatsIOPlugin
+    DEPENDS "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_INSTALL_ITKFACTORIES_DIR}${BF_BUILD_TYPE}/${BF_LIB_PREFIX}BioFormatsIOPlugin.so"
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+    "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_INSTALL_ITKFACTORIES_DIR}${BF_BUILD_TYPE}/${BF_LIB_PREFIX}BioFormatsIOPlugin.so"
+    "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_DIST_DIR}/${BF_LIB_PREFIX}BioFormatsIOPlugin.so"
+    VERBATIM
+  )
+  install(FILES
+    "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_DIST_DIR}/${BF_LIB_PREFIX}BioFormatsIOPlugin.so"
+    DESTINATION "build/${BioFormatsImageIO_DIST_DIR}"
+  )
 endif(APPLE)
 
 add_custom_command(
   TARGET BioFormatsIOPlugin
-  DEPENDS "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_INSTALL_ITKFACTORIES_DIR}/libBioFormatsIOPlugin*"
+  DEPENDS "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_INSTALL_ITKFACTORIES_DIR}${BF_BUILD_TYPE}/${BF_LIB_PREFIX}BioFormatsIOPlugin${BF_SUFFIX}"
   POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy
-  "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_INSTALL_ITKFACTORIES_DIR}/libBioFormatsIOPlugin${BF_SUFFIX}"
-  "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_DIST_DIR}/libBioFormatsIOPlugin${BF_SUFFIX}"
+  "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_INSTALL_ITKFACTORIES_DIR}${BF_BUILD_TYPE}/${BF_LIB_PREFIX}BioFormatsIOPlugin${BF_SUFFIX}"
+  "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_DIST_DIR}/${BF_LIB_PREFIX}BioFormatsIOPlugin${BF_SUFFIX}"
   VERBATIM
 )
 install(FILES
-  "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_DIST_DIR}/libBioFormatsIOPlugin${BF_SUFFIX}"
+  "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_DIST_DIR}/${BF_LIB_PREFIX}BioFormatsIOPlugin${BF_SUFFIX}"
   DESTINATION "build/${BioFormatsImageIO_DIST_DIR}"
 )
 
 add_custom_command(
   TARGET BioFormatsIOPlugin
-  DEPENDS "${CMAKE_BINARY_DIR}/libBioFormatsIO${BF_SUFFIX}"
+  DEPENDS "${CMAKE_BINARY_DIR}${BF_BUILD_TYPE}/${BF_LIB_PREFIX}BioFormatsIO${BF_SUFFIX}"
   POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy
-  "${CMAKE_BINARY_DIR}/libBioFormatsIO${BF_SUFFIX}"
-  "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_DIST_DIR}/libBioFormatsIO${BF_SUFFIX}"
+  "${CMAKE_BINARY_DIR}${BF_BUILD_TYPE}/${BF_LIB_PREFIX}BioFormatsIO${BF_SUFFIX}"
+  "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_DIST_DIR}/${BF_LIB_PREFIX}BioFormatsIO${BF_SUFFIX}"
   VERBATIM
 )
 install(FILES
-  "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_DIST_DIR}/libBioFormatsIO${BF_SUFFIX}"
+  "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_DIST_DIR}/${BF_LIB_PREFIX}BioFormatsIO${BF_SUFFIX}"
   DESTINATION "build/${BioFormatsImageIO_DIST_DIR}"
 )
 
