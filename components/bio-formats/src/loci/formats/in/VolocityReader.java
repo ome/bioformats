@@ -416,6 +416,25 @@ public class VolocityReader extends FormatReader {
     }
     setSeries(0);
 
+    for (int i=0; i<getSeriesCount(); i++) {
+      setSeries(i);
+
+      addSeriesMeta("Name", stackNames.get(i));
+      addSeriesMeta("Pixel width (in microns)", physicalX[i]);
+      addSeriesMeta("Pixel height (in microns)", physicalY[i]);
+      addSeriesMeta("Z step (in microns)", physicalZ[i]);
+      addSeriesMeta("Objective magnification", magnification[i]);
+      addSeriesMeta("Camera/Detector", detector[i]);
+      addSeriesMeta("Description", description[i]);
+
+      if (channelNames[i] != null) {
+        for (int c=0; c<channelNames[i].length; c++) {
+          addSeriesMeta("Channel #" + (c + 1), channelNames[i][c]);
+        }
+      }
+    }
+    setSeries(0);
+
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
 
