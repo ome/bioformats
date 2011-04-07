@@ -179,6 +179,13 @@ public class VolocityReader extends FormatReader {
       throw new FormatException("Could not find data directory.");
     }
 
+    String[] files = dir.list(true);
+    for (String f : files) {
+      if (!checkSuffix(f, "aisf") && !checkSuffix(f, "atsf")) {
+        extraFiles.add(new Location(dir, f).getAbsolutePath());
+      }
+    }
+
     try {
       ServiceFactory factory = new ServiceFactory();
       MetakitService reader = factory.getInstance(MetakitService.class);
