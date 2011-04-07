@@ -285,17 +285,17 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					<xsd:documentation>Dimensional size of pixel data array [units:none]</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="PhysicalSizeX" use="optional" type="xsd:float">
+			<xsd:attribute name="PhysicalSizeX" use="optional" type="PositiveFloat">
 				<xsd:annotation>
 					<xsd:documentation>Physical size of a pixel in microns[um].</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="PhysicalSizeY" use="optional" type="xsd:float">
+			<xsd:attribute name="PhysicalSizeY" use="optional" type="PositiveFloat">
 				<xsd:annotation>
 					<xsd:documentation>Physical size of a pixel in microns[um].</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="PhysicalSizeZ" use="optional" type="xsd:float">
+			<xsd:attribute name="PhysicalSizeZ" use="optional" type="PositiveFloat">
 				<xsd:annotation>
 					<xsd:documentation>Physical size of a pixel in microns[um].</xsd:documentation>
 				</xsd:annotation>
@@ -1202,6 +1202,16 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 		</xsd:annotation>
 		<xsd:restriction base="xsd:int">
 			<xsd:minInclusive value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="PositiveFloat">
+		<xsd:annotation>
+			<xsd:documentation>
+				A simple type that restricts the value to a float between >0 and max 32-bit float {i.e. (2−2^-23) × 2^27 ≈ 3.4 × 10^38}
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:float">
+			<xsd:minExclusive value="0.0"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="PercentFraction">
