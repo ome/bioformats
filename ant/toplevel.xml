@@ -21,6 +21,7 @@ Type "ant -p" for a list of targets.
       compile-loci-plugins,
       compile-lwf-stubs,
       compile-mdbtools,
+      compile-metakit,
       compile-ome-editor,
       compile-ome-io,
       compile-ome-plugins,
@@ -38,6 +39,7 @@ Type "ant -p" for a list of targets.
       jar-loci-plugins,
       jar-lwf-stubs,
       jar-mdbtools,
+      jar-metakit,
       jar-ome-editor,
       jar-ome-io,
       jar-ome-plugins,
@@ -55,6 +57,7 @@ Type "ant -p" for a list of targets.
       osgi-loci-plugins,
       osgi-lwf-stubs,
       osgi-mdbtools,
+      osgi-metakit,
       osgi-ome-editor,
       osgi-ome-io,
       osgi-ome-plugins,
@@ -78,6 +81,7 @@ Type "ant -p" for a list of targets.
       findbugs-common,
       findbugs-formats,
       findbugs-loci-plugins,
+      findbugs-metakit,
       findbugs-ome-io,
       findbugs-ome-plugins,
       findbugs-tests"
@@ -92,6 +96,7 @@ Type "ant -p" for a list of targets.
       clean-loci-plugins,
       clean-lwf-stubs,
       clean-mdbtools,
+      clean-metakit,
       clean-ome-editor,
       clean-ome-io,
       clean-ome-plugins,
@@ -111,6 +116,7 @@ Type "ant -p" for a list of targets.
       test-loci-plugins,
       test-lwf-stubs,
       test-mdbtools,
+      test-metakit,
       test-ome-editor,
       test-ome-io,
       test-ome-plugins,
@@ -306,6 +312,38 @@ Type "ant -p" for a list of targets.
     <ant dir="components/forks/mdbtools" target="mdbtools.test"/>
   </target>
 
+  <!-- Metakit library -->
+
+  <target name="compile-metakit"
+    description="compile classes for Metakit Java library">
+    <ant dir="components/metakit" target="metakit.compile"/>
+  </target>
+
+  <target name="jar-metakit"
+    description="generate JAR file for Metakit Java library">
+    <ant dir="components/metakit" target="metakit.jar"/>
+  </target>
+
+  <target name="osgi-metakit" depends="jar-metakit"
+    description="generate OSGi bundle for Metakit Java library">
+    <ant dir="components/metakit" target="metakit.osgi"/>
+  </target>
+
+  <target name="findbugs-metakit"
+    description="run findbugs on Metakit Java library">
+    <ant dir="components/metakit" target="metakit.findbugs"/>
+  </target>
+
+  <target name="clean-metakit"
+    description="remove build files for Metakit Java library">
+    <ant dir="components/metakit" target="metakit.clean"/>
+  </target>
+
+  <target name="test-metakit"
+    description="compile and run tests for Metakit Java library">
+    <ant dir="components/metakit" target="metakit.test"/>
+  </target>
+
   <!-- OME-XML Java library -->
 
   <target name="compile-ome-xml"
@@ -377,6 +415,7 @@ Type "ant -p" for a list of targets.
       compile-jai,
       compile-lwf-stubs,
       compile-mdbtools,
+      compile-metakit,
       compile-ome-xml,
       compile-poi-loci"
     description="compile classes for Bio-Formats">
@@ -388,6 +427,7 @@ Type "ant -p" for a list of targets.
       jar-jai,
       jar-lwf-stubs,
       jar-mdbtools,
+      jar-metakit,
       jar-ome-xml,
       jar-poi-loci"
     description="generate JAR file for Bio-Formats">
@@ -409,6 +449,7 @@ Type "ant -p" for a list of targets.
       clean-jai,
       clean-lwf-stubs,
       clean-mdbtools,
+      clean-metakit,
       clean-ome-xml,
       clean-poi-loci"
     description="remove build files for Bio-Formats">
@@ -717,6 +758,7 @@ Type "ant -p" for a list of targets.
       jar-jai,
       jar-loci-plugins,
       jar-mdbtools,
+      jar-metakit,
       jar-ome-xml,
       jar-poi-loci"
     description="create JAR file encompassing several LOCI tools">
