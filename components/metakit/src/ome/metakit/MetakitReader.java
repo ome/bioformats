@@ -4,7 +4,7 @@
 
 /*
 OME Metakit package for reading Metakit database files.
-Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
+Copyright (C) 2011-@year@ UW-Madison LOCI and Glencoe Software, Inc.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -30,6 +30,8 @@ import loci.common.RandomAccessInputStream;
 
 /**
  * Top-level reader for Metakit database files.
+ * See http://equi4.com/metakit/metakit-ff.html for basic documentation on the
+ * Metakit file format.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/metakit/src/ome/metakit/MetakitReader.java">Trac</a>,
