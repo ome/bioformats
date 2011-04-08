@@ -345,7 +345,9 @@ public class ImageInfo {
     if (reader instanceof ImageReader) {
       // determine format
       ImageReader ir = (ImageReader) reader;
-      LOGGER.info("Checking file format [{}]", ir.getFormat(id));
+      if (new Location(id).exists()) {
+        LOGGER.info("Checking file format [{}]", ir.getFormat(id));
+      }
     }
     else {
       // verify format
@@ -356,7 +358,15 @@ public class ImageInfo {
     LOGGER.info("Initializing reader");
     if (stitch) {
       reader = new FileStitcher(reader, true);
-      String pat = FilePattern.findPattern(new Location(id));
+      Location f = new Location(id);
+      String pat = null;
+      if (!f.exists()) {
+        ((FileStitcher) reader).setUsingPatternIds(true);
+        pat = id;
+      }
+      else {
+        pat = FilePattern.findPattern(f);
+      }
       if (pat != null) id = pat;
     }
     if (expand) reader = new ChannelFiller(reader);
