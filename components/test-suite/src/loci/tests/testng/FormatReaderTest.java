@@ -1220,6 +1220,7 @@ public class FormatReaderTest {
    * @testng.test groups = "all xml fast"
    */
   public void testValidXML() {
+    if (config == null) throw new SkipException("No config tree");
     String testName = "testValidXML";
     if (!initFile()) result(testName, false, "initFile");
     String format = config.getReader();
