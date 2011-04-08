@@ -208,7 +208,14 @@ public final class ImageConverter {
     IFormatReader reader = new ImageReader();
     if (stitch) {
       reader = new FileStitcher(reader);
-      String pat = FilePattern.findPattern(new Location(in));
+      Location f = new Location(in);
+      String pat = null;
+      if (!f.exists()) {
+        pat = in;
+      }
+      else {
+        pat = FilePattern.findPattern(f);
+      }
       if (pat != null) in = pat;
     }
     if (separate) reader = new ChannelSeparator(reader);

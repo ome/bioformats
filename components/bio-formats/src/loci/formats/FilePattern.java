@@ -589,7 +589,9 @@ public class FilePattern {
 
       Arrays.sort(files);
 
-      Pattern regex = Pattern.compile(pattern);
+      String basePattern =
+        pattern.substring(pattern.lastIndexOf(File.separator) + 1);
+      Pattern regex = Pattern.compile(basePattern);
 
       for (String f : files) {
         if (regex.matcher(f).matches()) {
