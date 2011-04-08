@@ -1278,6 +1278,43 @@ public class FormatReaderTest {
   /**
    * @testng.test groups = "all pixels"
    */
+  public void testReorderedPixelsHashes() {
+    if (config == null) throw new SkipException("No config tree");
+    String testName = "testReorderedPixelsHashes";
+    if (!initFile()) result(testName, false, "initFile");
+    boolean success = true;
+    String msg = null;
+    try {
+      for (int i=0; i<reader.getSeriesCount() && success; i++) {
+        reader.setSeries(i);
+        config.setSeries(i);
+
+        for (int j=0; j<3; j++) {
+          int index = (int) (Math.random() * reader.getImageCount());
+          reader.openBytes(index);
+        }
+
+        String md5 = TestTools.md5(reader.openBytes(0));
+        String expected1 = config.getMD5();
+        String expected2 = config.getAlternateMD5();
+
+        if (!md5.equals(expected1) && !md5.equals(expected2)) {
+          success = false;
+          msg = expected1 == null && expected2 == null ? "no configuration" :
+            "series " + i;
+        }
+      }
+    }
+    catch (Throwable t) {
+      LOGGER.info("", t);
+      success = false;
+    }
+    result(testName, success, msg);
+  }
+
+  /**
+   * @testng.test groups = "all pixels"
+   */
   public void testSubimagePixelsHashes() {
     if (config == null) throw new SkipException("No config tree");
     String testName = "testSubimagePixelsHashes";
