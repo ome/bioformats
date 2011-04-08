@@ -27,8 +27,10 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 
 import loci.common.xml.XMLTools;
+import loci.formats.tiff.TiffParser;
 
 /**
  * Attempts to validate the given XML files.
@@ -60,7 +62,15 @@ public class XMLValidate {
     else {
       // read from file(s)
       for (int i=0; i<args.length; i++) {
-        process(args[i], new BufferedReader(new FileReader(args[i])));
+        if (args[i].toLowerCase().endsWith("tif") ||
+          args[i].toLowerCase().endsWith("tiff"))
+        {
+          String comment = new TiffParser(args[i]).getComment();
+          process(args[i], new BufferedReader(new StringReader(comment)));
+        }
+        else {
+          process(args[i], new BufferedReader(new FileReader(args[i])));
+        }
       }
     }
   }
