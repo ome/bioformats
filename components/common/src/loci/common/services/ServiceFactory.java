@@ -110,9 +110,10 @@ public class ServiceFactory {
       String implementationName = (String) entry.getValue();
       Class<? extends Service> interfaceClass = null;
       Class<? extends Service> implementationClass = null;
+      ClassLoader loader = this.getClass().getClassLoader();
       try {
         interfaceClass = (Class<? extends Service>)
-          Class.forName((String) entry.getKey());
+          Class.forName(interfaceName, false, loader);
       }
       catch (Throwable t) {
         LOGGER.debug("CLASSPATH missing interface: {}", interfaceName, t);
@@ -120,7 +121,7 @@ public class ServiceFactory {
       }
       try {
         implementationClass = (Class<? extends Service>)
-          Class.forName((String) entry.getValue());
+          Class.forName(implementationName, false, loader);
       }
       catch (Throwable t) {
         LOGGER.debug(
@@ -131,7 +132,6 @@ public class ServiceFactory {
       LOGGER.debug("Added interface {} and implementation {}",
         interfaceClass, implementationClass);
     }
-
   }
 
   /**
