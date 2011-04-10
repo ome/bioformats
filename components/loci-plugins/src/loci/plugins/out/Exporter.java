@@ -302,13 +302,14 @@ public class Exporter {
         store.setPixelsID(MetadataTools.createLSID("Pixels", 0), 0);
       }
 
-      if (store.getPixelsType(0) == null) {
-        try {
+      // always reset the pixel type
+      // this prevents problems if the user changed the bit depth of the image
+      try {
         store.setPixelsType(PixelType.fromString(
           FormatTools.getPixelTypeString(ptype)), 0);
-        }
-        catch (EnumerationException e) { }
       }
+      catch (EnumerationException e) { }
+
       if (store.getPixelsBinDataCount(0) == 0 ||
         store.getPixelsBinDataBigEndian(0, 0) == null)
       {
