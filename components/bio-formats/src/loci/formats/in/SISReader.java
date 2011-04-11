@@ -25,6 +25,7 @@ package loci.formats.in;
 
 import java.io.IOException;
 
+import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
@@ -56,6 +57,7 @@ public class SISReader extends BaseTiffReader {
   private String channelName;
   private String cameraName;
   private double physicalSizeX, physicalSizeY;
+  private String acquisitionDate;
 
   // -- Constructor --
 
@@ -100,9 +102,18 @@ public class SISReader extends BaseTiffReader {
 
     in.skipBytes(4);
 
-    long time = in.readLong();
+    in.skipBytes(6);
+    int minute = in.readShort();
+    int hour = in.readShort();
+    int day = in.readShort();
+    int month = in.readShort() + 1;
+    int year = 1900 + in.readShort();
 
-    in.skipBytes(14);
+    acquisitionDate =
+      year + "-" + month + "-" + day + " " + hour + ":" + minute;
+    acquisitionDate = DateTools.formatDate(acquisitionDate, "yyyy-M-d H:m");
+
+    in.skipBytes(6);
 
     imageName = in.readCString();
     in.skipBytes(18);
@@ -127,6 +138,7 @@ public class SISReader extends BaseTiffReader {
     addGlobalMeta("Channel name", channelName);
     addGlobalMeta("Camera name", cameraName);
     addGlobalMeta("Image name", imageName);
+    addGlobalMeta("Acquisition date", acquisitionDate);
   }
 
   /* @see BaseTiffReader#initMetadataStore() */
@@ -136,6 +148,7 @@ public class SISReader extends BaseTiffReader {
     MetadataTools.populatePixels(store, this);
 
     store.setImageName(imageName, 0);
+    store.setImageAcquiredDate(acquisitionDate, 0);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       String instrument = MetadataTools.createLSID("Instrument", 0);
