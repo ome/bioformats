@@ -587,7 +587,7 @@ public class TiffParser {
       stripByteCounts[tileNumber] *= pixel;
     }
     int size = (int) (tileWidth * tileLength * pixel * effectiveChannels);
-   
+
     if (buf == null) buf = new byte[size];
     if (stripByteCounts[tileNumber] == 0 ||
       stripOffsets[tileNumber] >= in.length())
@@ -613,7 +613,7 @@ public class TiffParser {
     TiffCompression.undifference(tile, ifd);
     unpackBytes(buf, 0, tile, ifd);
 
-    if (planarConfig == 2) {
+    if (planarConfig == 2 && !ifd.isTiled() && ifd.getSamplesPerPixel() > 1) {
       int channel = row % stripOffsets.length;
       int realBytes = ifd.getBytesPerSample()[channel];
       if (realBytes != pixel) {

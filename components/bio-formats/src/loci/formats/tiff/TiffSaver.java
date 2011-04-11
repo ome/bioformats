@@ -26,7 +26,9 @@ package loci.formats.tiff;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.TreeSet;
 
 import loci.common.ByteArrayHandle;
@@ -200,9 +202,9 @@ public class TiffSaver {
   }
 
   /**
-   * Writes any rectangle form the passed image.
+   * Writes to any rectangle from the passed block.
    *
-   * @param buf The byte array that represents the image the full image.
+   * @param buf The block that is to be written.
    * @param ifd The Image File Directories. Mustn't be <code>null</code>.
    * @param no  The image index within the current file, starting from 0.
    * @param pixelType The type of pixels.
@@ -219,6 +221,7 @@ public class TiffSaver {
       int y, int w, int h, boolean last)
   throws FormatException, IOException
   {
+    LOGGER.debug("Attempting to write image.");
     //b/c method is public should check parameters again
     if (buf == null) {
       throw new FormatException("Image data cannot be null");
@@ -233,36 +236,24 @@ public class TiffSaver {
       throw new FormatException("IFD cannot be null");
     }
 
-    int width = (int) ifd.getImageWidth();
-    int height = (int) ifd.getImageLength();
     int bytesPerPixel = FormatTools.getBytesPerPixel(pixelType);
-    int plane = width * height * bytesPerPixel;
-    int nChannels = buf.length / (width * height * bytesPerPixel);
+    int blockSize = w * h * bytesPerPixel;
+    int nChannels = buf.length / (w * h * bytesPerPixel);
     boolean interleaved = ifd.getPlanarConfiguration() == 1;
-
-    //boolean indexed = ifd.getIFDValue(IFD.COLOR_MAP) != null;
+    boolean isTiled = ifd.isTiled();
 
     makeValidIFD(ifd, pixelType, nChannels);
 
     // create pixel output buffers
 
     TiffCompression compression = ifd.getCompression();
-    /*
-    int rowsPerStrip = (int) ifd.getRowsPerStrip()[0];
-    int stripSize = rowsPerStrip * w * bytesPerPixel;
-    int nStrips = height/rowsPerStrip;//(height + rowsPerStrip-1) / rowsPerStrip;
-    int vv = width/w;
-    nStrips *= vv;
-    if (interleaved) stripSize *= nChannels;
-    else nStrips *= nChannels;
-     */
-    int tileWidth = (int) ifd.getTileWidth(); //make sure this is
+    int tileWidth = (int) ifd.getTileWidth();
     int tileHeight = (int) ifd.getTileLength();
-    int rowsPerStrip = (int) ifd.getRowsPerStrip()[0]; //should = tileHeight
-    //if (rowsPerStrip > h) rowsPerStrip = h;
-    int stripSize = rowsPerStrip * tileWidth * bytesPerPixel; //w
-
-    int nStrips = (int) (ifd.getTilesPerRow()*ifd.getTilesPerColumn());
+    int tilesPerRow = (int) ifd.getTilesPerRow();
+    int tilesPerColumn = (int) ifd.getTilesPerColumn();
+    int rowsPerStrip = (int) ifd.getRowsPerStrip()[0];
+    int stripSize = rowsPerStrip * tileWidth * bytesPerPixel;
+    int nStrips = (w / tileWidth) * (h / tileHeight);
 
     if (interleaved) stripSize *= nChannels;
     else nStrips *= nChannels;
@@ -275,30 +266,18 @@ public class TiffSaver {
     }
     int[] bps = ifd.getBitsPerSample();
     int off;
-    // The strip we're actually to compress based on the number of
-    // tiles/strips that we've configured and the dimensions of the data we've
-    // been given.
-    //int thisStrip = (y / h) * (width / w) + (x / w);
-    int wn = width/tileWidth;
-    int diff = width-(wn*tileWidth);
-    int yR = y/tileHeight;
-    int thisStrip = (y / tileHeight) * (width / tileWidth) + (x / tileWidth);
-    if (diff > 0) thisStrip = thisStrip+yR; 
 
     // write pixel strips to output buffers
     for (int strip = 0; strip < nStrips; strip++) {
-      if (strip != thisStrip) {
-        continue;
-      }
+      x = (strip % tilesPerRow) * tileWidth;
+      y = (strip / tilesPerRow) * tileHeight;
       for (int row=0; row<tileHeight; row++) {
         for (int col=0; col<tileWidth; col++) {
-          int ndx = ((row+y) * width + col +x) * bytesPerPixel;
+          int ndx = ((row+y) * w + col +x) * bytesPerPixel;
           for (int c=0; c<nChannels; c++) {
             for (int n=0; n<bps[c]/8; n++) {
               if (interleaved) {
-                //off = ndx * nChannels + c * bytesPerPixel + n;
-                //off = ndx + c * bytesPerPixel + n;
-                off = ndx + c * plane + n;
+                off = ndx + c * blockSize + n;
                 if (row >= h || col >= w) {
                   stripOut[strip].writeByte(0);
                 } else {
@@ -306,7 +285,7 @@ public class TiffSaver {
                 }
               }
               else {
-                off = c * plane + ndx + n;
+                off = c * blockSize + ndx + n;
                 if (row >= h || col >= w) {
                   stripOut[strip].writeByte(0);
                 } else {
@@ -324,15 +303,12 @@ public class TiffSaver {
     // compress strips according to given differencing and compression schemes
     byte[][] strips = new byte[nStrips][];
     for (int strip=0; strip<nStrips; strip++) {
-      if (strip != thisStrip) {
-        continue;
-      }
       strips[strip] = stripBuf[strip].toByteArray();
       TiffCompression.difference(strips[strip], ifd);
       CodecOptions codecOptions = compression.getCompressionCodecOptions(
           ifd, options);
-      codecOptions.height = tileHeight;//rowsPerStrip;
-      codecOptions.width = tileWidth;//w;
+      codecOptions.height = tileHeight;
+      codecOptions.width = tileWidth;
       strips[strip] = compression.compress(strips[strip], codecOptions);
     }
 
@@ -347,47 +323,78 @@ public class TiffSaver {
 
     // record strip byte counts and offsets
 
-    long[] stripByteCounts = new long[nStrips];
-    long[] stripOffsets = new long[nStrips];
+    List<Long> byteCounts = new ArrayList<Long>();
+    List<Long> offsets = new ArrayList<Long>();
+    long totalTiles = tilesPerRow * tilesPerColumn;
 
-    if (ifd.containsKey(IFD.STRIP_BYTE_COUNTS)) {
-      long[] newStripByteCounts = ifd.getStripByteCounts();
-      if (newStripByteCounts.length == nStrips) {
-        stripByteCounts = newStripByteCounts;
+    if (ifd.containsKey(IFD.STRIP_BYTE_COUNTS)
+        || ifd.containsKey(IFD.TILE_BYTE_COUNTS)) {
+      long[] ifdByteCounts = isTiled? ifd.getIFDLongArray(IFD.TILE_BYTE_COUNTS)
+          : ifd.getStripByteCounts();
+      for (long stripByteCount : ifdByteCounts) {
+        byteCounts.add(stripByteCount);
       }
     }
-    if (ifd.containsKey(IFD.STRIP_OFFSETS)) {
-      long[] newStripOffsets = ifd.getStripOffsets();
-      if (newStripOffsets.length == nStrips) {
-        stripOffsets = newStripOffsets;
+    else {
+      while (byteCounts.size() < totalTiles) {
+        byteCounts.add(0L);
       }
     }
-
-    for (int i=0; i<stripByteCounts.length; i++) {
-      if (stripByteCounts[i] == 0 && strips[i] != null) {
-        stripByteCounts[i] = strips[i].length;
+    Integer lastOffset = null;
+    if (ifd.containsKey(IFD.STRIP_OFFSETS)
+        || ifd.containsKey(IFD.TILE_OFFSETS)) {
+      long[] ifdOffsets = isTiled? ifd.getIFDLongArray(IFD.TILE_OFFSETS)
+          : ifd.getStripOffsets();
+      for (int i = 0; i < ifdOffsets.length; i++) {
+        if (lastOffset == null && ifdOffsets[i] == 0L) {
+          lastOffset = i - 1;
+        }
+        offsets.add(ifdOffsets[i]);
       }
     }
+    else {
+      while (offsets.size() < totalTiles) {
+        offsets.add(0L);
+      }
+      lastOffset = -1;
+    }
 
-    ifd.putIFDValue(IFD.STRIP_BYTE_COUNTS, stripByteCounts);
-    ifd.putIFDValue(IFD.STRIP_OFFSETS, stripOffsets);
+    if (isTiled) {
+      ifd.putIFDValue(IFD.TILE_BYTE_COUNTS, toPrimitiveArray(byteCounts));
+      ifd.putIFDValue(IFD.TILE_OFFSETS, toPrimitiveArray(offsets));
+    }
+    else {
+      ifd.putIFDValue(IFD.STRIP_BYTE_COUNTS, toPrimitiveArray(byteCounts));
+      ifd.putIFDValue(IFD.STRIP_OFFSETS, toPrimitiveArray(offsets));
+    }
 
     long fp = out.getFilePointer();
     writeIFD(ifd, 0);
 
     for (int i=0; i<strips.length; i++) {
-      if (stripOffsets[i] > 0 && stripByteCounts[i] != 0) {
-        LOGGER.debug("Strip {} seeking to {}",
-            i, stripOffsets[i] + stripByteCounts[i]);
-        out.seek(stripOffsets[i] + stripByteCounts[i]);
+      if (lastOffset != -1) {
+        out.seek(offsets.get(lastOffset) + byteCounts.get(lastOffset));
       }
-      else if (strips[i] != null) {
-        stripOffsets[i] = out.getFilePointer();
-        out.write(strips[i]);
+      int thisOffset = lastOffset + i + 1;
+      offsets.set(thisOffset, out.getFilePointer());
+      byteCounts.set(thisOffset, new Long(strips[i].length));
+      if (LOGGER.isDebugEnabled()) {
+        LOGGER.debug(String.format(
+            "Writing tile/strip %d/%d size: %d offset: %d",
+            thisOffset + 1, totalTiles, byteCounts.get(thisOffset),
+            offsets.get(thisOffset)));
       }
+      out.write(strips[i]);
     }
-    ifd.putIFDValue(IFD.STRIP_BYTE_COUNTS, stripByteCounts);
-    ifd.putIFDValue(IFD.STRIP_OFFSETS, stripOffsets);
+    if (isTiled) {
+      ifd.putIFDValue(IFD.TILE_BYTE_COUNTS, toPrimitiveArray(byteCounts));
+      ifd.putIFDValue(IFD.TILE_OFFSETS, toPrimitiveArray(offsets));
+
+    }
+    else {
+      ifd.putIFDValue(IFD.STRIP_BYTE_COUNTS, toPrimitiveArray(byteCounts));
+      ifd.putIFDValue(IFD.STRIP_OFFSETS, toPrimitiveArray(offsets));
+    }
     long endFP = out.getFilePointer();
     if (LOGGER.isDebugEnabled()) {
       LOGGER.debug("Offset before IFD write: {} Seeking to: {}",
@@ -395,6 +402,12 @@ public class TiffSaver {
     }
     out.seek(fp);
 
+    if (LOGGER.isDebugEnabled()) {
+      LOGGER.debug("Writing tile/strip offsets: {}",
+          Arrays.toString(toPrimitiveArray(offsets)));
+      LOGGER.debug("Writing tile/strip byte counts: {}",
+          Arrays.toString(toPrimitiveArray(byteCounts)));
+    }
     writeIFD(ifd, last ? 0 : endFP);
     if (LOGGER.isDebugEnabled()) {
       LOGGER.debug("Offset after IFD write: {}", out.getFilePointer());
@@ -733,6 +746,20 @@ public class TiffSaver {
   }
 
   // -- Helper methods --
+
+  /**
+   * Coverts a list to a primitive array.
+   * @param l The list of <code>Long</code> to convert.
+   * @return A primitive array of type <code>long[]</code> with the values from
+   * </code>l</code>.
+   */
+  private long[] toPrimitiveArray(List<Long> l) {
+    long[] toReturn = new long[l.size()];
+    for (int i = 0; i < l.size(); i++) {
+      toReturn[i] = l.get(i);
+    }
+    return toReturn;
+  }
 
   /**
    * Write the given value to the given RandomAccessOutputStream.
