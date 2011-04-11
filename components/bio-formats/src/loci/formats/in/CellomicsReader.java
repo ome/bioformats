@@ -156,6 +156,10 @@ public class CellomicsReader extends FormatReader {
     wellRows = uniqueRows.size();
     wellColumns = uniqueCols.size();
 
+    if (fields * wellRows * wellColumns > files.length) {
+      files = new String[] {id};
+    }
+
     core = new CoreMetadata[files.length];
 
     for (int i=0; i<core.length; i++) {
