@@ -355,7 +355,7 @@ public class DeltavisionReader extends FormatReader {
 
     LOGGER.info("Reading header");
 
-    in.skipBytes(16);
+    in.seek(16);
 
     int subImageStartX = in.readInt();
     int subImageStartY = in.readInt();
