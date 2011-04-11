@@ -131,7 +131,7 @@ public class TiffWriterTest {
     IFD ifd;
     int count;
     int series = reader.getSeriesCount();
-    String[][][] tileMD5s = new String[series][][];
+    String[][][] tileMD5s = new String[series][][]; 
     for (int s = 0; s < series; s++) {
       reader.setSeries(s);
       w = reader.getSizeX()/n;
@@ -212,7 +212,7 @@ public class TiffWriterTest {
     int n, m;
     int diffWidth, diffHeight;
     int series = reader.getSeriesCount();
-    String[][][] tileMD5s = new String[series][][];
+    String[][][] tileMD5s = new String[series][][]; 
     for (int s = 0; s < series; s++) {
       reader.setSeries(s);
       sizeX = reader.getSizeX();
