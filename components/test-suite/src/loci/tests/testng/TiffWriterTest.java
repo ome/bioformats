@@ -105,7 +105,7 @@ public class TiffWriterTest {
     writer.setMetadataRetrieve(newMetadata);
     writer.setCompression(compression);
     writer.setWriteSequentially(true);
-    writer.setInterleaved(true);
+    writer.setInterleaved(false);
     writer.setBigTiff(bigTiff);
     writer.setId(output);
     return writer;
@@ -124,19 +124,14 @@ public class TiffWriterTest {
       boolean bigTiff) 
     throws Exception {
     TiffWriter writer = initializeWriter(output, compression, bigTiff);
-    byte[] plane;
     int x, y;
     byte[] tile;
-    int index = 0;
     long[] rowPerStrip;
     int w, h;
     IFD ifd;
     int count;
-    Map<Integer, String> md5PerImage;
-    Map<Integer, Map<Integer, String>> 
-      md5ImageInSeries = new HashMap<Integer, Map<Integer, String>>();
-    int v;
     int series = reader.getSeriesCount();
+    String[][][] tileMD5s = new String[series][][];
     for (int s = 0; s < series; s++) {
       reader.setSeries(s);
       w = reader.getSizeX()/n;
@@ -144,23 +139,19 @@ public class TiffWriterTest {
       rowPerStrip = new long[1];
       rowPerStrip[0] = h;
       count = reader.getImageCount();
+      tileMD5s[s] = new String[count][m * n];
       for (int k = 0; k < count; k++) {
-        md5PerImage = new HashMap<Integer, String>();
-        v = s*series+k;
-        md5ImageInSeries.put(v, md5PerImage);
         ifd = new IFD();
         ifd.put(IFD.TILE_WIDTH, w);
         ifd.put(IFD.TILE_LENGTH, h);
         ifd.put(IFD.ROWS_PER_STRIP, rowPerStrip);
-        plane = reader.openBytes(k); //read the plane.
         for (int i = 0; i < m; i++) {
           y = h*i;
           for (int j = 0; j < n; j++) {
             x = w*j;
-            index = n*y+x;
             tile = reader.openBytes(k, x, y, w, h);
-            md5PerImage.put(index, TestTools.md5(tile));
-            writer.saveBytes(k, plane, ifd, x, y, w, h);
+            tileMD5s[s][k][(i * n) + j] = TestTools.md5(tile);
+            writer.saveBytes(k, tile, ifd, x, y, w, h);
           }
         }
       }
@@ -171,29 +162,25 @@ public class TiffWriterTest {
     outputReader.setId(output);
     
     //first series.
-    String planeDigest;
-    String tileDigest;
-    Map<Integer, String> results;
+    String writtenDigest;
+    String readDigest;
     for (int s = 0; s < series; s++) {
       outputReader.setSeries(s);
       count = outputReader.getImageCount();
       h = outputReader.getSizeY()/m;
       w = outputReader.getSizeX()/n;
       for (int k = 0; k < count; k++) {
-        v = s*series+k;
-        results = md5ImageInSeries.get(v);
         for (int i = 0; i < m; i++) {
           y = h*i;
           for (int j = 0; j < n; j++) {
             x = w*j;
-            index = n*y+x;
             tile = outputReader.openBytes(k, x, y, w, h);
-            planeDigest = results.get(index);
-            tileDigest = TestTools.md5(tile);
-            if (!planeDigest.equals(tileDigest)) {
-              fail("Compression: "+compression+" "+
-                  String.format("MD5:%d;%d;%d;%d;%d;%d %s != %s",
-                  s, k, x, y, w, h, planeDigest, tileDigest));
+            writtenDigest = tileMD5s[s][k][(i * n) + j];
+            readDigest = TestTools.md5(tile);
+            if (!writtenDigest.equals(readDigest)) {
+              fail(String.format(
+                  "Compression:%s MD5:%d;%d;%d;%d;%d; %s != %s",
+                  compression, k, x, y, w, h, writtenDigest, readDigest));
             }
           }
         }
@@ -215,22 +202,17 @@ public class TiffWriterTest {
       int blockWidth, int blockHeight, boolean bigTiff) 
     throws Exception {
     TiffWriter writer = initializeWriter(output, compression, bigTiff);
-    byte[] plane;
     int x, y;
     byte[] tile;
-    int index = 0;
     long[] rowPerStrip;
     int w, h;
     IFD ifd;
     int count;
-    Map<Integer, String> md5PerImage;
-    Map<Integer, Map<Integer, String>> 
-      md5ImageInSeries = new HashMap<Integer, Map<Integer, String>>();
-    int v;
     int sizeX, sizeY;
     int n, m;
     int diffWidth, diffHeight;
     int series = reader.getSeriesCount();
+    String[][][] tileMD5s = new String[series][][];
     for (int s = 0; s < series; s++) {
       reader.setSeries(s);
       sizeX = reader.getSizeX();
@@ -254,18 +236,14 @@ public class TiffWriterTest {
       rowPerStrip = new long[1];
       rowPerStrip[0] = blockHeight;
       count = reader.getImageCount();
+      tileMD5s[s] = new String[count][m * n];
       for (int k = 0; k < count; k++) {
         x = 0;
         y = 0;
-        v = s*series+k;
-        md5PerImage = new HashMap<Integer, String>();
-        md5ImageInSeries.put(v, md5PerImage);
         ifd = new IFD();
         ifd.put(IFD.TILE_WIDTH, blockWidth);
         ifd.put(IFD.TILE_LENGTH, blockHeight);
         ifd.put(IFD.ROWS_PER_STRIP, rowPerStrip);
-        plane = reader.openBytes(k); //read the plane.
-        index = 0;
         for (int i = 0; i < m; i++) {
           if (diffHeight > 0 && i == (m-1)) {
             y = sizeY-diffHeight;
@@ -283,10 +261,8 @@ public class TiffWriterTest {
               w = blockWidth;
             }
             tile = reader.openBytes(k, x, y, w, h);
-            String value = TestTools.md5(tile);
-            writer.saveBytes(0, plane, ifd, x, y, w, h);
-            md5PerImage.put(index, value);
-            index++;
+            tileMD5s[s][k][(i * n) + j] = TestTools.md5(tile);
+            writer.saveBytes(0, tile, ifd, x, y, w, h);
           }
         }
       }
@@ -297,16 +273,12 @@ public class TiffWriterTest {
     outputReader.setId(output);
     
     //first series.
-    String planeDigest;
-    String tileDigest;
-    Map<Integer, String> results;
+    String writtenDigest;
+    String readDigest;
     for (int s = 0; s < series; s++) {
       outputReader.setSeries(s);
       count = outputReader.getImageCount();
       for (int k = 0; k < count; k++) {
-        v = s*series+k;
-        results = md5ImageInSeries.get(v);
-        index = 0;
         sizeX = outputReader.getSizeX();
         sizeY = outputReader.getSizeY();
         n = sizeX/blockWidth;
@@ -332,14 +304,13 @@ public class TiffWriterTest {
               w = blockWidth;
             }
             tile = outputReader.openBytes(k, x, y, w, h);
-            planeDigest = results.get(index);
-            tileDigest = TestTools.md5(tile);
-            if (!planeDigest.equals(tileDigest)) {
-              fail("Compression: "+compression+" "+
-                  String.format("MD5:%d;%d;%d;%d;%d;%d %s != %s",
-                  s, k, x, y, w, h, planeDigest, tileDigest));
+            writtenDigest = tileMD5s[s][k][(i * n) + j];
+            readDigest = TestTools.md5(tile);
+            if (!writtenDigest.equals(readDigest)) {
+                fail(String.format(
+                        "Compression:%s MD5:%d;%d;%d;%d;%d; %s != %s",
+                        compression, k, x, y, w, h, writtenDigest, readDigest));
             }
-            index++;
           }
         }
       }
@@ -349,7 +320,7 @@ public class TiffWriterTest {
 
   @Parameters({"id"})
   @BeforeClass
-  public void parse( String id) throws Exception {
+  public void parse(String id) throws Exception {
     ServiceFactory factory = new ServiceFactory();
     service = factory.getInstance(OMEXMLService.class);
     metadata = service.createOMEXMLMetadata();

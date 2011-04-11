@@ -150,7 +150,6 @@ public class TiffWriter extends FormatWriter {
     boolean littleEndian = bigEndian == null ?
       false : !bigEndian.booleanValue();
 
-
     tiffSaver = new TiffSaver(out); 
     tiffSaver.setWritingSequentially(sequential);
     tiffSaver.setLittleEndian(littleEndian);
@@ -168,17 +167,14 @@ public class TiffWriter extends FormatWriter {
       tmp.close();
     }
 
-    int width = retrieve.getPixelsSizeX(series).getValue().intValue();
-    int height = retrieve.getPixelsSizeY(series).getValue().intValue();
     int c = getSamplesPerPixel();
     int type = FormatTools.pixelTypeFromString(
       retrieve.getPixelsType(series).toString());
     int bytesPerPixel = FormatTools.getBytesPerPixel(type);
 
-    int plane = width * height * c * bytesPerPixel;
-    if (plane > buf.length) {
-      c = buf.length / (width * height * bytesPerPixel);
-      plane = width * height * c * bytesPerPixel;
+    int blockSize = w * h * c * bytesPerPixel;
+    if (blockSize > buf.length) {
+      c = buf.length / (w * h * bytesPerPixel);
     }
 
     if (bytesPerPixel > 1 && c != 1 && c != 3) {
@@ -212,6 +208,8 @@ public class TiffWriter extends FormatWriter {
       ifd.putIFDValue(IFD.COLOR_MAP, colorMap);
     }
 
+    int width = retrieve.getPixelsSizeX(series).getValue().intValue();
+    int height = retrieve.getPixelsSizeY(series).getValue().intValue();
     ifd.put(new Integer(IFD.IMAGE_WIDTH), new Integer(width));
     ifd.put(new Integer(IFD.IMAGE_LENGTH), new Integer(height));
 
@@ -232,7 +230,8 @@ public class TiffWriter extends FormatWriter {
       new TiffRational((long) (physicalSizeY * 1000 * 10000), 1000));
 
     if (!isBigTiff) {
-      isBigTiff = (out.length() + 2 * plane) >= 4294967296L;
+      isBigTiff = (out.length() + 2
+          * (width * height * c * bytesPerPixel)) >= 4294967296L;
       if (isBigTiff) {
         throw new FormatException("File is too large; call setBigTiff(true)");
       }
