@@ -115,7 +115,7 @@ public class VolocityReader extends FormatReader {
     RandomAccessInputStream pix =
       new RandomAccessInputStream(pixelsFiles[getSeries()][zct[1]]);
 
-    int planeSize = FormatTools.getPlaneSize(this);
+    long planeSize = FormatTools.getPlaneSize(this);
     int planesInFile = (int) (pix.length() / planeSize);
     int planeIndex = no / getEffectiveSizeC();
     if (planesInFile == getSizeT()) {
