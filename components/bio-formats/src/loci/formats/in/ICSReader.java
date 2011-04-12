@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Hashtable;
@@ -135,6 +136,8 @@ public class ICSReader extends FormatReader {
   /** Whether or not the pixels are GZIP-compressed. */
   private boolean gzip;
 
+  private GZIPInputStream gzipStream;
+
   /** Whether or not the image is inverted along the Y axis. */
   private boolean invertY;
 
@@ -229,7 +232,33 @@ public class ICSReader extends FormatReader {
     int[] coordinates = getZCTCoords(no);
     int[] prevCoordinates = getZCTCoords(prevImage);
 
-    if (!gzip) in.seek(offset + no * (long) len);
+    if (!gzip) {
+      in.seek(offset + no * (long) len);
+    }
+    else {
+      long toSkip = (no - prevImage - 1) * (long) len;
+      if (gzipStream == null || no < prevImage) {
+        FileInputStream fis = null;
+        if (versionTwo) {
+          fis = new FileInputStream(currentIcsId);
+        }
+        else {
+          fis = new FileInputStream(currentIdsId);
+        }
+        gzipStream = new GZIPInputStream(fis);
+        toSkip = offset + no * (long) len;
+      }
+
+      while (toSkip > 0) {
+        toSkip -= gzipStream.skip(toSkip);
+      }
+
+      data = new byte[len * (storedRGB ? getSizeC() : 1)];
+      int toRead = data.length;
+      while (toRead > 0) {
+        toRead -= gzipStream.read(data, data.length - toRead, toRead);
+      }
+    }
 
     int sizeC = lifetime ? 1 : getSizeC();
 
@@ -256,15 +285,9 @@ public class ICSReader extends FormatReader {
       }
     }
     else if (gzip) {
-      if (x == 0 && getSizeX() == w) {
-        System.arraycopy(data, len * no + y * rowLen, buf, 0, h * rowLen);
-      }
-      else {
-        for (int row=y; row<h + y; row++) {
-          System.arraycopy(data, len * no + pixel * (row * getSizeX() + x),
-            buf, row * rowLen, rowLen);
-        }
-      }
+      RandomAccessInputStream s = new RandomAccessInputStream(data);
+      readPlane(s, x, y, w, h, buf);
+      s.close();
     }
     else {
       readPlane(in, x, y, w, h, buf);
@@ -310,6 +333,10 @@ public class ICSReader extends FormatReader {
       prevImage = 0;
       hasInstrumentData = false;
       storedRGB = false;
+      if (gzipStream != null) {
+        gzipStream.close();
+      }
+      gzipStream = null;
     }
   }
 
@@ -580,7 +607,10 @@ public class ICSReader extends FormatReader {
             laserModel = v;
           }
           else if (k.equalsIgnoreCase("history laser power")) {
-            laserPower = new Double(v);
+            try {
+              laserPower = new Double(v);
+            }
+            catch (NumberFormatException e) { }
           }
           else if (k.equalsIgnoreCase("history laser rep rate")) {
             String repRate = v;
@@ -848,30 +878,6 @@ public class ICSReader extends FormatReader {
     offset = in.getFilePointer();
 
     int bytes = bitsPerPixel / 8;
-
-    if (gzip) {
-      data = new byte[(int) (in.length() - in.getFilePointer())];
-      LOGGER.info("Decompressing pixel data");
-      in.read(data);
-      byte[] buf = new byte[8192];
-      int nBytes = getImageCount() * getSizeX() * getSizeY() * bytes;
-      ByteArrayHandle v = new ByteArrayHandle(nBytes);
-      try {
-        GZIPInputStream r = new GZIPInputStream(new ByteArrayInputStream(data));
-        int n = r.read(buf, 0, buf.length);
-        while (n > 0) {
-          v.write(buf, 0, n);
-          n = r.read(buf, 0, buf.length);
-        }
-        r.close();
-        data = v.getBytes();
-        v.close();
-      }
-      catch (IOException dfe) {
-        throw new FormatException("Error uncompressing gzip'ed data", dfe);
-      }
-      buf = null;
-    }
 
     if (bitsPerPixel < 32) core[0].littleEndian = !isLittleEndian();
 
