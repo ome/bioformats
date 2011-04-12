@@ -91,6 +91,7 @@ loci.formats.in.AIMReader             # aim
 loci.formats.in.InCell3000Reader      # frm
 loci.formats.in.SpiderReader          # spi
 loci.formats.in.VolocityReader        # mvd2
+loci.formats.in.ImagicReader          # hed
 loci.formats.in.FakeReader            # fake
 
 # multi-extension messes
