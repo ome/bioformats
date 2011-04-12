@@ -58,9 +58,31 @@ public class SpiderReader extends FormatReader {
     super("SPIDER", "spi");
     domains = new String[] {FormatTools.EM_DOMAIN};
     suffixSufficient = true;
+    suffixNecessary = false;
   }
 
   // -- IFormatReader API methods --
+
+  /**
+   * @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream)
+   */
+  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
+    final int blockLen = 104;
+    if (!FormatTools.validStream(stream, blockLen, true)) return false;
+    int size = (int) stream.readFloat() * 4;
+    stream.skipBytes(4);
+    size *= (int) stream.readFloat();
+    stream.seek(44);
+    int nsam = (int) stream.readFloat();
+    size *= nsam;
+    int headerSize = nsam * (int) stream.readFloat() * 4;
+    stream.skipBytes(48);
+    int slices = (int) stream.readFloat();
+    if (slices > 0) {
+      size *= slices;
+    }
+    return size + headerSize == stream.length();
+  }
 
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
@@ -72,7 +94,7 @@ public class SpiderReader extends FormatReader {
 
     long header = headerSize;
     if (oneHeaderPerSlice) {
-      header += no * headerSize;
+      header += (no + 1) * headerSize;
     }
 
     in.seek(header + no * FormatTools.getPlaneSize(this));
@@ -204,6 +226,9 @@ public class SpiderReader extends FormatReader {
     }
 
     core[0].imageCount = (int) Math.max(nSlice, 1);
+    if (maxim > 0) {
+      core[0].imageCount *= maxim;
+    }
     core[0].sizeZ = getImageCount();
     core[0].sizeC = 1;
     core[0].sizeT = 1;
@@ -214,6 +239,8 @@ public class SpiderReader extends FormatReader {
     core[0].pixelType = FormatTools.FLOAT;
     core[0].dimensionOrder = "XYZCT";
     core[0].rgb = false;
+
+    oneHeaderPerSlice = (irec * nsam * 4) != FormatTools.getPlaneSize(this);
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
