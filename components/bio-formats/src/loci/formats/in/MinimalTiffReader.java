@@ -24,7 +24,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -69,8 +71,11 @@ public class MinimalTiffReader extends FormatReader {
   /** List of thumbnail IFDs for the current TIFF. */
   protected IFDList thumbnailIFDs;
 
-  /** List of sub-resolution IFDs for the current TIFF. */
-  protected IFDList subResolutionIFDs;
+  /**
+   * List of sub-resolution IFDs for each IFD in the current TIFF with the
+   * same order as <code>ifds</code>.
+   */
+  protected List<IFDList> subResolutionIFDs;
 
   protected TiffParser tiffParser;
 
@@ -248,11 +253,12 @@ public class MinimalTiffReader extends FormatReader {
     IFD firstIFD = ifds.get(0);
     lastPlane = no;
     IFD ifd = ifds.get(no);
-    if (firstIFD.getCompression() == TiffCompression.JPEG_2000
-        || firstIFD.getCompression() == TiffCompression.JPEG_2000_LOSSY) {
+    if ((firstIFD.getCompression() == TiffCompression.JPEG_2000
+        || firstIFD.getCompression() == TiffCompression.JPEG_2000_LOSSY)
+        && resolutionLevels != null) {
       j2kCodecOptions.resolution = Math.abs(series - resolutionLevels);
       if (series > 0) {
-        ifd = subResolutionIFDs.get(series - 1);
+        ifd = subResolutionIFDs.get(no).get(series - 1);
       }
       LOGGER.info("Using JPEG 2000 resolution level {}",
           j2kCodecOptions.resolution);
@@ -318,7 +324,7 @@ public class MinimalTiffReader extends FormatReader {
     if (!fileOnly) {
       ifds = null;
       thumbnailIFDs = null;
-      subResolutionIFDs = new IFDList();
+      subResolutionIFDs = new ArrayList<IFDList>();
       lastPlane = 0;
       tiffParser = null;
       resolutionLevels = null;
@@ -399,6 +405,8 @@ public class MinimalTiffReader extends FormatReader {
                   resolutionLevels, ifd.getImageWidth(), ifd.getImageLength(),
                   ifd.getTileWidth(), ifd.getTileLength()));
             }
+            IFDList theseSubResolutionIFDs = new IFDList();
+            subResolutionIFDs.add(theseSubResolutionIFDs);
             for (int level = 1; level <= resolutionLevels; level++) {
               IFD newIFD = new IFD(ifd);
               long factor = (long) Math.pow(2, level);
@@ -417,7 +425,7 @@ public class MinimalTiffReader extends FormatReader {
                     "Tile %dx%d", resolutionLevel, newImageWidth,
                     newImageLength, newTileWidth, newTileLength));
               }
-              subResolutionIFDs.add(newIFD);
+              theseSubResolutionIFDs.add(newIFD);
             }
           }
         }
@@ -457,11 +465,12 @@ public class MinimalTiffReader extends FormatReader {
     core[0].bitsPerPixel = firstIFD.getBitsPerSample()[0];
 
     // New core metadata now that we know how many sub-resolutions we have.
-    if (resolutionLevels != null) {
-      CoreMetadata[] newCore = new CoreMetadata[subResolutionIFDs.size() + 1];
+    if (resolutionLevels != null && subResolutionIFDs.size() > 0) {
+      IFDList ifds = subResolutionIFDs.get(0);
+      CoreMetadata[] newCore = new CoreMetadata[ifds.size() + 1];
       newCore[0] = core[0];
       int i = 1;
-      for (IFD ifd : subResolutionIFDs) {
+      for (IFD ifd : ifds) {
         newCore[i] = new CoreMetadata(this, 0);
         newCore[i].sizeX = (int) ifd.getImageWidth();
         newCore[i].sizeY = (int) ifd.getImageLength();
