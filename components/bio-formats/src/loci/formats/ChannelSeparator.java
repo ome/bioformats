@@ -209,6 +209,20 @@ public class ChannelSeparator extends ReaderWrapper {
     return reader.openBytes(no, buf, x, y, w, h);
   }
 
+  /* @see loci.formats.IFormatReader#openThumbBytes(int) */
+  public byte[] openThumbBytes(int no) throws FormatException, IOException {
+    FormatTools.assertId(getCurrentFile(), true, 2);
+
+    int source = getOriginalIndex(no);
+    byte[] thumb = reader.openThumbBytes(source);
+
+    int c = getSizeC() / reader.getEffectiveSizeC();
+    int channel = no % c;
+    int bpp = FormatTools.getBytesPerPixel(getPixelType());
+
+    return ImageTools.splitChannels(thumb, channel, c, bpp, false, false);
+  }
+
   /* @see IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);

@@ -47,10 +47,18 @@ import loci.formats.tiff.PhotoInterp;
  */
 public class NDPIReader extends BaseTiffReader {
 
+  // -- Constants --
+
+  private static final int MAX_SIZE = 8192;
+
   // -- Fields --
 
   private JimiService service;
   private int initializedSeries = -1;
+  private int initializedPlane = -1;
+
+  private int sizeZ = 1;
+  private int pyramidHeight = 1;
 
   // -- Constructor --
 
@@ -74,22 +82,27 @@ public class NDPIReader extends BaseTiffReader {
     if (x == 0 && y == 0 && w == 1 && h == 1) {
       return buf;
     }
+    else if (getSizeX() <= MAX_SIZE && getSizeY() <= MAX_SIZE) {
+      int ifdIndex = getIFDIndex(getSeries(), no);
+      return tiffParser.getSamples(ifds.get(ifdIndex), buf, x, y, w, h);
+    }
 
-    if (initializedSeries != getSeries()) {
+    if (initializedSeries != getSeries() || initializedPlane != no) {
       if (x == 0 && y == 0 && w == getOptimalTileWidth() &&
         h == getOptimalTileHeight())
       {
         // it looks like we'll be reading lots of tiles
-        setupService(0, 0);
+        setupService(0, 0, no);
       }
       else {
         // it looks like we'll only read one tile
-        setupService(y, h);
+        setupService(y, h, no);
       }
       initializedSeries = getSeries();
+      initializedPlane = no;
     }
     else if (service.getScanline(y) == null) {
-      setupService(y, h);
+      setupService(y, h, no);
     }
 
     int c = getRGBChannelCount();
@@ -98,10 +111,27 @@ public class NDPIReader extends BaseTiffReader {
 
     for (int yy=y; yy<y + h; yy++) {
       byte[] scanline = service.getScanline(yy);
-      System.arraycopy(scanline, x * c * bytes, buf, (yy - y) * row, row);
+      if (scanline != null) {
+        System.arraycopy(scanline, x * c * bytes, buf, (yy - y) * row, row);
+      }
     }
 
     return buf;
+  }
+
+  /* @see loci.formats.IFormatReader#openThumbBytes(int) */
+  public byte[] openThumbBytes(int no) throws FormatException, IOException {
+    FormatTools.assertId(currentId, true, 1);
+
+    int currentSeries = getSeries();
+    if (currentSeries >= pyramidHeight) {
+      return super.openThumbBytes(no);
+    }
+
+    setSeries(pyramidHeight - 1);
+    byte[] thumb = FormatTools.openThumbBytes(this, no);
+    setSeries(currentSeries);
+    return thumb;
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
@@ -113,6 +143,9 @@ public class NDPIReader extends BaseTiffReader {
       }
       service = null;
       initializedSeries = -1;
+      initializedPlane = -1;
+      sizeZ = 1;
+      pyramidHeight = 1;
     }
   }
 
@@ -141,42 +174,54 @@ public class NDPIReader extends BaseTiffReader {
 
     ifds = tiffParser.getIFDs();
 
-    core = new CoreMetadata[ifds.size()];
-
-    for (int i=0; i<core.length; i++) {
-      setSeries(i);
-      core[i] = new CoreMetadata();
-      tiffParser.fillInIFD(ifds.get(i));
-
-      if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
+    for (int i=1; i<ifds.size(); i++) {
+      IFD ifd = ifds.get(i);
+      if (ifd.getImageWidth() == ifds.get(0).getImageWidth() &&
+        ifd.getImageLength() == ifds.get(0).getImageLength())
+      {
+        sizeZ++;
+      }
+      else if (sizeZ == 1) {
+        pyramidHeight++;
       }
     }
-    setSeries(0);
+
+    int seriesCount = pyramidHeight + (ifds.size() - pyramidHeight * sizeZ);
+    core = new CoreMetadata[seriesCount];
 
     // repopulate core metadata
 
+    for (int i=0; i<ifds.size(); i++) {
+      tiffParser.fillInIFD(ifds.get(i));
+    }
+
     for (int s=0; s<core.length; s++) {
-      IFD ifd = ifds.get(s);
+      setSeries(s);
+      core[s] = new CoreMetadata();
+
+      IFD ifd = ifds.get(getIFDIndex(s, 0));
       PhotoInterp p = ifd.getPhotometricInterpretation();
       int samples = ifd.getSamplesPerPixel();
       core[s].rgb = samples > 1 || p == PhotoInterp.RGB;
 
       core[s].sizeX = (int) ifd.getImageWidth();
       core[s].sizeY = (int) ifd.getImageLength();
-      core[s].sizeZ = 1;
+      core[s].sizeZ = s < pyramidHeight ? sizeZ : 1;
       core[s].sizeT = 1;
       core[s].sizeC = core[s].rgb ? samples : 1;
       core[s].littleEndian = ifd.isLittleEndian();
       core[s].indexed = p == PhotoInterp.RGB_PALETTE &&
         (get8BitLookupTable() != null || get16BitLookupTable() != null);
-      core[s].imageCount = 1;
+      core[s].imageCount = getSizeZ() * getSizeT();
       core[s].pixelType = ifd.getPixelType();
       core[s].metadataComplete = true;
-      core[s].interleaved = true;
+      core[s].interleaved = getSizeX() > MAX_SIZE || getSizeY() > MAX_SIZE;
       core[s].falseColor = false;
       core[s].dimensionOrder = "XYCZT";
       core[s].thumbnail = s != 0;
     }
+
+    setSeries(0);
   }
 
   /* @see loci.formats.BaseTiffReader#initMetadataStore() */
@@ -189,12 +234,13 @@ public class NDPIReader extends BaseTiffReader {
       store.setImageName("Series " + (i + 1), i);
 
       if (i > 0) {
-        String creationDate = ifds.get(i).getIFDTextValue(IFD.DATE_TIME);
+        int ifdIndex = getIFDIndex(i, 0);
+        String creationDate = ifds.get(ifdIndex).getIFDTextValue(IFD.DATE_TIME);
         creationDate = DateTools.formatDate(creationDate, DATE_FORMATS);
         store.setImageAcquiredDate(creationDate, i);
 
-        store.setPixelsPhysicalSizeX(ifds.get(i).getXResolution(), i);
-        store.setPixelsPhysicalSizeY(ifds.get(i).getYResolution(), i);
+        store.setPixelsPhysicalSizeX(ifds.get(ifdIndex).getXResolution(), i);
+        store.setPixelsPhysicalSizeY(ifds.get(ifdIndex).getYResolution(), i);
         store.setPixelsPhysicalSizeZ(0.0, i);
       }
     }
@@ -202,15 +248,27 @@ public class NDPIReader extends BaseTiffReader {
 
   // -- Helper methods --
 
-  private void setupService(int y, int h) throws FormatException, IOException {
+  private void setupService(int y, int h, int z)
+    throws FormatException, IOException
+  {
     service.close();
 
-    long offset = ifds.get(series).getStripOffsets()[0];
-    int byteCount = (int) ifds.get(series).getStripByteCounts()[0];
+    IFD ifd = ifds.get(getIFDIndex(getSeries(), z));
+
+    long offset = ifd.getStripOffsets()[0];
+    int byteCount = (int) ifd.getStripByteCounts()[0];
     in = new RandomAccessInputStream(currentId);
     in.seek(offset);
 
     service.initialize(in, y, h);
+  }
+
+  private int getIFDIndex(int seriesIndex, int zIndex) {
+    if (seriesIndex < pyramidHeight) {
+      return zIndex * pyramidHeight + seriesIndex;
+    }
+
+    return sizeZ * pyramidHeight + (seriesIndex - pyramidHeight);
   }
 
 }
