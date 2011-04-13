@@ -88,7 +88,7 @@ public class JimiServiceImpl implements JimiService {
    */
   public void initialize(RandomAccessInputStream in, int y, int h) {
     this.in = in;
-    tiles = new TileCache();
+    tiles = new TileCache(y, h);
 
     ImageProducer producer = Jimi.getImageProducer(this.in);
     consumer = new JimiConsumer(producer, y, h);
@@ -234,9 +234,13 @@ public class JimiServiceImpl implements JimiService {
     private Region lastRegion = null;
     private byte[] lastTile = null;
 
-    public TileCache() {
+    private int yy = 0, hh = 0;
+
+    public TileCache(int yy, int hh) {
       options.interleaved = true;
       options.littleEndian = false;
+      this.yy = yy;
+      this.hh = hh;
     }
 
     public void add(byte[] pixels, int x, int y, int w, int h)
@@ -245,7 +249,9 @@ public class JimiServiceImpl implements JimiService {
       toCompress.add(pixels);
       row++;
 
-      if ((y % ROW_COUNT) == ROW_COUNT - 1 || y == getHeight() - 1) {
+      if ((y % ROW_COUNT) == ROW_COUNT - 1 || y == getHeight() - 1 ||
+        y == yy + hh - 1)
+      {
         Region r = new Region(x, y - row + 1, w, row);
         options.width = w;
         options.height = row;
@@ -272,7 +278,9 @@ public class JimiServiceImpl implements JimiService {
       toCompress.add(buf);
       row++;
 
-      if ((y % ROW_COUNT) == ROW_COUNT - 1 || y == getHeight() - 1) {
+      if ((y % ROW_COUNT) == ROW_COUNT - 1 || y == getHeight() - 1 ||
+        y == yy + hh - 1)
+      {
         Region r = new Region(x, y - row + 1, w, row);
         options.width = w;
         options.height = row;
