@@ -86,8 +86,15 @@ public class BufferedImageReader extends ReaderWrapper {
   public BufferedImage openThumbImage(int no)
     throws FormatException, IOException
   {
-    BufferedImage img = AWTImageTools.makeUnsigned(openImage(no));
-    return AWTImageTools.scale(img, getThumbSizeX(), getThumbSizeY(), false);
+    Class dataType = getNativeDataType();
+    if (BufferedImage.class.isAssignableFrom(dataType)) {
+      BufferedImage img = AWTImageTools.makeUnsigned(openImage(no));
+      return AWTImageTools.scale(img, getThumbSizeX(), getThumbSizeY(), false);
+    }
+
+    byte[] thumbBytes = openThumbBytes(no);
+    return AWTImageTools.openImage(thumbBytes, this,
+      getThumbSizeX(), getThumbSizeY());
   }
 
 }
