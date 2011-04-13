@@ -115,14 +115,21 @@ public class VolocityReader extends FormatReader {
     RandomAccessInputStream pix =
       new RandomAccessInputStream(pixelsFiles[getSeries()][zct[1]]);
 
+    int padding = zct[2] * planePadding[getSeries()];
+
     long planeSize = FormatTools.getPlaneSize(this);
     int planesInFile = (int) (pix.length() / planeSize);
     int planeIndex = no / getEffectiveSizeC();
     if (planesInFile == getSizeT()) {
       planeIndex = zct[2];
-    }
 
-    int padding = zct[2] * planePadding[getSeries()];
+      int block = blockSize[getSeries()];
+      padding = block - (int) (planeSize % block);
+      if (padding == block) {
+        padding = 0;
+      }
+      padding *= zct[2];
+    }
 
     long offset =
       (long) blockSize[getSeries()] + planeIndex * planeSize + padding;
