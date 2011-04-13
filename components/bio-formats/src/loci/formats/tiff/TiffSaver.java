@@ -253,7 +253,8 @@ public class TiffSaver {
     int tilesPerColumn = (int) ifd.getTilesPerColumn();
     int rowsPerStrip = (int) ifd.getRowsPerStrip()[0];
     int stripSize = rowsPerStrip * tileWidth * bytesPerPixel;
-    int nStrips = (w / tileWidth) * (h / tileHeight);
+    int nStrips = ((w + tileWidth - 1) / tileWidth)
+                  * ((h + tileHeight - 1) / tileHeight);
 
     if (interleaved) stripSize *= nChannels;
     else nStrips *= nChannels;
