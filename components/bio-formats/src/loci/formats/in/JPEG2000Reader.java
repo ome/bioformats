@@ -59,6 +59,9 @@ public class JPEG2000Reader extends FormatReader {
   /** The number of JPEG 2000 resolution levels the file has. */
   private Integer resolutionLevels;
 
+  /** The color lookup table associated with this file. */
+  private int[][] lut;
+
   // -- Constructor --
 
   /** Constructs a new JPEG2000Reader. */
@@ -84,6 +87,38 @@ public class JPEG2000Reader extends FormatReader {
     return validStart && validEnd;
   }
 
+  /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  public byte[][] get8BitLookupTable() {
+    FormatTools.assertId(currentId, true, 1);
+    if (lut == null || FormatTools.getBytesPerPixel(getPixelType()) != 1) {
+      return null;
+    }
+
+    byte[][] byteLut = new byte[lut.length][lut[0].length];
+    for (int i=0; i<lut.length; i++) {
+      for (int j=0; j<lut[i].length; j++) {
+        byteLut[i][j] = (byte) (lut[i][j] & 0xff);
+      }
+    }
+    return byteLut;
+  }
+
+  /* @see loci.formats.IFormatReader#get16BitLookupTable() */
+  public short[][] get16BitLookupTable() {
+    FormatTools.assertId(currentId, true, 1);
+    if (lut == null || FormatTools.getBytesPerPixel(getPixelType()) != 2) {
+      return null;
+    }
+
+    short[][] shortLut = new short[lut.length][lut[0].length];
+    for (int i=0; i<lut.length; i++) {
+      for (int j=0; j<lut[i].length; j++) {
+        shortLut[i][j] = (short) (lut[i][j] & 0xffff);
+      }
+    }
+    return shortLut;
+  }
+
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
@@ -95,7 +130,12 @@ public class JPEG2000Reader extends FormatReader {
     JPEG2000CodecOptions options = new JPEG2000CodecOptions();
     options.interleaved = isInterleaved();
     options.littleEndian = isLittleEndian();
-    options.resolution = Math.abs(series - resolutionLevels);
+    if (resolutionLevels != null) {
+      options.resolution = Math.abs(series - resolutionLevels);
+    }
+    else {
+      options.resolution = series;
+    }
 
     in.seek(0);
     byte[] plane = new JPEG2000Codec().decompress(in, options);
@@ -128,6 +168,7 @@ public class JPEG2000Reader extends FormatReader {
       core[0].sizeC = metadataParser.getHeaderSizeC();
       core[0].pixelType = metadataParser.getHeaderPixelType();
     }
+    lut = metadataParser.getLookupTable();
 
     core[0].sizeZ = 1;
     core[0].sizeT = 1;
@@ -136,6 +177,7 @@ public class JPEG2000Reader extends FormatReader {
     core[0].rgb = getSizeC() > 1;
     core[0].interleaved = true;
     core[0].littleEndian = false;
+    core[0].indexed = !isRGB() && lut != null;
 
     // New core metadata now that we know how many sub-resolutions we have.
     if (resolutionLevels != null) {
