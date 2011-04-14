@@ -75,7 +75,8 @@ public class ScreenDetectionTest {
     }
   };
 
-  private static final int[] PLATE_COUNTS = new int[] {1, 2, 1};
+  private static final int[] PLATE_COUNTS = new int[] {1, 1, 1};
+  private static final int[] SERIES_COUNTS = new int[] {4, 3, 4};
 
   private ImageReader[] readers;
   private OMEXMLMetadata[] omexml;
@@ -123,7 +124,7 @@ public class ScreenDetectionTest {
   @Test
   public void testSeriesCounts() throws FormatException, IOException {
     for (int i=0; i<SCREENS.length; i++) {
-      assertEquals(readers[i].getSeriesCount(), SCREENS[i].length);
+      assertEquals(readers[i].getSeriesCount(), SERIES_COUNTS[i]);
     }
   }
 
