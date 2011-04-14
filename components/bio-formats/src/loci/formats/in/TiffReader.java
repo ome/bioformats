@@ -64,6 +64,8 @@ public class TiffReader extends BaseTiffReader {
 
   public static final String[] COMPANION_SUFFIXES = {"xml", "txt"};
 
+  public static final int IMAGEJ_TAG = 50839;
+
   // -- Fields --
 
   private String companionFile;
@@ -233,6 +235,10 @@ public class TiffReader extends BaseTiffReader {
     int z = 1, t = 1;
     int c = getSizeC();
 
+    if (ifds.get(0).containsKey(IMAGEJ_TAG)) {
+      comment += "\n" + ifds.get(0).getIFDTextValue(IMAGEJ_TAG);
+    }
+
     // parse ZCT sizes
     StringTokenizer st = new StringTokenizer(comment, "\n");
     while (st.hasMoreTokens()) {
@@ -263,6 +269,9 @@ public class TiffReader extends BaseTiffReader {
       else if (token.startsWith("yorigin=")) {
         yOrigin = parseInt(value);
         put("Y Origin", yOrigin);
+      }
+      else if (eq > 0) {
+        put(token.substring(0, eq).trim(), value);
       }
     }
     if (z * c * t == c && isRGB()) {
