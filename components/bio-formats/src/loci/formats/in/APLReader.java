@@ -29,6 +29,7 @@ import java.util.Vector;
 
 import loci.common.DataTools;
 import loci.common.Location;
+import loci.common.RandomAccessInputStream;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceFactory;
 import loci.formats.CoreMetadata;
@@ -38,6 +39,10 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.MDBService;
+import loci.formats.tiff.IFD;
+import loci.formats.tiff.IFDList;
+import loci.formats.tiff.PhotoInterp;
+import loci.formats.tiff.TiffParser;
 
 /**
  * APLReader is the file format reader for Olympus APL files.
@@ -57,7 +62,8 @@ public class APLReader extends FormatReader {
 
   private String[] tiffFiles;
   private String[] xmlFiles;
-  private MinimalTiffReader[] tiffReaders;
+  private TiffParser[] parser;
+  private IFDList[] ifds;
   private Vector<String> used;
 
   // -- Constructor --
@@ -120,22 +126,24 @@ public class APLReader extends FormatReader {
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    return tiffReaders[series].openBytes(no, buf, x, y, w, h);
+    return parser[series].getSamples(ifds[series].get(no), buf, x, y, w, h);
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
-    if (tiffReaders != null) {
-      for (MinimalTiffReader reader : tiffReaders) {
-        reader.close(fileOnly);
-      }
-    }
     if (!fileOnly) {
-      tiffReaders = null;
       tiffFiles = null;
       xmlFiles = null;
       used = null;
+      ifds = null;
+      if (parser != null) {
+        for (TiffParser p : parser) {
+          if (p != null) {
+            p.getStream().close();
+          }
+        }
+      }
     }
   }
 
@@ -147,13 +155,25 @@ public class APLReader extends FormatReader {
   /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
-    return tiffReaders[getSeries()].getOptimalTileWidth();
+    try {
+      return (int) ifds[getSeries()].get(0).getTileWidth();
+    }
+    catch (FormatException e) {
+      LOGGER.debug("Could not retrieve tile width", e);
+    }
+    return super.getOptimalTileWidth();
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
-    return tiffReaders[getSeries()].getOptimalTileHeight();
+    try {
+      return (int) ifds[getSeries()].get(0).getTileLength();
+    }
+    catch (FormatException e) {
+      LOGGER.debug("Could not retrieve tile height", e);
+    }
+    return super.getOptimalTileHeight();
   }
 
   // -- Internal FormatReader API methods --
@@ -290,7 +310,8 @@ public class APLReader extends FormatReader {
     }
     tiffFiles = new String[seriesCount];
     xmlFiles = new String[seriesCount];
-    tiffReaders = new MinimalTiffReader[seriesCount];
+    parser = new TiffParser[seriesCount];
+    ifds = new IFDList[seriesCount];
 
     for (int i=0; i<seriesCount; i++) {
       int secondRow = seriesIndexes.get(i);
@@ -310,19 +331,27 @@ public class APLReader extends FormatReader {
       xmlFiles[i] = topDirectory + File.separator + row2[filename];
       tiffFiles[i] = topDirectory + File.separator + row3[filename];
 
-      tiffReaders[i] = new MinimalTiffReader();
-      tiffReaders[i].setId(tiffFiles[i]);
+      parser[i] = new TiffParser(tiffFiles[i]);
+      parser[i].setDoCaching(false);
+      ifds[i] = parser[i].getIFDs();
+      for (IFD ifd : ifds[i]) {
+        parser[i].fillInIFD(ifd);
+      }
 
       // get core metadata from TIFF file
 
-      core[i].sizeX = tiffReaders[i].getSizeX();
-      core[i].sizeY = tiffReaders[i].getSizeY();
-      core[i].rgb = tiffReaders[i].isRGB();
-      core[i].pixelType = tiffReaders[i].getPixelType();
-      core[i].littleEndian = tiffReaders[i].isLittleEndian();
-      core[i].indexed = tiffReaders[i].isIndexed();
-      core[i].falseColor = tiffReaders[i].isFalseColor();
-      core[i].imageCount = tiffReaders[i].getImageCount();
+      IFD ifd = ifds[i].get(0);
+      PhotoInterp photo = ifd.getPhotometricInterpretation();
+      int samples = ifd.getSamplesPerPixel();
+
+      core[i].sizeX = (int) ifd.getImageWidth();
+      core[i].sizeY = (int) ifd.getImageLength();
+      core[i].rgb = samples > 1 || photo == PhotoInterp.RGB;
+      core[i].pixelType = ifd.getPixelType();
+      core[i].littleEndian = ifd.isLittleEndian();
+      core[i].indexed = photo == PhotoInterp.RGB_PALETTE &&
+        ifd.containsKey(IFD.COLOR_MAP);
+      core[i].imageCount = ifds[i].size();
       if (core[i].sizeZ * core[i].sizeT * (core[i].rgb ? 1 : core[i].sizeC) !=
         core[i].imageCount)
       {
