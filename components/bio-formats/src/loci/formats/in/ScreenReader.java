@@ -69,11 +69,10 @@ public class ScreenReader extends FormatReader {
 
   // -- Fields --
 
-  private String[] screenMetadataFiles;
-  private String[][] plateMetadataFiles;
+  private String[] plateMetadataFiles;
 
-  private ImageReader[][] readers;
-  private boolean[][][] plateMaps;
+  private ImageReader[] readers;
+  private boolean[][] plateMaps;
   private ClassList<IFormatReader> validReaders;
 
   // -- Constructor --
@@ -135,19 +134,19 @@ public class ScreenReader extends FormatReader {
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    if (readers == null || readers[0][0].getCurrentFile() == null) {
+    if (readers == null || readers[0].getCurrentFile() == null) {
       return null;
     }
-    return readers[0][0].get8BitLookupTable();
+    return readers[0].get8BitLookupTable();
   }
 
   /* @see loci.formats.IFormatReader#get16BitLookupTable() */
   public short[][] get16BitLookupTable() throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
-    if (readers == null || readers[0][0].getCurrentFile() == null) {
+    if (readers == null || readers[0].getCurrentFile() == null) {
       return null;
     }
-    return readers[0][0].get16BitLookupTable();
+    return readers[0].get16BitLookupTable();
   }
 
   /**
@@ -159,11 +158,10 @@ public class ScreenReader extends FormatReader {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
     int[] spwIndexes = getSPWIndexes(getSeries());
-    int plate = spwIndexes[0];
-    int well = spwIndexes[1];
-    int field = spwIndexes[2];
-    readers[plate][well].setSeries(field);
-    return readers[plate][well].openBytes(no, buf, x, y, w, h);
+    int well = spwIndexes[0];
+    int field = spwIndexes[1];
+    readers[well].setSeries(field);
+    return readers[well].openBytes(no, buf, x, y, w, h);
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
@@ -171,21 +169,15 @@ public class ScreenReader extends FormatReader {
     FormatTools.assertId(currentId, true, 1);
 
     int[] spwIndexes = getSPWIndexes(getSeries());
-    int plate = spwIndexes[0];
-    int well = spwIndexes[1];
+    int well = spwIndexes[0];
 
     Vector<String> files = new Vector<String>();
-    if (screenMetadataFiles != null) {
-      for (String f : screenMetadataFiles) {
+    if (plateMetadataFiles != null) {
+      for (String f : plateMetadataFiles) {
         files.add(f);
       }
     }
-    if (plateMetadataFiles[plate] != null) {
-      for (String f : plateMetadataFiles[plate]) {
-        files.add(f);
-      }
-    }
-    String[] readerFiles = readers[plate][well].getSeriesUsedFiles(noPixels);
+    String[] readerFiles = readers[well].getSeriesUsedFiles(noPixels);
     if (readerFiles != null) {
       for (String f : readerFiles) {
         files.add(f);
@@ -198,17 +190,14 @@ public class ScreenReader extends FormatReader {
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (readers != null) {
-      for (ImageReader[] wells : readers) {
-        for (ImageReader well : wells) {
-          well.close(fileOnly);
-        }
+      for (ImageReader well : readers) {
+        well.close(fileOnly);
       }
     }
     if (!fileOnly) {
       readers = null;
       plateMaps = null;
       plateMetadataFiles = null;
-      screenMetadataFiles = null;
     }
   }
 
@@ -219,38 +208,16 @@ public class ScreenReader extends FormatReader {
     super.initFile(id);
 
     Location file = new Location(id).getAbsoluteFile();
+    Location plate = null;
     Location screen = null;
     if (isValidWellName(file.getAbsolutePath())) {
-      screen = file.getParentFile();
-      screen = screen.getParentFile();
+      plate = file.getParentFile();
+      screen = plate.getParentFile();
     }
     else throw new FormatException(id + " is not a valid well name.");
 
     // build the list of plate directories
     Vector<String> metadataFiles = new Vector<String>();
-    Vector<String> tmpPlates = new Vector<String>();
-    String[] screenList = screen.list(true);
-    for (String f : screenList) {
-      Location plateFile = new Location(screen, f).getAbsoluteFile();
-      if (isValidPlateName(plateFile.getAbsolutePath()) &&
-        hasValidWells(plateFile))
-      {
-        tmpPlates.add(plateFile.getAbsolutePath());
-      }
-      else if (!plateFile.isDirectory()) {
-        metadataFiles.add(plateFile.getAbsolutePath());
-      }
-    }
-    screenMetadataFiles =
-      metadataFiles.toArray(new String[metadataFiles.size()]);
-    metadataFiles.clear();
-
-    String[] plates = tmpPlates.toArray(new String[tmpPlates.size()]);
-    Arrays.sort(plates);
-
-    readers = new ImageReader[plates.length][];
-    String[][] files = new String[plates.length][];
-    plateMaps = new boolean[plates.length][][];
 
     Comparator<String> c = new Comparator<String>() {
       public int compare(String s1, String s2) {
@@ -267,57 +234,53 @@ public class ScreenReader extends FormatReader {
       }
     };
 
-    plateMetadataFiles = new String[plates.length][];
-
     // build the list of well files for each plate
     Vector<String> tmpWells = new Vector<String>();
-    int coreLength = 0;
-    for (int plate=0; plate<plates.length; plate++) {
-      String[] plateList = new Location(plates[plate]).list(true);
-      int maxRow = 0, maxCol = 0;
-      for (String well : plateList) {
-        Location wellFile = new Location(plates[plate], well);
-        if (isValidWellName(wellFile.getAbsolutePath())) {
-          String row = getRow(well);
-          String col = getColumn(well);
 
-          boolean canAdd = true;
-          for (String tmpWell : tmpWells) {
-            String tmpRow = getRow(tmpWell);
-            String tmpCol = getColumn(tmpWell);
-            if (tmpRow.equals(row) && tmpCol.equals(col)) {
-              canAdd = false;
-              break;
-            }
-          }
-          if (!canAdd) continue;
+    String[] plateList = plate.list(true);
+    int maxRow = 0, maxCol = 0;
+    for (String well : plateList) {
+      Location wellFile = new Location(plate, well);
+      if (isValidWellName(wellFile.getAbsolutePath())) {
+        String row = getRow(well);
+        String col = getColumn(well);
 
-          tmpWells.add(wellFile.getAbsolutePath());
-
-          if ((row.charAt(0) - 'A') > maxRow) {
-            maxRow = row.charAt(0) - 'A';
-          }
-          if (Integer.parseInt(col) - 1 > maxCol) {
-            maxCol = Integer.parseInt(col) - 1;
+        boolean canAdd = true;
+        for (String tmpWell : tmpWells) {
+          String tmpRow = getRow(tmpWell);
+          String tmpCol = getColumn(tmpWell);
+          if (tmpRow.equals(row) && tmpCol.equals(col)) {
+            canAdd = false;
+            break;
           }
         }
-        else if (!wellFile.isDirectory()) {
-          metadataFiles.add(wellFile.getAbsolutePath());
+        if (!canAdd) continue;
+
+        tmpWells.add(wellFile.getAbsolutePath());
+
+        if ((row.charAt(0) - 'A') > maxRow) {
+          maxRow = row.charAt(0) - 'A';
+        }
+        if (Integer.parseInt(col) - 1 > maxCol) {
+          maxCol = Integer.parseInt(col) - 1;
         }
       }
-      files[plate] = tmpWells.toArray(new String[tmpWells.size()]);
-
-      Arrays.sort(files[plate], c);
-      readers[plate] = new ImageReader[files[plate].length];
-      coreLength += files[plate].length;
-
-      plateMaps[plate] = new boolean[maxRow + 1][maxCol + 1];
-      plateMetadataFiles[plate] =
-        metadataFiles.toArray(new String[metadataFiles.size()]);
-
-      tmpWells.clear();
-      metadataFiles.clear();
+      else if (!wellFile.isDirectory()) {
+        metadataFiles.add(wellFile.getAbsolutePath());
+      }
     }
+    String[] files = tmpWells.toArray(new String[tmpWells.size()]);
+
+    Arrays.sort(files, c);
+    readers = new ImageReader[files.length];
+    int coreLength = files.length;
+
+    plateMaps = new boolean[maxRow + 1][maxCol + 1];
+    plateMetadataFiles =
+      metadataFiles.toArray(new String[metadataFiles.size()]);
+
+    tmpWells.clear();
+    metadataFiles.clear();
 
     // initialize each of the well files
 
@@ -336,29 +299,26 @@ public class ScreenReader extends FormatReader {
     }
 
     Vector<CoreMetadata> coreMetadata = new Vector<CoreMetadata>();
-    int[][] seriesCounts = new int[files.length][];
     int lastCount = 0;
 
-    for (int plate=0; plate<files.length; plate++) {
-      seriesCounts[plate] = new int[files[plate].length];
-      for (int well=0; well<files[plate].length; well++) {
-        readers[plate][well] = new ImageReader(validReaders);
-        readers[plate][well].setMetadataStore(omexmlMeta);
-        readers[plate][well].setId(files[plate][well]);
-        CoreMetadata[] core = readers[plate][well].getCoreMetadata();
-        for (int field=0; field<core.length; field++) {
-          coreMetadata.add(core[field]);
-        }
-        seriesCounts[plate][well] = readers[plate][well].getSeriesCount();
-        lastCount = seriesCounts[plate][well];
-
-        String row = getRow(files[plate][well]);
-        String col = getColumn(files[plate][well]);
-        int rowIndex = (int) (row.charAt(0) - 'A');
-        int colIndex = Integer.parseInt(col) - 1;
-
-        plateMaps[plate][rowIndex][colIndex] = true;
+    int[] seriesCounts = new int[files.length];
+    for (int well=0; well<files.length; well++) {
+      readers[well] = new ImageReader(validReaders);
+      readers[well].setMetadataStore(omexmlMeta);
+      readers[well].setId(files[well]);
+      CoreMetadata[] core = readers[well].getCoreMetadata();
+      for (int field=0; field<core.length; field++) {
+        coreMetadata.add(core[field]);
       }
+      seriesCounts[well] = readers[well].getSeriesCount();
+      lastCount = seriesCounts[well];
+
+      String row = getRow(files[well]);
+      String col = getColumn(files[well]);
+      int rowIndex = (int) (row.charAt(0) - 'A');
+      int colIndex = Integer.parseInt(col) - 1;
+
+      plateMaps[rowIndex][colIndex] = true;
     }
     core = coreMetadata.toArray(new CoreMetadata[coreMetadata.size()]);
 
@@ -380,43 +340,40 @@ public class ScreenReader extends FormatReader {
     store.setScreenID(screenID, 0);
     store.setScreenName(screen.getName(), 0);
 
-    for (int plate=0; plate<files.length; plate++) {
-      String plateID = MetadataTools.createLSID("Plate", plate);
-      store.setPlateID(plateID, plate);
-      store.setScreenPlateRef(plateID, 0, plate);
+    String plateID = MetadataTools.createLSID("Plate", 0);
+    store.setPlateID(plateID, 0);
+    store.setScreenPlateRef(plateID, 0, 0);
 
-      store.setPlateName(new Location(plates[plate]).getName(), plate);
-      store.setPlateRows(new PositiveInteger(plateMaps[plate].length), plate);
-      store.setPlateColumns(new PositiveInteger(plateMaps[plate][0].length),
-        plate);
-      store.setPlateRowNamingConvention(NamingConvention.LETTER, plate);
-      store.setPlateColumnNamingConvention(NamingConvention.NUMBER, plate);
+    store.setPlateName(plate.getName(), 0);
+    store.setPlateRows(new PositiveInteger(plateMaps.length), 0);
+    store.setPlateColumns(new PositiveInteger(plateMaps[0].length), 0);
+    store.setPlateRowNamingConvention(NamingConvention.LETTER, 0);
+    store.setPlateColumnNamingConvention(NamingConvention.NUMBER, 0);
 
-      int realWell = 0;
-      for (int row=0; row<plateMaps[plate].length; row++) {
-        for (int col=0; col<plateMaps[plate][row].length; col++) {
-          int well = row * plateMaps[plate][row].length + col;
-          String wellID = MetadataTools.createLSID("Well", plate, well);
-          store.setWellID(wellID, plate, well);
-          store.setWellColumn(new NonNegativeInteger(col), plate, well);
-          store.setWellRow(new NonNegativeInteger(row), plate, well);
+    int realWell = 0;
+    for (int row=0; row<plateMaps.length; row++) {
+      for (int col=0; col<plateMaps[row].length; col++) {
+        int well = row * plateMaps[row].length + col;
+        String wellID = MetadataTools.createLSID("Well", 0, well);
+        store.setWellID(wellID, 0, well);
+        store.setWellColumn(new NonNegativeInteger(col), 0, well);
+        store.setWellRow(new NonNegativeInteger(row), 0, well);
 
-          if (plateMaps[plate][row][col]) {
-            for (int field=0; field<seriesCounts[plate][realWell]; field++) {
-              int seriesIndex = getSeriesIndex(plate, realWell, field);
-              String imageID = MetadataTools.createLSID("Image", seriesIndex);
-              store.setImageID(imageID, seriesIndex);
-              store.setImageName("Well " + ((char) (row + 'A')) + (col + 1) +
-                ", Field " + (field + 1), seriesIndex);
-              String wellSampleID =
-                MetadataTools.createLSID("WellSample", plate, well, field);
-              store.setWellSampleID(wellSampleID, plate, well, field);
-              store.setWellSampleImageRef(imageID, plate, well, field);
-              store.setWellSampleIndex(
-                new NonNegativeInteger(seriesIndex), plate, well, field);
-            }
-            realWell++;
+        if (plateMaps[row][col]) {
+          for (int field=0; field<seriesCounts[realWell]; field++) {
+            int seriesIndex = getSeriesIndex(realWell, field);
+            String imageID = MetadataTools.createLSID("Image", seriesIndex);
+            store.setImageID(imageID, seriesIndex);
+            store.setImageName("Well " + ((char) (row + 'A')) + (col + 1) +
+              ", Field " + (field + 1), seriesIndex);
+            String wellSampleID =
+              MetadataTools.createLSID("WellSample", 0, well, field);
+            store.setWellSampleID(wellSampleID, 0, well, field);
+            store.setWellSampleImageRef(imageID, 0, well, field);
+            store.setWellSampleIndex(
+              new NonNegativeInteger(seriesIndex), 0, well, field);
           }
+          realWell++;
         }
       }
     }
@@ -442,30 +399,19 @@ public class ScreenReader extends FormatReader {
     return new Location(filename).isDirectory();
   }
 
-  private int getSeriesIndex(int plate, int well, int field) {
-    int fieldCount = readers[plate][well].getSeriesCount();
+  private int getSeriesIndex(int well, int field) {
+    int fieldCount = readers[well].getSeriesCount();
     int seriesIndex = 0;
-    for (int p=0; p<plate; p++) {
-      int realWell = 0;
-      for (int row=0; row<plateMaps[p].length; row++) {
-        for (int col=0; col<plateMaps[p][row].length; col++) {
-          if (plateMaps[p][row][col]) {
-            seriesIndex += readers[p][realWell].getSeriesCount();
-            realWell++;
-          }
-        }
-      }
-    }
     int validWells = -1;
-    for (int row=0; row<plateMaps[plate].length; row++) {
-      for (int col=0; col<plateMaps[plate][row].length; col++) {
-         if (plateMaps[plate][row][col]) {
+    for (int row=0; row<plateMaps.length; row++) {
+      for (int col=0; col<plateMaps[row].length; col++) {
+         if (plateMaps[row][col]) {
             validWells++;
 
             if (validWells == well) {
               return seriesIndex + field;
             }
-            seriesIndex += readers[plate][validWells].getSeriesCount();
+            seriesIndex += readers[validWells].getSeriesCount();
          }
       }
     }
@@ -474,20 +420,18 @@ public class ScreenReader extends FormatReader {
 
   private int[] getSPWIndexes(int seriesIndex) {
     int s = 0;
-    for (int plate=0; plate<plateMaps.length; plate++) {
-      int wellIndex = 0;
-      for (int row=0; row<plateMaps[plate].length; row++) {
-        for (int col=0; col<plateMaps[plate][row].length; col++) {
-          if (plateMaps[plate][row][col]) {
-            for (int i=0; i<readers[plate][wellIndex].getSeriesCount(); i++) {
-              s++;
+    int wellIndex = 0;
+    for (int row=0; row<plateMaps.length; row++) {
+      for (int col=0; col<plateMaps[row].length; col++) {
+        if (plateMaps[row][col]) {
+          for (int i=0; i<readers[wellIndex].getSeriesCount(); i++) {
+            s++;
 
-              if (s == seriesIndex + 1) {
-                return new int[] {plate, wellIndex, i};
-              }
+            if (s == seriesIndex + 1) {
+              return new int[] {wellIndex, i};
             }
-            wellIndex++;
           }
+          wellIndex++;
         }
       }
     }
@@ -495,11 +439,11 @@ public class ScreenReader extends FormatReader {
     return new int[] {-1, -1};
   }
 
-  private int[] getRowAndColumn(int plate, int well) {
+  private int[] getRowAndColumn(int well) {
     int validWells = 0;
-    for (int row=0; row<plateMaps[plate].length; row++) {
-      for (int col=0; col<plateMaps[plate][row].length; col++) {
-        if (plateMaps[plate][row][col]) {
+    for (int row=0; row<plateMaps.length; row++) {
+      for (int col=0; col<plateMaps[row].length; col++) {
+        if (plateMaps[row][col]) {
           validWells++;
 
           if (validWells == well + 1) {
