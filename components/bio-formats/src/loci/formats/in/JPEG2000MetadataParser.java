@@ -87,6 +87,9 @@ public class JPEG2000MetadataParser {
   /** Number of JPEG 2000 resolution levels the file has. */
   private Integer resolutionLevels;
 
+  /** Color lookup table stored in the file. */
+  private int[][] lut;
+
   // -- Constructor --
 
   /**
@@ -185,6 +188,30 @@ public class JPEG2000MetadataParser {
             parseBoxes();
             break;
           }
+          case PALETTE:
+            int nEntries = in.readShort();
+            int nColumns = in.read();
+            int[] bitDepths = new int[nColumns];
+            for (int i=0; i<bitDepths.length; i++) {
+              bitDepths[i] = in.read() & 0x7f;
+              while ((bitDepths[i] % 8) != 0) {
+                bitDepths[i]++;
+              }
+            }
+            lut = new int[nColumns][nEntries];
+
+            for (int i=0; i<nColumns; i++) {
+              for (int j=0; j<lut[i].length; j++) {
+                if (bitDepths[i] == 8) {
+                  lut[i][j] = in.read();
+                }
+                else if (bitDepths[i] == 16) {
+                  lut[i][j] = in.readShort();
+                }
+              }
+            }
+
+            break;
         }
       }
       // Exit or seek to the next metadata box
@@ -381,6 +408,15 @@ public class JPEG2000MetadataParser {
    */
   public Integer getCodestreamPixelType() {
     return codestreamPixelType;
+  }
+
+  /**
+   * Returns the color lookup table stored in the file, or null if a lookup
+   * table is not present.
+   * @return See above.
+   */
+  public int[][] getLookupTable() {
+    return lut;
   }
 
   private int convertPixelType(int type) {
