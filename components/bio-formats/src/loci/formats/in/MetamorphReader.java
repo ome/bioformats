@@ -1256,7 +1256,8 @@ public class MetamorphReader extends BaseTiffReader {
     // when we reach that; much like a NULL terminated C string.
     long saveLoc = in.getFilePointer();
     in.seek(uic1offset);
-    int currentID, valOrOffset;
+    int currentID;
+    long valOrOffset;
     // variable declarations, because switch is dumb
     int num, denom;
     String thedate, thetime;
@@ -1267,7 +1268,7 @@ public class MetamorphReader extends BaseTiffReader {
     for (int i=0; i<uic1count; i++) {
       if (in.getFilePointer() >= in.length()) break;
       currentID = in.readInt();
-      valOrOffset = in.readInt();
+      valOrOffset = in.readInt() & 0xffffffffL;
       lastOffset = in.getFilePointer();
 
       String key = getKey(currentID);
