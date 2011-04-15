@@ -269,7 +269,8 @@ public class TiffSaver {
     int off;
 
     // write pixel strips to output buffers
-    for (int strip = 0; strip < nStrips; strip++) {
+    int effectiveStrips = !interleaved ? nStrips / nChannels : nStrips;
+    for (int strip = 0; strip < effectiveStrips; strip++) {
       x = (strip % tilesPerRow) * tileWidth;
       y = (strip / tilesPerRow) * tileHeight;
       for (int row=0; row<tileHeight; row++) {
@@ -328,10 +329,15 @@ public class TiffSaver {
     List<Long> offsets = new ArrayList<Long>();
     long totalTiles = tilesPerRow * tilesPerColumn;
 
-    if (ifd.containsKey(IFD.STRIP_BYTE_COUNTS)
-        || ifd.containsKey(IFD.TILE_BYTE_COUNTS)) {
-      long[] ifdByteCounts = isTiled? ifd.getIFDLongArray(IFD.TILE_BYTE_COUNTS)
-          : ifd.getStripByteCounts();
+    if (!interleaved) {
+      totalTiles *= nChannels;
+    }
+
+    if (ifd.containsKey(IFD.STRIP_BYTE_COUNTS) ||
+      ifd.containsKey(IFD.TILE_BYTE_COUNTS))
+    {
+      long[] ifdByteCounts = isTiled ?
+        ifd.getIFDLongArray(IFD.TILE_BYTE_COUNTS) : ifd.getStripByteCounts();
       for (long stripByteCount : ifdByteCounts) {
         byteCounts.add(stripByteCount);
       }
@@ -342,10 +348,10 @@ public class TiffSaver {
       }
     }
     Integer lastOffset = null;
-    if (ifd.containsKey(IFD.STRIP_OFFSETS)
-        || ifd.containsKey(IFD.TILE_OFFSETS)) {
-      long[] ifdOffsets = isTiled? ifd.getIFDLongArray(IFD.TILE_OFFSETS)
-          : ifd.getStripOffsets();
+    if (ifd.containsKey(IFD.STRIP_OFFSETS) || ifd.containsKey(IFD.TILE_OFFSETS))
+    {
+      long[] ifdOffsets = isTiled ?
+        ifd.getIFDLongArray(IFD.TILE_OFFSETS) : ifd.getStripOffsets();
       for (int i = 0; i < ifdOffsets.length; i++) {
         if (lastOffset == null && ifdOffsets[i] == 0L) {
           lastOffset = i - 1;
@@ -390,7 +396,6 @@ public class TiffSaver {
     if (isTiled) {
       ifd.putIFDValue(IFD.TILE_BYTE_COUNTS, toPrimitiveArray(byteCounts));
       ifd.putIFDValue(IFD.TILE_OFFSETS, toPrimitiveArray(offsets));
-
     }
     else {
       ifd.putIFDValue(IFD.STRIP_BYTE_COUNTS, toPrimitiveArray(byteCounts));
