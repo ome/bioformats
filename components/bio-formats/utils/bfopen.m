@@ -160,7 +160,7 @@ for s = 1:numSeries
         end
         if ~isempty(colorMaps{s, i})
             newMap = colorMaps{s, i};
-            m = newMap(row, col) < 0;
+            m = newMap < 0;
             newMap(m) = newMap(m) + bppMax;
             colorMaps{s, i} = newMap / (bppMax - 1);
         end

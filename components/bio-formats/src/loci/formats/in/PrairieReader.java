@@ -331,10 +331,16 @@ public class PrairieReader extends FormatReader {
             String offset = i < offsets.size() ? offsets.get(i) : null;
 
             if (offset != null) {
-              store.setDetectorSettingsOffset(new Double(offset), 0, i);
+              try {
+                store.setDetectorSettingsOffset(new Double(offset), 0, i);
+              }
+              catch (NumberFormatException e) { }
             }
             if (gain != null) {
-              store.setDetectorSettingsGain(new Double(gain), 0, i);
+              try {
+                store.setDetectorSettingsGain(new Double(gain), 0, i);
+              }
+              catch (NumberFormatException e) { }
             }
 
             // link DetectorSettings to an actual Detector
@@ -375,7 +381,10 @@ public class PrairieReader extends FormatReader {
           if (laserPower != null) {
             String laser = MetadataTools.createLSID("LightSource", 0 ,0);
             store.setLaserID(laser, 0, 0);
-            store.setLaserPower(new Double(laserPower), 0, 0);
+            try {
+              store.setLaserPower(new Double(laserPower), 0, 0);
+            }
+            catch (NumberFormatException e) { }
           }
         }
       }
@@ -483,10 +492,16 @@ public class PrairieReader extends FormatReader {
           core[0].sizeY = Integer.parseInt(value);
         }
         else if (key.equals("micronsPerPixel_XAxis")) {
-          pixelSizeX = Double.parseDouble(value);
+          try {
+            pixelSizeX = Double.parseDouble(value);
+          }
+          catch (NumberFormatException e) { }
         }
         else if (key.equals("micronsPerPixel_YAxis")) {
-          pixelSizeY = Double.parseDouble(value);
+          try {
+            pixelSizeY = Double.parseDouble(value);
+          }
+          catch (NumberFormatException e) { }
         }
         else if (key.equals("objectiveLens")) {
           String[] tokens = value.split(" ");
@@ -502,7 +517,10 @@ public class PrairieReader extends FormatReader {
           }
         }
         else if (key.equals("objectiveLensNA")) {
-          lensNA = new Double(value);
+          try {
+            lensNA = new Double(value);
+          }
+          catch (NumberFormatException e) { }
         }
         else if (key.equals("imagingDevice")) {
           microscopeModel = value;
@@ -511,26 +529,44 @@ public class PrairieReader extends FormatReader {
         else if (key.startsWith("pmtOffset_")) offsets.add(value);
         else if (key.equals("laserPower_0")) laserPower = value;
         else if (key.equals("positionCurrent_XAxis")) {
-          positionX.add(new Double(value));
-          addGlobalMeta("X position for position #" + positionX.size(), value);
+          try {
+            positionX.add(new Double(value));
+            addGlobalMeta("X position for position #" + positionX.size(),
+              value);
+          }
+          catch (NumberFormatException e) { }
         }
         else if (key.equals("positionCurrent_YAxis")) {
-          positionY.add(new Double(value));
-          addGlobalMeta("Y position for position #" + positionY.size(), value);
+          try {
+            positionY.add(new Double(value));
+            addGlobalMeta("Y position for position #" + positionY.size(),
+              value);
+          }
+          catch (NumberFormatException e) { }
         }
         else if (key.equals("positionCurrent_ZAxis")) {
-          positionZ.add(new Double(value));
-          addGlobalMeta("Z position for position #" + positionZ.size(), value);
+          try {
+            positionZ.add(new Double(value));
+            addGlobalMeta("Z position for position #" + positionZ.size(),
+              value);
+          }
+          catch (NumberFormatException e) { }
         }
         else if (key.equals("opticalZoom")) {
-          zoom = new Double(value);
+          try {
+            zoom = new Double(value);
+          }
+          catch (NumberFormatException e) { }
         }
         else if (key.equals("bitDepth")) {
           core[0].bitsPerPixel = Integer.parseInt(value);
         }
       }
       else if (qName.equals("PVTSeriesElementWait")) {
-        waitTime = new Double(attributes.getValue("waitTime"));
+        try {
+          waitTime = new Double(attributes.getValue("waitTime"));
+        }
+        catch (NumberFormatException e) { }
       }
     }
   }
