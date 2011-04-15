@@ -139,6 +139,13 @@ public class NRRDReader extends FormatReader {
       }
       else throw new FormatException("Unsupported encoding: " + encoding);
     }
+    else if (encoding.equals("raw")) {
+      RandomAccessInputStream s = new RandomAccessInputStream(dataFile);
+      s.seek(no * FormatTools.getPlaneSize(this));
+      readPlane(s, x, y, w, h, buf);
+      s.close();
+      return buf;
+    }
     return helper.openBytes(no, buf, x, y, w, h);
   }
 
@@ -223,7 +230,7 @@ public class NRRDReader extends FormatReader {
           for (int i=0; i<numDimensions; i++) {
             int size = Integer.parseInt(tokens[i]);
 
-            if (numDimensions >= 3 && i == 0 && size > 1 && size <= 4) {
+            if (numDimensions >= 3 && i == 0 && size > 1 && size <= 16) {
               core[0].sizeC = size;
             }
             else if (i == 0 || (getSizeC() > 1 && i == 1)) {
@@ -268,7 +275,9 @@ public class NRRDReader extends FormatReader {
       if (f.exists() && parent != null) {
         dataFile = new Location(parent, dataFile).getAbsolutePath();
       }
-      helper.setId(dataFile);
+      if (!encoding.equals("raw")) {
+        helper.setId(dataFile);
+      }
     }
 
     core[0].rgb = getSizeC() > 1;
