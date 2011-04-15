@@ -283,11 +283,17 @@ public class NRRDReader extends FormatReader {
     MetadataTools.setDefaultCreationDate(store, id, 0);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      for (int i=0; i<pixelSizes.length; i++) {
-        Double d = new Double(pixelSizes[i].trim());
-        if (i == 0) store.setPixelsPhysicalSizeX(d, 0);
-        else if (i == 1) store.setPixelsPhysicalSizeY(d, 0);
-        else if (i == 2) store.setPixelsPhysicalSizeZ(d, 0);
+      if (pixelSizes != null) {
+        for (int i=0; i<pixelSizes.length; i++) {
+          if (pixelSizes[i] == null) continue;
+          try {
+            Double d = new Double(pixelSizes[i].trim());
+            if (i == 0) store.setPixelsPhysicalSizeX(d, 0);
+            else if (i == 1) store.setPixelsPhysicalSizeY(d, 0);
+            else if (i == 2) store.setPixelsPhysicalSizeZ(d, 0);
+          }
+          catch (NumberFormatException e) { }
+        }
       }
     }
   }
