@@ -588,6 +588,15 @@ public class OMETiffReader extends FormatReader {
       // populate core metadata
       info[s] = planes;
       try {
+        if (!info[s][0].reader.isThisType(info[s][0].id)) {
+          info[s][0].id = currentId;
+        }
+        for (int plane=0; plane<info[s].length; plane++) {
+          if (!info[s][plane].reader.isThisType(info[s][plane].id)) {
+            info[s][plane].id = info[s][0].id;
+          }
+        }
+
         info[s][0].reader.setId(info[s][0].id);
         tileWidth[s] = info[s][0].reader.getOptimalTileWidth();
         tileHeight[s] = info[s][0].reader.getOptimalTileHeight();
