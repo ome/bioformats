@@ -52,16 +52,15 @@ import loci.formats.tiff.TiffCompression;
  * @author Jean-Marie Burel <j dot burel at dundee dot ac dot uk>
  */
 public class CompressDecompressTest {
-  
+
   /**
    * Tests the writing of the tiles.
-   * @param output The output where to write the data.
    * @param compression The compression to use.
-   * @param n The value by which to divide the width of the image
-   * @param m The value by which to divide the height of the image
+   * @param lossy whether or not this is a lossy compression type
    */
-  private void assertCompression(TiffCompression compression) 
-  throws Exception {
+  private void assertCompression(TiffCompression compression, boolean lossy)
+    throws Exception
+  {
     IFD ifd = new IFD();
     int w = 64;
     int h = 64;
@@ -71,7 +70,13 @@ public class CompressDecompressTest {
     ifd.put(IFD.BITS_PER_SAMPLE, new int[] { bpp });
     ifd.put(IFD.SAMPLES_PER_PIXEL, 1);
     ifd.put(IFD.LITTLE_ENDIAN, Boolean.TRUE);
+
+
     byte[] plane = new byte[w * h * (bpp / 8)];
+    for (int i=0; i<plane.length; i++) {
+      plane[i] = (byte) i;
+    }
+
     String beforeCompression, afterCompression, afterDecompression;
     CodecOptions options = compression.getCompressionCodecOptions(ifd);
     byte[] compressed;
@@ -99,57 +104,57 @@ public class CompressDecompressTest {
       }
       afterDecompression = TestTools.md5(
           compression.decompress(compressed, options));
-      if (!beforeCompression.equals(afterDecompression)) {
+      if (!lossy && !beforeCompression.equals(afterDecompression)) {
         fail("Compression: "+compression.getCodecName()+" "+
             String.format("Decompression MD5 %s != %s",
             beforeCompression, afterDecompression));
       }
     }
   }
-  
+
   /**
    * Tests the compression and decompression using <code>JPEG2000</code>.
    * @throws Exception Throw if an error occurred while writing.
    */
   @Test
   public void testCompressDecompressedJ2KLossless() throws Exception {
-    assertCompression( TiffCompression.JPEG_2000);
+    assertCompression( TiffCompression.JPEG_2000, false);
   }
-  
+
   /**
    * Tests the compression and decompression using <code>JPEG2000-lossy</code>.
    * @throws Exception Throw if an error occurred while writing.
    */
   @Test
   public void testCompressDecompressedJ2KLossy() throws Exception {
-    assertCompression( TiffCompression.JPEG_2000_LOSSY);
+    assertCompression( TiffCompression.JPEG_2000_LOSSY, true);
   }
-  
+
   /**
    * Tests the compression and decompression using <code>JPEG</code>.
    * @throws Exception Throw if an error occurred while writing.
    */
   @Test
   public void testCompressDecompressedJPEG() throws Exception {
-    assertCompression( TiffCompression.JPEG);
+    assertCompression( TiffCompression.JPEG, true);
   }
-  
+
   /**
    * Tests the compression and decompression using <code>Deflate</code>.
    * @throws Exception Throw if an error occurred while writing.
    */
   @Test
   public void testCompressDecompressedDeflate() throws Exception {
-    assertCompression( TiffCompression.DEFLATE);
+    assertCompression( TiffCompression.DEFLATE, false);
   }
-  
+
   /**
    * Tests the compression and decompression using <code>Uncompressed</code>.
    * @throws Exception Throw if an error occurred while writing.
    */
   @Test
   public void testCompressDecompressedUncompressed() throws Exception {
-    assertCompression( TiffCompression.UNCOMPRESSED);
+    assertCompression( TiffCompression.UNCOMPRESSED, false);
   }
-  
+
 }
