@@ -110,6 +110,9 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
     XMLTools.getStylesheet("/loci/formats/meta/2010-04-to-2010-06.xsl",
     OMEXMLServiceImpl.class);
 
+  private static final String SCHEMA_PATH =
+    "http://www.openmicroscopy.org/Schemas/OME/";
+
   /**
    * Default constructor.
    */
@@ -285,7 +288,39 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
   /** @see OMEXMLService#getOMEXML(loci.formats.meta.MetadataRetrieve) */
   public String getOMEXML(MetadataRetrieve src) throws ServiceException {
     OMEXMLMetadata omexmlMeta = getOMEMetadata(src);
-    return omexmlMeta.dumpXML();
+    String xml = omexmlMeta.dumpXML();
+
+    // make sure that the namespace has been set correctly
+
+    // convert XML string to DOM
+    Document doc = null;
+    Exception exception = null;
+    try {
+      doc = XMLTools.parseDOM(xml);
+    }
+    catch (ParserConfigurationException exc) { exception = exc; }
+    catch (SAXException exc) { exception = exc; }
+    catch (IOException exc) { exception = exc; }
+    if (exception != null) {
+      LOGGER.info("Malformed OME-XML", exception);
+      return null;
+    }
+
+    Element root = doc.getDocumentElement();
+    root.setAttribute("xmlns", SCHEMA_PATH + getLatestVersion());
+
+    // convert tweaked DOM back to XML string
+    try {
+      xml = XMLTools.getXML(doc);
+    }
+    catch (TransformerConfigurationException exc) { exception = exc; }
+    catch (TransformerException exc) { exception = exc; }
+    if (exception != null) {
+      LOGGER.info("Internal XML conversion error", exception);
+      return null;
+    }
+
+    return xml;
   }
 
   /** @see OMEXMLService#validateOMEXML(java.lang.String) */
