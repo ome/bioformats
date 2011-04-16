@@ -69,7 +69,8 @@ public class SEQReader extends BaseTiffReader {
     parser.setDoCaching(false);
     IFD ifd = parser.getFirstIFD();
     if (ifd == null) return false;
-    return ifd.containsKey(IMAGE_PRO_TAG_1);
+    Object tag = ifd.get(IMAGE_PRO_TAG_1);
+    return tag != null && (tag instanceof short[]);
   }
 
   // -- Internal BaseTiffReader API methods --
