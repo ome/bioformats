@@ -49,7 +49,7 @@
 				The Screen(s) that a plate belongs to are specified by the ScreenRef element.
 				The Plate ID and Name attributes are required.
 				The Wells in a plate are numbers from the top-left corner in a grid starting at zero.
-				i.e The top-left well of a plate is index (0,0)
+				i.e. The top-left well of a plate is index (0,0)
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
