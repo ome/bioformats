@@ -1363,6 +1363,10 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			<xsd:documentation>
 				The type of detector used to capture the image.
 				The Detector ID can be used as a reference within the Channel element in the Image element.
+				
+				Each attribute now has an indication of what type of detector
+				it applies to. This is preparatory work for cleaning up and 
+				possibly splitting this object into sub-types.
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
@@ -1371,28 +1375,28 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					<xsd:attribute name="Gain" use="optional" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The Detector Gain for this detector, as a float. [units:none]
+								The Detector Gain for this detector, as a float. [units:none] {used:CCD,EMCCD,PMT}
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="Voltage" use="optional" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The Voltage of the detector (e.g. PMT voltage) as a float. volts[V]
+								The Voltage of the detector (e.g. PMT voltage) as a float. volts[V] {used:PMT}
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="Offset" use="optional" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The Detector Offset. [units:none]
+								The Detector Offset. [units:none] {used:CCD,EMCCD}
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="Zoom" use="optional" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The Zoom or "Confocal Zoom" or "Scan Zoom" for a detector. [units:none]
+								The Zoom or "Confocal Zoom" or "Scan Zoom" for a detector. [units:none] {used:PMT}
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
@@ -1400,7 +1404,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 						<xsd:annotation>
 							<xsd:documentation>
 								Gain applied to the detector signal. 
-								This is the electronic gain (as apposed to the inherent gain) that is set for the detector. [units:none]
+								This is the electronic gain (as apposed to the inherent gain) that is set for the detector. [units:none] {used:EMCCD#EMGain}
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
@@ -1408,7 +1412,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					<xsd:attribute name="Type" use="optional">
 						<xsd:annotation>
 							<xsd:documentation>
-								The Type of detector. E.g. CCD, PMT, EMCCD etc. 
+								The Type of detector. E.g. CCD, PMT, EMCCD etc.
 							</xsd:documentation>
 						</xsd:annotation>
 						<xsd:simpleType>
@@ -2064,6 +2068,10 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 				This holds the setting applied to a detector as well as a
 				reference to the detector. 
 				The ID is the detector used in this case.
+				
+				Each attribute now has an indication of what type of detector
+				it applies to. This is preparatory work for cleaning up and 
+				possibly splitting this object into sub-types.
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
@@ -2073,28 +2081,28 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					<xsd:attribute name="Offset" use="optional" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The Offset of the detector. [units none]
+								The Offset of the detector. [units none] {used:CCD,EMCCD}
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="Gain" use="optional" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The Gain of the detector. [units:none]
+								The Gain of the detector. [units:none] {used:CCD,EMCCD,PMT}
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="Voltage" use="optional" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The Voltage of the detector. volts[V]
+								The Voltage of the detector. volts[V] {used:PMT}
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="ReadOutRate" use="optional" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The speed at which the detector can count pixels. 
+								The speed at which the detector can count pixels.  {used:CCD,EMCCD}
 								Units of ReadOutRate is MHz. This is the bytes per second that 
 								can be read from the detector (like a baud rate). megahertz[MHz]
 							</xsd:documentation>
@@ -2103,7 +2111,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					<xsd:attribute name="Binning" use="optional">
 						<xsd:annotation>
 							<xsd:documentation>
-								Represents the number of pixels that are combined to form larger pixels.
+								Represents the number of pixels that are combined to form larger pixels. {used:CCD,EMCCD}
 							</xsd:documentation>
 						</xsd:annotation>
 						<xsd:simpleType>
