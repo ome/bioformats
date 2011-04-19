@@ -158,12 +158,14 @@ for s = 1:numSeries
         else
             colorMaps{s, i} = r.get16BitLookupTable()';
         end
+        warning off
         if ~isempty(colorMaps{s, i})
             newMap = colorMaps{s, i};
             m = newMap < 0;
             newMap(m) = newMap(m) + bppMax;
             colorMaps{s, i} = newMap / (bppMax - 1);
         end
+        warning on
 
         % convert byte array to MATLAB image
         if isBioFormatsTrunk && (sgn || ~canTypecast)
