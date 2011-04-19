@@ -190,6 +190,9 @@ public class TiffParser {
       if (ifd.containsKey(IFD.IMAGE_WIDTH)) ifds.add(ifd);
       long[] subOffsets = null;
       try {
+        if (!doCaching) {
+          fillInIFD(ifd);
+        }
         subOffsets = ifd.getIFDLongArray(IFD.SUB_IFD);
       }
       catch (FormatException e) { }

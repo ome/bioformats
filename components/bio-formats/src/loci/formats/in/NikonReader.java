@@ -311,6 +311,7 @@ public class NikonReader extends BaseTiffReader {
     IFDList exifIFDs = tiffParser.getExifIFDs();
     if (exifIFDs.size() > 0) {
       IFD exifIFD = exifIFDs.get(0);
+      tiffParser.fillInIFD(exifIFD);
 
       // put all the EXIF data in the metadata hashtable
 
