@@ -187,13 +187,18 @@
 					<xsd:annotation>
 						<xsd:documentation>
 							The font family used to draw the text. [enumeration]
+							Note: these values are all lower case so they match 
+							the standard HTML/CSS values. "fantasy" has been
+							included for completeness we do not recommended it's
+							regular use.
 						</xsd:documentation>
 					</xsd:annotation>
 					<xsd:restriction base="xsd:string">
-						<xsd:enumeration value="Arial"/>
-						<xsd:enumeration value="Courier"/>
-						<xsd:enumeration value="Helvetica"/>
-						<xsd:enumeration value="TimesNewRoman"/>
+						<xsd:enumeration value="serif"/>
+						<xsd:enumeration value="sans-serif"/>
+						<xsd:enumeration value="cursive"/>
+						<xsd:enumeration value="fantasy"/>
+						<xsd:enumeration value="monospace"/>
 					</xsd:restriction>
 				</xsd:simpleType>
 			</xsd:attribute>
@@ -209,13 +214,15 @@
 					<xsd:annotation>
 						<xsd:documentation>
 							The style and weight applied to the text.  [enumeration]
+							This is a simplified combination of the HTML/CSS 
+							attributes font-style AND font-weight.
 						</xsd:documentation>
 					</xsd:annotation>
 					<xsd:restriction base="xsd:string">
 						<xsd:enumeration value="Bold"/>
 						<xsd:enumeration value="BoldItalic"/>
 						<xsd:enumeration value="Italic"/>
-						<xsd:enumeration value="Regular"/>
+						<xsd:enumeration value="Normal"/>
 					</xsd:restriction>
 				</xsd:simpleType>
 			</xsd:attribute>
