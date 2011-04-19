@@ -739,6 +739,7 @@ public class LIFReader extends FormatReader {
       Stack<String> nameStack = new Stack<String>();
       HashMap<String, Integer> indexes = new HashMap<String, Integer>();
       populateOriginalMetadata(image, nameStack, indexes);
+      indexes.clear();
     }
     setSeries(0);
   }
@@ -763,7 +764,8 @@ public class LIFReader extends FormatReader {
         key.append("|");
       }
       if (suffix != null && value != null && suffix.length() > 0 &&
-        value.length() > 0)
+        value.length() > 0 && !suffix.equals("HighInteger") &&
+        !suffix.equals("LowInteger"))
       {
         Integer i = indexes.get(key.toString() + suffix);
         String storedKey = key.toString() + suffix + " " + (i == null ? 0 : i);
@@ -774,13 +776,17 @@ public class LIFReader extends FormatReader {
         NamedNodeMap attributes = root.getAttributes();
         for (int i=0; i<attributes.getLength(); i++) {
           Attr attr = (Attr) attributes.item(i);
-          Integer index = indexes.get(key.toString() + attr.getName());
-          if (index == null) {
-            index = 0;
+          if (!attr.getName().equals("HighInteger") &&
+            !attr.getName().equals("LowInteger"))
+          {
+            Integer index = indexes.get(key.toString() + attr.getName());
+            if (index == null) {
+              index = 0;
+            }
+            String storedKey = key.toString() + attr.getName() + " " + index;
+            indexes.put(key.toString() + attr.getName(), index + 1);
+            addSeriesMeta(storedKey, attr.getValue());
           }
-          String storedKey = key.toString() + attr.getName() + " " + index;
-          indexes.put(key.toString() + attr.getName(), index + 1);
-          addSeriesMeta(storedKey, attr.getValue());
         }
       }
     }
