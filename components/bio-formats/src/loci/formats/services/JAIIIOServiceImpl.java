@@ -66,10 +66,6 @@ public class JAIIIOServiceImpl extends AbstractService
     "The JAI Image I/O Tools are required to read JPEG-2000 files. Please " +
     "obtain jai_imageio.jar from http://loci.wisc.edu/ome/formats-library.html";
 
-  // -- Fields --
-
-  private J2KImageReader reader;
-
   // -- JAIIIOService API methods --
 
   /**
@@ -140,7 +136,7 @@ public class JAIIIOServiceImpl extends AbstractService
   public BufferedImage readImage(InputStream in, JPEG2000CodecOptions options)
     throws IOException, ServiceException
   {
-    setupReader();
+    J2KImageReader reader = getReader();
     MemoryCacheImageInputStream mciis = new MemoryCacheImageInputStream(in);
     reader.setInput(mciis, false, true);
     J2KImageReadParam param = (J2KImageReadParam) reader.getDefaultReadParam();
@@ -161,7 +157,7 @@ public class JAIIIOServiceImpl extends AbstractService
   public Raster readRaster(InputStream in, JPEG2000CodecOptions options)
     throws IOException, ServiceException
   {
-    setupReader();
+    J2KImageReader reader = getReader();
     MemoryCacheImageInputStream mciis = new MemoryCacheImageInputStream(in);
     reader.setInput(mciis, false, true);
     J2KImageReadParam param = (J2KImageReadParam) reader.getDefaultReadParam();
@@ -178,15 +174,14 @@ public class JAIIIOServiceImpl extends AbstractService
   }
 
   /** Set up the JPEG-2000 image reader. */
-  private void setupReader() {
-    if (reader != null) return;
+  private J2KImageReader getReader() {
     IIORegistry registry = IIORegistry.getDefaultInstance();
     Iterator<J2KImageReaderSpi> iter =
       ServiceRegistry.lookupProviders(J2KImageReaderSpi.class);
     registry.registerServiceProviders(iter);
     J2KImageReaderSpi spi =
       registry.getServiceProviderByClass(J2KImageReaderSpi.class);
-    reader = new J2KImageReader(spi);
+    return new J2KImageReader(spi);
   }
 
 }
