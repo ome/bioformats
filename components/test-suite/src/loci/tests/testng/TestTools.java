@@ -46,6 +46,8 @@ import java.util.List;
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
+import loci.formats.IFormatReader;
+import loci.formats.IFormatWriter;
 import loci.formats.ImageReader;
 
 import org.apache.log4j.Level;
@@ -265,4 +267,81 @@ public class TestTools {
     return false;
   }
 
+  /**
+   * Iterates over every tile in a given pixel buffer based on the over arching
+   * dimensions and a requested maximum tile width and height.
+   * @param iteration Invoker to call for each tile.
+   * @param sizeX Width of the entire image.
+   * @param sizeY Height of the entire image.
+   * @param sizeZ Number of optical sections the image contains.
+   * @param sizeC Number of channels the image contains.
+   * @param sizeT Number of timepoints the image contains.
+   * @param tileWidth <b>Maximum</b> width of the tile requested. The tile
+   * request itself will be smaller than the original tile width requested if
+   * <code>x + tileWidth > sizeX</code>.
+   * @param tileHeight <b>Maximum</b> height of the tile requested. The tile
+   * request itself will be smaller if <code>y + tileHeight > sizeY</code>.
+   * @return The total number of tiles iterated over.
+   */
+  public static int forEachTile(TileLoopIteration iteration,
+      int sizeX, int sizeY, int sizeZ, int sizeC,
+      int sizeT, int tileWidth, int tileHeight)
+
+  {
+    int tileCount = 0;
+    int x, y, w, h;
+    for (int t = 0; t < sizeT; t++) {
+      for (int c = 0; c < sizeC; c++) {
+        for (int z = 0; z < sizeZ; z++) {
+          for (int tileOffsetY = 0; 
+               tileOffsetY < (sizeY + tileHeight - 1) / tileHeight;
+               tileOffsetY++) {
+            for (int tileOffsetX = 0;
+                 tileOffsetX < (sizeX + tileWidth - 1) / tileWidth;
+                 tileOffsetX++) {
+              x = tileOffsetX * tileWidth;
+              y = tileOffsetY * tileHeight;
+              w = tileWidth;
+              if (w + x > sizeX) {
+                w = sizeX - x;
+              }
+              h = tileHeight;
+              if (h + y > sizeY) {
+                h = sizeY - y;
+              }
+              iteration.run(z, c, t, x, y, w, h, tileCount);
+              tileCount++;
+            }
+          }
+        }
+      }
+    }
+    return tileCount;
+  }
+
+  /**
+   * A single iteration of a tile for each loop.
+   * @author Chris Allan <callan at blackcat dot ca>
+   * @since OMERO Beta-4.3.0
+   */
+  public interface TileLoopIteration {
+    /**
+     * Invoke a single loop iteration.
+     * @param z Z section counter of the loop.
+     * @param c Channel counter of the loop.
+     * @param t Timepoint counter of the loop.
+     * @param x X offset within the plane specified by the section, channel and
+     * timepoint counters.
+     * @param y Y offset within the plane specified by the section, channel and
+     * timepoint counters.
+     * @param tileWidth Width of the tile requested. The tile request
+     * itself may be smaller than the original tile width requested if
+     * <code>x + tileWidth > sizeX</code>.
+     * @param tileHeight Height of the tile requested. The tile request
+     * itself may be smaller if <code>y + tileHeight > sizeY</code>.
+     * @param tileCount Counter of the tile since the beginning of the loop.
+     */
+    void run(int z, int c, int t, int x, int y, int tileWidth,
+             int tileHeight, int tileCount);
+  }
 }
