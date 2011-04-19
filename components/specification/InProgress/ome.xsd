@@ -790,6 +790,10 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 	<xsd:element name="OTF"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
+				NOTE: OTF is DEPRECATED as it is due to be removed. 
+				No objections were received in reply to:
+				http://lists.openmicroscopy.org.uk/pipermail/ome-devel/2011-April/001931.html
+
 				The optical transfer function. FilterSetRef refers to the set of 
 				filters used in computing the OTF.
 				This element must contain a BinData element containing the 
