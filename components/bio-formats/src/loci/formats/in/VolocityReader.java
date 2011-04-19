@@ -34,12 +34,11 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
+import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 
 import ome.metakit.MetakitException;
 import ome.metakit.MetakitReader;
-
-import ome.xml.model.primitives.PositiveInteger;
 
 /**
  * VolocityReader is the file format reader for Volocity library files.
@@ -74,7 +73,6 @@ public class VolocityReader extends FormatReader {
   /** Constructs a new Volocity reader. */
   public VolocityReader() {
     super("Volocity Library", "mvd2");
-    domains = new String[] {FormatTools.UNKNOWN_DOMAIN};
   }
 
   // -- IFormatReader API methods --
@@ -232,9 +230,9 @@ public class VolocityReader extends FormatReader {
 
     core = new CoreMetadata[parentIDs.size()];
     String[][] channelNames = new String[core.length][];
-    Double[] physicalX = new Double[core.length];
-    Double[] physicalY = new Double[core.length];
-    Double[] physicalZ = new Double[core.length];
+    Float[] physicalX = new Float[core.length];
+    Float[] physicalY = new Float[core.length];
+    Float[] physicalZ = new Float[core.length];
     Double[] magnification = new Double[core.length];
     String[] detector = new String[core.length];
     String[] description = new String[core.length];
@@ -296,7 +294,7 @@ public class VolocityReader extends FormatReader {
       if (xIndex >= 0) {
         data = getStream(xIndex);
         data.seek(SIGNATURE_SIZE);
-        physicalX[i] = data.readDouble();
+        physicalX[i] = (float) data.readDouble();
         data.close();
       }
 
@@ -304,7 +302,7 @@ public class VolocityReader extends FormatReader {
       if (yIndex >= 0) {
         data = getStream(yIndex);
         data.seek(SIGNATURE_SIZE);
-        physicalY[i] = data.readDouble();
+        physicalY[i] = (float) data.readDouble();
         data.close();
       }
 
@@ -312,7 +310,7 @@ public class VolocityReader extends FormatReader {
       if (zIndex >= 0) {
         data = getStream(zIndex);
         data.seek(SIGNATURE_SIZE);
-        physicalZ[i] = data.readDouble();
+        physicalZ[i] = (float) data.readDouble();
         data.close();
       }
 
@@ -404,8 +402,20 @@ public class VolocityReader extends FormatReader {
           bytesPerPixel /= 3;
         }
 
-        core[i].pixelType =
-          FormatTools.pixelTypeFromBytes(bytesPerPixel, false, false);
+        switch (bytesPerPixel) {
+          case 1:
+            core[i].pixelType = FormatTools.UINT8;
+            break;
+          case 2:
+            core[i].pixelType = FormatTools.UINT16;
+            break;
+          case 4:
+            core[i].pixelType = FormatTools.UINT32;
+            break;
+          default:
+            throw new FormatException(
+              "Unsupported bytes per pixel: " + bytesPerPixel);
+        }
 
         // full timepoints are padded to have a multiple of 256 bytes
         int timepoint = FormatTools.getPlaneSize(this) * getSizeZ();
@@ -449,7 +459,8 @@ public class VolocityReader extends FormatReader {
     }
     setSeries(0);
 
-    MetadataStore store = makeFilterMetadata();
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     MetadataTools.populatePixels(store, this);
 
     String instrument = MetadataTools.createLSID("Instrument", 0);
@@ -463,29 +474,29 @@ public class VolocityReader extends FormatReader {
       store.setImageDescription(description[i], i);
       if (channelNames[i] != null) {
         for (int c=0; c<getEffectiveSizeC(); c++) {
-          store.setChannelName(channelNames[i][c], i, c);
+          store.setLogicalChannelName(channelNames[i][c], i, c);
         }
       }
-      store.setPixelsPhysicalSizeX(physicalX[i], i);
-      store.setPixelsPhysicalSizeY(physicalY[i], i);
-      store.setPixelsPhysicalSizeZ(physicalZ[i], i);
+      store.setDimensionsPhysicalSizeX(physicalX[i], i, 0);
+      store.setDimensionsPhysicalSizeY(physicalY[i], i, 0);
+      store.setDimensionsPhysicalSizeZ(physicalZ[i], i, 0);
 
       String objective = MetadataTools.createLSID("Objective", 0, i);
       store.setObjectiveID(objective, 0, i);
       if (magnification[i] != null) {
         store.setObjectiveNominalMagnification(
-          new PositiveInteger(magnification[i].intValue()), 0, i);
+          magnification[i].intValue(), 0, i);
       }
-      store.setObjectiveCorrection(getCorrection("Other"), 0, i);
-      store.setObjectiveImmersion(getImmersion("Other"), 0, i);
-      store.setImageObjectiveSettingsID(objective, i);
+      store.setObjectiveCorrection("Other", 0, i);
+      store.setObjectiveImmersion("Other", 0, i);
+      store.setObjectiveSettingsObjective(objective, i);
 
       String detectorID = MetadataTools.createLSID("Detector", 0, i);
       store.setDetectorID(detectorID, 0, i);
       store.setDetectorModel(detector[i], 0, i);
 
       for (int c=0; c<getEffectiveSizeC(); c++) {
-        store.setDetectorSettingsID(detectorID, i, c);
+        store.setDetectorSettingsDetector(detectorID, i, c);
       }
     }
     setSeries(0);
