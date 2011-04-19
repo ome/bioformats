@@ -737,12 +737,15 @@ public class LIFReader extends FormatReader {
       translateDetectors(image, i);
 
       Stack<String> nameStack = new Stack<String>();
-      populateOriginalMetadata(image, nameStack);
+      HashMap<String, Integer> indexes = new HashMap<String, Integer>();
+      populateOriginalMetadata(image, nameStack, indexes);
     }
     setSeries(0);
   }
 
-  private void populateOriginalMetadata(Element root, Stack<String> nameStack) {
+  private void populateOriginalMetadata(Element root, Stack<String> nameStack,
+    HashMap<String, Integer> indexes)
+  {
     String name = root.getNodeName();
     if (root.hasAttributes() && !name.equals("Element") &&
       !name.equals("Attachment") && !name.equals("LMSDataContainerHeader"))
@@ -762,23 +765,22 @@ public class LIFReader extends FormatReader {
       if (suffix != null && value != null && suffix.length() > 0 &&
         value.length() > 0)
       {
-        int index = 0;
-        String storedKey = key.toString() + suffix + " ";
-        while (getSeriesMeta(storedKey + index) != null) {
-          index++;
-        }
-        addSeriesMeta(storedKey + index, value);
+        Integer i = indexes.get(key.toString() + suffix);
+        String storedKey = key.toString() + suffix + " " + (i == null ? 0 : i);
+        indexes.put(key.toString() + suffix, i == null ? 1 : i + 1);
+        addSeriesMeta(storedKey, value);
       }
       else {
         NamedNodeMap attributes = root.getAttributes();
         for (int i=0; i<attributes.getLength(); i++) {
           Attr attr = (Attr) attributes.item(i);
-          String storedKey = key.toString() + attr.getName() + " ";
-          int index = 0;
-          while (getSeriesMeta(storedKey + index) != null) {
-            index++;
+          Integer index = indexes.get(key.toString() + attr.getName());
+          if (index == null) {
+            index = 0;
           }
-          addSeriesMeta(storedKey + index, attr.getValue());
+          String storedKey = key.toString() + attr.getName() + " " + index;
+          indexes.put(key.toString() + attr.getName(), index + 1);
+          addSeriesMeta(storedKey, attr.getValue());
         }
       }
     }
@@ -787,7 +789,7 @@ public class LIFReader extends FormatReader {
     for (int i=0; i<children.getLength(); i++) {
       Object child = children.item(i);
       if (child instanceof Element) {
-        populateOriginalMetadata((Element) child, nameStack);
+        populateOriginalMetadata((Element) child, nameStack, indexes);
       }
     }
 
