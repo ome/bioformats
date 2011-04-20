@@ -139,7 +139,7 @@ public class CellSensReader extends FormatReader {
 
       }
       else {
-        IFD ifd = ifds.get(s - files.size() - 1);
+        IFD ifd = ifds.get(s - files.size() + 1);
         PhotoInterp p = ifd.getPhotometricInterpretation();
         int samples = ifd.getSamplesPerPixel();
         core[s].rgb = samples > 1 || p == PhotoInterp.RGB;
