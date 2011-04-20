@@ -408,6 +408,29 @@ public class LIFReader extends FormatReader {
     }
     initMetadata(xml);
     xml = null;
+
+    // correct offsets, if necessary
+    if (offsets.size() > getSeriesCount()) {
+      Long[] storedOffsets = offsets.toArray(new Long[offsets.size()]);
+      offsets.clear();
+      int index = 0;
+      for (int i=0; i<getSeriesCount(); i++) {
+        setSeries(i);
+        long nBytes = (long) FormatTools.getPlaneSize(this) * getImageCount();
+        long start = storedOffsets[index];
+        long end = index == storedOffsets.length - 1 ? in.length() :
+          storedOffsets[index + 1];
+        while (end - start < nBytes && ((end - start) / nBytes) != 1) {
+          index++;
+          start = storedOffsets[index];
+          end = index == storedOffsets.length - 1 ? in.length() :
+            storedOffsets[index + 1];
+        }
+        offsets.add(storedOffsets[index]);
+        index++;
+      }
+      setSeries(0);
+    }
   }
 
   // -- Helper methods --
