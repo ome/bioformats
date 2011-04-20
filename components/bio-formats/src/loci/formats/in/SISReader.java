@@ -116,7 +116,12 @@ public class SISReader extends BaseTiffReader {
     in.skipBytes(6);
 
     imageName = in.readCString();
-    in.skipBytes(18);
+    if ((in.getFilePointer() % 2) == 1) {
+      in.skipBytes(1);
+    }
+
+    while (in.readShort() != 8);
+    in.skipBytes(4);
 
     in.seek(in.readInt());
 
