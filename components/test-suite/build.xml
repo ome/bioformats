@@ -12,6 +12,14 @@ Type "ant -p" for a list of targets.
   <import file="${root.dir}/ant/java.xml"/>
   <property file="build.properties"/>
 
+  <target name="test-file-handles" depends="compile"
+    description="run tests for leaking file handles">
+    <exec executable="${basedir}/target-test-runner">
+      <arg value="loci.tests.testng.FileHandleTest"/>
+      <arg value="${filename}"/>
+    </exec>
+  </target>
+
   <target name="test-omero-open-bytes" depends="compile"
     description="run tests for opening planes as in OMERO">
     <exec executable="${basedir}/target-test-runner">
