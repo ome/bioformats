@@ -372,7 +372,9 @@ public class PrairieReader extends FormatReader {
           store.setObjectiveID(objective, 0, 0);
           store.setImageObjectiveSettingsID(objective, 0);
 
-          store.setObjectiveNominalMagnification(magnification, 0, 0);
+          if (magnification != null) {
+            store.setObjectiveNominalMagnification(magnification, 0, 0);
+          }
           store.setObjectiveManufacturer(objectiveManufacturer, 0, 0);
           store.setObjectiveImmersion(getImmersion(immersion), 0, 0);
           store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
@@ -510,7 +512,10 @@ public class PrairieReader extends FormatReader {
           }
           if (tokens.length > 1) {
             String mag = tokens[1].toLowerCase().replaceAll("x", "");
-            magnification = new PositiveInteger(new Integer(mag));
+            try {
+              magnification = new PositiveInteger(new Integer(mag));
+            }
+            catch (NumberFormatException e) { }
           }
           if (tokens.length > 2) {
             immersion = tokens[2];
