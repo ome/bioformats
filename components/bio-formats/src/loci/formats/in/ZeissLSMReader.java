@@ -375,15 +375,7 @@ public class ZeissLSMReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
 
-    if (!checkSuffix(id, MDB_SUFFIX) && isGroupFiles()) {
-      String mdb = getMDBFile(id);
-      if (mdb != null) {
-        setId(mdb);
-        return;
-      }
-      lsmFilenames = new String[] {id};
-    }
-    else if (checkSuffix(id, MDB_SUFFIX)) {
+    if (checkSuffix(id, MDB_SUFFIX)) {
       lsmFilenames = parseMDB(id);
     }
     else lsmFilenames = new String[] {id};
