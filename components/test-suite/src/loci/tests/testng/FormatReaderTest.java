@@ -1278,6 +1278,7 @@ public class FormatReaderTest {
   /**
    * @testng.test groups = "all pixels"
    */
+  /*
   public void testReorderedPixelsHashes() {
     if (config == null) throw new SkipException("No config tree");
     String testName = "testReorderedPixelsHashes";
@@ -1311,6 +1312,7 @@ public class FormatReaderTest {
     }
     result(testName, success, msg);
   }
+  */
 
   /**
    * @testng.test groups = "all pixels"
