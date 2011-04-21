@@ -494,7 +494,7 @@ public class IFD extends HashMap<Integer, Object> {
   public boolean isTiled() throws FormatException {
     Object offsets = get(new Integer(STRIP_OFFSETS));
     Object tileWidth = get(new Integer(TILE_WIDTH));
-    return offsets == null || tileWidth != null;
+    return offsets == null && tileWidth != null;
   }
 
   /**
