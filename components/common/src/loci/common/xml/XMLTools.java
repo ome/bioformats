@@ -32,6 +32,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Set;
@@ -85,6 +86,22 @@ public final class XMLTools {
   // -- Constants --
 
   static final Logger LOGGER = LoggerFactory.getLogger(XMLTools.class);
+
+  private static final String XML_SCHEMA_PATH =
+    "http://www.w3.org/2001/XMLSchema";
+
+  private static final SchemaFactory FACTORY =
+    SchemaFactory.newInstance(XML_SCHEMA_PATH);
+
+  // -- Fields --
+
+  private static ThreadLocal<HashMap<URL, Schema>> schemas =
+    new ThreadLocal<HashMap<URL, Schema>>()
+  {
+    protected HashMap<URL, Schema> initialValue() {
+      return new HashMap<URL, Schema>();
+    }
+  };
 
   // -- Constructor --
 
@@ -469,11 +486,6 @@ public final class XMLTools {
 
     LOGGER.info("Validating {}", label);
 
-    // look up a factory for the W3C XML Schema language
-    String xmlSchemaPath = "http://www.w3.org/2001/XMLSchema";
-    // Java XML factories are not declared to be thread safe
-    SchemaFactory factory = SchemaFactory.newInstance(xmlSchemaPath);
-
     // compile the schema
     URL schemaLocation = null;
     try {
@@ -483,13 +495,16 @@ public final class XMLTools {
       LOGGER.info("Error accessing schema at {}", schemaPath, exc);
       return false;
     }
-    Schema schema = null;
-    try {
-      schema = factory.newSchema(schemaLocation);
-    }
-    catch (SAXException exc) {
-      LOGGER.info("Error parsing schema at {}", schemaPath, exc);
-      return false;
+    Schema schema = schemas.get().get(schemaLocation);
+    if (schema == null) {
+      try {
+        schema = FACTORY.newSchema(schemaLocation);
+        schemas.get().put(schemaLocation, schema);
+      }
+      catch (SAXException exc) {
+        LOGGER.info("Error parsing schema at {}", schemaPath, exc);
+        return false;
+      }
     }
 
     // get a validator from the schema
