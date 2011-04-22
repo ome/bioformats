@@ -172,7 +172,14 @@ public class ImaconReader extends BaseTiffReader {
     }
 
     for (int i=0; i<getSeriesCount(); i++) {
-      store.setImageName(imageName + " #" + (i + 1), i);
+      String name = imageName;
+      if (imageName.length() == 0) {
+        name = "#" + (i + 1);
+      }
+      else {
+        name += " #" + (i + 1);
+      }
+      store.setImageName(name, i);
       if (creationDate != null) {
         store.setImageAcquiredDate(creationDate, i);
       }
