@@ -1,4 +1,7 @@
 #!/bin/bash
+# This script uses Jar2Lib to generate a CMakeLists.txt and the relevant proxy classes for bfcpp.
+# It will create a build directory and open cmake for you.
+# To build bfcpp, configure and generate a make file and use the command "make"
 
 PROJECT_DIR=`cd "$(dirname $0)"; pwd`
 JAR_DIR="$PROJECT_DIR/../../../jar"
@@ -15,4 +18,12 @@ java -cp \
   "$ARTIFACT_DIR/ome-xml.jar" \
   "$ARTIFACT_DIR/bio-formats.jar" \
   -conflicts "$PROJECT_DIR/conflicts.txt" \
-  -header "$PROJECT_DIR/header.txt"
+  -header "$PROJECT_DIR/header.txt" \
+  -extras "$PROJECT_DIR/cmake_extras.txt"
+
+
+  cd bfcpp
+  mkdir build
+  cd build
+  ccmake ..
+  make
