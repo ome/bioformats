@@ -116,6 +116,7 @@ public class TextReader extends FormatReader {
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     final int blockLen = 8192;
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
+    row = 0;
     String data = stream.readString(blockLen);
     List<String> lines = Arrays.asList(data.split("\n"));
     String[] line = getNextLine(lines);
