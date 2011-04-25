@@ -60,7 +60,11 @@ import loci.formats.ImageReader;
 import loci.formats.ReaderWrapper;
 import loci.formats.gui.AWTImageTools;
 import loci.formats.gui.BufferedImageReader;
+import loci.formats.in.AnalyzeReader;
 import loci.formats.in.BioRadReader;
+import loci.formats.in.MetamorphReader;
+import loci.formats.in.MetamorphTiffReader;
+import loci.formats.in.NiftiReader;
 import loci.formats.in.NRRDReader;
 import loci.formats.in.OMETiffReader;
 import loci.formats.in.TiffDelegateReader;
@@ -1409,6 +1413,19 @@ public class FormatReaderTest {
               String low = used[i].toLowerCase();
               boolean isPic = low.endsWith(".pic") || low.endsWith(".pic.gz");
               if (isPic) continue;
+            }
+
+            // Analyze reader is allowed to redundantly accept NIfTI files
+            if (result && r instanceof NiftiReader &&
+              readers[j] instanceof AnalyzeReader)
+            {
+              continue;
+            }
+
+            if (result && r instanceof MetamorphReader &&
+              readers[i] instanceof MetamorphTiffReader)
+            {
+              continue;
             }
 
             boolean expected = r == readers[j];

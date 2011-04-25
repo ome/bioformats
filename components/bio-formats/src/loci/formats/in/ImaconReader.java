@@ -117,8 +117,8 @@ public class ImaconReader extends BaseTiffReader {
       core[i] = new CoreMetadata();
       core[i].imageCount = 1;
       IFD ifd = ifds.get(i);
-      tiffParser.fillInIFD(ifd);
       ifd.remove(PIXELS_TAG);
+      tiffParser.fillInIFD(ifd);
 
       PhotoInterp photo = ifd.getPhotometricInterpretation();
       int samples = ifd.getSamplesPerPixel();
@@ -172,7 +172,14 @@ public class ImaconReader extends BaseTiffReader {
     }
 
     for (int i=0; i<getSeriesCount(); i++) {
-      store.setImageName(imageName + " #" + (i + 1), i);
+      String name = imageName;
+      if (imageName.length() == 0) {
+        name = "#" + (i + 1);
+      }
+      else {
+        name += " #" + (i + 1);
+      }
+      store.setImageName(name, i);
       if (creationDate != null) {
         store.setImageAcquiredDate(creationDate, i);
       }

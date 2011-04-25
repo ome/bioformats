@@ -70,7 +70,7 @@ public class SBIGReader extends FormatReader {
     final int blockLen = (int) HEADER_SIZE;
     final int checkLen = 32;
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
-    return stream.readString(checkLen).indexOf("Image") > 0;
+    return stream.readString(checkLen).indexOf("ST-7 Compressed Image") >= 0;
   }
 
   /**
