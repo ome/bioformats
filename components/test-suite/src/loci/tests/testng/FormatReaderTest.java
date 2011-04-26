@@ -1019,7 +1019,11 @@ public class FormatReaderTest {
           retrieve.getChannelEmissionWavelength(i, c);
         Integer expectedWavelength = config.getEmissionWavelength(c);
 
-        if (!(realWavelength == null && expectedWavelength == null) &&
+        if (realWavelength == null && expectedWavelength == null) {
+          continue;
+        }
+
+        if (realWavelength == null || expectedWavelength == null ||
           !expectedWavelength.equals(realWavelength.getValue()))
         {
           result(testName, false, "Series " + i + " channel " + c);
@@ -1046,7 +1050,11 @@ public class FormatReaderTest {
           retrieve.getChannelExcitationWavelength(i, c);
         Integer expectedWavelength = config.getExcitationWavelength(c);
 
-        if (!(realWavelength == null && expectedWavelength == null) &&
+        if (realWavelength == null && expectedWavelength == null) {
+          continue;
+        }
+
+        if (realWavelength == null || expectedWavelength == null ||
           !expectedWavelength.equals(realWavelength.getValue()))
         {
           result(testName, false, "Series " + i + " channel " + c);
