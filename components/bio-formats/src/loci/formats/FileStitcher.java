@@ -958,7 +958,9 @@ public class FileStitcher extends ReaderWrapper {
       if (reader.getSeriesCount() == 1 && getSeriesCount() > 1) {
         for (int i=0; i<getSeriesCount(); i++) {
           int index = getExternalSeries(i);
-          store.setImageName(externals[index].getFilePattern().getPattern(), i);
+          String pattern = externals[index].getFilePattern().getPattern();
+          pattern = pattern.substring(pattern.lastIndexOf(File.separator) + 1);
+          store.setImageName(pattern, i);
         }
       }
     }
