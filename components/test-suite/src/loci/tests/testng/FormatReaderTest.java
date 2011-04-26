@@ -62,6 +62,9 @@ import loci.formats.gui.AWTImageTools;
 import loci.formats.gui.BufferedImageReader;
 import loci.formats.in.AnalyzeReader;
 import loci.formats.in.BioRadReader;
+import loci.formats.in.GelReader;
+import loci.formats.in.JPEGReader;
+import loci.formats.in.L2DReader;
 import loci.formats.in.MetamorphReader;
 import loci.formats.in.MetamorphTiffReader;
 import loci.formats.in.NiftiReader;
@@ -1432,7 +1435,13 @@ public class FormatReaderTest {
             }
 
             if (result && r instanceof MetamorphReader &&
-              readers[i] instanceof MetamorphTiffReader)
+              readers[j] instanceof MetamorphTiffReader)
+            {
+              continue;
+            }
+
+            if (result && (readers[j] instanceof L2DReader) ||
+              ((r instanceof L2DReader) && (readers[j] instanceof GelReader)))
             {
               continue;
             }
