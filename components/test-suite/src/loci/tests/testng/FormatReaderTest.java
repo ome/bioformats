@@ -1196,6 +1196,15 @@ public class FormatReaderTest {
           r.setId(base[i]);
 
           String[] comp = r.getUsedFiles();
+
+          // If an .mdb file was initialized, then .lsm files are grouped.
+          // If one of the .lsm files is initialized, though, then files
+          // are not grouped.  This is expected behavior; see ticket #3701.
+          if (base[i].toLowerCase().endsWith(".lsm") && comp.length == 1) {
+            r.close();
+            continue;
+          }
+
           if (comp.length != base.length) {
             success = false;
             msg = base[i] + " (file list length was " + comp.length +
