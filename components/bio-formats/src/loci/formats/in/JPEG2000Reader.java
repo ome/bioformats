@@ -62,6 +62,8 @@ public class JPEG2000Reader extends FormatReader {
   /** The color lookup table associated with this file. */
   private int[][] lut;
 
+  private long pixelsOffset;
+
   // -- Constructor --
 
   /** Constructs a new JPEG2000Reader. */
@@ -119,6 +121,16 @@ public class JPEG2000Reader extends FormatReader {
     return shortLut;
   }
 
+  /* @see loci.formats.IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws IOException {
+    super.close(fileOnly);
+    if (!fileOnly) {
+      resolutionLevels = null;
+      lut = null;
+      pixelsOffset = 0;
+    }
+  }
+
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
@@ -127,17 +139,17 @@ public class JPEG2000Reader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    JPEG2000CodecOptions options = new JPEG2000CodecOptions();
+    JPEG2000CodecOptions options = JPEG2000CodecOptions.getDefaultOptions();
     options.interleaved = isInterleaved();
     options.littleEndian = isLittleEndian();
     if (resolutionLevels != null) {
       options.resolution = Math.abs(series - resolutionLevels);
     }
-    else {
+    else if (getSeriesCount() > 1) {
       options.resolution = series;
     }
 
-    in.seek(0);
+    in.seek(pixelsOffset);
     byte[] plane = new JPEG2000Codec().decompress(in, options);
     RandomAccessInputStream s = new RandomAccessInputStream(plane);
     readPlane(s, x, y, w, h, buf);
@@ -169,6 +181,8 @@ public class JPEG2000Reader extends FormatReader {
       core[0].pixelType = metadataParser.getHeaderPixelType();
     }
     lut = metadataParser.getLookupTable();
+
+    pixelsOffset = metadataParser.getCodestreamOffset();
 
     core[0].sizeZ = 1;
     core[0].sizeT = 1;

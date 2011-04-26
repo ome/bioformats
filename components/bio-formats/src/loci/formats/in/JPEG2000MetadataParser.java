@@ -54,6 +54,9 @@ public class JPEG2000MetadataParser {
   /** Stream that we're parsing metadata from. */
   private RandomAccessInputStream in;
 
+  /** Offset to first contiguous codestream. */
+  private long codestreamOffset;
+
   /** Maximum read offset within in the stream. */
   private long maximumReadOffset;
 
@@ -127,6 +130,11 @@ public class JPEG2000MetadataParser {
     }
   }
 
+  /** Retrieves the offset to the first contiguous codestream. */
+  public long getCodestreamOffset() {
+    return codestreamOffset;
+  }
+
   /**
    * Parses the JPEG 2000 JP2 metadata boxes.
    * @throws IOException Thrown if there is an error reading from the file.
@@ -149,7 +157,9 @@ public class JPEG2000MetadataParser {
         length = DataTools.swap(length);
       }
       nextPos = pos + length;
-      length -= 8;
+      if (length >= 8) {
+        length -= 8;
+      }
       if (boxType == null) {
         LOGGER.warn("Unknown JPEG 2000 box 0x{} at {}",
             Integer.toHexString(boxCode), pos);
@@ -168,7 +178,7 @@ public class JPEG2000MetadataParser {
         switch (boxType) {
           case CONTIGUOUS_CODESTREAM: {
             try {
-              parseContiguousCodestream(length);
+              parseContiguousCodestream(length == 0 ? in.length() : length);
             }
             catch (Exception e) {
               LOGGER.warn("Could not parse contiguous codestream.", e);
@@ -229,8 +239,11 @@ public class JPEG2000MetadataParser {
    * @param length Total length of the codestream block.
    * @throws IOException Thrown if there is an error reading from the file.
    */
-  private void parseContiguousCodestream(long length)
-    throws IOException {
+  private void parseContiguousCodestream(long length) throws IOException {
+    if (codestreamOffset == 0) {
+      codestreamOffset = in.getFilePointer();
+    }
+
     JPEG2000SegmentMarker segmentMarker;
     int segmentMarkerCode = 0, segmentLength = 0;
     long pos = in.getFilePointer(), nextPos = 0;
