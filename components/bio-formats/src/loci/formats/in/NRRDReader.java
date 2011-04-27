@@ -101,7 +101,11 @@ public class NRRDReader extends FormatReader {
       return true;
     }
 
-    header = new Location(name.substring(0, name.lastIndexOf(".")) + ".nhdr");
+    if (name.indexOf(".") >= 0) {
+      name = name.substring(0, name.lastIndexOf("."));
+    }
+
+    header = new Location(name + ".nhdr");
     return header.exists();
   }
 
