@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.in;
 
+import java.io.File;
 import java.io.IOException;
 
 import loci.common.Location;
@@ -95,7 +96,13 @@ public class NRRDReader extends FormatReader {
     if (!open) return false;
 
     // look for a matching .nhdr file
-    return new Location(name + ".nhdr").exists();
+    Location header = new Location(name + ".nhdr");
+    if (header.exists()) {
+      return true;
+    }
+
+    header = new Location(name.substring(0, name.lastIndexOf(".")) + ".nhdr");
+    return header.exists();
   }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
@@ -168,6 +175,13 @@ public class NRRDReader extends FormatReader {
     // make sure we actually have the .nrrd/.nhdr file
     if (!checkSuffix(id, "nhdr") && !checkSuffix(id, "nrrd")) {
       id += ".nhdr";
+
+      if (!new Location(id).exists()) {
+        id = id.substring(0, id.lastIndexOf("."));
+        id = id.substring(0, id.lastIndexOf("."));
+        id += ".nhdr";
+      }
+      id = new Location(id).getAbsolutePath();
     }
 
     super.initFile(id);
@@ -273,6 +287,7 @@ public class NRRDReader extends FormatReader {
       Location f = new Location(currentId).getAbsoluteFile();
       Location parent = f.getParentFile();
       if (f.exists() && parent != null) {
+        dataFile = dataFile.substring(dataFile.indexOf(File.separator) + 1);
         dataFile = new Location(parent, dataFile).getAbsolutePath();
       }
       if (!encoding.equals("raw")) {
