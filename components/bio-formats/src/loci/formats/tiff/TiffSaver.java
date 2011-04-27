@@ -80,6 +80,15 @@ public class TiffSaver {
   // -- Constructors --
 
   /**
+   * Constructs a new TIFF saver from the given filename.
+   * @param filename Filename of the output stream that we may use to create
+   * extra input or output streams as required.
+   */
+  public TiffSaver(String filename) throws IOException {
+    this(new RandomAccessOutputStream(filename), filename);
+  }
+
+  /**
    * Constructs a new TIFF saver from the given output source.
    * @param out Output stream to save TIFF data to.
    * @param filename Filename of the output stream that we may use to create
