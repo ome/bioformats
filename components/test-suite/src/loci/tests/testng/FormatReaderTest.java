@@ -64,9 +64,11 @@ import loci.formats.in.AnalyzeReader;
 import loci.formats.in.BioRadReader;
 import loci.formats.in.GelReader;
 import loci.formats.in.JPEGReader;
+import loci.formats.in.JPEG2000Reader;
 import loci.formats.in.L2DReader;
 import loci.formats.in.MetamorphReader;
 import loci.formats.in.MetamorphTiffReader;
+import loci.formats.in.ND2Reader;
 import loci.formats.in.NiftiReader;
 import loci.formats.in.NRRDReader;
 import loci.formats.in.OMETiffReader;
@@ -1450,6 +1452,13 @@ public class FormatReaderTest {
 
             if (result && (readers[j] instanceof L2DReader) ||
               ((r instanceof L2DReader) && (readers[j] instanceof GelReader)))
+            {
+              continue;
+            }
+
+            // ND2Reader is allowed to accept JPEG-2000 files
+            if (result && r instanceof JPEG2000Reader &&
+              readers[j] instanceof ND2Reader)
             {
               continue;
             }
