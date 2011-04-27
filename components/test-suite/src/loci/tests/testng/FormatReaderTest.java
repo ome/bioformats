@@ -62,8 +62,13 @@ import loci.formats.gui.AWTImageTools;
 import loci.formats.gui.BufferedImageReader;
 import loci.formats.in.AnalyzeReader;
 import loci.formats.in.BioRadReader;
+import loci.formats.in.GelReader;
+import loci.formats.in.JPEGReader;
+import loci.formats.in.JPEG2000Reader;
+import loci.formats.in.L2DReader;
 import loci.formats.in.MetamorphReader;
 import loci.formats.in.MetamorphTiffReader;
+import loci.formats.in.ND2Reader;
 import loci.formats.in.NiftiReader;
 import loci.formats.in.NRRDReader;
 import loci.formats.in.OMETiffReader;
@@ -1016,7 +1021,11 @@ public class FormatReaderTest {
           retrieve.getChannelEmissionWavelength(i, c);
         Integer expectedWavelength = config.getEmissionWavelength(c);
 
-        if (!(realWavelength == null && expectedWavelength == null) &&
+        if (realWavelength == null && expectedWavelength == null) {
+          continue;
+        }
+
+        if (realWavelength == null || expectedWavelength == null ||
           !expectedWavelength.equals(realWavelength.getValue()))
         {
           result(testName, false, "Series " + i + " channel " + c);
@@ -1043,7 +1052,11 @@ public class FormatReaderTest {
           retrieve.getChannelExcitationWavelength(i, c);
         Integer expectedWavelength = config.getExcitationWavelength(c);
 
-        if (!(realWavelength == null && expectedWavelength == null) &&
+        if (realWavelength == null && expectedWavelength == null) {
+          continue;
+        }
+
+        if (realWavelength == null || expectedWavelength == null ||
           !expectedWavelength.equals(realWavelength.getValue()))
         {
           result(testName, false, "Series " + i + " channel " + c);
@@ -1196,6 +1209,15 @@ public class FormatReaderTest {
           r.setId(base[i]);
 
           String[] comp = r.getUsedFiles();
+
+          // If an .mdb file was initialized, then .lsm files are grouped.
+          // If one of the .lsm files is initialized, though, then files
+          // are not grouped.  This is expected behavior; see ticket #3701.
+          if (base[i].toLowerCase().endsWith(".lsm") && comp.length == 1) {
+            r.close();
+            continue;
+          }
+
           if (comp.length != base.length) {
             success = false;
             msg = base[i] + " (file list length was " + comp.length +
@@ -1423,7 +1445,20 @@ public class FormatReaderTest {
             }
 
             if (result && r instanceof MetamorphReader &&
-              readers[i] instanceof MetamorphTiffReader)
+              readers[j] instanceof MetamorphTiffReader)
+            {
+              continue;
+            }
+
+            if (result && (readers[j] instanceof L2DReader) ||
+              ((r instanceof L2DReader) && (readers[j] instanceof GelReader)))
+            {
+              continue;
+            }
+
+            // ND2Reader is allowed to accept JPEG-2000 files
+            if (result && r instanceof JPEG2000Reader &&
+              readers[j] instanceof ND2Reader)
             {
               continue;
             }

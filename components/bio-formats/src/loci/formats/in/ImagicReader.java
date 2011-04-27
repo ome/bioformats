@@ -250,7 +250,7 @@ public class ImagicReader extends FormatReader {
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
 
-    store.setImageName(imageName, 0);
+    store.setImageName(imageName.trim(), 0);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setPixelsPhysicalSizeX(physicalXSize * 0.0001, 0);
