@@ -150,7 +150,7 @@ public class EditTiffG extends JFrame implements ActionListener {
       String path = f.getAbsolutePath();
       RandomAccessInputStream in = new RandomAccessInputStream(path);
       RandomAccessOutputStream out = new RandomAccessOutputStream(path);
-      TiffSaver saver = new TiffSaver(out);
+      TiffSaver saver = new TiffSaver(out, path);
       saver.overwriteComment(in, xml);
       in.close();
       out.close();

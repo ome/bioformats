@@ -103,7 +103,7 @@ public class TiffComment {
       else if (newComment != null) {
         RandomAccessInputStream in = new RandomAccessInputStream(file);
         RandomAccessOutputStream out = new RandomAccessOutputStream(file);
-        TiffSaver saver = new TiffSaver(out);
+        TiffSaver saver = new TiffSaver(out, file);
         saver.overwriteComment(in, newComment);
         in.close();
         out.close();

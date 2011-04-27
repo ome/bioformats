@@ -1008,7 +1008,14 @@ public class TiffParser {
     int entryTag = in.readUnsignedShort();
 
     // Parse the entry's "Type"
-    IFDType entryType = IFDType.get(in.readUnsignedShort());
+    IFDType entryType;
+    try {
+       entryType = IFDType.get(in.readUnsignedShort());
+    }
+    catch (EnumException e) {
+      LOGGER.error("Error reading IFD type at: {}", in.getFilePointer());
+      throw e;
+    }
 
     // Parse the entry's "ValueCount"
     int valueCount =

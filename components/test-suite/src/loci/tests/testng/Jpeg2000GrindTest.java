@@ -35,8 +35,8 @@ import static org.testng.Assert.fail;
 
 import java.io.File;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -90,27 +90,24 @@ public class Jpeg2000GrindTest {
 
   public static final int TILE_HEIGHT = 256;
 
-  public static final int THREAD_POOL_SIZE = 3;
+  public static final int THREAD_POOL_SIZE = 2;
 
   private int bytesPerPixel;
 
-  private List<String> hashDigests = new ArrayList<String>();
+  private Map<Integer, String> hashDigests = new HashMap<Integer, String>();
 
   private TiffWriter writer;
 
   private File id;
 
+  /** All the IFDs we have used for each "plane". */
+  private Map<Integer, IFD> ifds = new HashMap<Integer, IFD>();
+
   /** Last IFD we used during a tile write operation. */
-  private IFD lastIFD;
+  private int lastIFD;
 
-  /** Last z-section offset we used during a tile write operation. */
-  private int lastZ = -1;
-
-  /** Last channel offset we used during a tile write operation. */
-  private int lastC = -1;
-
-  /** Last timepoint offset  we used during a tile write operation. */
-  private int lastT = -1;
+  /** Thread pool executor service. */
+  private ExecutorService pool;
 
   /**
    * Initializes the writer.
@@ -143,32 +140,11 @@ public class Jpeg2000GrindTest {
     writer = new TiffWriter();
     writer.setMetadataRetrieve(metadata);
     writer.setCompression(compression);
-    writer.setWriteSequentially(true);
+    writer.setWriteSequentially(false);
     writer.setInterleaved(true);
     writer.setBigTiff(bigTiff);
     writer.setId(output);
     bytesPerPixel = FormatTools.getBytesPerPixel(PIXEL_TYPE);
-  }
-
-  /**
-   * Retrieves the IFD that should be used for a given planar offset.
-   * @param z Z-section offset requested.
-   * @param c Channel offset requested.
-   * @param t Timepoint offset requested.
-   * @param w Tile width requested.
-   * @param h Tile height requested.
-   * @return A new or already allocated IFD for use when writing tiles.
-   */
-  private IFD getIFD(int z, int c, int t, int w, int h) {
-    if (lastT != t || lastC != c || lastZ != z) {
-      lastIFD = new IFD();
-      lastIFD.put(IFD.TILE_WIDTH, w);
-      lastIFD.put(IFD.TILE_LENGTH, h);
-    }
-    lastT = t;
-    lastC = c;
-    lastZ = z;
-    return lastIFD;
   }
 
   @BeforeClass
@@ -187,15 +163,58 @@ public class Jpeg2000GrindTest {
 
   @Test(enabled=true)
   public void testPyramidWriteTiles() throws Exception {
+    pool = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
+    short tileCount = (short) TestTools.forEachTile(new TileLoopIteration() {
+      public void run(int z, int c, int t, int x, int y, int tileWidth,
+          int tileHeight, int tileCount) {
+        int planeNumber = FormatTools.getIndex(
+            "XYZCT", SIZE_Z, SIZE_C, SIZE_T, SIZE_Z * SIZE_C * SIZE_T, z, c, t);
+        if (planeNumber != lastIFD) {
+          pool.shutdown();
+          try {
+            while (!pool.awaitTermination(30, TimeUnit.SECONDS)) {
+              LOGGER.warn("Waiting for runnables to complete...");
+            }
+          } catch (InterruptedException e) {
+            LOGGER.error("Caught interuption while waiting for termination.");
+          }
+          pool = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
+          lastIFD = planeNumber;
+        }
+        pool.submit(new TileRunnable(
+            writer, z, c, t, x, y, tileWidth, tileHeight, tileCount));
+        tileCount++;
+      }
+    }, SIZE_X, SIZE_Y, SIZE_Z, SIZE_C, SIZE_T, TILE_WIDTH, TILE_HEIGHT);
+    pool.shutdown();
+    while (!pool.awaitTermination(30, TimeUnit.SECONDS)) {
+      LOGGER.warn("Waiting for runnables to complete...");
+    }
+    assertEquals(tileCount, 960);
+    writer.close();
+  }
+
+  /*
+  @Test(enabled=true)
+  public void testPyramidWriteTiles() throws Exception {
     short tileCount = (short) TestTools.forEachTile(new TileLoopIteration() {
       public void run(int z, int c, int t, int x, int y, int tileWidth,
           int tileHeight, int tileCount) {
         byte[] tile = new byte[tileWidth * tileHeight * bytesPerPixel];
         ByteBuffer.wrap(tile).asShortBuffer().put(0, (short) tileCount);
-        hashDigests.add(TestTools.md5(tile));
+        hashDigests.put(tileCount, TestTools.md5(tile));
         int planeNumber = FormatTools.getIndex(
             "XYZCT", SIZE_Z, SIZE_C, SIZE_T, SIZE_Z * SIZE_C * SIZE_T, z, c, t);
-        IFD ifd = getIFD(z, c, t, tileWidth, tileHeight);
+        IFD ifd;
+        synchronized (ifds) {
+          if (!ifds.containsKey(planeNumber)) {
+            ifd = new IFD();
+            ifd.put(IFD.TILE_WIDTH, TILE_WIDTH);
+            ifd.put(IFD.TILE_LENGTH, TILE_HEIGHT);
+            ifds.put(planeNumber, ifd);
+          }
+          ifd = ifds.get(planeNumber);
+        }
         try {
           writer.saveBytes(planeNumber, tile, ifd, x, y, tileWidth, tileHeight);
         } catch (Exception e) {
@@ -207,10 +226,11 @@ public class Jpeg2000GrindTest {
     assertEquals(tileCount, 960);
     writer.close();
   }
+  */
 
   @Test(dependsOnMethods={"testPyramidWriteTiles"}, enabled=true)
   public void testPyramidReadTilesMultiThreaded() throws Exception {
-    final ExecutorService pool = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
+    pool = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
     for (int theC = 0; theC < SIZE_C; theC++) {
       pool.execute(new ChannelRunnable(theC));
     }
@@ -220,9 +240,59 @@ public class Jpeg2000GrindTest {
     }
   }
 
+  class TileRunnable implements Runnable {
+
+    private int tileNumber;
+    private TiffWriter writer;
+    private int z;
+    private int c;
+    private int t;
+    private int x;
+    private int y;
+    private int tileWidth;
+    private int tileHeight;
+
+    public TileRunnable(TiffWriter writer, int z, int c, int t, int x, int y,
+        int tileWidth, int tileHeight, int tileNumber) {
+      this.z = z;
+      this.c = c;
+      this.t = t;
+      this.x = x;
+      this.y = y;
+      this.tileWidth = tileWidth;
+      this.tileHeight = tileHeight;
+      this.writer = writer;
+      this.tileNumber = tileNumber;
+    }
+
+    public void run() {
+      byte[] tile = new byte[tileWidth * tileHeight * bytesPerPixel];
+      ByteBuffer.wrap(tile).asShortBuffer().put(0, (short) tileNumber);
+      hashDigests.put(tileNumber, TestTools.md5(tile));
+      int planeNumber = FormatTools.getIndex(
+          "XYZCT", SIZE_Z, SIZE_C, SIZE_T, SIZE_Z * SIZE_C * SIZE_T, z, c, t);
+      IFD ifd;
+      synchronized (ifds) {
+        if (!ifds.containsKey(planeNumber)) {
+          ifd = new IFD();
+          ifd.put(IFD.TILE_WIDTH, TILE_WIDTH);
+          ifd.put(IFD.TILE_LENGTH, TILE_HEIGHT);
+          ifds.put(planeNumber, ifd);
+        }
+        ifd = ifds.get(planeNumber);
+      }
+      try {
+        writer.saveBytes(planeNumber, tile, ifd, x, y, tileWidth, tileHeight);
+      } catch (Exception e) {
+        LOGGER.error("Exception while writing tile", e);
+        throw new RuntimeException(e);
+      }
+    }
+  }
+
   class ChannelRunnable implements Runnable {
 
-    int theC;
+    private int theC;
 
     public ChannelRunnable(int theC) {
       this.theC = theC;
