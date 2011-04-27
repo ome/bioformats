@@ -72,6 +72,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
+import loci.common.RandomAccessOutputStream;
 import loci.common.ReflectedUniverse;
 import loci.common.services.ServiceFactory;
 import loci.formats.FormatException;
@@ -404,10 +405,16 @@ public class MetadataPane extends JPanel
           //just rewrite image description of original file.
           xml = addTiffData(xml, file);
           String path = file.getAbsolutePath();
-          TiffSaver saver = new TiffSaver(path);
-          RandomAccessInputStream in = new RandomAccessInputStream(path);
-          saver.overwriteComment(in, xml);
-          in.close();
+          RandomAccessOutputStream out = new RandomAccessOutputStream(path);
+          try {
+            TiffSaver saver = new TiffSaver(out, path);
+            RandomAccessInputStream in = new RandomAccessInputStream(path);
+            saver.overwriteComment(in, xml);
+            in.close();
+          }
+          finally {
+            out.close();
+          }
         }
         else {
           //create the new tiff file.

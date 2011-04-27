@@ -65,7 +65,7 @@ public class TiffSaverTest {
     ByteArrayHandle handle = new ByteArrayHandle(INITIAL_CAPACITY);
     out = new RandomAccessOutputStream(handle);
     in = new RandomAccessInputStream(handle);
-    tiffSaver = new TiffSaver(out);
+    tiffSaver = new TiffSaver(out, handle);
     tiffParser = new TiffParser(in);
 
     ifd = new IFD();
@@ -75,7 +75,27 @@ public class TiffSaverTest {
 
   @Test(expectedExceptions={ IllegalArgumentException.class })
   public void testNullOutputStream() throws IOException {
-    tiffSaver = new TiffSaver((RandomAccessOutputStream) null);
+    RandomAccessOutputStream a = null;
+    String b = null;
+    tiffSaver = new TiffSaver(a, b);
+    tiffSaver.writeHeader();
+  }
+
+  @Test(expectedExceptions={ IllegalArgumentException.class })
+  public void testNullFilename() throws IOException {
+    RandomAccessOutputStream a = 
+      new RandomAccessOutputStream(new ByteArrayHandle());
+    String b = null;
+    tiffSaver = new TiffSaver(a, b);
+    tiffSaver.writeHeader();
+  }
+
+  @Test(expectedExceptions={ IllegalArgumentException.class })
+  public void testNullBytes() throws IOException {
+    RandomAccessOutputStream a = 
+      new RandomAccessOutputStream(new ByteArrayHandle());
+    ByteArrayHandle b = null;
+    tiffSaver = new TiffSaver(a, b);
     tiffSaver.writeHeader();
   }
 

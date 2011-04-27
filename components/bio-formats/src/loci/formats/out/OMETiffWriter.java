@@ -232,7 +232,7 @@ public class OMETiffWriter extends TiffWriter {
     out = new RandomAccessOutputStream(file);
     RandomAccessInputStream in = null;
     try {
-      TiffSaver saver = new TiffSaver(out);
+      TiffSaver saver = new TiffSaver(out, file);
       in = new RandomAccessInputStream(file);
       saver.overwriteLastIFDOffset(in);
       saver.overwriteComment(in, xml);

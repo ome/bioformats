@@ -69,6 +69,9 @@ public class TiffWriter extends FormatWriter {
   /** The TiffSaver that will do most of the writing. */
   protected TiffSaver tiffSaver;
 
+  /** Input stream to use when overwriting data. */
+  protected RandomAccessInputStream in;
+
   /** Whether or not to check the parameters passed to saveBytes. */
   private boolean checkParams = true;
 
@@ -145,26 +148,61 @@ public class TiffWriter extends FormatWriter {
     throws IOException, FormatException
   {
     if (checkParams) checkParams(no, buf, x, y, w, h);
+    if (ifd == null) ifd = new IFD();
+    MetadataRetrieve retrieve = getMetadataRetrieve();
+    Boolean bigEndian = retrieve.getPixelsBinDataBigEndian(series, 0);
+    boolean littleEndian = bigEndian == null ?
+      false : !bigEndian.booleanValue();
+    int type = FormatTools.pixelTypeFromString(
+        retrieve.getPixelsType(series).toString());
+    int index = no;
+    // This operation is synchronized
+    synchronized (this) {
+      if (tiffSaver == null) {
+        tiffSaver = new TiffSaver(out, currentId);
+      }
+      tiffSaver.setWritingSequentially(sequential);
+      tiffSaver.setLittleEndian(littleEndian);
+      tiffSaver.setBigTiff(isBigTiff);
+      tiffSaver.setCodecOptions(options);
+      // This operation is synchronized against the TIFF saver.
+      synchronized (tiffSaver) {
+        index = prepareToWriteImage(no, buf, ifd, x, y, w, h);
+        if (index == -1) {
+          return;
+        }
+      }
+    }
+    tiffSaver.writeImage(buf, ifd, index, type, x, y, w, h,
+      no == getPlaneCount() - 1 && getSeries() == retrieve.getImageCount() - 1);
+  }
+
+  /**
+   * Performs the preparation for work prior to the usage of the TIFF saver.
+   * This method is factored out from <code>saveBytes()</code> in an attempt to
+   * ensure thread safety.
+   */
+  private int prepareToWriteImage(
+      int no, byte[] buf, IFD ifd, int x, int y, int w, int h)
+  throws IOException, FormatException {
     MetadataRetrieve retrieve = getMetadataRetrieve();
     Boolean bigEndian = retrieve.getPixelsBinDataBigEndian(series, 0);
     boolean littleEndian = bigEndian == null ?
       false : !bigEndian.booleanValue();
 
-    tiffSaver = new TiffSaver(out); 
-    tiffSaver.setWritingSequentially(sequential);
-    tiffSaver.setLittleEndian(littleEndian);
-    tiffSaver.setBigTiff(isBigTiff);
-    tiffSaver.setCodecOptions(options);
+    // Ensure that no more than one thread manipulated the initialized array
+    // at one time.
+    synchronized (this) {
+      if (no < initialized[series].length && !initialized[series][no]) {
+        initialized[series][no] = true;
 
-    if (no < initialized[series].length && !initialized[series][no]) {
-      initialized[series][no] = true;
-
-      RandomAccessInputStream tmp = new RandomAccessInputStream(currentId);
-      if (tmp.length() == 0) {
-        // write TIFF header
-        tiffSaver.writeHeader();
+        RandomAccessInputStream tmp = new RandomAccessInputStream(currentId);
+        if (tmp.length() == 0) {
+          // write TIFF header
+          tiffSaver.writeHeader();
+        }
+        tmp.close();
       }
-      tmp.close();
     }
 
     int c = getSamplesPerPixel();
@@ -192,10 +230,9 @@ public class TiffWriter extends FormatWriter {
         saveBytes(no + i, b, ifd, x, y, w, h);
       }
       checkParams = true;
-      return;
+      return -1;
     }
 
-    if (ifd == null) ifd = new IFD();
     formatCompression(ifd);
     byte[][] lut = AWTImageTools.get8BitLookupTable(cm);
     if (lut != null) {
@@ -252,9 +289,6 @@ public class TiffWriter extends FormatWriter {
     if (FormatTools.isSigned(type)) sampleFormat = 2;
     if (FormatTools.isFloatingPoint(type)) sampleFormat = 3;
     ifd.putIFDValue(IFD.SAMPLE_FORMAT, sampleFormat);
-    RandomAccessInputStream in = new RandomAccessInputStream(currentId);
-    in.order(littleEndian);
-    tiffSaver.setInputStream(in);
 
     int index = no;
     int realSeries = getSeries();
@@ -263,13 +297,21 @@ public class TiffWriter extends FormatWriter {
       index += getPlaneCount();
     }
     setSeries(realSeries);
-    tiffSaver.writeImage(buf, ifd, index, type, x, y, w, h,
-      no == getPlaneCount() - 1 && getSeries() == retrieve.getImageCount() - 1);
-    tiffSaver.setInputStream(null);
-    in.close();
+    return index;
   }
 
   // -- FormatWriter API methods --
+
+  /* (non-Javadoc)
+   * @see loci.formats.FormatWriter#close()
+   */
+  @Override
+  public void close() throws IOException {
+    super.close();
+    if (in != null) {
+      in.close();
+    }
+  }
 
   protected int getPlaneCount() {
     int c = getSamplesPerPixel();

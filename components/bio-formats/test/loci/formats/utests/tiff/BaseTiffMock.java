@@ -65,7 +65,7 @@ public class BaseTiffMock {
     handle = new ByteArrayHandle();
     handle.setOrder(ByteOrder.LITTLE_ENDIAN);
     out = new RandomAccessOutputStream(handle);
-    tiffSaver = new TiffSaver(out);
+    tiffSaver = new TiffSaver(out, handle);
     tiffSaver.writeHeader();
 
     IFD ifd = new IFD();
