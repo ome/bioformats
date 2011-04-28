@@ -85,11 +85,24 @@ public class TillVisionReader extends FormatReader {
 
   /** Constructs a new TillVision reader. */
   public TillVisionReader() {
-    super("TillVision", new String[] {"vws", "pst"});
+    super("TillVision", new String[] {"vws", "pst", "inf"});
     domains = new String[] {FormatTools.LM_DOMAIN};
   }
 
   // -- IFormatReader API methods --
+
+  /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  public boolean isThisType(String name, boolean open) {
+    if (checkSuffix(name, "vws") || checkSuffix(name, "pst")) {
+      return true;
+    }
+    String pstFile = name;
+    if (name.indexOf(".") != -1) {
+      pstFile = pstFile.substring(0, pstFile.lastIndexOf("."));
+    }
+    pstFile += ".pst";
+    return new Location(pstFile).exists();
+  }
 
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
@@ -171,8 +184,18 @@ public class TillVisionReader extends FormatReader {
       String name = pst.getParentFile().getName();
       Location parent = pst.getParentFile().getParentFile();
       Location vwsFile = new Location(parent, name.replaceAll(".pst", ".vws"));
-      if (vwsFile.exists()) {
+      if (vwsFile.exists() && !vwsFile.isDirectory()) {
         id = vwsFile.getAbsolutePath();
+      }
+      else if (vwsFile.isDirectory()) {
+        parent = pst.getParentFile();
+        String[] list = parent.list(true);
+        for (String f : list) {
+          if (checkSuffix(f, "vws")) {
+            id = new Location(parent, f).getAbsolutePath();
+            break;
+          }
+        }
       }
       else throw new FormatException("Could not find .vws file.");
     }
