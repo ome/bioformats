@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.tiff;
 
 import java.io.IOException;
-import java.util.TreeSet;
+import java.util.HashSet;
 import java.util.Vector;
 
 import loci.common.DataTools;
@@ -403,7 +403,7 @@ public class TiffParser {
 
   /** Fill in IFD entries that are stored at an arbitrary offset. */
   public void fillInIFD(IFD ifd) throws IOException {
-    TreeSet<TiffIFDEntry> entries = new TreeSet<TiffIFDEntry>();
+    HashSet<TiffIFDEntry> entries = new HashSet<TiffIFDEntry>();
     for (Object key : ifd.keySet()) {
       if (ifd.get(key) instanceof TiffIFDEntry) {
         entries.add((TiffIFDEntry) ifd.get(key));
