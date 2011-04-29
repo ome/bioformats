@@ -1340,7 +1340,9 @@ public class ZeissLSMReader extends FormatReader {
     }
     else if (block instanceof IlluminationChannel) {
       IlluminationChannel channel = (IlluminationChannel) block;
-      if (channel.acquire && channel.wavelength != null) {
+      if (channel.acquire && channel.wavelength != null &&
+        nextIllumChannel < getEffectiveSizeC())
+      {
         store.setChannelEmissionWavelength(
           new PositiveInteger(channel.wavelength), series, nextIllumChannel++);
       }

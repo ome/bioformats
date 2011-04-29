@@ -96,6 +96,7 @@ public class Configuration {
   private static final String NAME = "Name";
   private static final String SERIES_COUNT = "series_count";
   private static final String CHANNEL_COUNT = "channel_count";
+  private static final String DATE = "Date";
 
   // -- Fields --
 
@@ -281,6 +282,10 @@ public class Configuration {
     return currentTable.get(NAME);
   }
 
+  public String getDate() {
+    return currentTable.get(DATE);
+  }
+
   public void setSeries(int series) {
     Location file = new Location(dataFile);
     currentTable = ini.getTable(file.getName() + SERIES + series);
@@ -425,6 +430,11 @@ public class Configuration {
       Double timeIncrement = retrieve.getPixelsTimeIncrement(series);
       if (timeIncrement != null) {
         seriesTable.put(TIME_INCREMENT, timeIncrement.toString());
+      }
+
+      String date = retrieve.getImageAcquiredDate(series);
+      if (date != null) {
+        seriesTable.put(DATE, date);
       }
 
       for (int c=0; c<retrieve.getChannelCount(series); c++) {

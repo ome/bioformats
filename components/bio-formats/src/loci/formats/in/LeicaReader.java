@@ -335,13 +335,19 @@ public class LeicaReader extends FormatReader {
   /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
-    return tileWidth[getSeries()];
+    if (tileWidth[getSeries()] != 0) {
+      return tileWidth[getSeries()];
+    }
+    return super.getOptimalTileWidth();
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
-    return tileHeight[getSeries()];
+    if (tileHeight[getSeries()] != 0) {
+      return tileHeight[getSeries()];
+    }
+    return super.getOptimalTileHeight();
   }
 
   // -- Internal FormatReader API methods --
@@ -568,12 +574,15 @@ public class LeicaReader extends FormatReader {
       core[i].interleaved = false;
 
       String filename = (String) files[i].get(0);
-      tiff.setId(filename);
 
-      core[i].sizeX = tiff.getSizeX();
-      core[i].sizeY = tiff.getSizeY();
-      tileWidth[i] = tiff.getOptimalTileWidth();
-      tileHeight[i] = tiff.getOptimalTileHeight();
+      if (checkSuffix(filename, TiffReader.TIFF_SUFFIXES)) {
+        tiff.setId(filename);
+
+        core[i].sizeX = tiff.getSizeX();
+        core[i].sizeY = tiff.getSizeY();
+        tileWidth[i] = tiff.getOptimalTileWidth();
+        tileHeight[i] = tiff.getOptimalTileHeight();
+      }
     }
 
     for (int i=0; i<numSeries; i++) {

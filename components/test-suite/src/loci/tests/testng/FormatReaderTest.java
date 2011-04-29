@@ -557,7 +557,8 @@ public class FormatReaderTest {
 
         // if CreationDate is before 1990, it's probably invalid
         String date = retrieve.getImageAcquiredDate(i);
-        if (date != null) {
+        String configDate = config.getDate();
+        if (date != null && !date.equals(configDate)) {
           date = date.trim();
           long acquiredDate = DateTools.getTime(date, DateTools.ISO8601_FORMAT);
           long saneDate =

@@ -192,7 +192,11 @@ public class TCSReader extends FormatReader {
       n /= tiffReaders.length;
       plane = n % tiffReaders.length;
     }
+    if (lastPlane != 0) {
+      tiffReaders[lastPlane].close();
+    }
     lastPlane = n;
+    tiffReaders[n].setId(tiffs.get(n));
     return tiffReaders[n].openBytes(plane, buf, x, y, w, h);
   }
 
@@ -271,8 +275,8 @@ public class TCSReader extends FormatReader {
 
     for (int i=0; i<tiffReaders.length; i++) {
       tiffReaders[i] = new TiffReader();
-      tiffReaders[i].setId(tiffs.get(i));
     }
+    tiffReaders[0].setId(tiffs.get(0));
 
     int[] ch = new int[ifds.size()];
     int[] idx = new int[ifds.size()];
@@ -285,28 +289,31 @@ public class TCSReader extends FormatReader {
     core[0].dimensionOrder = isRGB() ? "XYC" : "XY";
 
     if (isGroupFiles()) {
-      FilePattern fp =
-        new FilePattern(new Location(currentId).getAbsoluteFile());
-      AxisGuesser guesser =
-        new AxisGuesser(fp, "XYTZC", 1, ifds.size(), 1, true);
+      try {
+        FilePattern fp =
+          new FilePattern(new Location(currentId).getAbsoluteFile());
+        AxisGuesser guesser =
+          new AxisGuesser(fp, "XYTZC", 1, ifds.size(), 1, true);
 
-      int[] axisTypes = guesser.getAxisTypes();
-      int[] count = fp.getCount();
+        int[] axisTypes = guesser.getAxisTypes();
+        int[] count = fp.getCount();
 
-      for (int i=axisTypes.length-1; i>=0; i--) {
-        if (axisTypes[i] == AxisGuesser.Z_AXIS) {
-          if (getDimensionOrder().indexOf("Z") == -1) {
-            core[0].dimensionOrder += "Z";
+        for (int i=axisTypes.length-1; i>=0; i--) {
+          if (axisTypes[i] == AxisGuesser.Z_AXIS) {
+            if (getDimensionOrder().indexOf("Z") == -1) {
+              core[0].dimensionOrder += "Z";
+            }
+            core[0].sizeZ *= count[i];
           }
-          core[0].sizeZ *= count[i];
-        }
-        else if (axisTypes[i] == AxisGuesser.C_AXIS) {
-          if (getDimensionOrder().indexOf("C") == -1) {
-            core[0].dimensionOrder += "C";
+          else if (axisTypes[i] == AxisGuesser.C_AXIS) {
+            if (getDimensionOrder().indexOf("C") == -1) {
+              core[0].dimensionOrder += "C";
+            }
+            core[0].sizeC *= count[i];
           }
-          core[0].sizeC *= count[i];
         }
       }
+      catch (NullPointerException e) { }
     }
 
     for (int i=0; i<ifds.size(); i++) {
@@ -514,7 +521,10 @@ public class TCSReader extends FormatReader {
         if (file.length() != current.getAbsolutePath().length()) continue;
 
         RandomAccessInputStream rais = new RandomAccessInputStream(file);
-        if (Math.abs(rais.length() - in.length()) > 16) continue;
+        if (Math.abs(rais.length() - in.length()) > 16) {
+          rais.close();
+          continue;
+        }
         TiffParser tp = new TiffParser(rais);
         IFD ifd = tp.getIFDs().get(0);
 

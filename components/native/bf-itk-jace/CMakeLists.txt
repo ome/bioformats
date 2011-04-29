@@ -353,6 +353,7 @@ install(FILES
   DESTINATION "${BioFormatsImageIO_DIST_DIR}"
 )
 
+if(APPLE)
 add_custom_command(
   TARGET BioFormatsIOPlugin
   DEPENDS "${BF_CPP_DIST_DIR}/${BF_LIB_PREFIX}jace.jni${BF_LIB_PREFIX}"
@@ -366,6 +367,7 @@ install(FILES
   "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_DIST_DIR}/${BF_LIB_PREFIX}jace.jni${BF_LIB_PREFIX}"
   DESTINATION "${BioFormatsImageIO_DIST_DIR}"
 )
+endif(APPLE)
 
 add_custom_command(
   TARGET BioFormatsIOPlugin
