@@ -12,7 +12,7 @@ target_link_libraries(minimum_writer bfcpp jace "${JAVA_JVM_LIBRARY}")
 
 ### post-build copies to dist dir ###
 if(NOT DEFINED BioFormatsImageIO_JACE_DIR)
-  set(BioFormatsImageIO_JACE_DIR jace/)
+  set(BioFormatsImageIO_JACE_DIR jace)
 endif(NOT DEFINED BioFormatsImageIO_JACE_DIR)
 
 if(NOT DEFINED BioFormatsImageIO_ARTIFACT_DIR)
@@ -36,6 +36,10 @@ if(APPLE)
  if(NOT DEFINED BF_SUFFIX)
    set(BF_SUFFIX .dylib)
  endif(NOT DEFINED BF_SUFFIX)
+
+ if(NOT DEFINED BF_JNI_SUFFIX)
+   set(BF_JNI_SUFFIX .jnilib)
+ endif(NOT DEFINED BF_JNI_SUFFIX)
 
  if(NOT DEFINED BF_EXE_SUFFIX)
    set(BF_EXE_SUFFIX "")
@@ -96,48 +100,54 @@ if(WIN64)
 endif(WIN64)
 
 
+if(APPLE)
+#make a .dylib version of libjace
+  add_custom_command(
+    TARGET bfcpp
+    DEPENDS "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_JACE_DIR}${BF_BUILD_TYPE}/{BF_LIB_PREFIX}jace${BF_JNI_SUFFIX}"
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+    "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_JACE_DIR}${BF_BUILD_TYPE}/${BF_LIB_PREFIX}jace${BF_JNI_SUFFIX}"
+    "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_JACE_DIR}${BF_BUILD_TYPE}/${BF_LIB_PREFIX}jace${BF_SUFFIX}"
+    VERBATIM
+  )
+
+  add_custom_command(
+    TARGET bfcpp
+    DEPENDS "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_JACE_DIR}${BF_BUILD_TYPE}/{BF_LIB_PREFIX}jace${BF_JNI_SUFFIX}"
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+    "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_JACE_DIR}${BF_BUILD_TYPE}/${BF_LIB_PREFIX}jace${BF_JNI_SUFFIX}"
+    "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_DIST_DIR}/${BF_LIB_PREFIX}jace${BF_JNI_SUFFIX}"
+    VERBATIM
+  )
+  install(FILES
+    "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_DIST_DIR}/${BF_LIB_PREFIX}jace${BF_JNI_SUFFIX}"
+    DESTINATION "${BioFormatsImageIO_DIST_DIR}"
+  )
+
+  add_custom_command(
+    TARGET bfcpp
+    DEPENDS "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_JACE_DIR}${BF_BUILD_TYPE}/{BF_LIB_PREFIX}jace${BF_JNI_SUFFIX}"
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+    "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_JACE_DIR}${BF_BUILD_TYPE}/${BF_LIB_PREFIX}jace${BF_JNI_SUFFIX}"
+    "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_DIST_DIR}/${BF_LIB_PREFIX}jace${BF_SUFFIX}"
+    VERBATIM
+  )
+  install(FILES
+    "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_DIST_DIR}/${BF_LIB_PREFIX}jace${BF_SUFFIX}"
+    DESTINATION "${BioFormatsImageIO_DIST_DIR}"
+  )
+endif(APPLE)
+
 #copy libjace
 add_custom_command(
   TARGET bfcpp
-  DEPENDS "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_JACE_DIR}${BF_BUILD_TYPE}/${BF_LIB_PREFIX}jace.jni${BF_LIB_PREFIX}"
+  DEPENDS "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_JACE_DIR}${BF_BUILD_TYPE}/${BF_LIB_PREFIX}jace${BF_SUFFIX}"
   POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy
-  "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_JACE_DIR}${BF_BUILD_TYPE}/${BF_LIB_PREFIX}jace.jni${BF_LIB_PREFIX}"
-  "${CMAKE_BINARY_DIR}${BF_BUILD_TYPE}/${BF_LIB_PREFIX}jace.jni${BF_LIB_PREFIX}"
-  VERBATIM
-)
-
-add_custom_command(
-  TARGET bfcpp
-  DEPENDS "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_JACE_DIR}${BF_BUILD_TYPE}/${BF_LIB_PREFIX}jace.jni${BF_LIB_PREFIX}"
-  POST_BUILD
-  COMMAND ${CMAKE_COMMAND} -E copy
-  "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_JACE_DIR}${BF_BUILD_TYPE}/${BF_LIB_PREFIX}jace.jni${BF_LIB_PREFIX}"
-  "${CMAKE_BINARY_DIR}${BF_BUILD_TYPE}/${BF_LIB_PREFIX}jace${BF_SUFFIX}"
-  VERBATIM
-)
-
-add_custom_command(
-  TARGET bfcpp
-  DEPENDS "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_JACE_DIR}${BF_BUILD_TYPE}/${BF_LIB_PREFIX}jace.jni${BF_LIB_PREFIX}"
-  POST_BUILD
-  COMMAND ${CMAKE_COMMAND} -E copy
-  "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_JACE_DIR}${BF_BUILD_TYPE}/${BF_LIB_PREFIX}jace.jni${BF_LIB_PREFIX}"
-  "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_DIST_DIR}/${BF_LIB_PREFIX}jace.jni${BF_LIB_PREFIX}"
-  VERBATIM
-)
-install(FILES
-  "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_DIST_DIR}/${BF_LIB_PREFIX}jace.jni${BF_LIB_PREFIX}"
-  DESTINATION "${BioFormatsImageIO_DIST_DIR}"
-)
-
-#make a .dylib/.so/.dll version of libjace
-add_custom_command(
-  TARGET bfcpp
-  DEPENDS "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_JACE_DIR}${BF_BUILD_TYPE}/{BF_LIB_PREFIX}jace.jni${BF_LIB_PREFIX}"
-  POST_BUILD
-  COMMAND ${CMAKE_COMMAND} -E copy
-  "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_JACE_DIR}${BF_BUILD_TYPE}/${BF_LIB_PREFIX}jace.jni${BF_LIB_PREFIX}"
+  "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_JACE_DIR}${BF_BUILD_TYPE}/${BF_LIB_PREFIX}jace${BF_SUFFIX}"
   "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_DIST_DIR}/${BF_LIB_PREFIX}jace${BF_SUFFIX}"
   VERBATIM
 )
