@@ -725,7 +725,7 @@ public class OpenlabReader extends FormatReader {
       // <channel name><optional Z section>_<plate>_<well>_<field>
 
       String[] tokens = name.split("_");
-      if (tokens.length == 4) {
+      if (tokens.length == 4 && !tokens[0].toLowerCase().endsWith("xy")) {
         specialPlateNames = true;
 
         if (!uniqueF.contains(tokens[3])) {
