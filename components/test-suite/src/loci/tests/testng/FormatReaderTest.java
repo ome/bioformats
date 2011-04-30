@@ -1219,6 +1219,16 @@ public class FormatReaderTest {
             continue;
           }
 
+          // Deltavision datasets are allowed to have different
+          // used file counts.  In some cases, a log file is associated
+          // with multiple .dv files, so initializing the log file
+          // will give different results.
+          if (file.toLowerCase().endsWith(".dv") &&
+            base[i].toLowerCase().endsWith(".log"))
+          {
+            continue;
+          }
+
           if (comp.length != base.length) {
             success = false;
             msg = base[i] + " (file list length was " + comp.length +

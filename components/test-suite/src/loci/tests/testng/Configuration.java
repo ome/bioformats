@@ -478,7 +478,7 @@ public class Configuration {
     for (IniTable table : ini) {
       String tableName = table.get(IniTable.HEADER_KEY);
       Location file = new Location(dataFile);
-      if (tableName.startsWith(file.getName())) {
+      if (tableName.startsWith(file.getName() + " ")) {
         newIni.add(table);
 
         if (tableName.endsWith("global")) {
