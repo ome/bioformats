@@ -135,10 +135,13 @@ public class OpenlabReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
   public byte[][] get8BitLookupTable() {
-    if (luts != null && series < planeOffsets.length &&
-      lastPlane < planeOffsets[series].length)
-    {
-      return luts.get(planeOffsets[series][lastPlane]);
+    if (luts != null) {
+      if (series < planeOffsets.length && lastPlane < planeOffsets[series].length) {
+        return luts.get(planeOffsets[series][lastPlane]);
+      }
+      else if (lastPlane < luts.size()) {
+        return luts.get(lastPlane);
+      }
     }
     return null;
   }
@@ -232,8 +235,11 @@ public class OpenlabReader extends FormatReader {
           }
 
           if (isIndexed()) {
-            luts.setElementAt(pict.get8BitLookupTable(),
-              planeOffsets[series][lastPlane]);
+            int index = no;
+            if (series < planeOffsets.length) {
+              index = planeOffsets[series][lastPlane];
+            }
+            luts.setElementAt(pict.get8BitLookupTable(), index);
           }
 
           r.openBytes(0, buf, x, y, w, h);
