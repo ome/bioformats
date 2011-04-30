@@ -725,7 +725,16 @@ public class OpenlabReader extends FormatReader {
       // <channel name><optional Z section>_<plate>_<well>_<field>
 
       String[] tokens = name.split("_");
-      if (tokens.length == 4 && !tokens[0].toLowerCase().endsWith("xy")) {
+      boolean validField = false;
+      try {
+        Integer.parseInt(tokens[tokens.length - 1]);
+        validField = true;
+      }
+      catch (NumberFormatException e) { }
+
+      if (tokens.length == 4 && !tokens[0].toLowerCase().endsWith("xy") &&
+        validField)
+      {
         specialPlateNames = true;
 
         if (!uniqueF.contains(tokens[3])) {
@@ -853,7 +862,7 @@ public class OpenlabReader extends FormatReader {
     in.read(buf);
     boolean found = false;
 
-    while (!found) {
+    while (!found && in.getFilePointer() < in.length()) {
       for (int i=0; i<buf.length-7; i++) {
         if (buf[i] == 0x49 && buf[i + 1] == 0x56 && buf[i + 2] == 0x45 &&
           buf[i + 3] == 0x41 && buf[i + 4] == 0x64 && buf[i + 5] == 0x62 &&
@@ -865,8 +874,8 @@ public class OpenlabReader extends FormatReader {
         }
       }
       if (!found) {
-        for (int i=6; i>=0; i--) {
-          buf[6 - i] = buf[buf.length - i];
+        for (int i=0; i<7; i++) {
+          buf[i] = buf[buf.length - (7 - i)];
         }
         in.read(buf, 7, buf.length - 7);
       }
