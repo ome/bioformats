@@ -85,6 +85,22 @@ public class CellSensReader extends FormatReader {
     return usedFiles;
   }
 
+  /* @see loci.formats.IFormatHandler#openThumbBytes(int) */
+  public byte[] openThumbBytes(int no) throws FormatException, IOException {
+    FormatTools.assertId(currentId, true, 1);
+
+    int currentSeries = getSeries();
+
+    if (currentSeries >= usedFiles.length - 1) {
+      return super.openThumbBytes(no);
+    }
+
+    setSeries(usedFiles.length);
+    byte[] thumb = FormatTools.openThumbBytes(this, 0);
+    setSeries(currentSeries);
+    return thumb;
+  }
+
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
@@ -107,7 +123,7 @@ public class CellSensReader extends FormatReader {
 
       for (int ty=0; ty<tilesHigh; ty++) {
         for (int tx=0; tx<tilesWide; tx++) {
-          int tile = ty * tilesWide + tx;
+          int tile = (no * tilesWide * tilesHigh) + ty * tilesWide + tx;
 
           Region tileBounds =
             new Region(tx * TILE_SIZE, ty * TILE_SIZE, TILE_SIZE, TILE_SIZE);
@@ -271,7 +287,7 @@ public class CellSensReader extends FormatReader {
 
         core[s].sizeZ = 1;
         core[s].sizeT = 1;
-        core[s].imageCount = 1;
+        core[s].imageCount = core[s].sizeZ * core[s].sizeT;
         core[s].littleEndian = false;
         core[s].rgb = core[s].sizeC > 1;
         core[s].interleaved = core[s].rgb;
