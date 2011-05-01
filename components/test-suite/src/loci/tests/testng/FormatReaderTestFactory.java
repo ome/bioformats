@@ -120,7 +120,12 @@ public class FormatReaderTestFactory {
       // scan for files
       System.out.println("Scanning for files...");
       long start = System.currentTimeMillis();
-      TestTools.getFiles(baseDir, files, FormatReaderTest.configTree);
+      try {
+        TestTools.getFiles(baseDir, files, FormatReaderTest.configTree);
+      }
+      catch (Exception e) {
+        LOGGER.info("Failed to retrieve complete list of files", e);
+      }
       long end = System.currentTimeMillis();
       double time = (end - start) / 1000.0;
       LOGGER.info(TestTools.DIVIDER);
