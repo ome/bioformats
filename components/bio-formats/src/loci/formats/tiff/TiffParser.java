@@ -618,20 +618,22 @@ public class TiffParser {
 
     if (planarConfig == 2 && !ifd.isTiled() && ifd.getSamplesPerPixel() > 1) {
       int channel = row % stripOffsets.length;
-      int realBytes = ifd.getBytesPerSample()[channel];
-      if (realBytes != pixel) {
-        // re-pack pixels to account for differing bits per sample
+      if (channel < ifd.getBytesPerSample().length) {
+        int realBytes = ifd.getBytesPerSample()[channel];
+        if (realBytes != pixel) {
+          // re-pack pixels to account for differing bits per sample
 
-        boolean littleEndian = ifd.isLittleEndian();
-        int[] samples = new int[buf.length / pixel];
-        for (int i=0; i<samples.length; i++) {
-          samples[i] =
-            DataTools.bytesToInt(buf, i * realBytes, realBytes, littleEndian);
-        }
+          boolean littleEndian = ifd.isLittleEndian();
+          int[] samples = new int[buf.length / pixel];
+          for (int i=0; i<samples.length; i++) {
+            samples[i] =
+              DataTools.bytesToInt(buf, i * realBytes, realBytes, littleEndian);
+          }
 
-        for (int i=0; i<samples.length; i++) {
-          DataTools.unpackBytes(
-            samples[i], buf, i * pixel, pixel, littleEndian);
+          for (int i=0; i<samples.length; i++) {
+            DataTools.unpackBytes(
+              samples[i], buf, i * pixel, pixel, littleEndian);
+          }
         }
       }
     }
