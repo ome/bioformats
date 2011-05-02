@@ -515,7 +515,7 @@ public class LociFunctions extends MacroFunctions {
       IJ.log("-- Gets the base filename used to initialize this dataset.");
       IJ.log("Ext.openImage(title, no)");
       IJ.log("-- Opens the no'th plane in a new window named 'title'.");
-      IJ.log("Ext.openImage(title, no, x, y, width, height)");
+      IJ.log("Ext.openSubImage(title, no, x, y, width, height)");
       IJ.log("-- Opens a subset of the no'th plane in a new window");
       IJ.log("-- named 'title'.");
       IJ.log("Ext.close()");
