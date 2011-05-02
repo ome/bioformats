@@ -61,6 +61,7 @@ import loci.formats.ReaderWrapper;
 import loci.formats.gui.AWTImageTools;
 import loci.formats.gui.BufferedImageReader;
 import loci.formats.in.AnalyzeReader;
+import loci.formats.in.APLReader;
 import loci.formats.in.BioRadReader;
 import loci.formats.in.GelReader;
 import loci.formats.in.JPEGReader;
@@ -72,6 +73,7 @@ import loci.formats.in.ND2Reader;
 import loci.formats.in.NiftiReader;
 import loci.formats.in.NRRDReader;
 import loci.formats.in.OMETiffReader;
+import loci.formats.in.SISReader;
 import loci.formats.in.TiffDelegateReader;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataRetrieve;
@@ -1470,6 +1472,12 @@ public class FormatReaderTest {
             // ND2Reader is allowed to accept JPEG-2000 files
             if (result && r instanceof JPEG2000Reader &&
               readers[j] instanceof ND2Reader)
+            {
+              continue;
+            }
+
+            if (result && r instanceof APLReader &&
+              readers[j] instanceof SISReader)
             {
               continue;
             }
