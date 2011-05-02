@@ -253,7 +253,9 @@ public class APLReader extends FormatReader {
     used.add(tnb + "_1.tnb");
     used.add(tnb + ".apl");
     String idPath = new Location(id).getAbsolutePath();
-    if (!used.contains(idPath)) used.add(idPath);
+    if (!used.contains(idPath) && checkSuffix(idPath, METADATA_SUFFIXES)) {
+      used.add(idPath);
+    }
 
     // calculate indexes to relevant metadata
 
