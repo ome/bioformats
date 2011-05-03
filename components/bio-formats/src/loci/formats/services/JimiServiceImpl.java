@@ -90,6 +90,9 @@ public class JimiServiceImpl implements JimiService {
     this.in = in;
     tiles = new TileCache(y, h);
 
+    // TODO: pre-process the stream to find any DNL markers.
+    // See ticket #5092.
+
     ImageProducer producer = Jimi.getImageProducer(this.in);
     consumer = new JimiConsumer(producer, y, h);
     producer.startProduction(consumer);
