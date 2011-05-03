@@ -1,0 +1,19 @@
+Format specification for Activated Pseudo Format (APF)
+------------------------------------------------------
+Purpose:
+Activated Pseudo Format is a simple-as-possible format created for
+demostrative encoders and decoders.
+
+Format:
+APF images are all 32bit alpha/red/green/blue images of the following
+form:
+
+[Header]
+  Signature       ASCII string "APF"
+  Width           Big-endian 32bit integer image pixel width
+  Height          Big-endian 32bit integer image pixel height
+[Data]
+  Pixel data      Right to left, top to bottom pixel data in
+                  big-endian integers with 8 bits per channel,
+                  ordered alpha, red, green then blue.
+

@@ -50,6 +50,9 @@ public class NDPIReader extends BaseTiffReader {
   // -- Constants --
 
   private static final int MAX_SIZE = 8192;
+  private static final int THUMB_TAG_1 = 65426;
+  private static final int THUMB_TAG_2 = 65439;
+  private static final int METADATA_TAG = 65449;
 
   // -- Fields --
 
@@ -192,6 +195,10 @@ public class NDPIReader extends BaseTiffReader {
     // repopulate core metadata
 
     for (int i=0; i<ifds.size(); i++) {
+      IFD ifd = ifds.get(i);
+      ifd.remove(THUMB_TAG_1);
+      ifd.remove(THUMB_TAG_2);
+      ifds.set(i, ifd);
       tiffParser.fillInIFD(ifds.get(i));
     }
 
@@ -257,8 +264,12 @@ public class NDPIReader extends BaseTiffReader {
 
     long offset = ifd.getStripOffsets()[0];
     int byteCount = (int) ifd.getStripByteCounts()[0];
+    if (in != null) {
+      in.close();
+    }
     in = new RandomAccessInputStream(currentId);
     in.seek(offset);
+    in.setLength(offset + byteCount);
 
     service.initialize(in, y, h);
   }
