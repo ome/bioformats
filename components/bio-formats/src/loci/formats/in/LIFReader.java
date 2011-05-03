@@ -757,6 +757,7 @@ public class LIFReader extends FormatReader {
       translateTimestamps(image, i);
       translateLaserLines(image, i);
       translateROIs(image, i);
+      translateSingleROIs(image, i);
       translateDetectors(image, i);
 
       Stack<String> nameStack = new Stack<String>();
@@ -924,7 +925,7 @@ public class LIFReader extends FormatReader {
       }
       String color = roiNode.getAttribute("color");
       if (color != null) {
-        roi.color = Integer.parseInt(color);
+        roi.color = Long.parseLong(color);
       }
       roi.name = roiNode.getAttribute("name");
       roi.fontName = roiNode.getAttribute("fontName");
@@ -959,6 +960,71 @@ public class LIFReader extends FormatReader {
       if (getNodes(imageNode, "ROI") != null) {
         alternateCenter = true;
       }
+    }
+  }
+
+  private void translateSingleROIs(Element imageNode, int image)
+    throws FormatException
+  {
+    if (imageROIs[image] != null) return;
+    NodeList children = getNodes(imageNode, "ROI");
+    if (children == null) return;
+    children = getNodes((Element) children.item(0), "Children");
+    if (children == null) return;
+    children = getNodes((Element) children.item(0), "Element");
+    if (children == null) return;
+    imageROIs[image] = new ROI[children.getLength()];
+
+    for (int r=0; r<children.getLength(); r++) {
+      NodeList rois = getNodes((Element) children.item(r), "ROISingle");
+
+      Element roiNode = (Element) rois.item(0);
+      ROI roi = new ROI();
+
+      String type = roiNode.getAttribute("RoiType");
+      if (type != null) {
+        roi.type = Integer.parseInt(type);
+      }
+      String color = roiNode.getAttribute("Color");
+      if (color != null) {
+        roi.color = Long.parseLong(color);
+      }
+      Element parent = (Element) roiNode.getParentNode();
+      parent = (Element) parent.getParentNode();
+      roi.name = parent.getAttribute("Name");
+
+      NodeList vertices = getNodes(roiNode, "P");
+
+      double sizeX = physicalSizeXs.get(image);
+      double sizeY = physicalSizeYs.get(image);
+
+      for (int v=0; v<vertices.getLength(); v++) {
+        Element vertex = (Element) vertices.item(v);
+        String xx = vertex.getAttribute("X");
+        String yy = vertex.getAttribute("Y");
+
+        if (xx != null) {
+          roi.x.add(parseDouble(xx) / sizeX);
+        }
+        if (yy != null) {
+          roi.y.add(parseDouble(yy) / sizeY);
+        }
+      }
+
+      Element transform = (Element) getNodes(roiNode, "Transformation").item(0);
+
+      roi.rotation = parseDouble(transform.getAttribute("Rotation"));
+
+      Element scaling = (Element) getNodes(transform, "Scaling").item(0);
+      roi.scaleX = parseDouble(scaling.getAttribute("XScale"));
+      roi.scaleY = parseDouble(scaling.getAttribute("YScale"));
+
+      Element translation =
+        (Element) getNodes(transform, "Translation").item(0);
+      roi.transX = parseDouble(translation.getAttribute("X")) / sizeX;
+      roi.transY = parseDouble(translation.getAttribute("Y")) / sizeY;
+
+      imageROIs[image][r] = roi;
     }
   }
 
@@ -1474,7 +1540,7 @@ public class LIFReader extends FormatReader {
     public double scaleX, scaleY;
     public double rotation;
 
-    public int color;
+    public long color;
     public int linewidth;
 
     public String text;
@@ -1499,7 +1565,9 @@ public class LIFReader extends FormatReader {
 
       store.setROIID(MetadataTools.createLSID("ROI", roi), roi);
       store.setTextID(MetadataTools.createLSID("Shape", roi, 0), roi, 0);
-      if (text == null) text = "";
+      if (text == null) {
+        text = name;
+      }
       store.setTextValue(text, roi, 0);
       if (fontSize != null) {
         store.setTextFontSize(
