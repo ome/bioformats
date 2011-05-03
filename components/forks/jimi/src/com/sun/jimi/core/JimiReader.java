@@ -787,16 +787,12 @@ public class JimiReader
 		}
 		else {
 			try {
-				ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
-				byte[] buf = new byte[STREAM_BUFFER_SIZE];
-
-				int read_len = 0;
-				while ((read_len = input.read(buf)) != -1) {
-					byteOut.write(buf, 0, read_len);
-				}
+        byte[] data = new byte[input.available()];
+				int offset = 0;
+        while (offset < data.length - 1) {
+          offset += input.read(data, offset, data.length - offset);
+        }
 				input.close();
-
-				byte[] data = byteOut.toByteArray();
 
 				awtimage = toolkit.createImage(data);
 			}
