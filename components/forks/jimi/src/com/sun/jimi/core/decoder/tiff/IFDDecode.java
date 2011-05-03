@@ -113,11 +113,11 @@ class IFDDecode
 	{
 		TIFField f;
 
-		Enumeration enum = ifd.getFields();
+		Enumeration e = ifd.getFields();
 		TIFField tf;
-		while (enum.hasMoreElements())
+		while (e.hasMoreElements())
 		{
-			tf = (TIFField)enum.nextElement();
+			tf = (TIFField)e.nextElement();
 			decodeField(tf);
 		}
 	}

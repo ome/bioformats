@@ -25,12 +25,12 @@ import com.sun.jimi.core.util.JimiUtil;
  */
 public class JimiRasterImageEnumeration
 {
-	protected JimiImageEnumeration enum;
+	protected JimiImageEnumeration e;
 	protected boolean synchronous;
 
 	public JimiRasterImageEnumeration(JimiImageEnumeration enumeration)
 	{
-		enum = enumeration;
+		e = enumeration;
 	}
 
 	public JimiRasterImageEnumeration(JimiImageEnumeration enumeration, boolean synchronous)
@@ -46,7 +46,7 @@ public class JimiRasterImageEnumeration
 	public JimiRasterImage getNextImage()
 		throws JimiException
 	{
-		JimiRasterImage image = JimiUtil.asJimiRasterImage(enum.getNextImage());
+		JimiRasterImage image = JimiUtil.asJimiRasterImage(e.getNextImage());
 		if (synchronous) {
 			image.waitFinished();
 		}
@@ -59,7 +59,7 @@ public class JimiRasterImageEnumeration
 	 */
 	public boolean hasMoreImages()
 	{
-		return enum.hasMoreImages();
+		return e.hasMoreImages();
 	}
 
 	/**
@@ -69,7 +69,7 @@ public class JimiRasterImageEnumeration
 	 */
 	public int countImages()
 	{
-		return enum.countImages();
+		return e.countImages();
 	}
 }
 
