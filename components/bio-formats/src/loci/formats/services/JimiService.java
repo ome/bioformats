@@ -40,13 +40,14 @@ import loci.common.services.ServiceException;
 public interface JimiService extends Service {
 
   /** Initialize the given file. */
-  public void initialize(String id);
+  public void initialize(String id, int imageWidth);
 
   /** Initialize the given file. */
-  public void initialize(RandomAccessInputStream in);
+  public void initialize(RandomAccessInputStream in, int imageWidth);
 
   /** Initialize the given file. */
-  public void initialize(RandomAccessInputStream in, int y, int h);
+  public void initialize(
+    RandomAccessInputStream in, int y, int h, int imageWidth);
 
   /**
    * Return the scanline for row 'y' from the currently initialized file.
