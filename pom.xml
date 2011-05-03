@@ -173,17 +173,6 @@
       <id>unifi.it</id>
       <url>http://ulisse.pin.unifi.it:8081/nexus/content/groups/open.repos</url>
     </repository>
-    <!-- NB: for sezpoz -->
-    <repository>
-      <id>java.net</id>
-      <url>http://download.java.net/maven/2</url>
-    </repository>
-    <!-- NB: for netbeans -->
-    <repository>
-      <id>netbeans</id>
-      <name>Repository for hosting NetBeans API artifacts</name>
-      <url>http://bits.netbeans.org/maven2</url>
-    </repository>
   </repositories>
 
   <distributionManagement>
