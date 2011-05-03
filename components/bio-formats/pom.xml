@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+    http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>loci</groupId>
+    <artifactId>bio-formats-base</artifactId>
+    <version>5.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>bio-formats</artifactId>
+
+  <name>Bio-Formats library</name>
+  <description>A library for reading and writing popular microscopy file formats.</description>
+  <url>http://loci.wisc.edu/software/bio-formats</url>
+  <inceptionYear>2005</inceptionYear>
+
+  <licenses>
+    <license>
+      <name>GPL 2 or later</name>
+      <url>http://www.gnu.org/licenses/gpl-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>jai_imageio</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>jimi</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>loci-common</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>lwf-stubs</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>mdbtools-java</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>metakit</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>ome-xml</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>poi-loci</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.jgoodies</groupId>
+      <artifactId>forms</artifactId>
+      <version>1.2.1</version>
+    </dependency>
+    <dependency>
+      <groupId>essi-unidata</groupId>
+      <artifactId>netcdf-java</artifactId>
+      <version>4.0.41</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.5.10</version>
+    </dependency>
+
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>1.2.14</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>xalan</groupId>
+      <artifactId>serializer</artifactId>
+      <version>2.7.1</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>1.5.10</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>xalan</groupId>
+      <artifactId>xalan</artifactId>
+      <version>2.7.1</version>
+      <scope>runtime</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.testng</groupId>
+      <artifactId>testng</artifactId>
+      <version>5.12.1</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifest>
+              <mainClass>loci.formats.gui.ImageViewer</mainClass>
+              <packageName>loci.formats</packageName>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>loci.maven.plugins</groupId>
+        <artifactId>cppwrap-maven-plugin</artifactId>
+        <version>1.0-SNAPSHOT</version>
+        <configuration>
+          <headerFile>src/main/cppwrap/header.txt</headerFile>
+          <libraries>
+            <library>${project.groupId}:loci-common:jar:${project.version}</library>
+            <library>${project.groupId}:ome-xml:jar:${project.version}</library>
+          </libraries>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <developers>
+    <developer>
+      <id>melissa</id>
+      <name>Melissa Linkert</name>
+      <email>melissa.linkert@glencoesoftware.com</email>
+      <url>http://openmicroscopy.org/site/about/development-teams/glencoe-software</url>
+      <organization>Glencoe Software</organization>
+      <organizationUrl>http://glencoesoftware.com/</organizationUrl>
+      <roles>
+        <role>architect</role>
+        <role>developer</role>
+      </roles>
+      <timezone>-6</timezone>
+      <properties>
+        <picUrl>http://openmicroscopy.org/site/about/development-teams/glencoe-software/melissalinkert.png</picUrl>
+      </properties>
+    </developer>
+    <developer>
+      <id>curtis</id>
+      <name>Curtis Rueden</name>
+      <email>ctrueden@wisc.edu</email>
+      <url>http://loci.wisc.edu/people/curtis-rueden</url>
+      <organization>UW-Madison LOCI</organization>
+      <organizationUrl>http://loci.wisc.edu/</organizationUrl>
+      <roles>
+        <role>architect</role>
+        <role>developer</role>
+      </roles>
+      <timezone>-6</timezone>
+      <properties>
+        <picUrl>http://loci.wisc.edu/files/loci/images/people/curtis-2010.jpg</picUrl>
+      </properties>
+    </developer>
+    <developer>
+      <id>callan</id>
+      <name>Chris Allan</name>
+      <email>callan@lifesci.dundee.ac.uk</email>
+      <url>http://openmicroscopy.org/site/about/development-teams/jason</url>
+      <organization>Swedlow Lab, University of Dundee</organization>
+      <organizationUrl>http://www.lifesci.dundee.ac.uk/groups/jason_swedlow/</organizationUrl>
+      <roles>
+        <role>architect</role>
+        <role>developer</role>
+      </roles>
+      <timezone>0</timezone>
+      <properties>
+        <picUrl>http://openmicroscopy.org/site/about/development-teams/jason/chrisallan.jpg</picUrl>
+      </properties>
+    </developer>
+    <developer>
+      <id>brain</id>
+      <name>Brian Loranger</name>
+      <email>brian.loranger@lifesci.dundee.ac.uk</email>
+      <url>http://openmicroscopy.org/site/about/development-teams/jason</url>
+      <organization>Swedlow Lab, University of Dundee</organization>
+      <organizationUrl>http://www.lifesci.dundee.ac.uk/groups/jason_swedlow/</organizationUrl>
+      <roles>
+        <role>developer</role>
+      </roles>
+      <timezone>0</timezone>
+      <properties>
+        <picUrl>http://openmicroscopy.org/site/about/development-teams/jason/brian.jpg</picUrl>
+      </properties>
+    </developer>
+  </developers>
+
+  <contributors>
+    <contributor>
+      <name>Eric Kjellman</name>
+      <email>egkjellman@wisc.edu</email>
+      <organization>UW-Madison LOCI</organization>
+      <organizationUrl>http://loci.wisc.edu/</organizationUrl>
+      <roles>
+        <role>developer</role>
+      </roles>
+      <timezone>-6</timezone>
+    </contributor>
+    <contributor><name>Eric Albert</name></contributor>
+    <contributor><name>Jonathan Armond</name></contributor>
+    <contributor><name>Simon Blanchoud</name></contributor>
+    <contributor><name>Ghislain Bonamy</name></contributor>
+    <contributor><name>Michel Boudinot</name></contributor>
+    <contributor><name>Thomas Caswell</name></contributor>
+    <contributor><name>Tony Collins</name></contributor>
+    <contributor><name>Dmitry Fedorov</name></contributor>
+    <contributor><name>Zack Galbreath</name></contributor>
+    <contributor><name>Shawn Garbett</name></contributor>
+    <contributor><name>Bram Gerritsen</name></contributor>
+    <contributor><name>John Hansen</name></contributor>
+    <contributor><name>Sebastien Huart</name></contributor>
+    <contributor><name>Greg Jefferis</name></contributor>
+    <contributor><name>Lee Kamentsky</name></contributor>
+    <contributor><name>Mikhail Kovtun</name></contributor>
+    <contributor><name>Chris Lesiak</name></contributor>
+    <contributor><name>Cris Luengo</name></contributor>
+    <contributor><name>Rubén Muñoz</name></contributor>
+    <contributor><name>Martin Offterdinger</name></contributor>
+    <contributor><name>Jim Paris</name></contributor>
+    <contributor><name>Nick Perry</name></contributor>
+    <contributor><name>Ville Rantanen</name></contributor>
+    <contributor><name>Wayne Rasband</name></contributor>
+    <contributor><name>Johannes Schindelin</name></contributor>
+    <contributor><name>Brett Shoelson</name></contributor>
+  </contributors>
+
+  <!-- NB: for project parent, in case of partial checkout -->
+  <repositories>
+    <repository>
+      <id>loci.releases</id>
+      <url>http://dev.loci.wisc.edu/maven2/releases</url>
+    </repository>
+    <repository>
+      <id>loci.snapshots</id>
+      <url>http://dev.loci.wisc.edu/maven2/snapshots</url>
+    </repository>
+  </repositories>
+
+</project>
