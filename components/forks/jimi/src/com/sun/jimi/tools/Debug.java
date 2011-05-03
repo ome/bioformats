@@ -72,7 +72,7 @@ public class Debug
       * @param message the message to print if the error
       **/
 
-    public static void assert(boolean flag, String message)
+    public static void assertTrue(boolean flag, String message)
     {
         if (!flag)
         {
@@ -90,7 +90,7 @@ public class Debug
 
     public static void assertNot(boolean flag, String message)
     {
-        assert(!flag, message);
+        assertTrue(!flag, message);
     }
 
     /**

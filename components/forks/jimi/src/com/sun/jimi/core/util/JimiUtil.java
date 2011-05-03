@@ -738,9 +738,9 @@ public class JimiUtil
 	 */
 	public static void runCommands(Vector commands)
 	{
-		Enumeration enum = commands.elements();
-		while (enum.hasMoreElements()) {
-			((Runnable)enum.nextElement()).run();
+		Enumeration e = commands.elements();
+		while (e.hasMoreElements()) {
+			((Runnable)e.nextElement()).run();
 		}
 	}
 

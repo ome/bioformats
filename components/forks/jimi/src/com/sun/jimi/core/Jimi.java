@@ -899,9 +899,9 @@ public class Jimi
 	public static String[] getEncoderTypes()
 	{
 		String[] types = new String[JimiControl.mimeToEncoderMap.size()];
-		Enumeration enum = JimiControl.mimeToEncoderMap.keys();
-		for (int i = 0; (i < types.length) && (enum.hasMoreElements()); i++) {
-			types[i] = (String)enum.nextElement();
+		Enumeration e = JimiControl.mimeToEncoderMap.keys();
+		for (int i = 0; (i < types.length) && (e.hasMoreElements()); i++) {
+			types[i] = (String)e.nextElement();
 		}
 		return types;
 	}
@@ -913,9 +913,9 @@ public class Jimi
 	public static String[] getDecoderTypes()
 	{
 		String[] types = new String[JimiControl.mimeToDecoderMap.size()];
-		Enumeration enum = JimiControl.mimeToDecoderMap.keys();
-		for (int i = 0; (i < types.length) && (enum.hasMoreElements()); i++) {
-			types[i] = (String)enum.nextElement();
+		Enumeration e = JimiControl.mimeToDecoderMap.keys();
+		for (int i = 0; (i < types.length) && (e.hasMoreElements()); i++) {
+			types[i] = (String)e.nextElement();
 		}
 		return types;
 	}
