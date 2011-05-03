@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path=""/>
-	<classpathentry exported="true" kind="lib" path="JimiProClasses.jar"/>
 	<classpathentry exported="true" kind="lib" path="ant-contrib-1.0b3.jar"/>
 	<classpathentry exported="true" kind="lib" path="checkstyle-all-5.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="clibwrapper_jiio.jar"/>
