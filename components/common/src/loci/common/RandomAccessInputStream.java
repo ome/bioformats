@@ -68,6 +68,8 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
   /** The file name. */
   protected String file;
 
+  protected long length = -1;
+
   // -- Constructors --
 
   /**
@@ -87,6 +89,7 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
     raf = handle;
     raf.setOrder(ByteOrder.BIG_ENDIAN);
     seek(0);
+    length = -1;
   }
 
   /** Constructs a random access stream around the given byte array. */
@@ -103,7 +106,21 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
 
   /** Gets the number of bytes in the file. */
   public long length() throws IOException {
-    return raf.length();
+    return length < 0 ? raf.length() : length;
+  }
+
+  /**
+   * Sets the length of the stream.
+   * The new length must be less than the real length of the stream.
+   * This allows us to work with a truncated view of a file, without modifying
+   * the file itself.
+   *
+   * Passing in a negative value will reset the length to the stream's real length.
+   */
+  public void setLength(long newLength) throws IOException {
+    if (newLength < length()) {
+      this.length = newLength;
+    }
   }
 
   /** Gets the current (absolute) file pointer. */
