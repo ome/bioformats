@@ -84,7 +84,7 @@ public class JimiJPEGReader extends FormatReader {
     try {
       ServiceFactory factory = new ServiceFactory();
       service = factory.getInstance(JimiService.class);
-      service.initialize(id);
+      service.initialize(id, 0);
     }
     catch (DependencyException de) {
       throw new MissingLibraryException("Could not find Jimi library", de);

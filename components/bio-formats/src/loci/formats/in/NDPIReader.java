@@ -271,7 +271,7 @@ public class NDPIReader extends BaseTiffReader {
     in.seek(offset);
     in.setLength(offset + byteCount);
 
-    service.initialize(in, y, h);
+    service.initialize(in, y, h, getSizeX());
   }
 
   private int getIFDIndex(int seriesIndex, int zIndex) {

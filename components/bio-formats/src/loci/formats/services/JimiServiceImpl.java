@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Hashtable;
 
+import loci.common.ByteArrayHandle;
 import loci.common.RandomAccessInputStream;
 import loci.common.Region;
 import loci.common.services.DependencyException;
@@ -67,9 +68,9 @@ public class JimiServiceImpl implements JimiService {
   // -- JimiService API methods --
 
   /* @see loci.formats.services.JimiService#initialize(String) */
-  public void initialize(String id) {
+  public void initialize(String id, int imageWidth) {
     try {
-      initialize(new RandomAccessInputStream(id));
+      initialize(new RandomAccessInputStream(id), imageWidth);
     }
     catch (IOException e) {
       LOGGER.debug("", e);
@@ -79,19 +80,71 @@ public class JimiServiceImpl implements JimiService {
   /**
    * @see loci.formats.services.JimiService#initialize(RandomAccessInputStream)
    */
-  public void initialize(RandomAccessInputStream in) {
-    initialize(in, 0, 0);
+  public void initialize(RandomAccessInputStream in, int imageWidth) {
+    initialize(in, 0, 0, imageWidth);
   }
 
   /**
    * @see loci.formats.services.JimiService#initialize(RandomAccessInputStream)
    */
-  public void initialize(RandomAccessInputStream in, int y, int h) {
+  public void initialize(RandomAccessInputStream in, int y, int h,
+    int imageWidth)
+  {
     this.in = in;
     tiles = new TileCache(y, h);
 
-    // TODO: pre-process the stream to find any DNL markers.
-    // See ticket #5092.
+    // pre-process the stream to make sure that the
+    // image width and height are non-zero
+
+    try {
+      long fp = in.getFilePointer();
+      boolean littleEndian = in.isLittleEndian();
+      in.order(false);
+
+      while (in.getFilePointer() < in.length() - 1) {
+        int code = in.readShort() & 0xffff;
+        int length = in.readShort() & 0xffff;
+        long pointer = in.getFilePointer();
+        if (length > 0xff00 || code < 0xff00) {
+          in.seek(pointer - 3);
+          continue;
+        }
+        if (code == 0xffc0) {
+          in.skipBytes(1);
+          int height = in.readShort() & 0xffff;
+          int width = in.readShort() & 0xffff;
+          if (height == 0 || width == 0) {
+            if (height == 0) {
+              height = y + h;
+            }
+            if (width == 0) {
+              width = imageWidth;
+            }
+
+            long pos = in.getFilePointer() - fp - 4;
+
+            byte[] buf = new byte[(int) (in.length() - fp)];
+            in.seek(fp);
+            in.read(buf);
+
+            ByteArrayHandle handle = new ByteArrayHandle(buf);
+            handle.seek(pos);
+            handle.writeShort(height);
+            handle.writeShort(width);
+
+            this.in = new RandomAccessInputStream(handle);
+          }
+          break;
+        }
+        else {
+          in.seek(pointer + length - 2);
+        }
+      }
+
+      in.seek(fp);
+      in.order(littleEndian);
+    }
+    catch (IOException e) { }
 
     ImageProducer producer = Jimi.getImageProducer(this.in);
     consumer = new JimiConsumer(producer, y, h);
