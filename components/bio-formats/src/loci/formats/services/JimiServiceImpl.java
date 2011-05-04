@@ -23,8 +23,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.services;
 
-import com.sun.jimi.core.Jimi;
-
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.image.ColorModel;
 import java.awt.image.ImageConsumer;
 import java.awt.image.ImageProducer;
@@ -146,10 +146,18 @@ public class JimiServiceImpl implements JimiService {
     }
     catch (IOException e) { }
 
-    ImageProducer producer = Jimi.getImageProducer(this.in);
-    consumer = new JimiConsumer(producer, y, h);
-    producer.startProduction(consumer);
-    while (producer.isConsumer(consumer));
+    try {
+      Toolkit toolkit = Toolkit.getDefaultToolkit();
+      byte[] data = new byte[this.in.available()];
+      this.in.readFully(data);
+      Image image = toolkit.createImage(data);
+      ImageProducer producer = image.getSource();
+
+      consumer = new JimiConsumer(producer, y, h);
+      producer.startProduction(consumer);
+      while (producer.isConsumer(consumer));
+    }
+    catch (IOException e) { }
   }
 
   /* @see loci.formats.services.JimiServices#getScanline(int) */
