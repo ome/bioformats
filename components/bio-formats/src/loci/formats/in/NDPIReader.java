@@ -27,14 +27,11 @@ import java.io.IOException;
 
 import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
-import loci.common.services.DependencyException;
-import loci.common.services.ServiceFactory;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
-import loci.formats.MissingLibraryException;
+import loci.formats.codec.JPEGTileDecoder;
 import loci.formats.meta.MetadataStore;
-import loci.formats.services.JimiService;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.PhotoInterp;
 
@@ -56,7 +53,7 @@ public class NDPIReader extends BaseTiffReader {
 
   // -- Fields --
 
-  private JimiService service;
+  private JPEGTileDecoder decoder;
   private int initializedSeries = -1;
   private int initializedPlane = -1;
 
@@ -104,7 +101,7 @@ public class NDPIReader extends BaseTiffReader {
       initializedSeries = getSeries();
       initializedPlane = no;
     }
-    else if (service.getScanline(y) == null) {
+    else if (decoder.getScanline(y) == null) {
       setupService(y, h, no);
     }
 
@@ -113,7 +110,7 @@ public class NDPIReader extends BaseTiffReader {
     int row = w * c * bytes;
 
     for (int yy=y; yy<y + h; yy++) {
-      byte[] scanline = service.getScanline(yy);
+      byte[] scanline = decoder.getScanline(yy);
       if (scanline != null) {
         System.arraycopy(scanline, x * c * bytes, buf, (yy - y) * row, row);
       }
@@ -141,10 +138,10 @@ public class NDPIReader extends BaseTiffReader {
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
-      if (service != null) {
-        service.close();
+      if (decoder != null) {
+        decoder.close();
       }
-      service = null;
+      decoder = null;
       initializedSeries = -1;
       initializedPlane = -1;
       sizeZ = 1;
@@ -166,14 +163,7 @@ public class NDPIReader extends BaseTiffReader {
   protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
 
-    try {
-      ServiceFactory factory = new ServiceFactory();
-      service = factory.getInstance(JimiService.class);
-    }
-    catch (DependencyException de) {
-      throw new MissingLibraryException(
-        "Could not find required Jimi library", de);
-    }
+    decoder = new JPEGTileDecoder();
 
     ifds = tiffParser.getIFDs();
 
@@ -258,7 +248,7 @@ public class NDPIReader extends BaseTiffReader {
   private void setupService(int y, int h, int z)
     throws FormatException, IOException
   {
-    service.close();
+    decoder.close();
 
     IFD ifd = ifds.get(getIFDIndex(getSeries(), z));
 
@@ -271,7 +261,7 @@ public class NDPIReader extends BaseTiffReader {
     in.seek(offset);
     in.setLength(offset + byteCount);
 
-    service.initialize(in, y, h, getSizeX());
+    decoder.initialize(in, y, h, getSizeX());
   }
 
   private int getIFDIndex(int seriesIndex, int zIndex) {

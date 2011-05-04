@@ -61,7 +61,7 @@ public class HamamatsuVMSReader extends FormatReader {
 
   private String[][][] tileFiles;
 
-  private JimiJPEGReader[] jpeg;
+  private TileJPEGReader[] jpeg;
 
   // -- Constructor --
 
@@ -106,7 +106,7 @@ public class HamamatsuVMSReader extends FormatReader {
       tileFiles = null;
       files.clear();
       if (jpeg != null) {
-        for (JimiJPEGReader j : jpeg) {
+        for (TileJPEGReader j : jpeg) {
           if (j != null) {
             j.close();
           }
@@ -177,7 +177,7 @@ public class HamamatsuVMSReader extends FormatReader {
       macroFile = new Location(dir, macroFile).getAbsolutePath();
     }
 
-    jpeg = new JimiJPEGReader[3];
+    jpeg = new TileJPEGReader[3];
     core = new CoreMetadata[3];
 
     for (int i=0; i<core.length; i++) {
@@ -194,7 +194,7 @@ public class HamamatsuVMSReader extends FormatReader {
           break;
       }
 
-      jpeg[i] = new JimiJPEGReader();
+      jpeg[i] = new TileJPEGReader();
       jpeg[i].setId(file);
       core[i] = jpeg[i].getCoreMetadata()[0];
       core[i].thumbnail = i > 0;

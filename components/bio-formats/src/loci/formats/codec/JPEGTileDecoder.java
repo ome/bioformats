@@ -1,5 +1,5 @@
 //
-// JimiServiceImpl.java
+// JPEGTileDecoder.java
 //
 
 /*
@@ -21,7 +21,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package loci.formats.services;
+package loci.formats.codec;
 
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -35,39 +35,32 @@ import java.util.Hashtable;
 import loci.common.ByteArrayHandle;
 import loci.common.RandomAccessInputStream;
 import loci.common.Region;
-import loci.common.services.DependencyException;
-import loci.common.services.Service;
-import loci.common.services.ServiceException;
 import loci.formats.FormatException;
-import loci.formats.codec.ByteVector;
-import loci.formats.codec.CodecOptions;
-import loci.formats.codec.JPEGCodec;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/services/JimiServiceImpl.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/services/JimiServiceImpl.java;hb=HEAD">Gitweb</a></dd></dl>
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/codec/JPEGTileDecoder.java">Trac</a>,
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/codec/JPEGTileDecoder.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  */
-public class JimiServiceImpl implements JimiService {
+public class JPEGTileDecoder {
 
   // -- Constants --
 
   protected static final Logger LOGGER =
-    LoggerFactory.getLogger(JimiServiceImpl.class);
+    LoggerFactory.getLogger(JPEGTileDecoder.class);
 
   // -- Fields --
 
-  private JimiConsumer consumer;
+  private TileConsumer consumer;
   private TileCache tiles;
   private RandomAccessInputStream in;
 
-  // -- JimiService API methods --
+  // -- JPEGTileDecoder API methods --
 
-  /* @see loci.formats.services.JimiService#initialize(String) */
   public void initialize(String id, int imageWidth) {
     try {
       initialize(new RandomAccessInputStream(id), imageWidth);
@@ -77,16 +70,10 @@ public class JimiServiceImpl implements JimiService {
     }
   }
 
-  /**
-   * @see loci.formats.services.JimiService#initialize(RandomAccessInputStream)
-   */
   public void initialize(RandomAccessInputStream in, int imageWidth) {
     initialize(in, 0, 0, imageWidth);
   }
 
-  /**
-   * @see loci.formats.services.JimiService#initialize(RandomAccessInputStream)
-   */
   public void initialize(RandomAccessInputStream in, int y, int h,
     int imageWidth)
   {
@@ -153,14 +140,13 @@ public class JimiServiceImpl implements JimiService {
       Image image = toolkit.createImage(data);
       ImageProducer producer = image.getSource();
 
-      consumer = new JimiConsumer(producer, y, h);
+      consumer = new TileConsumer(producer, y, h);
       producer.startProduction(consumer);
       while (producer.isConsumer(consumer));
     }
     catch (IOException e) { }
   }
 
-  /* @see loci.formats.services.JimiServices#getScanline(int) */
   public byte[] getScanline(int y) {
     try {
       return tiles.get(0, y, consumer.getWidth(), 1);
@@ -174,17 +160,14 @@ public class JimiServiceImpl implements JimiService {
     return null;
   }
 
-  /* @see loci.formats.services.JimiService#getWidth() */
   public int getWidth() {
     return consumer.getWidth();
   }
 
-  /* @see loci.formats.services.JimiService#getHeight() */
   public int getHeight() {
     return consumer.getHeight();
   }
 
-  /* @see loci.formats.services.JimiService#close() */
   public void close() {
     try {
       if (in != null) {
@@ -200,22 +183,22 @@ public class JimiServiceImpl implements JimiService {
 
   // -- Helper classes --
 
-  class JimiConsumer implements ImageConsumer {
+  class TileConsumer implements ImageConsumer {
     private int width, height;
     private ImageProducer producer;
     private int yy = 0, hh = 0;
 
-    public JimiConsumer(ImageProducer producer) {
+    public TileConsumer(ImageProducer producer) {
       this.producer = producer;
     }
 
-    public JimiConsumer(ImageProducer producer, int y, int h) {
+    public TileConsumer(ImageProducer producer, int y, int h) {
       this(producer);
       this.yy = y;
       this.hh = h;
     }
 
-    // -- JimiConsumer API methods --
+    // -- TileConsumer API methods --
 
     public int getWidth() {
       return width;

@@ -92,6 +92,7 @@ loci.formats.in.InCell3000Reader      # frm
 loci.formats.in.SpiderReader          # spi
 loci.formats.in.VolocityReader        # mvd2
 loci.formats.in.ImagicReader          # hed
+loci.formats.in.HamamatsuVMSReader    # vms
 loci.formats.in.FakeReader            # fake
 
 # multi-extension messes
@@ -119,7 +120,6 @@ loci.formats.in.JPEG2000Reader        # jp2, j2k [JAI-ImageIO]
 loci.formats.in.ND2Reader             # nd2, jp2 [JAI-ImageIO]
 loci.formats.in.PCIReader             # cxd [POI]
 loci.formats.in.ImarisHDFReader       # ims [NetCDF]
-loci.formats.in.HamamatsuVMSReader    # vms [Jimi]
 
 # TIFF-based readers with unique file extensions
 loci.formats.in.ZeissLSMReader        # lsm, mdb [MDB Tools]
@@ -131,7 +131,7 @@ loci.formats.in.SVSReader             # svs
 loci.formats.in.ImaconReader          # fff
 loci.formats.in.LEOReader             # sxm
 loci.formats.in.JPKReader             # jpk
-loci.formats.in.NDPIReader            # ndpi [Jimi]
+loci.formats.in.NDPIReader            # ndpi
 
 # TIFF-based readers with slow isThisType
 loci.formats.in.MIASReader            # tif
