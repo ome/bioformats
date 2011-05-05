@@ -779,7 +779,7 @@ public class LIFReader extends FormatReader {
 
       String suffix = root.getAttribute("Identifier");
       String value = root.getAttribute("Variant");
-      if (suffix == null) {
+      if (suffix == null || suffix.trim().length() == 0) {
         suffix = root.getAttribute("Description");
       }
       StringBuffer key = new StringBuffer();
