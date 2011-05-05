@@ -235,7 +235,7 @@ namespace itk {
 		//cout << "Got itkBridge class: " << itkBridgeClass << endl;
 
 		jmethodID mid = env->GetStaticMethodID(itkBridgeClass,
-		"readImageInfo", "(Ljava/lang/String;)[I");
+		"readImageInfo", "(Ljava/lang/String;)[D");
 		//cout << "Got readImageInfo method: " << mid << endl;
 
 		jclass stringClass = env->FindClass("java/lang/String");
@@ -245,27 +245,27 @@ namespace itk {
 		jstring arg = env->NewStringUTF(m_FileName.c_str());
 		env->SetObjectArrayElement(args, 0, arg);
 
-		jint imageInfo [13];
-		jintArray imageInfoArr = (jintArray)env->CallStaticObjectMethod(itkBridgeClass, mid, arg);
-		env->GetIntArrayRegion(imageInfoArr, 0, 13, imageInfo);
+		jdouble imageInfo [17];
+		jdoubleArray imageInfoArr = (jdoubleArray)env->CallStaticObjectMethod(itkBridgeClass, mid, arg);
+		env->GetDoubleArrayRegion(imageInfoArr, 0, 17, imageInfo);
     //cout << "Image info: " << imageInfo << endl;
 	    try {
-	      int seriesCount = imageInfo[1];
+	      int seriesCount = (int)imageInfo[1];
 	      itkDebugMacro("Series count = " << seriesCount);
 
 	      // set ITK byte order
-	      bool little = false;
-	      if(imageInfo[0] == 1)
+        bool little = false;
+        if(imageInfo[0] == 1)
 	    	  little = true;
 
 	      if (little) SetByteOrderToLittleEndian(); // m_ByteOrder
 	      else SetByteOrderToBigEndian(); // m_ByteOrder
 
 	      // set ITK component type
-	      int pixelType = imageInfo[2];
-	      int bpp = imageInfo[3];
+	      int pixelType = (int)imageInfo[2];
+	      int bpp = (int)imageInfo[3];
 	      itkDebugMacro("Bytes per pixel = " << bpp);
-	      int iotype = imageInfo[4];
+	      int iotype = (int)imageInfo[4];
 	      IOComponentType itkComponentType;
 	      if (iotype == 0)
 	        itkComponentType = UCHAR;
@@ -292,14 +292,14 @@ namespace itk {
 	      }
 
 	      // get pixel resolution and dimensional extents
-	      int sizeX = imageInfo[5];
-	      int sizeY = imageInfo[6];
-	      int sizeZ = imageInfo[7];
-	      int sizeC = imageInfo[9];
-	      int sizeT = imageInfo[8];
-	      int effSizeC = imageInfo[10];
-	      int rgbChannelCount = imageInfo[11];
-	      int imageCount = imageInfo[12];
+	      int sizeX = (int)imageInfo[5];
+	      int sizeY = (int)imageInfo[6];
+	      int sizeZ = (int)imageInfo[7];
+	      int sizeC = (int)imageInfo[9];
+	      int sizeT = (int)imageInfo[8];
+	      int effSizeC = (int)imageInfo[10];
+	      int rgbChannelCount = (int)imageInfo[11];
+	      int imageCount = (int)imageInfo[12];
 
 	      itkDebugMacro("Dimensional extents:" << std::endl
 	        << "\tSizeX = " << sizeX << std::endl
@@ -336,12 +336,11 @@ namespace itk {
 	      // get physical resolution
 	      double physX = 1, physY = 1, physZ = 1, timeIncrement = 1;
 	      // CTR - avoid invalid memory access error on some systems (OS X 10.5)
-	      //MetadataRetrieve retrieve = MetadataTools::asRetrieve(omeMeta);
-	      //physX = retrieve.getPixelsPhysicalSizeX(0).doubleValue();
-	      //physY = retrieve.getPixelsPhysicalSizeY(0).doubleValue();
-	      //physZ = retrieve.getPixelsPhysicalSizeZ(0).doubleValue();
-	      //timeIncrement = retrieve.getPixelsTimeIncrement(0).doubleValue();
-	      m_Spacing[0] = physX;
+	      physX = imageInfo[13];
+        physY = imageInfo[14];
+        physZ = imageInfo[15];
+        timeIncrement = imageInfo[16];
+        m_Spacing[0] = physX;
 	      m_Spacing[1] = physY;
 	      // TODO: verify m_Spacing.length > 2
 	      if (imageCount > 1) m_Spacing[2] = physZ;

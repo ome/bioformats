@@ -26,6 +26,9 @@ package loci.formats.itk;
 import java.io.IOException;
 
 import loci.formats.FormatException;
+import loci.formats.MetadataTools;
+import loci.formats.meta.MetadataRetrieve;
+import loci.formats.meta.MetadataStore;
 //import loci.formats.FormatTools;
 import loci.formats.ImageReader;
 import loci.formats.FormatTools;
@@ -57,7 +60,7 @@ public class ITKBridgeJNI {
     return h;
   }
 
-  public static int[] readImageInfo(String id) {
+  public static double[] readImageInfo(String id) {
     try {
       reader.setId(id);
     } catch (FormatException e) {
@@ -70,7 +73,8 @@ public class ITKBridgeJNI {
 
     // ORDERING: 0 little, 1 seriesCount, 2 pixelType, 3 bpp, 4 itkComponentType, 5 sizeX,
     //           6 sizeY, 7 sizeZ, 8 sizeT, 9 sizeC, 10 effSizeC, 11 rgbChannelCount, 12 imageCount
-    int[] returnValues = new int[13];
+    //           13 physX, 14 physY, 15 physZ, 16 timeIncrement
+    double[] returnValues = new double[17];
 
     // return this and use SetByteOrderToLittleEndian or SetByteOrderToBigEndian in C++ land
     boolean little = reader.isLittleEndian();
@@ -88,39 +92,53 @@ public class ITKBridgeJNI {
 
     // return bpp and set an IOComponent based on it
     int pixelType = reader.getPixelType();
-    returnValues[2]  = pixelType;
-    returnValues[3] = FormatTools.getBytesPerPixel(returnValues[2]);
+    returnValues[2]  = (double)pixelType;
+    returnValues[3] = (double)FormatTools.getBytesPerPixel((int)returnValues[2]);
 
     // 0 UCHAR, 1 CHAR, 2 USHORT, 3 SHORT, 4 UINT, 5 INT, 6 FLOAT, 7 DOUBLE, 8 UNKNOWN
     if (pixelType == FormatTools.UINT8)
-      returnValues[4] = 0;
+      returnValues[4] = (double)0;
     else if (pixelType == FormatTools.INT8)
-      returnValues[4] = 1;
+      returnValues[4] = (double)1;
     else if (pixelType == FormatTools.UINT16)
-      returnValues[4] = 2;
+      returnValues[4] = (double)2;
     else if (pixelType == FormatTools.INT16)
-      returnValues[4] = 3;
+      returnValues[4] = (double)3;
     else if (pixelType == FormatTools.UINT32)
-      returnValues[4] = 4;
+      returnValues[4] = (double)4;
     else if (pixelType == FormatTools.INT32)
-      returnValues[4] = 5;
+      returnValues[4] = (double)5;
     else if (pixelType == FormatTools.FLOAT)
-      returnValues[4] = 6;
+      returnValues[4] = (double)6;
     else if (pixelType == FormatTools.DOUBLE)
-      returnValues[4] = 7;
+      returnValues[4] = (double)7;
     else
-      returnValues[4] = 8;
+      returnValues[4] = (double)8;
 
     // return these
-    returnValues[5] = reader.getSizeX();
-    returnValues[6] = reader.getSizeY();
-    returnValues[7] = reader.getSizeZ();
-    returnValues[8] = reader.getSizeT();
-    returnValues[9] = reader.getSizeC();
-    returnValues[10] = reader.getEffectiveSizeC();
-    returnValues[11] = reader.getRGBChannelCount();
-    returnValues[12] = reader.getImageCount();
-
+    returnValues[5] = (double)reader.getSizeX();
+    returnValues[6] = (double)reader.getSizeY();
+    returnValues[7] = (double)reader.getSizeZ();
+    returnValues[8] = (double)reader.getSizeT();
+    returnValues[9] = (double)reader.getSizeC();
+    returnValues[10] = (double)reader.getEffectiveSizeC();
+    returnValues[11] = (double)reader.getRGBChannelCount();
+    returnValues[12] = (double)reader.getImageCount();
+    
+    MetadataRetrieve retrieve = MetadataTools.asRetrieve(reader.getMetadataStore());
+    Double d = retrieve.getPixelsPhysicalSizeX(0);
+    double d2 = d == null ? 1.0 : d.doubleValue();
+    returnValues[13] = d2;
+    d = retrieve.getPixelsPhysicalSizeY(0);
+    d2 = d == null ? 1.0 : d.doubleValue();
+    returnValues[14] = d2;
+    d = retrieve.getPixelsPhysicalSizeZ(0);
+    d2 = d == null ? 1.0 : d.doubleValue();
+    returnValues[15] = d2;
+    d = retrieve.getPixelsTimeIncrement(0);
+    d2 = d == null ? 1.0 : d.doubleValue();
+    returnValues[16] = d2;
+       
     return returnValues;
   }
 
