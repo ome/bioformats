@@ -73,6 +73,7 @@ import loci.formats.in.ND2Reader;
 import loci.formats.in.NiftiReader;
 import loci.formats.in.NRRDReader;
 import loci.formats.in.OMETiffReader;
+import loci.formats.in.PrairieReader;
 import loci.formats.in.SISReader;
 import loci.formats.in.TiffDelegateReader;
 import loci.formats.meta.IMetadata;
@@ -1480,6 +1481,15 @@ public class FormatReaderTest {
 
             if (result && r instanceof APLReader &&
               readers[j] instanceof SISReader)
+            {
+              continue;
+            }
+
+            // Prairie datasets can consist of OME-TIFF files with
+            // extra metadata files, so it is acceptable for the OME-TIFF
+            // reader to pick up TIFFs from a Prairie dataset
+            if (result && r instanceof PrairieReader &&
+              readers[j] instanceof OMETiffReader)
             {
               continue;
             }
