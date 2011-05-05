@@ -169,10 +169,11 @@ public class JPEG2000Codec extends BaseCodec {
   public byte[] decompress(RandomAccessInputStream in, CodecOptions options)
     throws FormatException, IOException
   {
-    if (in == null) 
+    if (in == null) {
       throw new IllegalArgumentException("No data to decompress.");
+    }
     if (options == null || !(options instanceof JPEG2000CodecOptions)) {
-      options = JPEG2000CodecOptions.getDefaultOptions();
+      options = JPEG2000CodecOptions.getDefaultOptions(options);
     }
 
     byte[] buf = null;

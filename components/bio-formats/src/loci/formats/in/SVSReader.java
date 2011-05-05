@@ -28,12 +28,14 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import loci.common.RandomAccessInputStream;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.PhotoInterp;
+import loci.formats.tiff.TiffParser;
 
 /**
  * SVSReader is the file format reader for Aperio SVS TIFF files.
@@ -50,6 +52,9 @@ public class SVSReader extends BaseTiffReader {
   private static final Logger LOGGER =
     LoggerFactory.getLogger(SVSReader.class);
 
+  /** TIFF image description prefix for Aperio SVS files. */
+  public static final String APERIO_IMAGE_DESCRIPTION_PREFIX = "Aperio Image";
+
   // -- Fields --
 
   private float[] pixelSize;
@@ -65,6 +70,46 @@ public class SVSReader extends BaseTiffReader {
   }
 
   // -- IFormatReader API methods --
+
+  /* (non-Javadoc)
+   * @see loci.formats.FormatReader#isThisType(java.lang.String, boolean)
+   */
+  @Override
+  public boolean isThisType(String name, boolean open) {
+    boolean isThisType = super.isThisType(name, open);
+    if (!isThisType && open) {
+      RandomAccessInputStream stream = null;
+      try {
+        stream = new RandomAccessInputStream(name);
+        TiffParser tiffParser = new TiffParser(stream);
+        if (!tiffParser.isValidHeader()) {
+          return false;
+        }
+        String imageDescription =
+          tiffParser.getFirstIFD().getIFDTextValue(IFD.IMAGE_DESCRIPTION);
+        if (imageDescription != null
+            && imageDescription.startsWith(APERIO_IMAGE_DESCRIPTION_PREFIX)) {
+          return true;
+        }
+        return false;
+      }
+      catch (IOException e) {
+        LOGGER.debug("I/O exception during isThisType() evaluation.", e);
+        return false;
+      }
+      finally {
+        try {
+          if (stream != null) {
+            stream.close();
+          }
+        }
+        catch (IOException e) {
+          LOGGER.debug("I/O exception during stream closure..", e);
+        }
+      }
+    }
+    return isThisType;
+  }
 
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
