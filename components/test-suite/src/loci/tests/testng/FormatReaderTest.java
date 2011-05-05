@@ -1115,7 +1115,9 @@ public class FormatReaderTest {
       String realName = retrieve.getImageName(i);
       String expectedName = config.getImageName();
 
-      if (!expectedName.equals(realName)) {
+      if (!expectedName.equals(realName) &&
+        !(realName == null && expectedName.equals("null")))
+      {
         result(testName, false, "Series " + i + " (got '" + realName +
           "', expected '" + expectedName + "')");
       }
