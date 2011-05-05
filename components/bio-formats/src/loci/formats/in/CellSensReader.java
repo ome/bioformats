@@ -67,6 +67,8 @@ public class CellSensReader extends FormatReader {
   private Long[][] tileOffsets;
   private boolean jpeg = false;
 
+  private int[] rows, cols;
+
   // -- Constructor --
 
   /** Constructs a new cellSens reader. */
@@ -110,41 +112,47 @@ public class CellSensReader extends FormatReader {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
     if (getSeries() < getSeriesCount() - ifds.size()) {
-      int tilesWide = getSizeX() / TILE_SIZE;
-      int tilesHigh = getSizeY() / TILE_SIZE;
-      if (tilesWide * TILE_SIZE < getSizeX()) {
-        tilesWide++;
-      }
-      if (tilesHigh * TILE_SIZE < getSizeY()) {
-        tilesHigh++;
-      }
+      int tileRows = rows[getSeries()];
+      int tileCols = cols[getSeries()];
 
-      Region imageBounds = new Region(x, y, w, h);
+      Region image = new Region(x, y, w, h);
+      int outputRow = 0, outputCol = 0;
+      Region intersection = null;
 
-      for (int ty=0; ty<tilesHigh; ty++) {
-        for (int tx=0; tx<tilesWide; tx++) {
-          int tile = (no * tilesWide * tilesHigh) + ty * tilesWide + tx;
+      byte[] tileBuf = null;
+      int pixel =
+        getRGBChannelCount() * FormatTools.getBytesPerPixel(getPixelType());
+      int outputRowLen = w * pixel;
 
-          Region tileBounds =
-            new Region(tx * TILE_SIZE, ty * TILE_SIZE, TILE_SIZE, TILE_SIZE);
-
-          if (!imageBounds.intersects(tileBounds)) {
+      for (int row=0; row<tileRows; row++) {
+        for (int col=0; col<tileCols; col++) {
+          Region tile =
+            new Region(col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+          if (!tile.intersects(image)) {
             continue;
           }
 
-          Region intersection = imageBounds.intersection(tileBounds);
-          byte[] b = decodeTile(tile);
+          intersection = tile.intersection(image);
 
-          int pixel =
-            getRGBChannelCount() * FormatTools.getBytesPerPixel(getPixelType());
-          int row = (int) Math.min(TILE_SIZE, intersection.width) * pixel;
+          int tileIndex = (no * tileRows * tileCols) + row * tileCols + col;
+          tileBuf = decodeTile(tileIndex);
 
-          if (b != null) {
-            for (int yy=0; yy<intersection.height; yy++) {
-              int offset = (ty * TILE_SIZE + yy) * w * pixel + tx * row;
-              System.arraycopy(b, yy * row, buf, offset, row);
-            }
+          int rowLen = pixel * (int) Math.min(intersection.width, TILE_SIZE);
+
+          int outputOffset = outputRow * outputRowLen + outputCol;
+          for (int trow=0; trow<intersection.height; trow++) {
+            int realRow = trow + intersection.y - tile.y;
+            System.arraycopy(tileBuf,
+              realRow * TILE_SIZE * pixel, buf, outputOffset, rowLen);
+            outputOffset += outputRowLen;
           }
+
+          outputCol += rowLen;
+        }
+
+        if (intersection != null) {
+          outputRow += intersection.height;
+          outputCol = 0;
         }
       }
 
@@ -165,6 +173,8 @@ public class CellSensReader extends FormatReader {
       usedFiles = null;
       tileOffsets = null;
       jpeg = false;
+      rows = null;
+      cols = null;
     }
   }
 
@@ -210,6 +220,8 @@ public class CellSensReader extends FormatReader {
     core = new CoreMetadata[files.size() - 1 + ifds.size()];
 
     tileOffsets = new Long[files.size() - 1][];
+    rows = new int[files.size() - 1];
+    cols = new int[files.size() - 1];
 
     IFDList exifs = parser.getExifIFDs();
 
@@ -233,7 +245,9 @@ public class CellSensReader extends FormatReader {
               long fp = etsFile.getFilePointer();
               etsFile.seek(fp - buf.length + i + 8);
 
-              if (etsFile.readInt() == TILE_SIZE && etsFile.readInt() == TILE_SIZE) {
+              if (etsFile.readInt() == TILE_SIZE &&
+                etsFile.readInt() == TILE_SIZE)
+              {
                 offsets.add(fp - buf.length + i);
               }
 
@@ -251,6 +265,7 @@ public class CellSensReader extends FormatReader {
         }
 
         tileOffsets[s] = offsets.toArray(new Long[offsets.size()]);
+
         byte[] b = decodeTile(0);
 
         int diff = 0;
@@ -276,20 +291,70 @@ public class CellSensReader extends FormatReader {
 
         etsFile.close();
 
-        if (s < exifs.size() && exifs.get(s).containsKey(IFD.PIXEL_X_DIMENSION)) {
+        boolean adjustedDimensions = false;
+
+        if (s < exifs.size() && exifs.get(s).containsKey(IFD.PIXEL_X_DIMENSION))
+        {
           core[s].sizeX = exifs.get(s).getIFDIntValue(IFD.PIXEL_X_DIMENSION);
           core[s].sizeY = exifs.get(s).getIFDIntValue(IFD.PIXEL_Y_DIMENSION);
+
+          int maxTiles = (int) (0.75 * tileOffsets[s].length);
+          int tileSize = TILE_SIZE * TILE_SIZE;
+
+          while ((((long) core[s].sizeX * core[s].sizeY) / tileSize) > maxTiles)
+          {
+            adjustedDimensions = true;
+            core[s].sizeX /= 2;
+            core[s].sizeY /= 2;
+          }
         }
         else {
           core[s].sizeX = vsi.readInt();
           core[s].sizeY = vsi.readInt();
         }
 
+        int tileRows = getSizeY() / TILE_SIZE;
+        int tileCols = getSizeX() / TILE_SIZE;
+        if (tileCols * TILE_SIZE < getSizeX()) {
+          tileCols++;
+        }
+        if (tileRows * TILE_SIZE < getSizeY()) {
+          tileRows++;
+        }
+
+        int c = 1;
+        if (!adjustedDimensions) {
+          int totalTiles = 0;
+          while (totalTiles == 0 ||
+            ((tileOffsets[s].length % tileOffsets[s].length) != 0))
+          {
+            int row = tileRows;
+            int col = tileCols;
+            while (row > 1 || col > 1) {
+              totalTiles += row * col;
+              row = (row / 2) + (row % 2);
+              col = (col / 2) + (col % 2);
+            }
+            totalTiles++;
+
+            if ((tileOffsets[s].length % totalTiles) != 0) {
+              totalTiles = 0;
+              tileCols++;
+            }
+          }
+
+          c = tileOffsets[s].length / totalTiles;
+        }
+
+        rows[s] = tileRows;
+        cols[s] = tileCols;
+
+        core[s].rgb = core[s].sizeC > 1;
+        core[s].sizeC *= c;
         core[s].sizeZ = 1;
         core[s].sizeT = 1;
-        core[s].imageCount = core[s].sizeZ * core[s].sizeT;
+        core[s].imageCount = core[s].sizeZ * core[s].sizeT * c;
         core[s].littleEndian = false;
-        core[s].rgb = core[s].sizeC > 1;
         core[s].interleaved = core[s].rgb;
       }
       else {
