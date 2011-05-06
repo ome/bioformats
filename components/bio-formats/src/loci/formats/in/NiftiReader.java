@@ -206,6 +206,8 @@ public class NiftiReader extends FormatReader {
     in.order(little);
     pixelFile.order(little);
 
+    core[0].littleEndian = little;
+
     LOGGER.info("Reading header");
 
     nDimensions = in.readShort();
