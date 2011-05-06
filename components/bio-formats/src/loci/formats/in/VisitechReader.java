@@ -115,6 +115,10 @@ public class VisitechReader extends FormatReader {
     int fileIndex = (series * getSizeC()) + no / div;
     int planeIndex = no % div;
 
+    if (fileIndex >= files.size() || fileIndex >= pixelOffsets.length) {
+      return buf;
+    }
+
     String file = files.get(fileIndex);
     RandomAccessInputStream s = new RandomAccessInputStream(file);
     s.order(isLittleEndian());
