@@ -251,7 +251,8 @@ public class ScanrReader extends FormatReader {
     // make sure we have the .xml file
     if (!checkSuffix(id, "xml") && isGroupFiles()) {
       Location parent = new Location(id).getAbsoluteFile().getParentFile();
-      if (checkSuffix(id, "tif") && parent.getName().equals("Data")) {
+      if (checkSuffix(id, "tif") && parent.getName().equalsIgnoreCase("Data"))
+      {
         parent = parent.getParentFile();
       }
       String[] list = parent.list();
