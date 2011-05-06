@@ -685,12 +685,14 @@ public class BDReader extends FormatReader {
     TiffParser parser = new TiffParser(s);
     parser.setDoCaching(false);
     IFD firstIFD = parser.getFirstIFD();
-    TiffIFDEntry timestamp = (TiffIFDEntry) firstIFD.get(IFD.DATE_TIME);
-    if (timestamp != null) {
-      String stamp = parser.getIFDValue(timestamp).toString();
-      s.close();
-      stamp = DateTools.formatDate(stamp, BaseTiffReader.DATE_FORMATS);
-      return DateTools.getTime(stamp, DateTools.ISO8601_FORMAT);
+    if (firstIFD != null) {
+      TiffIFDEntry timestamp = (TiffIFDEntry) firstIFD.get(IFD.DATE_TIME);
+      if (timestamp != null) {
+        String stamp = parser.getIFDValue(timestamp).toString();
+        s.close();
+        stamp = DateTools.formatDate(stamp, BaseTiffReader.DATE_FORMATS);
+        return DateTools.getTime(stamp, DateTools.ISO8601_FORMAT);
+      }
     }
     s.close();
     return new Location(file).lastModified();

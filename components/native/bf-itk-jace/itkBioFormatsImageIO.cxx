@@ -297,11 +297,15 @@ namespace itk {
       // get physical resolution
       double physX = 1, physY = 1, physZ = 1, timeIncrement = 1;
       // CTR - avoid invalid memory access error on some systems (OS X 10.5)
-      //MetadataRetrieve retrieve = MetadataTools::asRetrieve(omeMeta);
-      //physX = retrieve.getPixelsPhysicalSizeX(0).doubleValue();
-      //physY = retrieve.getPixelsPhysicalSizeY(0).doubleValue();
-      //physZ = retrieve.getPixelsPhysicalSizeZ(0).doubleValue();
-      //timeIncrement = retrieve.getPixelsTimeIncrement(0).doubleValue();
+      MetadataRetrieve retrieve = MetadataTools::asRetrieve(omeMeta);
+      jace::proxy::java::lang::Double d = retrieve.getPixelsPhysicalSizeX(0);
+      d.isNaN() ? physX = 1 : physX = d.doubleValue();
+      d = retrieve.getPixelsPhysicalSizeY(0);
+      d.isNaN() ? physY = 1 : physY = d.doubleValue();
+      d = retrieve.getPixelsPhysicalSizeZ(0);
+      d.isNaN() ? physZ = 1 : physZ = d.doubleValue();
+      d = retrieve.getPixelsTimeIncrement(0);
+      d.isNaN() ? timeIncrement = 1 : timeIncrement = d.doubleValue();
       m_Spacing[0] = physX;
       m_Spacing[1] = physY;
       // TODO: verify m_Spacing.length > 2

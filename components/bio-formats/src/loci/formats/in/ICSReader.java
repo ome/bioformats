@@ -239,14 +239,16 @@ public class ICSReader extends FormatReader {
       long toSkip = (no - prevImage - 1) * (long) len;
       if (gzipStream == null || no < prevImage) {
         FileInputStream fis = null;
+        toSkip = no * (long) len;
         if (versionTwo) {
           fis = new FileInputStream(currentIcsId);
+          fis.skip(offset);
         }
         else {
           fis = new FileInputStream(currentIdsId);
+          toSkip += offset;
         }
         gzipStream = new GZIPInputStream(fis);
-        toSkip = offset + no * (long) len;
       }
 
       while (toSkip > 0) {
