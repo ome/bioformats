@@ -245,7 +245,7 @@ public class FormatReaderTest {
         reader.setSeries(i);
         int x = reader.getSizeX();
         int y = reader.getSizeY();
-        int c = reader.isIndexed() ? 1 : reader.getRGBChannelCount();
+        int c = reader.getRGBChannelCount();
         int bytes = FormatTools.getBytesPerPixel(reader.getPixelType());
 
         int expected = x * y * c * bytes;

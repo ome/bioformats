@@ -1114,9 +1114,16 @@ public class FV1000Reader extends FormatReader {
           if (shape == 0) {
             nextROI++;
 
-            String roiID = MetadataTools.createLSID("ROI", nextROI);
-            store.setROIID(roiID, nextROI);
-            store.setImageROIRef(roiID, 0, nextROI);
+            if (shapeType == POINT || shapeType == GRID ||
+              shapeType == RECTANGLE || shapeType == LINE ||
+              shapeType == CIRCLE || shapeType == ELLIPSE ||
+              shapeType == POLYGON || shapeType == FREE_SHAPE ||
+              shapeType == POLYLINE || shapeType == FREE_LINE)
+            {
+              String roiID = MetadataTools.createLSID("ROI", nextROI);
+              store.setROIID(roiID, nextROI);
+              store.setImageROIRef(roiID, 0, nextROI);
+            }
           }
 
           String shapeID = MetadataTools.createLSID("Shape", nextROI, shape);
