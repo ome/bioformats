@@ -766,13 +766,13 @@ public final class AWTImageTools {
     }
 
     int bpp = FormatTools.getBytesPerPixel(pixelType);
-    BufferedImage b = makeImage(buf, w, h, indexed ? 1 : rgbChanCount,
+    BufferedImage b = makeImage(buf, w, h, rgbChanCount,
       interleaved, bpp, false, little, signed);
     if (b == null) {
       throw new FormatException("Could not construct BufferedImage");
     }
 
-    if (indexed) {
+    if (indexed && rgbChanCount == 1) {
       if (pixelType == FormatTools.UINT8 || pixelType == FormatTools.INT8) {
         byte[][] table = r.get8BitLookupTable();
         if (table != null && table.length > 0 && table[0] != null) {
