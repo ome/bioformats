@@ -256,13 +256,10 @@ public class MinimalTiffReader extends FormatReader {
     if ((firstIFD.getCompression() == TiffCompression.JPEG_2000
         || firstIFD.getCompression() == TiffCompression.JPEG_2000_LOSSY)
         && resolutionLevels != null) {
-      j2kCodecOptions.resolution = Math.abs(series - resolutionLevels);
       if (series > 0) {
         ifd = subResolutionIFDs.get(no).get(series - 1);
       }
-      LOGGER.info("Using JPEG 2000 resolution level {}",
-          j2kCodecOptions.resolution);
-      tiffParser.setCodecOptions(j2kCodecOptions);
+      setResolutionLevel(ifd);
     }
 
     tiffParser.getSamples(ifd, buf, x, y, w, h);
@@ -481,4 +478,16 @@ public class MinimalTiffReader extends FormatReader {
     }
   }
 
+  /**
+   * Sets the resolution level when we have JPEG 2000 compressed data.
+   * @param ifd The active IFD that is being used in our current
+   * <code>openBytes()</code> calling context. It will be the sub-resolution
+   * IFD if <code>currentSeries > 0</code>.
+   */
+  protected void setResolutionLevel(IFD ifd) {
+    j2kCodecOptions.resolution = Math.abs(series - resolutionLevels);
+    LOGGER.info("Using JPEG 2000 resolution level {}",
+        j2kCodecOptions.resolution);
+    tiffParser.setCodecOptions(j2kCodecOptions);
+  }
 }
