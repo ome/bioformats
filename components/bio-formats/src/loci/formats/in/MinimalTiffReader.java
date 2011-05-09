@@ -407,10 +407,13 @@ public class MinimalTiffReader extends FormatReader {
             for (int level = 1; level <= resolutionLevels; level++) {
               IFD newIFD = new IFD(ifd);
               long factor = (long) Math.pow(2, level);
-              long newImageWidth = ifd.getImageWidth() / factor;
-              long newImageLength = ifd.getImageLength() / factor;
-              long newTileWidth = ifd.getTileWidth() / factor;
-              long newTileLength = ifd.getTileLength() / factor;
+              long newTileWidth =
+                Math.round((double) ifd.getTileWidth() / factor);
+              long newTileLength =
+                Math.round((double) ifd.getTileLength() / factor);
+              long newImageWidth = ifd.getTilesPerRow() * newTileWidth;
+              long newImageLength = ifd.getTilesPerColumn() * newTileWidth;
+
               int resolutionLevel = Math.abs(level - resolutionLevels);
               newIFD.put(IFD.IMAGE_WIDTH, newImageWidth);
               newIFD.put(IFD.IMAGE_LENGTH, newImageLength);
