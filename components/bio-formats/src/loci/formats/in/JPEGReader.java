@@ -23,6 +23,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.in;
 
+import java.io.IOException;
+
+import loci.formats.DelegateReader;
+import loci.formats.FormatException;
+import loci.formats.FormatTools;
+
 /**
  * JPEGReader is the file format reader for JPEG images.
  *
@@ -32,13 +38,38 @@ package loci.formats.in;
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
-public class JPEGReader extends ImageIOReader {
+public class JPEGReader extends DelegateReader {
 
   // -- Constructor --
 
   /** Constructs a new JPEGReader. */
   public JPEGReader() {
     super("JPEG", new String[] {"jpg", "jpeg", "jpe"});
+    nativeReader = new DefaultJPEGReader();
+    legacyReader = new TileJPEGReader();
+    nativeReaderInitialized = false;
+    legacyReaderInitialized = false;
+    domains = new String[] {FormatTools.GRAPHICS_DOMAIN};
+  }
+
+  // -- IFormatHandler API methods --
+
+  /* @see IFormatHandler#setId(String) */
+  public void setId(String id) throws FormatException, IOException {
+    super.setId(id);
+    if (getSizeX() > 2048 && getSizeY() > 2048 && !legacyReaderInitialized) {
+      close();
+      useLegacy = true;
+      super.setId(id);
+    }
+  }
+
+  // -- Helper reader --
+
+  class DefaultJPEGReader extends ImageIOReader {
+    public DefaultJPEGReader() {
+      super("JPEG", new String[] {"jpg", "jpeg", "jpe"});
+    }
   }
 
 }

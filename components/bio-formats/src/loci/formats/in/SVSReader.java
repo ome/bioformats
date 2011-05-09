@@ -85,8 +85,7 @@ public class SVSReader extends BaseTiffReader {
         if (!tiffParser.isValidHeader()) {
           return false;
         }
-        String imageDescription =
-          tiffParser.getFirstIFD().getIFDTextValue(IFD.IMAGE_DESCRIPTION);
+        String imageDescription = tiffParser.getComment();
         if (imageDescription != null
             && imageDescription.startsWith(APERIO_IMAGE_DESCRIPTION_PREFIX)) {
           return true;
@@ -104,7 +103,7 @@ public class SVSReader extends BaseTiffReader {
           }
         }
         catch (IOException e) {
-          LOGGER.debug("I/O exception during stream closure..", e);
+          LOGGER.debug("I/O exception during stream closure.", e);
         }
       }
     }

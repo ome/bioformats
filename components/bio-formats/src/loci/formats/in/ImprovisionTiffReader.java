@@ -126,7 +126,7 @@ public class ImprovisionTiffReader extends BaseTiffReader {
 
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
-   */ 
+   */
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
@@ -261,6 +261,17 @@ public class ImprovisionTiffReader extends BaseTiffReader {
     else {
       files = new String[] {currentId};
     }
+
+    if (files.length > 1 && files.length * ifds.size() < getImageCount()) {
+      files = new String[] {currentId};
+      core[0].imageCount = ifds.size();
+      core[0].sizeZ = ifds.size();
+      core[0].sizeT = 1;
+      if (!isRGB()) {
+        core[0].sizeC = 1;
+      }
+    }
+
     readers = new MinimalTiffReader[files.length];
     for (int i=0; i<readers.length; i++) {
       readers[i] = new MinimalTiffReader();
