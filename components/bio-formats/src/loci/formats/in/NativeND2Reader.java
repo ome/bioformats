@@ -787,7 +787,10 @@ public class NativeND2Reader extends FormatReader {
 
       String xml = sb.toString().substring(offset, len - offset);
       handler = new ND2Handler(core);
-      XMLTools.parseXML(XMLTools.sanitizeXML(xml), handler);
+      try {
+        XMLTools.parseXML(XMLTools.sanitizeXML(xml), handler);
+      }
+      catch (IOException e) { }
       xml = null;
 
       isLossless = handler.isLossless();
