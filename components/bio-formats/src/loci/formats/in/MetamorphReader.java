@@ -323,7 +323,9 @@ public class MetamorphReader extends BaseTiffReader {
           String prefix = f.substring(0, f.lastIndexOf("."));
           if (stkName.startsWith(prefix) || prefix.equals(stkPrefix)) {
             ndfile = new Location(parent, f).getAbsoluteFile();
-            break;
+            if (prefix.equals(stkPrefix)) {
+              break;
+            }
           }
         }
       }
