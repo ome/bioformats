@@ -54,31 +54,79 @@
 	<xsd:element name="OME"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
-				The OME element is a container for all information objects accessible by OME.  These information objects include descriptions of the imaging experiments
-				and the people who perform them, descriptions of the microscope, the resulting images and how they were acquired, the analyses performed on those images,
+				The OME element is a container for all information objects accessible by OME.
+				These information objects include descriptions of the imaging experiments
+				and the people who perform them, descriptions of the microscope, the resulting
+				images and how they were acquired, the analyses performed on those images,
 				and the analysis results themselves.
 				An OME file may contain any or all of this information.
+
+				With the creation of the Metadata Only Companion OME-XML and Binary Only OME-TIFF files
+				the top level OME node has changed slightly.
+				It can EITHER:
+				    Contain all the previously expected elements
+				OR:
+				    Contain a single BinaryOnly element that points at
+				    its Metadata Only Companion OME-XML file.
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
-			<xsd:sequence>
-				<xsd:element ref="Project" minOccurs="0" maxOccurs="unbounded"/>
-				<xsd:element ref="Dataset" minOccurs="0" maxOccurs="unbounded"/>
-				<xsd:element ref="Experiment" minOccurs="0" maxOccurs="unbounded"/>
-				<xsd:element ref="SPW:Plate" minOccurs="0" maxOccurs="unbounded"/>
-				<xsd:element ref="SPW:Screen" minOccurs="0" maxOccurs="unbounded"/>
-				<xsd:element ref="Experimenter" minOccurs="0" maxOccurs="unbounded"/>
-				<xsd:element ref="Group" minOccurs="0" maxOccurs="unbounded"/>
-				<xsd:element ref="Instrument" minOccurs="0" maxOccurs="unbounded"/>
-				<xsd:element ref="Image" minOccurs="0" maxOccurs="unbounded"/>
-				<xsd:element ref="SA:StructuredAnnotations" minOccurs="0" maxOccurs="1"/>
-				<xsd:element ref="ROI:ROI" minOccurs="0" maxOccurs="unbounded"/>
-			</xsd:sequence>
+			<xsd:choice>
+				<!-- Either: standard expected elements -->
+				<xsd:sequence>
+					<xsd:element ref="Project" minOccurs="0" maxOccurs="unbounded"/>
+					<xsd:element ref="Dataset" minOccurs="0" maxOccurs="unbounded"/>
+					<xsd:element ref="Experiment" minOccurs="0" maxOccurs="unbounded"/>
+					<xsd:element ref="SPW:Plate" minOccurs="0" maxOccurs="unbounded"/>
+					<xsd:element ref="SPW:Screen" minOccurs="0" maxOccurs="unbounded"/>
+					<xsd:element ref="Experimenter" minOccurs="0" maxOccurs="unbounded"/>
+					<xsd:element ref="Group" minOccurs="0" maxOccurs="unbounded"/>
+					<xsd:element ref="Instrument" minOccurs="0" maxOccurs="unbounded"/>
+					<xsd:element ref="Image" minOccurs="0" maxOccurs="unbounded"/>
+					<xsd:element ref="SA:StructuredAnnotations" minOccurs="0" maxOccurs="1"/>
+					<xsd:element ref="ROI:ROI" minOccurs="0" maxOccurs="unbounded"/>
+				</xsd:sequence>
+				<!-- Or: Single BinaryOnly element -->
+				<xsd:element name="BinaryOnly" minOccurs="1" maxOccurs="1">
+					<xsd:annotation>
+						<xsd:documentation>
+							Pointer to an external metadata file. If this element is
+							present, then no other metadata may be present in this file,
+							i.e. this file is a place-holder.
+						</xsd:documentation>
+					</xsd:annotation>
+					<xsd:complexType>
+						<xsd:attribute name="MetadataFile" type="xsd:string" use="required">
+							<xsd:annotation>
+								<xsd:documentation>
+									Filename of the OME-XML metadata file for this
+									binary data. If the file cannot be found, a search can be
+									performed based on the UUID.
+								</xsd:documentation>
+							</xsd:annotation>
+						</xsd:attribute>
+						<xsd:attribute name="UUID" type="UniversallyUniqueIdentifier" use="required">
+							<xsd:annotation>
+								<xsd:documentation>
+									The unique identifier of another OME-XML block
+									whose metadata describes the binary data in this file. This UUID
+									is considered authoritative regardless of mismatches in the
+									filename.
+								</xsd:documentation>
+							</xsd:annotation>
+						</xsd:attribute>
+					</xsd:complexType>
+				</xsd:element>
+				<!-- End of MetadataOnly Element -->
+			</xsd:choice>
 			<xsd:attribute name="UUID" type="UniversallyUniqueIdentifier" use="optional">
 				<xsd:annotation>
 					<xsd:documentation>
 						This unique identifier is used to keep track of multi part files.
 						It allows the links between files to survive renaming.
+
+						While OPTIONAL in the general case this is REQUIRED in a
+						MetadataOnly Companion to a collection of BinaryOnly files.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
