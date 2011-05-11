@@ -75,7 +75,7 @@ public class VolocityReader extends FormatReader {
 
   /** Constructs a new Volocity reader. */
   public VolocityReader() {
-    super("Volocity Library", "mvd2");
+    super("Volocity Library", new String [] {"mvd2", "aisf", "aiix", "dat"});
     domains = new String[] {FormatTools.UNKNOWN_DOMAIN};
   }
 
@@ -92,6 +92,28 @@ public class VolocityReader extends FormatReader {
     }
     files.add(timestampFiles[getSeries()]);
     return files.toArray(new String[files.size()]);
+  }
+
+  /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  public boolean isThisType(String name, boolean open) {
+    if (checkSuffix(name, "mvd2")) {
+      return super.isThisType(name, open);
+    }
+
+    if (open && checkSuffix(name, suffixes)) {
+      Location file = new Location(name).getAbsoluteFile();
+      Location parent = file.getParentFile();
+      parent = parent.getParentFile();
+      if (parent != null) {
+        String[] files = parent.list(true);
+        for (String f : files) {
+          if (checkSuffix(f, "mvd2")) {
+            return super.isThisType(new Location(parent, f).getAbsolutePath());
+          }
+        }
+      }
+    }
+    return false;
   }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
@@ -172,6 +194,18 @@ public class VolocityReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
+    if (!checkSuffix(id, "mvd2")) {
+      Location file = new Location(id).getAbsoluteFile();
+      Location parent = file.getParentFile().getParentFile();
+      String[] files = parent.list(true);
+      for (String f : files) {
+        if (checkSuffix(f, "mvd2")) {
+          id = new Location(parent, f).getAbsolutePath();
+          break;
+        }
+      }
+    }
+
     super.initFile(id);
 
     extraFiles = new ArrayList<String>();
