@@ -26,6 +26,7 @@ package loci.formats.out;
 import java.io.IOException;
 
 import loci.common.RandomAccessInputStream;
+import loci.common.RandomAccessOutputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.FormatWriter;
@@ -50,15 +51,15 @@ public class TiffWriter extends FormatWriter {
 
   // -- Constants --
 
-  public static final String COMPRESSION_UNCOMPRESSED = 
+  public static final String COMPRESSION_UNCOMPRESSED =
     CompressionType.UNCOMPRESSED.getCompression();
-  public static final String COMPRESSION_LZW = 
+  public static final String COMPRESSION_LZW =
     CompressionType.LZW.getCompression();
-  public static final String COMPRESSION_J2K = 
+  public static final String COMPRESSION_J2K =
     CompressionType.J2K.getCompression();
-  public static final String COMPRESSION_J2K_LOSSY = 
+  public static final String COMPRESSION_J2K_LOSSY =
     CompressionType.J2K_LOSSY.getCompression();
-  public static final String COMPRESSION_JPEG = 
+  public static final String COMPRESSION_JPEG =
     CompressionType.JPEG.getCompression();
 
   // -- Fields --
@@ -150,21 +151,12 @@ public class TiffWriter extends FormatWriter {
     if (checkParams) checkParams(no, buf, x, y, w, h);
     if (ifd == null) ifd = new IFD();
     MetadataRetrieve retrieve = getMetadataRetrieve();
-    Boolean bigEndian = retrieve.getPixelsBinDataBigEndian(series, 0);
-    boolean littleEndian = bigEndian == null ?
-      false : !bigEndian.booleanValue();
     int type = FormatTools.pixelTypeFromString(
         retrieve.getPixelsType(series).toString());
     int index = no;
     // This operation is synchronized
     synchronized (this) {
-      if (tiffSaver == null) {
-        tiffSaver = new TiffSaver(out, currentId);
-      }
-      tiffSaver.setWritingSequentially(sequential);
-      tiffSaver.setLittleEndian(littleEndian);
-      tiffSaver.setBigTiff(isBigTiff);
-      tiffSaver.setCodecOptions(options);
+      setupTiffSaver();
       // This operation is synchronized against the TIFF saver.
       synchronized (tiffSaver) {
         index = prepareToWriteImage(no, buf, ifd, x, y, w, h);
@@ -198,8 +190,12 @@ public class TiffWriter extends FormatWriter {
 
         RandomAccessInputStream tmp = new RandomAccessInputStream(currentId);
         if (tmp.length() == 0) {
-          // write TIFF header
-          tiffSaver.writeHeader();
+          synchronized (this) {
+            setupTiffSaver();
+
+            // write TIFF header
+            tiffSaver.writeHeader();
+          }
         }
         tmp.close();
       }
@@ -251,13 +247,15 @@ public class TiffWriter extends FormatWriter {
     ifd.put(new Integer(IFD.IMAGE_LENGTH), new Integer(height));
 
     Double physicalSizeX = retrieve.getPixelsPhysicalSizeX(series);
-    if (physicalSizeX == null || physicalSizeX.doubleValue() == 0) 
+    if (physicalSizeX == null || physicalSizeX.doubleValue() == 0) {
       physicalSizeX = 0d;
+    }
     else physicalSizeX = 1d / physicalSizeX;
 
     Double physicalSizeY = retrieve.getPixelsPhysicalSizeY(series);
-    if (physicalSizeY == null || physicalSizeY.doubleValue() == 0)
+    if (physicalSizeY == null || physicalSizeY.doubleValue() == 0) {
       physicalSizeY = 0d;
+    }
     else physicalSizeY = 1d / physicalSizeY;
 
     ifd.put(IFD.RESOLUTION_UNIT, 3);
@@ -371,6 +369,24 @@ public class TiffWriter extends FormatWriter {
   public void setBigTiff(boolean bigTiff) {
     FormatTools.assertId(currentId, false, 1);
     isBigTiff = bigTiff;
+  }
+
+  // -- Helper methods --
+
+  private void setupTiffSaver() throws IOException {
+    out.close();
+    out = new RandomAccessOutputStream(currentId);
+    tiffSaver = new TiffSaver(out, currentId);
+
+    MetadataRetrieve retrieve = getMetadataRetrieve();
+    Boolean bigEndian = retrieve.getPixelsBinDataBigEndian(series, 0);
+    boolean littleEndian = bigEndian == null ?
+      false : !bigEndian.booleanValue();
+
+    tiffSaver.setWritingSequentially(sequential);
+    tiffSaver.setLittleEndian(littleEndian);
+    tiffSaver.setBigTiff(isBigTiff);
+    tiffSaver.setCodecOptions(options);
   }
 
 }

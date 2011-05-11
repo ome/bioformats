@@ -321,6 +321,9 @@ public class MetamorphReader extends BaseTiffReader {
       for (String f : list) {
         if (checkSuffix(f, ND_SUFFIX)) {
           String prefix = f.substring(0, f.lastIndexOf("."));
+          if (prefix.indexOf("_") >= 0) {
+            prefix = prefix.substring(0, prefix.indexOf("_") + 1);
+          }
           if (stkName.startsWith(prefix) || prefix.equals(stkPrefix)) {
             ndfile = new Location(parent, f).getAbsoluteFile();
             if (prefix.equals(stkPrefix)) {
