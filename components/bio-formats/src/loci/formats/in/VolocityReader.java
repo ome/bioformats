@@ -75,7 +75,8 @@ public class VolocityReader extends FormatReader {
 
   /** Constructs a new Volocity reader. */
   public VolocityReader() {
-    super("Volocity Library", new String [] {"mvd2", "aisf", "aiix", "dat"});
+    super("Volocity Library",
+      new String [] {"mvd2", "aisf", "aiix", "dat", "atsf"});
     domains = new String[] {FormatTools.UNKNOWN_DOMAIN};
   }
 
@@ -90,7 +91,9 @@ public class VolocityReader extends FormatReader {
     for (int c=0; c<getEffectiveSizeC(); c++) {
       files.add(pixelsFiles[getSeries()][c]);
     }
-    files.add(timestampFiles[getSeries()]);
+    if (timestampFiles[getSeries()] != null) {
+      files.add(timestampFiles[getSeries()]);
+    }
     return files.toArray(new String[files.size()]);
   }
 
@@ -222,7 +225,7 @@ public class VolocityReader extends FormatReader {
 
     String[] files = dir.list(true);
     for (String f : files) {
-      if (!checkSuffix(f, "aisf") && !checkSuffix(f, "atsf")) {
+      if (checkSuffix(f, "aiix") || checkSuffix(f, "dat")) {
         extraFiles.add(new Location(dir, f).getAbsolutePath());
       }
     }
