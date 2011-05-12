@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import loci.common.ByteArrayHandle;
 import loci.common.RandomAccessInputStream;
@@ -95,7 +96,12 @@ public class PhotoshopTiffReader extends BaseTiffReader {
     if (getSeries() == 0) return super.openBytes(no, buf, x, y, w, h);
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    tag.seek(layerOffset[(getSeries() - 1) * getSizeC()]);
+    int offsetIndex = 0;
+    for (int i=1; i<getSeries(); i++) {
+      offsetIndex += core[i].sizeC;
+    }
+
+    tag.seek(layerOffset[offsetIndex]);
 
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
 
@@ -109,7 +115,7 @@ public class PhotoshopTiffReader extends BaseTiffReader {
       ByteArrayHandle pix = new ByteArrayHandle();
       for (int c=0; c<getSizeC(); c++) {
         int index = channelOrder[getSeries() - 1][c];
-        tag.seek(layerOffset[(getSeries() - 1) * getSizeC() + index]);
+        tag.seek(layerOffset[offsetIndex + index]);
         pix.write(codec.decompress(tag, options));
       }
       RandomAccessInputStream plane = new RandomAccessInputStream(pix);
@@ -168,39 +174,44 @@ public class PhotoshopTiffReader extends BaseTiffReader {
         compression = new int[nLayers];
         layerNames = new String[nLayers];
 
-        core = new CoreMetadata[nLayers + 1];
-        core[0] = firstSeries;
+        ArrayList<CoreMetadata> layerMetadata = new ArrayList<CoreMetadata>();
+
         channelOrder = new int[nLayers][];
 
         int[][] dataSize = new int[nLayers][];
+        int offsetCount = 0;
         for (int layer=0; layer<nLayers; layer++) {
           int top = tag.readInt();
           int left = tag.readInt();
           int bottom = tag.readInt();
           int right = tag.readInt();
 
-          core[layer + 1] = new CoreMetadata();
-          core[layer + 1].sizeX = right - left;
-          core[layer + 1].sizeY = bottom - top;
-          core[layer + 1].pixelType = getPixelType();
-          core[layer + 1].sizeC = tag.readShort();
-          core[layer + 1].sizeZ = 1;
-          core[layer + 1].sizeT = 1;
-          core[layer + 1].imageCount = 1;
-          core[layer + 1].rgb = isRGB();
-          core[layer + 1].interleaved = isInterleaved();
-          core[layer + 1].littleEndian = isLittleEndian();
-          core[layer + 1].dimensionOrder = getDimensionOrder();
+          CoreMetadata layerCore = new CoreMetadata();
+          layerCore = new CoreMetadata();
+          layerCore.sizeX = right - left;
+          layerCore.sizeY = bottom - top;
+          layerCore.pixelType = getPixelType();
+          layerCore.sizeC = tag.readShort();
+          layerCore.sizeZ = 1;
+          layerCore.sizeT = 1;
+          layerCore.imageCount = 1;
+          layerCore.rgb = isRGB();
+          layerCore.interleaved = isInterleaved();
+          layerCore.littleEndian = isLittleEndian();
+          layerCore.dimensionOrder = getDimensionOrder();
 
-          if (layerOffset == null) {
-            layerOffset = new long[nLayers * core[layer + 1].sizeC];
+          if (layerCore.sizeX == 0 || layerCore.sizeY == 0) {
+            layerMetadata.clear();
+            break;
           }
 
-          channelOrder[layer] = new int[core[layer + 1].sizeC];
-          dataSize[layer] = new int[core[layer + 1].sizeC];
-          for (int c=0; c<core[layer + 1].sizeC; c++) {
+          offsetCount += layerCore.sizeC;
+
+          channelOrder[layer] = new int[layerCore.sizeC];
+          dataSize[layer] = new int[layerCore.sizeC];
+          for (int c=0; c<layerCore.sizeC; c++) {
             int channelID = tag.readShort();
-            if (channelID < 0) channelID = core[layer + 1].sizeC - 1;
+            if (channelID < 0) channelID = layerCore.sizeC - 1;
             channelOrder[layer][channelID] = c;
             dataSize[layer][c] = tag.readInt();
           }
@@ -221,31 +232,40 @@ public class PhotoshopTiffReader extends BaseTiffReader {
           layerNames[layer] = tag.readString(nameLength + pad);
           addGlobalMeta("Layer name #" + layer, layerNames[layer]);
           tag.skipBytes((int) (fp + len - tag.getFilePointer()));
+          layerMetadata.add(layerCore);
         }
 
+        core = new CoreMetadata[layerMetadata.size() + 1];
+        core[0] = firstSeries;
+        for (int i=0; i<layerMetadata.size(); i++) {
+          core[i + 1] = layerMetadata.get(i);
+        }
+        nLayers = layerMetadata.size();
+
+        layerOffset = new long[offsetCount];
+
+        int nextOffset = 0;
         for (int layer=0; layer<nLayers; layer++) {
           for (int c=0; c<core[layer + 1].sizeC; c++) {
             long startFP = tag.getFilePointer();
             compression[layer] = tag.readShort();
-            layerOffset[(layer * core[layer + 1].sizeC) + c] =
-              tag.getFilePointer();
+            layerOffset[nextOffset] = tag.getFilePointer();
             if (compression[layer] == ZIP) {
-              layerOffset[(layer * core[layer + 1].sizeC) + c] =
-                tag.getFilePointer();
+              layerOffset[nextOffset] = tag.getFilePointer();
               ZlibCodec codec = new ZlibCodec();
               codec.decompress(tag, null);
             }
             else if (compression[layer] == PACKBITS) {
               if (layer == 0) tag.skipBytes(256);
               else tag.skipBytes(192);
-              layerOffset[(layer * core[layer + 1].sizeC) + c] =
-                tag.getFilePointer();
+              layerOffset[nextOffset] = tag.getFilePointer();
               PackbitsCodec codec = new PackbitsCodec();
               CodecOptions options = new CodecOptions();
               options.maxBytes = core[layer + 1].sizeX * core[layer + 1].sizeY;
               codec.decompress(tag, options);
             }
             tag.seek(startFP + dataSize[layer][c]);
+            nextOffset++;
           }
         }
       }
