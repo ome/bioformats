@@ -555,7 +555,7 @@ public class TCSReader extends FormatReader {
 
         String date = ifd.getIFDStringValue(IFD.DATE_TIME);
         long nextStamp = DateTools.getTime(date, "yyyy:MM:dd HH:mm:ss");
-        if (Math.abs(thisStamp - nextStamp) < 60000) {
+        if (Math.abs(thisStamp - nextStamp) < 600000) {
           match = true;
           break;
         }
