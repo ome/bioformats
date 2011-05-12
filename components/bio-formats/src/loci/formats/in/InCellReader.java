@@ -109,6 +109,7 @@ public class InCellReader extends FormatReader {
     {
       Location file = new Location(name).getAbsoluteFile().getParentFile();
       String[] list = file.list(true);
+      if (list == null) return false;
       for (String f : list) {
         if (checkSuffix(f, new String[] {"xdce", "xml"})) {
           return isThisType(new Location(file, f).getAbsolutePath(), open);
