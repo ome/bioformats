@@ -334,6 +334,10 @@ public class TiffReader extends BaseTiffReader {
         core[0].sizeT = t;
         core[0].sizeC = c;
       }
+      else if (z * t == ifds.size()) {
+        core[0].sizeZ = z;
+        core[0].sizeT = t;
+      }
       else core[0].sizeZ = ifds.size();
       core[0].imageCount = ifds.size();
     }
