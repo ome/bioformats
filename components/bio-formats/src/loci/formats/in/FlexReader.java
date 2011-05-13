@@ -471,6 +471,9 @@ public class FlexReader extends FormatReader {
 
     String[] files = doGrouping ? flex.toArray(new String[flex.size()]) :
       new String[] {currentFile.getAbsolutePath()};
+    if (files.length == 0) {
+      files = new String[] {currentFile.getAbsolutePath()};
+    }
     LOGGER.debug("Determined that {} .flex files belong together.",
       files.length);
 
