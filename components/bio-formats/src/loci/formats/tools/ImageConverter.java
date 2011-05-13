@@ -27,6 +27,7 @@ import java.awt.image.IndexColorModel;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
+import java.util.List;
 
 import loci.common.DebugTools;
 import loci.common.Location;
@@ -48,11 +49,15 @@ import loci.formats.MetadataTools;
 import loci.formats.MissingLibraryException;
 import loci.formats.ReaderWrapper;
 import loci.formats.in.OMETiffReader;
+import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 import loci.formats.out.TiffWriter;
 import loci.formats.services.OMEXMLService;
 import loci.formats.services.OMEXMLServiceImpl;
+
+import ome.xml.model.Image;
+import ome.xml.model.OME;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -224,9 +229,10 @@ public final class ImageConverter {
 
     reader.setMetadataFiltered(true);
     reader.setOriginalMetadataPopulated(true);
+    OMEXMLService service = null;
     try {
       ServiceFactory factory = new ServiceFactory();
-      OMEXMLService service = factory.getInstance(OMEXMLService.class);
+      service = factory.getInstance(OMEXMLService.class);
       reader.setMetadataStore(service.createOMEXMLMetadata());
     }
     catch (DependencyException de) {
@@ -243,7 +249,24 @@ public final class ImageConverter {
     MetadataTools.populatePixels(store, reader, false, false);
 
     if (store instanceof MetadataRetrieve) {
-      writer.setMetadataRetrieve((MetadataRetrieve) store);
+      if (series >= 0) {
+        OME root = (OME) store.getRoot();
+        Image exportImage = root.getImage(series);
+
+        try {
+          IMetadata meta = service.createOMEXMLMetadata();
+          OME newRoot = (OME) meta.getRoot();
+          newRoot.addImage(exportImage);
+          meta.setRoot(newRoot);
+          writer.setMetadataRetrieve((MetadataRetrieve) meta);
+        }
+        catch (ServiceException e) {
+          throw new FormatException(e);
+        }
+      }
+      else {
+        writer.setMetadataRetrieve((MetadataRetrieve) store);
+      }
     }
     writer.setWriteSequentially(true);
 
@@ -270,7 +293,8 @@ public final class ImageConverter {
     long timeLastLogged = System.currentTimeMillis();
     for (int q=first; q<last; q++) {
       reader.setSeries(q);
-      writer.setSeries(q);
+      int writerSeries = series == -1 ? q : 0;
+      writer.setSeries(writerSeries);
       writer.setInterleaved(reader.isInterleaved());
       writer.setValidBitsPerPixel(reader.getBitsPerPixel());
       int numImages = writer.canDoStacks() ? reader.getImageCount() : 1;
