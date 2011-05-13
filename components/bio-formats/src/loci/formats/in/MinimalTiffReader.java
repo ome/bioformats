@@ -406,13 +406,22 @@ public class MinimalTiffReader extends FormatReader {
             subResolutionIFDs.add(theseSubResolutionIFDs);
             for (int level = 1; level <= resolutionLevels; level++) {
               IFD newIFD = new IFD(ifd);
+              long imageWidth = ifd.getImageWidth();
+              long imageLength = ifd.getImageLength();
+              long tileWidth = ifd.getTileWidth();
+              long tileLength = ifd.getTileLength();
               long factor = (long) Math.pow(2, level);
-              long newTileWidth =
-                Math.round((double) ifd.getTileWidth() / factor);
-              long newTileLength =
-                Math.round((double) ifd.getTileLength() / factor);
-              long newImageWidth = ifd.getTilesPerRow() * newTileWidth;
-              long newImageLength = ifd.getTilesPerColumn() * newTileWidth;
+              long newTileWidth = Math.round((double) tileWidth / factor);
+              long newTileLength = Math.round((double) tileLength / factor);
+              long evenTilesPerRow = imageWidth / tileWidth;
+              long evenTilesPerColumn = imageLength / tileLength;
+              long remainingWidth = imageWidth - (evenTilesPerRow * tileWidth);
+              long remainingLength =
+                imageLength - (evenTilesPerColumn * tileLength);
+              long newImageWidth = (evenTilesPerRow * newTileWidth) +
+                  Math.round((double) remainingWidth / factor);
+              long newImageLength = (evenTilesPerColumn * newTileLength) +
+                  Math.round((double) remainingLength / factor);
 
               int resolutionLevel = Math.abs(level - resolutionLevels);
               newIFD.put(IFD.IMAGE_WIDTH, newImageWidth);
