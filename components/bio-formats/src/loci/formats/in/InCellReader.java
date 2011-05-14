@@ -185,8 +185,10 @@ public class InCellReader extends FormatReader {
 
     // pixels are stored in .im files
     RandomAccessInputStream s = new RandomAccessInputStream(filename);
-    s.skipBytes(128);
-    readPlane(s, x, y, w, h, buf);
+    if (s.length() > FormatTools.getPlaneSize(this)) {
+      s.seek(128);
+      readPlane(s, x, y, w, h, buf);
+    }
     s.close();
     return buf;
   }
