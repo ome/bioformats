@@ -30,6 +30,7 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
+import loci.formats.UnsupportedCompressionException;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -112,7 +113,8 @@ public class LIMReader extends FormatReader {
     isCompressed = in.readShort() != 0;
     addGlobalMeta("Is compressed", isCompressed);
     if (isCompressed) {
-      throw new FormatException("Compressed LIM files not supported.");
+      throw new UnsupportedCompressionException(
+        "Compressed LIM files not supported.");
     }
 
     core[0].imageCount = 1;
