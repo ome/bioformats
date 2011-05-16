@@ -350,25 +350,32 @@ public abstract class FormatWriter extends FormatHandler
     int c = r.getChannelCount(series);
     int planes = z * c * t;
 
-    if (no < 0) throw new FormatException("Plane index must be >= 0");
+    if (no < 0) throw new FormatException(String.format(
+        "Plane index:%d must be >= 0", no));
     if (no >= planes) {
-      throw new FormatException("Plane index must be < " + planes);
+      throw new FormatException(String.format(
+          "Plane index:%d must be < %d", no, planes));
     }
 
     int sizeX = r.getPixelsSizeX(series).getValue().intValue();
     int sizeY = r.getPixelsSizeY(series).getValue().intValue();
-    if (x < 0) throw new FormatException("X coordinate must be >= 0");
-    if (y < 0) throw new FormatException("Y coordinate must be >= 0");
+    if (x < 0) throw new FormatException(String.format("X:%d must be >= 0", x));
+    if (y < 0) throw new FormatException(String.format("Y:%d must be >= 0", y));
     if (x >= sizeX) {
-      throw new FormatException("X coordinate must be < " + sizeX);
+      throw new FormatException(String.format(
+          "X:%d must be < %d", x, sizeX));
     }
     if (y >= sizeY) {
-      throw new FormatException("Y coordinate must be < " + sizeY);
+      throw new FormatException(String.format("Y:%d must be < %d", y, sizeY));
     }
-    if (w <= 0) throw new FormatException("Width must be > 0");
-    if (h <= 0) throw new FormatException("Height must be > 0");
-    if (x + w > sizeX) throw new FormatException("(w + x) must be <= " + sizeX);
-    if (y + h > sizeY) throw new FormatException("(h + y) must be <= " + sizeY);
+    if (w <= 0) throw new FormatException(String.format(
+        "Width:%d must be > 0", w));
+    if (h <= 0) throw new FormatException(String.format(
+        "Height:%d must be > 0", h));
+    if (x + w > sizeX) throw new FormatException(String.format(
+        "(w:%d + x:%d) must be <= %d", w, x, sizeX));
+    if (y + h > sizeY) throw new FormatException(String.format(
+        "(h:%d + y:%d) must be <= %d", h, y, sizeY));
 
     int pixelType =
       FormatTools.pixelTypeFromString(r.getPixelsType(series).toString());

@@ -170,14 +170,25 @@ public class InCellReader extends FormatReader {
     if (filename == null || !(new Location(filename).exists())) return buf;
 
     if (imageFiles[well][field][timepoint][image].isTiff) {
-      tiffReader.setId(filename);
-      return tiffReader.openBytes(0, buf, x, y, w, h);
+      try {
+        tiffReader.setId(filename);
+        return tiffReader.openBytes(0, buf, x, y, w, h);
+      }
+      catch (FormatException e) {
+        LOGGER.debug("", e);
+      }
+      catch (IOException e) {
+        LOGGER.debug("", e);
+      }
+      return buf;
     }
 
     // pixels are stored in .im files
     RandomAccessInputStream s = new RandomAccessInputStream(filename);
-    s.skipBytes(128);
-    readPlane(s, x, y, w, h, buf);
+    if (s.length() > FormatTools.getPlaneSize(this)) {
+      s.seek(128);
+      readPlane(s, x, y, w, h, buf);
+    }
     s.close();
     return buf;
   }
