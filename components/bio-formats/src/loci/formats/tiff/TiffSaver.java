@@ -278,8 +278,8 @@ public class TiffSaver {
       int tilesPerRow = (int) ifd.getTilesPerRow();
       int rowsPerStrip = (int) ifd.getRowsPerStrip()[0];
       int stripSize = rowsPerStrip * tileWidth * bytesPerPixel;
-      nStrips = ((w + tileWidth - 1) / tileWidth)
-      * ((h + tileHeight - 1) / tileHeight);
+      nStrips =
+        ((w + tileWidth - 1) / tileWidth) * ((h + tileHeight - 1) / tileHeight);
 
       if (interleaved) stripSize *= nChannels;
       else nStrips *= nChannels;
@@ -304,7 +304,7 @@ public class TiffSaver {
             for (int c=0; c<nChannels; c++) {
               for (int n=0; n<bps[c]/8; n++) {
                 if (interleaved) {
-                  off = ndx + c * blockSize + n;
+                  off = ndx * nChannels + c * bytesPerPixel + n;
                   if (row >= h || col >= w) {
                     stripOut[strip].writeByte(0);
                   } else {
