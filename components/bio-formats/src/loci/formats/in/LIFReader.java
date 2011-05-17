@@ -578,7 +578,7 @@ public class LIFReader extends FormatReader {
         store.setImageAcquiredDate(DateTools.convertDate(
           (long) (acquiredDate[i] * 1000), DateTools.COBOL), i);
       }
-      store.setImageName(imageNames[i], i);
+      store.setImageName(imageNames[i].trim(), i);
 
       store.setPixelsPhysicalSizeX(physicalSizeXs.get(i), i);
       store.setPixelsPhysicalSizeY(physicalSizeYs.get(i), i);
@@ -948,7 +948,10 @@ public class LIFReader extends FormatReader {
       roi.rotation = parseDouble(roiNode.getAttribute("transRotation"));
       String linewidth = roiNode.getAttribute("linewidth");
       if (linewidth != null) {
-        roi.linewidth = Integer.parseInt(linewidth);
+        try {
+          roi.linewidth = Integer.parseInt(linewidth);
+        }
+        catch (NumberFormatException e) { }
       }
       roi.text = roiNode.getAttribute("text");
 
@@ -1581,8 +1584,11 @@ public class LIFReader extends FormatReader {
       }
       store.setTextValue(text, roi, 0);
       if (fontSize != null) {
-        store.setTextFontSize(
-            new NonNegativeInteger((int) Double.parseDouble(fontSize)), roi, 0);
+        try {
+          int size = (int) Double.parseDouble(fontSize);
+          store.setTextFontSize(new NonNegativeInteger(size), roi, 0);
+        }
+        catch (NumberFormatException e) { }
       }
       store.setTextStrokeWidth(new Double(linewidth), roi, 0);
 
