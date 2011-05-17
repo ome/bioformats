@@ -262,7 +262,7 @@ public class LIFReader extends FormatReader {
     }
 
     if (series >= offsets.size()) {
-      // truncate file; imitate LAS AF and return black planes
+      // truncated file; imitate LAS AF and return black planes
       Arrays.fill(buf, (byte) 0);
       return buf;
     }
@@ -278,6 +278,12 @@ public class LIFReader extends FormatReader {
     int bytesToSkip = (int) (nextOffset - offset - planeSize * getImageCount());
     bytesToSkip /= getSizeY();
     if ((getSizeX() % 4) == 0) bytesToSkip = 0;
+
+    if (offset + (planeSize + bytesToSkip * getSizeY()) * no >= in.length()) {
+      // truncated file; imitate LAS AF and return black planes
+      Arrays.fill(buf, (byte) 0);
+      return buf;
+    }
 
     in.seek(offset + planeSize * no);
     in.skipBytes(bytesToSkip * getSizeY() * no);
