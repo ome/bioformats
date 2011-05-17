@@ -262,7 +262,7 @@ public class LIFReader extends FormatReader {
     }
 
     if (series >= offsets.size()) {
-      // truncate file; imitate LAS AF and return black planes
+      // truncated file; imitate LAS AF and return black planes
       Arrays.fill(buf, (byte) 0);
       return buf;
     }
@@ -278,6 +278,12 @@ public class LIFReader extends FormatReader {
     int bytesToSkip = (int) (nextOffset - offset - planeSize * getImageCount());
     bytesToSkip /= getSizeY();
     if ((getSizeX() % 4) == 0) bytesToSkip = 0;
+
+    if (offset + (planeSize + bytesToSkip * getSizeY()) * no >= in.length()) {
+      // truncated file; imitate LAS AF and return black planes
+      Arrays.fill(buf, (byte) 0);
+      return buf;
+    }
 
     in.seek(offset + planeSize * no);
     in.skipBytes(bytesToSkip * getSizeY() * no);
@@ -578,7 +584,7 @@ public class LIFReader extends FormatReader {
         store.setImageAcquiredDate(DateTools.convertDate(
           (long) (acquiredDate[i] * 1000), DateTools.COBOL), i);
       }
-      store.setImageName(imageNames[i], i);
+      store.setImageName(imageNames[i].trim(), i);
 
       store.setPixelsPhysicalSizeX(physicalSizeXs.get(i), i);
       store.setPixelsPhysicalSizeY(physicalSizeYs.get(i), i);
@@ -948,7 +954,10 @@ public class LIFReader extends FormatReader {
       roi.rotation = parseDouble(roiNode.getAttribute("transRotation"));
       String linewidth = roiNode.getAttribute("linewidth");
       if (linewidth != null) {
-        roi.linewidth = Integer.parseInt(linewidth);
+        try {
+          roi.linewidth = Integer.parseInt(linewidth);
+        }
+        catch (NumberFormatException e) { }
       }
       roi.text = roiNode.getAttribute("text");
 
@@ -1581,8 +1590,11 @@ public class LIFReader extends FormatReader {
       }
       store.setTextValue(text, roi, 0);
       if (fontSize != null) {
-        store.setTextFontSize(
-            new NonNegativeInteger((int) Double.parseDouble(fontSize)), roi, 0);
+        try {
+          int size = (int) Double.parseDouble(fontSize);
+          store.setTextFontSize(new NonNegativeInteger(size), roi, 0);
+        }
+        catch (NumberFormatException e) { }
       }
       store.setTextStrokeWidth(new Double(linewidth), roi, 0);
 
