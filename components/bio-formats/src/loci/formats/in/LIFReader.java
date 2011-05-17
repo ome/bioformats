@@ -623,21 +623,21 @@ public class LIFReader extends FormatReader {
           {
             nextDetector++;
           }
-          if (nextDetector >= activeDetectors.size()) {
-            continue;
-          }
-          String detectorID =
-            MetadataTools.createLSID("Detector", i, nextDetector);
-          store.setDetectorSettingsID(detectorID, i, c);
-          nextDetector++;
-        }
-        if (detectorOffsets[i] != null && c < detectorOffsets[i].size()) {
-          store.setDetectorSettingsOffset(
-            (Double) detectorOffsets[i].get(c), i, c);
-        }
+          if (nextDetector < activeDetectors.size()) {
+            String detectorID =
+              MetadataTools.createLSID("Detector", i, nextDetector);
+            store.setDetectorSettingsID(detectorID, i, c);
+            nextDetector++;
 
-        if (gains[i] != null) {
-          store.setDetectorSettingsGain(gains[i][c], i, c);
+            if (detectorOffsets[i] != null && c < detectorOffsets[i].size()) {
+              store.setDetectorSettingsOffset(
+                (Double) detectorOffsets[i].get(c), i, c);
+            }
+
+            if (gains[i] != null) {
+              store.setDetectorSettingsGain(gains[i][c], i, c);
+            }
+          }
         }
 
         if (channelNames[i] != null) {
@@ -852,57 +852,63 @@ public class LIFReader extends FormatReader {
   private void translateDetectors(Element imageNode, int image)
     throws FormatException
   {
-    NodeList detectors = getNodes(imageNode, "Detector");
-    if (detectors == null) return;
+    NodeList definitions = getNodes(imageNode, "ATLConfocalSettingDefinition");
+    if (definitions == null) return;
 
     int nextChannel = 0;
-    for (int d=0; d<detectors.getLength(); d++) {
-      Element detector = (Element) detectors.item(d);
-      Element grandparent = (Element) detector.getParentNode().getParentNode();
-      NodeList multibands = getNodes(grandparent, "MultiBand");
+    for (int definition=0; definition<definitions.getLength(); definition++) {
+      Element definitionNode = (Element) definitions.item(definition);
+      NodeList detectors = getNodes(definitionNode, "Detector");
+      if (detectors == null) return;
 
-      String v = detector.getAttribute("Gain");
-      Double gain = v == null || v.trim().length() == 0 ? null : new Double(v);
-      v = detector.getAttribute("Offset");
-      Double offset =
-        v == null || v.trim().length() == 0 ? null : new Double(v);
+      for (int d=0; d<detectors.getLength(); d++) {
+        Element detector = (Element) detectors.item(d);
+        NodeList multibands = getNodes(definitionNode, "MultiBand");
 
-      boolean active = "1".equals(detector.getAttribute("IsActive"));
+        String v = detector.getAttribute("Gain");
+        Double gain =
+          v == null || v.trim().length() == 0 ? null : new Double(v);
+        v = detector.getAttribute("Offset");
+        Double offset =
+          v == null || v.trim().length() == 0 ? null : new Double(v);
 
-      if (active) {
-        String c = detector.getAttribute("Channel");
-        int channel = c == null ? 0 : Integer.parseInt(c);
+        boolean active = "1".equals(detector.getAttribute("IsActive"));
 
-        Element multiband = null;
+        if (active) {
+          String c = detector.getAttribute("Channel");
+          int channel = c == null ? 0 : Integer.parseInt(c);
 
-        if (multibands != null) {
-          for (int i=0; i<multibands.getLength(); i++) {
-            Element mb = (Element) multibands.item(i);
-            if (channel == Integer.parseInt(mb.getAttribute("Channel"))) {
-              multiband = mb;
-              break;
+          Element multiband = null;
+
+          if (multibands != null) {
+            for (int i=0; i<multibands.getLength(); i++) {
+              Element mb = (Element) multibands.item(i);
+              if (channel == Integer.parseInt(mb.getAttribute("Channel"))) {
+                multiband = mb;
+                break;
+              }
             }
           }
-        }
 
-        if (multiband != null) {
-          if (nextChannel < channelNames[image].length) {
-            channelNames[image][nextChannel] =
-              multiband.getAttribute("DyeName");
+          if (multiband != null) {
+            if (nextChannel < channelNames[image].length) {
+              channelNames[image][nextChannel] =
+                multiband.getAttribute("DyeName");
+            }
+
+            double cutIn = new Double(multiband.getAttribute("LeftWorld"));
+            double cutOut = new Double(multiband.getAttribute("RightWorld"));
+            cutIns[image].add(new PositiveInteger((int) Math.round(cutIn)));
+            cutOuts[image].add(new PositiveInteger((int) Math.round(cutOut)));
           }
 
-          double leftWorld = new Double(multiband.getAttribute("LeftWorld"));
-          double rightWorld = new Double(multiband.getAttribute("RightWorld"));
-          cutIns[image].add(new PositiveInteger((int) Math.round(leftWorld)));
-          cutOuts[image].add(new PositiveInteger((int) Math.round(rightWorld)));
-        }
+          if (nextChannel < getEffectiveSizeC()) {
+            gains[image][nextChannel] = gain;
+            detectorOffsets[image].add(offset);
+          }
 
-        if (nextChannel < getEffectiveSizeC()) {
-          gains[image][nextChannel] = gain;
-          detectorOffsets[image].add(offset);
+          nextChannel++;
         }
-
-        nextChannel++;
       }
     }
   }
