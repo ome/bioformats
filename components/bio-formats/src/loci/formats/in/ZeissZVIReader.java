@@ -38,6 +38,7 @@ import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceFactory;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -90,12 +91,8 @@ public class ZeissZVIReader extends FormatReader {
 
   private Hashtable<Integer, String> timestamps, exposureTime;
   private int cIndex = -1;
-  private boolean isTiled;
-  private int tileRows, tileColumns;
   private boolean isJPEG, isZlib;
 
-  private String firstImageTile, secondImageTile;
-  private int tileWidth, tileHeight;
   private int realWidth, realHeight;
 
   private POIService poi;
@@ -109,7 +106,6 @@ public class ZeissZVIReader extends FormatReader {
   private int[] channelColors;
   private int lastPlane;
   private Hashtable<Integer, Integer> tiles = new Hashtable<Integer, Integer>();
-  private boolean isMeanderScan;
 
   private Hashtable<Integer, Double> detectorGain =
     new Hashtable<Integer, Double>();
@@ -230,180 +226,34 @@ public class ZeissZVIReader extends FormatReader {
     options.littleEndian = isLittleEndian();
     options.interleaved = isInterleaved();
 
-    if (tileRows * tileColumns == 0 || tileWidth * tileHeight == 0) {
-      RandomAccessInputStream s = poi.getDocumentStream(imageFiles[no]);
-      s.seek(offsets[no]);
+    int index = no;
+    if (getSeriesCount() > 1) {
+      index += getSeries() * getImageCount();
+    }
 
-      int len = w * pixel;
-      int row = getSizeX() * pixel;
+    RandomAccessInputStream s = poi.getDocumentStream(imageFiles[index]);
+    s.seek(offsets[index]);
 
-      if (isJPEG) {
-        byte[] t = new JPEGCodec().decompress(s, options);
+    int len = w * pixel;
+    int row = getSizeX() * pixel;
 
-        for (int yy=0; yy<h; yy++) {
-          System.arraycopy(t, (yy + y) * row + x * pixel, buf, yy*len, len);
-        }
+    if (isJPEG) {
+      byte[] t = new JPEGCodec().decompress(s, options);
+
+      for (int yy=0; yy<h; yy++) {
+        System.arraycopy(t, (yy + y) * row + x * pixel, buf, yy*len, len);
       }
-      else if (isZlib) {
-        byte[] t = new ZlibCodec().decompress(s, options);
-        for (int yy=0; yy<h; yy++) {
-          System.arraycopy(t, (yy + y) * row + x * pixel, buf, yy*len, len);
-        }
+    }
+    else if (isZlib) {
+      byte[] t = new ZlibCodec().decompress(s, options);
+      for (int yy=0; yy<h; yy++) {
+        System.arraycopy(t, (yy + y) * row + x * pixel, buf, yy*len, len);
       }
-      else {
-        readPlane(s, x, y, w, h, buf);
-      }
-      s.close();
     }
     else {
-      // determine which tiles to read
-
-      int rowOffset = 0;
-      int colOffset = 0;
-
-      int count = getImageCount();
-
-      int channel = no % getEffectiveSizeC();
-      int plane = (no / getEffectiveSizeC()) * getEffectiveSizeC();
-      int scale = plane * tileRows * tileColumns + channel;
-      int firstTile =
-        firstImageTile == null ? 0 : Integer.parseInt(firstImageTile);
-      int prevIndex = -1;
-
-      for (int row=0; row<tileRows; row++) {
-        for (int col=0; col<tileColumns; col++) {
-          int rowIndex = row * tileHeight;
-          int colIndex = col * tileWidth;
-
-          int tileIndex = row * tileColumns + col;
-
-          if ((rowIndex <= y && rowIndex + tileHeight >= y) ||
-            (rowIndex > y && rowIndex <= y + h))
-          {
-            if ((colIndex <= x && colIndex + tileWidth >= x) ||
-              (colIndex > x && colIndex <= x + w))
-            {
-              // read this tile
-              int tileX = colIndex < x ? x - colIndex : 0;
-              int tileY = rowIndex < y ? y - rowIndex : 0;
-              int tileW = colIndex + tileWidth <= x + w ?
-                tileWidth - tileX : x + w - colIndex -  tileX;
-              int tileH = rowIndex + tileHeight <= y + h ?
-                tileHeight - tileY : y + h - rowIndex - tileY;
-
-              int ii = row*tileColumns + col;
-
-              if (isMeanderScan) {
-                if (((row % 2) == 1 && getRGBChannelCount() == 1)) {
-                  ii = row*tileColumns + (tileColumns - col - 1);
-                  tileIndex -= col;
-                  tileIndex += (tileColumns - col - 1);
-                }
-                else if (getRGBChannelCount() > 1) {
-                  ii = (tileRows - row - 1) * tileColumns + 1;
-                  if ((row % 2) == 0) {
-                    ii += col;
-                  }
-                  else {
-                    ii += (tileColumns - col - 1);
-                  }
-                  tileIndex = 0;
-                }
-              }
-              else {
-                if (getRGBChannelCount() > 1) {
-                  ii = (tileRows - row - 1) * tileColumns + col + 1;
-                }
-              }
-
-              Integer tileCount = tiles.get(new Integer(ii));
-              boolean valid =
-                tileCount != null && tileCount.intValue() == getImageCount();
-              if (!valid) {
-                colOffset += tileW;
-                if (colOffset >= w) {
-                  colOffset = 0;
-                  rowOffset += tileH;
-                }
-                continue;
-              }
-              int c = getEffectiveSizeC();
-              int cPos = getDimensionOrder().indexOf("C");
-              if (getImageCount() > 1 && (cPos > 2 || c == 1)) {
-                int p = ii;
-                for (int n=0; n<p; n++) {
-                  if (tiles.containsKey(new Integer(n))) {
-                    ii += tiles.get(new Integer(n)).intValue();
-                  }
-                }
-              }
-              if (getImageCount() > 1 && cPos > 2) {
-                ii -= tileIndex;
-              }
-              else if (cPos == 2) {
-                ii *= c;
-                ii += scale;
-              }
-              if (getImageCount() == 1) ii -= firstTile;
-              if (cPos > 2) ii += no;
-
-              if (ii < 0) {
-                if (prevIndex < 0) ii = no;
-                else {
-                  ii = prevIndex + getImageCount();
-                }
-              }
-
-              if (ii >= imageFiles.length) {
-                colOffset += tileW;
-                if (colOffset >= w) {
-                  colOffset = 0;
-                  rowOffset += tileH;
-                }
-                continue;
-              }
-              if (((row % 2) == 1 && getRGBChannelCount() == 1) ||
-                ((row % 2) == 0 && getRGBChannelCount() > 1))
-              {
-                tileIndex -= (tileColumns - col - 1);
-                tileIndex += col;
-              }
-              prevIndex = ii;
-              InputStream s = poi.getInputStream(imageFiles[ii]);
-              s.skip(offsets[ii]);
-
-              if (isJPEG || isZlib) {
-                byte[] tile = new byte[s.available()];
-                s.read(tile);
-                Codec codec = isJPEG ? new JPEGCodec() : new ZlibCodec();
-                s = new ByteArrayInputStream(codec.decompress(tile, options));
-              }
-
-              int actualRowsInTile =
-                (tileWidth * tileHeight * pixel) / (tileWidth * pixel);
-              int blankRows = tileHeight - actualRowsInTile;
-              tileH -= blankRows;
-
-              for (int r=tileY; r<tileY + tileH; r++) {
-                int dest =
-                  pixel * (w * (rowOffset + r - tileY + blankRows) + colOffset);
-                int len = pixel * tileW;
-                s.skip(pixel * tileX);
-                s.read(buf, dest, len);
-                s.skip(pixel * (tileWidth - tileW - tileX));
-              }
-              s.close();
-
-              colOffset += tileW;
-              if (colOffset >= w) {
-                colOffset = 0;
-                rowOffset += tileH;
-              }
-            }
-          }
-        }
-      }
+      readPlane(s, x, y, w, h, buf);
     }
+    s.close();
 
     if (isRGB() && !isJPEG) {
       // reverse bytes in groups of 3 to account for BGR storage
@@ -426,20 +276,18 @@ public class ZeissZVIReader extends FormatReader {
       coordinates = null;
       imageFiles = null;
       cIndex = -1;
-      bpp = tileRows = tileColumns = 0;
-      isTiled = isJPEG = isZlib = false;
+      bpp = 0;
+      isJPEG = isZlib = false;
       if (poi != null) poi.close();
       poi = null;
       tagsToParse = null;
       nextEmWave = nextExWave = nextChName = 0;
-      firstImageTile = secondImageTile = null;
-      tileWidth = tileHeight = realWidth = realHeight = 0;
+      realWidth = realHeight = 0;
       stageX.clear();
       stageY.clear();
       channelColors = null;
       lastPlane = 0;
       tiles.clear();
-      isMeanderScan = false;
       detectorGain.clear();
       detectorOffset.clear();
       emWavelength.clear();
@@ -602,16 +450,12 @@ public class ZeissZVIReader extends FormatReader {
         imageFiles[imageNum] = name;
         s.close();
       }
-      else if (dirName.equals("Mosaic")) {
-        RandomAccessInputStream s = poi.getDocumentStream(name);
-        s.order(true);
-        s.seek(60);
-        isMeanderScan = s.readShort() != 0;
-        s.close();
-      }
     }
 
     LOGGER.info("Populating metadata");
+
+    stageX.clear();
+    stageY.clear();
 
     core[0].sizeZ = zIndices.size();
     core[0].sizeT = tIndices.size();
@@ -632,7 +476,7 @@ public class ZeissZVIReader extends FormatReader {
     }
 
     // calculate tile dimensions and number of tiles
-    if (isTiled) {
+    if (core.length > 1) {
       Integer[] t = tiles.keySet().toArray(new Integer[tiles.size()]);
       Arrays.sort(t);
       Vector<Integer> tmpOffsets = new Vector<Integer>();
@@ -661,8 +505,8 @@ public class ZeissZVIReader extends FormatReader {
 
     int totalTiles = offsets.length / getImageCount();
 
-    tileRows = realHeight / getSizeY();
-    tileColumns = realWidth / getSizeX();
+    int tileRows = realHeight / getSizeY();
+    int tileColumns = realWidth / getSizeX();
 
     if (getSizeY() * tileRows != realHeight) tileRows++;
     if (getSizeX() * tileColumns != realWidth) tileColumns++;
@@ -670,19 +514,16 @@ public class ZeissZVIReader extends FormatReader {
     if (totalTiles <= 1) {
       tileRows = 1;
       tileColumns = 1;
-      totalTiles = 1;
-      isTiled = false;
     }
 
     if (tileRows == 0) tileRows = 1;
     if (tileColumns == 0) tileColumns = 1;
 
-    if (tileColumns == 1 && tileRows == 1) isTiled = false;
-    else {
-      tileWidth = getSizeX();
-      tileHeight = getSizeY();
-      core[0].sizeX = tileWidth * tileColumns;
-      core[0].sizeY = tileHeight * tileRows;
+    if (tileColumns > 1 || tileRows > 1) {
+      CoreMetadata originalCore = core[0];
+      core = new CoreMetadata[tileRows * tileColumns];
+
+      core[0] = originalCore;
     }
 
     core[0].dimensionOrder = "XY";
@@ -712,78 +553,95 @@ public class ZeissZVIReader extends FormatReader {
 
     core[0].indexed = !isRGB() && channelColors != null;
 
+    for (int i=1; i<core.length; i++) {
+      core[i] = new CoreMetadata(this, 0);
+    }
+
     MetadataTools.populatePixels(store, this, true);
 
-    long firstStamp = 0;
-    if (timestamps.size() > 0) {
-      String timestamp = timestamps.get(new Integer(0));
-      firstStamp = parseTimestamp(timestamp);
-      store.setImageAcquiredDate(DateTools.convertDate(
-        (long) (firstStamp / 1600), DateTools.ZVI), 0);
+    for (int i=0; i<getSeriesCount(); i++) {
+      long firstStamp = 0;
+      if (timestamps.size() > 0) {
+        String timestamp = timestamps.get(new Integer(0));
+        firstStamp = parseTimestamp(timestamp);
+        String date =
+          DateTools.convertDate((long) (firstStamp / 1600), DateTools.ZVI);
+        store.setImageAcquiredDate(date, i);
+      }
+      else MetadataTools.setDefaultCreationDate(store, getCurrentFile(), i);
     }
-    else MetadataTools.setDefaultCreationDate(store, getCurrentFile(), 0);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       // link Instrument and Image
       String instrumentID = MetadataTools.createLSID("Instrument", 0);
       store.setInstrumentID(instrumentID, 0);
-      store.setImageInstrumentRef(instrumentID, 0);
-      if (imageDescription != null) {
-        store.setImageDescription(imageDescription, 0);
-      }
 
-      store.setPixelsPhysicalSizeX(physicalSizeX, 0);
-      store.setPixelsPhysicalSizeY(physicalSizeY, 0);
-      store.setPixelsPhysicalSizeZ(physicalSizeZ, 0);
-
-      for (int plane=0; plane<getImageCount(); plane++) {
-        int[] zct = getZCTCoords(plane);
-        String exposure = exposureTime.get(new Integer(zct[1]));
-        if (exposure == null && exposureTime.size() == 1) {
-          exposure = exposureTime.get(exposureTime.keys().nextElement());
-        }
-        Double exp = new Double(0.0);
-        try { exp = new Double(exposure); }
-        catch (NumberFormatException e) { }
-        catch (NullPointerException e) { }
-        store.setPlaneExposureTime(exp, 0, plane);
-
-        if (plane < timestamps.size()) {
-          String timestamp = timestamps.get(new Integer(plane));
-          long stamp = parseTimestamp(timestamp);
-          stamp -= firstStamp;
-          store.setPlaneDeltaT(new Double(stamp / 1600000), 0, plane);
-        }
-
-        if (stageX.get(plane) != null) {
-          store.setPlanePositionX(stageX.get(plane), 0, plane);
-        }
-        if (stageY.get(plane) != null) {
-          store.setPlanePositionY(stageY.get(plane), 0, plane);
-        }
-      }
+      String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
+      store.setObjectiveID(objectiveID, 0, 0);
+      store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
+      store.setObjectiveImmersion(getImmersion("Other"), 0, 0);
 
       // link DetectorSettings to an actual Detector
       for (int i=0; i<getEffectiveSizeC(); i++) {
         String detectorID = MetadataTools.createLSID("Detector", 0, i);
         store.setDetectorID(detectorID, 0, i);
-        store.setDetectorSettingsID(detectorID, 0, i);
         store.setDetectorType(getDetectorType("Other"), 0, i);
 
-        store.setDetectorSettingsGain(detectorGain.get(i), 0, i);
-        store.setDetectorSettingsOffset(detectorOffset.get(i), 0, i);
+        for (int s=0; s<getSeriesCount(); s++) {
+          store.setDetectorSettingsID(detectorID, s, i);
+          store.setDetectorSettingsGain(detectorGain.get(i), s, i);
+          store.setDetectorSettingsOffset(detectorOffset.get(i), s, i);
 
-        store.setChannelName(channelName.get(i), 0, i);
-        store.setChannelEmissionWavelength(emWavelength.get(i), 0, i);
-        store.setChannelExcitationWavelength(exWavelength.get(i), 0, i);
+          store.setChannelName(channelName.get(i), s, i);
+          store.setChannelEmissionWavelength(emWavelength.get(i), s, i);
+          store.setChannelExcitationWavelength(exWavelength.get(i), s, i);
+        }
       }
 
-      // link Objective to Image
-      String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
-      store.setObjectiveID(objectiveID, 0, 0);
-      store.setImageObjectiveSettingsID(objectiveID, 0);
-      store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
-      store.setObjectiveImmersion(getImmersion("Other"), 0, 0);
+      for (int i=0; i<getSeriesCount(); i++) {
+        store.setImageInstrumentRef(instrumentID, i);
+        store.setImageObjectiveSettingsID(objectiveID, i);
+
+        if (imageDescription != null) {
+          store.setImageDescription(imageDescription, i);
+        }
+        store.setImageName("Tile #" + (i + 1), i);
+
+        store.setPixelsPhysicalSizeX(physicalSizeX, i);
+        store.setPixelsPhysicalSizeY(physicalSizeY, i);
+        store.setPixelsPhysicalSizeZ(physicalSizeZ, i);
+
+        long firstStamp = parseTimestamp(timestamps.get(new Integer(0)));
+
+        for (int plane=0; plane<getImageCount(); plane++) {
+          int[] zct = getZCTCoords(plane);
+          String exposure = exposureTime.get(new Integer(zct[1]));
+          if (exposure == null && exposureTime.size() == 1) {
+            exposure = exposureTime.get(exposureTime.keys().nextElement());
+          }
+          Double exp = new Double(0.0);
+          try { exp = new Double(exposure); }
+          catch (NumberFormatException e) { }
+          catch (NullPointerException e) { }
+          store.setPlaneExposureTime(exp, i, plane);
+
+          int posIndex = i * getImageCount() + plane;
+
+          if (posIndex < timestamps.size()) {
+            String timestamp = timestamps.get(new Integer(posIndex));
+            long stamp = parseTimestamp(timestamp);
+            stamp -= firstStamp;
+            store.setPlaneDeltaT(new Double(stamp / 1600000), i, plane);
+          }
+
+          if (stageX.get(posIndex) != null) {
+            store.setPlanePositionX(stageX.get(posIndex), i, plane);
+          }
+          if (stageY.get(posIndex) != null) {
+            store.setPlanePositionY(stageY.get(posIndex), i, plane);
+          }
+        }
+      }
     }
   }
 
@@ -906,13 +764,7 @@ public class ZeissZVIReader extends FormatReader {
           }
         }
 
-        if (key.equals("ImageTile Index") || key.equals("ImageTile Index 0")) {
-          if (firstImageTile == null) {
-            firstImageTile = value;
-          }
-        }
-        else if (key.equals("ImageTile Index 1")) secondImageTile = value;
-        else if (key.startsWith("MultiChannel Color")) {
+        if (key.startsWith("MultiChannel Color")) {
           if (cIndex >= 0 && cIndex < effectiveSizeC) {
             if (channelColors == null ||
               effectiveSizeC > channelColors.length)
@@ -1018,13 +870,13 @@ public class ZeissZVIReader extends FormatReader {
           }
           store.setObjectiveImmersion(getImmersion(immersion), 0, 0);
         }
-        else if (key.indexOf("Stage Position X") != -1) {
+        else if (key.startsWith("Stage Position X")) {
           stageX.put(image, new Double(value));
-          addGlobalMeta("X position for position #1", value);
+          addGlobalMeta("X position for position #" + stageX.size(), value);
         }
-        else if (key.indexOf("Stage Position Y") != -1) {
+        else if (key.startsWith("Stage Position Y")) {
           stageY.put(image, new Double(value));
-          addGlobalMeta("Y position for position #1", value);
+          addGlobalMeta("Y position for position #" + stageY.size(), value);
         }
         else if (key.startsWith("Orca Analog Gain")) {
           detectorGain.put(cIndex, new Double(value));
