@@ -909,6 +909,11 @@ public class LIFReader extends FormatReader {
 
           nextChannel++;
         }
+
+        if (active) {
+          detectorModels[image].add("");
+          activeDetector[image].add(active);
+        }
       }
     }
   }
