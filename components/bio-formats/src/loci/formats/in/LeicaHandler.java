@@ -34,6 +34,7 @@ import loci.formats.CoreMetadata;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.PositiveFloat;
 
 import ome.xml.model.enums.Correction;
 import ome.xml.model.enums.DetectorType;
@@ -421,7 +422,7 @@ public class LeicaHandler extends DefaultHandler {
               break;
           }
           physicalSizeX = physicalSize.doubleValue();
-          store.setPixelsPhysicalSizeX(physicalSize, numDatasets);
+          store.setPixelsPhysicalSizeX(new PositiveFloat(physicalSize), numDatasets);
           break;
         case 2: // Y axis
           if (coreMeta.sizeY != 0) {
@@ -437,7 +438,7 @@ public class LeicaHandler extends DefaultHandler {
           else {
             coreMeta.sizeY = len;
             physicalSizeY = physicalSize.doubleValue();
-            store.setPixelsPhysicalSizeY(physicalSize, numDatasets);
+            store.setPixelsPhysicalSizeY(new PositiveFloat(physicalSize), numDatasets);
           }
           break;
         case 3: // Z axis
@@ -446,7 +447,7 @@ public class LeicaHandler extends DefaultHandler {
             coreMeta.sizeY = len;
             coreMeta.sizeZ = 1;
             physicalSizeY = physicalSize.doubleValue();
-            store.setPixelsPhysicalSizeY(physicalSize, numDatasets);
+            store.setPixelsPhysicalSizeY(new PositiveFloat(physicalSize), numDatasets);
             bytesPerAxis.put(new Integer(nBytes), "Y");
           }
           else {
@@ -460,7 +461,7 @@ public class LeicaHandler extends DefaultHandler {
             coreMeta.sizeY = len;
             coreMeta.sizeT = 1;
             physicalSizeY = physicalSize.doubleValue();
-            store.setPixelsPhysicalSizeY(physicalSize, numDatasets);
+            store.setPixelsPhysicalSizeY(new PositiveFloat(physicalSize), numDatasets);
             bytesPerAxis.put(new Integer(nBytes), "Y");
           }
           else {
@@ -491,7 +492,7 @@ public class LeicaHandler extends DefaultHandler {
       }
       else if (id.equals("dblStepSize")) {
         double zStep = Double.parseDouble(value) * 1000000;
-        store.setPixelsPhysicalSizeZ(zStep, numDatasets);
+        store.setPixelsPhysicalSizeZ(new PositiveFloat(zStep), numDatasets);
       }
       else if (id.equals("nDelayTime_s")) {
         store.setPixelsTimeIncrement(new Double(value), numDatasets);

@@ -38,6 +38,7 @@ import loci.formats.codec.JPEGCodec;
 import loci.formats.codec.MSRLECodec;
 import loci.formats.codec.MSVideoCodec;
 import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.PositiveFloat;
 
 /**
  * AVIReader is the file format reader for AVI files.

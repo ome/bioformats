@@ -24,8 +24,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package ome.xml.model.primitives;
 
 /**
- * A float whose constraints are bound to Java's 32-bit float and a further
- * positive restriction.
+ * A float whose constraints are bound to Java's 64-bit float (double) and a
+ * further positive restriction.
  *
  * @author callan
  *
@@ -35,9 +35,9 @@ package ome.xml.model.primitives;
  */
 public class PositiveFloat extends NonNegativeFloat {
 
-  public PositiveFloat(Float value) {
+  public PositiveFloat(Double value) {
     super(value);
-    if (value == null || value.floatValue() <= 0) {
+    if (value == null || value.doubleValue() <= 0) {
       throw new IllegalArgumentException(
           value + " must not be null and positive.");
     }
@@ -50,6 +50,6 @@ public class PositiveFloat extends NonNegativeFloat {
    * @return See above.
    */
   public static PositiveFloat valueOf(String s) {
-    return new PositiveFloat(Float.valueOf(s));
+    return new PositiveFloat(Double.valueOf(s));
   }
 }

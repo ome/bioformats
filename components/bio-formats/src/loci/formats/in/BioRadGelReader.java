@@ -32,6 +32,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.PositiveFloat;
 
 /**
  * BioRadGelReader is the file format reader for Bio-Rad gel files.
@@ -208,8 +209,8 @@ public class BioRadGelReader extends FormatReader {
 
     store.setImageAcquiredDate(date, 0);
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      store.setPixelsPhysicalSizeX(physicalWidth / getSizeX(), 0);
-      store.setPixelsPhysicalSizeY(physicalHeight / getSizeY(), 0);
+      store.setPixelsPhysicalSizeX(new PositiveFloat(physicalWidth / getSizeX()), 0);
+      store.setPixelsPhysicalSizeY(new PositiveFloat(physicalHeight / getSizeY()), 0);
     }
   }
 

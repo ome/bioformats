@@ -38,6 +38,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.PositiveFloat;
 
 /**
  * MicromanagerReader is the file format reader for Micro-Manager files.
@@ -439,9 +440,9 @@ public class MicromanagerReader extends FormatReader {
         store.setChannelName(channels[i], 0, i);
       }
 
-      store.setPixelsPhysicalSizeX(pixelSize, 0);
-      store.setPixelsPhysicalSizeY(pixelSize, 0);
-      store.setPixelsPhysicalSizeZ(sliceThickness, 0);
+      store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSize), 0);
+      store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSize), 0);
+      store.setPixelsPhysicalSizeZ(new PositiveFloat(sliceThickness), 0);
 
       for (int i=0; i<getImageCount(); i++) {
         store.setPlaneExposureTime(exposureTime, 0, i);

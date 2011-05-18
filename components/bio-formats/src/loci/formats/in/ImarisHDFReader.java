@@ -39,6 +39,7 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.MissingLibraryException;
 import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.PositiveFloat;
 import loci.formats.services.NetCDFService;
 import loci.formats.services.NetCDFServiceImpl;
 
@@ -269,9 +270,9 @@ public class ImarisHDFReader extends FormatReader {
       if (px == 1) px = (maxX - minX) / core[s].sizeX;
       if (py == 1) py = (maxY - minY) / core[s].sizeY;
       if (pz == 1) pz = (maxZ - minZ) / core[s].sizeZ;
-      store.setPixelsPhysicalSizeX(px, s);
-      store.setPixelsPhysicalSizeY(py, s);
-      store.setPixelsPhysicalSizeZ(pz, s);
+      store.setPixelsPhysicalSizeX(new PositiveFloat(px), s);
+      store.setPixelsPhysicalSizeY(new PositiveFloat(py), s);
+      store.setPixelsPhysicalSizeZ(new PositiveFloat(pz), s);
 
       for (int i=0; i<core[s].sizeC; i++, cIndex++) {
         Float gainValue = null;

@@ -32,6 +32,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.PositiveFloat;
 
 /**
  * SpiderReader is the file format reader for SPIDER files.
@@ -250,8 +251,8 @@ public class SpiderReader extends FormatReader {
     store.setImageAcquiredDate(DateTools.formatDate(date, DATE_FORMAT), 0);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      store.setPixelsPhysicalSizeX(new Double(pixelSize * 0.0001), 0);
-      store.setPixelsPhysicalSizeY(new Double(pixelSize * 0.0001), 0);
+      store.setPixelsPhysicalSizeX(new PositiveFloat(new Double(pixelSize * 0.0001)), 0);
+      store.setPixelsPhysicalSizeY(new PositiveFloat(new Double(pixelSize * 0.0001)), 0);
     }
   }
 

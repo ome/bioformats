@@ -42,6 +42,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.PositiveFloat;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 import loci.formats.tiff.TiffConstants;
@@ -678,9 +679,9 @@ public class LeicaReader extends FormatReader {
       // link Instrument and Image
       store.setImageInstrumentRef(instrumentID, i);
 
-      store.setPixelsPhysicalSizeX(physicalSizes[i][0], i);
-      store.setPixelsPhysicalSizeY(physicalSizes[i][1], i);
-      store.setPixelsPhysicalSizeZ(physicalSizes[i][2], i);
+      store.setPixelsPhysicalSizeX(new PositiveFloat(physicalSizes[i][0]), i);
+      store.setPixelsPhysicalSizeY(new PositiveFloat(physicalSizes[i][1]), i);
+      store.setPixelsPhysicalSizeZ(new PositiveFloat(physicalSizes[i][2]), i);
       if ((int) physicalSizes[i][4] > 0) {
         store.setPixelsTimeIncrement(physicalSizes[i][4], i);
       }

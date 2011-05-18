@@ -39,6 +39,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.PositiveFloat;
 
 import ome.xml.model.primitives.PositiveInteger;
 
@@ -210,10 +211,10 @@ public class HamamatsuVMSReader extends FormatReader {
     store.setImageName(path + " map", 2);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      store.setPixelsPhysicalSizeX(physicalWidth / core[0].sizeX, 0);
-      store.setPixelsPhysicalSizeY(physicalHeight / core[0].sizeY, 0);
-      store.setPixelsPhysicalSizeX(macroWidth / core[1].sizeX, 1);
-      store.setPixelsPhysicalSizeY(macroHeight / core[1].sizeY, 1);
+      store.setPixelsPhysicalSizeX(new PositiveFloat(physicalWidth / core[0].sizeX), 0);
+      store.setPixelsPhysicalSizeY(new PositiveFloat(physicalHeight / core[0].sizeY), 0);
+      store.setPixelsPhysicalSizeX(new PositiveFloat(macroWidth / core[1].sizeX), 1);
+      store.setPixelsPhysicalSizeY(new PositiveFloat(macroHeight / core[1].sizeY), 1);
 
       String instrumentID = MetadataTools.createLSID("Instrument", 0);
       store.setInstrumentID(instrumentID, 0);

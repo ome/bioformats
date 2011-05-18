@@ -32,6 +32,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.PositiveFloat;
 
 /**
  * AIMReader is the file format reader for .aim files.
@@ -167,13 +168,13 @@ public class AIMReader extends FormatReader {
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       if (xSize != null && xLength != null) {
-        store.setPixelsPhysicalSizeX(xLength / xSize, 0);
+        store.setPixelsPhysicalSizeX(new PositiveFloat(xLength / xSize), 0);
       }
       if (ySize != null && yLength != null) {
-        store.setPixelsPhysicalSizeY(yLength / ySize, 0);
+        store.setPixelsPhysicalSizeY(new PositiveFloat(yLength / ySize), 0);
       }
       if (zSize != null && zLength != null) {
-        store.setPixelsPhysicalSizeZ(zLength / zSize, 0);
+        store.setPixelsPhysicalSizeZ(new PositiveFloat(zLength / zSize), 0);
       }
     }
   }

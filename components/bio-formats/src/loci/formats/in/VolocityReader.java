@@ -39,6 +39,7 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.MissingLibraryException;
 import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.PositiveFloat;
 import loci.formats.services.MetakitService;
 
 import ome.xml.model.primitives.PositiveInteger;
@@ -507,9 +508,9 @@ public class VolocityReader extends FormatReader {
           store.setChannelName(channelNames[i][c], i, c);
         }
       }
-      store.setPixelsPhysicalSizeX(physicalX[i], i);
-      store.setPixelsPhysicalSizeY(physicalY[i], i);
-      store.setPixelsPhysicalSizeZ(physicalZ[i], i);
+      store.setPixelsPhysicalSizeX(new PositiveFloat(physicalX[i]), i);
+      store.setPixelsPhysicalSizeY(new PositiveFloat(physicalY[i]), i);
+      store.setPixelsPhysicalSizeZ(new PositiveFloat(physicalZ[i]), i);
 
       String objective = MetadataTools.createLSID("Objective", 0, i);
       store.setObjectiveID(objective, 0, i);

@@ -48,6 +48,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.PositiveFloat;
 import loci.formats.services.POIService;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
@@ -905,10 +906,10 @@ public class FV1000Reader extends FormatReader {
       // populate Dimensions data
 
       if (pixelSizeX != null) {
-        store.setPixelsPhysicalSizeX(new Double(pixelSizeX), i);
+        store.setPixelsPhysicalSizeX(new PositiveFloat(new Double(pixelSizeX)), i);
       }
       if (pixelSizeY != null) {
-        store.setPixelsPhysicalSizeY(new Double(pixelSizeY), i);
+        store.setPixelsPhysicalSizeY(new PositiveFloat(new Double(pixelSizeY)), i);
       }
       if (pixelSizeZ == Double.NEGATIVE_INFINITY ||
         pixelSizeZ == Double.POSITIVE_INFINITY || getSizeZ() == 1)
@@ -921,7 +922,7 @@ public class FV1000Reader extends FormatReader {
         pixelSizeT = 0d;
       }
 
-      store.setPixelsPhysicalSizeZ(pixelSizeZ, i);
+      store.setPixelsPhysicalSizeZ(new PositiveFloat(pixelSizeZ), i);
       store.setPixelsTimeIncrement(pixelSizeT, i);
 
       // populate LogicalChannel data

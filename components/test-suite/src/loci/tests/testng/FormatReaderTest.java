@@ -868,7 +868,7 @@ public class FormatReaderTest {
       config.setSeries(i);
 
       Double expectedSize = config.getPhysicalSizeX();
-      Double realSize = retrieve.getPixelsPhysicalSizeX(i);
+      Double realSize = retrieve.getPixelsPhysicalSizeX(i).getValue();
 
       if (!(expectedSize == null && realSize == null) &&
         !expectedSize.equals(realSize))
@@ -892,7 +892,7 @@ public class FormatReaderTest {
       config.setSeries(i);
 
       Double expectedSize = config.getPhysicalSizeY();
-      Double realSize = retrieve.getPixelsPhysicalSizeY(i);
+      Double realSize = retrieve.getPixelsPhysicalSizeY(i).getValue();
 
       if (!(expectedSize == null && realSize == null) &&
         !expectedSize.equals(realSize))
@@ -916,7 +916,7 @@ public class FormatReaderTest {
       config.setSeries(i);
 
       Double expectedSize = config.getPhysicalSizeZ();
-      Double realSize = retrieve.getPixelsPhysicalSizeZ(i);
+      Double realSize = retrieve.getPixelsPhysicalSizeZ(i).getValue();
 
       if (!(expectedSize == null && realSize == null) &&
         !expectedSize.equals(realSize))

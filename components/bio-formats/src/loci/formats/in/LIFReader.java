@@ -50,6 +50,7 @@ import loci.formats.ImageTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.PositiveFloat;
 import loci.formats.services.OMEXMLService;
 
 import ome.xml.model.enums.DetectorType;
@@ -586,9 +587,9 @@ public class LIFReader extends FormatReader {
       }
       store.setImageName(imageNames[i].trim(), i);
 
-      store.setPixelsPhysicalSizeX(physicalSizeXs.get(i), i);
-      store.setPixelsPhysicalSizeY(physicalSizeYs.get(i), i);
-      store.setPixelsPhysicalSizeZ(zSteps[i], i);
+      store.setPixelsPhysicalSizeX(new PositiveFloat(physicalSizeXs.get(i)), i);
+      store.setPixelsPhysicalSizeY(new PositiveFloat(physicalSizeYs.get(i)), i);
+      store.setPixelsPhysicalSizeZ(new PositiveFloat(zSteps[i]), i);
       store.setPixelsTimeIncrement(tSteps[i], i);
 
       Vector detectors = detectorModels[i];

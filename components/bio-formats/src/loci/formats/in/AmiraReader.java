@@ -38,6 +38,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.PositiveFloat;
 import loci.formats.tools.AmiraParameters;
 
 /**
@@ -185,9 +186,9 @@ public class AmiraReader extends FormatReader {
       addGlobalMeta("Pixels per meter (Y)", 1e6 / pixelHeight);
       addGlobalMeta("Pixels per meter (Z)", 1e6 / pixelDepth);
 
-      store.setPixelsPhysicalSizeX(new Double(pixelWidth), 0);
-      store.setPixelsPhysicalSizeY(new Double(pixelHeight), 0);
-      store.setPixelsPhysicalSizeZ(new Double(pixelDepth), 0);
+      store.setPixelsPhysicalSizeX(new PositiveFloat(new Double(pixelWidth)), 0);
+      store.setPixelsPhysicalSizeY(new PositiveFloat(new Double(pixelHeight)), 0);
+      store.setPixelsPhysicalSizeZ(new PositiveFloat(new Double(pixelDepth)), 0);
     }
 
     if (parameters.ascii) {

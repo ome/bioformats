@@ -34,6 +34,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.PositiveFloat;
 
 /**
  * VarianFDFReader is the file format reader for Varian FDF files.
@@ -162,9 +163,9 @@ public class VarianFDFReader extends FormatReader {
     MetadataTools.populatePixels(store, this, !minMetadata);
 
     if (!minMetadata) {
-      store.setPixelsPhysicalSizeX(pixelSizeX, 0);
-      store.setPixelsPhysicalSizeY(pixelSizeY, 0);
-      store.setPixelsPhysicalSizeZ(pixelSizeZ, 0);
+      store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSizeX), 0);
+      store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSizeY), 0);
+      store.setPixelsPhysicalSizeZ(new PositiveFloat(pixelSizeZ), 0);
 
       for (int i=0; i<getImageCount(); i++) {
         store.setPlanePositionX(originX, 0, i);

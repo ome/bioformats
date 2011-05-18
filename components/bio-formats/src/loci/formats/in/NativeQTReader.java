@@ -41,6 +41,7 @@ import loci.formats.codec.QTRLECodec;
 import loci.formats.codec.RPZACodec;
 import loci.formats.codec.ZlibCodec;
 import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.PositiveFloat;
 
 /**
  * NativeQTReader is the file format reader for QuickTime movie files.

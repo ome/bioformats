@@ -32,6 +32,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.PositiveFloat;
 
 /**
  * ImagicReader is the file format reader for IMAGIC files.
@@ -253,9 +254,9 @@ public class ImagicReader extends FormatReader {
     store.setImageName(imageName.trim(), 0);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      store.setPixelsPhysicalSizeX(physicalXSize * 0.0001, 0);
-      store.setPixelsPhysicalSizeY(physicalYSize * 0.0001, 0);
-      store.setPixelsPhysicalSizeZ(physicalZSize * 0.0001, 0);
+      store.setPixelsPhysicalSizeX(new PositiveFloat(physicalXSize * 0.0001), 0);
+      store.setPixelsPhysicalSizeY(new PositiveFloat(physicalYSize * 0.0001), 0);
+      store.setPixelsPhysicalSizeZ(new PositiveFloat(physicalZSize * 0.0001), 0);
     }
   }
 

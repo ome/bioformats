@@ -36,6 +36,7 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.IMinMaxStore;
 import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.PositiveFloat;
 
 import ome.xml.model.primitives.PositiveInteger;
 
@@ -502,9 +503,9 @@ public class DeltavisionReader extends FormatReader {
       }
     }
 
-    store.setPixelsPhysicalSizeX(new Double(pixX), 0);
-    store.setPixelsPhysicalSizeY(new Double(pixY), 0);
-    store.setPixelsPhysicalSizeZ(new Double(pixZ), 0);
+    store.setPixelsPhysicalSizeX(new PositiveFloat(new Double(pixX)), 0);
+    store.setPixelsPhysicalSizeY(new PositiveFloat(new Double(pixY)), 0);
+    store.setPixelsPhysicalSizeZ(new PositiveFloat(new Double(pixZ)), 0);
 
     store.setImageDescription(imageDesc, 0);
 
@@ -798,9 +799,9 @@ public class DeltavisionReader extends FormatReader {
               LOGGER.warn("Could not parse pixel size '{}'",
                 pixelSizes[q].trim());
             }
-            if (q == 0) store.setPixelsPhysicalSizeX(size, 0);
-            if (q == 1) store.setPixelsPhysicalSizeY(size, 0);
-            if (q == 2) store.setPixelsPhysicalSizeZ(size, 0);
+            if (q == 0) store.setPixelsPhysicalSizeX(new PositiveFloat(size), 0);
+            if (q == 1) store.setPixelsPhysicalSizeY(new PositiveFloat(size), 0);
+            if (q == 2) store.setPixelsPhysicalSizeZ(new PositiveFloat(size), 0);
           }
         }
         else if (key.equals("Binning")) {

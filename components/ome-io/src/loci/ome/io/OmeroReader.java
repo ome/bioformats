@@ -36,6 +36,7 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tools.ImageInfo;
+import ome.xml.model.primitives.PositiveFloat;
 import omero.ServerError;
 import omero.api.GatewayPrx;
 import omero.api.RawPixelsStorePrx;
@@ -235,9 +236,9 @@ public class OmeroReader extends FormatReader {
       store.setImageDescription(description, 0);
       MetadataTools.populatePixels(store, this);
 
-      store.setPixelsPhysicalSizeX(new Double(px), 0);
-      store.setPixelsPhysicalSizeY(new Double(py), 0);
-      store.setPixelsPhysicalSizeZ(new Double(pz), 0);
+      store.setPixelsPhysicalSizeX(new PositiveFloat(px), 0);
+      store.setPixelsPhysicalSizeY(new PositiveFloat(py), 0);
+      store.setPixelsPhysicalSizeZ(new PositiveFloat(pz), 0);
     }
     catch (CannotCreateSessionException e) {
       throw new FormatException(e);

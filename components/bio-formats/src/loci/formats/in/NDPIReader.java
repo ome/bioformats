@@ -32,6 +32,7 @@ import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.codec.JPEGTileDecoder;
 import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.PositiveFloat;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.PhotoInterp;
 
@@ -236,9 +237,9 @@ public class NDPIReader extends BaseTiffReader {
         creationDate = DateTools.formatDate(creationDate, DATE_FORMATS);
         store.setImageAcquiredDate(creationDate, i);
 
-        store.setPixelsPhysicalSizeX(ifds.get(ifdIndex).getXResolution(), i);
-        store.setPixelsPhysicalSizeY(ifds.get(ifdIndex).getYResolution(), i);
-        store.setPixelsPhysicalSizeZ(0.0, i);
+        store.setPixelsPhysicalSizeX(new PositiveFloat(ifds.get(ifdIndex).getXResolution()), i);
+        store.setPixelsPhysicalSizeY(new PositiveFloat(ifds.get(ifdIndex).getYResolution()), i);
+        store.setPixelsPhysicalSizeZ(new PositiveFloat(0.0), i);
       }
     }
   }

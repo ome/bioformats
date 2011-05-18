@@ -39,6 +39,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.PositiveFloat;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
 
@@ -324,8 +325,8 @@ public class PrairieReader extends FormatReader {
           store.setInstrumentID(instrumentID, 0);
           store.setImageInstrumentRef(instrumentID, 0);
 
-          store.setPixelsPhysicalSizeX(pixelSizeX, 0);
-          store.setPixelsPhysicalSizeY(pixelSizeY, 0);
+          store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSizeX), 0);
+          store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSizeY), 0);
           for (int i=0; i<getSizeC(); i++) {
             String gain = i < gains.size() ? gains.get(i) : null;
             String offset = i < offsets.size() ? offsets.get(i) : null;

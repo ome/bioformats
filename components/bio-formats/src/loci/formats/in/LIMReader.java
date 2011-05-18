@@ -32,6 +32,7 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.UnsupportedCompressionException;
 import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.PositiveFloat;
 
 /**
  * LIMReader is the file format reader for Laboratory Imaging/Nikon LIM files.

@@ -24,8 +24,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package ome.xml.model.primitives;
 
 /**
- * A float whose constraints are bound to Java's 32-bit float and a further
- * non-negative restriction.
+ * A float whose constraints are bound to Java's 64-bit float (double) and a
+ * further non-negative restriction.
  *
  * @author callan
  *
@@ -33,11 +33,11 @@ package ome.xml.model.primitives;
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/NonNegativeInteger.java">Trac</a>,
  * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/NonNegativeInteger.java;hb=HEAD">Gitweb</a></dd></dl>
  */
-public class NonNegativeFloat extends PrimitiveType<Float> {
+public class NonNegativeFloat extends PrimitiveType<Double> {
 
-  public NonNegativeFloat(Float value) {
+  public NonNegativeFloat(Double value) {
     super(value);
-    if (value == null || value.floatValue() < 0) {
+    if (value == null || value.doubleValue() < 0) {
       throw new IllegalArgumentException(
           value + " must not be null or non-negative.");
     }
@@ -50,6 +50,6 @@ public class NonNegativeFloat extends PrimitiveType<Float> {
    * @return See above.
    */
   public static NonNegativeFloat valueOf(String s) {
-    return new NonNegativeFloat(Float.valueOf(s));
+    return new NonNegativeFloat(Double.valueOf(s));
   }
 }

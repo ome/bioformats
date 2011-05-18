@@ -50,27 +50,27 @@ public class PositiveFloatTest {
 
   @Test(expectedExceptions={IllegalArgumentException.class})
   public void testMinusOne() {
-    new PositiveFloat(-1.0f);
+    new PositiveFloat(-1.0);
   }
 
   @Test(expectedExceptions={IllegalArgumentException.class})
   public void testZero() {
-    new PositiveFloat(0.0f);
+    new PositiveFloat(0.0);
   }
 
   @Test
   public void testPositiveOne() {
-    new PositiveFloat(1.0f);
+    new PositiveFloat(1.0);
   }
 
   @Test
   public void testEquivalence() {
-    PositiveFloat a = new PositiveFloat(0.1f);
-    PositiveFloat b = new PositiveFloat(0.1f);
-    PositiveFloat c = new PositiveFloat(2.0f);
-    Float d = new Float(0.1f);
-    Float e = new Float(2.0f);
-    Float f = new Float(3.0f);
+    PositiveFloat a = new PositiveFloat(0.1);
+    PositiveFloat b = new PositiveFloat(0.1);
+    PositiveFloat c = new PositiveFloat(2.0);
+    Double d = new Double(0.1);
+    Double e = new Double(2.0);
+    Double f = new Double(3.0);
     assertFalse(a == b);
     assertFalse(a == c);
     assertTrue(a.equals(b));
@@ -83,6 +83,6 @@ public class PositiveFloatTest {
 
   @Test
   public void testToString() {
-    assertEquals("0.1", new PositiveFloat(0.1f).toString());
+    assertEquals("0.1", new PositiveFloat(0.1).toString());
   }
 }
