@@ -38,7 +38,6 @@ import loci.formats.codec.JPEG2000BoxType;
 import loci.formats.codec.JPEG2000Codec;
 import loci.formats.codec.JPEG2000CodecOptions;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 
 /**
  * JPEG2000Reader is the file format reader for JPEG-2000 images.

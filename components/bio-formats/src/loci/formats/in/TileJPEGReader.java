@@ -15,7 +15,6 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.codec.JPEGTileDecoder;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 
 /**
  * Reader for decoding JPEG images using java.awt.Toolkit.

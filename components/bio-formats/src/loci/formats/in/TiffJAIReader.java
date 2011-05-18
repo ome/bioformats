@@ -40,7 +40,6 @@ import loci.formats.MetadataTools;
 import loci.formats.MissingLibraryException;
 import loci.formats.gui.AWTImageTools;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 
 /**
  * TiffJAIReader is a file format reader for TIFF images. It uses the

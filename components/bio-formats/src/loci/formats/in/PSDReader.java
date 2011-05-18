@@ -33,7 +33,6 @@ import loci.formats.MetadataTools;
 import loci.formats.codec.CodecOptions;
 import loci.formats.codec.PackbitsCodec;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 
 /**
  * PSDReader is the file format reader for Photoshop PSD files.

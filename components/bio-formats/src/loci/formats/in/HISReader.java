@@ -35,7 +35,6 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.codec.BitBuffer;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 
 /**
  * HISReader is the file format reader for Hamamatsu .his files.

@@ -40,7 +40,6 @@ import loci.formats.MetadataTools;
 import loci.formats.gui.AWTImageTools;
 import loci.formats.gui.LegacyQTTools;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 
 /**
  * LegacyQTReader is a file format reader for QuickTime movie files.

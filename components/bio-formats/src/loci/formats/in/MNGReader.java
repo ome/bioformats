@@ -38,7 +38,6 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.gui.AWTImageTools;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 
 /**
  * MNGReader is the file format reader for Multiple Network Graphics (MNG)

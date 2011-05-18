@@ -37,7 +37,6 @@ import loci.formats.codec.CodecOptions;
 import loci.formats.codec.PackbitsCodec;
 import loci.formats.codec.ZlibCodec;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
 
