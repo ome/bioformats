@@ -35,7 +35,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2011-05-18 16:16:44+0100
+ * Created by callan via xsd-fu on 2011-05-18 16:39:22+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -3464,21 +3464,21 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// Ignoring MetadataOnly element, complex property
-	public Double getPixelsPhysicalSizeX(int imageIndex)
+	public PositiveFloat getPixelsPhysicalSizeX(int imageIndex)
 	{
 		// Parents: {u'Image': {u'OME': None}}
 		// PhysicalSizeX is not a reference
 		return root.getImage(imageIndex).getPixels().getPhysicalSizeX();
 	}
 
-	public Double getPixelsPhysicalSizeY(int imageIndex)
+	public PositiveFloat getPixelsPhysicalSizeY(int imageIndex)
 	{
 		// Parents: {u'Image': {u'OME': None}}
 		// PhysicalSizeY is not a reference
 		return root.getImage(imageIndex).getPixels().getPhysicalSizeY();
 	}
 
-	public Double getPixelsPhysicalSizeZ(int imageIndex)
+	public PositiveFloat getPixelsPhysicalSizeZ(int imageIndex)
 	{
 		// Parents: {u'Image': {u'OME': None}}
 		// PhysicalSizeZ is not a reference
@@ -11155,7 +11155,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// Ignoring MetadataOnly element, complex property
-	public void setPixelsPhysicalSizeX(Double physicalSizeX, int imageIndex)
+	public void setPixelsPhysicalSizeX(PositiveFloat physicalSizeX, int imageIndex)
 	{
 		// Parents: {u'Image': {u'OME': None}}
 		// PhysicalSizeX is not a reference
@@ -11173,7 +11173,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o2.setPhysicalSizeX(physicalSizeX);
 	}
 
-	public void setPixelsPhysicalSizeY(Double physicalSizeY, int imageIndex)
+	public void setPixelsPhysicalSizeY(PositiveFloat physicalSizeY, int imageIndex)
 	{
 		// Parents: {u'Image': {u'OME': None}}
 		// PhysicalSizeY is not a reference
@@ -11191,7 +11191,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o2.setPhysicalSizeY(physicalSizeY);
 	}
 
-	public void setPixelsPhysicalSizeZ(Double physicalSizeZ, int imageIndex)
+	public void setPixelsPhysicalSizeZ(PositiveFloat physicalSizeZ, int imageIndex)
 	{
 		// Parents: {u'Image': {u'OME': None}}
 		// PhysicalSizeZ is not a reference

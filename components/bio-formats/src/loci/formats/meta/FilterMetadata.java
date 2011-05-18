@@ -35,7 +35,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2011-05-18 16:16:59+0100
+ * Created by callan via xsd-fu on 2011-05-18 16:39:40+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -2299,17 +2299,17 @@ public class FilterMetadata implements MetadataStore
 	}
 
 	// Ignoring MetadataOnly element, complex property
-	public void setPixelsPhysicalSizeX(Double physicalSizeX, int imageIndex)
+	public void setPixelsPhysicalSizeX(PositiveFloat physicalSizeX, int imageIndex)
 	{
 		store.setPixelsPhysicalSizeX(physicalSizeX, imageIndex);
 	}
 
-	public void setPixelsPhysicalSizeY(Double physicalSizeY, int imageIndex)
+	public void setPixelsPhysicalSizeY(PositiveFloat physicalSizeY, int imageIndex)
 	{
 		store.setPixelsPhysicalSizeY(physicalSizeY, imageIndex);
 	}
 
-	public void setPixelsPhysicalSizeZ(Double physicalSizeZ, int imageIndex)
+	public void setPixelsPhysicalSizeZ(PositiveFloat physicalSizeZ, int imageIndex)
 	{
 		store.setPixelsPhysicalSizeZ(physicalSizeZ, imageIndex);
 	}

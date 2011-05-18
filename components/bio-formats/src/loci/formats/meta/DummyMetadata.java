@@ -35,7 +35,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2011-05-18 16:16:54+0100
+ * Created by callan via xsd-fu on 2011-05-18 16:39:31+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -2623,17 +2623,17 @@ public class DummyMetadata implements IMetadata
 	}
 
 	// Ignoring MetadataOnly element, complex property
-	public Double getPixelsPhysicalSizeX(int imageIndex)
+	public PositiveFloat getPixelsPhysicalSizeX(int imageIndex)
 	{
 		return null;
 	}
 
-	public Double getPixelsPhysicalSizeY(int imageIndex)
+	public PositiveFloat getPixelsPhysicalSizeY(int imageIndex)
 	{
 		return null;
 	}
 
-	public Double getPixelsPhysicalSizeZ(int imageIndex)
+	public PositiveFloat getPixelsPhysicalSizeZ(int imageIndex)
 	{
 		return null;
 	}
@@ -5742,15 +5742,15 @@ public class DummyMetadata implements IMetadata
 	}
 
 	// Ignoring MetadataOnly element, complex property
-	public void setPixelsPhysicalSizeX(Double physicalSizeX, int imageIndex)
+	public void setPixelsPhysicalSizeX(PositiveFloat physicalSizeX, int imageIndex)
 	{
 	}
 
-	public void setPixelsPhysicalSizeY(Double physicalSizeY, int imageIndex)
+	public void setPixelsPhysicalSizeY(PositiveFloat physicalSizeY, int imageIndex)
 	{
 	}
 
-	public void setPixelsPhysicalSizeZ(Double physicalSizeZ, int imageIndex)
+	public void setPixelsPhysicalSizeZ(PositiveFloat physicalSizeZ, int imageIndex)
 	{
 	}
 

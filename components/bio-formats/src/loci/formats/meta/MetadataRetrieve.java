@@ -35,7 +35,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2011-05-18 16:16:36+0100
+ * Created by callan via xsd-fu on 2011-05-18 16:39:12+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -1520,11 +1520,11 @@ public interface MetadataRetrieve {
 	String getPixelsID(int imageIndex);
 
 	// Ignoring MetadataOnly element, complex property
-	Double getPixelsPhysicalSizeX(int imageIndex);
+	PositiveFloat getPixelsPhysicalSizeX(int imageIndex);
 
-	Double getPixelsPhysicalSizeY(int imageIndex);
+	PositiveFloat getPixelsPhysicalSizeY(int imageIndex);
 
-	Double getPixelsPhysicalSizeZ(int imageIndex);
+	PositiveFloat getPixelsPhysicalSizeZ(int imageIndex);
 
 	// Ignoring Plane element, complex property
 	PositiveInteger getPixelsSizeC(int imageIndex);

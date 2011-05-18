@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2011-05-18 16:02:43+0100
+ * Created by callan via xsd-fu on 2011-05-18 16:38:52+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -77,13 +77,13 @@ public class Pixels extends AbstractOMEModelObject
 	private Double timeIncrement;
 
 	// Property
-	private Double physicalSizeY;
+	private PositiveFloat physicalSizeY;
 
 	// Property
-	private Double physicalSizeX;
+	private PositiveFloat physicalSizeX;
 
 	// Property
-	private Double physicalSizeZ;
+	private PositiveFloat physicalSizeZ;
 
 	// Property
 	private PositiveInteger sizeX;
@@ -189,19 +189,19 @@ public class Pixels extends AbstractOMEModelObject
 		if (element.hasAttribute("PhysicalSizeY"))
 		{
 			// Attribute property PhysicalSizeY
-			setPhysicalSizeY(Double.valueOf(
+			setPhysicalSizeY(PositiveFloat.valueOf(
 					element.getAttribute("PhysicalSizeY")));
 		}
 		if (element.hasAttribute("PhysicalSizeX"))
 		{
 			// Attribute property PhysicalSizeX
-			setPhysicalSizeX(Double.valueOf(
+			setPhysicalSizeX(PositiveFloat.valueOf(
 					element.getAttribute("PhysicalSizeX")));
 		}
 		if (element.hasAttribute("PhysicalSizeZ"))
 		{
 			// Attribute property PhysicalSizeZ
-			setPhysicalSizeZ(Double.valueOf(
+			setPhysicalSizeZ(PositiveFloat.valueOf(
 					element.getAttribute("PhysicalSizeZ")));
 		}
 		if (element.hasAttribute("SizeX"))
@@ -366,34 +366,34 @@ public class Pixels extends AbstractOMEModelObject
 	}
 
 	// Property
-	public Double getPhysicalSizeY()
+	public PositiveFloat getPhysicalSizeY()
 	{
 		return physicalSizeY;
 	}
 
-	public void setPhysicalSizeY(Double physicalSizeY)
+	public void setPhysicalSizeY(PositiveFloat physicalSizeY)
 	{
 		this.physicalSizeY = physicalSizeY;
 	}
 
 	// Property
-	public Double getPhysicalSizeX()
+	public PositiveFloat getPhysicalSizeX()
 	{
 		return physicalSizeX;
 	}
 
-	public void setPhysicalSizeX(Double physicalSizeX)
+	public void setPhysicalSizeX(PositiveFloat physicalSizeX)
 	{
 		this.physicalSizeX = physicalSizeX;
 	}
 
 	// Property
-	public Double getPhysicalSizeZ()
+	public PositiveFloat getPhysicalSizeZ()
 	{
 		return physicalSizeZ;
 	}
 
-	public void setPhysicalSizeZ(Double physicalSizeZ)
+	public void setPhysicalSizeZ(PositiveFloat physicalSizeZ)
 	{
 		this.physicalSizeZ = physicalSizeZ;
 	}

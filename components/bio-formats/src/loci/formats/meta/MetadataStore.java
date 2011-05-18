@@ -35,7 +35,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2011-05-18 16:18:23+0100
+ * Created by callan via xsd-fu on 2011-05-18 16:39:07+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -1314,11 +1314,11 @@ public interface MetadataStore
 	void setPixelsID(String id, int imageIndex);
 
 	// Ignoring MetadataOnly element, complex property
-	void setPixelsPhysicalSizeX(Double physicalSizeX, int imageIndex);
+	void setPixelsPhysicalSizeX(PositiveFloat physicalSizeX, int imageIndex);
 
-	void setPixelsPhysicalSizeY(Double physicalSizeY, int imageIndex);
+	void setPixelsPhysicalSizeY(PositiveFloat physicalSizeY, int imageIndex);
 
-	void setPixelsPhysicalSizeZ(Double physicalSizeZ, int imageIndex);
+	void setPixelsPhysicalSizeZ(PositiveFloat physicalSizeZ, int imageIndex);
 
 	// Ignoring Plane element, complex property
 	void setPixelsSizeC(PositiveInteger sizeC, int imageIndex);

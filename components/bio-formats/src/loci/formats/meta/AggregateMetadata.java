@@ -35,7 +35,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2011-05-18 16:16:50+0100
+ * Created by callan via xsd-fu on 2011-05-18 16:39:26+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -6165,7 +6165,7 @@ public class AggregateMetadata implements IMetadata
 	}
 
 	// Ignoring MetadataOnly element, complex property
-	public Double getPixelsPhysicalSizeX(int imageIndex)
+	public PositiveFloat getPixelsPhysicalSizeX(int imageIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -6173,14 +6173,14 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				Double result = retrieve.getPixelsPhysicalSizeX(imageIndex);
+				PositiveFloat result = retrieve.getPixelsPhysicalSizeX(imageIndex);
 				if (result != null) return result;
 			}
 		}
 		return null;
 	}
 
-	public Double getPixelsPhysicalSizeY(int imageIndex)
+	public PositiveFloat getPixelsPhysicalSizeY(int imageIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -6188,14 +6188,14 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				Double result = retrieve.getPixelsPhysicalSizeY(imageIndex);
+				PositiveFloat result = retrieve.getPixelsPhysicalSizeY(imageIndex);
 				if (result != null) return result;
 			}
 		}
 		return null;
 	}
 
-	public Double getPixelsPhysicalSizeZ(int imageIndex)
+	public PositiveFloat getPixelsPhysicalSizeZ(int imageIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -6203,7 +6203,7 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				Double result = retrieve.getPixelsPhysicalSizeZ(imageIndex);
+				PositiveFloat result = retrieve.getPixelsPhysicalSizeZ(imageIndex);
 				if (result != null) return result;
 			}
 		}
@@ -13640,7 +13640,7 @@ public class AggregateMetadata implements IMetadata
 	}
 
 	// Ignoring MetadataOnly element, complex property
-	public void setPixelsPhysicalSizeX(Double physicalSizeX, int imageIndex)
+	public void setPixelsPhysicalSizeX(PositiveFloat physicalSizeX, int imageIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -13653,7 +13653,7 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
-	public void setPixelsPhysicalSizeY(Double physicalSizeY, int imageIndex)
+	public void setPixelsPhysicalSizeY(PositiveFloat physicalSizeY, int imageIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -13666,7 +13666,7 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
-	public void setPixelsPhysicalSizeZ(Double physicalSizeZ, int imageIndex)
+	public void setPixelsPhysicalSizeZ(PositiveFloat physicalSizeZ, int imageIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
