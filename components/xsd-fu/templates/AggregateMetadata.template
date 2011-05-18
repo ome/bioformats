@@ -173,9 +173,13 @@
 		if len(results.keys()) == 0:
 			raise Exception("Zero KEYS No accessor for: name:%s parent:%s prop:%s === %s" % (name, parent, prop, results))
 		return results[parent]
-%}
+%}\
 \
 \
+//
+// AggregateMetadata.java
+//
+
 /*
  * loci.formats.meta.AggregateMetadata
  *
@@ -227,8 +231,8 @@ import ome.xml.model.primitives.*;
  * metadata stores.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/meta/AggregateMetadata.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/meta/AggregateMetadata.java">SVN</a></dd></dl>
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/meta/AggregateMetadata.java">Trac</a>,
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/meta/AggregateMetadata.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Chris Allan callan at blackcat.ca
  * @author Curtis Rueden ctrueden at wisc.edu

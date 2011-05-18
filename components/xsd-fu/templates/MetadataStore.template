@@ -41,9 +41,13 @@
 
 	def sorted_properties(o):
 		return sorted(o.properties.values() + o.baseObjectProperties, lambda x, y: cmp(x.name, y.name))
-%}
+%}\
 \
 \
+//
+// MetadataStore.java
+//
+
 /*
  * loci.formats.meta.MetadataStore
  *
@@ -121,8 +125,8 @@ import ome.xml.model.primitives.*;
  * see {@link loci.formats.meta.MetadataConverter#convertMetadata}.</p>
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/meta/MetadataStore.java">Trac</a>,
- * <a href="https://skyking.microscopy.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/meta/MetadataStore.java">SVN</a></dd></dl>
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/meta/MetadataStore.java">Trac</a>,
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/meta/MetadataStore.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Chris Allan callan at blackcat.ca
  * @author Curtis Rueden ctrueden at wisc.edu
