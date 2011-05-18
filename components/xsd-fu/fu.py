@@ -104,6 +104,7 @@ def updateTypeMaps(namespace):
 		'NonNegativeInt': 'NonNegativeInteger',
 		'PositiveLong': 'PositiveLong',
 		'NonNegativeLong': 'NonNegativeLong',
+		'PositiveFloat': 'PositiveFloat',
 		namespace + 'float': 'Double',
 		namespace + 'double': 'Double',
 		namespace + 'anyURI': 'String',
