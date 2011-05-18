@@ -3,7 +3,7 @@
 <!--
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#
-	# Copyright (C) 2003-2010 Open Microscopy Environment
+	# Copyright (C) 2003-2011 Open Microscopy Environment
 	#		Massachusetts Institute of Technology,
 	#		National Institutes of Health,
 	#		University of Dundee,
@@ -16,21 +16,21 @@
 	# Written by:  Andrew Patterson <ajpatterson@lifesci.dundee.ac.uk>
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -->
-<xsd:schema xmlns="http://www.openmicroscopy.org/Schemas/SPW/2010-06" 
-	targetNamespace="http://www.openmicroscopy.org/Schemas/SPW/2010-06" 
-	xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2010-06" 
-	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2010-06" 
-	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2010-06" 
+<xsd:schema xmlns="http://www.openmicroscopy.org/Schemas/SPW/2011-06" 
+	targetNamespace="http://www.openmicroscopy.org/Schemas/SPW/2011-06" 
+	xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2011-06" 
+	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2011-06" 
+	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2011-06" 
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
 	version="1" 
 	elementFormDefault="qualified">
 	<!-- Using the svn location for import -->
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2010-06" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Working/ome.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2010-06" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Working/SA.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2011-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/InProgress/ome.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2011-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/InProgress/SA.xsd"/>
 	
 	<!-- Using the local directory location for import
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2010-06" schemaLocation="ome.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2010-06" schemaLocation="SA.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2011-06" schemaLocation="ome.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2011-06" schemaLocation="SA.xsd"/>
 	-->
 
 	<xsd:annotation>

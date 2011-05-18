@@ -21,7 +21,7 @@
 	 xmlns:xsd = "http://www.w3.org/2001/XMLSchema"
 	 version = "1"
 	 elementFormDefault = "qualified">
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2007-06" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Release/2007-06/V2/ome.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2007-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/Released-Schema/2007-06/V2/ome.xsd"/>
 	<xsd:element name = "OME">
 		<xsd:complexType>
 			<xsd:sequence>
