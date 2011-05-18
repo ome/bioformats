@@ -25,10 +25,10 @@
 	xmlns:xsd = "http://www.w3.org/2001/XMLSchema"
 	 version = "1"
 	 elementFormDefault = "qualified">
-	<import namespace="http://www.openmicroscopy.org/Schemas/CLI/2007-06" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Release/2007-06/V1/CLI.xsd"/>
-	<import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2007-06" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Release/2007-06/V1/BinaryFile.xsd"/>
-	<import namespace="http://www.openmicroscopy.org/Schemas/MLI/2007-06" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Release/2007-06/V1/MLI.xsd"/>
-	<import namespace="http://www.openmicroscopy.org/Schemas/OME/2007-06" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Release/2007-06/V1/ome.xsd"/>
+	<import namespace="http://www.openmicroscopy.org/Schemas/CLI/2007-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/Released-Schema/2007-06/V1/CLI.xsd"/>
+	<import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2007-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/Released-Schema/2007-06/V1/BinaryFile.xsd"/>
+	<import namespace="http://www.openmicroscopy.org/Schemas/MLI/2007-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/Released-Schema/2007-06/V1/MLI.xsd"/>
+	<import namespace="http://www.openmicroscopy.org/Schemas/OME/2007-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/Released-Schema/2007-06/V1/ome.xsd"/>
 	<import namespace = "http://www.w3.org/XML/1998/namespace"/>
 	<element name = "Entry">
 		<complexType>

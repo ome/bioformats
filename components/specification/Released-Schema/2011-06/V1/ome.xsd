@@ -3,7 +3,7 @@
 <!--
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#
-	# Copyright (C) 2002-2010 Open Microscopy Environment
+	# Copyright (C) 2002-2011 Open Microscopy Environment
 	#       Massachusetts Institute of Technology,
 	#       National Institutes of Health,
 	#       University of Dundee,
@@ -16,31 +16,31 @@
 	# Written by: Ilya G. Goldberg, Andrew J Patterson
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -->
-<xsd:schema xmlns="http://www.openmicroscopy.org/Schemas/OME/2010-06" 
-	targetNamespace="http://www.openmicroscopy.org/Schemas/OME/2010-06" 
+<xsd:schema xmlns="http://www.openmicroscopy.org/Schemas/OME/2011-06" 
+	targetNamespace="http://www.openmicroscopy.org/Schemas/OME/2011-06" 
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
-	xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2010-06"
-	xmlns:BIN="http://www.openmicroscopy.org/Schemas/BinaryFile/2010-06" 
-	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2010-06" 
-	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2010-06" 
-	xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2010-06" 
+	xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2011-06"
+	xmlns:BIN="http://www.openmicroscopy.org/Schemas/BinaryFile/2011-06" 
+	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2011-06" 
+	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2011-06" 
+	xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2011-06" 
 	xmlns:xml="http://www.w3.org/XML/1998/namespace"
 	version="1" 
 	elementFormDefault="qualified">
 
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2010-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/Released-Schema/2010-06/V1/BinaryFile.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SPW/2010-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/Released-Schema/2010-06/V1/SPW.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2010-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/Released-Schema/2010-06/V1/SA.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/ROI/2010-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/Released-Schema/2010-06/V1/ROI.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2011-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/Released-Schema/2011-06/V1/BinaryFile.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SPW/2011-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/Released-Schema/2011-06/V1/SPW.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2011-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/Released-Schema/2011-06/V1/SA.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/ROI/2011-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/Released-Schema/2011-06/V1/ROI.xsd"/>
 
 	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd"/>
 
 	<xsd:annotation>
 		<xsd:documentation>
 			Open Microscopy Environment
-			OME XML Schema April 2010
+			OME XML Schema April 2011
 			Author:  Ilya G. Goldberg, Andrew J Patterson
-			Copyright 2002 - 2010 OME. All rights reserved.
+			Copyright 2002 - 2011 OME. All rights reserved.
 		</xsd:documentation>
 	</xsd:annotation>
 
@@ -48,31 +48,79 @@
 	<xsd:element name="OME"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
-				The OME element is a container for all information objects accessible by OME.  These information objects include descriptions of the imaging experiments
-				and the people who perform them, descriptions of the microscope, the resulting images and how they were acquired, the analyses performed on those images,
+				The OME element is a container for all information objects accessible by OME.
+				These information objects include descriptions of the imaging experiments
+				and the people who perform them, descriptions of the microscope, the resulting
+				images and how they were acquired, the analyses performed on those images,
 				and the analysis results themselves.
 				An OME file may contain any or all of this information.
+
+				With the creation of the Metadata Only Companion OME-XML and Binary Only OME-TIFF files
+				the top level OME node has changed slightly.
+				It can EITHER:
+				    Contain all the previously expected elements
+				OR:
+				    Contain a single BinaryOnly element that points at
+				    its Metadata Only Companion OME-XML file.
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
-			<xsd:sequence>
-				<xsd:element ref="Project" minOccurs="0" maxOccurs="unbounded"/>
-				<xsd:element ref="Dataset" minOccurs="0" maxOccurs="unbounded"/>
-				<xsd:element ref="Experiment" minOccurs="0" maxOccurs="unbounded"/>
-				<xsd:element ref="SPW:Plate" minOccurs="0" maxOccurs="unbounded"/>
-				<xsd:element ref="SPW:Screen" minOccurs="0" maxOccurs="unbounded"/>
-				<xsd:element ref="Experimenter" minOccurs="0" maxOccurs="unbounded"/>
-				<xsd:element ref="Group" minOccurs="0" maxOccurs="unbounded"/>
-				<xsd:element ref="Instrument" minOccurs="0" maxOccurs="unbounded"/>
-				<xsd:element ref="Image" minOccurs="0" maxOccurs="unbounded"/>
-				<xsd:element ref="SA:StructuredAnnotations" minOccurs="0" maxOccurs="1"/>
-				<xsd:element ref="ROI:ROI" minOccurs="0" maxOccurs="unbounded"/>
-			</xsd:sequence>
+			<xsd:choice>
+				<!-- Either: standard expected elements -->
+				<xsd:sequence>
+					<xsd:element ref="Project" minOccurs="0" maxOccurs="unbounded"/>
+					<xsd:element ref="Dataset" minOccurs="0" maxOccurs="unbounded"/>
+					<xsd:element ref="Experiment" minOccurs="0" maxOccurs="unbounded"/>
+					<xsd:element ref="SPW:Plate" minOccurs="0" maxOccurs="unbounded"/>
+					<xsd:element ref="SPW:Screen" minOccurs="0" maxOccurs="unbounded"/>
+					<xsd:element ref="Experimenter" minOccurs="0" maxOccurs="unbounded"/>
+					<xsd:element ref="Group" minOccurs="0" maxOccurs="unbounded"/>
+					<xsd:element ref="Instrument" minOccurs="0" maxOccurs="unbounded"/>
+					<xsd:element ref="Image" minOccurs="0" maxOccurs="unbounded"/>
+					<xsd:element ref="SA:StructuredAnnotations" minOccurs="0" maxOccurs="1"/>
+					<xsd:element ref="ROI:ROI" minOccurs="0" maxOccurs="unbounded"/>
+				</xsd:sequence>
+				<!-- Or: Single BinaryOnly element -->
+				<xsd:element name="BinaryOnly" minOccurs="1" maxOccurs="1">
+					<xsd:annotation>
+						<xsd:documentation>
+							Pointer to an external metadata file. If this element is
+							present, then no other metadata may be present in this file,
+							i.e. this file is a place-holder.
+						</xsd:documentation>
+					</xsd:annotation>
+					<xsd:complexType>
+						<xsd:attribute name="MetadataFile" type="xsd:string" use="required">
+							<xsd:annotation>
+								<xsd:documentation>
+									Filename of the OME-XML metadata file for this
+									binary data. If the file cannot be found, a search can be
+									performed based on the UUID.
+								</xsd:documentation>
+							</xsd:annotation>
+						</xsd:attribute>
+						<xsd:attribute name="UUID" type="UniversallyUniqueIdentifier" use="required">
+							<xsd:annotation>
+								<xsd:documentation>
+									The unique identifier of another OME-XML block
+									whose metadata describes the binary data in this file. This UUID
+									is considered authoritative regardless of mismatches in the
+									filename.
+								</xsd:documentation>
+							</xsd:annotation>
+						</xsd:attribute>
+					</xsd:complexType>
+				</xsd:element>
+				<!-- End of MetadataOnly Element -->
+			</xsd:choice>
 			<xsd:attribute name="UUID" type="UniversallyUniqueIdentifier" use="optional">
 				<xsd:annotation>
 					<xsd:documentation>
 						This unique identifier is used to keep track of multi part files.
 						It allows the links between files to survive renaming.
+
+						While OPTIONAL in the general case this is REQUIRED in a
+						MetadataOnly Companion to a collection of BinaryOnly files.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -279,17 +327,17 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					<xsd:documentation>Dimensional size of pixel data array [units:none]</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="PhysicalSizeX" use="optional" type="xsd:float">
+			<xsd:attribute name="PhysicalSizeX" use="optional" type="PositiveFloat">
 				<xsd:annotation>
 					<xsd:documentation>Physical size of a pixel in microns[um].</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="PhysicalSizeY" use="optional" type="xsd:float">
+			<xsd:attribute name="PhysicalSizeY" use="optional" type="PositiveFloat">
 				<xsd:annotation>
 					<xsd:documentation>Physical size of a pixel in microns[um].</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="PhysicalSizeZ" use="optional" type="xsd:float">
+			<xsd:attribute name="PhysicalSizeZ" use="optional" type="PositiveFloat">
 				<xsd:annotation>
 					<xsd:documentation>Physical size of a pixel in microns[um].</xsd:documentation>
 				</xsd:annotation>
@@ -679,6 +727,18 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:sequence>
+				<xsd:element name="Description" minOccurs="0" maxOccurs="1">
+					<xsd:annotation>
+						<xsd:documentation>
+							A description for the Microbeam Manipulation. [plane text multi-line string]
+						</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:whiteSpace value="preserve"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
 				<xsd:element ref="ROI:ROIRef" minOccurs="1" maxOccurs="unbounded"/>
 				<xsd:element ref="ExperimenterRef" minOccurs="1" maxOccurs="1"/>
 				<xsd:element ref="LightSourceSettings" minOccurs="0" maxOccurs="unbounded"/>
@@ -772,6 +832,10 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 	<xsd:element name="OTF"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
+				NOTE: OTF is DEPRECATED as it is due to be removed. 
+				No objections were received in reply to:
+				http://lists.openmicroscopy.org.uk/pipermail/ome-devel/2011-April/001931.html
+
 				The optical transfer function. FilterSetRef refers to the set of 
 				filters used in computing the OTF.
 				This element must contain a BinData element containing the 
@@ -1198,6 +1262,16 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			<xsd:minInclusive value="1"/>
 		</xsd:restriction>
 	</xsd:simpleType>
+	<xsd:simpleType name="PositiveFloat">
+		<xsd:annotation>
+			<xsd:documentation>
+				A simple type that restricts the value to a float between >0 and max 32-bit float {i.e. (2−2^-23) × 2^27 ≈ 3.4 × 10^38}
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:float">
+			<xsd:minExclusive value="0.0"/>
+		</xsd:restriction>
+	</xsd:simpleType>
 	<xsd:simpleType name="PercentFraction">
 		<xsd:annotation>
 			<xsd:documentation>
@@ -1357,6 +1431,10 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			<xsd:documentation>
 				The type of detector used to capture the image.
 				The Detector ID can be used as a reference within the Channel element in the Image element.
+				
+				Each attribute now has an indication of what type of detector
+				it applies to. This is preparatory work for cleaning up and 
+				possibly splitting this object into sub-types.
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
@@ -1365,28 +1443,28 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					<xsd:attribute name="Gain" use="optional" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The Detector Gain for this detector, as a float. [units:none]
+								The Detector Gain for this detector, as a float. [units:none] {used:CCD,EMCCD,PMT}
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="Voltage" use="optional" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The Voltage of the detector (e.g. PMT voltage) as a float. volts[V]
+								The Voltage of the detector (e.g. PMT voltage) as a float. volts[V] {used:PMT}
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="Offset" use="optional" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The Detector Offset. [units:none]
+								The Detector Offset. [units:none] {used:CCD,EMCCD}
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="Zoom" use="optional" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The Zoom or "Confocal Zoom" or "Scan Zoom" for a detector. [units:none]
+								The Zoom or "Confocal Zoom" or "Scan Zoom" for a detector. [units:none] {used:PMT}
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
@@ -1394,7 +1472,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 						<xsd:annotation>
 							<xsd:documentation>
 								Gain applied to the detector signal. 
-								This is the electronic gain (as apposed to the inherent gain) that is set for the detector. [units:none]
+								This is the electronic gain (as apposed to the inherent gain) that is set for the detector. [units:none] {used:EMCCD#EMGain}
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
@@ -1402,7 +1480,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					<xsd:attribute name="Type" use="optional">
 						<xsd:annotation>
 							<xsd:documentation>
-								The Type of detector. E.g. CCD, PMT, EMCCD etc. 
+								The Type of detector. E.g. CCD, PMT, EMCCD etc.
 							</xsd:documentation>
 						</xsd:annotation>
 						<xsd:simpleType>
@@ -2058,6 +2136,10 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 				This holds the setting applied to a detector as well as a
 				reference to the detector. 
 				The ID is the detector used in this case.
+				
+				Each attribute now has an indication of what type of detector
+				it applies to. This is preparatory work for cleaning up and 
+				possibly splitting this object into sub-types.
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
@@ -2067,28 +2149,28 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					<xsd:attribute name="Offset" use="optional" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The Offset of the detector. [units none]
+								The Offset of the detector. [units none] {used:CCD,EMCCD}
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="Gain" use="optional" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The Gain of the detector. [units:none]
+								The Gain of the detector. [units:none] {used:CCD,EMCCD,PMT}
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="Voltage" use="optional" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The Voltage of the detector. volts[V]
+								The Voltage of the detector. volts[V] {used:PMT}
 							</xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
 					<xsd:attribute name="ReadOutRate" use="optional" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The speed at which the detector can count pixels. 
+								The speed at which the detector can count pixels.  {used:CCD,EMCCD}
 								Units of ReadOutRate is MHz. This is the bytes per second that 
 								can be read from the detector (like a baud rate). megahertz[MHz]
 							</xsd:documentation>
@@ -2097,7 +2179,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					<xsd:attribute name="Binning" use="optional">
 						<xsd:annotation>
 							<xsd:documentation>
-								Represents the number of pixels that are combined to form larger pixels.
+								Represents the number of pixels that are combined to form larger pixels. {used:CCD,EMCCD}
 							</xsd:documentation>
 						</xsd:annotation>
 						<xsd:simpleType>

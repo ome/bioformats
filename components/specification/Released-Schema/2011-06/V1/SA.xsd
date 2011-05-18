@@ -1,5 +1,5 @@
 <?xml version = "1.0" encoding = "UTF-8"?>
-<?xml-stylesheet href="http://cvs.openmicroscopy.org.uk/snapshots/omero/editor/omeXsd/display.xsl" type="text/xsl"?>
+<!-- style sheet OFF -->
 <!--
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#
@@ -23,13 +23,9 @@
 	xmlns:xsd = "http://www.w3.org/2001/XMLSchema"
 	version = "1"
 	elementFormDefault = "qualified">
-	<!-- Using the svn location for import -->
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2011-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/InProgress/ome.xsd"/>
-	<xsd:import namespace = "http://www.openmicroscopy.org/Schemas/BinaryFile/2011-06" schemaLocation = "http://git.openmicroscopy.org/src/develop/components/specification/InProgress/BinaryFile.xsd"/>
-	<!-- Using the local directory location for import 
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2011-06" schemaLocation="ome.xsd"/>
-	<xsd:import namespace = "http://www.openmicroscopy.org/Schemas/BinaryFile/2011-06" schemaLocation = "BinaryFile.xsd"/>
-	-->
+
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2011-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/Released-Schema/2011-06/V1/ome.xsd"/>
+	<xsd:import namespace = "http://www.openmicroscopy.org/Schemas/BinaryFile/2011-06" schemaLocation = "http://git.openmicroscopy.org/src/develop/components/specification/Released-Schema/2011-06/V1/BinaryFile.xsd"/>
 	
 	<!-- Annotatable objects
 		Annotation

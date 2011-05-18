@@ -3,7 +3,7 @@
 <!--
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#
-	# Copyright (C) 2003-2010 Open Microscopy Environment
+	# Copyright (C) 2003-2011 Open Microscopy Environment
 	#       Massachusetts Institute of Technology,
 	#       National Institutes of Health,
 	#       University of Dundee,
@@ -16,18 +16,18 @@
 	# Written by:  Andrew J Patterson 
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -->
-<xsd:schema xmlns = "http://www.openmicroscopy.org/Schemas/ROI/2010-04"
-	targetNamespace = "http://www.openmicroscopy.org/Schemas/ROI/2010-04"
-	xmlns:OME = "http://www.openmicroscopy.org/Schemas/OME/2010-04"
-	xmlns:BIN="http://www.openmicroscopy.org/Schemas/BinaryFile/2010-04" 
-	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2010-04" 
+<xsd:schema xmlns = "http://www.openmicroscopy.org/Schemas/ROI/2011-06"
+	targetNamespace = "http://www.openmicroscopy.org/Schemas/ROI/2011-06"
+	xmlns:OME = "http://www.openmicroscopy.org/Schemas/OME/2011-06"
+	xmlns:BIN="http://www.openmicroscopy.org/Schemas/BinaryFile/2011-06" 
+	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2011-06" 
 	xmlns:xsd = "http://www.w3.org/2001/XMLSchema"
 	version = "1"
 	elementFormDefault = "qualified">
 
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2010-04" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/Released-Schema/2010-04/V1/ome.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2010-04" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/Released-Schema/2010-04/V1/BinaryFile.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2010-04" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/Released-Schema/2010-04/V1/SA.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2011-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/Released-Schema/2011-06/V1/ome.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2011-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/Released-Schema/2011-06/V1/BinaryFile.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2011-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/Released-Schema/2011-06/V1/SA.xsd"/>
 	
 	<xsd:element name="ROI"> <!-- top level definition -->
 		<xsd:annotation>
@@ -96,7 +96,6 @@
 					<xsd:element ref="Path" minOccurs="1" maxOccurs="1"/>
 					<xsd:element ref="Text" minOccurs="1" maxOccurs="1"/>
 				</xsd:choice>
-				<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element name="Description" minOccurs="0" maxOccurs="1">
 					<xsd:annotation>
 						<xsd:documentation>
@@ -117,10 +116,11 @@
 					</xsd:documentation>
 				</xsd:annotation>		
 			</xsd:attribute>
-			<xsd:attribute name="Fill" use="optional" type="xsd:integer">
+			<xsd:attribute name="Fill" use="optional" type="xsd:int">
 				<xsd:annotation>
 					<xsd:documentation>
 						The colour of the fill - encoded as RGBA
+						The value "-2147483648" is #FFFFFFFF so solid white (it is a signed 32 bit value)
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -138,10 +138,11 @@
 					</xsd:restriction>
 				</xsd:simpleType>
 			</xsd:attribute>
-			<xsd:attribute name="Stroke" use="optional" type="xsd:integer">
+			<xsd:attribute name="Stroke" use="optional" type="xsd:int">
 				<xsd:annotation>
 					<xsd:documentation>
 						The colour of the stroke  - encoded as RGBA
+						The value "-2147483648" is #FFFFFFFF so solid white (it is a signed 32 bit value)
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -181,17 +182,22 @@
 					<xsd:annotation>
 						<xsd:documentation>
 							The font family used to draw the text. [enumeration]
+							Note: these values are all lower case so they match 
+							the standard HTML/CSS values. "fantasy" has been
+							included for completeness we do not recommended it's
+							regular use.
 						</xsd:documentation>
 					</xsd:annotation>
 					<xsd:restriction base="xsd:string">
-						<xsd:enumeration value="Arial"/>
-						<xsd:enumeration value="Courier"/>
-						<xsd:enumeration value="Helvetica"/>
-						<xsd:enumeration value="TimesNewRoman"/>
+						<xsd:enumeration value="serif"/>
+						<xsd:enumeration value="sans-serif"/>
+						<xsd:enumeration value="cursive"/>
+						<xsd:enumeration value="fantasy"/>
+						<xsd:enumeration value="monospace"/>
 					</xsd:restriction>
 				</xsd:simpleType>
 			</xsd:attribute>
-			<xsd:attribute name="FontSize" use="optional" type="xsd:integer">
+			<xsd:attribute name="FontSize" use="optional" type="OME:NonNegativeInt">
 				<xsd:annotation>
 					<xsd:documentation>
 						Size of the font [units points]
@@ -202,19 +208,21 @@
 				<xsd:simpleType>
 					<xsd:annotation>
 						<xsd:documentation>
-							The style applied to the text.  [enumeration]
+							The style and weight applied to the text.  [enumeration]
+							This is a simplified combination of the HTML/CSS 
+							attributes font-style AND font-weight.
 						</xsd:documentation>
 					</xsd:annotation>
 					<xsd:restriction base="xsd:string">
 						<xsd:enumeration value="Bold"/>
 						<xsd:enumeration value="BoldItalic"/>
 						<xsd:enumeration value="Italic"/>
-						<xsd:enumeration value="Regular"/>
+						<xsd:enumeration value="Normal"/>
 					</xsd:restriction>
 				</xsd:simpleType>
 			</xsd:attribute>
 			<xsd:attribute name="ID" use="required" type="ShapeID"/>
-			<xsd:attribute name="TheZ" use="optional" type="xsd:integer">
+			<xsd:attribute name="TheZ" use="optional" type="OME:NonNegativeInt">
 				<xsd:annotation>
 					<xsd:documentation>
 						The z-section the ROI applies to. If not specified then 
@@ -223,7 +231,7 @@
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="TheT" use="optional" type="xsd:integer">
+			<xsd:attribute name="TheT" use="optional" type="OME:NonNegativeInt">
 				<xsd:annotation>
 					<xsd:documentation>
 						The timepoint the ROI applies to. If not specified then 
@@ -232,7 +240,7 @@
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="TheC" use="optional" type="xsd:integer">
+			<xsd:attribute name="TheC" use="optional" type="OME:NonNegativeInt">
 				<xsd:annotation>
 					<xsd:documentation>
 						The channel the ROI applies to. If not specified then 
@@ -307,23 +315,37 @@
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
-					<xsd:sequence>
-						<xsd:element ref="BIN:BinData" minOccurs="1" maxOccurs="unbounded"/>
-					</xsd:sequence>
-					<xsd:attribute name="X" use="required" type="xsd:float">
-						<xsd:annotation>
-							<xsd:documentation>
-								The X coordinate of the left side of the image. [units pixels]
-							</xsd:documentation>
-						</xsd:annotation>
-					</xsd:attribute>
-					<xsd:attribute name="Y" use="required" type="xsd:float">
-						<xsd:annotation>
-							<xsd:documentation>
-								The Y coordinate of the top side of the image. [units pixels]
-							</xsd:documentation>
-						</xsd:annotation>
-					</xsd:attribute>
+			<xsd:sequence>
+				<xsd:element ref="BIN:BinData" minOccurs="1" maxOccurs="unbounded"/>
+			</xsd:sequence>
+			<xsd:attribute name="X" use="required" type="xsd:float">
+				<xsd:annotation>
+					<xsd:documentation> 
+						The X coordinate of the left side of the image. [units pixels]
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="Y" use="required" type="xsd:float">
+				<xsd:annotation>
+					<xsd:documentation>
+						The Y coordinate of the top side of the image. [units pixels]
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="Width" use="required" type="xsd:float">
+				<xsd:annotation>
+					<xsd:documentation>
+						The width of the mask. [units pixels]
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="Height" use="required" type="xsd:float">
+				<xsd:annotation>
+					<xsd:documentation> 
+						The height of the mask. [units pixels]
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
 		</xsd:complexType>
 	</xsd:element>
 
@@ -426,6 +448,10 @@
 	<xsd:element name="Polyline"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
+				NOTE: Polyline and Path are DEPRECATED as they are due to be 
+				replaced in the next major release to provide support for 
+				3-dimensional objects. see http://www.ome-xml.org/wiki/ROI
+				
 				The Polyline defines open and closed shapes formed of straight 
 				lines. Note: Polyline uses counterclockwise winding (this is the 
 				default OpenGL behavior)
@@ -455,6 +481,10 @@
 	<xsd:element name="Path"> <!-- top level definition -->
 		<xsd:annotation>
 			<xsd:documentation>
+				NOTE: Polyline and Path are DEPRECATED as they are due to be 
+				replaced in the next major release to provide support for 
+				3-dimensional objects. see http://www.ome-xml.org/wiki/ROI
+				
 				A path is a complex shape that can consists of straight and 
 				curved sections. It is defined as a collection of drawing 
 				commands.

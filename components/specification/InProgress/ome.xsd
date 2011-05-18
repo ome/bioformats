@@ -3,7 +3,7 @@
 <!--
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	#
-	# Copyright (C) 2002-2010 Open Microscopy Environment
+	# Copyright (C) 2002-2011 Open Microscopy Environment
 	#       Massachusetts Institute of Technology,
 	#       National Institutes of Health,
 	#       University of Dundee,
@@ -16,27 +16,27 @@
 	# Written by: Ilya G. Goldberg, Andrew J Patterson
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -->
-<xsd:schema xmlns="http://www.openmicroscopy.org/Schemas/OME/2010-06" 
-	targetNamespace="http://www.openmicroscopy.org/Schemas/OME/2010-06" 
+<xsd:schema xmlns="http://www.openmicroscopy.org/Schemas/OME/2011-06" 
+	targetNamespace="http://www.openmicroscopy.org/Schemas/OME/2011-06" 
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
-	xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2010-06"
-	xmlns:BIN="http://www.openmicroscopy.org/Schemas/BinaryFile/2010-06" 
-	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2010-06" 
-	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2010-06" 
-	xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2010-06" 
+	xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2011-06"
+	xmlns:BIN="http://www.openmicroscopy.org/Schemas/BinaryFile/2011-06" 
+	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2011-06" 
+	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2011-06" 
+	xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2011-06" 
 	xmlns:xml="http://www.w3.org/XML/1998/namespace"
 	version="1" 
 	elementFormDefault="qualified">
 	<!-- Using the svn location for import --> 
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2010-06" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Working/BinaryFile.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SPW/2010-06" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Working/SPW.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2010-06" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Working/SA.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/ROI/2010-06" schemaLocation="http://cvs.openmicroscopy.org.uk/svn/specification/Xml/Working/ROI.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2011-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/InProgress/BinaryFile.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SPW/2011-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/InProgress/SPW.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2011-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/InProgress/SA.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/ROI/2011-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/InProgress/ROI.xsd"/>
 	<!-- Using the local directory location for import 
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2010-06" schemaLocation="BinaryFile.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SPW/2010-06" schemaLocation="SPW.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2010-06" schemaLocation="SA.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/ROI/2010-06" schemaLocation="ROI.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2011-06" schemaLocation="BinaryFile.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SPW/2011-06" schemaLocation="SPW.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2011-06" schemaLocation="SA.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/ROI/2011-06" schemaLocation="ROI.xsd"/>
 	-->
 	
 	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd"/>
@@ -44,9 +44,9 @@
 	<xsd:annotation>
 		<xsd:documentation>
 			Open Microscopy Environment
-			OME XML Schema April 2010
+			OME XML Schema April 2011
 			Author:  Ilya G. Goldberg, Andrew J Patterson
-			Copyright 2002 - 2010 OME. All rights reserved.
+			Copyright 2002 - 2011 OME. All rights reserved.
 		</xsd:documentation>
 	</xsd:annotation>
 
