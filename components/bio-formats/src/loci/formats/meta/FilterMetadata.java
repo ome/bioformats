@@ -35,7 +35,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-07-01 12:04:40+0100
+ * Created by callan via xsd-fu on 2011-05-18 16:16:59+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -222,6 +222,24 @@ public class FilterMetadata implements MetadataStore
 	public void setOTFBinaryFileSize(NonNegativeLong size, int instrumentIndex, int OTFIndex)
 	{
 		store.setOTFBinaryFileSize(size, instrumentIndex, OTFIndex);
+	}
+
+	//
+	// BinaryOnly property storage
+	//
+	// {u'OME': None}
+	// Is multi path? False
+
+	public void setBinaryOnlyMetadataFile(String metadataFile)
+	{
+		metadataFile = filter? DataTools.sanitize(metadataFile) : metadataFile;
+		store.setBinaryOnlyMetadataFile(metadataFile);
+	}
+
+	public void setBinaryOnlyUUID(String uuid)
+	{
+		uuid = filter? DataTools.sanitize(uuid) : uuid;
+		store.setBinaryOnlyUUID(uuid);
 	}
 
 	//
@@ -1902,6 +1920,12 @@ public class FilterMetadata implements MetadataStore
 	//
 	// {u'Experiment': {u'OME': None}}
 	// Is multi path? False
+
+	public void setMicrobeamManipulationDescription(String description, int experimentIndex, int microbeamManipulationIndex)
+	{
+		description = filter? DataTools.sanitize(description) : description;
+		store.setMicrobeamManipulationDescription(description, experimentIndex, microbeamManipulationIndex);
+	}
 
 	public void setMicrobeamManipulationExperimenterRef(String experimenter, int experimentIndex, int microbeamManipulationIndex)
 	{

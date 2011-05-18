@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-11-25 11:31:54+0000
+ * Created by callan via xsd-fu on 2011-05-18 16:02:43+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -58,7 +58,7 @@ public class OME extends AbstractOMEModelObject
 
 	// -- Constants --
 
-	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2010-06";
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2011-06";
 
 	/** Logger for this class. */
 	private static final Logger LOGGER =
@@ -102,6 +102,9 @@ public class OME extends AbstractOMEModelObject
 
 	// Property which occurs more than once
 	private List<ROI> roiList = new ArrayList<ROI>();
+
+	// Property
+	private BinaryOnly binaryOnly;
 
 	// -- Constructors --
 
@@ -261,6 +264,22 @@ public class OME extends AbstractOMEModelObject
 		{
 			addROI(
 					new ROI(ROI_element, model));
+		}
+		List<Element> BinaryOnly_nodeList =
+				getChildrenByTagName(element, "BinaryOnly");
+		if (BinaryOnly_nodeList.size() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"BinaryOnly node list size %d != 1",
+					BinaryOnly_nodeList.size()));
+		}
+		else if (BinaryOnly_nodeList.size() != 0)
+		{
+			// Element property BinaryOnly which is complex (has
+			// sub-elements)
+			setBinaryOnly(new BinaryOnly(
+					(Element) BinaryOnly_nodeList.get(0), model));
 		}
 	}
 
@@ -610,6 +629,17 @@ public class OME extends AbstractOMEModelObject
 		roiList.remove(roi);
 	}
 
+	// Property
+	public BinaryOnly getBinaryOnly()
+	{
+		return binaryOnly;
+	}
+
+	public void setBinaryOnly(BinaryOnly binaryOnly)
+	{
+		this.binaryOnly = binaryOnly;
+	}
+
 	public Element asXMLElement(Document document)
 	{
 		return asXMLElement(document, null);
@@ -725,6 +755,12 @@ public class OME extends AbstractOMEModelObject
 			{
 				OME_element.appendChild(roiList_value.asXMLElement(document));
 			}
+		}
+		if (binaryOnly != null)
+		{
+			// Element property BinaryOnly which is complex (has
+			// sub-elements)
+			OME_element.appendChild(binaryOnly.asXMLElement(document));
 		}
 		return super.asXMLElement(document, OME_element);
 	}

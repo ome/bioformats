@@ -35,7 +35,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-08-24 16:48:47+0100
+ * Created by callan via xsd-fu on 2011-05-18 16:16:50+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -363,6 +363,7 @@ public class AggregateMetadata implements IMetadata
 
 	// Arc entity counting
 	// BinaryFile entity counting
+	// BinaryOnly entity counting
 	// BooleanAnnotation entity counting
 	public int getBooleanAnnotationCount()
 	{
@@ -1487,6 +1488,43 @@ public class AggregateMetadata implements IMetadata
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
 				NonNegativeLong result = retrieve.getOTFBinaryFileSize(instrumentIndex, OTFIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	//
+	// BinaryOnly property storage
+	//
+	// Indexes: {u'OME': []}
+	// {u'OME': None}
+	// Is multi path? False
+
+	public String getBinaryOnlyMetadataFile(int metadataFileIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				String result = retrieve.getBinaryOnlyMetadataFile(metadataFileIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	public String getBinaryOnlyUUID(int UUIDIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				String result = retrieve.getBinaryOnlyUUID(UUIDIndex);
 				if (result != null) return result;
 			}
 		}
@@ -5232,6 +5270,21 @@ public class AggregateMetadata implements IMetadata
 	// Indexes: {u'Experiment': [u'int experimentIndex', u'int microbeamManipulationIndex']}
 	// {u'Experiment': {u'OME': None}}
 	// Is multi path? False
+
+	public String getMicrobeamManipulationDescription(int experimentIndex, int microbeamManipulationIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				String result = retrieve.getMicrobeamManipulationDescription(experimentIndex, microbeamManipulationIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
 
 	public String getMicrobeamManipulationExperimenterRef(int experimentIndex, int microbeamManipulationIndex)
 	{
@@ -9501,6 +9554,38 @@ public class AggregateMetadata implements IMetadata
 	}
 
 	//
+	// BinaryOnly property storage
+	//
+	// {u'OME': None}
+	// Is multi path? False
+
+	public void setBinaryOnlyMetadataFile(String metadataFile)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setBinaryOnlyMetadataFile(metadataFile);
+			}
+		}
+	}
+
+	public void setBinaryOnlyUUID(String uuid)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setBinaryOnlyUUID(uuid);
+			}
+		}
+	}
+
+	//
 	// BooleanAnnotation property storage
 	//
 	// {u'StructuredAnnotations': {u'OME': None}}
@@ -12774,6 +12859,19 @@ public class AggregateMetadata implements IMetadata
 	//
 	// {u'Experiment': {u'OME': None}}
 	// Is multi path? False
+
+	public void setMicrobeamManipulationDescription(String description, int experimentIndex, int microbeamManipulationIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setMicrobeamManipulationDescription(description, experimentIndex, microbeamManipulationIndex);
+			}
+		}
+	}
 
 	public void setMicrobeamManipulationExperimenterRef(String experimenter, int experimentIndex, int microbeamManipulationIndex)
 	{

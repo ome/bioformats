@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-06-11 17:17:29+0100
+ * Created by callan via xsd-fu on 2011-05-18 16:02:49+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -40,7 +40,7 @@ package ome.xml.model.enums;
 
 public enum FontFamily implements Enumeration
 {
-  ARIAL("Arial"), COURIER("Courier"), HELVETICA("Helvetica"), TIMESNEWROMAN("TimesNewRoman");
+  SERIF("serif"), SANSSERIF("sans-serif"), CURSIVE("cursive"), FANTASY("fantasy"), MONOSPACE("monospace");
   
   private FontFamily(String value)
   {
@@ -50,21 +50,25 @@ public enum FontFamily implements Enumeration
   public static FontFamily fromString(String value)
     throws EnumerationException
   {
-    if ("Arial".equals(value))
+    if ("serif".equals(value))
     {
-      return ARIAL;
+      return SERIF;
     }
-    if ("Courier".equals(value))
+    if ("sans-serif".equals(value))
     {
-      return COURIER;
+      return SANSSERIF;
     }
-    if ("Helvetica".equals(value))
+    if ("cursive".equals(value))
     {
-      return HELVETICA;
+      return CURSIVE;
     }
-    if ("TimesNewRoman".equals(value))
+    if ("fantasy".equals(value))
     {
-      return TIMESNEWROMAN;
+      return FANTASY;
+    }
+    if ("monospace".equals(value))
+    {
+      return MONOSPACE;
     }
     String s = String.format("%s not a supported value of %s",
                              value, FontFamily.class);

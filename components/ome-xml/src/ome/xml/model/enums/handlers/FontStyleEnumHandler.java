@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-07-05 16:15:25+0100
+ * Created by callan via xsd-fu on 2011-05-18 16:02:54+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -74,7 +74,7 @@ public class FontStyleEnumHandler implements IEnumerationHandler {
     p.put("^\\s*Bold\\s*", "Bold");
     p.put("^\\s*BoldItalic\\s*", "BoldItalic");
     p.put("^\\s*Italic\\s*", "Italic");
-    p.put("^\\s*Regular\\s*", "Regular");
+    p.put("^\\s*Normal\\s*", "Normal");
     return p;
   }
 

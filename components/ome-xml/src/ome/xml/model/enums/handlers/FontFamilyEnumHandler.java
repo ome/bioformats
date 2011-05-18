@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-07-05 16:15:25+0100
+ * Created by callan via xsd-fu on 2011-05-18 16:02:54+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -71,10 +71,11 @@ public class FontFamilyEnumHandler implements IEnumerationHandler {
   private static Hashtable<String, String> makePatterns() {
     Hashtable<String, String> p = new Hashtable<String, String>();
     // BEGIN Schema enumeration mappings
-    p.put("^\\s*Arial\\s*", "Arial");
-    p.put("^\\s*Courier\\s*", "Courier");
-    p.put("^\\s*Helvetica\\s*", "Helvetica");
-    p.put("^\\s*TimesNewRoman\\s*", "TimesNewRoman");
+    p.put("^\\s*serif\\s*", "serif");
+    p.put("^\\s*sans-serif\\s*", "sans-serif");
+    p.put("^\\s*cursive\\s*", "cursive");
+    p.put("^\\s*fantasy\\s*", "fantasy");
+    p.put("^\\s*monospace\\s*", "monospace");
     return p;
   }
 

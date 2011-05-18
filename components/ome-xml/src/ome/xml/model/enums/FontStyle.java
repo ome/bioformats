@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-06-11 17:17:29+0100
+ * Created by callan via xsd-fu on 2011-05-18 16:02:49+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -40,7 +40,7 @@ package ome.xml.model.enums;
 
 public enum FontStyle implements Enumeration
 {
-  BOLD("Bold"), BOLDITALIC("BoldItalic"), ITALIC("Italic"), REGULAR("Regular");
+  BOLD("Bold"), BOLDITALIC("BoldItalic"), ITALIC("Italic"), NORMAL("Normal");
   
   private FontStyle(String value)
   {
@@ -62,9 +62,9 @@ public enum FontStyle implements Enumeration
     {
       return ITALIC;
     }
-    if ("Regular".equals(value))
+    if ("Normal".equals(value))
     {
-      return REGULAR;
+      return NORMAL;
     }
     String s = String.format("%s not a supported value of %s",
                              value, FontStyle.class);

@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-06-11 17:17:29+0100
+ * Created by callan via xsd-fu on 2011-05-18 16:02:49+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -40,7 +40,7 @@ package ome.xml.model.enums;
 
 public enum ExperimentType implements Enumeration
 {
-  FP("FP"), FRET("FRET"), TIMELAPSE("TimeLapse"), FOURDPLUS("FourDPlus"), SCREEN("Screen"), IMMUNOCYTOCHEMISTRY("Immunocytochemistry"), IMMUNOFLUORESCENCE("Immunofluorescence"), FISH("FISH"), ELECTROPHYSIOLOGY("Electrophysiology"), IONIMAGING("IonImaging"), COLOCALIZATION("Colocalization"), PGIDOCUMENTATION("PGIDocumentation"), FLUORESCENCELIFETIME("FluorescenceLifetime"), SPECTRALIMAGING("SpectralImaging"), PHOTOBLEACHING("Photobleaching"), OTHER("Other");
+  FP("FP"), FRET("FRET"), TIMELAPSE("TimeLapse"), FOURDPLUS("FourDPlus"), SCREEN("Screen"), IMMUNOCYTOCHEMISTRY("Immunocytochemistry"), IMMUNOFLUORESCENCE("Immunofluorescence"), FISH("FISH"), ELECTROPHYSIOLOGY("Electrophysiology"), IONIMAGING("IonImaging"), COLOCALIZATION("Colocalization"), PGIDOCUMENTATION("PGIDocumentation"), FLUORESCENCELIFETIME("FluorescenceLifetime"), SPECTRALIMAGING("SpectralImaging"), PHOTOBLEACHING("Photobleaching"), SPIM("SPIM"), OTHER("Other");
   
   private ExperimentType(String value)
   {
@@ -109,6 +109,10 @@ public enum ExperimentType implements Enumeration
     if ("Photobleaching".equals(value))
     {
       return PHOTOBLEACHING;
+    }
+    if ("SPIM".equals(value))
+    {
+      return SPIM;
     }
     if ("Other".equals(value))
     {

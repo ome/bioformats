@@ -35,7 +35,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-08-24 16:48:27+0100
+ * Created by callan via xsd-fu on 2011-05-18 16:16:36+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -114,6 +114,7 @@ public interface MetadataRetrieve {
 
 	// Arc entity counting
 	// BinaryFile entity counting
+	// BinaryOnly entity counting
 	// BooleanAnnotation entity counting
 	int getBooleanAnnotationCount();
 
@@ -368,6 +369,16 @@ public interface MetadataRetrieve {
 	NonNegativeLong getFileAnnotationBinaryFileSize(int fileAnnotationIndex);
 
 	NonNegativeLong getOTFBinaryFileSize(int instrumentIndex, int OTFIndex);
+
+	//
+	// BinaryOnly property storage
+	//
+	// {u'OME': None}
+	// Is multi path? False
+
+	String getBinaryOnlyMetadataFile(int metadataFileIndex);
+
+	String getBinaryOnlyUUID(int UUIDIndex);
 
 	//
 	// BooleanAnnotation property storage
@@ -1311,6 +1322,8 @@ public interface MetadataRetrieve {
 	//
 	// {u'Experiment': {u'OME': None}}
 	// Is multi path? False
+
+	String getMicrobeamManipulationDescription(int experimentIndex, int microbeamManipulationIndex);
 
 	String getMicrobeamManipulationExperimenterRef(int experimentIndex, int microbeamManipulationIndex);
 

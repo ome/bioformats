@@ -35,7 +35,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-08-24 16:58:15+0100
+ * Created by callan via xsd-fu on 2011-05-18 16:16:44+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -48,8 +48,8 @@ import ome.xml.model.primitives.*;
 
 /**
  * A metadata store implementation for constructing and manipulating OME-XML
- * DOMs for the 2010-04 version of OME-XML. It requires the
- * ome.xml.r201004 package to compile (part of ome-xml.jar).
+ * DOMs for the current version of OME-XML. It requires the
+ * ome.xml.model package to compile (part of ome-xml.jar).
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/ome/OMEXMLMetadataImpl.java">Trac</a>,
@@ -220,6 +220,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 
 	// Arc entity counting
 	// BinaryFile entity counting
+	// BinaryOnly entity counting
 	// BooleanAnnotation entity counting
 	public int getBooleanAnnotationCount()
 	{
@@ -833,6 +834,27 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		// Parents: {u'FileAnnotation': {u'StructuredAnnotations': {u'OME': None}}, u'OTF': {u'Instrument': {u'OME': None}}}
 		// Size is not a reference
 		return root.getInstrument(instrumentIndex).getOTF(OTFIndex).getBinaryFile().getSize();
+	}
+
+	//
+	// BinaryOnly property storage
+	//
+	// Indexes: {u'OME': []}
+	// {u'OME': None}
+	// Is multi path? False
+
+	public String getBinaryOnlyMetadataFile(int metadataFileIndex)
+	{
+		// Parents: {u'OME': None}
+		// MetadataFile is not a reference
+		return root.getBinaryOnly().getMetadataFile();
+	}
+
+	public String getBinaryOnlyUUID(int UUIDIndex)
+	{
+		// Parents: {u'OME': None}
+		// UUID is not a reference
+		return root.getBinaryOnly().getUUID();
 	}
 
 	//
@@ -2957,6 +2979,13 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Indexes: {u'Experiment': [u'int experimentIndex', u'int microbeamManipulationIndex']}
 	// {u'Experiment': {u'OME': None}}
 	// Is multi path? False
+
+	public String getMicrobeamManipulationDescription(int experimentIndex, int microbeamManipulationIndex)
+	{
+		// Parents: {u'Experiment': {u'OME': None}}
+		// Description is not a reference
+		return root.getExperiment(experimentIndex).getMicrobeamManipulation(microbeamManipulationIndex).getDescription();
+	}
 
 	public String getMicrobeamManipulationExperimenterRef(int experimentIndex, int microbeamManipulationIndex)
 	{
@@ -5527,6 +5556,38 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		}
 		BinaryFile o3 = o2.getBinaryFile();
 		o3.setSize(size);
+	}
+
+	//
+	// BinaryOnly property storage
+	//
+	// {u'OME': None}
+	// Is multi path? False
+
+	public void setBinaryOnlyMetadataFile(String metadataFile)
+	{
+		// Parents: {u'OME': None}
+		// MetadataFile is not a reference
+		OME o0 = root;
+		if (o0.getBinaryOnly() == null)
+		{
+			o0.setBinaryOnly(new BinaryOnly());
+		}
+		BinaryOnly o1 = o0.getBinaryOnly();
+		o1.setMetadataFile(metadataFile);
+	}
+
+	public void setBinaryOnlyUUID(String uuid)
+	{
+		// Parents: {u'OME': None}
+		// UUID is not a reference
+		OME o0 = root;
+		if (o0.getBinaryOnly() == null)
+		{
+			o0.setBinaryOnly(new BinaryOnly());
+		}
+		BinaryOnly o1 = o0.getBinaryOnly();
+		o1.setUUID(uuid);
 	}
 
 	//
@@ -9979,6 +10040,24 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	//
 	// {u'Experiment': {u'OME': None}}
 	// Is multi path? False
+
+	public void setMicrobeamManipulationDescription(String description, int experimentIndex, int microbeamManipulationIndex)
+	{
+		// Parents: {u'Experiment': {u'OME': None}}
+		// Description is not a reference
+		OME o0 = root;
+		if (o0.sizeOfExperimentList() == experimentIndex)
+		{
+			o0.addExperiment(new Experiment());
+		}
+		Experiment o1 = o0.getExperiment(experimentIndex);
+		if (o1.sizeOfMicrobeamManipulationList() == microbeamManipulationIndex)
+		{
+			o1.addMicrobeamManipulation(new MicrobeamManipulation());
+		}
+		MicrobeamManipulation o2 = o1.getMicrobeamManipulation(microbeamManipulationIndex);
+		o2.setDescription(description);
+	}
 
 	public void setMicrobeamManipulationExperimenterRef(String experimenter, int experimentIndex, int microbeamManipulationIndex)
 	{

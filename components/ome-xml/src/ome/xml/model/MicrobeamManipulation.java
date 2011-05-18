@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-11-25 11:31:54+0000
+ * Created by callan via xsd-fu on 2011-05-18 16:02:43+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -58,7 +58,7 @@ public class MicrobeamManipulation extends AbstractOMEModelObject
 
 	// -- Constants --
 
-	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2010-06";
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2011-06";
 
 	/** Logger for this class. */
 	private static final Logger LOGGER =
@@ -72,6 +72,9 @@ public class MicrobeamManipulation extends AbstractOMEModelObject
 
 	// Property
 	private String id;
+
+	// Property
+	private String description;
 
 	// Reference ROIRef
 	private List<ROI> roiList = new ArrayList<ROI>();
@@ -152,6 +155,22 @@ public class MicrobeamManipulation extends AbstractOMEModelObject
 			// Adding this model object to the model handler
 			model.addModelObject(getID(), this);
 		}
+		List<Element> Description_nodeList =
+				getChildrenByTagName(element, "Description");
+		if (Description_nodeList.size() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Description node list size %d != 1",
+					Description_nodeList.size()));
+		}
+		else if (Description_nodeList.size() != 0)
+		{
+			// Element property Description which is not complex (has no
+			// sub-elements)
+			setDescription(
+					String.valueOf(Description_nodeList.get(0).getTextContent()));
+		}
 		// Element reference ROIRef
 		List<Element> ROIRef_nodeList =
 				getChildrenByTagName(element, "ROIRef");
@@ -230,6 +249,17 @@ public class MicrobeamManipulation extends AbstractOMEModelObject
 	public void setID(String id)
 	{
 		this.id = id;
+	}
+
+	// Property
+	public String getDescription()
+	{
+		return description;
+	}
+
+	public void setDescription(String description)
+	{
+		this.description = description;
 	}
 
 	// Reference which occurs more than once
@@ -370,6 +400,15 @@ public class MicrobeamManipulation extends AbstractOMEModelObject
 		{
 			// Attribute property ID
 			MicrobeamManipulation_element.setAttribute("ID", id.toString());
+		}
+		if (description != null)
+		{
+			// Element property Description which is not complex (has no
+			// sub-elements)
+			Element description_element = 
+					document.createElementNS(NAMESPACE, "Description");
+			description_element.setTextContent(description.toString());
+			MicrobeamManipulation_element.appendChild(description_element);
 		}
 		if (roiList != null)
 		{

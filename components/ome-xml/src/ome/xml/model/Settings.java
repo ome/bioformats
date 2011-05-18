@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-11-25 11:31:54+0000
+ * Created by callan via xsd-fu on 2011-05-18 16:02:43+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -58,7 +58,7 @@ public abstract class Settings extends Reference
 
 	// -- Constants --
 
-	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2010-06";
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2011-06";
 
 	/** Logger for this class. */
 	private static final Logger LOGGER =

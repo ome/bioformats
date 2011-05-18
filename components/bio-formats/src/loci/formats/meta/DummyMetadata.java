@@ -35,7 +35,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-08-24 16:50:49+0100
+ * Created by callan via xsd-fu on 2011-05-18 16:16:54+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -161,6 +161,7 @@ public class DummyMetadata implements IMetadata
 
 	// Arc entity counting
 	// BinaryFile entity counting
+	// BinaryOnly entity counting
 	// BooleanAnnotation entity counting
 	public int getBooleanAnnotationCount()
 	{
@@ -617,6 +618,23 @@ public class DummyMetadata implements IMetadata
 	}
 
 	public NonNegativeLong getOTFBinaryFileSize(int instrumentIndex, int OTFIndex)
+	{
+		return null;
+	}
+
+	//
+	// BinaryOnly property storage
+	//
+	// Indexes: {u'OME': []}
+	// {u'OME': None}
+	// Is multi path? False
+
+	public String getBinaryOnlyMetadataFile(int metadataFileIndex)
+	{
+		return null;
+	}
+
+	public String getBinaryOnlyUUID(int UUIDIndex)
 	{
 		return null;
 	}
@@ -2240,6 +2258,11 @@ public class DummyMetadata implements IMetadata
 	// Indexes: {u'Experiment': [u'int experimentIndex', u'int microbeamManipulationIndex']}
 	// {u'Experiment': {u'OME': None}}
 	// Is multi path? False
+
+	public String getMicrobeamManipulationDescription(int experimentIndex, int microbeamManipulationIndex)
+	{
+		return null;
+	}
 
 	public String getMicrobeamManipulationExperimenterRef(int experimentIndex, int microbeamManipulationIndex)
 	{
@@ -4036,6 +4059,20 @@ public class DummyMetadata implements IMetadata
 	}
 
 	//
+	// BinaryOnly property storage
+	//
+	// {u'OME': None}
+	// Is multi path? False
+
+	public void setBinaryOnlyMetadataFile(String metadataFile)
+	{
+	}
+
+	public void setBinaryOnlyUUID(String uuid)
+	{
+	}
+
+	//
 	// BooleanAnnotation property storage
 	//
 	// {u'StructuredAnnotations': {u'OME': None}}
@@ -5401,6 +5438,10 @@ public class DummyMetadata implements IMetadata
 	//
 	// {u'Experiment': {u'OME': None}}
 	// Is multi path? False
+
+	public void setMicrobeamManipulationDescription(String description, int experimentIndex, int microbeamManipulationIndex)
+	{
+	}
 
 	public void setMicrobeamManipulationExperimenterRef(String experimenter, int experimentIndex, int microbeamManipulationIndex)
 	{
