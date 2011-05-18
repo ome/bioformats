@@ -697,10 +697,12 @@ public class BioRadReader extends FormatReader {
                       // found length of axis in um
                       Double pixelSize = new Double(values[2]);
                       if (key.equals("AXIS_2")) {
-                        store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSize), 0);
+                        store.setPixelsPhysicalSizeX(
+                          new PositiveFloat(pixelSize), 0);
                       }
                       else if (key.equals("AXIS_3")) {
-                        store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSize), 0);
+                        store.setPixelsPhysicalSizeY(
+                          new PositiveFloat(pixelSize), 0);
                       }
                     }
                   }
@@ -733,9 +735,11 @@ public class BioRadReader extends FormatReader {
                     addGlobalMeta(STRUCTURE_LABELS_1[i], values[i]);
                   }
 
+                  int mag = (int) Float.parseFloat(values[11]);
                   store.setObjectiveNominalMagnification(
-                    new PositiveInteger((int) Float.parseFloat(values[11])), 0, 0);
-                  store.setPixelsPhysicalSizeZ(new PositiveFloat(new Double(values[14])), 0);
+                    new PositiveInteger(mag), 0, 0);
+                  store.setPixelsPhysicalSizeZ(
+                    new PositiveFloat(new Double(values[14])), 0);
                   break;
                 case 2:
                   for (int i=0; i<STRUCTURE_LABELS_2.length; i++) {

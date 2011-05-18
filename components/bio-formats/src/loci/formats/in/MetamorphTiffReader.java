@@ -367,8 +367,10 @@ public class MetamorphTiffReader extends BaseTiffReader {
         }
 
         store.setImagingEnvironmentTemperature(handler.getTemperature(), s);
-        store.setPixelsPhysicalSizeX(new PositiveFloat(handler.getPixelSizeX()), s);
-        store.setPixelsPhysicalSizeY(new PositiveFloat(handler.getPixelSizeY()), s);
+        store.setPixelsPhysicalSizeX(
+          new PositiveFloat(handler.getPixelSizeX()), s);
+        store.setPixelsPhysicalSizeY(
+          new PositiveFloat(handler.getPixelSizeY()), s);
 
         for (int c=0; c<getEffectiveSizeC(); c++) {
           if (uniqueChannels.size() > c) {

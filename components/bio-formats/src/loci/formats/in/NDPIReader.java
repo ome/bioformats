@@ -237,8 +237,10 @@ public class NDPIReader extends BaseTiffReader {
         creationDate = DateTools.formatDate(creationDate, DATE_FORMATS);
         store.setImageAcquiredDate(creationDate, i);
 
-        store.setPixelsPhysicalSizeX(new PositiveFloat(ifds.get(ifdIndex).getXResolution()), i);
-        store.setPixelsPhysicalSizeY(new PositiveFloat(ifds.get(ifdIndex).getYResolution()), i);
+        store.setPixelsPhysicalSizeX(
+          new PositiveFloat(ifds.get(ifdIndex).getXResolution()), i);
+        store.setPixelsPhysicalSizeY(
+          new PositiveFloat(ifds.get(ifdIndex).getYResolution()), i);
         store.setPixelsPhysicalSizeZ(new PositiveFloat(0.0), i);
       }
     }

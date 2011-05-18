@@ -799,9 +799,15 @@ public class DeltavisionReader extends FormatReader {
               LOGGER.warn("Could not parse pixel size '{}'",
                 pixelSizes[q].trim());
             }
-            if (q == 0) store.setPixelsPhysicalSizeX(new PositiveFloat(size), 0);
-            if (q == 1) store.setPixelsPhysicalSizeY(new PositiveFloat(size), 0);
-            if (q == 2) store.setPixelsPhysicalSizeZ(new PositiveFloat(size), 0);
+            if (q == 0) {
+              store.setPixelsPhysicalSizeX(new PositiveFloat(size), 0);
+            }
+            if (q == 1) {
+              store.setPixelsPhysicalSizeY(new PositiveFloat(size), 0);
+            }
+            if (q == 2) {
+              store.setPixelsPhysicalSizeZ(new PositiveFloat(size), 0);
+            }
           }
         }
         else if (key.equals("Binning")) {

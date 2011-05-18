@@ -251,8 +251,9 @@ public class SpiderReader extends FormatReader {
     store.setImageAcquiredDate(DateTools.formatDate(date, DATE_FORMAT), 0);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      store.setPixelsPhysicalSizeX(new PositiveFloat(new Double(pixelSize * 0.0001)), 0);
-      store.setPixelsPhysicalSizeY(new PositiveFloat(new Double(pixelSize * 0.0001)), 0);
+      Double size = new Double(pixelSize * 0.0001);
+      store.setPixelsPhysicalSizeX(new PositiveFloat(size), 0);
+      store.setPixelsPhysicalSizeY(new PositiveFloat(size), 0);
     }
   }
 

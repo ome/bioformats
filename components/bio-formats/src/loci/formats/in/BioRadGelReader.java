@@ -209,8 +209,10 @@ public class BioRadGelReader extends FormatReader {
 
     store.setImageAcquiredDate(date, 0);
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      store.setPixelsPhysicalSizeX(new PositiveFloat(physicalWidth / getSizeX()), 0);
-      store.setPixelsPhysicalSizeY(new PositiveFloat(physicalHeight / getSizeY()), 0);
+      store.setPixelsPhysicalSizeX(
+        new PositiveFloat(physicalWidth / getSizeX()), 0);
+      store.setPixelsPhysicalSizeY(
+        new PositiveFloat(physicalHeight / getSizeY()), 0);
     }
   }
 

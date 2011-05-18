@@ -123,8 +123,10 @@ public class QuesantReader extends FormatReader {
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription(comment, 0);
-      store.setPixelsPhysicalSizeX(new PositiveFloat((double) xSize / getSizeX()), 0);
-      store.setPixelsPhysicalSizeY(new PositiveFloat((double) xSize / getSizeY()), 0);
+      store.setPixelsPhysicalSizeX(
+        new PositiveFloat((double) xSize / getSizeX()), 0);
+      store.setPixelsPhysicalSizeY(
+        new PositiveFloat((double) xSize / getSizeY()), 0);
     }
   }
 

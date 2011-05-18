@@ -928,9 +928,12 @@ public class NativeND2Reader extends FormatReader {
     // populate Dimensions data
     if (handler != null) {
       for (int i=0; i<getSeriesCount(); i++) {
-        store.setPixelsPhysicalSizeX(new PositiveFloat(handler.getPixelSizeX()), i);
-        store.setPixelsPhysicalSizeY(new PositiveFloat(handler.getPixelSizeY()), i);
-        store.setPixelsPhysicalSizeZ(new PositiveFloat(handler.getPixelSizeZ()), i);
+        store.setPixelsPhysicalSizeX(
+          new PositiveFloat(handler.getPixelSizeX()), i);
+        store.setPixelsPhysicalSizeY(
+          new PositiveFloat(handler.getPixelSizeY()), i);
+        store.setPixelsPhysicalSizeZ(
+          new PositiveFloat(handler.getPixelSizeZ()), i);
       }
     }
 

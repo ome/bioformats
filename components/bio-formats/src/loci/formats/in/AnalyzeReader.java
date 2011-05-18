@@ -325,7 +325,8 @@ public class AnalyzeReader extends FormatReader {
       store.setImageDescription(description, 0);
       store.setPixelsPhysicalSizeX(new PositiveFloat(voxelWidth * 0.001), 0);
       store.setPixelsPhysicalSizeY(new PositiveFloat(voxelHeight * 0.001), 0);
-      store.setPixelsPhysicalSizeZ(new PositiveFloat(sliceThickness * 0.001), 0);
+      store.setPixelsPhysicalSizeZ(
+        new PositiveFloat(sliceThickness * 0.001), 0);
       store.setPixelsTimeIncrement(new Double(deltaT * 1000), 0);
     }
   }

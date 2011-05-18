@@ -440,8 +440,10 @@ public class CellWorxReader extends FormatReader {
           Double ySize = new Double(value.substring(s + 1, end).trim());
           for (int field=0; field<fieldCount; field++) {
             int index = seriesIndex + field;
-            store.setPixelsPhysicalSizeX(new PositiveFloat(xSize / getSizeX()), index);
-            store.setPixelsPhysicalSizeY(new PositiveFloat(ySize / getSizeY()), index);
+            store.setPixelsPhysicalSizeX(
+              new PositiveFloat(xSize / getSizeX()), index);
+            store.setPixelsPhysicalSizeY(
+              new PositiveFloat(ySize / getSizeY()), index);
           }
         }
       }

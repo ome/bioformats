@@ -752,8 +752,9 @@ public class SlidebookReader extends FormatReader {
 
       for (int i=0; i<getSeriesCount(); i++) {
         if (i < pixelSize.size()) {
-          store.setPixelsPhysicalSizeX(new PositiveFloat(new Double(pixelSize.get(i))), i);
-          store.setPixelsPhysicalSizeY(new PositiveFloat(new Double(pixelSize.get(i))), i);
+          Double size = new Double(pixelSize.get(i));
+          store.setPixelsPhysicalSizeX(new PositiveFloat(size), i);
+          store.setPixelsPhysicalSizeY(new PositiveFloat(size), i);
         }
         int idx = 0;
         for (int q=0; q<i; q++) {
@@ -761,7 +762,8 @@ public class SlidebookReader extends FormatReader {
         }
 
         if (idx < pixelSizeZ.size() && pixelSizeZ.get(idx) != null) {
-          store.setPixelsPhysicalSizeZ(new PositiveFloat(pixelSizeZ.get(idx)), i);
+          store.setPixelsPhysicalSizeZ(
+            new PositiveFloat(pixelSizeZ.get(idx)), i);
         }
       }
 

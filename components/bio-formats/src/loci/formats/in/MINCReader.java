@@ -237,9 +237,15 @@ public class MINCReader extends FormatReader {
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription(netcdf.getAttributeValue("/history"), 0);
 
-      if (physicalX != null) store.setPixelsPhysicalSizeX(new PositiveFloat(physicalX), 0);
-      if (physicalY != null) store.setPixelsPhysicalSizeY(new PositiveFloat(physicalY), 0);
-      if (physicalZ != null) store.setPixelsPhysicalSizeZ(new PositiveFloat(physicalZ), 0);
+      if (physicalX != null) {
+        store.setPixelsPhysicalSizeX(new PositiveFloat(physicalX), 0);
+      }
+      if (physicalY != null) {
+        store.setPixelsPhysicalSizeY(new PositiveFloat(physicalY), 0);
+      }
+      if (physicalZ != null) {
+        store.setPixelsPhysicalSizeZ(new PositiveFloat(physicalZ), 0);
+      }
     }
   }
 

@@ -372,9 +372,12 @@ public class Ecat7Reader extends FormatReader {
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription(description, 0);
-      store.setPixelsPhysicalSizeX(new PositiveFloat(new Double(xPixelSize)), 0);
-      store.setPixelsPhysicalSizeY(new PositiveFloat(new Double(yPixelSize)), 0);
-      store.setPixelsPhysicalSizeZ(new PositiveFloat(new Double(zPixelSize)), 0);
+      store.setPixelsPhysicalSizeX(
+        new PositiveFloat(new Double(xPixelSize)), 0);
+      store.setPixelsPhysicalSizeY(
+        new PositiveFloat(new Double(yPixelSize)), 0);
+      store.setPixelsPhysicalSizeZ(
+        new PositiveFloat(new Double(zPixelSize)), 0);
     }
   }
 

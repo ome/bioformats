@@ -598,10 +598,12 @@ public class FlexReader extends FormatReader {
         }
 
         if (seriesIndex < xSizes.size()) {
-          store.setPixelsPhysicalSizeX(new PositiveFloat(xSizes.get(seriesIndex)), i);
+          store.setPixelsPhysicalSizeX(
+            new PositiveFloat(xSizes.get(seriesIndex)), i);
         }
         if (seriesIndex < ySizes.size()) {
-          store.setPixelsPhysicalSizeY(new PositiveFloat(ySizes.get(seriesIndex)), i);
+          store.setPixelsPhysicalSizeY(
+            new PositiveFloat(ySizes.get(seriesIndex)), i);
         }
 
         int well = wellNumber[pos[1]][0] * wellColumns + wellNumber[pos[1]][1];
