@@ -250,12 +250,17 @@ public final class ImageConverter {
 
     if (store instanceof MetadataRetrieve) {
       if (series >= 0) {
-        OME root = (OME) store.getRoot();
-        Image exportImage = root.getImage(series);
-
         try {
-          IMetadata meta = service.createOMEXMLMetadata();
+          String xml = service.getOMEXML(service.asRetrieve(store));
+          OME root = (OME) store.getRoot();
+          Image exportImage = root.getImage(series);
+
+          IMetadata meta = service.createOMEXMLMetadata(xml);
           OME newRoot = (OME) meta.getRoot();
+          while (newRoot.sizeOfImageList() > 0) {
+            newRoot.removeImage(newRoot.getImage(0));
+          }
+
           newRoot.addImage(exportImage);
           meta.setRoot(newRoot);
           writer.setMetadataRetrieve((MetadataRetrieve) meta);
