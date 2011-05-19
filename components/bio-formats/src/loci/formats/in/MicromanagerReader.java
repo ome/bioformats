@@ -440,9 +440,13 @@ public class MicromanagerReader extends FormatReader {
         store.setChannelName(channels[i], 0, i);
       }
 
-      store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSize), 0);
-      store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSize), 0);
-      store.setPixelsPhysicalSizeZ(new PositiveFloat(sliceThickness), 0);
+      if (pixelSize != null && pixelSize > 0) {
+        store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSize), 0);
+        store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSize), 0);
+      }
+      if (sliceThickness != null && sliceThickness > 0) {
+        store.setPixelsPhysicalSizeZ(new PositiveFloat(sliceThickness), 0);
+      }
 
       for (int i=0; i<getImageCount(); i++) {
         store.setPlaneExposureTime(exposureTime, 0, i);

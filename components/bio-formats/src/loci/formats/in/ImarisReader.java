@@ -209,9 +209,15 @@ public class ImarisReader extends FormatReader {
 
       // populate Dimensions data
 
-      store.setPixelsPhysicalSizeX(new PositiveFloat(new Double(dx)), 0);
-      store.setPixelsPhysicalSizeY(new PositiveFloat(new Double(dy)), 0);
-      store.setPixelsPhysicalSizeZ(new PositiveFloat(new Double(dz)), 0);
+      if (dx > 0) {
+        store.setPixelsPhysicalSizeX(new PositiveFloat(new Double(dx)), 0);
+      }
+      if (dy > 0) {
+        store.setPixelsPhysicalSizeY(new PositiveFloat(new Double(dy)), 0);
+      }
+      if (dz > 0) {
+        store.setPixelsPhysicalSizeZ(new PositiveFloat(new Double(dz)), 0);
+      }
       store.setPixelsTimeIncrement(1.0, 0);
 
       // populate LogicalChannel data

@@ -916,12 +916,12 @@ public class FV1000Reader extends FormatReader {
       if (pixelSizeZ == Double.NEGATIVE_INFINITY ||
         pixelSizeZ == Double.POSITIVE_INFINITY || getSizeZ() == 1)
       {
-        pixelSizeZ = 0d;
+        pixelSizeZ = 1d;
       }
       if (pixelSizeT == Double.NEGATIVE_INFINITY ||
         pixelSizeT == Double.POSITIVE_INFINITY || getSizeT() == 1)
       {
-        pixelSizeT = 0d;
+        pixelSizeT = 1d;
       }
 
       store.setPixelsPhysicalSizeZ(new PositiveFloat(pixelSizeZ), i);

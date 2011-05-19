@@ -590,8 +590,12 @@ public class OpenlabReader extends FormatReader {
     if (level != MetadataLevel.MINIMUM) {
       // populate MetadataStore
 
-      store.setPixelsPhysicalSizeX(new PositiveFloat(new Double(xcal)), 0);
-      store.setPixelsPhysicalSizeY(new PositiveFloat(new Double(ycal)), 0);
+      if (xcal > 0) {
+        store.setPixelsPhysicalSizeX(new PositiveFloat(new Double(xcal)), 0);
+      }
+      if (ycal > 0) {
+        store.setPixelsPhysicalSizeY(new PositiveFloat(new Double(ycal)), 0);
+      }
 
       // link Instrument and Image
       String instrumentID = MetadataTools.createLSID("Instrument", 0);

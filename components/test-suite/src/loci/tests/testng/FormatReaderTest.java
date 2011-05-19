@@ -81,6 +81,7 @@ import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.OMEXMLService;
 
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 
 import org.slf4j.Logger;
@@ -868,10 +869,14 @@ public class FormatReaderTest {
       config.setSeries(i);
 
       Double expectedSize = config.getPhysicalSizeX();
-      Double realSize = retrieve.getPixelsPhysicalSizeX(i).getValue();
+      if (expectedSize == null || expectedSize == 0d) {
+        expectedSize = null;
+      }
+      PositiveFloat realSize = retrieve.getPixelsPhysicalSizeX(i);
+      Double size = realSize == null ? null : realSize.getValue();
 
       if (!(expectedSize == null && realSize == null) &&
-        !expectedSize.equals(realSize))
+        !expectedSize.equals(size))
       {
         result(testName, false, "Series " + i);
       }
@@ -892,10 +897,14 @@ public class FormatReaderTest {
       config.setSeries(i);
 
       Double expectedSize = config.getPhysicalSizeY();
-      Double realSize = retrieve.getPixelsPhysicalSizeY(i).getValue();
+      if (expectedSize == null || expectedSize == 0d) {
+        expectedSize = null;
+      }
+      PositiveFloat realSize = retrieve.getPixelsPhysicalSizeY(i);
+      Double size = realSize == null ? null : realSize.getValue();
 
       if (!(expectedSize == null && realSize == null) &&
-        !expectedSize.equals(realSize))
+        !expectedSize.equals(size))
       {
         result(testName, false, "Series " + i);
       }
@@ -916,10 +925,14 @@ public class FormatReaderTest {
       config.setSeries(i);
 
       Double expectedSize = config.getPhysicalSizeZ();
-      Double realSize = retrieve.getPixelsPhysicalSizeZ(i).getValue();
+      if (expectedSize == null || expectedSize == 0d) {
+        expectedSize = null;
+      }
+      PositiveFloat realSize = retrieve.getPixelsPhysicalSizeZ(i);
+      Double size = realSize == null ? null : realSize.getValue();
 
       if (!(expectedSize == null && realSize == null) &&
-        !expectedSize.equals(realSize))
+        !expectedSize.equals(size))
       {
         result(testName, false, "Series " + i);
       }

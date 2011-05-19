@@ -241,7 +241,7 @@ public class NDPIReader extends BaseTiffReader {
           new PositiveFloat(ifds.get(ifdIndex).getXResolution()), i);
         store.setPixelsPhysicalSizeY(
           new PositiveFloat(ifds.get(ifdIndex).getYResolution()), i);
-        store.setPixelsPhysicalSizeZ(new PositiveFloat(0.0), i);
+        store.setPixelsPhysicalSizeZ(null, i);
       }
     }
   }

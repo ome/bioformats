@@ -486,9 +486,15 @@ public class TCSReader extends FormatReader {
       MetadataTools.setDefaultCreationDate(store, id, i);
     }
 
-    store.setPixelsPhysicalSizeX(new PositiveFloat(voxelX), 0);
-    store.setPixelsPhysicalSizeY(new PositiveFloat(voxelY), 0);
-    store.setPixelsPhysicalSizeZ(new PositiveFloat(voxelZ), 0);
+    if (voxelX > 0) {
+      store.setPixelsPhysicalSizeX(new PositiveFloat(voxelX), 0);
+    }
+    if (voxelY > 0) {
+      store.setPixelsPhysicalSizeY(new PositiveFloat(voxelY), 0);
+    }
+    if (voxelZ > 0) {
+      store.setPixelsPhysicalSizeZ(new PositiveFloat(voxelZ), 0);
+    }
   }
 
   // -- Helper methods --

@@ -602,12 +602,18 @@ public class MetamorphReader extends BaseTiffReader {
       if (sizeX == null) sizeX = handler.getPixelSizeX();
       if (sizeY == null) sizeY = handler.getPixelSizeY();
 
-      store.setPixelsPhysicalSizeX(new PositiveFloat(sizeX), i);
-      store.setPixelsPhysicalSizeY(new PositiveFloat(sizeY), i);
+      if (sizeX > 0) {
+        store.setPixelsPhysicalSizeX(new PositiveFloat(sizeX), i);
+      }
+      if (sizeY > 0) {
+        store.setPixelsPhysicalSizeY(new PositiveFloat(sizeY), i);
+      }
       if (zDistances != null) {
         stepSize = zDistances[0];
       }
-      store.setPixelsPhysicalSizeZ(new PositiveFloat(stepSize), i);
+      if (stepSize > 0) {
+        store.setPixelsPhysicalSizeZ(new PositiveFloat(stepSize), i);
+      }
 
       int waveIndex = 0;
       for (int c=0; c<getEffectiveSizeC(); c++) {
