@@ -311,12 +311,6 @@ public class TiffWriter extends FormatWriter {
     }
   }
 
-  protected int getPlaneCount() {
-    int c = getSamplesPerPixel();
-    if (c == 1 || c == 3) return super.getPlaneCount();
-    return c * super.getPlaneCount();
-  }
-
   // -- IFormatWriter API methods --
 
   /**

@@ -650,7 +650,7 @@ public class LIFReader extends FormatReader {
           store.setChannelName(channelNames[i][c], i, c);
         }
         store.setChannelPinholeSize(pinholes[i], i, c);
-        if (exWaves[i] != null && exWaves[i][c] != null && exWaves[i][c] > 0) {
+        if (exWaves[i] != null && exWaves[i][c] != null && exWaves[i][c] > 1) {
           store.setChannelExcitationWavelength(
             new PositiveInteger(exWaves[i][c]), i, c);
         }
