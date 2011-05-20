@@ -70,7 +70,7 @@ public class ChannelColorTest {
 
   @Test
   public void testGetLatestVersion() {
-    assertEquals("2010-06", service.getLatestVersion());
+    assertEquals("2011-06", service.getLatestVersion());
   }
 
   @Test
