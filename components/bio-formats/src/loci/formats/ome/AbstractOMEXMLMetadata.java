@@ -60,10 +60,7 @@ public abstract class AbstractOMEXMLMetadata implements OMEXMLMetadata {
 
   /** OME-XML schema location. */
   public static final String SCHEMA =
-    // TODO: this should be replaced with
-    // http://www.openmicroscopy.org/Schemas/OME/2011-06/ome.xsd
-    // before release
-    "http://git.openmicroscopy.org/?p=ome.git;a=blob_plain;f=components/specification/Released-Schema/2011-06/V1/ome.xsd;hb=develop";
+    "http://www.openmicroscopy.org/Schemas/OME/2011-06/ome.xsd";
 
   // -- Fields --
 

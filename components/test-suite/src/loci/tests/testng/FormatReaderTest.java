@@ -1274,6 +1274,8 @@ public class FormatReaderTest {
   /**
    * @testng.test groups = "all xml fast"
    */
+  /*
+  // TODO : re-enable after the 2011-06 schema is published
   public void testValidXML() {
     if (config == null) throw new SkipException("No config tree");
     String testName = "testValidXML";
@@ -1296,6 +1298,7 @@ public class FormatReaderTest {
     }
     result(testName, success);
   }
+  */
 
   /**
    * @testng.test groups = "all pixels"
