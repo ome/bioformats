@@ -59,8 +59,14 @@
 
 	<!-- The Enumeration terms to be modified. -->
 	<xsl:variable name="enumeration-maps">
-		<mapping name="theAtribute">
-			<map from="oldName" to="newName"/>
+		<mapping name="FontFamily">
+			<map from="Arial" to="sans-serif"/>
+			<map from="Courier" to="monospace"/>
+			<map from="Helvetica" to="sans-serif"/>
+			<map from="TimesNewRoman" to="serif"/>
+		</mapping>
+		<mapping name="FontStyle">
+			<map from="Regular" to="Normal"/>
 		</mapping>
 	</xsl:variable>
 
@@ -116,10 +122,30 @@
 			<xsl:apply-templates select="node()"/>
 		</xsl:element>
 	</xsl:template>
-	
-	<!-- MORE TO FOLLOW! -->
-	<!-- ROI font -->
-	
+
+	<xsl:template match="ROI:Shape">
+		<xsl:element name="ROI:Shape" namespace="{$newROINS}">
+			<xsl:for-each select="@*">
+				<xsl:choose>
+					<xsl:when test="name() = 'FontFamily' or name() = 'FontStyle'">
+						<xsl:attribute name="{local-name(.)}">
+							<xsl:call-template name="transformEnumerationValue">
+								<xsl:with-param name="mappingName"><xsl:value-of select="local-name(.)"/></xsl:with-param>
+								<xsl:with-param name="value"><xsl:value-of select="."/></xsl:with-param>
+							</xsl:call-template>
+						</xsl:attribute>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:attribute name="{local-name(.)}">
+							<xsl:value-of select="."/>
+						</xsl:attribute>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:for-each>
+			<xsl:apply-templates select="node()"/>
+		</xsl:element>
+	</xsl:template>
+
 	<!-- Rewriting all namespaces -->
 
 	<xsl:template match="OME:OME">

@@ -33,7 +33,7 @@
 			<ROI:Shape ID="Shape:3" FillRule="EvenOdd" Label="Hi There!">
 				<ROI:Point X="1" Y="1"/>
 			</ROI:Shape>
-			<ROI:Shape ID="Shape:4" FillRule="EvenOdd">
+			<ROI:Shape ID="Shape:4" FillRule="EvenOdd" FontStyle="Regular" FontFamily="TimesNewRoman">
 				<ROI:Text X="1" Y="1">
 					<ROI:Value>Hello World!</ROI:Value>
 				</ROI:Text>
