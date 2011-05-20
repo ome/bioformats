@@ -222,27 +222,29 @@ public class QTWriter extends FormatWriter {
     // this will makes the colors look right in other readers (e.g. xine),
     // but needs to be reversed in QTReader
 
+    byte[] tmp = new byte[buf.length];
     if (nChannels == 1 && !needLegacy) {
       for (int i=0; i<buf.length; i++) {
-        buf[i] = (byte) (255 - buf[i]);
+        tmp[i] = (byte) (255 - buf[i]);
       }
     }
+    else System.arraycopy(buf, 0, tmp, 0, buf.length);
 
     if (!interleaved) {
       // need to write interleaved data
-      byte[] tmp = new byte[buf.length];
-      System.arraycopy(buf, 0, tmp, 0, buf.length);
-      for (int i=0; i<buf.length; i++) {
+      byte[] tmp2 = new byte[tmp.length];
+      System.arraycopy(tmp, 0, tmp2, 0, tmp.length);
+      for (int i=0; i<tmp.length; i++) {
         int c = i / (w * h);
         int index = i % (w * h);
-        buf[index * nChannels + c] = tmp[i];
+        tmp[index * nChannels + c] = tmp2[i];
       }
     }
 
-    int rowLen = buf.length / h;
+    int rowLen = tmp.length / h;
     for (int row=0; row<h; row++) {
       out.skipBytes(nChannels * x);
-      out.write(buf, row * rowLen, rowLen);
+      out.write(tmp, row * rowLen, rowLen);
       for (int i=0; i<pad; i++) {
         out.writeByte(0);
       }
