@@ -414,21 +414,24 @@ public class MinimalTiffReader extends FormatReader {
               long newTileWidth = Math.round((double) tileWidth / factor);
               newTileWidth = newTileWidth < 1? 1 : newTileWidth;
               long newTileLength = Math.round((double) tileLength / factor);
-              newTileLength = newTileLength < 1? 1 : newTileWidth;
+              newTileLength = newTileLength < 1? 1 : newTileLength;
               long evenTilesPerRow = imageWidth / tileWidth;
               long evenTilesPerColumn = imageLength / tileLength;
-              long remainingWidth = Math.round(
+              double remainingWidth =
                   ((double) (imageWidth - (evenTilesPerRow * tileWidth))) /
-                  factor);
-              remainingWidth = remainingWidth < 1? 1 : remainingWidth;
-              long remainingLength = Math.round(
+                  factor;
+              remainingWidth = remainingWidth < 1? Math.ceil(remainingWidth) :
+                  Math.round(remainingWidth);
+              double remainingLength =
                   ((double) (imageLength - (evenTilesPerColumn * tileLength))) /
-                  factor);
-              remainingLength = remainingLength < 1? 1 : remainingLength;
-              long newImageWidth = (evenTilesPerRow * newTileWidth) +
-                  remainingWidth;
-              long newImageLength = (evenTilesPerColumn * newTileLength) +
-                  remainingLength;
+                  factor;
+              remainingLength =
+                remainingLength < 1? Math.ceil(remainingLength) :
+                Math.round(remainingLength);
+              long newImageWidth = (long) ((evenTilesPerRow * newTileWidth) +
+                  remainingWidth);
+              long newImageLength =
+                (long) ((evenTilesPerColumn * newTileLength) + remainingLength);
 
               int resolutionLevel = Math.abs(level - resolutionLevels);
               newIFD.put(IFD.IMAGE_WIDTH, newImageWidth);
