@@ -415,15 +415,15 @@ public class Configuration {
 
       seriesTable.put(NAME, retrieve.getImageName(series));
 
-      Double physicalX = retrieve.getPixelsPhysicalSizeX(series);
+      Double physicalX = retrieve.getPixelsPhysicalSizeX(series).getValue();
       if (physicalX != null) {
         seriesTable.put(PHYSICAL_SIZE_X, physicalX.toString());
       }
-      Double physicalY = retrieve.getPixelsPhysicalSizeY(series);
+      Double physicalY = retrieve.getPixelsPhysicalSizeY(series).getValue();
       if (physicalY != null) {
         seriesTable.put(PHYSICAL_SIZE_Y, physicalY.toString());
       }
-      Double physicalZ = retrieve.getPixelsPhysicalSizeZ(series);
+      Double physicalZ = retrieve.getPixelsPhysicalSizeZ(series).getValue();
       if (physicalZ != null) {
         seriesTable.put(PHYSICAL_SIZE_Z, physicalZ.toString());
       }

@@ -34,6 +34,7 @@ import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.PositiveFloat;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
 
@@ -128,9 +129,9 @@ public class NikonElementsTiffReader extends BaseTiffReader {
       return;
     }
 
-    store.setPixelsPhysicalSizeX(handler.getPixelSizeX(), 0);
-    store.setPixelsPhysicalSizeY(handler.getPixelSizeY(), 0);
-    store.setPixelsPhysicalSizeZ(handler.getPixelSizeZ(), 0);
+    store.setPixelsPhysicalSizeX(new PositiveFloat(handler.getPixelSizeX()), 0);
+    store.setPixelsPhysicalSizeY(new PositiveFloat(handler.getPixelSizeY()), 0);
+    store.setPixelsPhysicalSizeZ(new PositiveFloat(handler.getPixelSizeZ()), 0);
 
     String instrument = MetadataTools.createLSID("Instrument", 0);
     store.setInstrumentID(instrument, 0);

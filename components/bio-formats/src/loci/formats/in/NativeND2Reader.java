@@ -42,6 +42,7 @@ import loci.formats.codec.CodecOptions;
 import loci.formats.codec.JPEG2000Codec;
 import loci.formats.codec.ZlibCodec;
 import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.PositiveFloat;
 
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveInteger;
@@ -927,9 +928,19 @@ public class NativeND2Reader extends FormatReader {
     // populate Dimensions data
     if (handler != null) {
       for (int i=0; i<getSeriesCount(); i++) {
-        store.setPixelsPhysicalSizeX(handler.getPixelSizeX(), i);
-        store.setPixelsPhysicalSizeY(handler.getPixelSizeY(), i);
-        store.setPixelsPhysicalSizeZ(handler.getPixelSizeZ(), i);
+        double sizeX = handler.getPixelSizeX();
+        double sizeY = handler.getPixelSizeY();
+        double sizeZ = handler.getPixelSizeZ();
+
+        if (sizeX > 0) {
+          store.setPixelsPhysicalSizeX(new PositiveFloat(sizeX), i);
+        }
+        if (sizeY > 0) {
+          store.setPixelsPhysicalSizeY(new PositiveFloat(sizeY), i);
+        }
+        if (sizeZ > 0) {
+          store.setPixelsPhysicalSizeZ(new PositiveFloat(sizeZ), i);
+        }
       }
     }
 

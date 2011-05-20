@@ -31,6 +31,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.PositiveFloat;
 
 /**
  * SeikoReader is the file format reader for Seiko .xqd/.xqf files.
@@ -113,8 +114,8 @@ public class SeikoReader extends FormatReader {
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription(comment, 0);
-      store.setPixelsPhysicalSizeX(xSize, 0);
-      store.setPixelsPhysicalSizeY(ySize, 0);
+      store.setPixelsPhysicalSizeX(new PositiveFloat(xSize), 0);
+      store.setPixelsPhysicalSizeY(new PositiveFloat(ySize), 0);
     }
   }
 

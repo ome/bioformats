@@ -38,6 +38,7 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.MissingLibraryException;
 import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.PositiveFloat;
 import loci.formats.services.NetCDFService;
 
 /**
@@ -236,9 +237,15 @@ public class MINCReader extends FormatReader {
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription(netcdf.getAttributeValue("/history"), 0);
 
-      if (physicalX != null) store.setPixelsPhysicalSizeX(physicalX, 0);
-      if (physicalY != null) store.setPixelsPhysicalSizeY(physicalY, 0);
-      if (physicalZ != null) store.setPixelsPhysicalSizeZ(physicalZ, 0);
+      if (physicalX != null) {
+        store.setPixelsPhysicalSizeX(new PositiveFloat(physicalX), 0);
+      }
+      if (physicalY != null) {
+        store.setPixelsPhysicalSizeY(new PositiveFloat(physicalY), 0);
+      }
+      if (physicalZ != null) {
+        store.setPixelsPhysicalSizeZ(new PositiveFloat(physicalZ), 0);
+      }
     }
   }
 

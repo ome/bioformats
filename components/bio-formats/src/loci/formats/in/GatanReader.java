@@ -33,6 +33,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.PositiveFloat;
 
 /**
  * GatanReader is the file format reader for Gatan files.
@@ -198,13 +199,13 @@ public class GatanReader extends FormatReader {
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       if (pixelSizes.size() > 0) {
-        store.setPixelsPhysicalSizeX(pixelSizes.get(0), 0);
+        store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSizes.get(0)), 0);
       }
       if (pixelSizes.size() > 1) {
-        store.setPixelsPhysicalSizeY(pixelSizes.get(1), 0);
+        store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSizes.get(1)), 0);
       }
       if (pixelSizes.size() > 2) {
-        store.setPixelsPhysicalSizeZ(pixelSizes.get(2), 0);
+        store.setPixelsPhysicalSizeZ(new PositiveFloat(pixelSizes.get(2)), 0);
       }
 
       if (info == null) info = "";

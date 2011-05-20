@@ -12,6 +12,8 @@ import loci.formats.ImageReader;
 import loci.formats.meta.IMetadata;
 import loci.formats.services.OMEXMLService;
 
+import ome.xml.model.primitives.PositiveFloat;
+
 /**
  * Uses Bio-Formats to extract some basic standardized
  * (format-independent) metadata.
@@ -43,9 +45,9 @@ public class GetPhysicalMetadata {
 
   /** Outputs global timing details. */
   public static void printPhysicalDimensions(IMetadata meta, int series) {
-    double physicalSizeX = meta.getPixelsPhysicalSizeX(series);
-    double physicalSizeY = meta.getPixelsPhysicalSizeY(series);
-    double physicalSizeZ = meta.getPixelsPhysicalSizeZ(series);
+    double physicalSizeX = meta.getPixelsPhysicalSizeX(series).getValue();
+    double physicalSizeY = meta.getPixelsPhysicalSizeY(series).getValue();
+    double physicalSizeZ = meta.getPixelsPhysicalSizeZ(series).getValue();
     double timeIncrement = meta.getPixelsTimeIncrement(series);
     System.out.println();
     System.out.println("Physical dimensions:");

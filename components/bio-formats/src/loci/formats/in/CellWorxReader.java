@@ -36,6 +36,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.PositiveFloat;
 
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveInteger;
@@ -439,8 +440,10 @@ public class CellWorxReader extends FormatReader {
           Double ySize = new Double(value.substring(s + 1, end).trim());
           for (int field=0; field<fieldCount; field++) {
             int index = seriesIndex + field;
-            store.setPixelsPhysicalSizeX(xSize / getSizeX(), index);
-            store.setPixelsPhysicalSizeY(ySize / getSizeY(), index);
+            store.setPixelsPhysicalSizeX(
+              new PositiveFloat(xSize / getSizeX()), index);
+            store.setPixelsPhysicalSizeY(
+              new PositiveFloat(ySize / getSizeY()), index);
           }
         }
       }

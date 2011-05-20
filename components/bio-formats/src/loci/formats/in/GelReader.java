@@ -32,6 +32,7 @@ import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.PositiveFloat;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 import loci.formats.tiff.TiffParser;
@@ -197,8 +198,8 @@ public class GelReader extends BaseTiffReader {
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       Double pixelSize = new Double(scale.doubleValue());
-      store.setPixelsPhysicalSizeX(pixelSize, 0);
-      store.setPixelsPhysicalSizeY(pixelSize, 0);
+      store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSize), 0);
+      store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSize), 0);
     }
   }
 

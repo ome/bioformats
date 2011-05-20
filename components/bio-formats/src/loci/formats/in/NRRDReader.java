@@ -36,6 +36,7 @@ import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.PositiveFloat;
 
 /**
  * File format reader for NRRD files; see http://teem.sourceforge.net/nrrd.
@@ -316,9 +317,15 @@ public class NRRDReader extends FormatReader {
           if (pixelSizes[i] == null) continue;
           try {
             Double d = new Double(pixelSizes[i].trim());
-            if (i == 0) store.setPixelsPhysicalSizeX(d, 0);
-            else if (i == 1) store.setPixelsPhysicalSizeY(d, 0);
-            else if (i == 2) store.setPixelsPhysicalSizeZ(d, 0);
+            if (i == 0) {
+              store.setPixelsPhysicalSizeX(new PositiveFloat(d), 0);
+            }
+            else if (i == 1) {
+              store.setPixelsPhysicalSizeY(new PositiveFloat(d), 0);
+            }
+            else if (i == 2) {
+              store.setPixelsPhysicalSizeZ(new PositiveFloat(d), 0);
+            }
           }
           catch (NumberFormatException e) { }
         }

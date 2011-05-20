@@ -34,6 +34,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.PositiveFloat;
 
 /**
  * PDSReader is the file format reader for Perkin Elmer densitometer files.
@@ -276,10 +277,10 @@ public class PDSReader extends FormatReader {
       store.setPlanePositionX(xPos, 0, 0);
       store.setPlanePositionY(yPos, 0, 0);
       if (deltaX != null) {
-        store.setPixelsPhysicalSizeX(deltaX, 0);
+        store.setPixelsPhysicalSizeX(new PositiveFloat(deltaX), 0);
       }
       if (deltaY != null) {
-        store.setPixelsPhysicalSizeY(deltaY, 0);
+        store.setPixelsPhysicalSizeY(new PositiveFloat(deltaY), 0);
       }
     }
   }

@@ -35,7 +35,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-08-24 16:50:49+0100
+ * Created by callan via xsd-fu on 2011-05-18 16:39:31+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -161,6 +161,7 @@ public class DummyMetadata implements IMetadata
 
 	// Arc entity counting
 	// BinaryFile entity counting
+	// BinaryOnly entity counting
 	// BooleanAnnotation entity counting
 	public int getBooleanAnnotationCount()
 	{
@@ -617,6 +618,23 @@ public class DummyMetadata implements IMetadata
 	}
 
 	public NonNegativeLong getOTFBinaryFileSize(int instrumentIndex, int OTFIndex)
+	{
+		return null;
+	}
+
+	//
+	// BinaryOnly property storage
+	//
+	// Indexes: {u'OME': []}
+	// {u'OME': None}
+	// Is multi path? False
+
+	public String getBinaryOnlyMetadataFile(int metadataFileIndex)
+	{
+		return null;
+	}
+
+	public String getBinaryOnlyUUID(int UUIDIndex)
 	{
 		return null;
 	}
@@ -2241,6 +2259,11 @@ public class DummyMetadata implements IMetadata
 	// {u'Experiment': {u'OME': None}}
 	// Is multi path? False
 
+	public String getMicrobeamManipulationDescription(int experimentIndex, int microbeamManipulationIndex)
+	{
+		return null;
+	}
+
 	public String getMicrobeamManipulationExperimenterRef(int experimentIndex, int microbeamManipulationIndex)
 	{
 		return null;
@@ -2600,17 +2623,17 @@ public class DummyMetadata implements IMetadata
 	}
 
 	// Ignoring MetadataOnly element, complex property
-	public Double getPixelsPhysicalSizeX(int imageIndex)
+	public PositiveFloat getPixelsPhysicalSizeX(int imageIndex)
 	{
 		return null;
 	}
 
-	public Double getPixelsPhysicalSizeY(int imageIndex)
+	public PositiveFloat getPixelsPhysicalSizeY(int imageIndex)
 	{
 		return null;
 	}
 
-	public Double getPixelsPhysicalSizeZ(int imageIndex)
+	public PositiveFloat getPixelsPhysicalSizeZ(int imageIndex)
 	{
 		return null;
 	}
@@ -4036,6 +4059,20 @@ public class DummyMetadata implements IMetadata
 	}
 
 	//
+	// BinaryOnly property storage
+	//
+	// {u'OME': None}
+	// Is multi path? False
+
+	public void setBinaryOnlyMetadataFile(String metadataFile)
+	{
+	}
+
+	public void setBinaryOnlyUUID(String uuid)
+	{
+	}
+
+	//
 	// BooleanAnnotation property storage
 	//
 	// {u'StructuredAnnotations': {u'OME': None}}
@@ -5402,6 +5439,10 @@ public class DummyMetadata implements IMetadata
 	// {u'Experiment': {u'OME': None}}
 	// Is multi path? False
 
+	public void setMicrobeamManipulationDescription(String description, int experimentIndex, int microbeamManipulationIndex)
+	{
+	}
+
 	public void setMicrobeamManipulationExperimenterRef(String experimenter, int experimentIndex, int microbeamManipulationIndex)
 	{
 	}
@@ -5701,15 +5742,15 @@ public class DummyMetadata implements IMetadata
 	}
 
 	// Ignoring MetadataOnly element, complex property
-	public void setPixelsPhysicalSizeX(Double physicalSizeX, int imageIndex)
+	public void setPixelsPhysicalSizeX(PositiveFloat physicalSizeX, int imageIndex)
 	{
 	}
 
-	public void setPixelsPhysicalSizeY(Double physicalSizeY, int imageIndex)
+	public void setPixelsPhysicalSizeY(PositiveFloat physicalSizeY, int imageIndex)
 	{
 	}
 
-	public void setPixelsPhysicalSizeZ(Double physicalSizeZ, int imageIndex)
+	public void setPixelsPhysicalSizeZ(PositiveFloat physicalSizeZ, int imageIndex)
 	{
 	}
 

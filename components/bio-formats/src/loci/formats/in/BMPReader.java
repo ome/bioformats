@@ -33,6 +33,7 @@ import loci.formats.ImageTools;
 import loci.formats.MetadataTools;
 import loci.formats.codec.BitBuffer;
 import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.PositiveFloat;
 
 /**
  * BMPReader is the file format reader for Microsoft Bitmap (BMP) files.
@@ -296,11 +297,11 @@ public class BMPReader extends FormatReader {
       // resolution is stored as pixels per meter; we want to convert to
       // microns per pixel
 
-      double correctedX = pixelSizeX == 0 ? 0.0 : 1000000.0 / pixelSizeX;
-      double correctedY = pixelSizeY == 0 ? 0.0 : 1000000.0 / pixelSizeY;
+      double correctedX = pixelSizeX == 0 ? 1.0 : 1000000.0 / pixelSizeX;
+      double correctedY = pixelSizeY == 0 ? 1.0 : 1000000.0 / pixelSizeY;
 
-      store.setPixelsPhysicalSizeX(correctedX, 0);
-      store.setPixelsPhysicalSizeY(correctedY, 0);
+      store.setPixelsPhysicalSizeX(new PositiveFloat(correctedX), 0);
+      store.setPixelsPhysicalSizeY(new PositiveFloat(correctedY), 0);
     }
   }
 

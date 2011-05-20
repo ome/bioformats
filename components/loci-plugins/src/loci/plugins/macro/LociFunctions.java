@@ -394,21 +394,21 @@ public class LociFunctions extends MacroFunctions {
   public void getPixelsPhysicalSizeX(Double[] sizeX) {
     int imageIndex = r.getSeries();
     MetadataRetrieve retrieve = (MetadataRetrieve) r.getMetadataStore();
-    sizeX[0] = retrieve.getPixelsPhysicalSizeX(imageIndex);
+    sizeX[0] = retrieve.getPixelsPhysicalSizeX(imageIndex).getValue();
     if (sizeX[0] == null) sizeX[0] = new Double(Double.NaN);
   }
 
   public void getPixelsPhysicalSizeY(Double[] sizeY) {
     int imageIndex = r.getSeries();
     MetadataRetrieve retrieve = (MetadataRetrieve) r.getMetadataStore();
-    sizeY[0] = retrieve.getPixelsPhysicalSizeY(imageIndex);
+    sizeY[0] = retrieve.getPixelsPhysicalSizeY(imageIndex).getValue();
     if (sizeY[0] == null) sizeY[0] = new Double(Double.NaN);
   }
 
   public void getPixelsPhysicalSizeZ(Double[] sizeZ) {
     int imageIndex = r.getSeries();
     MetadataRetrieve retrieve = (MetadataRetrieve) r.getMetadataStore();
-    sizeZ[0] = retrieve.getPixelsPhysicalSizeZ(imageIndex);
+    sizeZ[0] = retrieve.getPixelsPhysicalSizeZ(imageIndex).getValue();
     if (sizeZ[0] == null) sizeZ[0] = new Double(Double.NaN);
   }
 

@@ -168,15 +168,15 @@ public class ICSWriter extends FormatWriter {
         char dim = order.charAt(i);
         Number value = 1.0;
         if (dim == 'X') {
-          value = meta.getPixelsPhysicalSizeX(0);
+          value = meta.getPixelsPhysicalSizeX(0).getValue();
           units.append("micrometers\t");
         }
         else if (dim == 'Y') {
-          value = meta.getPixelsPhysicalSizeY(0);
+          value = meta.getPixelsPhysicalSizeY(0).getValue();
           units.append("micrometers\t");
         }
         else if (dim == 'Z') {
-          value = meta.getPixelsPhysicalSizeZ(0);
+          value = meta.getPixelsPhysicalSizeZ(0).getValue();
           units.append("micrometers\t");
         }
         else if (dim == 'T') {

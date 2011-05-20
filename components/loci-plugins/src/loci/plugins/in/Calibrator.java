@@ -33,6 +33,7 @@ import java.util.Arrays;
 import loci.formats.FormatTools;
 import loci.formats.meta.IMetadata;
 import ome.xml.model.primitives.NonNegativeInteger;
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 
 /**
@@ -64,12 +65,12 @@ public class Calibrator {
     double xcal = Double.NaN, ycal = Double.NaN;
     double zcal = Double.NaN, tcal = Double.NaN;
 
-    Double xd = meta.getPixelsPhysicalSizeX(series);
-    if (xd != null) xcal = xd.floatValue();
-    Double yd = meta.getPixelsPhysicalSizeY(series);
-    if (yd != null) ycal = yd.floatValue();
-    Double zd = meta.getPixelsPhysicalSizeZ(series);
-    if (zd != null) zcal = zd.floatValue();
+    PositiveFloat xd = meta.getPixelsPhysicalSizeX(series);
+    if (xd != null) xcal = xd.getValue();
+    PositiveFloat yd = meta.getPixelsPhysicalSizeY(series);
+    if (yd != null) ycal = yd.getValue();
+    PositiveFloat zd = meta.getPixelsPhysicalSizeZ(series);
+    if (zd != null) zcal = zd.getValue();
     Double td = meta.getPixelsTimeIncrement(series);
     if (td != null) tcal = td.floatValue();
 

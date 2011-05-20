@@ -45,6 +45,7 @@ import loci.formats.ImageTools;
 import loci.formats.MetadataTools;
 import loci.formats.codec.BitWriter;
 import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.PositiveFloat;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
 
@@ -1005,10 +1006,10 @@ public class MIASReader extends FormatReader {
 
     for (int well=0; well<tiffs.length; well++) {
       if (physicalSizeX != null) {
-        store.setPixelsPhysicalSizeX(physicalSizeX, well);
+        store.setPixelsPhysicalSizeX(new PositiveFloat(physicalSizeX), well);
       }
       if (physicalSizeY != null) {
-        store.setPixelsPhysicalSizeY(physicalSizeY, well);
+        store.setPixelsPhysicalSizeY(new PositiveFloat(physicalSizeY), well);
       }
       for (int c=0; c<channelNames.size(); c++) {
         if (c < getEffectiveSizeC()) {

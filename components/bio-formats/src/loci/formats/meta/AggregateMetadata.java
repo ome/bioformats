@@ -35,7 +35,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2010-08-24 16:48:47+0100
+ * Created by callan via xsd-fu on 2011-05-18 16:39:26+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -363,6 +363,7 @@ public class AggregateMetadata implements IMetadata
 
 	// Arc entity counting
 	// BinaryFile entity counting
+	// BinaryOnly entity counting
 	// BooleanAnnotation entity counting
 	public int getBooleanAnnotationCount()
 	{
@@ -1487,6 +1488,43 @@ public class AggregateMetadata implements IMetadata
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
 				NonNegativeLong result = retrieve.getOTFBinaryFileSize(instrumentIndex, OTFIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	//
+	// BinaryOnly property storage
+	//
+	// Indexes: {u'OME': []}
+	// {u'OME': None}
+	// Is multi path? False
+
+	public String getBinaryOnlyMetadataFile(int metadataFileIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				String result = retrieve.getBinaryOnlyMetadataFile(metadataFileIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	public String getBinaryOnlyUUID(int UUIDIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				String result = retrieve.getBinaryOnlyUUID(UUIDIndex);
 				if (result != null) return result;
 			}
 		}
@@ -5233,6 +5271,21 @@ public class AggregateMetadata implements IMetadata
 	// {u'Experiment': {u'OME': None}}
 	// Is multi path? False
 
+	public String getMicrobeamManipulationDescription(int experimentIndex, int microbeamManipulationIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				String result = retrieve.getMicrobeamManipulationDescription(experimentIndex, microbeamManipulationIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
 	public String getMicrobeamManipulationExperimenterRef(int experimentIndex, int microbeamManipulationIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -6112,7 +6165,7 @@ public class AggregateMetadata implements IMetadata
 	}
 
 	// Ignoring MetadataOnly element, complex property
-	public Double getPixelsPhysicalSizeX(int imageIndex)
+	public PositiveFloat getPixelsPhysicalSizeX(int imageIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -6120,14 +6173,14 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				Double result = retrieve.getPixelsPhysicalSizeX(imageIndex);
+				PositiveFloat result = retrieve.getPixelsPhysicalSizeX(imageIndex);
 				if (result != null) return result;
 			}
 		}
 		return null;
 	}
 
-	public Double getPixelsPhysicalSizeY(int imageIndex)
+	public PositiveFloat getPixelsPhysicalSizeY(int imageIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -6135,14 +6188,14 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				Double result = retrieve.getPixelsPhysicalSizeY(imageIndex);
+				PositiveFloat result = retrieve.getPixelsPhysicalSizeY(imageIndex);
 				if (result != null) return result;
 			}
 		}
 		return null;
 	}
 
-	public Double getPixelsPhysicalSizeZ(int imageIndex)
+	public PositiveFloat getPixelsPhysicalSizeZ(int imageIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -6150,7 +6203,7 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				Double result = retrieve.getPixelsPhysicalSizeZ(imageIndex);
+				PositiveFloat result = retrieve.getPixelsPhysicalSizeZ(imageIndex);
 				if (result != null) return result;
 			}
 		}
@@ -9501,6 +9554,38 @@ public class AggregateMetadata implements IMetadata
 	}
 
 	//
+	// BinaryOnly property storage
+	//
+	// {u'OME': None}
+	// Is multi path? False
+
+	public void setBinaryOnlyMetadataFile(String metadataFile)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setBinaryOnlyMetadataFile(metadataFile);
+			}
+		}
+	}
+
+	public void setBinaryOnlyUUID(String uuid)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setBinaryOnlyUUID(uuid);
+			}
+		}
+	}
+
+	//
 	// BooleanAnnotation property storage
 	//
 	// {u'StructuredAnnotations': {u'OME': None}}
@@ -12775,6 +12860,19 @@ public class AggregateMetadata implements IMetadata
 	// {u'Experiment': {u'OME': None}}
 	// Is multi path? False
 
+	public void setMicrobeamManipulationDescription(String description, int experimentIndex, int microbeamManipulationIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setMicrobeamManipulationDescription(description, experimentIndex, microbeamManipulationIndex);
+			}
+		}
+	}
+
 	public void setMicrobeamManipulationExperimenterRef(String experimenter, int experimentIndex, int microbeamManipulationIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -13542,7 +13640,7 @@ public class AggregateMetadata implements IMetadata
 	}
 
 	// Ignoring MetadataOnly element, complex property
-	public void setPixelsPhysicalSizeX(Double physicalSizeX, int imageIndex)
+	public void setPixelsPhysicalSizeX(PositiveFloat physicalSizeX, int imageIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -13555,7 +13653,7 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
-	public void setPixelsPhysicalSizeY(Double physicalSizeY, int imageIndex)
+	public void setPixelsPhysicalSizeY(PositiveFloat physicalSizeY, int imageIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -13568,7 +13666,7 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
-	public void setPixelsPhysicalSizeZ(Double physicalSizeZ, int imageIndex)
+	public void setPixelsPhysicalSizeZ(PositiveFloat physicalSizeZ, int imageIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{

@@ -31,6 +31,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.PositiveFloat;
 
 /**
  * OxfordInstrumentsReader is the file format reader for
@@ -163,8 +164,8 @@ public class OxfordInstrumentsReader extends FormatReader {
 
     store.setImageDescription(comment, 0);
     store.setImageAcquiredDate(dateTime, 0);
-    store.setPixelsPhysicalSizeX(xSize / getSizeX(), 0);
-    store.setPixelsPhysicalSizeY(ySize / getSizeY(), 0);
+    store.setPixelsPhysicalSizeX(new PositiveFloat(xSize / getSizeX()), 0);
+    store.setPixelsPhysicalSizeY(new PositiveFloat(ySize / getSizeY()), 0);
   }
 
   // -- Helper methods --
