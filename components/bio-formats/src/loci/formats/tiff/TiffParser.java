@@ -590,7 +590,13 @@ public class TiffParser {
 
     int tileNumber = (int) (row * numTileCols + col);
     byte[] tile = new byte[(int) stripByteCounts[tileNumber]];
-    in.seek(stripOffsets[tileNumber]);
+
+    long offset = stripOffsets[tileNumber];
+    if (offset < 0) {
+      offset += 0x100000000L;
+    }
+
+    in.seek(offset);
     in.read(tile);
 
     int size = (int) (tileWidth * tileLength * pixel * effectiveChannels);
