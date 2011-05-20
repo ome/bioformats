@@ -74,6 +74,7 @@ import ome.xml.model.OME;
 import ome.xml.model.enums.DimensionOrder;
 import ome.xml.model.enums.EnumerationException;
 import ome.xml.model.enums.PixelType;
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 
 /**
@@ -332,9 +333,9 @@ public class Exporter {
 
       Calibration cal = imp.getCalibration();
 
-      store.setPixelsPhysicalSizeX(new Double(cal.pixelWidth), 0);
-      store.setPixelsPhysicalSizeY(new Double(cal.pixelHeight), 0);
-      store.setPixelsPhysicalSizeZ(new Double(cal.pixelDepth), 0);
+      store.setPixelsPhysicalSizeX(new PositiveFloat(cal.pixelWidth), 0);
+      store.setPixelsPhysicalSizeY(new PositiveFloat(cal.pixelHeight), 0);
+      store.setPixelsPhysicalSizeZ(new PositiveFloat(cal.pixelDepth), 0);
       store.setPixelsTimeIncrement(new Double(cal.frameInterval), 0);
 
       if (imp.getImageStackSize() !=

@@ -33,6 +33,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.PositiveFloat;
 
 /**
  * RHKReader is the file format reader for RHK Technologies files.
@@ -196,8 +197,8 @@ public class RHKReader extends FormatReader {
     MetadataTools.populatePixels(store, this);
     MetadataTools.setDefaultCreationDate(store, currentId, 0);
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      store.setPixelsPhysicalSizeX(xScale, 0);
-      store.setPixelsPhysicalSizeY(yScale, 0);
+      store.setPixelsPhysicalSizeX(new PositiveFloat(xScale), 0);
+      store.setPixelsPhysicalSizeY(new PositiveFloat(yScale), 0);
       store.setImageDescription(description, 0);
     }
   }

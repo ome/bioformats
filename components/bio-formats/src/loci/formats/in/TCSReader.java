@@ -42,6 +42,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.PositiveFloat;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 import loci.formats.tiff.TiffParser;
@@ -485,9 +486,15 @@ public class TCSReader extends FormatReader {
       MetadataTools.setDefaultCreationDate(store, id, i);
     }
 
-    store.setPixelsPhysicalSizeX(voxelX, 0);
-    store.setPixelsPhysicalSizeY(voxelY, 0);
-    store.setPixelsPhysicalSizeZ(voxelZ, 0);
+    if (voxelX > 0) {
+      store.setPixelsPhysicalSizeX(new PositiveFloat(voxelX), 0);
+    }
+    if (voxelY > 0) {
+      store.setPixelsPhysicalSizeY(new PositiveFloat(voxelY), 0);
+    }
+    if (voxelZ > 0) {
+      store.setPixelsPhysicalSizeZ(new PositiveFloat(voxelZ), 0);
+    }
   }
 
   // -- Helper methods --

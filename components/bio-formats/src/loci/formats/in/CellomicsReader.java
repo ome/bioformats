@@ -36,6 +36,7 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.codec.ZlibCodec;
 import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.PositiveFloat;
 
 import ome.xml.model.enums.NamingConvention;
 import ome.xml.model.primitives.NonNegativeInteger;
@@ -289,8 +290,12 @@ public class CellomicsReader extends FormatReader {
       double height = pixelHeight == 0 ? 0.0 : 1000000.0 / pixelHeight;
 
       for (int i=0; i<getSeriesCount(); i++) {
-        store.setPixelsPhysicalSizeX(width, 0);
-        store.setPixelsPhysicalSizeY(height, 0);
+        if (width > 0) {
+          store.setPixelsPhysicalSizeX(new PositiveFloat(width), 0);
+        }
+        if (height > 0) {
+          store.setPixelsPhysicalSizeY(new PositiveFloat(height), 0);
+        }
       }
     }
   }

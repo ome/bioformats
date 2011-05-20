@@ -39,6 +39,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.PositiveFloat;
 
 import ome.xml.model.primitives.PositiveInteger;
 
@@ -575,8 +576,8 @@ public class PerkinElmerReader extends FormatReader {
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       // populate Dimensions element
-      store.setPixelsPhysicalSizeX(pixelSizeX, 0);
-      store.setPixelsPhysicalSizeY(pixelSizeY, 0);
+      store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSizeX), 0);
+      store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSizeY), 0);
 
       // link Instrument and Image
       String instrumentID = MetadataTools.createLSID("Instrument", 0);

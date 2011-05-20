@@ -39,6 +39,7 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.IMinMaxStore;
 import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.PositiveFloat;
 
 import ome.xml.model.primitives.PositiveInteger;
 
@@ -696,10 +697,12 @@ public class BioRadReader extends FormatReader {
                       // found length of axis in um
                       Double pixelSize = new Double(values[2]);
                       if (key.equals("AXIS_2")) {
-                        store.setPixelsPhysicalSizeX(pixelSize, 0);
+                        store.setPixelsPhysicalSizeX(
+                          new PositiveFloat(pixelSize), 0);
                       }
                       else if (key.equals("AXIS_3")) {
-                        store.setPixelsPhysicalSizeY(pixelSize, 0);
+                        store.setPixelsPhysicalSizeY(
+                          new PositiveFloat(pixelSize), 0);
                       }
                     }
                   }
@@ -710,12 +713,12 @@ public class BioRadReader extends FormatReader {
             else if (n.p.startsWith("AXIS_2")) {
               String[] values = n.p.split(" ");
               Double pixelSize = new Double(values[3]);
-              store.setPixelsPhysicalSizeX(pixelSize, 0);
+              store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSize), 0);
             }
             else if (n.p.startsWith("AXIS_3")) {
               String[] values = n.p.split(" ");
               Double pixelSize = new Double(values[3]);
-              store.setPixelsPhysicalSizeY(pixelSize, 0);
+              store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSize), 0);
             }
             else {
               addGlobalMeta("Note #" + noteIndex, n.toString());
@@ -732,9 +735,11 @@ public class BioRadReader extends FormatReader {
                     addGlobalMeta(STRUCTURE_LABELS_1[i], values[i]);
                   }
 
+                  int mag = (int) Float.parseFloat(values[11]);
                   store.setObjectiveNominalMagnification(
-                    new PositiveInteger((int) Float.parseFloat(values[11])), 0, 0);
-                  store.setPixelsPhysicalSizeZ(new Double(values[14]), 0);
+                    new PositiveInteger(mag), 0, 0);
+                  store.setPixelsPhysicalSizeZ(
+                    new PositiveFloat(new Double(values[14])), 0);
                   break;
                 case 2:
                   for (int i=0; i<STRUCTURE_LABELS_2.length; i++) {
@@ -751,8 +756,8 @@ public class BioRadReader extends FormatReader {
                   double height = y2 - y1;
                   height /= getSizeY();
 
-                  store.setPixelsPhysicalSizeX(width, 0);
-                  store.setPixelsPhysicalSizeY(height, 0);
+                  store.setPixelsPhysicalSizeX(new PositiveFloat(width), 0);
+                  store.setPixelsPhysicalSizeY(new PositiveFloat(height), 0);
 
                   break;
                 case 3:

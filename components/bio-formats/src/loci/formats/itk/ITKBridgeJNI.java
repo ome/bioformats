@@ -126,13 +126,13 @@ public class ITKBridgeJNI {
     returnValues[12] = (double)reader.getImageCount();
     
     MetadataRetrieve retrieve = MetadataTools.asRetrieve(reader.getMetadataStore());
-    Double d = retrieve.getPixelsPhysicalSizeX(0);
+    Double d = retrieve.getPixelsPhysicalSizeX(0).getValue();
     double d2 = d == null ? 1.0 : d.doubleValue();
     returnValues[13] = d2;
-    d = retrieve.getPixelsPhysicalSizeY(0);
+    d = retrieve.getPixelsPhysicalSizeY(0).getValue();
     d2 = d == null ? 1.0 : d.doubleValue();
     returnValues[14] = d2;
-    d = retrieve.getPixelsPhysicalSizeZ(0);
+    d = retrieve.getPixelsPhysicalSizeZ(0).getValue();
     d2 = d == null ? 1.0 : d.doubleValue();
     returnValues[15] = d2;
     d = retrieve.getPixelsTimeIncrement(0);

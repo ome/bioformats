@@ -49,6 +49,7 @@ import loci.formats.codec.JPEGCodec;
 import loci.formats.codec.ZlibCodec;
 import loci.formats.meta.DummyMetadata;
 import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.PositiveFloat;
 import loci.formats.services.POIService;
 
 import ome.xml.model.primitives.PositiveInteger;
@@ -607,9 +608,9 @@ public class ZeissZVIReader extends FormatReader {
         }
         store.setImageName("Tile #" + (i + 1), i);
 
-        store.setPixelsPhysicalSizeX(physicalSizeX, i);
-        store.setPixelsPhysicalSizeY(physicalSizeY, i);
-        store.setPixelsPhysicalSizeZ(physicalSizeZ, i);
+        store.setPixelsPhysicalSizeX(new PositiveFloat(physicalSizeX), i);
+        store.setPixelsPhysicalSizeY(new PositiveFloat(physicalSizeY), i);
+        store.setPixelsPhysicalSizeZ(new PositiveFloat(physicalSizeZ), i);
 
         long firstStamp = parseTimestamp(timestamps.get(new Integer(0)));
 

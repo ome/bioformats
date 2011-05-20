@@ -41,6 +41,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.PositiveFloat;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 import loci.formats.tiff.TiffCompression;
@@ -597,10 +598,12 @@ public class FlexReader extends FormatReader {
         }
 
         if (seriesIndex < xSizes.size()) {
-          store.setPixelsPhysicalSizeX(xSizes.get(seriesIndex), i);
+          store.setPixelsPhysicalSizeX(
+            new PositiveFloat(xSizes.get(seriesIndex)), i);
         }
         if (seriesIndex < ySizes.size()) {
-          store.setPixelsPhysicalSizeY(ySizes.get(seriesIndex), i);
+          store.setPixelsPhysicalSizeY(
+            new PositiveFloat(ySizes.get(seriesIndex)), i);
         }
 
         int well = wellNumber[pos[1]][0] * wellColumns + wellNumber[pos[1]][1];

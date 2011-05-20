@@ -31,6 +31,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.PositiveFloat;
 
 /**
  * MRCReader is the file format reader for MRC files.
@@ -276,9 +277,9 @@ public class MRCReader extends FormatReader {
     MetadataTools.setDefaultCreationDate(store, id, 0);
 
     if (level != MetadataLevel.MINIMUM) {
-      store.setPixelsPhysicalSizeX(xSize, 0);
-      store.setPixelsPhysicalSizeY(ySize, 0);
-      store.setPixelsPhysicalSizeZ(zSize, 0);
+      store.setPixelsPhysicalSizeX(new PositiveFloat(xSize), 0);
+      store.setPixelsPhysicalSizeY(new PositiveFloat(ySize), 0);
+      store.setPixelsPhysicalSizeZ(new PositiveFloat(zSize), 0);
     }
   }
 

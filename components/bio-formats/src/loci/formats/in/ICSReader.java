@@ -41,6 +41,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.PositiveFloat;
 
 import ome.xml.model.primitives.PositiveInteger;
 
@@ -917,13 +918,13 @@ public class ICSReader extends FormatReader {
       if (pixelSizes != null) {
         for (int i=0; i<pixelSizes.length; i++) {
           if (axes[i].equals("x")) {
-            store.setPixelsPhysicalSizeX(pixelSizes[i], 0);
+            store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSizes[i]), 0);
           }
           else if (axes[i].equals("y")) {
-            store.setPixelsPhysicalSizeY(pixelSizes[i], 0);
+            store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSizes[i]), 0);
           }
           else if (axes[i].equals("z")) {
-            store.setPixelsPhysicalSizeZ(pixelSizes[i], 0);
+            store.setPixelsPhysicalSizeZ(new PositiveFloat(pixelSizes[i]), 0);
           }
           else if (axes[i].equals("t")) {
             store.setPixelsTimeIncrement(pixelSizes[i], 0);
@@ -932,11 +933,11 @@ public class ICSReader extends FormatReader {
       }
       else if (sizes != null) {
         if (sizes.length > 0) {
-          store.setPixelsPhysicalSizeX(sizes[0], 0);
+          store.setPixelsPhysicalSizeX(new PositiveFloat(sizes[0]), 0);
         }
         if (sizes.length > 1) {
           sizes[1] /= getSizeY();
-          store.setPixelsPhysicalSizeY(sizes[1], 0);
+          store.setPixelsPhysicalSizeY(new PositiveFloat(sizes[1]), 0);
         }
       }
 

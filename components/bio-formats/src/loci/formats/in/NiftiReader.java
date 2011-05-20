@@ -33,6 +33,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.PositiveFloat;
 
 /**
  * NiftiReader is the file format reader for NIfTI files.
@@ -246,9 +247,12 @@ public class NiftiReader extends FormatReader {
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription(description, 0);
-      store.setPixelsPhysicalSizeX(new Double(voxelWidth), 0);
-      store.setPixelsPhysicalSizeY(new Double(voxelHeight), 0);
-      store.setPixelsPhysicalSizeZ(new Double(sliceThickness), 0);
+      store.setPixelsPhysicalSizeX(
+        new PositiveFloat(new Double(voxelWidth)), 0);
+      store.setPixelsPhysicalSizeY(
+        new PositiveFloat(new Double(voxelHeight)), 0);
+      store.setPixelsPhysicalSizeZ(
+        new PositiveFloat(new Double(sliceThickness)), 0);
       store.setPixelsTimeIncrement(new Double(deltaT), 0);
     }
   }

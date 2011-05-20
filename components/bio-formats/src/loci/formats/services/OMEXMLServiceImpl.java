@@ -109,6 +109,9 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
   private static final Templates UPDATE_201004 =
     XMLTools.getStylesheet("/loci/formats/meta/2010-04-to-2010-06.xsl",
     OMEXMLServiceImpl.class);
+  private static final Templates UPDATE_201006 =
+    XMLTools.getStylesheet("/loci/formats/meta/2010-06-to-2011-06.xsl",
+    OMEXMLServiceImpl.class);
 
   private static final String SCHEMA_PATH =
     "http://www.openmicroscopy.org/Schemas/OME/";
@@ -154,21 +157,33 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
       LOGGER.debug("XML updated to at least 2008-09");
       LOGGER.trace("At least 2008-09 dump: {}", transformed);
 
-      if (!version.equals("2009-09") && !version.equals("2010-04")) {
+      if (!version.equals("2009-09") && !version.equals("2010-04") &&
+        !version.equals("2010-06"))
+      {
         transformed = verifyOMENamespace(transformed);
         transformed = XMLTools.transformXML(transformed, UPDATE_200809);
       }
       LOGGER.debug("XML updated to at least 2009-09");
       LOGGER.trace("At least 2009-09 dump: {}", transformed);
-      if (!version.equals("2010-04")) {
+      if (!version.equals("2010-04") && !version.equals("2010-06")) {
         transformed = verifyOMENamespace(transformed);
         transformed = XMLTools.transformXML(transformed, UPDATE_200909);
       }
+      else transformed = xml;
       LOGGER.debug("XML updated to at least 2010-04");
       LOGGER.trace("At least 2010-04 dump: {}", transformed);
-      transformed = verifyOMENamespace(transformed);
-      transformed = XMLTools.transformXML(transformed, UPDATE_201004);
+
+      if (!version.equals("2010-04")) {
+        transformed = verifyOMENamespace(transformed);
+        transformed = XMLTools.transformXML(transformed, UPDATE_201004);
+      }
+      else transformed = xml;
       LOGGER.debug("XML updated to at least 2010-06");
+
+      transformed = verifyOMENamespace(transformed);
+      transformed = XMLTools.transformXML(transformed, UPDATE_201006);
+      LOGGER.debug("XML updated to at least 2011-06");
+
       // fix namespaces
       transformed = transformed.replaceAll("<ns.*?:", "<");
       transformed = transformed.replaceAll("xmlns:ns.*?=", "xmlns:OME=");

@@ -32,6 +32,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.PositiveFloat;
 
 /**
  * QuesantReader is the file format reader for Quesant .afm files.
@@ -122,8 +123,10 @@ public class QuesantReader extends FormatReader {
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription(comment, 0);
-      store.setPixelsPhysicalSizeX((double) xSize / getSizeX(), 0);
-      store.setPixelsPhysicalSizeY((double) xSize / getSizeY(), 0);
+      store.setPixelsPhysicalSizeX(
+        new PositiveFloat((double) xSize / getSizeX()), 0);
+      store.setPixelsPhysicalSizeY(
+        new PositiveFloat((double) xSize / getSizeY()), 0);
     }
   }
 

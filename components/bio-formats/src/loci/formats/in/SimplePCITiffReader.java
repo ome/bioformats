@@ -39,6 +39,7 @@ import loci.formats.FormatTools;
 import loci.formats.ImageTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.PositiveFloat;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
 
@@ -198,8 +199,8 @@ public class SimplePCITiffReader extends BaseTiffReader {
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription(MAGIC_STRING, 0);
-      store.setPixelsPhysicalSizeX(scaling, 0);
-      store.setPixelsPhysicalSizeY(scaling, 0);
+      store.setPixelsPhysicalSizeX(new PositiveFloat(scaling), 0);
+      store.setPixelsPhysicalSizeY(new PositiveFloat(scaling), 0);
 
       String instrument = MetadataTools.createLSID("Instrument", 0);
       store.setInstrumentID(instrument, 0);

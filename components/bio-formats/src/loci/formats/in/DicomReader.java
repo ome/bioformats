@@ -44,6 +44,7 @@ import loci.formats.codec.JPEG2000Codec;
 import loci.formats.codec.JPEGCodec;
 import loci.formats.codec.PackbitsCodec;
 import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.PositiveFloat;
 
 /**
  * DicomReader is the file format reader for DICOM files.
@@ -693,10 +694,12 @@ public class DicomReader extends FormatReader {
         store.setImageDescription(imageType, i);
 
         if (pixelSizeX != null) {
-          store.setPixelsPhysicalSizeX(new Double(pixelSizeX), i);
+          store.setPixelsPhysicalSizeX(
+            new PositiveFloat(new Double(pixelSizeX)), i);
         }
         if (pixelSizeY != null) {
-          store.setPixelsPhysicalSizeY(new Double(pixelSizeY), i);
+          store.setPixelsPhysicalSizeY(
+            new PositiveFloat(new Double(pixelSizeY)), i);
         }
       }
     }

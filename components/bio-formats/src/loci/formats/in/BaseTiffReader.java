@@ -32,6 +32,7 @@ import loci.common.DateTools;
 import loci.formats.FormatException;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.PositiveFloat;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 import loci.formats.tiff.PhotoInterp;
@@ -434,9 +435,13 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
       double pixX = firstIFD.getXResolution();
       double pixY = firstIFD.getYResolution();
 
-      store.setPixelsPhysicalSizeX(pixX, 0);
-      store.setPixelsPhysicalSizeY(pixY, 0);
-      store.setPixelsPhysicalSizeZ(0.0, 0);
+      if (pixX > 0) {
+        store.setPixelsPhysicalSizeX(new PositiveFloat(pixX), 0);
+      }
+      if (pixY > 0) {
+        store.setPixelsPhysicalSizeY(new PositiveFloat(pixY), 0);
+      }
+      store.setPixelsPhysicalSizeZ(null, 0);
     }
   }
 

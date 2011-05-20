@@ -32,6 +32,7 @@ import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.PositiveFloat;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
 import loci.formats.tiff.TiffRational;
@@ -412,9 +413,9 @@ public class FluoviewReader extends BaseTiffReader {
 
     // populate Dimensions
     for (int i=0; i<getSeriesCount(); i++) {
-      store.setPixelsPhysicalSizeX(voxelX, i);
-      store.setPixelsPhysicalSizeY(voxelY, i);
-      store.setPixelsPhysicalSizeZ(voxelZ, i);
+      store.setPixelsPhysicalSizeX(new PositiveFloat(voxelX), i);
+      store.setPixelsPhysicalSizeY(new PositiveFloat(voxelY), i);
+      store.setPixelsPhysicalSizeZ(new PositiveFloat(voxelZ), i);
       store.setPixelsTimeIncrement(voxelT, i);
 
       int montage = getMontage(i);

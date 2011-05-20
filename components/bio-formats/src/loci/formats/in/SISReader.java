@@ -31,6 +31,7 @@ import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.PositiveFloat;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
 
@@ -174,8 +175,8 @@ public class SISReader extends BaseTiffReader {
       store.setDetectorType(getDetectorType("Other"), 0, 0);
       store.setDetectorSettingsID(detector, 0, 0);
 
-      store.setPixelsPhysicalSizeX(physicalSizeX / 1000, 0);
-      store.setPixelsPhysicalSizeY(physicalSizeY / 1000, 0);
+      store.setPixelsPhysicalSizeX(new PositiveFloat(physicalSizeX / 1000), 0);
+      store.setPixelsPhysicalSizeY(new PositiveFloat(physicalSizeY / 1000), 0);
       store.setChannelName(channelName, 0, 0);
     }
   }

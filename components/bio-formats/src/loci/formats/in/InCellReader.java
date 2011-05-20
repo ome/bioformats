@@ -37,6 +37,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.PositiveFloat;
 
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveInteger;
@@ -851,8 +852,8 @@ public class InCellReader extends FormatReader {
         for (int i=0; i<getSeriesCount(); i++) {
           store.setImageObjectiveSettingsID(objectiveID, i);
           store.setImageObjectiveSettingsRefractiveIndex(refractive, i);
-          store.setPixelsPhysicalSizeX(pixelSizeX, i);
-          store.setPixelsPhysicalSizeY(pixelSizeY, i);
+          store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSizeX), i);
+          store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSizeY), i);
         }
       }
       else if (qName.equals("ExcitationFilter")) {

@@ -45,6 +45,7 @@ import loci.formats.FormatTools;
 import loci.formats.ImageTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+import ome.xml.model.primitives.PositiveFloat;
 import loci.formats.services.MDBService;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
@@ -1161,9 +1162,9 @@ public class ZeissLSMReader extends FormatReader {
       Double pixY = new Double(pixelSizeY);
       Double pixZ = new Double(pixelSizeZ);
 
-      store.setPixelsPhysicalSizeX(pixX, series);
-      store.setPixelsPhysicalSizeY(pixY, series);
-      store.setPixelsPhysicalSizeZ(pixZ, series);
+      store.setPixelsPhysicalSizeX(new PositiveFloat(pixX), series);
+      store.setPixelsPhysicalSizeY(new PositiveFloat(pixY), series);
+      store.setPixelsPhysicalSizeZ(new PositiveFloat(pixZ), series);
 
       double firstStamp = 0;
       if (timestamps.size() > 0) {
