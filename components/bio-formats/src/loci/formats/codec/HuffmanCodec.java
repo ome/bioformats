@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.codec;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
@@ -46,6 +47,9 @@ public class HuffmanCodec extends BaseCodec {
   // -- Fields --
 
   private int leafCounter;
+
+  private HashMap<short[], Decoder> cachedDecoders =
+    new HashMap<short[], Decoder>();
 
   // -- Codec API methods --
 
@@ -100,15 +104,20 @@ public class HuffmanCodec extends BaseCodec {
   public int getSample(BitBuffer bb, CodecOptions options)
     throws FormatException
   {
-    if (bb == null) 
+    if (bb == null) {
       throw new IllegalArgumentException("No data to handle.");
+    }
     if (options == null || !(options instanceof HuffmanCodecOptions)) {
       throw new FormatException("Options must be an instance of " +
         "loci.formats.codec.HuffmanCodecOptions.");
     }
 
     HuffmanCodecOptions huffman = (HuffmanCodecOptions) options;
-    Decoder decoder = new Decoder(huffman.table);
+    Decoder decoder = cachedDecoders.get(huffman.table);
+    if (decoder == null) {
+      decoder = new Decoder(huffman.table);
+      cachedDecoders.put(huffman.table, decoder);
+    }
 
     int bitCount = decoder.decode(bb);
     if (bitCount < 0) bitCount = 0;

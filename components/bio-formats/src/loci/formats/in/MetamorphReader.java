@@ -579,6 +579,11 @@ public class MetamorphReader extends BaseTiffReader {
       store.setInstrumentID(instrumentID, i);
       store.setImageInstrumentRef(instrumentID, i);
 
+      if (i == 0) {
+        store.setDetectorID(detectorID, 0, 0);
+        store.setDetectorType(getDetectorType("Other"), 0, 0);
+      }
+
       String comment = getFirstComment(i);
       if (comment != null && comment.startsWith("<MetaData>")) {
         XMLTools.parseXML(comment, handler);
@@ -761,15 +766,6 @@ public class MetamorphReader extends BaseTiffReader {
       }
     }
     setSeries(0);
-
-    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      store.setDetectorID(detectorID, 0, 0);
-      store.setDetectorZoom(zoom, 0, 0);
-      if (handler != null && handler.getZoom() != 0) {
-        store.setDetectorZoom(handler.getZoom(), 0, 0);
-      }
-      store.setDetectorType(getDetectorType("Other"), 0, 0);
-    }
   }
 
   // -- Internal BaseTiffReader API methods --
