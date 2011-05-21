@@ -48,6 +48,7 @@ import loci.formats.ReaderWrapper;
 import loci.formats.meta.IMetadata;
 
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.PositiveFloat;
 
 /**
  * <dl><dt><b>Source code:</b></dt>
@@ -415,15 +416,15 @@ public class Configuration {
 
       seriesTable.put(NAME, retrieve.getImageName(series));
 
-      Double physicalX = retrieve.getPixelsPhysicalSizeX(series).getValue();
+      PositiveFloat physicalX = retrieve.getPixelsPhysicalSizeX(series);
       if (physicalX != null) {
         seriesTable.put(PHYSICAL_SIZE_X, physicalX.toString());
       }
-      Double physicalY = retrieve.getPixelsPhysicalSizeY(series).getValue();
+      PositiveFloat physicalY = retrieve.getPixelsPhysicalSizeY(series);
       if (physicalY != null) {
         seriesTable.put(PHYSICAL_SIZE_Y, physicalY.toString());
       }
-      Double physicalZ = retrieve.getPixelsPhysicalSizeZ(series).getValue();
+      PositiveFloat physicalZ = retrieve.getPixelsPhysicalSizeZ(series);
       if (physicalZ != null) {
         seriesTable.put(PHYSICAL_SIZE_Z, physicalZ.toString());
       }
