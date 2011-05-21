@@ -236,7 +236,6 @@ public class PCIReader extends FormatReader {
         (relativePath.equals("Data") && parent.indexOf("Image") != -1))
       {
         imageFiles.put(imageFiles.size(), name);
-        /* debug */ System.out.println(poi.getFileSize(name));
 
         if (getSizeX() != 0 && getSizeY() != 0) {
           int bpp = FormatTools.getBytesPerPixel(getPixelType());
