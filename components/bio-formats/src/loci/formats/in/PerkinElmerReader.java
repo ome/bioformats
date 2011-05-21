@@ -95,7 +95,7 @@ public class PerkinElmerReader extends FormatReader {
   /** Constructs a new PerkinElmer reader. */
   public PerkinElmerReader() {
     super("PerkinElmer", new String[] {
-      "ano", "cfg", "csv", "htm", "rec", "tim", "zpo"});
+      "ano", "cfg", "csv", "htm", "rec", "tim", "zpo", "tif"});
     domains = new String[] {FormatTools.LM_DOMAIN};
     hasCompanionFiles = true;
   }
@@ -150,7 +150,7 @@ public class PerkinElmerReader extends FormatReader {
     if (!htmlFile.exists()) {
       htmlFile = new Location(prefix + ".HTM");
       while (!htmlFile.exists() && prefix.indexOf("_") != -1) {
-        prefix = prefix.substring(0, prefix.indexOf("_"));
+        prefix = prefix.substring(0, prefix.lastIndexOf("_"));
         htmlFile = new Location(prefix + ".htm");
         if (!htmlFile.exists()) htmlFile = new Location(prefix + ".HTM");
       }
