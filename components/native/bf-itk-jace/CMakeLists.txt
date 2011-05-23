@@ -196,7 +196,7 @@ if(NOT DEFINED BioFormatsImageIO_INSTALL_ITKFACTORIES_DIR)
 endif(NOT DEFINED BioFormatsImageIO_INSTALL_ITKFACTORIES_DIR)
 
 if(NOT DEFINED BF_CPP_DIST_DIR)
-  set(BF_CPP_DIST_DIR ../../bf-cpp/bfcpp/build/dist/bf-cpp)
+  set(BF_CPP_DIST_DIR ../../bf-cpp/bfcpp/build/dist/bfcpp)
 endif(NOT DEFINED BF_CPP_DIST_DIR)
 
 if(NOT DEFINED BioFormatsImageIO_DIST_DIR)

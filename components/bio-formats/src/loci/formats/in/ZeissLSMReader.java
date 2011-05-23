@@ -1754,8 +1754,21 @@ public class ZeissLSMReader extends FormatReader {
       }
     }
 
-    if (mdbCount > 1 || ((referencedLSMs.size() > referenceCount) && mdbCount > 1)) {
-      referencedLSMs.clear();
+    if (mdbCount > 1 || ((referencedLSMs.size() > referenceCount) &&
+      mdbCount > 1))
+    {
+      for (int i=0; i<fileList.length; i++) {
+        String absolutePath =
+          new Location(parent, fileList[i]).getAbsolutePath();
+        if (checkSuffix(fileList[i], "mdb") && !absolutePath.endsWith(mdbFile))
+        {
+          String[] files = parseMDB(absolutePath);
+          for (String f : files) {
+            referencedLSMs.remove(f);
+          }
+        }
+      }
+
     }
 
     return referencedLSMs.toArray(new String[0]);
