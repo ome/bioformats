@@ -235,17 +235,32 @@ public class Configuration {
 
   public Double getPhysicalSizeX() {
     String physicalSize = currentTable.get(PHYSICAL_SIZE_X);
-    return physicalSize == null ? null : new Double(physicalSize);
+    if (physicalSize == null) return null;
+    try {
+      return new Double(physicalSize);
+    }
+    catch (NumberFormatException e) { }
+    return null;
   }
 
   public Double getPhysicalSizeY() {
     String physicalSize = currentTable.get(PHYSICAL_SIZE_Y);
-    return physicalSize == null ? null : new Double(physicalSize);
+    if (physicalSize == null) return null;
+    try {
+      return new Double(physicalSize);
+    }
+    catch (NumberFormatException e) { }
+    return null;
   }
 
   public Double getPhysicalSizeZ() {
     String physicalSize = currentTable.get(PHYSICAL_SIZE_Z);
-    return physicalSize == null ? null : new Double(physicalSize);
+    if (physicalSize == null) return null;
+    try {
+      return new Double(physicalSize);
+    }
+    catch (NumberFormatException e) { }
+    return null;
   }
 
   public Double getTimeIncrement() {
