@@ -19,7 +19,8 @@ java -cp \
   "$ARTIFACT_DIR/bio-formats.jar" \
   -conflicts "$PROJECT_DIR/conflicts.txt" \
   -header "$PROJECT_DIR/header.txt" \
-  -extras "$PROJECT_DIR/cmake_extras.txt"
+  -extras "$PROJECT_DIR/cmake_extras.txt" \
+  -core "$PROJECT_DIR/core.txt"
 
 
   cd bfcpp
