@@ -39,9 +39,9 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.MissingLibraryException;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 import loci.formats.services.MetakitService;
 
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 
 /**
@@ -77,7 +77,7 @@ public class VolocityReader extends FormatReader {
   /** Constructs a new Volocity reader. */
   public VolocityReader() {
     super("Volocity Library",
-      new String [] {"mvd2", "aisf", "aiix", "dat", "atsf"});
+      new String[] {"mvd2", "aisf", "aiix", "dat", "atsf"});
     domains = new String[] {FormatTools.UNKNOWN_DOMAIN};
   }
 
@@ -226,7 +226,7 @@ public class VolocityReader extends FormatReader {
 
     String[] files = dir.list(true);
     for (String f : files) {
-      if (checkSuffix(f, "aiix") || checkSuffix(f, "dat")) {
+      if (!checkSuffix(f, "aisf") && !checkSuffix(f, "atsf")) {
         extraFiles.add(new Location(dir, f).getAbsolutePath());
       }
     }
@@ -264,6 +264,7 @@ public class VolocityReader extends FormatReader {
             stackNames.add(name);
             parentIDs.add((Integer) sampleTable[i][0]);
           }
+          s.close();
         }
         else {
           stackNames.add(name);
@@ -301,25 +302,23 @@ public class VolocityReader extends FormatReader {
             getString((Integer) sampleTable[channels[c]][11]);
 
           RandomAccessInputStream data = getStream(channels[c]);
-          data.seek(22);
-          int stackID = data.readInt();
-          pixelsFiles[i][c] =
-            new Location(dir, stackID + ".aisf").getAbsolutePath();
+          if (data.length() > 22) {
+            data.seek(22);
+            int stackID = data.readInt();
+            pixelsFiles[i][c] =
+              new Location(dir, stackID + ".aisf").getAbsolutePath();
+          }
+          else {
+            Integer child =
+              getAllChildren((Integer) sampleTable[channels[c]][0])[0];
+            pixelsFiles[i][c] = getFile((Integer) sampleTable[child][0], dir);
+          }
           data.close();
         }
       }
       else {
         pixelsFiles[i] = new String[1];
-        for (int row=0; row<sampleTable.length; row++) {
-          if (parent.equals(sampleTable[row][0])) {
-            Object o = sampleTable[row][14];
-            if (o != null) {
-              String fileLink = o.toString().trim() + ".dat";
-              pixelsFiles[i][0] = new Location(dir, fileLink).getAbsolutePath();
-            }
-            break;
-          }
-        }
+        pixelsFiles[i][0] = getFile(parent, dir);
       }
 
       RandomAccessInputStream data = null;
@@ -467,6 +466,18 @@ public class VolocityReader extends FormatReader {
         core[i].pixelType = FormatTools.UINT8;
         blockSize[i] = 99;
         planePadding[i] = 0;
+
+        if (s.length() <
+          (core[i].sizeX * core[i].sizeY * core[i].sizeZ * core[i].sizeC))
+        {
+          core[i].rgb = false;
+          core[i].sizeC = 1;
+          long pixels = core[i].sizeX * core[i].sizeY * core[i].sizeZ;
+          int bytes = (int) (s.length() / pixels);
+          core[i].pixelType =
+            FormatTools.pixelTypeFromBytes(bytes, false, false);
+          blockSize[i] = 114;
+        }
       }
       s.close();
     }
@@ -582,6 +593,19 @@ public class VolocityReader extends FormatReader {
 
     data.order(true);
     return data;
+  }
+
+  private String getFile(Integer parent, Location dir) {
+    for (int row=0; row<sampleTable.length; row++) {
+      if (parent.equals(sampleTable[row][0])) {
+        Object o = sampleTable[row][14];
+        if (o != null) {
+          String fileLink = o.toString().trim() + ".dat";
+          return new Location(dir, fileLink).getAbsolutePath();
+        }
+      }
+    }
+    return null;
   }
 
 }
