@@ -88,8 +88,13 @@ public class MRCReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    in.seek(HEADER_SIZE + extHeaderSize + no * FormatTools.getPlaneSize(this));
-    readPlane(in, x, y, w, h, buf);
+    long planeSize = FormatTools.getPlaneSize(this);
+    long offset = HEADER_SIZE + extHeaderSize + no * planeSize;
+
+    if (offset + planeSize <= in.length() && offset >= 0) {
+      in.seek(offset);
+      readPlane(in, x, y, w, h, buf);
+    }
 
     return buf;
   }
