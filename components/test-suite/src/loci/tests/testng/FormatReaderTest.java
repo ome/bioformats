@@ -895,7 +895,6 @@ public class FormatReaderTest {
 
     for (int i=0; i<reader.getSeriesCount(); i++) {
       config.setSeries(i);
-
       Double expectedSize = config.getPhysicalSizeY();
       if (expectedSize == null || expectedSize == 0d) {
         expectedSize = null;
@@ -1104,10 +1103,13 @@ public class FormatReaderTest {
         }
         catch (NullPointerException e) { }
 
-        if (!(expectedDetector == null && realDetector == null) &&
-          !expectedDetector.equals(realDetector))
-        {
-          result(testName, false, "Series " + i + " channel " + c);
+        if (!(expectedDetector == null && realDetector == null)) {
+          if ((expectedDetector == null ||
+            !expectedDetector.equals(realDetector)) && (realDetector == null ||
+            !realDetector.equals(expectedDetector)))
+          {
+            result(testName, false, "Series " + i + " channel " + c);
+          }
         }
       }
     }

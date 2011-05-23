@@ -297,11 +297,15 @@ public class BMPReader extends FormatReader {
       // resolution is stored as pixels per meter; we want to convert to
       // microns per pixel
 
-      double correctedX = pixelSizeX == 0 ? 1.0 : 1000000.0 / pixelSizeX;
-      double correctedY = pixelSizeY == 0 ? 1.0 : 1000000.0 / pixelSizeY;
+      double correctedX = pixelSizeX == 0 ? 0.0 : 1000000.0 / pixelSizeX;
+      double correctedY = pixelSizeY == 0 ? 0.0 : 1000000.0 / pixelSizeY;
 
-      store.setPixelsPhysicalSizeX(new PositiveFloat(correctedX), 0);
-      store.setPixelsPhysicalSizeY(new PositiveFloat(correctedY), 0);
+      if (correctedX > 0) {
+        store.setPixelsPhysicalSizeX(new PositiveFloat(correctedX), 0);
+      }
+      if (correctedY > 0) {
+        store.setPixelsPhysicalSizeY(new PositiveFloat(correctedY), 0);
+      }
     }
   }
 
