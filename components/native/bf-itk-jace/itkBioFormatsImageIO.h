@@ -66,9 +66,17 @@ using jace::proxy::loci::formats::IFormatReader;
 using jace::proxy::loci::formats::ImageReader;
 using jace::proxy::loci::formats::ImageWriter;
 using jace::proxy::loci::formats::MetadataTools;
-using jace::proxy::loci::formats::meta::IMetadata;
 using jace::proxy::loci::formats::meta::MetadataRetrieve;
+using jace::proxy::loci::formats::meta::IMetadata;
+#include "ome-xml.h"
+using jace::proxy::ome::xml::model::enums::DimensionOrder;
+using jace::proxy::ome::xml::model::enums::PixelType;
+using jace::proxy::ome::xml::model::primitives::PositiveInteger;
+using jace::proxy::types::JInt;
+using jace::proxy::java::lang::Boolean;
+using jace::proxy::java::lang::Integer;
 
+using jace::proxy::ome::xml::model::OME;
 #undef Byte
 
 // STL includes
@@ -76,6 +84,7 @@ using jace::proxy::loci::formats::meta::MetadataRetrieve;
 // ITK includes
 #include "itkImageIOBase.h"
 #include "itkMatrix.h"
+#include "itkIndent.h"
 
 #include <itk_zlib.h>
 

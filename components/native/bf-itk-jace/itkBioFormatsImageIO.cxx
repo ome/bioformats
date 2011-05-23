@@ -209,8 +209,16 @@ namespace itk {
 
       // set ITK byte order
       bool little = reader->isLittleEndian();
-      if (little) SetByteOrderToLittleEndian(); // m_ByteOrder
-      else SetByteOrderToBigEndian(); // m_ByteOrder
+      if (little)
+      {
+        SetByteOrderToLittleEndian(); // m_ByteOrder
+        itkDebugMacro("Little endian and m_ByteOrder is: " << m_ByteOrder);
+      } 
+      else
+      {
+        SetByteOrderToBigEndian(); // m_ByteOrder
+        itkDebugMacro("Big endian and m_ByteOrder is: " << m_ByteOrder);
+      }
 
       // set ITK component type
       int pixelType = reader->getPixelType();
@@ -297,20 +305,39 @@ namespace itk {
       // get physical resolution
       double physX = 1, physY = 1, physZ = 1, timeIncrement = 1;
       // CTR - avoid invalid memory access error on some systems (OS X 10.5)
+      // TODO: NPE at retrieve.getPixelsPhysicalSize call
+      /*
       MetadataRetrieve retrieve = MetadataTools::asRetrieve(omeMeta);
+      itkDebugMacro("Retrieve: " << retrieve << " ImageCount: " << (retrieve.getImageCount()));
+      OME root = retrieve.getRoot();
       jace::proxy::java::lang::Double d = retrieve.getPixelsPhysicalSizeX(0);
+      itkDebugMacro("Retrieve: " << retrieve << " d: " << d);
       d.isNaN() ? physX = 1 : physX = d.doubleValue();
       d = retrieve.getPixelsPhysicalSizeY(0);
       d.isNaN() ? physY = 1 : physY = d.doubleValue();
-      d = retrieve.getPixelsPhysicalSizeZ(0);
-      d.isNaN() ? physZ = 1 : physZ = d.doubleValue();
-      d = retrieve.getPixelsTimeIncrement(0);
-      d.isNaN() ? timeIncrement = 1 : timeIncrement = d.doubleValue();
+      if(imageCount > 1)
+      {
+        if(sizeZ > 1)
+        {
+          d = retrieve.getPixelsPhysicalSizeZ(0);
+          d.isNaN() ? physZ = 1 : physZ = d.doubleValue();
+        }
+        if(sizeT > 1)
+        {
+          d = retrieve.getPixelsTimeIncrement(0);
+          d.isNaN() ? timeIncrement = 1 : timeIncrement = d.doubleValue();
+        }
+      }
+      */
+
       m_Spacing[0] = physX;
       m_Spacing[1] = physY;
       // TODO: verify m_Spacing.length > 2
-      if (imageCount > 1) m_Spacing[2] = physZ;
-      m_Spacing[3] = timeIncrement;
+      if (imageCount > 1)
+      {
+        m_Spacing[2] = physZ;
+        m_Spacing[3] = timeIncrement;
+      }
 
       itkDebugMacro("Physical resolution = " << physX << " x " << physY
         << " x " << physZ << " x " << timeIncrement);
@@ -501,12 +528,145 @@ namespace itk {
 
   void BioFormatsImageIO::WriteImageInformation() {
     itkDebugMacro("BioFormatsImageIO::WriteImageInformation");
+
+
+
     // NB: Nothing to do.
   } // end WriteImageInformation function
 
   void BioFormatsImageIO::Write(const void* buffer) {
     itkDebugMacro("BioFormatsImageIO::Write");
-    // CTR TODO - implement Write function
+    try{
+    const int xIndex = 0, yIndex = 1, zIndex = 2, cIndex = 3, tIndex = 4;
+    ImageIORegion region = GetIORegion();
+    Indent ind;
+    int regionDim = region.GetImageDimension();
+    itkDebugMacro("dim0: " << m_Dimensions[0] << std::endl
+               << "dim1: " << m_Dimensions[1] << std::endl
+               << "dim2: " << m_Dimensions[2] << std::endl
+               << "dim3: " << m_Dimensions[3] << std::endl
+               << "dim4: " << m_Dimensions[4] << std::endl)
+    IMetadata meta = MetadataTools::createOMEXMLMetadata();
+    meta.createRoot();
+    meta.setImageID("Image:0" , 0);
+    meta.setPixelsID("Pixels:0", 0);
+    jace::proxy::java::lang::Boolean* bHelp;
+    if (m_ByteOrder)
+      meta.setPixelsBinDataBigEndian(bHelp->valueOf("false"), 0, 0);
+    else
+      meta.setPixelsBinDataBigEndian(bHelp->valueOf("true"), 0, 0);
+    meta.setPixelsDimensionOrder(DimensionOrder::XYZCT(), 0);
+    meta.setPixelsType(PixelType::fromString(FormatTools::getPixelTypeString(m_PixelType)) , 0);
+    for(int i = 0; i < regionDim; i++)
+    {
+      int tmp = m_Dimensions[i] > 0 ? m_Dimensions[i] : 1;
+      switch(i)
+      {
+        case xIndex: meta.setPixelsSizeX(PositiveInteger(Integer(tmp)) , 0);
+        break;
+        case yIndex: meta.setPixelsSizeY(PositiveInteger(Integer(tmp)) , 0);
+        break;
+        case zIndex: meta.setPixelsSizeZ(PositiveInteger(Integer(tmp)) , 0);
+        break;
+        case cIndex: meta.setPixelsSizeC(PositiveInteger(Integer(tmp)) , 0);
+        break;
+        case tIndex: meta.setPixelsSizeT(PositiveInteger(Integer(tmp)) , 0);
+        break;
+      }
+    }
+    for(int i = regionDim; i < 5; i++)
+    {
+      switch(i)
+      {
+        case xIndex: meta.setPixelsSizeX(PositiveInteger(Integer(1)) , 0);
+        break;
+        case yIndex: meta.setPixelsSizeY(PositiveInteger(Integer(1)) , 0);
+        break;
+        case zIndex: meta.setPixelsSizeZ(PositiveInteger(Integer(1)) , 0);
+        break;
+        case cIndex: meta.setPixelsSizeC(PositiveInteger(Integer(1)) , 0);
+        break;
+        case tIndex: meta.setPixelsSizeT(PositiveInteger(Integer(1)) , 0);
+        break;
+      }
+    }
+    meta.setChannelID("Channel:0:0" , 0, 0);
+    meta.setChannelSamplesPerPixel(PositiveInteger(Integer(1)) , 0, 0);
+
+    writer->setMetadataRetrieve(meta);
+    itkDebugMacro("Setting id to: " << m_FileName);
+    writer->setId(m_FileName);
+    itkDebugMacro("Id set.");
+
+    int bpp = FormatTools::getBytesPerPixel(m_PixelType);
+    int xStart = 0, xCount = 1;
+    int yStart = 0, yCount = 1;
+    int zStart = 0, zCount = 1;
+    int cStart = 0, cCount = 1;
+    int tStart = 0, tCount = 1;
+
+    //bool isInterleaved = writer->isInterleaved();
+    int rgbChannelCount = 1;
+
+    for (int dim = 0; dim < regionDim; dim++) {
+      int index = region.GetIndex(dim);
+      int size = region.GetSize(dim);
+      if (dim == xIndex) {
+        xStart = index;
+        xCount = size;
+      }
+      else if (dim == yIndex) {
+        yStart = index;
+        yCount = size;
+      }
+      else if (dim == zIndex) {
+        zStart = index;
+        zCount = size;
+      }
+      else if (dim == tIndex) {
+        tStart = index;
+        tCount = size;
+      }
+      else if (dim == cIndex) {
+        cStart = index;
+        cCount = size;
+      }
+    }
+    int bytesPerPlane = xCount * yCount * bpp * rgbChannelCount;
+
+    jbyte* jData = (jbyte*) buffer;
+
+    itkDebugMacro("Writing data...");
+
+    int no = 0;
+    ByteArray buf(bytesPerPlane);
+    for (int c=cStart; c<cStart+cCount; c++) {
+      for (int t=tStart; t<tStart+tCount; t++) {
+        for (int z=zStart; z<zStart+zCount; z++) {
+          itkDebugMacro("Writing region at c: " << c << " t: " << t << " z: " << z << " ...");
+          JNIEnv* env = jace::helper::attach();
+          jbyteArray jArray = static_cast<jbyteArray>(buf.getJavaJniArray());
+          env->SetByteArrayRegion(jArray, 0, bytesPerPlane, jData);
+          writer->saveBytes(no++, jArray, xStart, yStart, xCount, yCount);
+          jData += bytesPerPlane;
+          itkDebugMacro("Done writing region.");
+        }
+      }
+    }
+    itkDebugMacro("Done writing data.");
+
+    writer->close();
+    }
+    catch(Exception& e) {
+      itkDebugMacro("A Java error occurred: " << DebugTools::getStackTrace(e));
+    }
+    catch (JNIException& jniException) {
+      itkDebugMacro("A JNI error occurred: " << jniException.what());
+    }
+    catch (std::exception& e) {
+      itkDebugMacro("A C++ error occurred: " << e.what());
+    }
+    itkDebugMacro("Done writing image.");
   } // end Write function
 
 } // end namespace itk
