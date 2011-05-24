@@ -367,7 +367,7 @@ public class ITKBridgePipes {
 		  meta.setPixelsType(PixelType.fromString(FormatTools.getPixelTypeString(pixelType)), 0);
 
 	  } catch (EnumerationException e) {
-		  throw new IOException(e.getMessage(), e.getCause());
+		  throw new IOException(e.getMessage());
 	  }
 	  
 	  if(byteOrder == 0)
