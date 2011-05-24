@@ -190,7 +190,9 @@ public class FormatReaderTest {
         int type = reader.getPixelType();
         int bytes = FormatTools.getBytesPerPixel(type);
 
-        if (c > 4 || !TestTools.canFitInMemory(x * y * c * bytes)) {
+        int plane = x * y * c * bytes;
+
+        if (c > 4 || plane < 0 || !TestTools.canFitInMemory(plane)) {
           continue;
         }
 
@@ -251,7 +253,7 @@ public class FormatReaderTest {
 
         int expected = x * y * c * bytes;
 
-        if (!TestTools.canFitInMemory(expected)) {
+        if (!TestTools.canFitInMemory(expected) || expected < 0) {
           continue;
         }
 
@@ -357,7 +359,7 @@ public class FormatReaderTest {
         reader.setSeries(i);
         int x = reader.getThumbSizeX();
         int y = reader.getThumbSizeY();
-        int c = reader.isIndexed() ? 1 : reader.getRGBChannelCount();
+        int c = reader.getRGBChannelCount();
         int type = reader.getPixelType();
         int bytes = FormatTools.getBytesPerPixel(type);
         int expected = x * y * c * bytes;
@@ -1168,7 +1170,11 @@ public class FormatReaderTest {
           reader.setSeries(i);
           int imageCount = reader.getImageCount();
           totalPlanes += imageCount;
-          byte[] buf = new byte[FormatTools.getPlaneSize(reader)];
+          int planeSize = FormatTools.getPlaneSize(reader);
+          if (planeSize < 0) {
+            continue;
+          }
+          byte[] buf = new byte[planeSize];
           for (int j=0; j<imageCount; j++) {
             try {
               reader.openBytes(j, buf);
@@ -1325,7 +1331,8 @@ public class FormatReaderTest {
         reader.setSeries(i);
         config.setSeries(i);
 
-        if (!TestTools.canFitInMemory(FormatTools.getPlaneSize(reader))) {
+        int planeSize = FormatTools.getPlaneSize(reader);
+        if (planeSize < 0 || !TestTools.canFitInMemory(planeSize)) {
           continue;
         }
 

@@ -37,12 +37,17 @@ import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
+import loci.formats.ImageWriter;
 import loci.formats.MetadataTools;
 import loci.formats.in.DefaultMetadataOptions;
 import loci.formats.in.MetadataLevel;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataStore;
 
+import ome.xml.model.enums.DimensionOrder;
+import ome.xml.model.enums.PixelType;
+import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.enums.EnumerationException;
 /**
  * ITKBridgePipes is a Java console application that listens for "commands"
  * on stdin and issues results on stdout. It is used by the pipes version of
@@ -123,6 +128,28 @@ public class ITKBridgePipes {
       // add an extra \n to mark the end of the output
       System.out.println();
       return res;
+    }
+    else if(command.equals("write")) {
+    	int byteOrder = Integer.parseInt( args[2] );
+    	int dims = Integer.parseInt( args[3] );
+    	int dim0 = Integer.parseInt( args[4] );
+    	int dim1 = Integer.parseInt( args[5] );
+    	int dim2 = Integer.parseInt( args[6] );
+    	int dim3 = Integer.parseInt( args[7] );
+    	int dim4 = Integer.parseInt( args[8] );
+    	int pixelType = Integer.parseInt( args[9] );
+    	int rgbCCount = Integer.parseInt( args[10] );
+    	int xStart = Integer.parseInt( args[11] );
+    	int yStart = Integer.parseInt( args[13] );
+    	int zStart = Integer.parseInt( args[15] );
+    	int cStart = Integer.parseInt( args[17] );
+    	int tStart = Integer.parseInt( args[19] );
+    	int xCount = Integer.parseInt( args[12] );
+    	int yCount = Integer.parseInt( args[14] );
+    	int zCount = Integer.parseInt( args[16] );
+    	int cCount = Integer.parseInt( args[18] );
+    	int tCount = Integer.parseInt( args[20] );
+    	return write(args[1], byteOrder, dims, dim0, dim1, dim2, dim3, dim4, pixelType, rgbCCount, xStart, yStart, zStart, cStart, tStart, xCount, yCount, zCount, cCount, tCount);
     }
     else {
       System.err.println("Unknown command: " + command);
@@ -321,6 +348,76 @@ public class ITKBridgePipes {
     out.flush();
     return true;
   }
+  
+  /**
+   * 
+   */
+  public boolean write ( String fileName, int byteOrder, int dims,
+		  int dim0, int dim1, int dim2, int dim3, int dim4,
+		  int pixelType, int rgbCCount, int xStart, int yStart,
+		  int zStart, int cStart, int tStart, int xCount, int yCount,
+		  int zCount, int cCount, int tCount) throws IOException, FormatException
+  {
+	  IMetadata meta = MetadataTools.createOMEXMLMetadata();
+	  meta.createRoot();
+	  meta.setPixelsID("Pixels:0", 0);
+	  meta.setPixelsDimensionOrder(DimensionOrder.XYZCT, 0);
+
+	  try {
+		  meta.setPixelsType(PixelType.fromString(FormatTools.getPixelTypeString(pixelType)), 0);
+
+	  } catch (EnumerationException e) {
+		  throw new IOException(e.getMessage(), e.getCause());
+	  }
+	  
+	  if(byteOrder == 0)
+		  meta.setPixelsBinDataBigEndian(new Boolean("true"), 0, 0);
+	  else
+		  meta.setPixelsBinDataBigEndian(new Boolean("false"), 0, 0);
+	  
+	  meta.setPixelsSizeX(new PositiveInteger(new Integer(dim0)), 0);
+	  meta.setPixelsSizeY(new PositiveInteger(new Integer(dim1)), 0);
+	  meta.setPixelsSizeZ(new PositiveInteger(new Integer(dim2)), 0);
+	  meta.setPixelsSizeC(new PositiveInteger(new Integer(dim3)), 0);
+	  meta.setPixelsSizeT(new PositiveInteger(new Integer(dim4)), 0);
+	  meta.setChannelID("Channel:0:0", 0, 0);
+	  meta.setChannelSamplesPerPixel(new PositiveInteger(new Integer(1)), 0, 0);
+	  
+	  ImageWriter writer = new ImageWriter();
+	  writer.setMetadataRetrieve(meta);
+	  writer.setId(fileName);
+	  
+	  int bpp = FormatTools.getBytesPerPixel(pixelType);
+	  
+	  int bytesPerPlane = xCount * yCount * bpp * rgbCCount;
+	  
+	  int numIters = (cCount - cStart) * (tCount - tStart) * (zCount - zStart);
+	  
+	  // tell native code how many times to iterate & how big each iteration is
+	  System.out.println(bytesPerPlane + "\n" + numIters + "\n");
+	  System.out.flush();
+	  
+	  byte[] buf = new byte[bytesPerPlane];
+	  
+	  final BufferedReader in =
+		  new BufferedReader(new InputStreamReader(System.in));
+	  
+	  String line = "";
+	  int no = 0;
+	  for(int c=cStart; c<cStart+cCount; c++) {
+		  for(int t=tStart; t<tStart+tCount; t++) {
+			  for(int z=zStart; z<zStart+zCount; z++) {
+				  line = in.readLine(); // blocks for input, waiting for next set of bytes
+				  buf = line.getBytes();
+				  writer.saveBytes(no++, buf, xStart, yStart, xCount, yCount);
+			  }
+		  }
+	  }
+	  
+	  in.close();
+	  writer.close();
+	  return true;
+  }
 
   /** Tests whether the given file path can be parsed by Bio-Formats. */
   public boolean canRead(String filePath)
@@ -405,6 +502,28 @@ public class ITKBridgePipes {
     }
     else if(args[0].equals("waitForInput")) {
       new ITKBridgePipes().waitForInput();
+    }
+    else if(args[0].equals("write")) {
+    	int byteOrder = Integer.parseInt( args[2] );
+    	int dims = Integer.parseInt( args[3] );
+    	int dim0 = Integer.parseInt( args[4] );
+    	int dim1 = Integer.parseInt( args[5] );
+    	int dim2 = Integer.parseInt( args[6] );
+    	int dim3 = Integer.parseInt( args[7] );
+    	int dim4 = Integer.parseInt( args[8] );
+    	int pixelType = Integer.parseInt( args[9] );
+    	int rgbCCount = Integer.parseInt( args[10] );
+    	int xStart = Integer.parseInt( args[11] );
+    	int yStart = Integer.parseInt( args[13] );
+    	int zStart = Integer.parseInt( args[15] );
+    	int cStart = Integer.parseInt( args[17] );
+    	int tStart = Integer.parseInt( args[19] );
+    	int xCount = Integer.parseInt( args[12] );
+    	int yCount = Integer.parseInt( args[14] );
+    	int zCount = Integer.parseInt( args[16] );
+    	int cCount = Integer.parseInt( args[18] );
+    	int tCount = Integer.parseInt( args[20] );
+    	if(!new ITKBridgePipes().write(args[1], byteOrder, dims, dim0, dim1, dim2, dim3, dim4, pixelType, rgbCCount, xStart, yStart, zStart, cStart, tStart, xCount, yCount, zCount, cCount, tCount)) System.exit(1);
     }
     else {
       System.err.println("Error: unknown command: "+args[0]);

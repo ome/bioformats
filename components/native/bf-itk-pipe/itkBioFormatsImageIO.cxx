@@ -610,10 +610,114 @@ void BioFormatsImageIO::WriteImageInformation()
   // NB: Nothing to do.
 }
 
-void BioFormatsImageIO::Write(const void * itkNotUsed(buffer) )
+void BioFormatsImageIO::Write(const void * buffer )
 {
   itkDebugMacro("BioFormatsImageIO::Write");
-  // CTR TODO - implement Write function
+
+  ImageIORegion region = GetIORegion();
+  int regionDim = region.GetImageDimension();
+
+  std::string command = "write\t";
+  command += m_FileName;
+  command += "\t";
+  command += toString(m_ByteOrder);
+  command += "\t";
+  command += toString(regionDim);
+  command += "\t";
+
+  for(int i = 0; i < regionDim; i++){
+    command += toString(m_Dimensions[i]);
+    command += "\t";
+  }
+
+  for(int i = regionDim; i < 5; i++) {
+    command += toString(1);
+    command += "\t";
+  }
+
+  command += toString(m_PixelType);
+  command += "\t";
+
+  int rgbChannelCount = 1;
+
+  command += toString(rgbChannelCount);
+  command += "\t";
+
+  int xIndex = 0, yIndex = 1, zIndex = 2, cIndex = 3, tIndex = 4;
+
+  for (int dim = 0; dim < regionDim; dim++)
+  {
+    int index = region.GetIndex(dim);
+    int size = region.GetSize(dim);
+    command += toString(index);
+    command += "\t";
+    command += toString(size);
+    command += "\t";
+  }
+
+  for(int i = regionDim; i < 5; i++) {
+    command += toString(1);
+    command += "\t";
+  }
+
+  itkDebugMacro("BioFormatsImageIO::Write command: " << command);
+  write( m_Pipe[1], command.c_str(), command.size() );
+
+
+  // need to read back the number of planes and bytes per plane to read from buffer
+  std::string imgInfo;
+  std::string errorMessage;
+  char * pipedata;
+  int pipedatalength = 1000;
+
+  bool keepReading = true;
+  while( keepReading )
+    {
+    int retcode = itksysProcess_WaitForData( m_Process, &pipedata, &pipedatalength, NULL );
+    // itkDebugMacro( "BioFormatsImageIO::ReadImageInformation: reading " << pipedatalength << " bytes.");
+    if( retcode == itksysProcess_Pipe_STDOUT )
+      {
+      imgInfo += std::string( pipedata, pipedatalength );
+      // if the two last char are "\n\n", then we're done
+      if( imgInfo.size() >= 2 && imgInfo.substr( imgInfo.size()-2, 2 ) == "\n\n" )
+        {
+        keepReading = false;
+        }
+      }
+    else if( retcode == itksysProcess_Pipe_STDERR )
+      {
+      errorMessage += std::string( pipedata, pipedatalength );
+      }
+    else
+      {
+      DestroyJavaProcess();
+      itkExceptionMacro(<<"BioFormatsImageIO: 'ITKBridgePipe canRead' exited abnormally. " << errorMessage);
+      }
+    }
+
+  itkDebugMacro("BioFormatsImageIO::CanRead error output: " << errorMessage);
+
+  // we have one thing per line
+  int p0 = 0;
+  int p1 = 0;
+  std::string vals;
+  // can read?
+  p1 = imgInfo.find("\n", p0);
+  vals = imgInfo.substr( p0, p1 );
+
+  int bytesPerPlane, numPlanes;
+  bytesPerPlane = valueOfString<int>(vals);
+
+  vals = imgInfo.substr( (p1 + 1), (imgInfo.size() - 2 - p1));
+  numPlanes = valueOfString<int>(vals);
+
+  char* data = (char*)buffer;
+
+  for (int i = 0; i < numPlanes; i++)
+  {
+    write( m_Pipe[1], data, bytesPerPlane );
+    data += bytesPerPlane;
+  }
 }
 
 } // end namespace itk
