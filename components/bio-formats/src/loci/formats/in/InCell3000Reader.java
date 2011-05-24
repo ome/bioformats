@@ -52,7 +52,7 @@ public class InCell3000Reader extends FormatReader {
   /** Constructs a new InCell 3000 reader. */
   public InCell3000Reader() {
     super("InCell 3000", "frm");
-    domains = new String[] {FormatTools.HCS_DOMAIN};
+    domains = new String[] {FormatTools.UNKNOWN_DOMAIN};
   }
 
   // -- IFormatReader API methods --
