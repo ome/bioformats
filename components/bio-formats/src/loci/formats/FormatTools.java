@@ -882,7 +882,21 @@ public final class FormatTools {
     byte[][] bytes = null;
     try {
       r.exec("import loci.formats.gui.AWTImageTools");
-      r.setVar("plane", reader.openBytes(no));
+
+      int planeSize = getPlaneSize(reader);
+      byte[] plane = null;
+      if (planeSize < 0) {
+        int width = reader.getThumbSizeX() * 4;
+        int height = reader.getThumbSizeY() * 4;
+        int x = (reader.getSizeX() - width) / 2;
+        int y = (reader.getSizeY() - height) / 2;
+        plane = reader.openBytes(no, x, y, width, height);
+      }
+      else {
+        plane = reader.openBytes(no);
+      }
+
+      r.setVar("plane", plane);
       r.setVar("reader", reader);
       r.setVar("sizeX", reader.getSizeX());
       r.setVar("sizeY", reader.getSizeY());
