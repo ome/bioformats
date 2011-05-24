@@ -1153,8 +1153,8 @@ public class FormatReaderTest {
     try {
       int properMem = config.getMemory();
       double properTime = config.getAccessTimeMillis();
-      if (properMem < 0 || properTime < 0) {
-        success = false;
+      if (properMem <= 0 || properTime <= 0) {
+        success = true;
         msg = "no configuration";
       }
       else {
@@ -1287,8 +1287,6 @@ public class FormatReaderTest {
   /**
    * @testng.test groups = "all xml fast"
    */
-  /*
-  // TODO : re-enable after the 2011-06 schema is published
   public void testValidXML() {
     if (config == null) throw new SkipException("No config tree");
     String testName = "testValidXML";
@@ -1311,7 +1309,6 @@ public class FormatReaderTest {
     }
     result(testName, success);
   }
-  */
 
   /**
    * @testng.test groups = "all pixels"
@@ -1328,14 +1325,20 @@ public class FormatReaderTest {
         reader.setSeries(i);
         config.setSeries(i);
 
+        if (!TestTools.canFitInMemory(FormatTools.getPlaneSize(reader))) {
+          continue;
+        }
+
         String md5 = TestTools.md5(reader.openBytes(0));
         String expected1 = config.getMD5();
         String expected2 = config.getAlternateMD5();
 
+        if (expected1 == null && expected2 == null) {
+          continue;
+        }
         if (!md5.equals(expected1) && !md5.equals(expected2)) {
           success = false;
-          msg = expected1 == null && expected2 == null ? "no configuration" :
-            "series " + i;
+          msg = "series " + i;
         }
       }
     }
