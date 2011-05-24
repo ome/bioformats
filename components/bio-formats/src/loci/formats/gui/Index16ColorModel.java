@@ -128,18 +128,21 @@ public class Index16ColorModel extends ColorModel {
 
   /* @see java.awt.image.ColorModel#getBlue(int) */
   public int getBlue(int pixel) {
+    if (blueShort == null) return 0;
     int blue = blueShort[pixel] & 0xffff;
     return littleEndian ? DataTools.swap(blue) : blue;
   }
 
   /* @see java.awt.image.ColorModel#getGreen(int) */
   public int getGreen(int pixel) {
+    if (greenShort == null) return 0;
     int green = greenShort[pixel] & 0xffff;
     return littleEndian ? DataTools.swap(green) : green;
   }
 
   /* @see java.awt.image.ColorModel#getRed(int) */
   public int getRed(int pixel) {
+    if (redShort == null) return 0;
     int red = redShort[pixel] & 0xffff;
     return littleEndian ? DataTools.swap(red) : red;
   }
