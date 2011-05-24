@@ -359,7 +359,7 @@ public class FormatReaderTest {
         reader.setSeries(i);
         int x = reader.getThumbSizeX();
         int y = reader.getThumbSizeY();
-        int c = reader.isIndexed() ? 1 : reader.getRGBChannelCount();
+        int c = reader.getRGBChannelCount();
         int type = reader.getPixelType();
         int bytes = FormatTools.getBytesPerPixel(type);
         int expected = x * y * c * bytes;
