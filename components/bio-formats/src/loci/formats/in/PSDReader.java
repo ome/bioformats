@@ -268,10 +268,8 @@ public class PSDReader extends FormatReader {
           }
         }
       }
-      if (layerCount > 0) {
-        while (in.read() != '8');
-        in.skipBytes(7);
-      }
+      while (in.read() != '8');
+      in.skipBytes(7);
       int len = in.readInt();
       if ((len % 4) != 0) len += 4 - (len % 4);
       in.skipBytes(len);
