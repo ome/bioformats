@@ -525,6 +525,8 @@ public class FlexReader extends FormatReader {
         well = pos[1];
         NonNegativeInteger row = new NonNegativeInteger(wellNumber[pos[1]][0]);
         NonNegativeInteger col = new NonNegativeInteger(wellNumber[pos[1]][1]);
+        String wellID = MetadataTools.createLSID("Well", pos[2], well);
+        store.setWellID(wellID, pos[2], well);
         store.setWellRow(row, pos[2], pos[1]);
         store.setWellColumn(col, pos[2], pos[1]);
       }
@@ -1049,8 +1051,10 @@ public class FlexReader extends FormatReader {
     HashMap<String, String> v = new HashMap<String, String>();
     Boolean firstCompressed = null;
     for (String file : fileList) {
-      TiffParser parser = new TiffParser(file);
+      RandomAccessInputStream s = new RandomAccessInputStream(file);
+      TiffParser parser = new TiffParser(s);
       IFD firstIFD = parser.getFirstIFD();
+      s.close();
       boolean compressed =
         firstIFD.getCompression() != TiffCompression.UNCOMPRESSED;
       if (firstCompressed == null) {
