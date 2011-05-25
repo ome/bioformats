@@ -262,23 +262,24 @@ public class CellomicsReader extends FormatReader {
       String wellRow = getWellRow(file);
       String wellColumn = getWellColumn(file);
 
-      int row = wellRow.charAt(0) - 'A';
+      int row = wellRow.toUpperCase().charAt(0) - 'A';
       int col = Integer.parseInt(wellColumn) - 1;
-
-      int wellIndex = row * realCols + col;
-
-      int fieldIndex = i % fields;
-
-      String wellSampleID =
-        MetadataTools.createLSID("WellSample", 0, wellIndex, fieldIndex);
-      store.setWellSampleID(wellSampleID, 0, wellIndex, fieldIndex);
-      store.setWellSampleIndex(
-        new NonNegativeInteger(fieldIndex), 0, wellIndex, fieldIndex);
 
       String imageID = MetadataTools.createLSID("Image", i);
       store.setImageID(imageID, i);
-      store.setWellSampleImageRef(imageID, 0, wellIndex, fieldIndex);
+      if (row < realRows && col < realCols) {
 
+        int wellIndex = row * realCols + col;
+        int fieldIndex = i % fields;
+
+        String wellSampleID =
+          MetadataTools.createLSID("WellSample", 0, wellIndex, fieldIndex);
+        store.setWellSampleID(wellSampleID, 0, wellIndex, fieldIndex);
+        store.setWellSampleIndex(
+          new NonNegativeInteger(fieldIndex), 0, wellIndex, fieldIndex);
+
+        store.setWellSampleImageRef(imageID, 0, wellIndex, fieldIndex);
+      }
       store.setImageName(
         "Well " + wellRow + wellColumn + ", Field #" + field, i);
     }

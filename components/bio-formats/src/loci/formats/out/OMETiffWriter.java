@@ -311,6 +311,13 @@ public class OMETiffWriter extends TiffWriter {
     int z = r.getPixelsSizeZ(series).getValue().intValue();
     int t = r.getPixelsSizeT(series).getValue().intValue();
     int c = r.getChannelCount(series);
+    String pixelType = r.getPixelsType(series).getValue();
+    int bytes = FormatTools.getBytesPerPixel(pixelType);
+
+    if (bytes > 1 && c == 1) {
+      c = r.getChannelSamplesPerPixel(series, 0).getValue();
+    }
+
     return z * c * t;
   }
 
