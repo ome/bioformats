@@ -1047,15 +1047,32 @@ public class FlexReader extends FormatReader {
   {
     LOGGER.info("Grouping together files in the same dataset");
     HashMap<String, String> v = new HashMap<String, String>();
+    Boolean firstCompressed = null;
     for (String file : fileList) {
-      int[] well = getWell(file);
-      if (well[0] > nRows) nRows = well[0];
-      if (well[1] > nCols) nCols = well[1];
-      if (fileList.length == 1) {
-        well[0] = 0;
-        well[1] = 0;
+      TiffParser parser = new TiffParser(file);
+      IFD firstIFD = parser.getFirstIFD();
+      boolean compressed =
+        firstIFD.getCompression() != TiffCompression.UNCOMPRESSED;
+      if (firstCompressed == null) {
+        firstCompressed = compressed;
       }
-      v.put(well[0] + "," + well[1], file);
+      if (compressed == firstCompressed) {
+        int[] well = getWell(file);
+        if (well[0] > nRows) nRows = well[0];
+        if (well[1] > nCols) nCols = well[1];
+        if (fileList.length == 1) {
+          well[0] = 0;
+          well[1] = 0;
+        }
+
+        v.put(well[0] + "," + well[1], file);
+      }
+      else {
+        v.clear();
+        v.put("0,0", currentId);
+        fileList = new String[] {currentId};
+        break;
+      }
     }
 
     nRows++;

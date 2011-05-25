@@ -971,6 +971,9 @@ public class LIFReader extends FormatReader {
       roi.text = roiNode.getAttribute("text");
 
       NodeList vertices = getNodes(roiNode, "Vertex");
+      if (vertices == null) {
+        continue;
+      }
 
       for (int v=0; v<vertices.getLength(); v++) {
         Element vertex = (Element) vertices.item(v);
