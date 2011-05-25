@@ -106,6 +106,9 @@ public class NikonReader extends BaseTiffReader {
   private boolean lossyCompression;
   private int split = -1;
 
+  private byte[] lastPlane = null;
+  private int lastIndex = -1;
+
   // -- Constructor --
 
   /** Constructs a new Nikon reader. */
@@ -155,110 +158,115 @@ public class NikonReader extends BaseTiffReader {
       return super.openBytes(no, buf, x, y, w, h);
     }
 
-    long[] offsets = ifd.getStripOffsets();
+    if (lastPlane == null || lastIndex != no) {
+      long[] offsets = ifd.getStripOffsets();
 
-    boolean maybeCompressed = ifd.getCompression() == TiffCompression.NIKON;
-    boolean compressed = vPredictor != null && curve != null && maybeCompressed;
+      boolean maybeCompressed = ifd.getCompression() == TiffCompression.NIKON;
+      boolean compressed =
+        vPredictor != null && curve != null && maybeCompressed;
 
-    if (!maybeCompressed && dataSize == 14) dataSize = 16;
+      if (!maybeCompressed && dataSize == 14) dataSize = 16;
 
-    ByteArrayOutputStream src = new ByteArrayOutputStream();
+      ByteArrayOutputStream src = new ByteArrayOutputStream();
 
-    NikonCodec codec = new NikonCodec();
-    NikonCodecOptions options = new NikonCodecOptions();
-    options.width = getSizeX();
-    options.height = getSizeY();
-    options.bitsPerSample = dataSize;
-    options.curve = curve;
-    if (vPredictor != null) {
-      options.vPredictor = new int[vPredictor.length];
-    }
-    options.lossless = !lossyCompression;
-    options.split = split;
-
-    for (int i=0; i<byteCounts.length; i++) {
-      byte[] t = new byte[(int) byteCounts[i]];
-
-      in.seek(offsets[i]);
-      in.read(t);
-
-      if (compressed) {
-        options.maxBytes = (int) byteCounts[i];
-        System.arraycopy(vPredictor, 0, options.vPredictor, 0,
-          vPredictor.length);
-        t = codec.decompress(t, options);
+      NikonCodec codec = new NikonCodec();
+      NikonCodecOptions options = new NikonCodecOptions();
+      options.width = getSizeX();
+      options.height = getSizeY();
+      options.bitsPerSample = dataSize;
+      options.curve = curve;
+      if (vPredictor != null) {
+        options.vPredictor = new int[vPredictor.length];
       }
-      src.write(t);
-    }
+      options.lossless = !lossyCompression;
+      options.split = split;
 
-    BitBuffer bb = new BitBuffer(src.toByteArray());
-    short[] pix = new short[getSizeX() * getSizeY() * 3];
+      for (int i=0; i<byteCounts.length; i++) {
+        byte[] t = new byte[(int) byteCounts[i]];
 
-    src.close();
+        in.seek(offsets[i]);
+        in.read(t);
 
-    int[] colorMap = {1, 0, 2, 1}; // default color map
-    short[] ifdColors = (short[]) ifd.get(COLOR_MAP);
-    if (ifdColors != null && ifdColors.length >= colorMap.length) {
-      boolean colorsValid = true;
-      for (int q=0; q<colorMap.length; q++) {
-        if (ifdColors[q] < 0 || ifdColors[q] > 2) {
-          // found invalid channel index, use default color map instead
-          colorsValid = false;
-          break;
+        if (compressed) {
+          options.maxBytes = (int) byteCounts[i];
+          System.arraycopy(vPredictor, 0, options.vPredictor, 0,
+            vPredictor.length);
+          t = codec.decompress(t, options);
         }
+        src.write(t);
       }
-      if (colorsValid) {
+
+      BitBuffer bb = new BitBuffer(src.toByteArray());
+      short[] pix = new short[getSizeX() * getSizeY() * 3];
+
+      src.close();
+
+      int[] colorMap = {1, 0, 2, 1}; // default color map
+      short[] ifdColors = (short[]) ifd.get(COLOR_MAP);
+      if (ifdColors != null && ifdColors.length >= colorMap.length) {
+        boolean colorsValid = true;
         for (int q=0; q<colorMap.length; q++) {
-          colorMap[q] = ifdColors[q];
+          if (ifdColors[q] < 0 || ifdColors[q] > 2) {
+            // found invalid channel index, use default color map instead
+            colorsValid = false;
+            break;
+          }
+        }
+        if (colorsValid) {
+          for (int q=0; q<colorMap.length; q++) {
+            colorMap[q] = ifdColors[q];
+          }
         }
       }
-    }
 
-    boolean interleaveRows = offsets.length == 1 && !maybeCompressed;
+      boolean interleaveRows = offsets.length == 1 && !maybeCompressed;
 
-    for (int row=0; row<getSizeY(); row++) {
-      int realRow = interleaveRows ? (row < (getSizeY() / 2) ?
-        row * 2 : (row - (getSizeY() / 2)) * 2 + 1) : row;
-      for (int col=0; col<getSizeX(); col++) {
-        short val = (short) (bb.getBits(dataSize) & 0xffff);
-        int mapIndex = (realRow % 2) * 2 + (col % 2);
+      for (int row=0; row<getSizeY(); row++) {
+        int realRow = interleaveRows ? (row < (getSizeY() / 2) ?
+          row * 2 : (row - (getSizeY() / 2)) * 2 + 1) : row;
+        for (int col=0; col<getSizeX(); col++) {
+          short val = (short) (bb.getBits(dataSize) & 0xffff);
+          int mapIndex = (realRow % 2) * 2 + (col % 2);
 
-        int redOffset = realRow * getSizeX() + col;
-        int greenOffset = (getSizeY() + realRow) * getSizeX() + col;
-        int blueOffset = (2 * getSizeY() + realRow) * getSizeX() + col;
+          int redOffset = realRow * getSizeX() + col;
+          int greenOffset = (getSizeY() + realRow) * getSizeX() + col;
+          int blueOffset = (2 * getSizeY() + realRow) * getSizeX() + col;
 
-        if (colorMap[mapIndex] == 0) {
-          pix[redOffset] = adjustForWhiteBalance(val, 0);
-        }
-        else if (colorMap[mapIndex] == 1) {
-          pix[greenOffset] = adjustForWhiteBalance(val, 1);
-        }
-        else if (colorMap[mapIndex] == 2) {
-          pix[blueOffset] = adjustForWhiteBalance(val, 2);
-        }
-
-        if (maybeCompressed && !compressed) {
-          int toSkip = 0;
-          if ((col % 10) == 9) {
-            toSkip = 1;
+          if (colorMap[mapIndex] == 0) {
+            pix[redOffset] = adjustForWhiteBalance(val, 0);
           }
-          if (col == getSizeX() - 1) {
-            toSkip = 10;
+          else if (colorMap[mapIndex] == 1) {
+            pix[greenOffset] = adjustForWhiteBalance(val, 1);
           }
-          bb.skipBits(toSkip * 8);
+          else if (colorMap[mapIndex] == 2) {
+            pix[blueOffset] = adjustForWhiteBalance(val, 2);
+          }
+
+          if (maybeCompressed && !compressed) {
+            int toSkip = 0;
+            if ((col % 10) == 9) {
+              toSkip = 1;
+            }
+            if (col == getSizeX() - 1) {
+              toSkip = 10;
+            }
+            bb.skipBits(toSkip * 8);
+          }
         }
       }
+
+      lastPlane = new byte[FormatTools.getPlaneSize(this)];
+      ImageTools.interpolate(pix, lastPlane, colorMap, getSizeX(), getSizeY(),
+        isLittleEndian());
+      lastIndex = no;
     }
 
-    byte[] b = new byte[FormatTools.getPlaneSize(this)];
-    ImageTools.interpolate(pix, b, colorMap, getSizeX(), getSizeY(),
-      isLittleEndian());
     int bpp = FormatTools.getBytesPerPixel(getPixelType()) * 3;
     int rowLen = w * bpp;
     int width = getSizeX() * bpp;
     for (int row=0; row<h; row++) {
       System.arraycopy(
-        b, (row + y) * width + x * bpp, buf, row * rowLen, rowLen);
+        lastPlane, (row + y) * width + x * bpp, buf, row * rowLen, rowLen);
     }
 
     return buf;
@@ -276,6 +284,8 @@ public class NikonReader extends BaseTiffReader {
       curve = null;
       vPredictor = null;
       lossyCompression = false;
+      lastPlane = null;
+      lastIndex = -1;
     }
   }
 
