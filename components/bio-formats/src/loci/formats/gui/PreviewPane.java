@@ -299,6 +299,15 @@ public class PreviewPane extends JPanel
     }
   }
 
+  // -- PreviewPane API methods --
+
+  /** Closes the underlying image reader. */
+  public void close() throws IOException {
+    if (reader != null) {
+      reader.close();
+    }
+  }
+
   // -- Helper methods --
 
   /**
