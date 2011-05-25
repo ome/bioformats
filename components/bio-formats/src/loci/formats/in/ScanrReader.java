@@ -160,7 +160,7 @@ public class ScanrReader extends FormatReader {
     if (!noPixels && tiffs != null) {
       int offset = getSeries() * getImageCount();
       for (int i=0; i<getImageCount(); i++) {
-        if (tiffs[offset + i] != null) {
+        if (offset + i < tiffs.length && tiffs[offset + i] != null) {
           files.add(tiffs[offset + i]);
         }
       }
@@ -486,7 +486,10 @@ public class ScanrReader extends FormatReader {
 
       int field = i % nFields;
       int well = i / nFields;
-      int wellIndex = wellNumbers.get(well) - 1;
+      int wellIndex = well;
+      if (wellNumbers.get(well) != null) {
+        wellIndex = wellNumbers.get(well) - 1;
+      }
 
       int wellRow = wellIndex / wellColumns;
       int wellCol = wellIndex % wellColumns;
