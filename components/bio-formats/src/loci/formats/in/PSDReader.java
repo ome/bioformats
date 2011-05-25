@@ -268,8 +268,12 @@ public class PSDReader extends FormatReader {
           }
         }
       }
+      long start = in.getFilePointer();
       while (in.read() != '8');
       in.skipBytes(7);
+      if (in.getFilePointer() - start > 1024) {
+        in.seek(start);
+      }
       int len = in.readInt();
       if ((len % 4) != 0) len += 4 - (len % 4);
       in.skipBytes(len);
