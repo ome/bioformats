@@ -402,6 +402,8 @@ public class TiffSaver {
       }
     }
 
+    out.seek(out.length());
+
     // record strip byte counts and offsets
 
     List<Long> byteCounts = new ArrayList<Long>();

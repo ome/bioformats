@@ -104,7 +104,7 @@ public class TiffWriter extends FormatWriter {
     if (v == null)
       ifd.put(new Integer(IFD.COMPRESSION), compressType.getCode());
   }
-  
+
   // -- Constructors --
 
   public TiffWriter() {
@@ -167,6 +167,7 @@ public class TiffWriter extends FormatWriter {
         }
       }
     }
+
     tiffSaver.writeImage(buf, ifd, index, type, x, y, w, h,
       no == getPlaneCount() - 1 && getSeries() == retrieve.getImageCount() - 1);
   }
@@ -315,6 +316,20 @@ public class TiffWriter extends FormatWriter {
     }
   }
 
+  /* @see loci.formats.FormatWriter#getPlaneCount() */
+  public int getPlaneCount() {
+    MetadataRetrieve retrieve = getMetadataRetrieve();
+    int c = getSamplesPerPixel();
+    int type = FormatTools.pixelTypeFromString(
+      retrieve.getPixelsType(series).toString());
+    int bytesPerPixel = FormatTools.getBytesPerPixel(type);
+
+    if (bytesPerPixel > 1 && c != 1 && c != 3) {
+      return super.getPlaneCount() * c;
+    }
+    return super.getPlaneCount();
+  }
+
   // -- IFormatWriter API methods --
 
   /**
@@ -351,7 +366,8 @@ public class TiffWriter extends FormatWriter {
     if (codec != null && (codec.startsWith(COMPRESSION_J2K) ||
       codec.equals(COMPRESSION_JPEG)))
     {
-      return new int[] {FormatTools.INT8, FormatTools.UINT8, FormatTools.INT16, FormatTools.UINT16};//Question to ask
+      return new int[] {FormatTools.INT8, FormatTools.UINT8,
+        FormatTools.INT16, FormatTools.UINT16};
     }
     return new int[] {FormatTools.INT8, FormatTools.UINT8, FormatTools.INT16,
       FormatTools.UINT16, FormatTools.INT32, FormatTools.UINT32,
