@@ -117,7 +117,11 @@ public class PDSReader extends FormatReader {
 
     int pad = recordWidth - (getSizeX() % recordWidth);
     RandomAccessInputStream pixels = new RandomAccessInputStream(pixelsFile);
-    readPlane(pixels, x, y, w, h, pad, buf);
+
+    int realX = reverseX ? getSizeX() - w - x : x;
+    int realY = reverseY ? getSizeY() - h - y : y;
+
+    readPlane(pixels, realX, realY, w, h, pad, buf);
     pixels.close();
 
     if (reverseX) {
