@@ -523,29 +523,30 @@ public class TCSReader extends FormatReader {
     HashMap<String, Long> timestamps = new HashMap<String, Long>();
 
     for (String file : list) {
-      if (checkSuffix(file, TiffReader.TIFF_SUFFIXES)) {
-        file = new Location(parent, file).getAbsolutePath();
-        if (file.length() != current.getAbsolutePath().length()) continue;
+      file = new Location(parent, file).getAbsolutePath();
+      if (file.length() != current.getAbsolutePath().length()) continue;
 
-        RandomAccessInputStream rais = new RandomAccessInputStream(file);
-        if (Math.abs(rais.length() - in.length()) > 16) {
-          rais.close();
-          continue;
-        }
-        TiffParser tp = new TiffParser(rais);
-        IFD ifd = tp.getIFDs().get(0);
-
-        String date = ifd.getIFDStringValue(IFD.DATE_TIME);
-        if (date != null) {
-          long stamp = DateTools.getTime(date, "yyyy:MM:dd HH:mm:ss");
-
-          String software = ifd.getIFDStringValue(IFD.SOFTWARE);
-          if (software != null && software.trim().startsWith("TCS")) {
-            timestamps.put(file, new Long(stamp));
-          }
-        }
+      RandomAccessInputStream rais = new RandomAccessInputStream(file);
+      if (Math.abs(rais.length() - in.length()) > 16) {
         rais.close();
+        continue;
       }
+      TiffParser tp = new TiffParser(rais);
+      if (!tp.isValidHeader()) {
+        continue;
+      }
+      IFD ifd = tp.getIFDs().get(0);
+
+      String date = ifd.getIFDStringValue(IFD.DATE_TIME);
+      if (date != null) {
+        long stamp = DateTools.getTime(date, "yyyy:MM:dd HH:mm:ss");
+
+        String software = ifd.getIFDStringValue(IFD.SOFTWARE);
+        if (software != null && software.trim().startsWith("TCS")) {
+          timestamps.put(file, new Long(stamp));
+        }
+      }
+      rais.close();
     }
 
     String[] files = timestamps.keySet().toArray(new String[timestamps.size()]);
