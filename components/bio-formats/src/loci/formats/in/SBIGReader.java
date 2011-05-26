@@ -85,30 +85,34 @@ public class SBIGReader extends FormatReader {
     int width = getSizeX() * 2;
 
     if (compressed) {
-      for (int row=0; row<h; row++) {
+      byte[] b = new byte[FormatTools.getPlaneSize(this)];
+      for (int row=0; row<getSizeY(); row++) {
         int rowLen = in.readShort();
         if (rowLen == width) {
-          in.read(buf, row * width, rowLen);
+          in.read(b, row * width, rowLen);
         }
         else {
           int bufferPointer = row * width;
-          in.read(buf, bufferPointer, 2);
+          in.read(b, bufferPointer, 2);
           while (bufferPointer - row * width < width - 2) {
             short prevPixel =
-              DataTools.bytesToShort(buf, bufferPointer, isLittleEndian());
+              DataTools.bytesToShort(b, bufferPointer, isLittleEndian());
             bufferPointer += 2;
             byte check = in.readByte();
             if (check == -128) {
-              in.read(buf, bufferPointer, 2);
+              in.read(b, bufferPointer, 2);
             }
             else {
               prevPixel += check;
-              DataTools.unpackBytes(prevPixel, buf, bufferPointer, 2,
+              DataTools.unpackBytes(prevPixel, b, bufferPointer, 2,
                 isLittleEndian());
             }
           }
         }
       }
+      RandomAccessInputStream stream = new RandomAccessInputStream(b);
+      readPlane(stream, x, y, w, h, buf);
+      stream.close();
     }
     else readPlane(in, x, y, w, h, buf);
     return buf;
