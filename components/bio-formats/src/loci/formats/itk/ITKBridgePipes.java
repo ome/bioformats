@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.itk;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.FileOutputStream;
@@ -36,6 +37,7 @@ import java.util.HashMap;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
+import loci.formats.IFormatWriter;
 import loci.formats.ImageReader;
 import loci.formats.ImageWriter;
 import loci.formats.MetadataTools;
@@ -65,12 +67,13 @@ public class ITKBridgePipes {
   private static final String HASH_PREFIX = "hash:";
 
   private IFormatReader reader = null;
+  private IFormatWriter writer = null;
+  private BufferedReader in;
   private String readerPath = "";
 
   /** Enters an input loop, waiting for commands, until EOF is reached. */
   public void waitForInput() throws FormatException, IOException {
-    final BufferedReader in =
-      new BufferedReader(new InputStreamReader(System.in));
+    in = new BufferedReader(new InputStreamReader(System.in));
     while (true) {
       final String line = in.readLine(); // blocks until a line is read
       if (line == null) break; // eof
@@ -90,7 +93,6 @@ public class ITKBridgePipes {
   public boolean executeCommand(String commandLine)
     throws FormatException, IOException
   {
-    System.err.println(commandLine);
     String[] args = commandLine.split("\t");
 
     final String command = args[0].trim();
@@ -123,6 +125,13 @@ public class ITKBridgePipes {
       System.out.println();
       return res;
     }
+    else if(args[0].equals("canWrite")) {
+    	final String filePath = args[1].trim();
+    	boolean res = canWrite(filePath);
+        // add an extra \n to mark the end of the output
+        System.out.println();
+    	return res;
+    }
     else if (command.equals("exit")) {
       boolean res = exit();
       // add an extra \n to mark the end of the output
@@ -140,14 +149,14 @@ public class ITKBridgePipes {
     	int pixelType = Integer.parseInt( args[9] );
     	int rgbCCount = Integer.parseInt( args[10] );
     	int xStart = Integer.parseInt( args[11] );
-    	int yStart = Integer.parseInt( args[13] );
-    	int zStart = Integer.parseInt( args[15] );
-    	int cStart = Integer.parseInt( args[17] );
-    	int tStart = Integer.parseInt( args[19] );
     	int xCount = Integer.parseInt( args[12] );
+    	int yStart = Integer.parseInt( args[13] );
     	int yCount = Integer.parseInt( args[14] );
+    	int zStart = Integer.parseInt( args[15] );
     	int zCount = Integer.parseInt( args[16] );
+    	int cStart = Integer.parseInt( args[17] );
     	int cCount = Integer.parseInt( args[18] );
+    	int tStart = Integer.parseInt( args[19] );
     	int tCount = Integer.parseInt( args[20] );
     	return write(args[1], byteOrder, dims, dim0, dim1, dim2, dim3, dim4, pixelType, rgbCCount, xStart, yStart, zStart, cStart, tStart, xCount, yCount, zCount, cCount, tCount);
     }
@@ -360,6 +369,7 @@ public class ITKBridgePipes {
   {
 	  IMetadata meta = MetadataTools.createOMEXMLMetadata();
 	  meta.createRoot();
+	  meta.setImageID("Image:0", 0);
 	  meta.setPixelsID("Pixels:0", 0);
 	  meta.setPixelsDimensionOrder(DimensionOrder.XYZCT, 0);
 
@@ -381,9 +391,9 @@ public class ITKBridgePipes {
 	  meta.setPixelsSizeC(new PositiveInteger(new Integer(dim3)), 0);
 	  meta.setPixelsSizeT(new PositiveInteger(new Integer(dim4)), 0);
 	  meta.setChannelID("Channel:0:0", 0, 0);
-	  meta.setChannelSamplesPerPixel(new PositiveInteger(new Integer(1)), 0, 0);
+	  meta.setChannelSamplesPerPixel(new PositiveInteger(new Integer(rgbCCount)), 0, 0);
 	  
-	  ImageWriter writer = new ImageWriter();
+	  writer = new ImageWriter();
 	  writer.setMetadataRetrieve(meta);
 	  writer.setId(fileName);
 	  
@@ -394,22 +404,34 @@ public class ITKBridgePipes {
 	  int numIters = (cCount - cStart) * (tCount - tStart) * (zCount - zStart);
 	  
 	  // tell native code how many times to iterate & how big each iteration is
-	  System.out.println(bytesPerPlane + "\n" + numIters + "\n");
+	  System.out.print(bytesPerPlane + "\n" + fileName + "\n" + cStart + "\n" + cCount + "\n" + tStart + "\n" + tCount + "\n" + zStart + "\n" + zCount + "\n\n");
 	  System.out.flush();
-	  
-	  byte[] buf = new byte[bytesPerPlane];
-	  
-	  final BufferedReader in =
-		  new BufferedReader(new InputStreamReader(System.in));
-	  
-	  String line = "";
+
+	  String line;
 	  int no = 0;
 	  for(int c=cStart; c<cStart+cCount; c++) {
 		  for(int t=tStart; t<tStart+tCount; t++) {
 			  for(int z=zStart; z<zStart+zCount; z++) {
-				  line = in.readLine(); // blocks for input, waiting for next set of bytes
-				  buf = line.getBytes();
-				  writer.saveBytes(no++, buf, xStart, yStart, xCount, yCount);
+				  
+				  line = "";
+				  int bytesRead = 0;
+
+				  String test = "";
+				  byte[] buf = new byte[bytesPerPlane]; 
+				  BufferedInputStream linein = new BufferedInputStream(System.in);
+				  
+				  while(bytesRead < bytesPerPlane)				  
+				  {
+					  int read = linein.read(buf, bytesRead, (bytesPerPlane - bytesRead));
+					  bytesRead += (read > 0) ? read : 0;
+					  // notify native code that more bytes can be read
+					  System.out.println("Bytes read: " + bytesRead + ". Plane no: " + no + ". Ready for more bytes.\n");
+				  }
+				  
+				  writer.saveBytes(no, buf, xStart, yStart, xCount, yCount);
+				  // notify native code that a plane has been saved
+				  System.out.println("Plane no: " + no + " saved.\n");
+				  no++;
 			  }
 		  }
 	  }
@@ -426,6 +448,17 @@ public class ITKBridgePipes {
     createReader(null);
     final boolean canRead = reader.isThisType(filePath);
     System.out.println(canRead);
+    System.out.flush();
+    return true;
+  }
+  
+  /** Tests whether the given file path can be written by Bio-Formats. */
+  public boolean canWrite(String filePath)
+    throws FormatException, IOException
+  {
+    writer = new ImageWriter();
+    final boolean canWrite = writer.isThisType(filePath);
+    System.out.println(canWrite);
     System.out.flush();
     return true;
   }
@@ -500,6 +533,9 @@ public class ITKBridgePipes {
     else if(args[0].equals("canRead")) {
       if (!new ITKBridgePipes().canRead(args[1])) System.exit(1);
     }
+    else if(args[0].equals("canWrite")) {
+      if (!new ITKBridgePipes().canWrite(args[1])) System.exit(1);
+    }
     else if(args[0].equals("waitForInput")) {
       new ITKBridgePipes().waitForInput();
     }
@@ -523,7 +559,8 @@ public class ITKBridgePipes {
     	int zCount = Integer.parseInt( args[16] );
     	int cCount = Integer.parseInt( args[18] );
     	int tCount = Integer.parseInt( args[20] );
-    	if(!new ITKBridgePipes().write(args[1], byteOrder, dims, dim0, dim1, dim2, dim3, dim4, pixelType, rgbCCount, xStart, yStart, zStart, cStart, tStart, xCount, yCount, zCount, cCount, tCount)) System.exit(1);
+    	if(!new ITKBridgePipes().write(args[1], byteOrder, dims, dim0, dim1, dim2, dim3, dim4, pixelType, rgbCCount, xStart, yStart, zStart, cStart, tStart, xCount, yCount, zCount, cCount, tCount)) 
+    		System.exit(1);
     }
     else {
       System.err.println("Error: unknown command: "+args[0]);
