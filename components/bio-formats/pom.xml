@@ -129,7 +129,8 @@
         <artifactId>cppwrap-maven-plugin</artifactId>
         <version>1.0-SNAPSHOT</version>
         <configuration>
-          <headerFile>src/main/cppwrap/header.txt</headerFile>
+          <headerFile>cppwrap/header.txt</headerFile>
+          <conflictsFile>cppwrap/conflicts.txt</conflictsFile>
           <libraries>
             <library>${project.groupId}:loci-common:jar:${project.version}</library>
             <library>${project.groupId}:ome-xml:jar:${project.version}</library>
