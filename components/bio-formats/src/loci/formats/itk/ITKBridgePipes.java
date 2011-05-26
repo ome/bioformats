@@ -426,11 +426,13 @@ public class ITKBridgePipes {
 					  bytesRead += (read > 0) ? read : 0;
 					  // notify native code that more bytes can be read
 					  System.out.println("Bytes read: " + bytesRead + ". Plane no: " + no + ". Ready for more bytes.\n");
+					  System.out.flush();
 				  }
 				  
 				  writer.saveBytes(no, buf, xStart, yStart, xCount, yCount);
 				  // notify native code that a plane has been saved
 				  System.out.println("Plane no: " + no + " saved.\n");
+				  System.out.flush();
 				  no++;
 			  }
 		  }
