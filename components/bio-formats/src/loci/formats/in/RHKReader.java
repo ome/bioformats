@@ -197,8 +197,12 @@ public class RHKReader extends FormatReader {
     MetadataTools.populatePixels(store, this);
     MetadataTools.setDefaultCreationDate(store, currentId, 0);
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      store.setPixelsPhysicalSizeX(new PositiveFloat(xScale), 0);
-      store.setPixelsPhysicalSizeY(new PositiveFloat(yScale), 0);
+      if (xScale > 0) {
+        store.setPixelsPhysicalSizeX(new PositiveFloat(xScale), 0);
+      }
+      if (yScale > 0) {
+        store.setPixelsPhysicalSizeY(new PositiveFloat(yScale), 0);
+      }
       store.setImageDescription(description, 0);
     }
   }

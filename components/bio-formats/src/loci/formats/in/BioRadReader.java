@@ -738,8 +738,11 @@ public class BioRadReader extends FormatReader {
                   int mag = (int) Float.parseFloat(values[11]);
                   store.setObjectiveNominalMagnification(
                     new PositiveInteger(mag), 0, 0);
-                  store.setPixelsPhysicalSizeZ(
-                    new PositiveFloat(new Double(values[14])), 0);
+
+                  Double sizeZ = new Double(values[14]);
+                  if (sizeZ > 0) {
+                    store.setPixelsPhysicalSizeZ(new PositiveFloat(sizeZ), 0);
+                  }
                   break;
                 case 2:
                   for (int i=0; i<STRUCTURE_LABELS_2.length; i++) {
@@ -756,8 +759,12 @@ public class BioRadReader extends FormatReader {
                   double height = y2 - y1;
                   height /= getSizeY();
 
-                  store.setPixelsPhysicalSizeX(new PositiveFloat(width), 0);
-                  store.setPixelsPhysicalSizeY(new PositiveFloat(height), 0);
+                  if (width > 0) {
+                    store.setPixelsPhysicalSizeX(new PositiveFloat(width), 0);
+                  }
+                  if (height > 0) {
+                    store.setPixelsPhysicalSizeY(new PositiveFloat(height), 0);
+                  }
 
                   break;
                 case 3:

@@ -303,6 +303,9 @@ public class PictReader extends FormatReader {
         if ((in.getFilePointer() & 0x1L) != 0) {
           in.skipBytes(1);
         }
+        if (in.getFilePointer() + 2 >= in.length()) {
+          break;
+        }
         opcode = in.readShort() & 0xffff;
       }
     }

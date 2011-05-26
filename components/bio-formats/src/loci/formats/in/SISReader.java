@@ -163,8 +163,10 @@ public class SISReader extends BaseTiffReader {
 
       String objective = MetadataTools.createLSID("Objective", 0, 0);
       store.setObjectiveID(objective, 0, 0);
-      store.setObjectiveNominalMagnification(
-        new PositiveInteger((int) magnification), 0, 0);
+      if ((int) magnification > 0) {
+        store.setObjectiveNominalMagnification(
+          new PositiveInteger((int) magnification), 0, 0);
+      }
       store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
       store.setObjectiveImmersion(getImmersion("Other"), 0, 0);
       store.setImageObjectiveSettingsID(objective, 0);
