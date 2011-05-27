@@ -102,7 +102,7 @@ public class GatanDM2Reader extends FormatReader {
     core[0].sizeY = in.readShort();
     int bpp = (int) ((footerOffset - HEADER_SIZE) / (getSizeX() * getSizeY()));
 
-    core[0].pixelType = FormatTools.pixelTypeFromBytes(bpp, false, false);
+    core[0].pixelType = FormatTools.pixelTypeFromBytes(bpp, true, false);
     core[0].sizeC = 1;
     core[0].sizeT = 1;
     core[0].sizeZ = 1;
@@ -135,7 +135,7 @@ public class GatanDM2Reader extends FormatReader {
         in.skipBytes(35);
         strlen = in.readShort();
       }
-      if (strlen + in.getFilePointer() >= in.length()) break;
+      if (strlen < 0 || strlen + in.getFilePointer() >= in.length()) break;
       String label = in.readString(strlen);
       StringBuffer value = new StringBuffer();
 
