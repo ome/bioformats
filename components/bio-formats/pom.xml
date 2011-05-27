@@ -129,7 +129,11 @@
         <artifactId>cppwrap-maven-plugin</artifactId>
         <version>1.0-SNAPSHOT</version>
         <configuration>
-          <headerFile>src/main/cppwrap/header.txt</headerFile>
+          <headerFile>cppwrap/header.txt</headerFile>
+          <conflictsFile>cppwrap/conflicts.txt</conflictsFile>
+          <coreFile>cppwrap/core.txt</coreFile>
+          <extrasFile>cppwrap/extras.txt</extrasFile>
+          <sourceDir>cppwrap</sourceDir>
           <libraries>
             <library>${project.groupId}:loci-common:jar:${project.version}</library>
             <library>${project.groupId}:ome-xml:jar:${project.version}</library>
@@ -255,5 +259,17 @@
       <url>http://dev.loci.wisc.edu/maven2/snapshots</url>
     </repository>
   </repositories>
+
+  <!-- NB: for cppwrap-maven-plugin -->
+  <pluginRepositories>
+    <pluginRepository>
+      <id>loci.releases</id>
+      <url>http://dev.loci.wisc.edu/maven2/releases</url>
+    </pluginRepository>
+    <pluginRepository>
+      <id>loci.snapshots</id>
+      <url>http://dev.loci.wisc.edu/maven2/snapshots</url>
+    </pluginRepository>
+  </pluginRepositories>
 
 </project>

@@ -1,0 +1,55 @@
+find_package(Java REQUIRED)
+
+### build some examples for testing bfcpp ###
+
+add_executable(showinf ../source/showinf.cpp)
+
+target_link_libraries(showinf bfcpp jace "${JAVA_JVM_LIBRARY}")
+
+add_executable(minimum_writer ../source/minimum_writer.cpp)
+
+target_link_libraries(minimum_writer bfcpp jace "${JAVA_JVM_LIBRARY}")
+
+if(NOT DEFINED Jar2Lib_ARTIFACT_DIR)
+  set(Jar2Lib_ARTIFACT_DIR ../../../../../artifacts)
+endif(NOT DEFINED Jar2Lib_ARTIFACT_DIR)
+
+# copy loci_tools.jar
+add_custom_command(
+  TARGET bfcpp
+  DEPENDS "${Jar2Lib_ARTIFACT_DIR}/loci_tools.jar"
+  POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E copy
+  "${Jar2Lib_ARTIFACT_DIR}/loci_tools.jar"
+  "${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/loci_tools.jar"
+  VERBATIM
+)
+install(FILES
+  "${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/loci_tools.jar"
+  DESTINATION "${Jar2Lib_DIST_DIR}"
+)
+
+# generate extension list
+add_custom_command(
+  TARGET bfcpp
+  DEPENDS "${Jar2Lib_ARTIFACT_DIR}/loci_tools.jar"
+  POST_BUILD
+  COMMAND ${Java_JAVA_EXECUTABLE} -cp ${Jar2Lib_ARTIFACT_DIR}/loci_tools.jar
+  "loci.formats.tools.BioFormatsExtensionPrinter"
+  VERBATIM
+)
+
+# copy extensions to dist dir
+add_custom_command(
+  TARGET bfcpp
+  DEPENDS "${CMAKE_BINARY_DIR}/BioFormatsSuffixes.txt"
+  POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E copy
+  "${CMAKE_BINARY_DIR}/BioFormatsSuffixes.txt"
+  "${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/BioFormatsSuffixes.txt"
+  VERBATIM
+)
+install(FILES
+  "${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/BioFormatsSuffixes.txt"
+  DESTINATION "${Jar2Lib_DIST_DIR}"
+)

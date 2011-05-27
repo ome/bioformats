@@ -204,7 +204,7 @@ public class ScanrReader extends FormatReader {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
     int index = getSeries() * getImageCount() + no;
-    if (tiffs[index] != null) {
+    if (index < tiffs.length && tiffs[index] != null) {
       reader.setId(tiffs[index]);
       reader.openBytes(0, buf, x, y, w, h);
       reader.close();

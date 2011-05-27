@@ -591,7 +591,7 @@ namespace itk {
       }
     }
     meta.setChannelID("Channel:0:0" , 0, 0);
-    meta.setChannelSamplesPerPixel(PositiveInteger(Integer(1)) , 0, 0);
+    meta.setChannelSamplesPerPixel(PositiveInteger(Integer(m_NumberOfComponents)) , 0, 0);
 
     writer->setMetadataRetrieve(meta);
     itkDebugMacro("Setting id to: " << m_FileName);
@@ -606,7 +606,7 @@ namespace itk {
     int tStart = 0, tCount = 1;
 
     //bool isInterleaved = writer->isInterleaved();
-    int rgbChannelCount = 1;
+    int rgbChannelCount = m_NumberOfComponents;
 
     for (int dim = 0; dim < regionDim; dim++) {
       int index = region.GetIndex(dim);

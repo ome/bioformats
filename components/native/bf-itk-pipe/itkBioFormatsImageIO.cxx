@@ -124,10 +124,9 @@ namespace itk {
     return oss.str();
   }
 
-
-
 BioFormatsImageIO::BioFormatsImageIO()
 {
+  //DebugOn(); // NB: For debugging.
   itkDebugMacro("BioFormatsImageIO constructor");
 
   this->m_FileType = Binary;
@@ -601,7 +600,54 @@ void BioFormatsImageIO::Read(void* pData)
 bool BioFormatsImageIO::CanWriteFile(const char* name)
 {
   itkDebugMacro("BioFormatsImageIO::CanWriteFile: name = " << name);
-  return false;
+  CreateJavaProcess();
+
+  std::string command = "canWrite\t";
+  command += name;
+  command += "\n";
+  write( m_Pipe[1], command.c_str(), command.size() );
+
+  std::string imgInfo;
+  std::string errorMessage;
+  char * pipedata;
+  int pipedatalength = 1000;
+
+  bool keepReading = true;
+  while( keepReading )
+    {
+    int retcode = itksysProcess_WaitForData( m_Process, &pipedata, &pipedatalength, NULL );
+    itkDebugMacro( "BioFormatsImageIO::CanWriteFile: reading " << pipedatalength << " bytes.");
+    if( retcode == itksysProcess_Pipe_STDOUT )
+      {
+      imgInfo += std::string( pipedata, pipedatalength );
+      // if the two last char are "\n\n", then we're done
+      if( imgInfo.size() >= 2 && imgInfo.substr( imgInfo.size()-2, 2 ) == "\n\n" )
+        {
+        keepReading = false;
+        }
+      }
+    else if( retcode == itksysProcess_Pipe_STDERR )
+      {
+      errorMessage += std::string( pipedata, pipedatalength );
+      }
+    else
+      {
+      DestroyJavaProcess();
+      itkExceptionMacro(<<"BioFormatsImageIO: 'ITKBridgePipe canWrite' exited abnormally. " << errorMessage);
+      }
+    }
+
+  itkDebugMacro("BioFormatsImageIO::CanWrite error output: " << errorMessage);
+
+  // we have one thing per line
+  int p0 = 0;
+  int p1 = 0;
+  std::string canWrite;
+  // can write?
+  p1 = imgInfo.find("\n", p0);
+  canWrite = imgInfo.substr( p0, p1 );
+  itkDebugMacro("CanWrite result: " << canWrite);
+  return valueOfString<bool>(canWrite);
 }
 
 void BioFormatsImageIO::WriteImageInformation()
@@ -613,6 +659,8 @@ void BioFormatsImageIO::WriteImageInformation()
 void BioFormatsImageIO::Write(const void * buffer )
 {
   itkDebugMacro("BioFormatsImageIO::Write");
+
+  CreateJavaProcess();
 
   ImageIORegion region = GetIORegion();
   int regionDim = region.GetImageDimension();
@@ -638,31 +686,45 @@ void BioFormatsImageIO::Write(const void * buffer )
   command += toString(m_PixelType);
   command += "\t";
 
-  int rgbChannelCount = 1;
+  int rgbChannelCount = m_NumberOfComponents;
 
   command += toString(rgbChannelCount);
   command += "\t";
 
   int xIndex = 0, yIndex = 1, zIndex = 2, cIndex = 3, tIndex = 4;
+  int bytesPerPlane = rgbChannelCount;
+  int numPlanes = 1;
 
-  for (int dim = 0; dim < regionDim; dim++)
+  for (int dim = 0; dim < 5; dim++)
   {
-    int index = region.GetIndex(dim);
-    int size = region.GetSize(dim);
-    command += toString(index);
-    command += "\t";
-    command += toString(size);
-    command += "\t";
+    if(dim < regionDim)
+    {
+      int index = region.GetIndex(dim);
+      int size = region.GetSize(dim);
+      itkDebugMacro("dim = " << dim << " index = " << index << " size = " << size);
+      command += toString(index);
+      command += "\t";
+      command += toString(size);
+      command += "\t";
+
+      if( dim == cIndex || dim == zIndex || dim == tIndex )
+      {
+        numPlanes *= size - index;
+      }
+    }
+    else
+    {
+      command += toString(0);
+      command += "\t";
+      command += toString(1);
+      command += "\t";
+    }
   }
 
-  for(int i = regionDim; i < 5; i++) {
-    command += toString(1);
-    command += "\t";
-  }
+  command += "\n";
 
   itkDebugMacro("BioFormatsImageIO::Write command: " << command);
   write( m_Pipe[1], command.c_str(), command.size() );
-
 
   // need to read back the number of planes and bytes per plane to read from buffer
   std::string imgInfo;
@@ -670,11 +732,11 @@ void BioFormatsImageIO::Write(const void * buffer )
   char * pipedata;
   int pipedatalength = 1000;
 
+  itkDebugMacro("BioFormatsImageIO::Write reading data back ...");
   bool keepReading = true;
   while( keepReading )
     {
     int retcode = itksysProcess_WaitForData( m_Process, &pipedata, &pipedatalength, NULL );
-    // itkDebugMacro( "BioFormatsImageIO::ReadImageInformation: reading " << pipedatalength << " bytes.");
     if( retcode == itksysProcess_Pipe_STDOUT )
       {
       imgInfo += std::string( pipedata, pipedatalength );
@@ -687,36 +749,107 @@ void BioFormatsImageIO::Write(const void * buffer )
     else if( retcode == itksysProcess_Pipe_STDERR )
       {
       errorMessage += std::string( pipedata, pipedatalength );
+      //itkDebugMacro( "In read back loop. errorMessage: " << imgInfo);
       }
     else
       {
       DestroyJavaProcess();
-      itkExceptionMacro(<<"BioFormatsImageIO: 'ITKBridgePipe canRead' exited abnormally. " << errorMessage);
+      itkExceptionMacro(<<"BioFormatsImageIO: 'ITKBridgePipe Write' exited abnormally. " << errorMessage);
       }
     }
 
-  itkDebugMacro("BioFormatsImageIO::CanRead error output: " << errorMessage);
+  itkDebugMacro("BioFormatsImageIO::Write error output: " << errorMessage);
+  itkDebugMacro("Read imgInfo: " << imgInfo);
 
-  // we have one thing per line
+  // bytesPerPlane is the first line
   int p0 = 0;
   int p1 = 0;
   std::string vals;
-  // can read?
   p1 = imgInfo.find("\n", p0);
   vals = imgInfo.substr( p0, p1 );
 
-  int bytesPerPlane, numPlanes;
   bytesPerPlane = valueOfString<int>(vals);
+  itkDebugMacro("BPP: " << bytesPerPlane << " numPlanes: " << numPlanes);
 
-  vals = imgInfo.substr( (p1 + 1), (imgInfo.size() - 2 - p1));
-  numPlanes = valueOfString<int>(vals);
+  typedef unsigned char BYTE;
+  BYTE* data = (BYTE*)buffer;
 
-  char* data = (char*)buffer;
+  int pipelength = 10000;
 
   for (int i = 0; i < numPlanes; i++)
   {
-    write( m_Pipe[1], data, bytesPerPlane );
-    data += bytesPerPlane;
+      int bytesRead = 0;
+      while(bytesRead < bytesPerPlane )
+      {
+        itkDebugMacro("bytesPerPlane: " << bytesPerPlane << " bytesRead: " << bytesRead << " pipelength: " << pipelength);
+        int bytesToRead = ((bytesPerPlane - bytesRead) > pipelength ? pipelength : (bytesPerPlane - bytesRead));
+
+        itkDebugMacro("Writing " << bytesToRead << " bytes to plane " << i << ".  Bytes read: " << bytesRead);
+
+        write( m_Pipe[1], data, bytesToRead );
+        data += bytesToRead;
+        bytesRead += bytesToRead;
+
+        itkDebugMacro("Waiting for confirmation of end of plane");
+
+        std::string bytesDone;
+        keepReading = true;
+        while( keepReading )
+          {
+          int retcode = itksysProcess_WaitForData( m_Process, &pipedata, &pipedatalength, NULL );
+          if( retcode == itksysProcess_Pipe_STDOUT )
+            {
+            bytesDone += std::string( pipedata, pipedatalength );
+            // if the two last char are "\n\n", then we're done
+            if( bytesDone.size() >= 2 && bytesDone.substr( bytesDone.size()-2, 2 ) == "\n\n" )
+              {
+              keepReading = false;
+              }
+            }
+          else if( retcode == itksysProcess_Pipe_STDERR )
+            {
+            errorMessage += std::string( pipedata, pipedatalength );
+            //itkDebugMacro( "In end of data loop. errorMessage: " << bytesDone);
+            }
+          else
+            {
+            DestroyJavaProcess();
+            itkExceptionMacro(<<"BioFormatsImageIO: 'ITKBridgePipe Write' exited abnormally. " << errorMessage);
+            }
+          }
+
+        itkDebugMacro("BioFormatsImageIO::Write error output: " << errorMessage);
+        itkDebugMacro("Read bytesDone: " << bytesDone);
+      }
+
+      std::string planeDone;
+      keepReading = true;
+      while( keepReading )
+        {
+        int retcode = itksysProcess_WaitForData( m_Process, &pipedata, &pipedatalength, NULL );
+        if( retcode == itksysProcess_Pipe_STDOUT )
+          {
+          planeDone += std::string( pipedata, pipedatalength );
+          // if the two last char are "\n\n", then we're done
+          if( planeDone.size() >= 2 && planeDone.substr( planeDone.size()-2, 2 ) == "\n\n" )
+            {
+            keepReading = false;
+            }
+          }
+        else if( retcode == itksysProcess_Pipe_STDERR )
+          {
+          errorMessage += std::string( pipedata, pipedatalength );
+          //itkDebugMacro( "In end of plane loop. errorMessage: " << planeDone);
+          }
+        else
+          {
+          DestroyJavaProcess();
+          itkExceptionMacro(<<"BioFormatsImageIO: 'ITKBridgePipe Write' exited abnormally. " << errorMessage);
+          }
+        }
+
+       itkDebugMacro("BioFormatsImageIO::Write error output: " << errorMessage);
+       itkDebugMacro("Read planeDone: " << planeDone);
   }
 }
 

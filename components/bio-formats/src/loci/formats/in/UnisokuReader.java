@@ -57,12 +57,35 @@ public class UnisokuReader extends FormatReader {
 
   /** Constructs a new Unisoku reader. */
   public UnisokuReader() {
-    super("Unisoku STM", "hdr");
+    super("Unisoku STM", new String[] {"hdr", "dat"});
     domains = new String[] {FormatTools.SPM_DOMAIN};
     suffixSufficient = false;
   }
 
   // -- IFormatReader API methods --
+
+  /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  public boolean isThisType(String name, boolean open) {
+    if (checkSuffix(name, "hdr")) {
+      return super.isThisType(name, open);
+    }
+
+    if (name.indexOf(".") < 0) {
+      return false;
+    }
+
+    String baseName = name.substring(0, name.lastIndexOf("."));
+
+    Location file = new Location(baseName + ".HDR");
+    if (!file.exists()) {
+      file = new Location(baseName + ".hdr");
+    }
+
+    if (!file.exists()) {
+      return false;
+    }
+    return super.isThisType(file.getAbsolutePath(), open);
+  }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
@@ -107,6 +130,11 @@ public class UnisokuReader extends FormatReader {
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     id = new Location(id).getAbsolutePath();
+
+    if (checkSuffix(id, "dat")) {
+      id = id.substring(0, id.lastIndexOf(".")) + ".HDR";
+    }
+
     super.initFile(id);
 
     datFile = id.substring(0, id.lastIndexOf(".")) + ".DAT";

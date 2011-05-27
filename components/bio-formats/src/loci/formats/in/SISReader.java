@@ -177,8 +177,15 @@ public class SISReader extends BaseTiffReader {
       store.setDetectorType(getDetectorType("Other"), 0, 0);
       store.setDetectorSettingsID(detector, 0, 0);
 
-      store.setPixelsPhysicalSizeX(new PositiveFloat(physicalSizeX / 1000), 0);
-      store.setPixelsPhysicalSizeY(new PositiveFloat(physicalSizeY / 1000), 0);
+      physicalSizeX /= 1000;
+      physicalSizeY /= 1000;
+
+      if (physicalSizeX > 0.000001) {
+        store.setPixelsPhysicalSizeX(new PositiveFloat(physicalSizeX), 0);
+      }
+      if (physicalSizeY > 0.000001) {
+        store.setPixelsPhysicalSizeY(new PositiveFloat(physicalSizeY), 0);
+      }
       store.setChannelName(channelName, 0, 0);
     }
   }

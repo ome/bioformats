@@ -123,6 +123,17 @@ public class TiffWriter extends FormatWriter {
     isBigTiff = false;
   }
 
+  // -- IFormatHandler API methods --
+
+  /* @see loci.formats.IFormatHandler#setId(String) */
+  public void setId(String id) throws FormatException, IOException {
+    super.setId(id);
+
+    synchronized (this) {
+      setupTiffSaver();
+    }
+  }
+
   // -- TiffWriter API methods --
 
   /**
@@ -158,7 +169,6 @@ public class TiffWriter extends FormatWriter {
     int index = no;
     // This operation is synchronized
     synchronized (this) {
-      setupTiffSaver();
       // This operation is synchronized against the TIFF saver.
       synchronized (tiffSaver) {
         index = prepareToWriteImage(no, buf, ifd, x, y, w, h);
@@ -194,8 +204,6 @@ public class TiffWriter extends FormatWriter {
         RandomAccessInputStream tmp = new RandomAccessInputStream(currentId);
         if (tmp.length() == 0) {
           synchronized (this) {
-            setupTiffSaver();
-
             // write TIFF header
             tiffSaver.writeHeader();
           }
