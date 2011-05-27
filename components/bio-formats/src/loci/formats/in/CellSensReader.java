@@ -300,12 +300,13 @@ public class CellSensReader extends FormatReader {
 
           int maxTiles = (int) (0.75 * tileOffsets[s].length);
           int tileSize = TILE_SIZE * TILE_SIZE;
+          double ratio = (double) core[s].sizeY / core[s].sizeX;
 
           while ((((long) core[s].sizeX * core[s].sizeY) / tileSize) > maxTiles)
           {
             adjustedDimensions = true;
-            core[s].sizeX /= 2;
-            core[s].sizeY /= 2;
+            core[s].sizeX -= TILE_SIZE;
+            core[s].sizeY -= (int) (ratio * TILE_SIZE);
           }
         }
         else {
