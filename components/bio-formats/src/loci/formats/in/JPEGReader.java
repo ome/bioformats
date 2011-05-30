@@ -25,6 +25,7 @@ package loci.formats.in;
 
 import java.io.IOException;
 
+import loci.common.RandomAccessInputStream;
 import loci.formats.DelegateReader;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
@@ -50,6 +51,7 @@ public class JPEGReader extends DelegateReader {
     nativeReaderInitialized = false;
     legacyReaderInitialized = false;
     domains = new String[] {FormatTools.GRAPHICS_DOMAIN};
+    suffixNecessary = false;
   }
 
   // -- IFormatHandler API methods --
@@ -69,6 +71,25 @@ public class JPEGReader extends DelegateReader {
   class DefaultJPEGReader extends ImageIOReader {
     public DefaultJPEGReader() {
       super("JPEG", new String[] {"jpg", "jpeg", "jpe"});
+      suffixNecessary = false;
+    }
+
+    /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+    public boolean isThisType(RandomAccessInputStream stream) throws IOException
+    {
+      final int blockLen = 4;
+      if (!FormatTools.validStream(stream, blockLen, false)) return false;
+
+      byte[] signature = new byte[blockLen];
+      stream.read(signature);
+
+      if (signature[0] != (byte) 0xff || signature[1] != (byte) 0xd8 ||
+        signature[2] != (byte) 0xff || signature[3] != (byte) 0xe0)
+      {
+        return false;
+      }
+
+      return true;
     }
   }
 

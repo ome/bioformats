@@ -84,7 +84,7 @@ public class APNGReader extends BIFormatReader {
     final int blockLen = 8;
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
 
-    byte[] signature = new byte[8];
+    byte[] signature = new byte[blockLen];
     stream.read(signature);
 
     if (signature[0] != (byte) 0x89 || signature[1] != 0x50 ||
