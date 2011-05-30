@@ -74,9 +74,27 @@ public class APNGReader extends BIFormatReader {
   public APNGReader() {
     super("Animated PNG", "png");
     domains = new String[] {FormatTools.GRAPHICS_DOMAIN};
+    suffixNecessary = false;
   }
 
   // -- IFormatReader API methods --
+
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
+    final int blockLen = 8;
+    if (!FormatTools.validStream(stream, blockLen, false)) return false;
+
+    byte[] signature = new byte[8];
+    stream.read(signature);
+
+    if (signature[0] != (byte) 0x89 || signature[1] != 0x50 ||
+      signature[2] != 0x4e || signature[3] != 0x47 || signature[4] != 0x0d ||
+      signature[5] != 0x0a || signature[6] != 0x1a || signature[7] != 0x0a)
+    {
+      return false;
+    }
+    return true;
+  }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
   public byte[][] get8BitLookupTable() {
