@@ -52,12 +52,14 @@ http://www.itk.org/Wiki/Plugin_IO_mechanisms
 // Luis Ibanez and Jim Miller for fixes and suggestions.
 
 #include <fstream>
+#include <sstream>
 
 #include "itkBioFormatsImageIO.h"
 #include "itkIOCommon.h"
 #include "itkExceptionObject.h"
 #include "itkByteSwapper.h"
 #include "itkMetaDataObject.h"
+#include "javaTools.h"
 
 #include <vnl/vnl_matrix.h>
 #include <vnl/vnl_vector.h>
@@ -87,46 +89,18 @@ namespace itk {
     DebugOn(); // NB: For debugging.
     itkDebugMacro("BioFormatsImageIO constructor");
     m_FileType = Binary;
-
-    try {
-      jace::StaticVmLoader* tmpLoader = (jace::StaticVmLoader*)jace::helper::getVmLoader();
-      if(tmpLoader == NULL) {
-
-        // initialize the Java virtual machine
-        itkDebugMacro("Creating JVM...");
-        jace::OptionList list;
-        jace::StaticVmLoader loader(JNI_VERSION_1_4);
-
-        const char name[] = "ITK_AUTOLOAD_PATH";
-        const char* namePtr;
-        namePtr = name;
-        char* path;
-        path = getenv(name);
-        std::string dir("");
-        if( path != NULL) {
-          dir.assign(path);
-        }
-
-        if( dir.at(dir.length() - 1) != SLASH ) {
-          dir.append(1,SLASH);
-        } 
-
-        list.push_back(jace::ClassPath(
-        dir+"jace-runtime.jar"+PATHSTEP+dir+"bio-formats.jar"+PATHSTEP+dir+"loci_tools.jar"
-        ));
-        list.push_back(jace::CustomOption("-Xcheck:jni"));
-        list.push_back(jace::CustomOption("-Xmx256m"));
-        list.push_back(jace::CustomOption("-Djava.awt.headless=true"));
-        list.push_back(jace::CustomOption("-Djava.library.path=" + dir));
-        //list.push_back(jace::CustomOption("-verbose"));
-        //list.push_back(jace::CustomOption("-verbose:jni"));
-        jace::helper::createVm(loader, list, false);
-        itkDebugMacro("JVM created.");
-      }
+    const char name[] = "ITK_AUTOLOAD_PATH";
+    const char* namePtr;
+    namePtr = name;
+    char* path;
+    path = getenv(name);
+    std::string dir("");
+    if( path != NULL) {
+      dir.assign(path);
     }
-    catch (JNIException& jniException) {
-      itkDebugMacro("Exception creating JVM: " << jniException.what());
-    }
+    itkDebugMacro("Creating JVM...");
+    JavaTools::createJVM(std::string(dir+"loci_tools.jar"+PATHSTEP+dir+"jace-runtime.jar"+PATHSTEP+dir+"bio-formats.jar"));
+    itkDebugMacro("JVM Created");
 
     try {
       itkDebugMacro("Creating Bio-Formats objects...");
@@ -304,40 +278,24 @@ namespace itk {
 
       // get physical resolution
       double physX = 1, physY = 1, physZ = 1, timeIncrement = 1;
-      // CTR - avoid invalid memory access error on some systems (OS X 10.5)
-      // TODO: NPE at retrieve.getPixelsPhysicalSize call
-      /*
+
       MetadataRetrieve retrieve = MetadataTools::asRetrieve(omeMeta);
-      itkDebugMacro("Retrieve: " << retrieve << " ImageCount: " << (retrieve.getImageCount()));
-      OME root = retrieve.getRoot();
-      jace::proxy::java::lang::Double d = retrieve.getPixelsPhysicalSizeX(0);
-      itkDebugMacro("Retrieve: " << retrieve << " d: " << d);
-      d.isNaN() ? physX = 1 : physX = d.doubleValue();
-      d = retrieve.getPixelsPhysicalSizeY(0);
-      d.isNaN() ? physY = 1 : physY = d.doubleValue();
-      if(imageCount > 1)
-      {
-        if(sizeZ > 1)
-        {
-          d = retrieve.getPixelsPhysicalSizeZ(0);
-          d.isNaN() ? physZ = 1 : physZ = d.doubleValue();
-        }
-        if(sizeT > 1)
-        {
-          d = retrieve.getPixelsTimeIncrement(0);
-          d.isNaN() ? timeIncrement = 1 : timeIncrement = d.doubleValue();
-        }
-      }
-      */
+
+      itkDebugMacro("Getting Physical Pixel Sizes...");
+      PositiveFloat metaX = retrieve.getPixelsPhysicalSizeX(0);
+      PositiveFloat metaY = retrieve.getPixelsPhysicalSizeY(0);
+      PositiveFloat metaZ = retrieve.getPixelsPhysicalSizeZ(0);
+      Double metaT = retrieve.getPixelsTimeIncrement(0);
+
+      physX = decode(metaX);
+      physY = decode(metaY);
+      physZ = decode(metaZ);
+      timeIncrement = decode(metaT);
 
       m_Spacing[0] = physX;
       m_Spacing[1] = physY;
-      // TODO: verify m_Spacing.length > 2
-      if (imageCount > 1)
-      {
-        m_Spacing[2] = physZ;
-        m_Spacing[3] = timeIncrement;
-      }
+      m_Spacing[2] = physZ;
+      m_Spacing[3] = timeIncrement;
 
       itkDebugMacro("Physical resolution = " << physX << " x " << physY
         << " x " << physZ << " x " << timeIncrement);
@@ -668,5 +626,19 @@ namespace itk {
     }
     itkDebugMacro("Done writing image.");
   } // end Write function
+
+  double BioFormatsImageIO::decode(PositiveFloat pf) {
+    if (pf.isNull()) return 1;
+    jace::proxy::java::lang::Object tmpo = pf.getValue();
+    jobject obj = tmpo.getJavaJniObject();
+    Double val (obj);
+    return decode(val);
+  }
+
+  double BioFormatsImageIO::decode(Double d) {
+    if (d.isNull() || d.isNaN()) return 1;
+    return d.doubleValue();
+  }
+
 
 } // end namespace itk

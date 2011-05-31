@@ -44,6 +44,7 @@ your combined work must be distributed under the terms of the GPL.
 
 // for Bio-Formats C++ bindings
 #include "bio-formats.h"
+#include "javaTools.h"
 #include "loci-common.h"
 using jace::JNIException;
 using jace::proxy::java::io::IOException;
@@ -100,7 +101,7 @@ bool doCore = true;
 bool doMeta = true;
 bool filter = true;
 bool thumbs = false;
-bool merge = false;
+bool si_merge = false;
 bool stitch = false;
 bool separate = false;
 bool expand = false;
@@ -124,24 +125,7 @@ DimensionSwapper* dimSwapper = NULL;
 
 // -- Methods --
 
-/* Initializes the Java virtual machine. */
-void createJVM() {
-  cout << "Creating JVM... ";
-  jace::StaticVmLoader loader(JNI_VERSION_1_4);
-  jace::OptionList list;
-  list.push_back(jace::ClassPath(
-    "jace-runtime.jar" + PATHSEP +
-    "bio-formats.jar" + PATHSEP +
-    "loci_tools.jar"));
-  list.push_back(jace::CustomOption("-Xcheck:jni"));
-  list.push_back(jace::CustomOption("-Xmx256m"));
-  list.push_back(jace::CustomOption("-Djava.awt.headless=true"));
-  //list.push_back(jace::CustomOption("-verbose:jni"));
-  jace::helper::createVm(loader, list, false);
-  cout << "JVM created." << endl;
-}
-
-void parseArgs(int argc, const char *argv[]) {
+void readArgs(int argc, const char *argv[]) {
   for (int i=1; i<argc; i++) {
     string arg = argv[i];
     if (arg.substr(0, 1).compare("-") == 0) {
@@ -151,7 +135,7 @@ void parseArgs(int argc, const char *argv[]) {
       else if (arg.compare("-nometa") == 0) doMeta = false;
       else if (arg.compare("-nofilter") == 0) filter = false;
       else if (arg.compare("-thumbs") == 0) thumbs = true;
-      else if (arg.compare("-merge") == 0) merge = true;
+      else if (arg.compare("-si_merge") == 0) si_merge = true;
       else if (arg.compare("-stitch") == 0) stitch = true;
       else if (arg.compare("-separate") == 0) separate = true;
       else if (arg.compare("-expand") == 0) expand = true;
@@ -193,7 +177,7 @@ void parseArgs(int argc, const char *argv[]) {
 void printUsage() {
   cout << "To test read a file in any format, run:" << endl <<
     "  showinf file [-nopix] [-nocore] [-nometa] [-thumbs] " << endl <<
-    "    [-merge] [-stitch] [-separate] [-expand] [-omexml]" << endl <<
+    "    [-si_merge] [-stitch] [-separate] [-expand] [-omexml]" << endl <<
     "    [-normalize] [-range start end] [-series num]" << endl <<
     "    [-swap inputOrder] [-shuffle outputOrder]" << endl <<
     "    [-xmlversion v] [-crop x,y,w,h]" << endl <<
@@ -205,7 +189,7 @@ void printUsage() {
     "   -nometa: do not parse format-specific metadata table" << endl <<
     " -nofilter: do not filter metadata fields" << endl <<
     "   -thumbs: read thumbnails instead of normal pixels" << endl <<
-    "    -merge: combine separate channels into RGB image" << endl <<
+    "    -si_merge: combine separate channels into RGB image" << endl <<
     "   -stitch: stitch files with similar names" << endl <<
     " -separate: split RGB image into separate channels" << endl <<
     "   -expand: expand indexed color to RGB" << endl <<
@@ -246,7 +230,7 @@ void configureReaderPreInit() {
   }
   if (expand) reader = channelFiller = new ChannelFiller(*reader);
   if (separate) reader = channelSeparator = new ChannelSeparator(*reader);
-  if (merge) reader = channelMerger = new ChannelMerger(*reader);
+  if (si_merge) reader = channelMerger = new ChannelMerger(*reader);
   if (swapOrder || shuffleOrder) {
     reader = dimSwapper = new DimensionSwapper(*reader);
   }
@@ -358,7 +342,7 @@ void readCoreMetadata() {
     cout << ":" << endl;
     cout << "\tImage count = " << imageCount << endl;
     cout << "\tRGB = " << tf(rgb) << " (" << rgbChanCount << ")";
-    if (merge) cout << " (merged)";
+    if (si_merge) cout << " (merged)";
     else if (separate) cout << " (separated)";
     cout << endl;
     if (rgb != (rgbChanCount != 1)) {
@@ -542,7 +526,7 @@ void destroyObjects() {
 
 /* Displays information on the given file. */
 bool testRead(int argc, const char *argv[]) {
-  parseArgs(argc, argv);
+  readArgs(argc, argv);
   if (printVersion) {
     cout << "Version: " << FormatTools::VERSION() << endl;
     cout << "SVN revision: " << FormatTools::SVN_REVISION() << endl;
@@ -585,7 +569,7 @@ bool testRead(int argc, const char *argv[]) {
 
 int main(int argc, const char *argv[]) {
   try {
-    createJVM();
+    JavaTools::createJVM(std::string("bio-formats.jar;loci_tools.jar"));
     testRead(argc, argv);
   }
   catch (FormatException& fe) {

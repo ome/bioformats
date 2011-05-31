@@ -4,7 +4,7 @@ find_package(Java REQUIRED)
 
 add_executable(showinf ../source/showinf.cpp)
 
-target_link_libraries(showinf bfcpp jace "${JAVA_JVM_LIBRARY}")
+target_link_libraries(showinf bfcpp jace jtools "${JAVA_JVM_LIBRARY}")
 
 add_executable(minimum_writer ../source/minimum_writer.cpp)
 
