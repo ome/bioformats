@@ -476,7 +476,8 @@ public class VolocityReader extends FormatReader {
           int bytes = (int) (s.length() / pixels);
           core[i].pixelType =
             FormatTools.pixelTypeFromBytes(bytes, false, false);
-          blockSize[i] = 114;
+          s.seek(70);
+          blockSize[i] = s.readInt();
         }
       }
       s.close();
