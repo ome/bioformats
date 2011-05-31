@@ -72,6 +72,8 @@ public class VolocityReader extends FormatReader {
   private Location dir = null;
   private int[] blockSize;
 
+  private boolean[] clippingData;
+
   // -- Constructor --
 
   /** Constructs a new Volocity reader. */
@@ -163,7 +165,16 @@ public class VolocityReader extends FormatReader {
       return buf;
     }
     pix.seek(offset);
-    readPlane(pix, x, y, w, h, buf);
+
+    if (clippingData[getSeries()]) {
+      byte[] b = decode(pix);
+      RandomAccessInputStream s = new RandomAccessInputStream(b);
+      readPlane(s, x, y, w, h, buf);
+      s.close();
+    }
+    else {
+      readPlane(pix, x, y, w, h, buf);
+    }
     pix.close();
 
     if (getRGBChannelCount() == 4) {
@@ -389,6 +400,8 @@ public class VolocityReader extends FormatReader {
 
     double[][][] stamps = new double[core.length][][];
 
+    clippingData = new boolean[core.length];
+
     for (int i=0; i<core.length; i++) {
       setSeries(i);
 
@@ -478,6 +491,7 @@ public class VolocityReader extends FormatReader {
             FormatTools.pixelTypeFromBytes(bytes, false, false);
           s.seek(70);
           blockSize[i] = s.readInt();
+          clippingData[i] = true;
         }
       }
       s.close();
@@ -607,6 +621,31 @@ public class VolocityReader extends FormatReader {
       }
     }
     return null;
+  }
+
+  private byte[] decode(RandomAccessInputStream pix) throws IOException {
+    byte[] buf = new byte[FormatTools.getPlaneSize(this)];
+
+    int pointer = 0;
+
+    while (pointer < buf.length) {
+      int p = pix.read();
+      if (p == 0x44) {
+        pix.skipBytes(1);
+        if (pix.read() != 0) {
+          pix.seek(pix.getFilePointer() - 2);
+          buf[pointer++] = (byte) p;
+          continue;
+        }
+        pointer += 3;
+        while (pix.read() == 0);
+      }
+      else {
+        buf[pointer++] = (byte) p;
+      }
+    }
+
+    return buf;
   }
 
 }
