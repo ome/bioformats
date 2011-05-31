@@ -25,6 +25,7 @@ package loci.formats.in;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.DecimalFormatSymbols;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.TimeZone;
@@ -376,6 +377,9 @@ public class MetamorphReader extends BaseTiffReader {
           creationTime = value;
         }
         else if (key.equals("ZStepSize")) {
+          char separator = new DecimalFormatSymbols().getDecimalSeparator();
+          value = value.replace('.', separator);
+          value = value.replace(',', separator);
           stepSize = Double.parseDouble(value);
         }
         else if (key.equals("NStagePositions")) {
@@ -488,6 +492,7 @@ public class MetamorphReader extends BaseTiffReader {
       int q = 0;
       int f = 0;
       String file = stks[q][f];
+
       while (file == null) {
         if (f < stks[q].length - 1) f++;
         else if (q < stks.length - 1) {
@@ -959,6 +964,9 @@ public class MetamorphReader extends BaseTiffReader {
               value = value.substring(0, value.indexOf(" "));
             }
             try {
+              char separator = new DecimalFormatSymbols().getDecimalSeparator();
+              value = value.replace('.', separator);
+              value = value.replace(',', separator);
               double exposure = Double.parseDouble(value);
               exposureTime = new Double(exposure / 1000);
             }
@@ -1065,7 +1073,11 @@ public class MetamorphReader extends BaseTiffReader {
       if (!l.exists()) {
         name = name.substring(0, name.lastIndexOf(".")) + ".tif";
         l = new Location(parent, name);
-        return l.exists() ? l.getAbsolutePath() : null;
+        if (!l.exists()) {
+          name = name.substring(0, name.lastIndexOf(".")) + ".stk";
+          l = new Location(parent, name);
+          return l.exists() ? l.getAbsolutePath() : null;
+        }
       }
     }
     return l.getAbsolutePath();
