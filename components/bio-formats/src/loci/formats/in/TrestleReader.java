@@ -71,9 +71,28 @@ public class TrestleReader extends BaseTiffReader {
     super("Trestle", new String[] {"tif"});
     domains = new String[] {FormatTools.HISTOLOGY_DOMAIN};
     suffixSufficient = false;
+    suffixNecessary = false;
   }
 
   // -- IFormatReader API methods --
+
+  /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  public boolean isThisType(String name, boolean open) {
+    if (super.isThisType(name, open)) return true;
+
+    if (!checkSuffix(name, "tif") && open) {
+      Location parent = new Location(name).getAbsoluteFile().getParentFile();
+      String[] list = parent.list(true);
+      for (String f : list) {
+        if (checkSuffix(f, "tif")) {
+          if (isThisType(new Location(parent, f).getAbsolutePath(), open)) {
+            return true;
+          }
+        }
+      }
+    }
+    return false;
+  }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
@@ -144,9 +163,29 @@ public class TrestleReader extends BaseTiffReader {
     return super.getOptimalTileHeight();
   }
 
+  // -- Internal FormatReader API methods --
+
+  /* @see loci.formats.FormatReader#initFile(String) */
+  protected void initFile(String id) throws FormatException, IOException {
+    if (!checkSuffix(id, "tif")) {
+      Location parent = new Location(id).getAbsoluteFile().getParentFile();
+      String[] list = parent.list(true);
+      for (String f : list) {
+        if (checkSuffix(f, "tif")) {
+          String path = new Location(parent, f).getAbsolutePath();
+          if (isThisType(path)) {
+            id = path;
+            break;
+          }
+        }
+      }
+    }
+    super.initFile(id);
+  }
+
   // -- Internal BaseTiffReader API methods --
 
-  /* @see loci.formats.BaseTiffReader#initStandardMetadata() */
+  /* @see loci.formats.in.BaseTiffReader#initStandardMetadata() */
   protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
 
