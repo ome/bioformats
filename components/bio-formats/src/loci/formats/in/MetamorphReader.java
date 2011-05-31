@@ -492,6 +492,7 @@ public class MetamorphReader extends BaseTiffReader {
       int q = 0;
       int f = 0;
       String file = stks[q][f];
+
       while (file == null) {
         if (f < stks[q].length - 1) f++;
         else if (q < stks.length - 1) {
@@ -1072,7 +1073,11 @@ public class MetamorphReader extends BaseTiffReader {
       if (!l.exists()) {
         name = name.substring(0, name.lastIndexOf(".")) + ".tif";
         l = new Location(parent, name);
-        return l.exists() ? l.getAbsolutePath() : null;
+        if (!l.exists()) {
+          name = name.substring(0, name.lastIndexOf(".")) + ".stk";
+          l = new Location(parent, name);
+          return l.exists() ? l.getAbsolutePath() : null;
+        }
       }
     }
     return l.getAbsolutePath();
