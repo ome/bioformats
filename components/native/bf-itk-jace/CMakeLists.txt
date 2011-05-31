@@ -84,6 +84,7 @@ set(include_dirs
   ${JACE_DIR}/source/c++/include
   ${BF_CPP_DIR}/include
   ${BF_CPP_DIR}/proxies/include
+  ${BF_CPP_DIR}/jtools/include
 )
 
 #if(EXISTS "${ITK_DIR}/CMakeCache.txt")
@@ -127,6 +128,7 @@ target_link_libraries(${lib_name}
   ITKIO
   bfcpp
   jace
+  jtools
   ${JAVA_JVM_LIBRARY}
 )
 
@@ -162,6 +164,7 @@ target_link_libraries(BioFormatsIOPlugin
   ${lib_name}
   bfcpp
   jace
+  jtools
   ${JAVA_JVM_LIBRARY}
 )
 
@@ -353,6 +356,20 @@ install(FILES
   DESTINATION "${BioFormatsImageIO_DIST_DIR}"
 )
 
+add_custom_command(
+  TARGET BioFormatsIOPlugin
+  DEPENDS "${BF_CPP_DIST_DIR}/${BF_LIB_PREFIX}jtools${BF_SUFFIX}"
+  POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E copy
+  "${BF_CPP_DIST_DIR}/${BF_LIB_PREFIX}jtools${BF_SUFFIX}"
+  "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_DIST_DIR}/${BF_LIB_PREFIX}jtools${BF_SUFFIX}"
+  VERBATIM
+)
+install(FILES
+  "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_DIST_DIR}/${BF_LIB_PREFIX}jtools${BF_SUFFIX}"
+  DESTINATION "${BioFormatsImageIO_DIST_DIR}"
+)
+
 if(APPLE)
 add_custom_command(
   TARGET BioFormatsIOPlugin
@@ -380,6 +397,20 @@ add_custom_command(
 )
 install(FILES
   "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_DIST_DIR}/jace-runtime.jar"
+  DESTINATION "${BioFormatsImageIO_DIST_DIR}"
+)
+
+add_custom_command(
+  TARGET BioFormatsIOPlugin
+  DEPENDS "${BF_CPP_DIST_DIR}/bio-formats.jar"
+  POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E copy
+  "${BF_CPP_DIST_DIR}/bio-formats.jar"
+  "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_DIST_DIR}/bio-formats.jar"
+  VERBATIM
+)
+install(FILES
+  "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_DIST_DIR}/bio-formats.jar"
   DESTINATION "${BioFormatsImageIO_DIST_DIR}"
 )
 

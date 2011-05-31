@@ -72,11 +72,13 @@ using jace::proxy::loci::formats::meta::IMetadata;
 using jace::proxy::ome::xml::model::enums::DimensionOrder;
 using jace::proxy::ome::xml::model::enums::PixelType;
 using jace::proxy::ome::xml::model::primitives::PositiveInteger;
+using jace::proxy::ome::xml::model::primitives::PositiveFloat;
 using jace::proxy::types::JInt;
 using jace::proxy::java::lang::Boolean;
 using jace::proxy::java::lang::Integer;
+using jace::proxy::java::lang::Double;
+using jace::proxy::java::lang::String;
 
-using jace::proxy::ome::xml::model::OME;
 #undef Byte
 
 // STL includes
@@ -88,7 +90,7 @@ using jace::proxy::ome::xml::model::OME;
 
 #include <itk_zlib.h>
 
-//#include "itkBioFormatsIOWin32Header.h"
+#include "itkBioFormatsIOWin32Header.h"
 
 namespace itk
 {
@@ -130,6 +132,9 @@ namespace itk
     ChannelSeparator* channelSeparator;
     ChannelMerger* channelMerger;
     ImageWriter* writer;
+
+    virtual double decode(PositiveFloat pf);
+    virtual double decode(Double h);
   };
 
 }
