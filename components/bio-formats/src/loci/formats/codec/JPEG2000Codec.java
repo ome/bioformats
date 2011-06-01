@@ -201,7 +201,7 @@ public class JPEG2000Codec extends BaseCodec {
     initialize();
 
     if (options == null || !(options instanceof JPEG2000CodecOptions)) {
-      options = JPEG2000CodecOptions.getDefaultOptions();
+      options = JPEG2000CodecOptions.getDefaultOptions(options);
     }
     else {
       options = new JPEG2000CodecOptions(options);
