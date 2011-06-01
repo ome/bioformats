@@ -694,12 +694,16 @@ public class DicomReader extends FormatReader {
         store.setImageDescription(imageType, i);
 
         if (pixelSizeX != null) {
-          store.setPixelsPhysicalSizeX(
-            new PositiveFloat(new Double(pixelSizeX)), i);
+          Double sizeX = new Double(pixelSizeX);
+          if (sizeX > 0) {
+            store.setPixelsPhysicalSizeX(new PositiveFloat(sizeX), i);
+          }
         }
         if (pixelSizeY != null) {
-          store.setPixelsPhysicalSizeY(
-            new PositiveFloat(new Double(pixelSizeY)), i);
+          Double sizeY = new Double(pixelSizeY);
+          if (sizeY > 0) {
+            store.setPixelsPhysicalSizeY(new PositiveFloat(sizeY), i);
+          }
         }
       }
     }
