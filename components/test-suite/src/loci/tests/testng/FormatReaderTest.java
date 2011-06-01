@@ -73,9 +73,11 @@ import loci.formats.in.ND2Reader;
 import loci.formats.in.NiftiReader;
 import loci.formats.in.NRRDReader;
 import loci.formats.in.OMETiffReader;
+import loci.formats.in.PGMReader;
 import loci.formats.in.PrairieReader;
 import loci.formats.in.SISReader;
 import loci.formats.in.TiffDelegateReader;
+import loci.formats.in.TrestleReader;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
@@ -1529,6 +1531,14 @@ public class FormatReaderTest {
             // reader to pick up TIFFs from a Prairie dataset
             if (result && r instanceof PrairieReader &&
               readers[j] instanceof OMETiffReader)
+            {
+              continue;
+            }
+
+            if (result && r instanceof TrestleReader &&
+              (readers[j] instanceof JPEGReader ||
+              readers[j] instanceof PGMReader ||
+              readers[j] instanceof TiffDelegateReader))
             {
               continue;
             }
