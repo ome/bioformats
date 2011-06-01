@@ -167,11 +167,6 @@
       <id>loci.thirdparty</id>
       <url>http://dev.loci.wisc.edu/maven2/thirdparty</url>
     </repository>
-    <!-- NB: for netcdf-java -->
-    <repository>
-      <id>unifi.it</id>
-      <url>http://ulisse.pin.unifi.it:8081/nexus/content/groups/open.repos</url>
-    </repository>
   </repositories>
 
   <distributionManagement>
