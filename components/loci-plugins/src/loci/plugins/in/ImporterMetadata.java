@@ -96,6 +96,9 @@ public class ImporterMetadata extends HashMap<String, Object> {
       put(pad + s + "DimensionOrder", r.getDimensionOrder());
       put(pad + s + "IsInterleaved", new Boolean(r.isInterleaved()));
       put(pad + s + "BitsPerPixel", new Integer(r.getBitsPerPixel()));
+
+      String seriesName = process.getOMEMetadata().getImageName(i);
+      put(pad + "Series " + i + " Name", seriesName);
     }
     r.setSeries(oldSeries);
   }
