@@ -918,13 +918,19 @@ public class ICSReader extends FormatReader {
       if (pixelSizes != null) {
         for (int i=0; i<pixelSizes.length; i++) {
           if (axes[i].equals("x")) {
-            store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSizes[i]), 0);
+            if (pixelSizes[i] > 0) {
+              store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSizes[i]), 0);
+            }
           }
           else if (axes[i].equals("y")) {
-            store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSizes[i]), 0);
+            if (pixelSizes[i] > 0) {
+              store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSizes[i]), 0);
+            }
           }
           else if (axes[i].equals("z")) {
-            store.setPixelsPhysicalSizeZ(new PositiveFloat(pixelSizes[i]), 0);
+            if (pixelSizes[i] > 0) {
+              store.setPixelsPhysicalSizeZ(new PositiveFloat(pixelSizes[i]), 0);
+            }
           }
           else if (axes[i].equals("t")) {
             store.setPixelsTimeIncrement(pixelSizes[i], 0);

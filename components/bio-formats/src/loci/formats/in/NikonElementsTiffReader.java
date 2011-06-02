@@ -129,9 +129,18 @@ public class NikonElementsTiffReader extends BaseTiffReader {
       return;
     }
 
-    store.setPixelsPhysicalSizeX(new PositiveFloat(handler.getPixelSizeX()), 0);
-    store.setPixelsPhysicalSizeY(new PositiveFloat(handler.getPixelSizeY()), 0);
-    store.setPixelsPhysicalSizeZ(new PositiveFloat(handler.getPixelSizeZ()), 0);
+    Double pixelSizeX = handler.getPixelSizeX();
+    Double pixelSizeY = handler.getPixelSizeY();
+    Double pixelSizeZ = handler.getPixelSizeZ();
+    if (pixelSizeX > 0) {
+      store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSizeX), 0);
+    }
+    if (pixelSizeY > 0) {
+      store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSizeY), 0);
+    }
+    if (pixelSizeZ > 0) {
+      store.setPixelsPhysicalSizeZ(new PositiveFloat(pixelSizeZ), 0);
+    }
 
     String instrument = MetadataTools.createLSID("Instrument", 0);
     store.setInstrumentID(instrument, 0);
