@@ -208,6 +208,11 @@ public class NativeND2Reader extends FormatReader {
     options.maxBytes = (int) maxFP;
 
     int scanlinePad = isJPEG ? 0 : getSizeX() % 2;
+    if (scanlinePad == 1) {
+      if (split && !isLossless) {
+        scanlinePad = 0;
+      }
+    }
 
     if (isJPEG || isLossless) {
       if (codec == null) codec = createCodec(isJPEG);
