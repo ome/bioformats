@@ -234,7 +234,7 @@ public class TiffWriter extends FormatWriter {
         byte[] b = ImageTools.splitChannels(buf, i, c, bytesPerPixel,
           false, interleaved);
 
-        saveBytes(no + i, b, (IFD) ifd.clone(), x, y, w, h);
+        saveBytes(no * c + i, b, (IFD) ifd.clone(), x, y, w, h);
       }
       checkParams = true;
       return -1;
