@@ -120,7 +120,10 @@ public class JAIIIOServiceImpl extends AbstractService
     ios.close();
   }
 
-  /* @see JAIIIOService#writeImage(OutputStream, BufferedImage) */
+  /**
+   * @deprecated
+   * @see JAIIIOService#writeImage(OutputStream, BufferedImage)
+   */
   public void writeImage(OutputStream out, BufferedImage img, boolean lossless,
     int[] codeBlockSize, double quality) throws IOException, ServiceException
   {

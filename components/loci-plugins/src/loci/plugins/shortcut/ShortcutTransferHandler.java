@@ -117,7 +117,7 @@ public class ShortcutTransferHandler extends TransferHandler {
           // convert "file://" URLs into path names
           ids[i] = id.replaceAll("^file:/*", "/");
           if (!new File(ids[i]).exists()) {
-            ids[i] = URLDecoder.decode(ids[i]);
+            ids[i] = URLDecoder.decode(ids[i], "UTF-8");
           }
         }
       }
