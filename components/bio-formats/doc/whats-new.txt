@@ -1,3 +1,26 @@
+4.3.0 (2011 June):
+* Many bug fixes, including:
+  - Many fixes for reading and writing sub-images
+  - Fixes for stage position parsing in the Zeiss formats
+  - File type detection fixes
+* Updated JPEG-2000 reading and writing support to be more flexible
+* Added support for 9 new formats:
+  - InCell 3000
+  - Trestle
+  - Hamamatsu .ndpi
+  - Hamamatsu VMS
+  - SPIDER
+  - Volocity .mvd2
+  - Olympus SIS TIFF
+  - IMAGIC
+  - cellSens VSI
+* Updated to 2011-06 OME-XML schema
+* Minor speed improvements in many formats
+* Switched version control system from SVN to Git
+* Moved all Trac tickets into the OME Trac: http://trac.openmicroscopy.org.uk
+* Improvements to testing frameworks
+* Added Maven build system as an alternative to the existing Ant build system
+
 4.2.2 (2010 December 6):
 * Several bug fixes, notably:
   - Metadata parsing fixes for Zeiss LSM, Metamorph STK, and FV1000
