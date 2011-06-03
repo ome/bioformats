@@ -1,5 +1,5 @@
 //
-// CompressDecompressTest
+// CompressDecompressTest.java
 //
 
 /*

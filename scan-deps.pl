@@ -86,6 +86,18 @@ ZZ
   LICENSE => "GPL",
 );
 
+my %metakit = (
+  NAME    => "metakit",
+  TITLE   => "Metakit database library",
+  PATH    => "components/metakit",
+  JAR     => "metakit.jar",
+  PACKAGE => "ome.metakit",
+  DESC    => <<ZZ,
+A library for reading Metakit database files.
+ZZ
+  LICENSE => "GPL",
+);
+
 my %omeIO = (
   NAME    => "ome-io",
   TITLE   => "OME I/O",
@@ -564,6 +576,7 @@ my @active = (
   \%bioFormats,
   \%lociCommon,
   \%lociPlugins,
+  \%metakit,
   \%omeIO,
   \%omePlugins,
   \%omeXML,

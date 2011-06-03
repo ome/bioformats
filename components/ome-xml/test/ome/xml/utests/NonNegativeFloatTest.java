@@ -1,5 +1,5 @@
 //
-// NonNegativeFloatFloat.java
+// NonNegativeFloatTest.java
 //
 
 /*
