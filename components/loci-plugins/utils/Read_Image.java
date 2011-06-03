@@ -18,7 +18,8 @@ import loci.plugins.util.ImageProcessorReader;
 import loci.plugins.util.LociPrefs;
 
 /**
- * A very simple example of using Bio-Formats in an ImageJ plugin.
+ * An ImageJ plugin that uses Bio-Formats to build up an {@link ImageStack},
+ * reading image planes one by one.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/loci-plugins/utils/Read_Image.java">Trac</a>,
