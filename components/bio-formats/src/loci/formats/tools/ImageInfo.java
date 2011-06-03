@@ -103,6 +103,7 @@ public class ImageInfo {
   private boolean preload = false;
   private boolean ascii = false;
   private boolean usedFiles = true;
+  private boolean omexmlOnly = false;
   private String omexmlVersion = null;
   private int start = 0;
   private int end = Integer.MAX_VALUE;
@@ -145,6 +146,7 @@ public class ImageInfo {
     autoscale = false;
     preload = false;
     usedFiles = true;
+    omexmlOnly = false;
     omexmlVersion = null;
     start = 0;
     end = Integer.MAX_VALUE;
@@ -177,6 +179,11 @@ public class ImageInfo {
         else if (args[i].equals("-autoscale")) autoscale = true;
         else if (args[i].equals("-debug")) {
           DebugTools.enableLogging("DEBUG");
+        }
+        else if (args[i].equals("-omexml-only")) {
+          omexmlOnly = true;
+          omexml = true;
+          DebugTools.enableLogging("OFF");
         }
         else if (args[i].equals("-preload")) preload = true;
         else if (args[i].equals("-ascii")) ascii = true;
@@ -887,8 +894,14 @@ public class ImageInfo {
       LOGGER.info("Generating OME-XML (schema version {})", version);
     }
     if (ms instanceof MetadataRetrieve) {
+      if (omexmlOnly) {
+        DebugTools.enableLogging("INFO");
+      }
       String xml = service.getOMEXML((MetadataRetrieve) ms);
       LOGGER.info("{}", XMLTools.indentXML(xml, true));
+      if (omexmlOnly) {
+        DebugTools.enableLogging("OFF");
+      }
       service.validateOMEXML(xml);
     }
     else {
