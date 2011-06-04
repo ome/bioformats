@@ -344,8 +344,8 @@ public class Location {
       String[] f = file.list();
       if (f == null) return null;
       for (String name : f) {
-        if (!noHiddenFiles ||
-          !new Location(file.getAbsolutePath(), name).isHidden())
+        if (!noHiddenFiles || !(name.startsWith(".") ||
+          new Location(file.getAbsolutePath(), name).isHidden()))
         {
           files.add(name);
         }
