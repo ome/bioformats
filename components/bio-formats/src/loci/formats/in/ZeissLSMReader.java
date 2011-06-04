@@ -25,6 +25,7 @@ package loci.formats.in;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Vector;
 
@@ -1729,6 +1730,7 @@ public class ZeissLSMReader extends FormatReader {
     }
 
     String[] fileList = parent.list(true);
+    Arrays.sort(fileList);
     for (int i=0; i<fileList.length; i++) {
       String absolutePath = new Location(parent, fileList[i]).getAbsolutePath();
       if (checkSuffix(fileList[i], "mdb") &&
