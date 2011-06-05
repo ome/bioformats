@@ -169,7 +169,7 @@ public class VolocityReader extends FormatReader {
 
     if (clippingData[getSeries()]) {
       pix.seek(offset - 3);
-      byte[] b = new LZOCodec.decompress(pix, null);
+      byte[] b = new LZOCodec().decompress(pix, null);
       RandomAccessInputStream s = new RandomAccessInputStream(b);
       readPlane(s, x, y, w, h, buf);
       s.close();
