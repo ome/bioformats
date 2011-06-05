@@ -38,6 +38,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.MissingLibraryException;
+import loci.formats.codec.LZOCodec;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.MetakitService;
 
@@ -167,7 +168,8 @@ public class VolocityReader extends FormatReader {
     pix.seek(offset);
 
     if (clippingData[getSeries()]) {
-      byte[] b = decode(pix);
+      pix.seek(offset - 3);
+      byte[] b = new LZOCodec.decompress(pix, null);
       RandomAccessInputStream s = new RandomAccessInputStream(b);
       readPlane(s, x, y, w, h, buf);
       s.close();
@@ -621,31 +623,6 @@ public class VolocityReader extends FormatReader {
       }
     }
     return null;
-  }
-
-  private byte[] decode(RandomAccessInputStream pix) throws IOException {
-    byte[] buf = new byte[FormatTools.getPlaneSize(this)];
-
-    int pointer = 0;
-
-    while (pointer < buf.length) {
-      int p = pix.read();
-      if (p == 0x44) {
-        pix.skipBytes(1);
-        if (pix.read() != 0) {
-          pix.seek(pix.getFilePointer() - 2);
-          buf[pointer++] = (byte) p;
-          continue;
-        }
-        pointer += 3;
-        while (pix.read() == 0);
-      }
-      else {
-        buf[pointer++] = (byte) p;
-      }
-    }
-
-    return buf;
   }
 
 }
