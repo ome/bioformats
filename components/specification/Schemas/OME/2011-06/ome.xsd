@@ -1545,7 +1545,8 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 				The channel number associated with a filter set is specified in Channel.
 				It is based on the FilterSpec type, so has the required attributes Manufacturer, Model, and LotNumber.
 				It may also contain a Type attribute which may be set to
-				'LongPass', 'ShortPass', 'BandPass', or 'MultiPass'.
+				'LongPass', 'ShortPass', 'BandPass', 'MultiPass',
+				'Dichroic', 'NeutralDensity', or 'Other'.
 				It can be associated with an optional FilterWheel - Note: this is not the same as a FilterSet
 			</xsd:documentation>
 		</xsd:annotation>
