@@ -124,6 +124,17 @@
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
+			<xsd:attribute name="Creator" type="xsd:string" use="optional">
+				<xsd:annotation>
+					<xsd:documentation>
+						This is the name of the creating application of the OME-XML
+						and preferably its full version.
+						e.g "CompanyName, SoftwareName, V2.6.3456"
+						This is optional but we hope it will be set by applications
+						writing out OME-XML from scratch.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
 		</xsd:complexType>
 
 		<!-- Unique IDs and Valid References -->
