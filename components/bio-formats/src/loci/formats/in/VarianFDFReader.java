@@ -163,9 +163,15 @@ public class VarianFDFReader extends FormatReader {
     MetadataTools.populatePixels(store, this, !minMetadata);
 
     if (!minMetadata) {
-      store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSizeX), 0);
-      store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSizeY), 0);
-      store.setPixelsPhysicalSizeZ(new PositiveFloat(pixelSizeZ), 0);
+      if (pixelSizeX > 0) {
+        store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSizeX), 0);
+      }
+      if (pixelSizeY > 0) {
+        store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSizeY), 0);
+      }
+      if (pixelSizeZ > 0) {
+        store.setPixelsPhysicalSizeZ(new PositiveFloat(pixelSizeZ), 0);
+      }
 
       for (int i=0; i<getImageCount(); i++) {
         store.setPlanePositionX(originX, 0, i);

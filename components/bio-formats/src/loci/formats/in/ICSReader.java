@@ -938,12 +938,14 @@ public class ICSReader extends FormatReader {
         }
       }
       else if (sizes != null) {
-        if (sizes.length > 0) {
+        if (sizes.length > 0 && sizes[0] > 0) {
           store.setPixelsPhysicalSizeX(new PositiveFloat(sizes[0]), 0);
         }
         if (sizes.length > 1) {
           sizes[1] /= getSizeY();
-          store.setPixelsPhysicalSizeY(new PositiveFloat(sizes[1]), 0);
+          if (sizes[1] > 0) {
+            store.setPixelsPhysicalSizeY(new PositiveFloat(sizes[1]), 0);
+          }
         }
       }
 
