@@ -906,12 +906,16 @@ public class FV1000Reader extends FormatReader {
       // populate Dimensions data
 
       if (pixelSizeX != null) {
-        store.setPixelsPhysicalSizeX(
-          new PositiveFloat(new Double(pixelSizeX)), i);
+        Double sizeX = new Double(pixelSizeX);
+        if (sizeX > 0) {
+          store.setPixelsPhysicalSizeX(new PositiveFloat(sizeX), i);
+        }
       }
       if (pixelSizeY != null) {
-        store.setPixelsPhysicalSizeY(
-          new PositiveFloat(new Double(pixelSizeY)), i);
+        Double sizeY = new Double(pixelSizeY);
+        if (sizeY > 0) {
+          store.setPixelsPhysicalSizeY(new PositiveFloat(sizeY), i);
+        }
       }
       if (pixelSizeZ == Double.NEGATIVE_INFINITY ||
         pixelSizeZ == Double.POSITIVE_INFINITY || getSizeZ() == 1)
@@ -924,7 +928,9 @@ public class FV1000Reader extends FormatReader {
         pixelSizeT = 1d;
       }
 
-      store.setPixelsPhysicalSizeZ(new PositiveFloat(pixelSizeZ), i);
+      if (pixelSizeZ > 0) {
+        store.setPixelsPhysicalSizeZ(new PositiveFloat(pixelSizeZ), i);
+      }
       store.setPixelsTimeIncrement(pixelSizeT, i);
 
       // populate LogicalChannel data
