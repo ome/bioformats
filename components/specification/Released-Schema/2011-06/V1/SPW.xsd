@@ -85,8 +85,17 @@
 			<xsd:attribute name="Name" use="optional" type="xsd:string">
 				<xsd:annotation>
 					<xsd:documentation>
-						The Name identifies the plate to the user.	It is used much like the 
-						ID, and so must be unique within the document.
+						The Name identifies the plate to the user.	
+						It is used much like the ID, and so must be 
+						unique within the document.
+						
+						If a plate name is not available when one is needed
+						it will be constructed in the following order:
+						1. If name is available use it.
+						2. If not use "Start time - End time" 
+						    (NOTE: Not a subtraction! A string representation
+						    of the two times separated by a dash.)
+						3. If these times are not available use the Plate ID.
 					</xsd:documentation>
 				</xsd:annotation>		
 			</xsd:attribute>
