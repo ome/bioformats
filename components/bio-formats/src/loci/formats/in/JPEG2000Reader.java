@@ -68,7 +68,7 @@ public class JPEG2000Reader extends FormatReader {
 
   /** Constructs a new JPEG2000Reader. */
   public JPEG2000Reader() {
-    super("JPEG-2000", new String[] {"jp2", "j2k"});
+    super("JPEG-2000", new String[] {"jp2", "j2k", "jpf"});
     suffixSufficient = false;
     domains = new String[] {FormatTools.GRAPHICS_DOMAIN};
   }
