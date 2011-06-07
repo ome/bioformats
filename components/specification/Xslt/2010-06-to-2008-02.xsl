@@ -188,7 +188,14 @@
 						<xsl:value-of select="@BigEndian"/>
 					</xsl:for-each>
 				</xsl:variable>
-				<xsl:value-of select="$valueBigEndian"/>
+				<xsl:choose>
+					<xsl:when test="string-length($valueBigEndian) = 0">
+						<xsl:value-of select="'false'"/>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:value-of select="$valueBigEndian"/>
+					</xsl:otherwise>
+				</xsl:choose>
 			</xsl:attribute>
 			
 			<xsl:for-each select="@* [name(.) = 'DimensionOrder' or name(.) = 'SizeC' or name(.) = 'SizeT' or name(.) = 'SizeX' or name(.) = 'SizeY' or name(.) = 'SizeZ']">
@@ -197,6 +204,7 @@
 				</xsl:attribute>
 			</xsl:for-each>
 			<xsl:apply-templates select="* [local-name(.) = 'BinData']"/>
+			<xsl:apply-templates select="* [local-name(.) = 'TiffData']"/>
 		</xsl:element>
 	</xsl:template>
 	
@@ -213,7 +221,24 @@
 			<xsl:apply-templates select="node()"/>
 		</xsl:element>
 	</xsl:template>
+
+	<xsl:template match="OME:TiffData">
+		<xsl:element name="{name()}" namespace="{$newOMENS}">
+			<xsl:for-each select="@* [not(name(.) = 'PlaneCount')]">
+				<xsl:attribute name="{local-name(.)}">
+					<xsl:value-of select="."/>
+				</xsl:attribute>
+			</xsl:for-each>
+			<xsl:for-each select="@* [name(.) = 'PlaneCount']">
+				<xsl:attribute name="NumPlanes">
+					<xsl:value-of select="."/>
+				</xsl:attribute>
+			</xsl:for-each>
+			<xsl:apply-templates select="node()"/>
+		</xsl:element>
+	</xsl:template>
 	
+
 	<xsl:template match="ROI:*"/>
 	<xsl:template match="SA:*"/>
 	<xsl:template match="SPW:*"/>
@@ -228,7 +253,7 @@
 			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 			xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2008-02 
 			http://www.openmicroscopy.org/Schemas/OME/2008-02/ome.xsd">
-			<xsl:apply-templates/>
+			<xsl:apply-templates select="* [local-name(.) = 'Image']"/>
 		</OME>
 	</xsl:template>
 
