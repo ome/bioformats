@@ -68,6 +68,9 @@ public class APNGReader extends BIFormatReader {
 
   private byte[][] lut;
 
+  private BufferedImage lastImage;
+  private int lastImageIndex = -1;
+
   // -- Constructor --
 
   /** Constructs a new APNGReader. */
@@ -108,15 +111,20 @@ public class APNGReader extends BIFormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, -1, x, y, w, h);
 
+    if (no == lastImageIndex) {
+      return AWTImageTools.getSubimage(lastImage, isLittleEndian(), x, y, w, h);
+    }
+
     if (no == 0) {
       in.seek(0);
       DataInputStream dis =
         new DataInputStream(new BufferedInputStream(in, 4096));
+      lastImage = ImageIO.read(dis);
+      lastImageIndex = 0;
       if (x == 0 && y == 0 && w == getSizeX() && h == getSizeY()) {
-        return ImageIO.read(dis);
+        return lastImage;
       }
-      return AWTImageTools.getSubimage(ImageIO.read(dis), isLittleEndian(),
-        x, y, w, h);
+      return AWTImageTools.getSubimage(lastImage, isLittleEndian(), x, y, w, h);
     }
 
     ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -183,7 +191,10 @@ public class APNGReader extends BIFormatReader {
     WritableRaster currentRaster = b.getRaster();
 
     firstRaster.setDataElements(coords[0], coords[1], currentRaster);
-    return new BufferedImage(first.getColorModel(), firstRaster, false, null);
+    lastImage =
+      new BufferedImage(first.getColorModel(), firstRaster, false, null);
+    lastImageIndex = no;
+    return lastImage;
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
@@ -193,6 +204,8 @@ public class APNGReader extends BIFormatReader {
       lut = null;
       frameCoordinates = null;
       blocks = null;
+      lastImage = null;
+      lastImageIndex = -1;
     }
   }
 

@@ -812,8 +812,20 @@ public final class AWTImageTools {
    * or double[][], depending on the image's transfer type.
    */
   public static Object getPixels(BufferedImage image) {
+    return getPixels(image, 0, 0, image.getWidth(), image.getHeight());
+  }
+
+  /**
+   *
+   * Gets the image's pixel data as arrays of primitives, one per channel.
+   * The returned type will be either byte[][], short[][], int[][], float[][]
+   * or double[][], depending on the image's transfer type.
+   */
+  public static Object getPixels(BufferedImage image, int x, int y,
+    int w, int h)
+  {
     WritableRaster raster = image.getRaster();
-    return getPixels(raster);
+    return getPixels(raster, x, y, w, h);
   }
 
   /**
@@ -822,14 +834,27 @@ public final class AWTImageTools {
    * or double[][], depending on the raster's transfer type.
    */
   public static Object getPixels(WritableRaster raster) {
+    return getPixels(raster, 0, 0, raster.getWidth(), raster.getHeight());
+  }
+
+  /**
+   * Gets the raster's pixel data as arrays of primitives, one per channel.
+   * The returned type will be either byte[][], short[][], int[][], float[][]
+   * or double[][], depending on the raster's transfer type.
+   */
+  public static Object getPixels(WritableRaster raster, int x, int y,
+    int w, int h)
+  {
     int tt = raster.getTransferType();
-    if (tt == DataBuffer.TYPE_BYTE) return getBytes(raster);
+    if (tt == DataBuffer.TYPE_BYTE) return getBytes(raster, x, y, w, h);
     else if (tt == DataBuffer.TYPE_USHORT || tt == DataBuffer.TYPE_SHORT) {
-      return getShorts(raster);
+      return getShorts(raster, x, y, w, h);
     }
-    else if (tt == DataBuffer.TYPE_INT) return getInts(raster);
-    else if (tt == DataBuffer.TYPE_FLOAT) return getFloats(raster);
-    else if (tt == DataBuffer.TYPE_DOUBLE) return getDoubles(raster);
+    else if (tt == DataBuffer.TYPE_INT) return getInts(raster, x, y, w, h);
+    else if (tt == DataBuffer.TYPE_FLOAT) return getFloats(raster, x, y, w, h);
+    else if (tt == DataBuffer.TYPE_DOUBLE) {
+      return getDoubles(raster, x, y, w, h);
+    }
     else return null;
   }
 
@@ -841,14 +866,22 @@ public final class AWTImageTools {
 
   /** Extracts pixel data as arrays of unsigned bytes, one per channel. */
   public static byte[][] getBytes(WritableRaster r) {
-    if (canUseBankDataDirectly(r, DataBuffer.TYPE_BYTE, DataBufferByte.class)) {
+    return getBytes(r, 0, 0, r.getWidth(), r.getHeight());
+  }
+
+  /** Extracts pixel data as arrays of unsigned bytes, one per channel. */
+  public static byte[][] getBytes(WritableRaster r, int x, int y, int w, int h)
+  {
+    if (canUseBankDataDirectly(r, DataBuffer.TYPE_BYTE, DataBufferByte.class) &&
+      x == 0 && y == 0 && w == r.getWidth() && h == r.getHeight())
+    {
       return ((DataBufferByte) r.getDataBuffer()).getBankData();
     }
-    int w = r.getWidth(), h = r.getHeight(), c = r.getNumBands();
+    int c = r.getNumBands();
     byte[][] samples = new byte[c][w * h];
     int[] buf = new int[w * h];
     for (int i=0; i<c; i++) {
-      r.getSamples(0, 0, w, h, i, buf);
+      r.getSamples(x, y, w, h, i, buf);
       for (int j=0; j<buf.length; j++) samples[i][j] = (byte) buf[j];
     }
     return samples;
@@ -862,16 +895,24 @@ public final class AWTImageTools {
 
   /** Extracts pixel data as arrays of unsigned shorts, one per channel. */
   public static short[][] getShorts(WritableRaster r) {
+    return getShorts(r, 0, 0, r.getWidth(), r.getHeight());
+  }
+
+  /** Extracts pixel data as arrays of unsigned shorts, one per channel. */
+  public static short[][] getShorts(WritableRaster r, int x, int y,
+    int w, int h)
+  {
     if (canUseBankDataDirectly(r,
-      DataBuffer.TYPE_USHORT, DataBufferUShort.class))
+      DataBuffer.TYPE_USHORT, DataBufferUShort.class) && x == 0 && y == 0 &&
+      w == r.getWidth() && h == r.getHeight())
     {
       return ((DataBufferUShort) r.getDataBuffer()).getBankData();
     }
-    int w = r.getWidth(), h = r.getHeight(), c = r.getNumBands();
+    int c = r.getNumBands();
     short[][] samples = new short[c][w * h];
     int[] buf = new int[w * h];
     for (int i=0; i<c; i++) {
-      r.getSamples(0, 0, w, h, i, buf);
+      r.getSamples(x, y, w, h, i, buf);
       for (int j=0; j<buf.length; j++) samples[i][j] = (short) buf[j];
     }
     return samples;
@@ -885,13 +926,20 @@ public final class AWTImageTools {
 
   /** Extracts pixel data as arrays of signed integers, one per channel. */
   public static int[][] getInts(WritableRaster r) {
-    if (canUseBankDataDirectly(r, DataBuffer.TYPE_INT, DataBufferInt.class)) {
+    return getInts(r, 0, 0, r.getWidth(), r.getHeight());
+  }
+
+  /** Extracts pixel data as arrays of signed integers, one per channel. */
+  public static int[][] getInts(WritableRaster r, int x, int y, int w, int h) {
+    if (canUseBankDataDirectly(r, DataBuffer.TYPE_INT, DataBufferInt.class) &&
+      x == 0 && y == 0 && w == r.getWidth() && h == r.getHeight())
+    {
       return ((DataBufferInt) r.getDataBuffer()).getBankData();
     }
     // NB: an order of magnitude faster than the naive makeType solution
-    int w = r.getWidth(), h = r.getHeight(), c = r.getNumBands();
+    int c = r.getNumBands();
     int[][] samples = new int[c][w * h];
-    for (int i=0; i<c; i++) r.getSamples(0, 0, w, h, i, samples[i]);
+    for (int i=0; i<c; i++) r.getSamples(x, y, w, h, i, samples[i]);
     return samples;
   }
 
@@ -903,14 +951,23 @@ public final class AWTImageTools {
 
   /** Extracts pixel data as arrays of floats, one per channel. */
   public static float[][] getFloats(WritableRaster r) {
-    if (canUseBankDataDirectly(r, DataBuffer.TYPE_FLOAT, DataBufferFloat.class))
+    return getFloats(r, 0, 0, r.getWidth(), r.getHeight());
+  }
+
+  /** Extracts pixel data as arrays of floats, one per channel. */
+  public static float[][] getFloats(WritableRaster r, int x, int y,
+    int w, int h)
+  {
+    if (canUseBankDataDirectly(r, DataBuffer.TYPE_FLOAT,
+      DataBufferFloat.class) && x == 0 && y == 0 && w == r.getWidth() &&
+      h == r.getHeight())
     {
       return ((DataBufferFloat) r.getDataBuffer()).getBankData();
     }
     // NB: an order of magnitude faster than the naive makeType solution
-    int w = r.getWidth(), h = r.getHeight(), c = r.getNumBands();
+    int c = r.getNumBands();
     float[][] samples = new float[c][w * h];
-    for (int i=0; i<c; i++) r.getSamples(0, 0, w, h, i, samples[i]);
+    for (int i=0; i<c; i++) r.getSamples(x, y, w, h, i, samples[i]);
     return samples;
   }
 
@@ -922,15 +979,23 @@ public final class AWTImageTools {
 
   /** Extracts pixel data as arrays of doubles, one per channel. */
   public static double[][] getDoubles(WritableRaster r) {
+    return getDoubles(r, 0, 0, r.getWidth(), r.getHeight());
+  }
+
+  /** Extracts pixel data as arrays of doubles, one per channel. */
+  public static double[][] getDoubles(WritableRaster r, int x, int y,
+    int w, int h)
+  {
     if (canUseBankDataDirectly(r,
-      DataBuffer.TYPE_DOUBLE, DataBufferDouble.class))
+      DataBuffer.TYPE_DOUBLE, DataBufferDouble.class) && x == 0 && y == 0 &&
+      w == r.getWidth() && h == r.getHeight())
     {
       return ((DataBufferDouble) r.getDataBuffer()).getBankData();
     }
     // NB: an order of magnitude faster than the naive makeType solution
-    int w = r.getWidth(), h = r.getHeight(), c = r.getNumBands();
+    int c = r.getNumBands();
     double[][] samples = new double[c][w * h];
-    for (int i=0; i<c; i++) r.getSamples(0, 0, w, h, i, samples[i]);
+    for (int i=0; i<c; i++) r.getSamples(x, y, w, h, i, samples[i]);
     return samples;
   }
 
@@ -997,7 +1062,7 @@ public final class AWTImageTools {
   public static byte[][] getPixelBytes(BufferedImage img, boolean little,
     int x, int y, int w, int h)
   {
-    Object pixels = getPixels(img);
+    Object pixels = getPixels(img, x, y, w, h);
     int imageType = img.getType();
     byte[][] pixelBytes = null;
 
@@ -1062,20 +1127,7 @@ public final class AWTImageTools {
       }
     }
 
-    if (x == 0 && y == 0 && w == img.getWidth() && h == img.getHeight()) {
-      return pixelBytes;
-    }
-
-    int bpp = FormatTools.getBytesPerPixel(getPixelType(img));
-    byte[][] croppedBytes = new byte[pixelBytes.length][w * h * bpp];
-    for (int c=0; c<croppedBytes.length; c++) {
-      for (int row=0; row<h; row++) {
-        int src = (row + y) * img.getWidth() * bpp + x * bpp;
-        int dest = row * w * bpp;
-        System.arraycopy(pixelBytes[c], src, croppedBytes[c], dest, w * bpp);
-      }
-    }
-    return croppedBytes;
+    return pixelBytes;
   }
 
   /**

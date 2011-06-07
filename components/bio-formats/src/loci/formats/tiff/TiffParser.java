@@ -698,7 +698,7 @@ public class TiffParser {
       samplesPerPixel, numSamples);
 
     TiffCompression compression = ifd.getCompression();
-    if (compression == TiffCompression.JPEG_2000 || 
+    if (compression == TiffCompression.JPEG_2000 ||
         compression == TiffCompression.JPEG_2000_LOSSY)
       codecOptions = compression.getCompressionCodecOptions(ifd, codecOptions);
     else codecOptions = compression.getCompressionCodecOptions(ifd);
@@ -763,8 +763,10 @@ public class TiffParser {
     int bufferSize = (int) tileWidth * (int) tileLength *
       bufferSizeSamplesPerPixel * bpp;
 
+    boolean usableCachedBuffer = true;
     if (cachedTileBuffer == null || cachedTileBuffer.length != bufferSize) {
       cachedTileBuffer = new byte[bufferSize];
+      usableCachedBuffer = false;
     }
 
     Region tileBounds = new Region(0, 0, (int) tileWidth, (int) tileLength);
@@ -780,7 +782,9 @@ public class TiffParser {
 
         if (!imageBounds.intersects(tileBounds)) continue;
 
-        getTile(ifd, cachedTileBuffer, row, col);
+        if (!usableCachedBuffer || numTileRows * numTileCols > 1) {
+          getTile(ifd, cachedTileBuffer, row, col);
+        }
 
         // adjust tile bounds, if necessary
 

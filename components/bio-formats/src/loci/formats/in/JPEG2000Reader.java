@@ -64,6 +64,9 @@ public class JPEG2000Reader extends FormatReader {
 
   private long pixelsOffset;
 
+  private int lastSeries = -1;
+  private byte[] lastSeriesPlane;
+
   // -- Constructor --
 
   /** Constructs a new JPEG2000Reader. */
@@ -128,6 +131,8 @@ public class JPEG2000Reader extends FormatReader {
       resolutionLevels = null;
       lut = null;
       pixelsOffset = 0;
+      lastSeries = -1;
+      lastSeriesPlane = null;
     }
   }
 
@@ -138,6 +143,13 @@ public class JPEG2000Reader extends FormatReader {
     throws FormatException, IOException
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
+
+    if (lastSeries == getSeries() && lastSeriesPlane != null) {
+      RandomAccessInputStream s = new RandomAccessInputStream(lastSeriesPlane);
+      readPlane(s, x, y, w, h, buf);
+      s.close();
+      return buf;
+    }
 
     JPEG2000CodecOptions options = JPEG2000CodecOptions.getDefaultOptions();
     options.interleaved = isInterleaved();
@@ -150,10 +162,11 @@ public class JPEG2000Reader extends FormatReader {
     }
 
     in.seek(pixelsOffset);
-    byte[] plane = new JPEG2000Codec().decompress(in, options);
-    RandomAccessInputStream s = new RandomAccessInputStream(plane);
+    lastSeriesPlane = new JPEG2000Codec().decompress(in, options);
+    RandomAccessInputStream s = new RandomAccessInputStream(lastSeriesPlane);
     readPlane(s, x, y, w, h, buf);
     s.close();
+    lastSeries = getSeries();
     return buf;
   }
 

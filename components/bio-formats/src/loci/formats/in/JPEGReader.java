@@ -41,6 +41,10 @@ import loci.formats.FormatTools;
  */
 public class JPEGReader extends DelegateReader {
 
+  // -- Constants --
+
+  private static final int MAX_SIZE = 8192;
+
   // -- Constructor --
 
   /** Constructs a new JPEGReader. */
@@ -59,7 +63,9 @@ public class JPEGReader extends DelegateReader {
   /* @see IFormatHandler#setId(String) */
   public void setId(String id) throws FormatException, IOException {
     super.setId(id);
-    if (getSizeX() > 2048 && getSizeY() > 2048 && !legacyReaderInitialized) {
+    if (getSizeX() > MAX_SIZE && getSizeY() > MAX_SIZE &&
+      !legacyReaderInitialized)
+    {
       close();
       useLegacy = true;
       super.setId(id);
