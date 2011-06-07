@@ -123,8 +123,11 @@ public class JPEGTileDecoder {
           }
           break;
         }
-        else {
+        else if (pointer + length - 2 < in.length()) {
           in.seek(pointer + length - 2);
+        }
+        else {
+          break;
         }
       }
 
