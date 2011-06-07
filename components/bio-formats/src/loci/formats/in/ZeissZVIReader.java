@@ -608,9 +608,15 @@ public class ZeissZVIReader extends FormatReader {
         }
         store.setImageName("Tile #" + (i + 1), i);
 
-        store.setPixelsPhysicalSizeX(new PositiveFloat(physicalSizeX), i);
-        store.setPixelsPhysicalSizeY(new PositiveFloat(physicalSizeY), i);
-        store.setPixelsPhysicalSizeZ(new PositiveFloat(physicalSizeZ), i);
+        if (physicalSizeX != null && physicalSizeX > 0) {
+          store.setPixelsPhysicalSizeX(new PositiveFloat(physicalSizeX), i);
+        }
+        if (physicalSizeY != null && physicalSizeY > 0) {
+          store.setPixelsPhysicalSizeY(new PositiveFloat(physicalSizeY), i);
+        }
+        if (physicalSizeZ != null && physicalSizeZ > 0) {
+          store.setPixelsPhysicalSizeZ(new PositiveFloat(physicalSizeZ), i);
+        }
 
         long firstStamp = parseTimestamp(timestamps.get(new Integer(0)));
 
@@ -1465,7 +1471,9 @@ public class ZeissZVIReader extends FormatReader {
       stamp = Long.parseLong(s);
     }
     catch (NumberFormatException exc) {
-      stamp = DateTools.getTime(s, "M/d/y h:mm:ss aa");
+      if (s != null) {
+        stamp = DateTools.getTime(s, "M/d/y h:mm:ss aa");
+      }
     }
     return stamp;
   }
