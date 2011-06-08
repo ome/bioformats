@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.tiff;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Vector;
 
@@ -80,6 +81,8 @@ public class TiffParser {
 
   /** Codec options to be used when decoding compressed pixel data. */
   private CodecOptions codecOptions = CodecOptions.getDefaultOptions();
+
+  private HashMap<IFD, byte[]> cachedPixels = new HashMap<IFD, byte[]>();
 
   // -- Constructors --
 
@@ -785,11 +788,16 @@ public class TiffParser {
 
         if (!imageBounds.intersects(tileBounds)) continue;
 
-        //if (!usableCachedBuffer || numTileRows * numTileCols > 1 ||
-        //  ifdCount > 1)
-        //{
+        if (!cachedPixels.containsKey(ifd)) {
           getTile(ifd, cachedTileBuffer, row, col);
-        //}
+          if (numTileRows * numTileCols == 1) {
+            cachedPixels.clear();
+            cachedPixels.put(ifd, cachedTileBuffer);
+          }
+        }
+        else {
+          cachedTileBuffer = cachedPixels.get(ifd);
+        }
 
         // adjust tile bounds, if necessary
 
