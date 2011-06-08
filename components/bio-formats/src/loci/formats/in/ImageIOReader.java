@@ -49,6 +49,10 @@ import loci.formats.meta.MetadataStore;
  */
 public abstract class ImageIOReader extends BIFormatReader {
 
+  // -- Fields --
+
+  private BufferedImage img;
+
   // -- Constructors --
 
   /** Constructs a new ImageIOReader. */
@@ -65,6 +69,14 @@ public abstract class ImageIOReader extends BIFormatReader {
 
   // -- IFormatReader API methods --
 
+  /* @see loci.formats.IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws IOException {
+    super.close(fileOnly);
+    if (!fileOnly) {
+      img = null;
+    }
+  }
+
   /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
@@ -77,13 +89,7 @@ public abstract class ImageIOReader extends BIFormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, -1, x, y, w, h);
 
-    RandomAccessInputStream ras = new RandomAccessInputStream(currentId);
-    DataInputStream dis =
-      new DataInputStream(new BufferedInputStream(ras, 4096));
-    BufferedImage b = ImageIO.read(dis);
-    ras.close();
-    dis.close();
-    return AWTImageTools.getSubimage(b, isLittleEndian(), x, y, w, h);
+    return AWTImageTools.getSubimage(img, isLittleEndian(), x, y, w, h);
   }
 
   // -- Internal FormatReader API methods --
@@ -96,7 +102,7 @@ public abstract class ImageIOReader extends BIFormatReader {
     core[0].imageCount = 1;
     RandomAccessInputStream ras = new RandomAccessInputStream(currentId);
     DataInputStream dis = new DataInputStream(ras);
-    BufferedImage img = ImageIO.read(dis);
+    img = ImageIO.read(dis);
     dis.close();
     if (img == null) throw new FormatException("Invalid image stream");
 

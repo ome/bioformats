@@ -25,6 +25,7 @@ package loci.formats.in;
 
 import java.io.IOException;
 
+import loci.common.ByteArrayHandle;
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -56,6 +57,12 @@ public class PSDReader extends FormatReader {
 
   /** Offset to pixel data. */
   private long offset;
+
+  private int[][] lens;
+  private boolean compressed = false;
+
+  private int lastImageIndex = -1;
+  private byte[] lastImage;
 
   // -- Constructor --
 
@@ -89,35 +96,41 @@ public class PSDReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
+    if (no == lastImageIndex && lastImage != null) {
+      RandomAccessInputStream s = new RandomAccessInputStream(lastImage);
+      readPlane(s, x, y, w, h, buf);
+      s.close();
+      return buf;
+    }
+
     in.seek(offset);
 
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
     int plane = getSizeX() * getSizeY() * bpp;
-    int[][] lens = new int[getSizeC()][getSizeY()];
-    boolean compressed = in.readShort() == 1;
 
     if (compressed) {
       PackbitsCodec codec = new PackbitsCodec();
-      for (int c=0; c<getSizeC(); c++) {
-        for (int row=0; row<getSizeY(); row++) {
-          lens[c][row] = in.readShort();
-        }
-      }
-
       CodecOptions options = new CodecOptions();
       options.maxBytes = getSizeX() * bpp;
 
-      int len = w * bpp;
+      ByteArrayHandle pix = new ByteArrayHandle();
+      byte[] b = null;
 
       for (int c=0; c<getSizeC(); c++) {
         for (int row=0; row<getSizeY(); row++) {
-          if (row < y || row >= (y + h)) in.skipBytes(lens[c][row]);
-          else {
-            byte[] b = codec.decompress(in, options);
-            System.arraycopy(b, x*bpp, buf, c * h * len + (row - y) * len, len);
-          }
+          b = new byte[lens[c][row]];
+          in.read(b);
+          b = codec.decompress(b, options);
+          pix.write(b);
         }
       }
+
+      lastImageIndex = no;
+      lastImage = pix.getBytes();
+
+      RandomAccessInputStream s = new RandomAccessInputStream(lastImage);
+      readPlane(s, x, y, w, h, buf);
+      s.close();
     }
     else {
       readPlane(in, x, y, w, h, buf);
@@ -131,6 +144,10 @@ public class PSDReader extends FormatReader {
     if (!fileOnly) {
       lut = null;
       offset = 0;
+      compressed = false;
+      lens = null;
+      lastImageIndex = -1;
+      lastImage = null;
     }
   }
 
@@ -299,6 +316,20 @@ public class PSDReader extends FormatReader {
     core[0].dimensionOrder = "XYCZT";
     core[0].interleaved = false;
     core[0].metadataComplete = true;
+
+    in.seek(offset);
+
+    compressed = in.readShort() == 1;
+    lens = new int[getSizeC()][getSizeY()];
+
+    if (compressed) {
+      for (int c=0; c<getSizeC(); c++) {
+        for (int row=0; row<getSizeY(); row++) {
+          lens[c][row] = in.readShort();
+        }
+      }
+    }
+    offset = in.getFilePointer();
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);

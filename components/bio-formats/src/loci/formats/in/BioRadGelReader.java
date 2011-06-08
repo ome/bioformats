@@ -96,7 +96,7 @@ public class BioRadGelReader extends FormatReader {
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
     int pixel = bpp * getSizeC();
 
-    in.skipBytes(pixel * getSizeX() * y);
+    in.skipBytes(pixel * getSizeX() * (getSizeY() - h - y));
 
     for (int row=h-1; row>=0; row--) {
       in.skipBytes(x * pixel);
