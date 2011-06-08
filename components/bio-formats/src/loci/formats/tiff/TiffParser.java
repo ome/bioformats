@@ -785,11 +785,11 @@ public class TiffParser {
 
         if (!imageBounds.intersects(tileBounds)) continue;
 
-        if (!usableCachedBuffer || numTileRows * numTileCols > 1 ||
-          ifdCount > 1)
-        {
+        //if (!usableCachedBuffer || numTileRows * numTileCols > 1 ||
+        //  ifdCount > 1)
+        //{
           getTile(ifd, cachedTileBuffer, row, col);
-        }
+        //}
 
         // adjust tile bounds, if necessary
 
