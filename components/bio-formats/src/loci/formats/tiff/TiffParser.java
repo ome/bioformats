@@ -76,6 +76,8 @@ public class TiffParser {
   /** Cached first IFD in the current file. */
   private IFD firstIFD;
 
+  private int ifdCount = 0;
+
   /** Codec options to be used when decoding compressed pixel data. */
   private CodecOptions codecOptions = CodecOptions.getDefaultOptions();
 
@@ -274,6 +276,7 @@ public class TiffParser {
     for (int i=0; i<f.length; i++) {
       f[i] = offsets.get(i).longValue();
     }
+    ifdCount = f.length;
 
     return f;
   }
@@ -782,7 +785,9 @@ public class TiffParser {
 
         if (!imageBounds.intersects(tileBounds)) continue;
 
-        if (!usableCachedBuffer || numTileRows * numTileCols > 1) {
+        if (!usableCachedBuffer || numTileRows * numTileCols > 1 ||
+          ifdCount > 1)
+        {
           getTile(ifd, cachedTileBuffer, row, col);
         }
 
