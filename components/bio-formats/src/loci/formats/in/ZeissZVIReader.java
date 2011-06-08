@@ -610,7 +610,9 @@ public class ZeissZVIReader extends FormatReader {
         if (imageDescription != null) {
           store.setImageDescription(imageDescription, i);
         }
-        store.setImageName("Tile #" + (i + 1), i);
+        if (getSeriesCount() > 1) {
+          store.setImageName("Tile #" + (i + 1), i);
+        }
 
         if (physicalSizeX != null && physicalSizeX > 0) {
           store.setPixelsPhysicalSizeX(new PositiveFloat(physicalSizeX), i);
