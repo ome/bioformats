@@ -232,6 +232,10 @@ public class ZeissZVIReader extends FormatReader {
       index += getSeries() * getImageCount();
     }
 
+    if (index >= imageFiles.length) {
+      return buf;
+    }
+
     RandomAccessInputStream s = poi.getDocumentStream(imageFiles[index]);
     s.seek(offsets[index]);
 
