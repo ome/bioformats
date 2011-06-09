@@ -43,7 +43,7 @@ your combined work must be distributed under the terms of the GPL.
 //   components/bio-formats/utils/MinimumWriter.java
 
 // for Bio-Formats C++ bindings
-#include "bio-formats.h"
+#include "bio-formats-5.0-SNAPSHOT.h"
 using jace::JNIException;
 using jace::proxy::java::io::IOException;
 using jace::proxy::java::lang::Boolean;
@@ -53,7 +53,7 @@ using jace::proxy::loci::formats::FormatTools;
 using jace::proxy::loci::formats::ImageWriter;
 using jace::proxy::loci::formats::MetadataTools;
 using jace::proxy::loci::formats::meta::IMetadata;
-#include "ome-xml.h"
+#include "ome-xml-5.0-SNAPSHOT.h"
 using jace::proxy::ome::xml::model::enums::DimensionOrder;
 using jace::proxy::ome::xml::model::enums::PixelType;
 using jace::proxy::ome::xml::model::primitives::PositiveInteger;

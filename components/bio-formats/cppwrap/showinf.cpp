@@ -43,8 +43,8 @@ your combined work must be distributed under the terms of the GPL.
 //   components/bio-formats/src/loci/formats/tools/ImageInfo.java
 
 // for Bio-Formats C++ bindings
-#include "bio-formats.h"
-#include "loci-common.h"
+#include "bio-formats-5.0-SNAPSHOT.h"
+#include "loci-common-5.0-SNAPSHOT.h"
 using jace::JNIException;
 using jace::proxy::java::io::IOException;
 using jace::proxy::java::lang::Object;
