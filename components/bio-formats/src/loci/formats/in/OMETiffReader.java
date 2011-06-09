@@ -631,7 +631,9 @@ public class OMETiffReader extends FormatReader {
         // incorrect dimension order
         String uuidFileName = "";
         try {
-          uuidFileName = meta.getUUIDFileName(i, 0);
+          if (meta.getTiffDataCount(i) > 0) {
+            uuidFileName = meta.getUUIDFileName(i, 0);
+          }
         }
         catch (NullPointerException e) { }
         if (meta.getChannelCount(i) > 0 && meta.getChannelName(i, 0) == null &&

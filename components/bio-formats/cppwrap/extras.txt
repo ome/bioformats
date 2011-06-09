@@ -1,15 +1,3 @@
-find_package(Java REQUIRED)
-
-### build some examples for testing bfcpp ###
-
-add_executable(showinf ../source/showinf.cpp)
-
-target_link_libraries(showinf bfcpp jace "${JAVA_JVM_LIBRARY}")
-
-add_executable(minimum_writer ../source/minimum_writer.cpp)
-
-target_link_libraries(minimum_writer bfcpp jace "${JAVA_JVM_LIBRARY}")
-
 if(NOT DEFINED Jar2Lib_ARTIFACT_DIR)
   set(Jar2Lib_ARTIFACT_DIR ../../../../../artifacts)
 endif(NOT DEFINED Jar2Lib_ARTIFACT_DIR)

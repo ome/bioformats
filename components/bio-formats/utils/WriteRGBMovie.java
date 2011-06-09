@@ -51,6 +51,9 @@ public class WriteRGBMovie {
     OMEXMLService service = factory.getInstance(OMEXMLService.class);
     IMetadata meta = service.createOMEXMLMetadata();
     meta.createRoot();
+
+    meta.setImageID("Image:0", 0);
+    meta.setPixelsID("Pixels:0", 0);
     meta.setPixelsBinDataBigEndian(Boolean.TRUE, 0, 0);
     meta.setPixelsDimensionOrder(DimensionOrder.XYZCT, 0);
     meta.setPixelsType(
@@ -60,6 +63,7 @@ public class WriteRGBMovie {
     meta.setPixelsSizeZ(new PositiveInteger(1), 0);
     meta.setPixelsSizeC(new PositiveInteger(numChannels), 0);
     meta.setPixelsSizeT(new PositiveInteger(numFrames), 0);
+    meta.setChannelID("Channel:0:0", 0, 0);
     meta.setChannelSamplesPerPixel(new PositiveInteger(numChannels), 0, 0);
 
     // write image planes to disk

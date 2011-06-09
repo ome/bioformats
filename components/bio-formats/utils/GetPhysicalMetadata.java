@@ -45,10 +45,10 @@ public class GetPhysicalMetadata {
 
   /** Outputs global timing details. */
   public static void printPhysicalDimensions(IMetadata meta, int series) {
-    double physicalSizeX = meta.getPixelsPhysicalSizeX(series).getValue();
-    double physicalSizeY = meta.getPixelsPhysicalSizeY(series).getValue();
-    double physicalSizeZ = meta.getPixelsPhysicalSizeZ(series).getValue();
-    double timeIncrement = meta.getPixelsTimeIncrement(series);
+    PositiveFloat physicalSizeX = meta.getPixelsPhysicalSizeX(series);
+    PositiveFloat physicalSizeY = meta.getPixelsPhysicalSizeY(series);
+    PositiveFloat physicalSizeZ = meta.getPixelsPhysicalSizeZ(series);
+    Double timeIncrement = meta.getPixelsTimeIncrement(series);
     System.out.println();
     System.out.println("Physical dimensions:");
     System.out.println("\tX spacing = " + physicalSizeX + " microns");
