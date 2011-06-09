@@ -142,7 +142,7 @@ public class JPEG2000MetadataParser {
   private void parseBoxes() throws IOException {
     long originalPos = in.getFilePointer(), nextPos = 0;
     long pos = originalPos;
-    LOGGER.info("Parsing JPEG 2000 boxes at {}", pos);
+    LOGGER.trace("Parsing JPEG 2000 boxes at {}", pos);
     int length = 0, boxCode;
     JPEG2000BoxType boxType;
 
@@ -152,7 +152,7 @@ public class JPEG2000MetadataParser {
       boxCode = in.readInt();
       boxType = JPEG2000BoxType.get(boxCode);
       if (boxType == JPEG2000BoxType.SIGNATURE_WRONG_ENDIANNESS) {
-        LOGGER.debug("Swapping endianness during box parsing.");
+        LOGGER.trace("Swapping endianness during box parsing.");
         in.order(!in.isLittleEndian());
         length = DataTools.swap(length);
       }
@@ -174,7 +174,7 @@ public class JPEG2000MetadataParser {
         }
       }
       else {
-        LOGGER.debug("Found JPEG 2000 '{}' box at {}", boxType.getName(), pos);
+        LOGGER.trace("Found JPEG 2000 '{}' box at {}", boxType.getName(), pos);
         switch (boxType) {
           case CONTIGUOUS_CODESTREAM: {
             try {
@@ -226,10 +226,10 @@ public class JPEG2000MetadataParser {
       }
       // Exit or seek to the next metadata box
       if (nextPos < 0 || nextPos >= maximumReadOffset || length == 0) {
-        LOGGER.debug("Exiting box parser loop.");
+        LOGGER.trace("Exiting box parser loop.");
         break;
       }
-      LOGGER.debug("Seeking to next box at {}", nextPos);
+      LOGGER.trace("Seeking to next box at {}", nextPos);
       in.seek(nextPos);
     }
   }
@@ -247,7 +247,7 @@ public class JPEG2000MetadataParser {
     JPEG2000SegmentMarker segmentMarker;
     int segmentMarkerCode = 0, segmentLength = 0;
     long pos = in.getFilePointer(), nextPos = 0;
-    LOGGER.info("Parsing JPEG 2000 contiguous codestream of length {} at {}",
+    LOGGER.trace("Parsing JPEG 2000 contiguous codestream of length {} at {}",
         length, pos);
     long maximumReadOffset = pos + length;
     boolean terminate = false;
@@ -256,7 +256,7 @@ public class JPEG2000MetadataParser {
       segmentMarkerCode = in.readUnsignedShort();
       segmentMarker = JPEG2000SegmentMarker.get(segmentMarkerCode);
       if (segmentMarker == JPEG2000SegmentMarker.SOC_WRONG_ENDIANNESS) {
-        LOGGER.debug("Swapping endianness during segment marker parsing.");
+        LOGGER.trace("Swapping endianness during segment marker parsing.");
         in.order(!in.isLittleEndian());
         segmentMarkerCode = JPEG2000SegmentMarker.SOC.getCode();
         segmentMarker = JPEG2000SegmentMarker.SOC;
@@ -279,8 +279,8 @@ public class JPEG2000MetadataParser {
             Integer.toHexString(segmentMarkerCode), pos);
       }
       else {
-        if (LOGGER.isDebugEnabled()) {
-          LOGGER.debug(String.format(
+        if (LOGGER.isTraceEnabled()) {
+          LOGGER.trace(String.format(
               "Found JPEG 2000 segment marker '%s' of length %d at %d",
               segmentMarker.getName(), segmentLength, pos));
         }
@@ -295,10 +295,10 @@ public class JPEG2000MetadataParser {
             //  * Capability (uint16)
             in.skipBytes(2);
             codestreamSizeX = in.readInt();
-            LOGGER.debug("Read reference grid width {} at {}", codestreamSizeX,
+            LOGGER.trace("Read reference grid width {} at {}", codestreamSizeX,
                 in.getFilePointer());
             codestreamSizeY = in.readInt();
-            LOGGER.debug("Read reference grid height {} at {}", codestreamSizeY,
+            LOGGER.trace("Read reference grid height {} at {}", codestreamSizeY,
                 in.getFilePointer());
             // Skipping:
             //  * Horizontal image offset (uint32)
@@ -309,11 +309,11 @@ public class JPEG2000MetadataParser {
             //  * Vertical tile offset (uint32)
             in.skipBytes(24);
             codestreamSizeC = in.readShort();
-            LOGGER.debug("Read total components {} at {}",
+            LOGGER.trace("Read total components {} at {}",
                 codestreamSizeC, in.getFilePointer());
             int type = in.readInt();
             codestreamPixelType = convertPixelType(type);
-            LOGGER.debug("Read codestream pixel type {} at {}",
+            LOGGER.trace("Read codestream pixel type {} at {}",
                 codestreamPixelType, in.getFilePointer());
             break;
           }
@@ -325,7 +325,7 @@ public class JPEG2000MetadataParser {
             //  * Multiple component transform (uint8)
             in.skipBytes(5);
             resolutionLevels = in.readUnsignedByte();
-            LOGGER.debug("Found number of resolution levels {} at {} ", 
+            LOGGER.trace("Found number of resolution levels {} at {} ",
                 resolutionLevels, in.getFilePointer());
             break;
           }
@@ -333,10 +333,10 @@ public class JPEG2000MetadataParser {
       }
       // Exit or seek to the next metadata box
       if (nextPos < 0 || nextPos >= maximumReadOffset || terminate) {
-        LOGGER.debug("Exiting segment marker parse loop.");
+        LOGGER.trace("Exiting segment marker parse loop.");
         break;
       }
-      LOGGER.debug("Seeking to next segment marker at {}", nextPos);
+      LOGGER.trace("Seeking to next segment marker at {}", nextPos);
       in.seek(nextPos);
     }
   }
