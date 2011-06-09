@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2011-05-18 16:38:52+0100
+ * Created by melissa via xsd-fu on 2011-06-09 09:56:12.014006
  *
  *-----------------------------------------------------------------------------
  */
@@ -69,6 +69,9 @@ public class OME extends AbstractOMEModelObject
 
 	// Property
 	private String uuid;
+
+	// Property
+	private String creator;
 
 	// Property which occurs more than once
 	private List<Project> projectList = new ArrayList<Project>();
@@ -158,6 +161,12 @@ public class OME extends AbstractOMEModelObject
 			// Attribute property UUID
 			setUUID(String.valueOf(
 					element.getAttribute("UUID")));
+		}
+		if (element.hasAttribute("Creator"))
+		{
+			// Attribute property Creator
+			setCreator(String.valueOf(
+					element.getAttribute("Creator")));
 		}
 		// Element property Project which is complex (has
 		// sub-elements) and occurs more than once
@@ -306,6 +315,17 @@ public class OME extends AbstractOMEModelObject
 	public void setUUID(String uuid)
 	{
 		this.uuid = uuid;
+	}
+
+	// Property
+	public String getCreator()
+	{
+		return creator;
+	}
+
+	public void setCreator(String creator)
+	{
+		this.creator = creator;
 	}
 
 	// Property which occurs more than once
@@ -659,6 +679,11 @@ public class OME extends AbstractOMEModelObject
 		{
 			// Attribute property UUID
 			OME_element.setAttribute("UUID", uuid.toString());
+		}
+		if (creator != null)
+		{
+			// Attribute property Creator
+			OME_element.setAttribute("Creator", creator.toString());
 		}
 		if (projectList != null)
 		{

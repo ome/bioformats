@@ -508,7 +508,7 @@ public class MinimalTiffReader extends FormatReader {
    */
   protected void setResolutionLevel(IFD ifd) {
     j2kCodecOptions.resolution = Math.abs(series - resolutionLevels);
-    LOGGER.info("Using JPEG 2000 resolution level {}",
+    LOGGER.debug("Using JPEG 2000 resolution level {}",
         j2kCodecOptions.resolution);
     tiffParser.setCodecOptions(j2kCodecOptions);
   }
