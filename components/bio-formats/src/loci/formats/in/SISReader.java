@@ -23,9 +23,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.in;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.StringReader;
 
 import loci.common.DateTools;
+import loci.common.IniList;
+import loci.common.IniParser;
+import loci.common.IniTable;
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
@@ -50,6 +55,7 @@ public class SISReader extends BaseTiffReader {
   // -- Constants --
 
   private static final int SIS_TAG = 33560;
+  private static final int SIS_INI_TAG = 33471;
 
   // -- Fields --
 
@@ -97,6 +103,27 @@ public class SISReader extends BaseTiffReader {
     super.initStandardMetadata();
 
     IFD ifd = ifds.get(0);
+
+    String iniMetadata = ifd.getIFDTextValue(SIS_INI_TAG);
+    if (iniMetadata != null) {
+      IniParser parser = new IniParser();
+      IniList ini =
+        parser.parseINI(new BufferedReader(new StringReader(iniMetadata)));
+
+      IniTable dimensions = ini.getTable("Dimension");
+      int z = Integer.parseInt(dimensions.get("Z"));
+      int c = Integer.parseInt(dimensions.get("Band"));
+      int t = Integer.parseInt(dimensions.get("Time"));
+
+      if (z * c * t == ifds.size()) {
+        core[0].sizeZ = z;
+        core[0].sizeT = t;
+        core[0].sizeC *= c;
+      }
+
+      // TODO : parse more metadata from the INI tables
+    }
+
     long metadataPointer = ifd.getIFDLongValue(SIS_TAG, 0);
 
     in.seek(metadataPointer);
@@ -136,7 +163,9 @@ public class SISReader extends BaseTiffReader {
     magnification = in.readDouble();
     int cameraNameLength = in.readShort();
     channelName = in.readCString();
-    cameraName = channelName.substring(0, cameraNameLength);
+
+    int length = (int) Math.min(cameraNameLength, channelName.length());
+    cameraName = channelName.substring(0, length);
 
     addGlobalMeta("Nanometers per pixel (X)", physicalSizeX);
     addGlobalMeta("Nanometers per pixel (Y)", physicalSizeY);
