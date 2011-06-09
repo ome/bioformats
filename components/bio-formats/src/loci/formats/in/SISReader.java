@@ -35,11 +35,10 @@ import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
+import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
-
-import ome.xml.model.primitives.PositiveInteger;
 
 /**
  * SISReader is the file format reader for Olympus Soft Imaging Solutions
@@ -70,7 +69,7 @@ public class SISReader extends BaseTiffReader {
   public SISReader() {
     super("Olympus SIS TIFF", new String[] {"tif", "tiff"});
     suffixSufficient = false;
-    domains = new String[] {FormatTools.UNKNOWN_DOMAIN};
+    domains = new String[] {FormatTools.LM_DOMAIN};
   }
 
   // -- IFormatReader API methods --
@@ -123,7 +122,7 @@ public class SISReader extends BaseTiffReader {
       // TODO : parse more metadata from the INI tables
     }
 
-    long metadataPointer = ifd.getIFDLongValue(SIS_TAG, 0);
+    long metadataPointer = ifd.getIFDLongValue(SIS_TAG, false, 0);
 
     in.seek(metadataPointer);
 
@@ -178,35 +177,33 @@ public class SISReader extends BaseTiffReader {
   /* @see BaseTiffReader#initMetadataStore() */
   protected void initMetadataStore() throws FormatException {
     super.initMetadataStore();
-    MetadataStore store = makeFilterMetadata();
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     MetadataTools.populatePixels(store, this);
 
     store.setImageName(imageName, 0);
-    store.setImageAcquiredDate(acquisitionDate, 0);
+    store.setImageCreationDate(acquisitionDate, 0);
 
-    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      String instrument = MetadataTools.createLSID("Instrument", 0);
-      store.setInstrumentID(instrument, 0);
-      store.setImageInstrumentRef(instrument, 0);
+    String instrument = MetadataTools.createLSID("Instrument", 0);
+    store.setInstrumentID(instrument, 0);
+    store.setImageInstrumentRef(instrument, 0);
 
-      String objective = MetadataTools.createLSID("Objective", 0, 0);
-      store.setObjectiveID(objective, 0, 0);
-      store.setObjectiveNominalMagnification(
-        new PositiveInteger((int) magnification), 0, 0);
-      store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
-      store.setObjectiveImmersion(getImmersion("Other"), 0, 0);
-      store.setImageObjectiveSettingsID(objective, 0);
+    String objective = MetadataTools.createLSID("Objective", 0, 0);
+    store.setObjectiveID(objective, 0, 0);
+    store.setObjectiveNominalMagnification((int) magnification, 0, 0);
+    store.setObjectiveCorrection("Other", 0, 0);
+    store.setObjectiveImmersion("Other", 0, 0);
+    store.setObjectiveSettingsObjective(objective, 0);
 
-      String detector = MetadataTools.createLSID("Detector", 0, 0);
-      store.setDetectorID(detector, 0, 0);
-      store.setDetectorModel(cameraName, 0, 0);
-      store.setDetectorType(getDetectorType("Other"), 0, 0);
-      store.setDetectorSettingsID(detector, 0, 0);
+    String detector = MetadataTools.createLSID("Detector", 0, 0);
+    store.setDetectorID(detector, 0, 0);
+    store.setDetectorModel(cameraName, 0, 0);
+    store.setDetectorType("Other", 0, 0);
+    store.setDetectorSettingsDetector(detector, 0, 0);
 
-      store.setPixelsPhysicalSizeX(physicalSizeX / 1000, 0);
-      store.setPixelsPhysicalSizeY(physicalSizeY / 1000, 0);
-      store.setChannelName(channelName, 0, 0);
-    }
+    store.setDimensionsPhysicalSizeX((float) physicalSizeX / 1000, 0, 0);
+    store.setDimensionsPhysicalSizeY((float) physicalSizeY / 1000, 0, 0);
+    store.setLogicalChannelName(channelName, 0, 0);
   }
 
 }
