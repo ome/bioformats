@@ -93,10 +93,10 @@ public class SlidebookReader extends FormatReader {
     int magicBytes1 = stream.readShort();
     int magicBytes2 = stream.readShort();
 
-    return (magicBytes1 == SLD_MAGIC_BYTES_1_0 &&
-      magicBytes2 == SLD_MAGIC_BYTES_1_1) ||
-      (magicBytes1 == SLD_MAGIC_BYTES_2_0 &&
-      magicBytes2 == SLD_MAGIC_BYTES_2_1);
+
+    return ((magicBytes2 & 0xff00) == SLD_MAGIC_BYTES_1_1) &&
+      (magicBytes1 == SLD_MAGIC_BYTES_1_0 ||
+      magicBytes1 == SLD_MAGIC_BYTES_2_0);
   }
 
   /**

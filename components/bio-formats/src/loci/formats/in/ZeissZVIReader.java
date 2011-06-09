@@ -232,6 +232,10 @@ public class ZeissZVIReader extends FormatReader {
       index += getSeries() * getImageCount();
     }
 
+    if (index >= imageFiles.length) {
+      return buf;
+    }
+
     RandomAccessInputStream s = poi.getDocumentStream(imageFiles[index]);
     s.seek(offsets[index]);
 
@@ -248,7 +252,12 @@ public class ZeissZVIReader extends FormatReader {
     else if (isZlib) {
       byte[] t = new ZlibCodec().decompress(s, options);
       for (int yy=0; yy<h; yy++) {
-        System.arraycopy(t, (yy + y) * row + x * pixel, buf, yy*len, len);
+        int src = (yy + y) * row + x * pixel;
+        int dest = yy * len;
+        if (src + len <= t.length && dest + len <= buf.length) {
+          System.arraycopy(t, src, buf, dest, len);
+        }
+        else break;
       }
     }
     else {
@@ -606,7 +615,9 @@ public class ZeissZVIReader extends FormatReader {
         if (imageDescription != null) {
           store.setImageDescription(imageDescription, i);
         }
-        store.setImageName("Tile #" + (i + 1), i);
+        if (getSeriesCount() > 1) {
+          store.setImageName("Tile #" + (i + 1), i);
+        }
 
         if (physicalSizeX != null && physicalSizeX > 0) {
           store.setPixelsPhysicalSizeX(new PositiveFloat(physicalSizeX), i);
