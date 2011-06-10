@@ -178,6 +178,11 @@ public class DocumentBlock
               stream.seek(blocks[firstBlockIndex].offset + firstBlockOffset);
               stream.read(buffer, buffer_offset, blockSize - firstBlockOffset);
               buffer_offset += blockSize - firstBlockOffset;
+
+              if (lastBlockIndex > blocks.length) {
+                lastBlockIndex = blocks.length - 1;
+              }
+
               for (int j = firstBlockIndex + 1; j < lastBlockIndex; j++)
               {
                   stream.seek(blocks[j].offset);
