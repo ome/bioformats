@@ -103,6 +103,12 @@ public class ChannelMerger extends ReaderWrapper {
     return order;
   }
 
+  /* @see IFormatReader#isInterleaved() */
+  public boolean isInterleaved() {
+    FormatTools.assertId(getCurrentFile(), true, 2);
+    return false;
+  }
+
   /* @see IFormatReader#isRGB() */
   public boolean isRGB() {
     FormatTools.assertId(getCurrentFile(), true, 2);
