@@ -1,4 +1,4 @@
-4.3.0 (2011 June):
+4.3.0 (2011 June 14):
 * Many bug fixes, including:
   - Many fixes for reading and writing sub-images
   - Fixes for stage position parsing in the Zeiss formats
@@ -20,6 +20,7 @@
 * Moved all Trac tickets into the OME Trac: http://trac.openmicroscopy.org.uk
 * Improvements to testing frameworks
 * Added Maven build system as an alternative to the existing Ant build system
+* Added pre-compiled C++ bindings to the download page
 
 4.2.2 (2010 December 6):
 * Several bug fixes, notably:
