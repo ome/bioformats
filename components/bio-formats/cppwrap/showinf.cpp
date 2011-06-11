@@ -42,6 +42,9 @@ your combined work must be distributed under the terms of the GPL.
 // For the original Java version, see:
 //   components/bio-formats/src/loci/formats/tools/ImageInfo.java
 
+// for JVM initialization
+#include "javaTools.h"
+
 // for Bio-Formats C++ bindings
 #include "bio-formats-5.0-SNAPSHOT.h"
 #include "loci-common-5.0-SNAPSHOT.h"
@@ -83,12 +86,6 @@ using std::string;
 // for INT_MAX
 #include <limits.h>
 
-#if defined (_WIN32)
-#define PATHSEP string(";")
-#else
-#define PATHSEP string(":")
-#endif
-
 #define tf(x) (x ? "true" : "false")
 
 // -- Fields --
@@ -100,7 +97,7 @@ bool doCore = true;
 bool doMeta = true;
 bool filter = true;
 bool thumbs = false;
-bool merge = false;
+bool cMerge = false;
 bool stitch = false;
 bool separate = false;
 bool expand = false;
@@ -124,23 +121,6 @@ DimensionSwapper* dimSwapper = NULL;
 
 // -- Methods --
 
-/* Initializes the Java virtual machine. */
-void createJVM() {
-  cout << "Creating JVM... ";
-  jace::StaticVmLoader loader(JNI_VERSION_1_4);
-  jace::OptionList list;
-  list.push_back(jace::ClassPath(
-    "jace-runtime.jar" + PATHSEP +
-    "bio-formats.jar" + PATHSEP +
-    "loci_tools.jar"));
-  list.push_back(jace::CustomOption("-Xcheck:jni"));
-  list.push_back(jace::CustomOption("-Xmx256m"));
-  list.push_back(jace::CustomOption("-Djava.awt.headless=true"));
-  //list.push_back(jace::CustomOption("-verbose:jni"));
-  jace::helper::createVm(loader, list, false);
-  cout << "JVM created." << endl;
-}
-
 void parseArgs(int argc, const char *argv[]) {
   for (int i=1; i<argc; i++) {
     string arg = argv[i];
@@ -151,7 +131,7 @@ void parseArgs(int argc, const char *argv[]) {
       else if (arg.compare("-nometa") == 0) doMeta = false;
       else if (arg.compare("-nofilter") == 0) filter = false;
       else if (arg.compare("-thumbs") == 0) thumbs = true;
-      else if (arg.compare("-merge") == 0) merge = true;
+      else if (arg.compare("-merge") == 0) cMerge = true;
       else if (arg.compare("-stitch") == 0) stitch = true;
       else if (arg.compare("-separate") == 0) separate = true;
       else if (arg.compare("-expand") == 0) expand = true;
@@ -246,7 +226,7 @@ void configureReaderPreInit() {
   }
   if (expand) reader = channelFiller = new ChannelFiller(*reader);
   if (separate) reader = channelSeparator = new ChannelSeparator(*reader);
-  if (merge) reader = channelMerger = new ChannelMerger(*reader);
+  if (cMerge) reader = channelMerger = new ChannelMerger(*reader);
   if (swapOrder || shuffleOrder) {
     reader = dimSwapper = new DimensionSwapper(*reader);
   }
@@ -358,7 +338,7 @@ void readCoreMetadata() {
     cout << ":" << endl;
     cout << "\tImage count = " << imageCount << endl;
     cout << "\tRGB = " << tf(rgb) << " (" << rgbChanCount << ")";
-    if (merge) cout << " (merged)";
+    if (cMerge) cout << " (merged)";
     else if (separate) cout << " (separated)";
     cout << endl;
     if (rgb != (rgbChanCount != 1)) {
@@ -585,7 +565,7 @@ bool testRead(int argc, const char *argv[]) {
 
 int main(int argc, const char *argv[]) {
   try {
-    createJVM();
+    JavaTools::createJVM(string("loci_tools.jar"));
     testRead(argc, argv);
   }
   catch (FormatException& fe) {
@@ -600,7 +580,7 @@ int main(int argc, const char *argv[]) {
     cout << "An unexpected JNI error occurred. " << jniException.what() << endl;
     return -4;
   }
-  catch (std::exception& e) {
+  catch (exception& e) {
     cout << "An unexpected C++ error occurred. " << e.what() << endl;
     return -5;
   }
