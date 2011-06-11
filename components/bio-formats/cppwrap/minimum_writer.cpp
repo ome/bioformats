@@ -42,8 +42,12 @@ your combined work must be distributed under the terms of the GPL.
 // For the original Java version, see:
 //   components/bio-formats/utils/MinimumWriter.java
 
+// for JVM initialization
+#include "javaTools.h"
+
 // for Bio-Formats C++ bindings
 #include "bio-formats-5.0-SNAPSHOT.h"
+#include "ome-xml-5.0-SNAPSHOT.h"
 using jace::JNIException;
 using jace::proxy::java::io::IOException;
 using jace::proxy::java::lang::Boolean;
@@ -53,7 +57,6 @@ using jace::proxy::loci::formats::FormatTools;
 using jace::proxy::loci::formats::ImageWriter;
 using jace::proxy::loci::formats::MetadataTools;
 using jace::proxy::loci::formats::meta::IMetadata;
-#include "ome-xml-5.0-SNAPSHOT.h"
 using jace::proxy::ome::xml::model::enums::DimensionOrder;
 using jace::proxy::ome::xml::model::enums::PixelType;
 using jace::proxy::ome::xml::model::primitives::PositiveInteger;
@@ -62,6 +65,9 @@ using jace::proxy::ome::xml::model::primitives::PositiveInteger;
 using std::cout;
 using std::endl;
 
+#include <exception>
+using std::exception;
+
 #include <string>
 using std::string;
 
@@ -69,30 +75,7 @@ using std::string;
 #include <stdio.h>
 #include <stdlib.h>
 
-#if defined (_WIN32)
-#define PATHSEP string(";")
-#else
-#define PATHSEP string(":")
-#endif
-
 // -- Methods --
-
-/* Initializes the Java virtual machine. */
-void createJVM() {
-  cout << "Creating JVM... ";
-  jace::StaticVmLoader loader(JNI_VERSION_1_4);
-  jace::OptionList list;
-  list.push_back(jace::ClassPath(
-    "jace-runtime.jar" + PATHSEP +
-    "bio-formats.jar" + PATHSEP +
-    "loci_tools.jar"));
-  list.push_back(jace::CustomOption("-Xcheck:jni"));
-  list.push_back(jace::CustomOption("-Xmx256m"));
-  list.push_back(jace::CustomOption("-Djava.awt.headless=true"));
-  //list.push_back(jace::CustomOption("-verbose:jni"));
-  jace::helper::createVm(loader, list, false);
-  cout << "JVM created." << endl;
-}
 
 /*
  * Demonstrates the minimum amount of metadata
@@ -148,7 +131,7 @@ bool minWrite(int argc, const char *argv[]) {
 
 int main(int argc, const char *argv[]) {
   try {
-    createJVM();
+    JavaTools::createJVM(string("loci_tools.jar"));
     minWrite(argc, argv);
   }
   catch (FormatException& fe) {
@@ -163,7 +146,7 @@ int main(int argc, const char *argv[]) {
     cout << "An unexpected JNI error occurred. " << jniException.what() << endl;
     return -4;
   }
-  catch (std::exception& e) {
+  catch (exception& e) {
     cout << "An unexpected C++ error occurred. " << e.what() << endl;
     return -5;
   }
