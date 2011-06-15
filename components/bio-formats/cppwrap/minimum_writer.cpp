@@ -4,7 +4,7 @@
 
 /*
 OME Bio-Formats C++ bindings for native access to Bio-Formats Java library.
-Copyright (c) 2008-@year@, UW-Madison LOCI.
+Copyright (c) 2008, UW-Madison LOCI.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
