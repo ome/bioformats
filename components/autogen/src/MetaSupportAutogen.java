@@ -3,7 +3,7 @@
 //
 
 /*
-LOCI autogen package for programmatically generating source code.
+Bio-Formats autogen package for programmatically generating source code.
 Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
 
 This program is free software; you can redistribute it and/or modify
