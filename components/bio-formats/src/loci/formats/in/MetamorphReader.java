@@ -454,7 +454,9 @@ public class MetamorphReader extends BaseTiffReader {
           for (int j=0; j<cc; j++) {
             boolean validZ = j >= hasZ.size() || hasZ.get(j).booleanValue();
             int seriesNdx = s * (seriesCount / ns);
-            seriesNdx += (seriesCount == 1 || validZ) ? 0 : 1;
+            if (nstages == 0 && (!validZ || seriesCount > 1)) {
+              seriesNdx++;
+            }
             stks[seriesNdx][pt[seriesNdx]] = prefix;
             if (j < waveNames.size() && waveNames.get(j) != null) {
               stks[seriesNdx][pt[seriesNdx]] += "_w" + (j + 1);
