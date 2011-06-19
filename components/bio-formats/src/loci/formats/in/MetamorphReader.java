@@ -465,6 +465,10 @@ public class MetamorphReader extends BaseTiffReader {
                 // If there are underscores in the wavelength name, translate
                 // them to hyphens. (See #558)
                 waveName = waveName.replace('_', '-');
+                // If there are slashes (forward or backward) in the wavelength
+                // name, translate them to hyphens. (See #5922)
+                waveName = waveName.replace('/', '-');
+                waveName = waveName.replace('\\', '-');
                 stks[seriesNdx][pt[seriesNdx]] += waveName;
               }
             }
