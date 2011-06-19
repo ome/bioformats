@@ -491,17 +491,10 @@ public class MetamorphReader extends BaseTiffReader {
         }
       }
 
-      int q = 0;
-      int f = 0;
-      String file = stks[q][f];
-
-      while (file == null) {
-        if (f < stks[q].length - 1) f++;
-        else if (q < stks.length - 1) {
-          q++;
-          f = 0;
-        }
-        file = stks[q][f];
+      String file = locateFirstValidFile();
+      if (file == null) {
+        throw new FormatException(
+            "Unable to locate at lease one valid STK file!");
       }
 
       RandomAccessInputStream s = new RandomAccessInputStream(file);
@@ -1477,6 +1470,21 @@ public class MetamorphReader extends BaseTiffReader {
    */
   public static String intFormatMax(int myint, int maxint) {
     return intFormat(myint, String.valueOf(maxint).length());
+  }
+
+  /**
+   * Locates the first valid file in the STK arrays.
+   * @return Path to the first valid file.
+   */
+  private String locateFirstValidFile() {
+    for (int q = 0; q < stks.length; q++) {
+      for (int f = 0; f < stks.length; f++) {
+        if (stks[q][f] != null) {
+          return stks[q][f];
+        }
+      }
+    }
+    return null;
   }
 
   private TiffRational readRational(RandomAccessInputStream s)
