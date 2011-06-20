@@ -104,6 +104,7 @@ public class ImageInfo {
   private boolean ascii = false;
   private boolean usedFiles = true;
   private boolean omexmlOnly = false;
+  private boolean validate = true;
   private String omexmlVersion = null;
   private int start = 0;
   private int end = Integer.MAX_VALUE;
@@ -147,6 +148,7 @@ public class ImageInfo {
     preload = false;
     usedFiles = true;
     omexmlOnly = false;
+    validate = true;
     omexmlVersion = null;
     start = 0;
     end = Integer.MAX_VALUE;
@@ -177,6 +179,7 @@ public class ImageInfo {
         else if (args[i].equals("-normalize")) normalize = true;
         else if (args[i].equals("-fast")) fastBlit = true;
         else if (args[i].equals("-autoscale")) autoscale = true;
+        else if (args[i].equals("-novalid")) validate = false;
         else if (args[i].equals("-debug")) {
           DebugTools.enableLogging("DEBUG");
         }
@@ -902,7 +905,9 @@ public class ImageInfo {
       if (omexmlOnly) {
         DebugTools.enableLogging("OFF");
       }
-      service.validateOMEXML(xml);
+      if (validate) {
+        service.validateOMEXML(xml);
+      }
     }
     else {
       LOGGER.info("The metadata could not be converted to OME-XML.");
