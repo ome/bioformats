@@ -29,9 +29,14 @@ import java.util.Vector;
 import loci.common.RandomAccessInputStream;
 import loci.common.ReflectException;
 import loci.common.ReflectedUniverse;
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceException;
+import loci.common.services.ServiceFactory;
 import loci.formats.meta.DummyMetadata;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
+import loci.formats.services.OMEXMLService;
+import loci.formats.services.OMEXMLServiceImpl;
 
 /**
  * A utility class for format reader and writer implementations.
@@ -919,6 +924,96 @@ public final class FormatTools {
       System.arraycopy(bytes[i], 0, rtn, bytes[0].length * i, bytes[i].length);
     }
     return rtn;
+  }
+
+  // -- Conversion convenience methods --
+
+  /**
+   * Convenience method for converting the specified input file to the
+   * specified output file.  The ImageReader and ImageWriter classes are used
+   * for input and output, respectively.  To use other IFormatReader or
+   * IFormatWriter implementation,
+   * @see convert(IFormatReader, IFormatWriter, String).
+   *
+   * @param input the full path name of the existing input file
+   * @param output the full path name of the output file to be created
+   * @throws FormatException if there is a general problem reading from or
+   * writing to one of the files.
+   * @throws IOException if there is an I/O-related error.
+   */
+  public static void convert(String input, String output)
+    throws FormatException, IOException
+  {
+    IFormatReader reader = new ImageReader();
+    try {
+      ServiceFactory factory = new ServiceFactory();
+      OMEXMLService service = factory.getInstance(OMEXMLService.class);
+      reader.setMetadataStore(service.createOMEXMLMetadata());
+    }
+    catch (DependencyException de) {
+      throw new MissingLibraryException(OMEXMLServiceImpl.NO_OME_XML_MSG, de);
+    }
+    catch (ServiceException se) {
+      throw new FormatException(se);
+    }
+    reader.setId(input);
+
+    IFormatWriter writer = new ImageWriter();
+
+    convert(reader, writer, output);
+  }
+
+  /**
+   * Convenience method for writing all of the images and metadata obtained
+   * from the specified IFormatReader into the specified IFormatWriter.
+   *
+   * It is required that setId(String) be called on the IFormatReader
+   * object before it is passed to convert(...).  setMetadataStore(...)
+   * should also have been called with an appropriate instance of IMetadata.
+   *
+   * The setId(String) method must not be called on the IFormatWriter
+   * object; this is taken care of internally.  Additionally, the
+   * setMetadataRetrieve(...) method in IFormatWriter should not be called.
+   *
+   * @param input the pre-initialized IFormatReader used for reading data.
+   * @param output the uninitialized IFormatWriter used for writing data.
+   * @param outputFile the full path name of the output file to be created.
+   * @throws FormatException if there is a general problem reading from or
+   * writing to one of the files.
+   * @throws IOException if there is an I/O-related error.
+   */
+  public static void convert(IFormatReader input, IFormatWriter output,
+    String outputFile)
+    throws FormatException, IOException
+  {
+    MetadataStore store = input.getMetadataStore();
+    MetadataRetrieve meta = null;
+    try {
+      ServiceFactory factory = new ServiceFactory();
+      OMEXMLService service = factory.getInstance(OMEXMLService.class);
+      meta = service.asRetrieve(store);
+    }
+    catch (DependencyException de) {
+      throw new MissingLibraryException(OMEXMLServiceImpl.NO_OME_XML_MSG, de);
+    }
+
+    output.setMetadataRetrieve(meta);
+    output.setId(outputFile);
+
+    for (int series=0; series<input.getSeriesCount(); series++) {
+      input.setSeries(series);
+      output.setSeries(series);
+
+      byte[] buf = new byte[getPlaneSize(input)];
+
+      for (int image=0; image<input.getImageCount(); image++) {
+        input.openBytes(image, buf);
+        output.saveBytes(image, buf);
+      }
+    }
+
+    input.close();
+    output.close();
   }
 
 }
