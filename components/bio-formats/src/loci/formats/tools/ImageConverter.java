@@ -58,6 +58,7 @@ import loci.formats.services.OMEXMLServiceImpl;
 
 import ome.xml.model.Image;
 import ome.xml.model.OME;
+import ome.xml.model.primitives.PositiveInteger;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -97,6 +98,7 @@ public final class ImageConverter {
     int firstPlane = 0;
     int lastPlane = Integer.MAX_VALUE;
     int channel = -1, zSection = -1, timepoint = -1;
+    int xCoordinate = 0, yCoordinate = 0, width = 0, height = 0;
     if (args != null) {
       for (int i=0; i<args.length; i++) {
         if (args[i].startsWith("-") && args.length > 1) {
@@ -133,6 +135,13 @@ public final class ImageConverter {
             }
             catch (NumberFormatException exc) { }
           }
+          else if (args[i].equals("-crop")) {
+            String[] tokens = args[++i].split(",");
+            xCoordinate = Integer.parseInt(tokens[0]);
+            yCoordinate = Integer.parseInt(tokens[1]);
+            width = Integer.parseInt(tokens[2]);
+            height = Integer.parseInt(tokens[3]);
+          }
           else {
             LOGGER.error("Found unknown command flag: {}; exiting.", args[i]);
             return false;
@@ -164,7 +173,8 @@ public final class ImageConverter {
         "To convert a file between formats, run:",
         "  bfconvert [-debug] [-stitch] [-separate] [-merge] [-expand]",
         "    [-bigtiff] [-compression codec] [-series series] [-map id]",
-        "    [-range start end] in_file out_file",
+        "    [-range start end] [-crop x,y,w,h] [-channel channel] [-z Z]",
+        "    [-timepoint timepoint] [-nogroup] [-version] in_file out_file",
         "",
         "    -version: print the library version and exit",
         "      -debug: turn on debugging output",
@@ -179,6 +189,10 @@ public final class ImageConverter {
         "      -range: specify range of planes to convert (inclusive)",
         "    -nogroup: force multi-file datasets to be read as individual " +
         "files",
+        "       -crop: crop images before converting; argument is 'x,y,w,h'",
+        "    -channel: only convert the specified channel (indexed from 0)",
+        "          -z: only convert the specified Z section (indexed from 0)",
+        "  -timepoint: only convert the specified timepoint (indexed from 0)",
         "",
         "If any of the following patterns are present in out_file, they will",
         "be replaced with the indicated metadata value from the input file.",
@@ -289,6 +303,10 @@ public final class ImageConverter {
 
           newRoot.addImage(exportImage);
           meta.setRoot(newRoot);
+
+          meta.setPixelsSizeX(new PositiveInteger(width), 0);
+          meta.setPixelsSizeY(new PositiveInteger(height), 0);
+
           writer.setMetadataRetrieve((MetadataRetrieve) meta);
         }
         catch (ServiceException e) {
@@ -296,6 +314,8 @@ public final class ImageConverter {
         }
       }
       else {
+        store.setPixelsSizeX(new PositiveInteger(width), 0);
+        store.setPixelsSizeY(new PositiveInteger(height), 0);
         writer.setMetadataRetrieve((MetadataRetrieve) store);
       }
     }
@@ -360,7 +380,8 @@ public final class ImageConverter {
         if (compression != null) writer.setCompression(compression);
 
         long s = System.currentTimeMillis();
-        byte[] buf = reader.openBytes(i);
+        byte[] buf =
+          reader.openBytes(i, xCoordinate, yCoordinate, width, height);
         byte[][] lut = reader.get8BitLookupTable();
         if (lut != null) {
           IndexColorModel model = new IndexColorModel(8, lut[0].length,
