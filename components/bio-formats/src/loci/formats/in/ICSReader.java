@@ -79,7 +79,7 @@ public class ICSReader extends FormatReader {
     "parameter", "sensor", "history", "document", "view.*", "end", "file",
     "offset", "parameters", "order", "sizes", "coordinates", "significant_bits",
     "format", "sign", "compression", "byte_order", "origin", "scale", "units",
-    "labels", "SCIL_TYPE", "type", "model", "s_params", "gain.*", "dwell",
+    "t", "labels", "SCIL_TYPE", "type", "model", "s_params", "gain.*", "dwell",
     "shutter.*", "pinhole", "laser.*", "version", "objective", "PassCount",
     "step.*", "date", "GMTdate", "label", "software", "author", "length",
     "Z (background)", "dimensions", "rep period", "image form", "extents",
@@ -393,6 +393,8 @@ public class ICSReader extends FormatReader {
     LOGGER.info("Reading metadata");
 
     Double[] pixelSizes = null;
+    Double[] timestamps = null;
+    String[] units = null;
     String[] axes = null;
     int[] axisLengths = null;
     String byteOrder = null, rFormat = null, compression = null;
@@ -503,16 +505,16 @@ public class ICSReader extends FormatReader {
           compression = v;
         }
         else if (k.equalsIgnoreCase("parameter scale")) {
-          StringTokenizer t = new StringTokenizer(v);
-          pixelSizes = new Double[t.countTokens()];
-          for (int n=0; n<pixelSizes.length; n++) {
-            try {
-              pixelSizes[n] = new Double(t.nextToken().trim());
-            }
-            catch (NumberFormatException e) {
-              LOGGER.debug("Could not parse pixel size", e);
-            }
-          }
+          // parse physical pixel sizes and time increment
+          pixelSizes = splitDoubles(v);
+        }
+        else if (k.equalsIgnoreCase("parameter t")) {
+          // parse explicit timestamps
+          timestamps = splitDoubles(v);
+        }
+        else if (k.equalsIgnoreCase("parameter units")) {
+          // parse units for scale
+          units = v.split("\\s+");
         }
         else if (k.equalsIgnoreCase("representation sign")) {
           signed = v.equals("signed");
@@ -917,23 +919,28 @@ public class ICSReader extends FormatReader {
 
       if (pixelSizes != null) {
         for (int i=0; i<pixelSizes.length; i++) {
-          if (axes[i].equals("x")) {
-            if (pixelSizes[i] > 0) {
-              store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSizes[i]), 0);
+          Double pixelSize = pixelSizes[i];
+          String axis = axes != null && axes.length > i ? axes[i] : "";
+          String unit = units != null && units.length > i ? units[i] : "";
+          if (axis.equals("x")) {
+            if (pixelSize > 0 && checkUnit(unit, "um", "microns")) {
+              store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSize), 0);
             }
           }
-          else if (axes[i].equals("y")) {
-            if (pixelSizes[i] > 0) {
-              store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSizes[i]), 0);
+          else if (axis.equals("y")) {
+            if (pixelSize > 0 && checkUnit(unit, "um", "microns")) {
+              store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSize), 0);
             }
           }
-          else if (axes[i].equals("z")) {
-            if (pixelSizes[i] > 0) {
-              store.setPixelsPhysicalSizeZ(new PositiveFloat(pixelSizes[i]), 0);
+          else if (axis.equals("z")) {
+            if (pixelSize > 0 && checkUnit(unit, "um", "microns")) {
+              store.setPixelsPhysicalSizeZ(new PositiveFloat(pixelSize), 0);
             }
           }
-          else if (axes[i].equals("t")) {
-            store.setPixelsTimeIncrement(pixelSizes[i], 0);
+          else if (axis.equals("t")) {
+            if (checkUnit(unit, "ms")) {
+              store.setPixelsTimeIncrement(1000 * pixelSize, 0);
+            }
           }
         }
       }
@@ -945,6 +952,24 @@ public class ICSReader extends FormatReader {
           sizes[1] /= getSizeY();
           if (sizes[1] > 0) {
             store.setPixelsPhysicalSizeY(new PositiveFloat(sizes[1]), 0);
+          }
+        }
+      }
+
+      // populate Plane data
+
+      if (timestamps != null) {
+        for (int t=0; t<timestamps.length; t++) {
+          if (t >= getSizeT()) break; // ignore superfluous timestamps
+          if (timestamps[t] == null) continue; // ignore missing timestamp
+          double deltaT = timestamps[t];
+          if (Double.isNaN(deltaT)) continue; // ignore invalid timestamp
+          // assign timestamp to all relevant planes
+          for (int z=0; z<getSizeZ(); z++) {
+            for (int c=0; c<getEffectiveSizeC(); c++) {
+              int index = getIndex(z, c, t);
+              store.setPlaneDeltaT(deltaT, 0, index);
+            }
           }
         }
       }
@@ -1089,6 +1114,34 @@ public class ICSReader extends FormatReader {
         }
       }
     }
+  }
+
+  // -- Helper methods --
+
+  /** Splits the given string into a list of {@link Double}s. */
+  private Double[] splitDoubles(String v) {
+    StringTokenizer t = new StringTokenizer(v);
+    Double[] values = new Double[t.countTokens()];
+    for (int n=0; n<values.length; n++) {
+      String token = t.nextToken().trim();
+      try {
+        values[n] = new Double(token);
+      }
+      catch (NumberFormatException e) {
+        LOGGER.debug("Could not parse double value '{}'", token, e);
+      }
+    }
+    return values;
+  }
+
+  /** Verifies that a unit matches the expected value. */
+  private boolean checkUnit(String actual, String... expected) {
+    if (actual == null || actual.equals("")) return true; // undefined is OK
+    for (String exp : expected) {
+      if (actual.equals(exp)) return true; // unit matches expected value
+    }
+    LOGGER.debug("Unexpected unit '{}'; expected '{}'", actual, expected);
+    return false;
   }
 
 }

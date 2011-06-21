@@ -77,7 +77,7 @@ public class Calibrator {
     boolean xcalPresent = !Double.isNaN(xcal);
     boolean ycalPresent = !Double.isNaN(ycal);
     boolean zcalPresent = !Double.isNaN(zcal);
-    boolean tcalPresent = !Double.isNaN(tcal);
+    boolean tcalPresent = !Double.isNaN(tcal) && tcal != 0;
 
     // HACK: If the physical width or height are missing,
     // assume that the width and height are equal.
@@ -154,7 +154,11 @@ public class Calibrator {
       tiCount++;
     }
     if (tiCount == 0) return Double.NaN;
-    return (float) (tiTotal / tiCount);
+
+    // divide by 1000, as the DeltaT values are stored in milliseconds
+    // but the expected units are seconds
+
+    return (float) (tiTotal / tiCount) / 1000f;
   }
 
 }
