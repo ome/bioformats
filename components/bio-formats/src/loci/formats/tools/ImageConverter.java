@@ -92,6 +92,7 @@ public final class ImageConverter {
     String compression = null;
     boolean stitch = false, separate = false, merge = false, fill = false;
     boolean bigtiff = false;
+    boolean printVersion = false;
     int series = -1;
     int firstPlane = 0;
     int lastPlane = Integer.MAX_VALUE;
@@ -127,7 +128,8 @@ public final class ImageConverter {
           }
         }
         else {
-          if (in == null) in = args[i];
+          if (args[i].equals("-version")) printVersion = true;
+          else if (in == null) in = args[i];
           else if (out == null) out = args[i];
           else {
             LOGGER.error("Found unknown argument: {}; exiting.", args[i]);
@@ -138,6 +140,14 @@ public final class ImageConverter {
         }
       }
     }
+
+    if (printVersion) {
+      LOGGER.info("Version: {}", FormatTools.VERSION);
+      LOGGER.info("VCS revision: {}", FormatTools.VCS_REVISION);
+      LOGGER.info("Build date: {}", FormatTools.DATE);
+      return true;
+    }
+
     if (in == null || out == null) {
       String[] s = {
         "To convert a file between formats, run:",
@@ -145,6 +155,7 @@ public final class ImageConverter {
         "    [-bigtiff] [-compression codec] [-series series] [-map id]",
         "    [-range start end] in_file out_file",
         "",
+        "    -version: print the library version and exit",
         "      -debug: turn on debugging output",
         "     -stitch: stitch input files with similar names",
         "   -separate: split RGB images into separate channels",
