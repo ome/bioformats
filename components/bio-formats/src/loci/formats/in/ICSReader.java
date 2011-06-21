@@ -393,6 +393,8 @@ public class ICSReader extends FormatReader {
     LOGGER.info("Reading metadata");
 
     Double[] pixelSizes = null;
+    Double[] timestamps = null;
+    String[] units = null;
     String[] axes = null;
     int[] axisLengths = null;
     String byteOrder = null, rFormat = null, compression = null;
@@ -503,16 +505,16 @@ public class ICSReader extends FormatReader {
           compression = v;
         }
         else if (k.equalsIgnoreCase("parameter scale")) {
-          StringTokenizer t = new StringTokenizer(v);
-          pixelSizes = new Double[t.countTokens()];
-          for (int n=0; n<pixelSizes.length; n++) {
-            try {
-              pixelSizes[n] = new Double(t.nextToken().trim());
-            }
-            catch (NumberFormatException e) {
-              LOGGER.debug("Could not parse pixel size", e);
-            }
-          }
+          // parse physical pixel sizes and time increment
+          pixelSizes = splitDoubles(v);
+        }
+        else if (k.equalsIgnoreCase("parameter t")) {
+          // parse explicit timestamps
+          timestamps = splitDoubles(v);
+        }
+        else if (k.equalsIgnoreCase("parameter units")) {
+          // parse units for scale
+          units = v.trim().split("\\s+");
         }
         else if (k.equalsIgnoreCase("representation sign")) {
           signed = v.equals("signed");
@@ -1089,6 +1091,23 @@ public class ICSReader extends FormatReader {
         }
       }
     }
+  }
+
+  // -- Helper methods --
+
+  private Double[] splitDoubles(String v) {
+    StringTokenizer t = new StringTokenizer(v);
+    Double[] values = new Double[t.countTokens()];
+    for (int n=0; n<values.length; n++) {
+      String token = t.nextToken().trim();
+      try {
+        values[n] = new Double(token);
+      }
+      catch (NumberFormatException e) {
+        LOGGER.debug("Could not parse value: " + token, e);
+      }
+    }
+    return values;
   }
 
 }
