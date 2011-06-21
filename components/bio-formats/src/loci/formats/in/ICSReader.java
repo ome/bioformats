@@ -968,7 +968,7 @@ public class ICSReader extends FormatReader {
           for (int z=0; z<getSizeZ(); z++) {
             for (int c=0; c<getEffectiveSizeC(); c++) {
               int index = getIndex(z, c, t);
-              store.setPlaneDeltaT(deltaT, index, 0);
+              store.setPlaneDeltaT(deltaT, 0, index);
             }
           }
         }
