@@ -79,7 +79,7 @@ public class ICSReader extends FormatReader {
     "parameter", "sensor", "history", "document", "view.*", "end", "file",
     "offset", "parameters", "order", "sizes", "coordinates", "significant_bits",
     "format", "sign", "compression", "byte_order", "origin", "scale", "units",
-    "labels", "SCIL_TYPE", "type", "model", "s_params", "gain.*", "dwell",
+    "t", "labels", "SCIL_TYPE", "type", "model", "s_params", "gain.*", "dwell",
     "shutter.*", "pinhole", "laser.*", "version", "objective", "PassCount",
     "step.*", "date", "GMTdate", "label", "software", "author", "length",
     "Z (background)", "dimensions", "rep period", "image form", "extents",
@@ -952,6 +952,24 @@ public class ICSReader extends FormatReader {
           sizes[1] /= getSizeY();
           if (sizes[1] > 0) {
             store.setPixelsPhysicalSizeY(new PositiveFloat(sizes[1]), 0);
+          }
+        }
+      }
+
+      // populate Plane data
+
+      if (timestamps != null) {
+        for (int t=0; t<timestamps.length; t++) {
+          if (t >= getSizeT()) break; // ignore superfluous timestamps
+          if (timestamps[t] == null) continue; // ignore missing timestamp
+          double deltaT = timestamps[t];
+          if (Double.isNaN(deltaT)) continue; // ignore invalid timestamp
+          // assign timestamp to all relevant planes
+          for (int z=0; z<getSizeZ(); z++) {
+            for (int c=0; c<getEffectiveSizeC(); c++) {
+              int index = getIndex(z, c, t);
+              store.setPlaneDeltaT(deltaT, index, 0);
+            }
           }
         }
       }
