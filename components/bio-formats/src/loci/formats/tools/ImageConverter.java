@@ -96,6 +96,7 @@ public final class ImageConverter {
     int series = -1;
     int firstPlane = 0;
     int lastPlane = Integer.MAX_VALUE;
+    int channel = -1, zSection = -1, timepoint = -1;
     if (args != null) {
       for (int i=0; i<args.length; i++) {
         if (args[i].startsWith("-") && args.length > 1) {
@@ -110,6 +111,15 @@ public final class ImageConverter {
           else if (args[i].equals("-map")) map = args[++i];
           else if (args[i].equals("-compression")) compression = args[++i];
           else if (args[i].equals("-nogroup")) group = false;
+          else if (args[i].equals("-channel")) {
+            channel = Integer.parseInt(args[++i]);
+          }
+          else if (args[i].equals("-z")) {
+            zSection = Integer.parseInt(args[++i]);
+          }
+          else if (args[i].equals("-timepoint")) {
+            timepoint = Integer.parseInt(args[++i]);
+          }
           else if (args[i].equals("-series")) {
             try {
               series = Integer.parseInt(args[++i]);
@@ -324,9 +334,28 @@ public final class ImageConverter {
       int endPlane = (int) Math.min(numImages, lastPlane);
       numImages = endPlane - startPlane;
 
+      if (channel >= 0) {
+        numImages /= reader.getEffectiveSizeC();
+      }
+      if (zSection >= 0) {
+        numImages /= reader.getSizeZ();
+      }
+      if (timepoint >= 0) {
+        numImages /= reader.getSizeT();
+      }
+
       total += numImages;
 
+      int count = 0;
       for (int i=startPlane; i<endPlane; i++) {
+        int[] coords = reader.getZCTCoords(i);
+
+        if ((zSection >= 0 && coords[0] != zSection) || (channel >= 0 &&
+          coords[1] != channel) || (timepoint >= 0 && coords[2] != timepoint))
+        {
+          continue;
+        }
+
         writer.setId(FormatTools.getFilename(q, i, reader, out));
         if (compression != null) writer.setCompression(compression);
 
@@ -345,8 +374,8 @@ public final class ImageConverter {
         write += e - m;
 
         // log number of planes processed every second or so
-        if (i == numImages - 1 || (e - timeLastLogged) / 1000 > 0) {
-          int current = (i - startPlane) + 1;
+        if (count == numImages - 1 || (e - timeLastLogged) / 1000 > 0) {
+          int current = (count - startPlane) + 1;
           int percent = 100 * current / numImages;
           StringBuilder sb = new StringBuilder();
           sb.append("\t");
@@ -361,6 +390,7 @@ public final class ImageConverter {
             new Object[] {current, numImages, percent});
           timeLastLogged = e;
         }
+        count++;
       }
     }
     writer.close();
