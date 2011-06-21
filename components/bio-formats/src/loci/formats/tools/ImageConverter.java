@@ -91,7 +91,7 @@ public final class ImageConverter {
     String map = null;
     String compression = null;
     boolean stitch = false, separate = false, merge = false, fill = false;
-    boolean bigtiff = false;
+    boolean bigtiff = false, group = true;
     boolean printVersion = false;
     int series = -1;
     int firstPlane = 0;
@@ -109,6 +109,7 @@ public final class ImageConverter {
           else if (args[i].equals("-bigtiff")) bigtiff = true;
           else if (args[i].equals("-map")) map = args[++i];
           else if (args[i].equals("-compression")) compression = args[++i];
+          else if (args[i].equals("-nogroup")) group = false;
           else if (args[i].equals("-series")) {
             try {
               series = Integer.parseInt(args[++i]);
@@ -166,6 +167,8 @@ public final class ImageConverter {
         "     -series: specify which image series to convert",
         "        -map: specify file on disk to which name should be mapped",
         "      -range: specify range of planes to convert (inclusive)",
+        "    -nogroup: force multi-file datasets to be read as individual " +
+        "files",
         "",
         "If any of the following patterns are present in out_file, they will",
         "be replaced with the indicated metadata value from the input file.",
@@ -239,6 +242,7 @@ public final class ImageConverter {
     if (merge) reader = new ChannelMerger(reader);
     if (fill) reader = new ChannelFiller(reader);
 
+    reader.setGroupFiles(group);
     reader.setMetadataFiltered(true);
     reader.setOriginalMetadataPopulated(true);
     OMEXMLService service = null;
