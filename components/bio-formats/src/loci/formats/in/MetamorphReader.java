@@ -229,10 +229,13 @@ public class MetamorphReader extends BaseTiffReader {
 
     // the original file is a .nd file, so we need to construct a new reader
     // for the constituent STK files
+    stkReaders[series][ndx].setMetadataOptions(
+        new DefaultMetadataOptions(MetadataLevel.MINIMUM));
     stkReaders[series][ndx].setId(file);
     int plane = stks[series].length == 1 ? no : coords[0];
     stkReaders[series][ndx].openBytes(plane, buf, x, y, w, h);
     stkReaders[series][ndx].close();
+
     return buf;
   }
 
@@ -454,7 +457,9 @@ public class MetamorphReader extends BaseTiffReader {
           for (int j=0; j<cc; j++) {
             boolean validZ = j >= hasZ.size() || hasZ.get(j).booleanValue();
             int seriesNdx = s * (seriesCount / ns);
-            seriesNdx += (seriesCount == 1 || validZ) ? 0 : 1;
+            if (nstages == 0 && (!validZ || seriesCount > 1)) {
+              seriesNdx++;
+            }
             stks[seriesNdx][pt[seriesNdx]] = prefix;
             if (j < waveNames.size() && waveNames.get(j) != null) {
               stks[seriesNdx][pt[seriesNdx]] += "_w" + (j + 1);
@@ -463,6 +468,10 @@ public class MetamorphReader extends BaseTiffReader {
                 // If there are underscores in the wavelength name, translate
                 // them to hyphens. (See #558)
                 waveName = waveName.replace('_', '-');
+                // If there are slashes (forward or backward) in the wavelength
+                // name, translate them to hyphens. (See #5922)
+                waveName = waveName.replace('/', '-');
+                waveName = waveName.replace('\\', '-');
                 stks[seriesNdx][pt[seriesNdx]] += waveName;
               }
             }
@@ -489,17 +498,10 @@ public class MetamorphReader extends BaseTiffReader {
         }
       }
 
-      int q = 0;
-      int f = 0;
-      String file = stks[q][f];
-
-      while (file == null) {
-        if (f < stks[q].length - 1) f++;
-        else if (q < stks.length - 1) {
-          q++;
-          f = 0;
-        }
-        file = stks[q][f];
+      String file = locateFirstValidFile();
+      if (file == null) {
+        throw new FormatException(
+            "Unable to locate at lease one valid STK file!");
       }
 
       RandomAccessInputStream s = new RandomAccessInputStream(file);
@@ -1475,6 +1477,21 @@ public class MetamorphReader extends BaseTiffReader {
    */
   public static String intFormatMax(int myint, int maxint) {
     return intFormat(myint, String.valueOf(maxint).length());
+  }
+
+  /**
+   * Locates the first valid file in the STK arrays.
+   * @return Path to the first valid file.
+   */
+  private String locateFirstValidFile() {
+    for (int q = 0; q < stks.length; q++) {
+      for (int f = 0; f < stks.length; f++) {
+        if (stks[q][f] != null) {
+          return stks[q][f];
+        }
+      }
+    }
+    return null;
   }
 
   private TiffRational readRational(RandomAccessInputStream s)

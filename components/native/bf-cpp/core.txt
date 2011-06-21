@@ -1,4 +1,0 @@
-java.io.IOException
-java.lang.Class
-java.util.Hashtable
-java.lang.Double
