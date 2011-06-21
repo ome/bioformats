@@ -514,7 +514,7 @@ public class ICSReader extends FormatReader {
         }
         else if (k.equalsIgnoreCase("parameter units")) {
           // parse units for scale
-          units = v.trim().split("\\s+");
+          units = v.split("\\s+");
         }
         else if (k.equalsIgnoreCase("representation sign")) {
           signed = v.equals("signed");
@@ -919,23 +919,28 @@ public class ICSReader extends FormatReader {
 
       if (pixelSizes != null) {
         for (int i=0; i<pixelSizes.length; i++) {
-          if (axes[i].equals("x")) {
-            if (pixelSizes[i] > 0) {
-              store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSizes[i]), 0);
+          Double pixelSize = pixelSizes[i];
+          String axis = axes != null && axes.length > i ? axes[i] : "";
+          String unit = units != null && units.length > i ? units[i] : "";
+          if (axis.equals("x")) {
+            if (pixelSize > 0 && checkUnit(unit, "um", "microns")) {
+              store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSize), 0);
             }
           }
-          else if (axes[i].equals("y")) {
-            if (pixelSizes[i] > 0) {
-              store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSizes[i]), 0);
+          else if (axis.equals("y")) {
+            if (pixelSize > 0 && checkUnit(unit, "um", "microns")) {
+              store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSize), 0);
             }
           }
-          else if (axes[i].equals("z")) {
-            if (pixelSizes[i] > 0) {
-              store.setPixelsPhysicalSizeZ(new PositiveFloat(pixelSizes[i]), 0);
+          else if (axis.equals("z")) {
+            if (pixelSize > 0 && checkUnit(unit, "um", "microns")) {
+              store.setPixelsPhysicalSizeZ(new PositiveFloat(pixelSize), 0);
             }
           }
-          else if (axes[i].equals("t")) {
-            store.setPixelsTimeIncrement(pixelSizes[i], 0);
+          else if (axis.equals("t")) {
+            if (checkUnit(unit, "ms")) {
+              store.setPixelsTimeIncrement(1000 * pixelSize, 0);
+            }
           }
         }
       }
@@ -1095,6 +1100,7 @@ public class ICSReader extends FormatReader {
 
   // -- Helper methods --
 
+  /** Splits the given string into a list of {@link Double}s. */
   private Double[] splitDoubles(String v) {
     StringTokenizer t = new StringTokenizer(v);
     Double[] values = new Double[t.countTokens()];
@@ -1104,10 +1110,20 @@ public class ICSReader extends FormatReader {
         values[n] = new Double(token);
       }
       catch (NumberFormatException e) {
-        LOGGER.debug("Could not parse value: " + token, e);
+        LOGGER.debug("Could not parse double value '{}'", token, e);
       }
     }
     return values;
+  }
+
+  /** Verifies that a unit matches the expected value. */
+  private boolean checkUnit(String actual, String... expected) {
+    if (actual == null || actual.equals("")) return true; // undefined is OK
+    for (String exp : expected) {
+      if (actual.equals(exp)) return true; // unit matches expected value
+    }
+    LOGGER.debug("Unexpected unit '{}'; expected '{}'", actual, expected);
+    return false;
   }
 
 }
