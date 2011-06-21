@@ -26,6 +26,7 @@ package loci.formats;
 import java.io.IOException;
 import java.util.Vector;
 
+import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
 import loci.common.ReflectException;
 import loci.common.ReflectedUniverse;
@@ -141,6 +142,7 @@ public final class FormatTools {
   public static final String CHANNEL_NAME = "%w";
   public static final String Z_NUM = "%z";
   public static final String T_NUM = "%t";
+  public static final String TIMESTAMP = "%A";
 
   // -- Constants - versioning --
 
@@ -816,6 +818,20 @@ public final class FormatTools {
     channelName = channelName.replaceAll("\\\\", "_");
 
     filename = filename.replaceAll(CHANNEL_NAME, channelName);
+
+    String date = retrieve.getImageAcquiredDate(series);
+    long stamp = 0;
+    if (retrieve.getPlaneCount(series) > image) {
+      Double deltaT = retrieve.getPlaneDeltaT(series, image);
+      if (deltaT != null) {
+        stamp = (long) (deltaT * 1000);
+      }
+    }
+    stamp += DateTools.getTime(date, DateTools.ISO8601_FORMAT);
+    date = DateTools.convertDate(stamp, (int) DateTools.UNIX_EPOCH);
+
+    filename = filename.replaceAll(TIMESTAMP, date);
+
     return filename;
   }
 
