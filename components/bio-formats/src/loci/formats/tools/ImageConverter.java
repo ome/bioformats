@@ -167,6 +167,7 @@ public final class ImageConverter {
         "   " + FormatTools.CHANNEL_NAME +"\t\tchannel name",
         "   " + FormatTools.Z_NUM + "\t\tZ index",
         "   " + FormatTools.T_NUM + "\t\tT index",
+        "   " + FormatTools.TIMESTAMP + "\t\tacquisition timestamp",
         "",
         "If any of these patterns are present, then the images to be saved",
         "will be split into multiple files.  For example, if the input file",
