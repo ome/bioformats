@@ -43,7 +43,7 @@
 		<OME:AcquiredDate>2008-02-06T13:43:19</OME:AcquiredDate>
 		<OME:Description>An example OME compliant file, based on Olympus.oib</OME:Description>
 		<OME:Pixels DimensionOrder="XYCZT" ID="Pixels:0" PhysicalSizeX="0.207" PhysicalSizeY="0.207"
-			PhysicalSizeZ="0.01" SizeC="3" SizeT="16" SizeX="1024" SizeY="1024" SizeZ="1"
+			PhysicalSizeZ="0.0" SizeC="3" SizeT="16" SizeX="1024" SizeY="1024" SizeZ="1"
 			TimeIncrement="120.1302" Type="uint16">
 			<OME:Channel EmissionWavelength="523" ExcitationWavelength="488" ID="Channel:0:0"
 				IlluminationType="Epifluorescence" Name="CH1" SamplesPerPixel="1"
