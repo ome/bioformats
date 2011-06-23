@@ -139,18 +139,22 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
     try {
       if (version.equals("2003-FC")) {
         xml = verifyOMENamespace(xml);
+        LOGGER.debug("Running UPDATE_2003FC stylesheet.");
         transformed = XMLTools.transformXML(xml, UPDATE_2003FC);
       }
       else if (version.equals("2006-LO")) {
         xml = verifyOMENamespace(xml);
+        LOGGER.debug("Running UPDATE_2006LO stylesheet.");
         transformed = XMLTools.transformXML(xml, UPDATE_2006LO);
       }
       else if (version.equals("2007-06")) {
         xml = verifyOMENamespace(xml);
+        LOGGER.debug("Running UPDATE_200706 stylesheet.");
         transformed = XMLTools.transformXML(xml, UPDATE_200706);
       }
       else if (version.equals("2008-02")) {
         xml = verifyOMENamespace(xml);
+        LOGGER.debug("Running UPDATE_200802 stylesheet.");
         transformed = XMLTools.transformXML(xml, UPDATE_200802);
       }
       else transformed = xml;
@@ -161,12 +165,14 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
         !version.equals("2010-06"))
       {
         transformed = verifyOMENamespace(transformed);
+        LOGGER.debug("Running UPDATE_200809 stylesheet.");
         transformed = XMLTools.transformXML(transformed, UPDATE_200809);
       }
       LOGGER.debug("XML updated to at least 2009-09");
       LOGGER.trace("At least 2009-09 dump: {}", transformed);
       if (!version.equals("2010-04") && !version.equals("2010-06")) {
         transformed = verifyOMENamespace(transformed);
+        LOGGER.debug("Running UPDATE_200909 stylesheet.");
         transformed = XMLTools.transformXML(transformed, UPDATE_200909);
       }
       else transformed = xml;
@@ -175,12 +181,14 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
 
       if (!version.equals("2010-04")) {
         transformed = verifyOMENamespace(transformed);
+        LOGGER.debug("Running UPDATE_201004 stylesheet.");
         transformed = XMLTools.transformXML(transformed, UPDATE_201004);
       }
       else transformed = xml;
       LOGGER.debug("XML updated to at least 2010-06");
 
       transformed = verifyOMENamespace(transformed);
+      LOGGER.debug("Running UPDATE_201006 stylesheet.");
       transformed = XMLTools.transformXML(transformed, UPDATE_201006);
       LOGGER.debug("XML updated to at least 2011-06");
 
