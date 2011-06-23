@@ -179,7 +179,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
       LOGGER.debug("XML updated to at least 2010-04");
       LOGGER.trace("At least 2010-04 dump: {}", transformed);
 
-      if (!version.equals("2010-04")) {
+      if (!version.equals("2010-06")) {
         transformed = verifyOMENamespace(transformed);
         LOGGER.debug("Running UPDATE_201004 stylesheet.");
         transformed = XMLTools.transformXML(transformed, UPDATE_201004);
