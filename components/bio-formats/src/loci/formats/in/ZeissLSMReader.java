@@ -456,6 +456,8 @@ public class ZeissLSMReader extends FormatReader {
 
     lut = new byte[ifdsList.size()][][];
 
+    long[] previousStripOffsets = null;
+
     for (int series=0; series<ifdsList.size(); series++) {
       IFDList ifds = ifdsList.get(series);
       for (IFD ifd : ifds) {
@@ -469,13 +471,16 @@ public class ZeissLSMReader extends FormatReader {
       // fix the offsets for > 4 GB files
       RandomAccessInputStream s =
         new RandomAccessInputStream(getLSMFileFromSeries(series));
-      for (int i=1; i<ifds.size(); i++) {
+      for (int i=0; i<ifds.size(); i++) {
         long[] stripOffsets = ifds.get(i).getStripOffsets();
-        long[] previousStripOffsets = ifds.get(i - 1).getStripOffsets();
 
-        if (stripOffsets == null || previousStripOffsets == null) {
+        if (stripOffsets == null || (i != 0 && previousStripOffsets == null)) {
           throw new FormatException(
             "Strip offsets are missing; this is an invalid file.");
+        }
+        else if (i == 0 && previousStripOffsets == null) {
+          previousStripOffsets = stripOffsets;
+          continue;
         }
 
         boolean neededAdjustment = false;
@@ -493,6 +498,7 @@ public class ZeissLSMReader extends FormatReader {
             ifds.get(i).putIFDValue(IFD.STRIP_OFFSETS, stripOffsets);
           }
         }
+        previousStripOffsets = stripOffsets;
       }
       s.close();
 
