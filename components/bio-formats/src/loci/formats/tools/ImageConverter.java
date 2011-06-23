@@ -29,6 +29,7 @@ import java.io.InputStreamReader;
 import java.io.IOException;
 import java.util.List;
 
+import loci.common.DataTools;
 import loci.common.DebugTools;
 import loci.common.Location;
 import loci.common.services.DependencyException;
@@ -44,8 +45,10 @@ import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.IFormatWriter;
 import loci.formats.ImageReader;
+import loci.formats.ImageTools;
 import loci.formats.ImageWriter;
 import loci.formats.MetadataTools;
+import loci.formats.MinMaxCalculator;
 import loci.formats.MissingLibraryException;
 import loci.formats.ReaderWrapper;
 import loci.formats.in.OMETiffReader;
@@ -58,6 +61,7 @@ import loci.formats.services.OMEXMLServiceImpl;
 
 import ome.xml.model.Image;
 import ome.xml.model.OME;
+import ome.xml.model.enums.PixelType;
 import ome.xml.model.primitives.PositiveInteger;
 
 import org.slf4j.Logger;
@@ -94,6 +98,7 @@ public final class ImageConverter {
     boolean stitch = false, separate = false, merge = false, fill = false;
     boolean bigtiff = false, group = true;
     boolean printVersion = false;
+    boolean autoscale = false;
     int series = -1;
     int firstPlane = 0;
     int lastPlane = Integer.MAX_VALUE;
@@ -113,6 +118,7 @@ public final class ImageConverter {
           else if (args[i].equals("-map")) map = args[++i];
           else if (args[i].equals("-compression")) compression = args[++i];
           else if (args[i].equals("-nogroup")) group = false;
+          else if (args[i].equals("-autoscale")) autoscale = true;
           else if (args[i].equals("-channel")) {
             channel = Integer.parseInt(args[++i]);
           }
@@ -174,7 +180,8 @@ public final class ImageConverter {
         "  bfconvert [-debug] [-stitch] [-separate] [-merge] [-expand]",
         "    [-bigtiff] [-compression codec] [-series series] [-map id]",
         "    [-range start end] [-crop x,y,w,h] [-channel channel] [-z Z]",
-        "    [-timepoint timepoint] [-nogroup] [-version] in_file out_file",
+        "    [-timepoint timepoint] [-nogroup] [-autoscale] [-version]",
+        "    in_file out_file",
         "",
         "    -version: print the library version and exit",
         "      -debug: turn on debugging output",
@@ -187,8 +194,11 @@ public final class ImageConverter {
         "     -series: specify which image series to convert",
         "        -map: specify file on disk to which name should be mapped",
         "      -range: specify range of planes to convert (inclusive)",
-        "    -nogroup: force multi-file datasets to be read as individual " +
-        "files",
+        "    -nogroup: force multi-file datasets to be read as individual" +
+        "              files",
+        "  -autoscale: automatically adjust brightness and contrast before",
+        "              converting; this may mean that the original pixel",
+        "              values are not preserved",
         "       -crop: crop images before converting; argument is 'x,y,w,h'",
         "    -channel: only convert the specified channel (indexed from 0)",
         "          -z: only convert the specified Z section (indexed from 0)",
@@ -265,6 +275,11 @@ public final class ImageConverter {
     if (separate) reader = new ChannelSeparator(reader);
     if (merge) reader = new ChannelMerger(reader);
     if (fill) reader = new ChannelFiller(reader);
+    MinMaxCalculator minMax = null;
+    if (autoscale) {
+      reader = new MinMaxCalculator(reader);
+      minMax = (MinMaxCalculator) reader;
+    }
 
     reader.setGroupFiles(group);
     reader.setMetadataFiltered(true);
@@ -288,6 +303,11 @@ public final class ImageConverter {
 
     MetadataTools.populatePixels(store, reader, false, false);
 
+    if (width == 0 || height == 0) {
+      width = reader.getSizeX();
+      height = reader.getSizeY();
+    }
+
     if (store instanceof MetadataRetrieve) {
       if (series >= 0) {
         try {
@@ -307,6 +327,10 @@ public final class ImageConverter {
           meta.setPixelsSizeX(new PositiveInteger(width), 0);
           meta.setPixelsSizeY(new PositiveInteger(height), 0);
 
+          if (autoscale) {
+            store.setPixelsType(PixelType.UINT8, 0);
+          }
+
           writer.setMetadataRetrieve((MetadataRetrieve) meta);
         }
         catch (ServiceException e) {
@@ -314,8 +338,17 @@ public final class ImageConverter {
         }
       }
       else {
-        store.setPixelsSizeX(new PositiveInteger(width), 0);
-        store.setPixelsSizeY(new PositiveInteger(height), 0);
+        for (int i=0; i<reader.getSeriesCount(); i++) {
+          if (width != reader.getSizeX() || height != reader.getSizeY()) {
+            store.setPixelsSizeX(new PositiveInteger(width), 0);
+            store.setPixelsSizeY(new PositiveInteger(height), 0);
+          }
+
+          if (autoscale) {
+            store.setPixelsType(PixelType.UINT8, i);
+          }
+        }
+
         writer.setMetadataRetrieve((MetadataRetrieve) store);
       }
     }
@@ -346,7 +379,7 @@ public final class ImageConverter {
       reader.setSeries(q);
       int writerSeries = series == -1 ? q : 0;
       writer.setSeries(writerSeries);
-      writer.setInterleaved(reader.isInterleaved());
+      writer.setInterleaved(reader.isInterleaved() && !autoscale);
       writer.setValidBitsPerPixel(reader.getBitsPerPixel());
       int numImages = writer.canDoStacks() ? reader.getImageCount() : 1;
 
@@ -382,6 +415,45 @@ public final class ImageConverter {
         long s = System.currentTimeMillis();
         byte[] buf =
           reader.openBytes(i, xCoordinate, yCoordinate, width, height);
+
+        if (autoscale) {
+          Double min = null;
+          Double max = null;
+
+          Double[] planeMin = minMax.getPlaneMinimum(i);
+          Double[] planeMax = minMax.getPlaneMaximum(i);
+
+          if (planeMin != null && planeMax != null) {
+            min = planeMin[0];
+            max = planeMax[0];
+
+            for (int j=1; j<planeMin.length; j++) {
+              if (planeMin[j].doubleValue() < min.doubleValue()) {
+                min = planeMin[j];
+              }
+              if (planeMax[j].doubleValue() < max.doubleValue()) {
+                max = planeMax[j];
+              }
+            }
+          }
+
+          int pixelType = reader.getPixelType();
+          int bpp = FormatTools.getBytesPerPixel(pixelType);
+          boolean floatingPoint = FormatTools.isFloatingPoint(pixelType);
+          Object pix = DataTools.makeDataArray(buf, bpp, floatingPoint,
+            reader.isLittleEndian());
+          byte[][] b = ImageTools.make24Bits(pix, width, height,
+            reader.isInterleaved(), false, min, max);
+
+          int channelCount = reader.getRGBChannelCount();
+          int copyComponents = (int) Math.min(channelCount, b.length);
+
+          buf = new byte[channelCount * b[0].length];
+          for (int j=0; j<copyComponents; j++) {
+            System.arraycopy(b[j], 0, buf, b[0].length * j, b[0].length);
+          }
+        }
+
         byte[][] lut = reader.get8BitLookupTable();
         if (lut != null) {
           IndexColorModel model = new IndexColorModel(8, lut[0].length,
