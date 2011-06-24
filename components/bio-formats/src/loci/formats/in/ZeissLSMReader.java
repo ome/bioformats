@@ -459,6 +459,10 @@ public class ZeissLSMReader extends FormatReader {
     long[] previousStripOffsets = null;
 
     for (int series=0; series<ifdsList.size(); series++) {
+      if (series > 0 && lsmFilenames.length > 1) {
+        previousStripOffsets = null;
+      }
+
       IFDList ifds = ifdsList.get(series);
       for (IFD ifd : ifds) {
         // check that predictor is set to 1 if anything other
