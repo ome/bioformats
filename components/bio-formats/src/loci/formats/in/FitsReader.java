@@ -71,7 +71,7 @@ public class FitsReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    in.seek(pixelOffset);
+    in.seek(pixelOffset + no * FormatTools.getPlaneSize(this));
     readPlane(in, x, y, w, h, buf);
     return buf;
   }
