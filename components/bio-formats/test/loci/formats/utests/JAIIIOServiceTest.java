@@ -76,7 +76,7 @@ public class JAIIIOServiceTest {
     return stream;
   }
 
-  public ByteArrayOutputStream testWriteImageLossy()
+  private ByteArrayOutputStream assertWriteImageLossy()
     throws IOException, ServiceException {
     JPEG2000CodecOptions options = JPEG2000CodecOptions.getDefaultOptions();
     options.lossless = false;
@@ -87,7 +87,7 @@ public class JAIIIOServiceTest {
     return stream;
   }
 
-  public ByteArrayOutputStream testWriteImageLossless()
+  private ByteArrayOutputStream assertWriteImageLossless()
     throws IOException, ServiceException {
     JPEG2000CodecOptions options = JPEG2000CodecOptions.getDefaultOptions();
     options.lossless = true;
@@ -130,7 +130,7 @@ public class JAIIIOServiceTest {
 
   @Test
   public void testReadImageLossy() throws IOException, ServiceException {
-    ByteArrayOutputStream outputStream = testWriteImageLossy();
+    ByteArrayOutputStream outputStream = assertWriteImageLossy();
     ByteArrayInputStream inputStream =
       new ByteArrayInputStream(outputStream.toByteArray());
     BufferedImage image = service.readImage(inputStream);
@@ -141,7 +141,7 @@ public class JAIIIOServiceTest {
 
   @Test
   public void testReadImageLossless() throws IOException, ServiceException {
-    ByteArrayOutputStream outputStream = testWriteImageLossless();
+    ByteArrayOutputStream outputStream = assertWriteImageLossless();
     ByteArrayInputStream inputStream =
       new ByteArrayInputStream(outputStream.toByteArray());
     BufferedImage image = service.readImage(inputStream);
@@ -152,7 +152,7 @@ public class JAIIIOServiceTest {
 
   @Test
   public void testReadRasterLossy() throws IOException, ServiceException {
-    ByteArrayOutputStream outputStream = testWriteImageLossy();
+    ByteArrayOutputStream outputStream = assertWriteImageLossy();
     ByteArrayInputStream inputStream =
       new ByteArrayInputStream(outputStream.toByteArray());
     Raster image = service.readRaster(inputStream);
@@ -163,7 +163,7 @@ public class JAIIIOServiceTest {
 
   @Test
   public void testReadRasterLossless() throws IOException, ServiceException {
-    ByteArrayOutputStream outputStream = testWriteImageLossless();
+    ByteArrayOutputStream outputStream = assertWriteImageLossless();
     ByteArrayInputStream inputStream =
       new ByteArrayInputStream(outputStream.toByteArray());
     Raster image = service.readRaster(inputStream);
@@ -174,7 +174,7 @@ public class JAIIIOServiceTest {
 
   @Test
   public void testReadImageLevel0Lossy() throws IOException, ServiceException {
-    ByteArrayOutputStream outputStream = testWriteImageLossy();
+    ByteArrayOutputStream outputStream = assertWriteImageLossy();
     ByteArrayInputStream inputStream =
       new ByteArrayInputStream(outputStream.toByteArray());
     JPEG2000CodecOptions options = JPEG2000CodecOptions.getDefaultOptions();
@@ -187,7 +187,7 @@ public class JAIIIOServiceTest {
 
   @Test
   public void testReadImageLevel0Lossless() throws IOException, ServiceException {
-    ByteArrayOutputStream outputStream = testWriteImageLossless();
+    ByteArrayOutputStream outputStream = assertWriteImageLossless();
     ByteArrayInputStream inputStream =
       new ByteArrayInputStream(outputStream.toByteArray());
     JPEG2000CodecOptions options = JPEG2000CodecOptions.getDefaultOptions();
@@ -200,7 +200,7 @@ public class JAIIIOServiceTest {
 
   @Test
   public void testReadRasterLevel0Lossy() throws IOException, ServiceException {
-    ByteArrayOutputStream outputStream = testWriteImageLossy();
+    ByteArrayOutputStream outputStream = assertWriteImageLossy();
     ByteArrayInputStream inputStream =
       new ByteArrayInputStream(outputStream.toByteArray());
     JPEG2000CodecOptions options = JPEG2000CodecOptions.getDefaultOptions();
@@ -213,7 +213,7 @@ public class JAIIIOServiceTest {
 
   @Test
   public void testReadRasterLevel0Lossless() throws IOException, ServiceException {
-    ByteArrayOutputStream outputStream = testWriteImageLossless();
+    ByteArrayOutputStream outputStream = assertWriteImageLossless();
     ByteArrayInputStream inputStream =
       new ByteArrayInputStream(outputStream.toByteArray());
     JPEG2000CodecOptions options = JPEG2000CodecOptions.getDefaultOptions();
