@@ -30,6 +30,7 @@ import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -91,6 +92,8 @@ public class DeltavisionReader extends FormatReader {
   protected DVExtHdrFields[][][] extHdrFields = null;
 
   private Double[] ndFilters;
+
+  private int[] lengths;
 
   private String logFile;
   private String deconvolutionLogFile;
@@ -156,8 +159,34 @@ public class DeltavisionReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
+    int[] coords = getZCTCoords(no);
+
+    int[] newCoords = new int[4];
+    int coordIndex = 0;
+    int dimIndex = 2;
+
+    while (coordIndex < newCoords.length) {
+      char dim = getDimensionOrder().charAt(dimIndex++);
+
+      switch (dim) {
+        case 'Z':
+          newCoords[coordIndex++] = coords[0];
+          break;
+        case 'C':
+          newCoords[coordIndex++] = coords[1];
+          break;
+        case 'T':
+          newCoords[coordIndex++] = getSeries();
+          newCoords[coordIndex++] = coords[2];
+          break;
+      }
+    }
+
+    int planeIndex = FormatTools.positionToRaster(lengths, newCoords);
+
     // read the image plane's pixel data
-    long planeOffset = (long) FormatTools.getPlaneSize(this) * no;
+    long planeSize = (long) FormatTools.getPlaneSize(this);
+    long planeOffset = planeSize * planeIndex;
     long offset = planeOffset + HEADER_LENGTH + extSize;
     if (offset < in.length()) {
       in.seek(HEADER_LENGTH + extSize + planeOffset);
@@ -176,6 +205,7 @@ public class DeltavisionReader extends FormatReader {
       extHdrFields = null;
       ndFilters = null;
       logFile = deconvolutionLogFile = null;
+      lengths = null;
     }
   }
 
@@ -318,6 +348,80 @@ public class DeltavisionReader extends FormatReader {
     core[0].indexed = false;
     core[0].falseColor = false;
 
+    // --- parse extended header ---
+
+    in.seek(128);
+    numIntsPerSection = in.readShort();
+    numFloatsPerSection = in.readShort();
+
+    LOGGER.info("Reading extended header");
+
+    setOffsetInfo(sequence, getSizeZ(), getSizeC(), getSizeT());
+    extHdrFields = new DVExtHdrFields[getSizeZ()][getSizeC()][getSizeT()];
+
+    ndFilters = new Double[getSizeC()];
+
+    Vector<Float> uniqueTileX = new Vector<Float>();
+    Vector<Float> uniqueTileY = new Vector<Float>();
+
+    // Run through every image and fill in the
+    // Extended Header information array for that image
+    int offset = HEADER_LENGTH + numIntsPerSection * 4;
+    for (int i=0; i<getImageCount(); i++) {
+      int[] coords = getZCTCoords(i);
+      int z = coords[0];
+      int w = coords[1];
+      int t = coords[2];
+
+      // -- read in the extended header data --
+
+      in.seek(offset + getTotalOffset(z, w, t));
+      DVExtHdrFields hdr = new DVExtHdrFields(in);
+      extHdrFields[z][w][t] = hdr;
+
+      if (!uniqueTileX.contains(hdr.stageXCoord)) {
+        uniqueTileX.add(hdr.stageXCoord);
+      }
+      if (!uniqueTileY.contains(hdr.stageYCoord)) {
+        uniqueTileY.add(hdr.stageYCoord);
+      }
+    }
+
+    int nStagePositions = uniqueTileX.size() * uniqueTileY.size();
+    if (nStagePositions > 0) {
+      core[0].sizeT /= nStagePositions;
+      core[0].imageCount /= nStagePositions;
+
+      if (nStagePositions > 1) {
+        CoreMetadata originalCore = core[0];
+        core = new CoreMetadata[nStagePositions];
+        for (int i=0; i<core.length; i++) {
+          core[i] = originalCore;
+        }
+      }
+    }
+
+    lengths = new int[4];
+    int lengthIndex = 0;
+    int dimIndex = 0;
+
+    while (lengthIndex < lengths.length) {
+      char dim = imageSequence.charAt(dimIndex++);
+
+      switch (dim) {
+        case 'Z':
+          lengths[lengthIndex++] = getSizeZ();
+          break;
+        case 'W':
+          lengths[lengthIndex++] = getSizeC();
+          break;
+        case 'T':
+          lengths[lengthIndex++] = getSeriesCount();
+          lengths[lengthIndex++] = getSizeT();
+          break;
+      }
+    }
+
     // --- populate original metadata ---
 
     LOGGER.info("Populating original metadata");
@@ -335,6 +439,32 @@ public class DeltavisionReader extends FormatReader {
     addGlobalMeta("Number of wavelengths", rawSizeC);
     addGlobalMeta("Number of focal planes", sizeZ);
 
+    for (int series=0; series<getSeriesCount(); series++) {
+      setSeries(series);
+      for (int plane=0; plane<getImageCount(); plane++) {
+        int[] coords = getZCTCoords(plane);
+
+        int tIndex = getSeriesCount() * coords[2] + series;
+        DVExtHdrFields hdr = extHdrFields[coords[0]][coords[1]][tIndex];
+
+        // -- record original metadata --
+
+        // NB: It adds a little overhead to record the extended headers into the
+        // original metadata table, but not as much as registering every header
+        // field individually. With this approach it is still easy to
+        // programmatically access any given extended header field.
+        String prefix =
+          "Extended header Z" + coords[0] + " W" + coords[1] + " T" + coords[2];
+        addSeriesMeta(prefix, hdr);
+
+        String position = " position for position #" + (series + 1);
+        addGlobalMeta("X" + position, hdr.stageXCoord);
+        addGlobalMeta("Y" + position, hdr.stageYCoord);
+        addGlobalMeta("Z" + position, hdr.stageZCoord);
+      }
+    }
+    setSeries(0);
+
     // --- populate OME metadata ---
 
     LOGGER.info("Populating OME metadata");
@@ -346,7 +476,10 @@ public class DeltavisionReader extends FormatReader {
     // link Instrument and Image
     String instrumentID = MetadataTools.createLSID("Instrument", 0);
     store.setInstrumentID(instrumentID, 0);
-    store.setImageInstrumentRef(instrumentID, 0);
+
+    for (int i=0; i<getSeriesCount(); i++) {
+      store.setImageInstrumentRef(instrumentID, i);
+    }
   }
 
   protected void initExtraMetadata() throws FormatException, IOException {
@@ -384,9 +517,7 @@ public class DeltavisionReader extends FormatReader {
     float meanIntensity = in.readFloat();
     int spaceGroupNumber = in.readInt();
 
-    in.seek(128);
-    numIntsPerSection = in.readShort();
-    numFloatsPerSection = in.readShort();
+    in.seek(132);
 
     short numSubResSets = in.readShort();
     short zAxisReductionQuotient = in.readShort();
@@ -404,9 +535,7 @@ public class DeltavisionReader extends FormatReader {
     minWave[4] = in.readFloat();
     maxWave[4] = in.readFloat();
 
-    in.skipBytes(2);
-
-    int sequence = in.readShort();
+    in.seek(184);
 
     float xTiltAngle = in.readFloat();
     float yTiltAngle = in.readFloat();
@@ -494,94 +623,62 @@ public class DeltavisionReader extends FormatReader {
 
     LOGGER.info("Populating OME metadata");
 
-    if (store instanceof IMinMaxStore) {
-      IMinMaxStore minMaxStore = (IMinMaxStore) store;
-      for (int i=0; i<minWave.length; i++) {
-        if (i < getEffectiveSizeC()) {
-          minMaxStore.setChannelGlobalMinMax(i, minWave[i], maxWave[i], 0);
+    for (int series=0; series<getSeriesCount(); series++) {
+      if (store instanceof IMinMaxStore) {
+        IMinMaxStore minMaxStore = (IMinMaxStore) store;
+        for (int i=0; i<minWave.length; i++) {
+          if (i < getEffectiveSizeC()) {
+            minMaxStore.setChannelGlobalMinMax(
+              i, minWave[i], maxWave[i], series);
+          }
         }
       }
+
+      store.setPixelsPhysicalSizeX(new PositiveFloat(new Double(pixX)), series);
+      store.setPixelsPhysicalSizeY(new PositiveFloat(new Double(pixY)), series);
+      store.setPixelsPhysicalSizeZ(new PositiveFloat(new Double(pixZ)), series);
+
+      store.setImageDescription(imageDesc, series);
     }
-
-    store.setPixelsPhysicalSizeX(new PositiveFloat(new Double(pixX)), 0);
-    store.setPixelsPhysicalSizeY(new PositiveFloat(new Double(pixY)), 0);
-    store.setPixelsPhysicalSizeZ(new PositiveFloat(new Double(pixZ)), 0);
-
-    store.setImageDescription(imageDesc, 0);
-
-    // --- parse extended header ---
-
-    // TODO - Refactor this section into those above, to maintain
-    // the division between header I/O, core metadata population,
-    // original metadata population, and OME metadata population.
-
-    LOGGER.info("Reading extended header");
-
-    setOffsetInfo(sequence, getSizeZ(), getSizeC(), getSizeT());
-    extHdrFields = new DVExtHdrFields[getSizeZ()][getSizeC()][getSizeT()];
-
-    ndFilters = new Double[getSizeC()];
 
     // if matching log file exists, extract key/value pairs from it
     boolean logFound = isGroupFiles() ? parseLogFile(store) : false;
     if (isGroupFiles()) parseDeconvolutionLog(store);
 
-    // Run through every image and fill in the
-    // Extended Header information array for that image
-    int offset = HEADER_LENGTH + numIntsPerSection * 4;
-    for (int i=0; i<getImageCount(); i++) {
-      int[] coords = getZCTCoords(i);
-      int z = coords[0];
-      int w = coords[1];
-      int t = coords[2];
+    for (int series=0; series<getSeriesCount(); series++) {
+      for (int i=0; i<getImageCount(); i++) {
+        int[] coords = getZCTCoords(i);
 
-      // -- read in the extended header data --
+        int tIndex = getSeriesCount() * coords[2] + series;
+        DVExtHdrFields hdr = extHdrFields[coords[0]][coords[1]][tIndex];
 
-      in.seek(offset + getTotalOffset(z, w, t));
-      DVExtHdrFields hdr = new DVExtHdrFields(in);
-      extHdrFields[z][w][t] = hdr;
+        // plane timing
+        if (!logFound) {
+          store.setPlaneDeltaT(new Double(hdr.timeStampSeconds), series, i);
+        }
+        store.setPlaneExposureTime(new Double(hdr.expTime), series, i);
 
-      // -- record original metadata --
-
-      // NB: It adds a little overhead to record the extended headers into the
-      // original metadata table, but not as much as registering every header
-      // field individually. With this approach it is still easy to
-      // programmatically access any given extended header field.
-      String prefix = "Extended header Z" + z + " W" + w + " T" + t;
-      addGlobalMeta(prefix, hdr);
-
-      addGlobalMeta("X position for position #1", hdr.stageXCoord);
-      addGlobalMeta("Y position for position #1", hdr.stageYCoord);
-      addGlobalMeta("Z position for position #1", hdr.stageZCoord);
-
-      // -- record OME metadata --
-
-      // plane timing
-      if (!logFound) {
-        store.setPlaneDeltaT(new Double(hdr.timeStampSeconds), 0, i);
+        // stage position
+        if (!logFound || getSeriesCount() > 1) {
+          store.setPlanePositionX(new Double(hdr.stageXCoord), series, i);
+          store.setPlanePositionY(new Double(hdr.stageYCoord), series, i);
+          store.setPlanePositionZ(new Double(hdr.stageZCoord), series, i);
+        }
       }
-      store.setPlaneExposureTime(new Double(hdr.expTime), 0, i);
 
-      // stage position
-      if (!logFound) {
-        store.setPlanePositionX(new Double(hdr.stageXCoord), 0, i);
-        store.setPlanePositionY(new Double(hdr.stageYCoord), 0, i);
-        store.setPlanePositionZ(new Double(hdr.stageZCoord), 0, i);
+      for (int w=0; w<getSizeC(); w++) {
+        DVExtHdrFields hdrC = extHdrFields[0][w][series];
+        if ((int) waves[w] > 0) {
+          store.setChannelEmissionWavelength(
+            new PositiveInteger((int) waves[w]), series, w);
+        }
+        if ((int) hdrC.exWavelen > 0) {
+          store.setChannelExcitationWavelength(
+            new PositiveInteger((int) hdrC.exWavelen), series, w);
+        }
+        if (ndFilters[w] == null) ndFilters[w] = new Double(hdrC.ndFilter);
+        store.setChannelNDFilter(ndFilters[w], series, w);
       }
-    }
-
-    for (int w=0; w<getSizeC(); w++) {
-      DVExtHdrFields hdrC = extHdrFields[0][w][0];
-      if ((int) waves[w] > 0) {
-        store.setChannelEmissionWavelength(
-          new PositiveInteger((int) waves[w]), 0, w);
-      }
-      if ((int) hdrC.exWavelen > 0) {
-        store.setChannelExcitationWavelength(
-          new PositiveInteger((int) hdrC.exWavelen), 0, w);
-      }
-      if (ndFilters[w] == null) ndFilters[w] = new Double(hdrC.ndFilter);
-      store.setChannelNDFilter(ndFilters[w], 0, w);
     }
   }
 
@@ -782,7 +879,9 @@ public class DeltavisionReader extends FormatReader {
           }
           String objectiveID = "Objective:" + value;
           store.setObjectiveID(objectiveID, 0, 0);
-          store.setImageObjectiveSettingsID(objectiveID, 0);
+          for (int series=0; series<getSeriesCount(); series++) {
+            store.setImageObjectiveSettingsID(objectiveID, series);
+          }
           store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
           store.setObjectiveImmersion(getImmersion("Other"), 0, 0);
         }
@@ -800,13 +899,19 @@ public class DeltavisionReader extends FormatReader {
                 pixelSizes[q].trim());
             }
             if (q == 0) {
-              store.setPixelsPhysicalSizeX(new PositiveFloat(size), 0);
+              for (int series=0; series<getSeriesCount(); series++) {
+                store.setPixelsPhysicalSizeX(new PositiveFloat(size), series);
+              }
             }
             if (q == 1) {
-              store.setPixelsPhysicalSizeY(new PositiveFloat(size), 0);
+              for (int series=0; series<getSeriesCount(); series++) {
+                store.setPixelsPhysicalSizeY(new PositiveFloat(size), series);
+              }
             }
             if (q == 2) {
-              store.setPixelsPhysicalSizeZ(new PositiveFloat(size), 0);
+              for (int series=0; series<getSeriesCount(); series++) {
+                store.setPixelsPhysicalSizeZ(new PositiveFloat(size), series);
+              }
             }
           }
         }
@@ -814,10 +919,12 @@ public class DeltavisionReader extends FormatReader {
           store.setDetectorType(getDetectorType("Other"), 0, 0);
           String detectorID = MetadataTools.createLSID("Detector", 0, 0);
           store.setDetectorID(detectorID, 0, 0);
-          for (int c=0; c<getSizeC(); c++) {
-            store.setDetectorSettingsBinning(getBinning(value), 0, c);
-            // link DetectorSettings to an actual Detector
-            store.setDetectorSettingsID(detectorID, 0, c);
+          for (int series=0; series<getSeriesCount(); series++) {
+            for (int c=0; c<getSizeC(); c++) {
+              store.setDetectorSettingsBinning(getBinning(value), series, c);
+              // link DetectorSettings to an actual Detector
+              store.setDetectorSettingsID(detectorID, series, c);
+            }
           }
         }
         // Camera properties
@@ -827,8 +934,10 @@ public class DeltavisionReader extends FormatReader {
         else if (key.equals("Gain")) {
           value = value.replaceAll("X", "");
           try {
-            for (int c=0; c<getSizeC(); c++) {
-              store.setDetectorSettingsGain(new Double(value), 0, c);
+            for (int series=0; series<getSeriesCount(); series++) {
+              for (int c=0; c<getSizeC(); c++) {
+                store.setDetectorSettingsGain(new Double(value), series, c);
+              }
             }
           }
           catch (NumberFormatException e) {
@@ -839,8 +948,10 @@ public class DeltavisionReader extends FormatReader {
           value = value.replaceAll("KHz", "");
           try {
             double mhz = Double.parseDouble(value) / 1000;
-            for (int c=0; c<getSizeC(); c++) {
-              store.setDetectorSettingsReadOutRate(mhz, 0, c);
+            for (int series=0; series<getSeriesCount(); series++) {
+              for (int c=0; c<getSizeC(); c++) {
+                store.setDetectorSettingsReadOutRate(mhz, series, c);
+              }
             }
           }
           catch (NumberFormatException e) {
@@ -863,7 +974,9 @@ public class DeltavisionReader extends FormatReader {
           if (space >= 0) value = value.substring(0, space);
           try {
             if (currentImage < getImageCount()) {
-              store.setPlaneDeltaT(new Double(value), 0, currentImage);
+              for (int series=0; series<getSeriesCount(); series++) {
+                store.setPlaneDeltaT(new Double(value), series, currentImage);
+              }
             }
           }
           catch (NumberFormatException e) {
@@ -878,7 +991,9 @@ public class DeltavisionReader extends FormatReader {
           catch (IllegalArgumentException e) {
             LOGGER.debug("", e);
           }
-          store.setChannelName(value, 0, cIndex);
+          for (int series=0; series<getSeriesCount(); series++) {
+            store.setChannelName(value, series, cIndex);
+          }
         }
         else if (key.equals("ND filter")) {
           value = value.replaceAll("%", "");
@@ -908,7 +1023,10 @@ public class DeltavisionReader extends FormatReader {
               LOGGER.warn("Could not parse stage coordinate '{}'", coords[i]);
             }
 
-            if (currentImage < getImageCount()) {
+            if (currentImage < getImageCount() && getSeriesCount() == 1) {
+              // NB: the positions are intentionally only populated for the
+              //     first series.  Positions for the other series are parsed
+              //     from the extended header.
               if (i == 0) {
                 store.setPlanePositionX(p, 0, currentImage);
               }
@@ -929,7 +1047,9 @@ public class DeltavisionReader extends FormatReader {
         if (line.length() > 8) line = line.substring(8).trim();
         String date = DateTools.formatDate(line, DATE_FORMAT);
         if (date != null) {
-          store.setImageAcquiredDate(date, 0);
+          for (int series=0; series<getSeriesCount(); series++) {
+            store.setImageAcquiredDate(date, series);
+          }
         }
         else {
           LOGGER.warn("Could not parse date '{}'", line);
