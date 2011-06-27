@@ -11,8 +11,15 @@
 
 """
 
+import glob
+import sys
 import os
+
 ov = os.environ.get("OMERO_VERSION", "unknown")
+
+for tools in glob.glob("setuptools*.egg"):
+    if tools.find(".".join(map(str, sys.version_info[0:2]))) > 0:
+       sys.path.insert(0, tools)
 
 from ez_setup import use_setuptools
 use_setuptools()
