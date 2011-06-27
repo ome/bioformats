@@ -388,9 +388,16 @@ public class DeltavisionReader extends FormatReader {
     }
 
     int nStagePositions = uniqueTileX.size() * uniqueTileY.size();
-    if (nStagePositions > 0) {
+    if (nStagePositions > 0 && nStagePositions <= getSizeT()) {
+      int t = getSizeT();
       core[0].sizeT /= nStagePositions;
-      core[0].imageCount /= nStagePositions;
+      if (getSizeT() * nStagePositions != t) {
+        core[0].sizeT = t;
+        nStagePositions = 1;
+      }
+      else {
+        core[0].imageCount /= nStagePositions;
+      }
 
       if (nStagePositions > 1) {
         CoreMetadata originalCore = core[0];
