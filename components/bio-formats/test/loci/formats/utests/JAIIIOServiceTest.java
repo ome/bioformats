@@ -26,7 +26,6 @@ package loci.formats.utests;
 import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertNotNull;
 import static org.testng.AssertJUnit.assertTrue;
-import static org.testng.AssertJUnit.fail;
 
 import java.awt.Transparency;
 import java.awt.color.ColorSpace;
@@ -270,30 +269,24 @@ public class JAIIIOServiceTest {
     assertEquals(SIZE_Y, image.getHeight());
   }
 
-  @Test
+  @Test(expectedExceptions={IllegalArgumentException.class})
   public void testWriteFloatingPointLossy() throws Exception {
-    try {
-      // The JAI ImageIO JPEG-2000 codec does not support floating point data.
-      JPEG2000CodecOptions options = JPEG2000CodecOptions.getDefaultOptions();
-      options.lossless = false;
-      options.codeBlockSize = CODE_BLOCK;
-      options.quality = 1.0f;
+    // The JAI ImageIO JPEG-2000 codec does not support floating point data.
+    JPEG2000CodecOptions options = JPEG2000CodecOptions.getDefaultOptions();
+    options.lossless = false;
+    options.codeBlockSize = CODE_BLOCK;
+    options.quality = 1.0f;
 
-      SampleModel sm = new ComponentSampleModel(
-          DataBuffer.TYPE_FLOAT, SIZE_X, SIZE_Y, 1, SIZE_X, new int[] { 0 });
-      DataBuffer db = new DataBufferFloat(SIZE_X * SIZE_Y);
-      WritableRaster wr = Raster.createWritableRaster(sm, db, null);
-      ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);
-      ColorModel cm = new ComponentColorModel(
-          cs, false, true, Transparency.OPAQUE, DataBuffer.TYPE_FLOAT);
-      BufferedImage image = new BufferedImage(cm, wr, true, null);
+    SampleModel sm = new ComponentSampleModel(
+        DataBuffer.TYPE_FLOAT, SIZE_X, SIZE_Y, 1, SIZE_X, new int[] { 0 });
+    DataBuffer db = new DataBufferFloat(SIZE_X * SIZE_Y);
+    WritableRaster wr = Raster.createWritableRaster(sm, db, null);
+    ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);
+    ColorModel cm = new ComponentColorModel(
+        cs, false, true, Transparency.OPAQUE, DataBuffer.TYPE_FLOAT);
+    BufferedImage image = new BufferedImage(cm, wr, true, null);
 
-      ByteArrayOutputStream stream = new ByteArrayOutputStream();
-      service.writeImage(stream, image, options);
-    }
-    catch (IllegalArgumentException e) {
-      return;
-    }
-    fail("IllegalArgumentException not thrown.");
+    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+    service.writeImage(stream, image, options);
   }
 }
