@@ -67,7 +67,7 @@ public class JAIIIOServiceTest {
     ServiceFactory sf = new ServiceFactory();
     service = sf.getInstance(JAIIIOService.class);
   }
-  
+
   private ByteArrayOutputStream writeImage(JPEG2000CodecOptions options)
     throws IOException, ServiceException {
     BufferedImage image = new BufferedImage(SIZE_X, SIZE_Y, IMAGE_TYPE);
@@ -131,7 +131,7 @@ public class JAIIIOServiceTest {
   @Test
   public void testReadImageLossy() throws IOException, ServiceException {
     ByteArrayOutputStream outputStream = testWriteImageLossy();
-    ByteArrayInputStream inputStream = 
+    ByteArrayInputStream inputStream =
       new ByteArrayInputStream(outputStream.toByteArray());
     BufferedImage image = service.readImage(inputStream);
     assertNotNull(image);
@@ -142,7 +142,7 @@ public class JAIIIOServiceTest {
   @Test
   public void testReadImageLossless() throws IOException, ServiceException {
     ByteArrayOutputStream outputStream = testWriteImageLossless();
-    ByteArrayInputStream inputStream = 
+    ByteArrayInputStream inputStream =
       new ByteArrayInputStream(outputStream.toByteArray());
     BufferedImage image = service.readImage(inputStream);
     assertNotNull(image);
@@ -153,7 +153,7 @@ public class JAIIIOServiceTest {
   @Test
   public void testReadRasterLossy() throws IOException, ServiceException {
     ByteArrayOutputStream outputStream = testWriteImageLossy();
-    ByteArrayInputStream inputStream = 
+    ByteArrayInputStream inputStream =
       new ByteArrayInputStream(outputStream.toByteArray());
     Raster image = service.readRaster(inputStream);
     assertNotNull(image);
@@ -164,7 +164,7 @@ public class JAIIIOServiceTest {
   @Test
   public void testReadRasterLossless() throws IOException, ServiceException {
     ByteArrayOutputStream outputStream = testWriteImageLossless();
-    ByteArrayInputStream inputStream = 
+    ByteArrayInputStream inputStream =
       new ByteArrayInputStream(outputStream.toByteArray());
     Raster image = service.readRaster(inputStream);
     assertNotNull(image);
@@ -175,7 +175,7 @@ public class JAIIIOServiceTest {
   @Test
   public void testReadImageLevel0Lossy() throws IOException, ServiceException {
     ByteArrayOutputStream outputStream = testWriteImageLossy();
-    ByteArrayInputStream inputStream = 
+    ByteArrayInputStream inputStream =
       new ByteArrayInputStream(outputStream.toByteArray());
     JPEG2000CodecOptions options = JPEG2000CodecOptions.getDefaultOptions();
     options.resolution = 0;
@@ -188,7 +188,7 @@ public class JAIIIOServiceTest {
   @Test
   public void testReadImageLevel0Lossless() throws IOException, ServiceException {
     ByteArrayOutputStream outputStream = testWriteImageLossless();
-    ByteArrayInputStream inputStream = 
+    ByteArrayInputStream inputStream =
       new ByteArrayInputStream(outputStream.toByteArray());
     JPEG2000CodecOptions options = JPEG2000CodecOptions.getDefaultOptions();
     options.resolution = 0;
@@ -201,7 +201,7 @@ public class JAIIIOServiceTest {
   @Test
   public void testReadRasterLevel0Lossy() throws IOException, ServiceException {
     ByteArrayOutputStream outputStream = testWriteImageLossy();
-    ByteArrayInputStream inputStream = 
+    ByteArrayInputStream inputStream =
       new ByteArrayInputStream(outputStream.toByteArray());
     JPEG2000CodecOptions options = JPEG2000CodecOptions.getDefaultOptions();
     options.resolution = 0;
@@ -214,7 +214,7 @@ public class JAIIIOServiceTest {
   @Test
   public void testReadRasterLevel0Lossless() throws IOException, ServiceException {
     ByteArrayOutputStream outputStream = testWriteImageLossless();
-    ByteArrayInputStream inputStream = 
+    ByteArrayInputStream inputStream =
       new ByteArrayInputStream(outputStream.toByteArray());
     JPEG2000CodecOptions options = JPEG2000CodecOptions.getDefaultOptions();
     options.resolution = 0;
@@ -234,7 +234,7 @@ public class JAIIIOServiceTest {
     options.codeBlockSize = CODE_BLOCK;
     options.quality = 1.0f;
     ByteArrayOutputStream outputStream = writeImage(options);
-    ByteArrayInputStream inputStream = 
+    ByteArrayInputStream inputStream =
       new ByteArrayInputStream(outputStream.toByteArray());
     BufferedImage image = service.readImage(inputStream, options);
     assertNotNull(image);
@@ -252,7 +252,7 @@ public class JAIIIOServiceTest {
     options.codeBlockSize = CODE_BLOCK;
     options.quality = 1.0f;
     ByteArrayOutputStream outputStream = writeImage(options);
-    ByteArrayInputStream inputStream = 
+    ByteArrayInputStream inputStream =
       new ByteArrayInputStream(outputStream.toByteArray());
     BufferedImage image = service.readImage(inputStream, options);
     assertNotNull(image);
