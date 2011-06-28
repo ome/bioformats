@@ -192,7 +192,8 @@ public class JPEG2000MetadataParser {
               headerSizeY = in.readInt();
               headerSizeX = in.readInt();
               headerSizeC = in.readShort();
-              int type = in.readInt();
+              int type = in.read();
+              in.skipBytes(3);
               headerPixelType = convertPixelType(type);
             }
             parseBoxes();
@@ -311,7 +312,8 @@ public class JPEG2000MetadataParser {
             codestreamSizeC = in.readShort();
             LOGGER.trace("Read total components {} at {}",
                 codestreamSizeC, in.getFilePointer());
-            int type = in.readInt();
+            int type = in.read();
+            in.skipBytes(3);
             codestreamPixelType = convertPixelType(type);
             LOGGER.trace("Read codestream pixel type {} at {}",
                 codestreamPixelType, in.getFilePointer());
@@ -433,8 +435,17 @@ public class JPEG2000MetadataParser {
   }
 
   private int convertPixelType(int type) {
-    if (type == 0xf070100 || type == 0xf070000) {
-      return FormatTools.UINT16;
+    int bits = (type & 0x7f) + 1;
+    boolean isSigned = ((type & 0x80) >> 7) == 1;
+
+    if (bits <= 8) {
+      return isSigned ? FormatTools.INT8 : FormatTools.UINT8;
+    }
+    else if (bits <= 16) {
+      return isSigned ? FormatTools.INT16 : FormatTools.UINT16;
+    }
+    else if (bits <= 32) {
+      return isSigned ? FormatTools.INT32 : FormatTools.UINT32;
     }
     return FormatTools.UINT8;
   }
