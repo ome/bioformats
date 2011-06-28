@@ -31,9 +31,12 @@ import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.formats.CoreMetadata;
+import loci.formats.FilePattern;
+import loci.formats.FileStitcher;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.IFormatReader;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
@@ -97,14 +100,29 @@ public class CellWorxReader extends FormatReader {
     FormatTools.assertId(currentId, true, 1);
     Vector<String> files = new Vector<String>();
     files.add(currentId);
-    if (plateLogFile != null) files.add(plateLogFile);
+    if (plateLogFile != null && new Location(plateLogFile).exists()) {
+      files.add(plateLogFile);
+    }
     if (zMapFile != null) files.add(zMapFile);
 
     int row = getWellRow(getSeries());
     int col = getWellColumn(getSeries());
 
-    files.add(logFiles[row][col]);
-    if (!noPixels) files.add(wellFiles[row][col]);
+    if (new Location(logFiles[row][col]).exists()) {
+      files.add(logFiles[row][col]);
+    }
+    if (!noPixels) {
+      if (checkSuffix(wellFiles[row][col], "pnl")) {
+        files.add(wellFiles[row][col]);
+      }
+      else {
+        FilePattern pattern = new FilePattern(wellFiles[row][col]);
+        String[] f = pattern.getFiles();
+        for (String ff : f) {
+          files.add(ff);
+        }
+      }
+    }
     return files.toArray(new String[files.size()]);
   }
 
@@ -118,9 +136,9 @@ public class CellWorxReader extends FormatReader {
     int fieldIndex = getSeries() % fieldCount;
 
     String file = getPNLFile(getSeries());
-    DeltavisionReader pnl = new DeltavisionReader();
-    pnl.setId(file);
-    pnl.openBytes(fieldIndex * getImageCount() + no, buf, x, y, w, h);
+    IFormatReader pnl = getReader(file);
+    pnl.setSeries(fieldIndex);
+    pnl.openBytes(no, buf, x, y, w, h);
     pnl.close();
     return buf;
   }
@@ -156,6 +174,7 @@ public class CellWorxReader extends FormatReader {
         for (String f : list) {
           if (checkSuffix(f, "htd")) {
             id = new Location(parent, f).getAbsolutePath();
+            LOGGER.info("Found .htd file {}", f);
             break;
           }
         }
@@ -169,6 +188,7 @@ public class CellWorxReader extends FormatReader {
     int xWells = 0, yWells = 0;
     int xFields = 0, yFields = 0;
     String[] wavelengths = null;
+    int nTimepoints = 1;
 
     // determine dataset dimensions
     for (String line : lines) {
@@ -200,6 +220,9 @@ public class CellWorxReader extends FormatReader {
       else if (key.equals("YSites")) {
         yFields = Integer.parseInt(value);
         fieldMap = new boolean[yFields][xFields];
+      }
+      else if (key.equals("TimePoints")) {
+        nTimepoints = Integer.parseInt(value);
       }
       else if (key.startsWith("SiteSelection")) {
         int row = Integer.parseInt(key.substring(13)) - 1;
@@ -235,6 +258,14 @@ public class CellWorxReader extends FormatReader {
           String base = plateName + rowLetter + String.format("%02d", col + 1);
           wellFiles[row][col] = base + ".pnl";
           logFiles[row][col] = base + "_scan.log";
+
+          if (!new Location(wellFiles[row][col]).exists()) {
+            // using TIFF files instead
+
+            base = plateName + rowLetter + (col + 1);
+            wellFiles[row][col] =
+              getTiffFile(base, wavelengths.length, nTimepoints);
+          }
         }
       }
     }
@@ -261,8 +292,7 @@ public class CellWorxReader extends FormatReader {
     core = new CoreMetadata[fieldCount * wellCount];
 
     String file = getPNLFile(0);
-    DeltavisionReader pnl = new DeltavisionReader();
-    pnl.setId(file);
+    IFormatReader pnl = getReader(file);
 
     for (int i=0; i<core.length; i++) {
       setSeries(i);
@@ -272,7 +302,7 @@ public class CellWorxReader extends FormatReader {
       core[i].sizeY = pnl.getSizeY();
       core[i].pixelType = pnl.getPixelType();
       core[i].sizeZ = 1;
-      core[i].sizeT = 1;
+      core[i].sizeT = nTimepoints;
       core[i].sizeC = wavelengths.length;
       core[i].imageCount = getSizeZ() * getSizeC() * getSizeT();
       core[i].dimensionOrder = "XYCZT";
@@ -393,6 +423,9 @@ public class CellWorxReader extends FormatReader {
     int col = getWellColumn(seriesIndex);
     int well = row * wellFiles[0].length + col;
     String logFile = logFiles[row][col];
+    if (!new Location(logFile).exists()) {
+      return;
+    }
     LOGGER.debug("Parsing log file for well {}{}", (char) (row + 'A'), col + 1);
 
     int oldSeries = getSeries();
@@ -493,6 +526,48 @@ public class CellWorxReader extends FormatReader {
     }
 
     setSeries(oldSeries);
+  }
+
+  private IFormatReader getReader(String file)
+    throws FormatException, IOException
+  {
+    IFormatReader pnl = new DeltavisionReader();
+    if (checkSuffix(file, "tif")) {
+      pnl = new FileStitcher();
+      ((FileStitcher) pnl).setUsingPatternIds(true);
+    }
+    pnl.setId(file);
+    return pnl;
+  }
+
+  private String getTiffFile(String base, int channels, int nTimepoints) {
+    String field = null;
+    if (fieldCount > 1) {
+      field = "s<1-" + fieldCount + ">";
+    }
+
+    String channel = null;
+    if (channels > 1) {
+      channel = "w<1-" + channels + ">";
+    }
+
+    String timepoint = null;
+    if (nTimepoints > 1) {
+      timepoint = "t<1-" + nTimepoints + ">";
+    }
+
+    String file = base;
+
+    if (field != null) {
+      file += "_" + field;
+    }
+    if (channel != null) {
+      file += "_" + channel;
+    }
+    if (timepoint != null) {
+      file += "_" + timepoint;
+    }
+    return file + ".tif";
   }
 
 }
