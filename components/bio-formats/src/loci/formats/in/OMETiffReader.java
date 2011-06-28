@@ -230,7 +230,7 @@ public class OMETiffReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#fileGroupOption() */
   public int fileGroupOption(String id) {
-    return FormatTools.MUST_GROUP;
+    return FormatTools.CAN_GROUP;
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
