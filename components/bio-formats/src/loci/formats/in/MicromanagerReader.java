@@ -322,13 +322,33 @@ public class MicromanagerReader extends FormatReader {
 
         token = st.nextToken().trim();
         String key = "", value = "";
-        while (!token.startsWith("}")) {
-          int colon = token.indexOf(":");
-          key = token.substring(1, colon).trim();
-          value = token.substring(colon + 1, token.length() - 1).trim();
+        boolean valueArray = false;
 
-          key = key.replaceAll("\"", "");
-          value = value.replaceAll("\"", "");
+        while (!token.startsWith("}")) {
+          if (valueArray) {
+            if (token.trim().equals("],")) {
+              valueArray = false;
+            }
+            else {
+              value += token.trim().replaceAll("\"", "");
+              token = st.nextToken().trim();
+              continue;
+            }
+          }
+          else {
+            int colon = token.indexOf(":");
+            key = token.substring(1, colon).trim();
+            value = token.substring(colon + 1, token.length() - 1).trim();
+
+            key = key.replaceAll("\"", "");
+            value = value.replaceAll("\"", "");
+
+            if (token.trim().endsWith("[")) {
+              valueArray = true;
+              token = st.nextToken().trim();
+              continue;
+            }
+          }
 
           addGlobalMeta(key, value);
 
