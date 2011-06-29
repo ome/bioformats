@@ -110,15 +110,16 @@ public class TileStitcher extends ReaderWrapper {
 
     byte[][][] bufs = new byte[tileX][tileY][buf.length / (tileX * tileY)];
 
-    for (int tx=0; tx<tileX; tx++) {
-      for (int ty=0; ty<tileY; ty++) {
-        reader.setSeries(tileOrdering[tx * tileY + ty]);
+    for (int ty=0; ty<tileY; ty++) {
+      for (int tx=0; tx<tileX; tx++) {
+        reader.setSeries(tileOrdering[ty * tileX + tx]);
         reader.openBytes(no, bufs[tx][ty], 0, 0, reader.getSizeX(), reader.getSizeY());
 
         int rowLen = bufs[tx][ty].length / reader.getSizeY();
+        int offset = rowLen * (ty * reader.getSizeY() * tileX + tx);
         for (int row=0; row<reader.getSizeY(); row++) {
-          System.arraycopy(bufs[tx][ty], row * rowLen, buf,
-            ty * reader.getSizeY() * rowLen * tileX + tx * rowLen, rowLen);
+          System.arraycopy(bufs[tx][ty], row * rowLen, buf, offset, rowLen);
+          offset += rowLen * tileX;
         }
       }
     }
@@ -215,11 +216,11 @@ public class TileStitcher extends ReaderWrapper {
         return 0;
       }
 
-      if (t1.x.equals(t2.x)) {
-        return t1.y.compareTo(t2.y);
+      if (t1.y.equals(t2.y)) {
+        return t1.x.compareTo(t2.x);
       }
 
-      return t1.x.compareTo(t2.y);
+      return t1.y.compareTo(t2.y);
     }
   }
 
