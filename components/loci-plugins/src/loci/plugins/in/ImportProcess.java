@@ -50,6 +50,7 @@ import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 import loci.formats.MinMaxCalculator;
+import loci.formats.TileStitcher;
 import loci.formats.meta.IMetadata;
 import loci.formats.services.OMEXMLService;
 import loci.plugins.BF;
@@ -96,6 +97,7 @@ public class ImportProcess implements StatusReporter {
   private ChannelSeparator channelSeparator;
   private DimensionSwapper dimensionSwapper;
   private MinMaxCalculator minMaxCalculator;
+  private TileStitcher tileStitcher;
   private VirtualReader virtualReader;
   private ImageProcessorReader reader;
 
@@ -510,6 +512,9 @@ public class ImportProcess implements StatusReporter {
     r = channelSeparator = new ChannelSeparator(r);
     r = dimensionSwapper = new DimensionSwapper(r);
     r = minMaxCalculator = new MinMaxCalculator(r);
+    if (options.doStitchTiles()) {
+      r = tileStitcher = new TileStitcher(r);
+    }
     r = virtualReader = new VirtualReader(r);
     reader = new ImageProcessorReader(r);
     setId();

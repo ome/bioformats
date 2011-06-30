@@ -344,6 +344,19 @@ info = <b>Use virtual stack</b> - \
   memory.
 default = false
 
+[stitchTiles]
+type = boolean
+label = Stitch_tiles
+info = <b>Stitch tiles</b> - \
+  Performs very simple stitching of tiles.                                    \
+  <br><br>The overlap is assumed to be 0%, and the stage coordinates are used \
+  to determine the proper placement of the tiles.  This is useful for         \
+  seeing a quick preview of what the stitched image might look like,          \
+  but is not a substitute for proper stitching plugins such as the            \
+  <a href="http://pacific.mpi-cbg.de/wiki/index.php/Stitching_2D/3D">         \
+  2D/3D Stitching plugin</a>.
+default = false
+
 [windowless]
 type = boolean
 label = windowless

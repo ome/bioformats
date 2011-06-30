@@ -91,6 +91,7 @@ public class MainDialog extends ImporterDialog
   protected Choice stackOrderChoice;
   protected Checkbox swapDimsBox;
   protected Checkbox virtualBox;
+  protected Checkbox stitchTilesBox;
 
   protected Map<Component, String> infoTable;
   protected JEditorPane infoPane;
@@ -132,6 +133,7 @@ public class MainDialog extends ImporterDialog
     addChoice(gd, ImporterOptions.KEY_STACK_ORDER);
     addCheckbox(gd, ImporterOptions.KEY_SWAP_DIMS);
     addCheckbox(gd, ImporterOptions.KEY_VIRTUAL);
+    addCheckbox(gd, ImporterOptions.KEY_STITCH_TILES);
     rebuildDialog(gd);
     return gd;
   }
@@ -158,6 +160,7 @@ public class MainDialog extends ImporterDialog
     options.setStackOrder(options.getStackOrders()[gd.getNextChoiceIndex()]);
     options.setSwapDimensions(gd.getNextBoolean());
     options.setVirtual(gd.getNextBoolean());
+    options.setStitchTiles(gd.getNextBoolean());
     return true;
   }
 
@@ -252,6 +255,7 @@ public class MainDialog extends ImporterDialog
       stackOrderLabel   = labels.get(labelIndex++);
       swapDimsBox       = boxes.get(boxIndex++);
       virtualBox        = boxes.get(boxIndex++);
+      stitchTilesBox    = boxes.get(boxIndex++);
     }
     verifyOptions(null);
 
@@ -282,6 +286,7 @@ public class MainDialog extends ImporterDialog
     infoTable.put(stackOrderLabel, options.getStackOrderInfo());
     infoTable.put(swapDimsBox, options.getSwapDimensionsInfo());
     infoTable.put(virtualBox, options.getVirtualInfo());
+    infoTable.put(stitchTilesBox, options.getStitchTilesInfo());
 
     // rebuild dialog using FormLayout to organize things more nicely
 
@@ -330,6 +335,8 @@ public class MainDialog extends ImporterDialog
     builder.add(openAllSeriesBox, xyw(cc, 1, row, 3));
     row += 2;
     builder.add(concatenateBox, xyw(cc, 1, row, 3));
+    row += 2;
+    builder.add(stitchTilesBox, xyw(cc, 1, row, 3));
     row += 2;
     builder.addSeparator("Color options", cc.xyw(1, row, 3));
     row += 2;
