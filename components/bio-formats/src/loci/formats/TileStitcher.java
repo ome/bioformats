@@ -28,6 +28,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 
+import loci.common.Region;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataStore;
 
@@ -108,19 +109,48 @@ public class TileStitcher extends ReaderWrapper {
   {
     FormatTools.assertId(getCurrentFile(), true, 2);
 
-    byte[][][] bufs = new byte[tileX][tileY][buf.length / (tileX * tileY)];
+    byte[] tileBuf = new byte[buf.length / tileX * tileY];
+
+    int tw = reader.getSizeX();
+    int th = reader.getSizeY();
+
+    Region image = new Region(x, y, w, h);
+    int pixelType = getPixelType();
+    int pixel = getRGBChannelCount() * FormatTools.getBytesPerPixel(pixelType);
+    int outputRowLen = w * pixel;
+    int outputRow = 0, outputCol = 0;
+    Region intersection = null;
 
     for (int ty=0; ty<tileY; ty++) {
       for (int tx=0; tx<tileX; tx++) {
-        reader.setSeries(tileOrdering[ty * tileX + tx]);
-        reader.openBytes(no, bufs[tx][ty], 0, 0, reader.getSizeX(), reader.getSizeY());
+        Region tile = new Region(tx * tw, ty * th, tw, th);
 
-        int rowLen = bufs[tx][ty].length / reader.getSizeY();
-        int offset = rowLen * (ty * reader.getSizeY() * tileX + tx);
-        for (int row=0; row<reader.getSizeY(); row++) {
-          System.arraycopy(bufs[tx][ty], row * rowLen, buf, offset, rowLen);
-          offset += rowLen * tileX;
+        if (!tile.intersects(image)) {
+          continue;
         }
+
+        intersection = tile.intersection(image);
+
+        reader.setSeries(tileOrdering[ty * tileX + tx]);
+        reader.openBytes(no, tileBuf, 0, 0, tw, th);
+
+        int rowLen = pixel * (int) Math.min(intersection.width, tw);
+        int outputOffset = outputRowLen * outputRow + outputCol;
+
+        for (int row=0; row<intersection.height; row++) {
+          int realRow = row + intersection.y - tile.y;
+          int inputOffset = pixel * (realRow * tw + tx);
+          ///* debug */ System.out.println("copying " + rowLen + " from " + inputOffset + " (" + tileBuf.length + ") to " + outputOffset + " (" + buf.length + ")");
+          System.arraycopy(tileBuf, inputOffset, buf, outputOffset, rowLen);
+          outputOffset += outputRowLen;
+        }
+
+        outputCol += rowLen;
+      }
+
+      if (intersection != null) {
+        outputRow += th;
+        outputCol = 0;
       }
     }
 
@@ -141,6 +171,11 @@ public class TileStitcher extends ReaderWrapper {
 
     IMetadata meta = (IMetadata) store;
 
+    // don't even think about stitching HCS data, as it quickly gets complicated
+    //
+    // it might be worth improving this in the future so that fields are
+    // stitched, but plates/wells are left alone, but for now it is easy
+    // enough to just ignore HCS data
     if (meta.getPlateCount() > 0) {
       tileX = 1;
       tileY = 1;
