@@ -140,7 +140,6 @@ public class TileStitcher extends ReaderWrapper {
         for (int row=0; row<intersection.height; row++) {
           int realRow = row + intersection.y - tile.y;
           int inputOffset = pixel * (realRow * tw + tx);
-          ///* debug */ System.out.println("copying " + rowLen + " from " + inputOffset + " (" + tileBuf.length + ") to " + outputOffset + " (" + buf.length + ")");
           System.arraycopy(tileBuf, inputOffset, buf, outputOffset, rowLen);
           outputOffset += outputRowLen;
         }
@@ -149,7 +148,7 @@ public class TileStitcher extends ReaderWrapper {
       }
 
       if (intersection != null) {
-        outputRow += th;
+        outputRow += intersection.height;
         outputCol = 0;
       }
     }
