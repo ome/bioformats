@@ -219,9 +219,14 @@ public class IvisionReader extends FormatReader {
         in.seek(in.getFilePointer() - 5);
 
         String xml = in.readString((int) (in.length() - in.getFilePointer()));
-        xml = xml.substring(xml.indexOf("<"), xml.lastIndexOf(">") + 1);
+        xml = xml.substring(xml.indexOf("<"), xml.lastIndexOf("plist>") + 6);
         IvisionHandler handler = new IvisionHandler();
-        XMLTools.parseXML(xml, handler);
+        try {
+          XMLTools.parseXML(xml, handler);
+        }
+        catch (IOException e) {
+          LOGGER.debug("", e);
+        }
       }
       else LOGGER.debug("XML metadata not found");
     }
