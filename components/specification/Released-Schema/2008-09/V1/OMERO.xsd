@@ -21,7 +21,7 @@
 	xmlns:xsd = "http://www.w3.org/2001/XMLSchema"
 	version = "1"
 	elementFormDefault = "qualified">
-	<xsd:import namespace = "http://www.openmicroscopy.org/Schemas/OME/2008-09" schemaLocation = "http://git.openmicroscopy.org/src/develop/components/specification/Released-Schema/2008-09/V1/ome.xsd"/>
+	<xsd:import namespace = "http://www.openmicroscopy.org/Schemas/OME/2008-09" schemaLocation = "http://git.openmicroscopy.org/src/master/components/specification/Released-Schema/2008-09/V1/ome.xsd"/>
 	
 	<xsd:element name="RoiDisplay"> <!-- top level definition -->
 		<xsd:complexType>

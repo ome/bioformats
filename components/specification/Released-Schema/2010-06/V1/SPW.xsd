@@ -25,8 +25,8 @@
 	version="1" 
 	elementFormDefault="qualified">
 
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2010-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/Released-Schema/2010-06/V1/ome.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2010-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/Released-Schema/2010-06/V1/SA.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2010-06" schemaLocation="http://git.openmicroscopy.org/src/master/components/specification/Released-Schema/2010-06/V1/ome.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2010-06" schemaLocation="http://git.openmicroscopy.org/src/master/components/specification/Released-Schema/2010-06/V1/SA.xsd"/>
 
 	<xsd:annotation>
 		<xsd:documentation>
