@@ -68,12 +68,6 @@
             <class name="loci.formats.utests.InOut201004Test"/>
         </classes>
     </test>
-    <test name="ChannelColor">
-      <groups/>
-      <classes>
-        <class name="loci.formats.utests.ChannelColorTest"/>
-      </classes>
-    </test>
     <test name="ReaderWrapper">
       <groups/>
       <classes>
