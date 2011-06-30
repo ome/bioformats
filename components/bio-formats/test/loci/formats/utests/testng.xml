@@ -6,10 +6,11 @@
             <class name="loci.formats.utests.LuraWaveServiceTest"/>
             <class name="loci.formats.utests.MDBServiceTest"/>
             <class name="loci.formats.utests.NetCDFServiceTest"/>
-            <class name="loci.formats.utests.OMEXMLServiceTest"/>
             <class name="loci.formats.utests.POIServiceTest"/>
         </classes>
-        <packages/>
+        <packages>
+            <package name="loci.formats.utests.xml"/>
+        </packages>
     </test>
     <test name="ServiceFactory">
         <groups/>
@@ -66,12 +67,6 @@
         <classes>
             <class name="loci.formats.utests.InOut201004Test"/>
         </classes>
-    </test>
-    <test name="ChannelColor">
-      <groups/>
-      <classes>
-        <class name="loci.formats.utests.ChannelColorTest"/>
-      </classes>
     </test>
     <test name="ReaderWrapper">
       <groups/>

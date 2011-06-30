@@ -122,7 +122,7 @@ public class CellomicsReader extends FormatReader {
 
     String plateName = getPlateName(baseFile.getName());
 
-    if (plateName != null) {
+    if (plateName != null && isGroupFiles()) {
       for (String f : list) {
         if (plateName.equals(getPlateName(f)) &&
           (checkSuffix(f, "c01") || checkSuffix(f, "dib")))
