@@ -24,9 +24,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
 
 import loci.common.Region;
 import loci.formats.meta.IMetadata;
@@ -44,7 +43,8 @@ public class TileStitcher extends ReaderWrapper {
 
   private int tileX = 0;
   private int tileY = 0;
-  private int[] tileOrdering;
+
+  private Integer[][] tileMap;
 
   // -- Utility methods --
 
@@ -62,8 +62,6 @@ public class TileStitcher extends ReaderWrapper {
   /** Constructs a TileStitcher with the given reader. */
   public TileStitcher(IFormatReader r) { super(r); }
 
-  // -- TileStitcher API methods --
-
   // -- IFormatReader API methods --
 
   /* @see IFormatReader#getSizeX() */
@@ -78,7 +76,10 @@ public class TileStitcher extends ReaderWrapper {
 
   /* @see IFormatReader#getSeriesCount() */
   public int getSeriesCount() {
-    return reader.getSeriesCount() / (tileX * tileY);
+    if (tileX == 1 && tileY == 1) {
+      return reader.getSeriesCount();
+    }
+    return 1;
   }
 
   /* @see IFormatReader#openBytes(int) */
@@ -109,6 +110,10 @@ public class TileStitcher extends ReaderWrapper {
   {
     FormatTools.assertId(getCurrentFile(), true, 2);
 
+    if (tileX == 1 && tileY == 1) {
+      return super.openBytes(no, buf, x, y, w, h);
+    }
+
     byte[] tileBuf = new byte[buf.length / tileX * tileY];
 
     int tw = reader.getSizeX();
@@ -130,11 +135,16 @@ public class TileStitcher extends ReaderWrapper {
         }
 
         intersection = tile.intersection(image);
+        int rowLen = pixel * (int) Math.min(intersection.width, tw);
 
-        reader.setSeries(tileOrdering[ty * tileX + tx]);
+        if (tileMap[ty][tx] == null) {
+          outputCol += rowLen;
+          continue;
+        }
+
+        reader.setSeries(tileMap[ty][tx]);
         reader.openBytes(no, tileBuf, 0, 0, tw, th);
 
-        int rowLen = pixel * (int) Math.min(intersection.width, tw);
         int outputOffset = outputRowLen * outputRow + outputCol;
 
         for (int row=0; row<intersection.height; row++) {
@@ -181,36 +191,77 @@ public class TileStitcher extends ReaderWrapper {
       return;
     }
 
-    HashMap<TileCoordinate, Integer> tileMap =
-      new HashMap<TileCoordinate, Integer>();
+    // now make sure that all of the series have the same dimensions
+    boolean equalDimensions = true;
+    for (int i=1; i<meta.getImageCount(); i++) {
+      if (!meta.getPixelsSizeX(i).equals(meta.getPixelsSizeX(0))) {
+        equalDimensions = false;
+      }
+      if (!meta.getPixelsSizeY(i).equals(meta.getPixelsSizeY(0))) {
+        equalDimensions = false;
+      }
+      if (!meta.getPixelsSizeZ(i).equals(meta.getPixelsSizeZ(0))) {
+        equalDimensions = false;
+      }
+      if (!meta.getPixelsSizeC(i).equals(meta.getPixelsSizeC(0))) {
+        equalDimensions = false;
+      }
+      if (!meta.getPixelsSizeT(i).equals(meta.getPixelsSizeT(0))) {
+        equalDimensions = false;
+      }
+      if (!meta.getPixelsType(i).equals(meta.getPixelsType(0))) {
+        equalDimensions = false;
+      }
+      if (!equalDimensions) break;
+    }
+
+    if (!equalDimensions) {
+      tileX = 1;
+      tileY = 1;
+      return;
+    }
+
+    ArrayList<TileCoordinate> tiles = new ArrayList<TileCoordinate>();
+
+    ArrayList<Double> uniqueX = new ArrayList<Double>();
+    ArrayList<Double> uniqueY = new ArrayList<Double>();
 
     for (int i=0; i<reader.getSeriesCount(); i++) {
       TileCoordinate coord = new TileCoordinate();
-      coord.x = meta.getPlanePositionX(i, 0);
-      coord.y = meta.getPlanePositionY(i, 0);
+      coord.x = meta.getPlanePositionX(i, reader.getImageCount() - 1);
+      coord.y = meta.getPlanePositionY(i, reader.getImageCount() - 1);
 
-      if (!tileMap.containsKey(coord)) {
-        tileMap.put(coord, i);
+      tiles.add(coord);
+
+      if (coord.x != null && !uniqueX.contains(coord.x)) {
+        uniqueX.add(coord.x);
       }
-      else {
-        tileX = 1;
-        tileY = 1;
-        return;
+      if (coord.y != null && !uniqueY.contains(coord.y)) {
+        uniqueY.add(coord.y);
       }
     }
 
-    tileOrdering = new int[tileMap.size()];
-    TileCoordinate[] tiles =
-      tileMap.keySet().toArray(new TileCoordinate[tileMap.size()]);
-    Arrays.sort(tiles, new TileComparator());
+    tileX = uniqueX.size();
+    tileY = uniqueY.size();
 
-    Double firstX = tiles[0].x;
+    tileMap = new Integer[tileY][tileX];
 
-    for (int i=0; i<tiles.length; i++) {
-      tileOrdering[i] = tileMap.get(tiles[i]);
-      if (i > 0 && tileX == 0 && tiles[i].x.equals(firstX)) {
-        tileX = i;
-        tileY = tiles.length / tileX;
+    Double[] xCoordinates = uniqueX.toArray(new Double[tileX]);
+    Arrays.sort(xCoordinates);
+    Double[] yCoordinates = uniqueY.toArray(new Double[tileY]);
+    Arrays.sort(yCoordinates);
+
+    for (int row=0; row<tileMap.length; row++) {
+      for (int col=0; col<tileMap[row].length; col++) {
+        TileCoordinate coordinate = new TileCoordinate();
+        coordinate.x = xCoordinates[col];
+        coordinate.y = yCoordinates[row];
+
+        for (int tile=0; tile<tiles.size(); tile++) {
+          if (tiles.get(tile).equals(coordinate)) {
+            tileMap[row][col] = tile;
+          }
+        }
       }
     }
   }
@@ -233,28 +284,9 @@ public class TileStitcher extends ReaderWrapper {
         return false;
       }
       TileCoordinate tile = (TileCoordinate) o;
-      return x.equals(tile.x) && y.equals(tile.y);
-    }
-  }
-
-  class TileComparator implements Comparator {
-    public int compare(Object o1, Object o2) {
-      if (!(o1 instanceof TileCoordinate) || !(o2 instanceof TileCoordinate)) {
-        return 0;
-      }
-
-      TileCoordinate t1 = (TileCoordinate) o1;
-      TileCoordinate t2 = (TileCoordinate) o2;
-
-      if (t1.equals(t2)) {
-        return 0;
-      }
-
-      if (t1.y.equals(t2.y)) {
-        return t1.x.compareTo(t2.x);
-      }
-
-      return t1.y.compareTo(t2.y);
+      boolean xEqual = x == null ? tile.x == null : x.equals(tile.x);
+      boolean yEqual = y == null ? tile.y == null : y.equals(tile.y);
+      return xEqual && yEqual;
     }
   }
 
