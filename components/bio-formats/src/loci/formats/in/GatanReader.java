@@ -198,14 +198,14 @@ public class GatanReader extends FormatReader {
     MetadataTools.setDefaultCreationDate(store, id, 0);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      if (pixelSizes.size() > 0) {
-        store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSizes.get(0)), 0);
-      }
-      if (pixelSizes.size() > 1) {
-        store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSizes.get(1)), 0);
-      }
-      if (pixelSizes.size() > 2) {
-        store.setPixelsPhysicalSizeZ(new PositiveFloat(pixelSizes.get(2)), 0);
+      if (pixelSizes.size() >= 3) {
+        int index = pixelSizes.size() - 3;
+        Double x = pixelSizes.get(index);
+        Double y = pixelSizes.get(index + 1);
+        Double z = pixelSizes.get(index + 2);
+        store.setPixelsPhysicalSizeX(new PositiveFloat(x), 0);
+        store.setPixelsPhysicalSizeY(new PositiveFloat(y), 0);
+        store.setPixelsPhysicalSizeZ(new PositiveFloat(z), 0);
       }
 
       if (info == null) info = "";
@@ -369,12 +369,8 @@ public class GatanReader extends FormatReader {
         addGlobalMeta(labelString, value);
 
         if (labelString.equals("Scale")) {
-          if (value.indexOf(",") == -1) pixelSizes.add(new Double(value));
-          else {
-            int comma = value.indexOf(",");
-            double start = Double.parseDouble(value.substring(0, comma));
-            double end = Double.parseDouble(value.substring(comma + 2));
-            pixelSizes.add(end - start);
+          if (value.indexOf(",") == -1) {
+            pixelSizes.add(new Double(value));
           }
         }
         else if (labelString.equals("LowLimit")) {
