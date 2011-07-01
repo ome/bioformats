@@ -28,6 +28,7 @@ import java.util.HashMap;
 
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
+import loci.formats.UnsupportedCompressionException;
 
 /**
  * This class implements Huffman decoding.
@@ -57,7 +58,8 @@ public class HuffmanCodec extends BaseCodec {
   public byte[] compress(byte[] data, CodecOptions options)
     throws FormatException
   {
-    throw new FormatException("Huffman encoding not currently supported");
+    throw new UnsupportedCompressionException(
+      "Huffman encoding not currently supported");
   }
 
   /**

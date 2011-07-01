@@ -31,6 +31,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.ImageTools;
 import loci.formats.MetadataTools;
+import loci.formats.UnsupportedCompressionException;
 import loci.formats.codec.BitBuffer;
 import loci.formats.meta.MetadataStore;
 import ome.xml.model.primitives.PositiveFloat;
@@ -106,8 +107,7 @@ public class BMPReader extends FormatReader {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
     if (compression != RAW) {
-      throw new FormatException("Compression type " + compression +
-        " not supported");
+      throw new UnsupportedCompressionException(compression + " not supported");
     }
 
     int rowsToSkip = invertY ? y : getSizeY() - (h + y);

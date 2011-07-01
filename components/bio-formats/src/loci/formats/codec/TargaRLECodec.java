@@ -29,6 +29,7 @@ import java.io.IOException;
 
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
+import loci.formats.UnsupportedCompressionException;
 
 /**
  * This class implements Targa RLE decompression. Compression is not yet
@@ -47,7 +48,8 @@ public class TargaRLECodec extends BaseCodec {
     throws FormatException
   {
     // TODO: Add compression support.
-    throw new FormatException("Targa RLE compression not currently supported");
+    throw new UnsupportedCompressionException(
+      "Targa RLE compression not currently supported");
   }
 
   /**

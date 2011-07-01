@@ -27,6 +27,7 @@ import java.io.IOException;
 
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
+import loci.formats.UnsupportedCompressionException;
 
 /**
  * This class implements LZO decompression. Compression is not yet
@@ -48,7 +49,8 @@ public class LZOCodec extends BaseCodec {
     throws FormatException
   {
     // TODO: Add LZO compression support.
-    throw new FormatException("LZO Compression not currently supported");
+    throw new UnsupportedCompressionException(
+      "LZO Compression not currently supported");
   }
 
   /* @see Codec#decompress(RandomAccessInputStream, CodecOptions) */
