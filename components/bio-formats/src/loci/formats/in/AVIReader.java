@@ -32,6 +32,7 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.ImageTools;
 import loci.formats.MetadataTools;
+import loci.formats.UnsupportedCompressionException;
 import loci.formats.codec.BitBuffer;
 import loci.formats.codec.CodecOptions;
 import loci.formats.codec.JPEGCodec;
@@ -359,7 +360,8 @@ public class AVIReader extends FormatReader {
     }
     */
     else {
-      throw new FormatException("Unsupported compression : " + bmpCompression);
+      throw new UnsupportedCompressionException(
+        bmpCompression + " not supported");
     }
     return buf;
   }
@@ -512,8 +514,8 @@ public class AVIReader extends FormatReader {
                 if (bmpCompression != MSRLE && bmpCompression != 0 &&
                   bmpCompression != MS_VIDEO && bmpCompression != JPEG)
                 {
-                  throw new FormatException("Unsupported compression type " +
-                    bmpCompression);
+                  throw new UnsupportedCompressionException(
+                    bmpCompression + " not supported");
                 }
 
                 if (!(bmpBitsPerPixel == 4 || bmpBitsPerPixel == 8 ||

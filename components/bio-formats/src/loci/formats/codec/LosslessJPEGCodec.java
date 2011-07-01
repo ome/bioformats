@@ -29,6 +29,7 @@ import java.util.Vector;
 import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
+import loci.formats.UnsupportedCompressionException;
 
 /**
  * Decompresses lossless JPEG images.
@@ -94,7 +95,8 @@ public class LosslessJPEGCodec extends BaseCodec {
   public byte[] compress(byte[] data, CodecOptions options)
     throws FormatException
   {
-    throw new FormatException("Lossless JPEG compression not supported");
+    throw new UnsupportedCompressionException(
+      "Lossless JPEG compression not supported");
   }
 
   /**
@@ -178,7 +180,8 @@ public class LosslessJPEGCodec extends BaseCodec {
               }
             }
             else {
-              throw new FormatException("Arithmetic coding not supported");
+              throw new UnsupportedCompressionException(
+                "Arithmetic coding not supported");
             }
 
             // apply predictor to the sample
@@ -265,7 +268,8 @@ public class LosslessJPEGCodec extends BaseCodec {
           buf = new byte[width * height * nComponents * bytesPerSample];
         }
         else if (code == SOF11) {
-          throw new FormatException("Arithmetic coding is not yet supported");
+          throw new UnsupportedCompressionException(
+            "Arithmetic coding is not yet supported");
         }
         else if (code == DHT) {
           if (huffmanTables == null) {

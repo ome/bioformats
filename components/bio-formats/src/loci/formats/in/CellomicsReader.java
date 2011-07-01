@@ -34,6 +34,7 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
+import loci.formats.UnsupportedCompressionException;
 import loci.formats.codec.ZlibCodec;
 import loci.formats.meta.MetadataStore;
 import ome.xml.model.primitives.PositiveFloat;
@@ -182,7 +183,8 @@ public class CellomicsReader extends FormatReader {
     int compression = in.readInt();
 
     if (x * y * nPlanes * (nBits / 8) + 52 > in.length()) {
-      throw new FormatException("Compressed pixel data is not yet supported.");
+      throw new UnsupportedCompressionException(
+        "Compressed pixel data is not yet supported.");
     }
 
     in.skipBytes(4);

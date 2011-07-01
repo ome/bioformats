@@ -28,6 +28,7 @@ import java.io.IOException;
 import loci.common.ByteArrayHandle;
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
+import loci.formats.UnsupportedCompressionException;
 
 /**
  * Methods for compressing and decompressing data using QuickTime RLE.
@@ -42,7 +43,8 @@ public class QTRLECodec extends BaseCodec {
   public byte[] compress(byte[] data, CodecOptions options)
     throws FormatException
   {
-    throw new FormatException("QTRLE compression not supported.");
+    throw new UnsupportedCompressionException(
+      "QTRLE compression not supported.");
   }
 
   /* @see Codec#decompress(RandomAccessInputStream, CodecOptions) */
