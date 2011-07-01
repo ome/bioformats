@@ -29,6 +29,7 @@ import java.io.IOException;
 
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
+import loci.formats.UnsupportedCompressionException;
 
 /**
  * This class implements packbits decompression. Compression is not yet
@@ -47,7 +48,8 @@ public class PackbitsCodec extends BaseCodec {
     throws FormatException
   {
     // TODO: Add compression support.
-    throw new FormatException("Packbits Compression not currently supported");
+    throw new UnsupportedCompressionException(
+      "Packbits Compression not currently supported");
   }
 
   /**

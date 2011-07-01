@@ -27,6 +27,7 @@ import java.io.IOException;
 
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
+import loci.formats.UnsupportedCompressionException;
 
 /**
  * Implements encoding and decoding methods for Apple RPZA.  This code was
@@ -46,7 +47,7 @@ public class RPZACodec extends BaseCodec {
   public byte[] compress(byte[] input, CodecOptions options)
     throws FormatException
   {
-    throw new FormatException("RPZA compression not supported.");
+    throw new UnsupportedCompressionException("RPZA compression not supported.");
   }
 
   /**

@@ -28,6 +28,7 @@ import java.util.Arrays;
 
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
+import loci.formats.UnsupportedCompressionException;
 
 /**
  * This class implements Nikon decompression. Compression is not yet
@@ -132,7 +133,8 @@ public class NikonCodec extends BaseCodec {
     throws FormatException
   {
     // TODO: Add compression support.
-    throw new FormatException("Nikon Compression not currently supported");
+    throw new UnsupportedCompressionException(
+      "Nikon Compression not currently supported");
   }
 
   /**

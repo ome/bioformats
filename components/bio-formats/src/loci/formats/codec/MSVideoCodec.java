@@ -27,6 +27,7 @@ import java.io.IOException;
 
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
+import loci.formats.UnsupportedCompressionException;
 
 /**
  * Methods for compressing and decompressing data using Microsoft Video 1.
@@ -44,7 +45,8 @@ public class MSVideoCodec extends BaseCodec {
   public byte[] compress(byte[] data, CodecOptions options)
     throws FormatException
   {
-    throw new FormatException("MS Video 1 compression not supported.");
+    throw new UnsupportedCompressionException(
+      "MS Video 1 compression not supported.");
   }
 
   /**

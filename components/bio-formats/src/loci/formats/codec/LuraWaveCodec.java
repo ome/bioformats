@@ -34,6 +34,7 @@ import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
 import loci.formats.FormatException;
 import loci.formats.MissingLibraryException;
+import loci.formats.UnsupportedCompressionException;
 import loci.formats.services.LuraWaveService;
 import loci.formats.services.LuraWaveServiceImpl;
 
@@ -61,7 +62,8 @@ public class LuraWaveCodec extends BaseCodec {
   public byte[] compress(byte[] data, CodecOptions options)
     throws FormatException
   {
-    throw new FormatException("LuraWave compression not supported");
+    throw new UnsupportedCompressionException(
+      "LuraWave compression not supported");
   }
 
   /* @see Codec#decompress(RandomAccessInputStream, CodecOptions) */
