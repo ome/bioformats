@@ -78,6 +78,7 @@ public class ImporterOptions extends OptionsList {
   public static final String KEY_UPGRADE_CHECK   = "upgradeCheck";
   public static final String KEY_VIRTUAL         = "virtual";
   public static final String KEY_WINDOWLESS      = "windowless";
+  public static final String KEY_STITCH_TILES    = "stitchTiles";
 
   // possible values for colorMode
   public static final String COLOR_MODE_DEFAULT = "Default";
@@ -389,6 +390,11 @@ public class ImporterOptions extends OptionsList {
   public String getWindowlessInfo() { return getInfo(KEY_WINDOWLESS); }
   public boolean isWindowless() { return isSet(KEY_WINDOWLESS); }
   public void setWindowless(boolean b) { setValue(KEY_WINDOWLESS, b); }
+
+  // stitchTiles
+  public String getStitchTilesInfo() { return getInfo(KEY_STITCH_TILES); }
+  public boolean doStitchTiles() { return isSet(KEY_STITCH_TILES); }
+  public void setStitchTiles(boolean b) { setValue(KEY_STITCH_TILES, b); }
 
   // -- ImporterOptions methods - secondary options accessors and mutators --
 
