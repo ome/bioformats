@@ -84,6 +84,7 @@ public class VolocityReader extends FormatReader {
     super("Volocity Library",
       new String[] {"mvd2", "aisf", "aiix", "dat", "atsf"});
     domains = new String[] {FormatTools.UNKNOWN_DOMAIN};
+    hasCompanionFiles = true;
   }
 
   // -- IFormatReader API methods --

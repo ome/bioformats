@@ -60,6 +60,7 @@ public class UnisokuReader extends FormatReader {
     super("Unisoku STM", new String[] {"hdr", "dat"});
     domains = new String[] {FormatTools.SPM_DOMAIN};
     suffixSufficient = false;
+    hasCompanionFiles = true;
   }
 
   // -- IFormatReader API methods --
