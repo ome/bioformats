@@ -212,8 +212,6 @@ public class LIFReader extends FormatReader {
   private String[] imageNames;
   private double[] acquiredDate;
 
-  private boolean[] flipX, flipY;
-
   // -- Constructor --
 
   /** Constructs a new Leica LIF reader. */
@@ -308,31 +306,6 @@ public class LIFReader extends FormatReader {
       ImageTools.bgrToRgb(buf, isInterleaved(), bytes, getRGBChannelCount());
     }
 
-    if (flipX[getSeries()]) {
-      byte[] pixel = new byte[bpp];
-      int rowLen = w * bpp;
-      for (int row=0; row<h; row++) {
-        for (int col=0; col<w/2; col++) {
-          int src = row * rowLen + col * bpp;
-          int dest = row * rowLen + (w - col - 1) * bpp;
-          System.arraycopy(buf, src, pixel, 0, bpp);
-          System.arraycopy(buf, dest, buf, src, bpp);
-          System.arraycopy(pixel, 0, buf, dest, bpp);
-        }
-      }
-    }
-    if (flipY[getSeries()]) {
-      int rowLen = w * bpp;
-      byte[] rowBuf = new byte[rowLen];
-      for (int row=0; row<h / 2; row++) {
-        int src = row * rowLen;
-        int dest = (h - row - 1) * rowLen;
-        System.arraycopy(buf, src, rowBuf, 0, rowLen);
-        System.arraycopy(buf, dest, buf, src, rowLen);
-        System.arraycopy(rowBuf, 0, buf, dest, rowLen);
-      }
-    }
-
     return buf;
   }
 
@@ -367,8 +340,6 @@ public class LIFReader extends FormatReader {
       alternateCenter = false;
       imageNames = null;
       acquiredDate = null;
-      flipX = null;
-      flipY = null;
     }
   }
 
@@ -781,8 +752,6 @@ public class LIFReader extends FormatReader {
     tSteps = new Double[imageNodes.getLength()];
     pinholes = new Double[imageNodes.getLength()];
     zooms = new Double[imageNodes.getLength()];
-    flipX = new boolean[imageNodes.getLength()];
-    flipY = new boolean[imageNodes.getLength()];
 
     expTimes = new Double[imageNodes.getLength()][];
     gains = new Double[imageNodes.getLength()][];
@@ -1345,10 +1314,10 @@ public class LIFReader extends FormatReader {
         detectorModels[image].add(value);
       }
       else if (id.equals("eDirectional")) {
-        flipX[image] = value.equals("1");
+        addSeriesMeta("Reverse X orientation", value.equals("1"));
       }
       else if (id.equals("eDirectionalY")) {
-        flipY[image] = value.equals("1");
+        addSeriesMeta("Reverse Y orientation", value.equals("1"));
       }
       else if (id.indexOf("WFC") == 1) {
         int c = 0;
