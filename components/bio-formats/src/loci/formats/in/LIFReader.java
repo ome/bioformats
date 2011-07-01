@@ -1313,6 +1313,12 @@ public class LIFReader extends FormatReader {
       else if (id.equals("CameraName")) {
         detectorModels[image].add(value);
       }
+      else if (id.equals("eDirectional")) {
+        addSeriesMeta("Reverse X orientation", value.equals("1"));
+      }
+      else if (id.equals("eDirectionalY")) {
+        addSeriesMeta("Reverse Y orientation", value.equals("1"));
+      }
       else if (id.indexOf("WFC") == 1) {
         int c = 0;
         try {
