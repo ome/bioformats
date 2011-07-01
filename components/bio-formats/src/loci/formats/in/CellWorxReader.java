@@ -73,6 +73,7 @@ public class CellWorxReader extends FormatReader {
   public CellWorxReader() {
     super("CellWorx", new String[] {"pnl", "htd", "log"});
     domains = new String[] {FormatTools.HCS_DOMAIN};
+    hasCompanionFiles = true;
   }
 
   // -- IFormatReader API methods --

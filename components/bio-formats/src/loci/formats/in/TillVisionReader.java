@@ -87,6 +87,7 @@ public class TillVisionReader extends FormatReader {
   public TillVisionReader() {
     super("TillVision", new String[] {"vws", "pst", "inf"});
     domains = new String[] {FormatTools.LM_DOMAIN};
+    hasCompanionFiles = true;
   }
 
   // -- IFormatReader API methods --

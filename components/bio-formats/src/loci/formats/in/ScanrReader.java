@@ -99,6 +99,7 @@ public class ScanrReader extends FormatReader {
     super("Olympus ScanR", new String[] {"dat", "xml", "tif"});
     domains = new String[] {FormatTools.HCS_DOMAIN};
     suffixSufficient = false;
+    hasCompanionFiles = true;
   }
 
   // -- IFormatReader API methods --
