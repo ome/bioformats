@@ -72,6 +72,7 @@ public class TrestleReader extends BaseTiffReader {
     domains = new String[] {FormatTools.HISTOLOGY_DOMAIN};
     suffixSufficient = false;
     suffixNecessary = false;
+    hasCompanionFiles = true;
   }
 
   // -- IFormatReader API methods --

@@ -64,6 +64,7 @@ public class PDSReader extends FormatReader {
     super("Perkin Elmer Densitometer", new String[] {"hdr", "img"});
     domains = new String[] {FormatTools.EM_DOMAIN};
     suffixSufficient = false;
+    hasCompanionFiles = true;
   }
 
   // -- IFormatReader API methods --

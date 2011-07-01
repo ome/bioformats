@@ -91,6 +91,7 @@ public class ScreenReader extends FormatReader {
         validReaders.addClass(c);
       }
     }
+    hasCompanionFiles = true;
   }
 
   // -- IFormatReader API methods --
