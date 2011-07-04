@@ -30,6 +30,7 @@ import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.formats.AxisGuesser;
 import loci.formats.CoreMetadata;
 import loci.formats.FilePattern;
 import loci.formats.FileStitcher;
@@ -137,8 +138,15 @@ public class CellWorxReader extends FormatReader {
 
     String file = getPNLFile(getSeries());
     IFormatReader pnl = getReader(file);
-    pnl.setSeries(fieldIndex);
-    pnl.openBytes(no, buf, x, y, w, h);
+    int planeIndex = no;
+    if (pnl.getSeriesCount() > fieldIndex) {
+      pnl.setSeries(fieldIndex);
+    }
+    else {
+      int[] zct = getZCTCoords(no);
+      planeIndex = pnl.getIndex(zct[0], zct[1], fieldIndex);
+    }
+    pnl.openBytes(planeIndex, buf, x, y, w, h);
     pnl.close();
     return buf;
   }
@@ -262,9 +270,8 @@ public class CellWorxReader extends FormatReader {
           if (!new Location(wellFiles[row][col]).exists()) {
             // using TIFF files instead
 
-            base = plateName + rowLetter + (col + 1);
-            wellFiles[row][col] =
-              getTiffFile(base, wavelengths.length, nTimepoints);
+            wellFiles[row][col] = getTiffFile(
+              plateName, rowLetter, col, wavelengths.length, nTimepoints);
           }
         }
       }
@@ -537,10 +544,29 @@ public class CellWorxReader extends FormatReader {
       ((FileStitcher) pnl).setUsingPatternIds(true);
     }
     pnl.setId(file);
+    if (pnl instanceof FileStitcher) {
+      int[] axisTypes = ((FileStitcher) pnl).getAxisTypes();
+      axisTypes[0] = AxisGuesser.Z_AXIS;
+      if (axisTypes.length > 1) {
+        if (axisTypes[1] != AxisGuesser.S_AXIS) {
+          axisTypes[1] = AxisGuesser.T_AXIS;
+        }
+      }
+      if (axisTypes.length > 2) {
+        axisTypes[2] = AxisGuesser.C_AXIS;
+      }
+      if (axisTypes.length > 3) {
+        axisTypes[3] = AxisGuesser.Z_AXIS;
+      }
+      ((FileStitcher) pnl).setAxisTypes(axisTypes);
+    }
     return pnl;
   }
 
-  private String getTiffFile(String base, int channels, int nTimepoints) {
+  private String getTiffFile(String plateName, char rowLetter, int col,
+    int channels, int nTimepoints)
+  {
+    String base = plateName + rowLetter + (col + 1);
     String field = null;
     if (fieldCount > 1) {
       field = "s<1-" + fieldCount + ">";
@@ -567,7 +593,34 @@ public class CellWorxReader extends FormatReader {
     if (timepoint != null) {
       file += "_" + timepoint;
     }
-    return file + ".tif";
+    file += ".tif";
+
+    FilePattern fp = new FilePattern(file);
+    String[] files = fp.getFiles();
+
+    if (!new Location(files[0]).exists()) {
+      file = plateName + rowLetter + String.format("%02d", col + 1);
+
+      if (field != null) {
+        field = ".*";
+      }
+      if (channel != null) {
+        channel = "w.*";
+      }
+
+      if (field != null) {
+        file += "_" + field;
+      }
+      if (channel != null) {
+        file += "_" + channel;
+      }
+      if (timepoint != null) {
+        file += "_" + timepoint;
+      }
+      file += ".tif";
+    }
+
+    return file;
   }
 
 }
