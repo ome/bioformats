@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import loci.common.ByteArrayHandle;
+import loci.common.DataTools;
 import loci.common.IRandomAccess;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
@@ -272,11 +273,15 @@ public class VolocityReader extends FormatReader {
       {
         if (channelIndex < 0) {
           RandomAccessInputStream s = getStream(i);
+          s.seek(0);
+          if (s.read() != 'I') {
+            s.order(false);
+          }
           s.seek(22);
           int x = s.readInt();
           int y = s.readInt();
           int z = s.readInt();
-          if (x * y * z != 0 && x * y * z < s.length()) {
+          if (x * y * z > 0 && x * y * z < (s.length() * 3)) {
             stackNames.add(name);
             parentIDs.add((Integer) sampleTable[i][0]);
           }
@@ -321,8 +326,11 @@ public class VolocityReader extends FormatReader {
           if (data.length() > 22) {
             data.seek(22);
             int stackID = data.readInt();
-            pixelsFiles[i][c] =
-              new Location(dir, stackID + ".aisf").getAbsolutePath();
+            Location f = new Location(dir, stackID + ".aisf");
+            if (!f.exists()) {
+              f = new Location(dir, DataTools.swap(stackID) + ".aisf");
+            }
+            pixelsFiles[i][c] = f.getAbsolutePath();
           }
           else {
             Integer child =
@@ -361,8 +369,11 @@ public class VolocityReader extends FormatReader {
         data = getStream(timestampIndex);
         data.seek(22);
         int timestampID = data.readInt();
-        timestampFiles[i] =
-          new Location(dir, timestampID + ".atsf").getAbsolutePath();
+        Location f = new Location(dir, timestampID + ".atsf");
+        if (!f.exists()) {
+          f = new Location(dir, DataTools.swap(timestampID) + ".atsf");
+        }
+        timestampFiles[i] = f.getAbsolutePath();
         data.close();
       }
 
@@ -432,6 +443,10 @@ public class VolocityReader extends FormatReader {
       if (timestampFiles[i] != null) {
         RandomAccessInputStream s =
           new RandomAccessInputStream(timestampFiles[i]);
+        s.seek(0);
+        if (s.read() != 'I') {
+          core[i].littleEndian = false;
+        }
         s.seek(17);
         s.order(isLittleEndian());
         core[i].sizeT = s.readInt();
@@ -493,6 +508,12 @@ public class VolocityReader extends FormatReader {
       else {
         boolean embedded = Location.getMappedFile(EMBEDDED_STREAM) != null;
 
+        s.seek(0);
+        if (s.read() != 'I') {
+          core[i].littleEndian = false;
+          s.order(false);
+        }
+
         s.seek(22);
         core[i].sizeX = s.readInt();
         core[i].sizeY = s.readInt();
@@ -511,6 +532,9 @@ public class VolocityReader extends FormatReader {
           core[i].sizeC = 1;
           long pixels = core[i].sizeX * core[i].sizeY * core[i].sizeZ;
           int bytes = (int) (s.length() / pixels);
+          if (bytes == 0) {
+            bytes = 1;
+          }
           core[i].pixelType =
             FormatTools.pixelTypeFromBytes(bytes, false, false);
           s.seek(70);
