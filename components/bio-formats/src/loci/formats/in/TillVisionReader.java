@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.IniList;
 import loci.common.IniParser;
@@ -74,7 +75,7 @@ public class TillVisionReader extends FormatReader {
   private RandomAccessInputStream pixelsStream;
   private Hashtable<Integer, Double> exposureTimes;
   private boolean embeddedImages;
-  private long embeddedOffset;
+  private long[] embeddedOffset;
   private String[] infFiles;
 
   private Vector<String> imageNames = new Vector<String>();
@@ -115,7 +116,7 @@ public class TillVisionReader extends FormatReader {
 
     int plane = FormatTools.getPlaneSize(this);
     if (embeddedImages) {
-      in.seek(embeddedOffset + no * plane);
+      in.seek(embeddedOffset[getSeries()] + no * plane);
       readPlane(in, x, y, w, h, buf);
     }
     else {
@@ -138,7 +139,7 @@ public class TillVisionReader extends FormatReader {
       pixelsStream = null;
       pixelsFiles = null;
       infFiles = null;
-      embeddedOffset = 0;
+      embeddedOffset = null;
       embeddedImages = false;
       exposureTimes = null;
       imageNames.clear();
@@ -227,40 +228,85 @@ public class TillVisionReader extends FormatReader {
       if (name.equals("Root Entry" + File.separator + "Contents")) {
         RandomAccessInputStream s = poi.getDocumentStream(name);
         s.order(true);
-        int nFound = 0;
 
-        embeddedImages = s.read() == 1;
+        boolean specialCImage = false;
+        int nFound = 0;
+        Long[] cimages = null;
+
+        Location dir = new Location(id).getAbsoluteFile().getParentFile();
+        String[] list = dir.list(true);
+        boolean hasPST = false;
+        for (String f : list) {
+          if (checkSuffix(f, "pst")) {
+            hasPST = true;
+            break;
+          }
+        }
+
+        if (!hasPST) {
+          cimages = findImages(s);
+          nFound = cimages.length;
+
+          if (nFound == 0) {
+            s.seek(13);
+            int len = s.readShort();
+            String type = s.readString(len);
+            if (type.equals("CImage")) {
+              nFound = 1;
+
+              cimages = new Long[] {s.getFilePointer() + 6};
+              specialCImage = true;
+            }
+          }
+
+          embeddedImages = nFound > 0;
+        }
         LOGGER.debug("Images are {}embedded", embeddedImages ? "" : "not ");
 
         if (embeddedImages) {
-          s.skipBytes(12);
-          int len = s.readShort();
-          String type = s.readString(len);
-          if (!type.equals("CImage")) {
-            embeddedImages = false;
-            s.close();
-            continue;
+          core = new CoreMetadata[nFound];
+          embeddedOffset = new long[nFound];
+
+          for (int i=0; i<getSeriesCount(); i++) {
+            core[i] = new CoreMetadata();
+
+            s.seek(cimages[i]);
+
+            int len = s.read();
+            String imageName = s.readString(len);
+            imageNames.add(imageName);
+
+            if (specialCImage) {
+              s.seek(1280);
+            }
+            else {
+              while (true) {
+                if (s.readString(2).equals("sB")) {
+                  break;
+                }
+                else s.seek(s.getFilePointer() - 1);
+              }
+            }
+
+            s.skipBytes(20);
+
+            core[i].sizeX = s.readInt();
+            core[i].sizeY = s.readInt();
+            core[i].sizeZ = s.readInt();
+            core[i].sizeC = s.readInt();
+            core[i].sizeT = s.readInt();
+
+            core[i].pixelType = convertPixelType(s.readInt());
+            if (specialCImage) {
+              embeddedOffset[i] = s.getFilePointer() + 27;
+            }
+            else {
+              embeddedOffset[i] = s.getFilePointer() + 31;
+            }
           }
 
-          s.seek(27);
-          len = s.read();
-          while (len != 0) {
-            s.skipBytes(len);
-            len = s.read();
-          }
-
-          s.skipBytes(1243);
-
-          core[0].sizeX = s.readInt();
-          core[0].sizeY = s.readInt();
-          core[0].sizeZ = s.readInt();
-          core[0].sizeC = s.readInt();
-          core[0].sizeT = s.readInt();
-          core[0].pixelType = convertPixelType(s.readInt());
-          embeddedOffset = s.getFilePointer() + 28;
           if (in != null) in.close();
           in = poi.getDocumentStream(name);
-          nImages++;
           s.close();
           break;
         }
@@ -540,6 +586,48 @@ public class TillVisionReader extends FormatReader {
       if (found) return (int) (i + marker.length);
     }
     return -1;
+  }
+
+  private Long[] findImages(RandomAccessInputStream s) throws IOException {
+    Vector<Long> offsets = new Vector<Long>();
+
+    byte[] buf = new byte[8192];
+    int overlap = 128;
+    s.read(buf, 0, overlap);
+
+    while (s.getFilePointer() < s.length()) {
+      s.read(buf, overlap, buf.length - overlap);
+
+      for (int i=0; i<buf.length-overlap; i++) {
+        if (DataTools.bytesToInt(buf, i, 4, false) == (int) 0xf03fff00 &&
+          DataTools.bytesToInt(buf, i + 4, 4, false) == 0 &&
+          DataTools.bytesToInt(buf, i + 8, 4, false) == 0 &&
+          DataTools.bytesToInt(buf, i + 12, 4, false) == 0xff00)
+        {
+          int pointer = i + 22;
+          int length = DataTools.bytesToShort(buf, pointer, 2, true);
+          if (length == 6 &&
+            new String(buf, pointer + 2, length).equals("CImage"))
+          {
+            pointer += length + 4;
+          }
+
+          if (DataTools.bytesToInt(buf, pointer, 4, false) == 0x08000400) {
+            long offset = s.getFilePointer() - buf.length + pointer + 4;
+            if (!offsets.contains(offset)) {
+              int len = buf[pointer + 4];
+              String name = new String(buf, pointer + 5, len);
+              if (name.indexOf("Palette") < 0) {
+                offsets.add(offset);
+              }
+            }
+          }
+        }
+      }
+      System.arraycopy(buf, buf.length - overlap, buf, 0, overlap);
+    }
+
+    return offsets.toArray(new Long[offsets.size()]);
   }
 
 }
