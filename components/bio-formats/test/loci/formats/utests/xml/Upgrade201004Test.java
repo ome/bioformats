@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.utests.xml;
 
 import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.AssertJUnit.assertNull;
+import static org.testng.AssertJUnit.assertNotNull;
 
 import java.io.InputStream;
 
@@ -33,10 +33,9 @@ import loci.common.services.ServiceFactory;
 import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.services.OMEXMLService;
 
-import ome.xml.model.Image;
+import ome.xml.model.CommentAnnotation;
 import ome.xml.model.OME;
-import ome.xml.model.Pixels;
-import ome.xml.model.primitives.PositiveFloat;
+import ome.xml.model.StructuredAnnotations;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -80,11 +79,16 @@ public class Upgrade201004Test {
   @Test
   public void validateUpgrade() throws ServiceException {
     assertEquals(1, ome.sizeOfImageList());
-    Image image = ome.getImage(0);
-    Pixels pixels = image.getPixels();
-    assertEquals(new PositiveFloat(0.207), pixels.getPhysicalSizeX());
-    assertEquals(new PositiveFloat(0.207), pixels.getPhysicalSizeY());
-    assertNull(pixels.getPhysicalSizeZ());
+    // StringAnnotation --> CommentAnnotation
+    StructuredAnnotations structuredAnnotations =
+      ome.getStructuredAnnotations();
+    assertNotNull(structuredAnnotations);
+    assertEquals(1, structuredAnnotations.sizeOfCommentAnnotationList());
+    CommentAnnotation commentAnnotation =
+      structuredAnnotations.getCommentAnnotation(0);
+    assertEquals("StringAnnotation:0", commentAnnotation.getID());
+    assertEquals("Transform", commentAnnotation.getNamespace());
+    assertEquals("Foobar", commentAnnotation.getValue());
   }
 
 }
