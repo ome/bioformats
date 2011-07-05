@@ -490,6 +490,7 @@ public class ImportProcess implements StatusReporter {
       String id = options.getId();
       options.setId(id);
       fileStitcher.setUsingPatternIds(true);
+      fileStitcher.setCanChangePattern(false);
     }
     r.setId(options.getId());
 

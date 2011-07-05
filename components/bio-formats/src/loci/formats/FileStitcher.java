@@ -66,6 +66,8 @@ public class FileStitcher extends ReaderWrapper {
    */
   private boolean patternIds = false;
 
+  private boolean doNotChangePattern = false;
+
   /** Dimensional axis lengths per file. */
   private int[] sizeZ, sizeC, sizeT;
 
@@ -128,6 +130,14 @@ public class FileStitcher extends ReaderWrapper {
 
   /** Gets whether the reader is using file patterns for IDs. */
   public boolean isUsingPatternIds() { return patternIds; }
+
+  public void setCanChangePattern(boolean doChange) {
+    doNotChangePattern = !doChange;
+  }
+
+  public boolean canChangePattern() {
+    return !doNotChangePattern;
+  }
 
   /** Gets the reader appropriate for use with the given image plane. */
   public IFormatReader getReader(int no) throws FormatException, IOException {
@@ -224,6 +234,9 @@ public class FileStitcher extends ReaderWrapper {
         // id is an unmapped file path; look to similar files on disk
         return FilePattern.findSeriesPatterns(id);
       }
+    }
+    if (doNotChangePattern) {
+      return new String[] {id};
     }
     patternIds = false;
     String[] patterns = findPatterns(new FilePattern(id).getFiles()[0]);
