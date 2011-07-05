@@ -488,6 +488,7 @@ public class LittleEndian
         long result = 0;
 
         for (int j = offset + size - 1; j >= offset; j--) {
+            if (j >= data.length) break;
             result <<= 8;
             result |= 0xff & data[j];
         }
