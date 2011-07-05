@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.utests.xml;
 
 import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertNotNull;
 
 import java.io.InputStream;
 
@@ -32,10 +33,11 @@ import loci.common.services.ServiceFactory;
 import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.services.OMEXMLService;
 
+import ome.xml.model.Channel;
 import ome.xml.model.Image;
 import ome.xml.model.OME;
 import ome.xml.model.Pixels;
-import ome.xml.model.primitives.PositiveFloat;
+import ome.xml.model.enums.AcquisitionMode;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -81,8 +83,12 @@ public class Upgrade200909Test {
     assertEquals(1, ome.sizeOfImageList());
     Image image = ome.getImage(0);
     Pixels pixels = image.getPixels();
-    assertEquals(new PositiveFloat(10000.0), pixels.getPhysicalSizeX());
-    assertEquals(new PositiveFloat(10000.0), pixels.getPhysicalSizeY());
+    assertNotNull(pixels);
+    assertEquals(1, pixels.sizeOfChannelList());
+    Channel channel = pixels.getChannel(0);
+    // XSLT transform of Channel.AcquisitionMode
+    // <map from="LaserScanningMicroscopy" to="LaserScanningConfocalMicroscopy"/>
+    assertEquals(AcquisitionMode.LASERSCANNINGCONFOCALMICROSCOPY, channel.getAcquisitionMode());
   }
 
 }
