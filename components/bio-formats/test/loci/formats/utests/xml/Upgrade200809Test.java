@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.utests.xml;
 
 import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertNotNull;
 
 import java.io.InputStream;
 
@@ -35,7 +36,6 @@ import loci.formats.services.OMEXMLService;
 import ome.xml.model.Image;
 import ome.xml.model.OME;
 import ome.xml.model.Pixels;
-import ome.xml.model.primitives.PositiveFloat;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -81,8 +81,13 @@ public class Upgrade200809Test {
     assertEquals(1, ome.sizeOfImageList());
     Image image = ome.getImage(0);
     Pixels pixels = image.getPixels();
-    assertEquals(new PositiveFloat(0.2), pixels.getPhysicalSizeX());
-    assertEquals(new PositiveFloat(0.2), pixels.getPhysicalSizeY());
+    assertNotNull(pixels);
+  }
+
+  @Test
+  public void testChannelColor() {
+    // OME:Channel, Color now use new colour representation and is required
+    assertEquals(-1, metadata.getChannelColor(0, 0).intValue());
   }
 
 }
