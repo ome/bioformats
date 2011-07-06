@@ -587,15 +587,9 @@ def docGenMain(args):
 	for theSchemas in [
 	["OME",           "../specification/InProgress/ome.xsd"], 
 	["SPW",           "../specification/InProgress/SPW.xsd"],
-	["CA",            "../specification/InProgress/CA.xsd"],
-	["CLI",           "../specification/InProgress/CLI.xsd"],
-	["AnalysisChain", "../specification/InProgress/AnalysisChain.xsd"],
-	["AnalysisModule","../specification/InProgress/AnalysisModule.xsd"],
 	["BinaryFile",    "../specification/InProgress/BinaryFile.xsd"],
-	["DataHistory",   "../specification/InProgress/DataHistory.xsd"],
-	["MLI",           "../specification/InProgress/Working/MLI.xsd"],
-	["SA",            "../specification/InProgress/Working/SA.xsd"],
-	["STD",           "../specification/InProgress/Working/STD.xsd"]
+	["SA",            "../specification/InProgress/SA.xsd"],
+	["ROI",            "../specification/InProgress/ROI.xsd"]
 	]:
 		prefix = theSchemas[0] + ":"
 		model = parseXmlSchema([theSchemas[1]], namespace)
