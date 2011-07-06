@@ -203,8 +203,9 @@ public class NikonReader extends BaseTiffReader {
 
       int[] colorMap = {1, 0, 2, 1}; // default color map
       short[] ifdColors = (short[]) ifd.get(COLOR_MAP);
+      boolean colorsValid = false;
       if (ifdColors != null && ifdColors.length >= colorMap.length) {
-        boolean colorsValid = true;
+        colorsValid = true;
         for (int q=0; q<colorMap.length; q++) {
           if (ifdColors[q] < 0 || ifdColors[q] > 2) {
             // found invalid channel index, use default color map instead
@@ -219,7 +220,8 @@ public class NikonReader extends BaseTiffReader {
         }
       }
 
-      boolean interleaveRows = offsets.length == 1 && !maybeCompressed;
+      boolean interleaveRows =
+        offsets.length == 1 && !maybeCompressed && !colorsValid;
 
       for (int row=0; row<getSizeY(); row++) {
         int realRow = interleaveRows ? (row < (getSizeY() / 2) ?
