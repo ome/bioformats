@@ -25,11 +25,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.plugins.in;
 
+import java.io.File;
+import java.math.BigInteger;
+
 import ij.IJ;
 import ij.gui.GenericDialog;
 
 import loci.common.Location;
 import loci.formats.FilePattern;
+import loci.formats.FilePatternBlock;
 
 /**
  * Bio-Formats Importer file pattern dialog box.
@@ -39,6 +43,11 @@ import loci.formats.FilePattern;
  * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/loci-plugins/src/loci/plugins/in/FilePatternDialog.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class FilePatternDialog extends ImporterDialog {
+
+  // -- Fields --
+
+  private FilePattern fp;
+  private String originalID;
 
   // -- Constructor --
 
@@ -81,6 +90,22 @@ public class FilePatternDialog extends ImporterDialog {
     GenericDialog gd = new GenericDialog("Bio-Formats File Stitching");
     int len = id.length() + 1;
     if (len > 80) len = 80;
+
+    originalID = id;
+    fp = new FilePattern(id);
+
+    String[] prefixes = fp.getPrefixes();
+    int[] counts = fp.getCount();
+
+    for (int i=0; i<prefixes.length; i++) {
+      String prefix = "Axis_" + (i + 1);
+      gd.addStringField(prefix + "_number_of_images", "" + counts[i]);
+      gd.addStringField(prefix + "_axis_first_image", "1");
+      gd.addStringField(prefix + "_axis_increment", "1");
+      gd.addMessage("");
+    }
+
+    gd.addStringField("File name contains:", "");
     gd.addStringField("Pattern: ", id, len);
 
     return gd;
@@ -88,7 +113,60 @@ public class FilePatternDialog extends ImporterDialog {
 
   @Override
   protected boolean harvestResults(GenericDialog gd) {
+    String[] counts = new String[fp.getPrefixes().length];
+    String[] firsts = new String[counts.length];
+    String[] increments = new String[counts.length];
+    int[] count = fp.getCount();
+
+    boolean changedAxes = false;
+
+    for (int i=0; i<counts.length; i++) {
+      counts[i] = gd.getNextString();
+      firsts[i] = gd.getNextString();
+      increments[i] = gd.getNextString();
+
+      if (!firsts[i].equals("1") || !increments[i].equals("1") ||
+        Integer.parseInt(counts[i]) != count[i])
+      {
+        changedAxes = true;
+      }
+    }
+
+    String contains = gd.getNextString();
     String id = gd.getNextString();
+
+    if (!changedAxes) {
+      if (contains.trim().length() > 0) {
+        String dir =
+          originalID.substring(0, originalID.lastIndexOf(File.separator) + 1);
+        id = dir + ".*" + contains + ".*";
+      }
+    }
+    else {
+      String pattern =
+        originalID.substring(0, originalID.lastIndexOf(File.separator) + 1);
+      for (int i=0; i<counts.length; i++) {
+        BigInteger first = new BigInteger(firsts[i]);
+        BigInteger fileCount = new BigInteger(counts[i]);
+        BigInteger increment = new BigInteger(increments[i]);
+
+        FilePatternBlock block = new FilePatternBlock(fp.getBlock(i));
+
+        first = first.add(block.getFirst()).subtract(BigInteger.ONE);
+        fileCount = fileCount.multiply(increment).add(first);
+
+        pattern += fp.getPrefix(i);
+        pattern += "<";
+        pattern += first;
+        pattern += "-";
+        pattern += fileCount.subtract(BigInteger.ONE);
+        pattern += ":";
+        pattern += increment;
+        pattern += ">";
+      }
+      id = pattern + fp.getSuffix();
+    }
+
     options.setId(id);
     return true;
   }
