@@ -86,7 +86,12 @@ public class APLReader extends FormatReader {
       Location file = new Location(name).getAbsoluteFile();
       Location parent = file.getParentFile();
       if (parent != null) {
-        parent = parent.getParentFile();
+        try {
+          parent = parent.getParentFile();
+        }
+        catch (NullPointerException e) {
+          parent = null;
+        }
         if (parent != null) {
           String[] list = parent.list(true);
           for (String f : list) {
