@@ -171,8 +171,16 @@
 				<xsl:value-of select="$firstPixels"/>
 			</xsl:attribute>
 
-			<xsl:apply-templates select="* [name(.) = 'AcquiredDate']"/>
-			
+			<xsl:choose>
+				<xsl:when test="local-name(*[1])='AcquiredDate'">
+					<xsl:apply-templates select="* [name(.) = 'AcquiredDate']"/>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:comment>Creation Date inserted by XSLT downgrade (set to 1st January 1970)</xsl:comment>
+					<xsl:element name="CreationDate" namespace="{$newOMENS}">1970-01-01T00:00:00.0Z</xsl:element>
+				</xsl:otherwise>
+			</xsl:choose>
+
 			<xsl:for-each select=" descendant::OME:Channel">
 				<xsl:element name="ChannelInfo" namespace="{$newOMENS}">
 					<xsl:for-each select="@* [name(.) = 'ID']">
