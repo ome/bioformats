@@ -69,7 +69,7 @@ def run_stylesheet(xslt, document):
 
 class Test200809t0200909(XsltBasic):
 
-    STYLESHEET = "../../../Xslt/2008-09-to-2009-09.xsl"
+    STYLESHEET = "../specification/Xslt/2008-09-to-2009-09.xsl"
     
     DOCUMENT = "tmp/sample-2008-09.ome"
     

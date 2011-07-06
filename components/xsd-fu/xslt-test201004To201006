@@ -68,13 +68,13 @@ def run_stylesheet(xslt, document):
 
 
 class Test201004to201006(XsltBasic):
-    STYLESHEET = "../../../Xslt/2010-04-to-2010-06.xsl"
+    STYLESHEET = "../specification/Xslt/2010-04-to-2010-06.xsl"
 
-    OLD_VALIDATION = "../../../Schemas/OME/2010-04/ome.xsd"
-    # NEW_VALIDATION = "../../../Schemas/OME/2010-06/ome.xsd"
-    NEW_VALIDATION = "../../Working/ome.xsd"
+    OLD_VALIDATION = "../specification/Released-Schema//2010-04/V1/ome.xsd"
+    # NEW_VALIDATION = "../specification/Released-Schema/2010-06/V1/ome.xsd"
+    NEW_VALIDATION = "../specification/InProgress/ome.xsd"
 
-    DOCUMENT = "../../Working/test-ome-samples/sample-2010-04.ome"
+    DOCUMENT = "../specification/InProgress/test-ome-samples/sample-2010-04.ome"
 
     OLD_OME_NS = "http://www.openmicroscopy.org/Schemas/OME/2010-04"
 

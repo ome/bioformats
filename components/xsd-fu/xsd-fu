@@ -585,17 +585,17 @@ def docGenMain(args):
 	namespace = "xsd:"
 	
 	for theSchemas in [
-	["OME","../../Working/ome.xsd"], 
-	["SPW","../../Working/SPW.xsd"],
-	["CA","../../Working/CA.xsd"],
-	["CLI","../../Working/CLI.xsd"],
-	["AnalysisChain","../../Working/AnalysisChain.xsd"],
-	["AnalysisModule","../../Working/AnalysisModule.xsd"],
-	["BinaryFile","../../Working/BinaryFile.xsd"],
-	["DataHistory","../../Working/DataHistory.xsd"],
-	["MLI","../../Working/MLI.xsd"],
-	["SA","../../Working/SA.xsd"],
-	["STD","../../Working/STD.xsd"]
+	["OME",           "../specification/InProgress/ome.xsd"], 
+	["SPW",           "../specification/InProgress/SPW.xsd"],
+	["CA",            "../specification/InProgress/CA.xsd"],
+	["CLI",           "../specification/InProgress/CLI.xsd"],
+	["AnalysisChain", "../specification/InProgress/AnalysisChain.xsd"],
+	["AnalysisModule","../specification/InProgress/AnalysisModule.xsd"],
+	["BinaryFile",    "../specification/InProgress/BinaryFile.xsd"],
+	["DataHistory",   "../specification/InProgress/DataHistory.xsd"],
+	["MLI",           "../specification/InProgress/Working/MLI.xsd"],
+	["SA",            "../specification/InProgress/Working/SA.xsd"],
+	["STD",           "../specification/InProgress/Working/STD.xsd"]
 	]:
 		prefix = theSchemas[0] + ":"
 		model = parseXmlSchema([theSchemas[1]], namespace)
@@ -621,16 +621,16 @@ def tabGenMain(args):
 	namespace = "xsd:"
 	
 	for theSchemas in [
-			["OME","../../Working/ome.xsd", 
+			["OME",       "../specification/InProgress/ome.xsd", 
 				[["OME", "OME:"]]], 
-			["ROI","../../Working/ROI.xsd", 
+			["ROI",       "../specification/InProgress/ROI.xsd", 
 				[["ROI", "OME:ROI:"]]], 
-			["SPW","../../Working/SPW.xsd", 
+			["SPW",       "../specification/InProgress/SPW.xsd", 
 				[["Plate", "OME:Plate:"],
 				["Screen", "OME:Screen:"]]],
-			["SA","../../Working/SA.xsd",
+			["SA",        "../specification/InProgress/SA.xsd",
 				[["StructuredAnnotations", "OME:StructuredAnnotations:"]]],
-			["BinaryFile","../../Working/BinaryFile.xsd",
+			["BinaryFile","../specification/InProgress/BinaryFile.xsd",
 				[["BinaryFile", "OME:Instrument:OTF:BinaryFile:"]]]
 		]:
 		prefix = theSchemas[0] + ":"

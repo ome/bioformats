@@ -35,7 +35,7 @@ do
   echo Generating OME $version source in ome/xml/$package/ome
   mkdir -p $out_path/ome/xml/$package/ome
   ./xsd-fu -p ome.xml.$package.ome \
-    -o $out_path/ome/xml/$package/ome ../../../Schemas/OME/$version/ome.xsd
+    -o $out_path/ome/xml/$package/ome ../specification/Schemas/OME/$version/ome.xsd
 
   # HACK - fix OME source code compile errors
   sed -i -e 's/BinDataNode/OMEXMLNode/g' \
@@ -51,7 +51,7 @@ do
   echo Generating SPW $version source in ome/xml/$package/spw
   mkdir -p $out_path/ome/xml/$package/spw
   ./xsd-fu -p ome.xml.$package.spw \
-    -o $out_path/ome/xml/$package/spw ../../../Schemas/SPW/$version/SPW.xsd
+    -o $out_path/ome/xml/$package/spw ../specification/Schemas/SPW/$version/SPW.xsd
 
   # HACK - fix SPW source code compile errors
   sed -i -e 's/OME://g' \

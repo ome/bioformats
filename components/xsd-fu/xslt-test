@@ -69,9 +69,9 @@ def run_stylesheet(xslt, document):
 
 class Test200809(XsltBasic):
 
-    STYLESHEET = "../../../Xslt/2008-09.xsl"
+    STYLESHEET = "../specification/Xslt/2008-09-to-2009-09.xsl"
     
-    DOCUMENT = "../../Working/test-ome-samples/sample-2008-09.ome"
+    DOCUMENT = "../specification/InProgress/test-ome-samples/sample-2008-09.ome"
     
     OLD_OME_NS = "http://www.openmicroscopy.org/Schemas/OME/2008-09"
 
