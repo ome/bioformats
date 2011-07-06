@@ -136,7 +136,7 @@ public class FilePatternDialog extends ImporterDialog {
     String id = gd.getNextString();
 
     if (!changedAxes) {
-      if (!contains.isEmpty()) {
+      if (contains.trim().length() > 0) {
         String dir =
           originalID.substring(0, originalID.lastIndexOf(File.separator) + 1);
         id = dir + ".*" + contains + ".*";
