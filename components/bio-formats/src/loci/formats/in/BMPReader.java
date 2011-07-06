@@ -138,7 +138,15 @@ public class BMPReader extends FormatReader {
       int rowIndex = invertY ? h - 1 - row : row;
       bb.skipBits(x * bpp * effectiveC);
       for (int i=0; i<w*effectiveC; i++) {
-        buf[rowIndex * w * effectiveC + i] = (byte) (bb.getBits(bpp) & 0xff);
+        if (bpp <= 8) {
+          buf[rowIndex * w * effectiveC + i] = (byte) (bb.getBits(bpp) & 0xff);
+        }
+        else {
+          for (int b=0; b<bpp/8; b++) {
+            buf[(bpp / 8) * (rowIndex * w * effectiveC + i) + b] =
+              (byte) (bb.getBits(8) & 0xff);
+          }
+        }
       }
       if (row > 0) {
         bb.skipBits((getSizeX() - w - x) * bpp * effectiveC + pad*8);
