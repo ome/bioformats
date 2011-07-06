@@ -636,7 +636,7 @@ public class CellWorxReader extends FormatReader {
       fp = new FilePattern(file);
       files = fp.getFiles();
 
-      if (!new Location(files[0]).exists()) {
+      if (files.length == 0 || !new Location(files[0]).exists()) {
         file = file.substring(0, file.lastIndexOf(".")) + ".TIF";
       }
     }
