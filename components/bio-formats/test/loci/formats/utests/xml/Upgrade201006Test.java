@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.utests.xml;
 
 import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertNull;
 
 import java.io.InputStream;
 
@@ -81,8 +82,10 @@ public class Upgrade201006Test {
     assertEquals(1, ome.sizeOfImageList());
     Image image = ome.getImage(0);
     Pixels pixels = image.getPixels();
+    // Pixels physical sizes are restricted to positive values
     assertEquals(new PositiveFloat(10000.0), pixels.getPhysicalSizeX());
     assertEquals(new PositiveFloat(10000.0), pixels.getPhysicalSizeY());
+    assertNull(pixels.getPhysicalSizeZ());
   }
 
 }

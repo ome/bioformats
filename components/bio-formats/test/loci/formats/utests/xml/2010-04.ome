@@ -4,6 +4,7 @@
 	xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2010-04"
 	xmlns:BIN="http://www.openmicroscopy.org/Schemas/BinaryFile/2010-04"
 	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2010-04"
+	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2010-04"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2010-04 
 	http://www.openmicroscopy.org/Schemas/OME/2010-04/ome.xsd">   
@@ -12,6 +13,11 @@
 		Work in progress!
 		Proposal 3 - 1st July 2010
 	-->
+	<SA:StructuredAnnotations>
+		<SA:StringAnnotation ID="StringAnnotation:0" Namespace="Transform">
+			<Value>Foobar</Value>
+		</SA:StringAnnotation>
+	</SA:StructuredAnnotations>
 	<SPW:Plate 
 		ID="Plate:1" 
 		Name="Control Plate" 
