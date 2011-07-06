@@ -599,6 +599,12 @@ public class CellWorxReader extends FormatReader {
     String[] files = fp.getFiles();
 
     if (!new Location(files[0]).exists()) {
+      file = file.substring(0, file.lastIndexOf(".")) + ".TIF";
+      fp = new FilePattern(file);
+      files = fp.getFiles();
+    }
+
+    if (!new Location(files[0]).exists()) {
       file = plateName + rowLetter + String.format("%02d", col + 1);
 
       if (field != null) {
@@ -618,6 +624,13 @@ public class CellWorxReader extends FormatReader {
         file += "_" + timepoint;
       }
       file += ".tif";
+
+      fp = new FilePattern(file);
+      files = fp.getFiles();
+
+      if (!new Location(files[0]).exists()) {
+        file = file.substring(0, file.lastIndexOf(".")) + ".TIF";
+      }
     }
 
     return file;
