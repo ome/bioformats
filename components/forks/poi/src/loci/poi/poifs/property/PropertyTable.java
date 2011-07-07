@@ -158,7 +158,7 @@ public class PropertyTable
     {
         int index = root.getChildIndex();
 
-        if (!Property.isValidIndex(index) || index >= _properties.size())
+        if (!Property.isValidIndex(index))
         {
 
             // property has no children
@@ -177,12 +177,12 @@ public class PropertyTable
                 populatePropertyTree(( DirectoryProperty ) property);
             }
             index = property.getPreviousChildIndex();
-            if (Property.isValidIndex(index) && index < _properties.size())
+            if (Property.isValidIndex(index))
             {
                 children.push(_properties.get(index));
             }
             index = property.getNextChildIndex();
-            if (Property.isValidIndex(index) && index < _properties.size())
+            if (Property.isValidIndex(index))
             {
                 children.push(_properties.get(index));
             }
