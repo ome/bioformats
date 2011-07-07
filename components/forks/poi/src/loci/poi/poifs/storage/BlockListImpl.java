@@ -94,8 +94,8 @@ class BlockListImpl
             result = _blocks[ index ];
             if (result == null)
             {
-                //throw new IOException("block[ " + index
-                //                      + " ] already removed");
+                throw new IOException("block[ " + index
+                                      + " ] already removed");
             }
             _blocks[ index ] = null;
         }
