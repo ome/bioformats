@@ -131,35 +131,29 @@ public class BMPReader extends FormatReader {
     byte[] rawPlane = new byte[planeSize];
     in.read(rawPlane);
 
-    if (bpp == 16) {
-      for (int i=0; i<planeSize; i+=2) {
-        byte tmp = rawPlane[i];
-        rawPlane[i] = rawPlane[i + 1];
-        rawPlane[i + 1] = tmp;
-      }
-    }
-
     BitBuffer bb = new BitBuffer(rawPlane);
 
-    int readBits = bpp == 16 ? 5 : bpp;
     int effectiveC = palette != null && palette[0].length > 0 ? 1 : getSizeC();
     for (int row=h-1; row>=0; row--) {
       int rowIndex = invertY ? h - 1 - row : row;
       bb.skipBits(x * bpp * effectiveC);
-
-      int index = rowIndex * w * effectiveC;
       for (int i=0; i<w*effectiveC; i++) {
-        if (bpp == 16 && (i % effectiveC == 0)) {
-          bb.skipBits(1);
+        if (bpp <= 8) {
+          buf[rowIndex * w * effectiveC + i] = (byte) (bb.getBits(bpp) & 0xff);
         }
-        buf[index + i] = (byte) (bb.getBits(readBits) & 0xff);
+        else {
+          for (int b=0; b<bpp/8; b++) {
+            buf[(bpp / 8) * (rowIndex * w * effectiveC + i) + b] =
+              (byte) (bb.getBits(8) & 0xff);
+          }
+        }
       }
       if (row > 0) {
         bb.skipBits((getSizeX() - w - x) * bpp * effectiveC + pad*8);
       }
     }
 
-    if (bpp != 16 && getRGBChannelCount() > 1) {
+    if (getRGBChannelCount() > 1) {
       ImageTools.bgrToRgb(buf, isInterleaved(), 1, getRGBChannelCount());
     }
     return buf;
@@ -246,12 +240,12 @@ public class BMPReader extends FormatReader {
 
     core[0].sizeC = bpp != 24 ? 1 : 3;
     if (bpp == 32) core[0].sizeC = 4;
-    if (bpp == 16) {
-      core[0].sizeC = 3;
-    }
-    if (bpp > 8 && bpp != 16) bpp /= getSizeC();
+    if (bpp > 8) bpp /= getSizeC();
 
     switch (bpp) {
+      case 16:
+        core[0].pixelType = FormatTools.UINT16;
+        break;
       case 32:
         core[0].pixelType = FormatTools.UINT32;
         break;

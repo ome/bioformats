@@ -219,7 +219,8 @@ public class NikonReader extends BaseTiffReader {
         }
       }
 
-      boolean interleaveRows = offsets.length == 1 && !maybeCompressed;
+      boolean interleaveRows =
+        offsets.length == 1 && !maybeCompressed && colorMap[0] != 0;
 
       for (int row=0; row<getSizeY(); row++) {
         int realRow = interleaveRows ? (row < (getSizeY() / 2) ?
