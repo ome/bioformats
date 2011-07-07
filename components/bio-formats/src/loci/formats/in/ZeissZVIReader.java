@@ -753,8 +753,6 @@ public class ZeissZVIReader extends FormatReader {
       if (s.getFilePointer() + 2 >= s.length()) break;
       String value = DataTools.stripString(getNextTag(s));
 
-      if (s.getFilePointer() + 12 >= s.length()) break;
-
       s.skipBytes(2);
       int tagID = s.readInt();
 
