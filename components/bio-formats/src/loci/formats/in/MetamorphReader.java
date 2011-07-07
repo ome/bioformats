@@ -460,6 +460,11 @@ public class MetamorphReader extends BaseTiffReader {
             if (nstages == 0 && (!validZ || seriesCount > 1)) {
               seriesNdx++;
             }
+            if (seriesNdx >= stks.length || seriesNdx >= pt.length ||
+              pt[seriesNdx] >= stks[seriesNdx].length)
+            {
+              continue;
+            }
             stks[seriesNdx][pt[seriesNdx]] = prefix;
             if (j < waveNames.size() && waveNames.get(j) != null) {
               stks[seriesNdx][pt[seriesNdx]] += "_w" + (j + 1);
@@ -1070,7 +1075,9 @@ public class MetamorphReader extends BaseTiffReader {
 
     if (!l.exists()) {
       // try replacing extension
-      name = name.substring(0, name.lastIndexOf(".")) + ".TIF";
+      int index = name.lastIndexOf(".");
+      if (index < 0) index = name.length();
+      name = name.substring(0, index) + ".TIF";
       l = new Location(parent, name);
       if (!l.exists()) {
         name = name.substring(0, name.lastIndexOf(".")) + ".tif";

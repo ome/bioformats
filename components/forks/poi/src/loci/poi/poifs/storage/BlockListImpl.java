@@ -94,15 +94,15 @@ class BlockListImpl
             result = _blocks[ index ];
             if (result == null)
             {
-                //throw new IOException("block[ " + index
-                //                      + " ] already removed");
+                throw new IOException("block[ " + index
+                                      + " ] already removed");
             }
             _blocks[ index ] = null;
         }
         catch (ArrayIndexOutOfBoundsException ignored)
         {
-            //throw new IOException("Cannot remove block[ " + index
-            //                      + " ]; out of range");
+            throw new IOException("Cannot remove block[ " + index
+                                  + " ]; out of range");
         }
         return result;
     }

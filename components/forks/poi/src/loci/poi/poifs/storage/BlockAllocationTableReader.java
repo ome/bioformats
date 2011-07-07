@@ -190,12 +190,9 @@ public class BlockAllocationTableReader
         List blocks       = new ArrayList();
         int  currentBlock = startBlock;
 
-        while (currentBlock != POIFSConstants.END_OF_CHAIN &&
-          currentBlock >= 0 && currentBlock < _entries.size())
+        while (currentBlock != POIFSConstants.END_OF_CHAIN)
         {
-            Object block = blockList.remove(currentBlock);
-            if (block == null) break;
-            blocks.add(block);
+            blocks.add(blockList.remove(currentBlock));
             currentBlock = _entries.get(currentBlock);
         }
         return ( ListManagedBlock [] ) blocks
