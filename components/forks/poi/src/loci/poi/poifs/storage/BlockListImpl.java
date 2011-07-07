@@ -101,8 +101,8 @@ class BlockListImpl
         }
         catch (ArrayIndexOutOfBoundsException ignored)
         {
-            //throw new IOException("Cannot remove block[ " + index
-            //                      + " ]; out of range");
+            throw new IOException("Cannot remove block[ " + index
+                                  + " ]; out of range");
         }
         return result;
     }
