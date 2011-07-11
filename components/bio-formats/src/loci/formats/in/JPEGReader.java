@@ -78,6 +78,7 @@ public class JPEGReader extends DelegateReader {
     public DefaultJPEGReader() {
       super("JPEG", new String[] {"jpg", "jpeg", "jpe"});
       suffixNecessary = false;
+      suffixSufficient = false;
     }
 
     /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
