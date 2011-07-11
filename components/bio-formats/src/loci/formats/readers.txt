@@ -94,6 +94,7 @@ loci.formats.in.VolocityReader        # mvd2
 loci.formats.in.ImagicReader          # hed
 loci.formats.in.HamamatsuVMSReader    # vms
 loci.formats.in.CellSensReader        # vsi
+loci.formats.in.INRReader             # inr
 loci.formats.in.FakeReader            # fake
 
 # multi-extension messes
