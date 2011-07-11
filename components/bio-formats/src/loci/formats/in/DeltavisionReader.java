@@ -798,7 +798,13 @@ public class DeltavisionReader extends FormatReader {
       logFile = getCurrentFile();
       logFile = logFile.substring(0, logFile.indexOf("_D3D.dv")) + ".dv.log";
     }
-    else logFile = getCurrentFile() + ".log";
+    else {
+      logFile = getCurrentFile() + ".log";
+      if (!new Location(logFile).exists()) {
+        logFile = getCurrentFile();
+        logFile = logFile.substring(0, logFile.lastIndexOf(".")) + ".log";
+      }
+    }
     if (!new Location(logFile).exists()) logFile = null;
 
     int dot = getCurrentFile().lastIndexOf(".");
