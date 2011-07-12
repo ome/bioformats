@@ -52,6 +52,8 @@ import loci.plugins.in.ImporterOptions;
 import loci.plugins.util.ImageProcessorReader;
 import loci.plugins.util.LociPrefs;
 
+import ome.xml.model.primitives.PositiveFloat;
+
 /**
  * This class provides macro extensions for ImageJ for Bio-Formats and other
  * LOCI tools. Currently, it is a fairly tight mirror to the
@@ -394,21 +396,30 @@ public class LociFunctions extends MacroFunctions {
   public void getPixelsPhysicalSizeX(Double[] sizeX) {
     int imageIndex = r.getSeries();
     MetadataRetrieve retrieve = (MetadataRetrieve) r.getMetadataStore();
-    sizeX[0] = retrieve.getPixelsPhysicalSizeX(imageIndex).getValue();
+    PositiveFloat x = retrieve.getPixelsPhysicalSizeX(imageIndex);
+    if (x != null) {
+      sizeX[0] = x.getValue();
+    }
     if (sizeX[0] == null) sizeX[0] = new Double(Double.NaN);
   }
 
   public void getPixelsPhysicalSizeY(Double[] sizeY) {
     int imageIndex = r.getSeries();
     MetadataRetrieve retrieve = (MetadataRetrieve) r.getMetadataStore();
-    sizeY[0] = retrieve.getPixelsPhysicalSizeY(imageIndex).getValue();
+    PositiveFloat y = retrieve.getPixelsPhysicalSizeY(imageIndex);
+    if (y != null) {
+      sizeY[0] = y.getValue();
+    }
     if (sizeY[0] == null) sizeY[0] = new Double(Double.NaN);
   }
 
   public void getPixelsPhysicalSizeZ(Double[] sizeZ) {
     int imageIndex = r.getSeries();
     MetadataRetrieve retrieve = (MetadataRetrieve) r.getMetadataStore();
-    sizeZ[0] = retrieve.getPixelsPhysicalSizeZ(imageIndex).getValue();
+    PositiveFloat z = retrieve.getPixelsPhysicalSizeZ(imageIndex);
+    if (z != null) {
+      sizeZ[0] = z.getValue();
+    }
     if (sizeZ[0] == null) sizeZ[0] = new Double(Double.NaN);
   }
 
