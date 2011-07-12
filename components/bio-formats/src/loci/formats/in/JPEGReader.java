@@ -91,7 +91,7 @@ public class JPEGReader extends DelegateReader {
       stream.read(signature);
 
       if (signature[0] != (byte) 0xff || signature[1] != (byte) 0xd8 ||
-        signature[2] != (byte) 0xff || signature[3] != (byte) 0xe0)
+        signature[2] != (byte) 0xff || ((int) signature[3] & 0xf0) != 0xe0)
       {
         return false;
       }
