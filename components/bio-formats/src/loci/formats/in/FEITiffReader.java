@@ -127,12 +127,49 @@ public class FEITiffReader extends BaseTiffReader {
       if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
         userName = userTable.get("User");
 
-        microscopeModel = ini.getTable("System").get("SystemType");
+        IniTable systemTable = ini.getTable("System");
+        if (systemTable == null) {
+          systemTable = ini.getTable("SYSTEM");
+        }
+        if (systemTable != null) {
+          microscopeModel = systemTable.get("SystemType");
+        }
 
-        IniTable beamTable = ini.getTable(ini.getTable("Beam").get("Beam"));
-        stageX = new Double(beamTable.get("StageX"));
-        stageY = new Double(beamTable.get("StageY"));
-        stageZ = new Double(beamTable.get("StageZ"));
+        IniTable beamTable = ini.getTable("Beam");
+        if (beamTable != null) {
+          String beamTableName = beamTable.get("Beam");
+          if (beamTableName != null) {
+            beamTable = ini.getTable(beamTableName);
+          }
+        }
+
+        if (beamTable != null) {
+          String beamX = beamTable.get("StageX");
+          String beamY = beamTable.get("StageY");
+          String beamZ = beamTable.get("StageZ");
+          IniTable stageTable = ini.getTable("Stage");
+
+          if (beamX != null) {
+            stageX = new Double(beamX);
+          }
+          else if (stageTable != null) {
+            stageX = new Double(stageTable.get("StageX"));
+          }
+
+          if (beamY != null) {
+            stageY = new Double(beamY);
+          }
+          else if (stageTable != null) {
+            stageY = new Double(stageTable.get("StageY"));
+          }
+
+          if (beamZ != null) {
+            stageZ = new Double(beamZ);
+          }
+          else if (stageTable != null) {
+            stageZ = new Double(stageTable.get("StageZ"));
+          }
+        }
 
         IniTable scanTable = ini.getTable("Scan");
         // physical sizes are stored in meters
