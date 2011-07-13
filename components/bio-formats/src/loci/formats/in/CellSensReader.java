@@ -498,8 +498,8 @@ public class CellSensReader extends FormatReader {
       core[s].imageCount *= uniqueC.size();
     }
 
-    rows[s] = uniqueX.size();
-    cols[s] = uniqueY.size();
+    rows[s] = uniqueY.size();
+    cols[s] = uniqueX.size();
 
     for (int i=0; i<tmpTiles.size(); i++) {
       tileMap[s].put(tmpTiles.get(i), i);
