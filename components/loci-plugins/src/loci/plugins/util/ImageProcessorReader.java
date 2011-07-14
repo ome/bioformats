@@ -85,6 +85,95 @@ public class ImageProcessorReader extends ReaderWrapper {
     return openProcessors(no, 0, 0, getSizeX(), getSizeY());
   }
 
+  public ImageProcessor[] openThumbProcessors(int no)
+    throws FormatException, IOException
+  {
+    // read byte array
+    byte[] b = openThumbBytes(no);
+
+    int c = getRGBChannelCount();
+    int type = getPixelType();
+    int bpp = FormatTools.getBytesPerPixel(type);
+    boolean interleave = isInterleaved();
+
+    int w = getThumbSizeX();
+    int h = getThumbSizeY();
+
+    if (b.length != w * h * c * bpp && b.length != w * h * bpp) {
+      throw new FormatException("Invalid byte array length: " + b.length +
+        " (expected w=" + w + ", h=" + h + ", c=" + c + ", bpp=" + bpp + ")");
+    }
+
+    // create a color model for this plane (null means default)
+    final LUT cm = createColorModel();
+
+    // convert byte array to appropriate primitive array type
+    boolean isFloat = FormatTools.isFloatingPoint(type);
+    boolean isLittle = isLittleEndian();
+    boolean isSigned = FormatTools.isSigned(type);
+
+    // construct image processors
+    ImageProcessor[] ip = new ImageProcessor[c];
+    for (int i=0; i<c; i++) {
+      byte[] channel =
+        ImageTools.splitChannels(b, i, c, bpp, false, interleave);
+      Object pixels = DataTools.makeDataArray(channel, bpp, isFloat, isLittle);
+      if (pixels instanceof byte[]) {
+        byte[] q = (byte[]) pixels;
+        if (q.length != w * h) {
+          byte[] tmp = q;
+          q = new byte[w * h];
+          System.arraycopy(tmp, 0, q, 0, Math.min(q.length, tmp.length));
+        }
+        if (isSigned) q = DataTools.makeSigned(q);
+
+        ip[i] = new ByteProcessor(w, h, q, null);
+        if (cm != null) ip[i].setColorModel(cm);
+      }
+      else if (pixels instanceof short[]) {
+        short[] q = (short[]) pixels;
+        if (q.length != w * h) {
+          short[] tmp = q;
+          q = new short[w * h];
+          System.arraycopy(tmp, 0, q, 0, Math.min(q.length, tmp.length));
+        }
+        if (isSigned) q = DataTools.makeSigned(q);
+
+        ip[i] = new ShortProcessor(w, h, q, cm);
+      }
+      else if (pixels instanceof int[]) {
+        int[] q = (int[]) pixels;
+        if (q.length != w * h) {
+          int[] tmp = q;
+          q = new int[w * h];
+          System.arraycopy(tmp, 0, q, 0, Math.min(q.length, tmp.length));
+        }
+
+        ip[i] = new FloatProcessor(w, h, q);
+      }
+      else if (pixels instanceof float[]) {
+        float[] q = (float[]) pixels;
+        if (q.length != w * h) {
+          float[] tmp = q;
+          q = new float[w * h];
+          System.arraycopy(tmp, 0, q, 0, Math.min(q.length, tmp.length));
+        }
+        ip[i] = new FloatProcessor(w, h, q, null);
+      }
+      else if (pixels instanceof double[]) {
+        double[] q = (double[]) pixels;
+        if (q.length != w * h) {
+          double[] tmp = q;
+          q = new double[w * h];
+          System.arraycopy(tmp, 0, q, 0, Math.min(q.length, tmp.length));
+        }
+        ip[i] = new FloatProcessor(w, h, q);
+      }
+    }
+
+    return ip;
+  }
+
   /**
    * Returns an array of ImageProcessors that represent the given slice.
    * There is one ImageProcessor per RGB channel;

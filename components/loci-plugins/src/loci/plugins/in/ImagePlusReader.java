@@ -113,6 +113,11 @@ public class ImagePlusReader implements StatusReporter {
     return imps.toArray(new ImagePlus[0]);
   }
 
+  public ImagePlus[] openThumbImagePlus() throws FormatException, IOException {
+    List<ImagePlus> imps = readThumbImages();
+    return imps.toArray(new ImagePlus[imps.size()]);
+  }
+
   // -- StatusReporter methods --
 
   public void addStatusListener(StatusListener l) {
@@ -206,6 +211,17 @@ public class ImagePlusReader implements StatusReporter {
   // -- Helper methods - image reading --
 
   private List<ImagePlus> readImages() throws FormatException, IOException {
+    return readImages(false); 
+  } 
+
+  private List<ImagePlus> readThumbImages() throws FormatException, IOException
+  {
+    return readImages(true);
+  }
+
+  private List<ImagePlus> readImages(boolean thumbnail)
+    throws FormatException, IOException
+  {
     final ImporterOptions options = process.getOptions();
     final ImageProcessorReader reader = process.getReader();
 
@@ -217,7 +233,7 @@ public class ImagePlusReader implements StatusReporter {
     // read in each image series
     for (int s=0; s<reader.getSeriesCount(); s++) {
       if (!options.isSeriesOn(s)) continue;
-      final ImagePlus imp = readImage(s);
+      final ImagePlus imp = readImage(s, thumbnail);
       imps.add(imp);
     }
 
@@ -243,7 +259,7 @@ public class ImagePlusReader implements StatusReporter {
     return imps;
   }
 
-  private ImagePlus readImage(int s)
+  private ImagePlus readImage(int s, boolean thumbnail)
     throws FormatException, IOException
   {
     final ImporterOptions options = process.getOptions();
@@ -256,7 +272,7 @@ public class ImagePlusReader implements StatusReporter {
     // create image stack
     final ImageStack stack;
     if (options.isVirtual()) stack = createVirtualStack(process, s, luts);
-    else stack = readPlanes(process, s, luts);
+    else stack = readPlanes(process, s, luts, thumbnail);
 
     notifyListeners(new StatusEvent(1, 1, "Creating image"));
 
@@ -331,7 +347,8 @@ public class ImagePlusReader implements StatusReporter {
     return virtualStack;
   }
 
-  private ImageStack readPlanes(ImportProcess process, int s, List<LUT> luts)
+  private ImageStack readPlanes(ImportProcess process, int s, List<LUT> luts,
+    boolean thumbnail)
     throws FormatException, IOException
   {
     final ImageProcessorReader reader = process.getReader();
@@ -358,7 +375,7 @@ public class ImagePlusReader implements StatusReporter {
       updateTiming(s, current, current++, total);
 
       // get image processor for ith plane
-      final ImageProcessor[] p = readProcessors(process, i, region);
+      final ImageProcessor[] p = readProcessors(process, i, region, thumbnail);
       if (p == null || p.length == 0) {
         throw new FormatException("Cannot read plane #" + i);
       }
@@ -382,7 +399,7 @@ public class ImagePlusReader implements StatusReporter {
    * @see ImportProcess#setId()
    */
   private ImageProcessor[] readProcessors(ImportProcess process,
-    int no, Region r) throws FormatException, IOException
+    int no, Region r, boolean thumbnail) throws FormatException, IOException
   {
     final ImageProcessorReader reader = process.getReader();
     final ImporterOptions options = process.getOptions();
@@ -391,6 +408,9 @@ public class ImagePlusReader implements StatusReporter {
     for (int i=0; i<LuraWave.MAX_TRIES; i++) {
       String code = LuraWave.initLicenseCode();
       try {
+        if (thumbnail) {
+          return reader.openThumbProcessors(no);
+        }
         return reader.openProcessors(no, r.x, r.y, r.width, r.height);
       }
       catch (FormatException exc) {
