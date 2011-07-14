@@ -188,6 +188,49 @@ public class LociFunctions extends MacroFunctions {
     }
   }
 
+  public void openThumbImagePlus(String path) {
+    ImagePlus[] imps = null;
+    try {
+      imps = BF.openThumbImagePlus(path);
+      for (ImagePlus imp : imps) imp.show();
+    }
+    catch (IOException exc) {
+      IJ.handleException(exc);
+    }
+    catch (FormatException exc) {
+      IJ.handleException(exc);
+    }
+  }
+
+  public void openThumbImage(String title, Double no)
+    throws FormatException, IOException
+  {
+    ImporterOptions options = new ImporterOptions();
+    options.setWindowless(true);
+    options.setId(r.getCurrentFile());
+    options.setCrop(true);
+    options.setSpecifyRanges(true);
+    options.setSeriesOn(r.getSeries(), true);
+
+    int[] zct = r.getZCTCoords(no.intValue());
+    options.setCBegin(r.getSeries(), zct[1]);
+    options.setZBegin(r.getSeries(), zct[0]);
+    options.setTBegin(r.getSeries(), zct[2]);
+    options.setCEnd(r.getSeries(), zct[1]);
+    options.setZEnd(r.getSeries(), zct[0]);
+    options.setTEnd(r.getSeries(), zct[2]);
+
+    ImportProcess process = new ImportProcess(options);
+    process.execute();
+
+    ImagePlusReader reader = new ImagePlusReader(process);
+    final ImagePlus imp = reader.openThumbImagePlus()[0];
+    Calibrator calibrator = new Calibrator(process);
+    calibrator.applyCalibration(imp);
+    process.getReader().close();
+    imp.show();
+  }
+
   public void openImage(String title, Double no)
     throws FormatException, IOException
   {
@@ -452,6 +495,9 @@ public class LociFunctions extends MacroFunctions {
       IJ.log("");
       IJ.log("Ext.openImagePlus(path)");
       IJ.log("-- Opens the image at the given path with the default options.");
+      IJ.log("Ext.openThumbImagePlus(path)");
+      IJ.log("-- Opens the thumbnail image at the given path");
+      IJ.log("-- with the default options.");
       IJ.log("Ext.getFormat(id, format)");
       IJ.log("-- Retrieves the file format of the given id (filename).");
       IJ.log("Ext.setId(id)");
@@ -529,6 +575,8 @@ public class LociFunctions extends MacroFunctions {
       IJ.log("Ext.openSubImage(title, no, x, y, width, height)");
       IJ.log("-- Opens a subset of the no'th plane in a new window");
       IJ.log("-- named 'title'.");
+      IJ.log("Ext.openThumbImage(title, no)");
+      IJ.log("-- Opens the no'th thumbnail in a new window named 'title'.");
       IJ.log("Ext.close()");
       IJ.log("-- Closes the active dataset.");
       IJ.log("Ext.closeFileOnly()");
