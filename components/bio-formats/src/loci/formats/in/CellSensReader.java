@@ -159,6 +159,11 @@ public class CellSensReader extends FormatReader {
           }
 
           intersection = tile.intersection(image);
+          int intersectionX = 0;
+
+          if (tile.x < image.x) {
+            intersectionX = image.x - tile.x;
+          }
 
           tileBuf = decodeTile(no, row, col);
 
@@ -167,8 +172,8 @@ public class CellSensReader extends FormatReader {
           int outputOffset = outputRow * outputRowLen + outputCol;
           for (int trow=0; trow<intersection.height; trow++) {
             int realRow = trow + intersection.y - tile.y;
-            System.arraycopy(tileBuf,
-              realRow * width * pixel, buf, outputOffset, rowLen);
+            int inputOffset = pixel * (realRow * width + intersectionX);
+            System.arraycopy(tileBuf, inputOffset, buf, outputOffset, rowLen);
             outputOffset += outputRowLen;
           }
 
@@ -458,48 +463,49 @@ public class CellSensReader extends FormatReader {
       tmpTiles.add(t);
     }
 
-    ArrayList<Integer> uniqueX = new ArrayList<Integer>();
-    ArrayList<Integer> uniqueY = new ArrayList<Integer>();
-    ArrayList<Integer> uniqueZ = new ArrayList<Integer>();
-    ArrayList<Integer> uniqueC = new ArrayList<Integer>();
+    int maxX = 0;
+    int maxY = 0;
+    int maxZ = 0;
+    int maxC = 0;
 
     for (TileCoordinate t : tmpTiles) {
-      if (!uniqueX.contains(t.coordinate[0])) {
-        uniqueX.add(t.coordinate[0]);
+      if (t.coordinate[0] > maxX) {
+        maxX = t.coordinate[0];
       }
-      if (!uniqueY.contains(t.coordinate[1])) {
-        uniqueY.add(t.coordinate[1]);
+      if (t.coordinate[1] > maxY) {
+        maxY = t.coordinate[1];
       }
+
       if (t.coordinate.length > 3) {
-        if (!uniqueZ.contains(t.coordinate[2])) {
-          uniqueZ.add(t.coordinate[2]);
+        if (t.coordinate[2] > maxZ) {
+          maxZ = t.coordinate[2];
         }
 
         if (t.coordinate.length > 4) {
-          if (!uniqueC.contains(t.coordinate[3])) {
-            uniqueC.add(t.coordinate[3]);
+          if (t.coordinate[3] > maxC) {
+            maxC = t.coordinate[3];
           }
         }
       }
     }
 
-    core[s].sizeX = tileX[s] * uniqueX.size();
-    core[s].sizeY = tileY[s] * uniqueY.size();
-    core[s].sizeZ = uniqueZ.size();
-    if (uniqueC.size() > 1) {
-      core[s].sizeC *= uniqueC.size();
+    core[s].sizeX = tileX[s] * (maxX + 1);
+    core[s].sizeY = tileY[s] * (maxY + 1);
+    core[s].sizeZ = maxZ + 1;
+    if (maxC > 0) {
+      core[s].sizeC *= (maxC + 1);
     }
     core[s].sizeT = 1;
     if (core[s].sizeZ == 0) {
       core[s].sizeZ = 1;
     }
     core[s].imageCount = core[s].sizeZ * core[s].sizeT;
-    if (uniqueC.size() > 1) {
-      core[s].imageCount *= uniqueC.size();
+    if (maxC > 0) {
+      core[s].imageCount *= (maxC + 1);
     }
 
-    rows[s] = uniqueY.size();
-    cols[s] = uniqueX.size();
+    rows[s] = maxY + 1;
+    cols[s] = maxX + 1;
 
     for (int i=0; i<tmpTiles.size(); i++) {
       tileMap[s].put(tmpTiles.get(i), i);
