@@ -31,6 +31,7 @@ import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.formats.AxisGuesser;
+import loci.formats.ClassList;
 import loci.formats.CoreMetadata;
 import loci.formats.FilePattern;
 import loci.formats.FileStitcher;
@@ -67,6 +68,9 @@ public class CellWorxReader extends FormatReader {
 
   private String plateLogFile;
   private String zMapFile;
+
+  private String lastFile;
+  private IFormatReader lastReader;
 
   // -- Constructor --
 
@@ -140,17 +144,24 @@ public class CellWorxReader extends FormatReader {
     int fieldIndex = getSeries() % fieldCount;
 
     String file = getPNLFile(getSeries());
-    IFormatReader pnl = getReader(file);
+
+    if (lastFile == null || lastReader == null || !file.equals(lastFile)) {
+      if (lastReader != null) {
+        lastReader.close();
+      }
+      lastReader = getReader(file);
+      lastFile = file;
+    }
+
     int planeIndex = no;
-    if (pnl.getSeriesCount() > fieldIndex) {
-      pnl.setSeries(fieldIndex);
+    if (lastReader.getSeriesCount() > fieldIndex) {
+      lastReader.setSeries(fieldIndex);
     }
     else {
       int[] zct = getZCTCoords(no);
-      planeIndex = pnl.getIndex(zct[0], zct[1], fieldIndex);
+      planeIndex = lastReader.getIndex(zct[0], zct[1], fieldIndex);
     }
-    pnl.openBytes(planeIndex, buf, x, y, w, h);
-    pnl.close();
+    lastReader.openBytes(planeIndex, buf, x, y, w, h);
     return buf;
   }
 
@@ -164,6 +175,11 @@ public class CellWorxReader extends FormatReader {
       fieldCount = 0;
       plateLogFile = null;
       zMapFile = null;
+      lastFile = null;
+      if (lastReader != null) {
+        lastReader.close();
+      }
+      lastReader = null;
     }
   }
 
@@ -549,6 +565,12 @@ public class CellWorxReader extends FormatReader {
     IFormatReader pnl = new DeltavisionReader();
     if (checkSuffix(file, "tif")) {
       pnl = new FileStitcher();
+
+      ClassList<IFormatReader> classList =
+        new ClassList<IFormatReader>(IFormatReader.class);
+      classList.addClass(MinimalTiffReader.class);
+
+      ((FileStitcher) pnl).setReaderClassList(classList);
       ((FileStitcher) pnl).setUsingPatternIds(true);
     }
     pnl.setId(file);
