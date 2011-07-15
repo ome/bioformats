@@ -78,6 +78,14 @@ public final class BF {
     return openImagePlus(options);
   }
 
+  public static ImagePlus[] openThumbImagePlus(String path)
+    throws FormatException, IOException
+  {
+    ImporterOptions options = new ImporterOptions();
+    options.setId(path);
+    return openThumbImagePlus(options);
+  }
+
   public static ImagePlus[] openImagePlus(ImporterOptions options)
     throws FormatException, IOException
   {
@@ -103,6 +111,21 @@ public final class BF {
     if (!process.execute()) return null;
     ImagePlusReader reader = new ImagePlusReader(process);
     return reader.openImagePlus();
+  }
+
+  public static ImagePlus[] openThumbImagePlus(ImporterOptions options)
+    throws FormatException, IOException
+  {
+    options.setQuiet(true); // NB: Only needed due to ImporterPrompter.
+    options.setWindowless(true); // NB: Only needed due to ImporterPrompter.
+
+    ImportProcess process = new ImportProcess(options);
+
+    new ImporterPrompter(process); // NB: Could eliminate this (see above).
+
+    if (!process.execute()) return null;
+    ImagePlusReader reader = new ImagePlusReader(process);
+    return reader.openThumbImagePlus();
   }
 
 }

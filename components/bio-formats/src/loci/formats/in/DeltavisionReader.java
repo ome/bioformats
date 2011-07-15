@@ -798,7 +798,13 @@ public class DeltavisionReader extends FormatReader {
       logFile = getCurrentFile();
       logFile = logFile.substring(0, logFile.indexOf("_D3D.dv")) + ".dv.log";
     }
-    else logFile = getCurrentFile() + ".log";
+    else {
+      logFile = getCurrentFile() + ".log";
+      if (!new Location(logFile).exists()) {
+        logFile = getCurrentFile();
+        logFile = logFile.substring(0, logFile.lastIndexOf(".")) + ".log";
+      }
+    }
     if (!new Location(logFile).exists()) logFile = null;
 
     int dot = getCurrentFile().lastIndexOf(".");
@@ -1286,9 +1292,9 @@ public class DeltavisionReader extends FormatReader {
         minInten = in.readFloat();
         maxInten = in.readFloat();
         in.skipBytes(4);
-        expTime = in.readFloat();
+        expTime = in.readFloat() / 1000;
 
-        ndFilter = in.readFloat();
+        ndFilter = in.readFloat() / 100;
         exWavelen = in.readFloat();
         emWavelen = in.readFloat();
         intenScaling = in.readFloat();
