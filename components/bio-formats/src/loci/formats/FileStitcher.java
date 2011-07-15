@@ -72,6 +72,7 @@ public class FileStitcher extends ReaderWrapper {
   private MetadataStore store;
 
   private ExternalSeries[] externals;
+  private ClassList<IFormatReader> classList;
 
   // -- Constructors --
 
@@ -105,6 +106,13 @@ public class FileStitcher extends ReaderWrapper {
   }
 
   // -- FileStitcher API methods --
+
+  /**
+   * Set the ClassList object to use when constructing any helper readers.
+   */
+  public void setReaderClassList(ClassList<IFormatReader> classList) {
+    this.classList = classList;
+  }
 
   /** Gets the wrapped reader prototype. */
   public IFormatReader getReader() { return reader; }
@@ -1173,7 +1181,7 @@ public class FileStitcher extends ReaderWrapper {
 
       readers = new DimensionSwapper[files.length];
       for (int i=0; i<readers.length; i++) {
-        readers[i] = new DimensionSwapper();
+        readers[i] = new DimensionSwapper(new ImageReader(classList));
         readers[i].setGroupFiles(false);
       }
       readers[0].setId(files[0]);
