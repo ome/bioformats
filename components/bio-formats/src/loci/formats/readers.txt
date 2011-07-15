@@ -168,3 +168,4 @@ loci.formats.in.OpenlabReader         # liff
 loci.formats.in.DicomReader           # dcm, dicom
 loci.formats.in.SMCameraReader        # (no extension)
 loci.formats.in.SBIGReader            # (no extension)
+loci.formats.in.HitachiReader         # txt, tif, jpg, bmp
