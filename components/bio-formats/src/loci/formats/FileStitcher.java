@@ -1104,7 +1104,10 @@ public class FileStitcher extends ReaderWrapper {
 
       readers = new DimensionSwapper[files.length];
       for (int i=0; i<readers.length; i++) {
-        readers[i] = new DimensionSwapper(new ImageReader(classList));
+        if (classList != null) {
+          readers[i] = new DimensionSwapper(new ImageReader(classList));
+        }
+        else readers[i] = new DimensionSwapper();
         readers[i].setGroupFiles(false);
       }
       readers[0].setId(files[0]);
