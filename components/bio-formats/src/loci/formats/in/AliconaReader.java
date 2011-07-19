@@ -83,6 +83,12 @@ public class AliconaReader extends FormatReader {
 
     int planeSize = (getSizeX() + pad) * getSizeY();
 
+    if (getPixelType() == FormatTools.FLOAT) {
+      in.seek(textureOffset);
+      readPlane(in, x, y, w, h, buf);
+      return buf;
+    }
+
     // 16-bit images are stored in a non-standard format:
     // all of the LSBs are stored together, followed by all of the MSBs
     // so instead of LMLMLM... storage, we have LLLLL...MMMMM...
@@ -148,6 +154,7 @@ public class AliconaReader extends FormatReader {
     boolean hasC = false;
     String voltage = null, magnification = null, workingDistance = null;
     String pntX = null, pntY = null;
+    int depthOffset = 0;
 
     for (int i=0; i<count; i++) {
       String key = in.readString(20).trim();
@@ -171,21 +178,36 @@ public class AliconaReader extends FormatReader {
       else if (key.equals("PixelSizeXMeter")) pntX = value;
       else if (key.equals("PixelSizeYMeter")) pntY = value;
       else if (key.equals("WorkingDistance")) workingDistance = value;
+      else if (key.equals("DepthImageOffset")) {
+        depthOffset = Integer.parseInt(value);
+      }
     }
 
     LOGGER.info("Populating metadata");
 
-    numBytes = (int) (in.length() - textureOffset) /
-      (getSizeX() * getSizeY() * getImageCount());
+    if (textureOffset != 0) {
+      numBytes = (int) (in.length() - textureOffset) /
+        (getSizeX() * getSizeY() * getImageCount());
 
-    core[0].sizeC = hasC ? 3 : 1;
-    core[0].sizeZ = 1;
-    core[0].sizeT = getImageCount() / getSizeC();
+      core[0].sizeC = hasC ? 3 : 1;
+      core[0].sizeZ = 1;
+      core[0].sizeT = getImageCount() / getSizeC();
+
+      core[0].pixelType =
+        FormatTools.pixelTypeFromBytes(numBytes, false, false);
+    }
+    else {
+      textureOffset = depthOffset;
+      core[0].pixelType = FormatTools.FLOAT;
+      core[0].sizeC = 1;
+      core[0].sizeZ = 1;
+      core[0].sizeT = 1;
+      core[0].imageCount = 1;
+    }
+
     core[0].rgb = false;
     core[0].interleaved = false;
     core[0].littleEndian = true;
-
-    core[0].pixelType = FormatTools.pixelTypeFromBytes(numBytes, false, false);
     core[0].dimensionOrder = "XYCTZ";
     core[0].metadataComplete = true;
     core[0].indexed = false;
