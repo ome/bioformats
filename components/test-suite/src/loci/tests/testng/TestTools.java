@@ -40,6 +40,7 @@ import java.security.NoSuchAlgorithmException;
 import java.text.FieldPosition;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -195,40 +196,70 @@ public class TestTools {
   }
 
   /** Recursively generate a list of files to test. */
-  public static void getFiles(String root, List files, ConfigurationTree config)
+  public static void getFiles(String root, List files,
+    final ConfigurationTree config)
   {
     Location f = new Location(root);
     String[] subs = f.list();
     if (subs == null) subs = new String[0];
-    Arrays.sort(subs);
 
     // make sure that if a config file exists, it is first on the list
     for (int i=0; i<subs.length; i++) {
+      Location file = new Location(root, subs[i]);
+      subs[i] = file.getAbsolutePath();
       if (subs[i].endsWith(".bioformats")) {
         String tmp = subs[0];
         subs[0] = subs[i];
         subs[i] = tmp;
-        break;
-      }
-    }
 
-    ImageReader typeTester = new ImageReader();
-
-    for (int i=0; i<subs.length; i++) {
-      Location file = new Location(root, subs[i]);
-      subs[i] = file.getAbsolutePath();
-      LOGGER.info("Checking {}:", subs[i]);
-
-      if (file.getName().equals(".bioformats")) {
         // special config file for the test suite
         LOGGER.info("\tconfig file");
         try {
-          config.parseConfigFile(subs[i]);
+          config.parseConfigFile(subs[0]);
         }
         catch (IOException exc) {
           LOGGER.info("", exc);
         }
         catch (Exception e) { }
+      }
+    }
+
+    Arrays.sort(subs, new Comparator() {
+      public int compare(Object o1, Object o2) {
+        String s1 = o1.toString();
+        String s2 = o2.toString();
+
+        Configuration c1 = null;
+        Configuration c2 = null;
+
+        try {
+          c1 = config.get(s1);
+        }
+        catch (IOException e) { }
+        try {
+          c2 = config.get(s2);
+        }
+        catch (IOException e) { }
+
+        if (c1 == null && c2 != null) {
+          return 1;
+        }
+        else if (c1 != null && c2 == null) {
+          return -1;
+        }
+
+        return s1.compareTo(s2);
+      }
+    });
+
+    ImageReader typeTester = new ImageReader();
+
+    for (int i=0; i<subs.length; i++) {
+      Location file = new Location(subs[i]);
+      LOGGER.info("Checking {}:", subs[i]);
+
+      if (file.getName().equals(".bioformats")) {
+        continue;
       }
       else if (isIgnoredFile(subs[i], config)) {
         LOGGER.info("\tignored");
