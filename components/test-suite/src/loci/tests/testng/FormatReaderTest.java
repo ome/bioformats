@@ -1661,7 +1661,7 @@ public class FormatReaderTest {
     // this prevents failures for missing configuration of files that are on
     // the used files list for a different file (e.g. TIFFs in a Leica LEI
     // dataset)
-    if (config == null) {
+    if (config == null && removeDuplicateFiles) {
       throw new RuntimeException(id + " not configured.");
     }
 
