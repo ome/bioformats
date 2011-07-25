@@ -513,6 +513,19 @@ public class ZeissZVIReader extends FormatReader {
       imageFiles = tmpFiles.toArray(new String[tmpFiles.size()]);
     }
 
+    if (getSizeX() == 0) {
+      core[0].sizeX = 1;
+    }
+    if (getSizeY() == 0) {
+      core[0].sizeY = 1;
+    }
+    if (getImageCount() == 0) {
+      core[0].imageCount = 1;
+      core[0].sizeZ = 1;
+      core[0].sizeC = 1;
+      core[0].sizeT = 1;
+    }
+
     int totalTiles = offsets.length / getImageCount();
 
     int tileRows = realHeight / getSizeY();
@@ -739,8 +752,6 @@ public class ZeissZVIReader extends FormatReader {
     for (int i=0; i<count; i++) {
       if (s.getFilePointer() + 2 >= s.length()) break;
       String value = DataTools.stripString(getNextTag(s));
-
-      if (s.getFilePointer() + 12 >= s.length()) break;
 
       s.skipBytes(2);
       int tagID = s.readInt();

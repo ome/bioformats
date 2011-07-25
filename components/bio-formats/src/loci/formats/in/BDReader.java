@@ -91,6 +91,7 @@ public class BDReader extends FormatReader {
   public BDReader() {
     super("BD Pathway", new String[] {"exp", "tif"});
     domains = new String[] {FormatTools.HCS_DOMAIN};
+    hasCompanionFiles = true;
     suffixSufficient = false;
     suffixNecessary = false;
   }

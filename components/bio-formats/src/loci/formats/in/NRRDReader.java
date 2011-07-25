@@ -35,6 +35,7 @@ import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 import loci.formats.MetadataTools;
+import loci.formats.UnsupportedCompressionException;
 import loci.formats.meta.MetadataStore;
 import ome.xml.model.primitives.PositiveFloat;
 
@@ -149,7 +150,10 @@ public class NRRDReader extends FormatReader {
         readPlane(in, x, y, w, h, buf);
         return buf;
       }
-      else throw new FormatException("Unsupported encoding: " + encoding);
+      else {
+        throw new UnsupportedCompressionException(
+          "Unsupported encoding: " + encoding);
+      }
     }
     else if (encoding.equals("raw")) {
       RandomAccessInputStream s = new RandomAccessInputStream(dataFile);

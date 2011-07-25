@@ -27,6 +27,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import loci.common.ByteArrayHandle;
+import loci.common.DataTools;
+import loci.common.IRandomAccess;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.services.DependencyException;
@@ -58,6 +60,7 @@ public class VolocityReader extends FormatReader {
   // -- Constants --
 
   private static final String DATA_DIR = "Data";
+  private static final String EMBEDDED_STREAM = "embedded-stream.raw";
 
   private static final int SIGNATURE_SIZE = 13;
 
@@ -82,6 +85,7 @@ public class VolocityReader extends FormatReader {
     super("Volocity Library",
       new String[] {"mvd2", "aisf", "aiix", "dat", "atsf"});
     domains = new String[] {FormatTools.UNKNOWN_DOMAIN};
+    hasCompanionFiles = true;
   }
 
   // -- IFormatReader API methods --
@@ -204,6 +208,7 @@ public class VolocityReader extends FormatReader {
       sampleTable = null;
       stringTable = null;
       dir = null;
+      Location.mapFile(EMBEDDED_STREAM, null);
     }
   }
 
@@ -233,14 +238,12 @@ public class VolocityReader extends FormatReader {
     Location parentDir = file.getParentFile();
     dir = new Location(parentDir, DATA_DIR);
 
-    if (!dir.exists()) {
-      throw new FormatException("Could not find data directory.");
-    }
-
-    String[] files = dir.list(true);
-    for (String f : files) {
-      if (!checkSuffix(f, "aisf") && !checkSuffix(f, "atsf")) {
-        extraFiles.add(new Location(dir, f).getAbsolutePath());
+    if (dir.exists()) {
+      String[] files = dir.list(true);
+      for (String f : files) {
+        if (!checkSuffix(f, "aisf") && !checkSuffix(f, "atsf")) {
+          extraFiles.add(new Location(dir, f).getAbsolutePath());
+        }
       }
     }
 
@@ -265,15 +268,20 @@ public class VolocityReader extends FormatReader {
       int channelIndex = getChildIndex((Integer) sampleTable[i][0], "Channels");
 
       if (i > 0 && (Integer) sampleTable[i][2] == 1 && (channelIndex >= 0 ||
-        (sampleTable[i][14] != null && !sampleTable[i][14].equals(0))))
+        (sampleTable[i][14] != null && !sampleTable[i][14].equals(0)) ||
+        ((byte[]) sampleTable[i][13]).length > 21))
       {
         if (channelIndex < 0) {
           RandomAccessInputStream s = getStream(i);
+          s.seek(0);
+          if (s.read() != 'I') {
+            s.order(false);
+          }
           s.seek(22);
           int x = s.readInt();
           int y = s.readInt();
           int z = s.readInt();
-          if (x * y * z != 0 && x * y * z < s.length()) {
+          if (x * y * z > 0 && x * y * z < (s.length() * 3)) {
             stackNames.add(name);
             parentIDs.add((Integer) sampleTable[i][0]);
           }
@@ -318,8 +326,11 @@ public class VolocityReader extends FormatReader {
           if (data.length() > 22) {
             data.seek(22);
             int stackID = data.readInt();
-            pixelsFiles[i][c] =
-              new Location(dir, stackID + ".aisf").getAbsolutePath();
+            Location f = new Location(dir, stackID + ".aisf");
+            if (!f.exists()) {
+              f = new Location(dir, DataTools.swap(stackID) + ".aisf");
+            }
+            pixelsFiles[i][c] = f.getAbsolutePath();
           }
           else {
             Integer child =
@@ -332,6 +343,23 @@ public class VolocityReader extends FormatReader {
       else {
         pixelsFiles[i] = new String[1];
         pixelsFiles[i][0] = getFile(parent, dir);
+
+        if (pixelsFiles[i][0] == null ||
+          !new Location(pixelsFiles[i][0]).exists())
+        {
+          int row = -1;
+          for (int r=0; r<sampleTable.length; r++) {
+            if (sampleTable[r][0].equals(parent)) {
+              row = r;
+              break;
+            }
+          }
+
+          pixelsFiles[i][0] = EMBEDDED_STREAM;
+          IRandomAccess data =
+            new ByteArrayHandle((byte[]) sampleTable[row][13]);
+          Location.mapFile(pixelsFiles[i][0], data);
+        }
       }
 
       RandomAccessInputStream data = null;
@@ -341,8 +369,11 @@ public class VolocityReader extends FormatReader {
         data = getStream(timestampIndex);
         data.seek(22);
         int timestampID = data.readInt();
-        timestampFiles[i] =
-          new Location(dir, timestampID + ".atsf").getAbsolutePath();
+        Location f = new Location(dir, timestampID + ".atsf");
+        if (!f.exists()) {
+          f = new Location(dir, DataTools.swap(timestampID) + ".atsf");
+        }
+        timestampFiles[i] = f.getAbsolutePath();
         data.close();
       }
 
@@ -412,6 +443,10 @@ public class VolocityReader extends FormatReader {
       if (timestampFiles[i] != null) {
         RandomAccessInputStream s =
           new RandomAccessInputStream(timestampFiles[i]);
+        s.seek(0);
+        if (s.read() != 'I') {
+          core[i].littleEndian = false;
+        }
         s.seek(17);
         s.order(isLittleEndian());
         core[i].sizeT = s.readInt();
@@ -471,15 +506,23 @@ public class VolocityReader extends FormatReader {
         }
       }
       else {
+        boolean embedded = Location.getMappedFile(EMBEDDED_STREAM) != null;
+
+        s.seek(0);
+        if (s.read() != 'I') {
+          core[i].littleEndian = false;
+          s.order(false);
+        }
+
         s.seek(22);
         core[i].sizeX = s.readInt();
         core[i].sizeY = s.readInt();
         core[i].sizeZ = s.readInt();
-        core[i].sizeC = 4;
+        core[i].sizeC = embedded ? 1 : 4;
         core[i].imageCount = getSizeZ() * getSizeT();
-        core[i].rgb = true;
+        core[i].rgb = core[i].sizeC > 1;
         core[i].pixelType = FormatTools.UINT8;
-        blockSize[i] = 99;
+        blockSize[i] = embedded ? (int) s.getFilePointer() : 99;
         planePadding[i] = 0;
 
         if (s.length() <
@@ -489,6 +532,9 @@ public class VolocityReader extends FormatReader {
           core[i].sizeC = 1;
           long pixels = core[i].sizeX * core[i].sizeY * core[i].sizeZ;
           int bytes = (int) (s.length() / pixels);
+          if (bytes == 0) {
+            bytes = 1;
+          }
           core[i].pixelType =
             FormatTools.pixelTypeFromBytes(bytes, false, false);
           s.seek(70);
@@ -536,9 +582,15 @@ public class VolocityReader extends FormatReader {
           store.setChannelName(channelNames[i][c], i, c);
         }
       }
-      store.setPixelsPhysicalSizeX(new PositiveFloat(physicalX[i]), i);
-      store.setPixelsPhysicalSizeY(new PositiveFloat(physicalY[i]), i);
-      store.setPixelsPhysicalSizeZ(new PositiveFloat(physicalZ[i]), i);
+      if (physicalX[i] != null && physicalX[i] > 0) {
+        store.setPixelsPhysicalSizeX(new PositiveFloat(physicalX[i]), i);
+      }
+      if (physicalY[i] != null && physicalY[i] > 0) {
+        store.setPixelsPhysicalSizeY(new PositiveFloat(physicalY[i]), i);
+      }
+      if (physicalZ[i] != null && physicalZ[i] > 0) {
+        store.setPixelsPhysicalSizeZ(new PositiveFloat(physicalZ[i]), i);
+      }
 
       String objective = MetadataTools.createLSID("Objective", 0, i);
       store.setObjectiveID(objective, 0, i);

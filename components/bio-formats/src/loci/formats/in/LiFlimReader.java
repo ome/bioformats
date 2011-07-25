@@ -45,6 +45,7 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
+import loci.formats.UnsupportedCompressionException;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -338,7 +339,10 @@ public class LiFlimReader extends FormatReader {
     // check compression type
     if (COMPRESSION_NONE.equals(compression)) gzip = false;
     else if (COMPRESSION_GZIP.equals(compression)) gzip = true;
-    else throw new FormatException("Unknown compression type: " + compression);
+    else {
+      throw new UnsupportedCompressionException(
+        "Unknown compression type: " + compression);
+    }
 
     // check dimensional extents
     int sizeP = Integer.parseInt(phases);
@@ -524,7 +528,7 @@ public class LiFlimReader extends FormatReader {
   private class ROI {
     public String name;
     public Hashtable<Integer, String> points = new Hashtable<Integer, String>();
-  
+
     public String pointsToString() {
       StringBuilder s = new StringBuilder();
       Integer[] pointIndices = points.keySet().toArray(new Integer[0]);

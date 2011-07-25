@@ -36,6 +36,7 @@ import java.util.Vector;
 
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.formats.in.DefaultMetadataOptions;
 import loci.formats.in.MetadataLevel;
 import loci.formats.in.MetadataOptions;
 import loci.formats.meta.MetadataStore;
@@ -66,6 +67,8 @@ public class FileStitcher extends ReaderWrapper {
    */
   private boolean patternIds = false;
 
+  private boolean doNotChangePattern = false;
+
   /** Dimensional axis lengths per file. */
   private int[] sizeZ, sizeC, sizeT;
 
@@ -84,6 +87,7 @@ public class FileStitcher extends ReaderWrapper {
   private MetadataStore store;
 
   private ExternalSeries[] externals;
+  private ClassList<IFormatReader> classList;
 
   // -- Constructors --
 
@@ -118,6 +122,13 @@ public class FileStitcher extends ReaderWrapper {
 
   // -- FileStitcher API methods --
 
+  /**
+   * Set the ClassList object to use when constructing any helper readers.
+   */
+  public void setReaderClassList(ClassList<IFormatReader> classList) {
+    this.classList = classList;
+  }
+
   /** Gets the wrapped reader prototype. */
   public IFormatReader getReader() { return reader; }
 
@@ -128,6 +139,14 @@ public class FileStitcher extends ReaderWrapper {
 
   /** Gets whether the reader is using file patterns for IDs. */
   public boolean isUsingPatternIds() { return patternIds; }
+
+  public void setCanChangePattern(boolean doChange) {
+    doNotChangePattern = !doChange;
+  }
+
+  public boolean canChangePattern() {
+    return !doNotChangePattern;
+  }
 
   /** Gets the reader appropriate for use with the given image plane. */
   public IFormatReader getReader(int no) throws FormatException, IOException {
@@ -224,6 +243,9 @@ public class FileStitcher extends ReaderWrapper {
         // id is an unmapped file path; look to similar files on disk
         return FilePattern.findSeriesPatterns(id);
       }
+    }
+    if (doNotChangePattern) {
+      return new String[] {id};
     }
     patternIds = false;
     String[] patterns = findPatterns(new FilePattern(id).getFiles()[0]);
@@ -1082,7 +1104,10 @@ public class FileStitcher extends ReaderWrapper {
 
       readers = new DimensionSwapper[files.length];
       for (int i=0; i<readers.length; i++) {
-        readers[i] = new DimensionSwapper();
+        if (classList != null) {
+          readers[i] = new DimensionSwapper(new ImageReader(classList));
+        }
+        else readers[i] = new DimensionSwapper();
         readers[i].setGroupFiles(false);
       }
       readers[0].setId(files[0]);

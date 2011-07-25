@@ -31,6 +31,7 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
+import loci.formats.UnsupportedCompressionException;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -72,7 +73,8 @@ public class NAFReader extends FormatReader {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
     if (compressed) {
-      throw new FormatException("Sorry, compressed data is not supported.");
+      throw new UnsupportedCompressionException(
+        "Sorry, compressed data is not supported.");
     }
 
     in.seek(offsets[series] + no * FormatTools.getPlaneSize(this));

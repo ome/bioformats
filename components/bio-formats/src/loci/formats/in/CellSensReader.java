@@ -25,7 +25,9 @@ package loci.formats.in;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
+import loci.common.ByteArrayHandle;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.Region;
@@ -33,6 +35,7 @@ import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.IFormatReader;
 import loci.formats.MetadataTools;
 import loci.formats.codec.Codec;
 import loci.formats.codec.CodecOptions;
@@ -55,7 +58,24 @@ public class CellSensReader extends FormatReader {
 
   // -- Constants --
 
-  private static final int TILE_SIZE = 512;
+  // Compression types
+  private static final int RAW = 0;
+  private static final int JPEG = 2;
+  private static final int JPEG_2000 = 3;
+  private static final int PNG = 8;
+  private static final int BMP = 9;
+
+  // Pixel types
+  private static final int CHAR = 1;
+  private static final int UCHAR = 2;
+  private static final int SHORT = 3;
+  private static final int USHORT = 4;
+  private static final int INT = 5;
+  private static final int UINT = 6;
+  private static final int LONG = 7;
+  private static final int ULONG = 8;
+  private static final int FLOAT = 9;
+  private static final int DOUBLE = 10;
 
   // -- Fields --
 
@@ -68,6 +88,11 @@ public class CellSensReader extends FormatReader {
   private boolean jpeg = false;
 
   private int[] rows, cols;
+  private int[] compressionType;
+  private int[] tileX, tileY;
+
+  private HashMap<TileCoordinate, Integer>[] tileMap;
+  private int[] nDimensions;
 
   // -- Constructor --
 
@@ -126,24 +151,29 @@ public class CellSensReader extends FormatReader {
 
       for (int row=0; row<tileRows; row++) {
         for (int col=0; col<tileCols; col++) {
-          Region tile =
-            new Region(col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+          int width = tileX[getSeries()];
+          int height = tileY[getSeries()];
+          Region tile = new Region(col * width, row * height, width, height);
           if (!tile.intersects(image)) {
             continue;
           }
 
           intersection = tile.intersection(image);
+          int intersectionX = 0;
 
-          int tileIndex = (no * tileRows * tileCols) + row * tileCols + col;
-          tileBuf = decodeTile(tileIndex);
+          if (tile.x < image.x) {
+            intersectionX = image.x - tile.x;
+          }
 
-          int rowLen = pixel * (int) Math.min(intersection.width, TILE_SIZE);
+          tileBuf = decodeTile(no, row, col);
+
+          int rowLen = pixel * (int) Math.min(intersection.width, width);
 
           int outputOffset = outputRow * outputRowLen + outputCol;
           for (int trow=0; trow<intersection.height; trow++) {
             int realRow = trow + intersection.y - tile.y;
-            System.arraycopy(tileBuf,
-              realRow * TILE_SIZE * pixel, buf, outputOffset, rowLen);
+            int inputOffset = pixel * (realRow * width + intersectionX);
+            System.arraycopy(tileBuf, inputOffset, buf, outputOffset, rowLen);
             outputOffset += outputRowLen;
           }
 
@@ -175,6 +205,11 @@ public class CellSensReader extends FormatReader {
       jpeg = false;
       rows = null;
       cols = null;
+      compressionType = null;
+      tileX = null;
+      tileY = null;
+      tileMap = null;
+      nDimensions = null;
     }
   }
 
@@ -222,141 +257,26 @@ public class CellSensReader extends FormatReader {
     tileOffsets = new Long[files.size() - 1][];
     rows = new int[files.size() - 1];
     cols = new int[files.size() - 1];
+    nDimensions = new int[core.length];
 
     IFDList exifs = parser.getExifIFDs();
 
+    compressionType = new int[core.length];
+    tileX = new int[core.length];
+    tileY = new int[core.length];
+    tileMap = new HashMap[core.length];
+
     for (int s=0; s<core.length; s++) {
       core[s] = new CoreMetadata();
+      tileMap[s] = new HashMap<TileCoordinate, Integer>();
 
       if (s < files.size() - 1) {
-        RandomAccessInputStream etsFile =
-          new RandomAccessInputStream(files.get(s));
+        setSeries(s);
+        parseETSFile(files.get(s), s);
 
-        ArrayList<Long> offsets = new ArrayList<Long>();
-
-        byte[] buf = new byte[8192];
-        etsFile.read(buf);
-
-        while (etsFile.getFilePointer() < etsFile.length()) {
-          for (int i=0; i<buf.length-3; i++) {
-            if (buf[i] == (byte) 0xff && buf[i + 1] == 0x4f &&
-              buf[i + 2] == (byte) 0xff && buf[i + 3] == 0x51)
-            {
-              long fp = etsFile.getFilePointer();
-              etsFile.seek(fp - buf.length + i + 8);
-
-              if (etsFile.readInt() == TILE_SIZE &&
-                etsFile.readInt() == TILE_SIZE)
-              {
-                offsets.add(fp - buf.length + i);
-              }
-
-              etsFile.seek(fp);
-            }
-            else if (buf[i] == (byte) 0xff && buf[i + 1] == (byte) 0xd8) {
-              offsets.add(etsFile.getFilePointer() - buf.length + i);
-              jpeg = true;
-            }
-          }
-          buf[0] = buf[buf.length - 3];
-          buf[1] = buf[buf.length - 2];
-          buf[2] = buf[buf.length - 1];
-          etsFile.read(buf, 3, buf.length - 3);
-        }
-
-        tileOffsets[s] = offsets.toArray(new Long[offsets.size()]);
-
-        byte[] b = decodeTile(0);
-
-        int diff = 0;
-        if (b != null) {
-          diff = b.length / (TILE_SIZE * TILE_SIZE);
-        }
-
-        switch (diff) {
-          case 0:
-          case 1:
-            core[s].pixelType = FormatTools.UINT8;
-            core[s].sizeC = 1;
-            break;
-          case 2:
-            core[s].pixelType = FormatTools.UINT16;
-            core[s].sizeC = 1;
-            break;
-          case 3:
-            core[s].pixelType = FormatTools.UINT8;
-            core[s].sizeC = 3;
-            break;
-        }
-
-        etsFile.close();
-
-        boolean adjustedDimensions = false;
-
-        if (s < exifs.size() && exifs.get(s).containsKey(IFD.PIXEL_X_DIMENSION))
-        {
-          core[s].sizeX = exifs.get(s).getIFDIntValue(IFD.PIXEL_X_DIMENSION);
-          core[s].sizeY = exifs.get(s).getIFDIntValue(IFD.PIXEL_Y_DIMENSION);
-
-          int maxTiles = (int) (0.75 * tileOffsets[s].length);
-          int tileSize = TILE_SIZE * TILE_SIZE;
-          double ratio = (double) core[s].sizeY / core[s].sizeX;
-
-          while ((((long) core[s].sizeX * core[s].sizeY) / tileSize) > maxTiles)
-          {
-            adjustedDimensions = true;
-            core[s].sizeX -= TILE_SIZE;
-            core[s].sizeY -= (int) (ratio * TILE_SIZE);
-          }
-        }
-        else {
-          core[s].sizeX = vsi.readInt();
-          core[s].sizeY = vsi.readInt();
-        }
-
-        int tileRows = getSizeY() / TILE_SIZE;
-        int tileCols = getSizeX() / TILE_SIZE;
-        if (tileCols * TILE_SIZE < getSizeX()) {
-          tileCols++;
-        }
-        if (tileRows * TILE_SIZE < getSizeY()) {
-          tileRows++;
-        }
-
-        int c = 1;
-        if (!adjustedDimensions) {
-          int totalTiles = 0;
-          while (totalTiles == 0 ||
-            ((tileOffsets[s].length % tileOffsets[s].length) != 0))
-          {
-            int row = tileRows;
-            int col = tileCols;
-            while (row > 1 || col > 1) {
-              totalTiles += row * col;
-              row = (row / 2) + (row % 2);
-              col = (col / 2) + (col % 2);
-            }
-            totalTiles++;
-
-            if ((tileOffsets[s].length % totalTiles) != 0) {
-              totalTiles = 0;
-              tileCols++;
-            }
-          }
-
-          c = tileOffsets[s].length / totalTiles;
-        }
-
-        rows[s] = tileRows;
-        cols[s] = tileCols;
-
-        core[s].rgb = core[s].sizeC > 1;
-        core[s].sizeC *= c;
-        core[s].sizeZ = 1;
-        core[s].sizeT = 1;
-        core[s].imageCount = core[s].sizeZ * core[s].sizeT * c;
         core[s].littleEndian = false;
         core[s].interleaved = core[s].rgb;
+        setSeries(0);
       }
       else {
         IFD ifd = ifds.get(s - files.size() + 1);
@@ -391,38 +311,295 @@ public class CellSensReader extends FormatReader {
   private int getTileSize() {
     int channels = getRGBChannelCount();
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
-    return bpp * channels * TILE_SIZE * TILE_SIZE;
+    return bpp * channels * tileX[getSeries()] * tileY[getSeries()];
   }
 
-  private byte[] decodeTile(int index) throws FormatException, IOException {
-    if (index >= tileOffsets[getSeries()].length) {
-      return null;
+  private byte[] decodeTile(int no, int row, int col)
+    throws FormatException, IOException
+  {
+    if (tileMap[getSeries()] == null) {
+      return new byte[getTileSize()];
     }
+
+    int[] zct = getZCTCoords(no);
+    TileCoordinate t = new TileCoordinate(nDimensions[getSeries()]);
+    t.coordinate[0] = col;
+    t.coordinate[1] = row;
+
+    if (t.coordinate.length > 3) {
+      t.coordinate[2] = zct[0];
+
+      if (t.coordinate.length > 4) {
+        t.coordinate[3] = zct[1];
+      }
+    }
+
+    Integer index = (Integer) tileMap[getSeries()].get(t);
+    if (index == null) {
+      return new byte[getTileSize()];
+    }
+
     Long offset = tileOffsets[getSeries()][index];
     RandomAccessInputStream ets =
       new RandomAccessInputStream(usedFiles[getSeries()]);
     ets.seek(offset);
 
-    Codec codec = null;
     CodecOptions options = new CodecOptions();
     options.interleaved = isInterleaved();
     options.littleEndian = isLittleEndian();
     int tileSize = getTileSize();
     if (tileSize == 0) {
-      tileSize = TILE_SIZE * TILE_SIZE * 10;
+      tileSize = tileX[getSeries()] * tileY[getSeries()] * 10;
     }
     options.maxBytes = (int) (offset + tileSize);
 
-    if (jpeg) {
-      codec = new JPEGCodec();
+    byte[] buf = null;
+    long end = index < tileOffsets[getSeries()].length - 1 ?
+      tileOffsets[getSeries()][index + 1] : ets.length();
+
+    IFormatReader reader = null;
+    String file = null;
+
+    switch (compressionType[getSeries()]) {
+      case RAW:
+        buf = new byte[tileSize];
+        ets.read(buf);
+        break;
+      case JPEG:
+        Codec codec = new JPEGCodec();
+        buf = codec.decompress(ets, options);
+        break;
+      case JPEG_2000:
+        codec = new JPEG2000Codec();
+        buf = codec.decompress(ets, options);
+        break;
+      case PNG:
+        file = "tile.png";
+        reader = new APNGReader();
+      case BMP:
+        if (reader == null) {
+          file = "tile.bmp";
+          reader = new BMPReader();
+        }
+
+        byte[] b = new byte[(int) (end - offset)];
+        ets.read(b);
+        Location.mapFile(file, new ByteArrayHandle(b));
+        reader.setId(file);
+        buf = reader.openBytes(0);
+        Location.mapFile(file, null);
+        break;
     }
-    else {
-      codec = new JPEG2000Codec();
+
+    if (reader != null) {
+      reader.close();
     }
-    byte[] buf = codec.decompress(ets, options);
 
     ets.close();
     return buf;
+  }
+
+  private void parseETSFile(String file, int s)
+    throws FormatException, IOException
+  {
+    RandomAccessInputStream etsFile = new RandomAccessInputStream(file);
+    etsFile.order(true);
+
+    // read the volume header
+    String magic = etsFile.readString(4).trim();
+    if (!magic.equals("SIS")) {
+      throw new FormatException("Unknown magic bytes: " + magic);
+    }
+
+    int headerSize = etsFile.readInt();
+    int version = etsFile.readInt();
+    nDimensions[s] = etsFile.readInt();
+    long additionalHeaderOffset = etsFile.readLong();
+    int additionalHeaderSize = etsFile.readInt();
+    etsFile.skipBytes(4); // reserved
+    long usedChunkOffset = etsFile.readLong();
+    int nUsedChunks = etsFile.readInt();
+    etsFile.skipBytes(4); // reserved
+
+    // read the additional header
+    etsFile.seek(additionalHeaderOffset);
+
+    String moreMagic = etsFile.readString(4).trim();
+    if (!moreMagic.equals("ETS")) {
+      throw new FormatException("Unknown magic bytes: " + moreMagic);
+    }
+
+    etsFile.skipBytes(4); // extra version number
+
+    int pixelType = etsFile.readInt();
+    core[s].sizeC = etsFile.readInt();
+    int colorspace = etsFile.readInt();
+    compressionType[s] = etsFile.readInt();
+    int compressionQuality = etsFile.readInt();
+    tileX[s] = etsFile.readInt();
+    tileY[s] = etsFile.readInt();
+    int tileZ = etsFile.readInt();
+
+    core[s].rgb = core[s].sizeC > 1;
+
+    // read the used chunks
+
+    etsFile.seek(usedChunkOffset);
+
+    tileOffsets[s] = new Long[nUsedChunks];
+
+    ArrayList<TileCoordinate> tmpTiles = new ArrayList<TileCoordinate>();
+
+    for (int chunk=0; chunk<nUsedChunks; chunk++) {
+      etsFile.skipBytes(4);
+      TileCoordinate t = new TileCoordinate(nDimensions[s]);
+      for (int i=0; i<nDimensions[s]; i++) {
+        t.coordinate[i] = etsFile.readInt();
+      }
+      tileOffsets[s][chunk] = etsFile.readLong();
+      int nBytes = etsFile.readInt();
+      etsFile.skipBytes(4);
+
+      tmpTiles.add(t);
+    }
+
+    int maxX = 0;
+    int maxY = 0;
+    int maxZ = 0;
+    int maxC = 0;
+
+    for (TileCoordinate t : tmpTiles) {
+      if (t.coordinate[0] > maxX) {
+        maxX = t.coordinate[0];
+      }
+      if (t.coordinate[1] > maxY) {
+        maxY = t.coordinate[1];
+      }
+
+      if (t.coordinate.length > 3) {
+        if (t.coordinate[2] > maxZ) {
+          maxZ = t.coordinate[2];
+        }
+
+        if (t.coordinate.length > 4) {
+          if (t.coordinate[3] > maxC) {
+            maxC = t.coordinate[3];
+          }
+        }
+      }
+    }
+
+    core[s].sizeX = tileX[s] * (maxX + 1);
+    core[s].sizeY = tileY[s] * (maxY + 1);
+    core[s].sizeZ = maxZ + 1;
+    if (maxC > 0) {
+      core[s].sizeC *= (maxC + 1);
+    }
+    core[s].sizeT = 1;
+    if (core[s].sizeZ == 0) {
+      core[s].sizeZ = 1;
+    }
+    core[s].imageCount = core[s].sizeZ * core[s].sizeT;
+    if (maxC > 0) {
+      core[s].imageCount *= (maxC + 1);
+    }
+
+    rows[s] = maxY + 1;
+    cols[s] = maxX + 1;
+
+    for (int i=0; i<tmpTiles.size(); i++) {
+      tileMap[s].put(tmpTiles.get(i), i);
+    }
+
+    core[s].pixelType = convertPixelType(pixelType);
+    etsFile.close();
+  }
+
+  private int convertPixelType(int pixelType) throws FormatException {
+    switch (pixelType) {
+      case CHAR:
+        return FormatTools.INT8;
+      case UCHAR:
+        return FormatTools.UINT8;
+      case SHORT:
+        return FormatTools.INT16;
+      case USHORT:
+        return FormatTools.UINT16;
+      case INT:
+        return FormatTools.INT32;
+      case UINT:
+        return FormatTools.UINT32;
+      case LONG:
+        throw new FormatException("Unsupported pixel type: long");
+      case ULONG:
+        throw new FormatException("Unsupported pixel type: unsigned long");
+      case FLOAT:
+        return FormatTools.FLOAT;
+      case DOUBLE:
+        return FormatTools.DOUBLE;
+      default:
+        throw new FormatException("Unsupported pixel type: " + pixelType);
+    }
+  }
+
+  // -- Helper class --
+
+  class TileCoordinate {
+    public int[] coordinate;
+
+    public TileCoordinate(int nDimensions) {
+      coordinate = new int[nDimensions];
+    }
+
+    public boolean equals(Object o) {
+      if (!(o instanceof TileCoordinate)) {
+        return false;
+      }
+
+      TileCoordinate t = (TileCoordinate) o;
+      if (coordinate.length != t.coordinate.length) {
+        return false;
+      }
+
+      for (int i=0; i<coordinate.length; i++) {
+        if (coordinate[i] != t.coordinate[i]) {
+          return false;
+        }
+      }
+      return true;
+    }
+
+    public int hashCode() {
+      int[] lengths = new int[coordinate.length];
+      lengths[0] = rows[getSeries()];
+      lengths[1] = cols[getSeries()];
+
+      if (coordinate.length > 3) {
+        lengths[2] = getSizeZ();
+
+        if (coordinate.length > 4) {
+          lengths[3] = getEffectiveSizeC();
+        }
+      }
+
+      for (int i=0; i<lengths.length; i++) {
+        if (lengths[i] == 0) {
+          lengths[i] = 1;
+        }
+      }
+
+      return FormatTools.positionToRaster(lengths, coordinate);
+    }
+
+    public String toString() {
+      StringBuffer b = new StringBuffer("{");
+      for (int p : coordinate) {
+        b.append(p);
+        b.append(", ");
+      }
+      b.append("}");
+      return b.toString();
+    }
   }
 
 }

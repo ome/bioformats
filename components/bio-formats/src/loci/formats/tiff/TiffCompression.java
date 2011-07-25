@@ -32,6 +32,7 @@ import loci.common.DataTools;
 import loci.common.enumeration.CodedEnum;
 import loci.common.enumeration.EnumException;
 import loci.formats.FormatException;
+import loci.formats.UnsupportedCompressionException;
 import loci.formats.codec.Codec;
 import loci.formats.codec.CodecOptions;
 import loci.formats.codec.JPEG2000Codec;
@@ -231,7 +232,7 @@ public enum TiffCompression implements CodedEnum {
     throws FormatException, IOException
   {
     if (codec == null) {
-      throw new FormatException(
+      throw new UnsupportedCompressionException(
           "Sorry, " + getCodecName() + " compression mode is not supported");
     }
     return codec.decompress(input, options);

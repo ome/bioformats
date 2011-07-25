@@ -1,5 +1,5 @@
 //
-// Upgrade201004Test.java
+// Upgrade200809Test.java
 //
 
 /*
@@ -33,23 +33,23 @@ import loci.common.services.ServiceFactory;
 import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.services.OMEXMLService;
 
-import ome.xml.model.CommentAnnotation;
+import ome.xml.model.Image;
 import ome.xml.model.OME;
-import ome.xml.model.StructuredAnnotations;
+import ome.xml.model.Pixels;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /**
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/test/loci/formats/utests/Upgrade201004Test.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/test/loci/formats/utests/Upgrade201004Test.java;hb=HEAD">Gitweb</a></dd></dl>
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/test/loci/formats/utests/Upgrade200809Test.java">Trac</a>,
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/test/loci/formats/utests/Upgrade200809Test.java;hb=HEAD">Gitweb</a></dd></dl>
  *
- * @author Chris Allan <callan at blackcat dot ca>
+ * @author Colin Blackburn <cblackburn at dundee dot ac dot uk>
  */
-public class Upgrade201004Test {
+public class Upgrade200809Test {
 
-  private static final String XML_FILE = "2010-04.ome";
+  private static final String XML_FILE = "2008-09.ome";
 
   private OMEXMLService service;
   private String xml;
@@ -61,7 +61,7 @@ public class Upgrade201004Test {
     ServiceFactory sf = new ServiceFactory();
     service = sf.getInstance(OMEXMLService.class);
 
-    InputStream s = Upgrade201004Test.class.getResourceAsStream(XML_FILE);
+    InputStream s = Upgrade200809Test.class.getResourceAsStream(XML_FILE);
     byte[] b = new byte[s.available()];
     s.read(b);
     s.close();
@@ -79,16 +79,15 @@ public class Upgrade201004Test {
   @Test
   public void validateUpgrade() throws ServiceException {
     assertEquals(1, ome.sizeOfImageList());
-    // StringAnnotation --> CommentAnnotation
-    StructuredAnnotations structuredAnnotations =
-      ome.getStructuredAnnotations();
-    assertNotNull(structuredAnnotations);
-    assertEquals(1, structuredAnnotations.sizeOfCommentAnnotationList());
-    CommentAnnotation commentAnnotation =
-      structuredAnnotations.getCommentAnnotation(0);
-    assertEquals("StringAnnotation:0", commentAnnotation.getID());
-    assertEquals("Transform", commentAnnotation.getNamespace());
-    assertEquals("Foobar", commentAnnotation.getValue());
+    Image image = ome.getImage(0);
+    Pixels pixels = image.getPixels();
+    assertNotNull(pixels);
+  }
+
+  @Test
+  public void testChannelColor() {
+    // OME:Channel, Color now use new colour representation and is required
+    assertEquals(-1, metadata.getChannelColor(0, 0).intValue());
   }
 
 }

@@ -33,6 +33,7 @@ import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
+import loci.formats.UnsupportedCompressionException;
 import loci.formats.codec.CodecOptions;
 import loci.formats.codec.JPEGCodec;
 import loci.formats.codec.MJPBCodec;
@@ -453,7 +454,10 @@ public class NativeQTReader extends FormatReader {
             in.close();
             in = oldIn;
           }
-          else throw new FormatException("Compressed header not supported.");
+          else {
+            throw new UnsupportedCompressionException(
+              "Compressed header not supported.");
+          }
         }
         else if (atomType.equals("stco")) {
           // we've found the plane offsets
@@ -496,7 +500,8 @@ public class NativeQTReader extends FormatReader {
                 !codec.equals("rpza") && !codec.equals("mjpb") &&
                 !codec.equals("jpeg"))
               {
-                throw new FormatException("Unsupported codec: " + codec);
+                throw new UnsupportedCompressionException(
+                  "Unsupported codec: " + codec);
               }
 
               in.skipBytes(16);
@@ -613,7 +618,9 @@ public class NativeQTReader extends FormatReader {
     else if (code.equals("jpeg")) {
       return new JPEGCodec().decompress(pixs, options);
     }
-    else throw new FormatException("Unsupported codec : " + code);
+    else {
+      throw new UnsupportedCompressionException("Unsupported codec : " + code);
+    }
   }
 
   /** Cut off header bytes from a resource fork file. */

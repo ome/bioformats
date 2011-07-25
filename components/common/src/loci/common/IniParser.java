@@ -47,6 +47,8 @@ public class IniParser {
 
   private String commentDelimiter = "#";
 
+  private boolean slashContinues = true;
+
   // -- IniParser API methods --
 
   /**
@@ -54,6 +56,16 @@ public class IniParser {
    */
   public void setCommentDelimiter(String delimiter) {
     commentDelimiter = delimiter;
+  }
+
+  /**
+   * Set whether or not a '\' at the end of a line signifies that the
+   * line continues on the following line.
+   *
+   * By default, a '\' does continue the line.
+   */
+  public void setBackslashContinuesLine(boolean slashContinues) {
+    this.slashContinues = slashContinues;
   }
 
   /** Parses the INI-style configuration data from the given resource. */
@@ -169,7 +181,7 @@ public class IniParser {
       line = line.trim();
 
       // backslash signifies data continues to next line
-      boolean slash = line.endsWith("\\");
+      boolean slash = slashContinues && line.endsWith("\\");
       if (slash) line = line.substring(0, line.length() - 1).trim() + " ";
       sb.append(line);
       if (!slash) break;

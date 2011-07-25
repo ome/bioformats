@@ -53,6 +53,7 @@ public class JEOLReader extends FormatReader {
   public JEOLReader() {
     super("JEOL", new String[] {"dat", "img", "par"});
     domains = new String[] {FormatTools.SEM_DOMAIN};
+    hasCompanionFiles = true;
     suffixSufficient = false;
   }
 

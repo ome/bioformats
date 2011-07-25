@@ -419,13 +419,19 @@ public class OMETiffReader extends FormatReader {
       }
       int samples = samplesPerPixel == null ?  -1 : samplesPerPixel.getValue();
       int tiffSamples = firstIFD.getSamplesPerPixel();
+
+      boolean adjustedSamples = false;
       if (samples != tiffSamples) {
         LOGGER.warn("SamplesPerPixel mismatch: OME={}, TIFF={}",
           samples, tiffSamples);
         samples = tiffSamples;
+        adjustedSamples = true;
       }
 
-      int effSizeC = meta.getPixelsSizeC(i).getValue().intValue() / samples;
+      int effSizeC = meta.getPixelsSizeC(i).getValue().intValue();
+      if (!adjustedSamples) {
+        effSizeC /= samples;
+      }
       if (effSizeC == 0) effSizeC = 1;
       if (effSizeC * samples != meta.getPixelsSizeC(i).getValue().intValue()) {
         effSizeC = meta.getPixelsSizeC(i).getValue().intValue();
@@ -647,7 +653,8 @@ public class OMETiffReader extends FormatReader {
         PhotoInterp photo = firstIFD.getPhotometricInterpretation();
         core[s].rgb = samples > 1 || photo == PhotoInterp.RGB;
         if ((samples != core[s].sizeC && (samples % core[s].sizeC) != 0 &&
-          (core[s].sizeC % samples) != 0) || core[s].sizeC == 1)
+          (core[s].sizeC % samples) != 0) || core[s].sizeC == 1 ||
+          adjustedSamples)
         {
           core[s].sizeC *= samples;
         }

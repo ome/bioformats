@@ -80,6 +80,8 @@ public class ZeissLSMReader extends FormatReader {
   private static final int TYPE_ASCII = 2;
   private static final int TYPE_LONG = 4;
   private static final int TYPE_RATIONAL = 5;
+  private static final int TYPE_DATE = 6;
+  private static final int TYPE_BOOLEAN = 7;
 
   /** Subblock types. */
   private static final int SUBBLOCK_RECORDING = 0x10000000;
@@ -819,6 +821,7 @@ public class ZeissLSMReader extends FormatReader {
     long eventListOffset = 0;
     long scanInformationOffset = 0;
     long channelWavelengthOffset = 0;
+    long applicationTagOffset = 0;
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       int spectralScan = ras.readShort();
@@ -853,7 +856,7 @@ public class ZeissLSMReader extends FormatReader {
       addSeriesMeta("TimeInterval", ras.readDouble());
       ras.skipBytes(4);
       scanInformationOffset = ras.readInt();
-      ras.skipBytes(4);
+      applicationTagOffset = ras.readInt();
       timeStampOffset = ras.readInt();
       eventListOffset = ras.readInt();
       overlayOffsets[3] = ras.readInt();
@@ -1156,6 +1159,11 @@ public class ZeissLSMReader extends FormatReader {
         for (SubBlock block : nonAcquiredBlocks) {
           populateMetadataStore(block, store, series);
         }
+      }
+
+      if (applicationTagOffset != 0) {
+        in.seek(applicationTagOffset);
+        parseApplicationTags();
       }
     }
 
@@ -1979,6 +1987,54 @@ public class ZeissLSMReader extends FormatReader {
     }
     in.skipBytes(dataSize);
     return "";
+  }
+
+  private void parseApplicationTags() throws IOException {
+    int blockSize = in.readInt();
+    int numEntries = in.readInt();
+
+    for (int i=0; i<numEntries; i++) {
+      long fp = in.getFilePointer();
+      int entrySize = in.readInt();
+      int entryNameLength = in.readInt();
+      String entryName = in.readString(entryNameLength);
+
+      int dataType = in.readInt();
+      int dataSize = in.readInt();
+
+      Object data = null;
+
+      switch (dataType) {
+        case TYPE_ASCII:
+          data = in.readString(dataSize);
+          break;
+        case TYPE_LONG:
+          data = new Integer(in.readInt());
+          break;
+        case TYPE_RATIONAL:
+          data = new Double(in.readDouble());
+          break;
+        case TYPE_DATE:
+          data = new Long(in.readLong());
+          break;
+        case TYPE_BOOLEAN:
+          data = new Boolean(in.readInt() == 0);
+          break;
+      }
+
+      addGlobalMeta(entryName, data);
+
+      if (in.getFilePointer() == fp + entrySize) {
+        continue;
+      }
+
+      int nDimensions = in.readInt();
+      int[] coordinate = new int[nDimensions];
+
+      for (int n=0; n<nDimensions; n++) {
+        coordinate[n] = in.readInt();
+      }
+    }
   }
 
   // -- Helper classes --

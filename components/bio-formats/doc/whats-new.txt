@@ -1,3 +1,13 @@
+4.3.1 (2011 July 8):
+* Several bug fixes, including:
+  - Fixes for multi-position Deltavision files
+  - Fixes for MicroManager 1.4 data
+  - Fixes for 12 and 14-bit JPEG-2000 data
+  - Various fixes for reading Volocity .mvd2 datasets
+* Added various options to the 'showinf' and 'bfconvert' command line tools
+* Added better tests for OME-XML backwards compatibility
+* Added the ability to roughly stitch tiles in a multi-position dataset
+
 4.3.0 (2011 June 14):
 * Many bug fixes, including:
   - Many fixes for reading and writing sub-images

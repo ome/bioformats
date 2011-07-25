@@ -140,9 +140,6 @@ public class PCIReader extends FormatReader {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
     String file = imageFiles.get(no);
-    if (file == null) {
-      return buf;
-    }
     RandomAccessInputStream s = poi.getDocumentStream(file);
     TiffParser tp = new TiffParser(s);
 
@@ -332,26 +329,6 @@ public class PCIReader extends FormatReader {
       int separator = file.lastIndexOf(File.separator);
       String parent = file.substring(0, separator);
       imageFiles.put(getImageIndex(parent), file);
-    }
-
-    if (getSizeX() == 0 && getSizeY() == 0) {
-      // file may have been truncated
-      // try to extract as much pixel data as possible anyway
-      core[0].pixelType = FormatTools.UINT16;
-      int plane = poi.getFileSize(imageFiles.get(0)) / 2;
-
-      if (plane == 1376256) {
-        core[0].sizeX = 1344;
-        core[0].sizeY = 1024;
-      }
-      else if (plane == 344064) {
-        core[0].sizeX = 672;
-        core[0].sizeY = 512;
-      }
-      else {
-        core[0].sizeX = (int) Math.sqrt(plane);
-        core[0].sizeY = getSizeX();
-      }
     }
 
     MetadataStore store = makeFilterMetadata();

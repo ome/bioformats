@@ -27,6 +27,7 @@ import java.io.IOException;
 
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
+import loci.formats.UnsupportedCompressionException;
 
 /**
  * Methods for compressing and decompressing QuickTime Motion JPEG-B data.
@@ -50,7 +51,8 @@ public class MJPBCodec extends BaseCodec {
   public byte[] compress(byte[] data, CodecOptions options)
     throws FormatException
   {
-    throw new FormatException("Motion JPEG-B compression not supported.");
+    throw new UnsupportedCompressionException(
+      "Motion JPEG-B compression not supported.");
   }
 
   /**

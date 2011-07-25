@@ -1,5 +1,5 @@
 //
-// NikonReader.java
+// DNGReader.java
 //
 
 /*
@@ -47,94 +47,57 @@ import loci.formats.tiff.TiffParser;
 import loci.formats.tiff.TiffRational;
 
 /**
- * NikonReader is the file format reader for Nikon NEF (TIFF) files.
+ * DNGReader is the file format reader for Canon DNG (TIFF) files.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/NikonReader.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/NikonReader.java;hb=HEAD">Gitweb</a></dd></dl>
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/DNGReader.java">Trac</a>,
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/DNGReader.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
-public class NikonReader extends BaseTiffReader {
+public class DNGReader extends BaseTiffReader {
 
   // -- Constants --
 
   /** Logger for this class. */
   private static final Logger LOGGER =
-    LoggerFactory.getLogger(NikonReader.class);
+    LoggerFactory.getLogger(DNGReader.class);
 
-  public static final String[] NEF_SUFFIX = {"nef"};
-
-  // Tags that give a good indication of whether this is an NEF file.
   private static final int TIFF_EPS_STANDARD = 37398;
   private static final int COLOR_MAP = 33422;
-
-  // Maker Note tags.
-  private static final int FIRMWARE_VERSION = 1;
-  private static final int ISO = 2;
-  private static final int QUALITY = 4;
-  private static final int MAKER_WHITE_BALANCE = 5;
-  private static final int SHARPENING = 6;
-  private static final int FOCUS_MODE = 7;
-  private static final int FLASH_SETTING = 8;
-  private static final int FLASH_MODE = 9;
-  private static final int WHITE_BALANCE_FINE = 11;
   private static final int WHITE_BALANCE_RGB_COEFFS = 12;
-  private static final int FLASH_COMPENSATION = 18;
-  private static final int TONE_COMPENSATION = 129;
-  private static final int LENS_TYPE = 131;
-  private static final int LENS = 132;
-  private static final int FLASH_USED = 135;
-  private static final int CURVE = 140;
-  private static final int COLOR_MODE = 141;
-  private static final int LIGHT_TYPE = 144;
-  private static final int HUE = 146;
-  private static final int CAPTURE_EDITOR_DATA = 3585;
 
   // -- Fields --
-
-  /** Offset to the Nikon Maker Note. */
-  protected int makerNoteOffset;
 
   /** The original IFD. */
   protected IFD original;
 
   private TiffRational[] whiteBalance;
   private Object cfaPattern;
-  private int[] curve;
-  private int[] vPredictor;
-  private boolean lossyCompression;
-  private int split = -1;
 
   private byte[] lastPlane = null;
   private int lastIndex = -1;
 
   // -- Constructor --
 
-  /** Constructs a new Nikon reader. */
-  public NikonReader() {
-    super("Nikon NEF", new String[] {"nef", "tif", "tiff"});
+  /** Constructs a new DNG reader. */
+  public DNGReader() {
+    super("DNG",
+      new String[] {"cr2", "crw", "jpg", "thm", "wav", "tif", "tiff"});
     suffixSufficient = false;
     domains = new String[] {FormatTools.GRAPHICS_DOMAIN};
   }
 
   // -- IFormatReader API methods --
 
-  /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
-  public boolean isThisType(String name, boolean open) {
-    // extension is sufficient as long as it is NEF
-    if (checkSuffix(name, NEF_SUFFIX)) return true;
-    return super.isThisType(name, open);
-  }
-
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     TiffParser tp = new TiffParser(stream);
     IFD ifd = tp.getFirstIFD();
     if (ifd == null) return false;
-    if (ifd.containsKey(TIFF_EPS_STANDARD)) return true;
+    boolean hasEPSTag = ifd.containsKey(TIFF_EPS_STANDARD);
     String make = ifd.getIFDTextValue(IFD.MAKE);
-    return make != null && make.indexOf("Nikon") != -1;
+    return make != null && make.indexOf("Canon") != -1 && hasEPSTag;
   }
 
   /**
@@ -161,25 +124,7 @@ public class NikonReader extends BaseTiffReader {
     if (lastPlane == null || lastIndex != no) {
       long[] offsets = ifd.getStripOffsets();
 
-      boolean maybeCompressed = ifd.getCompression() == TiffCompression.NIKON;
-      boolean compressed =
-        vPredictor != null && curve != null && maybeCompressed;
-
-      if (!maybeCompressed && dataSize == 14) dataSize = 16;
-
       ByteArrayOutputStream src = new ByteArrayOutputStream();
-
-      NikonCodec codec = new NikonCodec();
-      NikonCodecOptions options = new NikonCodecOptions();
-      options.width = getSizeX();
-      options.height = getSizeY();
-      options.bitsPerSample = dataSize;
-      options.curve = curve;
-      if (vPredictor != null) {
-        options.vPredictor = new int[vPredictor.length];
-      }
-      options.lossless = !lossyCompression;
-      options.split = split;
 
       for (int i=0; i<byteCounts.length; i++) {
         byte[] t = new byte[(int) byteCounts[i]];
@@ -187,19 +132,8 @@ public class NikonReader extends BaseTiffReader {
         in.seek(offsets[i]);
         in.read(t);
 
-        if (compressed) {
-          options.maxBytes = (int) byteCounts[i];
-          System.arraycopy(vPredictor, 0, options.vPredictor, 0,
-            vPredictor.length);
-          t = codec.decompress(t, options);
-        }
         src.write(t);
       }
-
-      BitBuffer bb = new BitBuffer(src.toByteArray());
-      short[] pix = new short[getSizeX() * getSizeY() * 3];
-
-      src.close();
 
       int[] colorMap = {1, 0, 2, 1}; // default color map
       short[] ifdColors = (short[]) ifd.get(COLOR_MAP);
@@ -219,12 +153,14 @@ public class NikonReader extends BaseTiffReader {
         }
       }
 
-      boolean interleaveRows =
-        offsets.length == 1 && !maybeCompressed && colorMap[0] != 0;
+      lastPlane = new byte[FormatTools.getPlaneSize(this)];
+
+      BitBuffer bb = new BitBuffer(src.toByteArray());
+      src.close();
+      short[] pix = new short[getSizeX() * getSizeY() * 3];
 
       for (int row=0; row<getSizeY(); row++) {
-        int realRow = interleaveRows ? (row < (getSizeY() / 2) ?
-          row * 2 : (row - (getSizeY() / 2)) * 2 + 1) : row;
+        int realRow = row;
         for (int col=0; col<getSizeX(); col++) {
           short val = (short) (bb.getBits(dataSize) & 0xffff);
           int mapIndex = (realRow % 2) * 2 + (col % 2);
@@ -242,23 +178,12 @@ public class NikonReader extends BaseTiffReader {
           else if (colorMap[mapIndex] == 2) {
             pix[blueOffset] = adjustForWhiteBalance(val, 2);
           }
-
-          if (maybeCompressed && !compressed) {
-            int toSkip = 0;
-            if ((col % 10) == 9) {
-              toSkip = 1;
-            }
-            if (col == getSizeX() - 1) {
-              toSkip = 10;
-            }
-            bb.skipBits(toSkip * 8);
-          }
         }
       }
 
-      lastPlane = new byte[FormatTools.getPlaneSize(this)];
-      ImageTools.interpolate(pix, lastPlane, colorMap, getSizeX(), getSizeY(),
+      ImageTools.interpolate(pix, buf, colorMap, getSizeX(), getSizeY(),
         isLittleEndian());
+
       lastIndex = no;
     }
 
@@ -277,14 +202,9 @@ public class NikonReader extends BaseTiffReader {
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
-      makerNoteOffset = 0;
       original = null;
-      split = -1;
       whiteBalance = null;
       cfaPattern = null;
-      curve = null;
-      vPredictor = null;
-      lossyCompression = false;
       lastPlane = null;
       lastIndex = -1;
     }
@@ -329,6 +249,11 @@ public class NikonReader extends BaseTiffReader {
       for (Integer key : exifIFD.keySet()) {
         int tag = key.intValue();
         String name = IFD.getIFDTagName(tag);
+
+        /* debug */ System.out.println("tag = " + tag);
+        /* debug */ System.out.println(exifIFD.get(key));
+        /* debug */ System.out.println();
+
         if (tag == IFD.CFA_PATTERN) {
           byte[] cfa = (byte[]) exifIFD.get(key);
           int[] colorMap = new int[cfa.length];
@@ -340,7 +265,7 @@ public class NikonReader extends BaseTiffReader {
           addGlobalMeta(name, exifIFD.get(key));
           if (name.equals("MAKER_NOTE")) {
             byte[] b = (byte[]) exifIFD.get(key);
-            int extra = new String(b, 0, 10).startsWith("Nikon") ? 10 : 0;
+            int extra = new String(b, 0, 10).startsWith("Canon") ? 10 : 0;
             byte[] buf = new byte[b.length];
             System.arraycopy(b, extra, buf, 0, buf.length - extra);
             RandomAccessInputStream makerNote =
@@ -357,60 +282,8 @@ public class NikonReader extends BaseTiffReader {
               for (Integer nextKey : note.keySet()) {
                 int nextTag = nextKey.intValue();
                 addGlobalMeta(name, note.get(nextKey));
-                if (nextTag == 150) {
-                  b = (byte[]) note.get(nextKey);
-                  RandomAccessInputStream s = new RandomAccessInputStream(b);
-                  byte check1 = s.readByte();
-                  byte check2 = s.readByte();
-
-                  lossyCompression = check1 != 0x46;
-
-                  vPredictor = new int[4];
-                  for (int q=0; q<vPredictor.length; q++) {
-                    vPredictor[q] = s.readShort();
-                  }
-
-                  curve = new int[16385];
-
-                  int bps = ifds.get(0).getBitsPerSample()[0];
-                  int max = 1 << bps & 0x7fff;
-                  int step = 0;
-                  int csize = s.readShort();
-                  if (csize > 1) {
-                    step = max / (csize - 1);
-                  }
-
-                  if (check1 == 0x44 && check2 == 0x20 && step > 0) {
-                    for (int i=0; i<csize; i++) {
-                      curve[i * step] = s.readShort();
-                    }
-                    for (int i=0; i<max; i++) {
-                      int n = i % step;
-                      curve[i] = (curve[i - n] * (step - n) +
-                        curve[i - n + step] * n) / step;
-                    }
-                    s.seek(562);
-                    split = s.readShort();
-                  }
-                  else {
-                    int maxValue = (int) Math.pow(2, bps) - 1;
-                    Arrays.fill(curve, maxValue);
-                    int nElements =
-                      (int) (s.length() - s.getFilePointer()) / 2;
-                    if (nElements < 100) {
-                      for (int i=0; i<curve.length; i++) {
-                        curve[i] = (short) i;
-                      }
-                    }
-                    else {
-                      for (int q=0; q<nElements; q++) {
-                        curve[q] = s.readShort();
-                      }
-                    }
-                  }
-                  s.close();
-                }
-                else if (nextTag == WHITE_BALANCE_RGB_COEFFS) {
+                if (nextTag == WHITE_BALANCE_RGB_COEFFS) {
+                  /* debug */ System.out.println("setting whiteBalance");
                   whiteBalance = (TiffRational[]) note.get(nextKey);
                 }
               }

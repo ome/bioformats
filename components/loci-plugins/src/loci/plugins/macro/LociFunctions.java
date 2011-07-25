@@ -52,6 +52,8 @@ import loci.plugins.in.ImporterOptions;
 import loci.plugins.util.ImageProcessorReader;
 import loci.plugins.util.LociPrefs;
 
+import ome.xml.model.primitives.PositiveFloat;
+
 /**
  * This class provides macro extensions for ImageJ for Bio-Formats and other
  * LOCI tools. Currently, it is a fairly tight mirror to the
@@ -184,6 +186,49 @@ public class LociFunctions extends MacroFunctions {
     catch (FormatException exc) {
       IJ.handleException(exc);
     }
+  }
+
+  public void openThumbImagePlus(String path) {
+    ImagePlus[] imps = null;
+    try {
+      imps = BF.openThumbImagePlus(path);
+      for (ImagePlus imp : imps) imp.show();
+    }
+    catch (IOException exc) {
+      IJ.handleException(exc);
+    }
+    catch (FormatException exc) {
+      IJ.handleException(exc);
+    }
+  }
+
+  public void openThumbImage(String title, Double no)
+    throws FormatException, IOException
+  {
+    ImporterOptions options = new ImporterOptions();
+    options.setWindowless(true);
+    options.setId(r.getCurrentFile());
+    options.setCrop(true);
+    options.setSpecifyRanges(true);
+    options.setSeriesOn(r.getSeries(), true);
+
+    int[] zct = r.getZCTCoords(no.intValue());
+    options.setCBegin(r.getSeries(), zct[1]);
+    options.setZBegin(r.getSeries(), zct[0]);
+    options.setTBegin(r.getSeries(), zct[2]);
+    options.setCEnd(r.getSeries(), zct[1]);
+    options.setZEnd(r.getSeries(), zct[0]);
+    options.setTEnd(r.getSeries(), zct[2]);
+
+    ImportProcess process = new ImportProcess(options);
+    process.execute();
+
+    ImagePlusReader reader = new ImagePlusReader(process);
+    final ImagePlus imp = reader.openThumbImagePlus()[0];
+    Calibrator calibrator = new Calibrator(process);
+    calibrator.applyCalibration(imp);
+    process.getReader().close();
+    imp.show();
   }
 
   public void openImage(String title, Double no)
@@ -394,21 +439,30 @@ public class LociFunctions extends MacroFunctions {
   public void getPixelsPhysicalSizeX(Double[] sizeX) {
     int imageIndex = r.getSeries();
     MetadataRetrieve retrieve = (MetadataRetrieve) r.getMetadataStore();
-    sizeX[0] = retrieve.getPixelsPhysicalSizeX(imageIndex).getValue();
+    PositiveFloat x = retrieve.getPixelsPhysicalSizeX(imageIndex);
+    if (x != null) {
+      sizeX[0] = x.getValue();
+    }
     if (sizeX[0] == null) sizeX[0] = new Double(Double.NaN);
   }
 
   public void getPixelsPhysicalSizeY(Double[] sizeY) {
     int imageIndex = r.getSeries();
     MetadataRetrieve retrieve = (MetadataRetrieve) r.getMetadataStore();
-    sizeY[0] = retrieve.getPixelsPhysicalSizeY(imageIndex).getValue();
+    PositiveFloat y = retrieve.getPixelsPhysicalSizeY(imageIndex);
+    if (y != null) {
+      sizeY[0] = y.getValue();
+    }
     if (sizeY[0] == null) sizeY[0] = new Double(Double.NaN);
   }
 
   public void getPixelsPhysicalSizeZ(Double[] sizeZ) {
     int imageIndex = r.getSeries();
     MetadataRetrieve retrieve = (MetadataRetrieve) r.getMetadataStore();
-    sizeZ[0] = retrieve.getPixelsPhysicalSizeZ(imageIndex).getValue();
+    PositiveFloat z = retrieve.getPixelsPhysicalSizeZ(imageIndex);
+    if (z != null) {
+      sizeZ[0] = z.getValue();
+    }
     if (sizeZ[0] == null) sizeZ[0] = new Double(Double.NaN);
   }
 
@@ -441,6 +495,9 @@ public class LociFunctions extends MacroFunctions {
       IJ.log("");
       IJ.log("Ext.openImagePlus(path)");
       IJ.log("-- Opens the image at the given path with the default options.");
+      IJ.log("Ext.openThumbImagePlus(path)");
+      IJ.log("-- Opens the thumbnail image at the given path");
+      IJ.log("-- with the default options.");
       IJ.log("Ext.getFormat(id, format)");
       IJ.log("-- Retrieves the file format of the given id (filename).");
       IJ.log("Ext.setId(id)");
@@ -518,6 +575,8 @@ public class LociFunctions extends MacroFunctions {
       IJ.log("Ext.openSubImage(title, no, x, y, width, height)");
       IJ.log("-- Opens a subset of the no'th plane in a new window");
       IJ.log("-- named 'title'.");
+      IJ.log("Ext.openThumbImage(title, no)");
+      IJ.log("-- Opens the no'th thumbnail in a new window named 'title'.");
       IJ.log("Ext.close()");
       IJ.log("-- Closes the active dataset.");
       IJ.log("Ext.closeFileOnly()");
