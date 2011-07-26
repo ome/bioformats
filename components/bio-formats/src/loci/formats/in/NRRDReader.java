@@ -157,7 +157,7 @@ public class NRRDReader extends FormatReader {
     }
     else if (encoding.equals("raw")) {
       RandomAccessInputStream s = new RandomAccessInputStream(dataFile);
-      s.seek(no * FormatTools.getPlaneSize(this));
+      s.seek(offset + no * FormatTools.getPlaneSize(this));
       readPlane(s, x, y, w, h, buf);
       s.close();
       return buf;
@@ -280,6 +280,9 @@ public class NRRDReader extends FormatReader {
         else if (key.equals("spacings")) {
           pixelSizes = v.split(" ");
         }
+        else if (key.equals("byte skip")) {
+          offset = Long.parseLong(v);
+        }
       }
 
       line = in.readLine();
@@ -292,7 +295,6 @@ public class NRRDReader extends FormatReader {
 
     if (dataFile == null) offset = in.getFilePointer();
     else {
-      offset = 0;
       Location f = new Location(currentId).getAbsoluteFile();
       Location parent = f.getParentFile();
       if (f.exists() && parent != null) {
