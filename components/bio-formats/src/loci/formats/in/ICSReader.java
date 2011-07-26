@@ -647,7 +647,7 @@ public class ICSReader extends FormatReader {
   /* @see loci.formats.IFormatReader#isInterleaved(int) */
   public boolean isInterleaved(int subC) {
     FormatTools.assertId(currentId, true, 1);
-    return subC == 0 && isRGB();
+    return subC == 0 && core[0].interleaved;
   }
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
