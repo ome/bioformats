@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.xml.XMLTools;
@@ -63,7 +64,7 @@ public class InCellReader extends FormatReader {
   private static final String[] PIXELS_SUFFIXES =
     new String[] {"tif", "tiff", "im"};
   private static final String[] METADATA_SUFFIXES =
-    new String[] {"xdce", "xml", "xlog"};
+    new String[] {"xml", "xlog"};
 
   // -- Fields --
 
@@ -215,6 +216,9 @@ public class InCellReader extends FormatReader {
         }
       }
     }
+    if (!files.contains(currentId)) {
+      files.add(currentId);
+    }
     return files.toArray(new String[files.size()]);
   }
 
@@ -271,14 +275,21 @@ public class InCellReader extends FormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     // make sure that we have the .xdce (or .xml) file
     if (checkSuffix(id, PIXELS_SUFFIXES) || checkSuffix(id, "xlog")) {
-      Location parent = new Location(id).getAbsoluteFile().getParentFile();
+      Location currentFile = new Location(id).getAbsoluteFile();
+      Location parent = currentFile.getParentFile();
       String[] list = parent.list(true);
       for (String f : list) {
         if (checkSuffix(f, new String[] {"xdce", "xml"})) {
           String path = new Location(parent, f).getAbsolutePath();
           if (isThisType(path)) {
-            id = path;
-            break;
+            // make sure that the .xdce file references the current file
+            // this ensures that the correct file is chosen if multiple
+            // .xdce files are the same directory
+            String data = DataTools.readFile(path);
+            if (data.indexOf(currentFile.getName()) >= 0) {
+              id = path;
+              break;
+            }
           }
         }
       }
