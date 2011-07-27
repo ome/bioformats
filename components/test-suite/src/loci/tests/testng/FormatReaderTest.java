@@ -1235,6 +1235,14 @@ public class FormatReaderTest {
           /*config.noStitching() ? new ImageReader() :*/ new FileStitcher();
 
         for (int i=0; i<base.length && success; i++) {
+          // .xlog files in InCell 1000/2000 files may belong to more
+          // than one dataset
+          if (file.toLowerCase().endsWith(".xdce") &&
+            base[i].toLowerCase().endsWith(".xlog"))
+          {
+            continue;
+          }
+
           r.setId(base[i]);
 
           String[] comp = r.getUsedFiles();
