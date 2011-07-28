@@ -48,6 +48,7 @@ public class FilePatternDialog extends ImporterDialog {
 
   private FilePattern fp;
   private String originalID;
+  private int[] paddingZeros;
 
   // -- Constructor --
 
@@ -96,6 +97,8 @@ public class FilePatternDialog extends ImporterDialog {
 
     String[] prefixes = fp.getPrefixes();
     int[] counts = fp.getCount();
+    paddingZeros = new int[counts.length];
+    String[][] elements = fp.getElements();
 
     for (int i=0; i<prefixes.length; i++) {
       String prefix = "Axis_" + (i + 1);
@@ -103,6 +106,12 @@ public class FilePatternDialog extends ImporterDialog {
       gd.addStringField(prefix + "_axis_first_image", "1");
       gd.addStringField(prefix + "_axis_increment", "1");
       gd.addMessage("");
+
+      try {
+        paddingZeros[i] = elements[i][0].length() -
+          String.valueOf(Integer.parseInt(elements[i][0])).length();
+      }
+      catch (NumberFormatException e) { }
     }
 
     gd.addStringField("File name contains:", "");
@@ -157,9 +166,18 @@ public class FilePatternDialog extends ImporterDialog {
 
         pattern += fp.getPrefix(i);
         pattern += "<";
+        int firstPadding = paddingZeros[i] - first.toString().length() + 1;
+        for (int zero=0; zero<firstPadding; zero++) {
+          pattern += "0";
+        }
         pattern += first;
         pattern += "-";
-        pattern += fileCount.subtract(BigInteger.ONE);
+        fileCount = fileCount.subtract(BigInteger.ONE);
+        int lastPadding = paddingZeros[i] - fileCount.toString().length() + 1;
+        for (int zero=0; zero<lastPadding; zero++) {
+          pattern += "0";
+        }
+        pattern += fileCount;
         pattern += ":";
         pattern += increment;
         pattern += ">";
