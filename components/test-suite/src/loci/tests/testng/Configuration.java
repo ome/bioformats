@@ -355,7 +355,7 @@ public class Configuration {
     globalTable.put(TEST, "true");
     globalTable.put(MEMORY, String.valueOf(TestTools.getUsedMemory()));
 
-    int planeSize = FormatTools.getPlaneSize(reader);
+    int planeSize = FormatTools.getPlaneSize(reader) * 3;
     boolean canOpenImages =
       planeSize > 0 && TestTools.canFitInMemory(planeSize);
 
