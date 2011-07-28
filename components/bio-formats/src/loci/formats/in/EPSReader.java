@@ -271,13 +271,19 @@ public class EPSReader extends FormatReader {
         if (line.startsWith("%%BoundingBox:")) {
           line = line.substring(14).trim();
           String[] t = line.split(" ");
-          int originX = Integer.parseInt(t[0].trim());
-          int originY = Integer.parseInt(t[1].trim());
-          core[0].sizeX = Integer.parseInt(t[2].trim()) - originX;
-          core[0].sizeY = Integer.parseInt(t[3].trim()) - originY;
+          try {
+            int originX = Integer.parseInt(t[0].trim());
+            int originY = Integer.parseInt(t[1].trim());
+            core[0].sizeX = Integer.parseInt(t[2].trim()) - originX;
+            core[0].sizeY = Integer.parseInt(t[3].trim()) - originY;
 
-          addGlobalMeta("X-coordinate of origin", originX);
-          addGlobalMeta("Y-coordinate of origin", originY);
+            addGlobalMeta("X-coordinate of origin", originX);
+            addGlobalMeta("Y-coordinate of origin", originY);
+          }
+          catch (NumberFormatException e) {
+            throw new FormatException(
+              "Files without image data are not supported.");
+          }
         }
         else if (line.startsWith("%%BeginBinary")) {
           binary = true;

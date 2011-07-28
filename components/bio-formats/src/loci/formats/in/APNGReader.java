@@ -111,7 +111,7 @@ public class APNGReader extends BIFormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, -1, x, y, w, h);
 
-    if (no == lastImageIndex) {
+    if (no == lastImageIndex && lastImage != null) {
       return AWTImageTools.getSubimage(lastImage, isLittleEndian(), x, y, w, h);
     }
 
@@ -182,17 +182,18 @@ public class APNGReader extends BIFormatReader {
     DataInputStream dis = new DataInputStream(new BufferedInputStream(s, 4096));
     BufferedImage b = ImageIO.read(dis);
     dis.close();
-    BufferedImage first = (BufferedImage)
-      openPlane(0, 0, 0, getSizeX(), getSizeY());
+
+    lastImage = null;
+    openPlane(0, 0, 0, getSizeX(), getSizeY());
 
     // paste current image onto first image
 
-    WritableRaster firstRaster = first.getRaster();
+    WritableRaster firstRaster = lastImage.getRaster();
     WritableRaster currentRaster = b.getRaster();
 
     firstRaster.setDataElements(coords[0], coords[1], currentRaster);
     lastImage =
-      new BufferedImage(first.getColorModel(), firstRaster, false, null);
+      new BufferedImage(lastImage.getColorModel(), firstRaster, false, null);
     lastImageIndex = no;
     return lastImage;
   }
