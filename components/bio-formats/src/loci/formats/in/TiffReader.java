@@ -242,7 +242,7 @@ public class TiffReader extends BaseTiffReader {
       comment += "\n" + ifds.get(0).getIFDTextValue(IMAGEJ_TAG);
     }
 
-    // parse ZCT sizes
+    // parse ImageJ metadata (ZCT sizes, calibration units, etc.)
     StringTokenizer st = new StringTokenizer(comment, "\n");
     while (st.hasMoreTokens()) {
       String token = st.nextToken();
@@ -253,6 +253,9 @@ public class TiffReader extends BaseTiffReader {
       if (token.startsWith("channels=")) c = parseInt(value);
       else if (token.startsWith("slices=")) z = parseInt(value);
       else if (token.startsWith("frames=")) t = parseInt(value);
+      else if (token.startsWith("mode=")) {
+        put("Color mode", value);
+      }
       else if (token.startsWith("unit=")) {
         calibrationUnit = value;
         put("Unit", calibrationUnit);
