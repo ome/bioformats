@@ -598,7 +598,10 @@ public class MetamorphReader extends BaseTiffReader {
 
       String comment = getFirstComment(i);
       if (comment != null && comment.startsWith("<MetaData>")) {
-        XMLTools.parseXML(comment, handler);
+        try {
+          XMLTools.parseXML(XMLTools.sanitizeXML(comment), handler);
+        }
+        catch (IOException e) { }
       }
 
       if (creationTime != null) {
