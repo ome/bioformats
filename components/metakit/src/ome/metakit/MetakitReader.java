@@ -289,25 +289,57 @@ public class MetakitReader {
       if (hasSubviews[table]) {
         int subviewCount = rowCount[table];
 
-        // read an IVecRef
+        long base = stream.getFilePointer();
+        rowCount[table] = 0;
+        Object[][][] subviewTable =
+          new Object[subviewCount][columns[table].length][];
 
-        int size = MetakitTools.readBpInt(stream);
-        long subviewPointer = MetakitTools.readBpInt(stream);
+        for (int subview=0; subview<subviewCount; subview++) {
+          // read an IVecRef
 
-        stream.seek(subviewPointer);
+          if (subview == 0) {
+            int size = MetakitTools.readBpInt(stream);
+            long subviewPointer = MetakitTools.readBpInt(stream);
+            base = stream.getFilePointer();
 
-        MetakitTools.readBpInt(stream); // 0x80
+            stream.seek(subviewPointer);
+          }
 
-        rowCount[table] = MetakitTools.readBpInt(stream);
+          MetakitTools.readBpInt(stream); // 0x80
+
+          int count = MetakitTools.readBpInt(stream);
+
+          if (count > 1) {
+            rowCount[table] += count;
+            for (int col=0; col<columns[table].length; col++) {
+              stream.order(littleEndian);
+              ColumnMap map = new ColumnMap(columns[table][col], stream, count);
+              subviewTable[subview][col] = map.getValues();
+            }
+          }
+        }
+
+        data[table] = new Object[columns[table].length][rowCount[table]];
+        int index = 0;
+        for (int subview=0; subview<subviewCount; subview++) {
+          if (subviewTable[subview][0] != null) {
+            for (int col=0; col<columns[table].length; col++) {
+              System.arraycopy(subviewTable[subview][col], 0, data[table][col],
+                index, subviewTable[subview][col].length);
+            }
+            index += subviewTable[subview][0].length;
+          }
+        }
       }
-
-      data[table] = new Object[columns[table].length][];
-      if (rowCount[table] > 0) {
-        for (int col=0; col<columns[table].length; col++) {
-          stream.order(littleEndian);
-          ColumnMap map =
-            new ColumnMap(columns[table][col], stream, rowCount[table]);
-          data[table][col] = map.getValues();
+      else {
+        data[table] = new Object[columns[table].length][];
+        if (rowCount[table] > 0) {
+          for (int col=0; col<columns[table].length; col++) {
+            stream.order(littleEndian);
+            ColumnMap map =
+              new ColumnMap(columns[table][col], stream, rowCount[table]);
+            data[table][col] = map.getValues();
+          }
         }
       }
       stream.seek(fp);

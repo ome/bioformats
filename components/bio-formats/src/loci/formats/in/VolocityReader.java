@@ -173,8 +173,19 @@ public class VolocityReader extends FormatReader {
 
     if (clippingData[getSeries()]) {
       pix.seek(offset - 3);
-      byte[] b = new LZOCodec().decompress(pix, null);
-      RandomAccessInputStream s = new RandomAccessInputStream(b);
+      ByteArrayHandle v = new ByteArrayHandle();
+      while (v.length() < FormatTools.getPlaneSize(this) &&
+        pix.getFilePointer() < pix.length())
+      {
+        try {
+          byte[] b = new LZOCodec().decompress(pix, null);
+          pix.skipBytes(4);
+          v.write(b);
+        }
+        catch (IOException e) { }
+      }
+      RandomAccessInputStream s = new RandomAccessInputStream(v);
+      s.seek(0);
       readPlane(s, x, y, w, h, buf);
       s.close();
     }
@@ -531,7 +542,8 @@ public class VolocityReader extends FormatReader {
           core[i].rgb = false;
           core[i].sizeC = 1;
           long pixels = core[i].sizeX * core[i].sizeY * core[i].sizeZ;
-          int bytes = (int) (s.length() / pixels);
+          double approximateBytes = (double) s.length() / pixels;
+          int bytes = (int) Math.round(approximateBytes);
           if (bytes == 0) {
             bytes = 1;
           }
