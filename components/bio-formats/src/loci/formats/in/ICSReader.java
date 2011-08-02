@@ -687,17 +687,27 @@ public class ICSReader extends FormatReader {
           fis = new FileInputStream(currentIdsId);
           toSkip += offset;
         }
-        gzipStream = new GZIPInputStream(fis);
+        try {
+          gzipStream = new GZIPInputStream(fis);
+        }
+        catch (IOException e) {
+          // the 'gzip' flag is set erroneously
+          gzip = false;
+          in.seek(offset + no * (long) len);
+          gzipStream = null;
+        }
       }
 
-      while (toSkip > 0) {
-        toSkip -= gzipStream.skip(toSkip);
-      }
+      if (gzipStream != null) {
+        while (toSkip > 0) {
+          toSkip -= gzipStream.skip(toSkip);
+        }
 
-      data = new byte[len * (storedRGB ? getSizeC() : 1)];
-      int toRead = data.length;
-      while (toRead > 0) {
-        toRead -= gzipStream.read(data, data.length - toRead, toRead);
+        data = new byte[len * (storedRGB ? getSizeC() : 1)];
+        int toRead = data.length;
+        while (toRead > 0) {
+          toRead -= gzipStream.read(data, data.length - toRead, toRead);
+        }
       }
     }
 
@@ -2198,8 +2208,6 @@ public class ICSReader extends FormatReader {
     if (getSizeT() == 0) core[0].sizeT = 1;
 
     core[0].interleaved = isRGB();
-    core[0].imageCount = getSizeZ() * getSizeT();
-    if (!isRGB()) core[0].imageCount *= getSizeC();
     core[0].indexed = false;
     core[0].falseColor = false;
     core[0].metadataComplete = true;
@@ -2236,6 +2244,10 @@ public class ICSReader extends FormatReader {
         core[0].cTypes = new String[] {FormatTools.LIFETIME};
       }
     }
+
+    // do not modify the Z, T, or channel counts after this point
+    core[0].imageCount = getSizeZ() * getSizeT();
+    if (!isRGB()) core[0].imageCount *= getSizeC();
 
     if (byteOrder != null) {
       String firstByte = byteOrder.split(" ")[0];
