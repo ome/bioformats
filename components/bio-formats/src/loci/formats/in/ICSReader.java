@@ -687,17 +687,27 @@ public class ICSReader extends FormatReader {
           fis = new FileInputStream(currentIdsId);
           toSkip += offset;
         }
-        gzipStream = new GZIPInputStream(fis);
+        try {
+          gzipStream = new GZIPInputStream(fis);
+        }
+        catch (IOException e) {
+          // the 'gzip' flag is set erroneously
+          gzip = false;
+          in.seek(offset + no * (long) len);
+          gzipStream = null;
+        }
       }
 
-      while (toSkip > 0) {
-        toSkip -= gzipStream.skip(toSkip);
-      }
+      if (gzipStream != null) {
+        while (toSkip > 0) {
+          toSkip -= gzipStream.skip(toSkip);
+        }
 
-      data = new byte[len * (storedRGB ? getSizeC() : 1)];
-      int toRead = data.length;
-      while (toRead > 0) {
-        toRead -= gzipStream.read(data, data.length - toRead, toRead);
+        data = new byte[len * (storedRGB ? getSizeC() : 1)];
+        int toRead = data.length;
+        while (toRead > 0) {
+          toRead -= gzipStream.read(data, data.length - toRead, toRead);
+        }
       }
     }
 
