@@ -2198,8 +2198,6 @@ public class ICSReader extends FormatReader {
     if (getSizeT() == 0) core[0].sizeT = 1;
 
     core[0].interleaved = isRGB();
-    core[0].imageCount = getSizeZ() * getSizeT();
-    if (!isRGB()) core[0].imageCount *= getSizeC();
     core[0].indexed = false;
     core[0].falseColor = false;
     core[0].metadataComplete = true;
@@ -2236,6 +2234,10 @@ public class ICSReader extends FormatReader {
         core[0].cTypes = new String[] {FormatTools.LIFETIME};
       }
     }
+
+    // do not modify the Z, T, or channel counts after this point
+    core[0].imageCount = getSizeZ() * getSizeT();
+    if (!isRGB()) core[0].imageCount *= getSizeC();
 
     if (byteOrder != null) {
       String firstByte = byteOrder.split(" ")[0];
