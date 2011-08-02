@@ -25,6 +25,7 @@ package loci.formats.in;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Vector;
@@ -121,6 +122,12 @@ public class FlexReader extends FormatReader {
   private RandomAccessInputStream firstStream;
 
   private String plateAcqStartTime;
+
+  private ArrayList<Double> planePositionX = new ArrayList<Double>();
+  private ArrayList<Double> planePositionY = new ArrayList<Double>();
+  private ArrayList<Double> planePositionZ = new ArrayList<Double>();
+  private ArrayList<Double> planeExposureTime = new ArrayList<Double>();
+  private ArrayList<Double> planeDeltaT = new ArrayList<Double>();
 
   /**
    * List of .flex files belonging to this dataset.
@@ -318,6 +325,11 @@ public class FlexReader extends FormatReader {
       wellNumber = null;
       if (firstStream != null) firstStream.close();
       firstStream = null;
+      planePositionX.clear();
+      planePositionY.clear();
+      planePositionZ.clear();
+      planeExposureTime.clear();
+      planeDeltaT.clear();
     }
   }
 
@@ -620,6 +632,25 @@ public class FlexReader extends FormatReader {
         if (pos[0] < yPositions.size()) {
           store.setWellSamplePositionY(
             yPositions.get(pos[0]), pos[2], well, pos[0]);
+        }
+
+        for (int image=0; image<getImageCount(); image++) {
+          int plane = i * getImageCount() + image;
+          if (plane < planePositionX.size()) {
+            store.setPlanePositionX(planePositionX.get(plane), i, image);
+          }
+          if (plane < planePositionY.size()) {
+            store.setPlanePositionY(planePositionY.get(plane), i, image);
+          }
+          if (plane < planePositionZ.size()) {
+            store.setPlanePositionZ(planePositionZ.get(plane), i, image);
+          }
+          if (plane < planeExposureTime.size()) {
+            store.setPlaneExposureTime(planeExposureTime.get(plane), i, image);
+          }
+          if (plane < planeDeltaT.size()) {
+            store.setPlaneDeltaT(planeDeltaT.get(plane), i, image);
+          }
         }
       }
     }
@@ -1348,25 +1379,24 @@ public class FlexReader extends FormatReader {
         }
         else if (qName.equals("PositionX")) {
           Double v = new Double(Double.parseDouble(value) * 1000000);
-          store.setPlanePositionX(v, currentSeries, currentImage);
+          planePositionX.add(v);
           addGlobalMeta("X position for position #" + (currentSeries + 1), v);
         }
         else if (qName.equals("PositionY")) {
           Double v = new Double(Double.parseDouble(value) * 1000000);
-          store.setPlanePositionY(v, currentSeries, currentImage);
+          planePositionY.add(v);
           addGlobalMeta("Y position for position #" + (currentSeries + 1), v);
         }
         else if (qName.equals("PositionZ")) {
           Double v = new Double(Double.parseDouble(value) * 1000000);
-          store.setPlanePositionZ(v, currentSeries, currentImage);
+          planePositionZ.add(v);
           addGlobalMeta("Z position for position #" + (currentSeries + 1), v);
         }
         else if (qName.equals("TimepointOffsetUsed")) {
-          store.setPlaneDeltaT(new Double(value), currentSeries, currentImage);
+          planeDeltaT.add(new Double(value));
         }
         else if (qName.equals("CameraExposureTime")) {
-          store.setPlaneExposureTime(new Double(value), currentSeries,
-            currentImage);
+          planeExposureTime.add(new Double(value));
         }
         else if (qName.equals("LightSourceCombinationRef")) {
           lightSourceCombinationRefs.add(value);
