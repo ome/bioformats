@@ -565,7 +565,8 @@ bool testRead(int argc, const char *argv[]) {
 
 int main(int argc, const char *argv[]) {
   try {
-    JavaTools::createJVM(string("loci_tools.jar"));
+    string jvm_args("bio-formats-5.0-SNAPSHOT.jar");
+    JavaTools::createJVM(jvm_args);
     testRead(argc, argv);
   }
   catch (FormatException& fe) {
