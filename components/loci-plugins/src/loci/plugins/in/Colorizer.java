@@ -281,6 +281,7 @@ public class Colorizer {
         ColorModel model = proc.getColorModel();
         proc.setMinAndMax(globalMin, globalMax);
         proc.setColorModel(model);
+        imp.setDisplayRange(globalMin, globalMax);
       }
     }
   }
