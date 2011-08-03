@@ -1,12 +1,12 @@
 
 # generate extension list
-FIND_PACKAGE(Java)
+FIND_PACKAGE(Java REQUIRED)
 
 add_custom_command(
   TARGET bio-formats
   DEPENDS "${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${Jar2Lib_DEPS_DIR}"
   POST_BUILD
-  COMMAND ${Java_JAVA_EXECUTABLE} -cp ${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${Jar2Lib_DEPS_DIR}/bio-formats-5.0-SNAPSHOT.jar:${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${Jar2Lib_DEPS_DIR}/ome-xml-5.0-SNAPSHOT.jar:${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${Jar2Lib_DEPS_DIR}/slf4j-api-1.5.10.jar:${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${Jar2Lib_DEPS_DIR}/slf4j-log4j12-1.5.10.jar:${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${Jar2Lib_DEPS_DIR}/log4j-1.2.14.jar "loci.formats.tools.BioFormatsExtensionPrinter"
+  COMMAND ${JAVA_RUNTIME} -cp ${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${Jar2Lib_DEPS_DIR}/bio-formats-5.0-SNAPSHOT.jar:${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${Jar2Lib_DEPS_DIR}/ome-xml-5.0-SNAPSHOT.jar:${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${Jar2Lib_DEPS_DIR}/slf4j-api-1.5.10.jar:${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${Jar2Lib_DEPS_DIR}/slf4j-log4j12-1.5.10.jar:${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${Jar2Lib_DEPS_DIR}/log4j-1.2.14.jar "loci.formats.tools.BioFormatsExtensionPrinter"
   VERBATIM
 )
 
