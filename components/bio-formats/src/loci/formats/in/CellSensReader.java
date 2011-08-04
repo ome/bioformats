@@ -238,13 +238,15 @@ public class CellSensReader extends FormatReader {
 
     Location pixelsDir = new Location(dir, "_" + name + "_");
     String[] stackDirs = pixelsDir.list(true);
-    for (String f : stackDirs) {
-      Location stackDir = new Location(pixelsDir, f);
-      String[] pixelsFiles = stackDir.list(true);
-      if (pixelsFiles != null) {
-        for (String pixelsFile : pixelsFiles) {
-          if (checkSuffix(pixelsFile, "ets")) {
-            files.add(new Location(stackDir, pixelsFile).getAbsolutePath());
+    if (stackDirs != null) {
+      for (String f : stackDirs) {
+        Location stackDir = new Location(pixelsDir, f);
+        String[] pixelsFiles = stackDir.list(true);
+        if (pixelsFiles != null) {
+          for (String pixelsFile : pixelsFiles) {
+            if (checkSuffix(pixelsFile, "ets")) {
+              files.add(new Location(stackDir, pixelsFile).getAbsolutePath());
+            }
           }
         }
       }
@@ -274,7 +276,7 @@ public class CellSensReader extends FormatReader {
         setSeries(s);
         parseETSFile(files.get(s), s);
 
-        core[s].littleEndian = false;
+        core[s].littleEndian = compressionType[s] == RAW;
         core[s].interleaved = core[s].rgb;
         setSeries(0);
       }
@@ -327,10 +329,15 @@ public class CellSensReader extends FormatReader {
     t.coordinate[1] = row;
 
     if (t.coordinate.length > 3) {
-      t.coordinate[2] = zct[0];
+      t.coordinate[2] = t.coordinate.length > 5 ? zct[2] :
+        t.coordinate.length > 4 ? zct[0] : zct[1];
 
       if (t.coordinate.length > 4) {
-        t.coordinate[3] = zct[1];
+        t.coordinate[3] = t.coordinate.length > 5 ? zct[0] : zct[1];
+      }
+
+      if (t.coordinate.length > 5) {
+        t.coordinate[4] = zct[1];
       }
     }
 
@@ -467,8 +474,15 @@ public class CellSensReader extends FormatReader {
     int maxY = 0;
     int maxZ = 0;
     int maxC = 0;
+    int maxT = 0;
 
     for (TileCoordinate t : tmpTiles) {
+      int tIndex = t.coordinate.length > 5 ? 2 : -1;
+      int zIndex = t.coordinate.length > 5 ? 3 :
+        t.coordinate.length > 4 ? 2 : -1;
+      int cIndex = t.coordinate.length > 5 ? 4 : t.coordinate.length > 4 ? 3 :
+        t.coordinate.length > 3 ? 2 : -1;
+
       if (t.coordinate[0] > maxX) {
         maxX = t.coordinate[0];
       }
@@ -476,17 +490,16 @@ public class CellSensReader extends FormatReader {
         maxY = t.coordinate[1];
       }
 
-      if (t.coordinate.length > 3) {
-        if (t.coordinate[2] > maxZ) {
-          maxZ = t.coordinate[2];
-        }
-
-        if (t.coordinate.length > 4) {
-          if (t.coordinate[3] > maxC) {
-            maxC = t.coordinate[3];
-          }
-        }
+      if (tIndex >= 0 && t.coordinate[tIndex] > maxT) {
+        maxT = t.coordinate[tIndex];
       }
+      if (zIndex >= 0 && t.coordinate[zIndex] > maxZ) {
+        maxZ = t.coordinate[zIndex];
+      }
+      if (cIndex >= 0 && t.coordinate[cIndex] > maxC) {
+        maxC = t.coordinate[cIndex];
+      }
+
     }
 
     core[s].sizeX = tileX[s] * (maxX + 1);
@@ -495,7 +508,7 @@ public class CellSensReader extends FormatReader {
     if (maxC > 0) {
       core[s].sizeC *= (maxC + 1);
     }
-    core[s].sizeT = 1;
+    core[s].sizeT = maxT + 1;
     if (core[s].sizeZ == 0) {
       core[s].sizeZ = 1;
     }
@@ -574,12 +587,15 @@ public class CellSensReader extends FormatReader {
       lengths[0] = rows[getSeries()];
       lengths[1] = cols[getSeries()];
 
+      if (coordinate.length > 2) {
+        lengths[2] = coordinate.length > 5 ? getSizeT() :
+          coordinate.length > 4 ? getSizeZ() : getEffectiveSizeC();
+      }
       if (coordinate.length > 3) {
-        lengths[2] = getSizeZ();
-
-        if (coordinate.length > 4) {
-          lengths[3] = getEffectiveSizeC();
-        }
+        lengths[3] = coordinate.length > 5 ? getSizeZ() : getEffectiveSizeC();
+      }
+      if (coordinate.length > 4) {
+        lengths[4] = getEffectiveSizeC();
       }
 
       for (int i=0; i<lengths.length; i++) {
