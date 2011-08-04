@@ -520,6 +520,14 @@ public class SlidebookReader extends FormatReader {
             x /= (div == 0 || div > 64 ? 1 : div);
             div = in.readShort();
             y /= (div == 0 || div > 64 ? 1 : div);
+
+            if (core[nextName - 1].sizeY <= 0) {
+              core[nextName - 1].sizeX = 0;
+            }
+            if (core[nextName - 1].sizeX <= 0) {
+              core[nextName - 1].sizeY = 0;
+            }
+
             if (x > 16 && (x < core[nextName - 1].sizeX ||
               core[nextName - 1].sizeX <= 0) && y > 16 &&
               (y < core[nextName - 1].sizeY || core[nextName - 1].sizeY <= 0))
@@ -614,6 +622,7 @@ public class SlidebookReader extends FormatReader {
       }
 
       int nPlanes = getSizeZ() * getSizeC();
+
       core[i].sizeT = (int) (pixels / (getSizeX() * getSizeY() * nPlanes));
       while (getSizeX() * getSizeY() * nPlanes * getSizeT() > pixels) {
         core[i].sizeT--;
@@ -630,7 +639,12 @@ public class SlidebookReader extends FormatReader {
           if (pixels >
             getSizeX() * getSizeY() * getSizeC() * getSizeT() * getSizeZ())
           {
-            core[i].sizeZ--;
+            in.seek(pixelOffsets.get(i) + (pixels -
+              getSizeX() * getSizeY() * getSizeC() * getSizeT() * getSizeZ()));
+            String check = in.readString(4096);
+            if (check.indexOf("II") >= 0 && check.indexOf("Annotation") < 0) {
+              core[i].sizeZ--;
+            }
           }
 
           nPlanes = getSizeC() * getSizeZ();
