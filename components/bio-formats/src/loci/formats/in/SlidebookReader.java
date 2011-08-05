@@ -401,8 +401,11 @@ public class SlidebookReader extends FormatReader {
         }
 
         if (in.getFilePointer() == prevOffset) {
-          in.skipBytes(254);
-          n = (char) in.readShort();
+          if (in.getFilePointer() + 256 < in.length()) {
+            in.skipBytes(254);
+            n = (char) in.readShort();
+          }
+          else break;
         }
 
         if (!isValidCharacter(n)) {
@@ -642,7 +645,7 @@ public class SlidebookReader extends FormatReader {
             in.seek(pixelOffsets.get(i) + (pixels -
               getSizeX() * getSizeY() * getSizeC() * getSizeT() * getSizeZ()));
             String check = in.readString(4096);
-            if (check.indexOf("II") >= 0 && check.indexOf("Annotation") < 0) {
+            if (check.indexOf("II") >= 0 && check.indexOf("Annotation") >= 0) {
               core[i].sizeZ--;
             }
           }
