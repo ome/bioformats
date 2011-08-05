@@ -211,7 +211,8 @@ public class HitachiReader extends FormatReader {
     core = helperReader.getCoreMetadata();
 
     MetadataStore store = makeFilterMetadata();
-    MetadataTools.populatePixels(store, this);
+    MetadataTools.populatePixels(store, this,
+      getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM);
 
     store.setImageName(imageName, 0);
 

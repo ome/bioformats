@@ -66,6 +66,7 @@ import loci.formats.in.BioRadReader;
 import loci.formats.in.GelReader;
 import loci.formats.in.JPEGReader;
 import loci.formats.in.JPEG2000Reader;
+import loci.formats.in.HitachiReader;
 import loci.formats.in.L2DReader;
 import loci.formats.in.MetamorphReader;
 import loci.formats.in.MetamorphTiffReader;
@@ -1265,6 +1266,14 @@ public class FormatReaderTest {
             continue;
           }
 
+          // Hitachi datasets consist of one text file and one pixels file
+          // in a common format (e.g. BMP, JPEG, TIF).
+          // It is acceptable for the pixels file to have a different
+          // used file count from the text file.
+          if (reader.getFormat().equals("Hitachi")) {
+            continue;
+          }
+
           if (comp.length != base.length) {
             success = false;
             msg = base[i] + " (file list length was " + comp.length +
@@ -1548,6 +1557,10 @@ public class FormatReaderTest {
               readers[j] instanceof PGMReader ||
               readers[j] instanceof TiffDelegateReader))
             {
+              continue;
+            }
+
+            if (result && r instanceof HitachiReader) {
               continue;
             }
 
