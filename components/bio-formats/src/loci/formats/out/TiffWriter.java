@@ -139,8 +139,7 @@ public class TiffWriter extends FormatWriter {
   /**
    * Saves the given image to the specified (possibly already open) file.
    * The IFD hashtable allows specification of TIFF parameters such as bit
-   * depth, compression and units.  If this image is the last one in the file,
-   * the last flag must be set.
+   * depth, compression and units.
    */
   public void saveBytes(int no, byte[] buf, IFD ifd)
     throws IOException, FormatException
@@ -154,9 +153,7 @@ public class TiffWriter extends FormatWriter {
   /**
    * Saves the given image to the specified series in the current file.
    * The IFD hashtable allows specification of TIFF parameters such as bit
-   * depth, compression and units. If this image is the last one in the series,
-   * the lastInSeries flag must be set. If this image is the last one in the
-   * file, the last flag must be set.
+   * depth, compression and units.
    */
   public void saveBytes(int no, byte[] buf, IFD ifd, int x, int y, int w, int h)
     throws IOException, FormatException
