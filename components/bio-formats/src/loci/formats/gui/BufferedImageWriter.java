@@ -101,33 +101,7 @@ public class BufferedImageWriter extends WriterWrapper {
     }
     else {
       // must convert BufferedImage to byte array
-      // TODO - move this code block into its own AWTImageTools method
-      boolean littleEndian = false;
-      int bpp = FormatTools.getBytesPerPixel(AWTImageTools.getPixelType(image));
-
-      MetadataRetrieve r = getMetadataRetrieve();
-      if (r != null) {
-        Boolean bigEndian = r.getPixelsBinDataBigEndian(getSeries(), 0);
-        if (bigEndian != null) littleEndian = !bigEndian.booleanValue();
-      }
-
-      byte[][] pixelBytes = AWTImageTools.getPixelBytes(image, littleEndian);
-      byte[] buf = new byte[pixelBytes.length * pixelBytes[0].length];
-      if (isInterleaved()) {
-        for (int i=0; i<pixelBytes[0].length; i+=bpp) {
-          for (int j=0; j<pixelBytes.length; j++) {
-            System.arraycopy(pixelBytes[j], i, buf,
-              i * pixelBytes.length + j * bpp, bpp);
-          }
-        }
-      }
-      else {
-        for (int i=0; i<pixelBytes.length; i++) {
-          System.arraycopy(pixelBytes[i], 0, buf,
-            i * pixelBytes[0].length, pixelBytes[i].length);
-        }
-      }
-      pixelBytes = null;
+      byte[] buf = toBytes(image, this);
 
       saveBytes(no, buf, x, y, w, h);
     }
@@ -170,6 +144,38 @@ public class BufferedImageWriter extends WriterWrapper {
   {
     setSeries(series);
     saveImage(numWritten++, image);
+  }
+
+  // -- Utility methods --
+
+  public static byte[] toBytes(BufferedImage image, IFormatWriter writer) {
+    boolean littleEndian = false;
+    int bpp = FormatTools.getBytesPerPixel(AWTImageTools.getPixelType(image));
+
+    MetadataRetrieve r = writer.getMetadataRetrieve();
+    if (r != null) {
+      Boolean bigEndian = r.getPixelsBinDataBigEndian(writer.getSeries(), 0);
+      if (bigEndian != null) littleEndian = !bigEndian.booleanValue();
+    }
+
+    byte[][] pixelBytes = AWTImageTools.getPixelBytes(image, littleEndian);
+    byte[] buf = new byte[pixelBytes.length * pixelBytes[0].length];
+    if (writer.isInterleaved()) {
+      for (int i=0; i<pixelBytes[0].length; i+=bpp) {
+        for (int j=0; j<pixelBytes.length; j++) {
+          System.arraycopy(pixelBytes[j], i, buf,
+            i * pixelBytes.length + j * bpp, bpp);
+        }
+      }
+    }
+    else {
+      for (int i=0; i<pixelBytes.length; i++) {
+        System.arraycopy(pixelBytes[i], 0, buf,
+          i * pixelBytes[0].length, pixelBytes[i].length);
+      }
+    }
+    pixelBytes = null;
+    return buf;
   }
 
 }
