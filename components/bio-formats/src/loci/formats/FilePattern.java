@@ -459,13 +459,21 @@ public class FilePattern {
   /**
    * Generate a pattern from a list of file names.
    * The pattern generated will be a regular expression.
+   *
+   * Currently assumes that all file names are in the same directory.
    */
   public static String findPattern(String[] names) {
+    String dir =
+      names[0].substring(0, names[0].lastIndexOf(File.separator) + 1);
+
     StringBuffer pattern = new StringBuffer();
+    pattern.append(dir);
 
     for (int i=0; i<names.length; i++) {
       pattern.append("(?:");
-      pattern.append(Pattern.quote(names[i]));
+      String name =
+        names[i].substring(names[i].lastIndexOf(File.separator) + 1);
+      pattern.append(Pattern.quote(name));
       pattern.append(")");
       if (i < names.length - 1) {
         pattern.append("|");
