@@ -505,6 +505,7 @@ public class FileStitcher extends ReaderWrapper {
       core = null;
       series = 0;
       store = null;
+      patternIds = false;
     }
   }
 
