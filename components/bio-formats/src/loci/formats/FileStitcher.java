@@ -505,7 +505,6 @@ public class FileStitcher extends ReaderWrapper {
       core = null;
       series = 0;
       store = null;
-      patternIds = false;
     }
   }
 
@@ -755,6 +754,10 @@ public class FileStitcher extends ReaderWrapper {
       }
       else reader.setId(id);
       return;
+    }
+
+    if (fp.isRegex()) {
+      setCanChangePattern(false);
     }
 
     String[] patterns = findPatterns(id);

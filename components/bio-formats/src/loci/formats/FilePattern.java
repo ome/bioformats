@@ -86,6 +86,9 @@ public class FilePattern {
   /** File listing for this file pattern. */
   private String[] files;
 
+  /** Whether or not this FilePattern represents a regular expression. */
+  private boolean isRegex = false;
+
   // -- Constructors --
 
   /** Creates a pattern object using the given file as a template. */
@@ -169,6 +172,11 @@ public class FilePattern {
   }
 
   // -- FilePattern API methods --
+
+  /** Returns whether or not this pattern is a regular expression. */
+  public boolean isRegex() {
+    return isRegex;
+  }
 
   /** Gets the file pattern string. */
   public String getPattern() { return pattern; }
@@ -573,6 +581,8 @@ public class FilePattern {
         return;
       }
 
+      isRegex = true;
+
       String[] files = null;
       int end = pattern.lastIndexOf(File.separator) + 1;
       String dir = pattern.substring(0, end);
@@ -591,11 +601,19 @@ public class FilePattern {
 
       String basePattern =
         pattern.substring(pattern.lastIndexOf(File.separator) + 1);
-      Pattern regex = Pattern.compile(basePattern);
+      Pattern regex = null;
+      try {
+        regex = Pattern.compile(basePattern);
+      }
+      catch (PatternSyntaxException e) {
+        regex = Pattern.compile(pattern);
+      }
 
       for (String f : files) {
-        if (regex.matcher(f).matches()) {
-          Location path = new Location(dir, f);
+        Location path = new Location(dir, f);
+        if (regex.matcher(f).matches() ||
+          regex.matcher(path.getAbsolutePath()).matches())
+        {
           if (path.exists()) fileList.add(path.getAbsolutePath());
           else fileList.add(f);
         }
