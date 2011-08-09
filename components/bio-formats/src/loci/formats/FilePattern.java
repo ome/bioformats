@@ -456,6 +456,24 @@ public class FilePattern {
     return sb.toString();
   }
 
+  /**
+   * Generate a pattern from a list of file names.
+   * The pattern generated will be a regular expression.
+   */
+  public static String findPattern(String[] names) {
+    StringBuffer pattern = new StringBuffer();
+
+    for (int i=0; i<names.length; i++) {
+      pattern.append("(?:");
+      pattern.append(Pattern.quote(names[i]));
+      pattern.append(")");
+      if (i < names.length - 1) {
+        pattern.append("|");
+      }
+    }
+    return pattern.toString();
+  }
+
   public static String[] findSeriesPatterns(String base) {
     Location file = new Location(base).getAbsoluteFile();
     Location parent = file.getParentFile();
