@@ -301,12 +301,19 @@ public class FormatReaderTest {
         int fy = reader.getSizeY();
 
         if (c > 4 || type == FormatTools.FLOAT || type == FormatTools.DOUBLE ||
-          !TestTools.canFitInMemory(fx * fy * c * bytes))
+          !TestTools.canFitInMemory((long) fx * fy * c * bytes))
         {
           continue;
         }
 
-        BufferedImage b = reader.openThumbImage(0);
+        BufferedImage b = null;
+        try {
+          b = reader.openThumbImage(0);
+        }
+        catch (OutOfMemoryError e) {
+          result(testName, true, "Image too large");
+          return;
+        }
 
         int actualX = b.getWidth();
         boolean passX = x == actualX;
@@ -371,12 +378,19 @@ public class FormatReaderTest {
         int fy = reader.getSizeY();
 
         if (c > 4 || type == FormatTools.FLOAT || type == FormatTools.DOUBLE ||
-          !TestTools.canFitInMemory(fx * fy * c * bytes))
+          !TestTools.canFitInMemory((long) fx * fy * c * bytes * 20))
         {
           continue;
         }
 
-        byte[] b = reader.openThumbBytes(0);
+        byte[] b = null;
+        try {
+          b = reader.openThumbBytes(0);
+        }
+        catch (OutOfMemoryError e) {
+          result(testName, true, "Image too large");
+          return;
+        }
         success = b.length == expected;
         if (!success) {
           msg = "series #" + i + ": was " + b.length + ", expected " + expected;
@@ -1274,6 +1288,12 @@ public class FormatReaderTest {
             continue;
           }
 
+          // JPEG files that are part of a Trestle dataset can be detected
+          // separately
+          if (reader.getFormat().equals("Trestle")) {
+            continue;
+          }
+
           if (comp.length != base.length) {
             success = false;
             msg = base[i] + " (file list length was " + comp.length +
@@ -1350,7 +1370,7 @@ public class FormatReaderTest {
         reader.setSeries(i);
         config.setSeries(i);
 
-        int planeSize = FormatTools.getPlaneSize(reader);
+        long planeSize = FormatTools.getPlaneSize(reader);
         if (planeSize < 0 || !TestTools.canFitInMemory(planeSize)) {
           continue;
         }
