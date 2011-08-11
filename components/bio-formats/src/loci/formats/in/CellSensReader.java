@@ -77,6 +77,50 @@ public class CellSensReader extends FormatReader {
   private static final int FLOAT = 9;
   private static final int DOUBLE = 10;
 
+  // Simple field types
+  private static final int COMPLEX = 11;
+  private static final int BOOLEAN = 12;
+  private static final int TCHAR = 13;
+  private static final int DWORD = 14;
+  private static final int TIMESTAMP = 17;
+  private static final int DATE = 18;
+  private static final int INT_2 = 256;
+  private static final int INT_3 = 257;
+  private static final int INT_4 = 258;
+  private static final int INT_RECT = 259;
+  private static final int DOUBLE_2 = 260;
+  private static final int DOUBLE_3 = 261;
+  private static final int DOUBLE_4 = 262;
+  private static final int DOUBLE_RECT = 263;
+  private static final int DOUBLE_2_2 = 264;
+  private static final int DOUBLE_3_3 = 265;
+  private static final int DOUBLE_4_4 = 266;
+  private static final int INT_INTERVAL = 267;
+  private static final int DOUBLE_INTERVAL = 268;
+  private static final int RGB = 269;
+  private static final int BGR = 270;
+  private static final int FIELD_TYPE = 271;
+  private static final int MEM_MODEL = 272;
+  private static final int COLOR_SPACE = 273;
+  private static final int INT_ARRAY_2 = 274;
+  private static final int INT_ARRAY_3 = 275;
+  private static final int INT_ARRAY_4 = 276;
+  private static final int INT_ARRAY_5 = 277;
+  private static final int DOUBLE_ARRAY_2 = 279;
+  private static final int DOUBLE_ARRAY_3 = 280;
+  private static final int UNICODE_TCHAR = 8192;
+  private static final int DIM_INDEX_1 = 8195;
+  private static final int DIM_INDEX_2 = 8199;
+  private static final int VOLUME_INDEX = 8200;
+  private static final int PIXEL_INFO_TYPE = 8470;
+
+  // Extended field types
+  private static final int NEW_VOLUME_HEADER = 0;
+  private static final int PROPERTY_SET_VOLUME = 1;
+  private static final int NEW_MDIM_VOLUME_HEADER = 2;
+  private static final int TIFF_IFD = 10;
+  private static final int VECTOR_DATA = 11;
+
   // -- Fields --
 
   private String[] usedFiles;
@@ -93,6 +137,12 @@ public class CellSensReader extends FormatReader {
 
   private HashMap<TileCoordinate, Integer>[] tileMap;
   private int[] nDimensions;
+  private boolean inDimensionProperties = false;
+  private boolean foundChannelTag = false;
+  private int dimensionTag;
+
+  private HashMap<String, Integer> dimensionOrdering =
+    new HashMap<String, Integer>();
 
   // -- Constructor --
 
@@ -210,6 +260,9 @@ public class CellSensReader extends FormatReader {
       tileY = null;
       tileMap = null;
       nDimensions = null;
+      inDimensionProperties = false;
+      foundChannelTag = false;
+      dimensionTag = 0;
     }
   }
 
@@ -224,6 +277,8 @@ public class CellSensReader extends FormatReader {
 
     RandomAccessInputStream vsi = new RandomAccessInputStream(id);
     vsi.order(parser.getStream().isLittleEndian());
+    vsi.seek(8);
+    readTags(vsi);
     vsi.seek(parser.getStream().getFilePointer());
 
     vsi.skipBytes(273);
@@ -299,8 +354,8 @@ public class CellSensReader extends FormatReader {
         core[s].falseColor = false;
         core[s].thumbnail = s != 0;
       }
-      core[s].dimensionOrder = "XYCZT";
       core[s].metadataComplete = true;
+      core[s].dimensionOrder = "XYCZT";
     }
     vsi.close();
 
@@ -328,16 +383,17 @@ public class CellSensReader extends FormatReader {
     t.coordinate[0] = col;
     t.coordinate[1] = row;
 
-    if (t.coordinate.length > 3) {
-      t.coordinate[2] = t.coordinate.length > 5 ? zct[2] :
-        t.coordinate.length > 4 ? zct[0] : zct[1];
+    for (String dim : dimensionOrdering.keySet()) {
+      int index = dimensionOrdering.get(dim) + 2;
 
-      if (t.coordinate.length > 4) {
-        t.coordinate[3] = t.coordinate.length > 5 ? zct[0] : zct[1];
+      if (dim.equals("Z")) {
+        t.coordinate[index] = zct[0];
       }
-
-      if (t.coordinate.length > 5) {
-        t.coordinate[4] = zct[1];
+      else if (dim.equals("C")) {
+        t.coordinate[index] = zct[1];
+      }
+      else if (dim.equals("T")) {
+        t.coordinate[index] = zct[2];
       }
     }
 
@@ -477,11 +533,13 @@ public class CellSensReader extends FormatReader {
     int maxT = 0;
 
     for (TileCoordinate t : tmpTiles) {
-      int tIndex = t.coordinate.length > 5 ? 2 : -1;
-      int zIndex = t.coordinate.length > 5 ? 3 :
-        t.coordinate.length > 4 ? 2 : -1;
-      int cIndex = t.coordinate.length > 5 ? 4 : t.coordinate.length > 4 ? 3 :
-        t.coordinate.length > 3 ? 2 : -1;
+      Integer tv = dimensionOrdering.get("T");
+      Integer zv = dimensionOrdering.get("Z");
+      Integer cv = dimensionOrdering.get("C");
+
+      int tIndex = tv == null ? -1 : tv + 2;
+      int zIndex = zv == null ? -1 : zv + 2;
+      int cIndex = cv == null ? -1 : cv + 2;
 
       if (t.coordinate[0] > maxX) {
         maxX = t.coordinate[0];
@@ -499,7 +557,6 @@ public class CellSensReader extends FormatReader {
       if (cIndex >= 0 && t.coordinate[cIndex] > maxC) {
         maxC = t.coordinate[cIndex];
       }
-
     }
 
     core[s].sizeX = tileX[s] * (maxX + 1);
@@ -555,6 +612,98 @@ public class CellSensReader extends FormatReader {
     }
   }
 
+  private void readTags(RandomAccessInputStream vsi) throws IOException {
+    // read the VSI header
+    long fp = vsi.getFilePointer();
+    int headerSize = vsi.readShort(); // should always be 24
+    int version = vsi.readShort(); // always 21321
+    int volumeVersion = vsi.readInt();
+    long dataFieldOffset = vsi.readLong();
+    int flags = vsi.readInt();
+    vsi.skipBytes(4);
+
+    int tagCount = flags & 0xfffffff;
+
+    vsi.seek(fp + dataFieldOffset);
+    if (vsi.getFilePointer() >= vsi.length()) {
+      return;
+    }
+
+    for (int i=0; i<tagCount; i++) {
+      // read the data field
+
+      int fieldType = vsi.readInt();
+      int tag = vsi.readInt();
+      int nextField = vsi.readInt();
+      int dataSize = vsi.readInt();
+
+      boolean extraTag = ((fieldType & 0x8000000) >> 27) == 1;
+      boolean extendedField = ((fieldType & 0x10000000) >> 28) == 1;
+      boolean inlineData = ((fieldType & 0x40000000) >> 30) == 1;
+      boolean array = (!inlineData && !extendedField) &&
+        ((fieldType & 0x20000000) >> 29) == 1;
+      boolean newVolume = ((fieldType & 0x80000000) >> 31) == 1;
+
+      int realType = fieldType & 0xffffff;
+      int secondTag = -1;
+
+      if (extraTag) {
+        secondTag = vsi.readInt();
+      }
+
+      if (extendedField && realType == NEW_VOLUME_HEADER) {
+        if (tag == 2007) {
+          dimensionTag = secondTag;
+          inDimensionProperties = true;
+        }
+        long endPointer = vsi.getFilePointer() + dataSize;
+        while (vsi.getFilePointer() < endPointer &&
+          vsi.getFilePointer() < vsi.length())
+        {
+          long start = vsi.getFilePointer();
+          readTags(vsi);
+          long end = vsi.getFilePointer();
+          if (start == end) {
+            break;
+          }
+        }
+        if (tag == 2007) {
+          inDimensionProperties = false;
+          foundChannelTag = false;
+        }
+      }
+
+      if (inDimensionProperties) {
+        if (tag == 2012 && !dimensionOrdering.containsValue(dimensionTag)) {
+          dimensionOrdering.put("Z", dimensionTag);
+        }
+        else if ((tag == 2100 || tag == 2027) &&
+          !dimensionOrdering.containsValue(dimensionTag))
+        {
+          dimensionOrdering.put("T", dimensionTag);
+        }
+        else if (tag == 2039 && !dimensionOrdering.containsValue(dimensionTag))
+        {
+          dimensionOrdering.put("L", dimensionTag);
+        }
+        else if (tag == 2008 && foundChannelTag &&
+          !dimensionOrdering.containsValue(dimensionTag))
+        {
+          dimensionOrdering.put("C", dimensionTag);
+        }
+        else if (tag == 2008) {
+          foundChannelTag = true;
+        }
+      }
+
+      if (nextField == 0) {
+        return;
+      }
+
+      vsi.seek(fp + nextField);
+    }
+  }
+
   // -- Helper class --
 
   class TileCoordinate {
@@ -587,15 +736,18 @@ public class CellSensReader extends FormatReader {
       lengths[0] = rows[getSeries()];
       lengths[1] = cols[getSeries()];
 
-      if (coordinate.length > 2) {
-        lengths[2] = coordinate.length > 5 ? getSizeT() :
-          coordinate.length > 4 ? getSizeZ() : getEffectiveSizeC();
-      }
-      if (coordinate.length > 3) {
-        lengths[3] = coordinate.length > 5 ? getSizeZ() : getEffectiveSizeC();
-      }
-      if (coordinate.length > 4) {
-        lengths[4] = getEffectiveSizeC();
+      for (String dim : dimensionOrdering.keySet()) {
+        int index = dimensionOrdering.get(dim) + 2;
+
+        if (dim.equals("Z")) {
+          lengths[index] = getSizeZ();
+        }
+        else if (dim.equals("C")) {
+          lengths[index] = getEffectiveSizeC();
+        }
+        else if (dim.equals("T")) {
+          lengths[index] = getSizeT();
+        }
       }
 
       for (int i=0; i<lengths.length; i++) {
