@@ -505,7 +505,6 @@ public class FileStitcher extends ReaderWrapper {
       core = null;
       series = 0;
       store = null;
-      patternIds = false;
     }
   }
 
@@ -733,7 +732,13 @@ public class FileStitcher extends ReaderWrapper {
     LOGGER.debug("initFile: {}", id);
 
     FilePattern fp = new FilePattern(id);
-    if (!patternIds) patternIds = fp.isValid() && fp.getFiles().length > 1;
+    if (!patternIds) {
+      patternIds = fp.isValid() && fp.getFiles().length > 1;
+    }
+    else {
+      patternIds =
+        !new Location(id).exists() && Location.getMappedId(id).equals(id);
+    }
 
     boolean mustGroup = false;
     if (patternIds) {

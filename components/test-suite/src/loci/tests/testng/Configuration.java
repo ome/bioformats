@@ -355,7 +355,7 @@ public class Configuration {
     globalTable.put(TEST, "true");
     globalTable.put(MEMORY, String.valueOf(TestTools.getUsedMemory()));
 
-    int planeSize = FormatTools.getPlaneSize(reader) * 3;
+    long planeSize = (long) FormatTools.getPlaneSize(reader) * 3;
     boolean canOpenImages =
       planeSize > 0 && TestTools.canFitInMemory(planeSize);
 
@@ -399,7 +399,7 @@ public class Configuration {
       seriesTable.put(CHANNEL_COUNT,
         String.valueOf(retrieve.getChannelCount(series)));
 
-      planeSize = FormatTools.getPlaneSize(reader);
+      planeSize = (long) FormatTools.getPlaneSize(reader);
       canOpenImages = planeSize > 0 && TestTools.canFitInMemory(planeSize);
 
       if (canOpenImages) {
