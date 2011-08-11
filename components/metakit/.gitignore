@@ -2,4 +2,5 @@
 .project
 .settings
 build
+build-eclipse
 target
