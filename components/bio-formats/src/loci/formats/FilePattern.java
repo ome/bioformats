@@ -467,7 +467,7 @@ public class FilePattern {
       names[0].substring(0, names[0].lastIndexOf(File.separator) + 1);
 
     StringBuffer pattern = new StringBuffer();
-    pattern.append(dir);
+    pattern.append(Pattern.quote(dir));
 
     for (int i=0; i<names.length; i++) {
       pattern.append("(?:");
@@ -610,23 +610,36 @@ public class FilePattern {
       isRegex = true;
 
       String[] files = null;
-      int end = pattern.lastIndexOf(File.separator) + 1;
-      String dir = pattern.substring(0, end);
+      String dir;
+
+      int endRegex = pattern.indexOf(File.separator + "\\E") + 1;
+      int endNotRegex = pattern.lastIndexOf(File.separator) + 1;
+      int end;
+
+      //Check if an escaped path has been defined as part of the regex.
+      if (pattern.startsWith("\\Q") && endRegex > 0 && endRegex <= endNotRegex)
+      {
+        dir = pattern.substring(2, endRegex);
+        end = endRegex + 2;
+      }
+      else {
+        dir = pattern.substring(0, endNotRegex);
+        end = endNotRegex;
+      }
       if (dir.equals("") || !new Location(dir).exists()) {
         files = Location.getIdMap().keySet().toArray(new String[0]);
         if (files.length == 0) {
           dir = ".";
-          files = new Location(dir).list(true);
+          files = new Location(dir).list();
         }
       }
       else {
-        files = new Location(dir).list(true);
+        files = new Location(dir).list();
       }
 
       Arrays.sort(files);
 
-      String basePattern =
-        pattern.substring(pattern.lastIndexOf(File.separator) + 1);
+      String basePattern = pattern.substring(end);
       Pattern regex = null;
       try {
         regex = Pattern.compile(basePattern);
