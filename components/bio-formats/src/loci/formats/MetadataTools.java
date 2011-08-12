@@ -324,9 +324,9 @@ public final class MetadataTools {
   public static void setDefaultCreationDate(MetadataStore store, String id,
     int series)
   {
-    Location file = new Location(id).getAbsoluteFile();
+    Location file = id == null ? null : new Location(id).getAbsoluteFile();
     long time = System.currentTimeMillis();
-    if (file.exists()) time = file.lastModified();
+    if (file != null && file.exists()) time = file.lastModified();
     store.setImageAcquiredDate(DateTools.convertDate(time, DateTools.UNIX),
       series);
   }
