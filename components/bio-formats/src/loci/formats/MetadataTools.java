@@ -173,6 +173,66 @@ public final class MetadataTools {
   }
 
   /**
+   * Populates the given {@link MetadataStore}, for the specified series, using
+   * the values from the provided {@link CoreMetadata}.
+   * <p>
+   * After calling this method, the metadata store will be sufficiently
+   * populated for use with an {@link IFormatWriter} (assuming it is also a
+   * {@link MetadataRetrieve}).
+   * </p>
+   *
+   * @throws EnumerationException if the dimensionOrder string is invalid.
+   */
+  public static void populateMetadata(MetadataStore store, int series,
+    String imageName, CoreMetadata coreMeta) throws EnumerationException
+  {
+    final String pixelType = FormatTools.getPixelTypeString(coreMeta.pixelType);
+    final int effSizeC = coreMeta.imageCount / coreMeta.sizeZ / coreMeta.sizeT;
+    final int samplesPerPixel = coreMeta.sizeC / effSizeC;
+    populateMetadata(store, series, imageName, coreMeta.littleEndian,
+      coreMeta.dimensionOrder, pixelType, coreMeta.sizeX, coreMeta.sizeY,
+      coreMeta.sizeZ, coreMeta.sizeC, coreMeta.sizeT, samplesPerPixel);
+  }
+
+  /**
+   * Populates the given {@link MetadataStore}, for the specified series, using
+   * the provided values.
+   * <p>
+   * After calling this method, the metadata store will be sufficiently
+   * populated for use with an {@link IFormatWriter} (assuming it is also a
+   * {@link MetadataRetrieve}).
+   * </p>
+   *
+   * @throws EnumerationException if the dimensionOrder or pixelType values are
+   *           invalid.
+   */
+  public static void populateMetadata(MetadataStore store, int series,
+    String imageName, boolean littleEndian, String dimensionOrder,
+    String pixelType, int sizeX, int sizeY, int sizeZ, int sizeC, int sizeT,
+    int samplesPerPixel) throws EnumerationException
+  {
+    store.setImageID(createLSID("Image", series), series);
+    if (imageName != null) store.setImageName(imageName, series);
+    store.setPixelsID(createLSID("Pixels", series), series);
+    store.setPixelsBinDataBigEndian(!littleEndian, series, 0);
+    store.setPixelsDimensionOrder(
+      DimensionOrder.fromString(dimensionOrder), series);
+    store.setPixelsType(PixelType.fromString(pixelType), series);
+    store.setPixelsSizeX(new PositiveInteger(sizeX), series);
+    store.setPixelsSizeY(new PositiveInteger(sizeY), series);
+    store.setPixelsSizeZ(new PositiveInteger(sizeZ), series);
+    store.setPixelsSizeC(new PositiveInteger(sizeC), series);
+    store.setPixelsSizeT(new PositiveInteger(sizeT), series);
+    int effSizeC = sizeC / samplesPerPixel;
+    for (int i=0; i<effSizeC; i++) {
+      store.setChannelID(createLSID("Channel", series, i),
+        series, i);
+      store.setChannelSamplesPerPixel(new PositiveInteger(samplesPerPixel),
+        series, i);
+    }
+  }
+
+  /**
    * Constructs an LSID, given the object type and indices.
    * For example, if the arguments are "Detector", 1, and 0, the LSID will
    * be "Detector:1:0".
