@@ -1,3 +1,4 @@
 .settings/org.maven.ide.eclipse.prefs
 build
+build-eclipse
 target
