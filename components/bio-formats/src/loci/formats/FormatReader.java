@@ -169,8 +169,8 @@ public abstract class FormatReader extends FormatHandler
     // string value, if passed in value is a string
     String val = string ? String.valueOf(value) : null;
 
-    if (filterMetadata ||
-      (saveOriginalMetadata && (getMetadataStore() instanceof OMEXMLMetadata)))
+    if (filterMetadata || (saveOriginalMetadata &&
+      MetadataTools.isOMEXMLMetadata(getMetadataStore())))
     {
       // filter out complex data types
       if (!simple) return;

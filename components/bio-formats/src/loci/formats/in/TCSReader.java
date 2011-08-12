@@ -272,22 +272,13 @@ public class TCSReader extends FormatReader {
 
     FilePattern fp = new FilePattern(new Location(currentId).getAbsoluteFile());
     AxisGuesser guesser = new AxisGuesser(fp, "XYTZC", 1, ifds.size(), 1, true);
-    BigInteger[] first = fp.getFirst();
-    BigInteger[] last = fp.getLast();
-    BigInteger[] step = fp.getStep();
 
-    int[] axisTypes = guesser.getAxisTypes();
     core[0].sizeZ = 1;
     core[0].sizeC = tiffReaders[0].getSizeC();
 
     core[0].dimensionOrder = isRGB() ? "XYC" : "XY";
 
     if (isGroupFiles()) {
-      FilePattern fp =
-        new FilePattern(new Location(currentId).getAbsoluteFile());
-      AxisGuesser guesser =
-        new AxisGuesser(fp, "XYTZC", 1, ifds.size(), 1, true);
-
       int[] axisTypes = guesser.getAxisTypes();
       int[] count = fp.getCount();
 
@@ -304,7 +295,6 @@ public class TCSReader extends FormatReader {
           }
           core[0].sizeC *= count[i];
         }
-        core[0].sizeC *= size;
       }
     }
 

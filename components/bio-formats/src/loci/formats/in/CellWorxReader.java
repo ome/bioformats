@@ -40,10 +40,8 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.MetadataTools;
+import loci.formats.meta.FilterMetadata;
 import loci.formats.meta.MetadataStore;
-
-import ome.xml.model.primitives.NonNegativeInteger;
-import ome.xml.model.primitives.PositiveInteger;
 
 /**
  * CellWorxReader is the file format reader for CellWorx .pnl files.
@@ -187,7 +185,7 @@ public class CellWorxReader extends FormatReader {
     // first, make sure that we have the .htd file
 
     if (!checkSuffix(id, "htd")) {
-      LOGGER.info("Searching for .htd file");
+      status("Searching for .htd file");
       String base = new Location(id).getAbsolutePath();
       base = base.substring(0, base.lastIndexOf("_"));
       id = base + ".HTD";
@@ -198,7 +196,7 @@ public class CellWorxReader extends FormatReader {
         for (String f : list) {
           if (checkSuffix(f, "htd")) {
             id = new Location(parent, f).getAbsolutePath();
-            LOGGER.info("Found .htd file {}", f);
+            status("Found .htd file " + f);
             break;
           }
         }
@@ -333,7 +331,8 @@ public class CellWorxReader extends FormatReader {
       core[i].interleaved = pnl.isInterleaved();
     }
 
-    MetadataStore store = makeFilterMetadata();
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     MetadataTools.populatePixels(store, this);
 
     String plateID = MetadataTools.createLSID("Plate", 0);
@@ -346,20 +345,15 @@ public class CellWorxReader extends FormatReader {
       store.setImageID(MetadataTools.createLSID("Image", i), i);
     }
 
-    store.setPlateAcquisitionID(
-      MetadataTools.createLSID("PlateAcquisition", 0, 0), 0, 0);
     int fieldCount = fieldMap[0].length * fieldMap.length;
-    store.setPlateAcquisitionMaximumFieldCount(
-      new PositiveInteger(fieldCount), 0, 0);
-
     int nextImage = 0;
     for (int row=0; row<wellFiles.length; row++) {
       for (int col=0; col<wellFiles[row].length; col++) {
         int wellIndex = row * wellFiles[row].length + col;
         String wellID = MetadataTools.createLSID("Well", 0, wellIndex);
         store.setWellID(wellID, 0, wellIndex);
-        store.setWellColumn(new NonNegativeInteger(col), 0, wellIndex);
-        store.setWellRow(new NonNegativeInteger(row), 0, wellIndex);
+        store.setWellColumn(col, 0, wellIndex);
+        store.setWellRow(row, 0, wellIndex);
 
         for (int fieldRow=0; fieldRow<fieldMap.length; fieldRow++) {
           for (int fieldCol=0; fieldCol<fieldMap[fieldRow].length; fieldCol++) {
@@ -371,11 +365,8 @@ public class CellWorxReader extends FormatReader {
               store.setWellSampleID(wellSampleID, 0, wellIndex, fieldIndex);
               String imageID = MetadataTools.createLSID("Image", nextImage);
               store.setWellSampleImageRef(imageID, 0, wellIndex, fieldIndex);
-              store.setWellSampleIndex(new NonNegativeInteger(
-                wellIndex * fieldCount + fieldIndex), 0, wellIndex, fieldIndex);
-
-              store.setPlateAcquisitionWellSampleRef(
-                wellSampleID, 0, 0, nextImage);
+              store.setWellSampleIndex(
+                wellIndex * fieldCount + fieldIndex, 0, wellIndex, fieldIndex);
 
               String well = (char) (row + 'A') + String.format("%02d", col + 1);
               store.setImageName(
@@ -387,19 +378,17 @@ public class CellWorxReader extends FormatReader {
       }
     }
 
-    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      if (serialNumber != null) {
-        store.setMicroscopeSerialNumber(serialNumber, 0);
-      }
+    if (serialNumber != null) {
+      store.setMicroscopeSerialNumber(serialNumber, 0);
+    }
 
-      for (int well=0; well<wellCount; well++) {
-        parseWellLogFile(well, store);
-      }
-      for (int i=0; i<core.length; i++) {
-        for (int c=0; c<getSizeC(); c++) {
-          if (c < wavelengths.length) {
-            store.setChannelName(wavelengths[c], i, c);
-          }
+    for (int well=0; well<wellCount; well++) {
+      parseWellLogFile(well, store);
+    }
+    for (int i=0; i<core.length; i++) {
+      for (int c=0; c<getSizeC(); c++) {
+        if (c < wavelengths.length) {
+          store.setLogicalChannelName(wavelengths[c], i, c);
         }
       }
     }
@@ -449,7 +438,7 @@ public class CellWorxReader extends FormatReader {
     if (!new Location(logFile).exists()) {
       return;
     }
-    LOGGER.debug("Parsing log file for well {}{}", (char) (row + 'A'), col + 1);
+    debug("Parsing log file for well " + (char) (row + 'A') + (col + 1));
 
     int oldSeries = getSeries();
     setSeries(seriesIndex);
@@ -468,7 +457,7 @@ public class CellWorxReader extends FormatReader {
       if (key.equals("Date")) {
         String date = DateTools.formatDate(value, DATE_FORMAT);
         for (int field=0; field<fieldCount; field++) {
-          store.setImageAcquiredDate(date, seriesIndex + field);
+          store.setImageCreationDate(date, seriesIndex + field);
         }
       }
       else if (key.equals("Scan Origin")) {
@@ -477,8 +466,8 @@ public class CellWorxReader extends FormatReader {
           for (int fieldCol=0; fieldCol<fieldMap[fieldRow].length; fieldCol++) {
             if (fieldMap[fieldRow][fieldCol] && wellFiles[row][col] != null) {
               int field = fieldRow * fieldMap[fieldRow].length + fieldCol;
-              store.setWellSamplePositionX(new Double(axes[0]), 0, well, field);
-              store.setWellSamplePositionY(new Double(axes[1]), 0, well, field);
+              store.setWellSamplePosX(new Float(axes[0]), 0, well, field);
+              store.setWellSamplePosY(new Float(axes[1]), 0, well, field);
             }
           }
         }
@@ -487,12 +476,12 @@ public class CellWorxReader extends FormatReader {
         int s = value.indexOf("x");
         if (s > 0) {
           int end = value.indexOf(" ", s + 2);
-          Double xSize = new Double(value.substring(0, s).trim());
-          Double ySize = new Double(value.substring(s + 1, end).trim());
+          Float xSize = new Float(value.substring(0, s).trim());
+          Float ySize = new Float(value.substring(s + 1, end).trim());
           for (int field=0; field<fieldCount; field++) {
             int index = seriesIndex + field;
-            store.setPixelsPhysicalSizeX(xSize / getSizeX(), index);
-            store.setPixelsPhysicalSizeY(ySize / getSizeY(), index);
+            store.setDimensionsPhysicalSizeX(xSize / getSizeX(), index, 0);
+            store.setDimensionsPhysicalSizeY(ySize / getSizeY(), index, 0);
           }
         }
       }
@@ -507,7 +496,7 @@ public class CellWorxReader extends FormatReader {
           token = token.trim();
           if (token.startsWith("gain")) {
             String instrumentID = MetadataTools.createLSID("Instrument", 0);
-            Double gain = new Double(token.replaceAll("gain ", ""));
+            Float gain = new Float(token.replaceAll("gain ", ""));
             String detectorID = MetadataTools.createLSID("Detector", 0, 0);
 
             store.setInstrumentID(instrumentID, 0);
@@ -516,7 +505,7 @@ public class CellWorxReader extends FormatReader {
             for (int field=0; field<fieldCount; field++) {
               store.setImageInstrumentRef(instrumentID, seriesIndex + field);
               store.setDetectorSettingsGain(gain, seriesIndex + field, index);
-              store.setDetectorSettingsID(detectorID,
+              store.setDetectorSettingsDetector(detectorID,
                 seriesIndex + field, index);
             }
           }
@@ -532,15 +521,6 @@ public class CellWorxReader extends FormatReader {
                 if (em.indexOf(" ") > 0) {
                   em = em.substring(0, em.indexOf(" "));
                 }
-              }
-
-              PositiveInteger exWave = new PositiveInteger(new Integer(ex));
-              PositiveInteger emWave = new PositiveInteger(new Integer(em));
-              for (int field=0; field<fieldCount; field++) {
-                store.setChannelExcitationWavelength(
-                  exWave, seriesIndex + field, index);
-                store.setChannelEmissionWavelength(
-                  emWave, seriesIndex + field, index);
               }
             }
           }
@@ -558,8 +538,7 @@ public class CellWorxReader extends FormatReader {
     if (checkSuffix(file, "tif")) {
       pnl = new FileStitcher();
 
-      ClassList<IFormatReader> classList =
-        new ClassList<IFormatReader>(IFormatReader.class);
+      ClassList classList = new ClassList(IFormatReader.class);
       classList.addClass(MinimalTiffReader.class);
 
       ((FileStitcher) pnl).setReaderClassList(classList);

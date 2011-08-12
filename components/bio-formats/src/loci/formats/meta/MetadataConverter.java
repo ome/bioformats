@@ -67,13 +67,6 @@ public final class MetadataConverter {
       if (datasetIDValue != null) dest.setDatasetID(datasetIDValue, datasetIndex);
     } catch (NullPointerException e) { }
     try {
-      for (int annotationRefIndex=0; annotationRefIndex<src.getDatasetAnnotationRefCount(datasetIndex); annotationRefIndex++)
-      {
-        String datasetAnnotationRefValue = src.getDatasetAnnotationRef(datasetIndex, annotationRefIndex);
-        if (datasetAnnotationRefValue != null) dest.setDatasetAnnotationRef(datasetAnnotationRefValue, datasetIndex, annotationRefIndex);
-      } 
-    } catch (NullPointerException e) { }
-    try {
       String datasetDescriptionValue = src.getDatasetDescription(datasetIndex);
       if (datasetDescriptionValue != null) dest.setDatasetDescription(datasetDescriptionValue, datasetIndex);
       String datasetExperimenterRefValue = src.getDatasetExperimenterRef(datasetIndex);
@@ -89,6 +82,8 @@ public final class MetadataConverter {
         String projectRefIDValue = src.getProjectRefID(datasetIndex, projectRefIndex);
         if (projectRefIDValue != null) dest.setProjectRefID(projectRefIDValue, datasetIndex, projectRefIndex);
       }
+    }
+    catch (NullPointerException e) { }
     }
     int experimentCount = src.getExperimentCount();
     for (int experimentIndex=0; experimentIndex<experimentCount; experimentIndex++) {
@@ -157,11 +152,6 @@ public final class MetadataConverter {
       if (imageInstrumentRefValue != null) dest.setImageInstrumentRef(imageInstrumentRefValue, imageIndex);
       String imageNameValue = src.getImageName(imageIndex);
       if (imageNameValue != null) dest.setImageName(imageNameValue, imageIndex);
-      int datasetRefCount = src.getDatasetRefCount(imageIndex);
-      for (int datasetRefIndex=0; datasetRefIndex<datasetRefCount; datasetRefIndex++) {
-        String datasetRefIDValue = src.getDatasetRefID(imageIndex, datasetRefIndex);
-        if (datasetRefIDValue != null) dest.setDatasetRefID(datasetRefIDValue, imageIndex, datasetRefIndex);
-      }
         String displayOptionsDisplayValue = src.getDisplayOptionsDisplay(imageIndex);
         if (displayOptionsDisplayValue != null) dest.setDisplayOptionsDisplay(displayOptionsDisplayValue, imageIndex);
         String displayOptionsIDValue = src.getDisplayOptionsID(imageIndex);
@@ -816,14 +806,6 @@ public final class MetadataConverter {
       if (projectIDValue != null) dest.setProjectID(projectIDValue, projectIndex);
     } catch (NullPointerException e) { }
     try {
-      int annotationRefCount = src.getProjectAnnotationRefCount(projectIndex);
-      for (int annotationRefIndex=0; annotationRefIndex<annotationRefCount; annotationRefIndex++)
-      {
-        String projectAnnotationRefValue = src.getProjectAnnotationRef(projectIndex, annotationRefIndex);
-        if (projectAnnotationRefValue != null) dest.setProjectAnnotationRef(projectAnnotationRefValue, projectIndex, annotationRefIndex);
-      }
-    } catch (NullPointerException e) { }
-    try {
       String projectDescriptionValue = src.getProjectDescription(projectIndex);
       if (projectDescriptionValue != null) dest.setProjectDescription(projectDescriptionValue, projectIndex);
       String projectExperimenterRefValue = src.getProjectExperimenterRef(projectIndex);
@@ -834,6 +816,8 @@ public final class MetadataConverter {
     try {
       String projectNameValue = src.getProjectName(projectIndex);
       if (projectNameValue != null) dest.setProjectName(projectNameValue, projectIndex);
+    }
+    catch (NullPointerException e) { }
     }
     int screenCount = src.getScreenCount();
     for (int screenIndex=0; screenIndex<screenCount; screenIndex++) {

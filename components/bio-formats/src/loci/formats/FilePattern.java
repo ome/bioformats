@@ -25,8 +25,10 @@ package loci.formats;
 
 import java.io.File;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -443,15 +445,10 @@ public class FilePattern {
   public static String[] findSeriesPatterns(String base, String dir,
     String[] nameList)
   {
-<<<<<<< HEAD
-    String baseSuffix = new Location(base).getName();
-    baseSuffix = baseSuffix.substring(baseSuffix.indexOf(".") + 1);
-=======
     String baseSuffix = base.substring(base.lastIndexOf(File.separator) + 1);
     int dot = baseSuffix.indexOf(".");
     if (dot < 0) baseSuffix = "";
     else baseSuffix = baseSuffix.substring(dot + 1);
->>>>>>> 79a11c9... * Fixed various file stitching bugs.
 
     ArrayList<String> patterns = new ArrayList<String>();
     int[] exclude = new int[] {AxisGuesser.S_AXIS};
@@ -578,8 +575,9 @@ public class FilePattern {
       Pattern regex = Pattern.compile(pattern);
 
       for (String f : files) {
-        if (regex.matcher(f).matches()) {
-          fileList.add(new Location(dir, f).getAbsolutePath());
+        String file = new Location(dir, f).getAbsolutePath();
+        if (regex.matcher(f).matches() || regex.matcher(file).matches()) {
+          fileList.add(file);
         }
       }
     }

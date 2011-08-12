@@ -26,9 +26,11 @@ package loci.formats;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Vector;
 
 import loci.common.Location;
@@ -72,7 +74,7 @@ public class FileStitcher extends ReaderWrapper {
   private MetadataStore store;
 
   private ExternalSeries[] externals;
-  private ClassList<IFormatReader> classList;
+  private ClassList classList;
 
   // -- Constructors --
 
@@ -110,7 +112,7 @@ public class FileStitcher extends ReaderWrapper {
   /**
    * Set the ClassList object to use when constructing any helper readers.
    */
-  public void setReaderClassList(ClassList<IFormatReader> classList) {
+  public void setReaderClassList(ClassList classList) {
     this.classList = classList;
   }
 
@@ -284,13 +286,13 @@ public class FileStitcher extends ReaderWrapper {
 
   /* @see IFormatReader#getEffectiveSizeC() */
   public int getEffectiveSizeC() {
-    FormatTools.assertId(currentId, true, 2);
+    FormatTools.assertId(reader.getCurrentFile(), true, 2);
     return getImageCount() / (getSizeZ() * getSizeT());
   }
 
   /* @see IFormatReader#getRGBChannelCount() */
   public int getRGBChannelCount() {
-    FormatTools.assertId(currentId, true, 2);
+    FormatTools.assertId(reader.getCurrentFile(), true, 2);
     return getSizeC() / getEffectiveSizeC();
   }
 
@@ -485,7 +487,6 @@ public class FileStitcher extends ReaderWrapper {
       core = null;
       series = 0;
       store = null;
-      patternIds = false;
     }
   }
 
@@ -664,25 +665,25 @@ public class FileStitcher extends ReaderWrapper {
 
   /* @see IFormatReader#getMetadataValue(String) */
   public Object getMetadataValue(String field) {
-    FormatTools.assertId(currentId, true, 2);
+    FormatTools.assertId(reader.getCurrentFile(), true, 2);
     return reader.getMetadataValue(field);
   }
 
   /* @see IFormatReader#getGlobalMetadata() */
   public Hashtable getGlobalMetadata() {
-    FormatTools.assertId(currentId, true, 2);
+    FormatTools.assertId(reader.getCurrentFile(), true, 2);
     return reader.getGlobalMetadata();
   }
 
   /* @see IFormatReader#getSeriesMetadata() */
   public Hashtable getSeriesMetadata() {
-    FormatTools.assertId(currentId, true, 2);
+    FormatTools.assertId(reader.getCurrentFile(), true, 2);
     return reader.getSeriesMetadata();
   }
 
   /** @deprecated */
   public Hashtable getMetadata() {
-    FormatTools.assertId(currentId, true ,2);
+    FormatTools.assertId(reader.getCurrentFile(), true ,2);
     return reader.getMetadata();
   }
 
@@ -719,7 +720,7 @@ public class FileStitcher extends ReaderWrapper {
         list.add(r);
       }
     }
-    return (IFormatReader[]) v.toArray(new IFormatReader[0]);
+    return (IFormatReader[]) list.toArray(new IFormatReader[0]);
   }
 
   /* @see IFormatReader#isSingleFile(String) */
@@ -748,7 +749,7 @@ public class FileStitcher extends ReaderWrapper {
 
   /* @see IFormatHandler#getFormat() */
   public String getFormat() {
-    FormatTools.assertId(currentId, true, 2);
+    FormatTools.assertId(reader.getCurrentFile(), true, 2);
     return reader.getFormat();
   }
 
@@ -759,7 +760,7 @@ public class FileStitcher extends ReaderWrapper {
 
   /* @see IFormatHandler#getNativeDataType() */
   public Class getNativeDataType() {
-    FormatTools.assertId(currentId, true, 2);
+    FormatTools.assertId(reader.getCurrentFile(), true, 2);
     return reader.getNativeDataType();
   }
 
@@ -769,34 +770,7 @@ public class FileStitcher extends ReaderWrapper {
     initFile(id);
   }
 
-  /* @see IFormatHandler#close() */
-  public void close() throws IOException { close(false); }
-
   // -- StatusReporter API methods --
-
-  /* @see IFormatHandler#addStatusListener(StatusListener) */
-  public void addStatusListener(StatusListener l) {
-    if (readers == null) reader.addStatusListener(l);
-    else {
-      for (int i=0; i<readers.length; i++) {
-        for (int j=0; j<readers[i].length; j++) {
-          readers[i][j].addStatusListener(l);
-        }
-      }
-    }
-  }
-
-  /* @see IFormatHandler#removeStatusListener(StatusListener) */
-  public void removeStatusListener(StatusListener l) {
-    if (readers == null) reader.removeStatusListener(l);
-    else {
-      for (int i=0; i<readers.length; i++) {
-        for (int j=0; j<readers[i].length; j++) {
-          readers[i][j].removeStatusListener(l);
-        }
-      }
-    }
-  }
 
   /* @see IFormatHandler#getStatusListeners() */
   public StatusListener[] getStatusListeners() {
@@ -811,6 +785,8 @@ public class FileStitcher extends ReaderWrapper {
 
     FilePattern fp = new FilePattern(id);
     if (!patternIds) patternIds = fp.isValid() && fp.getFiles().length > 1;
+
+    /* debug */ System.out.println("id = " + id);
 
     boolean mustGroup = false;
     if (patternIds) {
@@ -941,7 +917,6 @@ public class FileStitcher extends ReaderWrapper {
       core[i].seriesMetadata = rr.getSeriesMetadata();
       core[i].indexed = rr.isIndexed();
       core[i].falseColor = rr.isFalseColor();
-      core[i].bitsPerPixel = rr.getBitsPerPixel();
       sizeZ[i] = rr.getSizeZ();
       sizeC[i] = rr.getSizeC();
       sizeT[i] = rr.getSizeT();
@@ -1155,10 +1130,10 @@ public class FileStitcher extends ReaderWrapper {
       r.setOutputOrder(newOrder);
     }
     catch (FormatException e) {
-      LOGGER.debug("", e);
+      LogTools.traceDebug(e);
     }
     catch (IOException e) {
-      LOGGER.debug("", e);
+      LogTools.traceDebug(e);
     }
   }
 
