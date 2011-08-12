@@ -454,6 +454,9 @@ public class FilePattern {
     int[] exclude = new int[] {AxisGuesser.S_AXIS};
     for (String name : nameList) {
       String pattern = findPattern(name, dir, nameList, exclude);
+      if (pattern == null) {
+        continue;
+      }
       int start = pattern.lastIndexOf(File.separator) + 1;
       if (start < 0) start = 0;
       String patternSuffix = pattern.substring(start);
