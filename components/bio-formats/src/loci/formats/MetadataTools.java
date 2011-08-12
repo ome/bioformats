@@ -212,6 +212,7 @@ public final class MetadataTools {
     int samplesPerPixel) throws EnumerationException
   {
     store.setImageID(createLSID("Image", series), series);
+    setDefaultCreationDate(store, null, series);
     if (imageName != null) store.setImageName(imageName, series);
     store.setPixelsID(createLSID("Pixels", series), series);
     store.setPixelsBinDataBigEndian(!littleEndian, series, 0);
