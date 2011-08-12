@@ -273,6 +273,34 @@ public class ZeissCZIReader extends FormatReader {
           new Double(refractiveIndex), i);
       }
 
+      Double startTime = null;
+      if (acquiredDate != null) {
+        startTime =
+          DateTools.getTime(acquiredDate, DateTools.ISO8601_FORMAT) / 1000d;
+      }
+      for (int plane=0; plane<getImageCount(); plane++) {
+        for (SubBlock p : planes) {
+          if (p.seriesIndex == i && p.planeIndex == plane) {
+            if (startTime == null) {
+              startTime = p.timestamp;
+            }
+
+            if (p.stageX != null) {
+              store.setPlanePositionX(p.stageX, i, plane);
+            }
+            if (p.stageY != null) {
+              store.setPlanePositionY(p.stageY, i, plane);
+            }
+            if (p.timestamp != null) {
+              store.setPlaneDeltaT(p.timestamp - startTime, i, plane);
+            }
+            if (p.exposureTime != null) {
+              store.setPlaneExposureTime(p.exposureTime, i, plane);
+            }
+          }
+        }
+      }
+
       for (int c=0; c<getEffectiveSizeC(); c++) {
         if (c < channelNames.size()) {
           store.setChannelName(channelNames.get(c), i, c);
@@ -454,6 +482,7 @@ public class ZeissCZIReader extends FormatReader {
     }
 
     translateInformation(realRoot);
+    translateScaling(realRoot);
     translateDisplaySettings(realRoot);
     translateLayers(realRoot);
     translateExperiment(realRoot);
@@ -782,6 +811,39 @@ public class ZeissCZIReader extends FormatReader {
           store.setDichroicModel(model, 0, i);
           store.setDichroicSerialNumber(serialNumber, 0, i);
           store.setDichroicLotNumber(lotNumber, 0, i);
+        }
+      }
+    }
+  }
+
+  private void translateScaling(Element root) {
+    NodeList scalings = root.getElementsByTagName("Scaling");
+    if (scalings.getLength() == 0) {
+      return;
+    }
+
+    Element scaling = (Element) scalings.item(0);
+    NodeList distances = getGrandchildren(scaling, "Items", "Distance");
+
+    for (int i=0; i<distances.getLength(); i++) {
+      Element distance = (Element) distances.item(i);
+      String id = distance.getAttribute("Id");
+      Double value = new Double(getFirstNodeValue(distance, "Value"));
+      PositiveFloat size = new PositiveFloat(value);
+
+      if (id.equals("X")) {
+        for (int series=0; series<getSeriesCount(); series++) {
+          store.setPixelsPhysicalSizeX(size, series);
+        }
+      }
+      else if (id.equals("Y")) {
+        for (int series=0; series<getSeriesCount(); series++) {
+          store.setPixelsPhysicalSizeY(size, series);
+        }
+      }
+      else if (id.equals("Z")) {
+        for (int series=0; series<getSeriesCount(); series++) {
+          store.setPixelsPhysicalSizeZ(size, series);
         }
       }
     }
@@ -1204,6 +1266,8 @@ public class ZeissCZIReader extends FormatReader {
 
     private long dataOffset;
 
+    private Double stageX, stageY, timestamp, exposureTime;
+
     public void fillInData() throws IOException {
       super.fillInData();
 
@@ -1214,9 +1278,11 @@ public class ZeissCZIReader extends FormatReader {
       directoryEntry = new DirectoryEntry();
       in.skipBytes((int) Math.max(256 - (in.getFilePointer() - fp), 0));
 
-      metadata = in.readString(metadataSize);
+      metadata = in.readString(metadataSize).trim();
       dataOffset = in.getFilePointer();
       in.seek(in.getFilePointer() + dataSize + attachmentSize);
+
+      parseMetadata();
     }
 
     // -- SubBlock API methods --
@@ -1242,6 +1308,66 @@ public class ZeissCZIReader extends FormatReader {
       }
 
       return data;
+    }
+
+    // -- Helper methods --
+
+    private void parseMetadata() throws IOException {
+      if (metadata.length() == 0) {
+        return;
+      }
+
+      Element root = null;
+      try {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder parser = factory.newDocumentBuilder();
+        ByteArrayInputStream s = new ByteArrayInputStream(metadata.getBytes());
+        root = parser.parse(s).getDocumentElement();
+        s.close();
+      }
+      catch (ParserConfigurationException e) {
+        return;
+      }
+      catch (SAXException e) {
+        return;
+      }
+
+      if (root == null) {
+        return;
+      }
+
+      NodeList children = root.getChildNodes();
+
+      for (int i=0; i<children.getLength(); i++) {
+        if (!(children.item(i) instanceof Element)) {
+          continue;
+        }
+        Element child = (Element) children.item(i);
+
+        if (child.getNodeName().equals("Tags")) {
+          NodeList tags = child.getChildNodes();
+
+          for (int tag=0; tag<tags.getLength(); tag++) {
+            if (!(tags.item(tag) instanceof Element)) {
+              continue;
+            }
+            Element tagNode = (Element) tags.item(tag);
+            if (tagNode.getNodeName().equals("StageXPosition")) {
+              stageX = new Double(tagNode.getTextContent());
+            }
+            else if (tagNode.getNodeName().equals("StageYPosition")) {
+              stageY = new Double(tagNode.getTextContent());
+            }
+            else if (tagNode.getNodeName().equals("AcquisitionTime")) {
+              timestamp = DateTools.getTime(
+                tagNode.getTextContent(), DateTools.ISO8601_FORMAT) / 1000d;
+            }
+            else if (tagNode.getNodeName().equals("ExposureTime")) {
+              exposureTime = new Double(tagNode.getTextContent());
+            }
+          }
+        }
+      }
     }
   }
 
