@@ -19,6 +19,7 @@ import loci.common.services.ServiceFactory;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
+import loci.formats.MetadataTools;
 import loci.formats.gui.BufferedImageWriter;
 import loci.formats.meta.IMetadata;
 import loci.formats.out.OMETiffWriter;
@@ -168,9 +169,9 @@ public class MakeTestOmeTiff {
       serviceFactory.getInstance(OMEXMLService.class);
     final IMetadata meta = omexmlService.createOMEXMLMetadata();
 
-    meta.setImageID("Image:0", 0);
+    meta.setImageID(MetadataTools.createLSID("Image", 0), 0);
     meta.setImageName(name, 0);
-    meta.setPixelsID("Pixels:0", 0);
+    meta.setPixelsID(MetadataTools.createLSID("Pixels", 0), 0);
     meta.setPixelsBinDataBigEndian(Boolean.TRUE, 0, 0);
     meta.setPixelsDimensionOrder(
       DimensionOrder.fromString(info.dimensionOrder), 0);
@@ -180,8 +181,10 @@ public class MakeTestOmeTiff {
     meta.setPixelsSizeZ(new PositiveInteger(info.sizeZ), 0);
     meta.setPixelsSizeC(new PositiveInteger(info.sizeC), 0);
     meta.setPixelsSizeT(new PositiveInteger(info.sizeT), 0);
-    meta.setChannelID("Channel:0:0", 0, 0);
-    meta.setChannelSamplesPerPixel(new PositiveInteger(1), 0, 0);
+    for (int i=0; i<info.sizeC; i++) {
+      meta.setChannelID(MetadataTools.createLSID("Channel", 0, i), 0, i);
+      meta.setChannelSamplesPerPixel(new PositiveInteger(1), 0, i);
+    }
 
     return meta;
   }
