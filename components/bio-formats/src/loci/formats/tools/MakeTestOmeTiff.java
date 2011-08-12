@@ -24,10 +24,7 @@ import loci.formats.gui.BufferedImageWriter;
 import loci.formats.meta.IMetadata;
 import loci.formats.out.OMETiffWriter;
 import loci.formats.services.OMEXMLService;
-import ome.xml.model.enums.DimensionOrder;
 import ome.xml.model.enums.EnumerationException;
-import ome.xml.model.enums.PixelType;
-import ome.xml.model.primitives.PositiveInteger;
 
 /**
  * Creates sample OME-TIFF datasets according to the given parameters.
@@ -168,24 +165,7 @@ public class MakeTestOmeTiff {
     final OMEXMLService omexmlService =
       serviceFactory.getInstance(OMEXMLService.class);
     final IMetadata meta = omexmlService.createOMEXMLMetadata();
-
-    meta.setImageID(MetadataTools.createLSID("Image", 0), 0);
-    meta.setImageName(name, 0);
-    meta.setPixelsID(MetadataTools.createLSID("Pixels", 0), 0);
-    meta.setPixelsBinDataBigEndian(Boolean.TRUE, 0, 0);
-    meta.setPixelsDimensionOrder(
-      DimensionOrder.fromString(info.dimensionOrder), 0);
-    meta.setPixelsType(PixelType.UINT8, 0);
-    meta.setPixelsSizeX(new PositiveInteger(info.sizeX), 0);
-    meta.setPixelsSizeY(new PositiveInteger(info.sizeY), 0);
-    meta.setPixelsSizeZ(new PositiveInteger(info.sizeZ), 0);
-    meta.setPixelsSizeC(new PositiveInteger(info.sizeC), 0);
-    meta.setPixelsSizeT(new PositiveInteger(info.sizeT), 0);
-    for (int i=0; i<info.sizeC; i++) {
-      meta.setChannelID(MetadataTools.createLSID("Channel", 0, i), 0, i);
-      meta.setChannelSamplesPerPixel(new PositiveInteger(1), 0, i);
-    }
-
+    MetadataTools.populateMetadata(meta, 0, name, info);
     return meta;
   }
 
