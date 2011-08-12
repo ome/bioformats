@@ -44,20 +44,8 @@ public class MinimumWriter {
     OMEXMLService service = factory.getInstance(OMEXMLService.class);
     IMetadata meta = service.createOMEXMLMetadata();
 
-    meta.createRoot();
-    meta.setImageID("Image:0", 0);
-    meta.setPixelsID("Pixels:0", 0);
-    meta.setPixelsBinDataBigEndian(Boolean.TRUE, 0, 0);
-    meta.setPixelsDimensionOrder(DimensionOrder.XYZCT, 0);
-    meta.setPixelsType(
-      PixelType.fromString(FormatTools.getPixelTypeString(pixelType)), 0);
-    meta.setPixelsSizeX(new PositiveInteger(w), 0);
-    meta.setPixelsSizeY(new PositiveInteger(h), 0);
-    meta.setPixelsSizeZ(new PositiveInteger(1), 0);
-    meta.setPixelsSizeC(new PositiveInteger(c), 0);
-    meta.setPixelsSizeT(new PositiveInteger(1), 0);
-    meta.setChannelID("Channel:0:0", 0, 0);
-    meta.setChannelSamplesPerPixel(new PositiveInteger(c), 0, 0);
+    MetadataTools.populateMetadata(meta, 0, null, false, "XYZCT",
+      FormatTools.getPixelTypeString(pixelType), w, h, 1, c, 1, c);
 
     // write image plane to disk
     System.out.println("Writing image to '" + id + "'...");
