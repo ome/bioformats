@@ -786,8 +786,6 @@ public class FileStitcher extends ReaderWrapper {
     FilePattern fp = new FilePattern(id);
     if (!patternIds) patternIds = fp.isValid() && fp.getFiles().length > 1;
 
-    /* debug */ System.out.println("id = " + id);
-
     boolean mustGroup = false;
     if (patternIds) {
       mustGroup = fp.isValid() &&
