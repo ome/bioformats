@@ -110,19 +110,17 @@ public final class MetadataTools {
     int oldSeries = r.getSeries();
     for (int i=0; i<r.getSeriesCount(); i++) {
       r.setSeries(i);
-      store.setImageID(createLSID("Image", i), i);
+      
+      String imageName = null;
       if (doImageName) {
         Location f = new Location(r.getCurrentFile());
-        store.setImageName(f.getName(), i);
+        imageName = f.getName();
       }
-      String pixelsID = createLSID("Pixels", i);
-      store.setPixelsID(pixelsID, i);
-      store.setPixelsSizeX(new PositiveInteger(r.getSizeX()), i);
-      store.setPixelsSizeY(new PositiveInteger(r.getSizeY()), i);
-      store.setPixelsSizeZ(new PositiveInteger(r.getSizeZ()), i);
-      store.setPixelsSizeC(new PositiveInteger(r.getSizeC()), i);
-      store.setPixelsSizeT(new PositiveInteger(r.getSizeT()), i);
-      store.setPixelsBinDataBigEndian(new Boolean(!r.isLittleEndian()), i, 0);
+      String pixelType = FormatTools.getPixelTypeString(r.getPixelType());
+
+      populateMetadata(store, i, imageName, r.isLittleEndian(),
+        r.getDimensionOrder(), pixelType, r.getSizeX(), r.getSizeY(),
+        r.getSizeZ(), r.getSizeC(), r.getSizeT(), r.getRGBChannelCount());
 
       try {
         OMEXMLService service =
@@ -140,26 +138,9 @@ public final class MetadataTools {
         }
       }
       catch (DependencyException exc) {
-        LOGGER.debug("Failed to set BinData.Length", exc);
+        LOGGER.warn("Failed to set BinData.Length", exc);
       }
 
-      try {
-        store.setPixelsType(PixelType.fromString(
-          FormatTools.getPixelTypeString(r.getPixelType())), i);
-        store.setPixelsDimensionOrder(
-          DimensionOrder.fromString(r.getDimensionOrder()), i);
-      }
-      catch (EnumerationException e) {
-        LOGGER.debug("Failed to create enumeration", e);
-      }
-      if (r.getSizeC() > 0) {
-        Integer sampleCount = new Integer(r.getRGBChannelCount());
-        for (int c=0; c<r.getEffectiveSizeC(); c++) {
-          store.setChannelID(createLSID("Channel", i, c), i, c);
-          store.setChannelSamplesPerPixel(
-            new PositiveInteger(sampleCount), i, c);
-        }
-      }
       if (doPlane) {
         for (int q=0; q<r.getImageCount(); q++) {
           int[] coords = r.getZCTCoords(q);
