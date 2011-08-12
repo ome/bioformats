@@ -180,11 +180,9 @@ public final class MetadataTools {
    * populated for use with an {@link IFormatWriter} (assuming it is also a
    * {@link MetadataRetrieve}).
    * </p>
-   *
-   * @throws EnumerationException if the dimensionOrder string is invalid.
    */
   public static void populateMetadata(MetadataStore store, int series,
-    String imageName, CoreMetadata coreMeta) throws EnumerationException
+    String imageName, CoreMetadata coreMeta)
   {
     final String pixelType = FormatTools.getPixelTypeString(coreMeta.pixelType);
     final int effSizeC = coreMeta.imageCount / coreMeta.sizeZ / coreMeta.sizeT;
@@ -202,23 +200,30 @@ public final class MetadataTools {
    * populated for use with an {@link IFormatWriter} (assuming it is also a
    * {@link MetadataRetrieve}).
    * </p>
-   *
-   * @throws EnumerationException if the dimensionOrder or pixelType values are
-   *           invalid.
    */
   public static void populateMetadata(MetadataStore store, int series,
     String imageName, boolean littleEndian, String dimensionOrder,
     String pixelType, int sizeX, int sizeY, int sizeZ, int sizeC, int sizeT,
-    int samplesPerPixel) throws EnumerationException
+    int samplesPerPixel)
   {
     store.setImageID(createLSID("Image", series), series);
     setDefaultCreationDate(store, null, series);
     if (imageName != null) store.setImageName(imageName, series);
     store.setPixelsID(createLSID("Pixels", series), series);
     store.setPixelsBinDataBigEndian(!littleEndian, series, 0);
-    store.setPixelsDimensionOrder(
-      DimensionOrder.fromString(dimensionOrder), series);
-    store.setPixelsType(PixelType.fromString(pixelType), series);
+    try {
+      store.setPixelsDimensionOrder(
+        DimensionOrder.fromString(dimensionOrder), series);
+    }
+    catch (EnumerationException e) {
+      LOGGER.warn("Invalid dimension order: " + dimensionOrder, e);
+    }
+    try {
+      store.setPixelsType(PixelType.fromString(pixelType), series);
+    }
+    catch (EnumerationException e) {
+      LOGGER.warn("Invalid pixel type: " + pixelType, e);
+    }
     store.setPixelsSizeX(new PositiveInteger(sizeX), series);
     store.setPixelsSizeY(new PositiveInteger(sizeY), series);
     store.setPixelsSizeZ(new PositiveInteger(sizeZ), series);
