@@ -393,7 +393,12 @@ public class ND2Handler extends DefaultHandler {
     }
     else if (qName.equals("uiSequenceCount")) {
       int imageCount = Integer.parseInt(value);
-      if (core.length > 0) imageCount /= core.length;
+      if (core.length > 0) {
+        int newCount = imageCount / core.length;
+        if (newCount * core.length == imageCount) {
+          imageCount = newCount;
+        }
+      }
       if (core[0].sizeZ * core[0].sizeT != imageCount &&
         core[0].sizeZ * core[0].sizeC * core[0].sizeT != imageCount)
       {

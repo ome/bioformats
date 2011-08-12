@@ -97,6 +97,8 @@ public class NativeND2Reader extends FormatReader {
   private int lastChannel;
   private int[] colors;
 
+  private int nXFields;
+
   // -- Constructor --
 
   /** Constructs a new ND2 reader. */
@@ -209,7 +211,7 @@ public class NativeND2Reader extends FormatReader {
 
     int scanlinePad = isJPEG ? 0 : getSizeX() % 2;
     if (scanlinePad == 1) {
-      if (split && !isLossless) {
+      if (split && !isLossless && (nXFields % 2) != 0) {
         scanlinePad = 0;
       }
     }
@@ -220,11 +222,28 @@ public class NativeND2Reader extends FormatReader {
       copyPixels(x, y, w, h, bpp, scanlinePad, t, buf, split);
       t = null;
     }
-    else if (split) {
+    else if (split && (getSizeC() <= 4 || scanlinePad == 0)) {
       byte[] pix = new byte[(getSizeX() + scanlinePad) * getSizeY() * pixel];
       in.read(pix);
       copyPixels(x, y, w, h, bpp, scanlinePad, pix, buf, split);
       pix = null;
+    }
+    else if (split) {
+      // one padding pixel per row total, instead of one padding pixel
+      // per channel per row
+      int rowLength = getSizeX() * pixel + scanlinePad * bpp;
+      int destLength = w * pixel;
+
+      in.skipBytes(rowLength * y + x * pixel);
+      byte[] pix = new byte[destLength * h];
+      for (int row=0; row<h; row++) {
+        in.read(pix, row * destLength, destLength);
+        in.skipBytes(pixel * (getSizeX() - w - x) + scanlinePad * bpp);
+      }
+
+      pix = ImageTools.splitChannels(pix, lastChannel, getEffectiveSizeC(),
+        bpp, false, true);
+      System.arraycopy(pix, 0, buf, 0, pix.length);
     }
     else {
       // plane is not compressed
@@ -248,6 +267,7 @@ public class NativeND2Reader extends FormatReader {
       posX = posY = posZ = null;
       channelColors = null;
       split = false;
+      nXFields = 0;
     }
   }
 
@@ -403,8 +423,12 @@ public class NativeND2Reader extends FormatReader {
       fieldIndex = handler.getFieldIndex();
       core = handler.getCoreMetadata();
       Hashtable<String, Object> globalMetadata = handler.getMetadata();
+      nXFields = 0;
       for (String key : globalMetadata.keySet()) {
         addGlobalMeta(key, globalMetadata.get(key));
+        if (key.equals("iXFields")) {
+          nXFields = Integer.parseInt(globalMetadata.get(key).toString());
+        }
       }
 
       int numSeries = handler.getSeriesCount();

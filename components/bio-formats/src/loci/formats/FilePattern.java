@@ -86,6 +86,9 @@ public class FilePattern {
   /** File listing for this file pattern. */
   private String[] files;
 
+  /** Whether or not this FilePattern represents a regular expression. */
+  private boolean isRegex = false;
+
   // -- Constructors --
 
   /** Creates a pattern object using the given file as a template. */
@@ -169,6 +172,11 @@ public class FilePattern {
   }
 
   // -- FilePattern API methods --
+
+  /** Returns whether or not this pattern is a regular expression. */
+  public boolean isRegex() {
+    return isRegex;
+  }
 
   /** Gets the file pattern string. */
   public String getPattern() { return pattern; }
@@ -448,6 +456,32 @@ public class FilePattern {
     return sb.toString();
   }
 
+  /**
+   * Generate a pattern from a list of file names.
+   * The pattern generated will be a regular expression.
+   *
+   * Currently assumes that all file names are in the same directory.
+   */
+  public static String findPattern(String[] names) {
+    String dir =
+      names[0].substring(0, names[0].lastIndexOf(File.separator) + 1);
+
+    StringBuffer pattern = new StringBuffer();
+    pattern.append(Pattern.quote(dir));
+
+    for (int i=0; i<names.length; i++) {
+      pattern.append("(?:");
+      String name =
+        names[i].substring(names[i].lastIndexOf(File.separator) + 1);
+      pattern.append(Pattern.quote(name));
+      pattern.append(")");
+      if (i < names.length - 1) {
+        pattern.append("|");
+      }
+    }
+    return pattern.toString();
+  }
+
   public static String[] findSeriesPatterns(String base) {
     Location file = new Location(base).getAbsoluteFile();
     Location parent = file.getParentFile();
@@ -573,29 +607,52 @@ public class FilePattern {
         return;
       }
 
+      isRegex = true;
+
       String[] files = null;
-      int end = pattern.lastIndexOf(File.separator) + 1;
-      String dir = pattern.substring(0, end);
+      String dir;
+
+      int endRegex = pattern.indexOf(File.separator + "\\E") + 1;
+      int endNotRegex = pattern.lastIndexOf(File.separator) + 1;
+      int end;
+
+      //Check if an escaped path has been defined as part of the regex.
+      if (pattern.startsWith("\\Q") && endRegex > 0 && endRegex <= endNotRegex)
+      {
+        dir = pattern.substring(2, endRegex);
+        end = endRegex + 2;
+      }
+      else {
+        dir = pattern.substring(0, endNotRegex);
+        end = endNotRegex;
+      }
       if (dir.equals("") || !new Location(dir).exists()) {
         files = Location.getIdMap().keySet().toArray(new String[0]);
         if (files.length == 0) {
           dir = ".";
-          files = new Location(dir).list(true);
+          files = new Location(dir).list();
         }
       }
       else {
-        files = new Location(dir).list(true);
+        files = new Location(dir).list();
       }
 
       Arrays.sort(files);
 
-      String basePattern =
-        pattern.substring(pattern.lastIndexOf(File.separator) + 1);
-      Pattern regex = Pattern.compile(basePattern);
+      String basePattern = pattern.substring(end);
+      Pattern regex = null;
+      try {
+        regex = Pattern.compile(basePattern);
+      }
+      catch (PatternSyntaxException e) {
+        regex = Pattern.compile(pattern);
+      }
 
       for (String f : files) {
-        if (regex.matcher(f).matches()) {
-          Location path = new Location(dir, f);
+        Location path = new Location(dir, f);
+        if (regex.matcher(f).matches() ||
+          regex.matcher(path.getAbsolutePath()).matches())
+        {
           if (path.exists()) fileList.add(path.getAbsolutePath());
           else fileList.add(f);
         }

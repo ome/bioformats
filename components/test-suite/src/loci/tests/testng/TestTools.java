@@ -150,7 +150,7 @@ public class TestTools {
   }
 
   /** Returns true if a byte buffer of the given size will fit in memory. */
-  public static boolean canFitInMemory(int bufferSize) {
+  public static boolean canFitInMemory(long bufferSize) {
     Runtime r = Runtime.getRuntime();
     long mem = r.freeMemory();
     return bufferSize < mem;
