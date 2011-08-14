@@ -345,7 +345,6 @@ public class CellWorxReader extends FormatReader {
       store.setImageID(MetadataTools.createLSID("Image", i), i);
     }
 
-    int fieldCount = fieldMap[0].length * fieldMap.length;
     int nextImage = 0;
     for (int row=0; row<wellFiles.length; row++) {
       for (int col=0; col<wellFiles[row].length; col++) {
@@ -355,11 +354,10 @@ public class CellWorxReader extends FormatReader {
         store.setWellColumn(col, 0, wellIndex);
         store.setWellRow(row, 0, wellIndex);
 
+        int fieldIndex = 0;
         for (int fieldRow=0; fieldRow<fieldMap.length; fieldRow++) {
           for (int fieldCol=0; fieldCol<fieldMap[fieldRow].length; fieldCol++) {
             if (fieldMap[fieldRow][fieldCol] && wellFiles[row][col] != null) {
-              int fieldIndex = fieldRow * fieldMap[fieldRow].length + fieldCol;
-
               String wellSampleID = MetadataTools.createLSID("WellSample",
                 0, wellIndex, fieldIndex);
               store.setWellSampleID(wellSampleID, 0, wellIndex, fieldIndex);
@@ -372,6 +370,7 @@ public class CellWorxReader extends FormatReader {
               store.setImageName(
                 "Well " + well + " Field #" + (fieldIndex + 1), nextImage);
               nextImage++;
+              fieldIndex++;
             }
           }
         }
