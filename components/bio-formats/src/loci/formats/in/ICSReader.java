@@ -676,7 +676,7 @@ public class ICSReader extends FormatReader {
     }
     else {
       long toSkip = (no - prevImage - 1) * (long) len;
-      if (gzipStream == null || no < prevImage) {
+      if (gzipStream == null || no <= prevImage) {
         FileInputStream fis = null;
         toSkip = no * (long) len;
         if (versionTwo) {
