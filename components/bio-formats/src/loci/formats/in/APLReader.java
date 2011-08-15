@@ -88,16 +88,13 @@ public class APLReader extends FormatReader {
       if (parent != null) {
         try {
           parent = parent.getParentFile();
+          parent = parent.getParentFile();
         }
         catch (NullPointerException e) {
           parent = null;
         }
-        if (parent != null) {
-          String[] list = parent.list(true);
-          for (String f : list) {
-            if (checkSuffix(f, "mtb")) return true;
-          }
-        }
+        Location aplFile = new Location(parent, parent.getName() + ".apl");
+        return aplFile.exists();
       }
     }
     return false;

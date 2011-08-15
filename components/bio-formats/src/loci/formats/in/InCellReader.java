@@ -107,18 +107,10 @@ public class InCellReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
   public boolean isThisType(String name, boolean open) {
-    if (checkSuffix(name, PIXELS_SUFFIXES) || checkSuffix(name, "xlog") && open)
-    {
-      Location file = new Location(name).getAbsoluteFile().getParentFile();
-      String[] list = file.list(true);
-      if (list == null) return false;
-      for (String f : list) {
-        if (checkSuffix(f, new String[] {"xdce", "xml"})) {
-          return isThisType(new Location(file, f).getAbsolutePath(), open);
-        }
-      }
+    if (checkSuffix(name, "xdce") || checkSuffix(name, "xml")) {
+      return super.isThisType(name, open);
     }
-    return super.isThisType(name, open);
+    return false;
   }
 
   /* @see loci.formats.IFormatReader#isSingleFile(String) */
