@@ -143,6 +143,8 @@ public class LiFlimReader extends FormatReader {
   /** Series number indicating position in gzip stream. */
   private int gzSeries;
 
+  private int seriesCount, backgroundSeriesCount;
+
   // -- Constructor --
 
   /** Constructs a new LI-FLIM reader. */
@@ -176,13 +178,13 @@ public class LiFlimReader extends FormatReader {
     }
     else {
       in.seek(dataOffset + bytesPerPlane * no);
-      if (getSeries() == 1) {
-        setSeries(0);
-        int imageCount = getImageCount();
-        int planeSize = FormatTools.getPlaneSize(this);
-        setSeries(1);
-        in.skipBytes(imageCount * planeSize);
+
+      int thisSeries = getSeries();
+      for (int i=0; i<thisSeries; i++) {
+        setSeries(i);
+        in.skipBytes(getImageCount() * FormatTools.getPlaneSize(this));
       }
+      setSeries(thisSeries);
       readPlane(in, x, y, w, h, buf);
     }
 
@@ -222,6 +224,8 @@ public class LiFlimReader extends FormatReader {
       rois = null;
       stampValues = null;
       exposureTime = null;
+      seriesCount = 0;
+      backgroundSeriesCount = 0;
     }
   }
 
@@ -346,58 +350,55 @@ public class LiFlimReader extends FormatReader {
 
     // check dimensional extents
     int sizeP = Integer.parseInt(phases);
-    if (sizeP > 1) {
-      throw new FormatException("Sorry, multiple phases not supported");
-    }
     int sizeF = Integer.parseInt(frequencies);
-    if (sizeF > 1) {
-      throw new FormatException("Sorry, multiple frequencies not supported");
-    }
 
     int p = backgroundP == null ? 1 : Integer.parseInt(backgroundP);
-    if (p > 1) {
-      throw new FormatException("Sorry, multiple phases not supported");
-    }
     int f = backgroundF == null ? 1 : Integer.parseInt(backgroundF);
-    if (f > 1) {
-      throw new FormatException("Sorry, multiple frequencies not supported");
-    }
+
+    seriesCount = sizeP * sizeF;
+    backgroundSeriesCount = p * f;
 
     if (backgroundDatatype != null) {
-      core = new CoreMetadata[2];
-      core[0] = new CoreMetadata();
-      core[1] = new CoreMetadata();
+      core = new CoreMetadata[seriesCount + backgroundSeriesCount];
+    }
+    else if (seriesCount > 1) {
+      core = new CoreMetadata[seriesCount];
+    }
+    for (int i=0; i<getSeriesCount(); i++) {
+      core[i] = new CoreMetadata();
     }
 
     // populate core metadata
-    core[0].sizeX = Integer.parseInt(xLen);
-    core[0].sizeY = Integer.parseInt(yLen);
-    core[0].sizeZ = Integer.parseInt(zLen);
-    core[0].sizeC = Integer.parseInt(channels);
-    core[0].sizeT = Integer.parseInt(timestamps);
-    core[0].imageCount = getSizeZ() * getSizeT() * sizeP * sizeF;
-    core[0].rgb = getSizeC() > 1;
-    core[0].indexed = false;
-    core[0].dimensionOrder = "XYCZT";
-    core[0].pixelType = getPixelTypeFromString(datatype);
-    core[0].littleEndian = true;
-    core[0].interleaved = true;
-    core[0].falseColor = false;
+    for (int i=0; i<seriesCount; i++) {
+      core[i].sizeX = Integer.parseInt(xLen);
+      core[i].sizeY = Integer.parseInt(yLen);
+      core[i].sizeZ = Integer.parseInt(zLen);
+      core[i].sizeC = Integer.parseInt(channels);
+      core[i].sizeT = Integer.parseInt(timestamps);
+      core[i].imageCount = getSizeZ() * getSizeT();
+      core[i].rgb = getSizeC() > 1;
+      core[i].indexed = false;
+      core[i].dimensionOrder = "XYCZT";
+      core[i].pixelType = getPixelTypeFromString(datatype);
+      core[i].littleEndian = true;
+      core[i].interleaved = true;
+      core[i].falseColor = false;
+    }
 
-    if (core.length > 1) {
-      core[1].sizeX = Integer.parseInt(backgroundX);
-      core[1].sizeY = Integer.parseInt(backgroundY);
-      core[1].sizeZ = Integer.parseInt(backgroundZ);
-      core[1].sizeC = Integer.parseInt(backgroundC);
-      core[1].sizeT = Integer.parseInt(backgroundT);
-      core[1].imageCount = core[1].sizeZ * core[1].sizeT * p * f;
-      core[1].rgb = core[1].sizeC > 1;
-      core[1].indexed = false;
-      core[1].dimensionOrder = "XYCZT";
-      core[1].pixelType = getPixelTypeFromString(backgroundDatatype);
-      core[1].littleEndian = true;
-      core[1].interleaved = true;
-      core[1].falseColor = false;
+    for (int i=seriesCount; i<core.length; i++) {
+      core[i].sizeX = Integer.parseInt(backgroundX);
+      core[i].sizeY = Integer.parseInt(backgroundY);
+      core[i].sizeZ = Integer.parseInt(backgroundZ);
+      core[i].sizeC = Integer.parseInt(backgroundC);
+      core[i].sizeT = Integer.parseInt(backgroundT);
+      core[i].imageCount = core[i].sizeZ * core[i].sizeT;
+      core[i].rgb = core[i].sizeC > 1;
+      core[i].indexed = false;
+      core[i].dimensionOrder = "XYCZT";
+      core[i].pixelType = getPixelTypeFromString(backgroundDatatype);
+      core[i].littleEndian = true;
+      core[i].interleaved = true;
+      core[i].falseColor = false;
     }
   }
 
@@ -406,14 +407,19 @@ public class LiFlimReader extends FormatReader {
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this, times > 0);
-    MetadataTools.setDefaultCreationDate(store, currentId, 0);
 
-    // image data
     String path = new Location(getCurrentFile()).getName();
-    store.setImageName(path + " Primary Image", 0);
-    if (getSeriesCount() > 1) {
-      store.setImageName(path + " Background Image", 1);
-      MetadataTools.setDefaultCreationDate(store, currentId, 1);
+    for (int i=0; i<getSeriesCount(); i++) {
+      MetadataTools.setDefaultCreationDate(store, currentId, i);
+
+      // image data
+      if (i < seriesCount) {
+        store.setImageName(path + " Primary Image #" + (i + 1), i);
+      }
+      else {
+        store.setImageName(
+          path + " Background Image #" + (i - seriesCount + 1), i);
+      }
     }
 
     if (getMetadataOptions().getMetadataLevel() == MetadataLevel.MINIMUM) {
@@ -501,14 +507,17 @@ public class LiFlimReader extends FormatReader {
     }
 
     // seek to correct image number
-    if (getSeries() == 1 && gzSeries == 0) {
-      setSeries(0);
-      int nPlanes = getImageCount() - gzPos;
-      int nBytes = FormatTools.getPlaneSize(this) * nPlanes;
-      setSeries(1);
-      skip(gz, nBytes);
-      gzSeries = 1;
-      gzPos = 0;
+    if (getSeries() >= 1 && gzSeries < getSeries()) {
+      int originalSeries = getSeries();
+      for (int i=gzSeries; i<getSeries(); i++) {
+        setSeries(i);
+        int nPlanes = getImageCount() - gzPos;
+        int nBytes = FormatTools.getPlaneSize(this) * nPlanes;
+        skip(gz, nBytes);
+        gzPos = 0;
+      }
+      setSeries(originalSeries);
+      gzSeries = getSeries();
     }
     skip(gz, bytesPerPlane * (no - gzPos));
     gzPos = no + 1;
