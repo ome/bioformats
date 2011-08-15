@@ -116,11 +116,10 @@ public class VolocityReader extends FormatReader {
       Location parent = file.getParentFile();
       parent = parent.getParentFile();
       if (parent != null) {
-        String[] files = parent.list(true);
-        for (String f : files) {
-          if (checkSuffix(f, "mvd2")) {
-            return super.isThisType(new Location(parent, f).getAbsolutePath());
-          }
+        parent = parent.getParentFile();
+        if (parent != null) {
+          Location mvd2 = new Location(parent, parent.getName() + ".mvd2");
+          return mvd2.exists() && super.isThisType(mvd2.getAbsolutePath());
         }
       }
     }

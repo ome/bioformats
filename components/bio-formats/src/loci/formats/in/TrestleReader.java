@@ -82,15 +82,14 @@ public class TrestleReader extends BaseTiffReader {
     if (super.isThisType(name, open)) return true;
 
     if (!checkSuffix(name, "tif") && open) {
-      Location parent = new Location(name).getAbsoluteFile().getParentFile();
-      String[] list = parent.list(true);
-      for (String f : list) {
-        if (checkSuffix(f, "tif")) {
-          if (isThisType(new Location(parent, f).getAbsolutePath(), open)) {
-            return true;
-          }
-        }
-      }
+      Location current = new Location(name).getAbsoluteFile();
+      Location parent = current.getParentFile();
+
+      String tiff = current.getName();
+      tiff = tiff.substring(0, tiff.lastIndexOf(".")) + ".tif";
+
+      Location tiffFile = new Location(parent, tiff);
+      return tiffFile.exists() && isThisType(tiffFile.getAbsolutePath(), open);
     }
     return false;
   }
