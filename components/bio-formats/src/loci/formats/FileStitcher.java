@@ -116,7 +116,15 @@ public class FileStitcher extends ReaderWrapper {
    *   patterns rather than single file paths.
    */
   public FileStitcher(IFormatReader r, boolean patternIds) {
-    reader = DimensionSwapper.makeDimensionSwapper(r);
+    if (r.getClass().getPackage().getName().equals("loci.formats.in")) {
+      ClassList<IFormatReader> classes =
+        new ClassList<IFormatReader>(IFormatReader.class);
+      classes.addClass(r.getClass());
+      setReaderClassList(classes);
+    }
+    else {
+      reader = DimensionSwapper.makeDimensionSwapper(r);
+    }
     setUsingPatternIds(patternIds);
   }
 
