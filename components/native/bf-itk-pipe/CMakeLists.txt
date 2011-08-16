@@ -43,11 +43,7 @@
 
 project(BioFormatsImageIO)
 
-if(WIN32)
-  cmake_minimum_required(VERSION 2.8)
-else(WIN32)
-  cmake_minimum_required(VERSION 2.6)
-endif(WIN32)
+cmake_minimum_required(VERSION 2.8)
 
 if(COMMAND cmake_policy)
  cmake_policy(SET CMP0003 NEW)
