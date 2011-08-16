@@ -127,6 +127,7 @@ public class FileStitcher extends ReaderWrapper {
    */
   public void setReaderClassList(ClassList<IFormatReader> classList) {
     this.classList = classList;
+    reader = DimensionSwapper.makeDimensionSwapper(new ImageReader(classList));
   }
 
   /** Gets the wrapped reader prototype. */
