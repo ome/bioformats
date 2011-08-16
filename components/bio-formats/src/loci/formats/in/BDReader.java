@@ -113,6 +113,9 @@ public class BDReader extends FormatReader {
     catch (IOException f) {
       return false;
     }
+    catch (NullPointerException e) {
+      return false;
+    }
 
     if (id.endsWith(EXPERIMENT_FILE)) { return true; }
 

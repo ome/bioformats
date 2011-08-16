@@ -91,7 +91,7 @@ public class APLReader extends FormatReader {
           parent = parent.getParentFile();
         }
         catch (NullPointerException e) {
-          parent = null;
+          return false;
         }
         Location aplFile = new Location(parent, parent.getName() + ".apl");
         return aplFile.exists();
