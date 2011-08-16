@@ -102,15 +102,6 @@ if(NOT DEFINED BioFormatsImageIO_INSTALL_ITKFACTORIES_DIR)
   set(BioFormatsImageIO_INSTALL_ITKFACTORIES_DIR lib/)
 endif(NOT DEFINED BioFormatsImageIO_INSTALL_ITKFACTORIES_DIR)
 
-if(NOT DEFINED BioFormatsImageIO_ARTIFACT_DIR)
-  set(BioFormatsImageIO_ARTIFACT_DIR
-    ${PROJECT_SOURCE_DIR}/../../../artifacts)
-endif(NOT DEFINED BioFormatsImageIO_ARTIFACT_DIR)
-
-if(NOT DEFINED BIO_FORMATS_DIST_DIR)
-  set(BIO_FORMATS_DIST_DIR dist/bf-itk)
-endif(NOT DEFINED BIO_FORMATS_DIST_DIR)
-
 if(NOT DEFINED BF_BUILD_TYPE)
   set(BF_BUILD_TYPE "")
 endif(NOT DEFINED BF_BUILD_TYPE)
@@ -150,6 +141,13 @@ target_link_libraries(itkVectorImageBioFormatsImageIOTest BioFormatsIO)
 add_executable(perf perf.cxx)
 target_link_libraries(perf BioFormatsIO)
 
+# --------------------------------------------------------------------------
+# Copy targets into distribution folder (dist/bf-itk)
+
+if(NOT DEFINED BIO_FORMATS_DIST_DIR)
+  set(BIO_FORMATS_DIST_DIR "dist/bf-itk")
+endif(NOT DEFINED BIO_FORMATS_DIST_DIR)
+
 if(APPLE)
   if(NOT DEFINED BF_SUFFIX)
     set(BF_SUFFIX .dylib)
@@ -180,15 +178,14 @@ if(WIN64)
   endif(NOT DEFINED BF_SUFFIX)
 endif(WIN64)
 
-
 if(APPLE)
   add_custom_command(
     TARGET BioFormatsIOPlugin
     DEPENDS "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_INSTALL_ITKFACTORIES_DIR}/${BF_LIB_PREFIX}BioFormatsIOPlugin.so"
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy
-    "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_INSTALL_ITKFACTORIES_DIR}${BF_BUILD_TYPE}/${BF_LIB_PREFIX}BioFormatsIOPlugin.so"
-    "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_INSTALL_ITKFACTORIES_DIR}${BF_BUILD_TYPE}/${BF_LIB_PREFIX}BioFormatsIOPlugin${BF_SUFFIX}"
+      "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_INSTALL_ITKFACTORIES_DIR}${BF_BUILD_TYPE}/${BF_LIB_PREFIX}BioFormatsIOPlugin.so"
+      "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_INSTALL_ITKFACTORIES_DIR}${BF_BUILD_TYPE}/${BF_LIB_PREFIX}BioFormatsIOPlugin${BF_SUFFIX}"
     VERBATIM
   )
 
@@ -197,8 +194,8 @@ if(APPLE)
     DEPENDS "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_INSTALL_ITKFACTORIES_DIR}${BF_BUILD_TYPE}/${BF_LIB_PREFIX}BioFormatsIOPlugin.so"
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy
-    "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_INSTALL_ITKFACTORIES_DIR}${BF_BUILD_TYPE}/${BF_LIB_PREFIX}BioFormatsIOPlugin.so"
-    "${CMAKE_BINARY_DIR}/${BIO_FORMATS_DIST_DIR}/${BF_LIB_PREFIX}BioFormatsIOPlugin.so"
+      "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_INSTALL_ITKFACTORIES_DIR}${BF_BUILD_TYPE}/${BF_LIB_PREFIX}BioFormatsIOPlugin.so"
+      "${CMAKE_BINARY_DIR}/${BIO_FORMATS_DIST_DIR}/${BF_LIB_PREFIX}BioFormatsIOPlugin.so"
     VERBATIM
   )
   install(FILES
@@ -212,8 +209,8 @@ add_custom_command(
   DEPENDS "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_INSTALL_ITKFACTORIES_DIR}${BF_BUILD_TYPE}/${BF_LIB_PREFIX}BioFormatsIOPlugin${BF_SUFFIX}"
   POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy
-  "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_INSTALL_ITKFACTORIES_DIR}${BF_BUILD_TYPE}/${BF_LIB_PREFIX}BioFormatsIOPlugin${BF_SUFFIX}"
-  "${CMAKE_BINARY_DIR}/${BIO_FORMATS_DIST_DIR}/${BF_LIB_PREFIX}BioFormatsIOPlugin${BF_SUFFIX}"
+    "${CMAKE_BINARY_DIR}/${BioFormatsImageIO_INSTALL_ITKFACTORIES_DIR}${BF_BUILD_TYPE}/${BF_LIB_PREFIX}BioFormatsIOPlugin${BF_SUFFIX}"
+    "${CMAKE_BINARY_DIR}/${BIO_FORMATS_DIST_DIR}/${BF_LIB_PREFIX}BioFormatsIOPlugin${BF_SUFFIX}"
   VERBATIM
 )
 install(FILES
@@ -235,12 +232,29 @@ install(FILES
   DESTINATION "${BIO_FORMATS_DIST_DIR}"
 )
 
+# --------------------------------------------------------------------------
+# Define location of loci_tools.jar file. It is assumed that loci_tools.jar
+# has been generated using "ant tools" from the Bio-Formats base folder.
+
+if(NOT DEFINED BioFormatsImageIO_ARTIFACT_DIR)
+  set(BioFormatsImageIO_ARTIFACT_DIR
+    ${PROJECT_SOURCE_DIR}/../../../artifacts)
+endif(NOT DEFINED BioFormatsImageIO_ARTIFACT_DIR)
+
+if(NOT DEFINED BioFormatsImageIO_LOCI_TOOLS_JAR)
+  set(BioFormatsImageIO_LOCI_TOOLS_JAR
+    "${BioFormatsImageIO_ARTIFACT_DIR}/loci_tools.jar")
+endif(NOT DEFINED BioFormatsImageIO_LOCI_TOOLS_JAR)
+
+# --------------------------------------------------------------------------
+# Copy loci_tools.jar to the distribution folder (dist/bf-itk).
+
 add_custom_command(
   TARGET BioFormatsIOPlugin
-  DEPENDS "${BioFormatsImageIO_ARTIFACT_DIR}/loci_tools.jar"
+  DEPENDS "${BioFormatsImageIO_LOCI_TOOLS_JAR}"
   POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy
-  "${BioFormatsImageIO_ARTIFACT_DIR}/loci_tools.jar"
+  "${BioFormatsImageIO_LOCI_TOOLS_JAR}"
   "${CMAKE_BINARY_DIR}/${BIO_FORMATS_DIST_DIR}/loci_tools.jar"
   VERBATIM
 )
@@ -249,11 +263,15 @@ install(FILES
   DESTINATION "${BIO_FORMATS_DIST_DIR}"
 )
 
+# --------------------------------------------------------------------------
+# Generate a list of extensions supported by Bio-Formats, and copy the
+# resultant BioFormatsSuffixes.txt to the distribution folder (dist/bf-itk).
+
 add_custom_command(
   TARGET BioFormatsIOPlugin
-  DEPENDS "${BioFormatsImageIO_ARTIFACT_DIR}/loci_tools.jar"
+  DEPENDS "${BioFormatsImageIO_LOCI_TOOLS_JAR}"
   POST_BUILD
-  COMMAND ${Java_JAVA_EXECUTABLE} -cp ${BioFormatsImageIO_ARTIFACT_DIR}/loci_tools.jar
+  COMMAND "${Java_JAVA_EXECUTABLE}" -cp "${BioFormatsImageIO_LOCI_TOOLS_JAR}"
   "loci.formats.tools.BioFormatsExtensionPrinter"
   VERBATIM
 )
@@ -272,6 +290,10 @@ install(FILES
   DESTINATION "${BIO_FORMATS_DIST_DIR}"
 )
 
-SET(CPACK_PACKAGE_FILE_NAME "bf-itk")
-SET(CPACK_GENERATOR "TGZ;ZIP")
-INCLUDE( CPack )
+# --------------------------------------------------------------------------
+# Package distribution folder (dist/bf-itk) into .zip and .tar.gz archives,
+# which can be generated using the "make package" command.
+
+set(CPACK_PACKAGE_FILE_NAME "bf-itk")
+set(CPACK_GENERATOR "TGZ;ZIP")
+include(CPack)
