@@ -88,9 +88,7 @@ add_library(${lib_name}
 )
 
 target_link_libraries(${lib_name}
-#  ${ITK_LIBRARIES}
-  ITKIO
-  ITKIOReview
+  ${ITK_LIBRARIES}
 )
 
 # --------------------------------------------------------------------------
