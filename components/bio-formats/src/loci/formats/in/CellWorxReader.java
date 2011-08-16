@@ -30,11 +30,7 @@ import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
-import loci.formats.AxisGuesser;
-import loci.formats.ClassList;
 import loci.formats.CoreMetadata;
-import loci.formats.FilePattern;
-import loci.formats.FileStitcher;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -62,7 +58,7 @@ public class CellWorxReader extends FormatReader {
   // -- Fields --
 
   private boolean[][] fieldMap;
-  private String[][] wellFiles;
+  private String[][][] wellFiles;
   private String[][] logFiles;
   private int fieldCount = 0;
 
@@ -124,14 +120,12 @@ public class CellWorxReader extends FormatReader {
       files.add(logFiles[row][col]);
     }
     if (!noPixels) {
-      if (checkSuffix(wellFiles[row][col], "pnl")) {
-        files.add(wellFiles[row][col]);
+      if (checkSuffix(wellFiles[row][col][0], "pnl")) {
+        files.add(wellFiles[row][col][0]);
       }
       else {
-        FilePattern pattern = new FilePattern(wellFiles[row][col]);
-        String[] f = pattern.getFiles();
-        for (String ff : f) {
-          files.add(ff);
+        for (String f : wellFiles[row][col]) {
+          files.add(f);
         }
       }
     }
@@ -147,23 +141,30 @@ public class CellWorxReader extends FormatReader {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
     int fieldIndex = getSeries() % fieldCount;
 
-    String file = getPNLFile(getSeries());
+    String file = getFile(getSeries(), no);
 
     if (lastFile == null || lastReader == null || !file.equals(lastFile)) {
       if (lastReader != null) {
         lastReader.close();
       }
-      lastReader = getReader(file);
+      try {
+        lastReader = getReader(file);
+      }
+      catch (IOException e) {
+        // this almost always means that the file does not exist
+        LOGGER.debug("", e);
+        return buf;
+      }
       lastFile = file;
     }
 
     int planeIndex = no;
-    if (lastReader.getSeriesCount() > fieldIndex) {
+    if (lastReader.getSeriesCount() == fieldCount) {
       lastReader.setSeries(fieldIndex);
     }
     else {
       int[] zct = getZCTCoords(no);
-      planeIndex = lastReader.getIndex(zct[0], zct[1], fieldIndex);
+      planeIndex = zct[0];
     }
     lastReader.openBytes(planeIndex, buf, x, y, w, h);
     return buf;
@@ -233,7 +234,7 @@ public class CellWorxReader extends FormatReader {
       }
       else if (key.equals("YWells")) {
         yWells = Integer.parseInt(value);
-        wellFiles = new String[yWells][xWells];
+        wellFiles = new String[yWells][xWells][];
         logFiles = new String[yWells][xWells];
       }
       else if (key.startsWith("WellsSelection")) {
@@ -241,7 +242,7 @@ public class CellWorxReader extends FormatReader {
         String[] mapping = value.split(",");
         for (int col=0; col<xWells; col++) {
           if (new Boolean(mapping[col].trim()).booleanValue()) {
-            wellFiles[row][col] = "";
+            wellFiles[row][col] = new String[1];
           }
         }
       }
@@ -287,13 +288,13 @@ public class CellWorxReader extends FormatReader {
           wellCount++;
           char rowLetter = (char) (row + 'A');
           String base = plateName + rowLetter + String.format("%02d", col + 1);
-          wellFiles[row][col] = base + ".pnl";
+          wellFiles[row][col][0] = base + ".pnl";
           logFiles[row][col] = base + "_scan.log";
 
-          if (!new Location(wellFiles[row][col]).exists()) {
+          if (!new Location(wellFiles[row][col][0]).exists()) {
             // using TIFF files instead
 
-            wellFiles[row][col] = getTiffFile(
+            wellFiles[row][col] = getTiffFiles(
               plateName, rowLetter, col, wavelengths.length, nTimepoints);
           }
         }
@@ -321,7 +322,7 @@ public class CellWorxReader extends FormatReader {
 
     core = new CoreMetadata[fieldCount * wellCount];
 
-    String file = getPNLFile(0);
+    String file = getFile(0, 0);
     IFormatReader pnl = getReader(file);
 
     for (int i=0; i<core.length; i++) {
@@ -353,12 +354,6 @@ public class CellWorxReader extends FormatReader {
       store.setImageID(MetadataTools.createLSID("Image", i), i);
     }
 
-    store.setPlateAcquisitionID(
-      MetadataTools.createLSID("PlateAcquisition", 0, 0), 0, 0);
-    int fieldCount = fieldMap[0].length * fieldMap.length;
-    store.setPlateAcquisitionMaximumFieldCount(
-      new PositiveInteger(fieldCount), 0, 0);
-
     int nextImage = 0;
     for (int row=0; row<wellFiles.length; row++) {
       for (int col=0; col<wellFiles[row].length; col++) {
@@ -368,26 +363,23 @@ public class CellWorxReader extends FormatReader {
         store.setWellColumn(new NonNegativeInteger(col), 0, wellIndex);
         store.setWellRow(new NonNegativeInteger(row), 0, wellIndex);
 
+        int fieldIndex = 0;
         for (int fieldRow=0; fieldRow<fieldMap.length; fieldRow++) {
           for (int fieldCol=0; fieldCol<fieldMap[fieldRow].length; fieldCol++) {
             if (fieldMap[fieldRow][fieldCol] && wellFiles[row][col] != null) {
-              int fieldIndex = fieldRow * fieldMap[fieldRow].length + fieldCol;
-
               String wellSampleID = MetadataTools.createLSID("WellSample",
                 0, wellIndex, fieldIndex);
               store.setWellSampleID(wellSampleID, 0, wellIndex, fieldIndex);
               String imageID = MetadataTools.createLSID("Image", nextImage);
               store.setWellSampleImageRef(imageID, 0, wellIndex, fieldIndex);
-              store.setWellSampleIndex(new NonNegativeInteger(
-                wellIndex * fieldCount + fieldIndex), 0, wellIndex, fieldIndex);
-
-              store.setPlateAcquisitionWellSampleRef(
-                wellSampleID, 0, 0, nextImage);
+              store.setWellSampleIndex(
+                new NonNegativeInteger(nextImage), 0, wellIndex, fieldIndex);
 
               String well = (char) (row + 'A') + String.format("%02d", col + 1);
               store.setImageName(
                 "Well " + well + " Field #" + (fieldIndex + 1), nextImage);
               nextImage++;
+              fieldIndex++;
             }
           }
         }
@@ -440,8 +432,15 @@ public class CellWorxReader extends FormatReader {
   }
 
   /** Retrieve the .pnl file corresponding to the given series. */
-  private String getPNLFile(int seriesIndex) {
-    return wellFiles[getWellRow(seriesIndex)][getWellColumn(seriesIndex)];
+  private String getFile(int seriesIndex, int no) {
+    int row = getWellRow(seriesIndex);
+    int col = getWellColumn(seriesIndex);
+    int field = seriesIndex % fieldCount;
+    if (wellFiles[row][col].length == 0) {
+      return wellFiles[row][col][0];
+    }
+    int imageCount = wellFiles[row][col].length / fieldCount;
+    return wellFiles[row][col][field * imageCount + no];
   }
 
   /** Parse metadata from a well log file. */
@@ -568,106 +567,43 @@ public class CellWorxReader extends FormatReader {
   {
     IFormatReader pnl = new DeltavisionReader();
     if (checkSuffix(file, "tif")) {
-      pnl = new FileStitcher();
-
-      ClassList<IFormatReader> classList =
-        new ClassList<IFormatReader>(IFormatReader.class);
-      classList.addClass(MinimalTiffReader.class);
-
-      ((FileStitcher) pnl).setReaderClassList(classList);
-      ((FileStitcher) pnl).setUsingPatternIds(true);
+      pnl = new MinimalTiffReader();
     }
     pnl.setId(file);
-    if (pnl instanceof FileStitcher) {
-      int[] axisTypes = ((FileStitcher) pnl).getAxisTypes();
-      axisTypes[0] = AxisGuesser.Z_AXIS;
-      if (axisTypes.length > 1) {
-        if (axisTypes[1] != AxisGuesser.S_AXIS) {
-          axisTypes[1] = AxisGuesser.T_AXIS;
-        }
-      }
-      if (axisTypes.length > 2) {
-        axisTypes[2] = AxisGuesser.C_AXIS;
-      }
-      if (axisTypes.length > 3) {
-        axisTypes[3] = AxisGuesser.Z_AXIS;
-      }
-      ((FileStitcher) pnl).setAxisTypes(axisTypes);
-    }
     return pnl;
   }
 
-  private String getTiffFile(String plateName, char rowLetter, int col,
+  private String[] getTiffFiles(String plateName, char rowLetter, int col,
     int channels, int nTimepoints)
   {
-    String base = plateName + rowLetter + (col + 1);
-    String field = null;
-    if (fieldCount > 1) {
-      field = "s<1-" + fieldCount + ">";
-    }
+    String base = plateName + rowLetter + String.format("%02d", col + 1);
 
-    String channel = null;
-    if (channels > 1) {
-      channel = "w<1-" + channels + ">";
-    }
+    String[] files = new String[fieldCount * channels * nTimepoints];
 
-    String timepoint = null;
-    if (nTimepoints > 1) {
-      timepoint = "t<1-" + nTimepoints + ">";
-    }
+    int nextFile = 0;
+    for (int field=0; field<fieldCount; field++) {
+      for (int channel=0; channel<channels; channel++) {
+        for (int t=0; t<nTimepoints; t++, nextFile++) {
+          String file = base;
+          if (fieldCount > 1) {
+           file += "_s" + (field + 1);
+          }
+          if (channels > 1) {
+            file += "_w" + (channel + 1);
+          }
+          if (nTimepoints > 1) {
+            file += "_t" + nTimepoints;
+          }
+          files[nextFile] = file + ".tif";
 
-    String file = base;
-
-    if (field != null) {
-      file += "_" + field;
-    }
-    if (channel != null) {
-      file += "_" + channel;
-    }
-    if (timepoint != null) {
-      file += "_" + timepoint;
-    }
-    file += ".tif";
-
-    FilePattern fp = new FilePattern(file);
-    String[] files = fp.getFiles();
-
-    if (!new Location(files[0]).exists()) {
-      file = file.substring(0, file.lastIndexOf(".")) + ".TIF";
-      fp = new FilePattern(file);
-      files = fp.getFiles();
-    }
-
-    if (!new Location(files[0]).exists()) {
-      file = plateName + rowLetter + String.format("%02d", col + 1);
-
-      if (field != null) {
-        field = ".*";
-      }
-      if (channel != null) {
-        channel = "w.*";
-      }
-
-      if (field != null) {
-        file += "_" + field;
-      }
-      if (channel != null) {
-        file += "_" + channel;
-      }
-      if (timepoint != null) {
-        file += "_" + timepoint;
-      }
-      file += ".tif";
-
-      fp = new FilePattern(file);
-      files = fp.getFiles();
-
-      if (files.length == 0 || !new Location(files[0]).exists()) {
-        file = file.substring(0, file.lastIndexOf(".")) + ".TIF";
+          if (!new Location(files[nextFile]).exists()) {
+            files[nextFile] = file + ".TIF";
+          }
+        }
       }
     }
 
-    return file;
+    return files;
   }
 
 }
