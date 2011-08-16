@@ -91,16 +91,20 @@ public class CellWorxReader extends FormatReader {
     if (!open) return false;
 
     boolean foundHTD = false;
-    boolean foundPNL = false;
 
-    Location parent = new Location(name).getAbsoluteFile().getParentFile();
-    String[] list = parent.list(true);
-    if (list == null) return false;
-    for (String file : list) {
-      if (checkSuffix(file, "htd")) foundHTD = true;
-      if (checkSuffix(file, "pnl")) foundPNL = true;
+    Location current = new Location(name).getAbsoluteFile();
+    Location parent = current.getParentFile();
+
+    String htdName = current.getName();
+    while (htdName.indexOf("_") > 0) {
+      htdName = htdName.substring(0, htdName.lastIndexOf("_"));
+      if (new Location(parent, htdName + ".htd").exists() ||
+        new Location(parent, htdName + ".HTD").exists())
+      {
+        return true;
+      }
     }
-    return foundHTD && foundPNL;
+    return false;
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */

@@ -110,19 +110,17 @@ public final class MetadataTools {
     int oldSeries = r.getSeries();
     for (int i=0; i<r.getSeriesCount(); i++) {
       r.setSeries(i);
-      store.setImageID(createLSID("Image", i), i);
+      
+      String imageName = null;
       if (doImageName) {
         Location f = new Location(r.getCurrentFile());
-        store.setImageName(f.getName(), i);
+        imageName = f.getName();
       }
-      String pixelsID = createLSID("Pixels", i);
-      store.setPixelsID(pixelsID, i);
-      store.setPixelsSizeX(new PositiveInteger(r.getSizeX()), i);
-      store.setPixelsSizeY(new PositiveInteger(r.getSizeY()), i);
-      store.setPixelsSizeZ(new PositiveInteger(r.getSizeZ()), i);
-      store.setPixelsSizeC(new PositiveInteger(r.getSizeC()), i);
-      store.setPixelsSizeT(new PositiveInteger(r.getSizeT()), i);
-      store.setPixelsBinDataBigEndian(new Boolean(!r.isLittleEndian()), i, 0);
+      String pixelType = FormatTools.getPixelTypeString(r.getPixelType());
+
+      populateMetadata(store, i, imageName, r.isLittleEndian(),
+        r.getDimensionOrder(), pixelType, r.getSizeX(), r.getSizeY(),
+        r.getSizeZ(), r.getSizeC(), r.getSizeT(), r.getRGBChannelCount());
 
       try {
         OMEXMLService service =
@@ -140,26 +138,9 @@ public final class MetadataTools {
         }
       }
       catch (DependencyException exc) {
-        LOGGER.debug("Failed to set BinData.Length", exc);
+        LOGGER.warn("Failed to set BinData.Length", exc);
       }
 
-      try {
-        store.setPixelsType(PixelType.fromString(
-          FormatTools.getPixelTypeString(r.getPixelType())), i);
-        store.setPixelsDimensionOrder(
-          DimensionOrder.fromString(r.getDimensionOrder()), i);
-      }
-      catch (EnumerationException e) {
-        LOGGER.debug("Failed to create enumeration", e);
-      }
-      if (r.getSizeC() > 0) {
-        Integer sampleCount = new Integer(r.getRGBChannelCount());
-        for (int c=0; c<r.getEffectiveSizeC(); c++) {
-          store.setChannelID(createLSID("Channel", i, c), i, c);
-          store.setChannelSamplesPerPixel(
-            new PositiveInteger(sampleCount), i, c);
-        }
-      }
       if (doPlane) {
         for (int q=0; q<r.getImageCount(); q++) {
           int[] coords = r.getZCTCoords(q);
@@ -170,6 +151,72 @@ public final class MetadataTools {
       }
     }
     r.setSeries(oldSeries);
+  }
+
+  /**
+   * Populates the given {@link MetadataStore}, for the specified series, using
+   * the values from the provided {@link CoreMetadata}.
+   * <p>
+   * After calling this method, the metadata store will be sufficiently
+   * populated for use with an {@link IFormatWriter} (assuming it is also a
+   * {@link MetadataRetrieve}).
+   * </p>
+   */
+  public static void populateMetadata(MetadataStore store, int series,
+    String imageName, CoreMetadata coreMeta)
+  {
+    final String pixelType = FormatTools.getPixelTypeString(coreMeta.pixelType);
+    final int effSizeC = coreMeta.imageCount / coreMeta.sizeZ / coreMeta.sizeT;
+    final int samplesPerPixel = coreMeta.sizeC / effSizeC;
+    populateMetadata(store, series, imageName, coreMeta.littleEndian,
+      coreMeta.dimensionOrder, pixelType, coreMeta.sizeX, coreMeta.sizeY,
+      coreMeta.sizeZ, coreMeta.sizeC, coreMeta.sizeT, samplesPerPixel);
+  }
+
+  /**
+   * Populates the given {@link MetadataStore}, for the specified series, using
+   * the provided values.
+   * <p>
+   * After calling this method, the metadata store will be sufficiently
+   * populated for use with an {@link IFormatWriter} (assuming it is also a
+   * {@link MetadataRetrieve}).
+   * </p>
+   */
+  public static void populateMetadata(MetadataStore store, int series,
+    String imageName, boolean littleEndian, String dimensionOrder,
+    String pixelType, int sizeX, int sizeY, int sizeZ, int sizeC, int sizeT,
+    int samplesPerPixel)
+  {
+    store.setImageID(createLSID("Image", series), series);
+    setDefaultCreationDate(store, null, series);
+    if (imageName != null) store.setImageName(imageName, series);
+    store.setPixelsID(createLSID("Pixels", series), series);
+    store.setPixelsBinDataBigEndian(!littleEndian, series, 0);
+    try {
+      store.setPixelsDimensionOrder(
+        DimensionOrder.fromString(dimensionOrder), series);
+    }
+    catch (EnumerationException e) {
+      LOGGER.warn("Invalid dimension order: " + dimensionOrder, e);
+    }
+    try {
+      store.setPixelsType(PixelType.fromString(pixelType), series);
+    }
+    catch (EnumerationException e) {
+      LOGGER.warn("Invalid pixel type: " + pixelType, e);
+    }
+    store.setPixelsSizeX(new PositiveInteger(sizeX), series);
+    store.setPixelsSizeY(new PositiveInteger(sizeY), series);
+    store.setPixelsSizeZ(new PositiveInteger(sizeZ), series);
+    store.setPixelsSizeC(new PositiveInteger(sizeC), series);
+    store.setPixelsSizeT(new PositiveInteger(sizeT), series);
+    int effSizeC = sizeC / samplesPerPixel;
+    for (int i=0; i<effSizeC; i++) {
+      store.setChannelID(createLSID("Channel", series, i),
+        series, i);
+      store.setChannelSamplesPerPixel(new PositiveInteger(samplesPerPixel),
+        series, i);
+    }
   }
 
   /**
@@ -264,9 +311,9 @@ public final class MetadataTools {
   public static void setDefaultCreationDate(MetadataStore store, String id,
     int series)
   {
-    Location file = new Location(id).getAbsoluteFile();
+    Location file = id == null ? null : new Location(id).getAbsoluteFile();
     long time = System.currentTimeMillis();
-    if (file.exists()) time = file.lastModified();
+    if (file != null && file.exists()) time = file.lastModified();
     store.setImageAcquiredDate(DateTools.convertDate(time, DateTools.UNIX),
       series);
   }

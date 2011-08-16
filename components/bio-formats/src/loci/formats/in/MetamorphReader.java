@@ -147,9 +147,15 @@ public class MetamorphReader extends BaseTiffReader {
     if (open) {
       location = location.getAbsoluteFile();
       Location parent = location.getParentFile();
-      String[] list = parent.list(true);
-      for (String f : list) {
-        if (checkSuffix(f, "nd") && checkSuffix(name, suffixes)) {
+
+      String baseName = location.getName();
+
+      while (baseName.indexOf("_") >= 0) {
+        baseName = baseName.substring(0, baseName.lastIndexOf("_"));
+        if (checkSuffix(name, suffixes) &&
+          (new Location(parent, baseName + ".nd").exists() ||
+          new Location(parent, baseName + ".ND").exists()))
+        {
           return true;
         }
       }

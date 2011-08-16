@@ -113,6 +113,9 @@ public class BDReader extends FormatReader {
     catch (IOException f) {
       return false;
     }
+    catch (NullPointerException e) {
+      return false;
+    }
 
     if (id.endsWith(EXPERIMENT_FILE)) { return true; }
 
@@ -450,10 +453,9 @@ public class BDReader extends FormatReader {
     if (!checkSuffix(id, "exp")) {
       Location parent = new Location(id).getAbsoluteFile().getParentFile();
       if (checkSuffix(id, "tif")) parent = parent.getParentFile();
-      for (String file : parent.list()) {
-        if (file.equals(EXPERIMENT_FILE)) {
-          return new Location(parent, file).getAbsolutePath();
-        }
+      Location expFile = new Location(parent, EXPERIMENT_FILE);
+      if (expFile.exists()) {
+        return expFile.getAbsolutePath();
       }
       throw new FormatException("Could not find " + EXPERIMENT_FILE +
         " in " + parent.getAbsolutePath());
