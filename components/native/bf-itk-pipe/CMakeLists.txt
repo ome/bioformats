@@ -64,11 +64,6 @@ configure_file(
 )
 
 file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
-#install(FILES
-#  ${headers}
-#  "${CMAKE_CURRENT_BINARY_DIR}/itkBioFormatsImageIOConfigure.h"
-#  DESTINATION include/${PROJECT_NAME} COMPONENT Development
-#)
 
 if(NOT DEFINED BUILD_SHARED_LIBS)
   option(BUILD_SHARED_LIBS "Build with shared libraries." ON)
@@ -86,6 +81,7 @@ set(BioFormatsImageIO_SRCS
 
 # --------------------------------------------------------------------------
 # Build and install the library
+
 set(lib_name BioFormatsIO)
 add_library(${lib_name}
   ${BioFormatsImageIO_SRCS}
@@ -97,12 +93,7 @@ target_link_libraries(${lib_name}
   ITKIOReview
 )
 
-#install(TARGETS ${lib_name}
-#  RUNTIME DESTINATION bin COMPONENT RuntimeLibraries
-#  LIBRARY DESTINATION lib/${PROJECT_NAME} COMPONENT RuntimeLibraries
-#  ARCHIVE DESTINATION lib/${PROJECT_NAME} COMPONENT Development
-#)
-
+# --------------------------------------------------------------------------
 # Shared library that when placed in ITK_AUTOLOAD_PATH, will add
 # BioFormatsImageIO as an ImageIOFactory.  Need to have separate shared
 # library for each new format. Note that the plugin library is placed
@@ -146,13 +137,9 @@ target_link_libraries(BioFormatsIOPlugin
   ${lib_name}
 )
 
-#install(TARGETS BioFormatsIOPlugin
-#  RUNTIME DESTINATION ${BioFormatsImageIO_INSTALL_ITKFACTORIES_DIR} COMPONENT RuntimeLibraries
-#  LIBRARY DESTINATION ${BioFormatsImageIO_INSTALL_ITKFACTORIES_DIR} COMPONENT RuntimeLibraries
-#  ARCHIVE DESTINATION lib/${PROJECT_NAME} COMPONENT Development
-#)
+# --------------------------------------------------------------------------
+# Add some tests
 
-# add some tests
 add_executable(itkBioFormatsImageIOTest itkBioFormatsImageIOTest.cxx)
 target_link_libraries(itkBioFormatsImageIOTest BioFormatsIO)
 
