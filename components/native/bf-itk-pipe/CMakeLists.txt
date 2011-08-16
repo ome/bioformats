@@ -118,7 +118,8 @@ if(NOT DEFINED BioFormatsImageIO_INSTALL_ITKFACTORIES_DIR)
 endif(NOT DEFINED BioFormatsImageIO_INSTALL_ITKFACTORIES_DIR)
 
 if(NOT DEFINED BioFormatsImageIO_ARTIFACT_DIR)
-  set(BioFormatsImageIO_ARTIFACT_DIR ../../../../artifacts)
+  set(BioFormatsImageIO_ARTIFACT_DIR
+    ${PROJECT_SOURCE_DIR}/../../../artifacts)
 endif(NOT DEFINED BioFormatsImageIO_ARTIFACT_DIR)
 
 if(NOT DEFINED BIO_FORMATS_DIST_DIR)
