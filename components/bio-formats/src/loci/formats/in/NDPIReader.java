@@ -72,6 +72,11 @@ public class NDPIReader extends BaseTiffReader {
 
   // -- IFormatReader API methods --
 
+  /** @see loci.formats.IFormatReader#fileGroupOption(String) */
+  public int fileGroupOption(String id) throws FormatException, IOException {
+    return MUST_GROUP;
+  }
+
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
