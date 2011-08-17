@@ -53,10 +53,13 @@ int main( int argc, char * argv [] )
   ReaderType::Pointer reader = ReaderType::New();
   std::cout << "reader->GetUseStreaming(): " << reader->GetUseStreaming() << std::endl;
 
+  std::cout << "done checking streaming usage";
+
   reader->SetFileName("fileNotFound");
   reader->SetImageIO(io);
 
   // should get an exception
+  // TODO: Exception is thrown in Java not c++ .. is not caught and dies
   bool catched = false;
   try
     {
@@ -78,6 +81,7 @@ int main( int argc, char * argv [] )
   typedef itk::StreamingImageFilter<ImageType, ImageType> StreamingFilter;
   StreamingFilter::Pointer streamer = StreamingFilter::New();
   streamer->SetInput( reader->GetOutput() );
+  // should this be argv[2]? Anticipating seg fault as in RGB test
   streamer->SetNumberOfStreamDivisions( atoi(argv[3]) );
 
   itk::ImageFileWriter<ImageType>::Pointer writer;
