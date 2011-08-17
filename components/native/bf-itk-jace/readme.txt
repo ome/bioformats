@@ -4,8 +4,8 @@ Bio-Formats ITK plugin
 This package provides an ImageIO plugin for ITK that uses Bio-Formats
 to read and write supported life sciences file formats.
 
-The implementation is still very preliminary, and may be substantially changed
-before a stable release is announced.
+IMPORTANT NOTE: This implementation is a proof of concept that has been
+supplanted by the BF-ITK plugin in the bf-itk-pipe folder.
 
 
 LICENSE
