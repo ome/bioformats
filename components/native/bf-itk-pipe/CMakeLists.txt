@@ -167,6 +167,9 @@ target_link_libraries(itkBioFormatsImageIOTest BioFormatsIO)
 add_executable(itkRGBBioFormatsImageIOTest itkRGBBioFormatsImageIOTest.cxx)
 target_link_libraries(itkRGBBioFormatsImageIOTest BioFormatsIO)
 
+add_executable(itkBFImageInfo itkBioFormatsImageInfo.cxx)
+target_link_libraries(itkBFImageInfo BioFormatsIO)
+
 add_executable(itkVectorImageBioFormatsImageIOTest
   itkVectorImageBioFormatsImageIOTest.cxx
 )
