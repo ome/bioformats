@@ -1,3 +1,4 @@
+#
 # CMakeLists.txt
 #
 
@@ -45,12 +46,12 @@ project(BioFormatsImageIO)
 
 cmake_minimum_required(VERSION 2.8)
 
+# --------------------------------------------------------------------------
+# Initial setup
+
 if(COMMAND cmake_policy)
  cmake_policy(SET CMP0003 NEW)
 endif(COMMAND cmake_policy)
-
-find_package(ITK REQUIRED)
-include("${ITK_USE_FILE}")
 
 set(include_dirs
   ${CMAKE_CURRENT_SOURCE_DIR}
@@ -68,6 +69,39 @@ file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
 if(NOT DEFINED BUILD_SHARED_LIBS)
   option(BUILD_SHARED_LIBS "Build with shared libraries." ON)
 endif(NOT DEFINED BUILD_SHARED_LIBS)
+
+# --------------------------------------------------------------------------
+# Find ITK
+
+find_package(ITK REQUIRED)
+include("${ITK_USE_FILE}")
+
+# --------------------------------------------------------------------------
+# Check ITK version
+
+# ITK 3.20.0 or newer is required.
+# For ITK 3.x, ITK_USE_REVIEW must be turned ON.
+
+if(ITK_VERSION_MAJOR LESS "3")
+  message(FATAL_ERROR "The BF-ITK plugin requires ITK 3.20.0 or newer. You are using ${ITK_VERSION_MAJOR}.${ITK_VERSION_MINOR}.${ITK_VERSION_PATCH}.")
+endif(ITK_VERSION_MAJOR LESS "3")
+
+if(ITK_VERSION_MAJOR EQUAL "3")
+  if(ITK_VERSION_MINOR LESS "20")
+    message(FATAL_ERROR "The BF-ITK plugin requires ITK 3.20.0 or newer. You are using ${ITK_VERSION_MAJOR}.${ITK_VERSION_MINOR}.${ITK_VERSION_PATCH}.")
+  endif(ITK_VERSION_MINOR LESS "20")
+  if(NOT ITK_USE_REVIEW)
+    message(FATAL_ERROR "For ITK 3.x, ITK_USE_REVIEW must be turned ON.")
+  endif(NOT ITK_USE_REVIEW)
+  set(BF_LINK_REVIEW ON)
+endif(ITK_VERSION_MAJOR EQUAL "3")
+
+if(ITK_VERSION_MAJOR GREATER "3")
+  set(BF_LINK_REVIEW OFF)
+endif(ITK_VERSION_MAJOR GREATER "3")
+
+# --------------------------------------------------------------------------
+# Find Java native library
 
 find_package(Java REQUIRED)
 
@@ -87,9 +121,17 @@ add_library(${lib_name}
   ${BF_SRCS}
 )
 
-target_link_libraries(${lib_name}
-  ${ITK_LIBRARIES}
-)
+if(BF_LINK_REVIEW)
+  # Review libraries required
+  target_link_libraries(${lib_name}
+    ${ITK_LIBRARIES}
+    ITKIOReview
+  )
+else(BF_LINK_REVIEW)
+  target_link_libraries(${lib_name}
+    ${ITK_LIBRARIES}
+  )
+endif(BF_LINK_REVIEW)
 
 # --------------------------------------------------------------------------
 # Shared library that when placed in ITK_AUTOLOAD_PATH, will add
