@@ -54,12 +54,15 @@ int main( int argc, char * argv [] )
   ReaderType::Pointer reader = ReaderType::New();
   std::cout << "reader->GetUseStreaming(): " << reader->GetUseStreaming() << std::endl;
 
+
   reader->SetFileName(argv[1]);
   reader->SetImageIO(io);
 
   typedef itk::StreamingImageFilter<ImageType, ImageType> StreamingFilter;
   StreamingFilter::Pointer streamer = StreamingFilter::New();
   streamer->SetInput( reader->GetOutput() );
+  //this call to setnumberofstreamdivisions is causing a seg fault
+  // should this be argv[2] ?
   streamer->SetNumberOfStreamDivisions( atoi(argv[3]) );
 
   itk::ImageFileWriter<ImageType>::Pointer writer;

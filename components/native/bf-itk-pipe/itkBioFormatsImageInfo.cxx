@@ -1,15 +1,8 @@
-Bio-Formats ITK plugin
-----------------------
+//
+// itkBioFormatsImageInfo.cxx
+//
 
-This package provides an ImageIO plugin for ITK that uses Bio-Formats
-to read and write supported life sciences file formats.
-
-IMPORTANT NOTE: This implementation is a proof of concept that has been
-supplanted by the BF-ITK plugin in the bf-itk-pipe folder.
-
-
-LICENSE
-
+/*
 OME Bio-Formats ITK plugin for calling Bio-Formats from the Insight Toolkit.
 Copyright (c) 2008-@year@, UW-Madison LOCI.
 All rights reserved.
@@ -35,13 +28,17 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
 ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
 
+/*
 IMPORTANT NOTE: Although this software is distributed according to a
 "BSD-style" license, it requires the OME Bio-Formats Java library to do
 anything useful, which is licensed under the GPL v2 or later.
 As such, if you wish to distribute this software with Bio-Formats itself,
 your combined work must be distributed under the terms of the GPL.
+*/
 
+/*
 Adapted from the Slicer3 project: http://www.slicer.org/
 http://viewvc.slicer.org/viewcvs.cgi/trunk/Libs/MGHImageIO/
 
@@ -49,30 +46,53 @@ See slicer-license.txt for Slicer3's licensing information.
 
 For more information about the ITK Plugin IO mechanism, see:
 http://www.itk.org/Wiki/Plugin_IO_mechanisms
+*/
 
+#include <iostream>
+#include <vector>
+#include <string>
+#include "itkBioFormatsImageIO.h"
+#include "itkImageFileReader.h"
+#include "itkImageFileWriter.h"
+#include "itkImage.h"
+#include "itkMetaDataObject.h"
+#include "itkMetaDataDictionary.h"
 
-BUILDING AND TESTING THE PLUGIN ON LINUX AND MAC OS X
+int main( int argc, char * argv[] )
+{
+  if( argc < 2)
+  {
+    std::cerr << "Usage: " << argv[0] << " input\n";
+    return EXIT_FAILURE;
+  }
 
-1) Download and build the Insight Toolkit source code from:
+  typedef unsigned char     PixelType;
+  const unsigned int        Dimension = 3;
 
-     http://www.itk.org/ITK/resources/software.html
+  typedef itk::Image< PixelType, Dimension >  ImageType;
 
-   Be sure to build with shared libraries (BUILD_SHARED_LIBS set to ON).
+  typedef itk::ImageFileReader<ImageType> ReaderType;
 
-2) Follow the directions in components/native/bf-cpp to build the Bio-Formats
-   C++ bindings.
+  itk::BioFormatsImageIO::Pointer io = itk::BioFormatsImageIO::New();
 
-3) Change to this directory (components/native/itk-plugin).
+  io->DebugOn();
 
-4) Run the (lame, temporary) build script:
+  ReaderType::Pointer reader = ReaderType::New();
 
-     ITK_DIR=/path/to/itk/build sh build.sh 2> /dev/null
+  reader->SetImageIO(io);
+  reader->SetFileName(argv[1]);
+  reader->Update();
+  std::string notes1;
+  itk::MetaDataDictionary dict( reader->GetMetaDataDictionary() );
 
-5) After the build succeeds, the script will copy dependent libraries
-   (libjace.so, libbfjace.so, jace-runtime.jar and loci_tools.jar) into the ITK
-   binaries directory, then suggest some commands to proceed in testing. These
-   commands boil down to: a) set ITK_AUTOLOAD_PATH; b) run ImageHistogram1
-   example program on a TIFF file; c) optionally, clear ITK_AUTOLOAD_PATH and
-   rerun to compare against the results with ITK's built-in TIFF reader.
+  std::cout << "Metadata Keys, Value pairs:" << std::endl;
+  for(std::vector<std::string>::iterator it = dict.GetKeys().begin(); it != dict.GetKeys().end(); it++)
+  {
+    //TODO: Need to look up, in the MetaDataDictionary, the value paired to each key (*it)
+    std::cout << *it << " , " << std::endl;
+    //itk::ExposeMetaData<std::string>( reader->GetMetaDataDictionary(), *it, notes1 );
+    //std::cout << "Metadata: " << notes1 << std::endl;
 
-Please direct questions to the Bio-Formats team at bioformats@loci.wisc.edu.
+  }
+
+}
