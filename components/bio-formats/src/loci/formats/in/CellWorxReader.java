@@ -142,6 +142,9 @@ public class CellWorxReader extends FormatReader {
     int fieldIndex = getSeries() % fieldCount;
 
     String file = getFile(getSeries(), no);
+    if (file == null) {
+      return buf;
+    }
 
     if (lastFile == null || lastReader == null || !file.equals(lastFile)) {
       if (lastReader != null) {
@@ -440,7 +443,10 @@ public class CellWorxReader extends FormatReader {
       return wellFiles[row][col][0];
     }
     int imageCount = wellFiles[row][col].length / fieldCount;
-    return wellFiles[row][col][field * imageCount + no];
+    if (field * imageCount + no < wellFiles[row][col].length) {
+      return wellFiles[row][col][field * imageCount + no];
+    }
+    return null;
   }
 
   /** Parse metadata from a well log file. */
