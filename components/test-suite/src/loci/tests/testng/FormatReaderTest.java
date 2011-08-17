@@ -60,25 +60,7 @@ import loci.formats.ImageReader;
 import loci.formats.ReaderWrapper;
 import loci.formats.gui.AWTImageTools;
 import loci.formats.gui.BufferedImageReader;
-import loci.formats.in.AnalyzeReader;
-import loci.formats.in.APLReader;
-import loci.formats.in.BioRadReader;
-import loci.formats.in.GelReader;
-import loci.formats.in.JPEGReader;
-import loci.formats.in.JPEG2000Reader;
-import loci.formats.in.HitachiReader;
-import loci.formats.in.L2DReader;
-import loci.formats.in.MetamorphReader;
-import loci.formats.in.MetamorphTiffReader;
-import loci.formats.in.ND2Reader;
-import loci.formats.in.NiftiReader;
-import loci.formats.in.NRRDReader;
-import loci.formats.in.OMETiffReader;
-import loci.formats.in.PGMReader;
-import loci.formats.in.PrairieReader;
-import loci.formats.in.SISReader;
-import loci.formats.in.TiffDelegateReader;
-import loci.formats.in.TrestleReader;
+import loci.formats.in.*;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
@@ -1258,6 +1240,13 @@ public class FormatReaderTest {
             continue;
           }
 
+          // Volocity datasets can only be detected with the .mvd2 file
+          if (file.toLowerCase().endsWith(".mvd2") &&
+            !base[i].toLowerCase().endsWith(".mvd2"))
+          {
+            continue;
+          }
+
           r.setId(base[i]);
 
           String[] comp = r.getUsedFiles();
@@ -1291,6 +1280,13 @@ public class FormatReaderTest {
           // JPEG files that are part of a Trestle dataset can be detected
           // separately
           if (reader.getFormat().equals("Trestle")) {
+            continue;
+          }
+
+          // TIFF files in CellR datasets are detected separately
+          if (reader.getFormat().equals("Olympus APL") &&
+            base[i].toLowerCase().endsWith(".tif"))
+          {
             continue;
           }
 
@@ -1557,8 +1553,9 @@ public class FormatReaderTest {
               continue;
             }
 
-            if (result && r instanceof APLReader &&
-              readers[j] instanceof SISReader)
+            if ((result && r instanceof APLReader &&
+              readers[j] instanceof SISReader) || (!result &&
+              r instanceof APLReader && readers[j] instanceof APLReader))
             {
               continue;
             }
@@ -1581,6 +1578,19 @@ public class FormatReaderTest {
             }
 
             if (result && r instanceof HitachiReader) {
+              continue;
+            }
+
+            if (!result && r instanceof VolocityReader &&
+              readers[j] instanceof VolocityReader)
+            {
+              continue;
+            }
+
+            if (!result && r instanceof InCellReader &&
+              readers[j] instanceof InCellReader &&
+              !used[i].toLowerCase().endsWith(".xdce"))
+            {
               continue;
             }
 
