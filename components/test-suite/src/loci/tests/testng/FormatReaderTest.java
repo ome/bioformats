@@ -1235,7 +1235,7 @@ public class FormatReaderTest {
           // .xlog files in InCell 1000/2000 files may belong to more
           // than one dataset
           if (file.toLowerCase().endsWith(".xdce") &&
-            base[i].toLowerCase().endsWith(".xlog"))
+            !base[i].toLowerCase().endsWith(".xdce"))
           {
             continue;
           }
@@ -1286,6 +1286,13 @@ public class FormatReaderTest {
           // TIFF files in CellR datasets are detected separately
           if (reader.getFormat().equals("Olympus APL") &&
             base[i].toLowerCase().endsWith(".tif"))
+          {
+            continue;
+          }
+
+          // TIFF files in Li-Cor datasets are detected separately
+          if (reader.getFormat().equals("Li-Cor L2D") &&
+            !base[i].toLowerCase().endsWith("l2d"))
           {
             continue;
           }
@@ -1541,7 +1548,8 @@ public class FormatReaderTest {
             }
 
             if (result && (readers[j] instanceof L2DReader) ||
-              ((r instanceof L2DReader) && (readers[j] instanceof GelReader)))
+              ((r instanceof L2DReader) && (readers[j] instanceof GelReader) ||
+              readers[j] instanceof L2DReader))
             {
               continue;
             }
