@@ -66,6 +66,7 @@ public class OmeroReader extends FormatReader {
   private int thePort = DEFAULT_PORT;
 
   private RawPixelsStorePrx store;
+  private Image img;
   private Pixels pix;
 
   // -- Constructors --
@@ -146,7 +147,7 @@ public class OmeroReader extends FormatReader {
 
     String address = server, user = username, pass = password;
     int port = thePort;
-    long pid = -1;
+    long iid = -1;
 
     final String[] tokens = id.substring(6).split("\n");
     for (String token : tokens) {
@@ -163,9 +164,9 @@ public class OmeroReader extends FormatReader {
         }
         catch (NumberFormatException exc) { }
       }
-      else if (key.equals("pid")) {
+      else if (key.equals("iid")) {
         try {
-          pid = Long.parseLong(val);
+          iid = Long.parseLong(val);
         }
         catch (NumberFormatException exc) { }
       }
@@ -180,8 +181,8 @@ public class OmeroReader extends FormatReader {
     if (pass == null) {
       throw new FormatException("Invalid password");
     }
-    if (pid < 0) {
-      throw new FormatException("Invalid pixels ID");
+    if (iid < 0) {
+      throw new FormatException("Invalid image ID");
     }
 
     try {
@@ -195,10 +196,12 @@ public class OmeroReader extends FormatReader {
       // get raw pixels store and pixels
 
       store = serviceFactory.createRawPixelsStore();
-      store.setPixelsId(pid, false);
+      store.setPixelsId(iid, false);
 
       final GatewayPrx gateway = serviceFactory.createGateway();
-      pix = gateway.getPixels(pid);
+      img = gateway.getImage(iid);
+      long pixelsId = img.getPixels(0).getId().getValue();
+      pix = gateway.getPixels(pixelsId);
       final int sizeX = pix.getSizeX().getValue();
       final int sizeY = pix.getSizeY().getValue();
       final int sizeZ = pix.getSizeZ().getValue();
@@ -226,10 +229,8 @@ public class OmeroReader extends FormatReader {
       double py = pix.getSizeY().getValue();
       double pz = pix.getSizeZ().getValue();
 
-      Image image = pix.getImage();
-
-      String name = image.getName().getValue();
-      String description = image.getDescription().getValue();
+      String name = img.getName().getValue();
+      String description = img.getDescription().getValue();
 
       MetadataStore store = getMetadataStore();
       store.setImageName(name, 0);
@@ -270,8 +271,8 @@ public class OmeroReader extends FormatReader {
     System.out.print("Password? ");
     final String pass = new String(con.readLine());
 
-    System.out.print("Pixels ID? ");
-    final int pixelsId = Integer.parseInt(con.readLine());
+    System.out.print("Image ID? ");
+    final int imageId = Integer.parseInt(con.readLine());
     System.out.print("\n\n");
 
     // construct the OMERO reader
@@ -280,7 +281,7 @@ public class OmeroReader extends FormatReader {
     omeroReader.setPassword(pass);
     omeroReader.setServer(server);
     omeroReader.setPort(port);
-    final String id = "omero:pid=" + pixelsId;
+    final String id = "omero:iid=" + imageId;
     try {
       omeroReader.setId(id);
     }
