@@ -48,13 +48,8 @@
     </dependency>
     <dependency>
       <groupId>ome</groupId>
-      <artifactId>omero-client</artifactId>
-      <version>4.2.0</version>
-    </dependency>
-    <dependency>
-      <groupId>ome</groupId>
-      <artifactId>omero-common</artifactId>
-      <version>4.2.0</version>
+      <artifactId>omero_client</artifactId>
+      <version></version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
