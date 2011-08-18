@@ -281,8 +281,15 @@ public class OmeroReader extends FormatReader {
     omeroReader.setServer(server);
     omeroReader.setPort(port);
     final String id = "omero:pid=" + pixelsId;
-    omeroReader.setId(id);
-    omeroReader.close();
+    try {
+      omeroReader.setId(id);
+    }
+    catch (Exception e) {
+      LOGGER.info("", e);
+    }
+    finally {
+      omeroReader.close();
+    }
 
     // delegate the heavy lifting to Bio-Formats ImageInfo utility
     final ImageInfo imageInfo = new ImageInfo();
