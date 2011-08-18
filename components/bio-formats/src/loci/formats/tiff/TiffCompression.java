@@ -291,7 +291,7 @@ public enum TiffCompression implements CodedEnum {
   public CodecOptions getCompressionCodecOptions(IFD ifd, CodecOptions opt)
     throws FormatException{
     if (ifd == null)
-      throw new IllegalArgumentException("No IFD speficied.");
+      throw new IllegalArgumentException("No IFD specified.");
     if (opt == null) opt = CodecOptions.getDefaultOptions();
     CodecOptions options = new CodecOptions(opt);
     options.width = (int) ifd.getImageWidth();
