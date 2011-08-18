@@ -65,6 +65,7 @@ public class OmeroReader extends FormatReader {
   private String password;
   private int thePort = DEFAULT_PORT;
 
+  private omero.client client;
   private RawPixelsStorePrx store;
   private Image img;
   private Pixels pix;
@@ -128,7 +129,9 @@ public class OmeroReader extends FormatReader {
   @Override
   public void close() throws IOException {
     super.close();
-    // TODO close last session
+    if (client != null) {
+      client.closeSession();
+    }
   }
 
   @Override
@@ -190,7 +193,7 @@ public class OmeroReader extends FormatReader {
 
       LOGGER.info("Logging in");
 
-      omero.client client = new omero.client(server, port);
+      client = new omero.client(server, port);
       final ServiceFactoryPrx serviceFactory = client.createSession(user, pass);
 
       // get raw pixels store and pixels
@@ -286,16 +289,22 @@ public class OmeroReader extends FormatReader {
       omeroReader.setId(id);
     }
     catch (Exception e) {
-      LOGGER.info("", e);
-    }
-    finally {
       omeroReader.close();
+      throw e;
     }
 
     // delegate the heavy lifting to Bio-Formats ImageInfo utility
     final ImageInfo imageInfo = new ImageInfo();
     imageInfo.setReader(omeroReader); // override default image reader
-    if (!imageInfo.testRead(args)) System.exit(1);
+
+    String[] readArgs = new String[args.length + 1];
+    System.arraycopy(args, 0, readArgs, 0, args.length);
+    readArgs[args.length] = id;
+
+    if (!imageInfo.testRead(readArgs)) {
+      omeroReader.close();
+      System.exit(1);
+    }
   }
 
 }
