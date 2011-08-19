@@ -199,6 +199,7 @@ public class LIFReader extends FormatReader {
   private Vector[] detectorModels, voltages;
   private Integer[][] exWaves;
   private Vector[] activeDetector;
+  private HashMap[] detectorIndexes;
 
   private String[] immersions, corrections, objectiveModels;
   private Integer[] magnification;
@@ -340,6 +341,7 @@ public class LIFReader extends FormatReader {
       alternateCenter = false;
       imageNames = null;
       acquiredDate = null;
+      detectorIndexes = null;
     }
   }
 
@@ -582,18 +584,37 @@ public class LIFReader extends FormatReader {
         }
 
         int start = validIntensities.size() - getEffectiveSizeC();
+        if (start < 0) {
+          start = 0;
+        }
+
+        boolean noNames = true;
+        for (String name : channelNames[i]) {
+          if (!name.equals("")) {
+            noNames = false;
+            break;
+          }
+        }
+
         for (int k=start; k<validIntensities.size(); k++, nextChannel++) {
           int index = validIntensities.get(k);
           double intensity = (Double) laserIntensities.get(index);
           int laser = index % lasers.size();
           Integer wavelength = (Integer) lasers.get(laser);
           if (wavelength != 0) {
-            String id = MetadataTools.createLSID("LightSource", i, laser);
-            store.setChannelLightSourceSettingsID(id, i, nextChannel);
-            store.setChannelLightSourceSettingsAttenuation(
-              new PercentFraction((float) intensity / 100f), i, nextChannel);
-            store.setChannelExcitationWavelength(
-              new PositiveInteger(wavelength), i, nextChannel);
+            while (channelNames != null && nextChannel < getEffectiveSizeC() &&
+              (channelNames[i][nextChannel].equals("") && !noNames))
+            {
+              nextChannel++;
+            }
+            if (nextChannel < getEffectiveSizeC()) {
+              String id = MetadataTools.createLSID("LightSource", i, laser);
+              store.setChannelLightSourceSettingsID(id, i, nextChannel);
+              store.setChannelLightSourceSettingsAttenuation(
+                new PercentFraction((float) intensity / 100f), i, nextChannel);
+              store.setChannelExcitationWavelength(
+                new PositiveInteger(wavelength), i, nextChannel);
+            }
           }
         }
       }
@@ -651,7 +672,9 @@ public class LIFReader extends FormatReader {
       }
 
       Vector activeDetectors = activeDetector[i];
-      int nextDetector = 0;
+      int firstDetector = activeDetectors == null ? 0 :
+        activeDetectors.size() - getEffectiveSizeC();
+      int nextDetector = firstDetector;
 
       for (int c=0; c<getEffectiveSizeC(); c++) {
         if (activeDetectors != null) {
@@ -661,8 +684,8 @@ public class LIFReader extends FormatReader {
             nextDetector++;
           }
           if (nextDetector < activeDetectors.size()) {
-            String detectorID =
-              MetadataTools.createLSID("Detector", i, nextDetector);
+            String detectorID = MetadataTools.createLSID(
+              "Detector", i, nextDetector - firstDetector);
             store.setDetectorSettingsID(detectorID, i, c);
             nextDetector++;
 
@@ -770,6 +793,7 @@ public class LIFReader extends FormatReader {
     filterModels = new Vector[imageNodes.getLength()];
     microscopeModels = new String[imageNodes.getLength()];
     detectorModels = new Vector[imageNodes.getLength()];
+    detectorIndexes = new HashMap[imageNodes.getLength()];
     zSteps = new Double[imageNodes.getLength()];
     tSteps = new Double[imageNodes.getLength()];
     pinholes = new Double[imageNodes.getLength()];
@@ -916,6 +940,8 @@ public class LIFReader extends FormatReader {
           String c = detector.getAttribute("Channel");
           int channel = c == null ? 0 : Integer.parseInt(c);
 
+          detectorModels[image].add(detectorIndexes[image].get(channel));
+
           Element multiband = null;
 
           if (multibands != null) {
@@ -936,6 +962,9 @@ public class LIFReader extends FormatReader {
             cutIns[image].add(new PositiveInteger((int) Math.round(cutIn)));
             cutOuts[image].add(new PositiveInteger((int) Math.round(cutOut)));
           }
+          else {
+            channels.add("");
+          }
 
           if (nextChannel < getEffectiveSizeC()) {
             gains[image][nextChannel] = gain;
@@ -946,7 +975,6 @@ public class LIFReader extends FormatReader {
         }
 
         if (active) {
-          detectorModels[image].add("");
           activeDetector[image].add(active);
         }
       }
@@ -1195,6 +1223,7 @@ public class LIFReader extends FormatReader {
     cutIns[image] = new Vector<PositiveInteger>();
     cutOuts[image] = new Vector<PositiveInteger>();
     filterModels[image] = new Vector<String>();
+    detectorIndexes[image] = new HashMap<Integer, String>();
 
     for (int i=0; i<filterSettings.getLength(); i++) {
       Element filterSetting = (Element) filterSettings.item(i);
@@ -1203,6 +1232,7 @@ public class LIFReader extends FormatReader {
       String attribute = filterSetting.getAttribute("Attribute");
       String objectClass = filterSetting.getAttribute("ClassName");
       String variant = filterSetting.getAttribute("Variant");
+      String data = filterSetting.getAttribute("Data");
 
       if (attribute.equals("NumericalAperture")) {
         lensNA[image] = new Double(variant);
@@ -1215,7 +1245,7 @@ public class LIFReader extends FormatReader {
           int channel = getChannelIndex(filterSetting);
           if (channel < 0) continue;
 
-          detectorModels[image].add(object);
+          detectorIndexes[image].put(new Integer(data), object);
           activeDetector[image].add(variant.equals("Active"));
         }
         else if (attribute.equals("HighVoltage")) {
