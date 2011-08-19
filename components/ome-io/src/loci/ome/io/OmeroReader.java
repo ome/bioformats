@@ -29,7 +29,9 @@ import Glacier2.PermissionDeniedException;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
+import java.util.List;
 
+import loci.common.DateTools;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -37,11 +39,17 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tools.ImageInfo;
 import ome.xml.model.primitives.PositiveFloat;
+import ome.xml.model.primitives.PositiveInteger;
+import omero.RDouble;
+import omero.RInt;
+import omero.RTime;
 import omero.ServerError;
 import omero.api.GatewayPrx;
 import omero.api.RawPixelsStorePrx;
 import omero.api.ServiceFactoryPrx;
+import omero.model.Channel;
 import omero.model.Image;
+import omero.model.LogicalChannel;
 import omero.model.Pixels;
 
 /**
@@ -227,22 +235,69 @@ public class OmeroReader extends FormatReader {
       core[0].imageCount = sizeZ * sizeC * sizeT;
       core[0].pixelType = FormatTools.pixelTypeFromString(pixelType);
 
-      // CTR TODO this is wrong
-      double px = pix.getSizeX().getValue();
-      double py = pix.getSizeY().getValue();
-      double pz = pix.getSizeZ().getValue();
+      RDouble x = pix.getPhysicalSizeX();
+      Double px = x == null ? null : x.getValue();
+      RDouble y = pix.getPhysicalSizeY();
+      Double py = y == null ? null : y.getValue();
+      RDouble z = pix.getPhysicalSizeZ();
+      Double pz = z == null ? null : z.getValue();
+      RDouble t = pix.getTimeIncrement();
+      Double time = t == null ? null : t.getValue();
 
       String name = img.getName().getValue();
       String description = img.getDescription().getValue();
+      RTime date = img.getAcquisitionDate();
 
       MetadataStore store = getMetadataStore();
+      MetadataTools.populatePixels(store, this);
       store.setImageName(name, 0);
       store.setImageDescription(description, 0);
-      MetadataTools.populatePixels(store, this);
+      if (date != null) {
+        store.setImageAcquiredDate(DateTools.convertDate(date.getValue(),
+          (int) DateTools.UNIX_EPOCH), 0);
+      }
 
-      store.setPixelsPhysicalSizeX(new PositiveFloat(px), 0);
-      store.setPixelsPhysicalSizeY(new PositiveFloat(py), 0);
-      store.setPixelsPhysicalSizeZ(new PositiveFloat(pz), 0);
+      if (px != null) {
+        store.setPixelsPhysicalSizeX(new PositiveFloat(px), 0);
+      }
+      if (py != null) {
+        store.setPixelsPhysicalSizeY(new PositiveFloat(py), 0);
+      }
+      if (pz != null) {
+        store.setPixelsPhysicalSizeZ(new PositiveFloat(pz), 0);
+      }
+      if (time != null) {
+        store.setPixelsTimeIncrement(time, 0);
+      }
+
+      List<Channel> channels = pix.copyChannels();
+      for (int c=0; c<channels.size(); c++) {
+        LogicalChannel channel = channels.get(c).getLogicalChannel();
+
+        RInt emWave = channel.getEmissionWave();
+        RInt exWave = channel.getExcitationWave();
+        RDouble pinholeSize = channel.getPinHoleSize();
+
+        Integer emission = emWave == null ? null : emWave.getValue();
+        Integer excitation = exWave == null ? null : exWave.getValue();
+        String channelName = channel.getName().getValue();
+        Double pinhole = pinholeSize == null ? null : pinholeSize.getValue();
+
+        if (channelName != null) {
+          store.setChannelName(channelName, 0, c);
+        }
+        if (pinhole != null) {
+          store.setChannelPinholeSize(pinhole, 0, c);
+        }
+        if (emission != null) {
+          store.setChannelEmissionWavelength(
+            new PositiveInteger(emission), 0, c);
+        }
+        if (excitation != null) {
+          store.setChannelExcitationWavelength(
+            new PositiveInteger(excitation), 0, c);
+        }
+      }
     }
     catch (CannotCreateSessionException e) {
       throw new FormatException(e);
@@ -292,6 +347,7 @@ public class OmeroReader extends FormatReader {
       omeroReader.close();
       throw e;
     }
+    omeroReader.close();
 
     // delegate the heavy lifting to Bio-Formats ImageInfo utility
     final ImageInfo imageInfo = new ImageInfo();
