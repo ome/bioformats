@@ -892,6 +892,7 @@ public class LIFReader extends FormatReader {
     NodeList definitions = getNodes(imageNode, "ATLConfocalSettingDefinition");
     if (definitions == null) return;
 
+    Vector<String> channels = new Vector<String>();
     int nextChannel = 0;
     for (int definition=0; definition<definitions.getLength(); definition++) {
       Element definitionNode = (Element) definitions.item(definition);
@@ -928,10 +929,7 @@ public class LIFReader extends FormatReader {
           }
 
           if (multiband != null) {
-            if (nextChannel < channelNames[image].length) {
-              channelNames[image][nextChannel] =
-                multiband.getAttribute("DyeName");
-            }
+            channels.add(multiband.getAttribute("DyeName"));
 
             double cutIn = new Double(multiband.getAttribute("LeftWorld"));
             double cutOut = new Double(multiband.getAttribute("RightWorld"));
@@ -951,6 +949,13 @@ public class LIFReader extends FormatReader {
           detectorModels[image].add("");
           activeDetector[image].add(active);
         }
+      }
+    }
+
+    for (int i=0; i<getEffectiveSizeC(); i++) {
+      int index = i + channels.size() - getEffectiveSizeC();
+      if (index >= 0 && index < channels.size()) {
+        channelNames[image][i] = channels.get(index);
       }
     }
   }
