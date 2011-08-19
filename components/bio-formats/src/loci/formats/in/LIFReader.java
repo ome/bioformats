@@ -549,8 +549,19 @@ public class LIFReader extends FormatReader {
 
       Vector lasers = laserWavelength[i];
       Vector laserIntensities = laserIntensity[i];
-      int nextChannel = getEffectiveSizeC() - 1;
+      int nextChannel = 0;
+
       if (lasers != null) {
+        int laserIndex = 0;
+        while (laserIndex < lasers.size()) {
+          if ((Integer) lasers.get(laserIndex) == 0) {
+            lasers.removeElementAt(laserIndex);
+          }
+          else {
+            laserIndex++;
+          }
+        }
+
         for (int laser=0; laser<lasers.size(); laser++) {
           String id = MetadataTools.createLSID("LightSource", i, laser);
           store.setLaserID(id, i, laser);
@@ -560,18 +571,29 @@ public class LIFReader extends FormatReader {
           if (wavelength > 0) {
             store.setLaserWavelength(new PositiveInteger(wavelength), i, laser);
           }
+        }
 
-          if (laser < laserIntensities.size()) {
-            double intensity = (Double) laserIntensities.get(laser);
-            if (intensity < 100 && nextChannel >= 0 && wavelength != 0) {
-              store.setChannelLightSourceSettingsID(id, i, nextChannel);
-              store.setChannelLightSourceSettingsAttenuation(
-                new PercentFraction((float) intensity / 100f), i, nextChannel);
-              store.setChannelExcitationWavelength(
-                new PositiveInteger(wavelength), i, nextChannel);
+        Vector<Integer> validIntensities = new Vector<Integer>();
+        for (int laser=0; laser<laserIntensities.size(); laser++) {
+          double intensity = (Double) laserIntensities.get(laser);
+          if (intensity < 100) {
+            validIntensities.add(laser);
+          }
+        }
 
-              nextChannel--;
-            }
+        int start = validIntensities.size() - getEffectiveSizeC();
+        for (int k=start; k<validIntensities.size(); k++, nextChannel++) {
+          int index = validIntensities.get(k);
+          double intensity = (Double) laserIntensities.get(index);
+          int laser = index % lasers.size();
+          Integer wavelength = (Integer) lasers.get(laser);
+          if (wavelength != 0) {
+            String id = MetadataTools.createLSID("LightSource", i, laser);
+            store.setChannelLightSourceSettingsID(id, i, nextChannel);
+            store.setChannelLightSourceSettingsAttenuation(
+              new PercentFraction((float) intensity / 100f), i, nextChannel);
+            store.setChannelExcitationWavelength(
+              new PositiveInteger(wavelength), i, nextChannel);
           }
         }
       }
@@ -1063,49 +1085,59 @@ public class LIFReader extends FormatReader {
   private void translateLaserLines(Element imageNode, int image)
     throws FormatException
   {
-    NodeList laserLines = getNodes(imageNode, "LaserLineSetting");
-    if (laserLines == null) return;
+    NodeList aotfLists = getNodes(imageNode, "AotfList");
+    if (aotfLists == null) return;
 
     laserWavelength[image] = new Vector<Integer>();
     laserIntensity[image] = new Vector<Double>();
 
-    for (int laser=0; laser<laserLines.getLength(); laser++) {
-      Element laserLine = (Element) laserLines.item(laser);
+    int baseIntensityIndex = 0;
 
-      String lineIndex = laserLine.getAttribute("LineIndex");
-      String qual = laserLine.getAttribute("Qualifier");
-      int index = lineIndex == null ? 0 : Integer.parseInt(lineIndex);
-      int qualifier = qual == null ? 0: Integer.parseInt(qual);
+    for (int channel=0; channel<aotfLists.getLength(); channel++) {
+      Element aotf = (Element) aotfLists.item(channel);
+      NodeList laserLines = getNodes(aotf, "LaserLineSetting");
+      if (laserLines == null) return;
 
-      index += (2 - (qualifier / 10));
-      if (index < 0) index = 0;
+      for (int laser=0; laser<laserLines.getLength(); laser++) {
+        Element laserLine = (Element) laserLines.item(laser);
 
-      Integer wavelength = new Integer(laserLine.getAttribute("LaserLine"));
-      if (index < laserWavelength[image].size()) {
-        laserWavelength[image].setElementAt(wavelength, index);
-      }
-      else {
-        for (int i=laserWavelength[image].size(); i<index; i++) {
-          laserWavelength[image].add(new Integer(0));
-        }
-        laserWavelength[image].add(wavelength);
-      }
+        String lineIndex = laserLine.getAttribute("LineIndex");
+        String qual = laserLine.getAttribute("Qualifier");
+        int index = lineIndex == null ? 0 : Integer.parseInt(lineIndex);
+        int qualifier = qual == null ? 0: Integer.parseInt(qual);
 
-      String intensity = laserLine.getAttribute("IntensityDev");
-      double realIntensity = intensity == null ? 0d : new Double(intensity);
-      if (realIntensity > 0) {
-        realIntensity = 100d - realIntensity;
+        index += (2 - (qualifier / 10));
+        if (index < 0) index = 0;
 
-        if (index < laserIntensity[image].size()) {
-          laserIntensity[image].setElementAt(realIntensity, index);
+        Integer wavelength = new Integer(laserLine.getAttribute("LaserLine"));
+        if (index < laserWavelength[image].size()) {
+          laserWavelength[image].setElementAt(wavelength, index);
         }
         else {
-          for (int i=laserIntensity[image].size(); i<index; i++) {
-            laserIntensity[image].add(new Double(0));
+          for (int i=laserWavelength[image].size(); i<index; i++) {
+            laserWavelength[image].add(new Integer(0));
+          }
+          laserWavelength[image].add(wavelength);
+        }
+
+        String intensity = laserLine.getAttribute("IntensityDev");
+        double realIntensity = intensity == null ? 0d : new Double(intensity);
+        realIntensity = 100d - realIntensity;
+
+        int realIndex = baseIntensityIndex + index;
+
+        if (realIndex < laserIntensity[image].size()) {
+          laserIntensity[image].setElementAt(realIntensity, realIndex);
+        }
+        else {
+          while (realIndex < laserIntensity[image].size()) {
+            laserIntensity[image].add(100d);
           }
           laserIntensity[image].add(realIntensity);
         }
       }
+
+      baseIntensityIndex += laserWavelength[image].size();
     }
   }
 
