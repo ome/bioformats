@@ -49,7 +49,7 @@
     <dependency>
       <groupId>ome</groupId>
       <artifactId>omero_client</artifactId>
-      <version></version>
+      <version>4.3.1</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
