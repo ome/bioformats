@@ -65,6 +65,14 @@ public class IdDialog extends ImporterDialog {
       gd = new GenericDialog("Bio-Formats URL");
       gd.addStringField("URL: ", "http://", 30);
     }
+    else if (options.isOMERO()) {
+      gd = new GenericDialog("OMERO Server Credentials");
+      gd.addStringField("Server: ", "", 80);
+      gd.addStringField("Port: ", "4064", 80);
+      gd.addStringField("Username: ", "", 80);
+      gd.addStringField("Password: ", "", 80);
+      gd.addStringField("Image ID: ", "", 80);
+    }
     return gd;
   }
 
@@ -101,7 +109,7 @@ public class IdDialog extends ImporterDialog {
       name = od.getFileName();
       if (name == null) return false;
     }
-    else if (options.isHTTP()) {
+    else if (options.isHTTP() || options.isOMERO()) {
       gd.showDialog();
       if (gd.wasCanceled()) return false;
     }
@@ -138,6 +146,18 @@ public class IdDialog extends ImporterDialog {
         }
         return false;
       }
+    }
+    else if (options.isOMERO()) {
+      StringBuffer omero = new StringBuffer("omero:");
+      omero.append("server=");
+      omero.append(gd.getNextString());
+      omero.append("\nport=");
+      omero.append(gd.getNextString());
+      omero.append("\nuser=");
+      omero.append(gd.getNextString());
+      omero.append("\npass=");
+      omero.append(gd.getNextString());
+      id = omero.toString();
     }
     options.setId(id);
     return true;
