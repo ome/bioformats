@@ -90,6 +90,7 @@ public class ImporterOptions extends OptionsList {
   // possible values for location
   public static final String LOCATION_LOCAL = "Local machine";
   public static final String LOCATION_HTTP  = "Internet";
+  public static final String LOCATION_OMERO = "OMERO";
 
   // possible values for stackFormat
   public static final String VIEW_NONE       = "Metadata only";
@@ -291,6 +292,7 @@ public class ImporterOptions extends OptionsList {
   public String[] getLocations() { return getPossible(KEY_LOCATION); }
   public boolean isLocal() { return LOCATION_LOCAL.equals(getLocation()); }
   public boolean isHTTP() { return LOCATION_HTTP.equals(getLocation()); }
+  public boolean isOMERO() { return LOCATION_OMERO.equals(getLocation()); }
   public void setLocation(String s) { setValue(KEY_LOCATION, s); }
 
   // openAllSeries
