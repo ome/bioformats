@@ -678,7 +678,7 @@ public class LIFReader extends FormatReader {
 
       for (int c=0; c<getEffectiveSizeC(); c++) {
         if (activeDetectors != null) {
-          while (nextDetector < activeDetectors.size() &&
+          while (nextDetector >= 0 && nextDetector < activeDetectors.size() &&
             !(Boolean) activeDetectors.get(nextDetector))
           {
             nextDetector++;
