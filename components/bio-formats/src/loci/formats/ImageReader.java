@@ -152,10 +152,12 @@ public class ImageReader implements IFormatReader {
   {
    // HACK: skip file existence check for fake files
    boolean fake = id != null && id.toLowerCase().endsWith(".fake");
+   boolean omero = id != null && id.toLowerCase().startsWith("omero:") &&
+    id.indexOf("\n") > 0;
 
    // NB: Check that we can generate a valid handle for the ID;
    // e.g., for files, this will throw an exception if the file is missing.
-   if (!fake) Location.getHandle(id).close();
+   if (!fake && !omero) Location.getHandle(id).close();
 
     if (!id.equals(currentId)) {
       // initialize file
