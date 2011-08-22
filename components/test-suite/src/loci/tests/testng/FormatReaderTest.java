@@ -176,8 +176,11 @@ public class FormatReaderTest {
         int bytes = FormatTools.getBytesPerPixel(type);
 
         int plane = x * y * c * bytes;
+        long checkPlane = (long) x * y * c * bytes;
 
-        if (c > 4 || plane < 0 || !TestTools.canFitInMemory(plane)) {
+        if (c > 4 || plane < 0 || plane != checkPlane ||
+          !TestTools.canFitInMemory(plane))
+        {
           continue;
         }
 
