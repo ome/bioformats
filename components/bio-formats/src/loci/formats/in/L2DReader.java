@@ -30,6 +30,7 @@ import java.util.Vector;
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
+import loci.common.RandomAccessInputStream;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -51,6 +52,7 @@ public class L2DReader extends FormatReader {
   // -- Constants --
 
   public static final String DATE_FORMAT = "yyyy, m, d";
+  private static final String LICOR_MAGIC_STRING = "LI-COR LI2D";
 
   // -- Fields --
 
@@ -70,13 +72,16 @@ public class L2DReader extends FormatReader {
     super("Li-Cor L2D", new String[] {"l2d", "scn", "tif"});
     domains = new String[] {FormatTools.GEL_DOMAIN};
     hasCompanionFiles = true;
+    suffixSufficient = false;
   }
 
   // -- IFormatReader API methods --
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
   public boolean isThisType(String name, boolean open) {
-    if (checkSuffix(name, "l2d") || checkSuffix(name, "scn")) return true;
+    if (checkSuffix(name, "l2d") || checkSuffix(name, "scn")) {
+      return super.isThisType(name, open);
+    }
     if (!open) return false;
 
     Location location = new Location(name);
@@ -93,6 +98,13 @@ public class L2DReader extends FormatReader {
     boolean hasScan = new Location(parent, scanName + ".scn").exists();
 
     return hasScan && new Location(parent, scanName).exists();
+  }
+
+  /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
+  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
+    final int blockLen = 512;
+    if (!FormatTools.validStream(stream, blockLen, false)) return false;
+    return stream.readString(blockLen).indexOf(LICOR_MAGIC_STRING) >= 0;
   }
 
   /* @see loci.formats.IFormatReader#isSingleFile(String) */
