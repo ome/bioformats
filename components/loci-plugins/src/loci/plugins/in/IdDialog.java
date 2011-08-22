@@ -157,6 +157,8 @@ public class IdDialog extends ImporterDialog {
       omero.append(gd.getNextString());
       omero.append("\npass=");
       omero.append(gd.getNextString());
+      omero.append("\niid=");
+      omero.append(gd.getNextString());
       id = omero.toString();
     }
     options.setId(id);
