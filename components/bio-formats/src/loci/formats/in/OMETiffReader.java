@@ -148,7 +148,7 @@ public class OMETiffReader extends FormatReader {
         meta.setPixelsBinDataBigEndian(Boolean.TRUE, i, 0);
         MetadataTools.verifyMinimumPopulated(meta, i);
       }
-      return true;
+      return meta.getImageCount() > 0;
     }
     catch (ServiceException se) { }
     catch (NullPointerException e) { }
