@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.util.List;
 
 import loci.common.DateTools;
+import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -110,12 +111,12 @@ public class OmeroReader extends FormatReader {
   }
 
   @Override
-  public byte[] openBytes(int no, byte[] buf, int x1, int y1, int w1, int h1)
+  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
     FormatTools.checkPlaneNumber(this, no);
-    FormatTools.checkBufferSize(this, buf.length);
+    FormatTools.checkBufferSize(this, buf.length, w, h);
 
     final int[] zct = FormatTools.getZCTCoords(this, no);
 
@@ -127,17 +128,17 @@ public class OmeroReader extends FormatReader {
       throw new FormatException(e);
     }
 
-    final int len = getSizeX() * getSizeY() *
-      FormatTools.getBytesPerPixel(getPixelType());
-    System.arraycopy(plane, 0, buf, 0, len);
+    RandomAccessInputStream s = new RandomAccessInputStream(plane);
+    readPlane(s, x, y, w, h, buf);
+    s.close();
 
     return buf;
   }
 
   @Override
-  public void close() throws IOException {
-    super.close();
-    if (client != null) {
+  public void close(boolean fileOnly) throws IOException {
+    super.close(fileOnly);
+    if (!fileOnly && client != null) {
       client.closeSession();
     }
   }
@@ -201,7 +202,7 @@ public class OmeroReader extends FormatReader {
 
       LOGGER.info("Logging in");
 
-      client = new omero.client(server, port);
+      client = new omero.client(address, port);
       final ServiceFactoryPrx serviceFactory = client.createSession(user, pass);
 
       // get raw pixels store and pixels
