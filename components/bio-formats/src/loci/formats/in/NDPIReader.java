@@ -140,9 +140,21 @@ public class NDPIReader extends BaseTiffReader {
       return super.openThumbBytes(no);
     }
 
+    int thumbX = getThumbSizeX();
+    int thumbY = getThumbSizeY();
+
     setSeries(pyramidHeight - 1);
-    byte[] thumb = FormatTools.openThumbBytes(this, no);
-    setSeries(currentSeries);
+
+    byte[] thumb = null;
+
+    if (thumbX == getThumbSizeX() && thumbY == getThumbSizeY()) {
+      thumb = FormatTools.openThumbBytes(this, no);
+      setSeries(currentSeries);
+    }
+    else {
+      setSeries(currentSeries);
+      thumb = FormatTools.openThumbBytes(this, no);
+    }
     return thumb;
   }
 
