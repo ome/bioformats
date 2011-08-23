@@ -44,11 +44,14 @@
 	xmlns:exsl="http://exslt.org/common"
 	extension-element-prefixes="exsl" version="1.0">
 
-	<xsl:variable name="newOMENS">http://www.openmicroscopy.org/Schemas/OME/2008-02</xsl:variable>
-	<xsl:variable name="newSPWNS">http://www.openmicroscopy.org/Schemas/SPW/2008-02</xsl:variable>
+	<xsl:variable name="newOMENS"
+		>http://www.openmicroscopy.org/Schemas/OME/2008-02</xsl:variable>
+	<xsl:variable name="newSPWNS"
+		>http://www.openmicroscopy.org/Schemas/SPW/2008-02</xsl:variable>
 	<xsl:variable name="newBINNS"
 		>http://www.openmicroscopy.org/Schemas/BinaryFile/2008-02</xsl:variable>
-	<xsl:variable name="newSANS">http://www.openmicroscopy.org/Schemas/SA/2008-02</xsl:variable>
+	<xsl:variable name="newSANS"
+		>http://www.openmicroscopy.org/Schemas/SA/2008-02</xsl:variable>
 		
 	<xsl:output method="xml" indent="yes"/>
 	<xsl:preserve-space elements="*"/>
@@ -58,14 +61,32 @@
 
 	<!-- The Enumeration terms to be modified. -->
 	<xsl:variable name="enumeration-maps">
+		<mapping name="LaserLaserMedium">
+			<map from="Other" to="Ag"/>
+		</mapping>
+		<mapping name="LaserType">
+			<map from="Other" to="Dye"/>
+		</mapping>
+		<mapping name="DetectorType">
+			<map from="EBCCD" to="CCD"/>
+			<map from="EMCCD" to="EM-CCD"/>
+		</mapping>
+		<mapping name="FilterType">
+			<map from="Dichroic" to="BandPass"/>
+			<map from="NeutralDensity" to="BandPass"/>
+			<map from="Other" to="BandPass"/>
+		</mapping>
+		<mapping name="ObjectiveCorrection">
+			<map from="Achromat" to="UV"/>
+			<map from="PlanNeofluar" to="UV"/>
+			<map from="Other" to="UV"/>
+		</mapping>
 		<mapping name="LogicalChannelMode">
-			<map from="LaserScanningConfocalMicroscopy" to="LaserScanningConfocal"/>
-			<map from="PALM" to="Other"/>
 			<map from="STORM" to="Other"/>
-			<map from="STED" to="Other"/>
-			<map from="TIRF" to="Other"/>
-			<map from="FSM" to="Other"/>
 			<map from="LCM" to="Other"/>
+		</mapping>
+		<mapping name="ObjectiveRefMedium">
+			<map from="Other" to="Air"/>
 		</mapping>
 	</xsl:variable>
 
@@ -96,25 +117,7 @@
 	</xsl:template>
 	
 	<!-- Actual schema changes -->
-<!-- This version strips all SPW data. It would need updated to handle PlateRef V ScreenRef conflict.
-	
-	<xsl:template match="SPW:Description"/>
-	<xsl:template match="SPW:PlateAcquisition"/>
-	<xsl:template match="SPW:Reagent">		
-		<xsl:element name="{name()}" namespace="{$newSPWNS}">
-			<xsl:apply-templates select="@*"/>
-		</xsl:element>
-	</xsl:template>
 
-	<xsl:template match="SPW:Plate">
-		
-		<xsl:element name="{name()}" namespace="{$newSPWNS}">
-			<xsl:apply-templates select="@*"/>
-			<xsl:attribute name="Name"/>
-			<xsl:apply-templates select="*"/>
-		</xsl:element>
-	</xsl:template>
--->
 	<xsl:template match="OME:AcquiredDate">
 		<xsl:element name="CreationDate" namespace="{$newOMENS}">
 			<xsl:apply-templates select="node()"/>
@@ -172,7 +175,8 @@
 					</xsl:element>
 				</xsl:element>
 			</xsl:for-each>
-			<xsl:apply-templates select="* [name(.) = 'Pixels']"/>
+			<xsl:apply-templates select="* [local-name(.) = 'Pixels']"/>
+			<xsl:apply-templates select="* [local-name(.) = 'ROIRef']"/>
 			
 		</xsl:element>
 	</xsl:template>
@@ -206,30 +210,19 @@
 				</xsl:choose>
 			</xsl:attribute>
 			
-			<xsl:for-each select="@* [name(.) = 'DimensionOrder' or name(.) = 'SizeC' or name(.) = 'SizeT' or name(.) = 'SizeX' or name(.) = 'SizeY' or name(.) = 'SizeZ']">
+			<xsl:for-each select="@* [name(.) = 'DimensionOrder' or 
+				name(.) = 'SizeC' or name(.) = 'SizeT' or name(.) = 'SizeX' or 
+				name(.) = 'SizeY' or name(.) = 'SizeZ']">
 				<xsl:attribute name="{local-name(.)}">
 					<xsl:value-of select="."/>
 				</xsl:attribute>
 			</xsl:for-each>
 			<xsl:apply-templates select="* [local-name(.) = 'BinData']"/>
 			<xsl:apply-templates select="* [local-name(.) = 'TiffData']"/>
+			<xsl:apply-templates select="* [local-name(.) = 'MetadataOnly']"/>
 		</xsl:element>
 	</xsl:template>
 	
-	<!-- 
-		In Bin:BinData add Length attribute.
-	-->
-	<xsl:template match="Bin:BinData">
-		<xsl:element name="{name()}" namespace="{$newBINNS}">
-			<xsl:for-each select="@* [not(name(.) = 'BigEndian')]">
-				<xsl:attribute name="{local-name(.)}">
-					<xsl:value-of select="."/>
-				</xsl:attribute>
-			</xsl:for-each>
-			<xsl:apply-templates select="node()"/>
-		</xsl:element>
-	</xsl:template>
-
 	<xsl:template match="OME:TiffData">
 		<xsl:element name="{name()}" namespace="{$newOMENS}">
 			<xsl:for-each select="@* [not(name(.) = 'PlaneCount')]">
@@ -246,11 +239,577 @@
 		</xsl:element>
 	</xsl:template>
 	
+	<xsl:template match="OME:MetadataOnly">
+		<xsl:comment>MetadataOnly Files cannot be suported in version 2008-02 schema.</xsl:comment>
+		<xsl:comment>Begin Dummy BinData</xsl:comment>
+		<xsl:element name="BIN:BinData" namespace="{$newBINNS}">
+			<xsl:attribute name="Length">0</xsl:attribute>
+		</xsl:element>
+		<xsl:comment>End Dummy BinData</xsl:comment>
+	</xsl:template>
+	
+	<xsl:template match="OME:MicrobeamManipulationRef">
+		<xsl:element name="MicrobeamManipulation" namespace="{$newOMENS}">
+			<xsl:for-each select="@* [name(.) = 'ID']">
+				<xsl:attribute name="{local-name(.)}">
+					<xsl:value-of select="."/>
+				</xsl:attribute>
+			</xsl:for-each>
+	<!--		<xsl:for-each select="@* [not(name(.) = 'Type')]">
+				<xsl:attribute name="{local-name(.)}">
+					<xsl:value-of select="."/>
+				</xsl:attribute>
+			</xsl:for-each>
+			<xsl:for-each select="@* [name(.) = 'Type']">
+				<xsl:attribute name="Type">
+					<xsl:call-template name="replace-string-id">
+						<xsl:with-param name="text"><xsl:call-template name="replace-string-id">
+						<xsl:with-param name="text" select="."/>
+						<xsl:with-param name="replace" select="'FLIP'"/>
+						<xsl:with-param name="replacement" select="''"/>
+					</xsl:call-template></xsl:with-param>
+						<xsl:with-param name="replace" select="'  '"/>
+						<xsl:with-param name="replacement" select="' '"/>
+					</xsl:call-template>
+				</xsl:attribute>
+			</xsl:for-each>
+			<xsl:apply-templates select="*"/>-->
+		</xsl:element>
+	</xsl:template>
 
-	<xsl:template match="ROI:*"/>
+	<xsl:template match="OME:MicrobeamManipulation">
+		<xsl:element name="MicrobeamManipulationRef" namespace="{$newOMENS}">
+			<xsl:for-each select="@* [name(.) = 'ID']">
+				<xsl:attribute name="{local-name(.)}">
+					<xsl:value-of select="."/>
+				</xsl:attribute>
+			</xsl:for-each>
+		</xsl:element>
+	</xsl:template>
+
+	<xsl:template match="OME:Microscope">
+		<xsl:element name="{name()}" namespace="{$newOMENS}">
+			<xsl:for-each select="@* [not(name(.) = 'LotNumber')]">
+				<xsl:attribute name="{local-name(.)}">
+					<xsl:value-of select="."/>
+				</xsl:attribute>
+			</xsl:for-each>
+			<xsl:apply-templates select="*"/>
+		</xsl:element>
+	</xsl:template>
+
+	<xsl:template match="OME:FilterSet">
+		<xsl:element name="{name()}" namespace="{$newOMENS}">
+			<xsl:for-each select="@* [not(name(.) = 'SerialNumber')]">
+				<xsl:attribute name="{local-name(.)}">
+					<xsl:value-of select="."/>
+				</xsl:attribute>
+			</xsl:for-each>
+		</xsl:element>
+	</xsl:template>
+	
+	<xsl:template match="OME:Filter">
+		<xsl:element name="{name()}" namespace="{$newOMENS}">
+			<xsl:for-each select="@* [not(name(.) = 'SerialNumber')]">
+				<xsl:choose>
+					<xsl:when test="local-name(.)='Type'">
+						<xsl:attribute name="{local-name(.)}">
+							<xsl:call-template name="transformEnumerationValue">
+								<xsl:with-param name="mappingName"
+									select="'FilterType'"/>
+								<xsl:with-param name="value">
+									<xsl:value-of select="."/>
+								</xsl:with-param>
+							</xsl:call-template>
+						</xsl:attribute>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:attribute name="{local-name(.)}">
+							<xsl:value-of select="."/>
+						</xsl:attribute>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:for-each>
+			<xsl:apply-templates select="*"/>
+		</xsl:element>
+	</xsl:template>
+
+	<xsl:template match="OME:Dichroic">
+		<xsl:element name="{name()}" namespace="{$newOMENS}">
+			<xsl:for-each select="@* [not(name(.) = 'SerialNumber')]">
+				<xsl:attribute name="{local-name(.)}">
+					<xsl:value-of select="."/>
+				</xsl:attribute>
+			</xsl:for-each>
+		</xsl:element>
+	</xsl:template>
+
+	<xsl:template match="OME:OTF">
+		<xsl:element name="{name()}" namespace="{$newOMENS}">
+			<xsl:for-each select="@*">
+				<xsl:choose>
+					<xsl:when test="local-name(.)='Type'">
+						<xsl:attribute name="PixelType">
+							<xsl:value-of select="."/>
+						</xsl:attribute>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:attribute name="{local-name(.)}">
+							<xsl:value-of select="."/>
+						</xsl:attribute>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:for-each>
+			<xsl:apply-templates select="*"/>
+		</xsl:element>
+	</xsl:template>
+
+	<xsl:template match="OME:TransmittanceRange">
+		<xsl:element name="{name()}" namespace="{$newOMENS}">
+			<xsl:for-each select="@*">
+				<xsl:choose>
+					<xsl:when test="local-name(.)='Transmittance'">
+						<xsl:attribute name="{local-name(.)}">
+							<xsl:value-of select="round(. * 100)"/>
+						</xsl:attribute>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:attribute name="{local-name(.)}">
+							<xsl:value-of select="."/>
+						</xsl:attribute>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:for-each>
+			<xsl:apply-templates select="*"/>
+		</xsl:element>
+	</xsl:template>
+
+	<xsl:template match="OME:Detector">
+		<xsl:element name="{name()}" namespace="{$newOMENS}">
+			<xsl:for-each select="@* [not(name(.) = 'LotNumber')]">
+				<xsl:choose>
+					<xsl:when test="local-name(.)='Type'">
+						<xsl:attribute name="{local-name(.)}">
+							<xsl:call-template name="transformEnumerationValue">
+								<xsl:with-param name="mappingName"
+									select="'DetectorType'"/>
+								<xsl:with-param name="value">
+									<xsl:value-of select="."/>
+								</xsl:with-param>
+							</xsl:call-template>
+						</xsl:attribute>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:attribute name="{local-name(.)}">
+							<xsl:value-of select="."/>
+						</xsl:attribute>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:for-each>
+			<xsl:apply-templates select="*"/>
+		</xsl:element>
+	</xsl:template>
+
+	<xsl:template match="OME:Objective">
+		<xsl:element name="{name()}" namespace="{$newOMENS}">
+			<xsl:for-each select="@* [name(.) = 'ID']">
+				<xsl:attribute name="{local-name(.)}">
+					<xsl:value-of select="."/>
+				</xsl:attribute>
+			</xsl:for-each>
+			<xsl:for-each select="@* [name(.) = 'Model']">
+				<xsl:attribute name="{local-name(.)}">
+					<xsl:value-of select="."/>
+				</xsl:attribute>
+			</xsl:for-each>
+			<xsl:for-each select="@* [name(.) = 'Manufacturer']">
+				<xsl:attribute name="{local-name(.)}">
+					<xsl:value-of select="."/>
+				</xsl:attribute>
+			</xsl:for-each>
+			<xsl:for-each select="@* [name(.) = 'SerialNumber']">
+				<xsl:attribute name="{local-name(.)}">
+					<xsl:value-of select="."/>
+				</xsl:attribute>
+			</xsl:for-each>
+			<xsl:for-each select="@* [name(.) = 'Correction']">
+				<xsl:element name="Correction" namespace="{$newOMENS}">
+					<xsl:call-template name="transformEnumerationValue">
+						<xsl:with-param name="mappingName"
+							select="'ObjectiveCorrection'"/>
+						<xsl:with-param name="value">
+							<xsl:value-of select="."/>
+						</xsl:with-param>
+					</xsl:call-template>
+				</xsl:element>
+			</xsl:for-each>
+			<xsl:for-each select="@* [name(.) = 'Immersion']">
+				<xsl:element name="Immersion" namespace="{$newOMENS}">
+					<xsl:value-of select="."/>
+				</xsl:element>
+			</xsl:for-each>
+			<xsl:for-each select="@* [name(.) = 'LensNA']">
+				<xsl:element name="LensNA" namespace="{$newOMENS}">
+					<xsl:value-of select="."/>
+				</xsl:element>
+			</xsl:for-each>
+			<xsl:for-each select="@* [name(.) = 'NominalMagnification']">
+				<xsl:element name="NominalMagnification" namespace="{$newOMENS}">
+					<xsl:value-of select="."/>
+				</xsl:element>
+			</xsl:for-each>
+			<xsl:for-each select="@* [name(.) = 'CalibratedMagnification']">
+				<xsl:element name="CalibratedMagnification" namespace="{$newOMENS}">
+					<xsl:value-of select="."/>
+				</xsl:element>
+			</xsl:for-each>
+			<xsl:for-each select="@* [name(.) = 'WorkingDistance']">
+				<xsl:element name="WorkingDistance" namespace="{$newOMENS}">
+					<xsl:value-of select="."/>
+				</xsl:element>
+			</xsl:for-each>
+			<xsl:apply-templates select="*"/>
+		</xsl:element>
+	</xsl:template>
+
+	<xsl:template match="OME:ObjectiveSettings">
+		<xsl:element name="ObjectiveRef" namespace="{$newOMENS}">
+			<xsl:for-each select="@* [not(name(.) = 'RepetitionRate')]">
+				<xsl:choose>
+					<xsl:when test="local-name(.)='Medium'">
+						<xsl:attribute name="{local-name(.)}">
+							<xsl:call-template name="transformEnumerationValue">
+								<xsl:with-param name="mappingName"
+									select="'ObjectiveRefMedium'"/>
+								<xsl:with-param name="value">
+									<xsl:value-of select="."/>
+								</xsl:with-param>
+							</xsl:call-template>
+						</xsl:attribute>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:attribute name="{local-name(.)}">
+							<xsl:value-of select="."/>
+						</xsl:attribute>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:for-each>
+			<xsl:apply-templates select="*"/>
+		</xsl:element>
+	</xsl:template>
+
+	<xsl:template match="OME:LightSource">
+		<xsl:element name="{name()}" namespace="{$newOMENS}">
+			<xsl:for-each select="@* [not(name(.) = 'LotNumber')]">
+				<xsl:attribute name="{local-name(.)}">
+					<xsl:value-of select="."/>
+				</xsl:attribute>
+			</xsl:for-each>
+			<xsl:apply-templates select="*"/>
+		</xsl:element>
+	</xsl:template>
+
+	<xsl:template match="OME:Laser">
+		<xsl:element name="{name()}" namespace="{$newOMENS}">
+			<xsl:for-each select="@* [not(name(.) = 'RepetitionRate')]">
+				<xsl:choose>
+					<xsl:when test="local-name(.)='Type'">
+						<xsl:attribute name="{local-name(.)}">
+							<xsl:call-template name="transformEnumerationValue">
+								<xsl:with-param name="mappingName"
+									select="'LaserType'"/>
+								<xsl:with-param name="value">
+									<xsl:value-of select="."/>
+								</xsl:with-param>
+							</xsl:call-template>
+						</xsl:attribute>
+					</xsl:when>
+					<xsl:when test="local-name(.)='LaserMedium'">
+						<xsl:attribute name="{local-name(.)}">
+							<xsl:call-template name="transformEnumerationValue">
+								<xsl:with-param name="mappingName"
+									select="'LaserLaserMedium'"/>
+								<xsl:with-param name="value">
+									<xsl:value-of select="."/>
+								</xsl:with-param>
+							</xsl:call-template>
+						</xsl:attribute>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:attribute name="{local-name(.)}">
+							<xsl:value-of select="."/>
+						</xsl:attribute>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:for-each>
+			<xsl:apply-templates select="*"/>
+		</xsl:element>
+	</xsl:template>
+
+	<xsl:template match="OME:LightEmittingDiode">
+		<xsl:comment>Was LightEmittingDiode, now converted to Arc as LED not available in legacy schema.</xsl:comment>
+		<xsl:element name="Arc" namespace="{$newOMENS}">
+				<xsl:attribute name="Type">
+					<xsl:value-of select="'Hg'"/>
+				</xsl:attribute>
+		</xsl:element>
+	</xsl:template>
+
+	<xsl:template match="OME:Group">
+		<xsl:element name="{name()}" namespace="{$newOMENS}">
+			<xsl:apply-templates select="@*"/>
+			<xsl:apply-templates select="* [local-name(.) = 'Leader']"/>
+			<xsl:apply-templates select="* [local-name(.) = 'Contact']"/>
+		</xsl:element>
+	</xsl:template>
+
+	<xsl:template match="OME:Experiment">
+		<xsl:element name="{name()}" namespace="{$newOMENS}">
+			<xsl:apply-templates select="@*"/>
+			<xsl:apply-templates select="* [local-name(.) = 'Description']"/>
+			<xsl:apply-templates select="* [local-name(.) = 'ExperimenterRef']"/>
+			<xsl:apply-templates select="* [local-name(.) = 'MicrobeamManipulationRef']"/>
+		</xsl:element>
+	</xsl:template>
+
+	<xsl:template match="OME:Experimenter">
+		<xsl:element name="{name()}" namespace="{$newOMENS}">
+			<xsl:for-each select="@* [name(.) = 'ID']">
+				<xsl:attribute name="{local-name(.)}">
+					<xsl:value-of select="."/>
+				</xsl:attribute>
+			</xsl:for-each>
+			<xsl:for-each select="@* [name(.) = 'FirstName']">
+				<xsl:element name="FirstName" namespace="{$newOMENS}">
+					<xsl:value-of select="."/>
+				</xsl:element>
+			</xsl:for-each>
+			<xsl:for-each select="@* [name(.) = 'LastName']">
+				<xsl:element name="LastName" namespace="{$newOMENS}">
+					<xsl:value-of select="."/>
+				</xsl:element>
+			</xsl:for-each>
+			<xsl:for-each select="@* [name(.) = 'Email']">
+				<xsl:element name="Email" namespace="{$newOMENS}">
+					<xsl:value-of select="."/>
+				</xsl:element>
+			</xsl:for-each>
+			<xsl:for-each select="@* [name(.) = 'Institution']">
+				<xsl:element name="Institution" namespace="{$newOMENS}">
+					<xsl:value-of select="."/>
+				</xsl:element>
+			</xsl:for-each>
+			<xsl:for-each select="@* [name(.) = 'UserName']">
+				<xsl:element name="OMEName" namespace="{$newOMENS}">
+					<xsl:value-of select="."/>
+				</xsl:element>
+			</xsl:for-each>
+			<xsl:apply-templates select="* [local-name(.) = 'GroupRef']"/>
+		</xsl:element>
+	</xsl:template>
+	
+	<xsl:template match="OME:LogicalChannel">
+		<xsl:element name="{name()}" namespace="{$newOMENS}">
+			<xsl:for-each select="@*">
+				<xsl:choose>
+					<xsl:when test="local-name(.)='Mode'">
+						<xsl:attribute name="{local-name(.)}">
+							<xsl:call-template name="transformEnumerationValue">
+								<xsl:with-param name="mappingName"
+									select="'LogicalChannelMode'"/>
+								<xsl:with-param name="value">
+									<xsl:value-of select="."/>
+								</xsl:with-param>
+							</xsl:call-template>
+						</xsl:attribute>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:attribute name="{local-name(.)}">
+							<xsl:value-of select="."/>
+						</xsl:attribute>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:for-each>
+			<xsl:apply-templates select="*"/>
+		</xsl:element>
+	</xsl:template>
+	
+	<!-- 
+		In Bin:BinData remove BigEndian attribute.
+	-->
+	<xsl:template match="Bin:BinData">
+		<xsl:element name="{name()}" namespace="{$newBINNS}">
+			<xsl:for-each select="@* [not(name(.) = 'BigEndian')]">
+				<xsl:attribute name="{local-name(.)}">
+					<xsl:value-of select="."/>
+				</xsl:attribute>
+			</xsl:for-each>
+			<xsl:apply-templates select="node()"/>
+		</xsl:element>
+	</xsl:template>
+
+	<xsl:template match="Bin:BinaryFile">
+		<xsl:element name="{name()}" namespace="{$newBINNS}">
+			<xsl:for-each select="@* [not(name(.) = 'MIMEType')]">
+				<xsl:attribute name="{local-name(.)}">
+					<xsl:value-of select="."/>
+				</xsl:attribute>
+			</xsl:for-each>
+			<xsl:apply-templates select="node()"/>
+		</xsl:element>
+	</xsl:template>
+	
 	<xsl:template match="SA:*"/>
 	<xsl:template match="SPW:*"/>
+
+	<xsl:template match="SPW:Description"/>
+
+	<xsl:template match="SPW:Reagent">
+		<xsl:element name="{name()}" namespace="{$newSPWNS}">
+			<xsl:apply-templates select="@*"/>
+		</xsl:element>
+	</xsl:template>
+
+	<xsl:template match="SPW:Screen">
+		<xsl:variable name="screenID">
+			<xsl:value-of select="@* [name() = 'ID']"/>
+		</xsl:variable>
+		<xsl:element name="{name()}" namespace="{$newSPWNS}">
+			<xsl:apply-templates select="@*"/>
+			<xsl:for-each select="* [local-name(.)='Description']">
+				<xsl:element name="Description" namespace="{$newOMENS}">
+					<xsl:value-of select="."/>
+				</xsl:element>
+			</xsl:for-each>
+			<xsl:apply-templates select="* [not(local-name(.)='Description')]"/>
+
+			<!-- begin creating ScreenAcquisition -->
+			<xsl:for-each select="* [local-name(.)='PlateRef']">
+				<xsl:variable name="thePlateID"><xsl:value-of select="@ID"/></xsl:variable>
+				<xsl:for-each select="//SPW:PlateAcquisition [ancestor::node()/@ID=$thePlateID]">
+					<xsl:element name="SPW:ScreenAcquisition" namespace="{$newSPWNS}">
+						<xsl:attribute name="ID">ScreenAcquisition:<xsl:value-of select="$screenID"
+								/>:<xsl:value-of select="@* [name() = 'ID']"/></xsl:attribute>
+						<xsl:for-each select="@* [name() = 'StartTime' or name() = 'EndTime']">
+							<xsl:attribute name="{local-name(.)}">
+								<xsl:value-of select="."/>
+							</xsl:attribute>
+						</xsl:for-each>
+						<xsl:apply-templates select="*"/>
+					</xsl:element>
+				</xsl:for-each>
+			</xsl:for-each>
+			<!-- end creating ScreenAcquisition -->
+
+		</xsl:element>
+	</xsl:template>
 	
+	<!-- Create PlateAcquisition, Remove DefaultSample -->
+	<xsl:template match="SPW:Plate">
+		<xsl:variable name="plateID">
+			<xsl:value-of select="@* [name() = 'ID']"/>
+		</xsl:variable>
+		<xsl:element name="{name()}" namespace="{$newSPWNS}">
+			<!-- copy all attributes except DefaultSample -->
+			<xsl:attribute name="Name">
+				<xsl:value-of select="@Name"/>
+			</xsl:attribute>
+			<xsl:for-each select="* [local-name(.)='Description']">
+				<xsl:attribute name="Description">
+					<xsl:value-of select="."/>
+				</xsl:attribute>
+			</xsl:for-each>
+			
+			<xsl:for-each select="@* [not(name(.) = 'DefaultSample' or 
+				name(.) = 'Name' or name(.) = 'ColumnNamingConvention' or 
+				name(.) = 'RowNamingConvention' or name(.) = 'WellOriginX' or 
+				name(.) = 'WellOriginY' or name(.) = 'Rows' or name(.) = 'Columns')]">
+				<xsl:attribute name="{local-name(.)}">
+					<xsl:value-of select="."/>
+				</xsl:attribute>
+			</xsl:for-each>
+
+			<!-- Copy unchanged children -->
+			<xsl:apply-templates select="* [local-name(.)='Description']"/>
+			<xsl:apply-templates select="* [local-name(.)='ScreenRef']"/>
+			
+			<!-- begin copying Well (and adding WellSampleIndex) -->
+			<xsl:variable name="wellCount">
+				<xsl:value-of select="count(* [local-name(.)='Well'])"/>
+			</xsl:variable>
+			<xsl:for-each select="* [local-name(.)='Well']">
+				<xsl:variable name="wellNumber">
+					<xsl:number value="position()"/>
+				</xsl:variable>
+				<xsl:call-template name="convertWell">
+					<xsl:with-param name="wellNode" select="."/>
+					<xsl:with-param name="wellCount" select="$wellCount"/>
+					<xsl:with-param name="wellNumber" select="$wellNumber"/>
+				</xsl:call-template>
+			</xsl:for-each>
+			<!-- end copying Well -->
+			
+			<!-- Copy unchanged children -->
+			<xsl:apply-templates select="* [local-name(.)='AnnotationRef']"/>
+			
+		</xsl:element>
+	</xsl:template>
+	
+	<!-- SPW:Well - passing values through to well sample template -->
+	<xsl:template name="convertWell">
+		<xsl:param name="wellNode"/>
+		<xsl:param name="wellCount"/>
+		<xsl:param name="wellNumber"/>
+		<xsl:element name="SPW:Well" namespace="{$newSPWNS}">
+			<xsl:for-each select="@* [not(name() = 'Status' or name() = 'Color')]">
+				<xsl:attribute name="{local-name(.)}">
+					<xsl:value-of select="."/>
+				</xsl:attribute>
+			</xsl:for-each>
+			<xsl:for-each select="* [local-name(.)='WellSample']">
+			<xsl:call-template name="convertWellSample">
+					<xsl:with-param name="wellSampleNode" select="."/>
+					<xsl:with-param name="wellCount" select="$wellCount"/>
+					<xsl:with-param name="wellNumber" select="$wellNumber"/>
+				</xsl:call-template>
+			</xsl:for-each>
+			<xsl:apply-templates select="* [local-name(.)='ReagentRef']"/>
+			<xsl:apply-templates select="* [local-name(.)='AnnotationRef']"/>
+		</xsl:element>
+	</xsl:template>
+
+	<!-- SPW:WellSample - adding index to well sample -->
+	<xsl:template name="convertWellSample">
+		<xsl:param name="wellSampleNode"/>
+		<xsl:param name="wellCount"/>
+		<xsl:param name="wellNumber"/>
+		<xsl:element name="SPW:WellSample" namespace="{$newSPWNS}">
+			<xsl:for-each select="@* [not(name() = 'Timepoint')]">
+				<xsl:choose>
+					<xsl:when test="name() = 'PositionX'">
+						<xsl:attribute name="PosX">
+							<xsl:value-of select="."/>
+						</xsl:attribute>
+					</xsl:when>
+					<xsl:when test="name() = 'PositionY'">
+						<xsl:attribute name="PosY">
+							<xsl:value-of select="."/>
+						</xsl:attribute>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:attribute name="{local-name(.)}">
+							<xsl:value-of select="."/>
+						</xsl:attribute>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:for-each>
+			<xsl:attribute name="Index">
+				<xsl:value-of select="(($wellNumber) + ($wellCount * (position() - 1)))"/>
+			</xsl:attribute>
+			<xsl:apply-templates select="*"/>
+		</xsl:element>
+	</xsl:template>
+
 	<!-- Rewriting all namespaces -->
 
 	<xsl:template match="OME:OME">
@@ -261,6 +820,14 @@
 			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 			xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2008-02 
 			http://www.openmicroscopy.org/Schemas/OME/2008-02/ome.xsd">
+			<xsl:apply-templates select="* [local-name(.) = 'Project']"/>
+			<xsl:apply-templates select="* [local-name(.) = 'Dataset']"/>
+			<xsl:apply-templates select="* [local-name(.) = 'Experiment']"/>
+			<xsl:apply-templates select="* [local-name(.) = 'Plate']"/>
+			<xsl:apply-templates select="* [local-name(.) = 'Screen']"/>
+			<xsl:apply-templates select="* [local-name(.) = 'Experimenter']"/>
+			<xsl:apply-templates select="* [local-name(.) = 'Group']"/>
+			<xsl:apply-templates select="* [local-name(.) = 'Instrument']"/>
 			<xsl:apply-templates select="* [local-name(.) = 'Image']"/>
 		</OME>
 	</xsl:template>
@@ -276,12 +843,61 @@
 			<xsl:apply-templates select="@*|node()"/>
 		</xsl:element>
 	</xsl:template>
+	
+	<xsl:template match="SPW:*">
+		<xsl:element name="{name()}" namespace="{$newSPWNS}">
+			<xsl:apply-templates select="@*|node()"/>
+		</xsl:element>
+	</xsl:template>
+
+	<xsl:template match="ROI:ROIRef">
+		<xsl:comment>Only 2D Rectangle ROI supported in 2008-02: <xsl:value-of select="@ID"/></xsl:comment>
+		<xsl:variable name="roiID" select="@ID"/>
+		<xsl:for-each select="exsl:node-set(//OME:OME/ROI:ROI[@ID=$roiID])">
+			<xsl:for-each select="exsl:node-set(ROI:Union/ROI:Shape/ROI:Rectangle)">
+				<xsl:element name="ROI" namespace="{$newOMENS}">
+					<xsl:attribute name="ID">
+						<xsl:value-of select="$roiID"/>
+					</xsl:attribute>
+					<xsl:attribute name="X0">
+						<xsl:value-of select="round(@X)"/>
+					</xsl:attribute>
+					<xsl:attribute name="Y0">
+						<xsl:value-of select="round(@Y)"/>
+					</xsl:attribute>
+					<xsl:attribute name="X1">
+						<xsl:value-of select="round(@X + @Width)"/>
+					</xsl:attribute>
+					<xsl:attribute name="Y1">
+						<xsl:value-of select="round(@Y + @Height)"/>
+					</xsl:attribute>
+				</xsl:element>
+			</xsl:for-each>
+		</xsl:for-each>
+	</xsl:template>
 
 	<!-- Default processing -->
 	<xsl:template match="@*|node()">
 		<xsl:copy>
 			<xsl:apply-templates select="@*|node()"/>
 		</xsl:copy>
+	</xsl:template>
+
+	<!-- Replace string -->
+	<xsl:template name="replace-string-id">
+		<xsl:param name="text"/>
+		<xsl:param name="replace"/>
+		<xsl:param name="replacement"/>
+		<xsl:choose>
+			<xsl:when test="contains($text, $replace)">
+				<xsl:value-of select="substring-before($text, $replace)"/>
+				<xsl:value-of select="$replacement"/>
+				<xsl:value-of select="substring-after($text, $replace)"/>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:value-of select="$text"/>
+			</xsl:otherwise>
+		</xsl:choose>
 	</xsl:template>
 
 </xsl:stylesheet>
