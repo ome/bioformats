@@ -61,7 +61,7 @@
 			<SPW:WellSampleRef ID="WellSample:1.2.2.2"/>
 		</PlateAcquisition>
 	</SPW:Plate>
-	<SPW:Plate ID="Plate:2">
+	<SPW:Plate ID="Plate:2" Name="twoName">
 		<SPW:Description>Plate 2 description.</SPW:Description>
 		<SPW:ScreenRef ID="Screen:1"/>
 		<SPW:Well ID="Well:2.1.1" Column="1" Row="1">
@@ -125,7 +125,7 @@
 		<SPW:PlateRef ID="Plate:2"/>
 	</SPW:Screen>
 	<SPW:Screen ID="Screen:2" ProtocolDescription="" ProtocolIdentifier="" ReagentSetDescription="" ReagentSetIdentifier="" Name="" Type="">
-		<SPW:Description/>
+		<SPW:Description>twoScreen</SPW:Description>
 		<SPW:Reagent ID="Reagent:2" Name="" ReagentIdentifier="">
 			<SPW:Description/>
 		</SPW:Reagent>
