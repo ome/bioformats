@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import loci.common.Location;
+import loci.common.ReflectedUniverse;
 import loci.common.Region;
 import loci.common.StatusEvent;
 import loci.common.StatusListener;
@@ -42,6 +43,7 @@ import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
 import loci.formats.ChannelFiller;
 import loci.formats.ChannelSeparator;
+import loci.formats.ClassList;
 import loci.formats.DimensionSwapper;
 import loci.formats.FilePattern;
 import loci.formats.FileStitcher;
@@ -603,6 +605,27 @@ public class ImportProcess implements StatusReporter {
         WindowTools.reportException(exc, options.isQuiet(),
           "Sorry, there was a I/O problem reading the file.");
         throw exc;
+      }
+    }
+    else if (options.isOMERO()) {
+      BF.status(options.isQuiet(), "Establishing server connection");
+      try {
+        ReflectedUniverse r = new ReflectedUniverse();
+        r.exec("import loci.ome.io.OmeroReader");
+        r.exec("baseReader = new OmeroReader()");
+        ClassList<IFormatReader> classes =
+          new ClassList<IFormatReader>(IFormatReader.class);
+        r.setVar("classes", classes);
+        r.exec("class = baseReader.getClass()");
+        r.exec("classes.addClass(class)");
+        imageReader = new ImageReader(classes);
+        baseReader = imageReader.getReader(options.getId());
+      }
+      catch (Exception exc) {
+        WindowTools.reportException(exc, options.isQuiet(),
+          "Sorry, there was a problem communicating with the server.");
+        cancel();
+        return;
       }
     }
     else {

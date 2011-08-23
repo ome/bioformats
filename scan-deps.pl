@@ -451,27 +451,14 @@ ZZ
 my %omeroClient = (
   NAME    => "omero-client",
   TITLE   => "OMERO Client",
-  JAR     => "omero-client-4.2.0.jar",
+  JAR     => "omero_client.jar",
   PACKAGE => "ome\\(.system\\|ro.api\\)",
   LICENSE => "GPL",
   URL     => "http://trac.openmicroscopy.org.uk/omero/wiki/MilestoneDownloads",
   NOTES   => <<ZZ,
 used by OME I/O to connect to OMERO servers
 ZZ
-  VERSION => "4.2.0"
-);
-
-my %omeroCommon = (
-  NAME    => "omero-common",
-  TITLE   => "OMERO Common",
-  JAR     => "omero-common-4.2.0.jar",
-  PACKAGE => "ome.api",
-  LICENSE => "GPL",
-  URL     => "http://trac.openmicroscopy.org.uk/omero/wiki/MilestoneDownloads",
-  NOTES   => <<ZZ,
-used by OME I/O to connect to OMERO servers
-ZZ
-  VERSION => "4.2.0"
+  VERSION => "4.3.1"
 );
 
 my %slf4j_api = (

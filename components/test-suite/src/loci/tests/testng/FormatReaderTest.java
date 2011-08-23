@@ -60,25 +60,7 @@ import loci.formats.ImageReader;
 import loci.formats.ReaderWrapper;
 import loci.formats.gui.AWTImageTools;
 import loci.formats.gui.BufferedImageReader;
-import loci.formats.in.AnalyzeReader;
-import loci.formats.in.APLReader;
-import loci.formats.in.BioRadReader;
-import loci.formats.in.GelReader;
-import loci.formats.in.JPEGReader;
-import loci.formats.in.JPEG2000Reader;
-import loci.formats.in.HitachiReader;
-import loci.formats.in.L2DReader;
-import loci.formats.in.MetamorphReader;
-import loci.formats.in.MetamorphTiffReader;
-import loci.formats.in.ND2Reader;
-import loci.formats.in.NiftiReader;
-import loci.formats.in.NRRDReader;
-import loci.formats.in.OMETiffReader;
-import loci.formats.in.PGMReader;
-import loci.formats.in.PrairieReader;
-import loci.formats.in.SISReader;
-import loci.formats.in.TiffDelegateReader;
-import loci.formats.in.TrestleReader;
+import loci.formats.in.*;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
@@ -194,8 +176,11 @@ public class FormatReaderTest {
         int bytes = FormatTools.getBytesPerPixel(type);
 
         int plane = x * y * c * bytes;
+        long checkPlane = (long) x * y * c * bytes;
 
-        if (c > 4 || plane < 0 || !TestTools.canFitInMemory(plane)) {
+        if (c > 4 || plane < 0 || plane != checkPlane ||
+          !TestTools.canFitInMemory(plane))
+        {
           continue;
         }
 
@@ -1253,7 +1238,14 @@ public class FormatReaderTest {
           // .xlog files in InCell 1000/2000 files may belong to more
           // than one dataset
           if (file.toLowerCase().endsWith(".xdce") &&
-            base[i].toLowerCase().endsWith(".xlog"))
+            !base[i].toLowerCase().endsWith(".xdce"))
+          {
+            continue;
+          }
+
+          // Volocity datasets can only be detected with the .mvd2 file
+          if (file.toLowerCase().endsWith(".mvd2") &&
+            !base[i].toLowerCase().endsWith(".mvd2"))
           {
             continue;
           }
@@ -1291,6 +1283,20 @@ public class FormatReaderTest {
           // JPEG files that are part of a Trestle dataset can be detected
           // separately
           if (reader.getFormat().equals("Trestle")) {
+            continue;
+          }
+
+          // TIFF files in CellR datasets are detected separately
+          if (reader.getFormat().equals("Olympus APL") &&
+            base[i].toLowerCase().endsWith(".tif"))
+          {
+            continue;
+          }
+
+          // TIFF files in Li-Cor datasets are detected separately
+          if (reader.getFormat().equals("Li-Cor L2D") &&
+            !base[i].toLowerCase().endsWith("l2d"))
+          {
             continue;
           }
 
@@ -1545,7 +1551,8 @@ public class FormatReaderTest {
             }
 
             if (result && (readers[j] instanceof L2DReader) ||
-              ((r instanceof L2DReader) && (readers[j] instanceof GelReader)))
+              ((r instanceof L2DReader) && (readers[j] instanceof GelReader) ||
+              readers[j] instanceof L2DReader))
             {
               continue;
             }
@@ -1557,8 +1564,9 @@ public class FormatReaderTest {
               continue;
             }
 
-            if (result && r instanceof APLReader &&
-              readers[j] instanceof SISReader)
+            if ((result && r instanceof APLReader &&
+              readers[j] instanceof SISReader) || (!result &&
+              r instanceof APLReader && readers[j] instanceof APLReader))
             {
               continue;
             }
@@ -1581,6 +1589,19 @@ public class FormatReaderTest {
             }
 
             if (result && r instanceof HitachiReader) {
+              continue;
+            }
+
+            if (!result && r instanceof VolocityReader &&
+              readers[j] instanceof VolocityReader)
+            {
+              continue;
+            }
+
+            if (!result && r instanceof InCellReader &&
+              readers[j] instanceof InCellReader &&
+              !used[i].toLowerCase().endsWith(".xdce"))
+            {
               continue;
             }
 

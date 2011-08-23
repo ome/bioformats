@@ -141,14 +141,23 @@ public class OMETiffReader extends FormatReader {
     String comment = ifd.getComment();
     if (comment == null || comment.trim().length() == 0) return false;
 
+    comment = comment.trim();
+
+    // do a basic sanity check before attempting to parse the comment as XML
+    // the parsing step is a bit slow, so there is no sense in trying unless
+    // we are reasonably sure that the comment contains XML
+    if (!comment.startsWith("<") || !comment.endsWith(">")) {
+      return false;
+    }
+
     try {
       if (service == null) setupService();
-      IMetadata meta = service.createOMEXMLMetadata(comment.trim());
+      IMetadata meta = service.createOMEXMLMetadata(comment);
       for (int i=0; i<meta.getImageCount(); i++) {
         meta.setPixelsBinDataBigEndian(Boolean.TRUE, i, 0);
         MetadataTools.verifyMinimumPopulated(meta, i);
       }
-      return true;
+      return meta.getImageCount() > 0;
     }
     catch (ServiceException se) { }
     catch (NullPointerException e) { }

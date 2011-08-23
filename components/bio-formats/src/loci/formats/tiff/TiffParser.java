@@ -681,7 +681,9 @@ public class TiffParser {
     int pixel = ifd.getBytesPerSample()[0];
     int effectiveChannels = planarConfig == 2 ? 1 : samplesPerPixel;
 
-    ifd.printIFD();
+    if (LOGGER.isTraceEnabled()) {
+      ifd.printIFD();
+    }
 
     if (width * height > Integer.MAX_VALUE) {
       throw new FormatException("Sorry, ImageWidth x ImageLength > " +
@@ -704,9 +706,12 @@ public class TiffParser {
       samplesPerPixel, numSamples);
 
     TiffCompression compression = ifd.getCompression();
+
     if (compression == TiffCompression.JPEG_2000 ||
-        compression == TiffCompression.JPEG_2000_LOSSY)
+      compression == TiffCompression.JPEG_2000_LOSSY)
+    {
       codecOptions = compression.getCompressionCodecOptions(ifd, codecOptions);
+    }
     else codecOptions = compression.getCompressionCodecOptions(ifd);
     codecOptions.interleaved = true;
     codecOptions.littleEndian = ifd.isLittleEndian();
@@ -820,10 +825,16 @@ public class TiffParser {
           int dest = (int) (q * planeSize) + pixel * (tileX - x) +
             outputRowLen * (tileY - y);
           if (planarConfig == 2) dest += (planeSize * (row / nrows));
-          for (int tileRow=0; tileRow<theight; tileRow++) {
-            System.arraycopy(cachedTileBuffer, src, buf, dest, copy);
-            src += rowLen;
-            dest += outputRowLen;
+
+          if (rowLen == outputRowLen) {
+            System.arraycopy(cachedTileBuffer, src, buf, dest, copy * theight);
+          }
+          else {
+            for (int tileRow=0; tileRow<theight; tileRow++) {
+              System.arraycopy(cachedTileBuffer, src, buf, dest, copy);
+              src += rowLen;
+              dest += outputRowLen;
+            }
           }
         }
       }

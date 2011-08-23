@@ -32,9 +32,11 @@ import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.codec.JPEGTileDecoder;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.PhotoInterp;
+import loci.formats.tiff.TiffParser;
+
+import ome.xml.model.primitives.PositiveFloat;
 
 /**
  * NDPIReader is the file format reader for Hamamatsu .ndpi files.
@@ -72,6 +74,11 @@ public class NDPIReader extends BaseTiffReader {
 
   // -- IFormatReader API methods --
 
+  /** @see loci.formats.IFormatReader#fileGroupOption(String) */
+  public int fileGroupOption(String id) throws FormatException, IOException {
+    return MUST_GROUP;
+  }
+
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
@@ -85,6 +92,8 @@ public class NDPIReader extends BaseTiffReader {
     }
     else if (getSizeX() <= MAX_SIZE && getSizeY() <= MAX_SIZE) {
       int ifdIndex = getIFDIndex(getSeries(), no);
+      in = new RandomAccessInputStream(currentId);
+      tiffParser = new TiffParser(in);
       return tiffParser.getSamples(ifds.get(ifdIndex), buf, x, y, w, h);
     }
 
@@ -113,7 +122,9 @@ public class NDPIReader extends BaseTiffReader {
     for (int yy=y; yy<y + h; yy++) {
       byte[] scanline = decoder.getScanline(yy);
       if (scanline != null) {
-        System.arraycopy(scanline, x * c * bytes, buf, (yy - y) * row, row);
+        int copy = (int) Math.min(row, buf.length - (yy - y) * row - 1);
+        if (copy < 0) break;
+        System.arraycopy(scanline, x * c * bytes, buf, (yy - y) * row, copy);
       }
     }
 
@@ -129,9 +140,21 @@ public class NDPIReader extends BaseTiffReader {
       return super.openThumbBytes(no);
     }
 
+    int thumbX = getThumbSizeX();
+    int thumbY = getThumbSizeY();
+
     setSeries(pyramidHeight - 1);
-    byte[] thumb = FormatTools.openThumbBytes(this, no);
-    setSeries(currentSeries);
+
+    byte[] thumb = null;
+
+    if (thumbX == getThumbSizeX() && thumbY == getThumbSizeY()) {
+      thumb = FormatTools.openThumbBytes(this, no);
+      setSeries(currentSeries);
+    }
+    else {
+      setSeries(currentSeries);
+      thumb = FormatTools.openThumbBytes(this, no);
+    }
     return thumb;
   }
 

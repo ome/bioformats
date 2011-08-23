@@ -29,7 +29,10 @@ import Glacier2.PermissionDeniedException;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
+import java.util.List;
 
+import loci.common.DateTools;
+import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -37,11 +40,17 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tools.ImageInfo;
 import ome.xml.model.primitives.PositiveFloat;
+import ome.xml.model.primitives.PositiveInteger;
+import omero.RDouble;
+import omero.RInt;
+import omero.RTime;
 import omero.ServerError;
 import omero.api.GatewayPrx;
 import omero.api.RawPixelsStorePrx;
 import omero.api.ServiceFactoryPrx;
+import omero.model.Channel;
 import omero.model.Image;
+import omero.model.LogicalChannel;
 import omero.model.Pixels;
 
 /**
@@ -65,7 +74,9 @@ public class OmeroReader extends FormatReader {
   private String password;
   private int thePort = DEFAULT_PORT;
 
+  private omero.client client;
   private RawPixelsStorePrx store;
+  private Image img;
   private Pixels pix;
 
   // -- Constructors --
@@ -100,12 +111,12 @@ public class OmeroReader extends FormatReader {
   }
 
   @Override
-  public byte[] openBytes(int no, byte[] buf, int x1, int y1, int w1, int h1)
+  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
     FormatTools.assertId(currentId, true, 1);
     FormatTools.checkPlaneNumber(this, no);
-    FormatTools.checkBufferSize(this, buf.length);
+    FormatTools.checkBufferSize(this, buf.length, w, h);
 
     final int[] zct = FormatTools.getZCTCoords(this, no);
 
@@ -117,17 +128,19 @@ public class OmeroReader extends FormatReader {
       throw new FormatException(e);
     }
 
-    final int len = getSizeX() * getSizeY() *
-      FormatTools.getBytesPerPixel(getPixelType());
-    System.arraycopy(plane, 0, buf, 0, len);
+    RandomAccessInputStream s = new RandomAccessInputStream(plane);
+    readPlane(s, x, y, w, h, buf);
+    s.close();
 
     return buf;
   }
 
   @Override
-  public void close() throws IOException {
-    super.close();
-    // TODO close last session
+  public void close(boolean fileOnly) throws IOException {
+    super.close(fileOnly);
+    if (!fileOnly && client != null) {
+      client.closeSession();
+    }
   }
 
   @Override
@@ -146,7 +159,7 @@ public class OmeroReader extends FormatReader {
 
     String address = server, user = username, pass = password;
     int port = thePort;
-    long pid = -1;
+    long iid = -1;
 
     final String[] tokens = id.substring(6).split("\n");
     for (String token : tokens) {
@@ -163,9 +176,9 @@ public class OmeroReader extends FormatReader {
         }
         catch (NumberFormatException exc) { }
       }
-      else if (key.equals("pid")) {
+      else if (key.equals("iid")) {
         try {
-          pid = Long.parseLong(val);
+          iid = Long.parseLong(val);
         }
         catch (NumberFormatException exc) { }
       }
@@ -180,8 +193,8 @@ public class OmeroReader extends FormatReader {
     if (pass == null) {
       throw new FormatException("Invalid password");
     }
-    if (pid < 0) {
-      throw new FormatException("Invalid pixels ID");
+    if (iid < 0) {
+      throw new FormatException("Invalid image ID");
     }
 
     try {
@@ -189,16 +202,18 @@ public class OmeroReader extends FormatReader {
 
       LOGGER.info("Logging in");
 
-      omero.client client = new omero.client(server, port);
+      client = new omero.client(address, port);
       final ServiceFactoryPrx serviceFactory = client.createSession(user, pass);
 
       // get raw pixels store and pixels
 
       store = serviceFactory.createRawPixelsStore();
-      store.setPixelsId(pid, false);
+      store.setPixelsId(iid, false);
 
       final GatewayPrx gateway = serviceFactory.createGateway();
-      pix = gateway.getPixels(pid);
+      img = gateway.getImage(iid);
+      long pixelsId = img.getPixels(0).getId().getValue();
+      pix = gateway.getPixels(pixelsId);
       final int sizeX = pix.getSizeX().getValue();
       final int sizeY = pix.getSizeY().getValue();
       final int sizeZ = pix.getSizeZ().getValue();
@@ -221,24 +236,69 @@ public class OmeroReader extends FormatReader {
       core[0].imageCount = sizeZ * sizeC * sizeT;
       core[0].pixelType = FormatTools.pixelTypeFromString(pixelType);
 
-      // CTR TODO this is wrong
-      double px = pix.getSizeX().getValue();
-      double py = pix.getSizeY().getValue();
-      double pz = pix.getSizeZ().getValue();
+      RDouble x = pix.getPhysicalSizeX();
+      Double px = x == null ? null : x.getValue();
+      RDouble y = pix.getPhysicalSizeY();
+      Double py = y == null ? null : y.getValue();
+      RDouble z = pix.getPhysicalSizeZ();
+      Double pz = z == null ? null : z.getValue();
+      RDouble t = pix.getTimeIncrement();
+      Double time = t == null ? null : t.getValue();
 
-      Image image = pix.getImage();
-
-      String name = image.getName().getValue();
-      String description = image.getDescription().getValue();
+      String name = img.getName().getValue();
+      String description = img.getDescription().getValue();
+      RTime date = img.getAcquisitionDate();
 
       MetadataStore store = getMetadataStore();
+      MetadataTools.populatePixels(store, this);
       store.setImageName(name, 0);
       store.setImageDescription(description, 0);
-      MetadataTools.populatePixels(store, this);
+      if (date != null) {
+        store.setImageAcquiredDate(DateTools.convertDate(date.getValue(),
+          (int) DateTools.UNIX_EPOCH), 0);
+      }
 
-      store.setPixelsPhysicalSizeX(new PositiveFloat(px), 0);
-      store.setPixelsPhysicalSizeY(new PositiveFloat(py), 0);
-      store.setPixelsPhysicalSizeZ(new PositiveFloat(pz), 0);
+      if (px != null) {
+        store.setPixelsPhysicalSizeX(new PositiveFloat(px), 0);
+      }
+      if (py != null) {
+        store.setPixelsPhysicalSizeY(new PositiveFloat(py), 0);
+      }
+      if (pz != null) {
+        store.setPixelsPhysicalSizeZ(new PositiveFloat(pz), 0);
+      }
+      if (time != null) {
+        store.setPixelsTimeIncrement(time, 0);
+      }
+
+      List<Channel> channels = pix.copyChannels();
+      for (int c=0; c<channels.size(); c++) {
+        LogicalChannel channel = channels.get(c).getLogicalChannel();
+
+        RInt emWave = channel.getEmissionWave();
+        RInt exWave = channel.getExcitationWave();
+        RDouble pinholeSize = channel.getPinHoleSize();
+
+        Integer emission = emWave == null ? null : emWave.getValue();
+        Integer excitation = exWave == null ? null : exWave.getValue();
+        String channelName = channel.getName().getValue();
+        Double pinhole = pinholeSize == null ? null : pinholeSize.getValue();
+
+        if (channelName != null) {
+          store.setChannelName(channelName, 0, c);
+        }
+        if (pinhole != null) {
+          store.setChannelPinholeSize(pinhole, 0, c);
+        }
+        if (emission != null) {
+          store.setChannelEmissionWavelength(
+            new PositiveInteger(emission), 0, c);
+        }
+        if (excitation != null) {
+          store.setChannelExcitationWavelength(
+            new PositiveInteger(excitation), 0, c);
+        }
+      }
     }
     catch (CannotCreateSessionException e) {
       throw new FormatException(e);
@@ -270,8 +330,8 @@ public class OmeroReader extends FormatReader {
     System.out.print("Password? ");
     final String pass = new String(con.readLine());
 
-    System.out.print("Pixels ID? ");
-    final int pixelsId = Integer.parseInt(con.readLine());
+    System.out.print("Image ID? ");
+    final int imageId = Integer.parseInt(con.readLine());
     System.out.print("\n\n");
 
     // construct the OMERO reader
@@ -280,14 +340,28 @@ public class OmeroReader extends FormatReader {
     omeroReader.setPassword(pass);
     omeroReader.setServer(server);
     omeroReader.setPort(port);
-    final String id = "omero:pid=" + pixelsId;
-    omeroReader.setId(id);
+    final String id = "omero:iid=" + imageId;
+    try {
+      omeroReader.setId(id);
+    }
+    catch (Exception e) {
+      omeroReader.close();
+      throw e;
+    }
     omeroReader.close();
 
     // delegate the heavy lifting to Bio-Formats ImageInfo utility
     final ImageInfo imageInfo = new ImageInfo();
     imageInfo.setReader(omeroReader); // override default image reader
-    if (!imageInfo.testRead(args)) System.exit(1);
+
+    String[] readArgs = new String[args.length + 1];
+    System.arraycopy(args, 0, readArgs, 0, args.length);
+    readArgs[args.length] = id;
+
+    if (!imageInfo.testRead(readArgs)) {
+      omeroReader.close();
+      System.exit(1);
+    }
   }
 
 }
