@@ -107,12 +107,14 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
 
     // retrieve EXIF values, if available
 
-    IFDList exifIFDs = tiffParser.getExifIFDs();
-    if (exifIFDs.size() > 0) {
-      IFD exif = exifIFDs.get(0);
-      for (Integer key : exif.keySet()) {
-        int k = key.intValue();
-        addGlobalMeta(getExifTagName(k), exif.get(key));
+    if (ifds.get(0).containsKey(IFD.EXIF)) {
+      IFDList exifIFDs = tiffParser.getExifIFDs();
+      if (exifIFDs.size() > 0) {
+        IFD exif = exifIFDs.get(0);
+        for (Integer key : exif.keySet()) {
+          int k = key.intValue();
+          addGlobalMeta(getExifTagName(k), exif.get(key));
+        }
       }
     }
 
