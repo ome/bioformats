@@ -371,12 +371,24 @@ public class MinimalTiffReader extends FormatReader {
 
     LOGGER.info("Reading IFDs");
 
-    ifds = tiffParser.getNonThumbnailIFDs();
-    if (ifds == null || ifds.size() == 0) {
+    IFDList allIFDs = tiffParser.getIFDs();
+
+    if (allIFDs == null || allIFDs.size() == 0) {
       throw new FormatException("No IFDs found");
     }
 
-    thumbnailIFDs = tiffParser.getThumbnailIFDs();
+    ifds = new IFDList();
+    thumbnailIFDs = new IFDList();
+    for (IFD ifd : allIFDs) {
+      Number subfile = (Number) ifd.getIFDValue(IFD.NEW_SUBFILE_TYPE);
+      int subfileType = subfile == null ? 0 : subfile.intValue();
+      if (subfileType != 1 || allIFDs.size() <= 1) {
+        ifds.add(ifd);
+      }
+      else if (subfileType == 1) {
+        thumbnailIFDs.add(ifd);
+      }
+    }
 
     LOGGER.info("Populating metadata");
 
