@@ -82,8 +82,13 @@
 			<map from="Other" to="UV"/>
 		</mapping>
 		<mapping name="LogicalChannelMode">
+			<map from="PALM" to="Other"/>
 			<map from="STORM" to="Other"/>
+			<map from="STED" to="Other"/>
+			<map from="TIRF" to="Other"/>
+			<map from="FSM" to="Other"/>
 			<map from="LCM" to="Other"/>
+			<map from="LaserScanningConfocalMicroscopy" to="LaserScanningConfocal"/>
 		</mapping>
 		<mapping name="ObjectiveRefMedium">
 			<map from="Other" to="Air"/>
@@ -177,6 +182,7 @@
 			</xsl:for-each>
 			<xsl:apply-templates select="* [local-name(.) = 'Pixels']"/>
 			<xsl:apply-templates select="* [local-name(.) = 'ROIRef']"/>
+			<xsl:apply-templates select="* [local-name(.) = 'MicrobeamManipulationRef']"/>
 			
 		</xsl:element>
 	</xsl:template>
@@ -249,32 +255,41 @@
 	</xsl:template>
 	
 	<xsl:template match="OME:MicrobeamManipulationRef">
-		<xsl:element name="MicrobeamManipulation" namespace="{$newOMENS}">
-			<xsl:for-each select="@* [name(.) = 'ID']">
-				<xsl:attribute name="{local-name(.)}">
-					<xsl:value-of select="."/>
-				</xsl:attribute>
-			</xsl:for-each>
-	<!--		<xsl:for-each select="@* [not(name(.) = 'Type')]">
-				<xsl:attribute name="{local-name(.)}">
-					<xsl:value-of select="."/>
-				</xsl:attribute>
-			</xsl:for-each>
-			<xsl:for-each select="@* [name(.) = 'Type']">
-				<xsl:attribute name="Type">
-					<xsl:call-template name="replace-string-id">
-						<xsl:with-param name="text"><xsl:call-template name="replace-string-id">
-						<xsl:with-param name="text" select="."/>
-						<xsl:with-param name="replace" select="'FLIP'"/>
-						<xsl:with-param name="replacement" select="''"/>
-					</xsl:call-template></xsl:with-param>
-						<xsl:with-param name="replace" select="'  '"/>
-						<xsl:with-param name="replacement" select="' '"/>
-					</xsl:call-template>
-				</xsl:attribute>
-			</xsl:for-each>
-			<xsl:apply-templates select="*"/>-->
-		</xsl:element>
+		<xsl:variable name="theMicrobeamManipulationID">
+			<xsl:value-of select="@ID"/>
+		</xsl:variable>
+		<xsl:for-each select="//OME:MicrobeamManipulation[@ID=$theMicrobeamManipulationID]">
+			<xsl:element name="MicrobeamManipulation" namespace="{$newOMENS}">
+				<xsl:for-each select="@* [name(.) = 'ID']">
+					<xsl:attribute name="{local-name(.)}">
+						<xsl:value-of select="."/>
+					</xsl:attribute>
+				</xsl:for-each>
+				<xsl:for-each select="@* [not(name(.) = 'Type')]">
+					<xsl:attribute name="{local-name(.)}">
+						<xsl:value-of select="."/>
+					</xsl:attribute>
+				</xsl:for-each>
+				<xsl:for-each select="@* [name(.) = 'Type']">
+					<xsl:attribute name="Type">
+						<xsl:call-template name="replace-string-id">
+							<xsl:with-param name="text"><xsl:call-template name="replace-string-id">
+									<xsl:with-param name="text" select="."/>
+									<xsl:with-param name="replace" select="'FLIP'"/>
+									<xsl:with-param name="replacement" select="'Other'"/>
+								</xsl:call-template></xsl:with-param>
+							<xsl:with-param name="replace" select="'InverseFRAP'"/>
+							<xsl:with-param name="replacement" select="'Other'"/>
+						</xsl:call-template>
+					</xsl:attribute>
+				</xsl:for-each>
+				<xsl:for-each select="* [local-name(.) = 'ROIRef']">
+					<xsl:apply-templates select="." mode="inMicrobeam"/>
+				</xsl:for-each>
+				<xsl:apply-templates select="* [local-name(.) = 'ExperimenterRef']"/>
+				<xsl:apply-templates select="* [local-name(.) = 'LightSourceSettings']"/>
+			</xsl:element>
+		</xsl:for-each>
 	</xsl:template>
 
 	<xsl:template match="OME:MicrobeamManipulation">
@@ -509,6 +524,12 @@
 		</xsl:element>
 	</xsl:template>
 
+	<xsl:template match="OME:LightSourceSettings">
+		<xsl:element name="LightSourceRef" namespace="{$newOMENS}">
+			<xsl:apply-templates select="@*|*"/>
+		</xsl:element>
+	</xsl:template>
+
 	<xsl:template match="OME:Laser">
 		<xsl:element name="{name()}" namespace="{$newOMENS}">
 			<xsl:for-each select="@* [not(name(.) = 'RepetitionRate')]">
@@ -568,7 +589,7 @@
 			<xsl:apply-templates select="@*"/>
 			<xsl:apply-templates select="* [local-name(.) = 'Description']"/>
 			<xsl:apply-templates select="* [local-name(.) = 'ExperimenterRef']"/>
-			<xsl:apply-templates select="* [local-name(.) = 'MicrobeamManipulationRef']"/>
+			<xsl:apply-templates select="* [local-name(.) = 'MicrobeamManipulation']"/>
 		</xsl:element>
 	</xsl:template>
 
@@ -870,6 +891,20 @@
 					</xsl:attribute>
 					<xsl:attribute name="Y1">
 						<xsl:value-of select="round(@Y + @Height)"/>
+					</xsl:attribute>
+				</xsl:element>
+			</xsl:for-each>
+		</xsl:for-each>
+	</xsl:template>
+
+	<xsl:template match="ROI:ROIRef" mode="inMicrobeam">
+		<xsl:comment>Only 2D Rectangle ROI supported in 2008-02: <xsl:value-of select="@ID"/></xsl:comment>
+		<xsl:variable name="roiID" select="@ID"/>
+		<xsl:for-each select="exsl:node-set(//OME:OME/ROI:ROI[@ID=$roiID])">
+			<xsl:for-each select="exsl:node-set(ROI:Union/ROI:Shape/ROI:Rectangle)">
+				<xsl:element name="ROIRef" namespace="{$newOMENS}">
+					<xsl:attribute name="ID">
+						<xsl:value-of select="$roiID"/>
 					</xsl:attribute>
 				</xsl:element>
 			</xsl:for-each>
