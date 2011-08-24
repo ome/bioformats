@@ -101,6 +101,14 @@ namespace itk {
     return res;
   }
 
+  template <typename T>
+  T GetTypedMetaData ( MetaDataDictionary dict, std::string key )
+  {
+    std::string tmp;
+    ExposeMetaData<std::string>(dict, key, tmp);
+    return valueOfString<T>(tmp);
+  }
+
   template<>
   bool valueOfString<bool>( const std::string &s )
   {
@@ -382,13 +390,13 @@ void BioFormatsImageIO::ReadImageInformation()
   // fill the metadata dictionary
   MetaDataDictionary & dict = this->GetMetaDataDictionary();
 
-  // we have one thing per line
+  // we have one thing per two lines
   size_t p0 = 0;
   size_t p1 = 0;
   std::string line;
   while( p0 < imgInfo.size() )
     {
-    // get the current line
+    // get the key line
     p1 = imgInfo.find("\n", p0);
     line = imgInfo.substr( p0, p1-p0 );
 
@@ -400,13 +408,25 @@ void BioFormatsImageIO::ReadImageInformation()
       continue;
       }
 
-    // get the 3 parts of the line
-    int sep1 = line.find("(");
-    int sep2 = line.find("):");
-    std::string key = line.substr( 0, sep1 );
-    std::string type = line.substr( sep1+1, sep2-sep1-1 );
-    std::string value = line.substr( sep2+3, line.size()-sep2-1 );
-    // std::cout << "===" << name << "=" << type << "=" << value << "===" << std::endl;
+    std::string key = line;
+
+    // go to the next line
+    p0 = p1+1;
+
+    // get the value line
+    p1 = imgInfo.find("\n", p0);
+    line = imgInfo.substr( p0, p1-p0 );
+
+    // ignore the empty lines
+    if( line == "" )
+      {
+      // go to the next line
+      p0 = p1+1;
+      continue;
+      }
+
+    std::string value = line;
+    itkDebugMacro("=== " << key << " = " << value << " ===");
 
     // store the values in the dictionary
     if( dict.HasKey(key) )
@@ -415,8 +435,6 @@ void BioFormatsImageIO::ReadImageInformation()
       }
     else
       {
-      if( type == "string" )
-        {
         std::string tmp;
         // we have to unescape \\ and \n
         size_t lp0 = 0;
@@ -446,25 +464,8 @@ void BioFormatsImageIO::ReadImageInformation()
             lp0 = lp1 + 2;
             }
           }
+        itkDebugMacro("Storing metadata: " << key << " ---> " << tmp);
         EncapsulateMetaData< std::string >( dict, key, tmp );
-        }
-      else if( type == "bool" )
-        {
-        EncapsulateMetaData< bool >( dict, key, valueOfString<bool>(value) );
-        }
-      else if( type == "int" )
-        {
-        EncapsulateMetaData< long >( dict, key, valueOfString<long>(value) );
-        }
-      else if( type == "real" )
-        {
-        EncapsulateMetaData< double >( dict, key, valueOfString<double>(value) );
-        }
-      else if( type == "enum" )
-        {
-//         itkDebugMacro("BioFormatsImageIO::ReadImageInformation adding enum metadata " << key << " = " << value);
-        EncapsulateMetaData< long >( dict, key, valueOfString<long>(value) );
-        }
       }
 
     // go to the next line
@@ -478,39 +479,47 @@ void BioFormatsImageIO::ReadImageInformation()
   double r;
 
   // is little endian?
-  ExposeMetaData<bool>( dict, "LittleEndian", b );
+  b = GetTypedMetaData<bool>(dict, "LittleEndian");
   if( b )
     {
+    itkDebugMacro("Setting LittleEndian ---> True");
     SetByteOrderToLittleEndian();
     }
   else
     {
+    itkDebugMacro("Setting LittleEndian ---> False");
     SetByteOrderToBigEndian();
     }
 
   // component type
   itkAssertOrThrowMacro( dict.HasKey("PixelType"), "PixelType is not in the metadata dictionary!");
-  ExposeMetaData<long>( dict, "PixelType", i );
+  i = GetTypedMetaData<long>(dict, "PixelType");
   if( i == UNKNOWNCOMPONENTTYPE)
     {
     itkExceptionMacro("Unknown pixel type: "<< i);
     }
+  itkDebugMacro("Setting PixelType: " << i);
   SetComponentType( (itk::ImageIOBase::IOComponentType)i );
 
   // x, y, z, t, c
-  ExposeMetaData<long>( dict, "SizeX", i );
+  i = GetTypedMetaData<long>(dict, "SizeX");
+  itkDebugMacro("Setting SizeX: " << i);
   this->SetDimensions( 0, i );
-  ExposeMetaData<long>( dict, "SizeY", i );
+  i = GetTypedMetaData<long>(dict, "SizeY");
+  itkDebugMacro("Setting SizeY: " << i);
   this->SetDimensions( 1, i );
-  ExposeMetaData<long>( dict, "SizeZ", i );
+  i = GetTypedMetaData<long>(dict, "SizeZ");
+  itkDebugMacro("Setting SizeZ: " << i);
   this->SetDimensions( 2, i );
-  ExposeMetaData<long>( dict, "SizeT", i );
+  i = GetTypedMetaData<long>(dict, "SizeT");
+  itkDebugMacro("Setting SizeT: " << i);
   this->SetDimensions( 3, i );
-  ExposeMetaData<long>( dict, "SizeC", i );
+  i = GetTypedMetaData<long>(dict, "SizeC");
+  itkDebugMacro("Setting SizeC: " << i);
   this->SetDimensions( 4, i );
 
   // number of components
-  ExposeMetaData<long>( dict, "RGBChannelCount", i );
+  i = GetTypedMetaData<long>(dict, "RGBChannelCount");
   if( i == 1 )
     {
     this->SetPixelType( SCALAR );
@@ -526,15 +535,20 @@ void BioFormatsImageIO::ReadImageInformation()
   this->SetNumberOfComponents( i );
 
   // spacing
-  ExposeMetaData<double>( dict, "PixelsPhysicalSizeX", r );
+  r = GetTypedMetaData<double>(dict, "PixelsPhysicalSizeX");
+  itkDebugMacro("Setting PixelsPhysicalSizeX: " << r);
   this->SetSpacing( 0, r );
-  ExposeMetaData<double>( dict, "PixelsPhysicalSizeY", r );
+  r = GetTypedMetaData<double>(dict, "PixelsPhysicalSizeY");
+  itkDebugMacro("Setting PixelsPhysicalSizeY: " << r);
   this->SetSpacing( 1, r );
-  ExposeMetaData<double>( dict, "PixelsPhysicalSizeZ", r );
+  r = GetTypedMetaData<double>(dict, "PixelsPhysicalSizeZ");
+  itkDebugMacro("Setting PixelsPhysicalSizeZ: " << r);
   this->SetSpacing( 2, r );
-  ExposeMetaData<double>( dict, "PixelsPhysicalSizeT", r );
+  r = GetTypedMetaData<double>(dict, "PixelsPhysicalSizeT");
+  itkDebugMacro("Setting PixelsPhysicalSizeT: " << r);
   this->SetSpacing( 3, r );
-  ExposeMetaData<double>( dict, "PixelsPhysicalSizeC", r );
+  r = GetTypedMetaData<double>(dict, "PixelsPhysicalSizeC");
+  itkDebugMacro("Setting PixelsPhysicalSizeC: " << r);
   this->SetSpacing( 4, r );
 
 }
@@ -852,5 +866,4 @@ void BioFormatsImageIO::Write(const void * buffer )
        itkDebugMacro("Read planeDone: " << planeDone);
   }
 }
-
 } // end namespace itk

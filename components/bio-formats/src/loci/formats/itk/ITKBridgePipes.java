@@ -187,7 +187,7 @@ public class ITKBridgePipes {
    // now print the informations
 
    // little endian?
-    System.out.println( "LittleEndian(bool): " + (reader.isLittleEndian()? 1:0) );
+    sendData("LittleEndian", String.valueOf(reader.isLittleEndian()? 1:0));
 
     // component type
     // set ITK component type
@@ -221,25 +221,24 @@ public class ITKBridgePipes {
       default:
         itkComponentType = 0;
     }
-    System.out.println( "PixelType(enum): " + itkComponentType );
+    sendData("PixelType", String.valueOf(itkComponentType));
 
     // x, y, z, t, c
-    System.out.println( "SizeX(int): " + reader.getSizeX() );
-    System.out.println( "SizeY(int): " + reader.getSizeY() );
-    System.out.println( "SizeZ(int): " + reader.getSizeZ() );
-    System.out.println( "SizeT(int): " + reader.getSizeT() );
-    System.out.println( "SizeC(int): " + reader.getEffectiveSizeC() ); // reader.getSizeC()
-
+    sendData("SizeX", String.valueOf(reader.getSizeX()));
+    sendData("SizeY", String.valueOf(reader.getSizeY()));
+    sendData("SizeZ", String.valueOf(reader.getSizeZ()));
+    sendData("SizeT", String.valueOf(reader.getSizeT()));
+    sendData("SizeC", String.valueOf(reader.getEffectiveSizeC()));
+    
     // number of components
-    System.out.println( "RGBChannelCount(int): " + reader.getRGBChannelCount() );
+    sendData("RGBChannelCount", String.valueOf(reader.getRGBChannelCount()));
 
     // spacing
-    System.out.println( "PixelsPhysicalSizeX(real): " + (meta.getPixelsPhysicalSizeX(0)==null? 1.0: meta.getPixelsPhysicalSizeX(0)) );
-    System.out.println( "PixelsPhysicalSizeY(real): " + (meta.getPixelsPhysicalSizeY(0)==null? 1.0: meta.getPixelsPhysicalSizeY(0)) );
-    System.out.println( "PixelsPhysicalSizeZ(real): " + (meta.getPixelsPhysicalSizeZ(0)==null? 1.0: meta.getPixelsPhysicalSizeZ(0)) );
-    System.out.println( "PixelsPhysicalSizeT(real): " + (meta.getPixelsTimeIncrement(0)==null? 1.0: meta.getPixelsTimeIncrement(0)) );
-    // should we give something more useful for this one?
-    System.out.println( "PixelsPhysicalSizeC(real): " + 1.0 );
+    sendData("PixelsPhysicalSizeX", String.valueOf((meta.getPixelsPhysicalSizeX(0)==null? 1.0: meta.getPixelsPhysicalSizeX(0))));
+    sendData("PixelsPhysicalSizeY", String.valueOf((meta.getPixelsPhysicalSizeY(0)==null? 1.0: meta.getPixelsPhysicalSizeY(0))));
+    sendData("PixelsPhysicalSizeZ", String.valueOf((meta.getPixelsPhysicalSizeZ(0)==null? 1.0: meta.getPixelsPhysicalSizeZ(0))));
+    sendData("PixelsPhysicalSizeT", String.valueOf((meta.getPixelsTimeIncrement(0)==null? 1.0: meta.getPixelsTimeIncrement(0))));
+    sendData("PixelsPhysicalSizeC", String.valueOf(1.0));
 
     HashMap<String, Object> metadata = new HashMap<String, Object>();
     metadata.putAll( reader.getGlobalMetadata() );
@@ -250,43 +249,11 @@ public class ITKBridgePipes {
       Map.Entry entry = (Map.Entry) it.next();
 
       String key = (String)entry.getKey();
-      Object value = entry.getValue();
+      String value = entry.getValue().toString();
 
-      // clean up the key name
-      key = key.replace('(', ' ');
-      key = key.replace(')', ' ');
-      key = key.replace(':', ' ');
-
-      String type;
-      if( value instanceof Double ) {
-        type = "real";
-      }
-      else if( value instanceof Long ) {
-        type = "int";
-      }
-      else if( value instanceof Integer ) {
-        type = "int";
-      }
-      else if( value instanceof Boolean ) {
-        type = "bool";
-        // don't print false or true, but 0 or 1
-        if( ((Boolean)value).booleanValue() ) {
-          value = new Integer(1);
-        }
-        else {
-          value = new Integer(0);
-        }
-      }
-      else if( value instanceof String ) {
-        // remove the line return
-        value = ((String)value).replace("\\", "\\\\").replace("\n", "\\n");
-        type = "string";
-      }
-      else {
-        // defaults to string
-        type = "string";
-      }
-      System.out.println( entry.getKey() + "("+type+"): " + value );
+      // remove the line return
+      value = value.replace("\\", "\\\\").replace("\n", "\\n");
+      sendData(key, value);
     }
     System.out.flush();
 
@@ -511,6 +478,16 @@ public class ITKBridgePipes {
     reader.close();
     System.exit(0);
     return true;
+  }
+  
+  /**
+   *  Pipes the given key, value pair out to C++
+   * 
+   */
+  private void sendData(String key, String value)
+  {
+    System.out.println(key);
+    System.out.println(value);
   }
 
   // -- Main method --
