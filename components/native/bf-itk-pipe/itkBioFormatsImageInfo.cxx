@@ -56,6 +56,7 @@ http://www.itk.org/Wiki/Plugin_IO_mechanisms
 #include "itkImage.h"
 #include "itkMetaDataObject.h"
 #include "itkMetaDataDictionary.h"
+#include "itkImageIOBase.h"
 //#include "itkBioFormatsImageIO.h"
 
 #define METADATA_NOT_FOUND "No value for this key."
@@ -75,13 +76,9 @@ int main( int argc, char * argv[] )
 
   typedef itk::ImageFileReader<ImageType> ReaderType;
 
-  //itk::BioFormatsImageIO::Pointer io = itk::BioFormatsImageIO::New();
-  //io->DebugOn();
-
   ReaderType::Pointer reader = ReaderType::New();
   ImageType::Pointer img;
 
-  //reader->SetImageIO(io);
   reader->SetFileName(argv[1]);
   reader->Update();
   img = reader->GetOutput();
@@ -103,5 +100,14 @@ int main( int argc, char * argv[] )
     metaString = METADATA_NOT_FOUND;
   }
 
-  std::cout << "Metadata Key ---> Value pairs, from ITK struct:" << std::endl;
+  // Print out the metadata naturally contained within itkImageIOBase
+  std::cout << "Metadata Key ---> Value pairs, from ImageIOBase:" << std::endl;
+  std::cout << "Spacing: " << reader->GetImageIO()->GetSpacing(0) << std::endl;
+  std::cout << "Byte Order: " << reader->GetImageIO()->GetByteOrderAsString(reader->GetImageIO()->GetByteOrder()) << std::endl;
+  std::cout << "Pixel Stride: " << reader->GetImageIO()->GetPixelStride() << std::endl;
+  std::cout << "Pixel Type: " << reader->GetImageIO()->GetPixelTypeAsString(reader->GetImageIO()->GetPixelType()) << std::endl;
+  std::cout << "Image Size (in pixels): " << reader->GetImageIO()->GetImageSizeInPixels() << std::endl;
+  std::cout << "Component Type: " << reader->GetImageIO()->GetComponentTypeAsString(reader->GetImageIO()->GetComponentType()) << std::endl;
+  std::cout << "Number of Components: " << reader->GetImageIO()->GetNumberOfComponents() << std::endl;
+  std::cout << "Number of Dimensions: " << reader->GetImageIO()->GetNumberOfDimensions() << std::endl;
 }
