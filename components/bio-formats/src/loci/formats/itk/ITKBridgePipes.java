@@ -49,6 +49,7 @@ import loci.formats.meta.MetadataStore;
 import ome.xml.model.enums.DimensionOrder;
 import ome.xml.model.enums.PixelType;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.enums.EnumerationException;
 /**
  * ITKBridgePipes is a Java console application that listens for "commands"
@@ -139,26 +140,31 @@ public class ITKBridgePipes {
       return res;
     }
     else if(command.equals("write")) {
-    	int byteOrder = Integer.parseInt( args[2] );
-    	int dims = Integer.parseInt( args[3] );
-    	int dim0 = Integer.parseInt( args[4] );
-    	int dim1 = Integer.parseInt( args[5] );
-    	int dim2 = Integer.parseInt( args[6] );
-    	int dim3 = Integer.parseInt( args[7] );
-    	int dim4 = Integer.parseInt( args[8] );
-    	int pixelType = Integer.parseInt( args[9] );
-    	int rgbCCount = Integer.parseInt( args[10] );
-    	int xStart = Integer.parseInt( args[11] );
-    	int xCount = Integer.parseInt( args[12] );
-    	int yStart = Integer.parseInt( args[13] );
-    	int yCount = Integer.parseInt( args[14] );
-    	int zStart = Integer.parseInt( args[15] );
-    	int zCount = Integer.parseInt( args[16] );
-    	int cStart = Integer.parseInt( args[17] );
-    	int cCount = Integer.parseInt( args[18] );
-    	int tStart = Integer.parseInt( args[19] );
-    	int tCount = Integer.parseInt( args[20] );
-    	return write(args[1], byteOrder, dims, dim0, dim1, dim2, dim3, dim4, pixelType, rgbCCount, xStart, yStart, zStart, cStart, tStart, xCount, yCount, zCount, cCount, tCount);
+      int byteOrder = Integer.parseInt( args[2] );
+      int dims = Integer.parseInt( args[3] );
+      int dimx = Integer.parseInt( args[4] );
+      int dimy = Integer.parseInt( args[5] );
+      int dimz = Integer.parseInt( args[6] );
+      int dimt = Integer.parseInt( args[7] );
+      int dimc = Integer.parseInt( args[8] );
+      double pSizeX = Integer.parseInt( args[9]);
+      double pSizeY = Integer.parseInt( args[10]);
+      double pSizeZ = Integer.parseInt( args[11]);
+      double pSizeT = Integer.parseInt( args[12]);
+      double pSizeC = Integer.parseInt( args[13]);
+      int pixelType = Integer.parseInt( args[14] );
+      int rgbCCount = Integer.parseInt( args[15] );
+      int xStart = Integer.parseInt( args[16] );
+      int yStart = Integer.parseInt( args[18] );
+      int zStart = Integer.parseInt( args[20] );
+      int cStart = Integer.parseInt( args[22] );
+      int tStart = Integer.parseInt( args[24] );
+      int xCount = Integer.parseInt( args[17] );
+      int yCount = Integer.parseInt( args[19] );
+      int zCount = Integer.parseInt( args[21] );
+      int cCount = Integer.parseInt( args[23] );
+      int tCount = Integer.parseInt( args[25] );
+      if(!new ITKBridgePipes().write(args[1], byteOrder, dims, dimx, dimy, dimz, dimt, dimc, pSizeX, pSizeY, pSizeZ, pSizeT, pSizeC, pixelType, rgbCCount, xStart, yStart, zStart, cStart, tStart, xCount, yCount, zCount, cCount, tCount)); 
     }
     else {
       System.err.println("Unknown command: " + command);
@@ -329,7 +335,8 @@ public class ITKBridgePipes {
    * 
    */
   public boolean write ( String fileName, int byteOrder, int dims,
-		  int dim0, int dim1, int dim2, int dim3, int dim4,
+		  int dimx, int dimy, int dimz, int dimt, int dimc, double pSizeX,
+		  double pSizeY, double pSizeZ, double pSizeT, double pSizeC,
 		  int pixelType, int rgbCCount, int xStart, int yStart,
 		  int zStart, int cStart, int tStart, int xCount, int yCount,
 		  int zCount, int cCount, int tCount) throws IOException, FormatException
@@ -348,15 +355,22 @@ public class ITKBridgePipes {
 	  }
 	  
 	  if(byteOrder == 0)
-		  meta.setPixelsBinDataBigEndian(new Boolean("true"), 0, 0);
-	  else
 		  meta.setPixelsBinDataBigEndian(new Boolean("false"), 0, 0);
+	  else
+		  meta.setPixelsBinDataBigEndian(new Boolean("true"), 0, 0);
 	  
-	  meta.setPixelsSizeX(new PositiveInteger(new Integer(dim0)), 0);
-	  meta.setPixelsSizeY(new PositiveInteger(new Integer(dim1)), 0);
-	  meta.setPixelsSizeZ(new PositiveInteger(new Integer(dim2)), 0);
-	  meta.setPixelsSizeC(new PositiveInteger(new Integer(dim3)), 0);
-	  meta.setPixelsSizeT(new PositiveInteger(new Integer(dim4)), 0);
+	  meta.setPixelsSizeX(new PositiveInteger(new Integer(dimx)), 0);
+	  meta.setPixelsSizeY(new PositiveInteger(new Integer(dimy)), 0);
+	  meta.setPixelsSizeZ(new PositiveInteger(new Integer(dimz)), 0);
+	  meta.setPixelsSizeC(new PositiveInteger(new Integer(dimc)), 0);
+	  meta.setPixelsSizeT(new PositiveInteger(new Integer(dimt)), 0);
+	  
+    meta.setPixelsPhysicalSizeX(new PositiveFloat(new Double(pSizeX)), 0);
+    meta.setPixelsPhysicalSizeY(new PositiveFloat(new Double(pSizeY)), 0);
+    meta.setPixelsPhysicalSizeZ(new PositiveFloat(new Double(pSizeZ)), 0);
+    meta.setPixelsTimeIncrement(new Double(pSizeT), 0);
+
+
 	  meta.setChannelID("Channel:0:0", 0, 0);
 	  meta.setChannelSamplesPerPixel(new PositiveInteger(new Integer(rgbCCount)), 0, 0);
 	  
@@ -521,24 +535,29 @@ public class ITKBridgePipes {
     else if(args[0].equals("write")) {
     	int byteOrder = Integer.parseInt( args[2] );
     	int dims = Integer.parseInt( args[3] );
-    	int dim0 = Integer.parseInt( args[4] );
-    	int dim1 = Integer.parseInt( args[5] );
-    	int dim2 = Integer.parseInt( args[6] );
-    	int dim3 = Integer.parseInt( args[7] );
-    	int dim4 = Integer.parseInt( args[8] );
-    	int pixelType = Integer.parseInt( args[9] );
-    	int rgbCCount = Integer.parseInt( args[10] );
-    	int xStart = Integer.parseInt( args[11] );
-    	int yStart = Integer.parseInt( args[13] );
-    	int zStart = Integer.parseInt( args[15] );
-    	int cStart = Integer.parseInt( args[17] );
-    	int tStart = Integer.parseInt( args[19] );
-    	int xCount = Integer.parseInt( args[12] );
-    	int yCount = Integer.parseInt( args[14] );
-    	int zCount = Integer.parseInt( args[16] );
-    	int cCount = Integer.parseInt( args[18] );
-    	int tCount = Integer.parseInt( args[20] );
-    	if(!new ITKBridgePipes().write(args[1], byteOrder, dims, dim0, dim1, dim2, dim3, dim4, pixelType, rgbCCount, xStart, yStart, zStart, cStart, tStart, xCount, yCount, zCount, cCount, tCount)) 
+    	int dimx = Integer.parseInt( args[4] );
+    	int dimy = Integer.parseInt( args[5] );
+    	int dimz = Integer.parseInt( args[6] );
+    	int dimt = Integer.parseInt( args[7] );
+    	int dimc = Integer.parseInt( args[8] );
+    	double pSizeX = Integer.parseInt( args[9]);
+    	double pSizeY = Integer.parseInt( args[10]);
+    	double pSizeZ = Integer.parseInt( args[11]);
+    	double pSizeT = Integer.parseInt( args[12]);
+    	double pSizeC = Integer.parseInt( args[13]);
+    	int pixelType = Integer.parseInt( args[14] );
+    	int rgbCCount = Integer.parseInt( args[15] );
+    	int xStart = Integer.parseInt( args[16] );
+    	int yStart = Integer.parseInt( args[18] );
+    	int zStart = Integer.parseInt( args[20] );
+    	int cStart = Integer.parseInt( args[22] );
+    	int tStart = Integer.parseInt( args[24] );
+    	int xCount = Integer.parseInt( args[17] );
+    	int yCount = Integer.parseInt( args[19] );
+    	int zCount = Integer.parseInt( args[21] );
+    	int cCount = Integer.parseInt( args[23] );
+    	int tCount = Integer.parseInt( args[25] );
+    	if(!new ITKBridgePipes().write(args[1], byteOrder, dims, dimx, dimy, dimz, dimt, dimc, pSizeX, pSizeY, pSizeZ, pSizeT, pSizeC, pixelType, rgbCCount, xStart, yStart, zStart, cStart, tStart, xCount, yCount, zCount, cCount, tCount)) 
     		System.exit(1);
     }
     else {
