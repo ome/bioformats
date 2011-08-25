@@ -178,6 +178,15 @@ public class FormatReaderTest {
         int plane = x * y * c * bytes;
         long checkPlane = (long) x * y * c * bytes;
 
+        // account for the fact that most histology (big image) files
+        // require more memory for decoding/re-encoding BufferedImages
+        if (DataTools.indexOf(reader.getDomains(),
+          FormatTools.HISTOLOGY_DOMAIN) >= 0)
+        {
+          plane *= 2;
+          checkPlane *= 2;
+        }
+
         if (c > 4 || plane < 0 || plane != checkPlane ||
           !TestTools.canFitInMemory(plane))
         {

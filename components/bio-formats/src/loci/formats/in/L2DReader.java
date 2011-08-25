@@ -102,9 +102,10 @@ public class L2DReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    final int blockLen = 512;
+    final int blockLen = (int) Math.min(512, stream.length());
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
-    return stream.readString(blockLen).indexOf(LICOR_MAGIC_STRING) >= 0;
+    String check = stream.readString(blockLen);
+    return check.indexOf(LICOR_MAGIC_STRING) >= 0;
   }
 
   /* @see loci.formats.IFormatReader#isSingleFile(String) */
