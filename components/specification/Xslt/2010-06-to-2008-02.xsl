@@ -67,6 +67,9 @@
 		<mapping name="LaserType">
 			<map from="Other" to="Dye"/>
 		</mapping>
+		<mapping name="DetectorSettingsBinning">
+			<map from="Other" to="1x1"/>
+		</mapping>
 		<mapping name="DetectorType">
 			<map from="EBCCD" to="CCD"/>
 			<map from="EMCCD" to="EM-CCD"/>
@@ -80,6 +83,12 @@
 			<map from="Achromat" to="UV"/>
 			<map from="PlanNeofluar" to="UV"/>
 			<map from="Other" to="UV"/>
+		</mapping>
+		<mapping name="LogicalChannelIlluminationType">
+			<map from="Other" to="Transmitted"/>
+		</mapping>
+		<mapping name="LogicalChannelContrastMethod">
+			<map from="Other" to="Brightfield"/>
 		</mapping>
 		<mapping name="LogicalChannelMode">
 			<map from="PALM" to="Other"/>
@@ -157,36 +166,137 @@
 				</xsl:otherwise>
 			</xsl:choose>
 
+			<xsl:apply-templates select="* [local-name(.) = 'ExperimenterRef']"/>
+			<xsl:apply-templates select="* [local-name(.) = 'Description']"/>
+			<xsl:apply-templates select="* [local-name(.) = 'ExperimentRef']"/>
+			<xsl:apply-templates select="* [local-name(.) = 'GroupRef']"/>
+			<xsl:apply-templates select="* [local-name(.) = 'DatasetRef']"/>
+			<xsl:apply-templates select="* [local-name(.) = 'InstrumentRef']"/>
+			<xsl:apply-templates select="* [local-name(.) = 'ObjectiveSettings']"/>
+			<xsl:apply-templates select="* [local-name(.) = 'ImagingEnvironment']"/>
+			
 			<xsl:for-each select=" descendant::OME:Channel">
 				<xsl:element name="LogicalChannel" namespace="{$newOMENS}">
-					<xsl:for-each select="@* [name(.) = 'ID']">
-						<xsl:attribute name="ID">LogicalChannel:XSLT:<xsl:value-of select="."/></xsl:attribute>
+					<xsl:for-each select="@* [not(name(.) = 'Color' or name(.) = 'PinholeSize')]">
+						<xsl:choose>
+							<xsl:when test="local-name(.)='ID'">
+								<xsl:attribute name="ID">LogicalChannel:XSLT:<xsl:value-of
+										select="."/></xsl:attribute>
+							</xsl:when>
+
+							<xsl:when test="local-name(.)='AcquisitionMode'">
+								<xsl:attribute name="Mode">
+									<xsl:call-template name="transformEnumerationValue">
+										<xsl:with-param name="mappingName"
+											select="'LogicalChannelMode'"/>
+										<xsl:with-param name="value">
+											<xsl:value-of select="."/>
+										</xsl:with-param>
+									</xsl:call-template>
+								</xsl:attribute>
+							</xsl:when>
+
+							<xsl:when test="local-name(.)='ExcitationWavelength'">
+								<xsl:attribute name="ExWave">
+									<xsl:value-of select="."/>
+								</xsl:attribute>
+							</xsl:when>
+							<xsl:when test="local-name(.)='EmissionWavelength'">
+								<xsl:attribute name="EmWave">
+									<xsl:value-of select="."/>
+								</xsl:attribute>
+							</xsl:when>
+							<xsl:when test="local-name(.)='NDFilter'">
+								<xsl:attribute name="NdFilter">
+									<xsl:value-of select="."/>
+								</xsl:attribute>
+							</xsl:when>
+							<xsl:when test="local-name(.)='IlluminationType'">
+								<xsl:attribute name="{local-name(.)}">
+									<xsl:call-template name="transformEnumerationValue">
+										<xsl:with-param name="mappingName"
+											select="'LogicalChannelIlluminationType'"/>
+										<xsl:with-param name="value">
+											<xsl:value-of select="."/>
+										</xsl:with-param>
+									</xsl:call-template>
+								</xsl:attribute>
+							</xsl:when>
+							<xsl:when test="local-name(.)='ContrastMethod'">
+								<xsl:attribute name="{local-name(.)}">
+									<xsl:call-template name="transformEnumerationValue">
+										<xsl:with-param name="mappingName"
+											select="'LogicalChannelContrastMethod'"/>
+										<xsl:with-param name="value">
+											<xsl:value-of select="."/>
+										</xsl:with-param>
+									</xsl:call-template>
+								</xsl:attribute>
+							</xsl:when>
+							<xsl:otherwise>
+								<xsl:attribute name="{local-name(.)}">
+									<xsl:value-of select="."/>
+								</xsl:attribute>
+							</xsl:otherwise>
+						</xsl:choose>
 					</xsl:for-each>
-					<xsl:for-each select="@* [name(.) = 'AcquisitionMode']">
-						<xsl:attribute name="Mode">
-							<xsl:call-template name="transformEnumerationValue">
-								<xsl:with-param name="mappingName" select="'LogicalChannelMode'"/>
-								<xsl:with-param name="value"><xsl:value-of select="."/></xsl:with-param>
-							</xsl:call-template>
-						</xsl:attribute>
-					</xsl:for-each>
-					
+					<xsl:apply-templates select="* [local-name(.) = 'LightSourceSettings']"/>
+					<xsl:apply-templates select="* [local-name(.) = 'OTFRef']"/>
+					<xsl:apply-templates select="* [local-name(.) = 'DetectorSettings']"/>
+					<xsl:apply-templates select="* [local-name(.) = 'FilterSetRef']"/>
+
+					<xsl:apply-templates select="* [local-name(.) = 'LightPath']"/>
+
 					<xsl:element name="ChannelComponent" namespace="{$newOMENS}">
-						<xsl:attribute name="Pixels"><xsl:for-each select=" parent::node()">
-							<xsl:value-of select="@ID"/>
-						</xsl:for-each>
+						<xsl:attribute name="Pixels">
+							<xsl:for-each select=" parent::node()">
+								<xsl:value-of select="@ID"/>
+							</xsl:for-each>
 						</xsl:attribute>
-						<xsl:attribute name="Index"><xsl:value-of select="position()"/></xsl:attribute>
+						<xsl:attribute name="Index">
+							<xsl:value-of select="position()"/>
+						</xsl:attribute>
 					</xsl:element>
 				</xsl:element>
 			</xsl:for-each>
+
+			<xsl:apply-templates select="* [local-name(.) = 'StageLabel']"/>
 			<xsl:apply-templates select="* [local-name(.) = 'Pixels']"/>
 			<xsl:apply-templates select="* [local-name(.) = 'ROIRef']"/>
 			<xsl:apply-templates select="* [local-name(.) = 'MicrobeamManipulationRef']"/>
-			
 		</xsl:element>
 	</xsl:template>
-	
+
+	<xsl:template match="OME:LightPath">
+		<xsl:comment>LightPath is not supported in 2008-02 schema.</xsl:comment>
+	</xsl:template>
+
+	<xsl:template match="OME:DetectorSettings">
+		<xsl:element name="DetectorRef" namespace="{$newOMENS}">
+			<xsl:for-each select="@*">
+				<xsl:choose>
+					<xsl:when test="local-name(.)='Binning'">
+						<xsl:attribute name="{local-name(.)}">
+							<xsl:call-template name="transformEnumerationValue">
+								<xsl:with-param name="mappingName"
+									select="'DetectorSettingsBinning'"/>
+								<xsl:with-param name="value">
+									<xsl:value-of select="."/>
+								</xsl:with-param>
+							</xsl:call-template>
+						</xsl:attribute>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:attribute name="{local-name(.)}">
+							<xsl:value-of select="."/>
+						</xsl:attribute>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:for-each>
+			<xsl:apply-templates select="*"/>
+		</xsl:element>
+	</xsl:template>
+
 	<xsl:template match="OME:Pixels">
 		<xsl:element name="{name()}" namespace="{$newOMENS}">
 			<xsl:for-each select="@* [name(.) = 'ID']">
