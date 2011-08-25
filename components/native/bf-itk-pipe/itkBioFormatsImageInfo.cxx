@@ -92,7 +92,6 @@ int main( int argc, char * argv[] )
   std::cout << "Metadata Key ---> Value pairs, from dictionary:" << std::endl;
   for(; itKey != imgMetaKeys.end(); ++itKey)
   {
-    //TODO: Need to look up, in the MetaDataDictionary, the value paired to each key (*itKey)
     std::string tmp;
     itk::ExposeMetaData<std::string>( imgMetaDictionary, *itKey, tmp );
     std::cout << *itKey << " ---> " << tmp << std::endl;
@@ -101,8 +100,15 @@ int main( int argc, char * argv[] )
   }
 
   // Print out the metadata naturally contained within itkImageIOBase
+  itk::ImageIORegion region = reader->GetImageIO()->GetIORegion();
+  int regionDim = region.GetImageDimension();
+
   std::cout << "Metadata Key ---> Value pairs, from ImageIOBase:" << std::endl;
-  std::cout << "Spacing: " << reader->GetImageIO()->GetSpacing(0) << std::endl;
+
+  for(int i = 0; i < regionDim; i++)
+  {
+    std::cout << "Spacing " << i + 1 << ": " << reader->GetImageIO()->GetSpacing(i) << std::endl;
+  }
   std::cout << "Byte Order: " << reader->GetImageIO()->GetByteOrderAsString(reader->GetImageIO()->GetByteOrder()) << std::endl;
   std::cout << "Pixel Stride: " << reader->GetImageIO()->GetPixelStride() << std::endl;
   std::cout << "Pixel Type: " << reader->GetImageIO()->GetPixelTypeAsString(reader->GetImageIO()->GetPixelType()) << std::endl;
