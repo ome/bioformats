@@ -48,7 +48,7 @@
     </dependency>
     <dependency>
       <groupId>ome</groupId>
-      <artifactId>omero_client</artifactId>
+      <artifactId>omero-client</artifactId>
       <version>4.3.1</version>
     </dependency>
     <dependency>
