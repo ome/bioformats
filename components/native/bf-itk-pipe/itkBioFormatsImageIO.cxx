@@ -109,8 +109,8 @@ namespace itk {
     return valueOfString<T>(tmp);
   }
 
-  template<>
-  bool valueOfString<bool>( const std::string &s )
+  template <>
+  bool valueOfString <bool> ( const std::string &s )
   {
     std::stringstream ss;
     ss << s;
@@ -134,7 +134,7 @@ namespace itk {
 
 BioFormatsImageIO::BioFormatsImageIO()
 {
-  //DebugOn(); // NB: For debugging.
+  DebugOn(); // NB: For debugging.
   itkDebugMacro("BioFormatsImageIO constructor");
 
   this->m_FileType = Binary;
@@ -550,7 +550,6 @@ void BioFormatsImageIO::ReadImageInformation()
   r = GetTypedMetaData<double>(dict, "PixelsPhysicalSizeC");
   itkDebugMacro("Setting PixelsPhysicalSizeC: " << r);
   this->SetSpacing( 4, r );
-
 }
 
 void BioFormatsImageIO::Read(void* pData)
@@ -680,28 +679,47 @@ void BioFormatsImageIO::Write(const void * buffer )
   int regionDim = region.GetImageDimension();
 
   std::string command = "write\t";
+  itkDebugMacro("File name: " << m_FileName);
   command += m_FileName;
   command += "\t";
+  itkDebugMacro("Byte Order: " << GetByteOrderAsString(m_ByteOrder) << " " << m_ByteOrder);
   command += toString(m_ByteOrder);
   command += "\t";
+  itkDebugMacro("Region dimensions: " << regionDim);
   command += toString(regionDim);
   command += "\t";
 
   for(int i = 0; i < regionDim; i++){
+    itkDebugMacro("Dimension " << i << ": " << m_Dimensions[i]);
     command += toString(m_Dimensions[i]);
     command += "\t";
   }
 
   for(int i = regionDim; i < 5; i++) {
+    itkDebugMacro("Dimension " << i << ": " << 1);
     command += toString(1);
     command += "\t";
   }
 
+  for(int i = 0; i < regionDim; i++){
+    itkDebugMacro("Phys Pixel size " << i << ": " << this->GetSpacing(i));
+    command += toString(this->GetSpacing(i));
+    command += "\t";
+  }
+
+  for(int i = regionDim; i < 5; i++) {
+    itkDebugMacro("Phys Pixel size" << i << ": " << 1);
+    command += toString(1);
+    command += "\t";
+  }
+
+  itkDebugMacro("Pixel Type: " << m_PixelType);
   command += toString(m_PixelType);
   command += "\t";
 
   int rgbChannelCount = m_NumberOfComponents;
 
+  itkDebugMacro("RGB Channels: " << rgbChannelCount);
   command += toString(rgbChannelCount);
   command += "\t";
 
@@ -715,7 +733,7 @@ void BioFormatsImageIO::Write(const void * buffer )
     {
       int index = region.GetIndex(dim);
       int size = region.GetSize(dim);
-      itkDebugMacro("dim = " << dim << " index = " << index << " size = " << size);
+      itkDebugMacro("dim = " << dim << " index = " << toString(index) << " size = " << toString(size));
       command += toString(index);
       command += "\t";
       command += toString(size);
@@ -728,6 +746,7 @@ void BioFormatsImageIO::Write(const void * buffer )
     }
     else
     {
+      itkDebugMacro("dim = " << dim << " index = " << 0 << " size = " << 1);
       command += toString(0);
       command += "\t";
       command += toString(1);
