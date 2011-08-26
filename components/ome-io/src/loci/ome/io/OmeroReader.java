@@ -43,6 +43,7 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import omero.RDouble;
 import omero.RInt;
+import omero.RString;
 import omero.RTime;
 import omero.ServerError;
 import omero.api.GatewayPrx;
@@ -245,8 +246,12 @@ public class OmeroReader extends FormatReader {
       RDouble t = pix.getTimeIncrement();
       Double time = t == null ? null : t.getValue();
 
-      String name = img.getName().getValue();
-      String description = img.getDescription().getValue();
+      RString imageName = img.getName();
+      String name = imageName == null ? null : imageName.getValue();
+
+      RString imgDescription = img.getDescription();
+      String description =
+        imgDescription == null ? null : imgDescription.getValue();
       RTime date = img.getAcquisitionDate();
 
       MetadataStore store = getMetadataStore();
