@@ -1625,6 +1625,14 @@ public class FormatReaderTest {
               continue;
             }
 
+            if (!result && r instanceof BrukerReader &&
+              readers[j] instanceof BrukerReader &&
+              !used[i].toLowerCase().equals("acqp") &&
+              !used[i].toLowerCase().equals("fid"))
+            {
+              continue;
+            }
+
             boolean expected = r == readers[j];
             if (result != expected) {
               success = false;
