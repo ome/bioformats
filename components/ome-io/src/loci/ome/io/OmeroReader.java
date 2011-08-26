@@ -263,13 +263,13 @@ public class OmeroReader extends FormatReader {
           (int) DateTools.UNIX_EPOCH), 0);
       }
 
-      if (px != null) {
+      if (px != null && px > 0) {
         store.setPixelsPhysicalSizeX(new PositiveFloat(px), 0);
       }
-      if (py != null) {
+      if (py != null && py > 0) {
         store.setPixelsPhysicalSizeY(new PositiveFloat(py), 0);
       }
-      if (pz != null) {
+      if (pz != null && pz > 0) {
         store.setPixelsPhysicalSizeZ(new PositiveFloat(pz), 0);
       }
       if (time != null) {
@@ -295,11 +295,11 @@ public class OmeroReader extends FormatReader {
         if (pinhole != null) {
           store.setChannelPinholeSize(pinhole, 0, c);
         }
-        if (emission != null) {
+        if (emission != null && emission > 0) {
           store.setChannelEmissionWavelength(
             new PositiveInteger(emission), 0, c);
         }
-        if (excitation != null) {
+        if (excitation != null && excitation > 0) {
           store.setChannelExcitationWavelength(
             new PositiveInteger(excitation), 0, c);
         }
