@@ -209,11 +209,13 @@ public class OmeroReader extends FormatReader {
       // get raw pixels store and pixels
 
       store = serviceFactory.createRawPixelsStore();
-      store.setPixelsId(iid, false);
 
       final GatewayPrx gateway = serviceFactory.createGateway();
       img = gateway.getImage(iid);
       long pixelsId = img.getPixels(0).getId().getValue();
+
+      store.setPixelsId(pixelsId, false);
+
       pix = gateway.getPixels(pixelsId);
       final int sizeX = pix.getSizeX().getValue();
       final int sizeY = pix.getSizeY().getValue();
