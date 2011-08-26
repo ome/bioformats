@@ -107,13 +107,17 @@ int main( int argc, char * argv[] )
 
   for(int i = 0; i < regionDim; i++)
   {
+    std::cout << "Dimension " << i + 1 << " Size: " << region.GetSize(i) << std::endl;
+  }
+  for(int i = 0; i < regionDim; i++)
+  {
     std::cout << "Spacing " << i + 1 << ": " << reader->GetImageIO()->GetSpacing(i) << std::endl;
   }
   std::cout << "Byte Order: " << reader->GetImageIO()->GetByteOrderAsString(reader->GetImageIO()->GetByteOrder()) << std::endl;
   std::cout << "Pixel Stride: " << reader->GetImageIO()->GetPixelStride() << std::endl;
   std::cout << "Pixel Type: " << reader->GetImageIO()->GetPixelTypeAsString(reader->GetImageIO()->GetPixelType()) << std::endl;
   std::cout << "Image Size (in pixels): " << reader->GetImageIO()->GetImageSizeInPixels() << std::endl;
-  std::cout << "Component Type: " << reader->GetImageIO()->GetComponentTypeAsString(reader->GetImageIO()->GetComponentType()) << std::endl;
-  std::cout << "Number of Components: " << reader->GetImageIO()->GetNumberOfComponents() << std::endl;
+  std::cout << "Pixel Type: " << reader->GetImageIO()->GetComponentTypeAsString(reader->GetImageIO()->GetComponentType()) << std::endl;
+  std::cout << "RGB Channel Count: " << reader->GetImageIO()->GetNumberOfComponents() << std::endl;
   std::cout << "Number of Dimensions: " << reader->GetImageIO()->GetNumberOfDimensions() << std::endl;
 }
