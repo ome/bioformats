@@ -43,6 +43,7 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import omero.RDouble;
 import omero.RInt;
+import omero.RString;
 import omero.RTime;
 import omero.ServerError;
 import omero.api.GatewayPrx;
@@ -208,11 +209,13 @@ public class OmeroReader extends FormatReader {
       // get raw pixels store and pixels
 
       store = serviceFactory.createRawPixelsStore();
-      store.setPixelsId(iid, false);
 
       final GatewayPrx gateway = serviceFactory.createGateway();
       img = gateway.getImage(iid);
       long pixelsId = img.getPixels(0).getId().getValue();
+
+      store.setPixelsId(pixelsId, false);
+
       pix = gateway.getPixels(pixelsId);
       final int sizeX = pix.getSizeX().getValue();
       final int sizeY = pix.getSizeY().getValue();
@@ -245,8 +248,12 @@ public class OmeroReader extends FormatReader {
       RDouble t = pix.getTimeIncrement();
       Double time = t == null ? null : t.getValue();
 
-      String name = img.getName().getValue();
-      String description = img.getDescription().getValue();
+      RString imageName = img.getName();
+      String name = imageName == null ? null : imageName.getValue();
+
+      RString imgDescription = img.getDescription();
+      String description =
+        imgDescription == null ? null : imgDescription.getValue();
       RTime date = img.getAcquisitionDate();
 
       MetadataStore store = getMetadataStore();
@@ -258,13 +265,13 @@ public class OmeroReader extends FormatReader {
           (int) DateTools.UNIX_EPOCH), 0);
       }
 
-      if (px != null) {
+      if (px != null && px > 0) {
         store.setPixelsPhysicalSizeX(new PositiveFloat(px), 0);
       }
-      if (py != null) {
+      if (py != null && py > 0) {
         store.setPixelsPhysicalSizeY(new PositiveFloat(py), 0);
       }
-      if (pz != null) {
+      if (pz != null && pz > 0) {
         store.setPixelsPhysicalSizeZ(new PositiveFloat(pz), 0);
       }
       if (time != null) {
@@ -290,11 +297,11 @@ public class OmeroReader extends FormatReader {
         if (pinhole != null) {
           store.setChannelPinholeSize(pinhole, 0, c);
         }
-        if (emission != null) {
+        if (emission != null && emission > 0) {
           store.setChannelEmissionWavelength(
             new PositiveInteger(emission), 0, c);
         }
-        if (excitation != null) {
+        if (excitation != null && excitation > 0) {
           store.setChannelExcitationWavelength(
             new PositiveInteger(excitation), 0, c);
         }

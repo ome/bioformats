@@ -1259,6 +1259,17 @@ public class FormatReaderTest {
             continue;
           }
 
+          // Bruker datasets can only be detected with the
+          // 'fid' and 'acqp' files
+          if ((file.toLowerCase().endsWith("fid") ||
+            file.toLowerCase().endsWith("acqp")) &&
+            !base[i].toLowerCase().endsWith("fid") &&
+            !base[i].toLowerCase().endsWith("acqp") &&
+            reader.getFormat().equals("Bruker"))
+          {
+            continue;
+          }
+
           r.setId(base[i]);
 
           String[] comp = r.getUsedFiles();
@@ -1610,6 +1621,14 @@ public class FormatReaderTest {
             if (!result && r instanceof InCellReader &&
               readers[j] instanceof InCellReader &&
               !used[i].toLowerCase().endsWith(".xdce"))
+            {
+              continue;
+            }
+
+            if (!result && r instanceof BrukerReader &&
+              readers[j] instanceof BrukerReader &&
+              !used[i].toLowerCase().equals("acqp") &&
+              !used[i].toLowerCase().equals("fid"))
             {
               continue;
             }
