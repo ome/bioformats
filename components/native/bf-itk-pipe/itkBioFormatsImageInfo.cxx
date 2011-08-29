@@ -51,12 +51,15 @@ http://www.itk.org/Wiki/Plugin_IO_mechanisms
 #include <iostream>
 #include <vector>
 #include <string>
-#include "itkBioFormatsImageIO.h"
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 #include "itkImage.h"
 #include "itkMetaDataObject.h"
 #include "itkMetaDataDictionary.h"
+#include "itkImageIOBase.h"
+//#include "itkBioFormatsImageIO.h"
+
+#define METADATA_NOT_FOUND "No value for this key."
 
 int main( int argc, char * argv[] )
 {
@@ -73,26 +76,48 @@ int main( int argc, char * argv[] )
 
   typedef itk::ImageFileReader<ImageType> ReaderType;
 
-  itk::BioFormatsImageIO::Pointer io = itk::BioFormatsImageIO::New();
-
-  io->DebugOn();
-
   ReaderType::Pointer reader = ReaderType::New();
+  ImageType::Pointer img;
 
-  reader->SetImageIO(io);
   reader->SetFileName(argv[1]);
   reader->Update();
-  std::string notes1;
-  itk::MetaDataDictionary dict( reader->GetMetaDataDictionary() );
+  img = reader->GetOutput();
 
-  std::cout << "Metadata Keys, Value pairs:" << std::endl;
-  for(std::vector<std::string>::iterator it = dict.GetKeys().begin(); it != dict.GetKeys().end(); it++)
+  std::string metaString (METADATA_NOT_FOUND);
+  itk::MetaDataDictionary imgMetaDictionary = img->GetMetaDataDictionary();
+  std::vector<std::string> imgMetaKeys = imgMetaDictionary.GetKeys();
+  std::vector<std::string>::const_iterator itKey = imgMetaKeys.begin();
+
+  // Iterate through the keys and print their paired values
+  std::cout << "Metadata Key ---> Value pairs, from dictionary:" << std::endl;
+  for(; itKey != imgMetaKeys.end(); ++itKey)
   {
-    //TODO: Need to look up, in the MetaDataDictionary, the value paired to each key (*it)
-    std::cout << *it << " , " << std::endl;
-    //itk::ExposeMetaData<std::string>( reader->GetMetaDataDictionary(), *it, notes1 );
+    std::string tmp;
+    itk::ExposeMetaData<std::string>( imgMetaDictionary, *itKey, tmp );
+    std::cout << *itKey << " ---> " << tmp << std::endl;
     //std::cout << "Metadata: " << notes1 << std::endl;
-
+    metaString = METADATA_NOT_FOUND;
   }
 
+  // Print out the metadata naturally contained within itkImageIOBase
+  itk::ImageIORegion region = reader->GetImageIO()->GetIORegion();
+  int regionDim = region.GetImageDimension();
+
+  std::cout << "Metadata Key ---> Value pairs, from ImageIOBase:" << std::endl;
+
+  for(int i = 0; i < regionDim; i++)
+  {
+    std::cout << "Dimension " << i + 1 << " Size: " << region.GetSize(i) << std::endl;
+  }
+  for(int i = 0; i < regionDim; i++)
+  {
+    std::cout << "Spacing " << i + 1 << ": " << reader->GetImageIO()->GetSpacing(i) << std::endl;
+  }
+  std::cout << "Byte Order: " << reader->GetImageIO()->GetByteOrderAsString(reader->GetImageIO()->GetByteOrder()) << std::endl;
+  std::cout << "Pixel Stride: " << reader->GetImageIO()->GetPixelStride() << std::endl;
+  std::cout << "Pixel Type: " << reader->GetImageIO()->GetPixelTypeAsString(reader->GetImageIO()->GetPixelType()) << std::endl;
+  std::cout << "Image Size (in pixels): " << reader->GetImageIO()->GetImageSizeInPixels() << std::endl;
+  std::cout << "Pixel Type: " << reader->GetImageIO()->GetComponentTypeAsString(reader->GetImageIO()->GetComponentType()) << std::endl;
+  std::cout << "RGB Channel Count: " << reader->GetImageIO()->GetNumberOfComponents() << std::endl;
+  std::cout << "Number of Dimensions: " << reader->GetImageIO()->GetNumberOfDimensions() << std::endl;
 }

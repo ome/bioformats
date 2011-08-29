@@ -46,10 +46,15 @@ import java.nio.channels.FileChannel;
  */
 public class NIOFileHandle extends AbstractNIOHandle {
 
-  //-- Constants --
+  //-- Static fields --
 
   /** Default NIO buffer size to facilitate buffered I/O. */
-  protected static final int DEFAULT_BUFFER_SIZE = 1048576;
+  protected static int defaultBufferSize = 1048576;
+
+  /**
+   * Default NIO buffer size to facilitate buffered I/O for read/write streams.
+   */
+  protected static int defaultRWBufferSize = 8192;
 
   // -- Fields --
 
@@ -108,7 +113,8 @@ public class NIOFileHandle extends AbstractNIOHandle {
    * optionally to write to, the file specified by the File argument.
    */
   public NIOFileHandle(File file, String mode) throws IOException {
-    this(file, mode, DEFAULT_BUFFER_SIZE);
+    this(file, mode,
+      mode.equals("rw") ? defaultRWBufferSize : defaultBufferSize);
   }
 
   /**
@@ -117,6 +123,28 @@ public class NIOFileHandle extends AbstractNIOHandle {
    */
   public NIOFileHandle(String name, String mode) throws IOException {
     this(new File(name), mode);
+  }
+
+  // -- NIOFileHandle API methods --
+
+  /**
+   * Set the default buffer size for read-only files.
+   *
+   * Subsequent uses of the NIOFileHandle(String, String) and
+   * NIOFileHandle(File, String) constructors will use this buffer size.
+   */
+  public static void setDefaultBufferSize(int size) {
+    defaultBufferSize = size;
+  }
+
+  /**
+   * Set the default buffer size for read/write files.
+   *
+   * Subsequent uses of the NIOFileHandle(String, String) and
+   * NIOFileHandle(File, String) constructors will use this buffer size.
+   */
+  public static void setDefaultReadWriteBufferSize(int size) {
+    defaultRWBufferSize = size;
   }
 
   // -- FileHandle and Channel API methods --

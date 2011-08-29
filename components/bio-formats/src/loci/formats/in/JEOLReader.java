@@ -61,7 +61,18 @@ public class JEOLReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(String) */
   public boolean isThisType(String name, boolean open) {
-    if (checkSuffix(name, "par")) return true;
+    if (checkSuffix(name, "par") && open) {
+      String base = new Location(name).getAbsoluteFile().getAbsolutePath();
+      base = base.substring(0, base.lastIndexOf("."));
+      String id = base + ".IMG";
+      if (!new Location(id).exists()) {
+        id = base + ".DAT";
+      }
+      if (!new Location(id).exists()) {
+        return false;
+      }
+      return true;
+    }
     if (checkSuffix(name, "dat") && open) {
       try {
         RandomAccessInputStream stream = new RandomAccessInputStream(name);

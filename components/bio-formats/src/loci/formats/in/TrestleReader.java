@@ -86,7 +86,11 @@ public class TrestleReader extends BaseTiffReader {
       Location parent = current.getParentFile();
 
       String tiff = current.getName();
-      tiff = tiff.substring(0, tiff.lastIndexOf(".")) + ".tif";
+      int index = tiff.lastIndexOf(".");
+      if (index >= 0) {
+        tiff = tiff.substring(0, index);
+      }
+      tiff += ".tif";
 
       Location tiffFile = new Location(parent, tiff);
       return tiffFile.exists() && isThisType(tiffFile.getAbsolutePath(), open);
