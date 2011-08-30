@@ -1270,6 +1270,13 @@ public class FormatReaderTest {
             continue;
           }
 
+          // CellR datasets cannot be detected with a TIFF file
+          if (reader.getFormat().equals("Olympus APL") &&
+            base[i].toLowerCase().endsWith("tif"))
+          {
+            continue;
+          }
+
           r.setId(base[i]);
 
           String[] comp = r.getUsedFiles();
@@ -1630,6 +1637,11 @@ public class FormatReaderTest {
               !used[i].toLowerCase().equals("acqp") &&
               !used[i].toLowerCase().equals("fid"))
             {
+              continue;
+            }
+
+            // Volocity reader is allowed to accept files of other formats
+            if (result && r instanceof VolocityReader) {
               continue;
             }
 
