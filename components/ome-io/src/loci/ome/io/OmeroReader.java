@@ -285,10 +285,11 @@ public class OmeroReader extends FormatReader {
         RInt emWave = channel.getEmissionWave();
         RInt exWave = channel.getExcitationWave();
         RDouble pinholeSize = channel.getPinHoleSize();
+        RString cname = channel.getName();
 
         Integer emission = emWave == null ? null : emWave.getValue();
         Integer excitation = exWave == null ? null : exWave.getValue();
-        String channelName = channel.getName().getValue();
+        String channelName = cname == null ? null : cname.getValue();
         Double pinhole = pinholeSize == null ? null : pinholeSize.getValue();
 
         if (channelName != null) {
