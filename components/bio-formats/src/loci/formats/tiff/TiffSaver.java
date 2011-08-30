@@ -618,11 +618,13 @@ public class TiffSaver {
       out.writeShort(type);
       writeIntValue(out, q.length);
 
-      if (q.length <= dataLength / 4) {
+      int div = bigTiff ? 8 : 4;
+
+      if (q.length <= dataLength / div) {
         for (int i=0; i<q.length; i++) {
           writeIntValue(out, q[0]);
         }
-        for (int i=q.length; i<dataLength / 4; i++) {
+        for (int i=q.length; i<dataLength / div; i++) {
           writeIntValue(out, 0);
         }
       }

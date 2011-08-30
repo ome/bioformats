@@ -460,6 +460,13 @@ public class FlexReader extends FormatReader {
       if (measurementFiles.size() == 0) {
         LOGGER.warn("Measurement files not found.");
       }
+      else {
+        for (String f : measurementFiles) {
+          if (checkSuffix(f, RES_SUFFIX)) {
+            parseResFile(f);
+          }
+        }
+      }
     }
 
     MetadataStore store = makeFilterMetadata();
