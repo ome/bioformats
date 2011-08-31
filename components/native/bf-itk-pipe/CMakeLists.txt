@@ -142,7 +142,7 @@ endif(BF_LINK_REVIEW)
 
 set(BF_LIB_DIR "${CMAKE_BINARY_DIR}/lib")
 
-add_library(BioFormatsIOPlugin MODULE
+add_library(BioFormatsIOPlugin SHARED
   itkBioFormatsIOPlugin.cxx
 )
 set_target_properties(BioFormatsIOPlugin
@@ -179,6 +179,14 @@ add_executable(perf perf.cxx)
 target_link_libraries(perf BioFormatsIO)
 
 # --------------------------------------------------------------------------
+# If Unix, allow rpath
+if(UNIX)
+target_link_libraries(BioFormatsIOPlugin -WL,-rpath,.)
+target_link_libraries(${lib_name} -WL,-rpath,.)
+target_link_libraries(itkBFImageInfo -WL,-rpath,.)
+endif(UNIX)
+
+# --------------------------------------------------------------------------
 # Copy targets into distribution folder (dist/bf-itk)
 
 set(BF_DIST_DIR "dist/bf-itk")
@@ -197,32 +205,6 @@ else(APPLE) # assume UNIX
   set(BF_BUILD_TYPE "")
 endif(APPLE)
 
-if(APPLE)
-  add_custom_command(
-    TARGET BioFormatsIOPlugin
-    DEPENDS "${BF_LIB_DIR}/${BF_LIB_PREFIX}BioFormatsIOPlugin.so"
-    POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy
-      "${BF_LIB_DIR}/${BF_BUILD_TYPE}/${BF_LIB_PREFIX}BioFormatsIOPlugin.so"
-      "${BF_LIB_DIR}/${BF_BUILD_TYPE}/${BF_LIB_PREFIX}BioFormatsIOPlugin${BF_SUFFIX}"
-    VERBATIM
-  )
-
-  add_custom_command(
-    TARGET BioFormatsIOPlugin
-    DEPENDS "${BF_LIB_DIR}/${BF_BUILD_TYPE}/${BF_LIB_PREFIX}BioFormatsIOPlugin.so"
-    POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy
-      "${BF_LIB_DIR}/${BF_BUILD_TYPE}/${BF_LIB_PREFIX}BioFormatsIOPlugin.so"
-      "${CMAKE_BINARY_DIR}/${BF_DIST_DIR}/${BF_LIB_PREFIX}BioFormatsIOPlugin.so"
-    VERBATIM
-  )
-  install(FILES
-    "${CMAKE_BINARY_DIR}/${BF_DIST_DIR}/${BF_LIB_PREFIX}BioFormatsIOPlugin.so"
-    DESTINATION "${BF_DIST_DIR}"
-  )
-endif(APPLE)
-
 add_custom_command(
   TARGET BioFormatsIOPlugin
   DEPENDS "${BF_LIB_DIR}/${BF_BUILD_TYPE}/${BF_LIB_PREFIX}BioFormatsIOPlugin${BF_SUFFIX}"
@@ -231,10 +213,6 @@ add_custom_command(
     "${BF_LIB_DIR}/${BF_BUILD_TYPE}/${BF_LIB_PREFIX}BioFormatsIOPlugin${BF_SUFFIX}"
     "${CMAKE_BINARY_DIR}/${BF_DIST_DIR}/${BF_LIB_PREFIX}BioFormatsIOPlugin${BF_SUFFIX}"
   VERBATIM
-)
-install(FILES
-  "${CMAKE_BINARY_DIR}/${BF_DIST_DIR}/${BF_LIB_PREFIX}BioFormatsIOPlugin${BF_SUFFIX}"
-  DESTINATION "${BF_DIST_DIR}"
 )
 
 add_custom_command(
@@ -246,10 +224,40 @@ add_custom_command(
   "${CMAKE_BINARY_DIR}/${BF_DIST_DIR}/${BF_LIB_PREFIX}BioFormatsIO${BF_SUFFIX}"
   VERBATIM
 )
-install(FILES
-  "${CMAKE_BINARY_DIR}/${BF_DIST_DIR}/${BF_LIB_PREFIX}BioFormatsIO${BF_SUFFIX}"
-  DESTINATION "${BF_DIST_DIR}"
+
+if(APPLE)
+install(TARGETS
+  itkBFImageInfo
+  BioFormatsIO
+  BioFormatsIOPlugin
+  RUNTIME DESTINATION .
+  LIBRARY DESTINATION .
+  ARCHIVE DESTINATION .
 )
+elseif(WIN32 OR WIN64)
+install(TARGETS
+  itkBFImageInfo
+  BioFormatsIO
+  RUNTIME DESTINATION .
+  LIBRARY DESTINATION .
+  ARCHIVE DESTINATION .
+)
+install(FILES
+  "${CMAKE_BINARY_DIR}/${BF_DIST_DIR}/${BF_LIB_PREFIX}BioFormatsIOPlugin${BF_SUFFIX}"
+  DESTINATION "."
+)
+else(APPLE) # assume UNIX
+install(FILES
+  "${CMAKE_BINARY_DIR}/${BF_DIST_DIR}/${BF_LIB_PREFIX}BioFormatsIOPlugin${BF_SUFFIX}"
+  "${CMAKE_BINARY_DIR}/${BF_DIST_DIR}/${BF_LIB_PREFIX}BioFormatsIO${BF_SUFFIX}"
+  DESTINATION "."
+)
+
+install(PROGRAMS
+  "${CMAKE_BINARY_DIR}/itkBFImageInfo"
+  DESTINATION "."
+)
+endif(APPLE)
 
 # --------------------------------------------------------------------------
 # Define location of loci_tools.jar file. It is assumed that loci_tools.jar
@@ -272,7 +280,7 @@ add_custom_command(
 )
 install(FILES
   "${CMAKE_BINARY_DIR}/${BF_DIST_DIR}/loci_tools.jar"
-  DESTINATION "${BF_DIST_DIR}"
+  DESTINATION "."
 )
 
 # --------------------------------------------------------------------------
@@ -299,7 +307,7 @@ add_custom_command(
 )
 install(FILES
   "${CMAKE_BINARY_DIR}/${BF_DIST_DIR}/BioFormatsSuffixes.txt"
-  DESTINATION "${BF_DIST_DIR}"
+  DESTINATION "."
 )
 
 # --------------------------------------------------------------------------
