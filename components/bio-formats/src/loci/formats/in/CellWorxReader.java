@@ -357,11 +357,10 @@ public class CellWorxReader extends FormatReader {
       store.setImageID(MetadataTools.createLSID("Image", i), i);
     }
 
-    store.setPlateAcquisitionID(
-      MetadataTools.createLSID("PlateAcquisition", 0, 0), 0, 0);
-    int fieldCount = fieldMap[0].length * fieldMap.length;
+    String plateAcqID = MetadataTools.createLSID("PlateAcquisition", 0, 0);
+    store.setPlateAcquisitionID(plateAcqID, 0, 0);
     store.setPlateAcquisitionMaximumFieldCount(
-      new PositiveInteger(fieldCount), 0, 0);
+      new PositiveInteger(fieldMap.length * fieldMap[0].length), 0, 0);
 
     int nextImage = 0;
     for (int row=0; row<wellFiles.length; row++) {
@@ -384,6 +383,9 @@ public class CellWorxReader extends FormatReader {
               store.setWellSampleImageRef(imageID, 0, wellIndex, fieldIndex);
               store.setWellSampleIndex(
                 new NonNegativeInteger(nextImage), 0, wellIndex, fieldIndex);
+
+              store.setPlateAcquisitionWellSampleRef(
+                wellSampleID, 0, 0, nextImage);
 
               String well = (char) (row + 'A') + String.format("%02d", col + 1);
               store.setImageName(
