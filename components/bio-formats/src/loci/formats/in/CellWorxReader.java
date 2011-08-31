@@ -58,6 +58,7 @@ public class CellWorxReader extends FormatReader {
   private String[][][] wellFiles;
   private String[][] logFiles;
   private int fieldCount = 0;
+  private boolean fieldInName = false;
 
   private String plateLogFile;
   private String zMapFile;
@@ -150,7 +151,7 @@ public class CellWorxReader extends FormatReader {
     }
 
     int planeIndex = no;
-    if (lastReader.getSeriesCount() == fieldCount) {
+    if (lastReader.getSeriesCount() == fieldCount && fieldCount > 1) {
       lastReader.setSeries(fieldIndex);
     }
     else {
@@ -243,6 +244,9 @@ public class CellWorxReader extends FormatReader {
       else if (key.equals("YSites")) {
         yFields = Integer.parseInt(value);
         fieldMap = new boolean[yFields][xFields];
+      }
+      else if (key.equals("Sites")) {
+        fieldInName = new Boolean(value.toLowerCase()).booleanValue();
       }
       else if (key.equals("TimePoints")) {
         nTimepoints = Integer.parseInt(value);
@@ -573,7 +577,7 @@ public class CellWorxReader extends FormatReader {
       for (int channel=0; channel<channels; channel++) {
         for (int t=0; t<nTimepoints; t++, nextFile++) {
           String file = base;
-          if (fieldCount > 1) {
+          if (fieldCount > 1 || fieldInName) {
            file += "_s" + (field + 1);
           }
           if (channels > 1) {
