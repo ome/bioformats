@@ -240,10 +240,11 @@ public class ITKBridgePipes {
     sendData("RGBChannelCount", String.valueOf(reader.getRGBChannelCount()));
 
     // spacing
-    sendData("PixelsPhysicalSizeX", String.valueOf((meta.getPixelsPhysicalSizeX(0)==null? 1.0: meta.getPixelsPhysicalSizeX(0))));
-    sendData("PixelsPhysicalSizeY", String.valueOf((meta.getPixelsPhysicalSizeY(0)==null? 1.0: meta.getPixelsPhysicalSizeY(0))));
-    sendData("PixelsPhysicalSizeZ", String.valueOf((meta.getPixelsPhysicalSizeZ(0)==null? 1.0: meta.getPixelsPhysicalSizeZ(0))));
-    sendData("PixelsPhysicalSizeT", String.valueOf((meta.getPixelsTimeIncrement(0)==null? 1.0: meta.getPixelsTimeIncrement(0))));
+    // Note: ITK spacing is mm.  Bio-Formats uses um.
+    sendData("PixelsPhysicalSizeX", String.valueOf((meta.getPixelsPhysicalSizeX(0)==null? 1.0: meta.getPixelsPhysicalSizeX(0).getValue() / 1000f)));
+    sendData("PixelsPhysicalSizeY", String.valueOf((meta.getPixelsPhysicalSizeY(0)==null? 1.0: meta.getPixelsPhysicalSizeY(0).getValue() / 1000f)));
+    sendData("PixelsPhysicalSizeZ", String.valueOf((meta.getPixelsPhysicalSizeZ(0)==null? 1.0: meta.getPixelsPhysicalSizeZ(0).getValue() / 1000f)));
+    sendData("PixelsPhysicalSizeT", String.valueOf((meta.getPixelsTimeIncrement(0)==null? 1.0: meta.getPixelsTimeIncrement(0) / 1000)));
     sendData("PixelsPhysicalSizeC", String.valueOf(1.0));
 
     HashMap<String, Object> metadata = new HashMap<String, Object>();
@@ -365,9 +366,10 @@ public class ITKBridgePipes {
 	  meta.setPixelsSizeC(new PositiveInteger(new Integer(dimc)), 0);
 	  meta.setPixelsSizeT(new PositiveInteger(new Integer(dimt)), 0);
 	  
-    meta.setPixelsPhysicalSizeX(new PositiveFloat(new Double(pSizeX)), 0);
-    meta.setPixelsPhysicalSizeY(new PositiveFloat(new Double(pSizeY)), 0);
-    meta.setPixelsPhysicalSizeZ(new PositiveFloat(new Double(pSizeZ)), 0);
+	  // Note: ITK spacing is in mm.  Bio-Formats is in um.
+    meta.setPixelsPhysicalSizeX(new PositiveFloat(new Double(pSizeX * 1000)), 0);
+    meta.setPixelsPhysicalSizeY(new PositiveFloat(new Double(pSizeY * 1000)), 0);
+    meta.setPixelsPhysicalSizeZ(new PositiveFloat(new Double(pSizeZ * 1000)), 0);
     meta.setPixelsTimeIncrement(new Double(pSizeT), 0);
 
 
