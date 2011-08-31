@@ -523,7 +523,7 @@ public class TiffSaver {
       Object value = ifd.get(key);
       writeIFDValue(extraStream, ifdBytes + fp, key.intValue(), value);
     }
-    if (bigTiff) out.seek(out.getFilePointer() - 8);
+    if (bigTiff) out.seek(out.getFilePointer());
     writeIntValue(out, nextOffset);
     out.write(extra.getBytes(), 0, (int) extra.length());
   }
