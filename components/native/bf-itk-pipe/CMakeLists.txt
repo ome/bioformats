@@ -215,7 +215,7 @@ if(APPLE)
   )
   install(FILES
     "${CMAKE_BINARY_DIR}/${BF_DIST_DIR}/${BF_LIB_PREFIX}BioFormatsIOPlugin.so"
-    DESTINATION "${BF_DIST_DIR}"
+    DESTINATION "."
   )
 endif(APPLE)
 
@@ -230,7 +230,7 @@ add_custom_command(
 )
 install(FILES
   "${CMAKE_BINARY_DIR}/${BF_DIST_DIR}/${BF_LIB_PREFIX}BioFormatsIOPlugin${BF_SUFFIX}"
-  DESTINATION "${BF_DIST_DIR}"
+  DESTINATION "."
 )
 
 add_custom_command(
@@ -244,7 +244,7 @@ add_custom_command(
 )
 install(FILES
   "${CMAKE_BINARY_DIR}/${BF_DIST_DIR}/${BF_LIB_PREFIX}BioFormatsIO${BF_SUFFIX}"
-  DESTINATION "${BF_DIST_DIR}"
+  DESTINATION "."
 )
 
 # --------------------------------------------------------------------------
@@ -268,7 +268,7 @@ add_custom_command(
 )
 install(FILES
   "${CMAKE_BINARY_DIR}/${BF_DIST_DIR}/loci_tools.jar"
-  DESTINATION "${BF_DIST_DIR}"
+  DESTINATION "."
 )
 
 # --------------------------------------------------------------------------
@@ -295,7 +295,7 @@ add_custom_command(
 )
 install(FILES
   "${CMAKE_BINARY_DIR}/${BF_DIST_DIR}/BioFormatsSuffixes.txt"
-  DESTINATION "${BF_DIST_DIR}"
+  DESTINATION "."
 )
 
 # --------------------------------------------------------------------------
