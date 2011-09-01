@@ -192,6 +192,10 @@ public class ITKBridgePipes {
     
    // now print the informations
 
+    // interleaved?
+    sendData("Interleaved", String.valueOf(reader.isInterleaved()? 1:0));
+    
+    
    // little endian?
     sendData("LittleEndian", String.valueOf(reader.isLittleEndian()? 1:0));
 
@@ -291,6 +295,8 @@ public class ITKBridgePipes {
     int bpp = FormatTools.getBytesPerPixel( reader.getPixelType() );
     int xCount = reader.getSizeX();
     int yCount = reader.getSizeY();
+    
+    //TODO: this isn't being used at all..
     boolean isInterleaved = reader.isInterleaved();
     boolean canDoDirect = xBegin == 0 && yBegin == 0 && xEnd == xCount-1 && yEnd == yCount-1 && rgbChannelCount == 1;
 
@@ -379,7 +385,7 @@ public class ITKBridgePipes {
 	  writer = new ImageWriter();
 	  writer.setMetadataRetrieve(meta);
 	  writer.setId(fileName);
-	  
+
 	  int bpp = FormatTools.getBytesPerPixel(pixelType);
 	  
 	  int bytesPerPlane = xCount * yCount * bpp * rgbCCount;

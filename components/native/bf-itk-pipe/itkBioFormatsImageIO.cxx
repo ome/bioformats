@@ -478,6 +478,17 @@ void BioFormatsImageIO::ReadImageInformation()
   long i;
   double r;
 
+  // is interleaved?
+  b = GetTypedMetaData<bool>(dict, "Interleaved");
+  if( b )
+    {
+    itkDebugMacro("Interleaved ---> True");
+    }
+  else
+    {
+    itkDebugMacro("Interleaved ---> False");
+    }
+
   // is little endian?
   b = GetTypedMetaData<bool>(dict, "LittleEndian");
   if( b )
