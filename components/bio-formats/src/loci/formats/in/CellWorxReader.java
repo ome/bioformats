@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Vector;
 
 import loci.common.DataTools;
@@ -145,6 +146,7 @@ public class CellWorxReader extends FormatReader {
       catch (IOException e) {
         // this almost always means that the file does not exist
         traceDebug(e);
+        Arrays.fill(buf, (byte) 0);
         return buf;
       }
       lastFile = file;
