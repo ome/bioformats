@@ -163,7 +163,9 @@ public class SISReader extends BaseTiffReader {
     channelName = in.readCString();
 
     int length = (int) Math.min(cameraNameLength, channelName.length());
-    cameraName = channelName.substring(0, length);
+    if (length > 0) {
+      cameraName = channelName.substring(0, length);
+    }
 
     addGlobalMeta("Nanometers per pixel (X)", physicalSizeX);
     addGlobalMeta("Nanometers per pixel (Y)", physicalSizeY);
