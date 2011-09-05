@@ -496,7 +496,10 @@ public class ZeissLSMReader extends FormatReader {
             stripOffsets[j] = (previousStripOffsets[j] & ~0xffffffffL) |
               (stripOffsets[j] & 0xffffffffL);
             if (stripOffsets[j] < previousStripOffsets[j]) {
-              stripOffsets[j] += 0x100000000L;
+              long newOffset = stripOffsets[j] + 0x100000000L;
+              if (newOffset < s.length()) {
+                stripOffsets[j] = newOffset;
+              }
             }
             neededAdjustment = true;
           }
