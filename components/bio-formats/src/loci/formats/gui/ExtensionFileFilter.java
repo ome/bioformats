@@ -70,7 +70,9 @@ public class ExtensionFileFilter extends FileFilter
       sb.append("*.");
       sb.append(exts[i]);
     }
-    sb.append(")");
+    if (!first) {
+      sb.append(")");
+    }
     desc = sb.toString();
   }
 
