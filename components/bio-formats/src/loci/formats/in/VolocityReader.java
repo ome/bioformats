@@ -484,6 +484,17 @@ public class VolocityReader extends FormatReader {
         int w = s.readInt();
         int h = s.readInt();
 
+        if (w - x < 0 || h - y < 0 || (w - x) * (h - y) < 0) {
+          core[i].littleEndian = !isLittleEndian();
+          s.order(isLittleEndian());
+          s.seek(s.getFilePointer() - 20);
+          x = s.readInt();
+          y = s.readInt();
+          zStart = s.readInt();
+          w = s.readInt();
+          h = s.readInt();
+        }
+
         core[i].sizeX = w - x;
         core[i].sizeY = h - y;
         core[i].sizeZ = s.readInt() - zStart;
