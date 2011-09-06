@@ -148,7 +148,7 @@ public class CellSensReader extends FormatReader {
 
   /** Constructs a new cellSens reader. */
   public CellSensReader() {
-    super("CellSens VSI", "vsi");
+    super("CellSens VSI", new String[] {"vsi", "ets"});
     domains = new String[] {FormatTools.HISTOLOGY_DOMAIN};
     suffixSufficient = true;
   }
@@ -263,6 +263,7 @@ public class CellSensReader extends FormatReader {
       inDimensionProperties = false;
       foundChannelTag = false;
       dimensionTag = 0;
+      dimensionOrdering.clear();
     }
   }
 
@@ -271,6 +272,23 @@ public class CellSensReader extends FormatReader {
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
+
+    if (!checkSuffix(id, "vsi")) {
+      Location current = new Location(id).getAbsoluteFile();
+      Location parent = current.getParentFile();
+      parent = parent.getParentFile();
+      Location grandparent = parent.getParentFile();
+      String vsi = parent.getName();
+      vsi = vsi.substring(1, vsi.length() - 1) + ".vsi";
+
+      Location vsiFile = new Location(grandparent, vsi);
+      if (!vsiFile.exists()) {
+        throw new FormatException("Could not find .vsi file.");
+      }
+      else {
+        id = vsiFile.getAbsolutePath();
+      }
+    }
 
     parser = new TiffParser(id);
     ifds = parser.getIFDs();
@@ -615,6 +633,9 @@ public class CellSensReader extends FormatReader {
   private void readTags(RandomAccessInputStream vsi) throws IOException {
     // read the VSI header
     long fp = vsi.getFilePointer();
+    if (fp + 24 >= vsi.length()) {
+      return;
+    }
     int headerSize = vsi.readShort(); // should always be 24
     int version = vsi.readShort(); // always 21321
     int volumeVersion = vsi.readInt();

@@ -222,7 +222,7 @@ public class NativeND2Reader extends FormatReader {
       copyPixels(x, y, w, h, bpp, scanlinePad, t, buf, split);
       t = null;
     }
-    else if (split && (getSizeC() <= 4 || scanlinePad == 0)) {
+    else if (split && (getSizeC() <= 4 || scanlinePad == 0) && nXFields <= 1) {
       byte[] pix = new byte[(getSizeX() + scanlinePad) * getSizeY() * pixel];
       in.read(pix);
       copyPixels(x, y, w, h, bpp, scanlinePad, pix, buf, split);
