@@ -263,6 +263,7 @@ public class CellSensReader extends FormatReader {
       inDimensionProperties = false;
       foundChannelTag = false;
       dimensionTag = 0;
+      dimensionOrdering.clear();
     }
   }
 
@@ -632,6 +633,9 @@ public class CellSensReader extends FormatReader {
   private void readTags(RandomAccessInputStream vsi) throws IOException {
     // read the VSI header
     long fp = vsi.getFilePointer();
+    if (fp + 24 >= vsi.length()) {
+      return;
+    }
     int headerSize = vsi.readShort(); // should always be 24
     int version = vsi.readShort(); // always 21321
     int volumeVersion = vsi.readInt();
