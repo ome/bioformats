@@ -246,7 +246,7 @@ public class ZeissCZIReader extends FormatReader {
     // populate the OME metadata
 
     store = makeFilterMetadata();
-    MetadataTools.populatePixels(store, this);
+    MetadataTools.populatePixels(store, this, true);
 
     for (Segment segment : segments) {
       if (segment instanceof Metadata) {
@@ -332,21 +332,34 @@ public class ZeissCZIReader extends FormatReader {
           String color = channelColors.get(c);
           if (color != null) {
             color = color.replaceAll("#", "");
-            store.setChannelColor(Integer.parseInt(color, 16), i, c);
+            try {
+              store.setChannelColor(Integer.parseInt(color, 16), i, c);
+            }
+            catch (NumberFormatException e) { }
           }
         }
 
         if (c < emissionWavelengths.size()) {
-          Double wave = new Double(emissionWavelengths.get(c));
-          store.setChannelEmissionWavelength(
-            new PositiveInteger(wave.intValue()), i, c);
+          String emWave = emissionWavelengths.get(c);
+          if (emWave != null) {
+            Double wave = new Double(emWave);
+            if (wave.intValue() > 0) {
+              store.setChannelEmissionWavelength(
+                new PositiveInteger(wave.intValue()), i, c);
+            }
+          }
         }
         if (c < excitationWavelengths.size()) {
-          Double wave = new Double(excitationWavelengths.get(c));
-          store.setChannelExcitationWavelength(
-            new PositiveInteger(wave.intValue()), i, c);
+          String exWave = excitationWavelengths.get(c);
+          if (exWave != null) {
+            Double wave = new Double(exWave);
+            if (wave.intValue() > 0) {
+              store.setChannelExcitationWavelength(
+                new PositiveInteger(wave.intValue()), i, c);
+            }
+          }
         }
-        if (c < pinholeSizes.size()) {
+        if (c < pinholeSizes.size() && pinholeSizes.get(c) != null) {
           store.setChannelPinholeSize(new Double(pinholeSizes.get(c)), i, c);
         }
 
@@ -559,7 +572,9 @@ public class ZeissCZIReader extends FormatReader {
           binnings.add(getFirstNodeValue(detectorSettings, "Binning"));
 
           Element detector = getFirstNode(detectorSettings, "Detector");
-          detectorRefs.add(detector.getAttribute("Id"));
+          if (detector != null) {
+            detectorRefs.add(detector.getAttribute("Id"));
+          }
         }
       }
     }
@@ -616,28 +631,28 @@ public class ZeissCZIReader extends FormatReader {
 
           String type = getFirstNodeValue(lightSource, "LightSourceType");
           String power = getFirstNodeValue(lightSource, "Power");
-          if (type.equals("Laser")) {
+          if ("Laser".equals(type)) {
             store.setLaserPower(new Double(power), 0, i);
             store.setLaserLotNumber(lotNumber, 0, i);
             store.setLaserManufacturer(manufacturer, 0, i);
             store.setLaserModel(model, 0, i);
             store.setLaserSerialNumber(serialNumber, 0, i);
           }
-          else if (type.equals("Arc")) {
+          else if ("Arc".equals(type)) {
             store.setArcPower(new Double(power), 0, i);
             store.setArcLotNumber(lotNumber, 0, i);
             store.setArcManufacturer(manufacturer, 0, i);
             store.setArcModel(model, 0, i);
             store.setArcSerialNumber(serialNumber, 0, i);
           }
-          else if (type.equals("LightEmittingDiode")) {
+          else if ("LightEmittingDiode".equals(type)) {
             store.setLightEmittingDiodePower(new Double(power), 0, i);
             store.setLightEmittingDiodeLotNumber(lotNumber, 0, i);
             store.setLightEmittingDiodeManufacturer(manufacturer, 0, i);
             store.setLightEmittingDiodeModel(model, 0, i);
             store.setLightEmittingDiodeSerialNumber(serialNumber, 0, i);
           }
-          else if (type.equals("Filament")) {
+          else if ("Filament".equals(type)) {
             store.setFilamentPower(new Double(power), 0, i);
             store.setFilamentLotNumber(lotNumber, 0, i);
             store.setFilamentManufacturer(manufacturer, 0, i);
@@ -850,22 +865,24 @@ public class ZeissCZIReader extends FormatReader {
     for (int i=0; i<distances.getLength(); i++) {
       Element distance = (Element) distances.item(i);
       String id = distance.getAttribute("Id");
-      Double value = new Double(getFirstNodeValue(distance, "Value"));
-      PositiveFloat size = new PositiveFloat(value);
+      Double value = new Double(getFirstNodeValue(distance, "Value")) * 1000000;
+      if (value > 0) {
+        PositiveFloat size = new PositiveFloat(value);
 
-      if (id.equals("X")) {
-        for (int series=0; series<getSeriesCount(); series++) {
-          store.setPixelsPhysicalSizeX(size, series);
+        if (id.equals("X")) {
+          for (int series=0; series<getSeriesCount(); series++) {
+            store.setPixelsPhysicalSizeX(size, series);
+          }
         }
-      }
-      else if (id.equals("Y")) {
-        for (int series=0; series<getSeriesCount(); series++) {
-          store.setPixelsPhysicalSizeY(size, series);
+        else if (id.equals("Y")) {
+          for (int series=0; series<getSeriesCount(); series++) {
+            store.setPixelsPhysicalSizeY(size, series);
+          }
         }
-      }
-      else if (id.equals("Z")) {
-        for (int series=0; series<getSeriesCount(); series++) {
-          store.setPixelsPhysicalSizeZ(size, series);
+        else if (id.equals("Z")) {
+          for (int series=0; series<getSeriesCount(); series++) {
+            store.setPixelsPhysicalSizeZ(size, series);
+          }
         }
       }
     }
@@ -1066,7 +1083,14 @@ public class ZeissCZIReader extends FormatReader {
   }
 
   private Element getFirstNode(Element root, String name) {
-    return (Element) root.getElementsByTagName(name).item(0);
+    if (root == null) {
+      return null;
+    }
+    NodeList list = root.getElementsByTagName(name);
+    if (list == null) {
+      return null;
+    }
+    return (Element) list.item(0);
   }
 
   private NodeList getGrandchildren(Element root, String name) {
