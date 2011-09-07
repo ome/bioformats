@@ -198,6 +198,29 @@ public class ZeissCZIReader extends FormatReader {
     }
 
     calculateDimensions();
+    convertPixelType(planes.get(0).directoryEntry.pixelType);
+
+    // remove any invalid SubBlocks
+
+    int planeSize =
+      getSizeX() * getSizeY() * FormatTools.getBytesPerPixel(getPixelType());
+    for (int i=0; i<planes.size(); i++) {
+      byte[] pixels = planes.get(i).readPixelData();
+      if (pixels.length < planeSize) {
+        planes.remove(i);
+        i--;
+      }
+    }
+
+    if (getSizeZ() == 0) {
+      core[0].sizeZ = 1;
+    }
+    if (getSizeC() == 0) {
+      core[0].sizeC = 1;
+    }
+    if (getSizeT() == 0) {
+      core[0].sizeT = 1;
+    }
 
     // finish populating the core metadata
 
@@ -205,7 +228,6 @@ public class ZeissCZIReader extends FormatReader {
       mosaics * phases;
 
     core[0].imageCount = planes.size() / seriesCount;
-    convertPixelType(planes.get(0).directoryEntry.pixelType);
 
     if (seriesCount > 1) {
       CoreMetadata firstSeries = core[0];
