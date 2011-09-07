@@ -151,7 +151,11 @@ public class SISReader extends BaseTiffReader {
     while (in.readShort() != 8);
     in.skipBytes(4);
 
-    in.seek(in.readInt());
+    long pos = in.readInt() & 0xffffffffL;
+    if (pos >= in.length()) {
+      return;
+    }
+    in.seek(pos);
 
     in.skipBytes(12);
 
@@ -165,7 +169,9 @@ public class SISReader extends BaseTiffReader {
     channelName = in.readCString();
 
     int length = (int) Math.min(cameraNameLength, channelName.length());
-    cameraName = channelName.substring(0, length);
+    if (length > 0) {
+      cameraName = channelName.substring(0, length);
+    }
 
     addGlobalMeta("Nanometers per pixel (X)", physicalSizeX);
     addGlobalMeta("Nanometers per pixel (Y)", physicalSizeY);

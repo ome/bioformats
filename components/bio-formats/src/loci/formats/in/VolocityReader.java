@@ -484,6 +484,17 @@ public class VolocityReader extends FormatReader {
         int w = s.readInt();
         int h = s.readInt();
 
+        if (w - x < 0 || h - y < 0 || (w - x) * (h - y) < 0) {
+          core[i].littleEndian = !isLittleEndian();
+          s.order(isLittleEndian());
+          s.seek(s.getFilePointer() - 20);
+          x = s.readInt();
+          y = s.readInt();
+          zStart = s.readInt();
+          w = s.readInt();
+          h = s.readInt();
+        }
+
         core[i].sizeX = w - x;
         core[i].sizeY = h - y;
         core[i].sizeZ = s.readInt() - zStart;
@@ -534,6 +545,12 @@ public class VolocityReader extends FormatReader {
         core[i].pixelType = FormatTools.UINT8;
         blockSize[i] = embedded ? (int) s.getFilePointer() : 99;
         planePadding[i] = 0;
+
+        if (s.length() > core[i].sizeX * core[i].sizeY * core[i].sizeZ * 6) {
+          core[i].pixelType = FormatTools.UINT16;
+          core[i].sizeC = 3;
+          core[i].rgb = true;
+        }
 
         if (s.length() <
           (core[i].sizeX * core[i].sizeY * core[i].sizeZ * core[i].sizeC))

@@ -590,7 +590,7 @@ public class LIFReader extends FormatReader {
 
         boolean noNames = true;
         for (String name : channelNames[i]) {
-          if (!name.equals("")) {
+          if (name != null && !name.equals("")) {
             noNames = false;
             break;
           }
@@ -603,7 +603,8 @@ public class LIFReader extends FormatReader {
           Integer wavelength = (Integer) lasers.get(laser);
           if (wavelength != 0) {
             while (channelNames != null && nextChannel < getEffectiveSizeC() &&
-              (channelNames[i][nextChannel].equals("") && !noNames))
+              ((channelNames[i][nextChannel] == null ||
+              channelNames[i][nextChannel].equals("")) && !noNames))
             {
               nextChannel++;
             }

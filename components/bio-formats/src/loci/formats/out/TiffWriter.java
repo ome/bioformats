@@ -291,7 +291,9 @@ public class TiffWriter extends FormatWriter {
     else {
       out.seek((Long) ifd.get(IFD.REUSE));
     }
-    ifd.putIFDValue(IFD.PLANAR_CONFIGURATION, interleaved ? 1 : 2);
+    
+    ifd.putIFDValue(IFD.PLANAR_CONFIGURATION,
+      interleaved || getSamplesPerPixel() == 1 ? 1 : 2);
 
     int sampleFormat = 1;
     if (FormatTools.isSigned(type)) sampleFormat = 2;

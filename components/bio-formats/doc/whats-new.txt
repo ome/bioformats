@@ -1,3 +1,20 @@
+4.3.2 (2011 September 15):
+* Many bug fixes, including:
+  - Better support for Volocity datasets that contain compressed data
+  - More accurate parsing of ICS metadata
+  - More accurate parsing of cellSens .vsi files
+* Added support for a few new formats
+  - .inr
+  - Canon DNG
+  - Hitachi S-4800
+  - Kodak .bip
+  - JPX
+  - Volocity Library Clipping (.acff)
+  - Bruker MRI
+* Updated Zeiss LSM reader to parse application tags
+* Various performance improvements, particularly for reading/writing TIFFs
+* Updated OMERO ImageJ plugin to work with OMERO 4.3.x
+
 4.3.1 (2011 July 8):
 * Several bug fixes, including:
   - Fixes for multi-position Deltavision files
