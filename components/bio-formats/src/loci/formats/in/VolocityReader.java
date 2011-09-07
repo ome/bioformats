@@ -546,6 +546,12 @@ public class VolocityReader extends FormatReader {
         blockSize[i] = embedded ? (int) s.getFilePointer() : 99;
         planePadding[i] = 0;
 
+        if (s.length() > core[i].sizeX * core[i].sizeY * core[i].sizeZ * 6) {
+          core[i].pixelType = FormatTools.UINT16;
+          core[i].sizeC = 3;
+          core[i].rgb = true;
+        }
+
         if (s.length() <
           (core[i].sizeX * core[i].sizeY * core[i].sizeZ * core[i].sizeC))
         {

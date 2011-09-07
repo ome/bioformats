@@ -447,6 +447,10 @@ public class OMETiffReader extends FormatReader {
         adjustedSamples = true;
       }
 
+      if (adjustedSamples && meta.getChannelCount(i) <= 1) {
+        adjustedSamples = false;
+      }
+
       int effSizeC = meta.getPixelsSizeC(i).getValue().intValue();
       if (!adjustedSamples) {
         effSizeC /= samples;
