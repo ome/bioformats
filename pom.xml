@@ -10,7 +10,7 @@
   <version>5.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
-  <name>LOCI Software</name>
+  <name>Bio-Formats projects</name>
   <description>Umbrella project for Bio-Formats software projects.</description>
   <url>http://loci.wisc.edu/software</url>
   <inceptionYear>2005</inceptionYear>
