@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Vector;
 
 import loci.common.DataTools;
@@ -143,6 +144,7 @@ public class CellWorxReader extends FormatReader {
 
     String file = getFile(getSeries(), no);
     if (file == null) {
+      Arrays.fill(buf, (byte) 0);
       return buf;
     }
 
@@ -450,9 +452,13 @@ public class CellWorxReader extends FormatReader {
     if (wellFiles[row][col].length == 0) {
       return wellFiles[row][col][0];
     }
+
     int imageCount = wellFiles[row][col].length / fieldCount;
     if (field * imageCount + no < wellFiles[row][col].length) {
       return wellFiles[row][col][field * imageCount + no];
+    }
+    else if (field < wellFiles[row][col].length) {
+      return wellFiles[row][col][field];
     }
     return null;
   }
