@@ -794,6 +794,12 @@ public class DeltavisionReader extends FormatReader {
 
   /** Find the log files. */
   private void findLogFiles() throws IOException {
+    if (getCurrentFile().lastIndexOf(".") == -1) {
+      // The current file name has no extension, skip trying to find the
+      // log file(s).
+      logFile = null;
+      deconvolutionLogFile = null;
+    }
     if (getCurrentFile().endsWith("_D3D.dv")) {
       logFile = getCurrentFile();
       logFile = logFile.substring(0, logFile.indexOf("_D3D.dv")) + ".dv.log";
