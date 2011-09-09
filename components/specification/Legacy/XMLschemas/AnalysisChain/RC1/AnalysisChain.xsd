@@ -1,13 +1,23 @@
 <?xml version = "1.0" encoding = "UTF-8"?>
 <!--
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#
-# Copyright (C) 2003 Open Microscopy Environment
-#       Massachusetts Institute of Technology,
-#       National Institutes of Health,
-#       University of Dundee
-#
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    #
+    # Copyright (C) 2003-2011 Open Microscopy Environment
+    #       Massachusetts Institute of Technology,
+    #       National Institutes of Health,
+    #       University of Dundee,
+    #       University of Wisconsin at Madison
+    #
+    # This work is licensed under the
+    #       Creative Commons Attribution 3.0 Unported License.
+    # To view a copy of this license, visit
+    #       http://creativecommons.org/licenses/by/3.0/
+    # or send a letter to
+    #       Creative Commons, 444 Castro Street, Suite 900,
+    #       Mountain View, California, 94041, USA.
+    # For attribution instructions, visit
+    #       http://www.openmicroscopy.org/info/attribution
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -->
 
 

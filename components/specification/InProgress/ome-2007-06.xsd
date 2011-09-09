@@ -1,14 +1,23 @@
 <?xml version = "1.0" encoding = "UTF-8"?>
 <!--
-	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	#
-	# Copyright (C) 2002-2007 Open Microscopy Environment
-	#       Massachusetts Institute of Technology,
-	#       National Institutes of Health,
-	#       University of Dundee,
-	#       University of Wisconsin at Madison
-	#
-	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    #
+    # Copyright (C) 2002-2011 Open Microscopy Environment
+    #       Massachusetts Institute of Technology,
+    #       National Institutes of Health,
+    #       University of Dundee,
+    #       University of Wisconsin at Madison
+    #
+    # This work is licensed under the
+    #       Creative Commons Attribution 3.0 Unported License.
+    # To view a copy of this license, visit
+    #       http://creativecommons.org/licenses/by/3.0/
+    # or send a letter to
+    #       Creative Commons, 444 Castro Street, Suite 900,
+    #       Mountain View, California, 94041, USA.
+    # For attribution instructions, visit
+    #       http://www.openmicroscopy.org/info/attribution
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -->
 <!--
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -35,7 +44,7 @@
 			Open Microscopy Environment
 			OME XML Schema June 2007 - Update Version 2 September 2007
 			Author:  Ilya G. Goldberg, Andrew J Patterson
-			Copyright 2002 - 2007 OME. All rights reserved.
+			Copyright (C) 2002-2011 Open Microscopy Environment
 		</xsd:documentation>
 	</xsd:annotation>
 	<xsd:element name="OMEHACK">

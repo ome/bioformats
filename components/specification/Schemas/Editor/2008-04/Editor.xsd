@@ -1,14 +1,23 @@
 <?xml version = "1.0" encoding = "UTF-8"?>
 <!--
-    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     #
-    # Copyright (C) 2002-2008 Open Microscopy Environment
+    # Copyright (C) 2002-2011 Open Microscopy Environment
     #       Massachusetts Institute of Technology,
     #       National Institutes of Health,
     #       University of Dundee,
     #       University of Wisconsin at Madison
     #
-    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # This work is licensed under the
+    #       Creative Commons Attribution 3.0 Unported License.
+    # To view a copy of this license, visit
+    #       http://creativecommons.org/licenses/by/3.0/
+    # or send a letter to
+    #       Creative Commons, 444 Castro Street, Suite 900,
+    #       Mountain View, California, 94041, USA.
+    # For attribution instructions, visit
+    #       http://www.openmicroscopy.org/info/attribution
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -->
 <!--
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -27,7 +36,7 @@
             Open Microscopy Environment
             Protocol Editor Schema April 2008 - Version 1
             Author:  William Moore
-            Copyright 2002 - 2008 OME. All rights reserved.
+            Copyright (C) 2002-2011 Open Microscopy Environment
             See http://users.openmicroscopy.org.uk/~will/ 
             for user guides etc. 
             The structure permitted for elements in the Protocol Editor xml is highly flexible, allowing users to define structured annotations from these elements in any way they choose.

@@ -33,7 +33,7 @@
 				Open Microscopy Environment
 				OME Sample Third Party
 				Author: Andrew J Patterson
-				Copyright 2011 OME. All rights reserved.
+				Copyright (C) 2011 Open Microscopy Environment
 			</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
