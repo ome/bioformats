@@ -799,6 +799,7 @@ public class DeltavisionReader extends FormatReader {
       // log file(s).
       logFile = null;
       deconvolutionLogFile = null;
+      return;
     }
     if (getCurrentFile().endsWith("_D3D.dv")) {
       logFile = getCurrentFile();
