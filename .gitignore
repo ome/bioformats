@@ -1,3 +1,4 @@
+.classpath
 .project
 .settings
 BioFormats Unit Tests
@@ -12,7 +13,12 @@ Missing POI Service Tests
 OME ReaderWriter Service Tests
 OMEXMLTests
 artifacts
+build
+build-eclipse
+components/*/utils/*.class
 emailable-report.html
 index.html
+target
 testng-results.xml
 testng.css
+tools/*.jar
