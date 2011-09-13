@@ -29,7 +29,6 @@ use constant {
   LIB_OPT   => 12, # runtime library dependencies for each component
   COMPILE   => 13, # compile-time classpath for each component
   RUNTIME   => 14, # runtime classpath for each component
-  ECLIPSE   => 15, # Eclipse classpath for each component
   VERSION   => 16, # version number for each library
 };
 
@@ -37,13 +36,13 @@ use constant {
 
 my %autogen = (
   NAME    => "autogen",
-  TITLE   => "LOCI code generator",
+  TITLE   => "Bio-Formats code generator",
   PATH    => "components/autogen",
-  JAR     => "loci-autogen.jar",
+  JAR     => "bf-autogen.jar",
   PACKAGE => "(none)",
   DESC    => <<ZZ,
-Package for generating other code, including the Bio-Formats metadata API,
-related documentation, Ice bindings, and Bio-Formats C++ bindings headers
+Package for generating other code, particularly the Bio-Formats metadata
+support documentation
 ZZ
   LICENSE => "GPL",
 );
@@ -609,7 +608,6 @@ my @libs = (
   \%omeJava,
   \%omeJavaDeprecated,
   \%omeroClient,
-  \%omeroCommon,
   \%serializer,
   \%testng,
   \%velocity,
@@ -744,29 +742,6 @@ foreach my $c (@components) {
   $$c{RUNTIME} = \@runtime;
 }
 
-print STDERR "--== GATHERING ECLIPSE DEPENDENCIES ==--\n\n";
-foreach my $c (@components) {
-  my $path = $$c{PATH};
-
-  # read Eclipse classpath from classpath file
-  open FILE, "$path/.classpath"
-    or die "$path/.classpath: $!";
-  my @lines = <FILE>;
-  close(FILE);
-  my @eclipse = ();
-  foreach my $line (@lines) {
-    $line = rtrim($line);
-    if ($line =~ /<classpathentry /) {
-      # found a compile-time classpath entry
-      $line =~ s/.* path="//;
-      $line =~ s/"\/>$//;
-      push(@eclipse, $line);
-    }
-  }
-  @eclipse = sort @eclipse;
-  $$c{ECLIPSE} = \@eclipse;
-}
-
 # -- DATA VERIFICATION --
 
 print STDERR "--== VERIFYING CLASSPATH MATCHES ==--\n";
@@ -824,65 +799,6 @@ foreach my $c (@components) {
     $programErrors++;
   }
 
-  # verify Eclipse classpath
-  my @deps = ();
-  push(@deps, "src");
-  if (-e "$path/test") {
-    push(@deps, "test");
-  }
-  push(@deps, "org.eclipse.jdt.launching.JRE_CONTAINER");
-  foreach my $dep (@projDeps) {
-    push(@deps, "/$$dep{NAME}");
-  }
-  if (@libDeps > 0) {
-    push(@deps, "/External libraries");
-    foreach my $q (@libDeps) {
-      if ($$q{NAME} eq $testng{NAME}) {
-        push(@deps, "org.testng.TESTNG_CONTAINER");
-      }
-      if ($$q{NAME} eq $junit{NAME}) {
-        push(@deps, "org.eclipse.jdt.junit.JUNIT_CONTAINER/4");
-      }
-    }
-  }
-  push(@deps, "build-eclipse");
-  @deps = sort @deps;
-  @cp = @{$$c{ECLIPSE}};
-  my $eclipseError = 0;
-  if (@deps != @cp) {
-    print STDERR "\nDependency mismatch for $name Eclipse classpath:\n";
-    $eclipseError = 1;
-  }
-  else {
-    for (my $i = 0; $i < @cp; $i++) {
-      my $depEntry = $deps[$i];
-      my $cpEntry = $cp[$i];
-      if ($cpEntry ne $depEntry) {
-        print STDERR "\nDependency mismatch for $name Eclipse classpath:\n";
-        print STDERR "  #$i: $depEntry != $cpEntry\n";
-        $eclipseError = 1;
-        last;
-      }
-    }
-  }
-  if ($eclipseError) {
-    print STDERR "  Eclipse classpath:\n";
-    print STDERR "    Actual    = @cp\n";
-    print STDERR "    Synthetic = @deps\n";
-    print STDERR "\n";
-    print STDERR "  project deps =";
-    foreach my $q (@projDeps) {
-      print STDERR " $$q{NAME}";
-    }
-    print STDERR "\n";
-    print STDERR "  library deps =";
-    foreach my $q (@libDeps) {
-      print STDERR " $$q{NAME}";
-    }
-    print STDERR "\n";
-    $programErrors++;
-  }
-
   # verify runtime classpath
   my @runtime = ();
   foreach my $dep (@projOpt) {
@@ -892,7 +808,7 @@ foreach my $c (@components) {
     push(@runtime, "\${lib.dir}/$$dep{JAR}");
   }
   @runtime = sort @runtime;
-  @deps = (@compile, @runtime);
+  my @deps = (@compile, @runtime);
   @cp = @{$$c{RUNTIME}};
   my $runtimeError = 0;
   if (@deps != @cp) {
