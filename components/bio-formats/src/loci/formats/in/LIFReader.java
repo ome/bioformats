@@ -540,7 +540,7 @@ public class LIFReader extends FormatReader {
           }
           int channel = filter - (cutIns[i].size() - getEffectiveSizeC());
           if (channel >= 0 && channel < getEffectiveSizeC()) {
-            store.setLightPathEmissionFilterRef(filterID, i, channel, 0);
+            //store.setLightPathEmissionFilterRef(filterID, i, channel, 0);
           }
           store.setTransmittanceRangeCutIn(
             (PositiveInteger) cutIns[i].get(filter), i, filter);
