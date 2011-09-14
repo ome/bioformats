@@ -66,7 +66,7 @@ public class Updater implements PlugIn {
   public static final String STABLE_BUILD =
     "http://loci.wisc.edu/software/loci_tools.jar";
 
-  public static final String STABLE_VERSION = "4.2-DEV";
+  public static final String STABLE_VERSION = "4.3.2";
 
   public static final String REGISTRY = "http://upgrade.openmicroscopy.org.uk";
 
