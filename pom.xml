@@ -16,6 +16,7 @@
   <inceptionYear>2005</inceptionYear>
 
   <modules>
+    <module>components/autogen</module>
     <module>components/forks/jai</module>
     <module>components/forks/mdbtools</module>
     <module>components/forks/poi</module>
