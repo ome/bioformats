@@ -14,7 +14,6 @@ OME ReaderWriter Service Tests
 OMEXMLTests
 artifacts
 build
-build-eclipse
 components/*/utils/*.class
 emailable-report.html
 index.html
