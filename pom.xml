@@ -16,20 +16,20 @@
   <inceptionYear>2005</inceptionYear>
 
   <modules>
-    <module>components/autogen</module>
     <module>components/forks/jai</module>
     <module>components/forks/mdbtools</module>
     <module>components/forks/poi</module>
     <module>components/legacy/ome-editor</module>
     <!-- <module>components/legacy/ome-notes</module> -->
+    <module>components/autogen</module>
     <module>components/bio-formats</module>
     <module>components/common</module>
     <module>components/loci-plugins</module>
-    <!-- <module>components/loci-tools</module> -->
+    <module>components/loci-tools</module>
     <module>components/metakit</module>
     <module>components/ome-io</module>
     <module>components/ome-plugins</module>
-    <!-- <module>components/ome-tools</module> -->
+    <module>components/ome-tools</module>
     <module>components/ome-xml</module>
     <module>components/test-suite</module>
     <module>components/stubs/lwf-stubs</module>
