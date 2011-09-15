@@ -7,7 +7,7 @@
 
   <groupId>loci</groupId>
   <artifactId>bio-formats-base</artifactId>
-  <version>5.0-SNAPSHOT</version>
+  <version>4.3.3-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Bio-Formats projects</name>
