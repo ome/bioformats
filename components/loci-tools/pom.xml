@@ -16,7 +16,7 @@
 
   <name>LOCI Tools bundle</name>
   <description>An all-in-one bundle of LOCI libraries.</description>
-  <url>http://loci.wisc.edu/bio-formats</url>
+  <url>http://loci.wisc.edu/software/bio-formats</url>
   <inceptionYear>2006</inceptionYear>
 
   <licenses>
