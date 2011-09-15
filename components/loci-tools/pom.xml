@@ -36,13 +36,12 @@
   </dependencies>
 
   <build>
-    <defaultGoal>assembly:single</defaultGoal>
     <plugins>
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <configuration>
           <descriptors>
-            <descriptor>src/main/assembly/deps.xml</descriptor>
+            <descriptor>assembly.xml</descriptor>
           </descriptors>
           <archive>
             <manifest>
@@ -50,6 +49,15 @@
             </manifest>
           </archive>
         </configuration>
+        <executions>
+          <execution>
+            <id>make-assembly</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
