@@ -79,6 +79,9 @@
     </pluginManagement>
     <plugins>
       <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+      </plugin>
+      <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>2.3.2</version>
         <configuration>
@@ -98,7 +101,11 @@
         </configuration>
       </plugin>
       <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.9</version>
+        <configuration>
+          <argLine>-Xms512m -Xmx512m</argLine>
+        </configuration>
       </plugin>
     </plugins>
   </build>
