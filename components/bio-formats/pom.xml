@@ -192,10 +192,20 @@
         <picUrl>http://openmicroscopy.org/site/about/development-teams/jason/chrisallan.jpg</picUrl>
       </properties>
     </developer>
-    <developer>
-      <id>brain</id>
+  </developers>
+
+  <contributors>
+    <contributor>
+      <name>Eric Kjellman</name>
+      <organization>UW-Madison LOCI</organization>
+      <organizationUrl>http://loci.wisc.edu/</organizationUrl>
+      <roles>
+        <role>developer</role>
+      </roles>
+      <timezone>-6</timezone>
+    </contributor>
+    <contributor>
       <name>Brian Loranger</name>
-      <email>brian.loranger@lifesci.dundee.ac.uk</email>
       <url>http://openmicroscopy.org/site/about/development-teams/jason</url>
       <organization>Swedlow Lab, University of Dundee</organization>
       <organizationUrl>http://www.lifesci.dundee.ac.uk/groups/jason_swedlow/</organizationUrl>
@@ -206,19 +216,6 @@
       <properties>
         <picUrl>http://openmicroscopy.org/site/about/development-teams/jason/brian.jpg</picUrl>
       </properties>
-    </developer>
-  </developers>
-
-  <contributors>
-    <contributor>
-      <name>Eric Kjellman</name>
-      <email>egkjellman@wisc.edu</email>
-      <organization>UW-Madison LOCI</organization>
-      <organizationUrl>http://loci.wisc.edu/</organizationUrl>
-      <roles>
-        <role>developer</role>
-      </roles>
-      <timezone>-6</timezone>
     </contributor>
     <contributor><name>Eric Albert</name></contributor>
     <contributor><name>Jonathan Armond</name></contributor>
