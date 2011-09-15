@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+    http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>loci</groupId>
+    <artifactId>bio-formats-base</artifactId>
+    <version>4.3.3-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>loci_tools</artifactId>
+  <packaging>pom</packaging>
+
+  <name>LOCI Tools bundle</name>
+  <description>An all-in-one bundle of LOCI libraries.</description>
+  <url>http://loci.wisc.edu/bio-formats</url>
+  <inceptionYear>2006</inceptionYear>
+
+  <licenses>
+    <license>
+      <name>GPL 2 or later</name>
+      <url>http://www.gnu.org/licenses/gpl-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>bio-formats</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <defaultGoal>assembly:single</defaultGoal>
+    <plugins>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <configuration>
+          <descriptors>
+            <descriptor>src/main/assembly/deps.xml</descriptor>
+          </descriptors>
+          <archive>
+            <manifest>
+              <mainClass>loci.formats.gui.ImageViewer</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <developers>
+    <developer>
+      <id>curtis</id>
+      <name>Curtis Rueden</name>
+      <email>ctrueden@wisc.edu</email>
+      <url>http://loci.wisc.edu/people/curtis-rueden</url>
+      <organization>UW-Madison LOCI</organization>
+      <organizationUrl>http://loci.wisc.edu/</organizationUrl>
+      <roles>
+        <role>architect</role>
+        <role>developer</role>
+      </roles>
+      <timezone>-6</timezone>
+      <properties>
+        <picUrl>http://loci.wisc.edu/files/loci/images/people/curtis-2010.jpg</picUrl>
+      </properties>
+    </developer>
+  </developers>
+
+  <!-- NB: for bio-formats-base, in case of partial checkout -->
+  <repositories>
+    <repository>
+      <id>loci.releases</id>
+      <url>http://dev.loci.wisc.edu/maven2/releases</url>
+    </repository>
+    <repository>
+      <id>loci.snapshots</id>
+      <url>http://dev.loci.wisc.edu/maven2/snapshots</url>
+    </repository>
+  </repositories>
+
+</project>
