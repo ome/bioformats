@@ -8,14 +8,15 @@
   <parent>
     <groupId>loci</groupId>
     <artifactId>bio-formats-base</artifactId>
-    <version>4.3.3-SNAPSHOT</version>
+    <version>5.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>metakit</artifactId>
+  <artifactId>bf-autogen</artifactId>
 
-  <name>Metakit</name>
-  <description>A library for reading Metakit database files.</description>
-  <inceptionYear>2011</inceptionYear>
+  <name>Bio-Formats code generator</name>
+  <description>Package for generating other code, particularly the Bio-Formats metadata documentation.</description>
+  <url>http://loci.wisc.edu/software/bio-formats</url>
+  <inceptionYear>2007</inceptionYear>
 
   <licenses>
     <license>
@@ -28,32 +29,53 @@
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
+      <artifactId>bio-formats</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
       <artifactId>loci-common</artifactId>
       <version>${project.version}</version>
     </dependency>
-
     <dependency>
-      <groupId>org.testng</groupId>
-      <artifactId>testng</artifactId>
-      <version>5.12.1</version>
-      <scope>test</scope>
+      <groupId>org.apache.velocity</groupId>
+      <artifactId>velocity</artifactId>
+      <version>1.6.4</version>
     </dependency>
   </dependencies>
 
   <build>
     <plugins>
       <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
+        <artifactId>maven-jar-plugin</artifactId>
         <configuration>
-          <suiteXmlFiles>
-            <suiteXmlFile>test/ome/metakit/utests/testng-template.xml</suiteXmlFile>
-          </suiteXmlFiles>
+          <archive>
+            <manifest>
+              <mainClass>MetaSupportAutogen</mainClass>
+            </manifest>
+          </archive>
         </configuration>
       </plugin>
     </plugins>
   </build>
 
   <developers>
+    <developer>
+      <id>curtis</id>
+      <name>Curtis Rueden</name>
+      <email>ctrueden@wisc.edu</email>
+      <url>http://loci.wisc.edu/people/curtis-rueden</url>
+      <organization>UW-Madison LOCI</organization>
+      <organizationUrl>http://loci.wisc.edu/</organizationUrl>
+      <roles>
+        <role>architect</role>
+        <role>developer</role>
+      </roles>
+      <timezone>-6</timezone>
+      <properties>
+        <picUrl>http://loci.wisc.edu/files/loci/images/people/curtis-2010.jpg</picUrl>
+      </properties>
+    </developer>
     <developer>
       <id>melissa</id>
       <name>Melissa Linkert</name>
@@ -62,7 +84,6 @@
       <organization>Glencoe Software</organization>
       <organizationUrl>http://glencoesoftware.com/</organizationUrl>
       <roles>
-        <role>architect</role>
         <role>developer</role>
       </roles>
       <timezone>-6</timezone>
@@ -72,7 +93,7 @@
     </developer>
   </developers>
 
-  <!-- NB: for project parent, in case of partial checkout -->
+  <!-- NB: for bio-formats-base, in case of partial checkout -->
   <repositories>
     <repository>
       <id>loci.releases</id>

@@ -21,14 +21,15 @@
     <module>components/forks/poi</module>
     <module>components/legacy/ome-editor</module>
     <!-- <module>components/legacy/ome-notes</module> -->
+    <module>components/autogen</module>
     <module>components/bio-formats</module>
     <module>components/common</module>
     <module>components/loci-plugins</module>
-    <!-- <module>components/loci-tools</module> -->
+    <module>components/loci-tools</module>
     <module>components/metakit</module>
     <module>components/ome-io</module>
     <module>components/ome-plugins</module>
-    <!-- <module>components/ome-tools</module> -->
+    <module>components/ome-tools</module>
     <module>components/ome-xml</module>
     <module>components/test-suite</module>
     <module>components/stubs/lwf-stubs</module>
@@ -78,6 +79,9 @@
     </pluginManagement>
     <plugins>
       <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+      </plugin>
+      <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>2.3.2</version>
         <configuration>
@@ -97,7 +101,11 @@
         </configuration>
       </plugin>
       <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.9</version>
+        <configuration>
+          <argLine>-Xms512m -Xmx512m</argLine>
+        </configuration>
       </plugin>
     </plugins>
   </build>
