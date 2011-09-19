@@ -103,82 +103,6 @@ public class LIFReader extends FormatReader {
     return h;
   }
 
-  private static final byte[][][] BYTE_LUTS = createByteLUTs();
-
-  private static byte[][][] createByteLUTs() {
-    byte[][][] lut = new byte[9][3][256];
-    for (int i=0; i<256; i++) {
-      // red
-      lut[0][0][i] = (byte) (i & 0xff);
-      // green
-      lut[1][1][i] = (byte) (i & 0xff);
-      // blue
-      lut[2][2][i] = (byte) (i & 0xff);
-
-      // cyan
-      lut[3][1][i] = (byte) (i & 0xff);
-      lut[3][2][i] = (byte) (i & 0xff);
-
-      // magenta
-      lut[4][0][i] = (byte) (i & 0xff);
-      lut[4][2][i] = (byte) (i & 0xff);
-
-      // yellow
-      lut[5][0][i] = (byte) (i & 0xff);
-      lut[5][1][i] = (byte) (i & 0xff);
-
-      // gray
-      lut[6][0][i] = (byte) (i & 0xff);
-      lut[6][1][i] = (byte) (i & 0xff);
-      lut[6][2][i] = (byte) (i & 0xff);
-      lut[7][0][i] = (byte) (i & 0xff);
-      lut[7][1][i] = (byte) (i & 0xff);
-      lut[7][2][i] = (byte) (i & 0xff);
-      lut[8][0][i] = (byte) (i & 0xff);
-      lut[8][1][i] = (byte) (i & 0xff);
-      lut[8][2][i] = (byte) (i & 0xff);
-    }
-    return lut;
-  }
-
-  private static final short[][][] SHORT_LUTS = createShortLUTs();
-
-  private static short[][][] createShortLUTs() {
-    short[][][] lut = new short[9][3][65536];
-    for (int i=0; i<65536; i++) {
-      // red
-      lut[0][0][i] = (short) (i & 0xffff);
-      // green
-      lut[1][1][i] = (short) (i & 0xffff);
-      // blue
-      lut[2][2][i] = (short) (i & 0xffff);
-
-      // cyan
-      lut[3][1][i] = (short) (i & 0xffff);
-      lut[3][2][i] = (short) (i & 0xffff);
-
-      // magenta
-      lut[4][0][i] = (short) (i & 0xffff);
-      lut[4][2][i] = (short) (i & 0xffff);
-
-      // yellow
-      lut[5][0][i] = (short) (i & 0xffff);
-      lut[5][1][i] = (short) (i & 0xffff);
-
-      // gray
-      lut[6][0][i] = (short) (i & 0xffff);
-      lut[6][1][i] = (short) (i & 0xffff);
-      lut[6][2][i] = (short) (i & 0xffff);
-      lut[7][0][i] = (short) (i & 0xffff);
-      lut[7][1][i] = (short) (i & 0xffff);
-      lut[7][2][i] = (short) (i & 0xffff);
-      lut[8][0][i] = (short) (i & 0xffff);
-      lut[8][1][i] = (short) (i & 0xffff);
-      lut[8][2][i] = (short) (i & 0xffff);
-    }
-    return lut;
-  }
-
   // -- Fields --
 
   /** Offsets to memory blocks, paired with their corresponding description. */
@@ -240,14 +164,98 @@ public class LIFReader extends FormatReader {
   public byte[][] get8BitLookupTable() {
     FormatTools.assertId(currentId, true, 1);
     if (getPixelType() != FormatTools.UINT8 || !isIndexed()) return null;
-    return lastChannel < BYTE_LUTS.length ? BYTE_LUTS[lastChannel] : null;
+
+    if (lastChannel < 0 || lastChannel >= 9) {
+      return null;
+    }
+
+    byte[][] lut = new byte[3][256];
+    for (int i=0; i<256; i++) {
+      switch (lastChannel) {
+        case 0:
+          // red
+          lut[0][i] = (byte) (i & 0xff);
+          break;
+        case 1:
+          // green
+          lut[1][i] = (byte) (i & 0xff);
+          break;
+        case 2:
+          // blue
+          lut[2][i] = (byte) (i & 0xff);
+          break;
+        case 3:
+          // cyan
+          lut[1][i] = (byte) (i & 0xff);
+          lut[2][i] = (byte) (i & 0xff);
+          break;
+        case 4:
+          // magenta
+          lut[0][i] = (byte) (i & 0xff);
+          lut[2][i] = (byte) (i & 0xff);
+          break;
+        case 5:
+          // yellow
+          lut[0][i] = (byte) (i & 0xff);
+          lut[1][i] = (byte) (i & 0xff);
+          break;
+        default:
+          // gray
+          lut[0][i] = (byte) (i & 0xff);
+          lut[1][i] = (byte) (i & 0xff);
+          lut[2][i] = (byte) (i & 0xff);
+      }
+    }
+    return lut;
   }
 
   /* @see loci.formats.IFormatReader#get16BitLookupTable() */
   public short[][] get16BitLookupTable() {
     FormatTools.assertId(currentId, true, 1);
     if (getPixelType() != FormatTools.UINT16 || !isIndexed()) return null;
-    return lastChannel < SHORT_LUTS.length ? SHORT_LUTS[lastChannel] : null;
+
+    if (lastChannel < 0 || lastChannel >= 9) {
+      return null;
+    }
+
+    short[][] lut = new short[3][65536];
+    for (int i=0; i<65536; i++) {
+      switch (lastChannel) {
+        case 0:
+          // red
+          lut[0][i] = (short) (i & 0xffff);
+          break;
+        case 1:
+          // green
+          lut[1][i] = (short) (i & 0xffff);
+          break;
+        case 2:
+          // blue
+          lut[2][i] = (short) (i & 0xffff);
+          break;
+        case 3:
+          // cyan
+          lut[1][i] = (short) (i & 0xffff);
+          lut[2][i] = (short) (i & 0xffff);
+          break;
+        case 4:
+          // magenta
+          lut[0][i] = (short) (i & 0xffff);
+          lut[2][i] = (short) (i & 0xffff);
+          break;
+        case 5:
+          // yellow
+          lut[0][i] = (short) (i & 0xffff);
+          lut[1][i] = (short) (i & 0xffff);
+          break;
+        default:
+          // gray
+          lut[0][i] = (short) (i & 0xffff);
+          lut[1][i] = (short) (i & 0xffff);
+          lut[2][i] = (short) (i & 0xffff);
+      }
+    }
+    return lut;
   }
 
   /**
