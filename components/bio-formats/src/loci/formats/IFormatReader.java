@@ -209,6 +209,12 @@ public interface IFormatReader extends IFormatHandler, IMetadataConfigurable {
    * because X and Y must appear first in the dimension order. For
    * interleaved data, {@link #getDimensionOrder()} returns XYCTZ or XYCZT,
    * and this method returns true.
+   *
+   * Note that this flag returns whether or not the data returned by
+   * {@link #openBytes(int)} is interleaved.  In most cases, this will
+   * match the interleaving in the original file, but for some formats (e.g.
+   * TIFF) channel re-ordering is done internally and the return value of
+   * this method will not match what is in the original file.
    */
   boolean isInterleaved();
 

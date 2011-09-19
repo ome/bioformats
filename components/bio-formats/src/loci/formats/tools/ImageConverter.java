@@ -303,9 +303,11 @@ public final class ImageConverter {
 
     MetadataTools.populatePixels(store, reader, false, false);
 
+    boolean dimensionsSet = true;
     if (width == 0 || height == 0) {
       width = reader.getSizeX();
       height = reader.getSizeY();
+      dimensionsSet = false;
     }
 
     if (store instanceof MetadataRetrieve) {
@@ -377,6 +379,12 @@ public final class ImageConverter {
     long timeLastLogged = System.currentTimeMillis();
     for (int q=first; q<last; q++) {
       reader.setSeries(q);
+
+      if (!dimensionsSet) {
+        width = reader.getSizeX();
+        height = reader.getSizeY();
+      }
+
       int writerSeries = series == -1 ? q : 0;
       writer.setSeries(writerSeries);
       writer.setInterleaved(reader.isInterleaved() && !autoscale);
