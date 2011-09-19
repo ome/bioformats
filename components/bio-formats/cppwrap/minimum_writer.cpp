@@ -46,8 +46,8 @@ your combined work must be distributed under the terms of the GPL.
 #include "javaTools.h"
 
 // for Bio-Formats C++ bindings
-#include "bio-formats-5.0-SNAPSHOT.h"
-#include "ome-xml-5.0-SNAPSHOT.h"
+#include "bio-formats-4.3.3-SNAPSHOT.h"
+#include "ome-xml-4.3.3-SNAPSHOT.h"
 using jace::JNIException;
 using jace::proxy::java::io::IOException;
 using jace::proxy::java::lang::Boolean;
