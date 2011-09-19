@@ -342,6 +342,8 @@ public class PCIReader extends FormatReader {
       imageFiles.put(getImageIndex(parent), file);
     }
 
+    core[0].imageCount = getSizeZ() * getSizeT();
+
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this, true);
 
