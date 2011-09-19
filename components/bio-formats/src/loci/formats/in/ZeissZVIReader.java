@@ -126,7 +126,6 @@ public class ZeissZVIReader extends FormatReader {
   /** Constructs a new ZeissZVI reader. */
   public ZeissZVIReader() {
     super("Zeiss Vision Image (ZVI)", "zvi");
-    suffixNecessary = false;
     domains = new String[] {FormatTools.LM_DOMAIN};
   }
 
@@ -144,20 +143,7 @@ public class ZeissZVIReader extends FormatReader {
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
     int magic = stream.readInt();
     if (magic != ZVI_MAGIC_BYTES) return false;
-    try {
-      ServiceFactory factory = new ServiceFactory();
-      POIService p = factory.getInstance(POIService.class);
-      p.initialize(stream);
-      Vector<String> files = p.getDocumentList();
-      String filename = "Tags";
-      for (String f : files) {
-        if (f.trim().endsWith(filename)) return true;
-      }
-    }
-    catch (DependencyException e) {
-      LOGGER.debug("", e);
-    }
-    return false;
+    return true;
   }
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
