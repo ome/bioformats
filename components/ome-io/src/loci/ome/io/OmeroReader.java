@@ -265,6 +265,13 @@ public class OmeroReader extends FormatReader {
       RString imageName = img.getName();
       String name = imageName == null ? null : imageName.getValue();
 
+      if (name != null) {
+        currentId = name;
+      }
+      else {
+        currentId = "Image ID " + iid;
+      }
+
       RString imgDescription = img.getDescription();
       String description =
         imgDescription == null ? null : imgDescription.getValue();
