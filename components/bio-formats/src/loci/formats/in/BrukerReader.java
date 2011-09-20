@@ -219,6 +219,9 @@ public class BrukerReader extends FormatReader {
               value = value.substring(1, value.length() - 1);
             }
           }
+          if (key.length() < 4) {
+            continue;
+          }
 
           addSeriesMeta(key.substring(3), value);
 
