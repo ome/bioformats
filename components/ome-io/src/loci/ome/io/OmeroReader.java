@@ -74,6 +74,7 @@ public class OmeroReader extends FormatReader {
   private String username;
   private String password;
   private int thePort = DEFAULT_PORT;
+  private String sessionID;
 
   private omero.client client;
   private RawPixelsStorePrx store;
@@ -102,6 +103,10 @@ public class OmeroReader extends FormatReader {
 
   public void setPassword(String password) {
     this.password = password;
+  }
+
+  public void setSessionID(String sessionID) {
+    this.sessionID = sessionID;
   }
 
   // -- IFormatReader methods --
@@ -177,6 +182,9 @@ public class OmeroReader extends FormatReader {
         }
         catch (NumberFormatException exc) { }
       }
+      else if (key.equals("session")) {
+        sessionID = val;
+      }
       else if (key.equals("iid")) {
         try {
           iid = Long.parseLong(val);
@@ -188,10 +196,10 @@ public class OmeroReader extends FormatReader {
     if (address == null) {
       throw new FormatException("Invalid server address");
     }
-    if (user == null) {
+    if (user == null && sessionID == null) {
       throw new FormatException("Invalid username");
     }
-    if (pass == null) {
+    if (pass == null && sessionID == null) {
       throw new FormatException("Invalid password");
     }
     if (iid < 0) {
@@ -204,7 +212,13 @@ public class OmeroReader extends FormatReader {
       LOGGER.info("Logging in");
 
       client = new omero.client(address, port);
-      final ServiceFactoryPrx serviceFactory = client.createSession(user, pass);
+      ServiceFactoryPrx serviceFactory = null;
+      if (user != null && pass != null) {
+        serviceFactory = client.createSession(user, pass);
+      }
+      else {
+        serviceFactory = client.createSession(sessionID, sessionID);
+      }
 
       // get raw pixels store and pixels
 
