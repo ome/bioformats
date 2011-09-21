@@ -75,6 +75,7 @@ public class OmeroReader extends FormatReader {
   private String password;
   private int thePort = DEFAULT_PORT;
   private String sessionID;
+  private boolean encrypted = true;
 
   private omero.client client;
   private RawPixelsStorePrx store;
@@ -107,6 +108,10 @@ public class OmeroReader extends FormatReader {
 
   public void setSessionID(String sessionID) {
     this.sessionID = sessionID;
+  }
+
+  public void setEncrypted(boolean encrypted) {
+    this.encrypted = encrypted;
   }
 
   // -- IFormatReader methods --
@@ -218,6 +223,11 @@ public class OmeroReader extends FormatReader {
       }
       else {
         serviceFactory = client.createSession(sessionID, sessionID);
+      }
+
+      if (!encrypted) {
+        client = client.createClient(false);
+        serviceFactory = client.getSession();
       }
 
       // get raw pixels store and pixels
