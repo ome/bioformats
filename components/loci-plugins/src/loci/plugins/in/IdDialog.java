@@ -28,6 +28,10 @@ package loci.plugins.in;
 import ij.IJ;
 import ij.gui.GenericDialog;
 import ij.io.OpenDialog;
+
+import java.awt.TextField;
+import java.util.Vector;
+
 import loci.common.Location;
 
 /**
@@ -72,6 +76,9 @@ public class IdDialog extends ImporterDialog {
       gd.addStringField("Username: ", "", 80);
       gd.addStringField("Password: ", "", 80);
       gd.addStringField("Image ID: ", "", 80);
+
+      Vector v = gd.getStringFields();
+      ((TextField) v.get(3)).setEchoChar('*');
     }
     return gd;
   }
