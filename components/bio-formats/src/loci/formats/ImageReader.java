@@ -155,6 +155,9 @@ public class ImageReader implements IFormatReader {
    boolean omero = id != null && id.toLowerCase().startsWith("omero:") &&
     id.indexOf("\n") > 0;
 
+   // blacklist temporary files that are being copied e.g. by WinSCP
+   boolean invalid = id != null && id.toLowerCase().endsWith(".filepart");
+
    // NB: Check that we can generate a valid handle for the ID;
    // e.g., for files, this will throw an exception if the file is missing.
    if (!fake && !omero) Location.getHandle(id).close();
@@ -162,12 +165,14 @@ public class ImageReader implements IFormatReader {
     if (!id.equals(currentId)) {
       // initialize file
       boolean success = false;
-      for (int i=0; i<readers.length; i++) {
-        if (readers[i].isThisType(id, allowOpen)) {
-          current = i;
-          currentId = id;
-          success = true;
-          break;
+      if (!invalid) {
+        for (int i=0; i<readers.length; i++) {
+          if (readers[i].isThisType(id, allowOpen)) {
+            current = i;
+            currentId = id;
+            success = true;
+            break;
+          }
         }
       }
       if (!success) {
