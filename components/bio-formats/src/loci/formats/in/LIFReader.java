@@ -142,6 +142,7 @@ public class LIFReader extends FormatReader {
   /** Constructs a new Leica LIF reader. */
   public LIFReader() {
     super("Leica Image File Format", "lif");
+    suffixNecessary = false;
     domains = new String[] {FormatTools.LM_DOMAIN};
   }
 

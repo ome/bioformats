@@ -97,6 +97,13 @@ stitchFiles = 0;
 
 % -- Main function - no need to edit anything past this point --
 
+if exist('id') == 0
+  dir = uigetdir;
+  cd(dir);
+  file = uigetfile('*.*', 'Choose a file to open');
+  id = fullfile(dir, file);
+end
+
 % load the Bio-Formats library into the MATLAB environment
 if autoloadBioFormats
     path = fullfile(fileparts(mfilename('fullpath')), 'loci_tools.jar');
