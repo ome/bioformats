@@ -1205,13 +1205,13 @@ public class FormatReaderTest {
         int actualMem = (int) ((m2 - m1) >> 20);
 
         // check time elapsed
-        if (actualTime - timeMultiplier * properTime > 20.0) {
+        if (actualTime - timeMultiplier * properTime > 250.0) {
           success = false;
           msg = "got " + actualTime + " ms, expected " + properTime + " ms";
         }
 
         // check memory used
-        else if (actualMem > properMem) {
+        else if (actualMem > properMem + 20) {
           success = false;
           msg =  "used " + actualMem + " MB; expected <= " + properMem + " MB";
         }
