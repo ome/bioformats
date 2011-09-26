@@ -6,9 +6,10 @@ Download Apache Ant from http://ant.apache.org/.
 Type "ant -p" for a list of targets.
 -->
 
-<project name="io-image" default="jar" basedir=".">
-  <description>Build file for LOCI I/O Image project</description>
+<project name="scifio" default="jar" basedir=".">
+  <description>Build file for SciFIO project</description>
   <property name="root.dir" location="../.."/>
   <import file="${root.dir}/ant/java.xml"/>
   <property file="build.properties"/>
+<echo>artifact dir: ${artifact.dir}</echo>
 </project>
