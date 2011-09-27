@@ -40,13 +40,13 @@ your combined work must be distributed under the terms of the GPL.
 
 // A C++ version of the Bio-Formats MinimumWriter example.
 // For the original Java version, see:
-//   components/bio-formats/utils/MinimumWriter.java
+//   components/scifio/utils/MinimumWriter.java
 
 // for JVM initialization
 #include "javaTools.h"
 
 // for Bio-Formats C++ bindings
-#include "bio-formats-4.3.3-SNAPSHOT.h"
+#include "scifio-4.3.3-SNAPSHOT.h"
 #include "ome-xml-4.3.3-SNAPSHOT.h"
 using jace::JNIException;
 using jace::proxy::java::io::IOException;

@@ -90,6 +90,27 @@
     </dependency>
   </dependencies>
 
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>loci.maven.plugins</groupId>
+        <artifactId>cppwrap-maven-plugin</artifactId>
+        <version>1.0-SNAPSHOT</version>
+        <configuration>
+          <headerFile>cppwrap/header.txt</headerFile>
+          <conflictsFile>cppwrap/conflicts.txt</conflictsFile>
+          <coreFile>cppwrap/core.txt</coreFile>
+          <extrasFile>cppwrap/extras.txt</extrasFile>
+          <sourceDir>cppwrap</sourceDir>
+          <libraries>
+            <library>${project.groupId}:loci-common:jar:${project.version}</library>
+            <library>${project.groupId}:ome-xml:jar:${project.version}</library>
+          </libraries>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
   <developers>
     <developer>
       <id>mark</id>
