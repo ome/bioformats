@@ -123,9 +123,16 @@ public class MetamorphTiffReader extends BaseTiffReader {
       well.fieldRow, well.well, zct[2]};
 
     int fileIndex = FormatTools.positionToRaster(lengths, position);
-    RandomAccessInputStream s = new RandomAccessInputStream(files[fileIndex]);
+    RandomAccessInputStream s = null;
+    if (fileIndex < files.length) {
+      s = new RandomAccessInputStream(files[fileIndex]);
+    }
+    else {
+      s = new RandomAccessInputStream(files[0]);
+    }
     TiffParser parser = new TiffParser(s);
-    IFD ifd = parser.getFirstIFD();
+    IFD ifd = files.length == 1 ?
+      ifds.get(getSeries() * getImageCount() + no) : parser.getFirstIFD();
     parser.getSamples(ifd, buf, x, y, w, h);
     s.close();
 
@@ -215,9 +222,33 @@ public class MetamorphTiffReader extends BaseTiffReader {
     // parse XML comment
 
     MetamorphHandler handler = new MetamorphHandler(getGlobalMetadata());
+    Vector<Double> xPositions = new Vector<Double>();
+    Vector<Double> yPositions = new Vector<Double>();
+
     for (IFD ifd : ifds) {
       String xml = XMLTools.sanitizeXML(ifd.getComment());
       XMLTools.parseXML(xml, handler);
+
+      double x = handler.getStagePositionX();
+      double y = handler.getStagePositionY();
+
+      if (xPositions.size() == 0) {
+        xPositions.add(x);
+        yPositions.add(y);
+      }
+      else {
+        double previousX = xPositions.get(xPositions.size() - 1);
+        double previousY = yPositions.get(yPositions.size() - 1);
+
+        if (Math.abs(previousX - x) > 0.21 || Math.abs(previousY - y) > 0.21) {
+          xPositions.add(x);
+          yPositions.add(y);
+        }
+      }
+    }
+
+    if (xPositions.size() > 1) {
+      fieldRowCount = xPositions.size();
     }
 
     Vector<Integer> wavelengths = handler.getWavelengths();
@@ -249,9 +280,16 @@ public class MetamorphTiffReader extends BaseTiffReader {
     core[0].sizeT = totalPlanes /
       (wellCount * fieldRowCount * fieldColumnCount * getSizeZ() * effectiveC);
     if (getSizeT() == 0) core[0].sizeT = 1;
-    core[0].imageCount = getSizeZ() * getSizeT() * effectiveC;
 
     int seriesCount = wellCount * fieldRowCount * fieldColumnCount;
+
+    if (seriesCount > 1 && getSizeZ() > totalPlanes / seriesCount) {
+      core[0].sizeZ = 1;
+      core[0].sizeT = totalPlanes / (seriesCount * getSizeT() * effectiveC);
+    }
+
+    core[0].imageCount = getSizeZ() * getSizeT() * effectiveC;
+
     if (seriesCount > 1) {
       CoreMetadata oldCore = core[0];
       core = new CoreMetadata[seriesCount];
@@ -261,18 +299,24 @@ public class MetamorphTiffReader extends BaseTiffReader {
     }
 
     for (int s=0; s<wellCount * fieldRowCount * fieldColumnCount; s++) {
-      int[] lengths = new int[] {getSizeZ(), getEffectiveSizeC(),
-        fieldColumnCount, fieldRowCount, wellCount, getSizeT()};
+      if (files.length > 1) {
+        int[] lengths = new int[] {getSizeZ(), getEffectiveSizeC(),
+          fieldColumnCount, fieldRowCount, wellCount, getSizeT()};
 
-      Well well = getWell(s);
-      int[] position =
-        new int[] {0, 0, well.fieldCol, well.fieldRow, well.well, 0};
+        Well well = getWell(s);
+        int[] position =
+          new int[] {0, 0, well.fieldCol, well.fieldRow, well.well, 0};
 
-      int fileIndex = FormatTools.positionToRaster(lengths, position);
-      parseFile(files[fileIndex], handler);
+        int fileIndex = FormatTools.positionToRaster(lengths, position);
+        parseFile(files[fileIndex], handler);
 
-      stageX.add(handler.getStagePositionX());
-      stageY.add(handler.getStagePositionY());
+        stageX.add(handler.getStagePositionX());
+        stageY.add(handler.getStagePositionY());
+      }
+      else {
+        stageX.add(xPositions.get(s));
+        stageY.add(yPositions.get(s));
+      }
     }
 
     MetadataStore store = makeFilterMetadata();
