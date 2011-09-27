@@ -390,14 +390,20 @@ public final class MetadataTools {
   }
 
   /**
-   * @deprecated This method is not thread-safe; use
-   * {@link loci.formats.services.OMEXMLService#createOMEXMLMetadata()}
-   * instead.
+   * Creates an OME-XML metadata object using reflection, to avoid
+   * direct dependencies on the optional {@link loci.formats.ome} package.
+   * @return A new instance of {@link loci.formats.ome.AbstractOMEXMLMetadata},
+   *   or null if one cannot be created.
    */
   public static IMetadata createOMEXMLMetadata() {
-    if (omexmlService == null) return null;
     try {
-      return omexmlService.createOMEXMLMetadata();
+      final OMEXMLService service =
+        new ServiceFactory().getInstance(OMEXMLService.class);
+      if (service == null) return null;
+      return service.createOMEXMLMetadata();
+    }
+    catch (DependencyException exc) {
+      return null;
     }
     catch (ServiceException exc) {
       return null;
