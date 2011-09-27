@@ -63,9 +63,9 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.jgoodies</groupId>
-      <artifactId>forms</artifactId>
-      <version>1.2.1</version>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>scifio</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>essi-unidata</groupId>
