@@ -1680,7 +1680,9 @@ public class LIFReader extends FormatReader {
       // point of the ROI and the transX/transY values are relative to
       // the center point of the image
 
-      store.setROIID(MetadataTools.createLSID("ROI", roi), roi);
+      String roiID = MetadataTools.createLSID("ROI", roi);
+      store.setImageROIRef(roiID, series, roi);
+      store.setROIID(roiID, roi);
       store.setTextID(MetadataTools.createLSID("Shape", roi, 0), roi, 0);
       if (text == null) {
         text = name;
