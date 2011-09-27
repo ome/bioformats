@@ -147,7 +147,12 @@ public class MinimalTiffReader extends FormatReader {
       int next = 0;
       for (int j=0; j<table.length; j++) {
         for (int i=0; i<table[0].length; i++) {
-          table[j][i] = (byte) ((colorMap[next++] >> 8) & 0xff);
+          if (colorMap[next] > 255) {
+            table[j][i] = (byte) ((colorMap[next++] >> 8) & 0xff);
+          }
+          else {
+            table[j][i] = (byte) (colorMap[next++] & 0xff);
+          }
         }
       }
 
