@@ -117,7 +117,11 @@ public class ND2Handler extends DefaultHandler {
       String type = roi.get("ROIType");
 
       if (type.equals("Text")) {
-        store.setROIID(MetadataTools.createLSID("ROI", r), r);
+        String roiID = MetadataTools.createLSID("ROI", r);
+        for (int i=0; i<core.length; i++) {
+          store.setImageROIRef(roiID, i, r);
+        }
+        store.setROIID(roiID, r);
         store.setTextID(MetadataTools.createLSID("Shape", r, 0), r, 0);
         store.setTextFontSize(
           NonNegativeInteger.valueOf(roi.get("fHeight")), r, 0);
@@ -138,7 +142,11 @@ public class ND2Handler extends DefaultHandler {
         store.setRectangleHeight(points[3] - points[1], r, 1);
       }
       else if (type.equals("HorizontalLine") || type.equals("VerticalLine")) {
-        store.setROIID(MetadataTools.createLSID("ROI", r), r);
+        String roiID = MetadataTools.createLSID("ROI", r);
+        for (int i=0; i<core.length; i++) {
+          store.setImageROIRef(roiID, i, r);
+        }
+        store.setROIID(roiID, r);
 
         String segments = roi.get("segments");
         segments = segments.replaceAll("\\[\\]", "");

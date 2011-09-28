@@ -1437,6 +1437,7 @@ public class ZeissLSMReader extends FormatReader {
           store.setTextStrokeWidth(lineWidth, i, 0);
           store.setROIID(roiID, i);
           store.setTextID(shapeID, i, 0);
+          store.setImageROIRef(roiID, series, i);
           break;
         case LINE:
           in.skipBytes(4);
@@ -1452,6 +1453,7 @@ public class ZeissLSMReader extends FormatReader {
           store.setLineFontSize(new NonNegativeInteger(fontHeight), i, 0);
           store.setLineStrokeWidth(lineWidth, i, 0);
           store.setROIID(roiID, i);
+          store.setImageROIRef(roiID, series, i);
           store.setLineID(shapeID, i, 0);
           break;
         case SCALE_BAR:
@@ -1480,6 +1482,7 @@ public class ZeissLSMReader extends FormatReader {
           store.setRectangleStrokeWidth(lineWidth, i, 0);
           store.setROIID(roiID, i);
           store.setRectangleID(shapeID, i, 0);
+          store.setImageROIRef(roiID, series, i);
 
           break;
         case ELLIPSE:
@@ -1537,6 +1540,7 @@ public class ZeissLSMReader extends FormatReader {
           store.setEllipseFontSize(new NonNegativeInteger(fontHeight), i, 0);
           store.setEllipseStrokeWidth(lineWidth, i, 0);
           store.setROIID(roiID, i);
+          store.setImageROIRef(roiID, series, i);
           store.setEllipseID(shapeID, i, 0);
 
           break;
@@ -1557,6 +1561,7 @@ public class ZeissLSMReader extends FormatReader {
           store.setEllipseFontSize(new NonNegativeInteger(fontHeight), i, 0);
           store.setEllipseStrokeWidth(lineWidth, i, 0);
           store.setROIID(roiID, i);
+          store.setImageROIRef(roiID, series, i);
           store.setEllipseID(shapeID, i, 0);
 
           break;
@@ -1594,6 +1599,7 @@ public class ZeissLSMReader extends FormatReader {
           store.setEllipseFontSize(new NonNegativeInteger(fontHeight), i, 0);
           store.setEllipseStrokeWidth(lineWidth, i, 0);
           store.setROIID(roiID, i);
+          store.setImageROIRef(roiID, series, i);
           store.setEllipseID(shapeID, i, 0);
 
           break;
@@ -1618,6 +1624,7 @@ public class ZeissLSMReader extends FormatReader {
           store.setPolylineFontSize(new NonNegativeInteger(fontHeight), i, 0);
           store.setPolylineStrokeWidth(lineWidth, i, 0);
           store.setROIID(roiID, i);
+          store.setImageROIRef(roiID, series, i);
           store.setPolylineID(shapeID, i, 0);
 
           break;
@@ -1645,6 +1652,7 @@ public class ZeissLSMReader extends FormatReader {
           store.setPolylineFontSize(new NonNegativeInteger(fontHeight), i, 0);
           store.setPolylineStrokeWidth(lineWidth, i, 0);
           store.setROIID(roiID, i);
+          store.setImageROIRef(roiID, series, i);
           store.setPolylineID(shapeID, i, 0);
 
           break;
@@ -1672,6 +1680,7 @@ public class ZeissLSMReader extends FormatReader {
           store.setPolylineFontSize(new NonNegativeInteger(fontHeight), i, 0);
           store.setPolylineStrokeWidth(lineWidth, i, 0);
           store.setROIID(roiID, i);
+          store.setImageROIRef(roiID, series, i);
           store.setPolylineID(shapeID, i, 0);
 
           break;

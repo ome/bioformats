@@ -915,8 +915,14 @@ public class ZeissCZIReader extends FormatReader {
     for (int i=0; i<layers.getLength(); i++) {
       Element layer = (Element) layers.item(i);
 
+      String roiID = MetadataTools.createLSID("ROI", i);
+      store.setROIID(roiID, i);
       store.setROIName(layer.getAttribute("Name"), i);
       store.setROIDescription(getFirstNodeValue(layer, "Usage"), i);
+
+      for (int series=0; series<getSeriesCount(); series++) {
+        store.setImageROIRef(roiID, series, i);
+      }
 
       int shape = 0;
 
