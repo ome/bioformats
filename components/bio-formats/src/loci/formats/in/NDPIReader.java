@@ -142,18 +142,33 @@ public class NDPIReader extends BaseTiffReader {
 
     int thumbX = getThumbSizeX();
     int thumbY = getThumbSizeY();
+    int rgbCount = getRGBChannelCount();
 
     setSeries(pyramidHeight - 1);
 
     byte[] thumb = null;
 
-    if (thumbX == getThumbSizeX() && thumbY == getThumbSizeY()) {
+    if (thumbX == getThumbSizeX() && thumbY == getThumbSizeY() &&
+      rgbCount == getRGBChannelCount())
+    {
       thumb = FormatTools.openThumbBytes(this, no);
       setSeries(currentSeries);
     }
     else {
+      // find the smallest series with the same aspect ratio
+      for (int s=getSeriesCount()-1; s>=0; s--) {
+        setSeries(s);
+        if (thumbX == getThumbSizeX() && thumbY == getThumbSizeY() &&
+          s != currentSeries && rgbCount == getRGBChannelCount())
+        {
+          thumb = FormatTools.openThumbBytes(this, no);
+          break;
+        }
+      }
       setSeries(currentSeries);
-      thumb = FormatTools.openThumbBytes(this, no);
+      if (thumb == null) {
+        thumb = FormatTools.openThumbBytes(this, no);
+      }
     }
     return thumb;
   }

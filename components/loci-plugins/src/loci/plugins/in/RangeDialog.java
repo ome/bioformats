@@ -57,9 +57,15 @@ public class RangeDialog extends ImporterDialog {
 
     ImageProcessorReader r = process.getReader();
     int seriesCount = process.getSeriesCount();
+    int currentSeries = r.getSeries();
     for (int s=0; s<seriesCount; s++) {
-      if (options.isSeriesOn(s) && r.getImageCount() > 1) return true;
+      r.setSeries(s);
+      if (options.isSeriesOn(s) && r.getImageCount() > 1) {
+        r.setSeries(currentSeries);
+        return true;
+      }
     }
+    r.setSeries(currentSeries);
     return false;
   }
 
