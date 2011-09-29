@@ -134,6 +134,18 @@ ZZ
   LICENSE => "GPL",
 );
 
+my %scifio = (
+  NAME    => "scifio",
+  TITLE   => "SciFIO Java library",
+  PATH    => "components/scifio",
+  JAR     => "scifio.jar",
+  PACKAGE => "loci.formats",
+  DESC    => <<ZZ,
+A core library for defining scientific image IO
+ZZ
+  LICENSE => "BSD",
+);
+
 my %testSuite = (
   NAME    => "test-suite",
   TITLE   => "LOCI testing framework",
@@ -566,6 +578,7 @@ my @active = (
   \%omeIO,
   \%omePlugins,
   \%omeXML,
+  \%scifio,
   \%testSuite,
 );
 
