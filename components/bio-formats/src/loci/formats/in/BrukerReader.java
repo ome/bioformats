@@ -183,6 +183,10 @@ public class BrukerReader extends FormatReader {
             }
           }
         }
+
+        if (acqpFiles.size() > fidFiles.size()) {
+          acqpFiles.remove(acqpFiles.size() - 1);
+        }
       }
     }
 
@@ -203,7 +207,7 @@ public class BrukerReader extends FormatReader {
 
       String[] sizes = null;
       String[] ordering = null;
-      int ni = 0, nr = 0;
+      int ni = 0, nr = 0, ns = 0;
       int bits = 0;
 
       for (int i=0; i<lines.length; i++) {
@@ -255,6 +259,9 @@ public class BrukerReader extends FormatReader {
           else if (key.equals("##$ACQ_scan_name")) {
             imageNames[series] = value;
           }
+          else if (key.equals("##$ACQ_ns_list_size")) {
+            ns = Integer.parseInt(value);
+          }
         }
       }
 
@@ -268,8 +275,8 @@ public class BrukerReader extends FormatReader {
           core[series].sizeZ = nr;
         }
         else {
-          core[series].sizeY = ni;
-          core[series].sizeZ = ys * nr;
+          core[series].sizeY = ys;
+          core[series].sizeZ = ni;
         }
       }
       else if (sizes.length == 3) {
@@ -279,7 +286,8 @@ public class BrukerReader extends FormatReader {
 
       core[series].sizeX = (int) Math.max(td, 256);
 
-      core[series].sizeT = 1;
+      core[series].sizeZ /= ns;
+      core[series].sizeT = ns * nr;
       core[series].sizeC = 1;
       core[series].imageCount = getSizeZ() * getSizeC() * getSizeT();
       core[series].dimensionOrder = "XYZCT";
