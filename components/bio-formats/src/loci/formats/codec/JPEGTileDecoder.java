@@ -101,6 +101,10 @@ public class JPEGTileDecoder {
           int height = in.readShort() & 0xffff;
           int width = in.readShort() & 0xffff;
           if (height == 0 || width == 0) {
+            throw new RuntimeException(
+              "Width or height > 65500 is not supported.");
+
+            /*
             if (height == 0) {
               height = y + h;
             }
@@ -120,6 +124,7 @@ public class JPEGTileDecoder {
             handle.writeShort(width);
 
             this.in = new RandomAccessInputStream(handle);
+            */
           }
           break;
         }
