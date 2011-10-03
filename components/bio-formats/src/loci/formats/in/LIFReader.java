@@ -1781,7 +1781,10 @@ public class LIFReader extends FormatReader {
   private double parseDouble(String number) {
     if (number != null) {
       number = number.replaceAll(",", ".");
-      return Double.parseDouble(number);
+      try {
+        return Double.parseDouble(number);
+      }
+      catch (NumberFormatException e) { }
     }
     return 0;
   }
