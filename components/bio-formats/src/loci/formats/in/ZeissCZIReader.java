@@ -33,6 +33,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import loci.common.DateTools;
+import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.xml.XMLTools;
 import loci.formats.CoreMetadata;
@@ -118,6 +119,10 @@ public class ZeissCZIReader extends FormatReader {
   private ArrayList<String> channelColors = new ArrayList<String>();
   private ArrayList<String> binnings = new ArrayList<String>();
   private ArrayList<String> detectorRefs = new ArrayList<String>();
+
+  private Double[] positionsX;
+  private Double[] positionsY;
+  private Double[] positionsZ;
 
   // -- Constructor --
 
@@ -266,9 +271,12 @@ public class ZeissCZIReader extends FormatReader {
     store.setExperimenterMiddleName(userMiddleName, 0);
     store.setExperimenterUserName(userName, 0);
 
+    String name = new Location(getCurrentFile()).getName();
+
     for (int i=0; i<getSeriesCount(); i++) {
       store.setImageAcquiredDate(acquiredDate, i);
       store.setImageExperimenterRef(experimenterID, i);
+      store.setImageName(name + " #" + (i + 1), i);
 
       if (airPressure != null) {
         store.setImagingEnvironmentAirPressure(new Double(airPressure), i);
@@ -310,9 +318,21 @@ public class ZeissCZIReader extends FormatReader {
             if (p.stageX != null) {
               store.setPlanePositionX(p.stageX, i, plane);
             }
+            else if (positionsX != null && i < positionsX.length) {
+              store.setPlanePositionX(positionsX[i], i, plane);
+            }
+
             if (p.stageY != null) {
               store.setPlanePositionY(p.stageY, i, plane);
             }
+            else if (positionsY != null && i < positionsY.length) {
+              store.setPlanePositionY(positionsY[i], i, plane);
+            }
+
+            if (positionsZ != null && i < positionsZ.length) {
+              store.setPlanePositionZ(positionsZ[i], i, plane);
+            }
+
             if (p.timestamp != null) {
               store.setPlaneDeltaT(p.timestamp - startTime, i, plane);
             }
@@ -1079,7 +1099,37 @@ public class ZeissCZIReader extends FormatReader {
       return;
     }
 
-    // TODO
+    Element experimentBlock =
+      getFirstNode((Element) experiments.item(0), "ExperimentBlocks");
+    Element acquisition = getFirstNode(experimentBlock, "AcquisitionBlock");
+    Element tilesSetup = getFirstNode(acquisition, "TilesSetup");
+    NodeList groups = getGrandchildren(tilesSetup, "PositionGroup");
+
+    positionsX = new Double[core.length];
+    positionsY = new Double[core.length];
+    positionsZ = new Double[core.length];
+
+    for (int i=0; i<groups.getLength(); i++) {
+      Element group = (Element) groups.item(i);
+
+      int tilesX = Integer.parseInt(getFirstNodeValue(group, "TilesX"));
+      int tilesY = Integer.parseInt(getFirstNodeValue(group, "TilesY"));
+
+      Element position = getFirstNode(group, "Position");
+      Double xPos = new Double(position.getAttribute("X"));
+      Double yPos = new Double(position.getAttribute("Y"));
+      Double zPos = new Double(position.getAttribute("Z"));
+
+      Double overlap =
+        new Double(getFirstNodeValue(group, "TileAcquisitionOverlap"));
+
+      for (int tile=0; tile<tilesX * tilesY; tile++) {
+        int index = i * tilesX * tilesY + tile;
+        positionsX[index] = xPos;
+        positionsY[index] = yPos;
+        positionsZ[index] = zPos;
+      }
+    }
   }
 
   private Element getFirstNode(Element root, String name) {
