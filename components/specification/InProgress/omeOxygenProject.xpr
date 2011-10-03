@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project version="12.2">
+<project version="13.0">
     <meta>
         <filters directoryPatterns="" filePatterns="" positiveFilePatterns="" showHiddenFiles="false"/>
         <options>
-            <serialized version="12.2" xml:space="preserve">
+            <serialized version="13.0" xml:space="preserve">
                 <map>
                     <entry>
                         <String>allow.dt.page.setting.to.override.general.settings</String>
