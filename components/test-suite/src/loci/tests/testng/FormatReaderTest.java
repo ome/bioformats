@@ -1486,11 +1486,20 @@ public class FormatReaderTest {
         int w = (int) Math.min(Configuration.TILE_SIZE, reader.getSizeX());
         int h = (int) Math.min(Configuration.TILE_SIZE, reader.getSizeY());
 
-        String md5 = TestTools.md5(reader.openBytes(0, 0, 0, w, h));
         String expected1 = config.getTileMD5();
         String expected2 = config.getTileAlternateMD5();
 
-        if (!md5.equals(expected1) && !md5.equals(expected2) &&
+        String md5 = null;
+
+        try {
+          md5 = TestTools.md5(reader.openBytes(0, 0, 0, w, h));
+        }
+        catch (FormatException e) { }
+
+        if (md5 == null && expected1 == null && expected2 == null) {
+          success = true;
+        }
+        else if (!md5.equals(expected1) && !md5.equals(expected2) &&
           (expected1 != null || expected2 != null))
         {
           success = false;
