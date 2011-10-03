@@ -154,8 +154,10 @@ public class ZeissCZIReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
+    int currentSeries = getSeries();
+
     for (SubBlock plane : planes) {
-      if (plane.seriesIndex == getSeries() && plane.planeIndex == no) {
+      if (plane.seriesIndex == currentSeries && plane.planeIndex == no) {
         byte[] rawData = plane.readPixelData();
         RandomAccessInputStream s = new RandomAccessInputStream(rawData);
         readPlane(s, x, y, w, h, buf);
