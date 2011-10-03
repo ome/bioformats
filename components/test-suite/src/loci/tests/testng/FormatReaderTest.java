@@ -1494,7 +1494,7 @@ public class FormatReaderTest {
         try {
           md5 = TestTools.md5(reader.openBytes(0, 0, 0, w, h));
         }
-        catch (FormatException e) { }
+        catch (Exception e) { }
 
         if (md5 == null && expected1 == null && expected2 == null) {
           success = true;
