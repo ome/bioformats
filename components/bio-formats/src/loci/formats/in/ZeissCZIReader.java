@@ -177,6 +177,34 @@ public class ZeissCZIReader extends FormatReader {
       acquisitions = 1;
       mosaics = 1;
       phases = 1;
+      store = null;
+
+      acquiredDate = null;
+      userDisplayName = null;
+      userName = null;
+      userFirstName = null;
+      userLastName = null;
+      userMiddleName = null;
+      userEmail = null;
+      userInstitution = null;
+      temperature = null;
+      airPressure = null;
+      humidity = null;
+      co2Percent = null;
+      correctionCollar = null;
+      medium = null;
+      refractiveIndex = null;
+      positionsX = null;
+      positionsY = null;
+      positionsZ = null;
+
+      emissionWavelengths.clear();
+      excitationWavelengths.clear();
+      pinholeSizes.clear();
+      channelNames.clear();
+      channelColors.clear();
+      binnings.clear();
+      detectorRefs.clear();
     }
   }
 
