@@ -363,9 +363,13 @@ public class PrairieReader extends FormatReader {
             int[] zct = getZCTCoords(i);
             int index = FormatTools.getIndex(getDimensionOrder(), getSizeZ(),
               1, getSizeT(), getImageCount() / getSizeC(), zct[0], 0, zct[2]);
-            store.setPlanePositionX(positionX.get(index), 0, i);
-            store.setPlanePositionY(positionY.get(index), 0, i);
-            store.setPlanePositionZ(positionZ.get(index), 0, i);
+
+            double xPos = positionX.get(index);
+            double yPos = positionY.get(index);
+            double zPos = positionZ.get(index);
+            if (!Double.isNaN(xPos)) store.setPlanePositionX(xPos, 0, i);
+            if (!Double.isNaN(yPos)) store.setPlanePositionY(yPos, 0, i);
+            if (!Double.isNaN(zPos)) store.setPlanePositionZ(zPos, 0, i);
 
             store.setPlaneDeltaT(
               relativeTimes.get(String.valueOf(i + 1)), 0, i);
@@ -549,7 +553,9 @@ public class PrairieReader extends FormatReader {
             addGlobalMeta("X position for position #" + positionX.size(),
               value);
           }
-          catch (NumberFormatException e) { }
+          catch (NumberFormatException e) {
+            positionX.add(Double.NaN);
+          }
         }
         else if (key.equals("positionCurrent_YAxis")) {
           try {
@@ -557,7 +563,9 @@ public class PrairieReader extends FormatReader {
             addGlobalMeta("Y position for position #" + positionY.size(),
               value);
           }
-          catch (NumberFormatException e) { }
+          catch (NumberFormatException e) {
+            positionY.add(Double.NaN);
+          }
         }
         else if (key.equals("positionCurrent_ZAxis")) {
           try {
@@ -565,7 +573,9 @@ public class PrairieReader extends FormatReader {
             addGlobalMeta("Z position for position #" + positionZ.size(),
               value);
           }
-          catch (NumberFormatException e) { }
+          catch (NumberFormatException e) {
+            positionZ.add(Double.NaN);
+          }
         }
         else if (key.equals("opticalZoom")) {
           try {

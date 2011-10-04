@@ -124,6 +124,23 @@ public class SVSReader extends BaseTiffReader {
     return buf;
   }
 
+  /* @see loci.formats.IFormatReader#openThumbBytes(int) */
+  public byte[] openThumbBytes(int no) throws FormatException, IOException {
+    if (getSeriesCount() == 1 || getSeries() >= getSeriesCount() - 2) {
+      return super.openThumbBytes(no);
+    }
+
+    int smallestSeries = getSeriesCount() - 3;
+    if (smallestSeries >= 0) {
+      int thisSeries = getSeries();
+      setSeries(smallestSeries);
+      byte[] thumb = FormatTools.openThumbBytes(this, no);
+      setSeries(thisSeries);
+      return thumb;
+    }
+    return super.openThumbBytes(no);
+  }
+
   /* @see loci.formats.IFormatReader#close(boolean) */
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
