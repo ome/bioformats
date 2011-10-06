@@ -1,7 +1,7 @@
 <!--
 build.xml
 
-Ant build file for LOCI I/O Image project.
+Ant build file for SciFIO project.
 Download Apache Ant from http://ant.apache.org/.
 Type "ant -p" for a list of targets.
 -->
@@ -11,5 +11,69 @@ Type "ant -p" for a list of targets.
   <property name="root.dir" location="../.."/>
   <import file="${root.dir}/ant/java.xml"/>
   <property file="build.properties"/>
-<echo>artifact dir: ${artifact.dir}</echo>
+
+  <target name="test" depends="jar,compile-tests,test-no-ome-xml,
+    test-no-lurawave, test-no-jai"
+    description="run tests">
+    <!-- NOTE: Overrides default "test" target from java.xml -->
+    <copy tofile="${build.dir}/testng.xml" overwrite="true"
+      file="${tests.dir}/loci/formats/utests/testng.xml"/>
+    <testng haltonfailure="true" groups="all" testname="${component.name}">
+      <classpath>
+        <pathelement location="${test-classes.dir}"/>
+        <pathelement location="${classes.dir}"/>
+        <pathelement path="${component.classpath}"/>
+      </classpath>
+      <xmlfileset file="${build.dir}/testng.xml"/>
+      <jvmarg value="-Dlurawave.license=XXX"/>
+    </testng>
+  </target>
+
+  <target name="test-no-lurawave" depends="compile-tests"
+    description="run missing LuraWave JAR tests" if="doTests">
+    <copy tofile="${build.dir}/testng.xml" overwrite="true"
+      file="${tests.dir}/loci/formats/utests/testng-no-lurawave.xml"/>
+    <testng failureProperty="failedTest">
+      <classpath>
+        <pathelement location="${test-classes.dir}"/>
+        <pathelement location="${classes.dir}"/>
+        <pathelement path="${component.cp.no-lurawave}"/>
+      </classpath>
+      <xmlfileset file="${build.dir}/testng.xml"/>
+      <jvmarg value="-mx${testng.memory}"/>
+    </testng>
+    <fail if="failedTest"/>
+  </target>
+
+  <target name="test-no-jai" depends="compile-tests"
+    description="run missing JAI ImageIO JAR tests" if="doTests">
+    <copy tofile="${build.dir}/testng.xml" overwrite="true"
+      file="${tests.dir}/loci/formats/utests/testng-no-jai.xml"/>
+    <testng failureProperty="failedTest">
+      <classpath>
+        <pathelement location="${test-classes.dir}"/>
+        <pathelement location="${classes.dir}"/>
+        <pathelement path="${component.cp.no-jai}"/>
+      </classpath>
+      <xmlfileset file="${build.dir}/testng.xml"/>
+      <jvmarg value="-mx${testng.memory}"/>
+    </testng>
+    <fail if="failedTest"/>
+  </target>
+
+  <target name="test-no-ome-xml" depends="compile-tests"
+    description="run missing OME-XML JAR tests" if="doTests">
+    <copy tofile="${build.dir}/testng.xml" overwrite="true"
+      file="${tests.dir}/loci/formats/utests/testng-no-ome-xml.xml"/>
+    <testng failureProperty="failedTest">
+      <classpath>
+        <pathelement location="${test-classes.dir}"/>
+        <pathelement location="${classes.dir}"/>
+        <pathelement path="${component.cp.no-xml}"/>
+      </classpath>
+      <xmlfileset file="${build.dir}/testng.xml"/>
+      <jvmarg value="-mx${testng.memory}"/>
+    </testng>
+    <fail if="failedTest"/>
+  </target>
 </project>
