@@ -324,6 +324,9 @@ public class PCIReader extends FormatReader {
       core[0].sizeC = imageFiles.size() / getImageCount();
       core[0].imageCount *= getSizeC();
     }
+    else {
+      core[0].imageCount = getSizeZ() * getSizeT();
+    }
     core[0].interleaved = false;
     core[0].dimensionOrder = zFirst ? "XYCZT" : "XYCTZ";
     core[0].littleEndian = true;
@@ -338,8 +341,6 @@ public class PCIReader extends FormatReader {
       String parent = file.substring(0, separator);
       imageFiles.put(getImageIndex(parent), file);
     }
-
-    core[0].imageCount = getSizeZ() * getSizeT();
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this, true);
