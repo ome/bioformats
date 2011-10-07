@@ -1654,6 +1654,15 @@ public class FormatReaderTest {
               continue;
             }
 
+            // DNG files can be picked up by both the Nikon reader and the
+            // DNG reader
+
+            if (result && r instanceof NikonReader &&
+              readers[j] instanceof DNGReader)
+            {
+              continue;
+            }
+
             boolean expected = r == readers[j];
             if (result != expected) {
               success = false;
