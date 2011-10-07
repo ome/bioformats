@@ -2082,7 +2082,7 @@ public class ZeissLSMReader extends FormatReader {
       blockData = new Hashtable<Integer, Object>();
       Integer entry = readEntry();
       Object value = readValue();
-      while (value != null) {
+      while (value != null && in.getFilePointer() < in.length()) {
         if (!blockData.containsKey(entry)) blockData.put(entry, value);
         entry = readEntry();
         value = readValue();
