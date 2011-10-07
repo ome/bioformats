@@ -465,7 +465,7 @@ public class MetamorphReader extends BaseTiffReader {
             int seriesNdx = s * (seriesCount / ns);
 
             if ((seriesCount != 1 && !validZ) ||
-              (nstages == 0 && (!validZ || seriesCount > 1)))
+              (nstages == 0 && ((!validZ && cc > 1) || seriesCount > 1)))
             {
               seriesNdx++;
             }
