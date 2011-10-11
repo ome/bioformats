@@ -262,6 +262,16 @@ public class Location {
   public static IRandomAccess getHandle(String id, boolean writable)
     throws IOException
   {
+    return getHandle(id, writable, true);
+  }
+
+  /**
+   * Gets an IRandomAccess object that can read from or write to the given file.
+   * @see IRandomAccess
+   */
+  public static IRandomAccess getHandle(String id, boolean writable,
+    boolean allowArchiveHandles) throws IOException
+  {
     LOGGER.trace("getHandle(id = {}, writable = {})", id, writable);
     IRandomAccess handle = getMappedFile(id);
     if (handle == null) {
@@ -271,13 +281,13 @@ public class Location {
       if (id.startsWith("http://")) {
         handle = new URLHandle(mapId);
       }
-      else if (ZipHandle.isZipFile(id)) {
+      else if (allowArchiveHandles && ZipHandle.isZipFile(id)) {
         handle = new ZipHandle(mapId);
       }
-      else if (GZipHandle.isGZipFile(id)) {
+      else if (allowArchiveHandles && GZipHandle.isGZipFile(id)) {
         handle = new GZipHandle(mapId);
       }
-      else if (BZip2Handle.isBZip2File(id)) {
+      else if (allowArchiveHandles && BZip2Handle.isBZip2File(id)) {
         handle = new BZip2Handle(mapId);
       }
       else {
