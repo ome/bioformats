@@ -24,10 +24,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.IOException;
-import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import loci.common.IRandomAccess;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.ZipHandle;
@@ -101,7 +101,9 @@ public class ZipReader extends FormatReader {
     reader.setNormalized(isNormalized());
     reader.setMetadataStore(getMetadataStore());
 
-    in = new RandomAccessInputStream(id);
+    // NB: We need a raw handle on the ZIP data itself, not a ZipHandle.
+    IRandomAccess rawHandle = Location.getHandle(id, false, false);
+    in = new RandomAccessInputStream(rawHandle, id);
 
     ZipInputStream zip = new ZipInputStream(in);
     while (true) {
