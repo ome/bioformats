@@ -66,7 +66,7 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
   protected IRandomAccess raf;
 
   /** The file name. */
-  protected String file;
+  protected final String file;
 
   protected long length = -1;
 
@@ -79,17 +79,27 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
    * around the given file.
    */
   public RandomAccessInputStream(String file) throws IOException {
-    this(Location.getHandle(file));
-    this.file = file;
+    this(Location.getHandle(file), file);
   }
 
   /** Constructs a random access stream around the given handle. */
   public RandomAccessInputStream(IRandomAccess handle) throws IOException {
+    this(handle, null);
+  }
+
+  /**
+   * Constructs a random access stream around the given handle,
+   * and with the associated file path.
+   */
+  public RandomAccessInputStream(IRandomAccess handle, String file)
+    throws IOException
+  {
     if (LOGGER.isTraceEnabled()) {
       LOGGER.trace("RandomAccessInputStream {} OPEN", hashCode());
     }
     raf = handle;
     raf.setOrder(ByteOrder.BIG_ENDIAN);
+    this.file = file;
     seek(0);
     length = -1;
   }
