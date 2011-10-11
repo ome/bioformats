@@ -95,11 +95,13 @@ public class PrairieReader extends FormatReader {
   private Double lensNA;
   private Double waitTime;
 
-  private Vector<Double> deltaT = new Vector<Double>();
   private Vector<Double> positionX = new Vector<Double>();
   private Vector<Double> positionY = new Vector<Double>();
   private Vector<Double> positionZ = new Vector<Double>();
   private Vector<String> channels = new Vector<String>();
+
+  private Hashtable<String, Double> relativeTimes =
+    new Hashtable<String, Double>();
 
   private Double zoom;
 
@@ -236,13 +238,13 @@ public class PrairieReader extends FormatReader {
       magnification = null;
       immersion = null;
       lensNA = null;
-      deltaT.clear();
       positionX.clear();
       positionY.clear();
       positionZ.clear();
       channels.clear();
       zoom = null;
       waitTime = null;
+      relativeTimes.clear();
     }
   }
 
@@ -311,13 +313,14 @@ public class PrairieReader extends FormatReader {
         core[0].littleEndian = tiff.isLittleEndian();
         core[0].indexed = tiff.isIndexed();
         core[0].falseColor = false;
+
+        MetadataTools.populatePixels(store, this, !minimumMetadata);
+
         if (date != null) {
           date = DateTools.formatDate(date, "MM/dd/yyyy h:mm:ss a");
           if (date != null) store.setImageAcquiredDate(date, 0);
         }
         else MetadataTools.setDefaultCreationDate(store, id, 0);
-
-        MetadataTools.populatePixels(store, this, !minimumMetadata);
 
         if (!minimumMetadata) {
           // link Instrument and Image
@@ -468,6 +471,9 @@ public class PrairieReader extends FormatReader {
           int zIndex = Integer.parseInt(index);
           if (zIndex > getSizeZ()) core[0].sizeZ++;
         }
+
+        relativeTimes.put(index,
+          new Double(attributes.getValue("relativeTime")));
       }
       else if (qName.equals("File")) {
         core[0].imageCount++;
