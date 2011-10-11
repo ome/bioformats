@@ -206,10 +206,16 @@ public class PCIReader extends FormatReader {
       int separator = name.lastIndexOf(File.separator);
       String parent = name.substring(0, separator);
       String relativePath = name.substring(separator + 1);
-      RandomAccessInputStream stream = poi.getDocumentStream(name);
-      stream.order(true);
+      RandomAccessInputStream stream = null;
 
-      if (stream.length() == 8) {
+      if (!(relativePath.startsWith("Bitmap") ||
+        (relativePath.equals("Data") && parent.indexOf("Image") != -1)))
+      {
+        stream = poi.getDocumentStream(name);
+        stream.order(true);
+      }
+
+      if (stream != null && stream.length() == 8) {
         double value = stream.readDouble();
         stream.seek(0);
 
@@ -302,7 +308,9 @@ public class PCIReader extends FormatReader {
           }
         }
       }
-      stream.close();
+      if (stream != null) {
+        stream.close();
+      }
     }
 
     boolean zFirst = !new Double(firstZ).equals(new Double(secondZ));
@@ -315,6 +323,9 @@ public class PCIReader extends FormatReader {
     if (imageFiles.size() > getImageCount() && getSizeC() == 1) {
       core[0].sizeC = imageFiles.size() / getImageCount();
       core[0].imageCount *= getSizeC();
+    }
+    else {
+      core[0].imageCount = getSizeZ() * getSizeT();
     }
     core[0].interleaved = false;
     core[0].dimensionOrder = zFirst ? "XYCZT" : "XYCTZ";
@@ -330,6 +341,8 @@ public class PCIReader extends FormatReader {
       String parent = file.substring(0, separator);
       imageFiles.put(getImageIndex(parent), file);
     }
+
+    core[0].imageCount = getSizeZ() * getSizeT();
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this, true);

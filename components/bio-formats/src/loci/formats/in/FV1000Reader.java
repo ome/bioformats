@@ -1498,7 +1498,7 @@ public class FV1000Reader extends FormatReader {
       if (offset < 0 || offset + 1 >= pattern.length()) {
         break;
       }
-      if (pattern.charAt(offset + 1) == '%') {
+      if (pattern.charAt(offset + 1) != '0') {
         continue;
       }
       percentOffsets.add(new Integer(offset));

@@ -467,7 +467,9 @@ public class MIASReader extends FormatReader {
         String[] resultsList = f.list(true);
         for (String result : resultsList) {
           // exclude proprietary program state files
-          if (!result.endsWith(".sav") && !result.endsWith(".dsv")) {
+          if (!result.endsWith(".sav") && !result.endsWith(".dsv") &&
+            !result.endsWith(".dat"))
+          {
             Location r = new Location(f, result);
             AnalysisFile af = new AnalysisFile();
             af.filename = r.getAbsolutePath();

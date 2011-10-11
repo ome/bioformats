@@ -226,6 +226,9 @@ public class TileStitcher extends ReaderWrapper {
     ArrayList<Double> uniqueX = new ArrayList<Double>();
     ArrayList<Double> uniqueY = new ArrayList<Double>();
 
+    boolean equalZs = true;
+    Double firstZ = meta.getPlanePositionZ(0, reader.getImageCount() - 1);
+
     for (int i=0; i<reader.getSeriesCount(); i++) {
       TileCoordinate coord = new TileCoordinate();
       coord.x = meta.getPlanePositionX(i, reader.getImageCount() - 1);
@@ -239,10 +242,21 @@ public class TileStitcher extends ReaderWrapper {
       if (coord.y != null && !uniqueY.contains(coord.y)) {
         uniqueY.add(coord.y);
       }
+
+      Double zPos = meta.getPlanePositionZ(i, reader.getImageCount() - 1);
+      if ((firstZ == null && zPos != null) || !firstZ.equals(zPos)) {
+        equalZs = false;
+      }
     }
 
     tileX = uniqueX.size();
     tileY = uniqueY.size();
+
+    if (!equalZs) {
+      tileX = 1;
+      tileY = 1;
+      return;
+    }
 
     tileMap = new Integer[tileY][tileX];
 

@@ -95,11 +95,13 @@ public class PrairieReader extends FormatReader {
   private Double lensNA;
   private Double waitTime;
 
-  private Vector<Double> deltaT = new Vector<Double>();
   private Vector<Double> positionX = new Vector<Double>();
   private Vector<Double> positionY = new Vector<Double>();
   private Vector<Double> positionZ = new Vector<Double>();
   private Vector<String> channels = new Vector<String>();
+
+  private Hashtable<String, Double> relativeTimes =
+    new Hashtable<String, Double>();
 
   private Double zoom;
 
@@ -236,13 +238,13 @@ public class PrairieReader extends FormatReader {
       magnification = null;
       immersion = null;
       lensNA = null;
-      deltaT.clear();
       positionX.clear();
       positionY.clear();
       positionZ.clear();
       channels.clear();
       zoom = null;
       waitTime = null;
+      relativeTimes.clear();
     }
   }
 
@@ -311,13 +313,14 @@ public class PrairieReader extends FormatReader {
         core[0].littleEndian = tiff.isLittleEndian();
         core[0].indexed = tiff.isIndexed();
         core[0].falseColor = false;
+
+        MetadataTools.populatePixels(store, this, !minimumMetadata);
+
         if (date != null) {
           date = DateTools.formatDate(date, "MM/dd/yyyy h:mm:ss a");
           if (date != null) store.setImageAcquiredDate(date, 0);
         }
         else MetadataTools.setDefaultCreationDate(store, id, 0);
-
-        MetadataTools.populatePixels(store, this, !minimumMetadata);
 
         if (!minimumMetadata) {
           // link Instrument and Image
@@ -360,9 +363,16 @@ public class PrairieReader extends FormatReader {
             int[] zct = getZCTCoords(i);
             int index = FormatTools.getIndex(getDimensionOrder(), getSizeZ(),
               1, getSizeT(), getImageCount() / getSizeC(), zct[0], 0, zct[2]);
-            store.setPlanePositionX(positionX.get(index), 0, i);
-            store.setPlanePositionY(positionY.get(index), 0, i);
-            store.setPlanePositionZ(positionZ.get(index), 0, i);
+
+            double xPos = positionX.get(index);
+            double yPos = positionY.get(index);
+            double zPos = positionZ.get(index);
+            if (!Double.isNaN(xPos)) store.setPlanePositionX(xPos, 0, i);
+            if (!Double.isNaN(yPos)) store.setPlanePositionY(yPos, 0, i);
+            if (!Double.isNaN(zPos)) store.setPlanePositionZ(zPos, 0, i);
+
+            store.setPlaneDeltaT(
+              relativeTimes.get(String.valueOf(i + 1)), 0, i);
           }
 
           if (microscopeModel != null) {
@@ -461,6 +471,9 @@ public class PrairieReader extends FormatReader {
           int zIndex = Integer.parseInt(index);
           if (zIndex > getSizeZ()) core[0].sizeZ++;
         }
+
+        relativeTimes.put(index,
+          new Double(attributes.getValue("relativeTime")));
       }
       else if (qName.equals("File")) {
         core[0].imageCount++;
@@ -540,7 +553,9 @@ public class PrairieReader extends FormatReader {
             addGlobalMeta("X position for position #" + positionX.size(),
               value);
           }
-          catch (NumberFormatException e) { }
+          catch (NumberFormatException e) {
+            positionX.add(Double.NaN);
+          }
         }
         else if (key.equals("positionCurrent_YAxis")) {
           try {
@@ -548,7 +563,9 @@ public class PrairieReader extends FormatReader {
             addGlobalMeta("Y position for position #" + positionY.size(),
               value);
           }
-          catch (NumberFormatException e) { }
+          catch (NumberFormatException e) {
+            positionY.add(Double.NaN);
+          }
         }
         else if (key.equals("positionCurrent_ZAxis")) {
           try {
@@ -556,7 +573,9 @@ public class PrairieReader extends FormatReader {
             addGlobalMeta("Z position for position #" + positionZ.size(),
               value);
           }
-          catch (NumberFormatException e) { }
+          catch (NumberFormatException e) {
+            positionZ.add(Double.NaN);
+          }
         }
         else if (key.equals("opticalZoom")) {
           try {

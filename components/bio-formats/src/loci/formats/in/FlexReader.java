@@ -105,7 +105,7 @@ public class FlexReader extends FormatReader {
 
   private int wellRows, wellColumns;
 
-  private Vector<String> channelNames;
+  private String[] channelNames;
   private Vector<Double> xPositions, yPositions;
   private Vector<Double> xSizes, ySizes;
   private Vector<String> cameraIDs, objectiveIDs, lightSourceIDs;
@@ -578,6 +578,13 @@ public class FlexReader extends FormatReader {
           store.setImageObjectiveSettingsID(objectiveRefs.get(seriesIndex), i);
         }
 
+        for (int c=0; c<getEffectiveSizeC(); c++) {
+          int channelIndex = seriesIndex + c;
+          if (channelNames != null && channelIndex < channelNames.length) {
+            store.setChannelName(channelNames[channelIndex], i, c);
+          }
+        }
+
         if (seriesIndex < lightSourceCombinationRefs.size()) {
           String lightSourceCombo = lightSourceCombinationRefs.get(seriesIndex);
           Vector<String> lightSources =
@@ -722,7 +729,6 @@ public class FlexReader extends FormatReader {
     LOGGER.info("Parsing .flex file (well {}{})", wellRow + 'A', wellCol + 1);
     if (flexFiles[wellRow][wellCol] == null) return;
 
-    if (channelNames == null) channelNames = new Vector<String>();
     if (xPositions == null) xPositions = new Vector<Double>();
     if (yPositions == null) yPositions = new Vector<Double>();
     if (xSizes == null) xSizes = new Vector<Double>();
@@ -764,6 +770,8 @@ public class FlexReader extends FormatReader {
       new FlexHandler(n, f, store, firstFile, currentWell);
     LOGGER.info("Parsing XML in .flex file");
     XMLTools.parseXML(xml.getBytes(), handler);
+
+    channelNames = n.toArray(new String[n.size()]);
 
     if (firstFile) populateCoreMetadata(oldWellRow, oldWellCol, n);
 
@@ -845,7 +853,7 @@ public class FlexReader extends FormatReader {
     }
 
     if (getSizeC() == 0) {
-      core[0].sizeC = (int) Math.max(channelNames.size(), 1);
+      core[0].sizeC = (int) Math.max(channelNames.length, 1);
     }
 
     if (getSizeZ() == 0) core[0].sizeZ = 1;

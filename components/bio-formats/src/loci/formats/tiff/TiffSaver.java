@@ -248,6 +248,14 @@ public class TiffSaver {
       int y, int w, int h, boolean last)
   throws FormatException, IOException
   {
+    writeImage(buf, ifd, no, pixelType, x, y, w, h, last, null, false);
+  }
+
+  public void writeImage(byte[] buf, IFD ifd, int no, int pixelType, int x,
+      int y, int w, int h, boolean last, Integer nChannels,
+      boolean copyDirectly)
+  throws FormatException, IOException
+  {
     LOGGER.debug("Attempting to write image.");
     //b/c method is public should check parameters again
     if (buf == null) {
@@ -260,12 +268,14 @@ public class TiffSaver {
 
     // These operations are synchronized
     TiffCompression compression;
-    int tileWidth, tileHeight, nStrips, nChannels;
+    int tileWidth, tileHeight, nStrips;
     ByteArrayOutputStream[] stripBuf;
     synchronized (this) {
       int bytesPerPixel = FormatTools.getBytesPerPixel(pixelType);
       int blockSize = w * h * bytesPerPixel;
-      nChannels = buf.length / (w * h * bytesPerPixel);
+      if (nChannels == null) {
+        nChannels = buf.length / (w * h * bytesPerPixel);
+      }
       boolean interleaved = ifd.getPlanarConfiguration() == 1;
 
       makeValidIFD(ifd, pixelType, nChannels);
@@ -295,29 +305,34 @@ public class TiffSaver {
 
       // write pixel strips to output buffers
       int effectiveStrips = !interleaved ? nStrips / nChannels : nStrips;
-      for (int strip = 0; strip < effectiveStrips; strip++) {
-        int xOffset = (strip % tilesPerRow) * tileWidth;
-        int yOffset = (strip / tilesPerRow) * tileHeight;
-        for (int row=0; row<tileHeight; row++) {
-          for (int col=0; col<tileWidth; col++) {
-            int ndx = ((row+yOffset) * w + col + xOffset) * bytesPerPixel;
-            for (int c=0; c<nChannels; c++) {
-              for (int n=0; n<bps[c]/8; n++) {
-                if (interleaved) {
-                  off = ndx * nChannels + c * bytesPerPixel + n;
-                  if (row >= h || col >= w) {
-                    stripOut[strip].writeByte(0);
-                  } else {
-                    stripOut[strip].writeByte(buf[off]);
+      if (effectiveStrips == 1 && copyDirectly) {
+        stripOut[0].write(buf);
+      }
+      else {
+        for (int strip = 0; strip < effectiveStrips; strip++) {
+          int xOffset = (strip % tilesPerRow) * tileWidth;
+          int yOffset = (strip / tilesPerRow) * tileHeight;
+          for (int row=0; row<tileHeight; row++) {
+            for (int col=0; col<tileWidth; col++) {
+              int ndx = ((row+yOffset) * w + col + xOffset) * bytesPerPixel;
+              for (int c=0; c<nChannels; c++) {
+                for (int n=0; n<bps[c]/8; n++) {
+                  if (interleaved) {
+                    off = ndx * nChannels + c * bytesPerPixel + n;
+                    if (row >= h || col >= w) {
+                      stripOut[strip].writeByte(0);
+                    } else {
+                      stripOut[strip].writeByte(buf[off]);
+                    }
                   }
-                }
-                else {
-                  off = c * blockSize + ndx + n;
-                  if (row >= h || col >= w) {
-                    stripOut[strip].writeByte(0);
-                  } else {
-                    stripOut[c * (nStrips / nChannels) + strip].writeByte(
-                        buf[off]);
+                  else {
+                    off = c * blockSize + ndx + n;
+                    if (row >= h || col >= w) {
+                      stripOut[strip].writeByte(0);
+                    } else {
+                      stripOut[c * (nStrips / nChannels) + strip].writeByte(
+                          buf[off]);
+                    }
                   }
                 }
               }

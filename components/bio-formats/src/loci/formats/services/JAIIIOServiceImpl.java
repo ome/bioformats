@@ -63,8 +63,9 @@ public class JAIIIOServiceImpl extends AbstractService
   // -- Constants --
 
   public static final String NO_J2K_MSG =
-    "The JAI Image I/O Tools are required to read JPEG-2000 files. Please " +
-    "obtain jai_imageio.jar from http://loci.wisc.edu/ome/formats-library.html";
+    "The JAI Image I/O Tools are required to read JPEG-2000 files. " +
+    "Please obtain jai_imageio.jar from " +
+    "http://loci.wisc.edu/bio-formats/bio-formats-java-library";
 
   // -- JAIIIOService API methods --
 

@@ -57,7 +57,7 @@ public class BrukerReader extends FormatReader {
 
   // -- Fields --
 
-  private ArrayList<String> fidFiles = new ArrayList<String>();
+  private ArrayList<String> pixelsFiles = new ArrayList<String>();
   private ArrayList<String> allFiles = new ArrayList<String>();
 
   // -- Constructor --
@@ -97,7 +97,7 @@ public class BrukerReader extends FormatReader {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
     RandomAccessInputStream s =
-      new RandomAccessInputStream(fidFiles.get(getSeries()));
+      new RandomAccessInputStream(pixelsFiles.get(getSeries()));
     s.seek(no * FormatTools.getPlaneSize(this));
     readPlane(s, x, y, w, h, buf);
     s.close();
@@ -108,12 +108,12 @@ public class BrukerReader extends FormatReader {
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
 
-    String dir = fidFiles.get(getSeries());
+    String dir = pixelsFiles.get(getSeries());
     dir = dir.substring(0, dir.lastIndexOf(File.separator) + 1);
     ArrayList<String> files = new ArrayList<String>();
 
     for (String f : allFiles) {
-      if (f.startsWith(dir) && (!f.endsWith("fid") || !noPixels)) {
+      if (f.startsWith(dir) && (!f.endsWith("2dseq") || !noPixels)) {
         files.add(f);
       }
     }
@@ -130,7 +130,7 @@ public class BrukerReader extends FormatReader {
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
-      fidFiles.clear();
+      pixelsFiles.clear();
       allFiles.clear();
     }
   }
@@ -166,6 +166,7 @@ public class BrukerReader extends FormatReader {
     Arrays.sort(acquisitionDirs, comparator);
 
     ArrayList<String> acqpFiles = new ArrayList<String>();
+    ArrayList<String> recoFiles = new ArrayList<String>();
 
     for (String f : acquisitionDirs) {
       Location dir = new Location(parent, f);
@@ -175,25 +176,47 @@ public class BrukerReader extends FormatReader {
           Location child = new Location(dir, file);
           if (!child.isDirectory()) {
             allFiles.add(child.getAbsolutePath());
-            if (file.equals("fid")) {
-              fidFiles.add(child.getAbsolutePath());
-            }
-            else if (file.equals("acqp")) {
+            if (file.equals("acqp")) {
               acqpFiles.add(child.getAbsolutePath());
             }
           }
+          else {
+            Location grandchild = new Location(child, "1");
+            if (grandchild.exists()) {
+              String[] moreFiles = grandchild.list(true);
+              for (String m : moreFiles) {
+                Location ggc = new Location(grandchild, m);
+                if (!ggc.isDirectory()) {
+                  allFiles.add(ggc.getAbsolutePath());
+                  if (m.equals("2dseq")) {
+                    pixelsFiles.add(ggc.getAbsolutePath());
+                  }
+                  else if (m.equals("reco")) {
+                    recoFiles.add(ggc.getAbsolutePath());
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        if (acqpFiles.size() > pixelsFiles.size()) {
+          acqpFiles.remove(acqpFiles.size() - 1);
+        }
+        if (recoFiles.size() > pixelsFiles.size()) {
+          recoFiles.remove(recoFiles.size() - 1);
         }
       }
     }
 
-    core = new CoreMetadata[fidFiles.size()];
+    core = new CoreMetadata[pixelsFiles.size()];
 
-    String[] imageNames = new String[fidFiles.size()];
-    String[] timestamps = new String[fidFiles.size()];
-    String[] institutions = new String[fidFiles.size()];
-    String[] users = new String[fidFiles.size()];
+    String[] imageNames = new String[pixelsFiles.size()];
+    String[] timestamps = new String[pixelsFiles.size()];
+    String[] institutions = new String[pixelsFiles.size()];
+    String[] users = new String[pixelsFiles.size()];
 
-    for (int series=0; series<fidFiles.size(); series++) {
+    for (int series=0; series<pixelsFiles.size(); series++) {
       setSeries(series);
 
       core[series] = new CoreMetadata();
@@ -203,8 +226,9 @@ public class BrukerReader extends FormatReader {
 
       String[] sizes = null;
       String[] ordering = null;
-      int ni = 0, nr = 0;
+      int ni = 0, nr = 0, ns = 0;
       int bits = 0;
+      boolean signed = false;
 
       for (int i=0; i<lines.length; i++) {
         String line = lines[i];
@@ -218,6 +242,9 @@ public class BrukerReader extends FormatReader {
             if (value.startsWith("<")) {
               value = value.substring(1, value.length() - 1);
             }
+          }
+          if (key.length() < 4) {
+            continue;
           }
 
           addSeriesMeta(key.substring(3), value);
@@ -252,6 +279,41 @@ public class BrukerReader extends FormatReader {
           else if (key.equals("##$ACQ_scan_name")) {
             imageNames[series] = value;
           }
+          else if (key.equals("##$ACQ_ns_list_size")) {
+            ns = Integer.parseInt(value);
+          }
+        }
+      }
+
+      String recoData = DataTools.readFile(recoFiles.get(series));
+      lines = recoData.split("\n");
+
+      for (int i=0; i<lines.length; i++) {
+        String line = lines[i];
+        int index = line.indexOf("=");
+        if (index >= 0) {
+          String key = line.substring(0, index);
+          String value = line.substring(index + 1);
+
+          if (value.startsWith("(")) {
+            value = lines[i + 1].trim();
+            if (value.startsWith("<")) {
+              value = value.substring(1, value.length() - 1);
+            }
+          }
+          if (key.length() < 4) {
+            continue;
+          }
+
+          addSeriesMeta(key.substring(3), value);
+
+          if (key.equals("##$RECO_size")) {
+            sizes = value.split(" ");
+          }
+          else if (key.equals("##$RECO_wordtype")) {
+            bits = Integer.parseInt(value.substring(1, value.indexOf("BIT")));
+            signed = value.indexOf("_SGN_") >= 0;
+          }
         }
       }
 
@@ -265,8 +327,8 @@ public class BrukerReader extends FormatReader {
           core[series].sizeZ = nr;
         }
         else {
-          core[series].sizeY = ni;
-          core[series].sizeZ = ys * nr;
+          core[series].sizeY = ys;
+          core[series].sizeZ = ni;
         }
       }
       else if (sizes.length == 3) {
@@ -274,16 +336,17 @@ public class BrukerReader extends FormatReader {
         core[series].sizeZ = nr * zs;
       }
 
-      core[series].sizeX = (int) Math.max(td, 256);
+      core[series].sizeX = td;
 
-      core[series].sizeT = 1;
+      core[series].sizeZ /= ns;
+      core[series].sizeT = ns * nr;
       core[series].sizeC = 1;
       core[series].imageCount = getSizeZ() * getSizeC() * getSizeT();
-      core[series].dimensionOrder = "XYZCT";
+      core[series].dimensionOrder = "XYCTZ";
       core[series].rgb = false;
       core[series].interleaved = false;
       core[series].pixelType =
-        FormatTools.pixelTypeFromBytes(bits / 8, true, false);
+        FormatTools.pixelTypeFromBytes(bits / 8, true, signed);
     }
 
     MetadataStore store = makeFilterMetadata();
