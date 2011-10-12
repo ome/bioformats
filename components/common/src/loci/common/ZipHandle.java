@@ -56,7 +56,7 @@ public class ZipHandle extends StreamHandle {
   public ZipHandle(String file) throws IOException {
     super();
     this.file = file;
-    in = new RandomAccessInputStream(getHandle(file));
+    in = openStream(file);
     zip = new ZipInputStream(in);
 
     // strip off .zip extension and directory prefix
@@ -99,7 +99,7 @@ public class ZipHandle extends StreamHandle {
   public ZipHandle(String file, ZipEntry entry) throws IOException {
     super();
     this.file = file;
-    in = new RandomAccessInputStream(getHandle(file));
+    in = openStream(file);
     zip = new ZipInputStream(in);
     while (!entry.getName().equals(zip.getNextEntry().getName()));
     entryCount = 1;
@@ -159,7 +159,7 @@ public class ZipHandle extends StreamHandle {
     if (stream != null) stream.close();
     if (in != null) {
       in.close();
-      in = new RandomAccessInputStream(getHandle(file));
+      in = openStream(file);
     }
     if (zip != null) zip.close();
     zip = new ZipInputStream(in);
@@ -184,6 +184,12 @@ public class ZipHandle extends StreamHandle {
 
   private static IRandomAccess getHandle(String file) throws IOException {
     return Location.getHandle(file, false, false);
+  }
+
+  private static RandomAccessInputStream openStream(String file)
+    throws IOException
+  {
+    return new RandomAccessInputStream(getHandle(file), file);
   }
 
 }
