@@ -50,7 +50,6 @@ public class ZipHandle extends StreamHandle {
   private ZipInputStream zip;
   private ZipEntry entry;
   private int entryCount = 0;
-  private String file;
 
   // -- Constructor --
 
