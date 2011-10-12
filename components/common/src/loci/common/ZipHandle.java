@@ -91,10 +91,10 @@ public class ZipHandle extends StreamHandle {
   }
 
   /**
-   * Constructs a new ZipHandle corresponding to the given file.
+   * Constructs a new ZipHandle corresponding to the given entry of the
+   * specified Zip file.
    *
-   * @throws HandleException if:
-   *   <li>The given file is not a Zip file.<br>
+   * @throws HandleException if the given file is not a Zip file.
    */
   public ZipHandle(String file, ZipEntry entry) throws IOException {
     super();
