@@ -183,8 +183,7 @@ public class ZipHandle extends StreamHandle {
   }
 
   private static IRandomAccess getHandle(String file) throws IOException {
-    return file.startsWith("http://") ?
-      new URLHandle(file) : new NIOFileHandle(file, "r");
+    return Location.getHandle(file, false, false);
   }
 
 }
