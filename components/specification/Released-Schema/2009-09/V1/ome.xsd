@@ -2133,7 +2133,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 		<xsd:annotation>
 			<xsd:documentation>
 				Either LSID or internal consistent IDs for the file
-				See: http://www.ome-xml.org/wiki/LSID
+				See: http://www.openmicroscopy.org/site/support/file-formats/working-with-ome-xml/id-and-lsid
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:restriction base="xsd:string">

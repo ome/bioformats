@@ -464,7 +464,7 @@
 			<xsd:documentation>
 				NOTE: Polyline and Path are DEPRECATED as they are due to be 
 				replaced in the next major release to provide support for 
-				3-dimensional objects. see http://www.ome-xml.org/wiki/ROI
+				3-dimensional objects. see http://www.openmicroscopy.org/site/support/file-formats/working-with-ome-xml/roi
 				
 				The Polyline defines open and closed shapes formed of straight 
 				lines. Note: Polyline uses counterclockwise winding (this is the 
@@ -497,7 +497,7 @@
 			<xsd:documentation>
 				NOTE: Polyline and Path are DEPRECATED as they are due to be 
 				replaced in the next major release to provide support for 
-				3-dimensional objects. see http://www.ome-xml.org/wiki/ROI
+				3-dimensional objects. see http://www.openmicroscopy.org/site/support/file-formats/working-with-ome-xml/roi
 				
 				A path is a complex shape that can consists of straight and 
 				curved sections. It is defined as a collection of drawing 

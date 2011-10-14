@@ -117,7 +117,7 @@
 		</sa:LongAnnotation>
 		<sa:StringAnnotation ID="Annotation:11" Namespace="ome:omero:attachment:url">
 			<sa:Link>Image:1</sa:Link>
-			<sa:Value>http://www.ome-xml.org/</sa:Value>
+			<sa:Value>http://www.openmicroscopy.org/site/support/file-formats</sa:Value>
 		</sa:StringAnnotation>
 		<sa:TimestampAnnotation ID="Annotation:12" Namespace="ome:omero:insight:last-viewed">
 			<sa:Link>Image:1</sa:Link>

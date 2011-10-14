@@ -81,7 +81,7 @@
 			<sa:Value>204</sa:Value>
 		</sa:LongAnnotation>
 		<sa:StringAnnotation ID="Annotation:11" Namespace="sample:ome:omero:attachment:url">
-			<sa:Value>http://www.ome-xml.org/</sa:Value>
+			<sa:Value>http://www.openmicroscopy.org/site/support/file-formats</sa:Value>
 		</sa:StringAnnotation>
 		<sa:TimestampAnnotation ID="Annotation:12" Namespace="sample:ome:omero:insight:last-viewed">
 			<sa:Value>2008-03-04T14:17:43.0Z</sa:Value>
