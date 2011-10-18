@@ -1,3 +1,14 @@
+4.3.3 (2011 October 18):
+* Many bug fixes, including:
+  - Speed improvements to HCImage/SimplePCI and Zeiss ZVI files
+  - Reduce memory required by Leica LIF reader
+  - More accurately populate metadata for Prairie TIFF datasets
+  - Various fixes to improve the security of the OMERO plugin for ImageJ
+  - Better dimension detection for Bruker MRI datasets
+  - Better thumbnail generation for histology (SVS, NDPI) datasets
+  - Fix stage position parsing for Metamorph TIFF datasets
+  - Correctly populate the channel name for PerkinElmer Flex files
+
 4.3.2 (2011 September 15):
 * Many bug fixes, including:
   - Better support for Volocity datasets that contain compressed data

@@ -70,6 +70,8 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
 
   protected long length = -1;
 
+  protected long markedPos = -1;
+
   // -- Constructors --
 
   /**
@@ -136,6 +138,7 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
     if (Location.getMappedFile(file) != null) return;
     if (raf != null) raf.close();
     raf = null;
+    markedPos = -1;
   }
 
   /** Sets the endianness of the stream. */
@@ -441,10 +444,22 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
     return (int) remain;
   }
 
-  public void mark(int readLimit) { }
+  public void mark(int readLimit) {
+    try {
+      markedPos = getFilePointer();
+    }
+    catch (IOException exc) {
+      LOGGER.warn("Cannot set mark", exc);
+    }
+  }
 
-  public boolean markSupported() { return false; }
+  public boolean markSupported() {
+    return true;
+  }
 
-  public void reset() throws IOException { }
+  public void reset() throws IOException {
+    if (markedPos < 0) throw new IOException("No mark set");
+    seek(markedPos);
+  }
 
 }
