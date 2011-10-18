@@ -52,7 +52,7 @@ Type "ant -p" for a list of targets.
     </if>
 
     <!-- set release version from repository URL -->
-    <property name="release.version" value="4.3.3-DEV"/>
+    <property name="release.version" value="4.3.3"/>
   </target>
 
 </project>
