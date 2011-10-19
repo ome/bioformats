@@ -99,6 +99,7 @@ public final class ImageConverter {
     boolean bigtiff = false, group = true;
     boolean printVersion = false;
     boolean autoscale = false;
+    Boolean overwrite = null;
     int series = -1;
     int firstPlane = 0;
     int lastPlane = Integer.MAX_VALUE;
@@ -119,6 +120,12 @@ public final class ImageConverter {
           else if (args[i].equals("-compression")) compression = args[++i];
           else if (args[i].equals("-nogroup")) group = false;
           else if (args[i].equals("-autoscale")) autoscale = true;
+          else if (args[i].equals("-overwrite")) {
+            overwrite = true;
+          }
+          else if (args[i].equals("-nooverwrite")) {
+            overwrite = false;
+          }
           else if (args[i].equals("-channel")) {
             channel = Integer.parseInt(args[++i]);
           }
@@ -199,6 +206,8 @@ public final class ImageConverter {
         "  -autoscale: automatically adjust brightness and contrast before",
         "              converting; this may mean that the original pixel",
         "              values are not preserved",
+        "  -overwrite: always overwrite the output file, if it already exists",
+        "-nooverwrite: never overwrite the output file, if it already exists",
         "       -crop: crop images before converting; argument is 'x,y,w,h'",
         "    -channel: only convert the specified channel (indexed from 0)",
         "          -z: only convert the specified Z section (indexed from 0)",
@@ -240,11 +249,13 @@ public final class ImageConverter {
     }
 
     if (new Location(out).exists()) {
-      LOGGER.warn("Output file {} exists.", out);
-      LOGGER.warn("Do you want to overwrite it? ([y]/n)");
-      BufferedReader r = new BufferedReader(new InputStreamReader(System.in));
-      String choice = r.readLine().trim().toLowerCase();
-      boolean overwrite = !choice.startsWith("n");
+      if (overwrite == null) {
+        LOGGER.warn("Output file {} exists.", out);
+        LOGGER.warn("Do you want to overwrite it? ([y]/n)");
+        BufferedReader r = new BufferedReader(new InputStreamReader(System.in));
+        String choice = r.readLine().trim().toLowerCase();
+        overwrite = !choice.startsWith("n");
+      }
       if (!overwrite) {
         LOGGER.warn("Exiting; next time, please specify an output file that " +
           "does not exist.");
