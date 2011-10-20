@@ -847,9 +847,9 @@ public class FV1000Reader extends FormatReader {
         stream.read(buffer);
         stream.close();
         for (int q=0; q<buffer.length; q+=4) {
-          lut[c][0][q / 4] = buffer[q + 2];
-          lut[c][1][q / 4] = buffer[q + 1];
-          lut[c][2][q / 4] = buffer[q];
+          lut[c][0][q / 4] = (short) (buffer[q + 2] & 0xff);
+          lut[c][1][q / 4] = (short) (buffer[q + 1] & 0xff);
+          lut[c][2][q / 4] = (short) (buffer[q] & 0xff);
         }
       }
       catch (IOException e) { exc = e; }

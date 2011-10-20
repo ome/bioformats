@@ -339,6 +339,9 @@ public class ImageProcessorReader extends ReaderWrapper {
           average += value;
         }
         average /= adjustPerBin;
+        if (average > max) {
+          average = max;
+        }
         byteTable[c][i] = (byte) (255 * (average / max));
       }
     }
