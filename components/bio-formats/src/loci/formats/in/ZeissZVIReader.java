@@ -121,6 +121,8 @@ public class ZeissZVIReader extends FormatReader {
   private Double physicalSizeX, physicalSizeY, physicalSizeZ;
   private String imageDescription;
 
+  private Vector<String> roiIDs = new Vector<String>();
+
   // -- Constructor --
 
   /** Constructs a new ZeissZVI reader. */
@@ -292,6 +294,7 @@ public class ZeissZVIReader extends FormatReader {
       physicalSizeX = physicalSizeY = physicalSizeZ = null;
       imageDescription = null;
       timepoint = 0;
+      roiIDs.clear();
     }
   }
 
@@ -659,6 +662,12 @@ public class ZeissZVIReader extends FormatReader {
           }
         }
       }
+
+      for (int i=0; i<getSeriesCount(); i++) {
+        for (int roi=0; roi<roiIDs.size(); roi++) {
+          store.setImageROIRef(roiIDs.get(roi), i, roi);
+        }
+      }
     }
   }
 
@@ -1003,6 +1012,8 @@ public class ZeissZVIReader extends FormatReader {
 
       String roiID = MetadataTools.createLSID("ROI", imageNum);
       String shapeID = MetadataTools.createLSID("Shape", imageNum, shapeIndex);
+
+      roiIDs.add(roiID);
 
       if (roiType == ELLIPSE) {
         store.setROIID(roiID, imageNum);

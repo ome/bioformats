@@ -112,6 +112,12 @@ public class FormatReaderTestFactory {
     boolean inMemory = Boolean.parseBoolean(inMemoryValue);
     LOGGER.info("testng.in-memory = {}", inMemory);
 
+    // check for an alternate top level configuration file
+
+    final String toplevelConfig = "testng.toplevel-config";
+    String configFile = System.getProperty(toplevelConfig);
+    LOGGER.info("testng.toplevel-config = {}", configFile);
+
     // detect maximum heap size
     long maxMemory = Runtime.getRuntime().maxMemory() >> 20;
     LOGGER.info("Maximum heap size = {} MB", maxMemory);
@@ -121,7 +127,8 @@ public class FormatReaderTestFactory {
       System.out.println("Scanning for files...");
       long start = System.currentTimeMillis();
       try {
-        TestTools.getFiles(baseDir, files, FormatReaderTest.configTree);
+        TestTools.getFiles(baseDir, files, FormatReaderTest.configTree,
+          configFile);
       }
       catch (Exception e) {
         LOGGER.info("Failed to retrieve complete list of files", e);

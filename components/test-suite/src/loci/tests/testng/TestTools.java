@@ -197,17 +197,21 @@ public class TestTools {
 
   /** Recursively generate a list of files to test. */
   public static void getFiles(String root, List files,
-    final ConfigurationTree config)
+    final ConfigurationTree config, String toplevelConfig)
   {
     Location f = new Location(root);
     String[] subs = f.list();
     if (subs == null) subs = new String[0];
 
+    boolean isToplevel = toplevelConfig != null;
+
     // make sure that if a config file exists, it is first on the list
     for (int i=0; i<subs.length; i++) {
       Location file = new Location(root, subs[i]);
       subs[i] = file.getAbsolutePath();
-      if (subs[i].endsWith(".bioformats")) {
+      if ((!isToplevel && subs[i].endsWith(".bioformats")) ||
+        (isToplevel && subs[i].equals(toplevelConfig)))
+      {
         String tmp = subs[0];
         subs[0] = subs[i];
         subs[i] = tmp;
@@ -267,7 +271,7 @@ public class TestTools {
       }
       else if (file.isDirectory()) {
         LOGGER.info("\tdirectory");
-        getFiles(subs[i], files, config);
+        getFiles(subs[i], files, config, null);
       }
       else if (!subs[i].endsWith("readme.txt")) {
         if (typeTester.isThisType(subs[i])) {
