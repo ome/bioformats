@@ -106,6 +106,9 @@ public class FormatWriterTestFactory {
     }
     LOGGER.info("testng.multiplier = {}", multiplier);
 
+    final String toplevelConfigProp = "testng.toplevel-config";
+    String toplevelConfig = System.getProperty(toplevelConfigProp);
+
     // detect maximum heap size
     long maxMemory = Runtime.getRuntime().maxMemory() >> 20;
     LOGGER.info("Maximum heap size = {} MB", maxMemory);
@@ -114,7 +117,8 @@ public class FormatWriterTestFactory {
       // scan for files
       System.out.println("Scanning for files...");
       long start = System.currentTimeMillis();
-      TestTools.getFiles(baseDir, files, FormatWriterTest.configTree);
+      TestTools.getFiles(baseDir, files, FormatWriterTest.configTree,
+        toplevelConfig);
       long end = System.currentTimeMillis();
       double time = (end - start) / 1000.0;
       LOGGER.info(TestTools.DIVIDER);
