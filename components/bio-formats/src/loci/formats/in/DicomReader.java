@@ -139,8 +139,8 @@ public class DicomReader extends FormatReader {
   /** Constructs a new DICOM reader. */
   // "Digital Imaging and Communications in Medicine" is nasty long.
   public DicomReader() {
-    super("DICOM",
-      new String[] {"dic", "dcm", "dicom", "jp2", "j2ki", "j2kr", "raw"});
+    super("DICOM", new String[] {
+      "dic", "dcm", "dicom", "jp2", "j2ki", "j2kr", "raw", "ima"});
     suffixNecessary = false;
     suffixSufficient = false;
     domains = new String[] {FormatTools.MEDICAL_DOMAIN};
