@@ -458,6 +458,10 @@ public class LiFlimReader extends FormatReader {
       MetadataTools.setDefaultCreationDate(store, currentId, 0);
     }
 
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.NO_OVERLAYS) {
+      return;
+    }
+
     // regions of interest
     Integer[] roiIndices = rois.keySet().toArray(new Integer[rois.size()]);
     Arrays.sort(roiIndices);
@@ -469,7 +473,9 @@ public class LiFlimReader extends FormatReader {
       store.setPolylineClosed(Boolean.TRUE, roi, 0);
       String roiID = MetadataTools.createLSID("ROI", roi);
       store.setROIID(roiID, roi);
-      store.setImageROIRef(roiID, 0, roi);
+      for (int s=0; s<getSeriesCount(); s++) {
+        store.setImageROIRef(roiID, s, roi);
+      }
     }
   }
 
