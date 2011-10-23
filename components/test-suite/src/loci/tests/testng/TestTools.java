@@ -203,7 +203,8 @@ public class TestTools {
     String[] subs = f.list();
     if (subs == null) subs = new String[0];
 
-    boolean isToplevel = toplevelConfig != null;
+    boolean isToplevel =
+     toplevelConfig != null && new File(toplevelConfig).exists();
 
     // make sure that if a config file exists, it is first on the list
     for (int i=0; i<subs.length; i++) {

@@ -32,6 +32,7 @@ import java.util.Vector;
 
 import loci.common.DataTools;
 import loci.common.DateTools;
+import loci.common.IRandomAccess;
 import loci.common.Location;
 import loci.common.NIOFileHandle;
 import loci.common.RandomAccessInputStream;
@@ -256,8 +257,7 @@ public class FlexReader extends FormatReader {
       ifds[wellRow][wellCol].get(imageNumber) : ifds[0][0].get(0);
 
     RandomAccessInputStream s = (wellRow == 0 && wellCol == 0) ? firstStream :
-      new RandomAccessInputStream(
-        new NIOFileHandle(flexFiles[wellRow][wellCol], "r"));
+      new RandomAccessInputStream(getFileHandle(flexFiles[wellRow][wellCol]));
 
     int nBytes = ifd.getBitsPerSample()[0] / 8;
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
@@ -492,7 +492,12 @@ public class FlexReader extends FormatReader {
     String[] files = doGrouping ? flex.toArray(new String[flex.size()]) :
       new String[] {currentFile.getAbsolutePath()};
     if (files.length == 0) {
-      files = new String[] {currentFile.getAbsolutePath()};
+      if (Location.getMappedFile(currentFile.getName()) != null) {
+        files = new String[] {currentFile.getName()};
+      }
+      else {
+        files = new String[] {currentFile.getAbsolutePath()};
+      }
     }
     LOGGER.debug("Determined that {} .flex files belong together.",
       files.length);
@@ -1160,8 +1165,7 @@ public class FlexReader extends FormatReader {
         wellNumber[currentWell][0] = row;
         wellNumber[currentWell][1] = col;
 
-        s = new RandomAccessInputStream(
-          new NIOFileHandle(flexFiles[row][col], "r"));
+        s = new RandomAccessInputStream(getFileHandle(flexFiles[row][col]));
         if (currentWell == 0) firstStream = s;
         TiffParser tp = new TiffParser(s);
 
@@ -1223,6 +1227,13 @@ public class FlexReader extends FormatReader {
         currentWell++;
       }
     }
+  }
+
+  private IRandomAccess getFileHandle(String flexFile) throws IOException {
+    if (Location.getMappedFile(flexFile) != null) {
+      return Location.getMappedFile(flexFile);
+    }
+    return new NIOFileHandle(flexFile, "r");
   }
 
   // -- Helper classes --
