@@ -206,6 +206,39 @@ public class NDPIReader extends BaseTiffReader {
 
     ifds = tiffParser.getIFDs();
 
+    // fix the offsets for > 4 GB files
+    RandomAccessInputStream stream = new RandomAccessInputStream(currentId);
+    long[] previousStripOffsets = null;
+    for (int i=0; i<ifds.size(); i++) {
+      long[] stripOffsets = ifds.get(i).getStripOffsets();
+
+      if (i == 0) {
+        previousStripOffsets = stripOffsets;
+        continue;
+      }
+
+      boolean neededAdjustment = false;
+      for (int j=0; j<stripOffsets.length; j++) {
+        if (j >= previousStripOffsets.length) break;
+        if (stripOffsets[j] < previousStripOffsets[j]) {
+          stripOffsets[j] = (previousStripOffsets[j] & ~0xffffffffL) |
+            (stripOffsets[j] & 0xffffffffL);
+          if (stripOffsets[j] < previousStripOffsets[j]) {
+            long newOffset = stripOffsets[j] + 0x100000000L;
+            if (newOffset < stream.length()) {
+              stripOffsets[j] = newOffset;
+            }
+          }
+          neededAdjustment = true;
+        }
+        if (neededAdjustment) {
+          ifds.get(i).putIFDValue(IFD.STRIP_OFFSETS, stripOffsets);
+        }
+      }
+      previousStripOffsets = stripOffsets;
+    }
+    stream.close();
+
     for (int i=1; i<ifds.size(); i++) {
       IFD ifd = ifds.get(i);
       if (ifd.getImageWidth() == ifds.get(0).getImageWidth() &&
