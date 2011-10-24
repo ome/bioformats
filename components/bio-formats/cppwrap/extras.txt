@@ -8,7 +8,7 @@ add_custom_command(
   TARGET bio-formats
   DEPENDS "${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${Jar2Lib_DEPS_DIR}"
   POST_BUILD
-  COMMAND "${JAVA_RUNTIME}" -cp ${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${Jar2Lib_DEPS_DIR}/bio-formats-4.3.3-SNAPSHOT.jar\;${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${Jar2Lib_DEPS_DIR}/ome-xml-4.3.3-SNAPSHOT.jar\;${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${Jar2Lib_DEPS_DIR}/slf4j-api-1.5.10.jar\;${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${Jar2Lib_DEPS_DIR}/slf4j-log4j12-1.5.10.jar\;${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${Jar2Lib_DEPS_DIR}/log4j-1.2.14.jar "loci.formats.tools.BioFormatsExtensionPrinter"
+  COMMAND "${JAVA_RUNTIME}" -cp ${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${Jar2Lib_DEPS_DIR}/bio-formats-4.4-SNAPSHOT.jar\;${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${Jar2Lib_DEPS_DIR}/ome-xml-4.4-SNAPSHOT.jar\;${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${Jar2Lib_DEPS_DIR}/slf4j-api-1.5.10.jar\;${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${Jar2Lib_DEPS_DIR}/slf4j-log4j12-1.5.10.jar\;${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${Jar2Lib_DEPS_DIR}/log4j-1.2.14.jar "loci.formats.tools.BioFormatsExtensionPrinter"
   VERBATIM
 )
 else(WIN32)
@@ -16,7 +16,7 @@ add_custom_command(
   TARGET bio-formats
   DEPENDS "${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${Jar2Lib_DEPS_DIR}"
   POST_BUILD
-  COMMAND "${JAVA_RUNTIME}" -cp ${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${Jar2Lib_DEPS_DIR}/bio-formats-4.3.3-SNAPSHOT.jar:${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${Jar2Lib_DEPS_DIR}/ome-xml-4.3.3-SNAPSHOT.jar:${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${Jar2Lib_DEPS_DIR}/slf4j-api-1.5.10.jar:${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${Jar2Lib_DEPS_DIR}/slf4j-log4j12-1.5.10.jar:${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${Jar2Lib_DEPS_DIR}/log4j-1.2.14.jar "loci.formats.tools.BioFormatsExtensionPrinter"
+  COMMAND "${JAVA_RUNTIME}" -cp ${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${Jar2Lib_DEPS_DIR}/bio-formats-4.4-SNAPSHOT.jar:${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${Jar2Lib_DEPS_DIR}/ome-xml-4.4-SNAPSHOT.jar:${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${Jar2Lib_DEPS_DIR}/slf4j-api-1.5.10.jar:${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${Jar2Lib_DEPS_DIR}/slf4j-log4j12-1.5.10.jar:${CMAKE_BINARY_DIR}/${Jar2Lib_DIST_DIR}/${Jar2Lib_DEPS_DIR}/log4j-1.2.14.jar "loci.formats.tools.BioFormatsExtensionPrinter"
   VERBATIM
 )
 endif(WIN32)
