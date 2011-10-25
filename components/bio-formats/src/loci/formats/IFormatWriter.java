@@ -26,6 +26,7 @@ package loci.formats;
 import java.awt.image.ColorModel;
 import java.io.IOException;
 
+import loci.common.Region;
 import loci.formats.codec.CodecOptions;
 import loci.formats.meta.MetadataRetrieve;
 
@@ -64,6 +65,18 @@ public interface IFormatWriter extends IFormatHandler {
     throws FormatException, IOException;
 
   /**
+   * Saves the given image tile to the current series in the current file.
+   *
+   * @param no the image index within the current file, starting from 0.
+   * @param buf the byte array that represents the image tile.
+   * @param tile the Region representing the image tile to be read.
+   * @throws FormatException if one of the parameters is invalid.
+   * @throws IOException if there was a problem writing to the file.
+   */
+  void saveBytes(int no, byte[] buf, Region tile)
+    throws FormatException, IOException;
+
+  /**
    * Saves the given image plane to the current series in the current file.
    *
    * @param no the image index within the current file, starting from 0.
@@ -86,6 +99,18 @@ public interface IFormatWriter extends IFormatHandler {
    * @throws IOException if there was a problem writing to the file.
    */
   void savePlane(int no, Object plane, int x, int y, int w, int h)
+    throws FormatException, IOException;
+
+  /**
+   * Saves the given image plane to the current series in the current file.
+   *
+   * @param no the image index within the current file, starting from 0.
+   * @param plane the image plane.
+   * @param tile the Region representing the image tile to be read.
+   * @throws FormatException if one of the parameters is invalid.
+   * @throws IOException if there was a problem writing to the file.
+   */
+  void savePlane(int no, Object plane, Region tile)
     throws FormatException, IOException;
 
   /**

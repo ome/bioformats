@@ -27,6 +27,7 @@ import java.awt.image.ColorModel;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
+import loci.common.Region;
 import loci.formats.codec.CodecOptions;
 import loci.formats.meta.MetadataRetrieve;
 
@@ -155,6 +156,12 @@ public abstract class WriterWrapper implements IFormatWriter {
     writer.saveBytes(no, buf, x, y, w, h);
   }
 
+  public void saveBytes(int no, byte[] buf, Region tile)
+    throws FormatException, IOException
+  {
+    writer.saveBytes(no, buf, tile);
+  }
+
   public void savePlane(int no, Object plane)
     throws FormatException, IOException
   {
@@ -165,6 +172,12 @@ public abstract class WriterWrapper implements IFormatWriter {
     throws FormatException, IOException
   {
     writer.savePlane(no, plane, x, y, w, h);
+  }
+
+  public void savePlane(int no, Object plane, Region tile)
+    throws FormatException, IOException
+  {
+    writer.savePlane(no, plane, tile);
   }
 
   public void setSeries(int series) throws FormatException {

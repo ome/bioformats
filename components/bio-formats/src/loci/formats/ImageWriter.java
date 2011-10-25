@@ -30,6 +30,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
+import loci.common.Region;
 import loci.formats.codec.CodecOptions;
 import loci.formats.meta.MetadataRetrieve;
 
@@ -198,6 +199,13 @@ public class ImageWriter implements IFormatWriter {
     getWriter().saveBytes(no, buf, x, y, w, h);
   }
 
+  /* @see IFormatWriter#saveBytes(int, byte[], Region) */
+  public void saveBytes(int no, byte[] buf, Region tile)
+    throws FormatException, IOException
+  {
+    getWriter().saveBytes(no, buf, tile);
+  }
+
   /* @see IFormatWriter#savePlane(int, Object) */
   public void savePlane(int no, Object plane)
     throws FormatException, IOException
@@ -210,6 +218,13 @@ public class ImageWriter implements IFormatWriter {
     throws FormatException, IOException
   {
     getWriter().savePlane(no, plane, x, y, w, h);
+  }
+
+  /* @see IFormatWriter#savePlane(int, Object, Region) */
+  public void savePlane(int no, Object plane, Region tile)
+    throws FormatException, IOException
+  {
+    getWriter().savePlane(no, plane, tile);
   }
 
   /* @see IFormatWriter#setSeries(int) */
