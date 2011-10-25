@@ -33,12 +33,16 @@ import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.common.xml.XMLTools;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import ome.xml.model.primitives.PositiveFloat;
+
+import org.xml.sax.Attributes;
+import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * MicromanagerReader is the file format reader for Micro-Manager files.
@@ -56,6 +60,12 @@ public class MicromanagerReader extends FormatReader {
   /** File containing extra metadata. */
   private static final String METADATA = "metadata.txt";
 
+  /**
+   * Optional file containing additional acquisition parameters.
+   * (And yes, the spelling is correct.)
+   */
+  private static final String XML = "Acqusition.xml";
+
   // -- Fields --
 
   /** Helper reader for TIFF files. */
@@ -65,6 +75,7 @@ public class MicromanagerReader extends FormatReader {
   private Vector<String> tiffs;
 
   private String metadataFile;
+  private String xmlFile;
 
   private String[] channels;
 
@@ -83,7 +94,7 @@ public class MicromanagerReader extends FormatReader {
 
   /** Constructs a new Micromanager reader. */
   public MicromanagerReader() {
-    super("Micro-Manager", new String[] {"tif", "tiff", "txt"});
+    super("Micro-Manager", new String[] {"tif", "tiff", "txt", "xml"});
     domains = new String[] {FormatTools.LM_DOMAIN};
     hasCompanionFiles = true;
   }
@@ -98,7 +109,9 @@ public class MicromanagerReader extends FormatReader {
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
   public boolean isThisType(String name, boolean open) {
     if (!open) return false; // not allowed to touch the file system
-    if (name.equals(METADATA) || name.endsWith(File.separator + METADATA)) {
+    if (name.equals(METADATA) || name.endsWith(File.separator + METADATA) ||
+      name.equals(XML) || name.endsWith(File.separator + XML))
+    {
       try {
         RandomAccessInputStream stream = new RandomAccessInputStream(name);
         long length = stream.length();
@@ -139,6 +152,9 @@ public class MicromanagerReader extends FormatReader {
     FormatTools.assertId(currentId, true, 1);
     Vector<String> files = new Vector<String>();
     files.add(metadataFile);
+    if (xmlFile != null) {
+      files.add(xmlFile);
+    }
     if (!noPixels) files.addAll(tiffs);
     return files.toArray(new String[files.size()]);
   }
@@ -176,6 +192,7 @@ public class MicromanagerReader extends FormatReader {
       temperature = 0;
       voltage = null;
       cameraRef = cameraMode = null;
+      xmlFile = null;
     }
   }
 
@@ -391,6 +408,14 @@ public class MicromanagerReader extends FormatReader {
     timestamps = stamps.toArray(new Double[stamps.size()]);
     Arrays.sort(timestamps);
 
+    // look for the optional companion XML file
+
+    parentFile = new Location(currentId).getAbsoluteFile().getParentFile();
+    if (new Location(parentFile, XML).exists()) {
+      xmlFile = new Location(parent, XML).getAbsolutePath();
+      parseXMLFile();
+    }
+
     // build list of TIFF files
 
     buildTIFFList(baseTiff);
@@ -550,6 +575,31 @@ public class MicromanagerReader extends FormatReader {
           tiffs.add(filename.toString());
           filename.delete(0, filename.length());
         }
+      }
+    }
+  }
+
+  /** Parse metadata values from the Acqusition.xml file. */
+  private void parseXMLFile() throws IOException {
+    String xmlData = DataTools.readFile(xmlFile);
+    xmlData = XMLTools.sanitizeXML(xmlData);
+
+    DefaultHandler handler = new MicromanagerHandler();
+    XMLTools.parseXML(xmlData, handler);
+  }
+
+  // -- Helper classes --
+
+  /** SAX handler for parsing Acqusition.xml. */
+  class MicromanagerHandler extends DefaultHandler {
+    public void startElement(String uri, String localName, String qName,
+      Attributes attributes)
+    {
+      if (qName.equals("entry")) {
+        String key = attributes.getValue("key");
+        String value = attributes.getValue("value");
+
+        addGlobalMeta(key, value);
       }
     }
   }
