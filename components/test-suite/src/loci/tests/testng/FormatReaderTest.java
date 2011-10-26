@@ -1173,6 +1173,8 @@ public class FormatReaderTest {
       else {
         Runtime r = Runtime.getRuntime();
         System.gc(); // clean memory before we start
+        Thread.sleep(1000);
+        System.gc(); // clean memory before we start
         long m1 = r.totalMemory() - r.freeMemory();
         long t1 = System.currentTimeMillis();
         int totalPlanes = 0;
@@ -1199,6 +1201,8 @@ public class FormatReaderTest {
           }
         }
         long t2 = System.currentTimeMillis();
+        System.gc();
+        Thread.sleep(1000);
         System.gc();
         long m2 = r.totalMemory() - r.freeMemory();
         double actualTime = (double) (t2 - t1) / totalPlanes;
