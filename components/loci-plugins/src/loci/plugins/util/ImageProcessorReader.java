@@ -340,7 +340,7 @@ public class ImageProcessorReader extends ReaderWrapper {
         }
         average /= adjustPerBin;
         if (average > max) {
-          average = max;
+          average = (int) Math.min(max, average / valuesPerBin);
         }
         byteTable[c][i] = (byte) (255 * (average / max));
       }
