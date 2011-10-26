@@ -31,6 +31,7 @@ import ome.xml.model.primitives.PositiveInteger;
 
 import loci.common.DataTools;
 import loci.common.RandomAccessOutputStream;
+import loci.common.Region;
 import loci.formats.codec.CodecOptions;
 import loci.formats.meta.DummyMetadata;
 import loci.formats.meta.MetadataRetrieve;
@@ -122,6 +123,13 @@ public abstract class FormatWriter extends FormatHandler
     saveBytes(no, buf, 0, 0, width, height);
   }
 
+  /* @see IFormatWriter#saveBytes(int, byte[], Region) */
+  public void saveBytes(int no, byte[] buf, Region tile)
+    throws FormatException, IOException
+  {
+    saveBytes(no, buf, tile.x, tile.y, tile.width, tile.height);
+  }
+
   /* @see IFormatWriter#savePlane(int, Object) */
   public void savePlane(int no, Object plane)
     throws FormatException, IOException
@@ -140,6 +148,13 @@ public abstract class FormatWriter extends FormatHandler
       throw new IllegalArgumentException("Object to save must be a byte[]");
     }
     saveBytes(no, (byte[]) plane, x, y, w, h);
+  }
+
+  /* @see IFormatWriter#savePlane(int, Object, Region) */
+  public void savePlane(int no, Object plane, Region tile)
+    throws FormatException, IOException
+  {
+    savePlane(no, plane, tile.x, tile.y, tile.width, tile.height);
   }
 
   /* @see IFormatWriter#setSeries(int) */
