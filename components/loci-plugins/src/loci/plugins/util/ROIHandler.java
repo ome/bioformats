@@ -31,6 +31,7 @@ import ij.gui.OvalRoi;
 import ij.gui.PolygonRoi;
 import ij.gui.Roi;
 import ij.gui.ShapeRoi;
+import ij.gui.TextRoi;
 import ij.plugin.frame.RoiManager;
 
 import java.awt.Color;
@@ -128,7 +129,13 @@ public class ROIHandler {
             int y = rectangle.getY().intValue();
             int w = rectangle.getWidth().intValue();
             int h = rectangle.getHeight().intValue();
-            roi = new Roi(x, y, w, h);
+            String label = shapeObject.getLabel();
+            if (label != null) {
+              roi = new TextRoi(x, y, label);
+            }
+            else {
+              roi = new Roi(x, y, w, h);
+            }
           }
 
           if (roi != null) {
