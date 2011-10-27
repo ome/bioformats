@@ -893,7 +893,7 @@ public class DeltavisionReader extends FormatReader {
             if (tokens.length > 3) store.setObjectiveModel(tokens[3], 0, 0);
           }
         }
-        else if (key.equals("Lens ID")) {
+        else if (key.equalsIgnoreCase("Lens ID")) {
           if (value.indexOf(",") != -1) {
             value = value.substring(0, value.indexOf(","));
           }
