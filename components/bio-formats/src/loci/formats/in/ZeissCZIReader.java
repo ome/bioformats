@@ -119,6 +119,7 @@ public class ZeissCZIReader extends FormatReader {
   private ArrayList<String> channelColors = new ArrayList<String>();
   private ArrayList<String> binnings = new ArrayList<String>();
   private ArrayList<String> detectorRefs = new ArrayList<String>();
+  private ArrayList<String> objectiveIDs = new ArrayList<String>();
 
   private Double[] positionsX;
   private Double[] positionsY;
@@ -285,6 +286,7 @@ public class ZeissCZIReader extends FormatReader {
       channelColors.clear();
       binnings.clear();
       detectorRefs.clear();
+      objectiveIDs.clear();
 
       previousChannel = -1;
     }
@@ -409,6 +411,7 @@ public class ZeissCZIReader extends FormatReader {
         store.setImagingEnvironmentTemperature(new Double(temperature), i);
       }
 
+      store.setImageObjectiveSettingsID(objectiveIDs.get(0), i);
       if (correctionCollar != null) {
         store.setImageObjectiveSettingsCorrectionCollar(
           new Double(correctionCollar), i);
@@ -736,6 +739,8 @@ public class ZeissCZIReader extends FormatReader {
       NodeList microscopes = getGrandchildren(instrument, "Microscope");
       Element manufacturerNode = null;
 
+      store.setInstrumentID(MetadataTools.createLSID("Instrument", 0), 0);
+
       if (microscopes != null) {
         Element microscope = (Element) microscopes.item(0);
         manufacturerNode = getFirstNode(microscope, "Manufacturer");
@@ -860,6 +865,7 @@ public class ZeissCZIReader extends FormatReader {
             getFirstNodeValue(manufacturerNode, "SerialNumber");
           String lotNumber = getFirstNodeValue(manufacturerNode, "LotNumber");
 
+          objectiveIDs.add(objective.getAttribute("Id"));
           store.setObjectiveID(objective.getAttribute("Id"), 0, i);
           store.setObjectiveManufacturer(manufacturer, 0, i);
           store.setObjectiveModel(model, 0, i);
@@ -1093,6 +1099,8 @@ public class ZeissCZIReader extends FormatReader {
         Element textElements = getFirstNode(ellipse, "TextElements");
         Element attributes = getFirstNode(ellipse, "Attributes");
 
+        store.setEllipseID(
+          MetadataTools.createLSID("Shape", i, shape), i, shape);
         store.setEllipseRadiusX(
           new Double(getFirstNodeValue(geometry, "RadiusX")), i, shape);
         store.setEllipseRadiusY(
@@ -1155,21 +1163,25 @@ public class ZeissCZIReader extends FormatReader {
       String width = getFirstNodeValue(geometry, "Width");
       String height = getFirstNodeValue(geometry, "Height");
 
-      if (left != null) {
+      if (left != null && top != null && width != null && height != null) {
+        store.setRectangleID(
+          MetadataTools.createLSID("Shape", roi, shape), roi, shape);
         store.setRectangleX(new Double(left), roi, shape);
-      }
-      if (top != null) {
-        store.setRectangleY(new Double(top), roi, shape);
-      }
-      if (width != null) {
+        store.setRectangleY(
+          new Double(getSizeY() - Double.parseDouble(top)), roi, shape);
         store.setRectangleWidth(new Double(width), roi, shape);
-      }
-      if (height != null) {
         store.setRectangleHeight(new Double(height), roi, shape);
+
+        String name = getFirstNodeValue(attributes, "Name");
+        String label = getFirstNodeValue(textElements, "Text");
+
+        if (name != null) {
+          store.setRectangleName(name, roi, shape);
+        }
+        if (label != null) {
+          store.setRectangleLabel(label, roi, shape);
+        }
       }
-      store.setRectangleName(getFirstNodeValue(attributes, "Name"), roi, shape);
-      store.setRectangleLabel(
-        getFirstNodeValue(textElements, "Text"), roi, shape);
     }
     return shape;
   }
@@ -1183,6 +1195,8 @@ public class ZeissCZIReader extends FormatReader {
       Element textElements = getFirstNode(polyline, "TextElements");
       Element attributes = getFirstNode(polyline, "Attributes");
 
+      store.setPolylineID(
+        MetadataTools.createLSID("Shape", roi, shape), roi, shape);
       store.setPolylinePoints(
         getFirstNodeValue(geometry, "Points"), roi, shape);
       store.setPolylineClosed(closed, roi, shape);
@@ -1200,6 +1214,8 @@ public class ZeissCZIReader extends FormatReader {
       Element textElements = getFirstNode(circle, "TextElements");
       Element attributes = getFirstNode(circle, "Attributes");
 
+      store.setEllipseID(
+        MetadataTools.createLSID("Shape", roi, shape), roi, shape);
       store.setEllipseRadiusX(
         new Double(getFirstNodeValue(geometry, "Radius")), roi, shape);
       store.setEllipseRadiusY(
