@@ -124,6 +124,8 @@ public class ZeissCZIReader extends FormatReader {
   private Double[] positionsY;
   private Double[] positionsZ;
 
+  private int previousChannel = -1;
+
   // -- Constructor --
 
   /** Constructs a new Zeiss .czi reader. */
@@ -146,6 +148,80 @@ public class ZeissCZIReader extends FormatReader {
     return check.equals(CZI_MAGIC_STRING);
   }
 
+  /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  public byte[][] get8BitLookupTable() throws FormatException, IOException {
+    if ((getPixelType() != FormatTools.INT8 &&
+      getPixelType() != FormatTools.UINT8) || previousChannel == -1)
+    {
+      return null;
+    }
+
+    byte[][] lut = new byte[3][256];
+
+    String color = channelColors.get(previousChannel);
+    if (color != null) {
+      color = color.replaceAll("#", "");
+      try {
+        int colorValue = Integer.parseInt(color, 16);
+
+        int redMax = (colorValue & 0xff0000) >> 16;
+        int greenMax = (colorValue & 0xff00) >> 8;
+        int blueMax = colorValue & 0xff;
+
+        for (int i=0; i<lut[0].length; i++) {
+          lut[0][i] = (byte) (redMax * (i / 255.0));
+          lut[1][i] = (byte) (greenMax * (i / 255.0));
+          lut[2][i] = (byte) (blueMax * (i / 255.0));
+        }
+
+        return lut;
+      }
+      catch (NumberFormatException e) {
+        return null;
+      }
+    }
+    else return null;
+  }
+
+  /* @see loci.formats.IFormatReader#get16BitLookupTable() */
+  public short[][] get16BitLookupTable() throws FormatException, IOException {
+    if ((getPixelType() != FormatTools.INT16 &&
+      getPixelType() != FormatTools.UINT16) || previousChannel == -1)
+    {
+      return null;
+    }
+
+    short[][] lut = new short[3][65536];
+
+    String color = channelColors.get(previousChannel);
+    if (color != null) {
+      color = color.replaceAll("#", "");
+      try {
+        int colorValue = Integer.parseInt(color, 16);
+
+        int redMax = (colorValue & 0xff0000) >> 16;
+        int greenMax = (colorValue & 0xff00) >> 8;
+        int blueMax = colorValue & 0xff;
+
+        redMax = (int) (65535 * (redMax / 255.0));
+        greenMax = (int) (65535 * (greenMax / 255.0));
+        blueMax = (int) (65535 * (blueMax / 255.0));
+
+        for (int i=0; i<lut[0].length; i++) {
+          lut[0][i] = (short) ((int) (redMax * (i / 65535.0)) & 0xffff);
+          lut[1][i] = (short) ((int) (greenMax * (i / 65535.0)) & 0xffff);
+          lut[2][i] = (short) ((int) (blueMax * (i / 65535.0)) & 0xffff);
+        }
+
+        return lut;
+      }
+      catch (NumberFormatException e) {
+        return null;
+      }
+    }
+    else return null;
+  }
+
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
@@ -153,6 +229,8 @@ public class ZeissCZIReader extends FormatReader {
     throws FormatException, IOException
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
+
+    previousChannel = getZCTCoords(no)[1];
 
     int currentSeries = getSeries();
 
@@ -207,6 +285,8 @@ public class ZeissCZIReader extends FormatReader {
       channelColors.clear();
       binnings.clear();
       detectorRefs.clear();
+
+      previousChannel = -1;
     }
   }
 
@@ -288,6 +368,12 @@ public class ZeissCZIReader extends FormatReader {
         String xml = ((Metadata) segment).xml;
         xml = XMLTools.sanitizeXML(xml);
         translateMetadata(xml);
+      }
+    }
+
+    if (channelColors.size() > 0) {
+      for (int i=0; i<seriesCount; i++) {
+        core[i].indexed = true;
       }
     }
 
