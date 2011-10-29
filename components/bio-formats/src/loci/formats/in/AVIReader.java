@@ -61,6 +61,7 @@ public class AVIReader extends FormatReader {
   private static final int MS_VIDEO = 1296126531;
   //private static final int CINEPAK = 1684633187;
   private static final int JPEG = 1196444237;
+  private static final int Y8 = 538982489;
 
   // -- Fields --
 
@@ -134,7 +135,7 @@ public class AVIReader extends FormatReader {
     long maxBytes = end - fileOff;
     in.seek(fileOff);
 
-    if (bmpCompression != 0) {
+    if (bmpCompression != 0 && bmpCompression != Y8) {
       byte[] b = uncompress(no, buf);
       int rowLen = FormatTools.getPlaneSize(this, w, 1);
       int inputRowLen = FormatTools.getPlaneSize(this, getSizeX(), 1);
@@ -512,7 +513,8 @@ public class AVIReader extends FormatReader {
                 }
 
                 if (bmpCompression != MSRLE && bmpCompression != 0 &&
-                  bmpCompression != MS_VIDEO && bmpCompression != JPEG)
+                  bmpCompression != MS_VIDEO && bmpCompression != JPEG &&
+                  bmpCompression != Y8)
                 {
                   throw new UnsupportedCompressionException(
                     bmpCompression + " not supported");
@@ -531,10 +533,17 @@ public class AVIReader extends FormatReader {
                   lut = new byte[3][bmpColorsUsed];
 
                   for (int i=0; i<bmpColorsUsed; i++) {
-                    lut[2][i] = in.readByte();
-                    lut[1][i] = in.readByte();
-                    lut[0][i] = in.readByte();
-                    in.skipBytes(1);
+                    if (bmpCompression != Y8) {
+                      lut[2][i] = in.readByte();
+                      lut[1][i] = in.readByte();
+                      lut[0][i] = in.readByte();
+                      in.skipBytes(1);
+                    }
+                    else {
+                      lut[0][i] = (byte) i;
+                      lut[1][i] = (byte) i;
+                      lut[2][i] = (byte) i;
+                    }
                   }
                 }
 
