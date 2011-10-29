@@ -113,6 +113,7 @@ loci.formats.in.ScanrReader           # dat, xml, tif
 loci.formats.in.BDReader              # exp, tif
 loci.formats.in.UnisokuReader         # dat, hdr
 loci.formats.in.PDSReader             # hdr, img
+loci.formats.in.FujiReader            # inf, img
 
 # standard PIC reader must go last (it accepts any PIC)
 loci.formats.in.BioRadReader          # pic
