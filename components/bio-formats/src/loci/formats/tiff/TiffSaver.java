@@ -167,10 +167,11 @@ public class TiffSaver {
   public void setCodecOptions(CodecOptions options) {
     this.options = options;
   }
-  
+
   /** Writes the TIFF file header. */
   public void writeHeader() throws IOException {
     // write endianness indicator
+    out.seek(0);
     if (isLittleEndian()) {
       out.writeByte(TiffConstants.LITTLE);
       out.writeByte(TiffConstants.LITTLE);
