@@ -32,6 +32,9 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * A wrapper for buffered NIO logic that implements the IRandomAccess interface.
  *
@@ -45,6 +48,12 @@ import java.nio.channels.FileChannel;
  * @author Chris Allan <callan at blackcat dot ca>
  */
 public class NIOFileHandle extends AbstractNIOHandle {
+
+  // -- Constants --
+
+  /** Logger for this class. */
+  private static final Logger LOGGER =
+    LoggerFactory.getLogger(RandomAccessInputStream.class);
 
   //-- Static fields --
 
@@ -491,6 +500,7 @@ public class NIOFileHandle extends AbstractNIOHandle {
    * the buffer.
    */
   private void buffer(long offset, int size) throws IOException {
+    LOGGER.trace("buffer({}, {})", offset, size);
     position = offset;
     long newPosition = offset + size;
     if (newPosition < bufferStartPosition ||
@@ -511,6 +521,9 @@ public class NIOFileHandle extends AbstractNIOHandle {
       if (byteOrder != null) setOrder(byteOrder);
     }
     buffer.position((int) (offset - bufferStartPosition));
+    if (buffer.position() + size > buffer.limit()) {
+      buffer.limit(buffer.position() + size);
+    }
   }
 
   private void writeSetup(int length) throws IOException {
