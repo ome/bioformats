@@ -38,6 +38,9 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveInteger;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -52,6 +55,8 @@ public class ND2Handler extends DefaultHandler {
 
   // -- Constants --
 
+  private static final Logger LOGGER =
+    LoggerFactory.getLogger(ND2Handler.class);
   private static final String DATE_FORMAT = "dd/MM/yyyy  HH:mm:ss";
 
   // -- Fields --
@@ -324,6 +329,62 @@ public class ND2Handler extends DefaultHandler {
     String value = attributes.getValue("value");
     if (qName.equals("uiWidth")) {
       core[0].sizeX = Integer.parseInt(value);
+    }
+    else if ("rectSensorUser".equals(prevElement)) {
+      if (qName.equals("left")) {
+        core[0].sizeX = -1 * Integer.parseInt(value);
+      }
+      else if (qName.equals("top")) {
+        core[0].sizeY = -1 * Integer.parseInt(value);
+      }
+      else if (qName.equals("right")) {
+        core[0].sizeX += Integer.parseInt(value);
+      }
+      else if (qName.equals("bottom")) {
+        core[0].sizeY += Integer.parseInt(value);
+      }
+    }
+    else if ("LoopSize".equals(prevElement) && value != null) {
+      if (core[0].sizeT == 0) {
+        core[0].sizeT = Integer.parseInt(value);
+      }
+      else if (core[0].sizeZ == 0) {
+        core[0].sizeZ = Integer.parseInt(value);
+      }
+      core[0].dimensionOrder = "CTZ";
+    }
+    else if (qName.equals("FramesBefore")) {
+      if (core[0].sizeZ == 0) {
+        core[0].sizeZ = 1;
+      }
+      core[0].sizeZ *= Integer.parseInt(value);
+    }
+    else if (qName.equals("FramesAfter")) {
+      core[0].sizeZ *= Integer.parseInt(value);
+    }
+    else if (qName.equals("TimeBefore")) {
+      if (core[0].sizeT == 0) {
+        core[0].sizeT = 1;
+      }
+      core[0].sizeT *= Integer.parseInt(value);
+    }
+    else if (qName.equals("TimeAfter")) {
+      core[0].sizeT *= Integer.parseInt(value);
+    }
+    else if (qName.equals("uiMaxDst")) {
+      int maxPixelValue = Integer.parseInt(value) + 1;
+      int bits = 0;
+      while (maxPixelValue > 0) {
+        maxPixelValue /= 2;
+        bits++;
+      }
+      try {
+        core[0].pixelType =
+          FormatTools.pixelTypeFromBytes(bits / 8, false, false);
+      }
+      catch (FormatException e) {
+        LOGGER.warn("Could not set the pixel type", e);
+      }
     }
     else if (qName.equals("uiWidthBytes") || qName.equals("uiBpcInMemory")) {
       int div = qName.equals("uiWidthBytes") ? core[0].sizeX : 8;

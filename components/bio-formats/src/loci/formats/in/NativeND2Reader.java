@@ -447,6 +447,11 @@ public class NativeND2Reader extends FormatReader {
           core[i].sizeT = 1;
         }
       }
+      if (getSizeC() == 0) {
+        for (int i=0; i<getSeriesCount(); i++) {
+          core[i].sizeC = 1;
+        }
+      }
 
       // make sure the channel count is reasonable
       // sometimes the XML will indicate that there are multiple channels,
