@@ -1058,6 +1058,11 @@ public class RecordedImageProcessor extends ImageProcessor {
     proc.sqrt();
   }
 
+  public void swapPixelArrays() {
+    record("swapPixelArrays");
+    proc.swapPixelArrays();
+  }
+
   public void threshold(int level) {
     record("threshold", new Integer(level), int.class);
     proc.threshold(level);
