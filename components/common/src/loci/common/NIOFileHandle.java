@@ -521,7 +521,9 @@ public class NIOFileHandle extends AbstractNIOHandle {
       if (byteOrder != null) setOrder(byteOrder);
     }
     buffer.position((int) (offset - bufferStartPosition));
-    if (buffer.position() + size > buffer.limit()) {
+    if (buffer.position() + size > buffer.limit() &&
+      mapMode == FileChannel.MapMode.READ_WRITE)
+    {
       buffer.limit(buffer.position() + size);
     }
   }
