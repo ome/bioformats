@@ -48,9 +48,9 @@
       <version>1.2.1</version>
     </dependency>
     <dependency>
-      <groupId>net.imagej</groupId>
+      <groupId>imagej</groupId>
       <artifactId>ij</artifactId>
-      <version>[1.45s,)</version>
+      <version>1.43u</version>
     </dependency>
     <dependency>
       <groupId>log4j</groupId>
