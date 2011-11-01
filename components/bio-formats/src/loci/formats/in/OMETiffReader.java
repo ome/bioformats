@@ -339,6 +339,11 @@ public class OMETiffReader extends FormatReader {
       throw new FormatException("Could not parse OME-XML from TIFF comment");
     }
 
+    String[] acquiredDates = new String[meta.getImageCount()];
+    for (int i=0; i<acquiredDates.length; i++) {
+      acquiredDates[i] = meta.getImageAcquiredDate(i);
+    }
+
     String currentUUID = meta.getUUID();
     service.convertMetadata(meta, metadataStore);
 
@@ -732,6 +737,11 @@ public class OMETiffReader extends FormatReader {
     info = planeInfo.toArray(new OMETiffPlane[0][0]);
 
     MetadataTools.populatePixels(metadataStore, this, false, false);
+    for (int i=0; i<acquiredDates.length; i++) {
+      if (acquiredDates[i] != null) {
+        metadataStore.setImageAcquiredDate(acquiredDates[i], i);
+      }
+    }
     metadataStore = getMetadataStoreForConversion();
   }
 
