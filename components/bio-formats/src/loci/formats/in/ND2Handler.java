@@ -331,16 +331,16 @@ public class ND2Handler extends DefaultHandler {
       core[0].sizeX = Integer.parseInt(value);
     }
     else if ("rectSensorUser".equals(prevElement)) {
-      if (qName.equals("left")) {
+      if (qName.equals("left") && core[0].sizeX == 0) {
         core[0].sizeX = -1 * Integer.parseInt(value);
       }
-      else if (qName.equals("top")) {
+      else if (qName.equals("top") && core[0].sizeY == 0) {
         core[0].sizeY = -1 * Integer.parseInt(value);
       }
-      else if (qName.equals("right")) {
+      else if (qName.equals("right") && core[0].sizeX <= 0) {
         core[0].sizeX += Integer.parseInt(value);
       }
-      else if (qName.equals("bottom")) {
+      else if (qName.equals("bottom") && core[0].sizeY <= 0) {
         core[0].sizeY += Integer.parseInt(value);
       }
     }

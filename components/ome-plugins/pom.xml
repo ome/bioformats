@@ -53,9 +53,9 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>imagej</groupId>
+      <groupId>net.imagej</groupId>
       <artifactId>ij</artifactId>
-      <version>1.43u</version>
+      <version>[1.45s,)</version>
     </dependency>
   </dependencies>
 
