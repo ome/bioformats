@@ -1058,11 +1058,10 @@ public class RecordedImageProcessor extends ImageProcessor {
     proc.sqrt();
   }
 
-  // TODO - Reenable when ImageJ version is updated.
-//  public void swapPixelArrays() {
-//    record("swapPixelArrays");
-//    proc.swapPixelArrays();
-//  }
+  public void swapPixelArrays() {
+    record("swapPixelArrays");
+    proc.swapPixelArrays();
+  }
 
   public void threshold(int level) {
     record("threshold", new Integer(level), int.class);
