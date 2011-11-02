@@ -1345,7 +1345,7 @@ public class ImporterTest {
 
       CompositeImage ci = (CompositeImage)imp;
 
-      assertFalse(ci.hasCustomLuts());
+      assertEquals(chanPerPlane > 1, ci.hasCustomLuts());
 
       Color[] colorOrder;
       int expectedType;
@@ -1427,7 +1427,7 @@ public class ImporterTest {
 
       CompositeImage ci = (CompositeImage)imp;
 
-      assertFalse(ci.hasCustomLuts());
+      assertTrue(ci.hasCustomLuts());
 
       assertEquals(CompositeImage.COMPOSITE, ci.getMode());
 
@@ -1489,7 +1489,7 @@ public class ImporterTest {
 
       CompositeImage ci = (CompositeImage)imp;
 
-      assertFalse(ci.hasCustomLuts());
+      assertTrue(ci.hasCustomLuts());
 
       assertEquals(CompositeImage.COLOR, ci.getMode());
 
@@ -1615,7 +1615,7 @@ public class ImporterTest {
 
       CompositeImage ci = (CompositeImage)imp;
 
-      assertFalse(ci.hasCustomLuts());
+      assertTrue(ci.hasCustomLuts());
 
       assertEquals(CompositeImage.COLOR, ci.getMode());
 
@@ -2048,7 +2048,7 @@ public class ImporterTest {
 
     CompositeImage ci = (CompositeImage)imp;
 
-    assertFalse(ci.hasCustomLuts());
+    assertTrue(ci.hasCustomLuts());
 
     assertEquals(CompositeImage.COMPOSITE, ci.getMode());
 
@@ -2751,7 +2751,7 @@ public class ImporterTest {
     {
       CompositeImage ci = (CompositeImage)imp;
 
-      assertFalse(ci.hasCustomLuts());
+      assertTrue(ci.hasCustomLuts());
 
       assertEquals(CompositeImage.COLOR, ci.getMode());
 
