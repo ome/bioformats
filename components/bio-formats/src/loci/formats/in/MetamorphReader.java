@@ -240,7 +240,9 @@ public class MetamorphReader extends BaseTiffReader {
     stkReaders[series][ndx].setId(file);
     int plane = stks[series].length == 1 ? no : coords[0];
     stkReaders[series][ndx].openBytes(plane, buf, x, y, w, h);
-    stkReaders[series][ndx].close();
+    if (plane == stkReaders[series][ndx].getImageCount() - 1) {
+      stkReaders[series][ndx].close();
+    }
 
     return buf;
   }
@@ -318,7 +320,7 @@ public class MetamorphReader extends BaseTiffReader {
     Location ndfile = null;
 
     if (checkSuffix(id, ND_SUFFIX)) ndfile = new Location(id);
-    else if (canLookForND) {
+    else if (canLookForND && isGroupFiles()) {
       // an STK file was passed to initFile
       // let's check the parent directory for an .nd file
       Location stk = new Location(id).getAbsoluteFile();
