@@ -82,6 +82,8 @@ public class NiftiReader extends FormatReader {
     domains = new String[] {FormatTools.MEDICAL_DOMAIN,
       FormatTools.UNKNOWN_DOMAIN};
     hasCompanionFiles = true;
+    datasetDescription = "A single .nii file or one .img file and a " +
+      "similarly-named .hdr file";
   }
 
   // -- IFormatReader API methods --

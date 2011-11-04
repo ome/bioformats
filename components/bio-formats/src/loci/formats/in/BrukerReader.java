@@ -68,6 +68,8 @@ public class BrukerReader extends FormatReader {
     suffixSufficient = false;
     domains = new String[] {FormatTools.MEDICAL_DOMAIN};
     hasCompanionFiles = true;
+    datasetDescription = "One 'fid' and one 'acqp' plus several other " +
+      "metadata files and a 'pdata' directory";
   }
 
   // -- IFormatReader API methods --

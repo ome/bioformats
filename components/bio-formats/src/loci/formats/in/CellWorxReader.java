@@ -76,6 +76,8 @@ public class CellWorxReader extends FormatReader {
     super("CellWorx", new String[] {"pnl", "htd", "log"});
     domains = new String[] {FormatTools.HCS_DOMAIN};
     hasCompanionFiles = true;
+    datasetDescription = "One .htd file plus one or more .pnl or " +
+      ".tif files and optionally one or more .log files";
   }
 
   // -- IFormatReader API methods --

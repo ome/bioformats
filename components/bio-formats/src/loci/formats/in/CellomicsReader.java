@@ -65,6 +65,7 @@ public class CellomicsReader extends FormatReader {
   public CellomicsReader() {
     super("Cellomics C01", new String[] {"c01", "dib"});
     domains = new String[] {FormatTools.LM_DOMAIN, FormatTools.HCS_DOMAIN};
+    datasetDescription = "One or more .c01 files";
   }
 
   // -- IFormatReader API methods --

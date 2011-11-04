@@ -73,6 +73,8 @@ public class TrestleReader extends BaseTiffReader {
     suffixSufficient = false;
     suffixNecessary = false;
     hasCompanionFiles = true;
+    datasetDescription = "One .tif file plus several other similarly-named " +
+      "files (e.g. *.FocalPlane-*, .sld, .slx, .ROI)";
   }
 
   // -- IFormatReader API methods --

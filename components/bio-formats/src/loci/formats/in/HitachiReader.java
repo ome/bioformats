@@ -72,6 +72,8 @@ public class HitachiReader extends FormatReader {
     suffixSufficient = false;
     domains = new String[] {FormatTools.SEM_DOMAIN};
     hasCompanionFiles = true;
+    datasetDescription =
+      "One .txt file plus one similarly-named .tif, .bmp, or .jpg file";
   }
 
   // -- IFormatReader API methods --

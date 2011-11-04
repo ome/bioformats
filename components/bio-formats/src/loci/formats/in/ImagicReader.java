@@ -53,6 +53,7 @@ public class ImagicReader extends FormatReader {
   public ImagicReader() {
     super("IMAGIC", "hed");
     domains = new String[] {FormatTools.EM_DOMAIN};
+    datasetDescription = "One .hed file plus one similarly-named .img file";
   }
 
   // -- IFormatReader API methods --

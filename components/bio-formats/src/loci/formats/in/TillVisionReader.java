@@ -89,6 +89,8 @@ public class TillVisionReader extends FormatReader {
     super("TillVision", new String[] {"vws", "pst", "inf"});
     domains = new String[] {FormatTools.LM_DOMAIN};
     hasCompanionFiles = true;
+    datasetDescription = "One .vws file and possibly one similarly-named " +
+      "directory";
   }
 
   // -- IFormatReader API methods --

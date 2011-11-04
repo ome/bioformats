@@ -61,6 +61,7 @@ public class UnisokuReader extends FormatReader {
     domains = new String[] {FormatTools.SPM_DOMAIN};
     suffixSufficient = false;
     hasCompanionFiles = true;
+    datasetDescription = "One .HDR file plus one similarly-named .DAT file";
   }
 
   // -- IFormatReader API methods --

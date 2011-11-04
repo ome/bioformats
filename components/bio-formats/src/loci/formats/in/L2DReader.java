@@ -73,6 +73,8 @@ public class L2DReader extends FormatReader {
     domains = new String[] {FormatTools.GEL_DOMAIN};
     hasCompanionFiles = true;
     suffixSufficient = false;
+    datasetDescription = "One .l2d file with one or more directories " +
+      "containing .tif/.tiff files";
   }
 
   // -- IFormatReader API methods --

@@ -91,6 +91,7 @@ public class OMETiffReader extends FormatReader {
     suffixSufficient = false;
     domains = FormatTools.NON_GRAPHICS_DOMAINS;
     hasCompanionFiles = true;
+    datasetDescription = "One or more .ome.tiff files";
   }
 
   // -- IFormatReader API methods --

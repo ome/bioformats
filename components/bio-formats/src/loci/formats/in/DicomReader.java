@@ -144,6 +144,7 @@ public class DicomReader extends FormatReader {
     suffixNecessary = false;
     suffixSufficient = false;
     domains = new String[] {FormatTools.MEDICAL_DOMAIN};
+    datasetDescription = "One or more .dcm or .dicom files";
   }
 
   // -- IFormatReader API methods --
