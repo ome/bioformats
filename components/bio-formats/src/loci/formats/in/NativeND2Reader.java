@@ -475,6 +475,11 @@ public class NativeND2Reader extends FormatReader {
         }
       }
 
+      if (getSizeT() == imageOffsets.size() && getSeriesCount() > 1) {
+        CoreMetadata firstCore = core[0];
+        core = new CoreMetadata[] {firstCore};
+      }
+
       // calculate the image count
       for (int i=0; i<getSeriesCount(); i++) {
         core[i].imageCount = getSizeZ() * getSizeT() * getSizeC();

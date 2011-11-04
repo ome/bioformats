@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats;
 
+import java.io.Closeable;
 import java.io.IOException;
 
 /**
@@ -32,7 +33,7 @@ import java.io.IOException;
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/IFormatHandler.java">Trac</a>,
  * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/IFormatHandler.java;hb=HEAD">Gitweb</a></dd></dl>
  */
-public interface IFormatHandler {
+public interface IFormatHandler extends Closeable {
 
   /** Checks if the given string is a valid filename for this file format. */
   boolean isThisType(String name);
@@ -54,8 +55,5 @@ public interface IFormatHandler {
 
   /** Sets the current file name. */
   void setId(String id) throws FormatException, IOException;
-
-  /** Closes currently open file(s) and frees allocated memory. */
-  void close() throws IOException;
 
 }
