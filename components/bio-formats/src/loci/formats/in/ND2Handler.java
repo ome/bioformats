@@ -379,8 +379,10 @@ public class ND2Handler extends DefaultHandler {
         bits++;
       }
       try {
-        core[0].pixelType =
-          FormatTools.pixelTypeFromBytes(bits / 8, false, false);
+        if (core[0].pixelType == 0) {
+          core[0].pixelType =
+            FormatTools.pixelTypeFromBytes(bits / 8, false, false);
+        }
       }
       catch (FormatException e) {
         LOGGER.warn("Could not set the pixel type", e);
