@@ -133,6 +133,8 @@ public class MetamorphReader extends BaseTiffReader {
     domains = new String[] {FormatTools.LM_DOMAIN};
     hasCompanionFiles = true;
     suffixSufficient = false;
+    datasetDescription = "One or more .stk or .tif/.tiff files plus an " +
+      "optional .nd file";
   }
 
   // -- IFormatReader API methods --

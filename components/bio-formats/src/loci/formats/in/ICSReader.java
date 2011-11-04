@@ -542,6 +542,7 @@ public class ICSReader extends FormatReader {
     domains = new String[] {FormatTools.LM_DOMAIN, FormatTools.FLIM_DOMAIN,
       FormatTools.UNKNOWN_DOMAIN};
     hasCompanionFiles = true;
+    datasetDescription = "One .ics and possibly one .ids with a similar name";
   }
 
   // -- IFormatReader API methods --

@@ -105,6 +105,8 @@ public class MIASReader extends FormatReader {
     suffixSufficient = false;
     domains = new String[] {FormatTools.HCS_DOMAIN};
     hasCompanionFiles = true;
+    datasetDescription = "One directory per plate containing one directory " +
+      "per well, each with one or more .tif/.tiff files";
   }
 
   // -- IFormatReader API methods --

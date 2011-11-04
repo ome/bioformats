@@ -70,6 +70,7 @@ public class HamamatsuVMSReader extends FormatReader {
   public HamamatsuVMSReader() {
     super("Hamamatsu VMS", "vms");
     domains = new String[] {FormatTools.HISTOLOGY_DOMAIN};
+    datasetDescription = "One .vms file plus several .jpg files";
   }
 
   // -- IFormatReader API methods --

@@ -149,6 +149,9 @@ public class FlexReader extends FormatReader {
     super("Evotec Flex", SUFFIXES);
     domains = new String[] {FormatTools.HCS_DOMAIN};
     hasCompanionFiles = true;
+    datasetDescription = "One directory containing one or more .flex files, " +
+      "and an optional directory containing an .mea and .res file. The .mea " +
+      "and .res files may also be in the same directory as the .flex file(s).";
   }
 
   // -- IFormatReader API methods --

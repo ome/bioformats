@@ -107,6 +107,8 @@ public class DeltavisionReader extends FormatReader {
     suffixNecessary = false;
     domains = new String[] {FormatTools.LM_DOMAIN};
     hasCompanionFiles = true;
+    datasetDescription = "One .dv, .r3d, or .d3d file and up to two " +
+      "optional .log files";
   }
 
   // -- IFormatReader API methods --

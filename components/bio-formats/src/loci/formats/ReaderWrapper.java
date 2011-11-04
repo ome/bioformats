@@ -444,6 +444,10 @@ public abstract class ReaderWrapper implements IFormatReader {
     return reader.isSingleFile(id);
   }
 
+  public String getDatasetStructureDescription() {
+    return reader.getDatasetStructureDescription();
+  }
+
   public boolean hasCompanionFiles() {
     return reader.hasCompanionFiles();
   }

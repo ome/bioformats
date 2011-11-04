@@ -143,6 +143,9 @@ public abstract class FormatReader extends FormatHandler
   /** Whether this format supports multi-file datasets. */
   protected boolean hasCompanionFiles = false;
 
+  /** Short description of the structure of the dataset. */
+  protected String datasetDescription = "Single file";
+
   /** Whether or not to normalize float data. */
   protected boolean normalizeData;
 
@@ -1023,6 +1026,11 @@ public abstract class FormatReader extends FormatHandler
   /* @see IFormatReader#isSingleFile(String) */
   public boolean isSingleFile(String id) throws FormatException, IOException {
     return true;
+  }
+
+  /* @see IFormatReader#getDatasetStructureDescription() */
+  public String getDatasetStructureDescription() {
+    return datasetDescription;
   }
 
   /* @see IFormatReader#hasCompanionFiles() */

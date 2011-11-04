@@ -151,6 +151,8 @@ public class CellSensReader extends FormatReader {
     super("CellSens VSI", new String[] {"vsi", "ets"});
     domains = new String[] {FormatTools.HISTOLOGY_DOMAIN};
     suffixSufficient = true;
+    datasetDescription = "One .vsi file and an optional directory with a " +
+      "similar name that contains at least one subdirectory with .ets files";
   }
 
   // -- IFormatReader API methods --

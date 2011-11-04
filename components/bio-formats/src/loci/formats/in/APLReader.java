@@ -75,6 +75,8 @@ public class APLReader extends FormatReader {
     domains = new String[] {FormatTools.LM_DOMAIN};
     hasCompanionFiles = true;
     suffixSufficient = false;
+    datasetDescription = "One .apl file, one .mtb file, one .tnb file, and " +
+      "a directory containing one or more .tif files";
   }
 
   // -- IFormatReader API methods --

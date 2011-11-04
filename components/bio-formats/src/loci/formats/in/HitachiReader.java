@@ -68,10 +68,12 @@ public class HitachiReader extends FormatReader {
 
   /** Constructs a new Hitachi reader. */
   public HitachiReader() {
-    super("Hitachi", new String[] {"txt", "tif", "bmp", "jpg"});
+    super("Hitachi", "txt");
     suffixSufficient = false;
     domains = new String[] {FormatTools.SEM_DOMAIN};
     hasCompanionFiles = true;
+    datasetDescription =
+      "One .txt file plus one similarly-named .tif, .bmp, or .jpg file";
   }
 
   // -- IFormatReader API methods --

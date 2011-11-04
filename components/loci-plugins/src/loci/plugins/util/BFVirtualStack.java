@@ -74,6 +74,8 @@ public class BFVirtualStack extends VirtualStack {
 
   private int[] planeIndexes;
 
+  private float[] calibrationTable;
+
   // -- Static utility methods --
 
   protected static int getWidth(IFormatReader r, String path, int series)
@@ -230,6 +232,12 @@ public class BFVirtualStack extends VirtualStack {
       }
       currentProcessor = new RecordedImageProcessor(ip, pos[1], otherChannels);
       currentProcessor.setDoRecording(record);
+      if (calibrationTable == null) {
+        calibrationTable = currentProcessor.getChild().getCalibrationTable();
+      }
+      else {
+        currentProcessor.setCalibrationTable(calibrationTable);
+      }
       return currentProcessor.getChild();
     }
 
@@ -237,6 +245,12 @@ public class BFVirtualStack extends VirtualStack {
       currentSlice = n - 1;
       currentProcessor = new RecordedImageProcessor(ip);
       currentProcessor.setDoRecording(record);
+      if (calibrationTable == null) {
+        calibrationTable = currentProcessor.getChild().getCalibrationTable();
+      }
+      else {
+        currentProcessor.setCalibrationTable(calibrationTable);
+      }
       return currentProcessor.getChild();
     }
 

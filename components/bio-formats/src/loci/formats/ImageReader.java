@@ -613,6 +613,11 @@ public class ImageReader implements IFormatReader {
     return getReader(id).isSingleFile(id);
   }
 
+  /* @see IFormatReader#getDatasetStructureDescription() */
+  public String getDatasetStructureDescription() {
+    return getReader().getDatasetStructureDescription();
+  }
+
   /* @see IFormatReader#hasCompanionFiles() */
   public boolean hasCompanionFiles() {
     return getReader().hasCompanionFiles();

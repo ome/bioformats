@@ -192,6 +192,8 @@ public class ZeissLSMReader extends FormatReader {
     super("Zeiss Laser-Scanning Microscopy", new String[] {"lsm", "mdb"});
     domains = new String[] {FormatTools.LM_DOMAIN};
     hasCompanionFiles = true;
+    datasetDescription = "One or more .lsm files; if multiple .lsm files " +
+      "are present, an .mdb file should also be present";
   }
 
   // -- IFormatReader API methods --

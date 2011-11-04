@@ -77,6 +77,8 @@ public class NRRDReader extends FormatReader {
     super("NRRD", new String[] {"nrrd", "nhdr"});
     domains = new String[] {FormatTools.UNKNOWN_DOMAIN};
     hasCompanionFiles = true;
+    datasetDescription = "A single .nrrd file or one .nhdr file and one " +
+      "other file containing the pixels";
   }
 
   // -- IFormatReader API methods --

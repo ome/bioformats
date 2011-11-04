@@ -101,6 +101,8 @@ public class InCellReader extends FormatReader {
     suffixSufficient = false;
     domains = new String[] {FormatTools.HCS_DOMAIN};
     hasCompanionFiles = true;
+    datasetDescription = "One .xdce file with at least one .tif/.tiff or " +
+      ".im file";
   }
 
   // -- IFormatReader API methods --

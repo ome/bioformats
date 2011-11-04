@@ -60,7 +60,7 @@ public class LEOReader extends BaseTiffReader {
 
   /** Constructs a new LEO reader. */
   public LEOReader() {
-    super("LEO", "sxm");
+    super("LEO", new String[] {"sxm", "tif", "tiff"});
     domains = new String[] {FormatTools.EM_DOMAIN};
     suffixSufficient = false;
   }

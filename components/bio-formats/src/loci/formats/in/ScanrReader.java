@@ -100,6 +100,8 @@ public class ScanrReader extends FormatReader {
     domains = new String[] {FormatTools.HCS_DOMAIN};
     suffixSufficient = false;
     hasCompanionFiles = true;
+    datasetDescription = "One .xml file, one 'data' directory containing " +
+      ".tif/.tiff files, and optionally two .dat files";
   }
 
   // -- IFormatReader API methods --

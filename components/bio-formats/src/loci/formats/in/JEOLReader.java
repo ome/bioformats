@@ -55,6 +55,8 @@ public class JEOLReader extends FormatReader {
     domains = new String[] {FormatTools.SEM_DOMAIN};
     hasCompanionFiles = true;
     suffixSufficient = false;
+    datasetDescription = "A single .dat file or an .img file with a " +
+      "similarly-named .par file";
   }
 
   // -- IFormatReader API methods --

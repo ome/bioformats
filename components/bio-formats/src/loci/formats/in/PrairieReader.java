@@ -112,6 +112,8 @@ public class PrairieReader extends FormatReader {
     super("Prairie TIFF", new String[] {"tif", "tiff", "cfg", "xml"});
     domains = new String[] {FormatTools.LM_DOMAIN};
     hasCompanionFiles = true;
+    datasetDescription = "One .xml file, one .cfg file, and one or more " +
+      ".tif/.tiff files";
   }
 
   // -- IFormatReader API methods --

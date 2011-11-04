@@ -156,6 +156,8 @@ public class FV1000Reader extends FormatReader {
     super("Olympus FV1000", new String[] {"oib", "oif", "pty", "lut"});
     domains = new String[] {FormatTools.LM_DOMAIN};
     hasCompanionFiles = true;
+    datasetDescription = "Single .oib file or one .oif file and a " +
+      "similarly-named directory containing .tif/.tiff files";
   }
 
   // -- IFormatReader API methods --

@@ -119,6 +119,8 @@ public class FluoviewReader extends BaseTiffReader {
     super("Olympus Fluoview/ABD TIFF", new String[] {"tif", "tiff"});
     suffixSufficient = false;
     domains = new String[] {FormatTools.LM_DOMAIN};
+    datasetDescription =
+      "One or more .tif/.tiff files, and an optional .txt file";
   }
 
   // -- IFormatReader API methods --

@@ -69,6 +69,7 @@ public class VisitechReader extends FormatReader {
     suffixSufficient = false;
     domains = new String[] {FormatTools.LM_DOMAIN};
     hasCompanionFiles = true;
+    datasetDescription = "One .html file plus one or more .xys files";
   }
 
   // -- IFormatReader API methods --

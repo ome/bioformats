@@ -98,6 +98,8 @@ public class PerkinElmerReader extends FormatReader {
       "ano", "cfg", "csv", "htm", "rec", "tim", "zpo", "tif"});
     domains = new String[] {FormatTools.LM_DOMAIN};
     hasCompanionFiles = true;
+    datasetDescription = "One .htm file, several other metadata files " +
+      "(.tim, .ano, .csv, ...) and either .tif files or .2, .3, .4, etc. files";
   }
 
   // -- IFormatReader API methods --

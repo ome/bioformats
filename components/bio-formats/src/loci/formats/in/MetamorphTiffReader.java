@@ -78,6 +78,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
     super("Metamorph TIFF", new String[] {"tif", "tiff"});
     suffixSufficient = false;
     domains = new String[] {FormatTools.LM_DOMAIN, FormatTools.HCS_DOMAIN};
+    datasetDescription = "One or more .tif/.tiff files";
   }
 
   // -- IFormatReader API methods --

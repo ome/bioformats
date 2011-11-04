@@ -65,6 +65,7 @@ public class PDSReader extends FormatReader {
     domains = new String[] {FormatTools.EM_DOMAIN};
     suffixSufficient = false;
     hasCompanionFiles = true;
+    datasetDescription = "One .hdr file and a similarly-named .img file";
   }
 
   // -- IFormatReader API methods --

@@ -471,6 +471,9 @@ public interface IFormatReader extends IFormatHandler, IMetadataConfigurable {
   /** Returns true if this is a single-file format. */
   boolean isSingleFile(String id) throws FormatException, IOException;
 
+  /** Returns a short description of the dataset structure. */
+  String getDatasetStructureDescription();
+
   /** Returns a list of scientific domains in which this format is used. */
   String[] getPossibleDomains(String id) throws FormatException, IOException;
 
