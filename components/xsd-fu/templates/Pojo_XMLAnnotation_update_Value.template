@@ -29,9 +29,12 @@
 				NodeList childNodeList = Value_nodeList.get(0).getChildNodes();
 				for (int i = 0; i < childNodeList.getLength(); i++)
 				{
-					if (childNodeList.item(i).getNodeType() == Node.ELEMENT_NODE) {
+					try {
 						t.transform(new javax.xml.transform.dom.DOMSource(
 							childNodeList.item(i)), sr);
+					}
+					catch (javax.xml.transform.TransformerException te) {
+						LOGGER.warn("Failed to transform node #" + i, te);
 					}
 				}
 				setValue(sw.toString().trim());
