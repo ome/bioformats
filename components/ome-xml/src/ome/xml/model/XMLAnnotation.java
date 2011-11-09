@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2011-06-09 09:56:12.014006
+ * Created by melissa via xsd-fu on 2011-11-09 10:55:09-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -149,8 +149,13 @@ public class XMLAnnotation extends Annotation
 				NodeList childNodeList = Value_nodeList.get(0).getChildNodes();
 				for (int i = 0; i < childNodeList.getLength(); i++)
 				{
-					t.transform(new javax.xml.transform.dom.DOMSource(
-						childNodeList.item(i)), sr);
+					try {
+						t.transform(new javax.xml.transform.dom.DOMSource(
+							childNodeList.item(i)), sr);
+					}
+					catch (javax.xml.transform.TransformerException te) {
+						LOGGER.warn("Failed to transform node #" + i, te);
+					}
 				}
 				setValue(sw.toString().trim());
 			}
