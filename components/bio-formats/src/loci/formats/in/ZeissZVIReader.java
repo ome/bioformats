@@ -105,7 +105,7 @@ public class ZeissZVIReader extends FormatReader {
   private int timepoint = 0;
 
   private int[] channelColors;
-  private int lastPlane;
+  private int lastPlane = 0;
   private Hashtable<Integer, Integer> tiles = new Hashtable<Integer, Integer>();
 
   private Hashtable<Integer, Double> detectorGain =

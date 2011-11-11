@@ -143,7 +143,7 @@ public class BioRadReader extends FormatReader {
   private String[] picFiles;
 
   private byte[][][] lut;
-  private int lastChannel;
+  private int lastChannel = 0;
   private boolean brokenNotes = false;
 
   private Vector<Note> noteStrings;

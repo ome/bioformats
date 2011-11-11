@@ -262,9 +262,6 @@ public class ChannelFiller extends ReaderWrapper {
     if (lut8 != null) return lut8.length;
     short[][] lut16 = reader.get16BitLookupTable();
     if (lut16 != null) return lut16.length;
-    // NB: For some formats, LUTs are plane-specific and will
-    // only be available after opening a particular image plane.
-    reader.openBytes(0, 0, 0, 1, 1); // read a single pixel, for performance
     lut8 = reader.get8BitLookupTable();
     if (lut8 != null) return lut8.length;
     lut16 = reader.get16BitLookupTable();

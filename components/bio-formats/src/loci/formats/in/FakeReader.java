@@ -87,7 +87,7 @@ public class FakeReader extends FormatReader {
   private int[][] indexToValue = null, valueToIndex = null;
 
   /** Channel of last opened image plane. */
-  private int ac = -1;
+  private int ac = 0;
 
   // -- Constructor --
 

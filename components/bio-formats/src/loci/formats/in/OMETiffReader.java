@@ -74,7 +74,7 @@ public class OMETiffReader extends FormatReader {
   /** List of used files. */
   protected String[] used;
 
-  private int lastPlane;
+  private int lastPlane = 0;
   private boolean hasSPW;
 
   private int[] tileWidth;

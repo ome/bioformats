@@ -94,7 +94,7 @@ public class NativeND2Reader extends FormatReader {
 
   private Hashtable<String, Integer> channelColors;
   private boolean split = false;
-  private int lastChannel;
+  private int lastChannel = 0;
   private int[] colors;
 
   private int nXFields;
