@@ -1048,8 +1048,7 @@ public class TiffParser {
     }
 
     // Parse the entry's "ValueCount"
-    int valueCount =
-      bigTiff ? (int) (in.readLong() & 0xffffffff) : in.readInt();
+    int valueCount = bigTiff ? (int) in.readLong() : in.readInt();
     if (valueCount < 0) {
       throw new RuntimeException("Count of '" + valueCount + "' unexpected.");
     }

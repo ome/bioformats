@@ -76,7 +76,7 @@ public class MetakitTools {
     if (negative) {
       value = ~value;
     }
-    return value & 0xffffffff;
+    return value;
   }
 
 }
