@@ -38,6 +38,7 @@ public class DumpOMEXML {
 
     ImageReader r = new ImageReader();
     r.setMetadataStore(meta);
+    r.setOriginalMetadataPopulated(true);
     r.setId(path);
     r.close();
     String xml = omexmlService.getOMEXML(meta);
