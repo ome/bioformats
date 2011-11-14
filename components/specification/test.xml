@@ -1,0 +1,18 @@
+<ivy-module version="1.0">
+  <info
+      organisation="omero"
+      module="specification-test"
+      status="integration"/>
+  <configurations>
+    <conf name="test"/>
+  </configurations>
+  <publications>
+    <artifact name="specification-test" type="jar"/>
+  </publications>
+  <dependencies defaultconfmapping="test->*">
+    <dependency name="specification" rev="${omero.version}" changing="true"/>
+    <dependency name="model-${omero.db.profile}" rev="${omero.version}" changing="true"/>
+    <dependency name="model-test" rev="${omero.version}" changing="true"/>
+    <dependency org="loci" name="ome-xml" rev="${versions.bio-formats}"/>
+ </dependencies>
+</ivy-module>
