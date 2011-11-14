@@ -379,7 +379,7 @@ public class NativeQTReader extends FormatReader {
       in.seek(offset);
 
       // first 4 bytes are the atom size
-      long atomSize = in.readInt() & 0xffffffff;
+      long atomSize = in.readInt() & 0xffffffffL;
 
       // read the atom type
       String atomType = in.readString(4);

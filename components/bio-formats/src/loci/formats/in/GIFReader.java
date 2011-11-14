@@ -239,6 +239,8 @@ public class GIFReader extends FormatReader {
       }
     }
 
+    act = colorTables.get(0);
+
     LOGGER.info("Populating metadata");
 
     core[0].sizeZ = 1;

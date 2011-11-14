@@ -785,7 +785,7 @@ public class TiffSaver {
         int newCount;
         long newOffset;
         if (bigTiff) {
-          newCount = ifdBuf.readInt() & 0xffffffff;
+          newCount = ifdBuf.readInt();
           newOffset = ifdBuf.readLong();
         }
         else {

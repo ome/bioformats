@@ -298,7 +298,7 @@ public class QTWriter extends FormatWriter {
 
       RandomAccessInputStream in = new RandomAccessInputStream(currentId);
       in.seek(BYTE_COUNT_OFFSET);
-      numBytes = (int) (in.readInt() & 0xffffffff) - 8;
+      numBytes = in.readInt() - 8;
       in.close();
     }
 

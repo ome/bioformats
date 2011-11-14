@@ -105,7 +105,7 @@ public class OpenlabReader extends FormatReader {
   private int[][] planeOffsets;
 
   private Vector<byte[][]> luts;
-  private int lastPlane;
+  private int lastPlane = 0;
 
   private String gain, detectorOffset, xPos, yPos, zPos;
   private boolean specialPlateNames = false;
@@ -137,7 +137,9 @@ public class OpenlabReader extends FormatReader {
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
   public byte[][] get8BitLookupTable() {
     if (luts != null) {
-      if (series < planeOffsets.length && lastPlane < planeOffsets[series].length) {
+      if (series < planeOffsets.length &&
+        lastPlane < planeOffsets[series].length)
+      {
         return luts.get(planeOffsets[series][lastPlane]);
       }
       else if (lastPlane < luts.size()) {

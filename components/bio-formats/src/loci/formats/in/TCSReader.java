@@ -78,7 +78,7 @@ public class TCSReader extends FormatReader {
 
   private TiffParser tiffParser;
 
-  private int lastPlane;
+  private int lastPlane = 0;
   private long datestamp;
   private String xmlFile;
 

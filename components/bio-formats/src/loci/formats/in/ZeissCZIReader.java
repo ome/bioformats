@@ -125,7 +125,7 @@ public class ZeissCZIReader extends FormatReader {
   private Double[] positionsY;
   private Double[] positionsZ;
 
-  private int previousChannel = -1;
+  private int previousChannel = 0;
 
   // -- Constructor --
 
@@ -288,7 +288,7 @@ public class ZeissCZIReader extends FormatReader {
       detectorRefs.clear();
       objectiveIDs.clear();
 
-      previousChannel = -1;
+      previousChannel = 0;
     }
   }
 

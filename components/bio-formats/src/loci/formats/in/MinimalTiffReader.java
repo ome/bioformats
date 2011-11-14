@@ -79,7 +79,7 @@ public class MinimalTiffReader extends FormatReader {
 
   protected TiffParser tiffParser;
 
-  private int lastPlane;
+  private int lastPlane = 0;
 
   /** Number of JPEG 2000 resolution levels. */
   private Integer resolutionLevels;

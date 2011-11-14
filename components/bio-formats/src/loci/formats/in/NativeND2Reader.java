@@ -94,7 +94,7 @@ public class NativeND2Reader extends FormatReader {
 
   private Hashtable<String, Integer> channelColors;
   private boolean split = false;
-  private int lastChannel;
+  private int lastChannel = 0;
   private int[] colors;
 
   private int nXFields;
@@ -114,8 +114,8 @@ public class NativeND2Reader extends FormatReader {
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     final int blockLen = 8;
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
-    long magic1 = stream.readInt() & 0xffffffff;
-    long magic2 = stream.readInt() & 0xffffffff;
+    long magic1 = stream.readInt() & 0xffffffffL;
+    long magic2 = stream.readInt() & 0xffffffffL;
     return magic1 == ND2_MAGIC_BYTES_1 || magic2 == ND2_MAGIC_BYTES_2;
   }
 

@@ -144,7 +144,7 @@ public class FV1000Reader extends FormatReader {
   private POIService poi;
 
   private short[][][] lut;
-  private int lastChannel;
+  private int lastChannel = 0;
   private double pixelSizeZ = 1, pixelSizeT = 1;
 
   private String ptyStart = null, ptyEnd = null, ptyPattern = null, line = null;
