@@ -91,6 +91,7 @@ public class ScanrReader extends FormatReader {
   private double[] fieldPositionX;
   private double[] fieldPositionY;
   private Vector<Double> exposures = new Vector<Double>();
+  private Double deltaT = null;
 
   // -- Constructor --
 
@@ -195,6 +196,7 @@ public class ScanrReader extends FormatReader {
       fieldPositionX = null;
       fieldPositionY = null;
       exposures.clear();
+      deltaT = null;
     }
   }
 
@@ -541,6 +543,9 @@ public class ScanrReader extends FormatReader {
             store.setPlanePositionX(fieldPositionX[field], i, image);
             store.setPlanePositionY(fieldPositionY[field], i, image);
             store.setPlaneExposureTime(exposures.get(c), i, image);
+            if (deltaT != null) {
+              store.setPlaneDeltaT(deltaT, i, image);
+            }
           }
         }
       }
@@ -604,6 +609,9 @@ public class ScanrReader extends FormatReader {
         }
         else if (key.equals("timeloop count")) {
           core[0].sizeT = Integer.parseInt(value) + 1;
+        }
+        else if (key.equals("timeloop delay [ms]")) {
+          deltaT = Integer.parseInt(value) / 1000.0;
         }
         else if (key.equals("name") && validChannel) {
           channelNames.add(value);
