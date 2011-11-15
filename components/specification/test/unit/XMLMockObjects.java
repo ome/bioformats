@@ -1,5 +1,5 @@
 /*
- * integration.XMLMockFactory 
+ * unit.XMLMockFactory 
  *
  *------------------------------------------------------------------------------
  *  Copyright (C) 2006-2010 University of Dundee. All rights reserved.
@@ -20,7 +20,7 @@
  *
  *------------------------------------------------------------------------------
  */
-package coverage;
+package unit;
 
 //Java imports
 import java.awt.Color;
@@ -283,7 +283,7 @@ public class XMLMockObjects
 	 * @param index The index of the detector in the file.
 	 * @return See above.
 	 */
-	protected Detector createDetector(int index)
+	public Detector createDetector(int index)
 	{
 		Detector detector = new Detector();
 		detector.setID("Detector:"+index);
@@ -302,7 +302,7 @@ public class XMLMockObjects
 	 * @param index The index of the filter set in the file.
 	 * @return See above.
 	 */
-	protected FilterSet createFilterSet(int index)
+	public FilterSet createFilterSet(int index)
 	{
 		FilterSet set = new FilterSet();
 		set.setID("FilterSet:"+index);
@@ -318,7 +318,7 @@ public class XMLMockObjects
 	 * 
 	 * @return See above.
 	 */
-	protected Microscope createMicroscope()
+	public Microscope createMicroscope()
 	{
 		Microscope microscope = new Microscope();
 		microscope.setManufacturer(COMPONENT_MANUFACTURER);
@@ -335,7 +335,7 @@ public class XMLMockObjects
 	 * @param index The index of the dichroic in the file.
 	 * @return See above.
 	 */
-	protected Dichroic createDichroic(int index)
+	public Dichroic createDichroic(int index)
 	{
 		Dichroic dichroic = new Dichroic();
 		dichroic.setID("Dichroic:"+index);
@@ -352,7 +352,7 @@ public class XMLMockObjects
 	 * @param index The index of the objective in the file.
 	 * @return See above.
 	 */
-	protected Objective createObjective(int index)
+	public Objective createObjective(int index)
 	{
 		Objective objective = new Objective();
 		objective.setID("Objective:"+index);
@@ -378,7 +378,7 @@ public class XMLMockObjects
      * @param cutOut The cut out value.
 	 * @return See above.
 	 */
-	protected Filter createFilter(int index, int cutIn, int cutOut)
+	public Filter createFilter(int index, int cutIn, int cutOut)
 	{
 		Filter filter = new Filter();
 		filter.setID("Filter:"+index);
@@ -404,7 +404,7 @@ public class XMLMockObjects
 	 * @param index The index of the light source in the file.
 	 * @return See above.
 	 */
-	protected LightSource createLightSource(String type, int index)
+	public LightSource createLightSource(String type, int index)
 	{
 		if (Laser.class.getName().equals(type)) {
 			Laser laser = new Laser();
@@ -457,7 +457,7 @@ public class XMLMockObjects
 	 * @param bpp   The number of bytes per pixels.
 	 * @return See above.
 	 */
-	protected BinData createBinData(int sizeX, int sizeY, int bpp)
+	public BinData createBinData(int sizeX, int sizeY, int bpp)
 	{
 		BinData data = new BinData();
 		data.setBigEndian(false);
@@ -471,7 +471,7 @@ public class XMLMockObjects
 	 * 
 	 * @return See above.
 	 */
-	protected LightPath createLightPath()
+	public LightPath createLightPath()
 	{
 		LightPath lp = new LightPath();
 		if (NUMBER_OF_DICHROICS > 0) 
@@ -490,7 +490,7 @@ public class XMLMockObjects
 	 * 
 	 * @return See above.
 	 */
-	protected ImagingEnvironment createImageEnvironment()
+	public ImagingEnvironment createImageEnvironment()
 	{
 		ImagingEnvironment env = new ImagingEnvironment();
 		env.setAirPressure(1.0);
@@ -506,7 +506,7 @@ public class XMLMockObjects
 	 * @param index The index of the environment in the file.
 	 * @return See above.
 	 */
-	protected StageLabel createStageLabel()
+	public StageLabel createStageLabel()
 	{
 		StageLabel label = new StageLabel();
 		label.setName("StageLabel");
@@ -522,7 +522,7 @@ public class XMLMockObjects
 	 * @param ref Reference to the light source.
 	 * @return See above.
 	 */
-	protected LightSourceSettings createLightSourceSettings(int ref)
+	public LightSourceSettings createLightSourceSettings(int ref)
 	{
 		LightSourceSettings settings = new LightSourceSettings();
 		settings.setID("LightSource:"+ref);
@@ -537,7 +537,7 @@ public class XMLMockObjects
 	 * @param index The index in the file.
 	 * @return See above.
 	 */
-	protected MicrobeamManipulation createMicrobeamManipulation(int index)
+	public MicrobeamManipulation createMicrobeamManipulation(int index)
 	{
 		LightSourceSettings lss = createLightSourceSettings(4);
 		MicrobeamManipulation mm = new MicrobeamManipulation();
@@ -553,7 +553,7 @@ public class XMLMockObjects
      * @param index The index in the file.
      * @return See above.
      */
-    protected Experiment createExperiment(int index)
+    public Experiment createExperiment(int index)
     {
         Experiment exp = new Experiment();
         exp.setDescription("Experiment");
@@ -568,7 +568,7 @@ public class XMLMockObjects
      * @param index The index in the file.
      * @return See above.
      */
-    protected Experiment createExperimentWithMicrobeam(int index)
+    public Experiment createExperimentWithMicrobeam(int index)
     {
         Experiment exp = new Experiment();
         exp.setDescription("Experiment");
@@ -585,7 +585,7 @@ public class XMLMockObjects
 	 * @param ref Reference to the detector.
 	 * @return See above.
 	 */
-	protected DetectorSettings createDetectorSettings(int ref)
+	public DetectorSettings createDetectorSettings(int ref)
 	{
 		DetectorSettings settings = new DetectorSettings();
 		settings.setID("Detector:"+ref);
@@ -603,7 +603,7 @@ public class XMLMockObjects
 	 * @param ref Reference to the objective.
 	 * @return See above.
 	 */
-	protected ObjectiveSettings createObjectiveSettings(int ref)
+	public ObjectiveSettings createObjectiveSettings(int ref)
 	{
 		ObjectiveSettings settings = new ObjectiveSettings();
 		settings.setID("Objective:"+ref);
@@ -621,7 +621,7 @@ public class XMLMockObjects
 	 * @param settings The related settings.
 	 * @return See above.
 	 */
-	protected OTF createOTF(int index, FilterSet set, ObjectiveSettings settings)
+	public OTF createOTF(int index, FilterSet set, ObjectiveSettings settings)
 	{
 		OTF otf = new OTF();
 		otf.setID("OTF:"+index);
@@ -640,7 +640,7 @@ public class XMLMockObjects
 	 * 
 	 * @return See above.
 	 */
-	protected BinaryFile createBinaryFile()
+	public BinaryFile createBinaryFile()
 	{
 		BinaryFile bf = new BinaryFile();
 		bf.setBinData(createBinData(SIZE_X, SIZE_Y, BYTES_PER_PIXEL));
@@ -657,7 +657,7 @@ public class XMLMockObjects
 	 * @param t    The selected time-point.
 	 * @return See above.
 	 */
-	protected Shape createShape(int index, String type, int z, int c, int t)
+	public Shape createShape(int index, String type, int z, int c, int t)
 	{
 		Shape shape = null;
 		if (Line.class.getName().equals(type)) {
@@ -719,7 +719,7 @@ public class XMLMockObjects
 	 * @param c The selected channel.
 	 * @param t The selected time-point.
 	 */
-	protected ROI createROI(int index, int z, int c, int t)
+	public ROI createROI(int index, int z, int c, int t)
 	{
 		ROI roi = new ROI();
 		roi.setID("ROI:"+index);
@@ -754,7 +754,7 @@ public class XMLMockObjects
 	 * @param index The index of the project.
 	 * @return See above.
 	 */
-	protected Project createProject(int index)
+	public Project createProject(int index)
 	{
 		Project project = new Project();
 		project.setID("Project:"+index);
@@ -769,7 +769,7 @@ public class XMLMockObjects
 	 * @param index The index of the dataset.
 	 * @return See above.
 	 */
-	protected Dataset createDataset(int index)
+	public Dataset createDataset(int index)
 	{
 		Dataset dataset = new Dataset();
 		dataset.setID("Dataset:"+index);
@@ -784,7 +784,7 @@ public class XMLMockObjects
 	 * @param index The index of the screen.
 	 * @return See above.
 	 */
-	protected Screen createScreen(int index)
+	public Screen createScreen(int index)
 	{
 		Screen screen = new Screen();
 		screen.setID("Screen:"+index);
@@ -799,7 +799,7 @@ public class XMLMockObjects
 	 * @param index The index of the plate.
 	 * @return See above.
 	 */
-	protected Plate createBasicPlate(int index)
+	public Plate createBasicPlate(int index)
 	{
 		Plate plate = new Plate();
 		plate.setID("Plate:"+index);
@@ -816,7 +816,7 @@ public class XMLMockObjects
 	 * @param numberOfPlateAcquisition  The number of plate acquisition to add.
 	 * @return See above.
 	 */
-	protected Plate createPlate(int numberOfPlates, int index, 
+	public Plate createPlate(int numberOfPlates, int index, 
 			int numberOfPlateAcquisition)
 	{
 		return createPlate(numberOfPlates, index, ROWS, COLUMNS, FIELDS, 
@@ -834,7 +834,7 @@ public class XMLMockObjects
 	 * @param numberOfPlateAcquisition  The number of plate acquisition to add.
 	 * @return See above.
 	 */
-	protected Plate createPlate(int numberOfPlates, 
+	public Plate createPlate(int numberOfPlates, 
 			int index, int rows, int columns, int fields, 
 			int numberOfPlateAcquisition)
 	{
@@ -947,7 +947,7 @@ public class XMLMockObjects
 	 * @param t The time-point.
 	 * @return See above.
 	 */
-	protected Plane createPlane(int z, int c, int t)
+	public Plane createPlane(int z, int c, int t)
 	{
 		Plane plane = new Plane();
 		plane.setDeltaT(0.1);
@@ -970,7 +970,7 @@ public class XMLMockObjects
 	 * 	               metadata, <code>false</code> otherwise.
 	 * @return See above.
 	 */
-	protected Image createImage(int index, boolean metadata)
+	public Image createImage(int index, boolean metadata)
 	{
 		if (metadata && instrument == null)
 			populateInstrument();
@@ -1031,7 +1031,7 @@ public class XMLMockObjects
 	 * @param index The index in the file.
 	 * @return See above.
 	 */
-	protected Channel createChannel(int index)
+	public Channel createChannel(int index)
 	{
 		Channel channel = new Channel();
 		channel.setID("Channel:"+index);
@@ -1057,7 +1057,7 @@ public class XMLMockObjects
 	 * @param index The identifier of the image.
 	 * @return See above.
 	 */
-	protected Image createImage(int index)
+	public Image createImage(int index)
 	{
 		return createImage(index, false);
 	}
@@ -1069,7 +1069,7 @@ public class XMLMockObjects
 	 *                 <code>false</code> otherwise.
 	 * @return See above.
 	 */
-	protected Instrument createInstrument(boolean populate)
+	public Instrument createInstrument(boolean populate)
 	{
 		int index = 0;
 		Instrument instrument = new Instrument();
@@ -1103,7 +1103,7 @@ public class XMLMockObjects
 	 * @param index The index in the file.
 	 * @return See above.
 	 */
-	protected Reagent createReagent(int index)
+	public Reagent createReagent(int index)
 	{
 		Reagent reagent = new Reagent();
 		reagent.setID("Reagent:"+index);

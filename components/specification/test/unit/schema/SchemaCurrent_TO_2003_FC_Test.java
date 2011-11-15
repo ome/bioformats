@@ -4,7 +4,7 @@
  *   Copyright 2006-2011 University of Dundee. All rights reserved.
  *   Use is subject to license terms supplied in LICENSE.txt
  */
-package coverage.schema;
+package unit.schema;
 
 //Java imports
 import java.io.File;
@@ -26,9 +26,9 @@ import org.w3c.dom.NodeList;
 import org.springframework.util.ResourceUtils;
 
 //Application-internal dependencies
-import coverage.AbstractTest;
-import coverage.XMLMockObjects;
-import coverage.XMLWriter;
+import unit.AbstractTest;
+import unit.XMLMockObjects;
+import unit.XMLWriter;
 
 /** 
  * Collections of tests.
