@@ -65,8 +65,8 @@ public class NativeND2Reader extends FormatReader {
 
   // -- Constants --
 
-  public static final long ND2_MAGIC_BYTES_1 = 0xdacebe0a;
-  public static final long ND2_MAGIC_BYTES_2 = 0x6a502020;
+  public static final long ND2_MAGIC_BYTES_1 = 0xdacebe0aL;
+  public static final long ND2_MAGIC_BYTES_2 = 0x6a502020L;
 
   // -- Fields --
 
