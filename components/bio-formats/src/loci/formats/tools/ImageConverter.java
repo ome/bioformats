@@ -58,6 +58,7 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.out.TiffWriter;
 import loci.formats.services.OMEXMLService;
 import loci.formats.services.OMEXMLServiceImpl;
+import loci.formats.tiff.IFD;
 
 import ome.xml.model.Image;
 import ome.xml.model.OME;
@@ -81,6 +82,25 @@ public final class ImageConverter {
   private static final Logger LOGGER =
     LoggerFactory.getLogger(ImageConverter.class);
 
+  // -- Fields --
+
+  private String in = null, out = null;
+  private String map = null;
+  private String compression = null;
+  private boolean stitch = false, separate = false, merge = false, fill = false;
+  private boolean bigtiff = false, group = true;
+  private boolean printVersion = false;
+  private boolean autoscale = false;
+  private Boolean overwrite = null;
+  private int series = -1;
+  private int firstPlane = 0;
+  private int lastPlane = Integer.MAX_VALUE;
+  private int channel = -1, zSection = -1, timepoint = -1;
+  private int xCoordinate = 0, yCoordinate = 0, width = 0, height = 0;
+
+  private IFormatReader reader;
+  private MinMaxCalculator minMax;
+
   // -- Constructor --
 
   private ImageConverter() { }
@@ -88,23 +108,10 @@ public final class ImageConverter {
   // -- Utility methods --
 
   /** A utility method for converting a file from the command line. */
-  public static boolean testConvert(IFormatWriter writer, String[] args)
+  public boolean testConvert(IFormatWriter writer, String[] args)
     throws FormatException, IOException
   {
     DebugTools.enableLogging("INFO");
-    String in = null, out = null;
-    String map = null;
-    String compression = null;
-    boolean stitch = false, separate = false, merge = false, fill = false;
-    boolean bigtiff = false, group = true;
-    boolean printVersion = false;
-    boolean autoscale = false;
-    Boolean overwrite = null;
-    int series = -1;
-    int firstPlane = 0;
-    int lastPlane = Integer.MAX_VALUE;
-    int channel = -1, zSection = -1, timepoint = -1;
-    int xCoordinate = 0, yCoordinate = 0, width = 0, height = 0;
     if (args != null) {
       for (int i=0; i<args.length; i++) {
         if (args[i].startsWith("-") && args.length > 1) {
@@ -270,7 +277,7 @@ public final class ImageConverter {
 
     long start = System.currentTimeMillis();
     LOGGER.info(in);
-    IFormatReader reader = new ImageReader();
+    reader = new ImageReader();
     if (stitch) {
       reader = new FileStitcher(reader);
       Location f = new Location(in);
@@ -286,7 +293,7 @@ public final class ImageConverter {
     if (separate) reader = new ChannelSeparator(reader);
     if (merge) reader = new ChannelMerger(reader);
     if (fill) reader = new ChannelFiller(reader);
-    MinMaxCalculator minMax = null;
+    minMax = null;
     if (autoscale) {
       reader = new MinMaxCalculator(reader);
       minMax = (MinMaxCalculator) reader;
@@ -432,55 +439,7 @@ public final class ImageConverter {
         if (compression != null) writer.setCompression(compression);
 
         long s = System.currentTimeMillis();
-        byte[] buf =
-          reader.openBytes(i, xCoordinate, yCoordinate, width, height);
-
-        if (autoscale) {
-          Double min = null;
-          Double max = null;
-
-          Double[] planeMin = minMax.getPlaneMinimum(i);
-          Double[] planeMax = minMax.getPlaneMaximum(i);
-
-          if (planeMin != null && planeMax != null) {
-            min = planeMin[0];
-            max = planeMax[0];
-
-            for (int j=1; j<planeMin.length; j++) {
-              if (planeMin[j].doubleValue() < min.doubleValue()) {
-                min = planeMin[j];
-              }
-              if (planeMax[j].doubleValue() < max.doubleValue()) {
-                max = planeMax[j];
-              }
-            }
-          }
-
-          int pixelType = reader.getPixelType();
-          int bpp = FormatTools.getBytesPerPixel(pixelType);
-          boolean floatingPoint = FormatTools.isFloatingPoint(pixelType);
-          Object pix = DataTools.makeDataArray(buf, bpp, floatingPoint,
-            reader.isLittleEndian());
-          byte[][] b = ImageTools.make24Bits(pix, width, height,
-            reader.isInterleaved(), false, min, max);
-
-          int channelCount = reader.getRGBChannelCount();
-          int copyComponents = (int) Math.min(channelCount, b.length);
-
-          buf = new byte[channelCount * b[0].length];
-          for (int j=0; j<copyComponents; j++) {
-            System.arraycopy(b[j], 0, buf, b[0].length * j, b[0].length);
-          }
-        }
-
-        byte[][] lut = reader.get8BitLookupTable();
-        if (lut != null) {
-          IndexColorModel model = new IndexColorModel(8, lut[0].length,
-            lut[0], lut[1], lut[2]);
-          writer.setColorModel(model);
-        }
-        long m = System.currentTimeMillis();
-        writer.saveBytes(i - startPlane, buf);
+        long m = convertPlane(writer, i, startPlane);
         long e = System.currentTimeMillis();
         read += m - s;
         write += e - m;
@@ -520,10 +479,134 @@ public final class ImageConverter {
     return true;
   }
 
+  // -- Helper methods --
+
+  private long convertPlane(IFormatWriter writer, int index, int startPlane)
+    throws FormatException, IOException
+  {
+    if (width * height >= 4096 * 4096) {
+      // this is a "big image", so we will attempt to convert it one tile
+      // at a time
+
+      if ((writer instanceof TiffWriter) || ((writer instanceof ImageWriter) &&
+        (((ImageWriter) writer).getWriter(out) instanceof TiffWriter)))
+      {
+        return convertTilePlane(writer, index, startPlane);
+      }
+    }
+
+    byte[] buf =
+      reader.openBytes(index, xCoordinate, yCoordinate, width, height);
+
+    autoscalePlane(buf, index);
+    applyLUT(writer);
+    long m = System.currentTimeMillis();
+    writer.saveBytes(index - startPlane, buf);
+    return m;
+  }
+
+  private long convertTilePlane(IFormatWriter writer, int index, int startPlane)
+    throws FormatException, IOException
+  {
+    int w = width;
+    int h = 1;
+    int nXTiles = width / w;
+    int nYTiles = height / h;
+
+    IFD ifd = new IFD();
+
+    Long m = null;
+    for (int y=0; y<nYTiles; y++) {
+      for (int x=0; x<nXTiles; x++) {
+        int tileX = xCoordinate + x * w;
+        int tileY = yCoordinate + y * h;
+        int tileWidth = x < nXTiles - 1 ? w : w - (width % w);
+        int tileHeight = y < nYTiles - 1 ? h : h - (height % h);
+        byte[] buf =
+          reader.openBytes(index, tileX, tileY, tileWidth, tileHeight);
+
+        autoscalePlane(buf, index);
+        applyLUT(writer);
+        if (m == null) {
+          m = System.currentTimeMillis();
+        }
+        ifd.put(IFD.TILE_WIDTH, tileWidth);
+        ifd.put(IFD.TILE_LENGTH, tileHeight);
+
+        if (writer instanceof TiffWriter) {
+          ((TiffWriter) writer).saveBytes(index - startPlane, buf,
+            ifd, tileX, tileY, tileWidth, tileHeight);
+        }
+        else if (writer instanceof ImageWriter) {
+          IFormatWriter baseWriter = ((ImageWriter) writer).getWriter(out);
+          if (baseWriter instanceof TiffWriter) {
+            ((TiffWriter) baseWriter).saveBytes(index - startPlane, buf, ifd,
+              tileX, tileY, tileWidth, tileHeight);
+          }
+        }
+      }
+    }
+    return m;
+  }
+
+  private void autoscalePlane(byte[] buf, int index)
+    throws FormatException, IOException
+  {
+    if (autoscale) {
+      Double min = null;
+      Double max = null;
+
+      Double[] planeMin = minMax.getPlaneMinimum(index);
+      Double[] planeMax = minMax.getPlaneMaximum(index);
+
+      if (planeMin != null && planeMax != null) {
+        min = planeMin[0];
+        max = planeMax[0];
+
+        for (int j=1; j<planeMin.length; j++) {
+          if (planeMin[j].doubleValue() < min.doubleValue()) {
+            min = planeMin[j];
+          }
+          if (planeMax[j].doubleValue() < max.doubleValue()) {
+            max = planeMax[j];
+          }
+        }
+      }
+
+      int pixelType = reader.getPixelType();
+      int bpp = FormatTools.getBytesPerPixel(pixelType);
+      boolean floatingPoint = FormatTools.isFloatingPoint(pixelType);
+      Object pix = DataTools.makeDataArray(buf, bpp, floatingPoint,
+        reader.isLittleEndian());
+      byte[][] b = ImageTools.make24Bits(pix, width, height,
+        reader.isInterleaved(), false, min, max);
+
+      int channelCount = reader.getRGBChannelCount();
+      int copyComponents = (int) Math.min(channelCount, b.length);
+
+      buf = new byte[channelCount * b[0].length];
+      for (int j=0; j<copyComponents; j++) {
+        System.arraycopy(b[j], 0, buf, b[0].length * j, b[0].length);
+      }
+    }
+  }
+
+  private void applyLUT(IFormatWriter writer)
+    throws FormatException, IOException
+  {
+    byte[][] lut = reader.get8BitLookupTable();
+    if (lut != null) {
+      IndexColorModel model = new IndexColorModel(8, lut[0].length,
+        lut[0], lut[1], lut[2]);
+      writer.setColorModel(model);
+    }
+  }
+
   // -- Main method --
 
   public static void main(String[] args) throws FormatException, IOException {
-    if (!testConvert(new ImageWriter(), args)) System.exit(1);
+    ImageConverter converter = new ImageConverter();
+    if (!converter.testConvert(new ImageWriter(), args)) System.exit(1);
     System.exit(0);
   }
 
