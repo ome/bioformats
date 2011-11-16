@@ -14,5 +14,7 @@
     <dependency name="model-${omero.db.profile}" rev="${omero.version}" changing="true"/>
     <dependency name="model-test" rev="${omero.version}" changing="true"/>
     <dependency org="loci" name="ome-xml" rev="${versions.bio-formats}"/>
+    <dependency org="omero" name="omero_client" rev="${omero.version}" changing="true"/>
+    <dependency org="omero" name="blitz-test" rev="${omero.version}" changing="true"/>
  </dependencies>
 </ivy-module>

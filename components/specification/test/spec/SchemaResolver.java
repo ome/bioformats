@@ -5,7 +5,7 @@
  *   Use is subject to license terms supplied in LICENSE.txt
  */
 
-package unit;
+package spec;
 
 import java.io.InputStream;
 import org.w3c.dom.ls.LSResourceResolver;

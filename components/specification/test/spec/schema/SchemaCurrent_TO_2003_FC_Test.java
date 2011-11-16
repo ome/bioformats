@@ -4,7 +4,7 @@
  *   Copyright 2006-2011 University of Dundee. All rights reserved.
  *   Use is subject to license terms supplied in LICENSE.txt
  */
-package unit.schema;
+package spec.schema;
 
 //Java imports
 import java.io.File;
@@ -26,39 +26,41 @@ import org.w3c.dom.NodeList;
 import org.springframework.util.ResourceUtils;
 
 //Application-internal dependencies
-import unit.AbstractTest;
-import unit.XMLMockObjects;
-import unit.XMLWriter;
-
+import spec.AbstractTest;
+import spec.XMLMockObjects;
+import spec.XMLWriter;
 
 /** 
  * Collections of tests.
- * Checks if the downgrade from 2011-06 schema to 2010-06 schema works.
+ * Checks if the downgrade from current schema to 2003-FC schema works.
  *
  * @author Jean-Marie Burel &nbsp;&nbsp;&nbsp;&nbsp;
  * <a href="mailto:j.burel@dundee.ac.uk">j.burel@dundee.ac.uk</a>
  * @author Donald MacDonald &nbsp;&nbsp;&nbsp;&nbsp;
  * <a href="mailto:donald@lifesci.dundee.ac.uk">donald@lifesci.dundee.ac.uk</a>
- * @author Andrew Patterson &nbsp;&nbsp;&nbsp;&nbsp;
- * <a href="mailto:ajpatterson@lifesci.dundee.ac.uk">ajpatterson@lifesci.dundee.ac.uk</a>
  * @version 3.0
  * <small>
  * (<b>Internal version:</b> $Revision: $Date: $)
  * </small>
  * @since 3.0-Beta4
  */
-public class Schema2011_06_TO_2010_06_Test 
-	extends AbstractTest
+public class SchemaCurrent_TO_2003_FC_Test 
+	extends AbstractTest 
 {
 
 	/** The collection of files that have to be deleted. */
 	private List<File> files;
 	
-	/** The transform */
-	private InputStream STYLESHEET;
+	/** The transforms */
+	private InputStream STYLESHEET_A;
+	private InputStream STYLESHEET_B;
 	
 	/** The target schema */
 	private StreamSource[] schemaArray;
+
+	
+	/** The path in front of ID. */
+	private String XSLT_PATH_ID = "xslt.fix";
 	
 	/**
 	 * Checks if the <code>Image</code> tag was correctly transformed.
@@ -68,6 +70,7 @@ public class Schema2011_06_TO_2010_06_Test
 	 */
 	private void checkImageNode(Node destNode, Node srcNode)
 	{
+		String IMAGE_ID_PATH = XSLT_PATH_ID+":Image:XSLT:";
 		assertNotNull(destNode);
 		assertNotNull(srcNode);
 		NamedNodeMap attributesSrc = srcNode.getAttributes();
@@ -90,7 +93,7 @@ public class Schema2011_06_TO_2010_06_Test
 			if (n != null) {
 				name = n.getNodeName();
 				if (name.equals(XMLWriter.ID_ATTRIBUTE))
-					assertEquals(n.getNodeValue(), idSrc);
+					assertEquals(n.getNodeValue(), IMAGE_ID_PATH+idSrc);
 				else if (name.equals(XMLWriter.NAME_ATTRIBUTE))
 					assertEquals(n.getNodeValue(), nameSrc);
 			}
@@ -124,6 +127,7 @@ public class Schema2011_06_TO_2010_06_Test
 	 */
 	private void checkPixelsNode(Node destNode, Node srcNode)
 	{
+		String PIXELS_ID_PATH = XSLT_PATH_ID+":Pixels:XSLT:";
 		NamedNodeMap attributesSrc = srcNode.getAttributes();
 		String nameSrc = "";
 		String idSrc = "";
@@ -134,7 +138,6 @@ public class Schema2011_06_TO_2010_06_Test
 		String sizeT = "";
 		String pixelsType = "";
 		String dimensionOrder = "";
-		String bigEndian = "";
 		Node n;
 		String name;
 		for (int i = 0; i < attributesSrc.getLength(); i++) {
@@ -158,16 +161,15 @@ public class Schema2011_06_TO_2010_06_Test
 				pixelsType = n.getNodeValue();
 			else if (name.equals(XMLWriter.DIMENSION_ORDER_ATTRIBUTE))
 				dimensionOrder = n.getNodeValue();
-			else if (name.equals(XMLWriter.BIG_ENDIAN_ATTRIBUTE))
-				bigEndian = n.getNodeValue();
 		}
+		String bigEndianDst = "";
 		NamedNodeMap attributes = destNode.getAttributes();
 		for (int i = 0; i < attributes.getLength(); i++) {
 			n = attributes.item(i);
 			if (n != null) {
 				name = n.getNodeName();
 				if (name.equals(XMLWriter.ID_ATTRIBUTE))
-					assertEquals(n.getNodeValue(), idSrc);
+					assertEquals(n.getNodeValue(), PIXELS_ID_PATH+idSrc);
 				else if (name.equals(XMLWriter.NAME_ATTRIBUTE))
 					assertEquals(n.getNodeValue(), nameSrc);
 				else if (name.equals(XMLWriter.SIZE_X_ATTRIBUTE))
@@ -186,7 +188,7 @@ public class Schema2011_06_TO_2010_06_Test
 				else if (name.equals(XMLWriter.DIMENSION_ORDER_ATTRIBUTE))
 					assertEquals(n.getNodeValue(), dimensionOrder);
 				else if (name.equals(XMLWriter.BIG_ENDIAN_ATTRIBUTE))
-					assertEquals(n.getNodeValue(), bigEndian);
+					bigEndianDst = n.getNodeValue();
 			}
 		}
 		//check the tag now.
@@ -222,8 +224,8 @@ public class Schema2011_06_TO_2010_06_Test
 			n = attributesSrc.item(i);
 			if (n != null) {
 				name = n.getNodeName();
-//				if (name.contains(XMLWriter.BIG_ENDIAN_ATTRIBUTE))
-//					assertEquals(n.getNodeValue(), bigEndianDst);
+				if (name.contains(XMLWriter.BIG_ENDIAN_ATTRIBUTE))
+					assertEquals(n.getNodeValue(), bigEndianDst);
 			}
 		}
 	}
@@ -273,20 +275,16 @@ public class Schema2011_06_TO_2010_06_Test
     	super.setUp();
 
 		/** The target schema file */
-//		SCHEMA_2010_06 = this.getClass().getResourceAsStream("/2010-06/V1/ome.xsd");
+//		SCHEMA_2003_FC = this.getClass().getResourceAsStream("/2003-FC/V2/ome.xsd");
 		//components/specification/Released-Schema/2003-FC/V2/
 
-		schemaArray = new StreamSource[6];
+		schemaArray = new StreamSource[1];
 
-		schemaArray[0] = new StreamSource(this.getClass().getResourceAsStream("/Released-Schema/2010-06/V1/ome.xsd"));
-		schemaArray[1] = new StreamSource(this.getClass().getResourceAsStream("/Released-Schema/2010-06/V1/SPW.xsd"));
-		schemaArray[2] = new StreamSource(this.getClass().getResourceAsStream("/Released-Schema/2010-06/V1/SA.xsd"));
-		schemaArray[3] = new StreamSource(this.getClass().getResourceAsStream("/Released-Schema/2010-06/V1/ROI.xsd"));
-		schemaArray[4] = new StreamSource(this.getClass().getResourceAsStream("/Released-Schema/2010-06/V1/BinaryFile.xsd"));
-		schemaArray[5] = new StreamSource(this.getClass().getResourceAsStream("/Released-Schema/2010-06/V1/OMERO.xsd"));
+		schemaArray[0] = new StreamSource(this.getClass().getResourceAsStream("/Released-Schema/2003-FC/V2/ome.xsd"));
 
-		/** The transform file */
-		STYLESHEET = this.getClass().getResourceAsStream("/Xslt/2011-06-to-2010-06.xsl");
+		/** The transforms */
+		STYLESHEET_A = this.getClass().getResourceAsStream("/Xslt/2011-06-to-2010-06.xsl");
+		STYLESHEET_B = this.getClass().getResourceAsStream("/Xslt/2010-06-to-2003-FC.xsl");
 		//components/specification/Xslt/
 		
     	files = new ArrayList<File>();
@@ -309,30 +307,32 @@ public class Schema2011_06_TO_2010_06_Test
     }
 	
 	/**
-     * Tests the XSLT used to downgrade from schema 2011-06 to 2010-06.
+     * Tests the XSLT used to downgrade from current schema to 2003-FC.
      * An XML file with an image is created and the stylesheet is applied.
      * @throws Exception Thrown if an error occurred.
      */
     @Test(enabled = true)
-	public void testDowngradeTo201006ImageNoMetadata()
+	public void testDowngradeTo2003FCImageNoMetadata()
 		throws Exception
 	{
-		File f = File.createTempFile("testDowngradeTo201006ImageNoMetadata",
+		File inFile = File.createTempFile("testDowngradeTo2003FCImageNoMetadata",
 				"."+OME_XML_FORMAT);
-		files.add(f);
-		File output = File.createTempFile(
-				"testDowngradeTo201006ImageNoMetadataOutput",
+		files.add(inFile);
+		File middleFile = File.createTempFile("testDowngradeTo2003FCImageNoMetadataMiddle",
 				"."+OME_XML_FORMAT);
-		files.add(output);
+		files.add(middleFile);
+		File outputFile = File.createTempFile(
+				"testDowngradeTo2003FCImageNoMetadataOutput",
+				"."+OME_XML_FORMAT);
+		files.add(outputFile);
 		XMLMockObjects xml = new  XMLMockObjects();
 		XMLWriter writer = new XMLWriter();
-		writer.writeFile(f, xml.createImage(), true);
+		writer.writeFile(inFile, xml.createImage(), true);
 
-		File fCheckIn  = new File("/Users/andrew/Desktop/wibble1.xml");
-		writer.writeFile(fCheckIn , xml.getRoot(), true);
+		transformFileWithStream(inFile, middleFile, STYLESHEET_A);
+		transformFileWithStream(middleFile, outputFile, STYLESHEET_B);
 
-		transformFileWithStream(f, output, STYLESHEET);
-		Document doc = parseFileWithStreamArray(output, schemaArray);
+		Document doc = parseFileWithStreamArray(outputFile, schemaArray);
 		assertNotNull(doc);
 		
 		//Should only have one root node i.e. OME node
@@ -344,7 +344,7 @@ public class Schema2011_06_TO_2010_06_Test
 		list = root.getChildNodes();
 		String name;
 		Node n;
-		Document docSrc = parseFile(f, null);
+		Document docSrc = parseFile(inFile, null);
 		Node rootSrc = docSrc.getChildNodes().item(0);
 		Node imageNode = null;
 		NodeList listSrc = rootSrc.getChildNodes();
@@ -356,7 +356,7 @@ public class Schema2011_06_TO_2010_06_Test
 					imageNode = n;
 			}
 		}
-		
+
 		for (int i = 0; i < list.getLength(); i++) {
 			n = list.item(i);
 			name = n.getNodeName();
@@ -366,5 +366,5 @@ public class Schema2011_06_TO_2010_06_Test
 					checkImageNode(n, imageNode);
 			}
 		}
-	}	
+	}
 }

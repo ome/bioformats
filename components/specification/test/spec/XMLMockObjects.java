@@ -20,7 +20,7 @@
  *
  *------------------------------------------------------------------------------
  */
-package unit;
+package spec;
 
 //Java imports
 import java.awt.Color;
