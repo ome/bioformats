@@ -29,8 +29,8 @@ public class SchemaResolver implements LSResourceResolver
     private DOMImplementationLS theDOMImplementationLS;
 
     // the static string to strip when mapping schema locations
-    private static String GIT_MASTER_PATH  = "http://git.openmicroscopy.org/src/master/components/specification/Released-Schema";
-    private static String GIT_DEVELOP_PATH = "http://git.openmicroscopy.org/src/develop/components/specification/Released-Schema";
+    private static String GIT_MASTER_PATH  = "http://git.openmicroscopy.org/src/master/components/specification";
+    private static String GIT_DEVELOP_PATH = "http://git.openmicroscopy.org/src/develop/components/specification";
     private static String LEGACY_AC_PATH = "http://www.openmicroscopy.org/XMLschemas/AnalysisChain/RC1/";
     private static String LEGACY_AM_PATH = "http://www.openmicroscopy.org/XMLschemas/AnalysisModule/RC1/";
     private static String LEGACY_BF_PATH = "http://www.openmicroscopy.org/XMLschemas/BinaryFile/RC1/";
@@ -40,7 +40,7 @@ public class SchemaResolver implements LSResourceResolver
     private static String LEGACY_ML_PATH = "http://www.openmicroscopy.org/XMLschemas/MLI/IR2/";
     private static String LEGACY_OM_PATH = "http://www.openmicroscopy.org/XMLschemas/OME/FC/";
     private static String LEGACY_ST_PATH = "http://www.openmicroscopy.org/XMLschemas/STD/RC2/";
-    private static String LEGACY_SEARCH_PATH = "/2003-FC/V2/";
+    private static String LEGACY_SEARCH_PATH = "/Released-Schema/2003-FC/V2/";
 
     public SchemaResolver() throws ClassNotFoundException, InstantiationException, IllegalAccessException
     {
@@ -74,7 +74,7 @@ public class SchemaResolver implements LSResourceResolver
         // Match the requested schema locations and create the appropriate LSInput object
         if (systemId.equals("http://www.w3.org/2001/xml.xsd")) 
         {
-            theResult = makeSubstutionStream("/additions/jar/xml.xsd", systemId);
+            theResult = makeSubstutionStream("/Released-Schema/additions/jar/xml.xsd", systemId);
         } 
         else if (systemId.startsWith(GIT_MASTER_PATH)) 
         {

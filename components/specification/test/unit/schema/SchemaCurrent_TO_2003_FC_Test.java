@@ -280,11 +280,11 @@ public class SchemaCurrent_TO_2003_FC_Test
 
 		schemaArray = new StreamSource[1];
 
-		schemaArray[0] = new StreamSource(this.getClass().getResourceAsStream("/2003-FC/V2/ome.xsd"));
+		schemaArray[0] = new StreamSource(this.getClass().getResourceAsStream("/Released-Schema/2003-FC/V2/ome.xsd"));
 
 		/** The transforms */
-		STYLESHEET_A = this.getClass().getResourceAsStream("/2011-06-to-2010-06.xsl");
-		STYLESHEET_B = this.getClass().getResourceAsStream("/2010-06-to-2003-FC.xsl");
+		STYLESHEET_A = this.getClass().getResourceAsStream("/Xslt/2011-06-to-2010-06.xsl");
+		STYLESHEET_B = this.getClass().getResourceAsStream("/Xslt/2010-06-to-2003-FC.xsl");
 		//components/specification/Xslt/
 		
     	files = new ArrayList<File>();

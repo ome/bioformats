@@ -278,15 +278,15 @@ public class Schema2011_06_TO_2010_06_Test
 
 		schemaArray = new StreamSource[6];
 
-		schemaArray[0] = new StreamSource(this.getClass().getResourceAsStream("/2010-06/V1/ome.xsd"));
-		schemaArray[1] = new StreamSource(this.getClass().getResourceAsStream("/2010-06/V1/SPW.xsd"));
-		schemaArray[2] = new StreamSource(this.getClass().getResourceAsStream("/2010-06/V1/SA.xsd"));
-		schemaArray[3] = new StreamSource(this.getClass().getResourceAsStream("/2010-06/V1/ROI.xsd"));
-		schemaArray[4] = new StreamSource(this.getClass().getResourceAsStream("/2010-06/V1/BinaryFile.xsd"));
-		schemaArray[5] = new StreamSource(this.getClass().getResourceAsStream("/2010-06/V1/OMERO.xsd"));
+		schemaArray[0] = new StreamSource(this.getClass().getResourceAsStream("/Released-Schema/2010-06/V1/ome.xsd"));
+		schemaArray[1] = new StreamSource(this.getClass().getResourceAsStream("/Released-Schema/2010-06/V1/SPW.xsd"));
+		schemaArray[2] = new StreamSource(this.getClass().getResourceAsStream("/Released-Schema/2010-06/V1/SA.xsd"));
+		schemaArray[3] = new StreamSource(this.getClass().getResourceAsStream("/Released-Schema/2010-06/V1/ROI.xsd"));
+		schemaArray[4] = new StreamSource(this.getClass().getResourceAsStream("/Released-Schema/2010-06/V1/BinaryFile.xsd"));
+		schemaArray[5] = new StreamSource(this.getClass().getResourceAsStream("/Released-Schema/2010-06/V1/OMERO.xsd"));
 
 		/** The transform file */
-		STYLESHEET = this.getClass().getResourceAsStream("/2011-06-to-2010-06.xsl");
+		STYLESHEET = this.getClass().getResourceAsStream("/Xslt/2011-06-to-2010-06.xsl");
 		//components/specification/Xslt/
 		
     	files = new ArrayList<File>();

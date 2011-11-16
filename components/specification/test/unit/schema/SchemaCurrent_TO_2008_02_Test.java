@@ -297,11 +297,11 @@ public class SchemaCurrent_TO_2008_02_Test
 
 		schemaArray = new StreamSource[1];
 
-		schemaArray[0] = new StreamSource(this.getClass().getResourceAsStream("/2008-02/V2/ome.xsd"));
+		schemaArray[0] = new StreamSource(this.getClass().getResourceAsStream("/Released-Schema/2008-02/V2/ome.xsd"));
 
 		/** The transforms */
-		STYLESHEET_A = this.getClass().getResourceAsStream("/2011-06-to-2010-06.xsl");
-		STYLESHEET_B = this.getClass().getResourceAsStream("/2010-06-to-2008-02.xsl");
+		STYLESHEET_A = this.getClass().getResourceAsStream("/Xslt/2011-06-to-2010-06.xsl");
+		STYLESHEET_B = this.getClass().getResourceAsStream("/Xslt/2010-06-to-2008-02.xsl");
 		//components/specification/Xslt/
 
     	files = new ArrayList<File>();
