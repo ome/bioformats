@@ -408,15 +408,13 @@ public final class DataTools {
   public static String sanitizeDouble(String value) {
     value = value.replaceAll("[^0-9,\\.]", "");
     char separator = new DecimalFormatSymbols().getDecimalSeparator();
-    if (value.indexOf(separator) == -1) {
-      char usedSeparator = separator == '.' ? ',' : '.';
-      value = value.replace(usedSeparator, separator);
-      try {
-        Double.parseDouble(value);
-      }
-      catch (Exception e) {
-        value = value.replace(separator, usedSeparator);
-      }
+    char usedSeparator = separator == '.' ? ',' : '.';
+    value = value.replace(usedSeparator, separator);
+    try {
+      Double.parseDouble(value);
+    }
+    catch (Exception e) {
+      value = value.replace(separator, usedSeparator);
     }
     return value;
   }

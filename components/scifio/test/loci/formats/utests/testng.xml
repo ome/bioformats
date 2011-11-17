@@ -1,0 +1,65 @@
+<suite name="SciFIO Unit Tests">
+    <test name="ServiceTests">
+        <groups/>
+        <classes>
+            <class name="loci.formats.utests.JAIIIOServiceTest"/>
+            <class name="loci.formats.utests.LuraWaveServiceTest"/>
+        </classes>
+        <packages>
+            <package name="loci.formats.utests.xml"/>
+        </packages>
+    </test>
+    <test name="TIFFTests">
+        <groups>
+            <run>
+                <exclude name="tiffParserTests"/>
+            </run>
+        </groups>
+        <classes/>
+        <packages>
+            <package name="loci.formats.utests.tiff"/>
+        </packages>
+    </test>
+    <test name="BaseTIFFParserTest">
+        <parameter name="mockClassName"
+                   value="loci.formats.utests.tiff.BaseTiffMock"/>
+        <classes>
+            <class name="loci.formats.utests.tiff.TiffParserTest"/>
+        </classes>
+    </test>
+    <test name="RGBTIFFParserTest">
+        <parameter name="mockClassName"
+                   value="loci.formats.utests.tiff.RGBTiffMock"/>
+        <classes>
+            <class name="loci.formats.utests.tiff.TiffParserTest"/>
+        </classes>
+    </test>
+    <test name="ReaderWrapper">
+      <groups/>
+      <classes>
+        <class name="loci.formats.utests.WrapperTest"/>
+      </classes>
+    </test>
+    <test name="ModelMockReader">
+      <groups/>
+      <classes>
+        <class name="loci.formats.utests.SPWModelReaderTest"/>
+        <class name="loci.formats.utests.BaseModelReaderTest"/>
+        <class name="loci.formats.utests.BaseModelNoBinDataReaderTest"/>
+        <class name="loci.formats.utests.PumpWithLightSourceSettingsTest"/>
+      </classes>
+    </test>
+    <test name="ServiceFactory">
+        <groups/>
+        <classes>
+            <class name="loci.formats.utests.ServiceFactoryTest"/>
+        </classes>
+        <packages/>
+    </test>
+    <test name="IsThisType">
+      <groups/>
+      <classes>
+        <class name="loci.formats.utests.IsThisTypeTests"/>
+      </classes>
+    </test>
+</suite>

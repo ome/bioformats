@@ -134,6 +134,18 @@ ZZ
   LICENSE => "GPL",
 );
 
+my %scifio = (
+  NAME    => "scifio",
+  TITLE   => "SciFIO Java library",
+  PATH    => "components/scifio",
+  JAR     => "scifio.jar",
+  PACKAGE => "loci.formats",
+  DESC    => <<ZZ,
+A core library for defining scientific image IO
+ZZ
+  LICENSE => "BSD",
+);
+
 my %testSuite = (
   NAME    => "test-suite",
   TITLE   => "LOCI testing framework",
@@ -226,7 +238,7 @@ ZZ
   NOTES   => <<ZZ,
 Based on poi-2.5.1-final-20040804.jar, with bugfixes for OLE v2 and memory
 efficiency improvements. Used by Bio-Formats for OLE support (cxd, ipw, oib,
-zvi). Used by VisBio overlays logic for XLS export feature.
+zvi).
 ZZ
 );
 
@@ -336,7 +348,7 @@ my %forms = (
   LICENSE => "BSD",
   URL     => "http://www.jgoodies.com/freeware/forms/index.html",
   NOTES   => <<ZZ,
-used for layout by VisBio, Data Browser and OME Notes
+used for layout by SciFIO, Data Browser and OME Notes
 ZZ
   VERSION => "1.3.0"
 );
@@ -351,7 +363,7 @@ my %ice = (
   NOTES   => <<ZZ,
 used by Bio-Formats Ice framework
 ZZ
-  VERSIOn => "3.3.1"
+  VERSION => "3.3.1"
 );
 
 my %ij = (
@@ -362,8 +374,7 @@ my %ij = (
   LICENSE => "Public domain",
   URL     => "http://rsb.info.nih.gov/ij/",
   NOTES   => <<ZZ,
-used by LOCI plugins for ImageJ and OME plugins for ImageJ; bundled with VisBio
-to achieve ImageJ interconnectivity
+used by LOCI plugins for ImageJ and OME plugins for ImageJ
 ZZ
   VERSION => "1.43o"
 );
@@ -390,7 +401,7 @@ my %junit = (
   LICENSE => "Common Public License",
   URL     => "http://www.junit.org/",
   NOTES   => <<ZZ,
-unit testing framework used for a few VisBio unit tests
+unit testing framework used for a few unit tests
 ZZ
   VERSION => "4.8.2"
 );
@@ -566,6 +577,7 @@ my @active = (
   \%omeIO,
   \%omePlugins,
   \%omeXML,
+  \%scifio,
   \%testSuite,
 );
 

@@ -31,6 +31,7 @@
     <module>components/ome-plugins</module>
     <module>components/ome-tools</module>
     <module>components/ome-xml</module>
+    <module>components/scifio</module>
     <module>components/test-suite</module>
     <module>components/stubs/lwf-stubs</module>
   </modules>
