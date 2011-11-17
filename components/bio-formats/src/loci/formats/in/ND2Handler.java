@@ -23,10 +23,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.in;
 
-import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
+import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
@@ -380,15 +380,15 @@ public class ND2Handler extends DefaultHandler {
       parseKeyAndValue(qName, value, prevRuntype);
     }
     else if ("dPosX".equals(prevElement) && qName.startsWith("item_")) {
-      posX.add(new Double(sanitizeDouble(value)));
+      posX.add(new Double(DataTools.sanitizeDouble(value)));
       metadata.put("X position for position #" + posX.size(), value);
     }
     else if ("dPosY".equals(prevElement) && qName.startsWith("item_")) {
-      posY.add(new Double(sanitizeDouble(value)));
+      posY.add(new Double(DataTools.sanitizeDouble(value)));
       metadata.put("Y position for position #" + posY.size(), value);
     }
     else if ("dPosZ".equals(prevElement) && qName.startsWith("item_")) {
-      posZ.add(new Double(sanitizeDouble(value)));
+      posZ.add(new Double(DataTools.sanitizeDouble(value)));
       metadata.put("Z position for position #" + posZ.size(), value);
     }
     else if (qName.startsWith("item_")) {
@@ -430,7 +430,7 @@ public class ND2Handler extends DefaultHandler {
       rois.add(roi);
     }
     else if (qName.equals("dPinholeRadius")) {
-      pinholeSize = new Double(sanitizeDouble(value));
+      pinholeSize = new Double(DataTools.sanitizeDouble(value));
       metadata.put("Pinhole size", value);
     }
     else if (qName.endsWith("ChannelColor")) {
@@ -487,29 +487,29 @@ public class ND2Handler extends DefaultHandler {
     if (key == null || value == null) return;
     metadata.put(key, value);
     if (key.endsWith("dCalibration")) {
-      pixelSizeX = Double.parseDouble(sanitizeDouble(value));
+      pixelSizeX = Double.parseDouble(DataTools.sanitizeDouble(value));
       pixelSizeY = pixelSizeX;
     }
     else if (key.endsWith("dZStep")) {
-      pixelSizeZ = Double.parseDouble(sanitizeDouble(value));
+      pixelSizeZ = Double.parseDouble(DataTools.sanitizeDouble(value));
     }
     else if (key.endsWith("Gain")) {
-      value = sanitizeDouble(value);
+      value = DataTools.sanitizeDouble(value);
       if (!value.equals("")) {
         gain.add(new Double(value));
       }
     }
     else if (key.endsWith("dLampVoltage")) {
-      voltage = new Double(sanitizeDouble(value));
+      voltage = new Double(DataTools.sanitizeDouble(value));
     }
     else if (key.endsWith("dObjectiveMag") && mag == null) {
-      mag = new Double(sanitizeDouble(value));
+      mag = new Double(DataTools.sanitizeDouble(value));
     }
     else if (key.endsWith("dObjectiveNA")) {
-      na = new Double(sanitizeDouble(value));
+      na = new Double(DataTools.sanitizeDouble(value));
     }
     else if (key.endsWith("dRefractIndex1")) {
-      refractiveIndex = new Double(sanitizeDouble(value));
+      refractiveIndex = new Double(DataTools.sanitizeDouble(value));
     }
     else if (key.equals("sObjective") || key.equals("wsObjectiveName") ||
       key.equals("sOptics"))
@@ -529,7 +529,7 @@ public class ND2Handler extends DefaultHandler {
       correction = s.toString();
       if (magIndex >= 0) {
         String m = tokens[magIndex].substring(0, tokens[magIndex].indexOf("x"));
-        m = sanitizeDouble(m);
+        m = DataTools.sanitizeDouble(m);
         if (m.length() > 0) {
           mag = new Double(m);
         }
@@ -537,14 +537,14 @@ public class ND2Handler extends DefaultHandler {
       if (magIndex + 1 < tokens.length) immersion = tokens[magIndex + 1];
     }
     else if (key.endsWith("dTimeMSec")) {
-      long v = (long) Double.parseDouble(sanitizeDouble(value));
+      long v = (long) Double.parseDouble(DataTools.sanitizeDouble(value));
       if (!ts.contains(new Long(v))) {
         ts.add(new Long(v));
         metadata.put("number of timepoints", ts.size());
       }
     }
     else if (key.endsWith("dZPos")) {
-      long v = (long) Double.parseDouble(sanitizeDouble(value));
+      long v = (long) Double.parseDouble(DataTools.sanitizeDouble(value));
       if (!zs.contains(new Long(v))) {
         zs.add(new Long(v));
       }
@@ -655,16 +655,17 @@ public class ND2Handler extends DefaultHandler {
             else if (v[0].equals("Readout Speed")) {
               int last = v[1].lastIndexOf(" ");
               if (last != -1) v[1] = v[1].substring(0, last);
-              speed.add(new Double(sanitizeDouble(v[1])));
+              speed.add(new Double(DataTools.sanitizeDouble(v[1])));
             }
             else if (v[0].equals("Temperature")) {
               String temp = v[1].replaceAll("[\\D&&[^-.]]", "");
-              temperature.add(new Double(sanitizeDouble(temp)));
+              temperature.add(new Double(DataTools.sanitizeDouble(temp)));
             }
             else if (v[0].equals("Exposure")) {
               String[] s = v[1].trim().split(" ");
               try {
-                double time = Double.parseDouble(sanitizeDouble(s[0]));
+                double time =
+                  Double.parseDouble(DataTools.sanitizeDouble(s[0]));
                 // TODO: check for other units
                 if (s[1].equals("ms")) time /= 1000;
                 exposureTime.add(new Double(time));
@@ -672,7 +673,7 @@ public class ND2Handler extends DefaultHandler {
               catch (NumberFormatException e) { }
             }
             else if (v[0].equals("{Pinhole Size}")) {
-              pinholeSize = new Double(sanitizeDouble(v[1]));
+              pinholeSize = new Double(DataTools.sanitizeDouble(v[1]));
               metadata.put("Pinhole size", v[1]);
             }
           }
@@ -680,8 +681,8 @@ public class ND2Handler extends DefaultHandler {
             int space = v[0].indexOf(" ", v[0].indexOf("Step") + 1);
             int last = v[0].indexOf(" ", space + 1);
             if (last == -1) last = v[0].length();
-            pixelSizeZ =
-              Double.parseDouble(sanitizeDouble(v[0].substring(space, last)));
+            pixelSizeZ = Double.parseDouble(
+              DataTools.sanitizeDouble(v[0].substring(space, last)));
           }
           else if (v[0].equals("Line")) {
             String[] values = t.split(";");
@@ -697,7 +698,7 @@ public class ND2Handler extends DefaultHandler {
                 exWave.add(new Integer(nextValue));
               }
               else if (nextKey.equals("Power")) {
-                nextValue = sanitizeDouble(nextValue);
+                nextValue = DataTools.sanitizeDouble(nextValue);
                 power.add(new Integer((int) Double.parseDouble(nextValue)));
               }
             }
@@ -719,22 +720,6 @@ public class ND2Handler extends DefaultHandler {
     else if (key.equals("sDate")) {
       date = DateTools.formatDate(value, DATE_FORMAT);
     }
-  }
-
-  private String sanitizeDouble(String value) {
-    value = value.replaceAll("[^0-9,\\.]", "");
-    char separator = new DecimalFormatSymbols().getDecimalSeparator();
-    if (value.indexOf(separator) == -1) {
-      char usedSeparator = separator == '.' ? ',' : '.';
-      value = value.replace(usedSeparator, separator);
-      try {
-        Double.parseDouble(value);
-      }
-      catch (Exception e) {
-        value = value.replace(separator, usedSeparator);
-      }
-    }
-    return value;
   }
 
 }
