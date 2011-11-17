@@ -1,7 +1,7 @@
 <!--
 checkstyle.xml
 
-Checkstyle configuration file for use with Java software projects at LOCI.
+Checkstyle configuration file for use with SciFIO.
 Run "ant style" to check for source code style deviations.
 -->
 

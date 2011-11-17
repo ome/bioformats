@@ -8,19 +8,19 @@
   <parent>
     <groupId>loci</groupId>
     <artifactId>bio-formats-base</artifactId>
-    <version>4.4-SNAPSHOT</version>
+    <version>4.3.3-SNAPSHOT</version>
   </parent>
 
-  <artifactId>ome-io</artifactId>
+  <artifactId>scifio</artifactId>
 
-  <name>OME I/O</name>
-  <description>A library for OME database import, upload and download.</description>
-  <inceptionYear>2005</inceptionYear>
+  <name>SciFIO</name>
+  <description>Open source plug-in for image format decoding</description>
+  <url>http://loci.wisc.edu/software</url>
+  <inceptionYear>2011</inceptionYear>
 
   <licenses>
     <license>
-      <name>GPL 2 or later</name>
-      <url>http://www.gnu.org/licenses/gpl-2.0.txt</url>
+      <name>BSD</name>
       <distribution>repo</distribution>
     </license>
   </licenses>
@@ -28,7 +28,7 @@
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>scifio</artifactId>
+      <artifactId>jai_imageio</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -37,19 +37,19 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-      <version>1.2.14</version>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>lwf-stubs</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>ome</groupId>
-      <artifactId>ome-java</artifactId>
-      <version>2.6.1</version>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>ome-xml</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>ome</groupId>
-      <artifactId>omero-client</artifactId>
-      <version>4.3.1</version>
+      <groupId>com.jgoodies</groupId>
+      <artifactId>forms</artifactId>
+      <version>1.2.1</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -58,9 +58,27 @@
     </dependency>
 
     <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>1.2.14</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>xalan</groupId>
+      <artifactId>serializer</artifactId>
+      <version>2.7.1</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
       <version>1.5.10</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>xalan</groupId>
+      <artifactId>xalan</artifactId>
+      <version>2.7.1</version>
       <scope>runtime</scope>
     </dependency>
 
@@ -75,22 +93,19 @@
   <build>
     <plugins>
       <plugin>
-        <artifactId>maven-jar-plugin</artifactId>
+        <groupId>loci.maven.plugins</groupId>
+        <artifactId>cppwrap-maven-plugin</artifactId>
+        <version>1.0-SNAPSHOT</version>
         <configuration>
-          <archive>
-            <manifest>
-              <mainClass>loci.ome.io.OmeroReader</mainClass>
-              <packageName>loci.ome.io</packageName>
-            </manifest>
-          </archive>
-        </configuration>
-      </plugin>
-      <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <suiteXmlFiles>
-            <suiteXmlFile>test/loci/ome/utests/testng.xml</suiteXmlFile>
-          </suiteXmlFiles>
+          <headerFile>cppwrap/header.txt</headerFile>
+          <conflictsFile>cppwrap/conflicts.txt</conflictsFile>
+          <coreFile>cppwrap/core.txt</coreFile>
+          <extrasFile>cppwrap/extras.txt</extrasFile>
+          <sourceDir>cppwrap</sourceDir>
+          <libraries>
+            <library>${project.groupId}:loci-common:jar:${project.version}</library>
+            <library>${project.groupId}:ome-xml:jar:${project.version}</library>
+          </libraries>
         </configuration>
       </plugin>
     </plugins>
@@ -98,10 +113,10 @@
 
   <developers>
     <developer>
-      <id>curtis</id>
-      <name>Curtis Rueden</name>
-      <email>ctrueden@wisc.edu</email>
-      <url>http://loci.wisc.edu/people/curtis-rueden</url>
+      <id>mark</id>
+      <name>Mark Hiner</name>
+      <email>hinerm@gmail.edu</email>
+      <url>http://imagejdev.org/users/hinerm</url>
       <organization>UW-Madison LOCI</organization>
       <organizationUrl>http://loci.wisc.edu/</organizationUrl>
       <roles>
@@ -110,7 +125,7 @@
       </roles>
       <timezone>-6</timezone>
       <properties>
-        <picUrl>http://loci.wisc.edu/files/loci/images/people/curtis-2010.jpg</picUrl>
+        <picUrl>http://imagejdev.org/files/imagej/profile-pictures/Mark.jpg?1305649677</picUrl>
       </properties>
     </developer>
     <developer>
@@ -129,6 +144,22 @@
         <picUrl>http://openmicroscopy.org/site/about/development-teams/glencoe-software/melissalinkert.png</picUrl>
       </properties>
     </developer>
+    <developer>
+      <id>curtis</id>
+      <name>Curtis Rueden</name>
+      <email>ctrueden@wisc.edu</email>
+      <url>http://loci.wisc.edu/people/curtis-rueden</url>
+      <organization>UW-Madison LOCI</organization>
+      <organizationUrl>http://loci.wisc.edu/</organizationUrl>
+      <roles>
+        <role>architect</role>
+        <role>developer</role>
+      </roles>
+      <timezone>-6</timezone>
+      <properties>
+        <picUrl>http://loci.wisc.edu/files/loci/images/people/curtis-2010.jpg</picUrl>
+      </properties>
+    </developer>
   </developers>
 
   <!-- NB: for project parent, in case of partial checkout -->
@@ -142,5 +173,4 @@
       <url>http://dev.loci.wisc.edu/maven2/snapshots</url>
     </repository>
   </repositories>
-
 </project>

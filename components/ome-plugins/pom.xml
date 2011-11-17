@@ -29,7 +29,7 @@
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>bio-formats</artifactId>
+      <artifactId>scifio</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
