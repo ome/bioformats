@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package ome.metakit.utests;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 
 import ome.metakit.MetakitException;
 import ome.metakit.MetakitReader;
@@ -45,13 +46,15 @@ import org.testng.annotations.Test;
  */
 public class RowTest {
 
+  private static final String FILENAME = "test.mk";
   private static final String INVALID_TABLE = "this cannot be a valid table";
 
   private MetakitReader reader;
 
   @BeforeMethod
   public void setUp() throws IOException, MetakitException {
-    reader = new MetakitReader(System.getProperty("filename"));
+    String defaultFile = this.getClass().getResource(FILENAME).getPath();
+    reader = new MetakitReader(System.getProperty("filename", defaultFile));
   }
 
   @Test
@@ -63,7 +66,10 @@ public class RowTest {
 
       for (int row=0; row<data.length; row++) {
         for (int col=0; col<data[row].length; col++) {
-          assertTrue(columnTypes[col].isInstance(data[row][col]));
+          assertTrue(data[row][col] == null ||
+            columnTypes[col].isInstance(data[row][col]) ||
+            Array.getLength(data[row][col]) == 0 ||
+            columnTypes[col].isInstance(Array.get(data[row][col], 0)));
         }
       }
     }
