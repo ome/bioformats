@@ -102,7 +102,11 @@ public class MetakitReader {
    * Retrieve the name of every column in the named table.
    */
   public String[] getColumnNames(String tableName) {
-    return getColumnNames(DataTools.indexOf(tableNames, tableName));
+    int index = DataTools.indexOf(tableNames, tableName);
+    if (index < 0) {
+      return null;
+    }
+    return getColumnNames(index);
   }
 
   /**
@@ -129,7 +133,11 @@ public class MetakitReader {
    * Class in the Class[] returned by this method.
    */
   public Class[] getColumnTypes(String tableName) {
-    return getColumnTypes(DataTools.indexOf(tableNames, tableName));
+    int index = DataTools.indexOf(tableNames, tableName);
+    if (index < 0) {
+      return null;
+    }
+    return getColumnTypes(index);
   }
 
   /**
@@ -178,7 +186,11 @@ public class MetakitReader {
    * @see getColumnTypes(String)
    */
   public Object[][] getTableData(String tableName) {
-    return getTableData(DataTools.indexOf(tableNames, tableName));
+    int index = DataTools.indexOf(tableNames, tableName);
+    if (index < 0) {
+      return null;
+    }
+    return getTableData(index);
   }
 
   /**
@@ -201,7 +213,11 @@ public class MetakitReader {
    * @see getColumnTypes(String)
    */
   public Object[] getRowData(int rowIndex, String tableName) {
-    return getRowData(rowIndex, DataTools.indexOf(tableNames, tableName));
+    int index = DataTools.indexOf(tableNames, tableName);
+    if (index < 0) {
+      return null;
+    }
+    return getRowData(rowIndex, index);
   }
 
   // -- Helper methods --

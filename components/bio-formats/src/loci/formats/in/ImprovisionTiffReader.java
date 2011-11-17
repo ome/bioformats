@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
@@ -165,13 +166,13 @@ public class ImprovisionTiffReader extends BaseTiffReader {
         else if (key.equals("TotalChannels")) tc = value;
         else if (key.equals("TotalTimepoints")) tt = value;
         else if (key.equals("XCalibrationMicrons")) {
-          pixelSizeX = Double.parseDouble(value);
+          pixelSizeX = Double.parseDouble(DataTools.sanitizeDouble(value));
         }
         else if (key.equals("YCalibrationMicrons")) {
-          pixelSizeY = Double.parseDouble(value);
+          pixelSizeY = Double.parseDouble(DataTools.sanitizeDouble(value));
         }
         else if (key.equals("ZCalibrationMicrons")) {
-          pixelSizeZ = Double.parseDouble(value);
+          pixelSizeZ = Double.parseDouble(DataTools.sanitizeDouble(value));
         }
       }
       metadata.remove("Comment");

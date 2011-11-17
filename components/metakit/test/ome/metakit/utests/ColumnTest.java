@@ -45,13 +45,15 @@ import org.testng.annotations.Test;
  */
 public class ColumnTest {
 
+  private static final String FILENAME = "test.mk";
   private static final String INVALID_TABLE = "this cannot be a valid table";
 
   private MetakitReader reader;
 
   @BeforeMethod
   public void setUp() throws IOException, MetakitException {
-    reader = new MetakitReader(System.getProperty("filename"));
+    String defaultFile = this.getClass().getResource(FILENAME).getPath();
+    reader = new MetakitReader(System.getProperty("filename", defaultFile));
   }
 
   @Test

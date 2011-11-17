@@ -723,7 +723,10 @@ public class CellSensReader extends FormatReader {
         return;
       }
 
-      vsi.seek(fp + nextField);
+      if (fp + nextField < vsi.length()) {
+        vsi.seek(fp + nextField);
+      }
+      else break;
     }
   }
 
