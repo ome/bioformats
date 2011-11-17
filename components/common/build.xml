@@ -17,7 +17,8 @@ Type "ant -p"  for a list of targets.
     <copy tofile="${build.dir}/testng.xml"
       file="${testng.xml.template}" overwrite="true">
       <filterset>
-        <filter token="PARALLEL" value=""/> <!-- Disable parallelization -->
+        <!-- Disable parallelization -->
+        <filter token="PARALLEL" value="false"/>
       </filterset>
     </copy>
     <testng failureProperty="failedTest">
@@ -37,7 +38,8 @@ Type "ant -p"  for a list of targets.
     <copy tofile="${build.dir}/testng.xml"
       file="${testng.xml.template}" overwrite="true">
       <filterset>
-        <filter token="PARALLEL" value="parallel=&quot;classes&quot;"/>
+        <!-- Enable parallelization -->
+        <filter token="PARALLEL" value="classes"/>
       </filterset>
     </copy>
     <testng failureProperty="failedTest">

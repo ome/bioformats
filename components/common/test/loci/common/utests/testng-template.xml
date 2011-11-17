@@ -1,4 +1,4 @@
-<suite name="IO_Tests" @PARALLEL@>
+<suite name="IO_Tests" parallel="@PARALLEL@">
     <test name="ByteArrayHandle">
         <parameter name="provider" value="ByteArrayHandle"/>
         <groups>
