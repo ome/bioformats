@@ -94,6 +94,7 @@ public class NDPIReader extends BaseTiffReader {
       int ifdIndex = getIFDIndex(getSeries(), no);
       in = new RandomAccessInputStream(currentId);
       tiffParser = new TiffParser(in);
+      tiffParser.setUse64BitOffsets(true);
       return tiffParser.getSamples(ifds.get(ifdIndex), buf, x, y, w, h);
     }
 
@@ -196,6 +197,16 @@ public class NDPIReader extends BaseTiffReader {
     return (int) Math.min(maxHeight, getSizeY());
   }
 
+  // -- Internal FormatReader API methods --
+
+  /* @see loci.formats.FormatReader#initFile(String) */
+  protected void initFile(String id) throws FormatException, IOException {
+    RandomAccessInputStream s = new RandomAccessInputStream(id);
+    use64Bit = s.length() >= Math.pow(2, 32);
+    s.close();
+    super.initFile(id);
+  }
+
   // -- Internal BaseTiffReader API methods --
 
   /* @see loci.formats.BaseTiffReader#initStandardMetadata() */
@@ -208,34 +219,20 @@ public class NDPIReader extends BaseTiffReader {
 
     // fix the offsets for > 4 GB files
     RandomAccessInputStream stream = new RandomAccessInputStream(currentId);
-    long[] previousStripOffsets = null;
     for (int i=0; i<ifds.size(); i++) {
       long[] stripOffsets = ifds.get(i).getStripOffsets();
 
-      if (i == 0) {
-        previousStripOffsets = stripOffsets;
-        continue;
-      }
-
       boolean neededAdjustment = false;
       for (int j=0; j<stripOffsets.length; j++) {
-        if (j >= previousStripOffsets.length) break;
-        if (stripOffsets[j] < previousStripOffsets[j]) {
-          stripOffsets[j] = (previousStripOffsets[j] & ~0xffffffffL) |
-            (stripOffsets[j] & 0xffffffffL);
-          if (stripOffsets[j] < previousStripOffsets[j]) {
-            long newOffset = stripOffsets[j] + 0x100000000L;
-            if (newOffset < stream.length()) {
-              stripOffsets[j] = newOffset;
-            }
-          }
+        long newOffset = stripOffsets[j] + 0x100000000L;
+        if (newOffset < stream.length()) {
+          stripOffsets[j] = newOffset;
           neededAdjustment = true;
         }
-        if (neededAdjustment) {
-          ifds.get(i).putIFDValue(IFD.STRIP_OFFSETS, stripOffsets);
-        }
       }
-      previousStripOffsets = stripOffsets;
+      if (neededAdjustment) {
+        ifds.get(i).putIFDValue(IFD.STRIP_OFFSETS, stripOffsets);
+      }
     }
     stream.close();
 

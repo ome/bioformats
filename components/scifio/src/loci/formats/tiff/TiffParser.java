@@ -69,6 +69,9 @@ public class TiffParser {
   /** Whether or not the TIFF file contains BigTIFF data. */
   private boolean bigTiff;
 
+  /** Whether or not 64-bit offsets are used for non-BigTIFF files. */
+  private boolean fakeBigTiff = false;
+
   private boolean doCaching;
 
   /** Cached list of IFDs in the current file. */
@@ -125,6 +128,11 @@ public class TiffParser {
   /** Sets whether or not IFD entries should be cached. */
   public void setDoCaching(boolean doCaching) {
     this.doCaching = doCaching;
+  }
+
+  /** Sets whether or not 64-bit offsets are used for non-BigTIFF files. */
+  public void setUse64BitOffsets(boolean use64Bit) {
+    fakeBigTiff = use64Bit;
   }
 
   /** Gets the stream from which TIFF data is being parsed. */
@@ -1020,7 +1028,7 @@ public class TiffParser {
    * offset.
    */
   long getNextOffset(long previous) throws IOException {
-    if (bigTiff) {
+    if (bigTiff || fakeBigTiff) {
       return in.readLong();
     }
     long offset = (previous & ~0xffffffffL) | (in.readInt() & 0xffffffffL);

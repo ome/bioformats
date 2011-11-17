@@ -79,6 +79,8 @@ public class MinimalTiffReader extends FormatReader {
 
   protected TiffParser tiffParser;
 
+  protected boolean use64Bit = false;
+
   private int lastPlane = 0;
 
   /** Number of JPEG 2000 resolution levels. */
@@ -367,6 +369,7 @@ public class MinimalTiffReader extends FormatReader {
     in = new RandomAccessInputStream(id);
     tiffParser = new TiffParser(in);
     tiffParser.setDoCaching(false);
+    tiffParser.setUse64BitOffsets(use64Bit);
     Boolean littleEndian = tiffParser.checkHeader();
     if (littleEndian == null) {
       throw new FormatException("Invalid TIFF file");
