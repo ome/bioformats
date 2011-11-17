@@ -25,6 +25,7 @@ package loci.common;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.DecimalFormatSymbols;
 
 /**
  * A utility class with convenience methods for
@@ -401,6 +402,23 @@ public final class DataTools {
       sb.append(a);
     }
     return sb.toString();
+  }
+
+  /** Normalize the decimal separator for the user's locale. */
+  public static String sanitizeDouble(String value) {
+    value = value.replaceAll("[^0-9,\\.]", "");
+    char separator = new DecimalFormatSymbols().getDecimalSeparator();
+    if (value.indexOf(separator) == -1) {
+      char usedSeparator = separator == '.' ? ',' : '.';
+      value = value.replace(usedSeparator, separator);
+      try {
+        Double.parseDouble(value);
+      }
+      catch (Exception e) {
+        value = value.replace(separator, usedSeparator);
+      }
+    }
+    return value;
   }
 
   // -- Word decoding - primitive types to bytes --
