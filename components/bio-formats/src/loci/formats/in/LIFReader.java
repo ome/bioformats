@@ -525,7 +525,7 @@ public class LIFReader extends FormatReader {
       store.setInstrumentID(instrumentID, i);
 
       store.setMicroscopeModel(microscopeModels[i], i);
-      store.setMicroscopeType(getMicroscopeType("Unknown"), i);
+      store.setMicroscopeType(getMicroscopeType("Other"), i);
 
       String objectiveID = MetadataTools.createLSID("Objective", i, 0);
       store.setObjectiveID(objectiveID, i, 0);
