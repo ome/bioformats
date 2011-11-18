@@ -1,4 +1,4 @@
-SCIFIO library for reading, writing and converting scientific image data.
+OME SCIFIO library for reading, writing and converting scientific image data.
 
 Copyright 2011 UW-Madison LOCI and Glencoe Software, Inc.
 All rights reserved.
