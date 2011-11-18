@@ -14,7 +14,9 @@
   <artifactId>scifio</artifactId>
 
   <name>SCIFIO</name>
-  <description>Open source plug-in for image format decoding</description>
+  <description>SCientific Image Format Input and Output: an open source
+    framework for reading and writing scientific image file formats, and
+    converting metadata between standards.</description>
   <url>http://loci.wisc.edu/software</url>
   <inceptionYear>2011</inceptionYear>
 
