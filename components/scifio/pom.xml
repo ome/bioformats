@@ -13,7 +13,7 @@
 
   <artifactId>scifio</artifactId>
 
-  <name>SciFIO</name>
+  <name>SCIFIO</name>
   <description>Open source plug-in for image format decoding</description>
   <url>http://loci.wisc.edu/software</url>
   <inceptionYear>2011</inceptionYear>

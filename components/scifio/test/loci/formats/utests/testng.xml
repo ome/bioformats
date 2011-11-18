@@ -1,4 +1,4 @@
-<suite name="SciFIO Unit Tests">
+<suite name="SCIFIO Unit Tests">
     <test name="ServiceTests">
         <groups/>
         <classes>
