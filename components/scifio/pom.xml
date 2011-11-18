@@ -100,7 +100,6 @@
           <headerFile>cppwrap/header.txt</headerFile>
           <conflictsFile>cppwrap/conflicts.txt</conflictsFile>
           <coreFile>cppwrap/core.txt</coreFile>
-          <extrasFile>cppwrap/extras.txt</extrasFile>
           <sourceDir>cppwrap</sourceDir>
           <libraries>
             <library>${project.groupId}:loci-common:jar:${project.version}</library>
