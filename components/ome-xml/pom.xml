@@ -20,8 +20,7 @@
 
   <licenses>
     <license>
-      <name>GPL 2 or later</name>
-      <url>http://www.gnu.org/licenses/gpl-2.0.txt</url>
+      <name>Simplified BSD</name>
       <distribution>repo</distribution>
     </license>
   </licenses>
