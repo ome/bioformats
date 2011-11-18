@@ -7,12 +7,12 @@ cd "$(dirname "$0")"/..
 
 # find Maven v2 executable
 VER=`mvn -v | head -1 | sed -e 's/Apache Maven //' | sed 's/\..*//'`
-if [ "$VER" == "2" ]
+if [ "$VER" = "2" ]
 then
   MVN="mvn"
 else
   VER=`mvn2 -v | head -1 | sed -e 's/Apache Maven //' | sed 's/\..*//'`
-  if [ "$VER" == "2" ]
+  if [ "$VER" = "2" ]
   then
     MVN="mvn2"
   else
