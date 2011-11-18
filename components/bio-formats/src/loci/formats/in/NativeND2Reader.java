@@ -493,6 +493,11 @@ public class NativeND2Reader extends FormatReader {
             numSeries = 1;
             break;
           }
+          else if (imageOffsets.size() % core[i].sizeT == 0) {
+            core[i].imageCount = imageOffsets.size() / getSeriesCount();
+            core[i].sizeZ = core[i].imageCount / core[i].sizeT;
+            core[i].dimensionOrder = "CZT";
+          }
           else {
             core[i].imageCount = imageOffsets.size() / getSeriesCount();
             core[i].sizeZ = 1;
