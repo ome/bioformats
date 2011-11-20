@@ -223,4 +223,27 @@ Type "ant -p" for a list of targets.
     <fail if="failedTest"/>
   </target>
 
+  <target name="test-config-xml" depends="compile"
+    description="generate OME-XML files for automated test suite">
+    <testng sourcedir="${dest.dir}"
+      annotations="Javadoc" groups="config-xml" testname="OME-XML generation"
+      listener="loci.tests.testng.DotTestListener"
+      suitename="LOCI software test suite"
+      failureProperty="failedTest">
+      <classpath>
+        <pathelement location="${classes.dir}"/>
+        <pathelement path="${component.classpath}"/>
+      </classpath>
+      <classfileset file="${classes.dir}/${reader-test.class}"/>
+      <sysproperty key="testng.toplevel-config" value="${testng.toplevel-config}"/>
+      <sysproperty key="testng.filename" value="${testng.filename}"/>
+      <sysproperty key="testng.directory" value="${testng.directory}"/>
+      <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
+      <sysproperty key="lurawave.license" value="${lurawave.license}"/>
+      <sysproperty key="testng.in-memory" value="${testng.in-memory}"/>
+      <jvmarg value="-mx${testng.memory}"/>
+    </testng>
+    <fail if="failedTest"/>
+  </target>
+
 </project>
