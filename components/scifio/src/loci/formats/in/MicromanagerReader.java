@@ -300,6 +300,9 @@ public class MicromanagerReader extends FormatReader {
         if (endIndex == -1) endIndex = value.length();
 
         value = value.substring(startIndex + 1, endIndex).trim();
+        if (value.length() == 0) {
+          continue;
+        }
         value = value.substring(0, value.length() - 1);
         value = value.replaceAll("\"", "");
         if (value.endsWith(",")) value = value.substring(0, value.length() - 1);
