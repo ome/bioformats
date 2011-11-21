@@ -8,17 +8,36 @@ in loci.formats.in.
                               Methods to Override
                              ---------------------
 
-boolean isThisType(byte[]) :
+boolean isSingleFile(String id) throws FormatException, IOException:
+  Whether or not the named file is expected to be the only file in the
+  dataset.  This only needs to be overridden for formats whose datasets can
+  contain more than one file.
+
+boolean isThisType(RandomAccessInputStream) :
   Check the first few bytes of a file to determine if the file can be read by
-  this reader.  You can assume that the first byte of the array corresponds to
-  the first byte of the file.  Return true if the file can be read; false if
+  this reader.  You can assume that index 0 in the stream corresponds to
+  the index 0 in the file.  Return true if the file can be read; false if
   not (or if there is no way of checking).
 
-String[] getSeriesUsedFiles() throws FormatException, IOException :
+int fileGroupOption(String id) throws FormatException, IOException:
+  Returns an indication of whether or not the files in a multi-file dataset
+  can be handled individually.  The return value should be one of the
+  following:
+
+    * FormatTools.MUST_GROUP: the files cannot be handled separately
+    * FormatTools.CAN_GROUP: the files may be handled separately or as a
+                             single unit
+    * FormatTools.CANNOT_GROUP: the files must be handled separately
+
+  This method only needs to be overridden for formats whose datasets can
+  contain more than one file.
+
+String[] getSeriesUsedFiles(boolean noPixels) throws FormatException, IOException :
   You only need to override this if your format uses multiple files in a single
   dataset.  This method should return a list of all the files associated with
   the given file name and the current series (i.e. every file needed to display
-  the current series).
+  the current series).  If the 'noPixels' flag is set, then none of the files
+  returned should contain pixel data.
   For an example of how this works, see loci.formats.in.PerkinElmerReader.
   It is recommended that the first line of this method be
   "FormatTools.assertId(currentId, true, 1)" - this ensures that the file name
@@ -34,8 +53,8 @@ byte[] openBytes(int, byte[], int, int, int, int) throws FormatException, IOExce
   isLittleEndian() and isInterleaved().  Also, the length of the
   byte array should be [image width * image height * bytes per pixel].  Extra
   bytes will generally be truncated. It is recommended that the first line of
-  this method be "FormatTools.assertId(currentId, true, 1)" - this ensures that
-  the file name is non-null.
+  this method be "FormatTools.checkPlaneParameters(this, no, buf.length, x, y,
+  w, h)" - this ensures that all of the parameters are valid.
 
 protected void initFile(String) throws FormatException, IOException :
   The majority of the file parsing logic should be placed in this method.  The
@@ -50,6 +69,11 @@ protected void initFile(String) throws FormatException, IOException :
   super.initFile(String) is called.
   Also, super.initFile(String) constructs a Hashtable called "metadata" where
   you should store any relevant metadata.
+
+public void close(boolean fileOnly) throws IOException:
+  Cleans up any resources used by the reader.  Global variables should be
+  reset to their initial state, and any open files or delegate readers should
+  be closed.
 
 Note that if the new format is a variant of a format currently supported by
 Bio-Formats, it is more efficient to make the new reader a subclass of the
@@ -78,15 +102,33 @@ Thus, a stub for initFile(String) might look like this:
 For more details, see the javadoc for Location.mapId(String, String)
 and Location.getMappedId(String).
 
+                             Variables to Populate
+                            -----------------------
+
+There are a number of global variables defined in loci.formats.FormatReader that
+should be populated in the constructor of any implemented reader.
+
+These variables are:
+
+  * 'boolean suffixNecessary': indicates whether or not a file name suffix is
+    required; true by default
+  * 'boolean suffixSufficient': indicates whether or not a specific file name
+    suffix guarantees that this reader can open a particular file; true by
+    default
+  * 'boolean hasCompanionFiles': indicates whether or not there is at least
+    one file in a dataset of this format that contains only metadata (no
+    images); false by default
+  * 'String datasetDescription': a brief description of the layout of files
+    in datasets of this format; only necessary for multi-file datasets
+
+
                               Other Useful Things
                              ---------------------
 
 - loci.common.RandomAccessInputStream is a hybrid RandomAccessFile/InputStream
   class that is generally more efficient than either RandomAccessFile or
-  InputStream, and implements the DataInput interface.  It also keeps track
-  of open files, and will automatically close and re-open files as needed
-  to ensure that there aren't too many files open at one time.
-  It is recommended that you use this for reading binary files.
+  InputStream, and implements the DataInput interface.  It is recommended that
+  you use this for reading files.
 
 - loci.formats.Location provides an API similar to java.io.File, and supports
   File-like operations on URLs.  It is highly recommended that you use this
@@ -101,15 +143,17 @@ and Location.getMappedId(String).
   for more information.
 
 - If your reader relies on third-party code which may not be available to all
-  users, it is strongly suggested that you access this code only through a
-  loci.common.ReflectedUniverse object.  For an example of how this works,
-  see loci.formats.POITools.
+  users, it is strongly suggested that you make a corresponding service class
+  that interfaces with the third-party code.  Please see:
+
+  http://trac.openmicroscopy.org.uk/ome/wiki/BioFormats-Service
+
+  for a description of the service infrastructure, as well as the
+  loci.formats.services package.
 
 - Several common image compression types are supported through subclasses of
   loci.formats.codec.BaseCodec.  These include JPEG, LZW, LZO, Base64, ZIP and
   RLE (PackBits).
-
-- Debugging statements can be added using FormatHandler.debug(String).
 
 - If you wish to convert a file's metadata to OME-XML (strongly encouraged),
   please see metadata-guide.txt further information.
@@ -129,24 +173,42 @@ and Location.getMappedId(String).
   all of the metadata and dimension information, along with a window showing
   the images in the file.  ImageReader can take additional parameters; a
   brief listing is provided for reference, but it is recommended that you
-  take a look at the contents of ConsoleTools.testRead to see exactly what
-  each one does.
+  take a look at the contents of loci.formats.tools.ImageInfo to see exactly
+  what each one does.
 
     Argument            Action
     --------------------------
-    -nopix              Read metadata only; don't display images.
-    -nometa             Output only core metadata (dimension information).
-    -thumbs             Read thumbnails instead of regular images.
-    -merge              Combine separate channels into a set of RGB images.
-    -stitch             Open all files with a similar name.
-    -separate           Force RGB images to be split into separate channels.
-    -omexml             Output the OME-XML for the file.
-    -normalize          Normalize floating point images.
-    -fast               Display RGB images as quickly as possible.
-    -debug              Turn on debugging output.
-    -range              Specify a range of images to open.
-    -series             Set the series number (for container file formats).
-    -map                Specify file on disk to which name should be mapped.
+    -version: print the library version and exit
+        file: the image file to read
+      -nopix: read metadata only, not pixels
+     -nocore: do not output core metadata
+     -nometa: do not parse format-specific metadata table
+   -nofilter: do not filter metadata fields
+     -thumbs: read thumbnails instead of normal pixels
+     -minmax: compute min/max statistics
+      -merge: combine separate channels into RGB image
+    -nogroup: force multi-file datasets to be read as individual files
+     -stitch: stitch files with similar names
+   -separate: split RGB image into separate channels
+     -expand: expand indexed color to RGB
+     -omexml: populate OME-XML metadata
+  -normalize: normalize floating point images*
+       -fast: paint RGB images as quickly as possible*
+      -debug: turn on debugging output
+      -range: specify range of planes to read (inclusive)
+     -series: specify which image series to read
+       -swap: override the default input dimension order
+    -shuffle: override the default output dimension order
+        -map: specify file on disk to which name should be mapped
+    -preload: pre-read entire file into a buffer; significantly
+              reduces the time required to read the images, but
+              requires more memory
+       -crop: crop images before displaying; argument is 'x,y,w,h'
+  -autoscale: used in combination with '-fast' to automatically adjust
+              brightness and contrast
+    -novalid: do not perform validation of OME-XML
+-omexml-only: only output the generated OME-XML
+     -format: read file with a particular reader (e.g., ZeissZVI)
 
 - If you wish to test using TestNG, loci.tests.testng.FormatReaderTest provides
   several basic tests that work with all Bio-Formats readers.  See the
@@ -158,6 +220,7 @@ and Location.getMappedId(String).
   straightforward one).  loci.formats.in.LIFReader and InCellReader are also
   good references that show off some of the nicer features of Bio-Formats.
 
-If you have questions about Bio-Formats, please contact:
-  Curtis Rueden <ctrueden@wisc.edu>
-  Melissa Linkert <linkert@wisc.edu>
+If you have questions about Bio-Formats, please contact the Bio-Formats
+developers <bioformats@loci.wisc.edu>, or via one of the mailing lists:
+
+http://loci.wisc.edu/software/mailing-lists
