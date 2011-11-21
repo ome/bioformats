@@ -3,27 +3,15 @@ Alicona AL3D:
   - T series
   - 16 bit data
 
-Aperio SVS:
-  - any
-
 AVI:
   - files compressed with a common, unsupported codec
-  - 2+ GB files
 
 BioRad:
   - 16 bit data
   - 2+ GB files
 
-Deltavision:
-  - 8 bit data
-  - 32 bit integer data
-  - 32 bit float data
-
 Evotec Flex:
   - any, preferably 8 or 32 bit data
-
-Fluoview FV1000 OIB:
-  - 2+ GB files
 
 Image-Pro IPW:
   - multiple datasets in one file
@@ -73,8 +61,3 @@ Visitech XYS:
 Volocity ACFF:
   - anything - please specify dimensions and which version of Volocity was
     used
-
-Volocity MVD2:
-  - anything - please specify dimensions and which version of Volocity was
-    used
-
