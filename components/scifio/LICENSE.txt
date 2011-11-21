@@ -1,7 +1,10 @@
 OME SCIFIO library for reading, writing and converting scientific image data.
 
-Copyright 2011 UW-Madison LOCI and Glencoe Software, Inc.
-All rights reserved.
+Copyright (C) 2005-2011 University of Wisconsin, University of Dundee,
+and Glencoe Software, Inc. All rights reserved.
+
+This project is produced and maintained by the Open Microscopy Environment, a
+multi-site international collaboration (see http://openmicroscopy.org/about).
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
