@@ -476,7 +476,6 @@ public class ImportProcess implements StatusReporter {
 
     BF.status(options.isQuiet(), "Analyzing " + getIdName());
     baseReader.setMetadataFiltered(true);
-    baseReader.setOriginalMetadataPopulated(true);
     baseReader.setGroupFiles(!options.isUngroupFiles());
     baseReader.setId(options.getId());
   }
