@@ -23,6 +23,7 @@
   <licenses>
     <license>
       <name>Simplified BSD</name>
+      <url>http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/scifio/LICENSE.txt;hb=HEAD</url>
       <distribution>repo</distribution>
     </license>
   </licenses>

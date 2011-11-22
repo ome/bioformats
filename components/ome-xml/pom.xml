@@ -21,6 +21,7 @@
   <licenses>
     <license>
       <name>Simplified BSD</name>
+      <url>http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/ome-xml/LICENSE.txt;hb=HEAD</url>
       <distribution>repo</distribution>
     </license>
   </licenses>
