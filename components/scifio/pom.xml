@@ -13,14 +13,17 @@
 
   <artifactId>scifio</artifactId>
 
-  <name>SciFIO</name>
-  <description>Open source plug-in for image format decoding</description>
+  <name>SCIFIO</name>
+  <description>SCientific Image Format Input and Output: an open source
+    framework for reading and writing scientific image file formats, and
+    converting metadata between standards.</description>
   <url>http://loci.wisc.edu/software</url>
-  <inceptionYear>2011</inceptionYear>
+  <inceptionYear>2005</inceptionYear>
 
   <licenses>
     <license>
-      <name>BSD</name>
+      <name>Simplified BSD</name>
+      <url>http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/scifio/LICENSE.txt;hb=HEAD</url>
       <distribution>repo</distribution>
     </license>
   </licenses>

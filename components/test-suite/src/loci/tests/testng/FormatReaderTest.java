@@ -57,6 +57,7 @@ import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
+import loci.formats.MetadataTools;
 import loci.formats.ReaderWrapper;
 import loci.formats.gui.AWTImageTools;
 import loci.formats.gui.BufferedImageReader;
@@ -1708,6 +1709,32 @@ public class FormatReaderTest {
       File f = new File(new Location(file).getParent(), ".bioformats");
       Configuration newConfig = new Configuration(reader, f.getAbsolutePath());
       newConfig.saveToFile();
+      reader.close();
+    }
+    catch (Throwable t) {
+      LOGGER.info("", t);
+      assert false;
+    }
+  }
+
+  /**
+   * @testng.test groups = "config-xml"
+   */
+  public void writeXML() {
+    reader = new BufferedImageReader(new FileStitcher());
+    setupReader();
+    if (!initFile(false)) return;
+    String file = reader.getCurrentFile();
+    LOGGER.info("Generating XML: {}", file);
+    try {
+      Location l = new Location(file);
+      File f = new File(l.getParent(), l.getName() + ".ome.xml");
+      FileWriter writer = new FileWriter(f);
+      MetadataStore store = reader.getMetadataStore();
+      MetadataRetrieve retrieve = MetadataTools.asRetrieve(store);
+      String xml = MetadataTools.getOMEXML(retrieve);
+      writer.write(xml);
+      writer.close();
       reader.close();
     }
     catch (Throwable t) {

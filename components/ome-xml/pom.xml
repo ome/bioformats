@@ -20,8 +20,8 @@
 
   <licenses>
     <license>
-      <name>GPL 2 or later</name>
-      <url>http://www.gnu.org/licenses/gpl-2.0.txt</url>
+      <name>Simplified BSD</name>
+      <url>http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/ome-xml/LICENSE.txt;hb=HEAD</url>
       <distribution>repo</distribution>
     </license>
   </licenses>

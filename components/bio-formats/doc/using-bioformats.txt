@@ -8,11 +8,15 @@ with Bio-Formats.  It is recommended that you obtain the Bio-Formats source
 by following the directions at http://www.loci.wisc.edu/software, rather than
 using an official release.  It is also recommended that you have a copy of the
 JavaDocs nearby (available online at
-http://hudson.openmicroscopy.org.uk/job/LOCI/javadoc/);
+http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-trunk/javadoc/);
 the notes that follow will make more sense when you see the API.
 
 For a complete list of supported formats, see the Bio-Formats home page:
 http://www.loci.wisc.edu/software/bio-formats
+
+For a few working examples of how to use Bio-Formats, see:
+
+http://git.openmicroscopy.org/?p=bioformats.git;a=tree;f=components/bio-formats/utils
 
                               Basic File Reading
                              --------------------
@@ -103,15 +107,14 @@ provides a few extras to make file reading more flexible.
 
 The following file formats can be written using Bio-Formats:
 
-- TIFF (uncompressed or LZW)
-- OME-TIFF (uncompressed or LZW)
+- TIFF (uncompressed, LZW, JPEG, or JPEG-2000)
+- OME-TIFF (uncompressed, LZW, JPEG, or JPEG-2000)
 - JPEG
 - PNG
 - AVI (uncompressed)
 - QuickTime (uncompressed is supported natively; additional codecs use QTJava)
 - Encapsulated PostScript (EPS)
-
-We are planning support for OME-XML in the near future.
+- OME-XML (not recommended)
 
 The writer API (see loci.formats.IFormatWriter) is very similar to the reader
 API, in that files are written one plane at time (rather than all at once).
@@ -122,8 +125,11 @@ the same writer and output settings (compression, frames per second, etc.),
 and is especially useful for formats that do not support multiple images per
 file.
 
-Please see the Movie Stitcher (loci.apps.stitcher) for an example of how
-to write files using Bio-Formats.
+Please see loci.formats.tools.ImageConverter and
+
+http://trac.openmicroscopy.org.uk/ome/wiki/BioFormats-Export
+
+for examples of how to write files.
 
                     Arcane Notes and Implementation Details
                    -----------------------------------------
@@ -131,25 +137,13 @@ to write files using Bio-Formats.
 Following is a list of known oddities.
 
 o Importing multi-file formats (Leica LEI, PerkinElmer, FV1000 OIF, ICS, and
-  Prairie TIFF) can fail if any of the files are renamed.  There are
-  "best guess" heuristics in these readers, but they aren't guaranteed to work
-  in general.  So please don't rename files in these formats.
+  Prairie TIFF, to name afew) can fail if any of the files are renamed.  There
+  are "best guess" heuristics in these readers, but they aren't guaranteed to
+  work in general.  So please don't rename files in these formats.
 
 o If you are working on a Macintosh, make sure that the data and resource forks
   of your image files are stored together.  Bio-Formats does not handle
   separated forks (the native QuickTime reader tries, but usually fails).
-
-o Through specialized I/O classes, Bio-Formats is able to control the number of
-  open file descriptors (in the current JVM).  Currently, the maximum is 200,
-  which is lower than the default on most systems.  Side note on I/O: the
-  reasoning behind writing our own I/O stuff (see
-  loci.common.RandomAccessInputStream) is 1) InputStreams are fast at reading
-  data sequentially, but cannot do random access; 2) RandomAccessFiles are
-  great for random access, but less efficient for sequential reading; 3) we
-  needed RandomAccessFile-like functionality for byte arrays; 4) we wanted to
-  be able to read from disk, over HTTP, and potentially other sources.  The
-  result is a hybrid class that extends InputStream and implements DataInput to
-  meet all of our goals.
 
 o RLE-compressed QuickTime movies will look funny if the planes are not read
   in sequential order, since proper decoding of a particular plane can depend
