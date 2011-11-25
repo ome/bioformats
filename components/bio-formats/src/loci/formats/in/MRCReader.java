@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.IOException;
+import java.math.BigInteger;
 
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
@@ -131,9 +132,16 @@ public class MRCReader extends FormatReader {
     core[0].sizeY = in.readInt();
     core[0].sizeZ = in.readInt();
 
+    // We are using BigInteger here because of the very real possiblity
+    // of not just an int overflow but also a long overflow when multiplying
+    // sizeX * sizeY * sizeZ.
+    BigInteger v = BigInteger.valueOf(getSizeX());
+    v = v.multiply(BigInteger.valueOf(getSizeY()));
+    v = v.multiply(BigInteger.valueOf(getSizeZ()));
     if (getSizeX() < 0 || getSizeY() < 0 || getSizeZ() < 0 ||
-      (getSizeX() * getSizeY() * getSizeZ() > in.length()))
+      (v.compareTo(BigInteger.valueOf(in.length())) > 0))
     {
+      LOGGER.debug("Detected endianness is wrong, swapping");
       core[0].littleEndian = !isLittleEndian();
       in.seek(0);
       in.order(isLittleEndian());
