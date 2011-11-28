@@ -2166,14 +2166,19 @@ public class ZeissLSMReader extends FormatReader {
       }
       if (next < tokens.length) {
         String p = tokens[next++];
-        try {
-          magnification = new Integer(p.substring(0, p.indexOf("/") - 1));
+        int slash = p.indexOf("/");
+        if (slash > 0) {
+          try {
+            magnification = new Integer(p.substring(0, slash - 1));
+          }
+          catch (NumberFormatException e) { }
         }
-        catch (NumberFormatException e) { }
-        try {
-          lensNA = new Double(p.substring(p.indexOf("/") + 1));
+        if (slash >= 0 && slash < p.length() - 1) {
+          try {
+            lensNA = new Double(p.substring(slash + 1));
+          }
+          catch (NumberFormatException e) { }
         }
-        catch (NumberFormatException e) { }
       }
 
       immersion = next < tokens.length ? tokens[next++] : "Unknown";
