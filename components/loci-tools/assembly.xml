@@ -10,6 +10,7 @@
     <dependencySet>
       <excludes>
         <exclude>loci:lwf-stubs</exclude>
+        <exclude>net.imagej:ij</exclude>
       </excludes>
       <outputDirectory>/</outputDirectory>
       <unpack>true</unpack>

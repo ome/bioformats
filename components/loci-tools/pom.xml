@@ -30,7 +30,7 @@
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>scifio</artifactId>
+      <artifactId>loci_plugins</artifactId>
       <version>${project.version}</version>
     </dependency>
   </dependencies>
