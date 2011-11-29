@@ -458,7 +458,7 @@ public class SlidebookReader extends FormatReader {
                 iCount = 1;
               }
               prevSeries = j;
-              core[j].sizeC = iCount / 2;
+              core[j].sizeC = (int) Math.ceil(Math.sqrt(iCount));
               break;
             }
           }
@@ -473,9 +473,6 @@ public class SlidebookReader extends FormatReader {
                 uCount = 1;
               }
               prevSeriesU = j;
-              if (uCount > core[j].sizeZ) {
-                core[j].sizeZ = uCount;
-              }
               break;
             }
           }
@@ -610,6 +607,11 @@ public class SlidebookReader extends FormatReader {
       long plane = pixels / (getSizeC() * getSizeZ());
 
       if (adjust) {
+        if (getSizeX() == 0 && getSizeY() == 0) {
+          core[i].sizeX = (int) Math.ceil(Math.sqrt(plane));
+          core[i].sizeY = (int) Math.floor(Math.sqrt(plane));
+        }
+
         boolean widthGreater = getSizeX() > getSizeY();
         while (getSizeX() * getSizeY() > plane) {
           if (x) core[i].sizeX /= 2;
