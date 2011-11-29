@@ -716,6 +716,7 @@ public class MetamorphReader extends BaseTiffReader {
       }
 
       int lastFile = -1;
+      IFDList lastIFDs = null;
       IFD lastIFD = null;
       long[] lastOffsets = null;
 
@@ -731,16 +732,17 @@ public class MetamorphReader extends BaseTiffReader {
         if (fileIndex >= 0) {
           String file = stks == null ? currentId : stks[i][fileIndex];
           if (file != null) {
-            RandomAccessInputStream stream = new RandomAccessInputStream(file);
-            TiffParser tp = new TiffParser(stream);
-            tp.checkHeader();
             if (fileIndex != lastFile) {
+              RandomAccessInputStream stream =
+                new RandomAccessInputStream(file);
+              TiffParser tp = new TiffParser(stream);
+              tp.checkHeader();
               lastFile = fileIndex;
-              lastOffsets = tp.getIFDOffsets();
+              lastIFDs = tp.getIFDs();
+              stream.close();
             }
 
-            lastIFD = tp.getIFD(lastOffsets[p % lastOffsets.length]);
-            stream.close();
+            lastIFD = lastIFDs.get(p % lastIFDs.size());
             comment = lastIFD.getComment();
             if (comment != null) comment = comment.trim();
             handler = new MetamorphHandler(getSeriesMetadata());
