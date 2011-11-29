@@ -89,25 +89,7 @@ public final class BF {
   public static ImagePlus[] openImagePlus(ImporterOptions options)
     throws FormatException, IOException
   {
-    // TODO: Eliminate use of the ImporterPrompter. While no dialogs should
-    // appear due to the quiet and windowless flags, it would be cleaner to
-    // avoid piping everything through invisible GenericDialogs internally.
-    //
-    // However, we need to be sure all the Dialog classes are not performing
-    // any "side-effect" logic on the ImportProcess and/or ImporterOptions
-    // before we can make this change.
-    //
-    // Another downside might be that we could miss out on any other magic that
-    // ImageJ is performing (e.g., macro-related functionality), but further
-    // testing is warranted.
-
-    options.setQuiet(true); // NB: Only needed due to ImporterPrompter.
-    options.setWindowless(true); // NB: Only needed due to ImporterPrompter.
-
     ImportProcess process = new ImportProcess(options);
-
-    new ImporterPrompter(process); // NB: Could eliminate this (see above).
-
     if (!process.execute()) return null;
     ImagePlusReader reader = new ImagePlusReader(process);
     return reader.openImagePlus();
