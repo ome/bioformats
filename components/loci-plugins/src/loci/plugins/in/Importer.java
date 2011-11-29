@@ -119,8 +119,22 @@ public class Importer {
   public void showDialogs(ImportProcess process)
     throws FormatException, IOException
   {
+    // TODO: Do not use the ImporterPrompter in batch mode. Unfortunately,
+    // without avoiding usage of ImporterPrompter in batch mode, the
+    // Bio-Formats Importer plugin cannot work in headless mode.
+    //
+    // The problem is that invoking the ImporterPrompter activates crucial
+    // macro-related functionality (via GenericDialogs). We cannot currently
+    // eliminate the use of ImporterPrompter in batch/headless mode, as we do
+    // not do our own harvesting of importer options from the macro argument.
+    //
+    // Further, we need to be sure all the Dialog classes are not performing
+    // any "side-effect" logic on the ImportProcess and/or ImporterOptions
+    // before we can make this change.
+
     // attach dialog prompter to process
     new ImporterPrompter(process);
+
     // execute the preparation process
     process.execute();
     if (process.wasCanceled()) plugin.canceled = true;
