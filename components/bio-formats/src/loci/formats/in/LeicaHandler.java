@@ -189,12 +189,16 @@ public class LeicaHandler extends DefaultHandler {
 
       String[] keys = channels.keySet().toArray(new String[0]);
       Arrays.sort(keys);
+      int nextC = 0;
       for (int c=0; c<keys.length; c++) {
         Channel ch = channels.get(keys[c]);
-        store.setDetectorSettingsDetector(ch.detector, numDatasets, c);
-        store.setLogicalChannelExWave(ch.exWave, numDatasets, c);
-        store.setLogicalChannelName(ch.name, numDatasets, c);
-        store.setDetectorSettingsGain(ch.gain, numDatasets, c);
+        if (ch.detector != null) {
+          store.setDetectorSettingsDetector(ch.detector, numDatasets, nextC);
+          store.setDetectorSettingsGain(ch.gain, numDatasets, nextC);
+          store.setLogicalChannelExWave(ch.exWave, numDatasets, nextC);
+          store.setLogicalChannelName(ch.name, numDatasets, nextC);
+          nextC++;
+        }
       }
 
       channels.clear();
