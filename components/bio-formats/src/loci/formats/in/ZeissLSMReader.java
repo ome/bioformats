@@ -185,6 +185,9 @@ public class ZeissLSMReader extends FormatReader {
   private byte[] prevBuf = null;
   private Region prevRegion = null;
 
+  private Hashtable<Integer, String> acquiredDate =
+    new Hashtable<Integer, String>();
+
   // -- Constructor --
 
   /** Constructs a new Zeiss LSM reader. */
@@ -259,6 +262,7 @@ public class ZeissLSMReader extends FormatReader {
       seriesCounts = null;
       originX = originY = originZ = 0d;
       userName = null;
+      acquiredDate.clear();
     }
   }
 
@@ -525,6 +529,9 @@ public class ZeissLSMReader extends FormatReader {
       setSeries(series);
       if (series < imageNames.size()) {
         store.setImageName(imageNames.get(series), series);
+      }
+      if (acquiredDate.containsKey(series)) {
+        store.setImageAcquiredDate(acquiredDate.get(series), series);
       }
       store.setPixelsBinDataBigEndian(!isLittleEndian(), series, 0);
     }
@@ -1236,7 +1243,7 @@ public class ZeissLSMReader extends FormatReader {
       String objectiveID = MetadataTools.createLSID("Objective", instrument, 0);
       if (recording.acquire) {
         store.setImageDescription(recording.description, series);
-        store.setImageAcquiredDate(recording.startTime, series);
+        acquiredDate.put(series, recording.startTime);
         store.setImageObjectiveSettingsID(objectiveID, series);
         binning = recording.binning;
       }
