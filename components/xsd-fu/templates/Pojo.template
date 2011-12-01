@@ -323,7 +323,9 @@ ${customUpdatePropertyContent[prop.name]}
 			o_casted.link${klass.type}(this);
 {% end %}\
 {% if prop.maxOccurs > 1 %}\
-			${prop.javaInstanceVariableName}.add(o_casted);
+			if (!copyLinked${prop.javaMethodName}List().contains(o_casted)) {
+				${prop.javaInstanceVariableName}.add(o_casted);
+			}
 {% end %}\
 {% if prop.maxOccurs == 1 %}\
 			${prop.javaInstanceVariableName} = o_casted;
