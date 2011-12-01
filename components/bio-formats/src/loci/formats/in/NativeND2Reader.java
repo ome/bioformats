@@ -429,6 +429,17 @@ public class NativeND2Reader extends FormatReader {
         if (key.equals("iXFields")) {
           nXFields = Integer.parseInt(globalMetadata.get(key).toString());
         }
+        else if (key.equals("ChannelCount")) {
+          for (int i=0; i<getSeriesCount(); i++) {
+            if (core[i].sizeC == 0) {
+              core[i].sizeC =
+                Integer.parseInt(globalMetadata.get(key).toString());
+              if (core[i].sizeC > 1) {
+                core[i].rgb = true;
+              }
+            }
+          }
+        }
       }
 
       int numSeries = handler.getSeriesCount();
