@@ -244,8 +244,16 @@ public class TileStitcher extends ReaderWrapper {
       }
 
       Double zPos = meta.getPlanePositionZ(i, reader.getImageCount() - 1);
-      if ((firstZ == null && zPos != null) || !firstZ.equals(zPos)) {
-        equalZs = false;
+
+      if (firstZ == null) {
+        if (zPos != null) {
+          equalZs = false;
+        }
+      }
+      else {
+        if (!firstZ.equals(zPos)) {
+          equalZs = false;
+        }
       }
     }
 
