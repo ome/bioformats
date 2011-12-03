@@ -1243,7 +1243,9 @@ public class ZeissLSMReader extends FormatReader {
       String objectiveID = MetadataTools.createLSID("Objective", instrument, 0);
       if (recording.acquire) {
         store.setImageDescription(recording.description, series);
-        acquiredDate.put(series, recording.startTime);
+        if (recording.startTime != null) {
+          acquiredDate.put(series, recording.startTime);
+        }
         store.setImageObjectiveSettingsID(objectiveID, series);
         binning = recording.binning;
       }
