@@ -27,6 +27,8 @@ import java.io.IOException;
 import java.util.Hashtable;
 import java.util.List;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Templates;
 import javax.xml.transform.TransformerConfigurationException;
@@ -525,6 +527,31 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
     omexmlMeta.setRoot(root);
   }
 
+  /** @see OMEXMLService#isEqual(OMEXMLMetadata, OMEXMLMetadata) */
+  public boolean isEqual(OMEXMLMetadata src1, OMEXMLMetadata src2) {
+    ((OMEXMLMetadataImpl) src1).resolveReferences();
+    ((OMEXMLMetadataImpl) src2).resolveReferences();
+
+    OME omeRoot1 = (OME) src1.getRoot();
+    OME omeRoot2 = (OME) src2.getRoot();
+
+    DocumentBuilder builder = null;
+    try {
+      builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+    }
+    catch (ParserConfigurationException e) {
+      return false;
+    }
+
+    Document doc1 = builder.newDocument();
+    Document doc2 = builder.newDocument();
+
+    Element root1 = omeRoot1.asXMLElement(doc1);
+    Element root2 = omeRoot2.asXMLElement(doc2);
+
+    return equals(root1, root2);
+  }
+
   // -- Utility methods - casting --
 
   /** @see OMEXMLService#asStore(loci.formats.meta.MetadataRetrieve) */
@@ -556,6 +583,35 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
     catch (SAXException se) { }
     catch (IOException ioe) { }
     return null;
+  }
+
+  /** Compares two Elements for equality. */
+  public boolean equals(Node e1, Node e2) {
+    NodeList children1 = e1.getChildNodes();
+    NodeList children2 = e2.getChildNodes();
+
+    //NamedNodeMap attributes1 = e1.getAttributes();
+    //NamedNodeMap attributes2 = e2.getAttributes();
+
+    //if (attributes1.getLength() != attributes2.getLength()) {
+    //  return false;
+    //}
+    if (children1.getLength() != children2.getLength()) {
+      return false;
+    }
+    if (!e1.getLocalName().equals(e2.getLocalName())) {
+      return false;
+    }
+    if (!e1.getNodeValue().equals(e2.getNodeValue())) {
+      return false;
+    }
+
+    for (int i=0; i<children1.getLength(); i++) {
+      if (!equals(children1.item(i), children2.item(i))) {
+        return false;
+      }
+    }
+    return true;
   }
 
   // -- Helper class --
