@@ -190,6 +190,9 @@ public class VolocityReader extends FormatReader {
       s.close();
     }
     else {
+      if (pix.getFilePointer() + planeSize > pix.length()) {
+        return buf;
+      }
       readPlane(pix, x, y, w, h, buf);
     }
     pix.close();
@@ -560,9 +563,12 @@ public class VolocityReader extends FormatReader {
           core[i].sizeC = 1;
           long pixels = core[i].sizeX * core[i].sizeY * core[i].sizeZ;
           double approximateBytes = (double) s.length() / pixels;
-          int bytes = (int) Math.round(approximateBytes);
+          int bytes = (int) Math.ceil(approximateBytes);
           if (bytes == 0) {
             bytes = 1;
+          }
+          else if (bytes == 3) {
+            bytes = 2;
           }
           core[i].pixelType =
             FormatTools.pixelTypeFromBytes(bytes, false, false);

@@ -734,6 +734,9 @@ public class LIFReader extends FormatReader {
           if (timestamps[i][0] == acquiredDate[i]) {
             timestamp -= acquiredDate[i];
           }
+          else if (timestamp == acquiredDate[i] && image > 0) {
+            timestamp = timestamps[i][0];
+          }
           store.setPlaneDeltaT(timestamp, i, image);
         }
       }
