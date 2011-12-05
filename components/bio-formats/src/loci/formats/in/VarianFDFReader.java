@@ -89,7 +89,7 @@ public class VarianFDFReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    if (files.size() > 0) {
+    if (files.size() > 1) {
       in = new RandomAccessInputStream(files.get(no));
       in.order(isLittleEndian());
     }
@@ -105,7 +105,7 @@ public class VarianFDFReader extends FormatReader {
       System.arraycopy(buf, dest, buf, src, rowBuf.length);
       System.arraycopy(rowBuf, 0, buf, dest, rowBuf.length);
     }
-    if (files.size() > 0) {
+    if (files.size() > 1) {
       in.close();
     }
 
@@ -146,7 +146,7 @@ public class VarianFDFReader extends FormatReader {
     pixelOffsets = new long[getImageCount()];
     int planeSize = FormatTools.getPlaneSize(this);
     for (int i=0; i<pixelOffsets.length; i++) {
-      if (files.size() > 0) {
+      if (files.size() > 1) {
         in.close();
         in = new RandomAccessInputStream(files.get(i));
         pixelOffsets[i] = in.length() - planeSize;
