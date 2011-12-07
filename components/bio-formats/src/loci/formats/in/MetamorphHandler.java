@@ -214,7 +214,14 @@ public class MetamorphHandler extends DefaultHandler {
       }
     }
     else if (key.equals("Speed")) {
-      readOutRate = Double.parseDouble(value);
+      int space = value.indexOf(" ");
+      if (space > 0) {
+        value = value.substring(0, space);
+      }
+      try {
+        readOutRate = Double.parseDouble(value.trim());
+      }
+      catch (NumberFormatException e) { }
     }
     else if (key.equals("Exposure")) {
       if (value.indexOf(" ") != -1) {
