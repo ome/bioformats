@@ -436,6 +436,39 @@ public class LociFunctions extends MacroFunctions {
     exposureTime[0] = val == null ? new Double(Double.NaN) : val;
   }
 
+  public void getPlanePositionX(Double[] positionX, Double no) {
+    int imageIndex = r.getSeries();
+    int planeIndex = getPlaneIndex(r, no.intValue());
+    MetadataRetrieve retrieve = (MetadataRetrieve) r.getMetadataStore();
+    Double val = null;
+    if (planeIndex >= 0) {
+      val = retrieve.getPlanePositionX(imageIndex, planeIndex);
+    }
+    positionX[0] = val == null ? new Double(Double.NaN) : val;
+  }
+
+  public void getPlanePositionY(Double[] positionY, Double no) {
+    int imageIndex = r.getSeries();
+    int planeIndex = getPlaneIndex(r, no.intValue());
+    MetadataRetrieve retrieve = (MetadataRetrieve) r.getMetadataStore();
+    Double val = null;
+    if (planeIndex >= 0) {
+      val = retrieve.getPlanePositionY(imageIndex, planeIndex);
+    }
+    positionY[0] = val == null ? new Double(Double.NaN) : val;
+  }
+
+  public void getPlanePositionZ(Double[] positionZ, Double no) {
+    int imageIndex = r.getSeries();
+    int planeIndex = getPlaneIndex(r, no.intValue());
+    MetadataRetrieve retrieve = (MetadataRetrieve) r.getMetadataStore();
+    Double val = null;
+    if (planeIndex >= 0) {
+      val = retrieve.getPlanePositionZ(imageIndex, planeIndex);
+    }
+    positionZ[0] = val == null ? new Double(Double.NaN) : val;
+  }
+
   public void getPixelsPhysicalSizeX(Double[] sizeX) {
     int imageIndex = r.getSeries();
     MetadataRetrieve retrieve = (MetadataRetrieve) r.getMetadataStore();
@@ -472,7 +505,6 @@ public class LociFunctions extends MacroFunctions {
     sizeT[0] = retrieve.getPixelsTimeIncrement(imageIndex);
     if (sizeT[0] == null) sizeT[0] = new Double(Double.NaN);
   }
-
 
   // -- PlugIn API methods --
 
@@ -662,6 +694,15 @@ public class LociFunctions extends MacroFunctions {
       IJ.log("Ext.getPlaneTimingExposureTime(exposureTime, no)");
       IJ.log("-- Obtains the exposure time (in seconds) for the no'th");
       IJ.log("-- plane, or NaN if none.");
+      IJ.log("Ext.getPlanePositionX(positionX, no)");
+      IJ.log("-- Obtains the X coordinate of the stage for the no'th plane");
+      IJ.log("-- or NaN if none.");
+      IJ.log("Ext.getPlanePositionY(positionY, no)");
+      IJ.log("-- Obtains the Y coordinate of the stage for the no'th plane");
+      IJ.log("-- or NaN if none.");
+      IJ.log("Ext.getPlanePositionZ(positionZ, no)");
+      IJ.log("-- Obtains the Z coordinate of the stage for the no'th plane");
+      IJ.log("-- or NaN if none.");
       IJ.log("Ext.getPixelsPhysicalSizeX(sizeX)");
       IJ.log("-- Obtains the width of a pixel in microns, or NaN if the");
       IJ.log("-- the width is not stored in the original file.");
