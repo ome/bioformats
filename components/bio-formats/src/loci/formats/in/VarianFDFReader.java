@@ -143,6 +143,12 @@ public class VarianFDFReader extends FormatReader {
     core[0].imageCount = getSizeZ() * getSizeC() * getSizeT();
     core[0].dimensionOrder = "XYTZC";
 
+    if (files.size() > getImageCount()) {
+      int rem = files.size() / getImageCount();
+      core[0].sizeT *= rem;
+      core[0].imageCount = getSizeZ() * getSizeC() * getSizeT();
+    }
+
     pixelOffsets = new long[getImageCount()];
     int planeSize = FormatTools.getPlaneSize(this);
     for (int i=0; i<pixelOffsets.length; i++) {
