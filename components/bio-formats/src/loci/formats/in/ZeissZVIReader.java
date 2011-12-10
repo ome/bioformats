@@ -605,13 +605,15 @@ public class ZeissZVIReader extends FormatReader {
         store.setDetectorType(getDetectorType("Other"), 0, i);
 
         for (int s=0; s<getSeriesCount(); s++) {
-          store.setDetectorSettingsID(detectorID, s, i);
-          store.setDetectorSettingsGain(detectorGain.get(i), s, i);
-          store.setDetectorSettingsOffset(detectorOffset.get(i), s, i);
+          int c = channelIndex + i;
 
-          store.setChannelName(channelName.get(channelIndex + i), s, i);
-          store.setChannelEmissionWavelength(emWavelength.get(i), s, i);
-          store.setChannelExcitationWavelength(exWavelength.get(i), s, i);
+          store.setDetectorSettingsID(detectorID, s, i);
+          store.setDetectorSettingsGain(detectorGain.get(c), s, i);
+          store.setDetectorSettingsOffset(detectorOffset.get(c), s, i);
+
+          store.setChannelName(channelName.get(c), s, i);
+          store.setChannelEmissionWavelength(emWavelength.get(c), s, i);
+          store.setChannelExcitationWavelength(exWavelength.get(c), s, i);
         }
       }
 
