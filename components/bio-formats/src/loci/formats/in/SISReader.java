@@ -148,7 +148,10 @@ public class SISReader extends BaseTiffReader {
       in.skipBytes(1);
     }
 
-    while (in.readShort() != 8);
+    short check = in.readShort();
+    while (check != 7 && check != 8) {
+      check = in.readShort();
+    }
     in.skipBytes(4);
 
     long pos = in.readInt() & 0xffffffffL;
