@@ -1009,6 +1009,9 @@ public class NativeND2Reader extends FormatReader {
           int[] coords = getZCTCoords(n);
           int stampIndex = coords[2] + i * getSizeT();
           if (tsT.size() == getImageCount()) stampIndex = n;
+          else if (tsT.size() == getSizeZ()) {
+            stampIndex = coords[0];
+          }
           double stamp = tsT.get(stampIndex).doubleValue();
           store.setPlaneDeltaT(stamp, i, n);
 
