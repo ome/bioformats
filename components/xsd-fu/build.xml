@@ -27,6 +27,10 @@
             <mapper type="regexp" from="(xsd_fu-.*?)-py(.*?).egg" to="xsd-fu.egg" />
         </move>
     </target>
+    <target name="install" depends="package">
+        <!-- Defining here to work around jar signing -->
+        <publishArtifact/>
+    </target>
 
     <target name="test-compile" description="No-op"/>
     <target name="test" description="No-op"/>
