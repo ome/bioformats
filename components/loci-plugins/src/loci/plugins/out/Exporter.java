@@ -107,9 +107,20 @@ public class Exporter {
   /** Executes the plugin. */
   public void run() {
     String outfile = null;
+    Boolean splitZ = null;
+    Boolean splitC = null;
+    Boolean splitT = null;
 
-    if (plugin.arg != null && plugin.arg.startsWith("outfile=")) {
+    if (plugin.arg != null) {
       outfile = Macro.getValue(plugin.arg, "outfile", null);
+
+      String z = Macro.getValue(plugin.arg, "splitZ", null);
+      String c = Macro.getValue(plugin.arg, "splitC", null);
+      String t = Macro.getValue(plugin.arg, "splitT", null);
+
+      splitZ = z == null ? null : Boolean.valueOf(z);
+      splitC = c == null ? null : Boolean.valueOf(c);
+      splitT = t == null ? null : Boolean.valueOf(t);
       plugin.arg = null;
     }
 
@@ -196,6 +207,21 @@ public class Exporter {
       if (dir == null || name == null) return;
       outfile = new File(dir, name).getAbsolutePath();
       if (outfile == null) return;
+    }
+
+    if (splitZ == null || splitC == null || splitT == null) {
+      // ask if we want to export multiple files
+
+      GenericDialog multiFile =
+        new GenericDialog("Bio-Formats Exporter - Multiple Files");
+      multiFile.addCheckbox("Write each Z section to a separate file", false);
+      multiFile.addCheckbox("Write each timepoint to a separate file", false);
+      multiFile.addCheckbox("Write each channel to a separate file", false);
+      multiFile.showDialog();
+
+      splitZ = multiFile.getNextBoolean();
+      splitT = multiFile.getNextBoolean();
+      splitC = multiFile.getNextBoolean();
     }
 
     try {
@@ -376,7 +402,40 @@ public class Exporter {
         }
       }
 
-      w.setId(outfile);
+      String[] outputFiles = new String[] {outfile};
+
+      if (splitZ || splitC || splitT) {
+        int sizeZ = store.getPixelsSizeZ(0).getValue();
+        int sizeC = store.getPixelsSizeC(0).getValue();
+        int sizeT = store.getPixelsSizeT(0).getValue();
+
+        int nFiles = 1;
+        if (splitZ) {
+          nFiles *= sizeZ;
+        }
+        if (splitC) {
+          nFiles *= sizeC;
+        }
+        if (splitT) {
+          nFiles *= sizeT;
+        }
+
+        outputFiles = new String[nFiles];
+
+        int dot = outfile.indexOf(".", outfile.lastIndexOf(File.separator));
+        String base = outfile.substring(0, dot);
+        String ext = outfile.substring(dot);
+
+        int nextFile = 0;
+        for (int z=0; z<(splitZ ? sizeZ : 1); z++) {
+          for (int c=0; c<(splitC ? sizeC : 1); c++) {
+            for (int t=0; t<(splitT ? sizeT : 1); t++) {
+              outputFiles[nextFile++] = base + (splitZ ? "_Z" + z : "") +
+                (splitC ? "_C" + c : "") + (splitT ? "_T" + t : "") + ext;
+            }
+          }
+        }
+      }
 
       // prompt for options
 
@@ -461,7 +520,10 @@ public class Exporter {
         if (notSupportedType) {
           IJ.error("Pixel type not supported by this format.");
         }
-        else w.saveBytes(no++, plane);
+        else {
+          w.setId(outputFiles[no]);
+          w.saveBytes(no++, plane);
+        }
       }
       w.close();
     }
