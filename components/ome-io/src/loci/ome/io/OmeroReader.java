@@ -29,6 +29,7 @@ import Glacier2.PermissionDeniedException;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
 
 import loci.common.DateTools;
@@ -47,12 +48,20 @@ import omero.RString;
 import omero.RTime;
 import omero.ServerError;
 import omero.api.GatewayPrx;
+import omero.api.IAdminPrx;
+import omero.api.IQueryPrx;
 import omero.api.RawPixelsStorePrx;
 import omero.api.ServiceFactoryPrx;
 import omero.model.Channel;
+import omero.model.Experimenter;
+import omero.model.ExperimenterGroup;
+import omero.model.ExperimenterGroupI;
 import omero.model.Image;
+import omero.model.IObject;
 import omero.model.LogicalChannel;
 import omero.model.Pixels;
+import omero.sys.EventContext;
+import omero.sys.ParametersI;
 
 /**
  * Implementation of {@link loci.formats.IFormatReader}
@@ -75,6 +84,7 @@ public class OmeroReader extends FormatReader {
   private String password;
   private int thePort = DEFAULT_PORT;
   private String sessionID;
+  private String group;
   private boolean encrypted = true;
 
   private omero.client client;
@@ -112,6 +122,10 @@ public class OmeroReader extends FormatReader {
 
   public void setEncrypted(boolean encrypted) {
     this.encrypted = encrypted;
+  }
+
+  public void setGroup(String group) {
+    this.group = group;
   }
 
   // -- IFormatReader methods --
@@ -190,6 +204,9 @@ public class OmeroReader extends FormatReader {
       else if (key.equals("session")) {
         sessionID = val;
       }
+      else if (key.equals("group")) {
+        group = val;
+      }
       else if (key.equals("iid")) {
         try {
           iid = Long.parseLong(val);
@@ -230,12 +247,62 @@ public class OmeroReader extends FormatReader {
         serviceFactory = client.getSession();
       }
 
+      if (group != null) {
+        IAdminPrx iAdmin = serviceFactory.getAdminService();
+        IQueryPrx iQuery = serviceFactory.getQueryService();
+        EventContext eventContext = iAdmin.getEventContext();
+        ExperimenterGroup defaultGroup =
+          iAdmin.getDefaultGroup(eventContext.userId);
+        if (!group.equals(defaultGroup.getName().getValue())) {
+          Experimenter exp = iAdmin.getExperimenter(eventContext.userId);
+
+          ParametersI p = new ParametersI();
+          p.addId(eventContext.userId);
+          List<IObject> groupList = iQuery.findAllByQuery(
+            "select distinct g from ExperimenterGroup as g " +
+            "join fetch g.groupExperimenterMap as map " +
+            "join fetch map.parent e " +
+            "left outer join fetch map.child u " +
+            "left outer join fetch u.groupExperimenterMap m2 " +
+            "left outer join fetch m2.parent p " +
+            "where g.id in " +
+            "  (select m.parent from GroupExperimenterMap m " +
+            "  where m.child.id = :id )", p);
+
+          Iterator<IObject> i = groupList.iterator();
+
+          ExperimenterGroup g = null;
+
+          boolean in = false;
+          Long groupID = null;
+          while (i.hasNext()) {
+            g = (ExperimenterGroup) i.next();
+            if (group.equals(g.getName().getValue())) {
+              in = true;
+              groupID = g.getId().getValue();
+              break;
+            }
+          }
+          if (in) {
+            iAdmin.setDefaultGroup(exp, iAdmin.getGroup(groupID));
+            serviceFactory.setSecurityContext(
+              new ExperimenterGroupI(groupID, false));
+          }
+        }
+      }
+
       // get raw pixels store and pixels
 
       store = serviceFactory.createRawPixelsStore();
 
       final GatewayPrx gateway = serviceFactory.createGateway();
       img = gateway.getImage(iid);
+
+      if (img == null) {
+        throw new FormatException("Could not find Image with ID=" + iid +
+          " in group '" + group + "'.");
+      }
+
       long pixelsId = img.getPixels(0).getId().getValue();
 
       store.setPixelsId(pixelsId, false);
@@ -369,6 +436,9 @@ public class OmeroReader extends FormatReader {
     System.out.print("Password? ");
     final String pass = new String(con.readLine());
 
+    System.out.print("Group? ");
+    final String group = con.readLine();
+
     System.out.print("Image ID? ");
     final int imageId = Integer.parseInt(con.readLine());
     System.out.print("\n\n");
@@ -379,6 +449,7 @@ public class OmeroReader extends FormatReader {
     omeroReader.setPassword(pass);
     omeroReader.setServer(server);
     omeroReader.setPort(port);
+    omeroReader.setGroup(group);
     final String id = "omero:iid=" + imageId;
     try {
       omeroReader.setId(id);
