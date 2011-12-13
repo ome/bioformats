@@ -85,6 +85,7 @@ public class OmeroReader extends FormatReader {
   private int thePort = DEFAULT_PORT;
   private String sessionID;
   private String group;
+  private Long groupID = null;
   private boolean encrypted = true;
 
   private omero.client client;
@@ -124,8 +125,12 @@ public class OmeroReader extends FormatReader {
     this.encrypted = encrypted;
   }
 
-  public void setGroup(String group) {
+  public void setGroupName(String group) {
     this.group = group;
+  }
+
+  public void setGroupID(Long groupID) {
+    this.groupID = groupID;
   }
 
   // -- IFormatReader methods --
@@ -204,8 +209,11 @@ public class OmeroReader extends FormatReader {
       else if (key.equals("session")) {
         sessionID = val;
       }
-      else if (key.equals("group")) {
+      else if (key.equals("groupName")) {
         group = val;
+      }
+      else if (key.equals("groupID")) {
+        groupID = new Long(val);
       }
       else if (key.equals("iid")) {
         try {
@@ -247,13 +255,15 @@ public class OmeroReader extends FormatReader {
         serviceFactory = client.getSession();
       }
 
-      if (group != null) {
+      if (group != null || groupID != null) {
         IAdminPrx iAdmin = serviceFactory.getAdminService();
         IQueryPrx iQuery = serviceFactory.getQueryService();
         EventContext eventContext = iAdmin.getEventContext();
         ExperimenterGroup defaultGroup =
           iAdmin.getDefaultGroup(eventContext.userId);
-        if (!group.equals(defaultGroup.getName().getValue())) {
+        if (!defaultGroup.getName().getValue().equals(group) &&
+          !new Long(defaultGroup.getId().getValue()).equals(groupID))
+        {
           Experimenter exp = iAdmin.getExperimenter(eventContext.userId);
 
           ParametersI p = new ParametersI();
@@ -274,10 +284,11 @@ public class OmeroReader extends FormatReader {
           ExperimenterGroup g = null;
 
           boolean in = false;
-          Long groupID = null;
           while (i.hasNext()) {
             g = (ExperimenterGroup) i.next();
-            if (group.equals(g.getName().getValue())) {
+            if (g.getName().getValue().equals(group) ||
+              new Long(g.getId().getValue()).equals(groupID))
+            {
               in = true;
               groupID = g.getId().getValue();
               break;
@@ -449,7 +460,7 @@ public class OmeroReader extends FormatReader {
     omeroReader.setPassword(pass);
     omeroReader.setServer(server);
     omeroReader.setPort(port);
-    omeroReader.setGroup(group);
+    omeroReader.setGroupName(group);
     final String id = "omero:iid=" + imageId;
     try {
       omeroReader.setId(id);
