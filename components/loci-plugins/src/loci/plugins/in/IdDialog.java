@@ -75,6 +75,7 @@ public class IdDialog extends ImporterDialog {
       gd.addStringField("Port: ", "4064", 80);
       gd.addStringField("Username: ", "", 80);
       gd.addStringField("Password: ", "", 80);
+      gd.addStringField("Group:    ", "default", 80);
       gd.addStringField("Image ID: ", "", 80);
 
       Vector v = gd.getStringFields();
@@ -164,8 +165,23 @@ public class IdDialog extends ImporterDialog {
       omero.append(gd.getNextString());
       omero.append("\npass=");
       omero.append(gd.getNextString());
+
+      String group = gd.getNextString();
+      Long groupID = null;
+      try {
+        groupID = new Long(group);
+      }
+      catch (NumberFormatException e) { }
+
+      omero.append("\ngroupName=");
+      omero.append(group);
+      if (groupID != null) {
+        omero.append("\ngroupID=");
+        omero.append(groupID);
+      }
       omero.append("\niid=");
       omero.append(gd.getNextString());
+
       id = omero.toString();
     }
     options.setId(id);

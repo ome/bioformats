@@ -127,11 +127,35 @@ public class OMETiffWriter extends TiffWriter {
     }
     finally {
       super.close();
-      seriesMap = null;
-      imageLocations = null;
-      omeMeta = null;
-      service = null;
-      ifdCounts.clear();
+
+      boolean canReallyClose =
+        omeMeta == null || ifdCounts.size() == omeMeta.getImageCount();
+
+      if (omeMeta != null && canReallyClose) {
+        int omePlaneCount = 0;
+        for (int i=0; i<omeMeta.getImageCount(); i++) {
+          int sizeZ = omeMeta.getPixelsSizeZ(i).getValue();
+          int sizeC = omeMeta.getPixelsSizeC(i).getValue();
+          int sizeT = omeMeta.getPixelsSizeT(i).getValue();
+
+          omePlaneCount += sizeZ * sizeC * sizeT;
+        }
+
+        int ifdCount = 0;
+        for (String key : ifdCounts.keySet()) {
+          ifdCount += ifdCounts.get(key);
+        }
+
+        canReallyClose = omePlaneCount == ifdCount;
+      }
+
+      if (canReallyClose) {
+        seriesMap = null;
+        imageLocations = null;
+        omeMeta = null;
+        service = null;
+        ifdCounts.clear();
+      }
     }
   }
 
@@ -290,19 +314,23 @@ public class OMETiffWriter extends TiffWriter {
       }
 
       String filename = imageLocations[series][planeIndex];
-      if (filename == null) filename = currentId;
-      filename = new Location(filename).getName();
+      if (filename != null) {
+        filename = new Location(filename).getName();
 
-      Integer ifdIndex = ifdCounts.get(filename);
-      int ifd = ifdIndex == null ? 0 : ifdIndex.intValue();
+        Integer ifdIndex = ifdCounts.get(filename);
+        int ifd = ifdIndex == null ? 0 : ifdIndex.intValue();
+        if ((ifd > plane || ifdCounts.size() > 1) && ifd > 0) {
+          ifd--;
+        }
 
-      omeMeta.setUUIDFileName(filename, series, plane);
-      String uuid = "urn:uuid:" + getUUID(filename);
-      omeMeta.setUUIDValue(uuid, series, plane);
+        omeMeta.setUUIDFileName(filename, series, plane);
+        String uuid = "urn:uuid:" + getUUID(filename);
+        omeMeta.setUUIDValue(uuid, series, plane);
 
-      // fill in any non-default TiffData attributes
-      populateTiffData(omeMeta, zct, ifd, series, plane);
-      ifdCounts.put(filename, ifd + 1);
+        // fill in any non-default TiffData attributes
+        populateTiffData(omeMeta, zct, ifd, series, plane);
+        ifdCounts.put(filename, ifd + 1);
+      }
     }
   }
 
