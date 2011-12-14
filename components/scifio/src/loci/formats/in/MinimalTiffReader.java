@@ -38,7 +38,9 @@ import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
+import loci.formats.MetadataTools;
 import loci.formats.codec.JPEG2000CodecOptions;
+import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 import loci.formats.tiff.PhotoInterp;
@@ -519,6 +521,9 @@ public class MinimalTiffReader extends FormatReader {
       }
       core = newCore;
     }
+
+    MetadataStore store = makeFilterMetadata();
+    MetadataTools.populatePixels(store, this);
   }
 
   /**
