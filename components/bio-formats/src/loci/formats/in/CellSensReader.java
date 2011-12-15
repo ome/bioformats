@@ -552,15 +552,25 @@ public class CellSensReader extends FormatReader {
     int maxC = 0;
     int maxT = 0;
 
+    Integer tv = dimensionOrdering.get("T");
+    Integer zv = dimensionOrdering.get("Z");
+    Integer cv = dimensionOrdering.get("C");
+
+    int tIndex = tv == null ? -1 : tv + 2;
+    int zIndex = zv == null ? -1 : zv + 2;
+    int cIndex = cv == null ? -1 : cv + 2;
+
+    if (tv == null && zv == null && cv == null) {
+      cIndex = 2;
+      tIndex = 3;
+      zIndex = 4;
+
+      dimensionOrdering.put("C", 0);
+      dimensionOrdering.put("T", 1);
+      dimensionOrdering.put("Z", 2);
+    }
+
     for (TileCoordinate t : tmpTiles) {
-      Integer tv = dimensionOrdering.get("T");
-      Integer zv = dimensionOrdering.get("Z");
-      Integer cv = dimensionOrdering.get("C");
-
-      int tIndex = tv == null ? -1 : tv + 2;
-      int zIndex = zv == null ? -1 : zv + 2;
-      int cIndex = cv == null ? -1 : cv + 2;
-
       if (t.coordinate[0] > maxX) {
         maxX = t.coordinate[0];
       }
@@ -579,8 +589,18 @@ public class CellSensReader extends FormatReader {
       }
     }
 
-    core[s].sizeX = tileX[s] * (maxX + 1);
-    core[s].sizeY = tileY[s] * (maxY + 1);
+    if (maxX > 1) {
+      core[s].sizeX = tileX[s] * (maxX + 1);
+    }
+    else {
+      core[s].sizeX = tileX[s];
+    }
+    if (maxY > 1) {
+      core[s].sizeY = tileY[s] * (maxY + 1);
+    }
+    else {
+      core[s].sizeY = tileY[s];
+    }
     core[s].sizeZ = maxZ + 1;
     if (maxC > 0) {
       core[s].sizeC *= (maxC + 1);
@@ -594,8 +614,18 @@ public class CellSensReader extends FormatReader {
       core[s].imageCount *= (maxC + 1);
     }
 
-    rows[s] = maxY + 1;
-    cols[s] = maxX + 1;
+    if (maxY > 1) {
+      rows[s] = maxY + 1;
+    }
+    else {
+      rows[s] = 1;
+    }
+    if (maxX > 1) {
+      cols[s] = maxX + 1;
+    }
+    else {
+      cols[s] = 1;
+    }
 
     for (int i=0; i<tmpTiles.size(); i++) {
       tileMap[s].put(tmpTiles.get(i), i);
