@@ -170,7 +170,9 @@ public class CellSensReader extends FormatReader {
 
     int currentSeries = getSeries();
 
-    if (currentSeries >= usedFiles.length - 1) {
+    if (currentSeries >= usedFiles.length - 1 ||
+      usedFiles.length >= getSeriesCount())
+    {
       return super.openThumbBytes(no);
     }
 
@@ -552,25 +554,32 @@ public class CellSensReader extends FormatReader {
     int maxC = 0;
     int maxT = 0;
 
-    Integer tv = dimensionOrdering.get("T");
-    Integer zv = dimensionOrdering.get("Z");
-    Integer cv = dimensionOrdering.get("C");
-
-    int tIndex = tv == null ? -1 : tv + 2;
-    int zIndex = zv == null ? -1 : zv + 2;
-    int cIndex = cv == null ? -1 : cv + 2;
-
-    if (tv == null && zv == null && cv == null) {
-      cIndex = 2;
-      tIndex = 3;
-      zIndex = 4;
-
-      dimensionOrdering.put("C", 0);
-      dimensionOrdering.put("T", 1);
-      dimensionOrdering.put("Z", 2);
-    }
-
     for (TileCoordinate t : tmpTiles) {
+      Integer tv = dimensionOrdering.get("T");
+      Integer zv = dimensionOrdering.get("Z");
+      Integer cv = dimensionOrdering.get("C");
+
+      int tIndex = tv == null ? -1 : tv + 2;
+      int zIndex = zv == null ? -1 : zv + 2;
+      int cIndex = cv == null ? -1 : cv + 2;
+
+      if (tv == null && zv == null && cv == null) {
+        if (t.coordinate.length > 4) {
+          cIndex = 2;
+          dimensionOrdering.put("C", cIndex - 2);
+        }
+
+        if (t.coordinate.length > 4) {
+          tIndex = 3;
+          dimensionOrdering.put("T", tIndex - 2);
+        }
+
+        if (t.coordinate.length > 5) {
+          zIndex = 4;
+          dimensionOrdering.put("Z", zIndex - 2);
+        }
+      }
+
       if (t.coordinate[0] > maxX) {
         maxX = t.coordinate[0];
       }
