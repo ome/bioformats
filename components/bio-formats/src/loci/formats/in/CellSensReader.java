@@ -686,6 +686,10 @@ public class CellSensReader extends FormatReader {
 
     int tagCount = flags & 0xfffffff;
 
+    if (fp + dataFieldOffset < 0) {
+      return;
+    }
+
     vsi.seek(fp + dataFieldOffset);
     if (vsi.getFilePointer() >= vsi.length()) {
       return;
@@ -762,7 +766,7 @@ public class CellSensReader extends FormatReader {
         return;
       }
 
-      if (fp + nextField < vsi.length()) {
+      if (fp + nextField < vsi.length() || fp + nextField >= 0) {
         vsi.seek(fp + nextField);
       }
       else break;
