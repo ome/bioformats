@@ -49,6 +49,7 @@ public class GatanReader extends FormatReader {
   // -- Constants --
 
   public static final int DM3_MAGIC_BYTES = 3;
+  public static final int DM4_MAGIC_BYTES = 4;
 
   /** Tag types. */
   private static final int GROUP = 20;
@@ -65,6 +66,8 @@ public class GatanReader extends FormatReader {
   private static final int BYTE = 8;
   private static final int UBYTE = 9;
   private static final int CHAR = 10;
+  private static final int UNKNOWN = 11;
+  private static final int UNKNOWN2 = 12;
 
   // -- Fields --
 
@@ -85,6 +88,7 @@ public class GatanReader extends FormatReader {
   private String info;
 
   private boolean adjustEndianness = true;
+  private int version;
 
   // -- Constructor --
 
@@ -101,7 +105,8 @@ public class GatanReader extends FormatReader {
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     final int blockLen = 4;
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
-    return stream.readInt() == DM3_MAGIC_BYTES;
+    int check = stream.readInt();
+    return check == DM3_MAGIC_BYTES || check == DM4_MAGIC_BYTES;
   }
 
   /**
@@ -129,6 +134,7 @@ public class GatanReader extends FormatReader {
       gamma = mag = voltage = 0;
       info = null;
       adjustEndianness = true;
+      version = 0;
     }
   }
 
@@ -148,19 +154,22 @@ public class GatanReader extends FormatReader {
     in.order(isLittleEndian());
 
     // only support version 3
-    if (in.readInt() != 3) {
+    version = in.readInt();
+    if (version != 3 && version != 4) {
       throw new FormatException("invalid header");
     }
 
     LOGGER.info("Reading tags");
 
     in.skipBytes(4);
+    skipPadding();
     core[0].littleEndian = in.readInt() != 1;
     in.order(isLittleEndian());
 
     // TagGroup instance
 
     in.skipBytes(2);
+    skipPadding();
     int numTags = in.readInt();
     if (numTags > in.length()) {
       core[0].littleEndian = !isLittleEndian();
@@ -254,8 +263,12 @@ public class GatanReader extends FormatReader {
 
       if (type == VALUE) {
         labelString = in.readString(length);
+        skipPadding();
+        skipPadding();
         int skip = in.readInt(); // equal to '%%%%' / 623191333
+        skipPadding();
         int n = in.readInt();
+        skipPadding();
         int dataType = in.readInt();
         String sb = labelString;
         if (sb.length() > 32) {
@@ -282,7 +295,9 @@ public class GatanReader extends FormatReader {
         }
         else if (n == 3) {
           if (dataType == GROUP) {  // this should always be true
+            skipPadding();
             dataType = in.readInt();
+            skipPadding();
             length = in.readInt();
             if (labelString.equals("Data")) {
               pixelOffset = in.getFilePointer();
@@ -300,10 +315,17 @@ public class GatanReader extends FormatReader {
           // this is a normal struct of simple types
           if (dataType == ARRAY) {
             in.skipBytes(4);
+            skipPadding();
+            skipPadding();
             int numFields = in.readInt();
             StringBuffer s = new StringBuffer();
             in.skipBytes(4);
+            skipPadding();
+            long baseFP = in.getFilePointer() + 4;
             for (int j=0; j<numFields; j++) {
+              if (version == 4) {
+                in.seek(baseFP + j * 16);
+              }
               dataType = in.readInt();
               s.append(readValue(dataType));
               if (j < numFields - 1) s.append(", ");
@@ -312,9 +334,10 @@ public class GatanReader extends FormatReader {
             boolean lastTag = parent == null && i == numTags - 1;
             if (!lastTag) {
               // search for next tag
-              // empirically, we need to skip 4, 12, 18 or 28 total bytes
+              // empirically, we need to skip 4, 8, 12, 18, 24, or 28
+              // total bytes
               byte b = 0;
-              final int[] jumps = {4, 7, 5, 9};
+              final int[] jumps = {4, 3, 3, 5, 5, 3};
               for (int j=0; j<jumps.length; j++) {
                 in.skipBytes(jumps[j]);
                 if (in.getFilePointer() >= in.length()) return;
@@ -330,15 +353,23 @@ public class GatanReader extends FormatReader {
           }
           else if (dataType == GROUP) {
             // this is an array of structs
+            skipPadding();
             dataType = in.readInt();
             if (dataType == ARRAY) { // should always be true
               in.skipBytes(4);
+              skipPadding();
+              skipPadding();
               int numFields = in.readInt();
               int[] dataTypes = new int[numFields];
+              long baseFP = in.getFilePointer() + 12;
               for (int j=0; j<numFields; j++) {
                 in.skipBytes(4);
+                if (version == 4) {
+                  in.seek(baseFP + j * 16);
+                }
                 dataTypes[j] = in.readInt();
               }
+              skipPadding();
               int len = in.readInt();
 
               double[][] values = new double[numFields][len];
@@ -356,6 +387,9 @@ public class GatanReader extends FormatReader {
       else if (type == GROUP) {
         labelString = in.readString(length);
         in.skipBytes(2);
+        skipPadding();
+        skipPadding();
+        skipPadding();
         int num = in.readInt();
         LOGGER.debug("{}{}: group({}) {", new Object[] {indent, i, num});
         parseTags(num, labelString, indent + "  ");
@@ -415,6 +449,9 @@ public class GatanReader extends FormatReader {
       case UBYTE:
       case CHAR:
         return in.readByte();
+      case UNKNOWN:
+      case UNKNOWN2:
+        return in.readLong();
     }
     return 0;
   }
@@ -436,6 +473,12 @@ public class GatanReader extends FormatReader {
         return 1;
     }
     return 0;
+  }
+
+  private void skipPadding() throws IOException {
+    if (version == 4) {
+      in.skipBytes(4);
+    }
   }
 
 }
