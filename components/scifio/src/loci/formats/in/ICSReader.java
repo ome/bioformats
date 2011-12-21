@@ -774,7 +774,7 @@ public class ICSReader extends FormatReader {
       Location idsFile = new Location(idsId);
       if (!idsFile.exists()) throw new FormatException("IDS file not found.");
       currentIdsId = idsId;
-      in = new RandomAccessInputStream(icsId);
+      in = new RandomAccessInputStream(currentIdsId);
     }
     f.close();
 
@@ -791,8 +791,7 @@ public class ICSReader extends FormatReader {
 
     // parse key/value pairs from beginning of ICS file
 
-    RandomAccessInputStream reader =
-      new RandomAccessInputStream(versionTwo ? icsId : idsId);
+    RandomAccessInputStream reader = new RandomAccessInputStream(icsId);
     reader.seek(0);
     reader.readString(NL);
     String line = reader.readString(NL);
