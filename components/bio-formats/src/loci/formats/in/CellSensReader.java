@@ -563,19 +563,29 @@ public class CellSensReader extends FormatReader {
       int zIndex = zv == null ? -1 : zv + 2;
       int cIndex = cv == null ? -1 : cv + 2;
 
-      if (tv == null && zv == null && cv == null) {
-        if (t.coordinate.length > 4) {
+      if (tv == null && zv == null) {
+        if (t.coordinate.length > 4 && cv == null) {
           cIndex = 2;
           dimensionOrdering.put("C", cIndex - 2);
         }
 
         if (t.coordinate.length > 4) {
-          tIndex = 3;
+          if (cv == null) {
+            tIndex = 3;
+          }
+          else {
+            tIndex = cIndex + 2;
+          }
           dimensionOrdering.put("T", tIndex - 2);
         }
 
         if (t.coordinate.length > 5) {
-          zIndex = 4;
+          if (cv == null) {
+            zIndex = 4;
+          }
+          else {
+            zIndex = cIndex + 1;
+          }
           dimensionOrdering.put("Z", zIndex - 2);
         }
       }
