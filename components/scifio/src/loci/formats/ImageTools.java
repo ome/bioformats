@@ -107,53 +107,53 @@ public final class ImageTools {
     byte[] b = null;
 
     if (min == null) min = new Double(0);
-    double newRange = 256d;
+    double newRange = 255d;
 
     // adapted from ImageJ's TypeConverter methods
 
     if (pixels instanceof byte[]) b = (byte[]) pixels;
     else if (pixels instanceof short[]) {
       if (max == null) max = new Double(0xffff);
-      double range = max.doubleValue() - min.doubleValue() + 1;
+      double range = max.doubleValue() - min.doubleValue();
       double mult = newRange / range;
 
       short[] s = (short[]) pixels;
       b = new byte[s.length];
       for (int i=0; i<s.length; i++) {
-        b[i] = (byte) (Math.abs(s[i] * mult) - min.doubleValue());
+        b[i] = (byte) Math.abs((s[i] - min.doubleValue()) * mult);
       }
     }
     else if (pixels instanceof int[]) {
       if (max == null) max = new Double(0xffffffffL);
-      double range = max.doubleValue() - min.doubleValue() + 1;
+      double range = max.doubleValue() - min.doubleValue();
       double mult = newRange / range;
 
       int[] s = (int[]) pixels;
       b = new byte[s.length];
       for (int i=0; i<s.length; i++) {
-        b[i] = (byte) (Math.abs(s[i] * mult) - min.doubleValue());
+        b[i] = (byte) (Math.abs((s[i] - min.doubleValue()) * mult));
       }
     }
     else if (pixels instanceof float[]) {
       if (max == null) max = new Double(Float.MAX_VALUE);
-      double range = max.doubleValue() - min.doubleValue() + 1;
+      double range = max.doubleValue() - min.doubleValue();
       double mult = newRange / range;
 
       float[] s = (float[]) pixels;
       b = new byte[s.length];
       for (int i=0; i<s.length; i++) {
-        b[i] = (byte) (s[i] * mult - min.doubleValue());
+        b[i] = (byte) ((s[i] - min.doubleValue()) * mult);
       }
     }
     else if (pixels instanceof double[]) {
       if (max == null) max = new Double(Double.MAX_VALUE);
-      double range = max.doubleValue() - min.doubleValue() + 1;
+      double range = max.doubleValue() - min.doubleValue();
       double mult = newRange / range;
 
       double[] s = (double[]) pixels;
       b = new byte[s.length];
       for (int i=0; i<s.length; i++) {
-        b[i] = (byte) (s[i] * mult - min.doubleValue());
+        b[i] = (byte) ((s[i] - min.doubleValue()) * mult);
       }
     }
 
