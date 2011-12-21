@@ -60,6 +60,8 @@ public class SimplePCITiffReader extends BaseTiffReader {
   private static final String MAGIC_STRING = "Created by Hamamatsu Inc.";
   private static final String DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss z";
 
+  private static final int CUSTOM_BITS = 65531;
+
   // -- Fields --
 
   private MinimalTiffReader delegate;
@@ -180,6 +182,10 @@ public class SimplePCITiffReader extends BaseTiffReader {
 
     core[0].imageCount *= getSizeC();
     core[0].rgb = false;
+
+    if (ifds.get(0).containsKey(CUSTOM_BITS)) {
+      core[0].bitsPerPixel = ifds.get(0).getIFDIntValue(CUSTOM_BITS);
+    }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       HashMap<String, String> iniMap = ini.flattenIntoHashMap();

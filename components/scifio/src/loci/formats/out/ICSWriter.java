@@ -126,6 +126,12 @@ public class ICSWriter extends FormatWriter {
   public void setId(String id) throws FormatException, IOException {
     super.setId(id);
 
+    if (checkSuffix(currentId, "ids")) {
+      String metadataFile = currentId.substring(0, currentId.lastIndexOf("."));
+      metadataFile += ".ics";
+      out = new RandomAccessOutputStream(metadataFile);
+    }
+
     if (out.length() == 0) {
       out.writeBytes("\t\n");
       if (checkSuffix(id, "ids")) {
@@ -217,12 +223,7 @@ public class ICSWriter extends FormatWriter {
     }
 
     if (pixels == null) {
-      String pixelsFile = currentId;
-      if (checkSuffix(pixelsFile, "ids")) {
-        pixelsFile = pixelsFile.substring(0, pixelsFile.lastIndexOf(".") + 1);
-        pixelsFile += "ics";
-      }
-      pixels = new RandomAccessOutputStream(pixelsFile);
+      pixels = new RandomAccessOutputStream(currentId);
     }
   }
 
