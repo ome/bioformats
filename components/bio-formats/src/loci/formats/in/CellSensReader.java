@@ -576,7 +576,12 @@ public class CellSensReader extends FormatReader {
           else {
             tIndex = cIndex + 2;
           }
-          dimensionOrdering.put("T", tIndex - 2);
+          if (tIndex < t.coordinate.length) {
+            dimensionOrdering.put("T", tIndex - 2);
+          }
+          else {
+            tIndex = -1;
+          }
         }
 
         if (t.coordinate.length > 5) {
@@ -586,7 +591,12 @@ public class CellSensReader extends FormatReader {
           else {
             zIndex = cIndex + 1;
           }
-          dimensionOrdering.put("Z", zIndex - 2);
+          if (zIndex < t.coordinate.length) {
+            dimensionOrdering.put("Z", zIndex - 2);
+          }
+          else {
+            zIndex = -1;
+          }
         }
       }
 
