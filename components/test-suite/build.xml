@@ -137,7 +137,7 @@ Type "ant -p" for a list of targets.
       annotations="Javadoc" groups="automated" testname="Automated tests"
       listener="loci.tests.testng.DotTestListener"
       suitename="LOCI software test suite"
-      failureProperty="failedTest">
+      failureProperty="failedTest" useDefaultListeners="false">
       <classpath>
         <pathelement location="${classes.dir}"/>
         <pathelement path="${component.classpath}"/>
