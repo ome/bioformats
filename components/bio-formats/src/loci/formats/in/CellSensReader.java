@@ -169,6 +169,8 @@ public class CellSensReader extends FormatReader {
     FormatTools.assertId(currentId, true, 1);
 
     int currentSeries = getSeries();
+    int thumbSize = getThumbSizeX() * getThumbSizeY() *
+      FormatTools.getBytesPerPixel(getPixelType()) * getRGBChannelCount();
 
     if (currentSeries >= usedFiles.length - 1 ||
       usedFiles.length >= getSeriesCount())
@@ -179,7 +181,10 @@ public class CellSensReader extends FormatReader {
     setSeries(usedFiles.length);
     byte[] thumb = FormatTools.openThumbBytes(this, 0);
     setSeries(currentSeries);
-    return thumb;
+    if (thumb.length == thumbSize) {
+      return thumb;
+    }
+    return super.openThumbBytes(no);
   }
 
   /**
