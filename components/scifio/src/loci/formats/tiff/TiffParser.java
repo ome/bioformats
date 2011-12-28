@@ -799,11 +799,11 @@ public class TiffParser {
 
     for (int row=0; row<numTileRows; row++) {
       for (int col=0; col<numTileCols; col++) {
-        tileBounds.x = col * (int) (tileWidth);
-        tileBounds.y = row * (int) (tileLength);
+        tileBounds.x = col * (int) (tileWidth - overlapX);
+        tileBounds.y = row * (int) (tileLength - overlapY);
 
         if (planarConfig == 2) {
-          tileBounds.y = (int) ((row % nrows) * tileLength);
+          tileBounds.y = (int) ((row % nrows) * (tileLength - overlapY));
         }
 
         if (!imageBounds.intersects(tileBounds)) continue;
@@ -823,8 +823,8 @@ public class TiffParser {
 
         int tileX = (int) Math.max(tileBounds.x, x);
         int tileY = (int) Math.max(tileBounds.y, y);
-        int realX = tileX % (int) tileWidth;
-        int realY = tileY % (int) tileLength;
+        int realX = tileX % (int) (tileWidth - overlapX);
+        int realY = tileY % (int) (tileLength - overlapY);
 
         int twidth = (int) Math.min(endX - tileX, tileWidth - realX);
         int theight = (int) Math.min(endY - tileY, tileLength - realY);
