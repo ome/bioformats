@@ -666,6 +666,13 @@ public class TiffParser {
   public byte[] getSamples(IFD ifd, byte[] buf, int x, int y,
     long width, long height) throws FormatException, IOException
   {
+    return getSamples(ifd, buf, x, y, width, height, 0, 0);
+  }
+
+  public byte[] getSamples(IFD ifd, byte[] buf, int x, int y,
+    long width, long height, int overlapX, int overlapY)
+    throws FormatException, IOException
+  {
     LOGGER.trace("parsing IFD entries");
 
     // get internal non-IFD entries
@@ -792,8 +799,8 @@ public class TiffParser {
 
     for (int row=0; row<numTileRows; row++) {
       for (int col=0; col<numTileCols; col++) {
-        tileBounds.x = col * (int) tileWidth;
-        tileBounds.y = row * (int) tileLength;
+        tileBounds.x = col * (int) (tileWidth);
+        tileBounds.y = row * (int) (tileLength);
 
         if (planarConfig == 2) {
           tileBounds.y = (int) ((row % nrows) * tileLength);
