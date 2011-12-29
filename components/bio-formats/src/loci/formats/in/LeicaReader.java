@@ -96,25 +96,6 @@ public class LeicaReader extends FormatReader {
   private static final int SEQ_SCANNERSET_END = 300;
   private static final int SEQ_FILTERSET_END = 800;
 
-  private static final Hashtable<String, Integer> CHANNEL_PRIORITIES =
-    createChannelPriorities();
-
-  private static Hashtable<String, Integer> createChannelPriorities() {
-    Hashtable<String, Integer> h = new Hashtable<String, Integer>();
-
-    h.put("red", new Integer(0));
-    h.put("green", new Integer(1));
-    h.put("blue", new Integer(2));
-    h.put("cyan", new Integer(3));
-    h.put("magenta", new Integer(4));
-    h.put("yellow", new Integer(5));
-    h.put("black", new Integer(6));
-    h.put("gray", new Integer(7));
-    h.put("", new Integer(8));
-
-    return h;
-  }
-
   private static final Hashtable<Integer, String> DIMENSION_NAMES =
     makeDimensionTable();
 
@@ -166,6 +147,8 @@ public class LeicaReader extends FormatReader {
   private Double detectorOffset, detectorVoltage;
 
   private int[] tileWidth, tileHeight;
+
+  private int[][] channelColor;
 
   // -- Constructor --
 
@@ -530,6 +513,8 @@ public class LeicaReader extends FormatReader {
     physicalSizes = new double[headerIFDs.size()][5];
     pinhole = new double[headerIFDs.size()];
     exposureTime = new double[headerIFDs.size()];
+
+    channelColor = new int[headerIFDs.size()][];
 
     for (int i=0; i<headerIFDs.size(); i++) {
       IFD ifd = headerIFDs.get(i);
@@ -1127,6 +1112,8 @@ public class LeicaReader extends FormatReader {
     addSeriesMeta("Number of LUT channels", nChannels);
     addSeriesMeta("ID of colored dimension", in.readInt());
 
+    channelColor[seriesIndex] = new int[nChannels];
+
     for (int j=0; j<nChannels; j++) {
       String p = "LUT Channel " + j;
       addSeriesMeta(p + " version", in.readInt());
@@ -1135,6 +1122,28 @@ public class LeicaReader extends FormatReader {
       addSeriesMeta(p + " filename", getString(false));
       String lut = getString(false);
       addSeriesMeta(p + " name", lut);
+
+      channelColor[seriesIndex][j] = 0xffffff;
+
+      if (lut.equalsIgnoreCase("red")) {
+        channelColor[seriesIndex][j] = 0xff0000;
+      }
+      else if (lut.equalsIgnoreCase("green")) {
+        channelColor[seriesIndex][j] = 0xff00;
+      }
+      else if (lut.equalsIgnoreCase("blue")) {
+        channelColor[seriesIndex][j] = 0xff;
+      }
+      else if (lut.equalsIgnoreCase("yellow")) {
+        channelColor[seriesIndex][j] = 0xffff00;
+      }
+      else if (lut.equalsIgnoreCase("cyan")) {
+        channelColor[seriesIndex][j] = 0xffff;
+      }
+      else if (lut.equalsIgnoreCase("magenta")) {
+        channelColor[seriesIndex][j] = 0xff00ff;
+      }
+
       in.skipBytes(8);
     }
   }
@@ -1469,6 +1478,9 @@ public class LeicaReader extends FormatReader {
         }
         if (i < pinhole.length) {
           store.setChannelPinholeSize(new Double(pinhole[i]), i, channel);
+        }
+        if (channel < channelColor[i].length) {
+          store.setChannelColor(channelColor[i][channel], i, channel);
         }
       }
     }
