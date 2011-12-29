@@ -62,6 +62,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -590,19 +591,64 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
     NodeList children1 = e1.getChildNodes();
     NodeList children2 = e2.getChildNodes();
 
-    //NamedNodeMap attributes1 = e1.getAttributes();
-    //NamedNodeMap attributes2 = e2.getAttributes();
+    NamedNodeMap attributes1 = e1.getAttributes();
+    NamedNodeMap attributes2 = e2.getAttributes();
 
-    //if (attributes1.getLength() != attributes2.getLength()) {
-    //  return false;
-    //}
+    if (attributes1 == null || attributes2 == null) {
+      if ((attributes1 == null && attributes2 != null) ||
+        (attributes1 != null && attributes2 == null))
+      {
+        return false;
+      }
+    }
+    else if (attributes1.getLength() != attributes2.getLength()) {
+      return false;
+    }
+    else {
+      // make sure that all of the attributes are equal, except for IDs
+
+      int nAttributes = attributes1.getLength();
+
+      for (int i=0; i<nAttributes; i++) {
+        Node n1 = attributes1.item(i);
+        String localName = n1.getNodeName();
+
+        if (localName != null && !localName.equals("ID")) {
+          Node n2 = attributes2.getNamedItem(localName);
+          if (n2 == null) {
+            return false;
+          }
+
+          if (!equals(n1, n2)) {
+            return false;
+          }
+        }
+      }
+    }
+
     if (children1.getLength() != children2.getLength()) {
       return false;
     }
-    if (!e1.getLocalName().equals(e2.getLocalName())) {
+
+    String localName1 = e1.getLocalName();
+    if (localName1 == null) {
+      localName1 = "";
+    }
+    String localName2 = e2.getLocalName();
+    if (localName2 == null) {
+      localName2 = "";
+    }
+    if (!localName1.equals(localName2)) {
       return false;
     }
-    if (!e1.getNodeValue().equals(e2.getNodeValue())) {
+
+    Object node1 = e1.getNodeValue();
+    Object node2 = e2.getNodeValue();
+
+    if (node1 == null && node2 != null) {
+      return false;
+    }
+    if (node1 != null && !node1.equals(node2)) {
       return false;
     }
 
