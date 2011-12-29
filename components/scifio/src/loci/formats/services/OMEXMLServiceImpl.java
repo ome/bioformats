@@ -591,6 +591,23 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
     NodeList children1 = e1.getChildNodes();
     NodeList children2 = e2.getChildNodes();
 
+    String localName1 = e1.getLocalName();
+    if (localName1 == null) {
+      localName1 = "";
+    }
+    String localName2 = e2.getLocalName();
+    if (localName2 == null) {
+      localName2 = "";
+    }
+    if (!localName1.equals(localName2)) {
+      return false;
+    }
+
+    if (localName1.equals("StructuredAnnotations")) {
+      // we don't care about StructuredAnnotations at all
+      return true;
+    }
+
     NamedNodeMap attributes1 = e1.getAttributes();
     NamedNodeMap attributes2 = e2.getAttributes();
 
@@ -630,25 +647,13 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
       return false;
     }
 
-    String localName1 = e1.getLocalName();
-    if (localName1 == null) {
-      localName1 = "";
-    }
-    String localName2 = e2.getLocalName();
-    if (localName2 == null) {
-      localName2 = "";
-    }
-    if (!localName1.equals(localName2)) {
-      return false;
-    }
-
     Object node1 = e1.getNodeValue();
     Object node2 = e2.getNodeValue();
 
     if (node1 == null && node2 != null) {
       return false;
     }
-    if (node1 != null && !node1.equals(node2)) {
+    if (node1 != null && !node1.equals(node2) && !localName1.isEmpty()) {
       return false;
     }
 
