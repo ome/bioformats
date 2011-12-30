@@ -211,6 +211,20 @@ public interface OMEXMLService extends Service {
    */
   public void addMetadataOnly(OMEXMLMetadata omexmlMeta, int image);
 
+  /**
+   * Determine whether or not two OMEXMLMetadata objects are equal.
+   * Equality is defined as:
+   *
+   *  * having the same object graph (without regard to specific ID values)
+   *  * having the exact same attribute values on every node (with the exception
+   *    of 'ID' attributes)
+   *
+   * Note that StructuredAnnotations are ignored, i.e. the two OMEXMLMetadata
+   * objects may have wildly different things under StructuredAnnotations and
+   * still be considered equal.
+   */
+  public boolean isEqual(OMEXMLMetadata src1, OMEXMLMetadata src2);
+
   // -- Utility methods - casting --
 
   /**

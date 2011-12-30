@@ -723,6 +723,9 @@ public class LIFReader extends FormatReader {
         if (expTimes[i] != null) {
           store.setPlaneExposureTime(expTimes[i][c], i, c);
         }
+
+        int channelColor = getChannelColor(realChannel[i][c]);
+        store.setChannelColor(channelColor, i, c);
       }
 
       for (int image=0; image<getImageCount(); image++) {
@@ -1801,6 +1804,24 @@ public class LIFReader extends FormatReader {
       catch (NumberFormatException e) { }
     }
     return 0;
+  }
+
+  private int getChannelColor(int colorCode) {
+    switch (colorCode) {
+      case 0:
+        return 0xff0000;
+      case 1:
+        return 0xff00;
+      case 2:
+        return 0xff;
+      case 3:
+        return 0xffff;
+      case 4:
+        return 0xff00ff;
+      case 5:
+        return 0xffff00;
+    }
+    return 0xffffff;
   }
 
 }

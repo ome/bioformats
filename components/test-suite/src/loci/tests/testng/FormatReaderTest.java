@@ -65,6 +65,7 @@ import loci.formats.in.*;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataRetrieve;
 import loci.formats.meta.MetadataStore;
+import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.services.OMEXMLService;
 
 import ome.xml.model.primitives.PositiveFloat;
@@ -1156,6 +1157,42 @@ public class FormatReaderTest {
   }
 
   /**
+   * @testng.test groups = "all xml automated"
+   */
+  public void testEqualOMEXML() {
+    if (config == null) throw new SkipException("No config tree");
+    String testName = "testEqualOMEXML";
+    if (!initFile()) result(testName, false, "initFile");
+
+    boolean success = true;
+    String msg = null;
+    try {
+      String format = config.getReader();
+      if (format.equals("OMETiffReader") || format.equals("OMEXMLReader")) {
+        result(testName, true);
+        return;
+      }
+
+      MetadataStore store = reader.getMetadataStore();
+      success = omexmlService.isOMEXMLMetadata(store);
+      if (!success) msg = TestTools.shortClassName(store);
+
+      String file = reader.getCurrentFile() + ".ome.xml";
+      if (success && new File(file).exists()) {
+        String xml = DataTools.readFile(file);
+        OMEXMLMetadata base = omexmlService.createOMEXMLMetadata(xml);
+
+        success = omexmlService.isEqual(base, (OMEXMLMetadata) store);
+      }
+    }
+    catch (Throwable t) {
+      LOGGER.info("", t);
+      msg = t.getMessage();
+    }
+    result(testName, success, msg);
+  }
+
+  /**
    * @testng.test groups = "all"
    */
   public void testPerformance() {
@@ -1787,6 +1824,7 @@ public class FormatReaderTest {
       //}
       reader.setNormalized(true);
       reader.setMetadataFiltered(true);
+      reader.setOriginalMetadataPopulated(true);
       MetadataStore store = null;
       try {
         store = omexmlService.createOMEXMLMetadata();

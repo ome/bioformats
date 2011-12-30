@@ -27,6 +27,8 @@ import java.io.IOException;
 import java.util.Hashtable;
 import java.util.List;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Templates;
 import javax.xml.transform.TransformerConfigurationException;
@@ -60,6 +62,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -525,6 +528,31 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
     omexmlMeta.setRoot(root);
   }
 
+  /** @see OMEXMLService#isEqual(OMEXMLMetadata, OMEXMLMetadata) */
+  public boolean isEqual(OMEXMLMetadata src1, OMEXMLMetadata src2) {
+    ((OMEXMLMetadataImpl) src1).resolveReferences();
+    ((OMEXMLMetadataImpl) src2).resolveReferences();
+
+    OME omeRoot1 = (OME) src1.getRoot();
+    OME omeRoot2 = (OME) src2.getRoot();
+
+    DocumentBuilder builder = null;
+    try {
+      builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+    }
+    catch (ParserConfigurationException e) {
+      return false;
+    }
+
+    Document doc1 = builder.newDocument();
+    Document doc2 = builder.newDocument();
+
+    Element root1 = omeRoot1.asXMLElement(doc1);
+    Element root2 = omeRoot2.asXMLElement(doc2);
+
+    return equals(root1, root2);
+  }
+
   // -- Utility methods - casting --
 
   /** @see OMEXMLService#asStore(loci.formats.meta.MetadataRetrieve) */
@@ -555,6 +583,143 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
     catch (TransformerException te) { }
     catch (SAXException se) { }
     catch (IOException ioe) { }
+    return null;
+  }
+
+  /** Compares two Elements for equality. */
+  public boolean equals(Node e1, Node e2) {
+    NodeList children1 = e1.getChildNodes();
+    NodeList children2 = e2.getChildNodes();
+
+    String localName1 = e1.getLocalName();
+    if (localName1 == null) {
+      localName1 = "";
+    }
+    String localName2 = e2.getLocalName();
+    if (localName2 == null) {
+      localName2 = "";
+    }
+    if (!localName1.equals(localName2)) {
+      return false;
+    }
+
+    if (localName1.equals("StructuredAnnotations")) {
+      // we don't care about StructuredAnnotations at all
+      return true;
+    }
+
+    NamedNodeMap attributes1 = e1.getAttributes();
+    NamedNodeMap attributes2 = e2.getAttributes();
+
+    if (attributes1 == null || attributes2 == null) {
+      if ((attributes1 == null && attributes2 != null) ||
+        (attributes1 != null && attributes2 == null))
+      {
+        return false;
+      }
+    }
+    else if (attributes1.getLength() != attributes2.getLength()) {
+      return false;
+    }
+    else {
+      // make sure that all of the attributes are equal, except for IDs
+
+      int nAttributes = attributes1.getLength();
+
+      for (int i=0; i<nAttributes; i++) {
+        Node n1 = attributes1.item(i);
+        String localName = n1.getNodeName();
+
+        if (localName != null && !localName.equals("ID")) {
+          Node n2 = attributes2.getNamedItem(localName);
+          if (n2 == null) {
+            return false;
+          }
+
+          if (!equals(n1, n2)) {
+            return false;
+          }
+        }
+        else if ("ID".equals(localName)) {
+          if (localName1.endsWith("Settings")) {
+            // this is a reference to a different node
+            // the references are equal if the two referenced nodes are equal
+
+            Node n2 = attributes2.getNamedItem(localName);
+
+            Node realRoot1 = findRootNode(e1);
+            Node realRoot2 = findRootNode(e2);
+
+            String refName = localName1.replaceAll("Settings", "");
+
+            Node ref1 = findChildWithID(realRoot1, refName, n1.getNodeValue());
+            Node ref2 = findChildWithID(realRoot2, refName, n2.getNodeValue());
+
+            if (ref1 == null && ref2 == null) {
+              return true;
+            }
+            else if ((ref1 == null && ref2 != null) ||
+              (ref1 != null && ref2 == null) || !equals(ref1, ref2))
+            {
+              return false;
+            }
+          }
+        }
+      }
+    }
+
+    if (children1.getLength() != children2.getLength()) {
+      return false;
+    }
+
+    Object node1 = e1.getNodeValue();
+    Object node2 = e2.getNodeValue();
+
+    if (node1 == null && node2 != null) {
+      return false;
+    }
+    if (node1 != null && !node1.equals(node2) && !localName1.isEmpty()) {
+      return false;
+    }
+
+    for (int i=0; i<children1.getLength(); i++) {
+      if (!equals(children1.item(i), children2.item(i))) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /** Return the absolute root node for the specified child node. */
+  private Node findRootNode(Node child) {
+    if (child.getParentNode() != null) {
+      return findRootNode(child.getParentNode());
+    }
+    return child;
+  }
+
+  /** Return the child node with specified value for the "ID" attribute. */
+  private Node findChildWithID(Node root, String name, String id) {
+    NamedNodeMap attributes = root.getAttributes();
+    if (attributes != null) {
+      Node idNode = attributes.getNamedItem("ID");
+
+      if (idNode != null && id.equals(idNode.getNodeValue()) &&
+        name.equals(root.getNodeName()))
+      {
+        return root;
+      }
+    }
+
+    NodeList children = root.getChildNodes();
+
+    for (int i=0; i<children.getLength(); i++) {
+      Node result = findChildWithID(children.item(i), name, id);
+      if (result != null) {
+        return result;
+      }
+    }
+
     return null;
   }
 
