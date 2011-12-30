@@ -640,6 +640,31 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
             return false;
           }
         }
+        else if ("ID".equals(localName)) {
+          if (localName1.endsWith("Settings")) {
+            // this is a reference to a different node
+            // the references are equal if the two referenced nodes are equal
+
+            Node n2 = attributes2.getNamedItem(localName);
+
+            Node realRoot1 = findRootNode(e1);
+            Node realRoot2 = findRootNode(e2);
+
+            String refName = localName1.replaceAll("Settings", "");
+
+            Node ref1 = findChildWithID(realRoot1, refName, n1.getNodeValue());
+            Node ref2 = findChildWithID(realRoot2, refName, n2.getNodeValue());
+
+            if (ref1 == null && ref2 == null) {
+              return true;
+            }
+            else if ((ref1 == null && ref2 != null) ||
+              (ref1 != null && ref2 == null) || !equals(ref1, ref2))
+            {
+              return false;
+            }
+          }
+        }
       }
     }
 
@@ -663,6 +688,39 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
       }
     }
     return true;
+  }
+
+  /** Return the absolute root node for the specified child node. */
+  private Node findRootNode(Node child) {
+    if (child.getParentNode() != null) {
+      return findRootNode(child.getParentNode());
+    }
+    return child;
+  }
+
+  /** Return the child node with specified value for the "ID" attribute. */
+  private Node findChildWithID(Node root, String name, String id) {
+    NamedNodeMap attributes = root.getAttributes();
+    if (attributes != null) {
+      Node idNode = attributes.getNamedItem("ID");
+
+      if (idNode != null && id.equals(idNode.getNodeValue()) &&
+        name.equals(root.getNodeName()))
+      {
+        return root;
+      }
+    }
+
+    NodeList children = root.getChildNodes();
+
+    for (int i=0; i<children.getLength(); i++) {
+      Node result = findChildWithID(children.item(i), name, id);
+      if (result != null) {
+        return result;
+      }
+    }
+
+    return null;
   }
 
   // -- Helper class --
