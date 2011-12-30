@@ -678,7 +678,7 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
     if (node1 == null && node2 != null) {
       return false;
     }
-    if (node1 != null && !node1.equals(node2) && !localName1.isEmpty()) {
+    if (node1 != null && !node1.equals(node2) && !localName1.equals("")) {
       return false;
     }
 
