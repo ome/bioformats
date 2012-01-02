@@ -93,6 +93,7 @@ public class ND2Handler extends DefaultHandler {
   private ArrayList<Double> posX = new ArrayList<Double>();
   private ArrayList<Double> posY = new ArrayList<Double>();
   private ArrayList<Double> posZ = new ArrayList<Double>();
+  private ArrayList<String> posNames = new ArrayList<String>();
 
   private String cameraModel;
   private int fieldIndex = 0;
@@ -294,6 +295,10 @@ public class ND2Handler extends DefaultHandler {
     return posZ;
   }
 
+  public ArrayList<String> getPositionNames() {
+    return posNames;
+  }
+
   public String getCameraModel() {
     return cameraModel;
   }
@@ -352,6 +357,9 @@ public class ND2Handler extends DefaultHandler {
         core[0].sizeZ = Integer.parseInt(value);
       }
       core[0].dimensionOrder = "CTZ";
+    }
+    else if ("pPosName".equals(prevElement) && value != null) {
+      posNames.add(value);
     }
     else if (qName.equals("FramesBefore")) {
       if (core[0].sizeZ == 0) {
