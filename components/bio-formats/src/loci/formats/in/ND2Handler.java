@@ -84,6 +84,7 @@ public class ND2Handler extends DefaultHandler {
   private ArrayList<Double> posX = new ArrayList<Double>();
   private ArrayList<Double> posY = new ArrayList<Double>();
   private ArrayList<Double> posZ = new ArrayList<Double>();
+  private ArrayList<String> posNames = new ArrayList<String>();
 
   private String cameraModel;
   private int fieldIndex = 0;
@@ -273,6 +274,10 @@ public class ND2Handler extends DefaultHandler {
     return posZ;
   }
 
+  public ArrayList<String> getPositionNames() {
+    return posNames;
+  }
+
   public String getCameraModel() {
     return cameraModel;
   }
@@ -308,6 +313,50 @@ public class ND2Handler extends DefaultHandler {
     String value = attributes.getValue("value");
     if (qName.equals("uiWidth")) {
       core[0].sizeX = Integer.parseInt(value);
+    }
+    else if ("rectSensorUser".equals(prevElement)) {
+      if (qName.equals("left") && core[0].sizeX == 0) {
+        core[0].sizeX = -1 * Integer.parseInt(value);
+      }
+      else if (qName.equals("top") && core[0].sizeY == 0) {
+        core[0].sizeY = -1 * Integer.parseInt(value);
+      }
+      else if (qName.equals("right") && core[0].sizeX <= 0) {
+        core[0].sizeX += Integer.parseInt(value);
+      }
+      else if (qName.equals("bottom") && core[0].sizeY <= 0) {
+        core[0].sizeY += Integer.parseInt(value);
+      }
+    }
+    else if ("LoopSize".equals(prevElement) && value != null) {
+      if (core[0].sizeT == 0) {
+        core[0].sizeT = Integer.parseInt(value);
+      }
+      else if (core[0].sizeZ == 0) {
+        core[0].sizeZ = Integer.parseInt(value);
+      }
+      core[0].dimensionOrder = "CTZ";
+    }
+    else if ("pPosName".equals(prevElement) && value != null) {
+      posNames.add(value);
+    }
+    else if (qName.equals("FramesBefore")) {
+      if (core[0].sizeZ == 0) {
+        core[0].sizeZ = 1;
+      }
+      core[0].sizeZ *= Integer.parseInt(value);
+    }
+    else if (qName.equals("FramesAfter")) {
+      core[0].sizeZ *= Integer.parseInt(value);
+    }
+    else if (qName.equals("TimeBefore")) {
+      if (core[0].sizeT == 0) {
+        core[0].sizeT = 1;
+      }
+      core[0].sizeT *= Integer.parseInt(value);
+    }
+    else if (qName.equals("TimeAfter")) {
+      core[0].sizeT *= Integer.parseInt(value);
     }
     else if (qName.equals("uiWidthBytes") || qName.equals("uiBpcInMemory")) {
       int div = qName.equals("uiWidthBytes") ? core[0].sizeX : 8;

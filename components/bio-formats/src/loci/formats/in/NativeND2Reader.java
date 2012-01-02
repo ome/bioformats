@@ -872,8 +872,11 @@ public class NativeND2Reader extends FormatReader {
     MetadataTools.populatePixels(store, this, true);
 
     String filename = new Location(getCurrentFile()).getName();
+    ArrayList<String> posNames = handler.getPositionNames();
     for (int i=0; i<getSeriesCount(); i++) {
-      store.setImageName(filename + " (series " + (i + 1) + ")", i);
+      String suffix =
+        i < posNames.size() ? posNames.get(i) : "(series " + (i + 1) + ")";
+      store.setImageName(filename + " " + suffix, i);
       MetadataTools.setDefaultCreationDate(store, currentId, i);
     }
 
