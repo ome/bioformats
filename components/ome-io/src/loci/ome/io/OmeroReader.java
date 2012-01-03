@@ -431,7 +431,8 @@ public class OmeroReader extends FormatReader {
   /** A simple command line tool for downloading images from OMERO. */
   public static void main(String[] args) throws Exception {
     // parse OMERO credentials
-    BufferedReader con = new BufferedReader(new InputStreamReader(System.in));
+    BufferedReader con =
+      new BufferedReader(new InputStreamReader(System.in, "UTF-8"));
 
     System.out.print("Server? ");
     final String server = con.readLine();

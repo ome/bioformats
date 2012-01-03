@@ -489,7 +489,8 @@ public class OMEWriter extends FormatWriter {
     }
 
     // ask for information if necessary
-    BufferedReader cin = new BufferedReader(new InputStreamReader(System.in));
+    BufferedReader cin =
+      new BufferedReader(new InputStreamReader(System.in, "UTF-8"));
     if (server == null) {
       LOGGER.info("Server address? ");
       try { server = cin.readLine(); }
