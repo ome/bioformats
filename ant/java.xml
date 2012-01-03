@@ -93,11 +93,26 @@ Type "ant -p" for a list of targets.
       <then>
         <findbugs home="${findbugs.home}" jvmargs="-Xmx512m"
           output="xml:withMessages" outputFile="${build.dir}/findbugs.xml"
-          excludeFilter="${root.dir}/excludebugs.xml" reportLevel="high">
+          excludeFilter="${root.dir}/excludebugs.xml" reportLevel="high"
+          errorProperty="findbugsErrors"
+          warningsProperty="findbugsWarnings">
           <auxClasspath path="${component.classpath}"/>
           <sourcePath path="${dest.dir}"/>
           <class location="${classes.dir}"/>
         </findbugs>
+
+        <if>
+          <isset property="findbugsErrors"/>
+          <then>
+            <fail message="FindBugs produced one or more errors."/>
+          </then>
+        </if>
+        <if>
+          <isset property="findbugsWarnings"/>
+          <then>
+            <fail message="FindBugs produced one or more warnings."/>
+          </then>
+        </if>
       </then>
       <else>
 <echo>
