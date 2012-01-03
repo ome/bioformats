@@ -132,7 +132,7 @@ public class ColumnMap {
         byte[] buf = new byte[byteCounts[i]];
         stream.read(buf);
         char type = col.getTypeString().charAt(0);
-        values.add(type == 'B' ? buf : new String(buf));
+        values.add(type == 'B' ? buf : new String(buf, "UTF-8"));
       }
 
       stream.seek(fp);
