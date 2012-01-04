@@ -24,8 +24,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.common;
 
 import java.io.BufferedWriter;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,7 +59,8 @@ public class IniWriter {
   public void saveINI(IniList ini, String path, boolean append)
     throws IOException
   {
-    BufferedWriter out = new BufferedWriter(new FileWriter(path, append));
+    BufferedWriter out = new BufferedWriter(
+      new OutputStreamWriter(new FileOutputStream(path, append), "UTF-8"));
 
     for (IniTable table : ini) {
       String header = table.get(IniTable.HEADER_KEY);

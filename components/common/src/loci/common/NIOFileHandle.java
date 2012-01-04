@@ -430,7 +430,7 @@ public class NIOFileHandle extends AbstractNIOHandle {
 
   /* @see java.io.DataOutput.writeBytes(String) */
   public void writeBytes(String s) throws IOException {
-    write(s.getBytes());
+    write(s.getBytes("UTF-8"));
   }
 
   /* @see java.io.DataOutput.writeChar(int) */

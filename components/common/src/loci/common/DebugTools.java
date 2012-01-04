@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.common;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Enumeration;
 
@@ -46,9 +47,13 @@ public final class DebugTools {
 
   /** Extracts the given exception's corresponding stack trace to a string. */
   public static String getStackTrace(Throwable t) {
-    ByteArrayOutputStream out = new ByteArrayOutputStream();
-    t.printStackTrace(new PrintStream(out));
-    return new String(out.toByteArray());
+    try {
+      ByteArrayOutputStream out = new ByteArrayOutputStream();
+      t.printStackTrace(new PrintStream(out, false, "UTF-8"));
+      return new String(out.toByteArray(), "UTF-8");
+    }
+    catch (IOException e) { }
+    return null;
   }
 
   /**
