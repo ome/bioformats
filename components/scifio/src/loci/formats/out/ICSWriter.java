@@ -28,6 +28,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import loci.common.RandomAccessInputStream;
+import loci.common.RandomAccessOutputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.FormatWriter;
@@ -35,8 +36,8 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataRetrieve;
 
 /**
- * ICSWriter is the file format writer for ICS files.  It writes ICS version 2
- * files only.
+ * ICSWriter is the file format writer for ICS files.  It writes ICS version 1
+ * and 2 files.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/out/ICSWriter.java">Trac</a>,
@@ -50,10 +51,13 @@ public class ICSWriter extends FormatWriter {
   private int dimensionLength;
   private long pixelOffset;
   private int lastPlane = -1;
+  private RandomAccessOutputStream pixels;
 
   // -- Constructor --
 
-  public ICSWriter() { super("Image Cytometry Standard", "ics"); }
+  public ICSWriter() {
+    super("Image Cytometry Standard", new String[] {"ids", "ics"});
+  }
 
   // -- IFormatWriter API methods --
 
@@ -79,16 +83,16 @@ public class ICSWriter extends FormatWriter {
 
       if (!isFullPlane(x, y, w, h)) {
         // write a dummy plane that will be overwritten in sections
-        out.seek(pixelOffset + (no + 1) * planeSize);
+        pixels.seek(pixelOffset + (no + 1) * planeSize);
       }
     }
 
-    out.seek(pixelOffset + no * planeSize);
+    pixels.seek(pixelOffset + no * planeSize);
     if (isFullPlane(x, y, w, h) && (interleaved || rgbChannels == 1)) {
-      out.write(buf);
+      pixels.write(buf);
     }
     else {
-      out.skipBytes(bytesPerPixel * rgbChannels * sizeX * y);
+      pixels.skipBytes(bytesPerPixel * rgbChannels * sizeX * y);
       for (int row=0; row<h; row++) {
         ByteArrayOutputStream strip = new ByteArrayOutputStream();
         for (int col=0; col<w; col++) {
@@ -98,9 +102,9 @@ public class ICSWriter extends FormatWriter {
             strip.write(buf, index * bytesPerPixel, bytesPerPixel);
           }
         }
-        out.skipBytes(bytesPerPixel * rgbChannels * x);
-        out.write(strip.toByteArray());
-        out.skipBytes(bytesPerPixel * rgbChannels * (sizeX - w - x));
+        pixels.skipBytes(bytesPerPixel * rgbChannels * x);
+        pixels.write(strip.toByteArray());
+        pixels.skipBytes(bytesPerPixel * rgbChannels * (sizeX - w - x));
       }
     }
     lastPlane = no;
@@ -122,9 +126,20 @@ public class ICSWriter extends FormatWriter {
   public void setId(String id) throws FormatException, IOException {
     super.setId(id);
 
+    if (checkSuffix(currentId, "ids")) {
+      String metadataFile = currentId.substring(0, currentId.lastIndexOf("."));
+      metadataFile += ".ics";
+      out = new RandomAccessOutputStream(metadataFile);
+    }
+
     if (out.length() == 0) {
       out.writeBytes("\t\n");
-      out.writeBytes("ics_version\t2.0\n");
+      if (checkSuffix(id, "ids")) {
+        out.writeBytes("ics_version\t1.0\n");
+      }
+      else {
+        out.writeBytes("ics_version\t2.0\n");
+      }
       out.writeBytes("filename\t" + currentId + "\n");
       out.writeBytes("layout\tparameters\t6\n");
 
@@ -168,15 +183,21 @@ public class ICSWriter extends FormatWriter {
         char dim = order.charAt(i);
         Number value = 1.0;
         if (dim == 'X') {
-          value = meta.getPixelsPhysicalSizeX(0).getValue();
+          if (meta.getPixelsPhysicalSizeX(0) != null) {
+            value = meta.getPixelsPhysicalSizeX(0).getValue();
+          }
           units.append("micrometers\t");
         }
         else if (dim == 'Y') {
-          value = meta.getPixelsPhysicalSizeY(0).getValue();
+          if (meta.getPixelsPhysicalSizeY(0) != null) {
+            value = meta.getPixelsPhysicalSizeY(0).getValue();
+          }
           units.append("micrometers\t");
         }
         else if (dim == 'Z') {
-          value = meta.getPixelsPhysicalSizeZ(0).getValue();
+          if (meta.getPixelsPhysicalSizeZ(0) != null) {
+            value = meta.getPixelsPhysicalSizeZ(0).getValue();
+          }
           units.append("micrometers\t");
         }
         else if (dim == 'T') {
@@ -190,11 +211,19 @@ public class ICSWriter extends FormatWriter {
       out.writeBytes("\nend\n");
       pixelOffset = out.getFilePointer();
     }
-    else {
+    else if (checkSuffix(currentId, "ics")) {
       RandomAccessInputStream in = new RandomAccessInputStream(currentId);
       in.findString("\nend\n");
       pixelOffset = in.getFilePointer();
       in.close();
+    }
+
+    if (checkSuffix(currentId, "ids")) {
+      pixelOffset = 0;
+    }
+
+    if (pixels == null) {
+      pixels = new RandomAccessOutputStream(currentId);
     }
   }
 
@@ -209,6 +238,10 @@ public class ICSWriter extends FormatWriter {
     lastPlane = -1;
     dimensionOffset = 0;
     dimensionLength = 0;
+    if (pixels != null) {
+      pixels.close();
+    }
+    pixels = null;
   }
 
   // -- Helper methods --

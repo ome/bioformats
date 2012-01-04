@@ -259,6 +259,14 @@ public class NDPIReader extends BaseTiffReader {
       ifd.remove(THUMB_TAG_2);
       ifds.set(i, ifd);
       tiffParser.fillInIFD(ifds.get(i));
+
+      int[] bpp = ifds.get(i).getBitsPerSample();
+      for (int q=0; q<bpp.length; q++) {
+        if (bpp[q] < 8) {
+          bpp[q] = 8;
+        }
+      }
+      ifds.get(i).putIFDValue(IFD.BITS_PER_SAMPLE, bpp);
     }
 
     for (int s=0; s<core.length; s++) {

@@ -219,7 +219,29 @@ public class NativeND2Reader extends FormatReader {
     if (isJPEG || isLossless) {
       if (codec == null) codec = createCodec(isJPEG);
       byte[] t = codec.decompress(in, options);
-      copyPixels(x, y, w, h, bpp, scanlinePad, t, buf, split);
+      if ((getSizeX() + scanlinePad) * getSizeY() * pixel > t.length) {
+        // one padding pixel per row total, instead of one padding pixel
+        // per channel per row
+        int rowLength = getSizeX() * pixel + scanlinePad * bpp;
+        int destLength = w * pixel;
+
+        int p = rowLength * y + x * pixel;
+        byte[] pix = new byte[destLength * h];
+        for (int row=0; row<h; row++) {
+          System.arraycopy(t, p, pix, row * destLength, destLength);
+          int skip = pixel * (getSizeX() - w - x) + scanlinePad * bpp;
+          p += destLength + skip;
+        }
+
+        if (split) {
+          pix = ImageTools.splitChannels(pix, lastChannel, getEffectiveSizeC(),
+            bpp, false, true);
+        }
+        System.arraycopy(pix, 0, buf, 0, pix.length);
+      }
+      else {
+        copyPixels(x, y, w, h, bpp, scanlinePad, t, buf, split);
+      }
       t = null;
     }
     else if (split && (getSizeC() <= 4 || scanlinePad == 0) && nXFields <= 1) {
@@ -946,8 +968,11 @@ public class NativeND2Reader extends FormatReader {
     MetadataTools.populatePixels(store, this, true);
 
     String filename = new Location(getCurrentFile()).getName();
+    ArrayList<String> posNames = handler.getPositionNames();
     for (int i=0; i<getSeriesCount(); i++) {
-      store.setImageName(filename + " (series " + (i + 1) + ")", i);
+      String suffix =
+        i < posNames.size() ? posNames.get(i) : "(series " + (i + 1) + ")";
+      store.setImageName(filename + " " + suffix, i);
       MetadataTools.setDefaultCreationDate(store, currentId, i);
     }
 

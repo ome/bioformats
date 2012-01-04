@@ -68,6 +68,8 @@ public class ImarisHDFReader extends FormatReader {
   // channel parameters
   private Vector<String> emWave, exWave, channelMin, channelMax;
   private Vector<String> gain, pinhole, channelName, microscopyMode;
+  private Vector<double[]> colors;
+  private int lastChannel = 0;
 
   // -- Constructor --
 
@@ -93,6 +95,48 @@ public class ImarisHDFReader extends FormatReader {
     return stream.readString(blockLen).indexOf(HDF_MAGIC_STRING) >= 0;
   }
 
+  /* @see loci.formats.IFormatReader#get8BitLookupTable() */
+  public byte[][] get8BitLookupTable() {
+    FormatTools.assertId(currentId, true, 1);
+    if (getPixelType() != FormatTools.UINT8 || !isIndexed()) return null;
+
+    if (lastChannel < 0 || lastChannel >= colors.size()) {
+      return null;
+    }
+
+    double[] color = colors.get(lastChannel);
+
+    byte[][] lut = new byte[3][256];
+    for (int c=0; c<lut.length; c++) {
+      double max = color[c] * 255;
+      for (int p=0; p<lut[c].length; p++) {
+        lut[c][p] = (byte) ((p / 255.0) * max);
+      }
+    }
+    return lut;
+  }
+
+  /* @see loci.formats.IFormatReaderget16BitLookupTable() */
+  public short[][] get16BitLookupTable() {
+    FormatTools.assertId(currentId, true, 1);
+    if (getPixelType() != FormatTools.UINT16 || !isIndexed()) return null;
+
+    if (lastChannel < 0 || lastChannel >= colors.size()) {
+      return null;
+    }
+
+    double[] color = colors.get(lastChannel);
+
+    short[][] lut = new short[3][65536];
+    for (int c=0; c<lut.length; c++) {
+      double max = color[c] * 65535;
+      for (int p=0; p<lut[c].length; p++) {
+        lut[c][p] = (short) ((p / 65535.0) * max);
+      }
+    }
+    return lut;
+  }
+
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
@@ -100,6 +144,8 @@ public class ImarisHDFReader extends FormatReader {
     throws FormatException, IOException
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
+
+    lastChannel = getZCTCoords(no)[1];
 
     // pixel data is stored in XYZ blocks
 
@@ -162,6 +208,8 @@ public class ImarisHDFReader extends FormatReader {
 
       emWave = exWave = channelMin = channelMax = null;
       gain = pinhole = channelName = microscopyMode = null;
+      colors = null;
+      lastChannel = 0;
     }
   }
 
@@ -190,6 +238,7 @@ public class ImarisHDFReader extends FormatReader {
     pinhole = new Vector<String>();
     channelName = new Vector<String>();
     microscopyMode = new Vector<String>();
+    colors = new Vector<double[]>();
 
     seriesCount = 0;
 
@@ -248,7 +297,7 @@ public class ImarisHDFReader extends FormatReader {
       core[i].orderCertain = true;
       core[i].littleEndian = true;
       core[i].interleaved = false;
-      core[i].indexed = false;
+      core[i].indexed = colors.size() >= getSizeC();
     }
 
     MetadataStore store = makeFilterMetadata();
@@ -327,6 +376,15 @@ public class ImarisHDFReader extends FormatReader {
           }
           catch (NumberFormatException e) { }
         }
+
+        if (i < colors.size()) {
+          double[] color = colors.get(i);
+          int realColor = 0;
+          for (int cc=0; cc<color.length; cc++) {
+            realColor |= ((int) (color[cc] * 255) << (16 - cc * 8));
+          }
+          store.setChannelColor(realColor, s, i);
+        }
       }
     }
   }
@@ -393,6 +451,7 @@ public class ImarisHDFReader extends FormatReader {
       }
 
       if (attr.startsWith("/DataSetInfo/Channel_")) {
+        String originalValue = value;
         for (String d : DELIMITERS) {
           if (value.indexOf(d) != -1) {
             value = value.substring(value.indexOf(d) + 1);
@@ -412,6 +471,14 @@ public class ImarisHDFReader extends FormatReader {
         else if (name.equals("Pinhole")) pinhole.add(value);
         else if (name.equals("Name")) channelName.add(value);
         else if (name.equals("MicroscopyMode")) microscopyMode.add(value);
+        else if (name.equals("Color")) {
+          double[] color = new double[3];
+          String[] intensity = originalValue.split(" ");
+          for (int i=0; i<intensity.length; i++) {
+            color[i] = Double.parseDouble(intensity[i]);
+          }
+          colors.add(color);
+        }
       }
 
       if (value != null) addGlobalMeta(name, value);

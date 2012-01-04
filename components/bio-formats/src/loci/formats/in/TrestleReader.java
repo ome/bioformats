@@ -63,6 +63,7 @@ public class TrestleReader extends BaseTiffReader {
   private ArrayList<String> files;
   private String roiFile;
   private String roiDrawFile;
+  private int[] overlaps;
 
   // -- Constructor --
 
@@ -138,7 +139,8 @@ public class TrestleReader extends BaseTiffReader {
       return super.openBytes(no, buf, x, y, w, h);
     }
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
-    tiffParser.getSamples(ifds.get(series), buf, x, y, w, h);
+    tiffParser.getSamples(ifds.get(series), buf, x, y, w, h,
+      overlaps[getSeries() * 2], overlaps[getSeries() * 2 + 1]);
     return buf;
   }
 
@@ -213,6 +215,14 @@ public class TrestleReader extends BaseTiffReader {
       String key = v.substring(0, eq).trim();
       String value = v.substring(eq + 1).trim();
       addGlobalMeta(key, value);
+
+      if (key.equals("OverlapsXY")) {
+        String[] overlapValues = value.split(" ");
+        overlaps = new int[ifds.size() * 2];
+        for (int i=0; i<overlapValues.length; i++) {
+          overlaps[i] = Integer.parseInt(overlapValues[i]);
+        }
+      }
     }
 
     core = new CoreMetadata[ifds.size()];
@@ -234,8 +244,14 @@ public class TrestleReader extends BaseTiffReader {
       int samples = ifd.getSamplesPerPixel();
       core[s].rgb = samples > 1 || p == PhotoInterp.RGB;
 
-      core[s].sizeX = (int) ifd.getImageWidth();
-      core[s].sizeY = (int) ifd.getImageLength();
+      long numTileRows = ifd.getTilesPerColumn() - 1;
+      long numTileCols = ifd.getTilesPerRow() - 1;
+
+      int overlapX = overlaps[s * 2];
+      int overlapY = overlaps[s * 2 + 1];
+
+      core[s].sizeX = (int) (ifd.getImageWidth() - (numTileCols * overlapX));
+      core[s].sizeY = (int) (ifd.getImageLength() - (numTileRows * overlapY));
       core[s].sizeZ = 1;
       core[s].sizeT = 1;
       core[s].sizeC = core[s].rgb ? samples : 1;

@@ -834,6 +834,7 @@ public class ZeissLSMReader extends FormatReader {
     long scanInformationOffset = 0;
     long channelWavelengthOffset = 0;
     long applicationTagOffset = 0;
+    int[] channelColor = new int[getSizeC()];
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       int spectralScan = ras.readShort();
@@ -1005,6 +1006,9 @@ public class ZeissLSMReader extends FormatReader {
           core[getSeries()].indexed = true;
           for (int i=0; i<getSizeC(); i++) {
             int color = in.readInt();
+
+            channelColor[i] = color;
+
             int red = color & 0xff;
             int green = (color & 0xff00) >> 8;
             int blue = (color & 0xff0000) >> 16;
@@ -1196,6 +1200,10 @@ public class ZeissLSMReader extends FormatReader {
       store.setPixelsPhysicalSizeX(new PositiveFloat(pixX), series);
       store.setPixelsPhysicalSizeY(new PositiveFloat(pixY), series);
       store.setPixelsPhysicalSizeZ(new PositiveFloat(pixZ), series);
+
+      for (int i=0; i<getSizeC(); i++) {
+        store.setChannelColor(channelColor[i], series, i);
+      }
 
       double firstStamp = 0;
       if (timestamps.size() > 0) {

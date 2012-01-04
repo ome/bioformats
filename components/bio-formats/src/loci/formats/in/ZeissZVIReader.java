@@ -593,10 +593,8 @@ public class ZeissZVIReader extends FormatReader {
       store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
       store.setObjectiveImmersion(getImmersion("Other"), 0, 0);
 
-      int channelIndex = 0;
-      if (channelName.size() > 0 && channelName.get(0) == null) {
-        channelIndex = 1;
-      }
+      Integer[] channelKeys = channelName.keySet().toArray(new Integer[0]);
+      Arrays.sort(channelKeys);
 
       // link DetectorSettings to an actual Detector
       for (int i=0; i<getEffectiveSizeC(); i++) {
@@ -605,7 +603,10 @@ public class ZeissZVIReader extends FormatReader {
         store.setDetectorType(getDetectorType("Other"), 0, i);
 
         for (int s=0; s<getSeriesCount(); s++) {
-          int c = channelIndex + i;
+          int c = i;
+          if (i < channelKeys.length) {
+            c = channelKeys[i];
+          }
 
           store.setDetectorSettingsID(detectorID, s, i);
           store.setDetectorSettingsGain(detectorGain.get(c), s, i);
@@ -642,8 +643,11 @@ public class ZeissZVIReader extends FormatReader {
 
         for (int plane=0; plane<getImageCount(); plane++) {
           int[] zct = getZCTCoords(plane);
-          String exposure =
-            exposureTime.get(new Integer(zct[1] + channelIndex));
+          int expIndex = zct[1];
+          if (channelKeys.length > 0) {
+            expIndex += channelKeys[0];
+          }
+          String exposure = exposureTime.get(expIndex);
           if (exposure == null && exposureTime.size() == 1) {
             exposure = exposureTime.get(exposureTime.keys().nextElement());
           }

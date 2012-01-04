@@ -169,6 +169,8 @@ public class CellSensReader extends FormatReader {
     FormatTools.assertId(currentId, true, 1);
 
     int currentSeries = getSeries();
+    int thumbSize = getThumbSizeX() * getThumbSizeY() *
+      FormatTools.getBytesPerPixel(getPixelType()) * getRGBChannelCount();
 
     if (currentSeries >= usedFiles.length - 1 ||
       usedFiles.length >= getSeriesCount())
@@ -179,7 +181,10 @@ public class CellSensReader extends FormatReader {
     setSeries(usedFiles.length);
     byte[] thumb = FormatTools.openThumbBytes(this, 0);
     setSeries(currentSeries);
-    return thumb;
+    if (thumb.length == thumbSize) {
+      return thumb;
+    }
+    return super.openThumbBytes(no);
   }
 
   /**
@@ -563,20 +568,40 @@ public class CellSensReader extends FormatReader {
       int zIndex = zv == null ? -1 : zv + 2;
       int cIndex = cv == null ? -1 : cv + 2;
 
-      if (tv == null && zv == null && cv == null) {
-        if (t.coordinate.length > 4) {
+      if (tv == null && zv == null) {
+        if (t.coordinate.length > 4 && cv == null) {
           cIndex = 2;
           dimensionOrdering.put("C", cIndex - 2);
         }
 
         if (t.coordinate.length > 4) {
-          tIndex = 3;
-          dimensionOrdering.put("T", tIndex - 2);
+          if (cv == null) {
+            tIndex = 3;
+          }
+          else {
+            tIndex = cIndex + 2;
+          }
+          if (tIndex < t.coordinate.length) {
+            dimensionOrdering.put("T", tIndex - 2);
+          }
+          else {
+            tIndex = -1;
+          }
         }
 
         if (t.coordinate.length > 5) {
-          zIndex = 4;
-          dimensionOrdering.put("Z", zIndex - 2);
+          if (cv == null) {
+            zIndex = 4;
+          }
+          else {
+            zIndex = cIndex + 1;
+          }
+          if (zIndex < t.coordinate.length) {
+            dimensionOrdering.put("Z", zIndex - 2);
+          }
+          else {
+            zIndex = -1;
+          }
         }
       }
 
