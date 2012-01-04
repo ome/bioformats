@@ -35,8 +35,9 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.Arrays;
@@ -1737,7 +1738,6 @@ public class FormatReaderTest {
    * @testng.test groups = "config"
    */
   public void writeConfigFile() {
-    reader = new BufferedImageReader(new FileStitcher());
     setupReader();
     if (!initFile(false)) return;
     String file = reader.getCurrentFile();
@@ -1758,7 +1758,6 @@ public class FormatReaderTest {
    * @testng.test groups = "config-xml"
    */
   public void writeXML() {
-    reader = new BufferedImageReader(new FileStitcher());
     setupReader();
     if (!initFile(false)) return;
     String file = reader.getCurrentFile();
@@ -1766,7 +1765,8 @@ public class FormatReaderTest {
     try {
       Location l = new Location(file);
       File f = new File(l.getParent(), l.getName() + ".ome.xml");
-      FileWriter writer = new FileWriter(f);
+      OutputStreamWriter writer =
+        new OutputStreamWriter(new FileOutputStream(f), FormatTools.ENCODING);
       MetadataStore store = reader.getMetadataStore();
       MetadataRetrieve retrieve = MetadataTools.asRetrieve(store);
       String xml = MetadataTools.getOMEXML(retrieve);
@@ -1784,6 +1784,7 @@ public class FormatReaderTest {
 
   /** Sets up the current IFormatReader. */
   private void setupReader() {
+    reader = new BufferedImageReader(new FileStitcher());
     reader.setNormalized(true);
     reader.setOriginalMetadataPopulated(true);
     reader.setMetadataFiltered(true);
@@ -1814,25 +1815,7 @@ public class FormatReaderTest {
     }
 
     if (reader == null) {
-      /*
-      if (config.noStitching()) {
-        reader = new BufferedImageReader();
-      }
-      else {
-      */
-        reader = new BufferedImageReader(new FileStitcher());
-      //}
-      reader.setNormalized(true);
-      reader.setMetadataFiltered(true);
-      reader.setOriginalMetadataPopulated(true);
-      MetadataStore store = null;
-      try {
-        store = omexmlService.createOMEXMLMetadata();
-      }
-      catch (ServiceException e) {
-        LOGGER.warn("Could not parse OME-XML", e);
-      }
-      reader.setMetadataStore(store);
+      setupReader();
     }
 
     if (id.equals(reader.getCurrentFile())) return true; // already initialized

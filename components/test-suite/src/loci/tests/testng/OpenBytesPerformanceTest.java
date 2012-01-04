@@ -137,8 +137,8 @@ public class OpenBytesPerformanceTest
         optimalTileWidth = reader.getOptimalTileWidth();
         optimalTileHeight = reader.getOptimalTileHeight();
         LOGGER.info("Optimal tile {}x{}", optimalTileWidth, optimalTileHeight);
-        int tilesWide = (int) Math.ceil(sizeX / optimalTileWidth);
-        int tilesHigh = (int) Math.ceil(sizeY / optimalTileHeight);
+        int tilesWide = (int) Math.ceil((double) sizeX / optimalTileWidth);
+        int tilesHigh = (int) Math.ceil((double) sizeY / optimalTileHeight);
         LOGGER.info("Tile counts {}x{}", tilesWide, tilesHigh);
         int x, y = 0;
         StopWatch stopWatch;
@@ -166,8 +166,8 @@ public class OpenBytesPerformanceTest
         optimalTileWidth = reader.getOptimalTileWidth();
         optimalTileHeight = reader.getOptimalTileHeight();
         LOGGER.info("Optimal tile {}x{}", optimalTileWidth, optimalTileHeight);
-        int tilesWide = (int) Math.ceil(sizeX / optimalTileWidth);
-        int tilesHigh = (int) Math.ceil(sizeY / optimalTileHeight);
+        int tilesWide = (int) Math.ceil((double) sizeX / optimalTileWidth);
+        int tilesHigh = (int) Math.ceil((double) sizeY / optimalTileHeight);
         LOGGER.info("Tile counts {}x{}", tilesWide, tilesHigh);
         int x, y = 0;
         StopWatch stopWatch;

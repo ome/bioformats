@@ -183,7 +183,6 @@ public class Jpeg2000GrindTest {
         }
         pool.submit(new TileRunnable(
             writer, z, c, t, x, y, tileWidth, tileHeight, tileCount));
-        tileCount++;
       }
     }, SIZE_X, SIZE_Y, SIZE_Z, SIZE_C, SIZE_T, TILE_WIDTH, TILE_HEIGHT);
     pool.shutdown();
