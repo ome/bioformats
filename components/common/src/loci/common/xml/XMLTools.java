@@ -31,7 +31,8 @@ import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -95,11 +96,11 @@ public final class XMLTools {
 
   // -- Fields --
 
-  private static ThreadLocal<HashMap<URL, Schema>> schemas =
-    new ThreadLocal<HashMap<URL, Schema>>()
+  private static ThreadLocal<HashMap<URI, Schema>> schemas =
+    new ThreadLocal<HashMap<URI, Schema>>()
   {
-    protected HashMap<URL, Schema> initialValue() {
-      return new HashMap<URL, Schema>();
+    protected HashMap<URI, Schema> initialValue() {
+      return new HashMap<URI, Schema>();
     }
   };
 
@@ -487,19 +488,23 @@ public final class XMLTools {
     LOGGER.info("Validating {}", label);
 
     // compile the schema
-    URL schemaLocation = null;
+    URI schemaLocation = null;
     try {
-      schemaLocation = new URL(schemaPath);
+      schemaLocation = new URI(schemaPath);
     }
-    catch (MalformedURLException exc) {
+    catch (URISyntaxException exc) {
       LOGGER.info("Error accessing schema at {}", schemaPath, exc);
       return false;
     }
     Schema schema = schemas.get().get(schemaLocation);
     if (schema == null) {
       try {
-        schema = FACTORY.newSchema(schemaLocation);
+        schema = FACTORY.newSchema(schemaLocation.toURL());
         schemas.get().put(schemaLocation, schema);
+      }
+      catch (MalformedURLException exc) {
+        LOGGER.info("Error parsing schema at {}", schemaPath, exc);
+        return false;
       }
       catch (SAXException exc) {
         LOGGER.info("Error parsing schema at {}", schemaPath, exc);
