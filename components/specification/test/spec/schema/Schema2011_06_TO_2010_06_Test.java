@@ -327,8 +327,9 @@ public class Schema2011_06_TO_2010_06_Test
 		XMLWriter writer = new XMLWriter();
 		writer.writeFile(f, xml.createImage(), true);
 
-		File fCheckIn  = new File("/Users/andrew/Desktop/wibble1.xml");
-		writer.writeFile(fCheckIn , xml.getRoot(), true);
+// Dump out file for debuging
+//		File fCheckIn  = new File("/Users/andrew/Desktop/wibble1.xml");
+//		writer.writeFile(fCheckIn , xml.getRoot(), true);
 
 		transformFileWithStream(f, output, STYLESHEET);
 		Document doc = parseFileWithStreamArray(output, schemaArray);
