@@ -144,6 +144,9 @@ public final class FormatTools {
   public static final String T_NUM = "%t";
   public static final String TIMESTAMP = "%A";
 
+  /** Default file encoding. */
+  public static final String ENCODING = "UTF-8";
+
   // -- Constants - versioning --
 
   /**
