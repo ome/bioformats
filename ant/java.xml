@@ -96,7 +96,7 @@ Type "ant -p" for a list of targets.
           excludeFilter="${root.dir}/excludebugs.xml" reportLevel="high"
           errorProperty="findbugsErrors"
           warningsProperty="findbugsWarnings">
-          <auxClasspath path="${component.classpath}"/>
+          <auxClasspath path="${component.runtime-cp}"/>
           <sourcePath path="${dest.dir}"/>
           <class location="${classes.dir}"/>
         </findbugs>
