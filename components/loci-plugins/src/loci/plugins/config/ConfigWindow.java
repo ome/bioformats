@@ -36,6 +36,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -386,8 +387,15 @@ public class ConfigWindow extends JFrame
     String propKey = null;
     StringBuffer propValue = new StringBuffer();
     String resource = "libraries.txt";
-    BufferedReader in = new BufferedReader(new InputStreamReader(
-      ConfigWindow.class.getResourceAsStream(resource)));
+    BufferedReader in = null;
+    try {
+      in = new BufferedReader(new InputStreamReader(
+        ConfigWindow.class.getResourceAsStream(resource), "UTF-8"));
+    }
+    catch (UnsupportedEncodingException e) {
+      log.println("UTF-8 encoding is not supported.  Something is very wrong.");
+      e.printStackTrace(log);
+    }
     while (true) {
       String line = null;
       try {
