@@ -205,7 +205,8 @@ public class IPWReader extends FormatReader {
 
       if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
         if (relativePath.equals("CONTENTS")) {
-          addGlobalMeta("Version", new String(poi.getDocumentBytes(name)).trim());
+          addGlobalMeta("Version", new String(
+            poi.getDocumentBytes(name), FormatTools.ENCODING).trim());
         }
         else if (relativePath.equals("FrameRate")) {
           byte[] b = poi.getDocumentBytes(name, 4);
@@ -222,7 +223,8 @@ public class IPWReader extends FormatReader {
       }
 
       if (relativePath.equals("ImageInfo")) {
-        description = new String(poi.getDocumentBytes(name)).trim();
+        description =
+          new String(poi.getDocumentBytes(name), FormatTools.ENCODING).trim();
         addGlobalMeta("Image Description", description);
 
         String timestamp = null;

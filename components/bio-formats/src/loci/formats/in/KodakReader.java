@@ -132,7 +132,9 @@ public class KodakReader extends FormatReader {
       in.read(buf, overlap, buf.length - overlap);
 
       for (int i=0; i<buf.length-overlap; i++) {
-        if (marker.equals(new String(buf, i, marker.length()))) {
+        if (marker.equals(
+          new String(buf, i, marker.length(), FormatTools.ENCODING)))
+        {
           in.seek(in.getFilePointer() - buf.length + i);
           return;
         }
