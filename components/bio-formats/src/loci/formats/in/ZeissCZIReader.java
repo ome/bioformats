@@ -631,7 +631,8 @@ public class ZeissCZIReader extends FormatReader {
     try {
       DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
       DocumentBuilder parser = factory.newDocumentBuilder();
-      ByteArrayInputStream s = new ByteArrayInputStream(xml.getBytes());
+      ByteArrayInputStream s =
+        new ByteArrayInputStream(xml.getBytes(FormatTools.ENCODING));
       root = parser.parse(s).getDocumentElement();
       s.close();
     }
@@ -1555,7 +1556,8 @@ public class ZeissCZIReader extends FormatReader {
       try {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder parser = factory.newDocumentBuilder();
-        ByteArrayInputStream s = new ByteArrayInputStream(metadata.getBytes());
+        ByteArrayInputStream s =
+          new ByteArrayInputStream(metadata.getBytes(FormatTools.ENCODING));
         root = parser.parse(s).getDocumentElement();
         s.close();
       }

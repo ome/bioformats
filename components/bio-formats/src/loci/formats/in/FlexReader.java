@@ -777,7 +777,7 @@ public class FlexReader extends FormatReader {
     DefaultHandler handler =
       new FlexHandler(n, f, store, firstFile, currentWell);
     LOGGER.info("Parsing XML in .flex file");
-    XMLTools.parseXML(xml.getBytes(), handler);
+    XMLTools.parseXML(xml.getBytes(FormatTools.ENCODING), handler);
 
     channelNames = n.toArray(new String[n.size()]);
 

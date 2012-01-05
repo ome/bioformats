@@ -143,7 +143,8 @@ public class InstallWizard extends JFrame
   }
 
   public static String download(URLConnection conn) throws IOException {
-    InputStreamReader in = new InputStreamReader(conn.getInputStream());
+    InputStreamReader in =
+      new InputStreamReader(conn.getInputStream(), "UTF-8");
     char[] buf = new char[65536];
     StringBuffer sb = new StringBuffer();
     while (true) {

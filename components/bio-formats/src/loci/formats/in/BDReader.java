@@ -26,7 +26,8 @@ package loci.formats.in;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.Arrays;
@@ -467,12 +468,14 @@ public class BDReader extends FormatReader {
 
   private IniList readMetaData(String id) throws IOException {
     IniParser parser = new IniParser();
-    IniList exp = parser.parseINI(new BufferedReader(new FileReader(id)));
+    IniList exp = parser.parseINI(new BufferedReader(new InputStreamReader(
+      new FileInputStream(id), FormatTools.ENCODING)));
     IniList plate = null;
     // Read Plate File
     for (String filename : metadataFiles) {
       if (checkSuffix(filename, "plt")) {
-        plate = parser.parseINI(new BufferedReader(new FileReader(filename)));
+        plate = parser.parseINI(new BufferedReader(new InputStreamReader(
+          new FileInputStream(filename), FormatTools.ENCODING)));
       }
       else if (filename.endsWith("RoiSummary.txt")) {
         roiFile = filename;
@@ -585,8 +588,9 @@ public class BDReader extends FormatReader {
 
     for (int c=0; c<channelNames.size(); c++) {
       Location dyeFile = new Location(dir, channelNames.get(c) + ".dye");
-      IniList dye = new IniParser().parseINI(
-        new BufferedReader(new FileReader(dyeFile.getAbsolutePath())));
+      FileInputStream stream = new FileInputStream(dyeFile.getAbsolutePath());
+      IniList dye = new IniParser().parseINI(new BufferedReader(
+        new InputStreamReader(stream, FormatTools.ENCODING)));
 
       IniTable numerator = dye.getTable("Numerator");
       String em = numerator.get("Emission");

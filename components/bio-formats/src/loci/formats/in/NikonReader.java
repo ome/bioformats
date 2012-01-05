@@ -340,7 +340,8 @@ public class NikonReader extends BaseTiffReader {
           addGlobalMeta(name, exifIFD.get(key));
           if (name.equals("MAKER_NOTE")) {
             byte[] b = (byte[]) exifIFD.get(key);
-            int extra = new String(b, 0, 10).startsWith("Nikon") ? 10 : 0;
+            int extra = new String(
+              b, 0, 10, FormatTools.ENCODING).startsWith("Nikon") ? 10 : 0;
             byte[] buf = new byte[b.length];
             System.arraycopy(b, extra, buf, 0, buf.length - extra);
             RandomAccessInputStream makerNote =

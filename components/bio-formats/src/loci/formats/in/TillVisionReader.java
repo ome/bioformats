@@ -25,7 +25,8 @@ package loci.formats.in;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -467,7 +468,8 @@ public class TillVisionReader extends FormatReader {
         String inf = file.substring(0, dot) + ".inf";
         infFiles[i] = inf;
 
-        BufferedReader reader = new BufferedReader(new FileReader(inf));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(
+          new FileInputStream(inf), FormatTools.ENCODING));
         IniList data = parser.parseINI(reader);
         reader.close();
         IniTable infoTable = data.getTable("Info");
@@ -608,8 +610,8 @@ public class TillVisionReader extends FormatReader {
         {
           int pointer = i + 22;
           int length = DataTools.bytesToShort(buf, pointer, 2, true);
-          if (length == 6 &&
-            new String(buf, pointer + 2, length).equals("CImage"))
+          if (length == 6 && new String(
+            buf, pointer + 2, length, FormatTools.ENCODING).equals("CImage"))
           {
             pointer += length + 4;
           }
@@ -618,7 +620,8 @@ public class TillVisionReader extends FormatReader {
             long offset = s.getFilePointer() - buf.length + pointer + 4;
             if (!offsets.contains(offset)) {
               int len = buf[pointer + 4];
-              String name = new String(buf, pointer + 5, len);
+              String name =
+                new String(buf, pointer + 5, len, FormatTools.ENCODING);
               if (name.indexOf("Palette") < 0) {
                 offsets.add(offset);
               }

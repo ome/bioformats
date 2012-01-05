@@ -314,7 +314,7 @@ public class Location {
         while (!foundEnd) {
           byte[] b = new byte[is.available()];
           is.read(b);
-          String s = new String(b);
+          String s = new String(b, "UTF-8");
           if (s.toLowerCase().indexOf("</html>") != -1) foundEnd = true;
 
           while (s.indexOf("a href") != -1) {
@@ -423,7 +423,21 @@ public class Location {
    * @see java.net.URL#equals(Object)
    */
   public boolean equals(Object obj) {
-    return isURL ? url.equals(obj) : file.equals(obj);
+    String absPath = getAbsolutePath();
+    String thatPath = null;
+
+    if (obj instanceof Location) {
+      thatPath = ((Location) obj).getAbsolutePath();
+    }
+    else {
+      thatPath = obj.toString();
+    }
+
+    return absPath.equals(thatPath);
+  }
+
+  public int hashCode() {
+    return getAbsolutePath().hashCode();
   }
 
   /**

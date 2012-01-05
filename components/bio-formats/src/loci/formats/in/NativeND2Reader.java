@@ -430,7 +430,8 @@ public class NativeND2Reader extends FormatReader {
 
       // parse XML blocks
 
-      String xmlString = new String(xml.getBytes(), 0, (int) xml.length());
+      String xmlString =
+        new String(xml.getBytes(), 0, (int) xml.length(), FormatTools.ENCODING);
       xmlString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><ND2>" +
         xmlString + "</ND2>";
       xmlString = XMLTools.sanitizeXML(xmlString);
@@ -968,12 +969,14 @@ public class NativeND2Reader extends FormatReader {
     MetadataTools.populatePixels(store, this, true);
 
     String filename = new Location(getCurrentFile()).getName();
-    ArrayList<String> posNames = handler.getPositionNames();
-    for (int i=0; i<getSeriesCount(); i++) {
-      String suffix =
-        i < posNames.size() ? posNames.get(i) : "(series " + (i + 1) + ")";
-      store.setImageName(filename + " " + suffix, i);
-      MetadataTools.setDefaultCreationDate(store, currentId, i);
+    if (handler != null) {
+      ArrayList<String> posNames = handler.getPositionNames();
+      for (int i=0; i<getSeriesCount(); i++) {
+        String suffix =
+          i < posNames.size() ? posNames.get(i) : "(series " + (i + 1) + ")";
+        store.setImageName(filename + " " + suffix, i);
+        MetadataTools.setDefaultCreationDate(store, currentId, i);
+      }
     }
 
     colors = new int[getEffectiveSizeC()];

@@ -209,7 +209,7 @@ public class IPLabReader extends FormatReader {
 
     byte[] tagBytes = new byte[4];
     in.read(tagBytes);
-    String tag = new String(tagBytes);
+    String tag = new String(tagBytes, FormatTools.ENCODING);
     while (!tag.equals("fini") && in.getFilePointer() < in.length() - 4) {
       int size = in.readInt();
       if (tag.equals("clut")) {
@@ -396,7 +396,7 @@ public class IPLabReader extends FormatReader {
 
       if (in.getFilePointer() + 4 <= in.length()) {
         in.read(tagBytes);
-        tag = new String(tagBytes);
+        tag = new String(tagBytes, FormatTools.ENCODING);
       }
       else {
         tag = "fini";

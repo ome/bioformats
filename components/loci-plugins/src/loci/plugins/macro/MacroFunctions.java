@@ -31,12 +31,11 @@ import ij.macro.Functions;
 import ij.macro.MacroExtension;
 import ij.plugin.PlugIn;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import loci.plugins.util.LibraryChecker;
+import loci.plugins.util.WindowTools;
 
 /**
  * Convenience class that simplifies implemention of ImageJ macro extensions.
@@ -82,19 +81,13 @@ public class MacroFunctions implements PlugIn, MacroExtension {
       getClass().getMethod(name, c).invoke(this, args);
     }
     catch (NoSuchMethodException exc) {
-      ByteArrayOutputStream out = new ByteArrayOutputStream();
-      exc.printStackTrace(new PrintStream(out));
-      IJ.error(new String(out.toByteArray()));
+      WindowTools.reportException(exc, false, "Macro error");
     }
     catch (IllegalAccessException exc) {
-      ByteArrayOutputStream out = new ByteArrayOutputStream();
-      exc.printStackTrace(new PrintStream(out));
-      IJ.error(new String(out.toByteArray()));
+      WindowTools.reportException(exc, false, "Macro error");
     }
     catch (InvocationTargetException exc) {
-      ByteArrayOutputStream out = new ByteArrayOutputStream();
-      exc.printStackTrace(new PrintStream(out));
-      IJ.error(new String(out.toByteArray()));
+      WindowTools.reportException(exc, false, "Macro error");
     }
     return null;
   }

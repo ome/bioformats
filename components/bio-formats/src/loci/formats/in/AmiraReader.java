@@ -336,7 +336,8 @@ public class AmiraReader extends FormatReader {
       for (int i = 1;; i++) {
         byte c = in.readByte();
         if (!(c >= '0' && c <= '9') && c != '.') {
-          return Double.parseDouble(new String(numberBuffer, 0, i));
+          return Double.parseDouble(
+            new String(numberBuffer, 0, i, FormatTools.ENCODING));
         }
         numberBuffer[i] = c;
       }

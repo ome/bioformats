@@ -28,6 +28,7 @@ import java.util.Hashtable;
 import java.util.StringTokenizer;
 
 import loci.common.RandomAccessInputStream;
+import loci.formats.FormatTools;
 
 /**
  * SDTInfo encapsulates the header information for
@@ -470,7 +471,7 @@ public class SDTInfo {
     in.seek(infoOffs);
     byte[] infoBytes = new byte[infoLength];
     in.readFully(infoBytes);
-    info = new String(infoBytes);
+    info = new String(infoBytes, FormatTools.ENCODING);
 
     StringTokenizer st = new StringTokenizer(info, "\n");
     int count = st.countTokens();
@@ -488,7 +489,7 @@ public class SDTInfo {
     in.seek(setupOffs);
     byte[] setupBytes = new byte[setupLength];
     in.readFully(setupBytes);
-    setup = new String(setupBytes);
+    setup = new String(setupBytes, FormatTools.ENCODING);
 
     st = new StringTokenizer(setup, "\n");
     while (st.hasMoreTokens()) {

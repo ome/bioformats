@@ -760,7 +760,8 @@ public class LIFReader extends FormatReader {
     try {
       DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
       DocumentBuilder parser = factory.newDocumentBuilder();
-      ByteArrayInputStream s = new ByteArrayInputStream(xml.getBytes());
+      ByteArrayInputStream s =
+        new ByteArrayInputStream(xml.getBytes(FormatTools.ENCODING));
       Element root = parser.parse(s).getDocumentElement();
       s.close();
       return root;
