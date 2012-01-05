@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2011-11-09 10:55:09-0500
+ * Created by melissa via xsd-fu on 2012-01-05 15:21:37-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -190,7 +190,9 @@ public class FilterSet extends ManufacturerSpec
 		{
 			Filter o_casted = (Filter) o;
 			o_casted.linkFilterSet(this);
-			excitationFilterList.add(o_casted);
+			if (!copyLinkedExcitationFilterList().contains(o_casted)) {
+				excitationFilterList.add(o_casted);
+			}
 			return true;
 		}
 		if (reference instanceof DichroicRef)
@@ -204,7 +206,9 @@ public class FilterSet extends ManufacturerSpec
 		{
 			Filter o_casted = (Filter) o;
 			o_casted.linkFilterSet(this);
-			emissionFilterList.add(o_casted);
+			if (!copyLinkedEmissionFilterList().contains(o_casted)) {
+				emissionFilterList.add(o_casted);
+			}
 			return true;
 		}
 		LOGGER.debug("Unable to handle reference of type: {}", reference.getClass());

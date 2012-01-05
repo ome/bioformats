@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2011-11-09 10:55:09-0500
+ * Created by melissa via xsd-fu on 2012-01-05 15:21:37-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -214,7 +214,9 @@ public class MicrobeamManipulation extends AbstractOMEModelObject
 		{
 			ROI o_casted = (ROI) o;
 			o_casted.linkMicrobeamManipulation(this);
-			roiList.add(o_casted);
+			if (!copyLinkedROIList().contains(o_casted)) {
+				roiList.add(o_casted);
+			}
 			return true;
 		}
 		if (reference instanceof ExperimenterRef)

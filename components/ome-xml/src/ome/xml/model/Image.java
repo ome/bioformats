@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2011-11-09 10:55:09-0500
+ * Created by melissa via xsd-fu on 2012-01-05 15:21:37-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -390,7 +390,9 @@ public class Image extends AbstractOMEModelObject
 		{
 			Dataset o_casted = (Dataset) o;
 			o_casted.linkImage(this);
-			datasetList.add(o_casted);
+			if (!copyLinkedDatasetList().contains(o_casted)) {
+				datasetList.add(o_casted);
+			}
 			return true;
 		}
 		if (reference instanceof InstrumentRef)
@@ -404,21 +406,27 @@ public class Image extends AbstractOMEModelObject
 		{
 			ROI o_casted = (ROI) o;
 			o_casted.linkImage(this);
-			roiList.add(o_casted);
+			if (!copyLinkedROIList().contains(o_casted)) {
+				roiList.add(o_casted);
+			}
 			return true;
 		}
 		if (reference instanceof MicrobeamManipulationRef)
 		{
 			MicrobeamManipulation o_casted = (MicrobeamManipulation) o;
 			o_casted.linkImage(this);
-			microbeamManipulationList.add(o_casted);
+			if (!copyLinkedMicrobeamManipulationList().contains(o_casted)) {
+				microbeamManipulationList.add(o_casted);
+			}
 			return true;
 		}
 		if (reference instanceof AnnotationRef)
 		{
 			Annotation o_casted = (Annotation) o;
 			o_casted.linkImage(this);
-			annotationList.add(o_casted);
+			if (!copyLinkedAnnotationList().contains(o_casted)) {
+				annotationList.add(o_casted);
+			}
 			return true;
 		}
 		LOGGER.debug("Unable to handle reference of type: {}", reference.getClass());

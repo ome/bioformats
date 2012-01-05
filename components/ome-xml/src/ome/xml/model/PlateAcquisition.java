@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2011-11-09 10:55:09-0500
+ * Created by melissa via xsd-fu on 2012-01-05 15:21:37-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -225,14 +225,18 @@ public class PlateAcquisition extends AbstractOMEModelObject
 		{
 			WellSample o_casted = (WellSample) o;
 			o_casted.linkPlateAcquisition(this);
-			wellSampleList.add(o_casted);
+			if (!copyLinkedWellSampleList().contains(o_casted)) {
+				wellSampleList.add(o_casted);
+			}
 			return true;
 		}
 		if (reference instanceof AnnotationRef)
 		{
 			Annotation o_casted = (Annotation) o;
 			o_casted.linkPlateAcquisition(this);
-			annotationList.add(o_casted);
+			if (!copyLinkedAnnotationList().contains(o_casted)) {
+				annotationList.add(o_casted);
+			}
 			return true;
 		}
 		LOGGER.debug("Unable to handle reference of type: {}", reference.getClass());
