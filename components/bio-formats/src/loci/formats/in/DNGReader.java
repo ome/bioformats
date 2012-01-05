@@ -30,6 +30,7 @@ import java.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import loci.common.Constants;
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
@@ -262,7 +263,7 @@ public class DNGReader extends BaseTiffReader {
           if (name.equals("MAKER_NOTE")) {
             byte[] b = (byte[]) exifIFD.get(key);
             int extra = new String(
-              b, 0, 10, FormatTools.ENCODING).startsWith("Canon") ? 10 : 0;
+              b, 0, 10, Constants.ENCODING).startsWith("Canon") ? 10 : 0;
             byte[] buf = new byte[b.length];
             System.arraycopy(b, extra, buf, 0, buf.length - extra);
             RandomAccessInputStream makerNote =

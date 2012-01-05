@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 
 import loci.common.ByteArrayHandle;
+import loci.common.Constants;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.xml.XMLTools;
@@ -431,7 +432,7 @@ public class NativeND2Reader extends FormatReader {
       // parse XML blocks
 
       String xmlString =
-        new String(xml.getBytes(), 0, (int) xml.length(), FormatTools.ENCODING);
+        new String(xml.getBytes(), 0, (int) xml.length(), Constants.ENCODING);
       xmlString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><ND2>" +
         xmlString + "</ND2>";
       xmlString = XMLTools.sanitizeXML(xmlString);

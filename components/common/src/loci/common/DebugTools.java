@@ -49,8 +49,8 @@ public final class DebugTools {
   public static String getStackTrace(Throwable t) {
     try {
       ByteArrayOutputStream out = new ByteArrayOutputStream();
-      t.printStackTrace(new PrintStream(out, false, "UTF-8"));
-      return new String(out.toByteArray(), "UTF-8");
+      t.printStackTrace(new PrintStream(out, false, Constants.ENCODING));
+      return new String(out.toByteArray(), Constants.ENCODING);
     }
     catch (IOException e) { }
     return null;

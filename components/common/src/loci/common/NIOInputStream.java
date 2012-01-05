@@ -243,7 +243,7 @@ public class NIOInputStream extends InputStream implements DataInput {
       if (len > maxTermLen) maxTermLen = len;
     }
 
-    InputStreamReader in = new InputStreamReader(this, "UTF-8");
+    InputStreamReader in = new InputStreamReader(this, Constants.ENCODING);
     char[] buf = new char[blockSize];
     long loc = 0;
     while (loc < maxLen) {
@@ -349,7 +349,7 @@ public class NIOInputStream extends InputStream implements DataInput {
   public String readString(int n) throws IOException {
     byte[] b = new byte[n];
     readFully(b);
-    return new String(b, "UTF-8");
+    return new String(b, Constants.ENCODING);
   }
 
   /** Read eight input bytes and return a long value. */

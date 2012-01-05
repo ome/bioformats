@@ -42,10 +42,10 @@ import java.util.StringTokenizer;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import loci.common.Constants;
 import loci.common.IniList;
 import loci.common.IniParser;
 import loci.common.IniTable;
-import loci.formats.FormatTools;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -105,7 +105,7 @@ public class ConfigurationTree {
     parser.setCommentDelimiter(null);
     FileInputStream stream = new FileInputStream(configFile);
     IniList iniList = parser.parseINI(new BufferedReader(
-      new InputStreamReader(stream, FormatTools.ENCODING)));
+      new InputStreamReader(stream, Constants.ENCODING)));
     for (IniTable table : iniList) {
       String id = table.get(IniTable.HEADER_KEY);
       id = id.substring(0, id.lastIndexOf(" "));

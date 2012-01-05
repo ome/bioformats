@@ -31,6 +31,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.InflaterInputStream;
 
+import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
@@ -337,7 +338,7 @@ public class AmiraReader extends FormatReader {
         byte c = in.readByte();
         if (!(c >= '0' && c <= '9') && c != '.') {
           return Double.parseDouble(
-            new String(numberBuffer, 0, i, FormatTools.ENCODING));
+            new String(numberBuffer, 0, i, Constants.ENCODING));
         }
         numberBuffer[i] = c;
       }

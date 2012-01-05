@@ -314,7 +314,7 @@ public class Location {
         while (!foundEnd) {
           byte[] b = new byte[is.available()];
           is.read(b);
-          String s = new String(b, "UTF-8");
+          String s = new String(b, Constants.ENCODING);
           if (s.toLowerCase().indexOf("</html>") != -1) foundEnd = true;
 
           while (s.indexOf("a href") != -1) {

@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.IniList;
@@ -469,7 +470,7 @@ public class TillVisionReader extends FormatReader {
         infFiles[i] = inf;
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(
-          new FileInputStream(inf), FormatTools.ENCODING));
+          new FileInputStream(inf), Constants.ENCODING));
         IniList data = parser.parseINI(reader);
         reader.close();
         IniTable infoTable = data.getTable("Info");
@@ -611,7 +612,7 @@ public class TillVisionReader extends FormatReader {
           int pointer = i + 22;
           int length = DataTools.bytesToShort(buf, pointer, 2, true);
           if (length == 6 && new String(
-            buf, pointer + 2, length, FormatTools.ENCODING).equals("CImage"))
+            buf, pointer + 2, length, Constants.ENCODING).equals("CImage"))
           {
             pointer += length + 4;
           }
@@ -621,7 +622,7 @@ public class TillVisionReader extends FormatReader {
             if (!offsets.contains(offset)) {
               int len = buf[pointer + 4];
               String name =
-                new String(buf, pointer + 5, len, FormatTools.ENCODING);
+                new String(buf, pointer + 5, len, Constants.ENCODING);
               if (name.indexOf("Palette") < 0) {
                 offsets.add(offset);
               }

@@ -29,6 +29,7 @@ import java.io.InputStreamReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import loci.common.Constants;
 import loci.common.IniList;
 import loci.common.IniParser;
 import loci.common.IniTable;
@@ -127,7 +128,7 @@ public class HamamatsuVMSReader extends FormatReader {
 
     IniParser parser = new IniParser();
     IniList layout = parser.parseINI(new BufferedReader(
-      new InputStreamReader(new FileInputStream(id), FormatTools.ENCODING)));
+      new InputStreamReader(new FileInputStream(id), Constants.ENCODING)));
     IniTable slideInfo = layout.getTable("Virtual Microscope Specimen");
 
     int nLayers = Integer.parseInt(slideInfo.get("NoLayers"));

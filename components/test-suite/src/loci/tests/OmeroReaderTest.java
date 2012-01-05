@@ -35,7 +35,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import loci.formats.FormatTools;
+import loci.common.Constants;
 import loci.ome.io.OmeroReader;
 
 import org.apache.log4j.ConsoleAppender;
@@ -72,7 +72,7 @@ public class OmeroReaderTest {
 
     // get credentials from stdin
     BufferedReader in = new BufferedReader(
-      new InputStreamReader(System.in, FormatTools.ENCODING));
+      new InputStreamReader(System.in, Constants.ENCODING));
     String server = readLine(in, "Server", "localhost");
     String portValue = readLine(in, "Port", "1099");
     String user = readLine(in, "Username", "root");

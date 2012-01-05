@@ -32,6 +32,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import loci.common.Constants;
 import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
@@ -632,7 +633,7 @@ public class ZeissCZIReader extends FormatReader {
       DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
       DocumentBuilder parser = factory.newDocumentBuilder();
       ByteArrayInputStream s =
-        new ByteArrayInputStream(xml.getBytes(FormatTools.ENCODING));
+        new ByteArrayInputStream(xml.getBytes(Constants.ENCODING));
       root = parser.parse(s).getDocumentElement();
       s.close();
     }
@@ -1557,7 +1558,7 @@ public class ZeissCZIReader extends FormatReader {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder parser = factory.newDocumentBuilder();
         ByteArrayInputStream s =
-          new ByteArrayInputStream(metadata.getBytes(FormatTools.ENCODING));
+          new ByteArrayInputStream(metadata.getBytes(Constants.ENCODING));
         root = parser.parse(s).getDocumentElement();
         s.close();
       }

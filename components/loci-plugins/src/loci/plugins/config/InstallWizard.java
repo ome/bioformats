@@ -36,6 +36,8 @@ import java.net.URLConnection;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 
+import loci.common.Constants;
+
 /**
  * A wizard for walking users through installation of third party
  * libraries and plugins used by the LOCI plugins.
@@ -144,7 +146,7 @@ public class InstallWizard extends JFrame
 
   public static String download(URLConnection conn) throws IOException {
     InputStreamReader in =
-      new InputStreamReader(conn.getInputStream(), "UTF-8");
+      new InputStreamReader(conn.getInputStream(), Constants.ENCODING);
     char[] buf = new char[65536];
     StringBuffer sb = new StringBuffer();
     while (true) {

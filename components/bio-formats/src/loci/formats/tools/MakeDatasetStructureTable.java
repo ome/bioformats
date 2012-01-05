@@ -28,7 +28,7 @@ import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.Comparator;
 
-import loci.formats.FormatTools;
+import loci.common.Constants;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 import loci.formats.in.ZeissCZIReader;
@@ -144,7 +144,7 @@ public class MakeDatasetStructureTable {
       out = System.out;
     }
     else {
-      out = new PrintStream(args[0], FormatTools.ENCODING);
+      out = new PrintStream(args[0], Constants.ENCODING);
     }
   }
 

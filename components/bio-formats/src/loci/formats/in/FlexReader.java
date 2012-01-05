@@ -30,6 +30,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Vector;
 
+import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.IRandomAccess;
@@ -777,7 +778,7 @@ public class FlexReader extends FormatReader {
     DefaultHandler handler =
       new FlexHandler(n, f, store, firstFile, currentWell);
     LOGGER.info("Parsing XML in .flex file");
-    XMLTools.parseXML(xml.getBytes(FormatTools.ENCODING), handler);
+    XMLTools.parseXML(xml.getBytes(Constants.ENCODING), handler);
 
     channelNames = n.toArray(new String[n.size()]);
 

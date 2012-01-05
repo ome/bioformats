@@ -26,6 +26,7 @@ package ome.metakit;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import loci.common.Constants;
 import loci.common.RandomAccessInputStream;
 
 /**
@@ -132,7 +133,7 @@ public class ColumnMap {
         byte[] buf = new byte[byteCounts[i]];
         stream.read(buf);
         char type = col.getTypeString().charAt(0);
-        values.add(type == 'B' ? buf : new String(buf, "UTF-8"));
+        values.add(type == 'B' ? buf : new String(buf, Constants.ENCODING));
       }
 
       stream.seek(fp);

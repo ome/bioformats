@@ -42,8 +42,8 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
+import loci.common.Constants;
 import loci.formats.FormatException;
-import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 
@@ -97,7 +97,7 @@ public class FileHandleTest {
     Runtime rt = Runtime.getRuntime();
     Process p = rt.exec("lsof -Ft -p " + pid);
     BufferedReader s = new BufferedReader(
-      new InputStreamReader(p.getInputStream(), FormatTools.ENCODING));
+      new InputStreamReader(p.getInputStream(), Constants.ENCODING));
     int handleCount = 0;
     String line = s.readLine();
     while (true) {

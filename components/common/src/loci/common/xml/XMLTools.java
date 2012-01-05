@@ -62,6 +62,7 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
+import loci.common.Constants;
 import loci.common.RandomAccessInputStream;
 
 import org.slf4j.Logger;
@@ -127,7 +128,7 @@ public final class XMLTools {
   public static Document parseDOM(String xml)
     throws ParserConfigurationException, SAXException, IOException
   {
-    byte[] bytes = xml.getBytes("UTF-8");
+    byte[] bytes = xml.getBytes(Constants.ENCODING);
     InputStream is = new ByteArrayInputStream(bytes);
     try {
       Document doc = parseDOM(is);
@@ -278,7 +279,7 @@ public final class XMLTools {
   public static void parseXML(String xml, DefaultHandler handler)
     throws IOException
   {
-    parseXML(xml.getBytes("UTF-8"), handler);
+    parseXML(xml.getBytes(Constants.ENCODING), handler);
   }
 
   /**
@@ -468,7 +469,8 @@ public final class XMLTools {
       // Java XML factories are not declared to be thread safe
       SAXParserFactory factory = SAXParserFactory.newInstance();
       SAXParser saxParser = factory.newSAXParser();
-      InputStream is = new ByteArrayInputStream(xml.getBytes("UTF-8"));
+      InputStream is =
+        new ByteArrayInputStream(xml.getBytes(Constants.ENCODING));
       saxParser.parse(is, saxHandler);
     }
     catch (ParserConfigurationException exc) { exception = exc; }

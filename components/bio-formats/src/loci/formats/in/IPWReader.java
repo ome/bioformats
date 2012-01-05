@@ -29,6 +29,7 @@ import java.util.Hashtable;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
@@ -206,7 +207,7 @@ public class IPWReader extends FormatReader {
       if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
         if (relativePath.equals("CONTENTS")) {
           addGlobalMeta("Version", new String(
-            poi.getDocumentBytes(name), FormatTools.ENCODING).trim());
+            poi.getDocumentBytes(name), Constants.ENCODING).trim());
         }
         else if (relativePath.equals("FrameRate")) {
           byte[] b = poi.getDocumentBytes(name, 4);
@@ -224,7 +225,7 @@ public class IPWReader extends FormatReader {
 
       if (relativePath.equals("ImageInfo")) {
         description =
-          new String(poi.getDocumentBytes(name), FormatTools.ENCODING).trim();
+          new String(poi.getDocumentBytes(name), Constants.ENCODING).trim();
         addGlobalMeta("Image Description", description);
 
         String timestamp = null;

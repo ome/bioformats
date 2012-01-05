@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
+import loci.common.Constants;
 import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
@@ -431,8 +432,8 @@ public class OmeroReader extends FormatReader {
   /** A simple command line tool for downloading images from OMERO. */
   public static void main(String[] args) throws Exception {
     // parse OMERO credentials
-    BufferedReader con =
-      new BufferedReader(new InputStreamReader(System.in, "UTF-8"));
+    BufferedReader con = new BufferedReader(
+      new InputStreamReader(System.in, Constants.ENCODING));
 
     System.out.print("Server? ");
     final String server = con.readLine();

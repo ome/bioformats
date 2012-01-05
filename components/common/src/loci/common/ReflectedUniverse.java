@@ -451,7 +451,7 @@ public class ReflectedUniverse {
       System.out.println("Ignoring accessibility modifiers.");
     }
     BufferedReader in =
-      new BufferedReader(new InputStreamReader(System.in, "UTF-8"));
+      new BufferedReader(new InputStreamReader(System.in, Constants.ENCODING));
     while (true) {
       System.out.print("> ");
       String line = in.readLine();

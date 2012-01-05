@@ -25,6 +25,7 @@ package loci.formats.in;
 
 import java.io.IOException;
 
+import loci.common.Constants;
 import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
@@ -133,7 +134,7 @@ public class KodakReader extends FormatReader {
 
       for (int i=0; i<buf.length-overlap; i++) {
         if (marker.equals(
-          new String(buf, i, marker.length(), FormatTools.ENCODING)))
+          new String(buf, i, marker.length(), Constants.ENCODING)))
         {
           in.seek(in.getFilePointer() - buf.length + i);
           return;

@@ -153,7 +153,7 @@ public class IniParser {
   public static BufferedReader openTextResource(String path, Class<?> c) {
     try {
       return new BufferedReader(new InputStreamReader(
-        c.getResourceAsStream(path), "UTF-8"));
+        c.getResourceAsStream(path), Constants.ENCODING));
     }
     catch (IOException e) {
       LOGGER.error("Could not open BufferedReader", e);

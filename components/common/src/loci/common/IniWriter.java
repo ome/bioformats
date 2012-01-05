@@ -59,8 +59,8 @@ public class IniWriter {
   public void saveINI(IniList ini, String path, boolean append)
     throws IOException
   {
-    BufferedWriter out = new BufferedWriter(
-      new OutputStreamWriter(new FileOutputStream(path, append), "UTF-8"));
+    BufferedWriter out = new BufferedWriter(new OutputStreamWriter(
+      new FileOutputStream(path, append), Constants.ENCODING));
 
     for (IniTable table : ini) {
       String header = table.get(IniTable.HEADER_KEY);

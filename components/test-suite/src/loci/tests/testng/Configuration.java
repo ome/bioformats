@@ -37,6 +37,7 @@ import java.io.FileReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
 
+import loci.common.Constants;
 import loci.common.IniList;
 import loci.common.IniParser;
 import loci.common.IniTable;
@@ -117,7 +118,7 @@ public class Configuration {
     this.configFile = configFile;
 
     BufferedReader reader = new BufferedReader(new InputStreamReader(
-      new FileInputStream(this.configFile), FormatTools.ENCODING));
+      new FileInputStream(this.configFile), Constants.ENCODING));
     IniParser parser = new IniParser();
     parser.setCommentDelimiter(null);
     ini = parser.parseINI(reader);

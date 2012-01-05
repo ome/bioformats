@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Hashtable;
 
+import loci.common.Constants;
 import loci.common.DateTools;
 import loci.common.ReflectException;
 import loci.common.ReflectedUniverse;
@@ -489,8 +490,8 @@ public class OMEWriter extends FormatWriter {
     }
 
     // ask for information if necessary
-    BufferedReader cin =
-      new BufferedReader(new InputStreamReader(System.in, "UTF-8"));
+    BufferedReader cin = new BufferedReader(
+      new InputStreamReader(System.in, Constants.ENCODING));
     if (server == null) {
       LOGGER.info("Server address? ");
       try { server = cin.readLine(); }

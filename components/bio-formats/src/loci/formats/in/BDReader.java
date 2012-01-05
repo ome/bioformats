@@ -34,6 +34,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Vector;
 
+import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.IniList;
@@ -469,13 +470,13 @@ public class BDReader extends FormatReader {
   private IniList readMetaData(String id) throws IOException {
     IniParser parser = new IniParser();
     IniList exp = parser.parseINI(new BufferedReader(new InputStreamReader(
-      new FileInputStream(id), FormatTools.ENCODING)));
+      new FileInputStream(id), Constants.ENCODING)));
     IniList plate = null;
     // Read Plate File
     for (String filename : metadataFiles) {
       if (checkSuffix(filename, "plt")) {
         plate = parser.parseINI(new BufferedReader(new InputStreamReader(
-          new FileInputStream(filename), FormatTools.ENCODING)));
+          new FileInputStream(filename), Constants.ENCODING)));
       }
       else if (filename.endsWith("RoiSummary.txt")) {
         roiFile = filename;
@@ -590,7 +591,7 @@ public class BDReader extends FormatReader {
       Location dyeFile = new Location(dir, channelNames.get(c) + ".dye");
       FileInputStream stream = new FileInputStream(dyeFile.getAbsolutePath());
       IniList dye = new IniParser().parseINI(new BufferedReader(
-        new InputStreamReader(stream, FormatTools.ENCODING)));
+        new InputStreamReader(stream, Constants.ENCODING)));
 
       IniTable numerator = dye.getTable("Numerator");
       String em = numerator.get("Emission");

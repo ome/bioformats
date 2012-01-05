@@ -43,10 +43,10 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
-import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.IFormatWriter;
 import loci.formats.ImageReader;
@@ -182,7 +182,7 @@ public class TestTools {
       root.setLevel(Level.INFO);
       root.addAppender(new WriterAppender(
         new PatternLayout("%p [%d{dd-MM-yyyy HH:mm:ss.SSS}] %m%n"),
-        new PrintWriter(logFile, FormatTools.ENCODING)));
+        new PrintWriter(logFile, Constants.ENCODING)));
     }
     catch (IOException e) { LOGGER.info("", e); }
 

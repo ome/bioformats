@@ -46,6 +46,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import loci.common.ByteArrayHandle;
+import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
@@ -1766,7 +1767,7 @@ public class FormatReaderTest {
       Location l = new Location(file);
       File f = new File(l.getParent(), l.getName() + ".ome.xml");
       OutputStreamWriter writer =
-        new OutputStreamWriter(new FileOutputStream(f), FormatTools.ENCODING);
+        new OutputStreamWriter(new FileOutputStream(f), Constants.ENCODING);
       MetadataStore store = reader.getMetadataStore();
       MetadataRetrieve retrieve = MetadataTools.asRetrieve(store);
       String xml = MetadataTools.getOMEXML(retrieve);
