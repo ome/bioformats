@@ -101,6 +101,7 @@ loci.formats.in.ZeissCZIReader        # czi
 loci.formats.in.SIFReader             # sif
 loci.formats.in.NDPISReader           # ndpis
 loci.formats.in.PovrayReader          # df3
+loci.formats.in.IMODReader            # mod
 loci.formats.in.FakeReader            # fake
 
 # multi-extension messes
