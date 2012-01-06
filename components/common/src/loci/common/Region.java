@@ -93,6 +93,14 @@ public class Region {
     return new Region(x, y, w, h);
   }
 
+  /**
+   * Returns true if the point specified by the given X and Y coordinates
+   * is contained within this region.
+   */
+  public boolean containsPoint(int xc, int yc) {
+    return intersects(new Region(xc, yc, 1, 1));
+  }
+
   public String toString() {
     return "x=" + x + ", y=" + y + ", w=" + width + ", h=" + height;
   }
