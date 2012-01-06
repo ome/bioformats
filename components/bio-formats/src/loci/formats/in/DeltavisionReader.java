@@ -480,8 +480,6 @@ public class DeltavisionReader extends FormatReader {
 
     MetadataTools.populatePixels(store, this, true);
 
-    MetadataTools.setDefaultCreationDate(store, currentId, 0);
-
     // link Instrument and Image
     String instrumentID = MetadataTools.createLSID("Instrument", 0);
     store.setInstrumentID(instrumentID, 0);

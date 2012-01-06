@@ -167,7 +167,6 @@ public class AmiraReader extends FormatReader {
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
-    MetadataTools.setDefaultCreationDate(store, id, 0);
 
     // Note that Amira specifies a bounding box, not pixel sizes.
     // The bounding box is the range of the centre of the voxels

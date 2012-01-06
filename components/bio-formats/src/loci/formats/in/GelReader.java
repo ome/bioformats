@@ -192,9 +192,6 @@ public class GelReader extends BaseTiffReader {
     else if (parsedTime != null) {
       store.setImageAcquiredDate(parsedTime, 0);
     }
-    else {
-      MetadataTools.setDefaultCreationDate(store, getCurrentFile(), 0);
-    }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       Double pixelSize = new Double(scale.doubleValue());

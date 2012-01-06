@@ -160,8 +160,6 @@ public class INRReader extends FormatReader {
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
 
-    MetadataTools.setDefaultCreationDate(store, id, 0);
-
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       if (physicalSizeX != null) {
         store.setPixelsPhysicalSizeX(new PositiveFloat(physicalSizeX), 0);

@@ -410,8 +410,6 @@ public class LiFlimReader extends FormatReader {
 
     String path = new Location(getCurrentFile()).getName();
     for (int i=0; i<getSeriesCount(); i++) {
-      MetadataTools.setDefaultCreationDate(store, currentId, i);
-
       // image data
       if (i < seriesCount) {
         store.setImageName(path + " Primary Image #" + (i + 1), i);
@@ -452,10 +450,6 @@ public class LiFlimReader extends FormatReader {
           store.setPlaneExposureTime(exposureTime, 0, index);
         }
       }
-    }
-
-    if (firstStamp == 0) {
-      MetadataTools.setDefaultCreationDate(store, currentId, 0);
     }
 
     if (getMetadataOptions().getMetadataLevel() == MetadataLevel.NO_OVERLAYS) {

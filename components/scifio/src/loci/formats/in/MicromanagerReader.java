@@ -475,7 +475,6 @@ public class MicromanagerReader extends FormatReader {
       String date = DateTools.formatDate(time, DATE_FORMAT);
       store.setImageAcquiredDate(date, 0);
     }
-    else MetadataTools.setDefaultCreationDate(store, id, 0);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription(comment, 0);

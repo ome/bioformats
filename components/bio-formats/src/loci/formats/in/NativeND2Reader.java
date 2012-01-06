@@ -973,7 +973,6 @@ public class NativeND2Reader extends FormatReader {
       String suffix =
         i < posNames.size() ? posNames.get(i) : "(series " + (i + 1) + ")";
       store.setImageName(filename + " " + suffix, i);
-      MetadataTools.setDefaultCreationDate(store, currentId, i);
     }
 
     colors = new int[getEffectiveSizeC()];

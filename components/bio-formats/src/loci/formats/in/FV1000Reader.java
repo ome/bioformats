@@ -887,7 +887,6 @@ public class FV1000Reader extends FormatReader {
       // populate Image data
       store.setImageName("Series " + (i + 1), i);
       if (creationDate != null) store.setImageAcquiredDate(creationDate, i);
-      else MetadataTools.setDefaultCreationDate(store, id, i);
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {

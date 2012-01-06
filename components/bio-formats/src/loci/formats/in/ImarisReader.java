@@ -197,7 +197,6 @@ public class ImarisReader extends FormatReader {
     // populate Image data
 
     store.setImageName(imageName, 0);
-    MetadataTools.setDefaultCreationDate(store, currentId, 0);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription(description, 0);

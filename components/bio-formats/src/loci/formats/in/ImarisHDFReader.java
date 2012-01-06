@@ -306,7 +306,6 @@ public class ImarisHDFReader extends FormatReader {
     String imageName = new Location(getCurrentFile()).getName();
     for (int s=0; s<getSeriesCount(); s++) {
       store.setImageName(imageName + " Resolution Level " + (s + 1), s);
-      MetadataTools.setDefaultCreationDate(store, id, s);
     }
 
     if (getMetadataOptions().getMetadataLevel() == MetadataLevel.MINIMUM) {

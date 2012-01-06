@@ -229,7 +229,6 @@ public class CellomicsReader extends FormatReader {
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
-    MetadataTools.setDefaultCreationDate(store, id, 0);
 
     store.setPlateID(MetadataTools.createLSID("Plate", 0), 0);
     store.setPlateName(plateName, 0);

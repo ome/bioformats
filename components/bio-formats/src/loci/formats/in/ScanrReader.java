@@ -487,8 +487,6 @@ public class ScanrReader extends FormatReader {
       new PositiveInteger(nFields), 0, 0);
 
     for (int i=0; i<getSeriesCount(); i++) {
-      MetadataTools.setDefaultCreationDate(store, id, i);
-
       int field = i % nFields;
       int well = i / nFields;
       int wellIndex = well;

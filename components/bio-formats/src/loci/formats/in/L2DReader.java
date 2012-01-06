@@ -320,7 +320,6 @@ public class L2DReader extends FormatReader {
         dates[i] = DateTools.formatDate(dates[i], DATE_FORMAT);
         store.setImageAcquiredDate(dates[i], i);
       }
-      else MetadataTools.setDefaultCreationDate(store, id, i);
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {

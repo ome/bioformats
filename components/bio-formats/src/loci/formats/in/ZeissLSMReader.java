@@ -902,7 +902,6 @@ public class ZeissLSMReader extends FormatReader {
     }
     else ras.skipBytes(182);
 
-    MetadataTools.setDefaultCreationDate(store, getCurrentFile(), series);
     if (getSizeC() > 1) {
       if (!splitPlanes) splitPlanes = isRGB();
       core[series].rgb = false;
