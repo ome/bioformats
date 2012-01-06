@@ -521,7 +521,13 @@ public class Exporter {
           IJ.error("Pixel type not supported by this format.");
         }
         else {
-          w.setId(outputFiles[no]);
+          if (outputFiles.length == 1) {
+            // the user didn't tell us to write to multiple files
+            w.setId(outputFiles[0]);
+          }
+          else {
+            w.setId(outputFiles[no]);
+          }
           w.saveBytes(no++, plane);
         }
       }
