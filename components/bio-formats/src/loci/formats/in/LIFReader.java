@@ -50,7 +50,6 @@ import loci.formats.ImageTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 import loci.formats.services.OMEXMLService;
 
 import ome.xml.model.enums.DetectorType;
@@ -58,6 +57,7 @@ import ome.xml.model.enums.LaserMedium;
 import ome.xml.model.enums.LaserType;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PercentFraction;
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 
 import org.xml.sax.SAXException;

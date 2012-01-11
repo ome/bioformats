@@ -49,9 +49,9 @@ import loci.formats.codec.JPEGCodec;
 import loci.formats.codec.ZlibCodec;
 import loci.formats.meta.DummyMetadata;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 import loci.formats.services.POIService;
 
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 
 /**

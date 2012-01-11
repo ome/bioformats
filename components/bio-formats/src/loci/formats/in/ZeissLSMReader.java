@@ -29,9 +29,6 @@ import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Vector;
 
-import ome.xml.model.primitives.NonNegativeInteger;
-import ome.xml.model.primitives.PositiveInteger;
-
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
@@ -46,7 +43,6 @@ import loci.formats.FormatTools;
 import loci.formats.ImageTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 import loci.formats.services.MDBService;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
@@ -54,6 +50,10 @@ import loci.formats.tiff.PhotoInterp;
 import loci.formats.tiff.TiffCompression;
 import loci.formats.tiff.TiffConstants;
 import loci.formats.tiff.TiffParser;
+
+import ome.xml.model.primitives.NonNegativeInteger;
+import ome.xml.model.primitives.PositiveFloat;
+import ome.xml.model.primitives.PositiveInteger;
 
 /**
  * ZeissLSMReader is the file format reader for Zeiss LSM files.

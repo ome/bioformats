@@ -38,8 +38,8 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.MissingLibraryException;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 import loci.formats.services.NetCDFService;
+import ome.xml.model.primitives.PositiveFloat;
 
 /**
  * MINCReader is the file format reader for MINC MRI files.

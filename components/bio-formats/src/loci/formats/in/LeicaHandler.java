@@ -34,7 +34,6 @@ import loci.formats.CoreMetadata;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 
 import ome.xml.model.enums.Correction;
 import ome.xml.model.enums.DetectorType;
@@ -51,6 +50,7 @@ import ome.xml.model.enums.handlers.LaserTypeEnumHandler;
 import ome.xml.model.enums.handlers.MicroscopeTypeEnumHandler;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PercentFraction;
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 
 import org.xml.sax.Attributes;

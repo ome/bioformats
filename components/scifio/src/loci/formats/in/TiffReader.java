@@ -36,10 +36,10 @@ import loci.common.xml.XMLTools;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 import loci.formats.tiff.TiffCompression;
+import ome.xml.model.primitives.PositiveFloat;
 
 /**
  * TiffReader is the file format reader for regular TIFF files,

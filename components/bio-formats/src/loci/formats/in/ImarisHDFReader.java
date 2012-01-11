@@ -39,9 +39,9 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.MissingLibraryException;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 import loci.formats.services.NetCDFService;
 import loci.formats.services.NetCDFServiceImpl;
+import ome.xml.model.primitives.PositiveFloat;
 
 /**
  * Reader for Bitplane Imaris 5.5 (HDF) files.
