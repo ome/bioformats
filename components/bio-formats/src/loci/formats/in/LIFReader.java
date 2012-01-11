@@ -622,8 +622,10 @@ public class LIFReader extends FormatReader {
               store.setChannelLightSourceSettingsID(id, i, nextChannel);
               store.setChannelLightSourceSettingsAttenuation(
                 new PercentFraction((float) intensity / 100f), i, nextChannel);
-              store.setChannelExcitationWavelength(
-                new PositiveInteger(wavelength), i, nextChannel);
+              if (wavelength > 0) {
+                store.setChannelExcitationWavelength(
+                  new PositiveInteger(wavelength), i, nextChannel);
+              }
             }
           }
         }
@@ -977,8 +979,12 @@ public class LIFReader extends FormatReader {
 
             double cutIn = new Double(multiband.getAttribute("LeftWorld"));
             double cutOut = new Double(multiband.getAttribute("RightWorld"));
-            cutIns[image].add(new PositiveInteger((int) Math.round(cutIn)));
-            cutOuts[image].add(new PositiveInteger((int) Math.round(cutOut)));
+            if ((int) cutIn > 0) {
+              cutIns[image].add(new PositiveInteger((int) Math.round(cutIn)));
+            }
+            if ((int) cutOut > 0) {
+              cutOuts[image].add(new PositiveInteger((int) Math.round(cutOut)));
+            }
           }
           else {
             channels.add("");
@@ -1348,12 +1354,12 @@ public class LIFReader extends FormatReader {
         String description = filterSetting.getAttribute("Description");
         if (description.endsWith("(left)")) {
           filterModels[image].add(object);
-          if (v != null) {
+          if (v != null && v > 0) {
             cutIns[image].add(new PositiveInteger(v));
           }
         }
         else if (description.endsWith("(right)")) {
-          if (v != null) {
+          if (v != null && v > 0) {
             cutOuts[image].add(new PositiveInteger(v));
           }
         }
@@ -1697,7 +1703,9 @@ public class LIFReader extends FormatReader {
       if (fontSize != null) {
         try {
           int size = (int) Double.parseDouble(fontSize);
-          store.setTextFontSize(new NonNegativeInteger(size), roi, 0);
+          if (size > 0) {
+            store.setTextFontSize(new NonNegativeInteger(size), roi, 0);
+          }
         }
         catch (NumberFormatException e) { }
       }

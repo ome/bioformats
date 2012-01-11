@@ -642,8 +642,11 @@ public class BioRadReader extends FormatReader {
                 store.setObjectiveModel(value, 0, 0);
               }
               else if (key.equals("INFO_OBJECTIVE_MAGNIFICATION")) {
-                store.setObjectiveNominalMagnification(
-                  new PositiveInteger((int) Float.parseFloat(value)), 0, 0);
+                int mag = (int) Float.parseFloat(value);
+                if (mag > 0) {
+                  store.setObjectiveNominalMagnification(
+                    new PositiveInteger(mag), 0, 0);
+                }
               }
               else if (key.equals("LENS_MAGNIFICATION")) {
                 int magnification = (int) Float.parseFloat(value);
@@ -696,13 +699,15 @@ public class BioRadReader extends FormatReader {
                     if (type == 257 && values.length >= 3) {
                       // found length of axis in um
                       Double pixelSize = new Double(values[2]);
-                      if (key.equals("AXIS_2")) {
-                        store.setPixelsPhysicalSizeX(
-                          new PositiveFloat(pixelSize), 0);
-                      }
-                      else if (key.equals("AXIS_3")) {
-                        store.setPixelsPhysicalSizeY(
-                          new PositiveFloat(pixelSize), 0);
+                      if (pixelSize > 0) {
+                        if (key.equals("AXIS_2")) {
+                          store.setPixelsPhysicalSizeX(
+                            new PositiveFloat(pixelSize), 0);
+                        }
+                        else if (key.equals("AXIS_3")) {
+                          store.setPixelsPhysicalSizeY(
+                            new PositiveFloat(pixelSize), 0);
+                        }
                       }
                     }
                   }
@@ -713,12 +718,16 @@ public class BioRadReader extends FormatReader {
             else if (n.p.startsWith("AXIS_2")) {
               String[] values = n.p.split(" ");
               Double pixelSize = new Double(values[3]);
-              store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSize), 0);
+              if (pixelSize > 0) {
+                store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSize), 0);
+              }
             }
             else if (n.p.startsWith("AXIS_3")) {
               String[] values = n.p.split(" ");
               Double pixelSize = new Double(values[3]);
-              store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSize), 0);
+              if (pixelSize > 0) {
+                store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSize), 0);
+              }
             }
             else {
               addGlobalMeta("Note #" + noteIndex, n.toString());
@@ -736,8 +745,10 @@ public class BioRadReader extends FormatReader {
                   }
 
                   int mag = (int) Float.parseFloat(values[11]);
-                  store.setObjectiveNominalMagnification(
-                    new PositiveInteger(mag), 0, 0);
+                  if (mag > 0) {
+                    store.setObjectiveNominalMagnification(
+                      new PositiveInteger(mag), 0, 0);
+                  }
 
                   Double sizeZ = new Double(values[14]);
                   if (sizeZ > 0) {

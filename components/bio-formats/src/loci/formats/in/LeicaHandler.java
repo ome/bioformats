@@ -422,7 +422,10 @@ public class LeicaHandler extends DefaultHandler {
               break;
           }
           physicalSizeX = physicalSize.doubleValue();
-          store.setPixelsPhysicalSizeX(new PositiveFloat(physicalSize), numDatasets);
+          if (physicalSize > 0) {
+            store.setPixelsPhysicalSizeX(
+              new PositiveFloat(physicalSize), numDatasets);
+          }
           break;
         case 2: // Y axis
           if (coreMeta.sizeY != 0) {
@@ -438,7 +441,10 @@ public class LeicaHandler extends DefaultHandler {
           else {
             coreMeta.sizeY = len;
             physicalSizeY = physicalSize.doubleValue();
-            store.setPixelsPhysicalSizeY(new PositiveFloat(physicalSize), numDatasets);
+            if (physicalSize > 0) {
+              store.setPixelsPhysicalSizeY(
+                new PositiveFloat(physicalSize), numDatasets);
+            }
           }
           break;
         case 3: // Z axis
@@ -447,7 +453,10 @@ public class LeicaHandler extends DefaultHandler {
             coreMeta.sizeY = len;
             coreMeta.sizeZ = 1;
             physicalSizeY = physicalSize.doubleValue();
-            store.setPixelsPhysicalSizeY(new PositiveFloat(physicalSize), numDatasets);
+            if (physicalSize > 0) {
+              store.setPixelsPhysicalSizeY(
+                new PositiveFloat(physicalSize), numDatasets);
+            }
             bytesPerAxis.put(new Integer(nBytes), "Y");
           }
           else {
@@ -461,7 +470,10 @@ public class LeicaHandler extends DefaultHandler {
             coreMeta.sizeY = len;
             coreMeta.sizeT = 1;
             physicalSizeY = physicalSize.doubleValue();
-            store.setPixelsPhysicalSizeY(new PositiveFloat(physicalSize), numDatasets);
+            if (physicalSize > 0) {
+              store.setPixelsPhysicalSizeY(
+                new PositiveFloat(physicalSize), numDatasets);
+            }
             bytesPerAxis.put(new Integer(nBytes), "Y");
           }
           else {
@@ -492,7 +504,9 @@ public class LeicaHandler extends DefaultHandler {
       }
       else if (id.equals("dblStepSize")) {
         double zStep = Double.parseDouble(value) * 1000000;
-        store.setPixelsPhysicalSizeZ(new PositiveFloat(zStep), numDatasets);
+        if (zStep > 0) {
+          store.setPixelsPhysicalSizeZ(new PositiveFloat(zStep), numDatasets);
+        }
       }
       else if (id.equals("nDelayTime_s")) {
         store.setPixelsTimeIncrement(new Double(value), numDatasets);
@@ -585,8 +599,10 @@ public class LeicaHandler extends DefaultHandler {
             int mag = (int) Double.parseDouble(token.substring(0, x));
             String na = token.substring(x + 1);
 
-            store.setObjectiveNominalMagnification(
-              new PositiveInteger(mag), numDatasets, 0);
+            if (mag > 0) {
+              store.setObjectiveNominalMagnification(
+                new PositiveInteger(mag), numDatasets, 0);
+            }
             store.setObjectiveLensNA(new Double(na), numDatasets, 0);
           }
           else {
@@ -670,15 +686,15 @@ public class LeicaHandler extends DefaultHandler {
             MetadataTools.createLSID("Filter", numDatasets, nextFilter);
           store.setFilterID(id, numDatasets, nextFilter);
           store.setFilterModel(object, numDatasets, nextFilter);
-          if (v != null) {
+          if (v != null && v > 0) {
             store.setTransmittanceRangeCutIn(
-                new PositiveInteger(v), numDatasets, nextFilter);
+              new PositiveInteger(v), numDatasets, nextFilter);
           }
         }
         else if (attributes.getValue("Description").endsWith("(right)")) {
-          if (v != null) {
+          if (v != null && v > 0) {
             store.setTransmittanceRangeCutOut(
-                new PositiveInteger(v), numDatasets, nextFilter);
+              new PositiveInteger(v), numDatasets, nextFilter);
             nextFilter++;
           }
         }
@@ -725,10 +741,14 @@ public class LeicaHandler extends DefaultHandler {
           String filter =
             MetadataTools.createLSID("Filter", numDatasets, nextFilter);
           store.setFilterID(filter, numDatasets, nextFilter);
-          store.setTransmittanceRangeCutIn(
+          if (m.cutIn > 0) {
+            store.setTransmittanceRangeCutIn(
               new PositiveInteger(m.cutIn), numDatasets, nextFilter);
-          store.setTransmittanceRangeCutOut(
+          }
+          if (m.cutOut > 0) {
+            store.setTransmittanceRangeCutOut(
               new PositiveInteger(m.cutOut), numDatasets, nextFilter);
+          }
           store.setLightPathEmissionFilterRef(
             filter, numDatasets, nextChannel, 0);
           nextFilter++;
@@ -764,8 +784,10 @@ public class LeicaHandler extends DefaultHandler {
           store.setChannelLightSourceSettingsAttenuation(
             new PercentFraction((float) laser.intensity / 100f),
             numDatasets, nextChannel);
-          store.setChannelExcitationWavelength(
-            new PositiveInteger(laser.wavelength), numDatasets, nextChannel);
+          if (laser.wavelength > 0) {
+            store.setChannelExcitationWavelength(
+              new PositiveInteger(laser.wavelength), numDatasets, nextChannel);
+          }
         }
 
         nextChannel++;

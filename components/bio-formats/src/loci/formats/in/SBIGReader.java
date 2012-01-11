@@ -191,8 +191,12 @@ public class SBIGReader extends FormatReader {
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      store.setPixelsPhysicalSizeX(new PositiveFloat(sizeX), 0);
-      store.setPixelsPhysicalSizeY(new PositiveFloat(sizeY), 0);
+      if (sizeX > 0) {
+        store.setPixelsPhysicalSizeX(new PositiveFloat(sizeX), 0);
+      }
+      if (sizeY > 0) {
+        store.setPixelsPhysicalSizeY(new PositiveFloat(sizeY), 0);
+      }
       store.setImageDescription(description, 0);
     }
   }

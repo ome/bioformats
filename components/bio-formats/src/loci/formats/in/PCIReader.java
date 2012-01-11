@@ -350,8 +350,10 @@ public class PCIReader extends FormatReader {
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      store.setPixelsPhysicalSizeX(new PositiveFloat(scaleFactor), 0);
-      store.setPixelsPhysicalSizeY(new PositiveFloat(scaleFactor), 0);
+      if (scaleFactor > 0) {
+        store.setPixelsPhysicalSizeX(new PositiveFloat(scaleFactor), 0);
+        store.setPixelsPhysicalSizeY(new PositiveFloat(scaleFactor), 0);
+      }
 
       for (int i=0; i<timestamps.size(); i++) {
         Double timestamp = new Double(timestamps.get(i).doubleValue());

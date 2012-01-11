@@ -113,8 +113,12 @@ public class SeikoReader extends FormatReader {
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription(comment, 0);
-      store.setPixelsPhysicalSizeX(new PositiveFloat(xSize), 0);
-      store.setPixelsPhysicalSizeY(new PositiveFloat(ySize), 0);
+      if (xSize > 0) {
+        store.setPixelsPhysicalSizeX(new PositiveFloat(xSize), 0);
+      }
+      if (ySize > 0) {
+        store.setPixelsPhysicalSizeY(new PositiveFloat(ySize), 0);
+      }
     }
   }
 

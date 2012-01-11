@@ -988,8 +988,11 @@ public class MIASReader extends FormatReader {
           store.setObjectiveModel(value, 0, 0);
         }
         else if (key.equals("Magnification")) {
-          store.setObjectiveNominalMagnification(
-              new PositiveInteger((int) Double.parseDouble(value)), 0, 0);
+          int mag = (int) Double.parseDouble(value);
+          if (mag > 0) {
+            store.setObjectiveNominalMagnification(
+              new PositiveInteger(mag), 0, 0);
+          }
         }
         else if (key.startsWith("Mode_")) {
           channelNames.add(value);
@@ -1007,10 +1010,10 @@ public class MIASReader extends FormatReader {
     }
 
     for (int well=0; well<tiffs.length; well++) {
-      if (physicalSizeX != null) {
+      if (physicalSizeX != null && physicalSizeX > 0) {
         store.setPixelsPhysicalSizeX(new PositiveFloat(physicalSizeX), well);
       }
-      if (physicalSizeY != null) {
+      if (physicalSizeY != null && physicalSizeY > 0) {
         store.setPixelsPhysicalSizeY(new PositiveFloat(physicalSizeY), well);
       }
       for (int c=0; c<channelNames.size(); c++) {

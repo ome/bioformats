@@ -643,9 +643,18 @@ public class DeltavisionReader extends FormatReader {
         }
       }
 
-      store.setPixelsPhysicalSizeX(new PositiveFloat(new Double(pixX)), series);
-      store.setPixelsPhysicalSizeY(new PositiveFloat(new Double(pixY)), series);
-      store.setPixelsPhysicalSizeZ(new PositiveFloat(new Double(pixZ)), series);
+      if (pixX > 0) {
+        Double x = new Double(pixX);
+        store.setPixelsPhysicalSizeX(new PositiveFloat(x), series);
+      }
+      if (pixY > 0) {
+        Double y = new Double(pixY);
+        store.setPixelsPhysicalSizeY(new PositiveFloat(y), series);
+      }
+      if (pixZ > 0) {
+        Double z = new Double(pixZ);
+        store.setPixelsPhysicalSizeZ(new PositiveFloat(z), series);
+      }
 
       store.setImageDescription(imageDesc, series);
     }
@@ -878,8 +887,11 @@ public class DeltavisionReader extends FormatReader {
             }
 
             try {
-              store.setObjectiveNominalMagnification(
-                PositiveInteger.valueOf(magnification), 0, 0);
+              Integer mag = new Integer(magnification);
+              if (mag > 0) {
+                store.setObjectiveNominalMagnification(
+                  new PositiveInteger(mag), 0, 0);
+              }
             }
             catch (NumberFormatException e) {
               LOGGER.warn("Could not parse magnification '{}'", magnification);
@@ -921,6 +933,9 @@ public class DeltavisionReader extends FormatReader {
             catch (NumberFormatException e) {
               LOGGER.warn("Could not parse pixel size '{}'",
                 pixelSizes[q].trim());
+            }
+            if (size == null || size <= 0) {
+              continue;
             }
             if (q == 0) {
               for (int series=0; series<getSeriesCount(); series++) {

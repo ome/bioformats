@@ -196,11 +196,11 @@ public class NikonElementsTiffReader extends BaseTiffReader {
         store.setChannelAcquisitionMode(
           getAcquisitionMode(modality.get(c)), 0, c);
       }
-      if (c < emWave.size()) {
+      if (c < emWave.size() && emWave.get(c) > 0) {
         store.setChannelEmissionWavelength(
           new PositiveInteger(emWave.get(c)), 0, c);
       }
-      if (c < exWave.size()) {
+      if (c < exWave.size() && exWave.get(c) > 0) {
         store.setChannelExcitationWavelength(
           new PositiveInteger(exWave.get(c)), 0, c);
       }

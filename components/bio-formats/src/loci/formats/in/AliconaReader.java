@@ -265,8 +265,12 @@ public class AliconaReader extends FormatReader {
         double pixelSizeX = Double.parseDouble(pntX) * 1000000;
         double pixelSizeY = Double.parseDouble(pntY) * 1000000;
 
-        store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSizeX), 0);
-        store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSizeY), 0);
+        if (pixelSizeX > 0) {
+          store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSizeX), 0);
+        }
+        if (pixelSizeY > 0) {
+          store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSizeY), 0);
+        }
       }
     }
   }

@@ -883,8 +883,10 @@ public class ZeissZVIReader extends FormatReader {
               int mag = (int)
                 Double.parseDouble(tokens[q].substring(0, slash - q));
               String na = tokens[q].substring(slash + 1);
-              store.setObjectiveNominalMagnification(
+              if (mag > 0) {
+                store.setObjectiveNominalMagnification(
                   new PositiveInteger(mag), 0, 0);
+              }
               store.setObjectiveLensNA(new Double(na), 0, 0);
               store.setObjectiveCorrection(getCorrection(tokens[q - 1]), 0, 0);
               break;

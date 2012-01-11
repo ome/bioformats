@@ -189,7 +189,7 @@ public class IPLabReader extends FormatReader {
       in.skipBytes(dataSize);
       parseTags(store);
 
-      if (pixelSize != null) {
+      if (pixelSize != null && pixelSize > 0) {
         store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSize), 0);
         store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSize), 0);
       }

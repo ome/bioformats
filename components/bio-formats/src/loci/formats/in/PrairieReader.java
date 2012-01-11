@@ -329,8 +329,12 @@ public class PrairieReader extends FormatReader {
           store.setInstrumentID(instrumentID, 0);
           store.setImageInstrumentRef(instrumentID, 0);
 
-          store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSizeX), 0);
-          store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSizeY), 0);
+          if (pixelSizeX > 0) {
+            store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSizeX), 0);
+          }
+          if (pixelSizeY > 0) {
+            store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSizeY), 0);
+          }
           for (int i=0; i<getSizeC(); i++) {
             String gain = i < gains.size() ? gains.get(i) : null;
             String offset = i < offsets.size() ? offsets.get(i) : null;
@@ -528,7 +532,10 @@ public class PrairieReader extends FormatReader {
           if (tokens.length > 1) {
             String mag = tokens[1].toLowerCase().replaceAll("x", "");
             try {
-              magnification = new PositiveInteger(new Integer(mag));
+              Integer m = new Integer(mag);
+              if (m > 0) {
+                magnification = new PositiveInteger(m);
+              }
             }
             catch (NumberFormatException e) { }
           }

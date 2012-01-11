@@ -266,9 +266,9 @@ public class IvisionReader extends FormatReader {
       store.setObjectiveImmersion(getImmersion("Other"), 0, 0);
 
       if (lensNA != null) store.setObjectiveLensNA(lensNA, 0, 0);
-      if (magnification != null) {
+      if (magnification != null && magnification > 0) {
         store.setObjectiveNominalMagnification(
-            new PositiveInteger(magnification), 0, 0);
+          new PositiveInteger(magnification), 0, 0);
       }
       if (refractiveIndex != null) {
         store.setImageObjectiveSettingsRefractiveIndex(refractiveIndex, 0);

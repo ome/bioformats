@@ -629,7 +629,7 @@ public class VolocityReader extends FormatReader {
 
       String objective = MetadataTools.createLSID("Objective", 0, i);
       store.setObjectiveID(objective, 0, i);
-      if (magnification[i] != null) {
+      if (magnification[i] != null && magnification[i] > 0) {
         store.setObjectiveNominalMagnification(
           new PositiveInteger(magnification[i].intValue()), 0, i);
       }

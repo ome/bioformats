@@ -42,9 +42,8 @@ import loci.formats.codec.CodecOptions;
 import loci.formats.codec.JPEG2000Codec;
 import loci.formats.codec.ZlibCodec;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 
-import ome.xml.model.primitives.NonNegativeInteger;
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 
 /**
@@ -1121,11 +1120,11 @@ public class NativeND2Reader extends FormatReader {
           store.setChannelAcquisitionMode(
             getAcquisitionMode(modality.get(index)), i, c);
         }
-        if (index < emWave.size()) {
+        if (index < emWave.size() && emWave.get(index) > 0) {
           store.setChannelEmissionWavelength(
             new PositiveInteger(emWave.get(index)), i, c);
         }
-        if (index < exWave.size()) {
+        if (index < exWave.size() && exWave.get(index) > 0) {
           store.setChannelExcitationWavelength(
             new PositiveInteger(exWave.get(index)), i, c);
         }

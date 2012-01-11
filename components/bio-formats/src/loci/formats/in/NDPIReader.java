@@ -322,7 +322,6 @@ public class NDPIReader extends BaseTiffReader {
         if (yResolution > 0) {
           store.setPixelsPhysicalSizeY(new PositiveFloat(yResolution), i);
         }
-        store.setPixelsPhysicalSizeZ(null, i);
       }
     }
   }

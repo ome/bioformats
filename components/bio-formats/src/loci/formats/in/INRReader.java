@@ -161,13 +161,13 @@ public class INRReader extends FormatReader {
     MetadataTools.populatePixels(store, this);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      if (physicalSizeX != null) {
+      if (physicalSizeX != null && physicalSizeX > 0) {
         store.setPixelsPhysicalSizeX(new PositiveFloat(physicalSizeX), 0);
       }
-      if (physicalSizeY != null) {
+      if (physicalSizeY != null && physicalSizeY > 0) {
         store.setPixelsPhysicalSizeY(new PositiveFloat(physicalSizeY), 0);
       }
-      if (physicalSizeZ != null) {
+      if (physicalSizeZ != null && physicalSizeZ > 0) {
         store.setPixelsPhysicalSizeZ(new PositiveFloat(physicalSizeZ), 0);
       }
     }

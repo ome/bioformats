@@ -212,14 +212,22 @@ public class HamamatsuVMSReader extends FormatReader {
     store.setImageName(path + " map", 2);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      store.setPixelsPhysicalSizeX(
-        new PositiveFloat(physicalWidth / core[0].sizeX), 0);
-      store.setPixelsPhysicalSizeY(
-        new PositiveFloat(physicalHeight / core[0].sizeY), 0);
-      store.setPixelsPhysicalSizeX(
-        new PositiveFloat(macroWidth / core[1].sizeX), 1);
-      store.setPixelsPhysicalSizeY(
-        new PositiveFloat(macroHeight / core[1].sizeY), 1);
+      if (physicalWidth > 0) {
+        store.setPixelsPhysicalSizeX(
+          new PositiveFloat(physicalWidth / core[0].sizeX), 0);
+      }
+      if (physicalHeight > 0) {
+        store.setPixelsPhysicalSizeY(
+          new PositiveFloat(physicalHeight / core[0].sizeY), 0);
+      }
+      if (macroWidth > 0) {
+        store.setPixelsPhysicalSizeX(
+          new PositiveFloat(macroWidth / core[1].sizeX), 1);
+      }
+      if (macroHeight > 0) {
+        store.setPixelsPhysicalSizeY(
+          new PositiveFloat(macroHeight / core[1].sizeY), 1);
+      }
 
       String instrumentID = MetadataTools.createLSID("Instrument", 0);
       store.setInstrumentID(instrumentID, 0);
@@ -227,8 +235,10 @@ public class HamamatsuVMSReader extends FormatReader {
 
       String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
       store.setObjectiveID(objectiveID, 0, 0);
-      store.setObjectiveNominalMagnification(
-        new PositiveInteger(magnification.intValue()), 0, 0);
+      if (magnification > 0) {
+        store.setObjectiveNominalMagnification(
+          new PositiveInteger(magnification.intValue()), 0, 0);
+      }
       store.setImageObjectiveSettingsID(objectiveID, 0);
     }
   }

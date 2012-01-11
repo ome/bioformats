@@ -211,9 +211,16 @@ public class GatanReader extends FormatReader {
         Double x = pixelSizes.get(index);
         Double y = pixelSizes.get(index + 1);
         Double z = pixelSizes.get(index + 2);
-        store.setPixelsPhysicalSizeX(new PositiveFloat(x), 0);
-        store.setPixelsPhysicalSizeY(new PositiveFloat(y), 0);
-        store.setPixelsPhysicalSizeZ(new PositiveFloat(z), 0);
+
+        if (x > 0) {
+          store.setPixelsPhysicalSizeX(new PositiveFloat(x), 0);
+        }
+        if (y > 0) {
+          store.setPixelsPhysicalSizeY(new PositiveFloat(y), 0);
+        }
+        if (z > 0) {
+          store.setPixelsPhysicalSizeZ(new PositiveFloat(z), 0);
+        }
       }
 
       if (info == null) info = "";

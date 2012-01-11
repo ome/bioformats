@@ -1519,8 +1519,10 @@ public class ICSReader extends FormatReader {
       Arrays.sort(lasers);
       for (int i=0; i<lasers.length; i++) {
         store.setLaserID(MetadataTools.createLSID("LightSource", 0, i), 0, i);
-        store.setLaserWavelength(
-          new PositiveInteger(wavelengths.get(lasers[i])), 0, i);
+        if (wavelengths.get(lasers[i]) > 0) {
+          store.setLaserWavelength(
+            new PositiveInteger(wavelengths.get(lasers[i])), 0, i);
+        }
         store.setLaserType(getLaserType("Other"), 0, i);
         store.setLaserLaserMedium(getLaserMedium("Other"), 0, i);
 

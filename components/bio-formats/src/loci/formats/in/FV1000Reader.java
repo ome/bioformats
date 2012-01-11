@@ -988,10 +988,16 @@ public class FV1000Reader extends FormatReader {
             emValues[i] = emValues[i].replaceAll("\\D", "");
           }
           try {
-            store.setTransmittanceRangeCutIn(
-              PositiveInteger.valueOf(emValues[0]), 0, channelIndex);
-            store.setTransmittanceRangeCutOut(
-              PositiveInteger.valueOf(emValues[1]), 0, channelIndex);
+            Integer cutIn = new Integer(emValues[0]);
+            Integer cutOut = new Integer(emValues[1]);
+            if (cutIn > 0) {
+              store.setTransmittanceRangeCutIn(
+                new PositiveInteger(cutIn), 0, channelIndex);
+            }
+            if (cutOut > 0) {
+              store.setTransmittanceRangeCutOut(
+                new PositiveInteger(cutOut), 0, channelIndex);
+            }
           }
           catch (NumberFormatException e) { }
         }
@@ -1017,7 +1023,9 @@ public class FV1000Reader extends FormatReader {
       store.setLaserID(lightSourceID, 0, channelIndex);
       store.setLaserLaserMedium(getLaserMedium(channel.dyeName),
         0, channelIndex);
-      if (channelIndex < wavelengths.size()) {
+      if (channelIndex < wavelengths.size() &&
+        wavelengths.get(channelIndex) > 0)
+      {
         store.setLaserWavelength(
           new PositiveInteger(wavelengths.get(channelIndex)), 0, channelIndex);
       }
@@ -1141,8 +1149,10 @@ public class FV1000Reader extends FormatReader {
             store.setPointID(shapeID, nextROI, shape);
             store.setPointTheZ(new NonNegativeInteger(zIndex), nextROI, shape);
             store.setPointTheT(new NonNegativeInteger(tIndex), nextROI, shape);
-            store.setPointFontSize(
-              new NonNegativeInteger(fontSize), nextROI, shape);
+            if (fontSize > 0) {
+              store.setPointFontSize(
+                new NonNegativeInteger(fontSize), nextROI, shape);
+            }
             store.setPointStrokeWidth(new Double(lineWidth), nextROI, shape);
 
             store.setPointX(new Double(xc[0]), nextROI, shape);
@@ -1168,8 +1178,10 @@ public class FV1000Reader extends FormatReader {
                   new NonNegativeInteger(zIndex), nextROI, shape);
                 store.setRectangleTheT(
                   new NonNegativeInteger(tIndex), nextROI, shape);
-                store.setRectangleFontSize(
-                  new NonNegativeInteger(fontSize), nextROI, shape);
+                if (fontSize > 0) {
+                  store.setRectangleFontSize(
+                    new NonNegativeInteger(fontSize), nextROI, shape);
+                }
                 store.setRectangleStrokeWidth(
                   new Double(lineWidth), nextROI, shape);
 
@@ -1192,8 +1204,10 @@ public class FV1000Reader extends FormatReader {
 
             store.setLineTheZ(new NonNegativeInteger(zIndex), nextROI, shape);
             store.setLineTheT(new NonNegativeInteger(tIndex), nextROI, shape);
-            store.setLineFontSize(
-              new NonNegativeInteger(fontSize), nextROI, shape);
+            if (fontSize > 0) {
+              store.setLineFontSize(
+                new NonNegativeInteger(fontSize), nextROI, shape);
+            }
             store.setLineStrokeWidth(new Double(lineWidth), nextROI, shape);
 
             int centerX = x + (width / 2);
@@ -1215,8 +1229,10 @@ public class FV1000Reader extends FormatReader {
                 new NonNegativeInteger(zIndex), nextROI, shape);
             store.setEllipseTheT(
                 new NonNegativeInteger(tIndex), nextROI, shape);
-            store.setEllipseFontSize(
+            if (fontSize > 0) {
+              store.setEllipseFontSize(
                 new NonNegativeInteger(fontSize), nextROI, shape);
+            }
             store.setEllipseStrokeWidth(new Double(lineWidth), nextROI, shape);
             store.setEllipseTransform(String.format(ROTATION,
               angle, x + rx, y + ry), nextROI, shape);
@@ -1240,8 +1256,10 @@ public class FV1000Reader extends FormatReader {
                 new NonNegativeInteger(zIndex), nextROI, shape);
             store.setPolylineTheT(
                 new NonNegativeInteger(tIndex), nextROI, shape);
-            store.setPolylineFontSize(
+            if (fontSize > 0) {
+              store.setPolylineFontSize(
                 new NonNegativeInteger(fontSize), nextROI, shape);
+            }
             store.setPolylineStrokeWidth(new Double(lineWidth), nextROI, shape);
           }
           else {

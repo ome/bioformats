@@ -163,10 +163,14 @@ public class ImarisTiffReader extends BaseTiffReader {
 
       // populate LogicalChannel data
       for (int i=0; i<emWave.size(); i++) {
-        store.setChannelEmissionWavelength(
-          new PositiveInteger(emWave.get(i)), 0, i);
-        store.setChannelExcitationWavelength(
-          new PositiveInteger(exWave.get(i)), 0, i);
+        if (emWave.get(i) > 0) {
+          store.setChannelEmissionWavelength(
+            new PositiveInteger(emWave.get(i)), 0, i);
+        }
+        if (exWave.get(i) > 0) {
+          store.setChannelExcitationWavelength(
+            new PositiveInteger(exWave.get(i)), 0, i);
+        }
         store.setChannelName(channelNames.get(i), 0, i);
       }
     }

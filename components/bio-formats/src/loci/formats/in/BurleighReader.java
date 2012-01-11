@@ -176,9 +176,15 @@ public class BurleighReader extends FormatReader {
     MetadataTools.populatePixels(store, this);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      store.setPixelsPhysicalSizeX(new PositiveFloat(xSize / getSizeX()), 0);
-      store.setPixelsPhysicalSizeY(new PositiveFloat(ySize / getSizeY()), 0);
-      store.setPixelsPhysicalSizeZ(new PositiveFloat(zSize / getSizeZ()), 0);
+      if (xSize > 0) {
+        store.setPixelsPhysicalSizeX(new PositiveFloat(xSize / getSizeX()), 0);
+      }
+      if (ySize > 0) {
+        store.setPixelsPhysicalSizeY(new PositiveFloat(ySize / getSizeY()), 0);
+      }
+      if (zSize > 0) {
+        store.setPixelsPhysicalSizeZ(new PositiveFloat(zSize / getSizeZ()), 0);
+      }
     }
   }
 

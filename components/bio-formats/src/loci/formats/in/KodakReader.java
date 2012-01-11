@@ -182,15 +182,19 @@ public class KodakReader extends FormatReader {
         // resolution stored in pixels per inch
         value = value.substring(0, value.indexOf(" "));
         Double size = new Double(value);
-        size = 1.0 / (size * (1.0 / 25400));
-        store.setPixelsPhysicalSizeY(new PositiveFloat(size), 0);
+        if (size > 0) {
+          size = 1.0 / (size * (1.0 / 25400));
+          store.setPixelsPhysicalSizeY(new PositiveFloat(size), 0);
+        }
       }
       else if (key.equals("Horizontal Resolution")) {
         // resolution stored in pixels per inch
         value = value.substring(0, value.indexOf(" "));
         Double size = new Double(value);
-        size = 1.0 / (size * (1.0 / 25400));
-        store.setPixelsPhysicalSizeX(new PositiveFloat(size), 0);
+        if (size > 0) {
+          size = 1.0 / (size * (1.0 / 25400));
+          store.setPixelsPhysicalSizeX(new PositiveFloat(size), 0);
+        }
       }
       else if (key.equals("CCD Temperature")) {
         Double temp = new Double(value.substring(0, value.indexOf(" ")));

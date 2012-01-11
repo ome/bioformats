@@ -362,7 +362,9 @@ public class TiffReader extends BaseTiffReader {
     if (physicalSizeZ != null) {
       double zDepth = physicalSizeZ.doubleValue();
       if (zDepth < 0) zDepth = -zDepth;
-      store.setPixelsPhysicalSizeZ(new PositiveFloat(zDepth), 0);
+      if (zDepth > 0) {
+        store.setPixelsPhysicalSizeZ(new PositiveFloat(zDepth), 0);
+      }
     }
     if (timeIncrement != null) {
       store.setPixelsTimeIncrement(timeIncrement, 0);

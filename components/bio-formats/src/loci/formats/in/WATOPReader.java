@@ -150,10 +150,14 @@ public class WATOPReader extends FormatReader {
 
     if (level != MetadataLevel.MINIMUM) {
       store.setImageDescription(comment, 0);
-      store.setPixelsPhysicalSizeX(
-        new PositiveFloat((double) xSize / getSizeX()), 0);
-      store.setPixelsPhysicalSizeY(
-        new PositiveFloat((double) ySize / getSizeY()), 0);
+      if (xSize > 0) {
+        store.setPixelsPhysicalSizeX(
+          new PositiveFloat((double) xSize / getSizeX()), 0);
+      }
+      if (ySize > 0) {
+        store.setPixelsPhysicalSizeY(
+          new PositiveFloat((double) ySize / getSizeY()), 0);
+      }
     }
   }
 

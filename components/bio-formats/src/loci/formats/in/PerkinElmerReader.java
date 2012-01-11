@@ -577,8 +577,12 @@ public class PerkinElmerReader extends FormatReader {
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       // populate Dimensions element
-      store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSizeX), 0);
-      store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSizeY), 0);
+      if (pixelSizeX > 0) {
+        store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSizeX), 0);
+      }
+      if (pixelSizeY > 0) {
+        store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSizeY), 0);
+      }
 
       // link Instrument and Image
       String instrumentID = MetadataTools.createLSID("Instrument", 0);
@@ -587,11 +591,11 @@ public class PerkinElmerReader extends FormatReader {
 
       // populate LogicalChannel element
       for (int i=0; i<getEffectiveSizeC(); i++) {
-        if (i < emWaves.size()) {
+        if (i < emWaves.size() && emWaves.get(i) > 0) {
           store.setChannelEmissionWavelength(
             new PositiveInteger(emWaves.get(i)), 0, i);
         }
-        if (i < exWaves.size()) {
+        if (i < exWaves.size() && exWaves.get(i) > 0) {
           store.setChannelExcitationWavelength(
             new PositiveInteger(exWaves.get(i)), 0, i);
         }

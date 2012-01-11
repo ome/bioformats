@@ -1330,8 +1330,12 @@ public class LeicaReader extends FormatReader {
             getCorrection(correction), series, objective);
           store.setObjectiveModel(model.toString().trim(), series, objective);
           store.setObjectiveLensNA(new Double(na), series, objective);
-          store.setObjectiveNominalMagnification(new PositiveInteger((int)
-            Double.parseDouble(mag)), series, objective);
+
+          int magnification = (int) Double.parseDouble(mag);
+          if (magnification > 0) {
+            store.setObjectiveNominalMagnification(
+              new PositiveInteger(magnification), series, objective);
+          }
         }
         else if (tokens[2].equals("OrderNumber")) {
           store.setObjectiveSerialNumber(data, series, objective);
@@ -1367,15 +1371,18 @@ public class LeicaReader extends FormatReader {
               filterRefPopulated[series][index] = true;
             }
 
-            if (tokens[3].equals("0") && !cutInPopulated[series][index]) {
-              store.setTransmittanceRangeCutIn(
+            if (wavelength > 0) {
+              if (tokens[3].equals("0") && !cutInPopulated[series][index]) {
+                store.setTransmittanceRangeCutIn(
                   new PositiveInteger(wavelength), series, channel);
-              cutInPopulated[series][index] = true;
-            }
-            else if (tokens[3].equals("1") && !cutOutPopulated[series][index]) {
-              store.setTransmittanceRangeCutOut(
+                cutInPopulated[series][index] = true;
+              }
+              else if (tokens[3].equals("1") && !cutOutPopulated[series][index])
+              {
+                store.setTransmittanceRangeCutOut(
                   new PositiveInteger(wavelength), series, channel);
-              cutOutPopulated[series][index] = true;
+                cutOutPopulated[series][index] = true;
+              }
             }
           }
         }
@@ -1465,13 +1472,17 @@ public class LeicaReader extends FormatReader {
         }
         if (channel < emWaves[i].size()) {
           Integer wave = new Integer(emWaves[i].get(channel).toString());
-          store.setChannelEmissionWavelength(
-            new PositiveInteger(wave), i, channel);
+          if (wave > 0) {
+            store.setChannelEmissionWavelength(
+              new PositiveInteger(wave), i, channel);
+          }
         }
         if (channel < exWaves[i].size()) {
           Integer wave = new Integer(exWaves[i].get(channel).toString());
-          store.setChannelExcitationWavelength(
-            new PositiveInteger(wave), i, channel);
+          if (wave > 0) {
+            store.setChannelExcitationWavelength(
+              new PositiveInteger(wave), i, channel);
+          }
         }
         if (i < pinhole.length) {
           store.setChannelPinholeSize(new Double(pinhole[i]), i, channel);

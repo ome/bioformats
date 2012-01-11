@@ -415,9 +415,15 @@ public class FluoviewReader extends BaseTiffReader {
 
     // populate Dimensions
     for (int i=0; i<getSeriesCount(); i++) {
-      store.setPixelsPhysicalSizeX(new PositiveFloat(voxelX), i);
-      store.setPixelsPhysicalSizeY(new PositiveFloat(voxelY), i);
-      store.setPixelsPhysicalSizeZ(new PositiveFloat(voxelZ), i);
+      if (voxelX > 0) {
+        store.setPixelsPhysicalSizeX(new PositiveFloat(voxelX), i);
+      }
+      if (voxelY > 0) {
+        store.setPixelsPhysicalSizeY(new PositiveFloat(voxelY), i);
+      }
+      if (voxelZ > 0) {
+        store.setPixelsPhysicalSizeZ(new PositiveFloat(voxelZ), i);
+      }
       store.setPixelsTimeIncrement(voxelT, i);
 
       int montage = getMontage(i);

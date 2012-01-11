@@ -877,8 +877,15 @@ public class ZeissCZIReader extends FormatReader {
             getImmersion(getFirstNodeValue(objective, "Immersion")), 0, i);
           store.setObjectiveLensNA(
             new Double(getFirstNodeValue(objective, "LensNA")), 0, i);
-          store.setObjectiveNominalMagnification(PositiveInteger.valueOf(
-            getFirstNodeValue(objective, "NominalMagnification")), 0, i);
+
+          String magnification =
+            getFirstNodeValue(objective, "NominalMagnification");
+          Integer mag = new Integer(magnification);
+
+          if (mag > 0) {
+            store.setObjectiveNominalMagnification(
+              new PositiveInteger(mag), 0, i);
+          }
           String calibratedMag =
             getFirstNodeValue(objective, "CalibratedMagnification");
           if (calibratedMag != null) {
@@ -959,14 +966,31 @@ public class ZeissCZIReader extends FormatReader {
             getFirstNodeValue(filter, "FilterWheel"), 0, i);
 
           Element transmittance = getFirstNode(filter, "TransmittanceRange");
-          store.setTransmittanceRangeCutIn(PositiveInteger.valueOf(
-            getFirstNodeValue(transmittance, "CutIn")), 0, i);
-          store.setTransmittanceRangeCutOut(PositiveInteger.valueOf(
-            getFirstNodeValue(transmittance, "CutOut")), 0, i);
-          store.setTransmittanceRangeCutInTolerance(NonNegativeInteger.valueOf(
-            getFirstNodeValue(transmittance, "CutInTolerance")), 0, i);
-          store.setTransmittanceRangeCutOutTolerance(NonNegativeInteger.valueOf(
-            getFirstNodeValue(transmittance, "CutOutTolerance")), 0, i);
+
+          String cutIn = getFirstNodeValue(transmittance, "CutIn");
+          String cutOut = getFirstNodeValue(transmittance, "CutOut");
+          Integer inWave = new Integer(cutIn);
+          Integer outWave = new Integer(cutOut);
+
+          if (inWave > 0) {
+            store.setTransmittanceRangeCutIn(new PositiveInteger(inWave), 0, i);
+          }
+          if (outWave > 0) {
+            store.setTransmittanceRangeCutOut(
+              new PositiveInteger(outWave), 0, i);
+          }
+
+          String inTolerance =
+            getFirstNodeValue(transmittance, "CutInTolerance");
+          String outTolerance =
+            getFirstNodeValue(transmittance, "CutOutTolerance");
+          Integer cutInTolerance = new Integer(inTolerance);
+          Integer cutOutTolerance = new Integer(outTolerance);
+
+          store.setTransmittanceRangeCutInTolerance(
+            new NonNegativeInteger(cutInTolerance), 0, i);
+          store.setTransmittanceRangeCutOutTolerance(
+            new NonNegativeInteger(cutOutTolerance), 0, i);
           store.setTransmittanceRangeTransmittance(PercentFraction.valueOf(
             getFirstNodeValue(transmittance, "Transmittance")), 0, i);
         }

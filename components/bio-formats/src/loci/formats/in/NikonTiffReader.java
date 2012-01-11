@@ -249,7 +249,10 @@ public class NikonTiffReader extends BaseTiffReader {
         String laser = MetadataTools.createLSID("LightSource", 0, i);
         store.setLaserID(laser, 0, i);
         store.setLaserModel(laserIDs.get(i), 0, i);
-        store.setLaserWavelength(new PositiveInteger(wavelength.get(i)), 0, i);
+        if (wavelength.get(i) > 0) {
+          store.setLaserWavelength(
+            new PositiveInteger(wavelength.get(i)), 0, i);
+        }
         store.setLaserType(getLaserType("Other"), 0, i);
         store.setLaserLaserMedium(getLaserMedium("Other"), 0, i);
       }
@@ -262,11 +265,11 @@ public class NikonTiffReader extends BaseTiffReader {
 
       for (int c=0; c<getEffectiveSizeC(); c++) {
         store.setChannelPinholeSize(pinholeSize, 0, c);
-        if (c < exWave.size()) {
+        if (c < exWave.size() && exWave.get(c) > 0) {
           store.setChannelExcitationWavelength(
             new PositiveInteger(exWave.get(c)), 0, c);
         }
-        if (c < emWave.size()) {
+        if (c < emWave.size() && emWave.get(c) > 0) {
           store.setChannelEmissionWavelength(
             new PositiveInteger(emWave.get(c)), 0, c);
         }

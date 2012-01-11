@@ -396,8 +396,12 @@ public class APLReader extends FormatReader {
         }
         // TODO : add cases for other units
 
-        store.setPixelsPhysicalSizeX(new PositiveFloat(px), i);
-        store.setPixelsPhysicalSizeY(new PositiveFloat(py), i);
+        if (px > 0) {
+          store.setPixelsPhysicalSizeX(new PositiveFloat(px), i);
+        }
+        if (py > 0) {
+          store.setPixelsPhysicalSizeY(new PositiveFloat(py), i);
+        }
       }
     }
   }

@@ -252,8 +252,12 @@ public class FEITiffReader extends BaseTiffReader {
       store.setStageLabelY(stageY, 0);
       store.setStageLabelZ(stageZ, 0);
       store.setStageLabelName("", 0);
-      store.setPixelsPhysicalSizeX(new PositiveFloat(sizeX), 0);
-      store.setPixelsPhysicalSizeY(new PositiveFloat(sizeY), 0);
+      if (sizeX > 0) {
+        store.setPixelsPhysicalSizeX(new PositiveFloat(sizeX), 0);
+      }
+      if (sizeY > 0) {
+        store.setPixelsPhysicalSizeY(new PositiveFloat(sizeY), 0);
+      }
       store.setPixelsTimeIncrement(timeIncrement, 0);
     }
   }

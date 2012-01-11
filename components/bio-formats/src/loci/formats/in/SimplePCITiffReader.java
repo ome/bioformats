@@ -205,16 +205,20 @@ public class SimplePCITiffReader extends BaseTiffReader {
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription(MAGIC_STRING, 0);
-      store.setPixelsPhysicalSizeX(new PositiveFloat(scaling), 0);
-      store.setPixelsPhysicalSizeY(new PositiveFloat(scaling), 0);
+      if (scaling > 0) {
+        store.setPixelsPhysicalSizeX(new PositiveFloat(scaling), 0);
+        store.setPixelsPhysicalSizeY(new PositiveFloat(scaling), 0);
+      }
 
       String instrument = MetadataTools.createLSID("Instrument", 0);
       store.setInstrumentID(instrument, 0);
       store.setImageInstrumentRef(instrument, 0);
 
       store.setObjectiveID(MetadataTools.createLSID("Objective", 0, 0), 0, 0);
-      store.setObjectiveNominalMagnification(
-        new PositiveInteger(magnification), 0, 0);
+      if (magnification > 0) {
+        store.setObjectiveNominalMagnification(
+          new PositiveInteger(magnification), 0, 0);
+      }
       store.setObjectiveImmersion(getImmersion(immersion), 0, 0);
 
       String detector = MetadataTools.createLSID("Detector", 0, 0);
