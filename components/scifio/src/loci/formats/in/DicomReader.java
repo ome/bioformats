@@ -994,6 +994,15 @@ public class DicomReader extends FormatReader {
     if (elementLength == 0 && (groupWord == 0x7fe0 || tag == 0x291014)) {
       elementLength = getLength(stream, tag);
     }
+    else if (elementLength == 0) {
+      stream.seek(stream.getFilePointer() - 4);
+      String v = stream.readString(2);
+      if (v.equals("UT")) {
+        stream.skipBytes(2);
+        elementLength = stream.readInt();
+      }
+      else stream.skipBytes(2);
+    }
 
     // HACK - needed to read some GE files
     // The element length must be even!
