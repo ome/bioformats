@@ -688,7 +688,6 @@ public class DicomReader extends FormatReader {
 
     for (int i=0; i<core.length; i++) {
       if (stamp != null) store.setImageAcquiredDate(stamp, i);
-      else MetadataTools.setDefaultCreationDate(store, id, i);
       store.setImageName("Series " + i, i);
     }
 

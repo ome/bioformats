@@ -624,9 +624,6 @@ public class LeicaReader extends FormatReader {
         store.setImageAcquiredDate(
           DateTools.formatDate(timestamps[i][0], DATE_FORMAT), i);
       }
-      else {
-        MetadataTools.setDefaultCreationDate(store, id, i);
-      }
 
       store.setImageDescription(seriesDescriptions.get(i), i);
 

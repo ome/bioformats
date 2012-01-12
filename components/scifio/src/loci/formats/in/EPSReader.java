@@ -236,7 +236,6 @@ public class EPSReader extends FormatReader {
 
       MetadataStore store = makeFilterMetadata();
       MetadataTools.populatePixels(store, this);
-      MetadataTools.setDefaultCreationDate(store, id, 0);
       return;
     }
 
@@ -334,7 +333,6 @@ public class EPSReader extends FormatReader {
     // The metadata store we're working with.
     MetadataStore store = getMetadataStore();
     MetadataTools.populatePixels(store, this);
-    MetadataTools.setDefaultCreationDate(store, currentId, 0);
   }
 
 }

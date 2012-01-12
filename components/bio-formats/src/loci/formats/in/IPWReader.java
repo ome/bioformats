@@ -322,7 +322,6 @@ public class IPWReader extends FormatReader {
     if (creationDate != null) {
       store.setImageAcquiredDate(creationDate, 0);
     }
-    else MetadataTools.setDefaultCreationDate(store, id, 0);
   }
 
 }

@@ -162,10 +162,6 @@ public class VolocityClippingReader extends FormatReader {
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
-
-    // populate Image data
-
-    MetadataTools.setDefaultCreationDate(store, id, 0);
   }
 
 }

@@ -709,7 +709,6 @@ public class SlidebookReader extends FormatReader {
 
     for (int i=0; i<getSeriesCount(); i++) {
       if (imageNames[i] != null) store.setImageName(imageNames[i], i);
-      MetadataTools.setDefaultCreationDate(store, id, i);
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {

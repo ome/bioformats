@@ -480,7 +480,6 @@ public class BioRadReader extends FormatReader {
     core[0].indexed = lut != null;
 
     MetadataTools.populatePixels(store, this);
-    MetadataTools.setDefaultCreationDate(store, id, 0);
     store.setImageName(name, 0);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {

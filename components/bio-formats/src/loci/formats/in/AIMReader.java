@@ -164,7 +164,6 @@ public class AIMReader extends FormatReader {
     if (date != null) {
       store.setImageAcquiredDate(date, 0);
     }
-    else MetadataTools.setDefaultCreationDate(store, id, 0);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       if (xSize != null && xLength != null) {

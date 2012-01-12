@@ -752,8 +752,6 @@ public class MIASReader extends FormatReader {
       store.setWellSampleImageRef(imageID, 0, well, 0);
 
       store.setPlateAcquisitionWellSampleRef(wellSampleID, 0, 0, well);
-
-      MetadataTools.setDefaultCreationDate(store, id, well);
     }
 
     MetadataLevel level = getMetadataOptions().getMetadataLevel();

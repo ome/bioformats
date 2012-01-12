@@ -580,7 +580,6 @@ public class ZeissZVIReader extends FormatReader {
           DateTools.convertDate((long) (firstStamp / 1600), DateTools.ZVI);
         store.setImageAcquiredDate(date, i);
       }
-      else MetadataTools.setDefaultCreationDate(store, getCurrentFile(), i);
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
