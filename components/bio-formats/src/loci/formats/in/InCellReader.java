@@ -907,14 +907,17 @@ public class InCellReader extends FormatReader {
         if (value == null) {
           return;
         }
-        Double gain = new Double(value);
-        for (int i=0; i<getSeriesCount(); i++) {
-          setSeries(i);
-          for (int q=0; q<getSizeC(); q++) {
-            store.setDetectorSettingsGain(gain, i, q);
+        try {
+          Double gain = new Double(value);
+          for (int i=0; i<getSeriesCount(); i++) {
+            setSeries(i);
+            for (int q=0; q<getSizeC(); q++) {
+              store.setDetectorSettingsGain(gain, i, q);
+            }
           }
+          setSeries(0);
         }
-        setSeries(0);
+        catch (NumberFormatException e) { }
       }
       else if (qName.equals("PlateTemperature")) {
         Double temperature = new Double(attributes.getValue("value"));
