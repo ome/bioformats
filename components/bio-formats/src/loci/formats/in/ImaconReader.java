@@ -183,7 +183,6 @@ public class ImaconReader extends BaseTiffReader {
       if (creationDate != null) {
         store.setImageAcquiredDate(creationDate, i);
       }
-      else MetadataTools.setDefaultCreationDate(store, currentId, i);
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {

@@ -407,9 +407,6 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
     if (creationDate != null) {
       store.setImageAcquiredDate(creationDate, 0);
     }
-    else {
-       MetadataTools.setDefaultCreationDate(store, getCurrentFile(), 0);
-    }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       // populate Experimenter

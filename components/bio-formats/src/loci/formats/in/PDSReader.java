@@ -274,10 +274,9 @@ public class PDSReader extends FormatReader {
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this, !minimumMetadata);
 
-    if (date == null) {
-      MetadataTools.setDefaultCreationDate(store, currentId, 0);
+    if (date != null) {
+      store.setImageAcquiredDate(date, 0);
     }
-    else store.setImageAcquiredDate(date, 0);
 
     if (!minimumMetadata) {
       store.setPlanePositionX(xPos, 0, 0);

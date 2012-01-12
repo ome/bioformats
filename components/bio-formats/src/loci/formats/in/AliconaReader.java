@@ -218,8 +218,6 @@ public class AliconaReader extends FormatReader {
 
     // populate Image data
 
-    MetadataTools.setDefaultCreationDate(store, id, 0);
-
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       // link Image and Instrument
       String instrumentID = MetadataTools.createLSID("Instrument", 0);

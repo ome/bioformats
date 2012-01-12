@@ -287,7 +287,6 @@ public class MRCReader extends FormatReader {
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
-    MetadataTools.setDefaultCreationDate(store, id, 0);
 
     if (level != MetadataLevel.MINIMUM) {
       if (xSize > 0.0d) {

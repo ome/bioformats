@@ -174,7 +174,6 @@ public class BurleighReader extends FormatReader {
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
-    MetadataTools.setDefaultCreationDate(store, id, 0);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setPixelsPhysicalSizeX(new PositiveFloat(xSize / getSizeX()), 0);

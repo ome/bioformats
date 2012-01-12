@@ -1418,7 +1418,6 @@ public class ICSReader extends FormatReader {
     store.setImageName(imageName, 0);
 
     if (date != null) store.setImageAcquiredDate(date, 0);
-    else MetadataTools.setDefaultCreationDate(store, id, 0);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription(description, 0);

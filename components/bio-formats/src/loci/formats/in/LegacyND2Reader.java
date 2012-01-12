@@ -172,7 +172,6 @@ public class LegacyND2Reader extends FormatReader {
     MetadataTools.populatePixels(store, this);
     for (int i=0; i<getSeriesCount(); i++) {
       store.setImageName("Series " + (i + 1), i);
-      MetadataTools.setDefaultCreationDate(store, id, i);
     }
   }
 

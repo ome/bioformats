@@ -195,7 +195,6 @@ public class RHKReader extends FormatReader {
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
-    MetadataTools.setDefaultCreationDate(store, currentId, 0);
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       if (xScale > 0) {
         store.setPixelsPhysicalSizeX(new PositiveFloat(xScale), 0);

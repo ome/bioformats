@@ -216,7 +216,6 @@ public class FEITiffReader extends BaseTiffReader {
     if (date != null) {
       store.setImageAcquiredDate(DateTools.formatDate(date, DATE_FORMAT), 0);
     }
-    else MetadataTools.setDefaultCreationDate(store, currentId, 0);
 
     if (imageName != null) {
       store.setImageName(imageName, 0);

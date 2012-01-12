@@ -148,7 +148,6 @@ public class MolecularImagingReader extends FormatReader {
     if (date != null) {
       store.setImageAcquiredDate(DateTools.formatDate(date, DATE_FORMAT), 0);
     }
-    else MetadataTools.setDefaultCreationDate(store, currentId, 0);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSizeX), 0);

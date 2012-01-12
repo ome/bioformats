@@ -322,7 +322,6 @@ public class PrairieReader extends FormatReader {
           date = DateTools.formatDate(date, "MM/dd/yyyy h:mm:ss a");
           if (date != null) store.setImageAcquiredDate(date, 0);
         }
-        else MetadataTools.setDefaultCreationDate(store, id, 0);
 
         if (!minimumMetadata) {
           // link Instrument and Image

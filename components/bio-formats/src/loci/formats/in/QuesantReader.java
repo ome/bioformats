@@ -119,7 +119,6 @@ public class QuesantReader extends FormatReader {
       date = DateTools.formatDate(date, "MMM dd yyyy HH:mm:ssSSS");
       store.setImageAcquiredDate(date, 0);
     }
-    else MetadataTools.setDefaultCreationDate(store, id, 0);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription(comment, 0);

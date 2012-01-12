@@ -247,7 +247,6 @@ public class IvisionReader extends FormatReader {
       String date = DateTools.formatDate(creationDate, DATE_FORMAT);
       store.setImageAcquiredDate(date, 0);
     }
-    else MetadataTools.setDefaultCreationDate(store, currentId, 0);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       String instrumentID = MetadataTools.createLSID("Instrument", 0);

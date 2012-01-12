@@ -587,7 +587,6 @@ public class OpenlabReader extends FormatReader {
       (xPos != null || yPos != null || zPos != null);
 
     MetadataTools.populatePixels(store, this, planeInfoNeeded);
-    MetadataTools.setDefaultCreationDate(store, currentId, 0);
 
     if (level != MetadataLevel.MINIMUM) {
       // populate MetadataStore

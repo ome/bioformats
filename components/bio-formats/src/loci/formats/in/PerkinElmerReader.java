@@ -574,7 +574,6 @@ public class PerkinElmerReader extends FormatReader {
       finishTime = DateTools.formatDate(finishTime, DATE_FORMAT);
       store.setImageAcquiredDate(finishTime, 0);
     }
-    else MetadataTools.setDefaultCreationDate(store, id, 0);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       // populate Dimensions element
