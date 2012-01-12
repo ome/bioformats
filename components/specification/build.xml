@@ -5,7 +5,7 @@
     <import file="${import.dir}/global.xml"/>
     <import file="${import.dir}/lifecycle.xml"/>
 
-    <target name="package" depends="generate"><!-- Skip compile -->
+    <target name="package" depends="generate, offline-validate-ome-xml"><!-- Skip compile -->
         <jar destfile="${target.dir}/${ivy.module}.jar" update="true">
             <fileset dir="${basedir}" includes="Xslt/,Released-Schema/"/>
             <!-- ><fileset dir="${basedir}/Released-Schema"/>
@@ -13,6 +13,191 @@
         </jar>
     </target>
 
+    <target name="online-validate-ome-xml" description="Checks that all files used in the documentation are well formed using online schemas (very, very slow)">
+        <xmlvalidate failonerror="false" warn="true">
+            <fileset dir="${basedir}" 
+                includes="Samples/OmeFiles/**/*.ome"
+                excludes="Samples/OmeFiles/**/*metadata.ome, Samples/OmeFiles/Working/*.ome"/>
+            <attribute name="http://xml.org/sax/features/validation" value="true"/>
+            <attribute name="http://apache.org/xml/features/validation/schema"  value="true"/>
+            <attribute name="http://xml.org/sax/features/namespaces" value="true"/>
+        </xmlvalidate>
+    </target>
+
+    <target name="offline-validate-ome-xml" description="Checks that all files used in the documentation are well formed using local schemas (fast)">
+        <schemavalidate failonerror="true" warn="true">
+            <fileset dir="${basedir}" 
+                includes="Samples/OmeFiles/**/*.ome"
+                excludes="Samples/OmeFiles/**/*metadata.ome, Samples/OmeFiles/Working/*.ome"/>
+            <!-- Standard -->
+            <schema namespace="http://www.w3.org/XML/1998/namespace"
+                file="${basedir}/Released-Schema/additions/jar/xml.xsd" />
+            <schema namespace="http://www.w3.org/2001/XMLSchema" 
+                file="${basedir}/Released-Schema/additions/jar/XMLSchema.xsd" />
+
+            <!-- 2003-FC V2 -->
+            <schema namespace="http://www.openmicroscopy.org/Schemas/AnalysisChain/2003-FC"
+                file="${basedir}/Released-Schema/2003-FC/V2/AnalysisChain.xsd" />
+            <schema namespace="http://www.openmicroscopy.org/Schemas/AnalysisModule/2003-FC"
+                file="${basedir}/Released-Schema/2003-FC/V2/AnalysisModule.xsd" />
+            <schema namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2003-FC"
+                file="${basedir}/Released-Schema/2003-FC/V2/BinaryFile.xsd" />
+            <schema namespace="http://www.openmicroscopy.org/Schemas/CA/2003-FC" 
+                file="${basedir}/Released-Schema/2003-FC/V2/CA.xsd" />
+            <schema namespace="http://www.openmicroscopy.org/Schemas/CLI/2003-FC"
+                file="${basedir}/Released-Schema/2003-FC/V2/CLI.xsd" />
+            <schema namespace="http://www.openmicroscopy.org/Schemas/MLI/2003-FC"
+                file="${basedir}/Released-Schema/2003-FC/V2/MLI.xsd" />
+            <schema namespace="http://www.openmicroscopy.org/Schemas/OME/2003-FC"
+                file="${basedir}/Released-Schema/2003-FC/V2/ome.xsd" />
+            <schema namespace="http://www.openmicroscopy.org/Schemas/STD/2003-FC"
+                file="${basedir}/Released-Schema/2003-FC/V2/STD.xsd" />
+            <schema namespace="http://openmicroscopy.com/Schemas/DataHistory/2003-FC"
+                file="${basedir}/Released-Schema/2003-FC/V2/DataHistory.xsd" />
+
+            <!-- 2007-06 V2 -->
+            <schema namespace="http://www.openmicroscopy.org/Schemas/AnalysisChain/2007-06"
+                file="${basedir}/Released-Schema/2007-06/V2/AnalysisChain.xsd" />
+            <schema namespace="http://www.openmicroscopy.org/Schemas/AnalysisModule/2007-06"
+                file="${basedir}/Released-Schema/2007-06/V2/AnalysisModule.xsd" />
+            <schema namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2007-06"
+                file="${basedir}/Released-Schema/2007-06/V2/BinaryFile.xsd" />
+            <schema namespace="http://www.openmicroscopy.org/Schemas/CA/2007-06" 
+                file="${basedir}/Released-Schema/2007-06/V2/CA.xsd" />
+            <schema namespace="http://www.openmicroscopy.org/Schemas/CLI/2007-06"
+                file="${basedir}/Released-Schema/2007-06/V2/CLI.xsd" />
+            <schema namespace="http://www.openmicroscopy.org/Schemas/MLI/2007-06"
+                file="${basedir}/Released-Schema/2007-06/V2/MLI.xsd" />
+            <schema namespace="http://www.openmicroscopy.org/Schemas/OME/2007-06"
+                file="${basedir}/Released-Schema/2007-06/V2/ome.xsd" />
+            <schema namespace="http://www.openmicroscopy.org/Schemas/SPW/2007-06" 
+                file="${basedir}/Released-Schema/2007-06/V2/SPW.xsd" />
+            <schema namespace="http://www.openmicroscopy.org/Schemas/STD/2007-06"
+                file="${basedir}/Released-Schema/2007-06/V2/STD.xsd" />
+            <schema namespace="http://openmicroscopy.com/Schemas/DataHistory/2007-06"
+                file="${basedir}/Released-Schema/2007-06/V2/DataHistory.xsd" />
+
+            <!-- 2008-02 V2 -->
+            <schema namespace="http://www.openmicroscopy.org/Schemas/AnalysisChain/2008-02"
+                file="${basedir}/Released-Schema/2008-02/V2/AnalysisChain.xsd" />
+            <schema namespace="http://www.openmicroscopy.org/Schemas/AnalysisModule/2008-02"
+                file="${basedir}/Released-Schema/2008-02/V2/AnalysisModule.xsd" />
+            <schema namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2008-02"
+                file="${basedir}/Released-Schema/2008-02/V2/BinaryFile.xsd" />
+            <schema namespace="http://www.openmicroscopy.org/Schemas/CA/2008-02" 
+                file="${basedir}/Released-Schema/2008-02/V2/CA.xsd" />
+            <schema namespace="http://www.openmicroscopy.org/Schemas/CLI/2008-02"
+                file="${basedir}/Released-Schema/2008-02/V2/CLI.xsd" />
+            <schema namespace="http://www.openmicroscopy.org/Schemas/MLI/2008-02"
+                file="${basedir}/Released-Schema/2008-02/V2/MLI.xsd" />
+            <schema namespace="http://www.openmicroscopy.org/Schemas/OME/2008-02"
+                file="${basedir}/Released-Schema/2008-02/V2/ome.xsd" />
+            <schema namespace="http://www.openmicroscopy.org/Schemas/SPW/2008-02" 
+                file="${basedir}/Released-Schema/2008-02/V2/SPW.xsd" />
+            <schema namespace="http://www.openmicroscopy.org/Schemas/STD/2008-02"
+                file="${basedir}/Released-Schema/2008-02/V2/STD.xsd" />
+            <schema namespace="http://openmicroscopy.com/Schemas/DataHistory/2008-02"
+                file="${basedir}/Released-Schema/2008-02/V2/DataHistory.xsd" />
+
+            <!-- 2008-09 V1 -->
+            <schema namespace="http://www.openmicroscopy.org/Schemas/AnalysisChain/2008-09"
+                file="${basedir}/Released-Schema/2008-09/V1/AnalysisChain.xsd" />
+            <schema namespace="http://www.openmicroscopy.org/Schemas/AnalysisModule/2008-09"
+                file="${basedir}/Released-Schema/2008-09/V1/AnalysisModule.xsd" />
+            <schema namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2008-09"
+                file="${basedir}/Released-Schema/2008-09/V1/BinaryFile.xsd" />
+            <schema namespace="http://www.openmicroscopy.org/Schemas/CA/2008-09" 
+                file="${basedir}/Released-Schema/2008-09/V1/CA.xsd" />
+            <schema namespace="http://www.openmicroscopy.org/Schemas/CLI/2008-09"
+                file="${basedir}/Released-Schema/2008-09/V1/CLI.xsd" />
+            <schema namespace="http://www.openmicroscopy.org/Schemas/MLI/2008-09"
+                file="${basedir}/Released-Schema/2008-09/V1/MLI.xsd" />
+            <schema namespace="http://www.openmicroscopy.org/Schemas/OME/2008-09"
+                file="${basedir}/Released-Schema/2008-09/V1/ome.xsd" />
+            <schema namespace="http://www.openmicroscopy.org/Schemas/OMERO/2008-09"
+                file="${basedir}/Released-Schema/2008-09/V1/OMERO.xsd" />
+            <schema namespace="http://www.openmicroscopy.org/Schemas/SA/2008-09" 
+                file="${basedir}/Released-Schema/2008-09/V1/SA.xsd" />
+            <schema namespace="http://www.openmicroscopy.org/Schemas/SPW/2008-09" 
+                file="${basedir}/Released-Schema/2008-09/V1/SPW.xsd" />
+            <schema namespace="http://www.openmicroscopy.org/Schemas/STD/2008-09"
+                file="${basedir}/Released-Schema/2008-09/V1/STD.xsd" />
+            <schema namespace="http://openmicroscopy.com/Schemas/DataHistory/2008-09"
+                file="${basedir}/Released-Schema/2008-09/V1/DataHistory.xsd" />
+
+            <!-- 2009-09 V1 -->
+            <schema namespace="http://www.openmicroscopy.org/Schemas/AnalysisChain/2009-09"
+                file="${basedir}/Released-Schema/2009-09/V1/AnalysisChain.xsd" />
+            <schema namespace="http://www.openmicroscopy.org/Schemas/AnalysisModule/2009-09"
+                file="${basedir}/Released-Schema/2009-09/V1/AnalysisModule.xsd" />
+            <schema namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2009-09"
+                file="${basedir}/Released-Schema/2009-09/V1/BinaryFile.xsd" />
+            <schema namespace="http://www.openmicroscopy.org/Schemas/CA/2009-09" 
+                file="${basedir}/Released-Schema/2009-09/V1/CA.xsd" />
+            <schema namespace="http://www.openmicroscopy.org/Schemas/CLI/2009-09"
+                file="${basedir}/Released-Schema/2009-09/V1/CLI.xsd" />
+            <schema namespace="http://www.openmicroscopy.org/Schemas/MLI/2009-09"
+                file="${basedir}/Released-Schema/2009-09/V1/MLI.xsd" />
+            <schema namespace="http://www.openmicroscopy.org/Schemas/OME/2009-09"
+                file="${basedir}/Released-Schema/2009-09/V1/ome.xsd" />
+            <schema namespace="http://www.openmicroscopy.org/Schemas/OMERO/2009-09"
+                file="${basedir}/Released-Schema/2009-09/V1/OMERO.xsd" />
+            <schema namespace="http://www.openmicroscopy.org/Schemas/SA/2009-09" 
+                file="${basedir}/Released-Schema/2009-09/V1/SA.xsd" />
+            <schema namespace="http://www.openmicroscopy.org/Schemas/SPW/2009-09" 
+                file="${basedir}/Released-Schema/2009-09/V1/SPW.xsd" />
+            <schema namespace="http://www.openmicroscopy.org/Schemas/STD/2009-09"
+                file="${basedir}/Released-Schema/2009-09/V1/STD.xsd" />
+            <schema namespace="http://www.openmicroscopy.org/Schemas/ROI/2009-09"
+                file="${basedir}/Released-Schema/2009-09/V1/ROI.xsd" />
+            <schema namespace="http://openmicroscopy.com/Schemas/DataHistory/2009-09"
+                file="${basedir}/Released-Schema/2009-09/V1/DataHistory.xsd" />
+
+            <!-- 2010-04 V1 -->
+            <schema namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2010-04"
+                file="${basedir}/Released-Schema/2010-04/V1/BinaryFile.xsd" />
+            <schema namespace="http://www.openmicroscopy.org/Schemas/OME/2010-04"
+                file="${basedir}/Released-Schema/2010-04/V1/ome.xsd" />
+            <schema namespace="http://www.openmicroscopy.org/Schemas/OMERO/2010-04"
+                file="${basedir}/Released-Schema/2010-04/V1/OMERO.xsd" />
+            <schema namespace="http://www.openmicroscopy.org/Schemas/SA/2010-04" 
+                file="${basedir}/Released-Schema/2010-04/V1/SA.xsd" />
+            <schema namespace="http://www.openmicroscopy.org/Schemas/SPW/2010-04" 
+                file="${basedir}/Released-Schema/2010-04/V1/SPW.xsd" />
+            <schema namespace="http://www.openmicroscopy.org/Schemas/ROI/2010-04"
+                file="${basedir}/Released-Schema/2010-04/V1/ROI.xsd" />
+
+            <!-- 2010-06 V1 -->
+            <schema namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2010-06"
+                file="${basedir}/Released-Schema/2010-06/V1/BinaryFile.xsd" />
+            <schema namespace="http://www.openmicroscopy.org/Schemas/OME/2010-06"
+                file="${basedir}/Released-Schema/2010-06/V1/ome.xsd" />
+            <schema namespace="http://www.openmicroscopy.org/Schemas/OMERO/2010-06"
+                file="${basedir}/Released-Schema/2010-06/V1/OMERO.xsd" />
+            <schema namespace="http://www.openmicroscopy.org/Schemas/SA/2010-06" 
+                file="${basedir}/Released-Schema/2010-06/V1/SA.xsd" />
+            <schema namespace="http://www.openmicroscopy.org/Schemas/SPW/2010-06" 
+                file="${basedir}/Released-Schema/2010-06/V1/SPW.xsd" />
+            <schema namespace="http://www.openmicroscopy.org/Schemas/ROI/2010-06"
+                file="${basedir}/Released-Schema/2010-06/V1/ROI.xsd" />
+
+            <!-- 2011-06 V1 -->
+            <schema namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2011-06"
+                file="${basedir}/Released-Schema/2011-06/V1/BinaryFile.xsd" />
+            <schema namespace="http://www.openmicroscopy.org/Schemas/OME/2011-06"
+                file="${basedir}/Released-Schema/2011-06/V1/ome.xsd" />
+            <schema namespace="http://www.openmicroscopy.org/Schemas/OMERO/2011-06"
+                file="${basedir}/Released-Schema/2011-06/V1/OMERO.xsd" />
+            <schema namespace="http://www.openmicroscopy.org/Schemas/SA/2011-06" 
+                file="${basedir}/Released-Schema/2011-06/V1/SA.xsd" />
+            <schema namespace="http://www.openmicroscopy.org/Schemas/SPW/2011-06" 
+                file="${basedir}/Released-Schema/2011-06/V1/SPW.xsd" />
+            <schema namespace="http://www.openmicroscopy.org/Schemas/ROI/2011-06"
+                file="${basedir}/Released-Schema/2011-06/V1/ROI.xsd" />
+
+        </schemavalidate>
+        <echo message="Sample OME-XML files validated."/>
+    </target>
     <target name="integration" description="No-op"/>
     <target name="findbugs" description="No-op"/>
 
