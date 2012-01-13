@@ -917,7 +917,9 @@ public class InCellReader extends FormatReader {
           }
           setSeries(0);
         }
-        catch (NumberFormatException e) { }
+        catch (NumberFormatException e) {
+          LOGGER.debug("Could not parse gain value", e);
+        }
       }
       else if (qName.equals("PlateTemperature")) {
         Double temperature = new Double(attributes.getValue("value"));
