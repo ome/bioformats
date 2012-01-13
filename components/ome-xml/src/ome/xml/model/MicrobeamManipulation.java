@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-01-05 15:21:37-0500
+ * Created by melissa via xsd-fu on 2012-01-12 20:06:01-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -214,7 +214,7 @@ public class MicrobeamManipulation extends AbstractOMEModelObject
 		{
 			ROI o_casted = (ROI) o;
 			o_casted.linkMicrobeamManipulation(this);
-			if (!copyLinkedROIList().contains(o_casted)) {
+			if (!roiList.contains(o_casted)) {
 				roiList.add(o_casted);
 			}
 			return true;
@@ -288,7 +288,10 @@ public class MicrobeamManipulation extends AbstractOMEModelObject
 	public boolean linkROI(ROI o)
 	{
 		o.linkMicrobeamManipulation(this);
-		return roiList.add(o);
+		if (!roiList.contains(o)) {
+			return roiList.add(o);
+		}
+		return false;
 	}
 
 	public boolean unlinkROI(ROI o)
@@ -370,7 +373,10 @@ public class MicrobeamManipulation extends AbstractOMEModelObject
 
 	public boolean linkImage(Image o)
 	{
-		return image_BackReferenceList.add(o);
+		if (!image_BackReferenceList.contains(o)) {
+			return image_BackReferenceList.add(o);
+		}
+		return false;
 	}
 
 	public boolean unlinkImage(Image o)

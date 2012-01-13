@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-01-05 15:21:37-0500
+ * Created by melissa via xsd-fu on 2012-01-12 20:06:01-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -293,7 +293,7 @@ public class Plate extends AbstractOMEModelObject
 		if (reference instanceof ScreenRef)
 		{
 			Screen o_casted = (Screen) o;
-			if (!copyLinkedScreenList().contains(o_casted)) {
+			if (!screenList.contains(o_casted)) {
 				screenList.add(o_casted);
 			}
 			return true;
@@ -302,7 +302,7 @@ public class Plate extends AbstractOMEModelObject
 		{
 			Annotation o_casted = (Annotation) o;
 			o_casted.linkPlate(this);
-			if (!copyLinkedAnnotationList().contains(o_casted)) {
+			if (!annotationList.contains(o_casted)) {
 				annotationList.add(o_casted);
 			}
 			return true;
@@ -456,7 +456,10 @@ public class Plate extends AbstractOMEModelObject
 
 	public boolean linkScreen(Screen o)
 	{
-		return screenList.add(o);
+		if (!screenList.contains(o)) {
+			return screenList.add(o);
+		}
+		return false;
 	}
 
 	public boolean unlinkScreen(Screen o)
@@ -519,7 +522,10 @@ public class Plate extends AbstractOMEModelObject
 	public boolean linkAnnotation(Annotation o)
 	{
 		o.linkPlate(this);
-		return annotationList.add(o);
+		if (!annotationList.contains(o)) {
+			return annotationList.add(o);
+		}
+		return false;
 	}
 
 	public boolean unlinkAnnotation(Annotation o)

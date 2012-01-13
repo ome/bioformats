@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-01-05 15:21:37-0500
+ * Created by melissa via xsd-fu on 2012-01-12 20:06:01-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -165,7 +165,7 @@ public class LightPath extends AbstractOMEModelObject
 		{
 			Filter o_casted = (Filter) o;
 			o_casted.linkLightPath(this);
-			if (!copyLinkedExcitationFilterList().contains(o_casted)) {
+			if (!excitationFilterList.contains(o_casted)) {
 				excitationFilterList.add(o_casted);
 			}
 			return true;
@@ -181,7 +181,7 @@ public class LightPath extends AbstractOMEModelObject
 		{
 			Filter o_casted = (Filter) o;
 			o_casted.linkLightPath(this);
-			if (!copyLinkedEmissionFilterList().contains(o_casted)) {
+			if (!emissionFilterList.contains(o_casted)) {
 				emissionFilterList.add(o_casted);
 			}
 			return true;
@@ -215,7 +215,10 @@ public class LightPath extends AbstractOMEModelObject
 	public boolean linkExcitationFilter(Filter o)
 	{
 		o.linkLightPath(this);
-		return excitationFilterList.add(o);
+		if (!excitationFilterList.contains(o)) {
+			return excitationFilterList.add(o);
+		}
+		return false;
 	}
 
 	public boolean unlinkExcitationFilter(Filter o)
@@ -267,7 +270,10 @@ public class LightPath extends AbstractOMEModelObject
 	public boolean linkEmissionFilter(Filter o)
 	{
 		o.linkLightPath(this);
-		return emissionFilterList.add(o);
+		if (!emissionFilterList.contains(o)) {
+			return emissionFilterList.add(o);
+		}
+		return false;
 	}
 
 	public boolean unlinkEmissionFilter(Filter o)

@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-01-05 15:21:37-0500
+ * Created by melissa via xsd-fu on 2012-01-12 20:06:01-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -259,7 +259,10 @@ public class Filter extends ManufacturerSpec
 
 	public boolean linkFilterSet(FilterSet o)
 	{
-		return filterSet_BackReferenceList.add(o);
+		if (!filterSet_BackReferenceList.contains(o)) {
+			return filterSet_BackReferenceList.add(o);
+		}
+		return false;
 	}
 
 	public boolean unlinkFilterSet(FilterSet o)
@@ -290,7 +293,10 @@ public class Filter extends ManufacturerSpec
 
 	public boolean linkLightPath(LightPath o)
 	{
-		return lightPath_BackReferenceList.add(o);
+		if (!lightPath_BackReferenceList.contains(o)) {
+			return lightPath_BackReferenceList.add(o);
+		}
+		return false;
 	}
 
 	public boolean unlinkLightPath(LightPath o)
