@@ -381,7 +381,10 @@ ${customUpdatePropertyContent[prop.name]}
 {% if not prop.isBackReference and not fu.link_overridden(prop.name, klass.name) %}\
 		o.link${klass.type}(this);
 {% end %}\
-		return ${prop.javaInstanceVariableName}.add(o);
+		if (!${prop.javaInstanceVariableName}.contains(o)) {
+			return ${prop.javaInstanceVariableName}.add(o);
+		}
+		return false;
 	}
 
 	public boolean unlink${prop.javaMethodName}(${prop.javaType} o)
