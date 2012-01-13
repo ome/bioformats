@@ -328,6 +328,7 @@ public class ND2Handler extends DefaultHandler {
         core[0].sizeY += Integer.parseInt(value);
       }
     }
+    /*
     else if ("LoopSize".equals(prevElement) && value != null) {
       if (core[0].sizeT == 0) {
         core[0].sizeT = Integer.parseInt(value);
@@ -337,9 +338,11 @@ public class ND2Handler extends DefaultHandler {
       }
       core[0].dimensionOrder = "CTZ";
     }
+    */
     else if ("pPosName".equals(prevElement) && value != null) {
       posNames.add(value);
     }
+    /*
     else if (qName.equals("FramesBefore")) {
       if (core[0].sizeZ == 0) {
         core[0].sizeZ = 1;
@@ -358,6 +361,7 @@ public class ND2Handler extends DefaultHandler {
     else if (qName.equals("TimeAfter")) {
       core[0].sizeT *= Integer.parseInt(value);
     }
+    */
     else if (qName.equals("uiWidthBytes") || qName.equals("uiBpcInMemory")) {
       int div = qName.equals("uiWidthBytes") ? core[0].sizeX : 8;
       int bytes = Integer.parseInt(value) / div;
