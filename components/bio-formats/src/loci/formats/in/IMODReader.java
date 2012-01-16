@@ -24,6 +24,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import loci.common.RandomAccessInputStream;
 import loci.common.Region;
@@ -78,8 +79,9 @@ public class IMODReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    // draw each contour
+    // draw points given for each contour
 
+    /*
     Region image = new Region(x, y, w, h);
     int pixel =
       getRGBChannelCount() * FormatTools.getBytesPerPixel(getPixelType());
@@ -102,6 +104,7 @@ public class IMODReader extends FormatReader {
         }
       }
     }
+    */
 
     return buf;
   }
@@ -184,6 +187,9 @@ public class IMODReader extends FormatReader {
     addGlobalMeta("Beta", beta);
     addGlobalMeta("Gamma", gamma);
 
+    MetadataStore store = makeFilterMetadata();
+    ArrayList<String> roiIDs = new ArrayList<String>();
+
     for (int obj=0; obj<nObjects; obj++) {
       in.skipBytes(4); // OBJT
       String objName = in.readString(64);
@@ -217,6 +223,14 @@ public class IMODReader extends FormatReader {
       int nMeshes = in.readInt();
       int nSurfaces = in.readInt();
 
+      if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+        String roiID = MetadataTools.createLSID("ROI", obj);
+        store.setROIID(roiID, obj);
+        store.setROIName(objName, obj);
+
+        roiIDs.add(roiID);
+      }
+
       for (int contour=0; contour<nContours; contour++) {
         in.skipBytes(4); // CONT
 
@@ -231,6 +245,34 @@ public class IMODReader extends FormatReader {
           for (int i=0; i<points[obj][contour][p].length; i++) {
             points[obj][contour][p][i] = in.readFloat();
           }
+        }
+
+        if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+          String shapeID = MetadataTools.createLSID("Shape", obj, contour);
+          store.setPolylineID(shapeID, obj, contour);
+
+          int r = colors[obj][0];
+          int g = colors[obj][1];
+          int b = colors[obj][2];
+          store.setPolylineStroke((r << 16) | (g << 8) | b, obj, contour);
+          store.setPolylineStrokeWidth(new Double(lineWidth2D), obj, contour);
+          if (lineStyle == 1) {
+            store.setPolylineStrokeDashArray("5", obj, contour);
+          }
+          store.setPolylineClosed((flags & 0x8) == 0, obj, contour);
+
+          StringBuffer sb = new StringBuffer();
+          for (int i=0; i<nPoints; i++) {
+            sb.append(points[obj][contour][i][0]);
+            sb.append(",");
+            sb.append(points[obj][contour][i][1]);
+            sb.append(",");
+            if (i < nPoints - 1) {
+              sb.append(" ");
+            }
+          }
+
+          store.setPolylinePoints(sb.toString(), obj, contour);
         }
       }
 
@@ -257,8 +299,14 @@ public class IMODReader extends FormatReader {
     core[0].dimensionOrder = "XYCZT";
     core[0].pixelType = FormatTools.UINT8;
 
-    MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
+
+    if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
+      for (int i=0; i<roiIDs.size(); i++) {
+        store.setROIID(roiIDs.get(i), i);
+        store.setImageROIRef(roiIDs.get(i), 0, i);
+      }
+    }
   }
 
 }
