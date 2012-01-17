@@ -580,7 +580,9 @@ public class SlidebookReader extends FormatReader {
             in.seek(in.getFilePointer() - 2);
           }
           int len = in.read() - 1;
-          imageDescriptions.add(in.readString(len));
+          if (len > 0) {
+            imageDescriptions.add(in.readString(len));
+          }
         }
         else if (isSpool) {
           // spool files don't necessarily have block identifiers
