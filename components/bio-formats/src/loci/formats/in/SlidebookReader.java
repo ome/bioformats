@@ -418,6 +418,8 @@ public class SlidebookReader extends FormatReader {
     int[] sizeZ = new int[pixelOffsets.size()];
     int[] sizeC = new int[pixelOffsets.size()];
 
+    int[] divValues = new int[pixelOffsets.size()];
+
     // try to find the width and height
     int iCount = 0;
     int hCount = 0;
@@ -466,6 +468,7 @@ public class SlidebookReader extends FormatReader {
                   int checkX = in.readShort();
                   int checkY = in.readShort();
                   int div = in.readShort();
+                  divValues[j] = div;
                   sizeX[j] /= (div == 0 ? 1 : div);
                   div = in.readShort();
                   sizeY[j] /= (div == 0 ? 1 : div);
@@ -556,8 +559,17 @@ public class SlidebookReader extends FormatReader {
           long fp = in.getFilePointer();
           objective = in.readCString();
           in.seek(fp + 144);
-          pixelSize.add(in.readFloat());
+          float pixSize = in.readFloat();
           magnification = in.readShort();
+
+          int mult = 1;
+          if (pixelSize.size() < divValues.length) {
+            mult = divValues[pixelSize.size()];
+          }
+          float v = pixSize * mult;
+          if (v - 0.000001 > 0) {
+            pixelSize.add(v);
+          }
         }
         else if (n == 'e') {
           in.skipBytes(174);
@@ -754,8 +766,10 @@ public class SlidebookReader extends FormatReader {
       store.setObjectiveModel(objective, 0, 0);
       store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
       store.setObjectiveImmersion(getImmersion("Other"), 0, 0);
-      store.setObjectiveNominalMagnification(
-        new PositiveInteger(magnification), 0, 0);
+      if (magnification > 0) {
+        store.setObjectiveNominalMagnification(
+          new PositiveInteger(magnification), 0, 0);
+      }
 
       // link Objective to Image
       String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
@@ -774,11 +788,11 @@ public class SlidebookReader extends FormatReader {
         }
         int idx = 0;
         for (int q=0; q<i; q++) {
-          idx += core[q].sizeC;
+          idx += core[q].sizeC * core[q].sizeT;
         }
 
         if (idx < pixelSizeZ.size() && pixelSizeZ.get(idx) != null) {
-          if (pixelSizeZ.get(idx) > 0) {
+          if (pixelSizeZ.get(idx) - 0.00001 > 0) {
             store.setPixelsPhysicalSizeZ(
               new PositiveFloat(pixelSizeZ.get(idx)), i);
           }
