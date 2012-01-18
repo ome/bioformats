@@ -401,8 +401,8 @@ public class SlidebookReader extends FormatReader {
     // determine total number of pixel bytes
 
     Vector<Float> pixelSize = new Vector<Float>();
-    String objective = null;
-    int magnification = 0;
+    Vector<String> objectives = new Vector<String>();
+    Vector<Integer> magnifications = new Vector<Integer>();
     Vector<Double> pixelSizeZ = new Vector<Double>();
     Vector<Integer> exposureTimes = new Vector<Integer>();
 
@@ -559,10 +559,12 @@ public class SlidebookReader extends FormatReader {
           // objective info and pixel size X/Y
           in.skipBytes(6);
           long fp = in.getFilePointer();
-          objective = in.readCString();
+          while (in.read() == 0);
+          in.seek(in.getFilePointer() - 1);
+          String objective = in.readCString().trim();
           in.seek(fp + 144);
           float pixSize = in.readFloat();
-          magnification = in.readShort();
+          int magnification = in.readShort();
 
           int mult = 1;
           if (pixelSize.size() < divValues.length) {
@@ -571,6 +573,8 @@ public class SlidebookReader extends FormatReader {
           float v = pixSize * mult;
           if (isGreaterThanEpsilon(v)) {
             pixelSize.add(v);
+            objectives.add(objective);
+            magnifications.add(magnification);
           }
         }
         else if (n == 'e') {
@@ -760,23 +764,30 @@ public class SlidebookReader extends FormatReader {
       // link Instrument and Image
       String instrumentID = MetadataTools.createLSID("Instrument", 0);
       store.setInstrumentID(instrumentID, 0);
-      store.setImageInstrumentRef(instrumentID, 0);
+      for (int i=0; i<getSeriesCount(); i++) {
+        store.setImageInstrumentRef(instrumentID, i);
+      }
 
       int index = 0;
 
       // populate Objective data
-      store.setObjectiveModel(objective, 0, 0);
-      store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
-      store.setObjectiveImmersion(getImmersion("Other"), 0, 0);
-      if (magnification > 0) {
-        store.setObjectiveNominalMagnification(
-          new PositiveInteger(magnification), 0, 0);
-      }
+      for (int i=0; i<objectives.size(); i++) {
+        String objective = objectives.get(i);
+        store.setObjectiveModel(objective, 0, i);
+        store.setObjectiveCorrection(getCorrection("Other"), 0, i);
+        store.setObjectiveImmersion(getImmersion("Other"), 0, i);
+        if (magnifications.get(i) > 0) {
+          store.setObjectiveNominalMagnification(
+            new PositiveInteger(magnifications.get(i)), 0, i);
+        }
 
-      // link Objective to Image
-      String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
-      store.setObjectiveID(objectiveID, 0, 0);
-      store.setObjectiveSettingsID(objectiveID, 0);
+        // link Objective to Image
+        String objectiveID = MetadataTools.createLSID("Objective", 0, i);
+        store.setObjectiveID(objectiveID, 0, i);
+        if (i < getSeriesCount()) {
+          store.setImageObjectiveSettingsID(objectiveID, i);
+        }
+      }
 
       // populate Dimensions data
 
