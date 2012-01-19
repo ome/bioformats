@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2011-11-09 10:55:09-0500
+ * Created by melissa via xsd-fu on 2012-01-12 20:06:01-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -363,7 +363,10 @@ public class OTF extends AbstractOMEModelObject
 
 	public boolean linkChannel(Channel o)
 	{
-		return channel_BackReferenceList.add(o);
+		if (!channel_BackReferenceList.contains(o)) {
+			return channel_BackReferenceList.add(o);
+		}
+		return false;
 	}
 
 	public boolean unlinkChannel(Channel o)
