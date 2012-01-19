@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2011-11-09 10:55:09-0500
+ * Created by melissa via xsd-fu on 2012-01-12 20:06:01-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -225,14 +225,18 @@ public class PlateAcquisition extends AbstractOMEModelObject
 		{
 			WellSample o_casted = (WellSample) o;
 			o_casted.linkPlateAcquisition(this);
-			wellSampleList.add(o_casted);
+			if (!wellSampleList.contains(o_casted)) {
+				wellSampleList.add(o_casted);
+			}
 			return true;
 		}
 		if (reference instanceof AnnotationRef)
 		{
 			Annotation o_casted = (Annotation) o;
 			o_casted.linkPlateAcquisition(this);
-			annotationList.add(o_casted);
+			if (!annotationList.contains(o_casted)) {
+				annotationList.add(o_casted);
+			}
 			return true;
 		}
 		LOGGER.debug("Unable to handle reference of type: {}", reference.getClass());
@@ -330,7 +334,10 @@ public class PlateAcquisition extends AbstractOMEModelObject
 	public boolean linkWellSample(WellSample o)
 	{
 		o.linkPlateAcquisition(this);
-		return wellSampleList.add(o);
+		if (!wellSampleList.contains(o)) {
+			return wellSampleList.add(o);
+		}
+		return false;
 	}
 
 	public boolean unlinkWellSample(WellSample o)
@@ -363,7 +370,10 @@ public class PlateAcquisition extends AbstractOMEModelObject
 	public boolean linkAnnotation(Annotation o)
 	{
 		o.linkPlateAcquisition(this);
-		return annotationList.add(o);
+		if (!annotationList.contains(o)) {
+			return annotationList.add(o);
+		}
+		return false;
 	}
 
 	public boolean unlinkAnnotation(Annotation o)

@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2011-11-09 10:55:09-0500
+ * Created by melissa via xsd-fu on 2012-01-12 20:06:01-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -190,7 +190,9 @@ public class FilterSet extends ManufacturerSpec
 		{
 			Filter o_casted = (Filter) o;
 			o_casted.linkFilterSet(this);
-			excitationFilterList.add(o_casted);
+			if (!excitationFilterList.contains(o_casted)) {
+				excitationFilterList.add(o_casted);
+			}
 			return true;
 		}
 		if (reference instanceof DichroicRef)
@@ -204,7 +206,9 @@ public class FilterSet extends ManufacturerSpec
 		{
 			Filter o_casted = (Filter) o;
 			o_casted.linkFilterSet(this);
-			emissionFilterList.add(o_casted);
+			if (!emissionFilterList.contains(o_casted)) {
+				emissionFilterList.add(o_casted);
+			}
 			return true;
 		}
 		LOGGER.debug("Unable to handle reference of type: {}", reference.getClass());
@@ -247,7 +251,10 @@ public class FilterSet extends ManufacturerSpec
 	public boolean linkExcitationFilter(Filter o)
 	{
 		o.linkFilterSet(this);
-		return excitationFilterList.add(o);
+		if (!excitationFilterList.contains(o)) {
+			return excitationFilterList.add(o);
+		}
+		return false;
 	}
 
 	public boolean unlinkExcitationFilter(Filter o)
@@ -299,7 +306,10 @@ public class FilterSet extends ManufacturerSpec
 	public boolean linkEmissionFilter(Filter o)
 	{
 		o.linkFilterSet(this);
-		return emissionFilterList.add(o);
+		if (!emissionFilterList.contains(o)) {
+			return emissionFilterList.add(o);
+		}
+		return false;
 	}
 
 	public boolean unlinkEmissionFilter(Filter o)
@@ -331,7 +341,10 @@ public class FilterSet extends ManufacturerSpec
 
 	public boolean linkChannel(Channel o)
 	{
-		return channel_BackReferenceList.add(o);
+		if (!channel_BackReferenceList.contains(o)) {
+			return channel_BackReferenceList.add(o);
+		}
+		return false;
 	}
 
 	public boolean unlinkChannel(Channel o)
@@ -362,7 +375,10 @@ public class FilterSet extends ManufacturerSpec
 
 	public boolean linkOTF(OTF o)
 	{
-		return otf_backReferenceList.add(o);
+		if (!otf_backReferenceList.contains(o)) {
+			return otf_backReferenceList.add(o);
+		}
+		return false;
 	}
 
 	public boolean unlinkOTF(OTF o)

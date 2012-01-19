@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2011-11-09 10:55:09-0500
+ * Created by melissa via xsd-fu on 2012-01-12 20:06:01-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -390,7 +390,9 @@ public class Image extends AbstractOMEModelObject
 		{
 			Dataset o_casted = (Dataset) o;
 			o_casted.linkImage(this);
-			datasetList.add(o_casted);
+			if (!datasetList.contains(o_casted)) {
+				datasetList.add(o_casted);
+			}
 			return true;
 		}
 		if (reference instanceof InstrumentRef)
@@ -404,21 +406,27 @@ public class Image extends AbstractOMEModelObject
 		{
 			ROI o_casted = (ROI) o;
 			o_casted.linkImage(this);
-			roiList.add(o_casted);
+			if (!roiList.contains(o_casted)) {
+				roiList.add(o_casted);
+			}
 			return true;
 		}
 		if (reference instanceof MicrobeamManipulationRef)
 		{
 			MicrobeamManipulation o_casted = (MicrobeamManipulation) o;
 			o_casted.linkImage(this);
-			microbeamManipulationList.add(o_casted);
+			if (!microbeamManipulationList.contains(o_casted)) {
+				microbeamManipulationList.add(o_casted);
+			}
 			return true;
 		}
 		if (reference instanceof AnnotationRef)
 		{
 			Annotation o_casted = (Annotation) o;
 			o_casted.linkImage(this);
-			annotationList.add(o_casted);
+			if (!annotationList.contains(o_casted)) {
+				annotationList.add(o_casted);
+			}
 			return true;
 		}
 		LOGGER.debug("Unable to handle reference of type: {}", reference.getClass());
@@ -551,7 +559,10 @@ public class Image extends AbstractOMEModelObject
 	public boolean linkDataset(Dataset o)
 	{
 		o.linkImage(this);
-		return datasetList.add(o);
+		if (!datasetList.contains(o)) {
+			return datasetList.add(o);
+		}
+		return false;
 	}
 
 	public boolean unlinkDataset(Dataset o)
@@ -647,7 +658,10 @@ public class Image extends AbstractOMEModelObject
 	public boolean linkROI(ROI o)
 	{
 		o.linkImage(this);
-		return roiList.add(o);
+		if (!roiList.contains(o)) {
+			return roiList.add(o);
+		}
+		return false;
 	}
 
 	public boolean unlinkROI(ROI o)
@@ -680,7 +694,10 @@ public class Image extends AbstractOMEModelObject
 	public boolean linkMicrobeamManipulation(MicrobeamManipulation o)
 	{
 		o.linkImage(this);
-		return microbeamManipulationList.add(o);
+		if (!microbeamManipulationList.contains(o)) {
+			return microbeamManipulationList.add(o);
+		}
+		return false;
 	}
 
 	public boolean unlinkMicrobeamManipulation(MicrobeamManipulation o)
@@ -713,7 +730,10 @@ public class Image extends AbstractOMEModelObject
 	public boolean linkAnnotation(Annotation o)
 	{
 		o.linkImage(this);
-		return annotationList.add(o);
+		if (!annotationList.contains(o)) {
+			return annotationList.add(o);
+		}
+		return false;
 	}
 
 	public boolean unlinkAnnotation(Annotation o)
@@ -745,7 +765,10 @@ public class Image extends AbstractOMEModelObject
 
 	public boolean linkWellSample(WellSample o)
 	{
-		return wellSample_BackReferenceList.add(o);
+		if (!wellSample_BackReferenceList.contains(o)) {
+			return wellSample_BackReferenceList.add(o);
+		}
+		return false;
 	}
 
 	public boolean unlinkWellSample(WellSample o)
