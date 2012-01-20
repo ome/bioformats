@@ -567,7 +567,7 @@ public class SlidebookReader extends FormatReader {
             mult = divValues[pixelSize.size()];
           }
           float v = pixSize * mult;
-          if (v - 0.000001 > 0) {
+          if (isGreaterThanEpsilon(v)) {
             pixelSize.add(v);
           }
         }
@@ -792,7 +792,7 @@ public class SlidebookReader extends FormatReader {
         }
 
         if (idx < pixelSizeZ.size() && pixelSizeZ.get(idx) != null) {
-          if (pixelSizeZ.get(idx) - 0.00001 > 0) {
+          if (isGreaterThanEpsilon(pixelSizeZ.get(idx))) {
             store.setPixelsPhysicalSizeZ(
               new PositiveFloat(pixelSizeZ.get(idx)), i);
           }
@@ -837,6 +837,16 @@ public class SlidebookReader extends FormatReader {
       }
     }
     return false;
+  }
+
+  /**
+   * Returns true if the given double is greater than epsilon (defined here as
+   * 0.000001), i.e. positive and not a very, very small number.
+   * Returns false if the given double is negative or less than epsilon.
+   * See also: http://en.wikipedia.org/wiki/(%CE%B5,_%CE%B4)-definition_of_limit
+   */
+  private boolean isGreaterThanEpsilon(double v) {
+    return v - 0.000001 > 0;
   }
 
 }
