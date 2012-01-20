@@ -110,8 +110,6 @@ public class AmiraReader extends FormatReader {
     parameters = new AmiraParameters(in);
     offsetOfFirstStream = in.getFilePointer();
 
-    // TODO: handle multiple streams
-
     status("Populating metadata hashtable");
 
     addGlobalMeta("Image width", parameters.width);
@@ -121,14 +119,19 @@ public class AmiraReader extends FormatReader {
 
     status("Populating core metadata");
 
+    int channelIndex = 1;
+    while (parameters.getStreams().get("@" + channelIndex) != null) {
+      channelIndex++;
+    }
+
     core[0].sizeX = parameters.width;
     core[0].sizeY = parameters.height;
     core[0].sizeZ = parameters.depth;
     core[0].sizeT = 1;
-    core[0].sizeC = 1;
-    core[0].imageCount = getSizeZ();
+    core[0].sizeC = channelIndex - 1;
+    core[0].imageCount = getSizeZ() * getSizeC();
     core[0].littleEndian = parameters.littleEndian;
-    core[0].dimensionOrder = "XYCZT";
+    core[0].dimensionOrder = "XYZCT";
 
     if (parameters.streamTypes[0].toLowerCase().equals("byte")) {
       core[0].pixelType = FormatTools.UINT8;
