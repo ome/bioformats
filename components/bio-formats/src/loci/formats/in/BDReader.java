@@ -333,6 +333,10 @@ public class BDReader extends FormatReader {
       store.setPlateAcquisitionMaximumFieldCount(
         new PositiveInteger(fieldRows * fieldCols), 0, 0);
     }
+    else {
+      LOGGER.warn("Expected positive value for MaximumFieldCount; got {}",
+        fieldRows * fieldCols);
+    }
 
     for (int row=0; row<wellRows; row++) {
       for (int col=0; col<wellCols; col++) {
@@ -394,6 +398,11 @@ public class BDReader extends FormatReader {
           store.setObjectiveNominalMagnification(
             new PositiveInteger(magnification), 0, 0);
         }
+        else {
+          LOGGER.warn(
+            "Expected positive value for NominalMagnification; got {}",
+            magnification);
+        }
         if (na != null) {
           na = na.substring(0, 1) + "." + na.substring(1);
           store.setObjectiveLensNA(new Double(na), 0, 0);
@@ -414,9 +423,19 @@ public class BDReader extends FormatReader {
             store.setChannelEmissionWavelength(
               new PositiveInteger(emWave[c]), i, c);
           }
+          else {
+            LOGGER.warn(
+              "Expected positive value for EmissionWavelength; got {}",
+              emWave[c]);
+          }
           if (exWave[c] > 0) {
             store.setChannelExcitationWavelength(
               new PositiveInteger(exWave[c]), i, c);
+          }
+          else {
+            LOGGER.warn(
+              "Expected positive value for ExcitationWavelength; got {}",
+              exWave[c]);
           }
 
           String detectorID = MetadataTools.createLSID("Detector", 0, c);

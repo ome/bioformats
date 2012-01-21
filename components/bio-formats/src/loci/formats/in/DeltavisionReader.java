@@ -647,13 +647,22 @@ public class DeltavisionReader extends FormatReader {
         Double x = new Double(pixX);
         store.setPixelsPhysicalSizeX(new PositiveFloat(x), series);
       }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}", pixX);
+      }
       if (pixY > 0) {
         Double y = new Double(pixY);
         store.setPixelsPhysicalSizeY(new PositiveFloat(y), series);
       }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}", pixY);
+      }
       if (pixZ > 0) {
         Double z = new Double(pixZ);
         store.setPixelsPhysicalSizeZ(new PositiveFloat(z), series);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}", pixZ);
       }
 
       store.setImageDescription(imageDesc, series);
@@ -692,9 +701,17 @@ public class DeltavisionReader extends FormatReader {
           store.setChannelEmissionWavelength(
             new PositiveInteger((int) waves[w]), series, w);
         }
+        else {
+          LOGGER.warn("Expected positive value for EmissionWavelength; got {}",
+            waves[w]);
+        }
         if ((int) hdrC.exWavelen > 0) {
           store.setChannelExcitationWavelength(
             new PositiveInteger((int) hdrC.exWavelen), series, w);
+        }
+        else {
+          LOGGER.warn("Expected positive alue for ExcitationWavelength; got {}",
+            hdrC.exWavelen);
         }
         if (ndFilters[w] == null) ndFilters[w] = new Double(hdrC.ndFilter);
         store.setChannelNDFilter(ndFilters[w], series, w);
@@ -892,6 +909,11 @@ public class DeltavisionReader extends FormatReader {
                 store.setObjectiveNominalMagnification(
                   new PositiveInteger(mag), 0, 0);
               }
+              else {
+                LOGGER.warn(
+                  "Expected positive value for NominalMagnification; got {}",
+                  mag);
+              }
             }
             catch (NumberFormatException e) {
               LOGGER.warn("Could not parse magnification '{}'", magnification);
@@ -935,6 +957,8 @@ public class DeltavisionReader extends FormatReader {
                 pixelSizes[q].trim());
             }
             if (size == null || size <= 0) {
+              LOGGER.warn("Expected positive value for PhysicalSize; got {}",
+                size);
               continue;
             }
             if (q == 0) {
@@ -2134,6 +2158,10 @@ public class DeltavisionReader extends FormatReader {
     if (magnification > 0) {
       store.setObjectiveNominalMagnification(
         new PositiveInteger(magnification), 0, 0);
+    }
+    else {
+      LOGGER.warn("Expected positive value for NominalMagnification; got {}",
+        magnification);
     }
     if (calibratedMagnification != null) {
       store.setObjectiveCalibratedMagnification(calibratedMagnification, 0, 0);

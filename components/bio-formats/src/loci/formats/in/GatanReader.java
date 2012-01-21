@@ -215,11 +215,20 @@ public class GatanReader extends FormatReader {
         if (x > 0) {
           store.setPixelsPhysicalSizeX(new PositiveFloat(x), 0);
         }
+        else {
+          LOGGER.warn("Expected positive value for PhysicalSizeX; got {}", x);
+        }
         if (y > 0) {
           store.setPixelsPhysicalSizeY(new PositiveFloat(y), 0);
         }
+        else {
+          LOGGER.warn("Expected positive value for PhysicalSizeY; got {}", y);
+        }
         if (z > 0) {
           store.setPixelsPhysicalSizeZ(new PositiveFloat(z), 0);
+        }
+        else {
+          LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}", z);
         }
       }
 

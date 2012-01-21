@@ -209,6 +209,10 @@ public class SimplePCITiffReader extends BaseTiffReader {
         store.setPixelsPhysicalSizeX(new PositiveFloat(scaling), 0);
         store.setPixelsPhysicalSizeY(new PositiveFloat(scaling), 0);
       }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSize; got {}",
+          scaling);
+      }
 
       String instrument = MetadataTools.createLSID("Instrument", 0);
       store.setInstrumentID(instrument, 0);
@@ -218,6 +222,10 @@ public class SimplePCITiffReader extends BaseTiffReader {
       if (magnification > 0) {
         store.setObjectiveNominalMagnification(
           new PositiveInteger(magnification), 0, 0);
+      }
+      else {
+        LOGGER.warn("Expected positive value for NominalMagnification; got {}",
+          magnification);
       }
       store.setObjectiveImmersion(getImmersion(immersion), 0, 0);
 

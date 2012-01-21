@@ -335,6 +335,10 @@ public class NRRDReader extends FormatReader {
                 store.setPixelsPhysicalSizeZ(new PositiveFloat(d), 0);
               }
             }
+            else {
+              LOGGER.warn(
+                "Expected positive value for PhysicalSize; got {}", d);
+            }
           }
           catch (NumberFormatException e) { }
         }

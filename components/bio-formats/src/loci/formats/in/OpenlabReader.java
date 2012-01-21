@@ -594,8 +594,14 @@ public class OpenlabReader extends FormatReader {
       if (xcal > 0) {
         store.setPixelsPhysicalSizeX(new PositiveFloat(new Double(xcal)), 0);
       }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}", xcal);
+      }
       if (ycal > 0) {
         store.setPixelsPhysicalSizeY(new PositiveFloat(new Double(ycal)), 0);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}", ycal);
       }
 
       // link Instrument and Image

@@ -365,6 +365,10 @@ public class TiffReader extends BaseTiffReader {
       if (zDepth > 0) {
         store.setPixelsPhysicalSizeZ(new PositiveFloat(zDepth), 0);
       }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}",
+          zDepth);
+      }
     }
     if (timeIncrement != null) {
       store.setPixelsTimeIncrement(timeIncrement, 0);

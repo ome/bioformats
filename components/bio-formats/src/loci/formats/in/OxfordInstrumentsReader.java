@@ -171,8 +171,16 @@ public class OxfordInstrumentsReader extends FormatReader {
     if (physicalSizeX > 0) {
       store.setPixelsPhysicalSizeX(new PositiveFloat(physicalSizeX), 0);
     }
+    else {
+      LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+        physicalSizeX);
+    }
     if (physicalSizeY > 0) {
       store.setPixelsPhysicalSizeY(new PositiveFloat(physicalSizeY), 0);
+    }
+    else {
+      LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+        physicalSizeY);
     }
   }
 

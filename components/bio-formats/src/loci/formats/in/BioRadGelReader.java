@@ -213,9 +213,17 @@ public class BioRadGelReader extends FormatReader {
         store.setPixelsPhysicalSizeX(
           new PositiveFloat(physicalWidth / getSizeX()), 0);
       }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+          physicalWidth);
+      }
       if (physicalHeight > 0d) {
         store.setPixelsPhysicalSizeY(
           new PositiveFloat(physicalHeight / getSizeY()), 0);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+          physicalHeight);
       }
     }
   }

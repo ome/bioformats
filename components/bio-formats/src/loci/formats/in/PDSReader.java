@@ -284,8 +284,16 @@ public class PDSReader extends FormatReader {
       if (deltaX != null && deltaX > 0) {
         store.setPixelsPhysicalSizeX(new PositiveFloat(deltaX), 0);
       }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+          deltaX);
+      }
       if (deltaY != null && deltaY > 0) {
         store.setPixelsPhysicalSizeY(new PositiveFloat(deltaY), 0);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+          deltaY);
       }
     }
   }

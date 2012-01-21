@@ -343,6 +343,10 @@ public class L2DReader extends FormatReader {
             if (wave > 0) {
               store.setLaserWavelength(new PositiveInteger(wave), 0, q);
             }
+            else {
+              LOGGER.warn("Expected positive value for Wavelength; got {}",
+                wave);
+            }
             store.setLaserType(getLaserType("Other"), 0, q);
             store.setLaserLaserMedium(getLaserMedium("Other"), 0, q);
             store.setChannelLightSourceSettingsID(laser, i, q);

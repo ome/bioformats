@@ -487,6 +487,10 @@ public class ScanrReader extends FormatReader {
       store.setPlateAcquisitionMaximumFieldCount(
         new PositiveInteger(nFields), 0, 0);
     }
+    else {
+      LOGGER.warn("Expected positive value for MaximumFieldCount; got {}",
+        nFields);
+    }
 
     for (int i=0; i<getSeriesCount(); i++) {
       int field = i % nFields;
@@ -528,6 +532,10 @@ public class ScanrReader extends FormatReader {
         if (pixelSize != null && pixelSize > 0) {
           store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSize), i);
           store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSize), i);
+        }
+        else {
+          LOGGER.warn("Expected positive value for PhysicalSize; got {}",
+            pixelSize);
         }
 
         if (fieldPositionX != null && fieldPositionY != null) {

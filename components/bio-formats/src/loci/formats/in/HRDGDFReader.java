@@ -191,6 +191,10 @@ public class HRDGDFReader extends FormatReader {
         store.setPixelsPhysicalSizeX(new PositiveFloat(physicalSize), 0);
         store.setPixelsPhysicalSizeY(new PositiveFloat(physicalSize), 0);
       }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSize; got {}",
+          physicalSize);
+      }
     }
   }
 

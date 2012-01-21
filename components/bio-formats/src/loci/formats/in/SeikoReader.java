@@ -116,8 +116,14 @@ public class SeikoReader extends FormatReader {
       if (xSize > 0) {
         store.setPixelsPhysicalSizeX(new PositiveFloat(xSize), 0);
       }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}", xSize);
+      }
       if (ySize > 0) {
         store.setPixelsPhysicalSizeY(new PositiveFloat(ySize), 0);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}", ySize);
       }
     }
   }

@@ -167,9 +167,18 @@ public class ImarisTiffReader extends BaseTiffReader {
           store.setChannelEmissionWavelength(
             new PositiveInteger(emWave.get(i)), 0, i);
         }
+        else {
+          LOGGER.warn("Expected positive value for EmissionWavelength; got {}",
+            emWave.get(i));
+        }
         if (exWave.get(i) > 0) {
           store.setChannelExcitationWavelength(
             new PositiveInteger(exWave.get(i)), 0, i);
+        }
+        else {
+          LOGGER.warn(
+            "Expected positive value for ExcitationWavelength; got {}",
+            exWave.get(i));
         }
         store.setChannelName(channelNames.get(i), 0, i);
       }

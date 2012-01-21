@@ -448,6 +448,10 @@ public class InCellReader extends FormatReader {
       store.setPlateAcquisitionMaximumFieldCount(
         new PositiveInteger(fieldCount), 0, 0);
     }
+    else {
+      LOGGER.warn("Expected positive value for MaximumFieldCount; got {}",
+        fieldCount);
+    }
 
     // populate Image data
 
@@ -552,12 +556,21 @@ public class InCellReader extends FormatReader {
               store.setChannelEmissionWavelength(
                 new PositiveInteger(wave), i, q);
             }
+            else {
+              LOGGER.warn(
+                "Expected positive value for EmissionWavelength; got {}", wave);
+            }
           }
           if (q < exWaves.size()) {
             int wave = exWaves.get(q).intValue();
             if (wave > 0) {
               store.setChannelExcitationWavelength(
                 new PositiveInteger(wave), i, q);
+            }
+            else {
+              LOGGER.warn(
+                "Expected positive value for ExcitationWavelength; got {}",
+                wave);
             }
           }
         }
@@ -832,6 +845,10 @@ public class InCellReader extends FormatReader {
           store.setObjectiveNominalMagnification(
             new PositiveInteger(mag), 0, 0);
         }
+        else {
+          LOGGER.warn(
+            "Expected positive value for NominalMagnification; got {}", mag);
+        }
         store.setObjectiveLensNA(new Double(
           attributes.getValue("numerical_aperture")), 0, 0);
         try {
@@ -866,8 +883,16 @@ public class InCellReader extends FormatReader {
           if (pixelSizeX > 0) {
             store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSizeX), i);
           }
+          else {
+            LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+              pixelSizeX);
+          }
           if (pixelSizeY > 0) {
             store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSizeY), i);
+          }
+          else {
+            LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+              pixelSizeY);
           }
         }
       }

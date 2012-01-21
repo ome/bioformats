@@ -1013,11 +1013,23 @@ public class NativeND2Reader extends FormatReader {
         if (sizeX > 0) {
           store.setPixelsPhysicalSizeX(new PositiveFloat(sizeX), i);
         }
+        else {
+          LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+            sizeX);
+        }
         if (sizeY > 0) {
           store.setPixelsPhysicalSizeY(new PositiveFloat(sizeY), i);
         }
+        else {
+          LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+            sizeY);
+        }
         if (sizeZ > 0) {
           store.setPixelsPhysicalSizeZ(new PositiveFloat(sizeZ), i);
+        }
+        else {
+          LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}",
+            sizeZ);
         }
       }
     }
@@ -1120,13 +1132,27 @@ public class NativeND2Reader extends FormatReader {
           store.setChannelAcquisitionMode(
             getAcquisitionMode(modality.get(index)), i, c);
         }
-        if (index < emWave.size() && emWave.get(index) > 0) {
-          store.setChannelEmissionWavelength(
-            new PositiveInteger(emWave.get(index)), i, c);
+        if (index < emWave.size()) {
+          if (emWave.get(index) > 0) {
+            store.setChannelEmissionWavelength(
+              new PositiveInteger(emWave.get(index)), i, c);
+          }
+          else {
+            LOGGER.warn(
+              "Expected positive value for EmissionWavelength; got {}",
+              emWave.get(index));
+          }
         }
-        if (index < exWave.size() && exWave.get(index) > 0) {
-          store.setChannelExcitationWavelength(
-            new PositiveInteger(exWave.get(index)), i, c);
+        if (index < exWave.size()) {
+          if (exWave.get(index) > 0) {
+            store.setChannelExcitationWavelength(
+              new PositiveInteger(exWave.get(index)), i, c);
+          }
+          else {
+            LOGGER.warn(
+              "Expected positive value for ExcitationWavelength; got {}",
+              exWave.get(index));
+          }
         }
         if (index < binning.size()) {
           store.setDetectorSettingsBinning(

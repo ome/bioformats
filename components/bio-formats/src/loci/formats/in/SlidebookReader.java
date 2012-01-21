@@ -738,6 +738,10 @@ public class SlidebookReader extends FormatReader {
             store.setPixelsPhysicalSizeX(new PositiveFloat(size), i);
             store.setPixelsPhysicalSizeY(new PositiveFloat(size), i);
           }
+          else {
+            LOGGER.warn("Expected positive value for PhysicalSize; got {}",
+              size);
+          }
         }
         int idx = 0;
         for (int q=0; q<i; q++) {
@@ -748,6 +752,10 @@ public class SlidebookReader extends FormatReader {
           if (pixelSizeZ.get(idx) > 0) {
             store.setPixelsPhysicalSizeZ(
               new PositiveFloat(pixelSizeZ.get(idx)), i);
+          }
+          else {
+            LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}",
+              pixelSizeZ.get(idx));
           }
         }
       }

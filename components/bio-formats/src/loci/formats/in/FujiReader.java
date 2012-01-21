@@ -180,8 +180,16 @@ public class FujiReader extends FormatReader {
     if (physicalWidth > 0) {
       store.setPixelsPhysicalSizeX(new PositiveFloat(physicalWidth), 0);
     }
+    else {
+      LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+        physicalWidth);
+    }
     if (physicalHeight > 0) {
       store.setPixelsPhysicalSizeY(new PositiveFloat(physicalHeight), 0);
+    }
+    else {
+      LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+        physicalHeight);
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {

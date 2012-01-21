@@ -154,9 +154,17 @@ public class WATOPReader extends FormatReader {
         store.setPixelsPhysicalSizeX(
           new PositiveFloat((double) xSize / getSizeX()), 0);
       }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+          (double) xSize / getSizeX());
+      }
       if (ySize > 0) {
         store.setPixelsPhysicalSizeY(
           new PositiveFloat((double) ySize / getSizeY()), 0);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+          (double) ySize / getSizeY());
       }
     }
   }

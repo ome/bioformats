@@ -128,6 +128,9 @@ public class QuesantReader extends FormatReader {
         store.setPixelsPhysicalSizeY(
           new PositiveFloat((double) xSize / getSizeY()), 0);
       }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSize; got {}", xSize);
+      }
     }
   }
 

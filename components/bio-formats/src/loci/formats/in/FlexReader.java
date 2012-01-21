@@ -524,6 +524,10 @@ public class FlexReader extends FormatReader {
       store.setPlateAcquisitionMaximumFieldCount(
         new PositiveInteger(fieldCount), 0, 0);
     }
+    else {
+      LOGGER.warn("Expected positive value for MaximumFieldCount; got {}",
+        fieldCount);
+    }
 
     plateAcqStartTime =
       DateTools.formatDate(plateAcqStartTime, "dd.MM.yyyy  HH:mm:ss");
@@ -635,13 +639,25 @@ public class FlexReader extends FormatReader {
           }
         }
 
-        if (seriesIndex < xSizes.size() && xSizes.get(seriesIndex) > 0) {
-          store.setPixelsPhysicalSizeX(
-            new PositiveFloat(xSizes.get(seriesIndex)), i);
+        if (seriesIndex < xSizes.size()) {
+          if (xSizes.get(seriesIndex) > 0) {
+            store.setPixelsPhysicalSizeX(
+              new PositiveFloat(xSizes.get(seriesIndex)), i);
+          }
+          else {
+            LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+              xSizes.get(seriesIndex));
+          }
         }
-        if (seriesIndex < ySizes.size() && ySizes.get(seriesIndex) > 0) {
-          store.setPixelsPhysicalSizeY(
-            new PositiveFloat(ySizes.get(seriesIndex)), i);
+        if (seriesIndex < ySizes.size()) {
+          if (ySizes.get(seriesIndex) > 0) {
+            store.setPixelsPhysicalSizeY(
+              new PositiveFloat(ySizes.get(seriesIndex)), i);
+          }
+          else {
+            LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+              ySizes.get(seriesIndex));
+          }
         }
 
         int well = wellNumber[pos[1]][0] * wellColumns + wellNumber[pos[1]][1];
@@ -1339,6 +1355,10 @@ public class FlexReader extends FormatReader {
         if (wavelength > 0) {
           store.setLaserWavelength(
             new PositiveInteger(wavelength), 0, nextLaser);
+        }
+        else {
+          LOGGER.warn("Expected positive value for Wavelength; got {}",
+            wavelength);
         }
         try {
           store.setLaserType(getLaserType("Other"), 0, nextLaser);

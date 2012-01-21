@@ -296,8 +296,16 @@ public class CellomicsReader extends FormatReader {
         if (width > 0) {
           store.setPixelsPhysicalSizeX(new PositiveFloat(width), 0);
         }
+        else {
+          LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+            width);
+        }
         if (height > 0) {
           store.setPixelsPhysicalSizeY(new PositiveFloat(height), 0);
+        }
+        else {
+          LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+            height);
         }
       }
     }

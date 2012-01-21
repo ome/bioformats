@@ -327,11 +327,23 @@ public class ImprovisionTiffReader extends BaseTiffReader {
       if (pixelSizeX > 0) {
         store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSizeX), 0);
       }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+          pixelSizeX);
+      }
       if (pixelSizeY > 0) {
         store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSizeY), 0);
       }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+          pixelSizeY);
+      }
       if (pixelSizeZ > 0) {
         store.setPixelsPhysicalSizeZ(new PositiveFloat(pixelSizeZ), 0);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}",
+          pixelSizeZ);
       }
       store.setPixelsTimeIncrement(pixelSizeT / 1000000.0, 0);
       for (int i=0; i<getEffectiveSizeC(); i++) {

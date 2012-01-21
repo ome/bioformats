@@ -186,6 +186,10 @@ public class KodakReader extends FormatReader {
           size = 1.0 / (size * (1.0 / 25400));
           store.setPixelsPhysicalSizeY(new PositiveFloat(size), 0);
         }
+        else {
+          LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+            size);
+        }
       }
       else if (key.equals("Horizontal Resolution")) {
         // resolution stored in pixels per inch
@@ -194,6 +198,10 @@ public class KodakReader extends FormatReader {
         if (size > 0) {
           size = 1.0 / (size * (1.0 / 25400));
           store.setPixelsPhysicalSizeX(new PositiveFloat(size), 0);
+        }
+        else {
+          LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+            size);
         }
       }
       else if (key.equals("CCD Temperature")) {

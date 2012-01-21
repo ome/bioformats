@@ -993,6 +993,10 @@ public class MIASReader extends FormatReader {
             store.setObjectiveNominalMagnification(
               new PositiveInteger(mag), 0, 0);
           }
+          else {
+            LOGGER.warn(
+              "Expected positive value for NominalMagnification; got {}", mag);
+          }
         }
         else if (key.startsWith("Mode_")) {
           channelNames.add(value);
@@ -1013,8 +1017,16 @@ public class MIASReader extends FormatReader {
       if (physicalSizeX != null && physicalSizeX > 0) {
         store.setPixelsPhysicalSizeX(new PositiveFloat(physicalSizeX), well);
       }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+          physicalSizeX);
+      }
       if (physicalSizeY != null && physicalSizeY > 0) {
         store.setPixelsPhysicalSizeY(new PositiveFloat(physicalSizeY), well);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+          physicalSizeY);
       }
       for (int c=0; c<channelNames.size(); c++) {
         if (c < getEffectiveSizeC()) {

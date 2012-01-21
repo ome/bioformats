@@ -164,11 +164,23 @@ public class INRReader extends FormatReader {
       if (physicalSizeX != null && physicalSizeX > 0) {
         store.setPixelsPhysicalSizeX(new PositiveFloat(physicalSizeX), 0);
       }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+          physicalSizeX);
+      }
       if (physicalSizeY != null && physicalSizeY > 0) {
         store.setPixelsPhysicalSizeY(new PositiveFloat(physicalSizeY), 0);
       }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+          physicalSizeY);
+      }
       if (physicalSizeZ != null && physicalSizeZ > 0) {
         store.setPixelsPhysicalSizeZ(new PositiveFloat(physicalSizeZ), 0);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}",
+          physicalSizeZ);
       }
     }
   }

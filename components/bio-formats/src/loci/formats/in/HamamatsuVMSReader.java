@@ -216,17 +216,33 @@ public class HamamatsuVMSReader extends FormatReader {
         store.setPixelsPhysicalSizeX(
           new PositiveFloat(physicalWidth / core[0].sizeX), 0);
       }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+          physicalWidth / core[0].sizeX);
+      }
       if (physicalHeight > 0) {
         store.setPixelsPhysicalSizeY(
           new PositiveFloat(physicalHeight / core[0].sizeY), 0);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+          physicalHeight / core[0].sizeY);
       }
       if (macroWidth > 0) {
         store.setPixelsPhysicalSizeX(
           new PositiveFloat(macroWidth / core[1].sizeX), 1);
       }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+          macroWidth / core[1].sizeX);
+      }
       if (macroHeight > 0) {
         store.setPixelsPhysicalSizeY(
           new PositiveFloat(macroHeight / core[1].sizeY), 1);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+          macroHeight / core[1].sizeY);
       }
 
       String instrumentID = MetadataTools.createLSID("Instrument", 0);
@@ -238,6 +254,10 @@ public class HamamatsuVMSReader extends FormatReader {
       if (magnification > 0) {
         store.setObjectiveNominalMagnification(
           new PositiveInteger(magnification.intValue()), 0, 0);
+      }
+      else {
+        LOGGER.warn("Expected positive value for NominalMagnification; got {}",
+          magnification);
       }
       store.setImageObjectiveSettingsID(objectiveID, 0);
     }

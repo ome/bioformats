@@ -193,6 +193,10 @@ public class IPLabReader extends FormatReader {
         store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSize), 0);
         store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSize), 0);
       }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSize; got {}",
+          pixelSize);
+      }
       if (timeIncrement != null) {
         store.setPixelsTimeIncrement(timeIncrement, 0);
       }

@@ -56,7 +56,7 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
   // -- Constants --
 
   /** Logger for this class. */
-  private static final Logger LOGGER =
+  protected static final Logger LOGGER =
     LoggerFactory.getLogger(BaseTiffReader.class);
 
   public static final String[] DATE_FORMATS = {
@@ -439,8 +439,14 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
       if (pixX > 0) {
         store.setPixelsPhysicalSizeX(new PositiveFloat(pixX), 0);
       }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}", pixX);
+      }
       if (pixY > 0) {
         store.setPixelsPhysicalSizeY(new PositiveFloat(pixY), 0);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}", pixY);
       }
       store.setPixelsPhysicalSizeZ(null, 0);
     }

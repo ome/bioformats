@@ -244,6 +244,10 @@ public class HitachiReader extends FormatReader {
       store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSize), 0);
       store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSize), 0);
     }
+    else {
+      LOGGER.warn("Expected positive value for PhysicalSize; got {}",
+        pixelSize);
+    }
 
     if (stagePosX != null) {
       store.setPlanePositionX(stagePosX, 0, 0);

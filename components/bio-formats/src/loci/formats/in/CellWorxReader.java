@@ -367,6 +367,10 @@ public class CellWorxReader extends FormatReader {
       store.setPlateAcquisitionMaximumFieldCount(
         new PositiveInteger(fieldMap.length * fieldMap[0].length), 0, 0);
     }
+    else {
+      LOGGER.warn("Expected positive value for MaximumFieldCount; got {}",
+        fieldMap.length * fieldMap[0].length);
+    }
 
     int nextImage = 0;
     for (int row=0; row<wellFiles.length; row++) {
@@ -528,9 +532,17 @@ public class CellWorxReader extends FormatReader {
               store.setPixelsPhysicalSizeX(
                 new PositiveFloat(xSize / getSizeX()), index);
             }
+            else {
+              LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+                xSize / getSizeX());
+            }
             if (ySize > 0) {
               store.setPixelsPhysicalSizeY(
                 new PositiveFloat(ySize / getSizeY()), index);
+            }
+            else {
+              LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+                ySize / getSizeY());
             }
           }
         }
@@ -581,9 +593,19 @@ public class CellWorxReader extends FormatReader {
                   store.setChannelExcitationWavelength(new PositiveInteger(
                     excitation), seriesIndex + field, index);
                 }
+                else {
+                  LOGGER.warn(
+                    "Expected positive value for ExcitationWavelength; got {}",
+                    excitation);
+                }
                 if (emission > 0) {
                   store.setChannelEmissionWavelength(
                     new PositiveInteger(emission), seriesIndex + field, index);
+                }
+                else {
+                  LOGGER.warn(
+                    "Expected positive value for EmissionWavelength; got {}",
+                    emission);
                 }
               }
             }

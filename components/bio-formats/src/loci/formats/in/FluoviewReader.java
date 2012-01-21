@@ -32,10 +32,11 @@ import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
 import loci.formats.tiff.TiffRational;
+
+import ome.xml.model.primitives.PositiveFloat;
 
 /**
  * FluoviewReader is the file format reader for
@@ -418,11 +419,23 @@ public class FluoviewReader extends BaseTiffReader {
       if (voxelX > 0) {
         store.setPixelsPhysicalSizeX(new PositiveFloat(voxelX), i);
       }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+          voxelX);
+      }
       if (voxelY > 0) {
         store.setPixelsPhysicalSizeY(new PositiveFloat(voxelY), i);
       }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+          voxelY);
+      }
       if (voxelZ > 0) {
         store.setPixelsPhysicalSizeZ(new PositiveFloat(voxelZ), i);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}",
+          voxelZ);
       }
       store.setPixelsTimeIncrement(voxelT, i);
 

@@ -270,6 +270,10 @@ public class IvisionReader extends FormatReader {
         store.setObjectiveNominalMagnification(
           new PositiveInteger(magnification), 0, 0);
       }
+      else {
+        LOGGER.warn("Expected positive value for NominalMagnification; got {}",
+          magnification);
+      }
       if (refractiveIndex != null) {
         store.setImageObjectiveSettingsRefractiveIndex(refractiveIndex, 0);
       }

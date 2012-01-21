@@ -322,11 +322,20 @@ public class ImarisHDFReader extends FormatReader {
       if (px > 0) {
         store.setPixelsPhysicalSizeX(new PositiveFloat(px), s);
       }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}", px);
+      }
       if (py > 0) {
         store.setPixelsPhysicalSizeY(new PositiveFloat(py), s);
       }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}", py);
+      }
       if (pz > 0) {
         store.setPixelsPhysicalSizeZ(new PositiveFloat(pz), s);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}", pz);
       }
 
       for (int i=0; i<core[s].sizeC; i++, cIndex++) {

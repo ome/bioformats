@@ -332,8 +332,16 @@ public class PrairieReader extends FormatReader {
           if (pixelSizeX > 0) {
             store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSizeX), 0);
           }
+          else {
+            LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+              pixelSizeX);
+          }
           if (pixelSizeY > 0) {
             store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSizeY), 0);
+          }
+          else {
+            LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+              pixelSizeY);
           }
           for (int i=0; i<getSizeC(); i++) {
             String gain = i < gains.size() ? gains.get(i) : null;
@@ -535,6 +543,11 @@ public class PrairieReader extends FormatReader {
               Integer m = new Integer(mag);
               if (m > 0) {
                 magnification = new PositiveInteger(m);
+              }
+              else {
+                LOGGER.warn(
+                  "Expected positive value for NominalMagnification; got {}",
+                  m);
               }
             }
             catch (NumberFormatException e) { }

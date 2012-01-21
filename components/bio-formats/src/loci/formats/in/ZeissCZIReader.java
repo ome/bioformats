@@ -486,6 +486,10 @@ public class ZeissCZIReader extends FormatReader {
               store.setChannelEmissionWavelength(
                 new PositiveInteger(wave.intValue()), i, c);
             }
+            else {
+              LOGGER.warn(
+                "Expected positive value for EmissionWavelength; got {}", wave);
+            }
           }
         }
         if (c < excitationWavelengths.size()) {
@@ -495,6 +499,11 @@ public class ZeissCZIReader extends FormatReader {
             if (wave.intValue() > 0) {
               store.setChannelExcitationWavelength(
                 new PositiveInteger(wave.intValue()), i, c);
+            }
+            else {
+              LOGGER.warn(
+                "Expected positive value for ExcitationWavelength; got {}",
+                wave);
             }
           }
         }
@@ -886,6 +895,10 @@ public class ZeissCZIReader extends FormatReader {
             store.setObjectiveNominalMagnification(
               new PositiveInteger(mag), 0, i);
           }
+          else {
+            LOGGER.warn(
+              "Expected positive value for NominalMagnification; got {}", mag);
+          }
           String calibratedMag =
             getFirstNodeValue(objective, "CalibratedMagnification");
           if (calibratedMag != null) {
@@ -975,9 +988,15 @@ public class ZeissCZIReader extends FormatReader {
           if (inWave > 0) {
             store.setTransmittanceRangeCutIn(new PositiveInteger(inWave), 0, i);
           }
+          else {
+            LOGGER.warn("Expected positive value for CutIn; got {}", inWave);
+          }
           if (outWave > 0) {
             store.setTransmittanceRangeCutOut(
               new PositiveInteger(outWave), 0, i);
+          }
+          else {
+            LOGGER.warn("Expected positive value for CutOut; got {}", outWave);
           }
 
           String inTolerance =
@@ -1050,6 +1069,9 @@ public class ZeissCZIReader extends FormatReader {
             store.setPixelsPhysicalSizeZ(size, series);
           }
         }
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSize; got {}", value);
       }
     }
   }

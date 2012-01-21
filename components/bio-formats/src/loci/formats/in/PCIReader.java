@@ -354,6 +354,10 @@ public class PCIReader extends FormatReader {
         store.setPixelsPhysicalSizeX(new PositiveFloat(scaleFactor), 0);
         store.setPixelsPhysicalSizeY(new PositiveFloat(scaleFactor), 0);
       }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSize; got {}",
+          scaleFactor);
+      }
 
       for (int i=0; i<timestamps.size(); i++) {
         Double timestamp = new Double(timestamps.get(i).doubleValue());
