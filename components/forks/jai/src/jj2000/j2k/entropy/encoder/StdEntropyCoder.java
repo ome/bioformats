@@ -1408,8 +1408,8 @@ public class StdEntropyCoder extends EntropyCoder
 
         // Loop on significant magnitude bit-planes doing the 3 passes
         curbp = 30-skipbp;
-        fs = FS_LOSSY;
-        fm = FM_LOSSY;
+        fs = FS_LOSSLESS;
+        fm = FM_LOSSLESS;
         msew = Math.pow(2,((curbp-lmb)<<1)-MSE_LKP_FRAC_BITS)*
             srcblk.sb.stepWMSE*srcblk.wmseScaling;
         totdist = 0f;
