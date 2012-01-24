@@ -66,6 +66,7 @@
       <groups/>
         <classes>
           <class name="loci.formats.utests.LosslessJPEG2000Test"/>
+          <class name="loci.formats.utests.SixteenBitLosslessJPEG2000Test"/>
         </classes>
     </test>
 </suite>
