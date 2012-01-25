@@ -1132,25 +1132,25 @@ public class LeicaReader extends FormatReader {
       String lut = getString(false);
       addSeriesMeta(p + " name", lut);
 
-      channelColor[seriesIndex][j] = 0xffffff;
+      channelColor[seriesIndex][j] = 0xffffffff;
 
       if (lut.equalsIgnoreCase("red")) {
-        channelColor[seriesIndex][j] = 0xff0000;
+        channelColor[seriesIndex][j] = 0xff0000ff;
       }
       else if (lut.equalsIgnoreCase("green")) {
-        channelColor[seriesIndex][j] = 0xff00;
+        channelColor[seriesIndex][j] = 0xff00ff;
       }
       else if (lut.equalsIgnoreCase("blue")) {
-        channelColor[seriesIndex][j] = 0xff;
-      }
-      else if (lut.equalsIgnoreCase("yellow")) {
-        channelColor[seriesIndex][j] = 0xffff00;
-      }
-      else if (lut.equalsIgnoreCase("cyan")) {
         channelColor[seriesIndex][j] = 0xffff;
       }
+      else if (lut.equalsIgnoreCase("yellow")) {
+        channelColor[seriesIndex][j] = 0xffff00ff;
+      }
+      else if (lut.equalsIgnoreCase("cyan")) {
+        channelColor[seriesIndex][j] = 0xffffff;
+      }
       else if (lut.equalsIgnoreCase("magenta")) {
-        channelColor[seriesIndex][j] = 0xff00ff;
+        channelColor[seriesIndex][j] = 0xff00ffff;
       }
 
       in.skipBytes(8);

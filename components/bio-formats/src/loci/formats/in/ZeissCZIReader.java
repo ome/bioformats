@@ -472,7 +472,8 @@ public class ZeissCZIReader extends FormatReader {
           if (color != null) {
             color = color.replaceAll("#", "");
             try {
-              store.setChannelColor(Integer.parseInt(color, 16), i, c);
+              store.setChannelColor(
+                (Integer.parseInt(color, 16) << 8) | 0xff, i, c);
             }
             catch (NumberFormatException e) { }
           }

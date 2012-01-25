@@ -1865,19 +1865,19 @@ public class LIFReader extends FormatReader {
   private int getChannelColor(int colorCode) {
     switch (colorCode) {
       case 0:
-        return 0xff0000;
+        return 0xff0000ff;
       case 1:
-        return 0xff00;
+        return 0x00ff00ff;
       case 2:
-        return 0xff;
+        return 0x0000ffff;
       case 3:
-        return 0xffff;
+        return 0x00ffffff;
       case 4:
-        return 0xff00ff;
+        return 0xff00ffff;
       case 5:
-        return 0xffff00;
+        return 0xffff00ff;
     }
-    return 0xffffff;
+    return 0xffffffff;
   }
 
 }
