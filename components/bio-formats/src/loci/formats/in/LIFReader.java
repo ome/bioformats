@@ -991,8 +991,8 @@ public class LIFReader extends FormatReader {
 
             double cutIn = new Double(multiband.getAttribute("LeftWorld"));
             double cutOut = new Double(multiband.getAttribute("RightWorld"));
-            cutIns[image].add(new PositiveInteger((int) Math.round(cutIn)));
-            cutOuts[image].add(new PositiveInteger((int) Math.round(cutOut)));
+            cutIns[image].add(new PositiveInteger((int) Math.ceil(cutIn)));
+            cutOuts[image].add(new PositiveInteger((int) Math.ceil(cutOut)));
           }
           else {
             channels.add("");
@@ -1357,7 +1357,7 @@ public class LIFReader extends FormatReader {
       else if (objectClass.equals("CSpectrophotometerUnit")) {
         Integer v = null;
         try {
-          v = new Integer((int) Double.parseDouble(variant));
+          v = new Integer((int) Math.ceil(Double.parseDouble(variant)));
         }
         catch (NumberFormatException e) { }
         String description = filterSetting.getAttribute("Description");
