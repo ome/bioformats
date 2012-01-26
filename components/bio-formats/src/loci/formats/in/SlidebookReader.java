@@ -389,7 +389,18 @@ public class SlidebookReader extends FormatReader {
 
     if (pixelOffsets.size() > 1) {
       boolean little = isLittleEndian();
-      core = new CoreMetadata[uniqueSeries.size()];
+
+      int seriesCount = 0;
+      for (int i=0; i<uniqueSeries.size(); i++) {
+        Vector<Integer> pixelIndexes = uniqueSeries.get(orderedSeries.get(i));
+        int nBlocks = pixelIndexes.size();
+        if (nBlocks == 0) {
+          nBlocks++;
+        }
+        seriesCount += nBlocks;
+      }
+
+      core = new CoreMetadata[seriesCount];
       for (int i=0; i<getSeriesCount(); i++) {
         core[i] = new CoreMetadata();
         core[i].littleEndian = little;
@@ -628,11 +639,24 @@ public class SlidebookReader extends FormatReader {
 
     boolean divByTwo = false;
 
+    int nextPixelIndex = 0;
+    int nextBlock = 0;
+
     for (int i=0; i<getSeriesCount(); i++) {
       setSeries(i);
 
-      Vector<Integer> pixelIndexes = uniqueSeries.get(orderedSeries.get(i));
+      Vector<Integer> pixelIndexes =
+        uniqueSeries.get(orderedSeries.get(nextPixelIndex));
       int nBlocks = pixelIndexes.size();
+      if (nextBlock >= nBlocks) {
+        nextPixelIndex++;
+        nextBlock = 0;
+        pixelIndexes = uniqueSeries.get(orderedSeries.get(nextPixelIndex));
+        nBlocks = pixelIndexes.size();
+      }
+      else {
+        nextBlock++;
+      }
       int index = pixelIndexes.get(0);
 
       long pixels = pixelLengths.get(index).longValue() / 2;
@@ -721,7 +745,6 @@ public class SlidebookReader extends FormatReader {
       }
       if (getSizeT() == 0) core[i].sizeT = 1;
 
-      core[i].sizeT *= nBlocks;
       core[i].imageCount = nPlanes * getSizeT();
       core[i].pixelType = FormatTools.UINT16;
       core[i].dimensionOrder = nBlocks > 1 ? "XYZCT" : "XYZTC";
@@ -731,15 +754,14 @@ public class SlidebookReader extends FormatReader {
 
       planeOffset[i] = new long[getImageCount()];
       int nextImage = 0;
-      for (Integer pixelIndex : pixelIndexes) {
-        long offset = pixelOffsets.get(pixelIndex) + diff;
-        long length = pixelLengths.get(pixelIndex);
-        int planeSize = getSizeX() * getSizeY() * 2;
-        int planes = (int) (length / planeSize);
-        for (int p=0; p<planes; p++, nextImage++) {
-          if (nextImage < planeOffset[i].length) {
-            planeOffset[i][nextImage] = offset + p * planeSize;
-          }
+      Integer pixelIndex = pixelIndexes.get(nextBlock == 0 ? 0 : nextBlock - 1);
+      long offset = pixelOffsets.get(pixelIndex) + diff;
+      long length = pixelLengths.get(pixelIndex);
+      int planeSize = getSizeX() * getSizeY() * 2;
+      int planes = (int) (length / planeSize);
+      for (int p=0; p<planes; p++, nextImage++) {
+        if (nextImage < planeOffset[i].length) {
+          planeOffset[i][nextImage] = offset + p * planeSize;
         }
       }
     }
