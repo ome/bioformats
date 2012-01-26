@@ -34,7 +34,6 @@ import loci.formats.ImageTools;
 import loci.formats.MetadataTools;
 import loci.formats.codec.BitBuffer;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 
 /**
  * CanonRawReader is the file format reader for Canon RAW files.

@@ -38,9 +38,9 @@ import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 
 import ome.xml.model.primitives.NonNegativeInteger;
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 
 /**
@@ -363,8 +363,14 @@ public class CellWorxReader extends FormatReader {
 
     String plateAcqID = MetadataTools.createLSID("PlateAcquisition", 0, 0);
     store.setPlateAcquisitionID(plateAcqID, 0, 0);
-    store.setPlateAcquisitionMaximumFieldCount(
-      new PositiveInteger(fieldMap.length * fieldMap[0].length), 0, 0);
+    if (fieldMap.length * fieldMap[0].length > 0) {
+      store.setPlateAcquisitionMaximumFieldCount(
+        new PositiveInteger(fieldMap.length * fieldMap[0].length), 0, 0);
+    }
+    else {
+      LOGGER.warn("Expected positive value for MaximumFieldCount; got {}",
+        fieldMap.length * fieldMap[0].length);
+    }
 
     int nextImage = 0;
     for (int row=0; row<wellFiles.length; row++) {
@@ -522,10 +528,22 @@ public class CellWorxReader extends FormatReader {
           Double ySize = new Double(value.substring(s + 1, end).trim());
           for (int field=0; field<fieldCount; field++) {
             int index = seriesIndex + field;
-            store.setPixelsPhysicalSizeX(
-              new PositiveFloat(xSize / getSizeX()), index);
-            store.setPixelsPhysicalSizeY(
-              new PositiveFloat(ySize / getSizeY()), index);
+            if (xSize > 0) {
+              store.setPixelsPhysicalSizeX(
+                new PositiveFloat(xSize / getSizeX()), index);
+            }
+            else {
+              LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+                xSize / getSizeX());
+            }
+            if (ySize > 0) {
+              store.setPixelsPhysicalSizeY(
+                new PositiveFloat(ySize / getSizeY()), index);
+            }
+            else {
+              LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+                ySize / getSizeY());
+            }
           }
         }
       }
@@ -567,13 +585,28 @@ public class CellWorxReader extends FormatReader {
                 }
               }
 
-              PositiveInteger exWave = new PositiveInteger(new Integer(ex));
-              PositiveInteger emWave = new PositiveInteger(new Integer(em));
+              Integer emission = new Integer(em);
+              Integer excitation = new Integer(ex);
+
               for (int field=0; field<fieldCount; field++) {
-                store.setChannelExcitationWavelength(
-                  exWave, seriesIndex + field, index);
-                store.setChannelEmissionWavelength(
-                  emWave, seriesIndex + field, index);
+                if (excitation > 0) {
+                  store.setChannelExcitationWavelength(new PositiveInteger(
+                    excitation), seriesIndex + field, index);
+                }
+                else {
+                  LOGGER.warn(
+                    "Expected positive value for ExcitationWavelength; got {}",
+                    excitation);
+                }
+                if (emission > 0) {
+                  store.setChannelEmissionWavelength(
+                    new PositiveInteger(emission), seriesIndex + field, index);
+                }
+                else {
+                  LOGGER.warn(
+                    "Expected positive value for EmissionWavelength; got {}",
+                    emission);
+                }
               }
             }
           }

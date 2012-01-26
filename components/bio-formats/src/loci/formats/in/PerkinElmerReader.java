@@ -39,8 +39,8 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 
 /**
@@ -577,8 +577,20 @@ public class PerkinElmerReader extends FormatReader {
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       // populate Dimensions element
-      store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSizeX), 0);
-      store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSizeY), 0);
+      if (pixelSizeX > 0) {
+        store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSizeX), 0);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+          pixelSizeX);
+      }
+      if (pixelSizeY > 0) {
+        store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSizeY), 0);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+          pixelSizeY);
+      }
 
       // link Instrument and Image
       String instrumentID = MetadataTools.createLSID("Instrument", 0);
@@ -588,12 +600,26 @@ public class PerkinElmerReader extends FormatReader {
       // populate LogicalChannel element
       for (int i=0; i<getEffectiveSizeC(); i++) {
         if (i < emWaves.size()) {
-          store.setChannelEmissionWavelength(
-            new PositiveInteger(emWaves.get(i)), 0, i);
+          if (emWaves.get(i) > 0) {
+            store.setChannelEmissionWavelength(
+              new PositiveInteger(emWaves.get(i)), 0, i);
+          }
+          else {
+            LOGGER.warn(
+              "Expected positive value for EmissionWavelength; got {}",
+              emWaves.get(i));
+          }
         }
         if (i < exWaves.size()) {
-          store.setChannelExcitationWavelength(
-            new PositiveInteger(exWaves.get(i)), 0, i);
+          if (exWaves.get(i) > 0) {
+            store.setChannelExcitationWavelength(
+              new PositiveInteger(exWaves.get(i)), 0, i);
+          }
+          else {
+            LOGGER.warn(
+              "Expected positive value for ExcitationWavelength; got {}",
+              exWaves.get(i));
+          }
         }
       }
 

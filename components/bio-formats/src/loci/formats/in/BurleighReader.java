@@ -176,9 +176,27 @@ public class BurleighReader extends FormatReader {
     MetadataTools.populatePixels(store, this);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      store.setPixelsPhysicalSizeX(new PositiveFloat(xSize / getSizeX()), 0);
-      store.setPixelsPhysicalSizeY(new PositiveFloat(ySize / getSizeY()), 0);
-      store.setPixelsPhysicalSizeZ(new PositiveFloat(zSize / getSizeZ()), 0);
+      if (xSize > 0) {
+        store.setPixelsPhysicalSizeX(new PositiveFloat(xSize / getSizeX()), 0);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+          xSize / getSizeX());
+      }
+      if (ySize > 0) {
+        store.setPixelsPhysicalSizeY(new PositiveFloat(ySize / getSizeY()), 0);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+          ySize / getSizeY());
+      }
+      if (zSize > 0) {
+        store.setPixelsPhysicalSizeZ(new PositiveFloat(zSize / getSizeZ()), 0);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}",
+          zSize / getSizeZ());
+      }
     }
   }
 

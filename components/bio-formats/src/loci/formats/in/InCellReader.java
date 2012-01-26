@@ -38,9 +38,9 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 
 import ome.xml.model.primitives.NonNegativeInteger;
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 
 import org.xml.sax.Attributes;
@@ -444,8 +444,14 @@ public class InCellReader extends FormatReader {
 
     String plateAcqID = MetadataTools.createLSID("PlateAcquisition", 0, 0);
     store.setPlateAcquisitionID(plateAcqID, 0, 0);
-    store.setPlateAcquisitionMaximumFieldCount(
-      new PositiveInteger(fieldCount), 0, 0);
+    if (fieldCount > 0) {
+      store.setPlateAcquisitionMaximumFieldCount(
+        new PositiveInteger(fieldCount), 0, 0);
+    }
+    else {
+      LOGGER.warn("Expected positive value for MaximumFieldCount; got {}",
+        fieldCount);
+    }
 
     // populate Image data
 
@@ -550,12 +556,21 @@ public class InCellReader extends FormatReader {
               store.setChannelEmissionWavelength(
                 new PositiveInteger(wave), i, q);
             }
+            else {
+              LOGGER.warn(
+                "Expected positive value for EmissionWavelength; got {}", wave);
+            }
           }
           if (q < exWaves.size()) {
             int wave = exWaves.get(q).intValue();
             if (wave > 0) {
               store.setChannelExcitationWavelength(
                 new PositiveInteger(wave), i, q);
+            }
+            else {
+              LOGGER.warn(
+                "Expected positive value for ExcitationWavelength; got {}",
+                wave);
             }
           }
         }
@@ -824,8 +839,16 @@ public class InCellReader extends FormatReader {
         creationDate = date + "T" + time;
       }
       else if (qName.equals("ObjectiveCalibration")) {
-        store.setObjectiveNominalMagnification(new PositiveInteger((int)
-          Double.parseDouble(attributes.getValue("magnification"))), 0, 0);
+        int mag =
+          (int) Double.parseDouble(attributes.getValue("magnification"));
+        if (mag > 0) {
+          store.setObjectiveNominalMagnification(
+            new PositiveInteger(mag), 0, 0);
+        }
+        else {
+          LOGGER.warn(
+            "Expected positive value for NominalMagnification; got {}", mag);
+        }
         store.setObjectiveLensNA(new Double(
           attributes.getValue("numerical_aperture")), 0, 0);
         try {
@@ -857,8 +880,20 @@ public class InCellReader extends FormatReader {
         for (int i=0; i<getSeriesCount(); i++) {
           store.setImageObjectiveSettingsID(objectiveID, i);
           store.setImageObjectiveSettingsRefractiveIndex(refractive, i);
-          store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSizeX), i);
-          store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSizeY), i);
+          if (pixelSizeX > 0) {
+            store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSizeX), i);
+          }
+          else {
+            LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+              pixelSizeX);
+          }
+          if (pixelSizeY > 0) {
+            store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSizeY), i);
+          }
+          else {
+            LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+              pixelSizeY);
+          }
         }
       }
       else if (qName.equals("ExcitationFilter")) {

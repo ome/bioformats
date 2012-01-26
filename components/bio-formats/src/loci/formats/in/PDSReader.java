@@ -281,11 +281,19 @@ public class PDSReader extends FormatReader {
     if (!minimumMetadata) {
       store.setPlanePositionX(xPos, 0, 0);
       store.setPlanePositionY(yPos, 0, 0);
-      if (deltaX != null) {
+      if (deltaX != null && deltaX > 0) {
         store.setPixelsPhysicalSizeX(new PositiveFloat(deltaX), 0);
       }
-      if (deltaY != null) {
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+          deltaX);
+      }
+      if (deltaY != null && deltaY > 0) {
         store.setPixelsPhysicalSizeY(new PositiveFloat(deltaY), 0);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+          deltaY);
       }
     }
   }

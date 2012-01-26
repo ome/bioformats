@@ -329,8 +329,14 @@ public class BDReader extends FormatReader {
 
     String plateAcqID = MetadataTools.createLSID("PlateAcquisition", 0, 0);
     store.setPlateAcquisitionID(plateAcqID, 0, 0);
-    store.setPlateAcquisitionMaximumFieldCount(
-      new PositiveInteger(fieldRows * fieldCols), 0, 0);
+    if (fieldRows * fieldCols > 0) {
+      store.setPlateAcquisitionMaximumFieldCount(
+        new PositiveInteger(fieldRows * fieldCols), 0, 0);
+    }
+    else {
+      LOGGER.warn("Expected positive value for MaximumFieldCount; got {}",
+        fieldRows * fieldCols);
+    }
 
     for (int row=0; row<wellRows; row++) {
       for (int col=0; col<wellCols; col++) {
@@ -387,8 +393,16 @@ public class BDReader extends FormatReader {
           }
         }
 
-        store.setObjectiveNominalMagnification(
-          PositiveInteger.valueOf(mag), 0, 0);
+        Integer magnification = new Integer(mag);
+        if (magnification > 0) {
+          store.setObjectiveNominalMagnification(
+            new PositiveInteger(magnification), 0, 0);
+        }
+        else {
+          LOGGER.warn(
+            "Expected positive value for NominalMagnification; got {}",
+            magnification);
+        }
         if (na != null) {
           na = na.substring(0, 1) + "." + na.substring(1);
           store.setObjectiveLensNA(new Double(na), 0, 0);
@@ -405,10 +419,24 @@ public class BDReader extends FormatReader {
 
         for (int c=0; c<getSizeC(); c++) {
           store.setChannelName(channelNames.get(c), i, c);
-          store.setChannelEmissionWavelength(
-            new PositiveInteger(emWave[c]), i, c);
-          store.setChannelExcitationWavelength(
-            new PositiveInteger(exWave[c]), i, c);
+          if (emWave[c] > 0) {
+            store.setChannelEmissionWavelength(
+              new PositiveInteger(emWave[c]), i, c);
+          }
+          else {
+            LOGGER.warn(
+              "Expected positive value for EmissionWavelength; got {}",
+              emWave[c]);
+          }
+          if (exWave[c] > 0) {
+            store.setChannelExcitationWavelength(
+              new PositiveInteger(exWave[c]), i, c);
+          }
+          else {
+            LOGGER.warn(
+              "Expected positive value for ExcitationWavelength; got {}",
+              exWave[c]);
+          }
 
           String detectorID = MetadataTools.createLSID("Detector", 0, c);
           store.setDetectorID(detectorID, 0, c);

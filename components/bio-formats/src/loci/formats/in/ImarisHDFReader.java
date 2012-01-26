@@ -39,9 +39,9 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.MissingLibraryException;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 import loci.formats.services.NetCDFService;
 import loci.formats.services.NetCDFServiceImpl;
+import ome.xml.model.primitives.PositiveFloat;
 
 /**
  * Reader for Bitplane Imaris 5.5 (HDF) files.
@@ -318,9 +318,25 @@ public class ImarisHDFReader extends FormatReader {
       if (px == 1) px = (maxX - minX) / core[s].sizeX;
       if (py == 1) py = (maxY - minY) / core[s].sizeY;
       if (pz == 1) pz = (maxZ - minZ) / core[s].sizeZ;
-      store.setPixelsPhysicalSizeX(new PositiveFloat(px), s);
-      store.setPixelsPhysicalSizeY(new PositiveFloat(py), s);
-      store.setPixelsPhysicalSizeZ(new PositiveFloat(pz), s);
+
+      if (px > 0) {
+        store.setPixelsPhysicalSizeX(new PositiveFloat(px), s);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}", px);
+      }
+      if (py > 0) {
+        store.setPixelsPhysicalSizeY(new PositiveFloat(py), s);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}", py);
+      }
+      if (pz > 0) {
+        store.setPixelsPhysicalSizeZ(new PositiveFloat(pz), s);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}", pz);
+      }
 
       for (int i=0; i<core[s].sizeC; i++, cIndex++) {
         Float gainValue = null;

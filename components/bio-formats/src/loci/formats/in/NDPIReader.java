@@ -319,10 +319,17 @@ public class NDPIReader extends BaseTiffReader {
         if (xResolution > 0) {
           store.setPixelsPhysicalSizeX(new PositiveFloat(xResolution), i);
         }
+        else {
+          LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+            xResolution);
+        }
         if (yResolution > 0) {
           store.setPixelsPhysicalSizeY(new PositiveFloat(yResolution), i);
         }
-        store.setPixelsPhysicalSizeZ(null, i);
+        else {
+          LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+            yResolution);
+        }
       }
     }
   }

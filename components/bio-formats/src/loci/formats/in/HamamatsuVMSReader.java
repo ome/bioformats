@@ -39,8 +39,8 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 
 /**
@@ -212,14 +212,38 @@ public class HamamatsuVMSReader extends FormatReader {
     store.setImageName(path + " map", 2);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      store.setPixelsPhysicalSizeX(
-        new PositiveFloat(physicalWidth / core[0].sizeX), 0);
-      store.setPixelsPhysicalSizeY(
-        new PositiveFloat(physicalHeight / core[0].sizeY), 0);
-      store.setPixelsPhysicalSizeX(
-        new PositiveFloat(macroWidth / core[1].sizeX), 1);
-      store.setPixelsPhysicalSizeY(
-        new PositiveFloat(macroHeight / core[1].sizeY), 1);
+      if (physicalWidth > 0) {
+        store.setPixelsPhysicalSizeX(
+          new PositiveFloat(physicalWidth / core[0].sizeX), 0);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+          physicalWidth / core[0].sizeX);
+      }
+      if (physicalHeight > 0) {
+        store.setPixelsPhysicalSizeY(
+          new PositiveFloat(physicalHeight / core[0].sizeY), 0);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+          physicalHeight / core[0].sizeY);
+      }
+      if (macroWidth > 0) {
+        store.setPixelsPhysicalSizeX(
+          new PositiveFloat(macroWidth / core[1].sizeX), 1);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+          macroWidth / core[1].sizeX);
+      }
+      if (macroHeight > 0) {
+        store.setPixelsPhysicalSizeY(
+          new PositiveFloat(macroHeight / core[1].sizeY), 1);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+          macroHeight / core[1].sizeY);
+      }
 
       String instrumentID = MetadataTools.createLSID("Instrument", 0);
       store.setInstrumentID(instrumentID, 0);
@@ -227,8 +251,14 @@ public class HamamatsuVMSReader extends FormatReader {
 
       String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
       store.setObjectiveID(objectiveID, 0, 0);
-      store.setObjectiveNominalMagnification(
-        new PositiveInteger(magnification.intValue()), 0, 0);
+      if (magnification > 0) {
+        store.setObjectiveNominalMagnification(
+          new PositiveInteger(magnification.intValue()), 0, 0);
+      }
+      else {
+        LOGGER.warn("Expected positive value for NominalMagnification; got {}",
+          magnification);
+      }
       store.setImageObjectiveSettingsID(objectiveID, 0);
     }
   }

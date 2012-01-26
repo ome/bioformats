@@ -38,8 +38,8 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.MissingLibraryException;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 import loci.formats.services.NetCDFService;
+import ome.xml.model.primitives.PositiveFloat;
 
 /**
  * MINCReader is the file format reader for MINC MRI files.
@@ -236,14 +236,26 @@ public class MINCReader extends FormatReader {
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription(netcdf.getAttributeValue("/history"), 0);
 
-      if (physicalX != null) {
+      if (physicalX != null && physicalX > 0) {
         store.setPixelsPhysicalSizeX(new PositiveFloat(physicalX), 0);
       }
-      if (physicalY != null) {
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+          physicalX);
+      }
+      if (physicalY != null && physicalY > 0) {
         store.setPixelsPhysicalSizeY(new PositiveFloat(physicalY), 0);
       }
-      if (physicalZ != null) {
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+          physicalY);
+      }
+      if (physicalZ != null && physicalZ > 0) {
         store.setPixelsPhysicalSizeZ(new PositiveFloat(physicalZ), 0);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}",
+          physicalZ);
       }
     }
   }

@@ -39,10 +39,10 @@ import loci.formats.FormatTools;
 import loci.formats.ImageTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
 
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 
 /**
@@ -205,16 +205,28 @@ public class SimplePCITiffReader extends BaseTiffReader {
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription(MAGIC_STRING, 0);
-      store.setPixelsPhysicalSizeX(new PositiveFloat(scaling), 0);
-      store.setPixelsPhysicalSizeY(new PositiveFloat(scaling), 0);
+      if (scaling > 0) {
+        store.setPixelsPhysicalSizeX(new PositiveFloat(scaling), 0);
+        store.setPixelsPhysicalSizeY(new PositiveFloat(scaling), 0);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSize; got {}",
+          scaling);
+      }
 
       String instrument = MetadataTools.createLSID("Instrument", 0);
       store.setInstrumentID(instrument, 0);
       store.setImageInstrumentRef(instrument, 0);
 
       store.setObjectiveID(MetadataTools.createLSID("Objective", 0, 0), 0, 0);
-      store.setObjectiveNominalMagnification(
-        new PositiveInteger(magnification), 0, 0);
+      if (magnification > 0) {
+        store.setObjectiveNominalMagnification(
+          new PositiveInteger(magnification), 0, 0);
+      }
+      else {
+        LOGGER.warn("Expected positive value for NominalMagnification; got {}",
+          magnification);
+      }
       store.setObjectiveImmersion(getImmersion(immersion), 0, 0);
 
       String detector = MetadataTools.createLSID("Detector", 0, 0);
