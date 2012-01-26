@@ -604,12 +604,14 @@ public class SlidebookReader extends FormatReader {
           addSeriesMeta("Mag. changer", in.readCString());
         }
         else if (n == 'n') {
+          long fp1 = in.getFilePointer();
           in.seek(in.getFilePointer() - 3);
           while (in.read() != 0) {
             in.seek(in.getFilePointer() - 2);
           }
+          long fp2 = in.getFilePointer();
           int len = in.read() - 1;
-          if (len > 0) {
+          if (len > 0 && fp2 > fp1) {
             imageDescriptions.add(in.readString(len));
           }
         }
