@@ -762,7 +762,7 @@ public class FileStitcher extends ReaderWrapper {
       // reader subclass is handling file grouping
       noStitch = true;
       reader.close();
-      reader.setGroupFiles(true);
+      reader.setGroupFiles(group);
 
       if (patternIds && fp.isValid()) {
         reader.setId(fp.getFiles()[0]);
