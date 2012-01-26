@@ -815,7 +815,10 @@ public class SlidebookReader extends FormatReader {
 
       // populate Dimensions data
 
+      int exposureIndex = 0;
+
       for (int i=0; i<getSeriesCount(); i++) {
+        setSeries(i);
         if (i < pixelSize.size()) {
           Double size = new Double(pixelSize.get(i));
           if (size > 0) {
@@ -845,10 +848,14 @@ public class SlidebookReader extends FormatReader {
 
         for (int plane=0; plane<getImageCount(); plane++) {
           int c = getZCTCoords(plane)[1];
-          store.setPlaneExposureTime(
-            new Double(exposureTimes.get(c)), i, plane);
+          if (exposureIndex < exposureTimes.size()) {
+            store.setPlaneExposureTime(
+              new Double(exposureTimes.get(exposureIndex + c)), i, plane);
+          }
         }
+        exposureIndex += getSizeC();
       }
+      setSeries(0);
 
       // populate LogicalChannel data
 
