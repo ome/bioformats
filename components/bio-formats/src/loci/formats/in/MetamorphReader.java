@@ -367,6 +367,8 @@ public class MetamorphReader extends BaseTiffReader {
       ndFilename = ndfile.getAbsolutePath();
       String[] lines = DataTools.readFile(ndFilename).split("\n");
 
+      boolean globalDoZ = true;
+
       for (String line : lines) {
         int comma = line.indexOf(",");
         if (comma <= 0) continue;
@@ -401,6 +403,9 @@ public class MetamorphReader extends BaseTiffReader {
         else if (key.equals("WaveInFileName")) {
           useWaveNames = Boolean.parseBoolean(value);
         }
+        else if (key.equals("DoZSeries")) {
+          globalDoZ = new Boolean(value.toLowerCase());
+        }
       }
 
       // figure out how many files we need
@@ -424,7 +429,7 @@ public class MetamorphReader extends BaseTiffReader {
         boolean hasZ1 = i < hasZ.size() && hasZ.get(i).booleanValue();
         boolean hasZ2 = i != 0 && (i - 1 < hasZ.size()) &&
           hasZ.get(i - 1).booleanValue();
-        if (i > 0 && hasZ1 != hasZ2) {
+        if (i > 0 && hasZ1 != hasZ2 && globalDoZ) {
           if (!differentZs) seriesCount *= 2;
           differentZs = true;
         }
