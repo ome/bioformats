@@ -1034,6 +1034,45 @@ public class FormatReaderTest {
   /**
    * @testng.test groups = "all fast automated"
    */
+  public void testExposureTimes() {
+    if (config == null) throw new SkipException("No config tree");
+    String testName = "ExposureTimes";
+    if (!initFile()) result(testName, false, "initFile");
+    IMetadata retrieve = (IMetadata) reader.getMetadataStore();
+
+    for (int i=0; i<reader.getSeriesCount(); i++) {
+      reader.setSeries(i);
+      config.setSeries(i);
+
+      for (int c=0; c<config.getChannelCount(); c++) {
+        if (config.hasExposureTime(c)) {
+          Double exposureTime = config.getExposureTime(c);
+
+          for (int p=0; p<reader.getImageCount(); p++) {
+            int[] zct = reader.getZCTCoords(p);
+            if (zct[1] == c) {
+              Double planeExposureTime = retrieve.getPlaneExposureTime(i, p);
+
+              if (exposureTime == null && planeExposureTime == null) {
+                continue;
+              }
+
+              if (exposureTime == null || planeExposureTime == null ||
+                !exposureTime.equals(planeExposureTime))
+              {
+                result(testName, false, "Series " + i + " plane " + p);
+              }
+            }
+          }
+        }
+      }
+    }
+    result(testName, true);
+  }
+
+  /**
+   * @testng.test groups = "all fast automated"
+   */
   public void testEmissionWavelengths() {
     if (config == null) throw new SkipException("No config tree");
     String testName = "EmissionWavelengths";
@@ -1147,6 +1186,33 @@ public class FormatReaderTest {
       {
         result(testName, false, "Series " + i + " (got '" + realName +
           "', expected '" + expectedName + "')");
+      }
+    }
+    result(testName, true);
+  }
+
+  /**
+   * @testng.test groups = "all fast automated"
+   */
+  public void testImageDescriptions() {
+    if (config == null) throw new SkipException("No config tree");
+    String testName = "ImageDescriptions";
+    if (!initFile()) result(testName, false, "initFile");
+    IMetadata retrieve = (IMetadata) reader.getMetadataStore();
+
+    for (int i=0; i<reader.getSeriesCount(); i++) {
+      config.setSeries(i);
+
+      String realDescription = retrieve.getImageDescription(i);
+      if (config.hasImageDescription()) {
+        String expectedDescription = config.getImageDescription();
+
+        if (!expectedDescription.equals(realDescription) &&
+          !(realDescription == null && expectedDescription.equals("null")))
+        {
+          result(testName, false, "Series " + i + " (got '" + realDescription +
+            "', expected '" + expectedDescription + "')");
+        }
       }
     }
     result(testName, true);
