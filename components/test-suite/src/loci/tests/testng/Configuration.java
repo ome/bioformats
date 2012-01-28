@@ -485,8 +485,10 @@ public class Configuration {
 
         try {
           int plane = reader.getIndex(0, c, 0);
-          seriesTable.put(EXPOSURE_TIME + c,
-            retrieve.getPlaneExposureTime(series, plane).toString());
+          if (plane < retrieve.getPlaneCount(series)) {
+            seriesTable.put(EXPOSURE_TIME + c,
+              retrieve.getPlaneExposureTime(series, plane).toString());
+          }
         }
         catch (NullPointerException e) { }
 
