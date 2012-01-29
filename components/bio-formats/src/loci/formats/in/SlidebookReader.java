@@ -70,7 +70,7 @@ public class SlidebookReader extends FormatReader {
   private Vector<Long> pixelLengths;
   private Vector<Double> ndFilters;
 
-  private Vector<String> imageDescriptions;
+  private Hashtable<Integer, String> imageDescriptions;
 
   private long[][] planeOffset;
 
@@ -198,7 +198,7 @@ public class SlidebookReader extends FormatReader {
     pixelOffsets = new Vector<Long>();
     pixelLengths = new Vector<Long>();
     ndFilters = new Vector<Double>();
-    imageDescriptions = new Vector<String>();
+    imageDescriptions = new Hashtable<Integer, String>();
 
     in.seek(0);
 
@@ -611,8 +611,29 @@ public class SlidebookReader extends FormatReader {
           }
           long fp2 = in.getFilePointer();
           int len = in.read() - 1;
-          if (len > 0 && fp2 > fp1) {
-            imageDescriptions.add(in.readString(len));
+
+          int currentSeries = 0;
+          for (int j=0; j<pixelOffsets.size(); j++) {
+            long end = j == pixelOffsets.size() - 1 ? in.length() :
+              pixelOffsets.get(j + 1).longValue();
+            if (in.getFilePointer() < end) {
+              currentSeries = j;
+              break;
+            }
+          }
+
+          if (len > 0 && fp1 - fp2 != 2) {
+            if (fp2 < fp1) {
+              in.seek(in.getFilePointer() - 1);
+              String descr = in.readCString();
+              descr = descr.substring(0, descr.length() - 2);
+              if (!descr.endsWith("Annotatio")) {
+                imageDescriptions.put(currentSeries, descr);
+              }
+            }
+            else {
+              imageDescriptions.put(currentSeries, in.readString(len));
+            }
           }
         }
         else if (isSpool) {
@@ -780,8 +801,11 @@ public class SlidebookReader extends FormatReader {
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       for (int i=0; i<getSeriesCount(); i++) {
-        if (i < imageDescriptions.size()) {
+        if (imageDescriptions.containsKey(i)) {
           store.setImageDescription(imageDescriptions.get(i), i);
+        }
+        else {
+          store.setImageDescription("", i);
         }
       }
 
