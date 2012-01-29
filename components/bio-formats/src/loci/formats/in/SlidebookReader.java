@@ -572,6 +572,10 @@ public class SlidebookReader extends FormatReader {
           long fp = in.getFilePointer();
           while (in.read() == 0);
           in.seek(in.getFilePointer() - 1);
+          long nSkipped = in.getFilePointer() - fp;
+          if (nSkipped < 8) {
+            in.skipBytes((int) (8 - nSkipped));
+          }
           String objective = in.readCString().trim();
           in.seek(fp + 144);
           float pixSize = in.readFloat();
