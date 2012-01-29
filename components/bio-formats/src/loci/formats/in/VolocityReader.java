@@ -620,18 +620,34 @@ public class VolocityReader extends FormatReader {
       if (physicalX[i] != null && physicalX[i] > 0) {
         store.setPixelsPhysicalSizeX(new PositiveFloat(physicalX[i]), i);
       }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+          physicalX[i]);
+      }
       if (physicalY[i] != null && physicalY[i] > 0) {
         store.setPixelsPhysicalSizeY(new PositiveFloat(physicalY[i]), i);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+          physicalY[i]);
       }
       if (physicalZ[i] != null && physicalZ[i] > 0) {
         store.setPixelsPhysicalSizeZ(new PositiveFloat(physicalZ[i]), i);
       }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}",
+          physicalZ[i]);
+      }
 
       String objective = MetadataTools.createLSID("Objective", 0, i);
       store.setObjectiveID(objective, 0, i);
-      if (magnification[i] != null) {
+      if (magnification[i] != null && magnification[i] > 0) {
         store.setObjectiveNominalMagnification(
           new PositiveInteger(magnification[i].intValue()), 0, i);
+      }
+      else {
+        LOGGER.warn("Expected positive value for NominalMagnification; got {}",
+          magnification[i]);
       }
       store.setObjectiveCorrection(getCorrection("Other"), 0, i);
       store.setObjectiveImmersion(getImmersion("Other"), 0, i);

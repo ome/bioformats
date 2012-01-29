@@ -256,6 +256,9 @@ public class SpiderReader extends FormatReader {
         store.setPixelsPhysicalSizeX(new PositiveFloat(size), 0);
         store.setPixelsPhysicalSizeY(new PositiveFloat(size), 0);
       }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSize; got {}", size);
+      }
     }
   }
 

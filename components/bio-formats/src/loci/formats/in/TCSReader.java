@@ -42,10 +42,10 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 import loci.formats.tiff.TiffParser;
+import ome.xml.model.primitives.PositiveFloat;
 
 /**
  * TCSReader is the file format reader for Leica TCS TIFF files and their
@@ -485,11 +485,20 @@ public class TCSReader extends FormatReader {
     if (voxelX > 0) {
       store.setPixelsPhysicalSizeX(new PositiveFloat(voxelX), 0);
     }
+    else {
+      LOGGER.warn("Expected positive value for PhysicalSizeX; got {}", voxelX);
+    }
     if (voxelY > 0) {
       store.setPixelsPhysicalSizeY(new PositiveFloat(voxelY), 0);
     }
+    else {
+      LOGGER.warn("Expected positive value for PhysicalSizeY; got {}", voxelY);
+    }
     if (voxelZ > 0) {
       store.setPixelsPhysicalSizeZ(new PositiveFloat(voxelZ), 0);
+    }
+    else {
+      LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}", voxelZ);
     }
   }
 

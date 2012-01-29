@@ -44,7 +44,6 @@ import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 import loci.formats.tiff.PhotoInterp;
@@ -52,6 +51,7 @@ import loci.formats.tiff.TiffIFDEntry;
 import loci.formats.tiff.TiffParser;
 import loci.formats.tiff.TiffRational;
 
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 
 /**
@@ -639,14 +639,24 @@ public class MetamorphReader extends BaseTiffReader {
       if (sizeX > 0) {
         store.setPixelsPhysicalSizeX(new PositiveFloat(sizeX), i);
       }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}", sizeX);
+      }
       if (sizeY > 0) {
         store.setPixelsPhysicalSizeY(new PositiveFloat(sizeY), i);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}", sizeY);
       }
       if (zDistances != null) {
         stepSize = zDistances[0];
       }
       if (stepSize > 0) {
         store.setPixelsPhysicalSizeZ(new PositiveFloat(stepSize), i);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}",
+          stepSize);
       }
 
       int waveIndex = 0;
@@ -677,18 +687,23 @@ public class MetamorphReader extends BaseTiffReader {
         }
         store.setDetectorSettingsID(detectorID, i, c);
 
-        if (wave != null && waveIndex < wave.length &&
-          (int) wave[waveIndex] >= 1)
-        {
-          store.setChannelLightSourceSettingsWavelength(
-            new PositiveInteger((int) wave[waveIndex]), i, c);
+        if (wave != null && waveIndex < wave.length) {
+          if ((int) wave[waveIndex] >= 1) {
+            store.setChannelLightSourceSettingsWavelength(
+              new PositiveInteger((int) wave[waveIndex]), i, c);
 
-          // link LightSource to Image
-          String lightSourceID = MetadataTools.createLSID("LightSource", i, c);
-          store.setLaserID(lightSourceID, i, c);
-          store.setChannelLightSourceSettingsID(lightSourceID, i, c);
-          store.setLaserType(getLaserType("Other"), i, c);
-          store.setLaserLaserMedium(getLaserMedium("Other"), i, c);
+            // link LightSource to Image
+            String lightSourceID =
+              MetadataTools.createLSID("LightSource", i, c);
+            store.setLaserID(lightSourceID, i, c);
+            store.setChannelLightSourceSettingsID(lightSourceID, i, c);
+            store.setLaserType(getLaserType("Other"), i, c);
+            store.setLaserLaserMedium(getLaserMedium("Other"), i, c);
+          }
+          else {
+            LOGGER.warn("Expected positive value for Wavelength; got {}",
+              wave[waveIndex]);
+          }
         }
         waveIndex++;
       }

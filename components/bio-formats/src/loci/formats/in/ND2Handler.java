@@ -33,10 +33,8 @@ import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 
 import ome.xml.model.primitives.NonNegativeInteger;
-import ome.xml.model.primitives.PositiveInteger;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -129,8 +127,11 @@ public class ND2Handler extends DefaultHandler {
         }
         store.setROIID(roiID, r);
         store.setTextID(MetadataTools.createLSID("Shape", r, 0), r, 0);
-        store.setTextFontSize(
-          NonNegativeInteger.valueOf(roi.get("fHeight")), r, 0);
+
+        int fontSize = Integer.parseInt(roi.get("fHeight"));
+        if (fontSize >= 0) {
+          store.setTextFontSize(new NonNegativeInteger(fontSize), r, 0);
+        }
         store.setTextValue(roi.get("eval-text"), r, 0);
         store.setTextStrokeWidth(new Double(roi.get("line-width")), r, 0);
 

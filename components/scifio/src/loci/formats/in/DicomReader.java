@@ -700,11 +700,19 @@ public class DicomReader extends FormatReader {
           if (sizeX > 0) {
             store.setPixelsPhysicalSizeX(new PositiveFloat(sizeX), i);
           }
+          else {
+            LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+              sizeX);
+          }
         }
         if (pixelSizeY != null) {
           Double sizeY = new Double(pixelSizeY);
           if (sizeY > 0) {
             store.setPixelsPhysicalSizeY(new PositiveFloat(sizeY), i);
+          }
+          else {
+            LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+              sizeY);
           }
         }
       }

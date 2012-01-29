@@ -34,10 +34,10 @@ import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
 
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 
 /**
@@ -135,11 +135,23 @@ public class NikonElementsTiffReader extends BaseTiffReader {
     if (pixelSizeX > 0) {
       store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSizeX), 0);
     }
+    else {
+      LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+        pixelSizeX);
+    }
     if (pixelSizeY > 0) {
       store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSizeY), 0);
     }
+    else {
+      LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+        pixelSizeY);
+    }
     if (pixelSizeZ > 0) {
       store.setPixelsPhysicalSizeZ(new PositiveFloat(pixelSizeZ), 0);
+    }
+    else {
+      LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}",
+        pixelSizeZ);
     }
 
     String instrument = MetadataTools.createLSID("Instrument", 0);
@@ -197,12 +209,25 @@ public class NikonElementsTiffReader extends BaseTiffReader {
           getAcquisitionMode(modality.get(c)), 0, c);
       }
       if (c < emWave.size()) {
-        store.setChannelEmissionWavelength(
-          new PositiveInteger(emWave.get(c)), 0, c);
+        if (emWave.get(c) > 0) {
+          store.setChannelEmissionWavelength(
+            new PositiveInteger(emWave.get(c)), 0, c);
+        }
+        else {
+          LOGGER.warn("Expected positive value for EmissionWavelength; got {}",
+            emWave.get(c));
+        }
       }
       if (c < exWave.size()) {
-        store.setChannelExcitationWavelength(
-          new PositiveInteger(exWave.get(c)), 0, c);
+        if (exWave.get(c) > 0) {
+          store.setChannelExcitationWavelength(
+            new PositiveInteger(exWave.get(c)), 0, c);
+        }
+        else {
+          LOGGER.warn(
+            "Expected positive value for ExcitationWavelength; got {}",
+            exWave.get(c));
+        }
       }
       if (c < binning.size()) {
         store.setDetectorSettingsBinning(getBinning(binning.get(c)), 0, c);

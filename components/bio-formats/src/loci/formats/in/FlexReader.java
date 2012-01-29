@@ -43,7 +43,6 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 import loci.formats.tiff.TiffCompression;
@@ -51,6 +50,7 @@ import loci.formats.tiff.TiffConstants;
 import loci.formats.tiff.TiffParser;
 
 import ome.xml.model.primitives.NonNegativeInteger;
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 
 import org.xml.sax.Attributes;
@@ -520,8 +520,14 @@ public class FlexReader extends FormatReader {
     store.setPlateID(MetadataTools.createLSID("Plate", 0), 0);
     String plateAcqID = MetadataTools.createLSID("PlateAcquisition", 0, 0);
     store.setPlateAcquisitionID(plateAcqID, 0, 0);
-    store.setPlateAcquisitionMaximumFieldCount(
-      new PositiveInteger(fieldCount), 0, 0);
+    if (fieldCount > 0) {
+      store.setPlateAcquisitionMaximumFieldCount(
+        new PositiveInteger(fieldCount), 0, 0);
+    }
+    else {
+      LOGGER.warn("Expected positive value for MaximumFieldCount; got {}",
+        fieldCount);
+    }
 
     plateAcqStartTime =
       DateTools.formatDate(plateAcqStartTime, "dd.MM.yyyy  HH:mm:ss");
@@ -634,12 +640,24 @@ public class FlexReader extends FormatReader {
         }
 
         if (seriesIndex < xSizes.size()) {
-          store.setPixelsPhysicalSizeX(
-            new PositiveFloat(xSizes.get(seriesIndex)), i);
+          if (xSizes.get(seriesIndex) > 0) {
+            store.setPixelsPhysicalSizeX(
+              new PositiveFloat(xSizes.get(seriesIndex)), i);
+          }
+          else {
+            LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+              xSizes.get(seriesIndex));
+          }
         }
         if (seriesIndex < ySizes.size()) {
-          store.setPixelsPhysicalSizeY(
-            new PositiveFloat(ySizes.get(seriesIndex)), i);
+          if (ySizes.get(seriesIndex) > 0) {
+            store.setPixelsPhysicalSizeY(
+              new PositiveFloat(ySizes.get(seriesIndex)), i);
+          }
+          else {
+            LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+              ySizes.get(seriesIndex));
+          }
         }
 
         int well = wellNumber[pos[1]][0] * wellColumns + wellNumber[pos[1]][1];
@@ -1333,8 +1351,15 @@ public class FlexReader extends FormatReader {
       else if (qName.equals("Wavelength")) {
         String lsid = MetadataTools.createLSID("LightSource", 0, nextLaser);
         store.setLaserID(lsid, 0, nextLaser);
-        store.setLaserWavelength(
-          new PositiveInteger(new Integer(value)), 0, nextLaser);
+        Integer wavelength = new Integer(value);
+        if (wavelength > 0) {
+          store.setLaserWavelength(
+            new PositiveInteger(wavelength), 0, nextLaser);
+        }
+        else {
+          LOGGER.warn("Expected positive value for Wavelength; got {}",
+            wavelength);
+        }
         try {
           store.setLaserType(getLaserType("Other"), 0, nextLaser);
           store.setLaserLaserMedium(getLaserMedium("Other"), 0, nextLaser);

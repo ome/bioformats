@@ -37,10 +37,10 @@ import loci.formats.MetadataTools;
 import loci.formats.UnsupportedCompressionException;
 import loci.formats.codec.ZlibCodec;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 
 import ome.xml.model.enums.NamingConvention;
 import ome.xml.model.primitives.NonNegativeInteger;
+import ome.xml.model.primitives.PositiveFloat;
 
 /**
  * Reader for Cellomics C01 files.
@@ -296,8 +296,16 @@ public class CellomicsReader extends FormatReader {
         if (width > 0) {
           store.setPixelsPhysicalSizeX(new PositiveFloat(width), 0);
         }
+        else {
+          LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+            width);
+        }
         if (height > 0) {
           store.setPixelsPhysicalSizeY(new PositiveFloat(height), 0);
+        }
+        else {
+          LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+            height);
         }
       }
     }

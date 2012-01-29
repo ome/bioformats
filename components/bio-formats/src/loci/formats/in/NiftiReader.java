@@ -249,12 +249,30 @@ public class NiftiReader extends FormatReader {
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription(description, 0);
-      store.setPixelsPhysicalSizeX(
-        new PositiveFloat(new Double(voxelWidth)), 0);
-      store.setPixelsPhysicalSizeY(
-        new PositiveFloat(new Double(voxelHeight)), 0);
-      store.setPixelsPhysicalSizeZ(
-        new PositiveFloat(new Double(sliceThickness)), 0);
+      if (voxelWidth > 0) {
+        store.setPixelsPhysicalSizeX(
+          new PositiveFloat(new Double(voxelWidth)), 0);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+          voxelWidth);
+      }
+      if (voxelHeight > 0) {
+        store.setPixelsPhysicalSizeY(
+          new PositiveFloat(new Double(voxelHeight)), 0);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+          voxelHeight);
+      }
+      if (sliceThickness > 0) {
+        store.setPixelsPhysicalSizeZ(
+          new PositiveFloat(new Double(sliceThickness)), 0);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}",
+          sliceThickness);
+      }
       store.setPixelsTimeIncrement(new Double(deltaT), 0);
     }
   }

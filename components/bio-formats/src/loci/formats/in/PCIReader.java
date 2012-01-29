@@ -39,10 +39,10 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 import loci.formats.services.POIService;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
+import ome.xml.model.primitives.PositiveFloat;
 
 /**
  * PCIReader is the file format reader for SimplePCI (Compix) .cxd files.
@@ -350,8 +350,14 @@ public class PCIReader extends FormatReader {
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      store.setPixelsPhysicalSizeX(new PositiveFloat(scaleFactor), 0);
-      store.setPixelsPhysicalSizeY(new PositiveFloat(scaleFactor), 0);
+      if (scaleFactor > 0) {
+        store.setPixelsPhysicalSizeX(new PositiveFloat(scaleFactor), 0);
+        store.setPixelsPhysicalSizeY(new PositiveFloat(scaleFactor), 0);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSize; got {}",
+          scaleFactor);
+      }
 
       for (int i=0; i<timestamps.size(); i++) {
         Double timestamp = new Double(timestamps.get(i).doubleValue());

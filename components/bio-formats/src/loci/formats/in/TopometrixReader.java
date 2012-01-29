@@ -180,10 +180,22 @@ public class TopometrixReader extends FormatReader {
       new String[] {"MM/dd/yy HH:mm:ss", "MM/dd/yyyy HH:mm:ss"}), 0);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      store.setPixelsPhysicalSizeX(
-        new PositiveFloat((double) xSize / getSizeX()), 0);
-      store.setPixelsPhysicalSizeY(
-        new PositiveFloat((double) ySize / getSizeY()), 0);
+      if (xSize > 0) {
+        store.setPixelsPhysicalSizeX(
+          new PositiveFloat((double) xSize / getSizeX()), 0);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+          (double) xSize / getSizeX());
+      }
+      if (ySize > 0) {
+        store.setPixelsPhysicalSizeY(
+          new PositiveFloat((double) ySize / getSizeY()), 0);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+          (double) ySize / getSizeY());
+      }
       store.setImageDescription(comment, 0);
     }
   }

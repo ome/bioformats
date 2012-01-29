@@ -36,10 +36,10 @@ import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
 
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 
 /**
@@ -205,6 +205,10 @@ public class SISReader extends BaseTiffReader {
         store.setObjectiveNominalMagnification(
           new PositiveInteger((int) magnification), 0, 0);
       }
+      else {
+        LOGGER.warn("Expected positive value for NominalMagnification; got {}",
+          magnification);
+      }
       store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
       store.setObjectiveImmersion(getImmersion("Other"), 0, 0);
       store.setImageObjectiveSettingsID(objective, 0);
@@ -221,8 +225,16 @@ public class SISReader extends BaseTiffReader {
       if (physicalSizeX > 0.000001) {
         store.setPixelsPhysicalSizeX(new PositiveFloat(physicalSizeX), 0);
       }
+      else {
+        LOGGER.warn("Expected a positive value for PhysicalSizeX; got {}",
+          physicalSizeX);
+      }
       if (physicalSizeY > 0.000001) {
         store.setPixelsPhysicalSizeY(new PositiveFloat(physicalSizeY), 0);
+      }
+      else {
+        LOGGER.warn("Expected a positive value for PhysicalSizeY; got {}",
+          physicalSizeY);
       }
       store.setChannelName(channelName, 0, 0);
     }

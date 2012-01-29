@@ -49,9 +49,9 @@ import loci.formats.codec.JPEGCodec;
 import loci.formats.codec.ZlibCodec;
 import loci.formats.meta.DummyMetadata;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 import loci.formats.services.POIService;
 
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 
 /**
@@ -631,11 +631,23 @@ public class ZeissZVIReader extends FormatReader {
         if (physicalSizeX != null && physicalSizeX > 0) {
           store.setPixelsPhysicalSizeX(new PositiveFloat(physicalSizeX), i);
         }
+        else {
+          LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+            physicalSizeX);
+        }
         if (physicalSizeY != null && physicalSizeY > 0) {
           store.setPixelsPhysicalSizeY(new PositiveFloat(physicalSizeY), i);
         }
+        else {
+          LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+            physicalSizeY);
+        }
         if (physicalSizeZ != null && physicalSizeZ > 0) {
           store.setPixelsPhysicalSizeZ(new PositiveFloat(physicalSizeZ), i);
+        }
+        else {
+          LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}",
+            physicalSizeZ);
         }
 
         long firstStamp = parseTimestamp(timestamps.get(new Integer(0)));
@@ -829,6 +841,10 @@ public class ZeissZVIReader extends FormatReader {
             if (wave.intValue() > 0) {
               emWavelength.put(cIndex, new PositiveInteger(wave));
             }
+            else {
+              LOGGER.warn(
+                "Expected positive value for EmissionWavelength; got {}", wave);
+            }
           }
         }
         else if (key.startsWith("Excitation Wavelength")) {
@@ -836,6 +852,11 @@ public class ZeissZVIReader extends FormatReader {
             Integer wave = new Integer((int) Double.parseDouble(value));
             if (wave.intValue() > 0) {
               exWavelength.put(cIndex, new PositiveInteger(wave));
+            }
+            else {
+              LOGGER.warn(
+                "Expected positive value for ExcitationWavelength; got {}",
+                wave);
             }
           }
         }
@@ -866,6 +887,11 @@ public class ZeissZVIReader extends FormatReader {
             store.setObjectiveNominalMagnification(
               new PositiveInteger(magnification), 0, 0);
           }
+          else {
+            LOGGER.warn(
+              "Expected positive value for NominalMagnification; got {}",
+              magnification);
+          }
         }
         else if (key.startsWith("Objective ID")) {
           store.setObjectiveID("Objective:" + value, 0, 0);
@@ -883,8 +909,15 @@ public class ZeissZVIReader extends FormatReader {
               int mag = (int)
                 Double.parseDouble(tokens[q].substring(0, slash - q));
               String na = tokens[q].substring(slash + 1);
-              store.setObjectiveNominalMagnification(
+              if (mag > 0) {
+                store.setObjectiveNominalMagnification(
                   new PositiveInteger(mag), 0, 0);
+              }
+              else {
+                LOGGER.warn(
+                  "Expected positive value for NominalMagnification; got {}",
+                  mag);
+              }
               store.setObjectiveLensNA(new Double(na), 0, 0);
               store.setObjectiveCorrection(getCorrection(tokens[q - 1]), 0, 0);
               break;
