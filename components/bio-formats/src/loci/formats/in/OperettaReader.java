@@ -444,10 +444,10 @@ public class OperettaReader extends FormatReader {
           activePlane.filename = new Location(parent, value).getAbsolutePath();
         }
         else if ("Row".equals(currentName)) {
-          activePlane.row = Integer.parseInt(value);
+          activePlane.row = Integer.parseInt(value) - 1;
         }
         else if ("Col".equals(currentName)) {
-          activePlane.col = Integer.parseInt(value);
+          activePlane.col = Integer.parseInt(value) - 1;
         }
         else if ("FieldID".equals(currentName)) {
           activePlane.field = Integer.parseInt(value);
