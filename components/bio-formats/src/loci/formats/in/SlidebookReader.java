@@ -463,9 +463,15 @@ public class SlidebookReader extends FormatReader {
         if (n == 'i') {
           iCount++;
           in.skipBytes(70);
-          exposureTimes.add(in.readInt());
+          int expTime = in.readInt();
+          if (expTime > 0) {
+            exposureTimes.add(expTime);
+          }
           in.skipBytes(20);
-          pixelSizeZ.add(new Double(in.readFloat()));
+          Double size = new Double(in.readFloat());
+          if (isGreaterThanEpsilon(size)) {
+            pixelSizeZ.add(size);
+          }
           in.seek(in.getFilePointer() - 20);
 
           for (int j=0; j<pixelOffsets.size(); j++) {
