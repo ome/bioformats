@@ -736,14 +736,24 @@ public class SlidebookReader extends FormatReader {
       }
       else {
         long p = pixels / (getSizeX() * getSizeY());
-        if (p * getSizeX() * getSizeY() == pixels &&
-          p != getSizeC() * getSizeZ())
-        {
-          if (p % getSizeC() != 0) {
-            core[i].sizeC = 1;
-            core[i].sizeZ = (int) p;
+        if (pixels == p * getSizeX() * getSizeY()) {
+          if (p != getSizeC() * getSizeZ()) {
+            if (p % getSizeC() != 0) {
+              core[i].sizeC = 1;
+              core[i].sizeZ = (int) p;
+            }
+            else if (core[i].sizeZ == p + 1) {
+              core[i].sizeC = 1;
+              core[i].sizeZ = 1;
+              core[i].sizeT = (int) p;
+            }
+            else core[i].sizeZ = (int) (p / getSizeC());
           }
-          else core[i].sizeZ = (int) (p / getSizeC());
+        }
+        else {
+          core[i].sizeZ = 1;
+          core[i].sizeC = 1;
+          core[i].sizeT = (int) p;
         }
       }
       plane = pixels / (getSizeC() * getSizeZ());
@@ -752,9 +762,6 @@ public class SlidebookReader extends FormatReader {
         2 * (pixels - (getSizeX() * getSizeY() * getSizeC() * getSizeZ()));
       if ((pixelLengths.get(index).longValue() % 2) == 1) {
         diff++;
-      }
-      if (i == 0) {
-        diff = 0;
       }
 
       if (adjust && diff == 0) {
