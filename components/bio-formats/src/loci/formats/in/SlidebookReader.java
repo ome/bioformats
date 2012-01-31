@@ -690,7 +690,8 @@ public class SlidebookReader extends FormatReader {
       else {
         nextBlock++;
       }
-      int index = pixelIndexes.get(0);
+      int index =
+        pixelIndexes.size() == getSeriesCount() ? pixelIndexes.get(0) : i;
 
       long pixels = pixelLengths.get(index).longValue() / 2;
       boolean x = true;
@@ -787,7 +788,7 @@ public class SlidebookReader extends FormatReader {
 
       planeOffset[i] = new long[getImageCount()];
       int nextImage = 0;
-      Integer pixelIndex = pixelIndexes.get(nextBlock == 0 ? 0 : nextBlock - 1);
+      Integer pixelIndex = i;
       long offset = pixelOffsets.get(pixelIndex) + diff;
       long length = pixelLengths.get(pixelIndex);
       int planeSize = getSizeX() * getSizeY() * 2;
