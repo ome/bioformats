@@ -34,6 +34,8 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
+import ome.xml.model.primitives.PositiveFloat;
+
 /**
  * Reader for IMOD binary files.
  *
@@ -308,6 +310,34 @@ public class IMODReader extends FormatReader {
       }
     }
 
+    double physicalX = 0d, physicalY = 0d, physicalZ = 0d;
+
+    while (in.getFilePointer() + 4 < in.length()) {
+      // check if there is any extra metadata at the end of the file
+
+      String chunkType = in.readString(4);
+      if (chunkType.equals("IMAT")) {
+        in.skipBytes(20);
+      }
+      else if (chunkType.equals("VIEW")) {
+        in.skipBytes(4);
+        if (in.readInt() != 1) {
+          in.skipBytes(176);
+
+          int bytesPerView = in.readInt();
+
+          in.skipBytes(bytesPerView);
+        }
+      }
+      else if (chunkType.equals("MINX")) {
+        in.skipBytes(40); // skip old transformation values
+
+        physicalX = in.readFloat();
+        physicalY = in.readFloat();
+        physicalZ = in.readFloat();
+      }
+    }
+
     core[0].sizeT = 1;
     core[0].sizeC = 3;
     core[0].rgb = true;
@@ -324,7 +354,46 @@ public class IMODReader extends FormatReader {
         store.setROIID(roiIDs.get(i), i);
         store.setImageROIRef(roiIDs.get(i), 0, i);
       }
+
+      if (physicalX > 0) {
+        store.setPixelsPhysicalSizeX(
+          new PositiveFloat(adjustForUnits(pixSizeUnits, physicalX)), 0);
+      }
+      if (physicalY > 0) {
+        store.setPixelsPhysicalSizeY(
+          new PositiveFloat(adjustForUnits(pixSizeUnits, physicalY)), 0);
+      }
+      if (physicalZ > 0) {
+        store.setPixelsPhysicalSizeZ(
+          new PositiveFloat(adjustForUnits(pixSizeUnits, physicalZ)), 0);
+      }
     }
+  }
+
+  // -- Helper methods --
+
+  private double adjustForUnits(int units, double value) {
+    switch (units) {
+      case 0:   // pixels
+        return value;
+      case 1:   // m
+        return value * 100000000.0;
+      case 3:   // km
+        return value * 100000000000.0;
+      case -2:  // cm
+        return value * 1000000.0;
+      case -3:  // mm
+        return value * 1000.0;
+      case -6:  // µm
+        return value;
+      case -9:  // nm
+        return value / 1000.0;
+      case -10: // Å
+        return value / 10000.0;
+      case -12: // pm
+        return value / 1000000.0;
+    }
+    return value;
   }
 
 }
