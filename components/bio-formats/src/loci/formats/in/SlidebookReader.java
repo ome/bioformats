@@ -796,9 +796,17 @@ public class SlidebookReader extends FormatReader {
       planeOffset[i] = new long[getImageCount()];
       int nextImage = 0;
       Integer pixelIndex = i;
-      long offset = pixelOffsets.get(pixelIndex) + diff;
-      long length = pixelLengths.get(pixelIndex);
+      long offset = pixelOffsets.get(pixelIndex);
       int planeSize = getSizeX() * getSizeY() * 2;
+
+      if (diff < planeSize) {
+        offset += diff;
+      }
+      else {
+        offset += (diff % planeSize);
+      }
+
+      long length = pixelLengths.get(pixelIndex);
       int planes = (int) (length / planeSize);
       for (int p=0; p<planes; p++, nextImage++) {
         if (nextImage < planeOffset[i].length) {
