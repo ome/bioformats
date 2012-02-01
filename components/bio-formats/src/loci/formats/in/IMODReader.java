@@ -191,7 +191,25 @@ public class IMODReader extends FormatReader {
     ArrayList<String> roiIDs = new ArrayList<String>();
 
     for (int obj=0; obj<nObjects; obj++) {
-      in.skipBytes(4); // OBJT
+      String objt = in.readString(4);
+      while (!objt.equals("OBJT")) {
+        String prefix = "Object #" + obj + " ";
+        if (objt.equals("IMAT")) {
+          addGlobalMeta(prefix + "ambient", in.read());
+          addGlobalMeta(prefix + "diffuse", in.read());
+          addGlobalMeta(prefix + "specular", in.read());
+          addGlobalMeta(prefix + "shininess", in.read());
+          addGlobalMeta(prefix + "fill red", in.read());
+          addGlobalMeta(prefix + "fill green", in.read());
+          addGlobalMeta(prefix + "fill blue", in.read());
+          addGlobalMeta(prefix + "sphere quality", in.read());
+          in.skipBytes(4);
+          addGlobalMeta(prefix + "black level", in.read());
+          addGlobalMeta(prefix + "white level", in.read());
+          in.skipBytes(2);
+        }
+        objt = in.readString(4);
+      }
       String objName = in.readString(64);
       in.skipBytes(64); // unused
 
