@@ -70,6 +70,18 @@ public class ICSWriter extends FormatWriter {
     checkParams(no, buf, x, y, w, h);
 
     MetadataRetrieve meta = getMetadataRetrieve();
+
+    String order = meta.getPixelsDimensionOrder(series).getValue();
+    int sizeZ = meta.getPixelsSizeZ(series).getValue().intValue();
+    int sizeC = meta.getChannelCount(series);
+    int sizeT = meta.getPixelsSizeT(series).getValue().intValue();
+    int planes = sizeZ * sizeC * sizeT;
+
+    int[] coords =
+      FormatTools.getZCTCoords(order, sizeZ, sizeC, sizeT, planes, no);
+    int realIndex = FormatTools.getIndex(order, sizeZ, sizeC, sizeT, planes,
+      coords[0], coords[1], coords[2]);
+
     int sizeX = meta.getPixelsSizeX(series).getValue().intValue();
     int sizeY = meta.getPixelsSizeY(series).getValue().intValue();
     int pixelType =
@@ -78,16 +90,16 @@ public class ICSWriter extends FormatWriter {
     int rgbChannels = getSamplesPerPixel();
     int planeSize = sizeX * sizeY * rgbChannels * bytesPerPixel;
 
-    if (!initialized[series][no]) {
-      initialized[series][no] = true;
+    if (!initialized[series][realIndex]) {
+      initialized[series][realIndex] = true;
 
       if (!isFullPlane(x, y, w, h)) {
         // write a dummy plane that will be overwritten in sections
-        pixels.seek(pixelOffset + (no + 1) * planeSize);
+        pixels.seek(pixelOffset + (realIndex + 1) * planeSize);
       }
     }
 
-    pixels.seek(pixelOffset + no * planeSize);
+    pixels.seek(pixelOffset + realIndex * planeSize);
     if (isFullPlane(x, y, w, h) && (interleaved || rgbChannels == 1)) {
       pixels.write(buf);
     }
@@ -107,7 +119,7 @@ public class ICSWriter extends FormatWriter {
         pixels.skipBytes(bytesPerPixel * rgbChannels * (sizeX - w - x));
       }
     }
-    lastPlane = no;
+    lastPlane = realIndex;
   }
 
   /* @see loci.formats.IFormatWriter#canDoStacks() */
@@ -177,7 +189,13 @@ public class ICSWriter extends FormatWriter {
       }
 
       out.writeBytes("\nparameter\tscale\t1.000000\t");
-      String order = meta.getPixelsDimensionOrder(series).getValue();
+
+      // NB: always write in ZTC order.  Certain software (e.g. Volocity)
+      //     lacks the capacity to import files with any other dimension
+      //     ordering.  Technically, this is not our problem, but it is
+      //     easy enough to work around and makes life easier for our users.
+
+      String order = "XYZTC";
       StringBuffer units = new StringBuffer();
       for (int i=0; i<order.length(); i++) {
         char dim = order.charAt(i);
@@ -248,7 +266,7 @@ public class ICSWriter extends FormatWriter {
 
   private int[] overwriteDimensions(MetadataRetrieve meta) throws IOException {
     out.seek(dimensionOffset);
-    String order = meta.getPixelsDimensionOrder(series).toString();
+    String order = "XYZTC";
     int sizeX = meta.getPixelsSizeX(series).getValue().intValue();
     int sizeY = meta.getPixelsSizeY(series).getValue().intValue();
     int z = meta.getPixelsSizeZ(series).getValue().intValue();
