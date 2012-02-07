@@ -149,6 +149,11 @@ public class SISReader extends BaseTiffReader {
     short check = in.readShort();
     while (check != 7 && check != 8) {
       check = in.readShort();
+
+      if (check == 0x700 || check == 0x800) {
+        in.skipBytes(1);
+        break;
+      }
     }
     in.skipBytes(4);
 
@@ -173,6 +178,10 @@ public class SISReader extends BaseTiffReader {
     if (length > 0) {
       cameraName = channelName.substring(0, length);
     }
+
+    // these are no longer valid
+    getGlobalMetadata().remove("XResolution");
+    getGlobalMetadata().remove("YResolution");
 
     addGlobalMeta("Nanometers per pixel (X)", physicalSizeX);
     addGlobalMeta("Nanometers per pixel (Y)", physicalSizeY);
