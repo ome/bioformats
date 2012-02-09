@@ -115,8 +115,15 @@ public class SlidebookReader extends FormatReader {
     long offset = planeOffset[getSeries()][no];
     in.seek(offset);
 
+    int[] zct = getZCTCoords(no);
+
     // if this is a spool file, there may be an extra metadata block here
     if (isSpool) {
+      long len = pixelLengths.get(getSeries());
+      long planeSize = FormatTools.getPlaneSize(this);
+      long diff = len - getImageCount() * planeSize;
+      in.seek(in.getFilePointer() - diff);
+
       Integer[] keys = metadataInPlanes.keySet().toArray(new Integer[0]);
       Arrays.sort(keys);
       for (int key : keys) {
@@ -125,14 +132,30 @@ public class SlidebookReader extends FormatReader {
         }
       }
 
-      in.order(false);
-      long magicBytes = (long) in.readInt() & 0xffffffffL;
-      in.order(isLittleEndian());
-      if (magicBytes == SLD_MAGIC_BYTES_3 && !metadataInPlanes.contains(no)) {
-        metadataInPlanes.put(no, 0);
-        in.skipBytes(252);
+      // check next 8 blocks of 256 bytes, just in case
+
+      long beginning = in.getFilePointer();
+
+      for (int i=0; i<8; i++) {
+        if (in.getFilePointer() + 4 >= in.length()) {
+          in.seek(beginning);
+          break;
+        }
+        in.order(false);
+        long magicBytes = (long) in.readInt() & 0xffffffffL;
+        in.order(isLittleEndian());
+        if (magicBytes == SLD_MAGIC_BYTES_3 && !metadataInPlanes.contains(no)) {
+          metadataInPlanes.put(no, 0);
+          in.skipBytes(252);
+          break;
+        }
+        else if (i == 7) {
+          in.seek(beginning);
+        }
+        else {
+          in.skipBytes(252);
+        }
       }
-      else in.seek(in.getFilePointer() - 4);
     }
 
     readPlane(in, x, y, w, h, buf);
@@ -443,6 +466,9 @@ public class SlidebookReader extends FormatReader {
     int nextChannel = 0;
     for (int i=0; i<metadataOffsets.size(); i++) {
       long off = metadataOffsets.get(i).longValue();
+      if (isSpool && off == 0) {
+        off = 276;
+      }
       in.seek(off);
       long next = i == metadataOffsets.size() - 1 ? in.length() :
         metadataOffsets.get(i + 1).longValue();
@@ -568,9 +594,13 @@ public class SlidebookReader extends FormatReader {
         }
         else if (n == 'm') {
           // this block should contain a channel name
-          if (in.getFilePointer() > pixelOffsets.get(0).longValue()) {
+          if (in.getFilePointer() > pixelOffsets.get(0).longValue() || isSpool)
+          {
             in.skipBytes(14);
-            channelNames.add(in.readCString().trim());
+            String name = in.readCString().trim();
+            if (name.length() > 0) {
+              channelNames.add(name);
+            }
           }
         }
         else if (n == 'd') {
@@ -701,6 +731,13 @@ public class SlidebookReader extends FormatReader {
       core[i].sizeY = sizeY[index];
       core[i].sizeC = sizeC[index];
       core[i].sizeZ = sizeZ[index];
+
+      if (isSpool) {
+        if (core[i].sizeC == 0) {
+          core[i].sizeC = channelNames.size();
+        }
+      }
+
       if (core[i].sizeZ % nBlocks == 0) {
         core[i].sizeZ /= nBlocks;
       }
@@ -759,6 +796,9 @@ public class SlidebookReader extends FormatReader {
               }
             }
           }
+        }
+        else if (isSpool) {
+          core[i].sizeZ = (int) (p / getSizeC());
         }
         else {
           core[i].sizeZ = 1;
