@@ -34,6 +34,17 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * Class that allows checking for new versions of Bio-Formats, as well as
+ * updating to the latest stable, daily, or trunk version.
+ *
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/UpgradeChecker.java">Trac</a>,
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/UpgradeChecker.java;hb=HEAD">Gitweb</a></dd></dl>
+ */
 public class UpgradeChecker {
 
   // -- Constants - OMERO registry IDs --
@@ -88,6 +99,9 @@ public class UpgradeChecker {
   /** Number of bytes to read from the CI server at a time. */
   private static final int CHUNK_SIZE = 8192;
 
+  private static final Logger LOGGER =
+    LoggerFactory.getLogger(UpgradeChecker.class);
+
   // -- UpgradeChecker API methods --
 
   /**
@@ -129,7 +143,8 @@ public class UpgradeChecker {
             System.getProperty(REGISTRY_PROPERTIES[i]), "UTF-8"));
         }
         catch (UnsupportedEncodingException e) {
-          // TODO : logging
+          LOGGER.warn("Failed to append query argument: " +
+            REGISTRY_PROPERTIES[i], e);
         }
       }
     }
@@ -175,7 +190,7 @@ public class UpgradeChecker {
       }
     }
     catch (IOException e) {
-      // TODO : logging
+      LOGGER.warn("Failed to compare version numbers", e);
     }
     return false;
   }
@@ -194,7 +209,7 @@ public class UpgradeChecker {
     File jar = new File(downloadPath + ".tmp");
     if (jar.exists()) {
       if (!jar.delete()) {
-        // TODO : logging
+        LOGGER.warn("Failed to delete '{}'", jar.getAbsolutePath());
         return false;
       }
     }
@@ -217,7 +232,7 @@ public class UpgradeChecker {
         }
         int r = in.read(buf, off, len);
         if (r <= 0) {
-          // TODO : logging
+          LOGGER.warn("Truncated JAR file");
           return false;
         }
         off += r;
@@ -232,12 +247,13 @@ public class UpgradeChecker {
 
       boolean success = jar.renameTo(new File(downloadPath));
       if (!success) {
-        // TODO : logging
+        LOGGER.warn("Failed to rename '{}' to '{}'", jar.getAbsolutePath(),
+          downloadPath);
       }
       return success;
     }
     catch (IOException e) {
-
+      LOGGER.warn("Failed to download from " + urlPath, e);
     }
     return false;
   }
