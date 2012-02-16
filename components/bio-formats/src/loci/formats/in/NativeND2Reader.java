@@ -29,6 +29,7 @@ import java.util.Hashtable;
 
 import loci.common.ByteArrayHandle;
 import loci.common.Constants;
+import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.xml.XMLTools;
