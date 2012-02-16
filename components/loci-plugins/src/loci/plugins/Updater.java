@@ -40,6 +40,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 
+import loci.common.Constants;
 import loci.formats.FormatTools;
 import loci.plugins.util.WindowTools;
 
@@ -124,7 +125,7 @@ public class Updater implements PlugIn {
       else {
         try {
           query.append(URLEncoder.encode(
-            System.getProperty(REGISTRY_PROPERTIES[i]), "UTF-8"));
+            System.getProperty(REGISTRY_PROPERTIES[i]), Constants.ENCODING));
         }
         catch (UnsupportedEncodingException e) { }
       }

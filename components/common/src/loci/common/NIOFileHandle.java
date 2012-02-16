@@ -430,7 +430,7 @@ public class NIOFileHandle extends AbstractNIOHandle {
 
   /* @see java.io.DataOutput.writeBytes(String) */
   public void writeBytes(String s) throws IOException {
-    write(s.getBytes());
+    write(s.getBytes(Constants.ENCODING));
   }
 
   /* @see java.io.DataOutput.writeChar(int) */
@@ -483,7 +483,7 @@ public class NIOFileHandle extends AbstractNIOHandle {
   /* @see java.io.DataOutput.writeUTF(String)  */
   public void writeUTF(String str) throws IOException {
     // NB: number of bytes written is greater than the length of the string
-    int strlen = str.getBytes("UTF-8").length + 2;
+    int strlen = str.getBytes(Constants.ENCODING).length + 2;
     writeSetup(strlen);
     raf.seek(position);
     raf.writeUTF(str);

@@ -229,4 +229,8 @@ public class OptionsList {
     return true;
   }
 
+  public int hashCode() {
+    return options.hashCode();
+  }
+
 }

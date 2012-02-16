@@ -21,7 +21,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-import java.io.FileWriter;
+import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.DateFormat;
@@ -79,7 +79,7 @@ public class VelocityTools {
     Template t = ve.getTemplate(inFile);
     StringWriter writer = new StringWriter();
     t.merge(context, writer);
-    PrintWriter out = new PrintWriter(new FileWriter(outFile));
+    PrintWriter out = new PrintWriter(new File(outFile), "UTF-8");
     out.print(writer.toString());
     out.close();
     System.out.println("done.");

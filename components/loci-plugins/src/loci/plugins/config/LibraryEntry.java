@@ -30,6 +30,8 @@ import java.io.PrintWriter;
 import java.net.URLDecoder;
 import java.util.HashMap;
 
+import loci.common.Constants;
+
 /**
  * A list entry for the configuration window's Libraries tab.
  *
@@ -123,7 +125,7 @@ public class LibraryEntry implements Comparable<Object> {
       path = path.replaceAll("^/*/", "/");
       path = path.replaceAll("^/([A-Z]:)", "$1");
       path = path.replaceAll("!.*", "");
-      path = URLDecoder.decode(path, "UTF-8");
+      path = URLDecoder.decode(path, Constants.ENCODING);
       String slash = File.separator;
       if (slash.equals("\\")) slash = "\\\\";
       path = path.replaceAll("/", slash);

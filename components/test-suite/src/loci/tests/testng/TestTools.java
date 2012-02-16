@@ -32,7 +32,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package loci.tests.testng;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.security.MessageDigest;
@@ -44,6 +43,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
@@ -182,7 +182,7 @@ public class TestTools {
       root.setLevel(Level.INFO);
       root.addAppender(new WriterAppender(
         new PatternLayout("%p [%d{dd-MM-yyyy HH:mm:ss.SSS}] %m%n"),
-        new PrintWriter(new FileOutputStream(logFile))));
+        new PrintWriter(logFile, Constants.ENCODING)));
     }
     catch (IOException e) { LOGGER.info("", e); }
 

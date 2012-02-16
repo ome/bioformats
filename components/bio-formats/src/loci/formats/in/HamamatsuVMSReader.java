@@ -24,10 +24,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats.in;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import loci.common.Constants;
 import loci.common.IniList;
 import loci.common.IniParser;
 import loci.common.IniTable;
@@ -125,7 +127,8 @@ public class HamamatsuVMSReader extends FormatReader {
     super.initFile(id);
 
     IniParser parser = new IniParser();
-    IniList layout = parser.parseINI(new BufferedReader(new FileReader(id)));
+    IniList layout = parser.parseINI(new BufferedReader(
+      new InputStreamReader(new FileInputStream(id), Constants.ENCODING)));
     IniTable slideInfo = layout.getTable("Virtual Microscope Specimen");
 
     int nLayers = Integer.parseInt(slideInfo.get("NoLayers"));
