@@ -225,7 +225,6 @@ public class JPXReader extends FormatReader {
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this, true);
-    MetadataTools.setDefaultCreationDate(store, currentId, 0);
   }
 
   // -- Helper methods --

@@ -32,12 +32,13 @@ import loci.common.DateTools;
 import loci.formats.FormatException;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 import loci.formats.tiff.PhotoInterp;
 import loci.formats.tiff.TiffCompression;
 import loci.formats.tiff.TiffRational;
+
+import ome.xml.model.primitives.PositiveFloat;
 
 /**
  * BaseTiffReader is the superclass for file format readers compatible with
@@ -55,7 +56,7 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
   // -- Constants --
 
   /** Logger for this class. */
-  private static final Logger LOGGER =
+  protected static final Logger LOGGER =
     LoggerFactory.getLogger(BaseTiffReader.class);
 
   public static final String[] DATE_FORMATS = {
@@ -407,9 +408,6 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
     if (creationDate != null) {
       store.setImageAcquiredDate(creationDate, 0);
     }
-    else {
-       MetadataTools.setDefaultCreationDate(store, getCurrentFile(), 0);
-    }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       // populate Experimenter
@@ -441,8 +439,14 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
       if (pixX > 0) {
         store.setPixelsPhysicalSizeX(new PositiveFloat(pixX), 0);
       }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}", pixX);
+      }
       if (pixY > 0) {
         store.setPixelsPhysicalSizeY(new PositiveFloat(pixY), 0);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}", pixY);
       }
       store.setPixelsPhysicalSizeZ(null, 0);
     }

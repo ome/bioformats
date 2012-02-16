@@ -473,7 +473,8 @@ public class ZeissCZIReader extends FormatReader {
           if (color != null) {
             color = color.replaceAll("#", "");
             try {
-              store.setChannelColor(Integer.parseInt(color, 16), i, c);
+              store.setChannelColor(
+                (Integer.parseInt(color, 16) << 8) | 0xff, i, c);
             }
             catch (NumberFormatException e) { }
           }
@@ -487,6 +488,10 @@ public class ZeissCZIReader extends FormatReader {
               store.setChannelEmissionWavelength(
                 new PositiveInteger(wave.intValue()), i, c);
             }
+            else {
+              LOGGER.warn(
+                "Expected positive value for EmissionWavelength; got {}", wave);
+            }
           }
         }
         if (c < excitationWavelengths.size()) {
@@ -496,6 +501,11 @@ public class ZeissCZIReader extends FormatReader {
             if (wave.intValue() > 0) {
               store.setChannelExcitationWavelength(
                 new PositiveInteger(wave.intValue()), i, c);
+            }
+            else {
+              LOGGER.warn(
+                "Expected positive value for ExcitationWavelength; got {}",
+                wave);
             }
           }
         }
@@ -879,8 +889,19 @@ public class ZeissCZIReader extends FormatReader {
             getImmersion(getFirstNodeValue(objective, "Immersion")), 0, i);
           store.setObjectiveLensNA(
             new Double(getFirstNodeValue(objective, "LensNA")), 0, i);
-          store.setObjectiveNominalMagnification(PositiveInteger.valueOf(
-            getFirstNodeValue(objective, "NominalMagnification")), 0, i);
+
+          String magnification =
+            getFirstNodeValue(objective, "NominalMagnification");
+          Integer mag = new Integer(magnification);
+
+          if (mag > 0) {
+            store.setObjectiveNominalMagnification(
+              new PositiveInteger(mag), 0, i);
+          }
+          else {
+            LOGGER.warn(
+              "Expected positive value for NominalMagnification; got {}", mag);
+          }
           String calibratedMag =
             getFirstNodeValue(objective, "CalibratedMagnification");
           if (calibratedMag != null) {
@@ -961,14 +982,37 @@ public class ZeissCZIReader extends FormatReader {
             getFirstNodeValue(filter, "FilterWheel"), 0, i);
 
           Element transmittance = getFirstNode(filter, "TransmittanceRange");
-          store.setTransmittanceRangeCutIn(PositiveInteger.valueOf(
-            getFirstNodeValue(transmittance, "CutIn")), 0, i);
-          store.setTransmittanceRangeCutOut(PositiveInteger.valueOf(
-            getFirstNodeValue(transmittance, "CutOut")), 0, i);
-          store.setTransmittanceRangeCutInTolerance(NonNegativeInteger.valueOf(
-            getFirstNodeValue(transmittance, "CutInTolerance")), 0, i);
-          store.setTransmittanceRangeCutOutTolerance(NonNegativeInteger.valueOf(
-            getFirstNodeValue(transmittance, "CutOutTolerance")), 0, i);
+
+          String cutIn = getFirstNodeValue(transmittance, "CutIn");
+          String cutOut = getFirstNodeValue(transmittance, "CutOut");
+          Integer inWave = new Integer(cutIn);
+          Integer outWave = new Integer(cutOut);
+
+          if (inWave > 0) {
+            store.setTransmittanceRangeCutIn(new PositiveInteger(inWave), 0, i);
+          }
+          else {
+            LOGGER.warn("Expected positive value for CutIn; got {}", inWave);
+          }
+          if (outWave > 0) {
+            store.setTransmittanceRangeCutOut(
+              new PositiveInteger(outWave), 0, i);
+          }
+          else {
+            LOGGER.warn("Expected positive value for CutOut; got {}", outWave);
+          }
+
+          String inTolerance =
+            getFirstNodeValue(transmittance, "CutInTolerance");
+          String outTolerance =
+            getFirstNodeValue(transmittance, "CutOutTolerance");
+          Integer cutInTolerance = new Integer(inTolerance);
+          Integer cutOutTolerance = new Integer(outTolerance);
+
+          store.setTransmittanceRangeCutInTolerance(
+            new NonNegativeInteger(cutInTolerance), 0, i);
+          store.setTransmittanceRangeCutOutTolerance(
+            new NonNegativeInteger(cutOutTolerance), 0, i);
           store.setTransmittanceRangeTransmittance(PercentFraction.valueOf(
             getFirstNodeValue(transmittance, "Transmittance")), 0, i);
         }
@@ -1028,6 +1072,9 @@ public class ZeissCZIReader extends FormatReader {
             store.setPixelsPhysicalSizeZ(size, series);
           }
         }
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSize; got {}", value);
       }
     }
   }
@@ -1249,6 +1296,10 @@ public class ZeissCZIReader extends FormatReader {
     positionsY = new Double[core.length];
     positionsZ = new Double[core.length];
 
+    if (groups == null) {
+      return;
+    }
+
     for (int i=0; i<groups.getLength(); i++) {
       Element group = (Element) groups.item(i);
 
@@ -1265,9 +1316,11 @@ public class ZeissCZIReader extends FormatReader {
 
       for (int tile=0; tile<tilesX * tilesY; tile++) {
         int index = i * tilesX * tilesY + tile;
-        positionsX[index] = xPos;
-        positionsY[index] = yPos;
-        positionsZ[index] = zPos;
+        if (index < positionsX.length) {
+          positionsX[index] = xPos;
+          positionsY[index] = yPos;
+          positionsZ[index] = zPos;
+        }
       }
     }
   }

@@ -119,14 +119,18 @@ public class QuesantReader extends FormatReader {
       date = DateTools.formatDate(date, "MMM dd yyyy HH:mm:ssSSS");
       store.setImageAcquiredDate(date, 0);
     }
-    else MetadataTools.setDefaultCreationDate(store, id, 0);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription(comment, 0);
-      store.setPixelsPhysicalSizeX(
-        new PositiveFloat((double) xSize / getSizeX()), 0);
-      store.setPixelsPhysicalSizeY(
-        new PositiveFloat((double) xSize / getSizeY()), 0);
+      if (xSize > 0) {
+        store.setPixelsPhysicalSizeX(
+          new PositiveFloat((double) xSize / getSizeX()), 0);
+        store.setPixelsPhysicalSizeY(
+          new PositiveFloat((double) xSize / getSizeY()), 0);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSize; got {}", xSize);
+      }
     }
   }
 

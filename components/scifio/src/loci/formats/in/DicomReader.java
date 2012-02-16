@@ -688,7 +688,6 @@ public class DicomReader extends FormatReader {
 
     for (int i=0; i<core.length; i++) {
       if (stamp != null) store.setImageAcquiredDate(stamp, i);
-      else MetadataTools.setDefaultCreationDate(store, id, i);
       store.setImageName("Series " + i, i);
     }
 
@@ -701,11 +700,19 @@ public class DicomReader extends FormatReader {
           if (sizeX > 0) {
             store.setPixelsPhysicalSizeX(new PositiveFloat(sizeX), i);
           }
+          else {
+            LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+              sizeX);
+          }
         }
         if (pixelSizeY != null) {
           Double sizeY = new Double(pixelSizeY);
           if (sizeY > 0) {
             store.setPixelsPhysicalSizeY(new PositiveFloat(sizeY), i);
+          }
+          else {
+            LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+              sizeY);
           }
         }
       }
@@ -994,6 +1001,15 @@ public class DicomReader extends FormatReader {
 
     if (elementLength == 0 && (groupWord == 0x7fe0 || tag == 0x291014)) {
       elementLength = getLength(stream, tag);
+    }
+    else if (elementLength == 0) {
+      stream.seek(stream.getFilePointer() - 4);
+      String v = stream.readString(2);
+      if (v.equals("UT")) {
+        stream.skipBytes(2);
+        elementLength = stream.readInt();
+      }
+      else stream.skipBytes(2);
     }
 
     // HACK - needed to read some GE files

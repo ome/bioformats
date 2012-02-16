@@ -39,8 +39,8 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.IMinMaxStore;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 
 import org.xml.sax.Attributes;
@@ -480,7 +480,6 @@ public class BioRadReader extends FormatReader {
     core[0].indexed = lut != null;
 
     MetadataTools.populatePixels(store, this);
-    MetadataTools.setDefaultCreationDate(store, id, 0);
     store.setImageName(name, 0);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
@@ -498,6 +497,10 @@ public class BioRadReader extends FormatReader {
       if ((int) magFactor > 0) {
         store.setObjectiveNominalMagnification(
           new PositiveInteger((int) magFactor), 0, 0);
+      }
+      else {
+        LOGGER.warn("Expected positive value for NominalMagnification; got {}",
+          magFactor);
       }
       store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
       store.setObjectiveImmersion(getImmersion("Other"), 0, 0);
@@ -643,14 +646,27 @@ public class BioRadReader extends FormatReader {
                 store.setObjectiveModel(value, 0, 0);
               }
               else if (key.equals("INFO_OBJECTIVE_MAGNIFICATION")) {
-                store.setObjectiveNominalMagnification(
-                  new PositiveInteger((int) Float.parseFloat(value)), 0, 0);
+                int mag = (int) Float.parseFloat(value);
+                if (mag > 0) {
+                  store.setObjectiveNominalMagnification(
+                    new PositiveInteger(mag), 0, 0);
+                }
+                else {
+                  LOGGER.warn(
+                    "Expected positive value for NominalMagnification; got {}",
+                    mag);
+                }
               }
               else if (key.equals("LENS_MAGNIFICATION")) {
                 int magnification = (int) Float.parseFloat(value);
                 if (magnification > 0) {
                   store.setObjectiveNominalMagnification(
                     new PositiveInteger(magnification), 0, 0);
+                }
+                else {
+                  LOGGER.warn(
+                    "Expected positive value for NominalMagnification; got {}",
+                    magnification);
                 }
               }
               else if (key.startsWith("SETTING")) {
@@ -697,13 +713,20 @@ public class BioRadReader extends FormatReader {
                     if (type == 257 && values.length >= 3) {
                       // found length of axis in um
                       Double pixelSize = new Double(values[2]);
-                      if (key.equals("AXIS_2")) {
-                        store.setPixelsPhysicalSizeX(
-                          new PositiveFloat(pixelSize), 0);
+                      if (pixelSize > 0) {
+                        if (key.equals("AXIS_2")) {
+                          store.setPixelsPhysicalSizeX(
+                            new PositiveFloat(pixelSize), 0);
+                        }
+                        else if (key.equals("AXIS_3")) {
+                          store.setPixelsPhysicalSizeY(
+                            new PositiveFloat(pixelSize), 0);
+                        }
                       }
-                      else if (key.equals("AXIS_3")) {
-                        store.setPixelsPhysicalSizeY(
-                          new PositiveFloat(pixelSize), 0);
+                      else {
+                        LOGGER.warn(
+                          "Expected positive value for PhysicalSize; got {}",
+                          pixelSize);
                       }
                     }
                   }
@@ -714,12 +737,24 @@ public class BioRadReader extends FormatReader {
             else if (n.p.startsWith("AXIS_2")) {
               String[] values = n.p.split(" ");
               Double pixelSize = new Double(values[3]);
-              store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSize), 0);
+              if (pixelSize > 0) {
+                store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSize), 0);
+              }
+              else {
+                LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+                  pixelSize);
+              }
             }
             else if (n.p.startsWith("AXIS_3")) {
               String[] values = n.p.split(" ");
               Double pixelSize = new Double(values[3]);
-              store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSize), 0);
+              if (pixelSize > 0) {
+                store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSize), 0);
+              }
+              else {
+                LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+                  pixelSize);
+              }
             }
             else {
               addGlobalMeta("Note #" + noteIndex, n.toString());
@@ -737,12 +772,23 @@ public class BioRadReader extends FormatReader {
                   }
 
                   int mag = (int) Float.parseFloat(values[11]);
-                  store.setObjectiveNominalMagnification(
-                    new PositiveInteger(mag), 0, 0);
+                  if (mag > 0) {
+                    store.setObjectiveNominalMagnification(
+                      new PositiveInteger(mag), 0, 0);
+                  }
+                  else {
+                    LOGGER.warn("Expected positive value for " +
+                      "NominalMagnification; got {}", mag);
+                  }
 
                   Double sizeZ = new Double(values[14]);
                   if (sizeZ > 0) {
                     store.setPixelsPhysicalSizeZ(new PositiveFloat(sizeZ), 0);
+                  }
+                  else {
+                    LOGGER.warn(
+                      "Expected positive value for PhysicalSizeZ; got {}",
+                      sizeZ);
                   }
                   break;
                 case 2:
@@ -763,8 +809,18 @@ public class BioRadReader extends FormatReader {
                   if (width > 0) {
                     store.setPixelsPhysicalSizeX(new PositiveFloat(width), 0);
                   }
+                  else {
+                    LOGGER.warn(
+                      "Expected positive value for PhysicalSizeX; got {}",
+                      width);
+                  }
                   if (height > 0) {
                     store.setPixelsPhysicalSizeY(new PositiveFloat(height), 0);
+                  }
+                  else {
+                    LOGGER.warn(
+                      "Expected positive value for PhysicalSizeY; got {}",
+                      height);
                   }
 
                   break;

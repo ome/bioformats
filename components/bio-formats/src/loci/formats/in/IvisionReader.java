@@ -247,7 +247,6 @@ public class IvisionReader extends FormatReader {
       String date = DateTools.formatDate(creationDate, DATE_FORMAT);
       store.setImageAcquiredDate(date, 0);
     }
-    else MetadataTools.setDefaultCreationDate(store, currentId, 0);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       String instrumentID = MetadataTools.createLSID("Instrument", 0);
@@ -267,9 +266,13 @@ public class IvisionReader extends FormatReader {
       store.setObjectiveImmersion(getImmersion("Other"), 0, 0);
 
       if (lensNA != null) store.setObjectiveLensNA(lensNA, 0, 0);
-      if (magnification != null) {
+      if (magnification != null && magnification > 0) {
         store.setObjectiveNominalMagnification(
-            new PositiveInteger(magnification), 0, 0);
+          new PositiveInteger(magnification), 0, 0);
+      }
+      else {
+        LOGGER.warn("Expected positive value for NominalMagnification; got {}",
+          magnification);
       }
       if (refractiveIndex != null) {
         store.setImageObjectiveSettingsRefractiveIndex(refractiveIndex, 0);

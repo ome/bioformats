@@ -209,7 +209,6 @@ public class LegacyQTReader extends BIFormatReader {
 
       MetadataStore store = makeFilterMetadata();
       MetadataTools.populatePixels(store, this);
-      MetadataTools.setDefaultCreationDate(store, id, 0);
     }
     catch (ReflectException e) {
       throw new FormatException("Open movie failed", e);

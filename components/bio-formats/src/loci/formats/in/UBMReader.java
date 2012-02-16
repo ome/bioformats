@@ -108,7 +108,6 @@ public class UBMReader extends FormatReader {
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
-    MetadataTools.setDefaultCreationDate(store, id, 0);
   }
 
 }

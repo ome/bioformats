@@ -40,11 +40,11 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
 
 import ome.xml.model.primitives.NonNegativeInteger;
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 
 import org.xml.sax.Attributes;
@@ -483,12 +483,16 @@ public class ScanrReader extends FormatReader {
 
     int nFields = fieldRows * fieldColumns;
 
-    store.setPlateAcquisitionMaximumFieldCount(
-      new PositiveInteger(nFields), 0, 0);
+    if (nFields > 0) {
+      store.setPlateAcquisitionMaximumFieldCount(
+        new PositiveInteger(nFields), 0, 0);
+    }
+    else {
+      LOGGER.warn("Expected positive value for MaximumFieldCount; got {}",
+        nFields);
+    }
 
     for (int i=0; i<getSeriesCount(); i++) {
-      MetadataTools.setDefaultCreationDate(store, id, i);
-
       int field = i % nFields;
       int well = i / nFields;
       int wellIndex = well;
@@ -525,9 +529,13 @@ public class ScanrReader extends FormatReader {
         for (int c=0; c<getSizeC(); c++) {
           store.setChannelName(channelNames.get(c), i, c);
         }
-        if (pixelSize != null) {
+        if (pixelSize != null && pixelSize > 0) {
           store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSize), i);
           store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSize), i);
+        }
+        else {
+          LOGGER.warn("Expected positive value for PhysicalSize; got {}",
+            pixelSize);
         }
 
         if (fieldPositionX != null && fieldPositionY != null) {

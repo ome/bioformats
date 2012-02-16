@@ -251,8 +251,8 @@ public class TiffWriter extends FormatWriter {
 
     int width = retrieve.getPixelsSizeX(series).getValue().intValue();
     int height = retrieve.getPixelsSizeY(series).getValue().intValue();
-    ifd.put(new Integer(IFD.IMAGE_WIDTH), new Integer(width));
-    ifd.put(new Integer(IFD.IMAGE_LENGTH), new Integer(height));
+    ifd.put(new Integer(IFD.IMAGE_WIDTH), new Long(width));
+    ifd.put(new Integer(IFD.IMAGE_LENGTH), new Long(height));
 
     PositiveFloat px = retrieve.getPixelsPhysicalSizeX(series);
     Double physicalSizeX = px == null ? null : px.getValue();

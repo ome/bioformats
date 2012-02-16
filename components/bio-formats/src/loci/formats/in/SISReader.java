@@ -36,10 +36,10 @@ import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
 
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 
 /**
@@ -151,6 +151,11 @@ public class SISReader extends BaseTiffReader {
     short check = in.readShort();
     while (check != 7 && check != 8) {
       check = in.readShort();
+
+      if (check == 0x700 || check == 0x800) {
+        in.skipBytes(1);
+        break;
+      }
     }
     in.skipBytes(4);
 
@@ -175,6 +180,10 @@ public class SISReader extends BaseTiffReader {
     if (length > 0) {
       cameraName = channelName.substring(0, length);
     }
+
+    // these are no longer valid
+    getGlobalMetadata().remove("XResolution");
+    getGlobalMetadata().remove("YResolution");
 
     addGlobalMeta("Nanometers per pixel (X)", physicalSizeX);
     addGlobalMeta("Nanometers per pixel (Y)", physicalSizeY);
@@ -205,6 +214,10 @@ public class SISReader extends BaseTiffReader {
         store.setObjectiveNominalMagnification(
           new PositiveInteger((int) magnification), 0, 0);
       }
+      else {
+        LOGGER.warn("Expected positive value for NominalMagnification; got {}",
+          magnification);
+      }
       store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
       store.setObjectiveImmersion(getImmersion("Other"), 0, 0);
       store.setImageObjectiveSettingsID(objective, 0);
@@ -221,8 +234,16 @@ public class SISReader extends BaseTiffReader {
       if (physicalSizeX > 0.000001) {
         store.setPixelsPhysicalSizeX(new PositiveFloat(physicalSizeX), 0);
       }
+      else {
+        LOGGER.warn("Expected a positive value for PhysicalSizeX; got {}",
+          physicalSizeX);
+      }
       if (physicalSizeY > 0.000001) {
         store.setPixelsPhysicalSizeY(new PositiveFloat(physicalSizeY), 0);
+      }
+      else {
+        LOGGER.warn("Expected a positive value for PhysicalSizeY; got {}",
+          physicalSizeY);
       }
       store.setChannelName(channelName, 0, 0);
     }

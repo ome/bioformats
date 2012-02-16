@@ -34,8 +34,8 @@ import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 import loci.formats.tiff.TiffParser;
+import ome.xml.model.primitives.PositiveFloat;
 
 /**
  * ImprovisionTiffReader is the file format reader for
@@ -324,9 +324,27 @@ public class ImprovisionTiffReader extends BaseTiffReader {
     MetadataTools.populatePixels(store, this);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSizeX), 0);
-      store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSizeY), 0);
-      store.setPixelsPhysicalSizeZ(new PositiveFloat(pixelSizeZ), 0);
+      if (pixelSizeX > 0) {
+        store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSizeX), 0);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+          pixelSizeX);
+      }
+      if (pixelSizeY > 0) {
+        store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSizeY), 0);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+          pixelSizeY);
+      }
+      if (pixelSizeZ > 0) {
+        store.setPixelsPhysicalSizeZ(new PositiveFloat(pixelSizeZ), 0);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}",
+          pixelSizeZ);
+      }
       store.setPixelsTimeIncrement(pixelSizeT / 1000000.0, 0);
       for (int i=0; i<getEffectiveSizeC(); i++) {
         if (cNames != null && i < cNames.length) {

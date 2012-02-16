@@ -352,7 +352,6 @@ public class FakeReader extends FormatReader {
     for (int s=0; s<seriesCount; s++) {
       String imageName = s > 0 ? name + " " + (s + 1) : name;
       store.setImageName(imageName, s);
-      MetadataTools.setDefaultCreationDate(store, id, s);
     }
 
     // for indexed color images, create lookup tables

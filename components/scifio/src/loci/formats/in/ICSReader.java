@@ -41,8 +41,8 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 
 /**
@@ -1418,7 +1418,6 @@ public class ICSReader extends FormatReader {
     store.setImageName(imageName, 0);
 
     if (date != null) store.setImageAcquiredDate(date, 0);
-    else MetadataTools.setDefaultCreationDate(store, id, 0);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription(description, 0);
@@ -1445,15 +1444,27 @@ public class ICSReader extends FormatReader {
             if (pixelSize > 0 && checkUnit(unit, "um", "microns")) {
               store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSize), 0);
             }
+            else {
+              LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+                pixelSize);
+            }
           }
           else if (axis.equals("y")) {
             if (pixelSize > 0 && checkUnit(unit, "um", "microns")) {
               store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSize), 0);
             }
+            else {
+              LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+                pixelSize);
+            }
           }
           else if (axis.equals("z")) {
             if (pixelSize > 0 && checkUnit(unit, "um", "microns")) {
               store.setPixelsPhysicalSizeZ(new PositiveFloat(pixelSize), 0);
+            }
+            else {
+              LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}",
+                pixelSize);
             }
           }
           else if (axis.equals("t")) {
@@ -1467,10 +1478,18 @@ public class ICSReader extends FormatReader {
         if (sizes.length > 0 && sizes[0] > 0) {
           store.setPixelsPhysicalSizeX(new PositiveFloat(sizes[0]), 0);
         }
+        else {
+          LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+            sizes[0]);
+        }
         if (sizes.length > 1) {
           sizes[1] /= getSizeY();
           if (sizes[1] > 0) {
             store.setPixelsPhysicalSizeY(new PositiveFloat(sizes[1]), 0);
+          }
+          else {
+            LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+              sizes[1]);
           }
         }
       }
@@ -1502,15 +1521,27 @@ public class ICSReader extends FormatReader {
         if (pinholes.containsKey(i)) {
           store.setChannelPinholeSize(pinholes.get(i), 0, i);
         }
-        if (emWaves != null && i < emWaves.length && emWaves[i].intValue() > 0)
-        {
-          store.setChannelEmissionWavelength(
-            new PositiveInteger(emWaves[i]), 0, i);
+        if (emWaves != null && i < emWaves.length) {
+          if (emWaves[i].intValue() > 0) {
+            store.setChannelEmissionWavelength(
+              new PositiveInteger(emWaves[i]), 0, i);
+          }
+          else {
+            LOGGER.warn(
+              "Expected positive value for EmissionWavelength; got {}",
+              emWaves[i]);
+          }
         }
-        if (exWaves != null && i < exWaves.length && exWaves[i].intValue() > 0)
-        {
-          store.setChannelExcitationWavelength(
-            new PositiveInteger(exWaves[i]), 0, i);
+        if (exWaves != null && i < exWaves.length) {
+          if (exWaves[i].intValue() > 0) {
+            store.setChannelExcitationWavelength(
+              new PositiveInteger(exWaves[i]), 0, i);
+          }
+          else {
+            LOGGER.warn(
+              "Expected positive value for ExcitationWavelength; got {}",
+              exWaves[i]);
+          }
         }
       }
 
@@ -1520,8 +1551,14 @@ public class ICSReader extends FormatReader {
       Arrays.sort(lasers);
       for (int i=0; i<lasers.length; i++) {
         store.setLaserID(MetadataTools.createLSID("LightSource", 0, i), 0, i);
-        store.setLaserWavelength(
-          new PositiveInteger(wavelengths.get(lasers[i])), 0, i);
+        if (wavelengths.get(lasers[i]) > 0) {
+          store.setLaserWavelength(
+            new PositiveInteger(wavelengths.get(lasers[i])), 0, i);
+        }
+        else {
+          LOGGER.warn("Expected positive value for wavelength; got {}",
+            wavelengths.get(lasers[i]));
+        }
         store.setLaserType(getLaserType("Other"), 0, i);
         store.setLaserLaserMedium(getLaserMedium("Other"), 0, i);
 

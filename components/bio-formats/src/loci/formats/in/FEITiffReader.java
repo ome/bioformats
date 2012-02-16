@@ -38,9 +38,9 @@ import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
+import ome.xml.model.primitives.PositiveFloat;
 
 /**
  * FEITiffReader is the file format reader for TIFF files produced by various
@@ -216,7 +216,6 @@ public class FEITiffReader extends BaseTiffReader {
     if (date != null) {
       store.setImageAcquiredDate(DateTools.formatDate(date, DATE_FORMAT), 0);
     }
-    else MetadataTools.setDefaultCreationDate(store, currentId, 0);
 
     if (imageName != null) {
       store.setImageName(imageName, 0);
@@ -253,8 +252,18 @@ public class FEITiffReader extends BaseTiffReader {
       store.setStageLabelY(stageY, 0);
       store.setStageLabelZ(stageZ, 0);
       store.setStageLabelName("", 0);
-      store.setPixelsPhysicalSizeX(new PositiveFloat(sizeX), 0);
-      store.setPixelsPhysicalSizeY(new PositiveFloat(sizeY), 0);
+      if (sizeX > 0) {
+        store.setPixelsPhysicalSizeX(new PositiveFloat(sizeX), 0);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}", sizeX);
+      }
+      if (sizeY > 0) {
+        store.setPixelsPhysicalSizeY(new PositiveFloat(sizeY), 0);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}", sizeY);
+      }
       store.setPixelsTimeIncrement(timeIncrement, 0);
     }
   }

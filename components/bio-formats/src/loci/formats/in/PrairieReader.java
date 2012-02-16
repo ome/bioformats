@@ -39,10 +39,10 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
 
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 
 import org.xml.sax.Attributes;
@@ -322,7 +322,6 @@ public class PrairieReader extends FormatReader {
           date = DateTools.formatDate(date, "MM/dd/yyyy h:mm:ss a");
           if (date != null) store.setImageAcquiredDate(date, 0);
         }
-        else MetadataTools.setDefaultCreationDate(store, id, 0);
 
         if (!minimumMetadata) {
           // link Instrument and Image
@@ -330,8 +329,20 @@ public class PrairieReader extends FormatReader {
           store.setInstrumentID(instrumentID, 0);
           store.setImageInstrumentRef(instrumentID, 0);
 
-          store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSizeX), 0);
-          store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSizeY), 0);
+          if (pixelSizeX > 0) {
+            store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSizeX), 0);
+          }
+          else {
+            LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+              pixelSizeX);
+          }
+          if (pixelSizeY > 0) {
+            store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSizeY), 0);
+          }
+          else {
+            LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+              pixelSizeY);
+          }
           for (int i=0; i<getSizeC(); i++) {
             String gain = i < gains.size() ? gains.get(i) : null;
             String offset = i < offsets.size() ? offsets.get(i) : null;
@@ -529,7 +540,15 @@ public class PrairieReader extends FormatReader {
           if (tokens.length > 1) {
             String mag = tokens[1].toLowerCase().replaceAll("x", "");
             try {
-              magnification = new PositiveInteger(new Integer(mag));
+              Integer m = new Integer(mag);
+              if (m > 0) {
+                magnification = new PositiveInteger(m);
+              }
+              else {
+                LOGGER.warn(
+                  "Expected positive value for NominalMagnification; got {}",
+                  m);
+              }
             }
             catch (NumberFormatException e) { }
           }

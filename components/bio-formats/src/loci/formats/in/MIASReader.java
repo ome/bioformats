@@ -45,11 +45,11 @@ import loci.formats.ImageTools;
 import loci.formats.MetadataTools;
 import loci.formats.codec.BitWriter;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
 
 import ome.xml.model.primitives.NonNegativeInteger;
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 
 /**
@@ -752,8 +752,6 @@ public class MIASReader extends FormatReader {
       store.setWellSampleImageRef(imageID, 0, well, 0);
 
       store.setPlateAcquisitionWellSampleRef(wellSampleID, 0, 0, well);
-
-      MetadataTools.setDefaultCreationDate(store, id, well);
     }
 
     MetadataLevel level = getMetadataOptions().getMetadataLevel();
@@ -872,11 +870,11 @@ public class MIASReader extends FormatReader {
 
     switch (maxIndex) {
       case 0:
-        return 0xff0000;
+        return 0xff0000ff;
       case 1:
-        return 0xff00;
+        return 0xff00ff;
       case 2:
-        return 0xff;
+        return 0xffff;
     }
     return null;
   }
@@ -990,8 +988,15 @@ public class MIASReader extends FormatReader {
           store.setObjectiveModel(value, 0, 0);
         }
         else if (key.equals("Magnification")) {
-          store.setObjectiveNominalMagnification(
-              new PositiveInteger((int) Double.parseDouble(value)), 0, 0);
+          int mag = (int) Double.parseDouble(value);
+          if (mag > 0) {
+            store.setObjectiveNominalMagnification(
+              new PositiveInteger(mag), 0, 0);
+          }
+          else {
+            LOGGER.warn(
+              "Expected positive value for NominalMagnification; got {}", mag);
+          }
         }
         else if (key.startsWith("Mode_")) {
           channelNames.add(value);
@@ -1009,11 +1014,19 @@ public class MIASReader extends FormatReader {
     }
 
     for (int well=0; well<tiffs.length; well++) {
-      if (physicalSizeX != null) {
+      if (physicalSizeX != null && physicalSizeX > 0) {
         store.setPixelsPhysicalSizeX(new PositiveFloat(physicalSizeX), well);
       }
-      if (physicalSizeY != null) {
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+          physicalSizeX);
+      }
+      if (physicalSizeY != null && physicalSizeY > 0) {
         store.setPixelsPhysicalSizeY(new PositiveFloat(physicalSizeY), well);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+          physicalSizeY);
       }
       for (int c=0; c<channelNames.size(); c++) {
         if (c < getEffectiveSizeC()) {

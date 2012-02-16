@@ -299,7 +299,6 @@ public class BMPReader extends FormatReader {
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
-    MetadataTools.setDefaultCreationDate(store, id, 0);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       // resolution is stored as pixels per meter; we want to convert to
@@ -311,8 +310,16 @@ public class BMPReader extends FormatReader {
       if (correctedX > 0) {
         store.setPixelsPhysicalSizeX(new PositiveFloat(correctedX), 0);
       }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+          correctedX);
+      }
       if (correctedY > 0) {
         store.setPixelsPhysicalSizeY(new PositiveFloat(correctedY), 0);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+          correctedY);
       }
     }
   }

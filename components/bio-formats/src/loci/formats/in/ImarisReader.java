@@ -197,7 +197,6 @@ public class ImarisReader extends FormatReader {
     // populate Image data
 
     store.setImageName(imageName, 0);
-    MetadataTools.setDefaultCreationDate(store, currentId, 0);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription(description, 0);
@@ -212,11 +211,20 @@ public class ImarisReader extends FormatReader {
       if (dx > 0) {
         store.setPixelsPhysicalSizeX(new PositiveFloat(new Double(dx)), 0);
       }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}", dx);
+      }
       if (dy > 0) {
         store.setPixelsPhysicalSizeY(new PositiveFloat(new Double(dy)), 0);
       }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}", dy);
+      }
       if (dz > 0) {
         store.setPixelsPhysicalSizeZ(new PositiveFloat(new Double(dz)), 0);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}", dz);
       }
       store.setPixelsTimeIncrement(1.0, 0);
 

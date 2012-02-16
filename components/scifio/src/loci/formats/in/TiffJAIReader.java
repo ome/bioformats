@@ -171,7 +171,6 @@ public class TiffJAIReader extends BIFormatReader {
     // populate the metadata store
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
-    MetadataTools.setDefaultCreationDate(store, id, 0);
   }
 
   /** Obtains a BufferedImage from the given data source using JAI. */

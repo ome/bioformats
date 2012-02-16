@@ -525,7 +525,6 @@ public class TillVisionReader extends FormatReader {
       if (date != null && !date.equals("")) {
         store.setImageAcquiredDate(date, i);
       }
-      else MetadataTools.setDefaultCreationDate(store, currentId, i);
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {

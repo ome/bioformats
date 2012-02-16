@@ -31,7 +31,6 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.NonNegativeInteger;
 
 /**
  * SIFReader is the file format reader for Andor SIF files.
@@ -139,14 +138,11 @@ public class SIFReader extends FormatReader {
     core[0].littleEndian = true;
 
     MetadataStore store = makeFilterMetadata();
-    MetadataTools.populatePixels(store, this);
+    MetadataTools.populatePixels(store, this,
+      getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       for (int i=0; i<getImageCount(); i++) {
-        int[] zct = getZCTCoords(i);
-        store.setPlaneTheZ(new NonNegativeInteger(zct[0]), 0, i);
-        store.setPlaneTheC(new NonNegativeInteger(zct[1]), 0, i);
-        store.setPlaneTheT(new NonNegativeInteger(zct[2]), 0, i);
         store.setPlaneDeltaT(timestamp[i], 0, i);
       }
     }
