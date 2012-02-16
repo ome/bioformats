@@ -472,7 +472,8 @@ public class ZeissCZIReader extends FormatReader {
           if (color != null) {
             color = color.replaceAll("#", "");
             try {
-              store.setChannelColor(Integer.parseInt(color, 16), i, c);
+              store.setChannelColor(
+                (Integer.parseInt(color, 16) << 8) | 0xff, i, c);
             }
             catch (NumberFormatException e) { }
           }
@@ -1293,6 +1294,10 @@ public class ZeissCZIReader extends FormatReader {
     positionsY = new Double[core.length];
     positionsZ = new Double[core.length];
 
+    if (groups == null) {
+      return;
+    }
+
     for (int i=0; i<groups.getLength(); i++) {
       Element group = (Element) groups.item(i);
 
@@ -1309,9 +1314,11 @@ public class ZeissCZIReader extends FormatReader {
 
       for (int tile=0; tile<tilesX * tilesY; tile++) {
         int index = i * tilesX * tilesY + tile;
-        positionsX[index] = xPos;
-        positionsY[index] = yPos;
-        positionsZ[index] = zPos;
+        if (index < positionsX.length) {
+          positionsX[index] = xPos;
+          positionsY[index] = yPos;
+          positionsZ[index] = zPos;
+        }
       }
     }
   }
