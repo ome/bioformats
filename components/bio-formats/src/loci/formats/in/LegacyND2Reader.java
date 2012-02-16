@@ -70,6 +70,9 @@ public class LegacyND2Reader extends FormatReader {
       LOGGER.trace(NO_NIKON_MSG, e);
       libraryFound = false;
     }
+    catch (SecurityException e) {
+      LOGGER.warn("Insufficient permission to load native library", e);
+    }
   }
 
   // -- Constructor --
