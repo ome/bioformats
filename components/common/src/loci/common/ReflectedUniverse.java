@@ -450,7 +450,8 @@ public class ReflectedUniverse {
       r.setAccessibilityIgnored(true);
       System.out.println("Ignoring accessibility modifiers.");
     }
-    BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+    BufferedReader in =
+      new BufferedReader(new InputStreamReader(System.in, Constants.ENCODING));
     while (true) {
       System.out.print("> ");
       String line = in.readLine();

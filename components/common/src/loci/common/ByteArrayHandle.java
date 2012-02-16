@@ -330,7 +330,7 @@ public class ByteArrayHandle extends AbstractNIOHandle {
     int length = readUnsignedShort();
     byte[] b = new byte[length];
     read(b);
-    return new String(b, "UTF-8");
+    return new String(b, Constants.ENCODING);
   }
 
   /* @see java.io.DataInput.skipBytes(int) */
@@ -385,7 +385,7 @@ public class ByteArrayHandle extends AbstractNIOHandle {
 
   /* @see java.io.DataOutput.writeBytes(String) */
   public void writeBytes(String s) throws IOException {
-    write(s.getBytes());
+    write(s.getBytes(Constants.ENCODING));
   }
 
   /* @see java.io.DataOutput.writeChar(int) */
@@ -436,7 +436,7 @@ public class ByteArrayHandle extends AbstractNIOHandle {
 
   /* @see java.io.DataOutput.writeUTF(String)  */
   public void writeUTF(String str) throws IOException {
-    byte[] b = str.getBytes("UTF-8");
+    byte[] b = str.getBytes(Constants.ENCODING);
     writeShort(b.length);
     write(b);
   }

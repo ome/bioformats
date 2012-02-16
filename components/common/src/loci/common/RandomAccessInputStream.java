@@ -251,7 +251,7 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
       if (len > maxTermLen) maxTermLen = len;
     }
 
-    InputStreamReader in = new InputStreamReader(this);
+    InputStreamReader in = new InputStreamReader(this, Constants.ENCODING);
     char[] buf = new char[blockSize];
     long loc = 0;
     while (loc < maxLen && getFilePointer() < length() - 1) {
@@ -357,7 +357,7 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
     if (n > avail) n = avail;
     byte[] b = new byte[n];
     readFully(b);
-    return new String(b);
+    return new String(b, Constants.ENCODING);
   }
 
   /** Read eight input bytes and return a long value. */

@@ -27,6 +27,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.StringTokenizer;
 
+import loci.common.Constants;
+
 /**
  * Stores credentials for logging into an OME/OMERO server.
  *
@@ -83,8 +85,8 @@ public class OMECredentials {
       String value = token.substring(equals + 1);
 
       try {
-        key = URLDecoder.decode(key, "UTF-8").trim();
-        value = URLDecoder.decode(value, "UTF-8").trim();
+        key = URLDecoder.decode(key, Constants.ENCODING).trim();
+        value = URLDecoder.decode(value, Constants.ENCODING).trim();
       }
       catch (UnsupportedEncodingException exc) {
         throw new IllegalArgumentException(invalidMsg, exc);

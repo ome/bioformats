@@ -44,6 +44,7 @@ import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 
+import loci.common.Constants;
 import loci.plugins.util.WindowTools;
 
 /**
@@ -101,8 +102,8 @@ public class ShortcutPanel extends JPanel implements ActionListener, PlugIn {
       String path = url.toString();
       path = path.substring(0, path.indexOf("!")) + "!/plugins.config";
       url = new URL(path);
-      BufferedReader in =
-        new BufferedReader(new InputStreamReader(url.openStream()));
+      BufferedReader in = new BufferedReader(
+        new InputStreamReader(url.openStream(), Constants.ENCODING));
       while (true) {
         String line = in.readLine();
         if (line == null) break;

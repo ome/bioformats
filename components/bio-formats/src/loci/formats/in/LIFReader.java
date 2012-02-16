@@ -35,6 +35,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
@@ -794,7 +795,8 @@ public class LIFReader extends FormatReader {
     try {
       DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
       DocumentBuilder parser = factory.newDocumentBuilder();
-      ByteArrayInputStream s = new ByteArrayInputStream(xml.getBytes());
+      ByteArrayInputStream s =
+        new ByteArrayInputStream(xml.getBytes(Constants.ENCODING));
       Element root = parser.parse(s).getDocumentElement();
       s.close();
       return root;

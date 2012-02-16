@@ -151,8 +151,14 @@ public class IniParser {
 
   /** Opens a buffered reader for the given resource. */
   public static BufferedReader openTextResource(String path, Class<?> c) {
-    return new BufferedReader(new InputStreamReader(
-      c.getResourceAsStream(path)));
+    try {
+      return new BufferedReader(new InputStreamReader(
+        c.getResourceAsStream(path), Constants.ENCODING));
+    }
+    catch (IOException e) {
+      LOGGER.error("Could not open BufferedReader", e);
+    }
+    return null;
   }
 
   // -- Helper methods --
