@@ -210,7 +210,7 @@ public class TestTools {
     for (int i=0; i<subs.length; i++) {
       Location file = new Location(root, subs[i]);
       subs[i] = file.getAbsolutePath();
-      if ((!isToplevel && subs[i].endsWith(".bioformats")) ||
+      if ((!isToplevel && subs[i].equals(".bioformats")) ||
         (isToplevel && subs[i].equals(toplevelConfig)))
       {
         String tmp = subs[0];

@@ -1006,11 +1006,11 @@ public class ZeissLSMReader extends FormatReader {
           for (int i=0; i<getSizeC(); i++) {
             int color = in.readInt();
 
-            channelColor[i] = color;
-
             int red = color & 0xff;
             int green = (color & 0xff00) >> 8;
             int blue = (color & 0xff0000) >> 16;
+
+            channelColor[i] = (red << 24) | (green << 16) | (blue << 8) | 0xff;
 
             for (int j=0; j<256; j++) {
               lut[getSeries()][i * 3][j] = (byte) ((red / 255.0) * j);

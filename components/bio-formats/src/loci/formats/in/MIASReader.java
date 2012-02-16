@@ -870,11 +870,11 @@ public class MIASReader extends FormatReader {
 
     switch (maxIndex) {
       case 0:
-        return 0xff0000;
+        return 0xff0000ff;
       case 1:
-        return 0xff00;
+        return 0xff00ff;
       case 2:
-        return 0xff;
+        return 0xffff;
     }
     return null;
   }

@@ -81,6 +81,15 @@ public class JPEGReader extends DelegateReader {
       suffixSufficient = false;
     }
 
+    /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+    public boolean isThisType(String name, boolean open) {
+      if (open) {
+        return super.isThisType(name, open);
+      }
+
+      return checkSuffix(name, getSuffixes());
+    }
+
     /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
     public boolean isThisType(RandomAccessInputStream stream) throws IOException
     {
