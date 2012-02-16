@@ -114,7 +114,6 @@ public class SMCameraReader extends FormatReader {
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
-    MetadataTools.setDefaultCreationDate(store, currentId, 0);
   }
 
 }

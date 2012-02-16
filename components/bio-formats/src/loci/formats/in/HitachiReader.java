@@ -240,9 +240,13 @@ public class HitachiReader extends FormatReader {
     Double stagePosY = new Double(image.get("StagePositionY"));
     Double stagePosZ = new Double(image.get("StagePositionZ"));
 
-    if (pixelSize != null) {
+    if (pixelSize != null && pixelSize > 0) {
       store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSize), 0);
       store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSize), 0);
+    }
+    else {
+      LOGGER.warn("Expected positive value for PhysicalSize; got {}",
+        pixelSize);
     }
 
     if (stagePosX != null) {

@@ -32,9 +32,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package loci.tests.testng;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.FileReader;
+import java.io.InputStreamReader;
 import java.io.IOException;
 
+import loci.common.Constants;
 import loci.common.IniList;
 import loci.common.IniParser;
 import loci.common.IniTable;
@@ -114,7 +117,8 @@ public class Configuration {
     this.dataFile = dataFile;
     this.configFile = configFile;
 
-    BufferedReader reader = new BufferedReader(new FileReader(this.configFile));
+    BufferedReader reader = new BufferedReader(new InputStreamReader(
+      new FileInputStream(this.configFile), Constants.ENCODING));
     IniParser parser = new IniParser();
     parser.setCommentDelimiter(null);
     ini = parser.parseINI(reader);
@@ -323,6 +327,10 @@ public class Configuration {
 
     Configuration thatConfig = (Configuration) o;
     return this.getINI().equals(thatConfig.getINI());
+  }
+
+  public int hashCode() {
+    return this.getINI().hashCode();
   }
 
   // -- Helper methods --

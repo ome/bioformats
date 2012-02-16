@@ -99,18 +99,24 @@ public class LegacyQTTools {
     }
 
     // case for Windows
-    String windir = System.getProperty("java.library.path");
-    StringTokenizer st = new StringTokenizer(windir, ";");
+    try {
+      String windir = System.getProperty("java.library.path");
+      StringTokenizer st = new StringTokenizer(windir, ";");
 
-    while (st.hasMoreTokens()) {
-      Location f = new Location(st.nextToken(), "QTJava.zip");
-      if (f.exists()) {
-        try {
-          paths = new URL[] {f.toURL()};
+      while (st.hasMoreTokens()) {
+        Location f = new Location(st.nextToken(), "QTJava.zip");
+        if (f.exists()) {
+          try {
+            paths = new URL[] {f.toURL()};
+          }
+          catch (MalformedURLException exc) { LOGGER.info("", exc); }
+          return paths == null ? null : new URLClassLoader(paths);
         }
-        catch (MalformedURLException exc) { LOGGER.info("", exc); }
-        return paths == null ? null : new URLClassLoader(paths);
       }
+    }
+    catch (SecurityException e) {
+      // this is common when using Bio-Formats within an applet
+      LOGGER.warn("Cannot read value of 'java.library.path'", e);
     }
 
     return null;

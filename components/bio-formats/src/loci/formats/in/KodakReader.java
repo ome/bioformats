@@ -25,6 +25,7 @@ package loci.formats.in;
 
 import java.io.IOException;
 
+import loci.common.Constants;
 import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
@@ -132,7 +133,9 @@ public class KodakReader extends FormatReader {
       in.read(buf, overlap, buf.length - overlap);
 
       for (int i=0; i<buf.length-overlap; i++) {
-        if (marker.equals(new String(buf, i, marker.length()))) {
+        if (marker.equals(
+          new String(buf, i, marker.length(), Constants.ENCODING)))
+        {
           in.seek(in.getFilePointer() - buf.length + i);
           return;
         }
@@ -182,15 +185,27 @@ public class KodakReader extends FormatReader {
         // resolution stored in pixels per inch
         value = value.substring(0, value.indexOf(" "));
         Double size = new Double(value);
-        size = 1.0 / (size * (1.0 / 25400));
-        store.setPixelsPhysicalSizeY(new PositiveFloat(size), 0);
+        if (size > 0) {
+          size = 1.0 / (size * (1.0 / 25400));
+          store.setPixelsPhysicalSizeY(new PositiveFloat(size), 0);
+        }
+        else {
+          LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+            size);
+        }
       }
       else if (key.equals("Horizontal Resolution")) {
         // resolution stored in pixels per inch
         value = value.substring(0, value.indexOf(" "));
         Double size = new Double(value);
-        size = 1.0 / (size * (1.0 / 25400));
-        store.setPixelsPhysicalSizeX(new PositiveFloat(size), 0);
+        if (size > 0) {
+          size = 1.0 / (size * (1.0 / 25400));
+          store.setPixelsPhysicalSizeX(new PositiveFloat(size), 0);
+        }
+        else {
+          LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+            size);
+        }
       }
       else if (key.equals("CCD Temperature")) {
         Double temp = new Double(value.substring(0, value.indexOf(" ")));

@@ -78,7 +78,7 @@ public class BZip2Handle extends StreamHandle {
     byte[] b = new byte[2];
     s.read(b);
     s.close();
-    return new String(b).equals("BZ");
+    return new String(b, Constants.ENCODING).equals("BZ");
   }
 
   // -- StreamHandle API methods --

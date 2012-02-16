@@ -62,4 +62,12 @@
         <class name="loci.formats.utests.IsThisTypeTests"/>
       </classes>
     </test>
+    <test name="LosslessJPEG2000">
+      <groups/>
+        <classes>
+          <class name="loci.formats.utests.LosslessJPEG2000Test"/>
+          <class name="loci.formats.utests.SixteenBitLosslessJPEG2000Test"/>
+          <class name="loci.formats.utests.EightBitLosslessJPEG2000Test"/>
+        </classes>
+    </test>
 </suite>

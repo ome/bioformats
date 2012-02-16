@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2011-11-09 10:55:09-0500
+ * Created by melissa via xsd-fu on 2012-01-12 20:06:01-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -222,7 +222,9 @@ public class ROI extends AbstractOMEModelObject
 		{
 			Annotation o_casted = (Annotation) o;
 			o_casted.linkROI(this);
-			annotationList.add(o_casted);
+			if (!annotationList.contains(o_casted)) {
+				annotationList.add(o_casted);
+			}
 			return true;
 		}
 		LOGGER.debug("Unable to handle reference of type: {}", reference.getClass());
@@ -298,7 +300,10 @@ public class ROI extends AbstractOMEModelObject
 	public boolean linkAnnotation(Annotation o)
 	{
 		o.linkROI(this);
-		return annotationList.add(o);
+		if (!annotationList.contains(o)) {
+			return annotationList.add(o);
+		}
+		return false;
 	}
 
 	public boolean unlinkAnnotation(Annotation o)
@@ -341,7 +346,10 @@ public class ROI extends AbstractOMEModelObject
 
 	public boolean linkImage(Image o)
 	{
-		return image_BackReferenceList.add(o);
+		if (!image_BackReferenceList.contains(o)) {
+			return image_BackReferenceList.add(o);
+		}
+		return false;
 	}
 
 	public boolean unlinkImage(Image o)
@@ -372,7 +380,10 @@ public class ROI extends AbstractOMEModelObject
 
 	public boolean linkMicrobeamManipulation(MicrobeamManipulation o)
 	{
-		return microbeamManipulation_BackReferenceList.add(o);
+		if (!microbeamManipulation_BackReferenceList.contains(o)) {
+			return microbeamManipulation_BackReferenceList.add(o);
+		}
+		return false;
 	}
 
 	public boolean unlinkMicrobeamManipulation(MicrobeamManipulation o)

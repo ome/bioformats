@@ -36,10 +36,10 @@ import loci.common.xml.XMLTools;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 import loci.formats.tiff.TiffCompression;
+import ome.xml.model.primitives.PositiveFloat;
 
 /**
  * TiffReader is the file format reader for regular TIFF files,
@@ -362,7 +362,13 @@ public class TiffReader extends BaseTiffReader {
     if (physicalSizeZ != null) {
       double zDepth = physicalSizeZ.doubleValue();
       if (zDepth < 0) zDepth = -zDepth;
-      store.setPixelsPhysicalSizeZ(new PositiveFloat(zDepth), 0);
+      if (zDepth > 0) {
+        store.setPixelsPhysicalSizeZ(new PositiveFloat(zDepth), 0);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}",
+          zDepth);
+      }
     }
     if (timeIncrement != null) {
       store.setPixelsTimeIncrement(timeIncrement, 0);

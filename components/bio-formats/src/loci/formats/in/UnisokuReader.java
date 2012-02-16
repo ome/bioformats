@@ -222,8 +222,20 @@ public class UnisokuReader extends FormatReader {
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription(remark, 0);
-      store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSizeX), 0);
-      store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSizeY), 0);
+      if (pixelSizeX > 0) {
+        store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSizeX), 0);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+          pixelSizeX);
+      }
+      if (pixelSizeY > 0) {
+        store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSizeY), 0);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+          pixelSizeY);
+      }
     }
   }
 

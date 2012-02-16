@@ -156,7 +156,9 @@ public class FormatReaderTestFactory {
           LOGGER.warn("{} not configured.", id);
         }
       }
-      catch (Exception e) { }
+      catch (Exception e) {
+        LOGGER.warn("", e);
+      }
       tests[i] = new FormatReaderTest(id, multiplier, inMemory);
     }
     if (tests.length == 1) System.out.println("Ready to test " + files.get(0));

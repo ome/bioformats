@@ -475,7 +475,6 @@ public class MicromanagerReader extends FormatReader {
       String date = DateTools.formatDate(time, DATE_FORMAT);
       store.setImageAcquiredDate(date, 0);
     }
-    else MetadataTools.setDefaultCreationDate(store, id, 0);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription(comment, 0);
@@ -493,8 +492,16 @@ public class MicromanagerReader extends FormatReader {
         store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSize), 0);
         store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSize), 0);
       }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+          pixelSize);
+      }
       if (sliceThickness != null && sliceThickness > 0) {
         store.setPixelsPhysicalSizeZ(new PositiveFloat(sliceThickness), 0);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}",
+          sliceThickness);
       }
 
       for (int i=0; i<getImageCount(); i++) {

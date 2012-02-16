@@ -70,6 +70,9 @@ public class LegacyND2Reader extends FormatReader {
       LOGGER.trace(NO_NIKON_MSG, e);
       libraryFound = false;
     }
+    catch (SecurityException e) {
+      LOGGER.warn("Insufficient permission to load native library", e);
+    }
   }
 
   // -- Constructor --
@@ -172,7 +175,6 @@ public class LegacyND2Reader extends FormatReader {
     MetadataTools.populatePixels(store, this);
     for (int i=0; i<getSeriesCount(); i++) {
       store.setImageName("Series " + (i + 1), i);
-      MetadataTools.setDefaultCreationDate(store, id, i);
     }
   }
 

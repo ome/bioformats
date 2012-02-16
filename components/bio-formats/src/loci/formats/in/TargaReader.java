@@ -235,7 +235,6 @@ public class TargaReader extends FormatReader {
 
     // populate Image data
 
-    MetadataTools.setDefaultCreationDate(store, id, 0);
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription(identification, 0);
     }

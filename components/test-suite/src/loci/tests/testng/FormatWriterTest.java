@@ -84,10 +84,11 @@ public class FormatWriterTest {
   public static List skipFiles = new LinkedList();
 
   /** Reader for input file. */
-  private static BufferedImageReader reader;
+  private static BufferedImageReader reader = new BufferedImageReader();
 
   /** Reader for converted files. */
-  private static BufferedImageReader convertedReader;
+  private static BufferedImageReader convertedReader =
+    new BufferedImageReader();
 
   private static Configuration config;
 
@@ -100,8 +101,6 @@ public class FormatWriterTest {
 
   public FormatWriterTest(String filename) {
     id = filename;
-    reader = new BufferedImageReader();
-    convertedReader = new BufferedImageReader();
     try {
       reader.setId(id);
     }

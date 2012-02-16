@@ -189,11 +189,20 @@ public class SBIGReader extends FormatReader {
     if (date != null) {
       store.setImageAcquiredDate(DateTools.formatDate(date, DATE_FORMAT), 0);
     }
-    else MetadataTools.setDefaultCreationDate(store, currentId, 0);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      store.setPixelsPhysicalSizeX(new PositiveFloat(sizeX), 0);
-      store.setPixelsPhysicalSizeY(new PositiveFloat(sizeY), 0);
+      if (sizeX > 0) {
+        store.setPixelsPhysicalSizeX(new PositiveFloat(sizeX), 0);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}", sizeX);
+      }
+      if (sizeY > 0) {
+        store.setPixelsPhysicalSizeY(new PositiveFloat(sizeY), 0);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}", sizeY);
+      }
       store.setImageDescription(description, 0);
     }
   }

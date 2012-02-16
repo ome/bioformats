@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2011-11-09 10:55:09-0500
+ * Created by melissa via xsd-fu on 2012-01-12 20:06:01-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -199,7 +199,9 @@ public class Reagent extends AbstractOMEModelObject
 		{
 			Annotation o_casted = (Annotation) o;
 			o_casted.linkReagent(this);
-			annotationList.add(o_casted);
+			if (!annotationList.contains(o_casted)) {
+				annotationList.add(o_casted);
+			}
 			return true;
 		}
 		LOGGER.debug("Unable to handle reference of type: {}", reference.getClass());
@@ -275,7 +277,10 @@ public class Reagent extends AbstractOMEModelObject
 	public boolean linkAnnotation(Annotation o)
 	{
 		o.linkReagent(this);
-		return annotationList.add(o);
+		if (!annotationList.contains(o)) {
+			return annotationList.add(o);
+		}
+		return false;
 	}
 
 	public boolean unlinkAnnotation(Annotation o)
@@ -307,7 +312,10 @@ public class Reagent extends AbstractOMEModelObject
 
 	public boolean linkWell(Well o)
 	{
-		return well_BackReferenceList.add(o);
+		if (!well_BackReferenceList.contains(o)) {
+			return well_BackReferenceList.add(o);
+		}
+		return false;
 	}
 
 	public boolean unlinkWell(Well o)

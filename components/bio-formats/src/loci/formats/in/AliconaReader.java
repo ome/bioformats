@@ -218,8 +218,6 @@ public class AliconaReader extends FormatReader {
 
     // populate Image data
 
-    MetadataTools.setDefaultCreationDate(store, id, 0);
-
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       // link Image and Instrument
       String instrumentID = MetadataTools.createLSID("Instrument", 0);
@@ -267,8 +265,20 @@ public class AliconaReader extends FormatReader {
         double pixelSizeX = Double.parseDouble(pntX) * 1000000;
         double pixelSizeY = Double.parseDouble(pntY) * 1000000;
 
-        store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSizeX), 0);
-        store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSizeY), 0);
+        if (pixelSizeX > 0) {
+          store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSizeX), 0);
+        }
+        else {
+          LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+            pixelSizeX);
+        }
+        if (pixelSizeY > 0) {
+          store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSizeY), 0);
+        }
+        else {
+          LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+            pixelSizeY);
+        }
       }
     }
   }

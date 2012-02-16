@@ -33,7 +33,8 @@ package loci.tests.testng;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -41,10 +42,10 @@ import java.util.StringTokenizer;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import loci.common.Constants;
 import loci.common.IniList;
 import loci.common.IniParser;
 import loci.common.IniTable;
-import loci.formats.FormatTools;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -102,8 +103,9 @@ public class ConfigurationTree {
 
     IniParser parser = new IniParser();
     parser.setCommentDelimiter(null);
-    IniList iniList =
-      parser.parseINI(new BufferedReader(new FileReader(configFile)));
+    FileInputStream stream = new FileInputStream(configFile);
+    IniList iniList = parser.parseINI(new BufferedReader(
+      new InputStreamReader(stream, Constants.ENCODING)));
     for (IniTable table : iniList) {
       String id = table.get(IniTable.HEADER_KEY);
       id = id.substring(0, id.lastIndexOf(" "));

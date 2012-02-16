@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 
 import loci.common.ByteArrayHandle;
+import loci.common.Constants;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.xml.XMLTools;
@@ -42,9 +43,8 @@ import loci.formats.codec.CodecOptions;
 import loci.formats.codec.JPEG2000Codec;
 import loci.formats.codec.ZlibCodec;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 
-import ome.xml.model.primitives.NonNegativeInteger;
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 
 /**
@@ -378,30 +378,59 @@ public class NativeND2Reader extends FormatReader {
         else if (blockType.startsWith("Image") ||
           blockType.startsWith("CustomDataVa"))
         {
-          int length = lenOne + lenTwo - 12;
-          byte[] b = new byte[length];
-          in.read(b);
+          if (blockType.equals("ImageAttribu") && imageOffsets.size() > 0) {
+            in.skipBytes(6);
+            long endFP = in.getFilePointer() + lenOne + lenTwo - 18;
+            while (in.read() == 0);
 
-          // strip out invalid characters
-          int off = 0;
-          for (int j=0; j<length; j++) {
-            char c = (char) b[j];
-            if ((off == 0 && c == '!') || c == 0) off = j + 1;
-            if (Character.isISOControl(c) || !Character.isDefined(c)) {
-              b[j] = (byte) ' ';
+            while (in.getFilePointer() < endFP) {
+              int nameLen = in.read();
+              String attributeName =
+                DataTools.stripString(in.readString(nameLen * 2));
+              int valueOrLength = in.readInt();
+
+              if (attributeName.equals("uiWidth")) {
+                core[0].sizeX = valueOrLength;
+              }
+              else if (attributeName.equals("uiHeight")) {
+                core[0].sizeY = valueOrLength;
+              }
+              else if (attributeName.equals("uiBpcInMemory")) {
+                core[0].pixelType = FormatTools.pixelTypeFromBytes(
+                  valueOrLength / 8, false, false);
+              }
+              else if (attributeName.equals("SLxImageAttributes")) {
+                in.skipBytes(valueOrLength - 5);
+              }
+              in.skipBytes(1);
             }
           }
+          else {
+            int length = lenOne + lenTwo - 12;
+            byte[] b = new byte[length];
+            in.read(b);
 
-          if (length - off >= 5 && b[off] == '<' && b[off + 1] == '?' &&
-            b[off + 2] == 'x' && b[off + 3] == 'm' && b[off + 4] == 'l')
-          {
-            boolean endBracketFound = false;
-            while (!endBracketFound) {
-              if (b[off++] == '>') {
-                endBracketFound = true;
+            // strip out invalid characters
+            int off = 0;
+            for (int j=0; j<length; j++) {
+              char c = (char) b[j];
+              if ((off == 0 && c == '!') || c == 0) off = j + 1;
+              if (Character.isISOControl(c) || !Character.isDefined(c)) {
+                b[j] = (byte) ' ';
               }
             }
-            xml.write(b, off, b.length - off);
+
+            if (length - off >= 5 && b[off] == '<' && b[off + 1] == '?' &&
+              b[off + 2] == 'x' && b[off + 3] == 'm' && b[off + 4] == 'l')
+            {
+              boolean endBracketFound = false;
+              while (!endBracketFound) {
+                if (b[off++] == '>') {
+                  endBracketFound = true;
+                }
+              }
+              xml.write(b, off, b.length - off);
+            }
           }
           skip = 0;
         }
@@ -430,7 +459,8 @@ public class NativeND2Reader extends FormatReader {
 
       // parse XML blocks
 
-      String xmlString = new String(xml.getBytes(), 0, (int) xml.length());
+      String xmlString =
+        new String(xml.getBytes(), 0, (int) xml.length(), Constants.ENCODING);
       xmlString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><ND2>" +
         xmlString + "</ND2>";
       xmlString = XMLTools.sanitizeXML(xmlString);
@@ -973,7 +1003,6 @@ public class NativeND2Reader extends FormatReader {
       String suffix =
         i < posNames.size() ? posNames.get(i) : "(series " + (i + 1) + ")";
       store.setImageName(filename + " " + suffix, i);
-      MetadataTools.setDefaultCreationDate(store, currentId, i);
     }
 
     colors = new int[getEffectiveSizeC()];
@@ -1015,11 +1044,23 @@ public class NativeND2Reader extends FormatReader {
         if (sizeX > 0) {
           store.setPixelsPhysicalSizeX(new PositiveFloat(sizeX), i);
         }
+        else {
+          LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+            sizeX);
+        }
         if (sizeY > 0) {
           store.setPixelsPhysicalSizeY(new PositiveFloat(sizeY), i);
         }
+        else {
+          LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+            sizeY);
+        }
         if (sizeZ > 0) {
           store.setPixelsPhysicalSizeZ(new PositiveFloat(sizeZ), i);
+        }
+        else {
+          LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}",
+            sizeZ);
         }
       }
     }
@@ -1123,12 +1164,26 @@ public class NativeND2Reader extends FormatReader {
             getAcquisitionMode(modality.get(index)), i, c);
         }
         if (index < emWave.size()) {
-          store.setChannelEmissionWavelength(
-            new PositiveInteger(emWave.get(index)), i, c);
+          if (emWave.get(index) > 0) {
+            store.setChannelEmissionWavelength(
+              new PositiveInteger(emWave.get(index)), i, c);
+          }
+          else {
+            LOGGER.warn(
+              "Expected positive value for EmissionWavelength; got {}",
+              emWave.get(index));
+          }
         }
         if (index < exWave.size()) {
-          store.setChannelExcitationWavelength(
-            new PositiveInteger(exWave.get(index)), i, c);
+          if (exWave.get(index) > 0) {
+            store.setChannelExcitationWavelength(
+              new PositiveInteger(exWave.get(index)), i, c);
+          }
+          else {
+            LOGGER.warn(
+              "Expected positive value for ExcitationWavelength; got {}",
+              exWave.get(index));
+          }
         }
         if (index < binning.size()) {
           store.setDetectorSettingsBinning(

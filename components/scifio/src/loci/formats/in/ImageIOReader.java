@@ -125,7 +125,6 @@ public abstract class ImageIOReader extends BIFormatReader {
     // populate the metadata store
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
-    MetadataTools.setDefaultCreationDate(store, id, 0);
   }
 
 }

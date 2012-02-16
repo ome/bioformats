@@ -40,12 +40,12 @@ import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
 
 import ome.xml.model.enums.NamingConvention;
 import ome.xml.model.primitives.NonNegativeInteger;
+import ome.xml.model.primitives.PositiveFloat;
 
 /**
  * MetamorphTiffReader is the file format reader for TIFF files produced by
@@ -412,10 +412,22 @@ public class MetamorphTiffReader extends BaseTiffReader {
         }
 
         store.setImagingEnvironmentTemperature(handler.getTemperature(), s);
-        store.setPixelsPhysicalSizeX(
-          new PositiveFloat(handler.getPixelSizeX()), s);
-        store.setPixelsPhysicalSizeY(
-          new PositiveFloat(handler.getPixelSizeY()), s);
+        if (handler.getPixelSizeX() > 0) {
+          store.setPixelsPhysicalSizeX(
+            new PositiveFloat(handler.getPixelSizeX()), s);
+        }
+        else {
+          LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+            handler.getPixelSizeX());
+        }
+        if (handler.getPixelSizeY() > 0) {
+          store.setPixelsPhysicalSizeY(
+            new PositiveFloat(handler.getPixelSizeY()), s);
+        }
+        else {
+          LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+            handler.getPixelSizeY());
+        }
 
         for (int c=0; c<getEffectiveSizeC(); c++) {
           if (uniqueChannels.size() > c) {

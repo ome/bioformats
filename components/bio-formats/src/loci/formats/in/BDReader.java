@@ -26,13 +26,15 @@ package loci.formats.in;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Vector;
 
+import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.IniList;
@@ -329,8 +331,14 @@ public class BDReader extends FormatReader {
 
     String plateAcqID = MetadataTools.createLSID("PlateAcquisition", 0, 0);
     store.setPlateAcquisitionID(plateAcqID, 0, 0);
-    store.setPlateAcquisitionMaximumFieldCount(
-      new PositiveInteger(fieldRows * fieldCols), 0, 0);
+    if (fieldRows * fieldCols > 0) {
+      store.setPlateAcquisitionMaximumFieldCount(
+        new PositiveInteger(fieldRows * fieldCols), 0, 0);
+    }
+    else {
+      LOGGER.warn("Expected positive value for MaximumFieldCount; got {}",
+        fieldRows * fieldCols);
+    }
 
     for (int row=0; row<wellRows; row++) {
       for (int col=0; col<wellCols; col++) {
@@ -387,8 +395,16 @@ public class BDReader extends FormatReader {
           }
         }
 
-        store.setObjectiveNominalMagnification(
-          PositiveInteger.valueOf(mag), 0, 0);
+        Integer magnification = new Integer(mag);
+        if (magnification > 0) {
+          store.setObjectiveNominalMagnification(
+            new PositiveInteger(magnification), 0, 0);
+        }
+        else {
+          LOGGER.warn(
+            "Expected positive value for NominalMagnification; got {}",
+            magnification);
+        }
         if (na != null) {
           na = na.substring(0, 1) + "." + na.substring(1);
           store.setObjectiveLensNA(new Double(na), 0, 0);
@@ -405,10 +421,24 @@ public class BDReader extends FormatReader {
 
         for (int c=0; c<getSizeC(); c++) {
           store.setChannelName(channelNames.get(c), i, c);
-          store.setChannelEmissionWavelength(
-            new PositiveInteger(emWave[c]), i, c);
-          store.setChannelExcitationWavelength(
-            new PositiveInteger(exWave[c]), i, c);
+          if (emWave[c] > 0) {
+            store.setChannelEmissionWavelength(
+              new PositiveInteger(emWave[c]), i, c);
+          }
+          else {
+            LOGGER.warn(
+              "Expected positive value for EmissionWavelength; got {}",
+              emWave[c]);
+          }
+          if (exWave[c] > 0) {
+            store.setChannelExcitationWavelength(
+              new PositiveInteger(exWave[c]), i, c);
+          }
+          else {
+            LOGGER.warn(
+              "Expected positive value for ExcitationWavelength; got {}",
+              exWave[c]);
+          }
 
           String detectorID = MetadataTools.createLSID("Detector", 0, c);
           store.setDetectorID(detectorID, 0, c);
@@ -467,12 +497,14 @@ public class BDReader extends FormatReader {
 
   private IniList readMetaData(String id) throws IOException {
     IniParser parser = new IniParser();
-    IniList exp = parser.parseINI(new BufferedReader(new FileReader(id)));
+    IniList exp = parser.parseINI(new BufferedReader(new InputStreamReader(
+      new FileInputStream(id), Constants.ENCODING)));
     IniList plate = null;
     // Read Plate File
     for (String filename : metadataFiles) {
       if (checkSuffix(filename, "plt")) {
-        plate = parser.parseINI(new BufferedReader(new FileReader(filename)));
+        plate = parser.parseINI(new BufferedReader(new InputStreamReader(
+          new FileInputStream(filename), Constants.ENCODING)));
       }
       else if (filename.endsWith("RoiSummary.txt")) {
         roiFile = filename;
@@ -585,8 +617,9 @@ public class BDReader extends FormatReader {
 
     for (int c=0; c<channelNames.size(); c++) {
       Location dyeFile = new Location(dir, channelNames.get(c) + ".dye");
-      IniList dye = new IniParser().parseINI(
-        new BufferedReader(new FileReader(dyeFile.getAbsolutePath())));
+      FileInputStream stream = new FileInputStream(dyeFile.getAbsolutePath());
+      IniList dye = new IniParser().parseINI(new BufferedReader(
+        new InputStreamReader(stream, Constants.ENCODING)));
 
       IniTable numerator = dye.getTable("Numerator");
       String em = numerator.get("Emission");

@@ -105,4 +105,8 @@ public class Region {
       this.height == that.height;
   }
 
+  public int hashCode() {
+    return toString().hashCode();
+  }
+
 }

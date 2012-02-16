@@ -25,13 +25,15 @@ package loci.formats.in;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.IniList;
@@ -467,7 +469,8 @@ public class TillVisionReader extends FormatReader {
         String inf = file.substring(0, dot) + ".inf";
         infFiles[i] = inf;
 
-        BufferedReader reader = new BufferedReader(new FileReader(inf));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(
+          new FileInputStream(inf), Constants.ENCODING));
         IniList data = parser.parseINI(reader);
         reader.close();
         IniTable infoTable = data.getTable("Info");
@@ -522,7 +525,6 @@ public class TillVisionReader extends FormatReader {
       if (date != null && !date.equals("")) {
         store.setImageAcquiredDate(date, i);
       }
-      else MetadataTools.setDefaultCreationDate(store, currentId, i);
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
@@ -608,8 +610,8 @@ public class TillVisionReader extends FormatReader {
         {
           int pointer = i + 22;
           int length = DataTools.bytesToShort(buf, pointer, 2, true);
-          if (length == 6 &&
-            new String(buf, pointer + 2, length).equals("CImage"))
+          if (length == 6 && new String(
+            buf, pointer + 2, length, Constants.ENCODING).equals("CImage"))
           {
             pointer += length + 4;
           }
@@ -618,7 +620,8 @@ public class TillVisionReader extends FormatReader {
             long offset = s.getFilePointer() - buf.length + pointer + 4;
             if (!offsets.contains(offset)) {
               int len = buf[pointer + 4];
-              String name = new String(buf, pointer + 5, len);
+              String name =
+                new String(buf, pointer + 5, len, Constants.ENCODING);
               if (name.indexOf("Palette") < 0) {
                 offsets.add(offset);
               }

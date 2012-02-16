@@ -123,7 +123,7 @@ public class ZipHandle extends StreamHandle {
       handle.read(b);
     }
     handle.close();
-    return new String(b).equals("PK");
+    return new String(b, Constants.ENCODING).equals("PK");
   }
 
   /** Get the name of the backing Zip entry. */

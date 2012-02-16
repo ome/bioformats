@@ -248,8 +248,10 @@ public class ChannelFiller extends ReaderWrapper {
   public void setId(String id) throws FormatException, IOException {
     super.setId(id);
     lutLength = getLookupTableComponentCount();
-    MetadataStore store = getMetadataStore();
-    MetadataTools.populatePixels(store, this, false, false);
+    if (!id.equals(getCurrentFile())) {
+      MetadataStore store = getMetadataStore();
+      MetadataTools.populatePixels(store, this, false, false);
+    }
   }
 
   // -- Helper methods --

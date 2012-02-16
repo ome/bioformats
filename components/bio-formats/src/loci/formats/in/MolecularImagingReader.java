@@ -148,11 +148,22 @@ public class MolecularImagingReader extends FormatReader {
     if (date != null) {
       store.setImageAcquiredDate(DateTools.formatDate(date, DATE_FORMAT), 0);
     }
-    else MetadataTools.setDefaultCreationDate(store, currentId, 0);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSizeX), 0);
-      store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSizeY), 0);
+      if (pixelSizeX > 0) {
+        store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSizeX), 0);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+          pixelSizeX);
+      }
+      if (pixelSizeY > 0) {
+        store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSizeY), 0);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+          pixelSizeY);
+      }
     }
   }
 

@@ -30,6 +30,7 @@ import java.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import loci.common.Constants;
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
@@ -250,10 +251,6 @@ public class DNGReader extends BaseTiffReader {
         int tag = key.intValue();
         String name = IFD.getIFDTagName(tag);
 
-        /* debug */ System.out.println("tag = " + tag);
-        /* debug */ System.out.println(exifIFD.get(key));
-        /* debug */ System.out.println();
-
         if (tag == IFD.CFA_PATTERN) {
           byte[] cfa = (byte[]) exifIFD.get(key);
           int[] colorMap = new int[cfa.length];
@@ -265,7 +262,8 @@ public class DNGReader extends BaseTiffReader {
           addGlobalMeta(name, exifIFD.get(key));
           if (name.equals("MAKER_NOTE")) {
             byte[] b = (byte[]) exifIFD.get(key);
-            int extra = new String(b, 0, 10).startsWith("Canon") ? 10 : 0;
+            int extra = new String(
+              b, 0, 10, Constants.ENCODING).startsWith("Canon") ? 10 : 0;
             byte[] buf = new byte[b.length];
             System.arraycopy(b, extra, buf, 0, buf.length - extra);
             RandomAccessInputStream makerNote =

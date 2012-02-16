@@ -110,12 +110,21 @@ public class SeikoReader extends FormatReader {
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
-    MetadataTools.setDefaultCreationDate(store, currentId, 0);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription(comment, 0);
-      store.setPixelsPhysicalSizeX(new PositiveFloat(xSize), 0);
-      store.setPixelsPhysicalSizeY(new PositiveFloat(ySize), 0);
+      if (xSize > 0) {
+        store.setPixelsPhysicalSizeX(new PositiveFloat(xSize), 0);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}", xSize);
+      }
+      if (ySize > 0) {
+        store.setPixelsPhysicalSizeY(new PositiveFloat(ySize), 0);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}", ySize);
+      }
     }
   }
 

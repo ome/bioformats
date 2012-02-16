@@ -38,6 +38,8 @@ import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 import javax.swing.TransferHandler;
 
+import loci.common.Constants;
+
 /**
  * Drag and drop transfer handler for LOCI Plugins Shortcut Window.
  *
@@ -117,7 +119,7 @@ public class ShortcutTransferHandler extends TransferHandler {
           // convert "file://" URLs into path names
           ids[i] = id.replaceAll("^file:/*", "/");
           if (!new File(ids[i]).exists()) {
-            ids[i] = URLDecoder.decode(ids[i], "UTF-8");
+            ids[i] = URLDecoder.decode(ids[i], Constants.ENCODING);
           }
         }
       }

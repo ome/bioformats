@@ -195,13 +195,20 @@ public class RHKReader extends FormatReader {
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
-    MetadataTools.setDefaultCreationDate(store, currentId, 0);
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       if (xScale > 0) {
         store.setPixelsPhysicalSizeX(new PositiveFloat(xScale), 0);
       }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+          xScale);
+      }
       if (yScale > 0) {
         store.setPixelsPhysicalSizeY(new PositiveFloat(yScale), 0);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+          yScale);
       }
       store.setImageDescription(description, 0);
     }

@@ -35,6 +35,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
@@ -50,7 +51,6 @@ import loci.formats.ImageTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 import loci.formats.services.OMEXMLService;
 
 import ome.xml.model.enums.DetectorType;
@@ -58,6 +58,7 @@ import ome.xml.model.enums.LaserMedium;
 import ome.xml.model.enums.LaserType;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PercentFraction;
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 
 import org.xml.sax.SAXException;
@@ -537,6 +538,10 @@ public class LIFReader extends FormatReader {
         store.setObjectiveNominalMagnification(
           new PositiveInteger(magnification[i]), i, 0);
       }
+      else {
+        LOGGER.warn("Expected positive value for NominalMagnification; got {}",
+          magnification[i]);
+      }
       store.setObjectiveImmersion(getImmersion(immersions[i]), i, 0);
       store.setObjectiveCorrection(getCorrection(corrections[i]), i, 0);
       store.setObjectiveModel(objectiveModels[i], i, 0);
@@ -595,6 +600,10 @@ public class LIFReader extends FormatReader {
           if (wavelength > 0) {
             store.setLaserWavelength(new PositiveInteger(wavelength), i, laser);
           }
+          else {
+            LOGGER.warn("Expected positive value for Wavelength; got {}",
+              wavelength);
+          }
         }
 
         Vector<Integer> validIntensities = new Vector<Integer>();
@@ -635,8 +644,15 @@ public class LIFReader extends FormatReader {
               store.setChannelLightSourceSettingsID(id, i, nextChannel);
               store.setChannelLightSourceSettingsAttenuation(
                 new PercentFraction((float) intensity / 100f), i, nextChannel);
-              store.setChannelExcitationWavelength(
-                new PositiveInteger(wavelength), i, nextChannel);
+              if (wavelength > 0) {
+                store.setChannelExcitationWavelength(
+                  new PositiveInteger(wavelength), i, nextChannel);
+              }
+              else {
+                LOGGER.warn(
+                  "Expected positive value for ExcitationWavelength; got {}",
+                  wavelength);
+              }
             }
           }
         }
@@ -657,12 +673,24 @@ public class LIFReader extends FormatReader {
         store.setPixelsPhysicalSizeX(
           new PositiveFloat(physicalSizeXs.get(i)), i);
       }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+          physicalSizeXs.get(i));
+      }
       if (physicalSizeYs.get(i) > 0) {
         store.setPixelsPhysicalSizeY(
           new PositiveFloat(physicalSizeYs.get(i)), i);
       }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+          physicalSizeYs.get(i));
+      }
       if (zSteps[i] != null && zSteps[i] > 0) {
         store.setPixelsPhysicalSizeZ(new PositiveFloat(zSteps[i]), i);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}",
+          zSteps[i]);
       }
       store.setPixelsTimeIncrement(tSteps[i], i);
 
@@ -729,9 +757,16 @@ public class LIFReader extends FormatReader {
           store.setChannelName(channelNames[i][c], i, c);
         }
         store.setChannelPinholeSize(pinholes[i], i, c);
-        if (exWaves[i] != null && exWaves[i][c] != null && exWaves[i][c] > 1) {
-          store.setChannelExcitationWavelength(
-            new PositiveInteger(exWaves[i][c]), i, c);
+        if (exWaves[i] != null) {
+          if (exWaves[i][c] != null && exWaves[i][c] > 1) {
+            store.setChannelExcitationWavelength(
+              new PositiveInteger(exWaves[i][c]), i, c);
+          }
+          else {
+            LOGGER.warn(
+              "Expected positive value for ExcitationWavelength; got {}",
+              exWaves[i][c]);
+          }
         }
         if (expTimes[i] != null) {
           store.setPlaneExposureTime(expTimes[i][c], i, c);
@@ -773,7 +808,8 @@ public class LIFReader extends FormatReader {
     try {
       DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
       DocumentBuilder parser = factory.newDocumentBuilder();
-      ByteArrayInputStream s = new ByteArrayInputStream(xml.getBytes());
+      ByteArrayInputStream s =
+        new ByteArrayInputStream(xml.getBytes(Constants.ENCODING));
       Element root = parser.parse(s).getDocumentElement();
       s.close();
       return root;
@@ -991,8 +1027,18 @@ public class LIFReader extends FormatReader {
 
             double cutIn = new Double(multiband.getAttribute("LeftWorld"));
             double cutOut = new Double(multiband.getAttribute("RightWorld"));
-            cutIns[image].add(new PositiveInteger((int) Math.ceil(cutIn)));
-            cutOuts[image].add(new PositiveInteger((int) Math.ceil(cutOut)));
+            if ((int) cutIn > 0) {
+              cutIns[image].add(new PositiveInteger((int) Math.ceil(cutIn)));
+            }
+            else {
+              LOGGER.warn("Expected positive value for CutIn; got {}", cutIn);
+            }
+            if ((int) cutOut > 0) {
+              cutOuts[image].add(new PositiveInteger((int) Math.ceil(cutOut)));
+            }
+            else {
+              LOGGER.warn("Expected positive value for CutOut; got {}", cutOut);
+            }
           }
           else {
             channels.add("");
@@ -1363,13 +1409,19 @@ public class LIFReader extends FormatReader {
         String description = filterSetting.getAttribute("Description");
         if (description.endsWith("(left)")) {
           filterModels[image].add(object);
-          if (v != null) {
+          if (v != null && v > 0) {
             cutIns[image].add(new PositiveInteger(v));
+          }
+          else {
+            LOGGER.warn("Expected positive value for CutIn; got {}", v);
           }
         }
         else if (description.endsWith("(right)")) {
-          if (v != null) {
+          if (v != null && v > 0) {
             cutOuts[image].add(new PositiveInteger(v));
+          }
+          else {
+            LOGGER.warn("Expected positive value for CutOut; got {}", v);
           }
         }
         else if (description.endsWith("(stain)")) {
@@ -1715,7 +1767,13 @@ public class LIFReader extends FormatReader {
       if (fontSize != null) {
         try {
           int size = (int) Double.parseDouble(fontSize);
-          store.setTextFontSize(new NonNegativeInteger(size), roi, 0);
+          if (size > 0) {
+            store.setTextFontSize(new NonNegativeInteger(size), roi, 0);
+          }
+          else {
+            LOGGER.warn("Expected non-negative value for FontSize; got {}",
+              size);
+          }
         }
         catch (NumberFormatException e) { }
       }
@@ -1827,19 +1885,19 @@ public class LIFReader extends FormatReader {
   private int getChannelColor(int colorCode) {
     switch (colorCode) {
       case 0:
-        return 0xff0000;
+        return 0xff0000ff;
       case 1:
-        return 0xff00;
+        return 0x00ff00ff;
       case 2:
-        return 0xff;
+        return 0x0000ffff;
       case 3:
-        return 0xffff;
+        return 0x00ffffff;
       case 4:
-        return 0xff00ff;
+        return 0xff00ffff;
       case 5:
-        return 0xffff00;
+        return 0xffff00ff;
     }
-    return 0xffffff;
+    return 0xffffffff;
   }
 
 }

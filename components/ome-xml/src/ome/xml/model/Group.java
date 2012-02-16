@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2011-11-09 10:55:09-0500
+ * Created by melissa via xsd-fu on 2012-01-12 20:06:01-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -323,7 +323,10 @@ public class Group extends AbstractOMEModelObject
 
 	public boolean linkImage(Image o)
 	{
-		return image_BackReferenceList.add(o);
+		if (!image_BackReferenceList.contains(o)) {
+			return image_BackReferenceList.add(o);
+		}
+		return false;
 	}
 
 	public boolean unlinkImage(Image o)
@@ -354,7 +357,10 @@ public class Group extends AbstractOMEModelObject
 
 	public boolean linkProject(Project o)
 	{
-		return project_BackReferenceList.add(o);
+		if (!project_BackReferenceList.contains(o)) {
+			return project_BackReferenceList.add(o);
+		}
+		return false;
 	}
 
 	public boolean unlinkProject(Project o)
@@ -385,7 +391,10 @@ public class Group extends AbstractOMEModelObject
 
 	public boolean linkDataset(Dataset o)
 	{
-		return dataset_BackReferenceList.add(o);
+		if (!dataset_BackReferenceList.contains(o)) {
+			return dataset_BackReferenceList.add(o);
+		}
+		return false;
 	}
 
 	public boolean unlinkDataset(Dataset o)
@@ -416,7 +425,10 @@ public class Group extends AbstractOMEModelObject
 
 	public boolean linkExperimenter(Experimenter o)
 	{
-		return experimenter_BackReferenceList.add(o);
+		if (!experimenter_BackReferenceList.contains(o)) {
+			return experimenter_BackReferenceList.add(o);
+		}
+		return false;
 	}
 
 	public boolean unlinkExperimenter(Experimenter o)

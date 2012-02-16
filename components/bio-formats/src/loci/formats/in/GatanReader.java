@@ -204,7 +204,6 @@ public class GatanReader extends FormatReader {
     // The metadata store we're working with.
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
-    MetadataTools.setDefaultCreationDate(store, id, 0);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       if (pixelSizes.size() >= 3) {
@@ -212,9 +211,25 @@ public class GatanReader extends FormatReader {
         Double x = pixelSizes.get(index);
         Double y = pixelSizes.get(index + 1);
         Double z = pixelSizes.get(index + 2);
-        store.setPixelsPhysicalSizeX(new PositiveFloat(x), 0);
-        store.setPixelsPhysicalSizeY(new PositiveFloat(y), 0);
-        store.setPixelsPhysicalSizeZ(new PositiveFloat(z), 0);
+
+        if (x > 0) {
+          store.setPixelsPhysicalSizeX(new PositiveFloat(x), 0);
+        }
+        else {
+          LOGGER.warn("Expected positive value for PhysicalSizeX; got {}", x);
+        }
+        if (y > 0) {
+          store.setPixelsPhysicalSizeY(new PositiveFloat(y), 0);
+        }
+        else {
+          LOGGER.warn("Expected positive value for PhysicalSizeY; got {}", y);
+        }
+        if (z > 0) {
+          store.setPixelsPhysicalSizeZ(new PositiveFloat(z), 0);
+        }
+        else {
+          LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}", z);
+        }
       }
 
       if (info == null) info = "";

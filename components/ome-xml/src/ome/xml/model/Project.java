@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2011-11-09 10:55:09-0500
+ * Created by melissa via xsd-fu on 2012-01-12 20:06:01-0500
  *
  *-----------------------------------------------------------------------------
  */
@@ -228,7 +228,9 @@ public class Project extends AbstractOMEModelObject
 		{
 			Annotation o_casted = (Annotation) o;
 			o_casted.linkProject(this);
-			annotationList.add(o_casted);
+			if (!annotationList.contains(o_casted)) {
+				annotationList.add(o_casted);
+			}
 			return true;
 		}
 		LOGGER.debug("Unable to handle reference of type: {}", reference.getClass());
@@ -331,7 +333,10 @@ public class Project extends AbstractOMEModelObject
 	public boolean linkAnnotation(Annotation o)
 	{
 		o.linkProject(this);
-		return annotationList.add(o);
+		if (!annotationList.contains(o)) {
+			return annotationList.add(o);
+		}
+		return false;
 	}
 
 	public boolean unlinkAnnotation(Annotation o)
@@ -363,7 +368,10 @@ public class Project extends AbstractOMEModelObject
 
 	public boolean linkDataset(Dataset o)
 	{
-		return dataset_BackReferenceList.add(o);
+		if (!dataset_BackReferenceList.contains(o)) {
+			return dataset_BackReferenceList.add(o);
+		}
+		return false;
 	}
 
 	public boolean unlinkDataset(Dataset o)

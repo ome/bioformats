@@ -25,6 +25,7 @@ package loci.formats.in;
 
 import java.io.IOException;
 
+import loci.common.Constants;
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -184,15 +185,18 @@ public class IPLabReader extends FormatReader {
     // The metadata store we're working with.
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this, true);
-    MetadataTools.setDefaultCreationDate(store, id, 0);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       in.skipBytes(dataSize);
       parseTags(store);
 
-      if (pixelSize != null) {
+      if (pixelSize != null && pixelSize > 0) {
         store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSize), 0);
         store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSize), 0);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSize; got {}",
+          pixelSize);
       }
       if (timeIncrement != null) {
         store.setPixelsTimeIncrement(timeIncrement, 0);
@@ -209,7 +213,7 @@ public class IPLabReader extends FormatReader {
 
     byte[] tagBytes = new byte[4];
     in.read(tagBytes);
-    String tag = new String(tagBytes);
+    String tag = new String(tagBytes, Constants.ENCODING);
     while (!tag.equals("fini") && in.getFilePointer() < in.length() - 4) {
       int size = in.readInt();
       if (tag.equals("clut")) {
@@ -396,7 +400,7 @@ public class IPLabReader extends FormatReader {
 
       if (in.getFilePointer() + 4 <= in.length()) {
         in.read(tagBytes);
-        tag = new String(tagBytes);
+        tag = new String(tagBytes, Constants.ENCODING);
       }
       else {
         tag = "fini";
