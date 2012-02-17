@@ -168,9 +168,11 @@
         <class name="loci.common.utests.RandomAccessInputStreamTest"/>
       </classes>
     </test>
+    <!--
     <test name="Encoding">
       <classes>
         <class name="loci.common.utests.EncodingTest"/>
       </classes>
     </test>
+    -->
 </suite>
