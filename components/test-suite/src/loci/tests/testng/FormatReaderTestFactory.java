@@ -79,7 +79,13 @@ public class FormatReaderTestFactory {
       // parse base directory
       final String baseDirProp = "testng.directory";
       baseDir = System.getProperty(baseDirProp);
-      if (!new File(baseDir).isDirectory()) {
+      File baseDirFile = new File(baseDir);
+      if (!baseDirFile.isDirectory()) {
+        LOGGER.info("Directory: {}", baseDir);
+        LOGGER.info("  exists?: {}", baseDirFile.exists());
+        LOGGER.info("  readable?: {}", baseDirFile.canRead());
+        LOGGER.info("  is a directory?: {}", baseDirFile.isDirectory());
+
         if (baseDir == null || baseDir.equals("${" + baseDirProp + "}")) {
           LOGGER.error("No base directory specified.");
         }
