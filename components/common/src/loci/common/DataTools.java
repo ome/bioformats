@@ -833,6 +833,33 @@ public final class DataTools {
 
   // -- Array handling --
 
+  /**
+   * Allocates a 1-dimensional byte array matching the product of the given
+   * sizes.
+   * 
+   * @return a byte array of the appropriate size
+   * @throws IllegalArgumentException if the total size exceeds 2GB, which is
+   *           the maximum size of an array in Java; or if any size argument is
+   *           zero or negative
+   */
+  public static byte[] allocate(int... sizes) throws IllegalArgumentException {
+    if (sizes == null) return null;
+    if (sizes.length == 0) return new byte[0];
+    long total = 1;
+    for (int size : sizes) {
+      if (size < 1) {
+        throw new IllegalArgumentException("Invalid array size: " +
+          sizeAsProduct(sizes));
+      }
+      total *= size;
+      if (total > Integer.MAX_VALUE) {
+        throw new IllegalArgumentException("Array size too large: " +
+          sizeAsProduct(sizes));
+      }
+    }
+    return new byte[(int) total];
+  }
+
   /** Returns true if the given value is contained in the given array. */
   public static boolean containsValue(int[] array, int value) {
     return indexOf(array, value) != -1;
@@ -884,6 +911,19 @@ public final class DataTools {
       i[j] = (int) (i[j] + 2147483648L);
     }
     return i;
+  }
+
+  // -- Helper methods --
+
+  private static String sizeAsProduct(int... sizes) {
+    final StringBuilder sb = new StringBuilder();
+    boolean first = true;
+    for (int s : sizes) {
+      if (first) first = false;
+      else sb.append(" x ");
+      sb.append(s);
+    }
+    return sb.toString();
   }
 
 }
