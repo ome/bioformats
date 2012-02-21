@@ -25,6 +25,8 @@ package loci.formats;
 
 import java.io.IOException;
 
+import loci.common.DataTools;
+
 /**
  * Logic to automatically merge channels in a file.
  *
@@ -139,7 +141,7 @@ public class ChannelMerger extends ReaderWrapper {
   {
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
     int ch = getRGBChannelCount();
-    byte[] newBuffer = new byte[w * h * ch * bpp];
+    byte[] newBuffer = DataTools.allocate(w, h, ch, bpp);
     return openBytes(no, newBuffer, x, y, w, h);
   }
 

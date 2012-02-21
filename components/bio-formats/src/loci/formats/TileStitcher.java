@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import loci.common.DataTools;
 import loci.common.Region;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataStore;
@@ -100,7 +101,7 @@ public class TileStitcher extends ReaderWrapper {
   {
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
     int ch = getRGBChannelCount();
-    byte[] newBuffer = new byte[w * h * ch * bpp];
+    byte[] newBuffer = DataTools.allocate(w, h, ch, bpp);
     return openBytes(no, newBuffer, x, y, w, h);
   }
 
