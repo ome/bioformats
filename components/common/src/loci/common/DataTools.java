@@ -837,6 +837,7 @@ public final class DataTools {
    * Allocates a 1-dimensional byte array matching the product of the given
    * sizes.
    * 
+   * @param sizes list of sizes from which to allocate the array
    * @return a byte array of the appropriate size
    * @throws IllegalArgumentException if the total size exceeds 2GB, which is
    *           the maximum size of an array in Java; or if any size argument is
@@ -916,12 +917,12 @@ public final class DataTools {
   // -- Helper methods --
 
   private static String sizeAsProduct(int... sizes) {
-    final StringBuilder sb = new StringBuilder();
+    StringBuilder sb = new StringBuilder();
     boolean first = true;
-    for (int s : sizes) {
+    for (int size : sizes) {
       if (first) first = false;
       else sb.append(" x ");
-      sb.append(s);
+      sb.append(size);
     }
     return sb.toString();
   }
