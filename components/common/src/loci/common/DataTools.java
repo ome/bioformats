@@ -846,6 +846,22 @@ public final class DataTools {
   public static byte[] allocate(int... sizes) throws IllegalArgumentException {
     if (sizes == null) return null;
     if (sizes.length == 0) return new byte[0];
+    int total = safeMultiply(sizes);
+    return new byte[total];
+  }
+
+  /**
+   * Checks that the product of the given sizes does not exceed the 32-bit
+   * integer limit (i.e., {@link Integer#MAX_VALUE}).
+   * 
+   * @param sizes list of sizes from which to compute the product
+   * @return the product of the given sizes
+   * @throws IllegalArgumentException if the total size exceeds 2GiB, which is
+   *           the maximum size of an int in Java; or if any size argument is
+   *           zero or negative
+   */
+  public static int safeMultiply(int... sizes) throws IllegalArgumentException {
+    if (sizes.length == 0) return 0;
     long total = 1;
     for (int size : sizes) {
       if (size < 1) {
@@ -858,7 +874,8 @@ public final class DataTools {
           sizeAsProduct(sizes));
       }
     }
-    return new byte[(int) total];
+    // NB: The downcast to int is safe here, due to the checks above.
+    return (int) total;
   }
 
   /** Returns true if the given value is contained in the given array. */
