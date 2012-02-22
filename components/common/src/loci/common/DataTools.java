@@ -878,6 +878,35 @@ public final class DataTools {
     return (int) total;
   }
 
+  /**
+   * Checks that the product of the given sizes does not exceed the 64-bit
+   * integer limit (i.e., {@link Long#MAX_VALUE}).
+   * 
+   * @param sizes list of sizes from which to compute the product
+   * @return the product of the given sizes
+   * @throws IllegalArgumentException if the total size exceeds 8EiB, which is
+   *           the maximum size of a long in Java; or if any size argument is
+   *           zero or negative
+   */
+  public static long safeMultiply(long... sizes)
+    throws IllegalArgumentException
+  {
+    if (sizes.length == 0) return 0;
+    long total = 1;
+    for (long size : sizes) {
+      if (size < 1) {
+        throw new IllegalArgumentException("Invalid array size: " +
+          sizeAsProduct(sizes));
+      }
+      if (willOverflow(total, size)) {
+        throw new IllegalArgumentException("Array size too large: " +
+          sizeAsProduct(sizes));
+      }
+      total *= size;
+    }
+    return total;
+  }
+
   /** Returns true if the given value is contained in the given array. */
   public static boolean containsValue(int[] array, int value) {
     return indexOf(array, value) != -1;
@@ -942,6 +971,25 @@ public final class DataTools {
       sb.append(size);
     }
     return sb.toString();
+  }
+
+  private static String sizeAsProduct(long... sizes) {
+    StringBuilder sb = new StringBuilder();
+    boolean first = true;
+    for (long size : sizes) {
+      if (first) first = false;
+      else sb.append(" x ");
+      sb.append(size);
+    }
+    return sb.toString();
+  }
+
+  private static boolean willOverflow(long v1, long v2) {
+    return usedBits(v1) + usedBits(v2) > 64;
+  }
+
+  private static int usedBits(long v) {
+    return 64 - Long.numberOfLeadingZeros(v);
   }
 
 }
