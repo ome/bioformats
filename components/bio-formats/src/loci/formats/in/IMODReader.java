@@ -34,6 +34,7 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
+import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveFloat;
 
 /**
@@ -251,6 +252,9 @@ public class IMODReader extends FormatReader {
         roiIDs.add(roiID);
       }
 
+
+      int nextShape = 0;
+
       for (int contour=0; contour<nContours; contour++) {
         in.skipBytes(4); // CONT
 
@@ -268,31 +272,66 @@ public class IMODReader extends FormatReader {
         }
 
         if (getMetadataOptions().getMetadataLevel() == MetadataLevel.ALL) {
-          String shapeID = MetadataTools.createLSID("Shape", obj, contour);
-          store.setPolylineID(shapeID, obj, contour);
+          boolean wild = (contourFlags & 0x10) == 0x10;
 
-          int r = colors[obj][0];
-          int g = colors[obj][1];
-          int b = colors[obj][2];
-          store.setPolylineStroke((r << 16) | (g << 8) | b, obj, contour);
-          store.setPolylineStrokeWidth(new Double(lineWidth2D), obj, contour);
-          if (lineStyle == 1) {
-            store.setPolylineStrokeDashArray("5", obj, contour);
-          }
-          store.setPolylineClosed((flags & 0x8) == 0, obj, contour);
+          if (wild) {
+            int r = colors[obj][0];
+            int g = colors[obj][1];
+            int b = colors[obj][2];
 
-          StringBuffer sb = new StringBuffer();
-          for (int i=0; i<nPoints; i++) {
-            sb.append(points[obj][contour][i][0]);
-            sb.append(",");
-            sb.append(points[obj][contour][i][1]);
-            sb.append(",");
-            if (i < nPoints - 1) {
-              sb.append(" ");
+            for (int i=0; i<nPoints; i++) {
+              String shapeID =
+                MetadataTools.createLSID("Shape", obj, nextShape);
+              store.setPointID(shapeID, obj, nextShape);
+              store.setPointStroke((r << 16) | (g << 8) | b, obj, nextShape);
+              store.setPointStrokeWidth(
+                new Double(lineWidth2D), obj, nextShape);
+              if (lineStyle == 1) {
+                store.setPointStrokeDashArray("5", obj, nextShape);
+              }
+
+              store.setPointX(
+                new Double(points[obj][contour][i][0]), obj, nextShape);
+              store.setPointY(
+                new Double(points[obj][contour][i][1]), obj, nextShape);
+              store.setPointTheZ(new NonNegativeInteger(
+                (int) points[obj][contour][i][2]), obj, nextShape);
+
+              nextShape++;
             }
           }
+          else {
+            String shapeID = MetadataTools.createLSID("Shape", obj, nextShape);
+            store.setPolylineID(shapeID, obj, nextShape);
 
-          store.setPolylinePoints(sb.toString(), obj, contour);
+            int r = colors[obj][0];
+            int g = colors[obj][1];
+            int b = colors[obj][2];
+            store.setPolylineStroke((r << 16) | (g << 8) | b, obj, nextShape);
+            store.setPolylineStrokeWidth(
+              new Double(lineWidth2D), obj, nextShape);
+            if (lineStyle == 1) {
+              store.setPolylineStrokeDashArray("5", obj, nextShape);
+            }
+            store.setPolylineClosed((contourFlags & 0x8) == 0, obj, nextShape);
+
+            StringBuffer sb = new StringBuffer();
+            for (int i=0; i<nPoints; i++) {
+              sb.append(points[obj][contour][i][0]);
+              sb.append(",");
+              sb.append(points[obj][contour][i][1]);
+              if (i < nPoints - 1) {
+                sb.append(" ");
+              }
+            }
+
+            if (nPoints > 0) {
+              store.setPolylineTheZ(new NonNegativeInteger(
+                (int) points[obj][contour][0][2]), obj, nextShape);
+            }
+            store.setPolylinePoints(sb.toString(), obj, nextShape);
+            nextShape++;
+          }
         }
       }
 
