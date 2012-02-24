@@ -1441,7 +1441,9 @@ public class ICSReader extends FormatReader {
           String axis = axes != null && axes.length > i ? axes[i] : "";
           String unit = units != null && units.length > i ? units[i] : "";
           if (axis.equals("x")) {
-            if (pixelSize > 0 && checkUnit(unit, "um", "microns")) {
+            if (pixelSize > 0 &&
+              checkUnit(unit, "um", "microns", "micrometers"))
+            {
               store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSize), 0);
             }
             else {
@@ -1450,7 +1452,9 @@ public class ICSReader extends FormatReader {
             }
           }
           else if (axis.equals("y")) {
-            if (pixelSize > 0 && checkUnit(unit, "um", "microns")) {
+            if (pixelSize > 0 &&
+              checkUnit(unit, "um", "microns", "micrometers"))
+            {
               store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSize), 0);
             }
             else {
@@ -1459,7 +1463,9 @@ public class ICSReader extends FormatReader {
             }
           }
           else if (axis.equals("z")) {
-            if (pixelSize > 0 && checkUnit(unit, "um", "microns")) {
+            if (pixelSize > 0 &&
+              checkUnit(unit, "um", "microns", "micrometers"))
+            {
               store.setPixelsPhysicalSizeZ(new PositiveFloat(pixelSize), 0);
             }
             else {
