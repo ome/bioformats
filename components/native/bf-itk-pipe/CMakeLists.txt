@@ -279,7 +279,7 @@ add_custom_command(
   TARGET BioFormatsIOPlugin
   DEPENDS "${BF_LOCI_TOOLS_JAR}"
   POST_BUILD
-  COMMAND "${Java_JAVA_EXECUTABLE}" -cp "${BF_LOCI_TOOLS_JAR}"
+  COMMAND "${JAVA_RUNTIME}" -cp "${BF_LOCI_TOOLS_JAR}"
   "loci.formats.tools.BioFormatsExtensionPrinter"
   VERBATIM
 )
