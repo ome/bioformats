@@ -464,10 +464,6 @@ public final class MetadataConverter {
         if (channelNameValue != null) dest.setChannelName(channelNameValue, imageIndex, channelIndex);
       } catch (NullPointerException e) { }
       try {
-        String channelOTFRefValue = src.getChannelOTFRef(imageIndex, channelIndex);
-        if (channelOTFRefValue != null) dest.setChannelOTFRef(channelOTFRefValue, imageIndex, channelIndex);
-      } catch (NullPointerException e) { }
-      try {
         Double channelPinholeSizeValue = src.getChannelPinholeSize(imageIndex, channelIndex);
         if (channelPinholeSizeValue != null) dest.setChannelPinholeSize(channelPinholeSizeValue, imageIndex, channelIndex);
       } catch (NullPointerException e) { }
@@ -914,63 +910,6 @@ public final class MetadataConverter {
       try {
         MicroscopeType microscopeTypeValue = src.getMicroscopeType(instrumentIndex);
         if (microscopeTypeValue != null) dest.setMicroscopeType(microscopeTypeValue, instrumentIndex);
-      } catch (NullPointerException e) { }
-      try {
-      int otfCount = src.getOTFCount(instrumentIndex);
-      for (int otfIndex=0; otfIndex<otfCount; otfIndex++) {
-      try {
-        String otfBinaryFileFileNameValue = src.getOTFBinaryFileFileName(instrumentIndex, otfIndex);
-        if (otfBinaryFileFileNameValue != null) dest.setOTFBinaryFileFileName(otfBinaryFileFileNameValue, instrumentIndex, otfIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String otfBinaryFileMIMETypeValue = src.getOTFBinaryFileMIMEType(instrumentIndex, otfIndex);
-        if (otfBinaryFileMIMETypeValue != null) dest.setOTFBinaryFileMIMEType(otfBinaryFileMIMETypeValue, instrumentIndex, otfIndex);
-      } catch (NullPointerException e) { }
-      try {
-        NonNegativeLong otfBinaryFileSizeValue = src.getOTFBinaryFileSize(instrumentIndex, otfIndex);
-        if (otfBinaryFileSizeValue != null) dest.setOTFBinaryFileSize(otfBinaryFileSizeValue, instrumentIndex, otfIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String otfFilterSetRefValue = src.getOTFFilterSetRef(instrumentIndex, otfIndex);
-        if (otfFilterSetRefValue != null) dest.setOTFFilterSetRef(otfFilterSetRefValue, instrumentIndex, otfIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String otfidValue = src.getOTFID(instrumentIndex, otfIndex);
-        if (otfidValue != null) dest.setOTFID(otfidValue, instrumentIndex, otfIndex);
-      } catch (NullPointerException e) { }
-      try {
-        Double otfObjectiveSettingsCorrectionCollarValue = src.getOTFObjectiveSettingsCorrectionCollar(instrumentIndex, otfIndex);
-        if (otfObjectiveSettingsCorrectionCollarValue != null) dest.setOTFObjectiveSettingsCorrectionCollar(otfObjectiveSettingsCorrectionCollarValue, instrumentIndex, otfIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String otfObjectiveSettingsIDValue = src.getOTFObjectiveSettingsID(instrumentIndex, otfIndex);
-        if (otfObjectiveSettingsIDValue != null) dest.setOTFObjectiveSettingsID(otfObjectiveSettingsIDValue, instrumentIndex, otfIndex);
-      } catch (NullPointerException e) { }
-      try {
-        Medium otfObjectiveSettingsMediumValue = src.getOTFObjectiveSettingsMedium(instrumentIndex, otfIndex);
-        if (otfObjectiveSettingsMediumValue != null) dest.setOTFObjectiveSettingsMedium(otfObjectiveSettingsMediumValue, instrumentIndex, otfIndex);
-      } catch (NullPointerException e) { }
-      try {
-        Double otfObjectiveSettingsRefractiveIndexValue = src.getOTFObjectiveSettingsRefractiveIndex(instrumentIndex, otfIndex);
-        if (otfObjectiveSettingsRefractiveIndexValue != null) dest.setOTFObjectiveSettingsRefractiveIndex(otfObjectiveSettingsRefractiveIndexValue, instrumentIndex, otfIndex);
-      } catch (NullPointerException e) { }
-      try {
-        Boolean otfOpticalAxisAveragedValue = src.getOTFOpticalAxisAveraged(instrumentIndex, otfIndex);
-        if (otfOpticalAxisAveragedValue != null) dest.setOTFOpticalAxisAveraged(otfOpticalAxisAveragedValue, instrumentIndex, otfIndex);
-      } catch (NullPointerException e) { }
-      try {
-        PositiveInteger otfSizeXValue = src.getOTFSizeX(instrumentIndex, otfIndex);
-        if (otfSizeXValue != null) dest.setOTFSizeX(otfSizeXValue, instrumentIndex, otfIndex);
-      } catch (NullPointerException e) { }
-      try {
-        PositiveInteger otfSizeYValue = src.getOTFSizeY(instrumentIndex, otfIndex);
-        if (otfSizeYValue != null) dest.setOTFSizeY(otfSizeYValue, instrumentIndex, otfIndex);
-      } catch (NullPointerException e) { }
-      try {
-        PixelType otfTypeValue = src.getOTFType(instrumentIndex, otfIndex);
-        if (otfTypeValue != null) dest.setOTFType(otfTypeValue, instrumentIndex, otfIndex);
-      } catch (NullPointerException e) { }
-      }
       } catch (NullPointerException e) { }
       try {
       int objectiveCount = src.getObjectiveCount(instrumentIndex);
