@@ -16,13 +16,12 @@ Details follow.
 
 COMPILE-TIME DEPENDENCIES -- WINDOWS -- MAVEN
 
-Download Maven 2 from its web site (http://maven.apache.org/). You must use
-Maven 2.x, not Maven 3.x, for the code generation to function correctly.
+Download Maven from its web site (http://maven.apache.org/).
 
 Unpack the Maven archive into your Program Files, then add the folder's bin
 subdirectory to your PATH environment variable; e.g.:
 
-  C:\Program Files\apache-maven-2.2.1\bin
+  C:\Program Files\apache-maven-3.0.4\bin
 
 Once set, new Command Prompts will recognize "mvn" as a valid command.
 
@@ -101,7 +100,7 @@ HOW TO BUILD - WINDOWS
 Run Command Prompt and change to your Bio-Formats working copy. Then run:
 
   # generate the Bio-Formats C++ bindings
-  cd components\bio-formats
+  cd components\scifio
   mvn -DskipTests package cppwrap:wrap
 
   # build the Bio-Formats C++ bindings
@@ -119,6 +118,6 @@ generation is complete, close the CMake window.
 
 Back at the Command Prompt, type:
 
-  start bio-formats.sln
+  start scifio.sln
 
 The solution will then open in Visual Studio. Press F7 to compile it (or select Build Solution from the Build menu).
