@@ -717,7 +717,7 @@ public class DicomReader extends FormatReader {
               sizeY);
           }
         }
-        if (pixelSizeZ > 0) {
+        if (pixelSizeZ != null && pixelSizeZ > 0) {
           store.setPixelsPhysicalSizeZ(new PositiveFloat(pixelSizeZ), i);
         }
         else {
