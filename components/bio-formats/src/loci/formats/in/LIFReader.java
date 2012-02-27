@@ -1026,6 +1026,10 @@ public class LIFReader extends FormatReader {
             channels.add("");
           }
 
+          if (channel < nextChannel) {
+            nextChannel = 0;
+          }
+
           if (nextChannel < getEffectiveSizeC()) {
             gains[image][nextChannel] = gain;
             detectorOffsets[image][nextChannel] = offset;
