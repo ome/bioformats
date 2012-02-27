@@ -32,7 +32,6 @@
 -->
 
 <ome-transforms current="2011-06">
-	<!-- incomplete sample file for discussion -->
 	<source schema="2011-06">
 		<upgrades/>
 		<downgrades>
@@ -72,7 +71,6 @@
 			</target>
 		</downgrades>
 	</source>
-
 	<source schema="2010-06">
 		<upgrades>
 			<target schema="2011-06" quality="excellent">
@@ -107,7 +105,6 @@
 			</target>
 		</downgrades>
 	</source>
-
 	<source schema="2010-04">
 		<upgrades>
 			<target schema="2011-06" quality="excellent">
@@ -119,13 +116,13 @@
 			</target>
 		</upgrades>
 		<downgrades>
-			<target schema="2009-09" quality="poor">
+			<target schema="2009-09" quality="fair">
 				<transform file="2010-04-to-2010-06.xsl"/>
 				<transform file="2010-06-to-2008-02.xsl"/>
 				<transform file="2008-02-to-2008-09.xsl"/>
 				<transform file="2008-09-to-2009-09.xsl"/>
 			</target>
-			<target schema="2008-09" quality="poor">
+			<target schema="2008-09" quality="fair">
 				<transform file="2010-04-to-2010-06.xsl"/>
 				<transform file="2010-06-to-2003-FC.xsl"/>
 				<transform file="2003-FC-to-2008-09.xsl"/>
@@ -147,7 +144,6 @@
 			</target>
 		</downgrades>
 	</source>
-
 	<source schema="2009-09">
 		<upgrades>
 			<target schema="2011-06" quality="excellent">
@@ -190,7 +186,6 @@
 			</target>
 		</downgrades>
 	</source>
-	
 	<source schema="2008-09">
 		<upgrades>
 			<target schema="2011-06" quality="excellent">
@@ -236,7 +231,6 @@
 			</target>
 		</downgrades>
 	</source>
-	
 	<source schema="2008-02">
 		<upgrades>
 			<target schema="2011-06" quality="excellent">
@@ -283,7 +277,6 @@
 			</target>
 		</downgrades>
 	</source>
-	
 	<source schema="2007-06">
 		<upgrades>
 			<target schema="2011-06" quality="excellent">
@@ -325,7 +318,6 @@
 			</target>
 		</downgrades>
 	</source>
-	
 	<source schema="2003-FC">
 		<upgrades>
 			<target schema="2011-06" quality="excellent">
@@ -363,5 +355,4 @@
 		</upgrades>
 		<downgrades/>
 	</source>
-
 </ome-transforms>
