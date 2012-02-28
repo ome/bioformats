@@ -846,7 +846,7 @@ public final class DataTools {
   public static byte[] allocate(int... sizes) throws IllegalArgumentException {
     if (sizes == null) return null;
     if (sizes.length == 0) return new byte[0];
-    int total = safeMultiply(sizes);
+    int total = safeMultiply32(sizes);
     return new byte[total];
   }
 
@@ -860,7 +860,9 @@ public final class DataTools {
    *           the maximum size of an int in Java; or if any size argument is
    *           zero or negative
    */
-  public static int safeMultiply(int... sizes) throws IllegalArgumentException {
+  public static int safeMultiply32(int... sizes)
+    throws IllegalArgumentException
+  {
     if (sizes.length == 0) return 0;
     long total = 1;
     for (int size : sizes) {
@@ -888,7 +890,7 @@ public final class DataTools {
    *           the maximum size of a long in Java; or if any size argument is
    *           zero or negative
    */
-  public static long safeMultiply(long... sizes)
+  public static long safeMultiply64(long... sizes)
     throws IllegalArgumentException
   {
     if (sizes.length == 0) return 0;
