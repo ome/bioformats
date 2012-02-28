@@ -146,10 +146,16 @@ public class OpenBytesPerformanceTest
           for (int tileY = 0; tileY < tilesHigh; tileY++) {
             x = tileX * optimalTileWidth;
             y = tileY * optimalTileHeight;
+
+            int actualTileWidth =
+              (int) Math.min(optimalTileWidth, reader.getSizeX() - x);
+            int actualTileHeight =
+              (int) Math.min(optimalTileHeight, reader.getSizeY() - y);
+
             LOGGER.info("Reading tile at {}x{}", x, y);
             stopWatch = new Log4JStopWatch(String.format(
                 "%s[%d:%d]_alloc_tile", filename, series, image));
-            reader.openBytes(0, x, y, optimalTileWidth, optimalTileHeight);
+            reader.openBytes(0, x, y, actualTileWidth, actualTileHeight);
             stopWatch.stop();
           }
         }
@@ -178,11 +184,17 @@ public class OpenBytesPerformanceTest
           for (int tileY = 0; tileY < tilesHigh; tileY++) {
             x = tileX * optimalTileWidth;
             y = tileY * optimalTileHeight;
+
+            int actualTileWidth =
+              (int) Math.min(optimalTileWidth, reader.getSizeX() - x);
+            int actualTileHeight =
+              (int) Math.min(optimalTileHeight, reader.getSizeY() - y);
+
             LOGGER.info("Reading tile at {}x{}", x, y);
             stopWatch = new Log4JStopWatch(String.format(
                 "%s[%d:%d]_prealloc_tile", filename, series, image));
-            reader.openBytes(image, buf, x, y, optimalTileWidth,
-                             optimalTileHeight);
+            reader.openBytes(image, buf, x, y, actualTileWidth,
+                             actualTileHeight);
             stopWatch.stop();
           }
         }
