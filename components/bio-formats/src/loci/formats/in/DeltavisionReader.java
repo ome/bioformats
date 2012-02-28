@@ -83,6 +83,15 @@ public class DeltavisionReader extends FormatReader {
   /** Size of one time element in the extended header. */
   protected int tSize;
 
+  /** Number of tiles in X direction. */
+  private int xTiles;
+
+  /** Number of tiles in Y direction. */
+  private int yTiles;
+
+  /** Whether or not the stage moved backwards. */
+  private boolean backwardsStage = false;
+
   /**
    * The number of ints in each extended header section. These fields appear
    * to be all blank but need to be skipped to get to the floats afterwards
@@ -210,6 +219,9 @@ public class DeltavisionReader extends FormatReader {
       ndFilters = null;
       logFile = deconvolutionLogFile = null;
       lengths = null;
+      backwardsStage = false;
+      xTiles = 0;
+      yTiles = 0;
     }
   }
 
@@ -391,7 +403,16 @@ public class DeltavisionReader extends FormatReader {
       }
     }
 
-    int nStagePositions = uniqueTileX.size() * uniqueTileY.size();
+    xTiles = uniqueTileX.size();
+    yTiles = uniqueTileY.size();
+
+    if (yTiles > 1) {
+      if (uniqueTileY.get(1) < uniqueTileY.get(0)) {
+        backwardsStage = true;
+      }
+    }
+
+    int nStagePositions = xTiles * yTiles;
     if (nStagePositions > 0 && nStagePositions <= getSizeT()) {
       int t = getSizeT();
       core[0].sizeT /= nStagePositions;
@@ -675,10 +696,17 @@ public class DeltavisionReader extends FormatReader {
     if (isGroupFiles()) parseDeconvolutionLog(store);
 
     for (int series=0; series<getSeriesCount(); series++) {
+      int seriesIndex = series;
+      if (backwardsStage) {
+        int x = series % xTiles;
+        int y = series / xTiles;
+        seriesIndex = (yTiles - y - 1) * xTiles + (xTiles - x - 1);
+      }
+
       for (int i=0; i<getImageCount(); i++) {
         int[] coords = getZCTCoords(i);
 
-        int tIndex = getSeriesCount() * coords[2] + series;
+        int tIndex = getSeriesCount() * coords[2] + seriesIndex;
         DVExtHdrFields hdr = extHdrFields[coords[0]][coords[1]][tIndex];
 
         // plane timing
