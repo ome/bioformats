@@ -114,6 +114,7 @@ public class ImageInfo {
   private String swapOrder = null, shuffleOrder = null;
   private String map = null;
   private String format = null;
+  private int xmlSpaces = 3;
 
   private IFormatReader reader;
   private IFormatReader baseReader;
@@ -152,6 +153,7 @@ public class ImageInfo {
     omexmlOnly = false;
     validate = true;
     omexmlVersion = null;
+    xmlSpaces = 3;
     start = 0;
     end = Integer.MAX_VALUE;
     series = 0;
@@ -195,6 +197,9 @@ public class ImageInfo {
         else if (args[i].equals("-ascii")) ascii = true;
         else if (args[i].equals("-nousedfiles")) usedFiles = false;
         else if (args[i].equals("-xmlversion")) omexmlVersion = args[++i];
+        else if (args[i].equals("-xmlspaces")) {
+          xmlSpaces = Integer.parseInt(args[++i]);
+        }
         else if (args[i].equals("-crop")) {
           StringTokenizer st = new StringTokenizer(args[++i], ",");
           xCoordinate = Integer.parseInt(st.nextToken());
@@ -908,7 +913,7 @@ public class ImageInfo {
         DebugTools.enableLogging("INFO");
       }
       String xml = service.getOMEXML((MetadataRetrieve) ms);
-      LOGGER.info("{}", XMLTools.indentXML(xml, true));
+      LOGGER.info("{}", XMLTools.indentXML(xml, xmlSpaces, true));
       if (omexmlOnly) {
         DebugTools.enableLogging("OFF");
       }
