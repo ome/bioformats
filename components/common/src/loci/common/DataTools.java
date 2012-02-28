@@ -987,11 +987,7 @@ public final class DataTools {
   }
 
   private static boolean willOverflow(long v1, long v2) {
-    return usedBits(v1) + usedBits(v2) > 64;
-  }
-
-  private static int usedBits(long v) {
-    return 64 - Long.numberOfLeadingZeros(v);
+    return Long.MAX_VALUE / v1 < v2;
   }
 
 }
