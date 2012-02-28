@@ -308,9 +308,17 @@ Apache XML-RPC
     License:   Apache
 -->
 
-<project name="Bio-Formats" default="jars" basedir=".">
+<project name="Bio-Formats" default="jars" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
   <description>
     Master build file for all Java software projects at LOCI
   </description>
   <import file="ant/toplevel.xml"/>
+
+  <!-- OME-compatibility layer -->
+  <target name="dist" description="Hook for OME build to call Bio-Formats">
+    <ant target="tools"/>
+    <ant target="tools-ome"/>
+    <ant antfile="ome.xml" inheritRefs="false" inheritAll="false"/>
+  </target>
+
 </project>
