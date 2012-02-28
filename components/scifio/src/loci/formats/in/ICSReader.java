@@ -1436,12 +1436,30 @@ public class ICSReader extends FormatReader {
       // populate Dimensions data
 
       if (pixelSizes != null) {
+        if (units.length == pixelSizes.length - 1) {
+          // correct for missing units
+          // sometimes, the units for the C axis are missing entirely
+          ArrayList<String> realUnits = new ArrayList<String>();
+          int unitIndex = 0;
+          for (int i=0; i<axes.length; i++) {
+            if (axes[i].toLowerCase().equals("ch")) {
+              realUnits.add("nm");
+            }
+            else {
+              realUnits.add(units[unitIndex++]);
+            }
+          }
+          units = realUnits.toArray(new String[realUnits.size()]);
+        }
+
         for (int i=0; i<pixelSizes.length; i++) {
           Double pixelSize = pixelSizes[i];
           String axis = axes != null && axes.length > i ? axes[i] : "";
           String unit = units != null && units.length > i ? units[i] : "";
           if (axis.equals("x")) {
-            if (pixelSize > 0 && checkUnit(unit, "um", "microns")) {
+            if (pixelSize > 0 &&
+              checkUnit(unit, "um", "microns", "micrometers"))
+            {
               store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSize), 0);
             }
             else {
@@ -1450,7 +1468,9 @@ public class ICSReader extends FormatReader {
             }
           }
           else if (axis.equals("y")) {
-            if (pixelSize > 0 && checkUnit(unit, "um", "microns")) {
+            if (pixelSize > 0 &&
+              checkUnit(unit, "um", "microns", "micrometers"))
+            {
               store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSize), 0);
             }
             else {
@@ -1459,7 +1479,9 @@ public class ICSReader extends FormatReader {
             }
           }
           else if (axis.equals("z")) {
-            if (pixelSize > 0 && checkUnit(unit, "um", "microns")) {
+            if (pixelSize > 0 &&
+              checkUnit(unit, "um", "microns", "micrometers"))
+            {
               store.setPixelsPhysicalSizeZ(new PositiveFloat(pixelSize), 0);
             }
             else {

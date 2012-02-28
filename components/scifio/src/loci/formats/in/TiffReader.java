@@ -288,7 +288,7 @@ public class TiffReader extends BaseTiffReader {
     if (z * t * (isRGB() ? 1 : c) == ifds.size()) {
       core[0].sizeZ = z;
       core[0].sizeT = t;
-      core[0].sizeC = c;
+      core[0].sizeC = isRGB() ? getSizeC() : c;
     }
     else if (ifds.size() == 1 && z * t > ifds.size() &&
       ifds.get(0).getCompression() == TiffCompression.UNCOMPRESSED)

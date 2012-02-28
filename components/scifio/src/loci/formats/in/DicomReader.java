@@ -125,6 +125,7 @@ public class DicomReader extends FormatReader {
 
   private String date, time, imageType;
   private String pixelSizeX, pixelSizeY;
+  private Double pixelSizeZ;
 
   private Hashtable<Integer, Vector<String>> fileList;
   private int imagesPerFile;
@@ -384,6 +385,7 @@ public class DicomReader extends FormatReader {
       rescaleSlope = 1.0;
       rescaleIntercept = 0.0;
       pixelSizeX = pixelSizeY = null;
+      pixelSizeZ = null;
       imagesPerFile = 0;
       fileList = null;
       inverted = false;
@@ -715,6 +717,13 @@ public class DicomReader extends FormatReader {
               sizeY);
           }
         }
+        if (pixelSizeZ != null && pixelSizeZ > 0) {
+          store.setPixelsPhysicalSizeZ(new PositiveFloat(pixelSizeZ), i);
+        }
+        else {
+          LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}",
+            pixelSizeZ);
+        }
       }
     }
   }
@@ -787,6 +796,9 @@ public class DicomReader extends FormatReader {
       else if (key.equals("Pixel Spacing")) {
         pixelSizeX = info.substring(0, info.indexOf("\\"));
         pixelSizeY = info.substring(info.lastIndexOf("\\") + 1);
+      }
+      else if (key.equals("Spacing Between Slices")) {
+        pixelSizeZ = new Double(info);
       }
 
       if (((tag & 0xffff0000) >> 16) != 0x7fe0) {

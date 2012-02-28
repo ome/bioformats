@@ -113,11 +113,14 @@ public class MicromanagerReader extends FormatReader {
     if (name.equals(METADATA) || name.endsWith(File.separator + METADATA) ||
       name.equals(XML) || name.endsWith(File.separator + XML))
     {
+      final int blockSize = 8192;
       try {
         RandomAccessInputStream stream = new RandomAccessInputStream(name);
         long length = stream.length();
+        String data = stream.readString((int) Math.min(blockSize, length));
         stream.close();
-        return length > 0;
+        return length > 0 && (data.indexOf("Micro-Manager") >= 0 ||
+          data.indexOf("micromanager") >= 0);
       }
       catch (IOException e) {
         return false;
@@ -129,7 +132,7 @@ public class MicromanagerReader extends FormatReader {
       RandomAccessInputStream s = new RandomAccessInputStream(name);
       boolean validTIFF = isThisType(s);
       s.close();
-      return metaFile.exists() && metaFile.length() > 0 && validTIFF;
+      return validTIFF && isThisType(metaFile.getAbsolutePath(), open);
     }
     catch (NullPointerException e) { }
     catch (IOException e) { }
