@@ -60,6 +60,9 @@ public class FormatWriterTestFactory {
   public Object[] createInstances() {
     Vector files = new Vector();
 
+    // create log file
+    TestTools.createLogFile();
+
     // parse explicit filename, if any
     final String nameProp = "testng.filename";
     String filename = System.getProperty(nameProp);
@@ -87,8 +90,6 @@ public class FormatWriterTestFactory {
       }
       FormatWriterTest.configTree = new ConfigurationTree(baseDir);
 
-      // create log file
-      TestTools.createLogFile();
       LOGGER.info("testng.directory = {}", baseDir);
     }
 

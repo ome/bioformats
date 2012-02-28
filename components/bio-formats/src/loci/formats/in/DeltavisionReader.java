@@ -1601,6 +1601,7 @@ public class DeltavisionReader extends FormatReader {
         lensNA = 1.20;
         workingDistance = 0.25;
         immersion = getImmersion("Water");
+        break;
       case 10605:
         lensNA = 0.70;
         workingDistance = 1.10;
@@ -1762,6 +1763,7 @@ public class DeltavisionReader extends FormatReader {
         workingDistance = 0.20;
         immersion = getImmersion("Oil");
         model = "93129";
+        break;
       case 12101:
         lensNA = 0.10;
         calibratedMagnification = 2.0;
