@@ -1379,8 +1379,8 @@ public class ZeissLSMReader extends FormatReader {
         store.setDetectorID(detectorID, instrument, nextDetector);
         if (channel.acquire && nextDetector < getSizeC()) {
           store.setDetectorSettingsID(detectorID, series, nextDetector);
-          store.setDetectorSettingsBinning(
-            getBinning(binning), series, nextDetector);
+          //store.setDetectorSettingsBinning(
+          //  getBinning(binning), series, nextDetector);
         }
       }
       if (channel.amplificationGain != null) {
@@ -1404,7 +1404,7 @@ public class ZeissLSMReader extends FormatReader {
           store.setDichroicID(id, instrument, nextDichroic);
           store.setDichroicModel(beamSplitter.filter, instrument, nextDichroic);
           if (nextDichroicChannel < getEffectiveSizeC()) {
-            store.setLightPathDichroicRef(id, series, nextDichroicChannel);
+            //store.setLightPathDichroicRef(id, series, nextDichroicChannel);
           }
           nextDichroic++;
         }
