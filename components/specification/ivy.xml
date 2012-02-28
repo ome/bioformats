@@ -1,6 +1,6 @@
 <ivy-module version="1.0">
   <info
-      organisation="omero"
+      organisation="ome"
       module="specification"
       status="integration"/>
   <configurations>
