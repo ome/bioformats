@@ -53,10 +53,29 @@ public class ICSWriter extends FormatWriter {
   private int lastPlane = -1;
   private RandomAccessOutputStream pixels;
 
+  // NB: write in ZTC order by default.  Certain software (e.g. Volocity)
+  //     lacks the capacity to import files with any other dimension
+  //     ordering.  Technically, this is not our problem, but it is
+  //     easy enough to work around and makes life easier for our users.
+  private String outputOrder = "XYZTC";
+
   // -- Constructor --
 
   public ICSWriter() {
     super("Image Cytometry Standard", new String[] {"ids", "ics"});
+  }
+
+  // -- ICSWriter API methods --
+
+  /**
+   * Set the order in which dimensions should be written to the file.
+   * Valid values are specified in the documentation for
+   * {@link loci.formats.IFormatReader#getDimensionOrder()}
+   *
+   * By default, the ordering is "XYZTC".
+   */
+  public void setOutputOrder(String outputOrder) {
+    this.outputOrder = outputOrder;
   }
 
   // -- IFormatWriter API methods --
@@ -190,15 +209,9 @@ public class ICSWriter extends FormatWriter {
 
       out.writeBytes("\nparameter\tscale\t1.000000\t");
 
-      // NB: always write in ZTC order.  Certain software (e.g. Volocity)
-      //     lacks the capacity to import files with any other dimension
-      //     ordering.  Technically, this is not our problem, but it is
-      //     easy enough to work around and makes life easier for our users.
-
-      String order = "XYZTC";
       StringBuffer units = new StringBuffer();
-      for (int i=0; i<order.length(); i++) {
-        char dim = order.charAt(i);
+      for (int i=0; i<outputOrder.length(); i++) {
+        char dim = outputOrder.charAt(i);
         Number value = 1.0;
         if (dim == 'X') {
           if (meta.getPixelsPhysicalSizeX(0) != null) {
@@ -266,7 +279,6 @@ public class ICSWriter extends FormatWriter {
 
   private int[] overwriteDimensions(MetadataRetrieve meta) throws IOException {
     out.seek(dimensionOffset);
-    String order = "XYZTC";
     int sizeX = meta.getPixelsSizeX(series).getValue().intValue();
     int sizeY = meta.getPixelsSizeY(series).getValue().intValue();
     int z = meta.getPixelsSizeZ(series).getValue().intValue();
@@ -278,7 +290,8 @@ public class ICSWriter extends FormatWriter {
     int rgbChannels = getSamplesPerPixel();
 
     if (lastPlane < 0) lastPlane = z * c * t - 1;
-    int[] pos = FormatTools.getZCTCoords(order, z, c, t, z * c * t, lastPlane);
+    int[] pos =
+      FormatTools.getZCTCoords(outputOrder, z, c, t, z * c * t, lastPlane);
     lastPlane = -1;
 
     StringBuffer dimOrder = new StringBuffer();
@@ -291,17 +304,17 @@ public class ICSWriter extends FormatWriter {
       sizes[nextSize++] = pos[1] + 1;
     }
 
-    for (int i=0; i<order.length(); i++) {
-      if (order.charAt(i) == 'X') sizes[nextSize++] = sizeX;
-      else if (order.charAt(i) == 'Y') sizes[nextSize++] = sizeY;
-      else if (order.charAt(i) == 'Z') sizes[nextSize++] = pos[0] + 1;
-      else if (order.charAt(i) == 'T') sizes[nextSize++] = pos[2] + 1;
-      else if (order.charAt(i) == 'C' && dimOrder.indexOf("ch") == -1) {
+    for (int i=0; i<outputOrder.length(); i++) {
+      if (outputOrder.charAt(i) == 'X') sizes[nextSize++] = sizeX;
+      else if (outputOrder.charAt(i) == 'Y') sizes[nextSize++] = sizeY;
+      else if (outputOrder.charAt(i) == 'Z') sizes[nextSize++] = pos[0] + 1;
+      else if (outputOrder.charAt(i) == 'T') sizes[nextSize++] = pos[2] + 1;
+      else if (outputOrder.charAt(i) == 'C' && dimOrder.indexOf("ch") == -1) {
         sizes[nextSize++] = pos[1] + 1;
         dimOrder.append("ch");
       }
-      if (order.charAt(i) != 'C') {
-        dimOrder.append(String.valueOf(order.charAt(i)).toLowerCase());
+      if (outputOrder.charAt(i) != 'C') {
+        dimOrder.append(String.valueOf(outputOrder.charAt(i)).toLowerCase());
       }
       dimOrder.append("\t");
     }
