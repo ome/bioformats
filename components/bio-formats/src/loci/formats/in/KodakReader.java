@@ -183,7 +183,9 @@ public class KodakReader extends FormatReader {
       }
       else if (key.equals("Vertical Resolution")) {
         // resolution stored in pixels per inch
-        value = value.substring(0, value.indexOf(" "));
+        if (value.indexOf(" ") > 0) {
+          value = value.substring(0, value.indexOf(" "));
+        }
         Double size = new Double(value);
         if (size > 0) {
           size = 1.0 / (size * (1.0 / 25400));
@@ -196,7 +198,9 @@ public class KodakReader extends FormatReader {
       }
       else if (key.equals("Horizontal Resolution")) {
         // resolution stored in pixels per inch
-        value = value.substring(0, value.indexOf(" "));
+        if (value.indexOf(" ") > 0) {
+          value = value.substring(0, value.indexOf(" "));
+        }
         Double size = new Double(value);
         if (size > 0) {
           size = 1.0 / (size * (1.0 / 25400));
