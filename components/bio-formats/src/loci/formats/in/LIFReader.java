@@ -651,7 +651,8 @@ public class LIFReader extends FormatReader {
       store.setImageDescription(descriptions[i], i);
       if (acquiredDate[i] > 0) {
         store.setImageAcquiredDate(DateTools.convertDate(
-          (long) (acquiredDate[i] * 1000), DateTools.COBOL), i);
+          (long) (acquiredDate[i] * 1000), DateTools.COBOL,
+          DateTools.ISO8601_FORMAT, true), i);
       }
       store.setImageName(imageNames[i].trim(), i);
 
