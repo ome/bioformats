@@ -159,7 +159,13 @@ public class MicromanagerReader extends FormatReader {
     if (xmlFile != null) {
       files.add(xmlFile);
     }
-    if (!noPixels) files.addAll(tiffs);
+    if (!noPixels) {
+      for (String tiff : tiffs) {
+        if (new Location(tiff).exists()) {
+          files.add(tiff);
+        }
+      }
+    }
     return files.toArray(new String[files.size()]);
   }
 
