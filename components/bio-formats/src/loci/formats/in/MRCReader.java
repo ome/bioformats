@@ -94,7 +94,7 @@ public class MRCReader extends FormatReader {
 
     if (offset + planeSize <= in.length() && offset >= 0) {
       in.seek(offset);
-      readPlane(in, x, y, w, h, buf);
+      readPlane(in, x, getSizeY() - h - y, w, h, buf);
 
       // reverse the order of the rows
       // planes are stored with the origin in the lower-left corner
