@@ -113,7 +113,7 @@ public class MicromanagerReader extends FormatReader {
     if (name.equals(METADATA) || name.endsWith(File.separator + METADATA) ||
       name.equals(XML) || name.endsWith(File.separator + XML))
     {
-      final int blockSize = 8192;
+      final int blockSize = 1048576;
       try {
         RandomAccessInputStream stream = new RandomAccessInputStream(name);
         long length = stream.length();
