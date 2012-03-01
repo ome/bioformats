@@ -963,6 +963,9 @@ public class DeltavisionReader extends FormatReader {
           if (value.indexOf(",") != -1) {
             value = value.substring(0, value.indexOf(","));
           }
+          if (value.indexOf(" ") != -1) {
+            value = value.substring(value.indexOf(" ") + 1);
+          }
           String objectiveID = "Objective:" + value;
           store.setObjectiveID(objectiveID, 0, 0);
           for (int series=0; series<getSeriesCount(); series++) {
