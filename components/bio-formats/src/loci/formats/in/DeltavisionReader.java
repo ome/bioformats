@@ -695,6 +695,12 @@ public class DeltavisionReader extends FormatReader {
     boolean logFound = isGroupFiles() ? parseLogFile(store) : false;
     if (isGroupFiles()) parseDeconvolutionLog(store);
 
+    if (getSeriesCount() == 1) {
+      xTiles = 1;
+      yTiles = 1;
+      backwardsStage = false;
+    }
+
     for (int series=0; series<getSeriesCount(); series++) {
       int seriesIndex = series;
       if (backwardsStage) {
