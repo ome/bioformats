@@ -144,7 +144,7 @@ public class LeicaReader extends FormatReader {
   private boolean[][] cutOutPopulated;
   private boolean[][] filterRefPopulated;
 
-  private Double detectorOffset, detectorVoltage;
+  private Vector<Detector> detectors = new Vector<Detector>();
 
   private int[] tileWidth, tileHeight;
 
@@ -315,6 +315,7 @@ public class LeicaReader extends FormatReader {
       cutInPopulated = null;
       cutOutPopulated = null;
       filterRefPopulated = null;
+      detectors.clear();
     }
   }
 
@@ -634,6 +635,7 @@ public class LeicaReader extends FormatReader {
 
       nextDetector = 0;
       nextChannel = 0;
+      detectors.clear();
 
       cutInPopulated[i] = new boolean[core[i].sizeC];
       cutOutPopulated[i] = new boolean[core[i].sizeC];
@@ -1232,51 +1234,41 @@ public class LeicaReader extends FormatReader {
 
       LOGGER.trace("Parsing tokens: {}", tokens);
       if (tokens[0].startsWith("CDetectionUnit")) {
-        // detector information
-
         if (tokens[1].startsWith("PMT")) {
+          // detector information
+
+          Detector detector = new Detector();
+          int lastDetector = detectors.size() - 1;
+          if (detectors.size() > 0 &&
+            detectors.get(lastDetector).id == Integer.parseInt(tokens[3]))
+          {
+            detector = detectors.get(lastDetector);
+          }
+          else {
+            detectors.add(detector);
+          }
+
+          detector.id = Integer.parseInt(tokens[3]);
+
           try {
             if (tokens[2].equals("VideoOffset")) {
-              detectorOffset = new Double(data);
+              detector.offset = new Double(data);
             }
             else if (tokens[2].equals("HighVoltage")) {
-              detectorVoltage = new Double(data);
-              nextDetector++;
+              detector.voltage = new Double(data);
             }
             else if (tokens[2].equals("State")) {
-              // link Detector to Image, if the detector was actually used
-              if (data.equals("Active")) {
-                store.setDetectorOffset(detectorOffset, series, nextDetector);
-                store.setDetectorVoltage(detectorVoltage, series, nextDetector);
-                store.setDetectorType(
-                  getDetectorType("PMT"), series, nextDetector);
-                String index = tokens[1].substring(tokens[1].indexOf(" ") + 1);
-                int channelIndex = -1;
-                try {
-                  channelIndex = Integer.parseInt(index) - 1;
-                }
-                catch (NumberFormatException e) { }
-                if (channelIndex >= 0) {
-                  activeChannelIndices.add(new Integer(channelIndex));
-                }
+              detector.active = data.equals("Active");
 
-                String detectorID =
-                  MetadataTools.createLSID("Detector", series, nextDetector);
-                store.setDetectorID(detectorID, series, nextDetector);
+              String index = tokens[1].substring(tokens[1].indexOf(" ") + 1);
+              detector.index = -1;
+              try {
+                detector.index = Integer.parseInt(index) - 1;
+              }
+              catch (NumberFormatException e) { }
 
-                if (nextDetector == 0) {
-                  // link every channel to the first detector in the beginning
-                  // if additional detectors are found, the links will be
-                  // overwritten
-                  for (int c=0; c<getEffectiveSizeC(); c++) {
-                    store.setDetectorSettingsID(detectorID, series, c);
-                  }
-                }
-
-                if (nextChannel < getEffectiveSizeC()) {
-                  store.setDetectorSettingsID(
-                    detectorID, series, nextChannel++);
-                }
+              if (detector.active && detector.index > 0) {
+                activeChannelIndices.add(new Integer(detector.index));
               }
             }
           }
@@ -1480,6 +1472,35 @@ public class LeicaReader extends FormatReader {
       addSeriesMeta("Block " + blockNum + " " + contentID, data);
     }
 
+    for (Detector detector : detectors) {
+      // link Detector to Image, if the detector was actually used
+      if (detector.active) {
+        store.setDetectorOffset(detector.offset, series, nextDetector);
+        store.setDetectorVoltage(detector.voltage, series, nextDetector);
+        store.setDetectorType(getDetectorType("PMT"), series, nextDetector);
+
+        String detectorID =
+          MetadataTools.createLSID("Detector", series, nextDetector);
+        store.setDetectorID(detectorID, series, nextDetector);
+
+        if (nextDetector == 0) {
+          // link every channel to the first detector in the beginning
+          // if additional detectors are found, the links will be
+          // overwritten
+          for (int c=0; c<getEffectiveSizeC(); c++) {
+            store.setDetectorSettingsID(detectorID, series, c);
+          }
+        }
+
+        if (nextChannel < getEffectiveSizeC()) {
+          store.setDetectorSettingsID(detectorID, series, nextChannel++);
+        }
+
+        nextDetector++;
+      }
+    }
+    detectors.clear();
+
     // populate saved LogicalChannel data
 
     for (int i=0; i<getSeriesCount(); i++) {
@@ -1577,6 +1598,16 @@ public class LeicaReader extends FormatReader {
     table.put(new Integer(5832782), "logical y-wide");
     table.put(new Integer(5898318), "logical z-wide");
     return table;
+  }
+
+  // -- Helper class --
+
+  class Detector {
+    public int id;
+    public int index;
+    public boolean active;
+    public Double offset;
+    public Double voltage;
   }
 
 }
