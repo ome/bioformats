@@ -271,6 +271,9 @@ public class PSDReader extends FormatReader {
 
       // skip over pixel data for each layer
       for (int i=0; i<layerCount; i++) {
+        if (h[i] < 0) {
+          continue;
+        }
         int[] lens = new int[h[i]];
         for (int cc=0; cc<c[i]; cc++) {
           boolean compressed = in.readShort() == 1;
