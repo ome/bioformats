@@ -59,34 +59,28 @@ public class VirtualRandomAccess<T extends NativeType<T> & RealType<T>>
     this.virtImage = image;
   }
 
-  @Override
   public void fwd(int d) {
     position[d]++;
   }
 
-  @Override
   public void bck(int d) {
     position[d]--;
   }
 
-  @Override
   public void move(long distance, int d) {
     position[d] += distance;
   }
 
-  @Override
   public void setPosition(int[] pos) {
     for (int i = 0; i < position.length; i++)
       position[i] = pos[i];
   }
 
-  @Override
   public void setPosition(long[] pos) {
     for (int i = 0; i < position.length; i++)
       position[i] = pos[i];
   }
 
-  @Override
   public void setPosition(long pos, int d) {
     position[d] = pos;
   }
@@ -101,7 +95,6 @@ public class VirtualRandomAccess<T extends NativeType<T> & RealType<T>>
     return new VirtualRandomAccess<T>(virtImage);
   }
 
-  @Override
   public T get() {
     return accessor.get(position);
   }

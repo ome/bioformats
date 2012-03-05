@@ -38,8 +38,8 @@ import net.imglib2.IterableRealInterval;
 import net.imglib2.img.AbstractImg;
 import net.imglib2.img.Img;
 import net.imglib2.img.ImgFactory;
-import net.imglib2.io.ImgIOException;
-import net.imglib2.io.ImgOpener;
+import ome.scifio.img.ImgIOException;
+import ome.scifio.img.ImgOpener;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.integer.ByteType;
@@ -123,34 +123,28 @@ public class VirtualImg<T extends NativeType<T> & RealType<T>>
     return correctlyTypedVirtualImg(dimensions, rdr);
   }
 
-  @Override
   public VirtualRandomAccess<T> randomAccess() {
     return new VirtualRandomAccess<T>(this);
   }
 
-  @Override
   public VirtualCursor<T> cursor() {
     return new VirtualCursor<T>(this);
   }
 
-  @Override
   public VirtualCursor<T> localizingCursor() {
     // TODO - not supporting actual localizing cursor
     return new VirtualCursor<T>(this);
   }
 
-  @Override
   public boolean equalIterationOrder(IterableRealInterval<?> f) {
     // TODO maybe support. For now, for simplicity, don't support
     return false;
   }
 
-  @Override
   public ImgFactory<T> factory() {
     return new VirtualImgFactory<T>();
   }
 
-  @Override
   public Img<T> copy() {
     return new VirtualImg<T>(dims, reader, type, bytesOnly);
   }

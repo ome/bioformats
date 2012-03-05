@@ -60,33 +60,27 @@ public class VirtualCursor<T extends NativeType<T> & RealType<T>>
     this.accessor = new VirtualAccessor<T>(virtImage);
   }
 
-  @Override
   public T get() {
     iter.localize(position);
     return accessor.get(position);
   }
 
-  @Override
   public void fwd() {
     iter.fwd();
   }
 
-  @Override
   public void reset() {
     iter.reset();
   }
 
-  @Override
   public boolean hasNext() {
     return iter.hasNext();
   }
 
-  @Override
   public void localize(long[] pos) {
     iter.localize(pos);
   }
 
-  @Override
   public long getLongPosition(int d) {
     return iter.getLongPosition(d);
   }
