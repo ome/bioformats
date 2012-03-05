@@ -28,10 +28,10 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 */
 
-package ome.scifio.img.virtual;
+package ome.scifio.img;
 
 /**
- * Writes out an {@link ImgPlus} using Bio-Formats.
+ * Writes out an {@link ImgPlus} using Bio-Formats
  *
  * @author Mark Hiner
  * @author Curtis Rueden

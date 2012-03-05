@@ -28,7 +28,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 */
 
-package ome.scifio.img.virtual;
+package ome.scifio.img;
 
 import java.io.File;
 import java.io.FileOutputStream;

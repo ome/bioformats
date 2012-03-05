@@ -28,23 +28,23 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 */
 
-package ome.scifio.img.virtual;
+package ome.scifio.img;
 
 import net.imglib2.exception.ImgLibException;
 
 /**
  * Exception indicating something went wrong during I/O.
- *
+ * 
  * @author Curtis Rueden
  */
 public class ImgIOException extends ImgLibException {
 
-  public ImgIOException(final Object obj, final String message) {
-    super(obj.getClass().getCanonicalName() + ": " + message);
-  }
+	public ImgIOException(final Object obj, final String message) {
+		super(obj.getClass().getCanonicalName() + ": " + message);
+	}
 
-  public ImgIOException(final Throwable t) {
-    super(t);
-  }
+	public ImgIOException(final Throwable t) {
+		super(t);
+	}
 
 }
