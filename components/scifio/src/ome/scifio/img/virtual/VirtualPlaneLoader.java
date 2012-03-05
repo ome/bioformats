@@ -28,11 +28,11 @@ POSSIBILITY OF SUCH DAMAGE.
 
 package ome.scifio.img.virtual;
 
+import ome.scifio.img.ImgIOUtils;
 import loci.common.DataTools;
 import loci.formats.FormatTools;
 import net.imglib2.img.basictypeaccess.array.ArrayDataAccess;
 import net.imglib2.img.planar.PlanarImg;
-import net.imglib2.io.ImgOpener;
 
 
 /**
@@ -114,7 +114,7 @@ public class VirtualPlaneLoader {
     else { // want type from encoded bytes
       primitivePlane = typeConvert(planeBytes);
     }
-    ArrayDataAccess<?> wrappedPlane = ImgOpener.makeArray(primitivePlane);
+    ArrayDataAccess<?> wrappedPlane = ImgIOUtils.makeArray(primitivePlane);
     ((PlanarImg)planeImg).setPlane(0, wrappedPlane);
   }
 
