@@ -62,7 +62,7 @@ public class OmeValidator
      * @param schema The schema used to validate the specified file.
      * @return true if no errors
      */
-    public boolean validateFile(File file, File schema)
+    public boolean isValidFile(File file, File schema)
     {
         try {
             // try parsing the file and return true if no errors
@@ -79,7 +79,7 @@ public class OmeValidator
      * @param schemaStreamArray The schema as array of stream sources used to validate the specified file.
      * @return true if no errors
      */
-    public boolean validateFile(File file, StreamSource[] schemaStreamArray)
+    public boolean isValidFile(File file, StreamSource[] schemaStreamArray)
     {
         try {
             // try parsing the file and return true if no errors
@@ -92,6 +92,34 @@ public class OmeValidator
     
     /*
      * Validate the specified file
+     * Any validation errors thrown as an exception.
+     * @param file The file to parse.
+     * @param schemaStreamArray The schema as array of stream sources used to validate the specified file.
+     * @throws Exception Thrown if an error occurred.
+     */
+    public void validateFile(File file, StreamSource[] schemaStreamArray)
+        throws Exception
+    {
+        // try parsing the file
+        Document theDocument = parseFileWithStreamArray(file, schemaStreamArray);
+    }
+
+    /*
+     * Validate the specified file
+     * Any validation errors thrown as an exception.
+     * @param file The file to parse.
+     * @param schema The schema used to validate the specified file.
+     * @throws Exception Thrown if an error occurred.
+     */
+    public void validateFile(File file, File schema)
+        throws Exception
+    {
+        // try parsing the file
+        Document theDocument = parseFile(file, schema);
+    }
+
+    /*
+     * Validate the specified file
      * Any validation errors are sent to StdErr, not thrown as an exception.
      * @param file The file to parse.
      * @param schemaStreamArray The schema as array of stream sources used to validate the specified file.
@@ -100,8 +128,8 @@ public class OmeValidator
     public void validateFileToStdError(File file, StreamSource[] schemaStreamArray)
         throws Exception
     {
-        // try parsing the file and return true if no errors
-        Document theDocument = parseFileWithStreamArray(file, schemaStreamArray);
+        // try parsing the file
+        Document theDocument = parseFileWithStreamArrayToSdtErr(file, schemaStreamArray);
     }
 
     /**
