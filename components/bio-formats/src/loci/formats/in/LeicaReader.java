@@ -695,7 +695,9 @@ public class LeicaReader extends FormatReader {
           long time = DateTools.getTime(timestamps[i][j], DATE_FORMAT);
           double elapsedTime = (double) (time - firstPlane) / 1000;
           store.setPlaneDeltaT(elapsedTime, i, j);
-          store.setPlaneExposureTime(exposureTime[i], i, j);
+          if (exposureTime[i] > 0) {
+            store.setPlaneExposureTime(exposureTime[i], i, j);
+          }
         }
       }
     }
