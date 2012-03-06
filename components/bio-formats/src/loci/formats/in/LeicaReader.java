@@ -1268,7 +1268,7 @@ public class LeicaReader extends FormatReader {
               }
               catch (NumberFormatException e) { }
 
-              if (detector.active && detector.index > 0) {
+              if (detector.active && detector.index >= 0) {
                 activeChannelIndices.add(new Integer(detector.index));
               }
             }
