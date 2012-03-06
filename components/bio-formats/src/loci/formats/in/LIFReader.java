@@ -124,6 +124,7 @@ public class LIFReader extends FormatReader {
   private Integer[][] exWaves;
   private Vector[] activeDetector;
   private HashMap[] detectorIndexes;
+  private Vector[] stains;
 
   private String[] immersions, corrections, objectiveModels;
   private Integer[] magnification;
@@ -351,6 +352,7 @@ public class LIFReader extends FormatReader {
       imageNames = null;
       acquiredDate = null;
       detectorIndexes = null;
+      stains = null;
     }
   }
 
@@ -543,6 +545,8 @@ public class LIFReader extends FormatReader {
       store.setObjectiveCorrection(getCorrection(corrections[i]), i, 0);
       store.setObjectiveModel(objectiveModels[i], i, 0);
 
+      boolean[] linkedEmFilter = new boolean[getEffectiveSizeC()];
+
       if (cutIns[i] != null) {
         for (int filter=0; filter<cutIns[i].size(); filter++) {
           String filterID = MetadataTools.createLSID("Filter", i, filter);
@@ -551,10 +555,19 @@ public class LIFReader extends FormatReader {
             store.setFilterModel(
               (String) filterModels[i].get(filter), i, filter);
           }
-          int channel = filter - (cutIns[i].size() - getEffectiveSizeC());
-          if (channel >= 0 && channel < getEffectiveSizeC()) {
-            //store.setLightPathEmissionFilterRef(filterID, i, channel, 0);
+          if (filter < stains[i].size()) {
+            String stain = (String) stains[i].get(filter);
+
+            if (stain != null && channelNames[i] != null) {
+              for (int c=0; c<channelNames[i].length; c++) {
+                if (stain.equals(channelNames[i][c]) && !linkedEmFilter[c]) {
+                  store.setLightPathEmissionFilterRef(filterID, i, c, 0);
+                  linkedEmFilter[c] = true;
+                }
+              }
+            }
           }
+
           store.setTransmittanceRangeCutIn(
             (PositiveInteger) cutIns[i].get(filter), i, filter);
           store.setTransmittanceRangeCutOut(
@@ -845,6 +858,7 @@ public class LIFReader extends FormatReader {
     microscopeModels = new String[imageNodes.getLength()];
     detectorModels = new Vector[imageNodes.getLength()];
     detectorIndexes = new HashMap[imageNodes.getLength()];
+    stains = new Vector[imageNodes.getLength()];
     zSteps = new Double[imageNodes.getLength()];
     tSteps = new Double[imageNodes.getLength()];
     pinholes = new Double[imageNodes.getLength()];
@@ -1012,13 +1026,13 @@ public class LIFReader extends FormatReader {
             double cutIn = new Double(multiband.getAttribute("LeftWorld"));
             double cutOut = new Double(multiband.getAttribute("RightWorld"));
             if ((int) cutIn > 0) {
-              cutIns[image].add(new PositiveInteger((int) Math.round(cutIn)));
+              cutIns[image].add(new PositiveInteger((int) Math.ceil(cutIn)));
             }
             else {
               LOGGER.warn("Expected positive value for CutIn; got {}", cutIn);
             }
             if ((int) cutOut > 0) {
-              cutOuts[image].add(new PositiveInteger((int) Math.round(cutOut)));
+              cutOuts[image].add(new PositiveInteger((int) Math.ceil(cutOut)));
             }
             else {
               LOGGER.warn("Expected positive value for CutOut; got {}", cutOut);
@@ -1289,6 +1303,7 @@ public class LIFReader extends FormatReader {
     cutOuts[image] = new Vector<PositiveInteger>();
     filterModels[image] = new Vector<String>();
     detectorIndexes[image] = new HashMap<Integer, String>();
+    stains[image] = new Vector<String>();
 
     for (int i=0; i<filterSettings.getLength(); i++) {
       Element filterSetting = (Element) filterSettings.item(i);
@@ -1384,7 +1399,7 @@ public class LIFReader extends FormatReader {
       else if (objectClass.equals("CSpectrophotometerUnit")) {
         Integer v = null;
         try {
-          v = new Integer((int) Double.parseDouble(variant));
+          v = new Integer((int) Math.ceil(Double.parseDouble(variant)));
         }
         catch (NumberFormatException e) { }
         String description = filterSetting.getAttribute("Description");
@@ -1404,6 +1419,9 @@ public class LIFReader extends FormatReader {
           else {
             LOGGER.warn("Expected positive value for CutOut; got {}", v);
           }
+        }
+        else if (description.endsWith("(stain)")) {
+          stains[image].add(variant);
         }
       }
     }
