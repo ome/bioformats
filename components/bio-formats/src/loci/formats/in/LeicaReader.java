@@ -1432,21 +1432,18 @@ public class LeicaReader extends FormatReader {
           }
         }
         else if (tokens[2].equals("ZPos")) {
-          for (int q=0; q<core[series].imageCount; q++) {
-            store.setPlanePositionZ(new Double(data), series, q);
-            if (q == 0) {
-              addGlobalMeta("Z position for position #" + (series + 1), data);
-            }
-          }
+          store.setStageLabelName("Position", series);
+          store.setStageLabelZ(new Double(data), series);
+          addGlobalMeta("Z position for position #" + (series + 1), data);
         }
       }
       else if (tokens[0].equals("CScanActuator") &&
         tokens[1].equals("Z Scan Actuator") && tokens[2].equals("Position"))
       {
         double pos = Double.parseDouble(data) * 1000000;
-        for (int q=0; q<core[series].imageCount; q++) {
-          store.setPlanePositionZ(pos, series, q);
-        }
+        store.setStageLabelName("Position", series);
+        store.setStageLabelZ(pos, series);
+        addGlobalMeta("Z position for position #" + (series + 1), pos);
       }
 
       if (contentID.equals("dblVoxelX")) {
