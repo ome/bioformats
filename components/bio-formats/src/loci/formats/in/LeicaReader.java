@@ -1252,6 +1252,7 @@ public class LeicaReader extends FormatReader {
           }
 
           detector.id = Integer.parseInt(tokens[3]);
+          detector.name = tokens[1];
 
           try {
             if (tokens[2].equals("VideoOffset")) {
@@ -1493,7 +1494,20 @@ public class LeicaReader extends FormatReader {
         }
 
         if (nextChannel < getEffectiveSizeC()) {
-          store.setDetectorSettingsID(detectorID, series, nextChannel++);
+          store.setDetectorSettingsID(detectorID, series, nextChannel);
+          if (nextChannel < channelNames[series].size()) {
+            String name = (String) channelNames[series].get(nextChannel);
+            if (name == null || name.trim().equals("") || name.equals("None")) {
+              channelNames[series].setElementAt(detector.name, nextChannel);
+            }
+          }
+          else {
+            while (channelNames[series].size() < nextChannel) {
+              channelNames[series].add("");
+            }
+            channelNames[series].add(detector.name);
+          }
+          nextChannel++;
         }
 
         nextDetector++;
@@ -1608,6 +1622,7 @@ public class LeicaReader extends FormatReader {
     public boolean active;
     public Double offset;
     public Double voltage;
+    public String name;
   }
 
 }
