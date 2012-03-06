@@ -200,9 +200,10 @@ public class MRCReader extends FormatReader {
       int my = in.readInt();
       int mz = in.readInt();
 
-      xSize = in.readFloat() / mx;
-      ySize = in.readFloat() / my;
-      zSize = in.readFloat() / mz;
+      // physical sizes are stored in ångströms, we want them in µm
+      xSize = (in.readFloat() / mx) / 10000.0;
+      ySize = (in.readFloat() / my) / 10000.0;
+      zSize = (in.readFloat() / mz) / 10000.0;
 
       if (xSize == Double.POSITIVE_INFINITY) xSize = 1;
       if (ySize == Double.POSITIVE_INFINITY) ySize = 1;
