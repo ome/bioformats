@@ -97,6 +97,12 @@ public class OperettaReader extends FormatReader {
     if (localName.equals(XML_FILE)) {
       return true;
     }
+    Location parent = new Location(name).getAbsoluteFile().getParentFile();
+    Location xml = new Location(parent, XML_FILE);
+    if (!xml.exists()) {
+      return false;
+    }
+
     return super.isThisType(name, open);
   }
 
