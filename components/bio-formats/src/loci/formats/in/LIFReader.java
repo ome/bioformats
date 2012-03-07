@@ -725,7 +725,7 @@ public class LIFReader extends FormatReader {
             nextDetector - firstDetector < detectors.size())
           {
             String detectorID = MetadataTools.createLSID(
-              "Detector", i, nextDetector - firstDetector);
+              "Detector", i, nextDetector);
             store.setDetectorSettingsID(detectorID, i, c);
             nextDetector++;
 
@@ -973,6 +973,8 @@ public class LIFReader extends FormatReader {
     int nextChannel = 0;
     for (int definition=0; definition<definitions.getLength(); definition++) {
       Element definitionNode = (Element) definitions.item(definition);
+      String parentName = definitionNode.getParentNode().getNodeName();
+      boolean isMaster = parentName.endsWith("Master");
       NodeList detectors = getNodes(definitionNode, "Detector");
       if (detectors == null) return;
 
@@ -1029,16 +1031,18 @@ public class LIFReader extends FormatReader {
             channels.add("");
           }
 
-          if (channel < nextChannel) {
-            nextChannel = 0;
-          }
+          if (!isMaster) {
+            if (channel < nextChannel) {
+              nextChannel = 0;
+            }
 
-          if (nextChannel < getEffectiveSizeC()) {
-            gains[image][nextChannel] = gain;
-            detectorOffsets[image][nextChannel] = offset;
-          }
+            if (nextChannel < getEffectiveSizeC()) {
+              gains[image][nextChannel] = gain;
+              detectorOffsets[image][nextChannel] = offset;
+            }
 
-          nextChannel++;
+            nextChannel++;
+          }
         }
 
         if (active) {
