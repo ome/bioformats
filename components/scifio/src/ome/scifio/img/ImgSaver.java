@@ -34,20 +34,33 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import ome.xml.model.enums.DimensionOrder;
+import ome.xml.model.enums.EnumerationException;
+import ome.xml.model.enums.PixelType;
+import ome.xml.model.primitives.PositiveInteger;
+
 import net.imglib2.img.Img;
 import net.imglib2.img.ImgPlus;
 import net.imglib2.img.basictypeaccess.PlanarAccess;
+import net.imglib2.img.planar.PlanarImg;
+import net.imglib2.meta.AxisType;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.RealType;
 
+import loci.common.DataTools;
 import loci.common.StatusEvent;
 import loci.common.StatusListener;
 import loci.common.StatusReporter;
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceFactory;
 import loci.formats.FormatException;
+import loci.formats.FormatTools;
 import loci.formats.IFormatWriter;
 import loci.formats.ImageWriter;
 import loci.formats.MetadataTools;
 import loci.formats.meta.IMetadata;
+import loci.formats.meta.MetadataRetrieve;
+import loci.formats.services.OMEXMLService;
 
 /**
  * Writes out an {@link ImgPlus} using Bio-Formats
@@ -59,41 +72,63 @@ import loci.formats.meta.IMetadata;
 
 public class ImgSaver implements StatusReporter {
 
-  //TODO Status messages
-  
-  //TODO determine if working with planar images
-  
+  //TODO update "source" metadata field if save as...
+
+  // -- Constants --
+
   // -- Fields --
-  
+
   private final List<StatusListener> listeners =
     new ArrayList<StatusListener>();
-  
-  // -- ImgSaver methods --
-  
-  /**
-   * @throws ImgIOException 
-   * @throws IOException 
-   * @throws FormatException 
-   * 
-   */
-  public <T extends RealType<T> & NativeType<T>> void saveImg(
-    final String id, final ImgPlus<T> img) throws ImgIOException  {
-    saveImg(initializeWriter(id), img);
+
+  private OMEXMLService omexmlService;
+
+  // -- Constructor --
+
+  public ImgSaver() {
+    omexmlService = createOMEXMLService();
   }
-  
+
+  // -- ImgSaver methods --
+
+  /**
+   * @param <T>
+   * @param id
+   * @param img
+   * @throws ImgIOException
+   */
+  public <T extends RealType<T> & NativeType<T>> void saveImg(final String id,
+    final Img<T> img) throws ImgIOException
+  {
+    saveImg(initializeWriter(id), ImgPlus.wrap(img));
+  }
+
   /**
    * 
    * @param <T>
+   * @param id
    * @param img
-   * @throws ImgIOException 
-   * @throws IOException 
-   * @throws FormatException 
+   * @throws ImgIOException
+   */
+  public <T extends RealType<T> & NativeType<T>> void saveImg(final String id,
+    final ImgPlus<T> img) throws ImgIOException
+  {
+    saveImg(initializeWriter(id), img);
+  }
+
+  /**
+   * 
+   * @param <T>
+   * @param w
+   * @param img
+   * @throws ImgIOException
    */
   public <T extends RealType<T> & NativeType<T>> void saveImg(
-    final String id, final Img<T> img) throws ImgIOException  {
-    saveImg(id, ImgPlus.wrap(img));
+    final IFormatWriter w, final Img<T> img) throws ImgIOException
+  {
+    saveImg(w, ImgPlus.wrap(img));
   }
-  
+
   /**
    * 
    * @param <T>
@@ -101,22 +136,26 @@ public class ImgSaver implements StatusReporter {
    * @param img
    * @throws ImgIOException 
    */
-  public <T extends RealType<T> & NativeType<T>> void saveImg(final IFormatWriter w, 
-    final ImgPlus<T> img) throws ImgIOException {
-    
+  public <T extends RealType<T> & NativeType<T>> void saveImg(
+    final IFormatWriter w, final ImgPlus<T> img) throws ImgIOException
+  {
+
+    // use the ImgPlus to calculate necessary metadata
+    populateMeta(w, img);
+
+    final long startTime = System.currentTimeMillis();
+    final String id = img.getName();
+    final int planeCount = img.numDimensions();
+
     // write pixels
-   final long startTime = System.currentTimeMillis();
-   final String id = img.getName();
-   final int planeCount = img.numDimensions();
+    writePlanes(w, img);
 
-   writePlanes(w, img);
-
-   final long endTime = System.currentTimeMillis();
-   final float time = (endTime - startTime) / 1000f;
-   notifyListeners(new StatusEvent(planeCount, planeCount, id + 
-     ": wrote " + planeCount + " planes in " + time + " s"));
+    final long endTime = System.currentTimeMillis();
+    final float time = (endTime - startTime) / 1000f;
+    notifyListeners(new StatusEvent(planeCount, planeCount, id + ": wrote " +
+      planeCount + " planes in " + time + " s"));
   }
-  
+
   // -- StatusReporter methods --
 
   /** Adds a listener to those informed when progress occurs. */
@@ -140,16 +179,79 @@ public class ImgSaver implements StatusReporter {
         l.statusUpdated(e);
     }
   }
-  
+
   // -- Helper Methods --
-  
-  private <T extends RealType<T>> void writePlanes(IFormatWriter w, ImgPlus<T> img) throws ImgIOException {
+
+  /**
+   * Iterates through the planes of the provided {@link ImgPlus}, converting each to a 
+   * byte[] if necessary (the Bio-Formats writer requires a byte[]) and saving the
+   * plane.
+   * 
+   * Currently only {@link PlanarImg} is supported
+   */
+  @SuppressWarnings("unchecked")
+  private <T extends RealType<T> & NativeType<T>> void writePlanes(
+    final IFormatWriter w, final ImgPlus<T> img) throws ImgIOException
+  {
     final PlanarAccess<?> planarAccess = ImgIOUtils.getPlanarAccess(img);
-    if(planarAccess == null) {
-      throw new ImgIOException(new FormatException(), "Only Planar images supported at this time.");
+    if (planarAccess == null) {
+      throw new ImgIOException("Only Planar images supported at this time.");
     }
-    
-    
+
+    final PlanarImg<T, ?> planarImg = (PlanarImg<T, ?>) planarAccess;
+    final int planeCount = planarImg.numSlices();
+
+    if (img.numDimensions() > 0) {
+      final Class<?> arrayType = planarAccess.getPlane(0).getClass();
+
+      byte[] plane = null;
+
+      // iterate over each plane
+      for (int planeIndex = 0; planeIndex < planeCount; planeIndex++) {
+        notifyListeners(new StatusEvent(
+          planeIndex, planeCount, "Saving plane " + (planeIndex + 1) + "/" +
+            planeCount));
+
+        Object curPlane = planarAccess.getPlane(planeIndex);
+
+        // Convert current plane if necessary
+        if (arrayType == int[].class) {
+          plane = DataTools.intsToBytes((int[]) curPlane, false);
+        }
+        else if (arrayType == byte[].class) {
+          plane = (byte[]) curPlane;
+        }
+        else if (arrayType == short[].class) {
+          plane = DataTools.shortsToBytes((short[]) curPlane, false);
+        }
+        else if (arrayType == long[].class) {
+          plane = DataTools.longsToBytes((long[]) curPlane, false);
+        }
+        else if (arrayType == double[].class) {
+          plane = DataTools.doublesToBytes((double[]) curPlane, false);
+        }
+        else if (arrayType == float[].class) {
+          plane = DataTools.floatsToBytes((float[]) curPlane, false);
+        }
+        else {
+          throw new ImgIOException(
+            "PlanarImgs of type boolean or char not supported.");
+        }
+
+        // save bytes
+        try {
+          w.saveBytes(0, plane);
+        }
+        catch (FormatException e) {
+          throw new ImgIOException(e);
+        }
+        catch (IOException e) {
+          throw new ImgIOException(e);
+        }
+      }
+
+    }
+
     try {
       w.close();
     }
@@ -157,12 +259,18 @@ public class ImgSaver implements StatusReporter {
       throw new ImgIOException(e);
     }
   }
-  
-  private IFormatWriter initializeWriter(String id) throws ImgIOException {
-    IFormatWriter writer = new ImageWriter();
+
+  /**
+   *  Creates a new {@link IFormatWriter} with an unpopulated MetadataStore
+   *  and sets its id to the provided String. 
+   */
+  private IFormatWriter initializeWriter(final String id) throws ImgIOException
+  {
+    final IFormatWriter writer = new ImageWriter();
     final IMetadata store = MetadataTools.createOMEXMLMetadata();
+    store.createRoot();
     writer.setMetadataRetrieve(store);
-    
+
     try {
       writer.setId(id);
     }
@@ -172,7 +280,106 @@ public class ImgSaver implements StatusReporter {
     catch (IOException e) {
       throw new ImgIOException(e);
     }
-    
+
     return writer;
+  }
+
+  /**
+   * Uses the provided {@link ImgPlus} to populate the minimum metadata
+   *  fields necessary for writing.
+   * 
+   */
+  private <T extends RealType<T> & NativeType<T>> void populateMeta(
+    final IFormatWriter w, final ImgPlus<T> img) throws ImgIOException
+  {
+    //TODO image numbers? or are all imgPluses just a single image?
+
+    notifyListeners(new StatusEvent("Initializing " + img.getName()));
+
+    final MetadataRetrieve retrieve = w.getMetadataRetrieve();
+
+    if (omexmlService == null)
+      throw new ImgIOException(
+        "No OMEXMLService found. Invoke ImgSaver constructor first.");
+
+    // make sure we can store information in the writer's MetadataObject
+    if (omexmlService.asStore(retrieve) != null) {
+      final IMetadata meta = (IMetadata) retrieve;
+
+      // set required metadata
+
+      final int pixelType = ImgIOUtils.makeType(img.firstElement());
+      try {
+        meta.setPixelsType(
+          PixelType.fromString(FormatTools.getPixelTypeString(pixelType)), 0);
+      }
+      catch (EnumerationException e) {
+        throw new ImgIOException(e);
+      }
+
+      meta.setImageID("Image:0", 0);
+      meta.setPixelsID("Pixels:0", 0);
+      meta.setPixelsBinDataBigEndian(true, 0, 0);
+
+      final AxisType[] axes = new AxisType[img.numDimensions()];
+      img.axes(axes);
+
+      String dimOrder = "";
+
+      // if size C, Z, T and dimension order are populated we won't overwrite them.
+
+      for (int i = 0; i < axes.length; i++) {
+        switch (axes[i].getLabel().toLowerCase().charAt(0)) {
+          case 'x':
+            meta.setPixelsSizeX(
+              new PositiveInteger(new Long(img.dimension(i)).intValue()), 0);
+            dimOrder += "X";
+            break;
+          case 'y':
+            meta.setPixelsSizeY(
+              new PositiveInteger(new Long(img.dimension(i)).intValue()), 0);
+            dimOrder += "Y";
+            break;
+          case 'z':
+            if (meta.getPixelsSizeZ(0) == null)
+              meta.setPixelsSizeZ(new PositiveInteger(
+                new Long(img.dimension(i)).intValue()), 0);
+            dimOrder += "Z";
+            break;
+          case 'c':
+            if (meta.getPixelsSizeC(0) == null)
+              meta.setPixelsSizeC(new PositiveInteger(
+                new Long(img.dimension(i)).intValue()), 0);
+            dimOrder += "C";
+            break;
+          case 't':
+            if (meta.getPixelsSizeT(0) == null)
+              meta.setPixelsSizeT(new PositiveInteger(
+                new Long(img.dimension(i)).intValue()), 0);
+            dimOrder += "T";
+            break;
+        }
+      }
+
+      if (meta.getPixelsDimensionOrder(0) == null) try {
+        meta.setPixelsDimensionOrder(DimensionOrder.fromString(dimOrder), 0);
+      }
+      catch (EnumerationException e) {
+        throw new ImgIOException(e);
+      }
+
+      meta.setChannelID("Channel:0:0", 0, 0);
+      meta.setChannelSamplesPerPixel(
+        new PositiveInteger(img.getCompositeChannelCount()), 0, 0);
+    }
+  }
+
+  private OMEXMLService createOMEXMLService() {
+    try {
+      return new ServiceFactory().getInstance(OMEXMLService.class);
+    }
+    catch (DependencyException exc) {
+      return null;
+    }
   }
 }
