@@ -46,5 +46,9 @@ public class ImgIOException extends ImgLibException {
 	public ImgIOException(final Throwable t) {
 		super(t);
 	}
+	
+	public ImgIOException(final String s) {
+	  super(s);
+	}
 
 }
