@@ -205,10 +205,6 @@ public class MRCReader extends FormatReader {
       ySize = (in.readFloat() / my) / 10000.0;
       zSize = (in.readFloat() / mz) / 10000.0;
 
-      if (xSize == Double.POSITIVE_INFINITY) xSize = 1;
-      if (ySize == Double.POSITIVE_INFINITY) ySize = 1;
-      if (zSize == Double.POSITIVE_INFINITY) zSize = 1;
-
       addGlobalMeta("Pixel size (X)", xSize);
       addGlobalMeta("Pixel size (Y)", ySize);
       addGlobalMeta("Pixel size (Z)", zSize);
