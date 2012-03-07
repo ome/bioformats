@@ -186,6 +186,37 @@ public final class ImgIOUtils extends ImgLibException {
     }
     return (T) type;
   }
+  
+  /** Converts imglib Type object to Bio-Formats pixel type. */
+  public static <T extends RealType<T>> int makeType(final T type) {
+    int pixelType = FormatTools.UINT8;
+    if(type instanceof UnsignedByteType) {
+      pixelType = FormatTools.UINT8;
+    }
+    else if(type instanceof ByteType) {
+      pixelType = FormatTools.INT8;
+    }
+    else if(type instanceof UnsignedShortType) {
+      pixelType = FormatTools.UINT16;
+    }
+    else if(type instanceof ShortType) {
+      pixelType = FormatTools.INT16;
+    }
+    else if(type instanceof UnsignedIntType) {
+      pixelType = FormatTools.UINT32;
+    }
+    else if(type instanceof IntType) {
+      pixelType = FormatTools.INT32;
+    }
+    else if(type instanceof FloatType) {
+      pixelType = FormatTools.FLOAT;
+    }
+    else if(type instanceof DoubleType) {
+      pixelType = FormatTools.DOUBLE;
+    }
+    
+    return pixelType;
+  }
 
   /** Wraps raw primitive array in imglib Array object. */
   public static ArrayDataAccess<?> makeArray(final Object array) {
