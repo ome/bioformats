@@ -684,26 +684,32 @@ public class LIFReader extends FormatReader {
       Vector detectors = detectorModels[i];
       if (detectors != null) {
         nextChannel = 0;
-        for (int detector=0; detector<detectors.size(); detector++) {
-          String detectorID = MetadataTools.createLSID("Detector", i, detector);
-          store.setDetectorID(detectorID, i, detector);
-          store.setDetectorModel((String) detectors.get(detector), i, detector);
+        int start = detectors.size() - getEffectiveSizeC();
+        if (start < 0) {
+          start = 0;
+        }
+        for (int detector=start; detector<detectors.size(); detector++) {
+          int dIndex = detector - start;
+          String detectorID = MetadataTools.createLSID("Detector", i, dIndex);
+          store.setDetectorID(detectorID, i, dIndex);
+          store.setDetectorModel((String) detectors.get(detector), i, dIndex);
 
-          store.setDetectorZoom(zooms[i], i, detector);
-          store.setDetectorType(DetectorType.PMT, i, detector);
-          if (voltages[i] != null && detector < voltages[i].size()) {
+          store.setDetectorZoom(zooms[i], i, dIndex);
+          store.setDetectorType(DetectorType.PMT, i, dIndex);
+          if (voltages[i] != null && dIndex < voltages[i].size()) {
             store.setDetectorVoltage(
-              (Double) voltages[i].get(detector), i, detector);
+              (Double) voltages[i].get(dIndex), i, dIndex);
           }
 
           if (activeDetector[i] != null) {
-            if (detector < activeDetector[i].size() &&
-              (Boolean) activeDetector[i].get(detector) &&
+            int index = activeDetector[i].size() - getEffectiveSizeC() + dIndex;
+            if (index < activeDetector[i].size() &&
+              (Boolean) activeDetector[i].get(index) &&
               detectorOffsets[i] != null &&
               nextChannel < detectorOffsets[i].length)
             {
               store.setDetectorOffset(
-                detectorOffsets[i][nextChannel++], i, detector);
+                detectorOffsets[i][nextChannel++], i, dIndex);
             }
           }
         }
