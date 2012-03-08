@@ -49,11 +49,14 @@ import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.RealType;
 
 import loci.common.DataTools;
+import loci.common.Location;
 import loci.common.StatusEvent;
 import loci.common.StatusListener;
 import loci.common.StatusReporter;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceFactory;
+import loci.formats.AxisGuesser;
+import loci.formats.FilePattern;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.IFormatWriter;
@@ -259,7 +262,7 @@ public class ImgSaver implements StatusReporter {
 
         // save bytes
         try {
-          w.saveBytes(0, plane);
+          w.saveBytes(planeIndex, plane);
         }
         catch (FormatException e) {
           throw new ImgIOException(e);
