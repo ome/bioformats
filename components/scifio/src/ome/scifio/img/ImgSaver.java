@@ -34,29 +34,22 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import ome.xml.model.enums.DimensionOrder;
-import ome.xml.model.enums.EnumerationException;
-import ome.xml.model.enums.PixelType;
-import ome.xml.model.primitives.PositiveInteger;
-
+import net.imglib2.exception.ImgLibException;
+import net.imglib2.exception.IncompatibleTypeException;
 import net.imglib2.img.Img;
 import net.imglib2.img.ImgPlus;
 import net.imglib2.img.basictypeaccess.PlanarAccess;
-import net.imglib2.img.basictypeaccess.array.ArrayDataAccess;
 import net.imglib2.img.planar.PlanarImg;
 import net.imglib2.meta.AxisType;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.RealType;
 
 import loci.common.DataTools;
-import loci.common.Location;
 import loci.common.StatusEvent;
 import loci.common.StatusListener;
 import loci.common.StatusReporter;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceFactory;
-import loci.formats.AxisGuesser;
-import loci.formats.FilePattern;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.IFormatWriter;
@@ -76,10 +69,6 @@ import loci.formats.services.OMEXMLService;
 
 public class ImgSaver implements StatusReporter {
 
-  //TODO update "source" metadata field if save as...
-  
-  //TODO convert ImgIOExceptions with IncompatibleTypeExceptions where applicable
-
   // -- Constants --
 
   // -- Fields --
@@ -98,70 +87,82 @@ public class ImgSaver implements StatusReporter {
   // -- ImgSaver methods --
 
   /**
-   * id and Img provided.
+   * saveImg is the entry point for saving an {@link ImgPlus}
+   * The goal is to get to an {@link IFormatWriter} and {@link ImgPlus}
+   * which are then passed to writePlanes.
+   * These saveImg signatures facilitate multiple pathways to that goal.
+   * 
+   * This method is called when a String id and {@linl Img} are provided.
    * 
    * @param <T>
    * @param id
    * @param img
    * @throws ImgIOException
+   * @throws IncompatibleTypeException 
    */
   public <T extends RealType<T> & NativeType<T>> void saveImg(final String id,
-    final Img<T> img) throws ImgIOException
+    final Img<T> img) throws ImgIOException, IncompatibleTypeException
   {
     saveImg(id, ImgPlus.wrap(img));
   }
 
   /**
-   * id provided.
-   * ImgPlus provided or wrapped Img.
+   * String id provided.
+   * {@link ImgPlus} provided, or wrapped {@link Img} in previous saveImg.
    * 
    * @param <T>
    * @param id
    * @param img
    * @throws ImgIOException
+   * @throws IncompatibleTypeException 
    */
   public <T extends RealType<T> & NativeType<T>> void saveImg(final String id,
-    final ImgPlus<T> img) throws ImgIOException
+    final ImgPlus<T> img) throws ImgIOException, IncompatibleTypeException
   {
     saveImg(initializeWriter(id, img), img, false);
   }
 
   /**
-   * Writer and Img provided
+   * {@link IFormatWriter} and {@link Img} provided
    * 
    * @param <T>
    * @param w
    * @param img
    * @throws ImgIOException
+   * @throws IncompatibleTypeException 
    */
   public <T extends RealType<T> & NativeType<T>> void saveImg(
-    final IFormatWriter w, final Img<T> img) throws ImgIOException
+    final IFormatWriter w, final Img<T> img)
+    throws ImgIOException, IncompatibleTypeException
   {
     saveImg(w, ImgPlus.wrap(img));
   }
 
   /**
-   * Writer provided.
-   * ImgPlus provided, or wrapped provided Img.
+   * {@link IFormatWriter} provided.
+   * {@link ImgPlus} provided, or wrapped provided {@link Img}.
    * 
    * @param <T>
    * @param w
    * @param img
    * @throws ImgIOException 
+   * @throws IncompatibleTypeException 
    */
   public <T extends RealType<T> & NativeType<T>> void saveImg(
-    final IFormatWriter w, final ImgPlus<T> img) throws ImgIOException
+    final IFormatWriter w, final ImgPlus<T> img)
+    throws ImgIOException, IncompatibleTypeException
   {
     saveImg(w, img, true);
   }
-  
+
   /* Entry point for writePlanes method, the actual workhorse to save pixels to disk */
   private <T extends RealType<T> & NativeType<T>> void saveImg(
-    final IFormatWriter w, final ImgPlus<T> img, final boolean initializeWriter) throws ImgIOException
-    {
-    
+    final IFormatWriter w, final ImgPlus<T> img, final boolean initializeWriter)
+    throws ImgIOException, IncompatibleTypeException
+  {
+
     // use the ImgPlus to calculate necessary metadata if 
-    if(initializeWriter) {
+    if (initializeWriter) {
       populateMeta(w, img);
     }
 
@@ -176,7 +177,7 @@ public class ImgSaver implements StatusReporter {
     final float time = (endTime - startTime) / 1000f;
     notifyListeners(new StatusEvent(planeCount, planeCount, id + ": wrote " +
       planeCount + " planes in " + time + " s"));
-    }
+  }
 
   // -- StatusReporter methods --
 
@@ -210,21 +211,25 @@ public class ImgSaver implements StatusReporter {
    * plane.
    * 
    * Currently only {@link PlanarImg} is supported
+   * @throws IncompatibleTypeException 
    */
   @SuppressWarnings("unchecked")
   private <T extends RealType<T> & NativeType<T>> void writePlanes(
-    final IFormatWriter w, final ImgPlus<T> img) throws ImgIOException
+    final IFormatWriter w, final ImgPlus<T> img)
+    throws ImgIOException, IncompatibleTypeException
   {
     final PlanarAccess<?> planarAccess = ImgIOUtils.getPlanarAccess(img);
     if (planarAccess == null) {
-      throw new ImgIOException("Only Planar images supported at this time.");
+      throw new IncompatibleTypeException(new ImgLibException(), "Only " +
+        PlanarAccess.class + " images supported at this time.");
     }
 
     final PlanarImg<T, ?> planarImg = (PlanarImg<T, ?>) planarAccess;
     final int planeCount = planarImg.numSlices();
 
     if (img.numDimensions() > 0) {
-      final Class<?> arrayType = planarImg.getPlane(0).getCurrentStorageArray().getClass();
+      final Class<?> arrayType =
+        planarImg.getPlane(0).getCurrentStorageArray().getClass();
 
       byte[] plane = null;
 
@@ -234,7 +239,8 @@ public class ImgSaver implements StatusReporter {
           planeIndex, planeCount, "Saving plane " + (planeIndex + 1) + "/" +
             planeCount));
 
-        Object curPlane = planarImg.getPlane(planeIndex).getCurrentStorageArray();
+        Object curPlane =
+          planarImg.getPlane(planeIndex).getCurrentStorageArray();
 
         // Convert current plane if necessary
         if (arrayType == int[].class) {
@@ -256,8 +262,9 @@ public class ImgSaver implements StatusReporter {
           plane = DataTools.floatsToBytes((float[]) curPlane, false);
         }
         else {
-          throw new ImgIOException(
-            "PlanarImgs of type boolean or char not supported.");
+          throw new IncompatibleTypeException(
+            new ImgLibException(), "PlanarImgs of type " +
+              planarImg.getPlane(0).getClass() + " not supported.");
         }
 
         // save bytes
@@ -285,6 +292,7 @@ public class ImgSaver implements StatusReporter {
   /**
    *  Creates a new {@link IFormatWriter} with an unpopulated MetadataStore
    *  and sets its id to the provided String. 
+   * @throws IncompatibleTypeException 
    */
   private <T extends RealType<T> & NativeType<T>> IFormatWriter initializeWriter(
     final String id, final ImgPlus<T> img) throws ImgIOException
@@ -293,9 +301,9 @@ public class ImgSaver implements StatusReporter {
     final IMetadata store = MetadataTools.createOMEXMLMetadata();
     store.createRoot();
     writer.setMetadataRetrieve(store);
-    
+
     populateMeta(writer, img);
-    
+
     try {
       writer.setId(id);
     }
@@ -312,13 +320,12 @@ public class ImgSaver implements StatusReporter {
   /**
    * Uses the provided {@link ImgPlus} to populate the minimum metadata
    *  fields necessary for writing.
+   * @throws IncompatibleTypeException 
    * 
    */
   private <T extends RealType<T> & NativeType<T>> void populateMeta(
     final IFormatWriter w, final ImgPlus<T> img) throws ImgIOException
   {
-    //TODO image numbers? or are all imgPluses just a single image?
-
     notifyListeners(new StatusEvent("Initializing " + img.getName()));
 
     final MetadataRetrieve retrieve = w.getMetadataRetrieve();
