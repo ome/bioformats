@@ -544,16 +544,13 @@ public class LIFReader extends FormatReader {
       store.setObjectiveModel(objectiveModels[i], i, 0);
 
       if (cutIns[i] != null) {
+        int channel = 0;
         for (int filter=0; filter<cutIns[i].size(); filter++) {
           String filterID = MetadataTools.createLSID("Filter", i, filter);
           store.setFilterID(filterID, i, filter);
           if (filter < filterModels[i].size()) {
             store.setFilterModel(
               (String) filterModels[i].get(filter), i, filter);
-          }
-          int channel = filter - (cutIns[i].size() - getEffectiveSizeC());
-          if (channel >= 0 && channel < getEffectiveSizeC()) {
-            //store.setLightPathEmissionFilterRef(filterID, i, channel, 0);
           }
           store.setTransmittanceRangeCutIn(
             (PositiveInteger) cutIns[i].get(filter), i, filter);
@@ -613,6 +610,7 @@ public class LIFReader extends FormatReader {
           }
         }
 
+        int nextFilter = cutIns[i].size() - getEffectiveSizeC();
         for (int k=start; k<validIntensities.size(); k++, nextChannel++) {
           int index = validIntensities.get(k);
           double intensity = (Double) laserIntensities.get(index);
@@ -633,6 +631,28 @@ public class LIFReader extends FormatReader {
               if (wavelength > 0) {
                 store.setChannelExcitationWavelength(
                   new PositiveInteger(wavelength), i, nextChannel);
+
+                if (nextFilter >= cutIns[i].size()) {
+                  continue;
+                }
+                Integer cutIn =
+                  ((PositiveInteger) cutIns[i].get(nextFilter)).getValue();
+                while (cutIn - wavelength > 20) {
+                  nextFilter++;
+                  if (nextFilter < cutIns[i].size()) {
+                    cutIn =
+                      ((PositiveInteger) cutIns[i].get(nextFilter)).getValue();
+                  }
+                  else {
+                    break;
+                  }
+                }
+                if (nextFilter < cutIns[i].size()) {
+                  String fid =
+                    MetadataTools.createLSID("Filter", i, nextFilter);
+                  store.setLightPathEmissionFilterRef(fid, i, nextChannel, 0);
+                  nextFilter++;
+                }
               }
               else {
                 LOGGER.warn(
@@ -720,6 +740,14 @@ public class LIFReader extends FormatReader {
         activeDetectors.size() - getEffectiveSizeC();
       int nextDetector = firstDetector;
 
+      int nextFilter = -1;
+      if (filterModels[i] != null) {
+        nextFilter = (int) Math.max(filterModels[i].size(),
+          cutIns[i].size() - getEffectiveSizeC());
+        if (filterModels[i].size() == cutIns[i].size()) {
+          nextFilter = 0;
+        }
+      }
       for (int c=0; c<getEffectiveSizeC(); c++) {
         if (activeDetectors != null) {
           while (nextDetector >= 0 && nextDetector < activeDetectors.size() &&
@@ -766,6 +794,12 @@ public class LIFReader extends FormatReader {
 
         int channelColor = getChannelColor(realChannel[i][c]);
         store.setChannelColor(channelColor, i, c);
+
+        if (channelColor != -1 && nextFilter >= 0) {
+          String filterID = MetadataTools.createLSID("Filter", i, nextFilter);
+          store.setLightPathEmissionFilterRef(filterID, i, c, 0);
+          nextFilter++;
+        }
       }
 
       for (int image=0; image<getImageCount(); image++) {
