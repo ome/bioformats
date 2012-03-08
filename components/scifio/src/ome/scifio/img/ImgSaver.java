@@ -348,55 +348,82 @@ public class ImgSaver implements StatusReporter {
       String dimOrder = "";
 
       int sizeX = 0, sizeY = 0, sizeZ = -1, sizeC = -1, sizeT = -1;
-      
+
+      boolean sawKnown = false;
+      boolean sawUnknown = false;
+
       // parse dimension order and lengths
       for (int i = 0; i < axes.length; i++) {
         switch (axes[i].getLabel().toLowerCase().charAt(0)) {
           case 'x':
+            sawKnown = true;
             sizeX = new Long(img.dimension(i)).intValue();
             dimOrder += "X";
             break;
           case 'y':
+            sawKnown = true;
             sizeY = new Long(img.dimension(i)).intValue();
             dimOrder += "Y";
             break;
           case 'z':
+            sawKnown = true;
             sizeZ = new Long(img.dimension(i)).intValue();
             dimOrder += "Z";
             break;
           case 'c':
+            sawKnown = true;
             sizeC = new Long(img.dimension(i)).intValue();
             dimOrder += "C";
             break;
           case 't':
+            sawKnown = true;
             sizeT = new Long(img.dimension(i)).intValue();
             dimOrder += "T";
             break;
+          default:
+            if (sawKnown && sawUnknown == true)
+              throw new ImgIOException(
+                "Plane order error: non-sequential unknown axes discovered.");
+
+            int length = new Long(img.dimension(i)).intValue();
+
+            if (sizeC == -1) {
+              dimOrder += "C";
+              sizeC = 1;
+            }
+
+            if (length > 1) {
+              sizeC *= length;
+              sawUnknown = true;
+              sawKnown = false;
+            }
         }
       }
-      
+
       //TODO if size C, Z, T and dimension order are populated we won't overwrite them.
       /*
-     if(meta.getPixelsSizeZ(0) == null) sizeZ = meta.getPixelsSizeZ(0).getValue();
-     if(meta.getPixelsSizeC(0) == null) sizeC = meta.getPixelsSizeC(0).getValue();
-     if(meta.getPixelsSizeT(0) == null) sizeT = meta.getPixelsSizeT(0).getValue();
+      if(meta.getPixelsSizeZ(0) == null) sizeZ = meta.getPixelsSizeZ(0).getValue();
+      if(meta.getPixelsSizeC(0) == null) sizeC = meta.getPixelsSizeC(0).getValue();
+      if(meta.getPixelsSizeT(0) == null) sizeT = meta.getPixelsSizeT(0).getValue();
       */
-      
-      //TODO guess at dimension order..
-      if(sizeZ == -1) {
-        dimOrder += "Z"; 
+
+      if (sizeZ == -1) {
+        dimOrder += "Z";
         sizeZ = 1;
       }
-      if(sizeT == -1) {
-        dimOrder += "T"; 
+      if (sizeT == -1) {
+        dimOrder += "T";
         sizeT = 1;
       }
-      if(sizeC == -1) {
-        dimOrder += "C"; 
+      if (sizeC == -1) {
+        dimOrder += "C";
         sizeC = 1;
       }
-      
-      MetadataTools.populateMetadata(meta, 0, img.getName(), false, dimOrder, FormatTools.getPixelTypeString(pixelType), sizeX, sizeY, sizeZ, sizeC, sizeT, img.getCompositeChannelCount());
+
+      MetadataTools.populateMetadata(
+        meta, 0, img.getName(), false, dimOrder,
+        FormatTools.getPixelTypeString(pixelType), sizeX, sizeY, sizeZ, sizeC,
+        sizeT, img.getCompositeChannelCount());
     }
   }
 
