@@ -30,6 +30,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 package ome.scifio.img;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -119,6 +120,8 @@ public class ImgSaver implements StatusReporter {
   public <T extends RealType<T> & NativeType<T>> void saveImg(final String id,
     final ImgPlus<T> img) throws ImgIOException, IncompatibleTypeException
   {
+    img.setSource(id);
+    img.setName(new File(id).getName());
     saveImg(initializeWriter(id, img), img, false);
   }
 
@@ -138,6 +141,8 @@ public class ImgSaver implements StatusReporter {
     saveImg(w, ImgPlus.wrap(img));
   }
 
+  //TODO IFormatHandler needs to be promoted to be able to get the current file, to get its full path, to provide the ImgPlus
+  // pending that, these two IFormatWriter methods are not guaranteed to be useful
   /**
    * {@link IFormatWriter} provided.
    * {@link ImgPlus} provided, or wrapped provided {@link Img}.
@@ -166,8 +171,11 @@ public class ImgSaver implements StatusReporter {
       populateMeta(w, img);
     }
 
+    if (img.getSource().isEmpty())
+      throw new ImgIOException("Provided Image has no attached source.");
+
     final long startTime = System.currentTimeMillis();
-    final String id = img.getName();
+    final String id = img.getSource();
     final int planeCount = img.numDimensions();
 
     // write pixels
@@ -215,7 +223,7 @@ public class ImgSaver implements StatusReporter {
    */
   @SuppressWarnings("unchecked")
   private <T extends RealType<T> & NativeType<T>> void writePlanes(
-    final IFormatWriter w, final ImgPlus<T> img)
+    IFormatWriter w, final ImgPlus<T> img)
     throws ImgIOException, IncompatibleTypeException
   {
     final PlanarAccess<?> planarAccess = ImgIOUtils.getPlanarAccess(img);
@@ -232,6 +240,19 @@ public class ImgSaver implements StatusReporter {
         planarImg.getPlane(0).getCurrentStorageArray().getClass();
 
       byte[] plane = null;
+
+      // If we know this image will pass to Bio-Formats to be saved, delete the old file if it exists
+      if (arrayType == int[].class || arrayType == byte[].class ||
+        arrayType == short[].class || arrayType == long[].class ||
+        arrayType == double[].class || arrayType == float[].class)
+      {
+        File f = new File(img.getSource());
+        if (f.exists()) {
+          f.delete();
+          w = initializeWriter(img.getSource(), img);
+          populateMeta(w, img);
+        }
+      }
 
       // iterate over each plane
       for (int planeIndex = 0; planeIndex < planeCount; planeIndex++) {
