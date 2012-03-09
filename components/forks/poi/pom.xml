@@ -7,8 +7,9 @@
 
   <parent>
     <groupId>loci</groupId>
-    <artifactId>bio-formats-base</artifactId>
+    <artifactId>pom-scifio</artifactId>
     <version>4.4-SNAPSHOT</version>
+    <relativePath>../../..</relativePath>
   </parent>
 
   <artifactId>poi-loci</artifactId>
