@@ -93,7 +93,7 @@ public class UpgradeChecker {
   /** Properties that are sent to the OME registry. */
   private static final String[] REGISTRY_PROPERTIES = new String[] {
     "version", "os.name", "os.version", "os.arch", "java.runtime.version",
-    "java.vm.vendor"
+    "java.vm.vendor", "bioformats.class"
   };
 
   /** System property to set once the upgrade check is performed. */
@@ -163,6 +163,9 @@ public class UpgradeChecker {
     }
 
     // build the registry query
+
+    StackTraceElement[] trace = Thread.currentThread().getStackTrace();
+    System.setProperty("bioformats.class", trace[1].getClassName());
 
     StringBuffer query = new StringBuffer(REGISTRY);
     for (int i=0; i<REGISTRY_PROPERTIES.length; i++) {
