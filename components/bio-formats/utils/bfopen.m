@@ -97,6 +97,7 @@ stitchFiles = 0;
 
 % -- Main function - no need to edit anything past this point --
 
+% prompt for a file to open, if one was not specified
 if exist('id') == 0
   dir = uigetdir;
   cd(dir);
@@ -126,6 +127,24 @@ isBioFormatsTrunk = versionCheck(bioFormatsVersion, 5, 0);
 
 % initialize logging
 loci.common.DebugTools.enableLogging('INFO');
+
+% check for a new version, if we haven't done so already
+upgrader = loci.formats.UpgradeChecker();
+if ~upgrader.alreadyChecked()
+  canUpgrade = upgrader.newVersionAvailable();
+  autoDownload = 0;
+  if canUpgrade
+    fprintf('*** A new stable version of Bio-Formats is available ***');
+    if autoDownload
+      fprintf('*** Downloading... ***');
+      path = fullfile(fileparts(mfilename('fullpath')), 'loci_tools.jar');
+      upgrader.install(loci.formats.UpgraderChecker.STABLE_BUILD, path);
+      fprintf('*** Upgrade will be finished when MATLAB is restarted ***');
+    end
+  else
+    fprintf('*** loci_tools.jar is up-to-date ***');
+  end
+end
 
 r = loci.formats.ChannelFiller();
 r = loci.formats.ChannelSeparator(r);
