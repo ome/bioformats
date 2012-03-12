@@ -51,6 +51,7 @@ import loci.formats.MetadataTools;
 import loci.formats.MinMaxCalculator;
 import loci.formats.MissingLibraryException;
 import loci.formats.ReaderWrapper;
+import loci.formats.UpgradeChecker;
 import loci.formats.in.OMETiffReader;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataRetrieve;
@@ -605,6 +606,14 @@ public final class ImageConverter {
   // -- Main method --
 
   public static void main(String[] args) throws FormatException, IOException {
+    UpgradeChecker checker = new UpgradeChecker();
+    boolean canUpgrade = checker.newVersionAvailable();
+    if (canUpgrade) {
+      LOGGER.info("*** A new stable version is available. ***");
+      LOGGER.info("*** Install the new version using:     ***");
+      LOGGER.info("***   'upgradechecker -install'        ***");
+    }
+
     ImageConverter converter = new ImageConverter();
     if (!converter.testConvert(new ImageWriter(), args)) System.exit(1);
     System.exit(0);
