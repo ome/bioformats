@@ -96,6 +96,10 @@ public class UpgradeChecker {
     "java.vm.vendor"
   };
 
+  /** System property to set once the upgrade check is performed. */
+  private static final String UPGRADE_CHECK_PROPERTY =
+    "bioformats_upgrade_check";
+
   /** Number of bytes to read from the CI server at a time. */
   private static final int CHUNK_SIZE = 8192;
 
@@ -103,6 +107,18 @@ public class UpgradeChecker {
     LoggerFactory.getLogger(UpgradeChecker.class);
 
   // -- UpgradeChecker API methods --
+
+  /**
+   * Return true if an upgrade check has already been performed in this
+   * JVM session.
+   */
+  public boolean alreadyChecked() {
+    String checked = System.getProperty(UPGRADE_CHECK_PROPERTY);
+    if (checked == null) {
+      return false;
+    }
+    return Boolean.parseBoolean(checked);
+  }
 
   /**
    * Contact the OME registry and return true if a new version is available.
@@ -148,6 +164,8 @@ public class UpgradeChecker {
         }
       }
     }
+
+    System.setProperty(UPGRADE_CHECK_PROPERTY, "true");
 
     try {
       // connect to the registry
