@@ -100,6 +100,10 @@ public class UpgradeChecker {
   private static final String UPGRADE_CHECK_PROPERTY =
     "bioformats_upgrade_check";
 
+  /** System property indicating whether the upgrade check is ever allowed. */
+  private static final String UPGRADE_CHECK_ALLOWED_PROPERTY =
+    "bioformats_can_do_upgrade_check";
+
   /** Number of bytes to read from the CI server at a time. */
   private static final int CHUNK_SIZE = 8192;
 
@@ -121,6 +125,24 @@ public class UpgradeChecker {
   }
 
   /**
+   * Return whether or not we are ever allowed to perform an upgrade check.
+   */
+  public boolean canDoUpgradeCheck() {
+    String checked = System.getProperty(UPGRADE_CHECK_ALLOWED_PROPERTY);
+    if (checked == null) {
+      return true;
+    }
+    return Boolean.parseBoolean(checked);
+  }
+
+  /**
+   * Set whether or not we are ever allowed to perform an upgrade check.
+   */
+  public void setCanDoUpgradeCheck(boolean canDo) {
+    System.setProperty(UPGRADE_CHECK_ALLOWED_PROPERTY, String.valueOf(canDo));
+  }
+
+  /**
    * Contact the OME registry and return true if a new version is available.
    * OMERO.registry will identify this as a generic library usage of
    * Bio-Formats (i.e. not associated with a specific client application).
@@ -136,6 +158,10 @@ public class UpgradeChecker {
    *                  @see #REGISTRY_IMAGEJ, @see #REGISTRY_LIBRARY
    */
   public boolean newVersionAvailable(String registryID) {
+    if (!canDoUpgradeCheck()) {
+      return false;
+    }
+
     // build the registry query
 
     StringBuffer query = new StringBuffer(REGISTRY);
