@@ -351,13 +351,23 @@ public class ND2Handler extends DefaultHandler {
       }
     }
     else if ("LoopSize".equals(prevElement) && value != null) {
+      int v = Integer.parseInt(value);
+
       if (core[0].sizeT == 0) {
-        core[0].sizeT = Integer.parseInt(value);
+        core[0].sizeT = v;
+      }
+      else if (qName.equals("no_name") && v > 0 && core.length == 1) {
+        CoreMetadata previous = core[0];
+        core = new CoreMetadata[v];
+        for (int q=0; q<v; q++) {
+          core[q] = previous;
+        }
+        fieldIndex = 2;
       }
       else if (core[0].sizeZ == 0) {
-        core[0].sizeZ = Integer.parseInt(value);
+        core[0].sizeZ = v;
       }
-      core[0].dimensionOrder = "CTZ";
+      core[0].dimensionOrder = "CZT";
     }
     else if ("pPosName".equals(prevElement) && value != null) {
       posNames.add(value);
@@ -366,10 +376,14 @@ public class ND2Handler extends DefaultHandler {
       if (core[0].sizeZ == 0) {
         core[0].sizeZ = 1;
       }
-      core[0].sizeZ *= Integer.parseInt(value);
+      if (core.length == 1) {
+        core[0].sizeZ *= Integer.parseInt(value);
+      }
     }
     else if (qName.equals("FramesAfter")) {
-      core[0].sizeZ *= Integer.parseInt(value);
+      if (core.length == 1) {
+        core[0].sizeZ *= Integer.parseInt(value);
+      }
     }
     else if (qName.equals("TimeBefore")) {
       if (core[0].sizeT == 0) {
@@ -399,14 +413,16 @@ public class ND2Handler extends DefaultHandler {
     }
     else if (qName.equals("uiWidthBytes") || qName.equals("uiBpcInMemory")) {
       int div = qName.equals("uiWidthBytes") ? core[0].sizeX : 8;
-      int bytes = Integer.parseInt(value) / div;
+      if (div > 0) {
+        int bytes = Integer.parseInt(value) / div;
 
-      try {
-        core[0].pixelType =
-          FormatTools.pixelTypeFromBytes(bytes, false, false);
+        try {
+          core[0].pixelType =
+            FormatTools.pixelTypeFromBytes(bytes, false, false);
+        }
+        catch (FormatException e) { }
+        parseKeyAndValue(qName, value, prevRuntype);
       }
-      catch (FormatException e) { }
-      parseKeyAndValue(qName, value, prevRuntype);
     }
     else if ("dPosX".equals(prevElement) && qName.startsWith("item_")) {
       posX.add(new Double(DataTools.sanitizeDouble(value)));
@@ -442,7 +458,7 @@ public class ND2Handler extends DefaultHandler {
       parseKeyAndValue(qName, value, prevRuntype);
     }
     else if (qName.equals("dCompressionParam")) {
-      isLossless = Integer.parseInt(value) > 0;
+      isLossless = Double.parseDouble(value) > 0;
       parseKeyAndValue(qName, value, prevRuntype);
     }
     else if (qName.equals("CalibrationSeq") || qName.equals("MetadataSeq")) {
