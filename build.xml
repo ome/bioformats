@@ -308,7 +308,7 @@ Apache XML-RPC
     License:   Apache
 -->
 
-<project name="Bio-Formats" default="jars" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
+<project name="Bio-Formats" default="jars" basedir=".">
   <description>
     Master build file for all Java software projects at LOCI
   </description>

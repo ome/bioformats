@@ -1,5 +1,5 @@
 <ivy-module version="1.0">
-  <info organisation="ome" module="bio-formats" revision="4.3.3-DEV-ice33" status="integration" publication="20120228143140"/>
+  <info organisation="ome" module="bio-formats" status="integration"/>
   <configurations>
     <conf name="build"/>
     <conf name="runtime"/>
