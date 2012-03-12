@@ -1,6 +1,6 @@
 <ivy-module version="1.0">
   <info
-      organisation="omero"
+      organisation="ome"
       module="specification-test"
       status="integration"/>
   <configurations>
@@ -10,11 +10,12 @@
     <artifact name="specification-test" type="jar"/>
   </publications>
   <dependencies defaultconfmapping="test->*">
-    <dependency name="specification" rev="${omero.version}" changing="true"/>
-    <dependency name="model-${omero.db.profile}" rev="${omero.version}" changing="true"/>
-    <dependency name="model-test" rev="${omero.version}" changing="true"/>
-    <dependency org="loci" name="ome-xml" rev="${versions.bio-formats}"/>
-    <dependency org="omero" name="omero_client" rev="${omero.version}" changing="true"/>
-    <dependency org="omero" name="blitz-test" rev="${omero.version}" changing="true"/>
+    <dependency org="ome" name="specification" rev="${omero.version}" changing="true"/>
+    <dependency org="ome" name="ome-xml" rev="${omero.version}"/>
+    <dependency org="testng" name="testng" rev="${versions.testng}"/>
+    <dependency org="org.springframework" name="org.springframework.core" rev="${versions.spring}"/>
+    <dependency org="commons-logging" name="commons-logging" rev="${versions.commons-logging}"/>
+    <dependency org="emma" name="emma" rev="${versions.emma}"/>
+    <dependency org="emma" name="emma_ant" rev="${versions.emma}"/>
  </dependencies>
 </ivy-module>
