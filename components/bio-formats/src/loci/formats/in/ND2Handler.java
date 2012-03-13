@@ -439,11 +439,13 @@ public class ND2Handler extends DefaultHandler {
     else if (qName.startsWith("item_")) {
       int v = Integer.parseInt(qName.substring(qName.indexOf("_") + 1));
       if (v == numSeries) {
-        fieldIndex = core[0].dimensionOrder.length();
+        fieldIndex = 2;
+        //fieldIndex = core[0].dimensionOrder.length();
         numSeries++;
       }
       else if (v < numSeries && fieldIndex < core[0].dimensionOrder.length()) {
-        fieldIndex = core[0].dimensionOrder.length();
+        fieldIndex = 2;
+        //fieldIndex = core[0].dimensionOrder.length();
       }
     }
     else if (qName.equals("uiCompCount")) {
