@@ -129,22 +129,8 @@ isBioFormatsTrunk = versionCheck(bioFormatsVersion, 5, 0);
 loci.common.DebugTools.enableLogging('INFO');
 
 % check for a new version, if we haven't done so already
-upgrader = loci.formats.UpgradeChecker();
-if ~upgrader.alreadyChecked()
-  canUpgrade = upgrader.newVersionAvailable();
-  autoDownload = 0;
-  if canUpgrade
-    fprintf('*** A new stable version of Bio-Formats is available ***');
-    if autoDownload
-      fprintf('*** Downloading... ***');
-      path = fullfile(fileparts(mfilename('fullpath')), 'loci_tools.jar');
-      upgrader.install(loci.formats.UpgraderChecker.STABLE_BUILD, path);
-      fprintf('*** Upgrade will be finished when MATLAB is restarted ***');
-    end
-  else
-    fprintf('*** loci_tools.jar is up-to-date ***');
-  end
-end
+downloadNewVersion = 0;
+doUpgradeCheck(downloadNewVersion);
 
 r = loci.formats.ChannelFiller();
 r = loci.formats.ChannelSeparator(r);
@@ -315,3 +301,21 @@ minToken = tokens{1}(2);
 major = str2num(majToken{1});
 minor = str2num(minToken{1});
 result = major > maj || (major == maj && minor >= min);
+
+function [] = doUpgradeCheck(autoDownload)
+upgrader = loci.formats.UpgradeChecker();
+if ~upgrader.alreadyChecked()
+  canUpgrade = upgrader.newVersionAvailable();
+  if canUpgrade
+    fprintf('*** A new stable version of Bio-Formats is available ***');
+    if autoDownload
+      fprintf('*** Downloading... ***');
+      path = fullfile(fileparts(mfilename('fullpath')), 'loci_tools.jar');
+      upgrader.install(loci.formats.UpgradeChecker.STABLE_BUILD, path);
+      fprintf('*** Upgrade will be finished when MATLAB is restarted ***');
+    end
+  else
+    fprintf('*** loci_tools.jar is up-to-date ***');
+  end
+end
+
