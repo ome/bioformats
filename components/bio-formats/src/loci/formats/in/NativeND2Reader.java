@@ -627,6 +627,11 @@ public class NativeND2Reader extends FormatReader {
         core[0].sizeC = 3;
         core[0].rgb = true;
       }
+      else if (availableBytes >= planeSize * 2 &&
+        getPixelType() == FormatTools.INT8)
+      {
+        core[0].pixelType = FormatTools.UINT16;
+      }
 
       if (getSizeT() == imageOffsets.size() && getSeriesCount() > 1) {
         CoreMetadata firstCore = core[0];
@@ -1026,8 +1031,10 @@ public class NativeND2Reader extends FormatReader {
 
     if (getDimensionOrder() == null) core[0].dimensionOrder = "";
 
-    if (isRGB() && getDimensionOrder().indexOf("C") == -1) {
+    if (getSizeC() > 1) {
+      core[0].dimensionOrder = getDimensionOrder().replaceAll("C", "");
       core[0].dimensionOrder = "C" + getDimensionOrder();
+      fieldIndex++;
     }
 
     if (getDimensionOrder().indexOf("Z") == -1) core[0].dimensionOrder += "Z";
