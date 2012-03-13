@@ -321,10 +321,12 @@ Apache XML-RPC
     <ant antfile="ome.xml" inheritRefs="false" inheritAll="false"/>
   </target>
 
-  <target name="test-compile" depends="compile-tests" description="OME hook: compile all tests"/>
-
   <target name="eclipse" description="OME hook: create eclipse .classpath file">
     <ant target="eclipse" antfile="ome.xml" inheritRefs="false" inheritAll="false"/>
   </target>
+
+  <target name="test-compile" depends="compile-tests" description="OME hook: compile all tests"/>
+  <target name="integration" description="No-op"/>
+  <target name="findbugs" description="No-op"/>
 
 </project>
