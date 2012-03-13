@@ -723,7 +723,7 @@ public class LIFReader extends FormatReader {
 
           if (activeDetector[i] != null) {
             int index = activeDetector[i].size() - getEffectiveSizeC() + dIndex;
-            if (index < activeDetector[i].size() &&
+            if (index >= 0 && index < activeDetector[i].size() &&
               (Boolean) activeDetector[i].get(index) &&
               detectorOffsets[i] != null &&
               nextChannel < detectorOffsets[i].length)
