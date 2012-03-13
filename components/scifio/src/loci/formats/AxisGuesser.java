@@ -24,9 +24,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 package loci.formats;
 
 import java.io.IOException;
-import java.math.BigInteger;
 
 import loci.common.Location;
+
+import net.imglib2.meta.AxisType;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -356,6 +357,172 @@ public class AxisGuesser {
       if (p.equals(lowerLabel) || lowerLabel.endsWith(p)) return S_AXIS;
     }
     return UNKNOWN_AXIS;
+  }
+  
+  // -- ImgLibGuesser --
+  
+  /** 
+   * The ImgLib axes structure can contain multiple unknown axes.
+   * This method will determine if the provided dimension order,
+   * obtained from an ImgLib AxisType array, can be converted to a 
+   * 5-dimensional sequence compatible with Bio-Formats, and 
+   * returns that sequence if it exists and null otherwise.
+   * 
+   * @param newLengths - updated to hold the lengths of the newly ordered axes
+   */
+  public static String guessImgLib(final AxisType[] axes, final long[] dimLengths, final long[] newLengths) {
+
+    String oldOrder = "";
+    String newOrder = "";
+    
+    // initialize newLengths to be 1 for simpler multiplication logic later
+    for(int i = 0; i < newLengths.length; i++) {
+      newLengths[i] = 1;
+    }
+    
+    // Signifies if the given axis is present in the dimension order, 
+    // X=0, Y=1, Z=2, C=3, T=4
+    boolean[] haveDim = new boolean[5];
+    
+    // number of "blocks" of unknown axes, e.g. YUUUZU = 2
+    int contiguousUnknown = 0;
+    
+    // how many axis slots we have to work with
+    int missingAxisCount = 0;
+    
+    // flag to determine how many contiguous blocks of unknowns present
+    boolean unknownBlock = false;
+    
+    // first pass to determine which axes are missing and how many
+    // unknown blocks are present.
+    // We build oldOrder to iterate over on pass 2, for convenience
+    for(int i = 0; i < axes.length; i++) {
+      switch(axes[i].getLabel().toUpperCase().charAt(0)) {
+        case 'X':
+          oldOrder += "X";
+          haveDim[0] = true;
+          unknownBlock = false;
+          break;
+        case 'Y':
+          oldOrder += "Y";
+          haveDim[1] = true;
+          unknownBlock = false;
+          break;
+        case 'Z':
+          oldOrder += "Z";
+          haveDim[2] = true;
+          unknownBlock = false;
+          break;
+        case 'C':
+          oldOrder += "C";
+          haveDim[3] = true;
+          unknownBlock = false;
+          break;
+        case 'T':
+          oldOrder += "T";
+          haveDim[4] = true;
+          unknownBlock = false;
+          break;
+        default:
+          oldOrder += "U";
+          
+          // dimensions of size 1 have no effect on the ordering
+          if(dimLengths[i] > 1) {
+            if(!unknownBlock) {
+              unknownBlock = true;
+              contiguousUnknown++;
+            }
+          }
+        break;
+      }
+    }
+    
+    // determine how many axes are missing
+    for(boolean d : haveDim) {
+      if(!d) missingAxisCount++;
+    }
+    
+    // check to see if we can make a valid dimension ordering
+    if(contiguousUnknown > missingAxisCount) {
+      return null;
+    }
+    
+    int axesPlaced = 0;
+    unknownBlock = false;
+
+    // Second pass to assign new ordering and calculate lengths
+    for(int i = 0; i < axes.length; i++) {
+      switch(oldOrder.charAt(0)) {
+        case 'U':
+          // dimensions of size 1 have no effect on the ordering
+          if(dimLengths[i] > 1) {
+            if(!unknownBlock) {
+              unknownBlock = true;
+
+              // assign a label to this dimension
+              if(!haveDim[0]) {
+                newOrder += "X";
+                haveDim[0] = true;
+              }
+              else if(!haveDim[1]) {
+                newOrder += "Y";
+                haveDim[1] = true;
+              }
+              else if(!haveDim[2]) {
+                newOrder += "Z";
+                haveDim[2] = true;
+              }
+              else if(!haveDim[3]) {
+                newOrder += "C";
+                haveDim[3] = true;
+              }
+              else if(!haveDim[4]) {
+                newOrder += "T";
+                haveDim[4] = true;
+              }
+            }
+            newLengths[axesPlaced] *= dimLengths[i];
+          }
+        break;
+        default:
+          // "cap" the current unknown block
+          if(unknownBlock) {
+            axesPlaced++;
+            unknownBlock = false;
+          }
+          
+          newOrder += oldOrder.charAt(i);
+          newLengths[axesPlaced] = dimLengths[i];
+          axesPlaced++;
+          break;
+      }
+    }
+    
+    // append any remaining missing axes
+    // only have to update order string, as lengths are already 1
+    for(int i = 0; i < haveDim.length; i++) {
+      if(!haveDim[i]) {
+        switch(i) {
+          case 0:
+            newOrder += "X";
+          break;
+          case 1:
+            newOrder += "Y";
+          break;
+          case 2:
+            newOrder += "Z";
+          break;
+          case 3:
+            newOrder += "C";
+          break;
+          case 4:
+            newOrder += "T";
+          break;
+        }
+      }
+    }
+    
+    return newOrder;
   }
 
   // -- Main method --

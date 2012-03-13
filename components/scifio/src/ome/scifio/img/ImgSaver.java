@@ -51,6 +51,7 @@ import loci.common.StatusListener;
 import loci.common.StatusReporter;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceFactory;
+import loci.formats.AxisGuesser;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.IFormatWriter;
@@ -368,58 +369,14 @@ public class ImgSaver implements StatusReporter {
 
       String dimOrder = "";
 
-      int sizeX = 0, sizeY = 0, sizeZ = -1, sizeC = -1, sizeT = -1;
-
-      boolean sawKnown = false;
-      boolean sawUnknown = false;
-
-      // parse dimension order and lengths
-      for (int i = 0; i < axes.length; i++) {
-        switch (axes[i].getLabel().toLowerCase().charAt(0)) {
-          case 'x':
-            sawKnown = true;
-            sizeX = new Long(img.dimension(i)).intValue();
-            dimOrder += "X";
-            break;
-          case 'y':
-            sawKnown = true;
-            sizeY = new Long(img.dimension(i)).intValue();
-            dimOrder += "Y";
-            break;
-          case 'z':
-            sawKnown = true;
-            sizeZ = new Long(img.dimension(i)).intValue();
-            dimOrder += "Z";
-            break;
-          case 'c':
-            sawKnown = true;
-            sizeC = new Long(img.dimension(i)).intValue();
-            dimOrder += "C";
-            break;
-          case 't':
-            sawKnown = true;
-            sizeT = new Long(img.dimension(i)).intValue();
-            dimOrder += "T";
-            break;
-          default:
-            if (sawKnown && sawUnknown == true)
-              throw new ImgIOException(
-                "Plane order error: non-sequential unknown axes discovered.");
-
-            int length = new Long(img.dimension(i)).intValue();
-
-            if (sizeC == -1) {
-              dimOrder += "C";
-              sizeC = 1;
-            }
-
-            if (length > 1) {
-              sizeC *= length;
-              sawUnknown = true;
-              sawKnown = false;
-            }
-        }
-      }
+      long[] axisLengths = new long[5];
+      long[] oldLengths = new long[img.numDimensions()];
+      img.dimensions(oldLengths);
+      dimOrder = AxisGuesser.guessImgLib(axes, oldLengths, axisLengths);
+      
+      if(dimOrder == null)
+        throw new ImgIOException(
+          "Image has more than 5 dimensions.");
 
       //TODO if size C, Z, T and dimension order are populated we won't overwrite them.
       /*
@@ -428,17 +385,21 @@ public class ImgSaver implements StatusReporter {
       if(meta.getPixelsSizeT(0) == null) sizeT = meta.getPixelsSizeT(0).getValue();
       */
 
-      if (sizeZ == -1) {
-        dimOrder += "Z";
-        sizeZ = 1;
-      }
-      if (sizeT == -1) {
-        dimOrder += "T";
-        sizeT = 1;
-      }
-      if (sizeC == -1) {
-        dimOrder += "C";
-        sizeC = 1;
+      int sizeX = 0, sizeY = 0, sizeZ = 0, sizeC = 0, sizeT = 0;
+      
+      for(int i = 0; i < dimOrder.length(); i++) {
+        switch(dimOrder.charAt(i)) {
+          case 'X': sizeX = new Long(axisLengths[i]).intValue();
+          break;
+          case 'Y': sizeY = new Long(axisLengths[i]).intValue();
+          break;
+          case 'Z': sizeZ = new Long(axisLengths[i]).intValue();
+          break;
+          case 'C': sizeC = new Long(axisLengths[i]).intValue();
+          break;
+          case 'T': sizeT = new Long(axisLengths[i]).intValue();
+          break;
+        }
       }
 
       MetadataTools.populateMetadata(
