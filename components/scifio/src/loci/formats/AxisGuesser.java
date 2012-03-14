@@ -426,7 +426,9 @@ public class AxisGuesser {
         default:
           oldOrder += "U";
           
-          // dimensions of size 1 have no effect on the ordering
+          // dimensions of size 1 can be skipped, and only will
+          // be considered in pass 2 if the number of missing axes is
+          // greater than the number of contiguous unknown chunks found
           if(dimLengths[i] > 1) {
             if(!unknownBlock) {
               unknownBlock = true;
@@ -449,15 +451,25 @@ public class AxisGuesser {
     
     int axesPlaced = 0;
     unknownBlock = false;
+    
+    // Flag to determine if the current unknownBlock was started by
+    // an unknown of size 1.
+    boolean sizeOneUnknown = false;
 
     // Second pass to assign new ordering and calculate lengths
     for(int i = 0; i < axes.length; i++) {
       switch(oldOrder.charAt(0)) {
         case 'U':
           // dimensions of size 1 have no effect on the ordering
-          if(dimLengths[i] > 1) {
+          if(dimLengths[i] > 1 || contiguousUnknown < missingAxisCount) {
             if(!unknownBlock) {
               unknownBlock = true;
+              
+              // length of this unknown == 1
+              if(contiguousUnknown < missingAxisCount) {
+                contiguousUnknown++;
+                sizeOneUnknown = true;
+              }
 
               // assign a label to this dimension
               if(!haveDim[0]) {
@@ -481,6 +493,13 @@ public class AxisGuesser {
                 haveDim[4] = true;
               }
             }
+            else if(dimLengths[i] > 1 && sizeOneUnknown) {
+              // we are in a block of unknowns that was started by
+              // one of size 1, but contains an unknown of size > 1,
+              // thus was double counted (once in pass 1, once in pass 2)
+              sizeOneUnknown = false;
+              contiguousUnknown--;
+            }
             newLengths[axesPlaced] *= dimLengths[i];
           }
         break;
@@ -489,6 +508,7 @@ public class AxisGuesser {
           if(unknownBlock) {
             axesPlaced++;
             unknownBlock = false;
+            sizeOneUnknown = false;
           }
           
           newOrder += oldOrder.charAt(i);
