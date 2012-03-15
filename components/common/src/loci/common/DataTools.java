@@ -833,6 +833,82 @@ public final class DataTools {
 
   // -- Array handling --
 
+  /**
+   * Allocates a 1-dimensional byte array matching the product of the given
+   * sizes.
+   * 
+   * @param sizes list of sizes from which to allocate the array
+   * @return a byte array of the appropriate size
+   * @throws IllegalArgumentException if the total size exceeds 2GB, which is
+   *           the maximum size of an array in Java; or if any size argument is
+   *           zero or negative
+   */
+  public static byte[] allocate(int... sizes) throws IllegalArgumentException {
+    if (sizes == null) return null;
+    if (sizes.length == 0) return new byte[0];
+    int total = safeMultiply32(sizes);
+    return new byte[total];
+  }
+
+  /**
+   * Checks that the product of the given sizes does not exceed the 32-bit
+   * integer limit (i.e., {@link Integer#MAX_VALUE}).
+   * 
+   * @param sizes list of sizes from which to compute the product
+   * @return the product of the given sizes
+   * @throws IllegalArgumentException if the total size exceeds 2GiB, which is
+   *           the maximum size of an int in Java; or if any size argument is
+   *           zero or negative
+   */
+  public static int safeMultiply32(int... sizes)
+    throws IllegalArgumentException
+  {
+    if (sizes.length == 0) return 0;
+    long total = 1;
+    for (int size : sizes) {
+      if (size < 1) {
+        throw new IllegalArgumentException("Invalid array size: " +
+          sizeAsProduct(sizes));
+      }
+      total *= size;
+      if (total > Integer.MAX_VALUE) {
+        throw new IllegalArgumentException("Array size too large: " +
+          sizeAsProduct(sizes));
+      }
+    }
+    // NB: The downcast to int is safe here, due to the checks above.
+    return (int) total;
+  }
+
+  /**
+   * Checks that the product of the given sizes does not exceed the 64-bit
+   * integer limit (i.e., {@link Long#MAX_VALUE}).
+   * 
+   * @param sizes list of sizes from which to compute the product
+   * @return the product of the given sizes
+   * @throws IllegalArgumentException if the total size exceeds 8EiB, which is
+   *           the maximum size of a long in Java; or if any size argument is
+   *           zero or negative
+   */
+  public static long safeMultiply64(long... sizes)
+    throws IllegalArgumentException
+  {
+    if (sizes.length == 0) return 0;
+    long total = 1;
+    for (long size : sizes) {
+      if (size < 1) {
+        throw new IllegalArgumentException("Invalid array size: " +
+          sizeAsProduct(sizes));
+      }
+      if (willOverflow(total, size)) {
+        throw new IllegalArgumentException("Array size too large: " +
+          sizeAsProduct(sizes));
+      }
+      total *= size;
+    }
+    return total;
+  }
+
   /** Returns true if the given value is contained in the given array. */
   public static boolean containsValue(int[] array, int value) {
     return indexOf(array, value) != -1;
@@ -884,6 +960,34 @@ public final class DataTools {
       i[j] = (int) (i[j] + 2147483648L);
     }
     return i;
+  }
+
+  // -- Helper methods --
+
+  private static String sizeAsProduct(int... sizes) {
+    StringBuilder sb = new StringBuilder();
+    boolean first = true;
+    for (int size : sizes) {
+      if (first) first = false;
+      else sb.append(" x ");
+      sb.append(size);
+    }
+    return sb.toString();
+  }
+
+  private static String sizeAsProduct(long... sizes) {
+    StringBuilder sb = new StringBuilder();
+    boolean first = true;
+    for (long size : sizes) {
+      if (first) first = false;
+      else sb.append(" x ");
+      sb.append(size);
+    }
+    return sb.toString();
+  }
+
+  private static boolean willOverflow(long v1, long v2) {
+    return Long.MAX_VALUE / v1 < v2;
   }
 
 }
