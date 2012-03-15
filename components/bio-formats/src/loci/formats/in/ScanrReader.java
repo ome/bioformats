@@ -139,6 +139,16 @@ public class ScanrReader extends FormatReader {
       return true;
     }
 
+    Location parent = new Location(name).getAbsoluteFile().getParentFile();
+    if (checkSuffix(name, "tif") && parent.getName().equalsIgnoreCase("Data"))
+    {
+      parent = parent.getParentFile();
+    }
+    Location xmlFile = new Location(parent, XML_FILE);
+    if (!xmlFile.exists()) {
+      return false;
+    }
+
     return super.isThisType(name, open);
   }
 

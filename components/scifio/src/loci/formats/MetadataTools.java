@@ -110,7 +110,7 @@ public final class MetadataTools {
     int oldSeries = r.getSeries();
     for (int i=0; i<r.getSeriesCount(); i++) {
       r.setSeries(i);
-      
+
       String imageName = null;
       if (doImageName) {
         Location f = new Location(r.getCurrentFile());
@@ -118,9 +118,10 @@ public final class MetadataTools {
       }
       String pixelType = FormatTools.getPixelTypeString(r.getPixelType());
 
-      populateMetadata(store, i, imageName, r.isLittleEndian(),
-        r.getDimensionOrder(), pixelType, r.getSizeX(), r.getSizeY(),
-        r.getSizeZ(), r.getSizeC(), r.getSizeT(), r.getRGBChannelCount());
+      populateMetadata(store, r.getCurrentFile(), i, imageName,
+        r.isLittleEndian(), r.getDimensionOrder(), pixelType, r.getSizeX(),
+        r.getSizeY(), r.getSizeZ(), r.getSizeC(), r.getSizeT(),
+        r.getRGBChannelCount());
 
       try {
         OMEXMLService service =
@@ -168,7 +169,7 @@ public final class MetadataTools {
     final String pixelType = FormatTools.getPixelTypeString(coreMeta.pixelType);
     final int effSizeC = coreMeta.imageCount / coreMeta.sizeZ / coreMeta.sizeT;
     final int samplesPerPixel = coreMeta.sizeC / effSizeC;
-    populateMetadata(store, series, imageName, coreMeta.littleEndian,
+    populateMetadata(store, null, series, imageName, coreMeta.littleEndian,
       coreMeta.dimensionOrder, pixelType, coreMeta.sizeX, coreMeta.sizeY,
       coreMeta.sizeZ, coreMeta.sizeC, coreMeta.sizeT, samplesPerPixel);
   }
@@ -187,8 +188,27 @@ public final class MetadataTools {
     String pixelType, int sizeX, int sizeY, int sizeZ, int sizeC, int sizeT,
     int samplesPerPixel)
   {
+    populateMetadata(store, null, series, imageName, littleEndian,
+      dimensionOrder, pixelType, sizeX, sizeY, sizeZ, sizeC, sizeT,
+      samplesPerPixel);
+  }
+
+  /**
+   * Populates the given {@link MetadataStore}, for the specified series, using
+   * the provided values.
+   * <p>
+   * After calling this method, the metadata store will be sufficiently
+   * populated for use with an {@link IFormatWriter} (assuming it is also a
+   * {@link MetadataRetrieve}).
+   * </p>
+   */
+  public static void populateMetadata(MetadataStore store, String file,
+    int series, String imageName, boolean littleEndian, String dimensionOrder,
+    String pixelType, int sizeX, int sizeY, int sizeZ, int sizeC, int sizeT,
+    int samplesPerPixel)
+  {
     store.setImageID(createLSID("Image", series), series);
-    setDefaultCreationDate(store, null, series);
+    setDefaultCreationDate(store, file, series);
     if (imageName != null) store.setImageName(imageName, series);
     store.setPixelsID(createLSID("Pixels", series), series);
     store.setPixelsBinDataBigEndian(!littleEndian, series, 0);

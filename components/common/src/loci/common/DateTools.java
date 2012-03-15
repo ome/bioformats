@@ -27,6 +27,7 @@ import java.text.FieldPosition;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
 /**
  * A utility class with convenience methods for working with dates.
@@ -81,6 +82,18 @@ public final class DateTools {
   /** Converts the given timestamp into a date string with the given format. */
   public static String convertDate(long stamp, int format, String outputFormat)
   {
+    return convertDate(stamp, format, outputFormat, false);
+  }
+
+  /**
+   * Converts the given timestamp into a date string with the given format.
+   *
+   * If correctTimeZoneForGMT is set, then the timestamp will be interpreted
+   * as being relative to GMT and not the local time zone.
+   */
+  public static String convertDate(long stamp, int format, String outputFormat,
+    boolean correctTimeZoneForGMT)
+  {
     // see http://www.merlyn.demon.co.uk/critdate.htm for more information on
     // dates than you will ever need (or want)
 
@@ -102,6 +115,10 @@ public final class DateTools {
     }
 
     SimpleDateFormat fmt = new SimpleDateFormat(outputFormat);
+    if (correctTimeZoneForGMT) {
+      TimeZone tz = TimeZone.getDefault();
+      ms -= tz.getOffset(ms);
+    }
     StringBuffer sb = new StringBuffer();
 
     Date d = new Date(ms);

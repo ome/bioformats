@@ -909,6 +909,12 @@ public class ImageInfo {
       LOGGER.info("Generating OME-XML (schema version {})", version);
     }
     if (ms instanceof MetadataRetrieve) {
+      service.removeBinData(service.getOMEMetadata((MetadataRetrieve) ms));
+      for (int i=0; i<reader.getSeriesCount(); i++) {
+        service.addMetadataOnly(
+          service.getOMEMetadata((MetadataRetrieve) ms), i);
+      }
+
       if (omexmlOnly) {
         DebugTools.enableLogging("INFO");
       }

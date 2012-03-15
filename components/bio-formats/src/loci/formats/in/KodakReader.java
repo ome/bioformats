@@ -48,6 +48,7 @@ public class KodakReader extends FormatReader {
 
   private static final String MAGIC_STRING = "DTag";
   private static final String PIXELS_STRING = "BSfD";
+  private static final String DIMENSIONS_STRING = "GBiH";
 
   private static final String DATE_FORMAT = "HH:mm:ss 'on' MM/dd/yyyy";
 
@@ -103,11 +104,14 @@ public class KodakReader extends FormatReader {
 
     core[0].littleEndian = false;
 
+    findString(DIMENSIONS_STRING);
+    in.skipBytes(DIMENSIONS_STRING.length() + 20);
+    core[0].sizeX = in.readInt();
+    core[0].sizeY = in.readInt();
+
     findString(PIXELS_STRING);
     pixelOffset = in.getFilePointer() + PIXELS_STRING.length() + 20;
 
-    core[0].sizeX = 1024;
-    core[0].sizeY = 1024;
     core[0].sizeZ = 1;
     core[0].sizeC = 1;
     core[0].sizeT = 1;
@@ -183,7 +187,9 @@ public class KodakReader extends FormatReader {
       }
       else if (key.equals("Vertical Resolution")) {
         // resolution stored in pixels per inch
-        value = value.substring(0, value.indexOf(" "));
+        if (value.indexOf(" ") > 0) {
+          value = value.substring(0, value.indexOf(" "));
+        }
         Double size = new Double(value);
         if (size > 0) {
           size = 1.0 / (size * (1.0 / 25400));
@@ -196,7 +202,9 @@ public class KodakReader extends FormatReader {
       }
       else if (key.equals("Horizontal Resolution")) {
         // resolution stored in pixels per inch
-        value = value.substring(0, value.indexOf(" "));
+        if (value.indexOf(" ") > 0) {
+          value = value.substring(0, value.indexOf(" "));
+        }
         Double size = new Double(value);
         if (size > 0) {
           size = 1.0 / (size * (1.0 / 25400));
