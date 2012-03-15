@@ -1006,15 +1006,25 @@ public class ZeissCZIReader extends FormatReader {
             getFirstNodeValue(transmittance, "CutInTolerance");
           String outTolerance =
             getFirstNodeValue(transmittance, "CutOutTolerance");
-          Integer cutInTolerance = new Integer(inTolerance);
-          Integer cutOutTolerance = new Integer(outTolerance);
 
-          store.setTransmittanceRangeCutInTolerance(
-            new NonNegativeInteger(cutInTolerance), 0, i);
-          store.setTransmittanceRangeCutOutTolerance(
-            new NonNegativeInteger(cutOutTolerance), 0, i);
-          store.setTransmittanceRangeTransmittance(PercentFraction.valueOf(
-            getFirstNodeValue(transmittance, "Transmittance")), 0, i);
+          if (inTolerance != null) {
+            Integer cutInTolerance = new Integer(inTolerance);
+            store.setTransmittanceRangeCutInTolerance(
+              new NonNegativeInteger(cutInTolerance), 0, i);
+          }
+
+          if (outTolerance != null) {
+            Integer cutOutTolerance = new Integer(outTolerance);
+            store.setTransmittanceRangeCutOutTolerance(
+              new NonNegativeInteger(cutOutTolerance), 0, i);
+          }
+
+          String transmittancePercent =
+            getFirstNodeValue(transmittance, "Transmittance");
+          if (transmittancePercent != null) {
+            store.setTransmittanceRangeTransmittance(
+              PercentFraction.valueOf(transmittancePercent), 0, i);
+          }
         }
       }
 
