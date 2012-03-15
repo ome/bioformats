@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
+import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.formats.in.DefaultMetadataOptions;
@@ -441,7 +442,7 @@ public class FileStitcher extends ReaderWrapper {
   {
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
     int ch = getRGBChannelCount();
-    byte[] buf = new byte[w * h * ch * bpp];
+    byte[] buf = DataTools.allocate(w, h, ch, bpp);
     return openBytes(no, buf, x, y, w, h);
   }
 
