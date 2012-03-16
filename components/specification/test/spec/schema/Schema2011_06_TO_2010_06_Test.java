@@ -27,6 +27,7 @@ import org.springframework.util.ResourceUtils;
 
 //Application-internal dependencies
 import spec.AbstractTest;
+import spec.OmeValidator;
 import spec.XMLMockObjects;
 import spec.XMLWriter;
 
@@ -58,6 +59,9 @@ public class Schema2011_06_TO_2010_06_Test
 	
 	/** The target schema */
 	private StreamSource[] schemaArray;
+	
+	/** A validator used to check transformed files */
+	private OmeValidator anOmeValidator = new OmeValidator();
 	
 	/**
 	 * Checks if the <code>Image</code> tag was correctly transformed.
@@ -332,7 +336,7 @@ public class Schema2011_06_TO_2010_06_Test
 //		writer.writeFile(fCheckIn , xml.getRoot(), true);
 
 		transformFileWithStream(f, output, STYLESHEET);
-		Document doc = parseFileWithStreamArray(output, schemaArray);
+		Document doc = anOmeValidator.parseFileWithStreamArray(output, schemaArray);
 		assertNotNull(doc);
 		
 		//Should only have one root node i.e. OME node
@@ -344,7 +348,7 @@ public class Schema2011_06_TO_2010_06_Test
 		list = root.getChildNodes();
 		String name;
 		Node n;
-		Document docSrc = parseFile(f, null);
+		Document docSrc = anOmeValidator.parseFile(f, null);
 		Node rootSrc = docSrc.getChildNodes().item(0);
 		Node imageNode = null;
 		NodeList listSrc = rootSrc.getChildNodes();

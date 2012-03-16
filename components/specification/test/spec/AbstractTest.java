@@ -197,70 +197,7 @@ public class AbstractTest
         StreamResult result = new StreamResult(new FileOutputStream(output));
         transformer.transform(new StreamSource(input), result);
     }
-    
-    /**
-     * Parses the specified file and returns the document.
-     * 
-     * @param file The file to parse.
-     * @param schema The schema used to validate the specified file.
-     * @return
-     * @throws Exception Thrown if an error occurred.
-     */
-    protected Document parseFile(File file, File schema)
-        throws Exception
-    {
-        if (file == null) 
-            throw new IllegalArgumentException("No file to parse.");
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        if (schema != null) {
-            dbf.setValidating(true);   
-            dbf.setNamespaceAware(true);
-            dbf.setAttribute(JAXP_SCHEMA_LANGUAGE, W3C_XML_SCHEMA);
-            // Set the schema file
-            dbf.setAttribute(JAXP_SCHEMA_SOURCE, schema);
-        }
-        DocumentBuilder builder = dbf.newDocumentBuilder();
-        return builder.parse(file);
-    }
-    
 
-    /**
-     * Parses the specified file and returns the document.
-     * 
-     * @param file The file to parse.
-     * @param schemaStreamArray The schema as array of stream sources used to validate the specified file.
-     * @return
-     * @throws Exception Thrown if an error occurred.
-     */
-    protected Document parseFileWithStreamArray(File file, StreamSource[] schemaStreamArray)
-        throws Exception
-    {
-        if (file == null) 
-            throw new IllegalArgumentException("No file to parse.");
-
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        dbf.setNamespaceAware(true); // This must be set to avoid error : cvc-elt.1: Cannot find the declaration of element 'OME'.
-        SchemaFactory sFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-        SchemaResolver theTestClassResolver = new SchemaResolver();
-        sFactory.setResourceResolver(theTestClassResolver);
-        
-        Schema theSchema = sFactory.newSchema( schemaStreamArray );
-
-        /*
-        // Version - one step parse and validate (print error to stdErr)
-        dbf.setSchema(theSchema);
-        DocumentBuilder builder = dbf.newDocumentBuilder();
-        Document theDoc = builder.parse(file);
-        */
-
-        // Version - two step parse then validate (throws error as exception)
-        DocumentBuilder builder = dbf.newDocumentBuilder();
-        Document theDoc = builder.parse(file);
-        Validator validator=theSchema.newValidator();
-        validator.validate(new DOMSource(theDoc));
-        return theDoc;
-    }
-    
     /**
      * Transforms the input file using the specified stylesheet stream.
      * 
