@@ -98,10 +98,9 @@ stitchFiles = 0;
 % -- Main function - no need to edit anything past this point --
 
 if exist('id') == 0
-  dir = uigetdir;
-  cd(dir);
-  file = uigetfile('*.*', 'Choose a file to open');
-  id = fullfile(dir, file);
+  [path,file] = uigetfile(getFileExtensions, 'Choose a file to open');
+  id = fullfile(path, file);
+  if isequal(path,0) || isequal(file,0), return; end
 end
 
 % load the Bio-Formats library into the MATLAB environment
@@ -296,3 +295,16 @@ minToken = tokens{1}(2);
 major = str2num(majToken{1});
 minor = str2num(minToken{1});
 result = major > maj || (major == maj && minor >= min);
+
+
+function fileExt = getFileExtensions
+% Get the supported extensions (see loci.formats.tools.PrintFormatTable
+
+readers=loci.formats.ImageReader().getReaders;
+fileExt=cell(numel(readers),2);
+for i=1:numel(readers)
+    suffixes=readers(i).getSuffixes();
+    s=arrayfun(@(x) ['*.' char(x.toString) ';'],suffixes,'Unif',false);
+    fileExt{i,1} = horzcat(s{:});
+    fileExt{i,2} = char(readers(i).getFormat().toString);
+end
