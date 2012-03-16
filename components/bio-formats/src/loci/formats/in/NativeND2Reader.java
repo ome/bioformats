@@ -430,6 +430,9 @@ public class NativeND2Reader extends FormatReader {
               else if (attributeName.equals("uiHeight")) {
                 core[0].sizeY = valueOrLength;
               }
+              else if (attributeName.equals("uiComp")) {
+                core[0].sizeC = valueOrLength;
+              }
               else if (attributeName.equals("uiBpcInMemory")) {
                 core[0].pixelType = FormatTools.pixelTypeFromBytes(
                   valueOrLength / 8, false, false);
