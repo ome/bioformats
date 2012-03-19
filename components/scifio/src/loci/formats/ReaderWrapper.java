@@ -483,6 +483,22 @@ public abstract class ReaderWrapper implements IFormatReader {
     return reader.getOptimalTileHeight();
   }
 
+  public int getResolutionCount() {
+    return reader.getResolutionCount();
+  }
+
+  public void setResolution(int no) {
+    reader.setResolution(no);
+  }
+
+  public boolean hasFlattenedResolutions() {
+    return reader.hasFlattenedResolutions();
+  }
+
+  public void setFlattenedResolutions(boolean flattened) {
+    reader.setFlattenedResolutions(flattened);
+  }
+
   // -- IFormatHandler API methods --
 
   public boolean isThisType(String name) {
