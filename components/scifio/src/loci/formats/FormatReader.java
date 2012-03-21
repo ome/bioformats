@@ -1124,6 +1124,11 @@ public abstract class FormatReader extends FormatHandler
     resolution = no;
   }
 
+  /* @see IFormatReader#getResolution() */
+  public int getResolution() {
+    return resolution;
+  }
+
   /* @see IFormatReader#hasFlattenedResolutions */
   public boolean hasFlattenedResolutions() {
     return flattenedResolutions;

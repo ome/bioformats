@@ -491,6 +491,10 @@ public abstract class ReaderWrapper implements IFormatReader {
     reader.setResolution(no);
   }
 
+  public int getResolution() {
+    return reader.getResolution();
+  }
+
   public boolean hasFlattenedResolutions() {
     return reader.hasFlattenedResolutions();
   }

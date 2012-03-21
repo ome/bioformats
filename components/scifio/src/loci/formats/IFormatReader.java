@@ -507,6 +507,9 @@ public interface IFormatReader extends IFormatHandler, IMetadataConfigurable {
   /** Set the resolution level. */
   void setResolution(int resolution);
 
+  /** Get the current resolution level. */
+  int getResolution();
+
   /** Return whether or not resolution flattening is enabled. */
   boolean hasFlattenedResolutions();
 
