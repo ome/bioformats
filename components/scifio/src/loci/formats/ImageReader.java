@@ -675,7 +675,9 @@ public class ImageReader implements IFormatReader {
 
   /* @see IFormatReader#setFlattenedResolutions(boolean) */
   public void setFlattenedResolutions(boolean flattened) {
-    getReader().setFlattenedResolutions(flattened);
+    for (IFormatReader reader : readers) {
+      reader.setFlattenedResolutions(flattened);
+    }
   }
 
   // -- IFormatHandler API methods --
