@@ -68,7 +68,6 @@ public class PyramidTiffReader extends BaseTiffReader {
     domains = new String[] {FormatTools.EM_DOMAIN};
     suffixSufficient = false;
     suffixNecessary = false;
-    setFlattenedResolutions(false);
   }
 
   // -- IFormatReader API methods --
