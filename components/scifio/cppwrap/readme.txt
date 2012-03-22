@@ -107,4 +107,6 @@ individual JAR files as appropriate for your application. For details, see:
 
   http://www.loci.wisc.edu/bio-formats/bio-formats-java-library
 
-Please direct questions to the Bio-Formats team at bioformats@loci.wisc.edu.
+Please direct any questions to the Bio-Formats team:
+
+  http://loci.wisc.edu/bio-formats/contact
