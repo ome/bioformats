@@ -166,6 +166,12 @@ public class UpgradeChecker {
 
     StackTraceElement[] trace = Thread.currentThread().getStackTrace();
     System.setProperty("bioformats.class", trace[1].getClassName());
+    for (int i=0; i<trace.length; i++) {
+      if (trace[i].getClassName().equals("loci.formats.UpgradeChecker")) {
+        System.setProperty("bioformats.class", trace[i - 1].getClassName());
+        break;
+      }
+    }
 
     StringBuffer query = new StringBuffer(REGISTRY);
     for (int i=0; i<REGISTRY_PROPERTIES.length; i++) {
