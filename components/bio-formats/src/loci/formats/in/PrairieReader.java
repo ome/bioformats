@@ -139,18 +139,16 @@ public class PrairieReader extends FormatReader {
       if (prefix.lastIndexOf("Config") == -1) return false;
       prefix = prefix.substring(0, prefix.lastIndexOf("Config"));
     }
-    if (prefix.indexOf("_") != -1) {
-      prefix = prefix.substring(0, prefix.indexOf("_"));
-    }
 
-    // check for appropriately named XML and CFG files
+    // check for appropriately named XML file
 
     Location xml = new Location(parent, prefix + ".xml");
-    Location cfg = new Location(parent, prefix + "Config.cfg");
+    if (!xml.exists() && prefix.indexOf("_") != -1) {
+      prefix = prefix.substring(0, prefix.indexOf("_"));
+      xml = new Location(parent, prefix + ".xml");
+    }
 
-    boolean hasMetadataFiles = xml.exists() && cfg.exists();
-
-    return hasMetadataFiles && super.isThisType(name, false);
+    return xml.exists() && super.isThisType(name, false);
   }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
