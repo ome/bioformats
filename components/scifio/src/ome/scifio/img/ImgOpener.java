@@ -407,10 +407,10 @@ public class ImgOpener implements StatusReporter {
 		for (final char dim : dimOrder.toCharArray()) {
 			switch (dim) {
 				case 'X':
-					if (sizeX > 1) dimTypes.add(Axes.X);
+					if (sizeX > 0) dimTypes.add(Axes.X);
 					break;
 				case 'Y':
-					if (sizeY > 1) dimTypes.add(Axes.Y);
+					if (sizeY > 0) dimTypes.add(Axes.Y);
 					break;
 				case 'Z':
 					if (sizeZ > 1) dimTypes.add(Axes.Z);
@@ -465,10 +465,10 @@ public class ImgOpener implements StatusReporter {
 			final char dim = dimOrder.charAt(i);
 			switch (dim) {
 				case 'X':
-					if (sizeX > 1) calibrationList.add(xCal);
+					if (sizeX > 0) calibrationList.add(xCal);
 					break;
 				case 'Y':
-					if (sizeY > 1) calibrationList.add(yCal);
+					if (sizeY > 0) calibrationList.add(yCal);
 					break;
 				case 'Z':
 					if (sizeZ > 1) calibrationList.add(zCal);
@@ -689,10 +689,10 @@ public class ImgOpener implements StatusReporter {
 			final char dim = dimOrder.charAt(i);
 			switch (dim) {
 				case 'X':
-					if (sizeX > 1) index++; // NB: Leave X axis position alone.
+					if (sizeX > 0) index++; // NB: Leave X axis position alone.
 					break;
 				case 'Y':
-					if (sizeY > 1) index++; // NB: Leave Y axis position alone.
+					if (sizeY > 0) index++; // NB: Leave Y axis position alone.
 					break;
 				case 'Z':
 					if (sizeZ > 1) pos[index++] = zct[0];
