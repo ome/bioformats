@@ -132,42 +132,11 @@ public class VirtualPlaneLoader {
   }
 
   private Object typeConvert(byte[] bytes) {
+    int pixelType = virtImage.getReader().getPixelType();
+    int bytesPerPix = FormatTools.getBytesPerPixel(pixelType);
+    boolean floating = FormatTools.isFloatingPoint(pixelType);
 
-    int bytesPerPix;
-    boolean floating;
-
-    switch (virtImage.getReader().getPixelType()) {
-      case FormatTools.UINT8:
-      case FormatTools.INT8:
-        bytesPerPix = 1;
-        floating = false;
-        break;
-      case FormatTools.UINT16:
-      case FormatTools.INT16:
-        bytesPerPix = 2;
-        floating = false;
-        break;
-      case FormatTools.UINT32:
-      case FormatTools.INT32:
-        bytesPerPix = 4;
-        floating = false;
-        break;
-      case FormatTools.FLOAT:
-        bytesPerPix = 4;
-        floating = true;
-        break;
-      case FormatTools.DOUBLE:
-        bytesPerPix = 8;
-        floating = true;
-        break;
-      // TODO - BF does not support long[] i.e. FormatTools.INT64
-      default:
-        throw new
-          IllegalArgumentException(
-            "Cannot convert byte[] to unknown pixel type "+
-              virtImage.getReader().getPixelType());
-    }
-
-    return DataTools.makeDataArray(bytes, bytesPerPix, floating, virtImage.getReader().isLittleEndian());
+    return DataTools.makeDataArray(bytes, bytesPerPix, floating,
+      virtImage.getReader().isLittleEndian());
   }
 }

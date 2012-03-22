@@ -109,7 +109,7 @@ public class VirtualImg<T extends NativeType<T> & RealType<T>>
     long[] dimensions = ImgOpener.getDimLengths(rdr);
 
     if (bytesOnly) {
-      dimensions[0] *= getByteMultiplier(rdr);
+      dimensions[0] *= FormatTools.getBytesPerPixel(rdr.getPixelType());
       return byteTypedVirtualImg(dimensions, rdr);
     }
 
@@ -163,34 +163,6 @@ public class VirtualImg<T extends NativeType<T> & RealType<T>>
 
     // NOTE - removed code that tested dim0 & dim1 since byteOnly code can
     // mess with dim0. And we setup dims ourself so we know they are correct.
-  }
-
-  private static int getByteMultiplier(IFormatReader rdr)
-  {
-    switch (rdr.getPixelType()) {
-
-      case FormatTools.UINT8:
-      case FormatTools.INT8:
-        return 1;
-
-      case FormatTools.UINT16:
-      case FormatTools.INT16:
-        return 2;
-
-      case FormatTools.UINT32:
-      case FormatTools.INT32:
-      case FormatTools.FLOAT:
-        return 4;
-
-      case FormatTools.DOUBLE:
-        return 8;
-
-      // TODO - add LONG case here when supported by BioFormats
-
-      default:
-        throw new IllegalArgumentException(
-          "VirtualImg : unsupported pixel format");
-    }
   }
 
   private static VirtualImg<? extends RealType<?>>
