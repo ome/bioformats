@@ -145,7 +145,7 @@ public final class ImgIOUtils {
     return null;
   }
 
-  /** Converts Bio-Formats pixel type to imglib Type object. */
+  /** Converts SCIFIO pixel type to ImgLib2 Type object. */
   @SuppressWarnings("unchecked")
   public static <T extends RealType<T>> T makeType(final int pixelType) {
     final RealType<?> type;
@@ -180,7 +180,7 @@ public final class ImgIOUtils {
     return (T) type;
   }
   
-  /** Converts imglib Type object to Bio-Formats pixel type. */
+  /** Converts ImgLib2 Type object to SCIFIO pixel type. */
   public static <T extends RealType<T>> int makeType(final T type) {
     int pixelType = FormatTools.UINT8;
     if(type instanceof UnsignedByteType) {
@@ -211,7 +211,7 @@ public final class ImgIOUtils {
     return pixelType;
   }
 
-  /** Wraps raw primitive array in imglib Array object. */
+  /** Wraps raw primitive array in ImgLib2 Array object. */
   public static ArrayDataAccess<?> makeArray(final Object array) {
     final ArrayDataAccess<?> access;
     if (array instanceof byte[]) {

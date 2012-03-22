@@ -55,7 +55,7 @@ import loci.formats.meta.MetadataRetrieve;
 import loci.formats.services.OMEXMLService;
 
 /**
- * Writes out an {@link ImgPlus} using Bio-Formats.
+ * Writes out an {@link ImgPlus} using SCIFIO.
  *
  * @author Mark Hiner
  * @author Curtis Rueden
@@ -204,12 +204,13 @@ public class ImgSaver implements StatusReporter {
   // -- Helper Methods --
 
   /**
-   * Iterates through the planes of the provided {@link ImgPlus}, converting each to a 
-   * byte[] if necessary (the Bio-Formats writer requires a byte[]) and saving the
-   * plane.
-   * 
-   * Currently only {@link PlanarImg} is supported
-   * @throws IncompatibleTypeException 
+   * Iterates through the planes of the provided {@link ImgPlus}, converting
+   * each to a byte[] if necessary (the SCIFIO writer requires a byte[]) and
+   * saving the plane.
+   *
+   * Currently only {@link PlanarImg} is supported.
+   *
+   * @throws IncompatibleTypeException
    */
   @SuppressWarnings("unchecked")
   private <T extends RealType<T> & NativeType<T>> void writePlanes(
@@ -231,7 +232,8 @@ public class ImgSaver implements StatusReporter {
 
       byte[] plane = null;
 
-      // If we know this image will pass to Bio-Formats to be saved, delete the old file if it exists
+      // if we know this image will pass to SCIFIO to be saved,
+      // then delete the old file if it exists
       if (arrayType == int[].class || arrayType == byte[].class ||
         arrayType == short[].class || arrayType == long[].class ||
         arrayType == double[].class || arrayType == float[].class)

@@ -63,7 +63,7 @@ import net.imglib2.type.numeric.RealType;
 import ome.xml.model.primitives.PositiveFloat;
 
 /**
- * Reads in an {@link ImgPlus} using Bio-Formats.
+ * Reads in an {@link ImgPlus} using SCIFIO.
  * 
  * @author Curtis Rueden
  * @author Stephan Preibisch
@@ -383,7 +383,7 @@ public class ImgOpener implements StatusReporter {
 
 	// -- Helper methods --
 
-	/** Constructs and initializes a Bio-Formats reader for the given file. */
+	/** Constructs and initializes a SCIFIO reader for the given file. */
 	private IFormatReader initializeReader(final String id,
 		final boolean computeMinMax) throws FormatException, IOException
 	{
@@ -568,7 +568,7 @@ public class ImgOpener implements StatusReporter {
 
 		// PlanarRandomAccess is useful for efficient access to pixels in ImageJ
 		// (e.g., getPixels)
-		// #1 is useful for efficient Bio-Formats import, and useful for tools
+		// #1 is useful for efficient SCIFIO import, and useful for tools
 		// needing byte arrays (e.g., BufferedImage Java3D texturing by reference)
 		// #2 is useful for efficient memory use for tools wanting matching
 		// primitive arrays (e.g., virtual stacks in ImageJ)
