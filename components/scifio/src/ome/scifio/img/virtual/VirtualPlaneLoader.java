@@ -121,6 +121,7 @@ public class VirtualPlaneLoader {
   }
 
   private static int planeIndex(long[] planeDimensions, long[] planePos) {
+    // TODO: Migrate this to FormatTools.rasterToPosition(long[], long[]).
     int index = 0;
     for (int i = 0; i < planePos.length; i++) {
       int delta = 1;
