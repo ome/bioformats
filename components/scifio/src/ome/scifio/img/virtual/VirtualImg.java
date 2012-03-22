@@ -81,6 +81,8 @@ public class VirtualImg<T extends NativeType<T> & RealType<T>>
     checkDimensions();
   }
 
+  // TODO: Eliminate use of <?> generics in the methods below.
+
   /**
    * Factory method for creating VirtualImgs from file names
    * @param fileName - name of the file that contains data of interest
