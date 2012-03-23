@@ -51,6 +51,7 @@ public class VirtualAccessor<T extends NativeType<T> & RealType<T>> {
     long[] planeSize =
       new long[]{virtImage.dimension(0), virtImage.dimension(1)};
     this.planeImg =
+      (PlanarImg<T, ? extends ArrayDataAccess<?>>)
       new PlanarImgFactory<T>().create(planeSize, virtImage.getType().copy());
     this.planeLoader =
       new VirtualPlaneLoader(virtImage, planeImg, virtImage.isByteOnly());
