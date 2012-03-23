@@ -92,7 +92,11 @@ public final class BF {
     ImportProcess process = new ImportProcess(options);
     if (!process.execute()) return null;
     ImagePlusReader reader = new ImagePlusReader(process);
-    return reader.openImagePlus();
+    ImagePlus[] imps = reader.openImagePlus();
+    if (!options.isVirtual()) {
+      process.getReader().close();
+    }
+    return imps;
   }
 
   public static ImagePlus[] openThumbImagePlus(ImporterOptions options)
@@ -107,7 +111,11 @@ public final class BF {
 
     if (!process.execute()) return null;
     ImagePlusReader reader = new ImagePlusReader(process);
-    return reader.openThumbImagePlus();
+    ImagePlus[] imps = reader.openThumbImagePlus();
+    if (!options.isVirtual()) {
+      process.getReader().close();
+    }
+    return imps;
   }
 
 }
