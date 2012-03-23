@@ -161,8 +161,9 @@ public class ImgSaver implements StatusReporter {
       populateMeta(w, img);
     }
 
-    if (img.getSource().isEmpty())
+    if (img.getSource().length() == 0) {
       throw new ImgIOException("Provided Image has no attached source.");
+    }
 
     final long startTime = System.currentTimeMillis();
     final String id = img.getSource();
