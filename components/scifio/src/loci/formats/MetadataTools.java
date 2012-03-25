@@ -71,6 +71,8 @@ public final class MetadataTools {
 
   // -- Static fields --
 
+  private static boolean defaultDateEnabled = true;
+
   // -- Constructor --
 
   private MetadataTools() { }
@@ -324,13 +326,35 @@ public final class MetadataTools {
   }
 
   /**
+   * Disables the setting of a default creation date.
+   *
+   * By default, missing creation dates will be replaced with the corresponding
+   * file's last modification date, or the current time if the modification
+   * date is not available.
+   *
+   * Calling this method with the 'enabled' parameter set to 'false' causes
+   * missing creation dates to be left as null.
+   *
+   * @param enabled See above.
+   * @see #setDefaultCreationDate(MetadataStore, String, int)
+   */
+  public static void setDefaultDateEnabled(boolean enabled) {
+    defaultDateEnabled = enabled;
+  }
+
+  /**
    * Sets a default creation date.  If the named file exists, then the creation
    * date is set to the file's last modification date.  Otherwise, it is set
    * to the current date.
+   *
+   * @see #setDefaultDateEnabled(boolean)
    */
   public static void setDefaultCreationDate(MetadataStore store, String id,
     int series)
   {
+    if (!defaultDateEnabled) {
+      return;
+    }
     Location file = id == null ? null : new Location(id).getAbsoluteFile();
     long time = System.currentTimeMillis();
     if (file != null && file.exists()) time = file.lastModified();
