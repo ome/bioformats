@@ -25,7 +25,7 @@ upgrader = loci.formats.UpgradeChecker();
 if upgrader.alreadyChecked(), return; end
 
 % Check for new version of Bio-Formats
-canUpgrade = upgrader.newVersionAvailable();
+canUpgrade = upgrader.newVersionAvailable('MATLAB');
 if ~canUpgrade,
     fprintf('*** loci_tools.jar is up-to-date ***\n');
     return;

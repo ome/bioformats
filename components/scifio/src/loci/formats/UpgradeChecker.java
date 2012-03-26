@@ -90,10 +90,13 @@ public class UpgradeChecker {
   /** Location of the OME registry. */
   public static final String REGISTRY = "http://upgrade.openmicroscopy.org.uk";
 
+  /** Value of "bioformats.caller" for Bio-Formats utilities. */
+  public static final String DEFAULT_CALLER = "Bio-Formats utilities";
+
   /** Properties that are sent to the OME registry. */
   private static final String[] REGISTRY_PROPERTIES = new String[] {
     "version", "os.name", "os.version", "os.arch", "java.runtime.version",
-    "java.vm.vendor", "bioformats.class"
+    "java.vm.vendor", "bioformats.caller"
   };
 
   /** System property to set once the upgrade check is performed. */
@@ -146,9 +149,11 @@ public class UpgradeChecker {
    * Contact the OME registry and return true if a new version is available.
    * OMERO.registry will identify this as a generic library usage of
    * Bio-Formats (i.e. not associated with a specific client application).
+   *
+   * @param caller  name of the calling application, e.g. "MATLAB"
    */
-  public boolean newVersionAvailable() {
-    return newVersionAvailable(REGISTRY_LIBRARY);
+  public boolean newVersionAvailable(String caller) {
+    return newVersionAvailable(REGISTRY_LIBRARY, caller);
   }
 
   /**
@@ -156,23 +161,16 @@ public class UpgradeChecker {
    *
    * @param registryID how the application identifies itself to OMERO.registry
    *                  @see #REGISTRY_IMAGEJ, @see #REGISTRY_LIBRARY
+   * @param caller  name of the calling application, e.g. "MATLAB"
    */
-  public boolean newVersionAvailable(String registryID) {
+  public boolean newVersionAvailable(String registryID, String caller) {
     if (!canDoUpgradeCheck()) {
       return false;
     }
 
     // build the registry query
 
-    StackTraceElement[] trace = Thread.currentThread().getStackTrace();
-    System.setProperty("bioformats.class", trace[1].getClassName());
-    for (int i=0; i<trace.length; i++) {
-      if (trace[i].getClassName().equals("loci.formats.UpgradeChecker")) {
-        System.setProperty("bioformats.class", trace[i - 1].getClassName());
-        break;
-      }
-    }
-
+    System.setProperty("bioformats.caller", caller);
     StringBuffer query = new StringBuffer(REGISTRY);
     for (int i=0; i<REGISTRY_PROPERTIES.length; i++) {
       if (i == 0) {

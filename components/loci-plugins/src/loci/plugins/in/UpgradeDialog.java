@@ -97,7 +97,7 @@ public class UpgradeDialog extends ImporterDialog {
       UpgradeChecker checker = new UpgradeChecker();
       checkPerformed = true;
       BF.status(false, "Checking for new stable version...");
-      if (checker.newVersionAvailable()) {
+      if (checker.newVersionAvailable("ImageJ")) {
         boolean doUpgrade = IJ.showMessageWithCancel("",
           "A new stable version of Bio-Formats is available.\n" +
           "Click 'OK' to upgrade now, or 'Cancel' to skip for now.");

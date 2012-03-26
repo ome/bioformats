@@ -54,7 +54,7 @@ public class UpgradeCheck {
 
     boolean doInstall = args.length > 0 && args[0].equals("-install");
 
-    if (checker.newVersionAvailable()) {
+    if (checker.newVersionAvailable(UpgradeChecker.DEFAULT_CALLER)) {
       System.out.println("A newer stable version is available.");
     }
     else {

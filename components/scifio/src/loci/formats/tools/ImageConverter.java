@@ -607,7 +607,8 @@ public final class ImageConverter {
 
   public static void main(String[] args) throws FormatException, IOException {
     UpgradeChecker checker = new UpgradeChecker();
-    boolean canUpgrade = checker.newVersionAvailable();
+    boolean canUpgrade =
+      checker.newVersionAvailable(UpgradeChecker.DEFAULT_CALLER);
     if (canUpgrade) {
       LOGGER.info("*** A new stable version is available. ***");
       LOGGER.info("*** Install the new version using:     ***");
