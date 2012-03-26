@@ -610,6 +610,7 @@ public class NativeND2Reader extends FormatReader {
         {
           core[0].pixelType = FormatTools.UINT16;
         }
+        availableBytes = t.length;
       }
       catch (IOException e) {
         isLossless = false;
@@ -619,7 +620,6 @@ public class NativeND2Reader extends FormatReader {
 
       int planeSize = getSizeX() * getSizeY() * getSizeC() *
         FormatTools.getBytesPerPixel(getPixelType());
-      if (isLossless) planeSize /= 4;
 
       if (availableBytes < planeSize) {
         LOGGER.debug("Correcting SizeC: was {}", getSizeC());
