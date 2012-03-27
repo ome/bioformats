@@ -34,6 +34,7 @@ import net.imglib2.img.Img;
 import net.imglib2.img.ImgPlus;
 import net.imglib2.img.basictypeaccess.PlanarAccess;
 import net.imglib2.img.planar.PlanarImg;
+import net.imglib2.meta.Axes;
 import net.imglib2.meta.AxisType;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.RealType;
@@ -167,15 +168,15 @@ public class ImgSaver implements StatusReporter {
 
     final long startTime = System.currentTimeMillis();
     final String id = img.getSource();
-    final int planeCount = img.numDimensions();
+    final int sliceCount = countSlices(img);
 
     // write pixels
     writePlanes(w, img);
 
     final long endTime = System.currentTimeMillis();
     final float time = (endTime - startTime) / 1000f;
-    notifyListeners(new StatusEvent(planeCount, planeCount, id + ": wrote " +
-      planeCount + " planes in " + time + " s"));
+    notifyListeners(new StatusEvent(sliceCount, sliceCount, id + ": wrote " +
+      sliceCount + " planes in " + time + " s"));
   }
 
   // -- StatusReporter methods --
@@ -203,6 +204,21 @@ public class ImgSaver implements StatusReporter {
   }
 
   // -- Helper Methods --
+  
+  /* Counts the number of slices in the provided ImgPlus.
+   * NumSlices = product of the sizes of all non-X,Y planes.
+   */
+  private <T extends RealType<T> & NativeType<T>> int countSlices(ImgPlus<T> img) {
+    
+    int sliceCount = 1;
+    for(int i = 0; i < img.numDimensions(); i++) {
+      if( !(img.axis(i).equals(Axes.X) || img.axis(i).equals(Axes.Y)) ) {
+        sliceCount *= img.dimension(i);
+      }
+    }
+    
+    return sliceCount;
+  }
 
   /**
    * Iterates through the planes of the provided {@link ImgPlus}, converting
