@@ -121,10 +121,10 @@
 
   <developers>
     <developer>
-      <id>mark</id>
+      <id>hinerm</id>
       <name>Mark Hiner</name>
       <email>hinerm@gmail.edu</email>
-      <url>http://imagejdev.org/users/hinerm</url>
+      <url>http://developer.imagej.net/users/hinerm</url>
       <organization>UW-Madison LOCI</organization>
       <organizationUrl>http://loci.wisc.edu/</organizationUrl>
       <roles>
@@ -133,7 +133,7 @@
       </roles>
       <timezone>-6</timezone>
       <properties>
-        <picUrl>http://imagejdev.org/files/imagej/profile-pictures/Mark.jpg?1305649677</picUrl>
+        <picUrl>http://developer.imagej.net/files/imagej/profile-pictures/Mark.jpg?1305649677</picUrl>
       </properties>
     </developer>
     <developer>
