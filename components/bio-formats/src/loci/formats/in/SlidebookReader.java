@@ -866,6 +866,20 @@ public class SlidebookReader extends FormatReader {
     }
     setSeries(0);
 
+    if (pixelSizeZ.size() > 0) {
+      int seriesIndex = 0;
+      for (int q=0; q<getSeriesCount(); q++) {
+        int inc = core[q].sizeC * core[q].sizeT;
+        if (seriesIndex + inc > pixelSizeZ.size()) {
+          int z = core[q].sizeT;
+          core[q].sizeT = core[q].sizeZ;
+          core[q].sizeZ = z;
+          inc = core[q].sizeC * core[q].sizeT;
+        }
+        seriesIndex += inc;
+      }
+    }
+
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this, true);
 
