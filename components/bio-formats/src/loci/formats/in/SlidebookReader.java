@@ -499,6 +499,9 @@ public class SlidebookReader extends FormatReader {
           if (isGreaterThanEpsilon(size)) {
             pixelSizeZ.add(size);
           }
+          else {
+            pixelSizeZ.add(null);
+          }
           in.seek(in.getFilePointer() - 20);
 
           for (int j=0; j<pixelOffsets.size(); j++) {
@@ -598,7 +601,7 @@ public class SlidebookReader extends FormatReader {
           {
             in.skipBytes(14);
             String name = in.readCString().trim();
-            if (name.length() > 0) {
+            if (name.length() > 1) {
               channelNames.add(name);
             }
           }
@@ -801,9 +804,16 @@ public class SlidebookReader extends FormatReader {
           core[i].sizeZ = (int) (p / getSizeC());
         }
         else {
-          core[i].sizeZ = 1;
-          core[i].sizeC = 1;
-          core[i].sizeT = (int) p;
+          if (core[i].sizeC > 1 && p <= core[i].sizeC) {
+            core[i].sizeZ = 1;
+            core[i].sizeC = (int) p;
+            core[i].sizeT = 1;
+          }
+          else {
+            core[i].sizeZ = 1;
+            core[i].sizeC = 1;
+            core[i].sizeT = (int) p;
+          }
         }
       }
       plane = pixels / (getSizeC() * getSizeZ());
