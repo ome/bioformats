@@ -32,6 +32,7 @@ import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.common.xml.BaseHandler;
 import loci.common.xml.XMLTools;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
@@ -469,7 +470,7 @@ public class PrairieReader extends FormatReader {
   // -- Helper classes --
 
   /** SAX handler for parsing XML. */
-  public class PrairieHandler extends DefaultHandler {
+  public class PrairieHandler extends BaseHandler {
     public void startElement(String uri, String localName, String qName,
       Attributes attributes)
     {

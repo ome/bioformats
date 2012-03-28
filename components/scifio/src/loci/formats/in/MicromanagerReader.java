@@ -34,6 +34,7 @@ import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.common.xml.BaseHandler;
 import loci.common.xml.XMLTools;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
@@ -653,7 +654,7 @@ public class MicromanagerReader extends FormatReader {
   // -- Helper classes --
 
   /** SAX handler for parsing Acqusition.xml. */
-  class MicromanagerHandler extends DefaultHandler {
+  class MicromanagerHandler extends BaseHandler {
     public void startElement(String uri, String localName, String qName,
       Attributes attributes)
     {

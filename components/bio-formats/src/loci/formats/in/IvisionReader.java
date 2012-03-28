@@ -27,6 +27,7 @@ import java.io.IOException;
 
 import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
+import loci.common.xml.BaseHandler;
 import loci.common.xml.XMLTools;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -37,7 +38,6 @@ import loci.formats.meta.MetadataStore;
 import ome.xml.model.primitives.PositiveInteger;
 
 import org.xml.sax.Attributes;
-import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * IvisionReader is the file format reader for IVision (.IPM) files.
@@ -313,7 +313,7 @@ public class IvisionReader extends FormatReader {
 
   // -- Helper class --
 
-  class IvisionHandler extends DefaultHandler {
+  class IvisionHandler extends BaseHandler {
 
     // -- Fields --
 

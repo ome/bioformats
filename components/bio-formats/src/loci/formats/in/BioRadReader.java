@@ -31,6 +31,7 @@ import java.util.Vector;
 
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.common.xml.BaseHandler;
 import loci.common.xml.XMLTools;
 import loci.formats.FilePattern;
 import loci.formats.FormatException;
@@ -1123,7 +1124,7 @@ public class BioRadReader extends FormatReader {
   // -- Helper classes --
 
   /** SAX handler for parsing XML. */
-  class BioRadHandler extends DefaultHandler {
+  class BioRadHandler extends BaseHandler {
     public void startElement(String uri, String localName, String qName,
       Attributes attributes)
     {

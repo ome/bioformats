@@ -30,6 +30,7 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 
 import loci.common.DateTools;
+import loci.common.xml.BaseHandler;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
@@ -57,7 +58,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.xml.sax.Attributes;
-import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * SAX handler for parsing XML in Leica LIF and Leica TCS files.
@@ -68,7 +68,7 @@ import org.xml.sax.helpers.DefaultHandler;
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
-public class LeicaHandler extends DefaultHandler {
+public class LeicaHandler extends BaseHandler {
 
   // -- Constants --
 

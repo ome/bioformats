@@ -28,6 +28,7 @@ import java.util.Hashtable;
 
 import loci.common.DataTools;
 import loci.common.DateTools;
+import loci.common.xml.BaseHandler;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
@@ -40,7 +41,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.xml.sax.Attributes;
-import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * DefaultHandler implementation for handling XML produced by Nikon Elements.
@@ -49,7 +49,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/ND2Handler.java">Trac</a>,
  * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/ND2Handler.java;hb=HEAD">Gitweb</a></dd></dl>
  */
-public class ND2Handler extends DefaultHandler {
+public class ND2Handler extends BaseHandler {
 
   // -- Constants --
 
