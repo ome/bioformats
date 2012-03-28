@@ -809,7 +809,7 @@ public class SlidebookReader extends FormatReader {
             core[i].sizeC = (int) p;
             core[i].sizeT = 1;
           }
-          else {
+          else if (p != core[i].sizeZ * core[i].sizeC) {
             core[i].sizeZ = 1;
             core[i].sizeC = 1;
             core[i].sizeT = (int) p;
@@ -822,6 +822,10 @@ public class SlidebookReader extends FormatReader {
         2 * (pixels - (getSizeX() * getSizeY() * getSizeC() * getSizeZ()));
       if ((pixelLengths.get(index).longValue() % 2) == 1) {
         diff++;
+      }
+
+      if (diff > plane / 2) {
+        diff = 0;
       }
 
       if (adjust && diff == 0) {
