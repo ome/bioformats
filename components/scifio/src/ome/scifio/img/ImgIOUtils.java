@@ -36,6 +36,7 @@ import java.util.zip.ZipInputStream;
 import loci.formats.FormatTools;
 
 import net.imglib2.exception.ImgLibException;
+import net.imglib2.exception.IncompatibleTypeException;
 import net.imglib2.img.Img;
 import net.imglib2.img.ImgPlus;
 import net.imglib2.img.basictypeaccess.PlanarAccess;
@@ -180,8 +181,9 @@ public final class ImgIOUtils {
     return (T) type;
   }
   
-  /** Converts ImgLib2 Type object to SCIFIO pixel type. */
-  public static int makeType(final RealType type) {
+  /** Converts ImgLib2 Type object to SCIFIO pixel type. 
+   * @throws IncompatibleTypeException */
+  public static int makeType(final RealType type) throws ImgIOException {
     int pixelType = FormatTools.UINT8;
     if(type instanceof UnsignedByteType) {
       pixelType = FormatTools.UINT8;
@@ -206,6 +208,9 @@ public final class ImgIOUtils {
     }
     else if(type instanceof DoubleType) {
       pixelType = FormatTools.DOUBLE;
+    }
+    else {
+      throw new ImgIOException("Pixel type not supported in Bio-Formats. Please convert your image to a supported type.");
     }
     
     return pixelType;
