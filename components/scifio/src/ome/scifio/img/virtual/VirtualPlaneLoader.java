@@ -23,11 +23,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package ome.scifio.img.virtual;
 
-import ome.scifio.img.ImgIOUtils;
 import loci.common.DataTools;
 import loci.formats.FormatTools;
 import net.imglib2.img.basictypeaccess.array.ArrayDataAccess;
 import net.imglib2.img.planar.PlanarImg;
+import ome.scifio.img.ImgIOUtils;
 
 /**
  *
@@ -108,7 +108,7 @@ public class VirtualPlaneLoader {
       primitivePlane = typeConvert(planeBytes);
     }
     ArrayDataAccess<?> wrappedPlane = ImgIOUtils.makeArray(primitivePlane);
-    ((PlanarImg)planeImg).setPlane(0, wrappedPlane);
+    ((PlanarImg) planeImg).setPlane(0, wrappedPlane);
   }
 
   // -- private helpers --
@@ -140,4 +140,5 @@ public class VirtualPlaneLoader {
     return DataTools.makeDataArray(bytes, bytesPerPix, floating,
       virtImage.getReader().isLittleEndian());
   }
+
 }

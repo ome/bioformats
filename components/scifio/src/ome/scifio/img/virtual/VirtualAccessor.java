@@ -46,12 +46,10 @@ public class VirtualAccessor<T extends NativeType<T> & RealType<T>> {
   private PlanarRandomAccess<T> accessor;
   private VirtualPlaneLoader planeLoader;
 
-
   public VirtualAccessor(VirtualImg<T> virtImage) {
     long[] planeSize =
       new long[]{virtImage.dimension(0), virtImage.dimension(1)};
     this.planeImg =
-      (PlanarImg<T, ? extends ArrayDataAccess<?>>)
       new PlanarImgFactory<T>().create(planeSize, virtImage.getType().copy());
     this.planeLoader =
       new VirtualPlaneLoader(virtImage, planeImg, virtImage.isByteOnly());
@@ -74,4 +72,5 @@ public class VirtualAccessor<T extends NativeType<T> & RealType<T>> {
   public Object getCurrentPlane() {
     return planeImg.getPlane(0);
   }
+
 }

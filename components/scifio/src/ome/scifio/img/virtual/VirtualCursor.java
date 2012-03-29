@@ -91,4 +91,5 @@ public class VirtualCursor<T extends NativeType<T> & RealType<T>>
   public Object getCurrentPlane() {
     return accessor.getCurrentPlane();
   }
+
 }

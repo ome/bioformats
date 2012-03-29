@@ -23,7 +23,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package ome.scifio.img.virtual;
 
-import net.imglib2.AbstractRandomAccess;
+import net.imglib2.Point;
+import net.imglib2.RandomAccess;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.RealType;
 
@@ -35,55 +36,33 @@ import net.imglib2.type.numeric.RealType;
  * @author Barry DeZonia
  */
 public class VirtualRandomAccess<T extends NativeType<T> & RealType<T>>
-  extends AbstractRandomAccess<T>
+  extends Point implements RandomAccess<T>
 {
-  private VirtualImg<T> virtImage;
-  private VirtualAccessor<T> accessor;
+
+  private final VirtualImg<T> virtImage;
+  private final VirtualAccessor<T> accessor;
 
   /**
    * Constructor
    *
    * @param image - the VirtualImg to access randomly
    */
-  public VirtualRandomAccess(VirtualImg<T> image)
+  public VirtualRandomAccess(final VirtualImg<T> image)
   {
     super(image.numDimensions());
     this.accessor = new VirtualAccessor<T>(image);
     this.virtImage = image;
   }
 
-  public void fwd(int d) {
-    position[d]++;
-  }
-
-  public void bck(int d) {
-    position[d]--;
-  }
-
-  public void move(long distance, int d) {
-    position[d] += distance;
-  }
-
-  public void setPosition(int[] pos) {
-    for (int i = 0; i < position.length; i++)
-      position[i] = pos[i];
-  }
-
-  public void setPosition(long[] pos) {
-    for (int i = 0; i < position.length; i++)
-      position[i] = pos[i];
-  }
-
-  public void setPosition(long pos, int d) {
+  @Override
+  public void setPosition(final long pos, final int d) {
     position[d] = pos;
   }
 
-  @Override
   public VirtualRandomAccess<T> copy() {
     return new VirtualRandomAccess<T>(virtImage);
   }
 
-  @Override
   public VirtualRandomAccess<T> copyRandomAccess() {
     return new VirtualRandomAccess<T>(virtImage);
   }
@@ -95,4 +74,5 @@ public class VirtualRandomAccess<T extends NativeType<T> & RealType<T>>
   public Object getCurrentPlane() {
     return accessor.getCurrentPlane();
   }
+
 }

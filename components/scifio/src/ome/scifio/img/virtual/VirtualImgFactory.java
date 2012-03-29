@@ -38,6 +38,7 @@ import net.imglib2.type.numeric.RealType;
 public class VirtualImgFactory<T extends NativeType<T> & RealType<T>>
   extends ImgFactory<T>
 {
+
   @Override
   public Img<T> create(long[] dim, T type) {
     throw new UnsupportedOperationException(
@@ -45,7 +46,7 @@ public class VirtualImgFactory<T extends NativeType<T> & RealType<T>>
   }
 
   @Override
-  public <S> ImgFactory<S> imgFactory(S type) throws IncompatibleTypeException{
+  public <S> ImgFactory<S> imgFactory(S type) throws IncompatibleTypeException {
     throw new UnsupportedOperationException(
       "VirtualImgFactories cannot actually create images");
   }

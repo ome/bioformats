@@ -28,13 +28,9 @@ import java.io.IOException;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
-
-import net.imglib2.IterableRealInterval;
 import net.imglib2.img.AbstractImg;
 import net.imglib2.img.Img;
 import net.imglib2.img.ImgFactory;
-import ome.scifio.img.ImgIOException;
-import ome.scifio.img.ImgOpener;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.integer.ByteType;
@@ -45,6 +41,8 @@ import net.imglib2.type.numeric.integer.UnsignedIntType;
 import net.imglib2.type.numeric.integer.UnsignedShortType;
 import net.imglib2.type.numeric.real.DoubleType;
 import net.imglib2.type.numeric.real.FloatType;
+import ome.scifio.img.ImgIOException;
+import ome.scifio.img.ImgOpener;
 
 /**
  * This class supports the ability to open an image and only load data into
@@ -131,9 +129,10 @@ public class VirtualImg<T extends NativeType<T> & RealType<T>>
     return new VirtualCursor<T>(this);
   }
 
-  public boolean equalIterationOrder(IterableRealInterval<?> f) {
+  public Object iterationOrder()
+  {
     // TODO maybe support. For now, for simplicity, don't support
-    return false;
+    return this; // iteration order is only compatible with ourselves
   }
 
   public ImgFactory<T> factory() {
@@ -219,11 +218,12 @@ public class VirtualImg<T extends NativeType<T> & RealType<T>>
         return new VirtualImg<DoubleType>(
             dimensions, rdr, new DoubleType(), false);
 
-      // TODO - add LONG case here when supported by BioFormats
+      // TODO - add LONG case here when supported by Bio-Formats
 
       default:
         throw new IllegalArgumentException(
           "VirtualImg : unsupported pixel format");
     }
   }
+
 }
