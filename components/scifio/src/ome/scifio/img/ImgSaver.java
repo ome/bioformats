@@ -77,6 +77,37 @@ public class ImgSaver implements StatusReporter {
   }
 
   // -- ImgSaver methods --
+  
+  /**
+   * see isCompressible(ImgPlus)
+   * 
+   */
+  public <T extends RealType<T> & NativeType<T>> boolean isCompressible(final Img<T> img) {
+    return isCompressible(ImgPlus.wrap(img));
+  }
+  
+  /**
+   * Currently there are limits as to what types of Images can be saved.
+   * All images must ultimately adhere to an, at most, five-dimensional structure
+   * using the known axes X, Y, Z, Channel and Time.
+   * 
+   * Unknown axes (U) can potentially be handled by coercing to the Channel axis.
+   * For example, X Y Z U C U T would be valid, as would X Y Z U T.
+   * But X Y C Z U T would not, as the unknown axis can not be compressed with 
+   * Channel.
+   * 
+   * This method will return true if the axes of the provided image can be represented with
+   * a valid 5D String, and false otherwise.
+   * 
+   * @param <T>
+   * @param img
+   * @return
+   */
+  public <T extends RealType<T> & NativeType<T>> boolean isCompressible(final ImgPlus<T> img) {
+    String dimOrder = dimOrderFromImgPlus(img);
+    
+    return (dimOrder != null);
+  }
 
   /**
    * saveImg is the entry point for saving an {@link ImgPlus}
@@ -372,6 +403,7 @@ public class ImgSaver implements StatusReporter {
 
       final int pixelType = ImgIOUtils.makeType(img.firstElement());
 
+      //TODO is there some way to consolidate this with the isCompressible method?
       final AxisType[] axes = new AxisType[img.numDimensions()];
       img.axes(axes);
 
@@ -417,6 +449,20 @@ public class ImgSaver implements StatusReporter {
         sizeT, 1);
     }
   }
+  
+  /* Returns a String representation of the five-dimensional compression (if necessary) of
+   * the provided ImgPlus.
+   * If no five-dimensional compression is possible, returns null.
+   */
+  private <T extends RealType<T> & NativeType<T>> String dimOrderFromImgPlus(final ImgPlus<T> img) {
+    final AxisType[] axes = new AxisType[img.numDimensions()];
+    img.axes(axes);
+
+    long[] axisLengths = new long[5];
+    long[] oldLengths = new long[img.numDimensions()];
+    return AxisGuesser.guessImgLib(axes, oldLengths, axisLengths);
+  }
+
 
   private OMEXMLService createOMEXMLService() {
     try {
