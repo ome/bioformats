@@ -384,7 +384,7 @@ public class ImgSaver implements StatusReporter {
       
       if(dimOrder == null)
         throw new ImgIOException(
-          "Image has more than 5 dimensions.");
+          "Image has more than 5 dimensions in an order that could not be compressed.");
 
       //TODO if size C, Z, T and dimension order are populated we won't overwrite them.
       /*
