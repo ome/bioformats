@@ -104,7 +104,39 @@ public class ImgSaver implements StatusReporter {
    * @return
    */
   public <T extends RealType<T> & NativeType<T>> boolean isCompressible(final ImgPlus<T> img) {
-    String dimOrder = dimOrderFromImgPlus(img);
+    
+    AxisType[] axes = new AxisType[img.numDimensions()];
+    img.axes(axes);
+    
+    long[] axisLengths = new long[5];
+    long[] oldLengths = new long[img.numDimensions()];
+    
+    img.dimensions(oldLengths);
+    
+    // true if this img contains an axis that will need to be compressed
+    boolean foundUnknown = false;
+    
+    for(int i = 0; i < axes.length; i++) {
+      AxisType axis = axes[i];
+      
+      switch(axis.getLabel().toUpperCase().charAt(0)) {
+        case 'X':
+        case 'Y':
+        case 'Z':
+        case 'C':
+        case 'T':
+          break;
+        default:
+          if(oldLengths[i] > 1)
+            foundUnknown = true;
+      }
+    }
+    
+    if(!foundUnknown)
+      return false;
+    
+    // This ImgPlus had unknown axes of size > 1, so we will check to see if they can be compressed
+    String dimOrder = AxisGuesser.guessImgLib(axes, oldLengths, axisLengths);
     
     return (dimOrder != null);
   }
@@ -449,20 +481,6 @@ public class ImgSaver implements StatusReporter {
         sizeT, 1);
     }
   }
-  
-  /* Returns a String representation of the five-dimensional compression (if necessary) of
-   * the provided ImgPlus.
-   * If no five-dimensional compression is possible, returns null.
-   */
-  private <T extends RealType<T> & NativeType<T>> String dimOrderFromImgPlus(final ImgPlus<T> img) {
-    final AxisType[] axes = new AxisType[img.numDimensions()];
-    img.axes(axes);
-
-    long[] axisLengths = new long[5];
-    long[] oldLengths = new long[img.numDimensions()];
-    return AxisGuesser.guessImgLib(axes, oldLengths, axisLengths);
-  }
-
 
   private OMEXMLService createOMEXMLService() {
     try {
