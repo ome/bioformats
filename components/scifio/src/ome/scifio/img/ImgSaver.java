@@ -410,10 +410,11 @@ public class ImgSaver implements StatusReporter {
         }
       }
 
+      //TODO save composite channel count somewhere...
       MetadataTools.populateMetadata(
         meta, 0, img.getName(), false, dimOrder,
         FormatTools.getPixelTypeString(pixelType), sizeX, sizeY, sizeZ, sizeC,
-        sizeT, img.getCompositeChannelCount());
+        sizeT, 1);
     }
   }
 
