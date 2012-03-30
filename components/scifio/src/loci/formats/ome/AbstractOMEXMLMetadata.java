@@ -76,10 +76,6 @@ public abstract class AbstractOMEXMLMetadata implements OMEXMLMetadata {
 
   /** Creates a new OME-XML metadata object. */
   public AbstractOMEXMLMetadata() {
-    try {
-      builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-    }
-    catch (ParserConfigurationException e) { }
   }
 
   // -- OMEXMLMetadata API methods --
@@ -95,7 +91,7 @@ public abstract class AbstractOMEXMLMetadata implements OMEXMLMetadata {
     }
     try {
       ByteArrayOutputStream os = new ByteArrayOutputStream();
-      Document doc = builder.newDocument();
+      Document doc = createNewDocument();
       Element r = root.asXMLElement(doc);
       r.setAttribute("xmlns:xsi", XSI_NS);
       r.setAttribute("xsi:schemaLocation", OME.NAMESPACE + " " + SCHEMA);
@@ -112,7 +108,7 @@ public abstract class AbstractOMEXMLMetadata implements OMEXMLMetadata {
 
   /* @see loci.formats.meta.MetadataRetrieve#getUUID() */
   public String getUUID() {
-    Element ome = root.asXMLElement(builder.newDocument());
+    Element ome = getRootElement();
     return DOMUtil.getAttribute("UUID", ome);
   }
 
@@ -129,7 +125,7 @@ public abstract class AbstractOMEXMLMetadata implements OMEXMLMetadata {
 
   /* @see loci.formats.meta.MetadataRetrieve#setUUID(String) */
   public void setUUID(String uuid) {
-    Element ome = root.asXMLElement(builder.newDocument());
+    Element ome = getRootElement();
     DOMUtil.setAttribute("UUID", uuid, ome);
   }
 
@@ -169,6 +165,22 @@ public abstract class AbstractOMEXMLMetadata implements OMEXMLMetadata {
    */
   protected Double integerToDouble(Integer value) {
     return value == null ? null : new Double(value.doubleValue());
+  }
+
+  // -- Helper methods --
+
+  private Document createNewDocument() {
+    if (builder == null) {
+      try {
+        builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+      }
+      catch (ParserConfigurationException e) { }
+    }
+    return builder.newDocument();
+  }
+
+  private Element getRootElement() {
+    return root.asXMLElement(createNewDocument());
   }
 
 }
