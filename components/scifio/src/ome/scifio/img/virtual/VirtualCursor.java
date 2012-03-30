@@ -30,66 +30,67 @@ import net.imglib2.type.numeric.RealType;
 
 /**
  * This class manages read only nonspatial access to a virtual image. Data
- * returned from get() can be written to but any changes are never saved
- * to disk.
- *
+ * returned from get() can be written to but any changes are never saved to
+ * disk.
+ * 
  * @author Barry DeZonia
  */
-public class VirtualCursor<T extends NativeType<T> & RealType<T>>
-  extends AbstractCursor<T>
+public class VirtualCursor<T extends NativeType<T> & RealType<T>> extends
+	AbstractCursor<T>
 {
-  private VirtualImg<T> virtImage;
-  private IntervalIterator iter;
-  private long[] position;
-  private VirtualAccessor<T> accessor;
 
-  public VirtualCursor(VirtualImg<T> image) {
-    super(image.numDimensions());
-    this.virtImage = image;
-    long[] fullDimensions = new long[image.numDimensions()];
-    image.dimensions(fullDimensions);
-    this.iter = new IntervalIterator(fullDimensions);
-    this.position = new long[fullDimensions.length];
-    this.accessor = new VirtualAccessor<T>(virtImage);
-  }
+	private final VirtualImg<T> virtImage;
+	private final IntervalIterator iter;
+	private final long[] position;
+	private final VirtualAccessor<T> accessor;
 
-  public T get() {
-    iter.localize(position);
-    return accessor.get(position);
-  }
+	public VirtualCursor(final VirtualImg<T> image) {
+		super(image.numDimensions());
+		this.virtImage = image;
+		final long[] fullDimensions = new long[image.numDimensions()];
+		image.dimensions(fullDimensions);
+		this.iter = new IntervalIterator(fullDimensions);
+		this.position = new long[fullDimensions.length];
+		this.accessor = new VirtualAccessor<T>(virtImage);
+	}
 
-  public void fwd() {
-    iter.fwd();
-  }
+	public T get() {
+		iter.localize(position);
+		return accessor.get(position);
+	}
 
-  public void reset() {
-    iter.reset();
-  }
+	public void fwd() {
+		iter.fwd();
+	}
 
-  public boolean hasNext() {
-    return iter.hasNext();
-  }
+	public void reset() {
+		iter.reset();
+	}
 
-  public void localize(long[] pos) {
-    iter.localize(pos);
-  }
+	public boolean hasNext() {
+		return iter.hasNext();
+	}
 
-  public long getLongPosition(int d) {
-    return iter.getLongPosition(d);
-  }
+	public void localize(final long[] pos) {
+		iter.localize(pos);
+	}
 
-  @Override
-  public VirtualCursor<T> copy() {
-    return new VirtualCursor<T>(virtImage);
-  }
+	public long getLongPosition(final int d) {
+		return iter.getLongPosition(d);
+	}
 
-  @Override
-  public VirtualCursor<T> copyCursor() {
-    return new VirtualCursor<T>(virtImage);
-  }
+	@Override
+	public VirtualCursor<T> copy() {
+		return new VirtualCursor<T>(virtImage);
+	}
 
-  public Object getCurrentPlane() {
-    return accessor.getCurrentPlane();
-  }
+	@Override
+	public VirtualCursor<T> copyCursor() {
+		return new VirtualCursor<T>(virtImage);
+	}
+
+	public Object getCurrentPlane() {
+		return accessor.getCurrentPlane();
+	}
 
 }

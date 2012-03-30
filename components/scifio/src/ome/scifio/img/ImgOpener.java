@@ -67,6 +67,7 @@ import ome.xml.model.primitives.PositiveFloat;
  * 
  * @author Curtis Rueden
  * @author Stephan Preibisch
+ * @author Stephan Saalfeld
  */
 public class ImgOpener implements StatusReporter {
 
@@ -151,10 +152,10 @@ public class ImgOpener implements StatusReporter {
 	 * @throws IncompatibleTypeException if the {@link Type} of the {@link Img} is
 	 *           incompatible with the {@link ImgFactory}
 	 */
-	public <T extends RealType<T> & NativeType<T>> ImgPlus<T> openImg(
-		final String id, final ImgFactory<?> imgFactory,
-		final boolean computeMinMax) throws ImgIOException,
-		IncompatibleTypeException
+	public <T extends RealType<T> & NativeType<T>> ImgPlus<T>
+		openImg(final String id, final ImgFactory<?> imgFactory,
+			final boolean computeMinMax) throws ImgIOException,
+			IncompatibleTypeException
 	{
 		try {
 			final IFormatReader r = initializeReader(id, computeMinMax);
@@ -276,6 +277,7 @@ public class ImgOpener implements StatusReporter {
 		catch (final IOException e) {
 			throw new ImgIOException(e);
 		}
+		imgPlus.setSource(id);
 		final long endTime = System.currentTimeMillis();
 		final float time = (endTime - startTime) / 1000f;
 		notifyListeners(new StatusEvent(planeCount, planeCount, id + ": read " +
@@ -335,7 +337,7 @@ public class ImgOpener implements StatusReporter {
 
 		return r;
 	}
-	
+
 	/** Compiles an N-dimensional list of axis lengths from the given reader. */
 	public static long[] getDimLengths(final IFormatReader r) {
 		final long sizeX = r.getSizeX();
@@ -407,10 +409,10 @@ public class ImgOpener implements StatusReporter {
 		for (final char dim : dimOrder.toCharArray()) {
 			switch (dim) {
 				case 'X':
-					if (sizeX > 0) dimTypes.add(Axes.X);
+					if (sizeX > 1) dimTypes.add(Axes.X);
 					break;
 				case 'Y':
-					if (sizeY > 0) dimTypes.add(Axes.Y);
+					if (sizeY > 1) dimTypes.add(Axes.Y);
 					break;
 				case 'Z':
 					if (sizeZ > 1) dimTypes.add(Axes.Z);
@@ -465,10 +467,10 @@ public class ImgOpener implements StatusReporter {
 			final char dim = dimOrder.charAt(i);
 			switch (dim) {
 				case 'X':
-					if (sizeX > 0) calibrationList.add(xCal);
+					if (sizeX > 1) calibrationList.add(xCal);
 					break;
 				case 'Y':
-					if (sizeY > 0) calibrationList.add(yCal);
+					if (sizeY > 1) calibrationList.add(yCal);
 					break;
 				case 'Z':
 					if (sizeZ > 1) calibrationList.add(zCal);
@@ -672,8 +674,8 @@ public class ImgOpener implements StatusReporter {
 	}
 
 	/** Copies the current dimensional position into the given array. */
-	private void getPosition(final IFormatReader r, final int no,
-		final long[] pos)
+	private void
+		getPosition(final IFormatReader r, final int no, final long[] pos)
 	{
 		final int sizeX = r.getSizeX();
 		final int sizeY = r.getSizeY();
@@ -689,10 +691,10 @@ public class ImgOpener implements StatusReporter {
 			final char dim = dimOrder.charAt(i);
 			switch (dim) {
 				case 'X':
-					if (sizeX > 0) index++; // NB: Leave X axis position alone.
+					if (sizeX > 1) index++; // NB: Leave X axis position alone.
 					break;
 				case 'Y':
-					if (sizeY > 0) index++; // NB: Leave Y axis position alone.
+					if (sizeY > 1) index++; // NB: Leave Y axis position alone.
 					break;
 				case 'Z':
 					if (sizeZ > 1) pos[index++] = zct[0];

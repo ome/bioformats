@@ -30,25 +30,27 @@ import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.RealType;
 
 /**
- * Dummy implementation of an ImgFactory for VirtualImgs. Does not actually
- * do anything. Needed by VirtualImg to satisfy the Img contract.
- *
+ * Dummy implementation of an ImgFactory for VirtualImgs. Does not actually do
+ * anything. Needed by VirtualImg to satisfy the Img contract.
+ * 
  * @author Barry DeZonia
  */
-public class VirtualImgFactory<T extends NativeType<T> & RealType<T>>
-  extends ImgFactory<T>
+public class VirtualImgFactory<T extends NativeType<T> & RealType<T>> extends
+	ImgFactory<T>
 {
 
-  @Override
-  public Img<T> create(long[] dim, T type) {
-    throw new UnsupportedOperationException(
-      "VirtualImgFactories cannot actually create images");
-  }
+	@Override
+	public Img<T> create(final long[] dim, final T type) {
+		throw new UnsupportedOperationException(
+			"VirtualImgFactories cannot actually create images");
+	}
 
-  @Override
-  public <S> ImgFactory<S> imgFactory(S type) throws IncompatibleTypeException {
-    throw new UnsupportedOperationException(
-      "VirtualImgFactories cannot actually create images");
-  }
+	@Override
+	public <S> ImgFactory<S> imgFactory(final S type)
+		throws IncompatibleTypeException
+	{
+		throw new UnsupportedOperationException(
+			"VirtualImgFactories cannot actually create images");
+	}
 
 }
