@@ -656,13 +656,6 @@ public class LeicaHandler extends DefaultHandler {
         String id =
           MetadataTools.createLSID("Detector", numDatasets, nextChannel);
 
-        /* debug */
-        System.out.println("nextChannel = " + nextChannel);
-        System.out.println("  channel = " + channel);
-        System.out.println("  numChannels = " + numChannels);
-        System.out.println("  core.sizeC = " + core.get(numDatasets).sizeC);
-        /* end debug */
-
         boolean validChannel = numChannels <= 0 || nextChannel < numChannels;
 
         if (m != null && validChannel) {
