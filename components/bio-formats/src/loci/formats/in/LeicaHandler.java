@@ -777,10 +777,16 @@ public class LeicaHandler extends DefaultHandler {
       roi.text = attributes.getValue("text");
     }
     else if (qName.equals("Vertex")) {
-      String x = attributes.getValue("x").replaceAll(",", ".");
-      String y = attributes.getValue("y").replaceAll(",", ".");
-      roi.x.add(new Double(x));
-      roi.y.add(new Double(y));
+      String x = attributes.getValue("x");
+      String y = attributes.getValue("y");
+      if (x != null) {
+        x = x.replaceAll(",", ".");
+        roi.x.add(new Double(x));
+      }
+      if (y != null) {
+        y = y.replaceAll(",", ".");
+        roi.y.add(new Double(y));
+      }
     }
     else if (qName.equals("ROI")) {
       alternateCenter = true;
