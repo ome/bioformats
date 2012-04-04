@@ -628,9 +628,12 @@ public class LeicaHandler extends DefaultHandler {
       }
     }
     else if (qName.equals("Detector")) {
-      Float gain = new Float(attributes.getValue("Gain"));
-      Float offset = new Float(attributes.getValue("Offset"));
-      boolean active = attributes.getValue("IsActive").equals("1");
+      String gainValue = attributes.getValue("Gain");
+      String offsetValue = attributes.getValue("Offset");
+
+      Float gain = gainValue == null ? null : new Float(gainValue);
+      Float offset = offsetValue == null ? null : new Float(offsetValue);
+      boolean active = "1".equals(attributes.getValue("IsActive"));
 
       if (active) {
         // find the corresponding MultiBand and Detector
