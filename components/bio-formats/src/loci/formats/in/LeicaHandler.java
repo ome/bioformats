@@ -694,6 +694,10 @@ public class LeicaHandler extends DefaultHandler {
           store.setDetectorVoltage(detector.voltage, numDatasets,
             nextChannel);
         }
+        else {
+          store.setDetectorID(id, numDatasets, nextChannel);
+          store.setDetectorType("PMT", numDatasets, nextChannel);
+        }
 
         if (laser != null && laser.intensity > 0 && validChannel) {
           store.setLightSourceSettingsLightSource(laser.id, numDatasets,
