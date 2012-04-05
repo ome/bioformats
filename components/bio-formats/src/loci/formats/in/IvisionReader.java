@@ -275,7 +275,14 @@ public class IvisionReader extends FormatReader {
       store.setImageInstrumentRef(instrumentID, 0);
 
       if (deltaT != null) {
-        store.setPixelsTimeIncrement(new Double(deltaT), 0);
+        Double increment = 0d;
+        try {
+          increment = new Double(deltaT);
+        }
+        catch (NumberFormatException e) {
+          LOGGER.debug("Failed to parse time increment", e);
+        }
+        store.setPixelsTimeIncrement(increment, 0);
       }
 
       String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
@@ -306,7 +313,12 @@ public class IvisionReader extends FormatReader {
 
       store.setDetectorSettingsBinning(getBinning(binX + "x" + binY), 0, 0);
       if (gain != null) {
-        store.setDetectorSettingsGain(new Double(gain), 0, 0);
+        try {
+          store.setDetectorSettingsGain(new Double(gain), 0, 0);
+        }
+        catch (NumberFormatException e) {
+          LOGGER.debug("Failed to parse detector gain", e);
+        }
       }
     }
   }
