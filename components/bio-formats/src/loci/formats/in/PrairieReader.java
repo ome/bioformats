@@ -144,17 +144,28 @@ public class PrairieReader extends FormatReader {
     // check for appropriately named XML file
 
     Location xml = new Location(parent, prefix + ".xml");
-    if (!xml.exists() && prefix.indexOf("_") != -1) {
-      prefix = prefix.substring(0, prefix.indexOf("_"));
+    while (!xml.exists() && prefix.indexOf("_") != -1) {
+      prefix = prefix.substring(0, prefix.lastIndexOf("_"));
       xml = new Location(parent, prefix + ".xml");
     }
 
-    return xml.exists() && super.isThisType(name, false);
+    boolean validXML = false;
+    try {
+      RandomAccessInputStream xmlStream =
+        new RandomAccessInputStream(xml.getAbsolutePath());
+      validXML = isThisType(xmlStream);
+      xmlStream.close();
+    }
+    catch (IOException e) {
+      LOGGER.trace("Failed to check XML file's type", e);
+    }
+
+    return xml.exists() && super.isThisType(name, false) && validXML;
   }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    final int blockLen = 1048608;
+    final int blockLen = (int) Math.min(1048608, stream.length());
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
     String s = stream.readString(blockLen);
     if (s.indexOf("xml") != -1 && s.indexOf("PV") != -1) return true;
