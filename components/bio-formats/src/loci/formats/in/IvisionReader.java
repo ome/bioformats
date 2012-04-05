@@ -365,11 +365,13 @@ public class IvisionReader extends FormatReader {
     }
 
     public void characters(char[] ch, int start, int length) {
-      String v = new String(ch, start, length);
-      if ("key".equals(currentElement)) {
-        key = v;
+      String v = new String(ch, start, length).trim();
+      if (v.length() > 0) {
+        if ("key".equals(currentElement)) {
+          key = v;
+        }
+        else value = v;
       }
-      else value = v;
     }
 
     public void startElement(String uri, String localName, String qName,
