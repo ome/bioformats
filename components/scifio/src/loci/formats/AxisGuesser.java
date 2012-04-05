@@ -387,11 +387,11 @@ public class AxisGuesser {
     // number of "blocks" of unknown axes, e.g. YUUUZU = 2
     int contiguousUnknown = 0;
     
-    // how many axis slots we have to work with
-    int missingAxisCount = 0;
-    
     // flag to determine how many contiguous blocks of unknowns present
     boolean unknownBlock = false;
+    
+    // flag to indicate that unknown
+    boolean cAdjacent = false;
     
     // first pass to determine which axes are missing and how many
     // unknown blocks are present.
@@ -399,29 +399,37 @@ public class AxisGuesser {
     for(int i = 0; i < axes.length; i++) {
       switch(axes[i].getLabel().toUpperCase().charAt(0)) {
         case 'X':
-          oldOrder += "X";
+          oldOrder += axes[i].getLabel().toUpperCase().charAt(0);
           haveDim[0] = true;
           unknownBlock = false;
+          cAdjacent = false;
           break;
         case 'Y':
-          oldOrder += "Y";
+          oldOrder += axes[i].getLabel().toUpperCase().charAt(0);
           haveDim[1] = true;
           unknownBlock = false;
+          cAdjacent = false;
           break;
         case 'Z':
-          oldOrder += "Z";
+          oldOrder += axes[i].getLabel().toUpperCase().charAt(0);
           haveDim[2] = true;
           unknownBlock = false;
+          cAdjacent = false;
+          break;
+        case 'T':
+          oldOrder += axes[i].getLabel().toUpperCase().charAt(0);
+          haveDim[4] = true;
+          unknownBlock = false;
+          cAdjacent = false;
           break;
         case 'C':
           oldOrder += "C";
           haveDim[3] = true;
-          unknownBlock = false;
-          break;
-        case 'T':
-          oldOrder += "T";
-          haveDim[4] = true;
-          unknownBlock = false;
+          if(unknownBlock) {
+            contiguousUnknown--;
+            unknownBlock = false;
+          }
+          cAdjacent = true;
           break;
         default:
           oldOrder += "U";
@@ -432,83 +440,46 @@ public class AxisGuesser {
           if(dimLengths[i] > 1) {
             if(!unknownBlock) {
               unknownBlock = true;
-              contiguousUnknown++;
+              if(!cAdjacent)
+                contiguousUnknown++;
             }
           }
         break;
       }
     }
     
-    // determine how many axes are missing
-    for(boolean d : haveDim) {
-      if(!d) missingAxisCount++;
-    }
-    
-    // check to see if we can make a valid dimension ordering
-    if(contiguousUnknown > missingAxisCount) {
+    // There are two valid possibilities: we found a C axis and all the unknowns were grouped around it,
+    // or we didn't find a C axis and there was only one group of unknowns.
+    // If either of these conditions is not met, we can't find a valid ordering and return null
+    if( (!haveDim[3] && contiguousUnknown > 1) || (haveDim[3] && contiguousUnknown > 0))
       return null;
-    }
     
     int axesPlaced = 0;
     unknownBlock = false;
     
     // Flag to determine if the current unknownBlock was started by
     // an unknown of size 1.
-    boolean sizeOneUnknown = false;
+    boolean placedC = false;
 
     // Second pass to assign new ordering and calculate lengths
     for(int i = 0; i < axes.length; i++) {
-      switch(oldOrder.charAt(0)) {
+      switch(oldOrder.charAt(i)) {
+        case 'C':
         case 'U':
-          // dimensions of size 1 have no effect on the ordering
-          if(dimLengths[i] > 1 || contiguousUnknown < missingAxisCount) {
-            if(!unknownBlock) {
-              unknownBlock = true;
-              
-              // length of this unknown == 1
-              if(contiguousUnknown < missingAxisCount) {
-                contiguousUnknown++;
-                sizeOneUnknown = true;
-              }
-
-              // assign a label to this dimension
-              if(!haveDim[0]) {
-                newOrder += "X";
-                haveDim[0] = true;
-              }
-              else if(!haveDim[1]) {
-                newOrder += "Y";
-                haveDim[1] = true;
-              }
-              else if(!haveDim[2]) {
-                newOrder += "Z";
-                haveDim[2] = true;
-              }
-              else if(!haveDim[3]) {
-                newOrder += "C";
-                haveDim[3] = true;
-              }
-              else if(!haveDim[4]) {
-                newOrder += "T";
-                haveDim[4] = true;
-              }
+          if(dimLengths[i] > 1) {
+            if(!placedC) {
+              placedC = true;
+              newOrder += "C";
             }
-            else if(dimLengths[i] > 1 && sizeOneUnknown) {
-              // we are in a block of unknowns that was started by
-              // one of size 1, but contains an unknown of size > 1,
-              // thus was double counted (once in pass 1, once in pass 2)
-              sizeOneUnknown = false;
-              contiguousUnknown--;
-            }
+            unknownBlock = true;
             newLengths[axesPlaced] *= dimLengths[i];
           }
-        break;
+          break;
         default:
           // "cap" the current unknown block
           if(unknownBlock) {
             axesPlaced++;
             unknownBlock = false;
-            sizeOneUnknown = false;
           }
           
           newOrder += oldOrder.charAt(i);
@@ -518,6 +489,9 @@ public class AxisGuesser {
       }
     }
     
+    if(!placedC)
+      newOrder += "C";
+        
     // append any remaining missing axes
     // only have to update order string, as lengths are already 1
     for(int i = 0; i < haveDim.length; i++) {
@@ -533,7 +507,6 @@ public class AxisGuesser {
             newOrder += "Z";
           break;
           case 3:
-            newOrder += "C";
           break;
           case 4:
             newOrder += "T";

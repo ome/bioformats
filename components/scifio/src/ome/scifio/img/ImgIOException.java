@@ -28,6 +28,8 @@ import net.imglib2.exception.ImgLibException;
 /**
  * Exception indicating something went wrong during I/O.
  * 
+ * @author Stephan Preibisch
+ * @author Stephan Saalfeld
  * @author Curtis Rueden
  */
 public class ImgIOException extends ImgLibException {
@@ -39,9 +41,9 @@ public class ImgIOException extends ImgLibException {
 	public ImgIOException(final Throwable t) {
 		super(t);
 	}
-	
+
 	public ImgIOException(final String s) {
-	  super(s);
+		super(s);
 	}
 
 }

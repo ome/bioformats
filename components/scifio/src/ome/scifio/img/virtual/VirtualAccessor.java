@@ -35,43 +35,42 @@ import net.imglib2.type.numeric.RealType;
  * access position is provided by the user of the get(position) call. When user
  * tries to get a value from this accessor planes are loaded into memory as
  * needed. Planes are stored in a two dimensional PlanarImg that contains a
- * single plane. The user can modify the data values returned from get() but
- * the changes are never saved to disk.
- *
+ * single plane. The user can modify the data values returned from get() but the
+ * changes are never saved to disk.
+ * 
  * @author Barry DeZonia
  */
 public class VirtualAccessor<T extends NativeType<T> & RealType<T>> {
 
-  private PlanarImg<T, ? extends ArrayDataAccess<?>> planeImg;
-  private PlanarRandomAccess<T> accessor;
-  private VirtualPlaneLoader planeLoader;
+	private final PlanarImg<T, ? extends ArrayDataAccess<?>> planeImg;
+	private final PlanarRandomAccess<T> accessor;
+	private final VirtualPlaneLoader planeLoader;
 
+	public VirtualAccessor(final VirtualImg<T> virtImage) {
+		final long[] planeSize =
+			new long[] { virtImage.dimension(0), virtImage.dimension(1) };
+		this.planeImg =
+			new PlanarImgFactory<T>().create(planeSize, virtImage.getType().copy());
+		this.planeLoader =
+			new VirtualPlaneLoader(virtImage, planeImg, virtImage.isByteOnly());
+		// this initialization must follow loadPlane()
+		this.accessor = planeImg.randomAccess();
+	}
 
-  public VirtualAccessor(VirtualImg<T> virtImage) {
-    long[] planeSize =
-      new long[]{virtImage.dimension(0), virtImage.dimension(1)};
-    this.planeImg =
-      (PlanarImg<T, ? extends ArrayDataAccess<?>>)
-      new PlanarImgFactory<T>().create(planeSize, virtImage.getType().copy());
-    this.planeLoader =
-      new VirtualPlaneLoader(virtImage, planeImg, virtImage.isByteOnly());
-    // this initialization must follow loadPlane()
-    this.accessor = planeImg.randomAccess();
-  }
+	public T get(final long[] position) {
 
-  public T get(long[] position) {
+		if (planeLoader.virtualSwap(position)) {
+			accessor.get().updateContainer(accessor);
+		}
 
-    if (planeLoader.virtualSwap(position)) {
-      accessor.get().updateContainer(accessor);
-    }
+		accessor.setPosition(position[0], 0);
+		accessor.setPosition(position[1], 1);
 
-    accessor.setPosition(position[0], 0);
-    accessor.setPosition(position[1], 1);
+		return accessor.get();
+	}
 
-    return accessor.get();
-  }
+	public Object getCurrentPlane() {
+		return planeImg.getPlane(0);
+	}
 
-  public Object getCurrentPlane() {
-    return planeImg.getPlane(0);
-  }
 }
