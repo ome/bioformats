@@ -181,7 +181,7 @@ public final class ImgIOUtils {
   }
   
   /** Converts ImgLib2 Type object to SCIFIO pixel type. */
-  public static int makeType(final RealType<?> type) {
+  public static <T extends RealType<T>> int makeType(final T type) {
     int pixelType = FormatTools.UINT8;
     if(type instanceof UnsignedByteType) {
       pixelType = FormatTools.UINT8;
