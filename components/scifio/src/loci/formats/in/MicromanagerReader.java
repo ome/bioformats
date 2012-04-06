@@ -289,10 +289,14 @@ public class MicromanagerReader extends FormatReader {
             p.sliceThickness);
         }
 
+        int nextStamp = 0;
         for (int q=0; q<getImageCount(); q++) {
           store.setPlaneExposureTime(p.exposureTime, i, q);
-          if (q < p.timestamps.length) {
-            store.setPlaneDeltaT(p.timestamps[q], i, q);
+          String tiff = positions.get(getSeries()).getFile(q);
+          if (tiff != null && new Location(tiff).exists() &&
+            nextStamp < p.timestamps.length)
+          {
+            store.setPlaneDeltaT(p.timestamps[nextStamp++], i, q);
           }
         }
 
