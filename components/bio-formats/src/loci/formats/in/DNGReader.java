@@ -64,6 +64,7 @@ public class DNGReader extends BaseTiffReader {
   private static final Logger LOGGER =
     LoggerFactory.getLogger(DNGReader.class);
 
+  private static final int CANON_TAG = 34665;
   private static final int TIFF_EPS_STANDARD = 37398;
   private static final int COLOR_MAP = 33422;
   private static final int WHITE_BALANCE_RGB_COEFFS = 12;
@@ -97,6 +98,9 @@ public class DNGReader extends BaseTiffReader {
     IFD ifd = tp.getFirstIFD();
     if (ifd == null) return false;
     boolean hasEPSTag = ifd.containsKey(TIFF_EPS_STANDARD);
+    if (!hasEPSTag) {
+      hasEPSTag = ifd.containsKey(CANON_TAG);
+    }
     String make = ifd.getIFDTextValue(IFD.MAKE);
     return make != null && make.indexOf("Canon") != -1 && hasEPSTag;
   }
@@ -281,7 +285,6 @@ public class DNGReader extends BaseTiffReader {
                 int nextTag = nextKey.intValue();
                 addGlobalMeta(name, note.get(nextKey));
                 if (nextTag == WHITE_BALANCE_RGB_COEFFS) {
-                  /* debug */ System.out.println("setting whiteBalance");
                   whiteBalance = (TiffRational[]) note.get(nextKey);
                 }
               }

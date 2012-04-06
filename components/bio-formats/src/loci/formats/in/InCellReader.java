@@ -31,6 +31,7 @@ import java.util.Vector;
 import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.common.xml.BaseHandler;
 import loci.common.xml.XMLTools;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
@@ -612,7 +613,7 @@ public class InCellReader extends FormatReader {
 
   // -- Helper classes --
 
-  class MinimalInCellHandler extends DefaultHandler {
+  class MinimalInCellHandler extends BaseHandler {
     private String currentImageFile;
     private String currentThumbnail;
     private int wellRow, wellCol;
@@ -751,7 +752,7 @@ public class InCellReader extends FormatReader {
   }
 
   /** SAX handler for parsing XML. */
-  class InCellHandler extends DefaultHandler {
+  class InCellHandler extends BaseHandler {
     private String currentQName;
     private boolean openImage;
     private int nextEmWave = 0;

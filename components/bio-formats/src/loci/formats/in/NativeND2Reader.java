@@ -219,7 +219,14 @@ public class NativeND2Reader extends FormatReader {
 
     if (isJPEG || isLossless) {
       if (codec == null) codec = createCodec(isJPEG);
-      byte[] t = codec.decompress(in, options);
+      byte[] t = null;
+      try {
+        t = codec.decompress(in, options);
+      }
+      catch (IOException e) {
+        LOGGER.debug("Failed to decompress; plane may be corrupt", e);
+        return buf;
+      }
       if ((getSizeX() + scanlinePad) * getSizeY() * pixel > t.length) {
         // one padding pixel per row total, instead of one padding pixel
         // per channel per row
@@ -430,6 +437,9 @@ public class NativeND2Reader extends FormatReader {
               else if (attributeName.equals("uiHeight")) {
                 core[0].sizeY = valueOrLength;
               }
+              else if (attributeName.equals("uiComp")) {
+                core[0].sizeC = valueOrLength;
+              }
               else if (attributeName.equals("uiBpcInMemory")) {
                 core[0].pixelType = FormatTools.pixelTypeFromBytes(
                   valueOrLength / 8, false, false);
@@ -600,6 +610,7 @@ public class NativeND2Reader extends FormatReader {
         {
           core[0].pixelType = FormatTools.UINT16;
         }
+        availableBytes = t.length;
       }
       catch (IOException e) {
         isLossless = false;
@@ -609,7 +620,6 @@ public class NativeND2Reader extends FormatReader {
 
       int planeSize = getSizeX() * getSizeY() * getSizeC() *
         FormatTools.getBytesPerPixel(getPixelType());
-      if (isLossless) planeSize /= 4;
 
       if (availableBytes < planeSize) {
         LOGGER.debug("Correcting SizeC: was {}", getSizeC());

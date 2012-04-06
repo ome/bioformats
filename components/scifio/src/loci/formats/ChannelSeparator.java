@@ -171,8 +171,9 @@ public class ChannelSeparator extends ReaderWrapper {
 
         Runtime rt = Runtime.getRuntime();
         long availableMemory = rt.freeMemory();
+        long planeSize = DataTools.safeMultiply64(w, h, bpp, c);
 
-        if (availableMemory < w * h * bpp * c) {
+        if (availableMemory < planeSize || planeSize > Integer.MAX_VALUE) {
           strips = (int) Math.sqrt(h);
         }
 

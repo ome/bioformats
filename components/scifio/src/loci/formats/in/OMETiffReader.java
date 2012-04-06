@@ -533,9 +533,9 @@ public class OMETiffReader extends FormatReader {
         int z = firstZ == null ? 0 : firstZ.getValue();
 
         // NB: some writers index FirstC, FirstZ and FirstT from 1
-        if (cOneIndexed) c--;
-        if (zOneIndexed) z--;
-        if (tOneIndexed) t--;
+        if (cOneIndexed != null && cOneIndexed) c--;
+        if (zOneIndexed != null && zOneIndexed) z--;
+        if (tOneIndexed != null && tOneIndexed) t--;
 
         if (z >= sizeZ || c >= effSizeC || t >= sizeT) {
           LOGGER.warn("Found invalid TiffData: Z={}, C={}, T={}",
