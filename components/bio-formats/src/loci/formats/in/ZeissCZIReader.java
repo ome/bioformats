@@ -382,21 +382,26 @@ public class ZeissCZIReader extends FormatReader {
       }
     }
 
-    String experimenterID = MetadataTools.createLSID("Experimenter", 0);
-    store.setExperimenterID(experimenterID, 0);
-    store.setExperimenterDisplayName(userDisplayName, 0);
-    store.setExperimenterEmail(userEmail, 0);
-    store.setExperimenterFirstName(userFirstName, 0);
-    store.setExperimenterInstitution(userInstitution, 0);
-    store.setExperimenterLastName(userLastName, 0);
-    store.setExperimenterMiddleName(userMiddleName, 0);
-    store.setExperimenterUserName(userName, 0);
+    String experimenterID = null;
+    if (userDisplayName != null) {
+      experimenterID = MetadataTools.createLSID("Experimenter", 0);
+      store.setExperimenterID(experimenterID, 0);
+      store.setExperimenterDisplayName(userDisplayName, 0);
+      store.setExperimenterEmail(userEmail, 0);
+      store.setExperimenterFirstName(userFirstName, 0);
+      store.setExperimenterInstitution(userInstitution, 0);
+      store.setExperimenterLastName(userLastName, 0);
+      store.setExperimenterMiddleName(userMiddleName, 0);
+      store.setExperimenterUserName(userName, 0);
+    }
 
     String name = new Location(getCurrentFile()).getName();
 
     for (int i=0; i<getSeriesCount(); i++) {
       store.setImageAcquiredDate(acquiredDate, i);
-      store.setImageExperimenterRef(experimenterID, i);
+      if (experimenterID != null) {
+        store.setImageExperimenterRef(experimenterID, i);
+      }
       store.setImageName(name + " #" + (i + 1), i);
 
       if (airPressure != null) {
@@ -726,7 +731,15 @@ public class ZeissCZIReader extends FormatReader {
 
           Element detector = getFirstNode(detectorSettings, "Detector");
           if (detector != null) {
-            detectorRefs.add(detector.getAttribute("Id"));
+            String detectorID = detector.getAttribute("Id");
+            if (detectorID.indexOf(" ") != -1) {
+              detectorID =
+                detectorID.substring(detectorID.lastIndexOf(" ") + 1);
+            }
+            if (!detectorID.startsWith("Detector:")) {
+              detectorID = "Detector:" + detectorID;
+            }
+            detectorRefs.add(detectorID);
           }
         }
       }
@@ -838,7 +851,15 @@ public class ZeissCZIReader extends FormatReader {
             getFirstNodeValue(manufacturerNode, "SerialNumber");
           String lotNumber = getFirstNodeValue(manufacturerNode, "LotNumber");
 
-          store.setDetectorID(detector.getAttribute("Id"), 0, i);
+          String detectorID = detector.getAttribute("Id");
+          if (detectorID.indexOf(" ") != -1) {
+            detectorID = detectorID.substring(detectorID.lastIndexOf(" ") + 1);
+          }
+          if (!detectorID.startsWith("Detector:")) {
+            detectorID = "Detector:" + detectorID;
+          }
+
+          store.setDetectorID(detectorID, 0, i);
           store.setDetectorManufacturer(manufacturer, 0, i);
           store.setDetectorModel(model, 0, i);
           store.setDetectorSerialNumber(serialNumber, 0, i);
