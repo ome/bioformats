@@ -628,9 +628,12 @@ public class LeicaHandler extends DefaultHandler {
       }
     }
     else if (qName.equals("Detector")) {
-      Float gain = new Float(attributes.getValue("Gain"));
-      Float offset = new Float(attributes.getValue("Offset"));
-      boolean active = attributes.getValue("IsActive").equals("1");
+      String gainValue = attributes.getValue("Gain");
+      String offsetValue = attributes.getValue("Offset");
+
+      Float gain = gainValue == null ? null : new Float(gainValue);
+      Float offset = offsetValue == null ? null : new Float(offsetValue);
+      boolean active = "1".equals(attributes.getValue("IsActive"));
 
       if (active) {
         // find the corresponding MultiBand and Detector
@@ -655,13 +658,6 @@ public class LeicaHandler extends DefaultHandler {
 
         String id =
           MetadataTools.createLSID("Detector", numDatasets, nextChannel);
-
-        /* debug */
-        System.out.println("nextChannel = " + nextChannel);
-        System.out.println("  channel = " + channel);
-        System.out.println("  numChannels = " + numChannels);
-        System.out.println("  core.sizeC = " + core.get(numDatasets).sizeC);
-        /* end debug */
 
         boolean validChannel = numChannels <= 0 || nextChannel < numChannels;
 
@@ -697,6 +693,10 @@ public class LeicaHandler extends DefaultHandler {
           store.setDetectorOffset(detector.offset, numDatasets, nextChannel);
           store.setDetectorVoltage(detector.voltage, numDatasets,
             nextChannel);
+        }
+        else {
+          store.setDetectorID(id, numDatasets, nextChannel);
+          store.setDetectorType("PMT", numDatasets, nextChannel);
         }
 
         if (laser != null && laser.intensity > 0 && validChannel) {
@@ -784,10 +784,16 @@ public class LeicaHandler extends DefaultHandler {
       roi.text = attributes.getValue("text");
     }
     else if (qName.equals("Vertex")) {
-      String x = attributes.getValue("x").replaceAll(",", ".");
-      String y = attributes.getValue("y").replaceAll(",", ".");
-      roi.x.add(new Double(x));
-      roi.y.add(new Double(y));
+      String x = attributes.getValue("x");
+      String y = attributes.getValue("y");
+      if (x != null) {
+        x = x.replaceAll(",", ".");
+        roi.x.add(new Double(x));
+      }
+      if (y != null) {
+        y = y.replaceAll(",", ".");
+        roi.y.add(new Double(y));
+      }
     }
     else if (qName.equals("ROI")) {
       alternateCenter = true;
