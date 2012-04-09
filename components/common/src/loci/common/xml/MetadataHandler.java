@@ -26,7 +26,6 @@ package loci.common.xml;
 import java.util.Hashtable;
 
 import org.xml.sax.Attributes;
-import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * Used to retrieve key/value pairs from XML.
@@ -39,7 +38,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * @author Chris Allan callan at blackcat.ca
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
-class MetadataHandler extends DefaultHandler {
+class MetadataHandler extends BaseHandler {
   private String currentQName;
   private Hashtable<String, String> metadata =
     new Hashtable<String, String>();

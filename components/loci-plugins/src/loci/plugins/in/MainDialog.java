@@ -490,10 +490,20 @@ public class MainDialog extends ImporterDialog
     // == Dataset organization ==
 
     // groupFilesBox
-    if (src == stackFormatChoice && isStackBrowser) isGroupFiles = true;
+    if (src == stackFormatChoice && isStackBrowser) {
+      isGroupFiles = true;
+    }
+    else if (options.isOMERO()) {
+      isGroupFiles = false;
+      groupFilesEnabled = false;
+    }
 
     // ungroupFilesBox
-    // NB: no other options affect ungroupFilesBox
+
+    if (options.isOMERO()) {
+      isUngroupFiles = false;
+      ungroupFilesEnabled = false;
+    }
 
     // swapDimsBox
     // NB: no other options affect swapDimsBox

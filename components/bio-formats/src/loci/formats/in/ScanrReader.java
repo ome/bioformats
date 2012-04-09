@@ -35,6 +35,7 @@ import loci.common.ByteArrayHandle;
 import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.common.xml.BaseHandler;
 import loci.common.xml.XMLTools;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
@@ -50,7 +51,6 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 
 import org.xml.sax.Attributes;
-import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * ScanrReader is the file format reader for Olympus ScanR datasets.
@@ -616,7 +616,7 @@ public class ScanrReader extends FormatReader {
 
   // -- Helper class --
 
-  class ScanrHandler extends DefaultHandler {
+  class ScanrHandler extends BaseHandler {
     private String key, value;
     private String qName;
 

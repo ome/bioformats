@@ -30,6 +30,7 @@ import java.util.Arrays;
 import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.common.xml.BaseHandler;
 import loci.common.xml.XMLTools;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
@@ -45,7 +46,6 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 
 import org.xml.sax.Attributes;
-import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * OperettaReader is the file format reader for PerkinElmer Operetta data.
@@ -369,7 +369,7 @@ public class OperettaReader extends FormatReader {
 
   // -- Helper classes --
 
-  class OperettaHandler extends DefaultHandler {
+  class OperettaHandler extends BaseHandler {
     // -- Fields --
 
     private String currentName;

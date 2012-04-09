@@ -27,6 +27,7 @@ import java.io.IOException;
 
 import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
+import loci.common.xml.BaseHandler;
 import loci.common.xml.XMLTools;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -37,7 +38,6 @@ import loci.formats.meta.MetadataStore;
 import ome.xml.model.primitives.PositiveInteger;
 
 import org.xml.sax.Attributes;
-import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * IvisionReader is the file format reader for IVision (.IPM) files.
@@ -275,7 +275,14 @@ public class IvisionReader extends FormatReader {
       store.setImageInstrumentRef(instrumentID, 0);
 
       if (deltaT != null) {
-        store.setPixelsTimeIncrement(new Double(deltaT), 0);
+        Double increment = 0d;
+        try {
+          increment = new Double(deltaT);
+        }
+        catch (NumberFormatException e) {
+          LOGGER.debug("Failed to parse time increment", e);
+        }
+        store.setPixelsTimeIncrement(increment, 0);
       }
 
       String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
@@ -306,14 +313,19 @@ public class IvisionReader extends FormatReader {
 
       store.setDetectorSettingsBinning(getBinning(binX + "x" + binY), 0, 0);
       if (gain != null) {
-        store.setDetectorSettingsGain(new Double(gain), 0, 0);
+        try {
+          store.setDetectorSettingsGain(new Double(gain), 0, 0);
+        }
+        catch (NumberFormatException e) {
+          LOGGER.debug("Failed to parse detector gain", e);
+        }
       }
     }
   }
 
   // -- Helper class --
 
-  class IvisionHandler extends DefaultHandler {
+  class IvisionHandler extends BaseHandler {
 
     // -- Fields --
 
@@ -353,11 +365,13 @@ public class IvisionReader extends FormatReader {
     }
 
     public void characters(char[] ch, int start, int length) {
-      String v = new String(ch, start, length);
-      if ("key".equals(currentElement)) {
-        key = v;
+      String v = new String(ch, start, length).trim();
+      if (v.length() > 0) {
+        if ("key".equals(currentElement)) {
+          key = v;
+        }
+        else value = v;
       }
-      else value = v;
     }
 
     public void startElement(String uri, String localName, String qName,

@@ -152,7 +152,13 @@ public class Colorizer {
       final boolean doComposite = !options.isViewStandard() &&
         mode != -1 && cSize > 1 && cSize <= 7;
       if (doComposite) {
-        CompositeImage compImage = new CompositeImage(imp, mode);
+        final ImagePlus toClose = imp;
+        CompositeImage compImage = new CompositeImage(imp, mode) {
+          public void close() {
+            super.close();
+            toClose.close();
+          }
+        };
         if (luts != null) compImage.setLuts(luts);
         imps.set(i, compImage);
         imp = compImage;

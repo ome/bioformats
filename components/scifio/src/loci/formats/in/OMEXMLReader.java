@@ -33,6 +33,7 @@ import loci.common.RandomAccessInputStream;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
+import loci.common.xml.BaseHandler;
 import loci.common.xml.XMLTools;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
@@ -314,7 +315,7 @@ public class OMEXMLReader extends FormatReader {
 
   // -- Helper class --
 
-  class OMEXMLHandler extends DefaultHandler {
+  class OMEXMLHandler extends BaseHandler {
     private StringBuffer xmlBuffer;
     private String currentQName;
     private Locator locator;

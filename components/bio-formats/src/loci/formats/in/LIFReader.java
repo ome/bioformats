@@ -120,7 +120,7 @@ public class LIFReader extends FormatReader {
   private Double[] pinholes, zooms, zSteps, tSteps, lensNA;
   private Double[][] expTimes, gains, detectorOffsets;
   private String[][] channelNames;
-  private Vector[] detectorModels, voltages;
+  private Vector[] detectorModels;
   private Integer[][] exWaves;
   private Vector[] activeDetector;
   private HashMap[] detectorIndexes;
@@ -335,7 +335,7 @@ public class LIFReader extends FormatReader {
       expTimes = gains = null;
       detectorOffsets = null;
       channelNames = null;
-      detectorModels = voltages = null;
+      detectorModels = null;
       exWaves = null;
       activeDetector = null;
       immersions = corrections = null;
@@ -716,10 +716,6 @@ public class LIFReader extends FormatReader {
 
           store.setDetectorZoom(zooms[i], i, dIndex);
           store.setDetectorType(DetectorType.PMT, i, dIndex);
-          if (voltages[i] != null && dIndex < voltages[i].size()) {
-            store.setDetectorVoltage(
-              (Double) voltages[i].get(dIndex), i, dIndex);
-          }
 
           if (activeDetector[i] != null) {
             int index = activeDetector[i].size() - getEffectiveSizeC() + dIndex;
@@ -869,7 +865,6 @@ public class LIFReader extends FormatReader {
     laserIntensity = new Vector[imageNodes.getLength()];
     timestamps = new double[imageNodes.getLength()][];
     activeDetector = new Vector[imageNodes.getLength()];
-    voltages = new Vector[imageNodes.getLength()];
     serialNumber = new String[imageNodes.getLength()];
     lensNA = new Double[imageNodes.getLength()];
     magnification = new Integer[imageNodes.getLength()];
@@ -1329,7 +1324,6 @@ public class LIFReader extends FormatReader {
     if (filterSettings == null) return;
 
     activeDetector[image] = new Vector<Boolean>();
-    voltages[image] = new Vector<Double>();
     cutIns[image] = new Vector<PositiveInteger>();
     cutOuts[image] = new Vector<PositiveInteger>();
     filterModels[image] = new Vector<String>();
@@ -1357,19 +1351,6 @@ public class LIFReader extends FormatReader {
 
           detectorIndexes[image].put(new Integer(data), object);
           activeDetector[image].add(variant.equals("Active"));
-        }
-        else if (attribute.equals("HighVoltage")) {
-          int channel = getChannelIndex(filterSetting);
-          if (channel < 0) continue;
-          if (channel < voltages[image].size()) {
-            voltages[image].setElementAt(new Double(variant), channel);
-          }
-          else {
-            while (channel > voltages[image].size()) {
-              voltages[image].add(new Double(0));
-            }
-            voltages[image].add(new Double(variant));
-          }
         }
       }
       else if (attribute.equals("Objective")) {

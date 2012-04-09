@@ -26,7 +26,6 @@ package loci.common.xml;
 import java.util.StringTokenizer;
 
 import org.xml.sax.Attributes;
-import org.xml.sax.helpers.DefaultHandler;
 
 
 /**
@@ -41,7 +40,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 /**  */
-class ValidationSAXHandler extends DefaultHandler {
+class ValidationSAXHandler extends BaseHandler {
   private String schemaPath;
   private boolean first;
   public String getSchemaPath() { return schemaPath; }

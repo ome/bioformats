@@ -32,6 +32,7 @@ import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.common.xml.BaseHandler;
 import loci.common.xml.XMLTools;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
@@ -139,23 +140,32 @@ public class PrairieReader extends FormatReader {
       if (prefix.lastIndexOf("Config") == -1) return false;
       prefix = prefix.substring(0, prefix.lastIndexOf("Config"));
     }
-    if (prefix.indexOf("_") != -1) {
-      prefix = prefix.substring(0, prefix.indexOf("_"));
-    }
 
-    // check for appropriately named XML and CFG files
+    // check for appropriately named XML file
 
     Location xml = new Location(parent, prefix + ".xml");
-    Location cfg = new Location(parent, prefix + "Config.cfg");
+    while (!xml.exists() && prefix.indexOf("_") != -1) {
+      prefix = prefix.substring(0, prefix.lastIndexOf("_"));
+      xml = new Location(parent, prefix + ".xml");
+    }
 
-    boolean hasMetadataFiles = xml.exists() && cfg.exists();
+    boolean validXML = false;
+    try {
+      RandomAccessInputStream xmlStream =
+        new RandomAccessInputStream(xml.getAbsolutePath());
+      validXML = isThisType(xmlStream);
+      xmlStream.close();
+    }
+    catch (IOException e) {
+      LOGGER.trace("Failed to check XML file's type", e);
+    }
 
-    return hasMetadataFiles && super.isThisType(name, false);
+    return xml.exists() && super.isThisType(name, false) && validXML;
   }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    final int blockLen = 1048608;
+    final int blockLen = (int) Math.min(1048608, stream.length());
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
     String s = stream.readString(blockLen);
     if (s.indexOf("xml") != -1 && s.indexOf("PV") != -1) return true;
@@ -471,7 +481,7 @@ public class PrairieReader extends FormatReader {
   // -- Helper classes --
 
   /** SAX handler for parsing XML. */
-  public class PrairieHandler extends DefaultHandler {
+  public class PrairieHandler extends BaseHandler {
     public void startElement(String uri, String localName, String qName,
       Attributes attributes)
     {

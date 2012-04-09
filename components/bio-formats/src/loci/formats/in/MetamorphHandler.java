@@ -26,8 +26,9 @@ package loci.formats.in;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import loci.common.xml.BaseHandler;
+
 import org.xml.sax.Attributes;
-import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * MetamorphTiffReader is the file format reader for TIFF files produced by
@@ -40,7 +41,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * @author Melissa Linkert melissa at glencoesoftware.com
  * @author Thomas Caswell tcaswell at uchicago.edu
  */
-public class MetamorphHandler extends DefaultHandler {
+public class MetamorphHandler extends BaseHandler {
 
   // -- Fields --
 
