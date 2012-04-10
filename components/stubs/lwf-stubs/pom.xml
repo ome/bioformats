@@ -17,6 +17,7 @@
   <name>Luratech LuraWave stubs</name>
   <description>Stub of proprietary Java API to handle Luratech LWF compression. Required to compile Bio-Formats's support for Luratech LWF compression for the Opera Flex format.</description>
   <url>http://www.luratech.com/</url>
+  <inceptionYear>2010</inceptionYear>
 
   <licenses>
     <license>
@@ -25,6 +26,19 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <configuration>
+          <licenseName>lwf-stubs</licenseName>
+          <projectName>Luratech LWF library stub classes.</projectName>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 
   <developers>
     <developer>

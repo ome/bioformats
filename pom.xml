@@ -42,6 +42,10 @@
     <module>components/stubs/lwf-stubs</module>
   </modules>
 
+  <properties>
+    <license.server>http://code.imagej.net/licenses</license.server>
+  </properties>
+
   <build>
     <sourceDirectory>${project.basedir}/src</sourceDirectory>
     <testSourceDirectory>${project.basedir}/test</testSourceDirectory>
@@ -69,6 +73,18 @@
         <configuration>
           <source>1.5</source>
           <target>1.5</target>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <configuration>
+          <licenseName>gpl_v2</licenseName>
+          <licenseResolver>${license.server}</licenseResolver>
+          <organizationName>Board of Regents of the University of
+Wisconsin-Madison, Glencoe Software, Inc., and University of Dundee.</organizationName>
+          <canUpdateDescription>true</canUpdateDescription>
+          <canUpdateCopyright>true</canUpdateCopyright>
         </configuration>
       </plugin>
     </plugins>

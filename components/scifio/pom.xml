@@ -116,6 +116,14 @@
           </libraries>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <configuration>
+          <licenseName>scifio</licenseName>
+          <projectName>OME SCIFIO package for reading and converting scientific file formats.</projectName>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 

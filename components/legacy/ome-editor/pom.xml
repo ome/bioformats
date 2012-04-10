@@ -67,6 +67,15 @@
           </archive>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <configuration>
+          <licenseName>gpl_v2</licenseName>
+          <projectName>OME Metadata Editor application for exploration and editing of OME-XML and
+OME-TIFF metadata.</projectName>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 

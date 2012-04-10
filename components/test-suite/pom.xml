@@ -77,6 +77,14 @@
           </archive>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <configuration>
+          <licenseName>gpl_v2</licenseName>
+          <projectName>OME Bio-Formats manual and automated test suite.</projectName>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 

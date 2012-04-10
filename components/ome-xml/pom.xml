@@ -75,6 +75,19 @@
           </suiteXmlFiles>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <configuration>
+          <licenseName>ome-xml</licenseName>
+          <organizationName>Open Microscopy Environment
+    Massachusetts Institute of Technology,
+    National Institutes of Health,
+    University of Dundee,
+    and Board of Regents of the University of Wisconsin-Madison.</organizationName>
+          <projectName>OME-XML Java library for working with OME-XML metadata structures.</projectName>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 

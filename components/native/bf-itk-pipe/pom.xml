@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+    http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>loci</groupId>
+    <artifactId>pom-scifio-native</artifactId>
+    <version>4.4-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>pom-scifio-native-bf-itk-pipe</artifactId>
+  <packaging>pom</packaging>
+
+  <name>BF-ITK Pipes</name>
+  <inceptionYear>2010</inceptionYear>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <configuration>
+          <extraExtensions>
+            <txt>properties</txt>
+            <cxx>java</cxx>
+            <in>java</in>
+          </extraExtensions>
+          <excludes>
+            <exclude>LICENSE.txt</exclude>
+            <exclude>pom.xml</exclude>
+            <exclude>readme.txt</exclude>
+            <exclude>slicer-license.txt</exclude>
+          </excludes>
+          <roots>
+            <root>.</root>
+          </roots>
+          <licenseName>bf-itk-pipe</licenseName>
+          <projectName>Bio-Formats plugin for the Insight Toolkit.</projectName>
+          <organizationName>Insight Software Consortium, Board of Regents
+of the University of Wisconsin-Madison, Glencoe Software, Inc., and
+University of Dundee.</organizationName>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <!-- NB: for parent project -->
+  <repositories>
+    <repository>
+      <id>imagej.releases</id>
+      <url>http://maven.imagej.net/content/repositories/releases</url>
+    </repository>
+    <repository>
+      <id>imagej.snapshots</id>
+      <url>http://maven.imagej.net/content/repositories/snapshots</url>
+    </repository>
+  </repositories>
+
+</project>

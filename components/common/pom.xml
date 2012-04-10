@@ -64,6 +64,14 @@
           </suiteXmlFiles>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <configuration>
+          <licenseName>loci-common</licenseName>
+          <projectName>LOCI Common package: utilities for I/O, reflection and miscellaneous tasks.</projectName>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 

@@ -17,6 +17,7 @@
   <name>MDB Tools (Java port)</name>
   <description>Java API to handle Microsoft MDB format (Access). Used by Bio-Formats for Zeiss LSM metadata in MDB files.</description>
   <url>http://sourceforge.net/forum/message.php?msg_id=2550619</url>
+  <inceptionYear>2008</inceptionYear>
 
   <licenses>
     <license>
@@ -25,6 +26,19 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <configuration>
+          <licenseName>lgpl_v2</licenseName>
+          <projectName>Fork of MDB Tools (Java port).</projectName>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 
   <developers>
     <developer>
