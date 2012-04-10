@@ -97,17 +97,22 @@ stitchFiles = 0;
 
 % -- Main function - no need to edit anything past this point --
 
+% load the Bio-Formats library into the MATLAB environment
+if autoloadBioFormats
+    path =which('loci_tools.jar');
+    if isempty(path)
+        path = fullfile(fileparts(mfilename('fullpath')), 'loci_tools.jar');
+    end
+    javaaddpath(path);
+end
+
+% Prompt for a file if not input
 if exist('id','file') == 0
   [file,path] = uigetfile(getFileExtensions, 'Choose a file to open');
   id = [path file];
   if isequal(path,0) || isequal(file,0), return; end
 end
 
-% load the Bio-Formats library into the MATLAB environment
-if autoloadBioFormats
-    path = fullfile(fileparts(mfilename('fullpath')), 'loci_tools.jar');
-    javaaddpath(path);
-end
 
 % set LuraWave license code, if available
 if exist('lurawaveLicense')
