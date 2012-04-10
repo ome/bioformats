@@ -132,6 +132,19 @@
     </developer>
   </developers>
 
+  <contributors>
+    <contributor>
+      <name>Phillip Huettl</name>
+      <url>http://loci.wisc.edu/people/phillip-huettl</url>
+      <organization>UW-Madison LOCI</organization>
+      <organizationUrl>http://loci.wisc.edu/</organizationUrl>
+      <roles>
+        <role>developer</role>
+      </roles>
+      <timezone>-6</timezone>
+    </contributor>
+  </contributors>
+
   <!-- NB: for project parent, in case of partial checkout -->
   <repositories>
     <repository>
