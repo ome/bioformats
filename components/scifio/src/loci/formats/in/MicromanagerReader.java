@@ -26,6 +26,7 @@ package loci.formats.in;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
@@ -33,7 +34,9 @@ import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.common.xml.BaseHandler;
 import loci.common.xml.XMLTools;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -71,24 +74,7 @@ public class MicromanagerReader extends FormatReader {
   /** Helper reader for TIFF files. */
   private MinimalTiffReader tiffReader;
 
-  /** List of TIFF files to open. */
-  private Vector<String> tiffs;
-
-  private String metadataFile;
-  private String xmlFile;
-
-  private String[] channels;
-
-  private String comment, time;
-  private Double exposureTime, sliceThickness, pixelSize;
-  private Double[] timestamps;
-
-  private int gain;
-  private String binning, detectorID, detectorModel, detectorManufacturer;
-  private double temperature;
-  private Vector<Double> voltage;
-  private String cameraRef;
-  private String cameraMode;
+  private Vector<Position> positions;
 
   // -- Constructor --
 
@@ -113,11 +99,14 @@ public class MicromanagerReader extends FormatReader {
     if (name.equals(METADATA) || name.endsWith(File.separator + METADATA) ||
       name.equals(XML) || name.endsWith(File.separator + XML))
     {
+      final int blockSize = 1048576;
       try {
         RandomAccessInputStream stream = new RandomAccessInputStream(name);
         long length = stream.length();
+        String data = stream.readString((int) Math.min(blockSize, length));
         stream.close();
-        return length > 0;
+        return length > 0 && (data.indexOf("Micro-Manager") >= 0 ||
+          data.indexOf("micromanager") >= 0);
       }
       catch (IOException e) {
         return false;
@@ -129,7 +118,7 @@ public class MicromanagerReader extends FormatReader {
       RandomAccessInputStream s = new RandomAccessInputStream(name);
       boolean validTIFF = isThisType(s);
       s.close();
-      return metaFile.exists() && metaFile.length() > 0 && validTIFF;
+      return validTIFF && isThisType(metaFile.getAbsolutePath(), open);
     }
     catch (NullPointerException e) { }
     catch (IOException e) { }
@@ -152,11 +141,19 @@ public class MicromanagerReader extends FormatReader {
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
     Vector<String> files = new Vector<String>();
-    files.add(metadataFile);
-    if (xmlFile != null) {
-      files.add(xmlFile);
+    for (Position pos : positions) {
+      files.add(pos.metadataFile);
+      if (pos.xmlFile != null) {
+        files.add(pos.xmlFile);
+      }
+      if (!noPixels) {
+        for (String tiff : pos.tiffs) {
+          if (new Location(tiff).exists()) {
+            files.add(tiff);
+          }
+        }
+      }
     }
-    if (!noPixels) files.addAll(tiffs);
     return files.toArray(new String[files.size()]);
   }
 
@@ -168,11 +165,13 @@ public class MicromanagerReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    if (new Location(tiffs.get(no)).exists()) {
-      tiffReader.setId(tiffs.get(no));
+    String file = positions.get(getSeries()).getFile(no);
+
+    if (file != null && new Location(file).exists()) {
+      tiffReader.setId(file);
       return tiffReader.openBytes(0, buf, x, y, w, h);
     }
-    LOGGER.warn("File for image #{} ({}) is missing.", no, tiffs.get(no));
+    LOGGER.warn("File for image #{} ({}) is missing.", no, file);
     return buf;
   }
 
@@ -181,19 +180,7 @@ public class MicromanagerReader extends FormatReader {
     super.close(fileOnly);
     if (tiffReader != null) tiffReader.close(fileOnly);
     if (!fileOnly) {
-      tiffReader = null;
-      tiffs = null;
-      comment = time = null;
-      exposureTime = sliceThickness = pixelSize = null;
-      timestamps = null;
-      metadataFile = null;
-      channels = null;
-      gain = 0;
-      binning = detectorID = detectorModel = detectorManufacturer = null;
-      temperature = 0;
-      voltage = null;
-      cameraRef = cameraMode = null;
-      xmlFile = null;
+      positions = null;
     }
   }
 
@@ -215,6 +202,7 @@ public class MicromanagerReader extends FormatReader {
   public void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     tiffReader = new MinimalTiffReader();
+    positions = new Vector<Position>();
 
     LOGGER.info("Reading metadata file");
 
@@ -222,29 +210,149 @@ public class MicromanagerReader extends FormatReader {
 
     Location file = new Location(currentId).getAbsoluteFile();
     Location parentFile = file.getParentFile();
-    metadataFile = METADATA;
-    String parent = "";
+    String metadataFile = METADATA;
     if (file.exists()) {
       metadataFile = new Location(parentFile, METADATA).getAbsolutePath();
-      parent = parentFile.getAbsolutePath() + File.separator;
+
+      // look for other positions
+
+      if (parentFile.getName().indexOf("Pos_") >= 0) {
+        parentFile = parentFile.getParentFile();
+        String[] dirs = parentFile.list(true);
+        Arrays.sort(dirs);
+        for (String dir : dirs) {
+          if (dir.indexOf("Pos_") >= 0) {
+            Position pos = new Position();
+            Location posDir = new Location(parentFile, dir);
+            pos.metadataFile = new Location(posDir, METADATA).getAbsolutePath();
+            positions.add(pos);
+          }
+        }
+      }
+      else {
+        Position pos = new Position();
+        pos.metadataFile = metadataFile;
+        positions.add(pos);
+      }
     }
-    in = new RandomAccessInputStream(metadataFile);
+
+    core = new CoreMetadata[positions.size()];
+
+    for (int i=0; i<positions.size(); i++) {
+      core[i] = new CoreMetadata();
+      setSeries(i);
+      parsePosition(i);
+    }
+    setSeries(0);
+
+    MetadataStore store = makeFilterMetadata();
+    MetadataTools.populatePixels(store, this, true);
+
+    String instrumentID = MetadataTools.createLSID("Instrument", 0);
+    store.setInstrumentID(instrumentID, 0);
+
+    for (int i=0; i<positions.size(); i++) {
+      Position p = positions.get(i);
+      if (p.time != null) {
+        String date = DateTools.formatDate(p.time, DATE_FORMAT);
+        store.setImageAcquiredDate(date, i);
+      }
+
+      if (positions.size() > 1) {
+        Location parent = new Location(p.metadataFile).getParentFile();
+        store.setImageName(parent.getName(), i);
+      }
+
+      if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
+        store.setImageDescription(p.comment, i);
+
+        // link Instrument and Image
+        store.setImageInstrumentRef(instrumentID, i);
+
+        for (int c=0; c<p.channels.length; c++) {
+          store.setChannelName(p.channels[c], i, c);
+        }
+
+        if (p.pixelSize != null && p.pixelSize > 0) {
+          store.setPixelsPhysicalSizeX(new PositiveFloat(p.pixelSize), i);
+          store.setPixelsPhysicalSizeY(new PositiveFloat(p.pixelSize), i);
+        }
+        else {
+          LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+            p.pixelSize);
+        }
+        if (p.sliceThickness != null && p.sliceThickness > 0) {
+          store.setPixelsPhysicalSizeZ(new PositiveFloat(p.sliceThickness), i);
+        }
+        else {
+          LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}",
+            p.sliceThickness);
+        }
+
+        int nextStamp = 0;
+        for (int q=0; q<getImageCount(); q++) {
+          store.setPlaneExposureTime(p.exposureTime, i, q);
+          String tiff = positions.get(getSeries()).getFile(q);
+          if (tiff != null && new Location(tiff).exists() &&
+            nextStamp < p.timestamps.length)
+          {
+            store.setPlaneDeltaT(p.timestamps[nextStamp++], i, q);
+          }
+        }
+
+        String serialNumber = p.detectorID;
+        p.detectorID = MetadataTools.createLSID("Detector", 0, i);
+
+        for (int c=0; c<p.channels.length; c++) {
+          store.setDetectorSettingsBinning(getBinning(p.binning), i, c);
+          store.setDetectorSettingsGain(new Double(p.gain), i, c);
+          if (c < p.voltage.size()) {
+            store.setDetectorSettingsVoltage(p.voltage.get(c), i, c);
+          }
+          store.setDetectorSettingsID(p.detectorID, i, c);
+        }
+
+        store.setDetectorID(p.detectorID, 0, i);
+        if (p.detectorModel != null) {
+          store.setDetectorModel(p.detectorModel, 0, i);
+        }
+
+        if (serialNumber != null) {
+          store.setDetectorSerialNumber(serialNumber, 0, i);
+        }
+
+        if (p.detectorManufacturer != null) {
+          store.setDetectorManufacturer(p.detectorManufacturer, 0, i);
+        }
+
+        if (p.cameraMode == null) p.cameraMode = "Other";
+        store.setDetectorType(getDetectorType(p.cameraMode), 0, i);
+        store.setImagingEnvironmentTemperature(p.temperature, i);
+      }
+    }
+  }
+
+  // -- Helper methods --
+
+  private void parsePosition(int posIndex) throws IOException, FormatException {
+    Position p = positions.get(posIndex);
 
     // usually a small file, so we can afford to read it into memory
 
-    String s = DataTools.readFile(metadataFile);
+    String s = DataTools.readFile(p.metadataFile);
+    String parent = new Location(p.metadataFile).getParent();
 
     LOGGER.info("Finding image file names");
 
     // find the name of a TIFF file
     String baseTiff = null;
-    tiffs = new Vector<String>();
+    p.tiffs = new Vector<String>();
     int pos = 0;
     while (true) {
       pos = s.indexOf("FileName", pos);
-      if (pos == -1 || pos >= in.length()) break;
+      if (pos == -1 || pos >= s.length()) break;
       String name = s.substring(s.indexOf(":", pos), s.indexOf(",", pos));
-      baseTiff = parent + name.substring(3, name.length() - 1);
+      baseTiff = parent + File.separator + name.substring(3, name.length() - 1);
       pos++;
     }
 
@@ -265,7 +373,7 @@ public class MicromanagerReader extends FormatReader {
     LOGGER.info("Populating metadata");
 
     Vector<Double> stamps = new Vector<Double>();
-    voltage = new Vector<Double>();
+    p.voltage = new Vector<Double>();
 
     StringTokenizer st = new StringTokenizer(s, "\n");
     int[] slice = new int[3];
@@ -306,28 +414,37 @@ public class MicromanagerReader extends FormatReader {
         value = value.substring(0, value.length() - 1);
         value = value.replaceAll("\"", "");
         if (value.endsWith(",")) value = value.substring(0, value.length() - 1);
-        addGlobalMeta(key, value);
-        if (key.equals("Channels")) core[0].sizeC = Integer.parseInt(value);
+        addSeriesMeta(key, value);
+        if (key.equals("Channels")) {
+          core[posIndex].sizeC = Integer.parseInt(value);
+        }
         else if (key.equals("ChNames")) {
-          channels = value.split(",");
-          for (int q=0; q<channels.length; q++) {
-            channels[q] = channels[q].replaceAll("\"", "").trim();
+          p.channels = value.split(",");
+          for (int q=0; q<p.channels.length; q++) {
+            p.channels[q] = p.channels[q].replaceAll("\"", "").trim();
           }
         }
         else if (key.equals("Frames")) {
-          core[0].sizeT = Integer.parseInt(value);
+          core[posIndex].sizeT = Integer.parseInt(value);
         }
         else if (key.equals("Slices")) {
-          core[0].sizeZ = Integer.parseInt(value);
+          core[posIndex].sizeZ = Integer.parseInt(value);
         }
         else if (key.equals("PixelSize_um")) {
-          pixelSize = new Double(value);
+          p.pixelSize = new Double(value);
         }
         else if (key.equals("z-step_um")) {
-          sliceThickness = new Double(value);
+          p.sliceThickness = new Double(value);
         }
-        else if (key.equals("Time")) time = value;
-        else if (key.equals("Comment")) comment = value;
+        else if (key.equals("Time")) {
+          p.time = value;
+        }
+        else if (key.equals("Comment")) {
+          p.comment = value;
+        }
+        else if (key.equals("FileName")) {
+          p.fileNameMap.put(new Index(slice), value);
+        }
       }
 
       if (token.startsWith("\"FrameKey")) {
@@ -371,37 +488,39 @@ public class MicromanagerReader extends FormatReader {
             }
           }
 
-          addGlobalMeta(key, value);
+          addSeriesMeta(key, value);
 
           if (key.equals("Exposure-ms")) {
             double t = Double.parseDouble(value);
-            exposureTime = new Double(t / 1000);
+            p.exposureTime = new Double(t / 1000);
           }
           else if (key.equals("ElapsedTime-ms")) {
             double t = Double.parseDouble(value);
             stamps.add(new Double(t / 1000));
           }
-          else if (key.equals("Core-Camera")) cameraRef = value;
-          else if (key.equals(cameraRef + "-Binning")) {
-            if (value.indexOf("x") != -1) binning = value;
-            else binning = value + "x" + value;
+          else if (key.equals("Core-Camera")) p.cameraRef = value;
+          else if (key.equals(p.cameraRef + "-Binning")) {
+            if (value.indexOf("x") != -1) p.binning = value;
+            else p.binning = value + "x" + value;
           }
-          else if (key.equals(cameraRef + "-CameraID")) detectorID = value;
-          else if (key.equals(cameraRef + "-CameraName")) detectorModel = value;
-          else if (key.equals(cameraRef + "-Gain")) {
-            gain = (int) Double.parseDouble(value);
+          else if (key.equals(p.cameraRef + "-CameraID")) p.detectorID = value;
+          else if (key.equals(p.cameraRef + "-CameraName")) {
+            p.detectorModel = value;
           }
-          else if (key.equals(cameraRef + "-Name")) {
-            detectorManufacturer = value;
+          else if (key.equals(p.cameraRef + "-Gain")) {
+            p.gain = (int) Double.parseDouble(value);
           }
-          else if (key.equals(cameraRef + "-Temperature")) {
-            temperature = Double.parseDouble(value);
+          else if (key.equals(p.cameraRef + "-Name")) {
+            p.detectorManufacturer = value;
           }
-          else if (key.equals(cameraRef + "-CCDMode")) {
-            cameraMode = value;
+          else if (key.equals(p.cameraRef + "-Temperature")) {
+            p.temperature = Double.parseDouble(value);
+          }
+          else if (key.equals(p.cameraRef + "-CCDMode")) {
+            p.cameraMode = value;
           }
           else if (key.startsWith("DAC-") && key.endsWith("-Volts")) {
-            voltage.add(new Double(value));
+            p.voltage.add(new Double(value));
           }
 
           token = st.nextToken().trim();
@@ -409,27 +528,27 @@ public class MicromanagerReader extends FormatReader {
       }
     }
 
-    timestamps = stamps.toArray(new Double[stamps.size()]);
-    Arrays.sort(timestamps);
+    p.timestamps = stamps.toArray(new Double[stamps.size()]);
+    Arrays.sort(p.timestamps);
 
     // look for the optional companion XML file
 
-    parentFile = new Location(currentId).getAbsoluteFile().getParentFile();
-    if (new Location(parentFile, XML).exists()) {
-      xmlFile = new Location(parent, XML).getAbsolutePath();
+    if (new Location(parent, XML).exists()) {
+      p.xmlFile = new Location(parent, XML).getAbsolutePath();
       parseXMLFile();
     }
 
     // build list of TIFF files
 
-    buildTIFFList(baseTiff);
+    buildTIFFList(posIndex, baseTiff);
 
-    if (tiffs.size() == 0) {
+    if (p.tiffs.size() == 0) {
       Vector<String> uniqueZ = new Vector<String>();
       Vector<String> uniqueC = new Vector<String>();
       Vector<String> uniqueT = new Vector<String>();
 
-      Location dir = new Location(currentId).getAbsoluteFile().getParentFile();
+      Location dir =
+        new Location(p.metadataFile).getAbsoluteFile().getParentFile();
       String[] files = dir.list(true);
       Arrays.sort(files);
       for (String f : files) {
@@ -439,116 +558,43 @@ public class MicromanagerReader extends FormatReader {
           if (!uniqueC.contains(blocks[2])) uniqueC.add(blocks[2]);
           if (!uniqueZ.contains(blocks[3])) uniqueZ.add(blocks[3]);
 
-          tiffs.add(new Location(dir, f).getAbsolutePath());
+          p.tiffs.add(new Location(dir, f).getAbsolutePath());
         }
       }
 
-      core[0].sizeZ = uniqueZ.size();
-      core[0].sizeC = uniqueC.size();
-      core[0].sizeT = uniqueT.size();
+      core[posIndex].sizeZ = uniqueZ.size();
+      core[posIndex].sizeC = uniqueC.size();
+      core[posIndex].sizeT = uniqueT.size();
 
-      if (tiffs.size() == 0) {
+      if (p.tiffs.size() == 0) {
         throw new FormatException("Could not find TIFF files.");
       }
     }
 
-    tiffReader.setId(tiffs.get(0));
+    tiffReader.setId(p.tiffs.get(0));
 
-    if (getSizeZ() == 0) core[0].sizeZ = 1;
-    if (getSizeT() == 0) core[0].sizeT = tiffs.size() / getSizeC();
+    if (getSizeZ() == 0) core[posIndex].sizeZ = 1;
+    if (getSizeT() == 0) core[posIndex].sizeT = p.tiffs.size() / getSizeC();
 
-    core[0].sizeX = tiffReader.getSizeX();
-    core[0].sizeY = tiffReader.getSizeY();
-    core[0].dimensionOrder = "XYZCT";
-    core[0].pixelType = tiffReader.getPixelType();
-    core[0].rgb = tiffReader.isRGB();
-    core[0].interleaved = false;
-    core[0].littleEndian = tiffReader.isLittleEndian();
-    core[0].imageCount = getSizeZ() * getSizeC() * getSizeT();
-    core[0].indexed = false;
-    core[0].falseColor = false;
-    core[0].metadataComplete = true;
-
-    MetadataStore store = makeFilterMetadata();
-    MetadataTools.populatePixels(store, this, true);
-    if (time != null) {
-      String date = DateTools.formatDate(time, DATE_FORMAT);
-      store.setImageAcquiredDate(date, 0);
-    }
-
-    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      store.setImageDescription(comment, 0);
-
-      // link Instrument and Image
-      String instrumentID = MetadataTools.createLSID("Instrument", 0);
-      store.setInstrumentID(instrumentID, 0);
-      store.setImageInstrumentRef(instrumentID, 0);
-
-      for (int i=0; i<channels.length; i++) {
-        store.setChannelName(channels[i], 0, i);
-      }
-
-      if (pixelSize != null && pixelSize > 0) {
-        store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSize), 0);
-        store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSize), 0);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
-          pixelSize);
-      }
-      if (sliceThickness != null && sliceThickness > 0) {
-        store.setPixelsPhysicalSizeZ(new PositiveFloat(sliceThickness), 0);
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}",
-          sliceThickness);
-      }
-
-      for (int i=0; i<getImageCount(); i++) {
-        store.setPlaneExposureTime(exposureTime, 0, i);
-        if (i < timestamps.length) {
-          store.setPlaneDeltaT(timestamps[i], 0, i);
-        }
-      }
-
-      String serialNumber = detectorID;
-      detectorID = MetadataTools.createLSID("Detector", 0, 0);
-
-      for (int i=0; i<channels.length; i++) {
-        store.setDetectorSettingsBinning(getBinning(binning), 0, i);
-        store.setDetectorSettingsGain(new Double(gain), 0, i);
-        if (i < voltage.size()) {
-          store.setDetectorSettingsVoltage(voltage.get(i), 0, i);
-        }
-        store.setDetectorSettingsID(detectorID, 0, i);
-      }
-
-      store.setDetectorID(detectorID, 0, 0);
-      if (detectorModel != null) {
-        store.setDetectorModel(detectorModel, 0, 0);
-      }
-
-      if (serialNumber != null) {
-        store.setDetectorSerialNumber(serialNumber, 0, 0);
-      }
-
-      if (detectorManufacturer != null) {
-        store.setDetectorManufacturer(detectorManufacturer, 0, 0);
-      }
-
-      if (cameraMode == null) cameraMode = "Other";
-      store.setDetectorType(getDetectorType(cameraMode), 0, 0);
-      store.setImagingEnvironmentTemperature(temperature, 0);
-    }
+    core[posIndex].sizeX = tiffReader.getSizeX();
+    core[posIndex].sizeY = tiffReader.getSizeY();
+    core[posIndex].dimensionOrder = "XYZCT";
+    core[posIndex].pixelType = tiffReader.getPixelType();
+    core[posIndex].rgb = tiffReader.isRGB();
+    core[posIndex].interleaved = false;
+    core[posIndex].littleEndian = tiffReader.isLittleEndian();
+    core[posIndex].imageCount = getSizeZ() * getSizeC() * getSizeT();
+    core[posIndex].indexed = false;
+    core[posIndex].falseColor = false;
+    core[posIndex].metadataComplete = true;
   }
-
-  // -- Helper methods --
 
   /**
    * Populate the list of TIFF files using the given file name as a pattern.
    */
-  private void buildTIFFList(String baseTiff) {
+  private void buildTIFFList(int posIndex, String baseTiff) {
     LOGGER.info("Building list of TIFFs");
+    Position p = positions.get(posIndex);
     String prefix = "";
     if (baseTiff.indexOf(File.separator) != -1) {
       prefix = baseTiff.substring(0, baseTiff.lastIndexOf(File.separator) + 1);
@@ -563,6 +609,11 @@ public class MicromanagerReader extends FormatReader {
           // file names are of format:
           // img_<T>_<channel name>_<T>.tif
           filename.append(prefix);
+          if (!prefix.endsWith(File.separator) &&
+            !blocks[0].startsWith(File.separator))
+          {
+            filename.append(File.separator);
+          }
           filename.append(blocks[0]);
           filename.append("_");
 
@@ -573,7 +624,11 @@ public class MicromanagerReader extends FormatReader {
           filename.append(t);
           filename.append("_");
 
-          filename.append(channels[c]);
+          String channel = p.channels[c];
+          if (channel.indexOf("-") != -1) {
+            channel = channel.substring(0, channel.indexOf("-"));
+          }
+          filename.append(channel);
           filename.append("_");
 
           zeros = blocks[3].length() - String.valueOf(z).length() - 4;
@@ -583,7 +638,7 @@ public class MicromanagerReader extends FormatReader {
           filename.append(z);
           filename.append(".tif");
 
-          tiffs.add(filename.toString());
+          p.tiffs.add(filename.toString());
           filename.delete(0, filename.length());
         }
       }
@@ -592,7 +647,8 @@ public class MicromanagerReader extends FormatReader {
 
   /** Parse metadata values from the Acqusition.xml file. */
   private void parseXMLFile() throws IOException {
-    String xmlData = DataTools.readFile(xmlFile);
+    Position p = positions.get(getSeries());
+    String xmlData = DataTools.readFile(p.xmlFile);
     xmlData = XMLTools.sanitizeXML(xmlData);
 
     DefaultHandler handler = new MicromanagerHandler();
@@ -602,7 +658,7 @@ public class MicromanagerReader extends FormatReader {
   // -- Helper classes --
 
   /** SAX handler for parsing Acqusition.xml. */
-  class MicromanagerHandler extends DefaultHandler {
+  class MicromanagerHandler extends BaseHandler {
     public void startElement(String uri, String localName, String qName,
       Attributes attributes)
     {
@@ -610,8 +666,57 @@ public class MicromanagerReader extends FormatReader {
         String key = attributes.getValue("key");
         String value = attributes.getValue("value");
 
-        addGlobalMeta(key, value);
+        addSeriesMeta(key, value);
       }
+    }
+  }
+
+  class Position {
+    public Vector<String> tiffs;
+    public HashMap<Index, String> fileNameMap = new HashMap<Index, String>();
+
+    public String metadataFile;
+    public String xmlFile;
+
+    public String[] channels;
+
+    public String comment, time;
+    public Double exposureTime, sliceThickness, pixelSize;
+    public Double[] timestamps;
+
+    public int gain;
+    public String binning, detectorID, detectorModel, detectorManufacturer;
+    public double temperature;
+    public Vector<Double> voltage;
+    public String cameraRef;
+    public String cameraMode;
+
+    public String getFile(int no) {
+      int[] zct = getZCTCoords(no);
+      for (Index key : fileNameMap.keySet()) {
+        if (key.z == zct[0] && key.c == zct[1] && key.t == zct[2]) {
+          String file = fileNameMap.get(key);
+
+          for (String tiff : tiffs) {
+            if (tiff.endsWith(File.separator + file)) {
+              return tiff;
+            }
+          }
+        }
+      }
+      return fileNameMap.size() == 0 ? tiffs.get(no) : null;
+    }
+  }
+
+  class Index {
+    public int z;
+    public int c;
+    public int t;
+
+    public Index(int[] zct) {
+      z = zct[0];
+      c = zct[1];
+      t = zct[2];
     }
   }
 

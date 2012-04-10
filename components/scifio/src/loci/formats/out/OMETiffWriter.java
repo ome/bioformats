@@ -304,6 +304,7 @@ public class OMETiffWriter extends TiffWriter {
     }
     sizeC /= samplesPerPixel.getValue();
 
+    int nextPlane = 0;
     for (int plane=0; plane<imageCount; plane++) {
       int[] zct = FormatTools.getZCTCoords(dimensionOrder,
         sizeZ, sizeC, sizeT, imageCount, plane);
@@ -323,13 +324,14 @@ public class OMETiffWriter extends TiffWriter {
           ifd--;
         }
 
-        omeMeta.setUUIDFileName(filename, series, plane);
+        omeMeta.setUUIDFileName(filename, series, nextPlane);
         String uuid = "urn:uuid:" + getUUID(filename);
-        omeMeta.setUUIDValue(uuid, series, plane);
+        omeMeta.setUUIDValue(uuid, series, nextPlane);
 
         // fill in any non-default TiffData attributes
-        populateTiffData(omeMeta, zct, ifd, series, plane);
+        populateTiffData(omeMeta, zct, ifd, series, nextPlane);
         ifdCounts.put(filename, ifd + 1);
+        nextPlane++;
       }
     }
   }

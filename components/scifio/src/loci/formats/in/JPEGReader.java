@@ -23,8 +23,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.in;
 
+import java.awt.color.CMMException;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import loci.common.ByteArrayHandle;
+import loci.common.DataTools;
+import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.formats.DelegateReader;
 import loci.formats.FormatException;
@@ -62,7 +68,59 @@ public class JPEGReader extends DelegateReader {
 
   /* @see IFormatHandler#setId(String) */
   public void setId(String id) throws FormatException, IOException {
-    super.setId(id);
+    try {
+      super.setId(id);
+    }
+    catch (CMMException e) {
+      // strip out all but the first application marker
+      // ImageIO isn't too keen on supporting multiple application markers
+      // in the same stream, as evidenced by:
+      //
+      // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6488904
+
+      in = new RandomAccessInputStream(id);
+      ByteArrayOutputStream v = new ByteArrayOutputStream();
+
+      byte[] tag = new byte[2];
+      in.read(tag);
+      v.write(tag);
+
+      in.read(tag);
+      int tagValue = DataTools.bytesToShort(tag, false) & 0xffff;
+      boolean appNoteFound = false;
+      while (tagValue != 0xffdb) {
+        if (!appNoteFound || (tagValue < 0xffe0 && tagValue >= 0xfff0)) {
+          v.write(tag);
+
+          in.read(tag);
+          int len = DataTools.bytesToShort(tag, false) & 0xffff;
+          byte[] tagContents = new byte[len - 2];
+          in.read(tagContents);
+          v.write(tag);
+          v.write(tagContents);
+        }
+        else {
+          in.read(tag);
+          int len = DataTools.bytesToShort(tag, false) & 0xffff;
+          in.skipBytes(len - 2);
+        }
+
+        if (tagValue >= 0xffe0 && tagValue < 0xfff0 && !appNoteFound) {
+          appNoteFound = true;
+        }
+        in.read(tag);
+        tagValue = DataTools.bytesToShort(tag, false) & 0xffff;
+      }
+      v.write(tag);
+      byte[] remainder = new byte[(int) (in.length() - in.getFilePointer())];
+      in.read(remainder);
+      v.write(remainder);
+
+      ByteArrayHandle bytes = new ByteArrayHandle(v.toByteArray());
+ 
+      Location.mapFile(currentId + ".fixed", bytes);
+      super.setId(currentId + ".fixed");
+    }
     if (getSizeX() > MAX_SIZE && getSizeY() > MAX_SIZE &&
       !legacyReaderInitialized)
     {
@@ -70,6 +128,14 @@ public class JPEGReader extends DelegateReader {
       useLegacy = true;
       super.setId(id);
     }
+  }
+
+  // -- IFormatReader API methods --
+
+  /* @see IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws IOException {
+    super.close(fileOnly);
+    Location.mapId(currentId, null);
   }
 
   // -- Helper reader --

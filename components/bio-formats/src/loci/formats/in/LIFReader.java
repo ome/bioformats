@@ -118,10 +118,9 @@ public class LIFReader extends FormatReader {
 
   private String[] descriptions, microscopeModels, serialNumber;
   private Double[] pinholes, zooms, zSteps, tSteps, lensNA;
-  private Double[][] expTimes, gains;
-  private Vector[] detectorOffsets;
+  private Double[][] expTimes, gains, detectorOffsets;
   private String[][] channelNames;
-  private Vector[] detectorModels, voltages;
+  private Vector[] detectorModels;
   private Integer[][] exWaves;
   private Vector[] activeDetector;
   private HashMap[] detectorIndexes;
@@ -336,7 +335,7 @@ public class LIFReader extends FormatReader {
       expTimes = gains = null;
       detectorOffsets = null;
       channelNames = null;
-      detectorModels = voltages = null;
+      detectorModels = null;
       exWaves = null;
       activeDetector = null;
       immersions = corrections = null;
@@ -545,16 +544,13 @@ public class LIFReader extends FormatReader {
       store.setObjectiveModel(objectiveModels[i], i, 0);
 
       if (cutIns[i] != null) {
+        int channel = 0;
         for (int filter=0; filter<cutIns[i].size(); filter++) {
           String filterID = MetadataTools.createLSID("Filter", i, filter);
           store.setFilterID(filterID, i, filter);
           if (filter < filterModels[i].size()) {
             store.setFilterModel(
               (String) filterModels[i].get(filter), i, filter);
-          }
-          int channel = filter - (cutIns[i].size() - getEffectiveSizeC());
-          if (channel >= 0 && channel < getEffectiveSizeC()) {
-            //store.setLightPathEmissionFilterRef(filterID, i, channel, 0);
           }
           store.setTransmittanceRangeCutIn(
             (PositiveInteger) cutIns[i].get(filter), i, filter);
@@ -614,6 +610,7 @@ public class LIFReader extends FormatReader {
           }
         }
 
+        int nextFilter = cutIns[i].size() - getEffectiveSizeC();
         for (int k=start; k<validIntensities.size(); k++, nextChannel++) {
           int index = validIntensities.get(k);
           double intensity = (Double) laserIntensities.get(index);
@@ -634,6 +631,28 @@ public class LIFReader extends FormatReader {
               if (wavelength > 0) {
                 store.setChannelExcitationWavelength(
                   new PositiveInteger(wavelength), i, nextChannel);
+
+                if (nextFilter >= cutIns[i].size()) {
+                  continue;
+                }
+                Integer cutIn =
+                  ((PositiveInteger) cutIns[i].get(nextFilter)).getValue();
+                while (cutIn - wavelength > 20) {
+                  nextFilter++;
+                  if (nextFilter < cutIns[i].size()) {
+                    cutIn =
+                      ((PositiveInteger) cutIns[i].get(nextFilter)).getValue();
+                  }
+                  else {
+                    break;
+                  }
+                }
+                if (nextFilter < cutIns[i].size()) {
+                  String fid =
+                    MetadataTools.createLSID("Filter", i, nextFilter);
+                  store.setLightPathEmissionFilterRef(fid, i, nextChannel, 0);
+                  nextFilter++;
+                }
               }
               else {
                 LOGGER.warn(
@@ -652,7 +671,8 @@ public class LIFReader extends FormatReader {
       store.setImageDescription(descriptions[i], i);
       if (acquiredDate[i] > 0) {
         store.setImageAcquiredDate(DateTools.convertDate(
-          (long) (acquiredDate[i] * 1000), DateTools.COBOL), i);
+          (long) (acquiredDate[i] * 1000), DateTools.COBOL,
+          DateTools.ISO8601_FORMAT, true), i);
       }
       store.setImageName(imageNames[i].trim(), i);
 
@@ -684,26 +704,28 @@ public class LIFReader extends FormatReader {
       Vector detectors = detectorModels[i];
       if (detectors != null) {
         nextChannel = 0;
-        for (int detector=0; detector<detectors.size(); detector++) {
-          String detectorID = MetadataTools.createLSID("Detector", i, detector);
-          store.setDetectorID(detectorID, i, detector);
-          store.setDetectorModel((String) detectors.get(detector), i, detector);
+        int start = detectors.size() - getEffectiveSizeC();
+        if (start < 0) {
+          start = 0;
+        }
+        for (int detector=start; detector<detectors.size(); detector++) {
+          int dIndex = detector - start;
+          String detectorID = MetadataTools.createLSID("Detector", i, dIndex);
+          store.setDetectorID(detectorID, i, dIndex);
+          store.setDetectorModel((String) detectors.get(detector), i, dIndex);
 
-          store.setDetectorZoom(zooms[i], i, detector);
-          store.setDetectorType(DetectorType.PMT, i, detector);
-          if (voltages[i] != null && detector < voltages[i].size()) {
-            store.setDetectorVoltage(
-              (Double) voltages[i].get(detector), i, detector);
-          }
+          store.setDetectorZoom(zooms[i], i, dIndex);
+          store.setDetectorType(DetectorType.PMT, i, dIndex);
 
           if (activeDetector[i] != null) {
-            if (detector < activeDetector[i].size() &&
-              (Boolean) activeDetector[i].get(detector) &&
+            int index = activeDetector[i].size() - getEffectiveSizeC() + dIndex;
+            if (index >= 0 && index < activeDetector[i].size() &&
+              (Boolean) activeDetector[i].get(index) &&
               detectorOffsets[i] != null &&
-              nextChannel < detectorOffsets[i].size())
+              nextChannel < detectorOffsets[i].length)
             {
               store.setDetectorOffset(
-                (Double) detectorOffsets[i].get(nextChannel++), i, detector);
+                detectorOffsets[i][nextChannel++], i, dIndex);
             }
           }
         }
@@ -714,6 +736,14 @@ public class LIFReader extends FormatReader {
         activeDetectors.size() - getEffectiveSizeC();
       int nextDetector = firstDetector;
 
+      int nextFilter = -1;
+      if (filterModels[i] != null) {
+        nextFilter = (int) Math.max(filterModels[i].size(),
+          cutIns[i].size() - getEffectiveSizeC());
+        if (filterModels[i].size() == cutIns[i].size()) {
+          nextFilter = 0;
+        }
+      }
       for (int c=0; c<getEffectiveSizeC(); c++) {
         if (activeDetectors != null) {
           while (nextDetector >= 0 && nextDetector < activeDetectors.size() &&
@@ -729,9 +759,8 @@ public class LIFReader extends FormatReader {
             store.setDetectorSettingsID(detectorID, i, c);
             nextDetector++;
 
-            if (detectorOffsets[i] != null && c < detectorOffsets[i].size()) {
-              store.setDetectorSettingsOffset(
-                (Double) detectorOffsets[i].get(c), i, c);
+            if (detectorOffsets[i] != null && c < detectorOffsets[i].length) {
+              store.setDetectorSettingsOffset(detectorOffsets[i][c], i, c);
             }
 
             if (gains[i] != null) {
@@ -761,6 +790,12 @@ public class LIFReader extends FormatReader {
 
         int channelColor = getChannelColor(realChannel[i][c]);
         store.setChannelColor(channelColor, i, c);
+
+        if (channelColor != -1 && nextFilter >= 0) {
+          String filterID = MetadataTools.createLSID("Filter", i, nextFilter);
+          store.setLightPathEmissionFilterRef(filterID, i, c, 0);
+          nextFilter++;
+        }
       }
 
       for (int image=0; image<getImageCount(); image++) {
@@ -830,8 +865,6 @@ public class LIFReader extends FormatReader {
     laserIntensity = new Vector[imageNodes.getLength()];
     timestamps = new double[imageNodes.getLength()][];
     activeDetector = new Vector[imageNodes.getLength()];
-    voltages = new Vector[imageNodes.getLength()];
-    detectorOffsets = new Vector[imageNodes.getLength()];
     serialNumber = new String[imageNodes.getLength()];
     lensNA = new Double[imageNodes.getLength()];
     magnification = new Integer[imageNodes.getLength()];
@@ -855,6 +888,7 @@ public class LIFReader extends FormatReader {
 
     expTimes = new Double[imageNodes.getLength()][];
     gains = new Double[imageNodes.getLength()][];
+    detectorOffsets = new Double[imageNodes.getLength()][];
     channelNames = new String[imageNodes.getLength()][];
     exWaves = new Integer[imageNodes.getLength()][];
     imageROIs = new ROI[imageNodes.getLength()][];
@@ -974,6 +1008,8 @@ public class LIFReader extends FormatReader {
     int nextChannel = 0;
     for (int definition=0; definition<definitions.getLength(); definition++) {
       Element definitionNode = (Element) definitions.item(definition);
+      String parentName = definitionNode.getParentNode().getNodeName();
+      boolean isMaster = parentName.endsWith("Master");
       NodeList detectors = getNodes(definitionNode, "Detector");
       if (detectors == null) return;
 
@@ -1030,12 +1066,18 @@ public class LIFReader extends FormatReader {
             channels.add("");
           }
 
-          if (nextChannel < getEffectiveSizeC()) {
-            gains[image][nextChannel] = gain;
-            detectorOffsets[image].add(offset);
-          }
+          if (!isMaster) {
+            if (channel < nextChannel) {
+              nextChannel = 0;
+            }
 
-          nextChannel++;
+            if (nextChannel < getEffectiveSizeC()) {
+              gains[image][nextChannel] = gain;
+              detectorOffsets[image][nextChannel] = offset;
+            }
+
+            nextChannel++;
+          }
         }
 
         if (active) {
@@ -1282,8 +1324,6 @@ public class LIFReader extends FormatReader {
     if (filterSettings == null) return;
 
     activeDetector[image] = new Vector<Boolean>();
-    voltages[image] = new Vector<Double>();
-    detectorOffsets[image] = new Vector<Double>();
     cutIns[image] = new Vector<PositiveInteger>();
     cutOuts[image] = new Vector<PositiveInteger>();
     filterModels[image] = new Vector<String>();
@@ -1311,24 +1351,6 @@ public class LIFReader extends FormatReader {
 
           detectorIndexes[image].put(new Integer(data), object);
           activeDetector[image].add(variant.equals("Active"));
-        }
-        else if (attribute.equals("HighVoltage")) {
-          int channel = getChannelIndex(filterSetting);
-          if (channel < 0) continue;
-          if (channel < voltages[image].size()) {
-            voltages[image].setElementAt(new Double(variant), channel);
-          }
-          else {
-            while (channel > voltages[image].size()) {
-              voltages[image].add(new Double(0));
-            }
-            voltages[image].add(new Double(variant));
-          }
-        }
-        else if (attribute.equals("VideoOffset")) {
-          int channel = getChannelIndex(filterSetting);
-          if (channel < 0) continue;
-          detectorOffsets[image].add(new Double(variant));
         }
       }
       else if (attribute.equals("Objective")) {
@@ -1421,6 +1443,7 @@ public class LIFReader extends FormatReader {
 
     expTimes[image] = new Double[getEffectiveSizeC()];
     gains[image] = new Double[getEffectiveSizeC()];
+    detectorOffsets[image] = new Double[getEffectiveSizeC()];
     channelNames[image] = new String[getEffectiveSizeC()];
     exWaves[image] = new Integer[getEffectiveSizeC()];
     detectorModels[image] = new Vector<String>();

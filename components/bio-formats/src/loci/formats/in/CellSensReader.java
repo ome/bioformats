@@ -721,6 +721,10 @@ public class CellSensReader extends FormatReader {
     }
 
     for (int i=0; i<tagCount; i++) {
+      if (vsi.getFilePointer() + 16 >= vsi.length()) {
+        break;
+      }
+
       // read the data field
 
       int fieldType = vsi.readInt();

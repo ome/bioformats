@@ -29,6 +29,7 @@ import java.util.Vector;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
+import loci.common.xml.BaseHandler;
 import loci.common.xml.XMLTools;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
@@ -214,7 +215,7 @@ public class OMEXMLWriter extends FormatWriter {
 
   // -- Helper class --
 
-  class OMEHandler extends DefaultHandler {
+  class OMEHandler extends BaseHandler {
     public void characters(char[] ch, int start, int length) {
       currentFragment += new String(ch, start, length);
     }

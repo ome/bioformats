@@ -69,7 +69,7 @@ public enum TiffCompression implements CodedEnum {
   GROUP_3_FAX(3, null, "CCITT T.4 bi-level encoding (Group 3 Fax)"),
   GROUP_4_FAX(4, null, "CCITT T.6 bi-level encoding (Group 4 Fax)"),
   LZW(5, new LZWCodec(), "LZW"),
-  //JPEG(6),
+  OLD_JPEG(6, new JPEGCodec(), "Old JPEG"),
   JPEG(7, new JPEGCodec(), "JPEG"),
   PACK_BITS(32773, new PackbitsCodec(), "PackBits"),
   PROPRIETARY_DEFLATE(32946, new ZlibCodec(), "Deflate (Zlib)"),

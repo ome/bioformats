@@ -7,8 +7,9 @@
 
   <parent>
     <groupId>loci</groupId>
-    <artifactId>bio-formats-base</artifactId>
+    <artifactId>pom-scifio</artifactId>
     <version>4.4-SNAPSHOT</version>
+    <relativePath>../..</relativePath>
   </parent>
 
   <artifactId>loci_tools</artifactId>
@@ -40,6 +41,7 @@
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <configuration>
+          <appendAssemblyId>false</appendAssemblyId>
           <descriptors>
             <descriptor>assembly.xml</descriptor>
           </descriptors>
@@ -81,7 +83,7 @@
     </developer>
   </developers>
 
-  <!-- NB: for bio-formats-base, in case of partial checkout -->
+  <!-- NB: for parent project, in case of partial checkout -->
   <repositories>
     <repository>
       <id>loci.releases</id>

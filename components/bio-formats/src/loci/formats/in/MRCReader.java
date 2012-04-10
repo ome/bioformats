@@ -94,7 +94,18 @@ public class MRCReader extends FormatReader {
 
     if (offset + planeSize <= in.length() && offset >= 0) {
       in.seek(offset);
-      readPlane(in, x, y, w, h, buf);
+      readPlane(in, x, getSizeY() - h - y, w, h, buf);
+
+      // reverse the order of the rows
+      // planes are stored with the origin in the lower-left corner
+      byte[] tmp = new byte[w * FormatTools.getBytesPerPixel(getPixelType())];
+      for (int row=0; row<h/2; row++) {
+        int src = row * tmp.length;
+        int dest = (h - row - 1) * tmp.length;
+        System.arraycopy(buf, src, tmp, 0, tmp.length);
+        System.arraycopy(buf, dest, buf, src, tmp.length);
+        System.arraycopy(tmp, 0, buf, dest, tmp.length);
+      }
     }
 
     return buf;
@@ -189,13 +200,10 @@ public class MRCReader extends FormatReader {
       int my = in.readInt();
       int mz = in.readInt();
 
-      xSize = in.readFloat() / mx;
-      ySize = in.readFloat() / my;
-      zSize = in.readFloat() / mz;
-
-      if (xSize == Double.POSITIVE_INFINITY) xSize = 1;
-      if (ySize == Double.POSITIVE_INFINITY) ySize = 1;
-      if (zSize == Double.POSITIVE_INFINITY) zSize = 1;
+      // physical sizes are stored in ångströms, we want them in µm
+      xSize = (in.readFloat() / mx) / 10000.0;
+      ySize = (in.readFloat() / my) / 10000.0;
+      zSize = (in.readFloat() / mz) / 10000.0;
 
       addGlobalMeta("Pixel size (X)", xSize);
       addGlobalMeta("Pixel size (Y)", ySize);

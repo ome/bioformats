@@ -62,6 +62,7 @@ public class CellWorxReader extends FormatReader {
   private String[][][] wellFiles;
   private String[][] logFiles;
   private int fieldCount = 0;
+  private boolean doChannels = false;
 
   private String plateLogFile;
   private String zMapFile;
@@ -192,6 +193,7 @@ public class CellWorxReader extends FormatReader {
         lastReader.close();
       }
       lastReader = null;
+      doChannels = false;
     }
   }
 
@@ -269,6 +271,9 @@ public class CellWorxReader extends FormatReader {
         for (int col=0; col<xFields; col++) {
           fieldMap[row][col] = new Boolean(mapping[col].trim()).booleanValue();
         }
+      }
+      else if (key.equals("Waves")) {
+        doChannels = new Boolean(value.toLowerCase());
       }
       else if (key.equals("NWavelengths")) {
         wavelengths = new String[Integer.parseInt(value)];
@@ -643,7 +648,7 @@ public class CellWorxReader extends FormatReader {
           if (fieldCount > 1) {
            file += "_s" + (field + 1);
           }
-          if (channels > 1) {
+          if (doChannels || channels > 1) {
             file += "_w" + (channel + 1);
           }
           if (nTimepoints > 1) {

@@ -473,9 +473,9 @@ public class OMETiffReader extends FormatReader {
       for (int no=0; no<num; no++) planes[no] = new OMETiffPlane();
 
       int tiffDataCount = meta.getTiffDataCount(i);
-      boolean zOneIndexed = false;
-      boolean cOneIndexed = false;
-      boolean tOneIndexed = false;
+      Boolean zOneIndexed = null;
+      Boolean cOneIndexed = null;
+      Boolean tOneIndexed = null;
 
       // pre-scan TiffData indices to see if any of them are indexed from 1
 
@@ -487,9 +487,24 @@ public class OMETiffReader extends FormatReader {
         int t = firstT == null ? 0 : firstT.getValue();
         int z = firstZ == null ? 0 : firstZ.getValue();
 
-        if (c >= effSizeC) cOneIndexed = true;
-        if (z >= sizeZ) zOneIndexed = true;
-        if (t >= sizeT) tOneIndexed = true;
+        if (c >= effSizeC && cOneIndexed == null) {
+          cOneIndexed = true;
+        }
+        else if (c == 0) {
+          cOneIndexed = false;
+        }
+        if (z >= sizeZ && zOneIndexed == null) {
+          zOneIndexed = true;
+        }
+        else if (z == 0) {
+          zOneIndexed = false;
+        }
+        if (t >= sizeT && tOneIndexed == null) {
+          tOneIndexed = true;
+        }
+        else if (t == 0) {
+          tOneIndexed = false;
+        }
       }
 
       for (int td=0; td<tiffDataCount; td++) {
@@ -518,9 +533,15 @@ public class OMETiffReader extends FormatReader {
         int z = firstZ == null ? 0 : firstZ.getValue();
 
         // NB: some writers index FirstC, FirstZ and FirstT from 1
-        if (cOneIndexed) c--;
-        if (zOneIndexed) z--;
-        if (tOneIndexed) t--;
+        if (cOneIndexed != null && cOneIndexed) c--;
+        if (zOneIndexed != null && zOneIndexed) z--;
+        if (tOneIndexed != null && tOneIndexed) t--;
+
+        if (z >= sizeZ || c >= effSizeC || t >= sizeT) {
+          LOGGER.warn("Found invalid TiffData: Z={}, C={}, T={}",
+            new Object[] {z, c, t});
+          break;
+        }
 
         int index = FormatTools.getIndex(order,
           sizeZ, effSizeC, sizeT, num, z, c, t);

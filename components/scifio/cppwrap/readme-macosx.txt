@@ -15,8 +15,8 @@ HOW TO BUILD -- MAC OS X
 The following commands will generate and build the Bio-Formats C++ bindings:
 
   # generate the C++ bindings
-  cd components/bio-formats
-  mvn2 -DskipTests package cppwrap:wrap
+  cd components/scifio
+  mvn -DskipTests package cppwrap:wrap
 
   # compile the C++ bindings
   cd target/cppwrap

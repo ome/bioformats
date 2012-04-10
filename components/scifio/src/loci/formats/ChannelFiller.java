@@ -25,6 +25,7 @@ package loci.formats;
 
 import java.io.IOException;
 
+import loci.common.DataTools;
 import loci.formats.meta.MetadataStore;
 
 /**
@@ -170,8 +171,8 @@ public class ChannelFiller extends ReaderWrapper {
   public byte[] openBytes(int no, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    byte[] buf = new byte[w * h * getRGBChannelCount() *
-      FormatTools.getBytesPerPixel(getPixelType())];
+    byte[] buf = DataTools.allocate(w, h, getRGBChannelCount(),
+      FormatTools.getBytesPerPixel(getPixelType()));
     return openBytes(no, buf, x, y, w, h);
   }
 

@@ -37,6 +37,7 @@ import loci.common.IRandomAccess;
 import loci.common.Location;
 import loci.common.NIOFileHandle;
 import loci.common.RandomAccessInputStream;
+import loci.common.xml.BaseHandler;
 import loci.common.xml.XMLTools;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
@@ -1261,7 +1262,7 @@ public class FlexReader extends FormatReader {
   // -- Helper classes --
 
   /** SAX handler for parsing XML. */
-  public class FlexHandler extends DefaultHandler {
+  public class FlexHandler extends BaseHandler {
     private Vector<String> names, factors;
     private MetadataStore store;
 
@@ -1623,7 +1624,7 @@ public class FlexReader extends FormatReader {
   }
 
   /** SAX handler for parsing XML from .mea files. */
-  public class MeaHandler extends DefaultHandler {
+  public class MeaHandler extends BaseHandler {
     private Vector<String> flex = new Vector<String>();
     private String[] hostnames = null;
 
@@ -1674,7 +1675,7 @@ public class FlexReader extends FormatReader {
   }
 
   /** SAX handler for parsing XML from .res files. */
-  public class ResHandler extends DefaultHandler {
+  public class ResHandler extends BaseHandler {
 
     // -- DefaultHandler API methods --
 

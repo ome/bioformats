@@ -157,9 +157,22 @@ public class MINCReader extends FormatReader {
 
     try {
       Object pixels = netcdf.getVariableValue("/image");
+
       if (pixels instanceof byte[][][]) {
         core[0].pixelType = FormatTools.UINT8;
         pixelData = (byte[][][]) pixels;
+      }
+      else if (pixels instanceof byte[][][][]) {
+        byte[][][][] actualPixels = (byte[][][][]) pixels;
+        core[0].pixelType = FormatTools.UINT8;
+
+        pixelData = new byte[actualPixels.length * actualPixels[0].length][][];
+        int nextPlane = 0;
+        for (int t=0; t<actualPixels.length; t++) {
+          for (int z=0; z<actualPixels[t].length; z++) {
+            pixelData[nextPlane++] = actualPixels[t][z];
+          }
+        }
       }
       else if (pixels instanceof short[][][]) {
         core[0].pixelType = FormatTools.UINT16;
@@ -217,13 +230,18 @@ public class MINCReader extends FormatReader {
       throw new FormatException(e);
     }
 
-    core[0].sizeX = netcdf.getDimension("/zspace");
+    core[0].sizeX = netcdf.getDimension("/xspace");
     core[0].sizeY = netcdf.getDimension("/yspace");
-    core[0].sizeZ = netcdf.getDimension("/xspace");
+    core[0].sizeZ = netcdf.getDimension("/zspace");
 
-    core[0].sizeT = 1;
+    try {
+      core[0].sizeT = netcdf.getDimension("/time");
+    }
+    catch (NullPointerException e) {
+      core[0].sizeT = 1;
+    }
     core[0].sizeC = 1;
-    core[0].imageCount = core[0].sizeZ;
+    core[0].imageCount = getSizeZ() * getSizeT() * getSizeC();
     core[0].rgb = false;
     core[0].indexed = false;
     core[0].dimensionOrder = "XYZCT";

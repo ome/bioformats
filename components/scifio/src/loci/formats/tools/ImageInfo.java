@@ -98,6 +98,7 @@ public class ImageInfo {
   private boolean separate = false;
   private boolean expand = false;
   private boolean omexml = false;
+  private boolean originalMetadata = true;
   private boolean normalize = false;
   private boolean fastBlit = false;
   private boolean autoscale = false;
@@ -114,6 +115,7 @@ public class ImageInfo {
   private String swapOrder = null, shuffleOrder = null;
   private String map = null;
   private String format = null;
+  private int xmlSpaces = 3;
 
   private IFormatReader reader;
   private IFormatReader baseReader;
@@ -143,6 +145,7 @@ public class ImageInfo {
     separate = false;
     expand = false;
     omexml = false;
+    originalMetadata = true;
     normalize = false;
     fastBlit = false;
     autoscale = false;
@@ -151,6 +154,7 @@ public class ImageInfo {
     omexmlOnly = false;
     validate = true;
     omexmlVersion = null;
+    xmlSpaces = 3;
     start = 0;
     end = Integer.MAX_VALUE;
     series = 0;
@@ -177,6 +181,7 @@ public class ImageInfo {
         else if (args[i].equals("-separate")) separate = true;
         else if (args[i].equals("-expand")) expand = true;
         else if (args[i].equals("-omexml")) omexml = true;
+        else if (args[i].equals("-no-sas")) originalMetadata = false;
         else if (args[i].equals("-normalize")) normalize = true;
         else if (args[i].equals("-fast")) fastBlit = true;
         else if (args[i].equals("-autoscale")) autoscale = true;
@@ -193,6 +198,9 @@ public class ImageInfo {
         else if (args[i].equals("-ascii")) ascii = true;
         else if (args[i].equals("-nousedfiles")) usedFiles = false;
         else if (args[i].equals("-xmlversion")) omexmlVersion = args[++i];
+        else if (args[i].equals("-xmlspaces")) {
+          xmlSpaces = Integer.parseInt(args[++i]);
+        }
         else if (args[i].equals("-crop")) {
           StringTokenizer st = new StringTokenizer(args[++i], ",");
           xCoordinate = Integer.parseInt(st.nextToken());
@@ -245,7 +253,7 @@ public class ImageInfo {
       "    [-merge] [-nogroup] [-stitch] [-separate] [-expand] [-omexml]",
       "    [-normalize] [-fast] [-debug] [-range start end] [-series num]",
       "    [-swap inputOrder] [-shuffle outputOrder] [-map id] [-preload]",
-      "    [-crop x,y,w,h] [-autoscale] [-novalid] [-omexml-only]",
+      "    [-crop x,y,w,h] [-autoscale] [-novalid] [-omexml-only] [-no-sas]",
       "    [-format Format]",
       "",
       "    -version: print the library version and exit",
@@ -278,6 +286,7 @@ public class ImageInfo {
       "              brightness and contrast",
       "    -novalid: do not perform validation of OME-XML",
       "-omexml-only: only output the generated OME-XML",
+      "     -no-sas: do not output OME-XML StructuredAnnotation elements",
       "     -format: read file with a particular reader (e.g., ZeissZVI)",
       "",
       "* = may result in loss of precision",
@@ -340,7 +349,7 @@ public class ImageInfo {
 
   public void configureReaderPreInit() throws FormatException, IOException {
     if (omexml) {
-      reader.setOriginalMetadataPopulated(true);
+      reader.setOriginalMetadataPopulated(originalMetadata);
       try {
         ServiceFactory factory = new ServiceFactory();
         OMEXMLService service = factory.getInstance(OMEXMLService.class);
@@ -901,11 +910,17 @@ public class ImageInfo {
       LOGGER.info("Generating OME-XML (schema version {})", version);
     }
     if (ms instanceof MetadataRetrieve) {
+      service.removeBinData(service.getOMEMetadata((MetadataRetrieve) ms));
+      for (int i=0; i<reader.getSeriesCount(); i++) {
+        service.addMetadataOnly(
+          service.getOMEMetadata((MetadataRetrieve) ms), i);
+      }
+
       if (omexmlOnly) {
         DebugTools.enableLogging("INFO");
       }
       String xml = service.getOMEXML((MetadataRetrieve) ms);
-      LOGGER.info("{}", XMLTools.indentXML(xml, true));
+      LOGGER.info("{}", XMLTools.indentXML(xml, xmlSpaces, true));
       if (omexmlOnly) {
         DebugTools.enableLogging("OFF");
       }

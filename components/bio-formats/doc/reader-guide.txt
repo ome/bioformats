@@ -220,7 +220,6 @@ These variables are:
   straightforward one).  loci.formats.in.LIFReader and InCellReader are also
   good references that show off some of the nicer features of Bio-Formats.
 
-If you have questions about Bio-Formats, please contact the Bio-Formats
-developers <bioformats@loci.wisc.edu>, or via one of the mailing lists:
+If you have questions about Bio-Formats, please contact the Bio-Formats team:
 
-http://loci.wisc.edu/software/mailing-lists
+  http://loci.wisc.edu/bio-formats/contact

@@ -71,6 +71,8 @@ public final class MetadataTools {
 
   // -- Static fields --
 
+  private static boolean defaultDateEnabled = true;
+
   // -- Constructor --
 
   private MetadataTools() { }
@@ -110,7 +112,7 @@ public final class MetadataTools {
     int oldSeries = r.getSeries();
     for (int i=0; i<r.getSeriesCount(); i++) {
       r.setSeries(i);
-      
+
       String imageName = null;
       if (doImageName) {
         Location f = new Location(r.getCurrentFile());
@@ -118,9 +120,10 @@ public final class MetadataTools {
       }
       String pixelType = FormatTools.getPixelTypeString(r.getPixelType());
 
-      populateMetadata(store, i, imageName, r.isLittleEndian(),
-        r.getDimensionOrder(), pixelType, r.getSizeX(), r.getSizeY(),
-        r.getSizeZ(), r.getSizeC(), r.getSizeT(), r.getRGBChannelCount());
+      populateMetadata(store, r.getCurrentFile(), i, imageName,
+        r.isLittleEndian(), r.getDimensionOrder(), pixelType, r.getSizeX(),
+        r.getSizeY(), r.getSizeZ(), r.getSizeC(), r.getSizeT(),
+        r.getRGBChannelCount());
 
       try {
         OMEXMLService service =
@@ -168,7 +171,7 @@ public final class MetadataTools {
     final String pixelType = FormatTools.getPixelTypeString(coreMeta.pixelType);
     final int effSizeC = coreMeta.imageCount / coreMeta.sizeZ / coreMeta.sizeT;
     final int samplesPerPixel = coreMeta.sizeC / effSizeC;
-    populateMetadata(store, series, imageName, coreMeta.littleEndian,
+    populateMetadata(store, null, series, imageName, coreMeta.littleEndian,
       coreMeta.dimensionOrder, pixelType, coreMeta.sizeX, coreMeta.sizeY,
       coreMeta.sizeZ, coreMeta.sizeC, coreMeta.sizeT, samplesPerPixel);
   }
@@ -187,8 +190,27 @@ public final class MetadataTools {
     String pixelType, int sizeX, int sizeY, int sizeZ, int sizeC, int sizeT,
     int samplesPerPixel)
   {
+    populateMetadata(store, null, series, imageName, littleEndian,
+      dimensionOrder, pixelType, sizeX, sizeY, sizeZ, sizeC, sizeT,
+      samplesPerPixel);
+  }
+
+  /**
+   * Populates the given {@link MetadataStore}, for the specified series, using
+   * the provided values.
+   * <p>
+   * After calling this method, the metadata store will be sufficiently
+   * populated for use with an {@link IFormatWriter} (assuming it is also a
+   * {@link MetadataRetrieve}).
+   * </p>
+   */
+  public static void populateMetadata(MetadataStore store, String file,
+    int series, String imageName, boolean littleEndian, String dimensionOrder,
+    String pixelType, int sizeX, int sizeY, int sizeZ, int sizeC, int sizeT,
+    int samplesPerPixel)
+  {
     store.setImageID(createLSID("Image", series), series);
-    setDefaultCreationDate(store, null, series);
+    setDefaultCreationDate(store, file, series);
     if (imageName != null) store.setImageName(imageName, series);
     store.setPixelsID(createLSID("Pixels", series), series);
     store.setPixelsBinDataBigEndian(!littleEndian, series, 0);
@@ -304,13 +326,35 @@ public final class MetadataTools {
   }
 
   /**
+   * Disables the setting of a default creation date.
+   *
+   * By default, missing creation dates will be replaced with the corresponding
+   * file's last modification date, or the current time if the modification
+   * date is not available.
+   *
+   * Calling this method with the 'enabled' parameter set to 'false' causes
+   * missing creation dates to be left as null.
+   *
+   * @param enabled See above.
+   * @see #setDefaultCreationDate(MetadataStore, String, int)
+   */
+  public static void setDefaultDateEnabled(boolean enabled) {
+    defaultDateEnabled = enabled;
+  }
+
+  /**
    * Sets a default creation date.  If the named file exists, then the creation
    * date is set to the file's last modification date.  Otherwise, it is set
    * to the current date.
+   *
+   * @see #setDefaultDateEnabled(boolean)
    */
   public static void setDefaultCreationDate(MetadataStore store, String id,
     int series)
   {
+    if (!defaultDateEnabled) {
+      return;
+    }
     Location file = id == null ? null : new Location(id).getAbsoluteFile();
     long time = System.currentTimeMillis();
     if (file != null && file.exists()) time = file.lastModified();

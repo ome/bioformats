@@ -752,6 +752,10 @@ public class PerkinElmerReader extends FormatReader {
       Arrays.sort(keys);
       for (String key : keys) {
         int oldCount = zSections.get(key).intValue();
+        if (oldCount == 1 && !key.replaceAll("\\d", "").equals("")) {
+          oldFile += oldCount;
+          continue;
+        }
         int sizeC = isTiff ? tiff.getEffectiveSizeC() : getSizeC();
         int nPlanes = sizeC * getSizeT();
         int count = (int) Math.min(oldCount, nPlanes);

@@ -97,12 +97,10 @@ stitchFiles = 0;
 
 % -- Main function - no need to edit anything past this point --
 
-% prompt for a file to open, if one was not specified
-if exist('id') == 0
-  dir = uigetdir;
-  cd(dir);
-  file = uigetfile('*.*', 'Choose a file to open');
-  id = fullfile(dir, file);
+if exist('id','file') == 0
+  [file,path] = uigetfile(getFileExtensions, 'Choose a file to open');
+  id = [path file];
+  if isequal(path,0) || isequal(file,0), return; end
 end
 
 % load the Bio-Formats library into the MATLAB environment
@@ -118,42 +116,18 @@ if exist('lurawaveLicense')
     java.lang.System.setProperty('lurawave.license', lurawaveLicense);
 end
 
-% check MATLAB version, since typecast function requires MATLAB 7.1+
-canTypecast = versionCheck(version, 7, 1);
+% Get the channel filler
+r=bfGetReader(id,stitchFiles);
 
-% check Bio-Formats version, since makeDataArray2D function requires trunk
-bioFormatsVersion = char(loci.formats.FormatTools.VERSION);
-isBioFormatsTrunk = versionCheck(bioFormatsVersion, 5, 0);
 
-% initialize logging
-loci.common.DebugTools.enableLogging('INFO');
-
-% check for a new version, if we haven't done so already
-downloadNewVersion = 0;
-bfUpgradeCheck(downloadNewVersion);
-
-r = loci.formats.ChannelFiller();
-r = loci.formats.ChannelSeparator(r);
-if stitchFiles
-    r = loci.formats.FileStitcher(r);
-end
-
-tic
-r.setMetadataStore(loci.formats.MetadataTools.createOMEXMLMetadata());
-r.setId(id);
 numSeries = r.getSeriesCount();
 result = cell(numSeries, 2);
 for s = 1:numSeries
     fprintf('Reading series #%d', s);
     r.setSeries(s - 1);
-    width = r.getSizeX();
-    height = r.getSizeY();
     pixelType = r.getPixelType();
     bpp = loci.formats.FormatTools.getBytesPerPixel(pixelType);
-    fp = loci.formats.FormatTools.isFloatingPoint(pixelType);
-    sgn = loci.formats.FormatTools.isSigned(pixelType);
     bppMax = power(2, bpp * 8);
-    little = r.isLittleEndian();
     numImages = r.getImageCount();
     imageList = cell(numImages, 2);
     colorMaps = cell(numImages);
@@ -162,7 +136,7 @@ for s = 1:numSeries
             fprintf('\n    ');
         end
         fprintf('.');
-        plane = r.openBytes(i - 1);
+        arr=bfGetPlane(r,i);
 
         % retrieve color map data
         if bpp == 1
@@ -170,6 +144,7 @@ for s = 1:numSeries
         else
             colorMaps{s, i} = r.get16BitLookupTable()';
         end
+        
         warning off
         if ~isempty(colorMaps{s, i})
             newMap = colorMaps{s, i};
@@ -179,63 +154,6 @@ for s = 1:numSeries
         end
         warning on
 
-        % convert byte array to MATLAB image
-        if isBioFormatsTrunk && (sgn || ~canTypecast)
-            % can get the data directly to a matrix
-            arr = loci.common.DataTools.makeDataArray2D(plane, ...
-                bpp, fp, little, height);
-        else
-            % get the data as a vector, either because makeDataArray2D
-            % is not available, or we need a vector for typecast
-            arr = loci.common.DataTools.makeDataArray(plane, ...
-                bpp, fp, little);
-        end
-
-        % Java does not have explicitly unsigned data types;
-        % hence, we must inform MATLAB when the data is unsigned
-        if ~sgn
-            if canTypecast
-                % TYPECAST requires at least MATLAB 7.1
-                % NB: arr will always be a vector here
-                switch class(arr)
-                    case 'int8'
-                        arr = typecast(arr, 'uint8');
-                    case 'int16'
-                        arr = typecast(arr, 'uint16');
-                    case 'int32'
-                        arr = typecast(arr, 'uint32');
-                    case 'int64'
-                        arr = typecast(arr, 'uint64');
-                end
-            else
-                % adjust apparent negative values to actual positive ones
-                % NB: arr might be either a vector or a matrix here
-                mask = arr < 0;
-                adjusted = arr(mask) + bppMax / 2;
-                switch class(arr)
-                    case 'int8'
-                        arr = uint8(arr);
-                        adjusted = uint8(adjusted);
-                    case 'int16'
-                        arr = uint16(arr);
-                        adjusted = uint16(adjusted);
-                    case 'int32'
-                        arr = uint32(arr);
-                        adjusted = uint32(adjusted);
-                    case 'int64'
-                        arr = uint64(arr);
-                        adjusted = uint64(adjusted);
-                end
-                adjusted = adjusted + bppMax / 2;
-                arr(mask) = adjusted;
-            end
-        end
-
-        if isvector(arr)
-            % convert results from vector to matrix
-            shape = [width height];
-            arr = reshape(arr, shape)';
-        end
 
         % build an informative title for our figure
         label = id;
@@ -293,11 +211,25 @@ toc
 
 % -- Helper functions --
 
-function [result] = versionCheck(v, maj, min)
+function fileExt = getFileExtensions
+% List all supported extensions
 
-tokens = regexp(v, '[^\d]*(\d+)[^\d]+(\d+).*', 'tokens');
-majToken = tokens{1}(1);
-minToken = tokens{1}(2);
-major = str2num(majToken{1});
-minor = str2num(minToken{1});
-result = major > maj || (major == maj && minor >= min);
+% Get all readers and create cell array with suffixes and names
+readers=loci.formats.ImageReader().getReaders;
+fileExt=cell(numel(readers),2);
+for i=1:numel(readers)
+    suffixes=readers(i).getSuffixes();
+    fileExt{i,1}=arrayfun(@char,suffixes,'Unif',false);
+    fileExt{i,2} = char(readers(i).getFormat().toString);
+end
+
+% Concatenate all unique formats
+allExt=unique(vertcat(fileExt{:,1}));
+allExt=allExt(~cellfun(@isempty,allExt));
+fileExt=vertcat({allExt,'All formats'},fileExt);
+
+% Format file extensions
+for i=1:size(fileExt,1)
+    fileExt{i,1} = sprintf('*.%s;',fileExt{i,1}{:});
+    fileExt{i,1}(end)=[];
+end

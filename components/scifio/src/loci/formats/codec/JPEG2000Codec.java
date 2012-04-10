@@ -40,6 +40,7 @@ import loci.common.services.ServiceFactory;
 import loci.formats.FormatException;
 import loci.formats.MissingLibraryException;
 import loci.formats.gui.AWTImageTools;
+import loci.formats.gui.UnsignedIntBuffer;
 import loci.formats.services.JAIIIOService;
 import loci.formats.services.JAIIIOServiceImpl;
 
@@ -142,6 +143,32 @@ public class JPEG2000Codec extends BaseCodec {
       }
       DataBuffer buffer = new DataBufferUShort(s, plane);
       img = AWTImageTools.constructImage(s.length, DataBuffer.TYPE_USHORT,
+        j2kOptions.width, j2kOptions.height, false, true, buffer,
+        j2kOptions.colorModel);
+    }
+    else if (j2kOptions.bitsPerSample == 32) {
+      int[][] s = new int[j2kOptions.channels][plane];
+      if (j2kOptions.interleaved) {
+        for (int q=0; q<plane; q++) {
+          for (int c=0; c<j2kOptions.channels; c++) {
+            s[c][q] = DataTools.bytesToInt(data, next, 4,
+              j2kOptions.littleEndian);
+            next += 4;
+          }
+        }
+      }
+      else {
+        for (int c=0; c<j2kOptions.channels; c++) {
+          for (int q=0; q<plane; q++) {
+            s[c][q] = DataTools.bytesToInt(data, next, 4,
+              j2kOptions.littleEndian);
+            next += 4;
+          }
+        }
+      }
+
+      DataBuffer buffer = new UnsignedIntBuffer(s, plane);
+      img = AWTImageTools.constructImage(s.length, DataBuffer.TYPE_INT,
         j2kOptions.width, j2kOptions.height, false, true, buffer,
         j2kOptions.colorModel);
     }

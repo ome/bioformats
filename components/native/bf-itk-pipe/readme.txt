@@ -7,4 +7,5 @@ to read and write supported life sciences file formats.
 For details, including compilation and usage instructions, see:
   http://www.loci.wisc.edu/bio-formats/itk
 
-Please direct questions to the Bio-Formats team at bioformats@loci.wisc.edu.
+Please direct any questions to the Bio-Formats team:
+  http://loci.wisc.edu/bio-formats/contact

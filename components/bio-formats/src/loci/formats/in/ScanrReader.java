@@ -23,9 +23,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.in;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.ByteOrder;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.Vector;
 
@@ -33,6 +35,7 @@ import loci.common.ByteArrayHandle;
 import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.common.xml.BaseHandler;
 import loci.common.xml.XMLTools;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
@@ -48,7 +51,6 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 
 import org.xml.sax.Attributes;
-import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * ScanrReader is the file format reader for Olympus ScanR datasets.
@@ -135,6 +137,16 @@ public class ScanrReader extends FormatReader {
       localName.equals(ACQUISITION_FILE))
     {
       return true;
+    }
+
+    Location parent = new Location(name).getAbsoluteFile().getParentFile();
+    if (checkSuffix(name, "tif") && parent.getName().equalsIgnoreCase("Data"))
+    {
+      parent = parent.getParentFile();
+    }
+    Location xmlFile = new Location(parent, XML_FILE);
+    if (!xmlFile.exists()) {
+      return false;
     }
 
     return super.isThisType(name, open);
@@ -362,7 +374,42 @@ public class ScanrReader extends FormatReader {
     }
 
     tiffs = new String[nChannels * nWells * nPos * nTimepoints * nSlices];
-    Arrays.sort(list);
+
+    Arrays.sort(list, new Comparator<String>() {
+      public int compare(String s1, String s2) {
+        int lastSeparator1 = s1.lastIndexOf(File.separator) + 1;
+        int lastSeparator2 = s2.lastIndexOf(File.separator) + 1;
+        String dir1 = s1.substring(0, lastSeparator1);
+        String dir2 = s2.substring(0, lastSeparator2);
+
+        if (!dir1.equals(dir2)) {
+          return dir1.compareTo(dir2);
+        }
+
+        int dash1 = s1.indexOf("-", lastSeparator1);
+        int dash2 = s2.indexOf("-", lastSeparator2);
+
+        String label1 = dash1 < 0 ? "" : s1.substring(lastSeparator1, dash1);
+        String label2 = dash2 < 0 ? "" : s2.substring(lastSeparator2, dash2);
+
+        if (label1.equals(label2)) {
+          String remainder1 = dash1 < 0 ? s1 : s1.substring(dash1);
+          String remainder2 = dash2 < 0 ? s2 : s2.substring(dash2);
+          return remainder1.compareTo(remainder2);
+        }
+
+        Integer index1 = wellLabels.get(label1);
+        Integer index2 = wellLabels.get(label2);
+
+        if (index1 == null && index2 != null) {
+          return 1;
+        }
+        else if (index1 != null && index2 == null) {
+          return -1;
+        }
+        return index1.compareTo(index2);
+      }
+    });
     int lastListIndex = 0;
 
     int next = 0;
@@ -569,7 +616,7 @@ public class ScanrReader extends FormatReader {
 
   // -- Helper class --
 
-  class ScanrHandler extends DefaultHandler {
+  class ScanrHandler extends BaseHandler {
     private String key, value;
     private String qName;
 

@@ -27,6 +27,7 @@ import java.io.IOException;
 
 import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
+import loci.common.xml.BaseHandler;
 import loci.common.xml.XMLTools;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -37,7 +38,6 @@ import loci.formats.meta.MetadataStore;
 import ome.xml.model.primitives.PositiveInteger;
 
 import org.xml.sax.Attributes;
-import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * IvisionReader is the file format reader for IVision (.IPM) files.
@@ -69,6 +69,8 @@ public class IvisionReader extends FormatReader {
   private Integer magnification;
   private Double lensNA, refractiveIndex;
   private String wavelength;
+
+  private boolean hasPaddingByte = false;
 
   // -- Constructor --
 
@@ -106,6 +108,9 @@ public class IvisionReader extends FormatReader {
     int planeSize = getSizeX() * getSizeY() * getSizeC();
     if (color16) planeSize = 2 * (planeSize / 3);
     else if (squareRoot) planeSize *= 2;
+    else if (hasPaddingByte) {
+      planeSize += getSizeX() * getSizeY();
+    }
     else planeSize *= FormatTools.getBytesPerPixel(getPixelType());
 
     in.seek(imageOffset + planeSize * no);
@@ -117,6 +122,19 @@ public class IvisionReader extends FormatReader {
     else if (squareRoot) {
       // TODO
       throw new FormatException("Square-root iVision files are not supported");
+    }
+    else if (hasPaddingByte) {
+      int next = 0;
+      in.skipBytes(y * getSizeX() * getSizeC());
+      for (int row=0; row<h; row++) {
+        in.skipBytes(x * getSizeC());
+        for (int col=0; col<w; col++) {
+          in.skipBytes(1);
+          in.read(buf, next, getSizeC());
+          next += getSizeC();
+        }
+        in.skipBytes(getSizeC() * (getSizeX() - w - x));
+      }
     }
     else readPlane(in, x, y, w, h, buf);
 
@@ -139,6 +157,7 @@ public class IvisionReader extends FormatReader {
       magnification = null;
       lensNA = refractiveIndex = null;
       wavelength = null;
+      hasPaddingByte = false;
     }
   }
 
@@ -177,7 +196,8 @@ public class IvisionReader extends FormatReader {
         break;
       case 5:
         core[0].pixelType = FormatTools.UINT8;
-        core[0].sizeC = 4;
+        core[0].sizeC = 3;
+        hasPaddingByte = true;
         break;
       case 6:
         core[0].pixelType = FormatTools.UINT16;
@@ -255,7 +275,14 @@ public class IvisionReader extends FormatReader {
       store.setImageInstrumentRef(instrumentID, 0);
 
       if (deltaT != null) {
-        store.setPixelsTimeIncrement(new Double(deltaT), 0);
+        Double increment = 0d;
+        try {
+          increment = new Double(deltaT);
+        }
+        catch (NumberFormatException e) {
+          LOGGER.debug("Failed to parse time increment", e);
+        }
+        store.setPixelsTimeIncrement(increment, 0);
       }
 
       String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
@@ -286,14 +313,19 @@ public class IvisionReader extends FormatReader {
 
       store.setDetectorSettingsBinning(getBinning(binX + "x" + binY), 0, 0);
       if (gain != null) {
-        store.setDetectorSettingsGain(new Double(gain), 0, 0);
+        try {
+          store.setDetectorSettingsGain(new Double(gain), 0, 0);
+        }
+        catch (NumberFormatException e) {
+          LOGGER.debug("Failed to parse detector gain", e);
+        }
       }
     }
   }
 
   // -- Helper class --
 
-  class IvisionHandler extends DefaultHandler {
+  class IvisionHandler extends BaseHandler {
 
     // -- Fields --
 
@@ -333,11 +365,13 @@ public class IvisionReader extends FormatReader {
     }
 
     public void characters(char[] ch, int start, int length) {
-      String v = new String(ch, start, length);
-      if ("key".equals(currentElement)) {
-        key = v;
+      String v = new String(ch, start, length).trim();
+      if (v.length() > 0) {
+        if ("key".equals(currentElement)) {
+          key = v;
+        }
+        else value = v;
       }
-      else value = v;
     }
 
     public void startElement(String uri, String localName, String qName,

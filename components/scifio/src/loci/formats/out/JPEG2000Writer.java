@@ -129,7 +129,7 @@ public class JPEG2000Writer extends FormatWriter {
    */
   public int[] getPixelTypes(String codec) {
     return new int[] {FormatTools.INT8, FormatTools.UINT8, FormatTools.INT16,
-      FormatTools.UINT16};
+      FormatTools.UINT16, FormatTools.INT32, FormatTools.UINT32};
   }
 
 }

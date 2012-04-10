@@ -1230,13 +1230,6 @@ public class ZeissLSMReader extends FormatReader {
         if (zct[2] < timestamps.size()) {
           double thisStamp = timestamps.get(zct[2]).doubleValue();
           store.setPlaneDeltaT(thisStamp - firstStamp, series, i);
-          int index = zct[2] + 1;
-          double nextStamp = index < timestamps.size() ?
-            timestamps.get(index).doubleValue() : thisStamp;
-          if (i == getSizeT() - 1 && zct[2] > 0) {
-            thisStamp = timestamps.get(zct[2] - 1).doubleValue();
-          }
-          store.setPlaneExposureTime(nextStamp - thisStamp, series, i);
         }
         if (xCoordinates.size() > series) {
           store.setPlanePositionX(xCoordinates.get(series), series, i);
@@ -1379,8 +1372,8 @@ public class ZeissLSMReader extends FormatReader {
         store.setDetectorID(detectorID, instrument, nextDetector);
         if (channel.acquire && nextDetector < getSizeC()) {
           store.setDetectorSettingsID(detectorID, series, nextDetector);
-          store.setDetectorSettingsBinning(
-            getBinning(binning), series, nextDetector);
+          //store.setDetectorSettingsBinning(
+          //  getBinning(binning), series, nextDetector);
         }
       }
       if (channel.amplificationGain != null) {
@@ -1404,7 +1397,7 @@ public class ZeissLSMReader extends FormatReader {
           store.setDichroicID(id, instrument, nextDichroic);
           store.setDichroicModel(beamSplitter.filter, instrument, nextDichroic);
           if (nextDichroicChannel < getEffectiveSizeC()) {
-            store.setLightPathDichroicRef(id, series, nextDichroicChannel);
+            //store.setLightPathDichroicRef(id, series, nextDichroicChannel);
           }
           nextDichroic++;
         }

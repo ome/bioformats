@@ -27,6 +27,7 @@ import java.io.IOException;
 
 import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
+import loci.common.xml.BaseHandler;
 import loci.common.xml.XMLTools;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
@@ -38,7 +39,6 @@ import loci.formats.tiff.PhotoInterp;
 import loci.formats.tiff.TiffParser;
 
 import org.xml.sax.Attributes;
-import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * ImaconReader is the file format reader for Imacon .fff (TIFF) files.
@@ -209,7 +209,7 @@ public class ImaconReader extends BaseTiffReader {
 
   // -- Helper class --
 
-  class ImaconHandler extends DefaultHandler {
+  class ImaconHandler extends BaseHandler {
     private String key, value;
     private String qName;
 

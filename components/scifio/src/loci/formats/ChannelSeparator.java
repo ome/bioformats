@@ -25,6 +25,8 @@ package loci.formats;
 
 import java.io.IOException;
 
+import loci.common.DataTools;
+
 /**
  * Logic to automatically separate the channels in a file.
  *
@@ -139,7 +141,8 @@ public class ChannelSeparator extends ReaderWrapper {
   public byte[] openBytes(int no, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    byte[] buf = new byte[w * h * FormatTools.getBytesPerPixel(getPixelType())];
+    byte[] buf =
+      DataTools.allocate(w, h, FormatTools.getBytesPerPixel(getPixelType()));
     return openBytes(no, buf, x, y, w, h);
   }
 
@@ -168,8 +171,9 @@ public class ChannelSeparator extends ReaderWrapper {
 
         Runtime rt = Runtime.getRuntime();
         long availableMemory = rt.freeMemory();
+        long planeSize = DataTools.safeMultiply64(w, h, bpp, c);
 
-        if (availableMemory < w * h * bpp * c) {
+        if (availableMemory < planeSize || planeSize > Integer.MAX_VALUE) {
           strips = (int) Math.sqrt(h);
         }
 

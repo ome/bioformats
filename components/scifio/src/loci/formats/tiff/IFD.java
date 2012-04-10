@@ -621,6 +621,9 @@ public class IFD extends HashMap<Integer, Object> {
    * @throws FormatException if there is a problem parsing the IFD metadata.
    */
   public int getSamplesPerPixel() throws FormatException {
+    if (getCompression() == TiffCompression.OLD_JPEG) {
+      return 3; // always RGB
+    }
     return getIFDIntValue(SAMPLES_PER_PIXEL, 1);
   }
 
@@ -669,6 +672,9 @@ public class IFD extends HashMap<Integer, Object> {
   public PhotoInterp getPhotometricInterpretation() throws FormatException {
     Object photo = getIFDValue(PHOTOMETRIC_INTERPRETATION);
     if (photo instanceof PhotoInterp) return (PhotoInterp) photo;
+    if (photo == null && getCompression() == TiffCompression.OLD_JPEG) {
+      return PhotoInterp.RGB;
+    }
     int pi = photo instanceof Number ? ((Number) photo).intValue() :
       ((int[]) photo)[0];
     return PhotoInterp.get(pi);
