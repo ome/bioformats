@@ -124,7 +124,6 @@ end
 % Get the channel filler
 r=bfGetReader(id,stitchFiles);
 
-
 numSeries = r.getSeriesCount();
 result = cell(numSeries, 2);
 for s = 1:numSeries
@@ -212,7 +211,7 @@ for s = 1:numSeries
     fprintf('\n');
 end
 r.close();
-toc
+
 
 % -- Helper functions --
 
@@ -220,7 +219,8 @@ function fileExt = getFileExtensions
 % List all supported extensions
 
 % Get all readers and create cell array with suffixes and names
-readers=loci.formats.ImageReader().getReaders;
+imageReader=loci.formats.ImageReader();
+readers = imageReader.getReaders();
 fileExt=cell(numel(readers),2);
 for i=1:numel(readers)
     suffixes=readers(i).getSuffixes();
