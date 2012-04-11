@@ -1,6 +1,3 @@
-//
-// ImporterTest.java
-//
 
 package loci.plugins.in;
 

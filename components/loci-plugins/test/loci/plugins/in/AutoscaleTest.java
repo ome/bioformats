@@ -1,6 +1,3 @@
-//
-// AutoscaleTest.java
-//
 
 package loci.plugins.in;
 

@@ -1,6 +1,3 @@
-//
-// MacroTest.java
-//
 
 package loci.plugins.in;
 
