@@ -33,6 +33,7 @@ import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
 import loci.common.RandomAccessOutputStream;
 import loci.formats.FormatException;
+import loci.formats.UpgradeChecker;
 import loci.formats.tiff.TiffParser;
 import loci.formats.tiff.TiffSaver;
 
@@ -46,6 +47,15 @@ import loci.formats.tiff.TiffSaver;
 public class TiffComment {
 
   public static void main(String[] args) throws FormatException, IOException {
+    UpgradeChecker checker = new UpgradeChecker();
+    boolean canUpgrade =
+      checker.newVersionAvailable(UpgradeChecker.DEFAULT_CALLER);
+    if (canUpgrade) {
+      System.out.println("*** A new stable version is available. ***");
+      System.out.println("*** Install the new version using:     ***");
+      System.out.println("***   'upgradechecker -install'        ***");
+    }
+
     if (args.length == 0) {
       System.out.println("Usage:");
       System.out.println(

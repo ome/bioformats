@@ -51,6 +51,7 @@ import loci.formats.ImageTools;
 import loci.formats.MetadataTools;
 import loci.formats.MinMaxCalculator;
 import loci.formats.MissingLibraryException;
+import loci.formats.UpgradeChecker;
 import loci.formats.gui.AWTImageTools;
 import loci.formats.gui.BufferedImageReader;
 import loci.formats.gui.ImageViewer;
@@ -1001,6 +1002,14 @@ public class ImageInfo {
   // -- Main method --
 
   public static void main(String[] args) throws Exception {
+    UpgradeChecker checker = new UpgradeChecker();
+    boolean canUpgrade =
+      checker.newVersionAvailable(UpgradeChecker.DEFAULT_CALLER);
+    if (canUpgrade) {
+      LOGGER.info("*** A new stable version is available. ***");
+      LOGGER.info("*** Install the new version using:     ***");
+      LOGGER.info("***   'upgradechecker -install'        ***");
+    }
     if (!new ImageInfo().testRead(args)) System.exit(1);
   }
 

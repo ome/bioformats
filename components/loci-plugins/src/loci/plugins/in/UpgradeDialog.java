@@ -28,6 +28,8 @@ package loci.plugins.in;
 import ij.IJ;
 import ij.Prefs;
 import ij.gui.GenericDialog;
+
+import loci.formats.UpgradeChecker;
 import loci.plugins.BF;
 import loci.plugins.Updater;
 import loci.plugins.prefs.Option;
@@ -92,13 +94,16 @@ public class UpgradeDialog extends ImporterDialog {
     }
 
     if (options.doUpgradeCheck()) {
+      UpgradeChecker checker = new UpgradeChecker();
       checkPerformed = true;
       BF.status(false, "Checking for new stable version...");
-      if (Updater.newVersionAvailable()) {
+      if (checker.newVersionAvailable("ImageJ")) {
         boolean doUpgrade = IJ.showMessageWithCancel("",
           "A new stable version of Bio-Formats is available.\n" +
           "Click 'OK' to upgrade now, or 'Cancel' to skip for now.");
-        if (doUpgrade) Updater.install(Updater.STABLE_BUILD);
+        if (doUpgrade) {
+          Updater.install(UpgradeChecker.STABLE_BUILD + UpgradeChecker.TOOLS);
+        }
       }
     }
 
