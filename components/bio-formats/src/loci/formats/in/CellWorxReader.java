@@ -155,7 +155,9 @@ public class CellWorxReader extends FormatReader {
       return buf;
     }
 
-    if (lastFile == null || lastReader == null || !file.equals(lastFile)) {
+    if (lastFile == null || lastReader == null || !file.equals(lastFile) ||
+      lastReader.getCurrentFile() == null)
+    {
       if (lastReader != null) {
         lastReader.close();
       }
