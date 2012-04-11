@@ -125,11 +125,15 @@ public class CellWorxReader extends FormatReader {
     }
     if (!noPixels) {
       if (checkSuffix(wellFiles[row][col][0], "pnl")) {
-        files.add(wellFiles[row][col][0]);
+        if (new Location(wellFiles[row][col][0]).exists()) {
+          files.add(wellFiles[row][col][0]);
+        }
       }
       else {
         for (String f : wellFiles[row][col]) {
-          files.add(f);
+          if (new Location(f).exists()) {
+            files.add(f);
+          }
         }
       }
     }
