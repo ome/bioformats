@@ -21,8 +21,8 @@
 
   <licenses>
     <license>
-      <name>BSD</name>
-      <url>http://dev.loci.wisc.edu/svn/java/trunk/projects/test-suite/LICENSE.txt</url>
+      <name>GPL 2 or later</name>
+      <url>http://www.gnu.org/licenses/gpl-2.0.txt</url>
       <distribution>repo</distribution>
     </license>
   </licenses>

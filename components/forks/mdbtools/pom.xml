@@ -21,8 +21,8 @@
 
   <licenses>
     <license>
-      <name>LGPL 2 or later</name>
-      <url>http://www.gnu.org/licenses/lgpl-2.0.txt</url>
+      <name>LGPL 2.1 or later</name>
+      <url>http://www.gnu.org/licenses/lgpl-2.1.txt</url>
       <distribution>repo</distribution>
     </license>
   </licenses>
@@ -33,7 +33,7 @@
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>license-maven-plugin</artifactId>
         <configuration>
-          <licenseName>lgpl_v2</licenseName>
+          <licenseName>lgpl_v2_1</licenseName>
           <projectName>Fork of MDB Tools (Java port).</projectName>
         </configuration>
       </plugin>
