@@ -1157,44 +1157,71 @@ public class ZeissCZIReader extends FormatReader {
     for (int i=0; i<layers.getLength(); i++) {
       Element layer = (Element) layers.item(i);
 
-      String roiID = MetadataTools.createLSID("ROI", i);
-      store.setROIID(roiID, i);
-      store.setROIName(layer.getAttribute("Name"), i);
-      store.setROIDescription(getFirstNodeValue(layer, "Usage"), i);
+      NodeList elementses = layer.getElementsByTagName("Elements");
+      if (elementses.getLength() == 0) {
+        continue;
+      }
+      NodeList allGrandchildren = elementses.item(0).getChildNodes();
 
-      for (int series=0; series<getSeriesCount(); series++) {
-        store.setImageROIRef(roiID, series, i);
+      if (allGrandchildren.getLength() > 0) {
+        String roiID = MetadataTools.createLSID("ROI", i);
+        store.setROIID(roiID, i);
+        store.setROIName(layer.getAttribute("Name"), i);
+        store.setROIDescription(getFirstNodeValue(layer, "Usage"), i);
+
+        for (int series=0; series<getSeriesCount(); series++) {
+          store.setImageROIRef(roiID, series, i);
+        }
       }
 
       int shape = 0;
 
       NodeList lines = getGrandchildren(layer, "Elements", "Line");
-      for (int s=0; s<lines.getLength(); s++, shape++) {
-        Element line = (Element) lines.item(s);
+      shape = populateLines(lines, i, shape);
 
-        Element geometry = getFirstNode(line, "Geometry");
-        Element textElements = getFirstNode(line, "TextElements");
-        Element attributes = getFirstNode(line, "Attributes");
+      NodeList arrows = getGrandchildren(layer, "Elements", "OpenArrow");
+      shape = populateLines(arrows, i, shape);
 
-        String x1 = getFirstNodeValue(geometry, "X1");
-        String x2 = getFirstNodeValue(geometry, "X2");
-        String y1 = getFirstNodeValue(geometry, "Y1");
-        String y2 = getFirstNodeValue(geometry, "Y2");
+      NodeList crosses = getGrandchildren(layer, "Elements", "Cross");
+      for (int s=0; s<crosses.getLength(); s++, shape+=2) {
+        Element cross = (Element) crosses.item(s);
 
-        if (x1 != null) {
-          store.setLineX1(new Double(x1), i, shape);
-        }
-        if (x2 != null) {
-          store.setLineX2(new Double(x2), i, shape);
-        }
-        if (y1 != null) {
-          store.setLineY1(new Double(y1), i, shape);
-        }
-        if (y2 != null) {
-          store.setLineY2(new Double(y2), i, shape);
+        Element geometry = getFirstNode(cross, "Geometry");
+        Element textElements = getFirstNode(cross, "TextElements");
+        Element attributes = getFirstNode(cross, "Attributes");
+
+        store.setLineID(
+          MetadataTools.createLSID("Shape", i, shape), i, shape);
+        store.setLineID(
+          MetadataTools.createLSID("Shape", i, shape + 1), i, shape + 1);
+
+        String length = getFirstNodeValue(geometry, "Length");
+        String centerX = getFirstNodeValue(geometry, "CenterX");
+        String centerY = getFirstNodeValue(geometry, "CenterY");
+
+        if (length != null) {
+          Double halfLen = new Double(length) / 2;
+          if (centerX != null) {
+            store.setLineX1(new Double(centerX) - halfLen, i, shape);
+            store.setLineX2(new Double(centerX) + halfLen, i, shape);
+
+            store.setLineX1(new Double(centerX), i, shape + 1);
+            store.setLineX2(new Double(centerX), i, shape + 1);
+          }
+          if (centerY != null) {
+            store.setLineY1(new Double(centerY), i, shape);
+            store.setLineY2(new Double(centerY), i, shape);
+
+            store.setLineY1(new Double(centerY) - halfLen, i, shape + 1);
+            store.setLineY2(new Double(centerY) + halfLen, i, shape + 1);
+          }
         }
         store.setLineName(getFirstNodeValue(attributes, "Name"), i, shape);
-        store.setLineLabel(getFirstNodeValue(textElements, "Text"), i, shape);
+        store.setLineName(getFirstNodeValue(attributes, "Name"), i, shape + 1);
+        store.setLineLabel(
+          getFirstNodeValue(textElements, "Text"), i, shape);
+        store.setLineLabel(
+          getFirstNodeValue(textElements, "Text"), i, shape + 1);
       }
 
       NodeList rectangles = getGrandchildren(layer, "Elements", "Rectangle");
@@ -1322,6 +1349,40 @@ public class ZeissCZIReader extends FormatReader {
       store.setPolylineName(getFirstNodeValue(attributes, "Name"), roi, shape);
       store.setPolylineLabel(
         getFirstNodeValue(textElements, "Text"), roi, shape);
+    }
+    return shape;
+  }
+
+  private int populateLines(NodeList lines, int roi, int shape) {
+   for (int s=0; s<lines.getLength(); s++, shape++) {
+      Element line = (Element) lines.item(s);
+
+      Element geometry = getFirstNode(line, "Geometry");
+      Element textElements = getFirstNode(line, "TextElements");
+      Element attributes = getFirstNode(line, "Attributes");
+
+      String x1 = getFirstNodeValue(geometry, "X1");
+      String x2 = getFirstNodeValue(geometry, "X2");
+      String y1 = getFirstNodeValue(geometry, "Y1");
+      String y2 = getFirstNodeValue(geometry, "Y2");
+
+      store.setLineID(
+        MetadataTools.createLSID("Shape", roi, shape), roi, shape);
+
+      if (x1 != null) {
+        store.setLineX1(new Double(x1), roi, shape);
+      }
+      if (x2 != null) {
+        store.setLineX2(new Double(x2), roi, shape);
+      }
+      if (y1 != null) {
+        store.setLineY1(new Double(y1), roi, shape);
+      }
+      if (y2 != null) {
+        store.setLineY2(new Double(y2), roi, shape);
+      }
+      store.setLineName(getFirstNodeValue(attributes, "Name"), roi, shape);
+      store.setLineLabel(getFirstNodeValue(textElements, "Text"), roi, shape);
     }
     return shape;
   }
