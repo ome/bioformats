@@ -1,4 +1,4 @@
-OME-XML Java library for working with OME-XML metadata structures.
+LOCI Common package: utilities for I/O, reflection and miscellaneous tasks.
 
 Copyright (C) 2008 - 2012 Board of Regents of the University of
 Wisconsin-Madison, Broad Institute of MIT and Harvard, and Max Planck

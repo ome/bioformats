@@ -1,17 +1,16 @@
-OME SCIFIO library for reading, writing and converting scientific image data.
+OME SCIFIO package for reading and converting scientific file formats.
 
-Copyright (C) 2005-2011 UW-Madison LOCI and Glencoe Software, Inc.
-All rights reserved.
+Copyright (C) 2009 - 2012 Board of Regents of the University of
+Wisconsin-Madison, Glencoe Software, Inc., and University of Dundee.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
 
-   1. Redistributions of source code must retain the above copyright
-      notice, this list of conditions and the following disclaimer.
-
-   2. Redistributions in binary form must reproduce the above copyright
-      notice, this list of conditions and the following disclaimer in the
-      documentation and/or other materials provided with the distribution.
+1. Redistributions of source code must retain the above copyright notice,
+   this list of conditions and the following disclaimer.
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -27,4 +26,4 @@ POSSIBILITY OF SUCH DAMAGE.
 
 The views and conclusions contained in the software and documentation are
 those of the authors and should not be interpreted as representing official
-policies, either expressed or implied, of the copyright holders.
+policies, either expressed or implied, of any organization.
