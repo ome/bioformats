@@ -803,7 +803,7 @@ public class FileStitcher extends ReaderWrapper {
     fp = new FilePattern(patterns[0]);
 
     reader.close();
-    reader.setGroupFiles(false);
+    reader.setGroupFiles(group);
 
     if (!fp.isValid()) {
       throw new FormatException("Invalid file pattern: " + fp.getPattern());
@@ -816,7 +816,9 @@ public class FileStitcher extends ReaderWrapper {
         "multiple files and each file contains multiple series." + msg);
     }
 
-    if (reader.getUsedFiles().length - reader.getUsedFiles(true).length > 1) {
+    int nPixelsFiles =
+      reader.getUsedFiles().length - reader.getUsedFiles(true).length;
+    if (nPixelsFiles > 1) {
       noStitch = true;
       return;
     }
