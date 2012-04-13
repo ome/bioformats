@@ -807,6 +807,14 @@ public class LIFReader extends FormatReader {
         store.setChannelColor(channelColor, i, c);
 
         if (channelColor != -1 && nextFilter >= 0) {
+          if (nextDetector - firstDetector != getSizeC() &&
+            nextDetector >= cutIns[i].size())
+          {
+            while (nextFilterDetector < firstDetector) {
+              nextFilterDetector++;
+              nextFilter++;
+            }
+          }
           while (nextFilterDetector < activeDetectors.size() &&
             !(Boolean) activeDetectors.get(nextFilterDetector))
           {
