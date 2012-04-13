@@ -597,6 +597,10 @@ public class LIFReader extends FormatReader {
           }
         }
 
+        if (validIntensities.size() == getEffectiveSizeC() + 1) {
+          validIntensities.remove(1);
+        }
+
         int start = validIntensities.size() - getEffectiveSizeC();
         if (start < 0) {
           start = 0;
