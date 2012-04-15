@@ -26,9 +26,7 @@ package loci.common;
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -51,16 +49,18 @@ public class ZipHandle extends StreamHandle {
   private RandomAccessInputStream in;
   private ZipInputStream zip;
   private ZipEntry entry;
-  private int entryCount = 0;
-  private String file;
+  private int entryCount;
 
   // -- Constructor --
 
   public ZipHandle(String file) throws IOException {
     super();
     this.file = file;
-    in = new RandomAccessInputStream(getHandle(file));
+
+    in = openStream(file);
     zip = new ZipInputStream(in);
+    entry = null;
+    entryCount = 0;
 
     // strip off .zip extension and directory prefix
     String innerFile = file.substring(0, file.length() - 4);
@@ -68,45 +68,40 @@ public class ZipHandle extends StreamHandle {
     if (slash < 0) slash = innerFile.lastIndexOf("/");
     if (slash >= 0) innerFile = innerFile.substring(slash + 1);
 
-    // look for Zip entry with same prefix as the original Zip file
-    entry = null;
-
-    while (true) {
-      ZipEntry ze = zip.getNextEntry();
-      if (ze == null) break;
-      entryCount++;
-    }
-    resetStream();
-
+    // look for Zip entry with same prefix as the Zip file itself
+    boolean matchFound = false;
     while (true) {
       ZipEntry ze = zip.getNextEntry();
       if (ze == null) break;
       if (entry == null) entry = ze;
-      if (ze.getName().startsWith(innerFile)) {
+      if (!matchFound && ze.getName().startsWith(innerFile)) {
         // found entry with matching name
         entry = ze;
-        break;
+        matchFound = true;
       }
+      entryCount++;
     }
-
     resetStream();
+
     populateLength();
   }
 
   /**
-   * Constructs a new ZipHandle corresponding to the given file.
+   * Constructs a new ZipHandle corresponding to the given entry of the
+   * specified Zip file.
    *
-   * @throws HandleException if:
-   *   <li>The given file is not a Zip file.<br>
+   * @throws HandleException if the given file is not a Zip file.
    */
   public ZipHandle(String file, ZipEntry entry) throws IOException {
     super();
     this.file = file;
-    in = new RandomAccessInputStream(getHandle(file));
+
+    in = openStream(file);
     zip = new ZipInputStream(in);
-    while (!entry.getName().equals(zip.getNextEntry().getName()));
-    entryCount = 1;
     this.entry = entry;
+    entryCount = 1;
+
+    seekToEntry();
     resetStream();
     populateLength();
   }
@@ -162,19 +157,21 @@ public class ZipHandle extends StreamHandle {
     if (stream != null) stream.close();
     if (in != null) {
       in.close();
-      in = new RandomAccessInputStream(getHandle(file));
+      in = openStream(file);
     }
     if (zip != null) zip.close();
     zip = new ZipInputStream(in);
-    if (entry != null) {
-      while (!entry.getName().equals(zip.getNextEntry().getName()));
-    }
+    if (entry != null) seekToEntry();
     stream = new DataInputStream(new BufferedInputStream(
       zip, RandomAccessInputStream.MAX_OVERHEAD * 10));
     stream.mark(RandomAccessInputStream.MAX_OVERHEAD * 10);
   }
 
   // -- Helper methods --
+
+  private void seekToEntry() throws IOException {
+    while (!entry.getName().equals(zip.getNextEntry().getName()));
+  }
 
   private void populateLength() throws IOException {
     length = -1;
@@ -186,8 +183,13 @@ public class ZipHandle extends StreamHandle {
   }
 
   private static IRandomAccess getHandle(String file) throws IOException {
-    return file.startsWith("http://") ?
-      new URLHandle(file) : new NIOFileHandle(file, "r");
+    return Location.getHandle(file, false, false);
+  }
+
+  private static RandomAccessInputStream openStream(String file)
+    throws IOException
+  {
+    return new RandomAccessInputStream(getHandle(file), file);
   }
 
 }
