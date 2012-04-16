@@ -744,7 +744,7 @@ public class MetamorphReader extends BaseTiffReader {
       for (int p=0; p<getImageCount(); p++) {
         int[] coords = getZCTCoords(p);
         Double deltaT = new Double(0);
-        Double exposureTime = new Double(0);
+        Double expTime = exposureTime;
         Double xmlZPosition = null;
 
         int fileIndex = getIndex(0, 0, coords[2]) / getSizeZ();
@@ -792,11 +792,11 @@ public class MetamorphReader extends BaseTiffReader {
         }
 
         if (index < exposureTimes.size()) {
-          exposureTime = exposureTimes.get(index);
+          expTime = exposureTimes.get(index);
         }
 
         store.setPlaneDeltaT(deltaT, i, p);
-        store.setPlaneExposureTime(exposureTime, i, p);
+        store.setPlaneExposureTime(expTime, i, p);
 
         if (stageX != null && p < stageX.length) {
           store.setPlanePositionX(stageX[p], i, p);
