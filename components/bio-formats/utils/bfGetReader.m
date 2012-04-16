@@ -23,6 +23,13 @@ ip.addRequired('id',@ischar);
 ip.addOptional('stitchFiles',false,@isscalar);
 ip.parse(id,varargin{:});
 
+% set LuraWave license code, if available
+if exist('lurawaveLicense')
+    path = fullfile(fileparts(mfilename('fullpath')), 'lwf_jsdk2.6.jar');
+    javaaddpath(path);
+    java.lang.System.setProperty('lurawave.license', lurawaveLicense);
+end
+
 % initialize logging
 loci.common.DebugTools.enableLogging('INFO');
 
