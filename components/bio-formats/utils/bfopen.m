@@ -113,6 +113,9 @@ if exist('id','file') == 0
   if isequal(path,0) || isequal(file,0), return; end
 end
 
+% initialize logging
+loci.common.DebugTools.enableLogging('INFO');
+
 % Get the channel filler
 r=bfGetReader(id,stitchFiles);
 

@@ -30,9 +30,6 @@ if exist('lurawaveLicense')
     java.lang.System.setProperty('lurawave.license', lurawaveLicense);
 end
 
-% initialize logging
-loci.common.DebugTools.enableLogging('INFO');
-
 r = loci.formats.ChannelFiller();
 r = loci.formats.ChannelSeparator(r);
 if ip.Results.stitchFiles
