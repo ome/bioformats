@@ -113,6 +113,8 @@ public class MetamorphReader extends BaseTiffReader {
   private double tempZ;
   private boolean validZ;
 
+  private Double gain;
+
   private int mmPlanes; //number of metamorph planes
 
   private MetamorphReader[][] stkReaders;
@@ -279,6 +281,7 @@ public class MetamorphReader extends BaseTiffReader {
       tempZ = 0d;
       validZ = false;
       stkReaders = null;
+      gain = null;
     }
   }
 
@@ -690,6 +693,9 @@ public class MetamorphReader extends BaseTiffReader {
         if (handler.getReadOutRate() != 0) {
           store.setDetectorSettingsReadOutRate(handler.getReadOutRate(), i, c);
         }
+        if (gain != null) {
+          store.setDetectorSettingsGain(gain, i, c);
+        }
         store.setDetectorSettingsID(detectorID, i, c);
 
         if (wave != null && waveIndex < wave.length) {
@@ -1026,6 +1032,16 @@ public class MetamorphReader extends BaseTiffReader {
               core[0].bitsPerPixel = Integer.parseInt(value);
             }
             catch (NumberFormatException e) { }
+          }
+          else if (key.equals("Gain")) {
+            int space = value.indexOf(" ");
+            if (space != -1) {
+              int nextSpace = value.indexOf(" ", space + 1);
+              if (nextSpace < 0) {
+                nextSpace = value.length();
+              }
+              gain = new Double(value.substring(space, nextSpace));
+            }
           }
         }
       }
