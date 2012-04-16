@@ -1321,6 +1321,11 @@ public class FormatReaderTest {
             continue;
           }
 
+          // DICOM companion files may not be detected
+          if (reader.getFormat().equals("DICOM") && !base[i].equals(file)) {
+            continue;
+          }
+
           r.setId(base[i]);
 
           String[] comp = r.getUsedFiles();
@@ -1703,6 +1708,13 @@ public class FormatReaderTest {
 
             if (result && r instanceof NikonReader &&
               readers[j] instanceof DNGReader)
+            {
+              continue;
+            }
+
+            // DICOM reader is not expected to pick up companion files
+            if (!result && r instanceof DicomReader &&
+              readers[j] instanceof DicomReader)
             {
               continue;
             }
