@@ -4,20 +4,19 @@ function I = bfGetPlane(r,iPlane)
 % SYNOPSIS I=bfGetPlane(r,iPlane)
 %
 % Input 
-%    r - the reader object (obtained from bfGetReader)
+%    r - the reader object (e.g. the output bfGetReader)
 %
-%    iPlane - the index of the plane(s) to be retrieved.
+%    iPlane - a scalar giving the index of the plane to be retrieved.
 %
 % Output
 %
 %    I - an array of size (width x height) containing the plane
 %
-% Adapted from bfopen.m
 % See also bfGetReader
 
 % Input check
 ip=inputParser;
-ip.addRequired('r',@(x)isa(x,'loci.formats.ChannelSeparator'));
+ip.addRequired('r',@(x)isa(x,'loci.formats.ReaderWrapper'));
 ip.addRequired('iPlane',@isscalar);
 ip.parse(r,iPlane);
 
