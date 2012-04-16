@@ -1,11 +1,11 @@
 function r = bfGetReader(id,varargin)
-% Get the reader associated with a given dataset using Bio-Formats
+% bfGetReader get a reader for a microscopy image using Bio-Formats
 % 
 % SYNOPSIS r=bfGetReader(path)
 %
 % Input 
 %
-%    id - the path of a proprietary file
+%    id - the path to the microscopy image
 %
 %    stichFiles - Optional. Toggle the grouping of similarly
 %    named files into a single dataset based on file numbering.
@@ -13,7 +13,7 @@ function r = bfGetReader(id,varargin)
 %
 % Output
 %
-%    r - object of class loci.formats.ChannelSeparator
+%    r - a reader object of class extending loci.formats.ReaderWrapper
 %
 % Adapted from bfopen.m
 
@@ -29,6 +29,11 @@ if exist('lurawaveLicense')
     javaaddpath(path);
     java.lang.System.setProperty('lurawave.license', lurawaveLicense);
 end
+
+% Check Bio-Formats is in the Java path
+status = bfCheckJavaPath();
+assert(status,['Missing Bio-Formats library. Either add loci_tools.jar '...
+    'to the static Java path or add it to the Matlab path.']);
 
 r = loci.formats.ChannelFiller();
 r = loci.formats.ChannelSeparator(r);

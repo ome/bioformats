@@ -98,13 +98,9 @@ stitchFiles = 0;
 % -- Main function - no need to edit anything past this point --
 
 % load the Bio-Formats library into the MATLAB environment
-if autoloadBioFormats
-    path =which('loci_tools.jar');
-    if isempty(path)
-        path = fullfile(fileparts(mfilename('fullpath')), 'loci_tools.jar');
-    end
-    javaaddpath(path);
-end
+status = bfCheckJavaPath(autoloadBioFormats);
+assert(status,['Missing Bio-Formats library. Either add loci_tools.jar '...
+    'to the static Java path or add it to the Matlab path.']);
 
 % Prompt for a file if not input
 if exist('id','file') == 0
