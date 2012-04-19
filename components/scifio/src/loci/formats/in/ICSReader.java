@@ -1436,7 +1436,7 @@ public class ICSReader extends FormatReader {
       // populate Dimensions data
 
       if (pixelSizes != null) {
-        if (units.length == pixelSizes.length - 1) {
+        if (units != null && units.length == pixelSizes.length - 1) {
           // correct for missing units
           // sometimes, the units for the C axis are missing entirely
           ArrayList<String> realUnits = new ArrayList<String>();
