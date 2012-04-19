@@ -25,51 +25,8 @@ function [result] = bfopen(id)
 % NB: Internet Explorer sometimes erroneously renames the Bio-Formats library
 %     to loci_tools.zip. If this happens, rename it back to loci_tools.jar.
 %
-% Here are some examples of accessing data using the bfopen function:
-%
-%     % read the data using Bio-Formats
-%     data = bfopen('C:/data/experiment.lif');
-%
-%     % unwrap some specific image planes from the result
-%     numSeries = size(data, 1);
-%     series1 = data{1, 1};
-%     series2 = data{2, 1};
-%     series3 = data{3, 1};
-%     metadataList = data{1, 2};
-%     % ...etc.
-%     series1_numPlanes = size(series1, 1);
-%     series1_plane1 = series1{1, 1};
-%     series1_label1 = series1{1, 2};
-%     series1_plane2 = series1{2, 1};
-%     series1_label2 = series1{2, 2};
-%     series1_plane3 = series1{3, 1};
-%     series1_label3 = series1{3, 2};
-%     % ...etc.
-%
-%     % plot the 1st series's 1st image plane in a new figure
-%     series1_colorMaps = data{1, 3};
-%     figure('Name', series1_label1);
-%     if isempty(series1_colorMaps{1})
-%         colormap(gray);
-%     else
-%         colormap(series1_colorMaps{1});
-%     end
-%     imagesc(series1_plane1);
-%
-%     % Or if you have the image processing toolbox, you could use:
-%     % imshow(series1_plane1, []);
-%
-%     % Or animate as a movie (assumes 8-bit unsigned data)
-%     v = linspace(0, 1, 256)';
-%     cmap = [v v v];
-%     for p = 1:series1_numPlanes
-%         M(p) = im2frame(uint8(series1{p, 1}), cmap);
-%     end
-%     movie(M);
-%
-%     % Query some metadata fields (keys are format-dependent)
-%     subject = metadataList.get('Subject');
-%     title = metadataList.get('Title');
+% For many examples of how to use the bfopen function, please see:
+%     http://trac.openmicroscopy.org.uk/ome/wiki/BioFormats-Matlab
 
 % -- Configuration - customize this section to your liking --
 
