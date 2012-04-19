@@ -779,6 +779,9 @@ public class ND2Handler extends BaseHandler {
             v[0] = v[0].replace('}', ' ');
             metadata.put(v[0].trim(), v[1]);
           }
+          else if (v.length == 1) {
+            metadata.put(key, v[0]);
+          }
         }
       }
     }
