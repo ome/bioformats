@@ -103,7 +103,7 @@ public class OriginalMetadataAutogen {
     try {
       reader.setId(file);
     }
-    catch (UnknownFormatException e) {
+    catch (Exception e) {
       return;
     }
 
