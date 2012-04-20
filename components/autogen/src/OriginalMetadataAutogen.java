@@ -61,8 +61,10 @@ public class OriginalMetadataAutogen {
     throws FormatException, IOException
   {
     String[] files = DataTools.readFile(listFile).split("\n");
-    for (String f : files) {
-      parseFile(f);
+    for (int i=0; i<files.length; i++) {
+      parseFile(files[i]);
+      System.out.println("Parsed file #" + (i + 1) + " of " + files.length +
+        " (" + ((i + 1) / ((double) files.length)) + "%)");
     }
   }
 
