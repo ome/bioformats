@@ -275,15 +275,16 @@ public class IMODReader extends FormatReader {
           boolean wild = (contourFlags & 0x10) == 0x10;
 
           if (wild) {
-            int r = colors[obj][0];
-            int g = colors[obj][1];
-            int b = colors[obj][2];
+            int r = colors[obj][0] & 0xff;
+            int g = colors[obj][1] & 0xff;
+            int b = colors[obj][2] & 0xff;
 
             for (int i=0; i<nPoints; i++) {
               String shapeID =
                 MetadataTools.createLSID("Shape", obj, nextShape);
               store.setPointID(shapeID, obj, nextShape);
-              store.setPointStroke((r << 16) | (g << 8) | b, obj, nextShape);
+              store.setPointStroke(
+                (0xff << 24) | (r << 16) | (g << 8) | b, obj, nextShape);
               store.setPointStrokeWidth(
                 new Double(lineWidth2D), obj, nextShape);
               if (lineStyle == 1) {
@@ -304,10 +305,12 @@ public class IMODReader extends FormatReader {
             String shapeID = MetadataTools.createLSID("Shape", obj, nextShape);
             store.setPolylineID(shapeID, obj, nextShape);
 
-            int r = colors[obj][0];
-            int g = colors[obj][1];
-            int b = colors[obj][2];
-            store.setPolylineStroke((r << 16) | (g << 8) | b, obj, nextShape);
+            int r = colors[obj][0] & 0xff;
+            int g = colors[obj][1] & 0xff;
+            int b = colors[obj][2] & 0xff;
+
+            store.setPolylineStroke(
+              (0xff << 24) | (r << 16) | (g << 8) | b, obj, nextShape);
             store.setPolylineStrokeWidth(
               new Double(lineWidth2D), obj, nextShape);
             if (lineStyle == 1) {
