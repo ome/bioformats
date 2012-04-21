@@ -33,7 +33,7 @@ path =which('loci_tools.jar');
 if isempty(path)
     path = fullfile(fileparts(mfilename('fullpath')), 'loci_tools.jar');
 end
-assert(~isempty(path),'Cannot automatically locate loci_tools.jar');
+assert(exist(path,'file')==2,'Cannot automatically locate loci_tools.jar');
 
 % Add loci_tools to dynamic Java class path
 javaaddpath(path);    
