@@ -104,7 +104,7 @@ assert(status,['Missing Bio-Formats library. Either add loci_tools.jar '...
 
 % Prompt for a file if not input
 if nargin==0 || exist(id,'file') == 0
-  [file,path] = uigetfile(getFileExtensions, 'Choose a file to open');
+  [file,path] = uigetfile(bfGetFileExtensions, 'Choose a file to open');
   id = [path file];
   if isequal(path,0) || isequal(file,0), return; end
 end
@@ -202,30 +202,3 @@ for s = 1:numSeries
     fprintf('\n');
 end
 r.close();
-
-
-% -- Helper functions --
-
-function fileExt = getFileExtensions
-% List all supported extensions
-
-% Get all readers and create cell array with suffixes and names
-imageReader=loci.formats.ImageReader();
-readers = imageReader.getReaders();
-fileExt=cell(numel(readers),2);
-for i=1:numel(readers)
-    suffixes=readers(i).getSuffixes();
-    fileExt{i,1}=arrayfun(@char,suffixes,'Unif',false);
-    fileExt{i,2} = char(readers(i).getFormat().toString);
-end
-
-% Concatenate all unique formats
-allExt=unique(vertcat(fileExt{:,1}));
-allExt=allExt(~cellfun(@isempty,allExt));
-fileExt=vertcat({allExt,'All formats'},fileExt);
-
-% Format file extensions
-for i=1:size(fileExt,1)
-    fileExt{i,1} = sprintf('*.%s;',fileExt{i,1}{:});
-    fileExt{i,1}(end)=[];
-end
