@@ -64,7 +64,7 @@ public class OriginalMetadataAutogen {
     for (int i=0; i<files.length; i++) {
       parseFile(files[i]);
       System.out.println("Parsed file #" + (i + 1) + " of " + files.length +
-        " (" + ((i + 1) / ((double) files.length)) + "%)");
+        " (" + ((i + 1) / ((double) files.length)) * 100 + "%)");
     }
   }
 
@@ -94,8 +94,12 @@ public class OriginalMetadataAutogen {
 
       context.put("q", meta);
       context.put("format", format);
+
+      String filename = format.replaceAll(" ", "_");
+      filename = filename.replaceAll("/", "_");
+
       VelocityTools.processTemplate(engine, context, TEMPLATE,
-        "doc/original_meta/" + format.replaceAll(" ", "_") + ".txt");
+        "doc/original_meta/" + filename + ".txt");
     }
   }
 
