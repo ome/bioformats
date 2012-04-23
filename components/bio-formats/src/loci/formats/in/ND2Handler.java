@@ -328,13 +328,40 @@ public class ND2Handler extends BaseHandler {
   public void startElement(String uri, String localName, String qName,
     Attributes attributes)
   {
-    if ("CLxListVariant".equals(attributes.getValue("runtype"))) {
+    String runtype = attributes.getValue("runtype");
+    if ("CLxListVariant".equals(runtype) || "RLxIRect".equals(runtype)) {
       prevElement = qName;
     }
 
     String value = attributes.getValue("value");
+
     if (qName.equals("uiWidth")) {
-      core[0].sizeX = Integer.parseInt(value);
+      int x = Integer.parseInt(value);
+      if (x != 0) {
+        core[0].sizeX = x;
+      }
+    }
+    else if (qName.equals("uiCamPxlCountX")) {
+      if (core[0].sizeX == 0) {
+        try {
+          core[0].sizeX = Integer.parseInt(value);
+        }
+        catch (NumberFormatException e) { }
+      }
+    }
+    else if (qName.equals("uiCamPxlCountY")) {
+      if (core[0].sizeY == 0) {
+        try {
+          core[0].sizeY = Integer.parseInt(value);
+        }
+        catch (NumberFormatException e) { }
+      }
+    }
+    else if (qName.equals("iXFields")) {
+      core[0].sizeX *= Integer.parseInt(value);
+    }
+    else if (qName.equals("iYFields")) {
+      core[0].sizeY *= Integer.parseInt(value);
     }
     else if ("rectSensorUser".equals(prevElement)) {
       if (qName.equals("left") && core[0].sizeX == 0) {
@@ -453,7 +480,10 @@ public class ND2Handler extends BaseHandler {
       core[0].sizeC = (int) Math.max(core[0].sizeC, v);
     }
     else if (qName.equals("uiHeight")) {
-      core[0].sizeY = Integer.parseInt(value);
+      int y = Integer.parseInt(value);
+      if (y != 0) {
+        core[0].sizeY = y;
+      }
     }
     else if (qName.startsWith("TextInfo")) {
       parseKeyAndValue(qName, attributes.getValue("Text"), prevRuntype);

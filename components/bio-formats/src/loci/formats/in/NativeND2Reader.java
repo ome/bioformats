@@ -412,7 +412,9 @@ public class NativeND2Reader extends FormatReader {
         else if (blockType.startsWith("Image") ||
           blockType.startsWith("CustomDataVa"))
         {
-          if (blockType.equals("ImageAttribu") && imageOffsets.size() > 0) {
+          if (blockType.equals("ImageAttribu") ||
+            blockType.equals("ImageMetadat"))
+          {
             in.skipBytes(6);
             long endFP = in.getFilePointer() + lenOne + lenTwo - 18;
             while (in.read() == 0);
@@ -421,29 +423,57 @@ public class NativeND2Reader extends FormatReader {
 
             while (in.getFilePointer() < endFP) {
               int nameLen = in.read();
+              if (nameLen == 0) {
+                in.seek(in.getFilePointer() - 3);
+                nameLen = in.read();
+              }
+              if (nameLen < 0) {
+                break;
+              }
               long start = in.getFilePointer();
               String attributeName =
                 DataTools.stripString(in.readString(nameLen * 2));
               if (attributeName.startsWith("xml ") ||
-                attributeName.startsWith("l version"))
+                attributeName.startsWith("ml version") ||
+                attributeName.startsWith("l version") ||
+                attributeName.startsWith("version"))
               {
                 if (attributeName.startsWith("xml ")) {
                   in.seek(start - 2);
                 }
-                else {
+                else if (attributeName.startsWith("ml version")) {
+                  in.seek(start - 3);
+                }
+                else if (attributeName.startsWith("l version")) {
                   in.seek(start - 4);
+                }
+                else {
+                  in.seek(start - 6);
                 }
                 attributeName = in.readCString();
                 String xmlString = XMLTools.sanitizeXML(attributeName.trim());
                 xmlString =
                   xmlString.substring(0, xmlString.lastIndexOf(">") + 1);
+                if (xmlString.startsWith("<?xml")) {
+                  xmlString = xmlString.substring(xmlString.indexOf(">") + 1);
+                }
+                if (!xmlString.endsWith("</variant>")) {
+                  xmlString += "</variant>";
+                }
+
+                if (getDimensionOrder() == null) {
+                  core[0].dimensionOrder = "";
+                }
+
                 try {
                   ND2Handler handler = new ND2Handler(core);
                   XMLTools.parseXML(xmlString, handler);
+                  core = handler.getCoreMetadata();
                 }
                 catch (IOException e) {
                   LOGGER.debug("Could not parse XML", e);
                 }
+
                 in.seek(in.getFilePointer() - 8);
                 break;
               }
@@ -477,6 +507,40 @@ public class NativeND2Reader extends FormatReader {
                   toSkip++;
                 }
                 in.skipBytes(toSkip);
+              }
+              else if (attributeName.endsWith("Desc")) {
+                in.seek(in.getFilePointer() - 2);
+              }
+              else if (attributeName.equals("SLxExperiment")) {
+                in.skipBytes(8);
+              }
+              else if (attributeName.equals("wsCameraName")) {
+                in.seek(in.getFilePointer() - 4);
+                byte[] b = new byte[2];
+                in.read(b);
+                StringBuilder value = new StringBuilder();
+                while (b[0] != 0) {
+                  value.append(b[0]);
+                  in.read(b);
+                }
+                addGlobalMeta(attributeName, value.toString());
+              }
+              else if (attributeName.equals("uLoopPars")) {
+                int v2 = in.readInt();
+                int v3 = in.readInt();
+                addGlobalMeta(attributeName,
+                  valueOrLength + ", " + v2 + ", " + v3);
+              }
+              else if (attributeName.equals("pPeriod")) {
+                in.skipBytes(22);
+              }
+              else if (attributeName.equals("dPeriod") ||
+                attributeName.equals("dDuration"))
+              {
+                in.skipBytes(4);
+              }
+              else if (attributeName.equals("bDurationPref")) {
+                in.seek(in.getFilePointer() - 3);
               }
               in.skipBytes(1);
             }
@@ -658,10 +722,24 @@ public class NativeND2Reader extends FormatReader {
         core[0].sizeC = 3;
         core[0].rgb = true;
       }
-      else if (availableBytes >= planeSize * 2 &&
+      else if ((availableBytes >= planeSize * 2 || getSizeC() > 3) &&
         getPixelType() == FormatTools.INT8)
       {
         core[0].pixelType = FormatTools.UINT16;
+        if (getSizeC() > 3) {
+          core[0].sizeC = 3;
+          core[0].rgb = true;
+        }
+      }
+      else if (getSizeC() == 2 && getPixelType() == FormatTools.INT8) {
+        core[0].pixelType = FormatTools.UINT16;
+      }
+
+      int rowSize = getSizeX() * FormatTools.getBytesPerPixel(getPixelType()) *
+        getSizeC();
+      long sizeY = availableBytes / rowSize;
+      if (sizeY < getSizeY()) {
+        core[0].sizeY = (int) sizeY;
       }
 
       if (getSizeT() == imageOffsets.size() && getSeriesCount() > 1) {
@@ -702,6 +780,11 @@ public class NativeND2Reader extends FormatReader {
           core[i].sizeT = 1;
         }
       }
+      if (getSizeZ() * getSizeT() < imageOffsets.size()) {
+        core[0].sizeZ = 1;
+        core[0].sizeT = imageOffsets.size();
+        core[0].imageCount = getSizeZ() * getSizeT() * getSizeC();
+      }
 
       if (getDimensionOrder().equals("T")) {
         fieldIndex = 0;
@@ -737,6 +820,7 @@ public class NativeND2Reader extends FormatReader {
       System.arraycopy(lengths, 0, zctLengths, 0, lengths.length);
       zctLengths[fieldIndex] = 1;
 
+      boolean oneIndexed = false;
       for (int i=0; i<imageOffsets.size(); i++) {
         long offset = imageOffsets.get(i).longValue();
         int[] p = imageLengths.get(i);
@@ -752,6 +836,12 @@ public class NativeND2Reader extends FormatReader {
 
         String imageName = imageNames.get(i);
         int ndx = Integer.parseInt(imageName.replaceAll("\\D", ""));
+        if (ndx == 1 && i == 0) {
+          oneIndexed = true;
+        }
+        if (oneIndexed) {
+          ndx--;
+        }
 
         int[] pos = FormatTools.rasterToPosition(lengths, ndx);
         int seriesIndex = pos[fieldIndex];
