@@ -718,7 +718,7 @@ public class NativeND2Reader extends FormatReader {
           core[0].sizeC = 1;
         }
       }
-      else if (availableBytes > planeSize * 3) {
+      else if (availableBytes > planeSize * 3 && planeSize > 0) {
         core[0].sizeC = 3;
         core[0].rgb = true;
       }
@@ -733,6 +733,12 @@ public class NativeND2Reader extends FormatReader {
       }
       else if (getSizeC() == 2 && getPixelType() == FormatTools.INT8) {
         core[0].pixelType = FormatTools.UINT16;
+      }
+
+      if (getSizeX() == 0) {
+        core[0].sizeX = (int) Math.sqrt(availableBytes /
+          (getSizeC() * FormatTools.getBytesPerPixel(getPixelType())));
+        core[0].sizeY = getSizeX();
       }
 
       int rowSize = getSizeX() * FormatTools.getBytesPerPixel(getPixelType()) *
@@ -780,9 +786,10 @@ public class NativeND2Reader extends FormatReader {
           core[i].sizeT = 1;
         }
       }
+
       if (getSizeZ() * getSizeT() < imageOffsets.size()) {
         core[0].sizeZ = 1;
-        core[0].sizeT = imageOffsets.size();
+        core[0].sizeT = imageOffsets.size() / getSeriesCount();
         core[0].imageCount = getSizeZ() * getSizeT() * getSizeC();
       }
 

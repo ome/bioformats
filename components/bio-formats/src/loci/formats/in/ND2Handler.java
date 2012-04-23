@@ -107,6 +107,9 @@ public class ND2Handler extends BaseHandler {
   public ND2Handler(CoreMetadata[] core) {
     super();
     this.core = core;
+    if (this.core.length > 1) {
+      fieldIndex = 2;
+    }
   }
 
   // -- ND2Handler API methods --
