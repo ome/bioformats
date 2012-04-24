@@ -412,9 +412,7 @@ public class NativeND2Reader extends FormatReader {
         else if (blockType.startsWith("Image") ||
           blockType.startsWith("CustomDataVa"))
         {
-          if (blockType.equals("ImageAttribu") ||
-            blockType.equals("ImageMetadat"))
-          {
+          if (blockType.equals("ImageAttribu")) {
             in.skipBytes(6);
             long endFP = in.getFilePointer() + lenOne + lenTwo - 18;
             while (in.read() == 0);
