@@ -545,6 +545,10 @@ public class NativeND2Reader extends FormatReader {
               in.skipBytes(1);
             }
 
+            if (in.getFilePointer() > endFP) {
+              in.seek(endFP);
+            }
+
             isLossless = isLossless && canBeLossless;
           }
           else {
