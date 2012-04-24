@@ -508,10 +508,41 @@ public class NativeND2Reader extends FormatReader {
                 }
                 in.skipBytes(toSkip);
               }
+              else if (attributeName.endsWith("Desc")) {
+                in.seek(in.getFilePointer() - 2);
+              }
+              else if (attributeName.equals("SLxExperiment")) {
+                in.skipBytes(8);
+              }
+              else if (attributeName.equals("wsCameraName")) {
+                in.seek(in.getFilePointer() - 4);
+                byte[] b = new byte[2];
+                in.read(b);
+                StringBuilder value = new StringBuilder();
+                while (b[0] != 0) {
+                  value.append(b[0]);
+                  in.read(b);
+                }
+                addGlobalMeta(attributeName, value.toString());
+              }
+              else if (attributeName.equals("uLoopPars")) {
+                int v2 = in.readInt();
+                int v3 = in.readInt();
+                addGlobalMeta(attributeName,
+                  valueOrLength + ", " + v2 + ", " + v3);
+              }
+              else if (attributeName.equals("pPeriod")) {
+                in.skipBytes(22);
+              }
+              else if (attributeName.equals("dPeriod") ||
+                attributeName.equals("dDuration"))
+              {
+                in.skipBytes(4);
+              }
+              else if (attributeName.equals("bDurationPref")) {
+                in.seek(in.getFilePointer() - 3);
+              }
               in.skipBytes(1);
-            }
-            if (in.getFilePointer() > endFP) {
-              in.seek(endFP);
             }
 
             isLossless = isLossless && canBeLossless;
