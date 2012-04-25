@@ -102,6 +102,8 @@ public class ND2Handler extends BaseHandler {
   private Hashtable<String, Integer> realColors =
     new Hashtable<String, Integer>();
 
+  private int nXFields = 0, nYFields = 0;
+
   // -- Constructor --
 
   public ND2Handler(CoreMetadata[] core) {
@@ -361,10 +363,12 @@ public class ND2Handler extends BaseHandler {
       }
     }
     else if (qName.equals("iXFields")) {
-      core[0].sizeX *= Integer.parseInt(value);
+      int fields = Integer.parseInt(value);
+      nXFields += fields;
     }
     else if (qName.equals("iYFields")) {
-      core[0].sizeY *= Integer.parseInt(value);
+      int fields = Integer.parseInt(value);
+      nYFields += fields;
     }
     else if ("rectSensorUser".equals(prevElement)) {
       if (qName.equals("left") && core[0].sizeX == 0) {
@@ -569,6 +573,11 @@ public class ND2Handler extends BaseHandler {
       String chName = dyes.get(name);
       if (chName == null) chName = name;
       realColors.put(chName, colors.get(name));
+    }
+
+    if (nXFields < 10 && nYFields < 10) {
+      core[0].sizeX *= nXFields;
+      core[0].sizeY *= nYFields;
     }
   }
 
