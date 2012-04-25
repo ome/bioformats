@@ -1,3 +1,8 @@
+% TestCheckJavaPath define test cases for bfCheckJavaPath utility function
+%
+% Require MATLAB xUnit Test Framework to be installed
+% http://www.mathworks.com/matlabcentral/fileexchange/22846-matlab-xunit-test-framework
+
 classdef TestCheckJavaPath < TestCase
     
     properties
@@ -9,7 +14,7 @@ classdef TestCheckJavaPath < TestCase
             self = self@TestCase(name);
         end
         function setUp(self)
-            % Get path to loci_tools
+            % Get path to loci_tools (assuming it is in Matlab path)
             lociToolsPath = which('loci_tools.jar');
             assert(~isempty(lociToolsPath));
             
@@ -39,15 +44,15 @@ classdef TestCheckJavaPath < TestCase
                 assertTrue(status);
             else
                 assertFalse(status);
-            end
-            
+            end            
         end
         
          function testPerformance(self)
+             maxTime = .5;
              tic;
              bfCheckJavaPath();
              totalCheckTime=toc;
-             assert(totalCheckTime<1);           
+             assert(totalCheckTime<maxTime);           
         end
     end    
 end
