@@ -145,6 +145,7 @@ loci.formats.in.JPKReader             # jpk
 loci.formats.in.NDPIReader            # ndpi
 
 # TIFF-based readers with slow isThisType
+loci.formats.in.OMETiffReader         # tif
 loci.formats.in.MIASReader            # tif
 loci.formats.in.TCSReader             # xml, tif
 loci.formats.in.LeicaReader           # lei, tif
@@ -156,7 +157,6 @@ loci.formats.in.MicromanagerReader    # txt, tif
 loci.formats.in.ImprovisionTiffReader # tif
 loci.formats.in.MetamorphTiffReader   # tif
 loci.formats.in.NikonTiffReader       # tif
-loci.formats.in.OMETiffReader         # tif
 loci.formats.in.PhotoshopTiffReader   # tif
 loci.formats.in.FEITiffReader         # tif
 loci.formats.in.SimplePCITiffReader   # tif
