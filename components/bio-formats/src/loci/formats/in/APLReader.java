@@ -290,8 +290,8 @@ public class APLReader extends FormatReader {
       LOGGER.debug("  '{}'", f);
       Location file = new Location(dir, f);
       if (file.isDirectory() && f.indexOf("_DocumentFiles") > 0) {
-        LOGGER.debug("Found {}", topDirectory);
         topDirectory = file.getAbsolutePath();
+        LOGGER.debug("Found {}", topDirectory);
         break;
       }
     }
