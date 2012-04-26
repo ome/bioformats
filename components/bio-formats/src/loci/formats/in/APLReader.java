@@ -238,6 +238,8 @@ public class APLReader extends FormatReader {
     columnNames = new String[tmpNames.length - 1];
     System.arraycopy(tmpNames, 1, columnNames, 0, columnNames.length);
 
+    mdb.close();
+
     // add full table to metadata hashtable
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {

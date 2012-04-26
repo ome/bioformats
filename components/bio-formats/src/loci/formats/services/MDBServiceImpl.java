@@ -125,6 +125,7 @@ public class MDBServiceImpl extends AbstractService implements MDBService {
 
   /* @see MDBService#close() */
   public void close() {
+    mdb.close();
     mdb = null;
     boundValues = null;
   }

@@ -2,6 +2,8 @@ package mdbtools.libmdb;
 
 import mdbtools.publicapi.RandomAccess;
 
+import java.io.IOException;
+
 public class MdbFile
 {
   public RandomAccess fd;
@@ -18,4 +20,11 @@ public class MdbFile
 //  unsigned char *free_map;
   /* reference count */
   public int refs;
+
+  public void close() {
+    try {
+      fd.close();
+    }
+    catch (IOException e) { }
+  }
 }
