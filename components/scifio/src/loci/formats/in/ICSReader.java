@@ -1493,6 +1493,9 @@ public class ICSReader extends FormatReader {
             if (checkUnit(unit, "ms")) {
               store.setPixelsTimeIncrement(1000 * pixelSize, 0);
             }
+            else if (checkUnit(unit, "seconds") || checkUnit(unit, "s")) {
+              store.setPixelsTimeIncrement(pixelSize, 0);
+            }
           }
         }
       }
