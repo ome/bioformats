@@ -22,3 +22,6 @@ test-output
 testng-results.xml
 testng.css
 tools/*.jar
+
+# For Fiji #
+loci_tools.jar
