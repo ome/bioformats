@@ -132,7 +132,7 @@ public class EPSWriter extends FormatWriter {
 
     out.writeBytes("%!PS-Adobe-2.0 EPSF-1.2\n");
     out.writeBytes("%%Title: " + currentId + "\n");
-    out.writeBytes("%%Creator: LOCI Bio-Formats\n");
+    out.writeBytes("%%Creator: OME Bio-Formats\n");
     out.writeBytes("%%Pages: 1\n");
     out.writeBytes("%%BoundingBox: 0 0 " + width + " " + height + "\n");
     out.writeBytes("%%EndComments\n\n");

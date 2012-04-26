@@ -34,7 +34,7 @@ import loci.plugins.in.Importer;
 import loci.plugins.util.LibraryChecker;
 
 /**
- * ImageJ plugin for reading files using the LOCI Bio-Formats package.
+ * ImageJ plugin for reading files using the OME Bio-Formats package.
  * Wraps core logic in {@link loci.plugins.in.Importer}, to avoid
  * direct references to classes in the external Bio-Formats library.
  *
