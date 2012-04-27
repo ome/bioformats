@@ -1287,7 +1287,8 @@ public class FormatReaderTest {
         IFormatReader r =
           /*config.noStitching() ? new ImageReader() :*/ new FileStitcher();
 
-        for (int i=0; i<base.length && success; i++) {
+        int maxFiles = (int) Math.min(base.length, 100);
+        for (int i=0; i<maxFiles && success; i++) {
           // .xlog files in InCell 1000/2000 files may belong to more
           // than one dataset
           if (file.toLowerCase().endsWith(".xdce") &&
