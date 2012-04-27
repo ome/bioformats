@@ -632,7 +632,7 @@ public class MetamorphReader extends BaseTiffReader {
         store.setImageAcquiredDate(date, 0);
       }
 
-      store.setImageName(makeImageName(i), i);
+      store.setImageName(makeImageName(i).trim(), i);
 
       if (getMetadataOptions().getMetadataLevel() == MetadataLevel.MINIMUM) {
         continue;
@@ -684,7 +684,7 @@ public class MetamorphReader extends BaseTiffReader {
         }
 
         if (waveNames != null && waveIndex < waveNames.size()) {
-          store.setChannelName(waveNames.get(waveIndex), i, c);
+          store.setChannelName(waveNames.get(waveIndex).trim(), i, c);
         }
         if (handler.getBinning() != null) binning = handler.getBinning();
         if (binning != null) {
