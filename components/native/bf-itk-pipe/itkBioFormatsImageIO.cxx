@@ -83,6 +83,14 @@ See slicer-license.txt for Slicer3's licensing information.
 #define SLASH '/'
 #endif
 
+#ifdef WIN32
+#include <io.h>
+#include <fcntl.h>
+#include <process.h>
+#include <math.h>
+
+#endif
+
 //--------------------------------------
 //
 // BioFormatsImageIO
@@ -150,6 +158,8 @@ BioFormatsImageIO::BioFormatsImageIO()
     {
     itkExceptionMacro("ITK_AUTOLOAD_PATH is not set, you must set this environment variable and point it to the directory containing the bio-formats.jar file");
     }
+  
+
   dir.assign(path);
   if( dir.at(dir.length() - 1) != SLASH )
     {
@@ -158,8 +168,13 @@ BioFormatsImageIO::BioFormatsImageIO()
   std::string classpath = dir+"loci_tools.jar";
   classpath += PATHSTEP+dir;
 
-  std::string javaCommand = "/usr/bin/java"; // todo: let the user choose the java executable
+  
 
+#ifdef WIN32
+  std::string javaCommand = "java";
+#else
+  std::string javaCommand = "/usr/bin/java"; // todo: let the user choose the java executable
+#endif
   itkDebugMacro("BioFormatsImageIO base command: "+javaCommand+" -Xmx256m -Djava.awt.headless=true -cp "+classpath);
 
   m_Args.push_back( javaCommand );
@@ -171,7 +186,6 @@ BioFormatsImageIO::BioFormatsImageIO()
   m_Args.push_back( "waitForInput" );
   // convert to something usable by itksys
   m_Argv = toCArray( m_Args );
-
   m_Process = NULL;
 }
 
@@ -193,11 +207,24 @@ void BioFormatsImageIO::CreateJavaProcess()
       }
     }
 
-  pipe( m_Pipe );
+#ifdef WIN32
+   SECURITY_ATTRIBUTES saAttr; 
+   saAttr.nLength = sizeof(SECURITY_ATTRIBUTES); 
+   saAttr.bInheritHandle = TRUE; 
+   saAttr.lpSecurityDescriptor = NULL;
   
+  if( !CreatePipe( &(m_Pipe[0]), &(m_Pipe[1]), &saAttr, 0) )
+	itkExceptionMacro(<<"createpipe() failed");
+  if ( ! SetHandleInformation(m_Pipe[1], HANDLE_FLAG_INHERIT, 0) )
+    itkExceptionMacro(<<"set inherited failed");
+#else
+  pipe( m_Pipe );
+#endif
+
   m_Process = itksysProcess_New();
   itksysProcess_SetCommand( m_Process, m_Argv );
-  itksysProcess_SetPipeNative( m_Process, itksysProcess_Pipe_STDIN, m_Pipe );
+  itksysProcess_SetPipeNative( m_Process, itksysProcess_Pipe_STDIN, m_Pipe);
+  
   itksysProcess_Execute( m_Process );
 
   int state = itksysProcess_GetState( m_Process );
@@ -278,7 +305,12 @@ void BioFormatsImageIO::DestroyJavaProcess()
   itkDebugMacro("BioFormatsImageIO::DestroyJavaProcess destroying java process");
   itksysProcess_Delete( m_Process );
   m_Process = NULL;
+
+#ifdef WIN32
+  CloseHandle( m_Pipe[1] );
+#else
   close( m_Pipe[1] );
+#endif
 }
 
 bool BioFormatsImageIO::CanReadFile( const char* FileNameToRead )
@@ -292,7 +324,16 @@ bool BioFormatsImageIO::CanReadFile( const char* FileNameToRead )
   command += FileNameToRead;
   command += "\n";
   itkDebugMacro("BioFormatsImageIO::CanRead command: " << command);
+
+  
+ 
+#ifdef WIN32
+  DWORD bytesWritten;
+  bool r = WriteFile( m_Pipe[1], command.c_str(), command.size(), &bytesWritten, NULL );
+#else
   write( m_Pipe[1], command.c_str(), command.size() );
+#endif
+
   // fflush( m_Pipe[1] );
 
   // and read its reply
@@ -308,9 +349,14 @@ bool BioFormatsImageIO::CanReadFile( const char* FileNameToRead )
     // itkDebugMacro( "BioFormatsImageIO::ReadImageInformation: reading " << pipedatalength << " bytes.");
     if( retcode == itksysProcess_Pipe_STDOUT )
       {
+	  
       imgInfo += std::string( pipedata, pipedatalength );
       // if the two last char are "\n\n", then we're done
-      if( imgInfo.size() >= 2 && imgInfo.substr( imgInfo.size()-2, 2 ) == "\n\n" )
+#ifdef WIN32
+      if( imgInfo.size() >= 4 && imgInfo.substr( imgInfo.size()-4, 4 ) == "\r\n\r\n" )
+#else
+	  if( imgInfo.size() >= 2 && imgInfo.substr( imgInfo.size()-2, 2 ) == "\n\n" )
+#endif
         {
         keepReading = false;
         }
@@ -325,7 +371,6 @@ bool BioFormatsImageIO::CanReadFile( const char* FileNameToRead )
       itkExceptionMacro(<<"BioFormatsImageIO: 'ITKBridgePipe canRead' exited abnormally. " << errorMessage);
       }
     }
-
   itkDebugMacro("BioFormatsImageIO::CanRead error output: " << errorMessage);
 
   // we have one thing per line
@@ -341,6 +386,7 @@ bool BioFormatsImageIO::CanReadFile( const char* FileNameToRead )
 
 void BioFormatsImageIO::ReadImageInformation()
 {
+ 
   itkDebugMacro( "BioFormatsImageIO::ReadImageInformation: m_FileName = " << m_FileName);
 
   CreateJavaProcess();
@@ -350,9 +396,17 @@ void BioFormatsImageIO::ReadImageInformation()
   command += m_FileName;
   command += "\n";
   itkDebugMacro("BioFormatsImageIO::ReadImageInformation command: " << command);
-  write( m_Pipe[1], command.c_str(), command.size() );
-  // fflush( m_Pipe[1] );
 
+  
+
+#ifdef WIN32
+  DWORD bytesWritten;
+  WriteFile( m_Pipe[1], command.c_str(), command.size(), &bytesWritten, NULL );
+#else
+  write( m_Pipe[1], command.c_str(), command.size() );
+#endif
+
+  // fflush( m_Pipe[1] );
   std::string imgInfo;
   std::string errorMessage;
   char * pipedata;
@@ -362,12 +416,18 @@ void BioFormatsImageIO::ReadImageInformation()
   while( keepReading )
     {
     int retcode = itksysProcess_WaitForData( m_Process, &pipedata, &pipedatalength, NULL );
-    // itkDebugMacro( "BioFormatsImageIO::ReadImageInformation: reading " << pipedatalength << " bytes.");
+    //itkDebugMacro( "BioFormatsImageIO::ReadImageInformation: reading " << pipedatalength << " bytes.");
+
+	
     if( retcode == itksysProcess_Pipe_STDOUT )
       {
       imgInfo += std::string( pipedata, pipedatalength );
       // if the two last char are "\n\n", then we're done
-      if( imgInfo.size() >= 2 && imgInfo.substr( imgInfo.size()-2, 2 ) == "\n\n" )
+#ifdef WIN32
+		if( imgInfo.size() >= 4 && imgInfo.substr( imgInfo.size()-4, 4 ) == "\r\n\r\n" )
+#else
+        if( imgInfo.size() >= 2 && imgInfo.substr( imgInfo.size()-2, 2 ) == "\n\n" )
+#endif
         {
         keepReading = false;
         }
@@ -386,7 +446,7 @@ void BioFormatsImageIO::ReadImageInformation()
   itkDebugMacro("BioFormatsImageIO::ReadImageInformation error output: " << errorMessage);
 
   this->SetNumberOfDimensions(5);
-
+   
   // fill the metadata dictionary
   MetaDataDictionary & dict = this->GetMetaDataDictionary();
 
@@ -394,40 +454,63 @@ void BioFormatsImageIO::ReadImageInformation()
   size_t p0 = 0;
   size_t p1 = 0;
   std::string line;
+
   while( p0 < imgInfo.size() )
     {
+	
     // get the key line
+#ifdef WIN32
+    p1 = imgInfo.find("\r\n", p0);
+#else
     p1 = imgInfo.find("\n", p0);
+#endif
+
     line = imgInfo.substr( p0, p1-p0 );
 
     // ignore the empty lines
     if( line == "" )
       {
       // go to the next line
-      p0 = p1+1;
+#ifdef WIN32
+      p0 = p1+2;
+#else
+	  p0 = p1+1;
+#endif
       continue;
       }
 
     std::string key = line;
-
     // go to the next line
-    p0 = p1+1;
+#ifdef WIN32
+      p0 = p1+2;
+#else
+      p0 = p1+1;
+#endif
 
     // get the value line
-    p1 = imgInfo.find("\n", p0);
-    line = imgInfo.substr( p0, p1-p0 );
+    p1 = imgInfo.find("\r\n", p0);
 
+    line = imgInfo.substr( p0, p1-p0 );
+	
     // ignore the empty lines
+#ifdef WIN32
+    if( line == "\r" )
+#else
     if( line == "" )
+#endif
       {
       // go to the next line
+#ifdef WIN32
+      p0 = p1+2;
+#else
       p0 = p1+1;
+#endif
       continue;
       }
 
     std::string value = line;
-    itkDebugMacro("=== " << key << " = " << value << " ===");
-
+    //itkDebugMacro("=== " << key << " = " << value << " ===");
+    
     // store the values in the dictionary
     if( dict.HasKey(key) )
       {
@@ -439,6 +522,7 @@ void BioFormatsImageIO::ReadImageInformation()
         // we have to unescape \\ and \n
         size_t lp0 = 0;
         size_t lp1 = 0;
+		
         while( lp0 < value.size() )
           {
           lp1 = value.find( "\\", lp0 );
@@ -446,6 +530,7 @@ void BioFormatsImageIO::ReadImageInformation()
             {
             tmp += value.substr( lp0, value.size()-lp0 );
             lp0 = value.size();
+			
             }
           else
             {
@@ -463,15 +548,20 @@ void BioFormatsImageIO::ReadImageInformation()
               }
             lp0 = lp1 + 2;
             }
+		    
           }
         itkDebugMacro("Storing metadata: " << key << " ---> " << tmp);
         EncapsulateMetaData< std::string >( dict, key, tmp );
       }
 
     // go to the next line
-    p0 = p1+1;
+#ifdef WIN32
+      p0 = p1+2;
+#else
+      p0 = p1+1;
+#endif
+	
     }
-
   // set the values needed by the reader
   std::string s;
   bool b;
@@ -565,11 +655,13 @@ void BioFormatsImageIO::ReadImageInformation()
 
 void BioFormatsImageIO::Read(void* pData)
 {
+  
   itkDebugMacro("BioFormatsImageIO::Read");
   const ImageIORegion & region = this->GetIORegion();
 
   CreateJavaProcess();
 
+  
   // send the command to the java process
   std::string command = "read\t";
   command += m_FileName;
@@ -586,7 +678,14 @@ void BioFormatsImageIO::Read(void* pData)
     }
   command += "\n";
   itkDebugMacro("BioFormatsImageIO::Read command: " << command);
+
+#ifdef WIN32
+  DWORD bytesWritten;
+  WriteFile( m_Pipe[1], command.c_str(), command.size(), &bytesWritten, NULL );
+#else
   write( m_Pipe[1], command.c_str(), command.size() );
+#endif
+
   // fflush( m_Pipe[1] );
 
   // and read the image
@@ -629,7 +728,13 @@ bool BioFormatsImageIO::CanWriteFile(const char* name)
   std::string command = "canWrite\t";
   command += name;
   command += "\n";
+
+#ifdef WIN32
+ DWORD bytesWritten;
+  WriteFile( m_Pipe[1], command.c_str(), command.size(), &bytesWritten, NULL );
+#else
   write( m_Pipe[1], command.c_str(), command.size() );
+#endif
 
   std::string imgInfo;
   std::string errorMessage;
@@ -645,7 +750,11 @@ bool BioFormatsImageIO::CanWriteFile(const char* name)
       {
       imgInfo += std::string( pipedata, pipedatalength );
       // if the two last char are "\n\n", then we're done
+#ifdef WIN32
+	  if( imgInfo.size() >= 4 && imgInfo.substr( imgInfo.size()-4, 4 ) == "\r\n\r\n" )
+#else
       if( imgInfo.size() >= 2 && imgInfo.substr( imgInfo.size()-2, 2 ) == "\n\n" )
+#endif
         {
         keepReading = false;
         }
@@ -768,7 +877,13 @@ void BioFormatsImageIO::Write(const void * buffer )
   command += "\n";
 
   itkDebugMacro("BioFormatsImageIO::Write command: " << command);
+
+#ifdef WIN32
+  DWORD bytesWritten;
+  WriteFile( m_Pipe[1], command.c_str(), command.size(), &bytesWritten, NULL );
+#else
   write( m_Pipe[1], command.c_str(), command.size() );
+#endif
 
   // need to read back the number of planes and bytes per plane to read from buffer
   std::string imgInfo;
@@ -785,7 +900,11 @@ void BioFormatsImageIO::Write(const void * buffer )
       {
       imgInfo += std::string( pipedata, pipedatalength );
       // if the two last char are "\n\n", then we're done
-      if( imgInfo.size() >= 2 && imgInfo.substr( imgInfo.size()-2, 2 ) == "\n\n" )
+#ifdef WIN32
+      if( imgInfo.size() >= 4 && imgInfo.substr( imgInfo.size()-4, 4 ) == "\r\n\r\n" )
+#else
+	  if( imgInfo.size() >= 2 && imgInfo.substr( imgInfo.size()-2, 2 ) == "\n\n" )
+#endif
         {
         keepReading = false;
         }
@@ -830,7 +949,13 @@ void BioFormatsImageIO::Write(const void * buffer )
 
         itkDebugMacro("Writing " << bytesToRead << " bytes to plane " << i << ".  Bytes read: " << bytesRead);
 
-        write( m_Pipe[1], data, bytesToRead );
+		#ifdef WIN32
+		    DWORD bytesWritten;
+		    WriteFile( m_Pipe[1], data, bytesToRead, &bytesWritten, NULL );
+		#else
+			write( m_Pipe[1], data, bytesToRead );
+		#endif
+
         data += bytesToRead;
         bytesRead += bytesToRead;
 
@@ -845,7 +970,11 @@ void BioFormatsImageIO::Write(const void * buffer )
             {
             bytesDone += std::string( pipedata, pipedatalength );
             // if the two last char are "\n\n", then we're done
+#ifdef WIN32
+		    if( bytesDone.size() >= 4 && bytesDone.substr( bytesDone.size()-4, 4 ) == "\r\n\r\n" )
+#else
             if( bytesDone.size() >= 2 && bytesDone.substr( bytesDone.size()-2, 2 ) == "\n\n" )
+#endif
               {
               keepReading = false;
               }
@@ -875,7 +1004,11 @@ void BioFormatsImageIO::Write(const void * buffer )
           {
           planeDone += std::string( pipedata, pipedatalength );
           // if the two last char are "\n\n", then we're done
+#ifdef WIN32
+		  if( planeDone.size() >= 4 && planeDone.substr( planeDone.size()-4, 4 ) == "\r\n\r\n" )
+#else
           if( planeDone.size() >= 2 && planeDone.substr( planeDone.size()-2, 2 ) == "\n\n" )
+#endif
             {
             keepReading = false;
             }
