@@ -14,11 +14,15 @@ function volume = bfOpen3DVolume(filename)
 %
 %   volume - 3D array containing all images in the file.
 
-    volume = bfopen(filename);
-    vaux{1} = zeros([size(volume{1}, 1), size(volume{1}{1})]);
-    for k = 1:size(vaux{1}, 1)
-        vaux{1}(:,:,k) = volume{1}{k};
-    end
-    vaux{2} = filename;
-    volume{1} = vaux;
+% Prompt for a file if not input
+if nargin == 0 || exist(filename, 'file') == 0
+  [file, path] = uigetfile(bfGetFileExtensions, 'Choose a file to open');
+  filename = [path file];
+  if isequal(path, 0) || isequal(file, 0), return; end
+end
+
+volume = bfopen(filename);
+vaux{1} = cat(3, volume{1}{:,1});
+vaux{2} = filename;
+volume{1} = vaux;
 end
