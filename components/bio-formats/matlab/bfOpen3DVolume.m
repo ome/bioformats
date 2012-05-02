@@ -14,8 +14,9 @@ function volume = bfOpen3DVolume(filename)
 %
 %   volume - 3D array containing all images in the file.
 
-    volume = bfopen(filename);
-    vaux{1} = cat(3,volume{1}{:,1});
-    vaux{2} = filename;
-    volume{1} = vaux;
+
+volume = bfopen(filename);
+vaux{1} = cat(3,volume{1}{:,1});
+vaux{2} = filename;
+volume{1} = vaux;
 end
