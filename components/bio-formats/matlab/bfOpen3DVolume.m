@@ -27,7 +27,7 @@ if nargin == 0 || exist(filename, 'file') == 0
 end
 
 volume = bfopen(filename);
-vaux{1} = cat(3, volume{1}{:,1});
+vaux{1} = cat(3, volume{1}{:, 1});
 vaux{2} = filename;
 volume{1} = vaux;
 end

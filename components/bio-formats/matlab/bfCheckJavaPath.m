@@ -15,13 +15,13 @@ function status = bfCheckJavaPath(varargin)
 %    status - Boolean. True if loci_tools is part of the Java library.
 
 % Input check
-ip=inputParser;
-ip.addOptional('autoloadBioFormats',true,@isscalar);
+ip = inputParser;
+ip.addOptional('autoloadBioFormats', true, @isscalar);
 ip.parse(varargin{:});
 
 % Check if loci_tools is in the Java class path (static or dynamic)
 jPath = javaclasspath('-all');
-isLociTools = cellfun(@(x) ~isempty(regexp(x,'.*loci_tools.jar$','once')),...
+isLociTools = cellfun(@(x) ~isempty(regexp(x, '.*loci_tools.jar$', 'once')),...
     jPath);
 status = any(isLociTools);
 
@@ -29,11 +29,11 @@ status = any(isLociTools);
 if status || ~ip.Results.autoloadBioFormats, return; end   
 
 % Assume the jar is in Matlab path or under the same folder as this file
-path =which('loci_tools.jar');
+path = which('loci_tools.jar');
 if isempty(path)
     path = fullfile(fileparts(mfilename('fullpath')), 'loci_tools.jar');
 end
-assert(exist(path,'file')==2,'Cannot automatically locate loci_tools.jar');
+assert(exist(path, 'file') == 2, 'Cannot automatically locate loci_tools.jar');
 
 % Add loci_tools to dynamic Java class path
 javaaddpath(path);    
