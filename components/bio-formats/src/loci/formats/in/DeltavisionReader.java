@@ -129,11 +129,6 @@ public class DeltavisionReader extends FormatReader {
     return false;
   }
 
-  /* @see loci.formats.IFormatReader#fileGroupOption(String) */
-  public int fileGroupOption(String id) throws FormatException, IOException {
-    return FormatTools.MUST_GROUP;
-  }
-
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
   public boolean isThisType(String name, boolean open) {
     if (checkSuffix(name, "dv.log") || checkSuffix(name, "r3d.log") ||
