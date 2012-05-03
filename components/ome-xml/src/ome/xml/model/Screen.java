@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-05-03 09:56:03-0400
+ * Created by callan via xsd-fu on 2012-05-03 15:58:52+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -380,11 +380,13 @@ public class Screen extends AbstractOMEModelObject
 
 	public Reagent setReagent(int index, Reagent reagent)
 	{
+        reagent.setScreen(this);
 		return reagents.set(index, reagent);
 	}
 
 	public void addReagent(Reagent reagent)
 	{
+        reagent.setScreen(this);
 		reagents.add(reagent);
 	}
 

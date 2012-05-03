@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-05-03 09:56:03-0400
+ * Created by callan via xsd-fu on 2012-05-03 15:58:52+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -240,11 +240,13 @@ public class Mask extends Shape
 
 	public BinData setBinData(int index, BinData binData)
 	{
+        binData.setMask(this);
 		return binDataBlocks.set(index, binData);
 	}
 
 	public void addBinData(BinData binData)
 	{
+        binData.setMask(this);
 		binDataBlocks.add(binData);
 	}
 

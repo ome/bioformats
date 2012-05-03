@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-05-03 09:56:03-0400
+ * Created by callan via xsd-fu on 2012-05-03 15:58:52+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -455,11 +455,13 @@ public class Plate extends AbstractOMEModelObject
 
 	public Well setWell(int index, Well well)
 	{
+        well.setPlate(this);
 		return wells.set(index, well);
 	}
 
 	public void addWell(Well well)
 	{
+        well.setPlate(this);
 		wells.add(well);
 	}
 
@@ -524,11 +526,13 @@ public class Plate extends AbstractOMEModelObject
 
 	public PlateAcquisition setPlateAcquisition(int index, PlateAcquisition plateAcquisition)
 	{
+        plateAcquisition.setPlate(this);
 		return plateAcquisitions.set(index, plateAcquisition);
 	}
 
 	public void addPlateAcquisition(PlateAcquisition plateAcquisition)
 	{
+        plateAcquisition.setPlate(this);
 		plateAcquisitions.add(plateAcquisition);
 	}
 

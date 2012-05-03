@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-05-03 09:56:03-0400
+ * Created by callan via xsd-fu on 2012-05-03 15:58:52+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -484,11 +484,13 @@ public class Pixels extends AbstractOMEModelObject
 
 	public Channel setChannel(int index, Channel channel)
 	{
+        channel.setPixels(this);
 		return channels.set(index, channel);
 	}
 
 	public void addChannel(Channel channel)
 	{
+        channel.setPixels(this);
 		channels.add(channel);
 	}
 
@@ -515,11 +517,13 @@ public class Pixels extends AbstractOMEModelObject
 
 	public BinData setBinData(int index, BinData binData)
 	{
+        binData.setPixels(this);
 		return binDataBlocks.set(index, binData);
 	}
 
 	public void addBinData(BinData binData)
 	{
+        binData.setPixels(this);
 		binDataBlocks.add(binData);
 	}
 
@@ -546,11 +550,13 @@ public class Pixels extends AbstractOMEModelObject
 
 	public TiffData setTiffData(int index, TiffData tiffData)
 	{
+        tiffData.setPixels(this);
 		return tiffDataBlocks.set(index, tiffData);
 	}
 
 	public void addTiffData(TiffData tiffData)
 	{
+        tiffData.setPixels(this);
 		tiffDataBlocks.add(tiffData);
 	}
 
@@ -588,11 +594,13 @@ public class Pixels extends AbstractOMEModelObject
 
 	public Plane setPlane(int index, Plane plane)
 	{
+        plane.setPixels(this);
 		return planes.set(index, plane);
 	}
 
 	public void addPlane(Plane plane)
 	{
+        plane.setPixels(this);
 		planes.add(plane);
 	}
 

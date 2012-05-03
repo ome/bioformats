@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-05-03 09:56:03-0400
+ * Created by callan via xsd-fu on 2012-05-03 15:58:52+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -268,11 +268,13 @@ public class StructuredAnnotations extends AbstractOMEModelObject
 
 	public XMLAnnotation setXMLAnnotation(int index, XMLAnnotation xmlAnnotation)
 	{
+        xmlAnnotation.setStructuredAnnotations(this);
 		return xmlAnnotations.set(index, xmlAnnotation);
 	}
 
 	public void addXMLAnnotation(XMLAnnotation xmlAnnotation)
 	{
+        xmlAnnotation.setStructuredAnnotations(this);
 		xmlAnnotations.add(xmlAnnotation);
 	}
 
@@ -299,11 +301,13 @@ public class StructuredAnnotations extends AbstractOMEModelObject
 
 	public FileAnnotation setFileAnnotation(int index, FileAnnotation fileAnnotation)
 	{
+        fileAnnotation.setStructuredAnnotations(this);
 		return fileAnnotations.set(index, fileAnnotation);
 	}
 
 	public void addFileAnnotation(FileAnnotation fileAnnotation)
 	{
+        fileAnnotation.setStructuredAnnotations(this);
 		fileAnnotations.add(fileAnnotation);
 	}
 
@@ -330,11 +334,13 @@ public class StructuredAnnotations extends AbstractOMEModelObject
 
 	public ListAnnotation setListAnnotation(int index, ListAnnotation listAnnotation)
 	{
+        listAnnotation.setStructuredAnnotations(this);
 		return listAnnotations.set(index, listAnnotation);
 	}
 
 	public void addListAnnotation(ListAnnotation listAnnotation)
 	{
+        listAnnotation.setStructuredAnnotations(this);
 		listAnnotations.add(listAnnotation);
 	}
 
@@ -361,11 +367,13 @@ public class StructuredAnnotations extends AbstractOMEModelObject
 
 	public LongAnnotation setLongAnnotation(int index, LongAnnotation longAnnotation)
 	{
+        longAnnotation.setStructuredAnnotations(this);
 		return longAnnotations.set(index, longAnnotation);
 	}
 
 	public void addLongAnnotation(LongAnnotation longAnnotation)
 	{
+        longAnnotation.setStructuredAnnotations(this);
 		longAnnotations.add(longAnnotation);
 	}
 
@@ -392,11 +400,13 @@ public class StructuredAnnotations extends AbstractOMEModelObject
 
 	public DoubleAnnotation setDoubleAnnotation(int index, DoubleAnnotation doubleAnnotation)
 	{
+        doubleAnnotation.setStructuredAnnotations(this);
 		return doubleAnnotations.set(index, doubleAnnotation);
 	}
 
 	public void addDoubleAnnotation(DoubleAnnotation doubleAnnotation)
 	{
+        doubleAnnotation.setStructuredAnnotations(this);
 		doubleAnnotations.add(doubleAnnotation);
 	}
 
@@ -423,11 +433,13 @@ public class StructuredAnnotations extends AbstractOMEModelObject
 
 	public CommentAnnotation setCommentAnnotation(int index, CommentAnnotation commentAnnotation)
 	{
+        commentAnnotation.setStructuredAnnotations(this);
 		return commentAnnotations.set(index, commentAnnotation);
 	}
 
 	public void addCommentAnnotation(CommentAnnotation commentAnnotation)
 	{
+        commentAnnotation.setStructuredAnnotations(this);
 		commentAnnotations.add(commentAnnotation);
 	}
 
@@ -454,11 +466,13 @@ public class StructuredAnnotations extends AbstractOMEModelObject
 
 	public BooleanAnnotation setBooleanAnnotation(int index, BooleanAnnotation booleanAnnotation)
 	{
+        booleanAnnotation.setStructuredAnnotations(this);
 		return booleanAnnotations.set(index, booleanAnnotation);
 	}
 
 	public void addBooleanAnnotation(BooleanAnnotation booleanAnnotation)
 	{
+        booleanAnnotation.setStructuredAnnotations(this);
 		booleanAnnotations.add(booleanAnnotation);
 	}
 
@@ -485,11 +499,13 @@ public class StructuredAnnotations extends AbstractOMEModelObject
 
 	public TimestampAnnotation setTimestampAnnotation(int index, TimestampAnnotation timestampAnnotation)
 	{
+        timestampAnnotation.setStructuredAnnotations(this);
 		return timestampAnnotations.set(index, timestampAnnotation);
 	}
 
 	public void addTimestampAnnotation(TimestampAnnotation timestampAnnotation)
 	{
+        timestampAnnotation.setStructuredAnnotations(this);
 		timestampAnnotations.add(timestampAnnotation);
 	}
 
@@ -516,11 +532,13 @@ public class StructuredAnnotations extends AbstractOMEModelObject
 
 	public TagAnnotation setTagAnnotation(int index, TagAnnotation tagAnnotation)
 	{
+        tagAnnotation.setStructuredAnnotations(this);
 		return tagAnnotations.set(index, tagAnnotation);
 	}
 
 	public void addTagAnnotation(TagAnnotation tagAnnotation)
 	{
+        tagAnnotation.setStructuredAnnotations(this);
 		tagAnnotations.add(tagAnnotation);
 	}
 
@@ -547,11 +565,13 @@ public class StructuredAnnotations extends AbstractOMEModelObject
 
 	public TermAnnotation setTermAnnotation(int index, TermAnnotation termAnnotation)
 	{
+        termAnnotation.setStructuredAnnotations(this);
 		return termAnnotations.set(index, termAnnotation);
 	}
 
 	public void addTermAnnotation(TermAnnotation termAnnotation)
 	{
+        termAnnotation.setStructuredAnnotations(this);
 		termAnnotations.add(termAnnotation);
 	}
 

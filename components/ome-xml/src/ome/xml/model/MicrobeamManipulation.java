@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-05-03 09:56:03-0400
+ * Created by callan via xsd-fu on 2012-05-03 15:58:52+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -343,11 +343,13 @@ public class MicrobeamManipulation extends AbstractOMEModelObject
 
 	public LightSourceSettings setLightSourceSettings(int index, LightSourceSettings lightSourceSettings)
 	{
+        lightSourceSettings.setMicrobeamManipulation(this);
 		return lightSourceSettingsCombinations.set(index, lightSourceSettings);
 	}
 
 	public void addLightSourceSettings(LightSourceSettings lightSourceSettings)
 	{
+        lightSourceSettings.setMicrobeamManipulation(this);
 		lightSourceSettingsCombinations.add(lightSourceSettings);
 	}
 

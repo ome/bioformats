@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-05-03 09:56:03-0400
+ * Created by callan via xsd-fu on 2012-05-03 15:58:52+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -314,11 +314,13 @@ public class Instrument extends AbstractOMEModelObject
 
 	public LightSource setLightSource(int index, LightSource lightSource)
 	{
+        lightSource.setInstrument(this);
 		return lightSources.set(index, lightSource);
 	}
 
 	public void addLightSource(LightSource lightSource)
 	{
+        lightSource.setInstrument(this);
 		lightSources.add(lightSource);
 	}
 
@@ -345,11 +347,13 @@ public class Instrument extends AbstractOMEModelObject
 
 	public Detector setDetector(int index, Detector detector)
 	{
+        detector.setInstrument(this);
 		return detectors.set(index, detector);
 	}
 
 	public void addDetector(Detector detector)
 	{
+        detector.setInstrument(this);
 		detectors.add(detector);
 	}
 
@@ -376,11 +380,13 @@ public class Instrument extends AbstractOMEModelObject
 
 	public Objective setObjective(int index, Objective objective)
 	{
+        objective.setInstrument(this);
 		return objectives.set(index, objective);
 	}
 
 	public void addObjective(Objective objective)
 	{
+        objective.setInstrument(this);
 		objectives.add(objective);
 	}
 
@@ -407,11 +413,13 @@ public class Instrument extends AbstractOMEModelObject
 
 	public FilterSet setFilterSet(int index, FilterSet filterSet)
 	{
+        filterSet.setInstrument(this);
 		return filterSets.set(index, filterSet);
 	}
 
 	public void addFilterSet(FilterSet filterSet)
 	{
+        filterSet.setInstrument(this);
 		filterSets.add(filterSet);
 	}
 
@@ -438,11 +446,13 @@ public class Instrument extends AbstractOMEModelObject
 
 	public Filter setFilter(int index, Filter filter)
 	{
+        filter.setInstrument(this);
 		return filters.set(index, filter);
 	}
 
 	public void addFilter(Filter filter)
 	{
+        filter.setInstrument(this);
 		filters.add(filter);
 	}
 
@@ -469,11 +479,13 @@ public class Instrument extends AbstractOMEModelObject
 
 	public Dichroic setDichroic(int index, Dichroic dichroic)
 	{
+        dichroic.setInstrument(this);
 		return dichroics.set(index, dichroic);
 	}
 
 	public void addDichroic(Dichroic dichroic)
 	{
+        dichroic.setInstrument(this);
 		dichroics.add(dichroic);
 	}
 

@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-05-03 09:56:03-0400
+ * Created by callan via xsd-fu on 2012-05-03 15:58:52+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -280,11 +280,13 @@ public class Experiment extends AbstractOMEModelObject
 
 	public MicrobeamManipulation setMicrobeamManipulation(int index, MicrobeamManipulation microbeamManipulation)
 	{
+        microbeamManipulation.setExperiment(this);
 		return microbeamManipulations.set(index, microbeamManipulation);
 	}
 
 	public void addMicrobeamManipulation(MicrobeamManipulation microbeamManipulation)
 	{
+        microbeamManipulation.setExperiment(this);
 		microbeamManipulations.add(microbeamManipulation);
 	}
 
