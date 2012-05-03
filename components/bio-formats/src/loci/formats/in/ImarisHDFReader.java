@@ -397,7 +397,7 @@ public class ImarisHDFReader extends FormatReader {
           double[] color = colors.get(i);
           Color realColor = new Color(
             (int) (color[0] * 255), (int) (color[1] * 255),
-            (int) (color[2] * 255), (int) (color[3] * 255));
+            (int) (color[2] * 255), 255);
           store.setChannelColor(realColor, s, i);
         }
       }
