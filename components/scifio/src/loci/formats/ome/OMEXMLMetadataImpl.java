@@ -35,7 +35,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-05-03 05:24:57-0400
+ * Created by melissa via xsd-fu on 2012-05-03 09:56:10-0400
  *
  *-----------------------------------------------------------------------------
  */
@@ -879,6 +879,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public Boolean getBooleanAnnotationValue(int booleanAnnotationIndex)
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
@@ -989,6 +990,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.getImage(imageIndex).getPixels().getChannel(channelIndex).getPinholeSize();
 	}
 
+	// Ignoring Pixels_BackReference back reference
 	public Integer getChannelPockelCellSetting(int imageIndex, int channelIndex)
 	{
 		// Parents: {u'Pixels': {u'Image': {u'OME': None}}}
@@ -1051,6 +1053,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public String getCommentAnnotationValue(int commentAnnotationIndex)
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
@@ -1156,6 +1159,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.getInstrument(instrumentIndex).getDetector(detectorIndex).getID();
 	}
 
+	// Ignoring Instrument_BackReference back reference
 	public String getDetectorLotNumber(int instrumentIndex, int detectorIndex)
 	{
 		// Parents: {u'Instrument': {u'OME': None}}
@@ -1277,6 +1281,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.getInstrument(instrumentIndex).getDichroic(dichroicIndex).getID();
 	}
 
+	// Ignoring Instrument_BackReference back reference
 	// Ignoring LightPath_BackReference back reference
 	public String getDichroicLotNumber(int instrumentIndex, int dichroicIndex)
 	{
@@ -1365,6 +1370,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public Double getDoubleAnnotationValue(int doubleAnnotationIndex)
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
@@ -1901,6 +1907,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	// Ignoring WellSample_BackReference back reference
 	// Ignoring Well_BackReference back reference
 	//
@@ -1926,6 +1933,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.getInstrument(instrumentIndex).getFilter(filterIndex).getID();
 	}
 
+	// Ignoring Instrument_BackReference back reference
 	// Ignoring LightPath_BackReference back reference
 	// Ignoring LightPath_BackReference back reference
 	public String getFilterLotNumber(int instrumentIndex, int filterIndex)
@@ -2000,6 +2008,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.getInstrument(instrumentIndex).getFilterSet(filterSetIndex).getID();
 	}
 
+	// Ignoring Instrument_BackReference back reference
 	public String getFilterSetLotNumber(int instrumentIndex, int filterSetIndex)
 	{
 		// Parents: {u'Instrument': {u'OME': None}}
@@ -2673,6 +2682,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// Ignoring LightSourceRef back reference
+	// Ignoring MicrobeamManipulation_BackReference back reference
 	public PositiveInteger getChannelLightSourceSettingsWavelength(int imageIndex, int channelIndex)
 	{
 		// Parents: {u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}, u'MicrobeamManipulation': {u'Experiment': {u'OME': None}}}
@@ -2951,6 +2961,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	// Ignoring WellSample_BackReference back reference
 	// Ignoring Well_BackReference back reference
 	//
@@ -3001,6 +3012,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public Long getLongAnnotationValue(int longAnnotationIndex)
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
@@ -3232,6 +3244,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.getExperiment(experimentIndex).getMicrobeamManipulation(microbeamManipulationIndex).getDescription();
 	}
 
+	// Ignoring Experiment_BackReference back reference
 	public String getMicrobeamManipulationExperimenterRef(int experimentIndex, int microbeamManipulationIndex)
 	{
 		// Parents: {u'Experiment': {u'OME': None}}
@@ -3350,6 +3363,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.getInstrument(instrumentIndex).getObjective(objectiveIndex).getImmersion();
 	}
 
+	// Ignoring Instrument_BackReference back reference
 	public Boolean getObjectiveIris(int instrumentIndex, int objectiveIndex)
 	{
 		// Parents: {u'Instrument': {u'OME': None}}
@@ -3580,6 +3594,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.getImage(imageIndex).getPixels().getPlane(planeIndex).getHashSHA1();
 	}
 
+	// Ignoring Pixels_BackReference back reference
 	public Double getPlanePositionX(int imageIndex, int planeIndex)
 	{
 		// Parents: {u'Pixels': {u'Image': {u'OME': None}}}
@@ -3772,6 +3787,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.getPlate(plateIndex).getPlateAcquisition(plateAcquisitionIndex).getName();
 	}
 
+	// Ignoring Plate_BackReference back reference
 	public String getPlateAcquisitionStartTime(int plateIndex, int plateAcquisitionIndex)
 	{
 		// Parents: {u'Plate': {u'OME': None}}
@@ -4518,6 +4534,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.getScreen(screenIndex).getReagent(reagentIndex).getReagentIdentifier();
 	}
 
+	// Ignoring Screen_BackReference back reference
 	// Ignoring Well_BackReference back reference
 	//
 	// ReagentRef property storage
@@ -4908,6 +4925,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public String getTagAnnotationValue(int tagAnnotationIndex)
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
@@ -4965,6 +4983,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public String getTermAnnotationValue(int termAnnotationIndex)
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
@@ -5009,6 +5028,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.getImage(imageIndex).getPixels().getTiffData(tiffDataIndex).getIFD();
 	}
 
+	// Ignoring Pixels_BackReference back reference
 	public NonNegativeInteger getTiffDataPlaneCount(int imageIndex, int tiffDataIndex)
 	{
 		// Parents: {u'Pixels': {u'Image': {u'OME': None}}}
@@ -5065,6 +5085,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public String getTimestampAnnotationValue(int timestampAnnotationIndex)
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
@@ -5187,6 +5208,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.getPlate(plateIndex).getWell(wellIndex).getID();
 	}
 
+	// Ignoring Plate_BackReference back reference
 	public String getWellReagentRef(int plateIndex, int wellIndex)
 	{
 		// Parents: {u'Plate': {u'OME': None}}
@@ -5266,6 +5288,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.getPlate(plateIndex).getWell(wellIndex).getWellSample(wellSampleIndex).getTimepoint();
 	}
 
+	// Ignoring Well_BackReference back reference
 	//
 	// WellSampleRef property storage
 	//
@@ -5325,6 +5348,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public String getXMLAnnotationValue(int XMLAnnotationIndex)
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
@@ -5720,6 +5744,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public void setBooleanAnnotationValue(Boolean value, int booleanAnnotationIndex)
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
@@ -6030,6 +6055,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o3.setPinholeSize(pinholeSize);
 	}
 
+	// Ignoring Pixels_BackReference back reference
 	public void setChannelPockelCellSetting(Integer pockelCellSetting, int imageIndex, int channelIndex)
 	{
 		// Parents: {u'Pixels': {u'Image': {u'OME': None}}}
@@ -6161,6 +6187,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public void setCommentAnnotationValue(String value, int commentAnnotationIndex)
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
@@ -6343,6 +6370,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o2.setID(id);
 	}
 
+	// Ignoring Instrument_BackReference back reference
 	public void setDetectorLotNumber(String lotNumber, int instrumentIndex, int detectorIndex)
 	{
 		// Parents: {u'Instrument': {u'OME': None}}
@@ -6689,6 +6717,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o2.setID(id);
 	}
 
+	// Ignoring Instrument_BackReference back reference
 	// Ignoring LightPath_BackReference back reference
 	public void setDichroicLotNumber(String lotNumber, int instrumentIndex, int dichroicIndex)
 	{
@@ -6857,6 +6886,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public void setDoubleAnnotationValue(Double value, int doubleAnnotationIndex)
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
@@ -7919,6 +7949,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	// Ignoring WellSample_BackReference back reference
 	// Ignoring Well_BackReference back reference
 	//
@@ -7966,6 +7997,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o2.setID(id);
 	}
 
+	// Ignoring Instrument_BackReference back reference
 	// Ignoring LightPath_BackReference back reference
 	// Ignoring LightPath_BackReference back reference
 	public void setFilterLotNumber(String lotNumber, int instrumentIndex, int filterIndex)
@@ -8118,6 +8150,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o2.setID(id);
 	}
 
+	// Ignoring Instrument_BackReference back reference
 	public void setFilterSetLotNumber(String lotNumber, int instrumentIndex, int filterSetIndex)
 	{
 		// Parents: {u'Instrument': {u'OME': None}}
@@ -9507,6 +9540,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// Ignoring LightSourceRef back reference
+	// Ignoring MicrobeamManipulation_BackReference back reference
 	public void setChannelLightSourceSettingsWavelength(PositiveInteger wavelength, int imageIndex, int channelIndex)
 	{
 		// Parents: {u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}, u'MicrobeamManipulation': {u'Experiment': {u'OME': None}}}
@@ -10204,6 +10238,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	// Ignoring WellSample_BackReference back reference
 	// Ignoring Well_BackReference back reference
 	//
@@ -10291,6 +10326,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public void setLongAnnotationValue(Long value, int longAnnotationIndex)
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
@@ -10857,6 +10893,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o2.setDescription(description);
 	}
 
+	// Ignoring Experiment_BackReference back reference
 	public void setMicrobeamManipulationExperimenterRef(String experimenter, int experimentIndex, int microbeamManipulationIndex)
 	{
 		// Parents: {u'Experiment': {u'OME': None}}
@@ -11103,6 +11140,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o2.setImmersion(immersion);
 	}
 
+	// Ignoring Instrument_BackReference back reference
 	public void setObjectiveIris(Boolean iris, int instrumentIndex, int objectiveIndex)
 	{
 		// Parents: {u'Instrument': {u'OME': None}}
@@ -11652,6 +11690,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o3.setHashSHA1(hashSHA1);
 	}
 
+	// Ignoring Pixels_BackReference back reference
 	public void setPlanePositionX(Double positionX, int imageIndex, int planeIndex)
 	{
 		// Parents: {u'Pixels': {u'Image': {u'OME': None}}}
@@ -12075,6 +12114,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o2.setName(name);
 	}
 
+	// Ignoring Plate_BackReference back reference
 	public void setPlateAcquisitionStartTime(String startTime, int plateIndex, int plateAcquisitionIndex)
 	{
 		// Parents: {u'Plate': {u'OME': None}}
@@ -13798,6 +13838,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o2.setReagentIdentifier(reagentIdentifier);
 	}
 
+	// Ignoring Screen_BackReference back reference
 	// Ignoring Well_BackReference back reference
 	//
 	// ReagentRef property storage
@@ -14637,6 +14678,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public void setTagAnnotationValue(String value, int tagAnnotationIndex)
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
@@ -14742,6 +14784,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public void setTermAnnotationValue(String value, int termAnnotationIndex)
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
@@ -14860,6 +14903,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o3.setIFD(ifd);
 	}
 
+	// Ignoring Pixels_BackReference back reference
 	public void setTiffDataPlaneCount(NonNegativeInteger planeCount, int imageIndex, int tiffDataIndex)
 	{
 		// Parents: {u'Pixels': {u'Image': {u'OME': None}}}
@@ -14969,6 +15013,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public void setTimestampAnnotationValue(String value, int timestampAnnotationIndex)
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
@@ -15259,6 +15304,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o2.setID(id);
 	}
 
+	// Ignoring Plate_BackReference back reference
 	public void setWellReagentRef(String reagent, int plateIndex, int wellIndex)
 	{
 		// Parents: {u'Plate': {u'OME': None}}
@@ -15452,6 +15498,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o3.setTimepoint(timepoint);
 	}
 
+	// Ignoring Well_BackReference back reference
 	//
 	// WellSampleRef property storage
 	//
@@ -15547,6 +15594,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public void setXMLAnnotationValue(String value, int XMLAnnotationIndex)
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}

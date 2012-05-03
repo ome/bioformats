@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-05-03 05:24:50-0400
+ * Created by melissa via xsd-fu on 2012-05-03 09:56:03-0400
  *
  *-----------------------------------------------------------------------------
  */
@@ -69,6 +69,9 @@ public class FileAnnotation extends TypeAnnotation
 
 	// Property
 	private BinaryFile binaryFile;
+
+	// Back reference StructuredAnnotations_BackReference
+	private StructuredAnnotations structuredAnnotations;
 
 	// -- Constructors --
 
@@ -133,6 +136,7 @@ public class FileAnnotation extends TypeAnnotation
 			setBinaryFile(new BinaryFile(
 					(Element) BinaryFile_nodeList.get(0), model));
 		}
+		// *** IGNORING *** Skipped back reference StructuredAnnotations_BackReference
 	}
 
 	// -- FileAnnotation API methods --
@@ -160,6 +164,17 @@ public class FileAnnotation extends TypeAnnotation
 		this.binaryFile = binaryFile;
 	}
 
+	// Property
+	public StructuredAnnotations getStructuredAnnotations()
+	{
+		return structuredAnnotations;
+	}
+
+	public void setStructuredAnnotations(StructuredAnnotations structuredAnnotations_BackReference)
+	{
+		this.structuredAnnotations = structuredAnnotations_BackReference;
+	}
+
 	public Element asXMLElement(Document document)
 	{
 		return asXMLElement(document, null);
@@ -180,6 +195,10 @@ public class FileAnnotation extends TypeAnnotation
 			// Element property BinaryFile which is complex (has
 			// sub-elements)
 			FileAnnotation_element.appendChild(binaryFile.asXMLElement(document));
+		}
+		if (structuredAnnotations != null)
+		{
+			// *** IGNORING *** Skipped back reference StructuredAnnotations_BackReference
 		}
 		return super.asXMLElement(document, FileAnnotation_element);
 	}

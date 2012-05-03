@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-05-03 05:24:50-0400
+ * Created by melissa via xsd-fu on 2012-05-03 09:56:03-0400
  *
  *-----------------------------------------------------------------------------
  */
@@ -120,6 +120,9 @@ public class Channel extends AbstractOMEModelObject
 
 	// Property
 	private LightPath lightPath;
+
+	// Back reference Pixels_BackReference
+	private Pixels pixels;
 
 	// -- Constructors --
 
@@ -320,6 +323,7 @@ public class Channel extends AbstractOMEModelObject
 			setLightPath(new LightPath(
 					(Element) LightPath_nodeList.get(0), model));
 		}
+		// *** IGNORING *** Skipped back reference Pixels_BackReference
 	}
 
 	// -- Channel API methods --
@@ -585,6 +589,17 @@ public class Channel extends AbstractOMEModelObject
 		this.lightPath = lightPath;
 	}
 
+	// Property
+	public Pixels getPixels()
+	{
+		return pixels;
+	}
+
+	public void setPixels(Pixels pixels_BackReference)
+	{
+		this.pixels = pixels_BackReference;
+	}
+
 	public Element asXMLElement(Document document)
 	{
 		return asXMLElement(document, null);
@@ -699,6 +714,10 @@ public class Channel extends AbstractOMEModelObject
 			// Element property LightPath which is complex (has
 			// sub-elements)
 			Channel_element.appendChild(lightPath.asXMLElement(document));
+		}
+		if (pixels != null)
+		{
+			// *** IGNORING *** Skipped back reference Pixels_BackReference
 		}
 		return super.asXMLElement(document, Channel_element);
 	}

@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-05-03 05:24:50-0400
+ * Created by melissa via xsd-fu on 2012-05-03 09:56:03-0400
  *
  *-----------------------------------------------------------------------------
  */
@@ -66,6 +66,9 @@ public class ListAnnotation extends Annotation
 
 	// -- Instance variables --
 
+
+	// Back reference StructuredAnnotations_BackReference
+	private StructuredAnnotations structuredAnnotations;
 
 	// -- Constructors --
 
@@ -114,6 +117,7 @@ public class ListAnnotation extends Annotation
 		{
 			LOGGER.debug("Expecting node name of ListAnnotation got {}", tagName);
 		}
+		// *** IGNORING *** Skipped back reference StructuredAnnotations_BackReference
 	}
 
 	// -- ListAnnotation API methods --
@@ -130,6 +134,17 @@ public class ListAnnotation extends Annotation
 	}
 
 
+	// Property
+	public StructuredAnnotations getStructuredAnnotations()
+	{
+		return structuredAnnotations;
+	}
+
+	public void setStructuredAnnotations(StructuredAnnotations structuredAnnotations_BackReference)
+	{
+		this.structuredAnnotations = structuredAnnotations_BackReference;
+	}
+
 	public Element asXMLElement(Document document)
 	{
 		return asXMLElement(document, null);
@@ -145,6 +160,10 @@ public class ListAnnotation extends Annotation
 					document.createElementNS(NAMESPACE, "ListAnnotation");
 		}
 
+		if (structuredAnnotations != null)
+		{
+			// *** IGNORING *** Skipped back reference StructuredAnnotations_BackReference
+		}
 		return super.asXMLElement(document, ListAnnotation_element);
 	}
 }

@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-05-03 05:24:50-0400
+ * Created by melissa via xsd-fu on 2012-05-03 09:56:03-0400
  *
  *-----------------------------------------------------------------------------
  */
@@ -69,6 +69,9 @@ public class BooleanAnnotation extends BasicAnnotation
 
 	// Property
 	private Boolean value;
+
+	// Back reference StructuredAnnotations_BackReference
+	private StructuredAnnotations structuredAnnotations;
 
 	// -- Constructors --
 
@@ -133,6 +136,7 @@ public class BooleanAnnotation extends BasicAnnotation
 			setValue(
 					Boolean.valueOf(Value_nodeList.get(0).getTextContent()));
 		}
+		// *** IGNORING *** Skipped back reference StructuredAnnotations_BackReference
 	}
 
 	// -- BooleanAnnotation API methods --
@@ -160,6 +164,17 @@ public class BooleanAnnotation extends BasicAnnotation
 		this.value = value;
 	}
 
+	// Property
+	public StructuredAnnotations getStructuredAnnotations()
+	{
+		return structuredAnnotations;
+	}
+
+	public void setStructuredAnnotations(StructuredAnnotations structuredAnnotations_BackReference)
+	{
+		this.structuredAnnotations = structuredAnnotations_BackReference;
+	}
+
 	public Element asXMLElement(Document document)
 	{
 		return asXMLElement(document, null);
@@ -183,6 +198,10 @@ public class BooleanAnnotation extends BasicAnnotation
 					document.createElementNS(NAMESPACE, "Value");
 			value_element.setTextContent(value.toString());
 			BooleanAnnotation_element.appendChild(value_element);
+		}
+		if (structuredAnnotations != null)
+		{
+			// *** IGNORING *** Skipped back reference StructuredAnnotations_BackReference
 		}
 		return super.asXMLElement(document, BooleanAnnotation_element);
 	}

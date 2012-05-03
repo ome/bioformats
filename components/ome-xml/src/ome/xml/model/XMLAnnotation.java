@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-05-03 05:24:50-0400
+ * Created by melissa via xsd-fu on 2012-05-03 09:56:03-0400
  *
  *-----------------------------------------------------------------------------
  */
@@ -69,6 +69,9 @@ public class XMLAnnotation extends TextAnnotation
 
 	// Property
 	private String value;
+
+	// Back reference StructuredAnnotations_BackReference
+	private StructuredAnnotations structuredAnnotations;
 
 	// -- Constructors --
 
@@ -166,6 +169,7 @@ public class XMLAnnotation extends TextAnnotation
 		}
 
 		// -- END custom content from Value property template --
+		// *** IGNORING *** Skipped back reference StructuredAnnotations_BackReference
 	}
 
 	// -- XMLAnnotation API methods --
@@ -191,6 +195,17 @@ public class XMLAnnotation extends TextAnnotation
 	public void setValue(String value)
 	{
 		this.value = value;
+	}
+
+	// Property
+	public StructuredAnnotations getStructuredAnnotations()
+	{
+		return structuredAnnotations;
+	}
+
+	public void setStructuredAnnotations(StructuredAnnotations structuredAnnotations_BackReference)
+	{
+		this.structuredAnnotations = structuredAnnotations_BackReference;
 	}
 
 	public Element asXMLElement(Document document)
@@ -238,6 +253,10 @@ public class XMLAnnotation extends TextAnnotation
 			}
 			XMLAnnotation_element.appendChild(value_element);
 			// -- END custom content from Value property template --
+		}
+		if (structuredAnnotations != null)
+		{
+			// *** IGNORING *** Skipped back reference StructuredAnnotations_BackReference
 		}
 		return super.asXMLElement(document, XMLAnnotation_element);
 	}

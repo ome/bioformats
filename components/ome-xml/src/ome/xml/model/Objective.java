@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-05-03 05:24:50-0400
+ * Created by melissa via xsd-fu on 2012-05-03 09:56:03-0400
  *
  *-----------------------------------------------------------------------------
  */
@@ -90,6 +90,9 @@ public class Objective extends ManufacturerSpec
 
 	// Property
 	private String id;
+
+	// Back reference Instrument_BackReference
+	private Instrument instrument;
 
 	// -- Constructors --
 
@@ -194,6 +197,7 @@ public class Objective extends ManufacturerSpec
 			// Adding this model object to the model handler
 			model.addModelObject(getID(), this);
 		}
+		// *** IGNORING *** Skipped back reference Instrument_BackReference
 	}
 
 	// -- Objective API methods --
@@ -298,6 +302,17 @@ public class Objective extends ManufacturerSpec
 		this.id = id;
 	}
 
+	// Property
+	public Instrument getInstrument()
+	{
+		return instrument;
+	}
+
+	public void setInstrument(Instrument instrument_BackReference)
+	{
+		this.instrument = instrument_BackReference;
+	}
+
 	public Element asXMLElement(Document document)
 	{
 		return asXMLElement(document, null);
@@ -352,6 +367,10 @@ public class Objective extends ManufacturerSpec
 		{
 			// Attribute property ID
 			Objective_element.setAttribute("ID", id.toString());
+		}
+		if (instrument != null)
+		{
+			// *** IGNORING *** Skipped back reference Instrument_BackReference
 		}
 		return super.asXMLElement(document, Objective_element);
 	}

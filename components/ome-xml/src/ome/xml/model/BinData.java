@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-05-03 05:24:50-0400
+ * Created by melissa via xsd-fu on 2012-05-03 09:56:03-0400
  *
  *-----------------------------------------------------------------------------
  */
@@ -75,6 +75,12 @@ public class BinData extends AbstractOMEModelObject
 
 	// Property
 	private Compression compression;
+
+	// Back reference Pixels_BackReference
+	private Pixels pixels;
+
+	// Back reference Mask_BackReference
+	private Mask mask;
 
 	// -- Constructors --
 
@@ -141,6 +147,8 @@ public class BinData extends AbstractOMEModelObject
 			setCompression(Compression.fromString(
 					element.getAttribute("Compression")));
 		}
+		// *** IGNORING *** Skipped back reference Pixels_BackReference
+		// *** IGNORING *** Skipped back reference Mask_BackReference
 	}
 
 	// -- BinData API methods --
@@ -190,6 +198,28 @@ public class BinData extends AbstractOMEModelObject
 		this.compression = compression;
 	}
 
+	// Property
+	public Pixels getPixels()
+	{
+		return pixels;
+	}
+
+	public void setPixels(Pixels pixels_BackReference)
+	{
+		this.pixels = pixels_BackReference;
+	}
+
+	// Property
+	public Mask getMask()
+	{
+		return mask;
+	}
+
+	public void setMask(Mask mask_BackReference)
+	{
+		this.mask = mask_BackReference;
+	}
+
 	public Element asXMLElement(Document document)
 	{
 		return asXMLElement(document, null);
@@ -219,6 +249,14 @@ public class BinData extends AbstractOMEModelObject
 		{
 			// Attribute property Compression
 			BinData_element.setAttribute("Compression", compression.toString());
+		}
+		if (pixels != null)
+		{
+			// *** IGNORING *** Skipped back reference Pixels_BackReference
+		}
+		if (mask != null)
+		{
+			// *** IGNORING *** Skipped back reference Mask_BackReference
 		}
 		return super.asXMLElement(document, BinData_element);
 	}

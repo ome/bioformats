@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-05-03 05:24:50-0400
+ * Created by melissa via xsd-fu on 2012-05-03 09:56:03-0400
  *
  *-----------------------------------------------------------------------------
  */
@@ -78,6 +78,9 @@ public class Filter extends ManufacturerSpec
 
 	// Property
 	private TransmittanceRange transmittanceRange;
+
+	// Back reference Instrument_BackReference
+	private Instrument instrument;
 
 	// Back reference FilterSet_BackReference
 	private List<FilterSet> filterSetExcitationFilterLinks = new ArrayList<FilterSet>();
@@ -180,6 +183,7 @@ public class Filter extends ManufacturerSpec
 			setTransmittanceRange(new TransmittanceRange(
 					(Element) TransmittanceRange_nodeList.get(0), model));
 		}
+		// *** IGNORING *** Skipped back reference Instrument_BackReference
 		// *** IGNORING *** Skipped back reference FilterSet_BackReference
 		// *** IGNORING *** Skipped back reference FilterSet_BackReference
 		// *** IGNORING *** Skipped back reference LightPath_BackReference
@@ -242,6 +246,17 @@ public class Filter extends ManufacturerSpec
 	public void setTransmittanceRange(TransmittanceRange transmittanceRange)
 	{
 		this.transmittanceRange = transmittanceRange;
+	}
+
+	// Property
+	public Instrument getInstrument()
+	{
+		return instrument;
+	}
+
+	public void setInstrument(Instrument instrument_BackReference)
+	{
+		this.instrument = instrument_BackReference;
 	}
 
 	// Reference which occurs more than once
@@ -415,6 +430,10 @@ public class Filter extends ManufacturerSpec
 			// Element property TransmittanceRange which is complex (has
 			// sub-elements)
 			Filter_element.appendChild(transmittanceRange.asXMLElement(document));
+		}
+		if (instrument != null)
+		{
+			// *** IGNORING *** Skipped back reference Instrument_BackReference
 		}
 		if (filterSetExcitationFilterLinks != null)
 		{

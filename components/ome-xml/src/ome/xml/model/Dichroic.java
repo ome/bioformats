@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-05-03 05:24:50-0400
+ * Created by melissa via xsd-fu on 2012-05-03 09:56:03-0400
  *
  *-----------------------------------------------------------------------------
  */
@@ -69,6 +69,9 @@ public class Dichroic extends ManufacturerSpec
 
 	// Property
 	private String id;
+
+	// Back reference Instrument_BackReference
+	private Instrument instrument;
 
 	// Back reference FilterSet_BackReference
 	private List<FilterSet> filterSets = new ArrayList<FilterSet>();
@@ -137,6 +140,7 @@ public class Dichroic extends ManufacturerSpec
 			// Adding this model object to the model handler
 			model.addModelObject(getID(), this);
 		}
+		// *** IGNORING *** Skipped back reference Instrument_BackReference
 		// *** IGNORING *** Skipped back reference FilterSet_BackReference
 		// *** IGNORING *** Skipped back reference LightPath_BackReference
 	}
@@ -164,6 +168,17 @@ public class Dichroic extends ManufacturerSpec
 	public void setID(String id)
 	{
 		this.id = id;
+	}
+
+	// Property
+	public Instrument getInstrument()
+	{
+		return instrument;
+	}
+
+	public void setInstrument(Instrument instrument_BackReference)
+	{
+		this.instrument = instrument_BackReference;
 	}
 
 	// Reference which occurs more than once
@@ -253,6 +268,10 @@ public class Dichroic extends ManufacturerSpec
 		{
 			// Attribute property ID
 			Dichroic_element.setAttribute("ID", id.toString());
+		}
+		if (instrument != null)
+		{
+			// *** IGNORING *** Skipped back reference Instrument_BackReference
 		}
 		if (filterSets != null)
 		{

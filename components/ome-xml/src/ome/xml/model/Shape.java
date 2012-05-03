@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-05-03 05:24:50-0400
+ * Created by melissa via xsd-fu on 2012-05-03 09:56:03-0400
  *
  *-----------------------------------------------------------------------------
  */
@@ -133,6 +133,9 @@ public abstract class Shape extends AbstractOMEModelObject
 
 	// Property
 	private AffineTransform transform;
+
+	// Back reference Union_BackReference
+	private Union union;
 
 	// -- Constructors --
 
@@ -388,6 +391,7 @@ public abstract class Shape extends AbstractOMEModelObject
 		else if (Transform_nodeList.size() != 0)
 		{
 		}
+		// *** IGNORING *** Skipped back reference Union_BackReference
 	}
 
 	// -- Shape API methods --
@@ -605,6 +609,17 @@ public abstract class Shape extends AbstractOMEModelObject
 	public void setTransform(AffineTransform transform)
 	{
 		this.transform = transform;
+	}
+
+	// Property
+	public Union getUnion()
+	{
+		return union;
+	}
+
+	public void setUnion(Union union_BackReference)
+	{
+		this.union = union_BackReference;
 	}
 
 	protected Element asXMLElement(Document document, Element Shape_element)

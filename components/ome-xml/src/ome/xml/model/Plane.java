@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-05-03 05:24:50-0400
+ * Created by melissa via xsd-fu on 2012-05-03 09:56:03-0400
  *
  *-----------------------------------------------------------------------------
  */
@@ -96,6 +96,9 @@ public class Plane extends AbstractOMEModelObject
 
 	// Reference AnnotationRef
 	private List<Annotation> annotationLinks = new ArrayList<Annotation>();
+
+	// Back reference Pixels_BackReference
+	private Pixels pixels;
 
 	// -- Constructors --
 
@@ -217,6 +220,7 @@ public class Plane extends AbstractOMEModelObject
 			annotationLinks_reference.setID(AnnotationRef_element.getAttribute("ID"));
 			model.addReference(this, annotationLinks_reference);
 		}
+		// *** IGNORING *** Skipped back reference Pixels_BackReference
 	}
 
 	// -- Plane API methods --
@@ -379,6 +383,17 @@ public class Plane extends AbstractOMEModelObject
 		return annotationLinks.remove(o);
 	}
 
+	// Property
+	public Pixels getPixels()
+	{
+		return pixels;
+	}
+
+	public void setPixels(Pixels pixels_BackReference)
+	{
+		this.pixels = pixels_BackReference;
+	}
+
 	public Element asXMLElement(Document document)
 	{
 		return asXMLElement(document, null);
@@ -452,6 +467,10 @@ public class Plane extends AbstractOMEModelObject
 				o.setID(annotationLinks_value.getID());
 				Plane_element.appendChild(o.asXMLElement(document));
 			}
+		}
+		if (pixels != null)
+		{
+			// *** IGNORING *** Skipped back reference Pixels_BackReference
 		}
 		return super.asXMLElement(document, Plane_element);
 	}

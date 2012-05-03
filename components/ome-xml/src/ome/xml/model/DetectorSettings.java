@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-05-03 05:24:50-0400
+ * Created by melissa via xsd-fu on 2012-05-03 09:56:03-0400
  *
  *-----------------------------------------------------------------------------
  */
@@ -86,7 +86,7 @@ public class DetectorSettings extends Settings
 	private Double voltage;
 
 	// Back reference DetectorRef
-	private List<Detector> detector = new ArrayList<Detector>();
+	private Detector detector;
 
 	// -- Constructors --
 
@@ -262,38 +262,15 @@ public class DetectorSettings extends Settings
 		this.voltage = voltage;
 	}
 
-	// Reference which occurs more than once
-	public int sizeOfLinkedDetectorList()
+	// Property
+	public Detector getDetector()
 	{
-		return detector.size();
+		return detector;
 	}
 
-	public List<Detector> copyLinkedDetectorList()
+	public void setDetector(Detector detector)
 	{
-		return new ArrayList<Detector>(detector);
-	}
-
-	public Detector getLinkedDetector(int index)
-	{
-		return detector.get(index);
-	}
-
-	public Detector setLinkedDetector(int index, Detector o)
-	{
-		return detector.set(index, o);
-	}
-
-	public boolean linkDetector(Detector o)
-	{
-		if (!detector.contains(o)) {
-			return detector.add(o);
-		}
-		return false;
-	}
-
-	public boolean unlinkDetector(Detector o)
-	{
-		return detector.remove(o);
+		this.detector = detector;
 	}
 
 	public Element asXMLElement(Document document)

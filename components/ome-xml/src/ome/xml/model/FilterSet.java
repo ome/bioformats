@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-05-03 05:24:50-0400
+ * Created by melissa via xsd-fu on 2012-05-03 09:56:03-0400
  *
  *-----------------------------------------------------------------------------
  */
@@ -81,6 +81,9 @@ public class FilterSet extends ManufacturerSpec
 
 	// Back reference Channel_BackReference
 	private List<Channel> channels = new ArrayList<Channel>();
+
+	// Back reference Instrument_BackReference
+	private Instrument instrument;
 
 	// -- Constructors --
 
@@ -171,6 +174,7 @@ public class FilterSet extends ManufacturerSpec
 			model.addReference(this, emissionFilterLinks_reference);
 		}
 		// *** IGNORING *** Skipped back reference Channel_BackReference
+		// *** IGNORING *** Skipped back reference Instrument_BackReference
 	}
 
 	// -- FilterSet API methods --
@@ -356,6 +360,17 @@ public class FilterSet extends ManufacturerSpec
 		return channels.remove(o);
 	}
 
+	// Property
+	public Instrument getInstrument()
+	{
+		return instrument;
+	}
+
+	public void setInstrument(Instrument instrument_BackReference)
+	{
+		this.instrument = instrument_BackReference;
+	}
+
 	public Element asXMLElement(Document document)
 	{
 		return asXMLElement(document, null);
@@ -406,6 +421,10 @@ public class FilterSet extends ManufacturerSpec
 		if (channels != null)
 		{
 			// *** IGNORING *** Skipped back reference Channel_BackReference
+		}
+		if (instrument != null)
+		{
+			// *** IGNORING *** Skipped back reference Instrument_BackReference
 		}
 		return super.asXMLElement(document, FilterSet_element);
 	}

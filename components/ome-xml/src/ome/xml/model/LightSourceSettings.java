@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-05-03 05:24:50-0400
+ * Created by melissa via xsd-fu on 2012-05-03 09:56:03-0400
  *
  *-----------------------------------------------------------------------------
  */
@@ -77,7 +77,10 @@ public class LightSourceSettings extends Settings
 	private String id;
 
 	// Back reference LightSourceRef
-	private List<LightSource> lightSource = new ArrayList<LightSource>();
+	private LightSource lightSource;
+
+	// Back reference MicrobeamManipulation_BackReference
+	private MicrobeamManipulation microbeamManipulation;
 
 	// -- Constructors --
 
@@ -153,6 +156,7 @@ public class LightSourceSettings extends Settings
 			model.addModelObject(getID(), this);
 		}
 		// *** IGNORING *** Skipped back reference LightSourceRef
+		// *** IGNORING *** Skipped back reference MicrobeamManipulation_BackReference
 	}
 
 	// -- LightSourceSettings API methods --
@@ -202,38 +206,26 @@ public class LightSourceSettings extends Settings
 		this.id = id;
 	}
 
-	// Reference which occurs more than once
-	public int sizeOfLinkedLightSourceList()
+	// Property
+	public LightSource getLightSource()
 	{
-		return lightSource.size();
+		return lightSource;
 	}
 
-	public List<LightSource> copyLinkedLightSourceList()
+	public void setLightSource(LightSource lightSource)
 	{
-		return new ArrayList<LightSource>(lightSource);
+		this.lightSource = lightSource;
 	}
 
-	public LightSource getLinkedLightSource(int index)
+	// Property
+	public MicrobeamManipulation getMicrobeamManipulation()
 	{
-		return lightSource.get(index);
+		return microbeamManipulation;
 	}
 
-	public LightSource setLinkedLightSource(int index, LightSource o)
+	public void setMicrobeamManipulation(MicrobeamManipulation microbeamManipulation_BackReference)
 	{
-		return lightSource.set(index, o);
-	}
-
-	public boolean linkLightSource(LightSource o)
-	{
-		if (!lightSource.contains(o)) {
-			return lightSource.add(o);
-		}
-		return false;
-	}
-
-	public boolean unlinkLightSource(LightSource o)
-	{
-		return lightSource.remove(o);
+		this.microbeamManipulation = microbeamManipulation_BackReference;
 	}
 
 	public Element asXMLElement(Document document)
@@ -269,6 +261,10 @@ public class LightSourceSettings extends Settings
 		if (lightSource != null)
 		{
 			// *** IGNORING *** Skipped back reference LightSourceRef
+		}
+		if (microbeamManipulation != null)
+		{
+			// *** IGNORING *** Skipped back reference MicrobeamManipulation_BackReference
 		}
 		return super.asXMLElement(document, LightSourceSettings_element);
 	}

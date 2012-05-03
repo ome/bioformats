@@ -35,7 +35,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-05-03 05:25:04-0400
+ * Created by melissa via xsd-fu on 2012-05-03 09:56:18-0400
  *
  *-----------------------------------------------------------------------------
  */
@@ -268,6 +268,7 @@ public class FilterMetadata implements MetadataStore
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public void setBooleanAnnotationValue(Boolean value, int booleanAnnotationIndex)
 	{
 		store.setBooleanAnnotationValue(value, booleanAnnotationIndex);
@@ -352,6 +353,7 @@ public class FilterMetadata implements MetadataStore
 		store.setChannelPinholeSize(pinholeSize, imageIndex, channelIndex);
 	}
 
+	// Ignoring Pixels_BackReference back reference
 	public void setChannelPockelCellSetting(Integer pockelCellSetting, int imageIndex, int channelIndex)
 	{
 		store.setChannelPockelCellSetting(pockelCellSetting, imageIndex, channelIndex);
@@ -404,6 +406,7 @@ public class FilterMetadata implements MetadataStore
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public void setCommentAnnotationValue(String value, int commentAnnotationIndex)
 	{
 		value = filter? DataTools.sanitize(value) : value;
@@ -489,6 +492,7 @@ public class FilterMetadata implements MetadataStore
 		store.setDetectorID(id, instrumentIndex, detectorIndex);
 	}
 
+	// Ignoring Instrument_BackReference back reference
 	public void setDetectorLotNumber(String lotNumber, int instrumentIndex, int detectorIndex)
 	{
 		lotNumber = filter? DataTools.sanitize(lotNumber) : lotNumber;
@@ -584,6 +588,7 @@ public class FilterMetadata implements MetadataStore
 		store.setDichroicID(id, instrumentIndex, dichroicIndex);
 	}
 
+	// Ignoring Instrument_BackReference back reference
 	// Ignoring LightPath_BackReference back reference
 	public void setDichroicLotNumber(String lotNumber, int instrumentIndex, int dichroicIndex)
 	{
@@ -661,6 +666,7 @@ public class FilterMetadata implements MetadataStore
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public void setDoubleAnnotationValue(Double value, int doubleAnnotationIndex)
 	{
 		store.setDoubleAnnotationValue(value, doubleAnnotationIndex);
@@ -1079,6 +1085,7 @@ public class FilterMetadata implements MetadataStore
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	// Ignoring WellSample_BackReference back reference
 	// Ignoring Well_BackReference back reference
 	//
@@ -1101,6 +1108,7 @@ public class FilterMetadata implements MetadataStore
 		store.setFilterID(id, instrumentIndex, filterIndex);
 	}
 
+	// Ignoring Instrument_BackReference back reference
 	// Ignoring LightPath_BackReference back reference
 	// Ignoring LightPath_BackReference back reference
 	public void setFilterLotNumber(String lotNumber, int instrumentIndex, int filterIndex)
@@ -1161,6 +1169,7 @@ public class FilterMetadata implements MetadataStore
 		store.setFilterSetID(id, instrumentIndex, filterSetIndex);
 	}
 
+	// Ignoring Instrument_BackReference back reference
 	public void setFilterSetLotNumber(String lotNumber, int instrumentIndex, int filterSetIndex)
 	{
 		lotNumber = filter? DataTools.sanitize(lotNumber) : lotNumber;
@@ -1672,6 +1681,7 @@ public class FilterMetadata implements MetadataStore
 	}
 
 	// Ignoring LightSourceRef back reference
+	// Ignoring MicrobeamManipulation_BackReference back reference
 	public void setChannelLightSourceSettingsWavelength(PositiveInteger wavelength, int imageIndex, int channelIndex)
 	{
 		store.setChannelLightSourceSettingsWavelength(wavelength, imageIndex, channelIndex);
@@ -1873,6 +1883,7 @@ public class FilterMetadata implements MetadataStore
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	// Ignoring WellSample_BackReference back reference
 	// Ignoring Well_BackReference back reference
 	//
@@ -1917,6 +1928,7 @@ public class FilterMetadata implements MetadataStore
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public void setLongAnnotationValue(Long value, int longAnnotationIndex)
 	{
 		store.setLongAnnotationValue(value, longAnnotationIndex);
@@ -2082,6 +2094,7 @@ public class FilterMetadata implements MetadataStore
 		store.setMicrobeamManipulationDescription(description, experimentIndex, microbeamManipulationIndex);
 	}
 
+	// Ignoring Experiment_BackReference back reference
 	public void setMicrobeamManipulationExperimenterRef(String experimenter, int experimentIndex, int microbeamManipulationIndex)
 	{
 		store.setMicrobeamManipulationExperimenterRef(experimenter, experimentIndex, microbeamManipulationIndex);
@@ -2177,6 +2190,7 @@ public class FilterMetadata implements MetadataStore
 		store.setObjectiveImmersion(immersion, instrumentIndex, objectiveIndex);
 	}
 
+	// Ignoring Instrument_BackReference back reference
 	public void setObjectiveIris(Boolean iris, int instrumentIndex, int objectiveIndex)
 	{
 		store.setObjectiveIris(iris, instrumentIndex, objectiveIndex);
@@ -2353,6 +2367,7 @@ public class FilterMetadata implements MetadataStore
 		store.setPlaneHashSHA1(hashSHA1, imageIndex, planeIndex);
 	}
 
+	// Ignoring Pixels_BackReference back reference
 	public void setPlanePositionX(Double positionX, int imageIndex, int planeIndex)
 	{
 		store.setPlanePositionX(positionX, imageIndex, planeIndex);
@@ -2502,6 +2517,7 @@ public class FilterMetadata implements MetadataStore
 		store.setPlateAcquisitionName(name, plateIndex, plateAcquisitionIndex);
 	}
 
+	// Ignoring Plate_BackReference back reference
 	public void setPlateAcquisitionStartTime(String startTime, int plateIndex, int plateAcquisitionIndex)
 	{
 		startTime = filter? DataTools.sanitize(startTime) : startTime;
@@ -3053,6 +3069,7 @@ public class FilterMetadata implements MetadataStore
 		store.setReagentReagentIdentifier(reagentIdentifier, screenIndex, reagentIndex);
 	}
 
+	// Ignoring Screen_BackReference back reference
 	// Ignoring Well_BackReference back reference
 	//
 	// ReagentRef property storage
@@ -3353,6 +3370,7 @@ public class FilterMetadata implements MetadataStore
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public void setTagAnnotationValue(String value, int tagAnnotationIndex)
 	{
 		value = filter? DataTools.sanitize(value) : value;
@@ -3403,6 +3421,7 @@ public class FilterMetadata implements MetadataStore
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public void setTermAnnotationValue(String value, int termAnnotationIndex)
 	{
 		value = filter? DataTools.sanitize(value) : value;
@@ -3437,6 +3456,7 @@ public class FilterMetadata implements MetadataStore
 		store.setTiffDataIFD(ifd, imageIndex, tiffDataIndex);
 	}
 
+	// Ignoring Pixels_BackReference back reference
 	public void setTiffDataPlaneCount(NonNegativeInteger planeCount, int imageIndex, int tiffDataIndex)
 	{
 		store.setTiffDataPlaneCount(planeCount, imageIndex, tiffDataIndex);
@@ -3485,6 +3505,7 @@ public class FilterMetadata implements MetadataStore
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public void setTimestampAnnotationValue(String value, int timestampAnnotationIndex)
 	{
 		value = filter? DataTools.sanitize(value) : value;
@@ -3590,6 +3611,7 @@ public class FilterMetadata implements MetadataStore
 		store.setWellID(id, plateIndex, wellIndex);
 	}
 
+	// Ignoring Plate_BackReference back reference
 	public void setWellReagentRef(String reagent, int plateIndex, int wellIndex)
 	{
 		store.setWellReagentRef(reagent, plateIndex, wellIndex);
@@ -3651,6 +3673,7 @@ public class FilterMetadata implements MetadataStore
 		store.setWellSampleTimepoint(timepoint, plateIndex, wellIndex, wellSampleIndex);
 	}
 
+	// Ignoring Well_BackReference back reference
 	//
 	// WellSampleRef property storage
 	//
@@ -3703,6 +3726,7 @@ public class FilterMetadata implements MetadataStore
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public void setXMLAnnotationValue(String value, int XMLAnnotationIndex)
 	{
 		value = filter? DataTools.sanitize(value) : value;

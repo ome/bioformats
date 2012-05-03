@@ -35,7 +35,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-05-03 05:25:03-0400
+ * Created by melissa via xsd-fu on 2012-05-03 09:56:16-0400
  *
  *-----------------------------------------------------------------------------
  */
@@ -660,6 +660,7 @@ public class DummyMetadata implements IMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public Boolean getBooleanAnnotationValue(int booleanAnnotationIndex)
 	{
 		return null;
@@ -742,6 +743,7 @@ public class DummyMetadata implements IMetadata
 		return null;
 	}
 
+	// Ignoring Pixels_BackReference back reference
 	public Integer getChannelPockelCellSetting(int imageIndex, int channelIndex)
 	{
 		return null;
@@ -792,6 +794,7 @@ public class DummyMetadata implements IMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public String getCommentAnnotationValue(int commentAnnotationIndex)
 	{
 		return null;
@@ -875,6 +878,7 @@ public class DummyMetadata implements IMetadata
 		return null;
 	}
 
+	// Ignoring Instrument_BackReference back reference
 	public String getDetectorLotNumber(int instrumentIndex, int detectorIndex)
 	{
 		return null;
@@ -966,6 +970,7 @@ public class DummyMetadata implements IMetadata
 		return null;
 	}
 
+	// Ignoring Instrument_BackReference back reference
 	// Ignoring LightPath_BackReference back reference
 	public String getDichroicLotNumber(int instrumentIndex, int dichroicIndex)
 	{
@@ -1038,6 +1043,7 @@ public class DummyMetadata implements IMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public Double getDoubleAnnotationValue(int doubleAnnotationIndex)
 	{
 		return null;
@@ -1444,6 +1450,7 @@ public class DummyMetadata implements IMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	// Ignoring WellSample_BackReference back reference
 	// Ignoring Well_BackReference back reference
 	//
@@ -1465,6 +1472,7 @@ public class DummyMetadata implements IMetadata
 		return null;
 	}
 
+	// Ignoring Instrument_BackReference back reference
 	// Ignoring LightPath_BackReference back reference
 	// Ignoring LightPath_BackReference back reference
 	public String getFilterLotNumber(int instrumentIndex, int filterIndex)
@@ -1521,6 +1529,7 @@ public class DummyMetadata implements IMetadata
 		return null;
 	}
 
+	// Ignoring Instrument_BackReference back reference
 	public String getFilterSetLotNumber(int instrumentIndex, int filterSetIndex)
 	{
 		return null;
@@ -2020,6 +2029,7 @@ public class DummyMetadata implements IMetadata
 	}
 
 	// Ignoring LightSourceRef back reference
+	// Ignoring MicrobeamManipulation_BackReference back reference
 	public PositiveInteger getChannelLightSourceSettingsWavelength(int imageIndex, int channelIndex)
 	{
 		return null;
@@ -2217,6 +2227,7 @@ public class DummyMetadata implements IMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	// Ignoring WellSample_BackReference back reference
 	// Ignoring Well_BackReference back reference
 	//
@@ -2259,6 +2270,7 @@ public class DummyMetadata implements IMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public Long getLongAnnotationValue(int longAnnotationIndex)
 	{
 		return null;
@@ -2423,6 +2435,7 @@ public class DummyMetadata implements IMetadata
 		return null;
 	}
 
+	// Ignoring Experiment_BackReference back reference
 	public String getMicrobeamManipulationExperimenterRef(int experimentIndex, int microbeamManipulationIndex)
 	{
 		return null;
@@ -2515,6 +2528,7 @@ public class DummyMetadata implements IMetadata
 		return null;
 	}
 
+	// Ignoring Instrument_BackReference back reference
 	public Boolean getObjectiveIris(int instrumentIndex, int objectiveIndex)
 	{
 		return null;
@@ -2687,6 +2701,7 @@ public class DummyMetadata implements IMetadata
 		return null;
 	}
 
+	// Ignoring Pixels_BackReference back reference
 	public Double getPlanePositionX(int imageIndex, int planeIndex)
 	{
 		return null;
@@ -2829,6 +2844,7 @@ public class DummyMetadata implements IMetadata
 		return null;
 	}
 
+	// Ignoring Plate_BackReference back reference
 	public String getPlateAcquisitionStartTime(int plateIndex, int plateAcquisitionIndex)
 	{
 		return null;
@@ -3366,6 +3382,7 @@ public class DummyMetadata implements IMetadata
 		return null;
 	}
 
+	// Ignoring Screen_BackReference back reference
 	// Ignoring Well_BackReference back reference
 	//
 	// ReagentRef property storage
@@ -3657,6 +3674,7 @@ public class DummyMetadata implements IMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public String getTagAnnotationValue(int tagAnnotationIndex)
 	{
 		return null;
@@ -3704,6 +3722,7 @@ public class DummyMetadata implements IMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public String getTermAnnotationValue(int termAnnotationIndex)
 	{
 		return null;
@@ -3738,6 +3757,7 @@ public class DummyMetadata implements IMetadata
 		return null;
 	}
 
+	// Ignoring Pixels_BackReference back reference
 	public NonNegativeInteger getTiffDataPlaneCount(int imageIndex, int tiffDataIndex)
 	{
 		return null;
@@ -3784,6 +3804,7 @@ public class DummyMetadata implements IMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public String getTimestampAnnotationValue(int timestampAnnotationIndex)
 	{
 		return null;
@@ -3880,6 +3901,7 @@ public class DummyMetadata implements IMetadata
 		return null;
 	}
 
+	// Ignoring Plate_BackReference back reference
 	public String getWellReagentRef(int plateIndex, int wellIndex)
 	{
 		return null;
@@ -3939,6 +3961,7 @@ public class DummyMetadata implements IMetadata
 		return null;
 	}
 
+	// Ignoring Well_BackReference back reference
 	//
 	// WellSampleRef property storage
 	//
@@ -3990,6 +4013,7 @@ public class DummyMetadata implements IMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public String getXMLAnnotationValue(int XMLAnnotationIndex)
 	{
 		return null;
@@ -4035,6 +4059,11 @@ public class DummyMetadata implements IMetadata
 	// Ignoring Filament of parent abstract type
 	// ID accessor from parent LightSource
 	public void setArcID(String id, int instrumentIndex, int lightSourceIndex)
+	{
+	}
+
+	// Instrument_BackReference accessor from parent LightSource
+	public void setArcInstrument_BackReference(String instrument_BackReference, int instrumentIndex, int lightSourceIndex)
 	{
 	}
 
@@ -4138,6 +4167,7 @@ public class DummyMetadata implements IMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public void setBooleanAnnotationValue(Boolean value, int booleanAnnotationIndex)
 	{
 	}
@@ -4205,6 +4235,7 @@ public class DummyMetadata implements IMetadata
 	{
 	}
 
+	// Ignoring Pixels_BackReference back reference
 	public void setChannelPockelCellSetting(Integer pockelCellSetting, int imageIndex, int channelIndex)
 	{
 	}
@@ -4248,6 +4279,7 @@ public class DummyMetadata implements IMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public void setCommentAnnotationValue(String value, int commentAnnotationIndex)
 	{
 	}
@@ -4317,6 +4349,7 @@ public class DummyMetadata implements IMetadata
 	{
 	}
 
+	// Ignoring Instrument_BackReference back reference
 	public void setDetectorLotNumber(String lotNumber, int instrumentIndex, int detectorIndex)
 	{
 	}
@@ -4391,6 +4424,7 @@ public class DummyMetadata implements IMetadata
 	{
 	}
 
+	// Ignoring Instrument_BackReference back reference
 	// Ignoring LightPath_BackReference back reference
 	public void setDichroicLotNumber(String lotNumber, int instrumentIndex, int dichroicIndex)
 	{
@@ -4453,6 +4487,7 @@ public class DummyMetadata implements IMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public void setDoubleAnnotationValue(Double value, int doubleAnnotationIndex)
 	{
 	}
@@ -4550,6 +4585,11 @@ public class DummyMetadata implements IMetadata
 
 	// Transform accessor from parent Shape
 	public void setEllipseTransform(AffineTransform transform, int ROIIndex, int shapeIndex)
+	{
+	}
+
+	// Union_BackReference accessor from parent Shape
+	public void setEllipseUnion_BackReference(String union_BackReference, int ROIIndex, int shapeIndex)
 	{
 	}
 
@@ -4730,6 +4770,11 @@ public class DummyMetadata implements IMetadata
 	{
 	}
 
+	// Instrument_BackReference accessor from parent LightSource
+	public void setFilamentInstrument_BackReference(String instrument_BackReference, int instrumentIndex, int lightSourceIndex)
+	{
+	}
+
 	// Ignoring Laser of parent abstract type
 	// Ignoring LightEmittingDiode of parent abstract type
 	// LotNumber accessor from parent LightSource
@@ -4797,6 +4842,7 @@ public class DummyMetadata implements IMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	// Ignoring WellSample_BackReference back reference
 	// Ignoring Well_BackReference back reference
 	//
@@ -4815,6 +4861,7 @@ public class DummyMetadata implements IMetadata
 	{
 	}
 
+	// Ignoring Instrument_BackReference back reference
 	// Ignoring LightPath_BackReference back reference
 	// Ignoring LightPath_BackReference back reference
 	public void setFilterLotNumber(String lotNumber, int instrumentIndex, int filterIndex)
@@ -4861,6 +4908,7 @@ public class DummyMetadata implements IMetadata
 	{
 	}
 
+	// Ignoring Instrument_BackReference back reference
 	public void setFilterSetLotNumber(String lotNumber, int instrumentIndex, int filterSetIndex)
 	{
 	}
@@ -5097,6 +5145,11 @@ public class DummyMetadata implements IMetadata
 	{
 	}
 
+	// Union_BackReference accessor from parent Shape
+	public void setLabelUnion_BackReference(String union_BackReference, int ROIIndex, int shapeIndex)
+	{
+	}
+
 	// Visible accessor from parent Shape
 	public void setLabelVisible(Boolean visible, int ROIIndex, int shapeIndex)
 	{
@@ -5120,6 +5173,11 @@ public class DummyMetadata implements IMetadata
 	// Ignoring Filament of parent abstract type
 	// ID accessor from parent LightSource
 	public void setLaserID(String id, int instrumentIndex, int lightSourceIndex)
+	{
+	}
+
+	// Instrument_BackReference accessor from parent LightSource
+	public void setLaserInstrument_BackReference(String instrument_BackReference, int instrumentIndex, int lightSourceIndex)
 	{
 	}
 
@@ -5213,6 +5271,11 @@ public class DummyMetadata implements IMetadata
 	{
 	}
 
+	// Instrument_BackReference accessor from parent LightSource
+	public void setLightEmittingDiodeInstrument_BackReference(String instrument_BackReference, int instrumentIndex, int lightSourceIndex)
+	{
+	}
+
 	// Ignoring Laser of parent abstract type
 	// Ignoring LightEmittingDiode of parent abstract type
 	// LotNumber accessor from parent LightSource
@@ -5281,6 +5344,7 @@ public class DummyMetadata implements IMetadata
 	}
 
 	// Ignoring LightSourceRef back reference
+	// Ignoring MicrobeamManipulation_BackReference back reference
 	public void setChannelLightSourceSettingsWavelength(PositiveInteger wavelength, int imageIndex, int channelIndex)
 	{
 	}
@@ -5383,6 +5447,11 @@ public class DummyMetadata implements IMetadata
 	{
 	}
 
+	// Union_BackReference accessor from parent Shape
+	public void setLineUnion_BackReference(String union_BackReference, int ROIIndex, int shapeIndex)
+	{
+	}
+
 	// Visible accessor from parent Shape
 	public void setLineVisible(Boolean visible, int ROIIndex, int shapeIndex)
 	{
@@ -5447,6 +5516,7 @@ public class DummyMetadata implements IMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	// Ignoring WellSample_BackReference back reference
 	// Ignoring Well_BackReference back reference
 	//
@@ -5484,6 +5554,7 @@ public class DummyMetadata implements IMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public void setLongAnnotationValue(Long value, int longAnnotationIndex)
 	{
 	}
@@ -5584,6 +5655,11 @@ public class DummyMetadata implements IMetadata
 	{
 	}
 
+	// Union_BackReference accessor from parent Shape
+	public void setMaskUnion_BackReference(String union_BackReference, int ROIIndex, int shapeIndex)
+	{
+	}
+
 	// Visible accessor from parent Shape
 	public void setMaskVisible(Boolean visible, int ROIIndex, int shapeIndex)
 	{
@@ -5622,6 +5698,7 @@ public class DummyMetadata implements IMetadata
 	{
 	}
 
+	// Ignoring Experiment_BackReference back reference
 	public void setMicrobeamManipulationExperimenterRef(String experimenter, int experimentIndex, int microbeamManipulationIndex)
 	{
 	}
@@ -5698,6 +5775,7 @@ public class DummyMetadata implements IMetadata
 	{
 	}
 
+	// Ignoring Instrument_BackReference back reference
 	public void setObjectiveIris(Boolean iris, int instrumentIndex, int objectiveIndex)
 	{
 	}
@@ -5838,6 +5916,7 @@ public class DummyMetadata implements IMetadata
 	{
 	}
 
+	// Ignoring Pixels_BackReference back reference
 	public void setPlanePositionX(Double positionX, int imageIndex, int planeIndex)
 	{
 	}
@@ -5953,6 +6032,7 @@ public class DummyMetadata implements IMetadata
 	{
 	}
 
+	// Ignoring Plate_BackReference back reference
 	public void setPlateAcquisitionStartTime(String startTime, int plateIndex, int plateAcquisitionIndex)
 	{
 	}
@@ -6065,6 +6145,11 @@ public class DummyMetadata implements IMetadata
 	{
 	}
 
+	// Union_BackReference accessor from parent Shape
+	public void setPointUnion_BackReference(String union_BackReference, int ROIIndex, int shapeIndex)
+	{
+	}
+
 	// Visible accessor from parent Shape
 	public void setPointVisible(Boolean visible, int ROIIndex, int shapeIndex)
 	{
@@ -6172,6 +6257,11 @@ public class DummyMetadata implements IMetadata
 	{
 	}
 
+	// Union_BackReference accessor from parent Shape
+	public void setPolygonUnion_BackReference(String union_BackReference, int ROIIndex, int shapeIndex)
+	{
+	}
+
 	// Visible accessor from parent Shape
 	public void setPolygonVisible(Boolean visible, int ROIIndex, int shapeIndex)
 	{
@@ -6272,6 +6362,11 @@ public class DummyMetadata implements IMetadata
 
 	// Transform accessor from parent Shape
 	public void setPolylineTransform(AffineTransform transform, int ROIIndex, int shapeIndex)
+	{
+	}
+
+	// Union_BackReference accessor from parent Shape
+	public void setPolylineUnion_BackReference(String union_BackReference, int ROIIndex, int shapeIndex)
 	{
 	}
 
@@ -6405,6 +6500,7 @@ public class DummyMetadata implements IMetadata
 	{
 	}
 
+	// Ignoring Screen_BackReference back reference
 	// Ignoring Well_BackReference back reference
 	//
 	// ReagentRef property storage
@@ -6507,6 +6603,11 @@ public class DummyMetadata implements IMetadata
 
 	// Transform accessor from parent Shape
 	public void setRectangleTransform(AffineTransform transform, int ROIIndex, int shapeIndex)
+	{
+	}
+
+	// Union_BackReference accessor from parent Shape
+	public void setRectangleUnion_BackReference(String union_BackReference, int ROIIndex, int shapeIndex)
 	{
 	}
 
@@ -6651,6 +6752,7 @@ public class DummyMetadata implements IMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public void setTagAnnotationValue(String value, int tagAnnotationIndex)
 	{
 	}
@@ -6692,6 +6794,7 @@ public class DummyMetadata implements IMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public void setTermAnnotationValue(String value, int termAnnotationIndex)
 	{
 	}
@@ -6720,6 +6823,7 @@ public class DummyMetadata implements IMetadata
 	{
 	}
 
+	// Ignoring Pixels_BackReference back reference
 	public void setTiffDataPlaneCount(NonNegativeInteger planeCount, int imageIndex, int tiffDataIndex)
 	{
 	}
@@ -6760,6 +6864,7 @@ public class DummyMetadata implements IMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public void setTimestampAnnotationValue(String value, int timestampAnnotationIndex)
 	{
 	}
@@ -6839,6 +6944,7 @@ public class DummyMetadata implements IMetadata
 	{
 	}
 
+	// Ignoring Plate_BackReference back reference
 	public void setWellReagentRef(String reagent, int plateIndex, int wellIndex)
 	{
 	}
@@ -6887,6 +6993,7 @@ public class DummyMetadata implements IMetadata
 	{
 	}
 
+	// Ignoring Well_BackReference back reference
 	//
 	// WellSampleRef property storage
 	//
@@ -6932,6 +7039,7 @@ public class DummyMetadata implements IMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public void setXMLAnnotationValue(String value, int XMLAnnotationIndex)
 	{
 	}

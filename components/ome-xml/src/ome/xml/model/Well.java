@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-05-03 05:24:50-0400
+ * Created by melissa via xsd-fu on 2012-05-03 09:56:03-0400
  *
  *-----------------------------------------------------------------------------
  */
@@ -96,6 +96,9 @@ public class Well extends AbstractOMEModelObject
 
 	// Reference AnnotationRef
 	private List<Annotation> annotationLinks = new ArrayList<Annotation>();
+
+	// Back reference Plate_BackReference
+	private Plate plate;
 
 	// -- Constructors --
 
@@ -221,6 +224,7 @@ public class Well extends AbstractOMEModelObject
 			annotationLinks_reference.setID(AnnotationRef_element.getAttribute("ID"));
 			model.addReference(this, annotationLinks_reference);
 		}
+		// *** IGNORING *** Skipped back reference Plate_BackReference
 	}
 
 	// -- Well API methods --
@@ -418,6 +422,17 @@ public class Well extends AbstractOMEModelObject
 		return annotationLinks.remove(o);
 	}
 
+	// Property
+	public Plate getPlate()
+	{
+		return plate;
+	}
+
+	public void setPlate(Plate plate_BackReference)
+	{
+		this.plate = plate_BackReference;
+	}
+
 	public Element asXMLElement(Document document)
 	{
 		return asXMLElement(document, null);
@@ -493,6 +508,10 @@ public class Well extends AbstractOMEModelObject
 				o.setID(annotationLinks_value.getID());
 				Well_element.appendChild(o.asXMLElement(document));
 			}
+		}
+		if (plate != null)
+		{
+			// *** IGNORING *** Skipped back reference Plate_BackReference
 		}
 		return super.asXMLElement(document, Well_element);
 	}

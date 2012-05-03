@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-05-03 05:24:50-0400
+ * Created by melissa via xsd-fu on 2012-05-03 09:56:03-0400
  *
  *-----------------------------------------------------------------------------
  */
@@ -81,6 +81,9 @@ public class Reagent extends AbstractOMEModelObject
 
 	// Reference AnnotationRef
 	private List<Annotation> annotationLinks = new ArrayList<Annotation>();
+
+	// Back reference Screen_BackReference
+	private Screen screen;
 
 	// Back reference Well_BackReference
 	private List<Well> wells = new ArrayList<Well>();
@@ -183,6 +186,7 @@ public class Reagent extends AbstractOMEModelObject
 			annotationLinks_reference.setID(AnnotationRef_element.getAttribute("ID"));
 			model.addReference(this, annotationLinks_reference);
 		}
+		// *** IGNORING *** Skipped back reference Screen_BackReference
 		// *** IGNORING *** Skipped back reference Well_BackReference
 	}
 
@@ -291,6 +295,17 @@ public class Reagent extends AbstractOMEModelObject
 		return annotationLinks.remove(o);
 	}
 
+	// Property
+	public Screen getScreen()
+	{
+		return screen;
+	}
+
+	public void setScreen(Screen screen_BackReference)
+	{
+		this.screen = screen_BackReference;
+	}
+
 	// Reference which occurs more than once
 	public int sizeOfLinkedWellList()
 	{
@@ -373,6 +388,10 @@ public class Reagent extends AbstractOMEModelObject
 				o.setID(annotationLinks_value.getID());
 				Reagent_element.appendChild(o.asXMLElement(document));
 			}
+		}
+		if (screen != null)
+		{
+			// *** IGNORING *** Skipped back reference Screen_BackReference
 		}
 		if (wells != null)
 		{

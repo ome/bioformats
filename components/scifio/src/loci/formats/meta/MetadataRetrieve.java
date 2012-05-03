@@ -35,7 +35,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-05-03 05:24:56-0400
+ * Created by melissa via xsd-fu on 2012-05-03 09:56:09-0400
  *
  *-----------------------------------------------------------------------------
  */
@@ -397,6 +397,7 @@ public interface MetadataRetrieve {
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	Boolean getBooleanAnnotationValue(int booleanAnnotationIndex);
 
 	// Ignoring WellSample_BackReference back reference
@@ -436,6 +437,7 @@ public interface MetadataRetrieve {
 
 	Double getChannelPinholeSize(int imageIndex, int channelIndex);
 
+	// Ignoring Pixels_BackReference back reference
 	Integer getChannelPockelCellSetting(int imageIndex, int channelIndex);
 
 	PositiveInteger getChannelSamplesPerPixel(int imageIndex, int channelIndex);
@@ -467,6 +469,7 @@ public interface MetadataRetrieve {
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	String getCommentAnnotationValue(int commentAnnotationIndex);
 
 	// Ignoring WellSample_BackReference back reference
@@ -514,6 +517,7 @@ public interface MetadataRetrieve {
 
 	String getDetectorID(int instrumentIndex, int detectorIndex);
 
+	// Ignoring Instrument_BackReference back reference
 	String getDetectorLotNumber(int instrumentIndex, int detectorIndex);
 
 	String getDetectorManufacturer(int instrumentIndex, int detectorIndex);
@@ -558,6 +562,7 @@ public interface MetadataRetrieve {
 	// Ignoring FilterSet_BackReference back reference
 	String getDichroicID(int instrumentIndex, int dichroicIndex);
 
+	// Ignoring Instrument_BackReference back reference
 	// Ignoring LightPath_BackReference back reference
 	String getDichroicLotNumber(int instrumentIndex, int dichroicIndex);
 
@@ -604,6 +609,7 @@ public interface MetadataRetrieve {
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	Double getDoubleAnnotationValue(int doubleAnnotationIndex);
 
 	// Ignoring WellSample_BackReference back reference
@@ -846,6 +852,7 @@ public interface MetadataRetrieve {
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	// Ignoring WellSample_BackReference back reference
 	// Ignoring Well_BackReference back reference
 	//
@@ -860,6 +867,7 @@ public interface MetadataRetrieve {
 
 	String getFilterID(int instrumentIndex, int filterIndex);
 
+	// Ignoring Instrument_BackReference back reference
 	// Ignoring LightPath_BackReference back reference
 	// Ignoring LightPath_BackReference back reference
 	String getFilterLotNumber(int instrumentIndex, int filterIndex);
@@ -888,6 +896,7 @@ public interface MetadataRetrieve {
 
 	String getFilterSetID(int instrumentIndex, int filterSetIndex);
 
+	// Ignoring Instrument_BackReference back reference
 	String getFilterSetLotNumber(int instrumentIndex, int filterSetIndex);
 
 	String getFilterSetManufacturer(int instrumentIndex, int filterSetIndex);
@@ -1174,6 +1183,7 @@ public interface MetadataRetrieve {
 	String getMicrobeamManipulationLightSourceSettingsID(int experimentIndex, int microbeamManipulationIndex, int lightSourceSettingsIndex);
 
 	// Ignoring LightSourceRef back reference
+	// Ignoring MicrobeamManipulation_BackReference back reference
 	PositiveInteger getChannelLightSourceSettingsWavelength(int imageIndex, int channelIndex);
 
 	PositiveInteger getMicrobeamManipulationLightSourceSettingsWavelength(int experimentIndex, int microbeamManipulationIndex, int lightSourceSettingsIndex);
@@ -1282,6 +1292,7 @@ public interface MetadataRetrieve {
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	// Ignoring WellSample_BackReference back reference
 	// Ignoring Well_BackReference back reference
 	//
@@ -1311,6 +1322,7 @@ public interface MetadataRetrieve {
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	Long getLongAnnotationValue(int longAnnotationIndex);
 
 	// Ignoring WellSample_BackReference back reference
@@ -1403,6 +1415,7 @@ public interface MetadataRetrieve {
 
 	String getMicrobeamManipulationDescription(int experimentIndex, int microbeamManipulationIndex);
 
+	// Ignoring Experiment_BackReference back reference
 	String getMicrobeamManipulationExperimenterRef(int experimentIndex, int microbeamManipulationIndex);
 
 	String getMicrobeamManipulationID(int experimentIndex, int microbeamManipulationIndex);
@@ -1453,6 +1466,7 @@ public interface MetadataRetrieve {
 
 	Immersion getObjectiveImmersion(int instrumentIndex, int objectiveIndex);
 
+	// Ignoring Instrument_BackReference back reference
 	Boolean getObjectiveIris(int instrumentIndex, int objectiveIndex);
 
 	Double getObjectiveLensNA(int instrumentIndex, int objectiveIndex);
@@ -1535,6 +1549,7 @@ public interface MetadataRetrieve {
 
 	String getPlaneHashSHA1(int imageIndex, int planeIndex);
 
+	// Ignoring Pixels_BackReference back reference
 	Double getPlanePositionX(int imageIndex, int planeIndex);
 
 	Double getPlanePositionY(int imageIndex, int planeIndex);
@@ -1600,6 +1615,7 @@ public interface MetadataRetrieve {
 
 	String getPlateAcquisitionName(int plateIndex, int plateAcquisitionIndex);
 
+	// Ignoring Plate_BackReference back reference
 	String getPlateAcquisitionStartTime(int plateIndex, int plateAcquisitionIndex);
 
 	String getPlateAcquisitionWellSampleRef(int plateIndex, int plateAcquisitionIndex, int wellSampleRefIndex);
@@ -1900,6 +1916,7 @@ public interface MetadataRetrieve {
 
 	String getReagentReagentIdentifier(int screenIndex, int reagentIndex);
 
+	// Ignoring Screen_BackReference back reference
 	// Ignoring Well_BackReference back reference
 	//
 	// ReagentRef property storage
@@ -2068,6 +2085,7 @@ public interface MetadataRetrieve {
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	String getTagAnnotationValue(int tagAnnotationIndex);
 
 	// Ignoring WellSample_BackReference back reference
@@ -2099,6 +2117,7 @@ public interface MetadataRetrieve {
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	String getTermAnnotationValue(int termAnnotationIndex);
 
 	// Ignoring WellSample_BackReference back reference
@@ -2117,6 +2136,7 @@ public interface MetadataRetrieve {
 
 	NonNegativeInteger getTiffDataIFD(int imageIndex, int tiffDataIndex);
 
+	// Ignoring Pixels_BackReference back reference
 	NonNegativeInteger getTiffDataPlaneCount(int imageIndex, int tiffDataIndex);
 
 	// Ignoring UUID element, complex property
@@ -2147,6 +2167,7 @@ public interface MetadataRetrieve {
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	String getTimestampAnnotationValue(int timestampAnnotationIndex);
 
 	// Ignoring WellSample_BackReference back reference
@@ -2200,6 +2221,7 @@ public interface MetadataRetrieve {
 
 	String getWellID(int plateIndex, int wellIndex);
 
+	// Ignoring Plate_BackReference back reference
 	String getWellReagentRef(int plateIndex, int wellIndex);
 
 	NonNegativeInteger getWellRow(int plateIndex, int wellIndex);
@@ -2228,6 +2250,7 @@ public interface MetadataRetrieve {
 
 	String getWellSampleTimepoint(int plateIndex, int wellIndex, int wellSampleIndex);
 
+	// Ignoring Well_BackReference back reference
 	//
 	// WellSampleRef property storage
 	//
@@ -2265,6 +2288,7 @@ public interface MetadataRetrieve {
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	String getXMLAnnotationValue(int XMLAnnotationIndex);
 
 	// Ignoring WellSample_BackReference back reference

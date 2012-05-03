@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-05-03 05:24:50-0400
+ * Created by melissa via xsd-fu on 2012-05-03 09:56:03-0400
  *
  *-----------------------------------------------------------------------------
  */
@@ -87,6 +87,9 @@ public class MicrobeamManipulation extends AbstractOMEModelObject
 
 	// Back reference Image_BackReference
 	private List<Image> imageLinks = new ArrayList<Image>();
+
+	// Back reference Experiment_BackReference
+	private Experiment experiment;
 
 	// -- Constructors --
 
@@ -199,6 +202,7 @@ public class MicrobeamManipulation extends AbstractOMEModelObject
 					new LightSourceSettings(LightSourceSettings_element, model));
 		}
 		// *** IGNORING *** Skipped back reference Image_BackReference
+		// *** IGNORING *** Skipped back reference Experiment_BackReference
 	}
 
 	// -- MicrobeamManipulation API methods --
@@ -386,6 +390,17 @@ public class MicrobeamManipulation extends AbstractOMEModelObject
 		return imageLinks.remove(o);
 	}
 
+	// Property
+	public Experiment getExperiment()
+	{
+		return experiment;
+	}
+
+	public void setExperiment(Experiment experiment_BackReference)
+	{
+		this.experiment = experiment_BackReference;
+	}
+
 	public Element asXMLElement(Document document)
 	{
 		return asXMLElement(document, null);
@@ -449,6 +464,10 @@ public class MicrobeamManipulation extends AbstractOMEModelObject
 		if (imageLinks != null)
 		{
 			// *** IGNORING *** Skipped back reference Image_BackReference
+		}
+		if (experiment != null)
+		{
+			// *** IGNORING *** Skipped back reference Experiment_BackReference
 		}
 		return super.asXMLElement(document, MicrobeamManipulation_element);
 	}

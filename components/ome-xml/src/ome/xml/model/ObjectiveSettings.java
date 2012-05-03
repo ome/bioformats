@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-05-03 05:24:50-0400
+ * Created by melissa via xsd-fu on 2012-05-03 09:56:03-0400
  *
  *-----------------------------------------------------------------------------
  */
@@ -80,7 +80,7 @@ public class ObjectiveSettings extends Settings
 	private Medium medium;
 
 	// Back reference ObjectiveRef
-	private List<Objective> objective = new ArrayList<Objective>();
+	private Objective objective;
 
 	// -- Constructors --
 
@@ -222,38 +222,15 @@ public class ObjectiveSettings extends Settings
 		this.medium = medium;
 	}
 
-	// Reference which occurs more than once
-	public int sizeOfLinkedObjectiveList()
+	// Property
+	public Objective getObjective()
 	{
-		return objective.size();
+		return objective;
 	}
 
-	public List<Objective> copyLinkedObjectiveList()
+	public void setObjective(Objective objective)
 	{
-		return new ArrayList<Objective>(objective);
-	}
-
-	public Objective getLinkedObjective(int index)
-	{
-		return objective.get(index);
-	}
-
-	public Objective setLinkedObjective(int index, Objective o)
-	{
-		return objective.set(index, o);
-	}
-
-	public boolean linkObjective(Objective o)
-	{
-		if (!objective.contains(o)) {
-			return objective.add(o);
-		}
-		return false;
-	}
-
-	public boolean unlinkObjective(Objective o)
-	{
-		return objective.remove(o);
+		this.objective = objective;
 	}
 
 	public Element asXMLElement(Document document)

@@ -35,7 +35,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-05-03 05:25:00-0400
+ * Created by melissa via xsd-fu on 2012-05-03 09:56:13-0400
  *
  *-----------------------------------------------------------------------------
  */
@@ -1562,6 +1562,7 @@ public class AggregateMetadata implements IMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public Boolean getBooleanAnnotationValue(int booleanAnnotationIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -1784,6 +1785,7 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
+	// Ignoring Pixels_BackReference back reference
 	public Integer getChannelPockelCellSetting(int imageIndex, int channelIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -1894,6 +1896,7 @@ public class AggregateMetadata implements IMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public String getCommentAnnotationValue(int commentAnnotationIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -2087,6 +2090,7 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
+	// Ignoring Instrument_BackReference back reference
 	public String getDetectorLotNumber(int instrumentIndex, int detectorIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -2328,6 +2332,7 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
+	// Ignoring Instrument_BackReference back reference
 	// Ignoring LightPath_BackReference back reference
 	public String getDichroicLotNumber(int instrumentIndex, int dichroicIndex)
 	{
@@ -2480,6 +2485,7 @@ public class AggregateMetadata implements IMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public Double getDoubleAnnotationValue(int doubleAnnotationIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -3396,6 +3402,7 @@ public class AggregateMetadata implements IMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	// Ignoring WellSample_BackReference back reference
 	// Ignoring Well_BackReference back reference
 	//
@@ -3437,6 +3444,7 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
+	// Ignoring Instrument_BackReference back reference
 	// Ignoring LightPath_BackReference back reference
 	// Ignoring LightPath_BackReference back reference
 	public String getFilterLotNumber(int instrumentIndex, int filterIndex)
@@ -3583,6 +3591,7 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
+	// Ignoring Instrument_BackReference back reference
 	public String getFilterSetLotNumber(int instrumentIndex, int filterSetIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -4752,6 +4761,7 @@ public class AggregateMetadata implements IMetadata
 	}
 
 	// Ignoring LightSourceRef back reference
+	// Ignoring MicrobeamManipulation_BackReference back reference
 	public PositiveInteger getChannelLightSourceSettingsWavelength(int imageIndex, int channelIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -5239,6 +5249,7 @@ public class AggregateMetadata implements IMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	// Ignoring WellSample_BackReference back reference
 	// Ignoring Well_BackReference back reference
 	//
@@ -5321,6 +5332,7 @@ public class AggregateMetadata implements IMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public Long getLongAnnotationValue(int longAnnotationIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -5715,6 +5727,7 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
+	// Ignoring Experiment_BackReference back reference
 	public String getMicrobeamManipulationExperimenterRef(int experimentIndex, int microbeamManipulationIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -5937,6 +5950,7 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
+	// Ignoring Instrument_BackReference back reference
 	public Boolean getObjectiveIris(int instrumentIndex, int objectiveIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -6399,6 +6413,7 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
+	// Ignoring Pixels_BackReference back reference
 	public Double getPlanePositionX(int imageIndex, int planeIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -6791,6 +6806,7 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
+	// Ignoring Plate_BackReference back reference
 	public String getPlateAcquisitionStartTime(int plateIndex, int plateAcquisitionIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -8088,6 +8104,7 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
+	// Ignoring Screen_BackReference back reference
 	// Ignoring Well_BackReference back reference
 	//
 	// ReagentRef property storage
@@ -8769,6 +8786,7 @@ public class AggregateMetadata implements IMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public String getTagAnnotationValue(int tagAnnotationIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -8866,6 +8884,7 @@ public class AggregateMetadata implements IMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public String getTermAnnotationValue(int termAnnotationIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -8950,6 +8969,7 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
+	// Ignoring Pixels_BackReference back reference
 	public NonNegativeInteger getTiffDataPlaneCount(int imageIndex, int tiffDataIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -9046,6 +9066,7 @@ public class AggregateMetadata implements IMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public String getTimestampAnnotationValue(int timestampAnnotationIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -9272,6 +9293,7 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
+	// Ignoring Plate_BackReference back reference
 	public String getWellReagentRef(int plateIndex, int wellIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -9431,6 +9453,7 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
+	// Ignoring Well_BackReference back reference
 	//
 	// WellSampleRef property storage
 	//
@@ -9522,6 +9545,7 @@ public class AggregateMetadata implements IMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public String getXMLAnnotationValue(int XMLAnnotationIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -9850,6 +9874,7 @@ public class AggregateMetadata implements IMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public void setBooleanAnnotationValue(Boolean value, int booleanAnnotationIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -10043,6 +10068,7 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
+	// Ignoring Pixels_BackReference back reference
 	public void setChannelPockelCellSetting(Integer pockelCellSetting, int imageIndex, int channelIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -10140,6 +10166,7 @@ public class AggregateMetadata implements IMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public void setCommentAnnotationValue(String value, int commentAnnotationIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -10308,6 +10335,7 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
+	// Ignoring Instrument_BackReference back reference
 	public void setDetectorLotNumber(String lotNumber, int instrumentIndex, int detectorIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -10517,6 +10545,7 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
+	// Ignoring Instrument_BackReference back reference
 	// Ignoring LightPath_BackReference back reference
 	public void setDichroicLotNumber(String lotNumber, int instrumentIndex, int dichroicIndex)
 	{
@@ -10651,6 +10680,7 @@ public class AggregateMetadata implements IMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public void setDoubleAnnotationValue(Double value, int doubleAnnotationIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -11454,6 +11484,7 @@ public class AggregateMetadata implements IMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	// Ignoring WellSample_BackReference back reference
 	// Ignoring Well_BackReference back reference
 	//
@@ -11490,6 +11521,7 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
+	// Ignoring Instrument_BackReference back reference
 	// Ignoring LightPath_BackReference back reference
 	// Ignoring LightPath_BackReference back reference
 	public void setFilterLotNumber(String lotNumber, int instrumentIndex, int filterIndex)
@@ -11617,6 +11649,7 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
+	// Ignoring Instrument_BackReference back reference
 	public void setFilterSetLotNumber(String lotNumber, int instrumentIndex, int filterSetIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -12640,6 +12673,7 @@ public class AggregateMetadata implements IMetadata
 	}
 
 	// Ignoring LightSourceRef back reference
+	// Ignoring MicrobeamManipulation_BackReference back reference
 	public void setChannelLightSourceSettingsWavelength(PositiveInteger wavelength, int imageIndex, int channelIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -13067,6 +13101,7 @@ public class AggregateMetadata implements IMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	// Ignoring WellSample_BackReference back reference
 	// Ignoring Well_BackReference back reference
 	//
@@ -13140,6 +13175,7 @@ public class AggregateMetadata implements IMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public void setLongAnnotationValue(Long value, int longAnnotationIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -13485,6 +13521,7 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
+	// Ignoring Experiment_BackReference back reference
 	public void setMicrobeamManipulationExperimenterRef(String experimenter, int experimentIndex, int microbeamManipulationIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -13678,6 +13715,7 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
+	// Ignoring Instrument_BackReference back reference
 	public void setObjectiveIris(Boolean iris, int instrumentIndex, int objectiveIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -14079,6 +14117,7 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
+	// Ignoring Pixels_BackReference back reference
 	public void setPlanePositionX(Double positionX, int imageIndex, int planeIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -14419,6 +14458,7 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
+	// Ignoring Plate_BackReference back reference
 	public void setPlateAcquisitionStartTime(String startTime, int plateIndex, int plateAcquisitionIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -15555,6 +15595,7 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
+	// Ignoring Screen_BackReference back reference
 	// Ignoring Well_BackReference back reference
 	//
 	// ReagentRef property storage
@@ -16152,6 +16193,7 @@ public class AggregateMetadata implements IMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public void setTagAnnotationValue(String value, int tagAnnotationIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -16238,6 +16280,7 @@ public class AggregateMetadata implements IMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public void setTermAnnotationValue(String value, int termAnnotationIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -16311,6 +16354,7 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
+	// Ignoring Pixels_BackReference back reference
 	public void setTiffDataPlaneCount(NonNegativeInteger planeCount, int imageIndex, int tiffDataIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -16396,6 +16440,7 @@ public class AggregateMetadata implements IMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public void setTimestampAnnotationValue(String value, int timestampAnnotationIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -16592,6 +16637,7 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
+	// Ignoring Plate_BackReference back reference
 	public void setWellReagentRef(String reagent, int plateIndex, int wellIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -16730,6 +16776,7 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
+	// Ignoring Well_BackReference back reference
 	//
 	// WellSampleRef property storage
 	//
@@ -16811,6 +16858,7 @@ public class AggregateMetadata implements IMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public void setXMLAnnotationValue(String value, int XMLAnnotationIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)

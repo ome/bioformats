@@ -35,7 +35,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-05-03 05:24:54-0400
+ * Created by melissa via xsd-fu on 2012-05-03 09:56:07-0400
  *
  *-----------------------------------------------------------------------------
  */
@@ -196,6 +196,7 @@ public interface MetadataStore
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	void setBooleanAnnotationValue(Boolean value, int booleanAnnotationIndex);
 
 	// Ignoring WellSample_BackReference back reference
@@ -235,6 +236,7 @@ public interface MetadataStore
 
 	void setChannelPinholeSize(Double pinholeSize, int imageIndex, int channelIndex);
 
+	// Ignoring Pixels_BackReference back reference
 	void setChannelPockelCellSetting(Integer pockelCellSetting, int imageIndex, int channelIndex);
 
 	void setChannelSamplesPerPixel(PositiveInteger samplesPerPixel, int imageIndex, int channelIndex);
@@ -266,6 +268,7 @@ public interface MetadataStore
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	void setCommentAnnotationValue(String value, int commentAnnotationIndex);
 
 	// Ignoring WellSample_BackReference back reference
@@ -313,6 +316,7 @@ public interface MetadataStore
 
 	void setDetectorID(String id, int instrumentIndex, int detectorIndex);
 
+	// Ignoring Instrument_BackReference back reference
 	void setDetectorLotNumber(String lotNumber, int instrumentIndex, int detectorIndex);
 
 	void setDetectorManufacturer(String manufacturer, int instrumentIndex, int detectorIndex);
@@ -357,6 +361,7 @@ public interface MetadataStore
 	// Ignoring FilterSet_BackReference back reference
 	void setDichroicID(String id, int instrumentIndex, int dichroicIndex);
 
+	// Ignoring Instrument_BackReference back reference
 	// Ignoring LightPath_BackReference back reference
 	void setDichroicLotNumber(String lotNumber, int instrumentIndex, int dichroicIndex);
 
@@ -403,6 +408,7 @@ public interface MetadataStore
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	void setDoubleAnnotationValue(Double value, int doubleAnnotationIndex);
 
 	// Ignoring WellSample_BackReference back reference
@@ -645,6 +651,7 @@ public interface MetadataStore
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	// Ignoring WellSample_BackReference back reference
 	// Ignoring Well_BackReference back reference
 	//
@@ -659,6 +666,7 @@ public interface MetadataStore
 
 	void setFilterID(String id, int instrumentIndex, int filterIndex);
 
+	// Ignoring Instrument_BackReference back reference
 	// Ignoring LightPath_BackReference back reference
 	// Ignoring LightPath_BackReference back reference
 	void setFilterLotNumber(String lotNumber, int instrumentIndex, int filterIndex);
@@ -687,6 +695,7 @@ public interface MetadataStore
 
 	void setFilterSetID(String id, int instrumentIndex, int filterSetIndex);
 
+	// Ignoring Instrument_BackReference back reference
 	void setFilterSetLotNumber(String lotNumber, int instrumentIndex, int filterSetIndex);
 
 	void setFilterSetManufacturer(String manufacturer, int instrumentIndex, int filterSetIndex);
@@ -973,6 +982,7 @@ public interface MetadataStore
 	void setMicrobeamManipulationLightSourceSettingsID(String id, int experimentIndex, int microbeamManipulationIndex, int lightSourceSettingsIndex);
 
 	// Ignoring LightSourceRef back reference
+	// Ignoring MicrobeamManipulation_BackReference back reference
 	void setChannelLightSourceSettingsWavelength(PositiveInteger wavelength, int imageIndex, int channelIndex);
 
 	void setMicrobeamManipulationLightSourceSettingsWavelength(PositiveInteger wavelength, int experimentIndex, int microbeamManipulationIndex, int lightSourceSettingsIndex);
@@ -1081,6 +1091,7 @@ public interface MetadataStore
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	// Ignoring WellSample_BackReference back reference
 	// Ignoring Well_BackReference back reference
 	//
@@ -1110,6 +1121,7 @@ public interface MetadataStore
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	void setLongAnnotationValue(Long value, int longAnnotationIndex);
 
 	// Ignoring WellSample_BackReference back reference
@@ -1202,6 +1214,7 @@ public interface MetadataStore
 
 	void setMicrobeamManipulationDescription(String description, int experimentIndex, int microbeamManipulationIndex);
 
+	// Ignoring Experiment_BackReference back reference
 	void setMicrobeamManipulationExperimenterRef(String experimenter, int experimentIndex, int microbeamManipulationIndex);
 
 	void setMicrobeamManipulationID(String id, int experimentIndex, int microbeamManipulationIndex);
@@ -1252,6 +1265,7 @@ public interface MetadataStore
 
 	void setObjectiveImmersion(Immersion immersion, int instrumentIndex, int objectiveIndex);
 
+	// Ignoring Instrument_BackReference back reference
 	void setObjectiveIris(Boolean iris, int instrumentIndex, int objectiveIndex);
 
 	void setObjectiveLensNA(Double lensNA, int instrumentIndex, int objectiveIndex);
@@ -1334,6 +1348,7 @@ public interface MetadataStore
 
 	void setPlaneHashSHA1(String hashSHA1, int imageIndex, int planeIndex);
 
+	// Ignoring Pixels_BackReference back reference
 	void setPlanePositionX(Double positionX, int imageIndex, int planeIndex);
 
 	void setPlanePositionY(Double positionY, int imageIndex, int planeIndex);
@@ -1399,6 +1414,7 @@ public interface MetadataStore
 
 	void setPlateAcquisitionName(String name, int plateIndex, int plateAcquisitionIndex);
 
+	// Ignoring Plate_BackReference back reference
 	void setPlateAcquisitionStartTime(String startTime, int plateIndex, int plateAcquisitionIndex);
 
 	void setPlateAcquisitionWellSampleRef(String wellSample, int plateIndex, int plateAcquisitionIndex, int wellSampleRefIndex);
@@ -1699,6 +1715,7 @@ public interface MetadataStore
 
 	void setReagentReagentIdentifier(String reagentIdentifier, int screenIndex, int reagentIndex);
 
+	// Ignoring Screen_BackReference back reference
 	// Ignoring Well_BackReference back reference
 	//
 	// ReagentRef property storage
@@ -1867,6 +1884,7 @@ public interface MetadataStore
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	void setTagAnnotationValue(String value, int tagAnnotationIndex);
 
 	// Ignoring WellSample_BackReference back reference
@@ -1898,6 +1916,7 @@ public interface MetadataStore
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	void setTermAnnotationValue(String value, int termAnnotationIndex);
 
 	// Ignoring WellSample_BackReference back reference
@@ -1916,6 +1935,7 @@ public interface MetadataStore
 
 	void setTiffDataIFD(NonNegativeInteger ifd, int imageIndex, int tiffDataIndex);
 
+	// Ignoring Pixels_BackReference back reference
 	void setTiffDataPlaneCount(NonNegativeInteger planeCount, int imageIndex, int tiffDataIndex);
 
 	// Ignoring UUID element, complex property
@@ -1946,6 +1966,7 @@ public interface MetadataStore
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	void setTimestampAnnotationValue(String value, int timestampAnnotationIndex);
 
 	// Ignoring WellSample_BackReference back reference
@@ -2003,6 +2024,7 @@ public interface MetadataStore
 
 	void setWellID(String id, int plateIndex, int wellIndex);
 
+	// Ignoring Plate_BackReference back reference
 	void setWellReagentRef(String reagent, int plateIndex, int wellIndex);
 
 	void setWellRow(NonNegativeInteger row, int plateIndex, int wellIndex);
@@ -2031,6 +2053,7 @@ public interface MetadataStore
 
 	void setWellSampleTimepoint(String timepoint, int plateIndex, int wellIndex, int wellSampleIndex);
 
+	// Ignoring Well_BackReference back reference
 	//
 	// WellSampleRef property storage
 	//
@@ -2068,6 +2091,7 @@ public interface MetadataStore
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	void setXMLAnnotationValue(String value, int XMLAnnotationIndex);
 
 	// Ignoring WellSample_BackReference back reference

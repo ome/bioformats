@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-05-03 05:24:50-0400
+ * Created by melissa via xsd-fu on 2012-05-03 09:56:03-0400
  *
  *-----------------------------------------------------------------------------
  */
@@ -90,6 +90,9 @@ public class WellSample extends AbstractOMEModelObject
 
 	// Back reference PlateAcquisition_BackReference
 	private List<PlateAcquisition> plateAcquisitions = new ArrayList<PlateAcquisition>();
+
+	// Back reference Well_BackReference
+	private Well well;
 
 	// -- Constructors --
 
@@ -195,6 +198,7 @@ public class WellSample extends AbstractOMEModelObject
 			model.addReference(this, annotationLinks_reference);
 		}
 		// *** IGNORING *** Skipped back reference PlateAcquisition_BackReference
+		// *** IGNORING *** Skipped back reference Well_BackReference
 	}
 
 	// -- WellSample API methods --
@@ -373,6 +377,17 @@ public class WellSample extends AbstractOMEModelObject
 		return plateAcquisitions.remove(o);
 	}
 
+	// Property
+	public Well getWell()
+	{
+		return well;
+	}
+
+	public void setWell(Well well_BackReference)
+	{
+		this.well = well_BackReference;
+	}
+
 	public Element asXMLElement(Document document)
 	{
 		return asXMLElement(document, null);
@@ -433,6 +448,10 @@ public class WellSample extends AbstractOMEModelObject
 		if (plateAcquisitions != null)
 		{
 			// *** IGNORING *** Skipped back reference PlateAcquisition_BackReference
+		}
+		if (well != null)
+		{
+			// *** IGNORING *** Skipped back reference Well_BackReference
 		}
 		return super.asXMLElement(document, WellSample_element);
 	}

@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-05-03 05:24:50-0400
+ * Created by melissa via xsd-fu on 2012-05-03 09:56:03-0400
  *
  *-----------------------------------------------------------------------------
  */
@@ -80,6 +80,9 @@ public abstract class LightSource extends ManufacturerSpec
 	// *** WARNING *** Unhandled or skipped property Arc
 
 	// *** WARNING *** Unhandled or skipped property LightEmittingDiode
+
+	// Back reference Instrument_BackReference
+	private Instrument instrument;
 
 	// -- Constructors --
 
@@ -191,6 +194,7 @@ public abstract class LightSource extends ManufacturerSpec
 		else if (LightEmittingDiode_nodeList.size() != 0)
 		{
 		}
+		// *** IGNORING *** Skipped back reference Instrument_BackReference
 	}
 
 	// -- LightSource API methods --
@@ -236,6 +240,17 @@ public abstract class LightSource extends ManufacturerSpec
 	// *** WARNING *** Unhandled or skipped property Arc
 
 	// *** WARNING *** Unhandled or skipped property LightEmittingDiode
+
+	// Property
+	public Instrument getInstrument()
+	{
+		return instrument;
+	}
+
+	public void setInstrument(Instrument instrument_BackReference)
+	{
+		this.instrument = instrument_BackReference;
+	}
 
 	protected Element asXMLElement(Document document, Element LightSource_element)
 	{
