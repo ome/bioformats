@@ -275,7 +275,7 @@ public class PDSReader extends FormatReader {
     MetadataTools.populatePixels(store, this, !minimumMetadata);
 
     if (date != null) {
-      store.setImageAcquiredDate(date, 0);
+      store.setImageAcquisitionDate(date, 0);
     }
 
     if (!minimumMetadata) {

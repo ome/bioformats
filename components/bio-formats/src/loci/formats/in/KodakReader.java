@@ -179,7 +179,8 @@ public class KodakReader extends FormatReader {
         store.setMicroscopeModel(value, 0);
       }
       else if (key.equals("Capture Time/Date")) {
-        store.setImageAcquiredDate(DateTools.formatDate(value, DATE_FORMAT), 0);
+        store.setImageAcquisitionDate(
+          DateTools.formatDate(value, DATE_FORMAT), 0);
       }
       else if (key.equals("Exposure Time")) {
         Double exposure = new Double(value.substring(0, value.indexOf(" ")));

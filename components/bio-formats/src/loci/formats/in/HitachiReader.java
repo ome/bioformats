@@ -219,7 +219,7 @@ public class HitachiReader extends FormatReader {
     store.setImageName(imageName, 0);
 
     date = DateTools.formatDate(date + " " + time, DATE_FORMAT);
-    store.setImageAcquiredDate(date, 0);
+    store.setImageAcquisitionDate(date, 0);
 
     populateOMEMetadata(image, store);
   }
@@ -278,7 +278,7 @@ public class HitachiReader extends FormatReader {
 
       String objective = MetadataTools.createLSID("Objective", 0, 0);
       store.setObjectiveID(objective, 0, 0);
-      store.setImageObjectiveSettingsID(objective, 0);
+      store.setObjectiveSettingsID(objective, 0);
       store.setObjectiveWorkingDistance(new Double(workingDistance), 0, 0);
     }
   }

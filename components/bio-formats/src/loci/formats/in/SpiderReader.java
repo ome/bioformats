@@ -248,7 +248,7 @@ public class SpiderReader extends FormatReader {
 
     store.setImageName(title, 0);
     String date = creationDate + " " + creationTime;
-    store.setImageAcquiredDate(DateTools.formatDate(date, DATE_FORMAT), 0);
+    store.setImageAcquisitionDate(DateTools.formatDate(date, DATE_FORMAT), 0);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       Double size = new Double(pixelSize * 0.0001);

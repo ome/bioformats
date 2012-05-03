@@ -523,7 +523,7 @@ public class TillVisionReader extends FormatReader {
       }
       String date = i < dates.size() ? dates.get(i) : "";
       if (date != null && !date.equals("")) {
-        store.setImageAcquiredDate(date, i);
+        store.setImageAcquisitionDate(date, i);
       }
     }
 

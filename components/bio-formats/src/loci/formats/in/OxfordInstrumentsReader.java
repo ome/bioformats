@@ -163,7 +163,7 @@ public class OxfordInstrumentsReader extends FormatReader {
     MetadataTools.populatePixels(store, this);
 
     store.setImageDescription(comment, 0);
-    store.setImageAcquiredDate(dateTime, 0);
+    store.setImageAcquisitionDate(dateTime, 0);
 
     double physicalSizeX = xSize / getSizeX();
     double physicalSizeY = ySize / getSizeY();

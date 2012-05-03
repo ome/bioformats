@@ -497,7 +497,7 @@ public class InCellReader extends FormatReader {
       }
 
       store.setImageName(imageName, i);
-      store.setImageAcquiredDate(creationDate, i);
+      store.setImageAcquisitionDate(creationDate, i);
 
       timepoint--;
       if (timepoint < 0) timepoint = 0;
@@ -879,8 +879,8 @@ public class InCellReader extends FormatReader {
         String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
         store.setObjectiveID(objectiveID, 0, 0);
         for (int i=0; i<getSeriesCount(); i++) {
-          store.setImageObjectiveSettingsID(objectiveID, i);
-          store.setImageObjectiveSettingsRefractiveIndex(refractive, i);
+          store.setObjectiveSettingsID(objectiveID, i);
+          store.setObjectiveSettingsRefractiveIndex(refractive, i);
           if (pixelSizeX > 0) {
             store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSizeX), i);
           }

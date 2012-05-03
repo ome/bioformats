@@ -323,7 +323,7 @@ public class IPWReader extends FormatReader {
     MetadataTools.populatePixels(store, this);
     store.setImageDescription(description, 0);
     if (creationDate != null) {
-      store.setImageAcquiredDate(creationDate, 0);
+      store.setImageAcquisitionDate(creationDate, 0);
     }
   }
 

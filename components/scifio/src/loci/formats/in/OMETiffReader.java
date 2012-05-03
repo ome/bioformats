@@ -342,7 +342,7 @@ public class OMETiffReader extends FormatReader {
 
     String[] acquiredDates = new String[meta.getImageCount()];
     for (int i=0; i<acquiredDates.length; i++) {
-      acquiredDates[i] = meta.getImageAcquiredDate(i);
+      acquiredDates[i] = meta.getImageAcquisitionDate(i);
     }
 
     String currentUUID = meta.getUUID();
@@ -761,7 +761,7 @@ public class OMETiffReader extends FormatReader {
     MetadataTools.populatePixels(metadataStore, this, false, false);
     for (int i=0; i<acquiredDates.length; i++) {
       if (acquiredDates[i] != null) {
-        metadataStore.setImageAcquiredDate(acquiredDates[i], i);
+        metadataStore.setImageAcquisitionDate(acquiredDates[i], i);
       }
     }
     metadataStore = getMetadataStoreForConversion();

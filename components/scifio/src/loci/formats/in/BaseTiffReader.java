@@ -406,7 +406,7 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
     // populate Image
 
     if (creationDate != null) {
-      store.setImageAcquiredDate(creationDate, 0);
+      store.setImageAcquisitionDate(creationDate, 0);
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
@@ -425,7 +425,6 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
         store.setExperimenterFirstName(firstName, 0);
         store.setExperimenterLastName(lastName, 0);
         store.setExperimenterEmail(email, 0);
-        store.setExperimenterDisplayName(artist, 0);
         store.setExperimenterID(MetadataTools.createLSID("Experimenter", 0), 0);
       }
 

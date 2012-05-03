@@ -689,7 +689,7 @@ public class DicomReader extends FormatReader {
     if (stamp == null || stamp.trim().equals("")) stamp = null;
 
     for (int i=0; i<core.length; i++) {
-      if (stamp != null) store.setImageAcquiredDate(stamp, i);
+      if (stamp != null) store.setImageAcquisitionDate(stamp, i);
       store.setImageName("Series " + i, i);
     }
 

@@ -200,7 +200,7 @@ public class SimplePCITiffReader extends BaseTiffReader {
     MetadataTools.populatePixels(store, this, true);
 
     if (date != null) {
-      store.setImageAcquiredDate(DateTools.formatDate(date, DATE_FORMAT), 0);
+      store.setImageAcquisitionDate(DateTools.formatDate(date, DATE_FORMAT), 0);
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {

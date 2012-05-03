@@ -201,7 +201,7 @@ public class SISReader extends BaseTiffReader {
     MetadataTools.populatePixels(store, this);
 
     store.setImageName(imageName, 0);
-    store.setImageAcquiredDate(acquisitionDate, 0);
+    store.setImageAcquisitionDate(acquisitionDate, 0);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       String instrument = MetadataTools.createLSID("Instrument", 0);
@@ -220,7 +220,7 @@ public class SISReader extends BaseTiffReader {
       }
       store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
       store.setObjectiveImmersion(getImmersion("Other"), 0, 0);
-      store.setImageObjectiveSettingsID(objective, 0);
+      store.setObjectiveSettingsID(objective, 0);
 
       String detector = MetadataTools.createLSID("Detector", 0, 0);
       store.setDetectorID(detector, 0, 0);

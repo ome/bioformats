@@ -214,7 +214,7 @@ public class FEITiffReader extends BaseTiffReader {
     MetadataTools.populatePixels(store, this);
 
     if (date != null) {
-      store.setImageAcquiredDate(DateTools.formatDate(date, DATE_FORMAT), 0);
+      store.setImageAcquisitionDate(DateTools.formatDate(date, DATE_FORMAT), 0);
     }
 
     if (imageName != null) {
@@ -227,7 +227,7 @@ public class FEITiffReader extends BaseTiffReader {
       }
       if (userName != null) {
         store.setExperimenterID(MetadataTools.createLSID("Experimenter", 0), 0);
-        store.setExperimenterDisplayName(userName, 0);
+        store.setExperimenterLastName(userName, 0);
       }
       if (microscopeModel != null) {
         String instrument = MetadataTools.createLSID("Instrument", 0);

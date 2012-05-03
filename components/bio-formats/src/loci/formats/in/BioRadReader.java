@@ -492,7 +492,7 @@ public class BioRadReader extends FormatReader {
       // link Objective to Image using ObjectiveSettings
       String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
       store.setObjectiveID(objectiveID, 0, 0);
-      store.setImageObjectiveSettingsID(objectiveID, 0);
+      store.setObjectiveSettingsID(objectiveID, 0);
 
       store.setObjectiveLensNA(new Double(lens), 0, 0);
       if ((int) magFactor > 0) {
@@ -941,7 +941,7 @@ public class BioRadReader extends FormatReader {
                   String date = year + "-" + values[4] + "-" + values[3] + "T" +
                     values[2] + ":" + values[1] + ":" + values[0];
                   addGlobalMeta("Acquisition date", date);
-                  store.setImageAcquiredDate(date, 0);
+                  store.setImageAcquisitionDate(date, 0);
                   break;
                 case 18:
                   addGlobalMeta("Mixer 3 - enhanced", values[0]);

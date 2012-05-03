@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-01-12 20:06:01-0500
+ * Created by melissa via xsd-fu on 2012-05-03 05:24:50-0400
  *
  *-----------------------------------------------------------------------------
  */
@@ -58,7 +58,7 @@ public class Pump extends Reference
 
 	// -- Constants --
 
-	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2011-06";
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2012-06";
 
 	/** Logger for this class. */
 	private static final Logger LOGGER =
@@ -69,6 +69,9 @@ public class Pump extends Reference
 
 	// Property
 	private String id;
+
+	// Back reference Laser_BackReference
+	private List<Laser> lasers = new ArrayList<Laser>();
 
 	// -- Constructors --
 
@@ -131,6 +134,7 @@ public class Pump extends Reference
 			// Adding this model object to the model handler
 			model.addModelObject(getID(), this);
 		}
+		// *** IGNORING *** Skipped back reference Laser_BackReference
 	}
 
 	// -- Pump API methods --
@@ -158,6 +162,40 @@ public class Pump extends Reference
 		this.id = id;
 	}
 
+	// Reference which occurs more than once
+	public int sizeOfLinkedLaserList()
+	{
+		return lasers.size();
+	}
+
+	public List<Laser> copyLinkedLaserList()
+	{
+		return new ArrayList<Laser>(lasers);
+	}
+
+	public Laser getLinkedLaser(int index)
+	{
+		return lasers.get(index);
+	}
+
+	public Laser setLinkedLaser(int index, Laser o)
+	{
+		return lasers.set(index, o);
+	}
+
+	public boolean linkLaser(Laser o)
+	{
+		if (!lasers.contains(o)) {
+			return lasers.add(o);
+		}
+		return false;
+	}
+
+	public boolean unlinkLaser(Laser o)
+	{
+		return lasers.remove(o);
+	}
+
 	public Element asXMLElement(Document document)
 	{
 		return asXMLElement(document, null);
@@ -177,6 +215,10 @@ public class Pump extends Reference
 		{
 			// Attribute property ID
 			Pump_element.setAttribute("ID", id.toString());
+		}
+		if (lasers != null)
+		{
+			// *** IGNORING *** Skipped back reference Laser_BackReference
 		}
 		return super.asXMLElement(document, Pump_element);
 	}

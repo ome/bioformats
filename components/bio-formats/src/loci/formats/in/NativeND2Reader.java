@@ -1348,9 +1348,9 @@ public class NativeND2Reader extends FormatReader {
     Double refractiveIndex = handler.getRefractiveIndex();
 
     for (int i=0; i<getSeriesCount(); i++) {
-      store.setImageObjectiveSettingsID(objectiveID, i);
+      store.setObjectiveSettingsID(objectiveID, i);
       if (refractiveIndex != null) {
-        store.setImageObjectiveSettingsRefractiveIndex(refractiveIndex, i);
+        store.setObjectiveSettingsRefractiveIndex(refractiveIndex, i);
       }
     }
 

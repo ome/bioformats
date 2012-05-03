@@ -237,7 +237,7 @@ public class HISReader extends FormatReader {
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       for (int i=0; i<nSeries; i++) {
         store.setImageInstrumentRef(instrumentID, i);
-        store.setImageAcquiredDate(date[i], i);
+        store.setImageAcquisitionDate(date[i], i);
 
         store.setPlaneExposureTime(exposureTime[i], i, 0);
 

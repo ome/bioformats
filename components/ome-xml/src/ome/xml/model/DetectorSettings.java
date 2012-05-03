@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-01-12 20:06:01-0500
+ * Created by melissa via xsd-fu on 2012-05-03 05:24:50-0400
  *
  *-----------------------------------------------------------------------------
  */
@@ -58,7 +58,7 @@ public class DetectorSettings extends Settings
 
 	// -- Constants --
 
-	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2011-06";
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2012-06";
 
 	/** Logger for this class. */
 	private static final Logger LOGGER =
@@ -84,6 +84,9 @@ public class DetectorSettings extends Settings
 
 	// Property
 	private Double voltage;
+
+	// Back reference DetectorRef
+	private List<Detector> detector = new ArrayList<Detector>();
 
 	// -- Constructors --
 
@@ -176,6 +179,7 @@ public class DetectorSettings extends Settings
 			setVoltage(Double.valueOf(
 					element.getAttribute("Voltage")));
 		}
+		// *** IGNORING *** Skipped back reference DetectorRef
 	}
 
 	// -- DetectorSettings API methods --
@@ -258,6 +262,40 @@ public class DetectorSettings extends Settings
 		this.voltage = voltage;
 	}
 
+	// Reference which occurs more than once
+	public int sizeOfLinkedDetectorList()
+	{
+		return detector.size();
+	}
+
+	public List<Detector> copyLinkedDetectorList()
+	{
+		return new ArrayList<Detector>(detector);
+	}
+
+	public Detector getLinkedDetector(int index)
+	{
+		return detector.get(index);
+	}
+
+	public Detector setLinkedDetector(int index, Detector o)
+	{
+		return detector.set(index, o);
+	}
+
+	public boolean linkDetector(Detector o)
+	{
+		if (!detector.contains(o)) {
+			return detector.add(o);
+		}
+		return false;
+	}
+
+	public boolean unlinkDetector(Detector o)
+	{
+		return detector.remove(o);
+	}
+
 	public Element asXMLElement(Document document)
 	{
 		return asXMLElement(document, null);
@@ -302,6 +340,10 @@ public class DetectorSettings extends Settings
 		{
 			// Attribute property Voltage
 			DetectorSettings_element.setAttribute("Voltage", voltage.toString());
+		}
+		if (detector != null)
+		{
+			// *** IGNORING *** Skipped back reference DetectorRef
 		}
 		return super.asXMLElement(document, DetectorSettings_element);
 	}

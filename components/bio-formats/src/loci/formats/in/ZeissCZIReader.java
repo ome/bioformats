@@ -47,6 +47,7 @@ import loci.formats.codec.JPEGCodec;
 import loci.formats.codec.LZWCodec;
 import loci.formats.meta.MetadataStore;
 
+import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PercentFraction;
 import ome.xml.model.primitives.PositiveFloat;
@@ -384,7 +385,6 @@ public class ZeissCZIReader extends FormatReader {
 
     String experimenterID = MetadataTools.createLSID("Experimenter", 0);
     store.setExperimenterID(experimenterID, 0);
-    store.setExperimenterDisplayName(userDisplayName, 0);
     store.setExperimenterEmail(userEmail, 0);
     store.setExperimenterFirstName(userFirstName, 0);
     store.setExperimenterInstitution(userInstitution, 0);
@@ -395,7 +395,7 @@ public class ZeissCZIReader extends FormatReader {
     String name = new Location(getCurrentFile()).getName();
 
     for (int i=0; i<getSeriesCount(); i++) {
-      store.setImageAcquiredDate(acquiredDate, i);
+      store.setImageAcquisitionDate(acquiredDate, i);
       store.setImageExperimenterRef(experimenterID, i);
       store.setImageName(name + " #" + (i + 1), i);
 
@@ -414,14 +414,14 @@ public class ZeissCZIReader extends FormatReader {
         store.setImagingEnvironmentTemperature(new Double(temperature), i);
       }
 
-      store.setImageObjectiveSettingsID(objectiveIDs.get(0), i);
+      store.setObjectiveSettingsID(objectiveIDs.get(0), i);
       if (correctionCollar != null) {
-        store.setImageObjectiveSettingsCorrectionCollar(
+        store.setObjectiveSettingsCorrectionCollar(
           new Double(correctionCollar), i);
       }
-      store.setImageObjectiveSettingsMedium(getMedium(medium), i);
+      store.setObjectiveSettingsMedium(getMedium(medium), i);
       if (refractiveIndex != null) {
-        store.setImageObjectiveSettingsRefractiveIndex(
+        store.setObjectiveSettingsRefractiveIndex(
           new Double(refractiveIndex), i);
       }
 
@@ -476,7 +476,7 @@ public class ZeissCZIReader extends FormatReader {
             color = color.replaceAll("#", "");
             try {
               store.setChannelColor(
-                (Integer.parseInt(color, 16) << 8) | 0xff, i, c);
+                new Color((Integer.parseInt(color, 16) << 8) | 0xff), i, c);
             }
             catch (NumberFormatException e) { }
           }
@@ -1172,8 +1172,7 @@ public class ZeissCZIReader extends FormatReader {
         if (y2 != null) {
           store.setLineY2(new Double(y2), i, shape);
         }
-        store.setLineName(getFirstNodeValue(attributes, "Name"), i, shape);
-        store.setLineLabel(getFirstNodeValue(textElements, "Text"), i, shape);
+        store.setLineText(getFirstNodeValue(textElements, "Text"), i, shape);
       }
 
       NodeList rectangles = getGrandchildren(layer, "Elements", "Rectangle");
@@ -1207,9 +1206,7 @@ public class ZeissCZIReader extends FormatReader {
         if (centerY != null) {
           store.setEllipseY(new Double(centerY), i, shape);
         }
-        store.setEllipseName(getFirstNodeValue(attributes, "Name"), i, shape);
-        store.setEllipseLabel(
-          getFirstNodeValue(textElements, "Text"), i, shape);
+        store.setEllipseText(getFirstNodeValue(textElements, "Text"), i, shape);
       }
 
       // translate all of the circle ROIs
@@ -1273,11 +1270,8 @@ public class ZeissCZIReader extends FormatReader {
         String name = getFirstNodeValue(attributes, "Name");
         String label = getFirstNodeValue(textElements, "Text");
 
-        if (name != null) {
-          store.setRectangleName(name, roi, shape);
-        }
         if (label != null) {
-          store.setRectangleLabel(label, roi, shape);
+          store.setRectangleText(label, roi, shape);
         }
       }
     }
@@ -1293,14 +1287,22 @@ public class ZeissCZIReader extends FormatReader {
       Element textElements = getFirstNode(polyline, "TextElements");
       Element attributes = getFirstNode(polyline, "Attributes");
 
-      store.setPolylineID(
-        MetadataTools.createLSID("Shape", roi, shape), roi, shape);
-      store.setPolylinePoints(
-        getFirstNodeValue(geometry, "Points"), roi, shape);
-      store.setPolylineClosed(closed, roi, shape);
-      store.setPolylineName(getFirstNodeValue(attributes, "Name"), roi, shape);
-      store.setPolylineLabel(
-        getFirstNodeValue(textElements, "Text"), roi, shape);
+      String shapeID = MetadataTools.createLSID("Shape", roi, shape);
+
+      if (closed) {
+        store.setPolygonID(shapeID, roi, shape);
+        store.setPolygonPoints(
+          getFirstNodeValue(geometry, "Points"), roi, shape);
+        store.setPolygonText(
+          getFirstNodeValue(textElements, "Text"), roi, shape);
+      }
+      else {
+        store.setPolylineID(shapeID, roi, shape);
+        store.setPolylinePoints(
+          getFirstNodeValue(geometry, "Points"), roi, shape);
+        store.setPolylineText(
+          getFirstNodeValue(textElements, "Text"), roi, shape);
+      }
     }
     return shape;
   }
@@ -1328,9 +1330,7 @@ public class ZeissCZIReader extends FormatReader {
       if (centerY != null) {
         store.setEllipseY(new Double(centerY), roi, shape);
       }
-      store.setEllipseName(getFirstNodeValue(attributes, "Name"), roi, shape);
-      store.setEllipseLabel(
-        getFirstNodeValue(textElements, "Text"), roi, shape);
+      store.setEllipseText(getFirstNodeValue(textElements, "Text"), roi, shape);
     }
     return shape;
   }

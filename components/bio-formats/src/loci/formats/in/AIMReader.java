@@ -162,7 +162,7 @@ public class AIMReader extends FormatReader {
     MetadataTools.populatePixels(store, this);
 
     if (date != null) {
-      store.setImageAcquiredDate(date, 0);
+      store.setImageAcquisitionDate(date, 0);
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {

@@ -371,7 +371,7 @@ public class OmeroReader extends FormatReader {
       store.setImageName(name, 0);
       store.setImageDescription(description, 0);
       if (date != null) {
-        store.setImageAcquiredDate(DateTools.convertDate(date.getValue(),
+        store.setImageAcquisitionDate(DateTools.convertDate(date.getValue(),
           (int) DateTools.UNIX_EPOCH), 0);
       }
 

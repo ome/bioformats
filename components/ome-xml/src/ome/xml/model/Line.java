@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-01-12 20:06:01-0500
+ * Created by melissa via xsd-fu on 2012-05-03 05:24:50-0400
  *
  *-----------------------------------------------------------------------------
  */
@@ -58,7 +58,7 @@ public class Line extends Shape
 
 	// -- Constants --
 
-	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/ROI/2011-06";
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/ROI/2012-06";
 
 	/** Logger for this class. */
 	private static final Logger LOGGER =
@@ -68,16 +68,22 @@ public class Line extends Shape
 
 
 	// Property
-	private Double y1;
+	private Double y2;
 
 	// Property
 	private Double x2;
 
 	// Property
+	private Marker markerEnd;
+
+	// Property
+	private Double y1;
+
+	// Property
 	private Double x1;
 
 	// Property
-	private Double y2;
+	private Marker markerStart;
 
 	// -- Constructors --
 
@@ -126,11 +132,11 @@ public class Line extends Shape
 		{
 			LOGGER.debug("Expecting node name of Line got {}", tagName);
 		}
-		if (element.hasAttribute("Y1"))
+		if (element.hasAttribute("Y2"))
 		{
-			// Attribute property Y1
-			setY1(Double.valueOf(
-					element.getAttribute("Y1")));
+			// Attribute property Y2
+			setY2(Double.valueOf(
+					element.getAttribute("Y2")));
 		}
 		if (element.hasAttribute("X2"))
 		{
@@ -138,17 +144,29 @@ public class Line extends Shape
 			setX2(Double.valueOf(
 					element.getAttribute("X2")));
 		}
+		if (element.hasAttribute("MarkerEnd"))
+		{
+			// Attribute property which is an enumeration MarkerEnd
+			setMarkerEnd(Marker.fromString(
+					element.getAttribute("MarkerEnd")));
+		}
+		if (element.hasAttribute("Y1"))
+		{
+			// Attribute property Y1
+			setY1(Double.valueOf(
+					element.getAttribute("Y1")));
+		}
 		if (element.hasAttribute("X1"))
 		{
 			// Attribute property X1
 			setX1(Double.valueOf(
 					element.getAttribute("X1")));
 		}
-		if (element.hasAttribute("Y2"))
+		if (element.hasAttribute("MarkerStart"))
 		{
-			// Attribute property Y2
-			setY2(Double.valueOf(
-					element.getAttribute("Y2")));
+			// Attribute property which is an enumeration MarkerStart
+			setMarkerStart(Marker.fromString(
+					element.getAttribute("MarkerStart")));
 		}
 	}
 
@@ -167,14 +185,14 @@ public class Line extends Shape
 
 
 	// Property
-	public Double getY1()
+	public Double getY2()
 	{
-		return y1;
+		return y2;
 	}
 
-	public void setY1(Double y1)
+	public void setY2(Double y2)
 	{
-		this.y1 = y1;
+		this.y2 = y2;
 	}
 
 	// Property
@@ -189,6 +207,28 @@ public class Line extends Shape
 	}
 
 	// Property
+	public Marker getMarkerEnd()
+	{
+		return markerEnd;
+	}
+
+	public void setMarkerEnd(Marker markerEnd)
+	{
+		this.markerEnd = markerEnd;
+	}
+
+	// Property
+	public Double getY1()
+	{
+		return y1;
+	}
+
+	public void setY1(Double y1)
+	{
+		this.y1 = y1;
+	}
+
+	// Property
 	public Double getX1()
 	{
 		return x1;
@@ -200,14 +240,14 @@ public class Line extends Shape
 	}
 
 	// Property
-	public Double getY2()
+	public Marker getMarkerStart()
 	{
-		return y2;
+		return markerStart;
 	}
 
-	public void setY2(Double y2)
+	public void setMarkerStart(Marker markerStart)
 	{
-		this.y2 = y2;
+		this.markerStart = markerStart;
 	}
 
 	public Element asXMLElement(Document document)
@@ -225,25 +265,35 @@ public class Line extends Shape
 					document.createElementNS(NAMESPACE, "Line");
 		}
 
-		if (y1 != null)
+		if (y2 != null)
 		{
-			// Attribute property Y1
-			Line_element.setAttribute("Y1", y1.toString());
+			// Attribute property Y2
+			Line_element.setAttribute("Y2", y2.toString());
 		}
 		if (x2 != null)
 		{
 			// Attribute property X2
 			Line_element.setAttribute("X2", x2.toString());
 		}
+		if (markerEnd != null)
+		{
+			// Attribute property MarkerEnd
+			Line_element.setAttribute("MarkerEnd", markerEnd.toString());
+		}
+		if (y1 != null)
+		{
+			// Attribute property Y1
+			Line_element.setAttribute("Y1", y1.toString());
+		}
 		if (x1 != null)
 		{
 			// Attribute property X1
 			Line_element.setAttribute("X1", x1.toString());
 		}
-		if (y2 != null)
+		if (markerStart != null)
 		{
-			// Attribute property Y2
-			Line_element.setAttribute("Y2", y2.toString());
+			// Attribute property MarkerStart
+			Line_element.setAttribute("MarkerStart", markerStart.toString());
 		}
 		return super.asXMLElement(document, Line_element);
 	}

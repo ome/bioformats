@@ -216,7 +216,6 @@ public class GatanDM2Reader extends FormatReader {
         if (experimenterName.length > 1) {
           store.setExperimenterLastName(experimenterName[1], 0);
         }
-        store.setExperimenterDisplayName(value.toString(), 0);
         String expID = MetadataTools.createLSID("Experimenter", 0);
         store.setExperimenterID(expID, 0);
         store.setImageExperimenterRef(expID, 0);
@@ -228,7 +227,7 @@ public class GatanDM2Reader extends FormatReader {
         "M/d/yy h:mm:ss a", "d/M/yy h:mm:ss a",
         "M/d/yy H:mm:ss", "d/M/yy H:mm:ss"};
       date += " " + time;
-      store.setImageAcquiredDate(DateTools.formatDate(date, format), 0);
+      store.setImageAcquisitionDate(DateTools.formatDate(date, format), 0);
     }
     if (name != null) {
       store.setImageName(name, 0);

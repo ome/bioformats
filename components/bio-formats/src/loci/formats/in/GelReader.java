@@ -187,10 +187,10 @@ public class GelReader extends BaseTiffReader {
     String parsedTime = DateTools.formatDate(prepTime, FORMATS);
 
     if (parsedDate != null) {
-      store.setImageAcquiredDate(parsedDate, 0);
+      store.setImageAcquisitionDate(parsedDate, 0);
     }
     else if (parsedTime != null) {
-      store.setImageAcquiredDate(parsedTime, 0);
+      store.setImageAcquisitionDate(parsedTime, 0);
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {

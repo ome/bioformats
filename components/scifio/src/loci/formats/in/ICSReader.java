@@ -1417,7 +1417,7 @@ public class ICSReader extends FormatReader {
 
     store.setImageName(imageName, 0);
 
-    if (date != null) store.setImageAcquiredDate(date, 0);
+    if (date != null) store.setImageAcquisitionDate(date, 0);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription(description, 0);
@@ -1640,7 +1640,7 @@ public class ICSReader extends FormatReader {
       // link Objective to Image
       String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
       store.setObjectiveID(objectiveID, 0, 0);
-      store.setImageObjectiveSettingsID(objectiveID, 0);
+      store.setObjectiveSettingsID(objectiveID, 0);
 
       // populate Detector data
 
@@ -1664,7 +1664,6 @@ public class ICSReader extends FormatReader {
         String experimenterID = MetadataTools.createLSID("Experimenter", 0);
         store.setExperimenterID(experimenterID, 0);
         store.setExperimenterLastName(lastName, 0);
-        store.setExperimenterDisplayName(lastName, 0);
       }
 
       // populate StagePosition data

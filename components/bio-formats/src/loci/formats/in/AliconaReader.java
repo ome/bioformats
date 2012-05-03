@@ -257,7 +257,7 @@ public class AliconaReader extends FormatReader {
       // link Objective to an Image using ObjectiveSettings
       String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
       store.setObjectiveID(objectiveID, 0, 0);
-      store.setImageObjectiveSettingsID(objectiveID, 0);
+      store.setObjectiveSettingsID(objectiveID, 0);
 
       // populate Dimensions data
 

@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-01-12 20:06:01-0500
+ * Created by melissa via xsd-fu on 2012-05-03 05:24:50-0400
  *
  *-----------------------------------------------------------------------------
  */
@@ -58,7 +58,7 @@ public class WellSample extends AbstractOMEModelObject
 
 	// -- Constants --
 
-	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/SPW/2011-06";
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/SPW/2012-06";
 
 	/** Logger for this class. */
 	private static final Logger LOGGER =
@@ -86,10 +86,10 @@ public class WellSample extends AbstractOMEModelObject
 	private Image image;
 
 	// Reference AnnotationRef
-	private List<Annotation> annotationList = new ArrayList<Annotation>();
+	private List<Annotation> annotationLinks = new ArrayList<Annotation>();
 
 	// Back reference PlateAcquisition_BackReference
-	private List<PlateAcquisition> plateAcquisition_BackReferenceList = new ArrayList<PlateAcquisition>();
+	private List<PlateAcquisition> plateAcquisitions = new ArrayList<PlateAcquisition>();
 
 	// -- Constructors --
 
@@ -190,9 +190,9 @@ public class WellSample extends AbstractOMEModelObject
 				getChildrenByTagName(element, "AnnotationRef");
 		for (Element AnnotationRef_element : AnnotationRef_nodeList)
 		{
-			AnnotationRef annotationList_reference = new AnnotationRef();
-			annotationList_reference.setID(AnnotationRef_element.getAttribute("ID"));
-			model.addReference(this, annotationList_reference);
+			AnnotationRef annotationLinks_reference = new AnnotationRef();
+			annotationLinks_reference.setID(AnnotationRef_element.getAttribute("ID"));
+			model.addReference(this, annotationLinks_reference);
 		}
 		// *** IGNORING *** Skipped back reference PlateAcquisition_BackReference
 	}
@@ -217,8 +217,8 @@ public class WellSample extends AbstractOMEModelObject
 		{
 			Annotation o_casted = (Annotation) o;
 			o_casted.linkWellSample(this);
-			if (!annotationList.contains(o_casted)) {
-				annotationList.add(o_casted);
+			if (!annotationLinks.contains(o_casted)) {
+				annotationLinks.add(o_casted);
 			}
 			return true;
 		}
@@ -304,71 +304,73 @@ public class WellSample extends AbstractOMEModelObject
 	// Reference which occurs more than once
 	public int sizeOfLinkedAnnotationList()
 	{
-		return annotationList.size();
+		return annotationLinks.size();
 	}
 
 	public List<Annotation> copyLinkedAnnotationList()
 	{
-		return new ArrayList<Annotation>(annotationList);
+		return new ArrayList<Annotation>(annotationLinks);
 	}
 
 	public Annotation getLinkedAnnotation(int index)
 	{
-		return annotationList.get(index);
+		return annotationLinks.get(index);
 	}
 
 	public Annotation setLinkedAnnotation(int index, Annotation o)
 	{
-		return annotationList.set(index, o);
+		return annotationLinks.set(index, o);
 	}
 
 	public boolean linkAnnotation(Annotation o)
 	{
-		o.linkWellSample(this);
-		if (!annotationList.contains(o)) {
-			return annotationList.add(o);
+
+			o.linkWellSample(this);
+		if (!annotationLinks.contains(o)) {
+			return annotationLinks.add(o);
 		}
 		return false;
 	}
 
 	public boolean unlinkAnnotation(Annotation o)
 	{
-		o.unlinkWellSample(this);
-		return annotationList.remove(o);
+
+			o.unlinkWellSample(this);
+		return annotationLinks.remove(o);
 	}
 
 	// Reference which occurs more than once
 	public int sizeOfLinkedPlateAcquisitionList()
 	{
-		return plateAcquisition_BackReferenceList.size();
+		return plateAcquisitions.size();
 	}
 
 	public List<PlateAcquisition> copyLinkedPlateAcquisitionList()
 	{
-		return new ArrayList<PlateAcquisition>(plateAcquisition_BackReferenceList);
+		return new ArrayList<PlateAcquisition>(plateAcquisitions);
 	}
 
 	public PlateAcquisition getLinkedPlateAcquisition(int index)
 	{
-		return plateAcquisition_BackReferenceList.get(index);
+		return plateAcquisitions.get(index);
 	}
 
 	public PlateAcquisition setLinkedPlateAcquisition(int index, PlateAcquisition o)
 	{
-		return plateAcquisition_BackReferenceList.set(index, o);
+		return plateAcquisitions.set(index, o);
 	}
 
 	public boolean linkPlateAcquisition(PlateAcquisition o)
 	{
-		if (!plateAcquisition_BackReferenceList.contains(o)) {
-			return plateAcquisition_BackReferenceList.add(o);
+		if (!plateAcquisitions.contains(o)) {
+			return plateAcquisitions.add(o);
 		}
 		return false;
 	}
 
 	public boolean unlinkPlateAcquisition(PlateAcquisition o)
 	{
-		return plateAcquisition_BackReferenceList.remove(o);
+		return plateAcquisitions.remove(o);
 	}
 
 	public Element asXMLElement(Document document)
@@ -418,17 +420,17 @@ public class WellSample extends AbstractOMEModelObject
 			o.setID(image.getID());
 			WellSample_element.appendChild(o.asXMLElement(document));
 		}
-		if (annotationList != null)
+		if (annotationLinks != null)
 		{
 			// Reference property AnnotationRef which occurs more than once
-			for (Annotation annotationList_value : annotationList)
+			for (Annotation annotationLinks_value : annotationLinks)
 			{
 				AnnotationRef o = new AnnotationRef();
-				o.setID(annotationList_value.getID());
+				o.setID(annotationLinks_value.getID());
 				WellSample_element.appendChild(o.asXMLElement(document));
 			}
 		}
-		if (plateAcquisition_BackReferenceList != null)
+		if (plateAcquisitions != null)
 		{
 			// *** IGNORING *** Skipped back reference PlateAcquisition_BackReference
 		}

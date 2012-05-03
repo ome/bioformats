@@ -363,7 +363,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
 
       String date =
         DateTools.formatDate(handler.getDate(), DateTools.ISO8601_FORMAT);
-      store.setImageAcquiredDate(date, s);
+      store.setImageAcquisitionDate(date, s);
 
       if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
         Vector<String> timestamps = handler.getTimestamps();

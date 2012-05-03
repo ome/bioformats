@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-01-12 20:06:01-0500
+ * Created by melissa via xsd-fu on 2012-05-03 05:24:50-0400
  *
  *-----------------------------------------------------------------------------
  */
@@ -58,7 +58,7 @@ public class Project extends AbstractOMEModelObject
 
 	// -- Constants --
 
-	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2011-06";
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2012-06";
 
 	/** Logger for this class. */
 	private static final Logger LOGGER =
@@ -80,13 +80,13 @@ public class Project extends AbstractOMEModelObject
 	private Experimenter experimenter;
 
 	// Property
-	private Group group;
+	private ExperimenterGroup experimenterGroup;
+
+	// Reference DatasetRef
+	private List<Dataset> datasetLinks = new ArrayList<Dataset>();
 
 	// Reference AnnotationRef
-	private List<Annotation> annotationList = new ArrayList<Annotation>();
-
-	// Back reference Dataset_BackReference
-	private List<Dataset> dataset_BackReferenceList = new ArrayList<Dataset>();
+	private List<Annotation> annotationLinks = new ArrayList<Annotation>();
 
 	// -- Constructors --
 
@@ -180,25 +180,33 @@ public class Project extends AbstractOMEModelObject
 			experimenter_reference.setID(ExperimenterRef_element.getAttribute("ID"));
 			model.addReference(this, experimenter_reference);
 		}
-		// Element reference GroupRef
-		List<Element> GroupRef_nodeList =
-				getChildrenByTagName(element, "GroupRef");
-		for (Element GroupRef_element : GroupRef_nodeList)
+		// Element reference ExperimenterGroupRef
+		List<Element> ExperimenterGroupRef_nodeList =
+				getChildrenByTagName(element, "ExperimenterGroupRef");
+		for (Element ExperimenterGroupRef_element : ExperimenterGroupRef_nodeList)
 		{
-			GroupRef group_reference = new GroupRef();
-			group_reference.setID(GroupRef_element.getAttribute("ID"));
-			model.addReference(this, group_reference);
+			ExperimenterGroupRef experimenterGroup_reference = new ExperimenterGroupRef();
+			experimenterGroup_reference.setID(ExperimenterGroupRef_element.getAttribute("ID"));
+			model.addReference(this, experimenterGroup_reference);
+		}
+		// Element reference DatasetRef
+		List<Element> DatasetRef_nodeList =
+				getChildrenByTagName(element, "DatasetRef");
+		for (Element DatasetRef_element : DatasetRef_nodeList)
+		{
+			DatasetRef datasetLinks_reference = new DatasetRef();
+			datasetLinks_reference.setID(DatasetRef_element.getAttribute("ID"));
+			model.addReference(this, datasetLinks_reference);
 		}
 		// Element reference AnnotationRef
 		List<Element> AnnotationRef_nodeList =
 				getChildrenByTagName(element, "AnnotationRef");
 		for (Element AnnotationRef_element : AnnotationRef_nodeList)
 		{
-			AnnotationRef annotationList_reference = new AnnotationRef();
-			annotationList_reference.setID(AnnotationRef_element.getAttribute("ID"));
-			model.addReference(this, annotationList_reference);
+			AnnotationRef annotationLinks_reference = new AnnotationRef();
+			annotationLinks_reference.setID(AnnotationRef_element.getAttribute("ID"));
+			model.addReference(this, annotationLinks_reference);
 		}
-		// *** IGNORING *** Skipped back reference Dataset_BackReference
 	}
 
 	// -- Project API methods --
@@ -217,19 +225,28 @@ public class Project extends AbstractOMEModelObject
 			experimenter = o_casted;
 			return true;
 		}
-		if (reference instanceof GroupRef)
+		if (reference instanceof ExperimenterGroupRef)
 		{
-			Group o_casted = (Group) o;
+			ExperimenterGroup o_casted = (ExperimenterGroup) o;
 			o_casted.linkProject(this);
-			group = o_casted;
+			experimenterGroup = o_casted;
+			return true;
+		}
+		if (reference instanceof DatasetRef)
+		{
+			Dataset o_casted = (Dataset) o;
+			o_casted.linkProject(this);
+			if (!datasetLinks.contains(o_casted)) {
+				datasetLinks.add(o_casted);
+			}
 			return true;
 		}
 		if (reference instanceof AnnotationRef)
 		{
 			Annotation o_casted = (Annotation) o;
 			o_casted.linkProject(this);
-			if (!annotationList.contains(o_casted)) {
-				annotationList.add(o_casted);
+			if (!annotationLinks.contains(o_casted)) {
+				annotationLinks.add(o_casted);
 			}
 			return true;
 		}
@@ -291,92 +308,98 @@ public class Project extends AbstractOMEModelObject
 	}
 
 	// Reference
-	public Group getLinkedGroup()
+	public ExperimenterGroup getLinkedExperimenterGroup()
 	{
-		return group;
+		return experimenterGroup;
 	}
 
-	public void linkGroup(Group o)
+	public void linkExperimenterGroup(ExperimenterGroup o)
 	{
-		group = o;
+		experimenterGroup = o;
 	}
 
-	public void unlinkGroup(Group o)
+	public void unlinkExperimenterGroup(ExperimenterGroup o)
 	{
-		if (group == o)
+		if (experimenterGroup == o)
 		{
-			group = null;
+			experimenterGroup = null;
 		}
-	}
-
-	// Reference which occurs more than once
-	public int sizeOfLinkedAnnotationList()
-	{
-		return annotationList.size();
-	}
-
-	public List<Annotation> copyLinkedAnnotationList()
-	{
-		return new ArrayList<Annotation>(annotationList);
-	}
-
-	public Annotation getLinkedAnnotation(int index)
-	{
-		return annotationList.get(index);
-	}
-
-	public Annotation setLinkedAnnotation(int index, Annotation o)
-	{
-		return annotationList.set(index, o);
-	}
-
-	public boolean linkAnnotation(Annotation o)
-	{
-		o.linkProject(this);
-		if (!annotationList.contains(o)) {
-			return annotationList.add(o);
-		}
-		return false;
-	}
-
-	public boolean unlinkAnnotation(Annotation o)
-	{
-		o.unlinkProject(this);
-		return annotationList.remove(o);
 	}
 
 	// Reference which occurs more than once
 	public int sizeOfLinkedDatasetList()
 	{
-		return dataset_BackReferenceList.size();
+		return datasetLinks.size();
 	}
 
 	public List<Dataset> copyLinkedDatasetList()
 	{
-		return new ArrayList<Dataset>(dataset_BackReferenceList);
+		return new ArrayList<Dataset>(datasetLinks);
 	}
 
 	public Dataset getLinkedDataset(int index)
 	{
-		return dataset_BackReferenceList.get(index);
+		return datasetLinks.get(index);
 	}
 
 	public Dataset setLinkedDataset(int index, Dataset o)
 	{
-		return dataset_BackReferenceList.set(index, o);
+		return datasetLinks.set(index, o);
 	}
 
 	public boolean linkDataset(Dataset o)
 	{
-		if (!dataset_BackReferenceList.contains(o)) {
-			return dataset_BackReferenceList.add(o);
+
+			o.linkProject(this);
+		if (!datasetLinks.contains(o)) {
+			return datasetLinks.add(o);
 		}
 		return false;
 	}
 
 	public boolean unlinkDataset(Dataset o)
 	{
-		return dataset_BackReferenceList.remove(o);
+
+			o.unlinkProject(this);
+		return datasetLinks.remove(o);
+	}
+
+	// Reference which occurs more than once
+	public int sizeOfLinkedAnnotationList()
+	{
+		return annotationLinks.size();
+	}
+
+	public List<Annotation> copyLinkedAnnotationList()
+	{
+		return new ArrayList<Annotation>(annotationLinks);
+	}
+
+	public Annotation getLinkedAnnotation(int index)
+	{
+		return annotationLinks.get(index);
+	}
+
+	public Annotation setLinkedAnnotation(int index, Annotation o)
+	{
+		return annotationLinks.set(index, o);
+	}
+
+	public boolean linkAnnotation(Annotation o)
+	{
+
+			o.linkProject(this);
+		if (!annotationLinks.contains(o)) {
+			return annotationLinks.add(o);
+		}
+		return false;
+	}
+
+	public boolean unlinkAnnotation(Annotation o)
+	{
+
+			o.unlinkProject(this);
+		return annotationLinks.remove(o);
 	}
 
 	public Element asXMLElement(Document document)
@@ -420,26 +443,32 @@ public class Project extends AbstractOMEModelObject
 			o.setID(experimenter.getID());
 			Project_element.appendChild(o.asXMLElement(document));
 		}
-		if (group != null)
+		if (experimenterGroup != null)
 		{
-			// Reference property GroupRef
-			GroupRef o = new GroupRef();
-			o.setID(group.getID());
+			// Reference property ExperimenterGroupRef
+			ExperimenterGroupRef o = new ExperimenterGroupRef();
+			o.setID(experimenterGroup.getID());
 			Project_element.appendChild(o.asXMLElement(document));
 		}
-		if (annotationList != null)
+		if (datasetLinks != null)
 		{
-			// Reference property AnnotationRef which occurs more than once
-			for (Annotation annotationList_value : annotationList)
+			// Reference property DatasetRef which occurs more than once
+			for (Dataset datasetLinks_value : datasetLinks)
 			{
-				AnnotationRef o = new AnnotationRef();
-				o.setID(annotationList_value.getID());
+				DatasetRef o = new DatasetRef();
+				o.setID(datasetLinks_value.getID());
 				Project_element.appendChild(o.asXMLElement(document));
 			}
 		}
-		if (dataset_BackReferenceList != null)
+		if (annotationLinks != null)
 		{
-			// *** IGNORING *** Skipped back reference Dataset_BackReference
+			// Reference property AnnotationRef which occurs more than once
+			for (Annotation annotationLinks_value : annotationLinks)
+			{
+				AnnotationRef o = new AnnotationRef();
+				o.setID(annotationLinks_value.getID());
+				Project_element.appendChild(o.asXMLElement(document));
+			}
 		}
 		return super.asXMLElement(document, Project_element);
 	}

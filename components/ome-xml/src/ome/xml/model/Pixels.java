@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-01-12 20:06:01-0500
+ * Created by melissa via xsd-fu on 2012-05-03 05:24:50-0400
  *
  *-----------------------------------------------------------------------------
  */
@@ -58,7 +58,7 @@ public class Pixels extends AbstractOMEModelObject
 
 	// -- Constants --
 
-	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2011-06";
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2012-06";
 
 	/** Logger for this class. */
 	private static final Logger LOGGER =
@@ -104,22 +104,22 @@ public class Pixels extends AbstractOMEModelObject
 	private String id;
 
 	// Property which occurs more than once
-	private List<Channel> channelList = new ArrayList<Channel>();
+	private List<Channel> channels = new ArrayList<Channel>();
 
 	// Property which occurs more than once
-	private List<BinData> binDataList = new ArrayList<BinData>();
+	private List<BinData> binDataBlocks = new ArrayList<BinData>();
 
 	// Property which occurs more than once
-	private List<TiffData> tiffDataList = new ArrayList<TiffData>();
+	private List<TiffData> tiffDataBlocks = new ArrayList<TiffData>();
 
 	// Property
 	private MetadataOnly metadataOnly;
 
 	// Property which occurs more than once
-	private List<Plane> planeList = new ArrayList<Plane>();
+	private List<Plane> planes = new ArrayList<Plane>();
 
 	// Reference AnnotationRef
-	private List<Annotation> annotationList = new ArrayList<Annotation>();
+	private List<Annotation> annotationLinks = new ArrayList<Annotation>();
 
 	// -- Constructors --
 
@@ -305,9 +305,9 @@ public class Pixels extends AbstractOMEModelObject
 				getChildrenByTagName(element, "AnnotationRef");
 		for (Element AnnotationRef_element : AnnotationRef_nodeList)
 		{
-			AnnotationRef annotationList_reference = new AnnotationRef();
-			annotationList_reference.setID(AnnotationRef_element.getAttribute("ID"));
-			model.addReference(this, annotationList_reference);
+			AnnotationRef annotationLinks_reference = new AnnotationRef();
+			annotationLinks_reference.setID(AnnotationRef_element.getAttribute("ID"));
+			model.addReference(this, annotationLinks_reference);
 		}
 	}
 
@@ -324,8 +324,8 @@ public class Pixels extends AbstractOMEModelObject
 		{
 			Annotation o_casted = (Annotation) o;
 			o_casted.linkPixels(this);
-			if (!annotationList.contains(o_casted)) {
-				annotationList.add(o_casted);
+			if (!annotationLinks.contains(o_casted)) {
+				annotationLinks.add(o_casted);
 			}
 			return true;
 		}
@@ -469,94 +469,94 @@ public class Pixels extends AbstractOMEModelObject
 	// Property which occurs more than once
 	public int sizeOfChannelList()
 	{
-		return channelList.size();
+		return channels.size();
 	}
 
 	public List<Channel> copyChannelList()
 	{
-		return new ArrayList<Channel>(channelList);
+		return new ArrayList<Channel>(channels);
 	}
 
 	public Channel getChannel(int index)
 	{
-		return channelList.get(index);
+		return channels.get(index);
 	}
 
 	public Channel setChannel(int index, Channel channel)
 	{
-		return channelList.set(index, channel);
+		return channels.set(index, channel);
 	}
 
 	public void addChannel(Channel channel)
 	{
-		channelList.add(channel);
+		channels.add(channel);
 	}
 
 	public void removeChannel(Channel channel)
 	{
-		channelList.remove(channel);
+		channels.remove(channel);
 	}
 
 	// Property which occurs more than once
 	public int sizeOfBinDataList()
 	{
-		return binDataList.size();
+		return binDataBlocks.size();
 	}
 
 	public List<BinData> copyBinDataList()
 	{
-		return new ArrayList<BinData>(binDataList);
+		return new ArrayList<BinData>(binDataBlocks);
 	}
 
 	public BinData getBinData(int index)
 	{
-		return binDataList.get(index);
+		return binDataBlocks.get(index);
 	}
 
 	public BinData setBinData(int index, BinData binData)
 	{
-		return binDataList.set(index, binData);
+		return binDataBlocks.set(index, binData);
 	}
 
 	public void addBinData(BinData binData)
 	{
-		binDataList.add(binData);
+		binDataBlocks.add(binData);
 	}
 
 	public void removeBinData(BinData binData)
 	{
-		binDataList.remove(binData);
+		binDataBlocks.remove(binData);
 	}
 
 	// Property which occurs more than once
 	public int sizeOfTiffDataList()
 	{
-		return tiffDataList.size();
+		return tiffDataBlocks.size();
 	}
 
 	public List<TiffData> copyTiffDataList()
 	{
-		return new ArrayList<TiffData>(tiffDataList);
+		return new ArrayList<TiffData>(tiffDataBlocks);
 	}
 
 	public TiffData getTiffData(int index)
 	{
-		return tiffDataList.get(index);
+		return tiffDataBlocks.get(index);
 	}
 
 	public TiffData setTiffData(int index, TiffData tiffData)
 	{
-		return tiffDataList.set(index, tiffData);
+		return tiffDataBlocks.set(index, tiffData);
 	}
 
 	public void addTiffData(TiffData tiffData)
 	{
-		tiffDataList.add(tiffData);
+		tiffDataBlocks.add(tiffData);
 	}
 
 	public void removeTiffData(TiffData tiffData)
 	{
-		tiffDataList.remove(tiffData);
+		tiffDataBlocks.remove(tiffData);
 	}
 
 	// Property
@@ -573,68 +573,70 @@ public class Pixels extends AbstractOMEModelObject
 	// Property which occurs more than once
 	public int sizeOfPlaneList()
 	{
-		return planeList.size();
+		return planes.size();
 	}
 
 	public List<Plane> copyPlaneList()
 	{
-		return new ArrayList<Plane>(planeList);
+		return new ArrayList<Plane>(planes);
 	}
 
 	public Plane getPlane(int index)
 	{
-		return planeList.get(index);
+		return planes.get(index);
 	}
 
 	public Plane setPlane(int index, Plane plane)
 	{
-		return planeList.set(index, plane);
+		return planes.set(index, plane);
 	}
 
 	public void addPlane(Plane plane)
 	{
-		planeList.add(plane);
+		planes.add(plane);
 	}
 
 	public void removePlane(Plane plane)
 	{
-		planeList.remove(plane);
+		planes.remove(plane);
 	}
 
 	// Reference which occurs more than once
 	public int sizeOfLinkedAnnotationList()
 	{
-		return annotationList.size();
+		return annotationLinks.size();
 	}
 
 	public List<Annotation> copyLinkedAnnotationList()
 	{
-		return new ArrayList<Annotation>(annotationList);
+		return new ArrayList<Annotation>(annotationLinks);
 	}
 
 	public Annotation getLinkedAnnotation(int index)
 	{
-		return annotationList.get(index);
+		return annotationLinks.get(index);
 	}
 
 	public Annotation setLinkedAnnotation(int index, Annotation o)
 	{
-		return annotationList.set(index, o);
+		return annotationLinks.set(index, o);
 	}
 
 	public boolean linkAnnotation(Annotation o)
 	{
-		o.linkPixels(this);
-		if (!annotationList.contains(o)) {
-			return annotationList.add(o);
+
+			o.linkPixels(this);
+		if (!annotationLinks.contains(o)) {
+			return annotationLinks.add(o);
 		}
 		return false;
 	}
 
 	public boolean unlinkAnnotation(Annotation o)
 	{
-		o.unlinkPixels(this);
-		return annotationList.remove(o);
+
+			o.unlinkPixels(this);
+		return annotationLinks.remove(o);
 	}
 
 	public Element asXMLElement(Document document)
@@ -712,31 +714,31 @@ public class Pixels extends AbstractOMEModelObject
 			// Attribute property ID
 			Pixels_element.setAttribute("ID", id.toString());
 		}
-		if (channelList != null)
+		if (channels != null)
 		{
 			// Element property Channel which is complex (has
 			// sub-elements) and occurs more than once
-			for (Channel channelList_value : channelList)
+			for (Channel channels_value : channels)
 			{
-				Pixels_element.appendChild(channelList_value.asXMLElement(document));
+				Pixels_element.appendChild(channels_value.asXMLElement(document));
 			}
 		}
-		if (binDataList != null)
+		if (binDataBlocks != null)
 		{
 			// Element property BinData which is complex (has
 			// sub-elements) and occurs more than once
-			for (BinData binDataList_value : binDataList)
+			for (BinData binDataBlocks_value : binDataBlocks)
 			{
-				Pixels_element.appendChild(binDataList_value.asXMLElement(document));
+				Pixels_element.appendChild(binDataBlocks_value.asXMLElement(document));
 			}
 		}
-		if (tiffDataList != null)
+		if (tiffDataBlocks != null)
 		{
 			// Element property TiffData which is complex (has
 			// sub-elements) and occurs more than once
-			for (TiffData tiffDataList_value : tiffDataList)
+			for (TiffData tiffDataBlocks_value : tiffDataBlocks)
 			{
-				Pixels_element.appendChild(tiffDataList_value.asXMLElement(document));
+				Pixels_element.appendChild(tiffDataBlocks_value.asXMLElement(document));
 			}
 		}
 		if (metadataOnly != null)
@@ -745,22 +747,22 @@ public class Pixels extends AbstractOMEModelObject
 			// sub-elements)
 			Pixels_element.appendChild(metadataOnly.asXMLElement(document));
 		}
-		if (planeList != null)
+		if (planes != null)
 		{
 			// Element property Plane which is complex (has
 			// sub-elements) and occurs more than once
-			for (Plane planeList_value : planeList)
+			for (Plane planes_value : planes)
 			{
-				Pixels_element.appendChild(planeList_value.asXMLElement(document));
+				Pixels_element.appendChild(planes_value.asXMLElement(document));
 			}
 		}
-		if (annotationList != null)
+		if (annotationLinks != null)
 		{
 			// Reference property AnnotationRef which occurs more than once
-			for (Annotation annotationList_value : annotationList)
+			for (Annotation annotationLinks_value : annotationLinks)
 			{
 				AnnotationRef o = new AnnotationRef();
-				o.setID(annotationList_value.getID());
+				o.setID(annotationLinks_value.getID());
 				Pixels_element.appendChild(o.asXMLElement(document));
 			}
 		}

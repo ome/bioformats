@@ -626,7 +626,7 @@ public class MetamorphReader extends BaseTiffReader {
 
       if (creationTime != null) {
         String date = DateTools.formatDate(creationTime, SHORT_DATE_FORMAT);
-        store.setImageAcquiredDate(date, 0);
+        store.setImageAcquisitionDate(date, 0);
       }
 
       store.setImageName(makeImageName(i), i);

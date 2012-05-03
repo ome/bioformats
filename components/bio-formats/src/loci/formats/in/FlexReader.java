@@ -591,7 +591,7 @@ public class FlexReader extends FormatReader {
 
         int seriesIndex = i * getImageCount();
         if (seriesIndex < objectiveRefs.size()) {
-          store.setImageObjectiveSettingsID(objectiveRefs.get(seriesIndex), i);
+          store.setObjectiveSettingsID(objectiveRefs.get(seriesIndex), i);
         }
 
         for (int c=0; c<getEffectiveSizeC(); c++) {
@@ -1334,7 +1334,7 @@ public class FlexReader extends FormatReader {
         if (currentSeries >= seriesCount) return;
 
         if (qName.equals("DateTime")) {
-          store.setImageAcquiredDate(value, currentSeries);
+          store.setImageAcquisitionDate(value, currentSeries);
         }
       }
 

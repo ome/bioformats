@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-01-12 20:06:01-0500
+ * Created by melissa via xsd-fu on 2012-05-03 05:24:50-0400
  *
  *-----------------------------------------------------------------------------
  */
@@ -58,7 +58,7 @@ public class Channel extends AbstractOMEModelObject
 
 	// -- Constants --
 
-	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2011-06";
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2012-06";
 
 	/** Logger for this class. */
 	private static final Logger LOGGER =
@@ -77,7 +77,7 @@ public class Channel extends AbstractOMEModelObject
 	private AcquisitionMode acquisitionMode;
 
 	// Property
-	private Integer color;
+	private Color color;
 
 	// Property
 	private ContrastMethod contrastMethod;
@@ -98,7 +98,7 @@ public class Channel extends AbstractOMEModelObject
 	private PositiveInteger emissionWavelength;
 
 	// Property
-	private Double ndfilter;
+	private Double ndFilter;
 
 	// Property
 	private String id;
@@ -110,16 +110,13 @@ public class Channel extends AbstractOMEModelObject
 	private LightSourceSettings lightSourceSettings;
 
 	// Property
-	private OTF otf;
-
-	// Property
 	private DetectorSettings detectorSettings;
 
 	// Property
 	private FilterSet filterSet;
 
 	// Reference AnnotationRef
-	private List<Annotation> annotationList = new ArrayList<Annotation>();
+	private List<Annotation> annotationLinks = new ArrayList<Annotation>();
 
 	// Property
 	private LightPath lightPath;
@@ -192,7 +189,7 @@ public class Channel extends AbstractOMEModelObject
 		if (element.hasAttribute("Color"))
 		{
 			// Attribute property Color
-			setColor(Integer.valueOf(
+			setColor(Color.valueOf(
 					element.getAttribute("Color")));
 		}
 		if (element.hasAttribute("ContrastMethod"))
@@ -273,15 +270,6 @@ public class Channel extends AbstractOMEModelObject
 			setLightSourceSettings(new LightSourceSettings(
 					(Element) LightSourceSettings_nodeList.get(0), model));
 		}
-		// Element reference OTFRef
-		List<Element> OTFRef_nodeList =
-				getChildrenByTagName(element, "OTFRef");
-		for (Element OTFRef_element : OTFRef_nodeList)
-		{
-			OTFRef otf_reference = new OTFRef();
-			otf_reference.setID(OTFRef_element.getAttribute("ID"));
-			model.addReference(this, otf_reference);
-		}
 		List<Element> DetectorSettings_nodeList =
 				getChildrenByTagName(element, "DetectorSettings");
 		if (DetectorSettings_nodeList.size() > 1)
@@ -312,9 +300,9 @@ public class Channel extends AbstractOMEModelObject
 				getChildrenByTagName(element, "AnnotationRef");
 		for (Element AnnotationRef_element : AnnotationRef_nodeList)
 		{
-			AnnotationRef annotationList_reference = new AnnotationRef();
-			annotationList_reference.setID(AnnotationRef_element.getAttribute("ID"));
-			model.addReference(this, annotationList_reference);
+			AnnotationRef annotationLinks_reference = new AnnotationRef();
+			annotationLinks_reference.setID(AnnotationRef_element.getAttribute("ID"));
+			model.addReference(this, annotationLinks_reference);
 		}
 		List<Element> LightPath_nodeList =
 				getChildrenByTagName(element, "LightPath");
@@ -343,13 +331,6 @@ public class Channel extends AbstractOMEModelObject
 		{
 			return true;
 		}
-		if (reference instanceof OTFRef)
-		{
-			OTF o_casted = (OTF) o;
-			o_casted.linkChannel(this);
-			otf = o_casted;
-			return true;
-		}
 		if (reference instanceof FilterSetRef)
 		{
 			FilterSet o_casted = (FilterSet) o;
@@ -361,8 +342,8 @@ public class Channel extends AbstractOMEModelObject
 		{
 			Annotation o_casted = (Annotation) o;
 			o_casted.linkChannel(this);
-			if (!annotationList.contains(o_casted)) {
-				annotationList.add(o_casted);
+			if (!annotationLinks.contains(o_casted)) {
+				annotationLinks.add(o_casted);
 			}
 			return true;
 		}
@@ -405,12 +386,12 @@ public class Channel extends AbstractOMEModelObject
 	}
 
 	// Property
-	public Integer getColor()
+	public Color getColor()
 	{
 		return color;
 	}
 
-	public void setColor(Integer color)
+	public void setColor(Color color)
 	{
 		this.color = color;
 	}
@@ -484,12 +465,12 @@ public class Channel extends AbstractOMEModelObject
 	// Property
 	public Double getNDFilter()
 	{
-		return ndfilter;
+		return ndFilter;
 	}
 
-	public void setNDFilter(Double ndfilter)
+	public void setNDFilter(Double ndFilter)
 	{
-		this.ndfilter = ndfilter;
+		this.ndFilter = ndFilter;
 	}
 
 	// Property
@@ -525,25 +506,6 @@ public class Channel extends AbstractOMEModelObject
 		this.lightSourceSettings = lightSourceSettings;
 	}
 
-	// Reference
-	public OTF getLinkedOTF()
-	{
-		return otf;
-	}
-
-	public void linkOTF(OTF o)
-	{
-		otf = o;
-	}
-
-	public void unlinkOTF(OTF o)
-	{
-		if (otf == o)
-		{
-			otf = null;
-		}
-	}
-
 	// Property
 	public DetectorSettings getDetectorSettings()
 	{
@@ -577,37 +539,39 @@ public class Channel extends AbstractOMEModelObject
 	// Reference which occurs more than once
 	public int sizeOfLinkedAnnotationList()
 	{
-		return annotationList.size();
+		return annotationLinks.size();
 	}
 
 	public List<Annotation> copyLinkedAnnotationList()
 	{
-		return new ArrayList<Annotation>(annotationList);
+		return new ArrayList<Annotation>(annotationLinks);
 	}
 
 	public Annotation getLinkedAnnotation(int index)
 	{
-		return annotationList.get(index);
+		return annotationLinks.get(index);
 	}
 
 	public Annotation setLinkedAnnotation(int index, Annotation o)
 	{
-		return annotationList.set(index, o);
+		return annotationLinks.set(index, o);
 	}
 
 	public boolean linkAnnotation(Annotation o)
 	{
-		o.linkChannel(this);
-		if (!annotationList.contains(o)) {
-			return annotationList.add(o);
+
+			o.linkChannel(this);
+		if (!annotationLinks.contains(o)) {
+			return annotationLinks.add(o);
 		}
 		return false;
 	}
 
 	public boolean unlinkAnnotation(Annotation o)
 	{
-		o.unlinkChannel(this);
-		return annotationList.remove(o);
+
+			o.unlinkChannel(this);
+		return annotationLinks.remove(o);
 	}
 
 	// Property
@@ -686,10 +650,10 @@ public class Channel extends AbstractOMEModelObject
 			// Attribute property EmissionWavelength
 			Channel_element.setAttribute("EmissionWavelength", emissionWavelength.toString());
 		}
-		if (ndfilter != null)
+		if (ndFilter != null)
 		{
 			// Attribute property NDFilter
-			Channel_element.setAttribute("NDFilter", ndfilter.toString());
+			Channel_element.setAttribute("NDFilter", ndFilter.toString());
 		}
 		if (id != null)
 		{
@@ -707,13 +671,6 @@ public class Channel extends AbstractOMEModelObject
 			// sub-elements)
 			Channel_element.appendChild(lightSourceSettings.asXMLElement(document));
 		}
-		if (otf != null)
-		{
-			// Reference property OTFRef
-			OTFRef o = new OTFRef();
-			o.setID(otf.getID());
-			Channel_element.appendChild(o.asXMLElement(document));
-		}
 		if (detectorSettings != null)
 		{
 			// Element property DetectorSettings which is complex (has
@@ -727,13 +684,13 @@ public class Channel extends AbstractOMEModelObject
 			o.setID(filterSet.getID());
 			Channel_element.appendChild(o.asXMLElement(document));
 		}
-		if (annotationList != null)
+		if (annotationLinks != null)
 		{
 			// Reference property AnnotationRef which occurs more than once
-			for (Annotation annotationList_value : annotationList)
+			for (Annotation annotationLinks_value : annotationLinks)
 			{
 				AnnotationRef o = new AnnotationRef();
-				o.setID(annotationList_value.getID());
+				o.setID(annotationLinks_value.getID());
 				Channel_element.appendChild(o.asXMLElement(document));
 			}
 		}

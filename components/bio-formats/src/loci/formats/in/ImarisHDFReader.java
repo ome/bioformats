@@ -41,6 +41,7 @@ import loci.formats.MissingLibraryException;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.NetCDFService;
 import loci.formats.services.NetCDFServiceImpl;
+import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.PositiveFloat;
 
 /**
@@ -394,10 +395,9 @@ public class ImarisHDFReader extends FormatReader {
 
         if (i < colors.size()) {
           double[] color = colors.get(i);
-          int realColor = 0xff;
-          for (int cc=0; cc<color.length; cc++) {
-            realColor |= ((int) (color[cc] * 255) << (24 - cc * 8));
-          }
+          Color realColor = new Color(
+            (int) (color[0] * 255), (int) (color[1] * 255),
+            (int) (color[2] * 255), (int) (color[3] * 255));
           store.setChannelColor(realColor, s, i);
         }
       }

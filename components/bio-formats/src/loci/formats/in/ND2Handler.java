@@ -126,14 +126,14 @@ public class ND2Handler extends BaseHandler {
           store.setImageROIRef(roiID, i, r);
         }
         store.setROIID(roiID, r);
-        store.setTextID(MetadataTools.createLSID("Shape", r, 0), r, 0);
+        store.setLabelID(MetadataTools.createLSID("Shape", r, 0), r, 0);
 
         int fontSize = Integer.parseInt(roi.get("fHeight"));
         if (fontSize >= 0) {
-          store.setTextFontSize(new NonNegativeInteger(fontSize), r, 0);
+          store.setLabelFontSize(new NonNegativeInteger(fontSize), r, 0);
         }
-        store.setTextValue(roi.get("eval-text"), r, 0);
-        store.setTextStrokeWidth(new Double(roi.get("line-width")), r, 0);
+        store.setLabelText(roi.get("eval-text"), r, 0);
+        store.setLabelStrokeWidth(new Double(roi.get("line-width")), r, 0);
 
         String rectangle = roi.get("rectangle");
         String[] p = rectangle.split(",");

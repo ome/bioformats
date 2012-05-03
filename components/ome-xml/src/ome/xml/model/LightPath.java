@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-01-12 20:06:01-0500
+ * Created by melissa via xsd-fu on 2012-05-03 05:24:50-0400
  *
  *-----------------------------------------------------------------------------
  */
@@ -58,7 +58,7 @@ public class LightPath extends AbstractOMEModelObject
 
 	// -- Constants --
 
-	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2011-06";
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2012-06";
 
 	/** Logger for this class. */
 	private static final Logger LOGGER =
@@ -68,13 +68,13 @@ public class LightPath extends AbstractOMEModelObject
 
 
 	// Reference ExcitationFilterRef
-	private List<Filter> excitationFilterList = new ArrayList<Filter>();
+	private List<Filter> excitationFilterLinks = new ArrayList<Filter>();
 
 	// Property
 	private Dichroic dichroic;
 
 	// Reference EmissionFilterRef
-	private List<Filter> emissionFilterList = new ArrayList<Filter>();
+	private List<Filter> emissionFilterLinks = new ArrayList<Filter>();
 
 	// -- Constructors --
 
@@ -128,9 +128,9 @@ public class LightPath extends AbstractOMEModelObject
 				getChildrenByTagName(element, "ExcitationFilterRef");
 		for (Element ExcitationFilterRef_element : ExcitationFilterRef_nodeList)
 		{
-			ExcitationFilterRef excitationFilterList_reference = new ExcitationFilterRef();
-			excitationFilterList_reference.setID(ExcitationFilterRef_element.getAttribute("ID"));
-			model.addReference(this, excitationFilterList_reference);
+			ExcitationFilterRef excitationFilterLinks_reference = new ExcitationFilterRef();
+			excitationFilterLinks_reference.setID(ExcitationFilterRef_element.getAttribute("ID"));
+			model.addReference(this, excitationFilterLinks_reference);
 		}
 		// Element reference DichroicRef
 		List<Element> DichroicRef_nodeList =
@@ -146,9 +146,9 @@ public class LightPath extends AbstractOMEModelObject
 				getChildrenByTagName(element, "EmissionFilterRef");
 		for (Element EmissionFilterRef_element : EmissionFilterRef_nodeList)
 		{
-			EmissionFilterRef emissionFilterList_reference = new EmissionFilterRef();
-			emissionFilterList_reference.setID(EmissionFilterRef_element.getAttribute("ID"));
-			model.addReference(this, emissionFilterList_reference);
+			EmissionFilterRef emissionFilterLinks_reference = new EmissionFilterRef();
+			emissionFilterLinks_reference.setID(EmissionFilterRef_element.getAttribute("ID"));
+			model.addReference(this, emissionFilterLinks_reference);
 		}
 	}
 
@@ -164,9 +164,10 @@ public class LightPath extends AbstractOMEModelObject
 		if (reference instanceof ExcitationFilterRef)
 		{
 			Filter o_casted = (Filter) o;
-			o_casted.linkLightPath(this);
-			if (!excitationFilterList.contains(o_casted)) {
-				excitationFilterList.add(o_casted);
+      System.out.println("overridden back reference");
+      o_casted.linkLightPathExcitationFilter(this);
+			if (!excitationFilterLinks.contains(o_casted)) {
+				excitationFilterLinks.add(o_casted);
 			}
 			return true;
 		}
@@ -180,9 +181,10 @@ public class LightPath extends AbstractOMEModelObject
 		if (reference instanceof EmissionFilterRef)
 		{
 			Filter o_casted = (Filter) o;
-			o_casted.linkLightPath(this);
-			if (!emissionFilterList.contains(o_casted)) {
-				emissionFilterList.add(o_casted);
+      System.out.println("overridden back reference");
+      o_casted.linkLightPathEmissionFilter(this);
+			if (!emissionFilterLinks.contains(o_casted)) {
+				emissionFilterLinks.add(o_casted);
 			}
 			return true;
 		}
@@ -194,37 +196,40 @@ public class LightPath extends AbstractOMEModelObject
 	// Reference which occurs more than once
 	public int sizeOfLinkedExcitationFilterList()
 	{
-		return excitationFilterList.size();
+		return excitationFilterLinks.size();
 	}
 
 	public List<Filter> copyLinkedExcitationFilterList()
 	{
-		return new ArrayList<Filter>(excitationFilterList);
+		return new ArrayList<Filter>(excitationFilterLinks);
 	}
 
 	public Filter getLinkedExcitationFilter(int index)
 	{
-		return excitationFilterList.get(index);
+		return excitationFilterLinks.get(index);
 	}
 
 	public Filter setLinkedExcitationFilter(int index, Filter o)
 	{
-		return excitationFilterList.set(index, o);
+		return excitationFilterLinks.set(index, o);
 	}
 
 	public boolean linkExcitationFilter(Filter o)
 	{
-		o.linkLightPath(this);
-		if (!excitationFilterList.contains(o)) {
-			return excitationFilterList.add(o);
+
+      o.linkLightPathExcitationFilter(this);
+		if (!excitationFilterLinks.contains(o)) {
+			return excitationFilterLinks.add(o);
 		}
 		return false;
 	}
 
 	public boolean unlinkExcitationFilter(Filter o)
 	{
-		o.unlinkLightPath(this);
-		return excitationFilterList.remove(o);
+
+      System.out.println("overridden back reference");
+      o.unlinkLightPathExcitationFilter(this);
+		return excitationFilterLinks.remove(o);
 	}
 
 	// Reference
@@ -249,37 +254,40 @@ public class LightPath extends AbstractOMEModelObject
 	// Reference which occurs more than once
 	public int sizeOfLinkedEmissionFilterList()
 	{
-		return emissionFilterList.size();
+		return emissionFilterLinks.size();
 	}
 
 	public List<Filter> copyLinkedEmissionFilterList()
 	{
-		return new ArrayList<Filter>(emissionFilterList);
+		return new ArrayList<Filter>(emissionFilterLinks);
 	}
 
 	public Filter getLinkedEmissionFilter(int index)
 	{
-		return emissionFilterList.get(index);
+		return emissionFilterLinks.get(index);
 	}
 
 	public Filter setLinkedEmissionFilter(int index, Filter o)
 	{
-		return emissionFilterList.set(index, o);
+		return emissionFilterLinks.set(index, o);
 	}
 
 	public boolean linkEmissionFilter(Filter o)
 	{
-		o.linkLightPath(this);
-		if (!emissionFilterList.contains(o)) {
-			return emissionFilterList.add(o);
+
+      o.linkLightPathEmissionFilter(this);
+		if (!emissionFilterLinks.contains(o)) {
+			return emissionFilterLinks.add(o);
 		}
 		return false;
 	}
 
 	public boolean unlinkEmissionFilter(Filter o)
 	{
-		o.unlinkLightPath(this);
-		return emissionFilterList.remove(o);
+
+      System.out.println("overridden back reference");
+      o.unlinkLightPathEmissionFilter(this);
+		return emissionFilterLinks.remove(o);
 	}
 
 	public Element asXMLElement(Document document)
@@ -297,13 +305,13 @@ public class LightPath extends AbstractOMEModelObject
 					document.createElementNS(NAMESPACE, "LightPath");
 		}
 
-		if (excitationFilterList != null)
+		if (excitationFilterLinks != null)
 		{
 			// Reference property ExcitationFilterRef which occurs more than once
-			for (Filter excitationFilterList_value : excitationFilterList)
+			for (Filter excitationFilterLinks_value : excitationFilterLinks)
 			{
 				ExcitationFilterRef o = new ExcitationFilterRef();
-				o.setID(excitationFilterList_value.getID());
+				o.setID(excitationFilterLinks_value.getID());
 				LightPath_element.appendChild(o.asXMLElement(document));
 			}
 		}
@@ -314,13 +322,13 @@ public class LightPath extends AbstractOMEModelObject
 			o.setID(dichroic.getID());
 			LightPath_element.appendChild(o.asXMLElement(document));
 		}
-		if (emissionFilterList != null)
+		if (emissionFilterLinks != null)
 		{
 			// Reference property EmissionFilterRef which occurs more than once
-			for (Filter emissionFilterList_value : emissionFilterList)
+			for (Filter emissionFilterLinks_value : emissionFilterLinks)
 			{
 				EmissionFilterRef o = new EmissionFilterRef();
-				o.setID(emissionFilterList_value.getID());
+				o.setID(emissionFilterLinks_value.getID());
 				LightPath_element.appendChild(o.asXMLElement(document));
 			}
 		}

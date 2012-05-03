@@ -358,7 +358,7 @@ public final class MetadataTools {
     Location file = id == null ? null : new Location(id).getAbsoluteFile();
     long time = System.currentTimeMillis();
     if (file != null && file.exists()) time = file.lastModified();
-    store.setImageAcquiredDate(DateTools.convertDate(time, DateTools.UNIX),
+    store.setImageAcquisitionDate(DateTools.convertDate(time, DateTools.UNIX),
       series);
   }
 

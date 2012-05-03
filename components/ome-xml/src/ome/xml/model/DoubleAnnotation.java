@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-01-12 20:06:01-0500
+ * Created by melissa via xsd-fu on 2012-05-03 05:24:50-0400
  *
  *-----------------------------------------------------------------------------
  */
@@ -52,13 +52,13 @@ import org.w3c.dom.NodeList;
 import ome.xml.model.enums.*;
 import ome.xml.model.primitives.*;
 
-public class DoubleAnnotation extends Annotation
+public class DoubleAnnotation extends NumericAnnotation
 {
-	// Base: Annotation -- Name: DoubleAnnotation -- Type: DoubleAnnotation -- javaBase: Annotation -- javaType: Object
+	// Base: NumericAnnotation -- Name: DoubleAnnotation -- Type: DoubleAnnotation -- javaBase: NumericAnnotation -- javaType: Object
 
 	// -- Constants --
 
-	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/SA/2011-06";
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/SA/2012-06";
 
 	/** Logger for this class. */
 	private static final Logger LOGGER =

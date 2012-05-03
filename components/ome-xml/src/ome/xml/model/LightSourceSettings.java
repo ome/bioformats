@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-01-12 20:06:01-0500
+ * Created by melissa via xsd-fu on 2012-05-03 05:24:50-0400
  *
  *-----------------------------------------------------------------------------
  */
@@ -58,7 +58,7 @@ public class LightSourceSettings extends Settings
 
 	// -- Constants --
 
-	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2011-06";
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2012-06";
 
 	/** Logger for this class. */
 	private static final Logger LOGGER =
@@ -75,6 +75,9 @@ public class LightSourceSettings extends Settings
 
 	// Property
 	private String id;
+
+	// Back reference LightSourceRef
+	private List<LightSource> lightSource = new ArrayList<LightSource>();
 
 	// -- Constructors --
 
@@ -149,6 +152,7 @@ public class LightSourceSettings extends Settings
 			// Adding this model object to the model handler
 			model.addModelObject(getID(), this);
 		}
+		// *** IGNORING *** Skipped back reference LightSourceRef
 	}
 
 	// -- LightSourceSettings API methods --
@@ -198,6 +202,40 @@ public class LightSourceSettings extends Settings
 		this.id = id;
 	}
 
+	// Reference which occurs more than once
+	public int sizeOfLinkedLightSourceList()
+	{
+		return lightSource.size();
+	}
+
+	public List<LightSource> copyLinkedLightSourceList()
+	{
+		return new ArrayList<LightSource>(lightSource);
+	}
+
+	public LightSource getLinkedLightSource(int index)
+	{
+		return lightSource.get(index);
+	}
+
+	public LightSource setLinkedLightSource(int index, LightSource o)
+	{
+		return lightSource.set(index, o);
+	}
+
+	public boolean linkLightSource(LightSource o)
+	{
+		if (!lightSource.contains(o)) {
+			return lightSource.add(o);
+		}
+		return false;
+	}
+
+	public boolean unlinkLightSource(LightSource o)
+	{
+		return lightSource.remove(o);
+	}
+
 	public Element asXMLElement(Document document)
 	{
 		return asXMLElement(document, null);
@@ -227,6 +265,10 @@ public class LightSourceSettings extends Settings
 		{
 			// Attribute property ID
 			LightSourceSettings_element.setAttribute("ID", id.toString());
+		}
+		if (lightSource != null)
+		{
+			// *** IGNORING *** Skipped back reference LightSourceRef
 		}
 		return super.asXMLElement(document, LightSourceSettings_element);
 	}

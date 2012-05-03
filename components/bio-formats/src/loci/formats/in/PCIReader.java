@@ -346,7 +346,7 @@ public class PCIReader extends FormatReader {
     MetadataTools.populatePixels(store, this, true);
 
     if (creationDate != null) {
-      store.setImageAcquiredDate(creationDate, 0);
+      store.setImageAcquisitionDate(creationDate, 0);
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {

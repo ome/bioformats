@@ -181,7 +181,7 @@ public class ImaconReader extends BaseTiffReader {
       }
       store.setImageName(name, i);
       if (creationDate != null) {
-        store.setImageAcquiredDate(creationDate, i);
+        store.setImageAcquisitionDate(creationDate, i);
       }
     }
 
@@ -199,7 +199,6 @@ public class ImaconReader extends BaseTiffReader {
       store.setExperimenterID(experimenter, 0);
       store.setExperimenterFirstName(firstName, 0);
       store.setExperimenterLastName(lastName, 0);
-      store.setExperimenterDisplayName(lastName + ", " + firstName, 0);
 
       for (int i=0; i<getSeriesCount(); i++) {
         store.setImageExperimenterRef(experimenter, i);

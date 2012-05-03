@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-01-12 20:06:01-0500
+ * Created by melissa via xsd-fu on 2012-05-03 05:24:50-0400
  *
  *-----------------------------------------------------------------------------
  */
@@ -58,7 +58,7 @@ public class ImagingEnvironment extends AbstractOMEModelObject
 
 	// -- Constants --
 
-	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2011-06";
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2012-06";
 
 	/** Logger for this class. */
 	private static final Logger LOGGER =
@@ -68,7 +68,7 @@ public class ImagingEnvironment extends AbstractOMEModelObject
 
 
 	// Property
-	private PercentFraction co2percent;
+	private PercentFraction co2Percent;
 
 	// Property
 	private Double temperature;
@@ -169,12 +169,12 @@ public class ImagingEnvironment extends AbstractOMEModelObject
 	// Property
 	public PercentFraction getCO2Percent()
 	{
-		return co2percent;
+		return co2Percent;
 	}
 
-	public void setCO2Percent(PercentFraction co2percent)
+	public void setCO2Percent(PercentFraction co2Percent)
 	{
-		this.co2percent = co2percent;
+		this.co2Percent = co2Percent;
 	}
 
 	// Property
@@ -225,10 +225,10 @@ public class ImagingEnvironment extends AbstractOMEModelObject
 					document.createElementNS(NAMESPACE, "ImagingEnvironment");
 		}
 
-		if (co2percent != null)
+		if (co2Percent != null)
 		{
 			// Attribute property CO2Percent
-			ImagingEnvironment_element.setAttribute("CO2Percent", co2percent.toString());
+			ImagingEnvironment_element.setAttribute("CO2Percent", co2Percent.toString());
 		}
 		if (temperature != null)
 		{

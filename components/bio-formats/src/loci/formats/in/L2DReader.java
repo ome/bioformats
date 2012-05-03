@@ -318,7 +318,7 @@ public class L2DReader extends FormatReader {
       store.setImageName(scans[i], i);
       if (dates[i] != null) {
         dates[i] = DateTools.formatDate(dates[i], DATE_FORMAT);
-        store.setImageAcquiredDate(dates[i], i);
+        store.setImageAcquisitionDate(dates[i], i);
       }
     }
 

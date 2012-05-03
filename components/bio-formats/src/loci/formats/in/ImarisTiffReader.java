@@ -159,7 +159,7 @@ public class ImarisTiffReader extends BaseTiffReader {
 
       // populate Image data
       store.setImageDescription(description, 0);
-      store.setImageAcquiredDate(creationDate, 0);
+      store.setImageAcquisitionDate(creationDate, 0);
 
       // populate LogicalChannel data
       for (int i=0; i<emWave.size(); i++) {

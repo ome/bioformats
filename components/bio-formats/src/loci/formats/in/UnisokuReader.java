@@ -218,7 +218,7 @@ public class UnisokuReader extends FormatReader {
     MetadataTools.populatePixels(store, this);
 
     store.setImageName(imageName, 0);
-    store.setImageAcquiredDate(date, 0);
+    store.setImageAcquisitionDate(date, 0);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription(remark, 0);

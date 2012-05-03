@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.meta;
 
+import ome.xml.model.*;
 import ome.xml.model.enums.*;
 import ome.xml.model.primitives.*;
 
@@ -95,20 +96,12 @@ public final class MetadataConverter {
       if (datasetExperimenterRefValue != null) dest.setDatasetExperimenterRef(datasetExperimenterRefValue, datasetIndex);
     } catch (NullPointerException e) { }
     try {
-      String datasetGroupRefValue = src.getDatasetGroupRef(datasetIndex);
-      if (datasetGroupRefValue != null) dest.setDatasetGroupRef(datasetGroupRefValue, datasetIndex);
+      String datasetGroupRefValue = src.getDatasetExperimenterGroupRef(datasetIndex);
+      if (datasetGroupRefValue != null) dest.setDatasetExperimenterGroupRef(datasetGroupRefValue, datasetIndex);
     } catch (NullPointerException e) { }
     try {
       String datasetNameValue = src.getDatasetName(datasetIndex);
       if (datasetNameValue != null) dest.setDatasetName(datasetNameValue, datasetIndex);
-    } catch (NullPointerException e) { }
-    try {
-      int projectRefCount = src.getProjectRefCount(datasetIndex);
-      for (int projectRefIndex=0; projectRefIndex<projectRefCount; projectRefIndex++)
-      {
-        String datasetProjectRefValue = src.getDatasetProjectRef(datasetIndex, projectRefIndex);
-        if (datasetProjectRefValue != null) dest.setDatasetProjectRef(datasetProjectRefValue, datasetIndex, projectRefIndex);
-      }
     } catch (NullPointerException e) { }
       try {
       int annotationRefCount = src.getDatasetAnnotationRefCount(datasetIndex);
@@ -210,10 +203,6 @@ public final class MetadataConverter {
       }
     } catch (NullPointerException e) { }
     try {
-      String experimenterDisplayNameValue = src.getExperimenterDisplayName(experimenterIndex);
-      if (experimenterDisplayNameValue != null) dest.setExperimenterDisplayName(experimenterDisplayNameValue, experimenterIndex);
-    } catch (NullPointerException e) { }
-    try {
       String experimenterEmailValue = src.getExperimenterEmail(experimenterIndex);
       if (experimenterEmailValue != null) dest.setExperimenterEmail(experimenterEmailValue, experimenterIndex);
     } catch (NullPointerException e) { }
@@ -222,10 +211,10 @@ public final class MetadataConverter {
       if (experimenterFirstNameValue != null) dest.setExperimenterFirstName(experimenterFirstNameValue, experimenterIndex);
     } catch (NullPointerException e) { }
     try {
-      int groupRefCount = src.getExperimenterGroupRefCount(experimenterIndex);
+      int groupRefCount = src.getExperimenterExperimenterGroupRefCount(experimenterIndex);
       for (int groupRefIndex=0; groupRefIndex<groupRefCount; groupRefIndex++) {
-        String experimenterGroupRefValue = src.getExperimenterGroupRef(experimenterIndex, groupRefIndex);
-        if (experimenterGroupRefValue != null) dest.setExperimenterGroupRef(experimenterGroupRefValue, experimenterIndex, groupRefIndex);
+        String experimenterGroupRefValue = src.getExperimenterExperimenterGroupRef(experimenterIndex, groupRefIndex);
+        if (experimenterGroupRefValue != null) dest.setExperimenterExperimenterGroupRef(experimenterGroupRefValue, experimenterIndex, groupRefIndex);
       }
     } catch (NullPointerException e) { }
     try {
@@ -256,11 +245,11 @@ public final class MetadataConverter {
         }
       } catch (NullPointerException e) { }
       try {
-        int groupRefCount = src.getExperimenterGroupRefCount(experimenterIndex);
+        int groupRefCount = src.getExperimenterExperimenterGroupRefCount(experimenterIndex);
         for (int groupRefIndex=0; groupRefIndex<groupRefCount; groupRefIndex++)
         {
-          String groupRef = src.getExperimenterGroupRef(experimenterIndex, groupRefIndex);
-          if (groupRef != null) dest.setExperimenterGroupRef(groupRef, experimenterIndex, groupRefIndex);
+          String groupRef = src.getExperimenterExperimenterGroupRef(experimenterIndex, groupRefIndex);
+          if (groupRef != null) dest.setExperimenterExperimenterGroupRef(groupRef, experimenterIndex, groupRefIndex);
         }
       } catch (NullPointerException e) { }
     }
@@ -269,16 +258,16 @@ public final class MetadataConverter {
     int fileAnnotationCount = src.getFileAnnotationCount();
     for (int fileAnnotationIndex=0; fileAnnotationIndex<fileAnnotationCount; fileAnnotationIndex++) {
     try {
-      String fileAnnotationBinaryFileFileNameValue = src.getFileAnnotationBinaryFileFileName(fileAnnotationIndex);
-      if (fileAnnotationBinaryFileFileNameValue != null) dest.setFileAnnotationBinaryFileFileName(fileAnnotationBinaryFileFileNameValue, fileAnnotationIndex);
+      String fileAnnotationBinaryFileFileNameValue = src.getBinaryFileFileName(fileAnnotationIndex);
+      if (fileAnnotationBinaryFileFileNameValue != null) dest.setBinaryFileFileName(fileAnnotationBinaryFileFileNameValue, fileAnnotationIndex);
     } catch (NullPointerException e) { }
     try {
-      String fileAnnotationBinaryFileMIMETypeValue = src.getFileAnnotationBinaryFileMIMEType(fileAnnotationIndex);
-      if (fileAnnotationBinaryFileMIMETypeValue != null) dest.setFileAnnotationBinaryFileMIMEType(fileAnnotationBinaryFileMIMETypeValue, fileAnnotationIndex);
+      String fileAnnotationBinaryFileMIMETypeValue = src.getBinaryFileMIMEType(fileAnnotationIndex);
+      if (fileAnnotationBinaryFileMIMETypeValue != null) dest.setBinaryFileMIMEType(fileAnnotationBinaryFileMIMETypeValue, fileAnnotationIndex);
     } catch (NullPointerException e) { }
     try {
-      NonNegativeLong fileAnnotationBinaryFileSizeValue = src.getFileAnnotationBinaryFileSize(fileAnnotationIndex);
-      if (fileAnnotationBinaryFileSizeValue != null) dest.setFileAnnotationBinaryFileSize(fileAnnotationBinaryFileSizeValue, fileAnnotationIndex);
+      NonNegativeLong fileAnnotationBinaryFileSizeValue = src.getBinaryFileSize(fileAnnotationIndex);
+      if (fileAnnotationBinaryFileSizeValue != null) dest.setBinaryFileSize(fileAnnotationBinaryFileSizeValue, fileAnnotationIndex);
     } catch (NullPointerException e) { }
     try {
       String fileAnnotationIDValue = src.getFileAnnotationID(fileAnnotationIndex);
@@ -291,27 +280,26 @@ public final class MetadataConverter {
     }
     } catch (NullPointerException e) { }
     try {
-    int groupCount = src.getGroupCount();
+    int groupCount = src.getExperimenterGroupCount();
     for (int groupIndex=0; groupIndex<groupCount; groupIndex++) {
     try {
-      String groupIDValue = src.getGroupID(groupIndex);
-      if (groupIDValue != null) dest.setGroupID(groupIDValue, groupIndex);
+      String groupIDValue = src.getExperimenterGroupID(groupIndex);
+      if (groupIDValue != null) dest.setExperimenterGroupID(groupIDValue, groupIndex);
     } catch (NullPointerException e) { }
     try {
-      String groupContactValue = src.getGroupContact(groupIndex);
-      if (groupContactValue != null) dest.setGroupContact(groupContactValue, groupIndex);
+      String groupDescriptionValue = src.getExperimenterGroupDescription(groupIndex);
+      if (groupDescriptionValue != null) dest.setExperimenterGroupDescription(groupDescriptionValue, groupIndex);
     } catch (NullPointerException e) { }
     try {
-      String groupDescriptionValue = src.getGroupDescription(groupIndex);
-      if (groupDescriptionValue != null) dest.setGroupDescription(groupDescriptionValue, groupIndex);
+      int groupLeaderCount = src.getLeaderCount(groupIndex);
+      for (int i=0; i<groupLeaderCount; i++) {
+        String groupLeaderValue = src.getExperimenterGroupLeader(groupIndex, i);
+        if (groupLeaderValue != null) dest.setExperimenterGroupLeader(groupLeaderValue, groupIndex, i);
+      }
     } catch (NullPointerException e) { }
     try {
-      String groupLeaderValue = src.getGroupLeader(groupIndex);
-      if (groupLeaderValue != null) dest.setGroupLeader(groupLeaderValue, groupIndex);
-    } catch (NullPointerException e) { }
-    try {
-      String groupNameValue = src.getGroupName(groupIndex);
-      if (groupNameValue != null) dest.setGroupName(groupNameValue, groupIndex);
+      String groupNameValue = src.getExperimenterGroupName(groupIndex);
+      if (groupNameValue != null) dest.setExperimenterGroupName(groupNameValue, groupIndex);
     } catch (NullPointerException e) { }
     }
     } catch (NullPointerException e) { }
@@ -319,8 +307,8 @@ public final class MetadataConverter {
     int imageCount = src.getImageCount();
     for (int imageIndex=0; imageIndex<imageCount; imageIndex++) {
     try {
-      String imageAcquiredDateValue = src.getImageAcquiredDate(imageIndex);
-      if (imageAcquiredDateValue != null) dest.setImageAcquiredDate(imageAcquiredDateValue, imageIndex);
+      String imageAcquisitionDateValue = src.getImageAcquisitionDate(imageIndex);
+      if (imageAcquisitionDateValue != null) dest.setImageAcquisitionDate(imageAcquisitionDateValue, imageIndex);
     } catch (NullPointerException e) { }
     try {
       int annotationRefCount = src.getImageAnnotationRefCount(imageIndex);
@@ -328,14 +316,6 @@ public final class MetadataConverter {
       {
       String imageAnnotationRefValue = src.getImageAnnotationRef(imageIndex, annotationRefIndex);
       if (imageAnnotationRefValue != null) dest.setImageAnnotationRef(imageAnnotationRefValue, imageIndex, annotationRefIndex);
-      }
-    } catch (NullPointerException e) { }
-    try {
-      int datasetRefCount = src.getDatasetRefCount(imageIndex);
-      for (int datasetRefIndex=0; datasetRefIndex<datasetRefCount; datasetRefIndex++)
-      {
-        String imageDatasetRefValue = src.getImageDatasetRef(imageIndex, datasetRefIndex);
-        if (imageDatasetRefValue != null) dest.setImageDatasetRef(imageDatasetRefValue, imageIndex, datasetRefIndex);
       }
     } catch (NullPointerException e) { }
     try {
@@ -351,8 +331,8 @@ public final class MetadataConverter {
       if (imageExperimenterRefValue != null) dest.setImageExperimenterRef(imageExperimenterRefValue, imageIndex);
     } catch (NullPointerException e) { }
     try {
-      String imageGroupRefValue = src.getImageGroupRef(imageIndex);
-      if (imageGroupRefValue != null) dest.setImageGroupRef(imageGroupRefValue, imageIndex);
+      String imageGroupRefValue = src.getImageExperimenterGroupRef(imageIndex);
+      if (imageGroupRefValue != null) dest.setImageExperimenterGroupRef(imageGroupRefValue, imageIndex);
     } catch (NullPointerException e) { }
     try {
       String imageIDValue = src.getImageID(imageIndex);
@@ -375,20 +355,20 @@ public final class MetadataConverter {
       if (imageNameValue != null) dest.setImageName(imageNameValue, imageIndex);
     } catch (NullPointerException e) { }
     try {
-      Double imageObjectiveSettingsCorrectionCollarValue = src.getImageObjectiveSettingsCorrectionCollar(imageIndex);
-      if (imageObjectiveSettingsCorrectionCollarValue != null) dest.setImageObjectiveSettingsCorrectionCollar(imageObjectiveSettingsCorrectionCollarValue, imageIndex);
+      Double imageObjectiveSettingsCorrectionCollarValue = src.getObjectiveSettingsCorrectionCollar(imageIndex);
+      if (imageObjectiveSettingsCorrectionCollarValue != null) dest.setObjectiveSettingsCorrectionCollar(imageObjectiveSettingsCorrectionCollarValue, imageIndex);
     } catch (NullPointerException e) { }
     try {
-      String imageObjectiveSettingsIDValue = src.getImageObjectiveSettingsID(imageIndex);
-      if (imageObjectiveSettingsIDValue != null) dest.setImageObjectiveSettingsID(imageObjectiveSettingsIDValue, imageIndex);
+      String imageObjectiveSettingsIDValue = src.getObjectiveSettingsID(imageIndex);
+      if (imageObjectiveSettingsIDValue != null) dest.setObjectiveSettingsID(imageObjectiveSettingsIDValue, imageIndex);
     } catch (NullPointerException e) { }
     try {
-      Medium imageObjectiveSettingsMediumValue = src.getImageObjectiveSettingsMedium(imageIndex);
-      if (imageObjectiveSettingsMediumValue != null) dest.setImageObjectiveSettingsMedium(imageObjectiveSettingsMediumValue, imageIndex);
+      Medium imageObjectiveSettingsMediumValue = src.getObjectiveSettingsMedium(imageIndex);
+      if (imageObjectiveSettingsMediumValue != null) dest.setObjectiveSettingsMedium(imageObjectiveSettingsMediumValue, imageIndex);
     } catch (NullPointerException e) { }
     try {
-      Double imageObjectiveSettingsRefractiveIndexValue = src.getImageObjectiveSettingsRefractiveIndex(imageIndex);
-      if (imageObjectiveSettingsRefractiveIndexValue != null) dest.setImageObjectiveSettingsRefractiveIndex(imageObjectiveSettingsRefractiveIndexValue, imageIndex);
+      Double imageObjectiveSettingsRefractiveIndexValue = src.getObjectiveSettingsRefractiveIndex(imageIndex);
+      if (imageObjectiveSettingsRefractiveIndexValue != null) dest.setObjectiveSettingsRefractiveIndex(imageObjectiveSettingsRefractiveIndexValue, imageIndex);
     } catch (NullPointerException e) { }
     try {
       int roiRefCount = src.getImageROIRefCount(imageIndex);
@@ -412,7 +392,7 @@ public final class MetadataConverter {
         }
       } catch (NullPointerException e) { }
       try {
-        Integer channelColorValue = src.getChannelColor(imageIndex, channelIndex);
+        Color channelColorValue = src.getChannelColor(imageIndex, channelIndex);
         if (channelColorValue != null) dest.setChannelColor(channelColorValue, imageIndex, channelIndex);
       } catch (NullPointerException e) { }
       try {
@@ -1049,14 +1029,6 @@ public final class MetadataConverter {
       if (plateRowsValue != null) dest.setPlateRows(plateRowsValue, plateIndex);
     } catch (NullPointerException e) { }
     try {
-      int screenRefCount = src.getScreenRefCount(plateIndex);
-      for (int screenRefIndex=0; screenRefIndex<screenRefCount; screenRefIndex++)
-      {
-        String plateScreenRefValue = src.getPlateScreenRef(plateIndex, screenRefIndex);
-        if (plateScreenRefValue != null) dest.setPlateScreenRef(plateScreenRefValue, plateIndex, screenRefIndex);
-      }
-    } catch (NullPointerException e) { }
-    try {
       String plateStatusValue = src.getPlateStatus(plateIndex);
       if (plateStatusValue != null) dest.setPlateStatus(plateStatusValue, plateIndex);
     } catch (NullPointerException e) { }
@@ -1125,7 +1097,7 @@ public final class MetadataConverter {
         }
       } catch (NullPointerException e) { }
       try {
-        Integer wellColorValue = src.getWellColor(plateIndex, wellIndex);
+        Color wellColorValue = src.getWellColor(plateIndex, wellIndex);
         if (wellColorValue != null) dest.setWellColor(wellColorValue, plateIndex, wellIndex);
       } catch (NullPointerException e) { }
       try {
@@ -1153,8 +1125,8 @@ public final class MetadataConverter {
         if (wellRowValue != null) dest.setWellRow(wellRowValue, plateIndex, wellIndex);
       } catch (NullPointerException e) { }
       try {
-        String wellStatusValue = src.getWellStatus(plateIndex, wellIndex);
-        if (wellStatusValue != null) dest.setWellStatus(wellStatusValue, plateIndex, wellIndex);
+        String wellTypeValue = src.getWellType(plateIndex, wellIndex);
+        if (wellTypeValue != null) dest.setWellType(wellTypeValue, plateIndex, wellIndex);
       } catch (NullPointerException e) { }
         try {
         int wellSampleCount = src.getWellSampleCount(plateIndex, wellIndex);
@@ -1221,8 +1193,8 @@ public final class MetadataConverter {
       if (projectExperimenterRefValue != null) dest.setProjectExperimenterRef(projectExperimenterRefValue, projectIndex);
     } catch (NullPointerException e) { }
     try {
-      String projectGroupRefValue = src.getProjectGroupRef(projectIndex);
-      if (projectGroupRefValue != null) dest.setProjectGroupRef(projectGroupRefValue, projectIndex);
+      String projectGroupRefValue = src.getProjectExperimenterGroupRef(projectIndex);
+      if (projectGroupRefValue != null) dest.setProjectExperimenterGroupRef(projectGroupRefValue, projectIndex);
     } catch (NullPointerException e) { }
     try {
       String projectNameValue = src.getProjectName(projectIndex);
@@ -1261,13 +1233,8 @@ public final class MetadataConverter {
       int shapeCount = src.getShapeCount(roiIndex);
       for (int shapeIndex=0; shapeIndex<shapeCount; shapeIndex++) {
         try {
-          String ellipseDescriptionValue = src.getEllipseDescription(roiIndex, shapeIndex);
-          if (ellipseDescriptionValue != null) dest.setEllipseDescription(ellipseDescriptionValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          Integer ellipseFillValue = src.getEllipseFill(roiIndex, shapeIndex);
-          if (ellipseFillValue != null) dest.setEllipseFill(ellipseFillValue, roiIndex, shapeIndex);
+          Color ellipseFillValue = src.getEllipseFillColor(roiIndex, shapeIndex);
+          if (ellipseFillValue != null) dest.setEllipseFillColor(ellipseFillValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         catch (ClassCastException e) { }
         try {
@@ -1281,13 +1248,8 @@ public final class MetadataConverter {
         } catch (NullPointerException e) { }
         catch (ClassCastException e) { }
         try {
-          String ellipseLabelValue = src.getEllipseLabel(roiIndex, shapeIndex);
-          if (ellipseLabelValue != null) dest.setEllipseLabel(ellipseLabelValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          String ellipseNameValue = src.getEllipseName(roiIndex, shapeIndex);
-          if (ellipseNameValue != null) dest.setEllipseName(ellipseNameValue, roiIndex, shapeIndex);
+          String ellipseLabelValue = src.getEllipseText(roiIndex, shapeIndex);
+          if (ellipseLabelValue != null) dest.setEllipseText(ellipseLabelValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         catch (ClassCastException e) { }
         try {
@@ -1301,8 +1263,8 @@ public final class MetadataConverter {
         } catch (NullPointerException e) { }
         catch (ClassCastException e) { }
         try {
-          Integer ellipseStrokeValue = src.getEllipseStroke(roiIndex, shapeIndex);
-          if (ellipseStrokeValue != null) dest.setEllipseStroke(ellipseStrokeValue, roiIndex, shapeIndex);
+          Color ellipseStrokeValue = src.getEllipseStrokeColor(roiIndex, shapeIndex);
+          if (ellipseStrokeValue != null) dest.setEllipseStrokeColor(ellipseStrokeValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         catch (ClassCastException e) { }
         try {
@@ -1331,7 +1293,7 @@ public final class MetadataConverter {
         } catch (NullPointerException e) { }
         catch (ClassCastException e) { }
         try {
-          String ellipseTransformValue = src.getEllipseTransform(roiIndex, shapeIndex);
+          AffineTransform ellipseTransformValue = src.getEllipseTransform(roiIndex, shapeIndex);
           if (ellipseTransformValue != null) dest.setEllipseTransform(ellipseTransformValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         catch (ClassCastException e) { }
@@ -1346,13 +1308,8 @@ public final class MetadataConverter {
         } catch (NullPointerException e) { }
         catch (ClassCastException e) { }
         try {
-          String lineDescriptionValue = src.getLineDescription(roiIndex, shapeIndex);
-          if (lineDescriptionValue != null) dest.setLineDescription(lineDescriptionValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          Integer lineFillValue = src.getLineFill(roiIndex, shapeIndex);
-          if (lineFillValue != null) dest.setLineFill(lineFillValue, roiIndex, shapeIndex);
+          Color lineFillValue = src.getLineFillColor(roiIndex, shapeIndex);
+          if (lineFillValue != null) dest.setLineFillColor(lineFillValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         catch (ClassCastException e) { }
         try {
@@ -1366,18 +1323,13 @@ public final class MetadataConverter {
         } catch (NullPointerException e) { }
         catch (ClassCastException e) { }
         try {
-          String lineLabelValue = src.getLineLabel(roiIndex, shapeIndex);
-          if (lineLabelValue != null) dest.setLineLabel(lineLabelValue, roiIndex, shapeIndex);
+          String lineLabelValue = src.getLineText(roiIndex, shapeIndex);
+          if (lineLabelValue != null) dest.setLineText(lineLabelValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         catch (ClassCastException e) { }
         try {
-          String lineNameValue = src.getLineName(roiIndex, shapeIndex);
-          if (lineNameValue != null) dest.setLineName(lineNameValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          Integer lineStrokeValue = src.getLineStroke(roiIndex, shapeIndex);
-          if (lineStrokeValue != null) dest.setLineStroke(lineStrokeValue, roiIndex, shapeIndex);
+          Color lineStrokeValue = src.getLineStrokeColor(roiIndex, shapeIndex);
+          if (lineStrokeValue != null) dest.setLineStrokeColor(lineStrokeValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         catch (ClassCastException e) { }
         try {
@@ -1406,7 +1358,7 @@ public final class MetadataConverter {
         } catch (NullPointerException e) { }
         catch (ClassCastException e) { }
         try {
-          String lineTransformValue = src.getLineTransform(roiIndex, shapeIndex);
+          AffineTransform lineTransformValue = src.getLineTransform(roiIndex, shapeIndex);
           if (lineTransformValue != null) dest.setLineTransform(lineTransformValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         catch (ClassCastException e) { }
@@ -1431,13 +1383,8 @@ public final class MetadataConverter {
         } catch (NullPointerException e) { }
         catch (ClassCastException e) { }
         try {
-          String maskDescriptionValue = src.getMaskDescription(roiIndex, shapeIndex);
-          if (maskDescriptionValue != null) dest.setMaskDescription(maskDescriptionValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          Integer maskFillValue = src.getMaskFill(roiIndex, shapeIndex);
-          if (maskFillValue != null) dest.setMaskFill(maskFillValue, roiIndex, shapeIndex);
+          Color maskFillValue = src.getMaskFillColor(roiIndex, shapeIndex);
+          if (maskFillValue != null) dest.setMaskFillColor(maskFillValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         catch (ClassCastException e) { }
         try {
@@ -1451,18 +1398,13 @@ public final class MetadataConverter {
         } catch (NullPointerException e) { }
         catch (ClassCastException e) { }
         try {
-          String maskLabelValue = src.getMaskLabel(roiIndex, shapeIndex);
-          if (maskLabelValue != null) dest.setMaskLabel(maskLabelValue, roiIndex, shapeIndex);
+          String maskLabelValue = src.getMaskText(roiIndex, shapeIndex);
+          if (maskLabelValue != null) dest.setMaskText(maskLabelValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         catch (ClassCastException e) { }
         try {
-          String maskNameValue = src.getMaskName(roiIndex, shapeIndex);
-          if (maskNameValue != null) dest.setMaskName(maskNameValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          Integer maskStrokeValue = src.getMaskStroke(roiIndex, shapeIndex);
-          if (maskStrokeValue != null) dest.setMaskStroke(maskStrokeValue, roiIndex, shapeIndex);
+          Color maskStrokeValue = src.getMaskStrokeColor(roiIndex, shapeIndex);
+          if (maskStrokeValue != null) dest.setMaskStrokeColor(maskStrokeValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         catch (ClassCastException e) { }
         try {
@@ -1491,7 +1433,7 @@ public final class MetadataConverter {
         } catch (NullPointerException e) { }
         catch (ClassCastException e) { }
         try {
-          String maskTransformValue = src.getMaskTransform(roiIndex, shapeIndex);
+          AffineTransform maskTransformValue = src.getMaskTransform(roiIndex, shapeIndex);
           if (maskTransformValue != null) dest.setMaskTransform(maskTransformValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         catch (ClassCastException e) { }
@@ -1506,83 +1448,8 @@ public final class MetadataConverter {
         } catch (NullPointerException e) { }
         catch (ClassCastException e) { }
         try {
-          String pathDefinitionValue = src.getPathDefinition(roiIndex, shapeIndex);
-          if (pathDefinitionValue != null) dest.setPathDefinition(pathDefinitionValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          String pathDescriptionValue = src.getPathDescription(roiIndex, shapeIndex);
-          if (pathDescriptionValue != null) dest.setPathDescription(pathDescriptionValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          Integer pathFillValue = src.getPathFill(roiIndex, shapeIndex);
-          if (pathFillValue != null) dest.setPathFill(pathFillValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          NonNegativeInteger pathFontSizeValue = src.getPathFontSize(roiIndex, shapeIndex);
-          if (pathFontSizeValue != null) dest.setPathFontSize(pathFontSizeValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          String pathIDValue = src.getPathID(roiIndex, shapeIndex);
-          if (pathIDValue != null) dest.setPathID(pathIDValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          String pathLabelValue = src.getPathLabel(roiIndex, shapeIndex);
-          if (pathLabelValue != null) dest.setPathLabel(pathLabelValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          String pathNameValue = src.getPathName(roiIndex, shapeIndex);
-          if (pathNameValue != null) dest.setPathName(pathNameValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          Integer pathStrokeValue = src.getPathStroke(roiIndex, shapeIndex);
-          if (pathStrokeValue != null) dest.setPathStroke(pathStrokeValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          String pathStrokeDashArrayValue = src.getPathStrokeDashArray(roiIndex, shapeIndex);
-          if (pathStrokeDashArrayValue != null) dest.setPathStrokeDashArray(pathStrokeDashArrayValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          Double pathStrokeWidthValue = src.getPathStrokeWidth(roiIndex, shapeIndex);
-          if (pathStrokeWidthValue != null) dest.setPathStrokeWidth(pathStrokeWidthValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          NonNegativeInteger pathTheCValue = src.getPathTheC(roiIndex, shapeIndex);
-          if (pathTheCValue != null) dest.setPathTheC(pathTheCValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          NonNegativeInteger pathTheTValue = src.getPathTheT(roiIndex, shapeIndex);
-          if (pathTheTValue != null) dest.setPathTheT(pathTheTValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          NonNegativeInteger pathTheZValue = src.getPathTheZ(roiIndex, shapeIndex);
-          if (pathTheZValue != null) dest.setPathTheZ(pathTheZValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          String pathTransformValue = src.getPathTransform(roiIndex, shapeIndex);
-          if (pathTransformValue != null) dest.setPathTransform(pathTransformValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          String pointDescriptionValue = src.getPointDescription(roiIndex, shapeIndex);
-          if (pointDescriptionValue != null) dest.setPointDescription(pointDescriptionValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          Integer pointFillValue = src.getPointFill(roiIndex, shapeIndex);
-          if (pointFillValue != null) dest.setPointFill(pointFillValue, roiIndex, shapeIndex);
+          Color pointFillValue = src.getPointFillColor(roiIndex, shapeIndex);
+          if (pointFillValue != null) dest.setPointFillColor(pointFillValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         catch (ClassCastException e) { }
         try {
@@ -1596,18 +1463,13 @@ public final class MetadataConverter {
         } catch (NullPointerException e) { }
         catch (ClassCastException e) { }
         try {
-          String pointLabelValue = src.getPointLabel(roiIndex, shapeIndex);
-          if (pointLabelValue != null) dest.setPointLabel(pointLabelValue, roiIndex, shapeIndex);
+          String pointLabelValue = src.getPointText(roiIndex, shapeIndex);
+          if (pointLabelValue != null) dest.setPointText(pointLabelValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         catch (ClassCastException e) { }
         try {
-          String pointNameValue = src.getPointName(roiIndex, shapeIndex);
-          if (pointNameValue != null) dest.setPointName(pointNameValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          Integer pointStrokeValue = src.getPointStroke(roiIndex, shapeIndex);
-          if (pointStrokeValue != null) dest.setPointStroke(pointStrokeValue, roiIndex, shapeIndex);
+          Color pointStrokeValue = src.getPointStrokeColor(roiIndex, shapeIndex);
+          if (pointStrokeValue != null) dest.setPointStrokeColor(pointStrokeValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         catch (ClassCastException e) { }
         try {
@@ -1636,7 +1498,7 @@ public final class MetadataConverter {
         } catch (NullPointerException e) { }
         catch (ClassCastException e) { }
         try {
-          String pointTransformValue = src.getPointTransform(roiIndex, shapeIndex);
+          AffineTransform pointTransformValue = src.getPointTransform(roiIndex, shapeIndex);
           if (pointTransformValue != null) dest.setPointTransform(pointTransformValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         catch (ClassCastException e) { }
@@ -1651,18 +1513,8 @@ public final class MetadataConverter {
         } catch (NullPointerException e) { }
         catch (ClassCastException e) { }
         try {
-          Boolean polylineClosedValue = src.getPolylineClosed(roiIndex, shapeIndex);
-          if (polylineClosedValue != null) dest.setPolylineClosed(polylineClosedValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          String polylineDescriptionValue = src.getPolylineDescription(roiIndex, shapeIndex);
-          if (polylineDescriptionValue != null) dest.setPolylineDescription(polylineDescriptionValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          Integer polylineFillValue = src.getPolylineFill(roiIndex, shapeIndex);
-          if (polylineFillValue != null) dest.setPolylineFill(polylineFillValue, roiIndex, shapeIndex);
+          Color polylineFillValue = src.getPolylineFillColor(roiIndex, shapeIndex);
+          if (polylineFillValue != null) dest.setPolylineFillColor(polylineFillValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         catch (ClassCastException e) { }
         try {
@@ -1676,13 +1528,8 @@ public final class MetadataConverter {
         } catch (NullPointerException e) { }
         catch (ClassCastException e) { }
         try {
-          String polylineLabelValue = src.getPolylineLabel(roiIndex, shapeIndex);
-          if (polylineLabelValue != null) dest.setPolylineLabel(polylineLabelValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          String polylineNameValue = src.getPolylineName(roiIndex, shapeIndex);
-          if (polylineNameValue != null) dest.setPolylineName(polylineNameValue, roiIndex, shapeIndex);
+          String polylineLabelValue = src.getPolylineText(roiIndex, shapeIndex);
+          if (polylineLabelValue != null) dest.setPolylineText(polylineLabelValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         catch (ClassCastException e) { }
         try {
@@ -1691,8 +1538,8 @@ public final class MetadataConverter {
         } catch (NullPointerException e) { }
         catch (ClassCastException e) { }
         try {
-          Integer polylineStrokeValue = src.getPolylineStroke(roiIndex, shapeIndex);
-          if (polylineStrokeValue != null) dest.setPolylineStroke(polylineStrokeValue, roiIndex, shapeIndex);
+          Color polylineStrokeValue = src.getPolylineStrokeColor(roiIndex, shapeIndex);
+          if (polylineStrokeValue != null) dest.setPolylineStrokeColor(polylineStrokeValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         catch (ClassCastException e) { }
         try {
@@ -1721,18 +1568,13 @@ public final class MetadataConverter {
         } catch (NullPointerException e) { }
         catch (ClassCastException e) { }
         try {
-          String polylineTransformValue = src.getPolylineTransform(roiIndex, shapeIndex);
+          AffineTransform polylineTransformValue = src.getPolylineTransform(roiIndex, shapeIndex);
           if (polylineTransformValue != null) dest.setPolylineTransform(polylineTransformValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         catch (ClassCastException e) { }
         try {
-          String rectangleDescriptionValue = src.getRectangleDescription(roiIndex, shapeIndex);
-          if (rectangleDescriptionValue != null) dest.setRectangleDescription(rectangleDescriptionValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          Integer rectangleFillValue = src.getRectangleFill(roiIndex, shapeIndex);
-          if (rectangleFillValue != null) dest.setRectangleFill(rectangleFillValue, roiIndex, shapeIndex);
+          Color rectangleFillValue = src.getRectangleFillColor(roiIndex, shapeIndex);
+          if (rectangleFillValue != null) dest.setRectangleFillColor(rectangleFillValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         catch (ClassCastException e) { }
         try {
@@ -1751,18 +1593,13 @@ public final class MetadataConverter {
         } catch (NullPointerException e) { }
         catch (ClassCastException e) { }
         try {
-          String rectangleLabelValue = src.getRectangleLabel(roiIndex, shapeIndex);
-          if (rectangleLabelValue != null) dest.setRectangleLabel(rectangleLabelValue, roiIndex, shapeIndex);
+          String rectangleLabelValue = src.getRectangleText(roiIndex, shapeIndex);
+          if (rectangleLabelValue != null) dest.setRectangleText(rectangleLabelValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         catch (ClassCastException e) { }
         try {
-          String rectangleNameValue = src.getRectangleName(roiIndex, shapeIndex);
-          if (rectangleNameValue != null) dest.setRectangleName(rectangleNameValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          Integer rectangleStrokeValue = src.getRectangleStroke(roiIndex, shapeIndex);
-          if (rectangleStrokeValue != null) dest.setRectangleStroke(rectangleStrokeValue, roiIndex, shapeIndex);
+          Color rectangleStrokeValue = src.getRectangleStrokeColor(roiIndex, shapeIndex);
+          if (rectangleStrokeValue != null) dest.setRectangleStrokeColor(rectangleStrokeValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         catch (ClassCastException e) { }
         try {
@@ -1791,7 +1628,7 @@ public final class MetadataConverter {
         } catch (NullPointerException e) { }
         catch (ClassCastException e) { }
         try {
-          String rectangleTransformValue = src.getRectangleTransform(roiIndex, shapeIndex);
+          AffineTransform rectangleTransformValue = src.getRectangleTransform(roiIndex, shapeIndex);
           if (rectangleTransformValue != null) dest.setRectangleTransform(rectangleTransformValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         catch (ClassCastException e) { }
@@ -1811,83 +1648,68 @@ public final class MetadataConverter {
         } catch (NullPointerException e) { }
         catch (ClassCastException e) { }
         try {
-          String textDescriptionValue = src.getTextDescription(roiIndex, shapeIndex);
-          if (textDescriptionValue != null) dest.setTextDescription(textDescriptionValue, roiIndex, shapeIndex);
+          Color textFillValue = src.getLabelFillColor(roiIndex, shapeIndex);
+          if (textFillValue != null) dest.setLabelFillColor(textFillValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         catch (ClassCastException e) { }
         try {
-          Integer textFillValue = src.getTextFill(roiIndex, shapeIndex);
-          if (textFillValue != null) dest.setTextFill(textFillValue, roiIndex, shapeIndex);
+          NonNegativeInteger textFontSizeValue = src.getLabelFontSize(roiIndex, shapeIndex);
+          if (textFontSizeValue != null) dest.setLabelFontSize(textFontSizeValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         catch (ClassCastException e) { }
         try {
-          NonNegativeInteger textFontSizeValue = src.getTextFontSize(roiIndex, shapeIndex);
-          if (textFontSizeValue != null) dest.setTextFontSize(textFontSizeValue, roiIndex, shapeIndex);
+          String textIDValue = src.getLabelID(roiIndex, shapeIndex);
+          if (textIDValue != null) dest.setLabelID(textIDValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         catch (ClassCastException e) { }
         try {
-          String textIDValue = src.getTextID(roiIndex, shapeIndex);
-          if (textIDValue != null) dest.setTextID(textIDValue, roiIndex, shapeIndex);
+          String textLabelValue = src.getLabelText(roiIndex, shapeIndex);
+          if (textLabelValue != null) dest.setLabelText(textLabelValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         catch (ClassCastException e) { }
         try {
-          String textLabelValue = src.getTextLabel(roiIndex, shapeIndex);
-          if (textLabelValue != null) dest.setTextLabel(textLabelValue, roiIndex, shapeIndex);
+          Color textStrokeValue = src.getLabelStrokeColor(roiIndex, shapeIndex);
+          if (textStrokeValue != null) dest.setLabelStrokeColor(textStrokeValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         catch (ClassCastException e) { }
         try {
-          String textNameValue = src.getTextName(roiIndex, shapeIndex);
-          if (textNameValue != null) dest.setTextName(textNameValue, roiIndex, shapeIndex);
+          String textStrokeDashArrayValue = src.getLabelStrokeDashArray(roiIndex, shapeIndex);
+          if (textStrokeDashArrayValue != null) dest.setLabelStrokeDashArray(textStrokeDashArrayValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         catch (ClassCastException e) { }
         try {
-          Integer textStrokeValue = src.getTextStroke(roiIndex, shapeIndex);
-          if (textStrokeValue != null) dest.setTextStroke(textStrokeValue, roiIndex, shapeIndex);
+          Double textStrokeWidthValue = src.getLabelStrokeWidth(roiIndex, shapeIndex);
+          if (textStrokeWidthValue != null) dest.setLabelStrokeWidth(textStrokeWidthValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         catch (ClassCastException e) { }
         try {
-          String textStrokeDashArrayValue = src.getTextStrokeDashArray(roiIndex, shapeIndex);
-          if (textStrokeDashArrayValue != null) dest.setTextStrokeDashArray(textStrokeDashArrayValue, roiIndex, shapeIndex);
+          NonNegativeInteger textTheCValue = src.getLabelTheC(roiIndex, shapeIndex);
+          if (textTheCValue != null) dest.setLabelTheC(textTheCValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         catch (ClassCastException e) { }
         try {
-          Double textStrokeWidthValue = src.getTextStrokeWidth(roiIndex, shapeIndex);
-          if (textStrokeWidthValue != null) dest.setTextStrokeWidth(textStrokeWidthValue, roiIndex, shapeIndex);
+          NonNegativeInteger textTheTValue = src.getLabelTheT(roiIndex, shapeIndex);
+          if (textTheTValue != null) dest.setLabelTheT(textTheTValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         catch (ClassCastException e) { }
         try {
-          NonNegativeInteger textTheCValue = src.getTextTheC(roiIndex, shapeIndex);
-          if (textTheCValue != null) dest.setTextTheC(textTheCValue, roiIndex, shapeIndex);
+          NonNegativeInteger textTheZValue = src.getLabelTheZ(roiIndex, shapeIndex);
+          if (textTheZValue != null) dest.setLabelTheZ(textTheZValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         catch (ClassCastException e) { }
         try {
-          NonNegativeInteger textTheTValue = src.getTextTheT(roiIndex, shapeIndex);
-          if (textTheTValue != null) dest.setTextTheT(textTheTValue, roiIndex, shapeIndex);
+          AffineTransform textTransformValue = src.getLabelTransform(roiIndex, shapeIndex);
+          if (textTransformValue != null) dest.setLabelTransform(textTransformValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         catch (ClassCastException e) { }
         try {
-          NonNegativeInteger textTheZValue = src.getTextTheZ(roiIndex, shapeIndex);
-          if (textTheZValue != null) dest.setTextTheZ(textTheZValue, roiIndex, shapeIndex);
+          Double textXValue = src.getLabelX(roiIndex, shapeIndex);
+          if (textXValue != null) dest.setLabelX(textXValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         catch (ClassCastException e) { }
         try {
-          String textTransformValue = src.getTextTransform(roiIndex, shapeIndex);
-          if (textTransformValue != null) dest.setTextTransform(textTransformValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          String textValueValue = src.getTextValue(roiIndex, shapeIndex);
-          if (textValueValue != null) dest.setTextValue(textValueValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          Double textXValue = src.getTextX(roiIndex, shapeIndex);
-          if (textXValue != null) dest.setTextX(textXValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          Double textYValue = src.getTextY(roiIndex, shapeIndex);
-          if (textYValue != null) dest.setTextY(textYValue, roiIndex, shapeIndex);
+          Double textYValue = src.getLabelY(roiIndex, shapeIndex);
+          if (textYValue != null) dest.setLabelY(textYValue, roiIndex, shapeIndex);
         } catch (NullPointerException e) { }
         catch (ClassCastException e) { }
       }
