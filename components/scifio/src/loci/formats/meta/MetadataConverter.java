@@ -502,11 +502,6 @@ public final class MetadataConverter {
       }
       } catch (NullPointerException e) { }
       try {
-      int datasetRefCount = src.getDatasetRefCount(imageIndex);
-      for (int datasetRefIndex=0; datasetRefIndex<datasetRefCount; datasetRefIndex++) {
-      }
-      } catch (NullPointerException e) { }
-      try {
         Double imagingEnvironmentAirPressureValue = src.getImagingEnvironmentAirPressure(imageIndex);
         if (imagingEnvironmentAirPressureValue != null) dest.setImagingEnvironmentAirPressure(imagingEnvironmentAirPressureValue, imageIndex);
       } catch (NullPointerException e) { }

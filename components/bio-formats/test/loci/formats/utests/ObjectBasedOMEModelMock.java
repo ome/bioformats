@@ -42,7 +42,6 @@ import ome.xml.model.LightEmittingDiode;
 import ome.xml.model.ListAnnotation;
 import ome.xml.model.LongAnnotation;
 import ome.xml.model.OME;
-import ome.xml.model.OTF;
 import ome.xml.model.Objective;
 import ome.xml.model.ObjectiveSettings;
 import ome.xml.model.Pixels;
@@ -205,7 +204,6 @@ public class ObjectBasedOMEModelMock implements OMEModelMock {
 
     Filter emFilter = new Filter();
     Filter exFilter = new Filter();
-    OTF otf = new OTF();
     // Create <Objective/> under <Instrument/>
     Objective objective = new Objective();
     objective.setID(InOut201004Test.OBJECTIVE_ID);
@@ -215,29 +213,9 @@ public class ObjectBasedOMEModelMock implements OMEModelMock {
     emFilter.setType(InOut201004Test.EM_FILTER_TYPE);
     exFilter.setID(InOut201004Test.EX_FILTER_ID);
     exFilter.setType(InOut201004Test.EX_FILTER_TYPE);
-    otf.setID(InOut201004Test.OTF_ID);
-    otf.setType(InOut201004Test.OTF_PIXELTYPE);
-    otf.setSizeX(new PositiveInteger(InOut201004Test.OTF_SIZE_X));
-    otf.setSizeY(new PositiveInteger(InOut201004Test.OTF_SIZE_Y));
-    otf.setOpticalAxisAveraged(InOut201004Test.OTF_OPTICAL_AXIS_AVERAGED);
-    // Create <ObjectiveSettings/> under <OTF/>
-    ObjectiveSettings otfObjectiveSettings = new ObjectiveSettings();
-    otfObjectiveSettings.setID(objective.getID());
-    otf.setObjectiveSettings(otfObjectiveSettings);
-    // Create <BinaryFile/> under <OTF/>
-    BinaryFile otfBinaryFile = new BinaryFile();
-    otfBinaryFile.setFileName(InOut201004Test.OTF_BINARY_FILE_NAME);
-    otfBinaryFile.setSize(InOut201004Test.OTF_BINARY_FILE_SIZE);
-    External otfBinaryFileExternal = new External();
-    otfBinaryFileExternal.sethref(InOut201004Test.OTF_BINARY_FILE_EXTERNAL_HREF);
-    otfBinaryFileExternal.setSHA1(InOut201004Test.OTF_BINARY_FILE_EXTERNAL_SHA1);
-    otfBinaryFile.setExternal(otfBinaryFileExternal);
-    otf.setBinaryFile(otfBinaryFile);
-    otf.linkFilterSet(filterSet);
 
     instrument.addFilter(emFilter);
     instrument.addFilter(exFilter);
-    instrument.addOTF(otf);
     instrument.addObjective(objective);
 
     filterSet.linkEmissionFilter(emFilter);
