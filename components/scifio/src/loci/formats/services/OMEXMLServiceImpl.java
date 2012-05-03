@@ -115,6 +115,9 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
   private static final Templates UPDATE_201006 =
     XMLTools.getStylesheet("/loci/formats/meta/2010-06-to-2011-06.xsl",
     OMEXMLServiceImpl.class);
+  private static final Templates UPDATE_201106 =
+    XMLTools.getStylesheet("/loci/formats/meta/2011-06-to-2012-06.xsl",
+    OMEXMLServiceImpl.class);
 
   private static final String SCHEMA_PATH =
     "http://www.openmicroscopy.org/Schemas/OME/";
@@ -194,6 +197,11 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
       LOGGER.debug("Running UPDATE_201006 stylesheet.");
       transformed = XMLTools.transformXML(transformed, UPDATE_201006);
       LOGGER.debug("XML updated to at least 2011-06");
+
+      transformed = verifyOMENamespace(transformed);
+      LOGGER.debug("Running UPDATE_201106 stylesheet.");
+      transformed = XMLTools.transformXML(transformed, UPDATE_201106);
+      LOGGER.debug("XML updated to at least 2012-06");
 
       // fix namespaces
       transformed = transformed.replaceAll("<ns.*?:", "<");
