@@ -35,7 +35,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2012-05-03 15:58:58+0100
+ * Created by melissa via xsd-fu on 2012-05-04 08:47:44-0400
  *
  *-----------------------------------------------------------------------------
  */
@@ -261,12 +261,12 @@ public class DummyMetadata implements IMetadata
 	}
 
 	// ExperimenterGroupRef entity counting
-	public int getExperimenterExperimenterGroupRefCount(int experimenterIndex)
+	// ExperimenterRef entity counting
+	public int getExperimenterGroupExperimenterRefCount(int experimenterGroupIndex)
 	{
 		return -1;
 	}
 
-	// ExperimenterRef entity counting
 	// Filament entity counting
 	// FileAnnotation entity counting
 	public int getFileAnnotationCount()
@@ -1261,11 +1261,7 @@ public class DummyMetadata implements IMetadata
 	}
 
 	// Ignoring Experiment_BackReference back reference
-	public String getExperimenterExperimenterGroupRef(int experimenterIndex, int experimenterGroupRefIndex)
-	{
-		return null;
-	}
-
+	// Ignoring ExperimenterGroup_BackReference back reference
 	public String getExperimenterFirstName(int experimenterIndex)
 	{
 		return null;
@@ -1317,7 +1313,11 @@ public class DummyMetadata implements IMetadata
 		return null;
 	}
 
-	// Ignoring Experimenter_BackReference back reference
+	public String getExperimenterGroupExperimenterRef(int experimenterGroupIndex, int experimenterRefIndex)
+	{
+		return null;
+	}
+
 	public String getExperimenterGroupID(int experimenterGroupIndex)
 	{
 		return null;
@@ -1338,8 +1338,8 @@ public class DummyMetadata implements IMetadata
 	//
 	// ExperimenterGroupRef property storage
 	//
-	// Indexes: {u'Project': [u'int projectIndex'], u'Image': [u'int imageIndex'], u'Experimenter': [u'int experimenterIndex', u'int experimenterGroupRefIndex'], u'Dataset': [u'int datasetIndex']}
-	// {u'Project': {u'OME': None}, u'Image': {u'OME': None}, u'Experimenter': {u'OME': None}, u'Dataset': {u'OME': None}}
+	// Indexes: {u'Project': [u'int projectIndex'], u'Image': [u'int imageIndex'], u'Dataset': [u'int datasetIndex']}
+	// {u'Project': {u'OME': None}, u'Image': {u'OME': None}, u'Dataset': {u'OME': None}}
 	// Is multi path? True
 
 	// 1:1
@@ -1349,8 +1349,8 @@ public class DummyMetadata implements IMetadata
 	//
 	// ExperimenterRef property storage
 	//
-	// Indexes: {u'Project': [u'int projectIndex'], u'Image': [u'int imageIndex'], u'Experiment': [u'int experimentIndex'], u'MicrobeamManipulation': [u'int experimentIndex', u'int microbeamManipulationIndex'], u'Dataset': [u'int datasetIndex']}
-	// {u'Project': {u'OME': None}, u'Image': {u'OME': None}, u'Dataset': {u'OME': None}, u'Experiment': {u'OME': None}, u'MicrobeamManipulation': {u'Experiment': {u'OME': None}}}
+	// Indexes: {u'ExperimenterGroup': [u'int experimenterGroupIndex', u'int experimenterRefIndex'], u'Image': [u'int imageIndex'], u'Dataset': [u'int datasetIndex'], u'Project': [u'int projectIndex'], u'Experiment': [u'int experimentIndex'], u'MicrobeamManipulation': [u'int experimentIndex', u'int microbeamManipulationIndex']}
+	// {u'ExperimenterGroup': {u'OME': None}, u'Image': {u'OME': None}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Experiment': {u'OME': None}, u'MicrobeamManipulation': {u'Experiment': {u'OME': None}}}
 	// Is multi path? True
 
 	// 1:1
@@ -4676,10 +4676,7 @@ public class DummyMetadata implements IMetadata
 	}
 
 	// Ignoring Experiment_BackReference back reference
-	public void setExperimenterExperimenterGroupRef(String experimenterGroup, int experimenterIndex, int experimenterGroupRefIndex)
-	{
-	}
-
+	// Ignoring ExperimenterGroup_BackReference back reference
 	public void setExperimenterFirstName(String firstName, int experimenterIndex)
 	{
 	}
@@ -4722,7 +4719,10 @@ public class DummyMetadata implements IMetadata
 	{
 	}
 
-	// Ignoring Experimenter_BackReference back reference
+	public void setExperimenterGroupExperimenterRef(String experimenter, int experimenterGroupIndex, int experimenterRefIndex)
+	{
+	}
+
 	public void setExperimenterGroupID(String id, int experimenterGroupIndex)
 	{
 	}
@@ -4740,7 +4740,7 @@ public class DummyMetadata implements IMetadata
 	//
 	// ExperimenterGroupRef property storage
 	//
-	// {u'Project': {u'OME': None}, u'Image': {u'OME': None}, u'Experimenter': {u'OME': None}, u'Dataset': {u'OME': None}}
+	// {u'Project': {u'OME': None}, u'Image': {u'OME': None}, u'Dataset': {u'OME': None}}
 	// Is multi path? True
 
 	// 1:1
@@ -4750,7 +4750,7 @@ public class DummyMetadata implements IMetadata
 	//
 	// ExperimenterRef property storage
 	//
-	// {u'Project': {u'OME': None}, u'Image': {u'OME': None}, u'Dataset': {u'OME': None}, u'Experiment': {u'OME': None}, u'MicrobeamManipulation': {u'Experiment': {u'OME': None}}}
+	// {u'ExperimenterGroup': {u'OME': None}, u'Image': {u'OME': None}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Experiment': {u'OME': None}, u'MicrobeamManipulation': {u'Experiment': {u'OME': None}}}
 	// Is multi path? True
 
 	// 1:1

@@ -35,7 +35,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2012-05-03 15:58:55+0100
+ * Created by melissa via xsd-fu on 2012-05-04 08:47:38-0400
  *
  *-----------------------------------------------------------------------------
  */
@@ -166,9 +166,9 @@ public interface MetadataRetrieve {
 	int getExperimenterGroupCount();
 
 	// ExperimenterGroupRef entity counting
-	int getExperimenterExperimenterGroupRefCount(int experimenterIndex);
-
 	// ExperimenterRef entity counting
+	int getExperimenterGroupExperimenterRefCount(int experimenterGroupIndex);
+
 	// Filament entity counting
 	// FileAnnotation entity counting
 	int getFileAnnotationCount();
@@ -737,8 +737,7 @@ public interface MetadataRetrieve {
 	String getExperimenterEmail(int experimenterIndex);
 
 	// Ignoring Experiment_BackReference back reference
-	String getExperimenterExperimenterGroupRef(int experimenterIndex, int experimenterGroupRefIndex);
-
+	// Ignoring ExperimenterGroup_BackReference back reference
 	String getExperimenterFirstName(int experimenterIndex);
 
 	String getExperimenterID(int experimenterIndex);
@@ -765,7 +764,8 @@ public interface MetadataRetrieve {
 	// Ignoring Dataset_BackReference back reference
 	String getExperimenterGroupDescription(int experimenterGroupIndex);
 
-	// Ignoring Experimenter_BackReference back reference
+	String getExperimenterGroupExperimenterRef(int experimenterGroupIndex, int experimenterRefIndex);
+
 	String getExperimenterGroupID(int experimenterGroupIndex);
 
 	// Ignoring Image_BackReference back reference
@@ -777,7 +777,7 @@ public interface MetadataRetrieve {
 	//
 	// ExperimenterGroupRef property storage
 	//
-	// {u'Project': {u'OME': None}, u'Image': {u'OME': None}, u'Experimenter': {u'OME': None}, u'Dataset': {u'OME': None}}
+	// {u'Project': {u'OME': None}, u'Image': {u'OME': None}, u'Dataset': {u'OME': None}}
 	// Is multi path? True
 
 	// 1:1
@@ -787,7 +787,7 @@ public interface MetadataRetrieve {
 	//
 	// ExperimenterRef property storage
 	//
-	// {u'Project': {u'OME': None}, u'Image': {u'OME': None}, u'Dataset': {u'OME': None}, u'Experiment': {u'OME': None}, u'MicrobeamManipulation': {u'Experiment': {u'OME': None}}}
+	// {u'ExperimenterGroup': {u'OME': None}, u'Image': {u'OME': None}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Experiment': {u'OME': None}, u'MicrobeamManipulation': {u'Experiment': {u'OME': None}}}
 	// Is multi path? True
 
 	// 1:1

@@ -35,7 +35,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2012-05-03 15:58:57+0100
+ * Created by melissa via xsd-fu on 2012-05-04 08:47:42-0400
  *
  *-----------------------------------------------------------------------------
  */
@@ -623,7 +623,8 @@ public class AggregateMetadata implements IMetadata
 	}
 
 	// ExperimenterGroupRef entity counting
-	public int getExperimenterExperimenterGroupRefCount(int experimenterIndex)
+	// ExperimenterRef entity counting
+	public int getExperimenterGroupExperimenterRefCount(int experimenterGroupIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -631,14 +632,13 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				int result = retrieve.getExperimenterExperimenterGroupRefCount(experimenterIndex);
+				int result = retrieve.getExperimenterGroupExperimenterRefCount(experimenterGroupIndex);
 				if (result >= 0) return result;
 			}
 		}
 		return -1;
 	}
 
-	// ExperimenterRef entity counting
 	// Filament entity counting
 	// FileAnnotation entity counting
 	public int getFileAnnotationCount()
@@ -2983,21 +2983,7 @@ public class AggregateMetadata implements IMetadata
 	}
 
 	// Ignoring Experiment_BackReference back reference
-	public String getExperimenterExperimenterGroupRef(int experimenterIndex, int experimenterGroupRefIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getExperimenterExperimenterGroupRef(experimenterIndex, experimenterGroupRefIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
+	// Ignoring ExperimenterGroup_BackReference back reference
 	public String getExperimenterFirstName(int experimenterIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -3129,7 +3115,21 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
-	// Ignoring Experimenter_BackReference back reference
+	public String getExperimenterGroupExperimenterRef(int experimenterGroupIndex, int experimenterRefIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				String result = retrieve.getExperimenterGroupExperimenterRef(experimenterGroupIndex, experimenterRefIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
 	public String getExperimenterGroupID(int experimenterGroupIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -3180,8 +3180,8 @@ public class AggregateMetadata implements IMetadata
 	//
 	// ExperimenterGroupRef property storage
 	//
-	// Indexes: {u'Project': [u'int projectIndex'], u'Image': [u'int imageIndex'], u'Experimenter': [u'int experimenterIndex', u'int experimenterGroupRefIndex'], u'Dataset': [u'int datasetIndex']}
-	// {u'Project': {u'OME': None}, u'Image': {u'OME': None}, u'Experimenter': {u'OME': None}, u'Dataset': {u'OME': None}}
+	// Indexes: {u'Project': [u'int projectIndex'], u'Image': [u'int imageIndex'], u'Dataset': [u'int datasetIndex']}
+	// {u'Project': {u'OME': None}, u'Image': {u'OME': None}, u'Dataset': {u'OME': None}}
 	// Is multi path? True
 
 	// 1:1
@@ -3191,8 +3191,8 @@ public class AggregateMetadata implements IMetadata
 	//
 	// ExperimenterRef property storage
 	//
-	// Indexes: {u'Project': [u'int projectIndex'], u'Image': [u'int imageIndex'], u'Experiment': [u'int experimentIndex'], u'MicrobeamManipulation': [u'int experimentIndex', u'int microbeamManipulationIndex'], u'Dataset': [u'int datasetIndex']}
-	// {u'Project': {u'OME': None}, u'Image': {u'OME': None}, u'Dataset': {u'OME': None}, u'Experiment': {u'OME': None}, u'MicrobeamManipulation': {u'Experiment': {u'OME': None}}}
+	// Indexes: {u'ExperimenterGroup': [u'int experimenterGroupIndex', u'int experimenterRefIndex'], u'Image': [u'int imageIndex'], u'Dataset': [u'int datasetIndex'], u'Project': [u'int projectIndex'], u'Experiment': [u'int experimentIndex'], u'MicrobeamManipulation': [u'int experimentIndex', u'int microbeamManipulationIndex']}
+	// {u'ExperimenterGroup': {u'OME': None}, u'Image': {u'OME': None}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Experiment': {u'OME': None}, u'MicrobeamManipulation': {u'Experiment': {u'OME': None}}}
 	// Is multi path? True
 
 	// 1:1
@@ -11116,19 +11116,7 @@ public class AggregateMetadata implements IMetadata
 	}
 
 	// Ignoring Experiment_BackReference back reference
-	public void setExperimenterExperimenterGroupRef(String experimenterGroup, int experimenterIndex, int experimenterGroupRefIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setExperimenterExperimenterGroupRef(experimenterGroup, experimenterIndex, experimenterGroupRefIndex);
-			}
-		}
-	}
-
+	// Ignoring ExperimenterGroup_BackReference back reference
 	public void setExperimenterFirstName(String firstName, int experimenterIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -11243,7 +11231,19 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
-	// Ignoring Experimenter_BackReference back reference
+	public void setExperimenterGroupExperimenterRef(String experimenter, int experimenterGroupIndex, int experimenterRefIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setExperimenterGroupExperimenterRef(experimenter, experimenterGroupIndex, experimenterRefIndex);
+			}
+		}
+	}
+
 	public void setExperimenterGroupID(String id, int experimenterGroupIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -11288,7 +11288,7 @@ public class AggregateMetadata implements IMetadata
 	//
 	// ExperimenterGroupRef property storage
 	//
-	// {u'Project': {u'OME': None}, u'Image': {u'OME': None}, u'Experimenter': {u'OME': None}, u'Dataset': {u'OME': None}}
+	// {u'Project': {u'OME': None}, u'Image': {u'OME': None}, u'Dataset': {u'OME': None}}
 	// Is multi path? True
 
 	// 1:1
@@ -11298,7 +11298,7 @@ public class AggregateMetadata implements IMetadata
 	//
 	// ExperimenterRef property storage
 	//
-	// {u'Project': {u'OME': None}, u'Image': {u'OME': None}, u'Dataset': {u'OME': None}, u'Experiment': {u'OME': None}, u'MicrobeamManipulation': {u'Experiment': {u'OME': None}}}
+	// {u'ExperimenterGroup': {u'OME': None}, u'Image': {u'OME': None}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Experiment': {u'OME': None}, u'MicrobeamManipulation': {u'Experiment': {u'OME': None}}}
 	// Is multi path? True
 
 	// 1:1

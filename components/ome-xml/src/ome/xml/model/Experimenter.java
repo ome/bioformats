@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2012-05-03 15:58:52+0100
+ * Created by melissa via xsd-fu on 2012-05-04 08:47:29-0400
  *
  *-----------------------------------------------------------------------------
  */
@@ -88,9 +88,6 @@ public class Experimenter extends AbstractOMEModelObject
 	// Property
 	private String institution;
 
-	// Reference ExperimenterGroupRef
-	private List<ExperimenterGroup> experimenterGroupLinks = new ArrayList<ExperimenterGroup>();
-
 	// Reference AnnotationRef
 	private List<Annotation> annotationLinks = new ArrayList<Annotation>();
 
@@ -102,6 +99,9 @@ public class Experimenter extends AbstractOMEModelObject
 
 	// Back reference Project_BackReference
 	private List<Project> projects = new ArrayList<Project>();
+
+	// Back reference ExperimenterGroup_BackReference
+	private List<ExperimenterGroup> experimenterGroupLinks = new ArrayList<ExperimenterGroup>();
 
 	// Back reference Dataset_BackReference
 	private List<Dataset> datasets = new ArrayList<Dataset>();
@@ -206,15 +206,6 @@ public class Experimenter extends AbstractOMEModelObject
 			setInstitution(String.valueOf(
 					element.getAttribute("Institution")));
 		}
-		// Element reference ExperimenterGroupRef
-		List<Element> ExperimenterGroupRef_nodeList =
-				getChildrenByTagName(element, "ExperimenterGroupRef");
-		for (Element ExperimenterGroupRef_element : ExperimenterGroupRef_nodeList)
-		{
-			ExperimenterGroupRef experimenterGroupLinks_reference = new ExperimenterGroupRef();
-			experimenterGroupLinks_reference.setID(ExperimenterGroupRef_element.getAttribute("ID"));
-			model.addReference(this, experimenterGroupLinks_reference);
-		}
 		// Element reference AnnotationRef
 		List<Element> AnnotationRef_nodeList =
 				getChildrenByTagName(element, "AnnotationRef");
@@ -227,6 +218,7 @@ public class Experimenter extends AbstractOMEModelObject
 		// *** IGNORING *** Skipped back reference Image_BackReference
 		// *** IGNORING *** Skipped back reference MicrobeamManipulation_BackReference
 		// *** IGNORING *** Skipped back reference Project_BackReference
+		// *** IGNORING *** Skipped back reference ExperimenterGroup_BackReference
 		// *** IGNORING *** Skipped back reference Dataset_BackReference
 		// *** IGNORING *** Skipped back reference Experiment_BackReference
 	}
@@ -238,15 +230,6 @@ public class Experimenter extends AbstractOMEModelObject
 		boolean wasHandledBySuperClass = super.link(reference, o);
 		if (wasHandledBySuperClass)
 		{
-			return true;
-		}
-		if (reference instanceof ExperimenterGroupRef)
-		{
-			ExperimenterGroup o_casted = (ExperimenterGroup) o;
-			o_casted.linkExperimenter(this);
-			if (!experimenterGroupLinks.contains(o_casted)) {
-				experimenterGroupLinks.add(o_casted);
-			}
 			return true;
 		}
 		if (reference instanceof AnnotationRef)
@@ -338,44 +321,6 @@ public class Experimenter extends AbstractOMEModelObject
 	public void setInstitution(String institution)
 	{
 		this.institution = institution;
-	}
-
-	// Reference which occurs more than once
-	public int sizeOfLinkedExperimenterGroupList()
-	{
-		return experimenterGroupLinks.size();
-	}
-
-	public List<ExperimenterGroup> copyLinkedExperimenterGroupList()
-	{
-		return new ArrayList<ExperimenterGroup>(experimenterGroupLinks);
-	}
-
-	public ExperimenterGroup getLinkedExperimenterGroup(int index)
-	{
-		return experimenterGroupLinks.get(index);
-	}
-
-	public ExperimenterGroup setLinkedExperimenterGroup(int index, ExperimenterGroup o)
-	{
-		return experimenterGroupLinks.set(index, o);
-	}
-
-	public boolean linkExperimenterGroup(ExperimenterGroup o)
-	{
-
-			o.linkExperimenter(this);
-		if (!experimenterGroupLinks.contains(o)) {
-			return experimenterGroupLinks.add(o);
-		}
-		return false;
-	}
-
-	public boolean unlinkExperimenterGroup(ExperimenterGroup o)
-	{
-
-			o.unlinkExperimenter(this);
-		return experimenterGroupLinks.remove(o);
 	}
 
 	// Reference which occurs more than once
@@ -519,6 +464,40 @@ public class Experimenter extends AbstractOMEModelObject
 	}
 
 	// Reference which occurs more than once
+	public int sizeOfLinkedExperimenterGroupList()
+	{
+		return experimenterGroupLinks.size();
+	}
+
+	public List<ExperimenterGroup> copyLinkedExperimenterGroupList()
+	{
+		return new ArrayList<ExperimenterGroup>(experimenterGroupLinks);
+	}
+
+	public ExperimenterGroup getLinkedExperimenterGroup(int index)
+	{
+		return experimenterGroupLinks.get(index);
+	}
+
+	public ExperimenterGroup setLinkedExperimenterGroup(int index, ExperimenterGroup o)
+	{
+		return experimenterGroupLinks.set(index, o);
+	}
+
+	public boolean linkExperimenterGroup(ExperimenterGroup o)
+	{
+		if (!experimenterGroupLinks.contains(o)) {
+			return experimenterGroupLinks.add(o);
+		}
+		return false;
+	}
+
+	public boolean unlinkExperimenterGroup(ExperimenterGroup o)
+	{
+		return experimenterGroupLinks.remove(o);
+	}
+
+	// Reference which occurs more than once
 	public int sizeOfLinkedDatasetList()
 	{
 		return datasets.size();
@@ -636,16 +615,6 @@ public class Experimenter extends AbstractOMEModelObject
 			// Attribute property Institution
 			Experimenter_element.setAttribute("Institution", institution.toString());
 		}
-		if (experimenterGroupLinks != null)
-		{
-			// Reference property ExperimenterGroupRef which occurs more than once
-			for (ExperimenterGroup experimenterGroupLinks_value : experimenterGroupLinks)
-			{
-				ExperimenterGroupRef o = new ExperimenterGroupRef();
-				o.setID(experimenterGroupLinks_value.getID());
-				Experimenter_element.appendChild(o.asXMLElement(document));
-			}
-		}
 		if (annotationLinks != null)
 		{
 			// Reference property AnnotationRef which occurs more than once
@@ -667,6 +636,10 @@ public class Experimenter extends AbstractOMEModelObject
 		if (projects != null)
 		{
 			// *** IGNORING *** Skipped back reference Project_BackReference
+		}
+		if (experimenterGroupLinks != null)
+		{
+			// *** IGNORING *** Skipped back reference ExperimenterGroup_BackReference
 		}
 		if (datasets != null)
 		{

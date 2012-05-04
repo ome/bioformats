@@ -211,13 +211,6 @@ public final class MetadataConverter {
       if (experimenterFirstNameValue != null) dest.setExperimenterFirstName(experimenterFirstNameValue, experimenterIndex);
     } catch (NullPointerException e) { }
     try {
-      int groupRefCount = src.getExperimenterExperimenterGroupRefCount(experimenterIndex);
-      for (int groupRefIndex=0; groupRefIndex<groupRefCount; groupRefIndex++) {
-        String experimenterGroupRefValue = src.getExperimenterExperimenterGroupRef(experimenterIndex, groupRefIndex);
-        if (experimenterGroupRefValue != null) dest.setExperimenterExperimenterGroupRef(experimenterGroupRefValue, experimenterIndex, groupRefIndex);
-      }
-    } catch (NullPointerException e) { }
-    try {
       String experimenterIDValue = src.getExperimenterID(experimenterIndex);
       if (experimenterIDValue != null) dest.setExperimenterID(experimenterIDValue, experimenterIndex);
     } catch (NullPointerException e) { }
@@ -242,14 +235,6 @@ public final class MetadataConverter {
         for (int annotationRefIndex=0; annotationRefIndex<annotationRefCount; annotationRefIndex++) {
           String annotationRef = src.getExperimenterAnnotationRef(experimenterIndex, annotationRefIndex);
           if (annotationRef != null) dest.setExperimenterAnnotationRef(annotationRef, experimenterIndex, annotationRefIndex);
-        }
-      } catch (NullPointerException e) { }
-      try {
-        int groupRefCount = src.getExperimenterExperimenterGroupRefCount(experimenterIndex);
-        for (int groupRefIndex=0; groupRefIndex<groupRefCount; groupRefIndex++)
-        {
-          String groupRef = src.getExperimenterExperimenterGroupRef(experimenterIndex, groupRefIndex);
-          if (groupRef != null) dest.setExperimenterExperimenterGroupRef(groupRef, experimenterIndex, groupRefIndex);
         }
       } catch (NullPointerException e) { }
     }

@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2012-05-03 15:58:52+0100
+ * Created by melissa via xsd-fu on 2012-05-04 08:47:29-0400
  *
  *-----------------------------------------------------------------------------
  */
@@ -76,6 +76,9 @@ public class ExperimenterGroup extends AbstractOMEModelObject
 	// Property
 	private String description;
 
+	// Reference ExperimenterRef
+	private List<Experimenter> experimenterLinks = new ArrayList<Experimenter>();
+
 	// Reference Leader
 	private List<Experimenter> leaders = new ArrayList<Experimenter>();
 
@@ -90,9 +93,6 @@ public class ExperimenterGroup extends AbstractOMEModelObject
 
 	// Back reference Dataset_BackReference
 	private List<Dataset> datasets = new ArrayList<Dataset>();
-
-	// Back reference Experimenter_BackReference
-	private List<Experimenter> experimenterLinks = new ArrayList<Experimenter>();
 
 	// -- Constructors --
 
@@ -177,6 +177,15 @@ public class ExperimenterGroup extends AbstractOMEModelObject
 			setDescription(
 					String.valueOf(Description_nodeList.get(0).getTextContent()));
 		}
+		// Element reference ExperimenterRef
+		List<Element> ExperimenterRef_nodeList =
+				getChildrenByTagName(element, "ExperimenterRef");
+		for (Element ExperimenterRef_element : ExperimenterRef_nodeList)
+		{
+			ExperimenterRef experimenterLinks_reference = new ExperimenterRef();
+			experimenterLinks_reference.setID(ExperimenterRef_element.getAttribute("ID"));
+			model.addReference(this, experimenterLinks_reference);
+		}
 		// Element reference Leader
 		List<Element> Leader_nodeList =
 				getChildrenByTagName(element, "Leader");
@@ -198,7 +207,6 @@ public class ExperimenterGroup extends AbstractOMEModelObject
 		// *** IGNORING *** Skipped back reference Image_BackReference
 		// *** IGNORING *** Skipped back reference Project_BackReference
 		// *** IGNORING *** Skipped back reference Dataset_BackReference
-		// *** IGNORING *** Skipped back reference Experimenter_BackReference
 	}
 
 	// -- ExperimenterGroup API methods --
@@ -208,6 +216,15 @@ public class ExperimenterGroup extends AbstractOMEModelObject
 		boolean wasHandledBySuperClass = super.link(reference, o);
 		if (wasHandledBySuperClass)
 		{
+			return true;
+		}
+		if (reference instanceof ExperimenterRef)
+		{
+			Experimenter o_casted = (Experimenter) o;
+			o_casted.linkExperimenterGroup(this);
+			if (!experimenterLinks.contains(o_casted)) {
+				experimenterLinks.add(o_casted);
+			}
 			return true;
 		}
 		if (reference instanceof Leader)
@@ -264,6 +281,44 @@ public class ExperimenterGroup extends AbstractOMEModelObject
 	public void setDescription(String description)
 	{
 		this.description = description;
+	}
+
+	// Reference which occurs more than once
+	public int sizeOfLinkedExperimenterList()
+	{
+		return experimenterLinks.size();
+	}
+
+	public List<Experimenter> copyLinkedExperimenterList()
+	{
+		return new ArrayList<Experimenter>(experimenterLinks);
+	}
+
+	public Experimenter getLinkedExperimenter(int index)
+	{
+		return experimenterLinks.get(index);
+	}
+
+	public Experimenter setLinkedExperimenter(int index, Experimenter o)
+	{
+		return experimenterLinks.set(index, o);
+	}
+
+	public boolean linkExperimenter(Experimenter o)
+	{
+
+			o.linkExperimenterGroup(this);
+		if (!experimenterLinks.contains(o)) {
+			return experimenterLinks.add(o);
+		}
+		return false;
+	}
+
+	public boolean unlinkExperimenter(Experimenter o)
+	{
+
+			o.unlinkExperimenterGroup(this);
+		return experimenterLinks.remove(o);
 	}
 
 	// Reference which occurs more than once
@@ -444,40 +499,6 @@ public class ExperimenterGroup extends AbstractOMEModelObject
 		return datasets.remove(o);
 	}
 
-	// Reference which occurs more than once
-	public int sizeOfLinkedExperimenterList()
-	{
-		return experimenterLinks.size();
-	}
-
-	public List<Experimenter> copyLinkedExperimenterList()
-	{
-		return new ArrayList<Experimenter>(experimenterLinks);
-	}
-
-	public Experimenter getLinkedExperimenter(int index)
-	{
-		return experimenterLinks.get(index);
-	}
-
-	public Experimenter setLinkedExperimenter(int index, Experimenter o)
-	{
-		return experimenterLinks.set(index, o);
-	}
-
-	public boolean linkExperimenter(Experimenter o)
-	{
-		if (!experimenterLinks.contains(o)) {
-			return experimenterLinks.add(o);
-		}
-		return false;
-	}
-
-	public boolean unlinkExperimenter(Experimenter o)
-	{
-		return experimenterLinks.remove(o);
-	}
-
 	public Element asXMLElement(Document document)
 	{
 		return asXMLElement(document, null);
@@ -512,6 +533,16 @@ public class ExperimenterGroup extends AbstractOMEModelObject
 			description_element.setTextContent(description.toString());
 			ExperimenterGroup_element.appendChild(description_element);
 		}
+		if (experimenterLinks != null)
+		{
+			// Reference property ExperimenterRef which occurs more than once
+			for (Experimenter experimenterLinks_value : experimenterLinks)
+			{
+				ExperimenterRef o = new ExperimenterRef();
+				o.setID(experimenterLinks_value.getID());
+				ExperimenterGroup_element.appendChild(o.asXMLElement(document));
+			}
+		}
 		if (leaders != null)
 		{
 			// Reference property Leader which occurs more than once
@@ -543,10 +574,6 @@ public class ExperimenterGroup extends AbstractOMEModelObject
 		if (datasets != null)
 		{
 			// *** IGNORING *** Skipped back reference Dataset_BackReference
-		}
-		if (experimenterLinks != null)
-		{
-			// *** IGNORING *** Skipped back reference Experimenter_BackReference
 		}
 		return super.asXMLElement(document, ExperimenterGroup_element);
 	}

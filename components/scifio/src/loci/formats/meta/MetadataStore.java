@@ -35,7 +35,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2012-05-03 15:58:55+0100
+ * Created by melissa via xsd-fu on 2012-05-04 08:47:36-0400
  *
  *-----------------------------------------------------------------------------
  */
@@ -536,8 +536,7 @@ public interface MetadataStore
 	void setExperimenterEmail(String email, int experimenterIndex);
 
 	// Ignoring Experiment_BackReference back reference
-	void setExperimenterExperimenterGroupRef(String experimenterGroup, int experimenterIndex, int experimenterGroupRefIndex);
-
+	// Ignoring ExperimenterGroup_BackReference back reference
 	void setExperimenterFirstName(String firstName, int experimenterIndex);
 
 	void setExperimenterID(String id, int experimenterIndex);
@@ -564,7 +563,8 @@ public interface MetadataStore
 	// Ignoring Dataset_BackReference back reference
 	void setExperimenterGroupDescription(String description, int experimenterGroupIndex);
 
-	// Ignoring Experimenter_BackReference back reference
+	void setExperimenterGroupExperimenterRef(String experimenter, int experimenterGroupIndex, int experimenterRefIndex);
+
 	void setExperimenterGroupID(String id, int experimenterGroupIndex);
 
 	// Ignoring Image_BackReference back reference
@@ -576,7 +576,7 @@ public interface MetadataStore
 	//
 	// ExperimenterGroupRef property storage
 	//
-	// {u'Project': {u'OME': None}, u'Image': {u'OME': None}, u'Experimenter': {u'OME': None}, u'Dataset': {u'OME': None}}
+	// {u'Project': {u'OME': None}, u'Image': {u'OME': None}, u'Dataset': {u'OME': None}}
 	// Is multi path? True
 
 	// 1:1
@@ -586,7 +586,7 @@ public interface MetadataStore
 	//
 	// ExperimenterRef property storage
 	//
-	// {u'Project': {u'OME': None}, u'Image': {u'OME': None}, u'Dataset': {u'OME': None}, u'Experiment': {u'OME': None}, u'MicrobeamManipulation': {u'Experiment': {u'OME': None}}}
+	// {u'ExperimenterGroup': {u'OME': None}, u'Image': {u'OME': None}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Experiment': {u'OME': None}, u'MicrobeamManipulation': {u'Experiment': {u'OME': None}}}
 	// Is multi path? True
 
 	// 1:1

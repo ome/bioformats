@@ -35,7 +35,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2012-05-03 15:58:59+0100
+ * Created by melissa via xsd-fu on 2012-05-04 08:47:46-0400
  *
  *-----------------------------------------------------------------------------
  */
@@ -884,11 +884,7 @@ public class FilterMetadata implements MetadataStore
 	}
 
 	// Ignoring Experiment_BackReference back reference
-	public void setExperimenterExperimenterGroupRef(String experimenterGroup, int experimenterIndex, int experimenterGroupRefIndex)
-	{
-		store.setExperimenterExperimenterGroupRef(experimenterGroup, experimenterIndex, experimenterGroupRefIndex);
-	}
-
+	// Ignoring ExperimenterGroup_BackReference back reference
 	public void setExperimenterFirstName(String firstName, int experimenterIndex)
 	{
 		firstName = filter? DataTools.sanitize(firstName) : firstName;
@@ -946,7 +942,11 @@ public class FilterMetadata implements MetadataStore
 		store.setExperimenterGroupDescription(description, experimenterGroupIndex);
 	}
 
-	// Ignoring Experimenter_BackReference back reference
+	public void setExperimenterGroupExperimenterRef(String experimenter, int experimenterGroupIndex, int experimenterRefIndex)
+	{
+		store.setExperimenterGroupExperimenterRef(experimenter, experimenterGroupIndex, experimenterRefIndex);
+	}
+
 	public void setExperimenterGroupID(String id, int experimenterGroupIndex)
 	{
 		id = filter? DataTools.sanitize(id) : id;
@@ -969,7 +969,7 @@ public class FilterMetadata implements MetadataStore
 	//
 	// ExperimenterGroupRef property storage
 	//
-	// {u'Project': {u'OME': None}, u'Image': {u'OME': None}, u'Experimenter': {u'OME': None}, u'Dataset': {u'OME': None}}
+	// {u'Project': {u'OME': None}, u'Image': {u'OME': None}, u'Dataset': {u'OME': None}}
 	// Is multi path? True
 
 	// 1:1
@@ -979,7 +979,7 @@ public class FilterMetadata implements MetadataStore
 	//
 	// ExperimenterRef property storage
 	//
-	// {u'Project': {u'OME': None}, u'Image': {u'OME': None}, u'Dataset': {u'OME': None}, u'Experiment': {u'OME': None}, u'MicrobeamManipulation': {u'Experiment': {u'OME': None}}}
+	// {u'ExperimenterGroup': {u'OME': None}, u'Image': {u'OME': None}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Experiment': {u'OME': None}, u'MicrobeamManipulation': {u'Experiment': {u'OME': None}}}
 	// Is multi path? True
 
 	// 1:1

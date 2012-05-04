@@ -35,7 +35,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2012-05-03 15:58:56+0100
+ * Created by melissa via xsd-fu on 2012-05-04 08:47:39-0400
  *
  *-----------------------------------------------------------------------------
  */
@@ -351,14 +351,14 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// ExperimenterGroupRef entity counting
-	public int getExperimenterExperimenterGroupRefCount(int experimenterIndex)
+	// ExperimenterRef entity counting
+	public int getExperimenterGroupExperimenterRefCount(int experimenterGroupIndex)
 	{
-		// Parents: {u'Project': {u'OME': None}, u'Image': {u'OME': None}, u'Experimenter': {u'OME': None}, u'Dataset': {u'OME': None}}
-		// ExperimenterGroupRef is a reference
-		return root.getExperimenter(experimenterIndex).sizeOfLinkedExperimenterGroupList();
+		// Parents: {u'ExperimenterGroup': {u'OME': None}, u'Image': {u'OME': None}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Experiment': {u'OME': None}, u'MicrobeamManipulation': {u'Experiment': {u'OME': None}}}
+		// ExperimenterRef is a reference
+		return root.getExperimenterGroup(experimenterGroupIndex).sizeOfLinkedExperimenterList();
 	}
 
-	// ExperimenterRef entity counting
 	// Filament entity counting
 	// FileAnnotation entity counting
 	public int getFileAnnotationCount()
@@ -1665,13 +1665,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// Ignoring Experiment_BackReference back reference
-	public String getExperimenterExperimenterGroupRef(int experimenterIndex, int experimenterGroupRefIndex)
-	{
-		// Parents: {u'OME': None}
-		// ExperimenterGroupRef is reference and occurs more than once
-		return root.getExperimenter(experimenterIndex).getLinkedExperimenterGroup(experimenterGroupRefIndex).getID();
-	}
-
+	// Ignoring ExperimenterGroup_BackReference back reference
 	public String getExperimenterFirstName(int experimenterIndex)
 	{
 		// Parents: {u'OME': None}
@@ -1739,7 +1733,13 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.getExperimenterGroup(experimenterGroupIndex).getDescription();
 	}
 
-	// Ignoring Experimenter_BackReference back reference
+	public String getExperimenterGroupExperimenterRef(int experimenterGroupIndex, int experimenterRefIndex)
+	{
+		// Parents: {u'OME': None}
+		// ExperimenterRef is reference and occurs more than once
+		return root.getExperimenterGroup(experimenterGroupIndex).getLinkedExperimenter(experimenterRefIndex).getID();
+	}
+
 	public String getExperimenterGroupID(int experimenterGroupIndex)
 	{
 		// Parents: {u'OME': None}
@@ -1766,8 +1766,8 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	//
 	// ExperimenterGroupRef property storage
 	//
-	// Indexes: {u'Project': [u'int projectIndex'], u'Image': [u'int imageIndex'], u'Experimenter': [u'int experimenterIndex', u'int experimenterGroupRefIndex'], u'Dataset': [u'int datasetIndex']}
-	// {u'Project': {u'OME': None}, u'Image': {u'OME': None}, u'Experimenter': {u'OME': None}, u'Dataset': {u'OME': None}}
+	// Indexes: {u'Project': [u'int projectIndex'], u'Image': [u'int imageIndex'], u'Dataset': [u'int datasetIndex']}
+	// {u'Project': {u'OME': None}, u'Image': {u'OME': None}, u'Dataset': {u'OME': None}}
 	// Is multi path? True
 
 	// 1:1
@@ -1777,8 +1777,8 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	//
 	// ExperimenterRef property storage
 	//
-	// Indexes: {u'Project': [u'int projectIndex'], u'Image': [u'int imageIndex'], u'Experiment': [u'int experimentIndex'], u'MicrobeamManipulation': [u'int experimentIndex', u'int microbeamManipulationIndex'], u'Dataset': [u'int datasetIndex']}
-	// {u'Project': {u'OME': None}, u'Image': {u'OME': None}, u'Dataset': {u'OME': None}, u'Experiment': {u'OME': None}, u'MicrobeamManipulation': {u'Experiment': {u'OME': None}}}
+	// Indexes: {u'ExperimenterGroup': [u'int experimenterGroupIndex', u'int experimenterRefIndex'], u'Image': [u'int imageIndex'], u'Dataset': [u'int datasetIndex'], u'Project': [u'int projectIndex'], u'Experiment': [u'int experimentIndex'], u'MicrobeamManipulation': [u'int experimentIndex', u'int microbeamManipulationIndex']}
+	// {u'ExperimenterGroup': {u'OME': None}, u'Image': {u'OME': None}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Experiment': {u'OME': None}, u'MicrobeamManipulation': {u'Experiment': {u'OME': None}}}
 	// Is multi path? True
 
 	// 1:1
@@ -7535,17 +7535,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// Ignoring Experiment_BackReference back reference
-	public void setExperimenterExperimenterGroupRef(String experimenterGroup, int experimenterIndex, int experimenterGroupRefIndex)
-	{
-		// Parents: {u'OME': None}
-		// ExperimenterGroupRef is reference and occurs more than once
-		ExperimenterGroupRef experimenterGroupLinks_reference = new ExperimenterGroupRef();
-		experimenterGroupLinks_reference.setID(experimenterGroup);
-		model.addReference(
-				root.getExperimenter(experimenterIndex),
-				experimenterGroupLinks_reference);
-	}
-
+	// Ignoring ExperimenterGroup_BackReference back reference
 	public void setExperimenterFirstName(String firstName, int experimenterIndex)
 	{
 		// Parents: {u'OME': None}
@@ -7659,7 +7649,17 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o1.setDescription(description);
 	}
 
-	// Ignoring Experimenter_BackReference back reference
+	public void setExperimenterGroupExperimenterRef(String experimenter, int experimenterGroupIndex, int experimenterRefIndex)
+	{
+		// Parents: {u'OME': None}
+		// ExperimenterRef is reference and occurs more than once
+		ExperimenterRef experimenterLinks_reference = new ExperimenterRef();
+		experimenterLinks_reference.setID(experimenter);
+		model.addReference(
+				root.getExperimenterGroup(experimenterGroupIndex),
+				experimenterLinks_reference);
+	}
+
 	public void setExperimenterGroupID(String id, int experimenterGroupIndex)
 	{
 		// Parents: {u'OME': None}
@@ -7703,7 +7703,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	//
 	// ExperimenterGroupRef property storage
 	//
-	// {u'Project': {u'OME': None}, u'Image': {u'OME': None}, u'Experimenter': {u'OME': None}, u'Dataset': {u'OME': None}}
+	// {u'Project': {u'OME': None}, u'Image': {u'OME': None}, u'Dataset': {u'OME': None}}
 	// Is multi path? True
 
 	// 1:1
@@ -7713,7 +7713,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	//
 	// ExperimenterRef property storage
 	//
-	// {u'Project': {u'OME': None}, u'Image': {u'OME': None}, u'Dataset': {u'OME': None}, u'Experiment': {u'OME': None}, u'MicrobeamManipulation': {u'Experiment': {u'OME': None}}}
+	// {u'ExperimenterGroup': {u'OME': None}, u'Image': {u'OME': None}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Experiment': {u'OME': None}, u'MicrobeamManipulation': {u'Experiment': {u'OME': None}}}
 	// Is multi path? True
 
 	// 1:1
