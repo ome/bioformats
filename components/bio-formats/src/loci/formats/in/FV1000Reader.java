@@ -1314,6 +1314,8 @@ public class FV1000Reader extends FormatReader {
                 LOGGER.warn("Expected non-negative value for FontSize; got {}",
                   fontSize);
               }
+              store.setPolylineStrokeWidth(
+                new Double(lineWidth), nextROI, shape);
             }
             else {
               store.setPolygonID(shapeID, nextROI, shape);
@@ -1332,8 +1334,8 @@ public class FV1000Reader extends FormatReader {
                 LOGGER.warn("Expected non-negative value for FontSize; got {}",
                   fontSize);
               }
+              store.setPolygonStrokeWidth(new Double(lineWidth), nextROI, shape);
             }
-            store.setPolylineStrokeWidth(new Double(lineWidth), nextROI, shape);
           }
           else {
             if (shape == 0) nextROI--;
