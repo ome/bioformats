@@ -104,10 +104,17 @@ public class ND2Handler extends BaseHandler {
 
   private int nXFields = 0, nYFields = 0;
 
+  private boolean populateXY = true;
+
   // -- Constructor --
 
   public ND2Handler(CoreMetadata[] core) {
+    this(core, true);
+  }
+
+  public ND2Handler(CoreMetadata[] core, boolean populateXY) {
     super();
+    this.populateXY = populateXY;
     this.core = core;
     if (this.core.length > 1) {
       fieldIndex = 2;
@@ -342,12 +349,12 @@ public class ND2Handler extends BaseHandler {
 
     if (qName.equals("uiWidth")) {
       int x = Integer.parseInt(value);
-      if (x != 0) {
+      if (x != 0 && populateXY) {
         core[0].sizeX = x;
       }
     }
     else if (qName.equals("uiCamPxlCountX")) {
-      if (core[0].sizeX == 0) {
+      if (core[0].sizeX == 0 && populateXY) {
         try {
           core[0].sizeX = Integer.parseInt(value);
         }
@@ -355,7 +362,7 @@ public class ND2Handler extends BaseHandler {
       }
     }
     else if (qName.equals("uiCamPxlCountY")) {
-      if (core[0].sizeY == 0) {
+      if (core[0].sizeY == 0 && populateXY) {
         try {
           core[0].sizeY = Integer.parseInt(value);
         }
@@ -370,7 +377,7 @@ public class ND2Handler extends BaseHandler {
       int fields = Integer.parseInt(value);
       nYFields += fields;
     }
-    else if ("rectSensorUser".equals(prevElement)) {
+    else if ("rectSensorUser".equals(prevElement) && populateXY) {
       if (qName.equals("left") && core[0].sizeX == 0) {
         core[0].sizeX = -1 * Integer.parseInt(value);
       }
@@ -486,7 +493,7 @@ public class ND2Handler extends BaseHandler {
       int v = Integer.parseInt(value);
       core[0].sizeC = (int) Math.max(core[0].sizeC, v);
     }
-    else if (qName.equals("uiHeight")) {
+    else if (qName.equals("uiHeight") && populateXY) {
       int y = Integer.parseInt(value);
       if (y != 0) {
         core[0].sizeY = y;
@@ -575,7 +582,9 @@ public class ND2Handler extends BaseHandler {
       realColors.put(chName, colors.get(name));
     }
 
-    if (nXFields < 10 && nYFields < 10) {
+    if (nXFields > 0 && nXFields < 10 && nYFields > 0 && nYFields < 10 &&
+      populateXY)
+    {
       core[0].sizeX *= nXFields;
       core[0].sizeY *= nYFields;
     }

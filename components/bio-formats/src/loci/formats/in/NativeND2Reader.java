@@ -212,7 +212,9 @@ public class NativeND2Reader extends FormatReader {
 
     int scanlinePad = isJPEG ? 0 : getSizeX() % 2;
     if (scanlinePad == 1) {
-      if (split && !isLossless && (nXFields % 2) != 0) {
+      if (split && !isLossless && ((nXFields % 2) != 0 ||
+        (nXFields == 0 && getSizeC() > 4)))
+      {
         scanlinePad = 0;
       }
     }
@@ -257,7 +259,7 @@ public class NativeND2Reader extends FormatReader {
       }
       t = null;
     }
-    else if (split && (getSizeC() <= 4 || scanlinePad == 0) && nXFields <= 1) {
+    else if (split && (getSizeC() <= 4 || scanlinePad == 0) && nXFields == 1) {
       byte[] pix = new byte[(getSizeX() + scanlinePad) * getSizeY() * pixel];
       in.read(pix);
       copyPixels(x, y, w, h, bpp, scanlinePad, pix, buf, split);
@@ -611,7 +613,7 @@ public class NativeND2Reader extends FormatReader {
 
       core[0].dimensionOrder = "";
 
-      ND2Handler handler = new ND2Handler(core);
+      ND2Handler handler = new ND2Handler(core, getSizeX() == 0);
       XMLTools.parseXML(xmlString, handler);
 
       channelColors = handler.getChannelColors();
