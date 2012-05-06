@@ -123,6 +123,10 @@ public class ND2Handler extends BaseHandler {
 
   // -- ND2Handler API methods --
 
+  public int getXFields() {
+    return nXFields;
+  }
+
   public CoreMetadata[] getCoreMetadata() {
     return core;
   }

@@ -623,13 +623,13 @@ public class NativeND2Reader extends FormatReader {
       fieldIndex = handler.getFieldIndex();
       core = handler.getCoreMetadata();
       Hashtable<String, Object> globalMetadata = handler.getMetadata();
-      nXFields = 0;
+      nXFields = handler.getXFields();
+      if (nXFields > 6) {
+        nXFields = 0;
+      }
       for (String key : globalMetadata.keySet()) {
         addGlobalMeta(key, globalMetadata.get(key));
-        if (key.equals("iXFields")) {
-          nXFields = Integer.parseInt(globalMetadata.get(key).toString());
-        }
-        else if (key.equals("ChannelCount")) {
+        if (key.equals("ChannelCount")) {
           for (int i=0; i<getSeriesCount(); i++) {
             if (core[i].sizeC == 0) {
               core[i].sizeC =
