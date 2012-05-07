@@ -59,9 +59,7 @@ http://www.itk.org/Wiki/Plugin_IO_mechanisms
 #include <itkBioFormatsImageIOConfigure.h>
 
 #if defined(WIN32) && !defined(BIO_FORMATS_IO_STATIC)
-#if defined(BIO_FORMATS_IO_EXPORTS)
-#define BioFormatsImageIO_EXPORT __declspec( dllexport )
-#else
+#ifndef BioFormatsImageIO_EXPORT
 #define BioFormatsImageIO_EXPORT __declspec( dllexport )
 #endif
 #else
