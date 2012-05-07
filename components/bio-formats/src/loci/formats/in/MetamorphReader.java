@@ -162,6 +162,12 @@ public class MetamorphReader extends BaseTiffReader {
         {
           return true;
         }
+        if (checkSuffix(name, suffixes) &&
+          (new Location(parent, baseName + ".htd").exists() ||
+          new Location(parent, baseName + ".HTD").exists()))
+        {
+          return false;
+        }
       }
     }
     return super.isThisType(name, open);

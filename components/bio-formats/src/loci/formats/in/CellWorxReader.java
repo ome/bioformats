@@ -125,11 +125,15 @@ public class CellWorxReader extends FormatReader {
     }
     if (!noPixels) {
       if (checkSuffix(wellFiles[row][col][0], "pnl")) {
-        files.add(wellFiles[row][col][0]);
+        if (new Location(wellFiles[row][col][0]).exists()) {
+          files.add(wellFiles[row][col][0]);
+        }
       }
       else {
         for (String f : wellFiles[row][col]) {
-          files.add(f);
+          if (new Location(f).exists()) {
+            files.add(f);
+          }
         }
       }
     }
@@ -151,7 +155,9 @@ public class CellWorxReader extends FormatReader {
       return buf;
     }
 
-    if (lastFile == null || lastReader == null || !file.equals(lastFile)) {
+    if (lastFile == null || lastReader == null || !file.equals(lastFile) ||
+      lastReader.getCurrentFile() == null)
+    {
       if (lastReader != null) {
         lastReader.close();
       }
