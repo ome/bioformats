@@ -47,6 +47,7 @@ public class Concatenator {
   /** Concatenates the list of images as appropriate. */
   public List<ImagePlus> concatenate(List<ImagePlus> imps) {
 
+    /* TODO : fix this to work in windowlessly
     GenericDialog axisDialog = new GenericDialog("Choose concatenation axis");
     String[] options = new String[] {"T", "Z", "C"};
     axisDialog.addMessage(
@@ -62,6 +63,10 @@ public class Concatenator {
     boolean doAppendT = axis.equals("T");
     boolean doAppendZ = axis.equals("Z");
     boolean doAppendC = axis.equals("C");
+    */
+    boolean doAppendT = true;
+    boolean doAppendZ = true;
+    boolean doAppendC = true;
 
     // list of output (possibly concatenated) images
     final List<ImagePlus> outputImps = new ArrayList<ImagePlus>();
