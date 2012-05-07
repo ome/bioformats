@@ -843,7 +843,8 @@ void BioFormatsImageIO::Write(const void * buffer )
   command += toString(rgbChannelCount);
   command += "\t";
 
-  int xIndex = 0, yIndex = 1, zIndex = 2, cIndex = 3, tIndex = 4;
+  // int xIndex = 0, yIndex = 1
+  int zIndex = 2, cIndex = 3, tIndex = 4;
   int bytesPerPlane = rgbChannelCount;
   int numPlanes = 1;
 
