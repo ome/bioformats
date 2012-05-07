@@ -213,7 +213,7 @@ public class NativeND2Reader extends FormatReader {
     int scanlinePad = isJPEG ? 0 : getSizeX() % 2;
     if (scanlinePad == 1) {
       if (split && !isLossless && ((nXFields % 2) != 0 ||
-        (nXFields == 0 && getSizeC() > 4)))
+        (nXFields == 0 && (getSizeC() > 4 || getSizeC() == 2))))
       {
         scanlinePad = 0;
       }
