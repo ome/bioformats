@@ -165,6 +165,7 @@ loci.formats.in.NikonElementsTiffReader # tif
 loci.formats.in.TrestleReader         # tif
 loci.formats.in.SISReader             # tif
 loci.formats.in.DNGReader             # cr2, crw, jpg, thm, wav, tif?
+loci.formats.in.ZeissTIFFReader # tif
 
 # standard TIFF reader must go last (it accepts any TIFF)
 loci.formats.in.TiffDelegateReader    # tif, tiff
