@@ -65,12 +65,13 @@ See slicer-license.txt for Slicer3's licensing information.
 #define __itkBioFormatsImageIOFactory_h
 
 #include "itkObjectFactoryBase.h"
+#include "itkBioFormatsIOWin32Header.h"
 #include "itkImageIOBase.h"
 
 namespace itk
 {
 
-class BioFormatsImageIOFactory : public ObjectFactoryBase
+class BioFormatsImageIO_EXPORT BioFormatsImageIOFactory : public ObjectFactoryBase
 {
 public:
   /** Standard class typedefs **/
