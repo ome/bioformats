@@ -106,6 +106,8 @@ public class PrairieReader extends FormatReader {
 
   private Double zoom;
 
+  private boolean timeSeries = false;
+
   // -- Constructor --
 
   /** Constructs a new Prairie TIFF reader. */
@@ -257,6 +259,7 @@ public class PrairieReader extends FormatReader {
       zoom = null;
       waitTime = null;
       relativeTimes.clear();
+      timeSeries = false;
     }
   }
 
@@ -305,6 +308,11 @@ public class PrairieReader extends FormatReader {
 
       if (checkSuffix(id, XML_SUFFIX)) {
         core[0].sizeT = getImageCount() / (getSizeZ() * getSizeC());
+
+        if (timeSeries && getSizeT() == 1 && getSizeZ() > 1) {
+          core[0].sizeT = getSizeZ();
+          core[0].sizeZ = 1;
+        }
 
         files = new String[f.size()];
         f.copyInto(files);
@@ -487,6 +495,10 @@ public class PrairieReader extends FormatReader {
     {
       if (qName.equals("PVScan")) {
         date = attributes.getValue("date");
+      }
+      else if (qName.equals("Sequence")) {
+        String type = attributes.getValue("type");
+        timeSeries = "TSeries Timed Element".equals(type);
       }
       else if (qName.equals("Frame")) {
         String index = attributes.getValue("index");

@@ -27,6 +27,7 @@ package loci.plugins.in;
 
 import ij.ImagePlus;
 import ij.ImageStack;
+import ij.gui.GenericDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,6 +46,22 @@ public class Concatenator {
 
   /** Concatenates the list of images as appropriate. */
   public List<ImagePlus> concatenate(List<ImagePlus> imps) {
+
+    GenericDialog axisDialog = new GenericDialog("Choose concatenation axis");
+    String[] options = new String[] {"T", "Z", "C"};
+    axisDialog.addMessage(
+      "Choose the axis along which to concatenate image planes:");
+    axisDialog.addChoice("Axis", options, options[0]);
+    axisDialog.showDialog();
+
+    if (axisDialog.wasCanceled()) {
+      return imps;
+    }
+
+    String axis = axisDialog.getNextChoice();
+    boolean doAppendT = axis.equals("T");
+    boolean doAppendZ = axis.equals("Z");
+    boolean doAppendC = axis.equals("C");
 
     // list of output (possibly concatenated) images
     final List<ImagePlus> outputImps = new ArrayList<ImagePlus>();
@@ -88,14 +105,16 @@ public class Concatenator {
         outputImp.setStack(outputImp.getTitle(), outputStack);
 
         // update image dimensions
-        // NB: For now, we prioritize adding to the time points, then
-        // focal planes, and lastly channels. In some cases, there may be
-        // multiple compatible dimensions; in the future, we may prompt the
-        // user to choose the axis for concatenation.
-        if (canAppendT) outputImp.setDimensions(c, z, t + tSize);
-        else if (canAppendZ) outputImp.setDimensions(c, z + zSize, t);
-        else if (canAppendC) outputImp.setDimensions(c + cSize, z, t);
-        else throw new IllegalStateException("Dimensional mismatch");
+
+        if (doAppendT && canAppendT) {
+          outputImp.setDimensions(c, z, t + tSize);
+        }
+        else if (doAppendZ && canAppendZ) {
+          outputImp.setDimensions(c, z + zSize, t);
+        }
+        else if (doAppendC && canAppendC) {
+          outputImp.setDimensions(c + cSize, z, t);
+        }
 
         append = true;
         break;

@@ -388,6 +388,27 @@ public class NativeND2Reader extends FormatReader {
           imageNames.add(name.toString());
           name = name.delete(0, name.length());
         }
+        else if (blockType.startsWith("ImageText")) {
+          in.skipBytes(6);
+          while (in.read() == 0);
+          in.seek(in.getFilePointer() - 1);
+
+          String xmlString = XMLTools.sanitizeXML(in.readString(lenTwo));
+          xmlString = xmlString.substring(0, xmlString.lastIndexOf(">") + 1);
+
+          try {
+             ND2Handler handler = new ND2Handler(core);
+             XMLTools.parseXML(xmlString, handler);
+
+             Hashtable<String, Object> globalMetadata = handler.getMetadata();
+             for (String key : globalMetadata.keySet()) {
+               addGlobalMeta(key, globalMetadata.get(key));
+             }
+           }
+           catch (IOException e) {
+             LOGGER.debug("Could not parse XML", e);
+           }
+        }
         else if (blockType.startsWith("Image") ||
           blockType.startsWith("CustomDataVa"))
         {
