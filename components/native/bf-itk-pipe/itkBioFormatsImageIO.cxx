@@ -488,7 +488,11 @@ void BioFormatsImageIO::ReadImageInformation()
 #endif
 
     // get the value line
+#ifdef WIN32
     p1 = imgInfo.find("\r\n", p0);
+#else
+    p1 = imgInfo.find("\n", p0);
+#endif
 
     line = imgInfo.substr( p0, p1-p0 );
 	
