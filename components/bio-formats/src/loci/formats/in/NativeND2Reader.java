@@ -401,6 +401,7 @@ public class NativeND2Reader extends FormatReader {
           try {
              ND2Handler handler = new ND2Handler(core);
              XMLTools.parseXML(xmlString, handler);
+             core = handler.getCoreMetadata();
 
              Hashtable<String, Object> globalMetadata = handler.getMetadata();
              for (String key : globalMetadata.keySet()) {
@@ -802,7 +803,12 @@ public class NativeND2Reader extends FormatReader {
         if (!split) {
           count /= getSizeC();
         }
-        if (getSizeT() > getSizeZ()) {
+
+        int diff = count - getSizeZ() * getSizeT();
+        if (diff == getSizeZ()) {
+          core[0].sizeT++;
+        }
+        else if (getSizeT() > getSizeZ()) {
           core[0].sizeZ = 1;
           core[0].sizeT = count;
         }
