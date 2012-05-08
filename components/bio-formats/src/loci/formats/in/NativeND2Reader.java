@@ -399,13 +399,19 @@ public class NativeND2Reader extends FormatReader {
           in.seek(in.getFilePointer() - 1);
 
           String xmlString = XMLTools.sanitizeXML(in.readString(lenTwo));
-          xmlString = xmlString.substring(0, xmlString.lastIndexOf(">") + 1);
+          int start = xmlString.indexOf("<");
+          int end = xmlString.lastIndexOf(">");
+          xmlString = xmlString.substring(start, end + 1);
 
           try {
              ND2Handler handler = new ND2Handler(core);
              XMLTools.parseXML(xmlString, handler);
              core = handler.getCoreMetadata();
-             backupHandler = handler;
+             if (backupHandler == null ||
+               backupHandler.getChannelNames().size() == 0)
+             {
+               backupHandler = handler;
+             }
 
              Hashtable<String, Object> globalMetadata = handler.getMetadata();
              for (String key : globalMetadata.keySet()) {
@@ -474,6 +480,9 @@ public class NativeND2Reader extends FormatReader {
                   ND2Handler handler = new ND2Handler(core);
                   XMLTools.parseXML(xmlString, handler);
                   core = handler.getCoreMetadata();
+                  if (backupHandler == null) {
+                    backupHandler = handler;
+                  }
                 }
                 catch (IOException e) {
                   LOGGER.debug("Could not parse XML", e);
@@ -1413,6 +1422,15 @@ public class NativeND2Reader extends FormatReader {
     ArrayList<Integer> emWave = handler.getEmissionWavelengths();
     ArrayList<Integer> power = handler.getPowers();
     ArrayList<Hashtable<String, String>> rois = handler.getROIs();
+
+    if (backupHandler != null) {
+      if (emWave.size() == 0) {
+        emWave = backupHandler.getEmissionWavelengths();
+      }
+      if (exWave.size() == 0) {
+        exWave = backupHandler.getExcitationWavelengths();
+      }
+    }
 
     for (int i=0; i<getSeriesCount(); i++) {
       for (int c=0; c<getEffectiveSizeC(); c++) {
