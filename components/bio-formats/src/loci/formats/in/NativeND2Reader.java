@@ -100,6 +100,8 @@ public class NativeND2Reader extends FormatReader {
 
   private int nXFields;
 
+  private ND2Handler backupHandler;
+
   // -- Constructor --
 
   /** Constructs a new ND2 reader. */
@@ -305,6 +307,7 @@ public class NativeND2Reader extends FormatReader {
       channelColors = null;
       split = false;
       nXFields = 0;
+      backupHandler = null;
     }
   }
 
@@ -402,6 +405,7 @@ public class NativeND2Reader extends FormatReader {
              ND2Handler handler = new ND2Handler(core);
              XMLTools.parseXML(xmlString, handler);
              core = handler.getCoreMetadata();
+             backupHandler = handler;
 
              Hashtable<String, Object> globalMetadata = handler.getMetadata();
              for (String key : globalMetadata.keySet()) {
@@ -1264,6 +1268,9 @@ public class NativeND2Reader extends FormatReader {
     ArrayList<String> channelNames = null;
     if (handler != null) {
       channelNames = handler.getChannelNames();
+      if (channelNames.size() == 0 && backupHandler != null) {
+        channelNames = backupHandler.getChannelNames();
+      }
       for (int i=0; i<getSeriesCount(); i++) {
         for (int c=0; c<getEffectiveSizeC(); c++) {
           int index = i * getSizeC() + c;
