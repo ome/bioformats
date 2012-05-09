@@ -52,16 +52,8 @@ http://www.itk.org/Wiki/Plugin_IO_mechanisms
 #define __itkBioFormatsIOPlugin_h
 
 #include "itkObjectFactoryBase.h"
+#include "itkBioFormatsIOWin32Header.h"
 
-#ifdef WIN32
-#ifdef BioFormatsIOPlugin_EXPORTS
-#define BioFormatsIOPlugin_EXPORT __declspec(dllexport)
-#else
-#define BioFormatsIOPlugin_EXPORT __declspec(dllimport)
-#endif
-#else
-#define BioFormatsIOPlugin_EXPORT
-#endif
 
 /**
  * Routine that is called when the shared library is loaded by
@@ -70,6 +62,6 @@ http://www.itk.org/Wiki/Plugin_IO_mechanisms
  * itkLoad() is C (not C++) function.
  */
 extern "C" {
-  BioFormatsIOPlugin_EXPORT itk::ObjectFactoryBase* itkLoad();
+  BioFormatsImageIO_EXPORT itk::ObjectFactoryBase* itkLoad();
 }
 #endif
