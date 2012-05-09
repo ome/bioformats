@@ -35,7 +35,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-05-04 08:47:39-0400
+ * Created by melissa via xsd-fu on 2012-05-09 18:03:02-0400
  *
  *-----------------------------------------------------------------------------
  */
@@ -116,6 +116,14 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return className.substring(
 			className.lastIndexOf('.') + 1, className.length());
 	}
+
+  public String getShapeType(int roiIndex, int shapeIndex)
+  {
+    Shape o = root.getROI(roiIndex).getUnion().getShape(shapeIndex);
+    String className = o.getClass().getName();
+    return className.substring(
+      className.lastIndexOf('.') + 1, className.length());
+  }
 
 	// -- Entity counting (code generated definitions) --
 

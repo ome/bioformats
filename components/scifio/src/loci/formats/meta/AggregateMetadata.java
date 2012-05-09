@@ -35,7 +35,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-05-04 08:47:42-0400
+ * Created by melissa via xsd-fu on 2012-05-09 18:03:05-0400
  *
  *-----------------------------------------------------------------------------
  */
@@ -148,6 +148,20 @@ public class AggregateMetadata implements IMetadata
 		}
 		return null;
 	}
+
+  public String getShapeType(int roiIndex, int shapeIndex)
+  {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();)
+    {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve)
+      {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        return retrieve.getShapeType(roiIndex, shapeIndex);
+      }
+    }
+    return null;
+  }
 
 	// -- Entity counting (code generated definitions) --
 

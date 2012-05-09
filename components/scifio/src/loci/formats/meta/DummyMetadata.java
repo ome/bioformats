@@ -35,7 +35,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-05-04 08:47:44-0400
+ * Created by melissa via xsd-fu on 2012-05-09 18:03:08-0400
  *
  *-----------------------------------------------------------------------------
  */
@@ -86,6 +86,11 @@ public class DummyMetadata implements IMetadata
 	{
 		return null;
 	}
+
+  public String getShapeType(int roiIndex, int shapeIndex)
+  {
+    return null;
+  }
 
 	// -- Entity counting (code generated definitions) --
 

@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-05-04 08:47:29-0400
+ * Created by melissa via xsd-fu on 2012-05-09 18:02:54-0400
  *
  *-----------------------------------------------------------------------------
  */
@@ -164,7 +164,6 @@ public class LightPath extends AbstractOMEModelObject
 		if (reference instanceof ExcitationFilterRef)
 		{
 			Filter o_casted = (Filter) o;
-      System.out.println("overridden back reference");
       o_casted.linkLightPathExcitationFilter(this);
 			if (!excitationFilterLinks.contains(o_casted)) {
 				excitationFilterLinks.add(o_casted);
@@ -181,7 +180,6 @@ public class LightPath extends AbstractOMEModelObject
 		if (reference instanceof EmissionFilterRef)
 		{
 			Filter o_casted = (Filter) o;
-      System.out.println("overridden back reference");
       o_casted.linkLightPathEmissionFilter(this);
 			if (!emissionFilterLinks.contains(o_casted)) {
 				emissionFilterLinks.add(o_casted);
@@ -227,7 +225,6 @@ public class LightPath extends AbstractOMEModelObject
 	public boolean unlinkExcitationFilter(Filter o)
 	{
 
-      System.out.println("overridden back reference");
       o.unlinkLightPathExcitationFilter(this);
 		return excitationFilterLinks.remove(o);
 	}
@@ -285,7 +282,6 @@ public class LightPath extends AbstractOMEModelObject
 	public boolean unlinkEmissionFilter(Filter o)
 	{
 
-      System.out.println("overridden back reference");
       o.unlinkLightPathEmissionFilter(this);
 		return emissionFilterLinks.remove(o);
 	}
