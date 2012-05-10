@@ -401,7 +401,9 @@ public class NativeND2Reader extends FormatReader {
           String xmlString = XMLTools.sanitizeXML(in.readString(lenTwo));
           int start = xmlString.indexOf("<");
           int end = xmlString.lastIndexOf(">");
-          xmlString = xmlString.substring(start, end + 1);
+          if (start >= 0 && end >= 0) {
+            xmlString = xmlString.substring(start, end + 1);
+          }
 
           try {
              ND2Handler handler = new ND2Handler(core);
@@ -614,7 +616,9 @@ public class NativeND2Reader extends FormatReader {
             yOffset = fp + 8 * (nDoubles - imageOffsets.size());
           }
         }
-        in.skipBytes(skip);
+        if (skip > 0 && skip + in.getFilePointer() <= in.length()) {
+          in.skipBytes(skip);
+        }
       }
 
       // parse XML blocks
