@@ -66,6 +66,17 @@ if(NOT DEFINED BUILD_SHARED_LIBS)
   option(BUILD_SHARED_LIBS "Build with shared libraries." ON)
 endif(NOT DEFINED BUILD_SHARED_LIBS)
 
+option(BFITK_WIN_BUILD_DEBUG "Build Debug version? If false, builds Release. Windows only." ON)
+if(${BFITK_WIN_BUILD_DEBUG} STREQUAL "ON")
+  if(NOT DEFINED BFITK_WIN_BUILD_VALUE)
+    set(BFITK_WIN_BUILD_VALUE \\Debug)
+  endif(NOT DEFINED BFITK_WIN_BUILD_VALUE)
+elseif(${BFITK_WIN_BUILD_DEBUG} STREQUAL "OFF")
+  if(NOT DEFINED BFITK_WIN_BUILD_VALUE)
+    set(BFITK_WIN_BUILD_VALUE \\Release)
+  endif(NOT DEFINED BFITK_WIN_BUILD_VALUE)
+endif(${BFITK_WIN_BUILD_DEBUG} STREQUAL "ON")
+
 # --------------------------------------------------------------------------
 # Find ITK
 
@@ -185,7 +196,7 @@ if(APPLE)
   set(BF_BUILD_TYPE "")
 elseif(WIN32 OR WIN64)
   set(BF_LIB_PREFIX "")
-  set(BF_BUILD_TYPE "/Release")
+  set(BF_BUILD_TYPE ${BFITK_WIN_BUILD_VALUE})
   set(BF_SUFFIX ".dll")
 else(APPLE) # assume UNIX
   set(BF_LIB_PREFIX "lib")
