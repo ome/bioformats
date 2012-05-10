@@ -1,7 +1,7 @@
 function bfUpgradeCheck(varargin)
 % Check for new version of Bio-Formats and update it if applicable
 % 
-% SYNOPSIS: bfUpgradeCheck(autoDownload,'STABLE')
+% SYNOPSIS: bfUpgradeCheck(autoDownload, 'STABLE')
 %
 % Input 
 %    autoDownload - Optional. A boolean specifying of the latest version
@@ -14,10 +14,10 @@ function bfUpgradeCheck(varargin)
 %    none
 
 % Check input
-ip=inputParser;
-ip.addOptional('autoDownload',false,@isscalar);
-versions = {'stable','daily','trunk'};
-ip.addOptional('version','STABLE',@(x) any(strcmpi(x,versions)))
+ip = inputParser;
+ip.addOptional('autoDownload', false, @isscalar);
+versions = {'stable', 'daily', 'trunk'};
+ip.addOptional('version', 'STABLE', @(x) any(strcmpi(x, versions)))
 ip.parse(varargin{:})
 
 % Create UpgradeChecker
@@ -36,7 +36,7 @@ fprintf('*** A new stable version of Bio-Formats is available ***\n');
 if ip.Results.autoDownload
     fprintf('*** Downloading... ***');
     path = fullfile(fileparts(mfilename('fullpath')), 'loci_tools.jar');
-    buildName=[upper(ip.Results.version) '_BUILD'];
+    buildName = [upper(ip.Results.version) '_BUILD'];
     upgrader.install(loci.formats.UpgradeChecker.(buildName), path);
     fprintf('*** Upgrade will be finished when MATLAB is restarted ***\n');
 end
