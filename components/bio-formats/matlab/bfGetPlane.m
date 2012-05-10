@@ -1,7 +1,7 @@
-function I = bfGetPlane(r,iPlane)
+function I = bfGetPlane(r, iPlane)
 % Get the plane data from a dataset reader using bioformats tools
 % 
-% SYNOPSIS I=bfGetPlane(r,iPlane)
+% SYNOPSIS I = bfGetPlane(r, iPlane)
 %
 % Input 
 %    r - the reader object (e.g. the output bfGetReader)
@@ -15,10 +15,10 @@ function I = bfGetPlane(r,iPlane)
 % See also bfGetReader
 
 % Input check
-ip=inputParser;
-ip.addRequired('r',@(x)isa(x,'loci.formats.ReaderWrapper'));
-ip.addRequired('iPlane',@isscalar);
-ip.parse(r,iPlane);
+ip = inputParser;
+ip.addRequired('r', @(x) isa(x, 'loci.formats.ReaderWrapper'));
+ip.addRequired('iPlane', @isscalar);
+ip.parse(r, iPlane);
 
 % check MATLAB version, since typecast function requires MATLAB 7.1+
 canTypecast = versionCheck(version, 7, 1);
