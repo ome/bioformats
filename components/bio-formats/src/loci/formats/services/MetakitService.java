@@ -79,4 +79,7 @@ public interface MetakitService extends Service {
   /* @see ome.metakit.MetakitReader#getColumnTypes(String) */
   public Class[] getColumnTypes(String table);
 
+  /* @see ome.metakit.MetakitReader#close() */
+  public void close();
+
 }
