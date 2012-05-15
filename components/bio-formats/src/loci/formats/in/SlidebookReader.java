@@ -31,6 +31,7 @@ import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
@@ -517,10 +518,12 @@ public class SlidebookReader extends FormatReader {
                   int checkX = in.readShort();
                   int checkY = in.readShort();
                   int div = in.readShort();
-                  divValues[j] = div;
-                  sizeX[j] /= (div == 0 ? 1 : div);
-                  div = in.readShort();
-                  sizeY[j] /= (div == 0 ? 1 : div);
+                  if (checkX == checkY) {
+                    divValues[j] = div;
+                    sizeX[j] /= (div == 0 ? 1 : div);
+                    div = in.readShort();
+                    sizeY[j] /= (div == 0 ? 1 : div);
+                  }
                 }
                 else in.skipBytes(8);
               }
@@ -577,6 +580,28 @@ public class SlidebookReader extends FormatReader {
             x /= (div == 0 ? 1 : div);
             div = in.readShort();
             y /= (div == 0 ? 1 : div);
+
+            if (x > 0x10000 || y > 0x10000) {
+              in.seek(in.getFilePointer() - 11);
+              x = in.readInt();
+              y = in.readInt();
+              div = in.readShort();
+              x /= (div == 0 ? 1 : div);
+              div = in.readShort();
+              y /= (div == 0 ? 1 : div);
+
+              if (x > 0x10000 || y > 0x10000) {
+                in.skipBytes(2);
+
+                x = in.readInt();
+                y = in.readInt();
+                div = in.readShort();
+                x /= (div == 0 ? 1 : div);
+                div = in.readShort();
+                y /= (div == 0 ? 1 : div);
+              }
+            }
+
             if (nextName >= 1 && x > 16 && (x < sizeX[nextName - 1] ||
               sizeX[nextName - 1] == 0) && y > 16 &&
               (y < sizeY[nextName - 1] || sizeY[nextName - 1] == 0))
@@ -735,13 +760,15 @@ public class SlidebookReader extends FormatReader {
       core[i].sizeC = sizeC[index];
       core[i].sizeZ = sizeZ[index];
 
+      boolean cGreater = core[i].sizeC > core[i].sizeZ;
+
       if (isSpool) {
         if (core[i].sizeC == 0) {
           core[i].sizeC = channelNames.size();
         }
       }
 
-      if (core[i].sizeZ % nBlocks == 0) {
+      if (core[i].sizeZ % nBlocks == 0 && nBlocks != getSizeC()) {
         core[i].sizeZ /= nBlocks;
       }
 
@@ -777,6 +804,17 @@ public class SlidebookReader extends FormatReader {
         core[i].sizeZ = 1;
       }
       else {
+        boolean validSizes = true;
+        try {
+          DataTools.safeMultiply32(getSizeX(), getSizeY());
+        }
+        catch (IllegalArgumentException e) {
+          validSizes = false;
+        }
+        if (getSizeX() == 0 || getSizeY() == 0 || !validSizes) {
+          core[i].sizeX = sizeX[index] / 256;
+          core[i].sizeY = sizeY[index] / 256;
+        }
         long p = pixels / (getSizeX() * getSizeY());
         if (pixels == p * getSizeX() * getSizeY()) {
           if (p != getSizeC() * getSizeZ()) {
@@ -789,12 +827,19 @@ public class SlidebookReader extends FormatReader {
               core[i].sizeZ = 1;
               core[i].sizeT = (int) p;
             }
+            else if (getSizeC() > 1 &&
+              core[i].sizeZ == (p / (getSizeC() - 1)) + 1)
+            {
+              core[i].sizeC--;
+              core[i].sizeZ = 1;
+              core[i].sizeT = (int) (p / getSizeC());
+            }
             else {
               if (p > getSizeZ() && (p / getSizeZ() < getSizeZ() - 1)) {
                 core[i].sizeT = (int) (p / getSizeC());
                 core[i].sizeZ = 1;
               }
-              else {
+              else if (!adjust) {
                 core[i].sizeZ = (int) (p / getSizeC());
               }
             }
@@ -816,10 +861,14 @@ public class SlidebookReader extends FormatReader {
           }
         }
       }
-      plane = pixels / (getSizeC() * getSizeZ());
 
-      long diff =
-        2 * (pixels - (getSizeX() * getSizeY() * getSizeC() * getSizeZ()));
+      int div = getSizeC() * getSizeZ();
+      if (getSizeT() > 0) {
+        div *= getSizeT();
+      }
+      plane = pixels / div;
+
+      long diff = 2 * (pixels - (getSizeX() * getSizeY() * div));
       if ((pixelLengths.get(index).longValue() % 2) == 1) {
         diff++;
       }
@@ -849,6 +898,11 @@ public class SlidebookReader extends FormatReader {
         core[i].sizeT--;
       }
       if (getSizeT() == 0) core[i].sizeT = 1;
+
+      if (cGreater && getSizeC() == 1 && getSizeZ() > 1) {
+        core[i].sizeC = getSizeZ();
+        core[i].sizeZ = 1;
+      }
 
       core[i].imageCount = nPlanes * getSizeT();
       core[i].pixelType = FormatTools.UINT16;
@@ -950,7 +1004,10 @@ public class SlidebookReader extends FormatReader {
 
       // populate Dimensions data
 
-      int exposureIndex = 0;
+      int exposureIndex = exposureTimes.size() - channelNames.size();
+      if (exposureIndex >= 1) {
+        exposureIndex++;
+      }
 
       for (int i=0; i<getSeriesCount(); i++) {
         setSeries(i);
@@ -983,7 +1040,7 @@ public class SlidebookReader extends FormatReader {
 
         for (int plane=0; plane<getImageCount(); plane++) {
           int c = getZCTCoords(plane)[1];
-          if (exposureIndex < exposureTimes.size()) {
+          if (exposureIndex + c < exposureTimes.size()) {
             store.setPlaneExposureTime(
               new Double(exposureTimes.get(exposureIndex + c)), i, plane);
           }
