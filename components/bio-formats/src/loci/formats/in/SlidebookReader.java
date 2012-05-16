@@ -569,17 +569,32 @@ public class SlidebookReader extends FormatReader {
             long fp = in.getFilePointer();
             if ((in.getFilePointer() % 2) == 1) in.skipBytes(1);
             while (in.readShort() == 0);
-            in.skipBytes(18);
-            if (in.getFilePointer() - fp > 123 && (fp % 2) == 0) {
+            if (in.readShort() == 0) {
+              in.skipBytes(4);
+            }
+            else {
+              in.skipBytes(16);
+            }
+            long diff = in.getFilePointer() - fp;
+            if (diff > 123 && (fp % 2) == 0 && diff != 142 && diff != 143 &&
+              diff != 130)
+            {
               in.seek(fp + 123);
             }
 
             int x = in.readInt();
             int y = in.readInt();
+
+            if (x > 0x8000 || y > 0x8000) {
+              in.seek(in.getFilePointer() - 7);
+              x = in.readInt();
+              y = in.readInt();
+            }
+
             int div = in.readShort();
-            x /= (div == 0 ? 1 : div);
+            x /= (div == 0 || div > 0x100 ? 1 : div);
             div = in.readShort();
-            y /= (div == 0 ? 1 : div);
+            y /= (div == 0 || div > 0x100 ? 1 : div);
 
             if (x > 0x10000 || y > 0x10000) {
               in.seek(in.getFilePointer() - 11);
@@ -1040,7 +1055,9 @@ public class SlidebookReader extends FormatReader {
 
         for (int plane=0; plane<getImageCount(); plane++) {
           int c = getZCTCoords(plane)[1];
-          if (exposureIndex + c < exposureTimes.size()) {
+          if (exposureIndex + c < exposureTimes.size() &&
+            exposureIndex + c >= 0)
+          {
             store.setPlaneExposureTime(
               new Double(exposureTimes.get(exposureIndex + c)), i, plane);
           }
