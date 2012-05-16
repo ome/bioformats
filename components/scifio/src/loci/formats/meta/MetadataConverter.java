@@ -883,37 +883,39 @@ public final class MetadataConverter {
 
         try {
           String detectorSettingsID = src.getDetectorSettingsID(i, c);
-          dest.setDetectorSettingsID(detectorSettingsID, i, c);
+          if (detectorSettingsID != null) {
+            dest.setDetectorSettingsID(detectorSettingsID, i, c);
 
-          try {
-            Binning binning = src.getDetectorSettingsBinning(i, c);
-            dest.setDetectorSettingsBinning(binning, i, c);
-          }
-          catch (NullPointerException e) { }
+            try {
+              Binning binning = src.getDetectorSettingsBinning(i, c);
+              dest.setDetectorSettingsBinning(binning, i, c);
+            }
+            catch (NullPointerException e) { }
 
-          try {
-            Double gain = src.getDetectorSettingsGain(i, c);
-            dest.setDetectorSettingsGain(gain, i, c);
-          }
-          catch (NullPointerException e) { }
+            try {
+              Double gain = src.getDetectorSettingsGain(i, c);
+              dest.setDetectorSettingsGain(gain, i, c);
+            }
+            catch (NullPointerException e) { }
 
-          try {
-            Double offset = src.getDetectorSettingsOffset(i, c);
-            dest.setDetectorSettingsOffset(offset, i, c);
-          }
-          catch (NullPointerException e) { }
+            try {
+              Double offset = src.getDetectorSettingsOffset(i, c);
+              dest.setDetectorSettingsOffset(offset, i, c);
+            }
+            catch (NullPointerException e) { }
 
-          try {
-            Double readOutRate = src.getDetectorSettingsReadOutRate(i, c);
-            dest.setDetectorSettingsReadOutRate(readOutRate, i, c);
-          }
-          catch (NullPointerException e) { }
+            try {
+              Double readOutRate = src.getDetectorSettingsReadOutRate(i, c);
+              dest.setDetectorSettingsReadOutRate(readOutRate, i, c);
+            }
+            catch (NullPointerException e) { }
 
-          try {
-            Double voltage = src.getDetectorSettingsVoltage(i, c);
-            dest.setDetectorSettingsVoltage(voltage, i, c);
+            try {
+              Double voltage = src.getDetectorSettingsVoltage(i, c);
+              dest.setDetectorSettingsVoltage(voltage, i, c);
+            }
+            catch (NullPointerException e) { }
           }
-          catch (NullPointerException e) { }
         }
         catch (NullPointerException e) { }
 
@@ -925,20 +927,22 @@ public final class MetadataConverter {
 
         try {
           String lightSourceID = src.getChannelLightSourceSettingsID(i, c);
-          dest.setChannelLightSourceSettingsID(lightSourceID, i, c);
+          if (lightSourceID != null) {
+            dest.setChannelLightSourceSettingsID(lightSourceID, i, c);
 
-          try {
-            PercentFraction attenuation =
-              src.getChannelLightSourceSettingsAttenuation(i, c);
-            dest.setChannelLightSourceSettingsAttenuation(attenuation, i, c);
-          }
-          catch (NullPointerException e) { }
+            try {
+              PercentFraction attenuation =
+                src.getChannelLightSourceSettingsAttenuation(i, c);
+              dest.setChannelLightSourceSettingsAttenuation(attenuation, i, c);
+            }
+            catch (NullPointerException e) { }
 
-          try {
-            PositiveInteger wavelength = src.getChannelLightSourceSettingsWavelength(i, c);
-            dest.setChannelLightSourceSettingsWavelength(wavelength, i, c);
+            try {
+              PositiveInteger wavelength = src.getChannelLightSourceSettingsWavelength(i, c);
+              dest.setChannelLightSourceSettingsWavelength(wavelength, i, c);
+            }
+            catch (NullPointerException e) { }
           }
-          catch (NullPointerException e) { }
         }
         catch (NullPointerException e) { }
 
