@@ -630,25 +630,27 @@ public final class MetadataConverter {
 
       try {
         String objectiveID = src.getObjectiveSettingsID(i);
-        dest.setObjectiveSettingsID(objectiveID, i);
+        if (objectiveID != null) {
+          dest.setObjectiveSettingsID(objectiveID, i);
 
-        try {
-          Double correction = src.getObjectiveSettingsCorrectionCollar(i);
-          dest.setObjectiveSettingsCorrectionCollar(correction, i);
-        }
-        catch (NullPointerException e) { }
+          try {
+            Double correction = src.getObjectiveSettingsCorrectionCollar(i);
+            dest.setObjectiveSettingsCorrectionCollar(correction, i);
+          }
+          catch (NullPointerException e) { }
 
-        try {
-          Medium medium = src.getObjectiveSettingsMedium(i);
-          dest.setObjectiveSettingsMedium(medium, i);
-        }
-        catch (NullPointerException e) { }
+          try {
+            Medium medium = src.getObjectiveSettingsMedium(i);
+            dest.setObjectiveSettingsMedium(medium, i);
+          }
+          catch (NullPointerException e) { }
 
-        try {
-          Double refractiveIndex = src.getObjectiveSettingsRefractiveIndex(i);
-          dest.setObjectiveSettingsRefractiveIndex(refractiveIndex, i);
+          try {
+            Double refractiveIndex = src.getObjectiveSettingsRefractiveIndex(i);
+            dest.setObjectiveSettingsRefractiveIndex(refractiveIndex, i);
+          }
+          catch (NullPointerException e) { }
         }
-        catch (NullPointerException e) { }
       }
       catch (NullPointerException e) { }
 
