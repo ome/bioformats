@@ -94,7 +94,9 @@ public final class MetadataConverter {
         String id = src.getBooleanAnnotationID(i);
         dest.setBooleanAnnotationID(id, i);
       }
-      catch (NullPointerException e) { }
+      catch (NullPointerException e) {
+        continue;
+      }
 
       try {
         String description = src.getBooleanAnnotationDescription(i);
@@ -129,7 +131,9 @@ public final class MetadataConverter {
         String id = src.getCommentAnnotationID(i);
         dest.setCommentAnnotationID(id, i);
       }
-      catch (NullPointerException e) { }
+      catch (NullPointerException e) {
+        continue;
+      }
 
       try {
         String description = src.getCommentAnnotationDescription(i);
@@ -163,7 +167,9 @@ public final class MetadataConverter {
         String id = src.getDatasetID(i);
         dest.setDatasetID(id, i);
       }
-      catch (NullPointerException e) { }
+      catch (NullPointerException e) {
+        continue;
+      }
 
       try {
         String description = src.getDatasetDescription(i);
@@ -228,7 +234,9 @@ public final class MetadataConverter {
         String id = src.getDoubleAnnotationID(i);
         dest.setDoubleAnnotationID(id, i);
       }
-      catch (NullPointerException e) { }
+      catch (NullPointerException e) {
+        continue;
+      }
 
       try {
         String description = src.getDoubleAnnotationDescription(i);
@@ -263,7 +271,9 @@ public final class MetadataConverter {
         String id = src.getExperimentID(i);
         dest.setExperimentID(id, i);
       }
-      catch (NullPointerException e) { }
+      catch (NullPointerException e) {
+        continue;
+      }
 
       try {
         String description = src.getExperimentDescription(i);
@@ -293,7 +303,9 @@ public final class MetadataConverter {
           String microbeamID = src.getMicrobeamManipulationID(i, q);
           dest.setMicrobeamManipulationID(microbeamID, i, q);
         }
-        catch (NullPointerException e) { }
+        catch (NullPointerException e) {
+          continue;
+        }
 
         try {
           String microbeamDescription = src.getMicrobeamManipulationDescription(i, q);
@@ -361,7 +373,9 @@ public final class MetadataConverter {
         String id = src.getExperimenterID(i);
         dest.setExperimenterID(id, i);
       }
-      catch (NullPointerException e) { }
+      catch (NullPointerException e) {
+        continue;
+      }
 
       try {
         String email = src.getExperimenterEmail(i);
@@ -427,7 +441,9 @@ public final class MetadataConverter {
         String id = src.getExperimenterGroupID(i);
         dest.setExperimenterGroupID(id, i);
       }
-      catch (NullPointerException e) { }
+      catch (NullPointerException e) {
+        continue;
+      }
 
       try {
         String description = src.getExperimenterGroupDescription(i);
@@ -495,7 +511,9 @@ public final class MetadataConverter {
         String id = src.getFileAnnotationID(i);
         dest.setFileAnnotationID(id, i);
       }
-      catch (NullPointerException e) { }
+      catch (NullPointerException e) {
+        continue;
+      }
 
       try {
         String description = src.getFileAnnotationDescription(i);
@@ -540,7 +558,9 @@ public final class MetadataConverter {
         String id = src.getImageID(i);
         dest.setImageID(id, i);
       }
-      catch (NullPointerException e) { }
+      catch (NullPointerException e) {
+        continue;
+      }
 
       try {
         String date = src.getImageAcquisitionDate(i);
@@ -611,24 +631,24 @@ public final class MetadataConverter {
       try {
         String objectiveID = src.getObjectiveSettingsID(i);
         dest.setObjectiveSettingsID(objectiveID, i);
-      }
-      catch (NullPointerException e) { }
 
-      try {
-        Double correction = src.getObjectiveSettingsCorrectionCollar(i);
-        dest.setObjectiveSettingsCorrectionCollar(correction, i);
-      }
-      catch (NullPointerException e) { }
+        try {
+          Double correction = src.getObjectiveSettingsCorrectionCollar(i);
+          dest.setObjectiveSettingsCorrectionCollar(correction, i);
+        }
+        catch (NullPointerException e) { }
 
-      try {
-        Medium medium = src.getObjectiveSettingsMedium(i);
-        dest.setObjectiveSettingsMedium(medium, i);
-      }
-      catch (NullPointerException e) { }
+        try {
+          Medium medium = src.getObjectiveSettingsMedium(i);
+          dest.setObjectiveSettingsMedium(medium, i);
+        }
+        catch (NullPointerException e) { }
 
-      try {
-        Double refractiveIndex = src.getObjectiveSettingsRefractiveIndex(i);
-        dest.setObjectiveSettingsRefractiveIndex(refractiveIndex, i);
+        try {
+          Double refractiveIndex = src.getObjectiveSettingsRefractiveIndex(i);
+          dest.setObjectiveSettingsRefractiveIndex(refractiveIndex, i);
+        }
+        catch (NullPointerException e) { }
       }
       catch (NullPointerException e) { }
 
@@ -659,87 +679,87 @@ public final class MetadataConverter {
       try {
         String pixelsID = src.getPixelsID(i);
         dest.setPixelsID(pixelsID, i);
-      }
-      catch (NullPointerException e) { }
 
-      try {
-        DimensionOrder order = src.getPixelsDimensionOrder(i);
-        dest.setPixelsDimensionOrder(order, i);
-      }
-      catch (NullPointerException e) { }
-
-      try {
-        PositiveFloat physicalSizeX = src.getPixelsPhysicalSizeX(i);
-        dest.setPixelsPhysicalSizeX(physicalSizeX, i);
-      }
-      catch (NullPointerException e) { }
-
-      try {
-        PositiveFloat physicalSizeY = src.getPixelsPhysicalSizeY(i);
-        dest.setPixelsPhysicalSizeY(physicalSizeY, i);
-      }
-      catch (NullPointerException e) { }
-
-      try {
-        PositiveFloat physicalSizeZ = src.getPixelsPhysicalSizeZ(i);
-        dest.setPixelsPhysicalSizeZ(physicalSizeZ, i);
-      }
-      catch (NullPointerException e) { }
-
-      try {
-        PositiveInteger sizeC = src.getPixelsSizeC(i);
-        dest.setPixelsSizeC(sizeC, i);
-      }
-      catch (NullPointerException e) { }
-
-      try {
-        PositiveInteger sizeT = src.getPixelsSizeT(i);
-        dest.setPixelsSizeT(sizeT, i);
-      }
-      catch (NullPointerException e) { }
-
-      try {
-        PositiveInteger sizeX = src.getPixelsSizeX(i);
-        dest.setPixelsSizeX(sizeX, i);
-      }
-      catch (NullPointerException e) { }
-
-      try {
-        PositiveInteger sizeY = src.getPixelsSizeY(i);
-        dest.setPixelsSizeY(sizeY, i);
-      }
-      catch (NullPointerException e) { }
-
-      try {
-        PositiveInteger sizeZ = src.getPixelsSizeZ(i);
-        dest.setPixelsSizeZ(sizeZ, i);
-      }
-      catch (NullPointerException e) { }
-
-      try {
-        Double timeIncrement = src.getPixelsTimeIncrement(i);
-        dest.setPixelsTimeIncrement(timeIncrement, i);
-      }
-      catch (NullPointerException e) { }
-
-      try {
-        PixelType type = src.getPixelsType(i);
-        dest.setPixelsType(type, i);
-      }
-      catch (NullPointerException e) { }
-
-      int binDataCount = 0;
-      try {
-        binDataCount = src.getPixelsBinDataCount(i);
-      }
-      catch (NullPointerException e) { }
-      for (int q=0; q<binDataCount; q++) {
         try {
-          Boolean bigEndian = src.getPixelsBinDataBigEndian(i, q);
-          dest.setPixelsBinDataBigEndian(bigEndian, i, q);
+          DimensionOrder order = src.getPixelsDimensionOrder(i);
+          dest.setPixelsDimensionOrder(order, i);
         }
         catch (NullPointerException e) { }
+
+        try {
+          PositiveFloat physicalSizeX = src.getPixelsPhysicalSizeX(i);
+          dest.setPixelsPhysicalSizeX(physicalSizeX, i);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          PositiveFloat physicalSizeY = src.getPixelsPhysicalSizeY(i);
+          dest.setPixelsPhysicalSizeY(physicalSizeY, i);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          PositiveFloat physicalSizeZ = src.getPixelsPhysicalSizeZ(i);
+          dest.setPixelsPhysicalSizeZ(physicalSizeZ, i);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          PositiveInteger sizeC = src.getPixelsSizeC(i);
+          dest.setPixelsSizeC(sizeC, i);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          PositiveInteger sizeT = src.getPixelsSizeT(i);
+          dest.setPixelsSizeT(sizeT, i);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          PositiveInteger sizeX = src.getPixelsSizeX(i);
+          dest.setPixelsSizeX(sizeX, i);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          PositiveInteger sizeY = src.getPixelsSizeY(i);
+          dest.setPixelsSizeY(sizeY, i);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          PositiveInteger sizeZ = src.getPixelsSizeZ(i);
+          dest.setPixelsSizeZ(sizeZ, i);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          Double timeIncrement = src.getPixelsTimeIncrement(i);
+          dest.setPixelsTimeIncrement(timeIncrement, i);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          PixelType type = src.getPixelsType(i);
+          dest.setPixelsType(type, i);
+        }
+        catch (NullPointerException e) { }
+
+        int binDataCount = 0;
+        try {
+          binDataCount = src.getPixelsBinDataCount(i);
+        }
+        catch (NullPointerException e) { }
+        for (int q=0; q<binDataCount; q++) {
+          try {
+            Boolean bigEndian = src.getPixelsBinDataBigEndian(i, q);
+            dest.setPixelsBinDataBigEndian(bigEndian, i, q);
+          }
+          catch (NullPointerException e) { }
+        }
       }
+      catch (NullPointerException e) { }
 
       int annotationRefCount = 0;
       try {
@@ -777,7 +797,9 @@ public final class MetadataConverter {
           String channelID = src.getChannelID(i, c);
           dest.setChannelID(channelID, i, c);
         }
-        catch (NullPointerException e) { }
+        catch (NullPointerException e) {
+          continue;
+        }
 
         try {
           AcquisitionMode mode = src.getChannelAcquisitionMode(i, c);
@@ -860,36 +882,36 @@ public final class MetadataConverter {
         try {
           String detectorSettingsID = src.getDetectorSettingsID(i, c);
           dest.setDetectorSettingsID(detectorSettingsID, i, c);
-        }
-        catch (NullPointerException e) { }
 
-        try {
-          Binning binning = src.getDetectorSettingsBinning(i, c);
-          dest.setDetectorSettingsBinning(binning, i, c);
-        }
-        catch (NullPointerException e) { }
+          try {
+            Binning binning = src.getDetectorSettingsBinning(i, c);
+            dest.setDetectorSettingsBinning(binning, i, c);
+          }
+          catch (NullPointerException e) { }
 
-        try {
-          Double gain = src.getDetectorSettingsGain(i, c);
-          dest.setDetectorSettingsGain(gain, i, c);
-        }
-        catch (NullPointerException e) { }
+          try {
+            Double gain = src.getDetectorSettingsGain(i, c);
+            dest.setDetectorSettingsGain(gain, i, c);
+          }
+          catch (NullPointerException e) { }
 
-        try {
-          Double offset = src.getDetectorSettingsOffset(i, c);
-          dest.setDetectorSettingsOffset(offset, i, c);
-        }
-        catch (NullPointerException e) { }
+          try {
+            Double offset = src.getDetectorSettingsOffset(i, c);
+            dest.setDetectorSettingsOffset(offset, i, c);
+          }
+          catch (NullPointerException e) { }
 
-        try {
-          Double readOutRate = src.getDetectorSettingsReadOutRate(i, c);
-          dest.setDetectorSettingsReadOutRate(readOutRate, i, c);
-        }
-        catch (NullPointerException e) { }
+          try {
+            Double readOutRate = src.getDetectorSettingsReadOutRate(i, c);
+            dest.setDetectorSettingsReadOutRate(readOutRate, i, c);
+          }
+          catch (NullPointerException e) { }
 
-        try {
-          Double voltage = src.getDetectorSettingsVoltage(i, c);
-          dest.setDetectorSettingsVoltage(voltage, i, c);
+          try {
+            Double voltage = src.getDetectorSettingsVoltage(i, c);
+            dest.setDetectorSettingsVoltage(voltage, i, c);
+          }
+          catch (NullPointerException e) { }
         }
         catch (NullPointerException e) { }
 
@@ -902,19 +924,19 @@ public final class MetadataConverter {
         try {
           String lightSourceID = src.getChannelLightSourceSettingsID(i, c);
           dest.setChannelLightSourceSettingsID(lightSourceID, i, c);
-        }
-        catch (NullPointerException e) { }
 
-        try {
-          PercentFraction attenuation =
-            src.getChannelLightSourceSettingsAttenuation(i, c);
-          dest.setChannelLightSourceSettingsAttenuation(attenuation, i, c);
-        }
-        catch (NullPointerException e) { }
+          try {
+            PercentFraction attenuation =
+              src.getChannelLightSourceSettingsAttenuation(i, c);
+            dest.setChannelLightSourceSettingsAttenuation(attenuation, i, c);
+          }
+          catch (NullPointerException e) { }
 
-        try {
-          PositiveInteger wavelength = src.getChannelLightSourceSettingsWavelength(i, c);
-          dest.setChannelLightSourceSettingsWavelength(wavelength, i, c);
+          try {
+            PositiveInteger wavelength = src.getChannelLightSourceSettingsWavelength(i, c);
+            dest.setChannelLightSourceSettingsWavelength(wavelength, i, c);
+          }
+          catch (NullPointerException e) { }
         }
         catch (NullPointerException e) { }
 
@@ -1122,7 +1144,9 @@ public final class MetadataConverter {
         String id = src.getInstrumentID(i);
         dest.setInstrumentID(id, i);
       }
-      catch (NullPointerException e) { }
+      catch (NullPointerException e) {
+        continue;
+      }
 
       try {
         String microscopeLotNumber = src.getMicroscopeLotNumber(i);
@@ -1164,7 +1188,9 @@ public final class MetadataConverter {
           String detectorID = src.getDetectorID(i, q);
           dest.setDetectorID(detectorID, i, q);
         }
-        catch (NullPointerException e) { }
+        catch (NullPointerException e) {
+          continue;
+        }
 
         try {
           Double amplificationGain = src.getDetectorAmplificationGain(i, q);
@@ -1237,7 +1263,9 @@ public final class MetadataConverter {
           String dichroicID = src.getDichroicID(i, q);
           dest.setDichroicID(dichroicID, i, q);
         }
-        catch (NullPointerException e) { }
+        catch (NullPointerException e) {
+          continue;
+        }
 
         try {
           String lotNumber = src.getDichroicLotNumber(i, q);
@@ -1274,7 +1302,9 @@ public final class MetadataConverter {
           String filterID = src.getFilterID(i, q);
           dest.setFilterID(filterID, i, q);
         }
-        catch (NullPointerException e) { }
+        catch (NullPointerException e) {
+          continue;
+        }
 
         try {
           String filterWheel = src.getFilterFilterWheel(i, q);
@@ -1353,7 +1383,9 @@ public final class MetadataConverter {
           String objectiveID = src.getObjectiveID(i, q);
           dest.setObjectiveID(objectiveID, i, q);
         }
-        catch (NullPointerException e) { }
+        catch (NullPointerException e) {
+          continue;
+        }
 
         try {
           Double calibratedMag = src.getObjectiveCalibratedMagnification(i, q);
@@ -1432,7 +1464,9 @@ public final class MetadataConverter {
           String filterSetID = src.getFilterSetID(i, q);
           dest.setFilterSetID(filterSetID, i, q);
         }
-        catch (NullPointerException e) { }
+        catch (NullPointerException e) {
+          continue;
+        }
 
         try {
           String dichroicRef = src.getFilterSetDichroicRef(i, q);
@@ -1508,7 +1542,9 @@ public final class MetadataConverter {
         String id = src.getListAnnotationID(i);
         dest.setListAnnotationID(id, i);
       }
-      catch (NullPointerException e) { }
+      catch (NullPointerException e) {
+        continue;
+      }
 
       try {
         String description = src.getListAnnotationDescription(i);
@@ -1537,7 +1573,9 @@ public final class MetadataConverter {
         String id = src.getLongAnnotationID(i);
         dest.setLongAnnotationID(id, i);
       }
-      catch (NullPointerException e) { }
+      catch (NullPointerException e) {
+        continue;
+      }
 
       try {
         String description = src.getLongAnnotationDescription(i);
@@ -1570,7 +1608,9 @@ public final class MetadataConverter {
         String id = src.getPlateID(i);
         dest.setPlateID(id, i);
       }
-      catch (NullPointerException e) { }
+      catch (NullPointerException e) {
+        continue;
+      }
 
       try {
         NamingConvention columnConvention = src.getPlateColumnNamingConvention(i);
@@ -1648,7 +1688,9 @@ public final class MetadataConverter {
           String wellID = src.getWellID(i, q);
           dest.setWellID(wellID, i, q);
         }
-        catch (NullPointerException e) { }
+        catch (NullPointerException e) {
+          continue;
+        }
 
         try {
           Color color = src.getWellColor(i, q);
@@ -1715,7 +1757,9 @@ public final class MetadataConverter {
             String wellSampleID = src.getWellSampleID(i, q, w);
             dest.setWellSampleID(wellSampleID, i, q, w);
           }
-          catch (NullPointerException e) { }
+          catch (NullPointerException e) {
+            continue;
+          }
 
           try {
             String imageRef = src.getWellSampleImageRef(i, q, w);
@@ -1766,7 +1810,9 @@ public final class MetadataConverter {
           String plateAcquisitionID = src.getPlateAcquisitionID(i, q);
           dest.setPlateAcquisitionID(plateAcquisitionID, i, q);
         }
-        catch (NullPointerException e) { }
+        catch (NullPointerException e) {
+          continue;
+        }
 
         try {
           String acquisitionDescription = src.getPlateAcquisitionDescription(i, q);
@@ -1852,7 +1898,9 @@ public final class MetadataConverter {
         String projectID = src.getProjectID(i);
         dest.setProjectID(projectID, i);
       }
-      catch (NullPointerException e) { }
+      catch (NullPointerException e) {
+        continue;
+      }
 
       try {
         String description = src.getProjectDescription(i);
@@ -1917,7 +1965,9 @@ public final class MetadataConverter {
         String id = src.getROIID(i);
         dest.setROIID(id, i);
       }
-      catch (NullPointerException e) { }
+      catch (NullPointerException e) {
+        continue;
+      }
 
       try {
         String name = src.getROIName(i);
@@ -1950,7 +2000,9 @@ public final class MetadataConverter {
             String shapeID = src.getEllipseID(i, q);
             dest.setEllipseID(shapeID, i, q);
           }
-          catch (NullPointerException e) { }
+          catch (NullPointerException e) {
+            continue;
+          }
 
           try {
             Color fillColor = src.getEllipseFillColor(i, q);
@@ -2077,7 +2129,9 @@ public final class MetadataConverter {
             String shapeID = src.getLabelID(i, q);
             dest.setLabelID(shapeID, i, q);
           }
-          catch (NullPointerException e) { }
+          catch (NullPointerException e) {
+            continue;
+          }
 
           try {
             Color fillColor = src.getLabelFillColor(i, q);
@@ -2192,7 +2246,9 @@ public final class MetadataConverter {
             String shapeID = src.getLineID(i, q);
             dest.setLineID(shapeID, i, q);
           }
-          catch (NullPointerException e) { }
+          catch (NullPointerException e) {
+            continue;
+          }
 
           try {
             Color fillColor = src.getLineFillColor(i, q);
@@ -2331,7 +2387,9 @@ public final class MetadataConverter {
             String shapeID = src.getMaskID(i, q);
             dest.setMaskID(shapeID, i, q);
           }
-          catch (NullPointerException e) { }
+          catch (NullPointerException e) {
+            continue;
+          }
 
           try {
             Color fillColor = src.getMaskFillColor(i, q);
@@ -2458,7 +2516,9 @@ public final class MetadataConverter {
             String shapeID = src.getPointID(i, q);
             dest.setPointID(shapeID, i, q);
           }
-          catch (NullPointerException e) { }
+          catch (NullPointerException e) {
+            continue;
+          }
 
           try {
             Color fillColor = src.getPointFillColor(i, q);
@@ -2573,7 +2633,9 @@ public final class MetadataConverter {
             String shapeID = src.getPolygonID(i, q);
             dest.setPolygonID(shapeID, i, q);
           }
-          catch (NullPointerException e) { }
+          catch (NullPointerException e) {
+            continue;
+          }
 
           try {
             Color fillColor = src.getPolygonFillColor(i, q);
@@ -2682,7 +2744,9 @@ public final class MetadataConverter {
             String shapeID = src.getPolylineID(i, q);
             dest.setPolylineID(shapeID, i, q);
           }
-          catch (NullPointerException e) { }
+          catch (NullPointerException e) {
+            continue;
+          }
 
           try {
             Color fillColor = src.getPolylineFillColor(i, q);
@@ -2803,7 +2867,9 @@ public final class MetadataConverter {
             String shapeID = src.getRectangleID(i, q);
             dest.setRectangleID(shapeID, i, q);
           }
-          catch (NullPointerException e) { }
+          catch (NullPointerException e) {
+            continue;
+          }
 
           try {
             Color fillColor = src.getRectangleFillColor(i, q);
@@ -2953,7 +3019,9 @@ public final class MetadataConverter {
         String id = src.getScreenID(i);
         dest.setScreenID(id, i);
       }
-      catch (NullPointerException e) { }
+      catch (NullPointerException e) {
+        continue;
+      }
 
       try {
         String description = src.getScreenDescription(i);
@@ -3033,7 +3101,9 @@ public final class MetadataConverter {
           String reagentID = src.getReagentID(i, q);
           dest.setReagentID(reagentID, i, q);
         }
-        catch (NullPointerException e) { }
+        catch (NullPointerException e) {
+          continue;
+        }
 
         try {
           String reagentDescription = src.getReagentDescription(i, q);
@@ -3082,7 +3152,9 @@ public final class MetadataConverter {
         String id = src.getTagAnnotationID(i);
         dest.setTagAnnotationID(id, i);
       }
-      catch (NullPointerException e) { }
+      catch (NullPointerException e) {
+        continue;
+      }
 
       try {
         String description = src.getTagAnnotationDescription(i);
@@ -3117,7 +3189,9 @@ public final class MetadataConverter {
         String id = src.getTermAnnotationID(i);
         dest.setTermAnnotationID(id, i);
       }
-      catch (NullPointerException e) { }
+      catch (NullPointerException e) {
+        continue;
+      }
 
       try {
         String description = src.getTermAnnotationDescription(i);
@@ -3152,7 +3226,9 @@ public final class MetadataConverter {
         String id = src.getTimestampAnnotationID(i);
         dest.setTimestampAnnotationID(id, i);
       }
-      catch (NullPointerException e) { }
+      catch (NullPointerException e) {
+        continue;
+      }
 
       try {
         String description = src.getTimestampAnnotationDescription(i);
@@ -3187,7 +3263,9 @@ public final class MetadataConverter {
         String id = src.getXMLAnnotationID(i);
         dest.setXMLAnnotationID(id, i);
       }
-      catch (NullPointerException e) { }
+      catch (NullPointerException e) {
+        continue;
+      }
 
       try {
         String description = src.getXMLAnnotationDescription(i);
@@ -3225,7 +3303,9 @@ public final class MetadataConverter {
           String id = src.getArcID(instrumentIndex, lightSource);
           if (id != null) dest.setArcID(id, instrumentIndex, lightSource);
         }
-        catch (NullPointerException e) { }
+        catch (NullPointerException e) {
+          continue;
+        }
 
         try {
           String lotNumber = src.getArcLotNumber(instrumentIndex, lightSource);
@@ -3282,7 +3362,9 @@ public final class MetadataConverter {
           String id = src.getFilamentID(instrumentIndex, lightSource);
           if (id != null) dest.setFilamentID(id, instrumentIndex, lightSource);
         }
-        catch (NullPointerException e) { }
+        catch (NullPointerException e) {
+          continue;
+        }
 
         try {
           String lotNumber =
@@ -3343,7 +3425,9 @@ public final class MetadataConverter {
           String id = src.getLaserID(instrumentIndex, lightSource);
           if (id != null) dest.setLaserID(id, instrumentIndex, lightSource);
         }
-        catch (NullPointerException e) { }
+        catch (NullPointerException e) {
+          continue;
+        }
 
         try {
           String lotNumber =
@@ -3476,7 +3560,9 @@ public final class MetadataConverter {
             dest.setLightEmittingDiodeID(id, instrumentIndex, lightSource);
           }
         }
-        catch (NullPointerException e) { }
+        catch (NullPointerException e) {
+          continue;
+        }
 
         try {
           String lotNumber =
