@@ -656,25 +656,27 @@ public final class MetadataConverter {
 
       try {
         String stageLabelName = src.getStageLabelName(i);
-        dest.setStageLabelName(stageLabelName, i);
-      }
-      catch (NullPointerException e) { }
+        if (stageLabelName != null) {
+          dest.setStageLabelName(stageLabelName, i);
 
-      try {
-        Double stageLabelX = src.getStageLabelX(i);
-        dest.setStageLabelX(stageLabelX, i);
-      }
-      catch (NullPointerException e) { }
+          try {
+            Double stageLabelX = src.getStageLabelX(i);
+            dest.setStageLabelX(stageLabelX, i);
+          }
+          catch (NullPointerException e) { }
 
-      try {
-        Double stageLabelY = src.getStageLabelY(i);
-        dest.setStageLabelY(stageLabelY, i);
-      }
-      catch (NullPointerException e) { }
+          try {
+            Double stageLabelY = src.getStageLabelY(i);
+            dest.setStageLabelY(stageLabelY, i);
+          }
+          catch (NullPointerException e) { }
 
-      try {
-        Double stageLabelZ = src.getStageLabelZ(i);
-        dest.setStageLabelZ(stageLabelZ, i);
+          try {
+            Double stageLabelZ = src.getStageLabelZ(i);
+            dest.setStageLabelZ(stageLabelZ, i);
+          }
+          catch (NullPointerException e) { }
+        }
       }
       catch (NullPointerException e) { }
 
