@@ -35,7 +35,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-05-09 18:03:02-0400
+ * Created by callan via xsd-fu on 2012-05-18 10:08:20+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -2063,7 +2063,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// {u'OME': None}
 	// Is multi path? False
 
-	public String getImageAcquisitionDate(int imageIndex)
+	public Timestamp getImageAcquisitionDate(int imageIndex)
 	{
 		// Parents: {u'OME': None}
 		// AcquisitionDate is not a reference
@@ -3767,7 +3767,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.getPlate(plateIndex).getPlateAcquisition(plateAcquisitionIndex).getDescription();
 	}
 
-	public String getPlateAcquisitionEndTime(int plateIndex, int plateAcquisitionIndex)
+	public Timestamp getPlateAcquisitionEndTime(int plateIndex, int plateAcquisitionIndex)
 	{
 		// Parents: {u'Plate': {u'OME': None}}
 		// EndTime is not a reference
@@ -3796,7 +3796,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// Ignoring Plate_BackReference back reference
-	public String getPlateAcquisitionStartTime(int plateIndex, int plateAcquisitionIndex)
+	public Timestamp getPlateAcquisitionStartTime(int plateIndex, int plateAcquisitionIndex)
 	{
 		// Parents: {u'Plate': {u'OME': None}}
 		// StartTime is not a reference
@@ -5094,7 +5094,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
 	// Ignoring StructuredAnnotations_BackReference back reference
-	public String getTimestampAnnotationValue(int timestampAnnotationIndex)
+	public Timestamp getTimestampAnnotationValue(int timestampAnnotationIndex)
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
 		// Value is not a reference
@@ -5289,7 +5289,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.getPlate(plateIndex).getWell(wellIndex).getWellSample(wellSampleIndex).getPositionY();
 	}
 
-	public String getWellSampleTimepoint(int plateIndex, int wellIndex, int wellSampleIndex)
+	public Timestamp getWellSampleTimepoint(int plateIndex, int wellIndex, int wellSampleIndex)
 	{
 		// Parents: {u'Well': {u'Plate': {u'OME': None}}}
 		// Timepoint is not a reference
@@ -8247,7 +8247,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// {u'OME': None}
 	// Is multi path? False
 
-	public void setImageAcquisitionDate(String acquisitionDate, int imageIndex)
+	public void setImageAcquisitionDate(Timestamp acquisitionDate, int imageIndex)
 	{
 		// Parents: {u'OME': None}
 		// AcquisitionDate is not a reference
@@ -12049,7 +12049,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o2.setDescription(description);
 	}
 
-	public void setPlateAcquisitionEndTime(String endTime, int plateIndex, int plateAcquisitionIndex)
+	public void setPlateAcquisitionEndTime(Timestamp endTime, int plateIndex, int plateAcquisitionIndex)
 	{
 		// Parents: {u'Plate': {u'OME': None}}
 		// EndTime is not a reference
@@ -12123,7 +12123,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// Ignoring Plate_BackReference back reference
-	public void setPlateAcquisitionStartTime(String startTime, int plateIndex, int plateAcquisitionIndex)
+	public void setPlateAcquisitionStartTime(Timestamp startTime, int plateIndex, int plateAcquisitionIndex)
 	{
 		// Parents: {u'Plate': {u'OME': None}}
 		// StartTime is not a reference
@@ -15022,7 +15022,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
 	// Ignoring StructuredAnnotations_BackReference back reference
-	public void setTimestampAnnotationValue(String value, int timestampAnnotationIndex)
+	public void setTimestampAnnotationValue(Timestamp value, int timestampAnnotationIndex)
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
 		// Value is not a reference
@@ -15483,7 +15483,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o3.setPositionY(positionY);
 	}
 
-	public void setWellSampleTimepoint(String timepoint, int plateIndex, int wellIndex, int wellSampleIndex)
+	public void setWellSampleTimepoint(Timestamp timepoint, int plateIndex, int wellIndex, int wellSampleIndex)
 	{
 		// Parents: {u'Well': {u'Plate': {u'OME': None}}}
 		// Timepoint is not a reference

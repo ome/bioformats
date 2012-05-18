@@ -39,6 +39,7 @@ import loci.formats.tiff.TiffParser;
 
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 /**
  * NikonElementsTiffReader is the file format reader for TIFF files produced
@@ -122,7 +123,7 @@ public class NikonElementsTiffReader extends BaseTiffReader {
 
     String date = handler.getDate();
     if (date != null) {
-      store.setImageAcquisitionDate(date, 0);
+      store.setImageAcquisitionDate(new Timestamp(date), 0);
     }
 
     if (getMetadataOptions().getMetadataLevel() == MetadataLevel.MINIMUM) {

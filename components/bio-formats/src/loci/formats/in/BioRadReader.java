@@ -43,6 +43,7 @@ import loci.formats.meta.MetadataStore;
 
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
@@ -941,7 +942,7 @@ public class BioRadReader extends FormatReader {
                   String date = year + "-" + values[4] + "-" + values[3] + "T" +
                     values[2] + ":" + values[1] + ":" + values[0];
                   addGlobalMeta("Acquisition date", date);
-                  store.setImageAcquisitionDate(date, 0);
+                  store.setImageAcquisitionDate(new Timestamp(date), 0);
                   break;
                 case 18:
                   addGlobalMeta("Mixer 3 - enhanced", values[0]);

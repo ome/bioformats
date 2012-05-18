@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-05-09 18:02:54-0400
+ * Created by callan via xsd-fu on 2012-05-18 10:08:16+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -74,7 +74,7 @@ public class Image extends AbstractOMEModelObject
 	private String name;
 
 	// Property
-	private String acquisitionDate;
+	private Timestamp acquisitionDate;
 
 	// Property
 	private Experimenter experimenter;
@@ -199,7 +199,7 @@ public class Image extends AbstractOMEModelObject
 			// Element property AcquisitionDate which is not complex (has no
 			// sub-elements)
 			setAcquisitionDate(
-					String.valueOf(AcquisitionDate_nodeList.get(0).getTextContent()));
+					Timestamp.valueOf(AcquisitionDate_nodeList.get(0).getTextContent()));
 		}
 		// Element reference ExperimenterRef
 		List<Element> ExperimenterRef_nodeList =
@@ -440,12 +440,12 @@ public class Image extends AbstractOMEModelObject
 	}
 
 	// Property
-	public String getAcquisitionDate()
+	public Timestamp getAcquisitionDate()
 	{
 		return acquisitionDate;
 	}
 
-	public void setAcquisitionDate(String acquisitionDate)
+	public void setAcquisitionDate(Timestamp acquisitionDate)
 	{
 		this.acquisitionDate = acquisitionDate;
 	}

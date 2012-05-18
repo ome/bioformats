@@ -39,6 +39,7 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 /**
  * L2DReader is the file format reader for Li-Cor L2D datasets.
@@ -318,7 +319,7 @@ public class L2DReader extends FormatReader {
       store.setImageName(scans[i], i);
       if (dates[i] != null) {
         dates[i] = DateTools.formatDate(dates[i], DATE_FORMAT);
-        store.setImageAcquisitionDate(dates[i], i);
+        store.setImageAcquisitionDate(new Timestamp(dates[i]), i);
       }
     }
 

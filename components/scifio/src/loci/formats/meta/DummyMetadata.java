@@ -35,7 +35,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-05-09 18:03:08-0400
+ * Created by callan via xsd-fu on 2012-05-18 10:08:22+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -1573,7 +1573,7 @@ public class DummyMetadata implements IMetadata
 	// {u'OME': None}
 	// Is multi path? False
 
-	public String getImageAcquisitionDate(int imageIndex)
+	public Timestamp getImageAcquisitionDate(int imageIndex)
 	{
 		return null;
 	}
@@ -2829,7 +2829,7 @@ public class DummyMetadata implements IMetadata
 		return null;
 	}
 
-	public String getPlateAcquisitionEndTime(int plateIndex, int plateAcquisitionIndex)
+	public Timestamp getPlateAcquisitionEndTime(int plateIndex, int plateAcquisitionIndex)
 	{
 		return null;
 	}
@@ -2850,7 +2850,7 @@ public class DummyMetadata implements IMetadata
 	}
 
 	// Ignoring Plate_BackReference back reference
-	public String getPlateAcquisitionStartTime(int plateIndex, int plateAcquisitionIndex)
+	public Timestamp getPlateAcquisitionStartTime(int plateIndex, int plateAcquisitionIndex)
 	{
 		return null;
 	}
@@ -3810,7 +3810,7 @@ public class DummyMetadata implements IMetadata
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
 	// Ignoring StructuredAnnotations_BackReference back reference
-	public String getTimestampAnnotationValue(int timestampAnnotationIndex)
+	public Timestamp getTimestampAnnotationValue(int timestampAnnotationIndex)
 	{
 		return null;
 	}
@@ -3961,7 +3961,7 @@ public class DummyMetadata implements IMetadata
 		return null;
 	}
 
-	public String getWellSampleTimepoint(int plateIndex, int wellIndex, int wellSampleIndex)
+	public Timestamp getWellSampleTimepoint(int plateIndex, int wellIndex, int wellSampleIndex)
 	{
 		return null;
 	}
@@ -4946,7 +4946,7 @@ public class DummyMetadata implements IMetadata
 	// {u'OME': None}
 	// Is multi path? False
 
-	public void setImageAcquisitionDate(String acquisitionDate, int imageIndex)
+	public void setImageAcquisitionDate(Timestamp acquisitionDate, int imageIndex)
 	{
 	}
 
@@ -6021,7 +6021,7 @@ public class DummyMetadata implements IMetadata
 	{
 	}
 
-	public void setPlateAcquisitionEndTime(String endTime, int plateIndex, int plateAcquisitionIndex)
+	public void setPlateAcquisitionEndTime(Timestamp endTime, int plateIndex, int plateAcquisitionIndex)
 	{
 	}
 
@@ -6038,7 +6038,7 @@ public class DummyMetadata implements IMetadata
 	}
 
 	// Ignoring Plate_BackReference back reference
-	public void setPlateAcquisitionStartTime(String startTime, int plateIndex, int plateAcquisitionIndex)
+	public void setPlateAcquisitionStartTime(Timestamp startTime, int plateIndex, int plateAcquisitionIndex)
 	{
 	}
 
@@ -6870,7 +6870,7 @@ public class DummyMetadata implements IMetadata
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
 	// Ignoring StructuredAnnotations_BackReference back reference
-	public void setTimestampAnnotationValue(String value, int timestampAnnotationIndex)
+	public void setTimestampAnnotationValue(Timestamp value, int timestampAnnotationIndex)
 	{
 	}
 
@@ -6994,7 +6994,7 @@ public class DummyMetadata implements IMetadata
 	{
 	}
 
-	public void setWellSampleTimepoint(String timepoint, int plateIndex, int wellIndex, int wellSampleIndex)
+	public void setWellSampleTimepoint(Timestamp timepoint, int plateIndex, int wellIndex, int wellSampleIndex)
 	{
 	}
 

@@ -42,6 +42,7 @@ import loci.formats.meta.MetadataStore;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 /**
  * CellWorxReader is the file format reader for CellWorx .pnl files.
@@ -507,7 +508,8 @@ public class CellWorxReader extends FormatReader {
       if (key.equals("Date")) {
         String date = DateTools.formatDate(value, DATE_FORMAT);
         for (int field=0; field<fieldCount; field++) {
-          store.setImageAcquisitionDate(date, seriesIndex + field);
+          store.setImageAcquisitionDate(
+              new Timestamp(date), seriesIndex + field);
         }
       }
       else if (key.equals("Scan Origin")) {

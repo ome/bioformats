@@ -61,6 +61,7 @@ import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PercentFraction;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 import org.xml.sax.SAXException;
 import org.w3c.dom.Attr;
@@ -671,9 +672,9 @@ public class LIFReader extends FormatReader {
 
       store.setImageDescription(descriptions[i], i);
       if (acquiredDate[i] > 0) {
-        store.setImageAcquisitionDate(DateTools.convertDate(
+        store.setImageAcquisitionDate(new Timestamp(DateTools.convertDate(
           (long) (acquiredDate[i] * 1000), DateTools.COBOL,
-          DateTools.ISO8601_FORMAT, true), i);
+          DateTools.ISO8601_FORMAT, true)), i);
       }
       store.setImageName(imageNames[i].trim(), i);
 

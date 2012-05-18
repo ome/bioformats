@@ -52,6 +52,7 @@ import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PercentFraction;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 import org.xml.sax.SAXException;
 import org.w3c.dom.Attr;
@@ -395,7 +396,7 @@ public class ZeissCZIReader extends FormatReader {
     String name = new Location(getCurrentFile()).getName();
 
     for (int i=0; i<getSeriesCount(); i++) {
-      store.setImageAcquisitionDate(acquiredDate, i);
+      store.setImageAcquisitionDate(new Timestamp(acquiredDate), i);
       store.setImageExperimenterRef(experimenterID, i);
       store.setImageName(name + " #" + (i + 1), i);
 

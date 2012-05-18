@@ -29,6 +29,8 @@ import java.util.Hashtable;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import ome.xml.model.primitives.Timestamp;
+
 import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.DateTools;
@@ -323,7 +325,7 @@ public class IPWReader extends FormatReader {
     MetadataTools.populatePixels(store, this);
     store.setImageDescription(description, 0);
     if (creationDate != null) {
-      store.setImageAcquisitionDate(creationDate, 0);
+      store.setImageAcquisitionDate(new Timestamp(creationDate), 0);
     }
   }
 

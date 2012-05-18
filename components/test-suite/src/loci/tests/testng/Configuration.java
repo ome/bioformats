@@ -456,7 +456,7 @@ public class Configuration {
         seriesTable.put(TIME_INCREMENT, timeIncrement.toString());
       }
 
-      String date = retrieve.getImageAcquisitionDate(series);
+      String date = retrieve.getImageAcquisitionDate(series).getValue();
       if (date != null) {
         seriesTable.put(DATE, date);
       }

@@ -53,6 +53,7 @@ import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PercentFraction;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -899,7 +900,7 @@ public class LeicaHandler extends BaseHandler {
         if (DateTools.getTime(date, DateTools.ISO8601_FORMAT) <
           System.currentTimeMillis())
         {
-          store.setImageAcquisitionDate(date, numDatasets);
+          store.setImageAcquisitionDate(new Timestamp(date), numDatasets);
         }
         firstStamp = ms;
         store.setPlaneDeltaT(0.0, numDatasets, count);
