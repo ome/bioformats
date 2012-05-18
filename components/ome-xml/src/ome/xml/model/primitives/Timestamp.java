@@ -41,17 +41,30 @@ public class Timestamp extends PrimitiveType<String> {
   public static final String ISO8601_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
 
   /** Date as a Java type. */
-  private Date asDate;
+  private final Date asDate;
+
+  /** ISO 8601 date format parser / printer. */
+  private final SimpleDateFormat dateFormat =
+      new SimpleDateFormat(ISO8601_FORMAT);
 
   public Timestamp(String value) {
     super(value);
-    SimpleDateFormat dateFormat = new SimpleDateFormat(ISO8601_FORMAT);
     try {
       asDate = dateFormat.parse(value);
     }
     catch (ParseException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  public Timestamp(Date date) {
+    asDate = date;
+    value = dateFormat.format(date);
+  }
+
+  public Timestamp(Calendar calendar) {
+    asDate = calendar.getTime();
+    value = dateFormat.format(asDate);
   }
 
   /**

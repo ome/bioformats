@@ -50,7 +50,9 @@ import org.testng.annotations.Test;
  */
 public class TimestampTest {
 
-  public static final String TIMESTAMP = "2011-10-20T15:07:14.112-07:00";
+  public static final String TIMESTAMP = "2011-10-20T15:07:14";
+
+  private final Timestamp a = new Timestamp(TIMESTAMP);
 
   private void assertYMDHMS(Calendar calendar) {
     Assert.assertEquals(calendar.get(Calendar.YEAR), 2011);
@@ -70,23 +72,34 @@ public class TimestampTest {
 
   @Test
   public void testAsDate() {
-    Timestamp v = new Timestamp(TIMESTAMP);
-    Date date = v.asDate();
+    Date date = a.asDate();
     Calendar calendar = createCalendar(date);
     assertYMDHMS(calendar);
   }
 
   @Test
   public void testAsCalendar() {
-    Timestamp v = new Timestamp(TIMESTAMP);
-    assertYMDHMS(v.asCalendar());
+    assertYMDHMS(a.asCalendar());
   }
 
   @Test
   public void testAsSqlDate() {
-    Timestamp v = new Timestamp(TIMESTAMP);
-    java.sql.Date date = v.asSqlDate();
+    java.sql.Date date = a.asSqlDate();
     Calendar calendar = createCalendar(date);
     assertYMDHMS(calendar);
+  }
+
+  @Test
+  public void testDateConstructor() {
+    Timestamp b = new Timestamp(a.asDate());
+    Assert.assertEquals(b, a);
+    assertYMDHMS(b.asCalendar());
+  }
+
+  @Test
+  public void testCalendarConstructor() {
+    Timestamp b = new Timestamp(a.asCalendar());
+    Assert.assertEquals(b, a);
+    assertYMDHMS(b.asCalendar());
   }
 }
