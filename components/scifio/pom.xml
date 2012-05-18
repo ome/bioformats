@@ -104,7 +104,7 @@
       <plugin>
         <groupId>loci.maven.plugins</groupId>
         <artifactId>cppwrap-maven-plugin</artifactId>
-        <version>1.0.0</version>
+        <version>1.1.0</version>
         <configuration>
           <headerFile>cppwrap/header.txt</headerFile>
           <conflictsFile>cppwrap/conflicts.txt</conflictsFile>
