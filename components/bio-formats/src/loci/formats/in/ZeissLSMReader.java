@@ -55,6 +55,7 @@ import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 /**
  * ZeissLSMReader is the file format reader for Zeiss LSM files.
@@ -532,7 +533,8 @@ public class ZeissLSMReader extends FormatReader {
         store.setImageName(imageNames.get(series), series);
       }
       if (acquiredDate.containsKey(series)) {
-        store.setImageAcquisitionDate(acquiredDate.get(series), series);
+        store.setImageAcquisitionDate(new Timestamp(
+            acquiredDate.get(series)), series);
       }
       store.setPixelsBinDataBigEndian(!isLittleEndian(), series, 0);
     }

@@ -563,7 +563,7 @@ public final class MetadataConverter {
       }
 
       try {
-        String date = src.getImageAcquisitionDate(i);
+        Timestamp date = src.getImageAcquisitionDate(i);
         dest.setImageAcquisitionDate(date, i);
       }
       catch (NullPointerException e) { }
@@ -1788,7 +1788,7 @@ public final class MetadataConverter {
           catch (NullPointerException e) { }
 
           try {
-            String timepoint = src.getWellSampleTimepoint(i, q, w);
+            Timestamp timepoint = src.getWellSampleTimepoint(i, q, w);
             dest.setWellSampleTimepoint(timepoint, i, q, w);
           }
           catch (NullPointerException e) { }
@@ -1829,7 +1829,7 @@ public final class MetadataConverter {
         catch (NullPointerException e) { }
 
         try {
-          String endTime = src.getPlateAcquisitionEndTime(i, q);
+          Timestamp endTime = src.getPlateAcquisitionEndTime(i, q);
           dest.setPlateAcquisitionEndTime(endTime, i, q);
         }
         catch (NullPointerException e) { }
@@ -1847,7 +1847,7 @@ public final class MetadataConverter {
         catch (NullPointerException e) { }
 
         try {
-          String startTime = src.getPlateAcquisitionStartTime(i, q);
+          Timestamp startTime = src.getPlateAcquisitionStartTime(i, q);
           dest.setPlateAcquisitionStartTime(startTime, i, q);
         }
         catch (NullPointerException e) { }
@@ -3251,7 +3251,7 @@ public final class MetadataConverter {
       catch (NullPointerException e) { }
 
       try {
-        String value = src.getTimestampAnnotationValue(i);
+        Timestamp value = src.getTimestampAnnotationValue(i);
         dest.setTimestampAnnotationValue(value, i);
       }
       catch (NullPointerException e) { }

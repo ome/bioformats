@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-05-09 18:02:54-0400
+ * Created by callan via xsd-fu on 2012-05-18 10:08:16+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -80,7 +80,7 @@ public class WellSample extends AbstractOMEModelObject
 	private String id;
 
 	// Property
-	private String timepoint;
+	private Timestamp timepoint;
 
 	// Property
 	private Image image;
@@ -176,7 +176,7 @@ public class WellSample extends AbstractOMEModelObject
 		if (element.hasAttribute("Timepoint"))
 		{
 			// Attribute property Timepoint
-			setTimepoint(String.valueOf(
+			setTimepoint(Timestamp.valueOf(
 					element.getAttribute("Timepoint")));
 		}
 		// Element reference ImageRef
@@ -276,12 +276,12 @@ public class WellSample extends AbstractOMEModelObject
 	}
 
 	// Property
-	public String getTimepoint()
+	public Timestamp getTimepoint()
 	{
 		return timepoint;
 	}
 
-	public void setTimepoint(String timepoint)
+	public void setTimepoint(Timestamp timepoint)
 	{
 		this.timepoint = timepoint;
 	}

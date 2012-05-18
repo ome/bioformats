@@ -25,6 +25,8 @@ package loci.formats.in;
 
 import java.io.IOException;
 
+import ome.xml.model.primitives.Timestamp;
+
 import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
@@ -227,7 +229,8 @@ public class GatanDM2Reader extends FormatReader {
         "M/d/yy h:mm:ss a", "d/M/yy h:mm:ss a",
         "M/d/yy H:mm:ss", "d/M/yy H:mm:ss"};
       date += " " + time;
-      store.setImageAcquisitionDate(DateTools.formatDate(date, format), 0);
+      store.setImageAcquisitionDate(new Timestamp(
+              DateTools.formatDate(date, format)), 0);
     }
     if (name != null) {
       store.setImageName(name, 0);

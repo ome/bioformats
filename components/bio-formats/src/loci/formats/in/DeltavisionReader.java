@@ -42,6 +42,7 @@ import ome.xml.model.enums.Correction;
 import ome.xml.model.enums.Immersion;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 /**
  * DeltavisionReader is the file format reader for Deltavision files.
@@ -1148,7 +1149,7 @@ public class DeltavisionReader extends FormatReader {
         String date = DateTools.formatDate(line, DATE_FORMAT);
         if (date != null) {
           for (int series=0; series<getSeriesCount(); series++) {
-            store.setImageAcquisitionDate(date, series);
+            store.setImageAcquisitionDate(new Timestamp(date), series);
           }
         }
         else {

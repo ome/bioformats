@@ -41,6 +41,7 @@ import loci.formats.tiff.TiffParser;
 
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 /**
  * SISReader is the file format reader for Olympus Soft Imaging Solutions
@@ -201,7 +202,7 @@ public class SISReader extends BaseTiffReader {
     MetadataTools.populatePixels(store, this);
 
     store.setImageName(imageName, 0);
-    store.setImageAcquisitionDate(acquisitionDate, 0);
+    store.setImageAcquisitionDate(new Timestamp(acquisitionDate), 0);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       String instrument = MetadataTools.createLSID("Instrument", 0);

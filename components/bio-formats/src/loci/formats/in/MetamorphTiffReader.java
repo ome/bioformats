@@ -46,6 +46,7 @@ import loci.formats.tiff.TiffParser;
 import ome.xml.model.enums.NamingConvention;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveFloat;
+import ome.xml.model.primitives.Timestamp;
 
 /**
  * MetamorphTiffReader is the file format reader for TIFF files produced by
@@ -363,7 +364,7 @@ public class MetamorphTiffReader extends BaseTiffReader {
 
       String date =
         DateTools.formatDate(handler.getDate(), DateTools.ISO8601_FORMAT);
-      store.setImageAcquisitionDate(date, s);
+      store.setImageAcquisitionDate(new Timestamp(date), s);
 
       if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
         Vector<String> timestamps = handler.getTimestamps();

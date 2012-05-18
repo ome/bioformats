@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-05-09 18:02:54-0400
+ * Created by callan via xsd-fu on 2012-05-18 10:08:16+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -68,7 +68,7 @@ public class TimestampAnnotation extends BasicAnnotation
 
 
 	// Property
-	private String value;
+	private Timestamp value;
 
 	// Back reference StructuredAnnotations_BackReference
 	private StructuredAnnotations structuredAnnotations;
@@ -134,7 +134,7 @@ public class TimestampAnnotation extends BasicAnnotation
 			// Element property Value which is not complex (has no
 			// sub-elements)
 			setValue(
-					String.valueOf(Value_nodeList.get(0).getTextContent()));
+					Timestamp.valueOf(Value_nodeList.get(0).getTextContent()));
 		}
 		// *** IGNORING *** Skipped back reference StructuredAnnotations_BackReference
 	}
@@ -154,12 +154,12 @@ public class TimestampAnnotation extends BasicAnnotation
 
 
 	// Property
-	public String getValue()
+	public Timestamp getValue()
 	{
 		return value;
 	}
 
-	public void setValue(String value)
+	public void setValue(Timestamp value)
 	{
 		this.value = value;
 	}

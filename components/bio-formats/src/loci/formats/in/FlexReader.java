@@ -54,6 +54,7 @@ import loci.formats.tiff.TiffParser;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
@@ -534,7 +535,7 @@ public class FlexReader extends FormatReader {
     plateAcqStartTime =
       DateTools.formatDate(plateAcqStartTime, "dd.MM.yyyy  HH:mm:ss");
 
-    store.setPlateAcquisitionStartTime(plateAcqStartTime, 0, 0);
+    store.setPlateAcquisitionStartTime(new Timestamp(plateAcqStartTime), 0, 0);
 
     for (int row=0; row<wellRows; row++) {
       for (int col=0; col<wellColumns; col++) {
@@ -1334,7 +1335,7 @@ public class FlexReader extends FormatReader {
         if (currentSeries >= seriesCount) return;
 
         if (qName.equals("DateTime")) {
-          store.setImageAcquisitionDate(value, currentSeries);
+          store.setImageAcquisitionDate(new Timestamp(value), currentSeries);
         }
       }
 

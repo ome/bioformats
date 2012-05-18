@@ -44,6 +44,7 @@ import loci.formats.meta.MetadataStore;
 
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 /**
  * ICSReader is the file format reader for ICS (Image Cytometry Standard)
@@ -1417,7 +1418,7 @@ public class ICSReader extends FormatReader {
 
     store.setImageName(imageName, 0);
 
-    if (date != null) store.setImageAcquisitionDate(date, 0);
+    if (date != null) store.setImageAcquisitionDate(new Timestamp(date), 0);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription(description, 0);

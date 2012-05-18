@@ -35,7 +35,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-05-09 18:03:01-0400
+ * Created by callan via xsd-fu on 2012-05-18 10:08:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -923,7 +923,7 @@ public interface MetadataRetrieve {
 	// {u'OME': None}
 	// Is multi path? False
 
-	String getImageAcquisitionDate(int imageIndex);
+	Timestamp getImageAcquisitionDate(int imageIndex);
 
 	String getImageAnnotationRef(int imageIndex, int annotationRefIndex);
 
@@ -1609,7 +1609,7 @@ public interface MetadataRetrieve {
 
 	String getPlateAcquisitionDescription(int plateIndex, int plateAcquisitionIndex);
 
-	String getPlateAcquisitionEndTime(int plateIndex, int plateAcquisitionIndex);
+	Timestamp getPlateAcquisitionEndTime(int plateIndex, int plateAcquisitionIndex);
 
 	String getPlateAcquisitionID(int plateIndex, int plateAcquisitionIndex);
 
@@ -1618,7 +1618,7 @@ public interface MetadataRetrieve {
 	String getPlateAcquisitionName(int plateIndex, int plateAcquisitionIndex);
 
 	// Ignoring Plate_BackReference back reference
-	String getPlateAcquisitionStartTime(int plateIndex, int plateAcquisitionIndex);
+	Timestamp getPlateAcquisitionStartTime(int plateIndex, int plateAcquisitionIndex);
 
 	String getPlateAcquisitionWellSampleRef(int plateIndex, int plateAcquisitionIndex, int wellSampleRefIndex);
 
@@ -2170,7 +2170,7 @@ public interface MetadataRetrieve {
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
 	// Ignoring StructuredAnnotations_BackReference back reference
-	String getTimestampAnnotationValue(int timestampAnnotationIndex);
+	Timestamp getTimestampAnnotationValue(int timestampAnnotationIndex);
 
 	// Ignoring WellSample_BackReference back reference
 	// Ignoring Well_BackReference back reference
@@ -2250,7 +2250,7 @@ public interface MetadataRetrieve {
 
 	Double getWellSamplePositionY(int plateIndex, int wellIndex, int wellSampleIndex);
 
-	String getWellSampleTimepoint(int plateIndex, int wellIndex, int wellSampleIndex);
+	Timestamp getWellSampleTimepoint(int plateIndex, int wellIndex, int wellSampleIndex);
 
 	// Ignoring Well_BackReference back reference
 	//

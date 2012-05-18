@@ -35,6 +35,7 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import ome.xml.model.primitives.PositiveFloat;
+import ome.xml.model.primitives.Timestamp;
 
 /**
  * PDSReader is the file format reader for Perkin Elmer densitometer files.
@@ -275,7 +276,7 @@ public class PDSReader extends FormatReader {
     MetadataTools.populatePixels(store, this, !minimumMetadata);
 
     if (date != null) {
-      store.setImageAcquisitionDate(date, 0);
+      store.setImageAcquisitionDate(new Timestamp(date), 0);
     }
 
     if (!minimumMetadata) {

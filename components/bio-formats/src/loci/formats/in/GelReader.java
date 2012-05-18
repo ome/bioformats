@@ -37,6 +37,7 @@ import loci.formats.tiff.IFDList;
 import loci.formats.tiff.TiffParser;
 import loci.formats.tiff.TiffRational;
 import ome.xml.model.primitives.PositiveFloat;
+import ome.xml.model.primitives.Timestamp;
 
 /**
  * GelReader is the file format reader for
@@ -187,10 +188,10 @@ public class GelReader extends BaseTiffReader {
     String parsedTime = DateTools.formatDate(prepTime, FORMATS);
 
     if (parsedDate != null) {
-      store.setImageAcquisitionDate(parsedDate, 0);
+      store.setImageAcquisitionDate(new Timestamp(parsedDate), 0);
     }
     else if (parsedTime != null) {
-      store.setImageAcquisitionDate(parsedTime, 0);
+      store.setImageAcquisitionDate(new Timestamp(parsedTime), 0);
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {

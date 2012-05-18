@@ -58,6 +58,7 @@ import ome.xml.model.WellSample;
 import ome.xml.model.XMLAnnotation;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 /**
  * <dl><dt><b>Source code:</b></dt>
@@ -241,7 +242,7 @@ public class ObjectBasedOMEModelMock implements OMEModelMock {
 
     TimestampAnnotation plateAnnotation = new TimestampAnnotation();
     plateAnnotation.setID(InOut201004Test.PLATE_ANNOTATION_ID);
-    plateAnnotation.setValue(InOut201004Test.PLATE_ANNOTATION_VALUE);
+    plateAnnotation.setValue(new Timestamp(InOut201004Test.PLATE_ANNOTATION_VALUE));
     plateAnnotation.setNamespace(InOut201004Test.GENERAL_ANNOTATION_NAMESPACE);
     plate.linkAnnotation(plateAnnotation);
     annotations.addTimestampAnnotation(plateAnnotation);

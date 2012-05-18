@@ -39,6 +39,7 @@ import loci.formats.tiff.TiffCompression;
 import loci.formats.tiff.TiffRational;
 
 import ome.xml.model.primitives.PositiveFloat;
+import ome.xml.model.primitives.Timestamp;
 
 /**
  * BaseTiffReader is the superclass for file format readers compatible with
@@ -406,7 +407,7 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
     // populate Image
 
     if (creationDate != null) {
-      store.setImageAcquisitionDate(creationDate, 0);
+      store.setImageAcquisitionDate(new Timestamp(creationDate), 0);
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {

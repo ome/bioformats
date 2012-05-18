@@ -29,6 +29,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 
+import ome.xml.model.primitives.Timestamp;
+
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
@@ -359,8 +361,8 @@ public class BrukerReader extends FormatReader {
 
     for (int series=0; series<getSeriesCount(); series++) {
       store.setImageName(imageNames[series] + " #" + (series + 1), series);
-      store.setImageAcquisitionDate(
-        DateTools.formatDate(timestamps[series], DATE_FORMAT), series);
+      store.setImageAcquisitionDate(new Timestamp(
+        DateTools.formatDate(timestamps[series], DATE_FORMAT)), series);
 
       String expID = MetadataTools.createLSID("Experimenter", series);
       store.setExperimenterID(expID, series);
