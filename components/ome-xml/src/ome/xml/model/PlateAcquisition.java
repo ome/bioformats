@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-05-09 18:02:54-0400
+ * Created by callan via xsd-fu on 2012-05-18 10:08:16+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -71,13 +71,13 @@ public class PlateAcquisition extends AbstractOMEModelObject
 	private PositiveInteger maximumFieldCount;
 
 	// Property
-	private String endTime;
+	private Timestamp endTime;
 
 	// Property
 	private String id;
 
 	// Property
-	private String startTime;
+	private Timestamp startTime;
 
 	// Property
 	private String name;
@@ -150,7 +150,7 @@ public class PlateAcquisition extends AbstractOMEModelObject
 		if (element.hasAttribute("EndTime"))
 		{
 			// Attribute property EndTime
-			setEndTime(String.valueOf(
+			setEndTime(Timestamp.valueOf(
 					element.getAttribute("EndTime")));
 		}
 		if (!element.hasAttribute("ID") && getID() == null)
@@ -170,7 +170,7 @@ public class PlateAcquisition extends AbstractOMEModelObject
 		if (element.hasAttribute("StartTime"))
 		{
 			// Attribute property StartTime
-			setStartTime(String.valueOf(
+			setStartTime(Timestamp.valueOf(
 					element.getAttribute("StartTime")));
 		}
 		if (element.hasAttribute("Name"))
@@ -260,12 +260,12 @@ public class PlateAcquisition extends AbstractOMEModelObject
 	}
 
 	// Property
-	public String getEndTime()
+	public Timestamp getEndTime()
 	{
 		return endTime;
 	}
 
-	public void setEndTime(String endTime)
+	public void setEndTime(Timestamp endTime)
 	{
 		this.endTime = endTime;
 	}
@@ -282,12 +282,12 @@ public class PlateAcquisition extends AbstractOMEModelObject
 	}
 
 	// Property
-	public String getStartTime()
+	public Timestamp getStartTime()
 	{
 		return startTime;
 	}
 
-	public void setStartTime(String startTime)
+	public void setStartTime(Timestamp startTime)
 	{
 		this.startTime = startTime;
 	}

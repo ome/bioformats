@@ -36,6 +36,7 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 import org.xml.sax.Attributes;
 
@@ -265,7 +266,7 @@ public class IvisionReader extends FormatReader {
 
     if (creationDate != null) {
       String date = DateTools.formatDate(creationDate, DATE_FORMAT);
-      store.setImageAcquisitionDate(date, 0);
+      store.setImageAcquisitionDate(new Timestamp(date), 0);
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {

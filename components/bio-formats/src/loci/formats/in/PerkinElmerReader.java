@@ -42,6 +42,7 @@ import loci.formats.meta.MetadataStore;
 
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 /**
  * PerkinElmerReader is the file format reader for PerkinElmer files.
@@ -572,7 +573,7 @@ public class PerkinElmerReader extends FormatReader {
     // populate Image element
     if (finishTime != null) {
       finishTime = DateTools.formatDate(finishTime, DATE_FORMAT);
-      store.setImageAcquisitionDate(finishTime, 0);
+      store.setImageAcquisitionDate(new Timestamp(finishTime), 0);
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {

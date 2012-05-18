@@ -43,6 +43,7 @@ import loci.formats.meta.MetadataStore;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
@@ -497,7 +498,7 @@ public class InCellReader extends FormatReader {
       }
 
       store.setImageName(imageName, i);
-      store.setImageAcquisitionDate(creationDate, i);
+      store.setImageAcquisitionDate(new Timestamp(creationDate), i);
 
       timepoint--;
       if (timepoint < 0) timepoint = 0;

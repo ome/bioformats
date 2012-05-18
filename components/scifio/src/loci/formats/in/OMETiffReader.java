@@ -55,6 +55,7 @@ import loci.formats.tiff.TiffParser;
 
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 /**
  * OMETiffReader is the file format reader for
@@ -342,7 +343,7 @@ public class OMETiffReader extends FormatReader {
 
     String[] acquiredDates = new String[meta.getImageCount()];
     for (int i=0; i<acquiredDates.length; i++) {
-      acquiredDates[i] = meta.getImageAcquisitionDate(i);
+      acquiredDates[i] = meta.getImageAcquisitionDate(i).getValue();
     }
 
     String currentUUID = meta.getUUID();
@@ -761,7 +762,8 @@ public class OMETiffReader extends FormatReader {
     MetadataTools.populatePixels(metadataStore, this, false, false);
     for (int i=0; i<acquiredDates.length; i++) {
       if (acquiredDates[i] != null) {
-        metadataStore.setImageAcquisitionDate(acquiredDates[i], i);
+        metadataStore.setImageAcquisitionDate(
+            new Timestamp(acquiredDates[i]), i);
       }
     }
     metadataStore = getMetadataStoreForConversion();

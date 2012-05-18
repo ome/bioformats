@@ -35,7 +35,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-05-09 18:03:10-0400
+ * Created by callan via xsd-fu on 2012-05-18 10:08:23+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -1210,9 +1210,8 @@ public class FilterMetadata implements MetadataStore
 	// {u'OME': None}
 	// Is multi path? False
 
-	public void setImageAcquisitionDate(String acquisitionDate, int imageIndex)
+	public void setImageAcquisitionDate(Timestamp acquisitionDate, int imageIndex)
 	{
-		acquisitionDate = filter? DataTools.sanitize(acquisitionDate) : acquisitionDate;
 		store.setImageAcquisitionDate(acquisitionDate, imageIndex);
 	}
 
@@ -2494,9 +2493,8 @@ public class FilterMetadata implements MetadataStore
 		store.setPlateAcquisitionDescription(description, plateIndex, plateAcquisitionIndex);
 	}
 
-	public void setPlateAcquisitionEndTime(String endTime, int plateIndex, int plateAcquisitionIndex)
+	public void setPlateAcquisitionEndTime(Timestamp endTime, int plateIndex, int plateAcquisitionIndex)
 	{
-		endTime = filter? DataTools.sanitize(endTime) : endTime;
 		store.setPlateAcquisitionEndTime(endTime, plateIndex, plateAcquisitionIndex);
 	}
 
@@ -2518,9 +2516,8 @@ public class FilterMetadata implements MetadataStore
 	}
 
 	// Ignoring Plate_BackReference back reference
-	public void setPlateAcquisitionStartTime(String startTime, int plateIndex, int plateAcquisitionIndex)
+	public void setPlateAcquisitionStartTime(Timestamp startTime, int plateIndex, int plateAcquisitionIndex)
 	{
-		startTime = filter? DataTools.sanitize(startTime) : startTime;
 		store.setPlateAcquisitionStartTime(startTime, plateIndex, plateAcquisitionIndex);
 	}
 
@@ -3506,9 +3503,8 @@ public class FilterMetadata implements MetadataStore
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
 	// Ignoring StructuredAnnotations_BackReference back reference
-	public void setTimestampAnnotationValue(String value, int timestampAnnotationIndex)
+	public void setTimestampAnnotationValue(Timestamp value, int timestampAnnotationIndex)
 	{
-		value = filter? DataTools.sanitize(value) : value;
 		store.setTimestampAnnotationValue(value, timestampAnnotationIndex);
 	}
 
@@ -3667,9 +3663,8 @@ public class FilterMetadata implements MetadataStore
 		store.setWellSamplePositionY(positionY, plateIndex, wellIndex, wellSampleIndex);
 	}
 
-	public void setWellSampleTimepoint(String timepoint, int plateIndex, int wellIndex, int wellSampleIndex)
+	public void setWellSampleTimepoint(Timestamp timepoint, int plateIndex, int wellIndex, int wellSampleIndex)
 	{
-		timepoint = filter? DataTools.sanitize(timepoint) : timepoint;
 		store.setWellSampleTimepoint(timepoint, plateIndex, wellIndex, wellSampleIndex);
 	}
 

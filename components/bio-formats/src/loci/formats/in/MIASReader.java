@@ -52,6 +52,7 @@ import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 /**
  * MIASReader is the file format reader for Maia Scientific MIAS-2 datasets.
@@ -1035,7 +1036,7 @@ public class MIASReader extends FormatReader {
         }
       }
       date = DateTools.formatDate(date, "dd/MM/yyyy HH:mm:ss");
-      store.setImageAcquisitionDate(date, well);
+      store.setImageAcquisitionDate(new Timestamp(date), well);
 
       for (int i=0; i<getImageCount(); i++) {
         store.setPlaneExposureTime(exposure, well, i);

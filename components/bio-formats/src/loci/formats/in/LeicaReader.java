@@ -52,6 +52,7 @@ import ome.xml.model.enums.Immersion;
 import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -623,8 +624,8 @@ public class LeicaReader extends FormatReader {
         timestamps[i].length > 0)
       {
         firstPlane = DateTools.getTime(timestamps[i][0], DATE_FORMAT);
-        store.setImageAcquisitionDate(
-          DateTools.formatDate(timestamps[i][0], DATE_FORMAT), i);
+        store.setImageAcquisitionDate(new Timestamp(
+          DateTools.formatDate(timestamps[i][0], DATE_FORMAT)), i);
       }
 
       store.setImageDescription(seriesDescriptions.get(i), i);

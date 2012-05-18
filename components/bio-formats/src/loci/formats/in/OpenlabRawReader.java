@@ -25,6 +25,8 @@ package loci.formats.in;
 
 import java.io.IOException;
 
+import ome.xml.model.primitives.Timestamp;
+
 import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
@@ -191,7 +193,7 @@ public class OpenlabRawReader extends FormatReader {
     // The metadata store we're working with.
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
-    store.setImageAcquisitionDate(stamp, 0);
+    store.setImageAcquisitionDate(new Timestamp(stamp), 0);
     store.setImageName(imageName, 0);
   }
 

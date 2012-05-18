@@ -27,6 +27,7 @@ import loci.formats.ome.OMEXMLMetadataImpl;
 import ome.xml.model.OME;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 /**
  * <dl><dt><b>Source code:</b></dt>
@@ -180,7 +181,7 @@ public class IMetadataBasedOMEModelMock implements OMEModelMock {
 
     store.setTimestampAnnotationID(InOut201004Test.PLATE_ANNOTATION_ID, 0);
     store.setTimestampAnnotationNamespace(InOut201004Test.GENERAL_ANNOTATION_NAMESPACE, 0);
-    store.setTimestampAnnotationValue(InOut201004Test.PLATE_ANNOTATION_VALUE, 0);
+    store.setTimestampAnnotationValue(new Timestamp(InOut201004Test.PLATE_ANNOTATION_VALUE), 0);
 
     int wellSampleIndex = 0;
     int wellCount = 0;

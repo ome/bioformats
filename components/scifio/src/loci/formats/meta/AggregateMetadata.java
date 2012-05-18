@@ -35,7 +35,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-05-09 18:03:05-0400
+ * Created by callan via xsd-fu on 2012-05-18 10:08:21+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -3684,7 +3684,7 @@ public class AggregateMetadata implements IMetadata
 	// {u'OME': None}
 	// Is multi path? False
 
-	public String getImageAcquisitionDate(int imageIndex)
+	public Timestamp getImageAcquisitionDate(int imageIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -3692,7 +3692,7 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getImageAcquisitionDate(imageIndex);
+				Timestamp result = retrieve.getImageAcquisitionDate(imageIndex);
 				if (result != null) return result;
 			}
 		}
@@ -6760,7 +6760,7 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
-	public String getPlateAcquisitionEndTime(int plateIndex, int plateAcquisitionIndex)
+	public Timestamp getPlateAcquisitionEndTime(int plateIndex, int plateAcquisitionIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -6768,7 +6768,7 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getPlateAcquisitionEndTime(plateIndex, plateAcquisitionIndex);
+				Timestamp result = retrieve.getPlateAcquisitionEndTime(plateIndex, plateAcquisitionIndex);
 				if (result != null) return result;
 			}
 		}
@@ -6821,7 +6821,7 @@ public class AggregateMetadata implements IMetadata
 	}
 
 	// Ignoring Plate_BackReference back reference
-	public String getPlateAcquisitionStartTime(int plateIndex, int plateAcquisitionIndex)
+	public Timestamp getPlateAcquisitionStartTime(int plateIndex, int plateAcquisitionIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -6829,7 +6829,7 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getPlateAcquisitionStartTime(plateIndex, plateAcquisitionIndex);
+				Timestamp result = retrieve.getPlateAcquisitionStartTime(plateIndex, plateAcquisitionIndex);
 				if (result != null) return result;
 			}
 		}
@@ -9081,7 +9081,7 @@ public class AggregateMetadata implements IMetadata
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
 	// Ignoring StructuredAnnotations_BackReference back reference
-	public String getTimestampAnnotationValue(int timestampAnnotationIndex)
+	public Timestamp getTimestampAnnotationValue(int timestampAnnotationIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -9089,7 +9089,7 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getTimestampAnnotationValue(timestampAnnotationIndex);
+				Timestamp result = retrieve.getTimestampAnnotationValue(timestampAnnotationIndex);
 				if (result != null) return result;
 			}
 		}
@@ -9452,7 +9452,7 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
-	public String getWellSampleTimepoint(int plateIndex, int wellIndex, int wellSampleIndex)
+	public Timestamp getWellSampleTimepoint(int plateIndex, int wellIndex, int wellSampleIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -9460,7 +9460,7 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getWellSampleTimepoint(plateIndex, wellIndex, wellSampleIndex);
+				Timestamp result = retrieve.getWellSampleTimepoint(plateIndex, wellIndex, wellSampleIndex);
 				if (result != null) return result;
 			}
 		}
@@ -11732,7 +11732,7 @@ public class AggregateMetadata implements IMetadata
 	// {u'OME': None}
 	// Is multi path? False
 
-	public void setImageAcquisitionDate(String acquisitionDate, int imageIndex)
+	public void setImageAcquisitionDate(Timestamp acquisitionDate, int imageIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -14420,7 +14420,7 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
-	public void setPlateAcquisitionEndTime(String endTime, int plateIndex, int plateAcquisitionIndex)
+	public void setPlateAcquisitionEndTime(Timestamp endTime, int plateIndex, int plateAcquisitionIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -14473,7 +14473,7 @@ public class AggregateMetadata implements IMetadata
 	}
 
 	// Ignoring Plate_BackReference back reference
-	public void setPlateAcquisitionStartTime(String startTime, int plateIndex, int plateAcquisitionIndex)
+	public void setPlateAcquisitionStartTime(Timestamp startTime, int plateIndex, int plateAcquisitionIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -16455,7 +16455,7 @@ public class AggregateMetadata implements IMetadata
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
 	// Ignoring StructuredAnnotations_BackReference back reference
-	public void setTimestampAnnotationValue(String value, int timestampAnnotationIndex)
+	public void setTimestampAnnotationValue(Timestamp value, int timestampAnnotationIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -16777,7 +16777,7 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
-	public void setWellSampleTimepoint(String timepoint, int plateIndex, int wellIndex, int wellSampleIndex)
+	public void setWellSampleTimepoint(Timestamp timepoint, int plateIndex, int wellIndex, int wellSampleIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{

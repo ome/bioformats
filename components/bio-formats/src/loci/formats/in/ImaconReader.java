@@ -38,6 +38,8 @@ import loci.formats.tiff.IFD;
 import loci.formats.tiff.PhotoInterp;
 import loci.formats.tiff.TiffParser;
 
+import ome.xml.model.primitives.Timestamp;
+
 import org.xml.sax.Attributes;
 
 /**
@@ -181,7 +183,7 @@ public class ImaconReader extends BaseTiffReader {
       }
       store.setImageName(name, i);
       if (creationDate != null) {
-        store.setImageAcquisitionDate(creationDate, i);
+        store.setImageAcquisitionDate(new Timestamp(creationDate), i);
       }
     }
 

@@ -46,6 +46,7 @@ import loci.formats.codec.JPEGCodec;
 import loci.formats.codec.PackbitsCodec;
 import loci.formats.meta.MetadataStore;
 import ome.xml.model.primitives.PositiveFloat;
+import ome.xml.model.primitives.Timestamp;
 
 /**
  * DicomReader is the file format reader for DICOM files.
@@ -689,7 +690,7 @@ public class DicomReader extends FormatReader {
     if (stamp == null || stamp.trim().equals("")) stamp = null;
 
     for (int i=0; i<core.length; i++) {
-      if (stamp != null) store.setImageAcquisitionDate(stamp, i);
+      if (stamp != null) store.setImageAcquisitionDate(new Timestamp(stamp), i);
       store.setImageName("Series " + i, i);
     }
 

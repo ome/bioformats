@@ -35,7 +35,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-05-09 18:02:59-0400
+ * Created by callan via xsd-fu on 2012-05-18 10:08:19+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -720,7 +720,7 @@ public interface MetadataStore
 	// {u'OME': None}
 	// Is multi path? False
 
-	void setImageAcquisitionDate(String acquisitionDate, int imageIndex);
+	void setImageAcquisitionDate(Timestamp acquisitionDate, int imageIndex);
 
 	void setImageAnnotationRef(String annotation, int imageIndex, int annotationRefIndex);
 
@@ -1406,7 +1406,7 @@ public interface MetadataStore
 
 	void setPlateAcquisitionDescription(String description, int plateIndex, int plateAcquisitionIndex);
 
-	void setPlateAcquisitionEndTime(String endTime, int plateIndex, int plateAcquisitionIndex);
+	void setPlateAcquisitionEndTime(Timestamp endTime, int plateIndex, int plateAcquisitionIndex);
 
 	void setPlateAcquisitionID(String id, int plateIndex, int plateAcquisitionIndex);
 
@@ -1415,7 +1415,7 @@ public interface MetadataStore
 	void setPlateAcquisitionName(String name, int plateIndex, int plateAcquisitionIndex);
 
 	// Ignoring Plate_BackReference back reference
-	void setPlateAcquisitionStartTime(String startTime, int plateIndex, int plateAcquisitionIndex);
+	void setPlateAcquisitionStartTime(Timestamp startTime, int plateIndex, int plateAcquisitionIndex);
 
 	void setPlateAcquisitionWellSampleRef(String wellSample, int plateIndex, int plateAcquisitionIndex, int wellSampleRefIndex);
 
@@ -1967,7 +1967,7 @@ public interface MetadataStore
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
 	// Ignoring StructuredAnnotations_BackReference back reference
-	void setTimestampAnnotationValue(String value, int timestampAnnotationIndex);
+	void setTimestampAnnotationValue(Timestamp value, int timestampAnnotationIndex);
 
 	// Ignoring WellSample_BackReference back reference
 	// Ignoring Well_BackReference back reference
@@ -2051,7 +2051,7 @@ public interface MetadataStore
 
 	void setWellSamplePositionY(Double positionY, int plateIndex, int wellIndex, int wellSampleIndex);
 
-	void setWellSampleTimepoint(String timepoint, int plateIndex, int wellIndex, int wellSampleIndex);
+	void setWellSampleTimepoint(Timestamp timepoint, int plateIndex, int wellIndex, int wellSampleIndex);
 
 	// Ignoring Well_BackReference back reference
 	//

@@ -56,6 +56,7 @@ import loci.formats.tiff.TiffParser;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 /**
  * FV1000Reader is the file format reader for Fluoview FV 1000 OIB and
@@ -886,7 +887,8 @@ public class FV1000Reader extends FormatReader {
     for (int i=0; i<getSeriesCount(); i++) {
       // populate Image data
       store.setImageName("Series " + (i + 1), i);
-      if (creationDate != null) store.setImageAcquisitionDate(creationDate, i);
+      if (creationDate != null) store.setImageAcquisitionDate(
+          new Timestamp(creationDate), i);
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {

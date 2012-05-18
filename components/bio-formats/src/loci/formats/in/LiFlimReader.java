@@ -33,6 +33,8 @@ import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.zip.GZIPInputStream;
 
+import ome.xml.model.primitives.Timestamp;
+
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.IniList;
@@ -435,7 +437,7 @@ public class LiFlimReader extends FormatReader {
       Double deltaT;
       if (t == 0) {
         String date = DateTools.convertDate(stamp, DateTools.COBOL);
-        store.setImageAcquisitionDate(date, 0);
+        store.setImageAcquisitionDate(new Timestamp(date), 0);
         firstStamp = stamp;
         deltaT = new Double(0);
       }

@@ -53,6 +53,7 @@ import loci.formats.services.POIService;
 
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 /**
  * ZeissZVIReader is the file format reader for Zeiss ZVI files.
@@ -578,7 +579,7 @@ public class ZeissZVIReader extends FormatReader {
         firstStamp = parseTimestamp(timestamp);
         String date =
           DateTools.convertDate((long) (firstStamp / 1600), DateTools.ZVI);
-        store.setImageAcquisitionDate(date, i);
+        store.setImageAcquisitionDate(new Timestamp(date), i);
       }
     }
 
