@@ -331,17 +331,22 @@ public final class MetadataConverter {
         }
         catch (NullPointerException e) { }
         for (int p=0; p<lightSourceCount; p++) {
-          try {
-            PercentFraction attenuation = src.getMicrobeamManipulationLightSourceSettingsAttenuation(i, q, p);
-            dest.setMicrobeamManipulationLightSourceSettingsAttenuation(attenuation, i, q, p);
-          }
-          catch (NullPointerException e) { }
+          String lightSourceID = src.getMicrobeamManipulationLightSourceSettingsID(i, q, p);
+          if (lightSourceID != null) {
+            dest.setMicrobeamManipulationLightSourceSettingsID(lightSourceID, i, q, p);
 
-          try {
-            PositiveInteger wavelength = src.getMicrobeamManipulationLightSourceSettingsWavelength(i, q, p);
-            dest.setMicrobeamManipulationLightSourceSettingsWavelength(wavelength, i, q, p);
+            try {
+              PercentFraction attenuation = src.getMicrobeamManipulationLightSourceSettingsAttenuation(i, q, p);
+              dest.setMicrobeamManipulationLightSourceSettingsAttenuation(attenuation, i, q, p);
+            }
+            catch (NullPointerException e) { }
+
+            try {
+              PositiveInteger wavelength = src.getMicrobeamManipulationLightSourceSettingsWavelength(i, q, p);
+              dest.setMicrobeamManipulationLightSourceSettingsWavelength(wavelength, i, q, p);
+            }
+            catch (NullPointerException e) { }
           }
-          catch (NullPointerException e) { }
         }
 
         int roiRefCount = 0;
