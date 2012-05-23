@@ -230,13 +230,20 @@ public class APLReader extends FormatReader {
       throw new FormatException("MDB Tools Java library not found", de);
     }
 
-    mdb.initialize(mtb);
-    Vector<String[]> rows = mdb.parseDatabase().get(0);
+    String[] columnNames = null;
+    Vector<String[]> rows = null;
+    try {
+      mdb.initialize(mtb);
+      rows = mdb.parseDatabase().get(0);
 
-    String[] columnNames = rows.get(0);
-    String[] tmpNames = columnNames;
-    columnNames = new String[tmpNames.length - 1];
-    System.arraycopy(tmpNames, 1, columnNames, 0, columnNames.length);
+      columnNames = rows.get(0);
+      String[] tmpNames = columnNames;
+      columnNames = new String[tmpNames.length - 1];
+      System.arraycopy(tmpNames, 1, columnNames, 0, columnNames.length);
+    }
+    finally {
+      mdb.close();
+    }
 
     // add full table to metadata hashtable
 
@@ -290,8 +297,8 @@ public class APLReader extends FormatReader {
       LOGGER.debug("  '{}'", f);
       Location file = new Location(dir, f);
       if (file.isDirectory() && f.indexOf("_DocumentFiles") > 0) {
-        LOGGER.debug("Found {}", topDirectory);
         topDirectory = file.getAbsolutePath();
+        LOGGER.debug("Found {}", topDirectory);
         break;
       }
     }

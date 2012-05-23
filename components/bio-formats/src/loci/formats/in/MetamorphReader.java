@@ -1046,7 +1046,10 @@ public class MetamorphReader extends BaseTiffReader {
               if (nextSpace < 0) {
                 nextSpace = value.length();
               }
-              gain = new Double(value.substring(space, nextSpace));
+              try {
+                gain = new Double(value.substring(space, nextSpace));
+              }
+              catch (NumberFormatException e) { }
             }
           }
         }
