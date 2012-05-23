@@ -739,7 +739,7 @@ public class CellSensReader extends FormatReader {
 
       int fieldType = vsi.readInt();
       int tag = vsi.readInt();
-      int nextField = vsi.readInt();
+      long nextField = vsi.readInt() & 0xffffffffL;
       int dataSize = vsi.readInt();
 
       boolean extraTag = ((fieldType & 0x8000000) >> 27) == 1;
@@ -805,7 +805,7 @@ public class CellSensReader extends FormatReader {
         return;
       }
 
-      if (fp + nextField < vsi.length() || fp + nextField >= 0) {
+      if (fp + nextField < vsi.length() && fp + nextField >= 0) {
         vsi.seek(fp + nextField);
       }
       else break;
