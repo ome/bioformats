@@ -363,6 +363,13 @@ public class CellSensReader extends FormatReader {
 
         core[s].littleEndian = compressionType[s] == RAW;
         core[s].interleaved = core[s].rgb;
+
+        if (s == 0 && exifs.size() > 0) {
+          IFD exif = exifs.get(0);
+          core[s].sizeX = exif.getIFDIntValue(IFD.PIXEL_X_DIMENSION);
+          core[s].sizeY = exif.getIFDIntValue(IFD.PIXEL_Y_DIMENSION);
+        }
+
         setSeries(0);
       }
       else {
