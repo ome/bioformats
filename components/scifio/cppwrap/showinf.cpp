@@ -104,8 +104,8 @@ bool expand = false;
 bool omexml = false;
 bool normalize = false;
 String* omexmlVersion = NULL;
-int start = 0;
-int end = INT_MAX;
+int firstPlane = 0;
+int lastPlane = INT_MAX;
 int series = 0;
 int xCoordinate = 0, yCoordinate = 0, width = 0, height = 0;
 String* swapOrder = NULL;
@@ -149,8 +149,8 @@ void parseArgs(int argc, const char *argv[]) {
         height = atoi(string(cropTokens[3]).c_str());
       }
       else if (arg.compare("-range") == 0) {
-        start = atoi(argv[++i]);
-        end = atoi(argv[++i]);
+        firstPlane = atoi(argv[++i]);
+        lastPlane = atoi(argv[++i]);
       }
       else if (arg.compare("-series") == 0) {
         series = atoi(argv[++i]);
@@ -174,7 +174,7 @@ void printUsage() {
   cout << "To test read a file in any format, run:" << endl <<
     "  showinf file [-nopix] [-nocore] [-nometa] [-thumbs] " << endl <<
     "    [-merge] [-stitch] [-separate] [-expand] [-omexml]" << endl <<
-    "    [-normalize] [-range start end] [-series num]" << endl <<
+    "    [-normalize] [-range firstPlane lastPlane] [-series num]" << endl <<
     "    [-swap inputOrder] [-shuffle outputOrder]" << endl <<
     "    [-xmlversion v] [-crop x,y,w,h]" << endl <<
     "" << endl <<
@@ -418,11 +418,11 @@ void readPixels() {
   if (reader->getSeriesCount() > 1) cout << " series #" << series;
   cout << " pixel data ";
   int num = reader->getImageCount();
-  if (start < 0) start = 0;
-  if (start >= num) start = num - 1;
-  if (end < 0) end = 0;
-  if (end >= num) end = num - 1;
-  if (end < start) end = start;
+  if (firstPlane < 0) firstPlane = 0;
+  if (firstPlane >= num) firstPlane = num - 1;
+  if (lastPlane < 0) lastPlane = 0;
+  if (lastPlane >= num) lastPlane = num - 1;
+  if (lastPlane < firstPlane) lastPlane = firstPlane;
 
   int sizeX = reader->getSizeX();
   int sizeY = reader->getSizeY();
@@ -433,8 +433,8 @@ void readPixels() {
 
   int pixelType = reader->getPixelType();
 
-  cout << "(" << start << "-" << end << ") ";
-  for (int i=start; i<=end; i++) {
+  cout << "(" << firstPlane << "-" << lastPlane << ") ";
+  for (int i=firstPlane; i<=lastPlane; i++) {
     flush(cout);
     if (thumbs) reader->openThumbBytes(i);
     else reader->openBytes(i, xCoordinate, yCoordinate, width, height);
