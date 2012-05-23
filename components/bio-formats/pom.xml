@@ -244,16 +244,4 @@
     </repository>
   </repositories>
 
-  <!-- NB: for cppwrap-maven-plugin -->
-  <pluginRepositories>
-    <pluginRepository>
-      <id>loci.releases</id>
-      <url>http://dev.loci.wisc.edu/maven2/releases</url>
-    </pluginRepository>
-    <pluginRepository>
-      <id>loci.snapshots</id>
-      <url>http://dev.loci.wisc.edu/maven2/snapshots</url>
-    </pluginRepository>
-  </pluginRepositories>
-
 </project>
