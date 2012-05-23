@@ -171,11 +171,20 @@ public class SISReader extends BaseTiffReader {
     physicalSizeX = in.readDouble();
     physicalSizeY = in.readDouble();
 
+    if (physicalSizeX != physicalSizeY) {
+      physicalSizeX = physicalSizeY;
+      physicalSizeY = in.readDouble();
+    }
+
     in.skipBytes(8);
 
     magnification = in.readDouble();
     int cameraNameLength = in.readShort();
     channelName = in.readCString();
+
+    if (channelName.length() > 128) {
+      channelName = "";
+    }
 
     int length = (int) Math.min(cameraNameLength, channelName.length());
     if (length > 0) {
