@@ -102,7 +102,9 @@ public class DNGReader extends BaseTiffReader {
       hasEPSTag = ifd.containsKey(CANON_TAG);
     }
     String make = ifd.getIFDTextValue(IFD.MAKE);
-    return make != null && make.indexOf("Canon") != -1 && hasEPSTag;
+    String model = ifd.getIFDTextValue(IFD.MODEL);
+    return make != null && make.indexOf("Canon") != -1 && hasEPSTag &&
+      (model == null || !model.endsWith("S1 IS"));
   }
 
   /**
