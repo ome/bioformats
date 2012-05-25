@@ -66,6 +66,7 @@ public class TillVisionReader extends FormatReader {
   private static final byte[] MARKER_1 = new byte[] {(byte) 0x81, 3, 0};
   private static final byte[] MARKER_2 =
     new byte[] {0x43, 0x49, 0x6d, 0x61, 0x67, 0x65, 0x03, 0x00};
+  private static final byte[] MARKER_3 = new byte[] {(byte) 0x83, 3, 0};
 
   private static final String[] DATE_FORMATS = new String[] {
     "mm/dd/yy HH:mm:ss aa", "mm/dd/yy HH:mm:ss.SSS aa", "mm/dd/yy",
@@ -317,6 +318,9 @@ public class TillVisionReader extends FormatReader {
 
         s.seek(0);
 
+        int lowerBound = 0;
+        int upperBound = 0x1000;
+
         while (s.getFilePointer() < s.length() - 2) {
           LOGGER.debug("  Looking for image at {}", s.getFilePointer());
           s.order(false);
@@ -331,7 +335,11 @@ public class TillVisionReader extends FormatReader {
           s.skipBytes(6);
           s.order(true);
           len = s.readShort();
-          if (len < 0 || len > 0x1000) continue;
+          if (nImages == 0 && len > upperBound * 2 && len < upperBound * 4) {
+            lowerBound = 512;
+            upperBound = 0x4000;
+          }
+          if (len < lowerBound || len > upperBound) continue;
           String description = s.readString(len);
           LOGGER.debug("Description: {}", description);
 
@@ -558,19 +566,25 @@ public class TillVisionReader extends FormatReader {
     int offset1 = findNextOffset(s, MARKER_1);
     s.seek(fp);
     int offset2 = findNextOffset(s, MARKER_2);
+    s.seek(fp);
+    int offset3 = findNextOffset(s, MARKER_3);
 
     if (offset0 < 0) offset0 = Integer.MAX_VALUE;
     if (offset1 < 0) offset1 = Integer.MAX_VALUE;
     if (offset2 < 0) offset2 = Integer.MAX_VALUE;
+    if (offset3 < 0) offset3 = Integer.MAX_VALUE;
 
-    if (offset0 < offset1 && offset0 < offset2) {
+    if (offset0 < offset1 && offset0 < offset2 && offset0 < offset3) {
       return offset0;
     }
-    if (offset1 < offset0 && offset1 < offset2) {
+    if (offset1 < offset0 && offset1 < offset2 && offset1 < offset3) {
       return offset1;
     }
-    if (offset2 < offset1 && offset2 < offset0) {
+    if (offset2 < offset1 && offset2 < offset0 && offset2 < offset3) {
       return offset2;
+    }
+    if (offset3 < offset1 && offset3 < offset0 && offset3 < offset2) {
+      return offset3;
     }
     return -1;
   }
