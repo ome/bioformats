@@ -242,7 +242,9 @@ public class SpiderReader extends FormatReader {
     core[0].dimensionOrder = "XYZCT";
     core[0].rgb = false;
 
-    oneHeaderPerSlice = (irec * nsam * 4) != FormatTools.getPlaneSize(this);
+    long planeSize = FormatTools.getPlaneSize(this);
+    oneHeaderPerSlice =
+      (irec * nsam * 4) != planeSize && ((irec - 1) * 4) != planeSize;
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
