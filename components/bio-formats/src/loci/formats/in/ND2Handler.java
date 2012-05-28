@@ -102,14 +102,30 @@ public class ND2Handler extends BaseHandler {
   private Hashtable<String, Integer> realColors =
     new Hashtable<String, Integer>();
 
+  private int nXFields = 0, nYFields = 0;
+
+  private boolean populateXY = true;
+
   // -- Constructor --
 
   public ND2Handler(CoreMetadata[] core) {
+    this(core, true);
+  }
+
+  public ND2Handler(CoreMetadata[] core, boolean populateXY) {
     super();
+    this.populateXY = populateXY;
     this.core = core;
+    if (this.core.length > 1) {
+      fieldIndex = 2;
+    }
   }
 
   // -- ND2Handler API methods --
+
+  public int getXFields() {
+    return nXFields;
+  }
 
   public CoreMetadata[] getCoreMetadata() {
     return core;
@@ -328,15 +344,44 @@ public class ND2Handler extends BaseHandler {
   public void startElement(String uri, String localName, String qName,
     Attributes attributes)
   {
-    if ("CLxListVariant".equals(attributes.getValue("runtype"))) {
+    String runtype = attributes.getValue("runtype");
+    if ("CLxListVariant".equals(runtype) || "RLxIRect".equals(runtype)) {
       prevElement = qName;
     }
 
     String value = attributes.getValue("value");
+
     if (qName.equals("uiWidth")) {
-      core[0].sizeX = Integer.parseInt(value);
+      int x = Integer.parseInt(value);
+      if (x != 0 && populateXY) {
+        core[0].sizeX = x;
+      }
     }
-    else if ("rectSensorUser".equals(prevElement)) {
+    else if (qName.equals("uiCamPxlCountX")) {
+      if (core[0].sizeX == 0 && populateXY) {
+        try {
+          core[0].sizeX = Integer.parseInt(value);
+        }
+        catch (NumberFormatException e) { }
+      }
+    }
+    else if (qName.equals("uiCamPxlCountY")) {
+      if (core[0].sizeY == 0 && populateXY) {
+        try {
+          core[0].sizeY = Integer.parseInt(value);
+        }
+        catch (NumberFormatException e) { }
+      }
+    }
+    else if (qName.equals("iXFields")) {
+      int fields = Integer.parseInt(value);
+      nXFields += fields;
+    }
+    else if (qName.equals("iYFields")) {
+      int fields = Integer.parseInt(value);
+      nYFields += fields;
+    }
+    else if ("rectSensorUser".equals(prevElement) && populateXY) {
       if (qName.equals("left") && core[0].sizeX == 0) {
         core[0].sizeX = -1 * Integer.parseInt(value);
       }
@@ -452,8 +497,11 @@ public class ND2Handler extends BaseHandler {
       int v = Integer.parseInt(value);
       core[0].sizeC = (int) Math.max(core[0].sizeC, v);
     }
-    else if (qName.equals("uiHeight")) {
-      core[0].sizeY = Integer.parseInt(value);
+    else if (qName.equals("uiHeight") && populateXY) {
+      int y = Integer.parseInt(value);
+      if (y != 0) {
+        core[0].sizeY = y;
+      }
     }
     else if (qName.startsWith("TextInfo")) {
       parseKeyAndValue(qName, attributes.getValue("Text"), prevRuntype);
@@ -536,6 +584,13 @@ public class ND2Handler extends BaseHandler {
       String chName = dyes.get(name);
       if (chName == null) chName = name;
       realColors.put(chName, colors.get(name));
+    }
+
+    if (nXFields > 0 && nXFields < 10 && nYFields > 0 && nYFields < 10 &&
+      populateXY)
+    {
+      core[0].sizeX *= nXFields;
+      core[0].sizeY *= nYFields;
     }
   }
 
