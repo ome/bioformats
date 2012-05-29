@@ -118,6 +118,7 @@ import loci.formats.FormatTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
+import loci.formats.in.MinimalTiffReader;
 
 /**
  * ZeissTIFFReader is the file format reader for Zeiss AxioVision TIFF
@@ -147,7 +148,7 @@ public class ZeissTIFFReader extends BaseZeissReader {
   private Vector<String> tiffs;
 
   /** Helper reader for TIFF files. */
-  private TiffReader tiffReader;
+  private MinimalTiffReader tiffReader;
 
   // -- Constructor --
 
@@ -200,9 +201,9 @@ public class ZeissTIFFReader extends BaseZeissReader {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
     if (new Location(imageFiles[no]).exists()) {
       Plane p = planes.get(no);
-      TiffReader r = p.open();
-      r.openBytes(0, buf, x, y, w, h);
-      r.close();
+      tiffReader.setId(p.filename);
+      tiffReader.openBytes(0, buf, x, y, w, h);
+      tiffReader.close();
     } else {
       LOGGER.warn("File for image #{} ({}) is missing.", no, tiffs.get(no));
     }
@@ -233,9 +234,6 @@ public class ZeissTIFFReader extends BaseZeissReader {
     if (!fileOnly) {
       tiffInfo = null;
       tiffReader = null;
-      if (planes != null)
-        for (Plane p : planes)
-          p.close();
       planes = null;
       tiffs = null;
     }
@@ -372,6 +370,7 @@ public class ZeissTIFFReader extends BaseZeissReader {
   protected void initVars(String id) throws FormatException, IOException {
     super.initVars(id);
 
+    tiffReader = new MinimalTiffReader();
     planes = new ArrayList<Plane>();
   }
 
@@ -420,8 +419,9 @@ public class ZeissTIFFReader extends BaseZeissReader {
 
       planes.add(np);
       if (bpp == 0) {
-        np.open();
-        IFDList ifds = np.tiffReader.getIFDs();
+        tiffReader.setId(np.filename);
+        IFDList ifds = tiffReader.getIFDs();
+        tiffReader.close();
         IFD firstIFD = ifds.get(0);
         int bits = firstIFD.getBitsPerSample()[0];
         int samples = firstIFD.getSamplesPerPixel();
@@ -555,24 +555,10 @@ public class ZeissTIFFReader extends BaseZeissReader {
     public HashMap<String,String> tags = new HashMap<String,String>();
     public ArrayList<Tag> taglist;
     RandomAccessInputStream in;
-    TiffReader tiffReader;
 
     Plane(int id)
     {
       this.id = id;
-    }
-
-    TiffReader open() throws FormatException, IOException {
-      close();
-      tiffReader = new TiffReader();
-      tiffReader.setId(filename);
-      return tiffReader;
-    }
-
-    void close() throws IOException {
-      if (tiffReader != null) tiffReader.close();
-      tiffReader = null;
-      // TODO: Free resources; call from main close method for each plane.
     }
 
     public String
