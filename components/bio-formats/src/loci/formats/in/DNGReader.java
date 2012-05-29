@@ -31,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import loci.common.Constants;
+import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
@@ -67,14 +68,14 @@ public class DNGReader extends BaseTiffReader {
   private static final int CANON_TAG = 34665;
   private static final int TIFF_EPS_STANDARD = 37398;
   private static final int COLOR_MAP = 33422;
-  private static final int WHITE_BALANCE_RGB_COEFFS = 12;
+  private static final int WHITE_BALANCE_RGB_COEFFS = 16385;
 
   // -- Fields --
 
   /** The original IFD. */
   protected IFD original;
 
-  private TiffRational[] whiteBalance;
+  private double[] whiteBalance;
   private Object cfaPattern;
 
   private byte[] lastPlane = null;
@@ -125,7 +126,21 @@ public class DNGReader extends BaseTiffReader {
       totalBytes += b;
     }
     if (totalBytes == FormatTools.getPlaneSize(this) || bps.length > 1) {
-      return super.openBytes(no, buf, x, y, w, h);
+      // don't call super.openBytes here
+      // the pixel type of the image as stored in the TIFF is UINT8,
+      // but we need to expand it out to UINT16 (based upon the white balance)
+
+      byte[] b = new byte[buf.length / 2];
+      tiffParser.getSamples(ifds.get(0), b, x, y, w, h);
+
+      for (int i=0; i<b.length; i++) {
+        int c = i % 3;
+        short v = (short) (b[i] & 0xff);
+
+        v = adjustForWhiteBalance(v, c);
+        DataTools.unpackBytes(v, buf, i * 2, 2, isLittleEndian());
+      }
+      return buf;
     }
 
     if (lastPlane == null || lastIndex != no) {
@@ -241,7 +256,7 @@ public class DNGReader extends BaseTiffReader {
     core[0].sizeZ = 1;
     core[0].sizeC = isRGB() ? samples : 1;
     core[0].sizeT = ifds.size();
-    core[0].pixelType = firstIFD.getPixelType();
+    core[0].pixelType = FormatTools.UINT16;
     core[0].indexed = false;
 
     // now look for the EXIF IFD pointer
@@ -268,10 +283,10 @@ public class DNGReader extends BaseTiffReader {
           addGlobalMeta(name, exifIFD.get(key));
           if (name.equals("MAKER_NOTE")) {
             byte[] b = (byte[]) exifIFD.get(key);
-            int extra = new String(
-              b, 0, 10, Constants.ENCODING).startsWith("Canon") ? 10 : 0;
-            byte[] buf = new byte[b.length];
-            System.arraycopy(b, extra, buf, 0, buf.length - extra);
+            int offset = DataTools.bytesToInt(b, b.length - 4, isLittleEndian());
+            byte[] buf = new byte[b.length + offset - 8];
+            System.arraycopy(b, b.length - 8, buf, 0, 8);
+            System.arraycopy(b, 0, buf, offset, b.length - 8);
             RandomAccessInputStream makerNote =
               new RandomAccessInputStream(buf);
             TiffParser tp = new TiffParser(makerNote);
@@ -287,7 +302,20 @@ public class DNGReader extends BaseTiffReader {
                 int nextTag = nextKey.intValue();
                 addGlobalMeta(name, note.get(nextKey));
                 if (nextTag == WHITE_BALANCE_RGB_COEFFS) {
-                  whiteBalance = (TiffRational[]) note.get(nextKey);
+                  if (note.get(nextTag) instanceof TiffRational[]) {
+                    TiffRational[] wb = (TiffRational[]) note.get(nextTag);
+                    whiteBalance = new double[wb.length];
+                    for (int i=0; i<wb.length; i++) {
+                      whiteBalance[i] = wb[i].doubleValue();
+                    }
+                  }
+                  else {
+                    // use a default white balance table
+                    whiteBalance = new double[3];
+                    whiteBalance[0] = 2.391381;
+                    whiteBalance[1] = 0.929156;
+                    whiteBalance[2] = 1.298254;
+                  }
                 }
               }
             }
@@ -324,7 +352,7 @@ public class DNGReader extends BaseTiffReader {
 
   private short adjustForWhiteBalance(short val, int index) {
     if (whiteBalance != null && whiteBalance.length == 3) {
-      return (short) (val * whiteBalance[index].doubleValue());
+      return (short) (val * whiteBalance[index]);
     }
     return val;
   }
