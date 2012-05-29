@@ -906,8 +906,13 @@ public class FlexReader extends FormatReader {
     if (getImageCount() * fieldCount != nPlanes) {
       core[0].imageCount = nPlanes / fieldCount;
       core[0].sizeZ = 1;
-      core[0].sizeC = 1;
       core[0].sizeT = nPlanes / fieldCount;
+      if (getSizeT() % getSizeC() == 0) {
+        core[0].sizeT /= getSizeC();
+      }
+      else {
+        core[0].sizeC = 1;
+      }
     }
     core[0].sizeX = (int) ifd.getImageWidth();
     core[0].sizeY = (int) ifd.getImageLength();
