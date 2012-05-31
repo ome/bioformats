@@ -420,10 +420,7 @@ Type "ant -p" for a list of targets.
     depends="jar-common,
       jar-jai,
       jar-lwf-stubs,
-      jar-mdbtools,
-      jar-metakit,
-      jar-ome-xml,
-      jar-poi-loci"
+      jar-ome-xml"
     description="compile classes for SciFIO">
     <ant dir="components/scifio" target="scifio.compile"/>
   </target>
@@ -432,10 +429,7 @@ Type "ant -p" for a list of targets.
     depends="jar-common,
       jar-jai,
       jar-lwf-stubs,
-      jar-mdbtools,
-      jar-metakit,
-      jar-ome-xml,
-      jar-poi-loci"
+      jar-ome-xml"
     description="generate JAR file for SciFIO">
     <ant dir="components/scifio" target="scifio.jar"/>
   </target>
@@ -450,15 +444,11 @@ Type "ant -p" for a list of targets.
     <ant dir="components/scifio" target="scifio.findbugs"/>
   </target>
 
-
   <target name="clean-scifio"
     depends="clean-common,
       clean-jai,
       clean-lwf-stubs,
-      clean-mdbtools,
-      clean-metakit,
-      clean-ome-xml,
-      clean-poi-loci"
+      clean-ome-xml"
     description="remove build files for SciFIO">
     <ant dir="components/scifio" target="scifio.clean"/>
   </target>
