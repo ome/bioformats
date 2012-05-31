@@ -685,7 +685,9 @@ Type "ant -p" for a list of targets.
   <target name="compile-tests"
     depends="jar-common,
       jar-formats,
-      jar-ome-io"
+      jar-ome-io,
+      jar-ome-xml,
+      jar-scifio"
     description="compile classes for LOCI testing framework">
     <ant dir="components/test-suite" target="tests.compile"/>
   </target>
@@ -693,7 +695,9 @@ Type "ant -p" for a list of targets.
   <target name="jar-tests"
     depends="jar-common,
       jar-formats,
-      jar-ome-io"
+      jar-ome-io,
+      jar-ome-xml,
+      jar-scifio"
     description="generate JAR file for LOCI testing framework">
     <ant dir="components/test-suite" target="tests.jar"/>
   </target>
@@ -711,7 +715,9 @@ Type "ant -p" for a list of targets.
   <target name="clean-tests"
     depends="clean-common,
       clean-formats,
-      clean-ome-io"
+      clean-ome-io,
+      clean-ome-xml,
+      clean-scifio"
     description="remove build files for LOCI testing framework">
     <ant dir="components/test-suite" target="tests.clean"/>
   </target>
