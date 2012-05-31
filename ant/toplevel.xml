@@ -464,8 +464,6 @@ Type "ant -p" for a list of targets.
 
   <target name="compile-formats"
     depends="jar-common,
-      jar-jai,
-      jar-lwf-stubs,
       jar-mdbtools,
       jar-metakit,
       jar-ome-xml,
@@ -477,8 +475,6 @@ Type "ant -p" for a list of targets.
 
   <target name="jar-formats"
     depends="jar-common,
-      jar-jai,
-      jar-lwf-stubs,
       jar-mdbtools,
       jar-metakit,
       jar-ome-xml,
@@ -500,8 +496,6 @@ Type "ant -p" for a list of targets.
 
   <target name="clean-formats"
     depends="clean-common,
-      clean-jai,
-      clean-lwf-stubs,
       clean-mdbtools,
       clean-metakit,
       clean-ome-xml,
