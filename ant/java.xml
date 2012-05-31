@@ -13,6 +13,12 @@ Type "ant -p" for a list of targets.
 
   <taskdef name="testng" classpath="${testng.jar}"
     classname="org.testng.TestNGAntTask"/>
+  <if>
+    <isset property="findbugs.home"/>
+    <then>
+    <taskdef name="findbugs" classpath="${findbugs.home}/findbugs-ant.jar" classname="edu.umd.cs.findbugs.anttask.FindBugsTask"/>
+    </then>
+  </if>
   <condition property="doTests">
     <available file="${tests.dir}"/>
   </condition>
