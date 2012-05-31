@@ -359,6 +359,8 @@ public class CellWorxReader extends FormatReader {
       core[i].interleaved = pnl.isInterleaved();
     }
 
+    pnl.close();
+
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
 

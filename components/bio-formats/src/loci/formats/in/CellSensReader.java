@@ -257,6 +257,9 @@ public class CellSensReader extends FormatReader {
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
+      if (parser != null && parser.getStream() != null) {
+        parser.getStream().close();
+      }
       parser = null;
       ifds = null;
       usedFiles = null;

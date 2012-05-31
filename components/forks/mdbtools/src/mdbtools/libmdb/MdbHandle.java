@@ -41,4 +41,8 @@ public class MdbHandle
   public String backend_name;
   public MdbFormatConstants fmt;
   public MdbStatistics stats;
+
+  public void close() {
+    f.close();
+  }
 }

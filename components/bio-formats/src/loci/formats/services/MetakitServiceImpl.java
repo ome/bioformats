@@ -123,4 +123,9 @@ public class MetakitServiceImpl implements MetakitService {
     return reader.getColumnTypes(table);
   }
 
+  /* @see loci.formats.services.MetakitService#close() */
+  public void close() {
+    reader.close();
+  }
+
 }

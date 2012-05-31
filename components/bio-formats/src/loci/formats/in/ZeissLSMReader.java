@@ -1828,6 +1828,7 @@ public class ZeissLSMReader extends FormatReader {
       return null;
     }
     Vector<Vector<String[]>> tables = mdbService.parseDatabase();
+    mdbService.close();
     Vector<String> referencedLSMs = new Vector<String>();
 
     int referenceCount = 0;

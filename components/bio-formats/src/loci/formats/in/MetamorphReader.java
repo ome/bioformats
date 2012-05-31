@@ -485,7 +485,7 @@ public class MetamorphReader extends BaseTiffReader {
             if ((seriesCount != 1 && !validZ) ||
               (nstages == 0 && ((!validZ && cc > 1) || seriesCount > 1)))
             {
-              if (j > 0) {
+              if (j > 0 && seriesNdx < seriesCount - 1) {
                 seriesNdx++;
               }
             }
@@ -1046,7 +1046,10 @@ public class MetamorphReader extends BaseTiffReader {
               if (nextSpace < 0) {
                 nextSpace = value.length();
               }
-              gain = new Double(value.substring(space, nextSpace));
+              try {
+                gain = new Double(value.substring(space, nextSpace));
+              }
+              catch (NumberFormatException e) { }
             }
           }
         }

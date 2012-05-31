@@ -72,6 +72,24 @@ public class MetakitReader {
   // -- MetakitReader API methods --
 
   /**
+   * Close the reader and release any resources in use.
+   */
+  public void close() {
+    try {
+      if (stream != null) {
+        stream.close();
+      }
+      stream = null;
+      tableNames = null;
+      columns = null;
+      rowCount = null;
+      data = null;
+      littleEndian = false;
+    }
+    catch (IOException e) { }
+  }
+
+  /**
    * Retrieve the number of tables in this database file.
    */
   public int getTableCount() {

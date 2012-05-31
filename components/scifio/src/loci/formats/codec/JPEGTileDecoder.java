@@ -114,28 +114,6 @@ public class JPEGTileDecoder {
           if (height == 0 || width == 0) {
             throw new RuntimeException(
               "Width or height > 65500 is not supported.");
-
-            /*
-            if (height == 0) {
-              height = y + h;
-            }
-            if (width == 0) {
-              width = imageWidth;
-            }
-
-            long pos = in.getFilePointer() - fp - 4;
-
-            byte[] buf = new byte[(int) (in.length() - fp)];
-            in.seek(fp);
-            in.read(buf);
-
-            ByteArrayHandle handle = new ByteArrayHandle(buf);
-            handle.seek(pos);
-            handle.writeShort(height);
-            handle.writeShort(width);
-
-            this.in = new RandomAccessInputStream(handle);
-            */
           }
           break;
         }
@@ -287,7 +265,7 @@ public class JPEGTileDecoder {
   }
 
   class TileCache {
-    private static final int ROW_COUNT = 256;
+    private static final int ROW_COUNT = 128;
 
     private Hashtable<Region, byte[]> compressedTiles =
       new Hashtable<Region, byte[]>();

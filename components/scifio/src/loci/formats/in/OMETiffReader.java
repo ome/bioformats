@@ -42,6 +42,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Vector;
 
+import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.services.DependencyException;
@@ -772,6 +773,12 @@ public class OMETiffReader extends FormatReader {
     MetadataTools.populatePixels(metadataStore, this, false, false);
     for (int i=0; i<acquiredDates.length; i++) {
       if (acquiredDates[i] != null) {
+        if (DateTools.formatDate(acquiredDates[i], DateTools.ISO8601_FORMAT) ==
+          null)
+        {
+          acquiredDates[i] =
+            DateTools.formatDate(acquiredDates[i], "yyyy-MM-dd HH:mm:ss.SSS");
+        }
         metadataStore.setImageAcquiredDate(acquiredDates[i], i);
       }
     }

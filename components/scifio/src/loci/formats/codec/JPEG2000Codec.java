@@ -247,12 +247,14 @@ public class JPEG2000Codec extends BaseCodec {
 
     byte[][] single = null;
     WritableRaster b = null;
+    int bpp = options.bitsPerSample / 8;
 
     try {
       ByteArrayInputStream bis = new ByteArrayInputStream(buf);
       b = (WritableRaster) service.readRaster(
           bis, (JPEG2000CodecOptions) options);
       single = AWTImageTools.getPixelBytes(b, options.littleEndian);
+      bpp = single[0].length / (b.getWidth() * b.getHeight());
 
       bis.close();
       b = null;
@@ -270,9 +272,11 @@ public class JPEG2000Codec extends BaseCodec {
     byte[] rtn = new byte[single.length * single[0].length];
     if (options.interleaved) {
       int next = 0;
-      for (int i=0; i<single[0].length; i++) {
+      for (int i=0; i<single[0].length/bpp; i++) {
         for (int j=0; j<single.length; j++) {
-          rtn[next++] = single[j][i];
+          for (int bb=0; bb<bpp; bb++) {
+            rtn[next++] = single[j][i * bpp + bb];
+          }
         }
       }
     }
