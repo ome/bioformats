@@ -213,6 +213,7 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="test-common"
+    depends="compile-common"
     description="compile and run tests for LOCI common library">
     <ant dir="components/common" target="test"/>
   </target>
@@ -245,6 +246,7 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="test-jai"
+    depends="compile-jai"
     description="compile and run tests for JAI Image I/O Tools library">
     <ant dir="components/forks/jai" target="jai.test"/>
   </target>
@@ -280,6 +282,7 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="test-poi-loci"
+    depends="compile-poi-loci"
     description="compile and run tests for Apache POI library">
     <ant dir="components/forks/poi" target="poi-loci.test"/>
   </target>
@@ -312,6 +315,7 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="test-mdbtools"
+    depends="compile-mdbtools"
     description="compile and run tests for MDB Tools Java library">
     <ant dir="components/forks/mdbtools" target="mdbtools.test"/>
   </target>
@@ -348,6 +352,7 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="test-metakit"
+    depends="compile-metakit"
     description="compile and run tests for Metakit Java library">
     <ant dir="components/metakit" target="metakit.test"/>
   </target>
@@ -380,6 +385,7 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="test-ome-xml"
+    depends="compile-ome-xml"
     description="compile and run tests for OME-XML Java library">
     <ant dir="components/ome-xml" target="ome-xml.test"/>
   </target>
@@ -412,6 +418,7 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="test-lwf-stubs"
+    depends="compile-lwf-stubs"
     description="compile and run tests for LWF stubs">
     <ant dir="components/stubs/lwf-stubs" target="lwf-stubs.test"/>
   </target>
@@ -507,6 +514,7 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="test-formats"
+    depends="compile-formats"
     description="compile and run tests for Bio-Formats">
     <ant dir="components/bio-formats" target="test"/>
   </target>
@@ -546,6 +554,7 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="test-autogen"
+    depends="compile-autogen"
     description="compile and run tests for LOCI autogen">
     <ant dir="components/autogen" target="autogen.test"/>
   </target>
@@ -596,6 +605,7 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="test-loci-plugins"
+    depends="compile-loci-plugins"
     description="compile and run tests for LOCI Plugins for ImageJ">
     <ant dir="components/loci-plugins" target="loci-plugins.test"/>
   </target>
@@ -638,6 +648,7 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="test-ome-io"
+    depends="compile-ome-io"
     description="compile and run tests for OME I/O">
     <ant dir="components/ome-io" target="test"/>
   </target>
@@ -683,6 +694,7 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="test-ome-plugins"
+    depends="compile-ome-plugins"
     description="compile and run tests for OME Plugins for ImageJ">
     <ant dir="components/ome-plugins" target="ome-plugins.test"/>
   </target>
@@ -731,6 +743,7 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="test-tests"
+    depends="compile-tests"
     description="compile and run tests for LOCI testing framework">
     <ant dir="components/test-suite" target="tests.test"/>
   </target>
@@ -810,6 +823,7 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="test-ome-editor"
+    depends="compile-ome-editor"
     description="compile and run tests for OME Metadata Editor">
     <ant dir="components/legacy/ome-editor" target="ome-editor.test"/>
   </target>
