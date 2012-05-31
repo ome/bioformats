@@ -169,7 +169,7 @@ your FindBugs installation's lib directory. E.g.:
     <javac debug="true" includeantruntime="false"
       deprecation="true" source="1.5" target="1.5"
       srcdir="${utils.dir}" includes="*.java"
-      classpath="${artifact.dir}/${component.jar}">
+      classpath="${component.classpath}:${artifact.dir}/${component.jar}">
       <!--<compilerarg value="-Xlint:unchecked"/>-->
     </javac>
   </target>
