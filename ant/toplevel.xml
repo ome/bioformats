@@ -525,14 +525,14 @@ Type "ant -p" for a list of targets.
 
   <target name="compile-autogen"
     depends="jar-common,
-      jar-formats"
+      jar-scifio"
     description="compile classes for LOCI autogen">
     <ant dir="components/autogen" target="autogen.compile"/>
   </target>
 
   <target name="jar-autogen"
     depends="jar-common,
-      jar-formats"
+      jar-scifio"
     description="generate JAR file for LOCI autogen">
     <ant dir="components/autogen" target="autogen.jar"/>
   </target>
@@ -549,7 +549,7 @@ Type "ant -p" for a list of targets.
 
   <target name="clean-autogen"
     depends="clean-common,
-      clean-formats"
+      clean-scifio"
     description="remove build files for LOCI autogen">
     <ant dir="components/autogen" target="autogen.clean"/>
   </target>
