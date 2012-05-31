@@ -189,7 +189,7 @@ Type "ant -p" for a list of targets.
     <ant dir="components/common" target="common.compile"/>
   </target>
 
-  <target name="jar-common"
+  <target name="jar-common" depends="compile-common"
     description="generate JAR file for LOCI common library">
     <ant dir="components/common" target="common.jar"/>
   </target>
@@ -228,7 +228,7 @@ Type "ant -p" for a list of targets.
     <ant dir="components/forks/jai" target="jai.compile"/>
   </target>
 
-  <target name="jar-jai"
+  <target name="jar-jai" depends="compile-jai"
     description="generate JAR file for JAI Image I/O Tools library">
     <ant dir="components/forks/jai" target="jai.jar"/>
   </target>
@@ -262,8 +262,7 @@ Type "ant -p" for a list of targets.
     <ant dir="components/forks/poi" target="poi-loci.compile"/>
   </target>
 
-  <target name="jar-poi-loci"
-    depends="jar-common"
+  <target name="jar-poi-loci" depends="compile-poi-loci"
     description="generate JAR file for Apache POI library">
     <ant dir="components/forks/poi" target="poi-loci.jar"/>
   </target>
@@ -297,7 +296,7 @@ Type "ant -p" for a list of targets.
     <ant dir="components/forks/mdbtools" target="mdbtools.compile"/>
   </target>
 
-  <target name="jar-mdbtools"
+  <target name="jar-mdbtools" depends="compile-mdbtools"
     description="generate JAR file for MDB Tools Java library">
     <ant dir="components/forks/mdbtools" target="mdbtools.jar"/>
   </target>
@@ -331,8 +330,7 @@ Type "ant -p" for a list of targets.
     <ant dir="components/metakit" target="metakit.compile"/>
   </target>
 
-  <target name="jar-metakit"
-    depends="jar-common"
+  <target name="jar-metakit" depends="compile-metakit"
     description="generate JAR file for Metakit Java library">
     <ant dir="components/metakit" target="metakit.jar"/>
   </target>
@@ -367,7 +365,7 @@ Type "ant -p" for a list of targets.
     <ant dir="components/ome-xml" target="ome-xml.compile"/>
   </target>
 
-  <target name="jar-ome-xml"
+  <target name="jar-ome-xml" depends="compile-ome-xml"
     description="generate JAR file for OME-XML Java library">
     <ant dir="components/ome-xml" target="ome-xml.jar"/>
   </target>
@@ -400,7 +398,7 @@ Type "ant -p" for a list of targets.
     <ant dir="components/stubs/lwf-stubs" target="lwf-stubs.compile"/>
   </target>
 
-  <target name="jar-lwf-stubs"
+  <target name="jar-lwf-stubs" depends="compile-lwf-stubs"
     description="generate JAR file for LWF stubs">
     <ant dir="components/stubs/lwf-stubs" target="lwf-stubs.jar"/>
   </target>
@@ -437,11 +435,7 @@ Type "ant -p" for a list of targets.
     <ant dir="components/scifio" target="scifio.compile"/>
   </target>
 
-  <target name="jar-scifio"
-    depends="jar-common,
-      jar-jai,
-      jar-lwf-stubs,
-      jar-ome-xml"
+  <target name="jar-scifio" depends="compile-scifio"
     description="generate JAR file for SCIFIO">
     <ant dir="components/scifio" target="scifio.jar"/>
   </target>
@@ -484,13 +478,7 @@ Type "ant -p" for a list of targets.
     <ant dir="components/bio-formats" target="formats.compile"/>
   </target>
 
-  <target name="jar-formats"
-    depends="jar-common,
-      jar-mdbtools,
-      jar-metakit,
-      jar-ome-xml,
-      jar-poi-loci,
-      jar-scifio"
+  <target name="jar-formats" depends="compile-formats"
     description="generate JAR file for Bio-Formats">
     <ant dir="components/bio-formats" target="formats.jar"/>
   </target>
@@ -537,9 +525,7 @@ Type "ant -p" for a list of targets.
     <ant dir="components/autogen" target="autogen.compile"/>
   </target>
 
-  <target name="jar-autogen"
-    depends="jar-common,
-      jar-scifio"
+  <target name="jar-autogen" depends="compile-autogen"
     description="generate JAR file for LOCI autogen">
     <ant dir="components/autogen" target="autogen.jar"/>
   </target>
@@ -579,11 +565,7 @@ Type "ant -p" for a list of targets.
     <ant dir="components/loci-plugins" target="loci-plugins.compile"/>
   </target>
 
-  <target name="jar-loci-plugins"
-    depends="jar-common,
-      jar-formats,
-      jar-ome-xml,
-      jar-scifio"
+  <target name="jar-loci-plugins" depends="compile-loci-plugins"
     description="generate JAR file for LOCI Plugins for ImageJ">
     <ant dir="components/loci-plugins" target="loci-plugins.jar"/>
   </target>
@@ -629,10 +611,7 @@ Type "ant -p" for a list of targets.
     <ant dir="components/ome-io" target="ome-io.compile"/>
   </target>
 
-  <target name="jar-ome-io"
-    depends="jar-common,
-      jar-ome-xml,
-      jar-scifio"
+  <target name="jar-ome-io" depends="compile-ome-io"
     description="generate JAR file for OME I/O">
     <ant dir="components/ome-io" target="ome-io.jar"/>
   </target>
@@ -673,11 +652,7 @@ Type "ant -p" for a list of targets.
     <ant dir="components/ome-plugins" target="ome-plugins.compile"/>
   </target>
 
-  <target name="jar-ome-plugins"
-    depends="jar-common,
-      jar-loci-plugins,
-      jar-ome-io,
-      jar-scifio"
+  <target name="jar-ome-plugins" depends="compile-ome-plugins"
     description="generate JAR file for OME Plugins for ImageJ">
     <ant dir="components/ome-plugins" target="ome-plugins.jar"/>
   </target>
@@ -720,12 +695,7 @@ Type "ant -p" for a list of targets.
     <ant dir="components/test-suite" target="tests.compile"/>
   </target>
 
-  <target name="jar-tests"
-    depends="jar-common,
-      jar-formats,
-      jar-ome-io,
-      jar-ome-xml,
-      jar-scifio"
+  <target name="jar-tests" depends="compile-tests"
     description="generate JAR file for LOCI testing framework">
     <ant dir="components/test-suite" target="tests.jar"/>
   </target>
@@ -766,9 +736,7 @@ Type "ant -p" for a list of targets.
     <ant dir="components/legacy/ome-notes" target="ome-notes.compile"/>
   </target>
 
-  <target name="jar-ome-notes"
-    depends="jar-common,
-      jar-formats"
+  <target name="jar-ome-notes" depends="compile-ome-notes"
     description="generate JAR file for OME Notes">
     <ant dir="components/legacy/ome-notes" target="ome-notes.jar"/>
   </target>
@@ -805,10 +773,7 @@ Type "ant -p" for a list of targets.
     <ant dir="components/legacy/ome-editor" target="ome-editor.compile"/>
   </target>
 
-  <target name="jar-ome-editor"
-    depends="jar-common,
-      jar-ome-xml,
-      jar-scifio"
+  <target name="jar-ome-editor" depends="compile-ome-editor"
     description="generate JAR file for OME Metadata Editor">
     <ant dir="components/legacy/ome-editor" target="ome-editor.jar"/>
   </target>
