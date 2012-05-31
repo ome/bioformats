@@ -869,7 +869,8 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="tools-ome"
-    depends="jar-ome-io,
+    depends="copy-jars,
+      jar-ome-io,
       jar-ome-plugins"
     description="create JAR file encompassing several OME tools">
     <echo>----------=========== ome_tools ===========----------</echo>
