@@ -127,6 +127,7 @@ Type "ant -p" for a list of targets.
       test-ome-plugins,
       test-ome-xml,
       test-poi-loci,
+      test-scifio,
       test-tests"
     description="test all components">
   </target>
@@ -462,6 +463,12 @@ Type "ant -p" for a list of targets.
       clean-ome-xml"
     description="remove build files for SciFIO">
     <ant dir="components/scifio" target="scifio.clean"/>
+  </target>
+
+  <target name="test-scifio"
+    depends="compile-scifio"
+    description="compile and run tests for SciFIO">
+    <ant dir="components/scifio" target="test"/>
   </target>
 
   <!-- Bio-Formats -->
