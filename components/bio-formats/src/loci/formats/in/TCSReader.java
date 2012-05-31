@@ -238,6 +238,7 @@ public class TCSReader extends FormatReader {
     Location l = new Location(id).getAbsoluteFile();
     Location parent = l.getParentFile();
     String[] list = parent.list();
+    Arrays.sort(list);
 
     boolean isXML = checkSuffix(id, XML_SUFFIX);
 
