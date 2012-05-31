@@ -426,14 +426,14 @@ Type "ant -p" for a list of targets.
     <ant dir="components/stubs/lwf-stubs" target="lwf-stubs.test"/>
   </target>
 
-  <!-- SciFIO -->
+  <!-- SCIFIO -->
 
   <target name="compile-scifio"
     depends="jar-common,
       jar-jai,
       jar-lwf-stubs,
       jar-ome-xml"
-    description="compile classes for SciFIO">
+    description="compile classes for SCIFIO">
     <ant dir="components/scifio" target="scifio.compile"/>
   </target>
 
@@ -442,17 +442,17 @@ Type "ant -p" for a list of targets.
       jar-jai,
       jar-lwf-stubs,
       jar-ome-xml"
-    description="generate JAR file for SciFIO">
+    description="generate JAR file for SCIFIO">
     <ant dir="components/scifio" target="scifio.jar"/>
   </target>
 
   <target name="osgi-scifio" depends="jar-scifio"
-    description="generate OSGi bundle for SciFIO">
+    description="generate OSGi bundle for SCIFIO">
     <ant dir="components/scifio" target="scifio.osgi"/>
   </target>
 
   <target name="findbugs-scifio"
-    description="run findbugs on SciFIO">
+    description="run findbugs on SCIFIO">
     <ant dir="components/scifio" target="scifio.findbugs"/>
   </target>
 
@@ -461,13 +461,13 @@ Type "ant -p" for a list of targets.
       clean-jai,
       clean-lwf-stubs,
       clean-ome-xml"
-    description="remove build files for SciFIO">
+    description="remove build files for SCIFIO">
     <ant dir="components/scifio" target="scifio.clean"/>
   </target>
 
   <target name="test-scifio"
     depends="compile-scifio"
-    description="compile and run tests for SciFIO">
+    description="compile and run tests for SCIFIO">
     <ant dir="components/scifio" target="test"/>
   </target>
 
