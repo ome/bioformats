@@ -65,6 +65,7 @@ Type "ant -p" for a list of targets.
       osgi-ome-plugins,
       osgi-ome-xml,
       osgi-poi-loci,
+      osgi-scifio,
       osgi-tests"
     description="generate OSGi bundles for LOCI software packages"/>
 
@@ -86,6 +87,7 @@ Type "ant -p" for a list of targets.
       findbugs-metakit,
       findbugs-ome-io,
       findbugs-ome-plugins,
+      findbugs-scifio,
       findbugs-tests"
     description="run findbugs on most components"/>
 
