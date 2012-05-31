@@ -318,11 +318,13 @@ Type "ant -p" for a list of targets.
   <!-- Metakit library -->
 
   <target name="compile-metakit"
+    depends="jar-common"
     description="compile classes for Metakit Java library">
     <ant dir="components/metakit" target="metakit.compile"/>
   </target>
 
   <target name="jar-metakit"
+    depends="jar-common"
     description="generate JAR file for Metakit Java library">
     <ant dir="components/metakit" target="metakit.jar"/>
   </target>
@@ -338,6 +340,7 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="clean-metakit"
+    depends="clean-common"
     description="remove build files for Metakit Java library">
     <ant dir="components/metakit" target="metakit.clean"/>
   </target>
