@@ -199,8 +199,7 @@ Type "ant -p" for a list of targets.
     <ant dir="components/common" target="common.osgi"/>
   </target>
 
-  <target name="findbugs-common"
-    depends="compile-common"
+  <target name="findbugs-common" depends="jar-common"
     description="run findbugs on LOCI common library">
     <ant dir="components/common" target="common.findbugs"/>
   </target>
@@ -238,7 +237,7 @@ Type "ant -p" for a list of targets.
     <ant dir="components/forks/jai" target="jai.osgi"/>
   </target>
 
-  <target name="findbugs-jai"
+  <target name="findbugs-jai" depends="jar-jai"
     description="run findbugs on JAI Image I/O Tools library">
     <ant dir="components/forks/jai" target="jai.findbugs"/>
   </target>
@@ -272,7 +271,7 @@ Type "ant -p" for a list of targets.
     <ant dir="components/forks/poi" target="poi-loci.osgi"/>
   </target>
 
-  <target name="findbugs-poi-loci"
+  <target name="findbugs-poi-loci" depends="jar-poi-loci"
     description="run findbugs on Apache POI library">
     <ant dir="components/forks/poi" target="poi-loci.findbugs"/>
   </target>
@@ -306,7 +305,7 @@ Type "ant -p" for a list of targets.
     <ant dir="components/forks/mdbtools" target="mdbtools.osgi"/>
   </target>
 
-  <target name="findbugs-mdbtools"
+  <target name="findbugs-mdbtools" depends="jar-mdbtools"
     description="run findbugs on MDB Tools Java library">
     <ant dir="components/forks/mdbtools" target="mdbtools.findbugs"/>
   </target>
@@ -340,8 +339,7 @@ Type "ant -p" for a list of targets.
     <ant dir="components/metakit" target="metakit.osgi"/>
   </target>
 
-  <target name="findbugs-metakit"
-    depends="compile-metakit"
+  <target name="findbugs-metakit" depends="jar-metakit"
     description="run findbugs on Metakit Java library">
     <ant dir="components/metakit" target="metakit.findbugs"/>
   </target>
@@ -375,7 +373,7 @@ Type "ant -p" for a list of targets.
     <ant dir="components/ome-xml" target="ome-xml.osgi"/>
   </target>
 
-  <target name="findbugs-ome-xml"
+  <target name="findbugs-ome-xml" depends="jar-ome-xml"
     description="run findbugs on OME-XML Java library">
     <ant dir="components/ome-xml" target="ome-xml.findbugs"/>
   </target>
@@ -408,7 +406,7 @@ Type "ant -p" for a list of targets.
     <ant dir="components/stubs/lwf-stubs" target="lwf-stubs.osgi"/>
   </target>
 
-  <target name="findbugs-lwf-stubs"
+  <target name="findbugs-lwf-stubs" depends="jar-lwf-stubs"
     description="run findbugs on LWF stubs">
     <ant dir="components/stubs/lwf-stubs" target="lwf-stubs.findbugs"/>
   </target>
@@ -445,7 +443,7 @@ Type "ant -p" for a list of targets.
     <ant dir="components/scifio" target="scifio.osgi"/>
   </target>
 
-  <target name="findbugs-scifio"
+  <target name="findbugs-scifio" depends="jar-scifio"
     description="run findbugs on SCIFIO">
     <ant dir="components/scifio" target="scifio.findbugs"/>
   </target>
@@ -488,8 +486,7 @@ Type "ant -p" for a list of targets.
     <ant dir="components/bio-formats" target="formats.osgi"/>
   </target>
 
-  <target name="findbugs-formats"
-    depends="compile-formats"
+  <target name="findbugs-formats" depends="jar-formats"
     description="run findbugs on Bio-Formats">
     <ant dir="components/bio-formats" target="formats.findbugs"/>
   </target>
@@ -535,8 +532,7 @@ Type "ant -p" for a list of targets.
     <ant dir="components/autogen" target="autogen.osgi"/>
   </target>
 
-  <target name="findbugs-autogen"
-    depends="compile-autogen"
+  <target name="findbugs-autogen" depends="jar-autogen"
     description="run findbugs on LOCI autogen">
     <ant dir="components/autogen" target="autogen.findbugs"/>
   </target>
@@ -575,8 +571,7 @@ Type "ant -p" for a list of targets.
     <ant dir="components/loci-plugins" target="loci-plugins.osgi"/>
   </target>
 
-  <target name="findbugs-loci-plugins"
-    depends="compile-loci-plugins"
+  <target name="findbugs-loci-plugins" depends="jar-loci-plugins"
     description="run findbugs on LOCI Plugins for ImageJ">
     <ant dir="components/loci-plugins" target="loci-plugins.findbugs"/>
   </target>
@@ -621,8 +616,7 @@ Type "ant -p" for a list of targets.
     <ant dir="components/ome-io" target="ome-io.osgi"/>
   </target>
 
-  <target name="findbugs-ome-io"
-    depends="compile-ome-io"
+  <target name="findbugs-ome-io" depends="jar-ome-io"
     description="run findbugs on OME I/O">
     <ant dir="components/ome-io" target="ome-io.findbugs"/>
   </target>
@@ -662,8 +656,7 @@ Type "ant -p" for a list of targets.
     <ant dir="components/ome-plugins" target="ome-plugins.osgi"/>
   </target>
 
-  <target name="findbugs-ome-plugins"
-    depends="compile-ome-plugins"
+  <target name="findbugs-ome-plugins" depends="jar-ome-plugins"
     description="run findbugs on OME Plugins for ImageJ">
     <ant dir="components/ome-plugins" target="ome-plugins.findbugs"/>
   </target>
@@ -705,8 +698,7 @@ Type "ant -p" for a list of targets.
     <ant dir="components/test-suite" target="tests.osgi"/>
   </target>
 
-  <target name="findbugs-tests"
-    depends="compile-tests"
+  <target name="findbugs-tests" depends="jar-tests"
     description="run findbugs on LOCI testing framework">
     <ant dir="components/test-suite" target="tests.findbugs"/>
   </target>
@@ -746,7 +738,7 @@ Type "ant -p" for a list of targets.
     <ant dir="components/legacy/ome-notes" target="ome-notes.osgi"/>
   </target>
 
-  <target name="findbugs-ome-notes"
+  <target name="findbugs-ome-notes" depends="jar-ome-notes"
     description="run findbugs for OME Notes">
     <ant dir="components/legacy/ome-notes" target="ome-notes.findbugs"/>
   </target>
@@ -783,7 +775,7 @@ Type "ant -p" for a list of targets.
     <ant dir="components/legacy/ome-editor" target="ome-editor.osgi"/>
   </target>
 
-  <target name="findbugs-ome-editor"
+  <target name="findbugs-ome-editor" depends="jar-ome-editor"
     description="run findbugs on OME Metadata Editor">
     <ant dir="components/legacy/ome-editor" target="ome-editor.findbugs"/>
   </target>
