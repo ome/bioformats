@@ -251,7 +251,7 @@ Type "ant -p" for a list of targets.
   <!-- Apache POI Java library -->
 
   <target name="compile-poi-loci"
-    depends="compile-common"
+    depends="jar-common"
     description="compile classes for Apache POI library">
     <ant dir="components/forks/poi" target="poi-loci.compile"/>
   </target>
@@ -414,13 +414,13 @@ Type "ant -p" for a list of targets.
   <!-- SciFIO -->
 
   <target name="compile-scifio"
-    depends="compile-common,
-      compile-jai,
-      compile-lwf-stubs,
-      compile-mdbtools,
-      compile-metakit,
-      compile-ome-xml,
-      compile-poi-loci"
+    depends="jar-common,
+      jar-jai,
+      jar-lwf-stubs,
+      jar-mdbtools,
+      jar-metakit,
+      jar-ome-xml,
+      jar-poi-loci"
     description="compile classes for SciFIO">
     <ant dir="components/scifio" target="scifio.compile"/>
   </target>
@@ -463,14 +463,14 @@ Type "ant -p" for a list of targets.
   <!-- Bio-Formats -->
 
   <target name="compile-formats"
-    depends="compile-common,
-      compile-jai,
-      compile-lwf-stubs,
-      compile-mdbtools,
-      compile-metakit,
-      compile-ome-xml,
-      compile-poi-loci,
-      compile-scifio"
+    depends="jar-common,
+      jar-jai,
+      jar-lwf-stubs,
+      jar-mdbtools,
+      jar-metakit,
+      jar-ome-xml,
+      jar-poi-loci,
+      jar-scifio"
     description="compile classes for Bio-Formats">
     <ant dir="components/bio-formats" target="formats.compile"/>
   </target>
@@ -524,8 +524,8 @@ Type "ant -p" for a list of targets.
   <!-- LOCI autogen -->
 
   <target name="compile-autogen"
-    depends="compile-common,
-      compile-formats"
+    depends="jar-common,
+      jar-formats"
     description="compile classes for LOCI autogen">
     <ant dir="components/autogen" target="autogen.compile"/>
   </target>
@@ -562,8 +562,8 @@ Type "ant -p" for a list of targets.
   <!-- LOCI Plugins for ImageJ -->
 
   <target name="compile-loci-plugins"
-    depends="compile-common,
-      compile-formats"
+    depends="jar-common,
+      jar-formats"
     description="compile classes for LOCI Plugins for ImageJ">
     <ant dir="components/loci-plugins" target="loci-plugins.compile"/>
   </target>
@@ -605,8 +605,8 @@ Type "ant -p" for a list of targets.
   <!-- OME I/O -->
 
   <target name="compile-ome-io"
-    depends="compile-common,
-      compile-scifio"
+    depends="jar-common,
+      jar-scifio"
     description="compile classes for OME I/O">
     <ant dir="components/ome-io" target="ome-io.compile"/>
   </target>
@@ -643,10 +643,10 @@ Type "ant -p" for a list of targets.
   <!-- OME Plugins for ImageJ -->
 
   <target name="compile-ome-plugins"
-    depends="compile-common,
-      compile-loci-plugins,
-      compile-ome-io,
-      compile-scifio"
+    depends="jar-common,
+      jar-loci-plugins,
+      jar-ome-io,
+      jar-scifio"
     description="compile classes for OME Plugins for ImageJ">
     <ant dir="components/ome-plugins" target="ome-plugins.compile"/>
   </target>
@@ -687,9 +687,9 @@ Type "ant -p" for a list of targets.
   <!-- LOCI testing framework -->
 
   <target name="compile-tests"
-    depends="compile-common,
-      compile-formats,
-      compile-ome-io"
+    depends="jar-common,
+      jar-formats,
+      jar-ome-io"
     description="compile classes for LOCI testing framework">
     <ant dir="components/test-suite" target="tests.compile"/>
   </target>
@@ -766,9 +766,9 @@ Type "ant -p" for a list of targets.
   <!-- OME Metadata Editor -->
 
   <target name="compile-ome-editor"
-    depends="compile-common,
-      compile-formats,
-      compile-ome-xml"
+    depends="jar-common,
+      jar-formats,
+      jar-ome-xml"
     description="compile classes for OME Metadata Editor">
     <ant dir="components/legacy/ome-editor" target="ome-editor.compile"/>
   </target>
