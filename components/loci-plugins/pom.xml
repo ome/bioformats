@@ -64,6 +64,8 @@
       <version>1.2.14</version>
     </dependency>
 
+    <!-- NB: dependency:analyze has false warning about xml-apis:xml-apis. -->
+
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>

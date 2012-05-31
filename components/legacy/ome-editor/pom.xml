@@ -53,6 +53,8 @@
       <artifactId>ome-java-deprecated</artifactId>
       <version>2.6.1</version>
     </dependency>
+
+    <!-- NB: dependency:analyze has false warning about xml-apis:xml-apis. -->
   </dependencies>
 
   <build>

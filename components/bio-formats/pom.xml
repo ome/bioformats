@@ -69,6 +69,7 @@
       <version>1.5.10</version>
     </dependency>
 
+    <!-- NB: dependency:analyze has false warning about xml-apis:xml-apis. -->
 
     <dependency>
       <groupId>org.testng</groupId>
