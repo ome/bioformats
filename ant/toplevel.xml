@@ -770,16 +770,16 @@ Type "ant -p" for a list of targets.
 
   <target name="compile-ome-editor"
     depends="jar-common,
-      jar-formats,
-      jar-ome-xml"
+      jar-ome-xml,
+      jar-scifio"
     description="compile classes for OME Metadata Editor">
     <ant dir="components/legacy/ome-editor" target="ome-editor.compile"/>
   </target>
 
   <target name="jar-ome-editor"
     depends="jar-common,
-      jar-formats,
-      jar-ome-xml"
+      jar-ome-xml,
+      jar-scifio"
     description="generate JAR file for OME Metadata Editor">
     <ant dir="components/legacy/ome-editor" target="ome-editor.jar"/>
   </target>
@@ -796,8 +796,8 @@ Type "ant -p" for a list of targets.
 
   <target name="clean-ome-editor"
     depends="clean-common,
-      clean-formats,
-      clean-ome-xml"
+      clean-ome-xml,
+      clean-scifio"
     description="remove build files for OME Metadata Editor">
     <ant dir="components/legacy/ome-editor" target="ome-editor.clean"/>
   </target>
