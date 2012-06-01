@@ -271,27 +271,25 @@ public class ZeissTIFFReader extends BaseZeissReader {
       info.xmlname = name + XML_NAME;
       // If the XML file isn't present, check we're not in a subdirectory.
       lxml = new CaseInsensitiveLocation(info.xmlname);
-      if (lxml.exists()) {
+      if (lxml.exists()) { // Simple single-plane case
         info.origname = name;
         info.basedir = null; // Always null for single files.
         info.multifile = false;
-      } else {
+      } else { // Multiple planes
         CaseInsensitiveLocation lb = new CaseInsensitiveLocation(name + "_files");
-        lxml = new CaseInsensitiveLocation(lb, "_meta.xml");
-        if (lxml.exists()) {
+        lxml = new CaseInsensitiveLocation(lb, XML_NAME);
+        if (lb.exists() && lxml.exists()) { // Planes in subdirectory
           info.xmlname = lxml.getAbsolutePath();
           info.origname = name;
-          info.basedir = name + "_files"; // Multifile
+          info.basedir = lb.getAbsolutePath(); // Multifile
           info.multifile = true;
-        } else {
+        } else { // Planes in this directory
           lb = new CaseInsensitiveLocation(l.getParent());
-          String dir = lb.getAbsolutePath();
-          info.xmlname = dir + "/_meta.xml";
-          lxml = new CaseInsensitiveLocation(info.xmlname);
-          if (lxml.exists()) {
+          lxml = new CaseInsensitiveLocation(lb, XML_NAME);
+          if (lb.exists() && lxml.exists()) {
             info.xmlname = lxml.getAbsolutePath();
             info.origname = info.xmlname; // May be updated later
-            info.basedir = dir; // Multifile
+            info.basedir = lb.getAbsolutePath(); // Multifile
             info.multifile = true;
           } else {
             throw new FormatException("XML metadata not found");
