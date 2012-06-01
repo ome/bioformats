@@ -107,6 +107,7 @@ package loci.formats.in;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.Vector;
 
 import loci.common.DataTools;
 import loci.common.CaseInsensitiveLocation;
@@ -210,18 +211,16 @@ public class ZeissTIFFReader extends BaseZeissReader {
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
-    String[] ret = imageFiles;
-    if (noPixels) {
-      if (getImageCount() > 1) {
-        ret = new String[2];
-        ret[0] = imageFiles[getImageCount()];
-        ret[1] = imageFiles[getImageCount()+1];
-      } else {
-        ret = new String[1];
-        ret[0] = imageFiles[getImageCount()];
-      }
+    Vector<String> files = new Vector<String>();
+    
+    if (noPixels == false && tiffInfo.origname != null)
+      files.add(tiffInfo.origname);
+    files.add(tiffInfo.xmlname);
+    if (noPixels == false) {
+      for (String tiff : imageFiles)
+        files.add(tiff);
     }
-    return ret;
+    return files.toArray(new String[files.size()]);
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
