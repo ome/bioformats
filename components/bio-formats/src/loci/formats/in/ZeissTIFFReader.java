@@ -110,7 +110,6 @@ import java.util.ArrayList;
 
 import loci.common.DataTools;
 import loci.common.CaseInsensitiveLocation;
-import loci.common.CaseInsensitiveLocationCache;
 import loci.common.RandomAccessInputStream;
 import loci.common.xml.XMLTools;
 import loci.formats.FormatException;
@@ -147,7 +146,6 @@ public class ZeissTIFFReader extends BaseZeissReader {
   /** Helper reader for TIFF files. */
   private MinimalTiffReader tiffReader;
 
-  CaseInsensitiveLocationCache cache;
   // -- Constructor --
 
   public ZeissTIFFReader() {
@@ -176,7 +174,8 @@ public class ZeissTIFFReader extends BaseZeissReader {
       return false;
 
     try {
-      TIFFInfo info = evalFile(name, new CaseInsensitiveLocationCache());
+      CaseInsensitiveLocation.invalidateCache();
+      TIFFInfo info = evalFile(name);
     }
     catch (Exception e) {
       return false;
@@ -233,7 +232,6 @@ public class ZeissTIFFReader extends BaseZeissReader {
       tiffInfo = null;
       tiffReader = null;
       planes = null;
-      cache = null;
     }
   }
 
@@ -246,7 +244,7 @@ public class ZeissTIFFReader extends BaseZeissReader {
    * @throws FormatException
    * @throws IOException
    */
-  protected TIFFInfo evalFile(String id, CaseInsensitiveLocationCache cache) throws FormatException, IOException {
+  protected TIFFInfo evalFile(String id) throws FormatException, IOException {
     // If this is an XML file, or one of the per-plane TIFFs, we must find the real basename now.
     // If it's a tiff, check for foo_meta.xml or foo_files/_meta.xml or _meta.xml.  For the latter, work out the basename from the XML itself.  Note that it might be missing, so should be optional.
 
@@ -266,31 +264,31 @@ public class ZeissTIFFReader extends BaseZeissReader {
     CaseInsensitiveLocation l;
     CaseInsensitiveLocation lxml;
 
-    l = new CaseInsensitiveLocation(id, cache);
+    l = new CaseInsensitiveLocation(id);
     String name = l.getAbsolutePath();
     // This "original" name is only tentative; it might be set to to eiher the top-level image or thumbnail (if it's the XML file, and the top-level file exists, or the XML file if it does not exist)
     if (name.endsWith(".tif")) {
       // Now iterate through the various XML locations
       info.xmlname = name + XML_NAME;
       // If the XML file isn't present, check we're not in a subdirectory.
-      lxml = new CaseInsensitiveLocation(info.xmlname, cache);
+      lxml = new CaseInsensitiveLocation(info.xmlname);
       if (lxml.exists()) {
         info.origname = name;
         info.basedir = null; // Always null for single files.
         info.multifile = false;
       } else {
-        CaseInsensitiveLocation lb = new CaseInsensitiveLocation(name + "_files", cache);
-        lxml = new CaseInsensitiveLocation(lb, "_meta.xml", cache);
+        CaseInsensitiveLocation lb = new CaseInsensitiveLocation(name + "_files");
+        lxml = new CaseInsensitiveLocation(lb, "_meta.xml");
         if (lxml.exists()) {
           info.xmlname = lxml.getAbsolutePath();
           info.origname = name;
           info.basedir = name + "_files"; // Multifile
           info.multifile = true;
         } else {
-          lb = new CaseInsensitiveLocation(l.getParent(), cache);
+          lb = new CaseInsensitiveLocation(l.getParent());
           String dir = lb.getAbsolutePath();
           info.xmlname = dir + "/_meta.xml";
-          lxml = new CaseInsensitiveLocation(info.xmlname, cache);
+          lxml = new CaseInsensitiveLocation(info.xmlname);
           if (lxml.exists()) {
             info.xmlname = lxml.getAbsolutePath();
             info.origname = info.xmlname; // May be updated later
@@ -303,11 +301,11 @@ public class ZeissTIFFReader extends BaseZeissReader {
       }
     } else if (name.endsWith(XML_NAME)) {
       info.xmlname = name;
-      lxml = new CaseInsensitiveLocation(info.xmlname, cache);
+      lxml = new CaseInsensitiveLocation(info.xmlname);
       if (!lxml.exists())
         throw new FormatException("XML metadata not found");
       if (lxml.getName().equals(XML_NAME)) {// Multiple files
-        CaseInsensitiveLocation lb = new CaseInsensitiveLocation(lxml.getParent(), cache);
+        CaseInsensitiveLocation lb = new CaseInsensitiveLocation(lxml.getParent());
         info.xmlname = lxml.getAbsolutePath();
         info.origname = info.xmlname;
         info.basedir = lb.getAbsolutePath();
@@ -317,7 +315,7 @@ public class ZeissTIFFReader extends BaseZeissReader {
         info.origname = info.xmlname.substring(0,info.xmlname.length()-XML_NAME.length());
         info.basedir = null; // Single file
         info.multifile = false;
-        l = new CaseInsensitiveLocation(info.origname, cache);
+        l = new CaseInsensitiveLocation(info.origname);
         if (!l.exists())
           throw new FormatException("TIFF image data not found");
         info.origname = l.getAbsolutePath();
@@ -334,7 +332,7 @@ public class ZeissTIFFReader extends BaseZeissReader {
     boolean found = false;
     for (Tag t : info.handler.main_tagset.tags) {
       if (t.getKey().equals("Filename")) {
-        CaseInsensitiveLocation n = new CaseInsensitiveLocation(info.basedir, t.getValue(), cache);
+        CaseInsensitiveLocation n = new CaseInsensitiveLocation(info.basedir, t.getValue());
         info.origname = n.getName();
         found = true;
         break;
@@ -350,20 +348,19 @@ public class ZeissTIFFReader extends BaseZeissReader {
     String basename = info.origname;
     info.prefix = getPrefix(info.origname);
     if (info.basedir != null)
-      l = new CaseInsensitiveLocation (info.basedir, cache);
+      l = new CaseInsensitiveLocation (info.basedir);
     basename = l.getParent() + "/" + info.prefix + ".tif";
-    l = new CaseInsensitiveLocation (basename, cache);
+    l = new CaseInsensitiveLocation (basename);
     if (l.exists())
       info.origname = l.getAbsolutePath();
 
     return info;
   }
   protected void initFile(String id) throws FormatException, IOException {
-    CaseInsensitiveLocationCache cache = new CaseInsensitiveLocationCache();
-    TIFFInfo info = evalFile(id, cache);
+    CaseInsensitiveLocation.invalidateCache();
+    TIFFInfo info = evalFile(id);
     super.initFile(info.origname);
     this.tiffInfo = info;
-    this.cache = cache;
     super.initFileMain(info.origname);
   }
 
@@ -399,7 +396,7 @@ public class ZeissTIFFReader extends BaseZeissReader {
       if (nplanes == 1 && tiffInfo.multifile == false)
         np.filename = tiffInfo.origname;
       else
-        np.filename = new CaseInsensitiveLocation(tiffInfo.basedir + "/" + tiffInfo.prefix + "_" + p.basename + ".tif", cache).getAbsolutePath();
+        np.filename = new CaseInsensitiveLocation(tiffInfo.basedir + "/" + tiffInfo.prefix + "_" + p.basename + ".tif").getAbsolutePath();
 
       int tileid = parseInt(np.tags.get("ImageTile Index"));
       int channelid = parseInt(np.tags.get("Image Channel Index"));

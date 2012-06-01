@@ -25,9 +25,10 @@ package loci.common;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
 
 import loci.common.Location;
-import loci.common.CaseInsensitiveLocationCache;
 
 
 /**
@@ -39,49 +40,154 @@ import loci.common.CaseInsensitiveLocationCache;
  */
 public class CaseInsensitiveLocation extends Location {
 
+  // Fields
+
+  private static final Cache cache = new Cache();
+
   // -- Constructors (no caching) --
 
   public CaseInsensitiveLocation(String pathname) throws IOException {
-    super(findCaseInsensitive(new File(pathname), new CaseInsensitiveLocationCache()));
+    super(findCaseInsensitive(new File(pathname)));
   }
 
   public CaseInsensitiveLocation(File file) throws IOException {
-    super(findCaseInsensitive(file, new CaseInsensitiveLocationCache()));
+    super(findCaseInsensitive(file));
   }
 
   public CaseInsensitiveLocation(String parent, String child) throws IOException {
-    super(findCaseInsensitive(new File(parent + File.separator + child), new CaseInsensitiveLocationCache()));
+    super(findCaseInsensitive(new File(parent + File.separator + child)));
   }
 
   public CaseInsensitiveLocation(CaseInsensitiveLocation parent, String child) throws IOException {
-    super(findCaseInsensitive(new File(parent.getAbsolutePath(), child), new CaseInsensitiveLocationCache()));
+    super(findCaseInsensitive(new File(parent.getAbsolutePath(), child)));
   }
 
-  // -- Constructors (caching) --
-
-  public CaseInsensitiveLocation(String pathname, CaseInsensitiveLocationCache cache) throws IOException {
-    super(findCaseInsensitive(new File(pathname), cache));
-  }
-
-  public CaseInsensitiveLocation(File file, CaseInsensitiveLocationCache cache) throws IOException {
-    super(findCaseInsensitive(file, cache));
-  }
-
-  public CaseInsensitiveLocation(String parent, String child, CaseInsensitiveLocationCache cache) throws IOException {
-    super(findCaseInsensitive(new File(parent + File.separator + child), cache));
-  }
-
-  public CaseInsensitiveLocation(CaseInsensitiveLocation parent, String child, CaseInsensitiveLocationCache cache) throws IOException {
-    super(findCaseInsensitive(new File(parent.getAbsolutePath(), child), cache));
-  }
 
   // -- Methods --
 
-  private static File findCaseInsensitive(File name,
-      CaseInsensitiveLocationCache cache) throws IOException{
+  /**
+   * Remove (invalidate) cached content all directories.
+   */
+  public static void invalidateCache() {
+    cache.invalidate();
+  }
+
+  /**
+   * Remove (invalidate) cached content for the specified directory.
+   * @param dir the directory to remove,
+   */
+  public static void invalidateCache(File dir) {
+    cache.invalidate(dir);
+  }
+
+  private static File findCaseInsensitive(File name) throws IOException{
     // The file we're looking for doesn't exist, so look for it in the
     // same directory in a case-insensitive manner.  Note that this will
     // throw an exception if multiple copies are found.
     return cache.lookup(name);
   }
+
+  // Helper class
+
+  /**
+   * Caching for CaseInsensitiveLocation.  A case insensitive path lookup
+   * requires a full scan of the containing directory, which can be very
+   * expensive.  This class caches insensitive-to-sensitive name mappings,
+   * so the correct casing on filesystem is returned.
+   *
+   * <dl><dt><b>Source code:</b></dt>
+   * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/Cache.java">Trac</a>,
+   * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/common/src/loci/common/Cache.java;hb=HEAD">Gitweb</a></dd></dl>
+   */
+  private static final class Cache {
+
+    /**
+     * Mapping of directory names to directory content, the content being
+     * a mapping of case insensitive name to case sensitive (real) name
+     * on disc.
+     */
+    private HashMap<String,HashMap<String,HashSet<String>>> cache = new HashMap<String,HashMap<String,HashSet<String>>>();
+
+    /**
+     * The constructor.
+     */
+    public Cache() {
+      super();
+    }
+
+    /**
+     * Fill the cache with the content for the specified directory.
+     * @param dir the directory to cache.
+     * @return the filename mappings for the directory, or null if the
+     * directory did not exist.
+     */
+    // Cache the whole directory content in a single pass
+    private HashMap<String,HashSet<String>> fill(File dir) {
+      String dirname = dir.getAbsolutePath();
+      HashMap<String,HashSet<String>> s = cache.get(dirname);
+      if (s == null && dir.exists()) {
+        s = new HashMap<String,HashSet<String>>();
+        cache.put(dirname, s);
+        String[] files = dir.list();
+        for (String name : files) {
+          String lower = name.toLowerCase();
+          HashSet<String> f = s.get(lower);
+          if (f == null) {
+            f = new HashSet<String>();
+            s.put(lower, f);
+          }
+          f.add(name);
+        }
+      }
+      return s;
+    }
+
+    /**
+     * Remove a directory from the cache.
+     * @param dir the directory to remove.
+     */
+    public void invalidate(File dir) {
+      String dirname = dir.getAbsolutePath();
+      cache.remove(dirname);
+    }
+
+    /**
+     * Remove all content from the cache.
+     */
+    public void invalidate() {
+      cache.clear();
+    }
+
+    /**
+     * Look up a filename in the cache.
+     * @param name the name to look up (case insensitive).
+     * @return the filename on disc (case sensitive).
+     * @throws IOException
+     */
+    public File lookup(File name) throws IOException {
+
+      File parent = name.getParentFile();
+      if (parent != null) {
+        HashMap<String,HashSet<String>> s = fill(parent);
+
+        if (s != null) {
+          String realname = name.getName();
+          String lower = realname.toLowerCase();
+
+          HashSet<String> f = s.get(lower);
+          if (f != null) {
+            if (f.size() > 1)
+              throw new IOException("Multiple files found for case-insensitive path");
+            else if (f.size() == 1) {
+              String[] values = f.toArray(new String[0]);
+              return new File(parent, values[0]);
+            }
+          }
+        }
+      }
+      return name;
+    }
+
+  }
+
 }

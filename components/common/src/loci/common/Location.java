@@ -81,9 +81,9 @@ public class Location {
 
   // -- Fields --
 
-  protected boolean isURL = true;
-  protected URL url;
-  protected File file;
+  private boolean isURL = true;
+  private URL url;
+  private File file;
 
   // -- Constructors --
 
