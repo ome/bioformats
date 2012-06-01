@@ -346,8 +346,10 @@ public class ZeissTIFFReader extends BaseZeissReader {
 
     String basename = info.origname;
     info.prefix = getPrefix(info.origname);
-    if (info.basedir != null)
-      l = new CaseInsensitiveLocation (info.basedir);
+    if (info.basedir != null) {
+      CaseInsensitiveLocation b = new CaseInsensitiveLocation (info.basedir);
+      info.basedir = b.getAbsolutePath();
+    }
     basename = l.getParent() + "/" + info.prefix + ".tif";
     l = new CaseInsensitiveLocation (basename);
     if (l.exists())
