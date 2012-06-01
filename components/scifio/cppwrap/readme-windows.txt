@@ -101,7 +101,7 @@ Run Command Prompt and change to your Bio-Formats working copy. Then run:
 
   # generate the Bio-Formats C++ bindings
   cd components\scifio
-  mvn -DskipTests package cppwrap:wrap
+  mvn -DskipTests package dependency:copy-dependencies cppwrap:wrap
 
   # build the Bio-Formats C++ bindings
   cd target\cppwrap
@@ -112,12 +112,18 @@ Run Command Prompt and change to your Bio-Formats working copy. Then run:
 The CMake GUI will open. Click the Configure button, and a dialog will appear.
 Select your installed version of Visual Studio, and click Finish.
 
+When configuring, you can use the J2L_WIN_BUILD_DEBUG flag to indicate if this
+will be a Debug or Release build. If the flag it checked it will build as Debug,
+unchecked will build as Release.
+
 Once configuration is complete, click Configure again, repeating as necessary
 until the Generate button becomes available. Then click Generate. Once
 generation is complete, close the CMake window.
 
 Back at the Command Prompt, type:
 
-  start scifio.sln
+  start jace.sln
 
-The solution will then open in Visual Studio. Press F7 to compile it (or select Build Solution from the Build menu).
+The solution will then open in Visual Studio. Select Release or Debug as appriate
+from the drop-down menu.  Press F7 to compile (or select Build Solution from the
+Build menu).
