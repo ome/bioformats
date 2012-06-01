@@ -2,8 +2,10 @@
  * #%L
  * Luratech LWF library stub classes.
  * %%
- * Copyright (C) 2010 - 2012 Board of Regents of the University of
- * Wisconsin-Madison, Glencoe Software, Inc., and University of Dundee.
+ * Copyright (C) 2010 - 2012 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:

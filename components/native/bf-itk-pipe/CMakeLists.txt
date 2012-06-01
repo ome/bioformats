@@ -2,9 +2,11 @@
 # #%L
 # Bio-Formats plugin for the Insight Toolkit.
 # %%
-# Copyright (C) 2010 - 2012 Insight Software Consortium, Board of Regents
-# of the University of Wisconsin-Madison, Glencoe Software, Inc., and
-# University of Dundee.
+# Copyright (C) 2010 - 2012 Insight Software Consortium, and Open Microscopy
+# Environment:
+#   - Board of Regents of the University of Wisconsin-Madison
+#   - Glencoe Software, Inc.
+#   - University of Dundee
 # %%
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
