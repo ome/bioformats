@@ -470,6 +470,8 @@ public class ScanrReader extends FormatReader {
       }
       if (next == originalIndex && well < keys.length) {
         wellLabels.remove(keys[well]);
+      }
+      if (next == originalIndex) {
         wellNumbers.remove(well);
       }
     }
@@ -564,10 +566,11 @@ public class ScanrReader extends FormatReader {
       int field = i % nFields;
       int well = i / nFields;
       int index = well;
-      while (wellNumbers.get(index) == null) {
+      while (wellNumbers.get(index) == null && index < wellNumbers.size()) {
         index++;
       }
-      int wellIndex = wellNumbers.get(index) - 1;
+      int wellIndex =
+        wellNumbers.get(index) == null ? index : wellNumbers.get(index) - 1;
       wellNumbers.remove(index);
 
       int wellRow = wellIndex / wellColumns;
@@ -585,7 +588,7 @@ public class ScanrReader extends FormatReader {
       store.setWellSampleImageRef(imageID, 0, well, field);
       store.setImageID(imageID, i);
 
-      String name = "Well " + (wellIndex + 1) + ", Field " + (field + 1) +
+      String name = "Well " + (well + 1) + ", Field " + (field + 1) +
         " (Spot " + (i + 1) + ")";
       store.setImageName(name, i);
 
