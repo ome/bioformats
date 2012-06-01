@@ -106,7 +106,7 @@ public class CaseInsensitiveLocation extends Location {
      * a mapping of case insensitive name to case sensitive (real) name
      * on disc.
      */
-    private HashMap<String,HashMap<String,HashSet<String>>> cache = new HashMap<String,HashMap<String,HashSet<String>>>();
+    private HashMap<String,HashMap<String,String>> cache = new HashMap<String,HashMap<String,String>>();
 
     /**
      * The constructor.
@@ -122,21 +122,19 @@ public class CaseInsensitiveLocation extends Location {
      * directory did not exist.
      */
     // Cache the whole directory content in a single pass
-    private HashMap<String,HashSet<String>> fill(File dir) {
+    private HashMap<String,String> fill(File dir) throws IOException {
       String dirname = dir.getAbsolutePath();
-      HashMap<String,HashSet<String>> s = cache.get(dirname);
+      HashMap<String,String> s = cache.get(dirname);
       if (s == null && dir.exists()) {
-        s = new HashMap<String,HashSet<String>>();
+        s = new HashMap<String,String>();
         cache.put(dirname, s);
+
         String[] files = dir.list();
         for (String name : files) {
           String lower = name.toLowerCase();
-          HashSet<String> f = s.get(lower);
-          if (f == null) {
-            f = new HashSet<String>();
-            s.put(lower, f);
-          }
-          f.add(name);
+          if (s.containsKey(lower))
+            throw new IOException("Multiple files found for case-insensitive path");
+          s.put(lower, name);
         }
       }
       return s;
@@ -168,21 +166,14 @@ public class CaseInsensitiveLocation extends Location {
 
       File parent = name.getParentFile();
       if (parent != null) {
-        HashMap<String,HashSet<String>> s = fill(parent);
+        HashMap<String,String> s = fill(parent);
 
         if (s != null) {
           String realname = name.getName();
           String lower = realname.toLowerCase();
-
-          HashSet<String> f = s.get(lower);
-          if (f != null) {
-            if (f.size() > 1)
-              throw new IOException("Multiple files found for case-insensitive path");
-            else if (f.size() == 1) {
-              String[] values = f.toArray(new String[0]);
-              return new File(parent, values[0]);
-            }
-          }
+          String f = s.get(lower);
+          if (f != null)
+            return new File(parent, f);
         }
       }
       return name;
