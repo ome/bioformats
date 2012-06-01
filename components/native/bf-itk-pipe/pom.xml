@@ -39,9 +39,11 @@
           </roots>
           <licenseName>bf-itk-pipe</licenseName>
           <projectName>Bio-Formats plugin for the Insight Toolkit.</projectName>
-          <organizationName>Insight Software Consortium, Board of Regents
-of the University of Wisconsin-Madison, Glencoe Software, Inc., and
-University of Dundee.</organizationName>
+          <organizationName>Insight Software Consortium, and Open Microscopy
+Environment:
+  - Board of Regents of the University of Wisconsin-Madison
+  - Glencoe Software, Inc.
+  - University of Dundee</organizationName>
         </configuration>
       </plugin>
     </plugins>

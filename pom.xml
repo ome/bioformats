@@ -85,8 +85,10 @@
         <configuration>
           <licenseName>gpl_v2</licenseName>
           <licenseResolver>${license.server}</licenseResolver>
-          <organizationName>Board of Regents of the University of
-Wisconsin-Madison, Glencoe Software, Inc., and University of Dundee.</organizationName>
+          <organizationName>Open Microscopy Environment:
+  - Board of Regents of the University of Wisconsin-Madison
+  - Glencoe Software, Inc.
+  - University of Dundee</organizationName>
           <canUpdateDescription>true</canUpdateDescription>
           <canUpdateCopyright>true</canUpdateCopyright>
         </configuration>

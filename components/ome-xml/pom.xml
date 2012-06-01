@@ -80,11 +80,12 @@
         <artifactId>license-maven-plugin</artifactId>
         <configuration>
           <licenseName>ome-xml</licenseName>
-          <organizationName>Open Microscopy Environment
-    Massachusetts Institute of Technology,
-    National Institutes of Health,
-    University of Dundee,
-    and Board of Regents of the University of Wisconsin-Madison.</organizationName>
+          <organizationName>Open Microscopy Environment:
+  - Massachusetts Institute of Technology
+  - National Institutes of Health
+  - University of Dundee
+  - Board of Regents of the University of Wisconsin-Madison
+  - Glencoe Software, Inc.</organizationName>
           <projectName>OME-XML Java library for working with OME-XML metadata structures.</projectName>
         </configuration>
       </plugin>
