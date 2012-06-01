@@ -90,7 +90,6 @@
   - Glencoe Software, Inc.
   - University of Dundee</organizationName>
           <canUpdateDescription>true</canUpdateDescription>
-          <canUpdateCopyright>true</canUpdateCopyright>
         </configuration>
       </plugin>
     </plugins>
