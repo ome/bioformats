@@ -343,7 +343,10 @@ public class OMETiffReader extends FormatReader {
 
     String[] acquiredDates = new String[meta.getImageCount()];
     for (int i=0; i<acquiredDates.length; i++) {
-      acquiredDates[i] = meta.getImageAcquisitionDate(i).getValue();
+      Timestamp acquisitionDate = meta.getImageAcquisitionDate(i);
+      if (acquisitionDate != null) {
+        acquiredDates[i] = acquisitionDate.getValue();
+      }
     }
 
     String currentUUID = meta.getUUID();
