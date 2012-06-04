@@ -1,8 +1,9 @@
 LOCI Common package: utilities for I/O, reflection and miscellaneous tasks.
 
-Copyright (C) 2008 - 2012 Board of Regents of the University of
-Wisconsin-Madison, Broad Institute of MIT and Harvard, and Max Planck
-Institute of Molecular Cell Biology and Genetics.
+Copyright (C) 2008 - 2012 Open Microscopy Environment:
+  - Board of Regents of the University of Wisconsin-Madison
+  - Glencoe Software, Inc.
+  - University of Dundee
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
