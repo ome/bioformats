@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-01-12 20:06:01-0500
+ * Created by callan via xsd-fu on 2012-05-18 10:08:16+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -58,7 +58,7 @@ public class Leader extends Reference
 
 	// -- Constants --
 
-	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2011-06";
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2012-06";
 
 	/** Logger for this class. */
 	private static final Logger LOGGER =
@@ -69,6 +69,9 @@ public class Leader extends Reference
 
 	// Property
 	private String id;
+
+	// Back reference ExperimenterGroup_BackReference
+	private List<ExperimenterGroup> experimenterGroups = new ArrayList<ExperimenterGroup>();
 
 	// -- Constructors --
 
@@ -131,6 +134,7 @@ public class Leader extends Reference
 			// Adding this model object to the model handler
 			model.addModelObject(getID(), this);
 		}
+		// *** IGNORING *** Skipped back reference ExperimenterGroup_BackReference
 	}
 
 	// -- Leader API methods --
@@ -158,6 +162,40 @@ public class Leader extends Reference
 		this.id = id;
 	}
 
+	// Reference which occurs more than once
+	public int sizeOfLinkedExperimenterGroupList()
+	{
+		return experimenterGroups.size();
+	}
+
+	public List<ExperimenterGroup> copyLinkedExperimenterGroupList()
+	{
+		return new ArrayList<ExperimenterGroup>(experimenterGroups);
+	}
+
+	public ExperimenterGroup getLinkedExperimenterGroup(int index)
+	{
+		return experimenterGroups.get(index);
+	}
+
+	public ExperimenterGroup setLinkedExperimenterGroup(int index, ExperimenterGroup o)
+	{
+		return experimenterGroups.set(index, o);
+	}
+
+	public boolean linkExperimenterGroup(ExperimenterGroup o)
+	{
+		if (!experimenterGroups.contains(o)) {
+			return experimenterGroups.add(o);
+		}
+		return false;
+	}
+
+	public boolean unlinkExperimenterGroup(ExperimenterGroup o)
+	{
+		return experimenterGroups.remove(o);
+	}
+
 	public Element asXMLElement(Document document)
 	{
 		return asXMLElement(document, null);
@@ -177,6 +215,10 @@ public class Leader extends Reference
 		{
 			// Attribute property ID
 			Leader_element.setAttribute("ID", id.toString());
+		}
+		if (experimenterGroups != null)
+		{
+			// *** IGNORING *** Skipped back reference ExperimenterGroup_BackReference
 		}
 		return super.asXMLElement(document, Leader_element);
 	}

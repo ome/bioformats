@@ -1,5 +1,5 @@
 /*
- * ome.xml.model.Contact
+ * ome.xml.model.BasicAnnotation
  *
  *-----------------------------------------------------------------------------
  *
@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-01-12 20:06:01-0500
+ * Created by callan via xsd-fu on 2012-05-18 10:08:16+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -52,34 +52,31 @@ import org.w3c.dom.NodeList;
 import ome.xml.model.enums.*;
 import ome.xml.model.primitives.*;
 
-public class Contact extends Reference
+public abstract class BasicAnnotation extends Annotation
 {
-	// Base: Reference -- Name: Contact -- Type: Contact -- javaBase: Reference -- javaType: Object
+	// Base: Annotation -- Name: BasicAnnotation -- Type: BasicAnnotation -- javaBase: Annotation -- javaType: Object
 
 	// -- Constants --
 
-	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2011-06";
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/SA/2012-06";
 
 	/** Logger for this class. */
 	private static final Logger LOGGER =
-		LoggerFactory.getLogger(Contact.class);
+		LoggerFactory.getLogger(BasicAnnotation.class);
 
 	// -- Instance variables --
 
 
-	// Property
-	private String id;
-
 	// -- Constructors --
 
 	/** Default constructor. */
-	public Contact()
+	public BasicAnnotation()
 	{
 		super();
 	}
 
 	/** 
-	 * Constructs Contact recursively from an XML DOM tree.
+	 * Constructs BasicAnnotation recursively from an XML DOM tree.
 	 * @param element Root of the XML DOM tree to construct a model object
 	 * graph from.
 	 * @param model Handler for the OME model which keeps track of instances
@@ -87,19 +84,19 @@ public class Contact extends Reference
 	 * @throws EnumerationException If there is an error instantiating an
 	 * enumeration during model object creation.
 	 */
-	public Contact(Element element, OMEModel model)
+	public BasicAnnotation(Element element, OMEModel model)
 	    throws EnumerationException
 	{
 		update(element, model);
 	}
 
-	// -- Custom content from Contact specific template --
+	// -- Custom content from BasicAnnotation specific template --
 
 
 	// -- OMEModelObject API methods --
 
 	/** 
-	 * Updates Contact recursively from an XML DOM tree. <b>NOTE:</b> No
+	 * Updates BasicAnnotation recursively from an XML DOM tree. <b>NOTE:</b> No
 	 * properties are removed, only added or updated.
 	 * @param element Root of the XML DOM tree to construct a model object
 	 * graph from.
@@ -113,27 +110,13 @@ public class Contact extends Reference
 	{
 		super.update(element, model);
 		String tagName = element.getTagName();
-		if (!"Contact".equals(tagName))
+		if (!"BasicAnnotation".equals(tagName))
 		{
-			LOGGER.debug("Expecting node name of Contact got {}", tagName);
-		}
-		if (!element.hasAttribute("ID") && getID() == null)
-		{
-			// TODO: Should be its own exception
-			throw new RuntimeException(String.format(
-					"Contact missing required ID property."));
-		}
-		if (element.hasAttribute("ID"))
-		{
-			// ID property
-			setID(String.valueOf(
-						element.getAttribute("ID")));
-			// Adding this model object to the model handler
-			model.addModelObject(getID(), this);
+			LOGGER.debug("Expecting node name of BasicAnnotation got {}", tagName);
 		}
 	}
 
-	// -- Contact API methods --
+	// -- BasicAnnotation API methods --
 
 	public boolean link(Reference reference, OMEModelObject o)
 	{
@@ -147,37 +130,21 @@ public class Contact extends Reference
 	}
 
 
-	// Property
-	public String getID()
-	{
-		return id;
-	}
-
-	public void setID(String id)
-	{
-		this.id = id;
-	}
-
 	public Element asXMLElement(Document document)
 	{
 		return asXMLElement(document, null);
 	}
 
-	protected Element asXMLElement(Document document, Element Contact_element)
+	protected Element asXMLElement(Document document, Element BasicAnnotation_element)
 	{
-		// Creating XML block for Contact
+		// Creating XML block for BasicAnnotation
 
-		if (Contact_element == null)
+		if (BasicAnnotation_element == null)
 		{
-			Contact_element =
-					document.createElementNS(NAMESPACE, "Contact");
+			BasicAnnotation_element =
+					document.createElementNS(NAMESPACE, "BasicAnnotation");
 		}
 
-		if (id != null)
-		{
-			// Attribute property ID
-			Contact_element.setAttribute("ID", id.toString());
-		}
-		return super.asXMLElement(document, Contact_element);
+		return super.asXMLElement(document, BasicAnnotation_element);
 	}
 }

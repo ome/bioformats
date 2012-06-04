@@ -34,6 +34,7 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import ome.xml.model.primitives.PositiveFloat;
+import ome.xml.model.primitives.Timestamp;
 
 /**
  * SBIGReader is the file format reader for SBIG files.
@@ -187,7 +188,8 @@ public class SBIGReader extends FormatReader {
     MetadataTools.populatePixels(store, this);
 
     if (date != null) {
-      store.setImageAcquiredDate(DateTools.formatDate(date, DATE_FORMAT), 0);
+      store.setImageAcquisitionDate(new Timestamp(
+          DateTools.formatDate(date, DATE_FORMAT)), 0);
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {

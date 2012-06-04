@@ -44,6 +44,7 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.services.OMEXMLService;
 
+import ome.xml.model.AffineTransform;
 import ome.xml.model.enums.AcquisitionMode;
 import ome.xml.model.enums.ArcType;
 import ome.xml.model.enums.Binning;
@@ -1569,6 +1570,17 @@ public abstract class FormatReader extends FormatHandler
     catch (EnumerationException e) {
       throw new FormatException("Pulse creation failed", e);
     }
+  }
+
+  protected AffineTransform getRotationTransform(double theta) {
+    AffineTransform transform = new AffineTransform();
+    transform.setA02(0.0);
+    transform.setA12(0.0);
+    transform.setA00(Math.cos(theta));
+    transform.setA11(Math.cos(theta));
+    transform.setA01(Math.sin(theta));
+    transform.setA10(-1 * Math.sin(theta));
+    return transform;
   }
 
 }

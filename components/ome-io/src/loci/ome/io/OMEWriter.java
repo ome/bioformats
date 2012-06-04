@@ -253,7 +253,8 @@ public class OMEWriter extends FormatWriter {
 
         r.setVar("NOW", "now");
 
-        String creationDate = metadataRetrieve.getImageAcquiredDate(series);
+        String creationDate =
+            metadataRetrieve.getImageAcquisitionDate(series).getValue();
         if (creationDate == null) {
           creationDate =
             DateTools.convertDate(System.currentTimeMillis(), DateTools.UNIX);

@@ -1,5 +1,5 @@
 /*
- * ome.xml.model.Path
+ * ome.xml.model.Label
  *
  *-----------------------------------------------------------------------------
  *
@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-01-12 20:06:01-0500
+ * Created by callan via xsd-fu on 2012-05-18 10:08:16+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -52,34 +52,37 @@ import org.w3c.dom.NodeList;
 import ome.xml.model.enums.*;
 import ome.xml.model.primitives.*;
 
-public class Path extends Shape
+public class Label extends Shape
 {
-	// Base:  -- Name: Path -- Type: Path -- javaBase: AbstractOMEModelObject -- javaType: Object
+	// Base:  -- Name: Label -- Type: Label -- javaBase: AbstractOMEModelObject -- javaType: Object
 
 	// -- Constants --
 
-	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/ROI/2011-06";
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/ROI/2012-06";
 
 	/** Logger for this class. */
 	private static final Logger LOGGER =
-		LoggerFactory.getLogger(Path.class);
+		LoggerFactory.getLogger(Label.class);
 
 	// -- Instance variables --
 
 
 	// Property
-	private String definition;
+	private Double y;
+
+	// Property
+	private Double x;
 
 	// -- Constructors --
 
 	/** Default constructor. */
-	public Path()
+	public Label()
 	{
 		super();
 	}
 
 	/** 
-	 * Constructs Path recursively from an XML DOM tree.
+	 * Constructs Label recursively from an XML DOM tree.
 	 * @param element Root of the XML DOM tree to construct a model object
 	 * graph from.
 	 * @param model Handler for the OME model which keeps track of instances
@@ -87,19 +90,19 @@ public class Path extends Shape
 	 * @throws EnumerationException If there is an error instantiating an
 	 * enumeration during model object creation.
 	 */
-	public Path(Element element, OMEModel model)
+	public Label(Element element, OMEModel model)
 	    throws EnumerationException
 	{
 		update(element, model);
 	}
 
-	// -- Custom content from Path specific template --
+	// -- Custom content from Label specific template --
 
 
 	// -- OMEModelObject API methods --
 
 	/** 
-	 * Updates Path recursively from an XML DOM tree. <b>NOTE:</b> No
+	 * Updates Label recursively from an XML DOM tree. <b>NOTE:</b> No
 	 * properties are removed, only added or updated.
 	 * @param element Root of the XML DOM tree to construct a model object
 	 * graph from.
@@ -113,19 +116,25 @@ public class Path extends Shape
 	{
 		super.update(element, model);
 		String tagName = element.getTagName();
-		if (!"Path".equals(tagName))
+		if (!"Label".equals(tagName))
 		{
-			LOGGER.debug("Expecting node name of Path got {}", tagName);
+			LOGGER.debug("Expecting node name of Label got {}", tagName);
 		}
-		if (element.hasAttribute("Definition"))
+		if (element.hasAttribute("Y"))
 		{
-			// Attribute property Definition
-			setDefinition(String.valueOf(
-					element.getAttribute("Definition")));
+			// Attribute property Y
+			setY(Double.valueOf(
+					element.getAttribute("Y")));
+		}
+		if (element.hasAttribute("X"))
+		{
+			// Attribute property X
+			setX(Double.valueOf(
+					element.getAttribute("X")));
 		}
 	}
 
-	// -- Path API methods --
+	// -- Label API methods --
 
 	public boolean link(Reference reference, OMEModelObject o)
 	{
@@ -140,14 +149,25 @@ public class Path extends Shape
 
 
 	// Property
-	public String getDefinition()
+	public Double getY()
 	{
-		return definition;
+		return y;
 	}
 
-	public void setDefinition(String definition)
+	public void setY(Double y)
 	{
-		this.definition = definition;
+		this.y = y;
+	}
+
+	// Property
+	public Double getX()
+	{
+		return x;
+	}
+
+	public void setX(Double x)
+	{
+		this.x = x;
 	}
 
 	public Element asXMLElement(Document document)
@@ -155,21 +175,26 @@ public class Path extends Shape
 		return asXMLElement(document, null);
 	}
 
-	protected Element asXMLElement(Document document, Element Path_element)
+	protected Element asXMLElement(Document document, Element Label_element)
 	{
-		// Creating XML block for Path
+		// Creating XML block for Label
 
-		if (Path_element == null)
+		if (Label_element == null)
 		{
-			Path_element =
-					document.createElementNS(NAMESPACE, "Path");
+			Label_element =
+					document.createElementNS(NAMESPACE, "Label");
 		}
 
-		if (definition != null)
+		if (y != null)
 		{
-			// Attribute property Definition
-			Path_element.setAttribute("Definition", definition.toString());
+			// Attribute property Y
+			Label_element.setAttribute("Y", y.toString());
 		}
-		return super.asXMLElement(document, Path_element);
+		if (x != null)
+		{
+			// Attribute property X
+			Label_element.setAttribute("X", x.toString());
+		}
+		return super.asXMLElement(document, Label_element);
 	}
 }

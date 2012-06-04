@@ -45,6 +45,7 @@ import loci.formats.tiff.TiffParser;
 
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
@@ -338,7 +339,8 @@ public class PrairieReader extends FormatReader {
 
         if (date != null) {
           date = DateTools.formatDate(date, "MM/dd/yyyy h:mm:ss a");
-          if (date != null) store.setImageAcquiredDate(date, 0);
+          if (date != null) store.setImageAcquisitionDate(
+              new Timestamp(date), 0);
         }
 
         if (!minimumMetadata) {
@@ -412,7 +414,7 @@ public class PrairieReader extends FormatReader {
 
           String objective = MetadataTools.createLSID("Objective", 0, 0);
           store.setObjectiveID(objective, 0, 0);
-          store.setImageObjectiveSettingsID(objective, 0);
+          store.setObjectiveSettingsID(objective, 0);
 
           if (magnification != null) {
             store.setObjectiveNominalMagnification(magnification, 0, 0);

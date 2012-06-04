@@ -43,6 +43,7 @@ import loci.formats.meta.MetadataStore;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
@@ -497,7 +498,7 @@ public class InCellReader extends FormatReader {
       }
 
       store.setImageName(imageName, i);
-      store.setImageAcquiredDate(creationDate, i);
+      store.setImageAcquisitionDate(new Timestamp(creationDate), i);
 
       timepoint--;
       if (timepoint < 0) timepoint = 0;
@@ -879,8 +880,8 @@ public class InCellReader extends FormatReader {
         String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
         store.setObjectiveID(objectiveID, 0, 0);
         for (int i=0; i<getSeriesCount(); i++) {
-          store.setImageObjectiveSettingsID(objectiveID, i);
-          store.setImageObjectiveSettingsRefractiveIndex(refractive, i);
+          store.setObjectiveSettingsID(objectiveID, i);
+          store.setObjectiveSettingsRefractiveIndex(refractive, i);
           if (pixelSizeX > 0) {
             store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSizeX), i);
           }

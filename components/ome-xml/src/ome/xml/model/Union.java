@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-01-12 20:06:01-0500
+ * Created by callan via xsd-fu on 2012-05-18 10:08:16+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -58,7 +58,7 @@ public class Union extends AbstractOMEModelObject
 
 	// -- Constants --
 
-	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/ROI/2011-06";
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/ROI/2012-06";
 
 	/** Logger for this class. */
 	private static final Logger LOGGER =
@@ -68,7 +68,7 @@ public class Union extends AbstractOMEModelObject
 
 
 	// Property which occurs more than once
-	private List<Shape> shapeList = new ArrayList<Shape>();
+	private List<Shape> shapes = new ArrayList<Shape>();
 
 	// -- Constructors --
 
@@ -173,20 +173,20 @@ public class Union extends AbstractOMEModelObject
 				o.update(Polyline_element, model);
 				addShape(o);
 			}
-			List<Element> Path_nodeList = 
-					getChildrenByTagName(Shape_element, "Path");
-			for (Element Path_element : Path_nodeList)
+			List<Element> Polygon_nodeList = 
+					getChildrenByTagName(Shape_element, "Polygon");
+			for (Element Polygon_element : Polygon_nodeList)
 			{
-				Path o = new Path(Shape_element, model);
-				o.update(Path_element, model);
+				Polygon o = new Polygon(Shape_element, model);
+				o.update(Polygon_element, model);
 				addShape(o);
 			}
-			List<Element> Text_nodeList = 
-					getChildrenByTagName(Shape_element, "Text");
-			for (Element Text_element : Text_nodeList)
+			List<Element> Label_nodeList = 
+					getChildrenByTagName(Shape_element, "Label");
+			for (Element Label_element : Label_nodeList)
 			{
-				Text o = new Text(Shape_element, model);
-				o.update(Text_element, model);
+				Label o = new Label(Shape_element, model);
+				o.update(Label_element, model);
 				addShape(o);
 			}
 		}
@@ -209,32 +209,34 @@ public class Union extends AbstractOMEModelObject
 	// Property which occurs more than once
 	public int sizeOfShapeList()
 	{
-		return shapeList.size();
+		return shapes.size();
 	}
 
 	public List<Shape> copyShapeList()
 	{
-		return new ArrayList<Shape>(shapeList);
+		return new ArrayList<Shape>(shapes);
 	}
 
 	public Shape getShape(int index)
 	{
-		return shapeList.get(index);
+		return shapes.get(index);
 	}
 
 	public Shape setShape(int index, Shape shape)
 	{
-		return shapeList.set(index, shape);
+        shape.setUnion(this);
+		return shapes.set(index, shape);
 	}
 
 	public void addShape(Shape shape)
 	{
-		shapeList.add(shape);
+        shape.setUnion(this);
+		shapes.add(shape);
 	}
 
 	public void removeShape(Shape shape)
 	{
-		shapeList.remove(shape);
+		shapes.remove(shape);
 	}
 
 	public Element asXMLElement(Document document)
@@ -252,13 +254,13 @@ public class Union extends AbstractOMEModelObject
 					document.createElementNS(NAMESPACE, "Union");
 		}
 
-		if (shapeList != null)
+		if (shapes != null)
 		{
 			// Element property Shape which is complex (has
 			// sub-elements) and occurs more than once
-			for (Shape shapeList_value : shapeList)
+			for (Shape shapes_value : shapes)
 			{
-				Union_element.appendChild(shapeList_value.asXMLElement(document));
+				Union_element.appendChild(shapes_value.asXMLElement(document));
 			}
 		}
 		return super.asXMLElement(document, Union_element);

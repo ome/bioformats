@@ -48,9 +48,11 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
 
+import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 /**
  * MIASReader is the file format reader for Maia Scientific MIAS-2 datasets.
@@ -783,7 +785,7 @@ public class MIASReader extends FormatReader {
 
       if (level != MetadataLevel.NO_OVERLAYS) {
         // populate image-level ROIs
-        Integer[] colors = new Integer[getSizeC()];
+        Color[] colors = new Color[getSizeC()];
         int nextROI = 0;
         for (AnalysisFile af : analysisFiles) {
           String file = af.filename;
@@ -843,7 +845,7 @@ public class MIASReader extends FormatReader {
    * Well<nnnn>_mode<n>_z<nnn>_t<nnn>_AllModesOverlay.tif
    * files in <experiment>/<plate>/results/
    */
-  private Integer getChannelColorFromFile(String file)
+  private Color getChannelColorFromFile(String file)
     throws FormatException, IOException
   {
     RandomAccessInputStream s = new RandomAccessInputStream(file);
@@ -864,17 +866,17 @@ public class MIASReader extends FormatReader {
         maxIndex = c;
       }
       else if (v == max) {
-        return 0;
+        return new Color(0, 0, 0, 255);
       }
     }
 
     switch (maxIndex) {
-      case 0:
-        return 0xff0000ff;
-      case 1:
-        return 0xff00ff;
-      case 2:
-        return 0xffff;
+      case 0: // red
+        return new Color(255, 0, 0, 255);
+      case 1: // green
+        return new Color(0, 255, 0, 255);
+      case 2: // blue
+        return new Color(0, 0, 255, 255);
     }
     return null;
   }
@@ -920,7 +922,7 @@ public class MIASReader extends FormatReader {
     store.setEllipseTheZ(new NonNegativeInteger(zv), roi, 0);
     store.setEllipseX(new Double(data[columns.indexOf("Col")]), roi, 0);
     store.setEllipseY(new Double(data[columns.indexOf("Row")]), roi, 0);
-    store.setEllipseLabel(data[columns.indexOf("Label")], roi, 0);
+    store.setEllipseText(data[columns.indexOf("Label")], roi, 0);
 
     double diam = Double.parseDouble(data[columns.indexOf("Cell Diam.")]);
     double radius = diam / 2;
@@ -1034,7 +1036,7 @@ public class MIASReader extends FormatReader {
         }
       }
       date = DateTools.formatDate(date, "dd/MM/yyyy HH:mm:ss");
-      store.setImageAcquiredDate(date, well);
+      store.setImageAcquisitionDate(new Timestamp(date), well);
 
       for (int i=0; i<getImageCount(); i++) {
         store.setPlaneExposureTime(exposure, well, i);
@@ -1071,8 +1073,8 @@ public class MIASReader extends FormatReader {
         store.setMaskHeight(new Double(getSizeY()), roi + nOverlays, 0);
 
         int color = 0xff000000 | (0xff << (8 * (2 - i)));
-        store.setMaskStroke(color, roi + nOverlays, 0);
-        store.setMaskFill(color, roi + nOverlays, 0);
+        store.setMaskStrokeColor(new Color(color), roi + nOverlays, 0);
+        store.setMaskFillColor(new Color(color), roi + nOverlays, 0);
         store.setImageROIRef(roiId, series, roi + nOverlays);
         nOverlays++;
       }

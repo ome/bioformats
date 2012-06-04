@@ -43,6 +43,7 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.tools.ImageInfo;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 import omero.RDouble;
 import omero.RInt;
 import omero.RString;
@@ -371,8 +372,9 @@ public class OmeroReader extends FormatReader {
       store.setImageName(name, 0);
       store.setImageDescription(description, 0);
       if (date != null) {
-        store.setImageAcquiredDate(DateTools.convertDate(date.getValue(),
-          (int) DateTools.UNIX_EPOCH), 0);
+        store.setImageAcquisitionDate(new Timestamp(
+          DateTools.convertDate(date.getValue(), (int) DateTools.UNIX_EPOCH)),
+          0);
       }
 
       if (px != null && px > 0) {

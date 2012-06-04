@@ -1,5 +1,5 @@
 /*
- * ome.xml.model.GroupRef
+ * ome.xml.model.ExperimenterGroupRef
  *
  *-----------------------------------------------------------------------------
  *
@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-01-12 20:06:01-0500
+ * Created by callan via xsd-fu on 2012-05-18 10:08:16+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -52,17 +52,17 @@ import org.w3c.dom.NodeList;
 import ome.xml.model.enums.*;
 import ome.xml.model.primitives.*;
 
-public class GroupRef extends Reference
+public class ExperimenterGroupRef extends Reference
 {
-	// Base: Reference -- Name: GroupRef -- Type: GroupRef -- javaBase: Reference -- javaType: Object
+	// Base: Reference -- Name: ExperimenterGroupRef -- Type: ExperimenterGroupRef -- javaBase: Reference -- javaType: Object
 
 	// -- Constants --
 
-	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2011-06";
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2012-06";
 
 	/** Logger for this class. */
 	private static final Logger LOGGER =
-		LoggerFactory.getLogger(GroupRef.class);
+		LoggerFactory.getLogger(ExperimenterGroupRef.class);
 
 	// -- Instance variables --
 
@@ -73,13 +73,13 @@ public class GroupRef extends Reference
 	// -- Constructors --
 
 	/** Default constructor. */
-	public GroupRef()
+	public ExperimenterGroupRef()
 	{
 		super();
 	}
 
 	/** 
-	 * Constructs GroupRef recursively from an XML DOM tree.
+	 * Constructs ExperimenterGroupRef recursively from an XML DOM tree.
 	 * @param element Root of the XML DOM tree to construct a model object
 	 * graph from.
 	 * @param model Handler for the OME model which keeps track of instances
@@ -87,19 +87,19 @@ public class GroupRef extends Reference
 	 * @throws EnumerationException If there is an error instantiating an
 	 * enumeration during model object creation.
 	 */
-	public GroupRef(Element element, OMEModel model)
+	public ExperimenterGroupRef(Element element, OMEModel model)
 	    throws EnumerationException
 	{
 		update(element, model);
 	}
 
-	// -- Custom content from GroupRef specific template --
+	// -- Custom content from ExperimenterGroupRef specific template --
 
 
 	// -- OMEModelObject API methods --
 
 	/** 
-	 * Updates GroupRef recursively from an XML DOM tree. <b>NOTE:</b> No
+	 * Updates ExperimenterGroupRef recursively from an XML DOM tree. <b>NOTE:</b> No
 	 * properties are removed, only added or updated.
 	 * @param element Root of the XML DOM tree to construct a model object
 	 * graph from.
@@ -113,15 +113,15 @@ public class GroupRef extends Reference
 	{
 		super.update(element, model);
 		String tagName = element.getTagName();
-		if (!"GroupRef".equals(tagName))
+		if (!"ExperimenterGroupRef".equals(tagName))
 		{
-			LOGGER.debug("Expecting node name of GroupRef got {}", tagName);
+			LOGGER.debug("Expecting node name of ExperimenterGroupRef got {}", tagName);
 		}
 		if (!element.hasAttribute("ID") && getID() == null)
 		{
 			// TODO: Should be its own exception
 			throw new RuntimeException(String.format(
-					"GroupRef missing required ID property."));
+					"ExperimenterGroupRef missing required ID property."));
 		}
 		if (element.hasAttribute("ID"))
 		{
@@ -133,7 +133,7 @@ public class GroupRef extends Reference
 		}
 	}
 
-	// -- GroupRef API methods --
+	// -- ExperimenterGroupRef API methods --
 
 	public boolean link(Reference reference, OMEModelObject o)
 	{
@@ -163,21 +163,21 @@ public class GroupRef extends Reference
 		return asXMLElement(document, null);
 	}
 
-	protected Element asXMLElement(Document document, Element GroupRef_element)
+	protected Element asXMLElement(Document document, Element ExperimenterGroupRef_element)
 	{
-		// Creating XML block for GroupRef
+		// Creating XML block for ExperimenterGroupRef
 
-		if (GroupRef_element == null)
+		if (ExperimenterGroupRef_element == null)
 		{
-			GroupRef_element =
-					document.createElementNS(NAMESPACE, "GroupRef");
+			ExperimenterGroupRef_element =
+					document.createElementNS(NAMESPACE, "ExperimenterGroupRef");
 		}
 
 		if (id != null)
 		{
 			// Attribute property ID
-			GroupRef_element.setAttribute("ID", id.toString());
+			ExperimenterGroupRef_element.setAttribute("ID", id.toString());
 		}
-		return super.asXMLElement(document, GroupRef_element);
+		return super.asXMLElement(document, ExperimenterGroupRef_element);
 	}
 }

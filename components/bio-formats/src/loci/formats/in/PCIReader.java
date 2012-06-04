@@ -43,6 +43,7 @@ import loci.formats.services.POIService;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
 import ome.xml.model.primitives.PositiveFloat;
+import ome.xml.model.primitives.Timestamp;
 
 /**
  * PCIReader is the file format reader for SimplePCI (Compix) .cxd files.
@@ -346,7 +347,7 @@ public class PCIReader extends FormatReader {
     MetadataTools.populatePixels(store, this, true);
 
     if (creationDate != null) {
-      store.setImageAcquiredDate(creationDate, 0);
+      store.setImageAcquisitionDate(new Timestamp(creationDate), 0);
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {

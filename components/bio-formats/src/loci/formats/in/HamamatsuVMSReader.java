@@ -262,7 +262,7 @@ public class HamamatsuVMSReader extends FormatReader {
         LOGGER.warn("Expected positive value for NominalMagnification; got {}",
           magnification);
       }
-      store.setImageObjectiveSettingsID(objectiveID, 0);
+      store.setObjectiveSettingsID(objectiveID, 0);
     }
   }
 

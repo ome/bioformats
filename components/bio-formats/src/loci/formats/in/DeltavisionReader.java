@@ -42,6 +42,7 @@ import ome.xml.model.enums.Correction;
 import ome.xml.model.enums.Immersion;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 /**
  * DeltavisionReader is the file format reader for Deltavision files.
@@ -971,7 +972,7 @@ public class DeltavisionReader extends FormatReader {
           String objectiveID = "Objective:" + value;
           store.setObjectiveID(objectiveID, 0, 0);
           for (int series=0; series<getSeriesCount(); series++) {
-            store.setImageObjectiveSettingsID(objectiveID, series);
+            store.setObjectiveSettingsID(objectiveID, series);
           }
           store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
           store.setObjectiveImmersion(getImmersion("Other"), 0, 0);
@@ -1144,7 +1145,7 @@ public class DeltavisionReader extends FormatReader {
         String date = DateTools.formatDate(line, DATE_FORMAT);
         if (date != null) {
           for (int series=0; series<getSeriesCount(); series++) {
-            store.setImageAcquiredDate(date, series);
+            store.setImageAcquisitionDate(new Timestamp(date), series);
           }
         }
         else {
@@ -2182,7 +2183,7 @@ public class DeltavisionReader extends FormatReader {
     String objectiveID = "Objective:" + lensID;
     store.setObjectiveID(objectiveID, 0, 0);
     for (int series=0; series<getSeriesCount(); series++) {
-      store.setImageObjectiveSettingsID(objectiveID, series);
+      store.setObjectiveSettingsID(objectiveID, series);
     }
 
     store.setObjectiveLensNA(lensNA, 0, 0);

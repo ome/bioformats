@@ -36,6 +36,7 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 import org.xml.sax.Attributes;
 
@@ -265,7 +266,7 @@ public class IvisionReader extends FormatReader {
 
     if (creationDate != null) {
       String date = DateTools.formatDate(creationDate, DATE_FORMAT);
-      store.setImageAcquiredDate(date, 0);
+      store.setImageAcquisitionDate(new Timestamp(date), 0);
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
@@ -287,7 +288,7 @@ public class IvisionReader extends FormatReader {
 
       String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
       store.setObjectiveID(objectiveID, 0, 0);
-      store.setImageObjectiveSettingsID(objectiveID, 0);
+      store.setObjectiveSettingsID(objectiveID, 0);
 
       store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
       store.setObjectiveImmersion(getImmersion("Other"), 0, 0);
@@ -302,7 +303,7 @@ public class IvisionReader extends FormatReader {
           magnification);
       }
       if (refractiveIndex != null) {
-        store.setImageObjectiveSettingsRefractiveIndex(refractiveIndex, 0);
+        store.setObjectiveSettingsRefractiveIndex(refractiveIndex, 0);
       }
 
       String detectorID = MetadataTools.createLSID("Detector", 0, 0);

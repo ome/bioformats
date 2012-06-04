@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-01-12 20:06:01-0500
+ * Created by callan via xsd-fu on 2012-05-18 10:08:16+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -58,7 +58,7 @@ public class ObjectiveSettings extends Settings
 
 	// -- Constants --
 
-	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2011-06";
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2012-06";
 
 	/** Logger for this class. */
 	private static final Logger LOGGER =
@@ -78,6 +78,9 @@ public class ObjectiveSettings extends Settings
 
 	// Property
 	private Medium medium;
+
+	// Back reference ObjectiveRef
+	private Objective objective;
 
 	// -- Constructors --
 
@@ -158,6 +161,7 @@ public class ObjectiveSettings extends Settings
 			setMedium(Medium.fromString(
 					element.getAttribute("Medium")));
 		}
+		// *** IGNORING *** Skipped back reference ObjectiveRef
 	}
 
 	// -- ObjectiveSettings API methods --
@@ -218,6 +222,17 @@ public class ObjectiveSettings extends Settings
 		this.medium = medium;
 	}
 
+	// Property
+	public Objective getObjective()
+	{
+		return objective;
+	}
+
+	public void setObjective(Objective objective)
+	{
+		this.objective = objective;
+	}
+
 	public Element asXMLElement(Document document)
 	{
 		return asXMLElement(document, null);
@@ -252,6 +267,10 @@ public class ObjectiveSettings extends Settings
 		{
 			// Attribute property Medium
 			ObjectiveSettings_element.setAttribute("Medium", medium.toString());
+		}
+		if (objective != null)
+		{
+			// *** IGNORING *** Skipped back reference ObjectiveRef
 		}
 		return super.asXMLElement(document, ObjectiveSettings_element);
 	}

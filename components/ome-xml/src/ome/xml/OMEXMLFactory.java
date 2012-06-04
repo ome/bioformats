@@ -62,7 +62,7 @@ public final class OMEXMLFactory {
   // -- Constants --
 
   /** Latest OME-XML version namespace. */
-  public static final String LATEST_VERSION = "2011-06";
+  public static final String LATEST_VERSION = "2012-06";
 
   /** Basic skeleton for an OME-XML root node with modern schema. */
   protected static final String SKELETON =

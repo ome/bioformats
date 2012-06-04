@@ -33,6 +33,8 @@ import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.zip.GZIPInputStream;
 
+import ome.xml.model.primitives.Timestamp;
+
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.IniList;
@@ -435,7 +437,7 @@ public class LiFlimReader extends FormatReader {
       Double deltaT;
       if (t == 0) {
         String date = DateTools.convertDate(stamp, DateTools.COBOL);
-        store.setImageAcquiredDate(date, 0);
+        store.setImageAcquisitionDate(new Timestamp(date), 0);
         firstStamp = stamp;
         deltaT = new Double(0);
       }
@@ -462,9 +464,8 @@ public class LiFlimReader extends FormatReader {
     for (int roi=0; roi<roiIndices.length; roi++) {
       ROI r = rois.get(roiIndices[roi]);
       String polylineID = MetadataTools.createLSID("Shape", roi, 0);
-      store.setPolylineID(polylineID, roi, 0);
-      store.setPolylinePoints(r.pointsToString(), roi, 0);
-      store.setPolylineClosed(Boolean.TRUE, roi, 0);
+      store.setPolygonID(polylineID, roi, 0);
+      store.setPolygonPoints(r.pointsToString(), roi, 0);
       String roiID = MetadataTools.createLSID("ROI", roi);
       store.setROIID(roiID, roi);
       for (int s=0; s<getSeriesCount(); s++) {

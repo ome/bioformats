@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-01-12 20:06:01-0500
+ * Created by callan via xsd-fu on 2012-05-18 10:08:16+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -58,7 +58,7 @@ public class Experiment extends AbstractOMEModelObject
 
 	// -- Constants --
 
-	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2011-06";
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2012-06";
 
 	/** Logger for this class. */
 	private static final Logger LOGGER =
@@ -80,10 +80,10 @@ public class Experiment extends AbstractOMEModelObject
 	private Experimenter experimenter;
 
 	// Property which occurs more than once
-	private List<MicrobeamManipulation> microbeamManipulationList = new ArrayList<MicrobeamManipulation>();
+	private List<MicrobeamManipulation> microbeamManipulations = new ArrayList<MicrobeamManipulation>();
 
 	// Back reference Image_BackReference
-	private List<Image> image_BackReferenceList = new ArrayList<Image>();
+	private List<Image> images = new ArrayList<Image>();
 
 	// -- Constructors --
 
@@ -265,66 +265,68 @@ public class Experiment extends AbstractOMEModelObject
 	// Property which occurs more than once
 	public int sizeOfMicrobeamManipulationList()
 	{
-		return microbeamManipulationList.size();
+		return microbeamManipulations.size();
 	}
 
 	public List<MicrobeamManipulation> copyMicrobeamManipulationList()
 	{
-		return new ArrayList<MicrobeamManipulation>(microbeamManipulationList);
+		return new ArrayList<MicrobeamManipulation>(microbeamManipulations);
 	}
 
 	public MicrobeamManipulation getMicrobeamManipulation(int index)
 	{
-		return microbeamManipulationList.get(index);
+		return microbeamManipulations.get(index);
 	}
 
 	public MicrobeamManipulation setMicrobeamManipulation(int index, MicrobeamManipulation microbeamManipulation)
 	{
-		return microbeamManipulationList.set(index, microbeamManipulation);
+        microbeamManipulation.setExperiment(this);
+		return microbeamManipulations.set(index, microbeamManipulation);
 	}
 
 	public void addMicrobeamManipulation(MicrobeamManipulation microbeamManipulation)
 	{
-		microbeamManipulationList.add(microbeamManipulation);
+        microbeamManipulation.setExperiment(this);
+		microbeamManipulations.add(microbeamManipulation);
 	}
 
 	public void removeMicrobeamManipulation(MicrobeamManipulation microbeamManipulation)
 	{
-		microbeamManipulationList.remove(microbeamManipulation);
+		microbeamManipulations.remove(microbeamManipulation);
 	}
 
 	// Reference which occurs more than once
 	public int sizeOfLinkedImageList()
 	{
-		return image_BackReferenceList.size();
+		return images.size();
 	}
 
 	public List<Image> copyLinkedImageList()
 	{
-		return new ArrayList<Image>(image_BackReferenceList);
+		return new ArrayList<Image>(images);
 	}
 
 	public Image getLinkedImage(int index)
 	{
-		return image_BackReferenceList.get(index);
+		return images.get(index);
 	}
 
 	public Image setLinkedImage(int index, Image o)
 	{
-		return image_BackReferenceList.set(index, o);
+		return images.set(index, o);
 	}
 
 	public boolean linkImage(Image o)
 	{
-		if (!image_BackReferenceList.contains(o)) {
-			return image_BackReferenceList.add(o);
+		if (!images.contains(o)) {
+			return images.add(o);
 		}
 		return false;
 	}
 
 	public boolean unlinkImage(Image o)
 	{
-		return image_BackReferenceList.remove(o);
+		return images.remove(o);
 	}
 
 	public Element asXMLElement(Document document)
@@ -368,16 +370,16 @@ public class Experiment extends AbstractOMEModelObject
 			o.setID(experimenter.getID());
 			Experiment_element.appendChild(o.asXMLElement(document));
 		}
-		if (microbeamManipulationList != null)
+		if (microbeamManipulations != null)
 		{
 			// Element property MicrobeamManipulation which is complex (has
 			// sub-elements) and occurs more than once
-			for (MicrobeamManipulation microbeamManipulationList_value : microbeamManipulationList)
+			for (MicrobeamManipulation microbeamManipulations_value : microbeamManipulations)
 			{
-				Experiment_element.appendChild(microbeamManipulationList_value.asXMLElement(document));
+				Experiment_element.appendChild(microbeamManipulations_value.asXMLElement(document));
 			}
 		}
-		if (image_BackReferenceList != null)
+		if (images != null)
 		{
 			// *** IGNORING *** Skipped back reference Image_BackReference
 		}

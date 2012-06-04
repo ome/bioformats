@@ -34,6 +34,7 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import ome.xml.model.primitives.PositiveFloat;
+import ome.xml.model.primitives.Timestamp;
 
 /**
  * KodakReader is the file format reader for Kodak Molecular Imaging .bip files.
@@ -183,7 +184,8 @@ public class KodakReader extends FormatReader {
         store.setMicroscopeModel(value, 0);
       }
       else if (key.equals("Capture Time/Date")) {
-        store.setImageAcquiredDate(DateTools.formatDate(value, DATE_FORMAT), 0);
+        store.setImageAcquisitionDate(new Timestamp(
+          DateTools.formatDate(value, DATE_FORMAT)), 0);
       }
       else if (key.equals("Exposure Time")) {
         Double exposure = new Double(value.substring(0, value.indexOf(" ")));
