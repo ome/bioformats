@@ -117,6 +117,7 @@ public class DeltavisionReader extends FormatReader {
     super("Deltavision",
       new String[] {"dv", "r3d", "r3d_d3d", "dv.log", "r3d.log"});
     suffixNecessary = false;
+    suffixSufficient = false;
     domains = new String[] {FormatTools.LM_DOMAIN};
     hasCompanionFiles = true;
     datasetDescription = "One .dv, .r3d, or .d3d file and up to two " +
@@ -128,11 +129,6 @@ public class DeltavisionReader extends FormatReader {
   /* @see loci.formats.IFormatReader#isSingleFile(String) */
   public boolean isSingleFile(String id) throws FormatException, IOException {
     return false;
-  }
-
-  /* @see loci.formats.IFormatReader#fileGroupOption(String) */
-  public int fileGroupOption(String id) throws FormatException, IOException {
-    return FormatTools.MUST_GROUP;
   }
 
   /* @see loci.formats.IFormatReader#isThisType(String, boolean) */

@@ -122,6 +122,9 @@ public class HuffmanCodec extends BaseCodec {
     }
 
     int bitCount = decoder.decode(bb);
+    if (bitCount == 16) {
+      return 0x8000;
+    }
     if (bitCount < 0) bitCount = 0;
     int v = bb.getBits(bitCount) & ((int) Math.pow(2, bitCount) - 1);
     if ((v & (1 << (bitCount - 1))) == 0) {

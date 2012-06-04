@@ -1221,16 +1221,21 @@ public class ZeissLSMReader extends FormatReader {
         store.setChannelColor(channelColor[i], series, i);
       }
 
+      int stampIndex = 0;
+      for (int i=0; i<series; i++) {
+        stampIndex += core[i].sizeT;
+      }
+
       double firstStamp = 0;
       if (timestamps.size() > 0) {
-        firstStamp = timestamps.get(0).doubleValue();
+        firstStamp = timestamps.get(stampIndex).doubleValue();
       }
 
       for (int i=0; i<getImageCount(); i++) {
         int[] zct = FormatTools.getZCTCoords(this, i);
 
-        if (zct[2] < timestamps.size()) {
-          double thisStamp = timestamps.get(zct[2]).doubleValue();
+        if (getSizeT() > 1 && zct[2] < timestamps.size() - stampIndex) {
+          double thisStamp = timestamps.get(stampIndex + zct[2]).doubleValue();
           store.setPlaneDeltaT(thisStamp - firstStamp, series, i);
         }
         if (xCoordinates.size() > series) {
@@ -1852,6 +1857,7 @@ public class ZeissLSMReader extends FormatReader {
       return null;
     }
     Vector<Vector<String[]>> tables = mdbService.parseDatabase();
+    mdbService.close();
     Vector<String> referencedLSMs = new Vector<String>();
 
     int referenceCount = 0;

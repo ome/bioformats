@@ -219,7 +219,7 @@ public class SDTReader extends FormatReader {
     core[0].sizeT = 1;
     core[0].dimensionOrder = "XYZTC";
     core[0].pixelType = FormatTools.UINT16;
-    core[0].rgb = !intensity;
+    core[0].rgb = !intensity && getSizeC() > 1;
     core[0].littleEndian = true;
     core[0].imageCount = channels;
     core[0].indexed = false;

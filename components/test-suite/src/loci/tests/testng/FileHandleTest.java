@@ -37,6 +37,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
+import java.util.ArrayList;
 
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
@@ -76,30 +77,51 @@ public class FileHandleTest {
 
   @Test
   public void testHandleCount() throws FormatException, IOException {
-    int initialHandleCount = getHandleCount();
+    ArrayList<String> initialHandles = getHandles();
     reader = new ImageReader();
     reader.setId(id);
 
-    // subtract 1 for libnio.so, which only shows up after setId is called
-    int intermediateHandleCount = getHandleCount() - 1;
+    ArrayList<String> intermediateHandles = getHandles();
     reader.close();
-    int finalHandleCount = getHandleCount() - 1;
+    ArrayList<String> finalHandles = getHandles();
 
-    assertEquals(finalHandleCount, initialHandleCount);
-    assertTrue(intermediateHandleCount >= initialHandleCount);
+    int intermediateHandleCount = intermediateHandles.size();
+
+    for (int i=0; i<initialHandles.size(); i++) {
+      String s = initialHandles.get(i);
+      initialHandles.remove(s);
+      finalHandles.remove(s);
+      intermediateHandles.remove(s);
+      i--;
+    }
+
+    for (int i=0; i<finalHandles.size(); i++) {
+      String s = finalHandles.get(i);
+      if (s.endsWith("libnio.so") || s.endsWith("resources.jar")) {
+        finalHandles.remove(s);
+        i--;
+      }
+      else {
+        LOGGER.warn(s);
+      }
+    }
+
+    assertEquals(finalHandles.size(), initialHandles.size());
+    assertTrue(intermediateHandles.size() >= initialHandles.size());
     assertTrue(intermediateHandleCount < 1024);
   }
 
-  private int getHandleCount() throws IOException {
+  private ArrayList<String> getHandles() throws IOException {
+    ArrayList<String> names = new ArrayList<String>();
     String pid = ManagementFactory.getRuntimeMXBean().getName();
     pid = pid.substring(0, pid.indexOf("@"));
 
     Runtime rt = Runtime.getRuntime();
-    Process p = rt.exec("lsof -Ft -p " + pid);
+    Process p = rt.exec("lsof -Ftn -p " + pid);
     BufferedReader s = new BufferedReader(
       new InputStreamReader(p.getInputStream(), Constants.ENCODING));
-    int handleCount = 0;
     String line = s.readLine();
+    boolean valid = false;
     while (true) {
       try {
         p.exitValue();
@@ -111,7 +133,11 @@ public class FileHandleTest {
         LOGGER.warn("", e);
       }
       if (line != null && line.endsWith("REG")) {
-        handleCount++;
+        valid = true;
+      }
+      else if (line != null && line.startsWith("n") && valid) {
+        names.add(line.substring(1, line.length()));
+        valid = false;
       }
       line = s.readLine();
     }
@@ -119,7 +145,7 @@ public class FileHandleTest {
     p.getInputStream().close();
     p.getOutputStream().close();
     p.getErrorStream().close();
-    return handleCount;
+    return names;
   }
 
 }

@@ -1287,7 +1287,8 @@ public class FormatReaderTest {
         IFormatReader r =
           /*config.noStitching() ? new ImageReader() :*/ new FileStitcher();
 
-        for (int i=0; i<base.length && success; i++) {
+        int maxFiles = (int) Math.min(base.length, 100);
+        for (int i=0; i<maxFiles && success; i++) {
           // .xlog files in InCell 1000/2000 files may belong to more
           // than one dataset
           if (file.toLowerCase().endsWith(".xdce") &&
@@ -1318,6 +1319,11 @@ public class FormatReaderTest {
           if (reader.getFormat().equals("Olympus APL") &&
             base[i].toLowerCase().endsWith("tif"))
           {
+            continue;
+          }
+
+          // DICOM companion files may not be detected
+          if (reader.getFormat().equals("DICOM") && !base[i].equals(file)) {
             continue;
           }
 
@@ -1703,6 +1709,13 @@ public class FormatReaderTest {
 
             if (result && r instanceof NikonReader &&
               readers[j] instanceof DNGReader)
+            {
+              continue;
+            }
+
+            // DICOM reader is not expected to pick up companion files
+            if (!result && r instanceof DicomReader &&
+              readers[j] instanceof DicomReader)
             {
               continue;
             }

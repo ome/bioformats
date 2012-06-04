@@ -56,21 +56,21 @@ stitchFiles = 0;
 
 % load the Bio-Formats library into the MATLAB environment
 status = bfCheckJavaPath(autoloadBioFormats);
-assert(status,['Missing Bio-Formats library. Either add loci_tools.jar '...
+assert(status, ['Missing Bio-Formats library. Either add loci_tools.jar '...
     'to the static Java path or add it to the Matlab path.']);
 
 % Prompt for a file if not input
-if nargin==0 || exist(id,'file') == 0
-  [file,path] = uigetfile(bfGetFileExtensions, 'Choose a file to open');
+if nargin == 0 || exist(id, 'file') == 0
+  [file, path] = uigetfile(bfGetFileExtensions, 'Choose a file to open');
   id = [path file];
-  if isequal(path,0) || isequal(file,0), return; end
+  if isequal(path, 0) || isequal(file, 0), return; end
 end
 
 % initialize logging
 loci.common.DebugTools.enableLogging('INFO');
 
 % Get the channel filler
-r=bfGetReader(id,stitchFiles);
+r = bfGetReader(id, stitchFiles);
 
 numSeries = r.getSeriesCount();
 result = cell(numSeries, 2);
@@ -88,7 +88,7 @@ for s = 1:numSeries
             fprintf('\n    ');
         end
         fprintf('.');
-        arr=bfGetPlane(r,i);
+        arr = bfGetPlane(r, i);
 
         % retrieve color map data
         if bpp == 1

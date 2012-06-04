@@ -332,21 +332,23 @@ public class ScanrReader extends FormatReader {
     Vector<String> uniqueRows = new Vector<String>();
     Vector<String> uniqueColumns = new Vector<String>();
 
-    for (String well : wellLabels.keySet()) {
-      if (!Character.isLetter(well.charAt(0))) continue;
-      String row = well.substring(0, 1).trim();
-      String column = well.substring(1).trim();
-      if (!uniqueRows.contains(row) && row.length() > 0) uniqueRows.add(row);
-      if (!uniqueColumns.contains(column) && column.length() > 0) {
-        uniqueColumns.add(column);
+    if (wellRows == 0 || wellColumns == 0) {
+      for (String well : wellLabels.keySet()) {
+        if (!Character.isLetter(well.charAt(0))) continue;
+        String row = well.substring(0, 1).trim();
+        String column = well.substring(1).trim();
+        if (!uniqueRows.contains(row) && row.length() > 0) uniqueRows.add(row);
+        if (!uniqueColumns.contains(column) && column.length() > 0) {
+          uniqueColumns.add(column);
+        }
       }
-    }
 
-    wellRows = uniqueRows.size();
-    wellColumns = uniqueColumns.size();
+      wellRows = uniqueRows.size();
+      wellColumns = uniqueColumns.size();
 
-    if (wellRows * wellColumns != wellCount) {
-      adjustWellDimensions();
+      if (wellRows * wellColumns != wellCount) {
+        adjustWellDimensions();
+      }
     }
 
     int nChannels = getSizeC() == 0 ? channelNames.size() : getSizeC();
@@ -624,6 +626,7 @@ public class ScanrReader extends FormatReader {
 
     private boolean validChannel = false;
     private boolean foundPositions = false;
+    private boolean foundPlateLayout = false;
     private int nextXPos = 0;
     private int nextYPos = 0;
 
@@ -638,6 +641,9 @@ public class ScanrReader extends FormatReader {
         if (v.equals("subposition list")) {
           foundPositions = true;
         }
+        else if (v.equals("format typedef")) {
+          foundPlateLayout = true;
+        }
       }
       else if (qName.equals("Dimsize") && foundPositions &&
         fieldPositionX == null)
@@ -645,6 +651,13 @@ public class ScanrReader extends FormatReader {
         int nPositions = Integer.parseInt(v);
         fieldPositionX = new double[nPositions];
         fieldPositionY = new double[nPositions];
+      }
+      else if (key != null && key.equals("Rows") && foundPlateLayout) {
+        wellRows = Integer.parseInt(v);
+      }
+      else if (key != null && key.equals("Columns") && foundPlateLayout) {
+        wellColumns = Integer.parseInt(v);
+        foundPlateLayout = false;
       }
       else if (qName.equals("Val")) {
         value = v.trim();

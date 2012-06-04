@@ -518,23 +518,13 @@ public class ZeissZVIReader extends FormatReader {
 
     int totalTiles = offsets.length / getImageCount();
 
-    int tileRows = realHeight / getSizeY();
-    int tileColumns = realWidth / getSizeX();
-
-    if (getSizeY() * tileRows != realHeight) tileRows++;
-    if (getSizeX() * tileColumns != realWidth) tileColumns++;
-
-    if (totalTiles <= 1) {
-      tileRows = 1;
-      tileColumns = 1;
+    if (totalTiles < 1) {
+      totalTiles = 1;
     }
 
-    if (tileRows == 0) tileRows = 1;
-    if (tileColumns == 0) tileColumns = 1;
-
-    if (tileColumns > 1 || tileRows > 1) {
+    if (totalTiles > 1) {
       CoreMetadata originalCore = core[0];
-      core = new CoreMetadata[tileRows * tileColumns];
+      core = new CoreMetadata[totalTiles];
 
       core[0] = originalCore;
     }

@@ -106,7 +106,7 @@ public class BMPReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    if (compression != RAW) {
+    if (compression != RAW && in.length() < FormatTools.getPlaneSize(this)) {
       throw new UnsupportedCompressionException(compression + " not supported");
     }
 

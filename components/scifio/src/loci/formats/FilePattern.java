@@ -630,11 +630,11 @@ public class FilePattern {
         files = Location.getIdMap().keySet().toArray(new String[0]);
         if (files.length == 0) {
           dir = ".";
-          files = new Location(dir).list();
+          files = getAllFiles(dir);
         }
       }
       else {
-        files = new Location(dir).list();
+        files = getAllFiles(dir);
       }
 
       Arrays.sort(files);
@@ -674,6 +674,28 @@ public class FilePattern {
         }
       }
     }
+  }
+
+  private String[] getAllFiles(String dir) {
+    ArrayList<String> files = new ArrayList<String>();
+
+    Location root = new Location(dir);
+    String[] children = root.list();
+
+    for (String child : children) {
+      Location file = new Location(root, child);
+      if (file.isDirectory()) {
+        String[] grandchildren = getAllFiles(file.getAbsolutePath());
+        for (String g : grandchildren) {
+          files.add(g);
+        }
+      }
+      else {
+        files.add(file.getAbsolutePath());
+      }
+    }
+
+    return files.toArray(new String[files.size()]);
   }
 
   // -- Main method --

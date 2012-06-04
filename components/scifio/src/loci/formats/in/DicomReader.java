@@ -136,6 +136,8 @@ public class DicomReader extends FormatReader {
 
   private DicomReader helper;
 
+  private Vector<String> companionFiles = new Vector<String>();
+
   // -- Constructor --
 
   /** Constructs a new DICOM reader. */
@@ -147,6 +149,7 @@ public class DicomReader extends FormatReader {
     suffixSufficient = false;
     domains = new String[] {FormatTools.MEDICAL_DOMAIN};
     datasetDescription = "One or more .dcm or .dicom files";
+    hasCompanionFiles = true;
   }
 
   // -- IFormatReader API methods --
@@ -205,6 +208,9 @@ public class DicomReader extends FormatReader {
     Integer[] keys = fileList.keySet().toArray(new Integer[0]);
     Arrays.sort(keys);
     Vector<String> files = fileList.get(keys[getSeries()]);
+    for (String f : companionFiles) {
+      files.add(f);
+    }
     return files == null ? null : files.toArray(new String[files.size()]);
   }
 
@@ -394,6 +400,7 @@ public class DicomReader extends FormatReader {
       originalDate = originalTime = originalInstance = null;
       originalSeries = 0;
       helper = null;
+      companionFiles.clear();
     }
   }
 
@@ -404,6 +411,9 @@ public class DicomReader extends FormatReader {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
     in.order(true);
+
+    // look for companion files
+    attachCompanionFiles();
 
     helper = new DicomReader();
     helper.setGroupFiles(false);
@@ -1215,6 +1225,29 @@ public class DicomReader extends FormatReader {
       s = "0" + s;
     }
     return s.substring(0, 4) + "," + s.substring(4);
+  }
+
+  /**
+   * DICOM datasets produced by:
+   * http://www.ct-imaging.de/index.php/en/ct-systeme-e/mikro-ct-e.html
+   * contain a bunch of extra metadata and log files.
+   *
+   * We do not parse these extra files, but do locate and attach them to the
+   * DICOM file(s).
+   */
+  private void attachCompanionFiles() throws IOException {
+    Location parent = new Location(currentId).getAbsoluteFile().getParentFile();
+    Location grandparent = parent.getParentFile();
+
+    if (new Location(grandparent, parent.getName() + ".mif").exists()) {
+      String[] list = grandparent.list(true);
+      for (String f : list) {
+        Location file = new Location(grandparent, f);
+        if (!file.isDirectory()) {
+          companionFiles.add(file.getAbsolutePath());
+        }
+      }
+    }
   }
 
   /**

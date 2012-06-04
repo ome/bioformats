@@ -167,6 +167,7 @@ public class VolocityReader extends FormatReader {
     long offset =
       (long) blockSize[getSeries()] + planeIndex * planeSize + padding;
     if (offset >= pix.length()) {
+      pix.close();
       return buf;
     }
     pix.seek(offset);
@@ -267,6 +268,7 @@ public class VolocityReader extends FormatReader {
       reader.initialize(id);
       sampleTable = reader.getTableData(1);
       stringTable = reader.getTableData(2);
+      reader.close();
     }
     catch (DependencyException e) {
       throw new MissingLibraryException("Could not find Metakit library", e);

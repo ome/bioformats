@@ -606,6 +606,23 @@ public class FileStitcher extends ReaderWrapper {
       for (String file : f) {
         if (!files.contains(file)) files.add(file);
       }
+
+      DimensionSwapper[] readers = s.getReaders();
+      for (int i=0; i<readers.length; i++) {
+        try {
+          readers[i].setId(f[i]);
+          String[] used = readers[i].getUsedFiles();
+          for (String file : used) {
+            if (!files.contains(file)) files.add(file);
+          }
+        }
+        catch (FormatException e) {
+          LOGGER.debug("", e);
+        }
+        catch (IOException e) {
+          LOGGER.debug("", e);
+        }
+      }
     }
     return files.toArray(new String[files.size()]);
   }
@@ -786,7 +803,7 @@ public class FileStitcher extends ReaderWrapper {
     fp = new FilePattern(patterns[0]);
 
     reader.close();
-    reader.setGroupFiles(false);
+    reader.setGroupFiles(group);
 
     if (!fp.isValid()) {
       throw new FormatException("Invalid file pattern: " + fp.getPattern());
@@ -799,7 +816,9 @@ public class FileStitcher extends ReaderWrapper {
         "multiple files and each file contains multiple series." + msg);
     }
 
-    if (reader.getUsedFiles().length > 1) {
+    int nPixelsFiles =
+      reader.getUsedFiles().length - reader.getUsedFiles(true).length;
+    if (nPixelsFiles > 1) {
       noStitch = true;
       return;
     }

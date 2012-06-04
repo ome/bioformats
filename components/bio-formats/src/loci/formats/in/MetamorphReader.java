@@ -114,6 +114,8 @@ public class MetamorphReader extends BaseTiffReader {
   private double tempZ;
   private boolean validZ;
 
+  private Double gain;
+
   private int mmPlanes; //number of metamorph planes
 
   private MetamorphReader[][] stkReaders;
@@ -160,6 +162,12 @@ public class MetamorphReader extends BaseTiffReader {
           new Location(parent, baseName + ".ND").exists()))
         {
           return true;
+        }
+        if (checkSuffix(name, suffixes) &&
+          (new Location(parent, baseName + ".htd").exists() ||
+          new Location(parent, baseName + ".HTD").exists()))
+        {
+          return false;
         }
       }
     }
@@ -280,6 +288,7 @@ public class MetamorphReader extends BaseTiffReader {
       tempZ = 0d;
       validZ = false;
       stkReaders = null;
+      gain = null;
     }
   }
 
@@ -477,7 +486,7 @@ public class MetamorphReader extends BaseTiffReader {
             if ((seriesCount != 1 && !validZ) ||
               (nstages == 0 && ((!validZ && cc > 1) || seriesCount > 1)))
             {
-              if (j > 0) {
+              if (j > 0 && seriesNdx < seriesCount - 1) {
                 seriesNdx++;
               }
             }
@@ -630,7 +639,7 @@ public class MetamorphReader extends BaseTiffReader {
         store.setImageAcquisitionDate(new Timestamp(date), 0);
       }
 
-      store.setImageName(makeImageName(i), i);
+      store.setImageName(makeImageName(i).trim(), i);
 
       if (getMetadataOptions().getMetadataLevel() == MetadataLevel.MINIMUM) {
         continue;
@@ -682,7 +691,7 @@ public class MetamorphReader extends BaseTiffReader {
         }
 
         if (waveNames != null && waveIndex < waveNames.size()) {
-          store.setChannelName(waveNames.get(waveIndex), i, c);
+          store.setChannelName(waveNames.get(waveIndex).trim(), i, c);
         }
         if (handler.getBinning() != null) binning = handler.getBinning();
         if (binning != null) {
@@ -690,6 +699,9 @@ public class MetamorphReader extends BaseTiffReader {
         }
         if (handler.getReadOutRate() != 0) {
           store.setDetectorSettingsReadOutRate(handler.getReadOutRate(), i, c);
+        }
+        if (gain != null) {
+          store.setDetectorSettingsGain(gain, i, c);
         }
         store.setDetectorSettingsID(detectorID, i, c);
 
@@ -745,7 +757,7 @@ public class MetamorphReader extends BaseTiffReader {
       for (int p=0; p<getImageCount(); p++) {
         int[] coords = getZCTCoords(p);
         Double deltaT = new Double(0);
-        Double exposureTime = new Double(0);
+        Double expTime = exposureTime;
         Double xmlZPosition = null;
 
         int fileIndex = getIndex(0, 0, coords[2]) / getSizeZ();
@@ -793,11 +805,11 @@ public class MetamorphReader extends BaseTiffReader {
         }
 
         if (index < exposureTimes.size()) {
-          exposureTime = exposureTimes.get(index);
+          expTime = exposureTimes.get(index);
         }
 
         store.setPlaneDeltaT(deltaT, i, p);
-        store.setPlaneExposureTime(exposureTime, i, p);
+        store.setPlaneExposureTime(expTime, i, p);
 
         if (stageX != null && p < stageX.length) {
           store.setPlanePositionX(stageX[p], i, p);
@@ -1027,6 +1039,19 @@ public class MetamorphReader extends BaseTiffReader {
               core[0].bitsPerPixel = Integer.parseInt(value);
             }
             catch (NumberFormatException e) { }
+          }
+          else if (key.equals("Gain")) {
+            int space = value.indexOf(" ");
+            if (space != -1) {
+              int nextSpace = value.indexOf(" ", space + 1);
+              if (nextSpace < 0) {
+                nextSpace = value.length();
+              }
+              try {
+                gain = new Double(value.substring(space, nextSpace));
+              }
+              catch (NumberFormatException e) { }
+            }
           }
         }
       }

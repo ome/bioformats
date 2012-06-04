@@ -23,7 +23,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 package loci.formats.services;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -91,7 +93,14 @@ public class NetCDFServiceImpl extends AbstractService
     this.currentFile = file;
 
     String currentId = Location.getMappedId(currentFile);
+    PrintStream outStream = System.out;
+    PrintStream throwaway = new PrintStream(new ByteArrayOutputStream()) {
+      public void print(String s) { }
+    };
+    System.setOut(throwaway);
+    throwaway.close();
     netCDFFile = NetcdfFile.open(currentId);
+    System.setOut(outStream);
     root = netCDFFile.getRootGroup();
 
     attributeList = new Vector<String>();

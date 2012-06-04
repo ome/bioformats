@@ -160,6 +160,10 @@ public class KodakReader extends FormatReader {
     findString("Image Capture Source");
     String metadata = in.readCString();
 
+    if (metadata == null) {
+      return;
+    }
+
     String[] lines = metadata.split("\n");
 
     for (String line : lines) {
