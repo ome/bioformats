@@ -51,14 +51,21 @@ public final class About {
 
   /** URL for OME-XML Java library web page. */
   public static final String URL_OME_XML_LIBRARY =
-    "http://ome-xml.org/wiki/OmeXmlJava";
+    "http://www.openmicroscopy.org/" +
+    "site/support/file-formats/ome-xml-java-library";
 
   // -- Static utility methods --
 
   public static void about() {
     System.out.println("OME-XML Java library, " +
       "revision @vcs.revision@, built @date@");
-    System.out.println("Copyright 2005-@year@ Open Microscopy Environment");
+    System.out.println("Copyright 2006 - @year@ Open Microscopy Environment:");
+    System.out.println("  - Massachusetts Institute of Technology");
+    System.out.println("  - National Institutes of Health");
+    System.out.println("  - University of Dundee");
+    System.out.println("  - Board of Regents " +
+      "of the University of Wisconsin-Madison");
+    System.out.println("  - Glencoe Software, Inc.");
     System.out.println(URL_OME_XML_LIBRARY);
     System.out.println("Authors: Curtis Rueden, Chris Allan");
   }

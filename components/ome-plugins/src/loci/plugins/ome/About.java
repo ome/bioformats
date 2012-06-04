@@ -46,11 +46,12 @@ public final class About implements PlugIn {
 
   /** URL of LOCI Software web page. */
   public static final String URL_LOCI_SOFTWARE =
-    "http://www.loci.wisc.edu/software";
+    "http://loci.wisc.edu/software";
 
   /** URL of OME Plugins web page. */
   public static final String URL_OME_PLUGINS =
-    "http://ome-xml.org/wiki/OmePlugins";
+    "http://www.openmicroscopy.org/" +
+    "site/support/legacy/ome-server/imagej-plugin";
 
   // -- Runnable API methods --
 
@@ -63,8 +64,13 @@ public final class About implements PlugIn {
   public static void about() {
     String msg = "<html>" +
       "OME Plugins for ImageJ, revision @vcs.revision@, built @date@" +
-      "<br>Copyright 2005-@year@ UW-Madison LOCI" +
-      "<br><i>" + URL_LOCI_SOFTWARE + "</i>" +
+      "<br>Copyright (C) 2005 - @year@ Open Microscopy Environment:" +
+      "<ul>" +
+      "<li>Board of Regents of the University of Wisconsin-Madison</li>" +
+      "<li>Glencoe Software, Inc.</li>" +
+      "<li>University of Dundee</li>" +
+      "</ul>" +
+      "<i>" + URL_LOCI_SOFTWARE + "</i>" +
       "<br>" +
       "<br><b>Download from OME</b> and <b>Upload to OME</b>" +
       "<br>Authors: Melissa Linkert, Philip Huettl" +
