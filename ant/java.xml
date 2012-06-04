@@ -16,7 +16,7 @@ Type "ant -p" for a list of targets.
   <if>
     <isset property="findbugs.home"/>
     <then>
-    <taskdef name="findbugs" classpath="${findbugs.home}/findbugs-ant.jar${path.separator}${findbugs.home}/lib/findbugs-ant.jar" classname="edu.umd.cs.findbugs.anttask.FindBugsTask"/>
+      <taskdef name="findbugs" classpath="${findbugs.home}/findbugs-ant.jar${path.separator}${findbugs.home}/lib/findbugs-ant.jar" classname="edu.umd.cs.findbugs.anttask.FindBugsTask"/>
     </then>
   </if>
   <condition property="doTests">
