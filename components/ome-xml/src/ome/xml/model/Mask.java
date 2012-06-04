@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-01-12 20:06:01-0500
+ * Created by callan via xsd-fu on 2012-05-18 10:08:16+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -58,7 +58,7 @@ public class Mask extends Shape
 
 	// -- Constants --
 
-	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/ROI/2011-06";
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/ROI/2012-06";
 
 	/** Logger for this class. */
 	private static final Logger LOGGER =
@@ -80,7 +80,7 @@ public class Mask extends Shape
 	private Double width;
 
 	// Property which occurs more than once
-	private List<BinData> binDataList = new ArrayList<BinData>();
+	private List<BinData> binDataBlocks = new ArrayList<BinData>();
 
 	// -- Constructors --
 
@@ -225,32 +225,34 @@ public class Mask extends Shape
 	// Property which occurs more than once
 	public int sizeOfBinDataList()
 	{
-		return binDataList.size();
+		return binDataBlocks.size();
 	}
 
 	public List<BinData> copyBinDataList()
 	{
-		return new ArrayList<BinData>(binDataList);
+		return new ArrayList<BinData>(binDataBlocks);
 	}
 
 	public BinData getBinData(int index)
 	{
-		return binDataList.get(index);
+		return binDataBlocks.get(index);
 	}
 
 	public BinData setBinData(int index, BinData binData)
 	{
-		return binDataList.set(index, binData);
+        binData.setMask(this);
+		return binDataBlocks.set(index, binData);
 	}
 
 	public void addBinData(BinData binData)
 	{
-		binDataList.add(binData);
+        binData.setMask(this);
+		binDataBlocks.add(binData);
 	}
 
 	public void removeBinData(BinData binData)
 	{
-		binDataList.remove(binData);
+		binDataBlocks.remove(binData);
 	}
 
 	public Element asXMLElement(Document document)
@@ -288,13 +290,13 @@ public class Mask extends Shape
 			// Attribute property Width
 			Mask_element.setAttribute("Width", width.toString());
 		}
-		if (binDataList != null)
+		if (binDataBlocks != null)
 		{
 			// Element property BinData which is complex (has
 			// sub-elements) and occurs more than once
-			for (BinData binDataList_value : binDataList)
+			for (BinData binDataBlocks_value : binDataBlocks)
 			{
-				Mask_element.appendChild(binDataList_value.asXMLElement(document));
+				Mask_element.appendChild(binDataBlocks_value.asXMLElement(document));
 			}
 		}
 		return super.asXMLElement(document, Mask_element);

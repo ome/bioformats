@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-01-12 20:06:01-0500
+ * Created by callan via xsd-fu on 2012-05-18 10:08:16+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -58,7 +58,7 @@ public class LightSourceSettings extends Settings
 
 	// -- Constants --
 
-	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2011-06";
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2012-06";
 
 	/** Logger for this class. */
 	private static final Logger LOGGER =
@@ -75,6 +75,12 @@ public class LightSourceSettings extends Settings
 
 	// Property
 	private String id;
+
+	// Back reference LightSourceRef
+	private LightSource lightSource;
+
+	// Back reference MicrobeamManipulation_BackReference
+	private MicrobeamManipulation microbeamManipulation;
 
 	// -- Constructors --
 
@@ -149,6 +155,8 @@ public class LightSourceSettings extends Settings
 			// Adding this model object to the model handler
 			model.addModelObject(getID(), this);
 		}
+		// *** IGNORING *** Skipped back reference LightSourceRef
+		// *** IGNORING *** Skipped back reference MicrobeamManipulation_BackReference
 	}
 
 	// -- LightSourceSettings API methods --
@@ -198,6 +206,28 @@ public class LightSourceSettings extends Settings
 		this.id = id;
 	}
 
+	// Property
+	public LightSource getLightSource()
+	{
+		return lightSource;
+	}
+
+	public void setLightSource(LightSource lightSource)
+	{
+		this.lightSource = lightSource;
+	}
+
+	// Property
+	public MicrobeamManipulation getMicrobeamManipulation()
+	{
+		return microbeamManipulation;
+	}
+
+	public void setMicrobeamManipulation(MicrobeamManipulation microbeamManipulation_BackReference)
+	{
+		this.microbeamManipulation = microbeamManipulation_BackReference;
+	}
+
 	public Element asXMLElement(Document document)
 	{
 		return asXMLElement(document, null);
@@ -227,6 +257,14 @@ public class LightSourceSettings extends Settings
 		{
 			// Attribute property ID
 			LightSourceSettings_element.setAttribute("ID", id.toString());
+		}
+		if (lightSource != null)
+		{
+			// *** IGNORING *** Skipped back reference LightSourceRef
+		}
+		if (microbeamManipulation != null)
+		{
+			// *** IGNORING *** Skipped back reference MicrobeamManipulation_BackReference
 		}
 		return super.asXMLElement(document, LightSourceSettings_element);
 	}

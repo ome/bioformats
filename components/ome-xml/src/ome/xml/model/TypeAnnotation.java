@@ -1,5 +1,5 @@
 /*
- * ome.xml.model.Text
+ * ome.xml.model.TypeAnnotation
  *
  *-----------------------------------------------------------------------------
  *
@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-01-12 20:06:01-0500
+ * Created by callan via xsd-fu on 2012-05-18 10:08:16+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -52,40 +52,31 @@ import org.w3c.dom.NodeList;
 import ome.xml.model.enums.*;
 import ome.xml.model.primitives.*;
 
-public class Text extends Shape
+public abstract class TypeAnnotation extends Annotation
 {
-	// Base:  -- Name: Text -- Type: Text -- javaBase: AbstractOMEModelObject -- javaType: Object
+	// Base: Annotation -- Name: TypeAnnotation -- Type: TypeAnnotation -- javaBase: Annotation -- javaType: Object
 
 	// -- Constants --
 
-	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/ROI/2011-06";
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/SA/2012-06";
 
 	/** Logger for this class. */
 	private static final Logger LOGGER =
-		LoggerFactory.getLogger(Text.class);
+		LoggerFactory.getLogger(TypeAnnotation.class);
 
 	// -- Instance variables --
 
 
-	// Property
-	private Double y;
-
-	// Property
-	private Double x;
-
-	// Property
-	private String value;
-
 	// -- Constructors --
 
 	/** Default constructor. */
-	public Text()
+	public TypeAnnotation()
 	{
 		super();
 	}
 
 	/** 
-	 * Constructs Text recursively from an XML DOM tree.
+	 * Constructs TypeAnnotation recursively from an XML DOM tree.
 	 * @param element Root of the XML DOM tree to construct a model object
 	 * graph from.
 	 * @param model Handler for the OME model which keeps track of instances
@@ -93,19 +84,19 @@ public class Text extends Shape
 	 * @throws EnumerationException If there is an error instantiating an
 	 * enumeration during model object creation.
 	 */
-	public Text(Element element, OMEModel model)
+	public TypeAnnotation(Element element, OMEModel model)
 	    throws EnumerationException
 	{
 		update(element, model);
 	}
 
-	// -- Custom content from Text specific template --
+	// -- Custom content from TypeAnnotation specific template --
 
 
 	// -- OMEModelObject API methods --
 
 	/** 
-	 * Updates Text recursively from an XML DOM tree. <b>NOTE:</b> No
+	 * Updates TypeAnnotation recursively from an XML DOM tree. <b>NOTE:</b> No
 	 * properties are removed, only added or updated.
 	 * @param element Root of the XML DOM tree to construct a model object
 	 * graph from.
@@ -119,41 +110,13 @@ public class Text extends Shape
 	{
 		super.update(element, model);
 		String tagName = element.getTagName();
-		if (!"Text".equals(tagName))
+		if (!"TypeAnnotation".equals(tagName))
 		{
-			LOGGER.debug("Expecting node name of Text got {}", tagName);
-		}
-		if (element.hasAttribute("Y"))
-		{
-			// Attribute property Y
-			setY(Double.valueOf(
-					element.getAttribute("Y")));
-		}
-		if (element.hasAttribute("X"))
-		{
-			// Attribute property X
-			setX(Double.valueOf(
-					element.getAttribute("X")));
-		}
-		List<Element> Value_nodeList =
-				getChildrenByTagName(element, "Value");
-		if (Value_nodeList.size() > 1)
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Value node list size %d != 1",
-					Value_nodeList.size()));
-		}
-		else if (Value_nodeList.size() != 0)
-		{
-			// Element property Value which is not complex (has no
-			// sub-elements)
-			setValue(
-					String.valueOf(Value_nodeList.get(0).getTextContent()));
+			LOGGER.debug("Expecting node name of TypeAnnotation got {}", tagName);
 		}
 	}
 
-	// -- Text API methods --
+	// -- TypeAnnotation API methods --
 
 	public boolean link(Reference reference, OMEModelObject o)
 	{
@@ -167,73 +130,21 @@ public class Text extends Shape
 	}
 
 
-	// Property
-	public Double getY()
-	{
-		return y;
-	}
-
-	public void setY(Double y)
-	{
-		this.y = y;
-	}
-
-	// Property
-	public Double getX()
-	{
-		return x;
-	}
-
-	public void setX(Double x)
-	{
-		this.x = x;
-	}
-
-	// Property
-	public String getValue()
-	{
-		return value;
-	}
-
-	public void setValue(String value)
-	{
-		this.value = value;
-	}
-
 	public Element asXMLElement(Document document)
 	{
 		return asXMLElement(document, null);
 	}
 
-	protected Element asXMLElement(Document document, Element Text_element)
+	protected Element asXMLElement(Document document, Element TypeAnnotation_element)
 	{
-		// Creating XML block for Text
+		// Creating XML block for TypeAnnotation
 
-		if (Text_element == null)
+		if (TypeAnnotation_element == null)
 		{
-			Text_element =
-					document.createElementNS(NAMESPACE, "Text");
+			TypeAnnotation_element =
+					document.createElementNS(NAMESPACE, "TypeAnnotation");
 		}
 
-		if (y != null)
-		{
-			// Attribute property Y
-			Text_element.setAttribute("Y", y.toString());
-		}
-		if (x != null)
-		{
-			// Attribute property X
-			Text_element.setAttribute("X", x.toString());
-		}
-		if (value != null)
-		{
-			// Element property Value which is not complex (has no
-			// sub-elements)
-			Element value_element = 
-					document.createElementNS(NAMESPACE, "Value");
-			value_element.setTextContent(value.toString());
-			Text_element.appendChild(value_element);
-		}
-		return super.asXMLElement(document, Text_element);
+		return super.asXMLElement(document, TypeAnnotation_element);
 	}
 }

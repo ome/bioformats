@@ -1,5 +1,5 @@
 /*
- * ome.xml.model.OTFRef
+ * ome.xml.model.NumericAnnotation
  *
  *-----------------------------------------------------------------------------
  *
@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-01-12 20:06:01-0500
+ * Created by callan via xsd-fu on 2012-05-18 10:08:16+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -52,34 +52,31 @@ import org.w3c.dom.NodeList;
 import ome.xml.model.enums.*;
 import ome.xml.model.primitives.*;
 
-public class OTFRef extends Reference
+public abstract class NumericAnnotation extends Annotation
 {
-	// Base: Reference -- Name: OTFRef -- Type: OTFRef -- javaBase: Reference -- javaType: Object
+	// Base: Annotation -- Name: NumericAnnotation -- Type: NumericAnnotation -- javaBase: Annotation -- javaType: Object
 
 	// -- Constants --
 
-	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2011-06";
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/SA/2012-06";
 
 	/** Logger for this class. */
 	private static final Logger LOGGER =
-		LoggerFactory.getLogger(OTFRef.class);
+		LoggerFactory.getLogger(NumericAnnotation.class);
 
 	// -- Instance variables --
 
 
-	// Property
-	private String id;
-
 	// -- Constructors --
 
 	/** Default constructor. */
-	public OTFRef()
+	public NumericAnnotation()
 	{
 		super();
 	}
 
 	/** 
-	 * Constructs OTFRef recursively from an XML DOM tree.
+	 * Constructs NumericAnnotation recursively from an XML DOM tree.
 	 * @param element Root of the XML DOM tree to construct a model object
 	 * graph from.
 	 * @param model Handler for the OME model which keeps track of instances
@@ -87,19 +84,19 @@ public class OTFRef extends Reference
 	 * @throws EnumerationException If there is an error instantiating an
 	 * enumeration during model object creation.
 	 */
-	public OTFRef(Element element, OMEModel model)
+	public NumericAnnotation(Element element, OMEModel model)
 	    throws EnumerationException
 	{
 		update(element, model);
 	}
 
-	// -- Custom content from OTFRef specific template --
+	// -- Custom content from NumericAnnotation specific template --
 
 
 	// -- OMEModelObject API methods --
 
 	/** 
-	 * Updates OTFRef recursively from an XML DOM tree. <b>NOTE:</b> No
+	 * Updates NumericAnnotation recursively from an XML DOM tree. <b>NOTE:</b> No
 	 * properties are removed, only added or updated.
 	 * @param element Root of the XML DOM tree to construct a model object
 	 * graph from.
@@ -113,27 +110,13 @@ public class OTFRef extends Reference
 	{
 		super.update(element, model);
 		String tagName = element.getTagName();
-		if (!"OTFRef".equals(tagName))
+		if (!"NumericAnnotation".equals(tagName))
 		{
-			LOGGER.debug("Expecting node name of OTFRef got {}", tagName);
-		}
-		if (!element.hasAttribute("ID") && getID() == null)
-		{
-			// TODO: Should be its own exception
-			throw new RuntimeException(String.format(
-					"OTFRef missing required ID property."));
-		}
-		if (element.hasAttribute("ID"))
-		{
-			// ID property
-			setID(String.valueOf(
-						element.getAttribute("ID")));
-			// Adding this model object to the model handler
-			model.addModelObject(getID(), this);
+			LOGGER.debug("Expecting node name of NumericAnnotation got {}", tagName);
 		}
 	}
 
-	// -- OTFRef API methods --
+	// -- NumericAnnotation API methods --
 
 	public boolean link(Reference reference, OMEModelObject o)
 	{
@@ -147,37 +130,21 @@ public class OTFRef extends Reference
 	}
 
 
-	// Property
-	public String getID()
-	{
-		return id;
-	}
-
-	public void setID(String id)
-	{
-		this.id = id;
-	}
-
 	public Element asXMLElement(Document document)
 	{
 		return asXMLElement(document, null);
 	}
 
-	protected Element asXMLElement(Document document, Element OTFRef_element)
+	protected Element asXMLElement(Document document, Element NumericAnnotation_element)
 	{
-		// Creating XML block for OTFRef
+		// Creating XML block for NumericAnnotation
 
-		if (OTFRef_element == null)
+		if (NumericAnnotation_element == null)
 		{
-			OTFRef_element =
-					document.createElementNS(NAMESPACE, "OTFRef");
+			NumericAnnotation_element =
+					document.createElementNS(NAMESPACE, "NumericAnnotation");
 		}
 
-		if (id != null)
-		{
-			// Attribute property ID
-			OTFRef_element.setAttribute("ID", id.toString());
-		}
-		return super.asXMLElement(document, OTFRef_element);
+		return super.asXMLElement(document, NumericAnnotation_element);
 	}
 }

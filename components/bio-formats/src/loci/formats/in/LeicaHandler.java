@@ -53,6 +53,7 @@ import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PercentFraction;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -683,8 +684,8 @@ public class LeicaHandler extends BaseHandler {
       else if (attribute.equals("RefractionIndex")) {
         String id = MetadataTools.createLSID("Objective", numDatasets, 0);
         store.setObjectiveID(id, numDatasets, 0);
-        store.setImageObjectiveSettingsID(id, numDatasets);
-        store.setImageObjectiveSettingsRefractiveIndex(new Double(variant),
+        store.setObjectiveSettingsID(id, numDatasets);
+        store.setObjectiveSettingsRefractiveIndex(new Double(variant),
           numDatasets);
       }
       else if (attribute.equals("XPos")) {
@@ -899,7 +900,7 @@ public class LeicaHandler extends BaseHandler {
         if (DateTools.getTime(date, DateTools.ISO8601_FORMAT) <
           System.currentTimeMillis())
         {
-          store.setImageAcquiredDate(date, numDatasets);
+          store.setImageAcquisitionDate(new Timestamp(date), numDatasets);
         }
         firstStamp = ms;
         store.setPlaneDeltaT(0.0, numDatasets, count);
@@ -1053,27 +1054,27 @@ public class LeicaHandler extends BaseHandler {
       store.setImageROIRef(roiID, series, roi);
 
       store.setROIID(roiID, roi);
-      store.setTextID(MetadataTools.createLSID("Shape", roi, 0), roi, 0);
+      store.setLabelID(MetadataTools.createLSID("Shape", roi, 0), roi, 0);
       if (text == null) text = "";
-      store.setTextValue(text, roi, 0);
+      store.setLabelText(text, roi, 0);
       if (fontSize != null) {
         double size = Double.parseDouble(fontSize);
         if (size >= 0) {
-          store.setTextFontSize(new NonNegativeInteger((int) size), roi, 0);
+          store.setLabelFontSize(new NonNegativeInteger((int) size), roi, 0);
         }
         else {
           LOGGER.warn("Expected non-negative value for FontSize; got {}", size);
         }
       }
-      store.setTextStrokeWidth(new Double(linewidth), roi, 0);
+      store.setLabelStrokeWidth(new Double(linewidth), roi, 0);
 
       if (!normalized) normalize();
 
       double cornerX = x.get(0).doubleValue();
       double cornerY = y.get(0).doubleValue();
 
-      store.setTextX(cornerX, roi, 0);
-      store.setTextY(cornerY, roi, 0);
+      store.setLabelX(cornerX, roi, 0);
+      store.setLabelY(cornerY, roi, 0);
 
       int centerX = (core.get(series).sizeX / 2) - 1;
       int centerY = (core.get(series).sizeY / 2) - 1;
@@ -1098,9 +1099,8 @@ public class LeicaHandler extends BaseHandler {
             points.append(y.get(i).doubleValue() + roiY);
             if (i < x.size() - 1) points.append(" ");
           }
-          store.setPolylineID(shapeID, roi, 1);
-          store.setPolylinePoints(points.toString(), roi, 1);
-          store.setPolylineClosed(Boolean.TRUE, roi, 1);
+          store.setPolygonID(shapeID, roi, 1);
+          store.setPolygonPoints(points.toString(), roi, 1);
 
           break;
         case TEXT:

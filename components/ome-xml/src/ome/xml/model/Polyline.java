@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-01-12 20:06:01-0500
+ * Created by callan via xsd-fu on 2012-05-18 10:08:16+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -58,7 +58,7 @@ public class Polyline extends Shape
 
 	// -- Constants --
 
-	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/ROI/2011-06";
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/ROI/2012-06";
 
 	/** Logger for this class. */
 	private static final Logger LOGGER =
@@ -71,7 +71,10 @@ public class Polyline extends Shape
 	private String points;
 
 	// Property
-	private Boolean closed;
+	private Marker markerEnd;
+
+	// Property
+	private Marker markerStart;
 
 	// -- Constructors --
 
@@ -126,11 +129,17 @@ public class Polyline extends Shape
 			setPoints(String.valueOf(
 					element.getAttribute("Points")));
 		}
-		if (element.hasAttribute("Closed"))
+		if (element.hasAttribute("MarkerEnd"))
 		{
-			// Attribute property Closed
-			setClosed(Boolean.valueOf(
-					element.getAttribute("Closed")));
+			// Attribute property which is an enumeration MarkerEnd
+			setMarkerEnd(Marker.fromString(
+					element.getAttribute("MarkerEnd")));
+		}
+		if (element.hasAttribute("MarkerStart"))
+		{
+			// Attribute property which is an enumeration MarkerStart
+			setMarkerStart(Marker.fromString(
+					element.getAttribute("MarkerStart")));
 		}
 	}
 
@@ -160,14 +169,25 @@ public class Polyline extends Shape
 	}
 
 	// Property
-	public Boolean getClosed()
+	public Marker getMarkerEnd()
 	{
-		return closed;
+		return markerEnd;
 	}
 
-	public void setClosed(Boolean closed)
+	public void setMarkerEnd(Marker markerEnd)
 	{
-		this.closed = closed;
+		this.markerEnd = markerEnd;
+	}
+
+	// Property
+	public Marker getMarkerStart()
+	{
+		return markerStart;
+	}
+
+	public void setMarkerStart(Marker markerStart)
+	{
+		this.markerStart = markerStart;
 	}
 
 	public Element asXMLElement(Document document)
@@ -190,10 +210,15 @@ public class Polyline extends Shape
 			// Attribute property Points
 			Polyline_element.setAttribute("Points", points.toString());
 		}
-		if (closed != null)
+		if (markerEnd != null)
 		{
-			// Attribute property Closed
-			Polyline_element.setAttribute("Closed", closed.toString());
+			// Attribute property MarkerEnd
+			Polyline_element.setAttribute("MarkerEnd", markerEnd.toString());
+		}
+		if (markerStart != null)
+		{
+			// Attribute property MarkerStart
+			Polyline_element.setAttribute("MarkerStart", markerStart.toString());
 		}
 		return super.asXMLElement(document, Polyline_element);
 	}

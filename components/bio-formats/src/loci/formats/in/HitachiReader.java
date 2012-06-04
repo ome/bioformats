@@ -43,6 +43,7 @@ import loci.formats.ImageReader;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import ome.xml.model.primitives.PositiveFloat;
+import ome.xml.model.primitives.Timestamp;
 
 /**
  * HitachiReader is the file format reader for S-4800 files.
@@ -219,7 +220,7 @@ public class HitachiReader extends FormatReader {
     store.setImageName(imageName, 0);
 
     date = DateTools.formatDate(date + " " + time, DATE_FORMAT);
-    store.setImageAcquiredDate(date, 0);
+    store.setImageAcquisitionDate(new Timestamp(date), 0);
 
     populateOMEMetadata(image, store);
   }
@@ -278,7 +279,7 @@ public class HitachiReader extends FormatReader {
 
       String objective = MetadataTools.createLSID("Objective", 0, 0);
       store.setObjectiveID(objective, 0, 0);
-      store.setImageObjectiveSettingsID(objective, 0);
+      store.setObjectiveSettingsID(objective, 0);
       store.setObjectiveWorkingDistance(new Double(workingDistance), 0, 0);
     }
   }

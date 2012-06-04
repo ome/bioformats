@@ -53,6 +53,7 @@ import loci.formats.tiff.TiffRational;
 
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 /**
  * Reader is the file format reader for Metamorph STK files.
@@ -635,7 +636,7 @@ public class MetamorphReader extends BaseTiffReader {
 
       if (creationTime != null) {
         String date = DateTools.formatDate(creationTime, SHORT_DATE_FORMAT);
-        store.setImageAcquiredDate(date, 0);
+        store.setImageAcquisitionDate(new Timestamp(date), 0);
       }
 
       store.setImageName(makeImageName(i).trim(), i);

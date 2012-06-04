@@ -35,7 +35,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-01-12 20:06:08-0500
+ * Created by callan via xsd-fu on 2012-05-18 10:08:20+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -117,103 +117,118 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 			className.lastIndexOf('.') + 1, className.length());
 	}
 
+  public String getShapeType(int roiIndex, int shapeIndex)
+  {
+    Shape o = root.getROI(roiIndex).getUnion().getShape(shapeIndex);
+    String className = o.getClass().getName();
+    return className.substring(
+      className.lastIndexOf('.') + 1, className.length());
+  }
+
 	// -- Entity counting (code generated definitions) --
 
 	// AnnotationRef entity counting
 	public int getROIAnnotationRefCount(int ROIIndex)
 	{
-		// Parents: {u'ROI': {u'OME': None}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'Annotation': None, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
+		// Parents: {u'ROI': {u'OME': None}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'ExperimenterGroup': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'Annotation': None, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
 		// AnnotationRef is a reference
 		return root.getROI(ROIIndex).sizeOfLinkedAnnotationList();
 	}
 
 	public int getPlateAcquisitionAnnotationRefCount(int plateIndex, int plateAcquisitionIndex)
 	{
-		// Parents: {u'ROI': {u'OME': None}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'Annotation': None, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
+		// Parents: {u'ROI': {u'OME': None}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'ExperimenterGroup': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'Annotation': None, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
 		// AnnotationRef is a reference
 		return root.getPlate(plateIndex).getPlateAcquisition(plateAcquisitionIndex).sizeOfLinkedAnnotationList();
 	}
 
 	public int getPlateAnnotationRefCount(int plateIndex)
 	{
-		// Parents: {u'ROI': {u'OME': None}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'Annotation': None, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
+		// Parents: {u'ROI': {u'OME': None}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'ExperimenterGroup': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'Annotation': None, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
 		// AnnotationRef is a reference
 		return root.getPlate(plateIndex).sizeOfLinkedAnnotationList();
 	}
 
+	public int getExperimenterGroupAnnotationRefCount(int experimenterGroupIndex)
+	{
+		// Parents: {u'ROI': {u'OME': None}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'ExperimenterGroup': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'Annotation': None, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
+		// AnnotationRef is a reference
+		return root.getExperimenterGroup(experimenterGroupIndex).sizeOfLinkedAnnotationList();
+	}
+
 	public int getImageAnnotationRefCount(int imageIndex)
 	{
-		// Parents: {u'ROI': {u'OME': None}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'Annotation': None, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
+		// Parents: {u'ROI': {u'OME': None}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'ExperimenterGroup': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'Annotation': None, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
 		// AnnotationRef is a reference
 		return root.getImage(imageIndex).sizeOfLinkedAnnotationList();
 	}
 
 	public int getScreenAnnotationRefCount(int screenIndex)
 	{
-		// Parents: {u'ROI': {u'OME': None}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'Annotation': None, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
+		// Parents: {u'ROI': {u'OME': None}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'ExperimenterGroup': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'Annotation': None, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
 		// AnnotationRef is a reference
 		return root.getScreen(screenIndex).sizeOfLinkedAnnotationList();
 	}
 
 	public int getWellAnnotationRefCount(int plateIndex, int wellIndex)
 	{
-		// Parents: {u'ROI': {u'OME': None}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'Annotation': None, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
+		// Parents: {u'ROI': {u'OME': None}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'ExperimenterGroup': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'Annotation': None, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
 		// AnnotationRef is a reference
 		return root.getPlate(plateIndex).getWell(wellIndex).sizeOfLinkedAnnotationList();
 	}
 
 	public int getDatasetAnnotationRefCount(int datasetIndex)
 	{
-		// Parents: {u'ROI': {u'OME': None}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'Annotation': None, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
+		// Parents: {u'ROI': {u'OME': None}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'ExperimenterGroup': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'Annotation': None, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
 		// AnnotationRef is a reference
 		return root.getDataset(datasetIndex).sizeOfLinkedAnnotationList();
 	}
 
 	public int getProjectAnnotationRefCount(int projectIndex)
 	{
-		// Parents: {u'ROI': {u'OME': None}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'Annotation': None, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
+		// Parents: {u'ROI': {u'OME': None}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'ExperimenterGroup': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'Annotation': None, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
 		// AnnotationRef is a reference
 		return root.getProject(projectIndex).sizeOfLinkedAnnotationList();
 	}
 
 	public int getReagentAnnotationRefCount(int screenIndex, int reagentIndex)
 	{
-		// Parents: {u'ROI': {u'OME': None}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'Annotation': None, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
+		// Parents: {u'ROI': {u'OME': None}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'ExperimenterGroup': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'Annotation': None, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
 		// AnnotationRef is a reference
 		return root.getScreen(screenIndex).getReagent(reagentIndex).sizeOfLinkedAnnotationList();
 	}
 
 	public int getPlaneAnnotationRefCount(int imageIndex, int planeIndex)
 	{
-		// Parents: {u'ROI': {u'OME': None}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'Annotation': None, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
+		// Parents: {u'ROI': {u'OME': None}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'ExperimenterGroup': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'Annotation': None, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
 		// AnnotationRef is a reference
 		return root.getImage(imageIndex).getPixels().getPlane(planeIndex).sizeOfLinkedAnnotationList();
 	}
 
 	public int getExperimenterAnnotationRefCount(int experimenterIndex)
 	{
-		// Parents: {u'ROI': {u'OME': None}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'Annotation': None, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
+		// Parents: {u'ROI': {u'OME': None}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'ExperimenterGroup': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'Annotation': None, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
 		// AnnotationRef is a reference
 		return root.getExperimenter(experimenterIndex).sizeOfLinkedAnnotationList();
 	}
 
 	public int getWellSampleAnnotationRefCount(int plateIndex, int wellIndex, int wellSampleIndex)
 	{
-		// Parents: {u'ROI': {u'OME': None}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'Annotation': None, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
+		// Parents: {u'ROI': {u'OME': None}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'ExperimenterGroup': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'Annotation': None, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
 		// AnnotationRef is a reference
 		return root.getPlate(plateIndex).getWell(wellIndex).getWellSample(wellSampleIndex).sizeOfLinkedAnnotationList();
 	}
 
 	public int getPixelsAnnotationRefCount(int imageIndex)
 	{
-		// Parents: {u'ROI': {u'OME': None}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'Annotation': None, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
+		// Parents: {u'ROI': {u'OME': None}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'ExperimenterGroup': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'Annotation': None, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
 		// AnnotationRef is a reference
 		return root.getImage(imageIndex).getPixels().sizeOfLinkedAnnotationList();
 	}
 
 	public int getChannelAnnotationRefCount(int imageIndex, int channelIndex)
 	{
-		// Parents: {u'ROI': {u'OME': None}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'Annotation': None, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
+		// Parents: {u'ROI': {u'OME': None}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'ExperimenterGroup': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'Annotation': None, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
 		// AnnotationRef is a reference
 		return root.getImage(imageIndex).getPixels().getChannel(channelIndex).sizeOfLinkedAnnotationList();
 	}
@@ -245,7 +260,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.getStructuredAnnotations().sizeOfCommentAnnotationList();
 	}
 
-	// Contact entity counting
 	// Dataset entity counting
 	public int getDatasetCount()
 	{
@@ -255,11 +269,11 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// DatasetRef entity counting
-	public int getDatasetRefCount(int imageIndex)
+	public int getDatasetRefCount(int projectIndex)
 	{
-		// Parents: {u'Image': {u'OME': None}}
+		// Parents: {u'Project': {u'OME': None}}
 		// DatasetRef is a reference
-		return root.getImage(imageIndex).sizeOfLinkedDatasetList();
+		return root.getProject(projectIndex).sizeOfLinkedDatasetList();
 	}
 
 	// Detector entity counting
@@ -336,7 +350,23 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.sizeOfExperimenterList();
 	}
 
+	// ExperimenterGroup entity counting
+	public int getExperimenterGroupCount()
+	{
+		// Parents: {u'OME': None}
+		// ExperimenterGroup is not a reference
+		return root.sizeOfExperimenterGroupList();
+	}
+
+	// ExperimenterGroupRef entity counting
 	// ExperimenterRef entity counting
+	public int getExperimenterGroupExperimenterRefCount(int experimenterGroupIndex)
+	{
+		// Parents: {u'ExperimenterGroup': {u'OME': None}, u'Image': {u'OME': None}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Experiment': {u'OME': None}, u'MicrobeamManipulation': {u'Experiment': {u'OME': None}}}
+		// ExperimenterRef is a reference
+		return root.getExperimenterGroup(experimenterGroupIndex).sizeOfLinkedExperimenterList();
+	}
+
 	// Filament entity counting
 	// FileAnnotation entity counting
 	public int getFileAnnotationCount()
@@ -363,22 +393,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// FilterSetRef entity counting
-	// Group entity counting
-	public int getGroupCount()
-	{
-		// Parents: {u'OME': None}
-		// Group is not a reference
-		return root.sizeOfGroupList();
-	}
-
-	// GroupRef entity counting
-	public int getExperimenterGroupRefCount(int experimenterIndex)
-	{
-		// Parents: {u'Project': {u'OME': None}, u'Image': {u'OME': None}, u'Experimenter': {u'OME': None}, u'Dataset': {u'OME': None}}
-		// GroupRef is a reference
-		return root.getExperimenter(experimenterIndex).sizeOfLinkedGroupList();
-	}
-
 	// Image entity counting
 	public int getImageCount()
 	{
@@ -388,6 +402,13 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// ImageRef entity counting
+	public int getDatasetImageRefCount(int datasetIndex)
+	{
+		// Parents: {u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Dataset': {u'OME': None}}
+		// ImageRef is a reference
+		return root.getDataset(datasetIndex).sizeOfLinkedImageList();
+	}
+
 	// ImagingEnvironment entity counting
 	// Instrument entity counting
 	public int getInstrumentCount()
@@ -398,8 +419,16 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// InstrumentRef entity counting
+	// Label entity counting
 	// Laser entity counting
 	// Leader entity counting
+	public int getLeaderCount(int experimenterGroupIndex)
+	{
+		// Parents: {u'ExperimenterGroup': {u'OME': None}}
+		// Leader is a reference
+		return root.getExperimenterGroup(experimenterGroupIndex).sizeOfLinkedLeaderList();
+	}
+
 	// LightEmittingDiode entity counting
 	// LightPath entity counting
 	// LightSource entity counting
@@ -454,15 +483,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// Microscope entity counting
-	// OTF entity counting
-	public int getOTFCount(int instrumentIndex)
-	{
-		// Parents: {u'Instrument': {u'OME': None}}
-		// OTF is not a reference
-		return root.getInstrument(instrumentIndex).sizeOfOTFList();
-	}
-
-	// OTFRef entity counting
 	// Objective entity counting
 	public int getObjectiveCount(int instrumentIndex)
 	{
@@ -472,7 +492,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// ObjectiveSettings entity counting
-	// Path entity counting
 	// Pixels entity counting
 	// Plane entity counting
 	public int getPlaneCount(int imageIndex)
@@ -507,6 +526,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// Point entity counting
+	// Polygon entity counting
 	// Polyline entity counting
 	// Project entity counting
 	public int getProjectCount()
@@ -514,14 +534,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		// Parents: {u'OME': None}
 		// Project is not a reference
 		return root.sizeOfProjectList();
-	}
-
-	// ProjectRef entity counting
-	public int getProjectRefCount(int datasetIndex)
-	{
-		// Parents: {u'Dataset': {u'OME': None}}
-		// ProjectRef is a reference
-		return root.getDataset(datasetIndex).sizeOfLinkedProjectList();
 	}
 
 	// Pump entity counting
@@ -566,14 +578,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.sizeOfScreenList();
 	}
 
-	// ScreenRef entity counting
-	public int getScreenRefCount(int plateIndex)
-	{
-		// Parents: {u'Plate': {u'OME': None}}
-		// ScreenRef is a reference
-		return root.getPlate(plateIndex).sizeOfLinkedScreenList();
-	}
-
 	// Shape entity counting
 	public int getShapeCount(int ROIIndex)
 	{
@@ -600,7 +604,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.getStructuredAnnotations().sizeOfTermAnnotationList();
 	}
 
-	// Text entity counting
 	// TiffData entity counting
 	public int getTiffDataCount(int imageIndex)
 	{
@@ -704,8 +707,8 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	//
 	// AnnotationRef property storage
 	//
-	// Indexes: {u'ROI': [u'int ROIIndex', u'int annotationRefIndex'], u'Reagent': [u'int screenIndex', u'int reagentIndex', u'int annotationRefIndex'], u'Plate': [u'int plateIndex', u'int annotationRefIndex'], u'Image': [u'int imageIndex', u'int annotationRefIndex'], u'Well': [u'int plateIndex', u'int wellIndex', u'int annotationRefIndex'], u'Pixels': [u'int imageIndex', u'int annotationRefIndex'], u'Dataset': [u'int datasetIndex', u'int annotationRefIndex'], u'Project': [u'int projectIndex', u'int annotationRefIndex'], u'PlateAcquisition': [u'int plateIndex', u'int plateAcquisitionIndex', u'int annotationRefIndex'], u'Plane': [u'int imageIndex', u'int planeIndex', u'int annotationRefIndex'], u'Experimenter': [u'int experimenterIndex', u'int annotationRefIndex'], u'Annotation': [u'int annotationRefIndex'], u'WellSample': [u'int plateIndex', u'int wellIndex', u'int wellSampleIndex', u'int annotationRefIndex'], u'Screen': [u'int screenIndex', u'int annotationRefIndex'], u'Channel': [u'int imageIndex', u'int channelIndex', u'int annotationRefIndex']}
-	// {u'ROI': {u'OME': None}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'Annotation': None, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
+	// Indexes: {u'ROI': [u'int ROIIndex', u'int annotationRefIndex'], u'Reagent': [u'int screenIndex', u'int reagentIndex', u'int annotationRefIndex'], u'Plate': [u'int plateIndex', u'int annotationRefIndex'], u'ExperimenterGroup': [u'int experimenterGroupIndex', u'int annotationRefIndex'], u'Image': [u'int imageIndex', u'int annotationRefIndex'], u'Well': [u'int plateIndex', u'int wellIndex', u'int annotationRefIndex'], u'Pixels': [u'int imageIndex', u'int annotationRefIndex'], u'Dataset': [u'int datasetIndex', u'int annotationRefIndex'], u'Project': [u'int projectIndex', u'int annotationRefIndex'], u'PlateAcquisition': [u'int plateIndex', u'int plateAcquisitionIndex', u'int annotationRefIndex'], u'Plane': [u'int imageIndex', u'int planeIndex', u'int annotationRefIndex'], u'Experimenter': [u'int experimenterIndex', u'int annotationRefIndex'], u'Annotation': [u'int annotationRefIndex'], u'WellSample': [u'int plateIndex', u'int wellIndex', u'int wellSampleIndex', u'int annotationRefIndex'], u'Screen': [u'int screenIndex', u'int annotationRefIndex'], u'Channel': [u'int imageIndex', u'int channelIndex', u'int annotationRefIndex']}
+	// {u'ROI': {u'OME': None}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'ExperimenterGroup': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'Annotation': None, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
 	// Is multi path? True
 
 	// 1:1
@@ -788,52 +791,31 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	//
 	// BinaryFile property storage
 	//
-	// Indexes: {u'FileAnnotation': [u'int fileAnnotationIndex'], u'OTF': [u'int instrumentIndex', u'int OTFIndex']}
-	// {u'FileAnnotation': {u'StructuredAnnotations': {u'OME': None}}, u'OTF': {u'Instrument': {u'OME': None}}}
-	// Is multi path? True
+	// Indexes: {u'FileAnnotation': [u'int fileAnnotationIndex']}
+	// {u'FileAnnotation': {u'StructuredAnnotations': {u'OME': None}}}
+	// Is multi path? False
 
 	// Ignoring BinData element, complex property
 	// Ignoring External element, complex property
-	public String getFileAnnotationBinaryFileFileName(int fileAnnotationIndex)
+	public String getBinaryFileFileName(int fileAnnotationIndex)
 	{
-		// Parents: {u'FileAnnotation': {u'StructuredAnnotations': {u'OME': None}}, u'OTF': {u'Instrument': {u'OME': None}}}
+		// Parents: {u'FileAnnotation': {u'StructuredAnnotations': {u'OME': None}}}
 		// FileName is not a reference
 		return root.getStructuredAnnotations().getFileAnnotation(fileAnnotationIndex).getBinaryFile().getFileName();
 	}
 
-	public String getOTFBinaryFileFileName(int instrumentIndex, int OTFIndex)
+	public String getBinaryFileMIMEType(int fileAnnotationIndex)
 	{
-		// Parents: {u'FileAnnotation': {u'StructuredAnnotations': {u'OME': None}}, u'OTF': {u'Instrument': {u'OME': None}}}
-		// FileName is not a reference
-		return root.getInstrument(instrumentIndex).getOTF(OTFIndex).getBinaryFile().getFileName();
-	}
-
-	public String getFileAnnotationBinaryFileMIMEType(int fileAnnotationIndex)
-	{
-		// Parents: {u'FileAnnotation': {u'StructuredAnnotations': {u'OME': None}}, u'OTF': {u'Instrument': {u'OME': None}}}
+		// Parents: {u'FileAnnotation': {u'StructuredAnnotations': {u'OME': None}}}
 		// MIMEType is not a reference
 		return root.getStructuredAnnotations().getFileAnnotation(fileAnnotationIndex).getBinaryFile().getMIMEType();
 	}
 
-	public String getOTFBinaryFileMIMEType(int instrumentIndex, int OTFIndex)
+	public NonNegativeLong getBinaryFileSize(int fileAnnotationIndex)
 	{
-		// Parents: {u'FileAnnotation': {u'StructuredAnnotations': {u'OME': None}}, u'OTF': {u'Instrument': {u'OME': None}}}
-		// MIMEType is not a reference
-		return root.getInstrument(instrumentIndex).getOTF(OTFIndex).getBinaryFile().getMIMEType();
-	}
-
-	public NonNegativeLong getFileAnnotationBinaryFileSize(int fileAnnotationIndex)
-	{
-		// Parents: {u'FileAnnotation': {u'StructuredAnnotations': {u'OME': None}}, u'OTF': {u'Instrument': {u'OME': None}}}
+		// Parents: {u'FileAnnotation': {u'StructuredAnnotations': {u'OME': None}}}
 		// Size is not a reference
 		return root.getStructuredAnnotations().getFileAnnotation(fileAnnotationIndex).getBinaryFile().getSize();
-	}
-
-	public NonNegativeLong getOTFBinaryFileSize(int instrumentIndex, int OTFIndex)
-	{
-		// Parents: {u'FileAnnotation': {u'StructuredAnnotations': {u'OME': None}}, u'OTF': {u'Instrument': {u'OME': None}}}
-		// Size is not a reference
-		return root.getInstrument(instrumentIndex).getOTF(OTFIndex).getBinaryFile().getSize();
 	}
 
 	//
@@ -880,6 +862,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.getStructuredAnnotations().getBooleanAnnotation(booleanAnnotationIndex).getDescription();
 	}
 
+	// Ignoring ExperimenterGroup_BackReference back reference
 	// Ignoring Experimenter_BackReference back reference
 	public String getBooleanAnnotationID(int booleanAnnotationIndex)
 	{
@@ -904,6 +887,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public Boolean getBooleanAnnotationValue(int booleanAnnotationIndex)
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
@@ -934,7 +918,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.getImage(imageIndex).getPixels().getChannel(channelIndex).getLinkedAnnotation(annotationRefIndex).getID();
 	}
 
-	public Integer getChannelColor(int imageIndex, int channelIndex)
+	public Color getChannelColor(int imageIndex, int channelIndex)
 	{
 		// Parents: {u'Pixels': {u'Image': {u'OME': None}}}
 		// Color is not a reference
@@ -1007,13 +991,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.getImage(imageIndex).getPixels().getChannel(channelIndex).getName();
 	}
 
-	public String getChannelOTFRef(int imageIndex, int channelIndex)
-	{
-		// Parents: {u'Pixels': {u'Image': {u'OME': None}}}
-		// OTFRef is reference and occurs only once
-		return root.getImage(imageIndex).getPixels().getChannel(channelIndex).getLinkedOTF().getID();
-	}
-
 	public Double getChannelPinholeSize(int imageIndex, int channelIndex)
 	{
 		// Parents: {u'Pixels': {u'Image': {u'OME': None}}}
@@ -1021,6 +998,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.getImage(imageIndex).getPixels().getChannel(channelIndex).getPinholeSize();
 	}
 
+	// Ignoring Pixels_BackReference back reference
 	public Integer getChannelPockelCellSetting(int imageIndex, int channelIndex)
 	{
 		// Parents: {u'Pixels': {u'Image': {u'OME': None}}}
@@ -1058,6 +1036,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.getStructuredAnnotations().getCommentAnnotation(commentAnnotationIndex).getDescription();
 	}
 
+	// Ignoring ExperimenterGroup_BackReference back reference
 	// Ignoring Experimenter_BackReference back reference
 	public String getCommentAnnotationID(int commentAnnotationIndex)
 	{
@@ -1082,6 +1061,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public String getCommentAnnotationValue(int commentAnnotationIndex)
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
@@ -1091,17 +1071,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 
 	// Ignoring WellSample_BackReference back reference
 	// Ignoring Well_BackReference back reference
-	//
-	// Contact property storage
-	//
-	// Indexes: {u'Group': [u'int groupIndex']}
-	// {u'Group': {u'OME': None}}
-	// Is multi path? False
-
-	// 1:1
-	// Is multi path? False
-	// Ignoring ID property of reference Contact
-
 	//
 	// Dataset property storage
 	//
@@ -1123,18 +1092,18 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.getDataset(datasetIndex).getDescription();
 	}
 
+	public String getDatasetExperimenterGroupRef(int datasetIndex)
+	{
+		// Parents: {u'OME': None}
+		// ExperimenterGroupRef is reference and occurs only once
+		return root.getDataset(datasetIndex).getLinkedExperimenterGroup().getID();
+	}
+
 	public String getDatasetExperimenterRef(int datasetIndex)
 	{
 		// Parents: {u'OME': None}
 		// ExperimenterRef is reference and occurs only once
 		return root.getDataset(datasetIndex).getLinkedExperimenter().getID();
-	}
-
-	public String getDatasetGroupRef(int datasetIndex)
-	{
-		// Parents: {u'OME': None}
-		// GroupRef is reference and occurs only once
-		return root.getDataset(datasetIndex).getLinkedGroup().getID();
 	}
 
 	public String getDatasetID(int datasetIndex)
@@ -1144,7 +1113,13 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.getDataset(datasetIndex).getID();
 	}
 
-	// Ignoring Image_BackReference back reference
+	public String getDatasetImageRef(int datasetIndex, int imageRefIndex)
+	{
+		// Parents: {u'OME': None}
+		// ImageRef is reference and occurs more than once
+		return root.getDataset(datasetIndex).getLinkedImage(imageRefIndex).getID();
+	}
+
 	public String getDatasetName(int datasetIndex)
 	{
 		// Parents: {u'OME': None}
@@ -1152,18 +1127,12 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.getDataset(datasetIndex).getName();
 	}
 
-	public String getDatasetProjectRef(int datasetIndex, int projectRefIndex)
-	{
-		// Parents: {u'OME': None}
-		// ProjectRef is reference and occurs more than once
-		return root.getDataset(datasetIndex).getLinkedProject(projectRefIndex).getID();
-	}
-
+	// Ignoring Project_BackReference back reference
 	//
 	// DatasetRef property storage
 	//
-	// Indexes: {u'Image': [u'int imageIndex', u'int datasetRefIndex']}
-	// {u'Image': {u'OME': None}}
+	// Indexes: {u'Project': [u'int projectIndex', u'int datasetRefIndex']}
+	// {u'Project': {u'OME': None}}
 	// Is multi path? False
 
 	// 1:1
@@ -1198,6 +1167,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.getInstrument(instrumentIndex).getDetector(detectorIndex).getID();
 	}
 
+	// Ignoring Instrument_BackReference back reference
 	public String getDetectorLotNumber(int instrumentIndex, int detectorIndex)
 	{
 		// Parents: {u'Instrument': {u'OME': None}}
@@ -1268,6 +1238,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.getImage(imageIndex).getPixels().getChannel(channelIndex).getDetectorSettings().getBinning();
 	}
 
+	// Ignoring DetectorRef back reference
 	public Double getDetectorSettingsGain(int imageIndex, int channelIndex)
 	{
 		// Parents: {u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
@@ -1318,6 +1289,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.getInstrument(instrumentIndex).getDichroic(dichroicIndex).getID();
 	}
 
+	// Ignoring Instrument_BackReference back reference
 	// Ignoring LightPath_BackReference back reference
 	public String getDichroicLotNumber(int instrumentIndex, int dichroicIndex)
 	{
@@ -1381,6 +1353,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.getStructuredAnnotations().getDoubleAnnotation(doubleAnnotationIndex).getDescription();
 	}
 
+	// Ignoring ExperimenterGroup_BackReference back reference
 	// Ignoring Experimenter_BackReference back reference
 	public String getDoubleAnnotationID(int doubleAnnotationIndex)
 	{
@@ -1405,6 +1378,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public Double getDoubleAnnotationValue(int doubleAnnotationIndex)
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
@@ -1421,27 +1395,34 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
-	// Description accessor from parent Shape
-	public String getEllipseDescription(int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		Ellipse o = (Ellipse) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
-		return o.getDescription();
-	}
-
 	// Ignoring Ellipse of parent abstract type
-	// Fill accessor from parent Shape
-	public Integer getEllipseFill(int ROIIndex, int shapeIndex)
+	// FillColor accessor from parent Shape
+	public Color getEllipseFillColor(int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
 		Ellipse o = (Ellipse) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
-		return o.getFill();
+		return o.getFillColor();
 	}
 
-	// Ignoring FillRule of parent abstract type
-	// Ignoring FontFamily of parent abstract type
+	// FillRule accessor from parent Shape
+	public FillRule getEllipseFillRule(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Ellipse o = (Ellipse) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getFillRule();
+	}
+
+	// FontFamily accessor from parent Shape
+	public FontFamily getEllipseFontFamily(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Ellipse o = (Ellipse) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getFontFamily();
+	}
+
 	// FontSize accessor from parent Shape
 	public NonNegativeInteger getEllipseFontSize(int ROIIndex, int shapeIndex)
 	{
@@ -1451,7 +1432,15 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return o.getFontSize();
 	}
 
-	// Ignoring FontStyle of parent abstract type
+	// FontStyle accessor from parent Shape
+	public FontStyle getEllipseFontStyle(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Ellipse o = (Ellipse) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getFontStyle();
+	}
+
 	// ID accessor from parent Shape
 	public String getEllipseID(int ROIIndex, int shapeIndex)
 	{
@@ -1461,40 +1450,38 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return o.getID();
 	}
 
-	// Label accessor from parent Shape
-	public String getEllipseLabel(int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		Ellipse o = (Ellipse) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
-		return o.getLabel();
-	}
-
+	// Ignoring Label of parent abstract type
 	// Ignoring Line of parent abstract type
-	// Ignoring LineCap of parent abstract type
-	// Ignoring MarkerEnd of parent abstract type
-	// Ignoring MarkerStart of parent abstract type
-	// Ignoring Mask of parent abstract type
-	// Name accessor from parent Shape
-	public String getEllipseName(int ROIIndex, int shapeIndex)
+	// LineCap accessor from parent Shape
+	public LineCap getEllipseLineCap(int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
 		Ellipse o = (Ellipse) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
-		return o.getName();
+		return o.getLineCap();
 	}
 
-	// Ignoring Path of parent abstract type
+	// Locked accessor from parent Shape
+	public Boolean getEllipseLocked(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Ellipse o = (Ellipse) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getLocked();
+	}
+
+	// Ignoring Mask of parent abstract type
 	// Ignoring Point of parent abstract type
+	// Ignoring Polygon of parent abstract type
 	// Ignoring Polyline of parent abstract type
 	// Ignoring Rectangle of parent abstract type
-	// Stroke accessor from parent Shape
-	public Integer getEllipseStroke(int ROIIndex, int shapeIndex)
+	// StrokeColor accessor from parent Shape
+	public Color getEllipseStrokeColor(int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
 		Ellipse o = (Ellipse) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
-		return o.getStroke();
+		return o.getStrokeColor();
 	}
 
 	// StrokeDashArray accessor from parent Shape
@@ -1515,7 +1502,15 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return o.getStrokeWidth();
 	}
 
-	// Ignoring Text of parent abstract type
+	// Text accessor from parent Shape
+	public String getEllipseText(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Ellipse o = (Ellipse) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getText();
+	}
+
 	// TheC accessor from parent Shape
 	public NonNegativeInteger getEllipseTheC(int ROIIndex, int shapeIndex)
 	{
@@ -1544,12 +1539,21 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// Transform accessor from parent Shape
-	public String getEllipseTransform(int ROIIndex, int shapeIndex)
+	public AffineTransform getEllipseTransform(int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
 		Ellipse o = (Ellipse) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
 		return o.getTransform();
+	}
+
+	// Visible accessor from parent Shape
+	public Boolean getEllipseVisible(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Ellipse o = (Ellipse) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getVisible();
 	}
 
 	public Double getEllipseRadiusX(int ROIIndex, int shapeIndex)
@@ -1661,13 +1665,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// Ignoring Dataset_BackReference back reference
-	public String getExperimenterDisplayName(int experimenterIndex)
-	{
-		// Parents: {u'OME': None}
-		// DisplayName is not a reference
-		return root.getExperimenter(experimenterIndex).getDisplayName();
-	}
-
 	public String getExperimenterEmail(int experimenterIndex)
 	{
 		// Parents: {u'OME': None}
@@ -1676,18 +1673,12 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// Ignoring Experiment_BackReference back reference
+	// Ignoring ExperimenterGroup_BackReference back reference
 	public String getExperimenterFirstName(int experimenterIndex)
 	{
 		// Parents: {u'OME': None}
 		// FirstName is not a reference
 		return root.getExperimenter(experimenterIndex).getFirstName();
-	}
-
-	public String getExperimenterGroupRef(int experimenterIndex, int groupRefIndex)
-	{
-		// Parents: {u'OME': None}
-		// GroupRef is reference and occurs more than once
-		return root.getExperimenter(experimenterIndex).getLinkedGroup(groupRefIndex).getID();
 	}
 
 	public String getExperimenterID(int experimenterIndex)
@@ -1729,10 +1720,73 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	//
+	// ExperimenterGroup property storage
+	//
+	// Indexes: {u'OME': [u'int experimenterGroupIndex']}
+	// {u'OME': None}
+	// Is multi path? False
+
+	public String getExperimenterGroupAnnotationRef(int experimenterGroupIndex, int annotationRefIndex)
+	{
+		// Parents: {u'OME': None}
+		// AnnotationRef is reference and occurs more than once
+		return root.getExperimenterGroup(experimenterGroupIndex).getLinkedAnnotation(annotationRefIndex).getID();
+	}
+
+	// Ignoring Dataset_BackReference back reference
+	public String getExperimenterGroupDescription(int experimenterGroupIndex)
+	{
+		// Parents: {u'OME': None}
+		// Description is not a reference
+		return root.getExperimenterGroup(experimenterGroupIndex).getDescription();
+	}
+
+	public String getExperimenterGroupExperimenterRef(int experimenterGroupIndex, int experimenterRefIndex)
+	{
+		// Parents: {u'OME': None}
+		// ExperimenterRef is reference and occurs more than once
+		return root.getExperimenterGroup(experimenterGroupIndex).getLinkedExperimenter(experimenterRefIndex).getID();
+	}
+
+	public String getExperimenterGroupID(int experimenterGroupIndex)
+	{
+		// Parents: {u'OME': None}
+		// ID is not a reference
+		return root.getExperimenterGroup(experimenterGroupIndex).getID();
+	}
+
+	// Ignoring Image_BackReference back reference
+	public String getExperimenterGroupLeader(int experimenterGroupIndex, int leaderIndex)
+	{
+		// Parents: {u'OME': None}
+		// Leader is reference and occurs more than once
+		return root.getExperimenterGroup(experimenterGroupIndex).getLinkedLeader(leaderIndex).getID();
+	}
+
+	public String getExperimenterGroupName(int experimenterGroupIndex)
+	{
+		// Parents: {u'OME': None}
+		// Name is not a reference
+		return root.getExperimenterGroup(experimenterGroupIndex).getName();
+	}
+
+	// Ignoring Project_BackReference back reference
+	//
+	// ExperimenterGroupRef property storage
+	//
+	// Indexes: {u'Project': [u'int projectIndex'], u'Image': [u'int imageIndex'], u'Dataset': [u'int datasetIndex']}
+	// {u'Project': {u'OME': None}, u'Image': {u'OME': None}, u'Dataset': {u'OME': None}}
+	// Is multi path? True
+
+	// 1:1
+	// Is multi path? True
+	// Ignoring ID property of reference ExperimenterGroupRef
+
+	//
 	// ExperimenterRef property storage
 	//
-	// Indexes: {u'Project': [u'int projectIndex'], u'MicrobeamManipulation': [u'int experimentIndex', u'int microbeamManipulationIndex'], u'Image': [u'int imageIndex'], u'Experiment': [u'int experimentIndex'], u'Dataset': [u'int datasetIndex']}
-	// {u'Project': {u'OME': None}, u'Image': {u'OME': None}, u'Dataset': {u'OME': None}, u'Experiment': {u'OME': None}, u'MicrobeamManipulation': {u'Experiment': {u'OME': None}}}
+	// Indexes: {u'ExperimenterGroup': [u'int experimenterGroupIndex', u'int experimenterRefIndex'], u'Image': [u'int imageIndex'], u'Dataset': [u'int datasetIndex'], u'Project': [u'int projectIndex'], u'Experiment': [u'int experimentIndex'], u'MicrobeamManipulation': [u'int experimentIndex', u'int microbeamManipulationIndex']}
+	// {u'ExperimenterGroup': {u'OME': None}, u'Image': {u'OME': None}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Experiment': {u'OME': None}, u'MicrobeamManipulation': {u'Experiment': {u'OME': None}}}
 	// Is multi path? True
 
 	// 1:1
@@ -1836,6 +1890,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.getStructuredAnnotations().getFileAnnotation(fileAnnotationIndex).getDescription();
 	}
 
+	// Ignoring ExperimenterGroup_BackReference back reference
 	// Ignoring Experimenter_BackReference back reference
 	public String getFileAnnotationID(int fileAnnotationIndex)
 	{
@@ -1860,6 +1915,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	// Ignoring WellSample_BackReference back reference
 	// Ignoring Well_BackReference back reference
 	//
@@ -1869,6 +1925,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// {u'Instrument': {u'OME': None}}
 	// Is multi path? False
 
+	// Ignoring FilterSet_BackReference back reference
 	// Ignoring FilterSet_BackReference back reference
 	public String getFilterFilterWheel(int instrumentIndex, int filterIndex)
 	{
@@ -1884,6 +1941,8 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.getInstrument(instrumentIndex).getFilter(filterIndex).getID();
 	}
 
+	// Ignoring Instrument_BackReference back reference
+	// Ignoring LightPath_BackReference back reference
 	// Ignoring LightPath_BackReference back reference
 	public String getFilterLotNumber(int instrumentIndex, int filterIndex)
 	{
@@ -1957,6 +2016,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.getInstrument(instrumentIndex).getFilterSet(filterSetIndex).getID();
 	}
 
+	// Ignoring Instrument_BackReference back reference
 	public String getFilterSetLotNumber(int instrumentIndex, int filterSetIndex)
 	{
 		// Parents: {u'Instrument': {u'OME': None}}
@@ -1978,7 +2038,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.getInstrument(instrumentIndex).getFilterSet(filterSetIndex).getModel();
 	}
 
-	// Ignoring OTF_BackReference back reference
 	public String getFilterSetSerialNumber(int instrumentIndex, int filterSetIndex)
 	{
 		// Parents: {u'Instrument': {u'OME': None}}
@@ -1989,70 +2048,13 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	//
 	// FilterSetRef property storage
 	//
-	// Indexes: {u'Channel': [u'int imageIndex', u'int channelIndex'], u'OTF': [u'int instrumentIndex', u'int OTFIndex']}
-	// {u'OTF': {u'Instrument': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
-	// Is multi path? True
-
-	// 1:1
-	// Is multi path? True
-	// Ignoring ID property of reference FilterSetRef
-
-	//
-	// Group property storage
-	//
-	// Indexes: {u'OME': [u'int groupIndex']}
-	// {u'OME': None}
+	// Indexes: {u'Channel': [u'int imageIndex', u'int channelIndex']}
+	// {u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
 	// Is multi path? False
 
-	public String getGroupContact(int groupIndex)
-	{
-		// Parents: {u'OME': None}
-		// Contact is reference and occurs only once
-		return root.getGroup(groupIndex).getLinkedContact().getID();
-	}
-
-	// Ignoring Dataset_BackReference back reference
-	public String getGroupDescription(int groupIndex)
-	{
-		// Parents: {u'OME': None}
-		// Description is not a reference
-		return root.getGroup(groupIndex).getDescription();
-	}
-
-	// Ignoring Experimenter_BackReference back reference
-	public String getGroupID(int groupIndex)
-	{
-		// Parents: {u'OME': None}
-		// ID is not a reference
-		return root.getGroup(groupIndex).getID();
-	}
-
-	// Ignoring Image_BackReference back reference
-	public String getGroupLeader(int groupIndex)
-	{
-		// Parents: {u'OME': None}
-		// Leader is reference and occurs only once
-		return root.getGroup(groupIndex).getLinkedLeader().getID();
-	}
-
-	public String getGroupName(int groupIndex)
-	{
-		// Parents: {u'OME': None}
-		// Name is not a reference
-		return root.getGroup(groupIndex).getName();
-	}
-
-	// Ignoring Project_BackReference back reference
-	//
-	// GroupRef property storage
-	//
-	// Indexes: {u'Project': [u'int projectIndex'], u'Image': [u'int imageIndex'], u'Experimenter': [u'int experimenterIndex', u'int groupRefIndex'], u'Dataset': [u'int datasetIndex']}
-	// {u'Project': {u'OME': None}, u'Image': {u'OME': None}, u'Experimenter': {u'OME': None}, u'Dataset': {u'OME': None}}
-	// Is multi path? True
-
 	// 1:1
-	// Is multi path? True
-	// Ignoring ID property of reference GroupRef
+	// Is multi path? False
+	// Ignoring ID property of reference FilterSetRef
 
 	//
 	// Image property storage
@@ -2061,11 +2063,11 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// {u'OME': None}
 	// Is multi path? False
 
-	public String getImageAcquiredDate(int imageIndex)
+	public Timestamp getImageAcquisitionDate(int imageIndex)
 	{
 		// Parents: {u'OME': None}
-		// AcquiredDate is not a reference
-		return root.getImage(imageIndex).getAcquiredDate();
+		// AcquisitionDate is not a reference
+		return root.getImage(imageIndex).getAcquisitionDate();
 	}
 
 	public String getImageAnnotationRef(int imageIndex, int annotationRefIndex)
@@ -2075,13 +2077,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.getImage(imageIndex).getLinkedAnnotation(annotationRefIndex).getID();
 	}
 
-	public String getImageDatasetRef(int imageIndex, int datasetRefIndex)
-	{
-		// Parents: {u'OME': None}
-		// DatasetRef is reference and occurs more than once
-		return root.getImage(imageIndex).getLinkedDataset(datasetRefIndex).getID();
-	}
-
+	// Ignoring Dataset_BackReference back reference
 	public String getImageDescription(int imageIndex)
 	{
 		// Parents: {u'OME': None}
@@ -2096,18 +2092,18 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.getImage(imageIndex).getLinkedExperiment().getID();
 	}
 
+	public String getImageExperimenterGroupRef(int imageIndex)
+	{
+		// Parents: {u'OME': None}
+		// ExperimenterGroupRef is reference and occurs only once
+		return root.getImage(imageIndex).getLinkedExperimenterGroup().getID();
+	}
+
 	public String getImageExperimenterRef(int imageIndex)
 	{
 		// Parents: {u'OME': None}
 		// ExperimenterRef is reference and occurs only once
 		return root.getImage(imageIndex).getLinkedExperimenter().getID();
-	}
-
-	public String getImageGroupRef(int imageIndex)
-	{
-		// Parents: {u'OME': None}
-		// GroupRef is reference and occurs only once
-		return root.getImage(imageIndex).getLinkedGroup().getID();
 	}
 
 	public String getImageID(int imageIndex)
@@ -2153,12 +2149,12 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	//
 	// ImageRef property storage
 	//
-	// Indexes: {u'WellSample': [u'int plateIndex', u'int wellIndex', u'int wellSampleIndex']}
-	// {u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}}
-	// Is multi path? False
+	// Indexes: {u'WellSample': [u'int plateIndex', u'int wellIndex', u'int wellSampleIndex'], u'Dataset': [u'int datasetIndex', u'int imageRefIndex']}
+	// {u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Dataset': {u'OME': None}}
+	// Is multi path? True
 
 	// 1:1
-	// Is multi path? False
+	// Is multi path? True
 	// Ignoring ID property of reference ImageRef
 
 	//
@@ -2217,7 +2213,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring Image_BackReference back reference
 	// Ignoring LightSource element, complex property
 	// Ignoring Microscope element, complex property
-	// Ignoring OTF element, complex property
 	// Ignoring Objective element, complex property
 	//
 	// InstrumentRef property storage
@@ -2229,6 +2224,190 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// 1:1
 	// Is multi path? False
 	// Ignoring ID property of reference InstrumentRef
+
+	//
+	// Label property storage
+	//
+	// Indexes: {u'Shape': [u'int ROIIndex', u'int shapeIndex']}
+	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+	// Is multi path? False
+
+	// Ignoring Ellipse of parent abstract type
+	// FillColor accessor from parent Shape
+	public Color getLabelFillColor(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Label o = (Label) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getFillColor();
+	}
+
+	// FillRule accessor from parent Shape
+	public FillRule getLabelFillRule(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Label o = (Label) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getFillRule();
+	}
+
+	// FontFamily accessor from parent Shape
+	public FontFamily getLabelFontFamily(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Label o = (Label) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getFontFamily();
+	}
+
+	// FontSize accessor from parent Shape
+	public NonNegativeInteger getLabelFontSize(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Label o = (Label) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getFontSize();
+	}
+
+	// FontStyle accessor from parent Shape
+	public FontStyle getLabelFontStyle(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Label o = (Label) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getFontStyle();
+	}
+
+	// ID accessor from parent Shape
+	public String getLabelID(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Label o = (Label) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getID();
+	}
+
+	// Ignoring Label of parent abstract type
+	// Ignoring Line of parent abstract type
+	// LineCap accessor from parent Shape
+	public LineCap getLabelLineCap(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Label o = (Label) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getLineCap();
+	}
+
+	// Locked accessor from parent Shape
+	public Boolean getLabelLocked(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Label o = (Label) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getLocked();
+	}
+
+	// Ignoring Mask of parent abstract type
+	// Ignoring Point of parent abstract type
+	// Ignoring Polygon of parent abstract type
+	// Ignoring Polyline of parent abstract type
+	// Ignoring Rectangle of parent abstract type
+	// StrokeColor accessor from parent Shape
+	public Color getLabelStrokeColor(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Label o = (Label) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getStrokeColor();
+	}
+
+	// StrokeDashArray accessor from parent Shape
+	public String getLabelStrokeDashArray(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Label o = (Label) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getStrokeDashArray();
+	}
+
+	// StrokeWidth accessor from parent Shape
+	public Double getLabelStrokeWidth(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Label o = (Label) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getStrokeWidth();
+	}
+
+	// Text accessor from parent Shape
+	public String getLabelText(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Label o = (Label) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getText();
+	}
+
+	// TheC accessor from parent Shape
+	public NonNegativeInteger getLabelTheC(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Label o = (Label) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getTheC();
+	}
+
+	// TheT accessor from parent Shape
+	public NonNegativeInteger getLabelTheT(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Label o = (Label) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getTheT();
+	}
+
+	// TheZ accessor from parent Shape
+	public NonNegativeInteger getLabelTheZ(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Label o = (Label) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getTheZ();
+	}
+
+	// Transform accessor from parent Shape
+	public AffineTransform getLabelTransform(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Label o = (Label) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getTransform();
+	}
+
+	// Visible accessor from parent Shape
+	public Boolean getLabelVisible(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Label o = (Label) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getVisible();
+	}
+
+	public Double getLabelX(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Label o = (Label) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getX();
+	}
+
+	public Double getLabelY(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Label o = (Label) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getY();
+	}
 
 	//
 	// Laser property storage
@@ -2370,9 +2549,13 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	//
 	// Leader property storage
 	//
-	// Indexes: {u'Group': [u'int groupIndex']}
-	// {u'Group': {u'OME': None}}
+	// Indexes: {u'ExperimenterGroup': [u'int experimenterGroupIndex', u'int leaderIndex']}
+	// {u'ExperimenterGroup': {u'OME': None}}
 	// Is multi path? False
+
+	// 0:9999
+	// Is multi path? False
+	// Ignoring ExperimenterGroup_BackReference property of reference Leader
 
 	// 1:1
 	// Is multi path? False
@@ -2506,6 +2689,8 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.getExperiment(experimentIndex).getMicrobeamManipulation(microbeamManipulationIndex).getLightSourceSettings(lightSourceSettingsIndex).getID();
 	}
 
+	// Ignoring LightSourceRef back reference
+	// Ignoring MicrobeamManipulation_BackReference back reference
 	public PositiveInteger getChannelLightSourceSettingsWavelength(int imageIndex, int channelIndex)
 	{
 		// Parents: {u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}, u'MicrobeamManipulation': {u'Experiment': {u'OME': None}}}
@@ -2527,27 +2712,34 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
-	// Description accessor from parent Shape
-	public String getLineDescription(int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		Line o = (Line) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
-		return o.getDescription();
-	}
-
 	// Ignoring Ellipse of parent abstract type
-	// Fill accessor from parent Shape
-	public Integer getLineFill(int ROIIndex, int shapeIndex)
+	// FillColor accessor from parent Shape
+	public Color getLineFillColor(int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
 		Line o = (Line) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
-		return o.getFill();
+		return o.getFillColor();
 	}
 
-	// Ignoring FillRule of parent abstract type
-	// Ignoring FontFamily of parent abstract type
+	// FillRule accessor from parent Shape
+	public FillRule getLineFillRule(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Line o = (Line) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getFillRule();
+	}
+
+	// FontFamily accessor from parent Shape
+	public FontFamily getLineFontFamily(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Line o = (Line) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getFontFamily();
+	}
+
 	// FontSize accessor from parent Shape
 	public NonNegativeInteger getLineFontSize(int ROIIndex, int shapeIndex)
 	{
@@ -2557,7 +2749,15 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return o.getFontSize();
 	}
 
-	// Ignoring FontStyle of parent abstract type
+	// FontStyle accessor from parent Shape
+	public FontStyle getLineFontStyle(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Line o = (Line) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getFontStyle();
+	}
+
 	// ID accessor from parent Shape
 	public String getLineID(int ROIIndex, int shapeIndex)
 	{
@@ -2567,40 +2767,38 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return o.getID();
 	}
 
-	// Label accessor from parent Shape
-	public String getLineLabel(int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		Line o = (Line) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
-		return o.getLabel();
-	}
-
+	// Ignoring Label of parent abstract type
 	// Ignoring Line of parent abstract type
-	// Ignoring LineCap of parent abstract type
-	// Ignoring MarkerEnd of parent abstract type
-	// Ignoring MarkerStart of parent abstract type
-	// Ignoring Mask of parent abstract type
-	// Name accessor from parent Shape
-	public String getLineName(int ROIIndex, int shapeIndex)
+	// LineCap accessor from parent Shape
+	public LineCap getLineLineCap(int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
 		Line o = (Line) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
-		return o.getName();
+		return o.getLineCap();
 	}
 
-	// Ignoring Path of parent abstract type
+	// Locked accessor from parent Shape
+	public Boolean getLineLocked(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Line o = (Line) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getLocked();
+	}
+
+	// Ignoring Mask of parent abstract type
 	// Ignoring Point of parent abstract type
+	// Ignoring Polygon of parent abstract type
 	// Ignoring Polyline of parent abstract type
 	// Ignoring Rectangle of parent abstract type
-	// Stroke accessor from parent Shape
-	public Integer getLineStroke(int ROIIndex, int shapeIndex)
+	// StrokeColor accessor from parent Shape
+	public Color getLineStrokeColor(int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
 		Line o = (Line) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
-		return o.getStroke();
+		return o.getStrokeColor();
 	}
 
 	// StrokeDashArray accessor from parent Shape
@@ -2621,7 +2819,15 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return o.getStrokeWidth();
 	}
 
-	// Ignoring Text of parent abstract type
+	// Text accessor from parent Shape
+	public String getLineText(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Line o = (Line) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getText();
+	}
+
 	// TheC accessor from parent Shape
 	public NonNegativeInteger getLineTheC(int ROIIndex, int shapeIndex)
 	{
@@ -2650,12 +2856,37 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// Transform accessor from parent Shape
-	public String getLineTransform(int ROIIndex, int shapeIndex)
+	public AffineTransform getLineTransform(int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
 		Line o = (Line) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
 		return o.getTransform();
+	}
+
+	// Visible accessor from parent Shape
+	public Boolean getLineVisible(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Line o = (Line) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getVisible();
+	}
+
+	public Marker getLineMarkerEnd(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Line o = (Line) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getMarkerEnd();
+	}
+
+	public Marker getLineMarkerStart(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Line o = (Line) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getMarkerStart();
 	}
 
 	public Double getLineX1(int ROIIndex, int shapeIndex)
@@ -2713,6 +2944,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.getStructuredAnnotations().getListAnnotation(listAnnotationIndex).getDescription();
 	}
 
+	// Ignoring ExperimenterGroup_BackReference back reference
 	// Ignoring Experimenter_BackReference back reference
 	public String getListAnnotationID(int listAnnotationIndex)
 	{
@@ -2737,6 +2969,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	// Ignoring WellSample_BackReference back reference
 	// Ignoring Well_BackReference back reference
 	//
@@ -2762,6 +2995,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.getStructuredAnnotations().getLongAnnotation(longAnnotationIndex).getDescription();
 	}
 
+	// Ignoring ExperimenterGroup_BackReference back reference
 	// Ignoring Experimenter_BackReference back reference
 	public String getLongAnnotationID(int longAnnotationIndex)
 	{
@@ -2786,6 +3020,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public Long getLongAnnotationValue(int longAnnotationIndex)
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
@@ -2802,27 +3037,34 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
-	// Description accessor from parent Shape
-	public String getMaskDescription(int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		Mask o = (Mask) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
-		return o.getDescription();
-	}
-
 	// Ignoring Ellipse of parent abstract type
-	// Fill accessor from parent Shape
-	public Integer getMaskFill(int ROIIndex, int shapeIndex)
+	// FillColor accessor from parent Shape
+	public Color getMaskFillColor(int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
 		Mask o = (Mask) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
-		return o.getFill();
+		return o.getFillColor();
 	}
 
-	// Ignoring FillRule of parent abstract type
-	// Ignoring FontFamily of parent abstract type
+	// FillRule accessor from parent Shape
+	public FillRule getMaskFillRule(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Mask o = (Mask) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getFillRule();
+	}
+
+	// FontFamily accessor from parent Shape
+	public FontFamily getMaskFontFamily(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Mask o = (Mask) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getFontFamily();
+	}
+
 	// FontSize accessor from parent Shape
 	public NonNegativeInteger getMaskFontSize(int ROIIndex, int shapeIndex)
 	{
@@ -2832,7 +3074,15 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return o.getFontSize();
 	}
 
-	// Ignoring FontStyle of parent abstract type
+	// FontStyle accessor from parent Shape
+	public FontStyle getMaskFontStyle(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Mask o = (Mask) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getFontStyle();
+	}
+
 	// ID accessor from parent Shape
 	public String getMaskID(int ROIIndex, int shapeIndex)
 	{
@@ -2842,40 +3092,38 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return o.getID();
 	}
 
-	// Label accessor from parent Shape
-	public String getMaskLabel(int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		Mask o = (Mask) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
-		return o.getLabel();
-	}
-
+	// Ignoring Label of parent abstract type
 	// Ignoring Line of parent abstract type
-	// Ignoring LineCap of parent abstract type
-	// Ignoring MarkerEnd of parent abstract type
-	// Ignoring MarkerStart of parent abstract type
-	// Ignoring Mask of parent abstract type
-	// Name accessor from parent Shape
-	public String getMaskName(int ROIIndex, int shapeIndex)
+	// LineCap accessor from parent Shape
+	public LineCap getMaskLineCap(int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
 		Mask o = (Mask) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
-		return o.getName();
+		return o.getLineCap();
 	}
 
-	// Ignoring Path of parent abstract type
+	// Locked accessor from parent Shape
+	public Boolean getMaskLocked(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Mask o = (Mask) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getLocked();
+	}
+
+	// Ignoring Mask of parent abstract type
 	// Ignoring Point of parent abstract type
+	// Ignoring Polygon of parent abstract type
 	// Ignoring Polyline of parent abstract type
 	// Ignoring Rectangle of parent abstract type
-	// Stroke accessor from parent Shape
-	public Integer getMaskStroke(int ROIIndex, int shapeIndex)
+	// StrokeColor accessor from parent Shape
+	public Color getMaskStrokeColor(int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
 		Mask o = (Mask) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
-		return o.getStroke();
+		return o.getStrokeColor();
 	}
 
 	// StrokeDashArray accessor from parent Shape
@@ -2896,7 +3144,15 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return o.getStrokeWidth();
 	}
 
-	// Ignoring Text of parent abstract type
+	// Text accessor from parent Shape
+	public String getMaskText(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Mask o = (Mask) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getText();
+	}
+
 	// TheC accessor from parent Shape
 	public NonNegativeInteger getMaskTheC(int ROIIndex, int shapeIndex)
 	{
@@ -2925,12 +3181,21 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// Transform accessor from parent Shape
-	public String getMaskTransform(int ROIIndex, int shapeIndex)
+	public AffineTransform getMaskTransform(int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
 		Mask o = (Mask) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
 		return o.getTransform();
+	}
+
+	// Visible accessor from parent Shape
+	public Boolean getMaskVisible(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Mask o = (Mask) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getVisible();
 	}
 
 	// Ignoring BinData element, complex property
@@ -2987,6 +3252,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.getExperiment(experimentIndex).getMicrobeamManipulation(microbeamManipulationIndex).getDescription();
 	}
 
+	// Ignoring Experiment_BackReference back reference
 	public String getMicrobeamManipulationExperimenterRef(int experimentIndex, int microbeamManipulationIndex)
 	{
 		// Parents: {u'Experiment': {u'OME': None}}
@@ -3071,69 +3337,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	//
-	// OTF property storage
-	//
-	// Indexes: {u'Instrument': [u'int instrumentIndex', u'int OTFIndex']}
-	// {u'Instrument': {u'OME': None}}
-	// Is multi path? False
-
-	// Ignoring BinaryFile element, complex property
-	// Ignoring Channel_BackReference back reference
-	public String getOTFFilterSetRef(int instrumentIndex, int OTFIndex)
-	{
-		// Parents: {u'Instrument': {u'OME': None}}
-		// FilterSetRef is reference and occurs only once
-		return root.getInstrument(instrumentIndex).getOTF(OTFIndex).getLinkedFilterSet().getID();
-	}
-
-	public String getOTFID(int instrumentIndex, int OTFIndex)
-	{
-		// Parents: {u'Instrument': {u'OME': None}}
-		// ID is not a reference
-		return root.getInstrument(instrumentIndex).getOTF(OTFIndex).getID();
-	}
-
-	// Ignoring ObjectiveSettings element, complex property
-	public Boolean getOTFOpticalAxisAveraged(int instrumentIndex, int OTFIndex)
-	{
-		// Parents: {u'Instrument': {u'OME': None}}
-		// OpticalAxisAveraged is not a reference
-		return root.getInstrument(instrumentIndex).getOTF(OTFIndex).getOpticalAxisAveraged();
-	}
-
-	public PositiveInteger getOTFSizeX(int instrumentIndex, int OTFIndex)
-	{
-		// Parents: {u'Instrument': {u'OME': None}}
-		// SizeX is not a reference
-		return root.getInstrument(instrumentIndex).getOTF(OTFIndex).getSizeX();
-	}
-
-	public PositiveInteger getOTFSizeY(int instrumentIndex, int OTFIndex)
-	{
-		// Parents: {u'Instrument': {u'OME': None}}
-		// SizeY is not a reference
-		return root.getInstrument(instrumentIndex).getOTF(OTFIndex).getSizeY();
-	}
-
-	public PixelType getOTFType(int instrumentIndex, int OTFIndex)
-	{
-		// Parents: {u'Instrument': {u'OME': None}}
-		// Type is not a reference
-		return root.getInstrument(instrumentIndex).getOTF(OTFIndex).getType();
-	}
-
-	//
-	// OTFRef property storage
-	//
-	// Indexes: {u'Channel': [u'int imageIndex', u'int channelIndex']}
-	// {u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
-	// Is multi path? False
-
-	// 1:1
-	// Is multi path? False
-	// Ignoring ID property of reference OTFRef
-
-	//
 	// Objective property storage
 	//
 	// Indexes: {u'Instrument': [u'int instrumentIndex', u'int objectiveIndex']}
@@ -3168,6 +3371,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.getInstrument(instrumentIndex).getObjective(objectiveIndex).getImmersion();
 	}
 
+	// Ignoring Instrument_BackReference back reference
 	public Boolean getObjectiveIris(int instrumentIndex, int objectiveIndex)
 	{
 		// Parents: {u'Instrument': {u'OME': None}}
@@ -3227,210 +3431,37 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	//
 	// ObjectiveSettings property storage
 	//
-	// Indexes: {u'Image': [u'int imageIndex'], u'OTF': [u'int instrumentIndex', u'int OTFIndex']}
-	// {u'Image': {u'OME': None}, u'OTF': {u'Instrument': {u'OME': None}}}
-	// Is multi path? True
+	// Indexes: {u'Image': [u'int imageIndex']}
+	// {u'Image': {u'OME': None}}
+	// Is multi path? False
 
-	public Double getImageObjectiveSettingsCorrectionCollar(int imageIndex)
+	public Double getObjectiveSettingsCorrectionCollar(int imageIndex)
 	{
-		// Parents: {u'Image': {u'OME': None}, u'OTF': {u'Instrument': {u'OME': None}}}
+		// Parents: {u'Image': {u'OME': None}}
 		// CorrectionCollar is not a reference
 		return root.getImage(imageIndex).getObjectiveSettings().getCorrectionCollar();
 	}
 
-	public Double getOTFObjectiveSettingsCorrectionCollar(int instrumentIndex, int OTFIndex)
+	public String getObjectiveSettingsID(int imageIndex)
 	{
-		// Parents: {u'Image': {u'OME': None}, u'OTF': {u'Instrument': {u'OME': None}}}
-		// CorrectionCollar is not a reference
-		return root.getInstrument(instrumentIndex).getOTF(OTFIndex).getObjectiveSettings().getCorrectionCollar();
-	}
-
-	public String getImageObjectiveSettingsID(int imageIndex)
-	{
-		// Parents: {u'Image': {u'OME': None}, u'OTF': {u'Instrument': {u'OME': None}}}
+		// Parents: {u'Image': {u'OME': None}}
 		// ID is not a reference
 		return root.getImage(imageIndex).getObjectiveSettings().getID();
 	}
 
-	public String getOTFObjectiveSettingsID(int instrumentIndex, int OTFIndex)
+	public Medium getObjectiveSettingsMedium(int imageIndex)
 	{
-		// Parents: {u'Image': {u'OME': None}, u'OTF': {u'Instrument': {u'OME': None}}}
-		// ID is not a reference
-		return root.getInstrument(instrumentIndex).getOTF(OTFIndex).getObjectiveSettings().getID();
-	}
-
-	public Medium getImageObjectiveSettingsMedium(int imageIndex)
-	{
-		// Parents: {u'Image': {u'OME': None}, u'OTF': {u'Instrument': {u'OME': None}}}
+		// Parents: {u'Image': {u'OME': None}}
 		// Medium is not a reference
 		return root.getImage(imageIndex).getObjectiveSettings().getMedium();
 	}
 
-	public Medium getOTFObjectiveSettingsMedium(int instrumentIndex, int OTFIndex)
+	// Ignoring ObjectiveRef back reference
+	public Double getObjectiveSettingsRefractiveIndex(int imageIndex)
 	{
-		// Parents: {u'Image': {u'OME': None}, u'OTF': {u'Instrument': {u'OME': None}}}
-		// Medium is not a reference
-		return root.getInstrument(instrumentIndex).getOTF(OTFIndex).getObjectiveSettings().getMedium();
-	}
-
-	public Double getImageObjectiveSettingsRefractiveIndex(int imageIndex)
-	{
-		// Parents: {u'Image': {u'OME': None}, u'OTF': {u'Instrument': {u'OME': None}}}
+		// Parents: {u'Image': {u'OME': None}}
 		// RefractiveIndex is not a reference
 		return root.getImage(imageIndex).getObjectiveSettings().getRefractiveIndex();
-	}
-
-	public Double getOTFObjectiveSettingsRefractiveIndex(int instrumentIndex, int OTFIndex)
-	{
-		// Parents: {u'Image': {u'OME': None}, u'OTF': {u'Instrument': {u'OME': None}}}
-		// RefractiveIndex is not a reference
-		return root.getInstrument(instrumentIndex).getOTF(OTFIndex).getObjectiveSettings().getRefractiveIndex();
-	}
-
-	//
-	// Path property storage
-	//
-	// Indexes: {u'Shape': [u'int ROIIndex', u'int shapeIndex']}
-	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-	// Is multi path? False
-
-	// Description accessor from parent Shape
-	public String getPathDescription(int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		Path o = (Path) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
-		return o.getDescription();
-	}
-
-	// Ignoring Ellipse of parent abstract type
-	// Fill accessor from parent Shape
-	public Integer getPathFill(int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		Path o = (Path) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
-		return o.getFill();
-	}
-
-	// Ignoring FillRule of parent abstract type
-	// Ignoring FontFamily of parent abstract type
-	// FontSize accessor from parent Shape
-	public NonNegativeInteger getPathFontSize(int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		Path o = (Path) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
-		return o.getFontSize();
-	}
-
-	// Ignoring FontStyle of parent abstract type
-	// ID accessor from parent Shape
-	public String getPathID(int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		Path o = (Path) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
-		return o.getID();
-	}
-
-	// Label accessor from parent Shape
-	public String getPathLabel(int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		Path o = (Path) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
-		return o.getLabel();
-	}
-
-	// Ignoring Line of parent abstract type
-	// Ignoring LineCap of parent abstract type
-	// Ignoring MarkerEnd of parent abstract type
-	// Ignoring MarkerStart of parent abstract type
-	// Ignoring Mask of parent abstract type
-	// Name accessor from parent Shape
-	public String getPathName(int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		Path o = (Path) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
-		return o.getName();
-	}
-
-	// Ignoring Path of parent abstract type
-	// Ignoring Point of parent abstract type
-	// Ignoring Polyline of parent abstract type
-	// Ignoring Rectangle of parent abstract type
-	// Stroke accessor from parent Shape
-	public Integer getPathStroke(int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		Path o = (Path) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
-		return o.getStroke();
-	}
-
-	// StrokeDashArray accessor from parent Shape
-	public String getPathStrokeDashArray(int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		Path o = (Path) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
-		return o.getStrokeDashArray();
-	}
-
-	// StrokeWidth accessor from parent Shape
-	public Double getPathStrokeWidth(int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		Path o = (Path) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
-		return o.getStrokeWidth();
-	}
-
-	// Ignoring Text of parent abstract type
-	// TheC accessor from parent Shape
-	public NonNegativeInteger getPathTheC(int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		Path o = (Path) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
-		return o.getTheC();
-	}
-
-	// TheT accessor from parent Shape
-	public NonNegativeInteger getPathTheT(int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		Path o = (Path) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
-		return o.getTheT();
-	}
-
-	// TheZ accessor from parent Shape
-	public NonNegativeInteger getPathTheZ(int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		Path o = (Path) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
-		return o.getTheZ();
-	}
-
-	// Transform accessor from parent Shape
-	public String getPathTransform(int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		Path o = (Path) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
-		return o.getTransform();
-	}
-
-	public String getPathDefinition(int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		Path o = (Path) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
-		return o.getDefinition();
 	}
 
 	//
@@ -3571,6 +3602,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.getImage(imageIndex).getPixels().getPlane(planeIndex).getHashSHA1();
 	}
 
+	// Ignoring Pixels_BackReference back reference
 	public Double getPlanePositionX(int imageIndex, int planeIndex)
 	{
 		// Parents: {u'Pixels': {u'Image': {u'OME': None}}}
@@ -3655,6 +3687,13 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.getPlate(plateIndex).getExternalIdentifier();
 	}
 
+	public NonNegativeInteger getPlateFieldIndex(int plateIndex)
+	{
+		// Parents: {u'OME': None}
+		// FieldIndex is not a reference
+		return root.getPlate(plateIndex).getFieldIndex();
+	}
+
 	public String getPlateID(int plateIndex)
 	{
 		// Parents: {u'OME': None}
@@ -3684,13 +3723,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.getPlate(plateIndex).getRows();
 	}
 
-	public String getPlateScreenRef(int plateIndex, int screenRefIndex)
-	{
-		// Parents: {u'OME': None}
-		// ScreenRef is reference and occurs more than once
-		return root.getPlate(plateIndex).getLinkedScreen(screenRefIndex).getID();
-	}
-
+	// Ignoring Screen_BackReference back reference
 	public String getPlateStatus(int plateIndex)
 	{
 		// Parents: {u'OME': None}
@@ -3734,7 +3767,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.getPlate(plateIndex).getPlateAcquisition(plateAcquisitionIndex).getDescription();
 	}
 
-	public String getPlateAcquisitionEndTime(int plateIndex, int plateAcquisitionIndex)
+	public Timestamp getPlateAcquisitionEndTime(int plateIndex, int plateAcquisitionIndex)
 	{
 		// Parents: {u'Plate': {u'OME': None}}
 		// EndTime is not a reference
@@ -3762,7 +3795,8 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.getPlate(plateIndex).getPlateAcquisition(plateAcquisitionIndex).getName();
 	}
 
-	public String getPlateAcquisitionStartTime(int plateIndex, int plateAcquisitionIndex)
+	// Ignoring Plate_BackReference back reference
+	public Timestamp getPlateAcquisitionStartTime(int plateIndex, int plateAcquisitionIndex)
 	{
 		// Parents: {u'Plate': {u'OME': None}}
 		// StartTime is not a reference
@@ -3794,27 +3828,34 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
-	// Description accessor from parent Shape
-	public String getPointDescription(int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		Point o = (Point) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
-		return o.getDescription();
-	}
-
 	// Ignoring Ellipse of parent abstract type
-	// Fill accessor from parent Shape
-	public Integer getPointFill(int ROIIndex, int shapeIndex)
+	// FillColor accessor from parent Shape
+	public Color getPointFillColor(int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
 		Point o = (Point) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
-		return o.getFill();
+		return o.getFillColor();
 	}
 
-	// Ignoring FillRule of parent abstract type
-	// Ignoring FontFamily of parent abstract type
+	// FillRule accessor from parent Shape
+	public FillRule getPointFillRule(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Point o = (Point) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getFillRule();
+	}
+
+	// FontFamily accessor from parent Shape
+	public FontFamily getPointFontFamily(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Point o = (Point) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getFontFamily();
+	}
+
 	// FontSize accessor from parent Shape
 	public NonNegativeInteger getPointFontSize(int ROIIndex, int shapeIndex)
 	{
@@ -3824,7 +3865,15 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return o.getFontSize();
 	}
 
-	// Ignoring FontStyle of parent abstract type
+	// FontStyle accessor from parent Shape
+	public FontStyle getPointFontStyle(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Point o = (Point) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getFontStyle();
+	}
+
 	// ID accessor from parent Shape
 	public String getPointID(int ROIIndex, int shapeIndex)
 	{
@@ -3834,40 +3883,38 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return o.getID();
 	}
 
-	// Label accessor from parent Shape
-	public String getPointLabel(int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		Point o = (Point) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
-		return o.getLabel();
-	}
-
+	// Ignoring Label of parent abstract type
 	// Ignoring Line of parent abstract type
-	// Ignoring LineCap of parent abstract type
-	// Ignoring MarkerEnd of parent abstract type
-	// Ignoring MarkerStart of parent abstract type
-	// Ignoring Mask of parent abstract type
-	// Name accessor from parent Shape
-	public String getPointName(int ROIIndex, int shapeIndex)
+	// LineCap accessor from parent Shape
+	public LineCap getPointLineCap(int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
 		Point o = (Point) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
-		return o.getName();
+		return o.getLineCap();
 	}
 
-	// Ignoring Path of parent abstract type
+	// Locked accessor from parent Shape
+	public Boolean getPointLocked(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Point o = (Point) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getLocked();
+	}
+
+	// Ignoring Mask of parent abstract type
 	// Ignoring Point of parent abstract type
+	// Ignoring Polygon of parent abstract type
 	// Ignoring Polyline of parent abstract type
 	// Ignoring Rectangle of parent abstract type
-	// Stroke accessor from parent Shape
-	public Integer getPointStroke(int ROIIndex, int shapeIndex)
+	// StrokeColor accessor from parent Shape
+	public Color getPointStrokeColor(int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
 		Point o = (Point) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
-		return o.getStroke();
+		return o.getStrokeColor();
 	}
 
 	// StrokeDashArray accessor from parent Shape
@@ -3888,7 +3935,15 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return o.getStrokeWidth();
 	}
 
-	// Ignoring Text of parent abstract type
+	// Text accessor from parent Shape
+	public String getPointText(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Point o = (Point) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getText();
+	}
+
 	// TheC accessor from parent Shape
 	public NonNegativeInteger getPointTheC(int ROIIndex, int shapeIndex)
 	{
@@ -3917,12 +3972,21 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// Transform accessor from parent Shape
-	public String getPointTransform(int ROIIndex, int shapeIndex)
+	public AffineTransform getPointTransform(int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
 		Point o = (Point) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
 		return o.getTransform();
+	}
+
+	// Visible accessor from parent Shape
+	public Boolean getPointVisible(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Point o = (Point) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getVisible();
 	}
 
 	public Double getPointX(int ROIIndex, int shapeIndex)
@@ -3942,33 +4006,216 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	//
+	// Polygon property storage
+	//
+	// Indexes: {u'Shape': [u'int ROIIndex', u'int shapeIndex']}
+	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+	// Is multi path? False
+
+	// Ignoring Ellipse of parent abstract type
+	// FillColor accessor from parent Shape
+	public Color getPolygonFillColor(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Polygon o = (Polygon) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getFillColor();
+	}
+
+	// FillRule accessor from parent Shape
+	public FillRule getPolygonFillRule(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Polygon o = (Polygon) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getFillRule();
+	}
+
+	// FontFamily accessor from parent Shape
+	public FontFamily getPolygonFontFamily(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Polygon o = (Polygon) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getFontFamily();
+	}
+
+	// FontSize accessor from parent Shape
+	public NonNegativeInteger getPolygonFontSize(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Polygon o = (Polygon) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getFontSize();
+	}
+
+	// FontStyle accessor from parent Shape
+	public FontStyle getPolygonFontStyle(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Polygon o = (Polygon) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getFontStyle();
+	}
+
+	// ID accessor from parent Shape
+	public String getPolygonID(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Polygon o = (Polygon) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getID();
+	}
+
+	// Ignoring Label of parent abstract type
+	// Ignoring Line of parent abstract type
+	// LineCap accessor from parent Shape
+	public LineCap getPolygonLineCap(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Polygon o = (Polygon) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getLineCap();
+	}
+
+	// Locked accessor from parent Shape
+	public Boolean getPolygonLocked(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Polygon o = (Polygon) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getLocked();
+	}
+
+	// Ignoring Mask of parent abstract type
+	// Ignoring Point of parent abstract type
+	// Ignoring Polygon of parent abstract type
+	// Ignoring Polyline of parent abstract type
+	// Ignoring Rectangle of parent abstract type
+	// StrokeColor accessor from parent Shape
+	public Color getPolygonStrokeColor(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Polygon o = (Polygon) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getStrokeColor();
+	}
+
+	// StrokeDashArray accessor from parent Shape
+	public String getPolygonStrokeDashArray(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Polygon o = (Polygon) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getStrokeDashArray();
+	}
+
+	// StrokeWidth accessor from parent Shape
+	public Double getPolygonStrokeWidth(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Polygon o = (Polygon) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getStrokeWidth();
+	}
+
+	// Text accessor from parent Shape
+	public String getPolygonText(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Polygon o = (Polygon) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getText();
+	}
+
+	// TheC accessor from parent Shape
+	public NonNegativeInteger getPolygonTheC(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Polygon o = (Polygon) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getTheC();
+	}
+
+	// TheT accessor from parent Shape
+	public NonNegativeInteger getPolygonTheT(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Polygon o = (Polygon) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getTheT();
+	}
+
+	// TheZ accessor from parent Shape
+	public NonNegativeInteger getPolygonTheZ(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Polygon o = (Polygon) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getTheZ();
+	}
+
+	// Transform accessor from parent Shape
+	public AffineTransform getPolygonTransform(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Polygon o = (Polygon) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getTransform();
+	}
+
+	// Visible accessor from parent Shape
+	public Boolean getPolygonVisible(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Polygon o = (Polygon) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getVisible();
+	}
+
+	public String getPolygonPoints(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Polygon o = (Polygon) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getPoints();
+	}
+
+	//
 	// Polyline property storage
 	//
 	// Indexes: {u'Shape': [u'int ROIIndex', u'int shapeIndex']}
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
-	// Description accessor from parent Shape
-	public String getPolylineDescription(int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		Polyline o = (Polyline) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
-		return o.getDescription();
-	}
-
 	// Ignoring Ellipse of parent abstract type
-	// Fill accessor from parent Shape
-	public Integer getPolylineFill(int ROIIndex, int shapeIndex)
+	// FillColor accessor from parent Shape
+	public Color getPolylineFillColor(int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
 		Polyline o = (Polyline) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
-		return o.getFill();
+		return o.getFillColor();
 	}
 
-	// Ignoring FillRule of parent abstract type
-	// Ignoring FontFamily of parent abstract type
+	// FillRule accessor from parent Shape
+	public FillRule getPolylineFillRule(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Polyline o = (Polyline) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getFillRule();
+	}
+
+	// FontFamily accessor from parent Shape
+	public FontFamily getPolylineFontFamily(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Polyline o = (Polyline) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getFontFamily();
+	}
+
 	// FontSize accessor from parent Shape
 	public NonNegativeInteger getPolylineFontSize(int ROIIndex, int shapeIndex)
 	{
@@ -3978,7 +4225,15 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return o.getFontSize();
 	}
 
-	// Ignoring FontStyle of parent abstract type
+	// FontStyle accessor from parent Shape
+	public FontStyle getPolylineFontStyle(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Polyline o = (Polyline) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getFontStyle();
+	}
+
 	// ID accessor from parent Shape
 	public String getPolylineID(int ROIIndex, int shapeIndex)
 	{
@@ -3988,40 +4243,38 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return o.getID();
 	}
 
-	// Label accessor from parent Shape
-	public String getPolylineLabel(int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		Polyline o = (Polyline) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
-		return o.getLabel();
-	}
-
+	// Ignoring Label of parent abstract type
 	// Ignoring Line of parent abstract type
-	// Ignoring LineCap of parent abstract type
-	// Ignoring MarkerEnd of parent abstract type
-	// Ignoring MarkerStart of parent abstract type
-	// Ignoring Mask of parent abstract type
-	// Name accessor from parent Shape
-	public String getPolylineName(int ROIIndex, int shapeIndex)
+	// LineCap accessor from parent Shape
+	public LineCap getPolylineLineCap(int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
 		Polyline o = (Polyline) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
-		return o.getName();
+		return o.getLineCap();
 	}
 
-	// Ignoring Path of parent abstract type
+	// Locked accessor from parent Shape
+	public Boolean getPolylineLocked(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Polyline o = (Polyline) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getLocked();
+	}
+
+	// Ignoring Mask of parent abstract type
 	// Ignoring Point of parent abstract type
+	// Ignoring Polygon of parent abstract type
 	// Ignoring Polyline of parent abstract type
 	// Ignoring Rectangle of parent abstract type
-	// Stroke accessor from parent Shape
-	public Integer getPolylineStroke(int ROIIndex, int shapeIndex)
+	// StrokeColor accessor from parent Shape
+	public Color getPolylineStrokeColor(int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
 		Polyline o = (Polyline) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
-		return o.getStroke();
+		return o.getStrokeColor();
 	}
 
 	// StrokeDashArray accessor from parent Shape
@@ -4042,7 +4295,15 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return o.getStrokeWidth();
 	}
 
-	// Ignoring Text of parent abstract type
+	// Text accessor from parent Shape
+	public String getPolylineText(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Polyline o = (Polyline) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getText();
+	}
+
 	// TheC accessor from parent Shape
 	public NonNegativeInteger getPolylineTheC(int ROIIndex, int shapeIndex)
 	{
@@ -4071,7 +4332,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// Transform accessor from parent Shape
-	public String getPolylineTransform(int ROIIndex, int shapeIndex)
+	public AffineTransform getPolylineTransform(int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -4079,12 +4340,29 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return o.getTransform();
 	}
 
-	public Boolean getPolylineClosed(int ROIIndex, int shapeIndex)
+	// Visible accessor from parent Shape
+	public Boolean getPolylineVisible(int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
 		Polyline o = (Polyline) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
-		return o.getClosed();
+		return o.getVisible();
+	}
+
+	public Marker getPolylineMarkerEnd(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Polyline o = (Polyline) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getMarkerEnd();
+	}
+
+	public Marker getPolylineMarkerStart(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Polyline o = (Polyline) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getMarkerStart();
 	}
 
 	public String getPolylinePoints(int ROIIndex, int shapeIndex)
@@ -4109,7 +4387,13 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.getProject(projectIndex).getLinkedAnnotation(annotationRefIndex).getID();
 	}
 
-	// Ignoring Dataset_BackReference back reference
+	public String getProjectDatasetRef(int projectIndex, int datasetRefIndex)
+	{
+		// Parents: {u'OME': None}
+		// DatasetRef is reference and occurs more than once
+		return root.getProject(projectIndex).getLinkedDataset(datasetRefIndex).getID();
+	}
+
 	public String getProjectDescription(int projectIndex)
 	{
 		// Parents: {u'OME': None}
@@ -4117,18 +4401,18 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.getProject(projectIndex).getDescription();
 	}
 
+	public String getProjectExperimenterGroupRef(int projectIndex)
+	{
+		// Parents: {u'OME': None}
+		// ExperimenterGroupRef is reference and occurs only once
+		return root.getProject(projectIndex).getLinkedExperimenterGroup().getID();
+	}
+
 	public String getProjectExperimenterRef(int projectIndex)
 	{
 		// Parents: {u'OME': None}
 		// ExperimenterRef is reference and occurs only once
 		return root.getProject(projectIndex).getLinkedExperimenter().getID();
-	}
-
-	public String getProjectGroupRef(int projectIndex)
-	{
-		// Parents: {u'OME': None}
-		// GroupRef is reference and occurs only once
-		return root.getProject(projectIndex).getLinkedGroup().getID();
 	}
 
 	public String getProjectID(int projectIndex)
@@ -4146,17 +4430,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	//
-	// ProjectRef property storage
-	//
-	// Indexes: {u'Dataset': [u'int datasetIndex', u'int projectRefIndex']}
-	// {u'Dataset': {u'OME': None}}
-	// Is multi path? False
-
-	// 1:1
-	// Is multi path? False
-	// Ignoring ID property of reference ProjectRef
-
-	//
 	// Pump property storage
 	//
 	// Indexes: {u'Laser': [u'int instrumentIndex', u'int lightSourceIndex']}
@@ -4166,6 +4439,10 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// 1:1
 	// Is multi path? False
 	// Ignoring ID property of reference Pump
+
+	// 0:9999
+	// Is multi path? False
+	// Ignoring Laser_BackReference property of reference Pump
 
 	//
 	// ROI property storage
@@ -4265,6 +4542,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.getScreen(screenIndex).getReagent(reagentIndex).getReagentIdentifier();
 	}
 
+	// Ignoring Screen_BackReference back reference
 	// Ignoring Well_BackReference back reference
 	//
 	// ReagentRef property storage
@@ -4284,27 +4562,34 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
-	// Description accessor from parent Shape
-	public String getRectangleDescription(int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		Rectangle o = (Rectangle) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
-		return o.getDescription();
-	}
-
 	// Ignoring Ellipse of parent abstract type
-	// Fill accessor from parent Shape
-	public Integer getRectangleFill(int ROIIndex, int shapeIndex)
+	// FillColor accessor from parent Shape
+	public Color getRectangleFillColor(int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
 		Rectangle o = (Rectangle) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
-		return o.getFill();
+		return o.getFillColor();
 	}
 
-	// Ignoring FillRule of parent abstract type
-	// Ignoring FontFamily of parent abstract type
+	// FillRule accessor from parent Shape
+	public FillRule getRectangleFillRule(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Rectangle o = (Rectangle) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getFillRule();
+	}
+
+	// FontFamily accessor from parent Shape
+	public FontFamily getRectangleFontFamily(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Rectangle o = (Rectangle) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getFontFamily();
+	}
+
 	// FontSize accessor from parent Shape
 	public NonNegativeInteger getRectangleFontSize(int ROIIndex, int shapeIndex)
 	{
@@ -4314,7 +4599,15 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return o.getFontSize();
 	}
 
-	// Ignoring FontStyle of parent abstract type
+	// FontStyle accessor from parent Shape
+	public FontStyle getRectangleFontStyle(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Rectangle o = (Rectangle) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getFontStyle();
+	}
+
 	// ID accessor from parent Shape
 	public String getRectangleID(int ROIIndex, int shapeIndex)
 	{
@@ -4324,40 +4617,38 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return o.getID();
 	}
 
-	// Label accessor from parent Shape
-	public String getRectangleLabel(int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		Rectangle o = (Rectangle) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
-		return o.getLabel();
-	}
-
+	// Ignoring Label of parent abstract type
 	// Ignoring Line of parent abstract type
-	// Ignoring LineCap of parent abstract type
-	// Ignoring MarkerEnd of parent abstract type
-	// Ignoring MarkerStart of parent abstract type
-	// Ignoring Mask of parent abstract type
-	// Name accessor from parent Shape
-	public String getRectangleName(int ROIIndex, int shapeIndex)
+	// LineCap accessor from parent Shape
+	public LineCap getRectangleLineCap(int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
 		Rectangle o = (Rectangle) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
-		return o.getName();
+		return o.getLineCap();
 	}
 
-	// Ignoring Path of parent abstract type
+	// Locked accessor from parent Shape
+	public Boolean getRectangleLocked(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Rectangle o = (Rectangle) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getLocked();
+	}
+
+	// Ignoring Mask of parent abstract type
 	// Ignoring Point of parent abstract type
+	// Ignoring Polygon of parent abstract type
 	// Ignoring Polyline of parent abstract type
 	// Ignoring Rectangle of parent abstract type
-	// Stroke accessor from parent Shape
-	public Integer getRectangleStroke(int ROIIndex, int shapeIndex)
+	// StrokeColor accessor from parent Shape
+	public Color getRectangleStrokeColor(int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
 		Rectangle o = (Rectangle) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
-		return o.getStroke();
+		return o.getStrokeColor();
 	}
 
 	// StrokeDashArray accessor from parent Shape
@@ -4378,7 +4669,15 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return o.getStrokeWidth();
 	}
 
-	// Ignoring Text of parent abstract type
+	// Text accessor from parent Shape
+	public String getRectangleText(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Rectangle o = (Rectangle) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getText();
+	}
+
 	// TheC accessor from parent Shape
 	public NonNegativeInteger getRectangleTheC(int ROIIndex, int shapeIndex)
 	{
@@ -4407,12 +4706,21 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// Transform accessor from parent Shape
-	public String getRectangleTransform(int ROIIndex, int shapeIndex)
+	public AffineTransform getRectangleTransform(int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
 		Rectangle o = (Rectangle) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
 		return o.getTransform();
+	}
+
+	// Visible accessor from parent Shape
+	public Boolean getRectangleVisible(int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		Rectangle o = (Rectangle) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
+		return o.getVisible();
 	}
 
 	public Double getRectangleHeight(int ROIIndex, int shapeIndex)
@@ -4526,17 +4834,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	//
-	// ScreenRef property storage
-	//
-	// Indexes: {u'Plate': [u'int plateIndex', u'int screenRefIndex']}
-	// {u'Plate': {u'OME': None}}
-	// Is multi path? False
-
-	// 1:1
-	// Is multi path? False
-	// Ignoring ID property of reference ScreenRef
-
-	//
 	// StageLabel property storage
 	//
 	// Indexes: {u'Image': [u'int imageIndex']}
@@ -4611,6 +4908,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.getStructuredAnnotations().getTagAnnotation(tagAnnotationIndex).getDescription();
 	}
 
+	// Ignoring ExperimenterGroup_BackReference back reference
 	// Ignoring Experimenter_BackReference back reference
 	public String getTagAnnotationID(int tagAnnotationIndex)
 	{
@@ -4635,6 +4933,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public String getTagAnnotationValue(int tagAnnotationIndex)
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
@@ -4667,6 +4966,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.getStructuredAnnotations().getTermAnnotation(termAnnotationIndex).getDescription();
 	}
 
+	// Ignoring ExperimenterGroup_BackReference back reference
 	// Ignoring Experimenter_BackReference back reference
 	public String getTermAnnotationID(int termAnnotationIndex)
 	{
@@ -4691,6 +4991,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public String getTermAnnotationValue(int termAnnotationIndex)
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
@@ -4700,168 +5001,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 
 	// Ignoring WellSample_BackReference back reference
 	// Ignoring Well_BackReference back reference
-	//
-	// Text property storage
-	//
-	// Indexes: {u'Shape': [u'int ROIIndex', u'int shapeIndex']}
-	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-	// Is multi path? False
-
-	// Description accessor from parent Shape
-	public String getTextDescription(int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		Text o = (Text) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
-		return o.getDescription();
-	}
-
-	// Ignoring Ellipse of parent abstract type
-	// Fill accessor from parent Shape
-	public Integer getTextFill(int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		Text o = (Text) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
-		return o.getFill();
-	}
-
-	// Ignoring FillRule of parent abstract type
-	// Ignoring FontFamily of parent abstract type
-	// FontSize accessor from parent Shape
-	public NonNegativeInteger getTextFontSize(int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		Text o = (Text) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
-		return o.getFontSize();
-	}
-
-	// Ignoring FontStyle of parent abstract type
-	// ID accessor from parent Shape
-	public String getTextID(int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		Text o = (Text) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
-		return o.getID();
-	}
-
-	// Label accessor from parent Shape
-	public String getTextLabel(int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		Text o = (Text) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
-		return o.getLabel();
-	}
-
-	// Ignoring Line of parent abstract type
-	// Ignoring LineCap of parent abstract type
-	// Ignoring MarkerEnd of parent abstract type
-	// Ignoring MarkerStart of parent abstract type
-	// Ignoring Mask of parent abstract type
-	// Name accessor from parent Shape
-	public String getTextName(int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		Text o = (Text) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
-		return o.getName();
-	}
-
-	// Ignoring Path of parent abstract type
-	// Ignoring Point of parent abstract type
-	// Ignoring Polyline of parent abstract type
-	// Ignoring Rectangle of parent abstract type
-	// Stroke accessor from parent Shape
-	public Integer getTextStroke(int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		Text o = (Text) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
-		return o.getStroke();
-	}
-
-	// StrokeDashArray accessor from parent Shape
-	public String getTextStrokeDashArray(int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		Text o = (Text) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
-		return o.getStrokeDashArray();
-	}
-
-	// StrokeWidth accessor from parent Shape
-	public Double getTextStrokeWidth(int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		Text o = (Text) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
-		return o.getStrokeWidth();
-	}
-
-	// Ignoring Text of parent abstract type
-	// TheC accessor from parent Shape
-	public NonNegativeInteger getTextTheC(int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		Text o = (Text) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
-		return o.getTheC();
-	}
-
-	// TheT accessor from parent Shape
-	public NonNegativeInteger getTextTheT(int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		Text o = (Text) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
-		return o.getTheT();
-	}
-
-	// TheZ accessor from parent Shape
-	public NonNegativeInteger getTextTheZ(int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		Text o = (Text) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
-		return o.getTheZ();
-	}
-
-	// Transform accessor from parent Shape
-	public String getTextTransform(int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		Text o = (Text) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
-		return o.getTransform();
-	}
-
-	public String getTextValue(int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		Text o = (Text) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
-		return o.getValue();
-	}
-
-	public Double getTextX(int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		Text o = (Text) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
-		return o.getX();
-	}
-
-	public Double getTextY(int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		Text o = (Text) root.getROI(ROIIndex).getUnion().getShape(shapeIndex);
-		return o.getY();
-	}
-
 	//
 	// TiffData property storage
 	//
@@ -4897,6 +5036,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.getImage(imageIndex).getPixels().getTiffData(tiffDataIndex).getIFD();
 	}
 
+	// Ignoring Pixels_BackReference back reference
 	public NonNegativeInteger getTiffDataPlaneCount(int imageIndex, int tiffDataIndex)
 	{
 		// Parents: {u'Pixels': {u'Image': {u'OME': None}}}
@@ -4928,6 +5068,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.getStructuredAnnotations().getTimestampAnnotation(timestampAnnotationIndex).getDescription();
 	}
 
+	// Ignoring ExperimenterGroup_BackReference back reference
 	// Ignoring Experimenter_BackReference back reference
 	public String getTimestampAnnotationID(int timestampAnnotationIndex)
 	{
@@ -4952,7 +5093,8 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
-	public String getTimestampAnnotationValue(int timestampAnnotationIndex)
+	// Ignoring StructuredAnnotations_BackReference back reference
+	public Timestamp getTimestampAnnotationValue(int timestampAnnotationIndex)
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
 		// Value is not a reference
@@ -5039,7 +5181,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.getPlate(plateIndex).getWell(wellIndex).getLinkedAnnotation(annotationRefIndex).getID();
 	}
 
-	public Integer getWellColor(int plateIndex, int wellIndex)
+	public Color getWellColor(int plateIndex, int wellIndex)
 	{
 		// Parents: {u'Plate': {u'OME': None}}
 		// Color is not a reference
@@ -5074,6 +5216,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.getPlate(plateIndex).getWell(wellIndex).getID();
 	}
 
+	// Ignoring Plate_BackReference back reference
 	public String getWellReagentRef(int plateIndex, int wellIndex)
 	{
 		// Parents: {u'Plate': {u'OME': None}}
@@ -5088,11 +5231,11 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.getPlate(plateIndex).getWell(wellIndex).getRow();
 	}
 
-	public String getWellStatus(int plateIndex, int wellIndex)
+	public String getWellType(int plateIndex, int wellIndex)
 	{
 		// Parents: {u'Plate': {u'OME': None}}
-		// Status is not a reference
-		return root.getPlate(plateIndex).getWell(wellIndex).getStatus();
+		// Type is not a reference
+		return root.getPlate(plateIndex).getWell(wellIndex).getType();
 	}
 
 	// Ignoring WellSample element, complex property
@@ -5146,13 +5289,14 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.getPlate(plateIndex).getWell(wellIndex).getWellSample(wellSampleIndex).getPositionY();
 	}
 
-	public String getWellSampleTimepoint(int plateIndex, int wellIndex, int wellSampleIndex)
+	public Timestamp getWellSampleTimepoint(int plateIndex, int wellIndex, int wellSampleIndex)
 	{
 		// Parents: {u'Well': {u'Plate': {u'OME': None}}}
 		// Timepoint is not a reference
 		return root.getPlate(plateIndex).getWell(wellIndex).getWellSample(wellSampleIndex).getTimepoint();
 	}
 
+	// Ignoring Well_BackReference back reference
 	//
 	// WellSampleRef property storage
 	//
@@ -5187,6 +5331,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.getStructuredAnnotations().getXMLAnnotation(XMLAnnotationIndex).getDescription();
 	}
 
+	// Ignoring ExperimenterGroup_BackReference back reference
 	// Ignoring Experimenter_BackReference back reference
 	public String getXMLAnnotationID(int XMLAnnotationIndex)
 	{
@@ -5211,6 +5356,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public String getXMLAnnotationValue(int XMLAnnotationIndex)
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
@@ -5262,7 +5408,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	//
 	// AnnotationRef property storage
 	//
-	// {u'ROI': {u'OME': None}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'Annotation': None, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
+	// {u'ROI': {u'OME': None}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'ExperimenterGroup': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'Annotation': None, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
 	// Is multi path? True
 
 	// 1:1
@@ -5415,14 +5561,14 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	//
 	// BinaryFile property storage
 	//
-	// {u'FileAnnotation': {u'StructuredAnnotations': {u'OME': None}}, u'OTF': {u'Instrument': {u'OME': None}}}
-	// Is multi path? True
+	// {u'FileAnnotation': {u'StructuredAnnotations': {u'OME': None}}}
+	// Is multi path? False
 
 	// Ignoring BinData element, complex property
 	// Ignoring External element, complex property
-	public void setFileAnnotationBinaryFileFileName(String fileName, int fileAnnotationIndex)
+	public void setBinaryFileFileName(String fileName, int fileAnnotationIndex)
 	{
-		// Parents: {u'FileAnnotation': {u'StructuredAnnotations': {u'OME': None}}, u'OTF': {u'Instrument': {u'OME': None}}}
+		// Parents: {u'FileAnnotation': {u'StructuredAnnotations': {u'OME': None}}}
 		// FileName is not a reference
 		OME o0 = root;
 		if (o0.getStructuredAnnotations() == null)
@@ -5443,32 +5589,9 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o3.setFileName(fileName);
 	}
 
-	public void setOTFBinaryFileFileName(String fileName, int instrumentIndex, int OTFIndex)
+	public void setBinaryFileMIMEType(String mimeType, int fileAnnotationIndex)
 	{
-		// Parents: {u'FileAnnotation': {u'StructuredAnnotations': {u'OME': None}}, u'OTF': {u'Instrument': {u'OME': None}}}
-		// FileName is not a reference
-		OME o0 = root;
-		if (o0.sizeOfInstrumentList() == instrumentIndex)
-		{
-			o0.addInstrument(new Instrument());
-		}
-		Instrument o1 = o0.getInstrument(instrumentIndex);
-		if (o1.sizeOfOTFList() == OTFIndex)
-		{
-			o1.addOTF(new OTF());
-		}
-		OTF o2 = o1.getOTF(OTFIndex);
-		if (o2.getBinaryFile() == null)
-		{
-			o2.setBinaryFile(new BinaryFile());
-		}
-		BinaryFile o3 = o2.getBinaryFile();
-		o3.setFileName(fileName);
-	}
-
-	public void setFileAnnotationBinaryFileMIMEType(String mimetype, int fileAnnotationIndex)
-	{
-		// Parents: {u'FileAnnotation': {u'StructuredAnnotations': {u'OME': None}}, u'OTF': {u'Instrument': {u'OME': None}}}
+		// Parents: {u'FileAnnotation': {u'StructuredAnnotations': {u'OME': None}}}
 		// MIMEType is not a reference
 		OME o0 = root;
 		if (o0.getStructuredAnnotations() == null)
@@ -5486,35 +5609,12 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 			o2.setBinaryFile(new BinaryFile());
 		}
 		BinaryFile o3 = o2.getBinaryFile();
-		o3.setMIMEType(mimetype);
+		o3.setMIMEType(mimeType);
 	}
 
-	public void setOTFBinaryFileMIMEType(String mimetype, int instrumentIndex, int OTFIndex)
+	public void setBinaryFileSize(NonNegativeLong size, int fileAnnotationIndex)
 	{
-		// Parents: {u'FileAnnotation': {u'StructuredAnnotations': {u'OME': None}}, u'OTF': {u'Instrument': {u'OME': None}}}
-		// MIMEType is not a reference
-		OME o0 = root;
-		if (o0.sizeOfInstrumentList() == instrumentIndex)
-		{
-			o0.addInstrument(new Instrument());
-		}
-		Instrument o1 = o0.getInstrument(instrumentIndex);
-		if (o1.sizeOfOTFList() == OTFIndex)
-		{
-			o1.addOTF(new OTF());
-		}
-		OTF o2 = o1.getOTF(OTFIndex);
-		if (o2.getBinaryFile() == null)
-		{
-			o2.setBinaryFile(new BinaryFile());
-		}
-		BinaryFile o3 = o2.getBinaryFile();
-		o3.setMIMEType(mimetype);
-	}
-
-	public void setFileAnnotationBinaryFileSize(NonNegativeLong size, int fileAnnotationIndex)
-	{
-		// Parents: {u'FileAnnotation': {u'StructuredAnnotations': {u'OME': None}}, u'OTF': {u'Instrument': {u'OME': None}}}
+		// Parents: {u'FileAnnotation': {u'StructuredAnnotations': {u'OME': None}}}
 		// Size is not a reference
 		OME o0 = root;
 		if (o0.getStructuredAnnotations() == null)
@@ -5527,29 +5627,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 			o1.addFileAnnotation(new FileAnnotation());
 		}
 		FileAnnotation o2 = o1.getFileAnnotation(fileAnnotationIndex);
-		if (o2.getBinaryFile() == null)
-		{
-			o2.setBinaryFile(new BinaryFile());
-		}
-		BinaryFile o3 = o2.getBinaryFile();
-		o3.setSize(size);
-	}
-
-	public void setOTFBinaryFileSize(NonNegativeLong size, int instrumentIndex, int OTFIndex)
-	{
-		// Parents: {u'FileAnnotation': {u'StructuredAnnotations': {u'OME': None}}, u'OTF': {u'Instrument': {u'OME': None}}}
-		// Size is not a reference
-		OME o0 = root;
-		if (o0.sizeOfInstrumentList() == instrumentIndex)
-		{
-			o0.addInstrument(new Instrument());
-		}
-		Instrument o1 = o0.getInstrument(instrumentIndex);
-		if (o1.sizeOfOTFList() == OTFIndex)
-		{
-			o1.addOTF(new OTF());
-		}
-		OTF o2 = o1.getOTF(OTFIndex);
 		if (o2.getBinaryFile() == null)
 		{
 			o2.setBinaryFile(new BinaryFile());
@@ -5600,11 +5677,11 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
 		// AnnotationRef is reference and occurs more than once
-		AnnotationRef annotationList_reference = new AnnotationRef();
-		annotationList_reference.setID(annotation);
+		AnnotationRef annotationLinks_reference = new AnnotationRef();
+		annotationLinks_reference.setID(annotation);
 		model.addReference(
 				root.getStructuredAnnotations().getBooleanAnnotation(booleanAnnotationIndex),
-				annotationList_reference);
+				annotationLinks_reference);
 	}
 
 	// Ignoring Channel_BackReference back reference
@@ -5627,6 +5704,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o2.setDescription(description);
 	}
 
+	// Ignoring ExperimenterGroup_BackReference back reference
 	// Ignoring Experimenter_BackReference back reference
 	public void setBooleanAnnotationID(String id, int booleanAnnotationIndex)
 	{
@@ -5674,6 +5752,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public void setBooleanAnnotationValue(Boolean value, int booleanAnnotationIndex)
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
@@ -5727,14 +5806,14 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	{
 		// Parents: {u'Pixels': {u'Image': {u'OME': None}}}
 		// AnnotationRef is reference and occurs more than once
-		AnnotationRef annotationList_reference = new AnnotationRef();
-		annotationList_reference.setID(annotation);
+		AnnotationRef annotationLinks_reference = new AnnotationRef();
+		annotationLinks_reference.setID(annotation);
 		model.addReference(
 				root.getImage(imageIndex).getPixels().getChannel(channelIndex),
-				annotationList_reference);
+				annotationLinks_reference);
 	}
 
-	public void setChannelColor(Integer color, int imageIndex, int channelIndex)
+	public void setChannelColor(Color color, int imageIndex, int channelIndex)
 	{
 		// Parents: {u'Pixels': {u'Image': {u'OME': None}}}
 		// Color is not a reference
@@ -5915,7 +5994,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 
 	// Ignoring LightPath element, complex property
 	// Ignoring LightSourceSettings element, complex property
-	public void setChannelNDFilter(Double ndfilter, int imageIndex, int channelIndex)
+	public void setChannelNDFilter(Double ndFilter, int imageIndex, int channelIndex)
 	{
 		// Parents: {u'Pixels': {u'Image': {u'OME': None}}}
 		// NDFilter is not a reference
@@ -5935,7 +6014,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 			o2.addChannel(new Channel());
 		}
 		Channel o3 = o2.getChannel(channelIndex);
-		o3.setNDFilter(ndfilter);
+		o3.setNDFilter(ndFilter);
 	}
 
 	public void setChannelName(String name, int imageIndex, int channelIndex)
@@ -5961,17 +6040,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o3.setName(name);
 	}
 
-	public void setChannelOTFRef(String otf, int imageIndex, int channelIndex)
-	{
-		// Parents: {u'Pixels': {u'Image': {u'OME': None}}}
-		// OTFRef is reference and occurs more than once
-		OTFRef otf_reference = new OTFRef();
-		otf_reference.setID(otf);
-		model.addReference(
-				root.getImage(imageIndex).getPixels().getChannel(channelIndex),
-				otf_reference);
-	}
-
 	public void setChannelPinholeSize(Double pinholeSize, int imageIndex, int channelIndex)
 	{
 		// Parents: {u'Pixels': {u'Image': {u'OME': None}}}
@@ -5995,6 +6063,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o3.setPinholeSize(pinholeSize);
 	}
 
+	// Ignoring Pixels_BackReference back reference
 	public void setChannelPockelCellSetting(Integer pockelCellSetting, int imageIndex, int channelIndex)
 	{
 		// Parents: {u'Pixels': {u'Image': {u'OME': None}}}
@@ -6051,11 +6120,11 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
 		// AnnotationRef is reference and occurs more than once
-		AnnotationRef annotationList_reference = new AnnotationRef();
-		annotationList_reference.setID(annotation);
+		AnnotationRef annotationLinks_reference = new AnnotationRef();
+		annotationLinks_reference.setID(annotation);
 		model.addReference(
 				root.getStructuredAnnotations().getCommentAnnotation(commentAnnotationIndex),
-				annotationList_reference);
+				annotationLinks_reference);
 	}
 
 	// Ignoring Channel_BackReference back reference
@@ -6078,6 +6147,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o2.setDescription(description);
 	}
 
+	// Ignoring ExperimenterGroup_BackReference back reference
 	// Ignoring Experimenter_BackReference back reference
 	public void setCommentAnnotationID(String id, int commentAnnotationIndex)
 	{
@@ -6125,6 +6195,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public void setCommentAnnotationValue(String value, int commentAnnotationIndex)
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
@@ -6146,16 +6217,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring WellSample_BackReference back reference
 	// Ignoring Well_BackReference back reference
 	//
-	// Contact property storage
-	//
-	// {u'Group': {u'OME': None}}
-	// Is multi path? False
-
-	// 1:1
-	// Is multi path? False
-	// Ignoring ID property of reference Contact
-
-	//
 	// Dataset property storage
 	//
 	// {u'OME': None}
@@ -6165,11 +6226,11 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	{
 		// Parents: {u'OME': None}
 		// AnnotationRef is reference and occurs more than once
-		AnnotationRef annotationList_reference = new AnnotationRef();
-		annotationList_reference.setID(annotation);
+		AnnotationRef annotationLinks_reference = new AnnotationRef();
+		annotationLinks_reference.setID(annotation);
 		model.addReference(
 				root.getDataset(datasetIndex),
-				annotationList_reference);
+				annotationLinks_reference);
 	}
 
 	public void setDatasetDescription(String description, int datasetIndex)
@@ -6185,6 +6246,17 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o1.setDescription(description);
 	}
 
+	public void setDatasetExperimenterGroupRef(String experimenterGroup, int datasetIndex)
+	{
+		// Parents: {u'OME': None}
+		// ExperimenterGroupRef is reference and occurs more than once
+		ExperimenterGroupRef experimenterGroup_reference = new ExperimenterGroupRef();
+		experimenterGroup_reference.setID(experimenterGroup);
+		model.addReference(
+				root.getDataset(datasetIndex),
+				experimenterGroup_reference);
+	}
+
 	public void setDatasetExperimenterRef(String experimenter, int datasetIndex)
 	{
 		// Parents: {u'OME': None}
@@ -6194,17 +6266,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		model.addReference(
 				root.getDataset(datasetIndex),
 				experimenter_reference);
-	}
-
-	public void setDatasetGroupRef(String group, int datasetIndex)
-	{
-		// Parents: {u'OME': None}
-		// GroupRef is reference and occurs more than once
-		GroupRef group_reference = new GroupRef();
-		group_reference.setID(group);
-		model.addReference(
-				root.getDataset(datasetIndex),
-				group_reference);
 	}
 
 	public void setDatasetID(String id, int datasetIndex)
@@ -6221,7 +6282,17 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o1.setID(id);
 	}
 
-	// Ignoring Image_BackReference back reference
+	public void setDatasetImageRef(String image, int datasetIndex, int imageRefIndex)
+	{
+		// Parents: {u'OME': None}
+		// ImageRef is reference and occurs more than once
+		ImageRef imageLinks_reference = new ImageRef();
+		imageLinks_reference.setID(image);
+		model.addReference(
+				root.getDataset(datasetIndex),
+				imageLinks_reference);
+	}
+
 	public void setDatasetName(String name, int datasetIndex)
 	{
 		// Parents: {u'OME': None}
@@ -6235,21 +6306,11 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o1.setName(name);
 	}
 
-	public void setDatasetProjectRef(String project, int datasetIndex, int projectRefIndex)
-	{
-		// Parents: {u'OME': None}
-		// ProjectRef is reference and occurs more than once
-		ProjectRef projectList_reference = new ProjectRef();
-		projectList_reference.setID(project);
-		model.addReference(
-				root.getDataset(datasetIndex),
-				projectList_reference);
-	}
-
+	// Ignoring Project_BackReference back reference
 	//
 	// DatasetRef property storage
 	//
-	// {u'Image': {u'OME': None}}
+	// {u'Project': {u'OME': None}}
 	// Is multi path? False
 
 	// 1:1
@@ -6317,6 +6378,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o2.setID(id);
 	}
 
+	// Ignoring Instrument_BackReference back reference
 	public void setDetectorLotNumber(String lotNumber, int instrumentIndex, int detectorIndex)
 	{
 		// Parents: {u'Instrument': {u'OME': None}}
@@ -6495,6 +6557,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o4.setBinning(binning);
 	}
 
+	// Ignoring DetectorRef back reference
 	public void setDetectorSettingsGain(Double gain, int imageIndex, int channelIndex)
 	{
 		// Parents: {u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
@@ -6662,6 +6725,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o2.setID(id);
 	}
 
+	// Ignoring Instrument_BackReference back reference
 	// Ignoring LightPath_BackReference back reference
 	public void setDichroicLotNumber(String lotNumber, int instrumentIndex, int dichroicIndex)
 	{
@@ -6755,11 +6819,11 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
 		// AnnotationRef is reference and occurs more than once
-		AnnotationRef annotationList_reference = new AnnotationRef();
-		annotationList_reference.setID(annotation);
+		AnnotationRef annotationLinks_reference = new AnnotationRef();
+		annotationLinks_reference.setID(annotation);
 		model.addReference(
 				root.getStructuredAnnotations().getDoubleAnnotation(doubleAnnotationIndex),
-				annotationList_reference);
+				annotationLinks_reference);
 	}
 
 	// Ignoring Channel_BackReference back reference
@@ -6782,6 +6846,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o2.setDescription(description);
 	}
 
+	// Ignoring ExperimenterGroup_BackReference back reference
 	// Ignoring Experimenter_BackReference back reference
 	public void setDoubleAnnotationID(String id, int doubleAnnotationIndex)
 	{
@@ -6829,6 +6894,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public void setDoubleAnnotationValue(Double value, int doubleAnnotationIndex)
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
@@ -6855,33 +6921,9 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
-	// Description accessor from parent Shape
-	public void setEllipseDescription(String description, int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		OME o0 = root;
-		if (o0.sizeOfROIList() == ROIIndex)
-		{
-			o0.addROI(new ROI());
-		}
-		ROI o1 = o0.getROI(ROIIndex);
-		if (o1.getUnion() == null)
-		{
-			o1.setUnion(new Union());
-		}
-		Union o2 = o1.getUnion();
-		if (o2.sizeOfShapeList() == shapeIndex)
-		{
-			o2.addShape(new Ellipse());
-		}
-		Shape o3 = o2.getShape(shapeIndex);
-		((Ellipse)o3).setDescription(description);
-	}
-
 	// Ignoring Ellipse of parent abstract type
-	// Fill accessor from parent Shape
-	public void setEllipseFill(Integer fill, int ROIIndex, int shapeIndex)
+	// FillColor accessor from parent Shape
+	public void setEllipseFillColor(Color fillColor, int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -6901,11 +6943,57 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 			o2.addShape(new Ellipse());
 		}
 		Shape o3 = o2.getShape(shapeIndex);
-		((Ellipse)o3).setFill(fill);
+		((Ellipse)o3).setFillColor(fillColor);
 	}
 
-	// Ignoring FillRule of parent abstract type
-	// Ignoring FontFamily of parent abstract type
+	// FillRule accessor from parent Shape
+	public void setEllipseFillRule(FillRule fillRule, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Ellipse());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Ellipse)o3).setFillRule(fillRule);
+	}
+
+	// FontFamily accessor from parent Shape
+	public void setEllipseFontFamily(FontFamily fontFamily, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Ellipse());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Ellipse)o3).setFontFamily(fontFamily);
+	}
+
 	// FontSize accessor from parent Shape
 	public void setEllipseFontSize(NonNegativeInteger fontSize, int ROIIndex, int shapeIndex)
 	{
@@ -6930,7 +7018,30 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		((Ellipse)o3).setFontSize(fontSize);
 	}
 
-	// Ignoring FontStyle of parent abstract type
+	// FontStyle accessor from parent Shape
+	public void setEllipseFontStyle(FontStyle fontStyle, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Ellipse());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Ellipse)o3).setFontStyle(fontStyle);
+	}
+
 	// ID accessor from parent Shape
 	public void setEllipseID(String id, int ROIIndex, int shapeIndex)
 	{
@@ -6956,37 +7067,10 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		((Ellipse)o3).setID(id);
 	}
 
-	// Label accessor from parent Shape
-	public void setEllipseLabel(String label, int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		OME o0 = root;
-		if (o0.sizeOfROIList() == ROIIndex)
-		{
-			o0.addROI(new ROI());
-		}
-		ROI o1 = o0.getROI(ROIIndex);
-		if (o1.getUnion() == null)
-		{
-			o1.setUnion(new Union());
-		}
-		Union o2 = o1.getUnion();
-		if (o2.sizeOfShapeList() == shapeIndex)
-		{
-			o2.addShape(new Ellipse());
-		}
-		Shape o3 = o2.getShape(shapeIndex);
-		((Ellipse)o3).setLabel(label);
-	}
-
+	// Ignoring Label of parent abstract type
 	// Ignoring Line of parent abstract type
-	// Ignoring LineCap of parent abstract type
-	// Ignoring MarkerEnd of parent abstract type
-	// Ignoring MarkerStart of parent abstract type
-	// Ignoring Mask of parent abstract type
-	// Name accessor from parent Shape
-	public void setEllipseName(String name, int ROIIndex, int shapeIndex)
+	// LineCap accessor from parent Shape
+	public void setEllipseLineCap(LineCap lineCap, int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -7006,15 +7090,40 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 			o2.addShape(new Ellipse());
 		}
 		Shape o3 = o2.getShape(shapeIndex);
-		((Ellipse)o3).setName(name);
+		((Ellipse)o3).setLineCap(lineCap);
 	}
 
-	// Ignoring Path of parent abstract type
+	// Locked accessor from parent Shape
+	public void setEllipseLocked(Boolean locked, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Ellipse());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Ellipse)o3).setLocked(locked);
+	}
+
+	// Ignoring Mask of parent abstract type
 	// Ignoring Point of parent abstract type
+	// Ignoring Polygon of parent abstract type
 	// Ignoring Polyline of parent abstract type
 	// Ignoring Rectangle of parent abstract type
-	// Stroke accessor from parent Shape
-	public void setEllipseStroke(Integer stroke, int ROIIndex, int shapeIndex)
+	// StrokeColor accessor from parent Shape
+	public void setEllipseStrokeColor(Color strokeColor, int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -7034,7 +7143,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 			o2.addShape(new Ellipse());
 		}
 		Shape o3 = o2.getShape(shapeIndex);
-		((Ellipse)o3).setStroke(stroke);
+		((Ellipse)o3).setStrokeColor(strokeColor);
 	}
 
 	// StrokeDashArray accessor from parent Shape
@@ -7085,7 +7194,30 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		((Ellipse)o3).setStrokeWidth(strokeWidth);
 	}
 
-	// Ignoring Text of parent abstract type
+	// Text accessor from parent Shape
+	public void setEllipseText(String text, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Ellipse());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Ellipse)o3).setText(text);
+	}
+
 	// TheC accessor from parent Shape
 	public void setEllipseTheC(NonNegativeInteger theC, int ROIIndex, int shapeIndex)
 	{
@@ -7159,7 +7291,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// Transform accessor from parent Shape
-	public void setEllipseTransform(String transform, int ROIIndex, int shapeIndex)
+	public void setEllipseTransform(AffineTransform transform, int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -7180,6 +7312,30 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		}
 		Shape o3 = o2.getShape(shapeIndex);
 		((Ellipse)o3).setTransform(transform);
+	}
+
+	// Visible accessor from parent Shape
+	public void setEllipseVisible(Boolean visible, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Ellipse());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Ellipse)o3).setVisible(visible);
 	}
 
 	public void setEllipseRadiusX(Double radiusX, int ROIIndex, int shapeIndex)
@@ -7365,27 +7521,14 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	{
 		// Parents: {u'OME': None}
 		// AnnotationRef is reference and occurs more than once
-		AnnotationRef annotationList_reference = new AnnotationRef();
-		annotationList_reference.setID(annotation);
+		AnnotationRef annotationLinks_reference = new AnnotationRef();
+		annotationLinks_reference.setID(annotation);
 		model.addReference(
 				root.getExperimenter(experimenterIndex),
-				annotationList_reference);
+				annotationLinks_reference);
 	}
 
 	// Ignoring Dataset_BackReference back reference
-	public void setExperimenterDisplayName(String displayName, int experimenterIndex)
-	{
-		// Parents: {u'OME': None}
-		// DisplayName is not a reference
-		OME o0 = root;
-		if (o0.sizeOfExperimenterList() == experimenterIndex)
-		{
-			o0.addExperimenter(new Experimenter());
-		}
-		Experimenter o1 = o0.getExperimenter(experimenterIndex);
-		o1.setDisplayName(displayName);
-	}
-
 	public void setExperimenterEmail(String email, int experimenterIndex)
 	{
 		// Parents: {u'OME': None}
@@ -7400,6 +7543,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// Ignoring Experiment_BackReference back reference
+	// Ignoring ExperimenterGroup_BackReference back reference
 	public void setExperimenterFirstName(String firstName, int experimenterIndex)
 	{
 		// Parents: {u'OME': None}
@@ -7411,17 +7555,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		}
 		Experimenter o1 = o0.getExperimenter(experimenterIndex);
 		o1.setFirstName(firstName);
-	}
-
-	public void setExperimenterGroupRef(String group, int experimenterIndex, int groupRefIndex)
-	{
-		// Parents: {u'OME': None}
-		// GroupRef is reference and occurs more than once
-		GroupRef groupList_reference = new GroupRef();
-		groupList_reference.setID(group);
-		model.addReference(
-				root.getExperimenter(experimenterIndex),
-				groupList_reference);
 	}
 
 	public void setExperimenterID(String id, int experimenterIndex)
@@ -7494,9 +7627,101 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	//
+	// ExperimenterGroup property storage
+	//
+	// {u'OME': None}
+	// Is multi path? False
+
+	public void setExperimenterGroupAnnotationRef(String annotation, int experimenterGroupIndex, int annotationRefIndex)
+	{
+		// Parents: {u'OME': None}
+		// AnnotationRef is reference and occurs more than once
+		AnnotationRef annotationLinks_reference = new AnnotationRef();
+		annotationLinks_reference.setID(annotation);
+		model.addReference(
+				root.getExperimenterGroup(experimenterGroupIndex),
+				annotationLinks_reference);
+	}
+
+	// Ignoring Dataset_BackReference back reference
+	public void setExperimenterGroupDescription(String description, int experimenterGroupIndex)
+	{
+		// Parents: {u'OME': None}
+		// Description is not a reference
+		OME o0 = root;
+		if (o0.sizeOfExperimenterGroupList() == experimenterGroupIndex)
+		{
+			o0.addExperimenterGroup(new ExperimenterGroup());
+		}
+		ExperimenterGroup o1 = o0.getExperimenterGroup(experimenterGroupIndex);
+		o1.setDescription(description);
+	}
+
+	public void setExperimenterGroupExperimenterRef(String experimenter, int experimenterGroupIndex, int experimenterRefIndex)
+	{
+		// Parents: {u'OME': None}
+		// ExperimenterRef is reference and occurs more than once
+		ExperimenterRef experimenterLinks_reference = new ExperimenterRef();
+		experimenterLinks_reference.setID(experimenter);
+		model.addReference(
+				root.getExperimenterGroup(experimenterGroupIndex),
+				experimenterLinks_reference);
+	}
+
+	public void setExperimenterGroupID(String id, int experimenterGroupIndex)
+	{
+		// Parents: {u'OME': None}
+		// ID is not a reference
+		OME o0 = root;
+		if (o0.sizeOfExperimenterGroupList() == experimenterGroupIndex)
+		{
+			o0.addExperimenterGroup(new ExperimenterGroup());
+		}
+		ExperimenterGroup o1 = o0.getExperimenterGroup(experimenterGroupIndex);
+		model.addModelObject(id, o1);
+		o1.setID(id);
+	}
+
+	// Ignoring Image_BackReference back reference
+	public void setExperimenterGroupLeader(String leader, int experimenterGroupIndex, int leaderIndex)
+	{
+		// Parents: {u'OME': None}
+		// Leader is reference and occurs more than once
+		Leader leaders_reference = new Leader();
+		leaders_reference.setID(leader);
+		model.addReference(
+				root.getExperimenterGroup(experimenterGroupIndex),
+				leaders_reference);
+	}
+
+	public void setExperimenterGroupName(String name, int experimenterGroupIndex)
+	{
+		// Parents: {u'OME': None}
+		// Name is not a reference
+		OME o0 = root;
+		if (o0.sizeOfExperimenterGroupList() == experimenterGroupIndex)
+		{
+			o0.addExperimenterGroup(new ExperimenterGroup());
+		}
+		ExperimenterGroup o1 = o0.getExperimenterGroup(experimenterGroupIndex);
+		o1.setName(name);
+	}
+
+	// Ignoring Project_BackReference back reference
+	//
+	// ExperimenterGroupRef property storage
+	//
+	// {u'Project': {u'OME': None}, u'Image': {u'OME': None}, u'Dataset': {u'OME': None}}
+	// Is multi path? True
+
+	// 1:1
+	// Is multi path? True
+	// Ignoring ID property of reference ExperimenterGroupRef
+
+	//
 	// ExperimenterRef property storage
 	//
-	// {u'Project': {u'OME': None}, u'Image': {u'OME': None}, u'Dataset': {u'OME': None}, u'Experiment': {u'OME': None}, u'MicrobeamManipulation': {u'Experiment': {u'OME': None}}}
+	// {u'ExperimenterGroup': {u'OME': None}, u'Image': {u'OME': None}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Experiment': {u'OME': None}, u'MicrobeamManipulation': {u'Experiment': {u'OME': None}}}
 	// Is multi path? True
 
 	// 1:1
@@ -7656,11 +7881,11 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
 		// AnnotationRef is reference and occurs more than once
-		AnnotationRef annotationList_reference = new AnnotationRef();
-		annotationList_reference.setID(annotation);
+		AnnotationRef annotationLinks_reference = new AnnotationRef();
+		annotationLinks_reference.setID(annotation);
 		model.addReference(
 				root.getStructuredAnnotations().getFileAnnotation(fileAnnotationIndex),
-				annotationList_reference);
+				annotationLinks_reference);
 	}
 
 	// Ignoring BinaryFile element, complex property
@@ -7684,6 +7909,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o2.setDescription(description);
 	}
 
+	// Ignoring ExperimenterGroup_BackReference back reference
 	// Ignoring Experimenter_BackReference back reference
 	public void setFileAnnotationID(String id, int fileAnnotationIndex)
 	{
@@ -7731,6 +7957,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	// Ignoring WellSample_BackReference back reference
 	// Ignoring Well_BackReference back reference
 	//
@@ -7739,6 +7966,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// {u'Instrument': {u'OME': None}}
 	// Is multi path? False
 
+	// Ignoring FilterSet_BackReference back reference
 	// Ignoring FilterSet_BackReference back reference
 	public void setFilterFilterWheel(String filterWheel, int instrumentIndex, int filterIndex)
 	{
@@ -7777,6 +8005,8 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o2.setID(id);
 	}
 
+	// Ignoring Instrument_BackReference back reference
+	// Ignoring LightPath_BackReference back reference
 	// Ignoring LightPath_BackReference back reference
 	public void setFilterLotNumber(String lotNumber, int instrumentIndex, int filterIndex)
 	{
@@ -7891,22 +8121,22 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	{
 		// Parents: {u'Instrument': {u'OME': None}}
 		// EmissionFilterRef is reference and occurs more than once
-		EmissionFilterRef emissionFilterList_reference = new EmissionFilterRef();
-		emissionFilterList_reference.setID(emissionFilter);
+		EmissionFilterRef emissionFilterLinks_reference = new EmissionFilterRef();
+		emissionFilterLinks_reference.setID(emissionFilter);
 		model.addReference(
 				root.getInstrument(instrumentIndex).getFilterSet(filterSetIndex),
-				emissionFilterList_reference);
+				emissionFilterLinks_reference);
 	}
 
 	public void setFilterSetExcitationFilterRef(String excitationFilter, int instrumentIndex, int filterSetIndex, int excitationFilterRefIndex)
 	{
 		// Parents: {u'Instrument': {u'OME': None}}
 		// ExcitationFilterRef is reference and occurs more than once
-		ExcitationFilterRef excitationFilterList_reference = new ExcitationFilterRef();
-		excitationFilterList_reference.setID(excitationFilter);
+		ExcitationFilterRef excitationFilterLinks_reference = new ExcitationFilterRef();
+		excitationFilterLinks_reference.setID(excitationFilter);
 		model.addReference(
 				root.getInstrument(instrumentIndex).getFilterSet(filterSetIndex),
-				excitationFilterList_reference);
+				excitationFilterLinks_reference);
 	}
 
 	public void setFilterSetID(String id, int instrumentIndex, int filterSetIndex)
@@ -7928,6 +8158,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o2.setID(id);
 	}
 
+	// Ignoring Instrument_BackReference back reference
 	public void setFilterSetLotNumber(String lotNumber, int instrumentIndex, int filterSetIndex)
 	{
 		// Parents: {u'Instrument': {u'OME': None}}
@@ -7982,7 +8213,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o2.setModel(model);
 	}
 
-	// Ignoring OTF_BackReference back reference
 	public void setFilterSetSerialNumber(String serialNumber, int instrumentIndex, int filterSetIndex)
 	{
 		// Parents: {u'Instrument': {u'OME': None}}
@@ -8004,94 +8234,12 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	//
 	// FilterSetRef property storage
 	//
-	// {u'OTF': {u'Instrument': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
-	// Is multi path? True
-
-	// 1:1
-	// Is multi path? True
-	// Ignoring ID property of reference FilterSetRef
-
-	//
-	// Group property storage
-	//
-	// {u'OME': None}
+	// {u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
 	// Is multi path? False
 
-	public void setGroupContact(String contact, int groupIndex)
-	{
-		// Parents: {u'OME': None}
-		// Contact is reference and occurs more than once
-		Contact contact_reference = new Contact();
-		contact_reference.setID(contact);
-		model.addReference(
-				root.getGroup(groupIndex),
-				contact_reference);
-	}
-
-	// Ignoring Dataset_BackReference back reference
-	public void setGroupDescription(String description, int groupIndex)
-	{
-		// Parents: {u'OME': None}
-		// Description is not a reference
-		OME o0 = root;
-		if (o0.sizeOfGroupList() == groupIndex)
-		{
-			o0.addGroup(new Group());
-		}
-		Group o1 = o0.getGroup(groupIndex);
-		o1.setDescription(description);
-	}
-
-	// Ignoring Experimenter_BackReference back reference
-	public void setGroupID(String id, int groupIndex)
-	{
-		// Parents: {u'OME': None}
-		// ID is not a reference
-		OME o0 = root;
-		if (o0.sizeOfGroupList() == groupIndex)
-		{
-			o0.addGroup(new Group());
-		}
-		Group o1 = o0.getGroup(groupIndex);
-		model.addModelObject(id, o1);
-		o1.setID(id);
-	}
-
-	// Ignoring Image_BackReference back reference
-	public void setGroupLeader(String leader, int groupIndex)
-	{
-		// Parents: {u'OME': None}
-		// Leader is reference and occurs more than once
-		Leader leader_reference = new Leader();
-		leader_reference.setID(leader);
-		model.addReference(
-				root.getGroup(groupIndex),
-				leader_reference);
-	}
-
-	public void setGroupName(String name, int groupIndex)
-	{
-		// Parents: {u'OME': None}
-		// Name is not a reference
-		OME o0 = root;
-		if (o0.sizeOfGroupList() == groupIndex)
-		{
-			o0.addGroup(new Group());
-		}
-		Group o1 = o0.getGroup(groupIndex);
-		o1.setName(name);
-	}
-
-	// Ignoring Project_BackReference back reference
-	//
-	// GroupRef property storage
-	//
-	// {u'Project': {u'OME': None}, u'Image': {u'OME': None}, u'Experimenter': {u'OME': None}, u'Dataset': {u'OME': None}}
-	// Is multi path? True
-
 	// 1:1
-	// Is multi path? True
-	// Ignoring ID property of reference GroupRef
+	// Is multi path? False
+	// Ignoring ID property of reference FilterSetRef
 
 	//
 	// Image property storage
@@ -8099,41 +8247,31 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// {u'OME': None}
 	// Is multi path? False
 
-	public void setImageAcquiredDate(String acquiredDate, int imageIndex)
+	public void setImageAcquisitionDate(Timestamp acquisitionDate, int imageIndex)
 	{
 		// Parents: {u'OME': None}
-		// AcquiredDate is not a reference
+		// AcquisitionDate is not a reference
 		OME o0 = root;
 		if (o0.sizeOfImageList() == imageIndex)
 		{
 			o0.addImage(new Image());
 		}
 		Image o1 = o0.getImage(imageIndex);
-		o1.setAcquiredDate(acquiredDate);
+		o1.setAcquisitionDate(acquisitionDate);
 	}
 
 	public void setImageAnnotationRef(String annotation, int imageIndex, int annotationRefIndex)
 	{
 		// Parents: {u'OME': None}
 		// AnnotationRef is reference and occurs more than once
-		AnnotationRef annotationList_reference = new AnnotationRef();
-		annotationList_reference.setID(annotation);
+		AnnotationRef annotationLinks_reference = new AnnotationRef();
+		annotationLinks_reference.setID(annotation);
 		model.addReference(
 				root.getImage(imageIndex),
-				annotationList_reference);
+				annotationLinks_reference);
 	}
 
-	public void setImageDatasetRef(String dataset, int imageIndex, int datasetRefIndex)
-	{
-		// Parents: {u'OME': None}
-		// DatasetRef is reference and occurs more than once
-		DatasetRef datasetList_reference = new DatasetRef();
-		datasetList_reference.setID(dataset);
-		model.addReference(
-				root.getImage(imageIndex),
-				datasetList_reference);
-	}
-
+	// Ignoring Dataset_BackReference back reference
 	public void setImageDescription(String description, int imageIndex)
 	{
 		// Parents: {u'OME': None}
@@ -8158,6 +8296,17 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 				experiment_reference);
 	}
 
+	public void setImageExperimenterGroupRef(String experimenterGroup, int imageIndex)
+	{
+		// Parents: {u'OME': None}
+		// ExperimenterGroupRef is reference and occurs more than once
+		ExperimenterGroupRef experimenterGroup_reference = new ExperimenterGroupRef();
+		experimenterGroup_reference.setID(experimenterGroup);
+		model.addReference(
+				root.getImage(imageIndex),
+				experimenterGroup_reference);
+	}
+
 	public void setImageExperimenterRef(String experimenter, int imageIndex)
 	{
 		// Parents: {u'OME': None}
@@ -8167,17 +8316,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		model.addReference(
 				root.getImage(imageIndex),
 				experimenter_reference);
-	}
-
-	public void setImageGroupRef(String group, int imageIndex)
-	{
-		// Parents: {u'OME': None}
-		// GroupRef is reference and occurs more than once
-		GroupRef group_reference = new GroupRef();
-		group_reference.setID(group);
-		model.addReference(
-				root.getImage(imageIndex),
-				group_reference);
 	}
 
 	public void setImageID(String id, int imageIndex)
@@ -8210,11 +8348,11 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	{
 		// Parents: {u'OME': None}
 		// MicrobeamManipulationRef is reference and occurs more than once
-		MicrobeamManipulationRef microbeamManipulationList_reference = new MicrobeamManipulationRef();
-		microbeamManipulationList_reference.setID(microbeamManipulation);
+		MicrobeamManipulationRef microbeamManipulationLinks_reference = new MicrobeamManipulationRef();
+		microbeamManipulationLinks_reference.setID(microbeamManipulation);
 		model.addReference(
 				root.getImage(imageIndex),
-				microbeamManipulationList_reference);
+				microbeamManipulationLinks_reference);
 	}
 
 	public void setImageName(String name, int imageIndex)
@@ -8236,11 +8374,11 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	{
 		// Parents: {u'OME': None}
 		// ROIRef is reference and occurs more than once
-		ROIRef roiList_reference = new ROIRef();
-		roiList_reference.setID(roi);
+		ROIRef roiLinks_reference = new ROIRef();
+		roiLinks_reference.setID(roi);
 		model.addReference(
 				root.getImage(imageIndex),
-				roiList_reference);
+				roiLinks_reference);
 	}
 
 	// Ignoring StageLabel element, complex property
@@ -8248,11 +8386,11 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	//
 	// ImageRef property storage
 	//
-	// {u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}}
-	// Is multi path? False
+	// {u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Dataset': {u'OME': None}}
+	// Is multi path? True
 
 	// 1:1
-	// Is multi path? False
+	// Is multi path? True
 	// Ignoring ID property of reference ImageRef
 
 	//
@@ -8279,7 +8417,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o2.setAirPressure(airPressure);
 	}
 
-	public void setImagingEnvironmentCO2Percent(PercentFraction co2percent, int imageIndex)
+	public void setImagingEnvironmentCO2Percent(PercentFraction co2Percent, int imageIndex)
 	{
 		// Parents: {u'Image': {u'OME': None}}
 		// CO2Percent is not a reference
@@ -8294,7 +8432,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 			o1.setImagingEnvironment(new ImagingEnvironment());
 		}
 		ImagingEnvironment o2 = o1.getImagingEnvironment();
-		o2.setCO2Percent(co2percent);
+		o2.setCO2Percent(co2Percent);
 	}
 
 	public void setImagingEnvironmentHumidity(PercentFraction humidity, int imageIndex)
@@ -8360,7 +8498,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring Image_BackReference back reference
 	// Ignoring LightSource element, complex property
 	// Ignoring Microscope element, complex property
-	// Ignoring OTF element, complex property
 	// Ignoring Objective element, complex property
 	//
 	// InstrumentRef property storage
@@ -8371,6 +8508,475 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// 1:1
 	// Is multi path? False
 	// Ignoring ID property of reference InstrumentRef
+
+	//
+	// Label property storage
+	//
+	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+	// Is multi path? False
+
+	// Ignoring Ellipse of parent abstract type
+	// FillColor accessor from parent Shape
+	public void setLabelFillColor(Color fillColor, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Label());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Label)o3).setFillColor(fillColor);
+	}
+
+	// FillRule accessor from parent Shape
+	public void setLabelFillRule(FillRule fillRule, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Label());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Label)o3).setFillRule(fillRule);
+	}
+
+	// FontFamily accessor from parent Shape
+	public void setLabelFontFamily(FontFamily fontFamily, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Label());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Label)o3).setFontFamily(fontFamily);
+	}
+
+	// FontSize accessor from parent Shape
+	public void setLabelFontSize(NonNegativeInteger fontSize, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Label());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Label)o3).setFontSize(fontSize);
+	}
+
+	// FontStyle accessor from parent Shape
+	public void setLabelFontStyle(FontStyle fontStyle, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Label());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Label)o3).setFontStyle(fontStyle);
+	}
+
+	// ID accessor from parent Shape
+	public void setLabelID(String id, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Label());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		model.addModelObject(id, o3);
+		((Label)o3).setID(id);
+	}
+
+	// Ignoring Label of parent abstract type
+	// Ignoring Line of parent abstract type
+	// LineCap accessor from parent Shape
+	public void setLabelLineCap(LineCap lineCap, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Label());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Label)o3).setLineCap(lineCap);
+	}
+
+	// Locked accessor from parent Shape
+	public void setLabelLocked(Boolean locked, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Label());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Label)o3).setLocked(locked);
+	}
+
+	// Ignoring Mask of parent abstract type
+	// Ignoring Point of parent abstract type
+	// Ignoring Polygon of parent abstract type
+	// Ignoring Polyline of parent abstract type
+	// Ignoring Rectangle of parent abstract type
+	// StrokeColor accessor from parent Shape
+	public void setLabelStrokeColor(Color strokeColor, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Label());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Label)o3).setStrokeColor(strokeColor);
+	}
+
+	// StrokeDashArray accessor from parent Shape
+	public void setLabelStrokeDashArray(String strokeDashArray, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Label());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Label)o3).setStrokeDashArray(strokeDashArray);
+	}
+
+	// StrokeWidth accessor from parent Shape
+	public void setLabelStrokeWidth(Double strokeWidth, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Label());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Label)o3).setStrokeWidth(strokeWidth);
+	}
+
+	// Text accessor from parent Shape
+	public void setLabelText(String text, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Label());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Label)o3).setText(text);
+	}
+
+	// TheC accessor from parent Shape
+	public void setLabelTheC(NonNegativeInteger theC, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Label());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Label)o3).setTheC(theC);
+	}
+
+	// TheT accessor from parent Shape
+	public void setLabelTheT(NonNegativeInteger theT, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Label());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Label)o3).setTheT(theT);
+	}
+
+	// TheZ accessor from parent Shape
+	public void setLabelTheZ(NonNegativeInteger theZ, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Label());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Label)o3).setTheZ(theZ);
+	}
+
+	// Transform accessor from parent Shape
+	public void setLabelTransform(AffineTransform transform, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Label());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Label)o3).setTransform(transform);
+	}
+
+	// Visible accessor from parent Shape
+	public void setLabelVisible(Boolean visible, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Label());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Label)o3).setVisible(visible);
+	}
+
+	public void setLabelX(Double x, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Label());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Label)o3).setX(x);
+	}
+
+	public void setLabelY(Double y, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Label());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Label)o3).setY(y);
+	}
 
 	//
 	// Laser property storage
@@ -8656,8 +9262,12 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	//
 	// Leader property storage
 	//
-	// {u'Group': {u'OME': None}}
+	// {u'ExperimenterGroup': {u'OME': None}}
 	// Is multi path? False
+
+	// 0:9999
+	// Is multi path? False
+	// Ignoring ExperimenterGroup_BackReference property of reference Leader
 
 	// 1:1
 	// Is multi path? False
@@ -8809,22 +9419,22 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	{
 		// Parents: {u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
 		// EmissionFilterRef is reference and occurs more than once
-		EmissionFilterRef emissionFilterList_reference = new EmissionFilterRef();
-		emissionFilterList_reference.setID(emissionFilter);
+		EmissionFilterRef emissionFilterLinks_reference = new EmissionFilterRef();
+		emissionFilterLinks_reference.setID(emissionFilter);
 		model.addReference(
 				root.getImage(imageIndex).getPixels().getChannel(channelIndex).getLightPath(),
-				emissionFilterList_reference);
+				emissionFilterLinks_reference);
 	}
 
 	public void setLightPathExcitationFilterRef(String excitationFilter, int imageIndex, int channelIndex, int excitationFilterRefIndex)
 	{
 		// Parents: {u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
 		// ExcitationFilterRef is reference and occurs more than once
-		ExcitationFilterRef excitationFilterList_reference = new ExcitationFilterRef();
-		excitationFilterList_reference.setID(excitationFilter);
+		ExcitationFilterRef excitationFilterLinks_reference = new ExcitationFilterRef();
+		excitationFilterLinks_reference.setID(excitationFilter);
 		model.addReference(
 				root.getImage(imageIndex).getPixels().getChannel(channelIndex).getLightPath(),
-				excitationFilterList_reference);
+				excitationFilterLinks_reference);
 	}
 
 	//
@@ -8937,6 +9547,8 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o3.setID(id);
 	}
 
+	// Ignoring LightSourceRef back reference
+	// Ignoring MicrobeamManipulation_BackReference back reference
 	public void setChannelLightSourceSettingsWavelength(PositiveInteger wavelength, int imageIndex, int channelIndex)
 	{
 		// Parents: {u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}, u'MicrobeamManipulation': {u'Experiment': {u'OME': None}}}
@@ -8994,33 +9606,9 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
-	// Description accessor from parent Shape
-	public void setLineDescription(String description, int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		OME o0 = root;
-		if (o0.sizeOfROIList() == ROIIndex)
-		{
-			o0.addROI(new ROI());
-		}
-		ROI o1 = o0.getROI(ROIIndex);
-		if (o1.getUnion() == null)
-		{
-			o1.setUnion(new Union());
-		}
-		Union o2 = o1.getUnion();
-		if (o2.sizeOfShapeList() == shapeIndex)
-		{
-			o2.addShape(new Line());
-		}
-		Shape o3 = o2.getShape(shapeIndex);
-		((Line)o3).setDescription(description);
-	}
-
 	// Ignoring Ellipse of parent abstract type
-	// Fill accessor from parent Shape
-	public void setLineFill(Integer fill, int ROIIndex, int shapeIndex)
+	// FillColor accessor from parent Shape
+	public void setLineFillColor(Color fillColor, int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -9040,11 +9628,57 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 			o2.addShape(new Line());
 		}
 		Shape o3 = o2.getShape(shapeIndex);
-		((Line)o3).setFill(fill);
+		((Line)o3).setFillColor(fillColor);
 	}
 
-	// Ignoring FillRule of parent abstract type
-	// Ignoring FontFamily of parent abstract type
+	// FillRule accessor from parent Shape
+	public void setLineFillRule(FillRule fillRule, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Line());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Line)o3).setFillRule(fillRule);
+	}
+
+	// FontFamily accessor from parent Shape
+	public void setLineFontFamily(FontFamily fontFamily, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Line());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Line)o3).setFontFamily(fontFamily);
+	}
+
 	// FontSize accessor from parent Shape
 	public void setLineFontSize(NonNegativeInteger fontSize, int ROIIndex, int shapeIndex)
 	{
@@ -9069,7 +9703,30 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		((Line)o3).setFontSize(fontSize);
 	}
 
-	// Ignoring FontStyle of parent abstract type
+	// FontStyle accessor from parent Shape
+	public void setLineFontStyle(FontStyle fontStyle, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Line());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Line)o3).setFontStyle(fontStyle);
+	}
+
 	// ID accessor from parent Shape
 	public void setLineID(String id, int ROIIndex, int shapeIndex)
 	{
@@ -9095,37 +9752,10 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		((Line)o3).setID(id);
 	}
 
-	// Label accessor from parent Shape
-	public void setLineLabel(String label, int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		OME o0 = root;
-		if (o0.sizeOfROIList() == ROIIndex)
-		{
-			o0.addROI(new ROI());
-		}
-		ROI o1 = o0.getROI(ROIIndex);
-		if (o1.getUnion() == null)
-		{
-			o1.setUnion(new Union());
-		}
-		Union o2 = o1.getUnion();
-		if (o2.sizeOfShapeList() == shapeIndex)
-		{
-			o2.addShape(new Line());
-		}
-		Shape o3 = o2.getShape(shapeIndex);
-		((Line)o3).setLabel(label);
-	}
-
+	// Ignoring Label of parent abstract type
 	// Ignoring Line of parent abstract type
-	// Ignoring LineCap of parent abstract type
-	// Ignoring MarkerEnd of parent abstract type
-	// Ignoring MarkerStart of parent abstract type
-	// Ignoring Mask of parent abstract type
-	// Name accessor from parent Shape
-	public void setLineName(String name, int ROIIndex, int shapeIndex)
+	// LineCap accessor from parent Shape
+	public void setLineLineCap(LineCap lineCap, int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -9145,15 +9775,40 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 			o2.addShape(new Line());
 		}
 		Shape o3 = o2.getShape(shapeIndex);
-		((Line)o3).setName(name);
+		((Line)o3).setLineCap(lineCap);
 	}
 
-	// Ignoring Path of parent abstract type
+	// Locked accessor from parent Shape
+	public void setLineLocked(Boolean locked, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Line());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Line)o3).setLocked(locked);
+	}
+
+	// Ignoring Mask of parent abstract type
 	// Ignoring Point of parent abstract type
+	// Ignoring Polygon of parent abstract type
 	// Ignoring Polyline of parent abstract type
 	// Ignoring Rectangle of parent abstract type
-	// Stroke accessor from parent Shape
-	public void setLineStroke(Integer stroke, int ROIIndex, int shapeIndex)
+	// StrokeColor accessor from parent Shape
+	public void setLineStrokeColor(Color strokeColor, int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -9173,7 +9828,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 			o2.addShape(new Line());
 		}
 		Shape o3 = o2.getShape(shapeIndex);
-		((Line)o3).setStroke(stroke);
+		((Line)o3).setStrokeColor(strokeColor);
 	}
 
 	// StrokeDashArray accessor from parent Shape
@@ -9224,7 +9879,30 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		((Line)o3).setStrokeWidth(strokeWidth);
 	}
 
-	// Ignoring Text of parent abstract type
+	// Text accessor from parent Shape
+	public void setLineText(String text, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Line());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Line)o3).setText(text);
+	}
+
 	// TheC accessor from parent Shape
 	public void setLineTheC(NonNegativeInteger theC, int ROIIndex, int shapeIndex)
 	{
@@ -9298,7 +9976,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// Transform accessor from parent Shape
-	public void setLineTransform(String transform, int ROIIndex, int shapeIndex)
+	public void setLineTransform(AffineTransform transform, int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -9319,6 +9997,76 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		}
 		Shape o3 = o2.getShape(shapeIndex);
 		((Line)o3).setTransform(transform);
+	}
+
+	// Visible accessor from parent Shape
+	public void setLineVisible(Boolean visible, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Line());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Line)o3).setVisible(visible);
+	}
+
+	public void setLineMarkerEnd(Marker markerEnd, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Line());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Line)o3).setMarkerEnd(markerEnd);
+	}
+
+	public void setLineMarkerStart(Marker markerStart, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Line());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Line)o3).setMarkerStart(markerStart);
 	}
 
 	public void setLineX1(Double x1, int ROIIndex, int shapeIndex)
@@ -9423,11 +10171,11 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
 		// AnnotationRef is reference and occurs more than once
-		AnnotationRef annotationList_reference = new AnnotationRef();
-		annotationList_reference.setID(annotation);
+		AnnotationRef annotationLinks_reference = new AnnotationRef();
+		annotationLinks_reference.setID(annotation);
 		model.addReference(
 				root.getStructuredAnnotations().getListAnnotation(listAnnotationIndex),
-				annotationList_reference);
+				annotationLinks_reference);
 	}
 
 	// Ignoring Channel_BackReference back reference
@@ -9450,6 +10198,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o2.setDescription(description);
 	}
 
+	// Ignoring ExperimenterGroup_BackReference back reference
 	// Ignoring Experimenter_BackReference back reference
 	public void setListAnnotationID(String id, int listAnnotationIndex)
 	{
@@ -9497,6 +10246,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	// Ignoring WellSample_BackReference back reference
 	// Ignoring Well_BackReference back reference
 	//
@@ -9509,11 +10259,11 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
 		// AnnotationRef is reference and occurs more than once
-		AnnotationRef annotationList_reference = new AnnotationRef();
-		annotationList_reference.setID(annotation);
+		AnnotationRef annotationLinks_reference = new AnnotationRef();
+		annotationLinks_reference.setID(annotation);
 		model.addReference(
 				root.getStructuredAnnotations().getLongAnnotation(longAnnotationIndex),
-				annotationList_reference);
+				annotationLinks_reference);
 	}
 
 	// Ignoring Channel_BackReference back reference
@@ -9536,6 +10286,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o2.setDescription(description);
 	}
 
+	// Ignoring ExperimenterGroup_BackReference back reference
 	// Ignoring Experimenter_BackReference back reference
 	public void setLongAnnotationID(String id, int longAnnotationIndex)
 	{
@@ -9583,6 +10334,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public void setLongAnnotationValue(Long value, int longAnnotationIndex)
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
@@ -9609,33 +10361,9 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
-	// Description accessor from parent Shape
-	public void setMaskDescription(String description, int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		OME o0 = root;
-		if (o0.sizeOfROIList() == ROIIndex)
-		{
-			o0.addROI(new ROI());
-		}
-		ROI o1 = o0.getROI(ROIIndex);
-		if (o1.getUnion() == null)
-		{
-			o1.setUnion(new Union());
-		}
-		Union o2 = o1.getUnion();
-		if (o2.sizeOfShapeList() == shapeIndex)
-		{
-			o2.addShape(new Mask());
-		}
-		Shape o3 = o2.getShape(shapeIndex);
-		((Mask)o3).setDescription(description);
-	}
-
 	// Ignoring Ellipse of parent abstract type
-	// Fill accessor from parent Shape
-	public void setMaskFill(Integer fill, int ROIIndex, int shapeIndex)
+	// FillColor accessor from parent Shape
+	public void setMaskFillColor(Color fillColor, int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -9655,11 +10383,57 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 			o2.addShape(new Mask());
 		}
 		Shape o3 = o2.getShape(shapeIndex);
-		((Mask)o3).setFill(fill);
+		((Mask)o3).setFillColor(fillColor);
 	}
 
-	// Ignoring FillRule of parent abstract type
-	// Ignoring FontFamily of parent abstract type
+	// FillRule accessor from parent Shape
+	public void setMaskFillRule(FillRule fillRule, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Mask());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Mask)o3).setFillRule(fillRule);
+	}
+
+	// FontFamily accessor from parent Shape
+	public void setMaskFontFamily(FontFamily fontFamily, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Mask());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Mask)o3).setFontFamily(fontFamily);
+	}
+
 	// FontSize accessor from parent Shape
 	public void setMaskFontSize(NonNegativeInteger fontSize, int ROIIndex, int shapeIndex)
 	{
@@ -9684,7 +10458,30 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		((Mask)o3).setFontSize(fontSize);
 	}
 
-	// Ignoring FontStyle of parent abstract type
+	// FontStyle accessor from parent Shape
+	public void setMaskFontStyle(FontStyle fontStyle, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Mask());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Mask)o3).setFontStyle(fontStyle);
+	}
+
 	// ID accessor from parent Shape
 	public void setMaskID(String id, int ROIIndex, int shapeIndex)
 	{
@@ -9710,37 +10507,10 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		((Mask)o3).setID(id);
 	}
 
-	// Label accessor from parent Shape
-	public void setMaskLabel(String label, int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		OME o0 = root;
-		if (o0.sizeOfROIList() == ROIIndex)
-		{
-			o0.addROI(new ROI());
-		}
-		ROI o1 = o0.getROI(ROIIndex);
-		if (o1.getUnion() == null)
-		{
-			o1.setUnion(new Union());
-		}
-		Union o2 = o1.getUnion();
-		if (o2.sizeOfShapeList() == shapeIndex)
-		{
-			o2.addShape(new Mask());
-		}
-		Shape o3 = o2.getShape(shapeIndex);
-		((Mask)o3).setLabel(label);
-	}
-
+	// Ignoring Label of parent abstract type
 	// Ignoring Line of parent abstract type
-	// Ignoring LineCap of parent abstract type
-	// Ignoring MarkerEnd of parent abstract type
-	// Ignoring MarkerStart of parent abstract type
-	// Ignoring Mask of parent abstract type
-	// Name accessor from parent Shape
-	public void setMaskName(String name, int ROIIndex, int shapeIndex)
+	// LineCap accessor from parent Shape
+	public void setMaskLineCap(LineCap lineCap, int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -9760,15 +10530,40 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 			o2.addShape(new Mask());
 		}
 		Shape o3 = o2.getShape(shapeIndex);
-		((Mask)o3).setName(name);
+		((Mask)o3).setLineCap(lineCap);
 	}
 
-	// Ignoring Path of parent abstract type
+	// Locked accessor from parent Shape
+	public void setMaskLocked(Boolean locked, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Mask());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Mask)o3).setLocked(locked);
+	}
+
+	// Ignoring Mask of parent abstract type
 	// Ignoring Point of parent abstract type
+	// Ignoring Polygon of parent abstract type
 	// Ignoring Polyline of parent abstract type
 	// Ignoring Rectangle of parent abstract type
-	// Stroke accessor from parent Shape
-	public void setMaskStroke(Integer stroke, int ROIIndex, int shapeIndex)
+	// StrokeColor accessor from parent Shape
+	public void setMaskStrokeColor(Color strokeColor, int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -9788,7 +10583,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 			o2.addShape(new Mask());
 		}
 		Shape o3 = o2.getShape(shapeIndex);
-		((Mask)o3).setStroke(stroke);
+		((Mask)o3).setStrokeColor(strokeColor);
 	}
 
 	// StrokeDashArray accessor from parent Shape
@@ -9839,7 +10634,30 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		((Mask)o3).setStrokeWidth(strokeWidth);
 	}
 
-	// Ignoring Text of parent abstract type
+	// Text accessor from parent Shape
+	public void setMaskText(String text, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Mask());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Mask)o3).setText(text);
+	}
+
 	// TheC accessor from parent Shape
 	public void setMaskTheC(NonNegativeInteger theC, int ROIIndex, int shapeIndex)
 	{
@@ -9913,7 +10731,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// Transform accessor from parent Shape
-	public void setMaskTransform(String transform, int ROIIndex, int shapeIndex)
+	public void setMaskTransform(AffineTransform transform, int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -9934,6 +10752,30 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		}
 		Shape o3 = o2.getShape(shapeIndex);
 		((Mask)o3).setTransform(transform);
+	}
+
+	// Visible accessor from parent Shape
+	public void setMaskVisible(Boolean visible, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Mask());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Mask)o3).setVisible(visible);
 	}
 
 	// Ignoring BinData element, complex property
@@ -10059,6 +10901,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o2.setDescription(description);
 	}
 
+	// Ignoring Experiment_BackReference back reference
 	public void setMicrobeamManipulationExperimenterRef(String experimenter, int experimentIndex, int microbeamManipulationIndex)
 	{
 		// Parents: {u'Experiment': {u'OME': None}}
@@ -10095,11 +10938,11 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	{
 		// Parents: {u'Experiment': {u'OME': None}}
 		// ROIRef is reference and occurs more than once
-		ROIRef roiList_reference = new ROIRef();
-		roiList_reference.setID(roi);
+		ROIRef roiLinks_reference = new ROIRef();
+		roiLinks_reference.setID(roi);
 		model.addReference(
 				root.getExperiment(experimentIndex).getMicrobeamManipulation(microbeamManipulationIndex),
-				roiList_reference);
+				roiLinks_reference);
 	}
 
 	public void setMicrobeamManipulationType(MicrobeamManipulationType type, int experimentIndex, int microbeamManipulationIndex)
@@ -10227,127 +11070,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	//
-	// OTF property storage
-	//
-	// {u'Instrument': {u'OME': None}}
-	// Is multi path? False
-
-	// Ignoring BinaryFile element, complex property
-	// Ignoring Channel_BackReference back reference
-	public void setOTFFilterSetRef(String filterSet, int instrumentIndex, int OTFIndex)
-	{
-		// Parents: {u'Instrument': {u'OME': None}}
-		// FilterSetRef is reference and occurs more than once
-		FilterSetRef filterSet_reference = new FilterSetRef();
-		filterSet_reference.setID(filterSet);
-		model.addReference(
-				root.getInstrument(instrumentIndex).getOTF(OTFIndex),
-				filterSet_reference);
-	}
-
-	public void setOTFID(String id, int instrumentIndex, int OTFIndex)
-	{
-		// Parents: {u'Instrument': {u'OME': None}}
-		// ID is not a reference
-		OME o0 = root;
-		if (o0.sizeOfInstrumentList() == instrumentIndex)
-		{
-			o0.addInstrument(new Instrument());
-		}
-		Instrument o1 = o0.getInstrument(instrumentIndex);
-		if (o1.sizeOfOTFList() == OTFIndex)
-		{
-			o1.addOTF(new OTF());
-		}
-		OTF o2 = o1.getOTF(OTFIndex);
-		model.addModelObject(id, o2);
-		o2.setID(id);
-	}
-
-	// Ignoring ObjectiveSettings element, complex property
-	public void setOTFOpticalAxisAveraged(Boolean opticalAxisAveraged, int instrumentIndex, int OTFIndex)
-	{
-		// Parents: {u'Instrument': {u'OME': None}}
-		// OpticalAxisAveraged is not a reference
-		OME o0 = root;
-		if (o0.sizeOfInstrumentList() == instrumentIndex)
-		{
-			o0.addInstrument(new Instrument());
-		}
-		Instrument o1 = o0.getInstrument(instrumentIndex);
-		if (o1.sizeOfOTFList() == OTFIndex)
-		{
-			o1.addOTF(new OTF());
-		}
-		OTF o2 = o1.getOTF(OTFIndex);
-		o2.setOpticalAxisAveraged(opticalAxisAveraged);
-	}
-
-	public void setOTFSizeX(PositiveInteger sizeX, int instrumentIndex, int OTFIndex)
-	{
-		// Parents: {u'Instrument': {u'OME': None}}
-		// SizeX is not a reference
-		OME o0 = root;
-		if (o0.sizeOfInstrumentList() == instrumentIndex)
-		{
-			o0.addInstrument(new Instrument());
-		}
-		Instrument o1 = o0.getInstrument(instrumentIndex);
-		if (o1.sizeOfOTFList() == OTFIndex)
-		{
-			o1.addOTF(new OTF());
-		}
-		OTF o2 = o1.getOTF(OTFIndex);
-		o2.setSizeX(sizeX);
-	}
-
-	public void setOTFSizeY(PositiveInteger sizeY, int instrumentIndex, int OTFIndex)
-	{
-		// Parents: {u'Instrument': {u'OME': None}}
-		// SizeY is not a reference
-		OME o0 = root;
-		if (o0.sizeOfInstrumentList() == instrumentIndex)
-		{
-			o0.addInstrument(new Instrument());
-		}
-		Instrument o1 = o0.getInstrument(instrumentIndex);
-		if (o1.sizeOfOTFList() == OTFIndex)
-		{
-			o1.addOTF(new OTF());
-		}
-		OTF o2 = o1.getOTF(OTFIndex);
-		o2.setSizeY(sizeY);
-	}
-
-	public void setOTFType(PixelType type, int instrumentIndex, int OTFIndex)
-	{
-		// Parents: {u'Instrument': {u'OME': None}}
-		// Type is not a reference
-		OME o0 = root;
-		if (o0.sizeOfInstrumentList() == instrumentIndex)
-		{
-			o0.addInstrument(new Instrument());
-		}
-		Instrument o1 = o0.getInstrument(instrumentIndex);
-		if (o1.sizeOfOTFList() == OTFIndex)
-		{
-			o1.addOTF(new OTF());
-		}
-		OTF o2 = o1.getOTF(OTFIndex);
-		o2.setType(type);
-	}
-
-	//
-	// OTFRef property storage
-	//
-	// {u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
-	// Is multi path? False
-
-	// 1:1
-	// Is multi path? False
-	// Ignoring ID property of reference OTFRef
-
-	//
 	// Objective property storage
 	//
 	// {u'Instrument': {u'OME': None}}
@@ -10426,6 +11148,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o2.setImmersion(immersion);
 	}
 
+	// Ignoring Instrument_BackReference back reference
 	public void setObjectiveIris(Boolean iris, int instrumentIndex, int objectiveIndex)
 	{
 		// Parents: {u'Instrument': {u'OME': None}}
@@ -10573,12 +11296,12 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	//
 	// ObjectiveSettings property storage
 	//
-	// {u'Image': {u'OME': None}, u'OTF': {u'Instrument': {u'OME': None}}}
-	// Is multi path? True
+	// {u'Image': {u'OME': None}}
+	// Is multi path? False
 
-	public void setImageObjectiveSettingsCorrectionCollar(Double correctionCollar, int imageIndex)
+	public void setObjectiveSettingsCorrectionCollar(Double correctionCollar, int imageIndex)
 	{
-		// Parents: {u'Image': {u'OME': None}, u'OTF': {u'Instrument': {u'OME': None}}}
+		// Parents: {u'Image': {u'OME': None}}
 		// CorrectionCollar is not a reference
 		OME o0 = root;
 		if (o0.sizeOfImageList() == imageIndex)
@@ -10594,32 +11317,9 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o2.setCorrectionCollar(correctionCollar);
 	}
 
-	public void setOTFObjectiveSettingsCorrectionCollar(Double correctionCollar, int instrumentIndex, int OTFIndex)
+	public void setObjectiveSettingsID(String id, int imageIndex)
 	{
-		// Parents: {u'Image': {u'OME': None}, u'OTF': {u'Instrument': {u'OME': None}}}
-		// CorrectionCollar is not a reference
-		OME o0 = root;
-		if (o0.sizeOfInstrumentList() == instrumentIndex)
-		{
-			o0.addInstrument(new Instrument());
-		}
-		Instrument o1 = o0.getInstrument(instrumentIndex);
-		if (o1.sizeOfOTFList() == OTFIndex)
-		{
-			o1.addOTF(new OTF());
-		}
-		OTF o2 = o1.getOTF(OTFIndex);
-		if (o2.getObjectiveSettings() == null)
-		{
-			o2.setObjectiveSettings(new ObjectiveSettings());
-		}
-		ObjectiveSettings o3 = o2.getObjectiveSettings();
-		o3.setCorrectionCollar(correctionCollar);
-	}
-
-	public void setImageObjectiveSettingsID(String id, int imageIndex)
-	{
-		// Parents: {u'Image': {u'OME': None}, u'OTF': {u'Instrument': {u'OME': None}}}
+		// Parents: {u'Image': {u'OME': None}}
 		// ID is not a reference
 		OME o0 = root;
 		if (o0.sizeOfImageList() == imageIndex)
@@ -10636,33 +11336,9 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o2.setID(id);
 	}
 
-	public void setOTFObjectiveSettingsID(String id, int instrumentIndex, int OTFIndex)
+	public void setObjectiveSettingsMedium(Medium medium, int imageIndex)
 	{
-		// Parents: {u'Image': {u'OME': None}, u'OTF': {u'Instrument': {u'OME': None}}}
-		// ID is not a reference
-		OME o0 = root;
-		if (o0.sizeOfInstrumentList() == instrumentIndex)
-		{
-			o0.addInstrument(new Instrument());
-		}
-		Instrument o1 = o0.getInstrument(instrumentIndex);
-		if (o1.sizeOfOTFList() == OTFIndex)
-		{
-			o1.addOTF(new OTF());
-		}
-		OTF o2 = o1.getOTF(OTFIndex);
-		if (o2.getObjectiveSettings() == null)
-		{
-			o2.setObjectiveSettings(new ObjectiveSettings());
-		}
-		ObjectiveSettings o3 = o2.getObjectiveSettings();
-		model.addModelObject(id, o3);
-		o3.setID(id);
-	}
-
-	public void setImageObjectiveSettingsMedium(Medium medium, int imageIndex)
-	{
-		// Parents: {u'Image': {u'OME': None}, u'OTF': {u'Instrument': {u'OME': None}}}
+		// Parents: {u'Image': {u'OME': None}}
 		// Medium is not a reference
 		OME o0 = root;
 		if (o0.sizeOfImageList() == imageIndex)
@@ -10678,32 +11354,10 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o2.setMedium(medium);
 	}
 
-	public void setOTFObjectiveSettingsMedium(Medium medium, int instrumentIndex, int OTFIndex)
+	// Ignoring ObjectiveRef back reference
+	public void setObjectiveSettingsRefractiveIndex(Double refractiveIndex, int imageIndex)
 	{
-		// Parents: {u'Image': {u'OME': None}, u'OTF': {u'Instrument': {u'OME': None}}}
-		// Medium is not a reference
-		OME o0 = root;
-		if (o0.sizeOfInstrumentList() == instrumentIndex)
-		{
-			o0.addInstrument(new Instrument());
-		}
-		Instrument o1 = o0.getInstrument(instrumentIndex);
-		if (o1.sizeOfOTFList() == OTFIndex)
-		{
-			o1.addOTF(new OTF());
-		}
-		OTF o2 = o1.getOTF(OTFIndex);
-		if (o2.getObjectiveSettings() == null)
-		{
-			o2.setObjectiveSettings(new ObjectiveSettings());
-		}
-		ObjectiveSettings o3 = o2.getObjectiveSettings();
-		o3.setMedium(medium);
-	}
-
-	public void setImageObjectiveSettingsRefractiveIndex(Double refractiveIndex, int imageIndex)
-	{
-		// Parents: {u'Image': {u'OME': None}, u'OTF': {u'Instrument': {u'OME': None}}}
+		// Parents: {u'Image': {u'OME': None}}
 		// RefractiveIndex is not a reference
 		OME o0 = root;
 		if (o0.sizeOfImageList() == imageIndex)
@@ -10719,385 +11373,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o2.setRefractiveIndex(refractiveIndex);
 	}
 
-	public void setOTFObjectiveSettingsRefractiveIndex(Double refractiveIndex, int instrumentIndex, int OTFIndex)
-	{
-		// Parents: {u'Image': {u'OME': None}, u'OTF': {u'Instrument': {u'OME': None}}}
-		// RefractiveIndex is not a reference
-		OME o0 = root;
-		if (o0.sizeOfInstrumentList() == instrumentIndex)
-		{
-			o0.addInstrument(new Instrument());
-		}
-		Instrument o1 = o0.getInstrument(instrumentIndex);
-		if (o1.sizeOfOTFList() == OTFIndex)
-		{
-			o1.addOTF(new OTF());
-		}
-		OTF o2 = o1.getOTF(OTFIndex);
-		if (o2.getObjectiveSettings() == null)
-		{
-			o2.setObjectiveSettings(new ObjectiveSettings());
-		}
-		ObjectiveSettings o3 = o2.getObjectiveSettings();
-		o3.setRefractiveIndex(refractiveIndex);
-	}
-
-	//
-	// Path property storage
-	//
-	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-	// Is multi path? False
-
-	// Description accessor from parent Shape
-	public void setPathDescription(String description, int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		OME o0 = root;
-		if (o0.sizeOfROIList() == ROIIndex)
-		{
-			o0.addROI(new ROI());
-		}
-		ROI o1 = o0.getROI(ROIIndex);
-		if (o1.getUnion() == null)
-		{
-			o1.setUnion(new Union());
-		}
-		Union o2 = o1.getUnion();
-		if (o2.sizeOfShapeList() == shapeIndex)
-		{
-			o2.addShape(new Path());
-		}
-		Shape o3 = o2.getShape(shapeIndex);
-		((Path)o3).setDescription(description);
-	}
-
-	// Ignoring Ellipse of parent abstract type
-	// Fill accessor from parent Shape
-	public void setPathFill(Integer fill, int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		OME o0 = root;
-		if (o0.sizeOfROIList() == ROIIndex)
-		{
-			o0.addROI(new ROI());
-		}
-		ROI o1 = o0.getROI(ROIIndex);
-		if (o1.getUnion() == null)
-		{
-			o1.setUnion(new Union());
-		}
-		Union o2 = o1.getUnion();
-		if (o2.sizeOfShapeList() == shapeIndex)
-		{
-			o2.addShape(new Path());
-		}
-		Shape o3 = o2.getShape(shapeIndex);
-		((Path)o3).setFill(fill);
-	}
-
-	// Ignoring FillRule of parent abstract type
-	// Ignoring FontFamily of parent abstract type
-	// FontSize accessor from parent Shape
-	public void setPathFontSize(NonNegativeInteger fontSize, int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		OME o0 = root;
-		if (o0.sizeOfROIList() == ROIIndex)
-		{
-			o0.addROI(new ROI());
-		}
-		ROI o1 = o0.getROI(ROIIndex);
-		if (o1.getUnion() == null)
-		{
-			o1.setUnion(new Union());
-		}
-		Union o2 = o1.getUnion();
-		if (o2.sizeOfShapeList() == shapeIndex)
-		{
-			o2.addShape(new Path());
-		}
-		Shape o3 = o2.getShape(shapeIndex);
-		((Path)o3).setFontSize(fontSize);
-	}
-
-	// Ignoring FontStyle of parent abstract type
-	// ID accessor from parent Shape
-	public void setPathID(String id, int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		OME o0 = root;
-		if (o0.sizeOfROIList() == ROIIndex)
-		{
-			o0.addROI(new ROI());
-		}
-		ROI o1 = o0.getROI(ROIIndex);
-		if (o1.getUnion() == null)
-		{
-			o1.setUnion(new Union());
-		}
-		Union o2 = o1.getUnion();
-		if (o2.sizeOfShapeList() == shapeIndex)
-		{
-			o2.addShape(new Path());
-		}
-		Shape o3 = o2.getShape(shapeIndex);
-		model.addModelObject(id, o3);
-		((Path)o3).setID(id);
-	}
-
-	// Label accessor from parent Shape
-	public void setPathLabel(String label, int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		OME o0 = root;
-		if (o0.sizeOfROIList() == ROIIndex)
-		{
-			o0.addROI(new ROI());
-		}
-		ROI o1 = o0.getROI(ROIIndex);
-		if (o1.getUnion() == null)
-		{
-			o1.setUnion(new Union());
-		}
-		Union o2 = o1.getUnion();
-		if (o2.sizeOfShapeList() == shapeIndex)
-		{
-			o2.addShape(new Path());
-		}
-		Shape o3 = o2.getShape(shapeIndex);
-		((Path)o3).setLabel(label);
-	}
-
-	// Ignoring Line of parent abstract type
-	// Ignoring LineCap of parent abstract type
-	// Ignoring MarkerEnd of parent abstract type
-	// Ignoring MarkerStart of parent abstract type
-	// Ignoring Mask of parent abstract type
-	// Name accessor from parent Shape
-	public void setPathName(String name, int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		OME o0 = root;
-		if (o0.sizeOfROIList() == ROIIndex)
-		{
-			o0.addROI(new ROI());
-		}
-		ROI o1 = o0.getROI(ROIIndex);
-		if (o1.getUnion() == null)
-		{
-			o1.setUnion(new Union());
-		}
-		Union o2 = o1.getUnion();
-		if (o2.sizeOfShapeList() == shapeIndex)
-		{
-			o2.addShape(new Path());
-		}
-		Shape o3 = o2.getShape(shapeIndex);
-		((Path)o3).setName(name);
-	}
-
-	// Ignoring Path of parent abstract type
-	// Ignoring Point of parent abstract type
-	// Ignoring Polyline of parent abstract type
-	// Ignoring Rectangle of parent abstract type
-	// Stroke accessor from parent Shape
-	public void setPathStroke(Integer stroke, int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		OME o0 = root;
-		if (o0.sizeOfROIList() == ROIIndex)
-		{
-			o0.addROI(new ROI());
-		}
-		ROI o1 = o0.getROI(ROIIndex);
-		if (o1.getUnion() == null)
-		{
-			o1.setUnion(new Union());
-		}
-		Union o2 = o1.getUnion();
-		if (o2.sizeOfShapeList() == shapeIndex)
-		{
-			o2.addShape(new Path());
-		}
-		Shape o3 = o2.getShape(shapeIndex);
-		((Path)o3).setStroke(stroke);
-	}
-
-	// StrokeDashArray accessor from parent Shape
-	public void setPathStrokeDashArray(String strokeDashArray, int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		OME o0 = root;
-		if (o0.sizeOfROIList() == ROIIndex)
-		{
-			o0.addROI(new ROI());
-		}
-		ROI o1 = o0.getROI(ROIIndex);
-		if (o1.getUnion() == null)
-		{
-			o1.setUnion(new Union());
-		}
-		Union o2 = o1.getUnion();
-		if (o2.sizeOfShapeList() == shapeIndex)
-		{
-			o2.addShape(new Path());
-		}
-		Shape o3 = o2.getShape(shapeIndex);
-		((Path)o3).setStrokeDashArray(strokeDashArray);
-	}
-
-	// StrokeWidth accessor from parent Shape
-	public void setPathStrokeWidth(Double strokeWidth, int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		OME o0 = root;
-		if (o0.sizeOfROIList() == ROIIndex)
-		{
-			o0.addROI(new ROI());
-		}
-		ROI o1 = o0.getROI(ROIIndex);
-		if (o1.getUnion() == null)
-		{
-			o1.setUnion(new Union());
-		}
-		Union o2 = o1.getUnion();
-		if (o2.sizeOfShapeList() == shapeIndex)
-		{
-			o2.addShape(new Path());
-		}
-		Shape o3 = o2.getShape(shapeIndex);
-		((Path)o3).setStrokeWidth(strokeWidth);
-	}
-
-	// Ignoring Text of parent abstract type
-	// TheC accessor from parent Shape
-	public void setPathTheC(NonNegativeInteger theC, int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		OME o0 = root;
-		if (o0.sizeOfROIList() == ROIIndex)
-		{
-			o0.addROI(new ROI());
-		}
-		ROI o1 = o0.getROI(ROIIndex);
-		if (o1.getUnion() == null)
-		{
-			o1.setUnion(new Union());
-		}
-		Union o2 = o1.getUnion();
-		if (o2.sizeOfShapeList() == shapeIndex)
-		{
-			o2.addShape(new Path());
-		}
-		Shape o3 = o2.getShape(shapeIndex);
-		((Path)o3).setTheC(theC);
-	}
-
-	// TheT accessor from parent Shape
-	public void setPathTheT(NonNegativeInteger theT, int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		OME o0 = root;
-		if (o0.sizeOfROIList() == ROIIndex)
-		{
-			o0.addROI(new ROI());
-		}
-		ROI o1 = o0.getROI(ROIIndex);
-		if (o1.getUnion() == null)
-		{
-			o1.setUnion(new Union());
-		}
-		Union o2 = o1.getUnion();
-		if (o2.sizeOfShapeList() == shapeIndex)
-		{
-			o2.addShape(new Path());
-		}
-		Shape o3 = o2.getShape(shapeIndex);
-		((Path)o3).setTheT(theT);
-	}
-
-	// TheZ accessor from parent Shape
-	public void setPathTheZ(NonNegativeInteger theZ, int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		OME o0 = root;
-		if (o0.sizeOfROIList() == ROIIndex)
-		{
-			o0.addROI(new ROI());
-		}
-		ROI o1 = o0.getROI(ROIIndex);
-		if (o1.getUnion() == null)
-		{
-			o1.setUnion(new Union());
-		}
-		Union o2 = o1.getUnion();
-		if (o2.sizeOfShapeList() == shapeIndex)
-		{
-			o2.addShape(new Path());
-		}
-		Shape o3 = o2.getShape(shapeIndex);
-		((Path)o3).setTheZ(theZ);
-	}
-
-	// Transform accessor from parent Shape
-	public void setPathTransform(String transform, int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		OME o0 = root;
-		if (o0.sizeOfROIList() == ROIIndex)
-		{
-			o0.addROI(new ROI());
-		}
-		ROI o1 = o0.getROI(ROIIndex);
-		if (o1.getUnion() == null)
-		{
-			o1.setUnion(new Union());
-		}
-		Union o2 = o1.getUnion();
-		if (o2.sizeOfShapeList() == shapeIndex)
-		{
-			o2.addShape(new Path());
-		}
-		Shape o3 = o2.getShape(shapeIndex);
-		((Path)o3).setTransform(transform);
-	}
-
-	public void setPathDefinition(String definition, int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		OME o0 = root;
-		if (o0.sizeOfROIList() == ROIIndex)
-		{
-			o0.addROI(new ROI());
-		}
-		ROI o1 = o0.getROI(ROIIndex);
-		if (o1.getUnion() == null)
-		{
-			o1.setUnion(new Union());
-		}
-		Union o2 = o1.getUnion();
-		if (o2.sizeOfShapeList() == shapeIndex)
-		{
-			o2.addShape(new Path());
-		}
-		Shape o3 = o2.getShape(shapeIndex);
-		((Path)o3).setDefinition(definition);
-	}
-
 	//
 	// Pixels property storage
 	//
@@ -11108,11 +11383,11 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	{
 		// Parents: {u'Image': {u'OME': None}}
 		// AnnotationRef is reference and occurs more than once
-		AnnotationRef annotationList_reference = new AnnotationRef();
-		annotationList_reference.setID(annotation);
+		AnnotationRef annotationLinks_reference = new AnnotationRef();
+		annotationLinks_reference.setID(annotation);
 		model.addReference(
 				root.getImage(imageIndex).getPixels(),
-				annotationList_reference);
+				annotationLinks_reference);
 	}
 
 	// Ignoring BinData element, complex property
@@ -11347,11 +11622,11 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	{
 		// Parents: {u'Pixels': {u'Image': {u'OME': None}}}
 		// AnnotationRef is reference and occurs more than once
-		AnnotationRef annotationList_reference = new AnnotationRef();
-		annotationList_reference.setID(annotation);
+		AnnotationRef annotationLinks_reference = new AnnotationRef();
+		annotationLinks_reference.setID(annotation);
 		model.addReference(
 				root.getImage(imageIndex).getPixels().getPlane(planeIndex),
-				annotationList_reference);
+				annotationLinks_reference);
 	}
 
 	public void setPlaneDeltaT(Double deltaT, int imageIndex, int planeIndex)
@@ -11423,6 +11698,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o3.setHashSHA1(hashSHA1);
 	}
 
+	// Ignoring Pixels_BackReference back reference
 	public void setPlanePositionX(Double positionX, int imageIndex, int planeIndex)
 	{
 		// Parents: {u'Pixels': {u'Image': {u'OME': None}}}
@@ -11571,11 +11847,11 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	{
 		// Parents: {u'OME': None}
 		// AnnotationRef is reference and occurs more than once
-		AnnotationRef annotationList_reference = new AnnotationRef();
-		annotationList_reference.setID(annotation);
+		AnnotationRef annotationLinks_reference = new AnnotationRef();
+		annotationLinks_reference.setID(annotation);
 		model.addReference(
 				root.getPlate(plateIndex),
-				annotationList_reference);
+				annotationLinks_reference);
 	}
 
 	public void setPlateColumnNamingConvention(NamingConvention columnNamingConvention, int plateIndex)
@@ -11628,6 +11904,19 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		}
 		Plate o1 = o0.getPlate(plateIndex);
 		o1.setExternalIdentifier(externalIdentifier);
+	}
+
+	public void setPlateFieldIndex(NonNegativeInteger fieldIndex, int plateIndex)
+	{
+		// Parents: {u'OME': None}
+		// FieldIndex is not a reference
+		OME o0 = root;
+		if (o0.sizeOfPlateList() == plateIndex)
+		{
+			o0.addPlate(new Plate());
+		}
+		Plate o1 = o0.getPlate(plateIndex);
+		o1.setFieldIndex(fieldIndex);
 	}
 
 	public void setPlateID(String id, int plateIndex)
@@ -11684,17 +11973,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o1.setRows(rows);
 	}
 
-	public void setPlateScreenRef(String screen, int plateIndex, int screenRefIndex)
-	{
-		// Parents: {u'OME': None}
-		// ScreenRef is reference and occurs more than once
-		ScreenRef screenList_reference = new ScreenRef();
-		screenList_reference.setID(screen);
-		model.addReference(
-				root.getPlate(plateIndex),
-				screenList_reference);
-	}
-
+	// Ignoring Screen_BackReference back reference
 	public void setPlateStatus(String status, int plateIndex)
 	{
 		// Parents: {u'OME': None}
@@ -11745,11 +12024,11 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	{
 		// Parents: {u'Plate': {u'OME': None}}
 		// AnnotationRef is reference and occurs more than once
-		AnnotationRef annotationList_reference = new AnnotationRef();
-		annotationList_reference.setID(annotation);
+		AnnotationRef annotationLinks_reference = new AnnotationRef();
+		annotationLinks_reference.setID(annotation);
 		model.addReference(
 				root.getPlate(plateIndex).getPlateAcquisition(plateAcquisitionIndex),
-				annotationList_reference);
+				annotationLinks_reference);
 	}
 
 	public void setPlateAcquisitionDescription(String description, int plateIndex, int plateAcquisitionIndex)
@@ -11770,7 +12049,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o2.setDescription(description);
 	}
 
-	public void setPlateAcquisitionEndTime(String endTime, int plateIndex, int plateAcquisitionIndex)
+	public void setPlateAcquisitionEndTime(Timestamp endTime, int plateIndex, int plateAcquisitionIndex)
 	{
 		// Parents: {u'Plate': {u'OME': None}}
 		// EndTime is not a reference
@@ -11843,7 +12122,8 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o2.setName(name);
 	}
 
-	public void setPlateAcquisitionStartTime(String startTime, int plateIndex, int plateAcquisitionIndex)
+	// Ignoring Plate_BackReference back reference
+	public void setPlateAcquisitionStartTime(Timestamp startTime, int plateIndex, int plateAcquisitionIndex)
 	{
 		// Parents: {u'Plate': {u'OME': None}}
 		// StartTime is not a reference
@@ -11865,11 +12145,11 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	{
 		// Parents: {u'Plate': {u'OME': None}}
 		// WellSampleRef is reference and occurs more than once
-		WellSampleRef wellSampleList_reference = new WellSampleRef();
-		wellSampleList_reference.setID(wellSample);
+		WellSampleRef wellSamples_reference = new WellSampleRef();
+		wellSamples_reference.setID(wellSample);
 		model.addReference(
 				root.getPlate(plateIndex).getPlateAcquisition(plateAcquisitionIndex),
-				wellSampleList_reference);
+				wellSamples_reference);
 	}
 
 	//
@@ -11888,33 +12168,9 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
-	// Description accessor from parent Shape
-	public void setPointDescription(String description, int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		OME o0 = root;
-		if (o0.sizeOfROIList() == ROIIndex)
-		{
-			o0.addROI(new ROI());
-		}
-		ROI o1 = o0.getROI(ROIIndex);
-		if (o1.getUnion() == null)
-		{
-			o1.setUnion(new Union());
-		}
-		Union o2 = o1.getUnion();
-		if (o2.sizeOfShapeList() == shapeIndex)
-		{
-			o2.addShape(new Point());
-		}
-		Shape o3 = o2.getShape(shapeIndex);
-		((Point)o3).setDescription(description);
-	}
-
 	// Ignoring Ellipse of parent abstract type
-	// Fill accessor from parent Shape
-	public void setPointFill(Integer fill, int ROIIndex, int shapeIndex)
+	// FillColor accessor from parent Shape
+	public void setPointFillColor(Color fillColor, int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -11934,11 +12190,57 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 			o2.addShape(new Point());
 		}
 		Shape o3 = o2.getShape(shapeIndex);
-		((Point)o3).setFill(fill);
+		((Point)o3).setFillColor(fillColor);
 	}
 
-	// Ignoring FillRule of parent abstract type
-	// Ignoring FontFamily of parent abstract type
+	// FillRule accessor from parent Shape
+	public void setPointFillRule(FillRule fillRule, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Point());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Point)o3).setFillRule(fillRule);
+	}
+
+	// FontFamily accessor from parent Shape
+	public void setPointFontFamily(FontFamily fontFamily, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Point());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Point)o3).setFontFamily(fontFamily);
+	}
+
 	// FontSize accessor from parent Shape
 	public void setPointFontSize(NonNegativeInteger fontSize, int ROIIndex, int shapeIndex)
 	{
@@ -11963,7 +12265,30 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		((Point)o3).setFontSize(fontSize);
 	}
 
-	// Ignoring FontStyle of parent abstract type
+	// FontStyle accessor from parent Shape
+	public void setPointFontStyle(FontStyle fontStyle, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Point());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Point)o3).setFontStyle(fontStyle);
+	}
+
 	// ID accessor from parent Shape
 	public void setPointID(String id, int ROIIndex, int shapeIndex)
 	{
@@ -11989,37 +12314,10 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		((Point)o3).setID(id);
 	}
 
-	// Label accessor from parent Shape
-	public void setPointLabel(String label, int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		OME o0 = root;
-		if (o0.sizeOfROIList() == ROIIndex)
-		{
-			o0.addROI(new ROI());
-		}
-		ROI o1 = o0.getROI(ROIIndex);
-		if (o1.getUnion() == null)
-		{
-			o1.setUnion(new Union());
-		}
-		Union o2 = o1.getUnion();
-		if (o2.sizeOfShapeList() == shapeIndex)
-		{
-			o2.addShape(new Point());
-		}
-		Shape o3 = o2.getShape(shapeIndex);
-		((Point)o3).setLabel(label);
-	}
-
+	// Ignoring Label of parent abstract type
 	// Ignoring Line of parent abstract type
-	// Ignoring LineCap of parent abstract type
-	// Ignoring MarkerEnd of parent abstract type
-	// Ignoring MarkerStart of parent abstract type
-	// Ignoring Mask of parent abstract type
-	// Name accessor from parent Shape
-	public void setPointName(String name, int ROIIndex, int shapeIndex)
+	// LineCap accessor from parent Shape
+	public void setPointLineCap(LineCap lineCap, int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -12039,15 +12337,40 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 			o2.addShape(new Point());
 		}
 		Shape o3 = o2.getShape(shapeIndex);
-		((Point)o3).setName(name);
+		((Point)o3).setLineCap(lineCap);
 	}
 
-	// Ignoring Path of parent abstract type
+	// Locked accessor from parent Shape
+	public void setPointLocked(Boolean locked, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Point());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Point)o3).setLocked(locked);
+	}
+
+	// Ignoring Mask of parent abstract type
 	// Ignoring Point of parent abstract type
+	// Ignoring Polygon of parent abstract type
 	// Ignoring Polyline of parent abstract type
 	// Ignoring Rectangle of parent abstract type
-	// Stroke accessor from parent Shape
-	public void setPointStroke(Integer stroke, int ROIIndex, int shapeIndex)
+	// StrokeColor accessor from parent Shape
+	public void setPointStrokeColor(Color strokeColor, int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -12067,7 +12390,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 			o2.addShape(new Point());
 		}
 		Shape o3 = o2.getShape(shapeIndex);
-		((Point)o3).setStroke(stroke);
+		((Point)o3).setStrokeColor(strokeColor);
 	}
 
 	// StrokeDashArray accessor from parent Shape
@@ -12118,7 +12441,30 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		((Point)o3).setStrokeWidth(strokeWidth);
 	}
 
-	// Ignoring Text of parent abstract type
+	// Text accessor from parent Shape
+	public void setPointText(String text, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Point());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Point)o3).setText(text);
+	}
+
 	// TheC accessor from parent Shape
 	public void setPointTheC(NonNegativeInteger theC, int ROIIndex, int shapeIndex)
 	{
@@ -12192,7 +12538,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// Transform accessor from parent Shape
-	public void setPointTransform(String transform, int ROIIndex, int shapeIndex)
+	public void setPointTransform(AffineTransform transform, int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -12213,6 +12559,30 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		}
 		Shape o3 = o2.getShape(shapeIndex);
 		((Point)o3).setTransform(transform);
+	}
+
+	// Visible accessor from parent Shape
+	public void setPointVisible(Boolean visible, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Point());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Point)o3).setVisible(visible);
 	}
 
 	public void setPointX(Double x, int ROIIndex, int shapeIndex)
@@ -12262,38 +12632,460 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	//
+	// Polygon property storage
+	//
+	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+	// Is multi path? False
+
+	// Ignoring Ellipse of parent abstract type
+	// FillColor accessor from parent Shape
+	public void setPolygonFillColor(Color fillColor, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Polygon());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Polygon)o3).setFillColor(fillColor);
+	}
+
+	// FillRule accessor from parent Shape
+	public void setPolygonFillRule(FillRule fillRule, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Polygon());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Polygon)o3).setFillRule(fillRule);
+	}
+
+	// FontFamily accessor from parent Shape
+	public void setPolygonFontFamily(FontFamily fontFamily, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Polygon());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Polygon)o3).setFontFamily(fontFamily);
+	}
+
+	// FontSize accessor from parent Shape
+	public void setPolygonFontSize(NonNegativeInteger fontSize, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Polygon());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Polygon)o3).setFontSize(fontSize);
+	}
+
+	// FontStyle accessor from parent Shape
+	public void setPolygonFontStyle(FontStyle fontStyle, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Polygon());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Polygon)o3).setFontStyle(fontStyle);
+	}
+
+	// ID accessor from parent Shape
+	public void setPolygonID(String id, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Polygon());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		model.addModelObject(id, o3);
+		((Polygon)o3).setID(id);
+	}
+
+	// Ignoring Label of parent abstract type
+	// Ignoring Line of parent abstract type
+	// LineCap accessor from parent Shape
+	public void setPolygonLineCap(LineCap lineCap, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Polygon());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Polygon)o3).setLineCap(lineCap);
+	}
+
+	// Locked accessor from parent Shape
+	public void setPolygonLocked(Boolean locked, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Polygon());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Polygon)o3).setLocked(locked);
+	}
+
+	// Ignoring Mask of parent abstract type
+	// Ignoring Point of parent abstract type
+	// Ignoring Polygon of parent abstract type
+	// Ignoring Polyline of parent abstract type
+	// Ignoring Rectangle of parent abstract type
+	// StrokeColor accessor from parent Shape
+	public void setPolygonStrokeColor(Color strokeColor, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Polygon());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Polygon)o3).setStrokeColor(strokeColor);
+	}
+
+	// StrokeDashArray accessor from parent Shape
+	public void setPolygonStrokeDashArray(String strokeDashArray, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Polygon());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Polygon)o3).setStrokeDashArray(strokeDashArray);
+	}
+
+	// StrokeWidth accessor from parent Shape
+	public void setPolygonStrokeWidth(Double strokeWidth, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Polygon());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Polygon)o3).setStrokeWidth(strokeWidth);
+	}
+
+	// Text accessor from parent Shape
+	public void setPolygonText(String text, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Polygon());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Polygon)o3).setText(text);
+	}
+
+	// TheC accessor from parent Shape
+	public void setPolygonTheC(NonNegativeInteger theC, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Polygon());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Polygon)o3).setTheC(theC);
+	}
+
+	// TheT accessor from parent Shape
+	public void setPolygonTheT(NonNegativeInteger theT, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Polygon());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Polygon)o3).setTheT(theT);
+	}
+
+	// TheZ accessor from parent Shape
+	public void setPolygonTheZ(NonNegativeInteger theZ, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Polygon());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Polygon)o3).setTheZ(theZ);
+	}
+
+	// Transform accessor from parent Shape
+	public void setPolygonTransform(AffineTransform transform, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Polygon());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Polygon)o3).setTransform(transform);
+	}
+
+	// Visible accessor from parent Shape
+	public void setPolygonVisible(Boolean visible, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Polygon());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Polygon)o3).setVisible(visible);
+	}
+
+	public void setPolygonPoints(String points, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Polygon());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Polygon)o3).setPoints(points);
+	}
+
+	//
 	// Polyline property storage
 	//
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
-	// Description accessor from parent Shape
-	public void setPolylineDescription(String description, int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		OME o0 = root;
-		if (o0.sizeOfROIList() == ROIIndex)
-		{
-			o0.addROI(new ROI());
-		}
-		ROI o1 = o0.getROI(ROIIndex);
-		if (o1.getUnion() == null)
-		{
-			o1.setUnion(new Union());
-		}
-		Union o2 = o1.getUnion();
-		if (o2.sizeOfShapeList() == shapeIndex)
-		{
-			o2.addShape(new Polyline());
-		}
-		Shape o3 = o2.getShape(shapeIndex);
-		((Polyline)o3).setDescription(description);
-	}
-
 	// Ignoring Ellipse of parent abstract type
-	// Fill accessor from parent Shape
-	public void setPolylineFill(Integer fill, int ROIIndex, int shapeIndex)
+	// FillColor accessor from parent Shape
+	public void setPolylineFillColor(Color fillColor, int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -12313,11 +13105,57 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 			o2.addShape(new Polyline());
 		}
 		Shape o3 = o2.getShape(shapeIndex);
-		((Polyline)o3).setFill(fill);
+		((Polyline)o3).setFillColor(fillColor);
 	}
 
-	// Ignoring FillRule of parent abstract type
-	// Ignoring FontFamily of parent abstract type
+	// FillRule accessor from parent Shape
+	public void setPolylineFillRule(FillRule fillRule, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Polyline());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Polyline)o3).setFillRule(fillRule);
+	}
+
+	// FontFamily accessor from parent Shape
+	public void setPolylineFontFamily(FontFamily fontFamily, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Polyline());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Polyline)o3).setFontFamily(fontFamily);
+	}
+
 	// FontSize accessor from parent Shape
 	public void setPolylineFontSize(NonNegativeInteger fontSize, int ROIIndex, int shapeIndex)
 	{
@@ -12342,7 +13180,30 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		((Polyline)o3).setFontSize(fontSize);
 	}
 
-	// Ignoring FontStyle of parent abstract type
+	// FontStyle accessor from parent Shape
+	public void setPolylineFontStyle(FontStyle fontStyle, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Polyline());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Polyline)o3).setFontStyle(fontStyle);
+	}
+
 	// ID accessor from parent Shape
 	public void setPolylineID(String id, int ROIIndex, int shapeIndex)
 	{
@@ -12368,37 +13229,10 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		((Polyline)o3).setID(id);
 	}
 
-	// Label accessor from parent Shape
-	public void setPolylineLabel(String label, int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		OME o0 = root;
-		if (o0.sizeOfROIList() == ROIIndex)
-		{
-			o0.addROI(new ROI());
-		}
-		ROI o1 = o0.getROI(ROIIndex);
-		if (o1.getUnion() == null)
-		{
-			o1.setUnion(new Union());
-		}
-		Union o2 = o1.getUnion();
-		if (o2.sizeOfShapeList() == shapeIndex)
-		{
-			o2.addShape(new Polyline());
-		}
-		Shape o3 = o2.getShape(shapeIndex);
-		((Polyline)o3).setLabel(label);
-	}
-
+	// Ignoring Label of parent abstract type
 	// Ignoring Line of parent abstract type
-	// Ignoring LineCap of parent abstract type
-	// Ignoring MarkerEnd of parent abstract type
-	// Ignoring MarkerStart of parent abstract type
-	// Ignoring Mask of parent abstract type
-	// Name accessor from parent Shape
-	public void setPolylineName(String name, int ROIIndex, int shapeIndex)
+	// LineCap accessor from parent Shape
+	public void setPolylineLineCap(LineCap lineCap, int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -12418,15 +13252,40 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 			o2.addShape(new Polyline());
 		}
 		Shape o3 = o2.getShape(shapeIndex);
-		((Polyline)o3).setName(name);
+		((Polyline)o3).setLineCap(lineCap);
 	}
 
-	// Ignoring Path of parent abstract type
+	// Locked accessor from parent Shape
+	public void setPolylineLocked(Boolean locked, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Polyline());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Polyline)o3).setLocked(locked);
+	}
+
+	// Ignoring Mask of parent abstract type
 	// Ignoring Point of parent abstract type
+	// Ignoring Polygon of parent abstract type
 	// Ignoring Polyline of parent abstract type
 	// Ignoring Rectangle of parent abstract type
-	// Stroke accessor from parent Shape
-	public void setPolylineStroke(Integer stroke, int ROIIndex, int shapeIndex)
+	// StrokeColor accessor from parent Shape
+	public void setPolylineStrokeColor(Color strokeColor, int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -12446,7 +13305,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 			o2.addShape(new Polyline());
 		}
 		Shape o3 = o2.getShape(shapeIndex);
-		((Polyline)o3).setStroke(stroke);
+		((Polyline)o3).setStrokeColor(strokeColor);
 	}
 
 	// StrokeDashArray accessor from parent Shape
@@ -12497,7 +13356,30 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		((Polyline)o3).setStrokeWidth(strokeWidth);
 	}
 
-	// Ignoring Text of parent abstract type
+	// Text accessor from parent Shape
+	public void setPolylineText(String text, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Polyline());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Polyline)o3).setText(text);
+	}
+
 	// TheC accessor from parent Shape
 	public void setPolylineTheC(NonNegativeInteger theC, int ROIIndex, int shapeIndex)
 	{
@@ -12571,7 +13453,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// Transform accessor from parent Shape
-	public void setPolylineTransform(String transform, int ROIIndex, int shapeIndex)
+	public void setPolylineTransform(AffineTransform transform, int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -12594,7 +13476,8 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		((Polyline)o3).setTransform(transform);
 	}
 
-	public void setPolylineClosed(Boolean closed, int ROIIndex, int shapeIndex)
+	// Visible accessor from parent Shape
+	public void setPolylineVisible(Boolean visible, int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -12614,7 +13497,53 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 			o2.addShape(new Polyline());
 		}
 		Shape o3 = o2.getShape(shapeIndex);
-		((Polyline)o3).setClosed(closed);
+		((Polyline)o3).setVisible(visible);
+	}
+
+	public void setPolylineMarkerEnd(Marker markerEnd, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Polyline());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Polyline)o3).setMarkerEnd(markerEnd);
+	}
+
+	public void setPolylineMarkerStart(Marker markerStart, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Polyline());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Polyline)o3).setMarkerStart(markerStart);
 	}
 
 	public void setPolylinePoints(String points, int ROIIndex, int shapeIndex)
@@ -12650,14 +13579,24 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	{
 		// Parents: {u'OME': None}
 		// AnnotationRef is reference and occurs more than once
-		AnnotationRef annotationList_reference = new AnnotationRef();
-		annotationList_reference.setID(annotation);
+		AnnotationRef annotationLinks_reference = new AnnotationRef();
+		annotationLinks_reference.setID(annotation);
 		model.addReference(
 				root.getProject(projectIndex),
-				annotationList_reference);
+				annotationLinks_reference);
 	}
 
-	// Ignoring Dataset_BackReference back reference
+	public void setProjectDatasetRef(String dataset, int projectIndex, int datasetRefIndex)
+	{
+		// Parents: {u'OME': None}
+		// DatasetRef is reference and occurs more than once
+		DatasetRef datasetLinks_reference = new DatasetRef();
+		datasetLinks_reference.setID(dataset);
+		model.addReference(
+				root.getProject(projectIndex),
+				datasetLinks_reference);
+	}
+
 	public void setProjectDescription(String description, int projectIndex)
 	{
 		// Parents: {u'OME': None}
@@ -12671,6 +13610,17 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o1.setDescription(description);
 	}
 
+	public void setProjectExperimenterGroupRef(String experimenterGroup, int projectIndex)
+	{
+		// Parents: {u'OME': None}
+		// ExperimenterGroupRef is reference and occurs more than once
+		ExperimenterGroupRef experimenterGroup_reference = new ExperimenterGroupRef();
+		experimenterGroup_reference.setID(experimenterGroup);
+		model.addReference(
+				root.getProject(projectIndex),
+				experimenterGroup_reference);
+	}
+
 	public void setProjectExperimenterRef(String experimenter, int projectIndex)
 	{
 		// Parents: {u'OME': None}
@@ -12680,17 +13630,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		model.addReference(
 				root.getProject(projectIndex),
 				experimenter_reference);
-	}
-
-	public void setProjectGroupRef(String group, int projectIndex)
-	{
-		// Parents: {u'OME': None}
-		// GroupRef is reference and occurs more than once
-		GroupRef group_reference = new GroupRef();
-		group_reference.setID(group);
-		model.addReference(
-				root.getProject(projectIndex),
-				group_reference);
 	}
 
 	public void setProjectID(String id, int projectIndex)
@@ -12721,16 +13660,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	//
-	// ProjectRef property storage
-	//
-	// {u'Dataset': {u'OME': None}}
-	// Is multi path? False
-
-	// 1:1
-	// Is multi path? False
-	// Ignoring ID property of reference ProjectRef
-
-	//
 	// Pump property storage
 	//
 	// {u'Laser': {u'LightSource': {u'Instrument': {u'OME': None}}}}
@@ -12739,6 +13668,10 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// 1:1
 	// Is multi path? False
 	// Ignoring ID property of reference Pump
+
+	// 0:9999
+	// Is multi path? False
+	// Ignoring Laser_BackReference property of reference Pump
 
 	//
 	// ROI property storage
@@ -12750,11 +13683,11 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	{
 		// Parents: {u'OME': None}
 		// AnnotationRef is reference and occurs more than once
-		AnnotationRef annotationList_reference = new AnnotationRef();
-		annotationList_reference.setID(annotation);
+		AnnotationRef annotationLinks_reference = new AnnotationRef();
+		annotationLinks_reference.setID(annotation);
 		model.addReference(
 				root.getROI(ROIIndex),
-				annotationList_reference);
+				annotationLinks_reference);
 	}
 
 	public void setROIDescription(String description, int ROIIndex)
@@ -12833,11 +13766,11 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	{
 		// Parents: {u'Screen': {u'OME': None}}
 		// AnnotationRef is reference and occurs more than once
-		AnnotationRef annotationList_reference = new AnnotationRef();
-		annotationList_reference.setID(annotation);
+		AnnotationRef annotationLinks_reference = new AnnotationRef();
+		annotationLinks_reference.setID(annotation);
 		model.addReference(
 				root.getScreen(screenIndex).getReagent(reagentIndex),
-				annotationList_reference);
+				annotationLinks_reference);
 	}
 
 	public void setReagentDescription(String description, int screenIndex, int reagentIndex)
@@ -12913,6 +13846,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o2.setReagentIdentifier(reagentIdentifier);
 	}
 
+	// Ignoring Screen_BackReference back reference
 	// Ignoring Well_BackReference back reference
 	//
 	// ReagentRef property storage
@@ -12930,33 +13864,9 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
-	// Description accessor from parent Shape
-	public void setRectangleDescription(String description, int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		OME o0 = root;
-		if (o0.sizeOfROIList() == ROIIndex)
-		{
-			o0.addROI(new ROI());
-		}
-		ROI o1 = o0.getROI(ROIIndex);
-		if (o1.getUnion() == null)
-		{
-			o1.setUnion(new Union());
-		}
-		Union o2 = o1.getUnion();
-		if (o2.sizeOfShapeList() == shapeIndex)
-		{
-			o2.addShape(new Rectangle());
-		}
-		Shape o3 = o2.getShape(shapeIndex);
-		((Rectangle)o3).setDescription(description);
-	}
-
 	// Ignoring Ellipse of parent abstract type
-	// Fill accessor from parent Shape
-	public void setRectangleFill(Integer fill, int ROIIndex, int shapeIndex)
+	// FillColor accessor from parent Shape
+	public void setRectangleFillColor(Color fillColor, int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -12976,11 +13886,57 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 			o2.addShape(new Rectangle());
 		}
 		Shape o3 = o2.getShape(shapeIndex);
-		((Rectangle)o3).setFill(fill);
+		((Rectangle)o3).setFillColor(fillColor);
 	}
 
-	// Ignoring FillRule of parent abstract type
-	// Ignoring FontFamily of parent abstract type
+	// FillRule accessor from parent Shape
+	public void setRectangleFillRule(FillRule fillRule, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Rectangle());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Rectangle)o3).setFillRule(fillRule);
+	}
+
+	// FontFamily accessor from parent Shape
+	public void setRectangleFontFamily(FontFamily fontFamily, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Rectangle());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Rectangle)o3).setFontFamily(fontFamily);
+	}
+
 	// FontSize accessor from parent Shape
 	public void setRectangleFontSize(NonNegativeInteger fontSize, int ROIIndex, int shapeIndex)
 	{
@@ -13005,7 +13961,30 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		((Rectangle)o3).setFontSize(fontSize);
 	}
 
-	// Ignoring FontStyle of parent abstract type
+	// FontStyle accessor from parent Shape
+	public void setRectangleFontStyle(FontStyle fontStyle, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Rectangle());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Rectangle)o3).setFontStyle(fontStyle);
+	}
+
 	// ID accessor from parent Shape
 	public void setRectangleID(String id, int ROIIndex, int shapeIndex)
 	{
@@ -13031,37 +14010,10 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		((Rectangle)o3).setID(id);
 	}
 
-	// Label accessor from parent Shape
-	public void setRectangleLabel(String label, int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		OME o0 = root;
-		if (o0.sizeOfROIList() == ROIIndex)
-		{
-			o0.addROI(new ROI());
-		}
-		ROI o1 = o0.getROI(ROIIndex);
-		if (o1.getUnion() == null)
-		{
-			o1.setUnion(new Union());
-		}
-		Union o2 = o1.getUnion();
-		if (o2.sizeOfShapeList() == shapeIndex)
-		{
-			o2.addShape(new Rectangle());
-		}
-		Shape o3 = o2.getShape(shapeIndex);
-		((Rectangle)o3).setLabel(label);
-	}
-
+	// Ignoring Label of parent abstract type
 	// Ignoring Line of parent abstract type
-	// Ignoring LineCap of parent abstract type
-	// Ignoring MarkerEnd of parent abstract type
-	// Ignoring MarkerStart of parent abstract type
-	// Ignoring Mask of parent abstract type
-	// Name accessor from parent Shape
-	public void setRectangleName(String name, int ROIIndex, int shapeIndex)
+	// LineCap accessor from parent Shape
+	public void setRectangleLineCap(LineCap lineCap, int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -13081,15 +14033,40 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 			o2.addShape(new Rectangle());
 		}
 		Shape o3 = o2.getShape(shapeIndex);
-		((Rectangle)o3).setName(name);
+		((Rectangle)o3).setLineCap(lineCap);
 	}
 
-	// Ignoring Path of parent abstract type
+	// Locked accessor from parent Shape
+	public void setRectangleLocked(Boolean locked, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Rectangle());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Rectangle)o3).setLocked(locked);
+	}
+
+	// Ignoring Mask of parent abstract type
 	// Ignoring Point of parent abstract type
+	// Ignoring Polygon of parent abstract type
 	// Ignoring Polyline of parent abstract type
 	// Ignoring Rectangle of parent abstract type
-	// Stroke accessor from parent Shape
-	public void setRectangleStroke(Integer stroke, int ROIIndex, int shapeIndex)
+	// StrokeColor accessor from parent Shape
+	public void setRectangleStrokeColor(Color strokeColor, int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -13109,7 +14086,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 			o2.addShape(new Rectangle());
 		}
 		Shape o3 = o2.getShape(shapeIndex);
-		((Rectangle)o3).setStroke(stroke);
+		((Rectangle)o3).setStrokeColor(strokeColor);
 	}
 
 	// StrokeDashArray accessor from parent Shape
@@ -13160,7 +14137,30 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		((Rectangle)o3).setStrokeWidth(strokeWidth);
 	}
 
-	// Ignoring Text of parent abstract type
+	// Text accessor from parent Shape
+	public void setRectangleText(String text, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Rectangle());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Rectangle)o3).setText(text);
+	}
+
 	// TheC accessor from parent Shape
 	public void setRectangleTheC(NonNegativeInteger theC, int ROIIndex, int shapeIndex)
 	{
@@ -13234,7 +14234,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	}
 
 	// Transform accessor from parent Shape
-	public void setRectangleTransform(String transform, int ROIIndex, int shapeIndex)
+	public void setRectangleTransform(AffineTransform transform, int ROIIndex, int shapeIndex)
 	{
 		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 		// Shape is abstract proprietary and not a reference
@@ -13255,6 +14255,30 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		}
 		Shape o3 = o2.getShape(shapeIndex);
 		((Rectangle)o3).setTransform(transform);
+	}
+
+	// Visible accessor from parent Shape
+	public void setRectangleVisible(Boolean visible, int ROIIndex, int shapeIndex)
+	{
+		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+		// Shape is abstract proprietary and not a reference
+		OME o0 = root;
+		if (o0.sizeOfROIList() == ROIIndex)
+		{
+			o0.addROI(new ROI());
+		}
+		ROI o1 = o0.getROI(ROIIndex);
+		if (o1.getUnion() == null)
+		{
+			o1.setUnion(new Union());
+		}
+		Union o2 = o1.getUnion();
+		if (o2.sizeOfShapeList() == shapeIndex)
+		{
+			o2.addShape(new Rectangle());
+		}
+		Shape o3 = o2.getShape(shapeIndex);
+		((Rectangle)o3).setVisible(visible);
 	}
 
 	public void setRectangleHeight(Double height, int ROIIndex, int shapeIndex)
@@ -13359,11 +14383,11 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	{
 		// Parents: {u'OME': None}
 		// AnnotationRef is reference and occurs more than once
-		AnnotationRef annotationList_reference = new AnnotationRef();
-		annotationList_reference.setID(annotation);
+		AnnotationRef annotationLinks_reference = new AnnotationRef();
+		annotationLinks_reference.setID(annotation);
 		model.addReference(
 				root.getScreen(screenIndex),
-				annotationList_reference);
+				annotationLinks_reference);
 	}
 
 	public void setScreenDescription(String description, int screenIndex)
@@ -13410,11 +14434,11 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	{
 		// Parents: {u'OME': None}
 		// PlateRef is reference and occurs more than once
-		PlateRef plateList_reference = new PlateRef();
-		plateList_reference.setID(plate);
+		PlateRef plateLinks_reference = new PlateRef();
+		plateLinks_reference.setID(plate);
 		model.addReference(
 				root.getScreen(screenIndex),
-				plateList_reference);
+				plateLinks_reference);
 	}
 
 	public void setScreenProtocolDescription(String protocolDescription, int screenIndex)
@@ -13482,16 +14506,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		Screen o1 = o0.getScreen(screenIndex);
 		o1.setType(type);
 	}
-
-	//
-	// ScreenRef property storage
-	//
-	// {u'Plate': {u'OME': None}}
-	// Is multi path? False
-
-	// 1:1
-	// Is multi path? False
-	// Ignoring ID property of reference ScreenRef
 
 	//
 	// StageLabel property storage
@@ -13597,11 +14611,11 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
 		// AnnotationRef is reference and occurs more than once
-		AnnotationRef annotationList_reference = new AnnotationRef();
-		annotationList_reference.setID(annotation);
+		AnnotationRef annotationLinks_reference = new AnnotationRef();
+		annotationLinks_reference.setID(annotation);
 		model.addReference(
 				root.getStructuredAnnotations().getTagAnnotation(tagAnnotationIndex),
-				annotationList_reference);
+				annotationLinks_reference);
 	}
 
 	// Ignoring Channel_BackReference back reference
@@ -13624,6 +14638,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o2.setDescription(description);
 	}
 
+	// Ignoring ExperimenterGroup_BackReference back reference
 	// Ignoring Experimenter_BackReference back reference
 	public void setTagAnnotationID(String id, int tagAnnotationIndex)
 	{
@@ -13671,6 +14686,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public void setTagAnnotationValue(String value, int tagAnnotationIndex)
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
@@ -13701,11 +14717,11 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
 		// AnnotationRef is reference and occurs more than once
-		AnnotationRef annotationList_reference = new AnnotationRef();
-		annotationList_reference.setID(annotation);
+		AnnotationRef annotationLinks_reference = new AnnotationRef();
+		annotationLinks_reference.setID(annotation);
 		model.addReference(
 				root.getStructuredAnnotations().getTermAnnotation(termAnnotationIndex),
-				annotationList_reference);
+				annotationLinks_reference);
 	}
 
 	// Ignoring Channel_BackReference back reference
@@ -13728,6 +14744,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o2.setDescription(description);
 	}
 
+	// Ignoring ExperimenterGroup_BackReference back reference
 	// Ignoring Experimenter_BackReference back reference
 	public void setTermAnnotationID(String id, int termAnnotationIndex)
 	{
@@ -13775,6 +14792,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public void setTermAnnotationValue(String value, int termAnnotationIndex)
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
@@ -13795,408 +14813,6 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 
 	// Ignoring WellSample_BackReference back reference
 	// Ignoring Well_BackReference back reference
-	//
-	// Text property storage
-	//
-	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-	// Is multi path? False
-
-	// Description accessor from parent Shape
-	public void setTextDescription(String description, int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		OME o0 = root;
-		if (o0.sizeOfROIList() == ROIIndex)
-		{
-			o0.addROI(new ROI());
-		}
-		ROI o1 = o0.getROI(ROIIndex);
-		if (o1.getUnion() == null)
-		{
-			o1.setUnion(new Union());
-		}
-		Union o2 = o1.getUnion();
-		if (o2.sizeOfShapeList() == shapeIndex)
-		{
-			o2.addShape(new Text());
-		}
-		Shape o3 = o2.getShape(shapeIndex);
-		((Text)o3).setDescription(description);
-	}
-
-	// Ignoring Ellipse of parent abstract type
-	// Fill accessor from parent Shape
-	public void setTextFill(Integer fill, int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		OME o0 = root;
-		if (o0.sizeOfROIList() == ROIIndex)
-		{
-			o0.addROI(new ROI());
-		}
-		ROI o1 = o0.getROI(ROIIndex);
-		if (o1.getUnion() == null)
-		{
-			o1.setUnion(new Union());
-		}
-		Union o2 = o1.getUnion();
-		if (o2.sizeOfShapeList() == shapeIndex)
-		{
-			o2.addShape(new Text());
-		}
-		Shape o3 = o2.getShape(shapeIndex);
-		((Text)o3).setFill(fill);
-	}
-
-	// Ignoring FillRule of parent abstract type
-	// Ignoring FontFamily of parent abstract type
-	// FontSize accessor from parent Shape
-	public void setTextFontSize(NonNegativeInteger fontSize, int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		OME o0 = root;
-		if (o0.sizeOfROIList() == ROIIndex)
-		{
-			o0.addROI(new ROI());
-		}
-		ROI o1 = o0.getROI(ROIIndex);
-		if (o1.getUnion() == null)
-		{
-			o1.setUnion(new Union());
-		}
-		Union o2 = o1.getUnion();
-		if (o2.sizeOfShapeList() == shapeIndex)
-		{
-			o2.addShape(new Text());
-		}
-		Shape o3 = o2.getShape(shapeIndex);
-		((Text)o3).setFontSize(fontSize);
-	}
-
-	// Ignoring FontStyle of parent abstract type
-	// ID accessor from parent Shape
-	public void setTextID(String id, int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		OME o0 = root;
-		if (o0.sizeOfROIList() == ROIIndex)
-		{
-			o0.addROI(new ROI());
-		}
-		ROI o1 = o0.getROI(ROIIndex);
-		if (o1.getUnion() == null)
-		{
-			o1.setUnion(new Union());
-		}
-		Union o2 = o1.getUnion();
-		if (o2.sizeOfShapeList() == shapeIndex)
-		{
-			o2.addShape(new Text());
-		}
-		Shape o3 = o2.getShape(shapeIndex);
-		model.addModelObject(id, o3);
-		((Text)o3).setID(id);
-	}
-
-	// Label accessor from parent Shape
-	public void setTextLabel(String label, int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		OME o0 = root;
-		if (o0.sizeOfROIList() == ROIIndex)
-		{
-			o0.addROI(new ROI());
-		}
-		ROI o1 = o0.getROI(ROIIndex);
-		if (o1.getUnion() == null)
-		{
-			o1.setUnion(new Union());
-		}
-		Union o2 = o1.getUnion();
-		if (o2.sizeOfShapeList() == shapeIndex)
-		{
-			o2.addShape(new Text());
-		}
-		Shape o3 = o2.getShape(shapeIndex);
-		((Text)o3).setLabel(label);
-	}
-
-	// Ignoring Line of parent abstract type
-	// Ignoring LineCap of parent abstract type
-	// Ignoring MarkerEnd of parent abstract type
-	// Ignoring MarkerStart of parent abstract type
-	// Ignoring Mask of parent abstract type
-	// Name accessor from parent Shape
-	public void setTextName(String name, int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		OME o0 = root;
-		if (o0.sizeOfROIList() == ROIIndex)
-		{
-			o0.addROI(new ROI());
-		}
-		ROI o1 = o0.getROI(ROIIndex);
-		if (o1.getUnion() == null)
-		{
-			o1.setUnion(new Union());
-		}
-		Union o2 = o1.getUnion();
-		if (o2.sizeOfShapeList() == shapeIndex)
-		{
-			o2.addShape(new Text());
-		}
-		Shape o3 = o2.getShape(shapeIndex);
-		((Text)o3).setName(name);
-	}
-
-	// Ignoring Path of parent abstract type
-	// Ignoring Point of parent abstract type
-	// Ignoring Polyline of parent abstract type
-	// Ignoring Rectangle of parent abstract type
-	// Stroke accessor from parent Shape
-	public void setTextStroke(Integer stroke, int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		OME o0 = root;
-		if (o0.sizeOfROIList() == ROIIndex)
-		{
-			o0.addROI(new ROI());
-		}
-		ROI o1 = o0.getROI(ROIIndex);
-		if (o1.getUnion() == null)
-		{
-			o1.setUnion(new Union());
-		}
-		Union o2 = o1.getUnion();
-		if (o2.sizeOfShapeList() == shapeIndex)
-		{
-			o2.addShape(new Text());
-		}
-		Shape o3 = o2.getShape(shapeIndex);
-		((Text)o3).setStroke(stroke);
-	}
-
-	// StrokeDashArray accessor from parent Shape
-	public void setTextStrokeDashArray(String strokeDashArray, int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		OME o0 = root;
-		if (o0.sizeOfROIList() == ROIIndex)
-		{
-			o0.addROI(new ROI());
-		}
-		ROI o1 = o0.getROI(ROIIndex);
-		if (o1.getUnion() == null)
-		{
-			o1.setUnion(new Union());
-		}
-		Union o2 = o1.getUnion();
-		if (o2.sizeOfShapeList() == shapeIndex)
-		{
-			o2.addShape(new Text());
-		}
-		Shape o3 = o2.getShape(shapeIndex);
-		((Text)o3).setStrokeDashArray(strokeDashArray);
-	}
-
-	// StrokeWidth accessor from parent Shape
-	public void setTextStrokeWidth(Double strokeWidth, int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		OME o0 = root;
-		if (o0.sizeOfROIList() == ROIIndex)
-		{
-			o0.addROI(new ROI());
-		}
-		ROI o1 = o0.getROI(ROIIndex);
-		if (o1.getUnion() == null)
-		{
-			o1.setUnion(new Union());
-		}
-		Union o2 = o1.getUnion();
-		if (o2.sizeOfShapeList() == shapeIndex)
-		{
-			o2.addShape(new Text());
-		}
-		Shape o3 = o2.getShape(shapeIndex);
-		((Text)o3).setStrokeWidth(strokeWidth);
-	}
-
-	// Ignoring Text of parent abstract type
-	// TheC accessor from parent Shape
-	public void setTextTheC(NonNegativeInteger theC, int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		OME o0 = root;
-		if (o0.sizeOfROIList() == ROIIndex)
-		{
-			o0.addROI(new ROI());
-		}
-		ROI o1 = o0.getROI(ROIIndex);
-		if (o1.getUnion() == null)
-		{
-			o1.setUnion(new Union());
-		}
-		Union o2 = o1.getUnion();
-		if (o2.sizeOfShapeList() == shapeIndex)
-		{
-			o2.addShape(new Text());
-		}
-		Shape o3 = o2.getShape(shapeIndex);
-		((Text)o3).setTheC(theC);
-	}
-
-	// TheT accessor from parent Shape
-	public void setTextTheT(NonNegativeInteger theT, int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		OME o0 = root;
-		if (o0.sizeOfROIList() == ROIIndex)
-		{
-			o0.addROI(new ROI());
-		}
-		ROI o1 = o0.getROI(ROIIndex);
-		if (o1.getUnion() == null)
-		{
-			o1.setUnion(new Union());
-		}
-		Union o2 = o1.getUnion();
-		if (o2.sizeOfShapeList() == shapeIndex)
-		{
-			o2.addShape(new Text());
-		}
-		Shape o3 = o2.getShape(shapeIndex);
-		((Text)o3).setTheT(theT);
-	}
-
-	// TheZ accessor from parent Shape
-	public void setTextTheZ(NonNegativeInteger theZ, int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		OME o0 = root;
-		if (o0.sizeOfROIList() == ROIIndex)
-		{
-			o0.addROI(new ROI());
-		}
-		ROI o1 = o0.getROI(ROIIndex);
-		if (o1.getUnion() == null)
-		{
-			o1.setUnion(new Union());
-		}
-		Union o2 = o1.getUnion();
-		if (o2.sizeOfShapeList() == shapeIndex)
-		{
-			o2.addShape(new Text());
-		}
-		Shape o3 = o2.getShape(shapeIndex);
-		((Text)o3).setTheZ(theZ);
-	}
-
-	// Transform accessor from parent Shape
-	public void setTextTransform(String transform, int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		OME o0 = root;
-		if (o0.sizeOfROIList() == ROIIndex)
-		{
-			o0.addROI(new ROI());
-		}
-		ROI o1 = o0.getROI(ROIIndex);
-		if (o1.getUnion() == null)
-		{
-			o1.setUnion(new Union());
-		}
-		Union o2 = o1.getUnion();
-		if (o2.sizeOfShapeList() == shapeIndex)
-		{
-			o2.addShape(new Text());
-		}
-		Shape o3 = o2.getShape(shapeIndex);
-		((Text)o3).setTransform(transform);
-	}
-
-	public void setTextValue(String value, int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		OME o0 = root;
-		if (o0.sizeOfROIList() == ROIIndex)
-		{
-			o0.addROI(new ROI());
-		}
-		ROI o1 = o0.getROI(ROIIndex);
-		if (o1.getUnion() == null)
-		{
-			o1.setUnion(new Union());
-		}
-		Union o2 = o1.getUnion();
-		if (o2.sizeOfShapeList() == shapeIndex)
-		{
-			o2.addShape(new Text());
-		}
-		Shape o3 = o2.getShape(shapeIndex);
-		((Text)o3).setValue(value);
-	}
-
-	public void setTextX(Double x, int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		OME o0 = root;
-		if (o0.sizeOfROIList() == ROIIndex)
-		{
-			o0.addROI(new ROI());
-		}
-		ROI o1 = o0.getROI(ROIIndex);
-		if (o1.getUnion() == null)
-		{
-			o1.setUnion(new Union());
-		}
-		Union o2 = o1.getUnion();
-		if (o2.sizeOfShapeList() == shapeIndex)
-		{
-			o2.addShape(new Text());
-		}
-		Shape o3 = o2.getShape(shapeIndex);
-		((Text)o3).setX(x);
-	}
-
-	public void setTextY(Double y, int ROIIndex, int shapeIndex)
-	{
-		// Parents: {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-		// Shape is abstract proprietary and not a reference
-		OME o0 = root;
-		if (o0.sizeOfROIList() == ROIIndex)
-		{
-			o0.addROI(new ROI());
-		}
-		ROI o1 = o0.getROI(ROIIndex);
-		if (o1.getUnion() == null)
-		{
-			o1.setUnion(new Union());
-		}
-		Union o2 = o1.getUnion();
-		if (o2.sizeOfShapeList() == shapeIndex)
-		{
-			o2.addShape(new Text());
-		}
-		Shape o3 = o2.getShape(shapeIndex);
-		((Text)o3).setY(y);
-	}
-
 	//
 	// TiffData property storage
 	//
@@ -14295,6 +14911,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o3.setIFD(ifd);
 	}
 
+	// Ignoring Pixels_BackReference back reference
 	public void setTiffDataPlaneCount(NonNegativeInteger planeCount, int imageIndex, int tiffDataIndex)
 	{
 		// Parents: {u'Pixels': {u'Image': {u'OME': None}}}
@@ -14329,11 +14946,11 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
 		// AnnotationRef is reference and occurs more than once
-		AnnotationRef annotationList_reference = new AnnotationRef();
-		annotationList_reference.setID(annotation);
+		AnnotationRef annotationLinks_reference = new AnnotationRef();
+		annotationLinks_reference.setID(annotation);
 		model.addReference(
 				root.getStructuredAnnotations().getTimestampAnnotation(timestampAnnotationIndex),
-				annotationList_reference);
+				annotationLinks_reference);
 	}
 
 	// Ignoring Channel_BackReference back reference
@@ -14356,6 +14973,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o2.setDescription(description);
 	}
 
+	// Ignoring ExperimenterGroup_BackReference back reference
 	// Ignoring Experimenter_BackReference back reference
 	public void setTimestampAnnotationID(String id, int timestampAnnotationIndex)
 	{
@@ -14403,7 +15021,8 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
-	public void setTimestampAnnotationValue(String value, int timestampAnnotationIndex)
+	// Ignoring StructuredAnnotations_BackReference back reference
+	public void setTimestampAnnotationValue(Timestamp value, int timestampAnnotationIndex)
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
 		// Value is not a reference
@@ -14595,14 +15214,14 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	{
 		// Parents: {u'Plate': {u'OME': None}}
 		// AnnotationRef is reference and occurs more than once
-		AnnotationRef annotationList_reference = new AnnotationRef();
-		annotationList_reference.setID(annotation);
+		AnnotationRef annotationLinks_reference = new AnnotationRef();
+		annotationLinks_reference.setID(annotation);
 		model.addReference(
 				root.getPlate(plateIndex).getWell(wellIndex),
-				annotationList_reference);
+				annotationLinks_reference);
 	}
 
-	public void setWellColor(Integer color, int plateIndex, int wellIndex)
+	public void setWellColor(Color color, int plateIndex, int wellIndex)
 	{
 		// Parents: {u'Plate': {u'OME': None}}
 		// Color is not a reference
@@ -14693,6 +15312,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o2.setID(id);
 	}
 
+	// Ignoring Plate_BackReference back reference
 	public void setWellReagentRef(String reagent, int plateIndex, int wellIndex)
 	{
 		// Parents: {u'Plate': {u'OME': None}}
@@ -14722,10 +15342,10 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o2.setRow(row);
 	}
 
-	public void setWellStatus(String status, int plateIndex, int wellIndex)
+	public void setWellType(String type, int plateIndex, int wellIndex)
 	{
 		// Parents: {u'Plate': {u'OME': None}}
-		// Status is not a reference
+		// Type is not a reference
 		OME o0 = root;
 		if (o0.sizeOfPlateList() == plateIndex)
 		{
@@ -14737,7 +15357,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 			o1.addWell(new Well());
 		}
 		Well o2 = o1.getWell(wellIndex);
-		o2.setStatus(status);
+		o2.setType(type);
 	}
 
 	// Ignoring WellSample element, complex property
@@ -14751,11 +15371,11 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	{
 		// Parents: {u'Well': {u'Plate': {u'OME': None}}}
 		// AnnotationRef is reference and occurs more than once
-		AnnotationRef annotationList_reference = new AnnotationRef();
-		annotationList_reference.setID(annotation);
+		AnnotationRef annotationLinks_reference = new AnnotationRef();
+		annotationLinks_reference.setID(annotation);
 		model.addReference(
 				root.getPlate(plateIndex).getWell(wellIndex).getWellSample(wellSampleIndex),
-				annotationList_reference);
+				annotationLinks_reference);
 	}
 
 	public void setWellSampleID(String id, int plateIndex, int wellIndex, int wellSampleIndex)
@@ -14863,7 +15483,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o3.setPositionY(positionY);
 	}
 
-	public void setWellSampleTimepoint(String timepoint, int plateIndex, int wellIndex, int wellSampleIndex)
+	public void setWellSampleTimepoint(Timestamp timepoint, int plateIndex, int wellIndex, int wellSampleIndex)
 	{
 		// Parents: {u'Well': {u'Plate': {u'OME': None}}}
 		// Timepoint is not a reference
@@ -14886,6 +15506,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o3.setTimepoint(timepoint);
 	}
 
+	// Ignoring Well_BackReference back reference
 	//
 	// WellSampleRef property storage
 	//
@@ -14906,11 +15527,11 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}
 		// AnnotationRef is reference and occurs more than once
-		AnnotationRef annotationList_reference = new AnnotationRef();
-		annotationList_reference.setID(annotation);
+		AnnotationRef annotationLinks_reference = new AnnotationRef();
+		annotationLinks_reference.setID(annotation);
 		model.addReference(
 				root.getStructuredAnnotations().getXMLAnnotation(XMLAnnotationIndex),
-				annotationList_reference);
+				annotationLinks_reference);
 	}
 
 	// Ignoring Channel_BackReference back reference
@@ -14933,6 +15554,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		o2.setDescription(description);
 	}
 
+	// Ignoring ExperimenterGroup_BackReference back reference
 	// Ignoring Experimenter_BackReference back reference
 	public void setXMLAnnotationID(String id, int XMLAnnotationIndex)
 	{
@@ -14980,6 +15602,7 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public void setXMLAnnotationValue(String value, int XMLAnnotationIndex)
 	{
 		// Parents: {u'StructuredAnnotations': {u'OME': None}}

@@ -31,7 +31,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-01-12 20:06:01-0500
+ * Created by callan via xsd-fu on 2012-05-18 10:08:16+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -58,7 +58,7 @@ public class Detector extends ManufacturerSpec
 
 	// -- Constants --
 
-	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2011-06";
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2012-06";
 
 	/** Logger for this class. */
 	private static final Logger LOGGER =
@@ -87,6 +87,9 @@ public class Detector extends ManufacturerSpec
 
 	// Property
 	private Double voltage;
+
+	// Back reference Instrument_BackReference
+	private Instrument instrument;
 
 	// -- Constructors --
 
@@ -185,6 +188,7 @@ public class Detector extends ManufacturerSpec
 			setVoltage(Double.valueOf(
 					element.getAttribute("Voltage")));
 		}
+		// *** IGNORING *** Skipped back reference Instrument_BackReference
 	}
 
 	// -- Detector API methods --
@@ -278,6 +282,17 @@ public class Detector extends ManufacturerSpec
 		this.voltage = voltage;
 	}
 
+	// Property
+	public Instrument getInstrument()
+	{
+		return instrument;
+	}
+
+	public void setInstrument(Instrument instrument_BackReference)
+	{
+		this.instrument = instrument_BackReference;
+	}
+
 	public Element asXMLElement(Document document)
 	{
 		return asXMLElement(document, null);
@@ -327,6 +342,10 @@ public class Detector extends ManufacturerSpec
 		{
 			// Attribute property Voltage
 			Detector_element.setAttribute("Voltage", voltage.toString());
+		}
+		if (instrument != null)
+		{
+			// *** IGNORING *** Skipped back reference Instrument_BackReference
 		}
 		return super.asXMLElement(document, Detector_element);
 	}

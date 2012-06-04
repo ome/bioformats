@@ -33,6 +33,7 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import ome.xml.model.primitives.PositiveFloat;
+import ome.xml.model.primitives.Timestamp;
 
 /**
  * TopometrixReader is the file format reader for TopoMetrix .tfr, .ffr,
@@ -176,8 +177,8 @@ public class TopometrixReader extends FormatReader {
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
-    store.setImageAcquiredDate(DateTools.formatDate(date,
-      new String[] {"MM/dd/yy HH:mm:ss", "MM/dd/yyyy HH:mm:ss"}), 0);
+    store.setImageAcquisitionDate(new Timestamp(DateTools.formatDate(date,
+      new String[] {"MM/dd/yy HH:mm:ss", "MM/dd/yyyy HH:mm:ss"})), 0);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       if (xSize > 0) {
