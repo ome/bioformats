@@ -90,6 +90,15 @@
   - Glencoe Software, Inc.
   - University of Dundee</organizationName>
           <canUpdateDescription>true</canUpdateDescription>
+          <roots>
+            <root>src</root>
+            <root>target/generated-sources</root>
+            <root>target/processed-sources</root>
+            <root>test</root>
+            <root>utils</root>
+            <root>doc</root>
+            <root>cppwrap</root>
+          </roots>
         </configuration>
       </plugin>
     </plugins>
