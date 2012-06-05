@@ -569,7 +569,9 @@ public class ZeissZVIReader extends FormatReader {
         firstStamp = parseTimestamp(timestamp);
         String date =
           DateTools.convertDate((long) (firstStamp / 1600), DateTools.ZVI);
-        store.setImageAcquisitionDate(new Timestamp(date), i);
+        if (date != null) {
+          store.setImageAcquisitionDate(new Timestamp(date), i);
+        }
       }
     }
 

@@ -516,8 +516,10 @@ public class CellWorxReader extends FormatReader {
       if (key.equals("Date")) {
         String date = DateTools.formatDate(value, DATE_FORMAT);
         for (int field=0; field<fieldCount; field++) {
-          store.setImageAcquisitionDate(
+          if (date != null) {
+            store.setImageAcquisitionDate(
               new Timestamp(date), seriesIndex + field);
+          }
         }
       }
       else if (key.equals("Scan Origin")) {

@@ -211,7 +211,9 @@ public class SISReader extends BaseTiffReader {
     MetadataTools.populatePixels(store, this);
 
     store.setImageName(imageName, 0);
-    store.setImageAcquisitionDate(new Timestamp(acquisitionDate), 0);
+    if (acquisitionDate != null) {
+      store.setImageAcquisitionDate(new Timestamp(acquisitionDate), 0);
+    }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       String instrument = MetadataTools.createLSID("Instrument", 0);

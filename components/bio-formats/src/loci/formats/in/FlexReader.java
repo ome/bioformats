@@ -535,7 +535,10 @@ public class FlexReader extends FormatReader {
     plateAcqStartTime =
       DateTools.formatDate(plateAcqStartTime, "dd.MM.yyyy  HH:mm:ss");
 
-    store.setPlateAcquisitionStartTime(new Timestamp(plateAcqStartTime), 0, 0);
+    if (plateAcqStartTime != null) {
+      store.setPlateAcquisitionStartTime(
+        new Timestamp(plateAcqStartTime), 0, 0);
+    }
 
     for (int row=0; row<wellRows; row++) {
       for (int col=0; col<wellColumns; col++) {
@@ -1340,7 +1343,9 @@ public class FlexReader extends FormatReader {
         if (currentSeries >= seriesCount) return;
 
         if (qName.equals("DateTime")) {
-          store.setImageAcquisitionDate(new Timestamp(value), currentSeries);
+          if (value != null) {
+            store.setImageAcquisitionDate(new Timestamp(value), currentSeries);
+          }
         }
       }
 

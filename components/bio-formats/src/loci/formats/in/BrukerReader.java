@@ -361,8 +361,10 @@ public class BrukerReader extends FormatReader {
 
     for (int series=0; series<getSeriesCount(); series++) {
       store.setImageName(imageNames[series] + " #" + (series + 1), series);
-      store.setImageAcquisitionDate(new Timestamp(
-        DateTools.formatDate(timestamps[series], DATE_FORMAT)), series);
+      String date = DateTools.formatDate(timestamps[series], DATE_FORMAT);
+      if (date != null) {
+        store.setImageAcquisitionDate(new Timestamp(date), series);
+      }
 
       String expID = MetadataTools.createLSID("Experimenter", series);
       store.setExperimenterID(expID, series);

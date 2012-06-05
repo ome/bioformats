@@ -228,8 +228,10 @@ public class FEITiffReader extends BaseTiffReader {
     MetadataTools.populatePixels(store, this);
 
     if (date != null) {
-      store.setImageAcquisitionDate(new Timestamp(
-          DateTools.formatDate(date, DATE_FORMAT)), 0);
+      date = DateTools.formatDate(date, DATE_FORMAT);
+      if (date != null) {
+        store.setImageAcquisitionDate(new Timestamp(date), 0);
+      }
     }
 
     if (imageName != null) {

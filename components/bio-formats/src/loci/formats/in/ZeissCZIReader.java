@@ -396,7 +396,9 @@ public class ZeissCZIReader extends FormatReader {
     String name = new Location(getCurrentFile()).getName();
 
     for (int i=0; i<getSeriesCount(); i++) {
-      store.setImageAcquisitionDate(new Timestamp(acquiredDate), i);
+      if (acquiredDate != null) {
+        store.setImageAcquisitionDate(new Timestamp(acquiredDate), i);
+      }
       if (experimenterID != null) {
         store.setImageExperimenterRef(experimenterID, i);
       }

@@ -229,8 +229,10 @@ public class GatanDM2Reader extends FormatReader {
         "M/d/yy h:mm:ss a", "d/M/yy h:mm:ss a",
         "M/d/yy H:mm:ss", "d/M/yy H:mm:ss"};
       date += " " + time;
-      store.setImageAcquisitionDate(new Timestamp(
-              DateTools.formatDate(date, format)), 0);
+      date = DateTools.formatDate(date, format);
+      if (date != null) {
+        store.setImageAcquisitionDate(new Timestamp(date), 0);
+      }
     }
     if (name != null) {
       store.setImageName(name, 0);

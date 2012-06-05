@@ -147,7 +147,9 @@ public class WATOPReader extends FormatReader {
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
 
-    store.setImageAcquisitionDate(new Timestamp(date), 0);
+    if (date != null) {
+      store.setImageAcquisitionDate(new Timestamp(date), 0);
+    }
 
     if (level != MetadataLevel.MINIMUM) {
       store.setImageDescription(comment, 0);
