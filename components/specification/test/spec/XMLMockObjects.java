@@ -23,7 +23,6 @@
 package spec;
 
 //Java imports
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -31,6 +30,7 @@ import java.util.List;
 //Third-party libraries
 
 //Application-internal dependencies
+import ome.xml.model.AffineTransform;
 import ome.xml.model.Arc;
 import ome.xml.model.BinData;
 import ome.xml.model.Channel;
@@ -105,10 +105,12 @@ import ome.xml.model.enums.MicrobeamManipulationType;
 import ome.xml.model.enums.MicroscopeType;
 import ome.xml.model.enums.NamingConvention;
 import ome.xml.model.enums.PixelType;
+import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.NonNegativeLong;
 import ome.xml.model.primitives.PercentFraction;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 /** 
  * Creates XML objects for the 2010-06 schema.
@@ -126,9 +128,10 @@ import ome.xml.model.primitives.PositiveInteger;
 public class XMLMockObjects 
 {
 
-	/** The default color. */
-	public static final Color	DEFAULT_COLOR = new Color(100, 150, 200, 255);
-	
+    /** The default color. */
+    public static final java.awt.Color	DEFAULT_COLOR =
+            new java.awt.Color(100, 150, 200, 255);
+
 	/** The default power of a light source. */
 	public static final Double LIGHTSOURCE_POWER = 200.0;
 
@@ -253,10 +256,11 @@ public class XMLMockObjects
 	
 	/** Points used to create Polyline and Polygon shape. */
 	public static final String POINTS = "0,0 10,10";
-	
-	/** The default time. */
-	public static final String TIME = "2006-05-04T18:13:51.0Z";
-	
+
+    /** The default time. */
+    public static final Timestamp TIME =
+            Timestamp.valueOf("2006-05-04T18:13:51.0Z");
+
 	/** The default cut-in. */
 	public static final int CUT_IN = 200;
 	
@@ -612,29 +616,7 @@ public class XMLMockObjects
 		settings.setRefractiveIndex(1.0);
 		return settings;
 	}
-	
-	/**
-	 * Creates an OTF.
-	 * 
-	 * @param index The index of the OTF.
-	 * @param set   The related filter set.
-	 * @param settings The related settings.
-	 * @return See above.
-	 */
-	public OTF createOTF(int index, FilterSet set, ObjectiveSettings settings)
-	{
-		OTF otf = new OTF();
-		otf.setID("OTF:"+index);
-		otf.setOpticalAxisAveraged(true);
-		otf.setObjectiveSettings(settings);
-		otf.setSizeX(new PositiveInteger(SIZE_X));
-		otf.setSizeY(new PositiveInteger(SIZE_Y));
-		otf.setType(PIXEL_TYPE);
-		otf.linkFilterSet(set);
-		otf.setBinaryFile(createBinaryFile());
-		return otf;
-	}
-	
+
 	/**
 	 * Creates a binary file.
 	 * 
@@ -688,7 +670,6 @@ public class XMLMockObjects
 			shape = p;
 		} else if (Polyline.class.getName().equals(type)) {
 			Polyline pl = new Polyline();
-			pl.setClosed(false);
 			pl.setPoints(POINTS);
 			shape = pl;
 		} else if (Mask.class.getName().equals(type)) {
@@ -704,9 +685,10 @@ public class XMLMockObjects
 			shape.setTheC(new NonNegativeInteger(c));
 			shape.setTheZ(new NonNegativeInteger(z));
 			shape.setTheT(new NonNegativeInteger(t));
-			shape.setTransform("transform"+index);
-			shape.setFill(10);
-			shape.setStroke(255);
+			AffineTransform transform = new AffineTransform();
+			shape.setTransform(transform);
+			shape.setFillColor(new Color(10));
+			shape.setStrokeColor(new Color(255));
 		}
 		return shape;
 	}
@@ -885,10 +867,9 @@ public class XMLMockObjects
 				well.setID(String.format("Well:%d_%d_%d", row, column, index));
 				well.setRow(new NonNegativeInteger(row));
 				well.setColumn(new NonNegativeInteger(column));
-				well.setStatus("Transfection: done");
 				well.setExternalDescription("External Description");
 				well.setExternalIdentifier("External Identifier");
-				well.setColor(255);
+				well.setColor(new Color(255));
 				if (pas.size() == 0) {
 					for (int field = 0; field < fields; field++) {
 						sample = new WellSample();
@@ -1038,7 +1019,7 @@ public class XMLMockObjects
 		channel.setAcquisitionMode(AcquisitionMode.FLUORESCENCELIFETIME);
 		int argb = DEFAULT_COLOR.getRGB();
 		int	rgba = (argb << 8) | (argb >>> (32-8));
-		channel.setColor(rgba);
+		channel.setColor(new Color(rgba));
 		channel.setName("Name");
 		channel.setIlluminationType(IlluminationType.OBLIQUE);
 		channel.setPinholeSize(0.5);
@@ -1332,20 +1313,12 @@ public class XMLMockObjects
         Image image = createImage(0, true);
         ObjectiveSettings settings = createObjectiveSettings(0);
         image.setObjectiveSettings(settings);
-        OTF otf = createOTF(0, instrument.getFilterSet(0), settings);
-        instrument.addOTF(otf);
 
         //Add microbeam
         Experiment exp = createExperiment(0);
         ome.addExperiment(exp);
         MicrobeamManipulation mm = createMicrobeamManipulation(0);
         exp.addMicrobeamManipulation(mm);
-        Pixels pixels = image.getPixels();
-        Channel c;
-        for (int i = 0; i < pixels.getSizeC().getValue().intValue(); i++) {
-            c = pixels.getChannel(i);
-            c.linkOTF(otf);
-        }
         image.linkExperiment(exp);
         image.linkInstrument(instrument);
         ome.addImage(image);
