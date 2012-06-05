@@ -65,7 +65,6 @@ import ome.xml.model.OMEModelObject;
 import ome.xml.model.Objective;
 import ome.xml.model.ObjectiveSettings;
 import ome.xml.model.OME;
-import ome.xml.model.OTF;
 import ome.xml.model.Pixels;
 import ome.xml.model.Plane;
 import ome.xml.model.Plate;
@@ -995,8 +994,6 @@ public class XMLMockObjects
 				channel.setLightSourceSettings(createLightSourceSettings(j));
 				channel.setLightPath(createLightPath());
 				channel.setDetectorSettings(ds);
-				//link the channel to the OTF
-				//if (otf != null) otf.linkChannel(channel);
 				j++;
 			}
 			pixels.addChannel(channel);
