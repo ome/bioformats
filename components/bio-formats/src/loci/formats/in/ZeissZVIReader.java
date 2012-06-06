@@ -569,7 +569,9 @@ public class ZeissZVIReader extends FormatReader {
         firstStamp = parseTimestamp(timestamp);
         String date =
           DateTools.convertDate((long) (firstStamp / 1600), DateTools.ZVI);
-        store.setImageAcquisitionDate(new Timestamp(date), i);
+        if (date != null) {
+          store.setImageAcquisitionDate(new Timestamp(date), i);
+        }
       }
     }
 
@@ -811,7 +813,16 @@ public class ZeissZVIReader extends FormatReader {
             {
               channelColors = new int[effectiveSizeC];
             }
-            channelColors[cIndex] = Integer.parseInt(value);
+            if (channelColors[cIndex] == 0) {
+              channelColors[cIndex] = Integer.parseInt(value);
+            }
+          }
+          else if (cIndex == effectiveSizeC && channelColors != null &&
+            channelColors[0] == 0)
+          {
+            System.arraycopy(
+              channelColors, 1, channelColors, 0, channelColors.length - 1);
+            channelColors[cIndex - 1] = Integer.parseInt(value);
           }
         }
         else if (key.startsWith("Scale Factor for X") && physicalSizeX == null)

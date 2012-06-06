@@ -992,7 +992,9 @@ public class LeicaHandler extends BaseHandler {
       if (value instanceof Vector) {
         Vector v = (Vector) value;
         for (int o=0; o<v.size(); o++) {
-          h.put(key + " " + (o + 1), v.get(o));
+          if (v.get(o) != null) {
+            h.put(key + " " + (o + 1), v.get(o));
+          }
         }
         h.remove(key);
       }
@@ -1168,7 +1170,7 @@ public class LeicaHandler extends BaseHandler {
   }
 
   private void storeKeyValue(Hashtable h, String key, String value) {
-    if (h.get(key) == null) {
+    if (h.get(key) == null && key != null && value != null) {
       h.put(key, value);
     }
     else {

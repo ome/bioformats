@@ -312,7 +312,9 @@ public class NDPIReader extends BaseTiffReader {
         int ifdIndex = getIFDIndex(i, 0);
         String creationDate = ifds.get(ifdIndex).getIFDTextValue(IFD.DATE_TIME);
         creationDate = DateTools.formatDate(creationDate, DATE_FORMATS);
-        store.setImageAcquisitionDate(new Timestamp(creationDate), i);
+        if (creationDate != null) {
+          store.setImageAcquisitionDate(new Timestamp(creationDate), i);
+        }
 
         double xResolution = ifds.get(ifdIndex).getXResolution();
         double yResolution = ifds.get(ifdIndex).getYResolution();

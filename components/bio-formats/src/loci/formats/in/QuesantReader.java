@@ -118,7 +118,9 @@ public class QuesantReader extends FormatReader {
     MetadataTools.populatePixels(store, this);
     if (date != null) {
       date = DateTools.formatDate(date, "MMM dd yyyy HH:mm:ssSSS");
-      store.setImageAcquisitionDate(new Timestamp(date), 0);
+      if (date != null) {
+        store.setImageAcquisitionDate(new Timestamp(date), 0);
+      }
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {

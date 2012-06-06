@@ -177,8 +177,12 @@ public class TopometrixReader extends FormatReader {
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
-    store.setImageAcquisitionDate(new Timestamp(DateTools.formatDate(date,
-      new String[] {"MM/dd/yy HH:mm:ss", "MM/dd/yyyy HH:mm:ss"})), 0);
+
+    date = DateTools.formatDate(date,
+      new String[] {"MM/dd/yy HH:mm:ss", "MM/dd/yyyy HH:mm:ss"});
+    if (date != null) {
+      store.setImageAcquisitionDate(new Timestamp(date), 0);
+    }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       if (xSize > 0) {

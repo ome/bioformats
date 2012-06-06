@@ -220,7 +220,9 @@ public class HitachiReader extends FormatReader {
     store.setImageName(imageName, 0);
 
     date = DateTools.formatDate(date + " " + time, DATE_FORMAT);
-    store.setImageAcquisitionDate(new Timestamp(date), 0);
+    if (date != null) {
+      store.setImageAcquisitionDate(new Timestamp(date), 0);
+    }
 
     populateOMEMetadata(image, store);
   }

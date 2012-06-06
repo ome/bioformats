@@ -211,7 +211,9 @@ public class BioRadGelReader extends FormatReader {
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
 
-    store.setImageAcquisitionDate(new Timestamp(date), 0);
+    if (date != null) {
+      store.setImageAcquisitionDate(new Timestamp(date), 0);
+    }
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       if (physicalWidth > 0d) {
         store.setPixelsPhysicalSizeX(

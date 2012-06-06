@@ -437,7 +437,9 @@ public class LiFlimReader extends FormatReader {
       Double deltaT;
       if (t == 0) {
         String date = DateTools.convertDate(stamp, DateTools.COBOL);
-        store.setImageAcquisitionDate(new Timestamp(date), 0);
+        if (date != null) {
+          store.setImageAcquisitionDate(new Timestamp(date), 0);
+        }
         firstStamp = stamp;
         deltaT = new Double(0);
       }

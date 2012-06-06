@@ -498,7 +498,9 @@ public class InCellReader extends FormatReader {
       }
 
       store.setImageName(imageName, i);
-      store.setImageAcquisitionDate(new Timestamp(creationDate), i);
+      if (creationDate != null) {
+        store.setImageAcquisitionDate(new Timestamp(creationDate), i);
+      }
 
       timepoint--;
       if (timepoint < 0) timepoint = 0;

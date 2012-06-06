@@ -1377,6 +1377,14 @@ public class FormatReaderTest {
             continue;
           }
 
+          // TIFF files in Prairie datasets may be detected as OME-TIFF
+          if (reader.getFormat().equals("Prairie TIFF") &&
+            base[i].toLowerCase().endsWith(".tif") &&
+            r.getFormat().equals("OME-TIFF"))
+          {
+            continue;
+          }
+
           if (comp.length != base.length) {
             success = false;
             msg = base[i] + " (file list length was " + comp.length +

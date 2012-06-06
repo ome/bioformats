@@ -256,7 +256,9 @@ public class MicromanagerReader extends FormatReader {
       Position p = positions.get(i);
       if (p.time != null) {
         String date = DateTools.formatDate(p.time, DATE_FORMAT);
-        store.setImageAcquisitionDate(new Timestamp(date), i);
+        if (date != null) {
+          store.setImageAcquisitionDate(new Timestamp(date), i);
+        }
       }
 
       if (positions.size() > 1) {
