@@ -416,6 +416,23 @@ public class ScanrReader extends FormatReader {
 
     int next = 0;
     String[] keys = wellLabels.keySet().toArray(new String[wellLabels.size()]);
+    Arrays.sort(keys, new Comparator<String>() {
+      public int compare(String s1, String s2) {
+        char row1 = s1.charAt(0);
+        char row2 = s2.charAt(0);
+
+        Integer col1 = new Integer(s1.substring(1));
+        Integer col2 = new Integer(s2.substring(1));
+
+        if (row1 < row2) {
+          return -1;
+        }
+        else if (row1 > row2) {
+          return 1;
+        }
+        return col1.compareTo(col2);
+      }
+    });
     int realPosCount = 0;
     for (int well=0; well<nWells; well++) {
       int wellIndex = wellNumbers.get(well);
@@ -454,7 +471,11 @@ public class ScanrReader extends FormatReader {
       if (next == originalIndex && well < keys.length) {
         wellLabels.remove(keys[well]);
       }
+      if (next == originalIndex) {
+        wellNumbers.remove(well);
+      }
     }
+    nWells = wellNumbers.size();
 
     if (wellLabels.size() > 0 && wellLabels.size() != nWells) {
       uniqueRows.clear();
@@ -544,10 +565,13 @@ public class ScanrReader extends FormatReader {
     for (int i=0; i<getSeriesCount(); i++) {
       int field = i % nFields;
       int well = i / nFields;
-      int wellIndex = well;
-      if (wellNumbers.get(well) != null) {
-        wellIndex = wellNumbers.get(well) - 1;
+      int index = well;
+      while (wellNumbers.get(index) == null && index < wellNumbers.size()) {
+        index++;
       }
+      int wellIndex =
+        wellNumbers.get(index) == null ? index : wellNumbers.get(index) - 1;
+      wellNumbers.remove(index);
 
       int wellRow = wellIndex / wellColumns;
       int wellCol = wellIndex % wellColumns;
@@ -564,7 +588,7 @@ public class ScanrReader extends FormatReader {
       store.setWellSampleImageRef(imageID, 0, well, field);
       store.setImageID(imageID, i);
 
-      String name = "Well " + (wellIndex + 1) + ", Field " + (field + 1) +
+      String name = "Well " + (well + 1) + ", Field " + (field + 1) +
         " (Spot " + (i + 1) + ")";
       store.setImageName(name, i);
 

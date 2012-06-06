@@ -242,15 +242,19 @@ public class SpiderReader extends FormatReader {
     core[0].dimensionOrder = "XYZCT";
     core[0].rgb = false;
 
-    oneHeaderPerSlice = (irec * nsam * 4) != FormatTools.getPlaneSize(this);
+    long planeSize = FormatTools.getPlaneSize(this);
+    oneHeaderPerSlice =
+      (irec * nsam * 4) != planeSize && ((irec - 1) * 4) != planeSize;
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
 
     store.setImageName(title, 0);
     String date = creationDate + " " + creationTime;
-    store.setImageAcquisitionDate(new Timestamp(
-        DateTools.formatDate(date, DATE_FORMAT)), 0);
+    date = DateTools.formatDate(date, DATE_FORMAT);
+    if (date != null) {
+      store.setImageAcquisitionDate(new Timestamp(date), 0);
+    }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       Double size = new Double(pixelSize * 0.0001);

@@ -171,10 +171,12 @@ public class FujiReader extends FormatReader {
 
     String imageName = lines[1];
     String timestamp = lines[10];
+    timestamp = DateTools.formatDate(timestamp, DATE_FORMAT);
 
     store.setImageName(imageName, 0);
-    store.setImageAcquisitionDate(new Timestamp(
-      DateTools.formatDate(timestamp, DATE_FORMAT)), 0);
+    if (timestamp != null) {
+      store.setImageAcquisitionDate(new Timestamp(timestamp), 0);
+    }
 
     double physicalWidth = Double.parseDouble(lines[3]);
     double physicalHeight = Double.parseDouble(lines[4]);

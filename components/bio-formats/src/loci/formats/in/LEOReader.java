@@ -119,7 +119,9 @@ public class LEOReader extends BaseTiffReader {
     MetadataStore store = makeFilterMetadata();
 
     date = DateTools.formatDate(date, "HH:mm dd-MMM-yyyy");
-    store.setImageAcquisitionDate(new Timestamp(date), 0);
+    if (date != null) {
+      store.setImageAcquisitionDate(new Timestamp(date), 0);
+    }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       if (xSize > 0) {

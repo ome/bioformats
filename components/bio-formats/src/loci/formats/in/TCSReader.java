@@ -238,6 +238,7 @@ public class TCSReader extends FormatReader {
     Location l = new Location(id).getAbsoluteFile();
     Location parent = l.getParentFile();
     String[] list = parent.list();
+    Arrays.sort(list);
 
     boolean isXML = checkSuffix(id, XML_SUFFIX);
 
@@ -425,14 +426,14 @@ public class TCSReader extends FormatReader {
     core[0].indexed = tiffReaders[0].isIndexed();
 
     if (isRGB()) core[0].imageCount /= (getSizeC() / channelCount);
+
     if (getSizeZ() * getSizeT() * getEffectiveSizeC() !=
       (ifds.size() * tiffReaders.length))
     {
-      core[0].sizeZ = 1;
       int c = getEffectiveSizeC();
       if (c == 0) c = 1;
-      core[0].sizeT = (ifds.size() * tiffReaders.length) / c;
-      core[0].imageCount = getSizeT() * c;
+      core[0].sizeT = (ifds.size() * tiffReaders.length) / (c * getSizeZ());
+      core[0].imageCount = getSizeT() * c * getSizeZ();
       if (getSizeT() == 0) {
         core[0].sizeT = 1;
         core[0].imageCount = ifds.size() * tiffReaders.length;

@@ -1036,7 +1036,9 @@ public class MIASReader extends FormatReader {
         }
       }
       date = DateTools.formatDate(date, "dd/MM/yyyy HH:mm:ss");
-      store.setImageAcquisitionDate(new Timestamp(date), well);
+      if (date != null) {
+        store.setImageAcquisitionDate(new Timestamp(date), well);
+      }
 
       for (int i=0; i<getImageCount(); i++) {
         store.setPlaneExposureTime(exposure, well, i);

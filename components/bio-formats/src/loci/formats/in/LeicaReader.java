@@ -624,8 +624,10 @@ public class LeicaReader extends FormatReader {
         timestamps[i].length > 0)
       {
         firstPlane = DateTools.getTime(timestamps[i][0], DATE_FORMAT);
-        store.setImageAcquisitionDate(new Timestamp(
-          DateTools.formatDate(timestamps[i][0], DATE_FORMAT)), i);
+        String date = DateTools.formatDate(timestamps[i][0], DATE_FORMAT);
+        if (date != null) {
+          store.setImageAcquisitionDate(new Timestamp(date), i);
+        }
       }
 
       store.setImageDescription(seriesDescriptions.get(i), i);

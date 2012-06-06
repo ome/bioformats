@@ -171,11 +171,20 @@ public class SISReader extends BaseTiffReader {
     physicalSizeX = in.readDouble();
     physicalSizeY = in.readDouble();
 
+    if (physicalSizeX != physicalSizeY) {
+      physicalSizeX = physicalSizeY;
+      physicalSizeY = in.readDouble();
+    }
+
     in.skipBytes(8);
 
     magnification = in.readDouble();
     int cameraNameLength = in.readShort();
     channelName = in.readCString();
+
+    if (channelName.length() > 128) {
+      channelName = "";
+    }
 
     int length = (int) Math.min(cameraNameLength, channelName.length());
     if (length > 0) {
@@ -202,7 +211,9 @@ public class SISReader extends BaseTiffReader {
     MetadataTools.populatePixels(store, this);
 
     store.setImageName(imageName, 0);
-    store.setImageAcquisitionDate(new Timestamp(acquisitionDate), 0);
+    if (acquisitionDate != null) {
+      store.setImageAcquisitionDate(new Timestamp(acquisitionDate), 0);
+    }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       String instrument = MetadataTools.createLSID("Instrument", 0);

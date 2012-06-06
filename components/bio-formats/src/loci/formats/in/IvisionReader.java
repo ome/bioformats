@@ -266,7 +266,9 @@ public class IvisionReader extends FormatReader {
 
     if (creationDate != null) {
       String date = DateTools.formatDate(creationDate, DATE_FORMAT);
-      store.setImageAcquisitionDate(new Timestamp(date), 0);
+      if (date != null) {
+        store.setImageAcquisitionDate(new Timestamp(date), 0);
+      }
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
