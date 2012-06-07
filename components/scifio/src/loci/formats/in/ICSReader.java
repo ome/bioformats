@@ -691,6 +691,14 @@ public class ICSReader extends FormatReader {
         }
       }
     }
+    else if (lifetime && isInterleaved(0)) {
+        byte[] pixelBytes = new byte[bpp];
+        for (int i = 0; i < w * h; ++i) {
+            in.seek(offset + (long)(bpp * (no + i * w)));
+            in.read(pixelBytes);
+            System.arraycopy(pixelBytes, 0, buf, i * bpp, bpp);
+        } 
+    }
     else if (gzip) {
       RandomAccessInputStream s = new RandomAccessInputStream(data);
       readPlane(s, x, y, w, h, buf);
@@ -1393,6 +1401,12 @@ public class ICSReader extends FormatReader {
         core[0].sizeC = binCount;
         core[0].cLengths = new int[] {binCount};
         core[0].cTypes = new String[] {FormatTools.LIFETIME};
+        
+        // fix local vector variables also
+        channelTypes.clear();
+        channelTypes.add(FormatTools.LIFETIME);
+        channelLengths.clear();
+        channelLengths.add(binCount);
       }
     }
 
