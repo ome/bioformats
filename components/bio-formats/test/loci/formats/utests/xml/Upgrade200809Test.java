@@ -75,7 +75,7 @@ public class Upgrade200809Test {
 
   @Test
   public void getOMEXMLVersion() throws ServiceException {
-    assertEquals("2011-06", service.getOMEXMLVersion(metadata));
+    assertEquals("2012-06", service.getOMEXMLVersion(metadata));
   }
 
   @Test
@@ -89,7 +89,7 @@ public class Upgrade200809Test {
   @Test
   public void testChannelColor() {
     // OME:Channel, Color now use new colour representation and is required
-    assertEquals(-1, metadata.getChannelColor(0, 0).intValue());
+    assertEquals(-1, metadata.getChannelColor(0, 0).getValue().intValue());
   }
 
 }

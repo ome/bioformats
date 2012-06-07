@@ -78,7 +78,6 @@ import ome.xml.model.Image;
 import ome.xml.model.Instrument;
 import ome.xml.model.Laser;
 import ome.xml.model.OME;
-import ome.xml.model.OTF;
 import ome.xml.model.Pixels;
 import ome.xml.model.Plate;
 import ome.xml.model.Rectangle;
@@ -150,8 +149,6 @@ public class InOut201004Test {
 
   public static final String OBJECTIVE_ID = "Objective:0";
 
-  public static final String OTF_ID = "OTF:0";
-
   public static final String PLATE_ID = "Plate:0";
 
   public static final String PLATE_ANNOTATION_ID = "Annotation:Timestamp0";
@@ -200,8 +197,6 @@ public class InOut201004Test {
 
   public static final FilterType EX_FILTER_TYPE = FilterType.NEUTRALDENSITY;
 
-  public static final PixelType OTF_PIXELTYPE = PixelType.FLOAT;
-
   public static final Double LIGHTSOURCE_LASER_POWER = 1000.0;
 
   public static final Double LIGHTSOURCE_PUMP_POWER = 100.0;
@@ -217,12 +212,6 @@ public class InOut201004Test {
   public static final ArcType ARC_TYPE = ArcType.HGXE;
 
   public static final FilamentType FILAMENT_TYPE = FilamentType.HALOGEN;
-
-  public static final Integer OTF_SIZE_X = 512;
-
-  public static final Integer OTF_SIZE_Y = 512;
-
-  public static final Boolean OTF_OPTICAL_AXIS_AVERAGED = Boolean.FALSE;
 
   public static final Boolean IMAGE_ANNOTATION_VALUE = Boolean.FALSE;
 
@@ -252,15 +241,6 @@ public class InOut201004Test {
   public static final Double RECTANGLE_WIDTH = 128.0;
 
   public static final Double RECTANGLE_HEIGHT = 256.0;
-
-  public static final String OTF_BINARY_FILE_NAME = "abc.bin";
-
-  public static final NonNegativeLong OTF_BINARY_FILE_SIZE = new NonNegativeLong(64L);
-
-  public static final String OTF_BINARY_FILE_EXTERNAL_HREF = "file:///abc.bin";
-
-  public static final String OTF_BINARY_FILE_EXTERNAL_SHA1 =
-    "1234567890123456789012345678901234567890";
 
   public static final String TIFF_DATA_UUID = 
     "6DFA2954-FA9B-4447-A26C-82F9580D9425";
@@ -622,31 +602,6 @@ public class InOut201004Test {
     assertEquals(EX_FILTER_TYPE, exFilter.getType());
     FilterSet filterSet = ome.getInstrument(0).getDichroic(0).getLinkedFilterSet(0);
     assertEquals(EX_FILTER_ID, filterSet.getLinkedExcitationFilter(0).getID());
-  }
-
-  @Test(dependsOnMethods={"testValidInstrumentNode"})
-  public void testValidOTF() {
-    assertEquals(1, ome.getInstrument(0).sizeOfOTFList());
-    OTF otf = ome.getInstrument(0).getOTF(0);
-    assertNotNull(otf);
-    assertEquals(OTF_ID, otf.getID());
-    assertEquals(OTF_PIXELTYPE, otf.getType());
-    assertEquals(OTF_SIZE_X, otf.getSizeX().getValue());
-    assertEquals(OTF_SIZE_Y, otf.getSizeY().getValue());
-    assertEquals(OTF_OPTICAL_AXIS_AVERAGED, otf.getOpticalAxisAveraged());
-    ObjectiveSettings settings = otf.getObjectiveSettings();
-    assertNotNull(settings);
-    assertEquals(OBJECTIVE_ID, settings.getID());
-    assertEquals(otf, ome.getInstrument(0).getFilterSet(0).getLinkedOTF(0));
-    BinaryFile bf = otf.getBinaryFile();
-    assertNotNull(bf);
-    assertEquals(OTF_BINARY_FILE_NAME, bf.getFileName());
-    assertEquals(OTF_BINARY_FILE_SIZE, bf.getSize());
-    External external = bf.getExternal();
-    if (external != null) {
-      assertEquals(OTF_BINARY_FILE_EXTERNAL_HREF, external.gethref());
-      assertEquals(OTF_BINARY_FILE_EXTERNAL_SHA1, external.getSHA1());
-    }
   }
 
   @Test(dependsOnMethods={"testValidInstrumentNode", "testValidImageNode"})

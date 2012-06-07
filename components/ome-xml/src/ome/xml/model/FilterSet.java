@@ -39,7 +39,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-01-12 20:06:01-0500
+ * Created by callan via xsd-fu on 2012-05-18 10:08:16+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -66,7 +66,7 @@ public class FilterSet extends ManufacturerSpec
 
 	// -- Constants --
 
-	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2011-06";
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2012-06";
 
 	/** Logger for this class. */
 	private static final Logger LOGGER =
@@ -79,19 +79,19 @@ public class FilterSet extends ManufacturerSpec
 	private String id;
 
 	// Reference ExcitationFilterRef
-	private List<Filter> excitationFilterList = new ArrayList<Filter>();
+	private List<Filter> excitationFilterLinks = new ArrayList<Filter>();
 
 	// Property
 	private Dichroic dichroic;
 
 	// Reference EmissionFilterRef
-	private List<Filter> emissionFilterList = new ArrayList<Filter>();
+	private List<Filter> emissionFilterLinks = new ArrayList<Filter>();
 
 	// Back reference Channel_BackReference
-	private List<Channel> channel_BackReferenceList = new ArrayList<Channel>();
+	private List<Channel> channels = new ArrayList<Channel>();
 
-	// Back reference OTF_BackReference
-	private List<OTF> otf_backReferenceList = new ArrayList<OTF>();
+	// Back reference Instrument_BackReference
+	private Instrument instrument;
 
 	// -- Constructors --
 
@@ -159,9 +159,9 @@ public class FilterSet extends ManufacturerSpec
 				getChildrenByTagName(element, "ExcitationFilterRef");
 		for (Element ExcitationFilterRef_element : ExcitationFilterRef_nodeList)
 		{
-			ExcitationFilterRef excitationFilterList_reference = new ExcitationFilterRef();
-			excitationFilterList_reference.setID(ExcitationFilterRef_element.getAttribute("ID"));
-			model.addReference(this, excitationFilterList_reference);
+			ExcitationFilterRef excitationFilterLinks_reference = new ExcitationFilterRef();
+			excitationFilterLinks_reference.setID(ExcitationFilterRef_element.getAttribute("ID"));
+			model.addReference(this, excitationFilterLinks_reference);
 		}
 		// Element reference DichroicRef
 		List<Element> DichroicRef_nodeList =
@@ -177,12 +177,12 @@ public class FilterSet extends ManufacturerSpec
 				getChildrenByTagName(element, "EmissionFilterRef");
 		for (Element EmissionFilterRef_element : EmissionFilterRef_nodeList)
 		{
-			EmissionFilterRef emissionFilterList_reference = new EmissionFilterRef();
-			emissionFilterList_reference.setID(EmissionFilterRef_element.getAttribute("ID"));
-			model.addReference(this, emissionFilterList_reference);
+			EmissionFilterRef emissionFilterLinks_reference = new EmissionFilterRef();
+			emissionFilterLinks_reference.setID(EmissionFilterRef_element.getAttribute("ID"));
+			model.addReference(this, emissionFilterLinks_reference);
 		}
 		// *** IGNORING *** Skipped back reference Channel_BackReference
-		// *** IGNORING *** Skipped back reference OTF_BackReference
+		// *** IGNORING *** Skipped back reference Instrument_BackReference
 	}
 
 	// -- FilterSet API methods --
@@ -197,9 +197,9 @@ public class FilterSet extends ManufacturerSpec
 		if (reference instanceof ExcitationFilterRef)
 		{
 			Filter o_casted = (Filter) o;
-			o_casted.linkFilterSet(this);
-			if (!excitationFilterList.contains(o_casted)) {
-				excitationFilterList.add(o_casted);
+      o_casted.linkFilterSetExcitationFilter(this);
+			if (!excitationFilterLinks.contains(o_casted)) {
+				excitationFilterLinks.add(o_casted);
 			}
 			return true;
 		}
@@ -213,9 +213,9 @@ public class FilterSet extends ManufacturerSpec
 		if (reference instanceof EmissionFilterRef)
 		{
 			Filter o_casted = (Filter) o;
-			o_casted.linkFilterSet(this);
-			if (!emissionFilterList.contains(o_casted)) {
-				emissionFilterList.add(o_casted);
+      o_casted.linkFilterSetEmissionFilter(this);
+			if (!emissionFilterLinks.contains(o_casted)) {
+				emissionFilterLinks.add(o_casted);
 			}
 			return true;
 		}
@@ -238,37 +238,39 @@ public class FilterSet extends ManufacturerSpec
 	// Reference which occurs more than once
 	public int sizeOfLinkedExcitationFilterList()
 	{
-		return excitationFilterList.size();
+		return excitationFilterLinks.size();
 	}
 
 	public List<Filter> copyLinkedExcitationFilterList()
 	{
-		return new ArrayList<Filter>(excitationFilterList);
+		return new ArrayList<Filter>(excitationFilterLinks);
 	}
 
 	public Filter getLinkedExcitationFilter(int index)
 	{
-		return excitationFilterList.get(index);
+		return excitationFilterLinks.get(index);
 	}
 
 	public Filter setLinkedExcitationFilter(int index, Filter o)
 	{
-		return excitationFilterList.set(index, o);
+		return excitationFilterLinks.set(index, o);
 	}
 
 	public boolean linkExcitationFilter(Filter o)
 	{
-		o.linkFilterSet(this);
-		if (!excitationFilterList.contains(o)) {
-			return excitationFilterList.add(o);
+
+      o.linkFilterSetExcitationFilter(this);
+		if (!excitationFilterLinks.contains(o)) {
+			return excitationFilterLinks.add(o);
 		}
 		return false;
 	}
 
 	public boolean unlinkExcitationFilter(Filter o)
 	{
-		o.unlinkFilterSet(this);
-		return excitationFilterList.remove(o);
+
+      o.unlinkFilterSetExcitationFilter(this);
+		return excitationFilterLinks.remove(o);
 	}
 
 	// Reference
@@ -293,105 +295,84 @@ public class FilterSet extends ManufacturerSpec
 	// Reference which occurs more than once
 	public int sizeOfLinkedEmissionFilterList()
 	{
-		return emissionFilterList.size();
+		return emissionFilterLinks.size();
 	}
 
 	public List<Filter> copyLinkedEmissionFilterList()
 	{
-		return new ArrayList<Filter>(emissionFilterList);
+		return new ArrayList<Filter>(emissionFilterLinks);
 	}
 
 	public Filter getLinkedEmissionFilter(int index)
 	{
-		return emissionFilterList.get(index);
+		return emissionFilterLinks.get(index);
 	}
 
 	public Filter setLinkedEmissionFilter(int index, Filter o)
 	{
-		return emissionFilterList.set(index, o);
+		return emissionFilterLinks.set(index, o);
 	}
 
 	public boolean linkEmissionFilter(Filter o)
 	{
-		o.linkFilterSet(this);
-		if (!emissionFilterList.contains(o)) {
-			return emissionFilterList.add(o);
+
+      o.linkFilterSetEmissionFilter(this);
+		if (!emissionFilterLinks.contains(o)) {
+			return emissionFilterLinks.add(o);
 		}
 		return false;
 	}
 
 	public boolean unlinkEmissionFilter(Filter o)
 	{
-		o.unlinkFilterSet(this);
-		return emissionFilterList.remove(o);
+
+      o.unlinkFilterSetEmissionFilter(this);
+		return emissionFilterLinks.remove(o);
 	}
 
 	// Reference which occurs more than once
 	public int sizeOfLinkedChannelList()
 	{
-		return channel_BackReferenceList.size();
+		return channels.size();
 	}
 
 	public List<Channel> copyLinkedChannelList()
 	{
-		return new ArrayList<Channel>(channel_BackReferenceList);
+		return new ArrayList<Channel>(channels);
 	}
 
 	public Channel getLinkedChannel(int index)
 	{
-		return channel_BackReferenceList.get(index);
+		return channels.get(index);
 	}
 
 	public Channel setLinkedChannel(int index, Channel o)
 	{
-		return channel_BackReferenceList.set(index, o);
+		return channels.set(index, o);
 	}
 
 	public boolean linkChannel(Channel o)
 	{
-		if (!channel_BackReferenceList.contains(o)) {
-			return channel_BackReferenceList.add(o);
+		if (!channels.contains(o)) {
+			return channels.add(o);
 		}
 		return false;
 	}
 
 	public boolean unlinkChannel(Channel o)
 	{
-		return channel_BackReferenceList.remove(o);
+		return channels.remove(o);
 	}
 
-	// Reference which occurs more than once
-	public int sizeOfLinkedOTFList()
+	// Property
+	public Instrument getInstrument()
 	{
-		return otf_backReferenceList.size();
+		return instrument;
 	}
 
-	public List<OTF> copyLinkedOTFList()
+	public void setInstrument(Instrument instrument_BackReference)
 	{
-		return new ArrayList<OTF>(otf_backReferenceList);
-	}
-
-	public OTF getLinkedOTF(int index)
-	{
-		return otf_backReferenceList.get(index);
-	}
-
-	public OTF setLinkedOTF(int index, OTF o)
-	{
-		return otf_backReferenceList.set(index, o);
-	}
-
-	public boolean linkOTF(OTF o)
-	{
-		if (!otf_backReferenceList.contains(o)) {
-			return otf_backReferenceList.add(o);
-		}
-		return false;
-	}
-
-	public boolean unlinkOTF(OTF o)
-	{
-		return otf_backReferenceList.remove(o);
+		this.instrument = instrument_BackReference;
 	}
 
 	public Element asXMLElement(Document document)
@@ -414,13 +395,13 @@ public class FilterSet extends ManufacturerSpec
 			// Attribute property ID
 			FilterSet_element.setAttribute("ID", id.toString());
 		}
-		if (excitationFilterList != null)
+		if (excitationFilterLinks != null)
 		{
 			// Reference property ExcitationFilterRef which occurs more than once
-			for (Filter excitationFilterList_value : excitationFilterList)
+			for (Filter excitationFilterLinks_value : excitationFilterLinks)
 			{
 				ExcitationFilterRef o = new ExcitationFilterRef();
-				o.setID(excitationFilterList_value.getID());
+				o.setID(excitationFilterLinks_value.getID());
 				FilterSet_element.appendChild(o.asXMLElement(document));
 			}
 		}
@@ -431,23 +412,23 @@ public class FilterSet extends ManufacturerSpec
 			o.setID(dichroic.getID());
 			FilterSet_element.appendChild(o.asXMLElement(document));
 		}
-		if (emissionFilterList != null)
+		if (emissionFilterLinks != null)
 		{
 			// Reference property EmissionFilterRef which occurs more than once
-			for (Filter emissionFilterList_value : emissionFilterList)
+			for (Filter emissionFilterLinks_value : emissionFilterLinks)
 			{
 				EmissionFilterRef o = new EmissionFilterRef();
-				o.setID(emissionFilterList_value.getID());
+				o.setID(emissionFilterLinks_value.getID());
 				FilterSet_element.appendChild(o.asXMLElement(document));
 			}
 		}
-		if (channel_BackReferenceList != null)
+		if (channels != null)
 		{
 			// *** IGNORING *** Skipped back reference Channel_BackReference
 		}
-		if (otf_backReferenceList != null)
+		if (instrument != null)
 		{
-			// *** IGNORING *** Skipped back reference OTF_BackReference
+			// *** IGNORING *** Skipped back reference Instrument_BackReference
 		}
 		return super.asXMLElement(document, FilterSet_element);
 	}

@@ -57,6 +57,7 @@ import loci.formats.meta.MetadataStore;
 
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 /**
  * ICSReader is the file format reader for ICS (Image Cytometry Standard)
@@ -1430,7 +1431,7 @@ public class ICSReader extends FormatReader {
 
     store.setImageName(imageName, 0);
 
-    if (date != null) store.setImageAcquiredDate(date, 0);
+    if (date != null) store.setImageAcquisitionDate(new Timestamp(date), 0);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription(description, 0);
@@ -1656,7 +1657,7 @@ public class ICSReader extends FormatReader {
       // link Objective to Image
       String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
       store.setObjectiveID(objectiveID, 0, 0);
-      store.setImageObjectiveSettingsID(objectiveID, 0);
+      store.setObjectiveSettingsID(objectiveID, 0);
 
       // populate Detector data
 
@@ -1680,7 +1681,6 @@ public class ICSReader extends FormatReader {
         String experimenterID = MetadataTools.createLSID("Experimenter", 0);
         store.setExperimenterID(experimenterID, 0);
         store.setExperimenterLastName(lastName, 0);
-        store.setExperimenterDisplayName(lastName, 0);
       }
 
       // populate StagePosition data

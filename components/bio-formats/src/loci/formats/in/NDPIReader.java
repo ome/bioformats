@@ -39,6 +39,7 @@ import loci.formats.tiff.PhotoInterp;
 import loci.formats.tiff.TiffParser;
 
 import ome.xml.model.primitives.PositiveFloat;
+import ome.xml.model.primitives.Timestamp;
 
 /**
  * NDPIReader is the file format reader for Hamamatsu .ndpi files.
@@ -313,7 +314,9 @@ public class NDPIReader extends BaseTiffReader {
         int ifdIndex = getIFDIndex(i, 0);
         String creationDate = ifds.get(ifdIndex).getIFDTextValue(IFD.DATE_TIME);
         creationDate = DateTools.formatDate(creationDate, DATE_FORMATS);
-        store.setImageAcquiredDate(creationDate, i);
+        if (creationDate != null) {
+          store.setImageAcquisitionDate(new Timestamp(creationDate), i);
+        }
 
         double xResolution = ifds.get(ifdIndex).getXResolution();
         double yResolution = ifds.get(ifdIndex).getYResolution();

@@ -345,7 +345,7 @@ public class OperettaReader extends FormatReader {
 
       String experimenterID = MetadataTools.createLSID("Experimenter", 0);
       store.setExperimenterID(experimenterID, 0);
-      store.setExperimenterDisplayName(handler.getExperimenterName(), 0);
+      store.setExperimenterLastName(handler.getExperimenterName(), 0);
 
       for (int i=0; i<getSeriesCount(); i++) {
         store.setImageExperimenterRef(experimenterID, i);

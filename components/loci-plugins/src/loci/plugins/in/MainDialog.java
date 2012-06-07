@@ -519,7 +519,8 @@ public class MainDialog extends ImporterDialog
     // == Memory management ==
 
     // virtualBox
-    virtualEnabled = !isStackNone && !isStackImage5D && !isStackView5D;
+    virtualEnabled =
+      !isStackNone && !isStackImage5D && !isStackView5D && !isConcatenate;
     if (!virtualEnabled) isVirtual = false;
     else if (src == stackFormatChoice && isStackBrowser) isVirtual = true;
 

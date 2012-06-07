@@ -37,13 +37,14 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-01-12 20:06:07-0500
+ * Created by callan via xsd-fu on 2012-05-18 10:08:19+0100
  *
  *-----------------------------------------------------------------------------
  */
 
 package loci.formats.meta;
 
+import ome.xml.model.*;
 import ome.xml.model.enums.*;
 import ome.xml.model.primitives.*;
 
@@ -83,6 +84,8 @@ public interface MetadataRetrieve {
 
 	String getLightSourceType(int instrumentIndex, int lightSourceIndex);
 
+  String getShapeType(int roiIndex, int shapeIndex);
+
 	// -- Entity counting (code generated definitions) --
 
 	// AnnotationRef entity counting
@@ -91,6 +94,8 @@ public interface MetadataRetrieve {
 	int getPlateAcquisitionAnnotationRefCount(int plateIndex, int plateAcquisitionIndex);
 
 	int getPlateAnnotationRefCount(int plateIndex);
+
+	int getExperimenterGroupAnnotationRefCount(int experimenterGroupIndex);
 
 	int getImageAnnotationRefCount(int imageIndex);
 
@@ -126,12 +131,11 @@ public interface MetadataRetrieve {
 	// CommentAnnotation entity counting
 	int getCommentAnnotationCount();
 
-	// Contact entity counting
 	// Dataset entity counting
 	int getDatasetCount();
 
 	// DatasetRef entity counting
-	int getDatasetRefCount(int imageIndex);
+	int getDatasetRefCount(int projectIndex);
 
 	// Detector entity counting
 	int getDetectorCount(int instrumentIndex);
@@ -162,7 +166,13 @@ public interface MetadataRetrieve {
 	// Experimenter entity counting
 	int getExperimenterCount();
 
+	// ExperimenterGroup entity counting
+	int getExperimenterGroupCount();
+
+	// ExperimenterGroupRef entity counting
 	// ExperimenterRef entity counting
+	int getExperimenterGroupExperimenterRefCount(int experimenterGroupIndex);
+
 	// Filament entity counting
 	// FileAnnotation entity counting
 	int getFileAnnotationCount();
@@ -174,23 +184,22 @@ public interface MetadataRetrieve {
 	int getFilterSetCount(int instrumentIndex);
 
 	// FilterSetRef entity counting
-	// Group entity counting
-	int getGroupCount();
-
-	// GroupRef entity counting
-	int getExperimenterGroupRefCount(int experimenterIndex);
-
 	// Image entity counting
 	int getImageCount();
 
 	// ImageRef entity counting
+	int getDatasetImageRefCount(int datasetIndex);
+
 	// ImagingEnvironment entity counting
 	// Instrument entity counting
 	int getInstrumentCount();
 
 	// InstrumentRef entity counting
+	// Label entity counting
 	// Laser entity counting
 	// Leader entity counting
+	int getLeaderCount(int experimenterGroupIndex);
+
 	// LightEmittingDiode entity counting
 	// LightPath entity counting
 	// LightSource entity counting
@@ -215,15 +224,10 @@ public interface MetadataRetrieve {
 	int getMicrobeamManipulationRefCount(int imageIndex);
 
 	// Microscope entity counting
-	// OTF entity counting
-	int getOTFCount(int instrumentIndex);
-
-	// OTFRef entity counting
 	// Objective entity counting
 	int getObjectiveCount(int instrumentIndex);
 
 	// ObjectiveSettings entity counting
-	// Path entity counting
 	// Pixels entity counting
 	// Plane entity counting
 	int getPlaneCount(int imageIndex);
@@ -238,12 +242,10 @@ public interface MetadataRetrieve {
 	int getPlateRefCount(int screenIndex);
 
 	// Point entity counting
+	// Polygon entity counting
 	// Polyline entity counting
 	// Project entity counting
 	int getProjectCount();
-
-	// ProjectRef entity counting
-	int getProjectRefCount(int datasetIndex);
 
 	// Pump entity counting
 	// ROI entity counting
@@ -262,9 +264,6 @@ public interface MetadataRetrieve {
 	// Screen entity counting
 	int getScreenCount();
 
-	// ScreenRef entity counting
-	int getScreenRefCount(int plateIndex);
-
 	// Shape entity counting
 	int getShapeCount(int ROIIndex);
 
@@ -276,7 +275,6 @@ public interface MetadataRetrieve {
 	// TermAnnotation entity counting
 	int getTermAnnotationCount();
 
-	// Text entity counting
 	// TiffData entity counting
 	int getTiffDataCount(int imageIndex);
 
@@ -315,7 +313,7 @@ public interface MetadataRetrieve {
 	//
 	// AnnotationRef property storage
 	//
-	// {u'ROI': {u'OME': None}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'Annotation': None, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
+	// {u'ROI': {u'OME': None}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'ExperimenterGroup': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'Annotation': None, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
 	// Is multi path? True
 
 	// 1:1
@@ -355,22 +353,16 @@ public interface MetadataRetrieve {
 	//
 	// BinaryFile property storage
 	//
-	// {u'FileAnnotation': {u'StructuredAnnotations': {u'OME': None}}, u'OTF': {u'Instrument': {u'OME': None}}}
-	// Is multi path? True
+	// {u'FileAnnotation': {u'StructuredAnnotations': {u'OME': None}}}
+	// Is multi path? False
 
 	// Ignoring BinData element, complex property
 	// Ignoring External element, complex property
-	String getFileAnnotationBinaryFileFileName(int fileAnnotationIndex);
+	String getBinaryFileFileName(int fileAnnotationIndex);
 
-	String getOTFBinaryFileFileName(int instrumentIndex, int OTFIndex);
+	String getBinaryFileMIMEType(int fileAnnotationIndex);
 
-	String getFileAnnotationBinaryFileMIMEType(int fileAnnotationIndex);
-
-	String getOTFBinaryFileMIMEType(int instrumentIndex, int OTFIndex);
-
-	NonNegativeLong getFileAnnotationBinaryFileSize(int fileAnnotationIndex);
-
-	NonNegativeLong getOTFBinaryFileSize(int instrumentIndex, int OTFIndex);
+	NonNegativeLong getBinaryFileSize(int fileAnnotationIndex);
 
 	//
 	// BinaryOnly property storage
@@ -394,6 +386,7 @@ public interface MetadataRetrieve {
 	// Ignoring Dataset_BackReference back reference
 	String getBooleanAnnotationDescription(int booleanAnnotationIndex);
 
+	// Ignoring ExperimenterGroup_BackReference back reference
 	// Ignoring Experimenter_BackReference back reference
 	String getBooleanAnnotationID(int booleanAnnotationIndex);
 
@@ -408,6 +401,7 @@ public interface MetadataRetrieve {
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	Boolean getBooleanAnnotationValue(int booleanAnnotationIndex);
 
 	// Ignoring WellSample_BackReference back reference
@@ -422,7 +416,7 @@ public interface MetadataRetrieve {
 
 	String getChannelAnnotationRef(int imageIndex, int channelIndex, int annotationRefIndex);
 
-	Integer getChannelColor(int imageIndex, int channelIndex);
+	Color getChannelColor(int imageIndex, int channelIndex);
 
 	ContrastMethod getChannelContrastMethod(int imageIndex, int channelIndex);
 
@@ -445,10 +439,9 @@ public interface MetadataRetrieve {
 
 	String getChannelName(int imageIndex, int channelIndex);
 
-	String getChannelOTFRef(int imageIndex, int channelIndex);
-
 	Double getChannelPinholeSize(int imageIndex, int channelIndex);
 
+	// Ignoring Pixels_BackReference back reference
 	Integer getChannelPockelCellSetting(int imageIndex, int channelIndex);
 
 	PositiveInteger getChannelSamplesPerPixel(int imageIndex, int channelIndex);
@@ -465,6 +458,7 @@ public interface MetadataRetrieve {
 	// Ignoring Dataset_BackReference back reference
 	String getCommentAnnotationDescription(int commentAnnotationIndex);
 
+	// Ignoring ExperimenterGroup_BackReference back reference
 	// Ignoring Experimenter_BackReference back reference
 	String getCommentAnnotationID(int commentAnnotationIndex);
 
@@ -479,20 +473,11 @@ public interface MetadataRetrieve {
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	String getCommentAnnotationValue(int commentAnnotationIndex);
 
 	// Ignoring WellSample_BackReference back reference
 	// Ignoring Well_BackReference back reference
-	//
-	// Contact property storage
-	//
-	// {u'Group': {u'OME': None}}
-	// Is multi path? False
-
-	// 1:1
-	// Is multi path? False
-	// Ignoring ID property of reference Contact
-
 	//
 	// Dataset property storage
 	//
@@ -503,21 +488,21 @@ public interface MetadataRetrieve {
 
 	String getDatasetDescription(int datasetIndex);
 
-	String getDatasetExperimenterRef(int datasetIndex);
+	String getDatasetExperimenterGroupRef(int datasetIndex);
 
-	String getDatasetGroupRef(int datasetIndex);
+	String getDatasetExperimenterRef(int datasetIndex);
 
 	String getDatasetID(int datasetIndex);
 
-	// Ignoring Image_BackReference back reference
+	String getDatasetImageRef(int datasetIndex, int imageRefIndex);
+
 	String getDatasetName(int datasetIndex);
 
-	String getDatasetProjectRef(int datasetIndex, int projectRefIndex);
-
+	// Ignoring Project_BackReference back reference
 	//
 	// DatasetRef property storage
 	//
-	// {u'Image': {u'OME': None}}
+	// {u'Project': {u'OME': None}}
 	// Is multi path? False
 
 	// 1:1
@@ -536,6 +521,7 @@ public interface MetadataRetrieve {
 
 	String getDetectorID(int instrumentIndex, int detectorIndex);
 
+	// Ignoring Instrument_BackReference back reference
 	String getDetectorLotNumber(int instrumentIndex, int detectorIndex);
 
 	String getDetectorManufacturer(int instrumentIndex, int detectorIndex);
@@ -560,6 +546,7 @@ public interface MetadataRetrieve {
 
 	Binning getDetectorSettingsBinning(int imageIndex, int channelIndex);
 
+	// Ignoring DetectorRef back reference
 	Double getDetectorSettingsGain(int imageIndex, int channelIndex);
 
 	String getDetectorSettingsID(int imageIndex, int channelIndex);
@@ -579,6 +566,7 @@ public interface MetadataRetrieve {
 	// Ignoring FilterSet_BackReference back reference
 	String getDichroicID(int instrumentIndex, int dichroicIndex);
 
+	// Ignoring Instrument_BackReference back reference
 	// Ignoring LightPath_BackReference back reference
 	String getDichroicLotNumber(int instrumentIndex, int dichroicIndex);
 
@@ -610,6 +598,7 @@ public interface MetadataRetrieve {
 	// Ignoring Dataset_BackReference back reference
 	String getDoubleAnnotationDescription(int doubleAnnotationIndex);
 
+	// Ignoring ExperimenterGroup_BackReference back reference
 	// Ignoring Experimenter_BackReference back reference
 	String getDoubleAnnotationID(int doubleAnnotationIndex);
 
@@ -624,6 +613,7 @@ public interface MetadataRetrieve {
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	Double getDoubleAnnotationValue(int doubleAnnotationIndex);
 
 	// Ignoring WellSample_BackReference back reference
@@ -634,39 +624,40 @@ public interface MetadataRetrieve {
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
-	// Description accessor from parent Shape
-	String getEllipseDescription(int ROIIndex, int shapeIndex);
-
 	// Ignoring Ellipse of parent abstract type
-	// Fill accessor from parent Shape
-	Integer getEllipseFill(int ROIIndex, int shapeIndex);
+	// FillColor accessor from parent Shape
+	Color getEllipseFillColor(int ROIIndex, int shapeIndex);
 
-	// Ignoring FillRule of parent abstract type
-	// Ignoring FontFamily of parent abstract type
+	// FillRule accessor from parent Shape
+	FillRule getEllipseFillRule(int ROIIndex, int shapeIndex);
+
+	// FontFamily accessor from parent Shape
+	FontFamily getEllipseFontFamily(int ROIIndex, int shapeIndex);
+
 	// FontSize accessor from parent Shape
 	NonNegativeInteger getEllipseFontSize(int ROIIndex, int shapeIndex);
 
-	// Ignoring FontStyle of parent abstract type
+	// FontStyle accessor from parent Shape
+	FontStyle getEllipseFontStyle(int ROIIndex, int shapeIndex);
+
 	// ID accessor from parent Shape
 	String getEllipseID(int ROIIndex, int shapeIndex);
 
-	// Label accessor from parent Shape
-	String getEllipseLabel(int ROIIndex, int shapeIndex);
-
+	// Ignoring Label of parent abstract type
 	// Ignoring Line of parent abstract type
-	// Ignoring LineCap of parent abstract type
-	// Ignoring MarkerEnd of parent abstract type
-	// Ignoring MarkerStart of parent abstract type
-	// Ignoring Mask of parent abstract type
-	// Name accessor from parent Shape
-	String getEllipseName(int ROIIndex, int shapeIndex);
+	// LineCap accessor from parent Shape
+	LineCap getEllipseLineCap(int ROIIndex, int shapeIndex);
 
-	// Ignoring Path of parent abstract type
+	// Locked accessor from parent Shape
+	Boolean getEllipseLocked(int ROIIndex, int shapeIndex);
+
+	// Ignoring Mask of parent abstract type
 	// Ignoring Point of parent abstract type
+	// Ignoring Polygon of parent abstract type
 	// Ignoring Polyline of parent abstract type
 	// Ignoring Rectangle of parent abstract type
-	// Stroke accessor from parent Shape
-	Integer getEllipseStroke(int ROIIndex, int shapeIndex);
+	// StrokeColor accessor from parent Shape
+	Color getEllipseStrokeColor(int ROIIndex, int shapeIndex);
 
 	// StrokeDashArray accessor from parent Shape
 	String getEllipseStrokeDashArray(int ROIIndex, int shapeIndex);
@@ -674,7 +665,9 @@ public interface MetadataRetrieve {
 	// StrokeWidth accessor from parent Shape
 	Double getEllipseStrokeWidth(int ROIIndex, int shapeIndex);
 
-	// Ignoring Text of parent abstract type
+	// Text accessor from parent Shape
+	String getEllipseText(int ROIIndex, int shapeIndex);
+
 	// TheC accessor from parent Shape
 	NonNegativeInteger getEllipseTheC(int ROIIndex, int shapeIndex);
 
@@ -685,7 +678,10 @@ public interface MetadataRetrieve {
 	NonNegativeInteger getEllipseTheZ(int ROIIndex, int shapeIndex);
 
 	// Transform accessor from parent Shape
-	String getEllipseTransform(int ROIIndex, int shapeIndex);
+	AffineTransform getEllipseTransform(int ROIIndex, int shapeIndex);
+
+	// Visible accessor from parent Shape
+	Boolean getEllipseVisible(int ROIIndex, int shapeIndex);
 
 	Double getEllipseRadiusX(int ROIIndex, int shapeIndex);
 
@@ -742,14 +738,11 @@ public interface MetadataRetrieve {
 	String getExperimenterAnnotationRef(int experimenterIndex, int annotationRefIndex);
 
 	// Ignoring Dataset_BackReference back reference
-	String getExperimenterDisplayName(int experimenterIndex);
-
 	String getExperimenterEmail(int experimenterIndex);
 
 	// Ignoring Experiment_BackReference back reference
+	// Ignoring ExperimenterGroup_BackReference back reference
 	String getExperimenterFirstName(int experimenterIndex);
-
-	String getExperimenterGroupRef(int experimenterIndex, int groupRefIndex);
 
 	String getExperimenterID(int experimenterIndex);
 
@@ -765,9 +758,40 @@ public interface MetadataRetrieve {
 	String getExperimenterUserName(int experimenterIndex);
 
 	//
+	// ExperimenterGroup property storage
+	//
+	// {u'OME': None}
+	// Is multi path? False
+
+	String getExperimenterGroupAnnotationRef(int experimenterGroupIndex, int annotationRefIndex);
+
+	// Ignoring Dataset_BackReference back reference
+	String getExperimenterGroupDescription(int experimenterGroupIndex);
+
+	String getExperimenterGroupExperimenterRef(int experimenterGroupIndex, int experimenterRefIndex);
+
+	String getExperimenterGroupID(int experimenterGroupIndex);
+
+	// Ignoring Image_BackReference back reference
+	String getExperimenterGroupLeader(int experimenterGroupIndex, int leaderIndex);
+
+	String getExperimenterGroupName(int experimenterGroupIndex);
+
+	// Ignoring Project_BackReference back reference
+	//
+	// ExperimenterGroupRef property storage
+	//
+	// {u'Project': {u'OME': None}, u'Image': {u'OME': None}, u'Dataset': {u'OME': None}}
+	// Is multi path? True
+
+	// 1:1
+	// Is multi path? True
+	// Ignoring ID property of reference ExperimenterGroupRef
+
+	//
 	// ExperimenterRef property storage
 	//
-	// {u'Project': {u'OME': None}, u'Image': {u'OME': None}, u'Dataset': {u'OME': None}, u'Experiment': {u'OME': None}, u'MicrobeamManipulation': {u'Experiment': {u'OME': None}}}
+	// {u'ExperimenterGroup': {u'OME': None}, u'Image': {u'OME': None}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Experiment': {u'OME': None}, u'MicrobeamManipulation': {u'Experiment': {u'OME': None}}}
 	// Is multi path? True
 
 	// 1:1
@@ -817,6 +841,7 @@ public interface MetadataRetrieve {
 	// Ignoring Dataset_BackReference back reference
 	String getFileAnnotationDescription(int fileAnnotationIndex);
 
+	// Ignoring ExperimenterGroup_BackReference back reference
 	// Ignoring Experimenter_BackReference back reference
 	String getFileAnnotationID(int fileAnnotationIndex);
 
@@ -831,6 +856,7 @@ public interface MetadataRetrieve {
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	// Ignoring WellSample_BackReference back reference
 	// Ignoring Well_BackReference back reference
 	//
@@ -840,10 +866,13 @@ public interface MetadataRetrieve {
 	// Is multi path? False
 
 	// Ignoring FilterSet_BackReference back reference
+	// Ignoring FilterSet_BackReference back reference
 	String getFilterFilterWheel(int instrumentIndex, int filterIndex);
 
 	String getFilterID(int instrumentIndex, int filterIndex);
 
+	// Ignoring Instrument_BackReference back reference
+	// Ignoring LightPath_BackReference back reference
 	// Ignoring LightPath_BackReference back reference
 	String getFilterLotNumber(int instrumentIndex, int filterIndex);
 
@@ -871,54 +900,24 @@ public interface MetadataRetrieve {
 
 	String getFilterSetID(int instrumentIndex, int filterSetIndex);
 
+	// Ignoring Instrument_BackReference back reference
 	String getFilterSetLotNumber(int instrumentIndex, int filterSetIndex);
 
 	String getFilterSetManufacturer(int instrumentIndex, int filterSetIndex);
 
 	String getFilterSetModel(int instrumentIndex, int filterSetIndex);
 
-	// Ignoring OTF_BackReference back reference
 	String getFilterSetSerialNumber(int instrumentIndex, int filterSetIndex);
 
 	//
 	// FilterSetRef property storage
 	//
-	// {u'OTF': {u'Instrument': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
-	// Is multi path? True
-
-	// 1:1
-	// Is multi path? True
-	// Ignoring ID property of reference FilterSetRef
-
-	//
-	// Group property storage
-	//
-	// {u'OME': None}
+	// {u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
 	// Is multi path? False
 
-	String getGroupContact(int groupIndex);
-
-	// Ignoring Dataset_BackReference back reference
-	String getGroupDescription(int groupIndex);
-
-	// Ignoring Experimenter_BackReference back reference
-	String getGroupID(int groupIndex);
-
-	// Ignoring Image_BackReference back reference
-	String getGroupLeader(int groupIndex);
-
-	String getGroupName(int groupIndex);
-
-	// Ignoring Project_BackReference back reference
-	//
-	// GroupRef property storage
-	//
-	// {u'Project': {u'OME': None}, u'Image': {u'OME': None}, u'Experimenter': {u'OME': None}, u'Dataset': {u'OME': None}}
-	// Is multi path? True
-
 	// 1:1
-	// Is multi path? True
-	// Ignoring ID property of reference GroupRef
+	// Is multi path? False
+	// Ignoring ID property of reference FilterSetRef
 
 	//
 	// Image property storage
@@ -926,19 +925,18 @@ public interface MetadataRetrieve {
 	// {u'OME': None}
 	// Is multi path? False
 
-	String getImageAcquiredDate(int imageIndex);
+	Timestamp getImageAcquisitionDate(int imageIndex);
 
 	String getImageAnnotationRef(int imageIndex, int annotationRefIndex);
 
-	String getImageDatasetRef(int imageIndex, int datasetRefIndex);
-
+	// Ignoring Dataset_BackReference back reference
 	String getImageDescription(int imageIndex);
 
 	String getImageExperimentRef(int imageIndex);
 
-	String getImageExperimenterRef(int imageIndex);
+	String getImageExperimenterGroupRef(int imageIndex);
 
-	String getImageGroupRef(int imageIndex);
+	String getImageExperimenterRef(int imageIndex);
 
 	String getImageID(int imageIndex);
 
@@ -958,11 +956,11 @@ public interface MetadataRetrieve {
 	//
 	// ImageRef property storage
 	//
-	// {u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}}
-	// Is multi path? False
+	// {u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Dataset': {u'OME': None}}
+	// Is multi path? True
 
 	// 1:1
-	// Is multi path? False
+	// Is multi path? True
 	// Ignoring ID property of reference ImageRef
 
 	//
@@ -994,7 +992,6 @@ public interface MetadataRetrieve {
 	// Ignoring Image_BackReference back reference
 	// Ignoring LightSource element, complex property
 	// Ignoring Microscope element, complex property
-	// Ignoring OTF element, complex property
 	// Ignoring Objective element, complex property
 	//
 	// InstrumentRef property storage
@@ -1005,6 +1002,75 @@ public interface MetadataRetrieve {
 	// 1:1
 	// Is multi path? False
 	// Ignoring ID property of reference InstrumentRef
+
+	//
+	// Label property storage
+	//
+	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+	// Is multi path? False
+
+	// Ignoring Ellipse of parent abstract type
+	// FillColor accessor from parent Shape
+	Color getLabelFillColor(int ROIIndex, int shapeIndex);
+
+	// FillRule accessor from parent Shape
+	FillRule getLabelFillRule(int ROIIndex, int shapeIndex);
+
+	// FontFamily accessor from parent Shape
+	FontFamily getLabelFontFamily(int ROIIndex, int shapeIndex);
+
+	// FontSize accessor from parent Shape
+	NonNegativeInteger getLabelFontSize(int ROIIndex, int shapeIndex);
+
+	// FontStyle accessor from parent Shape
+	FontStyle getLabelFontStyle(int ROIIndex, int shapeIndex);
+
+	// ID accessor from parent Shape
+	String getLabelID(int ROIIndex, int shapeIndex);
+
+	// Ignoring Label of parent abstract type
+	// Ignoring Line of parent abstract type
+	// LineCap accessor from parent Shape
+	LineCap getLabelLineCap(int ROIIndex, int shapeIndex);
+
+	// Locked accessor from parent Shape
+	Boolean getLabelLocked(int ROIIndex, int shapeIndex);
+
+	// Ignoring Mask of parent abstract type
+	// Ignoring Point of parent abstract type
+	// Ignoring Polygon of parent abstract type
+	// Ignoring Polyline of parent abstract type
+	// Ignoring Rectangle of parent abstract type
+	// StrokeColor accessor from parent Shape
+	Color getLabelStrokeColor(int ROIIndex, int shapeIndex);
+
+	// StrokeDashArray accessor from parent Shape
+	String getLabelStrokeDashArray(int ROIIndex, int shapeIndex);
+
+	// StrokeWidth accessor from parent Shape
+	Double getLabelStrokeWidth(int ROIIndex, int shapeIndex);
+
+	// Text accessor from parent Shape
+	String getLabelText(int ROIIndex, int shapeIndex);
+
+	// TheC accessor from parent Shape
+	NonNegativeInteger getLabelTheC(int ROIIndex, int shapeIndex);
+
+	// TheT accessor from parent Shape
+	NonNegativeInteger getLabelTheT(int ROIIndex, int shapeIndex);
+
+	// TheZ accessor from parent Shape
+	NonNegativeInteger getLabelTheZ(int ROIIndex, int shapeIndex);
+
+	// Transform accessor from parent Shape
+	AffineTransform getLabelTransform(int ROIIndex, int shapeIndex);
+
+	// Visible accessor from parent Shape
+	Boolean getLabelVisible(int ROIIndex, int shapeIndex);
+
+	Double getLabelX(int ROIIndex, int shapeIndex);
+
+	Double getLabelY(int ROIIndex, int shapeIndex);
 
 	//
 	// Laser property storage
@@ -1055,8 +1121,12 @@ public interface MetadataRetrieve {
 	//
 	// Leader property storage
 	//
-	// {u'Group': {u'OME': None}}
+	// {u'ExperimenterGroup': {u'OME': None}}
 	// Is multi path? False
+
+	// 0:9999
+	// Is multi path? False
+	// Ignoring ExperimenterGroup_BackReference property of reference Leader
 
 	// 1:1
 	// Is multi path? False
@@ -1116,6 +1186,8 @@ public interface MetadataRetrieve {
 
 	String getMicrobeamManipulationLightSourceSettingsID(int experimentIndex, int microbeamManipulationIndex, int lightSourceSettingsIndex);
 
+	// Ignoring LightSourceRef back reference
+	// Ignoring MicrobeamManipulation_BackReference back reference
 	PositiveInteger getChannelLightSourceSettingsWavelength(int imageIndex, int channelIndex);
 
 	PositiveInteger getMicrobeamManipulationLightSourceSettingsWavelength(int experimentIndex, int microbeamManipulationIndex, int lightSourceSettingsIndex);
@@ -1126,39 +1198,40 @@ public interface MetadataRetrieve {
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
-	// Description accessor from parent Shape
-	String getLineDescription(int ROIIndex, int shapeIndex);
-
 	// Ignoring Ellipse of parent abstract type
-	// Fill accessor from parent Shape
-	Integer getLineFill(int ROIIndex, int shapeIndex);
+	// FillColor accessor from parent Shape
+	Color getLineFillColor(int ROIIndex, int shapeIndex);
 
-	// Ignoring FillRule of parent abstract type
-	// Ignoring FontFamily of parent abstract type
+	// FillRule accessor from parent Shape
+	FillRule getLineFillRule(int ROIIndex, int shapeIndex);
+
+	// FontFamily accessor from parent Shape
+	FontFamily getLineFontFamily(int ROIIndex, int shapeIndex);
+
 	// FontSize accessor from parent Shape
 	NonNegativeInteger getLineFontSize(int ROIIndex, int shapeIndex);
 
-	// Ignoring FontStyle of parent abstract type
+	// FontStyle accessor from parent Shape
+	FontStyle getLineFontStyle(int ROIIndex, int shapeIndex);
+
 	// ID accessor from parent Shape
 	String getLineID(int ROIIndex, int shapeIndex);
 
-	// Label accessor from parent Shape
-	String getLineLabel(int ROIIndex, int shapeIndex);
-
+	// Ignoring Label of parent abstract type
 	// Ignoring Line of parent abstract type
-	// Ignoring LineCap of parent abstract type
-	// Ignoring MarkerEnd of parent abstract type
-	// Ignoring MarkerStart of parent abstract type
-	// Ignoring Mask of parent abstract type
-	// Name accessor from parent Shape
-	String getLineName(int ROIIndex, int shapeIndex);
+	// LineCap accessor from parent Shape
+	LineCap getLineLineCap(int ROIIndex, int shapeIndex);
 
-	// Ignoring Path of parent abstract type
+	// Locked accessor from parent Shape
+	Boolean getLineLocked(int ROIIndex, int shapeIndex);
+
+	// Ignoring Mask of parent abstract type
 	// Ignoring Point of parent abstract type
+	// Ignoring Polygon of parent abstract type
 	// Ignoring Polyline of parent abstract type
 	// Ignoring Rectangle of parent abstract type
-	// Stroke accessor from parent Shape
-	Integer getLineStroke(int ROIIndex, int shapeIndex);
+	// StrokeColor accessor from parent Shape
+	Color getLineStrokeColor(int ROIIndex, int shapeIndex);
 
 	// StrokeDashArray accessor from parent Shape
 	String getLineStrokeDashArray(int ROIIndex, int shapeIndex);
@@ -1166,7 +1239,9 @@ public interface MetadataRetrieve {
 	// StrokeWidth accessor from parent Shape
 	Double getLineStrokeWidth(int ROIIndex, int shapeIndex);
 
-	// Ignoring Text of parent abstract type
+	// Text accessor from parent Shape
+	String getLineText(int ROIIndex, int shapeIndex);
+
 	// TheC accessor from parent Shape
 	NonNegativeInteger getLineTheC(int ROIIndex, int shapeIndex);
 
@@ -1177,7 +1252,14 @@ public interface MetadataRetrieve {
 	NonNegativeInteger getLineTheZ(int ROIIndex, int shapeIndex);
 
 	// Transform accessor from parent Shape
-	String getLineTransform(int ROIIndex, int shapeIndex);
+	AffineTransform getLineTransform(int ROIIndex, int shapeIndex);
+
+	// Visible accessor from parent Shape
+	Boolean getLineVisible(int ROIIndex, int shapeIndex);
+
+	Marker getLineMarkerEnd(int ROIIndex, int shapeIndex);
+
+	Marker getLineMarkerStart(int ROIIndex, int shapeIndex);
 
 	Double getLineX1(int ROIIndex, int shapeIndex);
 
@@ -1199,6 +1281,7 @@ public interface MetadataRetrieve {
 	// Ignoring Dataset_BackReference back reference
 	String getListAnnotationDescription(int listAnnotationIndex);
 
+	// Ignoring ExperimenterGroup_BackReference back reference
 	// Ignoring Experimenter_BackReference back reference
 	String getListAnnotationID(int listAnnotationIndex);
 
@@ -1213,6 +1296,7 @@ public interface MetadataRetrieve {
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	// Ignoring WellSample_BackReference back reference
 	// Ignoring Well_BackReference back reference
 	//
@@ -1227,6 +1311,7 @@ public interface MetadataRetrieve {
 	// Ignoring Dataset_BackReference back reference
 	String getLongAnnotationDescription(int longAnnotationIndex);
 
+	// Ignoring ExperimenterGroup_BackReference back reference
 	// Ignoring Experimenter_BackReference back reference
 	String getLongAnnotationID(int longAnnotationIndex);
 
@@ -1241,6 +1326,7 @@ public interface MetadataRetrieve {
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	Long getLongAnnotationValue(int longAnnotationIndex);
 
 	// Ignoring WellSample_BackReference back reference
@@ -1251,39 +1337,40 @@ public interface MetadataRetrieve {
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
-	// Description accessor from parent Shape
-	String getMaskDescription(int ROIIndex, int shapeIndex);
-
 	// Ignoring Ellipse of parent abstract type
-	// Fill accessor from parent Shape
-	Integer getMaskFill(int ROIIndex, int shapeIndex);
+	// FillColor accessor from parent Shape
+	Color getMaskFillColor(int ROIIndex, int shapeIndex);
 
-	// Ignoring FillRule of parent abstract type
-	// Ignoring FontFamily of parent abstract type
+	// FillRule accessor from parent Shape
+	FillRule getMaskFillRule(int ROIIndex, int shapeIndex);
+
+	// FontFamily accessor from parent Shape
+	FontFamily getMaskFontFamily(int ROIIndex, int shapeIndex);
+
 	// FontSize accessor from parent Shape
 	NonNegativeInteger getMaskFontSize(int ROIIndex, int shapeIndex);
 
-	// Ignoring FontStyle of parent abstract type
+	// FontStyle accessor from parent Shape
+	FontStyle getMaskFontStyle(int ROIIndex, int shapeIndex);
+
 	// ID accessor from parent Shape
 	String getMaskID(int ROIIndex, int shapeIndex);
 
-	// Label accessor from parent Shape
-	String getMaskLabel(int ROIIndex, int shapeIndex);
-
+	// Ignoring Label of parent abstract type
 	// Ignoring Line of parent abstract type
-	// Ignoring LineCap of parent abstract type
-	// Ignoring MarkerEnd of parent abstract type
-	// Ignoring MarkerStart of parent abstract type
-	// Ignoring Mask of parent abstract type
-	// Name accessor from parent Shape
-	String getMaskName(int ROIIndex, int shapeIndex);
+	// LineCap accessor from parent Shape
+	LineCap getMaskLineCap(int ROIIndex, int shapeIndex);
 
-	// Ignoring Path of parent abstract type
+	// Locked accessor from parent Shape
+	Boolean getMaskLocked(int ROIIndex, int shapeIndex);
+
+	// Ignoring Mask of parent abstract type
 	// Ignoring Point of parent abstract type
+	// Ignoring Polygon of parent abstract type
 	// Ignoring Polyline of parent abstract type
 	// Ignoring Rectangle of parent abstract type
-	// Stroke accessor from parent Shape
-	Integer getMaskStroke(int ROIIndex, int shapeIndex);
+	// StrokeColor accessor from parent Shape
+	Color getMaskStrokeColor(int ROIIndex, int shapeIndex);
 
 	// StrokeDashArray accessor from parent Shape
 	String getMaskStrokeDashArray(int ROIIndex, int shapeIndex);
@@ -1291,7 +1378,9 @@ public interface MetadataRetrieve {
 	// StrokeWidth accessor from parent Shape
 	Double getMaskStrokeWidth(int ROIIndex, int shapeIndex);
 
-	// Ignoring Text of parent abstract type
+	// Text accessor from parent Shape
+	String getMaskText(int ROIIndex, int shapeIndex);
+
 	// TheC accessor from parent Shape
 	NonNegativeInteger getMaskTheC(int ROIIndex, int shapeIndex);
 
@@ -1302,7 +1391,10 @@ public interface MetadataRetrieve {
 	NonNegativeInteger getMaskTheZ(int ROIIndex, int shapeIndex);
 
 	// Transform accessor from parent Shape
-	String getMaskTransform(int ROIIndex, int shapeIndex);
+	AffineTransform getMaskTransform(int ROIIndex, int shapeIndex);
+
+	// Visible accessor from parent Shape
+	Boolean getMaskVisible(int ROIIndex, int shapeIndex);
 
 	// Ignoring BinData element, complex property
 	Double getMaskHeight(int ROIIndex, int shapeIndex);
@@ -1327,6 +1419,7 @@ public interface MetadataRetrieve {
 
 	String getMicrobeamManipulationDescription(int experimentIndex, int microbeamManipulationIndex);
 
+	// Ignoring Experiment_BackReference back reference
 	String getMicrobeamManipulationExperimenterRef(int experimentIndex, int microbeamManipulationIndex);
 
 	String getMicrobeamManipulationID(int experimentIndex, int microbeamManipulationIndex);
@@ -1364,37 +1457,6 @@ public interface MetadataRetrieve {
 	MicroscopeType getMicroscopeType(int instrumentIndex);
 
 	//
-	// OTF property storage
-	//
-	// {u'Instrument': {u'OME': None}}
-	// Is multi path? False
-
-	// Ignoring BinaryFile element, complex property
-	// Ignoring Channel_BackReference back reference
-	String getOTFFilterSetRef(int instrumentIndex, int OTFIndex);
-
-	String getOTFID(int instrumentIndex, int OTFIndex);
-
-	// Ignoring ObjectiveSettings element, complex property
-	Boolean getOTFOpticalAxisAveraged(int instrumentIndex, int OTFIndex);
-
-	PositiveInteger getOTFSizeX(int instrumentIndex, int OTFIndex);
-
-	PositiveInteger getOTFSizeY(int instrumentIndex, int OTFIndex);
-
-	PixelType getOTFType(int instrumentIndex, int OTFIndex);
-
-	//
-	// OTFRef property storage
-	//
-	// {u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
-	// Is multi path? False
-
-	// 1:1
-	// Is multi path? False
-	// Ignoring ID property of reference OTFRef
-
-	//
 	// Objective property storage
 	//
 	// {u'Instrument': {u'OME': None}}
@@ -1408,6 +1470,7 @@ public interface MetadataRetrieve {
 
 	Immersion getObjectiveImmersion(int instrumentIndex, int objectiveIndex);
 
+	// Ignoring Instrument_BackReference back reference
 	Boolean getObjectiveIris(int instrumentIndex, int objectiveIndex);
 
 	Double getObjectiveLensNA(int instrumentIndex, int objectiveIndex);
@@ -1427,85 +1490,17 @@ public interface MetadataRetrieve {
 	//
 	// ObjectiveSettings property storage
 	//
-	// {u'Image': {u'OME': None}, u'OTF': {u'Instrument': {u'OME': None}}}
-	// Is multi path? True
-
-	Double getImageObjectiveSettingsCorrectionCollar(int imageIndex);
-
-	Double getOTFObjectiveSettingsCorrectionCollar(int instrumentIndex, int OTFIndex);
-
-	String getImageObjectiveSettingsID(int imageIndex);
-
-	String getOTFObjectiveSettingsID(int instrumentIndex, int OTFIndex);
-
-	Medium getImageObjectiveSettingsMedium(int imageIndex);
-
-	Medium getOTFObjectiveSettingsMedium(int instrumentIndex, int OTFIndex);
-
-	Double getImageObjectiveSettingsRefractiveIndex(int imageIndex);
-
-	Double getOTFObjectiveSettingsRefractiveIndex(int instrumentIndex, int OTFIndex);
-
-	//
-	// Path property storage
-	//
-	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+	// {u'Image': {u'OME': None}}
 	// Is multi path? False
 
-	// Description accessor from parent Shape
-	String getPathDescription(int ROIIndex, int shapeIndex);
+	Double getObjectiveSettingsCorrectionCollar(int imageIndex);
 
-	// Ignoring Ellipse of parent abstract type
-	// Fill accessor from parent Shape
-	Integer getPathFill(int ROIIndex, int shapeIndex);
+	String getObjectiveSettingsID(int imageIndex);
 
-	// Ignoring FillRule of parent abstract type
-	// Ignoring FontFamily of parent abstract type
-	// FontSize accessor from parent Shape
-	NonNegativeInteger getPathFontSize(int ROIIndex, int shapeIndex);
+	Medium getObjectiveSettingsMedium(int imageIndex);
 
-	// Ignoring FontStyle of parent abstract type
-	// ID accessor from parent Shape
-	String getPathID(int ROIIndex, int shapeIndex);
-
-	// Label accessor from parent Shape
-	String getPathLabel(int ROIIndex, int shapeIndex);
-
-	// Ignoring Line of parent abstract type
-	// Ignoring LineCap of parent abstract type
-	// Ignoring MarkerEnd of parent abstract type
-	// Ignoring MarkerStart of parent abstract type
-	// Ignoring Mask of parent abstract type
-	// Name accessor from parent Shape
-	String getPathName(int ROIIndex, int shapeIndex);
-
-	// Ignoring Path of parent abstract type
-	// Ignoring Point of parent abstract type
-	// Ignoring Polyline of parent abstract type
-	// Ignoring Rectangle of parent abstract type
-	// Stroke accessor from parent Shape
-	Integer getPathStroke(int ROIIndex, int shapeIndex);
-
-	// StrokeDashArray accessor from parent Shape
-	String getPathStrokeDashArray(int ROIIndex, int shapeIndex);
-
-	// StrokeWidth accessor from parent Shape
-	Double getPathStrokeWidth(int ROIIndex, int shapeIndex);
-
-	// Ignoring Text of parent abstract type
-	// TheC accessor from parent Shape
-	NonNegativeInteger getPathTheC(int ROIIndex, int shapeIndex);
-
-	// TheT accessor from parent Shape
-	NonNegativeInteger getPathTheT(int ROIIndex, int shapeIndex);
-
-	// TheZ accessor from parent Shape
-	NonNegativeInteger getPathTheZ(int ROIIndex, int shapeIndex);
-
-	// Transform accessor from parent Shape
-	String getPathTransform(int ROIIndex, int shapeIndex);
-
-	String getPathDefinition(int ROIIndex, int shapeIndex);
+	// Ignoring ObjectiveRef back reference
+	Double getObjectiveSettingsRefractiveIndex(int imageIndex);
 
 	//
 	// Pixels property storage
@@ -1558,6 +1553,7 @@ public interface MetadataRetrieve {
 
 	String getPlaneHashSHA1(int imageIndex, int planeIndex);
 
+	// Ignoring Pixels_BackReference back reference
 	Double getPlanePositionX(int imageIndex, int planeIndex);
 
 	Double getPlanePositionY(int imageIndex, int planeIndex);
@@ -1586,6 +1582,8 @@ public interface MetadataRetrieve {
 
 	String getPlateExternalIdentifier(int plateIndex);
 
+	NonNegativeInteger getPlateFieldIndex(int plateIndex);
+
 	String getPlateID(int plateIndex);
 
 	String getPlateName(int plateIndex);
@@ -1595,8 +1593,7 @@ public interface MetadataRetrieve {
 
 	PositiveInteger getPlateRows(int plateIndex);
 
-	String getPlateScreenRef(int plateIndex, int screenRefIndex);
-
+	// Ignoring Screen_BackReference back reference
 	String getPlateStatus(int plateIndex);
 
 	// Ignoring Well element, complex property
@@ -1614,7 +1611,7 @@ public interface MetadataRetrieve {
 
 	String getPlateAcquisitionDescription(int plateIndex, int plateAcquisitionIndex);
 
-	String getPlateAcquisitionEndTime(int plateIndex, int plateAcquisitionIndex);
+	Timestamp getPlateAcquisitionEndTime(int plateIndex, int plateAcquisitionIndex);
 
 	String getPlateAcquisitionID(int plateIndex, int plateAcquisitionIndex);
 
@@ -1622,7 +1619,8 @@ public interface MetadataRetrieve {
 
 	String getPlateAcquisitionName(int plateIndex, int plateAcquisitionIndex);
 
-	String getPlateAcquisitionStartTime(int plateIndex, int plateAcquisitionIndex);
+	// Ignoring Plate_BackReference back reference
+	Timestamp getPlateAcquisitionStartTime(int plateIndex, int plateAcquisitionIndex);
 
 	String getPlateAcquisitionWellSampleRef(int plateIndex, int plateAcquisitionIndex, int wellSampleRefIndex);
 
@@ -1642,39 +1640,40 @@ public interface MetadataRetrieve {
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
-	// Description accessor from parent Shape
-	String getPointDescription(int ROIIndex, int shapeIndex);
-
 	// Ignoring Ellipse of parent abstract type
-	// Fill accessor from parent Shape
-	Integer getPointFill(int ROIIndex, int shapeIndex);
+	// FillColor accessor from parent Shape
+	Color getPointFillColor(int ROIIndex, int shapeIndex);
 
-	// Ignoring FillRule of parent abstract type
-	// Ignoring FontFamily of parent abstract type
+	// FillRule accessor from parent Shape
+	FillRule getPointFillRule(int ROIIndex, int shapeIndex);
+
+	// FontFamily accessor from parent Shape
+	FontFamily getPointFontFamily(int ROIIndex, int shapeIndex);
+
 	// FontSize accessor from parent Shape
 	NonNegativeInteger getPointFontSize(int ROIIndex, int shapeIndex);
 
-	// Ignoring FontStyle of parent abstract type
+	// FontStyle accessor from parent Shape
+	FontStyle getPointFontStyle(int ROIIndex, int shapeIndex);
+
 	// ID accessor from parent Shape
 	String getPointID(int ROIIndex, int shapeIndex);
 
-	// Label accessor from parent Shape
-	String getPointLabel(int ROIIndex, int shapeIndex);
-
+	// Ignoring Label of parent abstract type
 	// Ignoring Line of parent abstract type
-	// Ignoring LineCap of parent abstract type
-	// Ignoring MarkerEnd of parent abstract type
-	// Ignoring MarkerStart of parent abstract type
-	// Ignoring Mask of parent abstract type
-	// Name accessor from parent Shape
-	String getPointName(int ROIIndex, int shapeIndex);
+	// LineCap accessor from parent Shape
+	LineCap getPointLineCap(int ROIIndex, int shapeIndex);
 
-	// Ignoring Path of parent abstract type
+	// Locked accessor from parent Shape
+	Boolean getPointLocked(int ROIIndex, int shapeIndex);
+
+	// Ignoring Mask of parent abstract type
 	// Ignoring Point of parent abstract type
+	// Ignoring Polygon of parent abstract type
 	// Ignoring Polyline of parent abstract type
 	// Ignoring Rectangle of parent abstract type
-	// Stroke accessor from parent Shape
-	Integer getPointStroke(int ROIIndex, int shapeIndex);
+	// StrokeColor accessor from parent Shape
+	Color getPointStrokeColor(int ROIIndex, int shapeIndex);
 
 	// StrokeDashArray accessor from parent Shape
 	String getPointStrokeDashArray(int ROIIndex, int shapeIndex);
@@ -1682,7 +1681,9 @@ public interface MetadataRetrieve {
 	// StrokeWidth accessor from parent Shape
 	Double getPointStrokeWidth(int ROIIndex, int shapeIndex);
 
-	// Ignoring Text of parent abstract type
+	// Text accessor from parent Shape
+	String getPointText(int ROIIndex, int shapeIndex);
+
 	// TheC accessor from parent Shape
 	NonNegativeInteger getPointTheC(int ROIIndex, int shapeIndex);
 
@@ -1693,11 +1694,81 @@ public interface MetadataRetrieve {
 	NonNegativeInteger getPointTheZ(int ROIIndex, int shapeIndex);
 
 	// Transform accessor from parent Shape
-	String getPointTransform(int ROIIndex, int shapeIndex);
+	AffineTransform getPointTransform(int ROIIndex, int shapeIndex);
+
+	// Visible accessor from parent Shape
+	Boolean getPointVisible(int ROIIndex, int shapeIndex);
 
 	Double getPointX(int ROIIndex, int shapeIndex);
 
 	Double getPointY(int ROIIndex, int shapeIndex);
+
+	//
+	// Polygon property storage
+	//
+	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+	// Is multi path? False
+
+	// Ignoring Ellipse of parent abstract type
+	// FillColor accessor from parent Shape
+	Color getPolygonFillColor(int ROIIndex, int shapeIndex);
+
+	// FillRule accessor from parent Shape
+	FillRule getPolygonFillRule(int ROIIndex, int shapeIndex);
+
+	// FontFamily accessor from parent Shape
+	FontFamily getPolygonFontFamily(int ROIIndex, int shapeIndex);
+
+	// FontSize accessor from parent Shape
+	NonNegativeInteger getPolygonFontSize(int ROIIndex, int shapeIndex);
+
+	// FontStyle accessor from parent Shape
+	FontStyle getPolygonFontStyle(int ROIIndex, int shapeIndex);
+
+	// ID accessor from parent Shape
+	String getPolygonID(int ROIIndex, int shapeIndex);
+
+	// Ignoring Label of parent abstract type
+	// Ignoring Line of parent abstract type
+	// LineCap accessor from parent Shape
+	LineCap getPolygonLineCap(int ROIIndex, int shapeIndex);
+
+	// Locked accessor from parent Shape
+	Boolean getPolygonLocked(int ROIIndex, int shapeIndex);
+
+	// Ignoring Mask of parent abstract type
+	// Ignoring Point of parent abstract type
+	// Ignoring Polygon of parent abstract type
+	// Ignoring Polyline of parent abstract type
+	// Ignoring Rectangle of parent abstract type
+	// StrokeColor accessor from parent Shape
+	Color getPolygonStrokeColor(int ROIIndex, int shapeIndex);
+
+	// StrokeDashArray accessor from parent Shape
+	String getPolygonStrokeDashArray(int ROIIndex, int shapeIndex);
+
+	// StrokeWidth accessor from parent Shape
+	Double getPolygonStrokeWidth(int ROIIndex, int shapeIndex);
+
+	// Text accessor from parent Shape
+	String getPolygonText(int ROIIndex, int shapeIndex);
+
+	// TheC accessor from parent Shape
+	NonNegativeInteger getPolygonTheC(int ROIIndex, int shapeIndex);
+
+	// TheT accessor from parent Shape
+	NonNegativeInteger getPolygonTheT(int ROIIndex, int shapeIndex);
+
+	// TheZ accessor from parent Shape
+	NonNegativeInteger getPolygonTheZ(int ROIIndex, int shapeIndex);
+
+	// Transform accessor from parent Shape
+	AffineTransform getPolygonTransform(int ROIIndex, int shapeIndex);
+
+	// Visible accessor from parent Shape
+	Boolean getPolygonVisible(int ROIIndex, int shapeIndex);
+
+	String getPolygonPoints(int ROIIndex, int shapeIndex);
 
 	//
 	// Polyline property storage
@@ -1705,39 +1776,40 @@ public interface MetadataRetrieve {
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
-	// Description accessor from parent Shape
-	String getPolylineDescription(int ROIIndex, int shapeIndex);
-
 	// Ignoring Ellipse of parent abstract type
-	// Fill accessor from parent Shape
-	Integer getPolylineFill(int ROIIndex, int shapeIndex);
+	// FillColor accessor from parent Shape
+	Color getPolylineFillColor(int ROIIndex, int shapeIndex);
 
-	// Ignoring FillRule of parent abstract type
-	// Ignoring FontFamily of parent abstract type
+	// FillRule accessor from parent Shape
+	FillRule getPolylineFillRule(int ROIIndex, int shapeIndex);
+
+	// FontFamily accessor from parent Shape
+	FontFamily getPolylineFontFamily(int ROIIndex, int shapeIndex);
+
 	// FontSize accessor from parent Shape
 	NonNegativeInteger getPolylineFontSize(int ROIIndex, int shapeIndex);
 
-	// Ignoring FontStyle of parent abstract type
+	// FontStyle accessor from parent Shape
+	FontStyle getPolylineFontStyle(int ROIIndex, int shapeIndex);
+
 	// ID accessor from parent Shape
 	String getPolylineID(int ROIIndex, int shapeIndex);
 
-	// Label accessor from parent Shape
-	String getPolylineLabel(int ROIIndex, int shapeIndex);
-
+	// Ignoring Label of parent abstract type
 	// Ignoring Line of parent abstract type
-	// Ignoring LineCap of parent abstract type
-	// Ignoring MarkerEnd of parent abstract type
-	// Ignoring MarkerStart of parent abstract type
-	// Ignoring Mask of parent abstract type
-	// Name accessor from parent Shape
-	String getPolylineName(int ROIIndex, int shapeIndex);
+	// LineCap accessor from parent Shape
+	LineCap getPolylineLineCap(int ROIIndex, int shapeIndex);
 
-	// Ignoring Path of parent abstract type
+	// Locked accessor from parent Shape
+	Boolean getPolylineLocked(int ROIIndex, int shapeIndex);
+
+	// Ignoring Mask of parent abstract type
 	// Ignoring Point of parent abstract type
+	// Ignoring Polygon of parent abstract type
 	// Ignoring Polyline of parent abstract type
 	// Ignoring Rectangle of parent abstract type
-	// Stroke accessor from parent Shape
-	Integer getPolylineStroke(int ROIIndex, int shapeIndex);
+	// StrokeColor accessor from parent Shape
+	Color getPolylineStrokeColor(int ROIIndex, int shapeIndex);
 
 	// StrokeDashArray accessor from parent Shape
 	String getPolylineStrokeDashArray(int ROIIndex, int shapeIndex);
@@ -1745,7 +1817,9 @@ public interface MetadataRetrieve {
 	// StrokeWidth accessor from parent Shape
 	Double getPolylineStrokeWidth(int ROIIndex, int shapeIndex);
 
-	// Ignoring Text of parent abstract type
+	// Text accessor from parent Shape
+	String getPolylineText(int ROIIndex, int shapeIndex);
+
 	// TheC accessor from parent Shape
 	NonNegativeInteger getPolylineTheC(int ROIIndex, int shapeIndex);
 
@@ -1756,9 +1830,14 @@ public interface MetadataRetrieve {
 	NonNegativeInteger getPolylineTheZ(int ROIIndex, int shapeIndex);
 
 	// Transform accessor from parent Shape
-	String getPolylineTransform(int ROIIndex, int shapeIndex);
+	AffineTransform getPolylineTransform(int ROIIndex, int shapeIndex);
 
-	Boolean getPolylineClosed(int ROIIndex, int shapeIndex);
+	// Visible accessor from parent Shape
+	Boolean getPolylineVisible(int ROIIndex, int shapeIndex);
+
+	Marker getPolylineMarkerEnd(int ROIIndex, int shapeIndex);
+
+	Marker getPolylineMarkerStart(int ROIIndex, int shapeIndex);
 
 	String getPolylinePoints(int ROIIndex, int shapeIndex);
 
@@ -1770,26 +1849,17 @@ public interface MetadataRetrieve {
 
 	String getProjectAnnotationRef(int projectIndex, int annotationRefIndex);
 
-	// Ignoring Dataset_BackReference back reference
+	String getProjectDatasetRef(int projectIndex, int datasetRefIndex);
+
 	String getProjectDescription(int projectIndex);
 
-	String getProjectExperimenterRef(int projectIndex);
+	String getProjectExperimenterGroupRef(int projectIndex);
 
-	String getProjectGroupRef(int projectIndex);
+	String getProjectExperimenterRef(int projectIndex);
 
 	String getProjectID(int projectIndex);
 
 	String getProjectName(int projectIndex);
-
-	//
-	// ProjectRef property storage
-	//
-	// {u'Dataset': {u'OME': None}}
-	// Is multi path? False
-
-	// 1:1
-	// Is multi path? False
-	// Ignoring ID property of reference ProjectRef
 
 	//
 	// Pump property storage
@@ -1800,6 +1870,10 @@ public interface MetadataRetrieve {
 	// 1:1
 	// Is multi path? False
 	// Ignoring ID property of reference Pump
+
+	// 0:9999
+	// Is multi path? False
+	// Ignoring Laser_BackReference property of reference Pump
 
 	//
 	// ROI property storage
@@ -1846,6 +1920,7 @@ public interface MetadataRetrieve {
 
 	String getReagentReagentIdentifier(int screenIndex, int reagentIndex);
 
+	// Ignoring Screen_BackReference back reference
 	// Ignoring Well_BackReference back reference
 	//
 	// ReagentRef property storage
@@ -1863,39 +1938,40 @@ public interface MetadataRetrieve {
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
-	// Description accessor from parent Shape
-	String getRectangleDescription(int ROIIndex, int shapeIndex);
-
 	// Ignoring Ellipse of parent abstract type
-	// Fill accessor from parent Shape
-	Integer getRectangleFill(int ROIIndex, int shapeIndex);
+	// FillColor accessor from parent Shape
+	Color getRectangleFillColor(int ROIIndex, int shapeIndex);
 
-	// Ignoring FillRule of parent abstract type
-	// Ignoring FontFamily of parent abstract type
+	// FillRule accessor from parent Shape
+	FillRule getRectangleFillRule(int ROIIndex, int shapeIndex);
+
+	// FontFamily accessor from parent Shape
+	FontFamily getRectangleFontFamily(int ROIIndex, int shapeIndex);
+
 	// FontSize accessor from parent Shape
 	NonNegativeInteger getRectangleFontSize(int ROIIndex, int shapeIndex);
 
-	// Ignoring FontStyle of parent abstract type
+	// FontStyle accessor from parent Shape
+	FontStyle getRectangleFontStyle(int ROIIndex, int shapeIndex);
+
 	// ID accessor from parent Shape
 	String getRectangleID(int ROIIndex, int shapeIndex);
 
-	// Label accessor from parent Shape
-	String getRectangleLabel(int ROIIndex, int shapeIndex);
-
+	// Ignoring Label of parent abstract type
 	// Ignoring Line of parent abstract type
-	// Ignoring LineCap of parent abstract type
-	// Ignoring MarkerEnd of parent abstract type
-	// Ignoring MarkerStart of parent abstract type
-	// Ignoring Mask of parent abstract type
-	// Name accessor from parent Shape
-	String getRectangleName(int ROIIndex, int shapeIndex);
+	// LineCap accessor from parent Shape
+	LineCap getRectangleLineCap(int ROIIndex, int shapeIndex);
 
-	// Ignoring Path of parent abstract type
+	// Locked accessor from parent Shape
+	Boolean getRectangleLocked(int ROIIndex, int shapeIndex);
+
+	// Ignoring Mask of parent abstract type
 	// Ignoring Point of parent abstract type
+	// Ignoring Polygon of parent abstract type
 	// Ignoring Polyline of parent abstract type
 	// Ignoring Rectangle of parent abstract type
-	// Stroke accessor from parent Shape
-	Integer getRectangleStroke(int ROIIndex, int shapeIndex);
+	// StrokeColor accessor from parent Shape
+	Color getRectangleStrokeColor(int ROIIndex, int shapeIndex);
 
 	// StrokeDashArray accessor from parent Shape
 	String getRectangleStrokeDashArray(int ROIIndex, int shapeIndex);
@@ -1903,7 +1979,9 @@ public interface MetadataRetrieve {
 	// StrokeWidth accessor from parent Shape
 	Double getRectangleStrokeWidth(int ROIIndex, int shapeIndex);
 
-	// Ignoring Text of parent abstract type
+	// Text accessor from parent Shape
+	String getRectangleText(int ROIIndex, int shapeIndex);
+
 	// TheC accessor from parent Shape
 	NonNegativeInteger getRectangleTheC(int ROIIndex, int shapeIndex);
 
@@ -1914,7 +1992,10 @@ public interface MetadataRetrieve {
 	NonNegativeInteger getRectangleTheZ(int ROIIndex, int shapeIndex);
 
 	// Transform accessor from parent Shape
-	String getRectangleTransform(int ROIIndex, int shapeIndex);
+	AffineTransform getRectangleTransform(int ROIIndex, int shapeIndex);
+
+	// Visible accessor from parent Shape
+	Boolean getRectangleVisible(int ROIIndex, int shapeIndex);
 
 	Double getRectangleHeight(int ROIIndex, int shapeIndex);
 
@@ -1950,16 +2031,6 @@ public interface MetadataRetrieve {
 	String getScreenReagentSetIdentifier(int screenIndex);
 
 	String getScreenType(int screenIndex);
-
-	//
-	// ScreenRef property storage
-	//
-	// {u'Plate': {u'OME': None}}
-	// Is multi path? False
-
-	// 1:1
-	// Is multi path? False
-	// Ignoring ID property of reference ScreenRef
 
 	//
 	// StageLabel property storage
@@ -2003,6 +2074,7 @@ public interface MetadataRetrieve {
 	// Ignoring Dataset_BackReference back reference
 	String getTagAnnotationDescription(int tagAnnotationIndex);
 
+	// Ignoring ExperimenterGroup_BackReference back reference
 	// Ignoring Experimenter_BackReference back reference
 	String getTagAnnotationID(int tagAnnotationIndex);
 
@@ -2017,6 +2089,7 @@ public interface MetadataRetrieve {
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	String getTagAnnotationValue(int tagAnnotationIndex);
 
 	// Ignoring WellSample_BackReference back reference
@@ -2033,6 +2106,7 @@ public interface MetadataRetrieve {
 	// Ignoring Dataset_BackReference back reference
 	String getTermAnnotationDescription(int termAnnotationIndex);
 
+	// Ignoring ExperimenterGroup_BackReference back reference
 	// Ignoring Experimenter_BackReference back reference
 	String getTermAnnotationID(int termAnnotationIndex);
 
@@ -2047,75 +2121,11 @@ public interface MetadataRetrieve {
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	String getTermAnnotationValue(int termAnnotationIndex);
 
 	// Ignoring WellSample_BackReference back reference
 	// Ignoring Well_BackReference back reference
-	//
-	// Text property storage
-	//
-	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-	// Is multi path? False
-
-	// Description accessor from parent Shape
-	String getTextDescription(int ROIIndex, int shapeIndex);
-
-	// Ignoring Ellipse of parent abstract type
-	// Fill accessor from parent Shape
-	Integer getTextFill(int ROIIndex, int shapeIndex);
-
-	// Ignoring FillRule of parent abstract type
-	// Ignoring FontFamily of parent abstract type
-	// FontSize accessor from parent Shape
-	NonNegativeInteger getTextFontSize(int ROIIndex, int shapeIndex);
-
-	// Ignoring FontStyle of parent abstract type
-	// ID accessor from parent Shape
-	String getTextID(int ROIIndex, int shapeIndex);
-
-	// Label accessor from parent Shape
-	String getTextLabel(int ROIIndex, int shapeIndex);
-
-	// Ignoring Line of parent abstract type
-	// Ignoring LineCap of parent abstract type
-	// Ignoring MarkerEnd of parent abstract type
-	// Ignoring MarkerStart of parent abstract type
-	// Ignoring Mask of parent abstract type
-	// Name accessor from parent Shape
-	String getTextName(int ROIIndex, int shapeIndex);
-
-	// Ignoring Path of parent abstract type
-	// Ignoring Point of parent abstract type
-	// Ignoring Polyline of parent abstract type
-	// Ignoring Rectangle of parent abstract type
-	// Stroke accessor from parent Shape
-	Integer getTextStroke(int ROIIndex, int shapeIndex);
-
-	// StrokeDashArray accessor from parent Shape
-	String getTextStrokeDashArray(int ROIIndex, int shapeIndex);
-
-	// StrokeWidth accessor from parent Shape
-	Double getTextStrokeWidth(int ROIIndex, int shapeIndex);
-
-	// Ignoring Text of parent abstract type
-	// TheC accessor from parent Shape
-	NonNegativeInteger getTextTheC(int ROIIndex, int shapeIndex);
-
-	// TheT accessor from parent Shape
-	NonNegativeInteger getTextTheT(int ROIIndex, int shapeIndex);
-
-	// TheZ accessor from parent Shape
-	NonNegativeInteger getTextTheZ(int ROIIndex, int shapeIndex);
-
-	// Transform accessor from parent Shape
-	String getTextTransform(int ROIIndex, int shapeIndex);
-
-	String getTextValue(int ROIIndex, int shapeIndex);
-
-	Double getTextX(int ROIIndex, int shapeIndex);
-
-	Double getTextY(int ROIIndex, int shapeIndex);
-
 	//
 	// TiffData property storage
 	//
@@ -2130,6 +2140,7 @@ public interface MetadataRetrieve {
 
 	NonNegativeInteger getTiffDataIFD(int imageIndex, int tiffDataIndex);
 
+	// Ignoring Pixels_BackReference back reference
 	NonNegativeInteger getTiffDataPlaneCount(int imageIndex, int tiffDataIndex);
 
 	// Ignoring UUID element, complex property
@@ -2145,6 +2156,7 @@ public interface MetadataRetrieve {
 	// Ignoring Dataset_BackReference back reference
 	String getTimestampAnnotationDescription(int timestampAnnotationIndex);
 
+	// Ignoring ExperimenterGroup_BackReference back reference
 	// Ignoring Experimenter_BackReference back reference
 	String getTimestampAnnotationID(int timestampAnnotationIndex);
 
@@ -2159,7 +2171,8 @@ public interface MetadataRetrieve {
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
-	String getTimestampAnnotationValue(int timestampAnnotationIndex);
+	// Ignoring StructuredAnnotations_BackReference back reference
+	Timestamp getTimestampAnnotationValue(int timestampAnnotationIndex);
 
 	// Ignoring WellSample_BackReference back reference
 	// Ignoring Well_BackReference back reference
@@ -2202,7 +2215,7 @@ public interface MetadataRetrieve {
 
 	String getWellAnnotationRef(int plateIndex, int wellIndex, int annotationRefIndex);
 
-	Integer getWellColor(int plateIndex, int wellIndex);
+	Color getWellColor(int plateIndex, int wellIndex);
 
 	NonNegativeInteger getWellColumn(int plateIndex, int wellIndex);
 
@@ -2212,11 +2225,12 @@ public interface MetadataRetrieve {
 
 	String getWellID(int plateIndex, int wellIndex);
 
+	// Ignoring Plate_BackReference back reference
 	String getWellReagentRef(int plateIndex, int wellIndex);
 
 	NonNegativeInteger getWellRow(int plateIndex, int wellIndex);
 
-	String getWellStatus(int plateIndex, int wellIndex);
+	String getWellType(int plateIndex, int wellIndex);
 
 	// Ignoring WellSample element, complex property
 	//
@@ -2238,8 +2252,9 @@ public interface MetadataRetrieve {
 
 	Double getWellSamplePositionY(int plateIndex, int wellIndex, int wellSampleIndex);
 
-	String getWellSampleTimepoint(int plateIndex, int wellIndex, int wellSampleIndex);
+	Timestamp getWellSampleTimepoint(int plateIndex, int wellIndex, int wellSampleIndex);
 
+	// Ignoring Well_BackReference back reference
 	//
 	// WellSampleRef property storage
 	//
@@ -2262,6 +2277,7 @@ public interface MetadataRetrieve {
 	// Ignoring Dataset_BackReference back reference
 	String getXMLAnnotationDescription(int XMLAnnotationIndex);
 
+	// Ignoring ExperimenterGroup_BackReference back reference
 	// Ignoring Experimenter_BackReference back reference
 	String getXMLAnnotationID(int XMLAnnotationIndex);
 
@@ -2276,6 +2292,7 @@ public interface MetadataRetrieve {
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	String getXMLAnnotationValue(int XMLAnnotationIndex);
 
 	// Ignoring WellSample_BackReference back reference

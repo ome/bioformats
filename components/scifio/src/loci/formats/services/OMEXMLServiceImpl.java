@@ -128,6 +128,9 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
   private static final Templates UPDATE_201006 =
     XMLTools.getStylesheet("/loci/formats/meta/2010-06-to-2011-06.xsl",
     OMEXMLServiceImpl.class);
+  private static final Templates UPDATE_201106 =
+    XMLTools.getStylesheet("/loci/formats/meta/2011-06-to-2012-06.xsl",
+    OMEXMLServiceImpl.class);
 
   private static final String SCHEMA_PATH =
     "http://www.openmicroscopy.org/Schemas/OME/";
@@ -178,7 +181,8 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
       LOGGER.trace("At least 2008-09 dump: {}", transformed);
 
       if (!version.equals("2009-09") && !version.equals("2010-04") &&
-        !version.equals("2010-06"))
+        !version.equals("2010-06") && !version.equals("2011-06") &&
+        !version.equals("2012-06"))
       {
         transformed = verifyOMENamespace(transformed);
         LOGGER.debug("Running UPDATE_200809 stylesheet.");
@@ -186,7 +190,9 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
       }
       LOGGER.debug("XML updated to at least 2009-09");
       LOGGER.trace("At least 2009-09 dump: {}", transformed);
-      if (!version.equals("2010-04") && !version.equals("2010-06")) {
+      if (!version.equals("2010-04") && !version.equals("2010-06") &&
+        !version.equals("2011-06") && !version.equals("2012-06"))
+      {
         transformed = verifyOMENamespace(transformed);
         LOGGER.debug("Running UPDATE_200909 stylesheet.");
         transformed = XMLTools.transformXML(transformed, UPDATE_200909);
@@ -195,7 +201,9 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
       LOGGER.debug("XML updated to at least 2010-04");
       LOGGER.trace("At least 2010-04 dump: {}", transformed);
 
-      if (!version.equals("2010-06")) {
+      if (!version.equals("2010-06") && !version.equals("2011-06") &&
+        !version.equals("2012-06"))
+      {
         transformed = verifyOMENamespace(transformed);
         LOGGER.debug("Running UPDATE_201004 stylesheet.");
         transformed = XMLTools.transformXML(transformed, UPDATE_201004);
@@ -203,10 +211,21 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
       else transformed = xml;
       LOGGER.debug("XML updated to at least 2010-06");
 
-      transformed = verifyOMENamespace(transformed);
-      LOGGER.debug("Running UPDATE_201006 stylesheet.");
-      transformed = XMLTools.transformXML(transformed, UPDATE_201006);
+      if (!version.equals("2011-06") && !version.equals("2012-06")) {
+        transformed = verifyOMENamespace(transformed);
+        LOGGER.debug("Running UPDATE_201006 stylesheet.");
+        transformed = XMLTools.transformXML(transformed, UPDATE_201006);
+      }
+      else transformed = xml;
       LOGGER.debug("XML updated to at least 2011-06");
+
+      if (!version.equals("2012-06")) {
+        transformed = verifyOMENamespace(transformed);
+        LOGGER.debug("Running UPDATE_201106 stylesheet.");
+        transformed = XMLTools.transformXML(transformed, UPDATE_201106);
+      }
+      else transformed = xml;
+      LOGGER.debug("XML updated to at least 2012-06");
 
       // fix namespaces
       transformed = transformed.replaceAll("<ns.*?:", "<");
@@ -299,6 +318,9 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
         String namespace = e.getAttribute("xmlns");
         if (namespace == null || namespace.equals("")) {
           namespace = e.getAttribute("xmlns:ome");
+        }
+        if (namespace == null || namespace.equals("")) {
+          namespace = e.getAttribute("xmlns:OME");
         }
 
         return namespace.endsWith("ome.xsd") ? "2003-FC" :

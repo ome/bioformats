@@ -832,7 +832,7 @@ public final class FormatTools {
 
     filename = filename.replaceAll(CHANNEL_NAME, channelName);
 
-    String date = retrieve.getImageAcquiredDate(series);
+    String date = retrieve.getImageAcquisitionDate(series).getValue();
     long stamp = 0;
     if (retrieve.getPlaneCount(series) > image) {
       Double deltaT = retrieve.getPlaneDeltaT(series, image);

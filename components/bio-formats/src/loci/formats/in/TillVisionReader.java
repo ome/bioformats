@@ -35,6 +35,8 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import ome.xml.model.primitives.Timestamp;
+
 import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.DateTools;
@@ -533,7 +535,7 @@ public class TillVisionReader extends FormatReader {
       }
       String date = i < dates.size() ? dates.get(i) : "";
       if (date != null && !date.equals("")) {
-        store.setImageAcquiredDate(date, i);
+        store.setImageAcquisitionDate(new Timestamp(date), i);
       }
     }
 

@@ -39,7 +39,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-01-12 20:06:01-0500
+ * Created by callan via xsd-fu on 2012-05-18 10:08:16+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -66,7 +66,7 @@ public class BinaryFile extends AbstractOMEModelObject
 
 	// -- Constants --
 
-	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/BinaryFile/2011-06";
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/BinaryFile/2012-06";
 
 	/** Logger for this class. */
 	private static final Logger LOGGER =
@@ -76,7 +76,7 @@ public class BinaryFile extends AbstractOMEModelObject
 
 
 	// Property
-	private String mimetype;
+	private String mimeType;
 
 	// Property
 	private NonNegativeLong size;
@@ -206,12 +206,12 @@ public class BinaryFile extends AbstractOMEModelObject
 	// Property
 	public String getMIMEType()
 	{
-		return mimetype;
+		return mimeType;
 	}
 
-	public void setMIMEType(String mimetype)
+	public void setMIMEType(String mimeType)
 	{
-		this.mimetype = mimetype;
+		this.mimeType = mimeType;
 	}
 
 	// Property
@@ -273,10 +273,10 @@ public class BinaryFile extends AbstractOMEModelObject
 					document.createElementNS(NAMESPACE, "BinaryFile");
 		}
 
-		if (mimetype != null)
+		if (mimeType != null)
 		{
 			// Attribute property MIMEType
-			BinaryFile_element.setAttribute("MIMEType", mimetype.toString());
+			BinaryFile_element.setAttribute("MIMEType", mimeType.toString());
 		}
 		if (size != null)
 		{

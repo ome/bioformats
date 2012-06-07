@@ -35,6 +35,7 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import ome.xml.model.primitives.PositiveFloat;
+import ome.xml.model.primitives.Timestamp;
 
 /**
  * QuesantReader is the file format reader for Quesant .afm files.
@@ -119,7 +120,9 @@ public class QuesantReader extends FormatReader {
     MetadataTools.populatePixels(store, this);
     if (date != null) {
       date = DateTools.formatDate(date, "MMM dd yyyy HH:mm:ssSSS");
-      store.setImageAcquiredDate(date, 0);
+      if (date != null) {
+        store.setImageAcquisitionDate(new Timestamp(date), 0);
+      }
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {

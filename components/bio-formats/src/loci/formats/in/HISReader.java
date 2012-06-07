@@ -27,6 +27,8 @@ package loci.formats.in;
 
 import java.io.IOException;
 
+import ome.xml.model.primitives.Timestamp;
+
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
@@ -239,7 +241,9 @@ public class HISReader extends FormatReader {
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       for (int i=0; i<nSeries; i++) {
         store.setImageInstrumentRef(instrumentID, i);
-        store.setImageAcquiredDate(date[i], i);
+        if (date[i] != null) {
+          store.setImageAcquisitionDate(new Timestamp(date[i]), i);
+        }
 
         store.setPlaneExposureTime(exposureTime[i], i, 0);
 

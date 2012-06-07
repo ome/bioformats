@@ -50,7 +50,7 @@ package ome.xml.model.primitives;
 public abstract class PrimitiveType<T> {
 
   /** The delegate value. */
-  final T value;
+  T value;
 
   /**
    * Default constructor.
@@ -58,6 +58,13 @@ public abstract class PrimitiveType<T> {
    */
   PrimitiveType(T value) {
     this.value = value;
+  }
+
+  /**
+   * Default constructor.
+   * @param value The delegate value to use.
+   */
+  PrimitiveType() {
   }
 
   /**

@@ -37,6 +37,7 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import ome.xml.model.primitives.PositiveFloat;
+import ome.xml.model.primitives.Timestamp;
 
 /**
  * FujiReader is the file format reader for Fuji LAS 3000 datasets.
@@ -172,9 +173,12 @@ public class FujiReader extends FormatReader {
 
     String imageName = lines[1];
     String timestamp = lines[10];
+    timestamp = DateTools.formatDate(timestamp, DATE_FORMAT);
 
     store.setImageName(imageName, 0);
-    store.setImageAcquiredDate(DateTools.formatDate(timestamp, DATE_FORMAT), 0);
+    if (timestamp != null) {
+      store.setImageAcquisitionDate(new Timestamp(timestamp), 0);
+    }
 
     double physicalWidth = Double.parseDouble(lines[3]);
     double physicalHeight = Double.parseDouble(lines[4]);

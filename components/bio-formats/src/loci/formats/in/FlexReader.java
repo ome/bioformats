@@ -56,6 +56,7 @@ import loci.formats.tiff.TiffParser;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
@@ -536,7 +537,10 @@ public class FlexReader extends FormatReader {
     plateAcqStartTime =
       DateTools.formatDate(plateAcqStartTime, "dd.MM.yyyy  HH:mm:ss");
 
-    store.setPlateAcquisitionStartTime(plateAcqStartTime, 0, 0);
+    if (plateAcqStartTime != null) {
+      store.setPlateAcquisitionStartTime(
+        new Timestamp(plateAcqStartTime), 0, 0);
+    }
 
     for (int row=0; row<wellRows; row++) {
       for (int col=0; col<wellColumns; col++) {
@@ -593,7 +597,7 @@ public class FlexReader extends FormatReader {
 
         int seriesIndex = i * getImageCount();
         if (seriesIndex < objectiveRefs.size()) {
-          store.setImageObjectiveSettingsID(objectiveRefs.get(seriesIndex), i);
+          store.setObjectiveSettingsID(objectiveRefs.get(seriesIndex), i);
         }
 
         for (int c=0; c<getEffectiveSizeC(); c++) {
@@ -907,8 +911,13 @@ public class FlexReader extends FormatReader {
     if (getImageCount() * fieldCount != nPlanes) {
       core[0].imageCount = nPlanes / fieldCount;
       core[0].sizeZ = 1;
-      core[0].sizeC = 1;
       core[0].sizeT = nPlanes / fieldCount;
+      if (getSizeT() % getSizeC() == 0) {
+        core[0].sizeT /= getSizeC();
+      }
+      else {
+        core[0].sizeC = 1;
+      }
     }
     core[0].sizeX = (int) ifd.getImageWidth();
     core[0].sizeY = (int) ifd.getImageLength();
@@ -1336,7 +1345,9 @@ public class FlexReader extends FormatReader {
         if (currentSeries >= seriesCount) return;
 
         if (qName.equals("DateTime")) {
-          store.setImageAcquiredDate(value, currentSeries);
+          if (value != null) {
+            store.setImageAcquisitionDate(new Timestamp(value), currentSeries);
+          }
         }
       }
 

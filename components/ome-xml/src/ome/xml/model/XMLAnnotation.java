@@ -39,7 +39,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-01-12 20:06:01-0500
+ * Created by callan via xsd-fu on 2012-05-18 10:08:16+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -60,13 +60,13 @@ import org.w3c.dom.NodeList;
 import ome.xml.model.enums.*;
 import ome.xml.model.primitives.*;
 
-public class XMLAnnotation extends Annotation
+public class XMLAnnotation extends TextAnnotation
 {
-	// Base: Annotation -- Name: XMLAnnotation -- Type: XMLAnnotation -- javaBase: Annotation -- javaType: Object
+	// Base: TextAnnotation -- Name: XMLAnnotation -- Type: XMLAnnotation -- javaBase: TextAnnotation -- javaType: Object
 
 	// -- Constants --
 
-	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/SA/2011-06";
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/SA/2012-06";
 
 	/** Logger for this class. */
 	private static final Logger LOGGER =
@@ -77,6 +77,9 @@ public class XMLAnnotation extends Annotation
 
 	// Property
 	private String value;
+
+	// Back reference StructuredAnnotations_BackReference
+	private StructuredAnnotations structuredAnnotations;
 
 	// -- Constructors --
 
@@ -174,6 +177,7 @@ public class XMLAnnotation extends Annotation
 		}
 
 		// -- END custom content from Value property template --
+		// *** IGNORING *** Skipped back reference StructuredAnnotations_BackReference
 	}
 
 	// -- XMLAnnotation API methods --
@@ -199,6 +203,17 @@ public class XMLAnnotation extends Annotation
 	public void setValue(String value)
 	{
 		this.value = value;
+	}
+
+	// Property
+	public StructuredAnnotations getStructuredAnnotations()
+	{
+		return structuredAnnotations;
+	}
+
+	public void setStructuredAnnotations(StructuredAnnotations structuredAnnotations_BackReference)
+	{
+		this.structuredAnnotations = structuredAnnotations_BackReference;
 	}
 
 	public Element asXMLElement(Document document)
@@ -246,6 +261,10 @@ public class XMLAnnotation extends Annotation
 			}
 			XMLAnnotation_element.appendChild(value_element);
 			// -- END custom content from Value property template --
+		}
+		if (structuredAnnotations != null)
+		{
+			// *** IGNORING *** Skipped back reference StructuredAnnotations_BackReference
 		}
 		return super.asXMLElement(document, XMLAnnotation_element);
 	}

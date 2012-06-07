@@ -36,6 +36,7 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
+import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveFloat;
 
@@ -285,8 +286,8 @@ public class IMODReader extends FormatReader {
               String shapeID =
                 MetadataTools.createLSID("Shape", obj, nextShape);
               store.setPointID(shapeID, obj, nextShape);
-              store.setPointStroke(
-                (0xff << 24) | (r << 16) | (g << 8) | b, obj, nextShape);
+              store.setPointStrokeColor(
+                new Color(r, g, b, 0xff), obj, nextShape);
               store.setPointStrokeWidth(
                 new Double(lineWidth2D), obj, nextShape);
               if (lineStyle == 1) {
@@ -305,20 +306,11 @@ public class IMODReader extends FormatReader {
           }
           else {
             String shapeID = MetadataTools.createLSID("Shape", obj, nextShape);
-            store.setPolylineID(shapeID, obj, nextShape);
+            boolean closed = (contourFlags & 0x8) == 0;
 
             int r = colors[obj][0] & 0xff;
             int g = colors[obj][1] & 0xff;
             int b = colors[obj][2] & 0xff;
-
-            store.setPolylineStroke(
-              (0xff << 24) | (r << 16) | (g << 8) | b, obj, nextShape);
-            store.setPolylineStrokeWidth(
-              new Double(lineWidth2D), obj, nextShape);
-            if (lineStyle == 1) {
-              store.setPolylineStrokeDashArray("5", obj, nextShape);
-            }
-            store.setPolylineClosed((contourFlags & 0x8) == 0, obj, nextShape);
 
             StringBuffer sb = new StringBuffer();
             for (int i=0; i<nPoints; i++) {
@@ -330,11 +322,38 @@ public class IMODReader extends FormatReader {
               }
             }
 
-            if (nPoints > 0) {
-              store.setPolylineTheZ(new NonNegativeInteger(
-                (int) points[obj][contour][0][2]), obj, nextShape);
+            if (closed) {
+              store.setPolygonID(shapeID, obj, nextShape);
+              store.setPolygonStrokeColor(
+                new Color(r, g, b, 0xff), obj, nextShape);
+              store.setPolygonStrokeWidth(
+                new Double(lineWidth2D), obj, nextShape);
+              if (lineStyle == 1) {
+                store.setPolygonStrokeDashArray("5", obj, nextShape);
+              }
+
+              if (nPoints > 0) {
+                store.setPolygonTheZ(new NonNegativeInteger(
+                  (int) points[obj][contour][0][2]), obj, nextShape);
+              }
+              store.setPolygonPoints(sb.toString(), obj, nextShape);
             }
-            store.setPolylinePoints(sb.toString(), obj, nextShape);
+            else {
+              store.setPolylineID(shapeID, obj, nextShape);
+              store.setPolylineStrokeColor(
+                new Color(r, g, b, 0xff), obj, nextShape);
+              store.setPolylineStrokeWidth(
+                new Double(lineWidth2D), obj, nextShape);
+              if (lineStyle == 1) {
+                store.setPolylineStrokeDashArray("5", obj, nextShape);
+              }
+
+              if (nPoints > 0) {
+                store.setPolylineTheZ(new NonNegativeInteger(
+                  (int) points[obj][contour][0][2]), obj, nextShape);
+              }
+              store.setPolylinePoints(sb.toString(), obj, nextShape);
+            }
             nextShape++;
           }
         }

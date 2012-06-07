@@ -40,6 +40,8 @@ import loci.formats.tiff.IFD;
 import loci.formats.tiff.PhotoInterp;
 import loci.formats.tiff.TiffParser;
 
+import ome.xml.model.primitives.Timestamp;
+
 import org.xml.sax.Attributes;
 
 /**
@@ -183,7 +185,7 @@ public class ImaconReader extends BaseTiffReader {
       }
       store.setImageName(name, i);
       if (creationDate != null) {
-        store.setImageAcquiredDate(creationDate, i);
+        store.setImageAcquisitionDate(new Timestamp(creationDate), i);
       }
     }
 
@@ -201,7 +203,6 @@ public class ImaconReader extends BaseTiffReader {
       store.setExperimenterID(experimenter, 0);
       store.setExperimenterFirstName(firstName, 0);
       store.setExperimenterLastName(lastName, 0);
-      store.setExperimenterDisplayName(lastName + ", " + firstName, 0);
 
       for (int i=0; i<getSeriesCount(); i++) {
         store.setImageExperimenterRef(experimenter, i);

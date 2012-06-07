@@ -39,7 +39,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-01-12 20:06:01-0500
+ * Created by callan via xsd-fu on 2012-05-18 10:08:16+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -60,34 +60,37 @@ import org.w3c.dom.NodeList;
 import ome.xml.model.enums.*;
 import ome.xml.model.primitives.*;
 
-public class OTFRef extends Reference
+public class Label extends Shape
 {
-	// Base: Reference -- Name: OTFRef -- Type: OTFRef -- javaBase: Reference -- javaType: Object
+	// Base:  -- Name: Label -- Type: Label -- javaBase: AbstractOMEModelObject -- javaType: Object
 
 	// -- Constants --
 
-	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2011-06";
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/ROI/2012-06";
 
 	/** Logger for this class. */
 	private static final Logger LOGGER =
-		LoggerFactory.getLogger(OTFRef.class);
+		LoggerFactory.getLogger(Label.class);
 
 	// -- Instance variables --
 
 
 	// Property
-	private String id;
+	private Double y;
+
+	// Property
+	private Double x;
 
 	// -- Constructors --
 
 	/** Default constructor. */
-	public OTFRef()
+	public Label()
 	{
 		super();
 	}
 
 	/** 
-	 * Constructs OTFRef recursively from an XML DOM tree.
+	 * Constructs Label recursively from an XML DOM tree.
 	 * @param element Root of the XML DOM tree to construct a model object
 	 * graph from.
 	 * @param model Handler for the OME model which keeps track of instances
@@ -95,19 +98,19 @@ public class OTFRef extends Reference
 	 * @throws EnumerationException If there is an error instantiating an
 	 * enumeration during model object creation.
 	 */
-	public OTFRef(Element element, OMEModel model)
+	public Label(Element element, OMEModel model)
 	    throws EnumerationException
 	{
 		update(element, model);
 	}
 
-	// -- Custom content from OTFRef specific template --
+	// -- Custom content from Label specific template --
 
 
 	// -- OMEModelObject API methods --
 
 	/** 
-	 * Updates OTFRef recursively from an XML DOM tree. <b>NOTE:</b> No
+	 * Updates Label recursively from an XML DOM tree. <b>NOTE:</b> No
 	 * properties are removed, only added or updated.
 	 * @param element Root of the XML DOM tree to construct a model object
 	 * graph from.
@@ -121,27 +124,25 @@ public class OTFRef extends Reference
 	{
 		super.update(element, model);
 		String tagName = element.getTagName();
-		if (!"OTFRef".equals(tagName))
+		if (!"Label".equals(tagName))
 		{
-			LOGGER.debug("Expecting node name of OTFRef got {}", tagName);
+			LOGGER.debug("Expecting node name of Label got {}", tagName);
 		}
-		if (!element.hasAttribute("ID") && getID() == null)
+		if (element.hasAttribute("Y"))
 		{
-			// TODO: Should be its own exception
-			throw new RuntimeException(String.format(
-					"OTFRef missing required ID property."));
+			// Attribute property Y
+			setY(Double.valueOf(
+					element.getAttribute("Y")));
 		}
-		if (element.hasAttribute("ID"))
+		if (element.hasAttribute("X"))
 		{
-			// ID property
-			setID(String.valueOf(
-						element.getAttribute("ID")));
-			// Adding this model object to the model handler
-			model.addModelObject(getID(), this);
+			// Attribute property X
+			setX(Double.valueOf(
+					element.getAttribute("X")));
 		}
 	}
 
-	// -- OTFRef API methods --
+	// -- Label API methods --
 
 	public boolean link(Reference reference, OMEModelObject o)
 	{
@@ -156,14 +157,25 @@ public class OTFRef extends Reference
 
 
 	// Property
-	public String getID()
+	public Double getY()
 	{
-		return id;
+		return y;
 	}
 
-	public void setID(String id)
+	public void setY(Double y)
 	{
-		this.id = id;
+		this.y = y;
+	}
+
+	// Property
+	public Double getX()
+	{
+		return x;
+	}
+
+	public void setX(Double x)
+	{
+		this.x = x;
 	}
 
 	public Element asXMLElement(Document document)
@@ -171,21 +183,26 @@ public class OTFRef extends Reference
 		return asXMLElement(document, null);
 	}
 
-	protected Element asXMLElement(Document document, Element OTFRef_element)
+	protected Element asXMLElement(Document document, Element Label_element)
 	{
-		// Creating XML block for OTFRef
+		// Creating XML block for Label
 
-		if (OTFRef_element == null)
+		if (Label_element == null)
 		{
-			OTFRef_element =
-					document.createElementNS(NAMESPACE, "OTFRef");
+			Label_element =
+					document.createElementNS(NAMESPACE, "Label");
 		}
 
-		if (id != null)
+		if (y != null)
 		{
-			// Attribute property ID
-			OTFRef_element.setAttribute("ID", id.toString());
+			// Attribute property Y
+			Label_element.setAttribute("Y", y.toString());
 		}
-		return super.asXMLElement(document, OTFRef_element);
+		if (x != null)
+		{
+			// Attribute property X
+			Label_element.setAttribute("X", x.toString());
+		}
+		return super.asXMLElement(document, Label_element);
 	}
 }

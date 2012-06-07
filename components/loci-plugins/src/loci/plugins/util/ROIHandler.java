@@ -47,6 +47,7 @@ import ome.xml.model.Ellipse;
 import ome.xml.model.Image;
 import ome.xml.model.OME;
 import ome.xml.model.Point;
+import ome.xml.model.Polygon;
 import ome.xml.model.Polyline;
 import ome.xml.model.Shape;
 import ome.xml.model.Union;
@@ -120,9 +121,15 @@ public class ROIHandler {
             Polyline polyline = (Polyline) shapeObject;
             String points = polyline.getPoints();
             int[][] coordinates = parsePoints(points);
-            boolean closed = polyline.getClosed();
             roi = new PolygonRoi(coordinates[0], coordinates[1],
-              coordinates[0].length, closed ? Roi.POLYGON : Roi.POLYLINE);
+              coordinates[0].length, Roi.POLYLINE);
+          }
+          else if (shapeObject instanceof Polygon) {
+            Polygon polygon = (Polygon) shapeObject;
+            String points = polygon.getPoints();
+            int[][] coordinates = parsePoints(points);
+            roi = new PolygonRoi(coordinates[0], coordinates[1],
+              coordinates[0].length, Roi.POLYGON);
           }
           else if (shapeObject instanceof ome.xml.model.Rectangle) {
             ome.xml.model.Rectangle rectangle =
@@ -131,7 +138,7 @@ public class ROIHandler {
             int y = rectangle.getY().intValue();
             int w = rectangle.getWidth().intValue();
             int h = rectangle.getHeight().intValue();
-            String label = shapeObject.getLabel();
+            String label = shapeObject.getText();
             if (label != null) {
               roi = new TextRoi(x, y, label);
             }
@@ -222,8 +229,7 @@ public class ROIHandler {
       points.append(yCoordinates[i] + bounds.y);
       if (i < xCoordinates.length - 1) points.append(" ");
     }
-    store.setPolylinePoints(points.toString(), roiNum, shape);
-    store.setPolylineClosed(Boolean.TRUE, roiNum, shape);
+    store.setPolygonPoints(points.toString(), roiNum, shape);
   }
 
   /** Store an Oval ROI in the given MetadataStore. */

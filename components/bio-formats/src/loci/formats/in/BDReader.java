@@ -419,7 +419,7 @@ public class BDReader extends FormatReader {
       // populate LogicalChannel data
       for (int i=0; i<getSeriesCount(); i++) {
         store.setImageInstrumentRef(instrumentID, i);
-        store.setImageObjectiveSettingsID(objectiveID, i);
+        store.setObjectiveSettingsID(objectiveID, i);
 
         for (int c=0; c<getSizeC(); c++) {
           store.setChannelName(channelNames.get(c), i, c);

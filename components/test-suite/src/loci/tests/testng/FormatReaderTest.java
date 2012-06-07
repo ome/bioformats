@@ -571,7 +571,7 @@ public class FormatReaderTest {
         }
 
         // if CreationDate is before 1990, it's probably invalid
-        String date = retrieve.getImageAcquiredDate(i);
+        String date = retrieve.getImageAcquisitionDate(i).getValue();
         String configDate = config.getDate();
         if (date != null && !date.equals(configDate)) {
           date = date.trim();
@@ -1367,6 +1367,14 @@ public class FormatReaderTest {
           // TIFF files in Li-Cor datasets are detected separately
           if (reader.getFormat().equals("Li-Cor L2D") &&
             !base[i].toLowerCase().endsWith("l2d"))
+          {
+            continue;
+          }
+
+          // TIFF files in Prairie datasets may be detected as OME-TIFF
+          if (reader.getFormat().equals("Prairie TIFF") &&
+            base[i].toLowerCase().endsWith(".tif") &&
+            r.getFormat().equals("OME-TIFF"))
           {
             continue;
           }

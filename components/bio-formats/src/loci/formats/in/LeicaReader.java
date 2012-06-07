@@ -51,8 +51,10 @@ import loci.formats.tiff.TiffParser;
 
 import ome.xml.model.enums.Correction;
 import ome.xml.model.enums.Immersion;
+import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -150,7 +152,7 @@ public class LeicaReader extends FormatReader {
 
   private int[] tileWidth, tileHeight;
 
-  private int[][] channelColor;
+  private Color[][] channelColor;
 
   // -- Constructor --
 
@@ -517,7 +519,7 @@ public class LeicaReader extends FormatReader {
     pinhole = new double[headerIFDs.size()];
     exposureTime = new double[headerIFDs.size()];
 
-    channelColor = new int[headerIFDs.size()][];
+    channelColor = new Color[headerIFDs.size()][];
 
     for (int i=0; i<headerIFDs.size(); i++) {
       IFD ifd = headerIFDs.get(i);
@@ -624,8 +626,10 @@ public class LeicaReader extends FormatReader {
         timestamps[i].length > 0)
       {
         firstPlane = DateTools.getTime(timestamps[i][0], DATE_FORMAT);
-        store.setImageAcquiredDate(
-          DateTools.formatDate(timestamps[i][0], DATE_FORMAT), i);
+        String date = DateTools.formatDate(timestamps[i][0], DATE_FORMAT);
+        if (date != null) {
+          store.setImageAcquisitionDate(new Timestamp(date), i);
+        }
       }
 
       store.setImageDescription(seriesDescriptions.get(i), i);
@@ -1128,7 +1132,7 @@ public class LeicaReader extends FormatReader {
     addSeriesMeta("Number of LUT channels", nChannels);
     addSeriesMeta("ID of colored dimension", in.readInt());
 
-    channelColor[seriesIndex] = new int[nChannels];
+    channelColor[seriesIndex] = new Color[nChannels];
 
     for (int j=0; j<nChannels; j++) {
       String p = "LUT Channel " + j;
@@ -1139,25 +1143,25 @@ public class LeicaReader extends FormatReader {
       String lut = getString(false);
       addSeriesMeta(p + " name", lut);
 
-      channelColor[seriesIndex][j] = 0xffffffff;
+      channelColor[seriesIndex][j] = new Color(255, 255, 255, 255);
 
       if (lut.equalsIgnoreCase("red")) {
-        channelColor[seriesIndex][j] = 0xff0000ff;
+        channelColor[seriesIndex][j] = new Color(255, 0, 0, 255);
       }
       else if (lut.equalsIgnoreCase("green")) {
-        channelColor[seriesIndex][j] = 0xff00ff;
+        channelColor[seriesIndex][j] = new Color(0, 255, 0, 255);
       }
       else if (lut.equalsIgnoreCase("blue")) {
-        channelColor[seriesIndex][j] = 0xffff;
+        channelColor[seriesIndex][j] = new Color(0, 0, 255, 255);
       }
       else if (lut.equalsIgnoreCase("yellow")) {
-        channelColor[seriesIndex][j] = 0xffff00ff;
+        channelColor[seriesIndex][j] = new Color(255, 255, 0, 255);
       }
       else if (lut.equalsIgnoreCase("cyan")) {
-        channelColor[seriesIndex][j] = 0xffffff;
+        channelColor[seriesIndex][j] = new Color(0, 255, 255, 255);
       }
       else if (lut.equalsIgnoreCase("magenta")) {
-        channelColor[seriesIndex][j] = 0xff00ffff;
+        channelColor[seriesIndex][j] = new Color(255, 0, 255, 255);
       }
 
       in.skipBytes(8);
@@ -1356,7 +1360,7 @@ public class LeicaReader extends FormatReader {
           store.setObjectiveSerialNumber(data, series, objective);
         }
         else if (tokens[2].equals("RefractionIndex")) {
-          store.setImageObjectiveSettingsRefractiveIndex(
+          store.setObjectiveSettingsRefractiveIndex(
             new Double(data), series);
         }
 
@@ -1365,7 +1369,7 @@ public class LeicaReader extends FormatReader {
           MetadataTools.createLSID("Objective", series, objective);
         store.setObjectiveID(objectiveID, series, objective);
         if (objective == 0) {
-          store.setImageObjectiveSettingsID(objectiveID, series);
+          store.setObjectiveSettingsID(objectiveID, series);
         }
       }
       else if (tokens[0].startsWith("CSpectrophotometerUnit")) {

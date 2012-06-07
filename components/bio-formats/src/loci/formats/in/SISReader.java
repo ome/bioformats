@@ -43,6 +43,7 @@ import loci.formats.tiff.TiffParser;
 
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 /**
  * SISReader is the file format reader for Olympus Soft Imaging Solutions
@@ -172,11 +173,20 @@ public class SISReader extends BaseTiffReader {
     physicalSizeX = in.readDouble();
     physicalSizeY = in.readDouble();
 
+    if (physicalSizeX != physicalSizeY) {
+      physicalSizeX = physicalSizeY;
+      physicalSizeY = in.readDouble();
+    }
+
     in.skipBytes(8);
 
     magnification = in.readDouble();
     int cameraNameLength = in.readShort();
     channelName = in.readCString();
+
+    if (channelName.length() > 128) {
+      channelName = "";
+    }
 
     int length = (int) Math.min(cameraNameLength, channelName.length());
     if (length > 0) {
@@ -203,7 +213,9 @@ public class SISReader extends BaseTiffReader {
     MetadataTools.populatePixels(store, this);
 
     store.setImageName(imageName, 0);
-    store.setImageAcquiredDate(acquisitionDate, 0);
+    if (acquisitionDate != null) {
+      store.setImageAcquisitionDate(new Timestamp(acquisitionDate), 0);
+    }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       String instrument = MetadataTools.createLSID("Instrument", 0);
@@ -222,7 +234,7 @@ public class SISReader extends BaseTiffReader {
       }
       store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
       store.setObjectiveImmersion(getImmersion("Other"), 0, 0);
-      store.setImageObjectiveSettingsID(objective, 0);
+      store.setObjectiveSettingsID(objective, 0);
 
       String detector = MetadataTools.createLSID("Detector", 0, 0);
       store.setDetectorID(detector, 0, 0);

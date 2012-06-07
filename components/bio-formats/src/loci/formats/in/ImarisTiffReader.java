@@ -40,6 +40,7 @@ import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 /**
  * ImarisTiffReader is the file format reader for
@@ -161,7 +162,9 @@ public class ImarisTiffReader extends BaseTiffReader {
 
       // populate Image data
       store.setImageDescription(description, 0);
-      store.setImageAcquiredDate(creationDate, 0);
+      if (creationDate != null) {
+        store.setImageAcquisitionDate(new Timestamp(creationDate), 0);
+      }
 
       // populate LogicalChannel data
       for (int i=0; i<emWave.size(); i++) {

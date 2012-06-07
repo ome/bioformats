@@ -39,6 +39,7 @@ import loci.formats.tiff.TiffParser;
 import loci.formats.tiff.TiffRational;
 
 import ome.xml.model.primitives.PositiveFloat;
+import ome.xml.model.primitives.Timestamp;
 
 /**
  * FluoviewReader is the file format reader for
@@ -385,7 +386,7 @@ public class FluoviewReader extends BaseTiffReader {
     MetadataTools.populatePixels(store, this, true);
 
     if (date != null) {
-      store.setImageAcquiredDate(date, 0);
+      store.setImageAcquisitionDate(new Timestamp(date), 0);
     }
 
     if (getMetadataOptions().getMetadataLevel() == MetadataLevel.MINIMUM) {
@@ -542,7 +543,7 @@ public class FluoviewReader extends BaseTiffReader {
     // link Objective to Image using ObjectiveSettings
     String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
     store.setObjectiveID(objectiveID, 0, 0);
-    store.setImageObjectiveSettingsID(objectiveID, 0);
+    store.setObjectiveSettingsID(objectiveID, 0);
   }
 
   // -- Helper methods --

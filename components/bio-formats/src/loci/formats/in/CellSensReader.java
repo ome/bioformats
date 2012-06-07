@@ -365,6 +365,13 @@ public class CellSensReader extends FormatReader {
 
         core[s].littleEndian = compressionType[s] == RAW;
         core[s].interleaved = core[s].rgb;
+
+        if (s == 0 && exifs.size() > 0) {
+          IFD exif = exifs.get(0);
+          core[s].sizeX = exif.getIFDIntValue(IFD.PIXEL_X_DIMENSION);
+          core[s].sizeY = exif.getIFDIntValue(IFD.PIXEL_Y_DIMENSION);
+        }
+
         setSeries(0);
       }
       else {
@@ -734,7 +741,7 @@ public class CellSensReader extends FormatReader {
 
       int fieldType = vsi.readInt();
       int tag = vsi.readInt();
-      int nextField = vsi.readInt();
+      long nextField = vsi.readInt() & 0xffffffffL;
       int dataSize = vsi.readInt();
 
       boolean extraTag = ((fieldType & 0x8000000) >> 27) == 1;
@@ -800,7 +807,7 @@ public class CellSensReader extends FormatReader {
         return;
       }
 
-      if (fp + nextField < vsi.length() || fp + nextField >= 0) {
+      if (fp + nextField < vsi.length() && fp + nextField >= 0) {
         vsi.seek(fp + nextField);
       }
       else break;

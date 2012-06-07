@@ -46,6 +46,7 @@ import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 import org.xml.sax.Attributes;
 
@@ -229,7 +230,10 @@ public class FEITiffReader extends BaseTiffReader {
     MetadataTools.populatePixels(store, this);
 
     if (date != null) {
-      store.setImageAcquiredDate(DateTools.formatDate(date, DATE_FORMAT), 0);
+      date = DateTools.formatDate(date, DATE_FORMAT);
+      if (date != null) {
+        store.setImageAcquisitionDate(new Timestamp(date), 0);
+      }
     }
 
     if (imageName != null) {
@@ -242,7 +246,7 @@ public class FEITiffReader extends BaseTiffReader {
       }
       if (userName != null) {
         store.setExperimenterID(MetadataTools.createLSID("Experimenter", 0), 0);
-        store.setExperimenterDisplayName(userName, 0);
+        store.setExperimenterLastName(userName, 0);
       }
       if (microscopeModel != null) {
         String instrument = MetadataTools.createLSID("Instrument", 0);

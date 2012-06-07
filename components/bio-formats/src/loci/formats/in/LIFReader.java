@@ -58,10 +58,12 @@ import loci.formats.services.OMEXMLService;
 import ome.xml.model.enums.DetectorType;
 import ome.xml.model.enums.LaserMedium;
 import ome.xml.model.enums.LaserType;
+import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PercentFraction;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 import org.xml.sax.SAXException;
 import org.w3c.dom.Attr;
@@ -678,14 +680,14 @@ public class LIFReader extends FormatReader {
       }
 
       store.setImageInstrumentRef(instrumentID, i);
-      store.setImageObjectiveSettingsID(objectiveID, i);
-      store.setImageObjectiveSettingsRefractiveIndex(refractiveIndex[i], i);
+      store.setObjectiveSettingsID(objectiveID, i);
+      store.setObjectiveSettingsRefractiveIndex(refractiveIndex[i], i);
 
       store.setImageDescription(descriptions[i], i);
       if (acquiredDate[i] > 0) {
-        store.setImageAcquiredDate(DateTools.convertDate(
+        store.setImageAcquisitionDate(new Timestamp(DateTools.convertDate(
           (long) (acquiredDate[i] * 1000), DateTools.COBOL,
-          DateTools.ISO8601_FORMAT, true), i);
+          DateTools.ISO8601_FORMAT, true)), i);
       }
       store.setImageName(imageNames[i].trim(), i);
 
@@ -809,10 +811,10 @@ public class LIFReader extends FormatReader {
           store.setPlaneExposureTime(expTimes[i][c], i, c);
         }
 
-        int channelColor = getChannelColor(realChannel[i][c]);
+        Color channelColor = getChannelColor(realChannel[i][c]);
         store.setChannelColor(channelColor, i, c);
 
-        if (channelColor != -1 && nextFilter >= 0) {
+        if (channelColor.getValue() != -1 && nextFilter >= 0) {
           if (nextDetector - firstDetector != getSizeC() &&
             nextDetector >= cutIns[i].size())
           {
@@ -1800,16 +1802,16 @@ public class LIFReader extends FormatReader {
       String roiID = MetadataTools.createLSID("ROI", roi);
       store.setImageROIRef(roiID, series, roi);
       store.setROIID(roiID, roi);
-      store.setTextID(MetadataTools.createLSID("Shape", roi, 0), roi, 0);
+      store.setLabelID(MetadataTools.createLSID("Shape", roi, 0), roi, 0);
       if (text == null) {
         text = name;
       }
-      store.setTextValue(text, roi, 0);
+      store.setLabelText(text, roi, 0);
       if (fontSize != null) {
         try {
           int size = (int) Double.parseDouble(fontSize);
           if (size > 0) {
-            store.setTextFontSize(new NonNegativeInteger(size), roi, 0);
+            store.setLabelFontSize(new NonNegativeInteger(size), roi, 0);
           }
           else {
             LOGGER.warn("Expected non-negative value for FontSize; got {}",
@@ -1818,15 +1820,15 @@ public class LIFReader extends FormatReader {
         }
         catch (NumberFormatException e) { }
       }
-      store.setTextStrokeWidth(new Double(linewidth), roi, 0);
+      store.setLabelStrokeWidth(new Double(linewidth), roi, 0);
 
       if (!normalized) normalize();
 
       double cornerX = x.get(0).doubleValue();
       double cornerY = y.get(0).doubleValue();
 
-      store.setTextX(cornerX, roi, 0);
-      store.setTextY(cornerY, roi, 0);
+      store.setLabelX(cornerX, roi, 0);
+      store.setLabelY(cornerY, roi, 0);
 
       int centerX = (core[series].sizeX / 2) - 1;
       int centerY = (core[series].sizeY / 2) - 1;
@@ -1851,9 +1853,8 @@ public class LIFReader extends FormatReader {
             points.append(y.get(i).doubleValue() + roiY);
             if (i < x.size() - 1) points.append(" ");
           }
-          store.setPolylineID(shapeID, roi, 1);
-          store.setPolylinePoints(points.toString(), roi, 1);
-          store.setPolylineClosed(Boolean.TRUE, roi, 1);
+          store.setPolygonID(shapeID, roi, 1);
+          store.setPolygonPoints(points.toString(), roi, 1);
 
           break;
         case TEXT:
@@ -1923,22 +1924,22 @@ public class LIFReader extends FormatReader {
     return 0;
   }
 
-  private int getChannelColor(int colorCode) {
+  private Color getChannelColor(int colorCode) {
     switch (colorCode) {
-      case 0:
-        return 0xff0000ff;
-      case 1:
-        return 0x00ff00ff;
-      case 2:
-        return 0x0000ffff;
-      case 3:
-        return 0x00ffffff;
-      case 4:
-        return 0xff00ffff;
-      case 5:
-        return 0xffff00ff;
+      case 0: // red
+        return new Color(255, 0, 0, 255);
+      case 1: // green
+        return new Color(0, 255, 0, 255);
+      case 2: // blue
+        return new Color(0, 0, 255, 255);
+      case 3: // cyan
+        return new Color(0, 255, 255, 255);
+      case 4: // magenta
+        return new Color(255, 0, 255, 255);
+      case 5: // yellow
+        return new Color(255, 255, 0, 255);
     }
-    return 0xffffffff;
+    return new Color(255, 255, 255, 255);
   }
 
 }

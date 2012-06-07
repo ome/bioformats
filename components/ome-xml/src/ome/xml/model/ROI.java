@@ -39,7 +39,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-01-12 20:06:01-0500
+ * Created by callan via xsd-fu on 2012-05-18 10:08:16+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -66,7 +66,7 @@ public class ROI extends AbstractOMEModelObject
 
 	// -- Constants --
 
-	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/ROI/2011-06";
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/ROI/2012-06";
 
 	/** Logger for this class. */
 	private static final Logger LOGGER =
@@ -88,16 +88,16 @@ public class ROI extends AbstractOMEModelObject
 	private Union union;
 
 	// Reference AnnotationRef
-	private List<Annotation> annotationList = new ArrayList<Annotation>();
+	private List<Annotation> annotationLinks = new ArrayList<Annotation>();
 
 	// Property
 	private String description;
 
 	// Back reference Image_BackReference
-	private List<Image> image_BackReferenceList = new ArrayList<Image>();
+	private List<Image> imageLinks = new ArrayList<Image>();
 
 	// Back reference MicrobeamManipulation_BackReference
-	private List<MicrobeamManipulation> microbeamManipulation_BackReferenceList = new ArrayList<MicrobeamManipulation>();
+	private List<MicrobeamManipulation> microbeamManipulationLinks = new ArrayList<MicrobeamManipulation>();
 
 	// -- Constructors --
 
@@ -193,9 +193,9 @@ public class ROI extends AbstractOMEModelObject
 				getChildrenByTagName(element, "AnnotationRef");
 		for (Element AnnotationRef_element : AnnotationRef_nodeList)
 		{
-			AnnotationRef annotationList_reference = new AnnotationRef();
-			annotationList_reference.setID(AnnotationRef_element.getAttribute("ID"));
-			model.addReference(this, annotationList_reference);
+			AnnotationRef annotationLinks_reference = new AnnotationRef();
+			annotationLinks_reference.setID(AnnotationRef_element.getAttribute("ID"));
+			model.addReference(this, annotationLinks_reference);
 		}
 		List<Element> Description_nodeList =
 				getChildrenByTagName(element, "Description");
@@ -230,8 +230,8 @@ public class ROI extends AbstractOMEModelObject
 		{
 			Annotation o_casted = (Annotation) o;
 			o_casted.linkROI(this);
-			if (!annotationList.contains(o_casted)) {
-				annotationList.add(o_casted);
+			if (!annotationLinks.contains(o_casted)) {
+				annotationLinks.add(o_casted);
 			}
 			return true;
 		}
@@ -287,37 +287,39 @@ public class ROI extends AbstractOMEModelObject
 	// Reference which occurs more than once
 	public int sizeOfLinkedAnnotationList()
 	{
-		return annotationList.size();
+		return annotationLinks.size();
 	}
 
 	public List<Annotation> copyLinkedAnnotationList()
 	{
-		return new ArrayList<Annotation>(annotationList);
+		return new ArrayList<Annotation>(annotationLinks);
 	}
 
 	public Annotation getLinkedAnnotation(int index)
 	{
-		return annotationList.get(index);
+		return annotationLinks.get(index);
 	}
 
 	public Annotation setLinkedAnnotation(int index, Annotation o)
 	{
-		return annotationList.set(index, o);
+		return annotationLinks.set(index, o);
 	}
 
 	public boolean linkAnnotation(Annotation o)
 	{
-		o.linkROI(this);
-		if (!annotationList.contains(o)) {
-			return annotationList.add(o);
+
+			o.linkROI(this);
+		if (!annotationLinks.contains(o)) {
+			return annotationLinks.add(o);
 		}
 		return false;
 	}
 
 	public boolean unlinkAnnotation(Annotation o)
 	{
-		o.unlinkROI(this);
-		return annotationList.remove(o);
+
+			o.unlinkROI(this);
+		return annotationLinks.remove(o);
 	}
 
 	// Property
@@ -334,69 +336,69 @@ public class ROI extends AbstractOMEModelObject
 	// Reference which occurs more than once
 	public int sizeOfLinkedImageList()
 	{
-		return image_BackReferenceList.size();
+		return imageLinks.size();
 	}
 
 	public List<Image> copyLinkedImageList()
 	{
-		return new ArrayList<Image>(image_BackReferenceList);
+		return new ArrayList<Image>(imageLinks);
 	}
 
 	public Image getLinkedImage(int index)
 	{
-		return image_BackReferenceList.get(index);
+		return imageLinks.get(index);
 	}
 
 	public Image setLinkedImage(int index, Image o)
 	{
-		return image_BackReferenceList.set(index, o);
+		return imageLinks.set(index, o);
 	}
 
 	public boolean linkImage(Image o)
 	{
-		if (!image_BackReferenceList.contains(o)) {
-			return image_BackReferenceList.add(o);
+		if (!imageLinks.contains(o)) {
+			return imageLinks.add(o);
 		}
 		return false;
 	}
 
 	public boolean unlinkImage(Image o)
 	{
-		return image_BackReferenceList.remove(o);
+		return imageLinks.remove(o);
 	}
 
 	// Reference which occurs more than once
 	public int sizeOfLinkedMicrobeamManipulationList()
 	{
-		return microbeamManipulation_BackReferenceList.size();
+		return microbeamManipulationLinks.size();
 	}
 
 	public List<MicrobeamManipulation> copyLinkedMicrobeamManipulationList()
 	{
-		return new ArrayList<MicrobeamManipulation>(microbeamManipulation_BackReferenceList);
+		return new ArrayList<MicrobeamManipulation>(microbeamManipulationLinks);
 	}
 
 	public MicrobeamManipulation getLinkedMicrobeamManipulation(int index)
 	{
-		return microbeamManipulation_BackReferenceList.get(index);
+		return microbeamManipulationLinks.get(index);
 	}
 
 	public MicrobeamManipulation setLinkedMicrobeamManipulation(int index, MicrobeamManipulation o)
 	{
-		return microbeamManipulation_BackReferenceList.set(index, o);
+		return microbeamManipulationLinks.set(index, o);
 	}
 
 	public boolean linkMicrobeamManipulation(MicrobeamManipulation o)
 	{
-		if (!microbeamManipulation_BackReferenceList.contains(o)) {
-			return microbeamManipulation_BackReferenceList.add(o);
+		if (!microbeamManipulationLinks.contains(o)) {
+			return microbeamManipulationLinks.add(o);
 		}
 		return false;
 	}
 
 	public boolean unlinkMicrobeamManipulation(MicrobeamManipulation o)
 	{
-		return microbeamManipulation_BackReferenceList.remove(o);
+		return microbeamManipulationLinks.remove(o);
 	}
 
 	public Element asXMLElement(Document document)
@@ -435,13 +437,13 @@ public class ROI extends AbstractOMEModelObject
 			// sub-elements)
 			ROI_element.appendChild(union.asXMLElement(document));
 		}
-		if (annotationList != null)
+		if (annotationLinks != null)
 		{
 			// Reference property AnnotationRef which occurs more than once
-			for (Annotation annotationList_value : annotationList)
+			for (Annotation annotationLinks_value : annotationLinks)
 			{
 				AnnotationRef o = new AnnotationRef();
-				o.setID(annotationList_value.getID());
+				o.setID(annotationLinks_value.getID());
 				ROI_element.appendChild(o.asXMLElement(document));
 			}
 		}
@@ -454,11 +456,11 @@ public class ROI extends AbstractOMEModelObject
 			description_element.setTextContent(description.toString());
 			ROI_element.appendChild(description_element);
 		}
-		if (image_BackReferenceList != null)
+		if (imageLinks != null)
 		{
 			// *** IGNORING *** Skipped back reference Image_BackReference
 		}
-		if (microbeamManipulation_BackReferenceList != null)
+		if (microbeamManipulationLinks != null)
 		{
 			// *** IGNORING *** Skipped back reference MicrobeamManipulation_BackReference
 		}

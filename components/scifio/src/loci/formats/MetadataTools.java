@@ -59,6 +59,7 @@ import ome.xml.model.enums.PixelType;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.NonNegativeLong;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -371,8 +372,8 @@ public final class MetadataTools {
     Location file = id == null ? null : new Location(id).getAbsoluteFile();
     long time = System.currentTimeMillis();
     if (file != null && file.exists()) time = file.lastModified();
-    store.setImageAcquiredDate(DateTools.convertDate(time, DateTools.UNIX),
-      series);
+    store.setImageAcquisitionDate(new Timestamp(DateTools.convertDate(
+        time, DateTools.UNIX)), series);
   }
 
   /**

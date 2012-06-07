@@ -46,6 +46,7 @@ import loci.formats.tiff.TiffParser;
 
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 /**
  * SimplePCITiffReader is the file format reader for TIFF files produced by
@@ -202,7 +203,10 @@ public class SimplePCITiffReader extends BaseTiffReader {
     MetadataTools.populatePixels(store, this, true);
 
     if (date != null) {
-      store.setImageAcquiredDate(DateTools.formatDate(date, DATE_FORMAT), 0);
+      date = DateTools.formatDate(date, DATE_FORMAT);
+      if (date != null) {
+        store.setImageAcquisitionDate(new Timestamp(date), 0);
+      }
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {

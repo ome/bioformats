@@ -56,6 +56,7 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import ome.xml.model.primitives.PositiveFloat;
+import ome.xml.model.primitives.Timestamp;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
@@ -268,7 +269,9 @@ public class MicromanagerReader extends FormatReader {
       Position p = positions.get(i);
       if (p.time != null) {
         String date = DateTools.formatDate(p.time, DATE_FORMAT);
-        store.setImageAcquiredDate(date, i);
+        if (date != null) {
+          store.setImageAcquisitionDate(new Timestamp(date), i);
+        }
       }
 
       if (positions.size() > 1) {

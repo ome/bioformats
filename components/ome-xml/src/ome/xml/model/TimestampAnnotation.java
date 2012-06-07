@@ -39,7 +39,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-01-12 20:06:01-0500
+ * Created by callan via xsd-fu on 2012-05-18 10:08:16+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -60,13 +60,13 @@ import org.w3c.dom.NodeList;
 import ome.xml.model.enums.*;
 import ome.xml.model.primitives.*;
 
-public class TimestampAnnotation extends Annotation
+public class TimestampAnnotation extends BasicAnnotation
 {
-	// Base: Annotation -- Name: TimestampAnnotation -- Type: TimestampAnnotation -- javaBase: Annotation -- javaType: Object
+	// Base: BasicAnnotation -- Name: TimestampAnnotation -- Type: TimestampAnnotation -- javaBase: BasicAnnotation -- javaType: Object
 
 	// -- Constants --
 
-	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/SA/2011-06";
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/SA/2012-06";
 
 	/** Logger for this class. */
 	private static final Logger LOGGER =
@@ -76,7 +76,10 @@ public class TimestampAnnotation extends Annotation
 
 
 	// Property
-	private String value;
+	private Timestamp value;
+
+	// Back reference StructuredAnnotations_BackReference
+	private StructuredAnnotations structuredAnnotations;
 
 	// -- Constructors --
 
@@ -139,8 +142,9 @@ public class TimestampAnnotation extends Annotation
 			// Element property Value which is not complex (has no
 			// sub-elements)
 			setValue(
-					String.valueOf(Value_nodeList.get(0).getTextContent()));
+					Timestamp.valueOf(Value_nodeList.get(0).getTextContent()));
 		}
+		// *** IGNORING *** Skipped back reference StructuredAnnotations_BackReference
 	}
 
 	// -- TimestampAnnotation API methods --
@@ -158,14 +162,25 @@ public class TimestampAnnotation extends Annotation
 
 
 	// Property
-	public String getValue()
+	public Timestamp getValue()
 	{
 		return value;
 	}
 
-	public void setValue(String value)
+	public void setValue(Timestamp value)
 	{
 		this.value = value;
+	}
+
+	// Property
+	public StructuredAnnotations getStructuredAnnotations()
+	{
+		return structuredAnnotations;
+	}
+
+	public void setStructuredAnnotations(StructuredAnnotations structuredAnnotations_BackReference)
+	{
+		this.structuredAnnotations = structuredAnnotations_BackReference;
 	}
 
 	public Element asXMLElement(Document document)
@@ -191,6 +206,10 @@ public class TimestampAnnotation extends Annotation
 					document.createElementNS(NAMESPACE, "Value");
 			value_element.setTextContent(value.toString());
 			TimestampAnnotation_element.appendChild(value_element);
+		}
+		if (structuredAnnotations != null)
+		{
+			// *** IGNORING *** Skipped back reference StructuredAnnotations_BackReference
 		}
 		return super.asXMLElement(document, TimestampAnnotation_element);
 	}

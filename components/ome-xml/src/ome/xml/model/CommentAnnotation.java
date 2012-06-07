@@ -39,7 +39,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-01-12 20:06:01-0500
+ * Created by callan via xsd-fu on 2012-05-18 10:08:16+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -60,13 +60,13 @@ import org.w3c.dom.NodeList;
 import ome.xml.model.enums.*;
 import ome.xml.model.primitives.*;
 
-public class CommentAnnotation extends Annotation
+public class CommentAnnotation extends TextAnnotation
 {
-	// Base: Annotation -- Name: CommentAnnotation -- Type: CommentAnnotation -- javaBase: Annotation -- javaType: Object
+	// Base: TextAnnotation -- Name: CommentAnnotation -- Type: CommentAnnotation -- javaBase: TextAnnotation -- javaType: Object
 
 	// -- Constants --
 
-	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/SA/2011-06";
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/SA/2012-06";
 
 	/** Logger for this class. */
 	private static final Logger LOGGER =
@@ -77,6 +77,9 @@ public class CommentAnnotation extends Annotation
 
 	// Property
 	private String value;
+
+	// Back reference StructuredAnnotations_BackReference
+	private StructuredAnnotations structuredAnnotations;
 
 	// -- Constructors --
 
@@ -141,6 +144,7 @@ public class CommentAnnotation extends Annotation
 			setValue(
 					String.valueOf(Value_nodeList.get(0).getTextContent()));
 		}
+		// *** IGNORING *** Skipped back reference StructuredAnnotations_BackReference
 	}
 
 	// -- CommentAnnotation API methods --
@@ -168,6 +172,17 @@ public class CommentAnnotation extends Annotation
 		this.value = value;
 	}
 
+	// Property
+	public StructuredAnnotations getStructuredAnnotations()
+	{
+		return structuredAnnotations;
+	}
+
+	public void setStructuredAnnotations(StructuredAnnotations structuredAnnotations_BackReference)
+	{
+		this.structuredAnnotations = structuredAnnotations_BackReference;
+	}
+
 	public Element asXMLElement(Document document)
 	{
 		return asXMLElement(document, null);
@@ -191,6 +206,10 @@ public class CommentAnnotation extends Annotation
 					document.createElementNS(NAMESPACE, "Value");
 			value_element.setTextContent(value.toString());
 			CommentAnnotation_element.appendChild(value_element);
+		}
+		if (structuredAnnotations != null)
+		{
+			// *** IGNORING *** Skipped back reference StructuredAnnotations_BackReference
 		}
 		return super.asXMLElement(document, CommentAnnotation_element);
 	}

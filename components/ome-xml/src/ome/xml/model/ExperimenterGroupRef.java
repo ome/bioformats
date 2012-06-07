@@ -39,7 +39,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-01-12 20:06:01-0500
+ * Created by callan via xsd-fu on 2012-05-18 10:08:16+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -60,40 +60,34 @@ import org.w3c.dom.NodeList;
 import ome.xml.model.enums.*;
 import ome.xml.model.primitives.*;
 
-public class Text extends Shape
+public class ExperimenterGroupRef extends Reference
 {
-	// Base:  -- Name: Text -- Type: Text -- javaBase: AbstractOMEModelObject -- javaType: Object
+	// Base: Reference -- Name: ExperimenterGroupRef -- Type: ExperimenterGroupRef -- javaBase: Reference -- javaType: Object
 
 	// -- Constants --
 
-	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/ROI/2011-06";
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2012-06";
 
 	/** Logger for this class. */
 	private static final Logger LOGGER =
-		LoggerFactory.getLogger(Text.class);
+		LoggerFactory.getLogger(ExperimenterGroupRef.class);
 
 	// -- Instance variables --
 
 
 	// Property
-	private Double y;
-
-	// Property
-	private Double x;
-
-	// Property
-	private String value;
+	private String id;
 
 	// -- Constructors --
 
 	/** Default constructor. */
-	public Text()
+	public ExperimenterGroupRef()
 	{
 		super();
 	}
 
 	/** 
-	 * Constructs Text recursively from an XML DOM tree.
+	 * Constructs ExperimenterGroupRef recursively from an XML DOM tree.
 	 * @param element Root of the XML DOM tree to construct a model object
 	 * graph from.
 	 * @param model Handler for the OME model which keeps track of instances
@@ -101,19 +95,19 @@ public class Text extends Shape
 	 * @throws EnumerationException If there is an error instantiating an
 	 * enumeration during model object creation.
 	 */
-	public Text(Element element, OMEModel model)
+	public ExperimenterGroupRef(Element element, OMEModel model)
 	    throws EnumerationException
 	{
 		update(element, model);
 	}
 
-	// -- Custom content from Text specific template --
+	// -- Custom content from ExperimenterGroupRef specific template --
 
 
 	// -- OMEModelObject API methods --
 
 	/** 
-	 * Updates Text recursively from an XML DOM tree. <b>NOTE:</b> No
+	 * Updates ExperimenterGroupRef recursively from an XML DOM tree. <b>NOTE:</b> No
 	 * properties are removed, only added or updated.
 	 * @param element Root of the XML DOM tree to construct a model object
 	 * graph from.
@@ -127,41 +121,27 @@ public class Text extends Shape
 	{
 		super.update(element, model);
 		String tagName = element.getTagName();
-		if (!"Text".equals(tagName))
+		if (!"ExperimenterGroupRef".equals(tagName))
 		{
-			LOGGER.debug("Expecting node name of Text got {}", tagName);
+			LOGGER.debug("Expecting node name of ExperimenterGroupRef got {}", tagName);
 		}
-		if (element.hasAttribute("Y"))
+		if (!element.hasAttribute("ID") && getID() == null)
 		{
-			// Attribute property Y
-			setY(Double.valueOf(
-					element.getAttribute("Y")));
-		}
-		if (element.hasAttribute("X"))
-		{
-			// Attribute property X
-			setX(Double.valueOf(
-					element.getAttribute("X")));
-		}
-		List<Element> Value_nodeList =
-				getChildrenByTagName(element, "Value");
-		if (Value_nodeList.size() > 1)
-		{
-			// TODO: Should be its own Exception
+			// TODO: Should be its own exception
 			throw new RuntimeException(String.format(
-					"Value node list size %d != 1",
-					Value_nodeList.size()));
+					"ExperimenterGroupRef missing required ID property."));
 		}
-		else if (Value_nodeList.size() != 0)
+		if (element.hasAttribute("ID"))
 		{
-			// Element property Value which is not complex (has no
-			// sub-elements)
-			setValue(
-					String.valueOf(Value_nodeList.get(0).getTextContent()));
+			// ID property
+			setID(String.valueOf(
+						element.getAttribute("ID")));
+			// Adding this model object to the model handler
+			model.addModelObject(getID(), this);
 		}
 	}
 
-	// -- Text API methods --
+	// -- ExperimenterGroupRef API methods --
 
 	public boolean link(Reference reference, OMEModelObject o)
 	{
@@ -176,36 +156,14 @@ public class Text extends Shape
 
 
 	// Property
-	public Double getY()
+	public String getID()
 	{
-		return y;
+		return id;
 	}
 
-	public void setY(Double y)
+	public void setID(String id)
 	{
-		this.y = y;
-	}
-
-	// Property
-	public Double getX()
-	{
-		return x;
-	}
-
-	public void setX(Double x)
-	{
-		this.x = x;
-	}
-
-	// Property
-	public String getValue()
-	{
-		return value;
-	}
-
-	public void setValue(String value)
-	{
-		this.value = value;
+		this.id = id;
 	}
 
 	public Element asXMLElement(Document document)
@@ -213,35 +171,21 @@ public class Text extends Shape
 		return asXMLElement(document, null);
 	}
 
-	protected Element asXMLElement(Document document, Element Text_element)
+	protected Element asXMLElement(Document document, Element ExperimenterGroupRef_element)
 	{
-		// Creating XML block for Text
+		// Creating XML block for ExperimenterGroupRef
 
-		if (Text_element == null)
+		if (ExperimenterGroupRef_element == null)
 		{
-			Text_element =
-					document.createElementNS(NAMESPACE, "Text");
+			ExperimenterGroupRef_element =
+					document.createElementNS(NAMESPACE, "ExperimenterGroupRef");
 		}
 
-		if (y != null)
+		if (id != null)
 		{
-			// Attribute property Y
-			Text_element.setAttribute("Y", y.toString());
+			// Attribute property ID
+			ExperimenterGroupRef_element.setAttribute("ID", id.toString());
 		}
-		if (x != null)
-		{
-			// Attribute property X
-			Text_element.setAttribute("X", x.toString());
-		}
-		if (value != null)
-		{
-			// Element property Value which is not complex (has no
-			// sub-elements)
-			Element value_element = 
-					document.createElementNS(NAMESPACE, "Value");
-			value_element.setTextContent(value.toString());
-			Text_element.appendChild(value_element);
-		}
-		return super.asXMLElement(document, Text_element);
+		return super.asXMLElement(document, ExperimenterGroupRef_element);
 	}
 }

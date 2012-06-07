@@ -39,7 +39,7 @@
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-01-12 20:06:01-0500
+ * Created by callan via xsd-fu on 2012-05-18 10:08:16+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -66,7 +66,7 @@ public class TiffData extends AbstractOMEModelObject
 
 	// -- Constants --
 
-	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2011-06";
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2012-06";
 
 	/** Logger for this class. */
 	private static final Logger LOGGER =
@@ -92,6 +92,9 @@ public class TiffData extends AbstractOMEModelObject
 
 	// Property
 	private UUID uuid;
+
+	// Back reference Pixels_BackReference
+	private Pixels pixels;
 
 	// -- Constructors --
 
@@ -186,6 +189,7 @@ public class TiffData extends AbstractOMEModelObject
 			setUUID(new UUID(
 					(Element) UUID_nodeList.get(0), model));
 		}
+		// *** IGNORING *** Skipped back reference Pixels_BackReference
 	}
 
 	// -- TiffData API methods --
@@ -268,6 +272,17 @@ public class TiffData extends AbstractOMEModelObject
 		this.uuid = uuid;
 	}
 
+	// Property
+	public Pixels getPixels()
+	{
+		return pixels;
+	}
+
+	public void setPixels(Pixels pixels_BackReference)
+	{
+		this.pixels = pixels_BackReference;
+	}
+
 	public Element asXMLElement(Document document)
 	{
 		return asXMLElement(document, null);
@@ -313,6 +328,10 @@ public class TiffData extends AbstractOMEModelObject
 			// Element property UUID which is complex (has
 			// sub-elements)
 			TiffData_element.appendChild(uuid.asXMLElement(document));
+		}
+		if (pixels != null)
+		{
+			// *** IGNORING *** Skipped back reference Pixels_BackReference
 		}
 		return super.asXMLElement(document, TiffData_element);
 	}
