@@ -27,7 +27,6 @@ package loci.formats.in;
 
 import java.io.IOException;
 
-import loci.common.ByteArrayHandle;
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -63,9 +62,6 @@ public class PSDReader extends FormatReader {
   private int[][] lens;
   private boolean compressed = false;
 
-  private int lastImageIndex = -1;
-  private byte[] lastImage;
-
   // -- Constructor --
 
   /** Constructs a new PSD reader. */
@@ -98,13 +94,6 @@ public class PSDReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    if (no == lastImageIndex && lastImage != null) {
-      RandomAccessInputStream s = new RandomAccessInputStream(lastImage);
-      readPlane(s, x, y, w, h, buf);
-      s.close();
-      return buf;
-    }
-
     in.seek(offset);
 
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
@@ -115,24 +104,23 @@ public class PSDReader extends FormatReader {
       CodecOptions options = new CodecOptions();
       options.maxBytes = getSizeX() * bpp;
 
-      ByteArrayHandle pix = new ByteArrayHandle();
       byte[] b = null;
 
+      int index = 0;
       for (int c=0; c<getSizeC(); c++) {
         for (int row=0; row<getSizeY(); row++) {
-          b = new byte[lens[c][row]];
-          in.read(b);
-          b = codec.decompress(b, options);
-          pix.write(b);
+          if (row < y || row >= y + h) {
+            in.skipBytes(lens[c][row]);
+          }
+          else {
+            b = new byte[lens[c][row]];
+            in.read(b);
+            b = codec.decompress(b, options);
+            System.arraycopy(b, x * bpp, buf, index, w * bpp);
+            index += w * bpp;
+          }
         }
       }
-
-      lastImageIndex = no;
-      lastImage = pix.getBytes();
-
-      RandomAccessInputStream s = new RandomAccessInputStream(lastImage);
-      readPlane(s, x, y, w, h, buf);
-      s.close();
     }
     else {
       readPlane(in, x, y, w, h, buf);
@@ -148,8 +136,6 @@ public class PSDReader extends FormatReader {
       offset = 0;
       compressed = false;
       lens = null;
-      lastImageIndex = -1;
-      lastImage = null;
     }
   }
 
