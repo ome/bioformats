@@ -92,6 +92,14 @@
           </suiteXmlFiles>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <configuration>
+          <licenseName>gpl_v2</licenseName>
+          <projectName>OME database I/O package for communicating with OME and OMERO servers.</projectName>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 
@@ -129,6 +137,19 @@
       </properties>
     </developer>
   </developers>
+
+  <contributors>
+    <contributor>
+      <name>Phillip Huettl</name>
+      <url>http://loci.wisc.edu/people/phillip-huettl</url>
+      <organization>UW-Madison LOCI</organization>
+      <organizationUrl>http://loci.wisc.edu/</organizationUrl>
+      <roles>
+        <role>developer</role>
+      </roles>
+      <timezone>-6</timezone>
+    </contributor>
+  </contributors>
 
   <!-- NB: for project parent, in case of partial checkout -->
   <repositories>

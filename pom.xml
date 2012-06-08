@@ -8,7 +8,7 @@
   <parent>
     <groupId>org.scijava</groupId>
     <artifactId>pom-scijava</artifactId>
-    <version>1.13</version>
+    <version>1.15</version>
   </parent>
 
   <groupId>loci</groupId>
@@ -26,7 +26,7 @@
     <module>components/forks/mdbtools</module>
     <module>components/forks/poi</module>
     <module>components/legacy/ome-editor</module>
-    <!-- <module>components/legacy/ome-notes</module> -->
+    <module>components/legacy/ome-notes</module>
     <module>components/autogen</module>
     <module>components/bio-formats</module>
     <module>components/common</module>
@@ -41,6 +41,10 @@
     <module>components/test-suite</module>
     <module>components/stubs/lwf-stubs</module>
   </modules>
+
+  <properties>
+    <license.server>http://code.imagej.net/licenses</license.server>
+  </properties>
 
   <build>
     <sourceDirectory>${project.basedir}/src</sourceDirectory>
@@ -74,6 +78,28 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>buildnumber-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <configuration>
+          <licenseName>gpl_v2</licenseName>
+          <licenseResolver>${license.server}</licenseResolver>
+          <organizationName>Open Microscopy Environment:
+  - Board of Regents of the University of Wisconsin-Madison
+  - Glencoe Software, Inc.
+  - University of Dundee</organizationName>
+          <canUpdateDescription>true</canUpdateDescription>
+          <roots>
+            <root>src</root>
+            <root>target/generated-sources</root>
+            <root>target/processed-sources</root>
+            <root>test</root>
+            <root>utils</root>
+            <root>doc</root>
+            <root>cppwrap</root>
+          </roots>
+        </configuration>
       </plugin>
     </plugins>
   </build>

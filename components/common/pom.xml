@@ -20,8 +20,8 @@
 
   <licenses>
     <license>
-      <name>GPL 2 or later</name>
-      <url>http://www.gnu.org/licenses/gpl-2.0.txt</url>
+      <name>Simplified BSD License</name>
+      <url>${license.server}/loci-common/license.txt</url>
       <distribution>repo</distribution>
     </license>
   </licenses>
@@ -64,6 +64,14 @@
           <suiteXmlFiles>
             <suiteXmlFile>test/loci/common/utests/testng-template.xml</suiteXmlFile>
           </suiteXmlFiles>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <configuration>
+          <licenseName>loci-common</licenseName>
+          <projectName>LOCI Common package: utilities for I/O, reflection and miscellaneous tasks.</projectName>
         </configuration>
       </plugin>
     </plugins>

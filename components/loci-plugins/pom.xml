@@ -87,6 +87,16 @@
           </archive>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <configuration>
+          <licenseName>gpl_v2</licenseName>
+          <projectName>LOCI Plugins for ImageJ: a collection of ImageJ plugins including the
+Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
+Data Browser and Stack Slicer.</projectName>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 
