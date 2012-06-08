@@ -13,6 +13,12 @@ Type "ant -p" for a list of targets.
 
   <taskdef name="testng" classpath="${testng.jar}"
     classname="org.testng.TestNGAntTask"/>
+  <if>
+    <isset property="findbugs.home"/>
+    <then>
+    <taskdef name="findbugs" classpath="${findbugs.home}/findbugs-ant.jar${path.separator}${findbugs.home}/lib/findbugs-ant.jar" classname="edu.umd.cs.findbugs.anttask.FindBugsTask"/>
+    </then>
+  </if>
   <condition property="doTests">
     <available file="${tests.dir}"/>
   </condition>
@@ -169,7 +175,7 @@ your FindBugs installation's lib directory. E.g.:
     <javac debug="true" includeantruntime="false"
       deprecation="true" source="1.5" target="1.5"
       srcdir="${utils.dir}" includes="*.java"
-      classpath="${artifact.dir}/${component.jar}">
+      classpath="${component.classpath}:${artifact.dir}/${component.jar}">
       <!--<compilerarg value="-Xlint:unchecked"/>-->
     </javac>
   </target>

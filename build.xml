@@ -327,6 +327,5 @@ Apache XML-RPC
 
   <target name="test-compile" depends="compile-tests" description="OME hook: compile all tests"/>
   <target name="integration" description="No-op"/>
-  <target name="findbugs" description="No-op"/>
 
 </project>

@@ -61,10 +61,6 @@ Type "ant -p" for a list of targets.
   <taskdef resource="checkstyletask.properties"
     classpath="${lib.dir}/checkstyle-all-5.0.jar:${lib.dir}/loci-checks.jar"/>
 
-  <!-- FindBugs: http://findbugs.sourceforge.net/ -->
-  <taskdef resource="edu/umd/cs/findbugs/anttask/tasks.properties"
-    classpath="${lib.dir}/findbugs-ant.jar"/>
-
   <!-- ProGuard: http://proguard.sourceforge.net/ -->
   <!--<taskdef resource="proguard/ant/task.properties"
     classpath="${lib.dir}/proguard.jar"/>-->
