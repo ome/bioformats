@@ -35,6 +35,7 @@
     </dependency>
 
     <dependency>
+      <!-- NB: We want this, despite warning from dependency:analyze. -->
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
       <version>1.2.14</version>
@@ -47,6 +48,7 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <!-- NB: We want this, despite warning from dependency:analyze. -->
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
       <version>1.5.10</version>

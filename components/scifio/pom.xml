@@ -61,6 +61,8 @@
       <version>1.5.10</version>
     </dependency>
 
+    <!-- NB: dependency:analyze has false warning about xml-apis:xml-apis. -->
+
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
@@ -68,27 +70,25 @@
       <scope>runtime</scope>
     </dependency>
     <dependency>
-      <groupId>xalan</groupId>
-      <artifactId>serializer</artifactId>
-      <version>2.7.1</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
+      <!-- NB: We want this, despite warning from dependency:analyze. -->
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
       <version>1.5.10</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
+      <!-- NB: We want this, despite warning from dependency:analyze. -->
       <groupId>xalan</groupId>
-      <artifactId>xalan</artifactId>
+      <artifactId>serializer</artifactId>
       <version>2.7.1</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
-      <groupId>net.sf.retrotranslator</groupId>
-      <artifactId>retrotranslator-runtime</artifactId>
-      <version>1.2.9</version>
+      <!-- NB: We want this, despite warning from dependency:analyze. -->
+      <groupId>xalan</groupId>
+      <artifactId>xalan</artifactId>
+      <version>2.7.1</version>
+      <scope>runtime</scope>
     </dependency>
 
     <dependency>
