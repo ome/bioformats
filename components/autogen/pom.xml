@@ -57,6 +57,14 @@
           </archive>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <configuration>
+          <licenseName>gpl_v2</licenseName>
+          <projectName>Bio-Formats autogen package for programmatically generating source code.</projectName>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 

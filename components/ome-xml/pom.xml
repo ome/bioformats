@@ -21,8 +21,8 @@
 
   <licenses>
     <license>
-      <name>Simplified BSD</name>
-      <url>http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/ome-xml/LICENSE.txt;hb=HEAD</url>
+      <name>Simplified BSD License</name>
+      <url>${license.server}/ome-xml/license.txt</url>
       <distribution>repo</distribution>
     </license>
   </licenses>
@@ -75,6 +75,20 @@
           <suiteXmlFiles>
             <suiteXmlFile>test/ome/xml/utests/testng.xml</suiteXmlFile>
           </suiteXmlFiles>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <configuration>
+          <licenseName>ome-xml</licenseName>
+          <organizationName>Open Microscopy Environment:
+  - Massachusetts Institute of Technology
+  - National Institutes of Health
+  - University of Dundee
+  - Board of Regents of the University of Wisconsin-Madison
+  - Glencoe Software, Inc.</organizationName>
+          <projectName>OME-XML Java library for working with OME-XML metadata structures.</projectName>
         </configuration>
       </plugin>
     </plugins>

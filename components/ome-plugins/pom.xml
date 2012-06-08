@@ -73,6 +73,15 @@
           </archive>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <configuration>
+          <licenseName>gpl_v2</licenseName>
+          <projectName>OME Plugins for ImageJ: a collection of ImageJ plugins
+including the Download from OME and Upload to OME plugins.</projectName>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 

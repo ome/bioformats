@@ -1,27 +1,29 @@
-//
-// About.java
-//
-
 /*
-LOCI Plugins for ImageJ: a collection of ImageJ plugins including the
-Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
-Data Browser and Stack Slicer. Copyright (C) 2005-@year@ Melissa Linkert,
-Curtis Rueden and Christopher Peterson.
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ * #%L
+ * LOCI Plugins for ImageJ: a collection of ImageJ plugins including the
+ * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
+ * Data Browser and Stack Slicer.
+ * %%
+ * Copyright (C) 2006 - 2012 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 2 of the 
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public 
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-2.0.html>.
+ * #L%
+ */
 
 package loci.plugins;
 
@@ -45,15 +47,15 @@ public final class About implements PlugIn {
 
   /** URL of LOCI Software web page. */
   public static final String URL_LOCI_SOFTWARE =
-    "http://www.loci.wisc.edu/software";
+    "http://loci.wisc.edu/software";
 
   /** URL of Bio-Formats ImageJ web page. */
   public static final String URL_BIO_FORMATS_IMAGEJ =
-    "http://www.loci.wisc.edu/bio-formats/imagej";
+    "http://loci.wisc.edu/bio-formats/imagej";
 
   /** URL of Data Browser web page. */
   public static final String URL_DATA_BROWSER =
-    "http://www.loci.wisc.edu/software/data-browser";
+    "http://loci.wisc.edu/software/data-browser";
 
   // -- PlugIn API methods --
 
@@ -67,8 +69,13 @@ public final class About implements PlugIn {
     String msg = "<html>" +
       "LOCI Plugins for ImageJ, revision @vcs.revision@, built @date@" +
       "<br>Release: @release.version@" +
-      "<br>Copyright 2005-@year@ UW-Madison LOCI" +
-      "<br><i>" + URL_LOCI_SOFTWARE + "</i>" +
+      "<br>Copyright (C) 2005 - @year@ Open Microscopy Environment:" +
+      "<ul>" +
+      "<li>Board of Regents of the University of Wisconsin-Madison</li>" +
+      "<li>Glencoe Software, Inc.</li>" +
+      "<li>University of Dundee</li>" +
+      "</ul>" +
+      "<i>" + URL_LOCI_SOFTWARE + "</i>" +
       "<br>" +
       "<br><b>Bio-Formats Importer</b>, <b>Bio-Formats Exporter</b> " +
       "and <b>Stack Slicer</b>" +
