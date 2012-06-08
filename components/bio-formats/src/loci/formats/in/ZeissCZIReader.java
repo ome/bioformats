@@ -386,7 +386,7 @@ public class ZeissCZIReader extends FormatReader {
     for (int i=0; i<planes.size(); i++) {
       int planeSize = planes.get(i).x * planes.get(i).y * bpp;
       byte[] pixels = planes.get(i).readPixelData();
-      if (pixels.length != planeSize) {
+      if (pixels.length < planeSize) {
         planes.remove(i);
         i--;
       }
