@@ -133,7 +133,7 @@ public class ZeissCZIReader extends FormatReader {
 
   private int previousChannel = 0;
 
-  private boolean prestitched = false;
+  private Boolean prestitched = null;
 
   // -- Constructor --
 
@@ -351,7 +351,7 @@ public class ZeissCZIReader extends FormatReader {
       objectiveIDs.clear();
 
       previousChannel = 0;
-      prestitched = false;
+      prestitched = null;
     }
   }
 
@@ -600,7 +600,9 @@ public class ZeissCZIReader extends FormatReader {
         switch (dimension.dimension.charAt(0)) {
           case 'X':
             plane.x = dimension.size;
-            if (getSizeX() > 0 && dimension.size != getSizeX()) {
+            if ((prestitched == null || prestitched) &&
+              getSizeX() > 0 && dimension.size != getSizeX())
+            {
               prestitched = true;
               continue;
             }
@@ -608,7 +610,9 @@ public class ZeissCZIReader extends FormatReader {
             break;
           case 'Y':
             plane.y = dimension.size;
-            if (getSizeY() > 0 && dimension.size != getSizeY()) {
+            if ((prestitched == null || prestitched) &&
+              getSizeY() > 0 && dimension.size != getSizeY())
+            {
               prestitched = true;
               continue;
             }
@@ -1910,6 +1914,9 @@ public class ZeissCZIReader extends FormatReader {
       filePart = in.readInt();
       compression = in.readInt();
       pyramidType = in.readByte();
+      if (pyramidType == 1) {
+        prestitched = false;
+      }
       in.skipBytes(1); // reserved
       in.skipBytes(4); // reserved
       dimensionCount = in.readInt();
