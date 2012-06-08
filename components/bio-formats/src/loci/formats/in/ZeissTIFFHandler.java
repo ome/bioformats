@@ -300,12 +300,12 @@ public class ZeissTIFFHandler extends DefaultHandler {
         raw[i] = (byte) Integer.parseInt(numbers[i]);
       }
 
-      if (raw.length == 156) {
+      if (raw.length >= 152) {
         // Note that all coordinates have the origin in the upper left corner.
         // We only have examples of packed structures of 156 bytes.
         int isize = DataTools.bytesToInt(raw, 0, true);
-        if (raw.length != isize)
-          System.out.println("ShapeAttributes length does not match internal size!  Trying to continue...");
+        if (raw.length < isize)
+          System.out.println("ShapeAttributes length ("+raw.length+") is less than internal size ("+isize+")!  Trying to continue...");
         int type = DataTools.bytesToInt(raw, 4, true);
         // Annotation feature type.
         current_shape.type = FeatureType.get(type);
@@ -352,7 +352,8 @@ public class ZeissTIFFHandler extends DefaultHandler {
         current_shape.pointStyle = BaseZeissReader.PointStyle.get(DataTools.bytesToInt(raw, 136, true));
         current_shape.lineEndSize = DataTools.bytesToInt(raw, 140, true);
         current_shape.lineEndPositions = BaseZeissReader.LineEndPositions.get(DataTools.bytesToInt(raw, 144, true));
-        current_shape.charset = Charset.get(DataTools.bytesToInt(raw, 152, true));
+        if (isize >= 156)
+          current_shape.charset = Charset.get(DataTools.bytesToInt(raw, 152, true));
       }
     }
     else if (qName.equals("Flags")) {
