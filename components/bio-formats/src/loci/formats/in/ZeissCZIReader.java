@@ -38,6 +38,7 @@ import loci.common.Constants;
 import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.common.Region;
 import loci.common.xml.XMLTools;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
@@ -131,6 +132,8 @@ public class ZeissCZIReader extends FormatReader {
   private Double[] positionsZ;
 
   private int previousChannel = 0;
+
+  private boolean prestitched = false;
 
   // -- Constructor --
 
@@ -242,13 +245,65 @@ public class ZeissCZIReader extends FormatReader {
 
     int currentSeries = getSeries();
 
+    Region image = new Region(x, y, w, h);
+
+    int currentX = 0;
+    int currentY = 0;
+
+    int pixel =
+      getRGBChannelCount() * FormatTools.getBytesPerPixel(getPixelType());
+    int outputRowLen = w * pixel;
+    int outputRow = h, outputCol = 0;
+
     for (SubBlock plane : planes) {
       if (plane.seriesIndex == currentSeries && plane.planeIndex == no) {
         byte[] rawData = plane.readPixelData();
-        RandomAccessInputStream s = new RandomAccessInputStream(rawData);
-        readPlane(s, x, y, w, h, buf);
-        s.close();
-        break;
+
+        if (prestitched) {
+          int realX = plane.x;
+          int realY = plane.y;
+
+          Region tile =
+            new Region(currentX, getSizeY() - currentY - realY, realX, realY);
+
+          if (tile.intersects(image)) {
+            Region intersection = tile.intersection(image);
+            int intersectionX = 0;
+
+            if (tile.x < image.x) {
+              intersectionX = image.x - tile.x;
+            }
+
+            int rowLen = pixel * (int) Math.min(intersection.width, realX);
+            int outputOffset =
+              (outputRow - intersection.height) * outputRowLen + outputCol;
+            for (int trow=0; trow<intersection.height; trow++) {
+              int realRow = trow + intersection.y - tile.y;
+              int inputOffset = pixel * (realRow * realX + intersectionX);
+              System.arraycopy(
+                rawData, inputOffset, buf, outputOffset, rowLen);
+              outputOffset += outputRowLen;
+            }
+
+            outputCol += rowLen;
+            if (outputCol >= w * pixel) {
+              outputCol = 0;
+              outputRow -= intersection.height;
+            }
+          }
+
+          currentX += realX;
+          if (currentX >= getSizeX()) {
+            currentX = 0;
+            currentY += realY;
+          }
+        }
+        else {
+          RandomAccessInputStream s = new RandomAccessInputStream(rawData);
+          readPlane(s, x, y, w, h, buf);
+          s.close();
+          break;
+        }
       }
     }
     return buf;
@@ -296,6 +351,7 @@ public class ZeissCZIReader extends FormatReader {
       objectiveIDs.clear();
 
       previousChannel = 0;
+      prestitched = false;
     }
   }
 
@@ -326,11 +382,11 @@ public class ZeissCZIReader extends FormatReader {
 
     // remove any invalid SubBlocks
 
-    int planeSize =
-      getSizeX() * getSizeY() * FormatTools.getBytesPerPixel(getPixelType());
+    int bpp = FormatTools.getBytesPerPixel(getPixelType());
     for (int i=0; i<planes.size(); i++) {
+      int planeSize = planes.get(i).x * planes.get(i).y * bpp;
       byte[] pixels = planes.get(i).readPixelData();
-      if (pixels.length < planeSize) {
+      if (pixels.length != planeSize) {
         planes.remove(i);
         i--;
       }
@@ -351,7 +407,7 @@ public class ZeissCZIReader extends FormatReader {
     int seriesCount = rotations * positions * illuminations * acquisitions *
       mosaics * phases;
 
-    core[0].imageCount = planes.size() / seriesCount;
+    core[0].imageCount = getSizeZ() * getSizeC() * getSizeT();
 
     if (seriesCount > 1) {
       CoreMetadata firstSeries = core[0];
@@ -543,9 +599,19 @@ public class ZeissCZIReader extends FormatReader {
       for (DimensionEntry dimension : plane.directoryEntry.dimensionEntries) {
         switch (dimension.dimension.charAt(0)) {
           case 'X':
+            plane.x = dimension.size;
+            if (getSizeX() > 0 && dimension.size != getSizeX()) {
+              prestitched = true;
+              continue;
+            }
             core[0].sizeX = dimension.size;
             break;
           case 'Y':
+            plane.y = dimension.size;
+            if (getSizeY() > 0 && dimension.size != getSizeY()) {
+              prestitched = true;
+              continue;
+            }
             core[0].sizeY = dimension.size;
             break;
           case 'C':
@@ -1693,6 +1759,8 @@ public class ZeissCZIReader extends FormatReader {
     private long dataOffset;
 
     private Double stageX, stageY, timestamp, exposureTime;
+
+    public int x, y;
 
     public void fillInData() throws IOException {
       super.fillInData();
