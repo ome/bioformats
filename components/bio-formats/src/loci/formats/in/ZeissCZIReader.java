@@ -1040,8 +1040,10 @@ public class ZeissCZIReader extends FormatReader {
           store.setFilterSetSerialNumber(serialNumber, 0, i);
           store.setFilterSetLotNumber(lotNumber, 0, i);
 
-          store.setFilterSetDichroicRef(
-            getFirstNodeValue(filterSet, "DichroicRef"), 0, i);
+          String dichroicRef = getFirstNodeValue(filterSet, "DichroicRef");
+          if (dichroicRef != null && dichroicRef.length() > 0) {
+            store.setFilterSetDichroicRef(dichroicRef, 0, i);
+          }
 
           NodeList excitations = getGrandchildren(
             filterSet, "ExcitationFilters", "ExcitationFilterRef");
@@ -1049,12 +1051,16 @@ public class ZeissCZIReader extends FormatReader {
             "EmissionFilterRef");
 
           for (int ex=0; ex<excitations.getLength(); ex++) {
-            store.setFilterSetExcitationFilterRef(
-              excitations.item(ex).getTextContent(), 0, i, ex);
+            String ref = excitations.item(ex).getTextContent();
+            if (ref != null && ref.length() > 0) {
+              store.setFilterSetExcitationFilterRef(ref, 0, i, ex);
+            }
           }
           for (int em=0; em<emissions.getLength(); em++) {
-            store.setFilterSetEmissionFilterRef(
-              emissions.item(em).getTextContent(), 0, i, em);
+            String ref = emissions.item(em).getTextContent();
+            if (ref != null && ref.length() > 0) {
+              store.setFilterSetEmissionFilterRef(ref, 0, i, em);
+            }
           }
         }
       }
