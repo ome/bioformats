@@ -407,7 +407,7 @@ public class ZeissCZIReader extends FormatReader {
     int seriesCount = rotations * positions * illuminations * acquisitions *
       mosaics * phases;
 
-    core[0].imageCount = getSizeZ() * getSizeC() * getSizeT();
+    core[0].imageCount = getSizeZ() * (isRGB() ? 1 : getSizeC()) * getSizeT();
 
     if (seriesCount > 1) {
       CoreMetadata firstSeries = core[0];
