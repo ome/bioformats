@@ -259,7 +259,7 @@ public class ZeissCZIReader extends FormatReader {
       if (plane.seriesIndex == currentSeries && plane.planeIndex == no) {
         byte[] rawData = plane.readPixelData();
 
-        if (prestitched) {
+        if (prestitched != null && prestitched) {
           int realX = plane.x;
           int realY = plane.y;
 
