@@ -780,6 +780,12 @@ public class SlidebookReader extends FormatReader {
       core[i].sizeC = sizeC[index];
       core[i].sizeZ = sizeZ[index];
 
+      /* debug */ System.out.println("series #" + i);
+      /* debug */ System.out.println("  X = " + getSizeX());
+      /* debug */ System.out.println("  Y = " + getSizeY());
+      /* debug */ System.out.println("  C = " + getSizeC());
+      /* debug */ System.out.println("  Z = " + getSizeZ());
+
       if (getSizeC() > 64) {
         // dimensions are probably incorrect
         core[i].sizeC = 1;
@@ -818,6 +824,10 @@ public class SlidebookReader extends FormatReader {
       if (getSizeZ() == 0) core[i].sizeZ = 1;
 
       long plane = pixels / (getSizeC() * getSizeZ());
+
+      /* debug */ System.out.println("  nBlocks = " + nBlocks);
+      /* debug */ System.out.println("  plane = " + plane);
+      /* debug */ System.out.println("  pixels = " + pixels);
 
       if (getSizeX() * getSizeY() == pixels) {
         if (getSizeC() == 2 && (getSizeX() % 2 == 0) && (getSizeY() % 2 == 0)) {
@@ -873,6 +883,7 @@ public class SlidebookReader extends FormatReader {
               core[i].sizeC = 1;
               core[i].sizeZ = 1;
               core[i].sizeT = (int) p;
+              /* debug */ System.out.println("*****");
             }
             else if (getSizeC() > 1 &&
               core[i].sizeZ == (p / (getSizeC() - 1)) + 1)
@@ -985,10 +996,7 @@ public class SlidebookReader extends FormatReader {
         div *= getSizeT();
       }
       if (div > 1) {
-        long newPlane = pixels / div;
-        if (newPlane < plane) {
-          plane = newPlane;
-        }
+        plane = pixels / div;
       }
 
       long diff = 2 * (pixels - (getSizeX() * getSizeY() * div));
