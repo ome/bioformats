@@ -883,7 +883,6 @@ public class SlidebookReader extends FormatReader {
               core[i].sizeC = 1;
               core[i].sizeZ = 1;
               core[i].sizeT = (int) p;
-              /* debug */ System.out.println("*****");
             }
             else if (getSizeC() > 1 &&
               core[i].sizeZ == (p / (getSizeC() - 1)) + 1)
@@ -924,7 +923,12 @@ public class SlidebookReader extends FormatReader {
         else if (p == 0) {
           adjust = true;
           if (getSizeC() > 1) {
-            core[i].sizeC = 1;
+            if (getSizeC() == 3) {
+              core[i].sizeC = 2;
+            }
+            else {
+              core[i].sizeC = 1;
+            }
           }
         }
         else {
