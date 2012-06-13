@@ -590,6 +590,11 @@ public class SlidebookReader extends FormatReader {
               x = in.readInt();
               y = in.readInt();
             }
+            else if (x == 0 || y == 0) {
+              in.seek(in.getFilePointer() - 27);
+              x = in.readInt();
+              y = in.readInt();
+            }
 
             int div = in.readShort();
             x /= (div == 0 || div > 0x100 ? 1 : div);
