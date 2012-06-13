@@ -775,6 +775,14 @@ public class SlidebookReader extends FormatReader {
       core[i].sizeC = sizeC[index];
       core[i].sizeZ = sizeZ[index];
 
+      if (getSizeC() > 64) {
+        // dimensions are probably incorrect
+        core[i].sizeC = 1;
+        core[i].sizeZ = 1;
+        core[i].sizeX /= 2;
+        core[i].sizeY /= 2;
+      }
+
       boolean isMontage = false;
       if (i > 1 && ((imageNames[i] != null &&
         imageNames[i].startsWith("Montage")) || getSizeC() >= 32))
@@ -793,7 +801,10 @@ public class SlidebookReader extends FormatReader {
       }
 
       if (core[i].sizeZ % nBlocks == 0 && nBlocks != getSizeC()) {
-        core[i].sizeZ /= nBlocks;
+        int z = core[i].sizeZ / nBlocks;
+        if (z <= nBlocks) {
+          core[i].sizeZ = z;
+        }
       }
 
       if (divByTwo) core[i].sizeX /= 2;
@@ -815,7 +826,8 @@ public class SlidebookReader extends FormatReader {
       }
       else if (getSizeX() * getSizeY() * getSizeZ() == pixels) {
         if (getSizeC() == 2 && getSizeC() != getSizeZ() &&
-          (getSizeX() % 2 == 0) && (getSizeY() % 2 == 0))
+          (getSizeX() % 2 == 0) && (getSizeY() % 2 == 0) && (i == 0 ||
+          core[i - 1].sizeC > 1))
         {
           core[i].sizeX /= 2;
           divByTwo = true;
@@ -828,6 +840,10 @@ public class SlidebookReader extends FormatReader {
       else if (getSizeX() * getSizeY() * getSizeC() == pixels) {
         core[i].sizeC = (int) (pixels / (getSizeX() * getSizeY()));
         core[i].sizeZ = 1;
+      }
+      else if ((getSizeX() / 2) * (getSizeY() / 2) * getSizeZ() == pixels) {
+        core[i].sizeX /= 2;
+        core[i].sizeY /= 2;
       }
       else {
         boolean validSizes = true;
@@ -865,6 +881,12 @@ public class SlidebookReader extends FormatReader {
                 core[i].sizeT = (int) (p / getSizeC());
                 core[i].sizeZ = 1;
               }
+              else if (pixels % getSizeX() == 0 && pixels % getSizeY() == 0) {
+                while (getSizeX() * getSizeY() > plane) {
+                  core[i].sizeX /= 2;
+                  core[i].sizeY /= 2;
+                }
+              }
               else if (!adjust) {
                 core[i].sizeZ = (int) (p / getSizeC());
               }
@@ -883,8 +905,15 @@ public class SlidebookReader extends FormatReader {
         else if (isSpool) {
           core[i].sizeZ = (int) (p / getSizeC());
         }
+        else if (p == 0) {
+          adjust = true;
+          if (getSizeC() > 1) {
+            core[i].sizeC = 1;
+          }
+        }
         else {
           if (core[i].sizeC > 1 && p <= core[i].sizeC) {
+            int z = getSizeZ();
             core[i].sizeZ = 1;
             core[i].sizeC = (int) p;
             core[i].sizeT = 1;
@@ -896,13 +925,19 @@ public class SlidebookReader extends FormatReader {
                 core[i].sizeY = (int) (pixels / getSizeX());
               }
             }
+            else if (!isMontage) {
+              core[i].sizeZ = z;
+              adjust = true;
+            }
           }
           else if (isMontage) {
             pixels /= (getSizeC() * getSizeZ());
             int originalX = getSizeX();
+            int originalY = getSizeY();
             boolean xGreater = getSizeX() > getSizeY();
-            while (pixels % (getSizeX() * getSizeY()) != 0 ||
-              ((double) getSizeY() / getSizeX() > 2))
+            while (getSizeX() * getSizeY() != 0 && (
+              pixels % (getSizeX() * getSizeY()) != 0 ||
+              ((double) getSizeY() / getSizeX() > 2)))
             {
               core[i].sizeX += originalX;
               core[i].sizeY = (int) (pixels / getSizeX());
@@ -910,20 +945,46 @@ public class SlidebookReader extends FormatReader {
                 break;
               }
             }
+            if (getSizeX() * getSizeY() == 0) {
+              pixels *= getSizeC() * getSizeZ();
+              core[i].sizeX = originalX;
+              core[i].sizeY = originalY;
+              isMontage = false;
+            }
           }
-          else if (p != core[i].sizeZ * core[i].sizeC) {
-            core[i].sizeZ = 1;
-            core[i].sizeC = 1;
-            core[i].sizeT = (int) p;
+          else if (p != getSizeZ() * getSizeC()) {
+            if (pixels % getSizeX() == 0 && pixels % getSizeY() == 0) {
+              while (getSizeX() * getSizeY() > plane) {
+                core[i].sizeX /= 2;
+                core[i].sizeY /= 2;
+              }
+            }
+            else {
+              core[i].sizeZ = 1;
+              core[i].sizeC = 1;
+              core[i].sizeT = (int) p;
+            }
           }
         }
+      }
+
+      if (getSizeC() == 0) {
+        core[i].sizeC = 1;
+      }
+      if (getSizeZ() == 0) {
+        core[i].sizeZ = 1;
       }
 
       int div = getSizeC() * getSizeZ();
       if (getSizeT() > 0) {
         div *= getSizeT();
       }
-      plane = pixels / div;
+      if (div > 1) {
+        long newPlane = pixels / div;
+        if (newPlane < plane) {
+          plane = newPlane;
+        }
+      }
 
       long diff = 2 * (pixels - (getSizeX() * getSizeY() * div));
       if ((pixelLengths.get(index).longValue() % 2) == 1) {
@@ -935,17 +996,26 @@ public class SlidebookReader extends FormatReader {
       }
 
       if (adjust && diff == 0) {
+        double ratio = (double) getSizeX() / getSizeY();
         boolean widthGreater = getSizeX() > getSizeY();
         while (getSizeX() * getSizeY() > plane) {
           if (x) core[i].sizeX /= 2;
           else core[i].sizeY /= 2;
           x = !x;
         }
-        while (getSizeX() * getSizeY() < plane ||
-          (getSizeX() < getSizeY() && widthGreater))
-        {
-          core[i].sizeX++;
-          core[i].sizeY = (int) (plane / getSizeX());
+        if (getSizeX() * getSizeY() != plane) {
+          while (ratio - ((double) getSizeX() / getSizeY()) >= 0.01) {
+            boolean first = true;
+            while (first || getSizeX() * getSizeY() < plane ||
+              (getSizeX() < getSizeY() && widthGreater))
+            {
+              if (first) {
+                first = false;
+              }
+              core[i].sizeX++;
+              core[i].sizeY = (int) (plane / getSizeX());
+            }
+          }
         }
       }
 
@@ -1052,7 +1122,7 @@ public class SlidebookReader extends FormatReader {
             MetadataTools.createLSID("Objective", 0, objectiveIndex);
           store.setObjectiveID(objectiveID, 0, objectiveIndex);
           if (i < getSeriesCount()) {
-            store.setImageObjectiveSettingsID(objectiveID, i);
+            store.setObjectiveSettingsID(objectiveID, i);
           }
 
           objectiveIndex++;
