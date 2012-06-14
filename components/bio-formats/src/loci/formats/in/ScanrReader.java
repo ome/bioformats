@@ -549,6 +549,8 @@ public class ScanrReader extends FormatReader {
     MetadataTools.populatePixels(store, this);
 
     store.setPlateID(MetadataTools.createLSID("Plate", 0), 0);
+    store.setPlateColumns(new PositiveInteger(wellColumns), 0);
+    store.setPlateRows(new PositiveInteger(wellRows), 0);
 
     String plateAcqID = MetadataTools.createLSID("PlateAcquisition", 0, 0);
     store.setPlateAcquisitionID(plateAcqID, 0, 0);
