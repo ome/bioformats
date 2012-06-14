@@ -160,7 +160,8 @@ public class NRRDReader extends FormatReader {
     // TODO : add support for additional encoding types
     if (dataFile == null) {
       if (encoding.equals("raw")) {
-        in.seek(offset + no * FormatTools.getPlaneSize(this));
+        long planeSize = FormatTools.getPlaneSize(this);
+        in.seek(offset + no * planeSize);
 
         readPlane(in, x, y, w, h, buf);
         return buf;
