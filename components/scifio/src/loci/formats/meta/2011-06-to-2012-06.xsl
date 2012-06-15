@@ -147,18 +147,40 @@
 			<xsl:for-each select="@* [name() = 'ID']">
 				<xsl:attribute name="ID">ExperimenterGroup:<xsl:value-of select="."/></xsl:attribute>
 			</xsl:for-each>
-			<xsl:apply-templates select="node()"/>
+			<xsl:apply-templates select="* [(local-name(.) = 'Description')]"/>
+			<xsl:comment>Insert reversed GroupRef nodes</xsl:comment>
+			
+			
+			<xsl:variable name="groupID" select="@ID"/>
+			<xsl:for-each select="exsl:node-set(//OME:OME/OME:Experimenter/OME:GroupRef[@ID=$groupID])">
+				<xsl:variable name="matchingExperimenterID"><xsl:for-each select=" parent::node()">
+					<xsl:value-of select="@ID"/>
+				</xsl:for-each></xsl:variable>
+				<xsl:if test="//OME:Group[@ID=$groupID]/OME:Contact[@ID=$matchingExperimenterID]">
+					<xsl:comment>Already matching Contact - <xsl:value-of select="$matchingExperimenterID"/></xsl:comment>
+				</xsl:if>
+				<xsl:if test="//OME:Group[@ID=$groupID]/OME:Leader[@ID=$matchingExperimenterID]">
+					<xsl:comment>Already matching Leader - <xsl:value-of select="$matchingExperimenterID"/></xsl:comment>
+				</xsl:if>
+				<xsl:if test="not(//OME:Group[@ID=$groupID]/OME:Leader[@ID=$matchingExperimenterID])">
+					<xsl:if test="not(//OME:Group[@ID=$groupID]/OME:Contact[@ID=$matchingExperimenterID])">
+						<xsl:comment>No existing match - <xsl:value-of select="$matchingExperimenterID"/></xsl:comment>
+						<xsl:element name="OME:ExperimenterRef" namespace="{$newOMENS}">
+							<xsl:attribute name="ID">
+								<xsl:value-of select="$matchingExperimenterID"/>
+							</xsl:attribute>
+						</xsl:element>
+					</xsl:if>
+				</xsl:if>
+			</xsl:for-each>
+			<xsl:apply-templates select="* [(local-name(.) = 'Leader')]"/>
+			<xsl:apply-templates select="* [(local-name(.) = 'Contact')]"/>
+			<xsl:apply-templates select="* [(local-name(.) = 'AnnotationRef')]"/>
 		</xsl:element>
 	</xsl:template>
 	
 	<xsl:template match="OME:GroupRef">
-		<xsl:element name="OME:ExperimenterGroupRef" namespace="{$newOMENS}">
-			<xsl:apply-templates select="@*[not(local-name(.)='ID')]"/>
-			<xsl:for-each select="@* [name() = 'ID']">
-				<xsl:attribute name="ID">ExperimenterGroup:<xsl:value-of select="."/></xsl:attribute>
-			</xsl:for-each>
-			<xsl:apply-templates select="node()"/>
-		</xsl:element>
+		<xsl:comment>Remove and reverse GroupRef</xsl:comment>
 	</xsl:template>
 	
 	<xsl:template match="SPW:ImageRef">
@@ -183,6 +205,48 @@
 		</xsl:element>
 	</xsl:template>
 
+	<xsl:template match="SPW:Plate">
+		<xsl:element name="SPW:Plate" namespace="{$newSPWNS}">
+			<xsl:apply-templates select="@*"/>
+			<xsl:apply-templates select="* [(local-name(.) = 'Description')]"/>
+			<xsl:comment>Remove ScreenRef elements and reverse </xsl:comment>
+			<xsl:apply-templates select="* [(local-name(.) = 'Well')]"/>
+			<xsl:apply-templates select="* [(local-name(.) = 'AnnotationRef')]"/>
+			<xsl:apply-templates select="* [(local-name(.) = 'PlateAcquisition')]"/>
+		</xsl:element>
+	</xsl:template>
+
+	<xsl:template match="SPW:Screen">
+		<xsl:element name="SPW:Screen" namespace="{$newSPWNS}">
+			<xsl:apply-templates select="@*"/>
+			<xsl:apply-templates select="* [(local-name(.) = 'Description')]"/>
+			<xsl:apply-templates select="* [(local-name(.) = 'Reagent')]"/>
+			<xsl:apply-templates select="* [(local-name(.) = 'PlateRef')]"/>
+			<xsl:comment>Insert reverses ScreenRef elements</xsl:comment>
+			<!-- Insert reverses ScreenRef elements -->
+			<xsl:variable name="screenID" select="@ID"/>
+			<xsl:for-each select="exsl:node-set(//SPW:Plate/SPW:ScreenRef[@ID=$screenID])">
+				<xsl:variable name="matchingPlateID"><xsl:for-each select=" parent::node()">
+					<xsl:value-of select="@ID"/>
+				</xsl:for-each></xsl:variable>
+				<xsl:if test="not(//SPW:Screen[@ID=$screenID]/SPW:PlateRef[@ID=$matchingPlateID])">
+					<xsl:comment>No existing PlateRef</xsl:comment>
+				</xsl:if>
+				<xsl:if test="//SPW:Screen[@ID=$screenID]/SPW:PlateRef[@ID=$matchingPlateID]">
+					<xsl:comment>Already matching PlateRef</xsl:comment>
+				</xsl:if>
+				<xsl:if test="not(//SPW:Screen[@ID=$screenID]/SPW:PlateRef[@ID=$matchingPlateID])">
+					<xsl:element name="SPW:PlateRef" namespace="{$newSPWNS}">
+						<xsl:attribute name="ID">
+							<xsl:value-of select="$matchingPlateID"/>
+						</xsl:attribute>
+					</xsl:element>
+				</xsl:if>
+			</xsl:for-each>
+			<xsl:apply-templates select="* [local-name(.) = 'AnnotationRef']"/>
+		</xsl:element>
+	</xsl:template>
+	
 	<xsl:template match="ROI:ROI">
 		<xsl:element name="ROI:ROI" namespace="{$newROINS}">
 			<xsl:apply-templates select="@*"/>
@@ -344,7 +408,7 @@
 	<!-- Rewriting all namespaces -->
 	
 	<xsl:template match="OME:OME">
-		<OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2012-06"
+		<OME:OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2012-06"
 			xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2012-06"
 			xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2012-06"
 			xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2012-06"
@@ -353,7 +417,7 @@
 			xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2012-06 
 			../../../InProgress/ome.xsd">
 			<xsl:apply-templates/>
-		</OME>
+		</OME:OME>
 	</xsl:template>
 	
 	<xsl:template match="OME:*">
