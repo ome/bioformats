@@ -507,6 +507,9 @@ public class CellWorxReader extends FormatReader {
     else if (field < wellFiles[row][col].length) {
       return wellFiles[row][col][field];
     }
+    else if (imageCount == 0 && wellFiles[row][col].length == 1) {
+      return wellFiles[row][col][0];
+    }
     return null;
   }
 
