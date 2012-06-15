@@ -438,7 +438,9 @@ public class TiffParser {
     }
 
     for (TiffIFDEntry entry : entries) {
-      ifd.put(new Integer(entry.getTag()), getIFDValue(entry));
+      if (entry.getValueCount() < 10 * 1024 * 1024 || entry.getTag() < 32768) {
+        ifd.put(new Integer(entry.getTag()), getIFDValue(entry));
+      }
     }
   }
 

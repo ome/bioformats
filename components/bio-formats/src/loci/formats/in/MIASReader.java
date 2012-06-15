@@ -1056,7 +1056,7 @@ public class MIASReader extends FormatReader {
   private int parseMasks(MetadataStore store, int series, int roi,
     String overlayTiff) throws FormatException, IOException
   {
-    if (!parseMasks) return 0;
+    if (!parseMasks || series >= getSeriesCount()) return 0;
     int nOverlays = 0;
     for (int i=0; i<3; i++) {
       String roiId = MetadataTools.createLSID("ROI", series, roi + nOverlays);

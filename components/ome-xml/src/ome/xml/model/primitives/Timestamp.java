@@ -64,12 +64,13 @@ public class Timestamp extends PrimitiveType<String> {
 
   public Timestamp(String value) {
     super(value);
+    Date date = new Date();
     try {
-      asDate = dateFormat.parse(value);
+      date = dateFormat.parse(value);
     }
     catch (ParseException e) {
-      throw new RuntimeException(e);
     }
+    asDate = date;
   }
 
   public Timestamp(Date date) {

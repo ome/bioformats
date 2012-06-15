@@ -202,16 +202,26 @@ public class BDReader extends FormatReader {
     int fieldCol = field % fieldCols;
 
     if (file != null) {
-      reader.setId(file);
-      if (fieldRows * fieldCols == 1) {
-        reader.openBytes(0, buf, x, y, w, h);
+      try {
+        reader.setId(file);
+        if (fieldRows * fieldCols == 1) {
+          reader.openBytes(0, buf, x, y, w, h);
+        }
+        else {
+          // fields are stored together in a single image,
+          // so we need to split them up
+          int fx = x + (fieldCol * getSizeX());
+          int fy = y + (fieldRow * getSizeY());
+          reader.openBytes(0, buf, fx, fy, w, h);
+        }
       }
-      else {
-        // fields are stored together in a single image,
-        // so we need to split them up
-        int fx = x + (fieldCol * getSizeX());
-        int fy = y + (fieldRow * getSizeY());
-        reader.openBytes(0, buf, fx, fy, w, h);
+      catch (FormatException e) {
+        LOGGER.debug("Could not read file " + file, e);
+        return buf;
+      }
+      catch (IOException e) {
+        LOGGER.debug("Could not read file " + file, e);
+        return buf;
       }
     }
 

@@ -830,6 +830,7 @@ public class LIFReader extends FormatReader {
             nextFilter++;
           }
           String filterID = MetadataTools.createLSID("Filter", i, nextFilter);
+          store.setFilterID(filterID, i, nextFilter);
           store.setLightPathEmissionFilterRef(filterID, i, c, 0);
           nextFilterDetector++;
           nextFilter++;

@@ -88,10 +88,12 @@ public class Configuration {
   private static final String TIME_INCREMENT = "TimeIncrement";
   private static final String LIGHT_SOURCE = "LightSource_";
   private static final String CHANNEL_NAME = "ChannelName_";
+  private static final String EXPOSURE_TIME = "ExposureTime_";
   private static final String EMISSION_WAVELENGTH = "EmissionWavelength_";
   private static final String EXCITATION_WAVELENGTH = "ExcitationWavelength_";
   private static final String DETECTOR = "Detector_";
   private static final String NAME = "Name";
+  private static final String DESCRIPTION = "Description";
   private static final String SERIES_COUNT = "series_count";
   private static final String CHANNEL_COUNT = "channel_count";
   private static final String DATE = "Date";
@@ -278,6 +280,15 @@ public class Configuration {
     return currentTable.get(CHANNEL_NAME + channel);
   }
 
+  public boolean hasExposureTime(int channel) {
+    return currentTable.containsKey(EXPOSURE_TIME + channel);
+  }
+
+  public Double getExposureTime(int channel) {
+    String exposure = currentTable.get(EXPOSURE_TIME + channel);
+    return exposure == null ? null : new Double(exposure);
+  }
+
   public Integer getEmissionWavelength(int channel) {
     String wavelength = currentTable.get(EMISSION_WAVELENGTH + channel);
     return wavelength == null ? null : new Integer(wavelength);
@@ -294,6 +305,14 @@ public class Configuration {
 
   public String getImageName() {
     return currentTable.get(NAME);
+  }
+
+  public boolean hasImageDescription() {
+    return currentTable.containsKey(DESCRIPTION);
+  }
+
+  public String getImageDescription() {
+    return currentTable.get(DESCRIPTION);
   }
 
   public String getDate() {
@@ -432,6 +451,7 @@ public class Configuration {
       }
 
       seriesTable.put(NAME, retrieve.getImageName(series));
+      seriesTable.put(DESCRIPTION, retrieve.getImageDescription(series));
 
       PositiveFloat physicalX = retrieve.getPixelsPhysicalSizeX(series);
       if (physicalX != null) {
@@ -460,6 +480,15 @@ public class Configuration {
         try {
           seriesTable.put(LIGHT_SOURCE + c,
             retrieve.getChannelLightSourceSettingsID(series, c));
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          int plane = reader.getIndex(0, c, 0);
+          if (plane < retrieve.getPlaneCount(series)) {
+            seriesTable.put(EXPOSURE_TIME + c,
+              retrieve.getPlaneExposureTime(series, plane).toString());
+          }
         }
         catch (NullPointerException e) { }
 

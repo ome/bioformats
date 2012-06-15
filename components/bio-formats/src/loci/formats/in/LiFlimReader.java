@@ -27,6 +27,7 @@ package loci.formats.in;
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;
+import java.io.EOFException;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -174,7 +175,12 @@ public class LiFlimReader extends FormatReader {
 
       // read compressed data
       byte[] bytes = new byte[bytesPerPlane];
-      gz.readFully(bytes);
+      try {
+        gz.readFully(bytes);
+      }
+      catch (EOFException e) {
+        LOGGER.debug("Could not read full plane", e);
+      }
 
       RandomAccessInputStream s = new RandomAccessInputStream(bytes);
       readPlane(s, x, y, w, h, buf);
@@ -514,7 +520,7 @@ public class LiFlimReader extends FormatReader {
     // seek to correct image number
     if (getSeries() >= 1 && gzSeries < getSeries()) {
       int originalSeries = getSeries();
-      for (int i=gzSeries; i<getSeries(); i++) {
+      for (int i=gzSeries; i<originalSeries; i++) {
         setSeries(i);
         int nPlanes = getImageCount() - gzPos;
         int nBytes = FormatTools.getPlaneSize(this) * nPlanes;
