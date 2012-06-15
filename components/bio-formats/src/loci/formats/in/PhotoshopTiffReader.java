@@ -40,6 +40,7 @@ import loci.formats.codec.PackbitsCodec;
 import loci.formats.codec.ZlibCodec;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
+import loci.formats.tiff.TiffIFDEntry;
 import loci.formats.tiff.TiffParser;
 
 /**
@@ -151,7 +152,14 @@ public class PhotoshopTiffReader extends BaseTiffReader {
 
     CoreMetadata firstSeries = core[0];
 
-    byte[] b = (byte[]) ifds.get(0).getIFDValue(IMAGE_SOURCE_DATA);
+    Object sourceData = ifds.get(0).getIFDValue(IMAGE_SOURCE_DATA);
+    byte[] b = null;
+    if (sourceData instanceof byte[]) {
+      b = (byte[]) sourceData;
+    }
+    else if (sourceData instanceof TiffIFDEntry) {
+      b = (byte[]) tiffParser.getIFDValue((TiffIFDEntry) sourceData);
+    }
     if (b == null) return;
 
     tag = new RandomAccessInputStream(b);

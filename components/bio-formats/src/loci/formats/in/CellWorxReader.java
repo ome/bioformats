@@ -27,6 +27,7 @@ package loci.formats.in;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Vector;
 
 import loci.common.DataTools;
@@ -39,8 +40,14 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.MetadataTools;
+import loci.formats.meta.IMetadata;
+import loci.formats.meta.MetadataConverter;
 import loci.formats.meta.MetadataStore;
+import loci.formats.ome.OMEXMLMetadata;
 
+import ome.xml.model.Image;
+import ome.xml.model.Instrument;
+import ome.xml.model.OME;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
@@ -362,9 +369,25 @@ public class CellWorxReader extends FormatReader {
       core[i].interleaved = pnl.isInterleaved();
     }
 
+    OMEXMLMetadata readerMetadata = (OMEXMLMetadata) pnl.getMetadataStore();
+    OME root = (OME) readerMetadata.getRoot();
+    Instrument instrument = root.getInstrument(0);
+    List<Image> images = root.copyImageList();
+
+    OME convertRoot = new OME();
+    convertRoot.addInstrument(instrument);
+    for (int i=0; i<core.length/images.size(); i++) {
+      for (Image img : images) {
+        convertRoot.addImage(img);
+      }
+    }
+    IMetadata convertMetadata = MetadataTools.createOMEXMLMetadata();
+    convertMetadata.setRoot(convertRoot);
+
     pnl.close();
 
     MetadataStore store = makeFilterMetadata();
+    MetadataConverter.convertMetadata(convertMetadata, store);
     MetadataTools.populatePixels(store, this);
 
     String plateID = MetadataTools.createLSID("Plate", 0);
@@ -483,6 +506,9 @@ public class CellWorxReader extends FormatReader {
     }
     else if (field < wellFiles[row][col].length) {
       return wellFiles[row][col][field];
+    }
+    else if (imageCount == 0 && wellFiles[row][col].length == 1) {
+      return wellFiles[row][col][0];
     }
     return null;
   }
@@ -641,8 +667,10 @@ public class CellWorxReader extends FormatReader {
   {
     IFormatReader pnl = new DeltavisionReader();
     if (checkSuffix(file, "tif")) {
-      pnl = new MinimalTiffReader();
+      pnl = new MetamorphReader();
     }
+    IMetadata metadata = MetadataTools.createOMEXMLMetadata();
+    pnl.setMetadataStore(metadata);
     pnl.setId(file);
     return pnl;
   }

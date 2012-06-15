@@ -831,7 +831,7 @@ public class FileStitcher extends ReaderWrapper {
 
     int nPixelsFiles =
       reader.getUsedFiles().length - reader.getUsedFiles(true).length;
-    if (nPixelsFiles > 1) {
+    if (nPixelsFiles > 1 || fp.getFiles().length == 1) {
       noStitch = true;
       return;
     }

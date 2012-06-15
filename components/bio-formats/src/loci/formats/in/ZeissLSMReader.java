@@ -1229,7 +1229,7 @@ public class ZeissLSMReader extends FormatReader {
       }
 
       double firstStamp = 0;
-      if (timestamps.size() > 0) {
+      if (timestamps.size() > 0 && stampIndex < timestamps.size()) {
         firstStamp = timestamps.get(stampIndex).doubleValue();
       }
 
