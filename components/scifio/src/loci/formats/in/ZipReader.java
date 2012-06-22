@@ -102,6 +102,13 @@ public class ZipReader extends FormatReader {
     super.close(fileOnly);
     if (reader != null) reader.close(fileOnly);
     if (!fileOnly) reader = null;
+    for (String name : mappedFiles) {
+      IRandomAccess handle = Location.getMappedFile(name);
+      Location.mapFile(name, null);
+      if (handle != null) {
+        handle.close();
+      }
+    }
     mappedFiles.clear();
   }
 
@@ -137,6 +144,8 @@ public class ZipReader extends FormatReader {
     metadataStore = reader.getMetadataStore();
     core = reader.getCoreMetadata();
     metadata = reader.getGlobalMetadata();
+
+    base.close();
   }
 
 }
