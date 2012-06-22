@@ -36,8 +36,8 @@ if nargin == 0 || exist(id, 'file') == 0
     id = [path file];
     if isequal(path, 0) || isequal(file, 0), return; end
 else
-    [~,f]= fileattrib(id);
-    id=f.Name;
+    [~, f] = fileattrib(id);
+    id = f.Name;
 end
 
 % set LuraWave license code, if available
