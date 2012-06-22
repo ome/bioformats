@@ -27,7 +27,7 @@ package loci.formats.in;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Hashtable; 
+import java.util.Hashtable;
 
 import loci.common.ByteArrayHandle;
 import loci.common.Constants;
@@ -318,7 +318,7 @@ public class NativeND2Reader extends FormatReader {
   // -- Internal FormatReader API methods --
 
   /* @see loci.formats.FormatReader#initFile(String) */
-protected void initFile(String id) throws FormatException, IOException {
+  protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
        
     in = new RandomAccessInputStream(id);
@@ -649,7 +649,7 @@ protected void initFile(String id) throws FormatException, IOException {
         }
         else if (getMetadataOptions().getMetadataLevel() !=
           MetadataLevel.MINIMUM)
-        { 
+        {
           if (blockType.startsWith("CustomData|A")) {
             customDataOffsets.add(new Long(fp));
             customDataLengths.add(new int[] {lenOne, lenTwo});
