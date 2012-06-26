@@ -550,7 +550,7 @@ public class MetamorphReader extends BaseTiffReader {
       core[0].sizeX = (int) ifd.getImageWidth();
       core[0].sizeY = (int) ifd.getImageLength();
 
-      core[0].sizeZ = !hasZ.get(0) ? 1 : zc;
+      core[0].sizeZ = hasZ.size() > 0 && !hasZ.get(0) ? 1 : zc;
       core[0].sizeC = cc;
       core[0].sizeT = tc;
       core[0].imageCount = getSizeZ() * getSizeC() * getSizeT();
@@ -579,7 +579,8 @@ public class MetamorphReader extends BaseTiffReader {
             int idx = j * 2 + 1;
             newCore[j * 2].sizeC = stks[j * 2].length / getSizeT();
             newCore[idx].sizeC = stks[idx].length / newCore[idx].sizeT;
-            newCore[idx].sizeZ = hasZ.size() > 1 && hasZ.get(1) ? zc : 1;
+            newCore[idx].sizeZ =
+              hasZ.size() > 1 && hasZ.get(1) && core[0].sizeZ == 1 ? zc : 1;
             newCore[j * 2].imageCount = newCore[j * 2].sizeC *
               newCore[j * 2].sizeT * newCore[j * 2].sizeZ;
             newCore[idx].imageCount =
