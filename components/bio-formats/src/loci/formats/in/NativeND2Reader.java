@@ -104,6 +104,8 @@ public class NativeND2Reader extends FormatReader {
 
   private ND2Handler backupHandler;
 
+  private double trueSizeX = 0;
+  
   // -- Constructor --
 
   /** Constructs a new ND2 reader. */
@@ -318,7 +320,7 @@ public class NativeND2Reader extends FormatReader {
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
-
+       
     in = new RandomAccessInputStream(id);
 
     channelColors = new Hashtable<String, Integer>();
@@ -384,7 +386,54 @@ public class NativeND2Reader extends FormatReader {
         int skip = len - 12 - lenOne * 2;
         if (skip <= 0) skip += lenOne * 2;
 
-        if (blockType.startsWith("ImageDataSeq")) {
+        
+        
+  // Image calibration for newer nd2 files
+      
+        if (blockType.endsWith("Calibra"))
+        {
+        	long veryStart = in.getFilePointer();
+        	   in.skipBytes(12); // ImageCalibra|tionLV
+                      
+        	  long endFP = in.getFilePointer() + lenOne + lenTwo - 24;
+               while (in.read() == 0);
+ 
+               while (in.getFilePointer() < endFP) {
+            	   
+                 int nameLen = in.read();
+                 
+                 if (nameLen == 0) {
+                   in.seek(in.getFilePointer() - 3);
+                   nameLen = in.read();
+                 }
+                 
+                 if (nameLen < 0) 
+                   break;
+                 
+                 // Get data
+                 String attributeName =  DataTools.stripString(in.readString(nameLen * 2));
+                 double valueOrLength = in.readDouble();
+                 
+                 
+                 if (attributeName.equals("dCalibration"))
+                 {
+	                	 if ( valueOrLength > 0) {
+	                          	 addGlobalMeta(attributeName, valueOrLength);
+	                          	 trueSizeX = valueOrLength;
+	                	 }
+                	 
+                    break;  // Done with calibration
+                 }
+                 
+                 
+              
+               } // while
+       
+           in.seek(veryStart); // For old nd2 files
+        } // elseif
+        
+        
+        if (blockType.startsWith("ImageDataSeq")) { 
           imageOffsets.add(new Long(fp));
           imageLengths.add(new int[] {lenOne, lenTwo});
           char b = (char) in.readByte();
@@ -558,8 +607,8 @@ public class NativeND2Reader extends FormatReader {
                 in.skipBytes(4);
               }
               else if (attributeName.equals("bDurationPref")) {
-                in.seek(in.getFilePointer() - 3);
-              }
+                  in.seek(in.getFilePointer() - 3);
+                }
               in.skipBytes(1);
             }
 
@@ -1324,8 +1373,11 @@ public class NativeND2Reader extends FormatReader {
         double sizeX = handler.getPixelSizeX();
         double sizeY = handler.getPixelSizeY();
         double sizeZ = handler.getPixelSizeZ();
-
-        if (sizeX > 0) {
+        
+        if (trueSizeX > 0)
+        	store.setPixelsPhysicalSizeX(new PositiveFloat(trueSizeX), i);
+        
+        else if (sizeX > 0) {
           store.setPixelsPhysicalSizeX(new PositiveFloat(sizeX), i);
         }
         else {
@@ -1348,7 +1400,7 @@ public class NativeND2Reader extends FormatReader {
         }
       }
     }
-
+     
     // populate PlaneTiming and StagePosition data
     ArrayList<Double> exposureTime = null;
     if (handler != null) handler.getExposureTimes();
@@ -1563,5 +1615,5 @@ public class NativeND2Reader extends FormatReader {
     readPlane(s, x, y, w, h, scanlinePad, buf);
     s.close();
   }
-
-}
+  
+} 
