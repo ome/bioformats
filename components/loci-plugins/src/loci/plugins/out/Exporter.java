@@ -31,6 +31,7 @@ import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.Macro;
+import ij.Prefs;
 import ij.gui.GenericDialog;
 import ij.io.FileInfo;
 import ij.io.OpenDialog;
@@ -403,6 +404,21 @@ public class Exporter {
           }
         }
       }
+
+      // NB: Animation rate code copied from ij.plugin.Animator#doOptions().
+			final int rate;
+			if (cal.fps != 0.0) {
+				rate = (int) cal.fps;
+			}
+			else if (cal.frameInterval != 0.0 && cal.getTimeUnit().equals("sec")) {
+				rate = (int) (1.0 / cal.frameInterval);
+			}
+			else {
+				// NB: Code from ij.plugin.Animator#animationRate initializer.
+				// The value is 7 by default in ImageJ, so must be 7 here as well.
+				rate = (int) Prefs.getDouble(Prefs.FPS, 7.0);
+			}
+			if (rate > 0) w.setFramesPerSecond(rate);
 
       String[] outputFiles = new String[] {outfile};
 
