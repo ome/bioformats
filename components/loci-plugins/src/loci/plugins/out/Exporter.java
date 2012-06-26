@@ -404,6 +404,17 @@ public class Exporter {
         }
       }
 
+      // NB: Animation rate code copied from ij.plugin.Animator#doOptions().
+			final int rate;
+			if (cal.fps != 0.0) {
+				rate = (int) cal.fps;
+			}
+			else if (cal.frameInterval != 0.0 && cal.getTimeUnit().equals("sec")) {
+				rate = (int) (1.0 / cal.frameInterval);
+			}
+			else rate = 0;
+			if (rate > 0) w.setFramesPerSecond(rate);
+
       String[] outputFiles = new String[] {outfile};
 
       if (splitZ || splitC || splitT) {
