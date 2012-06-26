@@ -31,6 +31,7 @@ import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.Macro;
+import ij.Prefs;
 import ij.gui.GenericDialog;
 import ij.io.FileInfo;
 import ij.io.OpenDialog;
@@ -412,7 +413,7 @@ public class Exporter {
 			else if (cal.frameInterval != 0.0 && cal.getTimeUnit().equals("sec")) {
 				rate = (int) (1.0 / cal.frameInterval);
 			}
-			else rate = 0;
+			else rate = (int) Prefs.getDouble(Prefs.FPS, 7.0);
 			if (rate > 0) w.setFramesPerSecond(rate);
 
       String[] outputFiles = new String[] {outfile};
