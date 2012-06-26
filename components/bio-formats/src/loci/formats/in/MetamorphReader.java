@@ -509,6 +509,8 @@ public class MetamorphReader extends BaseTiffReader {
                 // name, translate them to hyphens. (See #5922)
                 waveName = waveName.replace('/', '-');
                 waveName = waveName.replace('\\', '-');
+                waveName = waveName.replace('(', '-');
+                waveName = waveName.replace(')', '-');
                 stks[seriesNdx][pt[seriesNdx]] += waveName;
               }
             }
