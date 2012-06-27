@@ -353,8 +353,8 @@ public class QTWriter extends FormatWriter {
     int height = r.getPixelsSizeY(series).getValue().intValue();
     int nChannels = getSamplesPerPixel();
 
-    int timeScale = 100;
-    int duration = numWritten * (timeScale / fps);
+    int timeScale = 1000;
+    int duration = (int) (numWritten * ((double) timeScale / fps));
     int bitsPerPixel = (nChannels > 1) ? 24 : 40;
     int channels = (bitsPerPixel >= 40) ? 1 : 3;
 
@@ -553,7 +553,7 @@ public class QTWriter extends FormatWriter {
     out.writeShort(0); // flags
     out.writeInt(1); // number of entries in the table
     out.writeInt(numWritten); // number of planes
-    out.writeInt(fps); // frames per second
+    out.writeInt((int) ((double) timeScale / fps)); // milliseconds per frame
 
     // -- write stsc atom --
 
