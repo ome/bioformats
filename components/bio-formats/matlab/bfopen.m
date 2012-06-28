@@ -99,7 +99,7 @@ for s = 1:numSeries
         
         warning off
         if ~isempty(colorMaps{s, i})
-            newMap = double(colorMaps{s, i});
+            newMap = single(colorMaps{s, i});
             newMap(newMap < 0) = newMap(newMap < 0) + bppMax;
             colorMaps{s, i} = newMap / (bppMax - 1);
         end
