@@ -1091,7 +1091,10 @@ public class LIFReader extends FormatReader {
           }
 
           if (multiband != null) {
-            channels.add(multiband.getAttribute("DyeName"));
+            String dye = multiband.getAttribute("DyeName");
+            if (!channels.contains(dye)) {
+              channels.add(dye);
+            }
 
             double cutIn = new Double(multiband.getAttribute("LeftWorld"));
             double cutOut = new Double(multiband.getAttribute("RightWorld"));
