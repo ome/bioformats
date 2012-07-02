@@ -222,7 +222,7 @@ Type "ant -p" for a list of targets.
   <!-- Apache POI Java library -->
 
   <target name="deps-poi-loci"
-    depends="jar-common"/>
+    depends="jar-scifio"/>
 
   <target name="compile-poi-loci" depends="deps-poi-loci"
     description="compile classes for Apache POI library">
@@ -245,7 +245,7 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="clean-poi-loci"
-    depends="clean-common"
+    depends="clean-scifio"
     description="remove build files for Apache POI library">
     <ant dir="components/forks/poi" target="poi-loci.clean"/>
   </target>
@@ -292,7 +292,7 @@ Type "ant -p" for a list of targets.
   <!-- Metakit library -->
 
   <target name="deps-metakit"
-    depends="jar-common"/>
+    depends="jar-scifio"/>
 
   <target name="compile-metakit" depends="deps-metakit"
     description="compile classes for Metakit Java library">
@@ -315,7 +315,7 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="clean-metakit"
-    depends="clean-common"
+    depends="clean-scifio"
     description="remove build files for Metakit Java library">
     <ant dir="components/metakit" target="metakit.clean"/>
   </target>
@@ -396,8 +396,7 @@ Type "ant -p" for a list of targets.
   <!-- SCIFIO -->
 
   <target name="deps-scifio"
-    depends="jar-common,
-      jar-jai,
+    depends="jar-jai,
       jar-lwf-stubs,
       jar-ome-xml"/>
 
@@ -422,8 +421,7 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="clean-scifio"
-    depends="clean-common,
-      clean-jai,
+    depends="clean-jai,
       clean-lwf-stubs,
       clean-ome-xml"
     description="remove build files for SCIFIO">
@@ -443,8 +441,7 @@ Type "ant -p" for a list of targets.
   <!-- Bio-Formats -->
 
   <target name="deps-formats"
-    depends="jar-common,
-      jar-mdbtools,
+    depends="jar-mdbtools,
       jar-metakit,
       jar-ome-xml,
       jar-poi-loci,
@@ -471,8 +468,7 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="clean-formats"
-    depends="clean-common,
-      clean-mdbtools,
+    depends="clean-mdbtools,
       clean-metakit,
       clean-ome-xml,
       clean-poi-loci,
@@ -494,8 +490,7 @@ Type "ant -p" for a list of targets.
   <!-- LOCI autogen -->
 
   <target name="deps-autogen"
-    depends="jar-common,
-      jar-scifio"/>
+    depends="jar-scifio"/>
 
   <target name="compile-autogen" depends="deps-autogen"
     description="compile classes for LOCI autogen">
@@ -518,8 +513,7 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="clean-autogen"
-    depends="clean-common,
-      clean-scifio"
+    depends="clean-scifio"
     description="remove build files for LOCI autogen">
     <ant dir="components/autogen" target="autogen.clean"/>
   </target>
@@ -532,8 +526,7 @@ Type "ant -p" for a list of targets.
   <!-- LOCI Plugins for ImageJ -->
 
   <target name="deps-loci-plugins"
-    depends="jar-common,
-      jar-formats,
+    depends="jar-formats,
       jar-ome-xml,
       jar-scifio"/>
 
@@ -558,8 +551,7 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="clean-loci-plugins"
-    depends="clean-common,
-      clean-formats,
+    depends="clean-formats,
       clean-ome-xml,
       clean-scifio"
     description="remove build files for LOCI Plugins for ImageJ">
@@ -579,8 +571,7 @@ Type "ant -p" for a list of targets.
   <!-- OME I/O -->
 
   <target name="deps-ome-io"
-    depends="jar-common,
-      jar-ome-xml,
+    depends="jar-ome-xml,
       jar-scifio"/>
 
   <target name="compile-ome-io" depends="deps-ome-io"
@@ -604,8 +595,7 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="clean-ome-io"
-    depends="clean-common,
-      clean-ome-xml,
+    depends="clean-ome-xml,
       clean-scifio"
     description="remove build files for OME I/O">
     <ant dir="components/ome-io" target="ome-io.clean"/>
@@ -619,8 +609,7 @@ Type "ant -p" for a list of targets.
   <!-- OME Plugins for ImageJ -->
 
   <target name="deps-ome-plugins"
-    depends="jar-common,
-      jar-loci-plugins,
+    depends="jar-loci-plugins,
       jar-ome-io,
       jar-scifio"/>
 
@@ -645,8 +634,7 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="clean-ome-plugins"
-    depends="clean-common,
-      clean-loci-plugins,
+    depends="clean-loci-plugins,
       clean-ome-io,
       clean-scifio"
     description="remove build files for OME Plugins for ImageJ">
@@ -661,8 +649,7 @@ Type "ant -p" for a list of targets.
   <!-- LOCI testing framework -->
 
   <target name="deps-tests"
-    depends="jar-common,
-      jar-formats,
+    depends="jar-formats,
       jar-ome-io,
       jar-ome-xml,
       jar-scifio"/>
@@ -688,8 +675,7 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="clean-tests"
-    depends="clean-common,
-      clean-formats,
+    depends="clean-formats,
       clean-ome-io,
       clean-ome-xml,
       clean-scifio"
@@ -705,8 +691,8 @@ Type "ant -p" for a list of targets.
   <!-- OME Notes -->
 
   <target name="deps-ome-notes"
-    depends="compile-common,
-      compile-formats"/>
+    depends="compile-formats,
+      compile-scifio"/>
 
   <target name="compile-ome-notes" depends="deps-ome-notes"
     description="compile classes for OME Notes">
@@ -729,8 +715,8 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="clean-ome-notes"
-    depends="clean-common,
-      clean-formats"
+    depends="clean-formats,
+      clean-scifio"
     description="remove build files for OME Notes">
     <ant dir="components/legacy/ome-notes" target="ome-notes.clean"/>
   </target>
@@ -743,8 +729,7 @@ Type "ant -p" for a list of targets.
   <!-- OME Metadata Editor -->
 
   <target name="deps-ome-editor"
-    depends="jar-common,
-      jar-ome-xml,
+    depends="jar-ome-xml,
       jar-scifio"/>
 
   <target name="compile-ome-editor" depends="deps-ome-editor"
@@ -768,8 +753,7 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="clean-ome-editor"
-    depends="clean-common,
-      clean-ome-xml,
+    depends="clean-ome-xml,
       clean-scifio"
     description="remove build files for OME Metadata Editor">
     <ant dir="components/legacy/ome-editor" target="ome-editor.clean"/>
@@ -784,7 +768,6 @@ Type "ant -p" for a list of targets.
 
   <target name="tools"
     depends="copy-jars,
-      jar-common,
       jar-jai,
       jar-loci-plugins,
       jar-mdbtools,
