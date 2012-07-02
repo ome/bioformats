@@ -691,8 +691,8 @@ Type "ant -p" for a list of targets.
   <!-- OME Notes -->
 
   <target name="deps-ome-notes"
-    depends="compile-formats,
-      compile-scifio"/>
+    depends="jar-formats,
+      jar-scifio"/>
 
   <target name="compile-ome-notes" depends="deps-ome-notes"
     description="compile classes for OME Notes">
