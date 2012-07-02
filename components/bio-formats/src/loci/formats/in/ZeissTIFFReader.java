@@ -108,6 +108,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Vector;
+import java.util.Collections;
+import java.util.Iterator;
 
 import loci.common.DataTools;
 import loci.common.CaseInsensitiveLocation;
@@ -383,9 +385,8 @@ public class ZeissTIFFReader extends BaseZeissReader {
       System.out.println("Warning: no image planes found");
 
     // Determine number of separate timepoints, channels, and z slices.
-    int pc = 0;
     for (ZeissTIFFHandler.Plane p : tiffInfo.handler.planes) {
-      Plane np = new Plane(pc++);
+      Plane np = new Plane();
       for (Tag t : p.tagset.tags) {
         np.tags.put(t.getKey(), t.getValue());
       }
@@ -404,6 +405,7 @@ public class ZeissTIFFReader extends BaseZeissReader {
       int xsize = parseInt(np.tags.get("Camera Frame Width"));
       int ysize = parseInt(np.tags.get("Camera Frame Height"));
 
+      np.site = tileid;
       tileIndices.add(tileid);
       channelIndices.add(channelid);
       zIndices.add(sliceid);
@@ -425,25 +427,45 @@ public class ZeissTIFFReader extends BaseZeissReader {
       }
     }
 
+    // Filter out images with an incomplete number of z slices.
+    // This is to work around a probable bug in AxioVision.
+    int full = Collections.max(tileIndices);
+    int indexCount[] = new int[full+1];
+    int max = 0;
+    for (Plane plane : planes) {
+      indexCount[plane.site]++;
+      if (indexCount[plane.site] > max)
+        max = indexCount[plane.site];
+    }
+    for (int i = 0; i < full+1; i++) {
+      if (indexCount[i] != max)
+          tileIndices.remove(i);
+    }
+
+    for (Iterator<Plane> i = planes.iterator(); i.hasNext();) {
+      Plane plane = i.next();
+      if (!tileIndices.contains(plane.site)) {
+          i.remove();
+      }
+    }
+
     countImages(); // Allocates memory for arrays below
-    for (Plane plane : planes)
-    {
+
+    for (int i = 0; i < planes.size(); i++) {
+      Plane plane = planes.get(i);
       int channelid = parseInt(plane.tags.get("Image Channel Index"));
       int sliceid = parseInt(plane.tags.get("Image Index Z"));
       int timepointid = parseInt(plane.tags.get("Image Index T"));
 
-      coordinates[plane.id][0] = sliceid;
-      coordinates[plane.id][1] = channelid;
-      coordinates[plane.id][2] = timepointid;
-      imageFiles[plane.id] = plane.filename;
+      coordinates[i][0] = sliceid;
+      coordinates[i][1] = channelid;
+      coordinates[i][2] = timepointid;
+      imageFiles[i] = plane.filename;
     }
-    imageFiles[getImageCount()] = tiffInfo.xmlname;
-    if (getImageCount() > 1)
-      imageFiles[getImageCount() + 1] = tiffInfo.origname;
 
     int total = tileIndices.size() * channelIndices.size() * zIndices.size() * timepointIndices.size();
     if(total != planes.size())
-      System.out.println("Warning: Number of image planes not detected correctly.");
+      System.out.println("Warning: Number of image planes not detected correctly: total="+total+" planes.size="+planes.size());
 
   }
 
@@ -456,8 +478,10 @@ public class ZeissTIFFReader extends BaseZeissReader {
   protected void fillMetadataPass5(MetadataStore store) throws FormatException, IOException {
     super.fillMetadataPass5(store);
 
-    for (Plane plane : planes)
-    parseMainTags(plane.id, store, plane.taglist);
+    for (int i = 0; i < planes.size(); i++) {
+      Plane plane = planes.get(i);
+      parseMainTags(i, store, plane.taglist);
+    }
     System.out.flush();
   }
 
@@ -466,12 +490,6 @@ public class ZeissTIFFReader extends BaseZeissReader {
     core[0].imageCount = planes.size();
 
     super.countImages();
-
-    // Override since we have the XML and thumbnail to account for.
-    if (getImageCount() > 1)
-      imageFiles = new String[getImageCount() + 2];
-    else
-      imageFiles = new String[getImageCount() + 1];
   }
   // -- Helpers --
 
@@ -546,22 +564,20 @@ public class ZeissTIFFReader extends BaseZeissReader {
 
   class Plane
   {
-    public int id;
     public String filename;
     public HashMap<String,String> tags = new HashMap<String,String>();
     public ArrayList<Tag> taglist;
+    public int site;
     RandomAccessInputStream in;
 
-    Plane(int id)
+    Plane()
     {
-      this.id = id;
     }
 
     public String
     toString()
     {
       String s = new String("---Plane---\n");
-      s += "  id=" + id + "\n";
       s += "  file=" + filename + "\n keys=\n";
       for (String k : tags.keySet()) {
         s += "    " + k + "=" + tags.get(k) + "\n";
