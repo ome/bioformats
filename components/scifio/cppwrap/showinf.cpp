@@ -43,13 +43,12 @@
 
 // for Bio-Formats C++ bindings
 #include "scifio-4.5-SNAPSHOT.h"
-#include "loci-common-4.5-SNAPSHOT.h"
 using jace::JNIException;
 using jace::proxy::java::io::IOException;
 using jace::proxy::java::lang::Object;
 using jace::proxy::java::lang::String;
 using jace::proxy::java::util::Hashtable;
-using jace::proxy::loci::common::xml::XMLTools;
+using jace::proxy::ome::scifio::xml::XMLTools;
 using jace::proxy::loci::formats::ChannelFiller;
 using jace::proxy::loci::formats::ChannelMerger;
 using jace::proxy::loci::formats::ChannelSeparator;
