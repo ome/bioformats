@@ -344,13 +344,13 @@ public class ZeissTIFFReader extends BaseZeissReader {
         throw new FormatException("Image name not found in XML metadata");}
     }
 
-    String basename = info.origname;
     info.prefix = getPrefix(info.origname);
     if (info.basedir != null) {
       CaseInsensitiveLocation b = new CaseInsensitiveLocation (info.basedir);
       info.basedir = b.getAbsolutePath();
+      l = b;
     }
-    basename = l.getParent() + "/" + info.prefix + ".tif";
+    String basename = l.getParent() + "/" + info.prefix + ".tif";
     l = new CaseInsensitiveLocation (basename);
     if (l.exists())
       info.origname = l.getAbsolutePath();
