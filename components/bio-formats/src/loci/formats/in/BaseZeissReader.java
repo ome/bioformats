@@ -590,9 +590,6 @@ public abstract class BaseZeissReader extends FormatReader {
                 points.append(" ");
             }
             shapeID = MetadataTools.createLSID("Shape", roiIndex, shapeIndex);
-            store.setPolylineID(shapeID, roiIndex, shapeIndex);
-            store.setPolylinePoints(points.toString(), roiIndex, shapeIndex);
-
             boolean closed = (shape.type == FeatureType.POLYLINE_CLOSED || shape.type == FeatureType.SPLINE_CLOSED ||
                 shape.type == FeatureType.MEAS_POLYLINE_CLOSED || shape.type == FeatureType.MEAS_SPLINE_CLOSED);
             if (closed) {
