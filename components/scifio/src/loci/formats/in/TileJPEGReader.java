@@ -86,6 +86,10 @@ public class TileJPEGReader extends FormatReader {
 
     for (int ty=y; ty<y+h; ty++) {
       byte[] scanline = decoder.getScanline(ty);
+      if (scanline == null) {
+        decoder.initialize(currentId, 0);
+        scanline = decoder.getScanline(ty);
+      }
       System.arraycopy(scanline, c * x, buf, (ty - y) * c * w, c * w);
     }
 
@@ -109,8 +113,9 @@ public class TileJPEGReader extends FormatReader {
   public void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
 
+    in = new RandomAccessInputStream(id);
     decoder = new JPEGTileDecoder();
-    decoder.initialize(id, 0);
+    decoder.initialize(in, 0, 1, 0);
 
     core[0].interleaved = true;
     core[0].littleEndian = false;

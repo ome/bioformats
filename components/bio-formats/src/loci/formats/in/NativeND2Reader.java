@@ -105,7 +105,7 @@ public class NativeND2Reader extends FormatReader {
   private ND2Handler backupHandler;
 
   private double trueSizeX = 0;
-  
+
   // -- Constructor --
 
   /** Constructs a new ND2 reader. */
@@ -312,6 +312,7 @@ public class NativeND2Reader extends FormatReader {
       split = false;
       nXFields = 0;
       backupHandler = null;
+      trueSizeX = 0;
     }
   }
 
@@ -320,7 +321,7 @@ public class NativeND2Reader extends FormatReader {
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
-       
+
     in = new RandomAccessInputStream(id);
 
     channelColors = new Hashtable<String, Integer>();
@@ -1615,5 +1616,5 @@ public class NativeND2Reader extends FormatReader {
     readPlane(s, x, y, w, h, scanlinePad, buf);
     s.close();
   }
-  
-} 
+
+}

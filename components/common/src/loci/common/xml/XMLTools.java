@@ -406,7 +406,7 @@ public final class XMLTools {
       matcher = pattern.matcher(xml);
       while (matcher.find()) {
         String namespace = matcher.group(1);
-        if (!namespace.startsWith("ns") &&
+        if (!namespace.equalsIgnoreCase("OME") && !namespace.startsWith("ns") &&
           !namespaces.contains(namespace.toLowerCase()))
         {
           int end = matcher.end();
