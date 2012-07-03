@@ -44,6 +44,11 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>scifio</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
       <groupId>com.jgoodies</groupId>
       <artifactId>forms</artifactId>
       <version>1.2.1</version>
@@ -58,6 +63,8 @@
       <artifactId>log4j</artifactId>
       <version>1.2.14</version>
     </dependency>
+
+    <!-- NB: dependency:analyze has false warning about xml-apis:xml-apis. -->
 
     <dependency>
       <groupId>junit</groupId>
@@ -78,6 +85,16 @@
               <packageName>loci.plugins</packageName>
             </manifest>
           </archive>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <configuration>
+          <licenseName>gpl_v2</licenseName>
+          <projectName>LOCI Plugins for ImageJ: a collection of ImageJ plugins including the
+Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
+Data Browser and Stack Slicer.</projectName>
         </configuration>
       </plugin>
     </plugins>

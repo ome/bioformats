@@ -1,25 +1,27 @@
-//
-// ObjectBasedOMEModelMock.java
-//
-
 /*
-OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ * #%L
+ * OME Bio-Formats package for reading and converting biological file formats.
+ * %%
+ * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 2 of the 
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public 
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-2.0.html>.
+ * #L%
+ */
 
 package loci.formats.utests;
 
@@ -42,7 +44,6 @@ import ome.xml.model.LightEmittingDiode;
 import ome.xml.model.ListAnnotation;
 import ome.xml.model.LongAnnotation;
 import ome.xml.model.OME;
-import ome.xml.model.OTF;
 import ome.xml.model.Objective;
 import ome.xml.model.ObjectiveSettings;
 import ome.xml.model.Pixels;
@@ -59,6 +60,7 @@ import ome.xml.model.WellSample;
 import ome.xml.model.XMLAnnotation;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 /**
  * <dl><dt><b>Source code:</b></dt>
@@ -205,7 +207,6 @@ public class ObjectBasedOMEModelMock implements OMEModelMock {
 
     Filter emFilter = new Filter();
     Filter exFilter = new Filter();
-    OTF otf = new OTF();
     // Create <Objective/> under <Instrument/>
     Objective objective = new Objective();
     objective.setID(InOut201004Test.OBJECTIVE_ID);
@@ -215,29 +216,9 @@ public class ObjectBasedOMEModelMock implements OMEModelMock {
     emFilter.setType(InOut201004Test.EM_FILTER_TYPE);
     exFilter.setID(InOut201004Test.EX_FILTER_ID);
     exFilter.setType(InOut201004Test.EX_FILTER_TYPE);
-    otf.setID(InOut201004Test.OTF_ID);
-    otf.setType(InOut201004Test.OTF_PIXELTYPE);
-    otf.setSizeX(new PositiveInteger(InOut201004Test.OTF_SIZE_X));
-    otf.setSizeY(new PositiveInteger(InOut201004Test.OTF_SIZE_Y));
-    otf.setOpticalAxisAveraged(InOut201004Test.OTF_OPTICAL_AXIS_AVERAGED);
-    // Create <ObjectiveSettings/> under <OTF/>
-    ObjectiveSettings otfObjectiveSettings = new ObjectiveSettings();
-    otfObjectiveSettings.setID(objective.getID());
-    otf.setObjectiveSettings(otfObjectiveSettings);
-    // Create <BinaryFile/> under <OTF/>
-    BinaryFile otfBinaryFile = new BinaryFile();
-    otfBinaryFile.setFileName(InOut201004Test.OTF_BINARY_FILE_NAME);
-    otfBinaryFile.setSize(InOut201004Test.OTF_BINARY_FILE_SIZE);
-    External otfBinaryFileExternal = new External();
-    otfBinaryFileExternal.sethref(InOut201004Test.OTF_BINARY_FILE_EXTERNAL_HREF);
-    otfBinaryFileExternal.setSHA1(InOut201004Test.OTF_BINARY_FILE_EXTERNAL_SHA1);
-    otfBinaryFile.setExternal(otfBinaryFileExternal);
-    otf.setBinaryFile(otfBinaryFile);
-    otf.linkFilterSet(filterSet);
 
     instrument.addFilter(emFilter);
     instrument.addFilter(exFilter);
-    instrument.addOTF(otf);
     instrument.addObjective(objective);
 
     filterSet.linkEmissionFilter(emFilter);
@@ -263,7 +244,7 @@ public class ObjectBasedOMEModelMock implements OMEModelMock {
 
     TimestampAnnotation plateAnnotation = new TimestampAnnotation();
     plateAnnotation.setID(InOut201004Test.PLATE_ANNOTATION_ID);
-    plateAnnotation.setValue(InOut201004Test.PLATE_ANNOTATION_VALUE);
+    plateAnnotation.setValue(new Timestamp(InOut201004Test.PLATE_ANNOTATION_VALUE));
     plateAnnotation.setNamespace(InOut201004Test.GENERAL_ANNOTATION_NAMESPACE);
     plate.linkAnnotation(plateAnnotation);
     annotations.addTimestampAnnotation(plateAnnotation);

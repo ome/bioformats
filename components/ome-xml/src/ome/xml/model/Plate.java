@@ -1,37 +1,45 @@
 /*
- * ome.xml.model.Plate
- *
- *-----------------------------------------------------------------------------
- *
- *  Copyright (C) @year@ Open Microscopy Environment
- *      Massachusetts Institute of Technology,
- *      National Institutes of Health,
- *      University of Dundee,
- *      University of Wisconsin-Madison
- *
- *
- *
- *    This library is free software; you can redistribute it and/or
- *    modify it under the terms of the GNU Lesser General Public
- *    License as published by the Free Software Foundation; either
- *    version 2.1 of the License, or (at your option) any later version.
- *
- *    This library is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- *    Lesser General Public License for more details.
- *
- *    You should have received a copy of the GNU Lesser General Public
- *    License along with this library; if not, write to the Free Software
- *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
- *-----------------------------------------------------------------------------
+ * #%L
+ * OME-XML Java library for working with OME-XML metadata structures.
+ * %%
+ * Copyright (C) 2006 - 2012 Open Microscopy Environment:
+ *   - Massachusetts Institute of Technology
+ *   - National Institutes of Health
+ *   - University of Dundee
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ * %%
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ * 
+ * The views and conclusions contained in the software and documentation are
+ * those of the authors and should not be interpreted as representing official
+ * policies, either expressed or implied, of any organization.
+ * #L%
  */
 
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-01-12 20:06:01-0500
+ * Created by callan via xsd-fu on 2012-05-18 10:08:16+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -58,7 +66,7 @@ public class Plate extends AbstractOMEModelObject
 
 	// -- Constants --
 
-	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/SPW/2011-06";
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/SPW/2012-06";
 
 	/** Logger for this class. */
 	private static final Logger LOGGER =
@@ -83,6 +91,9 @@ public class Plate extends AbstractOMEModelObject
 	private NamingConvention columnNamingConvention;
 
 	// Property
+	private NonNegativeInteger fieldIndex;
+
+	// Property
 	private Double wellOriginY;
 
 	// Property
@@ -100,17 +111,17 @@ public class Plate extends AbstractOMEModelObject
 	// Property
 	private String description;
 
-	// Reference ScreenRef
-	private List<Screen> screenList = new ArrayList<Screen>();
-
 	// Property which occurs more than once
-	private List<Well> wellList = new ArrayList<Well>();
+	private List<Well> wells = new ArrayList<Well>();
 
 	// Reference AnnotationRef
-	private List<Annotation> annotationList = new ArrayList<Annotation>();
+	private List<Annotation> annotationLinks = new ArrayList<Annotation>();
 
 	// Property which occurs more than once
-	private List<PlateAcquisition> plateAcquisitionList = new ArrayList<PlateAcquisition>();
+	private List<PlateAcquisition> plateAcquisitions = new ArrayList<PlateAcquisition>();
+
+	// Back reference Screen_BackReference
+	private List<Screen> screenLinks = new ArrayList<Screen>();
 
 	// -- Constructors --
 
@@ -189,6 +200,12 @@ public class Plate extends AbstractOMEModelObject
 			setColumnNamingConvention(NamingConvention.fromString(
 					element.getAttribute("ColumnNamingConvention")));
 		}
+		if (element.hasAttribute("FieldIndex"))
+		{
+			// Attribute property FieldIndex
+			setFieldIndex(NonNegativeInteger.valueOf(
+					element.getAttribute("FieldIndex")));
+		}
 		if (element.hasAttribute("WellOriginY"))
 		{
 			// Attribute property WellOriginY
@@ -243,15 +260,6 @@ public class Plate extends AbstractOMEModelObject
 			setDescription(
 					String.valueOf(Description_nodeList.get(0).getTextContent()));
 		}
-		// Element reference ScreenRef
-		List<Element> ScreenRef_nodeList =
-				getChildrenByTagName(element, "ScreenRef");
-		for (Element ScreenRef_element : ScreenRef_nodeList)
-		{
-			ScreenRef screenList_reference = new ScreenRef();
-			screenList_reference.setID(ScreenRef_element.getAttribute("ID"));
-			model.addReference(this, screenList_reference);
-		}
 		// Element property Well which is complex (has
 		// sub-elements) and occurs more than once
 		List<Element> Well_nodeList =
@@ -266,9 +274,9 @@ public class Plate extends AbstractOMEModelObject
 				getChildrenByTagName(element, "AnnotationRef");
 		for (Element AnnotationRef_element : AnnotationRef_nodeList)
 		{
-			AnnotationRef annotationList_reference = new AnnotationRef();
-			annotationList_reference.setID(AnnotationRef_element.getAttribute("ID"));
-			model.addReference(this, annotationList_reference);
+			AnnotationRef annotationLinks_reference = new AnnotationRef();
+			annotationLinks_reference.setID(AnnotationRef_element.getAttribute("ID"));
+			model.addReference(this, annotationLinks_reference);
 		}
 		// Element property PlateAcquisition which is complex (has
 		// sub-elements) and occurs more than once
@@ -279,6 +287,7 @@ public class Plate extends AbstractOMEModelObject
 			addPlateAcquisition(
 					new PlateAcquisition(PlateAcquisition_element, model));
 		}
+		// *** IGNORING *** Skipped back reference Screen_BackReference
 	}
 
 	// -- Plate API methods --
@@ -290,20 +299,12 @@ public class Plate extends AbstractOMEModelObject
 		{
 			return true;
 		}
-		if (reference instanceof ScreenRef)
-		{
-			Screen o_casted = (Screen) o;
-			if (!screenList.contains(o_casted)) {
-				screenList.add(o_casted);
-			}
-			return true;
-		}
 		if (reference instanceof AnnotationRef)
 		{
 			Annotation o_casted = (Annotation) o;
 			o_casted.linkPlate(this);
-			if (!annotationList.contains(o_casted)) {
-				annotationList.add(o_casted);
+			if (!annotationLinks.contains(o_casted)) {
+				annotationLinks.add(o_casted);
 			}
 			return true;
 		}
@@ -365,6 +366,17 @@ public class Plate extends AbstractOMEModelObject
 	public void setColumnNamingConvention(NamingConvention columnNamingConvention)
 	{
 		this.columnNamingConvention = columnNamingConvention;
+	}
+
+	// Property
+	public NonNegativeInteger getFieldIndex()
+	{
+		return fieldIndex;
+	}
+
+	public void setFieldIndex(NonNegativeInteger fieldIndex)
+	{
+		this.fieldIndex = fieldIndex;
 	}
 
 	// Property
@@ -433,136 +445,142 @@ public class Plate extends AbstractOMEModelObject
 		this.description = description;
 	}
 
-	// Reference which occurs more than once
-	public int sizeOfLinkedScreenList()
-	{
-		return screenList.size();
-	}
-
-	public List<Screen> copyLinkedScreenList()
-	{
-		return new ArrayList<Screen>(screenList);
-	}
-
-	public Screen getLinkedScreen(int index)
-	{
-		return screenList.get(index);
-	}
-
-	public Screen setLinkedScreen(int index, Screen o)
-	{
-		return screenList.set(index, o);
-	}
-
-	public boolean linkScreen(Screen o)
-	{
-		if (!screenList.contains(o)) {
-			return screenList.add(o);
-		}
-		return false;
-	}
-
-	public boolean unlinkScreen(Screen o)
-	{
-		return screenList.remove(o);
-	}
-
 	// Property which occurs more than once
 	public int sizeOfWellList()
 	{
-		return wellList.size();
+		return wells.size();
 	}
 
 	public List<Well> copyWellList()
 	{
-		return new ArrayList<Well>(wellList);
+		return new ArrayList<Well>(wells);
 	}
 
 	public Well getWell(int index)
 	{
-		return wellList.get(index);
+		return wells.get(index);
 	}
 
 	public Well setWell(int index, Well well)
 	{
-		return wellList.set(index, well);
+        well.setPlate(this);
+		return wells.set(index, well);
 	}
 
 	public void addWell(Well well)
 	{
-		wellList.add(well);
+        well.setPlate(this);
+		wells.add(well);
 	}
 
 	public void removeWell(Well well)
 	{
-		wellList.remove(well);
+		wells.remove(well);
 	}
 
 	// Reference which occurs more than once
 	public int sizeOfLinkedAnnotationList()
 	{
-		return annotationList.size();
+		return annotationLinks.size();
 	}
 
 	public List<Annotation> copyLinkedAnnotationList()
 	{
-		return new ArrayList<Annotation>(annotationList);
+		return new ArrayList<Annotation>(annotationLinks);
 	}
 
 	public Annotation getLinkedAnnotation(int index)
 	{
-		return annotationList.get(index);
+		return annotationLinks.get(index);
 	}
 
 	public Annotation setLinkedAnnotation(int index, Annotation o)
 	{
-		return annotationList.set(index, o);
+		return annotationLinks.set(index, o);
 	}
 
 	public boolean linkAnnotation(Annotation o)
 	{
-		o.linkPlate(this);
-		if (!annotationList.contains(o)) {
-			return annotationList.add(o);
+
+			o.linkPlate(this);
+		if (!annotationLinks.contains(o)) {
+			return annotationLinks.add(o);
 		}
 		return false;
 	}
 
 	public boolean unlinkAnnotation(Annotation o)
 	{
-		o.unlinkPlate(this);
-		return annotationList.remove(o);
+
+			o.unlinkPlate(this);
+		return annotationLinks.remove(o);
 	}
 
 	// Property which occurs more than once
 	public int sizeOfPlateAcquisitionList()
 	{
-		return plateAcquisitionList.size();
+		return plateAcquisitions.size();
 	}
 
 	public List<PlateAcquisition> copyPlateAcquisitionList()
 	{
-		return new ArrayList<PlateAcquisition>(plateAcquisitionList);
+		return new ArrayList<PlateAcquisition>(plateAcquisitions);
 	}
 
 	public PlateAcquisition getPlateAcquisition(int index)
 	{
-		return plateAcquisitionList.get(index);
+		return plateAcquisitions.get(index);
 	}
 
 	public PlateAcquisition setPlateAcquisition(int index, PlateAcquisition plateAcquisition)
 	{
-		return plateAcquisitionList.set(index, plateAcquisition);
+        plateAcquisition.setPlate(this);
+		return plateAcquisitions.set(index, plateAcquisition);
 	}
 
 	public void addPlateAcquisition(PlateAcquisition plateAcquisition)
 	{
-		plateAcquisitionList.add(plateAcquisition);
+        plateAcquisition.setPlate(this);
+		plateAcquisitions.add(plateAcquisition);
 	}
 
 	public void removePlateAcquisition(PlateAcquisition plateAcquisition)
 	{
-		plateAcquisitionList.remove(plateAcquisition);
+		plateAcquisitions.remove(plateAcquisition);
+	}
+
+	// Reference which occurs more than once
+	public int sizeOfLinkedScreenList()
+	{
+		return screenLinks.size();
+	}
+
+	public List<Screen> copyLinkedScreenList()
+	{
+		return new ArrayList<Screen>(screenLinks);
+	}
+
+	public Screen getLinkedScreen(int index)
+	{
+		return screenLinks.get(index);
+	}
+
+	public Screen setLinkedScreen(int index, Screen o)
+	{
+		return screenLinks.set(index, o);
+	}
+
+	public boolean linkScreen(Screen o)
+	{
+		if (!screenLinks.contains(o)) {
+			return screenLinks.add(o);
+		}
+		return false;
+	}
+
+	public boolean unlinkScreen(Screen o)
+	{
+		return screenLinks.remove(o);
 	}
 
 	public Element asXMLElement(Document document)
@@ -605,6 +623,11 @@ public class Plate extends AbstractOMEModelObject
 			// Attribute property ColumnNamingConvention
 			Plate_element.setAttribute("ColumnNamingConvention", columnNamingConvention.toString());
 		}
+		if (fieldIndex != null)
+		{
+			// Attribute property FieldIndex
+			Plate_element.setAttribute("FieldIndex", fieldIndex.toString());
+		}
 		if (wellOriginY != null)
 		{
 			// Attribute property WellOriginY
@@ -639,43 +662,37 @@ public class Plate extends AbstractOMEModelObject
 			description_element.setTextContent(description.toString());
 			Plate_element.appendChild(description_element);
 		}
-		if (screenList != null)
-		{
-			// Reference property ScreenRef which occurs more than once
-			for (Screen screenList_value : screenList)
-			{
-				ScreenRef o = new ScreenRef();
-				o.setID(screenList_value.getID());
-				Plate_element.appendChild(o.asXMLElement(document));
-			}
-		}
-		if (wellList != null)
+		if (wells != null)
 		{
 			// Element property Well which is complex (has
 			// sub-elements) and occurs more than once
-			for (Well wellList_value : wellList)
+			for (Well wells_value : wells)
 			{
-				Plate_element.appendChild(wellList_value.asXMLElement(document));
+				Plate_element.appendChild(wells_value.asXMLElement(document));
 			}
 		}
-		if (annotationList != null)
+		if (annotationLinks != null)
 		{
 			// Reference property AnnotationRef which occurs more than once
-			for (Annotation annotationList_value : annotationList)
+			for (Annotation annotationLinks_value : annotationLinks)
 			{
 				AnnotationRef o = new AnnotationRef();
-				o.setID(annotationList_value.getID());
+				o.setID(annotationLinks_value.getID());
 				Plate_element.appendChild(o.asXMLElement(document));
 			}
 		}
-		if (plateAcquisitionList != null)
+		if (plateAcquisitions != null)
 		{
 			// Element property PlateAcquisition which is complex (has
 			// sub-elements) and occurs more than once
-			for (PlateAcquisition plateAcquisitionList_value : plateAcquisitionList)
+			for (PlateAcquisition plateAcquisitions_value : plateAcquisitions)
 			{
-				Plate_element.appendChild(plateAcquisitionList_value.asXMLElement(document));
+				Plate_element.appendChild(plateAcquisitions_value.asXMLElement(document));
 			}
+		}
+		if (screenLinks != null)
+		{
+			// *** IGNORING *** Skipped back reference Screen_BackReference
 		}
 		return super.asXMLElement(document, Plate_element);
 	}

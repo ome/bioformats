@@ -1,25 +1,27 @@
-//
-// NativeND2Reader.java
-//
-
 /*
-OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ * #%L
+ * OME Bio-Formats package for reading and converting biological file formats.
+ * %%
+ * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 2 of the 
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public 
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-2.0.html>.
+ * #L%
+ */
 
 package loci.formats.in;
 
@@ -102,6 +104,8 @@ public class NativeND2Reader extends FormatReader {
 
   private ND2Handler backupHandler;
 
+  private double trueSizeX = 0;
+  
   // -- Constructor --
 
   /** Constructs a new ND2 reader. */
@@ -316,7 +320,7 @@ public class NativeND2Reader extends FormatReader {
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
-
+       
     in = new RandomAccessInputStream(id);
 
     channelColors = new Hashtable<String, Integer>();
@@ -382,7 +386,54 @@ public class NativeND2Reader extends FormatReader {
         int skip = len - 12 - lenOne * 2;
         if (skip <= 0) skip += lenOne * 2;
 
-        if (blockType.startsWith("ImageDataSeq")) {
+        
+        
+  // Image calibration for newer nd2 files
+      
+        if (blockType.endsWith("Calibra"))
+        {
+        	long veryStart = in.getFilePointer();
+        	   in.skipBytes(12); // ImageCalibra|tionLV
+                      
+        	  long endFP = in.getFilePointer() + lenOne + lenTwo - 24;
+               while (in.read() == 0);
+ 
+               while (in.getFilePointer() < endFP) {
+            	   
+                 int nameLen = in.read();
+                 
+                 if (nameLen == 0) {
+                   in.seek(in.getFilePointer() - 3);
+                   nameLen = in.read();
+                 }
+                 
+                 if (nameLen < 0) 
+                   break;
+                 
+                 // Get data
+                 String attributeName =  DataTools.stripString(in.readString(nameLen * 2));
+                 double valueOrLength = in.readDouble();
+                 
+                 
+                 if (attributeName.equals("dCalibration"))
+                 {
+	                	 if ( valueOrLength > 0) {
+	                          	 addGlobalMeta(attributeName, valueOrLength);
+	                          	 trueSizeX = valueOrLength;
+	                	 }
+                	 
+                    break;  // Done with calibration
+                 }
+                 
+                 
+              
+               } // while
+       
+           in.seek(veryStart); // For old nd2 files
+        } // elseif
+        
+        
+        if (blockType.startsWith("ImageDataSeq")) { 
           imageOffsets.add(new Long(fp));
           imageLengths.add(new int[] {lenOne, lenTwo});
           char b = (char) in.readByte();
@@ -556,8 +607,8 @@ public class NativeND2Reader extends FormatReader {
                 in.skipBytes(4);
               }
               else if (attributeName.equals("bDurationPref")) {
-                in.seek(in.getFilePointer() - 3);
-              }
+                  in.seek(in.getFilePointer() - 3);
+                }
               in.skipBytes(1);
             }
 
@@ -1322,8 +1373,11 @@ public class NativeND2Reader extends FormatReader {
         double sizeX = handler.getPixelSizeX();
         double sizeY = handler.getPixelSizeY();
         double sizeZ = handler.getPixelSizeZ();
-
-        if (sizeX > 0) {
+        
+        if (trueSizeX > 0)
+        	store.setPixelsPhysicalSizeX(new PositiveFloat(trueSizeX), i);
+        
+        else if (sizeX > 0) {
           store.setPixelsPhysicalSizeX(new PositiveFloat(sizeX), i);
         }
         else {
@@ -1346,7 +1400,7 @@ public class NativeND2Reader extends FormatReader {
         }
       }
     }
-
+     
     // populate PlaneTiming and StagePosition data
     ArrayList<Double> exposureTime = null;
     if (handler != null) handler.getExposureTimes();
@@ -1529,9 +1583,9 @@ public class NativeND2Reader extends FormatReader {
     Double refractiveIndex = handler.getRefractiveIndex();
 
     for (int i=0; i<getSeriesCount(); i++) {
-      store.setImageObjectiveSettingsID(objectiveID, i);
+      store.setObjectiveSettingsID(objectiveID, i);
       if (refractiveIndex != null) {
-        store.setImageObjectiveSettingsRefractiveIndex(refractiveIndex, i);
+        store.setObjectiveSettingsRefractiveIndex(refractiveIndex, i);
       }
     }
 
@@ -1561,5 +1615,5 @@ public class NativeND2Reader extends FormatReader {
     readPlane(s, x, y, w, h, scanlinePad, buf);
     s.close();
   }
-
-}
+  
+} 

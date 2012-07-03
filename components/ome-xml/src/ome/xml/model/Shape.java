@@ -1,37 +1,45 @@
 /*
- * ome.xml.model.Shape
- *
- *-----------------------------------------------------------------------------
- *
- *  Copyright (C) @year@ Open Microscopy Environment
- *      Massachusetts Institute of Technology,
- *      National Institutes of Health,
- *      University of Dundee,
- *      University of Wisconsin-Madison
- *
- *
- *
- *    This library is free software; you can redistribute it and/or
- *    modify it under the terms of the GNU Lesser General Public
- *    License as published by the Free Software Foundation; either
- *    version 2.1 of the License, or (at your option) any later version.
- *
- *    This library is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- *    Lesser General Public License for more details.
- *
- *    You should have received a copy of the GNU Lesser General Public
- *    License along with this library; if not, write to the Free Software
- *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
- *-----------------------------------------------------------------------------
+ * #%L
+ * OME-XML Java library for working with OME-XML metadata structures.
+ * %%
+ * Copyright (C) 2006 - 2012 Open Microscopy Environment:
+ *   - Massachusetts Institute of Technology
+ *   - National Institutes of Health
+ *   - University of Dundee
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ * %%
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ * 
+ * The views and conclusions contained in the software and documentation are
+ * those of the authors and should not be interpreted as representing official
+ * policies, either expressed or implied, of any organization.
+ * #L%
  */
 
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-01-12 20:06:01-0500
+ * Created by callan via xsd-fu on 2012-05-18 10:08:16+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -58,7 +66,7 @@ public abstract class Shape extends AbstractOMEModelObject
 
 	// -- Constants --
 
-	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/ROI/2011-06";
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/ROI/2012-06";
 
 	/** Logger for this class. */
 	private static final Logger LOGGER =
@@ -74,7 +82,13 @@ public abstract class Shape extends AbstractOMEModelObject
 	private Double strokeWidth;
 
 	// Property
+	private Boolean locked;
+
+	// Property
 	private FillRule fillRule;
+
+	// Property
+	private Boolean visible;
 
 	// Property
 	private LineCap lineCap;
@@ -83,43 +97,31 @@ public abstract class Shape extends AbstractOMEModelObject
 	private NonNegativeInteger theC;
 
 	// Property
-	private NonNegativeInteger theT;
-
-	// Property
-	private String transform;
-
-	// Property
-	private String label;
-
-	// Property
 	private FontFamily fontFamily;
-
-	// Property
-	private Integer stroke;
 
 	// Property
 	private FontStyle fontStyle;
 
 	// Property
-	private Marker markerEnd;
-
-	// Property
-	private NonNegativeInteger theZ;
-
-	// Property
 	private NonNegativeInteger fontSize;
+
+	// Property
+	private Color fillColor;
+
+	// Property
+	private String text;
+
+	// Property
+	private Color strokeColor;
+
+	// Property
+	private NonNegativeInteger theT;
 
 	// Property
 	private String id;
 
 	// Property
-	private Integer fill;
-
-	// Property
-	private Marker markerStart;
-
-	// Property
-	private String name;
+	private NonNegativeInteger theZ;
 
 	// *** WARNING *** Unhandled or skipped property Line
 
@@ -133,12 +135,15 @@ public abstract class Shape extends AbstractOMEModelObject
 
 	// *** WARNING *** Unhandled or skipped property Polyline
 
-	// *** WARNING *** Unhandled or skipped property Path
+	// *** WARNING *** Unhandled or skipped property Polygon
 
-	// *** WARNING *** Unhandled or skipped property Text
+	// *** WARNING *** Unhandled or skipped property Label
 
 	// Property
-	private String description;
+	private AffineTransform transform;
+
+	// Back reference Union_BackReference
+	private Union union;
 
 	// -- Constructors --
 
@@ -194,11 +199,23 @@ public abstract class Shape extends AbstractOMEModelObject
 			setStrokeWidth(Double.valueOf(
 					element.getAttribute("StrokeWidth")));
 		}
+		if (element.hasAttribute("Locked"))
+		{
+			// Attribute property Locked
+			setLocked(Boolean.valueOf(
+					element.getAttribute("Locked")));
+		}
 		if (element.hasAttribute("FillRule"))
 		{
 			// Attribute property which is an enumeration FillRule
 			setFillRule(FillRule.fromString(
 					element.getAttribute("FillRule")));
+		}
+		if (element.hasAttribute("Visible"))
+		{
+			// Attribute property Visible
+			setVisible(Boolean.valueOf(
+					element.getAttribute("Visible")));
 		}
 		if (element.hasAttribute("LineCap"))
 		{
@@ -212,35 +229,11 @@ public abstract class Shape extends AbstractOMEModelObject
 			setTheC(NonNegativeInteger.valueOf(
 					element.getAttribute("TheC")));
 		}
-		if (element.hasAttribute("TheT"))
-		{
-			// Attribute property TheT
-			setTheT(NonNegativeInteger.valueOf(
-					element.getAttribute("TheT")));
-		}
-		if (element.hasAttribute("Transform"))
-		{
-			// Attribute property Transform
-			setTransform(String.valueOf(
-					element.getAttribute("Transform")));
-		}
-		if (element.hasAttribute("Label"))
-		{
-			// Attribute property Label
-			setLabel(String.valueOf(
-					element.getAttribute("Label")));
-		}
 		if (element.hasAttribute("FontFamily"))
 		{
 			// Attribute property which is an enumeration FontFamily
 			setFontFamily(FontFamily.fromString(
 					element.getAttribute("FontFamily")));
-		}
-		if (element.hasAttribute("Stroke"))
-		{
-			// Attribute property Stroke
-			setStroke(Integer.valueOf(
-					element.getAttribute("Stroke")));
 		}
 		if (element.hasAttribute("FontStyle"))
 		{
@@ -248,23 +241,35 @@ public abstract class Shape extends AbstractOMEModelObject
 			setFontStyle(FontStyle.fromString(
 					element.getAttribute("FontStyle")));
 		}
-		if (element.hasAttribute("MarkerEnd"))
-		{
-			// Attribute property which is an enumeration MarkerEnd
-			setMarkerEnd(Marker.fromString(
-					element.getAttribute("MarkerEnd")));
-		}
-		if (element.hasAttribute("TheZ"))
-		{
-			// Attribute property TheZ
-			setTheZ(NonNegativeInteger.valueOf(
-					element.getAttribute("TheZ")));
-		}
 		if (element.hasAttribute("FontSize"))
 		{
 			// Attribute property FontSize
 			setFontSize(NonNegativeInteger.valueOf(
 					element.getAttribute("FontSize")));
+		}
+		if (element.hasAttribute("FillColor"))
+		{
+			// Attribute property FillColor
+			setFillColor(Color.valueOf(
+					element.getAttribute("FillColor")));
+		}
+		if (element.hasAttribute("Text"))
+		{
+			// Attribute property Text
+			setText(String.valueOf(
+					element.getAttribute("Text")));
+		}
+		if (element.hasAttribute("StrokeColor"))
+		{
+			// Attribute property StrokeColor
+			setStrokeColor(Color.valueOf(
+					element.getAttribute("StrokeColor")));
+		}
+		if (element.hasAttribute("TheT"))
+		{
+			// Attribute property TheT
+			setTheT(NonNegativeInteger.valueOf(
+					element.getAttribute("TheT")));
 		}
 		if (!element.hasAttribute("ID") && getID() == null)
 		{
@@ -280,23 +285,11 @@ public abstract class Shape extends AbstractOMEModelObject
 			// Adding this model object to the model handler
 			model.addModelObject(getID(), this);
 		}
-		if (element.hasAttribute("Fill"))
+		if (element.hasAttribute("TheZ"))
 		{
-			// Attribute property Fill
-			setFill(Integer.valueOf(
-					element.getAttribute("Fill")));
-		}
-		if (element.hasAttribute("MarkerStart"))
-		{
-			// Attribute property which is an enumeration MarkerStart
-			setMarkerStart(Marker.fromString(
-					element.getAttribute("MarkerStart")));
-		}
-		if (element.hasAttribute("Name"))
-		{
-			// Attribute property Name
-			setName(String.valueOf(
-					element.getAttribute("Name")));
+			// Attribute property TheZ
+			setTheZ(NonNegativeInteger.valueOf(
+					element.getAttribute("TheZ")));
 		}
 		List<Element> Line_nodeList =
 				getChildrenByTagName(element, "Line");
@@ -370,46 +363,43 @@ public abstract class Shape extends AbstractOMEModelObject
 		else if (Polyline_nodeList.size() != 0)
 		{
 		}
-		List<Element> Path_nodeList =
-				getChildrenByTagName(element, "Path");
-		if (Path_nodeList.size() > 1)
+		List<Element> Polygon_nodeList =
+				getChildrenByTagName(element, "Polygon");
+		if (Polygon_nodeList.size() > 1)
 		{
 			// TODO: Should be its own Exception
 			throw new RuntimeException(String.format(
-					"Path node list size %d != 1",
-					Path_nodeList.size()));
+					"Polygon node list size %d != 1",
+					Polygon_nodeList.size()));
 		}
-		else if (Path_nodeList.size() != 0)
+		else if (Polygon_nodeList.size() != 0)
 		{
 		}
-		List<Element> Text_nodeList =
-				getChildrenByTagName(element, "Text");
-		if (Text_nodeList.size() > 1)
-		{
-			// TODO: Should be its own Exception
-			throw new RuntimeException(String.format(
-					"Text node list size %d != 1",
-					Text_nodeList.size()));
-		}
-		else if (Text_nodeList.size() != 0)
-		{
-		}
-		List<Element> Description_nodeList =
-				getChildrenByTagName(element, "Description");
-		if (Description_nodeList.size() > 1)
+		List<Element> Label_nodeList =
+				getChildrenByTagName(element, "Label");
+		if (Label_nodeList.size() > 1)
 		{
 			// TODO: Should be its own Exception
 			throw new RuntimeException(String.format(
-					"Description node list size %d != 1",
-					Description_nodeList.size()));
+					"Label node list size %d != 1",
+					Label_nodeList.size()));
 		}
-		else if (Description_nodeList.size() != 0)
+		else if (Label_nodeList.size() != 0)
 		{
-			// Element property Description which is not complex (has no
-			// sub-elements)
-			setDescription(
-					String.valueOf(Description_nodeList.get(0).getTextContent()));
 		}
+		List<Element> Transform_nodeList =
+				getChildrenByTagName(element, "Transform");
+		if (Transform_nodeList.size() > 1)
+		{
+			// TODO: Should be its own Exception
+			throw new RuntimeException(String.format(
+					"Transform node list size %d != 1",
+					Transform_nodeList.size()));
+		}
+		else if (Transform_nodeList.size() != 0)
+		{
+		}
+		// *** IGNORING *** Skipped back reference Union_BackReference
 	}
 
 	// -- Shape API methods --
@@ -449,6 +439,17 @@ public abstract class Shape extends AbstractOMEModelObject
 	}
 
 	// Property
+	public Boolean getLocked()
+	{
+		return locked;
+	}
+
+	public void setLocked(Boolean locked)
+	{
+		this.locked = locked;
+	}
+
+	// Property
 	public FillRule getFillRule()
 	{
 		return fillRule;
@@ -457,6 +458,17 @@ public abstract class Shape extends AbstractOMEModelObject
 	public void setFillRule(FillRule fillRule)
 	{
 		this.fillRule = fillRule;
+	}
+
+	// Property
+	public Boolean getVisible()
+	{
+		return visible;
+	}
+
+	public void setVisible(Boolean visible)
+	{
+		this.visible = visible;
 	}
 
 	// Property
@@ -482,39 +494,6 @@ public abstract class Shape extends AbstractOMEModelObject
 	}
 
 	// Property
-	public NonNegativeInteger getTheT()
-	{
-		return theT;
-	}
-
-	public void setTheT(NonNegativeInteger theT)
-	{
-		this.theT = theT;
-	}
-
-	// Property
-	public String getTransform()
-	{
-		return transform;
-	}
-
-	public void setTransform(String transform)
-	{
-		this.transform = transform;
-	}
-
-	// Property
-	public String getLabel()
-	{
-		return label;
-	}
-
-	public void setLabel(String label)
-	{
-		this.label = label;
-	}
-
-	// Property
 	public FontFamily getFontFamily()
 	{
 		return fontFamily;
@@ -523,17 +502,6 @@ public abstract class Shape extends AbstractOMEModelObject
 	public void setFontFamily(FontFamily fontFamily)
 	{
 		this.fontFamily = fontFamily;
-	}
-
-	// Property
-	public Integer getStroke()
-	{
-		return stroke;
-	}
-
-	public void setStroke(Integer stroke)
-	{
-		this.stroke = stroke;
 	}
 
 	// Property
@@ -548,28 +516,6 @@ public abstract class Shape extends AbstractOMEModelObject
 	}
 
 	// Property
-	public Marker getMarkerEnd()
-	{
-		return markerEnd;
-	}
-
-	public void setMarkerEnd(Marker markerEnd)
-	{
-		this.markerEnd = markerEnd;
-	}
-
-	// Property
-	public NonNegativeInteger getTheZ()
-	{
-		return theZ;
-	}
-
-	public void setTheZ(NonNegativeInteger theZ)
-	{
-		this.theZ = theZ;
-	}
-
-	// Property
 	public NonNegativeInteger getFontSize()
 	{
 		return fontSize;
@@ -578,6 +524,50 @@ public abstract class Shape extends AbstractOMEModelObject
 	public void setFontSize(NonNegativeInteger fontSize)
 	{
 		this.fontSize = fontSize;
+	}
+
+	// Property
+	public Color getFillColor()
+	{
+		return fillColor;
+	}
+
+	public void setFillColor(Color fillColor)
+	{
+		this.fillColor = fillColor;
+	}
+
+	// Property
+	public String getText()
+	{
+		return text;
+	}
+
+	public void setText(String text)
+	{
+		this.text = text;
+	}
+
+	// Property
+	public Color getStrokeColor()
+	{
+		return strokeColor;
+	}
+
+	public void setStrokeColor(Color strokeColor)
+	{
+		this.strokeColor = strokeColor;
+	}
+
+	// Property
+	public NonNegativeInteger getTheT()
+	{
+		return theT;
+	}
+
+	public void setTheT(NonNegativeInteger theT)
+	{
+		this.theT = theT;
 	}
 
 	// Property
@@ -592,36 +582,14 @@ public abstract class Shape extends AbstractOMEModelObject
 	}
 
 	// Property
-	public Integer getFill()
+	public NonNegativeInteger getTheZ()
 	{
-		return fill;
+		return theZ;
 	}
 
-	public void setFill(Integer fill)
+	public void setTheZ(NonNegativeInteger theZ)
 	{
-		this.fill = fill;
-	}
-
-	// Property
-	public Marker getMarkerStart()
-	{
-		return markerStart;
-	}
-
-	public void setMarkerStart(Marker markerStart)
-	{
-		this.markerStart = markerStart;
-	}
-
-	// Property
-	public String getName()
-	{
-		return name;
-	}
-
-	public void setName(String name)
-	{
-		this.name = name;
+		this.theZ = theZ;
 	}
 
 	// *** WARNING *** Unhandled or skipped property Line
@@ -636,19 +604,30 @@ public abstract class Shape extends AbstractOMEModelObject
 
 	// *** WARNING *** Unhandled or skipped property Polyline
 
-	// *** WARNING *** Unhandled or skipped property Path
+	// *** WARNING *** Unhandled or skipped property Polygon
 
-	// *** WARNING *** Unhandled or skipped property Text
+	// *** WARNING *** Unhandled or skipped property Label
 
 	// Property
-	public String getDescription()
+	public AffineTransform getTransform()
 	{
-		return description;
+		return transform;
 	}
 
-	public void setDescription(String description)
+	public void setTransform(AffineTransform transform)
 	{
-		this.description = description;
+		this.transform = transform;
+	}
+
+	// Property
+	public Union getUnion()
+	{
+		return union;
+	}
+
+	public void setUnion(Union union_BackReference)
+	{
+		this.union = union_BackReference;
 	}
 
 	protected Element asXMLElement(Document document, Element Shape_element)
@@ -679,10 +658,20 @@ public abstract class Shape extends AbstractOMEModelObject
 			// Attribute property StrokeWidth
 			Shape_element.setAttribute("StrokeWidth", strokeWidth.toString());
 		}
+		if (locked != null)
+		{
+			// Attribute property Locked
+			Shape_element.setAttribute("Locked", locked.toString());
+		}
 		if (fillRule != null)
 		{
 			// Attribute property FillRule
 			Shape_element.setAttribute("FillRule", fillRule.toString());
+		}
+		if (visible != null)
+		{
+			// Attribute property Visible
+			Shape_element.setAttribute("Visible", visible.toString());
 		}
 		if (lineCap != null)
 		{
@@ -694,79 +683,50 @@ public abstract class Shape extends AbstractOMEModelObject
 			// Attribute property TheC
 			Shape_element.setAttribute("TheC", theC.toString());
 		}
-		if (theT != null)
-		{
-			// Attribute property TheT
-			Shape_element.setAttribute("TheT", theT.toString());
-		}
-		if (transform != null)
-		{
-			// Attribute property Transform
-			Shape_element.setAttribute("Transform", transform.toString());
-		}
-		if (label != null)
-		{
-			// Attribute property Label
-			Shape_element.setAttribute("Label", label.toString());
-		}
 		if (fontFamily != null)
 		{
 			// Attribute property FontFamily
 			Shape_element.setAttribute("FontFamily", fontFamily.toString());
-		}
-		if (stroke != null)
-		{
-			// Attribute property Stroke
-			Shape_element.setAttribute("Stroke", stroke.toString());
 		}
 		if (fontStyle != null)
 		{
 			// Attribute property FontStyle
 			Shape_element.setAttribute("FontStyle", fontStyle.toString());
 		}
-		if (markerEnd != null)
-		{
-			// Attribute property MarkerEnd
-			Shape_element.setAttribute("MarkerEnd", markerEnd.toString());
-		}
-		if (theZ != null)
-		{
-			// Attribute property TheZ
-			Shape_element.setAttribute("TheZ", theZ.toString());
-		}
 		if (fontSize != null)
 		{
 			// Attribute property FontSize
 			Shape_element.setAttribute("FontSize", fontSize.toString());
+		}
+		if (fillColor != null)
+		{
+			// Attribute property FillColor
+			Shape_element.setAttribute("FillColor", fillColor.toString());
+		}
+		if (text != null)
+		{
+			// Attribute property Text
+			Shape_element.setAttribute("Text", text.toString());
+		}
+		if (strokeColor != null)
+		{
+			// Attribute property StrokeColor
+			Shape_element.setAttribute("StrokeColor", strokeColor.toString());
+		}
+		if (theT != null)
+		{
+			// Attribute property TheT
+			Shape_element.setAttribute("TheT", theT.toString());
 		}
 		if (id != null)
 		{
 			// Attribute property ID
 			Shape_element.setAttribute("ID", id.toString());
 		}
-		if (fill != null)
+		if (theZ != null)
 		{
-			// Attribute property Fill
-			Shape_element.setAttribute("Fill", fill.toString());
-		}
-		if (markerStart != null)
-		{
-			// Attribute property MarkerStart
-			Shape_element.setAttribute("MarkerStart", markerStart.toString());
-		}
-		if (name != null)
-		{
-			// Attribute property Name
-			Shape_element.setAttribute("Name", name.toString());
-		}
-		if (description != null)
-		{
-			// Element property Description which is not complex (has no
-			// sub-elements)
-			Element description_element = 
-					document.createElementNS(NAMESPACE, "Description");
-			description_element.setTextContent(description.toString());
-			Shape_element.appendChild(description_element);
+			// Attribute property TheZ
+			Shape_element.setAttribute("TheZ", theZ.toString());
 		}
 		return super.asXMLElement(document, Shape_element);
 	}

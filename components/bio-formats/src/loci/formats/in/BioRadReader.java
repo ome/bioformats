@@ -1,25 +1,27 @@
-//
-// BioRadReader.java
-//
-
 /*
-OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-0year1 UW-Madison LOCI and Glencoe Software, Inc.
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ * #%L
+ * OME Bio-Formats package for reading and converting biological file formats.
+ * %%
+ * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 2 of the 
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public 
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-2.0.html>.
+ * #L%
+ */
 
 package loci.formats.in;
 
@@ -43,6 +45,7 @@ import loci.formats.meta.MetadataStore;
 
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
@@ -492,7 +495,7 @@ public class BioRadReader extends FormatReader {
       // link Objective to Image using ObjectiveSettings
       String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
       store.setObjectiveID(objectiveID, 0, 0);
-      store.setImageObjectiveSettingsID(objectiveID, 0);
+      store.setObjectiveSettingsID(objectiveID, 0);
 
       store.setObjectiveLensNA(new Double(lens), 0, 0);
       if ((int) magFactor > 0) {
@@ -941,7 +944,7 @@ public class BioRadReader extends FormatReader {
                   String date = year + "-" + values[4] + "-" + values[3] + "T" +
                     values[2] + ":" + values[1] + ":" + values[0];
                   addGlobalMeta("Acquisition date", date);
-                  store.setImageAcquiredDate(date, 0);
+                  store.setImageAcquisitionDate(new Timestamp(date), 0);
                   break;
                 case 18:
                   addGlobalMeta("Mixer 3 - enhanced", values[0]);

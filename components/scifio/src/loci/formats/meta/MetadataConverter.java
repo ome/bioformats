@@ -1,28 +1,44 @@
-//
-// MetadataConverter.java
-//
-
 /*
-OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-2010 UW-Madison LOCI and Glencoe Software, Inc.
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ * #%L
+ * OME-XML Java library for working with OME-XML metadata structures.
+ * %%
+ * Copyright (C) 2006 - 2012 Open Microscopy Environment:
+ *   - Massachusetts Institute of Technology
+ *   - National Institutes of Health
+ *   - University of Dundee
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ * %%
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ * 
+ * The views and conclusions contained in the software and documentation are
+ * those of the authors and should not be interpreted as representing official
+ * policies, either expressed or implied, of any organization.
+ * #L%
+ */
 
 package loci.formats.meta;
 
+import ome.xml.model.*;
 import ome.xml.model.enums.*;
 import ome.xml.model.primitives.*;
 
@@ -55,2019 +71,3258 @@ public final class MetadataConverter {
    * (source) into a metadata store (destination).
    */
   public static void convertMetadata(MetadataRetrieve src, MetadataStore dest) {
-    try {
-    int booleanAnnotationCount = src.getBooleanAnnotationCount();
-    for (int booleanAnnotationIndex=0; booleanAnnotationIndex<booleanAnnotationCount; booleanAnnotationIndex++) {
-    try {
-      String booleanAnnotationIDValue = src.getBooleanAnnotationID(booleanAnnotationIndex);
-      if (booleanAnnotationIDValue != null) dest.setBooleanAnnotationID(booleanAnnotationIDValue, booleanAnnotationIndex);
-    } catch (NullPointerException e) { }
-    try {
-      String booleanAnnotationNamespaceValue = src.getBooleanAnnotationNamespace(booleanAnnotationIndex);
-      if (booleanAnnotationNamespaceValue != null) dest.setBooleanAnnotationNamespace(booleanAnnotationNamespaceValue, booleanAnnotationIndex);
-    } catch (NullPointerException e) { }
-    try {
-      Boolean booleanAnnotationValueValue = src.getBooleanAnnotationValue(booleanAnnotationIndex);
-      if (booleanAnnotationValueValue != null) dest.setBooleanAnnotationValue(booleanAnnotationValueValue, booleanAnnotationIndex);
-    } catch (NullPointerException e) { }
-    }
-    } catch (NullPointerException e) { }
-    try {
-    int datasetCount = src.getDatasetCount();
-    for (int datasetIndex=0; datasetIndex<datasetCount; datasetIndex++) {
-    try {
-      String datasetIDValue = src.getDatasetID(datasetIndex);
-      if (datasetIDValue != null) dest.setDatasetID(datasetIDValue, datasetIndex);
-    } catch (NullPointerException e) { }
-    try {
-      for (int annotationRefIndex=0; annotationRefIndex<src.getDatasetAnnotationRefCount(datasetIndex); annotationRefIndex++)
-      {
-        String datasetAnnotationRefValue = src.getDatasetAnnotationRef(datasetIndex, annotationRefIndex);
-        if (datasetAnnotationRefValue != null) dest.setDatasetAnnotationRef(datasetAnnotationRefValue, datasetIndex, annotationRefIndex);
-      } 
-    } catch (NullPointerException e) { }
-    try {
-      String datasetDescriptionValue = src.getDatasetDescription(datasetIndex);
-      if (datasetDescriptionValue != null) dest.setDatasetDescription(datasetDescriptionValue, datasetIndex);
-    } catch (NullPointerException e) { }
-    try {
-      String datasetExperimenterRefValue = src.getDatasetExperimenterRef(datasetIndex);
-      if (datasetExperimenterRefValue != null) dest.setDatasetExperimenterRef(datasetExperimenterRefValue, datasetIndex);
-    } catch (NullPointerException e) { }
-    try {
-      String datasetGroupRefValue = src.getDatasetGroupRef(datasetIndex);
-      if (datasetGroupRefValue != null) dest.setDatasetGroupRef(datasetGroupRefValue, datasetIndex);
-    } catch (NullPointerException e) { }
-    try {
-      String datasetNameValue = src.getDatasetName(datasetIndex);
-      if (datasetNameValue != null) dest.setDatasetName(datasetNameValue, datasetIndex);
-    } catch (NullPointerException e) { }
-    try {
-      int projectRefCount = src.getProjectRefCount(datasetIndex);
-      for (int projectRefIndex=0; projectRefIndex<projectRefCount; projectRefIndex++)
-      {
-        String datasetProjectRefValue = src.getDatasetProjectRef(datasetIndex, projectRefIndex);
-        if (datasetProjectRefValue != null) dest.setDatasetProjectRef(datasetProjectRefValue, datasetIndex, projectRefIndex);
-      }
-    } catch (NullPointerException e) { }
-      try {
-      int annotationRefCount = src.getDatasetAnnotationRefCount(datasetIndex);
-      for (int annotationRefIndex=0; annotationRefIndex<annotationRefCount; annotationRefIndex++) {
-        String annotationValue = src.getDatasetAnnotationRef(datasetIndex, annotationRefIndex);
-        if (annotationValue != null) dest.setDatasetAnnotationRef(annotationValue, datasetIndex, annotationRefIndex);
-      }
-      } catch (NullPointerException e) { }
-    }
-    } catch (NullPointerException e) { }
-    try {
-    int doubleAnnotationCount = src.getDoubleAnnotationCount();
-    for (int doubleAnnotationIndex=0; doubleAnnotationIndex<doubleAnnotationCount; doubleAnnotationIndex++) {
-    try {
-      String doubleAnnotationIDValue = src.getDoubleAnnotationID(doubleAnnotationIndex);
-      if (doubleAnnotationIDValue != null) dest.setDoubleAnnotationID(doubleAnnotationIDValue, doubleAnnotationIndex);
-    } catch (NullPointerException e) { }
-    try {
-      String doubleAnnotationNamespaceValue = src.getDoubleAnnotationNamespace(doubleAnnotationIndex);
-      if (doubleAnnotationNamespaceValue != null) dest.setDoubleAnnotationNamespace(doubleAnnotationNamespaceValue, doubleAnnotationIndex);
-    } catch (NullPointerException e) { }
-    try {
-      Double doubleAnnotationValueValue = src.getDoubleAnnotationValue(doubleAnnotationIndex);
-      if (doubleAnnotationValueValue != null) dest.setDoubleAnnotationValue(doubleAnnotationValueValue, doubleAnnotationIndex);
-    } catch (NullPointerException e) { }
-    }
-    } catch (NullPointerException e) { }
-    try {
-    int experimentCount = src.getExperimentCount();
-    for (int experimentIndex=0; experimentIndex<experimentCount; experimentIndex++) {
-    try {
-      String experimentDescriptionValue = src.getExperimentDescription(experimentIndex);
-      if (experimentDescriptionValue != null) dest.setExperimentDescription(experimentDescriptionValue, experimentIndex);
-    } catch (NullPointerException e) { }
-    try {
-      String experimentExperimenterRefValue = src.getExperimentExperimenterRef(experimentIndex);
-      if (experimentExperimenterRefValue != null) dest.setExperimentExperimenterRef(experimentExperimenterRefValue, experimentIndex);
-    } catch (NullPointerException e) { }
-    try {
-      String experimentIDValue = src.getExperimentID(experimentIndex);
-      if (experimentIDValue != null) dest.setExperimentID(experimentIDValue, experimentIndex);
-    } catch (NullPointerException e) { }
-    try {
-      ExperimentType experimentTypeValue = src.getExperimentType(experimentIndex);
-      if (experimentTypeValue != null) dest.setExperimentType(experimentTypeValue, experimentIndex);
-    } catch (NullPointerException e) { }
-      try {
-      int microbeamManipulationCount = src.getMicrobeamManipulationCount(experimentIndex);
-      for (int microbeamManipulationIndex=0; microbeamManipulationIndex<microbeamManipulationCount; microbeamManipulationIndex++) {
-      try {
-        String microbeamManipulationExperimenterRefValue = src.getMicrobeamManipulationExperimenterRef(experimentIndex, microbeamManipulationIndex);
-        if (microbeamManipulationExperimenterRefValue != null) dest.setMicrobeamManipulationExperimenterRef(microbeamManipulationExperimenterRefValue, experimentIndex, microbeamManipulationIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String microbeamManipulationIDValue = src.getMicrobeamManipulationID(experimentIndex, microbeamManipulationIndex);
-        if (microbeamManipulationIDValue != null) dest.setMicrobeamManipulationID(microbeamManipulationIDValue, experimentIndex, microbeamManipulationIndex);
-      } catch (NullPointerException e) { }
-      try {
-        int roiRefCount = src.getMicrobeamManipulationROIRefCount(experimentIndex, microbeamManipulationIndex);
-        for (int roiRefIndex=0; roiRefIndex<roiRefCount; roiRefIndex++) {
-          String microbeamManipulationROIRefValue = src.getMicrobeamManipulationROIRef(experimentIndex, microbeamManipulationIndex, roiRefIndex);
-          if (microbeamManipulationROIRefValue != null) dest.setMicrobeamManipulationROIRef(microbeamManipulationROIRefValue, experimentIndex, microbeamManipulationIndex, roiRefIndex);
-        }
-      } catch (NullPointerException e) { }
-      try {
-        MicrobeamManipulationType microbeamManipulationTypeValue = src.getMicrobeamManipulationType(experimentIndex, microbeamManipulationIndex);
-        if (microbeamManipulationTypeValue != null) dest.setMicrobeamManipulationType(microbeamManipulationTypeValue, experimentIndex, microbeamManipulationIndex);
-      } catch (NullPointerException e) { }
-        try {
-        int lightSourceSettingsCount = src.getMicrobeamManipulationLightSourceSettingsCount(experimentIndex, microbeamManipulationIndex);
-        for (int lightSourceSettingsIndex=0; lightSourceSettingsIndex<lightSourceSettingsCount; lightSourceSettingsIndex++) {
-        try {
-          PercentFraction microbeamManipulationLightSourceSettingsAttenuationValue = src.getMicrobeamManipulationLightSourceSettingsAttenuation(experimentIndex, microbeamManipulationIndex, lightSourceSettingsIndex);
-          if (microbeamManipulationLightSourceSettingsAttenuationValue != null) dest.setMicrobeamManipulationLightSourceSettingsAttenuation(microbeamManipulationLightSourceSettingsAttenuationValue, experimentIndex, microbeamManipulationIndex, lightSourceSettingsIndex);
-        } catch (NullPointerException e) { }
-        try {
-          String microbeamManipulationLightSourceSettingsIDValue = src.getMicrobeamManipulationLightSourceSettingsID(experimentIndex, microbeamManipulationIndex, lightSourceSettingsIndex);
-          if (microbeamManipulationLightSourceSettingsIDValue != null) dest.setMicrobeamManipulationLightSourceSettingsID(microbeamManipulationLightSourceSettingsIDValue, experimentIndex, microbeamManipulationIndex, lightSourceSettingsIndex);
-        } catch (NullPointerException e) { }
-        try {
-          PositiveInteger microbeamManipulationLightSourceSettingsWavelengthValue = src.getMicrobeamManipulationLightSourceSettingsWavelength(experimentIndex, microbeamManipulationIndex, lightSourceSettingsIndex);
-          if (microbeamManipulationLightSourceSettingsWavelengthValue != null) dest.setMicrobeamManipulationLightSourceSettingsWavelength(microbeamManipulationLightSourceSettingsWavelengthValue, experimentIndex, microbeamManipulationIndex, lightSourceSettingsIndex);
-        } catch (NullPointerException e) { }
-        }
-        } catch (NullPointerException e) { }
-      }
-      } catch (NullPointerException e) { }
-    }
-    } catch (NullPointerException e) { }
-    try {
-    int experimenterCount = src.getExperimenterCount();
-    for (int experimenterIndex=0; experimenterIndex<experimenterCount; experimenterIndex++) {
-    try {
-      int annotationRefCount = src.getExperimenterAnnotationRefCount(experimenterIndex);
-      for (int annotationRefIndex=0; annotationRefIndex<annotationRefCount; annotationRefIndex++)
-      {
-        String experimenterAnnotationRefValue = src.getExperimenterAnnotationRef(experimenterIndex, annotationRefIndex);
-        if (experimenterAnnotationRefValue != null) dest.setExperimenterAnnotationRef(experimenterAnnotationRefValue, experimenterIndex, annotationRefIndex);
-      }
-    } catch (NullPointerException e) { }
-    try {
-      String experimenterDisplayNameValue = src.getExperimenterDisplayName(experimenterIndex);
-      if (experimenterDisplayNameValue != null) dest.setExperimenterDisplayName(experimenterDisplayNameValue, experimenterIndex);
-    } catch (NullPointerException e) { }
-    try {
-      String experimenterEmailValue = src.getExperimenterEmail(experimenterIndex);
-      if (experimenterEmailValue != null) dest.setExperimenterEmail(experimenterEmailValue, experimenterIndex);
-    } catch (NullPointerException e) { }
-    try {
-      String experimenterFirstNameValue = src.getExperimenterFirstName(experimenterIndex);
-      if (experimenterFirstNameValue != null) dest.setExperimenterFirstName(experimenterFirstNameValue, experimenterIndex);
-    } catch (NullPointerException e) { }
-    try {
-      int groupRefCount = src.getExperimenterGroupRefCount(experimenterIndex);
-      for (int groupRefIndex=0; groupRefIndex<groupRefCount; groupRefIndex++) {
-        String experimenterGroupRefValue = src.getExperimenterGroupRef(experimenterIndex, groupRefIndex);
-        if (experimenterGroupRefValue != null) dest.setExperimenterGroupRef(experimenterGroupRefValue, experimenterIndex, groupRefIndex);
-      }
-    } catch (NullPointerException e) { }
-    try {
-      String experimenterIDValue = src.getExperimenterID(experimenterIndex);
-      if (experimenterIDValue != null) dest.setExperimenterID(experimenterIDValue, experimenterIndex);
-    } catch (NullPointerException e) { }
-    try {
-      String experimenterInstitutionValue = src.getExperimenterInstitution(experimenterIndex);
-      if (experimenterInstitutionValue != null) dest.setExperimenterInstitution(experimenterInstitutionValue, experimenterIndex);
-    } catch (NullPointerException e) { }
-    try {
-      String experimenterLastNameValue = src.getExperimenterLastName(experimenterIndex);
-      if (experimenterLastNameValue != null) dest.setExperimenterLastName(experimenterLastNameValue, experimenterIndex);
-    } catch (NullPointerException e) { }
-    try {
-      String experimenterMiddleNameValue = src.getExperimenterMiddleName(experimenterIndex);
-      if (experimenterMiddleNameValue != null) dest.setExperimenterMiddleName(experimenterMiddleNameValue, experimenterIndex);
-    } catch (NullPointerException e) { }
-    try {
-      String experimenterUserNameValue = src.getExperimenterUserName(experimenterIndex);
-      if (experimenterUserNameValue != null) dest.setExperimenterUserName(experimenterUserNameValue, experimenterIndex);
-    } catch (NullPointerException e) { }
-      try {
-        int annotationRefCount = src.getExperimenterAnnotationRefCount(experimenterIndex);
-        for (int annotationRefIndex=0; annotationRefIndex<annotationRefCount; annotationRefIndex++) {
-          String annotationRef = src.getExperimenterAnnotationRef(experimenterIndex, annotationRefIndex);
-          if (annotationRef != null) dest.setExperimenterAnnotationRef(annotationRef, experimenterIndex, annotationRefIndex);
-        }
-      } catch (NullPointerException e) { }
-      try {
-        int groupRefCount = src.getExperimenterGroupRefCount(experimenterIndex);
-        for (int groupRefIndex=0; groupRefIndex<groupRefCount; groupRefIndex++)
-        {
-          String groupRef = src.getExperimenterGroupRef(experimenterIndex, groupRefIndex);
-          if (groupRef != null) dest.setExperimenterGroupRef(groupRef, experimenterIndex, groupRefIndex);
-        }
-      } catch (NullPointerException e) { }
-    }
-    } catch (NullPointerException e) { }
-    try {
-    int fileAnnotationCount = src.getFileAnnotationCount();
-    for (int fileAnnotationIndex=0; fileAnnotationIndex<fileAnnotationCount; fileAnnotationIndex++) {
-    try {
-      String fileAnnotationBinaryFileFileNameValue = src.getFileAnnotationBinaryFileFileName(fileAnnotationIndex);
-      if (fileAnnotationBinaryFileFileNameValue != null) dest.setFileAnnotationBinaryFileFileName(fileAnnotationBinaryFileFileNameValue, fileAnnotationIndex);
-    } catch (NullPointerException e) { }
-    try {
-      String fileAnnotationBinaryFileMIMETypeValue = src.getFileAnnotationBinaryFileMIMEType(fileAnnotationIndex);
-      if (fileAnnotationBinaryFileMIMETypeValue != null) dest.setFileAnnotationBinaryFileMIMEType(fileAnnotationBinaryFileMIMETypeValue, fileAnnotationIndex);
-    } catch (NullPointerException e) { }
-    try {
-      NonNegativeLong fileAnnotationBinaryFileSizeValue = src.getFileAnnotationBinaryFileSize(fileAnnotationIndex);
-      if (fileAnnotationBinaryFileSizeValue != null) dest.setFileAnnotationBinaryFileSize(fileAnnotationBinaryFileSizeValue, fileAnnotationIndex);
-    } catch (NullPointerException e) { }
-    try {
-      String fileAnnotationIDValue = src.getFileAnnotationID(fileAnnotationIndex);
-      if (fileAnnotationIDValue != null) dest.setFileAnnotationID(fileAnnotationIDValue, fileAnnotationIndex);
-    } catch (NullPointerException e) { }
-    try {
-      String fileAnnotationNamespaceValue = src.getFileAnnotationNamespace(fileAnnotationIndex);
-      if (fileAnnotationNamespaceValue != null) dest.setFileAnnotationNamespace(fileAnnotationNamespaceValue, fileAnnotationIndex);
-    } catch (NullPointerException e) { }
-    }
-    } catch (NullPointerException e) { }
-    try {
-    int groupCount = src.getGroupCount();
-    for (int groupIndex=0; groupIndex<groupCount; groupIndex++) {
-    try {
-      String groupIDValue = src.getGroupID(groupIndex);
-      if (groupIDValue != null) dest.setGroupID(groupIDValue, groupIndex);
-    } catch (NullPointerException e) { }
-    try {
-      String groupContactValue = src.getGroupContact(groupIndex);
-      if (groupContactValue != null) dest.setGroupContact(groupContactValue, groupIndex);
-    } catch (NullPointerException e) { }
-    try {
-      String groupDescriptionValue = src.getGroupDescription(groupIndex);
-      if (groupDescriptionValue != null) dest.setGroupDescription(groupDescriptionValue, groupIndex);
-    } catch (NullPointerException e) { }
-    try {
-      String groupLeaderValue = src.getGroupLeader(groupIndex);
-      if (groupLeaderValue != null) dest.setGroupLeader(groupLeaderValue, groupIndex);
-    } catch (NullPointerException e) { }
-    try {
-      String groupNameValue = src.getGroupName(groupIndex);
-      if (groupNameValue != null) dest.setGroupName(groupNameValue, groupIndex);
-    } catch (NullPointerException e) { }
-    }
-    } catch (NullPointerException e) { }
-    try {
-    int imageCount = src.getImageCount();
-    for (int imageIndex=0; imageIndex<imageCount; imageIndex++) {
-    try {
-      String imageAcquiredDateValue = src.getImageAcquiredDate(imageIndex);
-      if (imageAcquiredDateValue != null) dest.setImageAcquiredDate(imageAcquiredDateValue, imageIndex);
-    } catch (NullPointerException e) { }
-    try {
-      int annotationRefCount = src.getImageAnnotationRefCount(imageIndex);
-      for (int annotationRefIndex=0; annotationRefIndex<annotationRefCount; annotationRefIndex++)
-      {
-      String imageAnnotationRefValue = src.getImageAnnotationRef(imageIndex, annotationRefIndex);
-      if (imageAnnotationRefValue != null) dest.setImageAnnotationRef(imageAnnotationRefValue, imageIndex, annotationRefIndex);
-      }
-    } catch (NullPointerException e) { }
-    try {
-      int datasetRefCount = src.getDatasetRefCount(imageIndex);
-      for (int datasetRefIndex=0; datasetRefIndex<datasetRefCount; datasetRefIndex++)
-      {
-        String imageDatasetRefValue = src.getImageDatasetRef(imageIndex, datasetRefIndex);
-        if (imageDatasetRefValue != null) dest.setImageDatasetRef(imageDatasetRefValue, imageIndex, datasetRefIndex);
-      }
-    } catch (NullPointerException e) { }
-    try {
-      String imageDescriptionValue = src.getImageDescription(imageIndex);
-      if (imageDescriptionValue != null) dest.setImageDescription(imageDescriptionValue, imageIndex);
-    } catch (NullPointerException e) { }
-    try {
-      String imageExperimentRefValue = src.getImageExperimentRef(imageIndex);
-      if (imageExperimentRefValue != null) dest.setImageExperimentRef(imageExperimentRefValue, imageIndex);
-    } catch (NullPointerException e) { }
-    try {
-      String imageExperimenterRefValue = src.getImageExperimenterRef(imageIndex);
-      if (imageExperimenterRefValue != null) dest.setImageExperimenterRef(imageExperimenterRefValue, imageIndex);
-    } catch (NullPointerException e) { }
-    try {
-      String imageGroupRefValue = src.getImageGroupRef(imageIndex);
-      if (imageGroupRefValue != null) dest.setImageGroupRef(imageGroupRefValue, imageIndex);
-    } catch (NullPointerException e) { }
-    try {
-      String imageIDValue = src.getImageID(imageIndex);
-      if (imageIDValue != null) dest.setImageID(imageIDValue, imageIndex);
-    } catch (NullPointerException e) { }
-    try {
-      String imageInstrumentRefValue = src.getImageInstrumentRef(imageIndex);
-      if (imageInstrumentRefValue != null) dest.setImageInstrumentRef(imageInstrumentRefValue, imageIndex);
-    } catch (NullPointerException e) { }
-    try {
-      int microbeamManipulationRefCount = src.getMicrobeamManipulationRefCount(imageIndex);
-      for (int microbeamManipulationRefIndex=0; microbeamManipulationRefIndex<microbeamManipulationRefCount; microbeamManipulationRefIndex++)
-      {
-        String imageMicrobeamManipulationRefValue = src.getImageMicrobeamManipulationRef(imageIndex, microbeamManipulationRefIndex);
-        if (imageMicrobeamManipulationRefValue != null) dest.setImageMicrobeamManipulationRef(imageMicrobeamManipulationRefValue, imageIndex, microbeamManipulationRefIndex);
-      }
-    } catch (NullPointerException e) { }
-    try {
-      String imageNameValue = src.getImageName(imageIndex);
-      if (imageNameValue != null) dest.setImageName(imageNameValue, imageIndex);
-    } catch (NullPointerException e) { }
-    try {
-      Double imageObjectiveSettingsCorrectionCollarValue = src.getImageObjectiveSettingsCorrectionCollar(imageIndex);
-      if (imageObjectiveSettingsCorrectionCollarValue != null) dest.setImageObjectiveSettingsCorrectionCollar(imageObjectiveSettingsCorrectionCollarValue, imageIndex);
-    } catch (NullPointerException e) { }
-    try {
-      String imageObjectiveSettingsIDValue = src.getImageObjectiveSettingsID(imageIndex);
-      if (imageObjectiveSettingsIDValue != null) dest.setImageObjectiveSettingsID(imageObjectiveSettingsIDValue, imageIndex);
-    } catch (NullPointerException e) { }
-    try {
-      Medium imageObjectiveSettingsMediumValue = src.getImageObjectiveSettingsMedium(imageIndex);
-      if (imageObjectiveSettingsMediumValue != null) dest.setImageObjectiveSettingsMedium(imageObjectiveSettingsMediumValue, imageIndex);
-    } catch (NullPointerException e) { }
-    try {
-      Double imageObjectiveSettingsRefractiveIndexValue = src.getImageObjectiveSettingsRefractiveIndex(imageIndex);
-      if (imageObjectiveSettingsRefractiveIndexValue != null) dest.setImageObjectiveSettingsRefractiveIndex(imageObjectiveSettingsRefractiveIndexValue, imageIndex);
-    } catch (NullPointerException e) { }
-    try {
-      int roiRefCount = src.getImageROIRefCount(imageIndex);
-      for (int roiRefIndex=0; roiRefIndex<roiRefCount; roiRefIndex++) {
-        String imageROIRefValue = src.getImageROIRef(imageIndex, roiRefIndex);
-        if (imageROIRefValue != null) dest.setImageROIRef(imageROIRefValue, imageIndex, roiRefIndex);
-      }
-    } catch (NullPointerException e) { }
-      try {
-      int channelCount = src.getChannelCount(imageIndex);
-      for (int channelIndex=0; channelIndex<channelCount; channelIndex++) {
-      try {
-        AcquisitionMode channelAcquisitionModeValue = src.getChannelAcquisitionMode(imageIndex, channelIndex);
-        if (channelAcquisitionModeValue != null) dest.setChannelAcquisitionMode(channelAcquisitionModeValue, imageIndex, channelIndex);
-      } catch (NullPointerException e) { }
-      try {
-        int annotationRefCount = src.getChannelAnnotationRefCount(imageIndex, channelIndex);
-        for (int annotationRefIndex=0; annotationRefIndex<annotationRefCount; annotationRefIndex++) {
-          String channelAnnotationRefValue = src.getChannelAnnotationRef(imageIndex, channelIndex, annotationRefIndex);
-          if (channelAnnotationRefValue != null) dest.setChannelAnnotationRef(channelAnnotationRefValue, imageIndex, channelIndex, annotationRefIndex);
-        }
-      } catch (NullPointerException e) { }
-      try {
-        Integer channelColorValue = src.getChannelColor(imageIndex, channelIndex);
-        if (channelColorValue != null) dest.setChannelColor(channelColorValue, imageIndex, channelIndex);
-      } catch (NullPointerException e) { }
-      try {
-        ContrastMethod channelContrastMethodValue = src.getChannelContrastMethod(imageIndex, channelIndex);
-        if (channelContrastMethodValue != null) dest.setChannelContrastMethod(channelContrastMethodValue, imageIndex, channelIndex);
-      } catch (NullPointerException e) { }
-      try {
-        PositiveInteger channelEmissionWavelengthValue = src.getChannelEmissionWavelength(imageIndex, channelIndex);
-        if (channelEmissionWavelengthValue != null) dest.setChannelEmissionWavelength(channelEmissionWavelengthValue, imageIndex, channelIndex);
-      } catch (NullPointerException e) { }
-      try {
-        PositiveInteger channelExcitationWavelengthValue = src.getChannelExcitationWavelength(imageIndex, channelIndex);
-        if (channelExcitationWavelengthValue != null) dest.setChannelExcitationWavelength(channelExcitationWavelengthValue, imageIndex, channelIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String channelFilterSetRefValue = src.getChannelFilterSetRef(imageIndex, channelIndex);
-        if (channelFilterSetRefValue != null) dest.setChannelFilterSetRef(channelFilterSetRefValue, imageIndex, channelIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String channelFluorValue = src.getChannelFluor(imageIndex, channelIndex);
-        if (channelFluorValue != null) dest.setChannelFluor(channelFluorValue, imageIndex, channelIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String channelIDValue = src.getChannelID(imageIndex, channelIndex);
-        if (channelIDValue != null) dest.setChannelID(channelIDValue, imageIndex, channelIndex);
-      } catch (NullPointerException e) { }
-      try {
-        IlluminationType channelIlluminationTypeValue = src.getChannelIlluminationType(imageIndex, channelIndex);
-        if (channelIlluminationTypeValue != null) dest.setChannelIlluminationType(channelIlluminationTypeValue, imageIndex, channelIndex);
-      } catch (NullPointerException e) { }
-      try {
-        PercentFraction channelLightSourceSettingsAttenuationValue = src.getChannelLightSourceSettingsAttenuation(imageIndex, channelIndex);
-        if (channelLightSourceSettingsAttenuationValue != null) dest.setChannelLightSourceSettingsAttenuation(channelLightSourceSettingsAttenuationValue, imageIndex, channelIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String channelLightSourceSettingsIDValue = src.getChannelLightSourceSettingsID(imageIndex, channelIndex);
-        if (channelLightSourceSettingsIDValue != null) dest.setChannelLightSourceSettingsID(channelLightSourceSettingsIDValue, imageIndex, channelIndex);
-      } catch (NullPointerException e) { }
-      try {
-        PositiveInteger channelLightSourceSettingsWavelengthValue = src.getChannelLightSourceSettingsWavelength(imageIndex, channelIndex);
-        if (channelLightSourceSettingsWavelengthValue != null) dest.setChannelLightSourceSettingsWavelength(channelLightSourceSettingsWavelengthValue, imageIndex, channelIndex);
-      } catch (NullPointerException e) { }
-      try {
-        Double channelNDFilterValue = src.getChannelNDFilter(imageIndex, channelIndex);
-        if (channelNDFilterValue != null) dest.setChannelNDFilter(channelNDFilterValue, imageIndex, channelIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String channelNameValue = src.getChannelName(imageIndex, channelIndex);
-        if (channelNameValue != null) dest.setChannelName(channelNameValue, imageIndex, channelIndex);
-      } catch (NullPointerException e) { }
-      try {
-        Double channelPinholeSizeValue = src.getChannelPinholeSize(imageIndex, channelIndex);
-        if (channelPinholeSizeValue != null) dest.setChannelPinholeSize(channelPinholeSizeValue, imageIndex, channelIndex);
-      } catch (NullPointerException e) { }
-      try {
-        Integer channelPockelCellSettingValue = src.getChannelPockelCellSetting(imageIndex, channelIndex);
-        if (channelPockelCellSettingValue != null) dest.setChannelPockelCellSetting(channelPockelCellSettingValue, imageIndex, channelIndex);
-      } catch (NullPointerException e) { }
-      try {
-        PositiveInteger channelSamplesPerPixelValue = src.getChannelSamplesPerPixel(imageIndex, channelIndex);
-        if (channelSamplesPerPixelValue != null) dest.setChannelSamplesPerPixel(channelSamplesPerPixelValue, imageIndex, channelIndex);
-      } catch (NullPointerException e) { }
-        try {
-          Binning detectorSettingsBinningValue = src.getDetectorSettingsBinning(imageIndex, channelIndex);
-          if (detectorSettingsBinningValue != null) dest.setDetectorSettingsBinning(detectorSettingsBinningValue, imageIndex, channelIndex);
-        } catch (NullPointerException e) { }
-        try {
-          Double detectorSettingsGainValue = src.getDetectorSettingsGain(imageIndex, channelIndex);
-          if (detectorSettingsGainValue != null) dest.setDetectorSettingsGain(detectorSettingsGainValue, imageIndex, channelIndex);
-        } catch (NullPointerException e) { }
-        try {
-          String detectorSettingsIDValue = src.getDetectorSettingsID(imageIndex, channelIndex);
-          if (detectorSettingsIDValue != null) dest.setDetectorSettingsID(detectorSettingsIDValue, imageIndex, channelIndex);
-        } catch (NullPointerException e) { }
-        try {
-          Double detectorSettingsOffsetValue = src.getDetectorSettingsOffset(imageIndex, channelIndex);
-          if (detectorSettingsOffsetValue != null) dest.setDetectorSettingsOffset(detectorSettingsOffsetValue, imageIndex, channelIndex);
-        } catch (NullPointerException e) { }
-        try {
-          Double detectorSettingsReadOutRateValue = src.getDetectorSettingsReadOutRate(imageIndex, channelIndex);
-          if (detectorSettingsReadOutRateValue != null) dest.setDetectorSettingsReadOutRate(detectorSettingsReadOutRateValue, imageIndex, channelIndex);
-        } catch (NullPointerException e) { }
-        try {
-          Double detectorSettingsVoltageValue = src.getDetectorSettingsVoltage(imageIndex, channelIndex);
-          if (detectorSettingsVoltageValue != null) dest.setDetectorSettingsVoltage(detectorSettingsVoltageValue, imageIndex, channelIndex);
-        } catch (NullPointerException e) { }
-        try {
-          String lightPathDichroicRefValue = src.getLightPathDichroicRef(imageIndex, channelIndex);
-          if (lightPathDichroicRefValue != null) dest.setLightPathDichroicRef(lightPathDichroicRefValue, imageIndex, channelIndex);
-        } catch (NullPointerException e) { }
-        try {
-          int emissionFilterRefCount = src.getLightPathEmissionFilterRefCount(imageIndex, channelIndex);
-          for (int emissionFilterRefIndex=0; emissionFilterRefIndex<emissionFilterRefCount; emissionFilterRefIndex++)
-          {
-            String lightPathEmissionFilterRefValue = src.getLightPathEmissionFilterRef(imageIndex, channelIndex, emissionFilterRefIndex);
-            if (lightPathEmissionFilterRefValue != null) dest.setLightPathEmissionFilterRef(lightPathEmissionFilterRefValue, imageIndex, channelIndex, emissionFilterRefIndex);
-          }
-        } catch (NullPointerException e) { }
-        try {
-          int excitationFilterRefCount = src.getLightPathExcitationFilterRefCount(imageIndex, channelIndex);
-          for (int excitationFilterRefIndex=0; excitationFilterRefIndex<excitationFilterRefCount; excitationFilterRefIndex++)
-          {
-            String lightPathExcitationFilterRefValue = src.getLightPathExcitationFilterRef(imageIndex, channelIndex, excitationFilterRefIndex);
-            if (lightPathExcitationFilterRefValue != null) dest.setLightPathExcitationFilterRef(lightPathExcitationFilterRefValue, imageIndex, channelIndex, excitationFilterRefIndex);
-          }
-        } catch (NullPointerException e) { }
-      }
-      } catch (NullPointerException e) { }
-      try {
-      int datasetRefCount = src.getDatasetRefCount(imageIndex);
-      for (int datasetRefIndex=0; datasetRefIndex<datasetRefCount; datasetRefIndex++) {
-      }
-      } catch (NullPointerException e) { }
-      try {
-        Double imagingEnvironmentAirPressureValue = src.getImagingEnvironmentAirPressure(imageIndex);
-        if (imagingEnvironmentAirPressureValue != null) dest.setImagingEnvironmentAirPressure(imagingEnvironmentAirPressureValue, imageIndex);
-      } catch (NullPointerException e) { }
-      try {
-        PercentFraction imagingEnvironmentCO2PercentValue = src.getImagingEnvironmentCO2Percent(imageIndex);
-        if (imagingEnvironmentCO2PercentValue != null) dest.setImagingEnvironmentCO2Percent(imagingEnvironmentCO2PercentValue, imageIndex);
-      } catch (NullPointerException e) { }
-      try {
-        PercentFraction imagingEnvironmentHumidityValue = src.getImagingEnvironmentHumidity(imageIndex);
-        if (imagingEnvironmentHumidityValue != null) dest.setImagingEnvironmentHumidity(imagingEnvironmentHumidityValue, imageIndex);
-      } catch (NullPointerException e) { }
-      try {
-        Double imagingEnvironmentTemperatureValue = src.getImagingEnvironmentTemperature(imageIndex);
-        if (imagingEnvironmentTemperatureValue != null) dest.setImagingEnvironmentTemperature(imagingEnvironmentTemperatureValue, imageIndex);
-      } catch (NullPointerException e) { }
-      try {
-      int microbeamManipulationRefCount = src.getMicrobeamManipulationRefCount(imageIndex);
-      for (int microbeamManipulationRefIndex=0; microbeamManipulationRefIndex<microbeamManipulationRefCount; microbeamManipulationRefIndex++) {
-      }
-      } catch (NullPointerException e) { }
-      try {
-        int annotationRefCount = src.getPixelsAnnotationRefCount(imageIndex);
-        for (int annotationRefIndex=0; annotationRefIndex<annotationRefCount; annotationRefIndex++)
-        {
-          String pixelsAnnotationRefValue = src.getPixelsAnnotationRef(imageIndex, annotationRefIndex);
-          if (pixelsAnnotationRefValue != null) dest.setPixelsAnnotationRef(pixelsAnnotationRefValue, imageIndex, annotationRefIndex);
-        }
-      } catch (NullPointerException e) { }
-      try {
-        DimensionOrder pixelsDimensionOrderValue = src.getPixelsDimensionOrder(imageIndex);
-        if (pixelsDimensionOrderValue != null) dest.setPixelsDimensionOrder(pixelsDimensionOrderValue, imageIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String pixelsIDValue = src.getPixelsID(imageIndex);
-        if (pixelsIDValue != null) dest.setPixelsID(pixelsIDValue, imageIndex);
-      } catch (NullPointerException e) { }
-      try {
-        PositiveFloat pixelsPhysicalSizeXValue = src.getPixelsPhysicalSizeX(imageIndex);
-        if (pixelsPhysicalSizeXValue != null) dest.setPixelsPhysicalSizeX(pixelsPhysicalSizeXValue, imageIndex);
-      } catch (NullPointerException e) { }
-      try {
-        PositiveFloat pixelsPhysicalSizeYValue = src.getPixelsPhysicalSizeY(imageIndex);
-        if (pixelsPhysicalSizeYValue != null) dest.setPixelsPhysicalSizeY(pixelsPhysicalSizeYValue, imageIndex);
-      } catch (NullPointerException e) { }
-      try {
-        PositiveFloat pixelsPhysicalSizeZValue = src.getPixelsPhysicalSizeZ(imageIndex);
-        if (pixelsPhysicalSizeZValue != null) dest.setPixelsPhysicalSizeZ(pixelsPhysicalSizeZValue, imageIndex);
-      } catch (NullPointerException e) { }
-      try {
-        PositiveInteger pixelsSizeCValue = src.getPixelsSizeC(imageIndex);
-        if (pixelsSizeCValue != null) dest.setPixelsSizeC(pixelsSizeCValue, imageIndex);
-      } catch (NullPointerException e) { }
-      try {
-        PositiveInteger pixelsSizeTValue = src.getPixelsSizeT(imageIndex);
-        if (pixelsSizeTValue != null) dest.setPixelsSizeT(pixelsSizeTValue, imageIndex);
-      } catch (NullPointerException e) { }
-      try {
-        PositiveInteger pixelsSizeXValue = src.getPixelsSizeX(imageIndex);
-        if (pixelsSizeXValue != null) dest.setPixelsSizeX(pixelsSizeXValue, imageIndex);
-      } catch (NullPointerException e) { }
-      try {
-        PositiveInteger pixelsSizeYValue = src.getPixelsSizeY(imageIndex);
-        if (pixelsSizeYValue != null) dest.setPixelsSizeY(pixelsSizeYValue, imageIndex);
-      } catch (NullPointerException e) { }
-      try {
-        PositiveInteger pixelsSizeZValue = src.getPixelsSizeZ(imageIndex);
-        if (pixelsSizeZValue != null) dest.setPixelsSizeZ(pixelsSizeZValue, imageIndex);
-      } catch (NullPointerException e) { }
-      try {
-        Double pixelsTimeIncrementValue = src.getPixelsTimeIncrement(imageIndex);
-        if (pixelsTimeIncrementValue != null) dest.setPixelsTimeIncrement(pixelsTimeIncrementValue, imageIndex);
-      } catch (NullPointerException e) { }
-      try {
-        PixelType pixelsTypeValue = src.getPixelsType(imageIndex);
-        if (pixelsTypeValue != null) dest.setPixelsType(pixelsTypeValue, imageIndex);
-      } catch (NullPointerException e) { }
-      try {
-      int binDataCount = src.getPixelsBinDataCount(imageIndex);
-      for (int binDataIndex=0; binDataIndex<binDataCount; binDataIndex++) {
-      try {
-        Boolean pixelsBinDataBigEndianValue = src.getPixelsBinDataBigEndian(imageIndex, binDataIndex);
-        if (pixelsBinDataBigEndianValue != null) dest.setPixelsBinDataBigEndian(pixelsBinDataBigEndianValue, imageIndex, binDataIndex);
-      } catch (NullPointerException e) { }
-      }
-      } catch (NullPointerException e) { }
-      try {
-      int planeCount = src.getPlaneCount(imageIndex);
-      for (int planeIndex=0; planeIndex<planeCount; planeIndex++) {
-      try {
-        int planeAnnotationRefCount = src.getPlaneAnnotationRefCount(imageIndex, planeIndex);
-        for (int annotationRefIndex=0; annotationRefIndex<planeAnnotationRefCount; annotationRefIndex++)
-        {
-          String planeAnnotationRefValue = src.getPlaneAnnotationRef(imageIndex, planeIndex, annotationRefIndex);
-          if (planeAnnotationRefValue != null) dest.setPlaneAnnotationRef(planeAnnotationRefValue, imageIndex, planeIndex, annotationRefIndex);
-        }
-      } catch (NullPointerException e) { }
-      try {
-        Double planeDeltaTValue = src.getPlaneDeltaT(imageIndex, planeIndex);
-        if (planeDeltaTValue != null) dest.setPlaneDeltaT(planeDeltaTValue, imageIndex, planeIndex);
-      } catch (NullPointerException e) { }
-      try {
-        Double planeExposureTimeValue = src.getPlaneExposureTime(imageIndex, planeIndex);
-        if (planeExposureTimeValue != null) dest.setPlaneExposureTime(planeExposureTimeValue, imageIndex, planeIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String planeHashSHA1Value = src.getPlaneHashSHA1(imageIndex, planeIndex);
-        if (planeHashSHA1Value != null) dest.setPlaneHashSHA1(planeHashSHA1Value, imageIndex, planeIndex);
-      } catch (NullPointerException e) { }
-      try {
-        Double planePositionXValue = src.getPlanePositionX(imageIndex, planeIndex);
-        if (planePositionXValue != null) dest.setPlanePositionX(planePositionXValue, imageIndex, planeIndex);
-      } catch (NullPointerException e) { }
-      try {
-        Double planePositionYValue = src.getPlanePositionY(imageIndex, planeIndex);
-        if (planePositionYValue != null) dest.setPlanePositionY(planePositionYValue, imageIndex, planeIndex);
-      } catch (NullPointerException e) { }
-      try {
-        Double planePositionZValue = src.getPlanePositionZ(imageIndex, planeIndex);
-        if (planePositionZValue != null) dest.setPlanePositionZ(planePositionZValue, imageIndex, planeIndex);
-      } catch (NullPointerException e) { }
-      try {
-        NonNegativeInteger planeTheCValue = src.getPlaneTheC(imageIndex, planeIndex);
-        if (planeTheCValue != null) dest.setPlaneTheC(planeTheCValue, imageIndex, planeIndex);
-      } catch (NullPointerException e) { }
-      try {
-        NonNegativeInteger planeTheTValue = src.getPlaneTheT(imageIndex, planeIndex);
-        if (planeTheTValue != null) dest.setPlaneTheT(planeTheTValue, imageIndex, planeIndex);
-      } catch (NullPointerException e) { }
-      try {
-        NonNegativeInteger planeTheZValue = src.getPlaneTheZ(imageIndex, planeIndex);
-        if (planeTheZValue != null) dest.setPlaneTheZ(planeTheZValue, imageIndex, planeIndex);
-      } catch (NullPointerException e) { }
-      }
-      } catch (NullPointerException e) { }
-      try {
-        String stageLabelNameValue = src.getStageLabelName(imageIndex);
-        if (stageLabelNameValue != null) dest.setStageLabelName(stageLabelNameValue, imageIndex);
-      } catch (NullPointerException e) { }
-      try {
-        Double stageLabelXValue = src.getStageLabelX(imageIndex);
-        if (stageLabelXValue != null) dest.setStageLabelX(stageLabelXValue, imageIndex);
-      } catch (NullPointerException e) { }
-      try {
-        Double stageLabelYValue = src.getStageLabelY(imageIndex);
-        if (stageLabelYValue != null) dest.setStageLabelY(stageLabelYValue, imageIndex);
-      } catch (NullPointerException e) { }
-      try {
-        Double stageLabelZValue = src.getStageLabelZ(imageIndex);
-        if (stageLabelZValue != null) dest.setStageLabelZ(stageLabelZValue, imageIndex);
-      } catch (NullPointerException e) { }
-      try {
-      int tiffDataCount = src.getTiffDataCount(imageIndex);
-      for (int tiffDataIndex=0; tiffDataIndex<tiffDataCount; tiffDataIndex++) {
-      try {
-        NonNegativeInteger tiffDataFirstCValue = src.getTiffDataFirstC(imageIndex, tiffDataIndex);
-        if (tiffDataFirstCValue != null) dest.setTiffDataFirstC(tiffDataFirstCValue, imageIndex, tiffDataIndex);
-      } catch (NullPointerException e) { }
-      try {
-        NonNegativeInteger tiffDataFirstTValue = src.getTiffDataFirstT(imageIndex, tiffDataIndex);
-        if (tiffDataFirstTValue != null) dest.setTiffDataFirstT(tiffDataFirstTValue, imageIndex, tiffDataIndex);
-      } catch (NullPointerException e) { }
-      try {
-        NonNegativeInteger tiffDataFirstZValue = src.getTiffDataFirstZ(imageIndex, tiffDataIndex);
-        if (tiffDataFirstZValue != null) dest.setTiffDataFirstZ(tiffDataFirstZValue, imageIndex, tiffDataIndex);
-      } catch (NullPointerException e) { }
-      try {
-        NonNegativeInteger tiffDataIFDValue = src.getTiffDataIFD(imageIndex, tiffDataIndex);
-        if (tiffDataIFDValue != null) dest.setTiffDataIFD(tiffDataIFDValue, imageIndex, tiffDataIndex);
-      } catch (NullPointerException e) { }
-      try {
-        NonNegativeInteger tiffDataPlaneCountValue = src.getTiffDataPlaneCount(imageIndex, tiffDataIndex);
-        if (tiffDataPlaneCountValue != null) dest.setTiffDataPlaneCount(tiffDataPlaneCountValue, imageIndex, tiffDataIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String uuidFileNameValue = src.getUUIDFileName(imageIndex, tiffDataIndex);
-        if (uuidFileNameValue != null) dest.setUUIDFileName(uuidFileNameValue, imageIndex, tiffDataIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String uuidValueValue = src.getUUIDValue(imageIndex, tiffDataIndex);
-        if (uuidValueValue != null) dest.setUUIDValue(uuidValueValue, imageIndex, tiffDataIndex);
-      } catch (NullPointerException e) { }
-      }
-      } catch (NullPointerException e) { }
-    }
-    } catch (NullPointerException e) { }
-    try {
-    int instrumentCount = src.getInstrumentCount();
-    for (int instrumentIndex=0; instrumentIndex<instrumentCount; instrumentIndex++) {
-    try {
-      String instrumentIDValue = src.getInstrumentID(instrumentIndex);
-      if (instrumentIDValue != null) dest.setInstrumentID(instrumentIDValue, instrumentIndex);
-    } catch (NullPointerException e) { }
-      try {
-      int detectorCount = src.getDetectorCount(instrumentIndex);
-      for (int detectorIndex=0; detectorIndex<detectorCount; detectorIndex++) {
-      try {
-        Double detectorAmplificationGainValue = src.getDetectorAmplificationGain(instrumentIndex, detectorIndex);
-        if (detectorAmplificationGainValue != null) dest.setDetectorAmplificationGain(detectorAmplificationGainValue, instrumentIndex, detectorIndex);
-      } catch (NullPointerException e) { }
-      try {
-        Double detectorGainValue = src.getDetectorGain(instrumentIndex, detectorIndex);
-        if (detectorGainValue != null) dest.setDetectorGain(detectorGainValue, instrumentIndex, detectorIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String detectorIDValue = src.getDetectorID(instrumentIndex, detectorIndex);
-        if (detectorIDValue != null) dest.setDetectorID(detectorIDValue, instrumentIndex, detectorIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String detectorLotNumberValue = src.getDetectorLotNumber(instrumentIndex, detectorIndex);
-        if (detectorLotNumberValue != null) dest.setDetectorLotNumber(detectorLotNumberValue, instrumentIndex, detectorIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String detectorManufacturerValue = src.getDetectorManufacturer(instrumentIndex, detectorIndex);
-        if (detectorManufacturerValue != null) dest.setDetectorManufacturer(detectorManufacturerValue, instrumentIndex, detectorIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String detectorModelValue = src.getDetectorModel(instrumentIndex, detectorIndex);
-        if (detectorModelValue != null) dest.setDetectorModel(detectorModelValue, instrumentIndex, detectorIndex);
-      } catch (NullPointerException e) { }
-      try {
-        Double detectorOffsetValue = src.getDetectorOffset(instrumentIndex, detectorIndex);
-        if (detectorOffsetValue != null) dest.setDetectorOffset(detectorOffsetValue, instrumentIndex, detectorIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String detectorSerialNumberValue = src.getDetectorSerialNumber(instrumentIndex, detectorIndex);
-        if (detectorSerialNumberValue != null) dest.setDetectorSerialNumber(detectorSerialNumberValue, instrumentIndex, detectorIndex);
-      } catch (NullPointerException e) { }
-      try {
-        DetectorType detectorTypeValue = src.getDetectorType(instrumentIndex, detectorIndex);
-        if (detectorTypeValue != null) dest.setDetectorType(detectorTypeValue, instrumentIndex, detectorIndex);
-      } catch (NullPointerException e) { }
-      try {
-        Double detectorVoltageValue = src.getDetectorVoltage(instrumentIndex, detectorIndex);
-        if (detectorVoltageValue != null) dest.setDetectorVoltage(detectorVoltageValue, instrumentIndex, detectorIndex);
-      } catch (NullPointerException e) { }
-      try {
-        Double detectorZoomValue = src.getDetectorZoom(instrumentIndex, detectorIndex);
-        if (detectorZoomValue != null) dest.setDetectorZoom(detectorZoomValue, instrumentIndex, detectorIndex);
-      } catch (NullPointerException e) { }
-      }
-      } catch (NullPointerException e) { }
-      try {
-      int dichroicCount = src.getDichroicCount(instrumentIndex);
-      for (int dichroicIndex=0; dichroicIndex<dichroicCount; dichroicIndex++) {
-      try {
-        String dichroicIDValue = src.getDichroicID(instrumentIndex, dichroicIndex);
-        if (dichroicIDValue != null) dest.setDichroicID(dichroicIDValue, instrumentIndex, dichroicIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String dichroicLotNumberValue = src.getDichroicLotNumber(instrumentIndex, dichroicIndex);
-        if (dichroicLotNumberValue != null) dest.setDichroicLotNumber(dichroicLotNumberValue, instrumentIndex, dichroicIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String dichroicManufacturerValue = src.getDichroicManufacturer(instrumentIndex, dichroicIndex);
-        if (dichroicManufacturerValue != null) dest.setDichroicManufacturer(dichroicManufacturerValue, instrumentIndex, dichroicIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String dichroicModelValue = src.getDichroicModel(instrumentIndex, dichroicIndex);
-        if (dichroicModelValue != null) dest.setDichroicModel(dichroicModelValue, instrumentIndex, dichroicIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String dichroicSerialNumberValue = src.getDichroicSerialNumber(instrumentIndex, dichroicIndex);
-        if (dichroicSerialNumberValue != null) dest.setDichroicSerialNumber(dichroicSerialNumberValue, instrumentIndex, dichroicIndex);
-      } catch (NullPointerException e) { }
-      }
-      } catch (NullPointerException e) { }
-      try {
-      int filterCount = src.getFilterCount(instrumentIndex);
-      for (int filterIndex=0; filterIndex<filterCount; filterIndex++) {
-      try {
-        String filterFilterWheelValue = src.getFilterFilterWheel(instrumentIndex, filterIndex);
-        if (filterFilterWheelValue != null) dest.setFilterFilterWheel(filterFilterWheelValue, instrumentIndex, filterIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String filterIDValue = src.getFilterID(instrumentIndex, filterIndex);
-        if (filterIDValue != null) dest.setFilterID(filterIDValue, instrumentIndex, filterIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String filterLotNumberValue = src.getFilterLotNumber(instrumentIndex, filterIndex);
-        if (filterLotNumberValue != null) dest.setFilterLotNumber(filterLotNumberValue, instrumentIndex, filterIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String filterManufacturerValue = src.getFilterManufacturer(instrumentIndex, filterIndex);
-        if (filterManufacturerValue != null) dest.setFilterManufacturer(filterManufacturerValue, instrumentIndex, filterIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String filterModelValue = src.getFilterModel(instrumentIndex, filterIndex);
-        if (filterModelValue != null) dest.setFilterModel(filterModelValue, instrumentIndex, filterIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String filterSerialNumberValue = src.getFilterSerialNumber(instrumentIndex, filterIndex);
-        if (filterSerialNumberValue != null) dest.setFilterSerialNumber(filterSerialNumberValue, instrumentIndex, filterIndex);
-      } catch (NullPointerException e) { }
-      try {
-        FilterType filterTypeValue = src.getFilterType(instrumentIndex, filterIndex);
-        if (filterTypeValue != null) dest.setFilterType(filterTypeValue, instrumentIndex, filterIndex);
-      } catch (NullPointerException e) { }
-      try {
-        PositiveInteger transmittanceRangeCutInValue = src.getTransmittanceRangeCutIn(instrumentIndex, filterIndex);
-        if (transmittanceRangeCutInValue != null) dest.setTransmittanceRangeCutIn(transmittanceRangeCutInValue, instrumentIndex, filterIndex);
-      } catch (NullPointerException e) { }
-      try {
-        NonNegativeInteger transmittanceRangeCutInToleranceValue = src.getTransmittanceRangeCutInTolerance(instrumentIndex, filterIndex);
-        if (transmittanceRangeCutInToleranceValue != null) dest.setTransmittanceRangeCutInTolerance(transmittanceRangeCutInToleranceValue, instrumentIndex, filterIndex);
-      } catch (NullPointerException e) { }
-      try {
-        PositiveInteger transmittanceRangeCutOutValue = src.getTransmittanceRangeCutOut(instrumentIndex, filterIndex);
-        if (transmittanceRangeCutOutValue != null) dest.setTransmittanceRangeCutOut(transmittanceRangeCutOutValue, instrumentIndex, filterIndex);
-      } catch (NullPointerException e) { }
-      try {
-        NonNegativeInteger transmittanceRangeCutOutToleranceValue = src.getTransmittanceRangeCutOutTolerance(instrumentIndex, filterIndex);
-        if (transmittanceRangeCutOutToleranceValue != null) dest.setTransmittanceRangeCutOutTolerance(transmittanceRangeCutOutToleranceValue, instrumentIndex, filterIndex);
-      } catch (NullPointerException e) { }
-      try {
-        PercentFraction transmittanceRangeTransmittanceValue = src.getTransmittanceRangeTransmittance(instrumentIndex, filterIndex);
-        if (transmittanceRangeTransmittanceValue != null) dest.setTransmittanceRangeTransmittance(transmittanceRangeTransmittanceValue, instrumentIndex, filterIndex);
-      } catch (NullPointerException e) { }
-      }
-      } catch (NullPointerException e) { }
-      try {
-      int filterSetCount = src.getFilterSetCount(instrumentIndex);
-      for (int filterSetIndex=0; filterSetIndex<filterSetCount; filterSetIndex++) {
-      try {
-        String filterSetIDValue = src.getFilterSetID(instrumentIndex, filterSetIndex);
-        if (filterSetIDValue != null) dest.setFilterSetID(filterSetIDValue, instrumentIndex, filterSetIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String filterSetLotNumberValue = src.getFilterSetLotNumber(instrumentIndex, filterSetIndex);
-        if (filterSetLotNumberValue != null) dest.setFilterSetLotNumber(filterSetLotNumberValue, instrumentIndex, filterSetIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String filterSetManufacturerValue = src.getFilterSetManufacturer(instrumentIndex, filterSetIndex);
-        if (filterSetManufacturerValue != null) dest.setFilterSetManufacturer(filterSetManufacturerValue, instrumentIndex, filterSetIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String filterSetModelValue = src.getFilterSetModel(instrumentIndex, filterSetIndex);
-        if (filterSetModelValue != null) dest.setFilterSetModel(filterSetModelValue, instrumentIndex, filterSetIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String filterSetSerialNumberValue = src.getFilterSetSerialNumber(instrumentIndex, filterSetIndex);
-        if (filterSetSerialNumberValue != null) dest.setFilterSetSerialNumber(filterSetSerialNumberValue, instrumentIndex, filterSetIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String filterSetDichroicRefValue = src.getFilterSetDichroicRef(instrumentIndex, filterSetIndex);
-        if (filterSetDichroicRefValue != null) dest.setFilterSetDichroicRef(filterSetDichroicRefValue, instrumentIndex, filterSetIndex);
-      } catch (NullPointerException e) { }
-      try {
-        int emissionFilterRefCount = src.getFilterSetEmissionFilterRefCount(instrumentIndex, filterSetIndex);
-        for (int emissionFilterRefIndex=0; emissionFilterRefIndex<emissionFilterRefCount; emissionFilterRefIndex++)
-        {
-          String filterSetEmissionFilterRefValue = src.getFilterSetEmissionFilterRef(instrumentIndex, filterSetIndex, emissionFilterRefIndex);
-          if (filterSetEmissionFilterRefValue != null) dest.setFilterSetEmissionFilterRef(filterSetEmissionFilterRefValue, instrumentIndex, filterSetIndex, emissionFilterRefIndex);
-        }
-      } catch (NullPointerException e) { }
-      try {
-        int excitationFilterRefCount = src.getFilterSetExcitationFilterRefCount(instrumentIndex, filterSetIndex);
-        for (int excitationFilterRefIndex=0; excitationFilterRefIndex<excitationFilterRefCount; excitationFilterRefIndex++)
-        {
-          String filterSetExcitationFilterRefValue = src.getFilterSetExcitationFilterRef(instrumentIndex, filterSetIndex, excitationFilterRefIndex);
-          if (filterSetExcitationFilterRefValue != null) dest.setFilterSetExcitationFilterRef(filterSetExcitationFilterRefValue, instrumentIndex, filterSetIndex, excitationFilterRefIndex);
-        }
-      } catch (NullPointerException e) { }
-      }
-      } catch (NullPointerException e) { }
-      try {
-        String microscopeLotNumberValue = src.getMicroscopeLotNumber(instrumentIndex);
-        if (microscopeLotNumberValue != null) dest.setMicroscopeLotNumber(microscopeLotNumberValue, instrumentIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String microscopeManufacturerValue = src.getMicroscopeManufacturer(instrumentIndex);
-        if (microscopeManufacturerValue != null) dest.setMicroscopeManufacturer(microscopeManufacturerValue, instrumentIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String microscopeModelValue = src.getMicroscopeModel(instrumentIndex);
-        if (microscopeModelValue != null) dest.setMicroscopeModel(microscopeModelValue, instrumentIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String microscopeSerialNumberValue = src.getMicroscopeSerialNumber(instrumentIndex);
-        if (microscopeSerialNumberValue != null) dest.setMicroscopeSerialNumber(microscopeSerialNumberValue, instrumentIndex);
-      } catch (NullPointerException e) { }
-      try {
-        MicroscopeType microscopeTypeValue = src.getMicroscopeType(instrumentIndex);
-        if (microscopeTypeValue != null) dest.setMicroscopeType(microscopeTypeValue, instrumentIndex);
-      } catch (NullPointerException e) { }
-      try {
-      int objectiveCount = src.getObjectiveCount(instrumentIndex);
-      for (int objectiveIndex=0; objectiveIndex<objectiveCount; objectiveIndex++) {
-      try {
-        Double objectiveCalibratedMagnificationValue = src.getObjectiveCalibratedMagnification(instrumentIndex, objectiveIndex);
-        if (objectiveCalibratedMagnificationValue != null) dest.setObjectiveCalibratedMagnification(objectiveCalibratedMagnificationValue, instrumentIndex, objectiveIndex);
-      } catch (NullPointerException e) { }
-      try {
-        Correction objectiveCorrectionValue = src.getObjectiveCorrection(instrumentIndex, objectiveIndex);
-        if (objectiveCorrectionValue != null) dest.setObjectiveCorrection(objectiveCorrectionValue, instrumentIndex, objectiveIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String objectiveIDValue = src.getObjectiveID(instrumentIndex, objectiveIndex);
-        if (objectiveIDValue != null) dest.setObjectiveID(objectiveIDValue, instrumentIndex, objectiveIndex);
-      } catch (NullPointerException e) { }
-      try {
-        Immersion objectiveImmersionValue = src.getObjectiveImmersion(instrumentIndex, objectiveIndex);
-        if (objectiveImmersionValue != null) dest.setObjectiveImmersion(objectiveImmersionValue, instrumentIndex, objectiveIndex);
-      } catch (NullPointerException e) { }
-      try {
-        Boolean objectiveIrisValue = src.getObjectiveIris(instrumentIndex, objectiveIndex);
-        if (objectiveIrisValue != null) dest.setObjectiveIris(objectiveIrisValue, instrumentIndex, objectiveIndex);
-      } catch (NullPointerException e) { }
-      try {
-        Double objectiveLensNAValue = src.getObjectiveLensNA(instrumentIndex, objectiveIndex);
-        if (objectiveLensNAValue != null) dest.setObjectiveLensNA(objectiveLensNAValue, instrumentIndex, objectiveIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String objectiveLotNumberValue = src.getObjectiveLotNumber(instrumentIndex, objectiveIndex);
-        if (objectiveLotNumberValue != null) dest.setObjectiveLotNumber(objectiveLotNumberValue, instrumentIndex, objectiveIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String objectiveManufacturerValue = src.getObjectiveManufacturer(instrumentIndex, objectiveIndex);
-        if (objectiveManufacturerValue != null) dest.setObjectiveManufacturer(objectiveManufacturerValue, instrumentIndex, objectiveIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String objectiveModelValue = src.getObjectiveModel(instrumentIndex, objectiveIndex);
-        if (objectiveModelValue != null) dest.setObjectiveModel(objectiveModelValue, instrumentIndex, objectiveIndex);
-      } catch (NullPointerException e) { }
-      try {
-        PositiveInteger objectiveNominalMagnificationValue = src.getObjectiveNominalMagnification(instrumentIndex, objectiveIndex);
-        if (objectiveNominalMagnificationValue != null) dest.setObjectiveNominalMagnification(objectiveNominalMagnificationValue, instrumentIndex, objectiveIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String objectiveSerialNumberValue = src.getObjectiveSerialNumber(instrumentIndex, objectiveIndex);
-        if (objectiveSerialNumberValue != null) dest.setObjectiveSerialNumber(objectiveSerialNumberValue, instrumentIndex, objectiveIndex);
-      } catch (NullPointerException e) { }
-      try {
-        Double objectiveWorkingDistanceValue = src.getObjectiveWorkingDistance(instrumentIndex, objectiveIndex);
-        if (objectiveWorkingDistanceValue != null) dest.setObjectiveWorkingDistance(objectiveWorkingDistanceValue, instrumentIndex, objectiveIndex);
-      } catch (NullPointerException e) { }
-      }
-      } catch (NullPointerException e) { }
-      convertLightSources(src, dest, instrumentIndex);
-    }
-    } catch (NullPointerException e) { }
-    try {
-    int listAnnotationCount = src.getListAnnotationCount();
-    for (int listAnnotationIndex=0; listAnnotationIndex<listAnnotationCount; listAnnotationIndex++) {
-    try {
-      //int annotationRefCount = src.getListAnnotationAnnotationRefCount(listAnnotationIndex);
-      //for (int annotationRefIndex=0; annotationRefIndex<annotationRefCount; annotationRefIndex++)
-      //{
-      //  String listAnnotationAnnotationRefValue = src.getListAnnotationAnnotationRef(listAnnotationIndex, annotationRefIndex);
-      //  if (listAnnotationAnnotationRefValue != null) dest.setListAnnotationAnnotationRef(listAnnotationAnnotationRefValue, listAnnotationIndex, annotationRefIndex);
-      //}
-    } catch (NullPointerException e) { }
-    try {
-      String listAnnotationIDValue = src.getListAnnotationID(listAnnotationIndex);
-      if (listAnnotationIDValue != null) dest.setListAnnotationID(listAnnotationIDValue, listAnnotationIndex);
-    } catch (NullPointerException e) { }
-    try {
-      String listAnnotationNamespaceValue = src.getListAnnotationNamespace(listAnnotationIndex);
-      if (listAnnotationNamespaceValue != null) dest.setListAnnotationNamespace(listAnnotationNamespaceValue, listAnnotationIndex);
-    } catch (NullPointerException e) { }
-    }
-    } catch (NullPointerException e) { }
-    try {
-    int longAnnotationCount = src.getLongAnnotationCount();
-    for (int longAnnotationIndex=0; longAnnotationIndex<longAnnotationCount; longAnnotationIndex++) {
-    try {
-      String longAnnotationIDValue = src.getLongAnnotationID(longAnnotationIndex);
-      if (longAnnotationIDValue != null) dest.setLongAnnotationID(longAnnotationIDValue, longAnnotationIndex);
-    } catch (NullPointerException e) { }
-    try {
-      String longAnnotationNamespaceValue = src.getLongAnnotationNamespace(longAnnotationIndex);
-      if (longAnnotationNamespaceValue != null) dest.setLongAnnotationNamespace(longAnnotationNamespaceValue, longAnnotationIndex);
-    } catch (NullPointerException e) { }
-    try {
-      Long longAnnotationValueValue = src.getLongAnnotationValue(longAnnotationIndex);
-      if (longAnnotationValueValue != null) dest.setLongAnnotationValue(longAnnotationValueValue, longAnnotationIndex);
-    } catch (NullPointerException e) { }
-    }
-    } catch (NullPointerException e) { }
-    try {
-    int plateCount = src.getPlateCount();
-    for (int plateIndex=0; plateIndex<plateCount; plateIndex++) {
-    try {
-      int annotationRefCount = src.getPlateAnnotationRefCount(plateIndex);
-      for (int annotationRefIndex=0; annotationRefIndex<annotationRefCount; annotationRefIndex++)
-      {
-        String plateAnnotationRefValue = src.getPlateAnnotationRef(plateIndex, annotationRefIndex);
-        if (plateAnnotationRefValue != null) dest.setPlateAnnotationRef(plateAnnotationRefValue, plateIndex, annotationRefIndex);
-      }
-    } catch (NullPointerException e) { }
-    try {
-      NamingConvention plateColumnNamingConventionValue = src.getPlateColumnNamingConvention(plateIndex);
-      if (plateColumnNamingConventionValue != null) dest.setPlateColumnNamingConvention(plateColumnNamingConventionValue, plateIndex);
-    } catch (NullPointerException e) { }
-    try {
-      PositiveInteger plateColumnsValue = src.getPlateColumns(plateIndex);
-      if (plateColumnsValue != null) dest.setPlateColumns(plateColumnsValue, plateIndex);
-    } catch (NullPointerException e) { }
-    try {
-      String plateDescriptionValue = src.getPlateDescription(plateIndex);
-      if (plateDescriptionValue != null) dest.setPlateDescription(plateDescriptionValue, plateIndex);
-    } catch (NullPointerException e) { }
-    try {
-      String plateExternalIdentifierValue = src.getPlateExternalIdentifier(plateIndex);
-      if (plateExternalIdentifierValue != null) dest.setPlateExternalIdentifier(plateExternalIdentifierValue, plateIndex);
-    } catch (NullPointerException e) { }
-    try {
-      String plateIDValue = src.getPlateID(plateIndex);
-      if (plateIDValue != null) dest.setPlateID(plateIDValue, plateIndex);
-    } catch (NullPointerException e) { }
-    try {
-      String plateNameValue = src.getPlateName(plateIndex);
-      if (plateNameValue != null) dest.setPlateName(plateNameValue, plateIndex);
-    } catch (NullPointerException e) { }
-    try {
-      NamingConvention plateRowNamingConventionValue = src.getPlateRowNamingConvention(plateIndex);
-      if (plateRowNamingConventionValue != null) dest.setPlateRowNamingConvention(plateRowNamingConventionValue, plateIndex);
-    } catch (NullPointerException e) { }
-    try {
-      PositiveInteger plateRowsValue = src.getPlateRows(plateIndex);
-      if (plateRowsValue != null) dest.setPlateRows(plateRowsValue, plateIndex);
-    } catch (NullPointerException e) { }
-    try {
-      int screenRefCount = src.getScreenRefCount(plateIndex);
-      for (int screenRefIndex=0; screenRefIndex<screenRefCount; screenRefIndex++)
-      {
-        String plateScreenRefValue = src.getPlateScreenRef(plateIndex, screenRefIndex);
-        if (plateScreenRefValue != null) dest.setPlateScreenRef(plateScreenRefValue, plateIndex, screenRefIndex);
-      }
-    } catch (NullPointerException e) { }
-    try {
-      String plateStatusValue = src.getPlateStatus(plateIndex);
-      if (plateStatusValue != null) dest.setPlateStatus(plateStatusValue, plateIndex);
-    } catch (NullPointerException e) { }
-    try {
-      Double plateWellOriginXValue = src.getPlateWellOriginX(plateIndex);
-      if (plateWellOriginXValue != null) dest.setPlateWellOriginX(plateWellOriginXValue, plateIndex);
-    } catch (NullPointerException e) { }
-    try {
-      Double plateWellOriginYValue = src.getPlateWellOriginY(plateIndex);
-      if (plateWellOriginYValue != null) dest.setPlateWellOriginY(plateWellOriginYValue, plateIndex);
-    } catch (NullPointerException e) { }
-      try {
-      int plateAcquisitionCount = src.getPlateAcquisitionCount(plateIndex);
-      for (int plateAcquisitionIndex=0; plateAcquisitionIndex<plateAcquisitionCount; plateAcquisitionIndex++) {
-      try {
-        int annotationRefCount = src.getPlateAcquisitionAnnotationRefCount(plateIndex, plateAcquisitionIndex);
-        for (int annotationRefIndex=0; annotationRefIndex<annotationRefCount; annotationRefIndex++)
-        {
-          String plateAcquisitionAnnotationRefValue = src.getPlateAcquisitionAnnotationRef(plateIndex, plateAcquisitionIndex, annotationRefIndex);
-          if (plateAcquisitionAnnotationRefValue != null) dest.setPlateAcquisitionAnnotationRef(plateAcquisitionAnnotationRefValue, plateIndex, plateAcquisitionIndex, annotationRefIndex);
-        }
-      } catch (NullPointerException e) { }
-      try {
-        String plateAcquisitionDescriptionValue = src.getPlateAcquisitionDescription(plateIndex, plateAcquisitionIndex);
-        if (plateAcquisitionDescriptionValue != null) dest.setPlateAcquisitionDescription(plateAcquisitionDescriptionValue, plateIndex, plateAcquisitionIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String plateAcquisitionEndTimeValue = src.getPlateAcquisitionEndTime(plateIndex, plateAcquisitionIndex);
-        if (plateAcquisitionEndTimeValue != null) dest.setPlateAcquisitionEndTime(plateAcquisitionEndTimeValue, plateIndex, plateAcquisitionIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String plateAcquisitionIDValue = src.getPlateAcquisitionID(plateIndex, plateAcquisitionIndex);
-        if (plateAcquisitionIDValue != null) dest.setPlateAcquisitionID(plateAcquisitionIDValue, plateIndex, plateAcquisitionIndex);
-      } catch (NullPointerException e) { }
-      try {
-        PositiveInteger plateAcquisitionMaximumFieldCountValue = src.getPlateAcquisitionMaximumFieldCount(plateIndex, plateAcquisitionIndex);
-        if (plateAcquisitionMaximumFieldCountValue != null) dest.setPlateAcquisitionMaximumFieldCount(plateAcquisitionMaximumFieldCountValue, plateIndex, plateAcquisitionIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String plateAcquisitionNameValue = src.getPlateAcquisitionName(plateIndex, plateAcquisitionIndex);
-        if (plateAcquisitionNameValue != null) dest.setPlateAcquisitionName(plateAcquisitionNameValue, plateIndex, plateAcquisitionIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String plateAcquisitionStartTimeValue = src.getPlateAcquisitionStartTime(plateIndex, plateAcquisitionIndex);
-        if (plateAcquisitionStartTimeValue != null) dest.setPlateAcquisitionStartTime(plateAcquisitionStartTimeValue, plateIndex, plateAcquisitionIndex);
-      } catch (NullPointerException e) { }
-      try {
-        int wellSampleRefCount = src.getWellSampleRefCount(plateIndex, plateAcquisitionIndex);
-        for (int wellSampleRefIndex=0; wellSampleRefIndex<wellSampleRefCount; wellSampleRefIndex++)
-        {
-          String plateAcquisitionWellSampleRefValue = src.getPlateAcquisitionWellSampleRef(plateIndex, plateAcquisitionIndex, wellSampleRefIndex);
-          if (plateAcquisitionWellSampleRefValue != null) dest.setPlateAcquisitionWellSampleRef(plateAcquisitionWellSampleRefValue, plateIndex, plateAcquisitionIndex, wellSampleRefIndex);
-        }
-      } catch (NullPointerException e) { }
-      }
-      } catch (NullPointerException e) { }
-      try {
-      int wellCount = src.getWellCount(plateIndex);
-      for (int wellIndex=0; wellIndex<wellCount; wellIndex++) {
-      try {
-        int annotationRefCount = src.getWellAnnotationRefCount(plateIndex, wellIndex);
-        for (int annotationRefIndex=0; annotationRefIndex<annotationRefCount; annotationRefIndex++)
-        {
-          String wellAnnotationRefValue = src.getWellAnnotationRef(plateIndex, wellIndex, annotationRefIndex);
-          if (wellAnnotationRefValue != null) dest.setWellAnnotationRef(wellAnnotationRefValue, plateIndex, wellIndex, annotationRefIndex);
-        }
-      } catch (NullPointerException e) { }
-      try {
-        Integer wellColorValue = src.getWellColor(plateIndex, wellIndex);
-        if (wellColorValue != null) dest.setWellColor(wellColorValue, plateIndex, wellIndex);
-      } catch (NullPointerException e) { }
-      try {
-        NonNegativeInteger wellColumnValue = src.getWellColumn(plateIndex, wellIndex);
-        if (wellColumnValue != null) dest.setWellColumn(wellColumnValue, plateIndex, wellIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String wellExternalDescriptionValue = src.getWellExternalDescription(plateIndex, wellIndex);
-        if (wellExternalDescriptionValue != null) dest.setWellExternalDescription(wellExternalDescriptionValue, plateIndex, wellIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String wellExternalIdentifierValue = src.getWellExternalIdentifier(plateIndex, wellIndex);
-        if (wellExternalIdentifierValue != null) dest.setWellExternalIdentifier(wellExternalIdentifierValue, plateIndex, wellIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String wellIDValue = src.getWellID(plateIndex, wellIndex);
-        if (wellIDValue != null) dest.setWellID(wellIDValue, plateIndex, wellIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String wellReagentRefValue = src.getWellReagentRef(plateIndex, wellIndex);
-        if (wellReagentRefValue != null) dest.setWellReagentRef(wellReagentRefValue, plateIndex, wellIndex);
-      } catch (NullPointerException e) { }
-      try {
-        NonNegativeInteger wellRowValue = src.getWellRow(plateIndex, wellIndex);
-        if (wellRowValue != null) dest.setWellRow(wellRowValue, plateIndex, wellIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String wellStatusValue = src.getWellStatus(plateIndex, wellIndex);
-        if (wellStatusValue != null) dest.setWellStatus(wellStatusValue, plateIndex, wellIndex);
-      } catch (NullPointerException e) { }
-        try {
-        int wellSampleCount = src.getWellSampleCount(plateIndex, wellIndex);
-        for (int wellSampleIndex=0; wellSampleIndex<wellSampleCount; wellSampleIndex++) {
-        try {
-          int annotationRefCount = src.getWellSampleAnnotationRefCount(plateIndex, wellIndex, wellSampleIndex);
-          for (int annotationRefIndex=0; annotationRefIndex<annotationRefCount; annotationRefIndex++)
-          {
-            String wellSampleAnnotationRefValue = src.getWellSampleAnnotationRef(plateIndex, wellIndex, wellSampleIndex, annotationRefIndex);
-            if (wellSampleAnnotationRefValue != null) dest.setWellSampleAnnotationRef(wellSampleAnnotationRefValue, plateIndex, wellIndex, wellSampleIndex, annotationRefIndex);
-          }
-        } catch (NullPointerException e) { }
-        try {
-          String wellSampleIDValue = src.getWellSampleID(plateIndex, wellIndex, wellSampleIndex);
-          if (wellSampleIDValue != null) dest.setWellSampleID(wellSampleIDValue, plateIndex, wellIndex, wellSampleIndex);
-        } catch (NullPointerException e) { }
-        try {
-          String wellSampleImageRefValue = src.getWellSampleImageRef(plateIndex, wellIndex, wellSampleIndex);
-          if (wellSampleImageRefValue != null) dest.setWellSampleImageRef(wellSampleImageRefValue, plateIndex, wellIndex, wellSampleIndex);
-        } catch (NullPointerException e) { }
-        try {
-          NonNegativeInteger wellSampleIndexValue = src.getWellSampleIndex(plateIndex, wellIndex, wellSampleIndex);
-          if (wellSampleIndexValue != null) dest.setWellSampleIndex(wellSampleIndexValue, plateIndex, wellIndex, wellSampleIndex);
-        } catch (NullPointerException e) { }
-        try {
-          Double wellSamplePositionXValue = src.getWellSamplePositionX(plateIndex, wellIndex, wellSampleIndex);
-          if (wellSamplePositionXValue != null) dest.setWellSamplePositionX(wellSamplePositionXValue, plateIndex, wellIndex, wellSampleIndex);
-        } catch (NullPointerException e) { }
-        try {
-          Double wellSamplePositionYValue = src.getWellSamplePositionY(plateIndex, wellIndex, wellSampleIndex);
-          if (wellSamplePositionYValue != null) dest.setWellSamplePositionY(wellSamplePositionYValue, plateIndex, wellIndex, wellSampleIndex);
-        } catch (NullPointerException e) { }
-        try {
-          String wellSampleTimepointValue = src.getWellSampleTimepoint(plateIndex, wellIndex, wellSampleIndex);
-          if (wellSampleTimepointValue != null) dest.setWellSampleTimepoint(wellSampleTimepointValue, plateIndex, wellIndex, wellSampleIndex);
-        } catch (NullPointerException e) { }
-        }
-        } catch (NullPointerException e) { }
-      }
-      } catch (NullPointerException e) { }
-    }
-    } catch (NullPointerException e) { }
-    try {
-    int projectCount = src.getProjectCount();
-    for (int projectIndex=0; projectIndex<projectCount; projectIndex++) {
-    try {
-      String projectIDValue = src.getProjectID(projectIndex);
-      if (projectIDValue != null) dest.setProjectID(projectIDValue, projectIndex);
-    } catch (NullPointerException e) { }
-    try {
-      int annotationRefCount = src.getProjectAnnotationRefCount(projectIndex);
-      for (int annotationRefIndex=0; annotationRefIndex<annotationRefCount; annotationRefIndex++)
-      {
-        String projectAnnotationRefValue = src.getProjectAnnotationRef(projectIndex, annotationRefIndex);
-        if (projectAnnotationRefValue != null) dest.setProjectAnnotationRef(projectAnnotationRefValue, projectIndex, annotationRefIndex);
-      }
-    } catch (NullPointerException e) { }
-    try {
-      String projectDescriptionValue = src.getProjectDescription(projectIndex);
-      if (projectDescriptionValue != null) dest.setProjectDescription(projectDescriptionValue, projectIndex);
-    } catch (NullPointerException e) { }
-    try {
-      String projectExperimenterRefValue = src.getProjectExperimenterRef(projectIndex);
-      if (projectExperimenterRefValue != null) dest.setProjectExperimenterRef(projectExperimenterRefValue, projectIndex);
-    } catch (NullPointerException e) { }
-    try {
-      String projectGroupRefValue = src.getProjectGroupRef(projectIndex);
-      if (projectGroupRefValue != null) dest.setProjectGroupRef(projectGroupRefValue, projectIndex);
-    } catch (NullPointerException e) { }
-    try {
-      String projectNameValue = src.getProjectName(projectIndex);
-      if (projectNameValue != null) dest.setProjectName(projectNameValue, projectIndex);
-    } catch (NullPointerException e) { }
-    }
-    } catch (NullPointerException e) { }
-    try {
-    int roiCount = src.getROICount();
-    for (int roiIndex=0; roiIndex<roiCount; roiIndex++) {
-    try {
-      int annotationRefCount = src.getROIAnnotationRefCount(roiIndex);
-      for (int annotationRefIndex=0; annotationRefIndex<annotationRefCount; annotationRefIndex++)
-      {
-        String roiAnnotationRefValue = src.getROIAnnotationRef(roiIndex, annotationRefIndex);
-        if (roiAnnotationRefValue != null) dest.setROIAnnotationRef(roiAnnotationRefValue, roiIndex, annotationRefIndex);
-      }
-    } catch (NullPointerException e) { }
-    try {
-      String roiDescriptionValue = src.getROIDescription(roiIndex);
-      if (roiDescriptionValue != null) dest.setROIDescription(roiDescriptionValue, roiIndex);
-    } catch (NullPointerException e) { }
-    try {
-      String roiidValue = src.getROIID(roiIndex);
-      if (roiidValue != null) dest.setROIID(roiidValue, roiIndex);
-    } catch (NullPointerException e) { }
-    try {
-      String roiNameValue = src.getROIName(roiIndex);
-      if (roiNameValue != null) dest.setROIName(roiNameValue, roiIndex);
-    } catch (NullPointerException e) { }
-    try {
-      String roiNamespaceValue = src.getROINamespace(roiIndex);
-      if (roiNamespaceValue != null) dest.setROINamespace(roiNamespaceValue, roiIndex);
-    } catch (NullPointerException e) { }
-      try {
-      int shapeCount = src.getShapeCount(roiIndex);
-      for (int shapeIndex=0; shapeIndex<shapeCount; shapeIndex++) {
-        try {
-          String ellipseDescriptionValue = src.getEllipseDescription(roiIndex, shapeIndex);
-          if (ellipseDescriptionValue != null) dest.setEllipseDescription(ellipseDescriptionValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          Integer ellipseFillValue = src.getEllipseFill(roiIndex, shapeIndex);
-          if (ellipseFillValue != null) dest.setEllipseFill(ellipseFillValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          NonNegativeInteger ellipseFontSizeValue = src.getEllipseFontSize(roiIndex, shapeIndex);
-          if (ellipseFontSizeValue != null) dest.setEllipseFontSize(ellipseFontSizeValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          String ellipseIDValue = src.getEllipseID(roiIndex, shapeIndex);
-          if (ellipseIDValue != null) dest.setEllipseID(ellipseIDValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          String ellipseLabelValue = src.getEllipseLabel(roiIndex, shapeIndex);
-          if (ellipseLabelValue != null) dest.setEllipseLabel(ellipseLabelValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          String ellipseNameValue = src.getEllipseName(roiIndex, shapeIndex);
-          if (ellipseNameValue != null) dest.setEllipseName(ellipseNameValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          Double ellipseRadiusXValue = src.getEllipseRadiusX(roiIndex, shapeIndex);
-          if (ellipseRadiusXValue != null) dest.setEllipseRadiusX(ellipseRadiusXValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          Double ellipseRadiusYValue = src.getEllipseRadiusY(roiIndex, shapeIndex);
-          if (ellipseRadiusYValue != null) dest.setEllipseRadiusY(ellipseRadiusYValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          Integer ellipseStrokeValue = src.getEllipseStroke(roiIndex, shapeIndex);
-          if (ellipseStrokeValue != null) dest.setEllipseStroke(ellipseStrokeValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          String ellipseStrokeDashArrayValue = src.getEllipseStrokeDashArray(roiIndex, shapeIndex);
-          if (ellipseStrokeDashArrayValue != null) dest.setEllipseStrokeDashArray(ellipseStrokeDashArrayValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          Double ellipseStrokeWidthValue = src.getEllipseStrokeWidth(roiIndex, shapeIndex);
-          if (ellipseStrokeWidthValue != null) dest.setEllipseStrokeWidth(ellipseStrokeWidthValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          NonNegativeInteger ellipseTheCValue = src.getEllipseTheC(roiIndex, shapeIndex);
-          if (ellipseTheCValue != null) dest.setEllipseTheC(ellipseTheCValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          NonNegativeInteger ellipseTheTValue = src.getEllipseTheT(roiIndex, shapeIndex);
-          if (ellipseTheTValue != null) dest.setEllipseTheT(ellipseTheTValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          NonNegativeInteger ellipseTheZValue = src.getEllipseTheZ(roiIndex, shapeIndex);
-          if (ellipseTheZValue != null) dest.setEllipseTheZ(ellipseTheZValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          String ellipseTransformValue = src.getEllipseTransform(roiIndex, shapeIndex);
-          if (ellipseTransformValue != null) dest.setEllipseTransform(ellipseTransformValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          Double ellipseXValue = src.getEllipseX(roiIndex, shapeIndex);
-          if (ellipseXValue != null) dest.setEllipseX(ellipseXValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          Double ellipseYValue = src.getEllipseY(roiIndex, shapeIndex);
-          if (ellipseYValue != null) dest.setEllipseY(ellipseYValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          String lineDescriptionValue = src.getLineDescription(roiIndex, shapeIndex);
-          if (lineDescriptionValue != null) dest.setLineDescription(lineDescriptionValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          Integer lineFillValue = src.getLineFill(roiIndex, shapeIndex);
-          if (lineFillValue != null) dest.setLineFill(lineFillValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          NonNegativeInteger lineFontSizeValue = src.getLineFontSize(roiIndex, shapeIndex);
-          if (lineFontSizeValue != null) dest.setLineFontSize(lineFontSizeValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          String lineIDValue = src.getLineID(roiIndex, shapeIndex);
-          if (lineIDValue != null) dest.setLineID(lineIDValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          String lineLabelValue = src.getLineLabel(roiIndex, shapeIndex);
-          if (lineLabelValue != null) dest.setLineLabel(lineLabelValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          String lineNameValue = src.getLineName(roiIndex, shapeIndex);
-          if (lineNameValue != null) dest.setLineName(lineNameValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          Integer lineStrokeValue = src.getLineStroke(roiIndex, shapeIndex);
-          if (lineStrokeValue != null) dest.setLineStroke(lineStrokeValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          String lineStrokeDashArrayValue = src.getLineStrokeDashArray(roiIndex, shapeIndex);
-          if (lineStrokeDashArrayValue != null) dest.setLineStrokeDashArray(lineStrokeDashArrayValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          Double lineStrokeWidthValue = src.getLineStrokeWidth(roiIndex, shapeIndex);
-          if (lineStrokeWidthValue != null) dest.setLineStrokeWidth(lineStrokeWidthValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          NonNegativeInteger lineTheCValue = src.getLineTheC(roiIndex, shapeIndex);
-          if (lineTheCValue != null) dest.setLineTheC(lineTheCValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          NonNegativeInteger lineTheTValue = src.getLineTheT(roiIndex, shapeIndex);
-          if (lineTheTValue != null) dest.setLineTheT(lineTheTValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          NonNegativeInteger lineTheZValue = src.getLineTheZ(roiIndex, shapeIndex);
-          if (lineTheZValue != null) dest.setLineTheZ(lineTheZValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          String lineTransformValue = src.getLineTransform(roiIndex, shapeIndex);
-          if (lineTransformValue != null) dest.setLineTransform(lineTransformValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          Double lineX1Value = src.getLineX1(roiIndex, shapeIndex);
-          if (lineX1Value != null) dest.setLineX1(lineX1Value, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          Double lineX2Value = src.getLineX2(roiIndex, shapeIndex);
-          if (lineX2Value != null) dest.setLineX2(lineX2Value, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          Double lineY1Value = src.getLineY1(roiIndex, shapeIndex);
-          if (lineY1Value != null) dest.setLineY1(lineY1Value, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          Double lineY2Value = src.getLineY2(roiIndex, shapeIndex);
-          if (lineY2Value != null) dest.setLineY2(lineY2Value, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          String maskDescriptionValue = src.getMaskDescription(roiIndex, shapeIndex);
-          if (maskDescriptionValue != null) dest.setMaskDescription(maskDescriptionValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          Integer maskFillValue = src.getMaskFill(roiIndex, shapeIndex);
-          if (maskFillValue != null) dest.setMaskFill(maskFillValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          NonNegativeInteger maskFontSizeValue = src.getMaskFontSize(roiIndex, shapeIndex);
-          if (maskFontSizeValue != null) dest.setMaskFontSize(maskFontSizeValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          String maskIDValue = src.getMaskID(roiIndex, shapeIndex);
-          if (maskIDValue != null) dest.setMaskID(maskIDValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          String maskLabelValue = src.getMaskLabel(roiIndex, shapeIndex);
-          if (maskLabelValue != null) dest.setMaskLabel(maskLabelValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          String maskNameValue = src.getMaskName(roiIndex, shapeIndex);
-          if (maskNameValue != null) dest.setMaskName(maskNameValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          Integer maskStrokeValue = src.getMaskStroke(roiIndex, shapeIndex);
-          if (maskStrokeValue != null) dest.setMaskStroke(maskStrokeValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          String maskStrokeDashArrayValue = src.getMaskStrokeDashArray(roiIndex, shapeIndex);
-          if (maskStrokeDashArrayValue != null) dest.setMaskStrokeDashArray(maskStrokeDashArrayValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          Double maskStrokeWidthValue = src.getMaskStrokeWidth(roiIndex, shapeIndex);
-          if (maskStrokeWidthValue != null) dest.setMaskStrokeWidth(maskStrokeWidthValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          NonNegativeInteger maskTheCValue = src.getMaskTheC(roiIndex, shapeIndex);
-          if (maskTheCValue != null) dest.setMaskTheC(maskTheCValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          NonNegativeInteger maskTheTValue = src.getMaskTheT(roiIndex, shapeIndex);
-          if (maskTheTValue != null) dest.setMaskTheT(maskTheTValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          NonNegativeInteger maskTheZValue = src.getMaskTheZ(roiIndex, shapeIndex);
-          if (maskTheZValue != null) dest.setMaskTheZ(maskTheZValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          String maskTransformValue = src.getMaskTransform(roiIndex, shapeIndex);
-          if (maskTransformValue != null) dest.setMaskTransform(maskTransformValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          Double maskXValue = src.getMaskX(roiIndex, shapeIndex);
-          if (maskXValue != null) dest.setMaskX(maskXValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          Double maskYValue = src.getMaskY(roiIndex, shapeIndex);
-          if (maskYValue != null) dest.setMaskY(maskYValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          String pathDefinitionValue = src.getPathDefinition(roiIndex, shapeIndex);
-          if (pathDefinitionValue != null) dest.setPathDefinition(pathDefinitionValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          String pathDescriptionValue = src.getPathDescription(roiIndex, shapeIndex);
-          if (pathDescriptionValue != null) dest.setPathDescription(pathDescriptionValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          Integer pathFillValue = src.getPathFill(roiIndex, shapeIndex);
-          if (pathFillValue != null) dest.setPathFill(pathFillValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          NonNegativeInteger pathFontSizeValue = src.getPathFontSize(roiIndex, shapeIndex);
-          if (pathFontSizeValue != null) dest.setPathFontSize(pathFontSizeValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          String pathIDValue = src.getPathID(roiIndex, shapeIndex);
-          if (pathIDValue != null) dest.setPathID(pathIDValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          String pathLabelValue = src.getPathLabel(roiIndex, shapeIndex);
-          if (pathLabelValue != null) dest.setPathLabel(pathLabelValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          String pathNameValue = src.getPathName(roiIndex, shapeIndex);
-          if (pathNameValue != null) dest.setPathName(pathNameValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          Integer pathStrokeValue = src.getPathStroke(roiIndex, shapeIndex);
-          if (pathStrokeValue != null) dest.setPathStroke(pathStrokeValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          String pathStrokeDashArrayValue = src.getPathStrokeDashArray(roiIndex, shapeIndex);
-          if (pathStrokeDashArrayValue != null) dest.setPathStrokeDashArray(pathStrokeDashArrayValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          Double pathStrokeWidthValue = src.getPathStrokeWidth(roiIndex, shapeIndex);
-          if (pathStrokeWidthValue != null) dest.setPathStrokeWidth(pathStrokeWidthValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          NonNegativeInteger pathTheCValue = src.getPathTheC(roiIndex, shapeIndex);
-          if (pathTheCValue != null) dest.setPathTheC(pathTheCValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          NonNegativeInteger pathTheTValue = src.getPathTheT(roiIndex, shapeIndex);
-          if (pathTheTValue != null) dest.setPathTheT(pathTheTValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          NonNegativeInteger pathTheZValue = src.getPathTheZ(roiIndex, shapeIndex);
-          if (pathTheZValue != null) dest.setPathTheZ(pathTheZValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          String pathTransformValue = src.getPathTransform(roiIndex, shapeIndex);
-          if (pathTransformValue != null) dest.setPathTransform(pathTransformValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          String pointDescriptionValue = src.getPointDescription(roiIndex, shapeIndex);
-          if (pointDescriptionValue != null) dest.setPointDescription(pointDescriptionValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          Integer pointFillValue = src.getPointFill(roiIndex, shapeIndex);
-          if (pointFillValue != null) dest.setPointFill(pointFillValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          NonNegativeInteger pointFontSizeValue = src.getPointFontSize(roiIndex, shapeIndex);
-          if (pointFontSizeValue != null) dest.setPointFontSize(pointFontSizeValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          String pointIDValue = src.getPointID(roiIndex, shapeIndex);
-          if (pointIDValue != null) dest.setPointID(pointIDValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          String pointLabelValue = src.getPointLabel(roiIndex, shapeIndex);
-          if (pointLabelValue != null) dest.setPointLabel(pointLabelValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          String pointNameValue = src.getPointName(roiIndex, shapeIndex);
-          if (pointNameValue != null) dest.setPointName(pointNameValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          Integer pointStrokeValue = src.getPointStroke(roiIndex, shapeIndex);
-          if (pointStrokeValue != null) dest.setPointStroke(pointStrokeValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          String pointStrokeDashArrayValue = src.getPointStrokeDashArray(roiIndex, shapeIndex);
-          if (pointStrokeDashArrayValue != null) dest.setPointStrokeDashArray(pointStrokeDashArrayValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          Double pointStrokeWidthValue = src.getPointStrokeWidth(roiIndex, shapeIndex);
-          if (pointStrokeWidthValue != null) dest.setPointStrokeWidth(pointStrokeWidthValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          NonNegativeInteger pointTheCValue = src.getPointTheC(roiIndex, shapeIndex);
-          if (pointTheCValue != null) dest.setPointTheC(pointTheCValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          NonNegativeInteger pointTheTValue = src.getPointTheT(roiIndex, shapeIndex);
-          if (pointTheTValue != null) dest.setPointTheT(pointTheTValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          NonNegativeInteger pointTheZValue = src.getPointTheZ(roiIndex, shapeIndex);
-          if (pointTheZValue != null) dest.setPointTheZ(pointTheZValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          String pointTransformValue = src.getPointTransform(roiIndex, shapeIndex);
-          if (pointTransformValue != null) dest.setPointTransform(pointTransformValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          Double pointXValue = src.getPointX(roiIndex, shapeIndex);
-          if (pointXValue != null) dest.setPointX(pointXValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          Double pointYValue = src.getPointY(roiIndex, shapeIndex);
-          if (pointYValue != null) dest.setPointY(pointYValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          Boolean polylineClosedValue = src.getPolylineClosed(roiIndex, shapeIndex);
-          if (polylineClosedValue != null) dest.setPolylineClosed(polylineClosedValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          String polylineDescriptionValue = src.getPolylineDescription(roiIndex, shapeIndex);
-          if (polylineDescriptionValue != null) dest.setPolylineDescription(polylineDescriptionValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          Integer polylineFillValue = src.getPolylineFill(roiIndex, shapeIndex);
-          if (polylineFillValue != null) dest.setPolylineFill(polylineFillValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          NonNegativeInteger polylineFontSizeValue = src.getPolylineFontSize(roiIndex, shapeIndex);
-          if (polylineFontSizeValue != null) dest.setPolylineFontSize(polylineFontSizeValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          String polylineIDValue = src.getPolylineID(roiIndex, shapeIndex);
-          if (polylineIDValue != null) dest.setPolylineID(polylineIDValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          String polylineLabelValue = src.getPolylineLabel(roiIndex, shapeIndex);
-          if (polylineLabelValue != null) dest.setPolylineLabel(polylineLabelValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          String polylineNameValue = src.getPolylineName(roiIndex, shapeIndex);
-          if (polylineNameValue != null) dest.setPolylineName(polylineNameValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          String polylinePointsValue = src.getPolylinePoints(roiIndex, shapeIndex);
-          if (polylinePointsValue != null) dest.setPolylinePoints(polylinePointsValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          Integer polylineStrokeValue = src.getPolylineStroke(roiIndex, shapeIndex);
-          if (polylineStrokeValue != null) dest.setPolylineStroke(polylineStrokeValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          String polylineStrokeDashArrayValue = src.getPolylineStrokeDashArray(roiIndex, shapeIndex);
-          if (polylineStrokeDashArrayValue != null) dest.setPolylineStrokeDashArray(polylineStrokeDashArrayValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          Double polylineStrokeWidthValue = src.getPolylineStrokeWidth(roiIndex, shapeIndex);
-          if (polylineStrokeWidthValue != null) dest.setPolylineStrokeWidth(polylineStrokeWidthValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          NonNegativeInteger polylineTheCValue = src.getPolylineTheC(roiIndex, shapeIndex);
-          if (polylineTheCValue != null) dest.setPolylineTheC(polylineTheCValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          NonNegativeInteger polylineTheTValue = src.getPolylineTheT(roiIndex, shapeIndex);
-          if (polylineTheTValue != null) dest.setPolylineTheT(polylineTheTValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          NonNegativeInteger polylineTheZValue = src.getPolylineTheZ(roiIndex, shapeIndex);
-          if (polylineTheZValue != null) dest.setPolylineTheZ(polylineTheZValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          String polylineTransformValue = src.getPolylineTransform(roiIndex, shapeIndex);
-          if (polylineTransformValue != null) dest.setPolylineTransform(polylineTransformValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          String rectangleDescriptionValue = src.getRectangleDescription(roiIndex, shapeIndex);
-          if (rectangleDescriptionValue != null) dest.setRectangleDescription(rectangleDescriptionValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          Integer rectangleFillValue = src.getRectangleFill(roiIndex, shapeIndex);
-          if (rectangleFillValue != null) dest.setRectangleFill(rectangleFillValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          NonNegativeInteger rectangleFontSizeValue = src.getRectangleFontSize(roiIndex, shapeIndex);
-          if (rectangleFontSizeValue != null) dest.setRectangleFontSize(rectangleFontSizeValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          Double rectangleHeightValue = src.getRectangleHeight(roiIndex, shapeIndex);
-          if (rectangleHeightValue != null) dest.setRectangleHeight(rectangleHeightValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          String rectangleIDValue = src.getRectangleID(roiIndex, shapeIndex);
-          if (rectangleIDValue != null) dest.setRectangleID(rectangleIDValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          String rectangleLabelValue = src.getRectangleLabel(roiIndex, shapeIndex);
-          if (rectangleLabelValue != null) dest.setRectangleLabel(rectangleLabelValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          String rectangleNameValue = src.getRectangleName(roiIndex, shapeIndex);
-          if (rectangleNameValue != null) dest.setRectangleName(rectangleNameValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          Integer rectangleStrokeValue = src.getRectangleStroke(roiIndex, shapeIndex);
-          if (rectangleStrokeValue != null) dest.setRectangleStroke(rectangleStrokeValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          String rectangleStrokeDashArrayValue = src.getRectangleStrokeDashArray(roiIndex, shapeIndex);
-          if (rectangleStrokeDashArrayValue != null) dest.setRectangleStrokeDashArray(rectangleStrokeDashArrayValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          Double rectangleStrokeWidthValue = src.getRectangleStrokeWidth(roiIndex, shapeIndex);
-          if (rectangleStrokeWidthValue != null) dest.setRectangleStrokeWidth(rectangleStrokeWidthValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          NonNegativeInteger rectangleTheCValue = src.getRectangleTheC(roiIndex, shapeIndex);
-          if (rectangleTheCValue != null) dest.setRectangleTheC(rectangleTheCValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          NonNegativeInteger rectangleTheTValue = src.getRectangleTheT(roiIndex, shapeIndex);
-          if (rectangleTheTValue != null) dest.setRectangleTheT(rectangleTheTValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          NonNegativeInteger rectangleTheZValue = src.getRectangleTheZ(roiIndex, shapeIndex);
-          if (rectangleTheZValue != null) dest.setRectangleTheZ(rectangleTheZValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          String rectangleTransformValue = src.getRectangleTransform(roiIndex, shapeIndex);
-          if (rectangleTransformValue != null) dest.setRectangleTransform(rectangleTransformValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          Double rectangleWidthValue = src.getRectangleWidth(roiIndex, shapeIndex);
-          if (rectangleWidthValue != null) dest.setRectangleWidth(rectangleWidthValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          Double rectangleXValue = src.getRectangleX(roiIndex, shapeIndex);
-          if (rectangleXValue != null) dest.setRectangleX(rectangleXValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          Double rectangleYValue = src.getRectangleY(roiIndex, shapeIndex);
-          if (rectangleYValue != null) dest.setRectangleY(rectangleYValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          String textDescriptionValue = src.getTextDescription(roiIndex, shapeIndex);
-          if (textDescriptionValue != null) dest.setTextDescription(textDescriptionValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          Integer textFillValue = src.getTextFill(roiIndex, shapeIndex);
-          if (textFillValue != null) dest.setTextFill(textFillValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          NonNegativeInteger textFontSizeValue = src.getTextFontSize(roiIndex, shapeIndex);
-          if (textFontSizeValue != null) dest.setTextFontSize(textFontSizeValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          String textIDValue = src.getTextID(roiIndex, shapeIndex);
-          if (textIDValue != null) dest.setTextID(textIDValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          String textLabelValue = src.getTextLabel(roiIndex, shapeIndex);
-          if (textLabelValue != null) dest.setTextLabel(textLabelValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          String textNameValue = src.getTextName(roiIndex, shapeIndex);
-          if (textNameValue != null) dest.setTextName(textNameValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          Integer textStrokeValue = src.getTextStroke(roiIndex, shapeIndex);
-          if (textStrokeValue != null) dest.setTextStroke(textStrokeValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          String textStrokeDashArrayValue = src.getTextStrokeDashArray(roiIndex, shapeIndex);
-          if (textStrokeDashArrayValue != null) dest.setTextStrokeDashArray(textStrokeDashArrayValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          Double textStrokeWidthValue = src.getTextStrokeWidth(roiIndex, shapeIndex);
-          if (textStrokeWidthValue != null) dest.setTextStrokeWidth(textStrokeWidthValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          NonNegativeInteger textTheCValue = src.getTextTheC(roiIndex, shapeIndex);
-          if (textTheCValue != null) dest.setTextTheC(textTheCValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          NonNegativeInteger textTheTValue = src.getTextTheT(roiIndex, shapeIndex);
-          if (textTheTValue != null) dest.setTextTheT(textTheTValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          NonNegativeInteger textTheZValue = src.getTextTheZ(roiIndex, shapeIndex);
-          if (textTheZValue != null) dest.setTextTheZ(textTheZValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          String textTransformValue = src.getTextTransform(roiIndex, shapeIndex);
-          if (textTransformValue != null) dest.setTextTransform(textTransformValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          String textValueValue = src.getTextValue(roiIndex, shapeIndex);
-          if (textValueValue != null) dest.setTextValue(textValueValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          Double textXValue = src.getTextX(roiIndex, shapeIndex);
-          if (textXValue != null) dest.setTextX(textXValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-        try {
-          Double textYValue = src.getTextY(roiIndex, shapeIndex);
-          if (textYValue != null) dest.setTextY(textYValue, roiIndex, shapeIndex);
-        } catch (NullPointerException e) { }
-        catch (ClassCastException e) { }
-      }
-      } catch (NullPointerException e) { }
-    }
-    } catch (NullPointerException e) { }
-    try {
-    int screenCount = src.getScreenCount();
-    for (int screenIndex=0; screenIndex<screenCount; screenIndex++) {
-    try {
-      int annotationRefCount = src.getScreenAnnotationRefCount(screenIndex);
-      for (int annotationRefIndex=0; annotationRefIndex<annotationRefCount; annotationRefIndex++)
-      {
-        String screenAnnotationRefValue = src.getScreenAnnotationRef(screenIndex, annotationRefIndex);
-        if (screenAnnotationRefValue != null) dest.setScreenAnnotationRef(screenAnnotationRefValue, screenIndex, annotationRefIndex);
-      }
-    } catch (NullPointerException e) { }
-    try {
-      String screenDescriptionValue = src.getScreenDescription(screenIndex);
-      if (screenDescriptionValue != null) dest.setScreenDescription(screenDescriptionValue, screenIndex);
-    } catch (NullPointerException e) { }
-    try {
-      String screenIDValue = src.getScreenID(screenIndex);
-      if (screenIDValue != null) dest.setScreenID(screenIDValue, screenIndex);
-    } catch (NullPointerException e) { }
-    try {
-      String screenNameValue = src.getScreenName(screenIndex);
-      if (screenNameValue != null) dest.setScreenName(screenNameValue, screenIndex);
-    } catch (NullPointerException e) { }
-    try {
-      int plateRefCount = src.getPlateRefCount(screenIndex);
-      for (int plateRefIndex=0; plateRefIndex<plateRefCount; plateRefIndex++) {
-        String screenPlateRefValue = src.getScreenPlateRef(screenIndex, plateRefIndex);
-        if (screenPlateRefValue != null) dest.setScreenPlateRef(screenPlateRefValue, screenIndex, plateRefIndex);
-      }
-    } catch (NullPointerException e) { }
-    try {
-      String screenProtocolDescriptionValue = src.getScreenProtocolDescription(screenIndex);
-      if (screenProtocolDescriptionValue != null) dest.setScreenProtocolDescription(screenProtocolDescriptionValue, screenIndex);
-    } catch (NullPointerException e) { }
-    try {
-      String screenProtocolIdentifierValue = src.getScreenProtocolIdentifier(screenIndex);
-      if (screenProtocolIdentifierValue != null) dest.setScreenProtocolIdentifier(screenProtocolIdentifierValue, screenIndex);
-    } catch (NullPointerException e) { }
-    try {
-      String screenReagentSetDescriptionValue = src.getScreenReagentSetDescription(screenIndex);
-      if (screenReagentSetDescriptionValue != null) dest.setScreenReagentSetDescription(screenReagentSetDescriptionValue, screenIndex);
-    } catch (NullPointerException e) { }
-    try {
-      String screenReagentSetIdentifierValue = src.getScreenReagentSetIdentifier(screenIndex);
-      if (screenReagentSetIdentifierValue != null) dest.setScreenReagentSetIdentifier(screenReagentSetIdentifierValue, screenIndex);
-    } catch (NullPointerException e) { }
-    try {
-      String screenTypeValue = src.getScreenType(screenIndex);
-      if (screenTypeValue != null) dest.setScreenType(screenTypeValue, screenIndex);
-    } catch (NullPointerException e) { }
-      try {
-      int reagentCount = src.getReagentCount(screenIndex);
-      for (int reagentIndex=0; reagentIndex<reagentCount; reagentIndex++) {
-      try {
-        int annotationRefCount = src.getReagentAnnotationRefCount(screenIndex, reagentIndex);
-        for (int annotationRefIndex=0; annotationRefIndex<annotationRefCount; annotationRefIndex++)
-        {
-          String reagentAnnotationRefValue = src.getReagentAnnotationRef(screenIndex, reagentIndex, annotationRefIndex);
-          if (reagentAnnotationRefValue != null) dest.setReagentAnnotationRef(reagentAnnotationRefValue, screenIndex, reagentIndex, annotationRefIndex);
-        }
-      } catch (NullPointerException e) { }
-      try {
-        String reagentDescriptionValue = src.getReagentDescription(screenIndex, reagentIndex);
-        if (reagentDescriptionValue != null) dest.setReagentDescription(reagentDescriptionValue, screenIndex, reagentIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String reagentIDValue = src.getReagentID(screenIndex, reagentIndex);
-        if (reagentIDValue != null) dest.setReagentID(reagentIDValue, screenIndex, reagentIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String reagentNameValue = src.getReagentName(screenIndex, reagentIndex);
-        if (reagentNameValue != null) dest.setReagentName(reagentNameValue, screenIndex, reagentIndex);
-      } catch (NullPointerException e) { }
-      try {
-        String reagentReagentIdentifierValue = src.getReagentReagentIdentifier(screenIndex, reagentIndex);
-        if (reagentReagentIdentifierValue != null) dest.setReagentReagentIdentifier(reagentReagentIdentifierValue, screenIndex, reagentIndex);
-      } catch (NullPointerException e) { }
-      }
-      } catch (NullPointerException e) { }
-    }
-    } catch (NullPointerException e) { }
-    try {
-    int commentAnnotationCount = src.getCommentAnnotationCount();
-    for (int stringAnnotationIndex=0; stringAnnotationIndex<commentAnnotationCount; stringAnnotationIndex++) {
-    try {
-      String stringAnnotationIDValue = src.getCommentAnnotationID(stringAnnotationIndex);
-      if (stringAnnotationIDValue != null) dest.setCommentAnnotationID(stringAnnotationIDValue, stringAnnotationIndex);
-    } catch (NullPointerException e) { }
-    try {
-      String stringAnnotationNamespaceValue = src.getCommentAnnotationNamespace(stringAnnotationIndex);
-      if (stringAnnotationNamespaceValue != null) dest.setCommentAnnotationNamespace(stringAnnotationNamespaceValue, stringAnnotationIndex);
-    } catch (NullPointerException e) { }
-    try {
-      String stringAnnotationValueValue = src.getCommentAnnotationValue(stringAnnotationIndex);
-      if (stringAnnotationValueValue != null) dest.setCommentAnnotationValue(stringAnnotationValueValue, stringAnnotationIndex);
-    } catch (NullPointerException e) { }
-    }
-    } catch (NullPointerException e) { }
-    try {
-    int timestampAnnotationCount = src.getTimestampAnnotationCount();
-    for (int timestampAnnotationIndex=0; timestampAnnotationIndex<timestampAnnotationCount; timestampAnnotationIndex++) {
-    try {
-      String timestampAnnotationIDValue = src.getTimestampAnnotationID(timestampAnnotationIndex);
-      if (timestampAnnotationIDValue != null) dest.setTimestampAnnotationID(timestampAnnotationIDValue, timestampAnnotationIndex);
-    } catch (NullPointerException e) { }
-    try {
-      String timestampAnnotationNamespaceValue = src.getTimestampAnnotationNamespace(timestampAnnotationIndex);
-      if (timestampAnnotationNamespaceValue != null) dest.setTimestampAnnotationNamespace(timestampAnnotationNamespaceValue, timestampAnnotationIndex);
-    } catch (NullPointerException e) { }
-    try {
-      String timestampAnnotationValueValue = src.getTimestampAnnotationValue(timestampAnnotationIndex);
-      if (timestampAnnotationValueValue != null) dest.setTimestampAnnotationValue(timestampAnnotationValueValue, timestampAnnotationIndex);
-    } catch (NullPointerException e) { }
-    }
-    } catch (NullPointerException e) { }
-    try {
-    int xmlAnnotationCount = src.getXMLAnnotationCount();
-    for (int xmlAnnotationIndex=0; xmlAnnotationIndex<xmlAnnotationCount; xmlAnnotationIndex++) {
-    try {
-      String xmlAnnotationIDValue = src.getXMLAnnotationID(xmlAnnotationIndex);
-      if (xmlAnnotationIDValue != null) dest.setXMLAnnotationID(xmlAnnotationIDValue, xmlAnnotationIndex);
-    } catch (NullPointerException e) { }
-    try {
-      String xmlAnnotationNamespaceValue = src.getXMLAnnotationNamespace(xmlAnnotationIndex);
-      if (xmlAnnotationNamespaceValue != null) dest.setXMLAnnotationNamespace(xmlAnnotationNamespaceValue, xmlAnnotationIndex);
-    } catch (NullPointerException e) { }
-    try {
-      String xmlAnnotationValueValue = src.getXMLAnnotationValue(xmlAnnotationIndex);
-      if (xmlAnnotationValueValue != null) dest.setXMLAnnotationValue(xmlAnnotationValueValue, xmlAnnotationIndex);
-    } catch (NullPointerException e) { }
-    }
-    } catch (NullPointerException e) { }
-    try {
-    int tagAnnotationCount = src.getTagAnnotationCount();
-    for (int tagAnnotationIndex=0; tagAnnotationIndex<tagAnnotationCount; tagAnnotationIndex++) {
-    try {
-      String tagAnnotationIDValue = src.getTagAnnotationID(tagAnnotationIndex);
-      if (tagAnnotationIDValue != null) dest.setTagAnnotationID(tagAnnotationIDValue, tagAnnotationIndex);
-    } catch (NullPointerException e) { }
-    try {
-      String tagAnnotationNamespaceValue = src.getTagAnnotationNamespace(tagAnnotationIndex);
-      if (tagAnnotationNamespaceValue != null) dest.setTagAnnotationNamespace(tagAnnotationNamespaceValue, tagAnnotationIndex);
-    } catch (NullPointerException e) { }
-    try {
-      String tagAnnotationValueValue = src.getTagAnnotationValue(tagAnnotationIndex);
-      if (tagAnnotationValueValue != null) dest.setTagAnnotationValue(tagAnnotationValueValue, tagAnnotationIndex);
-    } catch (NullPointerException e) { }
-    }
-    } catch (NullPointerException e) { }
-    try {
-    int termAnnotationCount = src.getTermAnnotationCount();
-    for (int termAnnotationIndex=0; termAnnotationIndex<termAnnotationCount; termAnnotationIndex++) {
-    try {
-      String termAnnotationIDValue = src.getTermAnnotationID(termAnnotationIndex);
-      if (termAnnotationIDValue != null) dest.setTermAnnotationID(termAnnotationIDValue, termAnnotationIndex);
-    } catch (NullPointerException e) { }
-    try {
-      String termAnnotationNamespaceValue = src.getTermAnnotationNamespace(termAnnotationIndex);
-      if (termAnnotationNamespaceValue != null) dest.setTermAnnotationNamespace(termAnnotationNamespaceValue, termAnnotationIndex);
-    } catch (NullPointerException e) { }
-    try {
-      String termAnnotationValueValue = src.getTermAnnotationValue(termAnnotationIndex);
-      if (termAnnotationValueValue != null) dest.setTermAnnotationValue(termAnnotationValueValue, termAnnotationIndex);
-    } catch (NullPointerException e) { }
-    }
-    } catch (NullPointerException e) { }
+    convertBooleanAnnotations(src, dest);
+    convertCommentAnnotations(src, dest);
+    convertDoubleAnnotations(src, dest);
+    convertFileAnnotations(src, dest);
+    convertListAnnotations(src, dest);
+    convertLongAnnotations(src, dest);
+    convertTagAnnotations(src, dest);
+    convertTermAnnotations(src, dest);
+    convertTimestampAnnotations(src, dest);
+    convertXMLAnnotations(src, dest);
+
+    convertROIs(src, dest);
+    convertInstruments(src, dest);
+    convertExperimenters(src, dest);
+    convertExperimenterGroups(src, dest);
+    convertExperiments(src, dest);
+    convertImages(src, dest);
+    convertPlates(src, dest);
+    convertScreens(src, dest);
+    convertDatasets(src, dest);
+    convertProjects(src, dest);
   }
 
   // -- Helper methods --
 
+  private static void convertBooleanAnnotations(MetadataRetrieve src,
+    MetadataStore dest)
+  {
+    int booleanAnnotationCount = 0;
+    try {
+      booleanAnnotationCount = src.getBooleanAnnotationCount();
+    }
+    catch (NullPointerException e) { }
+    for (int i=0; i<booleanAnnotationCount; i++) {
+      try {
+        String id = src.getBooleanAnnotationID(i);
+        dest.setBooleanAnnotationID(id, i);
+      }
+      catch (NullPointerException e) {
+        continue;
+      }
+
+      try {
+        String description = src.getBooleanAnnotationDescription(i);
+        dest.setBooleanAnnotationDescription(description, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        String namespace = src.getBooleanAnnotationNamespace(i);
+        dest.setBooleanAnnotationNamespace(namespace, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        Boolean value = src.getBooleanAnnotationValue(i);
+        dest.setBooleanAnnotationValue(value, i);
+      }
+      catch (NullPointerException e) { }
+    }
+  }
+
+  private static void convertCommentAnnotations(MetadataRetrieve src,
+    MetadataStore dest)
+  {
+    int commentAnnotationCount = 0;
+    try {
+      commentAnnotationCount = src.getCommentAnnotationCount();
+    }
+    catch (NullPointerException e) { }
+    for (int i=0; i<commentAnnotationCount; i++) {
+      try {
+        String id = src.getCommentAnnotationID(i);
+        dest.setCommentAnnotationID(id, i);
+      }
+      catch (NullPointerException e) {
+        continue;
+      }
+
+      try {
+        String description = src.getCommentAnnotationDescription(i);
+        dest.setCommentAnnotationDescription(description, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        String namespace = src.getCommentAnnotationNamespace(i);
+        dest.setCommentAnnotationNamespace(namespace, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        String value = src.getCommentAnnotationValue(i);
+        dest.setCommentAnnotationValue(value, i);
+      }
+      catch (NullPointerException e) { }
+    }
+  }
+
+  private static void convertDatasets(MetadataRetrieve src, MetadataStore dest)
+  {
+    int datasets = 0;
+    try {
+      datasets = src.getDatasetCount();
+    }
+    catch (NullPointerException e) { }
+    for (int i=0; i<datasets; i++) {
+      try {
+        String id = src.getDatasetID(i);
+        dest.setDatasetID(id, i);
+      }
+      catch (NullPointerException e) {
+        continue;
+      }
+
+      try {
+        String description = src.getDatasetDescription(i);
+        dest.setDatasetDescription(description, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        String experimenterGroupRef = src.getDatasetExperimenterGroupRef(i);
+        dest.setDatasetExperimenterGroupRef(experimenterGroupRef, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        String experimenterRef = src.getDatasetExperimenterRef(i);
+        dest.setDatasetExperimenterRef(experimenterRef, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        String name = src.getDatasetName(i);
+        dest.setDatasetName(name, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        int imageRefCount = src.getDatasetImageRefCount(i);
+        for (int q=0; q<imageRefCount; q++) {
+          try {
+            String imageRef = src.getDatasetImageRef(i, q);
+            dest.setDatasetImageRef(imageRef, i, q);
+          }
+          catch (NullPointerException e) { }
+        }
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        int annotationRefCount = src.getDatasetAnnotationRefCount(i);
+        for (int q=0; q<annotationRefCount; q++) {
+          try {
+            String annotationRef = src.getDatasetAnnotationRef(i, q);
+            dest.setDatasetAnnotationRef(annotationRef, i, q);
+          }
+          catch (NullPointerException e) { }
+        }
+      }
+      catch (NullPointerException e) { }
+    }
+  }
+
+  private static void convertDoubleAnnotations(MetadataRetrieve src,
+    MetadataStore dest)
+  {
+    int doubleAnnotationCount = 0;
+    try {
+      doubleAnnotationCount = src.getDoubleAnnotationCount();
+    }
+    catch (NullPointerException e) { }
+    for (int i=0; i<doubleAnnotationCount; i++) {
+      try {
+        String id = src.getDoubleAnnotationID(i);
+        dest.setDoubleAnnotationID(id, i);
+      }
+      catch (NullPointerException e) {
+        continue;
+      }
+
+      try {
+        String description = src.getDoubleAnnotationDescription(i);
+        dest.setDoubleAnnotationDescription(description, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        String namespace = src.getDoubleAnnotationNamespace(i);
+        dest.setDoubleAnnotationNamespace(namespace, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        Double value = src.getDoubleAnnotationValue(i);
+        dest.setDoubleAnnotationValue(value, i);
+      }
+      catch (NullPointerException e) { }
+    }
+  }
+
+  private static void convertExperiments(MetadataRetrieve src,
+    MetadataStore dest)
+  {
+    int experimentCount = 0;
+    try {
+      experimentCount = src.getExperimentCount();
+    }
+    catch (NullPointerException e) { }
+    for (int i=0; i<experimentCount; i++) {
+      try {
+        String id = src.getExperimentID(i);
+        dest.setExperimentID(id, i);
+      }
+      catch (NullPointerException e) {
+        continue;
+      }
+
+      try {
+        String description = src.getExperimentDescription(i);
+        dest.setExperimentDescription(description, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        String experimenterRef = src.getExperimentExperimenterRef(i);
+        dest.setExperimentExperimenterRef(experimenterRef, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        ExperimentType type = src.getExperimentType(i);
+        dest.setExperimentType(type, i);
+      }
+      catch (NullPointerException e) { }
+
+      int microbeamCount = 0;
+      try {
+        microbeamCount = src.getMicrobeamManipulationCount(i);
+      }
+      catch (NullPointerException e) { }
+      for (int q=0; q<microbeamCount; q++) {
+        try {
+          String microbeamID = src.getMicrobeamManipulationID(i, q);
+          dest.setMicrobeamManipulationID(microbeamID, i, q);
+        }
+        catch (NullPointerException e) {
+          continue;
+        }
+
+        try {
+          String microbeamDescription = src.getMicrobeamManipulationDescription(i, q);
+          dest.setMicrobeamManipulationDescription(microbeamDescription, i, q);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String microbeamExperimenterRef = src.getMicrobeamManipulationExperimenterRef(i, q);
+          dest.setMicrobeamManipulationExperimenterRef(microbeamExperimenterRef, i, q);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          MicrobeamManipulationType microbeamType = src.getMicrobeamManipulationType(i, q);
+          dest.setMicrobeamManipulationType(microbeamType, i, q);
+        }
+        catch (NullPointerException e) { }
+
+        int lightSourceCount = 0;
+        try {
+          lightSourceCount = src.getMicrobeamManipulationLightSourceSettingsCount(i, q);
+        }
+        catch (NullPointerException e) { }
+        for (int p=0; p<lightSourceCount; p++) {
+          String lightSourceID = src.getMicrobeamManipulationLightSourceSettingsID(i, q, p);
+          if (lightSourceID != null) {
+            dest.setMicrobeamManipulationLightSourceSettingsID(lightSourceID, i, q, p);
+
+            try {
+              PercentFraction attenuation = src.getMicrobeamManipulationLightSourceSettingsAttenuation(i, q, p);
+              dest.setMicrobeamManipulationLightSourceSettingsAttenuation(attenuation, i, q, p);
+            }
+            catch (NullPointerException e) { }
+
+            try {
+              PositiveInteger wavelength = src.getMicrobeamManipulationLightSourceSettingsWavelength(i, q, p);
+              dest.setMicrobeamManipulationLightSourceSettingsWavelength(wavelength, i, q, p);
+            }
+            catch (NullPointerException e) { }
+          }
+        }
+
+        int roiRefCount = 0;
+        try {
+          roiRefCount = src.getMicrobeamManipulationROIRefCount(i, q);
+        }
+        catch (NullPointerException e) { }
+        for (int p=0; p<roiRefCount; p++) {
+          try {
+            String roiRef = src.getMicrobeamManipulationROIRef(i, q, p);
+            dest.setMicrobeamManipulationROIRef(roiRef, i, q, p);
+          }
+          catch (NullPointerException e) { }
+        }
+      }
+    }
+  }
+
+  private static void convertExperimenters(MetadataRetrieve src,
+    MetadataStore dest)
+  {
+    int experimenterCount = 0;
+    try {
+      experimenterCount = src.getExperimenterCount();
+    }
+    catch (NullPointerException e) { }
+    for (int i=0; i<experimenterCount; i++) {
+      try {
+        String id = src.getExperimenterID(i);
+        dest.setExperimenterID(id, i);
+      }
+      catch (NullPointerException e) {
+        continue;
+      }
+
+      try {
+        String email = src.getExperimenterEmail(i);
+        dest.setExperimenterEmail(email, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        String firstName = src.getExperimenterFirstName(i);
+        dest.setExperimenterFirstName(firstName, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        String institution = src.getExperimenterInstitution(i);
+        dest.setExperimenterInstitution(institution, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        String lastName = src.getExperimenterLastName(i);
+        dest.setExperimenterLastName(lastName, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        String middleName = src.getExperimenterMiddleName(i);
+        dest.setExperimenterMiddleName(middleName, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        String userName = src.getExperimenterUserName(i);
+        dest.setExperimenterUserName(userName, i);
+      }
+      catch (NullPointerException e) { }
+
+      int annotationRefCount = 0;
+      try {
+        annotationRefCount = src.getExperimenterAnnotationRefCount(i);
+      }
+      catch (NullPointerException e) { }
+      for (int q=0; q<annotationRefCount; q++) {
+        try {
+          String annotationRef = src.getExperimenterAnnotationRef(i, q);
+          dest.setExperimenterAnnotationRef(annotationRef, i, q);
+        }
+        catch (NullPointerException e) { }
+      }
+    }
+  }
+
+  private static void convertExperimenterGroups(MetadataRetrieve src,
+    MetadataStore dest)
+  {
+    int experimenterGroupCount = 0;
+    try {
+      experimenterGroupCount = src.getExperimenterGroupCount();
+    }
+    catch (NullPointerException e) { }
+    for (int i=0; i<experimenterGroupCount; i++) {
+      try {
+        String id = src.getExperimenterGroupID(i);
+        dest.setExperimenterGroupID(id, i);
+      }
+      catch (NullPointerException e) {
+        continue;
+      }
+
+      try {
+        String description = src.getExperimenterGroupDescription(i);
+        dest.setExperimenterGroupDescription(description, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        String name = src.getExperimenterGroupName(i);
+        dest.setExperimenterGroupName(name, i);
+      }
+      catch (NullPointerException e) { }
+
+      int annotationRefCount = 0;
+      try {
+        annotationRefCount = src.getExperimenterGroupAnnotationRefCount(i);
+      }
+      catch (NullPointerException e) { }
+      for (int q=0; q<annotationRefCount; q++) {
+        try {
+          String annotationRef = src.getExperimenterGroupAnnotationRef(i, q);
+          dest.setExperimenterGroupAnnotationRef(annotationRef, i, q);
+        }
+        catch (NullPointerException e) { }
+      }
+
+      int experimenterRefCount = 0;
+      try {
+        experimenterRefCount = src.getExperimenterGroupExperimenterRefCount(i);
+      }
+      catch (NullPointerException e) { }
+      for (int q=0; q<experimenterRefCount; q++) {
+        try {
+          String experimenterRef = src.getExperimenterGroupExperimenterRef(i, q);
+          dest.setExperimenterGroupExperimenterRef(experimenterRef, i, q);
+        }
+        catch (NullPointerException e) { }
+      }
+
+      int leaderCount = 0;
+      try {
+        leaderCount = src.getLeaderCount(i);
+      }
+      catch (NullPointerException e) { }
+      for (int q=0; q<leaderCount; q++) {
+        try {
+          String leader = src.getExperimenterGroupLeader(i, q);
+          dest.setExperimenterGroupLeader(leader, i, q);
+        }
+        catch (NullPointerException e) { }
+      }
+    }
+  }
+
+  private static void convertFileAnnotations(MetadataRetrieve src,
+    MetadataStore dest)
+  {
+    int fileAnnotationCount = 0;
+    try {
+      fileAnnotationCount = src.getFileAnnotationCount();
+    }
+    catch (NullPointerException e) { }
+    for (int i=0; i<fileAnnotationCount; i++) {
+      try {
+        String id = src.getFileAnnotationID(i);
+        dest.setFileAnnotationID(id, i);
+      }
+      catch (NullPointerException e) {
+        continue;
+      }
+
+      try {
+        String description = src.getFileAnnotationDescription(i);
+        dest.setFileAnnotationDescription(description, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        String namespace = src.getFileAnnotationNamespace(i);
+        dest.setFileAnnotationNamespace(namespace, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        String fileName = src.getBinaryFileFileName(i);
+        dest.setBinaryFileFileName(fileName, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        String mimeType = src.getBinaryFileMIMEType(i);
+        dest.setBinaryFileMIMEType(mimeType, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        NonNegativeLong fileSize = src.getBinaryFileSize(i);
+        dest.setBinaryFileSize(fileSize, i);
+      }
+      catch (NullPointerException e) { }
+    }
+  }
+
+  private static void convertImages(MetadataRetrieve src, MetadataStore dest) {
+    int imageCount = 0;
+    try {
+      imageCount = src.getImageCount();
+    }
+    catch (NullPointerException e) { }
+    for (int i=0; i<imageCount; i++) {
+      try {
+        String id = src.getImageID(i);
+        dest.setImageID(id, i);
+      }
+      catch (NullPointerException e) {
+        continue;
+      }
+
+      try {
+        Timestamp date = src.getImageAcquisitionDate(i);
+        dest.setImageAcquisitionDate(date, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        String description = src.getImageDescription(i);
+        dest.setImageDescription(description, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        String experimentRef = src.getImageExperimentRef(i);
+        dest.setImageExperimentRef(experimentRef, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        String experimenterGroupRef = src.getImageExperimenterGroupRef(i);
+        dest.setImageExperimenterGroupRef(experimenterGroupRef, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        String experimenterRef = src.getImageExperimenterRef(i);
+        dest.setImageExperimenterRef(experimenterRef, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        String instrumentRef = src.getImageInstrumentRef(i);
+        dest.setImageInstrumentRef(instrumentRef, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        String name = src.getImageName(i);
+        dest.setImageName(name, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        Double airPressure = src.getImagingEnvironmentAirPressure(i);
+        dest.setImagingEnvironmentAirPressure(airPressure, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        PercentFraction co2 = src.getImagingEnvironmentCO2Percent(i);
+        dest.setImagingEnvironmentCO2Percent(co2, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        PercentFraction humidity = src.getImagingEnvironmentHumidity(i);
+        dest.setImagingEnvironmentHumidity(humidity, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        Double temperature = src.getImagingEnvironmentTemperature(i);
+        dest.setImagingEnvironmentTemperature(temperature, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        String objectiveID = src.getObjectiveSettingsID(i);
+        if (objectiveID != null) {
+          dest.setObjectiveSettingsID(objectiveID, i);
+
+          try {
+            Double correction = src.getObjectiveSettingsCorrectionCollar(i);
+            dest.setObjectiveSettingsCorrectionCollar(correction, i);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Medium medium = src.getObjectiveSettingsMedium(i);
+            dest.setObjectiveSettingsMedium(medium, i);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Double refractiveIndex = src.getObjectiveSettingsRefractiveIndex(i);
+            dest.setObjectiveSettingsRefractiveIndex(refractiveIndex, i);
+          }
+          catch (NullPointerException e) { }
+        }
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        String stageLabelName = src.getStageLabelName(i);
+        if (stageLabelName != null) {
+          dest.setStageLabelName(stageLabelName, i);
+
+          try {
+            Double stageLabelX = src.getStageLabelX(i);
+            dest.setStageLabelX(stageLabelX, i);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Double stageLabelY = src.getStageLabelY(i);
+            dest.setStageLabelY(stageLabelY, i);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Double stageLabelZ = src.getStageLabelZ(i);
+            dest.setStageLabelZ(stageLabelZ, i);
+          }
+          catch (NullPointerException e) { }
+        }
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        String pixelsID = src.getPixelsID(i);
+        dest.setPixelsID(pixelsID, i);
+
+        try {
+          DimensionOrder order = src.getPixelsDimensionOrder(i);
+          dest.setPixelsDimensionOrder(order, i);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          PositiveFloat physicalSizeX = src.getPixelsPhysicalSizeX(i);
+          dest.setPixelsPhysicalSizeX(physicalSizeX, i);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          PositiveFloat physicalSizeY = src.getPixelsPhysicalSizeY(i);
+          dest.setPixelsPhysicalSizeY(physicalSizeY, i);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          PositiveFloat physicalSizeZ = src.getPixelsPhysicalSizeZ(i);
+          dest.setPixelsPhysicalSizeZ(physicalSizeZ, i);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          PositiveInteger sizeC = src.getPixelsSizeC(i);
+          dest.setPixelsSizeC(sizeC, i);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          PositiveInteger sizeT = src.getPixelsSizeT(i);
+          dest.setPixelsSizeT(sizeT, i);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          PositiveInteger sizeX = src.getPixelsSizeX(i);
+          dest.setPixelsSizeX(sizeX, i);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          PositiveInteger sizeY = src.getPixelsSizeY(i);
+          dest.setPixelsSizeY(sizeY, i);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          PositiveInteger sizeZ = src.getPixelsSizeZ(i);
+          dest.setPixelsSizeZ(sizeZ, i);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          Double timeIncrement = src.getPixelsTimeIncrement(i);
+          dest.setPixelsTimeIncrement(timeIncrement, i);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          PixelType type = src.getPixelsType(i);
+          dest.setPixelsType(type, i);
+        }
+        catch (NullPointerException e) { }
+
+        int binDataCount = 0;
+        try {
+          binDataCount = src.getPixelsBinDataCount(i);
+        }
+        catch (NullPointerException e) { }
+        for (int q=0; q<binDataCount; q++) {
+          try {
+            Boolean bigEndian = src.getPixelsBinDataBigEndian(i, q);
+            dest.setPixelsBinDataBigEndian(bigEndian, i, q);
+          }
+          catch (NullPointerException e) { }
+        }
+      }
+      catch (NullPointerException e) { }
+
+      int annotationRefCount = 0;
+      try {
+        annotationRefCount = src.getImageAnnotationRefCount(i);
+      }
+      catch (NullPointerException e) { }
+      for (int q=0; q<annotationRefCount; q++) {
+        try {
+          String annotationRef = src.getImageAnnotationRef(i, q);
+          dest.setImageAnnotationRef(annotationRef, i, q);
+        }
+        catch (NullPointerException e) { }
+      }
+
+      int pixelsAnnotationRefCount = 0;
+      try {
+        pixelsAnnotationRefCount = src.getPixelsAnnotationRefCount(i);
+      }
+      catch (NullPointerException e) { }
+      for (int q=0; q<pixelsAnnotationRefCount; q++) {
+        try {
+          String pixelsAnnotationRef = src.getPixelsAnnotationRef(i, q);
+          dest.setPixelsAnnotationRef(pixelsAnnotationRef, i, q);
+        }
+        catch (NullPointerException e) { }
+      }
+
+      int channelCount = 0;
+      try {
+        channelCount = src.getChannelCount(i);
+      }
+      catch (NullPointerException e) { }
+      for (int c=0; c<channelCount; c++) {
+        try {
+          String channelID = src.getChannelID(i, c);
+          dest.setChannelID(channelID, i, c);
+        }
+        catch (NullPointerException e) {
+          continue;
+        }
+
+        try {
+          AcquisitionMode mode = src.getChannelAcquisitionMode(i, c);
+          dest.setChannelAcquisitionMode(mode, i, c);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          Color color = src.getChannelColor(i, c);
+          dest.setChannelColor(color, i, c);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          ContrastMethod method = src.getChannelContrastMethod(i, c);
+          dest.setChannelContrastMethod(method, i, c);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          PositiveInteger emWave = src.getChannelEmissionWavelength(i, c);
+          dest.setChannelEmissionWavelength(emWave, i, c);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          PositiveInteger exWave = src.getChannelExcitationWavelength(i, c);
+          dest.setChannelExcitationWavelength(exWave, i, c);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String filterSetRef = src.getChannelFilterSetRef(i, c);
+          dest.setChannelFilterSetRef(filterSetRef, i, c);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String fluor = src.getChannelFluor(i, c);
+          dest.setChannelFluor(fluor, i, c);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          IlluminationType illumType = src.getChannelIlluminationType(i, c);
+          dest.setChannelIlluminationType(illumType, i, c);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          Double ndFilter = src.getChannelNDFilter(i, c);
+          dest.setChannelNDFilter(ndFilter, i, c);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String channelName = src.getChannelName(i, c);
+          dest.setChannelName(channelName, i, c);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          Double pinholeSize = src.getChannelPinholeSize(i, c);
+          dest.setChannelPinholeSize(pinholeSize, i, c);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          Integer pockelCell = src.getChannelPockelCellSetting(i, c);
+          dest.setChannelPockelCellSetting(pockelCell, i, c);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          PositiveInteger samplesPerPixel = src.getChannelSamplesPerPixel(i, c);
+          dest.setChannelSamplesPerPixel(samplesPerPixel, i, c);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String detectorSettingsID = src.getDetectorSettingsID(i, c);
+          if (detectorSettingsID != null) {
+            dest.setDetectorSettingsID(detectorSettingsID, i, c);
+
+            try {
+              Binning binning = src.getDetectorSettingsBinning(i, c);
+              dest.setDetectorSettingsBinning(binning, i, c);
+            }
+            catch (NullPointerException e) { }
+
+            try {
+              Double gain = src.getDetectorSettingsGain(i, c);
+              dest.setDetectorSettingsGain(gain, i, c);
+            }
+            catch (NullPointerException e) { }
+
+            try {
+              Double offset = src.getDetectorSettingsOffset(i, c);
+              dest.setDetectorSettingsOffset(offset, i, c);
+            }
+            catch (NullPointerException e) { }
+
+            try {
+              Double readOutRate = src.getDetectorSettingsReadOutRate(i, c);
+              dest.setDetectorSettingsReadOutRate(readOutRate, i, c);
+            }
+            catch (NullPointerException e) { }
+
+            try {
+              Double voltage = src.getDetectorSettingsVoltage(i, c);
+              dest.setDetectorSettingsVoltage(voltage, i, c);
+            }
+            catch (NullPointerException e) { }
+          }
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String dichroicRef = src.getLightPathDichroicRef(i, c);
+          dest.setLightPathDichroicRef(dichroicRef, i, c);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String lightSourceID = src.getChannelLightSourceSettingsID(i, c);
+          if (lightSourceID != null) {
+            dest.setChannelLightSourceSettingsID(lightSourceID, i, c);
+
+            try {
+              PercentFraction attenuation =
+                src.getChannelLightSourceSettingsAttenuation(i, c);
+              dest.setChannelLightSourceSettingsAttenuation(attenuation, i, c);
+            }
+            catch (NullPointerException e) { }
+
+            try {
+              PositiveInteger wavelength = src.getChannelLightSourceSettingsWavelength(i, c);
+              dest.setChannelLightSourceSettingsWavelength(wavelength, i, c);
+            }
+            catch (NullPointerException e) { }
+          }
+        }
+        catch (NullPointerException e) { }
+
+        int channelAnnotationRefCount = 0;
+        try {
+          channelAnnotationRefCount = src.getChannelAnnotationRefCount(i, c);
+        }
+        catch (NullPointerException e) { }
+        for (int q=0; q<channelAnnotationRefCount; q++) {
+          try {
+            String channelAnnotationRef = src.getChannelAnnotationRef(i, c, q);
+            dest.setChannelAnnotationRef(channelAnnotationRef, i, c, q);
+          }
+          catch (NullPointerException e) { }
+        }
+
+        int emFilterRefCount = 0;
+        try {
+          emFilterRefCount = src.getLightPathEmissionFilterRefCount(i, c);
+        }
+        catch (NullPointerException e) { }
+        for (int q=0; q<emFilterRefCount; q++) {
+          try {
+            String emFilterRef = src.getLightPathEmissionFilterRef(i, c, q);
+            dest.setLightPathEmissionFilterRef(emFilterRef, i, c, q);
+          }
+          catch (NullPointerException e) { }
+        }
+
+        int exFilterRefCount = 0;
+        try {
+          exFilterRefCount = src.getLightPathExcitationFilterRefCount(i, c);
+        }
+        catch (NullPointerException e) { }
+        for (int q=0; q<exFilterRefCount; q++) {
+          try {
+            String exFilterRef = src.getLightPathExcitationFilterRef(i, c, q);
+            dest.setLightPathExcitationFilterRef(exFilterRef, i, c, q);
+          }
+          catch (NullPointerException e) { }
+        }
+      }
+
+      int planeCount = 0;
+      try {
+        planeCount = src.getPlaneCount(i);
+      }
+      catch (NullPointerException e) { }
+      for (int p=0; p<planeCount; p++) {
+        try {
+          Double deltaT = src.getPlaneDeltaT(i, p);
+          dest.setPlaneDeltaT(deltaT, i, p);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          Double exposureTime = src.getPlaneExposureTime(i, p);
+          dest.setPlaneExposureTime(exposureTime, i, p);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String sha1 = src.getPlaneHashSHA1(i, p);
+          dest.setPlaneHashSHA1(sha1, i, p);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          Double positionX = src.getPlanePositionX(i, p);
+          dest.setPlanePositionX(positionX, i, p);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          Double positionY = src.getPlanePositionY(i, p);
+          dest.setPlanePositionY(positionY, i, p);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          Double positionZ = src.getPlanePositionZ(i, p);
+          dest.setPlanePositionZ(positionZ, i, p);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          NonNegativeInteger theC = src.getPlaneTheC(i, p);
+          dest.setPlaneTheC(theC, i, p);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          NonNegativeInteger theT = src.getPlaneTheT(i, p);
+          dest.setPlaneTheT(theT, i, p);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          NonNegativeInteger theZ = src.getPlaneTheZ(i, p);
+          dest.setPlaneTheZ(theZ, i, p);
+        }
+        catch (NullPointerException e) { }
+
+        int planeAnnotationRefCount = 0;
+        try {
+          planeAnnotationRefCount = src.getPlaneAnnotationRefCount(i, p);
+        }
+        catch (NullPointerException e) { }
+        for (int q=0; q<planeAnnotationRefCount; q++) {
+          try {
+            String planeAnnotationRef = src.getPlaneAnnotationRef(i, p, q);
+            dest.setPlaneAnnotationRef(planeAnnotationRef, i, p, q);
+          }
+          catch (NullPointerException e) { }
+        }
+      }
+
+      int microbeamCount = 0;
+      try {
+        microbeamCount = src.getMicrobeamManipulationRefCount(i);
+      }
+      catch (NullPointerException e) { }
+      for (int q=0; q<microbeamCount; q++) {
+        try {
+          String microbeamRef = src.getImageMicrobeamManipulationRef(i, q);
+          dest.setImageMicrobeamManipulationRef(microbeamRef, i, q);
+        }
+        catch (NullPointerException e) { }
+      }
+
+      int roiRefCount = 0;
+      try {
+        roiRefCount = src.getImageROIRefCount(i);
+      }
+      catch (NullPointerException e) { }
+      for (int q=0; q<roiRefCount; q++) {
+        try {
+          String roiRef = src.getImageROIRef(i, q);
+          dest.setImageROIRef(roiRef, i, q);
+        }
+        catch (NullPointerException e) { }
+      }
+
+      int tiffDataCount = 0;
+      try {
+        tiffDataCount = src.getTiffDataCount(i);
+      }
+      catch (NullPointerException e) { }
+      for (int q=0; q<tiffDataCount; q++) {
+        try {
+          String uuid = src.getUUIDValue(i, q);
+          dest.setUUIDValue(uuid, i, q);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String filename = src.getUUIDFileName(i, q);
+          dest.setUUIDFileName(filename, i, q);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          NonNegativeInteger firstC = src.getTiffDataFirstC(i, q);
+          dest.setTiffDataFirstC(firstC, i, q);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          NonNegativeInteger firstT = src.getTiffDataFirstT(i, q);
+          dest.setTiffDataFirstT(firstT, i, q);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          NonNegativeInteger firstZ = src.getTiffDataFirstZ(i, q);
+          dest.setTiffDataFirstZ(firstZ, i, q);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          NonNegativeInteger ifd = src.getTiffDataIFD(i, q);
+          dest.setTiffDataIFD(ifd, i, q);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          NonNegativeInteger tiffDataPlaneCount = src.getTiffDataPlaneCount(i, q);
+          dest.setTiffDataPlaneCount(tiffDataPlaneCount, i, q);
+        }
+        catch (NullPointerException e) { }
+      }
+    }
+  }
+
+  private static void convertInstruments(MetadataRetrieve src,
+    MetadataStore dest)
+  {
+    int instrumentCount = 0;
+    try {
+      instrumentCount = src.getInstrumentCount();
+    }
+    catch (NullPointerException e) { }
+    for (int i=0; i<instrumentCount; i++) {
+      try {
+        String id = src.getInstrumentID(i);
+        dest.setInstrumentID(id, i);
+      }
+      catch (NullPointerException e) {
+        continue;
+      }
+
+      try {
+        String microscopeLotNumber = src.getMicroscopeLotNumber(i);
+        dest.setMicroscopeLotNumber(microscopeLotNumber, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        String microscopeManufacturer = src.getMicroscopeManufacturer(i);
+        dest.setMicroscopeManufacturer(microscopeManufacturer, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        String microscopeModel = src.getMicroscopeModel(i);
+        dest.setMicroscopeModel(microscopeModel, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        String microscopeSerialNumber = src.getMicroscopeSerialNumber(i);
+        dest.setMicroscopeSerialNumber(microscopeSerialNumber, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        MicroscopeType microscopeType = src.getMicroscopeType(i);
+        dest.setMicroscopeType(microscopeType, i);
+      }
+      catch (NullPointerException e) { }
+
+      int detectorCount = 0;
+      try {
+        detectorCount = src.getDetectorCount(i);
+      }
+      catch (NullPointerException e) { }
+      for (int q=0; q<detectorCount; q++) {
+        try {
+          String detectorID = src.getDetectorID(i, q);
+          dest.setDetectorID(detectorID, i, q);
+        }
+        catch (NullPointerException e) {
+          continue;
+        }
+
+        try {
+          Double amplificationGain = src.getDetectorAmplificationGain(i, q);
+          dest.setDetectorAmplificationGain(amplificationGain, i, q);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          Double gain = src.getDetectorGain(i, q);
+          dest.setDetectorGain(gain, i, q);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String lotNumber = src.getDetectorLotNumber(i, q);
+          dest.setDetectorLotNumber(lotNumber, i, q);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String manufacturer = src.getDetectorManufacturer(i, q);
+          dest.setDetectorManufacturer(manufacturer, i, q);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String model = src.getDetectorModel(i, q);
+          dest.setDetectorModel(model, i, q);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          Double offset = src.getDetectorOffset(i, q);
+          dest.setDetectorOffset(offset, i, q);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String serialNumber = src.getDetectorSerialNumber(i, q);
+          dest.setDetectorSerialNumber(serialNumber, i, q);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          DetectorType detectorType = src.getDetectorType(i, q);
+          dest.setDetectorType(detectorType, i, q);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          Double voltage = src.getDetectorVoltage(i, q);
+          dest.setDetectorVoltage(voltage, i, q);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          Double zoom = src.getDetectorZoom(i, q);
+          dest.setDetectorZoom(zoom, i, q);
+        }
+        catch (NullPointerException e) { }
+      }
+
+      int dichroicCount = 0;
+      try {
+        dichroicCount = src.getDichroicCount(i);
+      }
+      catch (NullPointerException e) { }
+      for (int q=0; q<dichroicCount; q++) {
+        try {
+          String dichroicID = src.getDichroicID(i, q);
+          dest.setDichroicID(dichroicID, i, q);
+        }
+        catch (NullPointerException e) {
+          continue;
+        }
+
+        try {
+          String lotNumber = src.getDichroicLotNumber(i, q);
+          dest.setDichroicLotNumber(lotNumber, i, q);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String manufacturer = src.getDichroicManufacturer(i, q);
+          dest.setDichroicManufacturer(manufacturer, i, q);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String model = src.getDichroicModel(i, q);
+          dest.setDichroicModel(model, i, q);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String serialNumber = src.getDichroicSerialNumber(i, q);
+          dest.setDichroicSerialNumber(serialNumber, i, q);
+        }
+        catch (NullPointerException e) { }
+      }
+
+      int filterCount = 0;
+      try {
+        filterCount = src.getFilterCount(i);
+      }
+      catch (NullPointerException e) { }
+      for (int q=0; q<filterCount; q++) {
+        try {
+          String filterID = src.getFilterID(i, q);
+          dest.setFilterID(filterID, i, q);
+        }
+        catch (NullPointerException e) {
+          continue;
+        }
+
+        try {
+          String filterWheel = src.getFilterFilterWheel(i, q);
+          dest.setFilterFilterWheel(filterWheel, i, q);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String lotNumber = src.getFilterLotNumber(i, q);
+          dest.setFilterLotNumber(lotNumber, i, q);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String manufacturer = src.getFilterManufacturer(i, q);
+          dest.setFilterManufacturer(manufacturer, i, q);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String model = src.getFilterModel(i, q);
+          dest.setFilterModel(model, i, q);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String serialNumber = src.getFilterSerialNumber(i, q);
+          dest.setFilterSerialNumber(serialNumber, i, q);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          FilterType filterType = src.getFilterType(i, q);
+          dest.setFilterType(filterType, i, q);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          PositiveInteger cutIn = src.getTransmittanceRangeCutIn(i, q);
+          dest.setTransmittanceRangeCutIn(cutIn, i, q);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          NonNegativeInteger cutInTolerance = src.getTransmittanceRangeCutInTolerance(i, q);
+          dest.setTransmittanceRangeCutInTolerance(cutInTolerance, i, q);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          PositiveInteger cutOut = src.getTransmittanceRangeCutOut(i, q);
+          dest.setTransmittanceRangeCutOut(cutOut, i, q);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          NonNegativeInteger cutOutTolerance = src.getTransmittanceRangeCutOutTolerance(i, q);
+          dest.setTransmittanceRangeCutOutTolerance(cutOutTolerance, i, q);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          PercentFraction transmittance = src.getTransmittanceRangeTransmittance(i, q);
+          dest.setTransmittanceRangeTransmittance(transmittance, i, q);
+        }
+        catch (NullPointerException e) { }
+      }
+
+      int objectiveCount = 0;
+      try {
+        objectiveCount = src.getObjectiveCount(i);
+      }
+      catch (NullPointerException e) { }
+      for (int q=0; q<objectiveCount; q++) {
+        try {
+          String objectiveID = src.getObjectiveID(i, q);
+          dest.setObjectiveID(objectiveID, i, q);
+        }
+        catch (NullPointerException e) {
+          continue;
+        }
+
+        try {
+          Double calibratedMag = src.getObjectiveCalibratedMagnification(i, q);
+          dest.setObjectiveCalibratedMagnification(calibratedMag, i, q);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          Correction correction = src.getObjectiveCorrection(i, q);
+          dest.setObjectiveCorrection(correction, i, q);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          Immersion immersion = src.getObjectiveImmersion(i, q);
+          dest.setObjectiveImmersion(immersion, i, q);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          Boolean iris = src.getObjectiveIris(i, q);
+          dest.setObjectiveIris(iris, i, q);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          Double lensNA = src.getObjectiveLensNA(i, q);
+          dest.setObjectiveLensNA(lensNA, i, q);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String lotNumber = src.getObjectiveLotNumber(i, q);
+          dest.setObjectiveLotNumber(lotNumber, i, q);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String manufacturer = src.getObjectiveManufacturer(i, q);
+          dest.setObjectiveManufacturer(manufacturer, i, q);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String model = src.getObjectiveModel(i, q);
+          dest.setObjectiveModel(model, i, q);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          PositiveInteger nominalMag = src.getObjectiveNominalMagnification(i, q);
+          dest.setObjectiveNominalMagnification(nominalMag, i, q);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String serialNumber = src.getObjectiveSerialNumber(i, q);
+          dest.setObjectiveSerialNumber(serialNumber, i, q);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          Double workingDistance = src.getObjectiveWorkingDistance(i, q);
+          dest.setObjectiveWorkingDistance(workingDistance, i, q);
+        }
+        catch (NullPointerException e) { }
+      }
+
+      int filterSetCount = 0;
+      try {
+        filterSetCount = src.getFilterSetCount(i);
+      }
+      catch (NullPointerException e) { }
+      for (int q=0; q<filterSetCount; q++) {
+        try {
+          String filterSetID = src.getFilterSetID(i, q);
+          dest.setFilterSetID(filterSetID, i, q);
+        }
+        catch (NullPointerException e) {
+          continue;
+        }
+
+        try {
+          String dichroicRef = src.getFilterSetDichroicRef(i, q);
+          dest.setFilterSetDichroicRef(dichroicRef, i, q);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String lotNumber = src.getFilterSetLotNumber(i, q);
+          dest.setFilterSetLotNumber(lotNumber, i, q);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String manufacturer = src.getFilterSetManufacturer(i, q);
+          dest.setFilterSetManufacturer(manufacturer, i, q);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String model = src.getFilterSetModel(i, q);
+          dest.setFilterSetModel(model, i, q);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String serialNumber = src.getFilterSetSerialNumber(i, q);
+          dest.setFilterSetSerialNumber(serialNumber, i, q);
+        }
+        catch (NullPointerException e) { }
+
+        int emFilterCount = 0;
+        try {
+          emFilterCount = src.getFilterSetEmissionFilterRefCount(i, q);
+        }
+        catch (NullPointerException e) { }
+        for (int f=0; f<emFilterCount; f++) {
+          try {
+            String emFilterRef = src.getFilterSetEmissionFilterRef(i, q, f);
+            dest.setFilterSetEmissionFilterRef(emFilterRef, i, q, f);
+          }
+          catch (NullPointerException e) { }
+        }
+
+        int exFilterCount = 0;
+        try {
+          exFilterCount = src.getFilterSetExcitationFilterRefCount(i, q);
+        }
+        catch (NullPointerException e) { }
+        for (int f=0; f<exFilterCount; f++) {
+          try {
+            String exFilterRef = src.getFilterSetExcitationFilterRef(i, q, f);
+            dest.setFilterSetExcitationFilterRef(exFilterRef, i, q, f);
+          }
+          catch (NullPointerException e) { }
+        }
+      }
+
+      convertLightSources(src, dest, i);
+    }
+  }
+
+  private static void convertListAnnotations(MetadataRetrieve src,
+    MetadataStore dest)
+  {
+    int listAnnotationCount = 0;
+    try {
+      listAnnotationCount = src.getListAnnotationCount();
+    }
+    catch (NullPointerException e) { }
+    for (int i=0; i<listAnnotationCount; i++) {
+      try {
+        String id = src.getListAnnotationID(i);
+        dest.setListAnnotationID(id, i);
+      }
+      catch (NullPointerException e) {
+        continue;
+      }
+
+      try {
+        String description = src.getListAnnotationDescription(i);
+        dest.setListAnnotationDescription(description, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        String namespace = src.getListAnnotationNamespace(i);
+        dest.setListAnnotationNamespace(namespace, i);
+      }
+      catch (NullPointerException e) { }
+    }
+  }
+
+  private static void convertLongAnnotations(MetadataRetrieve src,
+    MetadataStore dest)
+  {
+    int longAnnotationCount = 0;
+    try {
+      longAnnotationCount = src.getLongAnnotationCount();
+    }
+    catch (NullPointerException e) { }
+    for (int i=0; i<longAnnotationCount; i++) {
+      try {
+        String id = src.getLongAnnotationID(i);
+        dest.setLongAnnotationID(id, i);
+      }
+      catch (NullPointerException e) {
+        continue;
+      }
+
+      try {
+        String description = src.getLongAnnotationDescription(i);
+        dest.setLongAnnotationDescription(description, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        String namespace = src.getLongAnnotationNamespace(i);
+        dest.setLongAnnotationNamespace(namespace, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        Long value = src.getLongAnnotationValue(i);
+        dest.setLongAnnotationValue(value, i);
+      }
+      catch (NullPointerException e) { }
+    }
+  }
+
+  private static void convertPlates(MetadataRetrieve src, MetadataStore dest) {
+    int plateCount = 0;
+    try {
+      plateCount = src.getPlateCount();
+    }
+    catch (NullPointerException e) { }
+    for (int i=0; i<plateCount; i++) {
+      try {
+        String id = src.getPlateID(i);
+        dest.setPlateID(id, i);
+      }
+      catch (NullPointerException e) {
+        continue;
+      }
+
+      try {
+        NamingConvention columnConvention = src.getPlateColumnNamingConvention(i);
+        dest.setPlateColumnNamingConvention(columnConvention, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        PositiveInteger columns = src.getPlateColumns(i);
+        dest.setPlateColumns(columns, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        String description = src.getPlateDescription(i);
+        dest.setPlateDescription(description, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        String externalID = src.getPlateExternalIdentifier(i);
+        dest.setPlateExternalIdentifier(externalID, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        NonNegativeInteger fieldIndex = src.getPlateFieldIndex(i);
+        dest.setPlateFieldIndex(fieldIndex, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        String name = src.getPlateName(i);
+        dest.setPlateName(name, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        NamingConvention rowConvention = src.getPlateRowNamingConvention(i);
+        dest.setPlateRowNamingConvention(rowConvention, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        PositiveInteger rows = src.getPlateRows(i);
+        dest.setPlateRows(rows, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        String status = src.getPlateStatus(i);
+        dest.setPlateStatus(status, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        Double wellOriginX = src.getPlateWellOriginX(i);
+        dest.setPlateWellOriginX(wellOriginX, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        Double wellOriginY = src.getPlateWellOriginY(i);
+        dest.setPlateWellOriginY(wellOriginY, i);
+      }
+      catch (NullPointerException e) { }
+
+      int wellCount = 0;
+      try {
+        wellCount = src.getWellCount(i);
+      }
+      catch (NullPointerException e) { }
+      for (int q=0; q<wellCount; q++) {
+        try {
+          String wellID = src.getWellID(i, q);
+          dest.setWellID(wellID, i, q);
+        }
+        catch (NullPointerException e) {
+          continue;
+        }
+
+        try {
+          Color color = src.getWellColor(i, q);
+          dest.setWellColor(color, i, q);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          NonNegativeInteger column = src.getWellColumn(i, q);
+          dest.setWellColumn(column, i, q);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String externalDescription = src.getWellExternalDescription(i, q);
+          dest.setWellExternalDescription(externalDescription, i, q);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String wellExternalID = src.getWellExternalIdentifier(i, q);
+          dest.setWellExternalIdentifier(wellExternalID, i, q);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String reagentRef = src.getWellReagentRef(i, q);
+          dest.setWellReagentRef(reagentRef, i, q);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          NonNegativeInteger row = src.getWellRow(i, q);
+          dest.setWellRow(row, i, q);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String type = src.getWellType(i, q);
+          dest.setWellType(type, i, q);
+        }
+        catch (NullPointerException e) { }
+
+        int wellAnnotationRefCount = 0;
+        try {
+          src.getWellAnnotationRefCount(i, q);
+        }
+        catch (NullPointerException e) { }
+        for (int a=0; a<wellAnnotationRefCount; a++) {
+          try {
+            String wellAnnotationRef = src.getWellAnnotationRef(i, q, a);
+            dest.setWellAnnotationRef(wellAnnotationRef, i, q, a);
+          }
+          catch (NullPointerException e) { }
+        }
+
+        int wellSampleCount = 0;
+        try {
+          wellSampleCount = src.getWellSampleCount(i, q);
+        }
+        catch (NullPointerException e) { }
+        for (int w=0; w<wellSampleCount; w++) {
+          try {
+            String wellSampleID = src.getWellSampleID(i, q, w);
+            dest.setWellSampleID(wellSampleID, i, q, w);
+          }
+          catch (NullPointerException e) {
+            continue;
+          }
+
+          try {
+            String imageRef = src.getWellSampleImageRef(i, q, w);
+            dest.setWellSampleImageRef(imageRef, i, q, w);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Double positionX = src.getWellSamplePositionX(i, q, w);
+            dest.setWellSamplePositionX(positionX, i, q, w);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Double positionY = src.getWellSamplePositionY(i, q, w);
+            dest.setWellSamplePositionY(positionY, i, q, w);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Timestamp timepoint = src.getWellSampleTimepoint(i, q, w);
+            dest.setWellSampleTimepoint(timepoint, i, q, w);
+          }
+          catch (NullPointerException e) { }
+
+          int wellSampleAnnotationRefCount = 0;
+          try {
+            wellSampleAnnotationRefCount = src.getWellSampleAnnotationRefCount(i, q, w);
+          }
+          catch (NullPointerException e) { }
+          for (int a=0; a<wellSampleAnnotationRefCount; a++) {
+            try {
+              String wellSampleAnnotationRef = src.getWellSampleAnnotationRef(i, q, w, a);
+              dest.setWellSampleAnnotationRef(wellSampleAnnotationRef, i, q, w, a);
+            }
+            catch (NullPointerException e) { }
+          }
+        }
+      }
+
+      int plateAcquisitionCount = 0;
+      try {
+        plateAcquisitionCount = src.getPlateAcquisitionCount(i);
+      }
+      catch (NullPointerException e) { }
+      for (int q=0; q<plateAcquisitionCount; q++) {
+        try {
+          String plateAcquisitionID = src.getPlateAcquisitionID(i, q);
+          dest.setPlateAcquisitionID(plateAcquisitionID, i, q);
+        }
+        catch (NullPointerException e) {
+          continue;
+        }
+
+        try {
+          String acquisitionDescription = src.getPlateAcquisitionDescription(i, q);
+          dest.setPlateAcquisitionDescription(acquisitionDescription, i, q);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          Timestamp endTime = src.getPlateAcquisitionEndTime(i, q);
+          dest.setPlateAcquisitionEndTime(endTime, i, q);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          PositiveInteger maximumFields = src.getPlateAcquisitionMaximumFieldCount(i, q);
+          dest.setPlateAcquisitionMaximumFieldCount(maximumFields, i, q);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String acquisitionName = src.getPlateAcquisitionName(i, q);
+          dest.setPlateAcquisitionName(acquisitionName, i, q);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          Timestamp startTime = src.getPlateAcquisitionStartTime(i, q);
+          dest.setPlateAcquisitionStartTime(startTime, i, q);
+        }
+        catch (NullPointerException e) { }
+
+        int plateAcquisitionAnnotationRefCount = 0;
+        try {
+          plateAcquisitionAnnotationRefCount = src.getPlateAcquisitionAnnotationRefCount(i, q);
+        }
+        catch (NullPointerException e) { }
+        for (int a=0; a<plateAcquisitionAnnotationRefCount; a++) {
+          try {
+            String plateAcquisitionAnnotationRef = src.getPlateAcquisitionAnnotationRef(i, q, a);
+            dest.setPlateAcquisitionAnnotationRef(plateAcquisitionAnnotationRef, i, q, a);
+          }
+          catch (NullPointerException e) { }
+        }
+
+        int wellSampleRefCount = 0;
+        try {
+          wellSampleRefCount = src.getWellSampleRefCount(i, q);
+        }
+        catch (NullPointerException e) { }
+        for (int w=0; w<wellSampleRefCount; w++) {
+          try {
+            String wellSampleRef = src.getPlateAcquisitionWellSampleRef(i, q, w);
+            dest.setPlateAcquisitionWellSampleRef(wellSampleRef, i, q, w);
+          }
+          catch (NullPointerException e) { }
+        }
+      }
+
+      int plateAnnotationRefCount = 0;
+      try {
+        plateAnnotationRefCount = src.getPlateAnnotationRefCount(i);
+      }
+      catch (NullPointerException e) { }
+      for (int q=0; q<plateAnnotationRefCount; q++) {
+        try {
+          String annotationRef = src.getPlateAnnotationRef(i, q);
+          dest.setPlateAnnotationRef(annotationRef, i, q);
+        }
+        catch (NullPointerException e) { }
+      }
+    }
+  }
+
+  private static void convertProjects(MetadataRetrieve src, MetadataStore dest)
+  {
+    int projectCount = 0;
+    try {
+      projectCount = src.getProjectCount();
+    }
+    catch (NullPointerException e) { }
+    for (int i=0; i<projectCount; i++) {
+      try {
+        String projectID = src.getProjectID(i);
+        dest.setProjectID(projectID, i);
+      }
+      catch (NullPointerException e) {
+        continue;
+      }
+
+      try {
+        String description = src.getProjectDescription(i);
+        dest.setProjectDescription(description, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        String experimenterGroupRef = src.getProjectExperimenterGroupRef(i);
+        dest.setProjectExperimenterGroupRef(experimenterGroupRef, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        String experimenterRef = src.getProjectExperimenterRef(i);
+        dest.setProjectExperimenterRef(experimenterRef, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        String name = src.getProjectName(i);
+        dest.setProjectName(name, i);
+      }
+      catch (NullPointerException e) { }
+
+      int annotationRefCount = 0;
+      try {
+        annotationRefCount = src.getProjectAnnotationRefCount(i);
+      }
+      catch (NullPointerException e) { }
+      for (int q=0; q<annotationRefCount; q++) {
+        try {
+          String annotationRef = src.getProjectAnnotationRef(i, q);
+          dest.setProjectAnnotationRef(annotationRef, i, q);
+        }
+        catch (NullPointerException e) { }
+      }
+
+      int datasetRefCount = 0;
+      try {
+        datasetRefCount = src.getDatasetRefCount(i);
+      }
+      catch (NullPointerException e) { }
+      for (int q=0; q<datasetRefCount; q++) {
+        try {
+          String datasetRef = src.getProjectDatasetRef(i, q);
+          dest.setProjectDatasetRef(datasetRef, i, q);
+        }
+        catch (NullPointerException e) { }
+      }
+    }
+  }
+
+  private static void convertROIs(MetadataRetrieve src, MetadataStore dest) {
+    int roiCount = 0;
+    try {
+      roiCount = src.getROICount();
+    }
+    catch (NullPointerException e) { }
+    for (int i=0; i<roiCount; i++) {
+      try {
+        String id = src.getROIID(i);
+        dest.setROIID(id, i);
+      }
+      catch (NullPointerException e) {
+        continue;
+      }
+
+      try {
+        String name = src.getROIName(i);
+        dest.setROIName(name, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        String description = src.getROIDescription(i);
+        dest.setROIDescription(description, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        String namespace = src.getROINamespace(i);
+        dest.setROINamespace(namespace, i);
+      }
+      catch (NullPointerException e) { }
+
+      int shapeCount = 0;
+      try {
+        shapeCount = src.getShapeCount(i);
+      }
+      catch (NullPointerException e) { }
+      for (int q=0; q<shapeCount; q++) {
+        String type = src.getShapeType(i, q);
+
+        if (type.equals("Ellipse")) {
+          try {
+            String shapeID = src.getEllipseID(i, q);
+            dest.setEllipseID(shapeID, i, q);
+          }
+          catch (NullPointerException e) {
+            continue;
+          }
+
+          try {
+            Color fillColor = src.getEllipseFillColor(i, q);
+            dest.setEllipseFillColor(fillColor, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            FillRule fillRule = src.getEllipseFillRule(i, q);
+            dest.setEllipseFillRule(fillRule, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            FontFamily fontFamily = src.getEllipseFontFamily(i, q);
+            dest.setEllipseFontFamily(fontFamily, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            NonNegativeInteger fontSize = src.getEllipseFontSize(i, q);
+            dest.setEllipseFontSize(fontSize, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            FontStyle fontStyle = src.getEllipseFontStyle(i, q);
+            dest.setEllipseFontStyle(fontStyle, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            LineCap lineCap = src.getEllipseLineCap(i, q);
+            dest.setEllipseLineCap(lineCap, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Boolean locked = src.getEllipseLocked(i, q);
+            dest.setEllipseLocked(locked, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Color strokeColor = src.getEllipseStrokeColor(i, q);
+            dest.setEllipseStrokeColor(strokeColor, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            String dashArray = src.getEllipseStrokeDashArray(i, q);
+            dest.setEllipseStrokeDashArray(dashArray, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Double strokeWidth = src.getEllipseStrokeWidth(i, q);
+            dest.setEllipseStrokeWidth(strokeWidth, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            String text = src.getEllipseText(i, q);
+            dest.setEllipseText(text, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            NonNegativeInteger theC = src.getEllipseTheC(i, q);
+            dest.setEllipseTheC(theC, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            NonNegativeInteger theT = src.getEllipseTheT(i, q);
+            dest.setEllipseTheT(theT, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            NonNegativeInteger theZ = src.getEllipseTheZ(i, q);
+            dest.setEllipseTheZ(theZ, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            AffineTransform transform = src.getEllipseTransform(i, q);
+            dest.setEllipseTransform(transform, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Boolean visible = src.getEllipseVisible(i, q);
+            dest.setEllipseVisible(visible, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+          Double radiusX = src.getEllipseRadiusX(i, q);
+          dest.setEllipseRadiusX(radiusX, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Double radiusY = src.getEllipseRadiusY(i, q);
+            dest.setEllipseRadiusY(radiusY, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Double x = src.getEllipseX(i, q);
+            dest.setEllipseX(x, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Double y = src.getEllipseY(i, q);
+            dest.setEllipseY(y, i, q);
+          }
+          catch (NullPointerException e) { }
+        }
+        else if (type.equals("Label")) {
+          try {
+            String shapeID = src.getLabelID(i, q);
+            dest.setLabelID(shapeID, i, q);
+          }
+          catch (NullPointerException e) {
+            continue;
+          }
+
+          try {
+            Color fillColor = src.getLabelFillColor(i, q);
+            dest.setLabelFillColor(fillColor, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            FillRule fillRule = src.getLabelFillRule(i, q);
+            dest.setLabelFillRule(fillRule, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            FontFamily fontFamily = src.getLabelFontFamily(i, q);
+            dest.setLabelFontFamily(fontFamily, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            NonNegativeInteger fontSize = src.getLabelFontSize(i, q);
+            dest.setLabelFontSize(fontSize, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            FontStyle fontStyle = src.getLabelFontStyle(i, q);
+            dest.setLabelFontStyle(fontStyle, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            LineCap lineCap = src.getLabelLineCap(i, q);
+            dest.setLabelLineCap(lineCap, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Boolean locked = src.getLabelLocked(i, q);
+            dest.setLabelLocked(locked, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Color strokeColor = src.getLabelStrokeColor(i, q);
+            dest.setLabelStrokeColor(strokeColor, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            String dashArray = src.getLabelStrokeDashArray(i, q);
+            dest.setLabelStrokeDashArray(dashArray, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Double strokeWidth = src.getLabelStrokeWidth(i, q);
+            dest.setLabelStrokeWidth(strokeWidth, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            String text = src.getLabelText(i, q);
+            dest.setLabelText(text, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            NonNegativeInteger theC = src.getLabelTheC(i, q);
+            dest.setLabelTheC(theC, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            NonNegativeInteger theT = src.getLabelTheT(i, q);
+            dest.setLabelTheT(theT, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            NonNegativeInteger theZ = src.getLabelTheZ(i, q);
+            dest.setLabelTheZ(theZ, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            AffineTransform transform = src.getLabelTransform(i, q);
+            dest.setLabelTransform(transform, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Boolean visible = src.getLabelVisible(i, q);
+            dest.setLabelVisible(visible, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Double x = src.getLabelX(i, q);
+            dest.setLabelX(x, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Double y = src.getLabelY(i, q);
+            dest.setLabelY(y, i, q);
+          }
+          catch (NullPointerException e) { }
+        }
+        else if (type.equals("Line")) {
+          try {
+            String shapeID = src.getLineID(i, q);
+            dest.setLineID(shapeID, i, q);
+          }
+          catch (NullPointerException e) {
+            continue;
+          }
+
+          try {
+            Color fillColor = src.getLineFillColor(i, q);
+            dest.setLineFillColor(fillColor, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            FillRule fillRule = src.getLineFillRule(i, q);
+            dest.setLineFillRule(fillRule, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            FontFamily fontFamily = src.getLineFontFamily(i, q);
+            dest.setLineFontFamily(fontFamily, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            NonNegativeInteger fontSize = src.getLineFontSize(i, q);
+            dest.setLineFontSize(fontSize, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            FontStyle fontStyle = src.getLineFontStyle(i, q);
+            dest.setLineFontStyle(fontStyle, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            LineCap lineCap = src.getLineLineCap(i, q);
+            dest.setLineLineCap(lineCap, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Boolean locked = src.getLineLocked(i, q);
+            dest.setLineLocked(locked, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Color strokeColor = src.getLineStrokeColor(i, q);
+            dest.setLineStrokeColor(strokeColor, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            String dashArray = src.getLineStrokeDashArray(i, q);
+            dest.setLineStrokeDashArray(dashArray, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Double strokeWidth = src.getLineStrokeWidth(i, q);
+            dest.setLineStrokeWidth(strokeWidth, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            String text = src.getLineText(i, q);
+            dest.setLineText(text, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            NonNegativeInteger theC = src.getLineTheC(i, q);
+            dest.setLineTheC(theC, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            NonNegativeInteger theT = src.getLineTheT(i, q);
+            dest.setLineTheT(theT, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            NonNegativeInteger theZ = src.getLineTheZ(i, q);
+            dest.setLineTheZ(theZ, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            AffineTransform transform = src.getLineTransform(i, q);
+            dest.setLineTransform(transform, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Boolean visible = src.getLineVisible(i, q);
+            dest.setLineVisible(visible, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Marker end = src.getLineMarkerEnd(i, q);
+            dest.setLineMarkerEnd(end, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Marker start = src.getLineMarkerStart(i, q);
+            dest.setLineMarkerStart(start, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Double x1 = src.getLineX1(i, q);
+            dest.setLineX1(x1, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Double x2 = src.getLineX2(i, q);
+            dest.setLineX2(x2, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Double y1 = src.getLineY1(i, q);
+            dest.setLineY1(y1, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Double y2 = src.getLineY2(i, q);
+            dest.setLineY2(y2, i, q);
+          }
+          catch (NullPointerException e) { }
+        }
+        else if (type.equals("Mask")) {
+          try {
+            String shapeID = src.getMaskID(i, q);
+            dest.setMaskID(shapeID, i, q);
+          }
+          catch (NullPointerException e) {
+            continue;
+          }
+
+          try {
+            Color fillColor = src.getMaskFillColor(i, q);
+            dest.setMaskFillColor(fillColor, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            FillRule fillRule = src.getMaskFillRule(i, q);
+            dest.setMaskFillRule(fillRule, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            FontFamily fontFamily = src.getMaskFontFamily(i, q);
+            dest.setMaskFontFamily(fontFamily, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            NonNegativeInteger fontSize = src.getMaskFontSize(i, q);
+            dest.setMaskFontSize(fontSize, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            FontStyle fontStyle = src.getMaskFontStyle(i, q);
+            dest.setMaskFontStyle(fontStyle, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            LineCap lineCap = src.getMaskLineCap(i, q);
+            dest.setMaskLineCap(lineCap, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Boolean locked = src.getMaskLocked(i, q);
+            dest.setMaskLocked(locked, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Color strokeColor = src.getMaskStrokeColor(i, q);
+            dest.setMaskStrokeColor(strokeColor, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            String dashArray = src.getMaskStrokeDashArray(i, q);
+            dest.setMaskStrokeDashArray(dashArray, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Double strokeWidth = src.getMaskStrokeWidth(i, q);
+            dest.setMaskStrokeWidth(strokeWidth, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            String text = src.getMaskText(i, q);
+            dest.setMaskText(text, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            NonNegativeInteger theC = src.getMaskTheC(i, q);
+            dest.setMaskTheC(theC, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            NonNegativeInteger theT = src.getMaskTheT(i, q);
+            dest.setMaskTheT(theT, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            NonNegativeInteger theZ = src.getMaskTheZ(i, q);
+            dest.setMaskTheZ(theZ, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            AffineTransform transform = src.getMaskTransform(i, q);
+            dest.setMaskTransform(transform, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Boolean visible = src.getMaskVisible(i, q);
+            dest.setMaskVisible(visible, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Double height = src.getMaskHeight(i, q);
+            dest.setMaskHeight(height, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Double width = src.getMaskWidth(i, q);
+            dest.setMaskWidth(width, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Double x = src.getMaskX(i, q);
+            dest.setMaskX(x, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Double y = src.getMaskY(i, q);
+            dest.setMaskY(y, i, q);
+          }
+          catch (NullPointerException e) { }
+        }
+        else if (type.equals("Point")) {
+          try {
+            String shapeID = src.getPointID(i, q);
+            dest.setPointID(shapeID, i, q);
+          }
+          catch (NullPointerException e) {
+            continue;
+          }
+
+          try {
+            Color fillColor = src.getPointFillColor(i, q);
+            dest.setPointFillColor(fillColor, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            FillRule fillRule = src.getPointFillRule(i, q);
+            dest.setPointFillRule(fillRule, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            FontFamily fontFamily = src.getPointFontFamily(i, q);
+            dest.setPointFontFamily(fontFamily, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            NonNegativeInteger fontSize = src.getPointFontSize(i, q);
+            dest.setPointFontSize(fontSize, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            FontStyle fontStyle = src.getPointFontStyle(i, q);
+            dest.setPointFontStyle(fontStyle, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            LineCap lineCap = src.getPointLineCap(i, q);
+            dest.setPointLineCap(lineCap, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Boolean locked = src.getPointLocked(i, q);
+            dest.setPointLocked(locked, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Color strokeColor = src.getPointStrokeColor(i, q);
+            dest.setPointStrokeColor(strokeColor, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            String dashArray = src.getPointStrokeDashArray(i, q);
+            dest.setPointStrokeDashArray(dashArray, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Double strokeWidth = src.getPointStrokeWidth(i, q);
+            dest.setPointStrokeWidth(strokeWidth, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            String text = src.getPointText(i, q);
+            dest.setPointText(text, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            NonNegativeInteger theC = src.getPointTheC(i, q);
+            dest.setPointTheC(theC, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            NonNegativeInteger theT = src.getPointTheT(i, q);
+            dest.setPointTheT(theT, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            NonNegativeInteger theZ = src.getPointTheZ(i, q);
+            dest.setPointTheZ(theZ, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            AffineTransform transform = src.getPointTransform(i, q);
+            dest.setPointTransform(transform, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Boolean visible = src.getPointVisible(i, q);
+            dest.setPointVisible(visible, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Double x = src.getPointX(i, q);
+            dest.setPointX(x, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Double y = src.getPointY(i, q);
+            dest.setPointY(y, i, q);
+          }
+          catch (NullPointerException e) { }
+        }
+        else if (type.equals("Polygon")) {
+          try {
+            String shapeID = src.getPolygonID(i, q);
+            dest.setPolygonID(shapeID, i, q);
+          }
+          catch (NullPointerException e) {
+            continue;
+          }
+
+          try {
+            Color fillColor = src.getPolygonFillColor(i, q);
+            dest.setPolygonFillColor(fillColor, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            FillRule fillRule = src.getPolygonFillRule(i, q);
+            dest.setPolygonFillRule(fillRule, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            FontFamily fontFamily = src.getPolygonFontFamily(i, q);
+            dest.setPolygonFontFamily(fontFamily, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            NonNegativeInteger fontSize = src.getPolygonFontSize(i, q);
+            dest.setPolygonFontSize(fontSize, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            FontStyle fontStyle = src.getPolygonFontStyle(i, q);
+            dest.setPolygonFontStyle(fontStyle, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            LineCap lineCap = src.getPolygonLineCap(i, q);
+            dest.setPolygonLineCap(lineCap, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Boolean locked = src.getPolygonLocked(i, q);
+            dest.setPolygonLocked(locked, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Color strokeColor = src.getPolygonStrokeColor(i, q);
+            dest.setPolygonStrokeColor(strokeColor, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            String dashArray = src.getPolygonStrokeDashArray(i, q);
+            dest.setPolygonStrokeDashArray(dashArray, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Double strokeWidth = src.getPolygonStrokeWidth(i, q);
+            dest.setPolygonStrokeWidth(strokeWidth, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            String text = src.getPolygonText(i, q);
+            dest.setPolygonText(text, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            NonNegativeInteger theC = src.getPolygonTheC(i, q);
+            dest.setPolygonTheC(theC, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            NonNegativeInteger theT = src.getPolygonTheT(i, q);
+            dest.setPolygonTheT(theT, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            NonNegativeInteger theZ = src.getPolygonTheZ(i, q);
+            dest.setPolygonTheZ(theZ, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            AffineTransform transform = src.getPolygonTransform(i, q);
+            dest.setPolygonTransform(transform, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Boolean visible = src.getPolygonVisible(i, q);
+            dest.setPolygonVisible(visible, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            String points = src.getPolygonPoints(i, q);
+            dest.setPolygonPoints(points, i, q);
+          }
+          catch (NullPointerException e) { }
+        }
+        else if (type.equals("Polyline")) {
+          try {
+            String shapeID = src.getPolylineID(i, q);
+            dest.setPolylineID(shapeID, i, q);
+          }
+          catch (NullPointerException e) {
+            continue;
+          }
+
+          try {
+            Color fillColor = src.getPolylineFillColor(i, q);
+            dest.setPolylineFillColor(fillColor, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            FillRule fillRule = src.getPolylineFillRule(i, q);
+            dest.setPolylineFillRule(fillRule, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            FontFamily fontFamily = src.getPolylineFontFamily(i, q);
+            dest.setPolylineFontFamily(fontFamily, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            NonNegativeInteger fontSize = src.getPolylineFontSize(i, q);
+            dest.setPolylineFontSize(fontSize, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            FontStyle fontStyle = src.getPolylineFontStyle(i, q);
+            dest.setPolylineFontStyle(fontStyle, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            LineCap lineCap = src.getPolylineLineCap(i, q);
+            dest.setPolylineLineCap(lineCap, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Boolean locked = src.getPolylineLocked(i, q);
+            dest.setPolylineLocked(locked, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Color strokeColor = src.getPolylineStrokeColor(i, q);
+            dest.setPolylineStrokeColor(strokeColor, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            String dashArray = src.getPolylineStrokeDashArray(i, q);
+            dest.setPolylineStrokeDashArray(dashArray, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Double strokeWidth = src.getPolylineStrokeWidth(i, q);
+            dest.setPolylineStrokeWidth(strokeWidth, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            String text = src.getPolylineText(i, q);
+            dest.setPolylineText(text, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            NonNegativeInteger theC = src.getPolylineTheC(i, q);
+            dest.setPolylineTheC(theC, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            NonNegativeInteger theT = src.getPolylineTheT(i, q);
+            dest.setPolylineTheT(theT, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            NonNegativeInteger theZ = src.getPolylineTheZ(i, q);
+            dest.setPolylineTheZ(theZ, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            AffineTransform transform = src.getPolylineTransform(i, q);
+            dest.setPolylineTransform(transform, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Boolean visible = src.getPolylineVisible(i, q);
+            dest.setPolylineVisible(visible, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Marker end = src.getPolylineMarkerEnd(i, q);
+            dest.setPolylineMarkerEnd(end, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Marker start = src.getPolylineMarkerStart(i, q);
+            dest.setPolylineMarkerStart(start, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            String points = src.getPolylinePoints(i, q);
+            dest.setPolylinePoints(points, i, q);
+          }
+          catch (NullPointerException e) { }
+        }
+        else if (type.equals("Rectangle")) {
+          try {
+            String shapeID = src.getRectangleID(i, q);
+            dest.setRectangleID(shapeID, i, q);
+          }
+          catch (NullPointerException e) {
+            continue;
+          }
+
+          try {
+            Color fillColor = src.getRectangleFillColor(i, q);
+            dest.setRectangleFillColor(fillColor, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            FillRule fillRule = src.getRectangleFillRule(i, q);
+            dest.setRectangleFillRule(fillRule, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            FontFamily fontFamily = src.getRectangleFontFamily(i, q);
+            dest.setRectangleFontFamily(fontFamily, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            NonNegativeInteger fontSize = src.getRectangleFontSize(i, q);
+            dest.setRectangleFontSize(fontSize, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            FontStyle fontStyle = src.getRectangleFontStyle(i, q);
+            dest.setRectangleFontStyle(fontStyle, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            LineCap lineCap = src.getRectangleLineCap(i, q);
+            dest.setRectangleLineCap(lineCap, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Boolean locked = src.getRectangleLocked(i, q);
+            dest.setRectangleLocked(locked, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Color strokeColor = src.getRectangleStrokeColor(i, q);
+            dest.setRectangleStrokeColor(strokeColor, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            String dashArray = src.getRectangleStrokeDashArray(i, q);
+            dest.setRectangleStrokeDashArray(dashArray, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Double strokeWidth = src.getRectangleStrokeWidth(i, q);
+            dest.setRectangleStrokeWidth(strokeWidth, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            String text = src.getRectangleText(i, q);
+            dest.setRectangleText(text, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            NonNegativeInteger theC = src.getRectangleTheC(i, q);
+            dest.setRectangleTheC(theC, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            NonNegativeInteger theT = src.getRectangleTheT(i, q);
+            dest.setRectangleTheT(theT, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            NonNegativeInteger theZ = src.getRectangleTheZ(i, q);
+            dest.setRectangleTheZ(theZ, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            AffineTransform transform = src.getRectangleTransform(i, q);
+            dest.setRectangleTransform(transform, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Boolean visible = src.getRectangleVisible(i, q);
+            dest.setRectangleVisible(visible, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Double height = src.getRectangleHeight(i, q);
+            dest.setRectangleHeight(height, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Double width = src.getRectangleWidth(i, q);
+            dest.setRectangleWidth(width, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Double x = src.getRectangleX(i, q);
+            dest.setRectangleX(x, i, q);
+          }
+          catch (NullPointerException e) { }
+
+          try {
+            Double y = src.getRectangleY(i, q);
+            dest.setRectangleY(y, i, q);
+          }
+          catch (NullPointerException e) { }
+        }
+      }
+
+      int annotationRefCount = 0;
+      try {
+        annotationRefCount = src.getROIAnnotationRefCount(i);
+      }
+      catch (NullPointerException e) { }
+      for (int q=0; q<annotationRefCount; q++) {
+        try {
+          String annotationRef = src.getROIAnnotationRef(i, q);
+          dest.setROIAnnotationRef(annotationRef, i, q);
+        }
+        catch (NullPointerException e) { }
+      }
+    }
+  }
+
+  private static void convertScreens(MetadataRetrieve src, MetadataStore dest) {
+    int screenCount = 0;
+    try {
+      screenCount = src.getScreenCount();
+    }
+    catch (NullPointerException e) { }
+    for (int i=0; i<screenCount; i++) {
+      try {
+        String id = src.getScreenID(i);
+        dest.setScreenID(id, i);
+      }
+      catch (NullPointerException e) {
+        continue;
+      }
+
+      try {
+        String description = src.getScreenDescription(i);
+        dest.setScreenDescription(description, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        String name = src.getScreenName(i);
+        dest.setScreenName(name, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        String protocolDescription = src.getScreenProtocolDescription(i);
+        dest.setScreenProtocolDescription(protocolDescription, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        String protocolIdentifier = src.getScreenProtocolIdentifier(i);
+        dest.setScreenProtocolIdentifier(protocolIdentifier, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        String reagentSetDescription = src.getScreenReagentSetDescription(i);
+        dest.setScreenReagentSetDescription(reagentSetDescription, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        String reagentSetIdentifier = src.getScreenReagentSetIdentifier(i);
+        dest.setScreenReagentSetIdentifier(reagentSetIdentifier, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        String type = src.getScreenType(i);
+        dest.setScreenType(type, i);
+      }
+      catch (NullPointerException e) { }
+
+      int plateRefCount = 0;
+      try {
+        plateRefCount = src.getPlateRefCount(i);
+      }
+      catch (NullPointerException e) { }
+      for (int q=0; q<plateRefCount; q++) {
+        try {
+          String plateRef = src.getScreenPlateRef(i, q);
+          dest.setScreenPlateRef(plateRef, i, q);
+        }
+        catch (NullPointerException e) { }
+      }
+
+      int annotationRefCount = 0;
+      try {
+        annotationRefCount = src.getScreenAnnotationRefCount(i);
+      }
+      catch (NullPointerException e) { }
+      for (int q=0; q<annotationRefCount; q++) {
+        try {
+          String annotationRef = src.getScreenAnnotationRef(i, q);
+          dest.setScreenAnnotationRef(annotationRef, i, q);
+        }
+        catch (NullPointerException e) { }
+      }
+
+      int reagentCount = 0;
+      try {
+        reagentCount = src.getReagentCount(i);
+      }
+      catch (NullPointerException e) { }
+      for (int q=0; q<reagentCount; q++) {
+        try {
+          String reagentID = src.getReagentID(i, q);
+          dest.setReagentID(reagentID, i, q);
+        }
+        catch (NullPointerException e) {
+          continue;
+        }
+
+        try {
+          String reagentDescription = src.getReagentDescription(i, q);
+          dest.setReagentDescription(reagentDescription, i, q);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String reagentName = src.getReagentName(i, q);
+          dest.setReagentName(reagentName, i, q);
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          String reagentIdentifier = src.getReagentReagentIdentifier(i, q);
+          dest.setReagentReagentIdentifier(reagentIdentifier, i ,q);
+        }
+        catch (NullPointerException e) { }
+
+        int reagentAnnotationRefCount = 0;
+        try {
+          reagentAnnotationRefCount = src.getReagentAnnotationRefCount(i, q);
+        }
+        catch (NullPointerException e) { }
+        for (int r=0; r<reagentAnnotationRefCount; r++) {
+          try {
+            String reagentAnnotationRef = src.getReagentAnnotationRef(i, q, r);
+            dest.setReagentAnnotationRef(reagentAnnotationRef, i, q, r);
+          }
+          catch (NullPointerException e) { }
+        }
+      }
+    }
+  }
+
+  private static void convertTagAnnotations(MetadataRetrieve src,
+    MetadataStore dest)
+  {
+    int tagAnnotationCount = 0;
+    try {
+      tagAnnotationCount = src.getTagAnnotationCount();
+    }
+    catch (NullPointerException e) { }
+    for (int i=0; i<tagAnnotationCount; i++) {
+      try {
+        String id = src.getTagAnnotationID(i);
+        dest.setTagAnnotationID(id, i);
+      }
+      catch (NullPointerException e) {
+        continue;
+      }
+
+      try {
+        String description = src.getTagAnnotationDescription(i);
+        dest.setTagAnnotationDescription(description, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        String namespace = src.getTagAnnotationNamespace(i);
+        dest.setTagAnnotationNamespace(namespace, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        String value = src.getTagAnnotationValue(i);
+        dest.setTagAnnotationValue(value, i);
+      }
+      catch (NullPointerException e) { }
+    }
+  }
+
+  private static void convertTermAnnotations(MetadataRetrieve src,
+    MetadataStore dest)
+  {
+    int termAnnotationCount = 0;
+    try {
+      termAnnotationCount = src.getTermAnnotationCount();
+    }
+    catch (NullPointerException e) { }
+    for (int i=0; i<termAnnotationCount; i++) {
+      try {
+        String id = src.getTermAnnotationID(i);
+        dest.setTermAnnotationID(id, i);
+      }
+      catch (NullPointerException e) {
+        continue;
+      }
+
+      try {
+        String description = src.getTermAnnotationDescription(i);
+        dest.setTermAnnotationDescription(description, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        String namespace = src.getTermAnnotationNamespace(i);
+        dest.setTermAnnotationNamespace(namespace, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        String value = src.getTermAnnotationValue(i);
+        dest.setTermAnnotationValue(value, i);
+      }
+      catch (NullPointerException e) { }
+    }
+  }
+
+  private static void convertTimestampAnnotations(MetadataRetrieve src,
+    MetadataStore dest)
+  {
+    int timestampAnnotationCount = 0;
+    try {
+      timestampAnnotationCount = src.getTimestampAnnotationCount();
+    }
+    catch (NullPointerException e) { }
+    for (int i=0; i<timestampAnnotationCount; i++) {
+      try {
+        String id = src.getTimestampAnnotationID(i);
+        dest.setTimestampAnnotationID(id, i);
+      }
+      catch (NullPointerException e) {
+        continue;
+      }
+
+      try {
+        String description = src.getTimestampAnnotationDescription(i);
+        dest.setTimestampAnnotationDescription(description, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        String namespace = src.getTimestampAnnotationNamespace(i);
+        dest.setTimestampAnnotationNamespace(namespace, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        Timestamp value = src.getTimestampAnnotationValue(i);
+        dest.setTimestampAnnotationValue(value, i);
+      }
+      catch (NullPointerException e) { }
+    }
+  }
+
+  private static void convertXMLAnnotations(MetadataRetrieve src,
+    MetadataStore dest)
+  {
+    int xmlAnnotationCount = 0;
+    try {
+      xmlAnnotationCount = src.getXMLAnnotationCount();
+    }
+    catch (NullPointerException e) { }
+    for (int i=0; i<xmlAnnotationCount; i++) {
+      try {
+        String id = src.getXMLAnnotationID(i);
+        dest.setXMLAnnotationID(id, i);
+      }
+      catch (NullPointerException e) {
+        continue;
+      }
+
+      try {
+        String description = src.getXMLAnnotationDescription(i);
+        dest.setXMLAnnotationDescription(description, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        String namespace = src.getXMLAnnotationNamespace(i);
+        dest.setXMLAnnotationNamespace(namespace, i);
+      }
+      catch (NullPointerException e) { }
+
+      try {
+        String value = src.getXMLAnnotationValue(i);
+        dest.setXMLAnnotationValue(value, i);
+      }
+      catch (NullPointerException e) { }
+    }
+  }
+
   private static void convertLightSources(MetadataRetrieve src,
     MetadataStore dest, int instrumentIndex)
   {
-    int lightSourceCount = src.getLightSourceCount(instrumentIndex);
+    int lightSourceCount = 0;
+    try {
+      lightSourceCount = src.getLightSourceCount(instrumentIndex);
+    }
+    catch (NullPointerException e) { }
 
     for (int lightSource=0; lightSource<lightSourceCount; lightSource++) {
       String type = src.getLightSourceType(instrumentIndex, lightSource);
@@ -2076,7 +3331,9 @@ public final class MetadataConverter {
           String id = src.getArcID(instrumentIndex, lightSource);
           if (id != null) dest.setArcID(id, instrumentIndex, lightSource);
         }
-        catch (NullPointerException e) { }
+        catch (NullPointerException e) {
+          continue;
+        }
 
         try {
           String lotNumber = src.getArcLotNumber(instrumentIndex, lightSource);
@@ -2133,7 +3390,9 @@ public final class MetadataConverter {
           String id = src.getFilamentID(instrumentIndex, lightSource);
           if (id != null) dest.setFilamentID(id, instrumentIndex, lightSource);
         }
-        catch (NullPointerException e) { }
+        catch (NullPointerException e) {
+          continue;
+        }
 
         try {
           String lotNumber =
@@ -2194,7 +3453,9 @@ public final class MetadataConverter {
           String id = src.getLaserID(instrumentIndex, lightSource);
           if (id != null) dest.setLaserID(id, instrumentIndex, lightSource);
         }
-        catch (NullPointerException e) { }
+        catch (NullPointerException e) {
+          continue;
+        }
 
         try {
           String lotNumber =
@@ -2327,7 +3588,9 @@ public final class MetadataConverter {
             dest.setLightEmittingDiodeID(id, instrumentIndex, lightSource);
           }
         }
-        catch (NullPointerException e) { }
+        catch (NullPointerException e) {
+          continue;
+        }
 
         try {
           String lotNumber =

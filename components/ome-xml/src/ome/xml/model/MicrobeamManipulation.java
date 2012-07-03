@@ -1,37 +1,45 @@
 /*
- * ome.xml.model.MicrobeamManipulation
- *
- *-----------------------------------------------------------------------------
- *
- *  Copyright (C) @year@ Open Microscopy Environment
- *      Massachusetts Institute of Technology,
- *      National Institutes of Health,
- *      University of Dundee,
- *      University of Wisconsin-Madison
- *
- *
- *
- *    This library is free software; you can redistribute it and/or
- *    modify it under the terms of the GNU Lesser General Public
- *    License as published by the Free Software Foundation; either
- *    version 2.1 of the License, or (at your option) any later version.
- *
- *    This library is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- *    Lesser General Public License for more details.
- *
- *    You should have received a copy of the GNU Lesser General Public
- *    License along with this library; if not, write to the Free Software
- *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
- *-----------------------------------------------------------------------------
+ * #%L
+ * OME-XML Java library for working with OME-XML metadata structures.
+ * %%
+ * Copyright (C) 2006 - 2012 Open Microscopy Environment:
+ *   - Massachusetts Institute of Technology
+ *   - National Institutes of Health
+ *   - University of Dundee
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ * %%
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ * 
+ * The views and conclusions contained in the software and documentation are
+ * those of the authors and should not be interpreted as representing official
+ * policies, either expressed or implied, of any organization.
+ * #L%
  */
 
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-01-12 20:06:01-0500
+ * Created by callan via xsd-fu on 2012-05-18 10:08:16+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -58,7 +66,7 @@ public class MicrobeamManipulation extends AbstractOMEModelObject
 
 	// -- Constants --
 
-	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2011-06";
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2012-06";
 
 	/** Logger for this class. */
 	private static final Logger LOGGER =
@@ -77,16 +85,19 @@ public class MicrobeamManipulation extends AbstractOMEModelObject
 	private String description;
 
 	// Reference ROIRef
-	private List<ROI> roiList = new ArrayList<ROI>();
+	private List<ROI> roiLinks = new ArrayList<ROI>();
 
 	// Property
 	private Experimenter experimenter;
 
 	// Property which occurs more than once
-	private List<LightSourceSettings> lightSourceSettingsList = new ArrayList<LightSourceSettings>();
+	private List<LightSourceSettings> lightSourceSettingsCombinations = new ArrayList<LightSourceSettings>();
 
 	// Back reference Image_BackReference
-	private List<Image> image_BackReferenceList = new ArrayList<Image>();
+	private List<Image> imageLinks = new ArrayList<Image>();
+
+	// Back reference Experiment_BackReference
+	private Experiment experiment;
 
 	// -- Constructors --
 
@@ -176,9 +187,9 @@ public class MicrobeamManipulation extends AbstractOMEModelObject
 				getChildrenByTagName(element, "ROIRef");
 		for (Element ROIRef_element : ROIRef_nodeList)
 		{
-			ROIRef roiList_reference = new ROIRef();
-			roiList_reference.setID(ROIRef_element.getAttribute("ID"));
-			model.addReference(this, roiList_reference);
+			ROIRef roiLinks_reference = new ROIRef();
+			roiLinks_reference.setID(ROIRef_element.getAttribute("ID"));
+			model.addReference(this, roiLinks_reference);
 		}
 		// Element reference ExperimenterRef
 		List<Element> ExperimenterRef_nodeList =
@@ -199,6 +210,7 @@ public class MicrobeamManipulation extends AbstractOMEModelObject
 					new LightSourceSettings(LightSourceSettings_element, model));
 		}
 		// *** IGNORING *** Skipped back reference Image_BackReference
+		// *** IGNORING *** Skipped back reference Experiment_BackReference
 	}
 
 	// -- MicrobeamManipulation API methods --
@@ -214,8 +226,8 @@ public class MicrobeamManipulation extends AbstractOMEModelObject
 		{
 			ROI o_casted = (ROI) o;
 			o_casted.linkMicrobeamManipulation(this);
-			if (!roiList.contains(o_casted)) {
-				roiList.add(o_casted);
+			if (!roiLinks.contains(o_casted)) {
+				roiLinks.add(o_casted);
 			}
 			return true;
 		}
@@ -267,37 +279,39 @@ public class MicrobeamManipulation extends AbstractOMEModelObject
 	// Reference which occurs more than once
 	public int sizeOfLinkedROIList()
 	{
-		return roiList.size();
+		return roiLinks.size();
 	}
 
 	public List<ROI> copyLinkedROIList()
 	{
-		return new ArrayList<ROI>(roiList);
+		return new ArrayList<ROI>(roiLinks);
 	}
 
 	public ROI getLinkedROI(int index)
 	{
-		return roiList.get(index);
+		return roiLinks.get(index);
 	}
 
 	public ROI setLinkedROI(int index, ROI o)
 	{
-		return roiList.set(index, o);
+		return roiLinks.set(index, o);
 	}
 
 	public boolean linkROI(ROI o)
 	{
-		o.linkMicrobeamManipulation(this);
-		if (!roiList.contains(o)) {
-			return roiList.add(o);
+
+			o.linkMicrobeamManipulation(this);
+		if (!roiLinks.contains(o)) {
+			return roiLinks.add(o);
 		}
 		return false;
 	}
 
 	public boolean unlinkROI(ROI o)
 	{
-		o.unlinkMicrobeamManipulation(this);
-		return roiList.remove(o);
+
+			o.unlinkMicrobeamManipulation(this);
+		return roiLinks.remove(o);
 	}
 
 	// Reference
@@ -322,66 +336,79 @@ public class MicrobeamManipulation extends AbstractOMEModelObject
 	// Property which occurs more than once
 	public int sizeOfLightSourceSettingsList()
 	{
-		return lightSourceSettingsList.size();
+		return lightSourceSettingsCombinations.size();
 	}
 
 	public List<LightSourceSettings> copyLightSourceSettingsList()
 	{
-		return new ArrayList<LightSourceSettings>(lightSourceSettingsList);
+		return new ArrayList<LightSourceSettings>(lightSourceSettingsCombinations);
 	}
 
 	public LightSourceSettings getLightSourceSettings(int index)
 	{
-		return lightSourceSettingsList.get(index);
+		return lightSourceSettingsCombinations.get(index);
 	}
 
 	public LightSourceSettings setLightSourceSettings(int index, LightSourceSettings lightSourceSettings)
 	{
-		return lightSourceSettingsList.set(index, lightSourceSettings);
+        lightSourceSettings.setMicrobeamManipulation(this);
+		return lightSourceSettingsCombinations.set(index, lightSourceSettings);
 	}
 
 	public void addLightSourceSettings(LightSourceSettings lightSourceSettings)
 	{
-		lightSourceSettingsList.add(lightSourceSettings);
+        lightSourceSettings.setMicrobeamManipulation(this);
+		lightSourceSettingsCombinations.add(lightSourceSettings);
 	}
 
 	public void removeLightSourceSettings(LightSourceSettings lightSourceSettings)
 	{
-		lightSourceSettingsList.remove(lightSourceSettings);
+		lightSourceSettingsCombinations.remove(lightSourceSettings);
 	}
 
 	// Reference which occurs more than once
 	public int sizeOfLinkedImageList()
 	{
-		return image_BackReferenceList.size();
+		return imageLinks.size();
 	}
 
 	public List<Image> copyLinkedImageList()
 	{
-		return new ArrayList<Image>(image_BackReferenceList);
+		return new ArrayList<Image>(imageLinks);
 	}
 
 	public Image getLinkedImage(int index)
 	{
-		return image_BackReferenceList.get(index);
+		return imageLinks.get(index);
 	}
 
 	public Image setLinkedImage(int index, Image o)
 	{
-		return image_BackReferenceList.set(index, o);
+		return imageLinks.set(index, o);
 	}
 
 	public boolean linkImage(Image o)
 	{
-		if (!image_BackReferenceList.contains(o)) {
-			return image_BackReferenceList.add(o);
+		if (!imageLinks.contains(o)) {
+			return imageLinks.add(o);
 		}
 		return false;
 	}
 
 	public boolean unlinkImage(Image o)
 	{
-		return image_BackReferenceList.remove(o);
+		return imageLinks.remove(o);
+	}
+
+	// Property
+	public Experiment getExperiment()
+	{
+		return experiment;
+	}
+
+	public void setExperiment(Experiment experiment_BackReference)
+	{
+		this.experiment = experiment_BackReference;
 	}
 
 	public Element asXMLElement(Document document)
@@ -418,13 +445,13 @@ public class MicrobeamManipulation extends AbstractOMEModelObject
 			description_element.setTextContent(description.toString());
 			MicrobeamManipulation_element.appendChild(description_element);
 		}
-		if (roiList != null)
+		if (roiLinks != null)
 		{
 			// Reference property ROIRef which occurs more than once
-			for (ROI roiList_value : roiList)
+			for (ROI roiLinks_value : roiLinks)
 			{
 				ROIRef o = new ROIRef();
-				o.setID(roiList_value.getID());
+				o.setID(roiLinks_value.getID());
 				MicrobeamManipulation_element.appendChild(o.asXMLElement(document));
 			}
 		}
@@ -435,18 +462,22 @@ public class MicrobeamManipulation extends AbstractOMEModelObject
 			o.setID(experimenter.getID());
 			MicrobeamManipulation_element.appendChild(o.asXMLElement(document));
 		}
-		if (lightSourceSettingsList != null)
+		if (lightSourceSettingsCombinations != null)
 		{
 			// Element property LightSourceSettings which is complex (has
 			// sub-elements) and occurs more than once
-			for (LightSourceSettings lightSourceSettingsList_value : lightSourceSettingsList)
+			for (LightSourceSettings lightSourceSettingsCombinations_value : lightSourceSettingsCombinations)
 			{
-				MicrobeamManipulation_element.appendChild(lightSourceSettingsList_value.asXMLElement(document));
+				MicrobeamManipulation_element.appendChild(lightSourceSettingsCombinations_value.asXMLElement(document));
 			}
 		}
-		if (image_BackReferenceList != null)
+		if (imageLinks != null)
 		{
 			// *** IGNORING *** Skipped back reference Image_BackReference
+		}
+		if (experiment != null)
+		{
+			// *** IGNORING *** Skipped back reference Experiment_BackReference
 		}
 		return super.asXMLElement(document, MicrobeamManipulation_element);
 	}

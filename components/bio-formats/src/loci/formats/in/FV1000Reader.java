@@ -1,25 +1,27 @@
-//
-// FV1000Reader.java
-//
-
 /*
-OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ * #%L
+ * OME Bio-Formats package for reading and converting biological file formats.
+ * %%
+ * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 2 of the 
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public 
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-2.0.html>.
+ * #L%
+ */
 
 package loci.formats.in;
 
@@ -56,6 +58,7 @@ import loci.formats.tiff.TiffParser;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 /**
  * FV1000Reader is the file format reader for Fluoview FV 1000 OIB and
@@ -886,7 +889,8 @@ public class FV1000Reader extends FormatReader {
     for (int i=0; i<getSeriesCount(); i++) {
       // populate Image data
       store.setImageName("Series " + (i + 1), i);
-      if (creationDate != null) store.setImageAcquiredDate(creationDate, i);
+      if (creationDate != null) store.setImageAcquisitionDate(
+          new Timestamp(creationDate), i);
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
@@ -1087,7 +1091,7 @@ public class FV1000Reader extends FormatReader {
     // link Objective to Image using ObjectiveSettings
     String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
     store.setObjectiveID(objectiveID, 0, 0);
-    store.setImageObjectiveSettingsID(objectiveID, 0);
+    store.setObjectiveSettingsID(objectiveID, 0);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.NO_OVERLAYS) {
       int nextROI = -1;
@@ -1231,8 +1235,8 @@ public class FV1000Reader extends FormatReader {
                 double centerX = realX + (width / 2);
                 double centerY = realY + (height / 2);
 
-                store.setRectangleTransform(String.format(ROTATION,
-                  angle, centerX, centerY), nextROI, shape);
+                store.setRectangleTransform(
+                  getRotationTransform(angle), nextROI, shape);
 
                 if (row < divide - 1 || col < divide - 1) shape++;
               }
@@ -1260,8 +1264,7 @@ public class FV1000Reader extends FormatReader {
             int centerX = x + (width / 2);
             int centerY = y + (height / 2);
 
-            store.setLineTransform(String.format(ROTATION,
-              angle, (float) centerX, (float) centerY), nextROI, shape);
+            store.setLineTransform(getRotationTransform(angle), nextROI, shape);
           }
           else if (shapeType == CIRCLE || shapeType == ELLIPSE) {
             double rx = width / 2;
@@ -1285,8 +1288,8 @@ public class FV1000Reader extends FormatReader {
                 fontSize);
             }
             store.setEllipseStrokeWidth(new Double(lineWidth), nextROI, shape);
-            store.setEllipseTransform(String.format(ROTATION,
-              angle, x + rx, y + ry), nextROI, shape);
+            store.setEllipseTransform(
+              getRotationTransform(angle), nextROI, shape);
           }
           else if (shapeType == POLYGON || shapeType == FREE_SHAPE ||
             shapeType == POLYLINE || shapeType == FREE_LINE)
@@ -1298,24 +1301,45 @@ public class FV1000Reader extends FormatReader {
               points.append(yc[point]);
               if (point < xc.length - 1) points.append(" ");
             }
-            store.setPolylineID(shapeID, nextROI, shape);
-            store.setPolylinePoints(points.toString(), nextROI, shape);
-            store.setPolylineTransform("rotate(" + angle + ")", nextROI, shape);
-            store.setPolylineClosed(
-              shapeType == POLYGON || shapeType == FREE_SHAPE, nextROI, shape);
-            store.setPolylineTheZ(
-                new NonNegativeInteger(zIndex), nextROI, shape);
-            store.setPolylineTheT(
-                new NonNegativeInteger(tIndex), nextROI, shape);
-            if (fontSize > 0) {
-              store.setPolylineFontSize(
-                new NonNegativeInteger(fontSize), nextROI, shape);
+            if (shapeType == POLYLINE || shapeType == FREE_LINE) {
+              store.setPolylineID(shapeID, nextROI, shape);
+              store.setPolylinePoints(points.toString(), nextROI, shape);
+              store.setPolylineTransform(
+                getRotationTransform(angle), nextROI, shape);
+              store.setPolylineTheZ(
+                  new NonNegativeInteger(zIndex), nextROI, shape);
+              store.setPolylineTheT(
+                  new NonNegativeInteger(tIndex), nextROI, shape);
+              if (fontSize > 0) {
+                store.setPolylineFontSize(
+                  new NonNegativeInteger(fontSize), nextROI, shape);
+              }
+              else {
+                LOGGER.warn("Expected non-negative value for FontSize; got {}",
+                  fontSize);
+              }
+              store.setPolylineStrokeWidth(
+                new Double(lineWidth), nextROI, shape);
             }
             else {
-              LOGGER.warn("Expected non-negative value for FontSize; got {}",
-                fontSize);
+              store.setPolygonID(shapeID, nextROI, shape);
+              store.setPolygonPoints(points.toString(), nextROI, shape);
+              store.setPolygonTransform(
+                getRotationTransform(angle), nextROI, shape);
+              store.setPolygonTheZ(
+                  new NonNegativeInteger(zIndex), nextROI, shape);
+              store.setPolygonTheT(
+                  new NonNegativeInteger(tIndex), nextROI, shape);
+              if (fontSize > 0) {
+                store.setPolygonFontSize(
+                  new NonNegativeInteger(fontSize), nextROI, shape);
+              }
+              else {
+                LOGGER.warn("Expected non-negative value for FontSize; got {}",
+                  fontSize);
+              }
+              store.setPolygonStrokeWidth(new Double(lineWidth), nextROI, shape);
             }
-            store.setPolylineStrokeWidth(new Double(lineWidth), nextROI, shape);
           }
           else {
             if (shape == 0) nextROI--;

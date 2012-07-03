@@ -1,30 +1,33 @@
-//
-// CellWorxReader.java
-//
-
 /*
-OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ * #%L
+ * OME Bio-Formats package for reading and converting biological file formats.
+ * %%
+ * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 2 of the 
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public 
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-2.0.html>.
+ * #L%
+ */
 
 package loci.formats.in;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Vector;
 
 import loci.common.DataTools;
@@ -37,11 +40,18 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.MetadataTools;
+import loci.formats.meta.IMetadata;
+import loci.formats.meta.MetadataConverter;
 import loci.formats.meta.MetadataStore;
+import loci.formats.ome.OMEXMLMetadata;
 
+import ome.xml.model.Image;
+import ome.xml.model.Instrument;
+import ome.xml.model.OME;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 /**
  * CellWorxReader is the file format reader for CellWorx .pnl files.
@@ -359,9 +369,25 @@ public class CellWorxReader extends FormatReader {
       core[i].interleaved = pnl.isInterleaved();
     }
 
+    OMEXMLMetadata readerMetadata = (OMEXMLMetadata) pnl.getMetadataStore();
+    OME root = (OME) readerMetadata.getRoot();
+    Instrument instrument = root.getInstrument(0);
+    List<Image> images = root.copyImageList();
+
+    OME convertRoot = new OME();
+    convertRoot.addInstrument(instrument);
+    for (int i=0; i<core.length/images.size(); i++) {
+      for (Image img : images) {
+        convertRoot.addImage(img);
+      }
+    }
+    IMetadata convertMetadata = MetadataTools.createOMEXMLMetadata();
+    convertMetadata.setRoot(convertRoot);
+
     pnl.close();
 
     MetadataStore store = makeFilterMetadata();
+    MetadataConverter.convertMetadata(convertMetadata, store);
     MetadataTools.populatePixels(store, this);
 
     String plateID = MetadataTools.createLSID("Plate", 0);
@@ -481,6 +507,9 @@ public class CellWorxReader extends FormatReader {
     else if (field < wellFiles[row][col].length) {
       return wellFiles[row][col][field];
     }
+    else if (imageCount == 0 && wellFiles[row][col].length == 1) {
+      return wellFiles[row][col][0];
+    }
     return null;
   }
 
@@ -515,7 +544,10 @@ public class CellWorxReader extends FormatReader {
       if (key.equals("Date")) {
         String date = DateTools.formatDate(value, DATE_FORMAT);
         for (int field=0; field<fieldCount; field++) {
-          store.setImageAcquiredDate(date, seriesIndex + field);
+          if (date != null) {
+            store.setImageAcquisitionDate(
+              new Timestamp(date), seriesIndex + field);
+          }
         }
       }
       else if (key.equals("Scan Origin")) {
@@ -635,8 +667,10 @@ public class CellWorxReader extends FormatReader {
   {
     IFormatReader pnl = new DeltavisionReader();
     if (checkSuffix(file, "tif")) {
-      pnl = new MinimalTiffReader();
+      pnl = new MetamorphReader();
     }
+    IMetadata metadata = MetadataTools.createOMEXMLMetadata();
+    pnl.setMetadataStore(metadata);
     pnl.setId(file);
     return pnl;
   }

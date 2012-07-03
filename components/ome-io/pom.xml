@@ -29,12 +29,17 @@
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>scifio</artifactId>
+      <artifactId>loci-common</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>loci-common</artifactId>
+      <artifactId>ome-xml</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>scifio</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -56,13 +61,6 @@
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
       <version>1.5.10</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <version>1.5.10</version>
-      <scope>runtime</scope>
     </dependency>
 
     <dependency>
@@ -92,6 +90,14 @@
           <suiteXmlFiles>
             <suiteXmlFile>test/loci/ome/utests/testng.xml</suiteXmlFile>
           </suiteXmlFiles>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <configuration>
+          <licenseName>gpl_v2</licenseName>
+          <projectName>OME database I/O package for communicating with OME and OMERO servers.</projectName>
         </configuration>
       </plugin>
     </plugins>
@@ -131,6 +137,19 @@
       </properties>
     </developer>
   </developers>
+
+  <contributors>
+    <contributor>
+      <name>Phillip Huettl</name>
+      <url>http://loci.wisc.edu/people/phillip-huettl</url>
+      <organization>UW-Madison LOCI</organization>
+      <organizationUrl>http://loci.wisc.edu/</organizationUrl>
+      <roles>
+        <role>developer</role>
+      </roles>
+      <timezone>-6</timezone>
+    </contributor>
+  </contributors>
 
   <!-- NB: for project parent, in case of partial checkout -->
   <repositories>

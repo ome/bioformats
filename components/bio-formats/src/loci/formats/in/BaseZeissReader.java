@@ -46,6 +46,7 @@ import loci.formats.meta.MetadataStore;
 
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 /**
  * BaseZeissReader contains common functionality required by
@@ -290,7 +291,9 @@ public abstract class BaseZeissReader extends FormatReader {
         firstStamp = parseTimestamp(timestamp);
         String date =
             DateTools.convertDate((long) (firstStamp / 1600), DateTools.ZVI);
-        store.setImageAcquiredDate(date, i);
+        if (date != null) {
+          store.setImageAcquisitionDate(new Timestamp(date), i);
+        }
       }
     }
 
@@ -331,7 +334,7 @@ public abstract class BaseZeissReader extends FormatReader {
 
       for (int i=0; i<getSeriesCount(); i++) {
         store.setImageInstrumentRef(instrumentID, i);
-        store.setImageObjectiveSettingsID(objectiveID, i);
+        store.setObjectiveSettingsID(objectiveID, i);
 
         if (imageDescription != null) {
           store.setImageDescription(imageDescription, i);
@@ -450,7 +453,7 @@ public abstract class BaseZeissReader extends FormatReader {
               store.setPointX(shape.points[(i*2)], roiIndex, shapeIndex);
               store.setPointY(shape.points[(i*2)+1], roiIndex, shapeIndex);
               if (shape.text != null && i == 0 && (shape.type == FeatureType.MEAS_POINT || shape.type == FeatureType.MEAS_POINTS))
-                store.setPointLabel(shape.text, roiIndex, shapeIndex);
+                store.setPointText(shape.text, roiIndex, shapeIndex);
               shapeIndex++;
             }
             break;
@@ -464,7 +467,7 @@ public abstract class BaseZeissReader extends FormatReader {
             store.setLineX2(shape.points[2], roiIndex, shapeIndex);
             store.setLineY2(shape.points[3], roiIndex, shapeIndex);
             if (shape.text != null && shape.type == FeatureType.MEAS_LINE)
-              store.setLineLabel(shape.text, roiIndex, shapeIndex);
+              store.setLineText(shape.text, roiIndex, shapeIndex);
             shapeIndex++;
             break;
           case CALIPER:
@@ -496,7 +499,7 @@ public abstract class BaseZeissReader extends FormatReader {
               if (shape.text != null && i == caliperPoints - 2 && // Store label on baseline
                   shape.type == FeatureType.MEAS_CALIPER || shape.type == FeatureType.MEAS_MULTIPLE_CALIPER ||
                   shape.type == FeatureType.MEAS_DISTANCE || shape.type == FeatureType.MEAS_MULTIPLE_DISTANCE)
-                store.setLineLabel(shape.text, roiIndex, shapeIndex);
+                store.setLineText(shape.text, roiIndex, shapeIndex);
               shapeIndex++;
             }
             break;
@@ -514,7 +517,7 @@ public abstract class BaseZeissReader extends FormatReader {
               store.setLineY2(shape.points[(i*2)+3], roiIndex, shapeIndex);
               if (shape.text != null && i == 0 &&
                   (shape.type == FeatureType.MEAS_ANGLE3 || shape.type == FeatureType.MEAS_ANGLE3))
-                store.setLineLabel(shape.text, roiIndex, shapeIndex);
+                store.setLineText(shape.text, roiIndex, shapeIndex);
               shapeIndex++;
             }
             break;
@@ -531,7 +534,7 @@ public abstract class BaseZeissReader extends FormatReader {
             store.setEllipseRadiusX(radius, roiIndex, shapeIndex);
             store.setEllipseRadiusY(radius, roiIndex, shapeIndex);
             if (shape.text != null && shape.type == FeatureType.MEAS_ELLIPSE)
-              store.setEllipseLabel(shape.text, roiIndex, shapeIndex);
+              store.setEllipseText(shape.text, roiIndex, shapeIndex);
             shapeIndex++;
             shapeID = MetadataTools.createLSID("Shape", roiIndex, shapeIndex);
             store.setLineID(shapeID, roiIndex, shapeIndex);
@@ -549,14 +552,14 @@ public abstract class BaseZeissReader extends FormatReader {
             store.setLineY1(shape.points[1], roiIndex, shapeIndex);
             store.setLineX2(shape.points[2], roiIndex, shapeIndex);
             store.setLineY2(shape.points[3], roiIndex, shapeIndex);
-            store.setLineLabel(shape.text, roiIndex, shapeIndex);
+            store.setLineText(shape.text, roiIndex, shapeIndex);
             shapeIndex++;
             shapeID = MetadataTools.createLSID("Shape", roiIndex, shapeIndex);
-            store.setTextID(shapeID, roiIndex, shapeIndex);
-            store.setTextX(shape.points[0], roiIndex, shapeIndex);
-            store.setTextY(shape.points[1], roiIndex, shapeIndex);
+            store.setLabelID(shapeID, roiIndex, shapeIndex);
+            store.setLabelX(shape.points[0], roiIndex, shapeIndex);
+            store.setLabelY(shape.points[1], roiIndex, shapeIndex);
             if (shape.text != null)
-              store.setTextValue(shape.text, roiIndex, shapeIndex);
+              store.setLabelText(shape.text, roiIndex, shapeIndex);
             shapeIndex++;
             // Adding a rectangle is a hack to make the length get displayed in ImageJ.  This should be removed.
             shapeID = MetadataTools.createLSID("Shape", roiIndex, shapeIndex);
@@ -566,7 +569,7 @@ public abstract class BaseZeissReader extends FormatReader {
             store.setRectangleWidth(shape.points[2] - shape.points[0], roiIndex, shapeIndex);
             store.setRectangleHeight(shape.points[3] - shape.points[1], roiIndex, shapeIndex);
             if (shape.text != null)
-              store.setRectangleLabel(shape.text, roiIndex, shapeIndex);
+              store.setRectangleText(shape.text, roiIndex, shapeIndex);
             shapeIndex++;
             break;
           case POLYLINE_OPEN:
@@ -592,11 +595,21 @@ public abstract class BaseZeissReader extends FormatReader {
 
             boolean closed = (shape.type == FeatureType.POLYLINE_CLOSED || shape.type == FeatureType.SPLINE_CLOSED ||
                 shape.type == FeatureType.MEAS_POLYLINE_CLOSED || shape.type == FeatureType.MEAS_SPLINE_CLOSED);
-            store.setPolylineClosed(closed, roiIndex, shapeIndex);
-            if (shape.text != null &&
-                shape.type == FeatureType.MEAS_POLYLINE_OPEN || shape.type == FeatureType.MEAS_POLYLINE_CLOSED ||
-                shape.type == FeatureType.MEAS_SPLINE_OPEN || shape.type == FeatureType.MEAS_SPLINE_CLOSED)
-              store.setPolylineLabel(shape.text, roiIndex, shapeIndex);
+            if (closed) {
+              store.setPolygonID(shapeID, roiIndex, shapeIndex);
+              store.setPolygonPoints(points.toString(), roiIndex, shapeIndex);
+              if (shape.text != null &&
+                  shape.type == FeatureType.MEAS_POLYLINE_OPEN || shape.type == FeatureType.MEAS_POLYLINE_CLOSED ||
+                  shape.type == FeatureType.MEAS_SPLINE_OPEN || shape.type == FeatureType.MEAS_SPLINE_CLOSED)
+                  store.setPolygonText(shape.text, roiIndex, shapeIndex);
+            } else {
+              store.setPolylineID(shapeID, roiIndex, shapeIndex);
+              store.setPolylinePoints(points.toString(), roiIndex, shapeIndex);
+              if (shape.text != null &&
+                  shape.type == FeatureType.MEAS_POLYLINE_OPEN || shape.type == FeatureType.MEAS_POLYLINE_CLOSED ||
+                  shape.type == FeatureType.MEAS_SPLINE_OPEN || shape.type == FeatureType.MEAS_SPLINE_CLOSED)
+                  store.setPolylineText(shape.text, roiIndex, shapeIndex);
+            }
             shapeIndex++;
             break;
           case ALIGNED_RECTANGLE:
@@ -605,11 +618,11 @@ public abstract class BaseZeissReader extends FormatReader {
             // TODO: Determine top-left corner for text display?
             // We create a separate text and rectangle objects; this might need changing in the future.
             shapeID = MetadataTools.createLSID("Shape", roiIndex, shapeIndex);
-            store.setTextID(shapeID, roiIndex, shapeIndex);
-            store.setTextX(shape.points[0], roiIndex, shapeIndex);
-            store.setTextY(shape.points[1], roiIndex, shapeIndex);
+            store.setLabelID(shapeID, roiIndex, shapeIndex);
+            store.setLabelX(shape.points[0], roiIndex, shapeIndex);
+            store.setLabelY(shape.points[1], roiIndex, shapeIndex);
             if (shape.text != null)
-              store.setTextValue(shape.text, roiIndex, shapeIndex);
+              store.setLabelText(shape.text, roiIndex, shapeIndex);
             shapeIndex++;
             shapeID = MetadataTools.createLSID("Shape", roiIndex, shapeIndex);
             store.setRectangleID(shapeID, roiIndex, shapeIndex);
@@ -618,7 +631,7 @@ public abstract class BaseZeissReader extends FormatReader {
             store.setRectangleWidth(shape.points[4] - shape.points[0], roiIndex, shapeIndex);
             store.setRectangleHeight(shape.points[5] - shape.points[1], roiIndex, shapeIndex);
             if (shape.text != null)
-              store.setRectangleLabel(shape.text, roiIndex, shapeIndex);
+              store.setRectangleText(shape.text, roiIndex, shapeIndex);
             shapeIndex++;
             break;
           case RECTANGLE:
@@ -631,13 +644,12 @@ public abstract class BaseZeissReader extends FormatReader {
               if (p < 3) points.append(" ");
             }
             shapeID = MetadataTools.createLSID("Shape", roiIndex, shapeIndex);
-            store.setPolylineID(shapeID, roiIndex, shapeIndex);
-            store.setPolylinePoints(points.toString(), roiIndex, shapeIndex);
-            store.setPolylineClosed(true, roiIndex, shapeIndex);
+            store.setPolygonID(shapeID, roiIndex, shapeIndex);
+            store.setPolygonPoints(points.toString(), roiIndex, shapeIndex);
             if (shape.text != null &&
                 shape.type == FeatureType.MEAS_POLYLINE_OPEN || shape.type == FeatureType.MEAS_POLYLINE_CLOSED ||
                 shape.type == FeatureType.MEAS_SPLINE_OPEN || shape.type == FeatureType.MEAS_SPLINE_CLOSED)
-              store.setPolylineLabel(shape.text, roiIndex, shapeIndex);
+              store.setPolygonText(shape.text, roiIndex, shapeIndex);
             shapeIndex++;
             break;
           case ELLIPSE:
@@ -649,7 +661,7 @@ public abstract class BaseZeissReader extends FormatReader {
             store.setEllipseRadiusX((shape.points[4] - shape.points[0])/2.0, roiIndex, shapeIndex);
             store.setEllipseRadiusY((shape.points[5] - shape.points[1])/2.0, roiIndex, shapeIndex);
             if (shape.text != null) // Done for both types since annotations are permitted labels
-              store.setEllipseLabel(shape.text, roiIndex, shapeIndex);
+              store.setEllipseText(shape.text, roiIndex, shapeIndex);
             shapeIndex++;
             break;
           case LENGTH:
@@ -663,7 +675,7 @@ public abstract class BaseZeissReader extends FormatReader {
               store.setLineX2(shape.points[(i*2)+2], roiIndex, shapeIndex);
               store.setLineY2(shape.points[(i*2)+3], roiIndex, shapeIndex);
               if (shape.text != null && i == 0 && shape.type == FeatureType.MEAS_LENGTH)
-                store.setLineLabel(shape.text, roiIndex, shapeIndex);
+                store.setLineText(shape.text, roiIndex, shapeIndex);
               shapeIndex++;
             }
             break;
@@ -825,8 +837,16 @@ public abstract class BaseZeissReader extends FormatReader {
             {
               channelColors = new int[effectiveSizeC];
             }
-            channelColors[cIndex] = Integer.parseInt(value);
+            if (channelColors[cIndex] == 0) {
+              channelColors[cIndex] = Integer.parseInt(value);
+            }
           }
+          else if (cIndex == effectiveSizeC && channelColors != null &&
+            channelColors[0] == 0)
+          {
+            System.arraycopy(
+              channelColors, 1, channelColors, 0, channelColors.length - 1);
+            channelColors[cIndex - 1] = Integer.parseInt(value);          }
         }
         else if (key.startsWith("Scale Factor for X") && physicalSizeX == null)
         {

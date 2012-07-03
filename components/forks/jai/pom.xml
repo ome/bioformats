@@ -17,11 +17,12 @@
   <name>JAI Image I/O Tools</name>
   <description>Java API to handle JPEG and JPEG2000 files. Used by Bio-Formats to read images compressed with JPEG2000 and lossless JPEG. Modified from the 2008-10-14 source to include support for the YCbCr color space. Several files in the com.sun.media.jai packages were removed, as they are not needed by Bio-Formats, and created an additional dependency. This component will be removed once our changes have been added to the official JAI CVS repository.</description>
   <url>http://jai-imageio.dev.java.net/</url>
+  <inceptionYear>2008</inceptionYear>
 
   <licenses>
     <license>
-      <name>BSD</name>
-      <url>http://dev.loci.wisc.edu/svn/java/trunk/forks/jai/LICENSE.txt</url>
+      <name>Simplified BSD License</name>
+      <url>${license.server}/jai_imageio/license.txt</url>
       <distribution>repo</distribution>
     </license>
   </licenses>
@@ -33,6 +34,19 @@
       <version>1.1</version>
     </dependency>
   </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <configuration>
+          <licenseName>jai_imageio</licenseName>
+          <projectName>Fork of JAI Image I/O Tools.</projectName>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 
   <developers>
     <developer>

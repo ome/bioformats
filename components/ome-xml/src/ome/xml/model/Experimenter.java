@@ -1,37 +1,45 @@
 /*
- * ome.xml.model.Experimenter
- *
- *-----------------------------------------------------------------------------
- *
- *  Copyright (C) @year@ Open Microscopy Environment
- *      Massachusetts Institute of Technology,
- *      National Institutes of Health,
- *      University of Dundee,
- *      University of Wisconsin-Madison
- *
- *
- *
- *    This library is free software; you can redistribute it and/or
- *    modify it under the terms of the GNU Lesser General Public
- *    License as published by the Free Software Foundation; either
- *    version 2.1 of the License, or (at your option) any later version.
- *
- *    This library is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- *    Lesser General Public License for more details.
- *
- *    You should have received a copy of the GNU Lesser General Public
- *    License along with this library; if not, write to the Free Software
- *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
- *-----------------------------------------------------------------------------
+ * #%L
+ * OME-XML Java library for working with OME-XML metadata structures.
+ * %%
+ * Copyright (C) 2006 - 2012 Open Microscopy Environment:
+ *   - Massachusetts Institute of Technology
+ *   - National Institutes of Health
+ *   - University of Dundee
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ * %%
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ * 
+ * The views and conclusions contained in the software and documentation are
+ * those of the authors and should not be interpreted as representing official
+ * policies, either expressed or implied, of any organization.
+ * #L%
  */
 
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-01-12 20:06:01-0500
+ * Created by callan via xsd-fu on 2012-05-18 10:08:16+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -58,7 +66,7 @@ public class Experimenter extends AbstractOMEModelObject
 
 	// -- Constants --
 
-	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2011-06";
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2012-06";
 
 	/** Logger for this class. */
 	private static final Logger LOGGER =
@@ -68,10 +76,10 @@ public class Experimenter extends AbstractOMEModelObject
 
 
 	// Property
-	private String userName;
+	private String email;
 
 	// Property
-	private String displayName;
+	private String userName;
 
 	// Property
 	private String firstName;
@@ -83,34 +91,31 @@ public class Experimenter extends AbstractOMEModelObject
 	private String lastName;
 
 	// Property
-	private String email;
+	private String id;
 
 	// Property
 	private String institution;
 
-	// Property
-	private String id;
-
-	// Reference GroupRef
-	private List<Group> groupList = new ArrayList<Group>();
-
 	// Reference AnnotationRef
-	private List<Annotation> annotationList = new ArrayList<Annotation>();
+	private List<Annotation> annotationLinks = new ArrayList<Annotation>();
 
 	// Back reference Image_BackReference
-	private List<Image> image_BackReferenceList = new ArrayList<Image>();
+	private List<Image> images = new ArrayList<Image>();
 
 	// Back reference MicrobeamManipulation_BackReference
-	private List<MicrobeamManipulation> microbeamManipulation_BackReferenceList = new ArrayList<MicrobeamManipulation>();
+	private List<MicrobeamManipulation> microbeamManipulations = new ArrayList<MicrobeamManipulation>();
 
 	// Back reference Project_BackReference
-	private List<Project> project_BackReferenceList = new ArrayList<Project>();
+	private List<Project> projects = new ArrayList<Project>();
+
+	// Back reference ExperimenterGroup_BackReference
+	private List<ExperimenterGroup> experimenterGroupLinks = new ArrayList<ExperimenterGroup>();
 
 	// Back reference Dataset_BackReference
-	private List<Dataset> dataset_BackReferenceList = new ArrayList<Dataset>();
+	private List<Dataset> datasets = new ArrayList<Dataset>();
 
 	// Back reference Experiment_BackReference
-	private List<Experiment> experiment_BackReferenceList = new ArrayList<Experiment>();
+	private List<Experiment> experiments = new ArrayList<Experiment>();
 
 	// -- Constructors --
 
@@ -159,17 +164,17 @@ public class Experimenter extends AbstractOMEModelObject
 		{
 			LOGGER.debug("Expecting node name of Experimenter got {}", tagName);
 		}
+		if (element.hasAttribute("Email"))
+		{
+			// Attribute property Email
+			setEmail(String.valueOf(
+					element.getAttribute("Email")));
+		}
 		if (element.hasAttribute("UserName"))
 		{
 			// Attribute property UserName
 			setUserName(String.valueOf(
 					element.getAttribute("UserName")));
-		}
-		if (element.hasAttribute("DisplayName"))
-		{
-			// Attribute property DisplayName
-			setDisplayName(String.valueOf(
-					element.getAttribute("DisplayName")));
 		}
 		if (element.hasAttribute("FirstName"))
 		{
@@ -189,18 +194,6 @@ public class Experimenter extends AbstractOMEModelObject
 			setLastName(String.valueOf(
 					element.getAttribute("LastName")));
 		}
-		if (element.hasAttribute("Email"))
-		{
-			// Attribute property Email
-			setEmail(String.valueOf(
-					element.getAttribute("Email")));
-		}
-		if (element.hasAttribute("Institution"))
-		{
-			// Attribute property Institution
-			setInstitution(String.valueOf(
-					element.getAttribute("Institution")));
-		}
 		if (!element.hasAttribute("ID") && getID() == null)
 		{
 			// TODO: Should be its own exception
@@ -215,27 +208,25 @@ public class Experimenter extends AbstractOMEModelObject
 			// Adding this model object to the model handler
 			model.addModelObject(getID(), this);
 		}
-		// Element reference GroupRef
-		List<Element> GroupRef_nodeList =
-				getChildrenByTagName(element, "GroupRef");
-		for (Element GroupRef_element : GroupRef_nodeList)
+		if (element.hasAttribute("Institution"))
 		{
-			GroupRef groupList_reference = new GroupRef();
-			groupList_reference.setID(GroupRef_element.getAttribute("ID"));
-			model.addReference(this, groupList_reference);
+			// Attribute property Institution
+			setInstitution(String.valueOf(
+					element.getAttribute("Institution")));
 		}
 		// Element reference AnnotationRef
 		List<Element> AnnotationRef_nodeList =
 				getChildrenByTagName(element, "AnnotationRef");
 		for (Element AnnotationRef_element : AnnotationRef_nodeList)
 		{
-			AnnotationRef annotationList_reference = new AnnotationRef();
-			annotationList_reference.setID(AnnotationRef_element.getAttribute("ID"));
-			model.addReference(this, annotationList_reference);
+			AnnotationRef annotationLinks_reference = new AnnotationRef();
+			annotationLinks_reference.setID(AnnotationRef_element.getAttribute("ID"));
+			model.addReference(this, annotationLinks_reference);
 		}
 		// *** IGNORING *** Skipped back reference Image_BackReference
 		// *** IGNORING *** Skipped back reference MicrobeamManipulation_BackReference
 		// *** IGNORING *** Skipped back reference Project_BackReference
+		// *** IGNORING *** Skipped back reference ExperimenterGroup_BackReference
 		// *** IGNORING *** Skipped back reference Dataset_BackReference
 		// *** IGNORING *** Skipped back reference Experiment_BackReference
 	}
@@ -249,21 +240,12 @@ public class Experimenter extends AbstractOMEModelObject
 		{
 			return true;
 		}
-		if (reference instanceof GroupRef)
-		{
-			Group o_casted = (Group) o;
-			o_casted.linkExperimenter(this);
-			if (!groupList.contains(o_casted)) {
-				groupList.add(o_casted);
-			}
-			return true;
-		}
 		if (reference instanceof AnnotationRef)
 		{
 			Annotation o_casted = (Annotation) o;
 			o_casted.linkExperimenter(this);
-			if (!annotationList.contains(o_casted)) {
-				annotationList.add(o_casted);
+			if (!annotationLinks.contains(o_casted)) {
+				annotationLinks.add(o_casted);
 			}
 			return true;
 		}
@@ -271,6 +253,17 @@ public class Experimenter extends AbstractOMEModelObject
 		return false;
 	}
 
+
+	// Property
+	public String getEmail()
+	{
+		return email;
+	}
+
+	public void setEmail(String email)
+	{
+		this.email = email;
+	}
 
 	// Property
 	public String getUserName()
@@ -281,17 +274,6 @@ public class Experimenter extends AbstractOMEModelObject
 	public void setUserName(String userName)
 	{
 		this.userName = userName;
-	}
-
-	// Property
-	public String getDisplayName()
-	{
-		return displayName;
-	}
-
-	public void setDisplayName(String displayName)
-	{
-		this.displayName = displayName;
 	}
 
 	// Property
@@ -328,14 +310,14 @@ public class Experimenter extends AbstractOMEModelObject
 	}
 
 	// Property
-	public String getEmail()
+	public String getID()
 	{
-		return email;
+		return id;
 	}
 
-	public void setEmail(String email)
+	public void setID(String id)
 	{
-		this.email = email;
+		this.id = id;
 	}
 
 	// Property
@@ -349,257 +331,246 @@ public class Experimenter extends AbstractOMEModelObject
 		this.institution = institution;
 	}
 
-	// Property
-	public String getID()
-	{
-		return id;
-	}
-
-	public void setID(String id)
-	{
-		this.id = id;
-	}
-
-	// Reference which occurs more than once
-	public int sizeOfLinkedGroupList()
-	{
-		return groupList.size();
-	}
-
-	public List<Group> copyLinkedGroupList()
-	{
-		return new ArrayList<Group>(groupList);
-	}
-
-	public Group getLinkedGroup(int index)
-	{
-		return groupList.get(index);
-	}
-
-	public Group setLinkedGroup(int index, Group o)
-	{
-		return groupList.set(index, o);
-	}
-
-	public boolean linkGroup(Group o)
-	{
-		o.linkExperimenter(this);
-		if (!groupList.contains(o)) {
-			return groupList.add(o);
-		}
-		return false;
-	}
-
-	public boolean unlinkGroup(Group o)
-	{
-		o.unlinkExperimenter(this);
-		return groupList.remove(o);
-	}
-
 	// Reference which occurs more than once
 	public int sizeOfLinkedAnnotationList()
 	{
-		return annotationList.size();
+		return annotationLinks.size();
 	}
 
 	public List<Annotation> copyLinkedAnnotationList()
 	{
-		return new ArrayList<Annotation>(annotationList);
+		return new ArrayList<Annotation>(annotationLinks);
 	}
 
 	public Annotation getLinkedAnnotation(int index)
 	{
-		return annotationList.get(index);
+		return annotationLinks.get(index);
 	}
 
 	public Annotation setLinkedAnnotation(int index, Annotation o)
 	{
-		return annotationList.set(index, o);
+		return annotationLinks.set(index, o);
 	}
 
 	public boolean linkAnnotation(Annotation o)
 	{
-		o.linkExperimenter(this);
-		if (!annotationList.contains(o)) {
-			return annotationList.add(o);
+
+			o.linkExperimenter(this);
+		if (!annotationLinks.contains(o)) {
+			return annotationLinks.add(o);
 		}
 		return false;
 	}
 
 	public boolean unlinkAnnotation(Annotation o)
 	{
-		o.unlinkExperimenter(this);
-		return annotationList.remove(o);
+
+			o.unlinkExperimenter(this);
+		return annotationLinks.remove(o);
 	}
 
 	// Reference which occurs more than once
 	public int sizeOfLinkedImageList()
 	{
-		return image_BackReferenceList.size();
+		return images.size();
 	}
 
 	public List<Image> copyLinkedImageList()
 	{
-		return new ArrayList<Image>(image_BackReferenceList);
+		return new ArrayList<Image>(images);
 	}
 
 	public Image getLinkedImage(int index)
 	{
-		return image_BackReferenceList.get(index);
+		return images.get(index);
 	}
 
 	public Image setLinkedImage(int index, Image o)
 	{
-		return image_BackReferenceList.set(index, o);
+		return images.set(index, o);
 	}
 
 	public boolean linkImage(Image o)
 	{
-		if (!image_BackReferenceList.contains(o)) {
-			return image_BackReferenceList.add(o);
+		if (!images.contains(o)) {
+			return images.add(o);
 		}
 		return false;
 	}
 
 	public boolean unlinkImage(Image o)
 	{
-		return image_BackReferenceList.remove(o);
+		return images.remove(o);
 	}
 
 	// Reference which occurs more than once
 	public int sizeOfLinkedMicrobeamManipulationList()
 	{
-		return microbeamManipulation_BackReferenceList.size();
+		return microbeamManipulations.size();
 	}
 
 	public List<MicrobeamManipulation> copyLinkedMicrobeamManipulationList()
 	{
-		return new ArrayList<MicrobeamManipulation>(microbeamManipulation_BackReferenceList);
+		return new ArrayList<MicrobeamManipulation>(microbeamManipulations);
 	}
 
 	public MicrobeamManipulation getLinkedMicrobeamManipulation(int index)
 	{
-		return microbeamManipulation_BackReferenceList.get(index);
+		return microbeamManipulations.get(index);
 	}
 
 	public MicrobeamManipulation setLinkedMicrobeamManipulation(int index, MicrobeamManipulation o)
 	{
-		return microbeamManipulation_BackReferenceList.set(index, o);
+		return microbeamManipulations.set(index, o);
 	}
 
 	public boolean linkMicrobeamManipulation(MicrobeamManipulation o)
 	{
-		if (!microbeamManipulation_BackReferenceList.contains(o)) {
-			return microbeamManipulation_BackReferenceList.add(o);
+		if (!microbeamManipulations.contains(o)) {
+			return microbeamManipulations.add(o);
 		}
 		return false;
 	}
 
 	public boolean unlinkMicrobeamManipulation(MicrobeamManipulation o)
 	{
-		return microbeamManipulation_BackReferenceList.remove(o);
+		return microbeamManipulations.remove(o);
 	}
 
 	// Reference which occurs more than once
 	public int sizeOfLinkedProjectList()
 	{
-		return project_BackReferenceList.size();
+		return projects.size();
 	}
 
 	public List<Project> copyLinkedProjectList()
 	{
-		return new ArrayList<Project>(project_BackReferenceList);
+		return new ArrayList<Project>(projects);
 	}
 
 	public Project getLinkedProject(int index)
 	{
-		return project_BackReferenceList.get(index);
+		return projects.get(index);
 	}
 
 	public Project setLinkedProject(int index, Project o)
 	{
-		return project_BackReferenceList.set(index, o);
+		return projects.set(index, o);
 	}
 
 	public boolean linkProject(Project o)
 	{
-		if (!project_BackReferenceList.contains(o)) {
-			return project_BackReferenceList.add(o);
+		if (!projects.contains(o)) {
+			return projects.add(o);
 		}
 		return false;
 	}
 
 	public boolean unlinkProject(Project o)
 	{
-		return project_BackReferenceList.remove(o);
+		return projects.remove(o);
+	}
+
+	// Reference which occurs more than once
+	public int sizeOfLinkedExperimenterGroupList()
+	{
+		return experimenterGroupLinks.size();
+	}
+
+	public List<ExperimenterGroup> copyLinkedExperimenterGroupList()
+	{
+		return new ArrayList<ExperimenterGroup>(experimenterGroupLinks);
+	}
+
+	public ExperimenterGroup getLinkedExperimenterGroup(int index)
+	{
+		return experimenterGroupLinks.get(index);
+	}
+
+	public ExperimenterGroup setLinkedExperimenterGroup(int index, ExperimenterGroup o)
+	{
+		return experimenterGroupLinks.set(index, o);
+	}
+
+	public boolean linkExperimenterGroup(ExperimenterGroup o)
+	{
+		if (!experimenterGroupLinks.contains(o)) {
+			return experimenterGroupLinks.add(o);
+		}
+		return false;
+	}
+
+	public boolean unlinkExperimenterGroup(ExperimenterGroup o)
+	{
+		return experimenterGroupLinks.remove(o);
 	}
 
 	// Reference which occurs more than once
 	public int sizeOfLinkedDatasetList()
 	{
-		return dataset_BackReferenceList.size();
+		return datasets.size();
 	}
 
 	public List<Dataset> copyLinkedDatasetList()
 	{
-		return new ArrayList<Dataset>(dataset_BackReferenceList);
+		return new ArrayList<Dataset>(datasets);
 	}
 
 	public Dataset getLinkedDataset(int index)
 	{
-		return dataset_BackReferenceList.get(index);
+		return datasets.get(index);
 	}
 
 	public Dataset setLinkedDataset(int index, Dataset o)
 	{
-		return dataset_BackReferenceList.set(index, o);
+		return datasets.set(index, o);
 	}
 
 	public boolean linkDataset(Dataset o)
 	{
-		if (!dataset_BackReferenceList.contains(o)) {
-			return dataset_BackReferenceList.add(o);
+		if (!datasets.contains(o)) {
+			return datasets.add(o);
 		}
 		return false;
 	}
 
 	public boolean unlinkDataset(Dataset o)
 	{
-		return dataset_BackReferenceList.remove(o);
+		return datasets.remove(o);
 	}
 
 	// Reference which occurs more than once
 	public int sizeOfLinkedExperimentList()
 	{
-		return experiment_BackReferenceList.size();
+		return experiments.size();
 	}
 
 	public List<Experiment> copyLinkedExperimentList()
 	{
-		return new ArrayList<Experiment>(experiment_BackReferenceList);
+		return new ArrayList<Experiment>(experiments);
 	}
 
 	public Experiment getLinkedExperiment(int index)
 	{
-		return experiment_BackReferenceList.get(index);
+		return experiments.get(index);
 	}
 
 	public Experiment setLinkedExperiment(int index, Experiment o)
 	{
-		return experiment_BackReferenceList.set(index, o);
+		return experiments.set(index, o);
 	}
 
 	public boolean linkExperiment(Experiment o)
 	{
-		if (!experiment_BackReferenceList.contains(o)) {
-			return experiment_BackReferenceList.add(o);
+		if (!experiments.contains(o)) {
+			return experiments.add(o);
 		}
 		return false;
 	}
 
 	public boolean unlinkExperiment(Experiment o)
 	{
-		return experiment_BackReferenceList.remove(o);
+		return experiments.remove(o);
 	}
 
 	public Element asXMLElement(Document document)
@@ -617,15 +588,15 @@ public class Experimenter extends AbstractOMEModelObject
 					document.createElementNS(NAMESPACE, "Experimenter");
 		}
 
+		if (email != null)
+		{
+			// Attribute property Email
+			Experimenter_element.setAttribute("Email", email.toString());
+		}
 		if (userName != null)
 		{
 			// Attribute property UserName
 			Experimenter_element.setAttribute("UserName", userName.toString());
-		}
-		if (displayName != null)
-		{
-			// Attribute property DisplayName
-			Experimenter_element.setAttribute("DisplayName", displayName.toString());
 		}
 		if (firstName != null)
 		{
@@ -642,58 +613,47 @@ public class Experimenter extends AbstractOMEModelObject
 			// Attribute property LastName
 			Experimenter_element.setAttribute("LastName", lastName.toString());
 		}
-		if (email != null)
+		if (id != null)
 		{
-			// Attribute property Email
-			Experimenter_element.setAttribute("Email", email.toString());
+			// Attribute property ID
+			Experimenter_element.setAttribute("ID", id.toString());
 		}
 		if (institution != null)
 		{
 			// Attribute property Institution
 			Experimenter_element.setAttribute("Institution", institution.toString());
 		}
-		if (id != null)
-		{
-			// Attribute property ID
-			Experimenter_element.setAttribute("ID", id.toString());
-		}
-		if (groupList != null)
-		{
-			// Reference property GroupRef which occurs more than once
-			for (Group groupList_value : groupList)
-			{
-				GroupRef o = new GroupRef();
-				o.setID(groupList_value.getID());
-				Experimenter_element.appendChild(o.asXMLElement(document));
-			}
-		}
-		if (annotationList != null)
+		if (annotationLinks != null)
 		{
 			// Reference property AnnotationRef which occurs more than once
-			for (Annotation annotationList_value : annotationList)
+			for (Annotation annotationLinks_value : annotationLinks)
 			{
 				AnnotationRef o = new AnnotationRef();
-				o.setID(annotationList_value.getID());
+				o.setID(annotationLinks_value.getID());
 				Experimenter_element.appendChild(o.asXMLElement(document));
 			}
 		}
-		if (image_BackReferenceList != null)
+		if (images != null)
 		{
 			// *** IGNORING *** Skipped back reference Image_BackReference
 		}
-		if (microbeamManipulation_BackReferenceList != null)
+		if (microbeamManipulations != null)
 		{
 			// *** IGNORING *** Skipped back reference MicrobeamManipulation_BackReference
 		}
-		if (project_BackReferenceList != null)
+		if (projects != null)
 		{
 			// *** IGNORING *** Skipped back reference Project_BackReference
 		}
-		if (dataset_BackReferenceList != null)
+		if (experimenterGroupLinks != null)
+		{
+			// *** IGNORING *** Skipped back reference ExperimenterGroup_BackReference
+		}
+		if (datasets != null)
 		{
 			// *** IGNORING *** Skipped back reference Dataset_BackReference
 		}
-		if (experiment_BackReferenceList != null)
+		if (experiments != null)
 		{
 			// *** IGNORING *** Skipped back reference Experiment_BackReference
 		}

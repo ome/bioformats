@@ -1,25 +1,27 @@
-//
-// FlexReader.java
-//
-
 /*
-OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ * #%L
+ * OME Bio-Formats package for reading and converting biological file formats.
+ * %%
+ * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 2 of the 
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public 
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-2.0.html>.
+ * #L%
+ */
 
 package loci.formats.in;
 
@@ -54,6 +56,7 @@ import loci.formats.tiff.TiffParser;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
@@ -534,7 +537,10 @@ public class FlexReader extends FormatReader {
     plateAcqStartTime =
       DateTools.formatDate(plateAcqStartTime, "dd.MM.yyyy  HH:mm:ss");
 
-    store.setPlateAcquisitionStartTime(plateAcqStartTime, 0, 0);
+    if (plateAcqStartTime != null) {
+      store.setPlateAcquisitionStartTime(
+        new Timestamp(plateAcqStartTime), 0, 0);
+    }
 
     for (int row=0; row<wellRows; row++) {
       for (int col=0; col<wellColumns; col++) {
@@ -591,7 +597,7 @@ public class FlexReader extends FormatReader {
 
         int seriesIndex = i * getImageCount();
         if (seriesIndex < objectiveRefs.size()) {
-          store.setImageObjectiveSettingsID(objectiveRefs.get(seriesIndex), i);
+          store.setObjectiveSettingsID(objectiveRefs.get(seriesIndex), i);
         }
 
         for (int c=0; c<getEffectiveSizeC(); c++) {
@@ -905,8 +911,13 @@ public class FlexReader extends FormatReader {
     if (getImageCount() * fieldCount != nPlanes) {
       core[0].imageCount = nPlanes / fieldCount;
       core[0].sizeZ = 1;
-      core[0].sizeC = 1;
       core[0].sizeT = nPlanes / fieldCount;
+      if (getSizeT() % getSizeC() == 0) {
+        core[0].sizeT /= getSizeC();
+      }
+      else {
+        core[0].sizeC = 1;
+      }
     }
     core[0].sizeX = (int) ifd.getImageWidth();
     core[0].sizeY = (int) ifd.getImageLength();
@@ -1334,7 +1345,9 @@ public class FlexReader extends FormatReader {
         if (currentSeries >= seriesCount) return;
 
         if (qName.equals("DateTime")) {
-          store.setImageAcquiredDate(value, currentSeries);
+          if (value != null) {
+            store.setImageAcquisitionDate(new Timestamp(value), currentSeries);
+          }
         }
       }
 

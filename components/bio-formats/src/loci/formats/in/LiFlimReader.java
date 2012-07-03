@@ -1,30 +1,33 @@
-//
-// LiFlimReader.java
-//
-
 /*
-OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ * #%L
+ * OME Bio-Formats package for reading and converting biological file formats.
+ * %%
+ * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 2 of the 
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public 
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-2.0.html>.
+ * #L%
+ */
 
 package loci.formats.in;
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;
+import java.io.EOFException;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,6 +35,8 @@ import java.io.StringReader;
 import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.zip.GZIPInputStream;
+
+import ome.xml.model.primitives.Timestamp;
 
 import loci.common.DataTools;
 import loci.common.DateTools;
@@ -170,7 +175,12 @@ public class LiFlimReader extends FormatReader {
 
       // read compressed data
       byte[] bytes = new byte[bytesPerPlane];
-      gz.readFully(bytes);
+      try {
+        gz.readFully(bytes);
+      }
+      catch (EOFException e) {
+        LOGGER.debug("Could not read full plane", e);
+      }
 
       RandomAccessInputStream s = new RandomAccessInputStream(bytes);
       readPlane(s, x, y, w, h, buf);
@@ -435,7 +445,9 @@ public class LiFlimReader extends FormatReader {
       Double deltaT;
       if (t == 0) {
         String date = DateTools.convertDate(stamp, DateTools.COBOL);
-        store.setImageAcquiredDate(date, 0);
+        if (date != null) {
+          store.setImageAcquisitionDate(new Timestamp(date), 0);
+        }
         firstStamp = stamp;
         deltaT = new Double(0);
       }
@@ -462,9 +474,8 @@ public class LiFlimReader extends FormatReader {
     for (int roi=0; roi<roiIndices.length; roi++) {
       ROI r = rois.get(roiIndices[roi]);
       String polylineID = MetadataTools.createLSID("Shape", roi, 0);
-      store.setPolylineID(polylineID, roi, 0);
-      store.setPolylinePoints(r.pointsToString(), roi, 0);
-      store.setPolylineClosed(Boolean.TRUE, roi, 0);
+      store.setPolygonID(polylineID, roi, 0);
+      store.setPolygonPoints(r.pointsToString(), roi, 0);
       String roiID = MetadataTools.createLSID("ROI", roi);
       store.setROIID(roiID, roi);
       for (int s=0; s<getSeriesCount(); s++) {
@@ -509,7 +520,7 @@ public class LiFlimReader extends FormatReader {
     // seek to correct image number
     if (getSeries() >= 1 && gzSeries < getSeries()) {
       int originalSeries = getSeries();
-      for (int i=gzSeries; i<getSeries(); i++) {
+      for (int i=gzSeries; i<originalSeries; i++) {
         setSeries(i);
         int nPlanes = getImageCount() - gzPos;
         int nBytes = FormatTools.getPlaneSize(this) * nPlanes;

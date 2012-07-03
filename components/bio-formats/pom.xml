@@ -69,30 +69,7 @@
       <version>1.5.10</version>
     </dependency>
 
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-      <version>1.2.14</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>xalan</groupId>
-      <artifactId>serializer</artifactId>
-      <version>2.7.1</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <version>1.5.10</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>xalan</groupId>
-      <artifactId>xalan</artifactId>
-      <version>2.7.1</version>
-      <scope>runtime</scope>
-    </dependency>
+    <!-- NB: dependency:analyze has false warning about xml-apis:xml-apis. -->
 
     <dependency>
       <groupId>org.testng</groupId>
@@ -121,6 +98,14 @@
           <suiteXmlFiles>
             <suiteXmlFile>test/loci/formats/utests/testng.xml</suiteXmlFile>
           </suiteXmlFiles>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <configuration>
+          <licenseName>gpl_v2</licenseName>
+          <projectName>OME Bio-Formats package for reading and converting biological file formats.</projectName>
         </configuration>
       </plugin>
     </plugins>

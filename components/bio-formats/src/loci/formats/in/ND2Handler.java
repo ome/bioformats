@@ -1,25 +1,27 @@
-//
-// ND2Handler.java
-//
-
 /*
-OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ * #%L
+ * OME Bio-Formats package for reading and converting biological file formats.
+ * %%
+ * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 2 of the 
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public 
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-2.0.html>.
+ * #L%
+ */
 
 package loci.formats.in;
 
@@ -142,14 +144,14 @@ public class ND2Handler extends BaseHandler {
           store.setImageROIRef(roiID, i, r);
         }
         store.setROIID(roiID, r);
-        store.setTextID(MetadataTools.createLSID("Shape", r, 0), r, 0);
+        store.setLabelID(MetadataTools.createLSID("Shape", r, 0), r, 0);
 
         int fontSize = Integer.parseInt(roi.get("fHeight"));
         if (fontSize >= 0) {
-          store.setTextFontSize(new NonNegativeInteger(fontSize), r, 0);
+          store.setLabelFontSize(new NonNegativeInteger(fontSize), r, 0);
         }
-        store.setTextValue(roi.get("eval-text"), r, 0);
-        store.setTextStrokeWidth(new Double(roi.get("line-width")), r, 0);
+        store.setLabelText(roi.get("eval-text"), r, 0);
+        store.setLabelStrokeWidth(new Double(roi.get("line-width")), r, 0);
 
         String rectangle = roi.get("rectangle");
         String[] p = rectangle.split(",");

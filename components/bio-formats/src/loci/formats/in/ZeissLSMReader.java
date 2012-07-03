@@ -1,25 +1,27 @@
-//
-// ZeissLSMReader.java
-//
-
 /*
-OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ * #%L
+ * OME Bio-Formats package for reading and converting biological file formats.
+ * %%
+ * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 2 of the 
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public 
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-2.0.html>.
+ * #L%
+ */
 
 package loci.formats.in;
 
@@ -51,9 +53,11 @@ import loci.formats.tiff.TiffCompression;
 import loci.formats.tiff.TiffConstants;
 import loci.formats.tiff.TiffParser;
 
+import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 /**
  * ZeissLSMReader is the file format reader for Zeiss LSM files.
@@ -531,7 +535,8 @@ public class ZeissLSMReader extends FormatReader {
         store.setImageName(imageNames.get(series), series);
       }
       if (acquiredDate.containsKey(series)) {
-        store.setImageAcquiredDate(acquiredDate.get(series), series);
+        store.setImageAcquisitionDate(new Timestamp(
+            acquiredDate.get(series)), series);
       }
       store.setPixelsBinDataBigEndian(!isLittleEndian(), series, 0);
     }
@@ -834,7 +839,7 @@ public class ZeissLSMReader extends FormatReader {
     long scanInformationOffset = 0;
     long channelWavelengthOffset = 0;
     long applicationTagOffset = 0;
-    int[] channelColor = new int[getSizeC()];
+    Color[] channelColor = new Color[getSizeC()];
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       int spectralScan = ras.readShort();
@@ -1010,7 +1015,7 @@ public class ZeissLSMReader extends FormatReader {
             int green = (color & 0xff00) >> 8;
             int blue = (color & 0xff0000) >> 16;
 
-            channelColor[i] = (red << 24) | (green << 16) | (blue << 8) | 0xff;
+            channelColor[i] = new Color(red, green, blue, 255);
 
             for (int j=0; j<256; j++) {
               lut[getSeries()][i * 3][j] = (byte) ((red / 255.0) * j);
@@ -1189,7 +1194,6 @@ public class ZeissLSMReader extends FormatReader {
         String experimenterID = MetadataTools.createLSID("Experimenter", 0);
         store.setExperimenterID(experimenterID, 0);
         store.setExperimenterUserName(userName, 0);
-        store.setExperimenterDisplayName(userName, 0);
       }
 
       Double pixX = new Double(pixelSizeX);
@@ -1225,7 +1229,7 @@ public class ZeissLSMReader extends FormatReader {
       }
 
       double firstStamp = 0;
-      if (timestamps.size() > 0) {
+      if (timestamps.size() > 0 && stampIndex < timestamps.size()) {
         firstStamp = timestamps.get(stampIndex).doubleValue();
       }
 
@@ -1266,7 +1270,7 @@ public class ZeissLSMReader extends FormatReader {
         if (recording.startTime != null) {
           acquiredDate.put(series, recording.startTime);
         }
-        store.setImageObjectiveSettingsID(objectiveID, series);
+        store.setObjectiveSettingsID(objectiveID, series);
         binning = recording.binning;
       }
       store.setObjectiveCorrection(
@@ -1486,17 +1490,17 @@ public class ZeissLSMReader extends FormatReader {
           double x = in.readDouble();
           double y = in.readDouble();
           String text = DataTools.stripString(in.readCString());
-          store.setTextValue(text, i, 0);
+          store.setLabelText(text, i, 0);
           if (fontHeight >= 0) {
-            store.setTextFontSize(new NonNegativeInteger(fontHeight), i, 0);
+            store.setLabelFontSize(new NonNegativeInteger(fontHeight), i, 0);
           }
           else {
             LOGGER.warn("Expected non-negative value for FontSize; got {}",
               fontHeight);
           }
-          store.setTextStrokeWidth(lineWidth, i, 0);
+          store.setLabelStrokeWidth(lineWidth, i, 0);
           store.setROIID(roiID, i);
-          store.setTextID(shapeID, i, 0);
+          store.setLabelID(shapeID, i, 0);
           store.setImageROIRef(roiID, series, i);
           break;
         case LINE:
@@ -1602,8 +1606,7 @@ public class ZeissLSMReader extends FormatReader {
             double slope = (ys[2] - centerY) / (xs[2] - centerX);
             double theta = Math.toDegrees(Math.atan(slope));
 
-            store.setEllipseTransform("rotate(" + theta + " " + centerX +
-              " " + centerY + ")", i, 0);
+            store.setEllipseTransform(getRotationTransform(theta), i, 0);
           }
 
           store.setEllipseX(centerX, i, 0);
@@ -1744,19 +1747,33 @@ public class ZeissLSMReader extends FormatReader {
             if (j < points.length - 1) p.append(" ");
           }
 
-          store.setPolylinePoints(p.toString(), i, 0);
-          store.setPolylineClosed(type == CLOSED_POLYLINE, i, 0);
-          if (fontHeight >= 0) {
-            store.setPolylineFontSize(new NonNegativeInteger(fontHeight), i, 0);
-          }
-          else {
-            LOGGER.warn("Expected non-negative value for FontSize; got {}",
-              fontHeight);
-          }
-          store.setPolylineStrokeWidth(lineWidth, i, 0);
           store.setROIID(roiID, i);
           store.setImageROIRef(roiID, series, i);
-          store.setPolylineID(shapeID, i, 0);
+
+          if (type != CLOSED_POLYLINE) {
+            store.setPolylinePoints(p.toString(), i, 0);
+            if (fontHeight >= 0) {
+              store.setPolylineFontSize(new NonNegativeInteger(fontHeight), i, 0);
+            }
+            else {
+              LOGGER.warn("Expected non-negative value for FontSize; got {}",
+                fontHeight);
+            }
+            store.setPolylineStrokeWidth(lineWidth, i, 0);
+            store.setPolylineID(shapeID, i, 0);
+          }
+          else {
+            store.setPolygonPoints(p.toString(), i, 0);
+            if (fontHeight >= 0) {
+              store.setPolygonFontSize(new NonNegativeInteger(fontHeight), i, 0);
+            }
+            else {
+              LOGGER.warn("Expected non-negative value for FontSize; got {}",
+                fontHeight);
+            }
+            store.setPolygonStrokeWidth(lineWidth, i, 0);
+            store.setPolygonID(shapeID, i, 0);
+          }
 
           break;
         case CLOSED_BEZIER:
@@ -1778,19 +1795,33 @@ public class ZeissLSMReader extends FormatReader {
             if (j < points.length - 1) p.append(" ");
           }
 
-          store.setPolylinePoints(p.toString(), i, 0);
-          store.setPolylineClosed(type != OPEN_BEZIER, i, 0);
-          if (fontHeight >= 0) {
-            store.setPolylineFontSize(new NonNegativeInteger(fontHeight), i, 0);
-          }
-          else {
-            LOGGER.warn("Expected non-negative value for FontSize; got {}",
-              fontHeight);
-          }
-          store.setPolylineStrokeWidth(lineWidth, i, 0);
           store.setROIID(roiID, i);
           store.setImageROIRef(roiID, series, i);
-          store.setPolylineID(shapeID, i, 0);
+
+          if (type == OPEN_BEZIER) {
+            store.setPolylinePoints(p.toString(), i, 0);
+            if (fontHeight >= 0) {
+              store.setPolylineFontSize(new NonNegativeInteger(fontHeight), i, 0);
+            }
+            else {
+              LOGGER.warn("Expected non-negative value for FontSize; got {}",
+                fontHeight);
+            }
+            store.setPolylineStrokeWidth(lineWidth, i, 0);
+            store.setPolylineID(shapeID, i, 0);
+          }
+          else {
+            store.setPolygonPoints(p.toString(), i, 0);
+            if (fontHeight >= 0) {
+              store.setPolygonFontSize(new NonNegativeInteger(fontHeight), i, 0);
+            }
+            else {
+              LOGGER.warn("Expected non-negative value for FontSize; got {}",
+                fontHeight);
+            }
+            store.setPolygonStrokeWidth(lineWidth, i, 0);
+            store.setPolygonID(shapeID, i, 0);
+          }
 
           break;
         default:

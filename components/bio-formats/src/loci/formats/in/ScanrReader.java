@@ -1,25 +1,27 @@
-//
-// ScanrReader.java
-//
-
 /*
-OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ * #%L
+ * OME Bio-Formats package for reading and converting biological file formats.
+ * %%
+ * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 2 of the 
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public 
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-2.0.html>.
+ * #L%
+ */
 
 package loci.formats.in;
 
@@ -332,21 +334,23 @@ public class ScanrReader extends FormatReader {
     Vector<String> uniqueRows = new Vector<String>();
     Vector<String> uniqueColumns = new Vector<String>();
 
-    for (String well : wellLabels.keySet()) {
-      if (!Character.isLetter(well.charAt(0))) continue;
-      String row = well.substring(0, 1).trim();
-      String column = well.substring(1).trim();
-      if (!uniqueRows.contains(row) && row.length() > 0) uniqueRows.add(row);
-      if (!uniqueColumns.contains(column) && column.length() > 0) {
-        uniqueColumns.add(column);
+    if (wellRows == 0 || wellColumns == 0) {
+      for (String well : wellLabels.keySet()) {
+        if (!Character.isLetter(well.charAt(0))) continue;
+        String row = well.substring(0, 1).trim();
+        String column = well.substring(1).trim();
+        if (!uniqueRows.contains(row) && row.length() > 0) uniqueRows.add(row);
+        if (!uniqueColumns.contains(column) && column.length() > 0) {
+          uniqueColumns.add(column);
+        }
       }
-    }
 
-    wellRows = uniqueRows.size();
-    wellColumns = uniqueColumns.size();
+      wellRows = uniqueRows.size();
+      wellColumns = uniqueColumns.size();
 
-    if (wellRows * wellColumns != wellCount) {
-      adjustWellDimensions();
+      if (wellRows * wellColumns != wellCount) {
+        adjustWellDimensions();
+      }
     }
 
     int nChannels = getSizeC() == 0 ? channelNames.size() : getSizeC();
@@ -414,6 +418,23 @@ public class ScanrReader extends FormatReader {
 
     int next = 0;
     String[] keys = wellLabels.keySet().toArray(new String[wellLabels.size()]);
+    Arrays.sort(keys, new Comparator<String>() {
+      public int compare(String s1, String s2) {
+        char row1 = s1.charAt(0);
+        char row2 = s2.charAt(0);
+
+        Integer col1 = new Integer(s1.substring(1));
+        Integer col2 = new Integer(s2.substring(1));
+
+        if (row1 < row2) {
+          return -1;
+        }
+        else if (row1 > row2) {
+          return 1;
+        }
+        return col1.compareTo(col2);
+      }
+    });
     int realPosCount = 0;
     for (int well=0; well<nWells; well++) {
       int wellIndex = wellNumbers.get(well);
@@ -452,7 +473,11 @@ public class ScanrReader extends FormatReader {
       if (next == originalIndex && well < keys.length) {
         wellLabels.remove(keys[well]);
       }
+      if (next == originalIndex) {
+        wellNumbers.remove(well);
+      }
     }
+    nWells = wellNumbers.size();
 
     if (wellLabels.size() > 0 && wellLabels.size() != nWells) {
       uniqueRows.clear();
@@ -524,6 +549,8 @@ public class ScanrReader extends FormatReader {
     MetadataTools.populatePixels(store, this);
 
     store.setPlateID(MetadataTools.createLSID("Plate", 0), 0);
+    store.setPlateColumns(new PositiveInteger(wellColumns), 0);
+    store.setPlateRows(new PositiveInteger(wellRows), 0);
 
     String plateAcqID = MetadataTools.createLSID("PlateAcquisition", 0, 0);
     store.setPlateAcquisitionID(plateAcqID, 0, 0);
@@ -542,10 +569,13 @@ public class ScanrReader extends FormatReader {
     for (int i=0; i<getSeriesCount(); i++) {
       int field = i % nFields;
       int well = i / nFields;
-      int wellIndex = well;
-      if (wellNumbers.get(well) != null) {
-        wellIndex = wellNumbers.get(well) - 1;
+      int index = well;
+      while (wellNumbers.get(index) == null && index < wellNumbers.size()) {
+        index++;
       }
+      int wellIndex =
+        wellNumbers.get(index) == null ? index : wellNumbers.get(index) - 1;
+      wellNumbers.remove(index);
 
       int wellRow = wellIndex / wellColumns;
       int wellCol = wellIndex % wellColumns;
@@ -562,7 +592,7 @@ public class ScanrReader extends FormatReader {
       store.setWellSampleImageRef(imageID, 0, well, field);
       store.setImageID(imageID, i);
 
-      String name = "Well " + (wellIndex + 1) + ", Field " + (field + 1) +
+      String name = "Well " + (well + 1) + ", Field " + (field + 1) +
         " (Spot " + (i + 1) + ")";
       store.setImageName(name, i);
 
@@ -624,6 +654,7 @@ public class ScanrReader extends FormatReader {
 
     private boolean validChannel = false;
     private boolean foundPositions = false;
+    private boolean foundPlateLayout = false;
     private int nextXPos = 0;
     private int nextYPos = 0;
 
@@ -638,6 +669,9 @@ public class ScanrReader extends FormatReader {
         if (v.equals("subposition list")) {
           foundPositions = true;
         }
+        else if (v.equals("format typedef")) {
+          foundPlateLayout = true;
+        }
       }
       else if (qName.equals("Dimsize") && foundPositions &&
         fieldPositionX == null)
@@ -645,6 +679,13 @@ public class ScanrReader extends FormatReader {
         int nPositions = Integer.parseInt(v);
         fieldPositionX = new double[nPositions];
         fieldPositionY = new double[nPositions];
+      }
+      else if (key != null && key.equals("Rows") && foundPlateLayout) {
+        wellRows = Integer.parseInt(v);
+      }
+      else if (key != null && key.equals("Columns") && foundPlateLayout) {
+        wellColumns = Integer.parseInt(v);
+        foundPlateLayout = false;
       }
       else if (qName.equals("Val")) {
         value = v.trim();

@@ -1,25 +1,27 @@
-//
-// TCSReader.java
-//
-
 /*
-OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ * #%L
+ * OME Bio-Formats package for reading and converting biological file formats.
+ * %%
+ * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 2 of the 
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public 
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-2.0.html>.
+ * #L%
+ */
 
 package loci.formats.in;
 
@@ -238,6 +240,7 @@ public class TCSReader extends FormatReader {
     Location l = new Location(id).getAbsoluteFile();
     Location parent = l.getParentFile();
     String[] list = parent.list();
+    Arrays.sort(list);
 
     boolean isXML = checkSuffix(id, XML_SUFFIX);
 
@@ -425,14 +428,14 @@ public class TCSReader extends FormatReader {
     core[0].indexed = tiffReaders[0].isIndexed();
 
     if (isRGB()) core[0].imageCount /= (getSizeC() / channelCount);
+
     if (getSizeZ() * getSizeT() * getEffectiveSizeC() !=
       (ifds.size() * tiffReaders.length))
     {
-      core[0].sizeZ = 1;
       int c = getEffectiveSizeC();
       if (c == 0) c = 1;
-      core[0].sizeT = (ifds.size() * tiffReaders.length) / c;
-      core[0].imageCount = getSizeT() * c;
+      core[0].sizeT = (ifds.size() * tiffReaders.length) / (c * getSizeZ());
+      core[0].imageCount = getSizeT() * c * getSizeZ();
       if (getSizeT() == 0) {
         core[0].sizeT = 1;
         core[0].imageCount = ifds.size() * tiffReaders.length;

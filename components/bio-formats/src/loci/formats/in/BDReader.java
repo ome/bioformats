@@ -1,26 +1,28 @@
-//
-// BDReader.java
-//
-
 /*
-OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
-Copyright (C) 2009-@year@ Vanderbilt Integrative Cancer Center.
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ * #%L
+ * OME Bio-Formats package for reading and converting biological file formats.
+ * %%
+ * Copyright (C) 2005 - 2012 Vanderbilt Integrative Cancer Center, and
+ * Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 2 of the 
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public 
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-2.0.html>.
+ * #L%
+ */
 
 package loci.formats.in;
 
@@ -200,16 +202,26 @@ public class BDReader extends FormatReader {
     int fieldCol = field % fieldCols;
 
     if (file != null) {
-      reader.setId(file);
-      if (fieldRows * fieldCols == 1) {
-        reader.openBytes(0, buf, x, y, w, h);
+      try {
+        reader.setId(file);
+        if (fieldRows * fieldCols == 1) {
+          reader.openBytes(0, buf, x, y, w, h);
+        }
+        else {
+          // fields are stored together in a single image,
+          // so we need to split them up
+          int fx = x + (fieldCol * getSizeX());
+          int fy = y + (fieldRow * getSizeY());
+          reader.openBytes(0, buf, fx, fy, w, h);
+        }
       }
-      else {
-        // fields are stored together in a single image,
-        // so we need to split them up
-        int fx = x + (fieldCol * getSizeX());
-        int fy = y + (fieldRow * getSizeY());
-        reader.openBytes(0, buf, fx, fy, w, h);
+      catch (FormatException e) {
+        LOGGER.debug("Could not read file " + file, e);
+        return buf;
+      }
+      catch (IOException e) {
+        LOGGER.debug("Could not read file " + file, e);
+        return buf;
       }
     }
 
@@ -417,7 +429,7 @@ public class BDReader extends FormatReader {
       // populate LogicalChannel data
       for (int i=0; i<getSeriesCount(); i++) {
         store.setImageInstrumentRef(instrumentID, i);
-        store.setImageObjectiveSettingsID(objectiveID, i);
+        store.setObjectiveSettingsID(objectiveID, i);
 
         for (int c=0; c<getSizeC(); c++) {
           store.setChannelName(channelNames.get(c), i, c);

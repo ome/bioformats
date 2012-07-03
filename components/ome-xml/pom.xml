@@ -21,8 +21,8 @@
 
   <licenses>
     <license>
-      <name>Simplified BSD</name>
-      <url>http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/ome-xml/LICENSE.txt;hb=HEAD</url>
+      <name>Simplified BSD License</name>
+      <url>${license.server}/ome-xml/license.txt</url>
       <distribution>repo</distribution>
     </license>
   </licenses>
@@ -35,6 +35,7 @@
     </dependency>
 
     <dependency>
+      <!-- NB: We want this, despite warning from dependency:analyze. -->
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
       <version>1.2.14</version>
@@ -47,6 +48,7 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <!-- NB: We want this, despite warning from dependency:analyze. -->
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
       <version>1.5.10</version>
@@ -73,6 +75,20 @@
           <suiteXmlFiles>
             <suiteXmlFile>test/ome/xml/utests/testng.xml</suiteXmlFile>
           </suiteXmlFiles>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <configuration>
+          <licenseName>ome-xml</licenseName>
+          <organizationName>Open Microscopy Environment:
+  - Massachusetts Institute of Technology
+  - National Institutes of Health
+  - University of Dundee
+  - Board of Regents of the University of Wisconsin-Madison
+  - Glencoe Software, Inc.</organizationName>
+          <projectName>OME-XML Java library for working with OME-XML metadata structures.</projectName>
         </configuration>
       </plugin>
     </plugins>

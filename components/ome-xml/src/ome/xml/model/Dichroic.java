@@ -1,37 +1,45 @@
 /*
- * ome.xml.model.Dichroic
- *
- *-----------------------------------------------------------------------------
- *
- *  Copyright (C) @year@ Open Microscopy Environment
- *      Massachusetts Institute of Technology,
- *      National Institutes of Health,
- *      University of Dundee,
- *      University of Wisconsin-Madison
- *
- *
- *
- *    This library is free software; you can redistribute it and/or
- *    modify it under the terms of the GNU Lesser General Public
- *    License as published by the Free Software Foundation; either
- *    version 2.1 of the License, or (at your option) any later version.
- *
- *    This library is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- *    Lesser General Public License for more details.
- *
- *    You should have received a copy of the GNU Lesser General Public
- *    License along with this library; if not, write to the Free Software
- *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
- *-----------------------------------------------------------------------------
+ * #%L
+ * OME-XML Java library for working with OME-XML metadata structures.
+ * %%
+ * Copyright (C) 2006 - 2012 Open Microscopy Environment:
+ *   - Massachusetts Institute of Technology
+ *   - National Institutes of Health
+ *   - University of Dundee
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ * %%
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ * 
+ * The views and conclusions contained in the software and documentation are
+ * those of the authors and should not be interpreted as representing official
+ * policies, either expressed or implied, of any organization.
+ * #L%
  */
 
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2012-01-12 20:06:01-0500
+ * Created by callan via xsd-fu on 2012-05-18 10:08:16+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -58,7 +66,7 @@ public class Dichroic extends ManufacturerSpec
 
 	// -- Constants --
 
-	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2011-06";
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2012-06";
 
 	/** Logger for this class. */
 	private static final Logger LOGGER =
@@ -70,11 +78,14 @@ public class Dichroic extends ManufacturerSpec
 	// Property
 	private String id;
 
+	// Back reference Instrument_BackReference
+	private Instrument instrument;
+
 	// Back reference FilterSet_BackReference
-	private List<FilterSet> filterSet_BackReferenceList = new ArrayList<FilterSet>();
+	private List<FilterSet> filterSets = new ArrayList<FilterSet>();
 
 	// Back reference LightPath_BackReference
-	private List<LightPath> lightPath_BackReferenceList = new ArrayList<LightPath>();
+	private List<LightPath> lightPaths = new ArrayList<LightPath>();
 
 	// -- Constructors --
 
@@ -137,6 +148,7 @@ public class Dichroic extends ManufacturerSpec
 			// Adding this model object to the model handler
 			model.addModelObject(getID(), this);
 		}
+		// *** IGNORING *** Skipped back reference Instrument_BackReference
 		// *** IGNORING *** Skipped back reference FilterSet_BackReference
 		// *** IGNORING *** Skipped back reference LightPath_BackReference
 	}
@@ -166,72 +178,83 @@ public class Dichroic extends ManufacturerSpec
 		this.id = id;
 	}
 
+	// Property
+	public Instrument getInstrument()
+	{
+		return instrument;
+	}
+
+	public void setInstrument(Instrument instrument_BackReference)
+	{
+		this.instrument = instrument_BackReference;
+	}
+
 	// Reference which occurs more than once
 	public int sizeOfLinkedFilterSetList()
 	{
-		return filterSet_BackReferenceList.size();
+		return filterSets.size();
 	}
 
 	public List<FilterSet> copyLinkedFilterSetList()
 	{
-		return new ArrayList<FilterSet>(filterSet_BackReferenceList);
+		return new ArrayList<FilterSet>(filterSets);
 	}
 
 	public FilterSet getLinkedFilterSet(int index)
 	{
-		return filterSet_BackReferenceList.get(index);
+		return filterSets.get(index);
 	}
 
 	public FilterSet setLinkedFilterSet(int index, FilterSet o)
 	{
-		return filterSet_BackReferenceList.set(index, o);
+		return filterSets.set(index, o);
 	}
 
 	public boolean linkFilterSet(FilterSet o)
 	{
-		if (!filterSet_BackReferenceList.contains(o)) {
-			return filterSet_BackReferenceList.add(o);
+		if (!filterSets.contains(o)) {
+			return filterSets.add(o);
 		}
 		return false;
 	}
 
 	public boolean unlinkFilterSet(FilterSet o)
 	{
-		return filterSet_BackReferenceList.remove(o);
+		return filterSets.remove(o);
 	}
 
 	// Reference which occurs more than once
 	public int sizeOfLinkedLightPathList()
 	{
-		return lightPath_BackReferenceList.size();
+		return lightPaths.size();
 	}
 
 	public List<LightPath> copyLinkedLightPathList()
 	{
-		return new ArrayList<LightPath>(lightPath_BackReferenceList);
+		return new ArrayList<LightPath>(lightPaths);
 	}
 
 	public LightPath getLinkedLightPath(int index)
 	{
-		return lightPath_BackReferenceList.get(index);
+		return lightPaths.get(index);
 	}
 
 	public LightPath setLinkedLightPath(int index, LightPath o)
 	{
-		return lightPath_BackReferenceList.set(index, o);
+		return lightPaths.set(index, o);
 	}
 
 	public boolean linkLightPath(LightPath o)
 	{
-		if (!lightPath_BackReferenceList.contains(o)) {
-			return lightPath_BackReferenceList.add(o);
+		if (!lightPaths.contains(o)) {
+			return lightPaths.add(o);
 		}
 		return false;
 	}
 
 	public boolean unlinkLightPath(LightPath o)
 	{
-		return lightPath_BackReferenceList.remove(o);
+		return lightPaths.remove(o);
 	}
 
 	public Element asXMLElement(Document document)
@@ -254,11 +277,15 @@ public class Dichroic extends ManufacturerSpec
 			// Attribute property ID
 			Dichroic_element.setAttribute("ID", id.toString());
 		}
-		if (filterSet_BackReferenceList != null)
+		if (instrument != null)
+		{
+			// *** IGNORING *** Skipped back reference Instrument_BackReference
+		}
+		if (filterSets != null)
 		{
 			// *** IGNORING *** Skipped back reference FilterSet_BackReference
 		}
-		if (lightPath_BackReferenceList != null)
+		if (lightPaths != null)
 		{
 			// *** IGNORING *** Skipped back reference LightPath_BackReference
 		}
