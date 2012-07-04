@@ -505,7 +505,12 @@ public class MetamorphTiffReader extends BaseTiffReader {
       validTIFFs.add(tiff);
     }
 
-    files = validTIFFs.toArray(new String[validTIFFs.size()]);
+    if (validTIFFs.size() == 1) {
+      files = new String[] {currentId};
+    }
+    else {
+      files = validTIFFs.toArray(new String[validTIFFs.size()]);
+    }
   }
 
   private void parseFile(String tiff, MetamorphHandler handler)
