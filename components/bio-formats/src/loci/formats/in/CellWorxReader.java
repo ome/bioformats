@@ -705,6 +705,30 @@ public class CellWorxReader extends FormatReader {
       }
     }
 
+    boolean noneExist = true;
+    for (String file : files) {
+      if (new Location(file).exists()) {
+        noneExist = false;
+        break;
+      }
+    }
+
+    if (noneExist) {
+      nextFile = 0;
+      Location parent =
+        new Location(currentId).getAbsoluteFile().getParentFile();
+      String[] list = parent.list(true);
+      Arrays.sort(list);
+      for (String f : list) {
+        if (checkSuffix(f, new String [] {"tif", "tiff", "pnl"})) {
+          String path = new Location(parent, f).getAbsolutePath();
+          if (path.startsWith(base)) {
+            files[nextFile++] = path;
+          }
+        }
+      }
+    }
+
     return files;
   }
 

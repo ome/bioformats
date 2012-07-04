@@ -226,6 +226,28 @@ public final class MetadataTools {
     store.setImageID(createLSID("Image", series), series);
     setDefaultCreationDate(store, file, series);
     if (imageName != null) store.setImageName(imageName, series);
+    populatePixelsOnly(store, series, littleEndian, dimensionOrder, pixelType,
+      sizeX, sizeY, sizeZ, sizeC, sizeT, samplesPerPixel);
+  }
+
+  public static void populatePixelsOnly(MetadataStore store, IFormatReader r) {
+    int oldSeries = r.getSeries();
+    for (int i=0; i<r.getSeriesCount(); i++) {
+      r.setSeries(i);
+
+      String pixelType = FormatTools.getPixelTypeString(r.getPixelType());
+
+      populatePixelsOnly(store, i, r.isLittleEndian(), r.getDimensionOrder(),
+        pixelType, r.getSizeX(), r.getSizeY(), r.getSizeZ(), r.getSizeC(),
+        r.getSizeT(), r.getRGBChannelCount());
+    }
+    r.setSeries(oldSeries);
+  }
+
+  public static void populatePixelsOnly(MetadataStore store, int series,
+    boolean littleEndian, String dimensionOrder, String pixelType, int sizeX,
+    int sizeY, int sizeZ, int sizeC, int sizeT, int samplesPerPixel)
+  {
     store.setPixelsID(createLSID("Pixels", series), series);
     store.setPixelsBinDataBigEndian(!littleEndian, series, 0);
     try {
