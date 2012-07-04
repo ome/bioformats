@@ -94,13 +94,6 @@ public class PyramidTiffReader extends BaseTiffReader {
     return buf;
   }
 
-  /* @see loci.formats.IFormatReader#close(boolean) */
-  public void close(boolean fileOnly) throws IOException {
-    super.close(fileOnly);
-    if (!fileOnly) {
-    }
-  }
-
   /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
@@ -129,27 +122,19 @@ public class PyramidTiffReader extends BaseTiffReader {
 
   /* @see loci.formats.in.BaseTiffReader#initStandardMetadata() */
   protected void initStandardMetadata() throws FormatException, IOException {
-    super.initStandardMetadata();
-
-    ifds = tiffParser.getIFDs();
-    for (IFD ifd : ifds) {
-      tiffParser.fillInIFD(ifd);
-    }
-
     core = new CoreMetadata[ifds.size()];
-
-    for (int i=0; i<core.length; i++) {
-      core[i] = new CoreMetadata();
-
-      if (i == 0) {
-        core[i].resolutionCount = core.length;
-      }
-    }
 
     // repopulate core metadata
 
     for (int s=0; s<core.length; s++) {
+      core[s] = new CoreMetadata();
+
+      if (s == 0 && !hasFlattenedResolutions()) {
+        core[s].resolutionCount = core.length;
+      }
+
       IFD ifd = ifds.get(s);
+
       PhotoInterp p = ifd.getPhotometricInterpretation();
       int samples = ifd.getSamplesPerPixel();
       core[s].rgb = samples > 1 || p == PhotoInterp.RGB;
@@ -177,11 +162,6 @@ public class PyramidTiffReader extends BaseTiffReader {
 
   /* @see loci.formats.BaseTiffReader#initMetadataStore() */
   protected void initMetadataStore() throws FormatException {
-    /* debug */
-    System.out.println("series count = " + getSeriesCount());
-    System.out.println("current series = " + getSeries());
-    /* end debug */
-
     super.initMetadataStore();
 
     MetadataStore store = makeFilterMetadata();
