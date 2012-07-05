@@ -333,8 +333,10 @@ public class OMETiffWriter extends TiffWriter {
 
         Integer ifdIndex = ifdCounts.get(filename);
         int ifd = ifdIndex == null ? 0 : ifdIndex.intValue();
-        if ((ifd > plane || ifdCounts.size() > 1) && ifd > 0) {
-          ifd--;
+        if (series == 0) {
+          if ((ifd > plane || ifdCounts.size() > 1) && ifd > 0) {
+            ifd--;
+          }
         }
 
         omeMeta.setUUIDFileName(filename, series, nextPlane);
