@@ -34,22 +34,23 @@
  * #L%
  */
 
-package ome.scifio.enumeration;
+package loci.common.enumeration;
 
 /**
+ * A legacy wrapper class for ome.scifio.enumeration.EnumException.
+ * 
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/enumeration/EnumException.java">Trac</a>,
  * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/common/src/loci/common/enumeration/EnumException.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author callan
  */
-public class EnumException extends RuntimeException {
+public class EnumException extends ome.scifio.enumeration.EnumException {
 
   private static final long serialVersionUID = -4969429871517178079L;
-
+  
   public EnumException() { super(); }
   public EnumException(String s) { super(s); }
   public EnumException(String s, Throwable cause) { super(s, cause); }
   public EnumException(Throwable cause) { super(cause); }
-
 }

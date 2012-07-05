@@ -34,10 +34,10 @@
  * #L%
  */
 
-package ome.scifio.common;
+package loci.common;
 
 /**
- * Constants that are used within many classes in loci.common.
+ * Legacy delegator class for ome.scifio.common.Constants.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/Constants.java">Trac</a>,
@@ -45,6 +45,6 @@ package ome.scifio.common;
  */
 public final class Constants {
 
-  public static final String ENCODING = "UTF-8";
+  public static final String ENCODING = ome.scifio.common.Constants.ENCODING;
 
 }

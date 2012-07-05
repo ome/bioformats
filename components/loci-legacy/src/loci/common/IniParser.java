@@ -34,19 +34,13 @@
  * #L%
  */
 
-package ome.scifio.common;
+package loci.common;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
- * A simple parser for INI configuration files. Supports pound (#) as comments,
- * and backslash (\) to continue values across multiple lines.
+ * A legacy delegator class for ome.scifio.common.IniParser.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/IniParser.java">Trac</a>,
@@ -56,12 +50,15 @@ import org.slf4j.LoggerFactory;
  */
 public class IniParser {
 
-  /** Logger for this class. */
-  private static final Logger LOGGER = LoggerFactory.getLogger(IniParser.class);
-
-  private String commentDelimiter = "#";
-
-  private boolean slashContinues = true;
+  // -- Fields --
+  
+  private ome.scifio.common.IniParser parser;
+  
+  // -- Constructor --
+  
+  public IniParser() {
+    parser = new ome.scifio.common.IniParser();
+  }
 
   // -- IniParser API methods --
 
@@ -69,7 +66,7 @@ public class IniParser {
    * Set the String that identifies a comment.  Defaults to "#".
    */
   public void setCommentDelimiter(String delimiter) {
-    commentDelimiter = delimiter;
+    parser.setCommentDelimiter(delimiter);
   }
 
   /**
@@ -79,7 +76,7 @@ public class IniParser {
    * By default, a '\' does continue the line.
    */
   public void setBackslashContinuesLine(boolean slashContinues) {
-    this.slashContinues = slashContinues;
+    parser.setBackslashContinuesLine(slashContinues);
   }
 
   /** Parses the INI-style configuration data from the given resource. */
@@ -96,117 +93,30 @@ public class IniParser {
   public IniList parseINI(String path, Class<?> c)
     throws IOException
   {
-    return parseINI(openTextResource(path, c));
+    IniList iList = new IniList();
+    iList.list =  parser.parseINI(path, c);
+    return iList;
   }
 
   /** Parses the INI-style configuration data from the given input stream. */
   public IniList parseINI(BufferedReader in)
     throws IOException
   {
-    IniList list = new IniList();
-    IniTable attrs = null;
-    String chapter = null;
-    int no = 1;
-    StringBuffer sb = new StringBuffer();
-    while (true) {
-      int num = readLine(in, sb);
-      if (num == 0) break; // eof
-      String line = sb.toString();
-      LOGGER.debug("Line {}: {}", no, line);
-
-      // ignore blank lines
-      if (line.equals("")) {
-        no += num;
-        continue;
-      }
-
-      // check for chapter header
-      if (line.startsWith("{")) {
-        // strip curly braces
-        int end = line.length();
-        if (line.endsWith("}")) end--;
-        chapter = line.substring(1, end);
-        continue;
-      }
-
-      // check for section header
-      if (line.startsWith("[")) {
-        attrs = new IniTable();
-        list.add(attrs);
-
-        // strip brackets
-        int end = line.length();
-        if (line.endsWith("]")) end--;
-        String header = line.substring(1, end);
-        if (chapter != null) header = chapter + ": " + header;
-
-        attrs.put(IniTable.HEADER_KEY, header);
-        no += num;
-        continue;
-      }
-
-      // parse key/value pair
-      int equals = line.indexOf("=");
-      if (equals < 0) throw new IOException(no + ": bad line");
-      String key = line.substring(0, equals).trim();
-      String value = line.substring(equals + 1).trim();
-      attrs.put(key, value);
-      no += num;
-    }
-    return list;
+    IniList iList = new IniList();
+    iList.list =  parser.parseINI(in);
+    return iList;
   }
 
   // -- Utility methods --
 
   /** Opens a buffered reader for the given resource. */
   public static BufferedReader openTextResource(String path) {
-    return openTextResource(path, IniParser.class);
+    return ome.scifio.common.IniParser.openTextResource(path, IniParser.class);
   }
 
   /** Opens a buffered reader for the given resource. */
   public static BufferedReader openTextResource(String path, Class<?> c) {
-    try {
-      return new BufferedReader(new InputStreamReader(
-        c.getResourceAsStream(path), Constants.ENCODING));
-    }
-    catch (IOException e) {
-      LOGGER.error("Could not open BufferedReader", e);
-    }
-    return null;
-  }
-
-  // -- Helper methods --
-
-  /**
-   * Reads (at least) one line from the given input stream
-   * into the specified string buffer.
-   *
-   * @return number of lines read
-   */
-  private int readLine(BufferedReader in, StringBuffer sb) throws IOException {
-    int no = 0;
-    sb.setLength(0);
-    while (true) {
-      String line = in.readLine();
-      if (line == null) break;
-      no++;
-
-      // strip comments
-      if (commentDelimiter != null) {
-        int comment = line.indexOf(commentDelimiter);
-        if (comment >= 0) line = line.substring(0, comment);
-      }
-
-      // kill whitespace
-      line = line.trim();
-
-      // backslash signifies data continues to next line
-      boolean slash = slashContinues && line.endsWith("\\");
-      if (slash) line = line.substring(0, line.length() - 1).trim() + " ";
-      sb.append(line);
-      if (!slash) break;
-    }
-    return no;
+    return ome.scifio.common.IniParser.openTextResource(path, c);
   }
 
 }

@@ -34,10 +34,15 @@
  * #L%
  */
 
-package ome.scifio.services;
+package loci.common.services;
 
+import java.lang.reflect.InvocationTargetException;
+
+import loci.utils.ProtectedMethodInvoker;
 
 /**
+ * A legacy delegator class for ome.scifio.services.AbstractService
+ * 
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/services/AbstractService.java">Trac</a>,
  * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/common/src/loci/common/services/AbstractService.java;hb=HEAD">Gitweb</a></dd></dl>
@@ -46,6 +51,11 @@ package ome.scifio.services;
  */
 public abstract class AbstractService implements Service {
 
+  // -- Fields --
+  
+  protected ome.scifio.services.AbstractService service;
+  private ProtectedMethodInvoker pmi = new ProtectedMethodInvoker();
+  
   /**
    * Checks a given class dependency at runtime to ensure that a given class
    * will be available. This method is expected to be called at least once by
@@ -53,9 +63,15 @@ public abstract class AbstractService implements Service {
    * @param klass A class that this service depends upon.
    */
   protected void checkClassDependency(Class<? extends Object> klass) {
-    // Just need *something* here to trigger a ClassNotFoundException if the
-    // class isn't on the classpath.
-    klass.getName();
+    Class<?>[] c = new Class<?>[] {klass.getClass()};
+    Object[] o = new Object[] {klass};
+    
+    try {
+      pmi.invokeProtected(service, "checkClassDependency", c, o);
+    }
+    catch (InvocationTargetException e) {
+      throw new IllegalStateException(e);
+    }
   }
 
 }

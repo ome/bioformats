@@ -34,11 +34,11 @@
  * #L%
  */
 
-package ome.scifio.common;
+package loci.common;
 
 /**
- * A event indicating a status update.
- *
+ * A legacy delegator class for ome.scifio.common.StatusEvent.
+ * 
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/StatusEvent.java">Trac</a>,
  * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/common/src/loci/common/StatusEvent.java;hb=HEAD">Gitweb</a></dd></dl>
@@ -47,68 +47,57 @@ public class StatusEvent {
 
   // -- Fields --
 
-  /** Current progress value. */
-  protected int progress;
-
-  /** Current progress maximum. */
-  protected int maximum;
-
-  /** Current status message. */
-  protected String status;
-
-  /** Whether or not this is a warning event. */
-  protected boolean warning;
+  private ome.scifio.common.StatusEvent event;
 
   // -- Constructor --
 
   /** Constructs a status event. */
   public StatusEvent(String message) {
-    this(-1, -1, message);
+    event = new ome.scifio.common.StatusEvent(message);
   }
 
   /** Constructs a status event. */
   public StatusEvent(String message, boolean warn) {
-    this(-1, -1, message, warn);
+    event = new ome.scifio.common.StatusEvent(message, warn);
   }
 
   /** Constructs a status event. */
   public StatusEvent(int progress, int maximum, String message) {
-    this(progress, maximum, message, false);
+    event = new ome.scifio.common.StatusEvent(progress, maximum, message);
   }
 
   /** Constructs a status event. */
   public StatusEvent(int progress, int maximum, String message, boolean warn) {
-    this.progress = progress;
-    this.maximum = maximum;
-    status = message;
-    warning = warn;
+    event = new ome.scifio.common.StatusEvent(progress, maximum, message, warn);
   }
 
   // -- StatusEvent API methods --
 
   /** Gets progress value. Returns -1 if progress is unknown. */
-  public int getProgressValue() { return progress; }
+  public int getProgressValue() { 
+    return event.getProgressValue();
+  }
 
   /** Gets progress maximum. Returns -1 if progress is unknown. */
-  public int getProgressMaximum() { return maximum; }
+  public int getProgressMaximum() { 
+    return event.getProgressMaximum();
+  }
 
   /** Gets status message. */
-  public String getStatusMessage() { return status; }
+  public String getStatusMessage() {
+    return event.getStatusMessage();
+  }
 
   /** Returns whether or not this is a warning event. */
-  public boolean isWarning() { return warning; }
+  public boolean isWarning() { 
+    return event.isWarning();
+  }
 
   // -- Object API methods --
 
   @Override
   public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("Status");
-    sb.append(": progress=" + progress);
-    sb.append(", maximum=" + maximum);
-    sb.append(", warning=" + warning);
-    sb.append(", status='" + status + "'");
-    return sb.toString();
+    return event.toString();
   }
 
 }

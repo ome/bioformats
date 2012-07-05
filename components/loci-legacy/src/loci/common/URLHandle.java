@@ -34,17 +34,15 @@
  * #L%
  */
 
-package ome.scifio.io;
+package loci.common;
 
-import java.io.BufferedInputStream;
-import java.io.DataInputStream;
 import java.io.IOException;
-import java.net.URL;
-import java.net.URLConnection;
+import java.lang.reflect.InvocationTargetException;
+
+import loci.utils.ProtectedMethodInvoker;
 
 /**
- * Provides random access to URLs using the IRandomAccess interface.
- * Instances of URLHandle are read-only.
+ * A legacy delegator class for ome.scifio.io.URLHandle.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/URLHandle.java">Trac</a>,
@@ -59,12 +57,8 @@ import java.net.URLConnection;
 public class URLHandle extends StreamHandle {
 
   // -- Fields --
-
-  /** URL of open socket */
-  private String url;
-
-  /** Socket underlying this stream */
-  private URLConnection conn;
+  
+  private ProtectedMethodInvoker pmi = new ProtectedMethodInvoker();
 
   // -- Constructors --
 
@@ -72,51 +66,31 @@ public class URLHandle extends StreamHandle {
    * Constructs a new URLHandle using the given URL.
    */
   public URLHandle(String url) throws IOException {
-    if (!url.startsWith("http") && !url.startsWith("file:")) {
-      url = "http://" + url;
-    }
-    this.url = url;
-    resetStream();
+    sHandle = new ome.scifio.io.URLHandle(url);
   }
 
   // -- IRandomAccess API methods --
 
   /* @see IRandomAccess#seek(long) */
   public void seek(long pos) throws IOException {
-    if (pos < fp && pos >= mark) {
-      stream.reset();
-      fp = mark;
-      skip(pos - fp);
-    }
-    else super.seek(pos);
+    sHandle.seek(pos);
   }
 
   // -- StreamHandle API methods --
 
   /* @see StreamHandle#resetStream() */
   protected void resetStream() throws IOException {
-    conn = (new URL(url)).openConnection();
-    stream = new DataInputStream(new BufferedInputStream(
-      conn.getInputStream(), RandomAccessInputStream.MAX_OVERHEAD));
-    fp = 0;
-    mark = 0;
-    length = conn.getContentLength();
-    if (stream != null) stream.mark(RandomAccessInputStream.MAX_OVERHEAD);
+    Class<?>[] c = null;
+    Object[] o = null;
+    
+    try {
+      pmi.invokeProtected(sHandle, "resetStream", c, o);
+    }
+    catch (InvocationTargetException e) {
+      pmi.unwrapException(e, IOException.class);
+      throw new IllegalStateException(e);
+    }
   }
 
   // -- Helper methods --
-
-  /** Skip over the given number of bytes. */
-  private void skip(long bytes) throws IOException {
-    while (bytes >= Integer.MAX_VALUE) {
-      bytes -= skipBytes(Integer.MAX_VALUE);
-    }
-    int skipped = skipBytes((int) bytes);
-    while (skipped < bytes) {
-      int n = skipBytes((int) (bytes - skipped));
-      if (n == 0) break;
-      skipped += n;
-    }
-  }
-
 }

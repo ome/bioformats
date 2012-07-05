@@ -34,19 +34,12 @@
  * #L%
  */
 
-package ome.scifio.common;
+package loci.common;
 
-import java.io.BufferedWriter;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
- * A simple writer for INI configuration files.
+ * A legacy delegator class for ome.scifio.common.IniWriter.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/IniWriter.java">Trac</a>,
@@ -56,8 +49,15 @@ import org.slf4j.LoggerFactory;
  */
 public class IniWriter {
 
-  /** Logger for this class. */
-  private static final Logger LOGGER = LoggerFactory.getLogger(IniWriter.class);
+  // -- Fields --
+  
+  private ome.scifio.common.IniWriter writer;
+  
+  // -- Constructor --
+  
+  public IniWriter() {
+    writer = new ome.scifio.common.IniWriter();
+  }
 
   // -- IniWriter API methods --
 
@@ -66,26 +66,14 @@ public class IniWriter {
    * If the given file already exists, then the IniList will be appended.
    */
   public void saveINI(IniList ini, String path) throws IOException {
-    saveINI(ini, path, true);
+    writer.saveINI(ini.list, path);
   }
 
   /** Saves the given IniList to the given file. */
   public void saveINI(IniList ini, String path, boolean append)
     throws IOException
   {
-    BufferedWriter out = new BufferedWriter(new OutputStreamWriter(
-      new FileOutputStream(path, append), Constants.ENCODING));
-
-    for (IniTable table : ini) {
-      String header = table.get(IniTable.HEADER_KEY);
-      out.write("[" + header + "]\n");
-      for (String key : table.keySet()) {
-        out.write(key + " = " + table.get(key) + "\n");
-      }
-      out.write("\n");
-    }
-
-    out.close();
+    writer.saveINI(ini.list, path, append);
   }
 
 }

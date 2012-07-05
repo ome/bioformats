@@ -34,19 +34,16 @@
  * #L%
  */
 
-package ome.scifio.xml;
+package loci.common.xml;
 
 import java.io.IOException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
- * Top-level SAX handler.
+ * A legacy delegator class for ome.scifio.xml.BaseHandler.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/xml/BaseHandler.java">Trac</a>,
@@ -56,16 +53,16 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class BaseHandler extends DefaultHandler {
 
-  private static final Logger LOGGER =
-    LoggerFactory.getLogger(BaseHandler.class);
+  // -- Fields --
+  
+  protected ome.scifio.xml.BaseHandler handler = new ome.scifio.xml.BaseHandler();
 
   // -- DefaultHandler API methods --
 
   public InputSource resolveEntity(String publicId, String systemId)
     throws IOException, SAXException
   {
-    LOGGER.debug("Ignoring: {}, {}", publicId, systemId);
-    return new InputSource(new java.io.StringReader(""));
+    return handler.resolveEntity(publicId, systemId);
   }
 
 }

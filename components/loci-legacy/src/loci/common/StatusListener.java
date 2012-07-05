@@ -34,18 +34,16 @@
  * #L%
  */
 
-package ome.scifio.common;
-
-import java.util.EventListener;
+package loci.common;
 
 /**
- * A listener for status updates.
- *
+ * A legacy wrapper for ome.scifio.common.StatusListener.
+ * 
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/StatusListener.java">Trac</a>,
  * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/common/src/loci/common/StatusListener.java;hb=HEAD">Gitweb</a></dd></dl>
  */
-public interface StatusListener extends EventListener {
+public interface StatusListener extends ome.scifio.common.StatusListener {
 
   /** Called when status is updated. */
   void statusUpdated(StatusEvent e);

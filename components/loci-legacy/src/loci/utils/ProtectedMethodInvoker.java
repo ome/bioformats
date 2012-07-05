@@ -34,62 +34,71 @@
  * #L%
  */
 
-package loci.common;
+package loci.utils;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-
-import loci.utils.ProtectedMethodInvoker;
+import java.lang.reflect.Method;
 
 /**
- * A legacy delegator class for ome.scifio.io.GZipHandle.
+ * This class contains useful methods for executing protected methods via reflection.
+ * 
+ * Use the invokeProtected method to find and execute the target method within a source 
+ * object.
+ * 
+ * Use the unwrapException method to test any thrown exception for a match to a known
+ * throwable.
+ * 
+ * @author Mark Hiner hinerm at gmail.com
  *
- * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/GZipHandle.java">Trac</a>,
- * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/common/src/loci/common/GZipHandle.java;hb=HEAD">Gitweb</a></dd></dl>
- *
- * @see StreamHandle
- *
- * @author Melissa Linkert melissa at glencoesoftware.com
  */
-public class GZipHandle extends StreamHandle {
-
-  // -- Fields --
-  
-  private ProtectedMethodInvoker pmi = new ProtectedMethodInvoker();
-  
-  // -- Constructor --
+public class ProtectedMethodInvoker {
 
   /**
-   * Construct a new GZipHandle for the given file.
-   *
-   * @throws HandleException if the given file name is not a GZip file.
+   * This method checks whether the Throwable t is an instance of the provided 
+   * exceptionType. This can be used to check an InvocationTargetException
+   * returned by invokeProtected for known exception types that can be
+   * re-thrown properly.
+   * 
+   * @param t
+   * @param exceptionType
+   * @throws T
    */
-  public GZipHandle(String file) throws IOException {
-    sHandle = new ome.scifio.io.GZipHandle(file);
-  }
-
-  // -- GZipHandle API methods --
-
-  /** Returns true if the given filename is a gzip file. */
-  public static boolean isGZipFile(String file) throws IOException {
-    return ome.scifio.io.GZipHandle.isGZipFile(file);
-  }
-
-  // -- StreamHandle API methods --
-
-  /* @see StreamHandle#resetStream() */
-  protected void resetStream() throws IOException {
-    Class<?>[] c = null;
-    Object[] o = null;
-    
-    try {
-      pmi.invokeProtected(sHandle, "resetStream", c, o);
+  public <T extends Throwable> void unwrapException(Throwable t, Class<T> exceptionType) throws T {
+    final Throwable cause = t.getCause();
+    if (exceptionType.isAssignableFrom(cause.getClass())) {
+      @SuppressWarnings("unchecked")
+      final T typedException = (T) cause;
+      throw typedException;
     }
-    catch (InvocationTargetException e) {
-      pmi.unwrapException(e, IOException.class);
+  }
+
+  /**
+   * This method attempts to invoke the provided methodName within the source object.
+   * 
+   * paramTypes is an array of the classes for the method's parameters, and args
+   * is an array of the actual objects to be passed as parameters.
+   * 
+   * The return value is an object wrapping of the target method's return value.
+   * 
+   * @param source
+   * @param methodName
+   * @param paramTypes
+   * @param args
+   * @throws InvocationTargetException
+   */
+  public Object invokeProtected(Object source, String methodName, Class<?>[] paramTypes,
+    Object[] args) throws InvocationTargetException
+  {
+    try {
+      Method m = source.getClass().getDeclaredMethod(methodName, paramTypes);
+      m.setAccessible(true);
+      return m.invoke(source, args);
+    }
+    catch (NoSuchMethodException e) {
+      throw new IllegalStateException(e);
+    }
+    catch (IllegalAccessException e) {
       throw new IllegalStateException(e);
     }
   }
-
 }

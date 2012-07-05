@@ -34,10 +34,10 @@
  * #L%
  */
 
-package ome.scifio.common;
+package loci.common;
 
 /**
- * A simple interface for objects wishing to report their status to listeners.
+ * A legacy wrapper for ome.scifio.common.StatusReporter
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/StatusReporter.java">Trac</a>,
@@ -45,7 +45,7 @@ package ome.scifio.common;
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
-public interface StatusReporter {
+public interface StatusReporter extends ome.scifio.common.StatusReporter {
 
   void addStatusListener(StatusListener l);
   void removeStatusListener(StatusListener l);

@@ -34,15 +34,17 @@
  * #L%
  */
 
-package ome.scifio.services;
+package loci.common.services;
 
 /**
+ * A legacy wrapper interface for ome.scifio.services.Service.
+ * 
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/services/Service.java">Trac</a>,
  * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/common/src/loci/common/services/Service.java;hb=HEAD">Gitweb</a></dd></dl>
  *
  * @author callan
  */
-public interface Service {
+public interface Service extends ome.scifio.services.Service{
 
 }

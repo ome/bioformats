@@ -34,13 +34,13 @@
  * #L%
  */
 
-package ome.scifio.xml;
+package loci.common.xml;
 
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXParseException;
 
 /**
- * Used by various XMLTools methods to handle XML parsing errors.
+ * A legacy delegator class for ome.scifio.xml.ParserErrorHandler
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/xml/ParserErrorHandler.java">Trac</a>,
@@ -50,16 +50,22 @@ import org.xml.sax.SAXParseException;
  */
 public class ParserErrorHandler implements ErrorHandler {
 
+  // -- Fields --
+  
+  private ome.scifio.xml.ParserErrorHandler eHandler = new ome.scifio.xml.ParserErrorHandler ();
+  
+  // -- Methods --
+  
   public void error(SAXParseException e) {
-    XMLTools.LOGGER.debug(e.getMessage());
+    eHandler.error(e);
   }
 
   public void fatalError(SAXParseException e) {
-    XMLTools.LOGGER.debug(e.getMessage());
+    eHandler.fatalError(e);
   }
 
   public void warning(SAXParseException e) {
-    XMLTools.LOGGER.debug(e.getMessage());
+    eHandler.warning(e);
   }
 
 }

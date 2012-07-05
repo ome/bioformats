@@ -34,26 +34,19 @@
  * #L%
  */
 
-package ome.scifio.io;
+package loci.common;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileChannel.MapMode;
-import java.util.StringTokenizer;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import loci.utils.ProtectedMethodInvoker;
 
 /**
- * Provides a facade to byte buffer allocation that enables
- * <code>FileChannel.map()</code> usage on platforms where it's unlikely to
- * give us problems and heap allocation where it is. References:
- * <ul>
- *   <li>http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=5092131</li>
- *   <li>http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6417205</li>
- * </ul>
- *
+ * A legacy delegator class for ome.scifio.io.NIOByteBufferProvider.
+ * 
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/NIOByteBufferProvider.java">Trac</a>,
  * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/common/src/loci/common/NIOByteBufferProvider.java;hb=HEAD">Gitweb</a></dd></dl>
@@ -64,30 +57,12 @@ public class NIOByteBufferProvider {
 
   // -- Constants --
 
-  /** The minimum Java version we know is safe for memory mapped I/O. */
-  public static final int MINIMUM_JAVA_VERSION = 6;
-
-  /** Logger for this class. */
-  private static final Logger LOGGER =
-    LoggerFactory.getLogger(NIOByteBufferProvider.class);
-
   // -- Fields --
 
-  /** Whether or not we are to use memory mapped I/O. */
-  private static boolean useMappedByteBuffer = false;
-
-  /** File channel to allocate or map data from. */
-  private FileChannel channel;
-
-  /** If we are to use memory mapped I/O, the map mode. */
-  private MapMode mapMode;
-
-  static {
-    String mapping = System.getProperty("mappedBuffers");
-    useMappedByteBuffer = Boolean.parseBoolean(mapping);
-    LOGGER.debug("Using mapped byte buffer? {}", useMappedByteBuffer);
-  }
-
+  private ome.scifio.io.NIOByteBufferProvider buf;
+  
+  private ProtectedMethodInvoker pmi = new ProtectedMethodInvoker();
+  
   // -- Constructors --
 
   /**
@@ -97,10 +72,11 @@ public class NIOByteBufferProvider {
    * is to occur.
    */
   public NIOByteBufferProvider(FileChannel channel, MapMode mapMode) {
-    this.channel = channel;
-    this.mapMode = mapMode;
+    buf = new ome.scifio.io.NIOByteBufferProvider(channel, mapMode);
   }
 
+  // -- NIOByteBufferProvider API Methods --
+  
   /**
    * Allocates or maps the desired file data into memory.
    * @param bufferStartPosition The absolute position of the start of the
@@ -112,10 +88,7 @@ public class NIOByteBufferProvider {
    */
   public ByteBuffer allocate(long bufferStartPosition, int newSize)
     throws IOException {
-    if (useMappedByteBuffer) {
-      return allocateMappedByteBuffer(bufferStartPosition, newSize);
-    }
-    return allocateDirect(bufferStartPosition, newSize);
+    return buf.allocate(bufferStartPosition, newSize);
   }
 
   /**
@@ -129,9 +102,16 @@ public class NIOByteBufferProvider {
    */
   protected ByteBuffer allocateDirect(long bufferStartPosition, int newSize)
     throws IOException {
-    ByteBuffer buffer = ByteBuffer.allocate(newSize);
-    channel.read(buffer, bufferStartPosition);
-    return buffer;
+    Class<?>[] c = new Class<?>[] {long.class, int.class};
+    Object[] o = new Object[] {bufferStartPosition, newSize};
+    
+    try {
+      return (ByteBuffer)pmi.invokeProtected(buf, "allocateDirect", c, o);
+    }
+    catch (InvocationTargetException e) {
+      pmi.unwrapException(e, IOException.class);
+      throw new IllegalStateException(e);
+    }
   }
 
   /**
@@ -145,6 +125,15 @@ public class NIOByteBufferProvider {
    */
   protected ByteBuffer allocateMappedByteBuffer(
       long bufferStartPosition, int newSize) throws IOException {
-    return channel.map(mapMode, bufferStartPosition, newSize);
+    Class<?>[] c = new Class<?>[] {long.class, int.class};
+    Object[] o = new Object[] {bufferStartPosition, newSize};
+    
+    try {
+      return (ByteBuffer)pmi.invokeProtected(buf, "allocateMappedByteBuffer", c, o);
+    }
+    catch (InvocationTargetException e) {
+      pmi.unwrapException(e, IOException.class);
+      throw new IllegalStateException(e);
+    }
   }
 }

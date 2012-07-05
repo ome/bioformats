@@ -34,12 +34,14 @@
  * #L%
  */
 
-package ome.scifio.io;
+package loci.common;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import loci.utils.ProtectedMethodInvoker;
 
 /**
- * A wrapper for buffered NIO logic that implements the IRandomAccess interface.
+ * A legacy delegator to ome.scifio.io.AbstractNIOHandle.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/AbstractNIOHandle.java">Trac</a>,
@@ -60,6 +62,10 @@ public abstract class AbstractNIOHandle implements IRandomAccess {
 
   // -- Fields --
 
+  protected ome.scifio.io.AbstractNIOHandle handle;
+  
+  private ProtectedMethodInvoker pmi = new ProtectedMethodInvoker();
+
   // -- Constructors --
 
   // -- AbstractNIOHandle methods --
@@ -70,9 +76,14 @@ public abstract class AbstractNIOHandle implements IRandomAccess {
    * @throws IllegalArgumentException If an illegal mode is passed.
    */
   protected void validateMode(String mode) {
-    if (!(mode.equals("r") || mode.equals("rw"))) {
-      throw new IllegalArgumentException(
-        String.format("%s mode not in supported modes ('r', 'rw')", mode));
+    Class<?>[] c = new Class<?>[] {mode.getClass()};
+    Object[] o = new Object[] {mode};
+    
+    try {
+      pmi.invokeProtected(handle, "validateMode", c, o);
+    }
+    catch (InvocationTargetException e) {
+      throw new IllegalStateException(e);
     }
   }
 
@@ -85,11 +96,16 @@ public abstract class AbstractNIOHandle implements IRandomAccess {
    * @throws IOException If there is an error changing the handle's length.
    */
   protected boolean validateLength(int writeLength) throws IOException {
-    if (getFilePointer() + writeLength > length()) {
-      setLength(getFilePointer() + writeLength);
-      return false;
+    Class<?>[] c = new Class<?>[] {int.class};
+    Object[] o = new Object[] {writeLength};
+    
+    try {
+      return (Boolean)pmi.invokeProtected(handle, "validateLength", c, o);
     }
-    return true;
+    catch (InvocationTargetException e) {
+      pmi.unwrapException(e, IOException.class);
+      throw new IllegalStateException(e);
+    }
   }
 
   /**
@@ -98,4 +114,18 @@ public abstract class AbstractNIOHandle implements IRandomAccess {
    * @throws IOException If there is an error changing the handle's length.
    */
   protected abstract void setLength(long length) throws IOException;
+  
+  // -- Delegators --
+  
+  public boolean equals(Object obj) {
+    return handle.equals(obj);
+  }
+
+  public String toString() {
+    return handle.toString();
+  }
+  
+  public int hashCode() {
+    return handle.hashCode();
+  }
 }

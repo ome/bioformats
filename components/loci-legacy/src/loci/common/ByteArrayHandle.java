@@ -34,19 +34,14 @@
  * #L%
  */
 
-package ome.scifio.io;
+package loci.common;
 
-import java.io.EOFException;
 import java.io.IOException;
-import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
-import ome.scifio.common.Constants;
-
-
 /**
- * A wrapper for a byte array that implements the IRandomAccess interface.
+ * Legacy delegator class for ome.scifio.io.ByteArrayHandle.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/ByteArrayHandle.java">Trac</a>,
@@ -58,17 +53,8 @@ public class ByteArrayHandle extends AbstractNIOHandle {
 
   // -- Constants --
 
-  /** Initial length of a new file. */
-  protected static final int INITIAL_LENGTH = 1000000;
-
   // -- Fields --
-
-  /** Backing ByteBuffer. */
-  protected ByteBuffer buffer;
-
-  /** Length of the file. */
-  //protected long length;
-
+  
   // -- Constructors --
 
   /**
@@ -76,11 +62,11 @@ public class ByteArrayHandle extends AbstractNIOHandle {
    * write to, the bytes specified by the byte[] argument.
    */
   public ByteArrayHandle(byte[] bytes) {
-    buffer = ByteBuffer.wrap(bytes);
+    handle = new ome.scifio.io.ByteArrayHandle(bytes);
   }
 
   public ByteArrayHandle(ByteBuffer bytes) {
-    buffer = bytes;
+    handle = new ome.scifio.io.ByteArrayHandle(bytes);
   }
 
   /**
@@ -88,21 +74,19 @@ public class ByteArrayHandle extends AbstractNIOHandle {
    * @param capacity Number of bytes to initially allocate.
    */
   public ByteArrayHandle(int capacity) {
-    buffer = ByteBuffer.allocate(capacity);
-    buffer.limit(capacity);
+    handle = new ome.scifio.io.ByteArrayHandle(capacity);
   }
 
   /** Creates a random access byte stream to write to a byte array. */
   public ByteArrayHandle() {
-    buffer = ByteBuffer.allocate(INITIAL_LENGTH);
-    buffer.limit(0);
+    handle = new ome.scifio.io.ByteArrayHandle();
   }
 
   // -- ByteArrayHandle API methods --
 
   /** Gets the byte array backing this FileHandle. */
   public byte[] getBytes() {
-    return buffer.array();
+    return ((ome.scifio.io.ByteArrayHandle)handle).getBytes();
   }
 
   /**
@@ -112,249 +96,143 @@ public class ByteArrayHandle extends AbstractNIOHandle {
    * @return Backing buffer of this handle.
    */
   public ByteBuffer getByteBuffer() {
-    return buffer;
+    return ((ome.scifio.io.ByteArrayHandle)handle).getByteBuffer();
   }
 
   // -- AbstractNIOHandle API methods --
 
   /* @see AbstractNIOHandle.setLength(long) */
   public void setLength(long length) throws IOException {
-    if (length > buffer.capacity()) {
-      long fp = getFilePointer();
-      ByteBuffer tmp = ByteBuffer.allocate((int) (length * 2));
-      ByteOrder order = buffer == null ? null : getOrder();
-      seek(0);
-      buffer = tmp.put(buffer);
-      if (order != null) setOrder(order);
-      seek(fp);
-    }
-    buffer.limit((int) length);
+    ((ome.scifio.io.ByteArrayHandle)handle).setLength(length);
   }
 
   // -- IRandomAccess API methods --
 
   /* @see IRandomAccess.close() */
-  public void close() { }
+  public void close() {
+    ((ome.scifio.io.ByteArrayHandle)handle).close();
+  }
 
   /* @see IRandomAccess.getFilePointer() */
   public long getFilePointer() {
-    return buffer.position();
+    return ((ome.scifio.io.ByteArrayHandle)handle).getFilePointer();
   }
 
   /* @see IRandomAccess.length() */
   public long length() {
-    return buffer.limit();
+    return ((ome.scifio.io.ByteArrayHandle)handle).length();
   }
 
   /* @see IRandomAccess.read(byte[]) */
   public int read(byte[] b) throws IOException {
-    return read(b, 0, b.length);
+    return handle.read(b);
   }
 
   /* @see IRandomAccess.read(byte[], int, int) */
   public int read(byte[] b, int off, int len) throws IOException {
-    if (getFilePointer() + len > length()) {
-      len = (int) (length() - getFilePointer());
-    }
-    buffer.get(b, off, len);
-    return len;
+    return handle.read(b, off, len);
   }
 
   /* @see IRandomAccess.read(ByteBuffer) */
   public int read(ByteBuffer buf) throws IOException {
-    return read(buf, 0, buf.capacity());
+    return handle.read(buf);
   }
 
   /* @see IRandomAccess.read(ByteBuffer, int, int) */
   public int read(ByteBuffer buf, int off, int len) throws IOException {
-    if (buf.hasArray()) {
-      buffer.get(buf.array(), off, len);
-      return len;
-    }
-
-    byte[] b = new byte[len];
-    read(b);
-    buf.put(b, 0, len);
-    return len;
+    return handle.read(buf, off, len);
   }
 
   /* @see IRandomAccess.seek(long) */
   public void seek(long pos) throws IOException {
-    if (pos > length()) setLength(pos);
-    buffer.position((int) pos);
+    handle.seek(pos);
   }
 
   /* @see IRandomAccess.getOrder() */
   public ByteOrder getOrder() {
-    return buffer.order();
+    return handle.getOrder();
   }
 
   /* @see IRandomAccess.setOrder(ByteOrder) */
   public void setOrder(ByteOrder order) {
-    buffer.order(order);
+    handle.setOrder(order);
   }
 
   // -- DataInput API methods --
 
   /* @see java.io.DataInput.readBoolean() */
   public boolean readBoolean() throws IOException {
-    return readByte() != 0;
+    return handle.readBoolean();
   }
 
   /* @see java.io.DataInput.readByte() */
   public byte readByte() throws IOException {
-    if (getFilePointer() + 1 > length()) {
-      throw new EOFException(EOF_ERROR_MSG);
-    }
-    try {
-      return buffer.get();
-    }
-    catch (BufferUnderflowException e) {
-      EOFException eof = new EOFException();
-      eof.initCause(e);
-      throw eof;
-    }
+    return handle.readByte();
   }
 
   /* @see java.io.DataInput.readChar() */
   public char readChar() throws IOException {
-    if (getFilePointer() + 2 > length()) {
-      throw new EOFException(EOF_ERROR_MSG);
-    }
-    try {
-      return buffer.getChar();
-    }
-    catch (BufferUnderflowException e) {
-      EOFException eof = new EOFException();
-      eof.initCause(e);
-      throw eof;
-    }
+    return handle.readChar();
   }
 
   /* @see java.io.DataInput.readDouble() */
   public double readDouble() throws IOException {
-    if (getFilePointer() + 8 > length()) {
-      throw new EOFException(EOF_ERROR_MSG);
-    }
-    try {
-      return buffer.getDouble();
-    }
-    catch (BufferUnderflowException e) {
-      EOFException eof = new EOFException();
-      eof.initCause(e);
-      throw eof;
-    }
+    return handle.readDouble();
   }
 
   /* @see java.io.DataInput.readFloat() */
   public float readFloat() throws IOException {
-    if (getFilePointer() + 4 > length()) {
-      throw new EOFException(EOF_ERROR_MSG);
-    }
-    try {
-      return buffer.getFloat();
-    }
-    catch (BufferUnderflowException e) {
-      EOFException eof = new EOFException();
-      eof.initCause(e);
-      throw eof;
-    }
+    return handle.readFloat();
   }
 
   /* @see java.io.DataInput.readFully(byte[]) */
   public void readFully(byte[] b) throws IOException {
-    readFully(b, 0, b.length);
+    handle.readFully(b);
   }
 
   /* @see java.io.DataInput.readFully(byte[], int, int) */
   public void readFully(byte[] b, int off, int len) throws IOException {
-    if (getFilePointer() + len > length()) {
-      throw new EOFException(EOF_ERROR_MSG);
-    }
-    try {
-      buffer.get(b, off, len);
-    }
-    catch (BufferUnderflowException e) {
-      EOFException eof = new EOFException();
-      eof.initCause(e);
-      throw eof;
-    }
-  }
-
-  /* @see java.io.DataInput.readInt() */
-  public int readInt() throws IOException {
-    if (getFilePointer() + 4 > length()) {
-      throw new EOFException(EOF_ERROR_MSG);
-    }
-    try {
-      return buffer.getInt();
-    }
-    catch (BufferUnderflowException e) {
-      EOFException eof = new EOFException();
-      eof.initCause(e);
-      throw eof;
-    }
+    handle.readFully(b, off, len);
   }
 
   /* @see java.io.DataInput.readLine() */
   public String readLine() throws IOException {
-    throw new IOException("Unimplemented");
+    return handle.readLine();
   }
 
   /* @see java.io.DataInput.readLong() */
   public long readLong() throws IOException {
-    if (getFilePointer() + 8 > length()) {
-      throw new EOFException(EOF_ERROR_MSG);
-    }
-    try {
-      return buffer.getLong();
-    }
-    catch (BufferUnderflowException e) {
-      EOFException eof = new EOFException();
-      eof.initCause(e);
-      throw eof;
-    }
+    return handle.readLong();
+  }
+  
+  /* @see java.io.DataInput.readInt() */
+  public int readInt() throws IOException {
+    return handle.readInt();
   }
 
   /* @see java.io.DataInput.readShort() */
   public short readShort() throws IOException {
-    if (getFilePointer() + 2 > length()) {
-      throw new EOFException(EOF_ERROR_MSG);
-    }
-    try {
-      return buffer.getShort();
-    }
-    catch (BufferUnderflowException e) {
-      EOFException eof = new EOFException();
-      eof.initCause(e);
-      throw eof;
-    }
+    return handle.readShort();
   }
 
   /* @see java.io.DataInput.readUnsignedByte() */
   public int readUnsignedByte() throws IOException {
-    return readByte() & 0xff;
+    return handle.readUnsignedByte();
   }
 
   /* @see java.io.DataInput.readUnsignedShort() */
   public int readUnsignedShort() throws IOException {
-    return readShort() & 0xffff;
+    return handle.readUnsignedShort();
   }
 
   /* @see java.io.DataInput.readUTF() */
   public String readUTF() throws IOException {
-    int length = readUnsignedShort();
-    byte[] b = new byte[length];
-    read(b);
-    return new String(b, Constants.ENCODING);
+    return handle.readUTF();
   }
 
   /* @see java.io.DataInput.skipBytes(int) */
   public int skipBytes(int n) throws IOException {
-    int skipped = (int) Math.min(n, length() - getFilePointer());
-    if (skipped < 0) return 0;
-    seek(getFilePointer() + skipped);
-    return skipped;
+    return handle.skipBytes(n);
   }
 
   // -- DataOutput API methods --
@@ -366,95 +244,77 @@ public class ByteArrayHandle extends AbstractNIOHandle {
 
   /* @see java.io.DataOutput.write(byte[], int, int) */
   public void write(byte[] b, int off, int len) throws IOException {
-    validateLength(len);
-    buffer.put(b, off, len);
+    handle.write(b, off, len);
   }
 
   /* @see IRandomAccess.write(ByteBuffer) */
   public void write(ByteBuffer buf) throws IOException {
-    write(buf, 0, buf.capacity());
+    handle.write(buf);
   }
 
   /* @see IRandomAccess.write(ByteBuffer, int, int) */
   public void write(ByteBuffer buf, int off, int len) throws IOException {
-    validateLength(len);
-    buf.position(off);
-    buf.limit(off + len);
-    buffer.put(buf);
+    handle.write(buf, off, len);
   }
 
   /* @see java.io.DataOutput.write(int b) */
   public void write(int b) throws IOException {
-    validateLength(1);
-    buffer.put((byte) b);
+    handle.write(b);
   }
 
   /* @see java.io.DataOutput.writeBoolean(boolean) */
   public void writeBoolean(boolean v) throws IOException {
-    write(v ? 1 : 0);
+    handle.writeBoolean(v);
   }
 
   /* @see java.io.DataOutput.writeByte(int) */
   public void writeByte(int v) throws IOException {
-    write(v);
+    handle.writeByte(v);
   }
 
   /* @see java.io.DataOutput.writeBytes(String) */
   public void writeBytes(String s) throws IOException {
-    write(s.getBytes(Constants.ENCODING));
+    handle.writeBytes(s);
   }
 
   /* @see java.io.DataOutput.writeChar(int) */
   public void writeChar(int v) throws IOException {
-    validateLength(2);
-    buffer.putChar((char) v);
+    handle.writeChar(v);
   }
 
   /* @see java.io.DataOutput.writeChars(String) */
   public void writeChars(String s) throws IOException {
-    int len = 2 * s.length();
-    validateLength(len);
-    char[] c = s.toCharArray();
-    for (int i=0; i<c.length; i++) {
-      writeChar(c[i]);
-    }
+    handle.writeChars(s);
   }
 
   /* @see java.io.DataOutput.writeDouble(double) */
   public void writeDouble(double v) throws IOException {
-    validateLength(8);
-    buffer.putDouble(v);
+    handle.writeDouble(v);
   }
 
   /* @see java.io.DataOutput.writeFloat(float) */
   public void writeFloat(float v) throws IOException {
-    validateLength(4);
-    buffer.putFloat(v);
+    handle.writeFloat(v);
   }
 
   /* @see java.io.DataOutput.writeInt(int) */
   public void writeInt(int v) throws IOException {
-    validateLength(4);
-    buffer.putInt(v);
+    handle.writeInt(v);
   }
 
   /* @see java.io.DataOutput.writeLong(long) */
   public void writeLong(long v) throws IOException {
-    validateLength(8);
-    buffer.putLong(v);
+    handle.writeLong(v);
   }
 
   /* @see java.io.DataOutput.writeShort(int) */
   public void writeShort(int v) throws IOException {
-    validateLength(2);
-    buffer.putShort((short) v);
+    handle.writeShort(v);
   }
 
   /* @see java.io.DataOutput.writeUTF(String)  */
   public void writeUTF(String str) throws IOException {
-    byte[] b = str.getBytes(Constants.ENCODING);
-    writeShort(b.length);
-    write(b);
+    handle.writeUTF(str);
   }
 
 }

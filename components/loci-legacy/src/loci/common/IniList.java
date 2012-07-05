@@ -34,13 +34,24 @@
  * #L%
  */
 
-package ome.scifio.common;
+package loci.common;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
 
 /**
- * A data structure containing a parsed list of INI key/value tables.
+ * A legacy delegator class for ome.scifio.common.IniList.
+ * 
+ * Uses an "isa" relationship to preserve the inherited
+ * methods from ArrayList.
+ * 
+ * Dummy method signatures for IniList-specific methods
+ * are present to provide early warnings if these method
+ * names change (which would break backwards compatibility).
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/IniList.java">Trac</a>,
@@ -49,16 +60,142 @@ import java.util.HashMap;
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class IniList extends ArrayList<IniTable> {
+  
+  // -- Fields --
+  
+  public ome.scifio.common.IniList list = new ome.scifio.common.IniList();
+  
+  // -- Delegators --
 
-  // -- IniList methods --
+  public boolean add(IniTable arg0) {
+    return list.add(arg0.table);
+  }
+
+  public void add(int arg0, IniTable arg1) {
+    list.add(arg0, arg1.table);
+  }
+
+  public boolean addAll(Collection<? extends IniTable> arg0) {
+    Iterator<? extends IniTable> iter = arg0.iterator();
+    
+    while(iter.hasNext())
+      list.add(iter.next().table);
+    
+    return arg0.size() > 0;
+  }
+
+  public boolean addAll(int arg0, Collection<? extends IniTable> arg1) {
+    Iterator<? extends IniTable> iter = arg1.iterator();
+    
+    while(iter.hasNext())
+      list.add(arg0, iter.next().table);
+    
+    return arg1.size() > 0;
+  }
+
+  public void clear() {
+    list.clear();
+  }
+
+  public Object clone() {
+    return list.clone();
+  }
+
+  public boolean contains(Object arg0) {
+    return list.contains(arg0);
+  }
+
+  public boolean containsAll(Collection<?> arg0) {
+    return list.containsAll(arg0);
+  }
+
+  public void ensureCapacity(int arg0) {
+    list.ensureCapacity(arg0);
+  }
+
+  public boolean equals(Object arg0) {
+    return list.equals(arg0);
+  }
+
+  public IniTable get(int arg0) {
+    return convertTable(list.get(arg0));
+  }
+
+  public int hashCode() {
+    return list.hashCode();
+  }
+
+  public int indexOf(Object arg0) {
+    return list.indexOf(arg0);
+  }
+
+  public boolean isEmpty() {
+    return list.isEmpty();
+  }
+
+  public Iterator<IniTable> iterator() {
+    return convertList().iterator();
+  }
+
+  public int lastIndexOf(Object arg0) {
+    return list.lastIndexOf(arg0);
+  }
+
+  public ListIterator<IniTable> listIterator() {
+    return convertList().listIterator();
+  }
+
+  public ListIterator<IniTable> listIterator(int arg0) {
+    return convertList().listIterator(arg0);
+  }
+
+  public IniTable remove(int arg0) {
+    return convertTable(list.remove(arg0));
+  }
+
+  public boolean remove(Object arg0) {
+    return list.remove(arg0);
+  }
+
+  public boolean removeAll(Collection<?> arg0) {
+    return list.removeAll(arg0);
+  }
+
+  public boolean retainAll(Collection<?> arg0) {
+    return list.retainAll(arg0);
+  }
+
+  public IniTable set(int arg0, IniTable arg1) {
+    return convertTable(list.set(arg0, arg1.table));
+  }
+
+  public int size() {
+    return list.size();
+  }
+
+  public List<IniTable> subList(int arg0, int arg1) {
+    return convertList().subList(arg0, arg1);
+  }
+
+  public Object[] toArray() {
+    return list.toArray();
+  }
+
+  public <T> T[] toArray(T[] arg0) {
+    return list.toArray(arg0);
+  }
+
+  public String toString() {
+    return list.toString();
+  }
+
+  public void trimToSize() {
+    list.trimToSize();
+  }
 
   /** Gets the table with the given name (header). */
   public IniTable getTable(String tableName) {
-    for (IniTable table : this) {
-      String header = table.get(IniTable.HEADER_KEY);
-      if (tableName.equals(header)) return table;
-    }
-    return null;
+    return convertTable(list.getTable(tableName));
   }
 
   /**
@@ -66,16 +203,26 @@ public class IniList extends ArrayList<IniTable> {
    * of the format "[table name] table key".
    */
   public HashMap<String, String> flattenIntoHashMap() {
-    HashMap<String, String> h = new HashMap<String, String>();
-    for (IniTable table : this) {
-      String tableName = table.get(IniTable.HEADER_KEY);
-      for (String key : table.keySet()) {
-        if (!key.equals(IniTable.HEADER_KEY)) {
-          h.put("[" + tableName + "] " + key, table.get(key));
-        }
-      }
-    }
-    return h;
+    return list.flattenIntoHashMap();
+  }
+  
+  // -- Helper methods --
+  
+  private IniTable convertTable(ome.scifio.common.IniTable table) {
+    IniTable t = new IniTable();
+    t.table = table;
+    return t;
+  }
+  
+  private ArrayList<IniTable> convertList() {
+    Iterator<ome.scifio.common.IniTable> iter = list.iterator();
+    
+    ArrayList<IniTable> tmpTables = new ArrayList<IniTable>();
+    
+    while(iter.hasNext())
+      tmpTables.add(convertTable(iter.next()));
+    
+    return tmpTables;
   }
 
 }

@@ -34,11 +34,10 @@
  * #L%
  */
 
-package ome.scifio.services;
+package loci.common.services;
 
 /**
- * Exception thrown when there is an error within a given service. That could
- * not be handled.
+ * Legacy wrapper class for ome.scifio.services.ServiceException
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/services/ServiceException.java">Trac</a>,
@@ -46,7 +45,7 @@ package ome.scifio.services;
  *
  * @author Chris Allan <callan at blackcat dot ca>
  */
-public class ServiceException extends Exception
+public class ServiceException extends ome.scifio.services.ServiceException
 {
   /** Serial for this version. */
   private static final long serialVersionUID = 7402442944895106504L;

@@ -34,11 +34,10 @@
  * #L%
  */
 
-package ome.scifio.services;
+package loci.common.services;
 
 /**
- * Exception thrown when there is an object instantiation error or error
- * processing dependencies.
+ * A legacy wrapper class for ome.scifio.services.DependencyException.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/services/DependencyException.java">Trac</a>,
@@ -46,13 +45,10 @@ package ome.scifio.services;
  *
  * @author Chris Allan <callan at blackcat dot ca>
  */
-public class DependencyException extends Exception
+public class DependencyException extends ome.scifio.services.DependencyException
 {
   /** Serial for this version. */
   private static final long serialVersionUID = -7836244849086491562L;
-  
-  /** The class that was used in a failed instantiation. */
-  private Class<? extends Service> failureClass;
 
   /**
    * Default constructor.
@@ -70,8 +66,7 @@ public class DependencyException extends Exception
    */
   public DependencyException(String message, Class<? extends Service> klass)
   {
-    super(message);
-    this.failureClass = klass;
+    super(message, klass);
   }
 
   /**
@@ -83,8 +78,7 @@ public class DependencyException extends Exception
   public DependencyException(String message, Class<? extends Service> klass,
       Throwable cause)
   {
-    super(message, cause);
-    this.failureClass = klass;
+    super(message, klass, cause);
   }
 
   /**
@@ -100,18 +94,15 @@ public class DependencyException extends Exception
    * Returns the class that was used during a failed instantiation.
    * @return See above.
    */
+  @SuppressWarnings("unchecked")
   public Class<? extends Service> getFailureClass()
   {
-    return failureClass;
+    return (Class<? extends Service>) super.getFailureClass();
   }
 
   @Override
   public String toString()
   {
-    if (failureClass == null)
-    {
-      return getMessage();
-    }
-    return getMessage() + " for " + failureClass;
+    return super.toString();
   }
 }

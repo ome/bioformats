@@ -34,16 +34,10 @@
  * #L%
  */
 
-package ome.scifio.common;
-
-import java.text.FieldPosition;
-import java.text.ParsePosition;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.TimeZone;
+package loci.common;
 
 /**
- * A utility class with convenience methods for working with dates.
+ * A legacy delegator class for ome.scifio.common.DateTools.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/DateTools.java">Trac</a>,
@@ -58,20 +52,22 @@ public final class DateTools {
   // -- Constants --
 
   /** Timestamp formats. */
-  public static final int UNIX = 0;  // January 1, 1970
-  public static final int COBOL = 1;  // January 1, 1601
-  public static final int MICROSOFT = 2; // December 30, 1899
-  public static final int ZVI = 3;
+  public static final int UNIX = ome.scifio.common.DateTools.UNIX;
+  public static final int COBOL = ome.scifio.common.DateTools.COBOL; 
+  public static final int MICROSOFT = ome.scifio.common.DateTools.MICROSOFT;
+  public static final int ZVI = ome.scifio.common.DateTools.ZVI;
+  public static final int ALT_ZVI = ome.scifio.common.DateTools.ALT_ZVI;
 
   /** Milliseconds until UNIX epoch. */
-  public static final long UNIX_EPOCH = 0;
-  public static final long COBOL_EPOCH = 11644473600000L;
-  public static final long MICROSOFT_EPOCH = 2209143600000L;
-  public static final long ZVI_EPOCH = 2921084975759000L;
-
+  public static final long UNIX_EPOCH = ome.scifio.common.DateTools.UNIX_EPOCH;
+  public static final long COBOL_EPOCH = ome.scifio.common.DateTools.COBOL_EPOCH;
+  public static final long MICROSOFT_EPOCH = ome.scifio.common.DateTools.MICROSOFT_EPOCH;
+  public static final long ZVI_EPOCH = ome.scifio.common.DateTools.ZVI_EPOCH;
+  public static final long ALT_ZVI_EPOCH = ome.scifio.common.DateTools.ALT_ZVI_EPOCH;
+  
   /** ISO 8601 date format string. */
   public static final String ISO8601_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
-
+  
   // -- Constructor --
 
   private DateTools() { }
@@ -83,19 +79,18 @@ public final class DateTools {
    * Mainly useful in conjunction with COBOL date conversion.
    */
   public static long getMillisFromTicks(long hi, long lo) {
-    long ticks = ((hi << 32) | lo);
-    return ticks / 10000; // 100 ns = 0.0001 ms
+    return ome.scifio.common.DateTools.getMillisFromTicks(hi, lo);
   }
 
   /** Converts the given timestamp into an ISO8601 date. */
   public static String convertDate(long stamp, int format) {
-    return convertDate(stamp, format, ISO8601_FORMAT);
+    return ome.scifio.common.DateTools.convertDate(stamp, format);
   }
 
   /** Converts the given timestamp into a date string with the given format. */
   public static String convertDate(long stamp, int format, String outputFormat)
   {
-    return convertDate(stamp, format, outputFormat, false);
+    return ome.scifio.common.DateTools.convertDate(stamp, format, outputFormat);
   }
 
   /**
@@ -107,37 +102,7 @@ public final class DateTools {
   public static String convertDate(long stamp, int format, String outputFormat,
     boolean correctTimeZoneForGMT)
   {
-    // see http://www.merlyn.demon.co.uk/critdate.htm for more information on
-    // dates than you will ever need (or want)
-
-    long ms = stamp;
-
-    switch (format) {
-      case UNIX:
-        ms -= UNIX_EPOCH;
-        break;
-      case COBOL:
-        ms -= COBOL_EPOCH;
-        break;
-      case MICROSOFT:
-        ms -= MICROSOFT_EPOCH;
-        break;
-      case ZVI:
-        ms -= ZVI_EPOCH;
-        break;
-    }
-
-    SimpleDateFormat fmt = new SimpleDateFormat(outputFormat);
-    if (correctTimeZoneForGMT) {
-      TimeZone tz = TimeZone.getDefault();
-      ms -= tz.getOffset(ms);
-    }
-    StringBuffer sb = new StringBuffer();
-
-    Date d = new Date(ms);
-
-    fmt.format(d, sb, new FieldPosition(0));
-    return sb.toString();
+    return ome.scifio.common.DateTools.convertDate(stamp, format, outputFormat, correctTimeZoneForGMT);
   }
 
   /**
@@ -149,7 +114,7 @@ public final class DateTools {
    * @param format The date's input format.
    */
   public static String formatDate(String date, String format) {
-    return formatDate(date, format, false);
+    return ome.scifio.common.DateTools.formatDate(date, format);
   }
 
   /**
@@ -160,13 +125,7 @@ public final class DateTools {
    * @param lenient Whether or not to leniently parse the date.
    */
   public static String formatDate(String date, String format, boolean lenient) {
-    if (date == null) return null;
-    SimpleDateFormat sdf = new SimpleDateFormat(format);
-    sdf.setLenient(lenient);
-    Date d = sdf.parse(date, new ParsePosition(0));
-    if (d == null) return null;
-    sdf = new SimpleDateFormat(ISO8601_FORMAT);
-    return sdf.format(d);
+    return ome.scifio.common.DateTools.formatDate(date, format, lenient);
   }
 
   /**
@@ -178,7 +137,7 @@ public final class DateTools {
    * @param formats The date's possible input formats.
    */
   public static String formatDate(String date, String[] formats) {
-    return formatDate(date, formats, false);
+    return ome.scifio.common.DateTools.formatDate(date, formats);
   }
 
   /**
@@ -191,11 +150,7 @@ public final class DateTools {
   public static String formatDate(String date, String[] formats,
     boolean lenient)
   {
-    for (int i=0; i<formats.length; i++) {
-      String result = formatDate(date, formats[i], lenient);
-      if (result != null) return result;
-    }
-    return null;
+    return ome.scifio.common.DateTools.formatDate(date, formats, lenient);
   }
 
   /**
@@ -203,10 +158,7 @@ public final class DateTools {
    * (in Unix format: milliseconds since January 1, 1970).
    */
   public static long getTime(String date, String format) {
-    SimpleDateFormat f = new SimpleDateFormat(format);
-    Date d = f.parse(date, new ParsePosition(0));
-    if (d == null) return -1;
-    return d.getTime();
+    return ome.scifio.common.DateTools.getTime(date, format);
   }
 
 }

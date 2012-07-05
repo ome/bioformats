@@ -34,7 +34,7 @@
  * #L%
  */
 
-package ome.scifio.services;
+package loci.common.services;
 
 /**
  * <dl><dt><b>Source code:</b></dt>

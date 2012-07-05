@@ -34,21 +34,17 @@
  * #L%
  */
 
-package ome.scifio.io;
+package loci.common;
 
-import java.io.BufferedInputStream;
 import java.io.DataInputStream;
-import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
-import ome.scifio.common.Constants;
-
+import loci.utils.ProtectedMethodInvoker;
 
 /**
- * StreamHandle implementation for reading from Zip-compressed files
- * or byte arrays.  Instances of ZipHandle are read-only.
+ * A legacy delegator class for ome.scifio.io.ZipHandle.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/ZipHandle.java">Trac</a>,
@@ -62,44 +58,12 @@ public class ZipHandle extends StreamHandle {
 
   // -- Fields --
 
-  private RandomAccessInputStream in;
-  private ZipInputStream zip;
-  private ZipEntry entry;
-  private int entryCount;
+  private ProtectedMethodInvoker pmi = new ProtectedMethodInvoker();
 
   // -- Constructor --
 
   public ZipHandle(String file) throws IOException {
-    super();
-    this.file = file;
-
-    in = openStream(file);
-    zip = new ZipInputStream(in);
-    entry = null;
-    entryCount = 0;
-
-    // strip off .zip extension and directory prefix
-    String innerFile = file.substring(0, file.length() - 4);
-    int slash = innerFile.lastIndexOf(File.separator);
-    if (slash < 0) slash = innerFile.lastIndexOf("/");
-    if (slash >= 0) innerFile = innerFile.substring(slash + 1);
-
-    // look for Zip entry with same prefix as the Zip file itself
-    boolean matchFound = false;
-    while (true) {
-      ZipEntry ze = zip.getNextEntry();
-      if (ze == null) break;
-      if (entry == null) entry = ze;
-      if (!matchFound && ze.getName().startsWith(innerFile)) {
-        // found entry with matching name
-        entry = ze;
-        matchFound = true;
-      }
-      entryCount++;
-    }
-    resetStream();
-
-    populateLength();
+    sHandle = new ome.scifio.io.ZipHandle(file);
   }
 
   /**
@@ -109,103 +73,53 @@ public class ZipHandle extends StreamHandle {
    * @throws HandleException if the given file is not a Zip file.
    */
   public ZipHandle(String file, ZipEntry entry) throws IOException {
-    super();
-    this.file = file;
-
-    in = openStream(file);
-    zip = new ZipInputStream(in);
-    this.entry = entry;
-    entryCount = 1;
-
-    seekToEntry();
-    resetStream();
-    populateLength();
+    sHandle = new ome.scifio.io.ZipHandle(file, entry);
   }
 
   // -- ZipHandle API methods --
 
   /** Returns true if the given filename is a Zip file. */
   public static boolean isZipFile(String file) throws IOException {
-    if (!file.toLowerCase().endsWith(".zip")) return false;
-
-    IRandomAccess handle = getHandle(file);
-    byte[] b = new byte[2];
-    if (handle.length() >= 2) {
-      handle.read(b);
-    }
-    handle.close();
-    return new String(b, Constants.ENCODING).equals("PK");
+    return ome.scifio.io.ZipHandle.isZipFile(file);
   }
 
   /** Get the name of the backing Zip entry. */
   public String getEntryName() {
-    return entry.getName();
+    return ((ome.scifio.io.ZipHandle)sHandle).getEntryName();
   }
 
   /** Returns the DataInputStream corresponding to the backing Zip entry. */
   public DataInputStream getInputStream() {
-    return stream;
+    return ((ome.scifio.io.ZipHandle)sHandle).getInputStream();
   }
 
   /** Returns the number of entries. */
   public int getEntryCount() {
-    return entryCount;
+    return ((ome.scifio.io.ZipHandle)sHandle).getEntryCount();
   }
 
   // -- IRandomAccess API methods --
 
   /* @see IRandomAccess#close() */
   public void close() throws IOException {
-    if (!Location.getIdMap().containsValue(this)) {
-      super.close();
-      zip = null;
-      entry = null;
-      if (in != null) in.close();
-      in = null;
-      entryCount = 0;
-    }
+    sHandle.close();
   }
 
   // -- StreamHandle API methods --
 
   /* @see StreamHandle#resetStream() */
   protected void resetStream() throws IOException {
-    if (stream != null) stream.close();
-    if (in != null) {
-      in.close();
-      in = openStream(file);
+    Class<?>[] c = null;
+    Object[] o = null;
+    
+    try {
+      pmi.invokeProtected(sHandle, "resetStream", c, o);
     }
-    if (zip != null) zip.close();
-    zip = new ZipInputStream(in);
-    if (entry != null) seekToEntry();
-    stream = new DataInputStream(new BufferedInputStream(
-      zip, RandomAccessInputStream.MAX_OVERHEAD * 10));
-    stream.mark(RandomAccessInputStream.MAX_OVERHEAD * 10);
+    catch (InvocationTargetException e) {
+      pmi.unwrapException(e, IOException.class);
+      throw new IllegalStateException(e);
+    } 
   }
 
   // -- Helper methods --
-
-  private void seekToEntry() throws IOException {
-    while (!entry.getName().equals(zip.getNextEntry().getName()));
-  }
-
-  private void populateLength() throws IOException {
-    length = -1;
-    while (stream.available() > 0) {
-      stream.skip(1);
-      length++;
-    }
-    resetStream();
-  }
-
-  private static IRandomAccess getHandle(String file) throws IOException {
-    return Location.getHandle(file, false, false);
-  }
-
-  private static RandomAccessInputStream openStream(String file)
-    throws IOException
-  {
-    return new RandomAccessInputStream(getHandle(file), file);
-  }
-
 }

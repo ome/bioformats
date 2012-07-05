@@ -34,19 +34,15 @@
  * #L%
  */
 
-package ome.scifio.io;
+package loci.common;
 
-import java.io.BufferedInputStream;
-import java.io.DataInputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 
-import ome.scifio.common.Constants;
-
+import loci.utils.ProtectedMethodInvoker;
 
 /**
- * StreamHandle implementation for reading from BZip2-compressed files
- * or byte arrays.  Instances of BZip2Handle are read-only.
+ * Legacy delegator class for ome.scifio.io.BZip2Handle.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/BZip2Handle.java">Trac</a>,
@@ -58,6 +54,11 @@ import ome.scifio.common.Constants;
  */
 public class BZip2Handle extends StreamHandle {
 
+  // -- Fields --
+  
+  // ome.scifio.io.BZip2Handle instance for delegation
+  private ProtectedMethodInvoker pmi = new ProtectedMethodInvoker();
+  
   // -- Constructor --
 
   /**
@@ -66,48 +67,31 @@ public class BZip2Handle extends StreamHandle {
    * @throws HandleException if the given file is not a BZip2 file.
    */
   public BZip2Handle(String file) throws IOException {
-    super();
-    this.file = file;
-    if (!isBZip2File(file)) {
-      throw new HandleException(file + " is not a BZip2 file.");
-    }
-
-    resetStream();
-
-    length = 0;
-    while (true) {
-      int skip = stream.skipBytes(1024);
-      if (skip <= 0) break;
-      length += skip;
-    }
-
-    resetStream();
+    sHandle = new ome.scifio.io.BZip2Handle(file);
   }
 
   // -- BZip2Handle API methods --
 
   /** Returns true if the given filename is a BZip2 file. */
   public static boolean isBZip2File(String file) throws IOException {
-    if (!file.toLowerCase().endsWith(".bz2")) return false;
-
-    FileInputStream s = new FileInputStream(file);
-    byte[] b = new byte[2];
-    s.read(b);
-    s.close();
-    return new String(b, Constants.ENCODING).equals("BZ");
+    return ome.scifio.io.BZip2Handle.isBZip2File(file);
   }
 
   // -- StreamHandle API methods --
 
   /* @see StreamHandle#resetStream() */
   protected void resetStream() throws IOException {
-    BufferedInputStream bis = new BufferedInputStream(
-      new FileInputStream(file), RandomAccessInputStream.MAX_OVERHEAD);
-    int skipped = 0;
-    while (skipped < 2) {
-      skipped += bis.skip(2 - skipped);
+    Class<?>[] c = null;
+    Object[] o = null;
+    
+    try {
+      pmi.invokeProtected(sHandle, "invokeProtected", c, o);
     }
-    stream = new DataInputStream(new CBZip2InputStream(bis));
+    catch (InvocationTargetException e) {
+      pmi.unwrapException(e, IOException.class);
+      throw new IllegalStateException(e);
+    }
   }
+
 
 }

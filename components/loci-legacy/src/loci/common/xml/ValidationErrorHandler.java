@@ -34,13 +34,13 @@
  * #L%
  */
 
-package ome.scifio.xml;
+package loci.common.xml;
 
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXParseException;
 
 /**
- * Used by validateXML to handle XML validation errors.
+ * A legacy delegator class for ome.scifio.xml.ValidationErrorHandler
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/xml/ValidationErrorHandler.java">Trac</a>,
@@ -52,25 +52,26 @@ import org.xml.sax.SAXParseException;
  */
 public class ValidationErrorHandler implements ErrorHandler {
 
-  private int errors = 0;
+  // -- Fields --
+  
+  private ome.scifio.xml.ValidationErrorHandler handler = new ome.scifio.xml.ValidationErrorHandler();
+  
+  // -- ValidatorErrorHandler API -- 
+  
+  public boolean ok() { return handler.ok(); }
 
-  public boolean ok() { return errors == 0; }
-
-  public int getErrorCount() { return errors; }
+  public int getErrorCount() { return handler.getErrorCount(); }
 
   public void error(SAXParseException e) {
-    XMLTools.LOGGER.error(e.getMessage());
-    errors++;
+    handler.error(e);
   }
 
   public void fatalError(SAXParseException e) {
-    XMLTools.LOGGER.error(e.getMessage());
-    errors++;
+    handler.fatalError(e);
   }
 
   public void warning(SAXParseException e) {
-    XMLTools.LOGGER.warn(e.getMessage());
-    errors++;
+    handler.warning(e);
   }
 
 }
