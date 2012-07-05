@@ -450,6 +450,10 @@ public class OMETiffReader extends FormatReader {
     Hashtable<String, IFormatReader> readers =
       new Hashtable<String, IFormatReader>();
     for (int i=0; i<seriesCount; i++) {
+      if (i > 0) {
+        firstIFD = null;
+      }
+
       int s = i;
       LOGGER.debug("Image[{}] {", i);
       LOGGER.debug("  id = {}", meta.getImageID(i));
@@ -461,7 +465,8 @@ public class OMETiffReader extends FormatReader {
         samplesPerPixel = meta.getChannelSamplesPerPixel(i, 0);
       }
       int samples = samplesPerPixel == null ?  -1 : samplesPerPixel.getValue();
-      int tiffSamples = firstIFD.getSamplesPerPixel();
+      int tiffSamples =
+        firstIFD == null ? samples : firstIFD.getSamplesPerPixel();
 
       boolean adjustedSamples = false;
       if (samples != tiffSamples) {
@@ -676,13 +681,15 @@ public class OMETiffReader extends FormatReader {
         tileHeight[s] = info[s][0].reader.getOptimalTileHeight();
 
         core[s].sizeX = meta.getPixelsSizeX(i).getValue().intValue();
-        int tiffWidth = (int) firstIFD.getImageWidth();
+        int tiffWidth =
+          firstIFD == null ? core[s].sizeX : (int) firstIFD.getImageWidth();
         if (core[s].sizeX != tiffWidth) {
           LOGGER.warn("SizeX mismatch: OME={}, TIFF={}",
             core[s].sizeX, tiffWidth);
         }
         core[s].sizeY = meta.getPixelsSizeY(i).getValue().intValue();
-        int tiffHeight = (int) firstIFD.getImageLength();
+        int tiffHeight =
+          firstIFD == null ? core[s].sizeY : (int) firstIFD.getImageLength();
         if (core[s].sizeY != tiffHeight) {
           LOGGER.warn("SizeY mismatch: OME={}, TIFF={}",
             core[s].sizeY, tiffHeight);
@@ -692,7 +699,8 @@ public class OMETiffReader extends FormatReader {
         core[s].sizeT = meta.getPixelsSizeT(i).getValue().intValue();
         core[s].pixelType = FormatTools.pixelTypeFromString(
           meta.getPixelsType(i).toString());
-        int tiffPixelType = firstIFD.getPixelType();
+        int tiffPixelType =
+          firstIFD == null ? core[s].pixelType : firstIFD.getPixelType();
         if (core[s].pixelType != tiffPixelType) {
           LOGGER.warn("PixelType mismatch: OME={}, TIFF={}",
             core[s].pixelType, tiffPixelType);
@@ -718,7 +726,8 @@ public class OMETiffReader extends FormatReader {
         }
 
         core[s].orderCertain = true;
-        PhotoInterp photo = firstIFD.getPhotometricInterpretation();
+        PhotoInterp photo = firstIFD == null ?
+          PhotoInterp.BLACK_IS_ZERO : firstIFD.getPhotometricInterpretation();
         core[s].rgb = samples > 1 || photo == PhotoInterp.RGB;
         if ((samples != core[s].sizeC && (samples % core[s].sizeC) != 0 &&
           (core[s].sizeC % samples) != 0) || core[s].sizeC == 1 ||
@@ -748,10 +757,11 @@ public class OMETiffReader extends FormatReader {
           LOGGER.warn("OME-TIFF Pixels element contains BinData elements! " +
                       "Ignoring.");
         }
-        core[s].littleEndian = firstIFD.isLittleEndian();
+        core[s].littleEndian =
+          firstIFD == null ? core[0].littleEndian : firstIFD.isLittleEndian();
         core[s].interleaved = false;
         core[s].indexed = photo == PhotoInterp.RGB_PALETTE &&
-          firstIFD.getIFDValue(IFD.COLOR_MAP) != null;
+          firstIFD != null && firstIFD.getIFDValue(IFD.COLOR_MAP) != null;
         if (core[s].indexed) {
           core[s].rgb = false;
         }
