@@ -439,6 +439,7 @@ public class OMETiffReader extends FormatReader {
     // process TiffData elements
     Hashtable<String, IFormatReader> readers =
       new Hashtable<String, IFormatReader>();
+    boolean adjustedSamples = false;
     for (int i=0; i<seriesCount; i++) {
       int s = i;
       LOGGER.debug("Image[{}] {", i);
@@ -453,12 +454,16 @@ public class OMETiffReader extends FormatReader {
       int samples = samplesPerPixel == null ?  -1 : samplesPerPixel.getValue();
       int tiffSamples = firstIFD.getSamplesPerPixel();
 
-      boolean adjustedSamples = false;
-      if (samples != tiffSamples) {
+      if (adjustedSamples ||
+        (samples != tiffSamples && (i == 0 || samples < 0)))
+      {
         LOGGER.warn("SamplesPerPixel mismatch: OME={}, TIFF={}",
           samples, tiffSamples);
         samples = tiffSamples;
         adjustedSamples = true;
+      }
+      else {
+        adjustedSamples = false;
       }
 
       if (adjustedSamples && meta.getChannelCount(i) <= 1) {
@@ -667,13 +672,13 @@ public class OMETiffReader extends FormatReader {
 
         core[s].sizeX = meta.getPixelsSizeX(i).getValue().intValue();
         int tiffWidth = (int) firstIFD.getImageWidth();
-        if (core[s].sizeX != tiffWidth) {
+        if (core[s].sizeX != tiffWidth && s == 0) {
           LOGGER.warn("SizeX mismatch: OME={}, TIFF={}",
             core[s].sizeX, tiffWidth);
         }
         core[s].sizeY = meta.getPixelsSizeY(i).getValue().intValue();
         int tiffHeight = (int) firstIFD.getImageLength();
-        if (core[s].sizeY != tiffHeight) {
+        if (core[s].sizeY != tiffHeight && s ==  0) {
           LOGGER.warn("SizeY mismatch: OME={}, TIFF={}",
             core[s].sizeY, tiffHeight);
         }
@@ -683,7 +688,7 @@ public class OMETiffReader extends FormatReader {
         core[s].pixelType = FormatTools.pixelTypeFromString(
           meta.getPixelsType(i).toString());
         int tiffPixelType = firstIFD.getPixelType();
-        if (core[s].pixelType != tiffPixelType) {
+        if (core[s].pixelType != tiffPixelType && (s == 0 || adjustedSamples)) {
           LOGGER.warn("PixelType mismatch: OME={}, TIFF={}",
             core[s].pixelType, tiffPixelType);
           core[s].pixelType = tiffPixelType;
