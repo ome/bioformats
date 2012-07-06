@@ -801,6 +801,7 @@ public abstract class FormatReader extends FormatHandler
     if (!fileOnly) {
       in = null;
       currentId = null;
+      resolution = 0;
     }
   }
 
