@@ -235,6 +235,10 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
       {
         transformed = verifyOMENamespace(transformed);
         LOGGER.debug("Running UPDATE_201004 stylesheet.");
+        if (update201004 == null) {
+          update201004 =
+            XMLTools.getStylesheet(XSLT_201004, OMEXMLServiceImpl.class);
+        }
         transformed = XMLTools.transformXML(transformed, update201004);
       }
       else transformed = xml;
