@@ -21,8 +21,9 @@ assert(isnumeric(I), 'First argument must be numeri');
 % Input check
 ip = inputParser;
 ip.addRequired('outputPath', @ischar);
-dimensionOrderValidator = @(x) strcmp(sort(x), 'CTXYZ') && strcmp(x(1:2), 'XY');
-ip.addOptional('dimensionOrder', 'XYZCT', dimensionOrderValidator)
+allDimensions = ome.xml.model.enums.DimensionOrder.values();
+validator = @(x) ismember(x, arrayfun(@char, allDimensions, 'Unif', false));
+ip.addOptional('dimensionOrder', 'XYZCT', validator);
 ip.parse(outputPath, varargin{:});
 
 % Check loci=tools jar is in the Java path
