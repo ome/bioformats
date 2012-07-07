@@ -29,12 +29,12 @@ classdef TestBfsave < TestCase
         function testDimensionOrder(self)
             
             I = uint8(rand(100, 100, 3, 4, 5) * (2^8-1));
-            runDimensionOrderTest(I, self.path, 'XYZCT');
-            runDimensionOrderTest(I, self.path, 'XYZTC');
-            runDimensionOrderTest(I, self.path, 'XYCZT');
-            runDimensionOrderTest(I, self.path, 'XYCTZ');
-            runDimensionOrderTest(I, self.path, 'XYTZC');
-            runDimensionOrderTest(I, self.path, 'XYTZC');
+            dimensionOrders = ome.xml.model.enums.DimensionOrder.values();
+            dimensionOrders = arrayfun(@char, dimensionOrders, 'Unif', false);
+
+            for i =1 : numel(dimensionOrders)
+                runDimensionOrderTest(I, self.path, dimensionOrders{i});
+            end
         end        
                 
         
