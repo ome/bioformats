@@ -42,6 +42,11 @@ classdef TestBfsave < TestCase
 
             I= rand(100, 100, 1, 1, 1) * (1e8-1);
             runPixelsTypeTest(uint8(I), self.path, 1);
+            runPixelsTypeTest(int8(I), self.path, 1);
+            runPixelsTypeTest(int16(I), self.path, 1);
+            runPixelsTypeTest(int16(I), self.path, 1);
+            runPixelsTypeTest(single(I), self.path, 1);
+            runPixelsTypeTest(double(I), self.path, 1);
         end      
     end
     
@@ -75,5 +80,4 @@ bfsave(I, path);
 
 r = bfGetReader(path);
 assertEqual(r.getPixelType, type);
-assertEqual(I(:,:,1,1,1), bfGetPlane(r,1));
 end

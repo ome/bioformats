@@ -44,7 +44,17 @@ metadata.setPixelsID('Pixels:0', 0);
 metadata.setPixelsBinDataBigEndian(java.lang.Boolean.TRUE, 0, 0);
 d = ome.xml.model.enums.DimensionOrder.(ip.Results.dimensionOrder);
 metadata.setPixelsDimensionOrder(d, 0);
-metadata.setPixelsType(ome.xml.model.enums.PixelType.UINT8, 0);
+
+% Set pixels type
+pixelTypeEnumHandler = ome.xml.model.enums.handlers.PixelTypeEnumHandler();
+if strcmp(class(I),'single')
+    pixelsType = pixelTypeEnumHandler.getEnumeration('float');
+else
+    pixelsType = pixelTypeEnumHandler.getEnumeration(class(I));
+end
+metadata.setPixelsType(pixelsType, 0);
+
+% Set pixels size
 metadata.setPixelsSizeX(toInt(sizeX), 0);
 metadata.setPixelsSizeY(toInt(sizeY), 0);
 metadata.setPixelsSizeZ(toInt(sizeZ), 0);
