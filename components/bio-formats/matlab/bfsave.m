@@ -15,6 +15,9 @@ function bfsave(I, outputPath, varargin)
 % Output
 % 
 
+% Check loci=tools jar is in the Java path
+bfCheckJavaPath();
+
 % Not using the inputParser for first argument as it copies data
 assert(isnumeric(I), 'First argument must be numeri');
 
@@ -26,8 +29,6 @@ validator = @(x) ismember(x, arrayfun(@char, allDimensions, 'Unif', false));
 ip.addOptional('dimensionOrder', 'XYZCT', validator);
 ip.parse(outputPath, varargin{:});
 
-% Check loci=tools jar is in the Java path
-bfCheckJavaPath();
 
 % Read dimnensions from array
 sizeX = size(I, 1);
@@ -51,7 +52,7 @@ metadata.setPixelsDimensionOrder(dimensionOrder, 0);
 
 % Set pixels type
 pixelTypeEnumHandler = ome.xml.model.enums.handlers.PixelTypeEnumHandler();
-if strcmp(class(I),'single')
+if strcmp(class(I), 'single')
     pixelsType = pixelTypeEnumHandler.getEnumeration('float');
 else
     pixelsType = pixelTypeEnumHandler.getEnumeration(class(I));
