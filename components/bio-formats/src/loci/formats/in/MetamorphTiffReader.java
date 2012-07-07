@@ -116,7 +116,9 @@ public class MetamorphTiffReader extends BaseTiffReader {
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    if (getSeriesCount() == 1) return super.openBytes(no, buf, x, y, w, h);
+    if (getSeriesCount() == 1 && files.length == 1) {
+      return super.openBytes(no, buf, x, y, w, h);
+    }
 
     int[] lengths = new int[] {getSizeZ(), getEffectiveSizeC(),
       fieldColumnCount, fieldRowCount, wellCount, getSizeT()};
@@ -502,15 +504,13 @@ public class MetamorphTiffReader extends BaseTiffReader {
         }
         else continue;
       }
+      if (File.separator.equals("\\")) {
+        tiff = tiff.replaceAll("\\\\\\\\", "\\\\");
+      }
       validTIFFs.add(tiff);
     }
 
-    if (validTIFFs.size() == 1) {
-      files = new String[] {currentId};
-    }
-    else {
-      files = validTIFFs.toArray(new String[validTIFFs.size()]);
-    }
+    files = validTIFFs.toArray(new String[validTIFFs.size()]);
   }
 
   private void parseFile(String tiff, MetamorphHandler handler)
