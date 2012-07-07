@@ -42,8 +42,11 @@ metadata.createRoot();
 metadata.setImageID('Image:0', 0);
 metadata.setPixelsID('Pixels:0', 0);
 metadata.setPixelsBinDataBigEndian(java.lang.Boolean.TRUE, 0, 0);
-d = ome.xml.model.enums.DimensionOrder.(ip.Results.dimensionOrder);
-metadata.setPixelsDimensionOrder(d, 0);
+
+% Set dimension order
+dimensionOrderEnumHandler = ome.xml.model.enums.handlers.DimensionOrderEnumHandler();
+dimensionOrder = dimensionOrderEnumHandler.getEnumeration(ip.Results.dimensionOrder);
+metadata.setPixelsDimensionOrder(dimensionOrder, 0);
 
 % Set pixels type
 pixelTypeEnumHandler = ome.xml.model.enums.handlers.PixelTypeEnumHandler();
