@@ -6,13 +6,21 @@
 classdef TestBfsave < TestCase
     
     properties
-        path = '/tmp/tmp.ome.tiff';
+        path
     end
     
     methods
-         function self = TestBfsave(name)
+        function self = TestBfsave(name)
             self = self@TestCase(name);
-         end
+        end
+        
+        function setUp(self)
+            if isunix,
+                self.path = '/tmp/test.ome.tiff';
+            else
+                self.path = 'C:\test.ome.tiff';
+            end
+        end
         
         function tearDown(self)
             if exist(self.path,'file')==2, delete(self.path); end
@@ -33,7 +41,7 @@ classdef TestBfsave < TestCase
         function testPixelsType(self)
 
             I= rand(100, 100, 1, 1, 1) * (1e8-1);
-            runPixelsTypeTest(uint8(I), self.path, 'int8');
+            runPixelsTypeTest(uint8(I), self.path, 1);
         end      
     end
     
