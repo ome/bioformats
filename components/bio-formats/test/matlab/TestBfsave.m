@@ -28,7 +28,7 @@ classdef TestBfsave < TestCase
             
         function testDimensionOrder(self)
             
-            I = uint8(rand(100, 100, 3, 4, 5) * (1e8-1));
+            I = uint8(rand(100, 100, 3, 4, 5) * (2^8-1));
             runDimensionOrderTest(I, self.path, 'XYZCT');
             runDimensionOrderTest(I, self.path, 'XYZTC');
             runDimensionOrderTest(I, self.path, 'XYCZT');
@@ -40,13 +40,13 @@ classdef TestBfsave < TestCase
         
         function testPixelsType(self)
 
-            I= rand(100, 100, 1, 1, 1) * (1e8-1);
-            runPixelsTypeTest(uint8(I), self.path, 1);
-            runPixelsTypeTest(int8(I), self.path, 1);
-            runPixelsTypeTest(int16(I), self.path, 1);
-            runPixelsTypeTest(int16(I), self.path, 1);
-            runPixelsTypeTest(single(I), self.path, 1);
-            runPixelsTypeTest(double(I), self.path, 1);
+            I= rand(100, 100, 1, 1, 1) * (2^8-1);
+            runPixelsTypeTest(uint8(I), self.path);
+            runPixelsTypeTest(int8(I), self.path);
+            runPixelsTypeTest(int16(I), self.path);
+            runPixelsTypeTest(int16(I), self.path);
+            runPixelsTypeTest(single(I), self.path);
+            runPixelsTypeTest(double(I), self.path);
         end      
     end
     
@@ -73,11 +73,12 @@ for iPlane = 1 : sizeZ * sizeC * sizeT
 end
 end
 
-function runPixelsTypeTest(I, path, type)
+function runPixelsTypeTest(I, path)
 
 % Create stack and save it
 bfsave(I, path);
 
 r = bfGetReader(path);
-assertEqual(r.getPixelType, type);
+assertEqual(I, bfGetPlane(r,1));
+
 end

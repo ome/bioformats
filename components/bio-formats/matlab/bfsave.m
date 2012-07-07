@@ -75,12 +75,24 @@ writer = loci.formats.ImageWriter();
 writer.setMetadataRetrieve(metadata);
 writer.setId(outputPath);
 
+%
+switch class(I)
+    case {'int8', 'uint8'}
+        getBytes = @(x) x(:);
+    case {'uint16','int16'}
+        getBytes = @(x) loci.common.DataTools.shortsToBytes(x(:), 0);
+    case {'single'}
+        getBytes = @(x) loci.common.DataTools.floatsToBytes(x(:), 0);
+    case 'double'
+        getBytes = @(x) loci.common.DataTools.doublesToBytes(x(:), 0);
+end
+        
 % Save planes to the writer
 nPlanes = sizeZ * sizeC * sizeT;
 for index = 1 : nPlanes 
     [i, j, k] = ind2sub([size(I, 3) size(I, 4) size(I, 5)],index);
     plane = I(:, :, i, j, k)';
-    writer.saveBytes(index-1, plane(:));
+    writer.saveBytes(index-1, getBytes(plane));
 end
 writer.close();
 
