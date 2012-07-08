@@ -513,7 +513,6 @@ public class NIOFileHandle extends AbstractNIOHandle {
    * the buffer.
    */
   private void buffer(long offset, int size) throws IOException {
-    LOGGER.trace("buffer({}, {})", offset, size);
     position = offset;
     long newPosition = offset + size;
     if (newPosition < bufferStartPosition ||

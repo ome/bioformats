@@ -427,6 +427,30 @@ public class VolocityReader extends FormatReader {
         data.close();
       }
 
+      int xLocationIndex = getChildIndex(parent, "X Location");
+      if (xLocationIndex >= 0) {
+        data = getStream(xLocationIndex);
+        data.seek(SIGNATURE_SIZE);
+        stack.xLocation = data.readDouble();
+        data.close();
+      }
+
+      int yLocationIndex = getChildIndex(parent, "Y Location");
+      if (yLocationIndex >= 0) {
+        data = getStream(yLocationIndex);
+        data.seek(SIGNATURE_SIZE);
+        stack.yLocation = data.readDouble();
+        data.close();
+      }
+
+      int zLocationIndex = getChildIndex(parent, "Z Location");
+      if (zLocationIndex >= 0) {
+        data = getStream(zLocationIndex);
+        data.seek(SIGNATURE_SIZE);
+        stack.zLocation = data.readDouble();
+        data.close();
+      }
+
       stacks.add(stack);
     }
 
@@ -457,6 +481,9 @@ public class VolocityReader extends FormatReader {
           newStack.magnification = stack.magnification;
           newStack.detector = stack.detector;
           newStack.description = stack.description;
+          newStack.xLocation = stack.xLocation;
+          newStack.yLocation = stack.yLocation;
+          newStack.zLocation = stack.zLocation;
 
           String[] pixels = stack.pixelsFiles;
           newStack.pixelsFiles = new String[pixels.length - q];
@@ -632,6 +659,9 @@ public class VolocityReader extends FormatReader {
       addSeriesMeta("Objective magnification", stack.magnification);
       addSeriesMeta("Camera/Detector", stack.detector);
       addSeriesMeta("Description", stack.description);
+      addSeriesMeta("X Location", stack.xLocation);
+      addSeriesMeta("Y Location", stack.yLocation);
+      addSeriesMeta("Z Location", stack.zLocation);
 
       if (stack.channelNames != null) {
         for (int c=0; c<stack.channelNames.length; c++) {
@@ -642,7 +672,7 @@ public class VolocityReader extends FormatReader {
     setSeries(0);
 
     MetadataStore store = makeFilterMetadata();
-    MetadataTools.populatePixels(store, this);
+    MetadataTools.populatePixels(store, this, true);
 
     String instrument = MetadataTools.createLSID("Instrument", 0);
     store.setInstrumentID(instrument, 0);
@@ -701,6 +731,13 @@ public class VolocityReader extends FormatReader {
 
       for (int c=0; c<getEffectiveSizeC(); c++) {
         store.setDetectorSettingsID(detectorID, i, c);
+      }
+
+      for (int img=0; img<getImageCount(); img++) {
+        int z = getZCTCoords(img)[0];
+        store.setPlanePositionX(stack.xLocation, i, img);
+        store.setPlanePositionY(stack.yLocation, i, img);
+        store.setPlanePositionZ(stack.zLocation + z * stack.physicalZ, i, img);
       }
     }
     setSeries(0);
@@ -787,6 +824,9 @@ public class VolocityReader extends FormatReader {
     public Double magnification;
     public String detector;
     public String description;
+    public double xLocation;
+    public double yLocation;
+    public double zLocation;
   }
 
 }
