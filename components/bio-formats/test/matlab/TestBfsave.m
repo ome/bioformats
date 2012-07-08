@@ -28,7 +28,7 @@ classdef TestBfsave < TestCase
             
         function testDimensionOrder(self)
             
-            I = uint8(rand(100, 100, 3, 4, 5) * (2^8-1));
+            I = uint8(rand(50, 100, 3, 4, 5) * (2^8-1));
             dimensionOrders = ome.xml.model.enums.DimensionOrder.values();
             dimensionOrders = arrayfun(@char, dimensionOrders, 'Unif', false);
 
@@ -40,7 +40,7 @@ classdef TestBfsave < TestCase
         
         function testPixelsType(self)
 
-            I= rand(100, 100, 1, 1, 1) * (2^8-1);
+            I= rand(50, 100, 1, 1, 1) * (2^8-1);
             runPixelsTypeTest(uint8(I), self.path);
             runPixelsTypeTest(int8(I), self.path);
             runPixelsTypeTest(int16(I), self.path);

@@ -4,18 +4,19 @@ function bfsave(I, outputPath, varargin)
 % SYNOPSIS bfsave(I, outputPath)
 %          bfsave(I, outputPath, dimensionsOrder)
 %
-% Input:
-%       I - a 5D stack containing the pixels data
+% INPUT:
+%       I - a 5D matrix containing the pixels data
 %
 %       outputPath - a string containing the location of the path where to
 %       save the resulting OME-TIFF
 %
-%       dimensionOrder - optional. A string representing the dimension order
-%       of type XYxxx where xxx are CZT in any order. Default XYZCT.
-% Output
+%       dimensionOrder - optional. A string representing the dimension 
+%       order, Default: XYZCT.
+%
+% OUTPUT
 % 
 
-% Check loci=tools jar is in the Java path
+% Check loci-tools jar is in the Java path
 bfCheckJavaPath();
 
 % Not using the inputParser for first argument as it copies data
@@ -28,14 +29,6 @@ allDimensions = ome.xml.model.enums.DimensionOrder.values();
 validator = @(x) ismember(x, arrayfun(@char, allDimensions, 'Unif', false));
 ip.addOptional('dimensionOrder', 'XYZCT', validator);
 ip.parse(outputPath, varargin{:});
-
-
-% Read dimnensions from array
-sizeX = size(I, 1);
-sizeY = size(I, 2);
-sizeZ = size(I, find(ip.Results.dimensionOrder == 'Z'));
-sizeC = size(I, find(ip.Results.dimensionOrder == 'C'));
-sizeT = size(I, find(ip.Results.dimensionOrder == 'T'));
 
 % Create metadata
 toInt = @(x) ome.xml.model.primitives.PositiveInteger(java.lang.Integer(x));
@@ -59,12 +52,19 @@ else
 end
 metadata.setPixelsType(pixelsType, 0);
 
-% Set pixels size
+% Read pixels size from image and set it to the metadat
+sizeX = size(I, 2);
+sizeY = size(I, 1);
+sizeZ = size(I, find(ip.Results.dimensionOrder == 'Z'));
+sizeC = size(I, find(ip.Results.dimensionOrder == 'C'));
+sizeT = size(I, find(ip.Results.dimensionOrder == 'T'));
 metadata.setPixelsSizeX(toInt(sizeX), 0);
 metadata.setPixelsSizeY(toInt(sizeY), 0);
 metadata.setPixelsSizeZ(toInt(sizeZ), 0);
 metadata.setPixelsSizeC(toInt(sizeC), 0);
 metadata.setPixelsSizeT(toInt(sizeT), 0);
+
+% Set channels ID and samples per pixel
 for i = 1: sizeC
     metadata.setChannelID(['Channel:0:' num2str(i-1)], 0, i-1);
     metadata.setChannelSamplesPerPixel(toInt(1), 0, i-1);
@@ -75,7 +75,7 @@ writer = loci.formats.ImageWriter();
 writer.setMetadataRetrieve(metadata);
 writer.setId(outputPath);
 
-%
+% Load conversion tools for saving planes
 switch class(I)
     case {'int8', 'uint8'}
         getBytes = @(x) x(:);
