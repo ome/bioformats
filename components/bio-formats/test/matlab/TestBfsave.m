@@ -38,16 +38,35 @@ classdef TestBfsave < TestCase
         end        
                 
         
-        function testPixelsType(self)
-
-            I= rand(50, 100, 1, 1, 1) * (2^8-1);
-            runPixelsTypeTest(uint8(I), self.path);
-            runPixelsTypeTest(int8(I), self.path);
-            runPixelsTypeTest(int16(I), self.path);
-            runPixelsTypeTest(int16(I), self.path);
-            runPixelsTypeTest(single(I), self.path);
-            runPixelsTypeTest(double(I), self.path);
-        end      
+        function testPixelsTypeUINT8(self)
+            I = uint8(rand(50, 100, 1, 1, 1) * (2^8-1));
+            runPixelsTypeTest(I, self.path);
+        end
+        
+        function testPixelsTypeINT8(self)
+            I = int8(rand(50, 100, 1, 1, 1) * (2^8-1));
+            runPixelsTypeTest(I, self.path);
+        end
+        
+        function testUINT16(self)
+            I = uint16(rand(50, 100, 1, 1, 1) * (2^16-1));
+            runPixelsTypeTest(I, self.path);
+        end
+        
+        function testPixelsTypeINT16(self)
+            I = int16(rand(50, 100, 1, 1, 1) * (2^16-1));
+            runPixelsTypeTest(I, self.path);
+        end
+        
+        function testPixelsTypeFLOAT(self)
+            I = single(rand(50, 100, 1, 1, 1) * (2^16-1));
+            runPixelsTypeTest(I, self.path);
+        end
+        
+        function testPixelsTypeDOUBLE(self)
+            I= double(rand(50, 100, 1, 1, 1) * (2^16-1));
+            runPixelsTypeTest(I, self.path);
+        end
     end
     
 end
