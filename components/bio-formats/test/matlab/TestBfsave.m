@@ -26,18 +26,37 @@ classdef TestBfsave < TestCase
             if exist(self.path,'file')==2, delete(self.path); end
         end
             
-        function testDimensionOrder(self)
-            
+        % Dimension order tests
+        function testDimensionOrderXYZCT(self)            
             I = uint8(rand(50, 100, 3, 4, 5) * (2^8-1));
-            dimensionOrders = ome.xml.model.enums.DimensionOrder.values();
-            dimensionOrders = arrayfun(@char, dimensionOrders, 'Unif', false);
-
-            for i =1 : numel(dimensionOrders)
-                runDimensionOrderTest(I, self.path, dimensionOrders{i});
-            end
-        end        
-                
+            runDimensionOrderTest(I, self.path, 'XYZCT')
+        end
         
+        function testDimensionOrderXYZTC(self)            
+            I = uint8(rand(50, 100, 3, 4, 5) * (2^8-1));
+            runDimensionOrderTest(I, self.path, 'XYZTC')
+        end
+        
+        function testDimensionOrderXYCZT(self)            
+            I = uint8(rand(50, 100, 3, 4, 5) * (2^8-1));
+            runDimensionOrderTest(I, self.path, 'XYCZT')
+        end
+        
+        function testDimensionOrderXYCTZ(self)            
+            I = uint8(rand(50, 100, 3, 4, 5) * (2^8-1));
+            runDimensionOrderTest(I, self.path, 'XYCTZ')
+        end
+        function testDimensionOrderXYTCZ(self)            
+            I = uint8(rand(50, 100, 3, 4, 5) * (2^8-1));
+            runDimensionOrderTest(I, self.path, 'XYTCZ')
+        end
+        
+        function testDimensionOrderXYTZC(self)            
+            I = uint8(rand(50, 100, 3, 4, 5) * (2^8-1));
+            runDimensionOrderTest(I, self.path, 'XYTZC')
+        end
+                
+        % Data type tests
         function testPixelsTypeUINT8(self)
             I = uint8(rand(50, 100, 1, 1, 1) * (2^8-1));
             runPixelsTypeTest(I, self.path);
