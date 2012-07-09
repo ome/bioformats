@@ -67,13 +67,23 @@ classdef TestBfsave < TestCase
             runPixelsTypeTest(I, self.path);
         end
         
-        function testUINT16(self)
+        function testPixelsTypeUINT16(self)
             I = uint16(rand(50, 100, 1, 1, 1) * (2^16-1));
             runPixelsTypeTest(I, self.path);
         end
         
         function testPixelsTypeINT16(self)
             I = int16(rand(50, 100, 1, 1, 1) * (2^16-1));
+            runPixelsTypeTest(I, self.path);
+        end
+        
+        function testPixelsTypeUINT32(self)
+            I = uint32(rand(50, 100, 1, 1, 1) * (2^32-1));
+            runPixelsTypeTest(I, self.path);
+        end
+        
+        function testPixelsTypeINT32(self)
+            I = int32(rand(50, 100, 1, 1, 1) * (2^32-1));
             runPixelsTypeTest(I, self.path);
         end
         

@@ -81,6 +81,8 @@ switch class(I)
         getBytes = @(x) x(:);
     case {'uint16','int16'}
         getBytes = @(x) loci.common.DataTools.shortsToBytes(x(:), 0);
+    case {'uint32','int32'}
+        getBytes = @(x) loci.common.DataTools.intsToBytes(x(:), 0);
     case {'single'}
         getBytes = @(x) loci.common.DataTools.floatsToBytes(x(:), 0);
     case 'double'
