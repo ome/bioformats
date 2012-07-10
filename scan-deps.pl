@@ -464,7 +464,7 @@ my %omeroClient = (
   JAR     => "omero_client.jar",
   PACKAGE => "ome\\(.system\\|ro.api\\)",
   LICENSE => "GPL",
-  URL     => "http://trac.openmicroscopy.org.uk/omero/wiki/MilestoneDownloads",
+  URL     => "http://trac.openmicroscopy.org.uk/ome/wiki/MilestoneDownloads",
   NOTES   => <<ZZ,
 used by OME I/O to connect to OMERO servers
 ZZ
