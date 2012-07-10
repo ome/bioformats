@@ -1,7 +1,7 @@
 <?xml version = "1.0" encoding = "UTF-8"?>
 <AnalysisModuleLibrary
 	xmlns:xsi = "http://www.w3.org/2001/XMLSchema-instance" 
-	xsi:noNamespaceSchemaLocation = "http://openmicroscopy.org/XMLschemas/AnalysisModule/IR3/AnalysisModule.xsd">
+	xsi:noNamespaceSchemaLocation = "http://www.openmicroscopy.org/XMLschemas/AnalysisModule/IR3/AnalysisModule.xsd">
 <AnalysisModule Category = "Statistics" ModuleName = "Plane statistics" 
 	ModuleType = "OME::Analysis::CLIHandler" ProgramID = "/OME/bin/OME_Image_XY_stats" 
 	Description = "Calculate pixel statistics for each XY plane. Produced from XML specification.">
@@ -16,7 +16,7 @@
 	</Declaration>
 	<ExecutionInstructions ExecutionPoint = "precalculateImage" MakesNewFeature = "false" 
 		xmlns:xsi = "http://www.w3.org/2001/XMLSchema-instance" 
-		xsi:noNamespaceSchemaLocation = "http://openmicroscopy.org/XMLschemas/AnalysisModule/IR3/CLIExecutionInstructions.xsd">
+		xsi:noNamespaceSchemaLocation = "http://www.openmicroscopy.org/XMLschemas/AnalysisModule/IR3/CLIExecutionInstructions.xsd">
 		<CommandLine>
 			<InputSubString>
 				<RawText>Path=</RawText>
