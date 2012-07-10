@@ -115,7 +115,7 @@
       <id>callan</id>
       <name>Chris Allan</name>
       <email>callan@lifesci.dundee.ac.uk</email>
-      <url>http://openmicroscopy.org/site/about/development-teams/jason</url>
+      <url>http://www.openmicroscopy.org/site/about/development-teams/jason</url>
       <organization>Swedlow Lab, University of Dundee</organization>
       <organizationUrl>http://www.lifesci.dundee.ac.uk/groups/jason_swedlow/</organizationUrl>
       <roles>
@@ -124,14 +124,14 @@
       </roles>
       <timezone>0</timezone>
       <properties>
-        <picUrl>http://openmicroscopy.org/site/about/development-teams/jason/chrisallan.jpg</picUrl>
+        <picUrl>http://www.openmicroscopy.org/site/about/development-teams/jason/chrisallan.jpg</picUrl>
       </properties>
     </developer>
     <developer>
       <id>melissa</id>
       <name>Melissa Linkert</name>
       <email>melissa.linkert@glencoesoftware.com</email>
-      <url>http://openmicroscopy.org/site/about/development-teams/glencoe-software</url>
+      <url>http://www.openmicroscopy.org/site/about/development-teams/glencoe-software</url>
       <organization>Glencoe Software</organization>
       <organizationUrl>http://glencoesoftware.com/</organizationUrl>
       <roles>
@@ -140,7 +140,7 @@
       </roles>
       <timezone>-6</timezone>
       <properties>
-        <picUrl>http://openmicroscopy.org/site/about/development-teams/glencoe-software/melissalinkert.png</picUrl>
+        <picUrl>http://www.openmicroscopy.org/site/about/development-teams/glencoe-software/melissalinkert.png</picUrl>
       </properties>
     </developer>
   </developers>
