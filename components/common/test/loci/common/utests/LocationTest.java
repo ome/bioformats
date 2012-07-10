@@ -92,7 +92,7 @@ public class LocationTest {
       new Location(invalidPath),
       new Location(tmpDirectory),
       new Location("http://loci.wisc.edu/software/bio-formats"),
-      new Location("http://openmicroscopy.org/software/bio-formats"),
+      new Location("http://www.openmicroscopy.org/software/bio-formats"),
       new Location(hiddenFile)
     };
 
