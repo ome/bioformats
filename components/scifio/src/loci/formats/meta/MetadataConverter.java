@@ -1670,11 +1670,17 @@ public final class MetadataConverter {
       }
       catch (NullPointerException e) { }
 
+      // NB: plate name is required in OMERO
       try {
         String name = src.getPlateName(i);
+        if (name == null) {
+          name = "";
+        }
         dest.setPlateName(name, i);
       }
-      catch (NullPointerException e) { }
+      catch (NullPointerException e) {
+        dest.setPlateName("", i);
+      }
 
       try {
         NamingConvention rowConvention = src.getPlateRowNamingConvention(i);
