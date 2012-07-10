@@ -242,6 +242,8 @@ public class PSDReader extends FormatReader {
 
       if (layerLen == 0 && layerCount == 0) {
         in.skipBytes(2);
+        int check = in.readShort();
+        in.seek(in.getFilePointer() - (check == 0 ? 4 : 2));
       }
 
       int[] w = new int[layerCount];
