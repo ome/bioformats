@@ -751,9 +751,11 @@ public class SlidebookReader extends FormatReader {
     String currentName = imageNames[0];
     Vector<CoreMetadata> realCore = new Vector<CoreMetadata>();
     int t = 1;
-    boolean noFlattening = currentName.equals("Untitled");
+    boolean noFlattening =
+      currentName != null && currentName.equals("Untitled");
     for (int i=1; i<getSeriesCount(); i++) {
-      if (!imageNames[i].equals(currentName) || noFlattening ||
+      if (imageNames[i] == null || !imageNames[i].equals(currentName) ||
+        noFlattening ||
         (i == 1 && (sizeX[i - 1] != sizeX[i] || sizeY[i - 1] != sizeY[i] ||
         sizeC[i - 1] != sizeC[i] || sizeZ[i - 1] != sizeZ[i])))
       {
