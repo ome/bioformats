@@ -85,6 +85,8 @@ public class TiffParser {
   /** Whether or not 64-bit offsets are used for non-BigTIFF files. */
   private boolean fakeBigTiff = false;
 
+  private boolean equalStrips = false;
+
   private boolean doCaching;
 
   /** Cached list of IFDs in the current file. */
@@ -120,6 +122,14 @@ public class TiffParser {
   }
 
   // -- TiffParser methods --
+
+  /**
+   * Sets whether or not to assume that strips are of equal size.
+   * @param equalStrips Whether or not the strips are of equal size.
+   */
+  public void setAssumeEqualStrips(boolean equalStrips) {
+    this.equalStrips = equalStrips;
+  }
 
   /**
    * Sets the codec options to be used when decompressing pixel data.
@@ -525,7 +535,28 @@ public class TiffParser {
              || type == IFDType.IFD8) {
       if (count == 1) return new Long(in.readLong());
       long[] longs = new long[count];
-      for (int j=0; j<count; j++) longs[j] = in.readLong();
+
+      if (equalStrips && (entry.getTag() == IFD.STRIP_OFFSETS ||
+        entry.getTag() == IFD.TILE_OFFSETS))
+      {
+        longs[0] = in.readLong();
+        for (int j=1; j<count; j++) {
+          longs[j] = longs[0];
+        }
+      }
+      else if (equalStrips && (entry.getTag() == IFD.STRIP_BYTE_COUNTS ||
+        entry.getTag() == IFD.TILE_BYTE_COUNTS))
+      {
+        longs[0] = in.readLong();
+        longs[1] = in.readLong();
+        long diff = longs[1] - longs[0];
+        for (int j=2; j<count; j++) {
+          longs[j] = longs[j - 1] + diff;
+        }
+      }
+      else {
+        for (int j=0; j<count; j++) longs[j] = in.readLong();
+      }
       return longs;
     }
     else if (type == IFDType.RATIONAL || type == IFDType.SRATIONAL) {

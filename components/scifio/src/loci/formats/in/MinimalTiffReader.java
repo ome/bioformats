@@ -94,6 +94,8 @@ public class MinimalTiffReader extends FormatReader {
 
   protected TiffParser tiffParser;
 
+  protected boolean equalStrips = false;
+
   protected boolean use64Bit = false;
 
   private int lastPlane = 0;
@@ -419,6 +421,7 @@ public class MinimalTiffReader extends FormatReader {
 
     core[0].imageCount = ifds.size();
 
+    tiffParser.setAssumeEqualStrips(equalStrips);
     for (IFD ifd : ifds) {
       tiffParser.fillInIFD(ifd);
       if (ifd.getCompression() == TiffCompression.JPEG_2000
