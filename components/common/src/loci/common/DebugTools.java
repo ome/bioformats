@@ -39,6 +39,8 @@ package loci.common;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.Enumeration;
 
 /**
@@ -99,6 +101,24 @@ public final class DebugTools {
       return false;
     }
     return true;
+  }
+
+  /**
+   * This method uses reflection to scan the values of the given class's
+   * static fields, returning the first matching field's name.
+   */
+  public static String getFieldName(Class<?> c, int value) {
+    Field[] fields = c.getDeclaredFields();
+    for (int i=0; i<fields.length; i++) {
+    	if (!Modifier.isStatic(fields[i].getModifiers())) continue;
+      fields[i].setAccessible(true);
+      try {
+        if (fields[i].getInt(null) == value) return fields[i].getName();
+      }
+      catch (IllegalAccessException exc) { }
+      catch (IllegalArgumentException exc) { }
+    }
+    return "" + value;
   }
 
 }
