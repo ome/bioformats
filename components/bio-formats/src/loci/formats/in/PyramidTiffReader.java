@@ -70,6 +70,7 @@ public class PyramidTiffReader extends BaseTiffReader {
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     TiffParser parser = new TiffParser(stream);
+    parser.setAssumeEqualStrips(equalStrips);
     IFD ifd = parser.getFirstIFD();
     if (ifd == null) return false;
     String software = ifd.getIFDTextValue(IFD.SOFTWARE);
