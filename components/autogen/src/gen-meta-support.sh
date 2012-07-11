@@ -27,14 +27,14 @@
 
 baseDir="$1/components"
 outputFile="$baseDir/autogen/src/meta-support.txt"
-commonClasses="$baseDir/bio-formats/src/loci/formats/MetadataTools.java"
+commonClasses="$baseDir/scifio/src/loci/formats/MetadataTools.java"
 XML_ELEMENTS=`ls $baseDir/ome-xml/src/ome/xml/model/*.java | sed -e 's/.*\///' -e 's/\.java//'`
 HEADER='# This file documents the metadata support for each file format that\n# Bio-Formats can handle. Default value for unlisted properties is Missing,\n# indicating that the property cannot be represented in the format, or our\n# knowledge regarding the property regarding this format is incomplete.\n\n# To define the status of a property, use the syntax:\n#\n#     Entity.Property = Status [Comment]\n#\n# "Status" is one of Yes, No, Partial or Missing.\n# There is usually no need to specify Missing status, as it is the default.\n#\n# "Comment" is optional extra text for specifying further details, such as\n# when the status changed. This value can include a revision, a ticket, a\n# datestamp or any other appropriate information.\n#\n# As a shortcut for every property of a given entity, you can write:\n#\n#     Entity [Comment]\n#\n# Examples:\n#\n#     Dimensions = Yes since r2351\n#     Objective.NominalMagnification = Yes added on 2008 Jan 8\n#     ImagingEnvironment.Temperature = Partial see ticket #167 for details\n'
 
 rm $outputFile
 echo -e $HEADER >> $outputFile
 
-for reader in $baseDir/bio-formats/src/loci/formats/in/*Reader.java
+for reader in $baseDir/**/src/loci/formats/in/*Reader.java
 do
   echo [`echo $reader | sed -e 's/.*\///' -e 's/\.java//'`] >> $outputFile
   for line in `grep store.set $reader $commonClasses | sed -e 's/.*store\.set//' -e 's/(.*//' | sort | uniq`
