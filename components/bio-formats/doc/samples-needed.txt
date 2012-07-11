@@ -50,8 +50,7 @@ Slidebook:
 TIFF:
   - anything weird - preferably rare/unsupported compression or photometric
     interpretation type
-  - BigTIFF files
-  - anything compressed with Group 3 fax, Group 4 fax, or JPEG2000
+  - anything compressed with Group 3 fax, Group 4 fax
 
 Visitech XYS:
   - multi-Z, multi-T series
