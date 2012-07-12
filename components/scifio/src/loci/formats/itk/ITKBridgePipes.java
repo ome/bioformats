@@ -322,22 +322,25 @@ public class ITKBridgePipes {
         {
         for( int z=zBegin; z<=zEnd; z++ )
           {
-          byte[] image = reader.openBytes( reader.getIndex(z, c, t) );
+          int xLen = xEnd - xBegin + 1;
+          int yLen = yEnd - yBegin + 1;
+          byte[] image = reader.openBytes( reader.getIndex(z, c, t),
+            xBegin, yBegin, xLen, yLen );
           if( canDoDirect )
             {
             out.write(image);
             }
           else
             {
-            for( int y=yBegin; y<=yEnd; y++ )
+            for( int y=0; y<yLen; y++ )
               {
-              for( int x=xBegin; x<=xEnd; x++ )
+              for( int x=0; x<xLen; x++ )
                 {
                 for( int i=0; i<rgbChannelCount; i++ )
                   {
                   for( int b=0; b<bpp; b++ )
                     {
-                    int index = xCount * (yCount * (rgbChannelCount * b + i) + y) + x;
+                    int index = xLen * (yLen * (rgbChannelCount * b + i) + y) + x;
                     out.write( image[index] );
                     }
                   }
