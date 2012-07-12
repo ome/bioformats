@@ -1,25 +1,27 @@
-//
-// LeicaHandler.java
-//
-
 /*
-OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ * #%L
+ * OME Bio-Formats package for reading and converting biological file formats.
+ * %%
+ * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 2 of the 
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public 
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-2.0.html>.
+ * #L%
+ */
 
 package loci.formats.in;
 
@@ -30,11 +32,11 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 
 import loci.common.DateTools;
+import loci.common.xml.BaseHandler;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 
 import ome.xml.model.enums.Correction;
 import ome.xml.model.enums.DetectorType;
@@ -51,10 +53,14 @@ import ome.xml.model.enums.handlers.LaserTypeEnumHandler;
 import ome.xml.model.enums.handlers.MicroscopeTypeEnumHandler;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PercentFraction;
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.xml.sax.Attributes;
-import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * SAX handler for parsing XML in Leica LIF and Leica TCS files.
@@ -65,7 +71,13 @@ import org.xml.sax.helpers.DefaultHandler;
  *
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
-public class LeicaHandler extends DefaultHandler {
+public class LeicaHandler extends BaseHandler {
+
+  // -- Constants --
+
+  /** Logger for this class. */
+  private static final Logger LOGGER =
+    LoggerFactory.getLogger(LeicaHandler.class);
 
   // -- Fields --
 
@@ -422,7 +434,14 @@ public class LeicaHandler extends DefaultHandler {
               break;
           }
           physicalSizeX = physicalSize.doubleValue();
-          store.setPixelsPhysicalSizeX(new PositiveFloat(physicalSize), numDatasets);
+          if (physicalSize > 0) {
+            store.setPixelsPhysicalSizeX(
+              new PositiveFloat(physicalSize), numDatasets);
+          }
+          else {
+            LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+              physicalSize);
+          }
           break;
         case 2: // Y axis
           if (coreMeta.sizeY != 0) {
@@ -438,7 +457,14 @@ public class LeicaHandler extends DefaultHandler {
           else {
             coreMeta.sizeY = len;
             physicalSizeY = physicalSize.doubleValue();
-            store.setPixelsPhysicalSizeY(new PositiveFloat(physicalSize), numDatasets);
+            if (physicalSize > 0) {
+              store.setPixelsPhysicalSizeY(
+                new PositiveFloat(physicalSize), numDatasets);
+            }
+            else {
+              LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+                physicalSize);
+            }
           }
           break;
         case 3: // Z axis
@@ -447,7 +473,14 @@ public class LeicaHandler extends DefaultHandler {
             coreMeta.sizeY = len;
             coreMeta.sizeZ = 1;
             physicalSizeY = physicalSize.doubleValue();
-            store.setPixelsPhysicalSizeY(new PositiveFloat(physicalSize), numDatasets);
+            if (physicalSize > 0) {
+              store.setPixelsPhysicalSizeY(
+                new PositiveFloat(physicalSize), numDatasets);
+            }
+            else {
+              LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+                physicalSize);
+            }
             bytesPerAxis.put(new Integer(nBytes), "Y");
           }
           else {
@@ -461,7 +494,14 @@ public class LeicaHandler extends DefaultHandler {
             coreMeta.sizeY = len;
             coreMeta.sizeT = 1;
             physicalSizeY = physicalSize.doubleValue();
-            store.setPixelsPhysicalSizeY(new PositiveFloat(physicalSize), numDatasets);
+            if (physicalSize > 0) {
+              store.setPixelsPhysicalSizeY(
+                new PositiveFloat(physicalSize), numDatasets);
+            }
+            else {
+              LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+                physicalSize);
+            }
             bytesPerAxis.put(new Integer(nBytes), "Y");
           }
           else {
@@ -492,7 +532,13 @@ public class LeicaHandler extends DefaultHandler {
       }
       else if (id.equals("dblStepSize")) {
         double zStep = Double.parseDouble(value) * 1000000;
-        store.setPixelsPhysicalSizeZ(new PositiveFloat(zStep), numDatasets);
+        if (zStep > 0) {
+          store.setPixelsPhysicalSizeZ(new PositiveFloat(zStep), numDatasets);
+        }
+        else {
+          LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}",
+            zStep);
+        }
       }
       else if (id.equals("nDelayTime_s")) {
         store.setPixelsTimeIncrement(new Double(value), numDatasets);
@@ -527,6 +573,11 @@ public class LeicaHandler extends DefaultHandler {
           Integer exWave = new Integer(value);
           if (exWave > 0) {
             channel.exWave = new PositiveInteger(exWave);
+          }
+          else {
+            LOGGER.warn(
+              "Expected positive value for ExcitationWavelength; got {}",
+              exWave);
           }
         }
         // NB: "UesrDefName" is not a typo.
@@ -585,8 +636,15 @@ public class LeicaHandler extends DefaultHandler {
             int mag = (int) Double.parseDouble(token.substring(0, x));
             String na = token.substring(x + 1);
 
-            store.setObjectiveNominalMagnification(
-              new PositiveInteger(mag), numDatasets, 0);
+            if (mag > 0) {
+              store.setObjectiveNominalMagnification(
+                new PositiveInteger(mag), numDatasets, 0);
+            }
+            else {
+              LOGGER.warn(
+                "Expected positive value for NominalMagnification; got {}",
+                mag);
+            }
             store.setObjectiveLensNA(new Double(na), numDatasets, 0);
           }
           else {
@@ -628,8 +686,8 @@ public class LeicaHandler extends DefaultHandler {
       else if (attribute.equals("RefractionIndex")) {
         String id = MetadataTools.createLSID("Objective", numDatasets, 0);
         store.setObjectiveID(id, numDatasets, 0);
-        store.setImageObjectiveSettingsID(id, numDatasets);
-        store.setImageObjectiveSettingsRefractiveIndex(new Double(variant),
+        store.setObjectiveSettingsID(id, numDatasets);
+        store.setObjectiveSettingsRefractiveIndex(new Double(variant),
           numDatasets);
       }
       else if (attribute.equals("XPos")) {
@@ -670,16 +728,22 @@ public class LeicaHandler extends DefaultHandler {
             MetadataTools.createLSID("Filter", numDatasets, nextFilter);
           store.setFilterID(id, numDatasets, nextFilter);
           store.setFilterModel(object, numDatasets, nextFilter);
-          if (v != null) {
+          if (v != null && v > 0) {
             store.setTransmittanceRangeCutIn(
-                new PositiveInteger(v), numDatasets, nextFilter);
+              new PositiveInteger(v), numDatasets, nextFilter);
+          }
+          else {
+            LOGGER.warn("Expected positive value for CutIn; got {}", v);
           }
         }
         else if (attributes.getValue("Description").endsWith("(right)")) {
-          if (v != null) {
+          if (v != null && v > 0) {
             store.setTransmittanceRangeCutOut(
-                new PositiveInteger(v), numDatasets, nextFilter);
+              new PositiveInteger(v), numDatasets, nextFilter);
             nextFilter++;
+          }
+          else {
+            LOGGER.warn("Expected positive value for CutOut; got {}", v);
           }
         }
       }
@@ -725,10 +789,20 @@ public class LeicaHandler extends DefaultHandler {
           String filter =
             MetadataTools.createLSID("Filter", numDatasets, nextFilter);
           store.setFilterID(filter, numDatasets, nextFilter);
-          store.setTransmittanceRangeCutIn(
+          if (m.cutIn > 0) {
+            store.setTransmittanceRangeCutIn(
               new PositiveInteger(m.cutIn), numDatasets, nextFilter);
-          store.setTransmittanceRangeCutOut(
+          }
+          else {
+            LOGGER.warn("Expected positive value for CutIn; got {}", m.cutIn);
+          }
+          if (m.cutOut > 0) {
+            store.setTransmittanceRangeCutOut(
               new PositiveInteger(m.cutOut), numDatasets, nextFilter);
+          }
+          else {
+            LOGGER.warn("Expected positive value for CutOut; got {}", m.cutOut);
+          }
           store.setLightPathEmissionFilterRef(
             filter, numDatasets, nextChannel, 0);
           nextFilter++;
@@ -764,8 +838,15 @@ public class LeicaHandler extends DefaultHandler {
           store.setChannelLightSourceSettingsAttenuation(
             new PercentFraction((float) laser.intensity / 100f),
             numDatasets, nextChannel);
-          store.setChannelExcitationWavelength(
-            new PositiveInteger(laser.wavelength), numDatasets, nextChannel);
+          if (laser.wavelength > 0) {
+            store.setChannelExcitationWavelength(
+              new PositiveInteger(laser.wavelength), numDatasets, nextChannel);
+          }
+          else {
+            LOGGER.warn(
+              "Expected positive value for ExcitationWavelength; got {}",
+              laser.wavelength);
+          }
         }
 
         nextChannel++;
@@ -794,6 +875,10 @@ public class LeicaHandler extends DefaultHandler {
         store.setLaserWavelength(
           new PositiveInteger(l.wavelength), numDatasets, l.index);
       }
+      else {
+        LOGGER.warn("Expected positive value for Wavelength; got {}",
+          l.wavelength);
+      }
       store.setLaserType(LaserType.OTHER, numDatasets, l.index);
       store.setLaserLaserMedium(LaserMedium.OTHER, numDatasets, l.index);
 
@@ -817,7 +902,7 @@ public class LeicaHandler extends DefaultHandler {
         if (DateTools.getTime(date, DateTools.ISO8601_FORMAT) <
           System.currentTimeMillis())
         {
-          store.setImageAcquiredDate(date, numDatasets);
+          store.setImageAcquisitionDate(new Timestamp(date), numDatasets);
         }
         firstStamp = ms;
         store.setPlaneDeltaT(0.0, numDatasets, count);
@@ -909,7 +994,9 @@ public class LeicaHandler extends DefaultHandler {
       if (value instanceof Vector) {
         Vector v = (Vector) value;
         for (int o=0; o<v.size(); o++) {
-          h.put(key + " " + (o + 1), v.get(o));
+          if (v.get(o) != null) {
+            h.put(key + " " + (o + 1), v.get(o));
+          }
         }
         h.remove(key);
       }
@@ -971,22 +1058,27 @@ public class LeicaHandler extends DefaultHandler {
       store.setImageROIRef(roiID, series, roi);
 
       store.setROIID(roiID, roi);
-      store.setTextID(MetadataTools.createLSID("Shape", roi, 0), roi, 0);
+      store.setLabelID(MetadataTools.createLSID("Shape", roi, 0), roi, 0);
       if (text == null) text = "";
-      store.setTextValue(text, roi, 0);
+      store.setLabelText(text, roi, 0);
       if (fontSize != null) {
-        store.setTextFontSize(
-            new NonNegativeInteger((int) Double.parseDouble(fontSize)), roi, 0);
+        double size = Double.parseDouble(fontSize);
+        if (size >= 0) {
+          store.setLabelFontSize(new NonNegativeInteger((int) size), roi, 0);
+        }
+        else {
+          LOGGER.warn("Expected non-negative value for FontSize; got {}", size);
+        }
       }
-      store.setTextStrokeWidth(new Double(linewidth), roi, 0);
+      store.setLabelStrokeWidth(new Double(linewidth), roi, 0);
 
       if (!normalized) normalize();
 
       double cornerX = x.get(0).doubleValue();
       double cornerY = y.get(0).doubleValue();
 
-      store.setTextX(cornerX, roi, 0);
-      store.setTextY(cornerY, roi, 0);
+      store.setLabelX(cornerX, roi, 0);
+      store.setLabelY(cornerY, roi, 0);
 
       int centerX = (core.get(series).sizeX / 2) - 1;
       int centerY = (core.get(series).sizeY / 2) - 1;
@@ -1011,9 +1103,8 @@ public class LeicaHandler extends DefaultHandler {
             points.append(y.get(i).doubleValue() + roiY);
             if (i < x.size() - 1) points.append(" ");
           }
-          store.setPolylineID(shapeID, roi, 1);
-          store.setPolylinePoints(points.toString(), roi, 1);
-          store.setPolylineClosed(Boolean.TRUE, roi, 1);
+          store.setPolygonID(shapeID, roi, 1);
+          store.setPolygonPoints(points.toString(), roi, 1);
 
           break;
         case TEXT:
@@ -1081,7 +1172,7 @@ public class LeicaHandler extends DefaultHandler {
   }
 
   private void storeKeyValue(Hashtable h, String key, String value) {
-    if (h.get(key) == null) {
+    if (h.get(key) == null && key != null && value != null) {
       h.put(key, value);
     }
     else {

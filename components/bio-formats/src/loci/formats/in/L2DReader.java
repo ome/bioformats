@@ -1,25 +1,27 @@
-//
-// L2DReader.java
-//
-
 /*
-OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ * #%L
+ * OME Bio-Formats package for reading and converting biological file formats.
+ * %%
+ * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 2 of the 
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public 
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-2.0.html>.
+ * #L%
+ */
 
 package loci.formats.in;
 
@@ -39,6 +41,7 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 /**
  * L2DReader is the file format reader for Li-Cor L2D datasets.
@@ -318,9 +321,10 @@ public class L2DReader extends FormatReader {
       store.setImageName(scans[i], i);
       if (dates[i] != null) {
         dates[i] = DateTools.formatDate(dates[i], DATE_FORMAT);
-        store.setImageAcquiredDate(dates[i], i);
+        if (dates[i] != null) {
+          store.setImageAcquisitionDate(new Timestamp(dates[i]), i);
+        }
       }
-      else MetadataTools.setDefaultCreationDate(store, id, i);
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
@@ -341,7 +345,13 @@ public class L2DReader extends FormatReader {
             String laser = MetadataTools.createLSID("LightSource", 0, q);
             store.setLaserID(laser, 0, q);
             Integer wave = new Integer(waves[q].trim());
-            store.setLaserWavelength(new PositiveInteger(wave), 0, q);
+            if (wave > 0) {
+              store.setLaserWavelength(new PositiveInteger(wave), 0, q);
+            }
+            else {
+              LOGGER.warn("Expected positive value for Wavelength; got {}",
+                wave);
+            }
             store.setLaserType(getLaserType("Other"), 0, q);
             store.setLaserLaserMedium(getLaserMedium("Other"), 0, q);
             store.setChannelLightSourceSettingsID(laser, i, q);

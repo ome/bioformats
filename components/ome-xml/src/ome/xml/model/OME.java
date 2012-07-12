@@ -1,37 +1,45 @@
 /*
- * ome.xml.model.OME
- *
- *-----------------------------------------------------------------------------
- *
- *  Copyright (C) @year@ Open Microscopy Environment
- *      Massachusetts Institute of Technology,
- *      National Institutes of Health,
- *      University of Dundee,
- *      University of Wisconsin-Madison
- *
- *
- *
- *    This library is free software; you can redistribute it and/or
- *    modify it under the terms of the GNU Lesser General Public
- *    License as published by the Free Software Foundation; either
- *    version 2.1 of the License, or (at your option) any later version.
- *
- *    This library is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- *    Lesser General Public License for more details.
- *
- *    You should have received a copy of the GNU Lesser General Public
- *    License along with this library; if not, write to the Free Software
- *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
- *-----------------------------------------------------------------------------
+ * #%L
+ * OME-XML Java library for working with OME-XML metadata structures.
+ * %%
+ * Copyright (C) 2006 - 2012 Open Microscopy Environment:
+ *   - Massachusetts Institute of Technology
+ *   - National Institutes of Health
+ *   - University of Dundee
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ * %%
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ * 
+ * The views and conclusions contained in the software and documentation are
+ * those of the authors and should not be interpreted as representing official
+ * policies, either expressed or implied, of any organization.
+ * #L%
  */
 
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2011-11-09 10:55:09-0500
+ * Created by callan via xsd-fu on 2012-05-18 10:08:16+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -58,7 +66,7 @@ public class OME extends AbstractOMEModelObject
 
 	// -- Constants --
 
-	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2011-06";
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2012-06";
 
 	/** Logger for this class. */
 	private static final Logger LOGGER =
@@ -74,37 +82,37 @@ public class OME extends AbstractOMEModelObject
 	private String creator;
 
 	// Property which occurs more than once
-	private List<Project> projectList = new ArrayList<Project>();
+	private List<Project> projects = new ArrayList<Project>();
 
 	// Property which occurs more than once
-	private List<Dataset> datasetList = new ArrayList<Dataset>();
+	private List<Dataset> datasets = new ArrayList<Dataset>();
 
 	// Property which occurs more than once
-	private List<Experiment> experimentList = new ArrayList<Experiment>();
+	private List<Experiment> experiments = new ArrayList<Experiment>();
 
 	// Property which occurs more than once
-	private List<Plate> plateList = new ArrayList<Plate>();
+	private List<Plate> plates = new ArrayList<Plate>();
 
 	// Property which occurs more than once
-	private List<Screen> screenList = new ArrayList<Screen>();
+	private List<Screen> screens = new ArrayList<Screen>();
 
 	// Property which occurs more than once
-	private List<Experimenter> experimenterList = new ArrayList<Experimenter>();
+	private List<Experimenter> experimenters = new ArrayList<Experimenter>();
 
 	// Property which occurs more than once
-	private List<Group> groupList = new ArrayList<Group>();
+	private List<ExperimenterGroup> experimenterGroups = new ArrayList<ExperimenterGroup>();
 
 	// Property which occurs more than once
-	private List<Instrument> instrumentList = new ArrayList<Instrument>();
+	private List<Instrument> instruments = new ArrayList<Instrument>();
 
 	// Property which occurs more than once
-	private List<Image> imageList = new ArrayList<Image>();
+	private List<Image> images = new ArrayList<Image>();
 
 	// Property
 	private StructuredAnnotations structuredAnnotations;
 
 	// Property which occurs more than once
-	private List<ROI> roiList = new ArrayList<ROI>();
+	private List<ROI> roIs = new ArrayList<ROI>();
 
 	// Property
 	private BinaryOnly binaryOnly;
@@ -222,14 +230,14 @@ public class OME extends AbstractOMEModelObject
 			addExperimenter(
 					new Experimenter(Experimenter_element, model));
 		}
-		// Element property Group which is complex (has
+		// Element property ExperimenterGroup which is complex (has
 		// sub-elements) and occurs more than once
-		List<Element> Group_nodeList =
-				getChildrenByTagName(element, "Group");
-		for (Element Group_element : Group_nodeList)
+		List<Element> ExperimenterGroup_nodeList =
+				getChildrenByTagName(element, "ExperimenterGroup");
+		for (Element ExperimenterGroup_element : ExperimenterGroup_nodeList)
 		{
-			addGroup(
-					new Group(Group_element, model));
+			addExperimenterGroup(
+					new ExperimenterGroup(ExperimenterGroup_element, model));
 		}
 		// Element property Instrument which is complex (has
 		// sub-elements) and occurs more than once
@@ -331,280 +339,280 @@ public class OME extends AbstractOMEModelObject
 	// Property which occurs more than once
 	public int sizeOfProjectList()
 	{
-		return projectList.size();
+		return projects.size();
 	}
 
 	public List<Project> copyProjectList()
 	{
-		return new ArrayList<Project>(projectList);
+		return new ArrayList<Project>(projects);
 	}
 
 	public Project getProject(int index)
 	{
-		return projectList.get(index);
+		return projects.get(index);
 	}
 
 	public Project setProject(int index, Project project)
 	{
-		return projectList.set(index, project);
+		return projects.set(index, project);
 	}
 
 	public void addProject(Project project)
 	{
-		projectList.add(project);
+		projects.add(project);
 	}
 
 	public void removeProject(Project project)
 	{
-		projectList.remove(project);
+		projects.remove(project);
 	}
 
 	// Property which occurs more than once
 	public int sizeOfDatasetList()
 	{
-		return datasetList.size();
+		return datasets.size();
 	}
 
 	public List<Dataset> copyDatasetList()
 	{
-		return new ArrayList<Dataset>(datasetList);
+		return new ArrayList<Dataset>(datasets);
 	}
 
 	public Dataset getDataset(int index)
 	{
-		return datasetList.get(index);
+		return datasets.get(index);
 	}
 
 	public Dataset setDataset(int index, Dataset dataset)
 	{
-		return datasetList.set(index, dataset);
+		return datasets.set(index, dataset);
 	}
 
 	public void addDataset(Dataset dataset)
 	{
-		datasetList.add(dataset);
+		datasets.add(dataset);
 	}
 
 	public void removeDataset(Dataset dataset)
 	{
-		datasetList.remove(dataset);
+		datasets.remove(dataset);
 	}
 
 	// Property which occurs more than once
 	public int sizeOfExperimentList()
 	{
-		return experimentList.size();
+		return experiments.size();
 	}
 
 	public List<Experiment> copyExperimentList()
 	{
-		return new ArrayList<Experiment>(experimentList);
+		return new ArrayList<Experiment>(experiments);
 	}
 
 	public Experiment getExperiment(int index)
 	{
-		return experimentList.get(index);
+		return experiments.get(index);
 	}
 
 	public Experiment setExperiment(int index, Experiment experiment)
 	{
-		return experimentList.set(index, experiment);
+		return experiments.set(index, experiment);
 	}
 
 	public void addExperiment(Experiment experiment)
 	{
-		experimentList.add(experiment);
+		experiments.add(experiment);
 	}
 
 	public void removeExperiment(Experiment experiment)
 	{
-		experimentList.remove(experiment);
+		experiments.remove(experiment);
 	}
 
 	// Property which occurs more than once
 	public int sizeOfPlateList()
 	{
-		return plateList.size();
+		return plates.size();
 	}
 
 	public List<Plate> copyPlateList()
 	{
-		return new ArrayList<Plate>(plateList);
+		return new ArrayList<Plate>(plates);
 	}
 
 	public Plate getPlate(int index)
 	{
-		return plateList.get(index);
+		return plates.get(index);
 	}
 
 	public Plate setPlate(int index, Plate plate)
 	{
-		return plateList.set(index, plate);
+		return plates.set(index, plate);
 	}
 
 	public void addPlate(Plate plate)
 	{
-		plateList.add(plate);
+		plates.add(plate);
 	}
 
 	public void removePlate(Plate plate)
 	{
-		plateList.remove(plate);
+		plates.remove(plate);
 	}
 
 	// Property which occurs more than once
 	public int sizeOfScreenList()
 	{
-		return screenList.size();
+		return screens.size();
 	}
 
 	public List<Screen> copyScreenList()
 	{
-		return new ArrayList<Screen>(screenList);
+		return new ArrayList<Screen>(screens);
 	}
 
 	public Screen getScreen(int index)
 	{
-		return screenList.get(index);
+		return screens.get(index);
 	}
 
 	public Screen setScreen(int index, Screen screen)
 	{
-		return screenList.set(index, screen);
+		return screens.set(index, screen);
 	}
 
 	public void addScreen(Screen screen)
 	{
-		screenList.add(screen);
+		screens.add(screen);
 	}
 
 	public void removeScreen(Screen screen)
 	{
-		screenList.remove(screen);
+		screens.remove(screen);
 	}
 
 	// Property which occurs more than once
 	public int sizeOfExperimenterList()
 	{
-		return experimenterList.size();
+		return experimenters.size();
 	}
 
 	public List<Experimenter> copyExperimenterList()
 	{
-		return new ArrayList<Experimenter>(experimenterList);
+		return new ArrayList<Experimenter>(experimenters);
 	}
 
 	public Experimenter getExperimenter(int index)
 	{
-		return experimenterList.get(index);
+		return experimenters.get(index);
 	}
 
 	public Experimenter setExperimenter(int index, Experimenter experimenter)
 	{
-		return experimenterList.set(index, experimenter);
+		return experimenters.set(index, experimenter);
 	}
 
 	public void addExperimenter(Experimenter experimenter)
 	{
-		experimenterList.add(experimenter);
+		experimenters.add(experimenter);
 	}
 
 	public void removeExperimenter(Experimenter experimenter)
 	{
-		experimenterList.remove(experimenter);
+		experimenters.remove(experimenter);
 	}
 
 	// Property which occurs more than once
-	public int sizeOfGroupList()
+	public int sizeOfExperimenterGroupList()
 	{
-		return groupList.size();
+		return experimenterGroups.size();
 	}
 
-	public List<Group> copyGroupList()
+	public List<ExperimenterGroup> copyExperimenterGroupList()
 	{
-		return new ArrayList<Group>(groupList);
+		return new ArrayList<ExperimenterGroup>(experimenterGroups);
 	}
 
-	public Group getGroup(int index)
+	public ExperimenterGroup getExperimenterGroup(int index)
 	{
-		return groupList.get(index);
+		return experimenterGroups.get(index);
 	}
 
-	public Group setGroup(int index, Group group)
+	public ExperimenterGroup setExperimenterGroup(int index, ExperimenterGroup experimenterGroup)
 	{
-		return groupList.set(index, group);
+		return experimenterGroups.set(index, experimenterGroup);
 	}
 
-	public void addGroup(Group group)
+	public void addExperimenterGroup(ExperimenterGroup experimenterGroup)
 	{
-		groupList.add(group);
+		experimenterGroups.add(experimenterGroup);
 	}
 
-	public void removeGroup(Group group)
+	public void removeExperimenterGroup(ExperimenterGroup experimenterGroup)
 	{
-		groupList.remove(group);
+		experimenterGroups.remove(experimenterGroup);
 	}
 
 	// Property which occurs more than once
 	public int sizeOfInstrumentList()
 	{
-		return instrumentList.size();
+		return instruments.size();
 	}
 
 	public List<Instrument> copyInstrumentList()
 	{
-		return new ArrayList<Instrument>(instrumentList);
+		return new ArrayList<Instrument>(instruments);
 	}
 
 	public Instrument getInstrument(int index)
 	{
-		return instrumentList.get(index);
+		return instruments.get(index);
 	}
 
 	public Instrument setInstrument(int index, Instrument instrument)
 	{
-		return instrumentList.set(index, instrument);
+		return instruments.set(index, instrument);
 	}
 
 	public void addInstrument(Instrument instrument)
 	{
-		instrumentList.add(instrument);
+		instruments.add(instrument);
 	}
 
 	public void removeInstrument(Instrument instrument)
 	{
-		instrumentList.remove(instrument);
+		instruments.remove(instrument);
 	}
 
 	// Property which occurs more than once
 	public int sizeOfImageList()
 	{
-		return imageList.size();
+		return images.size();
 	}
 
 	public List<Image> copyImageList()
 	{
-		return new ArrayList<Image>(imageList);
+		return new ArrayList<Image>(images);
 	}
 
 	public Image getImage(int index)
 	{
-		return imageList.get(index);
+		return images.get(index);
 	}
 
 	public Image setImage(int index, Image image)
 	{
-		return imageList.set(index, image);
+		return images.set(index, image);
 	}
 
 	public void addImage(Image image)
 	{
-		imageList.add(image);
+		images.add(image);
 	}
 
 	public void removeImage(Image image)
 	{
-		imageList.remove(image);
+		images.remove(image);
 	}
 
 	// Property
@@ -621,32 +629,32 @@ public class OME extends AbstractOMEModelObject
 	// Property which occurs more than once
 	public int sizeOfROIList()
 	{
-		return roiList.size();
+		return roIs.size();
 	}
 
 	public List<ROI> copyROIList()
 	{
-		return new ArrayList<ROI>(roiList);
+		return new ArrayList<ROI>(roIs);
 	}
 
 	public ROI getROI(int index)
 	{
-		return roiList.get(index);
+		return roIs.get(index);
 	}
 
 	public ROI setROI(int index, ROI roi)
 	{
-		return roiList.set(index, roi);
+		return roIs.set(index, roi);
 	}
 
 	public void addROI(ROI roi)
 	{
-		roiList.add(roi);
+		roIs.add(roi);
 	}
 
 	public void removeROI(ROI roi)
 	{
-		roiList.remove(roi);
+		roIs.remove(roi);
 	}
 
 	// Property
@@ -685,85 +693,85 @@ public class OME extends AbstractOMEModelObject
 			// Attribute property Creator
 			OME_element.setAttribute("Creator", creator.toString());
 		}
-		if (projectList != null)
+		if (projects != null)
 		{
 			// Element property Project which is complex (has
 			// sub-elements) and occurs more than once
-			for (Project projectList_value : projectList)
+			for (Project projects_value : projects)
 			{
-				OME_element.appendChild(projectList_value.asXMLElement(document));
+				OME_element.appendChild(projects_value.asXMLElement(document));
 			}
 		}
-		if (datasetList != null)
+		if (datasets != null)
 		{
 			// Element property Dataset which is complex (has
 			// sub-elements) and occurs more than once
-			for (Dataset datasetList_value : datasetList)
+			for (Dataset datasets_value : datasets)
 			{
-				OME_element.appendChild(datasetList_value.asXMLElement(document));
+				OME_element.appendChild(datasets_value.asXMLElement(document));
 			}
 		}
-		if (experimentList != null)
+		if (experiments != null)
 		{
 			// Element property Experiment which is complex (has
 			// sub-elements) and occurs more than once
-			for (Experiment experimentList_value : experimentList)
+			for (Experiment experiments_value : experiments)
 			{
-				OME_element.appendChild(experimentList_value.asXMLElement(document));
+				OME_element.appendChild(experiments_value.asXMLElement(document));
 			}
 		}
-		if (plateList != null)
+		if (plates != null)
 		{
 			// Element property Plate which is complex (has
 			// sub-elements) and occurs more than once
-			for (Plate plateList_value : plateList)
+			for (Plate plates_value : plates)
 			{
-				OME_element.appendChild(plateList_value.asXMLElement(document));
+				OME_element.appendChild(plates_value.asXMLElement(document));
 			}
 		}
-		if (screenList != null)
+		if (screens != null)
 		{
 			// Element property Screen which is complex (has
 			// sub-elements) and occurs more than once
-			for (Screen screenList_value : screenList)
+			for (Screen screens_value : screens)
 			{
-				OME_element.appendChild(screenList_value.asXMLElement(document));
+				OME_element.appendChild(screens_value.asXMLElement(document));
 			}
 		}
-		if (experimenterList != null)
+		if (experimenters != null)
 		{
 			// Element property Experimenter which is complex (has
 			// sub-elements) and occurs more than once
-			for (Experimenter experimenterList_value : experimenterList)
+			for (Experimenter experimenters_value : experimenters)
 			{
-				OME_element.appendChild(experimenterList_value.asXMLElement(document));
+				OME_element.appendChild(experimenters_value.asXMLElement(document));
 			}
 		}
-		if (groupList != null)
+		if (experimenterGroups != null)
 		{
-			// Element property Group which is complex (has
+			// Element property ExperimenterGroup which is complex (has
 			// sub-elements) and occurs more than once
-			for (Group groupList_value : groupList)
+			for (ExperimenterGroup experimenterGroups_value : experimenterGroups)
 			{
-				OME_element.appendChild(groupList_value.asXMLElement(document));
+				OME_element.appendChild(experimenterGroups_value.asXMLElement(document));
 			}
 		}
-		if (instrumentList != null)
+		if (instruments != null)
 		{
 			// Element property Instrument which is complex (has
 			// sub-elements) and occurs more than once
-			for (Instrument instrumentList_value : instrumentList)
+			for (Instrument instruments_value : instruments)
 			{
-				OME_element.appendChild(instrumentList_value.asXMLElement(document));
+				OME_element.appendChild(instruments_value.asXMLElement(document));
 			}
 		}
-		if (imageList != null)
+		if (images != null)
 		{
 			// Element property Image which is complex (has
 			// sub-elements) and occurs more than once
-			for (Image imageList_value : imageList)
+			for (Image images_value : images)
 			{
-				OME_element.appendChild(imageList_value.asXMLElement(document));
+				OME_element.appendChild(images_value.asXMLElement(document));
 			}
 		}
 		if (structuredAnnotations != null)
@@ -772,13 +780,13 @@ public class OME extends AbstractOMEModelObject
 			// sub-elements)
 			OME_element.appendChild(structuredAnnotations.asXMLElement(document));
 		}
-		if (roiList != null)
+		if (roIs != null)
 		{
 			// Element property ROI which is complex (has
 			// sub-elements) and occurs more than once
-			for (ROI roiList_value : roiList)
+			for (ROI roIs_value : roIs)
 			{
-				OME_element.appendChild(roiList_value.asXMLElement(document));
+				OME_element.appendChild(roIs_value.asXMLElement(document));
 			}
 		}
 		if (binaryOnly != null)

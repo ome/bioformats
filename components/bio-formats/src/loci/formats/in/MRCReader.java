@@ -1,25 +1,27 @@
-//
-// MRCReader.java
-//
-
 /*
-OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ * #%L
+ * OME Bio-Formats package for reading and converting biological file formats.
+ * %%
+ * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 2 of the 
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public 
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-2.0.html>.
+ * #L%
+ */
 
 package loci.formats.in;
 
@@ -94,7 +96,18 @@ public class MRCReader extends FormatReader {
 
     if (offset + planeSize <= in.length() && offset >= 0) {
       in.seek(offset);
-      readPlane(in, x, y, w, h, buf);
+      readPlane(in, x, getSizeY() - h - y, w, h, buf);
+
+      // reverse the order of the rows
+      // planes are stored with the origin in the lower-left corner
+      byte[] tmp = new byte[w * FormatTools.getBytesPerPixel(getPixelType())];
+      for (int row=0; row<h/2; row++) {
+        int src = row * tmp.length;
+        int dest = (h - row - 1) * tmp.length;
+        System.arraycopy(buf, src, tmp, 0, tmp.length);
+        System.arraycopy(buf, dest, buf, src, tmp.length);
+        System.arraycopy(tmp, 0, buf, dest, tmp.length);
+      }
     }
 
     return buf;
@@ -189,13 +202,10 @@ public class MRCReader extends FormatReader {
       int my = in.readInt();
       int mz = in.readInt();
 
-      xSize = in.readFloat() / mx;
-      ySize = in.readFloat() / my;
-      zSize = in.readFloat() / mz;
-
-      if (xSize == Double.POSITIVE_INFINITY) xSize = 1;
-      if (ySize == Double.POSITIVE_INFINITY) ySize = 1;
-      if (zSize == Double.POSITIVE_INFINITY) zSize = 1;
+      // physical sizes are stored in ångströms, we want them in µm
+      xSize = (in.readFloat() / mx) / 10000.0;
+      ySize = (in.readFloat() / my) / 10000.0;
+      zSize = (in.readFloat() / mz) / 10000.0;
 
       addGlobalMeta("Pixel size (X)", xSize);
       addGlobalMeta("Pixel size (Y)", ySize);
@@ -287,7 +297,6 @@ public class MRCReader extends FormatReader {
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
-    MetadataTools.setDefaultCreationDate(store, id, 0);
 
     if (level != MetadataLevel.MINIMUM) {
       if (xSize > 0.0d) {

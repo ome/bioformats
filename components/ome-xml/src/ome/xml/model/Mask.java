@@ -1,37 +1,45 @@
 /*
- * ome.xml.model.Mask
- *
- *-----------------------------------------------------------------------------
- *
- *  Copyright (C) @year@ Open Microscopy Environment
- *      Massachusetts Institute of Technology,
- *      National Institutes of Health,
- *      University of Dundee,
- *      University of Wisconsin-Madison
- *
- *
- *
- *    This library is free software; you can redistribute it and/or
- *    modify it under the terms of the GNU Lesser General Public
- *    License as published by the Free Software Foundation; either
- *    version 2.1 of the License, or (at your option) any later version.
- *
- *    This library is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- *    Lesser General Public License for more details.
- *
- *    You should have received a copy of the GNU Lesser General Public
- *    License along with this library; if not, write to the Free Software
- *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
- *-----------------------------------------------------------------------------
+ * #%L
+ * OME-XML Java library for working with OME-XML metadata structures.
+ * %%
+ * Copyright (C) 2006 - 2012 Open Microscopy Environment:
+ *   - Massachusetts Institute of Technology
+ *   - National Institutes of Health
+ *   - University of Dundee
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ * %%
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ * 
+ * The views and conclusions contained in the software and documentation are
+ * those of the authors and should not be interpreted as representing official
+ * policies, either expressed or implied, of any organization.
+ * #L%
  */
 
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2011-11-09 10:55:09-0500
+ * Created by callan via xsd-fu on 2012-05-18 10:08:16+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -58,7 +66,7 @@ public class Mask extends Shape
 
 	// -- Constants --
 
-	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/ROI/2011-06";
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/ROI/2012-06";
 
 	/** Logger for this class. */
 	private static final Logger LOGGER =
@@ -80,7 +88,7 @@ public class Mask extends Shape
 	private Double width;
 
 	// Property which occurs more than once
-	private List<BinData> binDataList = new ArrayList<BinData>();
+	private List<BinData> binDataBlocks = new ArrayList<BinData>();
 
 	// -- Constructors --
 
@@ -225,32 +233,34 @@ public class Mask extends Shape
 	// Property which occurs more than once
 	public int sizeOfBinDataList()
 	{
-		return binDataList.size();
+		return binDataBlocks.size();
 	}
 
 	public List<BinData> copyBinDataList()
 	{
-		return new ArrayList<BinData>(binDataList);
+		return new ArrayList<BinData>(binDataBlocks);
 	}
 
 	public BinData getBinData(int index)
 	{
-		return binDataList.get(index);
+		return binDataBlocks.get(index);
 	}
 
 	public BinData setBinData(int index, BinData binData)
 	{
-		return binDataList.set(index, binData);
+        binData.setMask(this);
+		return binDataBlocks.set(index, binData);
 	}
 
 	public void addBinData(BinData binData)
 	{
-		binDataList.add(binData);
+        binData.setMask(this);
+		binDataBlocks.add(binData);
 	}
 
 	public void removeBinData(BinData binData)
 	{
-		binDataList.remove(binData);
+		binDataBlocks.remove(binData);
 	}
 
 	public Element asXMLElement(Document document)
@@ -288,13 +298,13 @@ public class Mask extends Shape
 			// Attribute property Width
 			Mask_element.setAttribute("Width", width.toString());
 		}
-		if (binDataList != null)
+		if (binDataBlocks != null)
 		{
 			// Element property BinData which is complex (has
 			// sub-elements) and occurs more than once
-			for (BinData binDataList_value : binDataList)
+			for (BinData binDataBlocks_value : binDataBlocks)
 			{
-				Mask_element.appendChild(binDataList_value.asXMLElement(document));
+				Mask_element.appendChild(binDataBlocks_value.asXMLElement(document));
 			}
 		}
 		return super.asXMLElement(document, Mask_element);

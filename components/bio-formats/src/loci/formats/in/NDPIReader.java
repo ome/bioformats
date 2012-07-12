@@ -1,25 +1,27 @@
-//
-// NDPIReader.java
-//
-
 /*
-OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ * #%L
+ * OME Bio-Formats package for reading and converting biological file formats.
+ * %%
+ * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 2 of the 
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public 
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-2.0.html>.
+ * #L%
+ */
 
 package loci.formats.in;
 
@@ -37,6 +39,7 @@ import loci.formats.tiff.PhotoInterp;
 import loci.formats.tiff.TiffParser;
 
 import ome.xml.model.primitives.PositiveFloat;
+import ome.xml.model.primitives.Timestamp;
 
 /**
  * NDPIReader is the file format reader for Hamamatsu .ndpi files.
@@ -259,6 +262,14 @@ public class NDPIReader extends BaseTiffReader {
       ifd.remove(THUMB_TAG_2);
       ifds.set(i, ifd);
       tiffParser.fillInIFD(ifds.get(i));
+
+      int[] bpp = ifds.get(i).getBitsPerSample();
+      for (int q=0; q<bpp.length; q++) {
+        if (bpp[q] < 8) {
+          bpp[q] = 8;
+        }
+      }
+      ifds.get(i).putIFDValue(IFD.BITS_PER_SAMPLE, bpp);
     }
 
     for (int s=0; s<core.length; s++) {
@@ -303,7 +314,9 @@ public class NDPIReader extends BaseTiffReader {
         int ifdIndex = getIFDIndex(i, 0);
         String creationDate = ifds.get(ifdIndex).getIFDTextValue(IFD.DATE_TIME);
         creationDate = DateTools.formatDate(creationDate, DATE_FORMATS);
-        store.setImageAcquiredDate(creationDate, i);
+        if (creationDate != null) {
+          store.setImageAcquisitionDate(new Timestamp(creationDate), i);
+        }
 
         double xResolution = ifds.get(ifdIndex).getXResolution();
         double yResolution = ifds.get(ifdIndex).getYResolution();
@@ -311,10 +324,17 @@ public class NDPIReader extends BaseTiffReader {
         if (xResolution > 0) {
           store.setPixelsPhysicalSizeX(new PositiveFloat(xResolution), i);
         }
+        else {
+          LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+            xResolution);
+        }
         if (yResolution > 0) {
           store.setPixelsPhysicalSizeY(new PositiveFloat(yResolution), i);
         }
-        store.setPixelsPhysicalSizeZ(null, i);
+        else {
+          LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+            yResolution);
+        }
       }
     }
   }

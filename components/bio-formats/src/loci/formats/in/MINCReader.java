@@ -1,25 +1,27 @@
-//
-// MINCReader.java
-//
-
 /*
-OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ * #%L
+ * OME Bio-Formats package for reading and converting biological file formats.
+ * %%
+ * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 2 of the 
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public 
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-2.0.html>.
+ * #L%
+ */
 
 package loci.formats.in;
 
@@ -38,8 +40,8 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.MissingLibraryException;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 import loci.formats.services.NetCDFService;
+import ome.xml.model.primitives.PositiveFloat;
 
 /**
  * MINCReader is the file format reader for MINC MRI files.
@@ -157,9 +159,22 @@ public class MINCReader extends FormatReader {
 
     try {
       Object pixels = netcdf.getVariableValue("/image");
+
       if (pixels instanceof byte[][][]) {
         core[0].pixelType = FormatTools.UINT8;
         pixelData = (byte[][][]) pixels;
+      }
+      else if (pixels instanceof byte[][][][]) {
+        byte[][][][] actualPixels = (byte[][][][]) pixels;
+        core[0].pixelType = FormatTools.UINT8;
+
+        pixelData = new byte[actualPixels.length * actualPixels[0].length][][];
+        int nextPlane = 0;
+        for (int t=0; t<actualPixels.length; t++) {
+          for (int z=0; z<actualPixels[t].length; z++) {
+            pixelData[nextPlane++] = actualPixels[t][z];
+          }
+        }
       }
       else if (pixels instanceof short[][][]) {
         core[0].pixelType = FormatTools.UINT16;
@@ -217,13 +232,18 @@ public class MINCReader extends FormatReader {
       throw new FormatException(e);
     }
 
-    core[0].sizeX = netcdf.getDimension("/zspace");
+    core[0].sizeX = netcdf.getDimension("/xspace");
     core[0].sizeY = netcdf.getDimension("/yspace");
-    core[0].sizeZ = netcdf.getDimension("/xspace");
+    core[0].sizeZ = netcdf.getDimension("/zspace");
 
-    core[0].sizeT = 1;
+    try {
+      core[0].sizeT = netcdf.getDimension("/time");
+    }
+    catch (NullPointerException e) {
+      core[0].sizeT = 1;
+    }
     core[0].sizeC = 1;
-    core[0].imageCount = core[0].sizeZ;
+    core[0].imageCount = getSizeZ() * getSizeT() * getSizeC();
     core[0].rgb = false;
     core[0].indexed = false;
     core[0].dimensionOrder = "XYZCT";
@@ -232,19 +252,30 @@ public class MINCReader extends FormatReader {
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
-    MetadataTools.setDefaultCreationDate(store, id, 0);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription(netcdf.getAttributeValue("/history"), 0);
 
-      if (physicalX != null) {
+      if (physicalX != null && physicalX > 0) {
         store.setPixelsPhysicalSizeX(new PositiveFloat(physicalX), 0);
       }
-      if (physicalY != null) {
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+          physicalX);
+      }
+      if (physicalY != null && physicalY > 0) {
         store.setPixelsPhysicalSizeY(new PositiveFloat(physicalY), 0);
       }
-      if (physicalZ != null) {
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+          physicalY);
+      }
+      if (physicalZ != null && physicalZ > 0) {
         store.setPixelsPhysicalSizeZ(new PositiveFloat(physicalZ), 0);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}",
+          physicalZ);
       }
     }
   }

@@ -1,37 +1,43 @@
-//
-// TillVisionReader.java
-//
-
 /*
-OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ * #%L
+ * OME Bio-Formats package for reading and converting biological file formats.
+ * %%
+ * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 2 of the 
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public 
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-2.0.html>.
+ * #L%
+ */
 
 package loci.formats.in;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import ome.xml.model.primitives.Timestamp;
+
+import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.IniList;
@@ -64,6 +70,7 @@ public class TillVisionReader extends FormatReader {
   private static final byte[] MARKER_1 = new byte[] {(byte) 0x81, 3, 0};
   private static final byte[] MARKER_2 =
     new byte[] {0x43, 0x49, 0x6d, 0x61, 0x67, 0x65, 0x03, 0x00};
+  private static final byte[] MARKER_3 = new byte[] {(byte) 0x83, 3, 0};
 
   private static final String[] DATE_FORMATS = new String[] {
     "mm/dd/yy HH:mm:ss aa", "mm/dd/yy HH:mm:ss.SSS aa", "mm/dd/yy",
@@ -315,6 +322,9 @@ public class TillVisionReader extends FormatReader {
 
         s.seek(0);
 
+        int lowerBound = 0;
+        int upperBound = 0x1000;
+
         while (s.getFilePointer() < s.length() - 2) {
           LOGGER.debug("  Looking for image at {}", s.getFilePointer());
           s.order(false);
@@ -329,7 +339,11 @@ public class TillVisionReader extends FormatReader {
           s.skipBytes(6);
           s.order(true);
           len = s.readShort();
-          if (len < 0 || len > 0x1000) continue;
+          if (nImages == 0 && len > upperBound * 2 && len < upperBound * 4) {
+            lowerBound = 512;
+            upperBound = 0x4000;
+          }
+          if (len < lowerBound || len > upperBound) continue;
           String description = s.readString(len);
           LOGGER.debug("Description: {}", description);
 
@@ -467,7 +481,8 @@ public class TillVisionReader extends FormatReader {
         String inf = file.substring(0, dot) + ".inf";
         infFiles[i] = inf;
 
-        BufferedReader reader = new BufferedReader(new FileReader(inf));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(
+          new FileInputStream(inf), Constants.ENCODING));
         IniList data = parser.parseINI(reader);
         reader.close();
         IniTable infoTable = data.getTable("Info");
@@ -520,9 +535,8 @@ public class TillVisionReader extends FormatReader {
       }
       String date = i < dates.size() ? dates.get(i) : "";
       if (date != null && !date.equals("")) {
-        store.setImageAcquiredDate(date, i);
+        store.setImageAcquisitionDate(new Timestamp(date), i);
       }
-      else MetadataTools.setDefaultCreationDate(store, currentId, i);
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
@@ -556,19 +570,25 @@ public class TillVisionReader extends FormatReader {
     int offset1 = findNextOffset(s, MARKER_1);
     s.seek(fp);
     int offset2 = findNextOffset(s, MARKER_2);
+    s.seek(fp);
+    int offset3 = findNextOffset(s, MARKER_3);
 
     if (offset0 < 0) offset0 = Integer.MAX_VALUE;
     if (offset1 < 0) offset1 = Integer.MAX_VALUE;
     if (offset2 < 0) offset2 = Integer.MAX_VALUE;
+    if (offset3 < 0) offset3 = Integer.MAX_VALUE;
 
-    if (offset0 < offset1 && offset0 < offset2) {
+    if (offset0 < offset1 && offset0 < offset2 && offset0 < offset3) {
       return offset0;
     }
-    if (offset1 < offset0 && offset1 < offset2) {
+    if (offset1 < offset0 && offset1 < offset2 && offset1 < offset3) {
       return offset1;
     }
-    if (offset2 < offset1 && offset2 < offset0) {
+    if (offset2 < offset1 && offset2 < offset0 && offset2 < offset3) {
       return offset2;
+    }
+    if (offset3 < offset1 && offset3 < offset0 && offset3 < offset2) {
+      return offset3;
     }
     return -1;
   }
@@ -608,8 +628,8 @@ public class TillVisionReader extends FormatReader {
         {
           int pointer = i + 22;
           int length = DataTools.bytesToShort(buf, pointer, 2, true);
-          if (length == 6 &&
-            new String(buf, pointer + 2, length).equals("CImage"))
+          if (length == 6 && new String(
+            buf, pointer + 2, length, Constants.ENCODING).equals("CImage"))
           {
             pointer += length + 4;
           }
@@ -618,7 +638,8 @@ public class TillVisionReader extends FormatReader {
             long offset = s.getFilePointer() - buf.length + pointer + 4;
             if (!offsets.contains(offset)) {
               int len = buf[pointer + 4];
-              String name = new String(buf, pointer + 5, len);
+              String name =
+                new String(buf, pointer + 5, len, Constants.ENCODING);
               if (name.indexOf("Palette") < 0) {
                 offsets.add(offset);
               }

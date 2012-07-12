@@ -7,8 +7,9 @@
 
   <parent>
     <groupId>loci</groupId>
-    <artifactId>bio-formats-base</artifactId>
-    <version>4.4-SNAPSHOT</version>
+    <artifactId>pom-scifio</artifactId>
+    <version>4.4.0</version>
+    <relativePath>../..</relativePath>
   </parent>
 
   <artifactId>scifio</artifactId>
@@ -22,8 +23,8 @@
 
   <licenses>
     <license>
-      <name>Simplified BSD</name>
-      <url>http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/scifio/LICENSE.txt;hb=HEAD</url>
+      <name>Simplified BSD License</name>
+      <url>${license.server}/scifio/license.txt</url>
       <distribution>repo</distribution>
     </license>
   </licenses>
@@ -60,6 +61,8 @@
       <version>1.5.10</version>
     </dependency>
 
+    <!-- NB: dependency:analyze has false warning about xml-apis:xml-apis. -->
+
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
@@ -67,18 +70,21 @@
       <scope>runtime</scope>
     </dependency>
     <dependency>
-      <groupId>xalan</groupId>
-      <artifactId>serializer</artifactId>
-      <version>2.7.1</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
+      <!-- NB: We want this, despite warning from dependency:analyze. -->
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
       <version>1.5.10</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
+      <!-- NB: We want this, despite warning from dependency:analyze. -->
+      <groupId>xalan</groupId>
+      <artifactId>serializer</artifactId>
+      <version>2.7.1</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <!-- NB: We want this, despite warning from dependency:analyze. -->
       <groupId>xalan</groupId>
       <artifactId>xalan</artifactId>
       <version>2.7.1</version>
@@ -98,7 +104,7 @@
       <plugin>
         <groupId>loci.maven.plugins</groupId>
         <artifactId>cppwrap-maven-plugin</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.1.0</version>
         <configuration>
           <headerFile>cppwrap/header.txt</headerFile>
           <conflictsFile>cppwrap/conflicts.txt</conflictsFile>
@@ -110,15 +116,23 @@
           </libraries>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <configuration>
+          <licenseName>scifio</licenseName>
+          <projectName>OME SCIFIO package for reading and converting scientific file formats.</projectName>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 
   <developers>
     <developer>
-      <id>mark</id>
+      <id>hinerm</id>
       <name>Mark Hiner</name>
       <email>hinerm@gmail.edu</email>
-      <url>http://imagejdev.org/users/hinerm</url>
+      <url>http://developer.imagej.net/users/hinerm</url>
       <organization>UW-Madison LOCI</organization>
       <organizationUrl>http://loci.wisc.edu/</organizationUrl>
       <roles>
@@ -127,14 +141,14 @@
       </roles>
       <timezone>-6</timezone>
       <properties>
-        <picUrl>http://imagejdev.org/files/imagej/profile-pictures/Mark.jpg?1305649677</picUrl>
+        <picUrl>http://developer.imagej.net/files/imagej/profile-pictures/Mark.jpg?1305649677</picUrl>
       </properties>
     </developer>
     <developer>
       <id>melissa</id>
       <name>Melissa Linkert</name>
       <email>melissa.linkert@glencoesoftware.com</email>
-      <url>http://openmicroscopy.org/site/about/development-teams/glencoe-software</url>
+      <url>http://www.openmicroscopy.org/site/about/development-teams/glencoe-software</url>
       <organization>Glencoe Software</organization>
       <organizationUrl>http://glencoesoftware.com/</organizationUrl>
       <roles>
@@ -143,7 +157,7 @@
       </roles>
       <timezone>-6</timezone>
       <properties>
-        <picUrl>http://openmicroscopy.org/site/about/development-teams/glencoe-software/melissalinkert.png</picUrl>
+        <picUrl>http://www.openmicroscopy.org/site/about/development-teams/glencoe-software/melissalinkert.png</picUrl>
       </properties>
     </developer>
     <developer>

@@ -7,8 +7,9 @@
 
   <parent>
     <groupId>loci</groupId>
-    <artifactId>bio-formats-base</artifactId>
-    <version>4.4-SNAPSHOT</version>
+    <artifactId>pom-scifio</artifactId>
+    <version>4.4.0</version>
+    <relativePath>../..</relativePath>
   </parent>
 
   <artifactId>ome-xml</artifactId>
@@ -20,8 +21,8 @@
 
   <licenses>
     <license>
-      <name>Simplified BSD</name>
-      <url>http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/ome-xml/LICENSE.txt;hb=HEAD</url>
+      <name>Simplified BSD License</name>
+      <url>${license.server}/ome-xml/license.txt</url>
       <distribution>repo</distribution>
     </license>
   </licenses>
@@ -34,6 +35,7 @@
     </dependency>
 
     <dependency>
+      <!-- NB: We want this, despite warning from dependency:analyze. -->
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
       <version>1.2.14</version>
@@ -46,6 +48,7 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <!-- NB: We want this, despite warning from dependency:analyze. -->
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
       <version>1.5.10</version>
@@ -74,6 +77,20 @@
           </suiteXmlFiles>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <configuration>
+          <licenseName>ome-xml</licenseName>
+          <organizationName>Open Microscopy Environment:
+  - Massachusetts Institute of Technology
+  - National Institutes of Health
+  - University of Dundee
+  - Board of Regents of the University of Wisconsin-Madison
+  - Glencoe Software, Inc.</organizationName>
+          <projectName>OME-XML Java library for working with OME-XML metadata structures.</projectName>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 
@@ -98,7 +115,7 @@
       <id>callan</id>
       <name>Chris Allan</name>
       <email>callan@lifesci.dundee.ac.uk</email>
-      <url>http://openmicroscopy.org/site/about/development-teams/jason</url>
+      <url>http://www.openmicroscopy.org/site/about/development-teams/jason</url>
       <organization>Swedlow Lab, University of Dundee</organization>
       <organizationUrl>http://www.lifesci.dundee.ac.uk/groups/jason_swedlow/</organizationUrl>
       <roles>
@@ -107,14 +124,14 @@
       </roles>
       <timezone>0</timezone>
       <properties>
-        <picUrl>http://openmicroscopy.org/site/about/development-teams/jason/chrisallan.jpg</picUrl>
+        <picUrl>http://www.openmicroscopy.org/site/about/development-teams/jason/chrisallan.jpg</picUrl>
       </properties>
     </developer>
     <developer>
       <id>melissa</id>
       <name>Melissa Linkert</name>
       <email>melissa.linkert@glencoesoftware.com</email>
-      <url>http://openmicroscopy.org/site/about/development-teams/glencoe-software</url>
+      <url>http://www.openmicroscopy.org/site/about/development-teams/glencoe-software</url>
       <organization>Glencoe Software</organization>
       <organizationUrl>http://glencoesoftware.com/</organizationUrl>
       <roles>
@@ -123,7 +140,7 @@
       </roles>
       <timezone>-6</timezone>
       <properties>
-        <picUrl>http://openmicroscopy.org/site/about/development-teams/glencoe-software/melissalinkert.png</picUrl>
+        <picUrl>http://www.openmicroscopy.org/site/about/development-teams/glencoe-software/melissalinkert.png</picUrl>
       </properties>
     </developer>
   </developers>

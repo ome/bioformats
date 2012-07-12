@@ -13,6 +13,12 @@ Type "ant -p" for a list of targets.
 
   <taskdef name="testng" classpath="${testng.jar}"
     classname="org.testng.TestNGAntTask"/>
+  <if>
+    <isset property="findbugs.home"/>
+    <then>
+    <taskdef name="findbugs" classpath="${findbugs.home}/findbugs-ant.jar${path.separator}${findbugs.home}/lib/findbugs-ant.jar" classname="edu.umd.cs.findbugs.anttask.FindBugsTask"/>
+    </then>
+  </if>
   <condition property="doTests">
     <available file="${tests.dir}"/>
   </condition>
@@ -93,11 +99,26 @@ Type "ant -p" for a list of targets.
       <then>
         <findbugs home="${findbugs.home}" jvmargs="-Xmx512m"
           output="xml:withMessages" outputFile="${build.dir}/findbugs.xml"
-          excludeFilter="${root.dir}/excludebugs.xml" reportLevel="high">
-          <auxClasspath path="${component.classpath}"/>
+          excludeFilter="${root.dir}/excludebugs.xml" reportLevel="high"
+          errorProperty="findbugsErrors"
+          warningsProperty="findbugsWarnings">
+          <auxClasspath path="${component.runtime-cp}"/>
           <sourcePath path="${dest.dir}"/>
           <class location="${classes.dir}"/>
         </findbugs>
+
+        <if>
+          <isset property="findbugsErrors"/>
+          <then>
+            <fail message="FindBugs produced one or more errors."/>
+          </then>
+        </if>
+        <if>
+          <isset property="findbugsWarnings"/>
+          <then>
+            <fail message="FindBugs produced one or more warnings."/>
+          </then>
+        </if>
       </then>
       <else>
 <echo>
@@ -154,7 +175,7 @@ your FindBugs installation's lib directory. E.g.:
     <javac debug="true" includeantruntime="false"
       deprecation="true" source="1.5" target="1.5"
       srcdir="${utils.dir}" includes="*.java"
-      classpath="${artifact.dir}/${component.jar}">
+      classpath="${component.classpath}:${artifact.dir}/${component.jar}">
       <!--<compilerarg value="-Xlint:unchecked"/>-->
     </javac>
   </target>

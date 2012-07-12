@@ -1,33 +1,27 @@
-//
-// OpenBytesPerformanceTest.java
-//
-
 /*
-LOCI software automated test suite for TestNG. Copyright (C) 2007-@year@
-Chris Allan. All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-  * Redistributions of source code must retain the above copyright
-    notice, this list of conditions and the following disclaimer.
-  * Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
-  * Neither the name of the UW-Madison LOCI nor the names of its
-    contributors may be used to endorse or promote products derived from
-    this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE UW-MADISON LOCI ``AS IS'' AND ANY
-EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS BE LIABLE FOR ANY
-DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
+ * #%L
+ * OME Bio-Formats manual and automated test suite.
+ * %%
+ * Copyright (C) 2006 - 2012 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 2 of the 
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public 
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-2.0.html>.
+ * #L%
+ */
 
 package loci.tests.testng;
 
@@ -137,8 +131,8 @@ public class OpenBytesPerformanceTest
         optimalTileWidth = reader.getOptimalTileWidth();
         optimalTileHeight = reader.getOptimalTileHeight();
         LOGGER.info("Optimal tile {}x{}", optimalTileWidth, optimalTileHeight);
-        int tilesWide = (int) Math.ceil(sizeX / optimalTileWidth);
-        int tilesHigh = (int) Math.ceil(sizeY / optimalTileHeight);
+        int tilesWide = (int) Math.ceil((double) sizeX / optimalTileWidth);
+        int tilesHigh = (int) Math.ceil((double) sizeY / optimalTileHeight);
         LOGGER.info("Tile counts {}x{}", tilesWide, tilesHigh);
         int x, y = 0;
         StopWatch stopWatch;
@@ -146,10 +140,16 @@ public class OpenBytesPerformanceTest
           for (int tileY = 0; tileY < tilesHigh; tileY++) {
             x = tileX * optimalTileWidth;
             y = tileY * optimalTileHeight;
+
+            int actualTileWidth =
+              (int) Math.min(optimalTileWidth, reader.getSizeX() - x);
+            int actualTileHeight =
+              (int) Math.min(optimalTileHeight, reader.getSizeY() - y);
+
             LOGGER.info("Reading tile at {}x{}", x, y);
             stopWatch = new Log4JStopWatch(String.format(
                 "%s[%d:%d]_alloc_tile", filename, series, image));
-            reader.openBytes(0, x, y, optimalTileWidth, optimalTileHeight);
+            reader.openBytes(0, x, y, actualTileWidth, actualTileHeight);
             stopWatch.stop();
           }
         }
@@ -166,8 +166,8 @@ public class OpenBytesPerformanceTest
         optimalTileWidth = reader.getOptimalTileWidth();
         optimalTileHeight = reader.getOptimalTileHeight();
         LOGGER.info("Optimal tile {}x{}", optimalTileWidth, optimalTileHeight);
-        int tilesWide = (int) Math.ceil(sizeX / optimalTileWidth);
-        int tilesHigh = (int) Math.ceil(sizeY / optimalTileHeight);
+        int tilesWide = (int) Math.ceil((double) sizeX / optimalTileWidth);
+        int tilesHigh = (int) Math.ceil((double) sizeY / optimalTileHeight);
         LOGGER.info("Tile counts {}x{}", tilesWide, tilesHigh);
         int x, y = 0;
         StopWatch stopWatch;
@@ -178,11 +178,17 @@ public class OpenBytesPerformanceTest
           for (int tileY = 0; tileY < tilesHigh; tileY++) {
             x = tileX * optimalTileWidth;
             y = tileY * optimalTileHeight;
+
+            int actualTileWidth =
+              (int) Math.min(optimalTileWidth, reader.getSizeX() - x);
+            int actualTileHeight =
+              (int) Math.min(optimalTileHeight, reader.getSizeY() - y);
+
             LOGGER.info("Reading tile at {}x{}", x, y);
             stopWatch = new Log4JStopWatch(String.format(
                 "%s[%d:%d]_prealloc_tile", filename, series, image));
-            reader.openBytes(image, buf, x, y, optimalTileWidth,
-                             optimalTileHeight);
+            reader.openBytes(image, buf, x, y, actualTileWidth,
+                             actualTileHeight);
             stopWatch.stop();
           }
         }

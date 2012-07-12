@@ -1,25 +1,27 @@
-//
-// IMetadataBasedOMEModelMock.java
-//
-
 /*
-OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ * #%L
+ * OME Bio-Formats package for reading and converting biological file formats.
+ * %%
+ * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 2 of the 
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public 
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-2.0.html>.
+ * #L%
+ */
 
 package loci.formats.utests;
 
@@ -27,6 +29,7 @@ import loci.formats.ome.OMEXMLMetadataImpl;
 import ome.xml.model.OME;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 /**
  * <dl><dt><b>Source code:</b></dt>
@@ -165,28 +168,6 @@ public class IMetadataBasedOMEModelMock implements OMEModelMock {
     store.setObjectiveID(InOut201004Test.OBJECTIVE_ID, 0, 0);
     store.setObjectiveModel(InOut201004Test.OBJECTIVE_MODEL, 0, 0);
     
-    // Create <OFT/> under <Instrument/>
-    store.setOTFID(InOut201004Test.OTF_ID, 0, 0);
-    store.setOTFType(InOut201004Test.OTF_PIXELTYPE, 0, 0);
-    store.setOTFSizeX(new PositiveInteger(InOut201004Test.OTF_SIZE_X), 0, 0);
-    store.setOTFSizeY(new PositiveInteger(InOut201004Test.OTF_SIZE_Y), 0, 0);
-    store.setOTFOpticalAxisAveraged(InOut201004Test.OTF_OPTICAL_AXIS_AVERAGED, 0, 0);
-    
-    // Create <ObjectiveSettings/> under <OTF/>
-    store.setOTFObjectiveSettingsID(InOut201004Test.OBJECTIVE_ID, 0, 0);
-
-    // Create <BinaryFile/> under <OTF/>
-    store.setOTFBinaryFileFileName(InOut201004Test.OTF_BINARY_FILE_NAME, 0, 0);
-    store.setOTFBinaryFileSize(InOut201004Test.OTF_BINARY_FILE_SIZE, 0, 0);
-    
-    // Link <FilterSet/> under <OTF/>
-    store.setOTFFilterSetRef(InOut201004Test.FILTERSET_ID, 0, 0);
-    
-    
-    // BinaryFile/External is not in the code generation
-    // otfBinaryFileExternal.sethref(InOut201004Test.OTF_BINARY_FILE_EXTERNAL_HREF);
-    // otfBinaryFileExternal.setSHA1(InOut201004Test.OTF_BINARY_FILE_EXTERNAL_SHA1);
-
     // link Instrument to the first Image
     store.setImageInstrumentRef(InOut201004Test.INSTRUMENT_ID, 0);
   }
@@ -202,7 +183,7 @@ public class IMetadataBasedOMEModelMock implements OMEModelMock {
 
     store.setTimestampAnnotationID(InOut201004Test.PLATE_ANNOTATION_ID, 0);
     store.setTimestampAnnotationNamespace(InOut201004Test.GENERAL_ANNOTATION_NAMESPACE, 0);
-    store.setTimestampAnnotationValue(InOut201004Test.PLATE_ANNOTATION_VALUE, 0);
+    store.setTimestampAnnotationValue(new Timestamp(InOut201004Test.PLATE_ANNOTATION_VALUE), 0);
 
     int wellSampleIndex = 0;
     int wellCount = 0;

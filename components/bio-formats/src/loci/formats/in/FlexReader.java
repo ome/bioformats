@@ -1,25 +1,27 @@
-//
-// FlexReader.java
-//
-
 /*
-OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ * #%L
+ * OME Bio-Formats package for reading and converting biological file formats.
+ * %%
+ * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 2 of the 
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public 
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-2.0.html>.
+ * #L%
+ */
 
 package loci.formats.in;
 
@@ -30,12 +32,14 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Vector;
 
+import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.IRandomAccess;
 import loci.common.Location;
 import loci.common.NIOFileHandle;
 import loci.common.RandomAccessInputStream;
+import loci.common.xml.BaseHandler;
 import loci.common.xml.XMLTools;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
@@ -43,7 +47,6 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 import loci.formats.tiff.TiffCompression;
@@ -51,7 +54,9 @@ import loci.formats.tiff.TiffConstants;
 import loci.formats.tiff.TiffParser;
 
 import ome.xml.model.primitives.NonNegativeInteger;
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
@@ -520,13 +525,22 @@ public class FlexReader extends FormatReader {
     store.setPlateID(MetadataTools.createLSID("Plate", 0), 0);
     String plateAcqID = MetadataTools.createLSID("PlateAcquisition", 0, 0);
     store.setPlateAcquisitionID(plateAcqID, 0, 0);
-    store.setPlateAcquisitionMaximumFieldCount(
-      new PositiveInteger(fieldCount), 0, 0);
+    if (fieldCount > 0) {
+      store.setPlateAcquisitionMaximumFieldCount(
+        new PositiveInteger(fieldCount), 0, 0);
+    }
+    else {
+      LOGGER.warn("Expected positive value for MaximumFieldCount; got {}",
+        fieldCount);
+    }
 
     plateAcqStartTime =
       DateTools.formatDate(plateAcqStartTime, "dd.MM.yyyy  HH:mm:ss");
 
-    store.setPlateAcquisitionStartTime(plateAcqStartTime, 0, 0);
+    if (plateAcqStartTime != null) {
+      store.setPlateAcquisitionStartTime(
+        new Timestamp(plateAcqStartTime), 0, 0);
+    }
 
     for (int row=0; row<wellRows; row++) {
       for (int col=0; col<wellColumns; col++) {
@@ -583,7 +597,7 @@ public class FlexReader extends FormatReader {
 
         int seriesIndex = i * getImageCount();
         if (seriesIndex < objectiveRefs.size()) {
-          store.setImageObjectiveSettingsID(objectiveRefs.get(seriesIndex), i);
+          store.setObjectiveSettingsID(objectiveRefs.get(seriesIndex), i);
         }
 
         for (int c=0; c<getEffectiveSizeC(); c++) {
@@ -634,12 +648,24 @@ public class FlexReader extends FormatReader {
         }
 
         if (seriesIndex < xSizes.size()) {
-          store.setPixelsPhysicalSizeX(
-            new PositiveFloat(xSizes.get(seriesIndex)), i);
+          if (xSizes.get(seriesIndex) > 0) {
+            store.setPixelsPhysicalSizeX(
+              new PositiveFloat(xSizes.get(seriesIndex)), i);
+          }
+          else {
+            LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+              xSizes.get(seriesIndex));
+          }
         }
         if (seriesIndex < ySizes.size()) {
-          store.setPixelsPhysicalSizeY(
-            new PositiveFloat(ySizes.get(seriesIndex)), i);
+          if (ySizes.get(seriesIndex) > 0) {
+            store.setPixelsPhysicalSizeY(
+              new PositiveFloat(ySizes.get(seriesIndex)), i);
+          }
+          else {
+            LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+              ySizes.get(seriesIndex));
+          }
         }
 
         int well = wellNumber[pos[1]][0] * wellColumns + wellNumber[pos[1]][1];
@@ -777,7 +803,7 @@ public class FlexReader extends FormatReader {
     DefaultHandler handler =
       new FlexHandler(n, f, store, firstFile, currentWell);
     LOGGER.info("Parsing XML in .flex file");
-    XMLTools.parseXML(xml.getBytes(), handler);
+    XMLTools.parseXML(xml.getBytes(Constants.ENCODING), handler);
 
     channelNames = n.toArray(new String[n.size()]);
 
@@ -885,8 +911,13 @@ public class FlexReader extends FormatReader {
     if (getImageCount() * fieldCount != nPlanes) {
       core[0].imageCount = nPlanes / fieldCount;
       core[0].sizeZ = 1;
-      core[0].sizeC = 1;
       core[0].sizeT = nPlanes / fieldCount;
+      if (getSizeT() % getSizeC() == 0) {
+        core[0].sizeT /= getSizeC();
+      }
+      else {
+        core[0].sizeC = 1;
+      }
     }
     core[0].sizeX = (int) ifd.getImageWidth();
     core[0].sizeY = (int) ifd.getImageLength();
@@ -1242,7 +1273,7 @@ public class FlexReader extends FormatReader {
   // -- Helper classes --
 
   /** SAX handler for parsing XML. */
-  public class FlexHandler extends DefaultHandler {
+  public class FlexHandler extends BaseHandler {
     private Vector<String> names, factors;
     private MetadataStore store;
 
@@ -1314,7 +1345,9 @@ public class FlexReader extends FormatReader {
         if (currentSeries >= seriesCount) return;
 
         if (qName.equals("DateTime")) {
-          store.setImageAcquiredDate(value, currentSeries);
+          if (value != null) {
+            store.setImageAcquisitionDate(new Timestamp(value), currentSeries);
+          }
         }
       }
 
@@ -1333,8 +1366,15 @@ public class FlexReader extends FormatReader {
       else if (qName.equals("Wavelength")) {
         String lsid = MetadataTools.createLSID("LightSource", 0, nextLaser);
         store.setLaserID(lsid, 0, nextLaser);
-        store.setLaserWavelength(
-          new PositiveInteger(new Integer(value)), 0, nextLaser);
+        Integer wavelength = new Integer(value);
+        if (wavelength > 0) {
+          store.setLaserWavelength(
+            new PositiveInteger(wavelength), 0, nextLaser);
+        }
+        else {
+          LOGGER.warn("Expected positive value for Wavelength; got {}",
+            wavelength);
+        }
         try {
           store.setLaserType(getLaserType("Other"), 0, nextLaser);
           store.setLaserLaserMedium(getLaserMedium("Other"), 0, nextLaser);
@@ -1597,7 +1637,7 @@ public class FlexReader extends FormatReader {
   }
 
   /** SAX handler for parsing XML from .mea files. */
-  public class MeaHandler extends DefaultHandler {
+  public class MeaHandler extends BaseHandler {
     private Vector<String> flex = new Vector<String>();
     private String[] hostnames = null;
 
@@ -1648,7 +1688,7 @@ public class FlexReader extends FormatReader {
   }
 
   /** SAX handler for parsing XML from .res files. */
-  public class ResHandler extends DefaultHandler {
+  public class ResHandler extends BaseHandler {
 
     // -- DefaultHandler API methods --
 

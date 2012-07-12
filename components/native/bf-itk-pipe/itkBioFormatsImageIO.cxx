@@ -1,64 +1,48 @@
-/*=========================================================================
- *
- *  Copyright Insight Software Consortium
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0.txt
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- *
- *=========================================================================*/
 /*
-OME Bio-Formats ITK plugin for calling Bio-Formats from the Insight Toolkit.
-Copyright (c) 2008, UW-Madison LOCI.
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-    * Redistributions of source code must retain the above copyright
-      notice, this list of conditions and the following disclaimer.
-    * Redistributions in binary form must reproduce the above copyright
-      notice, this list of conditions and the following disclaimer in the
-      documentation and/or other materials provided with the distribution.
-    * Neither the name of the UW-Madison LOCI nor the
-      names of its contributors may be used to endorse or promote products
-      derived from this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY UW-MADISON LOCI ''AS IS'' AND ANY
-EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL UW-MADISON LOCI BE LIABLE FOR ANY
-DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
-
-/*
-IMPORTANT NOTE: Although this specific file is distributed according to a
-"BSD-style" license and the Apache 2 license, it requires to be linked to the
-OME Bio-Formats Java library at run-time to do anything useful. The OME
-Bio-Formats Java library is licensed under the GPL v2 or later.  Therefore, if
-you wish to distribute this software in binary form with Bio-Formats itself,
-your combined binary work must be distributed under the terms of the GPL v2
-or later license.
-*/
-
-/*
-Adapted from the Slicer3 project: http://www.slicer.org/
-http://viewvc.slicer.org/viewcvs.cgi/trunk/Libs/MGHImageIO/
-
-See slicer-license.txt for Slicer3's licensing information.
-*/
+ * #%L
+ * Bio-Formats plugin for the Insight Toolkit.
+ * %%
+ * Copyright (C) 2010 - 2012 Insight Software Consortium, and Open Microscopy
+ * Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ * 
+ * The views and conclusions contained in the software and documentation are
+ * those of the authors and should not be interpreted as representing official
+ * policies, either expressed or implied, of any organization.
+ * 
+ * ----------------------------------------------------------------
+ * Adapted from the Slicer3 project: http://www.slicer.org/
+ * http://viewvc.slicer.org/viewcvs.cgi/trunk/Libs/MGHImageIO/
+ * 
+ * See slicer-license.txt for Slicer3's licensing information.
+ * 
+ * For more information about the ITK Plugin IO mechanism, see:
+ * http://www.itk.org/Wiki/Plugin_IO_mechanisms
+ * #L%
+ */
 
 // Special thanks to Alex Gouaillard, Sebastien Barre,
 // Luis Ibanez and Jim Miller for fixes and suggestions.
@@ -81,6 +65,14 @@ See slicer-license.txt for Slicer3's licensing information.
 #else
 #define PATHSTEP ':'
 #define SLASH '/'
+#endif
+
+#ifdef WIN32
+#include <io.h>
+#include <fcntl.h>
+#include <process.h>
+#include <math.h>
+
 #endif
 
 //--------------------------------------
@@ -150,6 +142,8 @@ BioFormatsImageIO::BioFormatsImageIO()
     {
     itkExceptionMacro("ITK_AUTOLOAD_PATH is not set, you must set this environment variable and point it to the directory containing the bio-formats.jar file");
     }
+  
+
   dir.assign(path);
   if( dir.at(dir.length() - 1) != SLASH )
     {
@@ -158,8 +152,13 @@ BioFormatsImageIO::BioFormatsImageIO()
   std::string classpath = dir+"loci_tools.jar";
   classpath += PATHSTEP+dir;
 
-  std::string javaCommand = "/usr/bin/java"; // todo: let the user choose the java executable
+  
 
+#ifdef WIN32
+  std::string javaCommand = "java";
+#else
+  std::string javaCommand = "/usr/bin/java"; // todo: let the user choose the java executable
+#endif
   itkDebugMacro("BioFormatsImageIO base command: "+javaCommand+" -Xmx256m -Djava.awt.headless=true -cp "+classpath);
 
   m_Args.push_back( javaCommand );
@@ -171,7 +170,6 @@ BioFormatsImageIO::BioFormatsImageIO()
   m_Args.push_back( "waitForInput" );
   // convert to something usable by itksys
   m_Argv = toCArray( m_Args );
-
   m_Process = NULL;
 }
 
@@ -193,11 +191,24 @@ void BioFormatsImageIO::CreateJavaProcess()
       }
     }
 
-  pipe( m_Pipe );
+#ifdef WIN32
+   SECURITY_ATTRIBUTES saAttr; 
+   saAttr.nLength = sizeof(SECURITY_ATTRIBUTES); 
+   saAttr.bInheritHandle = TRUE; 
+   saAttr.lpSecurityDescriptor = NULL;
   
+  if( !CreatePipe( &(m_Pipe[0]), &(m_Pipe[1]), &saAttr, 0) )
+	itkExceptionMacro(<<"createpipe() failed");
+  if ( ! SetHandleInformation(m_Pipe[1], HANDLE_FLAG_INHERIT, 0) )
+    itkExceptionMacro(<<"set inherited failed");
+#else
+  pipe( m_Pipe );
+#endif
+
   m_Process = itksysProcess_New();
   itksysProcess_SetCommand( m_Process, m_Argv );
-  itksysProcess_SetPipeNative( m_Process, itksysProcess_Pipe_STDIN, m_Pipe );
+  itksysProcess_SetPipeNative( m_Process, itksysProcess_Pipe_STDIN, m_Pipe);
+  
   itksysProcess_Execute( m_Process );
 
   int state = itksysProcess_GetState( m_Process );
@@ -278,7 +289,12 @@ void BioFormatsImageIO::DestroyJavaProcess()
   itkDebugMacro("BioFormatsImageIO::DestroyJavaProcess destroying java process");
   itksysProcess_Delete( m_Process );
   m_Process = NULL;
+
+#ifdef WIN32
+  CloseHandle( m_Pipe[1] );
+#else
   close( m_Pipe[1] );
+#endif
 }
 
 bool BioFormatsImageIO::CanReadFile( const char* FileNameToRead )
@@ -292,7 +308,16 @@ bool BioFormatsImageIO::CanReadFile( const char* FileNameToRead )
   command += FileNameToRead;
   command += "\n";
   itkDebugMacro("BioFormatsImageIO::CanRead command: " << command);
+
+  
+ 
+#ifdef WIN32
+  DWORD bytesWritten;
+  bool r = WriteFile( m_Pipe[1], command.c_str(), command.size(), &bytesWritten, NULL );
+#else
   write( m_Pipe[1], command.c_str(), command.size() );
+#endif
+
   // fflush( m_Pipe[1] );
 
   // and read its reply
@@ -308,9 +333,14 @@ bool BioFormatsImageIO::CanReadFile( const char* FileNameToRead )
     // itkDebugMacro( "BioFormatsImageIO::ReadImageInformation: reading " << pipedatalength << " bytes.");
     if( retcode == itksysProcess_Pipe_STDOUT )
       {
+	  
       imgInfo += std::string( pipedata, pipedatalength );
       // if the two last char are "\n\n", then we're done
-      if( imgInfo.size() >= 2 && imgInfo.substr( imgInfo.size()-2, 2 ) == "\n\n" )
+#ifdef WIN32
+      if( imgInfo.size() >= 4 && imgInfo.substr( imgInfo.size()-4, 4 ) == "\r\n\r\n" )
+#else
+	  if( imgInfo.size() >= 2 && imgInfo.substr( imgInfo.size()-2, 2 ) == "\n\n" )
+#endif
         {
         keepReading = false;
         }
@@ -325,7 +355,6 @@ bool BioFormatsImageIO::CanReadFile( const char* FileNameToRead )
       itkExceptionMacro(<<"BioFormatsImageIO: 'ITKBridgePipe canRead' exited abnormally. " << errorMessage);
       }
     }
-
   itkDebugMacro("BioFormatsImageIO::CanRead error output: " << errorMessage);
 
   // we have one thing per line
@@ -341,6 +370,7 @@ bool BioFormatsImageIO::CanReadFile( const char* FileNameToRead )
 
 void BioFormatsImageIO::ReadImageInformation()
 {
+ 
   itkDebugMacro( "BioFormatsImageIO::ReadImageInformation: m_FileName = " << m_FileName);
 
   CreateJavaProcess();
@@ -350,9 +380,17 @@ void BioFormatsImageIO::ReadImageInformation()
   command += m_FileName;
   command += "\n";
   itkDebugMacro("BioFormatsImageIO::ReadImageInformation command: " << command);
-  write( m_Pipe[1], command.c_str(), command.size() );
-  // fflush( m_Pipe[1] );
 
+  
+
+#ifdef WIN32
+  DWORD bytesWritten;
+  WriteFile( m_Pipe[1], command.c_str(), command.size(), &bytesWritten, NULL );
+#else
+  write( m_Pipe[1], command.c_str(), command.size() );
+#endif
+
+  // fflush( m_Pipe[1] );
   std::string imgInfo;
   std::string errorMessage;
   char * pipedata;
@@ -362,12 +400,18 @@ void BioFormatsImageIO::ReadImageInformation()
   while( keepReading )
     {
     int retcode = itksysProcess_WaitForData( m_Process, &pipedata, &pipedatalength, NULL );
-    // itkDebugMacro( "BioFormatsImageIO::ReadImageInformation: reading " << pipedatalength << " bytes.");
+    //itkDebugMacro( "BioFormatsImageIO::ReadImageInformation: reading " << pipedatalength << " bytes.");
+
+	
     if( retcode == itksysProcess_Pipe_STDOUT )
       {
       imgInfo += std::string( pipedata, pipedatalength );
       // if the two last char are "\n\n", then we're done
-      if( imgInfo.size() >= 2 && imgInfo.substr( imgInfo.size()-2, 2 ) == "\n\n" )
+#ifdef WIN32
+		if( imgInfo.size() >= 4 && imgInfo.substr( imgInfo.size()-4, 4 ) == "\r\n\r\n" )
+#else
+        if( imgInfo.size() >= 2 && imgInfo.substr( imgInfo.size()-2, 2 ) == "\n\n" )
+#endif
         {
         keepReading = false;
         }
@@ -386,7 +430,7 @@ void BioFormatsImageIO::ReadImageInformation()
   itkDebugMacro("BioFormatsImageIO::ReadImageInformation error output: " << errorMessage);
 
   this->SetNumberOfDimensions(5);
-
+   
   // fill the metadata dictionary
   MetaDataDictionary & dict = this->GetMetaDataDictionary();
 
@@ -394,40 +438,67 @@ void BioFormatsImageIO::ReadImageInformation()
   size_t p0 = 0;
   size_t p1 = 0;
   std::string line;
+
   while( p0 < imgInfo.size() )
     {
+	
     // get the key line
+#ifdef WIN32
+    p1 = imgInfo.find("\r\n", p0);
+#else
     p1 = imgInfo.find("\n", p0);
+#endif
+
     line = imgInfo.substr( p0, p1-p0 );
 
     // ignore the empty lines
     if( line == "" )
       {
       // go to the next line
-      p0 = p1+1;
+#ifdef WIN32
+      p0 = p1+2;
+#else
+	  p0 = p1+1;
+#endif
       continue;
       }
 
     std::string key = line;
-
     // go to the next line
-    p0 = p1+1;
+#ifdef WIN32
+      p0 = p1+2;
+#else
+      p0 = p1+1;
+#endif
 
     // get the value line
+#ifdef WIN32
+    p1 = imgInfo.find("\r\n", p0);
+#else
     p1 = imgInfo.find("\n", p0);
-    line = imgInfo.substr( p0, p1-p0 );
+#endif
 
+    line = imgInfo.substr( p0, p1-p0 );
+	
     // ignore the empty lines
+#ifdef WIN32
+    if( line == "\r" )
+#else
     if( line == "" )
+#endif
       {
       // go to the next line
+#ifdef WIN32
+      p0 = p1+2;
+#else
       p0 = p1+1;
+#endif
       continue;
       }
 
     std::string value = line;
-    itkDebugMacro("=== " << key << " = " << value << " ===");
-
+    //itkDebugMacro("=== " << key << " = " << value << " ===");
+    
     // store the values in the dictionary
     if( dict.HasKey(key) )
       {
@@ -439,6 +510,7 @@ void BioFormatsImageIO::ReadImageInformation()
         // we have to unescape \\ and \n
         size_t lp0 = 0;
         size_t lp1 = 0;
+		
         while( lp0 < value.size() )
           {
           lp1 = value.find( "\\", lp0 );
@@ -446,6 +518,7 @@ void BioFormatsImageIO::ReadImageInformation()
             {
             tmp += value.substr( lp0, value.size()-lp0 );
             lp0 = value.size();
+			
             }
           else
             {
@@ -463,15 +536,20 @@ void BioFormatsImageIO::ReadImageInformation()
               }
             lp0 = lp1 + 2;
             }
+		    
           }
         itkDebugMacro("Storing metadata: " << key << " ---> " << tmp);
         EncapsulateMetaData< std::string >( dict, key, tmp );
       }
 
     // go to the next line
-    p0 = p1+1;
+#ifdef WIN32
+      p0 = p1+2;
+#else
+      p0 = p1+1;
+#endif
+	
     }
-
   // set the values needed by the reader
   std::string s;
   bool b;
@@ -565,11 +643,13 @@ void BioFormatsImageIO::ReadImageInformation()
 
 void BioFormatsImageIO::Read(void* pData)
 {
+  
   itkDebugMacro("BioFormatsImageIO::Read");
   const ImageIORegion & region = this->GetIORegion();
 
   CreateJavaProcess();
 
+  
   // send the command to the java process
   std::string command = "read\t";
   command += m_FileName;
@@ -586,7 +666,14 @@ void BioFormatsImageIO::Read(void* pData)
     }
   command += "\n";
   itkDebugMacro("BioFormatsImageIO::Read command: " << command);
+
+#ifdef WIN32
+  DWORD bytesWritten;
+  WriteFile( m_Pipe[1], command.c_str(), command.size(), &bytesWritten, NULL );
+#else
   write( m_Pipe[1], command.c_str(), command.size() );
+#endif
+
   // fflush( m_Pipe[1] );
 
   // and read the image
@@ -629,7 +716,13 @@ bool BioFormatsImageIO::CanWriteFile(const char* name)
   std::string command = "canWrite\t";
   command += name;
   command += "\n";
+
+#ifdef WIN32
+ DWORD bytesWritten;
+  WriteFile( m_Pipe[1], command.c_str(), command.size(), &bytesWritten, NULL );
+#else
   write( m_Pipe[1], command.c_str(), command.size() );
+#endif
 
   std::string imgInfo;
   std::string errorMessage;
@@ -645,7 +738,11 @@ bool BioFormatsImageIO::CanWriteFile(const char* name)
       {
       imgInfo += std::string( pipedata, pipedatalength );
       // if the two last char are "\n\n", then we're done
+#ifdef WIN32
+	  if( imgInfo.size() >= 4 && imgInfo.substr( imgInfo.size()-4, 4 ) == "\r\n\r\n" )
+#else
       if( imgInfo.size() >= 2 && imgInfo.substr( imgInfo.size()-2, 2 ) == "\n\n" )
+#endif
         {
         keepReading = false;
         }
@@ -734,7 +831,8 @@ void BioFormatsImageIO::Write(const void * buffer )
   command += toString(rgbChannelCount);
   command += "\t";
 
-  int xIndex = 0, yIndex = 1, zIndex = 2, cIndex = 3, tIndex = 4;
+  // int xIndex = 0, yIndex = 1
+  int zIndex = 2, cIndex = 3, tIndex = 4;
   int bytesPerPlane = rgbChannelCount;
   int numPlanes = 1;
 
@@ -768,7 +866,13 @@ void BioFormatsImageIO::Write(const void * buffer )
   command += "\n";
 
   itkDebugMacro("BioFormatsImageIO::Write command: " << command);
+
+#ifdef WIN32
+  DWORD bytesWritten;
+  WriteFile( m_Pipe[1], command.c_str(), command.size(), &bytesWritten, NULL );
+#else
   write( m_Pipe[1], command.c_str(), command.size() );
+#endif
 
   // need to read back the number of planes and bytes per plane to read from buffer
   std::string imgInfo;
@@ -785,7 +889,11 @@ void BioFormatsImageIO::Write(const void * buffer )
       {
       imgInfo += std::string( pipedata, pipedatalength );
       // if the two last char are "\n\n", then we're done
-      if( imgInfo.size() >= 2 && imgInfo.substr( imgInfo.size()-2, 2 ) == "\n\n" )
+#ifdef WIN32
+      if( imgInfo.size() >= 4 && imgInfo.substr( imgInfo.size()-4, 4 ) == "\r\n\r\n" )
+#else
+	  if( imgInfo.size() >= 2 && imgInfo.substr( imgInfo.size()-2, 2 ) == "\n\n" )
+#endif
         {
         keepReading = false;
         }
@@ -830,7 +938,13 @@ void BioFormatsImageIO::Write(const void * buffer )
 
         itkDebugMacro("Writing " << bytesToRead << " bytes to plane " << i << ".  Bytes read: " << bytesRead);
 
-        write( m_Pipe[1], data, bytesToRead );
+		#ifdef WIN32
+		    DWORD bytesWritten;
+		    WriteFile( m_Pipe[1], data, bytesToRead, &bytesWritten, NULL );
+		#else
+			write( m_Pipe[1], data, bytesToRead );
+		#endif
+
         data += bytesToRead;
         bytesRead += bytesToRead;
 
@@ -845,7 +959,11 @@ void BioFormatsImageIO::Write(const void * buffer )
             {
             bytesDone += std::string( pipedata, pipedatalength );
             // if the two last char are "\n\n", then we're done
+#ifdef WIN32
+		    if( bytesDone.size() >= 4 && bytesDone.substr( bytesDone.size()-4, 4 ) == "\r\n\r\n" )
+#else
             if( bytesDone.size() >= 2 && bytesDone.substr( bytesDone.size()-2, 2 ) == "\n\n" )
+#endif
               {
               keepReading = false;
               }
@@ -875,7 +993,11 @@ void BioFormatsImageIO::Write(const void * buffer )
           {
           planeDone += std::string( pipedata, pipedatalength );
           // if the two last char are "\n\n", then we're done
+#ifdef WIN32
+		  if( planeDone.size() >= 4 && planeDone.substr( planeDone.size()-4, 4 ) == "\r\n\r\n" )
+#else
           if( planeDone.size() >= 2 && planeDone.substr( planeDone.size()-2, 2 ) == "\n\n" )
+#endif
             {
             keepReading = false;
             }

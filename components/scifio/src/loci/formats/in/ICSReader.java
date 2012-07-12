@@ -1,25 +1,38 @@
-//
-// ICSReader.java
-//
-
 /*
-OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ * #%L
+ * OME SCIFIO package for reading and converting scientific file formats.
+ * %%
+ * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ * 
+ * The views and conclusions contained in the software and documentation are
+ * those of the authors and should not be interpreted as representing official
+ * policies, either expressed or implied, of any organization.
+ * #L%
+ */
 
 package loci.formats.in;
 
@@ -41,9 +54,10 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 /**
  * ICSReader is the file format reader for ICS (Image Cytometry Standard)
@@ -1417,8 +1431,7 @@ public class ICSReader extends FormatReader {
 
     store.setImageName(imageName, 0);
 
-    if (date != null) store.setImageAcquiredDate(date, 0);
-    else MetadataTools.setDefaultCreationDate(store, id, 0);
+    if (date != null) store.setImageAcquisitionDate(new Timestamp(date), 0);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       store.setImageDescription(description, 0);
@@ -1437,28 +1450,65 @@ public class ICSReader extends FormatReader {
       // populate Dimensions data
 
       if (pixelSizes != null) {
+        if (units != null && units.length == pixelSizes.length - 1) {
+          // correct for missing units
+          // sometimes, the units for the C axis are missing entirely
+          ArrayList<String> realUnits = new ArrayList<String>();
+          int unitIndex = 0;
+          for (int i=0; i<axes.length; i++) {
+            if (axes[i].toLowerCase().equals("ch")) {
+              realUnits.add("nm");
+            }
+            else {
+              realUnits.add(units[unitIndex++]);
+            }
+          }
+          units = realUnits.toArray(new String[realUnits.size()]);
+        }
+
         for (int i=0; i<pixelSizes.length; i++) {
           Double pixelSize = pixelSizes[i];
           String axis = axes != null && axes.length > i ? axes[i] : "";
           String unit = units != null && units.length > i ? units[i] : "";
           if (axis.equals("x")) {
-            if (pixelSize > 0 && checkUnit(unit, "um", "microns")) {
+            if (pixelSize > 0 &&
+              checkUnit(unit, "um", "microns", "micrometers"))
+            {
               store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSize), 0);
+            }
+            else {
+              LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+                pixelSize);
             }
           }
           else if (axis.equals("y")) {
-            if (pixelSize > 0 && checkUnit(unit, "um", "microns")) {
+            if (pixelSize > 0 &&
+              checkUnit(unit, "um", "microns", "micrometers"))
+            {
               store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSize), 0);
+            }
+            else {
+              LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+                pixelSize);
             }
           }
           else if (axis.equals("z")) {
-            if (pixelSize > 0 && checkUnit(unit, "um", "microns")) {
+            if (pixelSize > 0 &&
+              checkUnit(unit, "um", "microns", "micrometers"))
+            {
               store.setPixelsPhysicalSizeZ(new PositiveFloat(pixelSize), 0);
+            }
+            else {
+              LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}",
+                pixelSize);
             }
           }
           else if (axis.equals("t")) {
             if (checkUnit(unit, "ms")) {
               store.setPixelsTimeIncrement(1000 * pixelSize, 0);
+            }
+            else if (checkUnit(unit, "seconds") || checkUnit(unit, "s")) {
+              store.setPixelsTimeIncrement(pixelSize, 0);
             }
           }
         }
@@ -1467,10 +1517,18 @@ public class ICSReader extends FormatReader {
         if (sizes.length > 0 && sizes[0] > 0) {
           store.setPixelsPhysicalSizeX(new PositiveFloat(sizes[0]), 0);
         }
+        else {
+          LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+            sizes[0]);
+        }
         if (sizes.length > 1) {
           sizes[1] /= getSizeY();
           if (sizes[1] > 0) {
             store.setPixelsPhysicalSizeY(new PositiveFloat(sizes[1]), 0);
+          }
+          else {
+            LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+              sizes[1]);
           }
         }
       }
@@ -1502,15 +1560,27 @@ public class ICSReader extends FormatReader {
         if (pinholes.containsKey(i)) {
           store.setChannelPinholeSize(pinholes.get(i), 0, i);
         }
-        if (emWaves != null && i < emWaves.length && emWaves[i].intValue() > 0)
-        {
-          store.setChannelEmissionWavelength(
-            new PositiveInteger(emWaves[i]), 0, i);
+        if (emWaves != null && i < emWaves.length) {
+          if (emWaves[i].intValue() > 0) {
+            store.setChannelEmissionWavelength(
+              new PositiveInteger(emWaves[i]), 0, i);
+          }
+          else {
+            LOGGER.warn(
+              "Expected positive value for EmissionWavelength; got {}",
+              emWaves[i]);
+          }
         }
-        if (exWaves != null && i < exWaves.length && exWaves[i].intValue() > 0)
-        {
-          store.setChannelExcitationWavelength(
-            new PositiveInteger(exWaves[i]), 0, i);
+        if (exWaves != null && i < exWaves.length) {
+          if (exWaves[i].intValue() > 0) {
+            store.setChannelExcitationWavelength(
+              new PositiveInteger(exWaves[i]), 0, i);
+          }
+          else {
+            LOGGER.warn(
+              "Expected positive value for ExcitationWavelength; got {}",
+              exWaves[i]);
+          }
         }
       }
 
@@ -1520,8 +1590,14 @@ public class ICSReader extends FormatReader {
       Arrays.sort(lasers);
       for (int i=0; i<lasers.length; i++) {
         store.setLaserID(MetadataTools.createLSID("LightSource", 0, i), 0, i);
-        store.setLaserWavelength(
-          new PositiveInteger(wavelengths.get(lasers[i])), 0, i);
+        if (wavelengths.get(lasers[i]) > 0) {
+          store.setLaserWavelength(
+            new PositiveInteger(wavelengths.get(lasers[i])), 0, i);
+        }
+        else {
+          LOGGER.warn("Expected positive value for wavelength; got {}",
+            wavelengths.get(lasers[i]));
+        }
         store.setLaserType(getLaserType("Other"), 0, i);
         store.setLaserLaserMedium(getLaserMedium("Other"), 0, i);
 
@@ -1581,7 +1657,7 @@ public class ICSReader extends FormatReader {
       // link Objective to Image
       String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
       store.setObjectiveID(objectiveID, 0, 0);
-      store.setImageObjectiveSettingsID(objectiveID, 0);
+      store.setObjectiveSettingsID(objectiveID, 0);
 
       // populate Detector data
 
@@ -1605,7 +1681,6 @@ public class ICSReader extends FormatReader {
         String experimenterID = MetadataTools.createLSID("Experimenter", 0);
         store.setExperimenterID(experimenterID, 0);
         store.setExperimenterLastName(lastName, 0);
-        store.setExperimenterDisplayName(lastName, 0);
       }
 
       // populate StagePosition data

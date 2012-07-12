@@ -1,30 +1,33 @@
-//
-// CellWorxReader.java
-//
-
 /*
-OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ * #%L
+ * OME Bio-Formats package for reading and converting biological file formats.
+ * %%
+ * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 2 of the 
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public 
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-2.0.html>.
+ * #L%
+ */
 
 package loci.formats.in;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Vector;
 
 import loci.common.DataTools;
@@ -37,11 +40,18 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.IFormatReader;
 import loci.formats.MetadataTools;
+import loci.formats.meta.IMetadata;
+import loci.formats.meta.MetadataConverter;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
+import loci.formats.ome.OMEXMLMetadata;
 
+import ome.xml.model.Image;
+import ome.xml.model.Instrument;
+import ome.xml.model.OME;
 import ome.xml.model.primitives.NonNegativeInteger;
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 /**
  * CellWorxReader is the file format reader for CellWorx .pnl files.
@@ -62,6 +72,7 @@ public class CellWorxReader extends FormatReader {
   private String[][][] wellFiles;
   private String[][] logFiles;
   private int fieldCount = 0;
+  private boolean doChannels = false;
 
   private String plateLogFile;
   private String zMapFile;
@@ -124,11 +135,15 @@ public class CellWorxReader extends FormatReader {
     }
     if (!noPixels) {
       if (checkSuffix(wellFiles[row][col][0], "pnl")) {
-        files.add(wellFiles[row][col][0]);
+        if (new Location(wellFiles[row][col][0]).exists()) {
+          files.add(wellFiles[row][col][0]);
+        }
       }
       else {
         for (String f : wellFiles[row][col]) {
-          files.add(f);
+          if (new Location(f).exists()) {
+            files.add(f);
+          }
         }
       }
     }
@@ -150,7 +165,9 @@ public class CellWorxReader extends FormatReader {
       return buf;
     }
 
-    if (lastFile == null || lastReader == null || !file.equals(lastFile)) {
+    if (lastFile == null || lastReader == null || !file.equals(lastFile) ||
+      lastReader.getCurrentFile() == null)
+    {
       if (lastReader != null) {
         lastReader.close();
       }
@@ -192,6 +209,7 @@ public class CellWorxReader extends FormatReader {
         lastReader.close();
       }
       lastReader = null;
+      doChannels = false;
     }
   }
 
@@ -269,6 +287,9 @@ public class CellWorxReader extends FormatReader {
         for (int col=0; col<xFields; col++) {
           fieldMap[row][col] = new Boolean(mapping[col].trim()).booleanValue();
         }
+      }
+      else if (key.equals("Waves")) {
+        doChannels = new Boolean(value.toLowerCase());
       }
       else if (key.equals("NWavelengths")) {
         wavelengths = new String[Integer.parseInt(value)];
@@ -348,7 +369,25 @@ public class CellWorxReader extends FormatReader {
       core[i].interleaved = pnl.isInterleaved();
     }
 
+    OMEXMLMetadata readerMetadata = (OMEXMLMetadata) pnl.getMetadataStore();
+    OME root = (OME) readerMetadata.getRoot();
+    Instrument instrument = root.getInstrument(0);
+    List<Image> images = root.copyImageList();
+
+    OME convertRoot = new OME();
+    convertRoot.addInstrument(instrument);
+    for (int i=0; i<core.length/images.size(); i++) {
+      for (Image img : images) {
+        convertRoot.addImage(img);
+      }
+    }
+    IMetadata convertMetadata = MetadataTools.createOMEXMLMetadata();
+    convertMetadata.setRoot(convertRoot);
+
+    pnl.close();
+
     MetadataStore store = makeFilterMetadata();
+    MetadataConverter.convertMetadata(convertMetadata, store);
     MetadataTools.populatePixels(store, this);
 
     String plateID = MetadataTools.createLSID("Plate", 0);
@@ -363,8 +402,14 @@ public class CellWorxReader extends FormatReader {
 
     String plateAcqID = MetadataTools.createLSID("PlateAcquisition", 0, 0);
     store.setPlateAcquisitionID(plateAcqID, 0, 0);
-    store.setPlateAcquisitionMaximumFieldCount(
-      new PositiveInteger(fieldMap.length * fieldMap[0].length), 0, 0);
+    if (fieldMap.length * fieldMap[0].length > 0) {
+      store.setPlateAcquisitionMaximumFieldCount(
+        new PositiveInteger(fieldMap.length * fieldMap[0].length), 0, 0);
+    }
+    else {
+      LOGGER.warn("Expected positive value for MaximumFieldCount; got {}",
+        fieldMap.length * fieldMap[0].length);
+    }
 
     int nextImage = 0;
     for (int row=0; row<wellFiles.length; row++) {
@@ -462,6 +507,9 @@ public class CellWorxReader extends FormatReader {
     else if (field < wellFiles[row][col].length) {
       return wellFiles[row][col][field];
     }
+    else if (imageCount == 0 && wellFiles[row][col].length == 1) {
+      return wellFiles[row][col][0];
+    }
     return null;
   }
 
@@ -496,7 +544,10 @@ public class CellWorxReader extends FormatReader {
       if (key.equals("Date")) {
         String date = DateTools.formatDate(value, DATE_FORMAT);
         for (int field=0; field<fieldCount; field++) {
-          store.setImageAcquiredDate(date, seriesIndex + field);
+          if (date != null) {
+            store.setImageAcquisitionDate(
+              new Timestamp(date), seriesIndex + field);
+          }
         }
       }
       else if (key.equals("Scan Origin")) {
@@ -522,10 +573,22 @@ public class CellWorxReader extends FormatReader {
           Double ySize = new Double(value.substring(s + 1, end).trim());
           for (int field=0; field<fieldCount; field++) {
             int index = seriesIndex + field;
-            store.setPixelsPhysicalSizeX(
-              new PositiveFloat(xSize / getSizeX()), index);
-            store.setPixelsPhysicalSizeY(
-              new PositiveFloat(ySize / getSizeY()), index);
+            if (xSize > 0) {
+              store.setPixelsPhysicalSizeX(
+                new PositiveFloat(xSize / getSizeX()), index);
+            }
+            else {
+              LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+                xSize / getSizeX());
+            }
+            if (ySize > 0) {
+              store.setPixelsPhysicalSizeY(
+                new PositiveFloat(ySize / getSizeY()), index);
+            }
+            else {
+              LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+                ySize / getSizeY());
+            }
           }
         }
       }
@@ -567,13 +630,28 @@ public class CellWorxReader extends FormatReader {
                 }
               }
 
-              PositiveInteger exWave = new PositiveInteger(new Integer(ex));
-              PositiveInteger emWave = new PositiveInteger(new Integer(em));
+              Integer emission = new Integer(em);
+              Integer excitation = new Integer(ex);
+
               for (int field=0; field<fieldCount; field++) {
-                store.setChannelExcitationWavelength(
-                  exWave, seriesIndex + field, index);
-                store.setChannelEmissionWavelength(
-                  emWave, seriesIndex + field, index);
+                if (excitation > 0) {
+                  store.setChannelExcitationWavelength(new PositiveInteger(
+                    excitation), seriesIndex + field, index);
+                }
+                else {
+                  LOGGER.warn(
+                    "Expected positive value for ExcitationWavelength; got {}",
+                    excitation);
+                }
+                if (emission > 0) {
+                  store.setChannelEmissionWavelength(
+                    new PositiveInteger(emission), seriesIndex + field, index);
+                }
+                else {
+                  LOGGER.warn(
+                    "Expected positive value for EmissionWavelength; got {}",
+                    emission);
+                }
               }
             }
           }
@@ -589,8 +667,10 @@ public class CellWorxReader extends FormatReader {
   {
     IFormatReader pnl = new DeltavisionReader();
     if (checkSuffix(file, "tif")) {
-      pnl = new MinimalTiffReader();
+      pnl = new MetamorphReader();
     }
+    IMetadata metadata = MetadataTools.createOMEXMLMetadata();
+    pnl.setMetadataStore(metadata);
     pnl.setId(file);
     return pnl;
   }
@@ -610,7 +690,7 @@ public class CellWorxReader extends FormatReader {
           if (fieldCount > 1) {
            file += "_s" + (field + 1);
           }
-          if (channels > 1) {
+          if (doChannels || channels > 1) {
             file += "_w" + (channel + 1);
           }
           if (nTimepoints > 1) {
@@ -620,6 +700,30 @@ public class CellWorxReader extends FormatReader {
 
           if (!new Location(files[nextFile]).exists()) {
             files[nextFile] = file + ".TIF";
+          }
+        }
+      }
+    }
+
+    boolean noneExist = true;
+    for (String file : files) {
+      if (new Location(file).exists()) {
+        noneExist = false;
+        break;
+      }
+    }
+
+    if (noneExist) {
+      nextFile = 0;
+      Location parent =
+        new Location(currentId).getAbsoluteFile().getParentFile();
+      String[] list = parent.list(true);
+      Arrays.sort(list);
+      for (String f : list) {
+        if (checkSuffix(f, new String [] {"tif", "tiff", "pnl"})) {
+          String path = new Location(parent, f).getAbsolutePath();
+          if (path.startsWith(base)) {
+            files[nextFile++] = path;
           }
         }
       }

@@ -1,25 +1,38 @@
-//
-// DicomReader.java
-//
-
 /*
-OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ * #%L
+ * OME SCIFIO package for reading and converting scientific file formats.
+ * %%
+ * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ * 
+ * The views and conclusions contained in the software and documentation are
+ * those of the authors and should not be interpreted as representing official
+ * policies, either expressed or implied, of any organization.
+ * #L%
+ */
 
 package loci.formats.in;
 
@@ -46,6 +59,7 @@ import loci.formats.codec.JPEGCodec;
 import loci.formats.codec.PackbitsCodec;
 import loci.formats.meta.MetadataStore;
 import ome.xml.model.primitives.PositiveFloat;
+import ome.xml.model.primitives.Timestamp;
 
 /**
  * DicomReader is the file format reader for DICOM files.
@@ -125,6 +139,7 @@ public class DicomReader extends FormatReader {
 
   private String date, time, imageType;
   private String pixelSizeX, pixelSizeY;
+  private Double pixelSizeZ;
 
   private Hashtable<Integer, Vector<String>> fileList;
   private int imagesPerFile;
@@ -133,6 +148,8 @@ public class DicomReader extends FormatReader {
   private int originalSeries;
 
   private DicomReader helper;
+
+  private Vector<String> companionFiles = new Vector<String>();
 
   // -- Constructor --
 
@@ -145,6 +162,7 @@ public class DicomReader extends FormatReader {
     suffixSufficient = false;
     domains = new String[] {FormatTools.MEDICAL_DOMAIN};
     datasetDescription = "One or more .dcm or .dicom files";
+    hasCompanionFiles = true;
   }
 
   // -- IFormatReader API methods --
@@ -203,6 +221,9 @@ public class DicomReader extends FormatReader {
     Integer[] keys = fileList.keySet().toArray(new Integer[0]);
     Arrays.sort(keys);
     Vector<String> files = fileList.get(keys[getSeries()]);
+    for (String f : companionFiles) {
+      files.add(f);
+    }
     return files == null ? null : files.toArray(new String[files.size()]);
   }
 
@@ -384,6 +405,7 @@ public class DicomReader extends FormatReader {
       rescaleSlope = 1.0;
       rescaleIntercept = 0.0;
       pixelSizeX = pixelSizeY = null;
+      pixelSizeZ = null;
       imagesPerFile = 0;
       fileList = null;
       inverted = false;
@@ -391,6 +413,7 @@ public class DicomReader extends FormatReader {
       originalDate = originalTime = originalInstance = null;
       originalSeries = 0;
       helper = null;
+      companionFiles.clear();
     }
   }
 
@@ -401,6 +424,9 @@ public class DicomReader extends FormatReader {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
     in.order(true);
+
+    // look for companion files
+    attachCompanionFiles();
 
     helper = new DicomReader();
     helper.setGroupFiles(false);
@@ -687,8 +713,7 @@ public class DicomReader extends FormatReader {
     if (stamp == null || stamp.trim().equals("")) stamp = null;
 
     for (int i=0; i<core.length; i++) {
-      if (stamp != null) store.setImageAcquiredDate(stamp, i);
-      else MetadataTools.setDefaultCreationDate(store, id, i);
+      if (stamp != null) store.setImageAcquisitionDate(new Timestamp(stamp), i);
       store.setImageName("Series " + i, i);
     }
 
@@ -701,12 +726,27 @@ public class DicomReader extends FormatReader {
           if (sizeX > 0) {
             store.setPixelsPhysicalSizeX(new PositiveFloat(sizeX), i);
           }
+          else {
+            LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+              sizeX);
+          }
         }
         if (pixelSizeY != null) {
           Double sizeY = new Double(pixelSizeY);
           if (sizeY > 0) {
             store.setPixelsPhysicalSizeY(new PositiveFloat(sizeY), i);
           }
+          else {
+            LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+              sizeY);
+          }
+        }
+        if (pixelSizeZ != null && pixelSizeZ > 0) {
+          store.setPixelsPhysicalSizeZ(new PositiveFloat(pixelSizeZ), i);
+        }
+        else {
+          LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}",
+            pixelSizeZ);
         }
       }
     }
@@ -780,6 +820,9 @@ public class DicomReader extends FormatReader {
       else if (key.equals("Pixel Spacing")) {
         pixelSizeX = info.substring(0, info.indexOf("\\"));
         pixelSizeY = info.substring(info.lastIndexOf("\\") + 1);
+      }
+      else if (key.equals("Spacing Between Slices")) {
+        pixelSizeZ = new Double(info);
       }
 
       if (((tag & 0xffff0000) >> 16) != 0x7fe0) {
@@ -995,6 +1038,15 @@ public class DicomReader extends FormatReader {
     if (elementLength == 0 && (groupWord == 0x7fe0 || tag == 0x291014)) {
       elementLength = getLength(stream, tag);
     }
+    else if (elementLength == 0) {
+      stream.seek(stream.getFilePointer() - 4);
+      String v = stream.readString(2);
+      if (v.equals("UT")) {
+        stream.skipBytes(2);
+        elementLength = stream.readInt();
+      }
+      else stream.skipBytes(2);
+    }
 
     // HACK - needed to read some GE files
     // The element length must be even!
@@ -1186,6 +1238,29 @@ public class DicomReader extends FormatReader {
       s = "0" + s;
     }
     return s.substring(0, 4) + "," + s.substring(4);
+  }
+
+  /**
+   * DICOM datasets produced by:
+   * http://www.ct-imaging.de/index.php/en/ct-systeme-e/mikro-ct-e.html
+   * contain a bunch of extra metadata and log files.
+   *
+   * We do not parse these extra files, but do locate and attach them to the
+   * DICOM file(s).
+   */
+  private void attachCompanionFiles() throws IOException {
+    Location parent = new Location(currentId).getAbsoluteFile().getParentFile();
+    Location grandparent = parent.getParentFile();
+
+    if (new Location(grandparent, parent.getName() + ".mif").exists()) {
+      String[] list = grandparent.list(true);
+      for (String f : list) {
+        Location file = new Location(grandparent, f);
+        if (!file.isDirectory()) {
+          companionFiles.add(file.getAbsolutePath());
+        }
+      }
+    }
   }
 
   /**

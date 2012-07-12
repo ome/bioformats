@@ -1,25 +1,38 @@
-//
-// XMLTools.java
-//
-
 /*
-LOCI Common package: utilities for I/O, reflection and miscellaneous tasks.
-Copyright (C) 2005-@year@ Melissa Linkert, Curtis Rueden and Chris Allan.
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ * #%L
+ * LOCI Common package: utilities for I/O, reflection and miscellaneous tasks.
+ * %%
+ * Copyright (C) 2008 - 2012 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ * 
+ * The views and conclusions contained in the software and documentation are
+ * those of the authors and should not be interpreted as representing official
+ * policies, either expressed or implied, of any organization.
+ * #L%
+ */
 
 package loci.common.xml;
 
@@ -31,7 +44,8 @@ import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -61,6 +75,7 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
+import loci.common.Constants;
 import loci.common.RandomAccessInputStream;
 
 import org.slf4j.Logger;
@@ -95,11 +110,11 @@ public final class XMLTools {
 
   // -- Fields --
 
-  private static ThreadLocal<HashMap<URL, Schema>> schemas =
-    new ThreadLocal<HashMap<URL, Schema>>()
+  private static ThreadLocal<HashMap<URI, Schema>> schemas =
+    new ThreadLocal<HashMap<URI, Schema>>()
   {
-    protected HashMap<URL, Schema> initialValue() {
-      return new HashMap<URL, Schema>();
+    protected HashMap<URI, Schema> initialValue() {
+      return new HashMap<URI, Schema>();
     }
   };
 
@@ -126,7 +141,7 @@ public final class XMLTools {
   public static Document parseDOM(String xml)
     throws ParserConfigurationException, SAXException, IOException
   {
-    byte[] bytes = xml.getBytes();
+    byte[] bytes = xml.getBytes(Constants.ENCODING);
     InputStream is = new ByteArrayInputStream(bytes);
     try {
       Document doc = parseDOM(is);
@@ -277,7 +292,7 @@ public final class XMLTools {
   public static void parseXML(String xml, DefaultHandler handler)
     throws IOException
   {
-    parseXML(xml.getBytes(), handler);
+    parseXML(xml.getBytes(Constants.ENCODING), handler);
   }
 
   /**
@@ -391,7 +406,7 @@ public final class XMLTools {
       matcher = pattern.matcher(xml);
       while (matcher.find()) {
         String namespace = matcher.group(1);
-        if (!namespace.startsWith("ns") &&
+        if (!namespace.equalsIgnoreCase("OME") && !namespace.startsWith("ns") &&
           !namespaces.contains(namespace.toLowerCase()))
         {
           int end = matcher.end();
@@ -467,7 +482,8 @@ public final class XMLTools {
       // Java XML factories are not declared to be thread safe
       SAXParserFactory factory = SAXParserFactory.newInstance();
       SAXParser saxParser = factory.newSAXParser();
-      InputStream is = new ByteArrayInputStream(xml.getBytes());
+      InputStream is =
+        new ByteArrayInputStream(xml.getBytes(Constants.ENCODING));
       saxParser.parse(is, saxHandler);
     }
     catch (ParserConfigurationException exc) { exception = exc; }
@@ -487,19 +503,23 @@ public final class XMLTools {
     LOGGER.info("Validating {}", label);
 
     // compile the schema
-    URL schemaLocation = null;
+    URI schemaLocation = null;
     try {
-      schemaLocation = new URL(schemaPath);
+      schemaLocation = new URI(schemaPath);
     }
-    catch (MalformedURLException exc) {
+    catch (URISyntaxException exc) {
       LOGGER.info("Error accessing schema at {}", schemaPath, exc);
       return false;
     }
     Schema schema = schemas.get().get(schemaLocation);
     if (schema == null) {
       try {
-        schema = FACTORY.newSchema(schemaLocation);
+        schema = FACTORY.newSchema(schemaLocation.toURL());
         schemas.get().put(schemaLocation, schema);
+      }
+      catch (MalformedURLException exc) {
+        LOGGER.info("Error parsing schema at {}", schemaPath, exc);
+        return false;
       }
       catch (SAXException exc) {
         LOGGER.info("Error parsing schema at {}", schemaPath, exc);

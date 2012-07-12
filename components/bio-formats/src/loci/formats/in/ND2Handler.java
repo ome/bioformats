@@ -1,25 +1,27 @@
-//
-// ND2Handler.java
-//
-
 /*
-OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ * #%L
+ * OME Bio-Formats package for reading and converting biological file formats.
+ * %%
+ * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 2 of the 
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public 
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-2.0.html>.
+ * #L%
+ */
 
 package loci.formats.in;
 
@@ -28,21 +30,19 @@ import java.util.Hashtable;
 
 import loci.common.DataTools;
 import loci.common.DateTools;
+import loci.common.xml.BaseHandler;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 
 import ome.xml.model.primitives.NonNegativeInteger;
-import ome.xml.model.primitives.PositiveInteger;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.xml.sax.Attributes;
-import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * DefaultHandler implementation for handling XML produced by Nikon Elements.
@@ -51,7 +51,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/ND2Handler.java">Trac</a>,
  * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/ND2Handler.java;hb=HEAD">Gitweb</a></dd></dl>
  */
-public class ND2Handler extends DefaultHandler {
+public class ND2Handler extends BaseHandler {
 
   // -- Constants --
 
@@ -104,14 +104,30 @@ public class ND2Handler extends DefaultHandler {
   private Hashtable<String, Integer> realColors =
     new Hashtable<String, Integer>();
 
+  private int nXFields = 0, nYFields = 0;
+
+  private boolean populateXY = true;
+
   // -- Constructor --
 
   public ND2Handler(CoreMetadata[] core) {
+    this(core, true);
+  }
+
+  public ND2Handler(CoreMetadata[] core, boolean populateXY) {
     super();
+    this.populateXY = populateXY;
     this.core = core;
+    if (this.core.length > 1) {
+      fieldIndex = 2;
+    }
   }
 
   // -- ND2Handler API methods --
+
+  public int getXFields() {
+    return nXFields;
+  }
 
   public CoreMetadata[] getCoreMetadata() {
     return core;
@@ -128,11 +144,14 @@ public class ND2Handler extends DefaultHandler {
           store.setImageROIRef(roiID, i, r);
         }
         store.setROIID(roiID, r);
-        store.setTextID(MetadataTools.createLSID("Shape", r, 0), r, 0);
-        store.setTextFontSize(
-          NonNegativeInteger.valueOf(roi.get("fHeight")), r, 0);
-        store.setTextValue(roi.get("eval-text"), r, 0);
-        store.setTextStrokeWidth(new Double(roi.get("line-width")), r, 0);
+        store.setLabelID(MetadataTools.createLSID("Shape", r, 0), r, 0);
+
+        int fontSize = Integer.parseInt(roi.get("fHeight"));
+        if (fontSize >= 0) {
+          store.setLabelFontSize(new NonNegativeInteger(fontSize), r, 0);
+        }
+        store.setLabelText(roi.get("eval-text"), r, 0);
+        store.setLabelStrokeWidth(new Double(roi.get("line-width")), r, 0);
 
         String rectangle = roi.get("rectangle");
         String[] p = rectangle.split(",");
@@ -327,15 +346,44 @@ public class ND2Handler extends DefaultHandler {
   public void startElement(String uri, String localName, String qName,
     Attributes attributes)
   {
-    if ("CLxListVariant".equals(attributes.getValue("runtype"))) {
+    String runtype = attributes.getValue("runtype");
+    if ("CLxListVariant".equals(runtype) || "RLxIRect".equals(runtype)) {
       prevElement = qName;
     }
 
     String value = attributes.getValue("value");
+
     if (qName.equals("uiWidth")) {
-      core[0].sizeX = Integer.parseInt(value);
+      int x = Integer.parseInt(value);
+      if (x != 0 && populateXY) {
+        core[0].sizeX = x;
+      }
     }
-    else if ("rectSensorUser".equals(prevElement)) {
+    else if (qName.equals("uiCamPxlCountX")) {
+      if (core[0].sizeX == 0 && populateXY) {
+        try {
+          core[0].sizeX = Integer.parseInt(value);
+        }
+        catch (NumberFormatException e) { }
+      }
+    }
+    else if (qName.equals("uiCamPxlCountY")) {
+      if (core[0].sizeY == 0 && populateXY) {
+        try {
+          core[0].sizeY = Integer.parseInt(value);
+        }
+        catch (NumberFormatException e) { }
+      }
+    }
+    else if (qName.equals("iXFields")) {
+      int fields = Integer.parseInt(value);
+      nXFields += fields;
+    }
+    else if (qName.equals("iYFields")) {
+      int fields = Integer.parseInt(value);
+      nYFields += fields;
+    }
+    else if ("rectSensorUser".equals(prevElement) && populateXY) {
       if (qName.equals("left") && core[0].sizeX == 0) {
         core[0].sizeX = -1 * Integer.parseInt(value);
       }
@@ -350,13 +398,23 @@ public class ND2Handler extends DefaultHandler {
       }
     }
     else if ("LoopSize".equals(prevElement) && value != null) {
+      int v = Integer.parseInt(value);
+
       if (core[0].sizeT == 0) {
-        core[0].sizeT = Integer.parseInt(value);
+        core[0].sizeT = v;
+      }
+      else if (qName.equals("no_name") && v > 0 && core.length == 1) {
+        CoreMetadata previous = core[0];
+        core = new CoreMetadata[v];
+        for (int q=0; q<v; q++) {
+          core[q] = previous;
+        }
+        fieldIndex = 2;
       }
       else if (core[0].sizeZ == 0) {
-        core[0].sizeZ = Integer.parseInt(value);
+        core[0].sizeZ = v;
       }
-      core[0].dimensionOrder = "CTZ";
+      core[0].dimensionOrder = "CZT";
     }
     else if ("pPosName".equals(prevElement) && value != null) {
       posNames.add(value);
@@ -365,10 +423,14 @@ public class ND2Handler extends DefaultHandler {
       if (core[0].sizeZ == 0) {
         core[0].sizeZ = 1;
       }
-      core[0].sizeZ *= Integer.parseInt(value);
+      if (core.length == 1) {
+        core[0].sizeZ *= Integer.parseInt(value);
+      }
     }
     else if (qName.equals("FramesAfter")) {
-      core[0].sizeZ *= Integer.parseInt(value);
+      if (core.length == 1) {
+        core[0].sizeZ *= Integer.parseInt(value);
+      }
     }
     else if (qName.equals("TimeBefore")) {
       if (core[0].sizeT == 0) {
@@ -398,14 +460,16 @@ public class ND2Handler extends DefaultHandler {
     }
     else if (qName.equals("uiWidthBytes") || qName.equals("uiBpcInMemory")) {
       int div = qName.equals("uiWidthBytes") ? core[0].sizeX : 8;
-      int bytes = Integer.parseInt(value) / div;
+      if (div > 0) {
+        int bytes = Integer.parseInt(value) / div;
 
-      try {
-        core[0].pixelType =
-          FormatTools.pixelTypeFromBytes(bytes, false, false);
+        try {
+          core[0].pixelType =
+            FormatTools.pixelTypeFromBytes(bytes, false, false);
+        }
+        catch (FormatException e) { }
+        parseKeyAndValue(qName, value, prevRuntype);
       }
-      catch (FormatException e) { }
-      parseKeyAndValue(qName, value, prevRuntype);
     }
     else if ("dPosX".equals(prevElement) && qName.startsWith("item_")) {
       posX.add(new Double(DataTools.sanitizeDouble(value)));
@@ -422,26 +486,31 @@ public class ND2Handler extends DefaultHandler {
     else if (qName.startsWith("item_")) {
       int v = Integer.parseInt(qName.substring(qName.indexOf("_") + 1));
       if (v == numSeries) {
-        fieldIndex = core[0].dimensionOrder.length();
+        fieldIndex = 2;
+        //fieldIndex = core[0].dimensionOrder.length();
         numSeries++;
       }
       else if (v < numSeries && fieldIndex < core[0].dimensionOrder.length()) {
-        fieldIndex = core[0].dimensionOrder.length();
+        fieldIndex = 2;
+        //fieldIndex = core[0].dimensionOrder.length();
       }
     }
     else if (qName.equals("uiCompCount")) {
       int v = Integer.parseInt(value);
       core[0].sizeC = (int) Math.max(core[0].sizeC, v);
     }
-    else if (qName.equals("uiHeight")) {
-      core[0].sizeY = Integer.parseInt(value);
+    else if (qName.equals("uiHeight") && populateXY) {
+      int y = Integer.parseInt(value);
+      if (y != 0) {
+        core[0].sizeY = y;
+      }
     }
     else if (qName.startsWith("TextInfo")) {
       parseKeyAndValue(qName, attributes.getValue("Text"), prevRuntype);
       parseKeyAndValue(qName, value, prevRuntype);
     }
     else if (qName.equals("dCompressionParam")) {
-      isLossless = Integer.parseInt(value) > 0;
+      isLossless = Double.parseDouble(value) > 0;
       parseKeyAndValue(qName, value, prevRuntype);
     }
     else if (qName.equals("CalibrationSeq") || qName.equals("MetadataSeq")) {
@@ -517,6 +586,13 @@ public class ND2Handler extends DefaultHandler {
       String chName = dyes.get(name);
       if (chName == null) chName = name;
       realColors.put(chName, colors.get(name));
+    }
+
+    if (nXFields > 0 && nXFields < 10 && nYFields > 0 && nYFields < 10 &&
+      populateXY)
+    {
+      core[0].sizeX *= nXFields;
+      core[0].sizeY *= nYFields;
     }
   }
 
@@ -759,6 +835,9 @@ public class ND2Handler extends DefaultHandler {
             v[0] = v[0].replace('{', ' ');
             v[0] = v[0].replace('}', ' ');
             metadata.put(v[0].trim(), v[1]);
+          }
+          else if (v.length == 1) {
+            metadata.put(key, v[0]);
           }
         }
       }

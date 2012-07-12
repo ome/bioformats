@@ -1,25 +1,27 @@
-//
-// MetamorphReader.java
-//
-
 /*
-OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ * #%L
+ * OME Bio-Formats package for reading and converting biological file formats.
+ * %%
+ * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 2 of the 
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public 
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-2.0.html>.
+ * #L%
+ */
 
 package loci.formats.in;
 
@@ -44,7 +46,6 @@ import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 import loci.formats.tiff.PhotoInterp;
@@ -52,7 +53,9 @@ import loci.formats.tiff.TiffIFDEntry;
 import loci.formats.tiff.TiffParser;
 import loci.formats.tiff.TiffRational;
 
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 /**
  * Reader is the file format reader for Metamorph STK files.
@@ -113,6 +116,8 @@ public class MetamorphReader extends BaseTiffReader {
   private double tempZ;
   private boolean validZ;
 
+  private Double gain;
+
   private int mmPlanes; //number of metamorph planes
 
   private MetamorphReader[][] stkReaders;
@@ -159,6 +164,12 @@ public class MetamorphReader extends BaseTiffReader {
           new Location(parent, baseName + ".ND").exists()))
         {
           return true;
+        }
+        if (checkSuffix(name, suffixes) &&
+          (new Location(parent, baseName + ".htd").exists() ||
+          new Location(parent, baseName + ".HTD").exists()))
+        {
+          return false;
         }
       }
     }
@@ -279,6 +290,7 @@ public class MetamorphReader extends BaseTiffReader {
       tempZ = 0d;
       validZ = false;
       stkReaders = null;
+      gain = null;
     }
   }
 
@@ -367,6 +379,8 @@ public class MetamorphReader extends BaseTiffReader {
       ndFilename = ndfile.getAbsolutePath();
       String[] lines = DataTools.readFile(ndFilename).split("\n");
 
+      boolean globalDoZ = true;
+
       for (String line : lines) {
         int comma = line.indexOf(",");
         if (comma <= 0) continue;
@@ -401,6 +415,9 @@ public class MetamorphReader extends BaseTiffReader {
         else if (key.equals("WaveInFileName")) {
           useWaveNames = Boolean.parseBoolean(value);
         }
+        else if (key.equals("DoZSeries")) {
+          globalDoZ = new Boolean(value.toLowerCase());
+        }
       }
 
       // figure out how many files we need
@@ -424,7 +441,7 @@ public class MetamorphReader extends BaseTiffReader {
         boolean hasZ1 = i < hasZ.size() && hasZ.get(i).booleanValue();
         boolean hasZ2 = i != 0 && (i - 1 < hasZ.size()) &&
           hasZ.get(i - 1).booleanValue();
-        if (i > 0 && hasZ1 != hasZ2) {
+        if (i > 0 && hasZ1 != hasZ2 && globalDoZ) {
           if (!differentZs) seriesCount *= 2;
           differentZs = true;
         }
@@ -471,7 +488,7 @@ public class MetamorphReader extends BaseTiffReader {
             if ((seriesCount != 1 && !validZ) ||
               (nstages == 0 && ((!validZ && cc > 1) || seriesCount > 1)))
             {
-              if (j > 0) {
+              if (j > 0 && seriesNdx < seriesCount - 1) {
                 seriesNdx++;
               }
             }
@@ -492,6 +509,8 @@ public class MetamorphReader extends BaseTiffReader {
                 // name, translate them to hyphens. (See #5922)
                 waveName = waveName.replace('/', '-');
                 waveName = waveName.replace('\\', '-');
+                waveName = waveName.replace('(', '-');
+                waveName = waveName.replace(')', '-');
                 stks[seriesNdx][pt[seriesNdx]] += waveName;
               }
             }
@@ -531,10 +550,10 @@ public class MetamorphReader extends BaseTiffReader {
       core[0].sizeX = (int) ifd.getImageWidth();
       core[0].sizeY = (int) ifd.getImageLength();
 
-      core[0].sizeZ = zc;
+      core[0].sizeZ = hasZ.size() > 0 && !hasZ.get(0) ? 1 : zc;
       core[0].sizeC = cc;
       core[0].sizeT = tc;
-      core[0].imageCount = zc * tc * cc;
+      core[0].imageCount = getSizeZ() * getSizeC() * getSizeT();
       core[0].dimensionOrder = "XYZCT";
 
       if (stks != null && stks.length > 1) {
@@ -557,14 +576,15 @@ public class MetamorphReader extends BaseTiffReader {
         if (stks.length > nstages) {
           int ns = nstages == 0 ? 1 : nstages;
           for (int j=0; j<ns; j++) {
+            int idx = j * 2 + 1;
             newCore[j * 2].sizeC = stks[j * 2].length / getSizeT();
-            newCore[j * 2 + 1].sizeC =
-              stks[j * 2 + 1].length / newCore[j * 2 + 1].sizeT;
-            newCore[j * 2 + 1].sizeZ = 1;
+            newCore[idx].sizeC = stks[idx].length / newCore[idx].sizeT;
+            newCore[idx].sizeZ =
+              hasZ.size() > 1 && hasZ.get(1) && core[0].sizeZ == 1 ? zc : 1;
             newCore[j * 2].imageCount = newCore[j * 2].sizeC *
               newCore[j * 2].sizeT * newCore[j * 2].sizeZ;
-            newCore[j * 2 + 1].imageCount =
-              newCore[j * 2 + 1].sizeC * newCore[j * 2 + 1].sizeT;
+            newCore[idx].imageCount =
+              newCore[idx].sizeC * newCore[idx].sizeT * newCore[idx].sizeZ;
           }
         }
         core = newCore;
@@ -621,11 +641,12 @@ public class MetamorphReader extends BaseTiffReader {
 
       if (creationTime != null) {
         String date = DateTools.formatDate(creationTime, SHORT_DATE_FORMAT);
-        store.setImageAcquiredDate(date, 0);
+        if (date != null) {
+          store.setImageAcquisitionDate(new Timestamp(date), 0);
+        }
       }
-      else if (i > 0) MetadataTools.setDefaultCreationDate(store, id, i);
 
-      store.setImageName(makeImageName(i), i);
+      store.setImageName(makeImageName(i).trim(), i);
 
       if (getMetadataOptions().getMetadataLevel() == MetadataLevel.MINIMUM) {
         continue;
@@ -640,14 +661,24 @@ public class MetamorphReader extends BaseTiffReader {
       if (sizeX > 0) {
         store.setPixelsPhysicalSizeX(new PositiveFloat(sizeX), i);
       }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}", sizeX);
+      }
       if (sizeY > 0) {
         store.setPixelsPhysicalSizeY(new PositiveFloat(sizeY), i);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}", sizeY);
       }
       if (zDistances != null) {
         stepSize = zDistances[0];
       }
       if (stepSize > 0) {
         store.setPixelsPhysicalSizeZ(new PositiveFloat(stepSize), i);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}",
+          stepSize);
       }
 
       int waveIndex = 0;
@@ -667,7 +698,7 @@ public class MetamorphReader extends BaseTiffReader {
         }
 
         if (waveNames != null && waveIndex < waveNames.size()) {
-          store.setChannelName(waveNames.get(waveIndex), i, c);
+          store.setChannelName(waveNames.get(waveIndex).trim(), i, c);
         }
         if (handler.getBinning() != null) binning = handler.getBinning();
         if (binning != null) {
@@ -676,20 +707,28 @@ public class MetamorphReader extends BaseTiffReader {
         if (handler.getReadOutRate() != 0) {
           store.setDetectorSettingsReadOutRate(handler.getReadOutRate(), i, c);
         }
+        if (gain != null) {
+          store.setDetectorSettingsGain(gain, i, c);
+        }
         store.setDetectorSettingsID(detectorID, i, c);
 
-        if (wave != null && waveIndex < wave.length &&
-          (int) wave[waveIndex] >= 1)
-        {
-          store.setChannelLightSourceSettingsWavelength(
-            new PositiveInteger((int) wave[waveIndex]), i, c);
+        if (wave != null && waveIndex < wave.length) {
+          if ((int) wave[waveIndex] >= 1) {
+            store.setChannelLightSourceSettingsWavelength(
+              new PositiveInteger((int) wave[waveIndex]), i, c);
 
-          // link LightSource to Image
-          String lightSourceID = MetadataTools.createLSID("LightSource", i, c);
-          store.setLaserID(lightSourceID, i, c);
-          store.setChannelLightSourceSettingsID(lightSourceID, i, c);
-          store.setLaserType(getLaserType("Other"), i, c);
-          store.setLaserLaserMedium(getLaserMedium("Other"), i, c);
+            // link LightSource to Image
+            String lightSourceID =
+              MetadataTools.createLSID("LightSource", i, c);
+            store.setLaserID(lightSourceID, i, c);
+            store.setChannelLightSourceSettingsID(lightSourceID, i, c);
+            store.setLaserType(getLaserType("Other"), i, c);
+            store.setLaserLaserMedium(getLaserMedium("Other"), i, c);
+          }
+          else {
+            LOGGER.warn("Expected positive value for Wavelength; got {}",
+              wave[waveIndex]);
+          }
         }
         waveIndex++;
       }
@@ -725,7 +764,7 @@ public class MetamorphReader extends BaseTiffReader {
       for (int p=0; p<getImageCount(); p++) {
         int[] coords = getZCTCoords(p);
         Double deltaT = new Double(0);
-        Double exposureTime = new Double(0);
+        Double expTime = exposureTime;
         Double xmlZPosition = null;
 
         int fileIndex = getIndex(0, 0, coords[2]) / getSizeZ();
@@ -773,11 +812,11 @@ public class MetamorphReader extends BaseTiffReader {
         }
 
         if (index < exposureTimes.size()) {
-          exposureTime = exposureTimes.get(index);
+          expTime = exposureTimes.get(index);
         }
 
         store.setPlaneDeltaT(deltaT, i, p);
-        store.setPlaneExposureTime(exposureTime, i, p);
+        store.setPlaneExposureTime(expTime, i, p);
 
         if (stageX != null && p < stageX.length) {
           store.setPlanePositionX(stageX[p], i, p);
@@ -1007,6 +1046,19 @@ public class MetamorphReader extends BaseTiffReader {
               core[0].bitsPerPixel = Integer.parseInt(value);
             }
             catch (NumberFormatException e) { }
+          }
+          else if (key.equals("Gain")) {
+            int space = value.indexOf(" ");
+            if (space != -1) {
+              int nextSpace = value.indexOf(" ", space + 1);
+              if (nextSpace < 0) {
+                nextSpace = value.length();
+              }
+              try {
+                gain = new Double(value.substring(space, nextSpace));
+              }
+              catch (NumberFormatException e) { }
+            }
           }
         }
       }

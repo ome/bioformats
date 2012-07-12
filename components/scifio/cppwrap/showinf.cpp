@@ -1,42 +1,38 @@
-//
-// showinf.cpp
-//
-
 /*
-OME Bio-Formats C++ bindings for native access to Bio-Formats Java library.
-Copyright (c) 2008, UW-Madison LOCI.
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-    * Redistributions of source code must retain the above copyright
-      notice, this list of conditions and the following disclaimer.
-    * Redistributions in binary form must reproduce the above copyright
-      notice, this list of conditions and the following disclaimer in the
-      documentation and/or other materials provided with the distribution.
-    * Neither the name of the UW-Madison LOCI nor the
-      names of its contributors may be used to endorse or promote products
-      derived from this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY UW-MADISON LOCI ''AS IS'' AND ANY
-EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL UW-MADISON LOCI BE LIABLE FOR ANY
-DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
-
-/*
-IMPORTANT NOTE: Although this software is distributed according to a
-"BSD-style" license, it requires the Bio-Formats Java library to do
-anything useful, which is licensed under the GPL v2 or later.
-As such, if you wish to distribute this software with Bio-Formats itself,
-your combined work must be distributed under the terms of the GPL.
-*/
+ * #%L
+ * OME SCIFIO package for reading and converting scientific file formats.
+ * %%
+ * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ * 
+ * The views and conclusions contained in the software and documentation are
+ * those of the authors and should not be interpreted as representing official
+ * policies, either expressed or implied, of any organization.
+ * #L%
+ */
 
 // A partial C++ version of the Bio-Formats showinf command line utility.
 // For the original Java version, see:
@@ -46,8 +42,8 @@ your combined work must be distributed under the terms of the GPL.
 #include "javaTools.h"
 
 // for Bio-Formats C++ bindings
-#include "scifio-4.4-SNAPSHOT.h"
-#include "loci-common-4.4-SNAPSHOT.h"
+#include "scifio-4.4.0.h"
+#include "loci-common-4.4.0.h"
 using jace::JNIException;
 using jace::proxy::java::io::IOException;
 using jace::proxy::java::lang::Object;
@@ -104,8 +100,8 @@ bool expand = false;
 bool omexml = false;
 bool normalize = false;
 String* omexmlVersion = NULL;
-int start = 0;
-int end = INT_MAX;
+int firstPlane = 0;
+int lastPlane = INT_MAX;
 int series = 0;
 int xCoordinate = 0, yCoordinate = 0, width = 0, height = 0;
 String* swapOrder = NULL;
@@ -149,8 +145,8 @@ void parseArgs(int argc, const char *argv[]) {
         height = atoi(string(cropTokens[3]).c_str());
       }
       else if (arg.compare("-range") == 0) {
-        start = atoi(argv[++i]);
-        end = atoi(argv[++i]);
+        firstPlane = atoi(argv[++i]);
+        lastPlane = atoi(argv[++i]);
       }
       else if (arg.compare("-series") == 0) {
         series = atoi(argv[++i]);
@@ -174,7 +170,7 @@ void printUsage() {
   cout << "To test read a file in any format, run:" << endl <<
     "  showinf file [-nopix] [-nocore] [-nometa] [-thumbs] " << endl <<
     "    [-merge] [-stitch] [-separate] [-expand] [-omexml]" << endl <<
-    "    [-normalize] [-range start end] [-series num]" << endl <<
+    "    [-normalize] [-range firstPlane lastPlane] [-series num]" << endl <<
     "    [-swap inputOrder] [-shuffle outputOrder]" << endl <<
     "    [-xmlversion v] [-crop x,y,w,h]" << endl <<
     "" << endl <<
@@ -418,11 +414,11 @@ void readPixels() {
   if (reader->getSeriesCount() > 1) cout << " series #" << series;
   cout << " pixel data ";
   int num = reader->getImageCount();
-  if (start < 0) start = 0;
-  if (start >= num) start = num - 1;
-  if (end < 0) end = 0;
-  if (end >= num) end = num - 1;
-  if (end < start) end = start;
+  if (firstPlane < 0) firstPlane = 0;
+  if (firstPlane >= num) firstPlane = num - 1;
+  if (lastPlane < 0) lastPlane = 0;
+  if (lastPlane >= num) lastPlane = num - 1;
+  if (lastPlane < firstPlane) lastPlane = firstPlane;
 
   int sizeX = reader->getSizeX();
   int sizeY = reader->getSizeY();
@@ -433,8 +429,8 @@ void readPixels() {
 
   int pixelType = reader->getPixelType();
 
-  cout << "(" << start << "-" << end << ") ";
-  for (int i=start; i<=end; i++) {
+  cout << "(" << firstPlane << "-" << lastPlane << ") ";
+  for (int i=firstPlane; i<=lastPlane; i++) {
     flush(cout);
     if (thumbs) reader->openThumbBytes(i);
     else reader->openBytes(i, xCoordinate, yCoordinate, width, height);

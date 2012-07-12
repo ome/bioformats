@@ -1,25 +1,27 @@
-//
-// PrairieReader.java
-//
-
 /*
-OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ * #%L
+ * OME Bio-Formats package for reading and converting biological file formats.
+ * %%
+ * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 2 of the 
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public 
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-2.0.html>.
+ * #L%
+ */
 
 package loci.formats.in;
 
@@ -32,6 +34,7 @@ import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.common.xml.BaseHandler;
 import loci.common.xml.XMLTools;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
@@ -39,11 +42,12 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
 
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
@@ -105,6 +109,8 @@ public class PrairieReader extends FormatReader {
 
   private Double zoom;
 
+  private boolean timeSeries = false;
+
   // -- Constructor --
 
   /** Constructs a new Prairie TIFF reader. */
@@ -139,23 +145,32 @@ public class PrairieReader extends FormatReader {
       if (prefix.lastIndexOf("Config") == -1) return false;
       prefix = prefix.substring(0, prefix.lastIndexOf("Config"));
     }
-    if (prefix.indexOf("_") != -1) {
-      prefix = prefix.substring(0, prefix.indexOf("_"));
-    }
 
-    // check for appropriately named XML and CFG files
+    // check for appropriately named XML file
 
     Location xml = new Location(parent, prefix + ".xml");
-    Location cfg = new Location(parent, prefix + "Config.cfg");
+    while (!xml.exists() && prefix.indexOf("_") != -1) {
+      prefix = prefix.substring(0, prefix.lastIndexOf("_"));
+      xml = new Location(parent, prefix + ".xml");
+    }
 
-    boolean hasMetadataFiles = xml.exists() && cfg.exists();
+    boolean validXML = false;
+    try {
+      RandomAccessInputStream xmlStream =
+        new RandomAccessInputStream(xml.getAbsolutePath());
+      validXML = isThisType(xmlStream);
+      xmlStream.close();
+    }
+    catch (IOException e) {
+      LOGGER.trace("Failed to check XML file's type", e);
+    }
 
-    return hasMetadataFiles && super.isThisType(name, false);
+    return xml.exists() && super.isThisType(name, false) && validXML;
   }
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    final int blockLen = 1048608;
+    final int blockLen = (int) Math.min(1048608, stream.length());
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
     String s = stream.readString(blockLen);
     if (s.indexOf("xml") != -1 && s.indexOf("PV") != -1) return true;
@@ -247,6 +262,7 @@ public class PrairieReader extends FormatReader {
       zoom = null;
       waitTime = null;
       relativeTimes.clear();
+      timeSeries = false;
     }
   }
 
@@ -296,6 +312,11 @@ public class PrairieReader extends FormatReader {
       if (checkSuffix(id, XML_SUFFIX)) {
         core[0].sizeT = getImageCount() / (getSizeZ() * getSizeC());
 
+        if (timeSeries && getSizeT() == 1 && getSizeZ() > 1) {
+          core[0].sizeT = getSizeZ();
+          core[0].sizeZ = 1;
+        }
+
         files = new String[f.size()];
         f.copyInto(files);
         if (tiff == null) {
@@ -320,9 +341,9 @@ public class PrairieReader extends FormatReader {
 
         if (date != null) {
           date = DateTools.formatDate(date, "MM/dd/yyyy h:mm:ss a");
-          if (date != null) store.setImageAcquiredDate(date, 0);
+          if (date != null) store.setImageAcquisitionDate(
+              new Timestamp(date), 0);
         }
-        else MetadataTools.setDefaultCreationDate(store, id, 0);
 
         if (!minimumMetadata) {
           // link Instrument and Image
@@ -330,8 +351,20 @@ public class PrairieReader extends FormatReader {
           store.setInstrumentID(instrumentID, 0);
           store.setImageInstrumentRef(instrumentID, 0);
 
-          store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSizeX), 0);
-          store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSizeY), 0);
+          if (pixelSizeX > 0) {
+            store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSizeX), 0);
+          }
+          else {
+            LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+              pixelSizeX);
+          }
+          if (pixelSizeY > 0) {
+            store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSizeY), 0);
+          }
+          else {
+            LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+              pixelSizeY);
+          }
           for (int i=0; i<getSizeC(); i++) {
             String gain = i < gains.size() ? gains.get(i) : null;
             String offset = i < offsets.size() ? offsets.get(i) : null;
@@ -383,7 +416,7 @@ public class PrairieReader extends FormatReader {
 
           String objective = MetadataTools.createLSID("Objective", 0, 0);
           store.setObjectiveID(objective, 0, 0);
-          store.setImageObjectiveSettingsID(objective, 0);
+          store.setObjectiveSettingsID(objective, 0);
 
           if (magnification != null) {
             store.setObjectiveNominalMagnification(magnification, 0, 0);
@@ -460,12 +493,16 @@ public class PrairieReader extends FormatReader {
   // -- Helper classes --
 
   /** SAX handler for parsing XML. */
-  public class PrairieHandler extends DefaultHandler {
+  public class PrairieHandler extends BaseHandler {
     public void startElement(String uri, String localName, String qName,
       Attributes attributes)
     {
       if (qName.equals("PVScan")) {
         date = attributes.getValue("date");
+      }
+      else if (qName.equals("Sequence")) {
+        String type = attributes.getValue("type");
+        timeSeries = "TSeries Timed Element".equals(type);
       }
       else if (qName.equals("Frame")) {
         String index = attributes.getValue("index");
@@ -529,7 +566,15 @@ public class PrairieReader extends FormatReader {
           if (tokens.length > 1) {
             String mag = tokens[1].toLowerCase().replaceAll("x", "");
             try {
-              magnification = new PositiveInteger(new Integer(mag));
+              Integer m = new Integer(mag);
+              if (m > 0) {
+                magnification = new PositiveInteger(m);
+              }
+              else {
+                LOGGER.warn(
+                  "Expected positive value for NominalMagnification; got {}",
+                  m);
+              }
             }
             catch (NumberFormatException e) { }
           }

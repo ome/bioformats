@@ -1,31 +1,35 @@
-//
-// OMECredentials.java
-//
-
 /*
-OME database I/O package for communicating with OME and OMERO servers.
-Copyright (C) 2005-@year@ Melissa Linkert, Curtis Rueden and Philip Huettl.
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ * #%L
+ * OME database I/O package for communicating with OME and OMERO servers.
+ * %%
+ * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 2 of the 
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public 
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-2.0.html>.
+ * #L%
+ */
 
 package loci.ome.io;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.StringTokenizer;
+
+import loci.common.Constants;
 
 /**
  * Stores credentials for logging into an OME/OMERO server.
@@ -83,8 +87,8 @@ public class OMECredentials {
       String value = token.substring(equals + 1);
 
       try {
-        key = URLDecoder.decode(key, "UTF-8").trim();
-        value = URLDecoder.decode(value, "UTF-8").trim();
+        key = URLDecoder.decode(key, Constants.ENCODING).trim();
+        value = URLDecoder.decode(value, Constants.ENCODING).trim();
       }
       catch (UnsupportedEncodingException exc) {
         throw new IllegalArgumentException(invalidMsg, exc);

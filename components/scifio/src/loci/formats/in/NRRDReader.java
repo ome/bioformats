@@ -1,25 +1,38 @@
-//
-// NRRDReader.java
-//
-
 /*
-OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ * #%L
+ * OME SCIFIO package for reading and converting scientific file formats.
+ * %%
+ * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ * 
+ * The views and conclusions contained in the software and documentation are
+ * those of the authors and should not be interpreted as representing official
+ * policies, either expressed or implied, of any organization.
+ * #L%
+ */
 
 package loci.formats.in;
 
@@ -147,7 +160,8 @@ public class NRRDReader extends FormatReader {
     // TODO : add support for additional encoding types
     if (dataFile == null) {
       if (encoding.equals("raw")) {
-        in.seek(offset + no * FormatTools.getPlaneSize(this));
+        long planeSize = FormatTools.getPlaneSize(this);
+        in.seek(offset + no * planeSize);
 
         readPlane(in, x, y, w, h, buf);
         return buf;
@@ -317,7 +331,6 @@ public class NRRDReader extends FormatReader {
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
-    MetadataTools.setDefaultCreationDate(store, id, 0);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       if (pixelSizes != null) {
@@ -325,14 +338,20 @@ public class NRRDReader extends FormatReader {
           if (pixelSizes[i] == null) continue;
           try {
             Double d = new Double(pixelSizes[i].trim());
-            if (i == 0) {
-              store.setPixelsPhysicalSizeX(new PositiveFloat(d), 0);
+            if (d > 0) {
+              if (i == 0) {
+                store.setPixelsPhysicalSizeX(new PositiveFloat(d), 0);
+              }
+              else if (i == 1) {
+                store.setPixelsPhysicalSizeY(new PositiveFloat(d), 0);
+              }
+              else if (i == 2) {
+                store.setPixelsPhysicalSizeZ(new PositiveFloat(d), 0);
+              }
             }
-            else if (i == 1) {
-              store.setPixelsPhysicalSizeY(new PositiveFloat(d), 0);
-            }
-            else if (i == 2) {
-              store.setPixelsPhysicalSizeZ(new PositiveFloat(d), 0);
+            else {
+              LOGGER.warn(
+                "Expected positive value for PhysicalSize; got {}", d);
             }
           }
           catch (NumberFormatException e) { }

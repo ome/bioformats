@@ -1,25 +1,27 @@
-//
-// BioRadReader.java
-//
-
 /*
-OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-0year1 UW-Madison LOCI and Glencoe Software, Inc.
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ * #%L
+ * OME Bio-Formats package for reading and converting biological file formats.
+ * %%
+ * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 2 of the 
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public 
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-2.0.html>.
+ * #L%
+ */
 
 package loci.formats.in;
 
@@ -31,6 +33,7 @@ import java.util.Vector;
 
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.common.xml.BaseHandler;
 import loci.common.xml.XMLTools;
 import loci.formats.FilePattern;
 import loci.formats.FormatException;
@@ -39,9 +42,10 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.IMinMaxStore;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
@@ -480,7 +484,6 @@ public class BioRadReader extends FormatReader {
     core[0].indexed = lut != null;
 
     MetadataTools.populatePixels(store, this);
-    MetadataTools.setDefaultCreationDate(store, id, 0);
     store.setImageName(name, 0);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
@@ -492,12 +495,16 @@ public class BioRadReader extends FormatReader {
       // link Objective to Image using ObjectiveSettings
       String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
       store.setObjectiveID(objectiveID, 0, 0);
-      store.setImageObjectiveSettingsID(objectiveID, 0);
+      store.setObjectiveSettingsID(objectiveID, 0);
 
       store.setObjectiveLensNA(new Double(lens), 0, 0);
       if ((int) magFactor > 0) {
         store.setObjectiveNominalMagnification(
           new PositiveInteger((int) magFactor), 0, 0);
+      }
+      else {
+        LOGGER.warn("Expected positive value for NominalMagnification; got {}",
+          magFactor);
       }
       store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
       store.setObjectiveImmersion(getImmersion("Other"), 0, 0);
@@ -643,14 +650,27 @@ public class BioRadReader extends FormatReader {
                 store.setObjectiveModel(value, 0, 0);
               }
               else if (key.equals("INFO_OBJECTIVE_MAGNIFICATION")) {
-                store.setObjectiveNominalMagnification(
-                  new PositiveInteger((int) Float.parseFloat(value)), 0, 0);
+                int mag = (int) Float.parseFloat(value);
+                if (mag > 0) {
+                  store.setObjectiveNominalMagnification(
+                    new PositiveInteger(mag), 0, 0);
+                }
+                else {
+                  LOGGER.warn(
+                    "Expected positive value for NominalMagnification; got {}",
+                    mag);
+                }
               }
               else if (key.equals("LENS_MAGNIFICATION")) {
                 int magnification = (int) Float.parseFloat(value);
                 if (magnification > 0) {
                   store.setObjectiveNominalMagnification(
                     new PositiveInteger(magnification), 0, 0);
+                }
+                else {
+                  LOGGER.warn(
+                    "Expected positive value for NominalMagnification; got {}",
+                    magnification);
                 }
               }
               else if (key.startsWith("SETTING")) {
@@ -697,13 +717,20 @@ public class BioRadReader extends FormatReader {
                     if (type == 257 && values.length >= 3) {
                       // found length of axis in um
                       Double pixelSize = new Double(values[2]);
-                      if (key.equals("AXIS_2")) {
-                        store.setPixelsPhysicalSizeX(
-                          new PositiveFloat(pixelSize), 0);
+                      if (pixelSize > 0) {
+                        if (key.equals("AXIS_2")) {
+                          store.setPixelsPhysicalSizeX(
+                            new PositiveFloat(pixelSize), 0);
+                        }
+                        else if (key.equals("AXIS_3")) {
+                          store.setPixelsPhysicalSizeY(
+                            new PositiveFloat(pixelSize), 0);
+                        }
                       }
-                      else if (key.equals("AXIS_3")) {
-                        store.setPixelsPhysicalSizeY(
-                          new PositiveFloat(pixelSize), 0);
+                      else {
+                        LOGGER.warn(
+                          "Expected positive value for PhysicalSize; got {}",
+                          pixelSize);
                       }
                     }
                   }
@@ -714,12 +741,24 @@ public class BioRadReader extends FormatReader {
             else if (n.p.startsWith("AXIS_2")) {
               String[] values = n.p.split(" ");
               Double pixelSize = new Double(values[3]);
-              store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSize), 0);
+              if (pixelSize > 0) {
+                store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSize), 0);
+              }
+              else {
+                LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+                  pixelSize);
+              }
             }
             else if (n.p.startsWith("AXIS_3")) {
               String[] values = n.p.split(" ");
               Double pixelSize = new Double(values[3]);
-              store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSize), 0);
+              if (pixelSize > 0) {
+                store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSize), 0);
+              }
+              else {
+                LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+                  pixelSize);
+              }
             }
             else {
               addGlobalMeta("Note #" + noteIndex, n.toString());
@@ -737,12 +776,23 @@ public class BioRadReader extends FormatReader {
                   }
 
                   int mag = (int) Float.parseFloat(values[11]);
-                  store.setObjectiveNominalMagnification(
-                    new PositiveInteger(mag), 0, 0);
+                  if (mag > 0) {
+                    store.setObjectiveNominalMagnification(
+                      new PositiveInteger(mag), 0, 0);
+                  }
+                  else {
+                    LOGGER.warn("Expected positive value for " +
+                      "NominalMagnification; got {}", mag);
+                  }
 
                   Double sizeZ = new Double(values[14]);
                   if (sizeZ > 0) {
                     store.setPixelsPhysicalSizeZ(new PositiveFloat(sizeZ), 0);
+                  }
+                  else {
+                    LOGGER.warn(
+                      "Expected positive value for PhysicalSizeZ; got {}",
+                      sizeZ);
                   }
                   break;
                 case 2:
@@ -763,8 +813,18 @@ public class BioRadReader extends FormatReader {
                   if (width > 0) {
                     store.setPixelsPhysicalSizeX(new PositiveFloat(width), 0);
                   }
+                  else {
+                    LOGGER.warn(
+                      "Expected positive value for PhysicalSizeX; got {}",
+                      width);
+                  }
                   if (height > 0) {
                     store.setPixelsPhysicalSizeY(new PositiveFloat(height), 0);
+                  }
+                  else {
+                    LOGGER.warn(
+                      "Expected positive value for PhysicalSizeY; got {}",
+                      height);
                   }
 
                   break;
@@ -884,7 +944,7 @@ public class BioRadReader extends FormatReader {
                   String date = year + "-" + values[4] + "-" + values[3] + "T" +
                     values[2] + ":" + values[1] + ":" + values[0];
                   addGlobalMeta("Acquisition date", date);
-                  store.setImageAcquiredDate(date, 0);
+                  store.setImageAcquisitionDate(new Timestamp(date), 0);
                   break;
                 case 18:
                   addGlobalMeta("Mixer 3 - enhanced", values[0]);
@@ -1067,7 +1127,7 @@ public class BioRadReader extends FormatReader {
   // -- Helper classes --
 
   /** SAX handler for parsing XML. */
-  class BioRadHandler extends DefaultHandler {
+  class BioRadHandler extends BaseHandler {
     public void startElement(String uri, String localName, String qName,
       Attributes attributes)
     {

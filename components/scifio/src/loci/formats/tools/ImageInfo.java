@@ -1,25 +1,38 @@
-//
-// ImageInfo.java
-//
-
 /*
-OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ * #%L
+ * OME SCIFIO package for reading and converting scientific file formats.
+ * %%
+ * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ * 
+ * The views and conclusions contained in the software and documentation are
+ * those of the authors and should not be interpreted as representing official
+ * policies, either expressed or implied, of any organization.
+ * #L%
+ */
 
 package loci.formats.tools;
 
@@ -51,6 +64,7 @@ import loci.formats.ImageTools;
 import loci.formats.MetadataTools;
 import loci.formats.MinMaxCalculator;
 import loci.formats.MissingLibraryException;
+import loci.formats.UpgradeChecker;
 import loci.formats.gui.AWTImageTools;
 import loci.formats.gui.BufferedImageReader;
 import loci.formats.gui.ImageViewer;
@@ -97,6 +111,7 @@ public class ImageInfo {
   private boolean separate = false;
   private boolean expand = false;
   private boolean omexml = false;
+  private boolean originalMetadata = true;
   private boolean normalize = false;
   private boolean fastBlit = false;
   private boolean autoscale = false;
@@ -113,6 +128,7 @@ public class ImageInfo {
   private String swapOrder = null, shuffleOrder = null;
   private String map = null;
   private String format = null;
+  private int xmlSpaces = 3;
 
   private IFormatReader reader;
   private IFormatReader baseReader;
@@ -142,6 +158,7 @@ public class ImageInfo {
     separate = false;
     expand = false;
     omexml = false;
+    originalMetadata = true;
     normalize = false;
     fastBlit = false;
     autoscale = false;
@@ -150,6 +167,7 @@ public class ImageInfo {
     omexmlOnly = false;
     validate = true;
     omexmlVersion = null;
+    xmlSpaces = 3;
     start = 0;
     end = Integer.MAX_VALUE;
     series = 0;
@@ -176,6 +194,7 @@ public class ImageInfo {
         else if (args[i].equals("-separate")) separate = true;
         else if (args[i].equals("-expand")) expand = true;
         else if (args[i].equals("-omexml")) omexml = true;
+        else if (args[i].equals("-no-sas")) originalMetadata = false;
         else if (args[i].equals("-normalize")) normalize = true;
         else if (args[i].equals("-fast")) fastBlit = true;
         else if (args[i].equals("-autoscale")) autoscale = true;
@@ -192,6 +211,9 @@ public class ImageInfo {
         else if (args[i].equals("-ascii")) ascii = true;
         else if (args[i].equals("-nousedfiles")) usedFiles = false;
         else if (args[i].equals("-xmlversion")) omexmlVersion = args[++i];
+        else if (args[i].equals("-xmlspaces")) {
+          xmlSpaces = Integer.parseInt(args[++i]);
+        }
         else if (args[i].equals("-crop")) {
           StringTokenizer st = new StringTokenizer(args[++i], ",");
           xCoordinate = Integer.parseInt(st.nextToken());
@@ -244,7 +266,7 @@ public class ImageInfo {
       "    [-merge] [-nogroup] [-stitch] [-separate] [-expand] [-omexml]",
       "    [-normalize] [-fast] [-debug] [-range start end] [-series num]",
       "    [-swap inputOrder] [-shuffle outputOrder] [-map id] [-preload]",
-      "    [-crop x,y,w,h] [-autoscale] [-novalid] [-omexml-only]",
+      "    [-crop x,y,w,h] [-autoscale] [-novalid] [-omexml-only] [-no-sas]",
       "    [-format Format]",
       "",
       "    -version: print the library version and exit",
@@ -277,6 +299,7 @@ public class ImageInfo {
       "              brightness and contrast",
       "    -novalid: do not perform validation of OME-XML",
       "-omexml-only: only output the generated OME-XML",
+      "     -no-sas: do not output OME-XML StructuredAnnotation elements",
       "     -format: read file with a particular reader (e.g., ZeissZVI)",
       "",
       "* = may result in loss of precision",
@@ -339,7 +362,7 @@ public class ImageInfo {
 
   public void configureReaderPreInit() throws FormatException, IOException {
     if (omexml) {
-      reader.setOriginalMetadataPopulated(true);
+      reader.setOriginalMetadataPopulated(originalMetadata);
       try {
         ServiceFactory factory = new ServiceFactory();
         OMEXMLService service = factory.getInstance(OMEXMLService.class);
@@ -900,11 +923,17 @@ public class ImageInfo {
       LOGGER.info("Generating OME-XML (schema version {})", version);
     }
     if (ms instanceof MetadataRetrieve) {
+      service.removeBinData(service.getOMEMetadata((MetadataRetrieve) ms));
+      for (int i=0; i<reader.getSeriesCount(); i++) {
+        service.addMetadataOnly(
+          service.getOMEMetadata((MetadataRetrieve) ms), i);
+      }
+
       if (omexmlOnly) {
         DebugTools.enableLogging("INFO");
       }
       String xml = service.getOMEXML((MetadataRetrieve) ms);
-      LOGGER.info("{}", XMLTools.indentXML(xml, true));
+      LOGGER.info("{}", XMLTools.indentXML(xml, xmlSpaces, true));
       if (omexmlOnly) {
         DebugTools.enableLogging("OFF");
       }
@@ -986,6 +1015,14 @@ public class ImageInfo {
   // -- Main method --
 
   public static void main(String[] args) throws Exception {
+    UpgradeChecker checker = new UpgradeChecker();
+    boolean canUpgrade =
+      checker.newVersionAvailable(UpgradeChecker.DEFAULT_CALLER);
+    if (canUpgrade) {
+      LOGGER.info("*** A new stable version is available. ***");
+      LOGGER.info("*** Install the new version using:     ***");
+      LOGGER.info("***   'upgradechecker -install'        ***");
+    }
     if (!new ImageInfo().testRead(args)) System.exit(1);
   }
 

@@ -30,8 +30,8 @@ HOW TO BUILD -- LINUX
 The following commands will generate and build the Bio-Formats C++ bindings:
 
   # generate the Bio-Formats C++ bindings
-  cd components/bio-formats
-  mvn -DskipTests package cppwrap:wrap
+  cd components/scifio
+  mvn -DskipTests package dependency:copy-dependencies cppwrap:wrap
 
   # build the Bio-Formats C++ bindings
   cd target/cppwrap

@@ -1,25 +1,27 @@
-//
-// APLReader.java
-//
-
 /*
-OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ * #%L
+ * OME Bio-Formats package for reading and converting biological file formats.
+ * %%
+ * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 2 of the 
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public 
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-2.0.html>.
+ * #L%
+ */
 
 package loci.formats.in;
 
@@ -38,12 +40,12 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 import loci.formats.services.MDBService;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 import loci.formats.tiff.PhotoInterp;
 import loci.formats.tiff.TiffParser;
+import ome.xml.model.primitives.PositiveFloat;
 
 /**
  * APLReader is the file format reader for Olympus APL files.
@@ -230,13 +232,20 @@ public class APLReader extends FormatReader {
       throw new FormatException("MDB Tools Java library not found", de);
     }
 
-    mdb.initialize(mtb);
-    Vector<String[]> rows = mdb.parseDatabase().get(0);
+    String[] columnNames = null;
+    Vector<String[]> rows = null;
+    try {
+      mdb.initialize(mtb);
+      rows = mdb.parseDatabase().get(0);
 
-    String[] columnNames = rows.get(0);
-    String[] tmpNames = columnNames;
-    columnNames = new String[tmpNames.length - 1];
-    System.arraycopy(tmpNames, 1, columnNames, 0, columnNames.length);
+      columnNames = rows.get(0);
+      String[] tmpNames = columnNames;
+      columnNames = new String[tmpNames.length - 1];
+      System.arraycopy(tmpNames, 1, columnNames, 0, columnNames.length);
+    }
+    finally {
+      mdb.close();
+    }
 
     // add full table to metadata hashtable
 
@@ -290,8 +299,8 @@ public class APLReader extends FormatReader {
       LOGGER.debug("  '{}'", f);
       Location file = new Location(dir, f);
       if (file.isDirectory() && f.indexOf("_DocumentFiles") > 0) {
-        LOGGER.debug("Found {}", topDirectory);
         topDirectory = file.getAbsolutePath();
+        LOGGER.debug("Found {}", topDirectory);
         break;
       }
     }
@@ -396,8 +405,18 @@ public class APLReader extends FormatReader {
         }
         // TODO : add cases for other units
 
-        store.setPixelsPhysicalSizeX(new PositiveFloat(px), i);
-        store.setPixelsPhysicalSizeY(new PositiveFloat(py), i);
+        if (px > 0) {
+          store.setPixelsPhysicalSizeX(new PositiveFloat(px), i);
+        }
+        else {
+          LOGGER.warn("Expected positive value for PhysicalSizeX; got {}", px);
+        }
+        if (py > 0) {
+          store.setPixelsPhysicalSizeY(new PositiveFloat(py), i);
+        }
+        else {
+          LOGGER.warn("Expected positive value for PhysicalSizeY; got {}", py);
+        }
       }
     }
   }

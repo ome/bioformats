@@ -1,25 +1,27 @@
-//
-// FV1000Reader.java
-//
-
 /*
-OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ * #%L
+ * OME Bio-Formats package for reading and converting biological file formats.
+ * %%
+ * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 2 of the 
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public 
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-2.0.html>.
+ * #L%
+ */
 
 package loci.formats.in;
 
@@ -48,14 +50,15 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 import loci.formats.services.POIService;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 import loci.formats.tiff.TiffParser;
 
 import ome.xml.model.primitives.NonNegativeInteger;
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 /**
  * FV1000Reader is the file format reader for Fluoview FV 1000 OIB and
@@ -849,9 +852,9 @@ public class FV1000Reader extends FormatReader {
         stream.read(buffer);
         stream.close();
         for (int q=0; q<buffer.length; q+=4) {
-          lut[c][0][q / 4] = (short) (buffer[q + 2] & 0xff);
-          lut[c][1][q / 4] = (short) (buffer[q + 1] & 0xff);
-          lut[c][2][q / 4] = (short) (buffer[q] & 0xff);
+          lut[c][0][q / 4] = (short) ((buffer[q + 2] & 0xff) * 257);
+          lut[c][1][q / 4] = (short) ((buffer[q + 1] & 0xff) * 257);
+          lut[c][2][q / 4] = (short) ((buffer[q] & 0xff) * 257);
         }
       }
       catch (IOException e) { exc = e; }
@@ -886,8 +889,8 @@ public class FV1000Reader extends FormatReader {
     for (int i=0; i<getSeriesCount(); i++) {
       // populate Image data
       store.setImageName("Series " + (i + 1), i);
-      if (creationDate != null) store.setImageAcquiredDate(creationDate, i);
-      else MetadataTools.setDefaultCreationDate(store, id, i);
+      if (creationDate != null) store.setImageAcquisitionDate(
+          new Timestamp(creationDate), i);
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
@@ -912,11 +915,19 @@ public class FV1000Reader extends FormatReader {
         if (sizeX > 0) {
           store.setPixelsPhysicalSizeX(new PositiveFloat(sizeX), i);
         }
+        else {
+          LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+            sizeX);
+        }
       }
       if (pixelSizeY != null) {
         Double sizeY = new Double(pixelSizeY);
         if (sizeY > 0) {
           store.setPixelsPhysicalSizeY(new PositiveFloat(sizeY), i);
+        }
+        else {
+          LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+            sizeY);
         }
       }
       if (pixelSizeZ == Double.NEGATIVE_INFINITY ||
@@ -932,6 +943,10 @@ public class FV1000Reader extends FormatReader {
 
       if (pixelSizeZ > 0) {
         store.setPixelsPhysicalSizeZ(new PositiveFloat(pixelSizeZ), i);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}",
+          pixelSizeZ);
       }
       store.setPixelsTimeIncrement(pixelSizeT, i);
 
@@ -970,11 +985,19 @@ public class FV1000Reader extends FormatReader {
         store.setChannelEmissionWavelength(
           new PositiveInteger(channel.emWave), 0, channelIndex);
       }
+      else {
+        LOGGER.warn("Expected positive value for EmissionWavelength; got {}",
+          channel.emWave);
+      }
       if (channel.exWave.intValue() > 0) {
         store.setChannelExcitationWavelength(
           new PositiveInteger(channel.exWave), 0, channelIndex);
         store.setChannelLightSourceSettingsWavelength(
           new PositiveInteger(channel.exWave), 0, channelIndex);
+      }
+      else {
+        LOGGER.warn("Expected positive value for ExcitationWavelength; got {}",
+          channel.exWave);
       }
 
       // populate Filter data
@@ -989,10 +1012,22 @@ public class FV1000Reader extends FormatReader {
             emValues[i] = emValues[i].replaceAll("\\D", "");
           }
           try {
-            store.setTransmittanceRangeCutIn(
-              PositiveInteger.valueOf(emValues[0]), 0, channelIndex);
-            store.setTransmittanceRangeCutOut(
-              PositiveInteger.valueOf(emValues[1]), 0, channelIndex);
+            Integer cutIn = new Integer(emValues[0]);
+            Integer cutOut = new Integer(emValues[1]);
+            if (cutIn > 0) {
+              store.setTransmittanceRangeCutIn(
+                new PositiveInteger(cutIn), 0, channelIndex);
+            }
+            else {
+              LOGGER.warn("Expected positive value for CutIn; got {}", cutIn);
+            }
+            if (cutOut > 0) {
+              store.setTransmittanceRangeCutOut(
+                new PositiveInteger(cutOut), 0, channelIndex);
+            }
+            else {
+              LOGGER.warn("Expected positive value for CutOut; got {}", cutOut);
+            }
           }
           catch (NumberFormatException e) { }
         }
@@ -1019,8 +1054,14 @@ public class FV1000Reader extends FormatReader {
       store.setLaserLaserMedium(getLaserMedium(channel.dyeName),
         0, channelIndex);
       if (channelIndex < wavelengths.size()) {
-        store.setLaserWavelength(
-          new PositiveInteger(wavelengths.get(channelIndex)), 0, channelIndex);
+        if (wavelengths.get(channelIndex) > 0) {
+          store.setLaserWavelength(new PositiveInteger(
+            wavelengths.get(channelIndex)), 0, channelIndex);
+        }
+        else {
+          LOGGER.warn("Expected positive value for Wavelength; got {}",
+            wavelengths.get(channelIndex));
+        }
       }
       store.setLaserType(getLaserType("Other"), 0, channelIndex);
 
@@ -1036,6 +1077,10 @@ public class FV1000Reader extends FormatReader {
       if (mag > 0) {
         store.setObjectiveNominalMagnification(new PositiveInteger(mag), 0, 0);
       }
+      else {
+        LOGGER.warn("Expected positive value for NominalMagnification; got {}",
+          mag);
+      }
     }
     if (workingDistance != null) {
       store.setObjectiveWorkingDistance(new Double(workingDistance), 0, 0);
@@ -1046,7 +1091,7 @@ public class FV1000Reader extends FormatReader {
     // link Objective to Image using ObjectiveSettings
     String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
     store.setObjectiveID(objectiveID, 0, 0);
-    store.setImageObjectiveSettingsID(objectiveID, 0);
+    store.setObjectiveSettingsID(objectiveID, 0);
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.NO_OVERLAYS) {
       int nextROI = -1;
@@ -1142,8 +1187,14 @@ public class FV1000Reader extends FormatReader {
             store.setPointID(shapeID, nextROI, shape);
             store.setPointTheZ(new NonNegativeInteger(zIndex), nextROI, shape);
             store.setPointTheT(new NonNegativeInteger(tIndex), nextROI, shape);
-            store.setPointFontSize(
-              new NonNegativeInteger(fontSize), nextROI, shape);
+            if (fontSize > 0) {
+              store.setPointFontSize(
+                new NonNegativeInteger(fontSize), nextROI, shape);
+            }
+            else {
+              LOGGER.warn("Expected non-negative value for FontSize; got {}",
+                fontSize);
+            }
             store.setPointStrokeWidth(new Double(lineWidth), nextROI, shape);
 
             store.setPointX(new Double(xc[0]), nextROI, shape);
@@ -1169,16 +1220,23 @@ public class FV1000Reader extends FormatReader {
                   new NonNegativeInteger(zIndex), nextROI, shape);
                 store.setRectangleTheT(
                   new NonNegativeInteger(tIndex), nextROI, shape);
-                store.setRectangleFontSize(
-                  new NonNegativeInteger(fontSize), nextROI, shape);
+                if (fontSize > 0) {
+                  store.setRectangleFontSize(
+                    new NonNegativeInteger(fontSize), nextROI, shape);
+                }
+                else {
+                  LOGGER.warn(
+                    "Expected non-negative value for FontSize; got {}",
+                    fontSize);
+                }
                 store.setRectangleStrokeWidth(
                   new Double(lineWidth), nextROI, shape);
 
                 double centerX = realX + (width / 2);
                 double centerY = realY + (height / 2);
 
-                store.setRectangleTransform(String.format(ROTATION,
-                  angle, centerX, centerY), nextROI, shape);
+                store.setRectangleTransform(
+                  getRotationTransform(angle), nextROI, shape);
 
                 if (row < divide - 1 || col < divide - 1) shape++;
               }
@@ -1193,15 +1251,20 @@ public class FV1000Reader extends FormatReader {
 
             store.setLineTheZ(new NonNegativeInteger(zIndex), nextROI, shape);
             store.setLineTheT(new NonNegativeInteger(tIndex), nextROI, shape);
-            store.setLineFontSize(
-              new NonNegativeInteger(fontSize), nextROI, shape);
+            if (fontSize > 0) {
+              store.setLineFontSize(
+                new NonNegativeInteger(fontSize), nextROI, shape);
+            }
+            else {
+              LOGGER.warn("Expected non-negative value for FontSize; got {}",
+                fontSize);
+            }
             store.setLineStrokeWidth(new Double(lineWidth), nextROI, shape);
 
             int centerX = x + (width / 2);
             int centerY = y + (height / 2);
 
-            store.setLineTransform(String.format(ROTATION,
-              angle, (float) centerX, (float) centerY), nextROI, shape);
+            store.setLineTransform(getRotationTransform(angle), nextROI, shape);
           }
           else if (shapeType == CIRCLE || shapeType == ELLIPSE) {
             double rx = width / 2;
@@ -1216,11 +1279,17 @@ public class FV1000Reader extends FormatReader {
                 new NonNegativeInteger(zIndex), nextROI, shape);
             store.setEllipseTheT(
                 new NonNegativeInteger(tIndex), nextROI, shape);
-            store.setEllipseFontSize(
+            if (fontSize > 0) {
+              store.setEllipseFontSize(
                 new NonNegativeInteger(fontSize), nextROI, shape);
+            }
+            else {
+              LOGGER.warn("Expected non-negative value for FontSize; got {}",
+                fontSize);
+            }
             store.setEllipseStrokeWidth(new Double(lineWidth), nextROI, shape);
-            store.setEllipseTransform(String.format(ROTATION,
-              angle, x + rx, y + ry), nextROI, shape);
+            store.setEllipseTransform(
+              getRotationTransform(angle), nextROI, shape);
           }
           else if (shapeType == POLYGON || shapeType == FREE_SHAPE ||
             shapeType == POLYLINE || shapeType == FREE_LINE)
@@ -1232,18 +1301,45 @@ public class FV1000Reader extends FormatReader {
               points.append(yc[point]);
               if (point < xc.length - 1) points.append(" ");
             }
-            store.setPolylineID(shapeID, nextROI, shape);
-            store.setPolylinePoints(points.toString(), nextROI, shape);
-            store.setPolylineTransform("rotate(" + angle + ")", nextROI, shape);
-            store.setPolylineClosed(
-              shapeType == POLYGON || shapeType == FREE_SHAPE, nextROI, shape);
-            store.setPolylineTheZ(
-                new NonNegativeInteger(zIndex), nextROI, shape);
-            store.setPolylineTheT(
-                new NonNegativeInteger(tIndex), nextROI, shape);
-            store.setPolylineFontSize(
-                new NonNegativeInteger(fontSize), nextROI, shape);
-            store.setPolylineStrokeWidth(new Double(lineWidth), nextROI, shape);
+            if (shapeType == POLYLINE || shapeType == FREE_LINE) {
+              store.setPolylineID(shapeID, nextROI, shape);
+              store.setPolylinePoints(points.toString(), nextROI, shape);
+              store.setPolylineTransform(
+                getRotationTransform(angle), nextROI, shape);
+              store.setPolylineTheZ(
+                  new NonNegativeInteger(zIndex), nextROI, shape);
+              store.setPolylineTheT(
+                  new NonNegativeInteger(tIndex), nextROI, shape);
+              if (fontSize > 0) {
+                store.setPolylineFontSize(
+                  new NonNegativeInteger(fontSize), nextROI, shape);
+              }
+              else {
+                LOGGER.warn("Expected non-negative value for FontSize; got {}",
+                  fontSize);
+              }
+              store.setPolylineStrokeWidth(
+                new Double(lineWidth), nextROI, shape);
+            }
+            else {
+              store.setPolygonID(shapeID, nextROI, shape);
+              store.setPolygonPoints(points.toString(), nextROI, shape);
+              store.setPolygonTransform(
+                getRotationTransform(angle), nextROI, shape);
+              store.setPolygonTheZ(
+                  new NonNegativeInteger(zIndex), nextROI, shape);
+              store.setPolygonTheT(
+                  new NonNegativeInteger(tIndex), nextROI, shape);
+              if (fontSize > 0) {
+                store.setPolygonFontSize(
+                  new NonNegativeInteger(fontSize), nextROI, shape);
+              }
+              else {
+                LOGGER.warn("Expected non-negative value for FontSize; got {}",
+                  fontSize);
+              }
+              store.setPolygonStrokeWidth(new Double(lineWidth), nextROI, shape);
+            }
           }
           else {
             if (shape == 0) nextROI--;

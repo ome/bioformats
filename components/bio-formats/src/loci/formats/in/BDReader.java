@@ -1,38 +1,42 @@
-//
-// BDReader.java
-//
-
 /*
-OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
-Copyright (C) 2009-@year@ Vanderbilt Integrative Cancer Center.
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ * #%L
+ * OME Bio-Formats package for reading and converting biological file formats.
+ * %%
+ * Copyright (C) 2005 - 2012 Vanderbilt Integrative Cancer Center, and
+ * Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 2 of the 
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public 
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-2.0.html>.
+ * #L%
+ */
 
 package loci.formats.in;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Vector;
 
+import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.IniList;
@@ -198,16 +202,26 @@ public class BDReader extends FormatReader {
     int fieldCol = field % fieldCols;
 
     if (file != null) {
-      reader.setId(file);
-      if (fieldRows * fieldCols == 1) {
-        reader.openBytes(0, buf, x, y, w, h);
+      try {
+        reader.setId(file);
+        if (fieldRows * fieldCols == 1) {
+          reader.openBytes(0, buf, x, y, w, h);
+        }
+        else {
+          // fields are stored together in a single image,
+          // so we need to split them up
+          int fx = x + (fieldCol * getSizeX());
+          int fy = y + (fieldRow * getSizeY());
+          reader.openBytes(0, buf, fx, fy, w, h);
+        }
       }
-      else {
-        // fields are stored together in a single image,
-        // so we need to split them up
-        int fx = x + (fieldCol * getSizeX());
-        int fy = y + (fieldRow * getSizeY());
-        reader.openBytes(0, buf, fx, fy, w, h);
+      catch (FormatException e) {
+        LOGGER.debug("Could not read file " + file, e);
+        return buf;
+      }
+      catch (IOException e) {
+        LOGGER.debug("Could not read file " + file, e);
+        return buf;
       }
     }
 
@@ -329,8 +343,14 @@ public class BDReader extends FormatReader {
 
     String plateAcqID = MetadataTools.createLSID("PlateAcquisition", 0, 0);
     store.setPlateAcquisitionID(plateAcqID, 0, 0);
-    store.setPlateAcquisitionMaximumFieldCount(
-      new PositiveInteger(fieldRows * fieldCols), 0, 0);
+    if (fieldRows * fieldCols > 0) {
+      store.setPlateAcquisitionMaximumFieldCount(
+        new PositiveInteger(fieldRows * fieldCols), 0, 0);
+    }
+    else {
+      LOGGER.warn("Expected positive value for MaximumFieldCount; got {}",
+        fieldRows * fieldCols);
+    }
 
     for (int row=0; row<wellRows; row++) {
       for (int col=0; col<wellCols; col++) {
@@ -387,8 +407,16 @@ public class BDReader extends FormatReader {
           }
         }
 
-        store.setObjectiveNominalMagnification(
-          PositiveInteger.valueOf(mag), 0, 0);
+        Integer magnification = new Integer(mag);
+        if (magnification > 0) {
+          store.setObjectiveNominalMagnification(
+            new PositiveInteger(magnification), 0, 0);
+        }
+        else {
+          LOGGER.warn(
+            "Expected positive value for NominalMagnification; got {}",
+            magnification);
+        }
         if (na != null) {
           na = na.substring(0, 1) + "." + na.substring(1);
           store.setObjectiveLensNA(new Double(na), 0, 0);
@@ -401,14 +429,28 @@ public class BDReader extends FormatReader {
       // populate LogicalChannel data
       for (int i=0; i<getSeriesCount(); i++) {
         store.setImageInstrumentRef(instrumentID, i);
-        store.setImageObjectiveSettingsID(objectiveID, i);
+        store.setObjectiveSettingsID(objectiveID, i);
 
         for (int c=0; c<getSizeC(); c++) {
           store.setChannelName(channelNames.get(c), i, c);
-          store.setChannelEmissionWavelength(
-            new PositiveInteger(emWave[c]), i, c);
-          store.setChannelExcitationWavelength(
-            new PositiveInteger(exWave[c]), i, c);
+          if (emWave[c] > 0) {
+            store.setChannelEmissionWavelength(
+              new PositiveInteger(emWave[c]), i, c);
+          }
+          else {
+            LOGGER.warn(
+              "Expected positive value for EmissionWavelength; got {}",
+              emWave[c]);
+          }
+          if (exWave[c] > 0) {
+            store.setChannelExcitationWavelength(
+              new PositiveInteger(exWave[c]), i, c);
+          }
+          else {
+            LOGGER.warn(
+              "Expected positive value for ExcitationWavelength; got {}",
+              exWave[c]);
+          }
 
           String detectorID = MetadataTools.createLSID("Detector", 0, c);
           store.setDetectorID(detectorID, 0, c);
@@ -467,12 +509,14 @@ public class BDReader extends FormatReader {
 
   private IniList readMetaData(String id) throws IOException {
     IniParser parser = new IniParser();
-    IniList exp = parser.parseINI(new BufferedReader(new FileReader(id)));
+    IniList exp = parser.parseINI(new BufferedReader(new InputStreamReader(
+      new FileInputStream(id), Constants.ENCODING)));
     IniList plate = null;
     // Read Plate File
     for (String filename : metadataFiles) {
       if (checkSuffix(filename, "plt")) {
-        plate = parser.parseINI(new BufferedReader(new FileReader(filename)));
+        plate = parser.parseINI(new BufferedReader(new InputStreamReader(
+          new FileInputStream(filename), Constants.ENCODING)));
       }
       else if (filename.endsWith("RoiSummary.txt")) {
         roiFile = filename;
@@ -585,8 +629,9 @@ public class BDReader extends FormatReader {
 
     for (int c=0; c<channelNames.size(); c++) {
       Location dyeFile = new Location(dir, channelNames.get(c) + ".dye");
-      IniList dye = new IniParser().parseINI(
-        new BufferedReader(new FileReader(dyeFile.getAbsolutePath())));
+      FileInputStream stream = new FileInputStream(dyeFile.getAbsolutePath());
+      IniList dye = new IniParser().parseINI(new BufferedReader(
+        new InputStreamReader(stream, Constants.ENCODING)));
 
       IniTable numerator = dye.getTable("Numerator");
       String em = numerator.get("Emission");

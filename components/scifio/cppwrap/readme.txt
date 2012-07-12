@@ -22,8 +22,7 @@ To build the Bio-Formats C++ bindings, the following modules are required:
 ==> Apache Maven -- http://maven.apache.org/
 Maven is a software project management and comprehension tool. Along with Ant,
 it is one of the supported build systems for the Bio-Formats Java library, and
-is used to generate the Bio-Formats C++ bindings. Note that the generation
-process requires Maven 2.x -- the process will fail with Maven 3.x.
+is used to generate the Bio-Formats C++ bindings.
 
 ==> CMake -- http://www.cmake.org/
 CMake is a cross-platform, open source build system generator, commonly used to
@@ -52,7 +51,7 @@ HOW TO BUILD
 The process of building the Bio-Formats C++ bindings is divided into two steps:
 
 1) Generate a C++ project consisting of "proxies" which wrap the Java code.
-   This step utilizes the Maven 2 project management tool, specifically a
+   This step utilizes the Maven project management tool, specifically a
    Maven plugin called cppwrap.
 
 2) Compile this generated C++ project. This step utilizes the cross-platform
@@ -74,13 +73,13 @@ If all goes well, the build system will:
 
 Please be patient, as the build may require several minutes to complete.
 
-Afterwards, the dist/bio-formats subdirectory will contain the following files:
+Afterwards, the dist/scifio subdirectory will contain the following files:
 
 1) libjace.so / libjace.jnilib / jace.dll :
      Jace shared library
 
-2) libbio-formats.so / libbio-formats.dylib / bio-formats.dll :
-     Bio-Formats C++ shared library
+2) libscifio.so / libscifio.dylib / scifio.dll :
+     SCIFIO C++ shared library
 
 3) jace-runtime.jar :
      Jace Java classes needed at runtime
@@ -108,4 +107,6 @@ individual JAR files as appropriate for your application. For details, see:
 
   http://www.loci.wisc.edu/bio-formats/bio-formats-java-library
 
-Please direct questions to the Bio-Formats team at bioformats@loci.wisc.edu.
+Please direct any questions to the Bio-Formats team:
+
+  http://loci.wisc.edu/bio-formats/contact

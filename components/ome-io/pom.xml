@@ -7,8 +7,9 @@
 
   <parent>
     <groupId>loci</groupId>
-    <artifactId>bio-formats-base</artifactId>
-    <version>4.4-SNAPSHOT</version>
+    <artifactId>pom-scifio</artifactId>
+    <version>4.4.0</version>
+    <relativePath>../..</relativePath>
   </parent>
 
   <artifactId>ome-io</artifactId>
@@ -28,12 +29,17 @@
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>scifio</artifactId>
+      <artifactId>loci-common</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>loci-common</artifactId>
+      <artifactId>ome-xml</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>scifio</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -55,13 +61,6 @@
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
       <version>1.5.10</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <version>1.5.10</version>
-      <scope>runtime</scope>
     </dependency>
 
     <dependency>
@@ -93,6 +92,14 @@
           </suiteXmlFiles>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <configuration>
+          <licenseName>gpl_v2</licenseName>
+          <projectName>OME database I/O package for communicating with OME and OMERO servers.</projectName>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 
@@ -117,7 +124,7 @@
       <id>melissa</id>
       <name>Melissa Linkert</name>
       <email>melissa.linkert@glencoesoftware.com</email>
-      <url>http://openmicroscopy.org/site/about/development-teams/glencoe-software</url>
+      <url>http://www.openmicroscopy.org/site/about/development-teams/glencoe-software</url>
       <organization>Glencoe Software</organization>
       <organizationUrl>http://glencoesoftware.com/</organizationUrl>
       <roles>
@@ -126,10 +133,23 @@
       </roles>
       <timezone>-6</timezone>
       <properties>
-        <picUrl>http://openmicroscopy.org/site/about/development-teams/glencoe-software/melissalinkert.png</picUrl>
+        <picUrl>http://www.openmicroscopy.org/site/about/development-teams/glencoe-software/melissalinkert.png</picUrl>
       </properties>
     </developer>
   </developers>
+
+  <contributors>
+    <contributor>
+      <name>Phillip Huettl</name>
+      <url>http://loci.wisc.edu/people/phillip-huettl</url>
+      <organization>UW-Madison LOCI</organization>
+      <organizationUrl>http://loci.wisc.edu/</organizationUrl>
+      <roles>
+        <role>developer</role>
+      </roles>
+      <timezone>-6</timezone>
+    </contributor>
+  </contributors>
 
   <!-- NB: for project parent, in case of partial checkout -->
   <repositories>

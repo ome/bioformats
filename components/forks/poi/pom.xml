@@ -7,8 +7,9 @@
 
   <parent>
     <groupId>loci</groupId>
-    <artifactId>bio-formats-base</artifactId>
-    <version>4.4-SNAPSHOT</version>
+    <artifactId>pom-scifio</artifactId>
+    <version>4.4.0</version>
+    <relativePath>../../..</relativePath>
   </parent>
 
   <artifactId>poi-loci</artifactId>
@@ -16,6 +17,7 @@
   <name>Apache Jakarta POI</name>
   <description>Java API to handle Microsoft OLE 2 Compound Document format (Word, Excel). Based on poi-2.5.1-final-20040804.jar, with bugfixes for OLE v2 and memory efficiency improvements. Used by Bio-Formats for OLE support (cxd, ipw, oib, zvi). Used by VisBio overlays logic for XLS export feature.</description>
   <url>http://jakarta.apache.org/poi/</url>
+  <inceptionYear>2008</inceptionYear>
 
   <licenses>
     <license>
@@ -38,12 +40,25 @@
     </dependency>
   </dependencies>
 
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <configuration>
+          <licenseName>apache_v2</licenseName>
+          <projectName>Fork of Apache Jakarta POI.</projectName>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
   <developers>
     <developer>
       <id>melissa</id>
       <name>Melissa Linkert</name>
       <email>melissa.linkert@glencoesoftware.com</email>
-      <url>http://openmicroscopy.org/site/about/development-teams/glencoe-software</url>
+      <url>http://www.openmicroscopy.org/site/about/development-teams/glencoe-software</url>
       <organization>Glencoe Software</organization>
       <organizationUrl>http://glencoesoftware.com/</organizationUrl>
       <roles>
@@ -52,7 +67,7 @@
       </roles>
       <timezone>-6</timezone>
       <properties>
-        <picUrl>http://openmicroscopy.org/site/about/development-teams/glencoe-software/melissalinkert.png</picUrl>
+        <picUrl>http://www.openmicroscopy.org/site/about/development-teams/glencoe-software/melissalinkert.png</picUrl>
       </properties>
     </developer>
   </developers>

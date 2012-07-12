@@ -1,25 +1,27 @@
-//
-// InCellReader.java
-//
-
 /*
-OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ * #%L
+ * OME Bio-Formats package for reading and converting biological file formats.
+ * %%
+ * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 2 of the 
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public 
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-2.0.html>.
+ * #L%
+ */
 
 package loci.formats.in;
 
@@ -31,6 +33,7 @@ import java.util.Vector;
 import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.common.xml.BaseHandler;
 import loci.common.xml.XMLTools;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
@@ -38,10 +41,11 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 
 import ome.xml.model.primitives.NonNegativeInteger;
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
@@ -444,8 +448,14 @@ public class InCellReader extends FormatReader {
 
     String plateAcqID = MetadataTools.createLSID("PlateAcquisition", 0, 0);
     store.setPlateAcquisitionID(plateAcqID, 0, 0);
-    store.setPlateAcquisitionMaximumFieldCount(
-      new PositiveInteger(fieldCount), 0, 0);
+    if (fieldCount > 0) {
+      store.setPlateAcquisitionMaximumFieldCount(
+        new PositiveInteger(fieldCount), 0, 0);
+    }
+    else {
+      LOGGER.warn("Expected positive value for MaximumFieldCount; got {}",
+        fieldCount);
+    }
 
     // populate Image data
 
@@ -490,7 +500,9 @@ public class InCellReader extends FormatReader {
       }
 
       store.setImageName(imageName, i);
-      store.setImageAcquiredDate(creationDate, i);
+      if (creationDate != null) {
+        store.setImageAcquisitionDate(new Timestamp(creationDate), i);
+      }
 
       timepoint--;
       if (timepoint < 0) timepoint = 0;
@@ -550,12 +562,21 @@ public class InCellReader extends FormatReader {
               store.setChannelEmissionWavelength(
                 new PositiveInteger(wave), i, q);
             }
+            else {
+              LOGGER.warn(
+                "Expected positive value for EmissionWavelength; got {}", wave);
+            }
           }
           if (q < exWaves.size()) {
             int wave = exWaves.get(q).intValue();
             if (wave > 0) {
               store.setChannelExcitationWavelength(
                 new PositiveInteger(wave), i, q);
+            }
+            else {
+              LOGGER.warn(
+                "Expected positive value for ExcitationWavelength; got {}",
+                wave);
             }
           }
         }
@@ -597,7 +618,7 @@ public class InCellReader extends FormatReader {
 
   // -- Helper classes --
 
-  class MinimalInCellHandler extends DefaultHandler {
+  class MinimalInCellHandler extends BaseHandler {
     private String currentImageFile;
     private String currentThumbnail;
     private int wellRow, wellCol;
@@ -736,7 +757,7 @@ public class InCellReader extends FormatReader {
   }
 
   /** SAX handler for parsing XML. */
-  class InCellHandler extends DefaultHandler {
+  class InCellHandler extends BaseHandler {
     private String currentQName;
     private boolean openImage;
     private int nextEmWave = 0;
@@ -824,8 +845,16 @@ public class InCellReader extends FormatReader {
         creationDate = date + "T" + time;
       }
       else if (qName.equals("ObjectiveCalibration")) {
-        store.setObjectiveNominalMagnification(new PositiveInteger((int)
-          Double.parseDouble(attributes.getValue("magnification"))), 0, 0);
+        int mag =
+          (int) Double.parseDouble(attributes.getValue("magnification"));
+        if (mag > 0) {
+          store.setObjectiveNominalMagnification(
+            new PositiveInteger(mag), 0, 0);
+        }
+        else {
+          LOGGER.warn(
+            "Expected positive value for NominalMagnification; got {}", mag);
+        }
         store.setObjectiveLensNA(new Double(
           attributes.getValue("numerical_aperture")), 0, 0);
         try {
@@ -855,10 +884,22 @@ public class InCellReader extends FormatReader {
         String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
         store.setObjectiveID(objectiveID, 0, 0);
         for (int i=0; i<getSeriesCount(); i++) {
-          store.setImageObjectiveSettingsID(objectiveID, i);
-          store.setImageObjectiveSettingsRefractiveIndex(refractive, i);
-          store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSizeX), i);
-          store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSizeY), i);
+          store.setObjectiveSettingsID(objectiveID, i);
+          store.setObjectiveSettingsRefractiveIndex(refractive, i);
+          if (pixelSizeX > 0) {
+            store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSizeX), i);
+          }
+          else {
+            LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+              pixelSizeX);
+          }
+          if (pixelSizeY > 0) {
+            store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSizeY), i);
+          }
+          else {
+            LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+              pixelSizeY);
+          }
         }
       }
       else if (qName.equals("ExcitationFilter")) {
@@ -907,14 +948,19 @@ public class InCellReader extends FormatReader {
         if (value == null) {
           return;
         }
-        Double gain = new Double(value);
-        for (int i=0; i<getSeriesCount(); i++) {
-          setSeries(i);
-          for (int q=0; q<getSizeC(); q++) {
-            store.setDetectorSettingsGain(gain, i, q);
+        try {
+          Double gain = new Double(value);
+          for (int i=0; i<getSeriesCount(); i++) {
+            setSeries(i);
+            for (int q=0; q<getSizeC(); q++) {
+              store.setDetectorSettingsGain(gain, i, q);
+            }
           }
+          setSeries(0);
         }
-        setSeries(0);
+        catch (NumberFormatException e) {
+          LOGGER.debug("Could not parse gain '" + value + "'", e);
+        }
       }
       else if (qName.equals("PlateTemperature")) {
         Double temperature = new Double(attributes.getValue("value"));

@@ -1,25 +1,27 @@
-//
-// FEITiffReader.java
-//
-
 /*
-OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ * #%L
+ * OME Bio-Formats package for reading and converting biological file formats.
+ * %%
+ * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 2 of the 
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public 
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-2.0.html>.
+ * #L%
+ */
 
 package loci.formats.in;
 
@@ -34,13 +36,19 @@ import loci.common.IniList;
 import loci.common.IniParser;
 import loci.common.IniTable;
 import loci.common.RandomAccessInputStream;
+import loci.common.xml.BaseHandler;
+import loci.common.xml.XMLTools;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
+import ome.xml.model.primitives.PositiveFloat;
+import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
+
+import org.xml.sax.Attributes;
 
 /**
  * FEITiffReader is the file format reader for TIFF files produced by various
@@ -70,6 +78,7 @@ public class FEITiffReader extends BaseTiffReader {
   private Double stageX, stageY, stageZ;
   private Double sizeX, sizeY, timeIncrement;
   private ArrayList<String> detectors;
+  private int magnification;
 
   // -- Constructor --
 
@@ -101,6 +110,7 @@ public class FEITiffReader extends BaseTiffReader {
       stageX = stageY = stageZ = null;
       sizeX = sizeY = timeIncrement = null;
       detectors = null;
+      magnification = 0;
     }
   }
 
@@ -114,96 +124,102 @@ public class FEITiffReader extends BaseTiffReader {
     addGlobalMeta("Software", helios ? "Helios NanoLab" : "S-FEG");
 
     String tag = ifds.get(0).getIFDTextValue(helios ? HELIOS_TAG : SFEG_TAG);
-
-    IniParser parser = new IniParser();
-    IniList ini = parser.parseINI(new BufferedReader(new StringReader(tag)));
-    detectors = new ArrayList<String>();
+    tag = tag.trim();
 
     // store metadata for later conversion to OME-XML
-    if (helios) {
-      IniTable userTable = ini.getTable("User");
-      date = userTable.get("Date") + " " + userTable.get("Time");
-
-      if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-        userName = userTable.get("User");
-
-        IniTable systemTable = ini.getTable("System");
-        if (systemTable == null) {
-          systemTable = ini.getTable("SYSTEM");
-        }
-        if (systemTable != null) {
-          microscopeModel = systemTable.get("SystemType");
-        }
-
-        IniTable beamTable = ini.getTable("Beam");
-        if (beamTable != null) {
-          String beamTableName = beamTable.get("Beam");
-          if (beamTableName != null) {
-            beamTable = ini.getTable(beamTableName);
-          }
-        }
-
-        if (beamTable != null) {
-          String beamX = beamTable.get("StageX");
-          String beamY = beamTable.get("StageY");
-          String beamZ = beamTable.get("StageZ");
-          IniTable stageTable = ini.getTable("Stage");
-
-          if (beamX != null) {
-            stageX = new Double(beamX);
-          }
-          else if (stageTable != null) {
-            stageX = new Double(stageTable.get("StageX"));
-          }
-
-          if (beamY != null) {
-            stageY = new Double(beamY);
-          }
-          else if (stageTable != null) {
-            stageY = new Double(stageTable.get("StageY"));
-          }
-
-          if (beamZ != null) {
-            stageZ = new Double(beamZ);
-          }
-          else if (stageTable != null) {
-            stageZ = new Double(stageTable.get("StageZ"));
-          }
-        }
-
-        IniTable scanTable = ini.getTable("Scan");
-        // physical sizes are stored in meters
-        sizeX = new Double(scanTable.get("PixelWidth")) * 1000000;
-        sizeY = new Double(scanTable.get("PixelHeight")) * 1000000;
-        timeIncrement = new Double(scanTable.get("FrameTime"));
-      }
+    if (tag.startsWith("<")) {
+      XMLTools.parseXML(tag, new FEIHandler());
     }
     else {
-      IniTable dataTable = ini.getTable("DatabarData");
-      imageName = dataTable.get("ImageName");
-      imageDescription = dataTable.get("szUserText");
+      IniParser parser = new IniParser();
+      IniList ini = parser.parseINI(new BufferedReader(new StringReader(tag)));
+      detectors = new ArrayList<String>();
 
-      String magnification = ini.getTable("Vector").get("Magnification");
-      sizeX = new Double(magnification) * MAG_MULTIPLIER;
-      sizeY = new Double(magnification) * MAG_MULTIPLIER;
+      if (helios) {
+        IniTable userTable = ini.getTable("User");
+        date = userTable.get("Date") + " " + userTable.get("Time");
 
-      IniTable scanTable = ini.getTable("Vector.Sysscan");
-      stageX = new Double(scanTable.get("PositionX"));
-      stageY = new Double(scanTable.get("PositionY"));
+        if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
+          userName = userTable.get("User");
 
-      IniTable detectorTable = ini.getTable("Vector.Video.Detectors");
-      int detectorCount =
-        Integer.parseInt(detectorTable.get("NrDetectorsConnected"));
-      for (int i=0; i<detectorCount; i++) {
-        detectors.add(detectorTable.get("Detector_" + i + "_Name"));
+          IniTable systemTable = ini.getTable("System");
+          if (systemTable == null) {
+            systemTable = ini.getTable("SYSTEM");
+          }
+          if (systemTable != null) {
+            microscopeModel = systemTable.get("SystemType");
+          }
+
+          IniTable beamTable = ini.getTable("Beam");
+          if (beamTable != null) {
+            String beamTableName = beamTable.get("Beam");
+            if (beamTableName != null) {
+              beamTable = ini.getTable(beamTableName);
+            }
+          }
+
+          if (beamTable != null) {
+            String beamX = beamTable.get("StageX");
+            String beamY = beamTable.get("StageY");
+            String beamZ = beamTable.get("StageZ");
+            IniTable stageTable = ini.getTable("Stage");
+
+            if (beamX != null) {
+              stageX = new Double(beamX);
+            }
+            else if (stageTable != null) {
+              stageX = new Double(stageTable.get("StageX"));
+            }
+
+            if (beamY != null) {
+              stageY = new Double(beamY);
+            }
+            else if (stageTable != null) {
+              stageY = new Double(stageTable.get("StageY"));
+            }
+
+            if (beamZ != null) {
+              stageZ = new Double(beamZ);
+            }
+            else if (stageTable != null) {
+              stageZ = new Double(stageTable.get("StageZ"));
+            }
+          }
+
+          IniTable scanTable = ini.getTable("Scan");
+          // physical sizes are stored in meters
+          sizeX = new Double(scanTable.get("PixelWidth")) * 1000000;
+          sizeY = new Double(scanTable.get("PixelHeight")) * 1000000;
+          timeIncrement = new Double(scanTable.get("FrameTime"));
+        }
       }
-    }
+      else {
+        IniTable dataTable = ini.getTable("DatabarData");
+        imageName = dataTable.get("ImageName");
+        imageDescription = dataTable.get("szUserText");
 
-    // store everything else in the metadata hashtable
+        String magnification = ini.getTable("Vector").get("Magnification");
+        sizeX = new Double(magnification) * MAG_MULTIPLIER;
+        sizeY = new Double(magnification) * MAG_MULTIPLIER;
 
-    if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-      HashMap<String, String> iniMap = ini.flattenIntoHashMap();
-      metadata.putAll(iniMap);
+        IniTable scanTable = ini.getTable("Vector.Sysscan");
+        stageX = new Double(scanTable.get("PositionX"));
+        stageY = new Double(scanTable.get("PositionY"));
+
+        IniTable detectorTable = ini.getTable("Vector.Video.Detectors");
+        int detectorCount =
+          Integer.parseInt(detectorTable.get("NrDetectorsConnected"));
+        for (int i=0; i<detectorCount; i++) {
+          detectors.add(detectorTable.get("Detector_" + i + "_Name"));
+        }
+      }
+
+      // store everything else in the metadata hashtable
+
+      if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
+        HashMap<String, String> iniMap = ini.flattenIntoHashMap();
+        metadata.putAll(iniMap);
+      }
     }
   }
 
@@ -214,9 +230,11 @@ public class FEITiffReader extends BaseTiffReader {
     MetadataTools.populatePixels(store, this);
 
     if (date != null) {
-      store.setImageAcquiredDate(DateTools.formatDate(date, DATE_FORMAT), 0);
+      date = DateTools.formatDate(date, DATE_FORMAT);
+      if (date != null) {
+        store.setImageAcquisitionDate(new Timestamp(date), 0);
+      }
     }
-    else MetadataTools.setDefaultCreationDate(store, currentId, 0);
 
     if (imageName != null) {
       store.setImageName(imageName, 0);
@@ -228,7 +246,7 @@ public class FEITiffReader extends BaseTiffReader {
       }
       if (userName != null) {
         store.setExperimenterID(MetadataTools.createLSID("Experimenter", 0), 0);
-        store.setExperimenterDisplayName(userName, 0);
+        store.setExperimenterLastName(userName, 0);
       }
       if (microscopeModel != null) {
         String instrument = MetadataTools.createLSID("Instrument", 0);
@@ -236,7 +254,7 @@ public class FEITiffReader extends BaseTiffReader {
         store.setImageInstrumentRef(instrument, 0);
         store.setMicroscopeModel(microscopeModel, 0);
       }
-      if (detectors.size() > 0) {
+      if (detectors != null && detectors.size() > 0) {
         String instrument = MetadataTools.createLSID("Instrument", 0);
         store.setInstrumentID(instrument, 0);
         store.setImageInstrumentRef(instrument, 0);
@@ -248,15 +266,81 @@ public class FEITiffReader extends BaseTiffReader {
           store.setDetectorType(getDetectorType("Other"), 0, i);
         }
       }
+      if (magnification > 0) {
+        store.setObjectiveID(MetadataTools.createLSID("Objective", 0, 0), 0, 0);
+        store.setObjectiveNominalMagnification(
+          new PositiveInteger(magnification), 0, 0);
+        store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
+        store.setObjectiveImmersion(getImmersion("Other"), 0, 0);
+      }
 
       store.setStageLabelX(stageX, 0);
       store.setStageLabelY(stageY, 0);
       store.setStageLabelZ(stageZ, 0);
       store.setStageLabelName("", 0);
-      store.setPixelsPhysicalSizeX(new PositiveFloat(sizeX), 0);
-      store.setPixelsPhysicalSizeY(new PositiveFloat(sizeY), 0);
+      if (sizeX != null && sizeX > 0) {
+        store.setPixelsPhysicalSizeX(new PositiveFloat(sizeX), 0);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}", sizeX);
+      }
+      if (sizeY != null && sizeY > 0) {
+        store.setPixelsPhysicalSizeY(new PositiveFloat(sizeY), 0);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}", sizeY);
+      }
       store.setPixelsTimeIncrement(timeIncrement, 0);
     }
+  }
+
+  // -- Helper class --
+
+  class FEIHandler extends BaseHandler {
+    private String key, value;
+    private String qName;
+
+    // -- DefaultHandler API methods --
+
+    public void characters(char[] data, int start, int len) {
+      if (qName.equals("Label")) {
+        key = new String(data, start, len);
+        value = null;
+      }
+      else if (qName.equals("Value")) {
+        value = new String(data, start, len);
+      }
+
+      if (key != null && value != null) {
+        addGlobalMeta(key, value);
+
+        if (key.equals("Stage X")) {
+          stageX = new Double(value);
+        }
+        else if (key.equals("Stage Y")) {
+          stageY = new Double(value);
+        }
+        else if (key.equals("Stage Z")) {
+          stageZ = new Double(value);
+        }
+        else if (key.equals("Microscope")) {
+          microscopeModel = value;
+        }
+        else if (key.equals("User")) {
+          userName = value;
+        }
+        else if (key.equals("Magnification")) {
+          magnification = (int) Double.parseDouble(value);
+        }
+      }
+    }
+
+    public void startElement(String uri, String localName, String qName,
+      Attributes attributes)
+    {
+      this.qName = qName;
+    }
+
   }
 
 }

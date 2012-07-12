@@ -1,25 +1,38 @@
-//
-// FileStitcher.java
-//
-
 /*
-OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ * #%L
+ * OME SCIFIO package for reading and converting scientific file formats.
+ * %%
+ * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ * 
+ * The views and conclusions contained in the software and documentation are
+ * those of the authors and should not be interpreted as representing official
+ * policies, either expressed or implied, of any organization.
+ * #L%
+ */
 
 package loci.formats;
 
@@ -34,6 +47,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
+import loci.common.DataTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.formats.in.DefaultMetadataOptions;
@@ -441,7 +455,7 @@ public class FileStitcher extends ReaderWrapper {
   {
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
     int ch = getRGBChannelCount();
-    byte[] buf = new byte[w * h * ch * bpp];
+    byte[] buf = DataTools.allocate(w, h, ch, bpp);
     return openBytes(no, buf, x, y, w, h);
   }
 
@@ -605,6 +619,23 @@ public class FileStitcher extends ReaderWrapper {
       for (String file : f) {
         if (!files.contains(file)) files.add(file);
       }
+
+      DimensionSwapper[] readers = s.getReaders();
+      for (int i=0; i<readers.length; i++) {
+        try {
+          readers[i].setId(f[i]);
+          String[] used = readers[i].getUsedFiles();
+          for (String file : used) {
+            if (!files.contains(file)) files.add(file);
+          }
+        }
+        catch (FormatException e) {
+          LOGGER.debug("", e);
+        }
+        catch (IOException e) {
+          LOGGER.debug("", e);
+        }
+      }
     }
     return files.toArray(new String[files.size()]);
   }
@@ -762,7 +793,7 @@ public class FileStitcher extends ReaderWrapper {
       // reader subclass is handling file grouping
       noStitch = true;
       reader.close();
-      reader.setGroupFiles(true);
+      reader.setGroupFiles(group);
 
       if (patternIds && fp.isValid()) {
         reader.setId(fp.getFiles()[0]);
@@ -785,7 +816,7 @@ public class FileStitcher extends ReaderWrapper {
     fp = new FilePattern(patterns[0]);
 
     reader.close();
-    reader.setGroupFiles(false);
+    reader.setGroupFiles(group);
 
     if (!fp.isValid()) {
       throw new FormatException("Invalid file pattern: " + fp.getPattern());
@@ -798,7 +829,9 @@ public class FileStitcher extends ReaderWrapper {
         "multiple files and each file contains multiple series." + msg);
     }
 
-    if (reader.getUsedFiles().length > 1) {
+    int nPixelsFiles =
+      reader.getUsedFiles().length - reader.getUsedFiles(true).length;
+    if (nPixelsFiles > 1 || fp.getFiles().length == 1) {
       noStitch = true;
       return;
     }

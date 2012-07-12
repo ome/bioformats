@@ -1,40 +1,37 @@
-//
-// Configuration.java
-//
-
 /*
-LOCI software automated test suite for TestNG. Copyright (C) 2007-@year@
-Melissa Linkert and Curtis Rueden. All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-  * Redistributions of source code must retain the above copyright
-    notice, this list of conditions and the following disclaimer.
-  * Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
-  * Neither the name of the UW-Madison LOCI nor the names of its
-    contributors may be used to endorse or promote products derived from
-    this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE UW-MADISON LOCI ``AS IS'' AND ANY
-EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS BE LIABLE FOR ANY
-DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
+ * #%L
+ * OME Bio-Formats manual and automated test suite.
+ * %%
+ * Copyright (C) 2006 - 2012 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 2 of the 
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public 
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-2.0.html>.
+ * #L%
+ */
 
 package loci.tests.testng;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.FileReader;
+import java.io.InputStreamReader;
 import java.io.IOException;
 
+import loci.common.Constants;
 import loci.common.IniList;
 import loci.common.IniParser;
 import loci.common.IniTable;
@@ -91,10 +88,12 @@ public class Configuration {
   private static final String TIME_INCREMENT = "TimeIncrement";
   private static final String LIGHT_SOURCE = "LightSource_";
   private static final String CHANNEL_NAME = "ChannelName_";
+  private static final String EXPOSURE_TIME = "ExposureTime_";
   private static final String EMISSION_WAVELENGTH = "EmissionWavelength_";
   private static final String EXCITATION_WAVELENGTH = "ExcitationWavelength_";
   private static final String DETECTOR = "Detector_";
   private static final String NAME = "Name";
+  private static final String DESCRIPTION = "Description";
   private static final String SERIES_COUNT = "series_count";
   private static final String CHANNEL_COUNT = "channel_count";
   private static final String DATE = "Date";
@@ -114,7 +113,8 @@ public class Configuration {
     this.dataFile = dataFile;
     this.configFile = configFile;
 
-    BufferedReader reader = new BufferedReader(new FileReader(this.configFile));
+    BufferedReader reader = new BufferedReader(new InputStreamReader(
+      new FileInputStream(this.configFile), Constants.ENCODING));
     IniParser parser = new IniParser();
     parser.setCommentDelimiter(null);
     ini = parser.parseINI(reader);
@@ -280,6 +280,15 @@ public class Configuration {
     return currentTable.get(CHANNEL_NAME + channel);
   }
 
+  public boolean hasExposureTime(int channel) {
+    return currentTable.containsKey(EXPOSURE_TIME + channel);
+  }
+
+  public Double getExposureTime(int channel) {
+    String exposure = currentTable.get(EXPOSURE_TIME + channel);
+    return exposure == null ? null : new Double(exposure);
+  }
+
   public Integer getEmissionWavelength(int channel) {
     String wavelength = currentTable.get(EMISSION_WAVELENGTH + channel);
     return wavelength == null ? null : new Integer(wavelength);
@@ -296,6 +305,14 @@ public class Configuration {
 
   public String getImageName() {
     return currentTable.get(NAME);
+  }
+
+  public boolean hasImageDescription() {
+    return currentTable.containsKey(DESCRIPTION);
+  }
+
+  public String getImageDescription() {
+    return currentTable.get(DESCRIPTION);
   }
 
   public String getDate() {
@@ -323,6 +340,10 @@ public class Configuration {
 
     Configuration thatConfig = (Configuration) o;
     return this.getINI().equals(thatConfig.getINI());
+  }
+
+  public int hashCode() {
+    return this.getINI().hashCode();
   }
 
   // -- Helper methods --
@@ -430,6 +451,7 @@ public class Configuration {
       }
 
       seriesTable.put(NAME, retrieve.getImageName(series));
+      seriesTable.put(DESCRIPTION, retrieve.getImageDescription(series));
 
       PositiveFloat physicalX = retrieve.getPixelsPhysicalSizeX(series);
       if (physicalX != null) {
@@ -448,7 +470,7 @@ public class Configuration {
         seriesTable.put(TIME_INCREMENT, timeIncrement.toString());
       }
 
-      String date = retrieve.getImageAcquiredDate(series);
+      String date = retrieve.getImageAcquisitionDate(series).getValue();
       if (date != null) {
         seriesTable.put(DATE, date);
       }
@@ -458,6 +480,15 @@ public class Configuration {
         try {
           seriesTable.put(LIGHT_SOURCE + c,
             retrieve.getChannelLightSourceSettingsID(series, c));
+        }
+        catch (NullPointerException e) { }
+
+        try {
+          int plane = reader.getIndex(0, c, 0);
+          if (plane < retrieve.getPlaneCount(series)) {
+            seriesTable.put(EXPOSURE_TIME + c,
+              retrieve.getPlaneExposureTime(series, plane).toString());
+          }
         }
         catch (NullPointerException e) { }
 

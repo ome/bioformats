@@ -1,25 +1,27 @@
-//
-// AmiraReader.java
-//
-
 /*
-OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ * #%L
+ * OME Bio-Formats package for reading and converting biological file formats.
+ * %%
+ * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 2 of the 
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public 
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-2.0.html>.
+ * #L%
+ */
 
 package loci.formats.in;
 
@@ -31,6 +33,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.InflaterInputStream;
 
+import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
@@ -38,8 +41,8 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 import loci.formats.tools.AmiraParameters;
+import ome.xml.model.primitives.PositiveFloat;
 
 /**
  * This is a file format reader for AmiraMesh data.
@@ -119,8 +122,6 @@ public class AmiraReader extends FormatReader {
     parameters = new AmiraParameters(in);
     offsetOfFirstStream = in.getFilePointer();
 
-    // TODO: handle multiple streams
-
     LOGGER.info("Populating metadata hashtable");
 
     addGlobalMeta("Image width", parameters.width);
@@ -130,14 +131,19 @@ public class AmiraReader extends FormatReader {
 
     LOGGER.info("Populating core metadata");
 
+    int channelIndex = 1;
+    while (parameters.getStreams().get("@" + channelIndex) != null) {
+      channelIndex++;
+    }
+
     core[0].sizeX = parameters.width;
     core[0].sizeY = parameters.height;
     core[0].sizeZ = parameters.depth;
     core[0].sizeT = 1;
-    core[0].sizeC = 1;
-    core[0].imageCount = getSizeZ();
+    core[0].sizeC = channelIndex - 1;
+    core[0].imageCount = getSizeZ() * getSizeC();
     core[0].littleEndian = parameters.littleEndian;
-    core[0].dimensionOrder = "XYCZT";
+    core[0].dimensionOrder = "XYZCT";
 
     String streamType = parameters.streamTypes[0].toLowerCase();
     if (streamType.equals("byte")) {
@@ -167,7 +173,6 @@ public class AmiraReader extends FormatReader {
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
-    MetadataTools.setDefaultCreationDate(store, id, 0);
 
     // Note that Amira specifies a bounding box, not pixel sizes.
     // The bounding box is the range of the centre of the voxels
@@ -186,12 +191,30 @@ public class AmiraReader extends FormatReader {
       addGlobalMeta("Pixels per meter (Y)", 1e6 / pixelHeight);
       addGlobalMeta("Pixels per meter (Z)", 1e6 / pixelDepth);
 
-      store.setPixelsPhysicalSizeX(
-        new PositiveFloat(new Double(pixelWidth)), 0);
-      store.setPixelsPhysicalSizeY(
-        new PositiveFloat(new Double(pixelHeight)), 0);
-      store.setPixelsPhysicalSizeZ(
-        new PositiveFloat(new Double(pixelDepth)), 0);
+      if (pixelWidth > 0) {
+        store.setPixelsPhysicalSizeX(
+          new PositiveFloat(new Double(pixelWidth)), 0);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+          pixelWidth);
+      }
+      if (pixelHeight > 0) {
+        store.setPixelsPhysicalSizeY(
+          new PositiveFloat(new Double(pixelHeight)), 0);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+          pixelHeight);
+      }
+      if (pixelDepth > 0) {
+        store.setPixelsPhysicalSizeZ(
+          new PositiveFloat(new Double(pixelDepth)), 0);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}",
+          pixelDepth);
+      }
     }
 
     if (parameters.ascii) {
@@ -336,7 +359,8 @@ public class AmiraReader extends FormatReader {
       for (int i = 1;; i++) {
         byte c = in.readByte();
         if (!(c >= '0' && c <= '9') && c != '.') {
-          return Double.parseDouble(new String(numberBuffer, 0, i));
+          return Double.parseDouble(
+            new String(numberBuffer, 0, i, Constants.ENCODING));
         }
         numberBuffer[i] = c;
       }

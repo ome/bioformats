@@ -1,27 +1,29 @@
-//
-// ConfigWindow.java
-//
-
 /*
-LOCI Plugins for ImageJ: a collection of ImageJ plugins including the
-Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
-Data Browser and Stack Slicer. Copyright (C) 2005-@year@ Melissa Linkert,
-Curtis Rueden and Christopher Peterson.
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ * #%L
+ * LOCI Plugins for ImageJ: a collection of ImageJ plugins including the
+ * Bio-Formats Importer, Bio-Formats Exporter, Bio-Formats Macro Extensions,
+ * Data Browser and Stack Slicer.
+ * %%
+ * Copyright (C) 2006 - 2012 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 2 of the 
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public 
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-2.0.html>.
+ * #L%
+ */
 
 package loci.plugins.config;
 
@@ -36,6 +38,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -65,6 +68,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import loci.common.Constants;
 import loci.plugins.util.WindowTools;
 
 /**
@@ -386,8 +390,15 @@ public class ConfigWindow extends JFrame
     String propKey = null;
     StringBuffer propValue = new StringBuffer();
     String resource = "libraries.txt";
-    BufferedReader in = new BufferedReader(new InputStreamReader(
-      ConfigWindow.class.getResourceAsStream(resource)));
+    BufferedReader in = null;
+    try {
+      in = new BufferedReader(new InputStreamReader(
+        ConfigWindow.class.getResourceAsStream(resource), Constants.ENCODING));
+    }
+    catch (UnsupportedEncodingException e) {
+      log.println("UTF-8 encoding is not supported.  Something is very wrong.");
+      e.printStackTrace(log);
+    }
     while (true) {
       String line = null;
       try {

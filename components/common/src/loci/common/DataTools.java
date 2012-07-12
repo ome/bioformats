@@ -1,25 +1,38 @@
-//
-// DataTools.java
-//
-
 /*
-LOCI Common package: utilities for I/O, reflection and miscellaneous tasks.
-Copyright (C) 2005-@year@ Melissa Linkert, Curtis Rueden and Chris Allan.
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ * #%L
+ * LOCI Common package: utilities for I/O, reflection and miscellaneous tasks.
+ * %%
+ * Copyright (C) 2008 - 2012 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ * 
+ * The views and conclusions contained in the software and documentation are
+ * those of the authors and should not be interpreted as representing official
+ * policies, either expressed or implied, of any organization.
+ * #L%
+ */
 
 package loci.common;
 
@@ -833,6 +846,82 @@ public final class DataTools {
 
   // -- Array handling --
 
+  /**
+   * Allocates a 1-dimensional byte array matching the product of the given
+   * sizes.
+   * 
+   * @param sizes list of sizes from which to allocate the array
+   * @return a byte array of the appropriate size
+   * @throws IllegalArgumentException if the total size exceeds 2GB, which is
+   *           the maximum size of an array in Java; or if any size argument is
+   *           zero or negative
+   */
+  public static byte[] allocate(int... sizes) throws IllegalArgumentException {
+    if (sizes == null) return null;
+    if (sizes.length == 0) return new byte[0];
+    int total = safeMultiply32(sizes);
+    return new byte[total];
+  }
+
+  /**
+   * Checks that the product of the given sizes does not exceed the 32-bit
+   * integer limit (i.e., {@link Integer#MAX_VALUE}).
+   * 
+   * @param sizes list of sizes from which to compute the product
+   * @return the product of the given sizes
+   * @throws IllegalArgumentException if the total size exceeds 2GiB, which is
+   *           the maximum size of an int in Java; or if any size argument is
+   *           zero or negative
+   */
+  public static int safeMultiply32(int... sizes)
+    throws IllegalArgumentException
+  {
+    if (sizes.length == 0) return 0;
+    long total = 1;
+    for (int size : sizes) {
+      if (size < 1) {
+        throw new IllegalArgumentException("Invalid array size: " +
+          sizeAsProduct(sizes));
+      }
+      total *= size;
+      if (total > Integer.MAX_VALUE) {
+        throw new IllegalArgumentException("Array size too large: " +
+          sizeAsProduct(sizes));
+      }
+    }
+    // NB: The downcast to int is safe here, due to the checks above.
+    return (int) total;
+  }
+
+  /**
+   * Checks that the product of the given sizes does not exceed the 64-bit
+   * integer limit (i.e., {@link Long#MAX_VALUE}).
+   * 
+   * @param sizes list of sizes from which to compute the product
+   * @return the product of the given sizes
+   * @throws IllegalArgumentException if the total size exceeds 8EiB, which is
+   *           the maximum size of a long in Java; or if any size argument is
+   *           zero or negative
+   */
+  public static long safeMultiply64(long... sizes)
+    throws IllegalArgumentException
+  {
+    if (sizes.length == 0) return 0;
+    long total = 1;
+    for (long size : sizes) {
+      if (size < 1) {
+        throw new IllegalArgumentException("Invalid array size: " +
+          sizeAsProduct(sizes));
+      }
+      if (willOverflow(total, size)) {
+        throw new IllegalArgumentException("Array size too large: " +
+          sizeAsProduct(sizes));
+      }
+      total *= size;
+    }
+    return total;
+  }
+
   /** Returns true if the given value is contained in the given array. */
   public static boolean containsValue(int[] array, int value) {
     return indexOf(array, value) != -1;
@@ -884,6 +973,34 @@ public final class DataTools {
       i[j] = (int) (i[j] + 2147483648L);
     }
     return i;
+  }
+
+  // -- Helper methods --
+
+  private static String sizeAsProduct(int... sizes) {
+    StringBuilder sb = new StringBuilder();
+    boolean first = true;
+    for (int size : sizes) {
+      if (first) first = false;
+      else sb.append(" x ");
+      sb.append(size);
+    }
+    return sb.toString();
+  }
+
+  private static String sizeAsProduct(long... sizes) {
+    StringBuilder sb = new StringBuilder();
+    boolean first = true;
+    for (long size : sizes) {
+      if (first) first = false;
+      else sb.append(" x ");
+      sb.append(size);
+    }
+    return sb.toString();
+  }
+
+  private static boolean willOverflow(long v1, long v2) {
+    return Long.MAX_VALUE / v1 < v2;
   }
 
 }

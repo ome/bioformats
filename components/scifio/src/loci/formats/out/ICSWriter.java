@@ -1,26 +1,38 @@
-//
-// ICSWriter.java
-//
-
 /*
-LOCI Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-@year@ Melissa Linkert, Curtis Rueden, Chris Allan,
-Eric Kjellman and Brian Loranger.
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU Library General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Library General Public License for more details.
-
-You should have received a copy of the GNU Library General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ * #%L
+ * OME SCIFIO package for reading and converting scientific file formats.
+ * %%
+ * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ * 
+ * The views and conclusions contained in the software and documentation are
+ * those of the authors and should not be interpreted as representing official
+ * policies, either expressed or implied, of any organization.
+ * #L%
+ */
 
 package loci.formats.out;
 
@@ -53,10 +65,29 @@ public class ICSWriter extends FormatWriter {
   private int lastPlane = -1;
   private RandomAccessOutputStream pixels;
 
+  // NB: write in ZTC order by default.  Certain software (e.g. Volocity)
+  //     lacks the capacity to import files with any other dimension
+  //     ordering.  Technically, this is not our problem, but it is
+  //     easy enough to work around and makes life easier for our users.
+  private String outputOrder = "XYZTC";
+
   // -- Constructor --
 
   public ICSWriter() {
     super("Image Cytometry Standard", new String[] {"ids", "ics"});
+  }
+
+  // -- ICSWriter API methods --
+
+  /**
+   * Set the order in which dimensions should be written to the file.
+   * Valid values are specified in the documentation for
+   * {@link loci.formats.IFormatReader#getDimensionOrder()}
+   *
+   * By default, the ordering is "XYZTC".
+   */
+  public void setOutputOrder(String outputOrder) {
+    this.outputOrder = outputOrder;
   }
 
   // -- IFormatWriter API methods --
@@ -70,6 +101,19 @@ public class ICSWriter extends FormatWriter {
     checkParams(no, buf, x, y, w, h);
 
     MetadataRetrieve meta = getMetadataRetrieve();
+
+    String order = meta.getPixelsDimensionOrder(series).getValue();
+    int sizeZ = meta.getPixelsSizeZ(series).getValue().intValue();
+    int sizeC = meta.getChannelCount(series);
+    int sizeT = meta.getPixelsSizeT(series).getValue().intValue();
+    int planes = sizeZ * sizeC * sizeT;
+
+    int[] coords =
+      FormatTools.getZCTCoords(order, sizeZ, sizeC, sizeT, planes, no);
+    int realIndex =
+      FormatTools.getIndex(outputOrder, sizeZ, sizeC, sizeT, planes,
+      coords[0], coords[1], coords[2]);
+
     int sizeX = meta.getPixelsSizeX(series).getValue().intValue();
     int sizeY = meta.getPixelsSizeY(series).getValue().intValue();
     int pixelType =
@@ -78,16 +122,16 @@ public class ICSWriter extends FormatWriter {
     int rgbChannels = getSamplesPerPixel();
     int planeSize = sizeX * sizeY * rgbChannels * bytesPerPixel;
 
-    if (!initialized[series][no]) {
-      initialized[series][no] = true;
+    if (!initialized[series][realIndex]) {
+      initialized[series][realIndex] = true;
 
       if (!isFullPlane(x, y, w, h)) {
         // write a dummy plane that will be overwritten in sections
-        pixels.seek(pixelOffset + (no + 1) * planeSize);
+        pixels.seek(pixelOffset + (realIndex + 1) * planeSize);
       }
     }
 
-    pixels.seek(pixelOffset + no * planeSize);
+    pixels.seek(pixelOffset + realIndex * planeSize);
     if (isFullPlane(x, y, w, h) && (interleaved || rgbChannels == 1)) {
       pixels.write(buf);
     }
@@ -107,7 +151,7 @@ public class ICSWriter extends FormatWriter {
         pixels.skipBytes(bytesPerPixel * rgbChannels * (sizeX - w - x));
       }
     }
-    lastPlane = no;
+    lastPlane = realIndex;
   }
 
   /* @see loci.formats.IFormatWriter#canDoStacks() */
@@ -177,10 +221,10 @@ public class ICSWriter extends FormatWriter {
       }
 
       out.writeBytes("\nparameter\tscale\t1.000000\t");
-      String order = meta.getPixelsDimensionOrder(series).getValue();
+
       StringBuffer units = new StringBuffer();
-      for (int i=0; i<order.length(); i++) {
-        char dim = order.charAt(i);
+      for (int i=0; i<outputOrder.length(); i++) {
+        char dim = outputOrder.charAt(i);
         Number value = 1.0;
         if (dim == 'X') {
           if (meta.getPixelsPhysicalSizeX(0) != null) {
@@ -248,7 +292,6 @@ public class ICSWriter extends FormatWriter {
 
   private int[] overwriteDimensions(MetadataRetrieve meta) throws IOException {
     out.seek(dimensionOffset);
-    String order = meta.getPixelsDimensionOrder(series).toString();
     int sizeX = meta.getPixelsSizeX(series).getValue().intValue();
     int sizeY = meta.getPixelsSizeY(series).getValue().intValue();
     int z = meta.getPixelsSizeZ(series).getValue().intValue();
@@ -260,7 +303,8 @@ public class ICSWriter extends FormatWriter {
     int rgbChannels = getSamplesPerPixel();
 
     if (lastPlane < 0) lastPlane = z * c * t - 1;
-    int[] pos = FormatTools.getZCTCoords(order, z, c, t, z * c * t, lastPlane);
+    int[] pos =
+      FormatTools.getZCTCoords(outputOrder, z, c, t, z * c * t, lastPlane);
     lastPlane = -1;
 
     StringBuffer dimOrder = new StringBuffer();
@@ -273,17 +317,17 @@ public class ICSWriter extends FormatWriter {
       sizes[nextSize++] = pos[1] + 1;
     }
 
-    for (int i=0; i<order.length(); i++) {
-      if (order.charAt(i) == 'X') sizes[nextSize++] = sizeX;
-      else if (order.charAt(i) == 'Y') sizes[nextSize++] = sizeY;
-      else if (order.charAt(i) == 'Z') sizes[nextSize++] = pos[0] + 1;
-      else if (order.charAt(i) == 'T') sizes[nextSize++] = pos[2] + 1;
-      else if (order.charAt(i) == 'C' && dimOrder.indexOf("ch") == -1) {
+    for (int i=0; i<outputOrder.length(); i++) {
+      if (outputOrder.charAt(i) == 'X') sizes[nextSize++] = sizeX;
+      else if (outputOrder.charAt(i) == 'Y') sizes[nextSize++] = sizeY;
+      else if (outputOrder.charAt(i) == 'Z') sizes[nextSize++] = pos[0] + 1;
+      else if (outputOrder.charAt(i) == 'T') sizes[nextSize++] = pos[2] + 1;
+      else if (outputOrder.charAt(i) == 'C' && dimOrder.indexOf("ch") == -1) {
         sizes[nextSize++] = pos[1] + 1;
         dimOrder.append("ch");
       }
-      if (order.charAt(i) != 'C') {
-        dimOrder.append(String.valueOf(order.charAt(i)).toLowerCase());
+      if (outputOrder.charAt(i) != 'C') {
+        dimOrder.append(String.valueOf(outputOrder.charAt(i)).toLowerCase());
       }
       dimOrder.append("\t");
     }

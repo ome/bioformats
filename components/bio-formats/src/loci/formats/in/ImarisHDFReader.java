@@ -1,25 +1,27 @@
-//
-// ImarisHDFReader.java
-//
-
 /*
-OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ * #%L
+ * OME Bio-Formats package for reading and converting biological file formats.
+ * %%
+ * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 2 of the 
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public 
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-2.0.html>.
+ * #L%
+ */
 
 package loci.formats.in;
 
@@ -39,9 +41,10 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.MissingLibraryException;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 import loci.formats.services.NetCDFService;
 import loci.formats.services.NetCDFServiceImpl;
+import ome.xml.model.primitives.Color;
+import ome.xml.model.primitives.PositiveFloat;
 
 /**
  * Reader for Bitplane Imaris 5.5 (HDF) files.
@@ -149,7 +152,7 @@ public class ImarisHDFReader extends FormatReader {
 
     // pixel data is stored in XYZ blocks
 
-    Object image = getImageData(no);
+    Object image = getImageData(no, y, h);
 
     boolean big = !isLittleEndian();
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
@@ -157,36 +160,36 @@ public class ImarisHDFReader extends FormatReader {
       int base = row * w * bpp;
       if (image instanceof byte[][]) {
         byte[][] data = (byte[][]) image;
-        byte[] rowData = data[row + y];
+        byte[] rowData = data[row];
         System.arraycopy(rowData, x, buf, row*w, w);
       }
       else if (image instanceof short[][]) {
         short[][] data = (short[][]) image;
-        short[] rowData = data[row + y];
+        short[] rowData = data[row];
         for (int i=0; i<w; i++) {
-          DataTools.unpackBytes(rowData[x + i], buf, base + 2*i, 2, big);
+          DataTools.unpackBytes(rowData[i + x], buf, base + 2*i, 2, big);
         }
       }
       else if (image instanceof int[][]) {
         int[][] data = (int[][]) image;
-        int[] rowData = data[row + y];
+        int[] rowData = data[row];
         for (int i=0; i<w; i++) {
-          DataTools.unpackBytes(rowData[x + i], buf, base + i*4, 4, big);
+          DataTools.unpackBytes(rowData[i + x], buf, base + i*4, 4, big);
         }
       }
       else if (image instanceof float[][]) {
         float[][] data = (float[][]) image;
-        float[] rowData = data[row + y];
+        float[] rowData = data[row];
         for (int i=0; i<w; i++) {
-          int v = Float.floatToIntBits(rowData[x + i]);
+          int v = Float.floatToIntBits(rowData[i + x]);
           DataTools.unpackBytes(v, buf, base + i*4, 4, big);
         }
       }
       else if (image instanceof double[][]) {
         double[][] data = (double[][]) image;
-        double[] rowData = data[row + y];
+        double[] rowData = data[row];
         for (int i=0; i<w; i++) {
-          long v = Double.doubleToLongBits(rowData[x + i]);
+          long v = Double.doubleToLongBits(rowData[i + x]);
           DataTools.unpackBytes(v, buf, base + i * 8, 8, big);
         }
       }
@@ -278,7 +281,7 @@ public class ImarisHDFReader extends FormatReader {
 
     int type = -1;
 
-    Object pix = getImageData(0);
+    Object pix = getImageData(0, 0, 1);
     if (pix instanceof byte[][]) type = FormatTools.UINT8;
     else if (pix instanceof short[][]) type = FormatTools.UINT16;
     else if (pix instanceof int[][]) type = FormatTools.UINT32;
@@ -306,7 +309,6 @@ public class ImarisHDFReader extends FormatReader {
     String imageName = new Location(getCurrentFile()).getName();
     for (int s=0; s<getSeriesCount(); s++) {
       store.setImageName(imageName + " Resolution Level " + (s + 1), s);
-      MetadataTools.setDefaultCreationDate(store, id, s);
     }
 
     if (getMetadataOptions().getMetadataLevel() == MetadataLevel.MINIMUM) {
@@ -319,9 +321,25 @@ public class ImarisHDFReader extends FormatReader {
       if (px == 1) px = (maxX - minX) / core[s].sizeX;
       if (py == 1) py = (maxY - minY) / core[s].sizeY;
       if (pz == 1) pz = (maxZ - minZ) / core[s].sizeZ;
-      store.setPixelsPhysicalSizeX(new PositiveFloat(px), s);
-      store.setPixelsPhysicalSizeY(new PositiveFloat(py), s);
-      store.setPixelsPhysicalSizeZ(new PositiveFloat(pz), s);
+
+      if (px > 0) {
+        store.setPixelsPhysicalSizeX(new PositiveFloat(px), s);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}", px);
+      }
+      if (py > 0) {
+        store.setPixelsPhysicalSizeY(new PositiveFloat(py), s);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}", py);
+      }
+      if (pz > 0) {
+        store.setPixelsPhysicalSizeZ(new PositiveFloat(pz), s);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}", pz);
+      }
 
       for (int i=0; i<core[s].sizeC; i++, cIndex++) {
         Float gainValue = null;
@@ -379,10 +397,9 @@ public class ImarisHDFReader extends FormatReader {
 
         if (i < colors.size()) {
           double[] color = colors.get(i);
-          int realColor = 0;
-          for (int cc=0; cc<color.length; cc++) {
-            realColor |= ((int) (color[cc] * 255) << (16 - cc * 8));
-          }
+          Color realColor = new Color(
+            (int) (color[0] * 255), (int) (color[1] * 255),
+            (int) (color[2] * 255), 255);
           store.setChannelColor(realColor, s, i);
         }
       }
@@ -391,13 +408,22 @@ public class ImarisHDFReader extends FormatReader {
 
   // -- Helper methods --
 
-  private Object getImageData(int no) throws FormatException {
+  private Object getImageData(int no, int y, int height)
+    throws FormatException
+  {
     int[] zct = getZCTCoords(no);
     String path = "/DataSet/ResolutionLevel_" + series + "/TimePoint_" +
       zct[2] + "/Channel_" + zct[1] + "/Data";
     Object image = null;
-    int[] dimensions = new int[] {1, getSizeY(), getSizeX()};
-    int[] indices = new int[] {zct[0], 0, 0};
+
+    // the width and height cannot be 1, because then netCDF will give us a
+    // singleton instead of an array
+    if (height == 1) {
+      height++;
+    }
+
+    int[] dimensions = new int[] {1, height, getSizeX()};
+    int[] indices = new int[] {zct[0], y, 0};
     try {
       image = netcdf.getArray(path, indices, dimensions);
     }

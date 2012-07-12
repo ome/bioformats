@@ -1,37 +1,45 @@
 /*
- * ome.xml.model.LightPath
- *
- *-----------------------------------------------------------------------------
- *
- *  Copyright (C) @year@ Open Microscopy Environment
- *      Massachusetts Institute of Technology,
- *      National Institutes of Health,
- *      University of Dundee,
- *      University of Wisconsin-Madison
- *
- *
- *
- *    This library is free software; you can redistribute it and/or
- *    modify it under the terms of the GNU Lesser General Public
- *    License as published by the Free Software Foundation; either
- *    version 2.1 of the License, or (at your option) any later version.
- *
- *    This library is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- *    Lesser General Public License for more details.
- *
- *    You should have received a copy of the GNU Lesser General Public
- *    License along with this library; if not, write to the Free Software
- *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
- *-----------------------------------------------------------------------------
+ * #%L
+ * OME-XML Java library for working with OME-XML metadata structures.
+ * %%
+ * Copyright (C) 2006 - 2012 Open Microscopy Environment:
+ *   - Massachusetts Institute of Technology
+ *   - National Institutes of Health
+ *   - University of Dundee
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ * %%
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ * 
+ * The views and conclusions contained in the software and documentation are
+ * those of the authors and should not be interpreted as representing official
+ * policies, either expressed or implied, of any organization.
+ * #L%
  */
 
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2011-11-09 10:55:09-0500
+ * Created by callan via xsd-fu on 2012-05-18 10:08:16+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -58,7 +66,7 @@ public class LightPath extends AbstractOMEModelObject
 
 	// -- Constants --
 
-	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2011-06";
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2012-06";
 
 	/** Logger for this class. */
 	private static final Logger LOGGER =
@@ -68,13 +76,13 @@ public class LightPath extends AbstractOMEModelObject
 
 
 	// Reference ExcitationFilterRef
-	private List<Filter> excitationFilterList = new ArrayList<Filter>();
+	private List<Filter> excitationFilterLinks = new ArrayList<Filter>();
 
 	// Property
 	private Dichroic dichroic;
 
 	// Reference EmissionFilterRef
-	private List<Filter> emissionFilterList = new ArrayList<Filter>();
+	private List<Filter> emissionFilterLinks = new ArrayList<Filter>();
 
 	// -- Constructors --
 
@@ -128,9 +136,9 @@ public class LightPath extends AbstractOMEModelObject
 				getChildrenByTagName(element, "ExcitationFilterRef");
 		for (Element ExcitationFilterRef_element : ExcitationFilterRef_nodeList)
 		{
-			ExcitationFilterRef excitationFilterList_reference = new ExcitationFilterRef();
-			excitationFilterList_reference.setID(ExcitationFilterRef_element.getAttribute("ID"));
-			model.addReference(this, excitationFilterList_reference);
+			ExcitationFilterRef excitationFilterLinks_reference = new ExcitationFilterRef();
+			excitationFilterLinks_reference.setID(ExcitationFilterRef_element.getAttribute("ID"));
+			model.addReference(this, excitationFilterLinks_reference);
 		}
 		// Element reference DichroicRef
 		List<Element> DichroicRef_nodeList =
@@ -146,9 +154,9 @@ public class LightPath extends AbstractOMEModelObject
 				getChildrenByTagName(element, "EmissionFilterRef");
 		for (Element EmissionFilterRef_element : EmissionFilterRef_nodeList)
 		{
-			EmissionFilterRef emissionFilterList_reference = new EmissionFilterRef();
-			emissionFilterList_reference.setID(EmissionFilterRef_element.getAttribute("ID"));
-			model.addReference(this, emissionFilterList_reference);
+			EmissionFilterRef emissionFilterLinks_reference = new EmissionFilterRef();
+			emissionFilterLinks_reference.setID(EmissionFilterRef_element.getAttribute("ID"));
+			model.addReference(this, emissionFilterLinks_reference);
 		}
 	}
 
@@ -164,8 +172,10 @@ public class LightPath extends AbstractOMEModelObject
 		if (reference instanceof ExcitationFilterRef)
 		{
 			Filter o_casted = (Filter) o;
-			o_casted.linkLightPath(this);
-			excitationFilterList.add(o_casted);
+      o_casted.linkLightPathExcitationFilter(this);
+			if (!excitationFilterLinks.contains(o_casted)) {
+				excitationFilterLinks.add(o_casted);
+			}
 			return true;
 		}
 		if (reference instanceof DichroicRef)
@@ -178,8 +188,10 @@ public class LightPath extends AbstractOMEModelObject
 		if (reference instanceof EmissionFilterRef)
 		{
 			Filter o_casted = (Filter) o;
-			o_casted.linkLightPath(this);
-			emissionFilterList.add(o_casted);
+      o_casted.linkLightPathEmissionFilter(this);
+			if (!emissionFilterLinks.contains(o_casted)) {
+				emissionFilterLinks.add(o_casted);
+			}
 			return true;
 		}
 		LOGGER.debug("Unable to handle reference of type: {}", reference.getClass());
@@ -190,34 +202,39 @@ public class LightPath extends AbstractOMEModelObject
 	// Reference which occurs more than once
 	public int sizeOfLinkedExcitationFilterList()
 	{
-		return excitationFilterList.size();
+		return excitationFilterLinks.size();
 	}
 
 	public List<Filter> copyLinkedExcitationFilterList()
 	{
-		return new ArrayList<Filter>(excitationFilterList);
+		return new ArrayList<Filter>(excitationFilterLinks);
 	}
 
 	public Filter getLinkedExcitationFilter(int index)
 	{
-		return excitationFilterList.get(index);
+		return excitationFilterLinks.get(index);
 	}
 
 	public Filter setLinkedExcitationFilter(int index, Filter o)
 	{
-		return excitationFilterList.set(index, o);
+		return excitationFilterLinks.set(index, o);
 	}
 
 	public boolean linkExcitationFilter(Filter o)
 	{
-		o.linkLightPath(this);
-		return excitationFilterList.add(o);
+
+      o.linkLightPathExcitationFilter(this);
+		if (!excitationFilterLinks.contains(o)) {
+			return excitationFilterLinks.add(o);
+		}
+		return false;
 	}
 
 	public boolean unlinkExcitationFilter(Filter o)
 	{
-		o.unlinkLightPath(this);
-		return excitationFilterList.remove(o);
+
+      o.unlinkLightPathExcitationFilter(this);
+		return excitationFilterLinks.remove(o);
 	}
 
 	// Reference
@@ -242,34 +259,39 @@ public class LightPath extends AbstractOMEModelObject
 	// Reference which occurs more than once
 	public int sizeOfLinkedEmissionFilterList()
 	{
-		return emissionFilterList.size();
+		return emissionFilterLinks.size();
 	}
 
 	public List<Filter> copyLinkedEmissionFilterList()
 	{
-		return new ArrayList<Filter>(emissionFilterList);
+		return new ArrayList<Filter>(emissionFilterLinks);
 	}
 
 	public Filter getLinkedEmissionFilter(int index)
 	{
-		return emissionFilterList.get(index);
+		return emissionFilterLinks.get(index);
 	}
 
 	public Filter setLinkedEmissionFilter(int index, Filter o)
 	{
-		return emissionFilterList.set(index, o);
+		return emissionFilterLinks.set(index, o);
 	}
 
 	public boolean linkEmissionFilter(Filter o)
 	{
-		o.linkLightPath(this);
-		return emissionFilterList.add(o);
+
+      o.linkLightPathEmissionFilter(this);
+		if (!emissionFilterLinks.contains(o)) {
+			return emissionFilterLinks.add(o);
+		}
+		return false;
 	}
 
 	public boolean unlinkEmissionFilter(Filter o)
 	{
-		o.unlinkLightPath(this);
-		return emissionFilterList.remove(o);
+
+      o.unlinkLightPathEmissionFilter(this);
+		return emissionFilterLinks.remove(o);
 	}
 
 	public Element asXMLElement(Document document)
@@ -287,13 +309,13 @@ public class LightPath extends AbstractOMEModelObject
 					document.createElementNS(NAMESPACE, "LightPath");
 		}
 
-		if (excitationFilterList != null)
+		if (excitationFilterLinks != null)
 		{
 			// Reference property ExcitationFilterRef which occurs more than once
-			for (Filter excitationFilterList_value : excitationFilterList)
+			for (Filter excitationFilterLinks_value : excitationFilterLinks)
 			{
 				ExcitationFilterRef o = new ExcitationFilterRef();
-				o.setID(excitationFilterList_value.getID());
+				o.setID(excitationFilterLinks_value.getID());
 				LightPath_element.appendChild(o.asXMLElement(document));
 			}
 		}
@@ -304,13 +326,13 @@ public class LightPath extends AbstractOMEModelObject
 			o.setID(dichroic.getID());
 			LightPath_element.appendChild(o.asXMLElement(document));
 		}
-		if (emissionFilterList != null)
+		if (emissionFilterLinks != null)
 		{
 			// Reference property EmissionFilterRef which occurs more than once
-			for (Filter emissionFilterList_value : emissionFilterList)
+			for (Filter emissionFilterLinks_value : emissionFilterLinks)
 			{
 				EmissionFilterRef o = new EmissionFilterRef();
-				o.setID(emissionFilterList_value.getID());
+				o.setID(emissionFilterLinks_value.getID());
 				LightPath_element.appendChild(o.asXMLElement(document));
 			}
 		}

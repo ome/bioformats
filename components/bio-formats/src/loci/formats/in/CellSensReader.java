@@ -1,25 +1,27 @@
-//
-// CellSensReader.java
-//
-
 /*
-OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ * #%L
+ * OME Bio-Formats package for reading and converting biological file formats.
+ * %%
+ * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 2 of the 
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public 
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-2.0.html>.
+ * #L%
+ */
 
 package loci.formats.in;
 
@@ -257,6 +259,9 @@ public class CellSensReader extends FormatReader {
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
+      if (parser != null && parser.getStream() != null) {
+        parser.getStream().close();
+      }
       parser = null;
       ifds = null;
       usedFiles = null;
@@ -360,6 +365,13 @@ public class CellSensReader extends FormatReader {
 
         core[s].littleEndian = compressionType[s] == RAW;
         core[s].interleaved = core[s].rgb;
+
+        if (s == 0 && exifs.size() > 0) {
+          IFD exif = exifs.get(0);
+          core[s].sizeX = exif.getIFDIntValue(IFD.PIXEL_X_DIMENSION);
+          core[s].sizeY = exif.getIFDIntValue(IFD.PIXEL_Y_DIMENSION);
+        }
+
         setSeries(0);
       }
       else {
@@ -721,11 +733,15 @@ public class CellSensReader extends FormatReader {
     }
 
     for (int i=0; i<tagCount; i++) {
+      if (vsi.getFilePointer() + 16 >= vsi.length()) {
+        break;
+      }
+
       // read the data field
 
       int fieldType = vsi.readInt();
       int tag = vsi.readInt();
-      int nextField = vsi.readInt();
+      long nextField = vsi.readInt() & 0xffffffffL;
       int dataSize = vsi.readInt();
 
       boolean extraTag = ((fieldType & 0x8000000) >> 27) == 1;
@@ -791,7 +807,7 @@ public class CellSensReader extends FormatReader {
         return;
       }
 
-      if (fp + nextField < vsi.length() || fp + nextField >= 0) {
+      if (fp + nextField < vsi.length() && fp + nextField >= 0) {
         vsi.seek(fp + nextField);
       }
       else break;

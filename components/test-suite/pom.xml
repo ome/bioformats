@@ -7,8 +7,9 @@
 
   <parent>
     <groupId>loci</groupId>
-    <artifactId>bio-formats-base</artifactId>
-    <version>4.4-SNAPSHOT</version>
+    <artifactId>pom-scifio</artifactId>
+    <version>4.4.0</version>
+    <relativePath>../..</relativePath>
   </parent>
 
   <artifactId>test-suite</artifactId>
@@ -20,8 +21,8 @@
 
   <licenses>
     <license>
-      <name>BSD</name>
-      <url>http://dev.loci.wisc.edu/svn/java/trunk/projects/test-suite/LICENSE.txt</url>
+      <name>GPL 2 or later</name>
+      <url>http://www.gnu.org/licenses/gpl-2.0.txt</url>
       <distribution>repo</distribution>
     </license>
   </licenses>
@@ -40,6 +41,16 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>ome-io</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>ome-xml</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>scifio</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -76,6 +87,14 @@
           </archive>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <configuration>
+          <licenseName>gpl_v2</licenseName>
+          <projectName>OME Bio-Formats manual and automated test suite.</projectName>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 
@@ -100,7 +119,7 @@
       <id>melissa</id>
       <name>Melissa Linkert</name>
       <email>melissa.linkert@glencoesoftware.com</email>
-      <url>http://openmicroscopy.org/site/about/development-teams/glencoe-software</url>
+      <url>http://www.openmicroscopy.org/site/about/development-teams/glencoe-software</url>
       <organization>Glencoe Software</organization>
       <organizationUrl>http://glencoesoftware.com/</organizationUrl>
       <roles>
@@ -109,7 +128,7 @@
       </roles>
       <timezone>-6</timezone>
       <properties>
-        <picUrl>http://openmicroscopy.org/site/about/development-teams/glencoe-software/melissalinkert.png</picUrl>
+        <picUrl>http://www.openmicroscopy.org/site/about/development-teams/glencoe-software/melissalinkert.png</picUrl>
       </properties>
     </developer>
   </developers>

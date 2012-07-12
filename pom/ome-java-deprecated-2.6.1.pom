@@ -6,7 +6,7 @@
   <artifactId>ome-java-deprecated</artifactId>
   <packaging>jar</packaging>
   <version>2.6.1</version>
-  <url>http://openmicroscopy.org/</url>
+  <url>http://www.openmicroscopy.org/</url>
 
   <licenses>
     <license>

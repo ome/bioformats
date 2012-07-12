@@ -1,25 +1,27 @@
-//
-// VolocityReader.java
-//
-
 /*
-OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ * #%L
+ * OME Bio-Formats package for reading and converting biological file formats.
+ * %%
+ * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 2 of the 
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public 
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-2.0.html>.
+ * #L%
+ */
 
 package loci.formats.in;
 
@@ -66,17 +68,10 @@ public class VolocityReader extends FormatReader {
 
   // -- Fields --
 
-  private String[][] pixelsFiles;
-  private String[] timestampFiles;
+  private ArrayList<Stack> stacks;
   private ArrayList<String> extraFiles;
-
-  private int[] planePadding;
-
   private Object[][] sampleTable, stringTable;
   private Location dir = null;
-  private int[] blockSize;
-
-  private boolean[] clippingData;
 
   // -- Constructor --
 
@@ -97,11 +92,12 @@ public class VolocityReader extends FormatReader {
 
     ArrayList<String> files = new ArrayList<String>();
     files.addAll(extraFiles);
+    Stack stack = stacks.get(getSeries());
     for (int c=0; c<getEffectiveSizeC(); c++) {
-      files.add(pixelsFiles[getSeries()][c]);
+      files.add(stack.pixelsFiles[c]);
     }
-    if (timestampFiles[getSeries()] != null) {
-      files.add(timestampFiles[getSeries()]);
+    if (stack.timestampFile != null) {
+      files.add(stack.timestampFile);
     }
     return files.toArray(new String[files.size()]);
   }
@@ -145,10 +141,11 @@ public class VolocityReader extends FormatReader {
 
     int[] zct = getZCTCoords(no);
 
+    Stack stack = stacks.get(getSeries());
     RandomAccessInputStream pix =
-      new RandomAccessInputStream(pixelsFiles[getSeries()][zct[1]]);
+      new RandomAccessInputStream(stack.pixelsFiles[zct[1]]);
 
-    int padding = zct[2] * planePadding[getSeries()];
+    int padding = zct[2] * stack.planePadding;
 
     long planeSize = FormatTools.getPlaneSize(this);
     int planesInFile = (int) (pix.length() / planeSize);
@@ -156,7 +153,7 @@ public class VolocityReader extends FormatReader {
     if (planesInFile == getSizeT()) {
       planeIndex = zct[2];
 
-      int block = blockSize[getSeries()];
+      int block = stack.blockSize;
       padding = block - (int) (planeSize % block);
       if (padding == block) {
         padding = 0;
@@ -164,14 +161,14 @@ public class VolocityReader extends FormatReader {
       padding *= zct[2];
     }
 
-    long offset =
-      (long) blockSize[getSeries()] + planeIndex * planeSize + padding;
+    long offset = (long) stack.blockSize + planeIndex * planeSize + padding;
     if (offset >= pix.length()) {
+      pix.close();
       return buf;
     }
     pix.seek(offset);
 
-    if (clippingData[getSeries()]) {
+    if (stack.clippingData) {
       pix.seek(offset - 3);
       ByteArrayHandle v = new ByteArrayHandle();
       while (v.length() < FormatTools.getPlaneSize(this) &&
@@ -215,10 +212,7 @@ public class VolocityReader extends FormatReader {
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
-      pixelsFiles = null;
-      extraFiles = null;
-      timestampFiles = null;
-      planePadding = null;
+      stacks = null;
       sampleTable = null;
       stringTable = null;
       dir = null;
@@ -244,6 +238,7 @@ public class VolocityReader extends FormatReader {
 
     super.initFile(id);
 
+    stacks = new ArrayList<Stack>();
     extraFiles = new ArrayList<String>();
 
     Location file = new Location(id).getAbsoluteFile();
@@ -267,6 +262,7 @@ public class VolocityReader extends FormatReader {
       reader.initialize(id);
       sampleTable = reader.getTableData(1);
       stringTable = reader.getTableData(2);
+      reader.close();
     }
     catch (DependencyException e) {
       throw new MissingLibraryException("Could not find Metakit library", e);
@@ -308,32 +304,21 @@ public class VolocityReader extends FormatReader {
       }
     }
 
-    core = new CoreMetadata[parentIDs.size()];
-    String[][] channelNames = new String[core.length][];
-    Double[] physicalX = new Double[core.length];
-    Double[] physicalY = new Double[core.length];
-    Double[] physicalZ = new Double[core.length];
-    Double[] magnification = new Double[core.length];
-    String[] detector = new String[core.length];
-    String[] description = new String[core.length];
-
-    pixelsFiles = new String[core.length][];
-    timestampFiles = new String[core.length];
-
     for (int i=0; i<parentIDs.size(); i++) {
-      core[i] = new CoreMetadata();
+      Stack stack = new Stack();
+      stack.core = new CoreMetadata();
       Integer parent = parentIDs.get(i);
 
       int channelIndex = getChildIndex(parent, "Channels");
       if (channelIndex >= 0) {
         Integer[] channels =
           getAllChildren((Integer) sampleTable[channelIndex][0]);
-        core[i].sizeC = channels.length;
-        pixelsFiles[i] = new String[core[i].sizeC];
+        stack.core.sizeC = channels.length;
+        stack.pixelsFiles = new String[stack.core.sizeC];
 
-        channelNames[i] = new String[channels.length];
+        stack.channelNames = new String[channels.length];
         for (int c=0; c<channels.length; c++) {
-          channelNames[i][c] =
+          stack.channelNames[c] =
             getString((Integer) sampleTable[channels[c]][11]);
 
           RandomAccessInputStream data = getStream(channels[c]);
@@ -344,22 +329,23 @@ public class VolocityReader extends FormatReader {
             if (!f.exists()) {
               f = new Location(dir, DataTools.swap(stackID) + ".aisf");
             }
-            pixelsFiles[i][c] = f.getAbsolutePath();
+            stack.pixelsFiles[c] = f.getAbsolutePath();
           }
           else {
             Integer child =
               getAllChildren((Integer) sampleTable[channels[c]][0])[0];
-            pixelsFiles[i][c] = getFile((Integer) sampleTable[child][0], dir);
+            stack.pixelsFiles[c] =
+              getFile((Integer) sampleTable[child][0], dir);
           }
           data.close();
         }
       }
       else {
-        pixelsFiles[i] = new String[1];
-        pixelsFiles[i][0] = getFile(parent, dir);
+        stack.pixelsFiles = new String[1];
+        stack.pixelsFiles[0] = getFile(parent, dir);
 
-        if (pixelsFiles[i][0] == null ||
-          !new Location(pixelsFiles[i][0]).exists())
+        if (stack.pixelsFiles[0] == null ||
+          !new Location(stack.pixelsFiles[0]).exists())
         {
           int row = -1;
           for (int r=0; r<sampleTable.length; r++) {
@@ -369,10 +355,10 @@ public class VolocityReader extends FormatReader {
             }
           }
 
-          pixelsFiles[i][0] = EMBEDDED_STREAM;
+          stack.pixelsFiles[0] = EMBEDDED_STREAM;
           IRandomAccess data =
             new ByteArrayHandle((byte[]) sampleTable[row][13]);
-          Location.mapFile(pixelsFiles[i][0], data);
+          Location.mapFile(stack.pixelsFiles[0], data);
         }
       }
 
@@ -387,7 +373,7 @@ public class VolocityReader extends FormatReader {
         if (!f.exists()) {
           f = new Location(dir, DataTools.swap(timestampID) + ".atsf");
         }
-        timestampFiles[i] = f.getAbsolutePath();
+        stack.timestampFile = f.getAbsolutePath();
         data.close();
       }
 
@@ -395,7 +381,7 @@ public class VolocityReader extends FormatReader {
       if (xIndex >= 0) {
         data = getStream(xIndex);
         data.seek(SIGNATURE_SIZE);
-        physicalX[i] = data.readDouble();
+        stack.physicalX = data.readDouble();
         data.close();
       }
 
@@ -403,7 +389,7 @@ public class VolocityReader extends FormatReader {
       if (yIndex >= 0) {
         data = getStream(yIndex);
         data.seek(SIGNATURE_SIZE);
-        physicalY[i] = data.readDouble();
+        stack.physicalY = data.readDouble();
         data.close();
       }
 
@@ -411,7 +397,7 @@ public class VolocityReader extends FormatReader {
       if (zIndex >= 0) {
         data = getStream(zIndex);
         data.seek(SIGNATURE_SIZE);
-        physicalZ[i] = data.readDouble();
+        stack.physicalZ = data.readDouble();
         data.close();
       }
 
@@ -419,7 +405,7 @@ public class VolocityReader extends FormatReader {
       if (objectiveIndex >= 0) {
         data = getStream(objectiveIndex);
         data.seek(SIGNATURE_SIZE);
-        magnification[i] = data.readDouble();
+        stack.magnification = data.readDouble();
         data.close();
       }
 
@@ -428,7 +414,7 @@ public class VolocityReader extends FormatReader {
         data = getStream(detectorIndex);
         data.seek(SIGNATURE_SIZE);
         int len = data.readInt();
-        detector[i] = data.readString(len);
+        stack.detector = data.readString(len);
         data.close();
       }
 
@@ -437,26 +423,104 @@ public class VolocityReader extends FormatReader {
         data = getStream(descriptionIndex);
         data.seek(SIGNATURE_SIZE);
         int len = data.readInt();
-        description[i] = data.readString(len);
+        stack.description = data.readString(len);
         data.close();
+      }
+
+      int xLocationIndex = getChildIndex(parent, "X Location");
+      if (xLocationIndex >= 0) {
+        data = getStream(xLocationIndex);
+        data.seek(SIGNATURE_SIZE);
+        stack.xLocation = data.readDouble();
+        data.close();
+      }
+
+      int yLocationIndex = getChildIndex(parent, "Y Location");
+      if (yLocationIndex >= 0) {
+        data = getStream(yLocationIndex);
+        data.seek(SIGNATURE_SIZE);
+        stack.yLocation = data.readDouble();
+        data.close();
+      }
+
+      int zLocationIndex = getChildIndex(parent, "Z Location");
+      if (zLocationIndex >= 0) {
+        data = getStream(zLocationIndex);
+        data.seek(SIGNATURE_SIZE);
+        stack.zLocation = data.readDouble();
+        data.close();
+      }
+
+      stacks.add(stack);
+    }
+
+    // split up channels as necessary
+
+    for (int i=0; i<stacks.size(); i++) {
+      Stack stack = stacks.get(i);
+
+      RandomAccessInputStream base =
+        new RandomAccessInputStream(stack.pixelsFiles[0]);
+      long baseLength = base.length();
+      base.close();
+
+      for (int q=1; q<stack.pixelsFiles.length; q++) {
+        base = new RandomAccessInputStream(stack.pixelsFiles[q]);
+        long length = base.length();
+        base.close();
+
+        if (length > baseLength) {
+          // split the stack
+          Stack newStack = new Stack();
+
+          newStack.timestampFile = stack.timestampFile;
+          newStack.core = new CoreMetadata();
+          newStack.physicalX = stack.physicalX;
+          newStack.physicalY = stack.physicalY;
+          newStack.physicalZ = stack.physicalZ;
+          newStack.magnification = stack.magnification;
+          newStack.detector = stack.detector;
+          newStack.description = stack.description;
+          newStack.xLocation = stack.xLocation;
+          newStack.yLocation = stack.yLocation;
+          newStack.zLocation = stack.zLocation;
+
+          String[] pixels = stack.pixelsFiles;
+          newStack.pixelsFiles = new String[pixels.length - q];
+          System.arraycopy(pixels, q, newStack.pixelsFiles, 0,
+            newStack.pixelsFiles.length);
+          stack.pixelsFiles = new String[q];
+          System.arraycopy(pixels, 0, stack.pixelsFiles, 0, q);
+
+          String[] channels = stack.channelNames;
+          newStack.channelNames = new String[channels.length - q];
+          System.arraycopy(channels, q, newStack.channelNames, 0,
+            newStack.channelNames.length);
+          stack.channelNames = new String[q];
+          System.arraycopy(channels, 0, stack.channelNames, 0, q);
+
+          newStack.core.sizeC = newStack.channelNames.length;
+          stack.core.sizeC = stack.channelNames.length;
+
+          stacks.add(i + 1, newStack);
+          stackNames.add(i + 1, stackNames.get(i));
+        }
       }
     }
 
-    planePadding = new int[core.length];
-    blockSize = new int[core.length];
-
-    double[][][] stamps = new double[core.length][][];
-
-    clippingData = new boolean[core.length];
+    core = new CoreMetadata[stacks.size()];
 
     for (int i=0; i<core.length; i++) {
       setSeries(i);
 
+      Stack stack = stacks.get(i);
+      core[i] = stack.core;
+
       core[i].littleEndian = true;
 
-      if (timestampFiles[i] != null) {
+      if (stack.timestampFile != null) {
         RandomAccessInputStream s =
-          new RandomAccessInputStream(timestampFiles[i]);
+          new RandomAccessInputStream(stack.timestampFile);
         s.seek(0);
         if (s.read() != 'I') {
           core[i].littleEndian = false;
@@ -475,12 +539,12 @@ public class VolocityReader extends FormatReader {
       core[i].dimensionOrder = "XYCZT";
 
       RandomAccessInputStream s =
-        new RandomAccessInputStream(pixelsFiles[i][0]);
+        new RandomAccessInputStream(stack.pixelsFiles[0]);
       s.order(isLittleEndian());
 
-      if (checkSuffix(pixelsFiles[i][0], "aisf")) {
+      if (checkSuffix(stack.pixelsFiles[0], "aisf")) {
         s.seek(18);
-        blockSize[i] = s.readShort() * 256;
+        stack.blockSize = s.readShort() * 256;
         s.skipBytes(5);
         int x = s.readInt();
         int y = s.readInt();
@@ -503,10 +567,12 @@ public class VolocityReader extends FormatReader {
         core[i].sizeY = h - y;
         core[i].sizeZ = s.readInt() - zStart;
         core[i].imageCount = getSizeZ() * getSizeC() * getSizeT();
+        core[i].pixelType = FormatTools.INT8;
 
         int planesPerFile = getSizeZ() * getSizeT();
         int planeSize = FormatTools.getPlaneSize(this);
-        int bytesPerPlane = (int) ((s.length() - blockSize[i]) / planesPerFile);
+        int bytesPerPlane =
+          (int) ((s.length() - stack.blockSize) / planesPerFile);
 
         int bytesPerPixel = 0;
         while (bytesPerPlane >= planeSize) {
@@ -520,14 +586,14 @@ public class VolocityReader extends FormatReader {
           bytesPerPixel /= 3;
         }
 
-        core[i].pixelType =
-          FormatTools.pixelTypeFromBytes(bytesPerPixel, false, false);
+        core[i].pixelType = FormatTools.pixelTypeFromBytes(
+          bytesPerPixel, false, bytesPerPixel > 2);
 
         // full timepoints are padded to have a multiple of 256 bytes
         int timepoint = FormatTools.getPlaneSize(this) * getSizeZ();
-        planePadding[i] = blockSize[i] - (timepoint % blockSize[i]);
-        if (planePadding[i] == blockSize[i]) {
-          planePadding[i] = 0;
+        stack.planePadding = stack.blockSize - (timepoint % stack.blockSize);
+        if (stack.planePadding == stack.blockSize) {
+          stack.planePadding = 0;
         }
       }
       else {
@@ -547,8 +613,8 @@ public class VolocityReader extends FormatReader {
         core[i].imageCount = getSizeZ() * getSizeT();
         core[i].rgb = core[i].sizeC > 1;
         core[i].pixelType = FormatTools.UINT8;
-        blockSize[i] = embedded ? (int) s.getFilePointer() : 99;
-        planePadding[i] = 0;
+        stack.blockSize = embedded ? (int) s.getFilePointer() : 99;
+        stack.planePadding = 0;
 
         if (s.length() > core[i].sizeX * core[i].sizeY * core[i].sizeZ * 6) {
           core[i].pixelType = FormatTools.UINT16;
@@ -573,8 +639,8 @@ public class VolocityReader extends FormatReader {
           core[i].pixelType =
             FormatTools.pixelTypeFromBytes(bytes, false, false);
           s.seek(70);
-          blockSize[i] = s.readInt();
-          clippingData[i] = true;
+          stack.blockSize = s.readInt();
+          stack.clippingData = true;
         }
       }
       s.close();
@@ -584,24 +650,29 @@ public class VolocityReader extends FormatReader {
     for (int i=0; i<getSeriesCount(); i++) {
       setSeries(i);
 
-      addSeriesMeta("Name", stackNames.get(i));
-      addSeriesMeta("Pixel width (in microns)", physicalX[i]);
-      addSeriesMeta("Pixel height (in microns)", physicalY[i]);
-      addSeriesMeta("Z step (in microns)", physicalZ[i]);
-      addSeriesMeta("Objective magnification", magnification[i]);
-      addSeriesMeta("Camera/Detector", detector[i]);
-      addSeriesMeta("Description", description[i]);
+      Stack stack = stacks.get(i);
 
-      if (channelNames[i] != null) {
-        for (int c=0; c<channelNames[i].length; c++) {
-          addSeriesMeta("Channel #" + (c + 1), channelNames[i][c]);
+      addSeriesMeta("Name", stackNames.get(i));
+      addSeriesMeta("Pixel width (in microns)", stack.physicalX);
+      addSeriesMeta("Pixel height (in microns)", stack.physicalY);
+      addSeriesMeta("Z step (in microns)", stack.physicalZ);
+      addSeriesMeta("Objective magnification", stack.magnification);
+      addSeriesMeta("Camera/Detector", stack.detector);
+      addSeriesMeta("Description", stack.description);
+      addSeriesMeta("X Location", stack.xLocation);
+      addSeriesMeta("Y Location", stack.yLocation);
+      addSeriesMeta("Z Location", stack.zLocation);
+
+      if (stack.channelNames != null) {
+        for (int c=0; c<stack.channelNames.length; c++) {
+          addSeriesMeta("Channel #" + (c + 1), stack.channelNames[c]);
         }
       }
     }
     setSeries(0);
 
     MetadataStore store = makeFilterMetadata();
-    MetadataTools.populatePixels(store, this);
+    MetadataTools.populatePixels(store, this, true);
 
     String instrument = MetadataTools.createLSID("Instrument", 0);
     store.setInstrumentID(instrument, 0);
@@ -610,39 +681,63 @@ public class VolocityReader extends FormatReader {
       store.setImageInstrumentRef(instrument, i);
 
       setSeries(i);
+      Stack stack = stacks.get(i);
       store.setImageName(stackNames.get(i), i);
-      store.setImageDescription(description[i], i);
-      if (channelNames[i] != null) {
+      store.setImageDescription(stack.description, i);
+      if (stack.channelNames != null) {
         for (int c=0; c<getEffectiveSizeC(); c++) {
-          store.setChannelName(channelNames[i][c], i, c);
+          store.setChannelName(stack.channelNames[c], i, c);
         }
       }
-      if (physicalX[i] != null && physicalX[i] > 0) {
-        store.setPixelsPhysicalSizeX(new PositiveFloat(physicalX[i]), i);
+      if (stack.physicalX != null && stack.physicalX > 0) {
+        store.setPixelsPhysicalSizeX(new PositiveFloat(stack.physicalX), i);
       }
-      if (physicalY[i] != null && physicalY[i] > 0) {
-        store.setPixelsPhysicalSizeY(new PositiveFloat(physicalY[i]), i);
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+          stack.physicalX);
       }
-      if (physicalZ[i] != null && physicalZ[i] > 0) {
-        store.setPixelsPhysicalSizeZ(new PositiveFloat(physicalZ[i]), i);
+      if (stack.physicalY != null && stack.physicalY > 0) {
+        store.setPixelsPhysicalSizeY(new PositiveFloat(stack.physicalY), i);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+          stack.physicalY);
+      }
+      if (stack.physicalZ != null && stack.physicalZ > 0) {
+        store.setPixelsPhysicalSizeZ(new PositiveFloat(stack.physicalZ), i);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}",
+          stack.physicalZ);
       }
 
       String objective = MetadataTools.createLSID("Objective", 0, i);
       store.setObjectiveID(objective, 0, i);
-      if (magnification[i] != null) {
+      if (stack.magnification != null && stack.magnification > 0) {
         store.setObjectiveNominalMagnification(
-          new PositiveInteger(magnification[i].intValue()), 0, i);
+          new PositiveInteger(stack.magnification.intValue()), 0, i);
+      }
+      else {
+        LOGGER.warn("Expected positive value for NominalMagnification; got {}",
+          stack.magnification);
       }
       store.setObjectiveCorrection(getCorrection("Other"), 0, i);
       store.setObjectiveImmersion(getImmersion("Other"), 0, i);
-      store.setImageObjectiveSettingsID(objective, i);
+      store.setObjectiveSettingsID(objective, i);
 
       String detectorID = MetadataTools.createLSID("Detector", 0, i);
       store.setDetectorID(detectorID, 0, i);
-      store.setDetectorModel(detector[i], 0, i);
+      store.setDetectorModel(stack.detector, 0, i);
 
       for (int c=0; c<getEffectiveSizeC(); c++) {
         store.setDetectorSettingsID(detectorID, i, c);
+      }
+
+      for (int img=0; img<getImageCount(); img++) {
+        int z = getZCTCoords(img)[0];
+        store.setPlanePositionX(stack.xLocation, i, img);
+        store.setPlanePositionY(stack.yLocation, i, img);
+        store.setPlanePositionZ(stack.zLocation + z * stack.physicalZ, i, img);
       }
     }
     setSeries(0);
@@ -710,6 +805,28 @@ public class VolocityReader extends FormatReader {
       }
     }
     return null;
+  }
+
+  // -- Helper class --
+
+  class Stack {
+    public String[] pixelsFiles;
+    public String timestampFile;
+    public int planePadding;
+    public int blockSize;
+    public boolean clippingData;
+
+    public CoreMetadata core;
+    public String[] channelNames;
+    public Double physicalX;
+    public Double physicalY;
+    public Double physicalZ;
+    public Double magnification;
+    public String detector;
+    public String description;
+    public double xLocation;
+    public double yLocation;
+    public double zLocation;
   }
 
 }

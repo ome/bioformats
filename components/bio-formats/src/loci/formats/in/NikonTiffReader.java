@@ -1,25 +1,27 @@
-//
-// NikonTiffReader.java
-//
-
 /*
-OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ * #%L
+ * OME Bio-Formats package for reading and converting biological file formats.
+ * %%
+ * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 2 of the 
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public 
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-2.0.html>.
+ * #L%
+ */
 
 package loci.formats.in;
 
@@ -31,10 +33,10 @@ import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
 
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 
 /**
@@ -219,11 +221,23 @@ public class NikonTiffReader extends BaseTiffReader {
       if (physicalSizeX > 0) {
         store.setPixelsPhysicalSizeX(new PositiveFloat(physicalSizeX), 0);
       }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+          physicalSizeX);
+      }
       if (physicalSizeY > 0) {
         store.setPixelsPhysicalSizeY(new PositiveFloat(physicalSizeY), 0);
       }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+          physicalSizeY);
+      }
       if (physicalSizeZ > 0) {
         store.setPixelsPhysicalSizeZ(new PositiveFloat(physicalSizeZ), 0);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}",
+          physicalSizeZ);
       }
 
       String instrumentID = MetadataTools.createLSID("Instrument", 0);
@@ -232,10 +246,14 @@ public class NikonTiffReader extends BaseTiffReader {
 
       String objectiveID = MetadataTools.createLSID("Objective", 0, 0);
       store.setObjectiveID(objectiveID, 0, 0);
-      store.setImageObjectiveSettingsID(objectiveID, 0);
+      store.setObjectiveSettingsID(objectiveID, 0);
       if (magnification > 0) {
         store.setObjectiveNominalMagnification(
           new PositiveInteger(magnification), 0, 0);
+      }
+      else {
+        LOGGER.warn("Expected positive value for NominalMagnification; got {}",
+          magnification);
       }
 
       if (correction == null) correction = "Other";
@@ -249,7 +267,14 @@ public class NikonTiffReader extends BaseTiffReader {
         String laser = MetadataTools.createLSID("LightSource", 0, i);
         store.setLaserID(laser, 0, i);
         store.setLaserModel(laserIDs.get(i), 0, i);
-        store.setLaserWavelength(new PositiveInteger(wavelength.get(i)), 0, i);
+        if (wavelength.get(i) > 0) {
+          store.setLaserWavelength(
+            new PositiveInteger(wavelength.get(i)), 0, i);
+        }
+        else {
+          LOGGER.warn("Expected positive value for Wavelength; got {}",
+            wavelength.get(i));
+        }
         store.setLaserType(getLaserType("Other"), 0, i);
         store.setLaserLaserMedium(getLaserMedium("Other"), 0, i);
       }
@@ -263,12 +288,26 @@ public class NikonTiffReader extends BaseTiffReader {
       for (int c=0; c<getEffectiveSizeC(); c++) {
         store.setChannelPinholeSize(pinholeSize, 0, c);
         if (c < exWave.size()) {
-          store.setChannelExcitationWavelength(
-            new PositiveInteger(exWave.get(c)), 0, c);
+          if (exWave.get(c) > 0) {
+            store.setChannelExcitationWavelength(
+              new PositiveInteger(exWave.get(c)), 0, c);
+          }
+          else {
+            LOGGER.warn(
+              "Expected positive value for ExcitationWavelength; got {}",
+              exWave.get(c));
+          }
         }
         if (c < emWave.size()) {
-          store.setChannelEmissionWavelength(
-            new PositiveInteger(emWave.get(c)), 0, c);
+          if (emWave.get(c) > 0) {
+            store.setChannelEmissionWavelength(
+              new PositiveInteger(emWave.get(c)), 0, c);
+          }
+          else {
+            LOGGER.warn(
+              "Expected positive value for EmissionWavelength; got {}",
+              emWave.get(c));
+          }
         }
       }
 

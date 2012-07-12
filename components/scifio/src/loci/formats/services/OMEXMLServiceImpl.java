@@ -1,25 +1,38 @@
-//
-// OMEXMLServiceImpl.java
-//
-
 /*
-OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ * #%L
+ * OME SCIFIO package for reading and converting scientific file formats.
+ * %%
+ * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ * 
+ * The views and conclusions contained in the software and documentation are
+ * those of the authors and should not be interpreted as representing official
+ * policies, either expressed or implied, of any organization.
+ * #L%
+ */
 
 package loci.formats.services;
 
@@ -85,36 +98,44 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
   private static final Logger LOGGER =
     LoggerFactory.getLogger(OMEXMLService.class);
 
+  // -- Stylesheet names --
+
+  private static final String XSLT_PATH = "/loci/formats/meta/";
+  private static final String XSLT_REORDER = XSLT_PATH + "reorder-2008-09.xsl";
+  private static final String XSLT_2003FC =
+    XSLT_PATH + "2003-FC-to-2008-09.xsl";
+  private static final String XSLT_2006LO =
+    XSLT_PATH + "2006-LO-to-2008-09.xsl";
+  private static final String XSLT_200706 =
+    XSLT_PATH + "2007-06-to-2008-09.xsl";
+  private static final String XSLT_200802 =
+    XSLT_PATH + "2008-02-to-2008-09.xsl";
+  private static final String XSLT_200809 =
+    XSLT_PATH + "2008-09-to-2009-09.xsl";
+  private static final String XSLT_200909 =
+    XSLT_PATH + "2009-09-to-2010-04.xsl";
+  private static final String XSLT_201004 =
+    XSLT_PATH + "2010-04-to-2010-06.xsl";
+  private static final String XSLT_201006 =
+    XSLT_PATH + "2010-06-to-2011-06.xsl";
+  private static final String XSLT_201106 =
+    XSLT_PATH + "2011-06-to-2012-06.xsl";
+
+  // -- Cached stylesheets --
+
   /** Reordering stylesheet. */
-  private static final Templates reorderXSLT =
-    XMLTools.getStylesheet("/loci/formats/meta/reorder-2008-09.xsl",
-    OMEXMLServiceImpl.class);
+  private static Templates reorderXSLT;
 
   /** Stylesheets for updating from previous schema releases. */
-  private static final Templates UPDATE_2003FC =
-    XMLTools.getStylesheet("/loci/formats/meta/2003-FC-to-2008-09.xsl",
-    OMEXMLServiceImpl.class);
-  private static final Templates UPDATE_2006LO =
-    XMLTools.getStylesheet("/loci/formats/meta/2006-LO-to-2008-09.xsl",
-    OMEXMLServiceImpl.class);
-  private static final Templates UPDATE_200706 =
-    XMLTools.getStylesheet("/loci/formats/meta/2007-06-to-2008-09.xsl",
-    OMEXMLServiceImpl.class);
-  private static final Templates UPDATE_200802 =
-    XMLTools.getStylesheet("/loci/formats/meta/2008-02-to-2008-09.xsl",
-    OMEXMLServiceImpl.class);
-  private static final Templates UPDATE_200809 =
-    XMLTools.getStylesheet("/loci/formats/meta/2008-09-to-2009-09.xsl",
-    OMEXMLServiceImpl.class);
-  private static final Templates UPDATE_200909 =
-    XMLTools.getStylesheet("/loci/formats/meta/2009-09-to-2010-04.xsl",
-    OMEXMLServiceImpl.class);
-  private static final Templates UPDATE_201004 =
-    XMLTools.getStylesheet("/loci/formats/meta/2010-04-to-2010-06.xsl",
-    OMEXMLServiceImpl.class);
-  private static final Templates UPDATE_201006 =
-    XMLTools.getStylesheet("/loci/formats/meta/2010-06-to-2011-06.xsl",
-    OMEXMLServiceImpl.class);
+  private static Templates update2003FC;
+  private static Templates update2006LO;
+  private static Templates update200706;
+  private static Templates update200802;
+  private static Templates update200809;
+  private static Templates update200909;
+  private static Templates update201004;
+  private static Templates update201006;
+  private static Templates update201106;
 
   private static final String SCHEMA_PATH =
     "http://www.openmicroscopy.org/Schemas/OME/";
@@ -143,57 +164,109 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
       if (version.equals("2003-FC")) {
         xml = verifyOMENamespace(xml);
         LOGGER.debug("Running UPDATE_2003FC stylesheet.");
-        transformed = XMLTools.transformXML(xml, UPDATE_2003FC);
+        if (update2003FC == null) {
+          update2003FC =
+            XMLTools.getStylesheet(XSLT_2003FC, OMEXMLServiceImpl.class);
+        }
+        transformed = XMLTools.transformXML(xml, update2003FC);
       }
       else if (version.equals("2006-LO")) {
         xml = verifyOMENamespace(xml);
         LOGGER.debug("Running UPDATE_2006LO stylesheet.");
-        transformed = XMLTools.transformXML(xml, UPDATE_2006LO);
+        if (update2006LO == null) {
+          update2006LO =
+            XMLTools.getStylesheet(XSLT_2006LO, OMEXMLServiceImpl.class);
+        }
+        transformed = XMLTools.transformXML(xml, update2006LO);
       }
       else if (version.equals("2007-06")) {
         xml = verifyOMENamespace(xml);
         LOGGER.debug("Running UPDATE_200706 stylesheet.");
-        transformed = XMLTools.transformXML(xml, UPDATE_200706);
+        if (update200706 == null) {
+          update200706 =
+            XMLTools.getStylesheet(XSLT_200706, OMEXMLServiceImpl.class);
+        }
+        transformed = XMLTools.transformXML(xml, update200706);
       }
       else if (version.equals("2008-02")) {
         xml = verifyOMENamespace(xml);
         LOGGER.debug("Running UPDATE_200802 stylesheet.");
-        transformed = XMLTools.transformXML(xml, UPDATE_200802);
+        if (update200802 == null) {
+          update200802 =
+            XMLTools.getStylesheet(XSLT_200802, OMEXMLServiceImpl.class);
+        }
+        transformed = XMLTools.transformXML(xml, update200802);
       }
       else transformed = xml;
       LOGGER.debug("XML updated to at least 2008-09");
       LOGGER.trace("At least 2008-09 dump: {}", transformed);
 
       if (!version.equals("2009-09") && !version.equals("2010-04") &&
-        !version.equals("2010-06"))
+        !version.equals("2010-06") && !version.equals("2011-06") &&
+        !version.equals("2012-06"))
       {
         transformed = verifyOMENamespace(transformed);
         LOGGER.debug("Running UPDATE_200809 stylesheet.");
-        transformed = XMLTools.transformXML(transformed, UPDATE_200809);
+        if (update200809 == null) {
+          update200809 =
+            XMLTools.getStylesheet(XSLT_200809, OMEXMLServiceImpl.class);
+        }
+        transformed = XMLTools.transformXML(transformed, update200809);
       }
       LOGGER.debug("XML updated to at least 2009-09");
       LOGGER.trace("At least 2009-09 dump: {}", transformed);
-      if (!version.equals("2010-04") && !version.equals("2010-06")) {
+      if (!version.equals("2010-04") && !version.equals("2010-06") &&
+        !version.equals("2011-06") && !version.equals("2012-06"))
+      {
         transformed = verifyOMENamespace(transformed);
         LOGGER.debug("Running UPDATE_200909 stylesheet.");
-        transformed = XMLTools.transformXML(transformed, UPDATE_200909);
+        if (update200909 == null) {
+          update200909 =
+            XMLTools.getStylesheet(XSLT_200909, OMEXMLServiceImpl.class);
+        }
+        transformed = XMLTools.transformXML(transformed, update200909);
       }
       else transformed = xml;
       LOGGER.debug("XML updated to at least 2010-04");
       LOGGER.trace("At least 2010-04 dump: {}", transformed);
 
-      if (!version.equals("2010-06")) {
+      if (!version.equals("2010-06") && !version.equals("2011-06") &&
+        !version.equals("2012-06"))
+      {
         transformed = verifyOMENamespace(transformed);
         LOGGER.debug("Running UPDATE_201004 stylesheet.");
-        transformed = XMLTools.transformXML(transformed, UPDATE_201004);
+        if (update201004 == null) {
+          update201004 =
+            XMLTools.getStylesheet(XSLT_201004, OMEXMLServiceImpl.class);
+        }
+        transformed = XMLTools.transformXML(transformed, update201004);
       }
       else transformed = xml;
       LOGGER.debug("XML updated to at least 2010-06");
 
-      transformed = verifyOMENamespace(transformed);
-      LOGGER.debug("Running UPDATE_201006 stylesheet.");
-      transformed = XMLTools.transformXML(transformed, UPDATE_201006);
+      if (!version.equals("2011-06") && !version.equals("2012-06")) {
+        transformed = verifyOMENamespace(transformed);
+        LOGGER.debug("Running UPDATE_201006 stylesheet.");
+        if (update201006 == null) {
+          update201006 =
+            XMLTools.getStylesheet(XSLT_201006, OMEXMLServiceImpl.class);
+        }
+        transformed = XMLTools.transformXML(transformed, update201006);
+      }
+      else transformed = xml;
       LOGGER.debug("XML updated to at least 2011-06");
+
+      if (!version.equals("2012-06")) {
+        transformed = verifyOMENamespace(transformed);
+        LOGGER.debug("Running UPDATE_201106 stylesheet.");
+        if (update201106 == null) {
+          update201106 =
+            XMLTools.getStylesheet(XSLT_201106, OMEXMLServiceImpl.class);
+        }
+        transformed = XMLTools.transformXML(transformed, update201106);
+      }
+      else transformed = xml;
+      LOGGER.debug("XML updated to at least 2012-06");
 
       // fix namespaces
       transformed = transformed.replaceAll("<ns.*?:", "<");
@@ -286,6 +359,9 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
         String namespace = e.getAttribute("xmlns");
         if (namespace == null || namespace.equals("")) {
           namespace = e.getAttribute("xmlns:ome");
+        }
+        if (namespace == null || namespace.equals("")) {
+          namespace = e.getAttribute("xmlns:OME");
         }
 
         return namespace.endsWith("ome.xsd") ? "2003-FC" :

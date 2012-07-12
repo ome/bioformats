@@ -1,37 +1,45 @@
 /*
- * ome.xml.model.Filter
- *
- *-----------------------------------------------------------------------------
- *
- *  Copyright (C) @year@ Open Microscopy Environment
- *      Massachusetts Institute of Technology,
- *      National Institutes of Health,
- *      University of Dundee,
- *      University of Wisconsin-Madison
- *
- *
- *
- *    This library is free software; you can redistribute it and/or
- *    modify it under the terms of the GNU Lesser General Public
- *    License as published by the Free Software Foundation; either
- *    version 2.1 of the License, or (at your option) any later version.
- *
- *    This library is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- *    Lesser General Public License for more details.
- *
- *    You should have received a copy of the GNU Lesser General Public
- *    License along with this library; if not, write to the Free Software
- *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
- *-----------------------------------------------------------------------------
+ * #%L
+ * OME-XML Java library for working with OME-XML metadata structures.
+ * %%
+ * Copyright (C) 2006 - 2012 Open Microscopy Environment:
+ *   - Massachusetts Institute of Technology
+ *   - National Institutes of Health
+ *   - University of Dundee
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ * %%
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ * 
+ * The views and conclusions contained in the software and documentation are
+ * those of the authors and should not be interpreted as representing official
+ * policies, either expressed or implied, of any organization.
+ * #L%
  */
 
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2011-11-09 10:55:09-0500
+ * Created by callan via xsd-fu on 2012-05-18 10:08:16+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -58,7 +66,7 @@ public class Filter extends ManufacturerSpec
 
 	// -- Constants --
 
-	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2011-06";
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2012-06";
 
 	/** Logger for this class. */
 	private static final Logger LOGGER =
@@ -79,11 +87,20 @@ public class Filter extends ManufacturerSpec
 	// Property
 	private TransmittanceRange transmittanceRange;
 
+	// Back reference Instrument_BackReference
+	private Instrument instrument;
+
 	// Back reference FilterSet_BackReference
-	private List<FilterSet> filterSet_BackReferenceList = new ArrayList<FilterSet>();
+	private List<FilterSet> filterSetExcitationFilterLinks = new ArrayList<FilterSet>();
+
+	// Back reference FilterSet_BackReference
+	private List<FilterSet> filterSetEmissionFilterLinks = new ArrayList<FilterSet>();
 
 	// Back reference LightPath_BackReference
-	private List<LightPath> lightPath_BackReferenceList = new ArrayList<LightPath>();
+	private List<LightPath> lightPathExcitationFilterLinks = new ArrayList<LightPath>();
+
+	// Back reference LightPath_BackReference
+	private List<LightPath> lightPathEmissionFilterLinks = new ArrayList<LightPath>();
 
 	// -- Constructors --
 
@@ -174,7 +191,10 @@ public class Filter extends ManufacturerSpec
 			setTransmittanceRange(new TransmittanceRange(
 					(Element) TransmittanceRange_nodeList.get(0), model));
 		}
+		// *** IGNORING *** Skipped back reference Instrument_BackReference
 		// *** IGNORING *** Skipped back reference FilterSet_BackReference
+		// *** IGNORING *** Skipped back reference FilterSet_BackReference
+		// *** IGNORING *** Skipped back reference LightPath_BackReference
 		// *** IGNORING *** Skipped back reference LightPath_BackReference
 	}
 
@@ -236,66 +256,151 @@ public class Filter extends ManufacturerSpec
 		this.transmittanceRange = transmittanceRange;
 	}
 
-	// Reference which occurs more than once
-	public int sizeOfLinkedFilterSetList()
+	// Property
+	public Instrument getInstrument()
 	{
-		return filterSet_BackReferenceList.size();
+		return instrument;
 	}
 
-	public List<FilterSet> copyLinkedFilterSetList()
+	public void setInstrument(Instrument instrument_BackReference)
 	{
-		return new ArrayList<FilterSet>(filterSet_BackReferenceList);
-	}
-
-	public FilterSet getLinkedFilterSet(int index)
-	{
-		return filterSet_BackReferenceList.get(index);
-	}
-
-	public FilterSet setLinkedFilterSet(int index, FilterSet o)
-	{
-		return filterSet_BackReferenceList.set(index, o);
-	}
-
-	public boolean linkFilterSet(FilterSet o)
-	{
-		return filterSet_BackReferenceList.add(o);
-	}
-
-	public boolean unlinkFilterSet(FilterSet o)
-	{
-		return filterSet_BackReferenceList.remove(o);
+		this.instrument = instrument_BackReference;
 	}
 
 	// Reference which occurs more than once
-	public int sizeOfLinkedLightPathList()
+	public int sizeOfLinkedFilterSetExcitationFilterList()
 	{
-		return lightPath_BackReferenceList.size();
+		return filterSetExcitationFilterLinks.size();
 	}
 
-	public List<LightPath> copyLinkedLightPathList()
+	public List<FilterSet> copyLinkedFilterSetExcitationFilterList()
 	{
-		return new ArrayList<LightPath>(lightPath_BackReferenceList);
+		return new ArrayList<FilterSet>(filterSetExcitationFilterLinks);
 	}
 
-	public LightPath getLinkedLightPath(int index)
+	public FilterSet getLinkedFilterSetExcitationFilter(int index)
 	{
-		return lightPath_BackReferenceList.get(index);
+		return filterSetExcitationFilterLinks.get(index);
 	}
 
-	public LightPath setLinkedLightPath(int index, LightPath o)
+	public FilterSet setLinkedFilterSetExcitationFilter(int index, FilterSet o)
 	{
-		return lightPath_BackReferenceList.set(index, o);
+		return filterSetExcitationFilterLinks.set(index, o);
 	}
 
-	public boolean linkLightPath(LightPath o)
+	public boolean linkFilterSetExcitationFilter(FilterSet o)
 	{
-		return lightPath_BackReferenceList.add(o);
+		if (!filterSetExcitationFilterLinks.contains(o)) {
+			return filterSetExcitationFilterLinks.add(o);
+		}
+		return false;
 	}
 
-	public boolean unlinkLightPath(LightPath o)
+	public boolean unlinkFilterSetExcitationFilter(FilterSet o)
 	{
-		return lightPath_BackReferenceList.remove(o);
+		return filterSetExcitationFilterLinks.remove(o);
+	}
+
+	// Reference which occurs more than once
+	public int sizeOfLinkedFilterSetEmissionFilterList()
+	{
+		return filterSetEmissionFilterLinks.size();
+	}
+
+	public List<FilterSet> copyLinkedFilterSetEmissionFilterList()
+	{
+		return new ArrayList<FilterSet>(filterSetEmissionFilterLinks);
+	}
+
+	public FilterSet getLinkedFilterSetEmissionFilter(int index)
+	{
+		return filterSetEmissionFilterLinks.get(index);
+	}
+
+	public FilterSet setLinkedFilterSetEmissionFilter(int index, FilterSet o)
+	{
+		return filterSetEmissionFilterLinks.set(index, o);
+	}
+
+	public boolean linkFilterSetEmissionFilter(FilterSet o)
+	{
+		if (!filterSetEmissionFilterLinks.contains(o)) {
+			return filterSetEmissionFilterLinks.add(o);
+		}
+		return false;
+	}
+
+	public boolean unlinkFilterSetEmissionFilter(FilterSet o)
+	{
+		return filterSetEmissionFilterLinks.remove(o);
+	}
+
+	// Reference which occurs more than once
+	public int sizeOfLinkedLightPathExcitationFilterList()
+	{
+		return lightPathExcitationFilterLinks.size();
+	}
+
+	public List<LightPath> copyLinkedLightPathExcitationFilterList()
+	{
+		return new ArrayList<LightPath>(lightPathExcitationFilterLinks);
+	}
+
+	public LightPath getLinkedLightPathExcitationFilter(int index)
+	{
+		return lightPathExcitationFilterLinks.get(index);
+	}
+
+	public LightPath setLinkedLightPathExcitationFilter(int index, LightPath o)
+	{
+		return lightPathExcitationFilterLinks.set(index, o);
+	}
+
+	public boolean linkLightPathExcitationFilter(LightPath o)
+	{
+		if (!lightPathExcitationFilterLinks.contains(o)) {
+			return lightPathExcitationFilterLinks.add(o);
+		}
+		return false;
+	}
+
+	public boolean unlinkLightPathExcitationFilter(LightPath o)
+	{
+		return lightPathExcitationFilterLinks.remove(o);
+	}
+
+	// Reference which occurs more than once
+	public int sizeOfLinkedLightPathEmissionFilterList()
+	{
+		return lightPathEmissionFilterLinks.size();
+	}
+
+	public List<LightPath> copyLinkedLightPathEmissionFilterList()
+	{
+		return new ArrayList<LightPath>(lightPathEmissionFilterLinks);
+	}
+
+	public LightPath getLinkedLightPathEmissionFilter(int index)
+	{
+		return lightPathEmissionFilterLinks.get(index);
+	}
+
+	public LightPath setLinkedLightPathEmissionFilter(int index, LightPath o)
+	{
+		return lightPathEmissionFilterLinks.set(index, o);
+	}
+
+	public boolean linkLightPathEmissionFilter(LightPath o)
+	{
+		if (!lightPathEmissionFilterLinks.contains(o)) {
+			return lightPathEmissionFilterLinks.add(o);
+		}
+		return false;
+	}
+
+	public boolean unlinkLightPathEmissionFilter(LightPath o)
+	{
+		return lightPathEmissionFilterLinks.remove(o);
 	}
 
 	public Element asXMLElement(Document document)
@@ -334,11 +439,23 @@ public class Filter extends ManufacturerSpec
 			// sub-elements)
 			Filter_element.appendChild(transmittanceRange.asXMLElement(document));
 		}
-		if (filterSet_BackReferenceList != null)
+		if (instrument != null)
+		{
+			// *** IGNORING *** Skipped back reference Instrument_BackReference
+		}
+		if (filterSetExcitationFilterLinks != null)
 		{
 			// *** IGNORING *** Skipped back reference FilterSet_BackReference
 		}
-		if (lightPath_BackReferenceList != null)
+		if (filterSetEmissionFilterLinks != null)
+		{
+			// *** IGNORING *** Skipped back reference FilterSet_BackReference
+		}
+		if (lightPathExcitationFilterLinks != null)
+		{
+			// *** IGNORING *** Skipped back reference LightPath_BackReference
+		}
+		if (lightPathEmissionFilterLinks != null)
 		{
 			// *** IGNORING *** Skipped back reference LightPath_BackReference
 		}

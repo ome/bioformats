@@ -1,25 +1,38 @@
-//
-// OMETiffReader.java
-//
-
 /*
-OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ * #%L
+ * OME SCIFIO package for reading and converting scientific file formats.
+ * %%
+ * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ * 
+ * The views and conclusions contained in the software and documentation are
+ * those of the authors and should not be interpreted as representing official
+ * policies, either expressed or implied, of any organization.
+ * #L%
+ */
 
 package loci.formats.in;
 
@@ -31,9 +44,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Vector;
 
-import ome.xml.model.primitives.NonNegativeInteger;
-import ome.xml.model.primitives.PositiveInteger;
-
+import loci.common.DateTools;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.common.services.DependencyException;
@@ -55,6 +66,10 @@ import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 import loci.formats.tiff.PhotoInterp;
 import loci.formats.tiff.TiffParser;
+
+import ome.xml.model.primitives.NonNegativeInteger;
+import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 /**
  * OMETiffReader is the file format reader for
@@ -342,7 +357,10 @@ public class OMETiffReader extends FormatReader {
 
     String[] acquiredDates = new String[meta.getImageCount()];
     for (int i=0; i<acquiredDates.length; i++) {
-      acquiredDates[i] = meta.getImageAcquiredDate(i);
+      Timestamp acquisitionDate = meta.getImageAcquisitionDate(i);
+      if (acquisitionDate != null) {
+        acquiredDates[i] = acquisitionDate.getValue();
+      }
     }
 
     String currentUUID = meta.getUUID();
@@ -431,6 +449,7 @@ public class OMETiffReader extends FormatReader {
     // process TiffData elements
     Hashtable<String, IFormatReader> readers =
       new Hashtable<String, IFormatReader>();
+    boolean adjustedSamples = false;
     for (int i=0; i<seriesCount; i++) {
       int s = i;
       LOGGER.debug("Image[{}] {", i);
@@ -445,12 +464,16 @@ public class OMETiffReader extends FormatReader {
       int samples = samplesPerPixel == null ?  -1 : samplesPerPixel.getValue();
       int tiffSamples = firstIFD.getSamplesPerPixel();
 
-      boolean adjustedSamples = false;
-      if (samples != tiffSamples) {
+      if (adjustedSamples ||
+        (samples != tiffSamples && (i == 0 || samples < 0)))
+      {
         LOGGER.warn("SamplesPerPixel mismatch: OME={}, TIFF={}",
           samples, tiffSamples);
         samples = tiffSamples;
         adjustedSamples = true;
+      }
+      else {
+        adjustedSamples = false;
       }
 
       if (adjustedSamples && meta.getChannelCount(i) <= 1) {
@@ -473,9 +496,9 @@ public class OMETiffReader extends FormatReader {
       for (int no=0; no<num; no++) planes[no] = new OMETiffPlane();
 
       int tiffDataCount = meta.getTiffDataCount(i);
-      boolean zOneIndexed = false;
-      boolean cOneIndexed = false;
-      boolean tOneIndexed = false;
+      Boolean zOneIndexed = null;
+      Boolean cOneIndexed = null;
+      Boolean tOneIndexed = null;
 
       // pre-scan TiffData indices to see if any of them are indexed from 1
 
@@ -487,9 +510,24 @@ public class OMETiffReader extends FormatReader {
         int t = firstT == null ? 0 : firstT.getValue();
         int z = firstZ == null ? 0 : firstZ.getValue();
 
-        if (c >= effSizeC) cOneIndexed = true;
-        if (z >= sizeZ) zOneIndexed = true;
-        if (t >= sizeT) tOneIndexed = true;
+        if (c >= effSizeC && cOneIndexed == null) {
+          cOneIndexed = true;
+        }
+        else if (c == 0) {
+          cOneIndexed = false;
+        }
+        if (z >= sizeZ && zOneIndexed == null) {
+          zOneIndexed = true;
+        }
+        else if (z == 0) {
+          zOneIndexed = false;
+        }
+        if (t >= sizeT && tOneIndexed == null) {
+          tOneIndexed = true;
+        }
+        else if (t == 0) {
+          tOneIndexed = false;
+        }
       }
 
       for (int td=0; td<tiffDataCount; td++) {
@@ -518,9 +556,15 @@ public class OMETiffReader extends FormatReader {
         int z = firstZ == null ? 0 : firstZ.getValue();
 
         // NB: some writers index FirstC, FirstZ and FirstT from 1
-        if (cOneIndexed) c--;
-        if (zOneIndexed) z--;
-        if (tOneIndexed) t--;
+        if (cOneIndexed != null && cOneIndexed) c--;
+        if (zOneIndexed != null && zOneIndexed) z--;
+        if (tOneIndexed != null && tOneIndexed) t--;
+
+        if (z >= sizeZ || c >= effSizeC || t >= sizeT) {
+          LOGGER.warn("Found invalid TiffData: Z={}, C={}, T={}",
+            new Object[] {z, c, t});
+          break;
+        }
 
         int index = FormatTools.getIndex(order,
           sizeZ, effSizeC, sizeT, num, z, c, t);
@@ -638,13 +682,13 @@ public class OMETiffReader extends FormatReader {
 
         core[s].sizeX = meta.getPixelsSizeX(i).getValue().intValue();
         int tiffWidth = (int) firstIFD.getImageWidth();
-        if (core[s].sizeX != tiffWidth) {
+        if (core[s].sizeX != tiffWidth && s == 0) {
           LOGGER.warn("SizeX mismatch: OME={}, TIFF={}",
             core[s].sizeX, tiffWidth);
         }
         core[s].sizeY = meta.getPixelsSizeY(i).getValue().intValue();
         int tiffHeight = (int) firstIFD.getImageLength();
-        if (core[s].sizeY != tiffHeight) {
+        if (core[s].sizeY != tiffHeight && s ==  0) {
           LOGGER.warn("SizeY mismatch: OME={}, TIFF={}",
             core[s].sizeY, tiffHeight);
         }
@@ -654,7 +698,7 @@ public class OMETiffReader extends FormatReader {
         core[s].pixelType = FormatTools.pixelTypeFromString(
           meta.getPixelsType(i).toString());
         int tiffPixelType = firstIFD.getPixelType();
-        if (core[s].pixelType != tiffPixelType) {
+        if (core[s].pixelType != tiffPixelType && (s == 0 || adjustedSamples)) {
           LOGGER.warn("PixelType mismatch: OME={}, TIFF={}",
             core[s].pixelType, tiffPixelType);
           core[s].pixelType = tiffPixelType;
@@ -740,7 +784,8 @@ public class OMETiffReader extends FormatReader {
     MetadataTools.populatePixels(metadataStore, this, false, false);
     for (int i=0; i<acquiredDates.length; i++) {
       if (acquiredDates[i] != null) {
-        metadataStore.setImageAcquiredDate(acquiredDates[i], i);
+        metadataStore.setImageAcquisitionDate(
+            new Timestamp(acquiredDates[i]), i);
       }
     }
     metadataStore = getMetadataStoreForConversion();

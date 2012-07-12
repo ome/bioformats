@@ -1,0 +1,28 @@
+<ivy-module version="1.0">
+  <info organisation="ome" module="bio-formats" status="integration"/>
+  <configurations>
+    <conf name="build"/>
+    <conf name="runtime"/>
+  </configurations>
+  <publications>
+    <artifact name="bio-formats"/>
+    <artifact name="jai_imageio"/>
+    <artifact name="loci-common"/>
+    <artifact name="mdbtools-java"/>
+    <artifact name="metakit"/>
+    <artifact name="ome-io"/>
+    <artifact name="ome-xml"/>
+    <artifact name="poi-loci"/>
+    <artifact name="scifio"/>
+  </publications>
+  <dependencies defaultconfmapping="build,runtime->default">
+    <!-- Internal -->
+    <dependency name="specification" rev="${omero.version}" changing="true" conf="build,runtime->build"/>
+    <!-- Deps -->
+    <dependency org="bf-deps" name="xalan" rev="2.7.1"/>
+    <dependency org="bf-deps" name="serializer" rev="2.7.1"/>
+    <dependency org="bf-deps" name="bufr" rev="1.1.00"/>
+    <dependency org="bf-deps" name="grib" rev="5.1.03"/>
+    <dependency org="bf-deps" name="netcdf" rev="4.0"/>
+  </dependencies>
+</ivy-module>

@@ -1,25 +1,27 @@
-//
-// MIASReader.java
-//
-
 /*
-OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ * #%L
+ * OME Bio-Formats package for reading and converting biological file formats.
+ * %%
+ * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 2 of the 
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public 
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-2.0.html>.
+ * #L%
+ */
 
 package loci.formats.in;
 
@@ -45,12 +47,14 @@ import loci.formats.ImageTools;
 import loci.formats.MetadataTools;
 import loci.formats.codec.BitWriter;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
 
+import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.NonNegativeInteger;
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 /**
  * MIASReader is the file format reader for Maia Scientific MIAS-2 datasets.
@@ -752,8 +756,6 @@ public class MIASReader extends FormatReader {
       store.setWellSampleImageRef(imageID, 0, well, 0);
 
       store.setPlateAcquisitionWellSampleRef(wellSampleID, 0, 0, well);
-
-      MetadataTools.setDefaultCreationDate(store, id, well);
     }
 
     MetadataLevel level = getMetadataOptions().getMetadataLevel();
@@ -785,7 +787,7 @@ public class MIASReader extends FormatReader {
 
       if (level != MetadataLevel.NO_OVERLAYS) {
         // populate image-level ROIs
-        Integer[] colors = new Integer[getSizeC()];
+        Color[] colors = new Color[getSizeC()];
         int nextROI = 0;
         for (AnalysisFile af : analysisFiles) {
           String file = af.filename;
@@ -845,7 +847,7 @@ public class MIASReader extends FormatReader {
    * Well<nnnn>_mode<n>_z<nnn>_t<nnn>_AllModesOverlay.tif
    * files in <experiment>/<plate>/results/
    */
-  private Integer getChannelColorFromFile(String file)
+  private Color getChannelColorFromFile(String file)
     throws FormatException, IOException
   {
     RandomAccessInputStream s = new RandomAccessInputStream(file);
@@ -866,17 +868,17 @@ public class MIASReader extends FormatReader {
         maxIndex = c;
       }
       else if (v == max) {
-        return 0;
+        return new Color(0, 0, 0, 255);
       }
     }
 
     switch (maxIndex) {
-      case 0:
-        return 0xff0000;
-      case 1:
-        return 0xff00;
-      case 2:
-        return 0xff;
+      case 0: // red
+        return new Color(255, 0, 0, 255);
+      case 1: // green
+        return new Color(0, 255, 0, 255);
+      case 2: // blue
+        return new Color(0, 0, 255, 255);
     }
     return null;
   }
@@ -922,7 +924,7 @@ public class MIASReader extends FormatReader {
     store.setEllipseTheZ(new NonNegativeInteger(zv), roi, 0);
     store.setEllipseX(new Double(data[columns.indexOf("Col")]), roi, 0);
     store.setEllipseY(new Double(data[columns.indexOf("Row")]), roi, 0);
-    store.setEllipseLabel(data[columns.indexOf("Label")], roi, 0);
+    store.setEllipseText(data[columns.indexOf("Label")], roi, 0);
 
     double diam = Double.parseDouble(data[columns.indexOf("Cell Diam.")]);
     double radius = diam / 2;
@@ -990,8 +992,15 @@ public class MIASReader extends FormatReader {
           store.setObjectiveModel(value, 0, 0);
         }
         else if (key.equals("Magnification")) {
-          store.setObjectiveNominalMagnification(
-              new PositiveInteger((int) Double.parseDouble(value)), 0, 0);
+          int mag = (int) Double.parseDouble(value);
+          if (mag > 0) {
+            store.setObjectiveNominalMagnification(
+              new PositiveInteger(mag), 0, 0);
+          }
+          else {
+            LOGGER.warn(
+              "Expected positive value for NominalMagnification; got {}", mag);
+          }
         }
         else if (key.startsWith("Mode_")) {
           channelNames.add(value);
@@ -1009,11 +1018,19 @@ public class MIASReader extends FormatReader {
     }
 
     for (int well=0; well<tiffs.length; well++) {
-      if (physicalSizeX != null) {
+      if (physicalSizeX != null && physicalSizeX > 0) {
         store.setPixelsPhysicalSizeX(new PositiveFloat(physicalSizeX), well);
       }
-      if (physicalSizeY != null) {
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+          physicalSizeX);
+      }
+      if (physicalSizeY != null && physicalSizeY > 0) {
         store.setPixelsPhysicalSizeY(new PositiveFloat(physicalSizeY), well);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+          physicalSizeY);
       }
       for (int c=0; c<channelNames.size(); c++) {
         if (c < getEffectiveSizeC()) {
@@ -1021,7 +1038,9 @@ public class MIASReader extends FormatReader {
         }
       }
       date = DateTools.formatDate(date, "dd/MM/yyyy HH:mm:ss");
-      store.setImageAcquiredDate(date, well);
+      if (date != null) {
+        store.setImageAcquisitionDate(new Timestamp(date), well);
+      }
 
       for (int i=0; i<getImageCount(); i++) {
         store.setPlaneExposureTime(exposure, well, i);
@@ -1037,7 +1056,7 @@ public class MIASReader extends FormatReader {
   private int parseMasks(MetadataStore store, int series, int roi,
     String overlayTiff) throws FormatException, IOException
   {
-    if (!parseMasks) return 0;
+    if (!parseMasks || series >= getSeriesCount()) return 0;
     int nOverlays = 0;
     for (int i=0; i<3; i++) {
       String roiId = MetadataTools.createLSID("ROI", series, roi + nOverlays);
@@ -1058,8 +1077,8 @@ public class MIASReader extends FormatReader {
         store.setMaskHeight(new Double(getSizeY()), roi + nOverlays, 0);
 
         int color = 0xff000000 | (0xff << (8 * (2 - i)));
-        store.setMaskStroke(color, roi + nOverlays, 0);
-        store.setMaskFill(color, roi + nOverlays, 0);
+        store.setMaskStrokeColor(new Color(color), roi + nOverlays, 0);
+        store.setMaskFillColor(new Color(color), roi + nOverlays, 0);
         store.setImageROIRef(roiId, series, roi + nOverlays);
         nOverlays++;
       }

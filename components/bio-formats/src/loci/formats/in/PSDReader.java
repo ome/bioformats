@@ -1,31 +1,32 @@
-//
-// PSDReader.java
-//
-
 /*
-OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ * #%L
+ * OME Bio-Formats package for reading and converting biological file formats.
+ * %%
+ * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 2 of the 
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public 
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-2.0.html>.
+ * #L%
+ */
 
 package loci.formats.in;
 
 import java.io.IOException;
 
-import loci.common.ByteArrayHandle;
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -61,9 +62,6 @@ public class PSDReader extends FormatReader {
   private int[][] lens;
   private boolean compressed = false;
 
-  private int lastImageIndex = -1;
-  private byte[] lastImage;
-
   // -- Constructor --
 
   /** Constructs a new PSD reader. */
@@ -96,13 +94,6 @@ public class PSDReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    if (no == lastImageIndex && lastImage != null) {
-      RandomAccessInputStream s = new RandomAccessInputStream(lastImage);
-      readPlane(s, x, y, w, h, buf);
-      s.close();
-      return buf;
-    }
-
     in.seek(offset);
 
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
@@ -113,24 +104,23 @@ public class PSDReader extends FormatReader {
       CodecOptions options = new CodecOptions();
       options.maxBytes = getSizeX() * bpp;
 
-      ByteArrayHandle pix = new ByteArrayHandle();
       byte[] b = null;
 
+      int index = 0;
       for (int c=0; c<getSizeC(); c++) {
         for (int row=0; row<getSizeY(); row++) {
-          b = new byte[lens[c][row]];
-          in.read(b);
-          b = codec.decompress(b, options);
-          pix.write(b);
+          if (row < y || row >= y + h) {
+            in.skipBytes(lens[c][row]);
+          }
+          else {
+            b = new byte[lens[c][row]];
+            in.read(b);
+            b = codec.decompress(b, options);
+            System.arraycopy(b, x * bpp, buf, index, w * bpp);
+            index += w * bpp;
+          }
         }
       }
-
-      lastImageIndex = no;
-      lastImage = pix.getBytes();
-
-      RandomAccessInputStream s = new RandomAccessInputStream(lastImage);
-      readPlane(s, x, y, w, h, buf);
-      s.close();
     }
     else {
       readPlane(in, x, y, w, h, buf);
@@ -146,8 +136,6 @@ public class PSDReader extends FormatReader {
       offset = 0;
       compressed = false;
       lens = null;
-      lastImageIndex = -1;
-      lastImage = null;
     }
   }
 
@@ -252,6 +240,12 @@ public class PSDReader extends FormatReader {
         throw new FormatException("Vector data is not supported.");
       }
 
+      if (layerLen == 0 && layerCount == 0) {
+        in.skipBytes(2);
+        int check = in.readShort();
+        in.seek(in.getFilePointer() - (check == 0 ? 4 : 2));
+      }
+
       int[] w = new int[layerCount];
       int[] h = new int[layerCount];
       int[] c = new int[layerCount];
@@ -271,6 +265,9 @@ public class PSDReader extends FormatReader {
 
       // skip over pixel data for each layer
       for (int i=0; i<layerCount; i++) {
+        if (h[i] < 0) {
+          continue;
+        }
         int[] lens = new int[h[i]];
         for (int cc=0; cc<c[i]; cc++) {
           boolean compressed = in.readShort() == 1;
@@ -293,6 +290,10 @@ public class PSDReader extends FormatReader {
       }
       int len = in.readInt();
       if ((len % 4) != 0) len += 4 - (len % 4);
+      if (len > in.length() - in.getFilePointer()) {
+        in.seek(start);
+        len = 0;
+      }
       in.skipBytes(len);
 
       String s = in.readString(4);
@@ -333,7 +334,6 @@ public class PSDReader extends FormatReader {
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
-    MetadataTools.setDefaultCreationDate(store, id, 0);
   }
 
 }

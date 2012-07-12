@@ -1,41 +1,45 @@
-//
-// AggregateMetadata.java
-//
-
 /*
- * loci.formats.meta.AggregateMetadata
- *
- *-----------------------------------------------------------------------------
- *
- *  Copyright (C) 2005-@year@ Open Microscopy Environment
- *      Massachusetts Institute of Technology,
- *      National Institutes of Health,
- *      University of Dundee,
- *      University of Wisconsin-Madison
- *
- *
- *
- *    This library is free software; you can redistribute it and/or
- *    modify it under the terms of the GNU Lesser General Public
- *    License as published by the Free Software Foundation; either
- *    version 2.1 of the License, or (at your option) any later version.
- *
- *    This library is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- *    Lesser General Public License for more details.
- *
- *    You should have received a copy of the GNU Lesser General Public
- *    License along with this library; if not, write to the Free Software
- *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
- *-----------------------------------------------------------------------------
+ * #%L
+ * OME-XML Java library for working with OME-XML metadata structures.
+ * %%
+ * Copyright (C) 2006 - 2012 Open Microscopy Environment:
+ *   - Massachusetts Institute of Technology
+ *   - National Institutes of Health
+ *   - University of Dundee
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ * %%
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ * 
+ * The views and conclusions contained in the software and documentation are
+ * those of the authors and should not be interpreted as representing official
+ * policies, either expressed or implied, of any organization.
+ * #L%
  */
 
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2011-06-09 09:58:56.439287
+ * Created by callan via xsd-fu on 2012-05-18 10:08:21+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -45,6 +49,7 @@ package loci.formats.meta;
 import java.util.Iterator;
 import java.util.List;
 
+import ome.xml.model.*;
 import ome.xml.model.enums.*;
 import ome.xml.model.primitives.*;
 
@@ -148,6 +153,20 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
+  public String getShapeType(int roiIndex, int shapeIndex)
+  {
+    for (Iterator iter = delegates.iterator(); iter.hasNext();)
+    {
+      Object o = iter.next();
+      if (o instanceof MetadataRetrieve)
+      {
+        MetadataRetrieve retrieve = (MetadataRetrieve) o;
+        return retrieve.getShapeType(roiIndex, shapeIndex);
+      }
+    }
+    return null;
+  }
+
 	// -- Entity counting (code generated definitions) --
 
 	// AnnotationRef entity counting
@@ -190,6 +209,21 @@ public class AggregateMetadata implements IMetadata
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
 				int result = retrieve.getPlateAnnotationRefCount(plateIndex);
+				if (result >= 0) return result;
+			}
+		}
+		return -1;
+	}
+
+	public int getExperimenterGroupAnnotationRefCount(int experimenterGroupIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				int result = retrieve.getExperimenterGroupAnnotationRefCount(experimenterGroupIndex);
 				if (result >= 0) return result;
 			}
 		}
@@ -412,7 +446,6 @@ public class AggregateMetadata implements IMetadata
 		return -1;
 	}
 
-	// Contact entity counting
 	// Dataset entity counting
 	public int getDatasetCount()
 	{
@@ -430,7 +463,7 @@ public class AggregateMetadata implements IMetadata
 	}
 
 	// DatasetRef entity counting
-	public int getDatasetRefCount(int imageIndex)
+	public int getDatasetRefCount(int projectIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -438,7 +471,7 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				int result = retrieve.getDatasetRefCount(imageIndex);
+				int result = retrieve.getDatasetRefCount(projectIndex);
 				if (result >= 0) return result;
 			}
 		}
@@ -591,7 +624,39 @@ public class AggregateMetadata implements IMetadata
 		return -1;
 	}
 
+	// ExperimenterGroup entity counting
+	public int getExperimenterGroupCount()
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				int result = retrieve.getExperimenterGroupCount();
+				if (result >= 0) return result;
+			}
+		}
+		return -1;
+	}
+
+	// ExperimenterGroupRef entity counting
 	// ExperimenterRef entity counting
+	public int getExperimenterGroupExperimenterRefCount(int experimenterGroupIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				int result = retrieve.getExperimenterGroupExperimenterRefCount(experimenterGroupIndex);
+				if (result >= 0) return result;
+			}
+		}
+		return -1;
+	}
+
 	// Filament entity counting
 	// FileAnnotation entity counting
 	public int getFileAnnotationCount()
@@ -642,38 +707,6 @@ public class AggregateMetadata implements IMetadata
 	}
 
 	// FilterSetRef entity counting
-	// Group entity counting
-	public int getGroupCount()
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				int result = retrieve.getGroupCount();
-				if (result >= 0) return result;
-			}
-		}
-		return -1;
-	}
-
-	// GroupRef entity counting
-	public int getExperimenterGroupRefCount(int experimenterIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				int result = retrieve.getExperimenterGroupRefCount(experimenterIndex);
-				if (result >= 0) return result;
-			}
-		}
-		return -1;
-	}
-
 	// Image entity counting
 	public int getImageCount()
 	{
@@ -691,6 +724,21 @@ public class AggregateMetadata implements IMetadata
 	}
 
 	// ImageRef entity counting
+	public int getDatasetImageRefCount(int datasetIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				int result = retrieve.getDatasetImageRefCount(datasetIndex);
+				if (result >= 0) return result;
+			}
+		}
+		return -1;
+	}
+
 	// ImagingEnvironment entity counting
 	// Instrument entity counting
 	public int getInstrumentCount()
@@ -709,8 +757,24 @@ public class AggregateMetadata implements IMetadata
 	}
 
 	// InstrumentRef entity counting
+	// Label entity counting
 	// Laser entity counting
 	// Leader entity counting
+	public int getLeaderCount(int experimenterGroupIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				int result = retrieve.getLeaderCount(experimenterGroupIndex);
+				if (result >= 0) return result;
+			}
+		}
+		return -1;
+	}
+
 	// LightEmittingDiode entity counting
 	// LightPath entity counting
 	// LightSource entity counting
@@ -813,23 +877,6 @@ public class AggregateMetadata implements IMetadata
 	}
 
 	// Microscope entity counting
-	// OTF entity counting
-	public int getOTFCount(int instrumentIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				int result = retrieve.getOTFCount(instrumentIndex);
-				if (result >= 0) return result;
-			}
-		}
-		return -1;
-	}
-
-	// OTFRef entity counting
 	// Objective entity counting
 	public int getObjectiveCount(int instrumentIndex)
 	{
@@ -847,7 +894,6 @@ public class AggregateMetadata implements IMetadata
 	}
 
 	// ObjectiveSettings entity counting
-	// Path entity counting
 	// Pixels entity counting
 	// Plane entity counting
 	public int getPlaneCount(int imageIndex)
@@ -914,6 +960,7 @@ public class AggregateMetadata implements IMetadata
 	}
 
 	// Point entity counting
+	// Polygon entity counting
 	// Polyline entity counting
 	// Project entity counting
 	public int getProjectCount()
@@ -925,22 +972,6 @@ public class AggregateMetadata implements IMetadata
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
 				int result = retrieve.getProjectCount();
-				if (result >= 0) return result;
-			}
-		}
-		return -1;
-	}
-
-	// ProjectRef entity counting
-	public int getProjectRefCount(int datasetIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				int result = retrieve.getProjectRefCount(datasetIndex);
 				if (result >= 0) return result;
 			}
 		}
@@ -1029,22 +1060,6 @@ public class AggregateMetadata implements IMetadata
 		return -1;
 	}
 
-	// ScreenRef entity counting
-	public int getScreenRefCount(int plateIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				int result = retrieve.getScreenRefCount(plateIndex);
-				if (result >= 0) return result;
-			}
-		}
-		return -1;
-	}
-
 	// Shape entity counting
 	public int getShapeCount(int ROIIndex)
 	{
@@ -1095,7 +1110,6 @@ public class AggregateMetadata implements IMetadata
 		return -1;
 	}
 
-	// Text entity counting
 	// TiffData entity counting
 	public int getTiffDataCount(int imageIndex)
 	{
@@ -1265,8 +1279,8 @@ public class AggregateMetadata implements IMetadata
 	//
 	// AnnotationRef property storage
 	//
-	// Indexes: {u'ROI': [u'int ROIIndex', u'int annotationRefIndex'], u'Reagent': [u'int screenIndex', u'int reagentIndex', u'int annotationRefIndex'], u'Plate': [u'int plateIndex', u'int annotationRefIndex'], u'Image': [u'int imageIndex', u'int annotationRefIndex'], u'Well': [u'int plateIndex', u'int wellIndex', u'int annotationRefIndex'], u'Pixels': [u'int imageIndex', u'int annotationRefIndex'], u'Dataset': [u'int datasetIndex', u'int annotationRefIndex'], u'Project': [u'int projectIndex', u'int annotationRefIndex'], u'PlateAcquisition': [u'int plateIndex', u'int plateAcquisitionIndex', u'int annotationRefIndex'], u'Plane': [u'int imageIndex', u'int planeIndex', u'int annotationRefIndex'], u'Experimenter': [u'int experimenterIndex', u'int annotationRefIndex'], u'Annotation': [u'int annotationRefIndex'], u'WellSample': [u'int plateIndex', u'int wellIndex', u'int wellSampleIndex', u'int annotationRefIndex'], u'Screen': [u'int screenIndex', u'int annotationRefIndex'], u'Channel': [u'int imageIndex', u'int channelIndex', u'int annotationRefIndex']}
-	// {u'ROI': {u'OME': None}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'Annotation': None, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
+	// Indexes: {u'ROI': [u'int ROIIndex', u'int annotationRefIndex'], u'Reagent': [u'int screenIndex', u'int reagentIndex', u'int annotationRefIndex'], u'Plate': [u'int plateIndex', u'int annotationRefIndex'], u'ExperimenterGroup': [u'int experimenterGroupIndex', u'int annotationRefIndex'], u'Image': [u'int imageIndex', u'int annotationRefIndex'], u'Well': [u'int plateIndex', u'int wellIndex', u'int annotationRefIndex'], u'Pixels': [u'int imageIndex', u'int annotationRefIndex'], u'Dataset': [u'int datasetIndex', u'int annotationRefIndex'], u'Project': [u'int projectIndex', u'int annotationRefIndex'], u'PlateAcquisition': [u'int plateIndex', u'int plateAcquisitionIndex', u'int annotationRefIndex'], u'Plane': [u'int imageIndex', u'int planeIndex', u'int annotationRefIndex'], u'Experimenter': [u'int experimenterIndex', u'int annotationRefIndex'], u'Annotation': [u'int annotationRefIndex'], u'WellSample': [u'int plateIndex', u'int wellIndex', u'int wellSampleIndex', u'int annotationRefIndex'], u'Screen': [u'int screenIndex', u'int annotationRefIndex'], u'Channel': [u'int imageIndex', u'int channelIndex', u'int annotationRefIndex']}
+	// {u'ROI': {u'OME': None}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'ExperimenterGroup': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'Annotation': None, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
 	// Is multi path? True
 
 	// 1:1
@@ -1398,13 +1412,13 @@ public class AggregateMetadata implements IMetadata
 	//
 	// BinaryFile property storage
 	//
-	// Indexes: {u'FileAnnotation': [u'int fileAnnotationIndex'], u'OTF': [u'int instrumentIndex', u'int OTFIndex']}
-	// {u'FileAnnotation': {u'StructuredAnnotations': {u'OME': None}}, u'OTF': {u'Instrument': {u'OME': None}}}
-	// Is multi path? True
+	// Indexes: {u'FileAnnotation': [u'int fileAnnotationIndex']}
+	// {u'FileAnnotation': {u'StructuredAnnotations': {u'OME': None}}}
+	// Is multi path? False
 
 	// Ignoring BinData element, complex property
 	// Ignoring External element, complex property
-	public String getFileAnnotationBinaryFileFileName(int fileAnnotationIndex)
+	public String getBinaryFileFileName(int fileAnnotationIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -1412,14 +1426,14 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getFileAnnotationBinaryFileFileName(fileAnnotationIndex);
+				String result = retrieve.getBinaryFileFileName(fileAnnotationIndex);
 				if (result != null) return result;
 			}
 		}
 		return null;
 	}
 
-	public String getOTFBinaryFileFileName(int instrumentIndex, int OTFIndex)
+	public String getBinaryFileMIMEType(int fileAnnotationIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -1427,14 +1441,14 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getOTFBinaryFileFileName(instrumentIndex, OTFIndex);
+				String result = retrieve.getBinaryFileMIMEType(fileAnnotationIndex);
 				if (result != null) return result;
 			}
 		}
 		return null;
 	}
 
-	public String getFileAnnotationBinaryFileMIMEType(int fileAnnotationIndex)
+	public NonNegativeLong getBinaryFileSize(int fileAnnotationIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -1442,52 +1456,7 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getFileAnnotationBinaryFileMIMEType(fileAnnotationIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
-	public String getOTFBinaryFileMIMEType(int instrumentIndex, int OTFIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getOTFBinaryFileMIMEType(instrumentIndex, OTFIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
-	public NonNegativeLong getFileAnnotationBinaryFileSize(int fileAnnotationIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				NonNegativeLong result = retrieve.getFileAnnotationBinaryFileSize(fileAnnotationIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
-	public NonNegativeLong getOTFBinaryFileSize(int instrumentIndex, int OTFIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				NonNegativeLong result = retrieve.getOTFBinaryFileSize(instrumentIndex, OTFIndex);
+				NonNegativeLong result = retrieve.getBinaryFileSize(fileAnnotationIndex);
 				if (result != null) return result;
 			}
 		}
@@ -1570,6 +1539,7 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
+	// Ignoring ExperimenterGroup_BackReference back reference
 	// Ignoring Experimenter_BackReference back reference
 	public String getBooleanAnnotationID(int booleanAnnotationIndex)
 	{
@@ -1610,6 +1580,7 @@ public class AggregateMetadata implements IMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public Boolean getBooleanAnnotationValue(int booleanAnnotationIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -1664,7 +1635,7 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
-	public Integer getChannelColor(int imageIndex, int channelIndex)
+	public Color getChannelColor(int imageIndex, int channelIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -1672,7 +1643,7 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				Integer result = retrieve.getChannelColor(imageIndex, channelIndex);
+				Color result = retrieve.getChannelColor(imageIndex, channelIndex);
 				if (result != null) return result;
 			}
 		}
@@ -1817,21 +1788,6 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
-	public String getChannelOTFRef(int imageIndex, int channelIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getChannelOTFRef(imageIndex, channelIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
 	public Double getChannelPinholeSize(int imageIndex, int channelIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -1847,6 +1803,7 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
+	// Ignoring Pixels_BackReference back reference
 	public Integer getChannelPockelCellSetting(int imageIndex, int channelIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -1916,6 +1873,7 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
+	// Ignoring ExperimenterGroup_BackReference back reference
 	// Ignoring Experimenter_BackReference back reference
 	public String getCommentAnnotationID(int commentAnnotationIndex)
 	{
@@ -1956,6 +1914,7 @@ public class AggregateMetadata implements IMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public String getCommentAnnotationValue(int commentAnnotationIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -1973,17 +1932,6 @@ public class AggregateMetadata implements IMetadata
 
 	// Ignoring WellSample_BackReference back reference
 	// Ignoring Well_BackReference back reference
-	//
-	// Contact property storage
-	//
-	// Indexes: {u'Group': [u'int groupIndex']}
-	// {u'Group': {u'OME': None}}
-	// Is multi path? False
-
-	// 1:1
-	// Is multi path? False
-	// Ignoring ID property of reference Contact
-
 	//
 	// Dataset property storage
 	//
@@ -2021,6 +1969,21 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
+	public String getDatasetExperimenterGroupRef(int datasetIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				String result = retrieve.getDatasetExperimenterGroupRef(datasetIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
 	public String getDatasetExperimenterRef(int datasetIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -2030,21 +1993,6 @@ public class AggregateMetadata implements IMetadata
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
 				String result = retrieve.getDatasetExperimenterRef(datasetIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
-	public String getDatasetGroupRef(int datasetIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getDatasetGroupRef(datasetIndex);
 				if (result != null) return result;
 			}
 		}
@@ -2066,7 +2014,21 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
-	// Ignoring Image_BackReference back reference
+	public String getDatasetImageRef(int datasetIndex, int imageRefIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				String result = retrieve.getDatasetImageRef(datasetIndex, imageRefIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
 	public String getDatasetName(int datasetIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -2082,26 +2044,12 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
-	public String getDatasetProjectRef(int datasetIndex, int projectRefIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getDatasetProjectRef(datasetIndex, projectRefIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
+	// Ignoring Project_BackReference back reference
 	//
 	// DatasetRef property storage
 	//
-	// Indexes: {u'Image': [u'int imageIndex', u'int datasetRefIndex']}
-	// {u'Image': {u'OME': None}}
+	// Indexes: {u'Project': [u'int projectIndex', u'int datasetRefIndex']}
+	// {u'Project': {u'OME': None}}
 	// Is multi path? False
 
 	// 1:1
@@ -2160,6 +2108,7 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
+	// Ignoring Instrument_BackReference back reference
 	public String getDetectorLotNumber(int instrumentIndex, int detectorIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -2302,6 +2251,7 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
+	// Ignoring DetectorRef back reference
 	public Double getDetectorSettingsGain(int imageIndex, int channelIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -2400,6 +2350,7 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
+	// Ignoring Instrument_BackReference back reference
 	// Ignoring LightPath_BackReference back reference
 	public String getDichroicLotNumber(int instrumentIndex, int dichroicIndex)
 	{
@@ -2511,6 +2462,7 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
+	// Ignoring ExperimenterGroup_BackReference back reference
 	// Ignoring Experimenter_BackReference back reference
 	public String getDoubleAnnotationID(int doubleAnnotationIndex)
 	{
@@ -2551,6 +2503,7 @@ public class AggregateMetadata implements IMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public Double getDoubleAnnotationValue(int doubleAnnotationIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -2575,25 +2528,9 @@ public class AggregateMetadata implements IMetadata
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
-	// Description accessor from parent Shape
-	public String getEllipseDescription(int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getEllipseDescription(ROIIndex, shapeIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
 	// Ignoring Ellipse of parent abstract type
-	// Fill accessor from parent Shape
-	public Integer getEllipseFill(int ROIIndex, int shapeIndex)
+	// FillColor accessor from parent Shape
+	public Color getEllipseFillColor(int ROIIndex, int shapeIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -2601,15 +2538,45 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				Integer result = retrieve.getEllipseFill(ROIIndex, shapeIndex);
+				Color result = retrieve.getEllipseFillColor(ROIIndex, shapeIndex);
 				if (result != null) return result;
 			}
 		}
 		return null;
 	}
 
-	// Ignoring FillRule of parent abstract type
-	// Ignoring FontFamily of parent abstract type
+	// FillRule accessor from parent Shape
+	public FillRule getEllipseFillRule(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				FillRule result = retrieve.getEllipseFillRule(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	// FontFamily accessor from parent Shape
+	public FontFamily getEllipseFontFamily(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				FontFamily result = retrieve.getEllipseFontFamily(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
 	// FontSize accessor from parent Shape
 	public NonNegativeInteger getEllipseFontSize(int ROIIndex, int shapeIndex)
 	{
@@ -2626,7 +2593,22 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
-	// Ignoring FontStyle of parent abstract type
+	// FontStyle accessor from parent Shape
+	public FontStyle getEllipseFontStyle(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				FontStyle result = retrieve.getEllipseFontStyle(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
 	// ID accessor from parent Shape
 	public String getEllipseID(int ROIIndex, int shapeIndex)
 	{
@@ -2643,29 +2625,10 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
-	// Label accessor from parent Shape
-	public String getEllipseLabel(int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getEllipseLabel(ROIIndex, shapeIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
+	// Ignoring Label of parent abstract type
 	// Ignoring Line of parent abstract type
-	// Ignoring LineCap of parent abstract type
-	// Ignoring MarkerEnd of parent abstract type
-	// Ignoring MarkerStart of parent abstract type
-	// Ignoring Mask of parent abstract type
-	// Name accessor from parent Shape
-	public String getEllipseName(int ROIIndex, int shapeIndex)
+	// LineCap accessor from parent Shape
+	public LineCap getEllipseLineCap(int ROIIndex, int shapeIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -2673,19 +2636,36 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getEllipseName(ROIIndex, shapeIndex);
+				LineCap result = retrieve.getEllipseLineCap(ROIIndex, shapeIndex);
 				if (result != null) return result;
 			}
 		}
 		return null;
 	}
 
-	// Ignoring Path of parent abstract type
+	// Locked accessor from parent Shape
+	public Boolean getEllipseLocked(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				Boolean result = retrieve.getEllipseLocked(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	// Ignoring Mask of parent abstract type
 	// Ignoring Point of parent abstract type
+	// Ignoring Polygon of parent abstract type
 	// Ignoring Polyline of parent abstract type
 	// Ignoring Rectangle of parent abstract type
-	// Stroke accessor from parent Shape
-	public Integer getEllipseStroke(int ROIIndex, int shapeIndex)
+	// StrokeColor accessor from parent Shape
+	public Color getEllipseStrokeColor(int ROIIndex, int shapeIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -2693,7 +2673,7 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				Integer result = retrieve.getEllipseStroke(ROIIndex, shapeIndex);
+				Color result = retrieve.getEllipseStrokeColor(ROIIndex, shapeIndex);
 				if (result != null) return result;
 			}
 		}
@@ -2732,7 +2712,22 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
-	// Ignoring Text of parent abstract type
+	// Text accessor from parent Shape
+	public String getEllipseText(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				String result = retrieve.getEllipseText(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
 	// TheC accessor from parent Shape
 	public NonNegativeInteger getEllipseTheC(int ROIIndex, int shapeIndex)
 	{
@@ -2782,7 +2777,7 @@ public class AggregateMetadata implements IMetadata
 	}
 
 	// Transform accessor from parent Shape
-	public String getEllipseTransform(int ROIIndex, int shapeIndex)
+	public AffineTransform getEllipseTransform(int ROIIndex, int shapeIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -2790,7 +2785,23 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getEllipseTransform(ROIIndex, shapeIndex);
+				AffineTransform result = retrieve.getEllipseTransform(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	// Visible accessor from parent Shape
+	public Boolean getEllipseVisible(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				Boolean result = retrieve.getEllipseVisible(ROIIndex, shapeIndex);
 				if (result != null) return result;
 			}
 		}
@@ -2974,21 +2985,6 @@ public class AggregateMetadata implements IMetadata
 	}
 
 	// Ignoring Dataset_BackReference back reference
-	public String getExperimenterDisplayName(int experimenterIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getExperimenterDisplayName(experimenterIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
 	public String getExperimenterEmail(int experimenterIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -3005,6 +3001,7 @@ public class AggregateMetadata implements IMetadata
 	}
 
 	// Ignoring Experiment_BackReference back reference
+	// Ignoring ExperimenterGroup_BackReference back reference
 	public String getExperimenterFirstName(int experimenterIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -3014,21 +3011,6 @@ public class AggregateMetadata implements IMetadata
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
 				String result = retrieve.getExperimenterFirstName(experimenterIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
-	public String getExperimenterGroupRef(int experimenterIndex, int groupRefIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getExperimenterGroupRef(experimenterIndex, groupRefIndex);
 				if (result != null) return result;
 			}
 		}
@@ -3114,10 +3096,121 @@ public class AggregateMetadata implements IMetadata
 	}
 
 	//
+	// ExperimenterGroup property storage
+	//
+	// Indexes: {u'OME': [u'int experimenterGroupIndex']}
+	// {u'OME': None}
+	// Is multi path? False
+
+	public String getExperimenterGroupAnnotationRef(int experimenterGroupIndex, int annotationRefIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				String result = retrieve.getExperimenterGroupAnnotationRef(experimenterGroupIndex, annotationRefIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	// Ignoring Dataset_BackReference back reference
+	public String getExperimenterGroupDescription(int experimenterGroupIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				String result = retrieve.getExperimenterGroupDescription(experimenterGroupIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	public String getExperimenterGroupExperimenterRef(int experimenterGroupIndex, int experimenterRefIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				String result = retrieve.getExperimenterGroupExperimenterRef(experimenterGroupIndex, experimenterRefIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	public String getExperimenterGroupID(int experimenterGroupIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				String result = retrieve.getExperimenterGroupID(experimenterGroupIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	// Ignoring Image_BackReference back reference
+	public String getExperimenterGroupLeader(int experimenterGroupIndex, int leaderIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				String result = retrieve.getExperimenterGroupLeader(experimenterGroupIndex, leaderIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	public String getExperimenterGroupName(int experimenterGroupIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				String result = retrieve.getExperimenterGroupName(experimenterGroupIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	// Ignoring Project_BackReference back reference
+	//
+	// ExperimenterGroupRef property storage
+	//
+	// Indexes: {u'Project': [u'int projectIndex'], u'Image': [u'int imageIndex'], u'Dataset': [u'int datasetIndex']}
+	// {u'Project': {u'OME': None}, u'Image': {u'OME': None}, u'Dataset': {u'OME': None}}
+	// Is multi path? True
+
+	// 1:1
+	// Is multi path? True
+	// Ignoring ID property of reference ExperimenterGroupRef
+
+	//
 	// ExperimenterRef property storage
 	//
-	// Indexes: {u'Project': [u'int projectIndex'], u'MicrobeamManipulation': [u'int experimentIndex', u'int microbeamManipulationIndex'], u'Image': [u'int imageIndex'], u'Experiment': [u'int experimentIndex'], u'Dataset': [u'int datasetIndex']}
-	// {u'Project': {u'OME': None}, u'Image': {u'OME': None}, u'Dataset': {u'OME': None}, u'Experiment': {u'OME': None}, u'MicrobeamManipulation': {u'Experiment': {u'OME': None}}}
+	// Indexes: {u'ExperimenterGroup': [u'int experimenterGroupIndex', u'int experimenterRefIndex'], u'Image': [u'int imageIndex'], u'Dataset': [u'int datasetIndex'], u'Project': [u'int projectIndex'], u'Experiment': [u'int experimentIndex'], u'MicrobeamManipulation': [u'int experimentIndex', u'int microbeamManipulationIndex']}
+	// {u'ExperimenterGroup': {u'OME': None}, u'Image': {u'OME': None}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Experiment': {u'OME': None}, u'MicrobeamManipulation': {u'Experiment': {u'OME': None}}}
 	// Is multi path? True
 
 	// 1:1
@@ -3286,6 +3379,7 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
+	// Ignoring ExperimenterGroup_BackReference back reference
 	// Ignoring Experimenter_BackReference back reference
 	public String getFileAnnotationID(int fileAnnotationIndex)
 	{
@@ -3326,6 +3420,7 @@ public class AggregateMetadata implements IMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	// Ignoring WellSample_BackReference back reference
 	// Ignoring Well_BackReference back reference
 	//
@@ -3335,6 +3430,7 @@ public class AggregateMetadata implements IMetadata
 	// {u'Instrument': {u'OME': None}}
 	// Is multi path? False
 
+	// Ignoring FilterSet_BackReference back reference
 	// Ignoring FilterSet_BackReference back reference
 	public String getFilterFilterWheel(int instrumentIndex, int filterIndex)
 	{
@@ -3366,6 +3462,8 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
+	// Ignoring Instrument_BackReference back reference
+	// Ignoring LightPath_BackReference back reference
 	// Ignoring LightPath_BackReference back reference
 	public String getFilterLotNumber(int instrumentIndex, int filterIndex)
 	{
@@ -3511,6 +3609,7 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
+	// Ignoring Instrument_BackReference back reference
 	public String getFilterSetLotNumber(int instrumentIndex, int filterSetIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -3556,7 +3655,6 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
-	// Ignoring OTF_BackReference back reference
 	public String getFilterSetSerialNumber(int instrumentIndex, int filterSetIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -3575,110 +3673,13 @@ public class AggregateMetadata implements IMetadata
 	//
 	// FilterSetRef property storage
 	//
-	// Indexes: {u'Channel': [u'int imageIndex', u'int channelIndex'], u'OTF': [u'int instrumentIndex', u'int OTFIndex']}
-	// {u'OTF': {u'Instrument': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
-	// Is multi path? True
-
-	// 1:1
-	// Is multi path? True
-	// Ignoring ID property of reference FilterSetRef
-
-	//
-	// Group property storage
-	//
-	// Indexes: {u'OME': [u'int groupIndex']}
-	// {u'OME': None}
+	// Indexes: {u'Channel': [u'int imageIndex', u'int channelIndex']}
+	// {u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
 	// Is multi path? False
 
-	public String getGroupContact(int groupIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getGroupContact(groupIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
-	// Ignoring Dataset_BackReference back reference
-	public String getGroupDescription(int groupIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getGroupDescription(groupIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
-	// Ignoring Experimenter_BackReference back reference
-	public String getGroupID(int groupIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getGroupID(groupIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
-	// Ignoring Image_BackReference back reference
-	public String getGroupLeader(int groupIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getGroupLeader(groupIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
-	public String getGroupName(int groupIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getGroupName(groupIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
-	// Ignoring Project_BackReference back reference
-	//
-	// GroupRef property storage
-	//
-	// Indexes: {u'Project': [u'int projectIndex'], u'Image': [u'int imageIndex'], u'Experimenter': [u'int experimenterIndex', u'int groupRefIndex'], u'Dataset': [u'int datasetIndex']}
-	// {u'Project': {u'OME': None}, u'Image': {u'OME': None}, u'Experimenter': {u'OME': None}, u'Dataset': {u'OME': None}}
-	// Is multi path? True
-
 	// 1:1
-	// Is multi path? True
-	// Ignoring ID property of reference GroupRef
+	// Is multi path? False
+	// Ignoring ID property of reference FilterSetRef
 
 	//
 	// Image property storage
@@ -3687,7 +3688,7 @@ public class AggregateMetadata implements IMetadata
 	// {u'OME': None}
 	// Is multi path? False
 
-	public String getImageAcquiredDate(int imageIndex)
+	public Timestamp getImageAcquisitionDate(int imageIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -3695,7 +3696,7 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getImageAcquiredDate(imageIndex);
+				Timestamp result = retrieve.getImageAcquisitionDate(imageIndex);
 				if (result != null) return result;
 			}
 		}
@@ -3717,21 +3718,7 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
-	public String getImageDatasetRef(int imageIndex, int datasetRefIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getImageDatasetRef(imageIndex, datasetRefIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
+	// Ignoring Dataset_BackReference back reference
 	public String getImageDescription(int imageIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -3762,6 +3749,21 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
+	public String getImageExperimenterGroupRef(int imageIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				String result = retrieve.getImageExperimenterGroupRef(imageIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
 	public String getImageExperimenterRef(int imageIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -3771,21 +3773,6 @@ public class AggregateMetadata implements IMetadata
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
 				String result = retrieve.getImageExperimenterRef(imageIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
-	public String getImageGroupRef(int imageIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getImageGroupRef(imageIndex);
 				if (result != null) return result;
 			}
 		}
@@ -3875,12 +3862,12 @@ public class AggregateMetadata implements IMetadata
 	//
 	// ImageRef property storage
 	//
-	// Indexes: {u'WellSample': [u'int plateIndex', u'int wellIndex', u'int wellSampleIndex']}
-	// {u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}}
-	// Is multi path? False
+	// Indexes: {u'WellSample': [u'int plateIndex', u'int wellIndex', u'int wellSampleIndex'], u'Dataset': [u'int datasetIndex', u'int imageRefIndex']}
+	// {u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Dataset': {u'OME': None}}
+	// Is multi path? True
 
 	// 1:1
-	// Is multi path? False
+	// Is multi path? True
 	// Ignoring ID property of reference ImageRef
 
 	//
@@ -3979,7 +3966,6 @@ public class AggregateMetadata implements IMetadata
 	// Ignoring Image_BackReference back reference
 	// Ignoring LightSource element, complex property
 	// Ignoring Microscope element, complex property
-	// Ignoring OTF element, complex property
 	// Ignoring Objective element, complex property
 	//
 	// InstrumentRef property storage
@@ -3991,6 +3977,323 @@ public class AggregateMetadata implements IMetadata
 	// 1:1
 	// Is multi path? False
 	// Ignoring ID property of reference InstrumentRef
+
+	//
+	// Label property storage
+	//
+	// Indexes: {u'Shape': [u'int ROIIndex', u'int shapeIndex']}
+	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+	// Is multi path? False
+
+	// Ignoring Ellipse of parent abstract type
+	// FillColor accessor from parent Shape
+	public Color getLabelFillColor(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				Color result = retrieve.getLabelFillColor(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	// FillRule accessor from parent Shape
+	public FillRule getLabelFillRule(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				FillRule result = retrieve.getLabelFillRule(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	// FontFamily accessor from parent Shape
+	public FontFamily getLabelFontFamily(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				FontFamily result = retrieve.getLabelFontFamily(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	// FontSize accessor from parent Shape
+	public NonNegativeInteger getLabelFontSize(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				NonNegativeInteger result = retrieve.getLabelFontSize(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	// FontStyle accessor from parent Shape
+	public FontStyle getLabelFontStyle(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				FontStyle result = retrieve.getLabelFontStyle(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	// ID accessor from parent Shape
+	public String getLabelID(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				String result = retrieve.getLabelID(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	// Ignoring Label of parent abstract type
+	// Ignoring Line of parent abstract type
+	// LineCap accessor from parent Shape
+	public LineCap getLabelLineCap(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				LineCap result = retrieve.getLabelLineCap(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	// Locked accessor from parent Shape
+	public Boolean getLabelLocked(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				Boolean result = retrieve.getLabelLocked(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	// Ignoring Mask of parent abstract type
+	// Ignoring Point of parent abstract type
+	// Ignoring Polygon of parent abstract type
+	// Ignoring Polyline of parent abstract type
+	// Ignoring Rectangle of parent abstract type
+	// StrokeColor accessor from parent Shape
+	public Color getLabelStrokeColor(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				Color result = retrieve.getLabelStrokeColor(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	// StrokeDashArray accessor from parent Shape
+	public String getLabelStrokeDashArray(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				String result = retrieve.getLabelStrokeDashArray(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	// StrokeWidth accessor from parent Shape
+	public Double getLabelStrokeWidth(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				Double result = retrieve.getLabelStrokeWidth(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	// Text accessor from parent Shape
+	public String getLabelText(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				String result = retrieve.getLabelText(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	// TheC accessor from parent Shape
+	public NonNegativeInteger getLabelTheC(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				NonNegativeInteger result = retrieve.getLabelTheC(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	// TheT accessor from parent Shape
+	public NonNegativeInteger getLabelTheT(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				NonNegativeInteger result = retrieve.getLabelTheT(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	// TheZ accessor from parent Shape
+	public NonNegativeInteger getLabelTheZ(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				NonNegativeInteger result = retrieve.getLabelTheZ(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	// Transform accessor from parent Shape
+	public AffineTransform getLabelTransform(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				AffineTransform result = retrieve.getLabelTransform(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	// Visible accessor from parent Shape
+	public Boolean getLabelVisible(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				Boolean result = retrieve.getLabelVisible(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	public Double getLabelX(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				Double result = retrieve.getLabelX(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	public Double getLabelY(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				Double result = retrieve.getLabelY(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
 
 	//
 	// Laser property storage
@@ -4237,9 +4540,13 @@ public class AggregateMetadata implements IMetadata
 	//
 	// Leader property storage
 	//
-	// Indexes: {u'Group': [u'int groupIndex']}
-	// {u'Group': {u'OME': None}}
+	// Indexes: {u'ExperimenterGroup': [u'int experimenterGroupIndex', u'int leaderIndex']}
+	// {u'ExperimenterGroup': {u'OME': None}}
 	// Is multi path? False
+
+	// 0:9999
+	// Is multi path? False
+	// Ignoring ExperimenterGroup_BackReference property of reference Leader
 
 	// 1:1
 	// Is multi path? False
@@ -4471,6 +4778,8 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
+	// Ignoring LightSourceRef back reference
+	// Ignoring MicrobeamManipulation_BackReference back reference
 	public PositiveInteger getChannelLightSourceSettingsWavelength(int imageIndex, int channelIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -4508,25 +4817,9 @@ public class AggregateMetadata implements IMetadata
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
-	// Description accessor from parent Shape
-	public String getLineDescription(int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getLineDescription(ROIIndex, shapeIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
 	// Ignoring Ellipse of parent abstract type
-	// Fill accessor from parent Shape
-	public Integer getLineFill(int ROIIndex, int shapeIndex)
+	// FillColor accessor from parent Shape
+	public Color getLineFillColor(int ROIIndex, int shapeIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -4534,15 +4827,45 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				Integer result = retrieve.getLineFill(ROIIndex, shapeIndex);
+				Color result = retrieve.getLineFillColor(ROIIndex, shapeIndex);
 				if (result != null) return result;
 			}
 		}
 		return null;
 	}
 
-	// Ignoring FillRule of parent abstract type
-	// Ignoring FontFamily of parent abstract type
+	// FillRule accessor from parent Shape
+	public FillRule getLineFillRule(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				FillRule result = retrieve.getLineFillRule(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	// FontFamily accessor from parent Shape
+	public FontFamily getLineFontFamily(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				FontFamily result = retrieve.getLineFontFamily(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
 	// FontSize accessor from parent Shape
 	public NonNegativeInteger getLineFontSize(int ROIIndex, int shapeIndex)
 	{
@@ -4559,7 +4882,22 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
-	// Ignoring FontStyle of parent abstract type
+	// FontStyle accessor from parent Shape
+	public FontStyle getLineFontStyle(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				FontStyle result = retrieve.getLineFontStyle(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
 	// ID accessor from parent Shape
 	public String getLineID(int ROIIndex, int shapeIndex)
 	{
@@ -4576,29 +4914,10 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
-	// Label accessor from parent Shape
-	public String getLineLabel(int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getLineLabel(ROIIndex, shapeIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
+	// Ignoring Label of parent abstract type
 	// Ignoring Line of parent abstract type
-	// Ignoring LineCap of parent abstract type
-	// Ignoring MarkerEnd of parent abstract type
-	// Ignoring MarkerStart of parent abstract type
-	// Ignoring Mask of parent abstract type
-	// Name accessor from parent Shape
-	public String getLineName(int ROIIndex, int shapeIndex)
+	// LineCap accessor from parent Shape
+	public LineCap getLineLineCap(int ROIIndex, int shapeIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -4606,19 +4925,36 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getLineName(ROIIndex, shapeIndex);
+				LineCap result = retrieve.getLineLineCap(ROIIndex, shapeIndex);
 				if (result != null) return result;
 			}
 		}
 		return null;
 	}
 
-	// Ignoring Path of parent abstract type
+	// Locked accessor from parent Shape
+	public Boolean getLineLocked(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				Boolean result = retrieve.getLineLocked(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	// Ignoring Mask of parent abstract type
 	// Ignoring Point of parent abstract type
+	// Ignoring Polygon of parent abstract type
 	// Ignoring Polyline of parent abstract type
 	// Ignoring Rectangle of parent abstract type
-	// Stroke accessor from parent Shape
-	public Integer getLineStroke(int ROIIndex, int shapeIndex)
+	// StrokeColor accessor from parent Shape
+	public Color getLineStrokeColor(int ROIIndex, int shapeIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -4626,7 +4962,7 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				Integer result = retrieve.getLineStroke(ROIIndex, shapeIndex);
+				Color result = retrieve.getLineStrokeColor(ROIIndex, shapeIndex);
 				if (result != null) return result;
 			}
 		}
@@ -4665,7 +5001,22 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
-	// Ignoring Text of parent abstract type
+	// Text accessor from parent Shape
+	public String getLineText(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				String result = retrieve.getLineText(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
 	// TheC accessor from parent Shape
 	public NonNegativeInteger getLineTheC(int ROIIndex, int shapeIndex)
 	{
@@ -4715,7 +5066,7 @@ public class AggregateMetadata implements IMetadata
 	}
 
 	// Transform accessor from parent Shape
-	public String getLineTransform(int ROIIndex, int shapeIndex)
+	public AffineTransform getLineTransform(int ROIIndex, int shapeIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -4723,7 +5074,53 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getLineTransform(ROIIndex, shapeIndex);
+				AffineTransform result = retrieve.getLineTransform(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	// Visible accessor from parent Shape
+	public Boolean getLineVisible(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				Boolean result = retrieve.getLineVisible(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	public Marker getLineMarkerEnd(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				Marker result = retrieve.getLineMarkerEnd(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	public Marker getLineMarkerStart(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				Marker result = retrieve.getLineMarkerStart(ROIIndex, shapeIndex);
 				if (result != null) return result;
 			}
 		}
@@ -4829,6 +5226,7 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
+	// Ignoring ExperimenterGroup_BackReference back reference
 	// Ignoring Experimenter_BackReference back reference
 	public String getListAnnotationID(int listAnnotationIndex)
 	{
@@ -4869,6 +5267,7 @@ public class AggregateMetadata implements IMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	// Ignoring WellSample_BackReference back reference
 	// Ignoring Well_BackReference back reference
 	//
@@ -4910,6 +5309,7 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
+	// Ignoring ExperimenterGroup_BackReference back reference
 	// Ignoring Experimenter_BackReference back reference
 	public String getLongAnnotationID(int longAnnotationIndex)
 	{
@@ -4950,6 +5350,7 @@ public class AggregateMetadata implements IMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public Long getLongAnnotationValue(int longAnnotationIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -4974,25 +5375,9 @@ public class AggregateMetadata implements IMetadata
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
-	// Description accessor from parent Shape
-	public String getMaskDescription(int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getMaskDescription(ROIIndex, shapeIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
 	// Ignoring Ellipse of parent abstract type
-	// Fill accessor from parent Shape
-	public Integer getMaskFill(int ROIIndex, int shapeIndex)
+	// FillColor accessor from parent Shape
+	public Color getMaskFillColor(int ROIIndex, int shapeIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -5000,15 +5385,45 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				Integer result = retrieve.getMaskFill(ROIIndex, shapeIndex);
+				Color result = retrieve.getMaskFillColor(ROIIndex, shapeIndex);
 				if (result != null) return result;
 			}
 		}
 		return null;
 	}
 
-	// Ignoring FillRule of parent abstract type
-	// Ignoring FontFamily of parent abstract type
+	// FillRule accessor from parent Shape
+	public FillRule getMaskFillRule(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				FillRule result = retrieve.getMaskFillRule(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	// FontFamily accessor from parent Shape
+	public FontFamily getMaskFontFamily(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				FontFamily result = retrieve.getMaskFontFamily(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
 	// FontSize accessor from parent Shape
 	public NonNegativeInteger getMaskFontSize(int ROIIndex, int shapeIndex)
 	{
@@ -5025,7 +5440,22 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
-	// Ignoring FontStyle of parent abstract type
+	// FontStyle accessor from parent Shape
+	public FontStyle getMaskFontStyle(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				FontStyle result = retrieve.getMaskFontStyle(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
 	// ID accessor from parent Shape
 	public String getMaskID(int ROIIndex, int shapeIndex)
 	{
@@ -5042,29 +5472,10 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
-	// Label accessor from parent Shape
-	public String getMaskLabel(int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getMaskLabel(ROIIndex, shapeIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
+	// Ignoring Label of parent abstract type
 	// Ignoring Line of parent abstract type
-	// Ignoring LineCap of parent abstract type
-	// Ignoring MarkerEnd of parent abstract type
-	// Ignoring MarkerStart of parent abstract type
-	// Ignoring Mask of parent abstract type
-	// Name accessor from parent Shape
-	public String getMaskName(int ROIIndex, int shapeIndex)
+	// LineCap accessor from parent Shape
+	public LineCap getMaskLineCap(int ROIIndex, int shapeIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -5072,19 +5483,36 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getMaskName(ROIIndex, shapeIndex);
+				LineCap result = retrieve.getMaskLineCap(ROIIndex, shapeIndex);
 				if (result != null) return result;
 			}
 		}
 		return null;
 	}
 
-	// Ignoring Path of parent abstract type
+	// Locked accessor from parent Shape
+	public Boolean getMaskLocked(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				Boolean result = retrieve.getMaskLocked(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	// Ignoring Mask of parent abstract type
 	// Ignoring Point of parent abstract type
+	// Ignoring Polygon of parent abstract type
 	// Ignoring Polyline of parent abstract type
 	// Ignoring Rectangle of parent abstract type
-	// Stroke accessor from parent Shape
-	public Integer getMaskStroke(int ROIIndex, int shapeIndex)
+	// StrokeColor accessor from parent Shape
+	public Color getMaskStrokeColor(int ROIIndex, int shapeIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -5092,7 +5520,7 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				Integer result = retrieve.getMaskStroke(ROIIndex, shapeIndex);
+				Color result = retrieve.getMaskStrokeColor(ROIIndex, shapeIndex);
 				if (result != null) return result;
 			}
 		}
@@ -5131,7 +5559,22 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
-	// Ignoring Text of parent abstract type
+	// Text accessor from parent Shape
+	public String getMaskText(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				String result = retrieve.getMaskText(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
 	// TheC accessor from parent Shape
 	public NonNegativeInteger getMaskTheC(int ROIIndex, int shapeIndex)
 	{
@@ -5181,7 +5624,7 @@ public class AggregateMetadata implements IMetadata
 	}
 
 	// Transform accessor from parent Shape
-	public String getMaskTransform(int ROIIndex, int shapeIndex)
+	public AffineTransform getMaskTransform(int ROIIndex, int shapeIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -5189,7 +5632,23 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getMaskTransform(ROIIndex, shapeIndex);
+				AffineTransform result = retrieve.getMaskTransform(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	// Visible accessor from parent Shape
+	public Boolean getMaskVisible(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				Boolean result = retrieve.getMaskVisible(ROIIndex, shapeIndex);
 				if (result != null) return result;
 			}
 		}
@@ -5286,6 +5745,7 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
+	// Ignoring Experiment_BackReference back reference
 	public String getMicrobeamManipulationExperimenterRef(int experimentIndex, int microbeamManipulationIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -5442,117 +5902,6 @@ public class AggregateMetadata implements IMetadata
 	}
 
 	//
-	// OTF property storage
-	//
-	// Indexes: {u'Instrument': [u'int instrumentIndex', u'int OTFIndex']}
-	// {u'Instrument': {u'OME': None}}
-	// Is multi path? False
-
-	// Ignoring BinaryFile element, complex property
-	// Ignoring Channel_BackReference back reference
-	public String getOTFFilterSetRef(int instrumentIndex, int OTFIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getOTFFilterSetRef(instrumentIndex, OTFIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
-	public String getOTFID(int instrumentIndex, int OTFIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getOTFID(instrumentIndex, OTFIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
-	// Ignoring ObjectiveSettings element, complex property
-	public Boolean getOTFOpticalAxisAveraged(int instrumentIndex, int OTFIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				Boolean result = retrieve.getOTFOpticalAxisAveraged(instrumentIndex, OTFIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
-	public PositiveInteger getOTFSizeX(int instrumentIndex, int OTFIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				PositiveInteger result = retrieve.getOTFSizeX(instrumentIndex, OTFIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
-	public PositiveInteger getOTFSizeY(int instrumentIndex, int OTFIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				PositiveInteger result = retrieve.getOTFSizeY(instrumentIndex, OTFIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
-	public PixelType getOTFType(int instrumentIndex, int OTFIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				PixelType result = retrieve.getOTFType(instrumentIndex, OTFIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
-	//
-	// OTFRef property storage
-	//
-	// Indexes: {u'Channel': [u'int imageIndex', u'int channelIndex']}
-	// {u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
-	// Is multi path? False
-
-	// 1:1
-	// Is multi path? False
-	// Ignoring ID property of reference OTFRef
-
-	//
 	// Objective property storage
 	//
 	// Indexes: {u'Instrument': [u'int instrumentIndex', u'int objectiveIndex']}
@@ -5619,6 +5968,7 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
+	// Ignoring Instrument_BackReference back reference
 	public Boolean getObjectiveIris(int instrumentIndex, int objectiveIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -5742,139 +6092,11 @@ public class AggregateMetadata implements IMetadata
 	//
 	// ObjectiveSettings property storage
 	//
-	// Indexes: {u'Image': [u'int imageIndex'], u'OTF': [u'int instrumentIndex', u'int OTFIndex']}
-	// {u'Image': {u'OME': None}, u'OTF': {u'Instrument': {u'OME': None}}}
-	// Is multi path? True
-
-	public Double getImageObjectiveSettingsCorrectionCollar(int imageIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				Double result = retrieve.getImageObjectiveSettingsCorrectionCollar(imageIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
-	public Double getOTFObjectiveSettingsCorrectionCollar(int instrumentIndex, int OTFIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				Double result = retrieve.getOTFObjectiveSettingsCorrectionCollar(instrumentIndex, OTFIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
-	public String getImageObjectiveSettingsID(int imageIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getImageObjectiveSettingsID(imageIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
-	public String getOTFObjectiveSettingsID(int instrumentIndex, int OTFIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getOTFObjectiveSettingsID(instrumentIndex, OTFIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
-	public Medium getImageObjectiveSettingsMedium(int imageIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				Medium result = retrieve.getImageObjectiveSettingsMedium(imageIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
-	public Medium getOTFObjectiveSettingsMedium(int instrumentIndex, int OTFIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				Medium result = retrieve.getOTFObjectiveSettingsMedium(instrumentIndex, OTFIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
-	public Double getImageObjectiveSettingsRefractiveIndex(int imageIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				Double result = retrieve.getImageObjectiveSettingsRefractiveIndex(imageIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
-	public Double getOTFObjectiveSettingsRefractiveIndex(int instrumentIndex, int OTFIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				Double result = retrieve.getOTFObjectiveSettingsRefractiveIndex(instrumentIndex, OTFIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
-	//
-	// Path property storage
-	//
-	// Indexes: {u'Shape': [u'int ROIIndex', u'int shapeIndex']}
-	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+	// Indexes: {u'Image': [u'int imageIndex']}
+	// {u'Image': {u'OME': None}}
 	// Is multi path? False
 
-	// Description accessor from parent Shape
-	public String getPathDescription(int ROIIndex, int shapeIndex)
+	public Double getObjectiveSettingsCorrectionCollar(int imageIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -5882,16 +6104,14 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getPathDescription(ROIIndex, shapeIndex);
+				Double result = retrieve.getObjectiveSettingsCorrectionCollar(imageIndex);
 				if (result != null) return result;
 			}
 		}
 		return null;
 	}
 
-	// Ignoring Ellipse of parent abstract type
-	// Fill accessor from parent Shape
-	public Integer getPathFill(int ROIIndex, int shapeIndex)
+	public String getObjectiveSettingsID(int imageIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -5899,17 +6119,14 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				Integer result = retrieve.getPathFill(ROIIndex, shapeIndex);
+				String result = retrieve.getObjectiveSettingsID(imageIndex);
 				if (result != null) return result;
 			}
 		}
 		return null;
 	}
 
-	// Ignoring FillRule of parent abstract type
-	// Ignoring FontFamily of parent abstract type
-	// FontSize accessor from parent Shape
-	public NonNegativeInteger getPathFontSize(int ROIIndex, int shapeIndex)
+	public Medium getObjectiveSettingsMedium(int imageIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -5917,16 +6134,15 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				NonNegativeInteger result = retrieve.getPathFontSize(ROIIndex, shapeIndex);
+				Medium result = retrieve.getObjectiveSettingsMedium(imageIndex);
 				if (result != null) return result;
 			}
 		}
 		return null;
 	}
 
-	// Ignoring FontStyle of parent abstract type
-	// ID accessor from parent Shape
-	public String getPathID(int ROIIndex, int shapeIndex)
+	// Ignoring ObjectiveRef back reference
+	public Double getObjectiveSettingsRefractiveIndex(int imageIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -5934,176 +6150,7 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getPathID(ROIIndex, shapeIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
-	// Label accessor from parent Shape
-	public String getPathLabel(int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getPathLabel(ROIIndex, shapeIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
-	// Ignoring Line of parent abstract type
-	// Ignoring LineCap of parent abstract type
-	// Ignoring MarkerEnd of parent abstract type
-	// Ignoring MarkerStart of parent abstract type
-	// Ignoring Mask of parent abstract type
-	// Name accessor from parent Shape
-	public String getPathName(int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getPathName(ROIIndex, shapeIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
-	// Ignoring Path of parent abstract type
-	// Ignoring Point of parent abstract type
-	// Ignoring Polyline of parent abstract type
-	// Ignoring Rectangle of parent abstract type
-	// Stroke accessor from parent Shape
-	public Integer getPathStroke(int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				Integer result = retrieve.getPathStroke(ROIIndex, shapeIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
-	// StrokeDashArray accessor from parent Shape
-	public String getPathStrokeDashArray(int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getPathStrokeDashArray(ROIIndex, shapeIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
-	// StrokeWidth accessor from parent Shape
-	public Double getPathStrokeWidth(int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				Double result = retrieve.getPathStrokeWidth(ROIIndex, shapeIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
-	// Ignoring Text of parent abstract type
-	// TheC accessor from parent Shape
-	public NonNegativeInteger getPathTheC(int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				NonNegativeInteger result = retrieve.getPathTheC(ROIIndex, shapeIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
-	// TheT accessor from parent Shape
-	public NonNegativeInteger getPathTheT(int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				NonNegativeInteger result = retrieve.getPathTheT(ROIIndex, shapeIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
-	// TheZ accessor from parent Shape
-	public NonNegativeInteger getPathTheZ(int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				NonNegativeInteger result = retrieve.getPathTheZ(ROIIndex, shapeIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
-	// Transform accessor from parent Shape
-	public String getPathTransform(int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getPathTransform(ROIIndex, shapeIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
-	public String getPathDefinition(int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getPathDefinition(ROIIndex, shapeIndex);
+				Double result = retrieve.getObjectiveSettingsRefractiveIndex(imageIndex);
 				if (result != null) return result;
 			}
 		}
@@ -6384,6 +6431,7 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
+	// Ignoring Pixels_BackReference back reference
 	public Double getPlanePositionX(int imageIndex, int planeIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -6556,6 +6604,21 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
+	public NonNegativeInteger getPlateFieldIndex(int plateIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				NonNegativeInteger result = retrieve.getPlateFieldIndex(plateIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
 	public String getPlateID(int plateIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -6617,21 +6680,7 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
-	public String getPlateScreenRef(int plateIndex, int screenRefIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getPlateScreenRef(plateIndex, screenRefIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
+	// Ignoring Screen_BackReference back reference
 	public String getPlateStatus(int plateIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -6715,7 +6764,7 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
-	public String getPlateAcquisitionEndTime(int plateIndex, int plateAcquisitionIndex)
+	public Timestamp getPlateAcquisitionEndTime(int plateIndex, int plateAcquisitionIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -6723,7 +6772,7 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getPlateAcquisitionEndTime(plateIndex, plateAcquisitionIndex);
+				Timestamp result = retrieve.getPlateAcquisitionEndTime(plateIndex, plateAcquisitionIndex);
 				if (result != null) return result;
 			}
 		}
@@ -6775,7 +6824,8 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
-	public String getPlateAcquisitionStartTime(int plateIndex, int plateAcquisitionIndex)
+	// Ignoring Plate_BackReference back reference
+	public Timestamp getPlateAcquisitionStartTime(int plateIndex, int plateAcquisitionIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -6783,7 +6833,7 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getPlateAcquisitionStartTime(plateIndex, plateAcquisitionIndex);
+				Timestamp result = retrieve.getPlateAcquisitionStartTime(plateIndex, plateAcquisitionIndex);
 				if (result != null) return result;
 			}
 		}
@@ -6823,25 +6873,9 @@ public class AggregateMetadata implements IMetadata
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
-	// Description accessor from parent Shape
-	public String getPointDescription(int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getPointDescription(ROIIndex, shapeIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
 	// Ignoring Ellipse of parent abstract type
-	// Fill accessor from parent Shape
-	public Integer getPointFill(int ROIIndex, int shapeIndex)
+	// FillColor accessor from parent Shape
+	public Color getPointFillColor(int ROIIndex, int shapeIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -6849,15 +6883,45 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				Integer result = retrieve.getPointFill(ROIIndex, shapeIndex);
+				Color result = retrieve.getPointFillColor(ROIIndex, shapeIndex);
 				if (result != null) return result;
 			}
 		}
 		return null;
 	}
 
-	// Ignoring FillRule of parent abstract type
-	// Ignoring FontFamily of parent abstract type
+	// FillRule accessor from parent Shape
+	public FillRule getPointFillRule(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				FillRule result = retrieve.getPointFillRule(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	// FontFamily accessor from parent Shape
+	public FontFamily getPointFontFamily(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				FontFamily result = retrieve.getPointFontFamily(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
 	// FontSize accessor from parent Shape
 	public NonNegativeInteger getPointFontSize(int ROIIndex, int shapeIndex)
 	{
@@ -6874,7 +6938,22 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
-	// Ignoring FontStyle of parent abstract type
+	// FontStyle accessor from parent Shape
+	public FontStyle getPointFontStyle(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				FontStyle result = retrieve.getPointFontStyle(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
 	// ID accessor from parent Shape
 	public String getPointID(int ROIIndex, int shapeIndex)
 	{
@@ -6891,29 +6970,10 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
-	// Label accessor from parent Shape
-	public String getPointLabel(int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getPointLabel(ROIIndex, shapeIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
+	// Ignoring Label of parent abstract type
 	// Ignoring Line of parent abstract type
-	// Ignoring LineCap of parent abstract type
-	// Ignoring MarkerEnd of parent abstract type
-	// Ignoring MarkerStart of parent abstract type
-	// Ignoring Mask of parent abstract type
-	// Name accessor from parent Shape
-	public String getPointName(int ROIIndex, int shapeIndex)
+	// LineCap accessor from parent Shape
+	public LineCap getPointLineCap(int ROIIndex, int shapeIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -6921,19 +6981,36 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getPointName(ROIIndex, shapeIndex);
+				LineCap result = retrieve.getPointLineCap(ROIIndex, shapeIndex);
 				if (result != null) return result;
 			}
 		}
 		return null;
 	}
 
-	// Ignoring Path of parent abstract type
+	// Locked accessor from parent Shape
+	public Boolean getPointLocked(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				Boolean result = retrieve.getPointLocked(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	// Ignoring Mask of parent abstract type
 	// Ignoring Point of parent abstract type
+	// Ignoring Polygon of parent abstract type
 	// Ignoring Polyline of parent abstract type
 	// Ignoring Rectangle of parent abstract type
-	// Stroke accessor from parent Shape
-	public Integer getPointStroke(int ROIIndex, int shapeIndex)
+	// StrokeColor accessor from parent Shape
+	public Color getPointStrokeColor(int ROIIndex, int shapeIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -6941,7 +7018,7 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				Integer result = retrieve.getPointStroke(ROIIndex, shapeIndex);
+				Color result = retrieve.getPointStrokeColor(ROIIndex, shapeIndex);
 				if (result != null) return result;
 			}
 		}
@@ -6980,7 +7057,22 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
-	// Ignoring Text of parent abstract type
+	// Text accessor from parent Shape
+	public String getPointText(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				String result = retrieve.getPointText(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
 	// TheC accessor from parent Shape
 	public NonNegativeInteger getPointTheC(int ROIIndex, int shapeIndex)
 	{
@@ -7030,7 +7122,7 @@ public class AggregateMetadata implements IMetadata
 	}
 
 	// Transform accessor from parent Shape
-	public String getPointTransform(int ROIIndex, int shapeIndex)
+	public AffineTransform getPointTransform(int ROIIndex, int shapeIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -7038,7 +7130,23 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getPointTransform(ROIIndex, shapeIndex);
+				AffineTransform result = retrieve.getPointTransform(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	// Visible accessor from parent Shape
+	public Boolean getPointVisible(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				Boolean result = retrieve.getPointVisible(ROIIndex, shapeIndex);
 				if (result != null) return result;
 			}
 		}
@@ -7076,31 +7184,317 @@ public class AggregateMetadata implements IMetadata
 	}
 
 	//
+	// Polygon property storage
+	//
+	// Indexes: {u'Shape': [u'int ROIIndex', u'int shapeIndex']}
+	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+	// Is multi path? False
+
+	// Ignoring Ellipse of parent abstract type
+	// FillColor accessor from parent Shape
+	public Color getPolygonFillColor(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				Color result = retrieve.getPolygonFillColor(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	// FillRule accessor from parent Shape
+	public FillRule getPolygonFillRule(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				FillRule result = retrieve.getPolygonFillRule(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	// FontFamily accessor from parent Shape
+	public FontFamily getPolygonFontFamily(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				FontFamily result = retrieve.getPolygonFontFamily(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	// FontSize accessor from parent Shape
+	public NonNegativeInteger getPolygonFontSize(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				NonNegativeInteger result = retrieve.getPolygonFontSize(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	// FontStyle accessor from parent Shape
+	public FontStyle getPolygonFontStyle(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				FontStyle result = retrieve.getPolygonFontStyle(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	// ID accessor from parent Shape
+	public String getPolygonID(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				String result = retrieve.getPolygonID(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	// Ignoring Label of parent abstract type
+	// Ignoring Line of parent abstract type
+	// LineCap accessor from parent Shape
+	public LineCap getPolygonLineCap(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				LineCap result = retrieve.getPolygonLineCap(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	// Locked accessor from parent Shape
+	public Boolean getPolygonLocked(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				Boolean result = retrieve.getPolygonLocked(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	// Ignoring Mask of parent abstract type
+	// Ignoring Point of parent abstract type
+	// Ignoring Polygon of parent abstract type
+	// Ignoring Polyline of parent abstract type
+	// Ignoring Rectangle of parent abstract type
+	// StrokeColor accessor from parent Shape
+	public Color getPolygonStrokeColor(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				Color result = retrieve.getPolygonStrokeColor(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	// StrokeDashArray accessor from parent Shape
+	public String getPolygonStrokeDashArray(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				String result = retrieve.getPolygonStrokeDashArray(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	// StrokeWidth accessor from parent Shape
+	public Double getPolygonStrokeWidth(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				Double result = retrieve.getPolygonStrokeWidth(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	// Text accessor from parent Shape
+	public String getPolygonText(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				String result = retrieve.getPolygonText(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	// TheC accessor from parent Shape
+	public NonNegativeInteger getPolygonTheC(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				NonNegativeInteger result = retrieve.getPolygonTheC(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	// TheT accessor from parent Shape
+	public NonNegativeInteger getPolygonTheT(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				NonNegativeInteger result = retrieve.getPolygonTheT(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	// TheZ accessor from parent Shape
+	public NonNegativeInteger getPolygonTheZ(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				NonNegativeInteger result = retrieve.getPolygonTheZ(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	// Transform accessor from parent Shape
+	public AffineTransform getPolygonTransform(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				AffineTransform result = retrieve.getPolygonTransform(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	// Visible accessor from parent Shape
+	public Boolean getPolygonVisible(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				Boolean result = retrieve.getPolygonVisible(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	public String getPolygonPoints(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				String result = retrieve.getPolygonPoints(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	//
 	// Polyline property storage
 	//
 	// Indexes: {u'Shape': [u'int ROIIndex', u'int shapeIndex']}
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
-	// Description accessor from parent Shape
-	public String getPolylineDescription(int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getPolylineDescription(ROIIndex, shapeIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
 	// Ignoring Ellipse of parent abstract type
-	// Fill accessor from parent Shape
-	public Integer getPolylineFill(int ROIIndex, int shapeIndex)
+	// FillColor accessor from parent Shape
+	public Color getPolylineFillColor(int ROIIndex, int shapeIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -7108,15 +7502,45 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				Integer result = retrieve.getPolylineFill(ROIIndex, shapeIndex);
+				Color result = retrieve.getPolylineFillColor(ROIIndex, shapeIndex);
 				if (result != null) return result;
 			}
 		}
 		return null;
 	}
 
-	// Ignoring FillRule of parent abstract type
-	// Ignoring FontFamily of parent abstract type
+	// FillRule accessor from parent Shape
+	public FillRule getPolylineFillRule(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				FillRule result = retrieve.getPolylineFillRule(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	// FontFamily accessor from parent Shape
+	public FontFamily getPolylineFontFamily(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				FontFamily result = retrieve.getPolylineFontFamily(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
 	// FontSize accessor from parent Shape
 	public NonNegativeInteger getPolylineFontSize(int ROIIndex, int shapeIndex)
 	{
@@ -7133,7 +7557,22 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
-	// Ignoring FontStyle of parent abstract type
+	// FontStyle accessor from parent Shape
+	public FontStyle getPolylineFontStyle(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				FontStyle result = retrieve.getPolylineFontStyle(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
 	// ID accessor from parent Shape
 	public String getPolylineID(int ROIIndex, int shapeIndex)
 	{
@@ -7150,29 +7589,10 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
-	// Label accessor from parent Shape
-	public String getPolylineLabel(int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getPolylineLabel(ROIIndex, shapeIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
+	// Ignoring Label of parent abstract type
 	// Ignoring Line of parent abstract type
-	// Ignoring LineCap of parent abstract type
-	// Ignoring MarkerEnd of parent abstract type
-	// Ignoring MarkerStart of parent abstract type
-	// Ignoring Mask of parent abstract type
-	// Name accessor from parent Shape
-	public String getPolylineName(int ROIIndex, int shapeIndex)
+	// LineCap accessor from parent Shape
+	public LineCap getPolylineLineCap(int ROIIndex, int shapeIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -7180,19 +7600,36 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getPolylineName(ROIIndex, shapeIndex);
+				LineCap result = retrieve.getPolylineLineCap(ROIIndex, shapeIndex);
 				if (result != null) return result;
 			}
 		}
 		return null;
 	}
 
-	// Ignoring Path of parent abstract type
+	// Locked accessor from parent Shape
+	public Boolean getPolylineLocked(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				Boolean result = retrieve.getPolylineLocked(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	// Ignoring Mask of parent abstract type
 	// Ignoring Point of parent abstract type
+	// Ignoring Polygon of parent abstract type
 	// Ignoring Polyline of parent abstract type
 	// Ignoring Rectangle of parent abstract type
-	// Stroke accessor from parent Shape
-	public Integer getPolylineStroke(int ROIIndex, int shapeIndex)
+	// StrokeColor accessor from parent Shape
+	public Color getPolylineStrokeColor(int ROIIndex, int shapeIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -7200,7 +7637,7 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				Integer result = retrieve.getPolylineStroke(ROIIndex, shapeIndex);
+				Color result = retrieve.getPolylineStrokeColor(ROIIndex, shapeIndex);
 				if (result != null) return result;
 			}
 		}
@@ -7239,7 +7676,22 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
-	// Ignoring Text of parent abstract type
+	// Text accessor from parent Shape
+	public String getPolylineText(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				String result = retrieve.getPolylineText(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
 	// TheC accessor from parent Shape
 	public NonNegativeInteger getPolylineTheC(int ROIIndex, int shapeIndex)
 	{
@@ -7289,7 +7741,7 @@ public class AggregateMetadata implements IMetadata
 	}
 
 	// Transform accessor from parent Shape
-	public String getPolylineTransform(int ROIIndex, int shapeIndex)
+	public AffineTransform getPolylineTransform(int ROIIndex, int shapeIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -7297,14 +7749,15 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getPolylineTransform(ROIIndex, shapeIndex);
+				AffineTransform result = retrieve.getPolylineTransform(ROIIndex, shapeIndex);
 				if (result != null) return result;
 			}
 		}
 		return null;
 	}
 
-	public Boolean getPolylineClosed(int ROIIndex, int shapeIndex)
+	// Visible accessor from parent Shape
+	public Boolean getPolylineVisible(int ROIIndex, int shapeIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -7312,7 +7765,37 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				Boolean result = retrieve.getPolylineClosed(ROIIndex, shapeIndex);
+				Boolean result = retrieve.getPolylineVisible(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	public Marker getPolylineMarkerEnd(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				Marker result = retrieve.getPolylineMarkerEnd(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	public Marker getPolylineMarkerStart(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				Marker result = retrieve.getPolylineMarkerStart(ROIIndex, shapeIndex);
 				if (result != null) return result;
 			}
 		}
@@ -7356,7 +7839,21 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
-	// Ignoring Dataset_BackReference back reference
+	public String getProjectDatasetRef(int projectIndex, int datasetRefIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				String result = retrieve.getProjectDatasetRef(projectIndex, datasetRefIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
 	public String getProjectDescription(int projectIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -7372,6 +7869,21 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
+	public String getProjectExperimenterGroupRef(int projectIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				String result = retrieve.getProjectExperimenterGroupRef(projectIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
 	public String getProjectExperimenterRef(int projectIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -7381,21 +7893,6 @@ public class AggregateMetadata implements IMetadata
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
 				String result = retrieve.getProjectExperimenterRef(projectIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
-	public String getProjectGroupRef(int projectIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getProjectGroupRef(projectIndex);
 				if (result != null) return result;
 			}
 		}
@@ -7433,17 +7930,6 @@ public class AggregateMetadata implements IMetadata
 	}
 
 	//
-	// ProjectRef property storage
-	//
-	// Indexes: {u'Dataset': [u'int datasetIndex', u'int projectRefIndex']}
-	// {u'Dataset': {u'OME': None}}
-	// Is multi path? False
-
-	// 1:1
-	// Is multi path? False
-	// Ignoring ID property of reference ProjectRef
-
-	//
 	// Pump property storage
 	//
 	// Indexes: {u'Laser': [u'int instrumentIndex', u'int lightSourceIndex']}
@@ -7453,6 +7939,10 @@ public class AggregateMetadata implements IMetadata
 	// 1:1
 	// Is multi path? False
 	// Ignoring ID property of reference Pump
+
+	// 0:9999
+	// Is multi path? False
+	// Ignoring Laser_BackReference property of reference Pump
 
 	//
 	// ROI property storage
@@ -7632,6 +8122,7 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
+	// Ignoring Screen_BackReference back reference
 	// Ignoring Well_BackReference back reference
 	//
 	// ReagentRef property storage
@@ -7651,25 +8142,9 @@ public class AggregateMetadata implements IMetadata
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
-	// Description accessor from parent Shape
-	public String getRectangleDescription(int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getRectangleDescription(ROIIndex, shapeIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
 	// Ignoring Ellipse of parent abstract type
-	// Fill accessor from parent Shape
-	public Integer getRectangleFill(int ROIIndex, int shapeIndex)
+	// FillColor accessor from parent Shape
+	public Color getRectangleFillColor(int ROIIndex, int shapeIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -7677,15 +8152,45 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				Integer result = retrieve.getRectangleFill(ROIIndex, shapeIndex);
+				Color result = retrieve.getRectangleFillColor(ROIIndex, shapeIndex);
 				if (result != null) return result;
 			}
 		}
 		return null;
 	}
 
-	// Ignoring FillRule of parent abstract type
-	// Ignoring FontFamily of parent abstract type
+	// FillRule accessor from parent Shape
+	public FillRule getRectangleFillRule(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				FillRule result = retrieve.getRectangleFillRule(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	// FontFamily accessor from parent Shape
+	public FontFamily getRectangleFontFamily(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				FontFamily result = retrieve.getRectangleFontFamily(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
 	// FontSize accessor from parent Shape
 	public NonNegativeInteger getRectangleFontSize(int ROIIndex, int shapeIndex)
 	{
@@ -7702,7 +8207,22 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
-	// Ignoring FontStyle of parent abstract type
+	// FontStyle accessor from parent Shape
+	public FontStyle getRectangleFontStyle(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				FontStyle result = retrieve.getRectangleFontStyle(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
 	// ID accessor from parent Shape
 	public String getRectangleID(int ROIIndex, int shapeIndex)
 	{
@@ -7719,29 +8239,10 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
-	// Label accessor from parent Shape
-	public String getRectangleLabel(int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getRectangleLabel(ROIIndex, shapeIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
+	// Ignoring Label of parent abstract type
 	// Ignoring Line of parent abstract type
-	// Ignoring LineCap of parent abstract type
-	// Ignoring MarkerEnd of parent abstract type
-	// Ignoring MarkerStart of parent abstract type
-	// Ignoring Mask of parent abstract type
-	// Name accessor from parent Shape
-	public String getRectangleName(int ROIIndex, int shapeIndex)
+	// LineCap accessor from parent Shape
+	public LineCap getRectangleLineCap(int ROIIndex, int shapeIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -7749,19 +8250,36 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getRectangleName(ROIIndex, shapeIndex);
+				LineCap result = retrieve.getRectangleLineCap(ROIIndex, shapeIndex);
 				if (result != null) return result;
 			}
 		}
 		return null;
 	}
 
-	// Ignoring Path of parent abstract type
+	// Locked accessor from parent Shape
+	public Boolean getRectangleLocked(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				Boolean result = retrieve.getRectangleLocked(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	// Ignoring Mask of parent abstract type
 	// Ignoring Point of parent abstract type
+	// Ignoring Polygon of parent abstract type
 	// Ignoring Polyline of parent abstract type
 	// Ignoring Rectangle of parent abstract type
-	// Stroke accessor from parent Shape
-	public Integer getRectangleStroke(int ROIIndex, int shapeIndex)
+	// StrokeColor accessor from parent Shape
+	public Color getRectangleStrokeColor(int ROIIndex, int shapeIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -7769,7 +8287,7 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				Integer result = retrieve.getRectangleStroke(ROIIndex, shapeIndex);
+				Color result = retrieve.getRectangleStrokeColor(ROIIndex, shapeIndex);
 				if (result != null) return result;
 			}
 		}
@@ -7808,7 +8326,22 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
-	// Ignoring Text of parent abstract type
+	// Text accessor from parent Shape
+	public String getRectangleText(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				String result = retrieve.getRectangleText(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
 	// TheC accessor from parent Shape
 	public NonNegativeInteger getRectangleTheC(int ROIIndex, int shapeIndex)
 	{
@@ -7858,7 +8391,7 @@ public class AggregateMetadata implements IMetadata
 	}
 
 	// Transform accessor from parent Shape
-	public String getRectangleTransform(int ROIIndex, int shapeIndex)
+	public AffineTransform getRectangleTransform(int ROIIndex, int shapeIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -7866,7 +8399,23 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getRectangleTransform(ROIIndex, shapeIndex);
+				AffineTransform result = retrieve.getRectangleTransform(ROIIndex, shapeIndex);
+				if (result != null) return result;
+			}
+		}
+		return null;
+	}
+
+	// Visible accessor from parent Shape
+	public Boolean getRectangleVisible(int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataRetrieve)
+			{
+				MetadataRetrieve retrieve = (MetadataRetrieve) o;
+				Boolean result = retrieve.getRectangleVisible(ROIIndex, shapeIndex);
 				if (result != null) return result;
 			}
 		}
@@ -8092,17 +8641,6 @@ public class AggregateMetadata implements IMetadata
 	}
 
 	//
-	// ScreenRef property storage
-	//
-	// Indexes: {u'Plate': [u'int plateIndex', u'int screenRefIndex']}
-	// {u'Plate': {u'OME': None}}
-	// Is multi path? False
-
-	// 1:1
-	// Is multi path? False
-	// Ignoring ID property of reference ScreenRef
-
-	//
 	// StageLabel property storage
 	//
 	// Indexes: {u'Image': [u'int imageIndex']}
@@ -8225,6 +8763,7 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
+	// Ignoring ExperimenterGroup_BackReference back reference
 	// Ignoring Experimenter_BackReference back reference
 	public String getTagAnnotationID(int tagAnnotationIndex)
 	{
@@ -8265,6 +8804,7 @@ public class AggregateMetadata implements IMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public String getTagAnnotationValue(int tagAnnotationIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -8321,6 +8861,7 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
+	// Ignoring ExperimenterGroup_BackReference back reference
 	// Ignoring Experimenter_BackReference back reference
 	public String getTermAnnotationID(int termAnnotationIndex)
 	{
@@ -8361,6 +8902,7 @@ public class AggregateMetadata implements IMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public String getTermAnnotationValue(int termAnnotationIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -8378,280 +8920,6 @@ public class AggregateMetadata implements IMetadata
 
 	// Ignoring WellSample_BackReference back reference
 	// Ignoring Well_BackReference back reference
-	//
-	// Text property storage
-	//
-	// Indexes: {u'Shape': [u'int ROIIndex', u'int shapeIndex']}
-	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-	// Is multi path? False
-
-	// Description accessor from parent Shape
-	public String getTextDescription(int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getTextDescription(ROIIndex, shapeIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
-	// Ignoring Ellipse of parent abstract type
-	// Fill accessor from parent Shape
-	public Integer getTextFill(int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				Integer result = retrieve.getTextFill(ROIIndex, shapeIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
-	// Ignoring FillRule of parent abstract type
-	// Ignoring FontFamily of parent abstract type
-	// FontSize accessor from parent Shape
-	public NonNegativeInteger getTextFontSize(int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				NonNegativeInteger result = retrieve.getTextFontSize(ROIIndex, shapeIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
-	// Ignoring FontStyle of parent abstract type
-	// ID accessor from parent Shape
-	public String getTextID(int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getTextID(ROIIndex, shapeIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
-	// Label accessor from parent Shape
-	public String getTextLabel(int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getTextLabel(ROIIndex, shapeIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
-	// Ignoring Line of parent abstract type
-	// Ignoring LineCap of parent abstract type
-	// Ignoring MarkerEnd of parent abstract type
-	// Ignoring MarkerStart of parent abstract type
-	// Ignoring Mask of parent abstract type
-	// Name accessor from parent Shape
-	public String getTextName(int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getTextName(ROIIndex, shapeIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
-	// Ignoring Path of parent abstract type
-	// Ignoring Point of parent abstract type
-	// Ignoring Polyline of parent abstract type
-	// Ignoring Rectangle of parent abstract type
-	// Stroke accessor from parent Shape
-	public Integer getTextStroke(int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				Integer result = retrieve.getTextStroke(ROIIndex, shapeIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
-	// StrokeDashArray accessor from parent Shape
-	public String getTextStrokeDashArray(int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getTextStrokeDashArray(ROIIndex, shapeIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
-	// StrokeWidth accessor from parent Shape
-	public Double getTextStrokeWidth(int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				Double result = retrieve.getTextStrokeWidth(ROIIndex, shapeIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
-	// Ignoring Text of parent abstract type
-	// TheC accessor from parent Shape
-	public NonNegativeInteger getTextTheC(int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				NonNegativeInteger result = retrieve.getTextTheC(ROIIndex, shapeIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
-	// TheT accessor from parent Shape
-	public NonNegativeInteger getTextTheT(int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				NonNegativeInteger result = retrieve.getTextTheT(ROIIndex, shapeIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
-	// TheZ accessor from parent Shape
-	public NonNegativeInteger getTextTheZ(int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				NonNegativeInteger result = retrieve.getTextTheZ(ROIIndex, shapeIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
-	// Transform accessor from parent Shape
-	public String getTextTransform(int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getTextTransform(ROIIndex, shapeIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
-	public String getTextValue(int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getTextValue(ROIIndex, shapeIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
-	public Double getTextX(int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				Double result = retrieve.getTextX(ROIIndex, shapeIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
-	public Double getTextY(int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataRetrieve)
-			{
-				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				Double result = retrieve.getTextY(ROIIndex, shapeIndex);
-				if (result != null) return result;
-			}
-		}
-		return null;
-	}
-
 	//
 	// TiffData property storage
 	//
@@ -8719,6 +8987,7 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
+	// Ignoring Pixels_BackReference back reference
 	public NonNegativeInteger getTiffDataPlaneCount(int imageIndex, int tiffDataIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -8774,6 +9043,7 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
+	// Ignoring ExperimenterGroup_BackReference back reference
 	// Ignoring Experimenter_BackReference back reference
 	public String getTimestampAnnotationID(int timestampAnnotationIndex)
 	{
@@ -8814,7 +9084,8 @@ public class AggregateMetadata implements IMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
-	public String getTimestampAnnotationValue(int timestampAnnotationIndex)
+	// Ignoring StructuredAnnotations_BackReference back reference
+	public Timestamp getTimestampAnnotationValue(int timestampAnnotationIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -8822,7 +9093,7 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getTimestampAnnotationValue(timestampAnnotationIndex);
+				Timestamp result = retrieve.getTimestampAnnotationValue(timestampAnnotationIndex);
 				if (result != null) return result;
 			}
 		}
@@ -8965,7 +9236,7 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
-	public Integer getWellColor(int plateIndex, int wellIndex)
+	public Color getWellColor(int plateIndex, int wellIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -8973,7 +9244,7 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				Integer result = retrieve.getWellColor(plateIndex, wellIndex);
+				Color result = retrieve.getWellColor(plateIndex, wellIndex);
 				if (result != null) return result;
 			}
 		}
@@ -9040,6 +9311,7 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
+	// Ignoring Plate_BackReference back reference
 	public String getWellReagentRef(int plateIndex, int wellIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -9070,7 +9342,7 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
-	public String getWellStatus(int plateIndex, int wellIndex)
+	public String getWellType(int plateIndex, int wellIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -9078,7 +9350,7 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getWellStatus(plateIndex, wellIndex);
+				String result = retrieve.getWellType(plateIndex, wellIndex);
 				if (result != null) return result;
 			}
 		}
@@ -9184,7 +9456,7 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
-	public String getWellSampleTimepoint(int plateIndex, int wellIndex, int wellSampleIndex)
+	public Timestamp getWellSampleTimepoint(int plateIndex, int wellIndex, int wellSampleIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -9192,13 +9464,14 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataRetrieve)
 			{
 				MetadataRetrieve retrieve = (MetadataRetrieve) o;
-				String result = retrieve.getWellSampleTimepoint(plateIndex, wellIndex, wellSampleIndex);
+				Timestamp result = retrieve.getWellSampleTimepoint(plateIndex, wellIndex, wellSampleIndex);
 				if (result != null) return result;
 			}
 		}
 		return null;
 	}
 
+	// Ignoring Well_BackReference back reference
 	//
 	// WellSampleRef property storage
 	//
@@ -9249,6 +9522,7 @@ public class AggregateMetadata implements IMetadata
 		return null;
 	}
 
+	// Ignoring ExperimenterGroup_BackReference back reference
 	// Ignoring Experimenter_BackReference back reference
 	public String getXMLAnnotationID(int XMLAnnotationIndex)
 	{
@@ -9289,6 +9563,7 @@ public class AggregateMetadata implements IMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public String getXMLAnnotationValue(int XMLAnnotationIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -9353,7 +9628,7 @@ public class AggregateMetadata implements IMetadata
 	//
 	// AnnotationRef property storage
 	//
-	// {u'ROI': {u'OME': None}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'Annotation': None, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
+	// {u'ROI': {u'OME': None}, u'PlateAcquisition': {u'Plate': {u'OME': None}}, u'Plate': {u'OME': None}, u'ExperimenterGroup': {u'OME': None}, u'Image': {u'OME': None}, u'Screen': {u'OME': None}, u'Well': {u'Plate': {u'OME': None}}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Reagent': {u'Screen': {u'OME': None}}, u'Plane': {u'Pixels': {u'Image': {u'OME': None}}}, u'Experimenter': {u'OME': None}, u'Annotation': None, u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Pixels': {u'Image': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
 	// Is multi path? True
 
 	// 1:1
@@ -9470,12 +9745,12 @@ public class AggregateMetadata implements IMetadata
 	//
 	// BinaryFile property storage
 	//
-	// {u'FileAnnotation': {u'StructuredAnnotations': {u'OME': None}}, u'OTF': {u'Instrument': {u'OME': None}}}
-	// Is multi path? True
+	// {u'FileAnnotation': {u'StructuredAnnotations': {u'OME': None}}}
+	// Is multi path? False
 
 	// Ignoring BinData element, complex property
 	// Ignoring External element, complex property
-	public void setFileAnnotationBinaryFileFileName(String fileName, int fileAnnotationIndex)
+	public void setBinaryFileFileName(String fileName, int fileAnnotationIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -9483,12 +9758,12 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataStore)
 			{
 				MetadataStore store = (MetadataStore) o;
-				store.setFileAnnotationBinaryFileFileName(fileName, fileAnnotationIndex);
+				store.setBinaryFileFileName(fileName, fileAnnotationIndex);
 			}
 		}
 	}
 
-	public void setOTFBinaryFileFileName(String fileName, int instrumentIndex, int OTFIndex)
+	public void setBinaryFileMIMEType(String mimeType, int fileAnnotationIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -9496,12 +9771,12 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataStore)
 			{
 				MetadataStore store = (MetadataStore) o;
-				store.setOTFBinaryFileFileName(fileName, instrumentIndex, OTFIndex);
+				store.setBinaryFileMIMEType(mimeType, fileAnnotationIndex);
 			}
 		}
 	}
 
-	public void setFileAnnotationBinaryFileMIMEType(String mimetype, int fileAnnotationIndex)
+	public void setBinaryFileSize(NonNegativeLong size, int fileAnnotationIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -9509,46 +9784,7 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataStore)
 			{
 				MetadataStore store = (MetadataStore) o;
-				store.setFileAnnotationBinaryFileMIMEType(mimetype, fileAnnotationIndex);
-			}
-		}
-	}
-
-	public void setOTFBinaryFileMIMEType(String mimetype, int instrumentIndex, int OTFIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setOTFBinaryFileMIMEType(mimetype, instrumentIndex, OTFIndex);
-			}
-		}
-	}
-
-	public void setFileAnnotationBinaryFileSize(NonNegativeLong size, int fileAnnotationIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setFileAnnotationBinaryFileSize(size, fileAnnotationIndex);
-			}
-		}
-	}
-
-	public void setOTFBinaryFileSize(NonNegativeLong size, int instrumentIndex, int OTFIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setOTFBinaryFileSize(size, instrumentIndex, OTFIndex);
+				store.setBinaryFileSize(size, fileAnnotationIndex);
 			}
 		}
 	}
@@ -9619,6 +9855,7 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
+	// Ignoring ExperimenterGroup_BackReference back reference
 	// Ignoring Experimenter_BackReference back reference
 	public void setBooleanAnnotationID(String id, int booleanAnnotationIndex)
 	{
@@ -9655,6 +9892,7 @@ public class AggregateMetadata implements IMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public void setBooleanAnnotationValue(Boolean value, int booleanAnnotationIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -9702,7 +9940,7 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
-	public void setChannelColor(Integer color, int imageIndex, int channelIndex)
+	public void setChannelColor(Color color, int imageIndex, int channelIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -9809,7 +10047,7 @@ public class AggregateMetadata implements IMetadata
 
 	// Ignoring LightPath element, complex property
 	// Ignoring LightSourceSettings element, complex property
-	public void setChannelNDFilter(Double ndfilter, int imageIndex, int channelIndex)
+	public void setChannelNDFilter(Double ndFilter, int imageIndex, int channelIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -9817,7 +10055,7 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataStore)
 			{
 				MetadataStore store = (MetadataStore) o;
-				store.setChannelNDFilter(ndfilter, imageIndex, channelIndex);
+				store.setChannelNDFilter(ndFilter, imageIndex, channelIndex);
 			}
 		}
 	}
@@ -9835,19 +10073,6 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
-	public void setChannelOTFRef(String otf, int imageIndex, int channelIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setChannelOTFRef(otf, imageIndex, channelIndex);
-			}
-		}
-	}
-
 	public void setChannelPinholeSize(Double pinholeSize, int imageIndex, int channelIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -9861,6 +10086,7 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
+	// Ignoring Pixels_BackReference back reference
 	public void setChannelPockelCellSetting(Integer pockelCellSetting, int imageIndex, int channelIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -9921,6 +10147,7 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
+	// Ignoring ExperimenterGroup_BackReference back reference
 	// Ignoring Experimenter_BackReference back reference
 	public void setCommentAnnotationID(String id, int commentAnnotationIndex)
 	{
@@ -9957,6 +10184,7 @@ public class AggregateMetadata implements IMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public void setCommentAnnotationValue(String value, int commentAnnotationIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -9972,16 +10200,6 @@ public class AggregateMetadata implements IMetadata
 
 	// Ignoring WellSample_BackReference back reference
 	// Ignoring Well_BackReference back reference
-	//
-	// Contact property storage
-	//
-	// {u'Group': {u'OME': None}}
-	// Is multi path? False
-
-	// 1:1
-	// Is multi path? False
-	// Ignoring ID property of reference Contact
-
 	//
 	// Dataset property storage
 	//
@@ -10014,6 +10232,19 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
+	public void setDatasetExperimenterGroupRef(String experimenterGroup, int datasetIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setDatasetExperimenterGroupRef(experimenterGroup, datasetIndex);
+			}
+		}
+	}
+
 	public void setDatasetExperimenterRef(String experimenter, int datasetIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -10023,19 +10254,6 @@ public class AggregateMetadata implements IMetadata
 			{
 				MetadataStore store = (MetadataStore) o;
 				store.setDatasetExperimenterRef(experimenter, datasetIndex);
-			}
-		}
-	}
-
-	public void setDatasetGroupRef(String group, int datasetIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setDatasetGroupRef(group, datasetIndex);
 			}
 		}
 	}
@@ -10053,7 +10271,19 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
-	// Ignoring Image_BackReference back reference
+	public void setDatasetImageRef(String image, int datasetIndex, int imageRefIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setDatasetImageRef(image, datasetIndex, imageRefIndex);
+			}
+		}
+	}
+
 	public void setDatasetName(String name, int datasetIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -10067,23 +10297,11 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
-	public void setDatasetProjectRef(String project, int datasetIndex, int projectRefIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setDatasetProjectRef(project, datasetIndex, projectRefIndex);
-			}
-		}
-	}
-
+	// Ignoring Project_BackReference back reference
 	//
 	// DatasetRef property storage
 	//
-	// {u'Image': {u'OME': None}}
+	// {u'Project': {u'OME': None}}
 	// Is multi path? False
 
 	// 1:1
@@ -10135,6 +10353,7 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
+	// Ignoring Instrument_BackReference back reference
 	public void setDetectorLotNumber(String lotNumber, int instrumentIndex, int detectorIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -10258,6 +10477,7 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
+	// Ignoring DetectorRef back reference
 	public void setDetectorSettingsGain(Double gain, int imageIndex, int channelIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -10343,6 +10563,7 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
+	// Ignoring Instrument_BackReference back reference
 	// Ignoring LightPath_BackReference back reference
 	public void setDichroicLotNumber(String lotNumber, int instrumentIndex, int dichroicIndex)
 	{
@@ -10440,6 +10661,7 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
+	// Ignoring ExperimenterGroup_BackReference back reference
 	// Ignoring Experimenter_BackReference back reference
 	public void setDoubleAnnotationID(String id, int doubleAnnotationIndex)
 	{
@@ -10476,6 +10698,7 @@ public class AggregateMetadata implements IMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public void setDoubleAnnotationValue(Double value, int doubleAnnotationIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -10497,23 +10720,9 @@ public class AggregateMetadata implements IMetadata
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
-	// Description accessor from parent Shape
-	public void setEllipseDescription(String description, int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setEllipseDescription(description, ROIIndex, shapeIndex);
-			}
-		}
-	}
-
 	// Ignoring Ellipse of parent abstract type
-	// Fill accessor from parent Shape
-	public void setEllipseFill(Integer fill, int ROIIndex, int shapeIndex)
+	// FillColor accessor from parent Shape
+	public void setEllipseFillColor(Color fillColor, int ROIIndex, int shapeIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -10521,13 +10730,39 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataStore)
 			{
 				MetadataStore store = (MetadataStore) o;
-				store.setEllipseFill(fill, ROIIndex, shapeIndex);
+				store.setEllipseFillColor(fillColor, ROIIndex, shapeIndex);
 			}
 		}
 	}
 
-	// Ignoring FillRule of parent abstract type
-	// Ignoring FontFamily of parent abstract type
+	// FillRule accessor from parent Shape
+	public void setEllipseFillRule(FillRule fillRule, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setEllipseFillRule(fillRule, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
+	// FontFamily accessor from parent Shape
+	public void setEllipseFontFamily(FontFamily fontFamily, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setEllipseFontFamily(fontFamily, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
 	// FontSize accessor from parent Shape
 	public void setEllipseFontSize(NonNegativeInteger fontSize, int ROIIndex, int shapeIndex)
 	{
@@ -10542,7 +10777,20 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
-	// Ignoring FontStyle of parent abstract type
+	// FontStyle accessor from parent Shape
+	public void setEllipseFontStyle(FontStyle fontStyle, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setEllipseFontStyle(fontStyle, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
 	// ID accessor from parent Shape
 	public void setEllipseID(String id, int ROIIndex, int shapeIndex)
 	{
@@ -10557,27 +10805,10 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
-	// Label accessor from parent Shape
-	public void setEllipseLabel(String label, int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setEllipseLabel(label, ROIIndex, shapeIndex);
-			}
-		}
-	}
-
+	// Ignoring Label of parent abstract type
 	// Ignoring Line of parent abstract type
-	// Ignoring LineCap of parent abstract type
-	// Ignoring MarkerEnd of parent abstract type
-	// Ignoring MarkerStart of parent abstract type
-	// Ignoring Mask of parent abstract type
-	// Name accessor from parent Shape
-	public void setEllipseName(String name, int ROIIndex, int shapeIndex)
+	// LineCap accessor from parent Shape
+	public void setEllipseLineCap(LineCap lineCap, int ROIIndex, int shapeIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -10585,17 +10816,32 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataStore)
 			{
 				MetadataStore store = (MetadataStore) o;
-				store.setEllipseName(name, ROIIndex, shapeIndex);
+				store.setEllipseLineCap(lineCap, ROIIndex, shapeIndex);
 			}
 		}
 	}
 
-	// Ignoring Path of parent abstract type
+	// Locked accessor from parent Shape
+	public void setEllipseLocked(Boolean locked, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setEllipseLocked(locked, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
+	// Ignoring Mask of parent abstract type
 	// Ignoring Point of parent abstract type
+	// Ignoring Polygon of parent abstract type
 	// Ignoring Polyline of parent abstract type
 	// Ignoring Rectangle of parent abstract type
-	// Stroke accessor from parent Shape
-	public void setEllipseStroke(Integer stroke, int ROIIndex, int shapeIndex)
+	// StrokeColor accessor from parent Shape
+	public void setEllipseStrokeColor(Color strokeColor, int ROIIndex, int shapeIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -10603,7 +10849,7 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataStore)
 			{
 				MetadataStore store = (MetadataStore) o;
-				store.setEllipseStroke(stroke, ROIIndex, shapeIndex);
+				store.setEllipseStrokeColor(strokeColor, ROIIndex, shapeIndex);
 			}
 		}
 	}
@@ -10636,7 +10882,20 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
-	// Ignoring Text of parent abstract type
+	// Text accessor from parent Shape
+	public void setEllipseText(String text, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setEllipseText(text, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
 	// TheC accessor from parent Shape
 	public void setEllipseTheC(NonNegativeInteger theC, int ROIIndex, int shapeIndex)
 	{
@@ -10680,7 +10939,7 @@ public class AggregateMetadata implements IMetadata
 	}
 
 	// Transform accessor from parent Shape
-	public void setEllipseTransform(String transform, int ROIIndex, int shapeIndex)
+	public void setEllipseTransform(AffineTransform transform, int ROIIndex, int shapeIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -10689,6 +10948,20 @@ public class AggregateMetadata implements IMetadata
 			{
 				MetadataStore store = (MetadataStore) o;
 				store.setEllipseTransform(transform, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
+	// Visible accessor from parent Shape
+	public void setEllipseVisible(Boolean visible, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setEllipseVisible(visible, ROIIndex, shapeIndex);
 			}
 		}
 	}
@@ -10847,19 +11120,6 @@ public class AggregateMetadata implements IMetadata
 	}
 
 	// Ignoring Dataset_BackReference back reference
-	public void setExperimenterDisplayName(String displayName, int experimenterIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setExperimenterDisplayName(displayName, experimenterIndex);
-			}
-		}
-	}
-
 	public void setExperimenterEmail(String email, int experimenterIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -10874,6 +11134,7 @@ public class AggregateMetadata implements IMetadata
 	}
 
 	// Ignoring Experiment_BackReference back reference
+	// Ignoring ExperimenterGroup_BackReference back reference
 	public void setExperimenterFirstName(String firstName, int experimenterIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -10883,19 +11144,6 @@ public class AggregateMetadata implements IMetadata
 			{
 				MetadataStore store = (MetadataStore) o;
 				store.setExperimenterFirstName(firstName, experimenterIndex);
-			}
-		}
-	}
-
-	public void setExperimenterGroupRef(String group, int experimenterIndex, int groupRefIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setExperimenterGroupRef(group, experimenterIndex, groupRefIndex);
 			}
 		}
 	}
@@ -10969,9 +11217,106 @@ public class AggregateMetadata implements IMetadata
 	}
 
 	//
+	// ExperimenterGroup property storage
+	//
+	// {u'OME': None}
+	// Is multi path? False
+
+	public void setExperimenterGroupAnnotationRef(String annotation, int experimenterGroupIndex, int annotationRefIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setExperimenterGroupAnnotationRef(annotation, experimenterGroupIndex, annotationRefIndex);
+			}
+		}
+	}
+
+	// Ignoring Dataset_BackReference back reference
+	public void setExperimenterGroupDescription(String description, int experimenterGroupIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setExperimenterGroupDescription(description, experimenterGroupIndex);
+			}
+		}
+	}
+
+	public void setExperimenterGroupExperimenterRef(String experimenter, int experimenterGroupIndex, int experimenterRefIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setExperimenterGroupExperimenterRef(experimenter, experimenterGroupIndex, experimenterRefIndex);
+			}
+		}
+	}
+
+	public void setExperimenterGroupID(String id, int experimenterGroupIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setExperimenterGroupID(id, experimenterGroupIndex);
+			}
+		}
+	}
+
+	// Ignoring Image_BackReference back reference
+	public void setExperimenterGroupLeader(String leader, int experimenterGroupIndex, int leaderIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setExperimenterGroupLeader(leader, experimenterGroupIndex, leaderIndex);
+			}
+		}
+	}
+
+	public void setExperimenterGroupName(String name, int experimenterGroupIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setExperimenterGroupName(name, experimenterGroupIndex);
+			}
+		}
+	}
+
+	// Ignoring Project_BackReference back reference
+	//
+	// ExperimenterGroupRef property storage
+	//
+	// {u'Project': {u'OME': None}, u'Image': {u'OME': None}, u'Dataset': {u'OME': None}}
+	// Is multi path? True
+
+	// 1:1
+	// Is multi path? True
+	// Ignoring ID property of reference ExperimenterGroupRef
+
+	//
 	// ExperimenterRef property storage
 	//
-	// {u'Project': {u'OME': None}, u'Image': {u'OME': None}, u'Dataset': {u'OME': None}, u'Experiment': {u'OME': None}, u'MicrobeamManipulation': {u'Experiment': {u'OME': None}}}
+	// {u'ExperimenterGroup': {u'OME': None}, u'Image': {u'OME': None}, u'Dataset': {u'OME': None}, u'Project': {u'OME': None}, u'Experiment': {u'OME': None}, u'MicrobeamManipulation': {u'Experiment': {u'OME': None}}}
 	// Is multi path? True
 
 	// 1:1
@@ -11120,6 +11465,7 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
+	// Ignoring ExperimenterGroup_BackReference back reference
 	// Ignoring Experimenter_BackReference back reference
 	public void setFileAnnotationID(String id, int fileAnnotationIndex)
 	{
@@ -11156,6 +11502,7 @@ public class AggregateMetadata implements IMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	// Ignoring WellSample_BackReference back reference
 	// Ignoring Well_BackReference back reference
 	//
@@ -11164,6 +11511,7 @@ public class AggregateMetadata implements IMetadata
 	// {u'Instrument': {u'OME': None}}
 	// Is multi path? False
 
+	// Ignoring FilterSet_BackReference back reference
 	// Ignoring FilterSet_BackReference back reference
 	public void setFilterFilterWheel(String filterWheel, int instrumentIndex, int filterIndex)
 	{
@@ -11191,6 +11539,8 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
+	// Ignoring Instrument_BackReference back reference
+	// Ignoring LightPath_BackReference back reference
 	// Ignoring LightPath_BackReference back reference
 	public void setFilterLotNumber(String lotNumber, int instrumentIndex, int filterIndex)
 	{
@@ -11317,6 +11667,7 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
+	// Ignoring Instrument_BackReference back reference
 	public void setFilterSetLotNumber(String lotNumber, int instrumentIndex, int filterSetIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -11356,7 +11707,6 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
-	// Ignoring OTF_BackReference back reference
 	public void setFilterSetSerialNumber(String serialNumber, int instrumentIndex, int filterSetIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -11373,97 +11723,12 @@ public class AggregateMetadata implements IMetadata
 	//
 	// FilterSetRef property storage
 	//
-	// {u'OTF': {u'Instrument': {u'OME': None}}, u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
-	// Is multi path? True
-
-	// 1:1
-	// Is multi path? True
-	// Ignoring ID property of reference FilterSetRef
-
-	//
-	// Group property storage
-	//
-	// {u'OME': None}
+	// {u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
 	// Is multi path? False
 
-	public void setGroupContact(String contact, int groupIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setGroupContact(contact, groupIndex);
-			}
-		}
-	}
-
-	// Ignoring Dataset_BackReference back reference
-	public void setGroupDescription(String description, int groupIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setGroupDescription(description, groupIndex);
-			}
-		}
-	}
-
-	// Ignoring Experimenter_BackReference back reference
-	public void setGroupID(String id, int groupIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setGroupID(id, groupIndex);
-			}
-		}
-	}
-
-	// Ignoring Image_BackReference back reference
-	public void setGroupLeader(String leader, int groupIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setGroupLeader(leader, groupIndex);
-			}
-		}
-	}
-
-	public void setGroupName(String name, int groupIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setGroupName(name, groupIndex);
-			}
-		}
-	}
-
-	// Ignoring Project_BackReference back reference
-	//
-	// GroupRef property storage
-	//
-	// {u'Project': {u'OME': None}, u'Image': {u'OME': None}, u'Experimenter': {u'OME': None}, u'Dataset': {u'OME': None}}
-	// Is multi path? True
-
 	// 1:1
-	// Is multi path? True
-	// Ignoring ID property of reference GroupRef
+	// Is multi path? False
+	// Ignoring ID property of reference FilterSetRef
 
 	//
 	// Image property storage
@@ -11471,7 +11736,7 @@ public class AggregateMetadata implements IMetadata
 	// {u'OME': None}
 	// Is multi path? False
 
-	public void setImageAcquiredDate(String acquiredDate, int imageIndex)
+	public void setImageAcquisitionDate(Timestamp acquisitionDate, int imageIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -11479,7 +11744,7 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataStore)
 			{
 				MetadataStore store = (MetadataStore) o;
-				store.setImageAcquiredDate(acquiredDate, imageIndex);
+				store.setImageAcquisitionDate(acquisitionDate, imageIndex);
 			}
 		}
 	}
@@ -11497,19 +11762,7 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
-	public void setImageDatasetRef(String dataset, int imageIndex, int datasetRefIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setImageDatasetRef(dataset, imageIndex, datasetRefIndex);
-			}
-		}
-	}
-
+	// Ignoring Dataset_BackReference back reference
 	public void setImageDescription(String description, int imageIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -11536,6 +11789,19 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
+	public void setImageExperimenterGroupRef(String experimenterGroup, int imageIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setImageExperimenterGroupRef(experimenterGroup, imageIndex);
+			}
+		}
+	}
+
 	public void setImageExperimenterRef(String experimenter, int imageIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -11545,19 +11811,6 @@ public class AggregateMetadata implements IMetadata
 			{
 				MetadataStore store = (MetadataStore) o;
 				store.setImageExperimenterRef(experimenter, imageIndex);
-			}
-		}
-	}
-
-	public void setImageGroupRef(String group, int imageIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setImageGroupRef(group, imageIndex);
 			}
 		}
 	}
@@ -11635,11 +11888,11 @@ public class AggregateMetadata implements IMetadata
 	//
 	// ImageRef property storage
 	//
-	// {u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}}
-	// Is multi path? False
+	// {u'WellSample': {u'Well': {u'Plate': {u'OME': None}}}, u'Dataset': {u'OME': None}}
+	// Is multi path? True
 
 	// 1:1
-	// Is multi path? False
+	// Is multi path? True
 	// Ignoring ID property of reference ImageRef
 
 	//
@@ -11661,7 +11914,7 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
-	public void setImagingEnvironmentCO2Percent(PercentFraction co2percent, int imageIndex)
+	public void setImagingEnvironmentCO2Percent(PercentFraction co2Percent, int imageIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -11669,7 +11922,7 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataStore)
 			{
 				MetadataStore store = (MetadataStore) o;
-				store.setImagingEnvironmentCO2Percent(co2percent, imageIndex);
+				store.setImagingEnvironmentCO2Percent(co2Percent, imageIndex);
 			}
 		}
 	}
@@ -11726,7 +11979,6 @@ public class AggregateMetadata implements IMetadata
 	// Ignoring Image_BackReference back reference
 	// Ignoring LightSource element, complex property
 	// Ignoring Microscope element, complex property
-	// Ignoring OTF element, complex property
 	// Ignoring Objective element, complex property
 	//
 	// InstrumentRef property storage
@@ -11737,6 +11989,284 @@ public class AggregateMetadata implements IMetadata
 	// 1:1
 	// Is multi path? False
 	// Ignoring ID property of reference InstrumentRef
+
+	//
+	// Label property storage
+	//
+	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+	// Is multi path? False
+
+	// Ignoring Ellipse of parent abstract type
+	// FillColor accessor from parent Shape
+	public void setLabelFillColor(Color fillColor, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setLabelFillColor(fillColor, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
+	// FillRule accessor from parent Shape
+	public void setLabelFillRule(FillRule fillRule, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setLabelFillRule(fillRule, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
+	// FontFamily accessor from parent Shape
+	public void setLabelFontFamily(FontFamily fontFamily, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setLabelFontFamily(fontFamily, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
+	// FontSize accessor from parent Shape
+	public void setLabelFontSize(NonNegativeInteger fontSize, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setLabelFontSize(fontSize, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
+	// FontStyle accessor from parent Shape
+	public void setLabelFontStyle(FontStyle fontStyle, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setLabelFontStyle(fontStyle, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
+	// ID accessor from parent Shape
+	public void setLabelID(String id, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setLabelID(id, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
+	// Ignoring Label of parent abstract type
+	// Ignoring Line of parent abstract type
+	// LineCap accessor from parent Shape
+	public void setLabelLineCap(LineCap lineCap, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setLabelLineCap(lineCap, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
+	// Locked accessor from parent Shape
+	public void setLabelLocked(Boolean locked, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setLabelLocked(locked, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
+	// Ignoring Mask of parent abstract type
+	// Ignoring Point of parent abstract type
+	// Ignoring Polygon of parent abstract type
+	// Ignoring Polyline of parent abstract type
+	// Ignoring Rectangle of parent abstract type
+	// StrokeColor accessor from parent Shape
+	public void setLabelStrokeColor(Color strokeColor, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setLabelStrokeColor(strokeColor, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
+	// StrokeDashArray accessor from parent Shape
+	public void setLabelStrokeDashArray(String strokeDashArray, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setLabelStrokeDashArray(strokeDashArray, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
+	// StrokeWidth accessor from parent Shape
+	public void setLabelStrokeWidth(Double strokeWidth, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setLabelStrokeWidth(strokeWidth, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
+	// Text accessor from parent Shape
+	public void setLabelText(String text, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setLabelText(text, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
+	// TheC accessor from parent Shape
+	public void setLabelTheC(NonNegativeInteger theC, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setLabelTheC(theC, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
+	// TheT accessor from parent Shape
+	public void setLabelTheT(NonNegativeInteger theT, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setLabelTheT(theT, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
+	// TheZ accessor from parent Shape
+	public void setLabelTheZ(NonNegativeInteger theZ, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setLabelTheZ(theZ, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
+	// Transform accessor from parent Shape
+	public void setLabelTransform(AffineTransform transform, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setLabelTransform(transform, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
+	// Visible accessor from parent Shape
+	public void setLabelVisible(Boolean visible, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setLabelVisible(visible, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
+	public void setLabelX(Double x, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setLabelX(x, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
+	public void setLabelY(Double y, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setLabelY(y, ROIIndex, shapeIndex);
+			}
+		}
+	}
 
 	//
 	// Laser property storage
@@ -11952,8 +12482,12 @@ public class AggregateMetadata implements IMetadata
 	//
 	// Leader property storage
 	//
-	// {u'Group': {u'OME': None}}
+	// {u'ExperimenterGroup': {u'OME': None}}
 	// Is multi path? False
+
+	// 0:9999
+	// Is multi path? False
+	// Ignoring ExperimenterGroup_BackReference property of reference Leader
 
 	// 1:1
 	// Is multi path? False
@@ -12156,6 +12690,8 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
+	// Ignoring LightSourceRef back reference
+	// Ignoring MicrobeamManipulation_BackReference back reference
 	public void setChannelLightSourceSettingsWavelength(PositiveInteger wavelength, int imageIndex, int channelIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -12188,23 +12724,9 @@ public class AggregateMetadata implements IMetadata
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
-	// Description accessor from parent Shape
-	public void setLineDescription(String description, int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setLineDescription(description, ROIIndex, shapeIndex);
-			}
-		}
-	}
-
 	// Ignoring Ellipse of parent abstract type
-	// Fill accessor from parent Shape
-	public void setLineFill(Integer fill, int ROIIndex, int shapeIndex)
+	// FillColor accessor from parent Shape
+	public void setLineFillColor(Color fillColor, int ROIIndex, int shapeIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -12212,13 +12734,39 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataStore)
 			{
 				MetadataStore store = (MetadataStore) o;
-				store.setLineFill(fill, ROIIndex, shapeIndex);
+				store.setLineFillColor(fillColor, ROIIndex, shapeIndex);
 			}
 		}
 	}
 
-	// Ignoring FillRule of parent abstract type
-	// Ignoring FontFamily of parent abstract type
+	// FillRule accessor from parent Shape
+	public void setLineFillRule(FillRule fillRule, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setLineFillRule(fillRule, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
+	// FontFamily accessor from parent Shape
+	public void setLineFontFamily(FontFamily fontFamily, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setLineFontFamily(fontFamily, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
 	// FontSize accessor from parent Shape
 	public void setLineFontSize(NonNegativeInteger fontSize, int ROIIndex, int shapeIndex)
 	{
@@ -12233,7 +12781,20 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
-	// Ignoring FontStyle of parent abstract type
+	// FontStyle accessor from parent Shape
+	public void setLineFontStyle(FontStyle fontStyle, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setLineFontStyle(fontStyle, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
 	// ID accessor from parent Shape
 	public void setLineID(String id, int ROIIndex, int shapeIndex)
 	{
@@ -12248,27 +12809,10 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
-	// Label accessor from parent Shape
-	public void setLineLabel(String label, int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setLineLabel(label, ROIIndex, shapeIndex);
-			}
-		}
-	}
-
+	// Ignoring Label of parent abstract type
 	// Ignoring Line of parent abstract type
-	// Ignoring LineCap of parent abstract type
-	// Ignoring MarkerEnd of parent abstract type
-	// Ignoring MarkerStart of parent abstract type
-	// Ignoring Mask of parent abstract type
-	// Name accessor from parent Shape
-	public void setLineName(String name, int ROIIndex, int shapeIndex)
+	// LineCap accessor from parent Shape
+	public void setLineLineCap(LineCap lineCap, int ROIIndex, int shapeIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -12276,17 +12820,32 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataStore)
 			{
 				MetadataStore store = (MetadataStore) o;
-				store.setLineName(name, ROIIndex, shapeIndex);
+				store.setLineLineCap(lineCap, ROIIndex, shapeIndex);
 			}
 		}
 	}
 
-	// Ignoring Path of parent abstract type
+	// Locked accessor from parent Shape
+	public void setLineLocked(Boolean locked, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setLineLocked(locked, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
+	// Ignoring Mask of parent abstract type
 	// Ignoring Point of parent abstract type
+	// Ignoring Polygon of parent abstract type
 	// Ignoring Polyline of parent abstract type
 	// Ignoring Rectangle of parent abstract type
-	// Stroke accessor from parent Shape
-	public void setLineStroke(Integer stroke, int ROIIndex, int shapeIndex)
+	// StrokeColor accessor from parent Shape
+	public void setLineStrokeColor(Color strokeColor, int ROIIndex, int shapeIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -12294,7 +12853,7 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataStore)
 			{
 				MetadataStore store = (MetadataStore) o;
-				store.setLineStroke(stroke, ROIIndex, shapeIndex);
+				store.setLineStrokeColor(strokeColor, ROIIndex, shapeIndex);
 			}
 		}
 	}
@@ -12327,7 +12886,20 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
-	// Ignoring Text of parent abstract type
+	// Text accessor from parent Shape
+	public void setLineText(String text, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setLineText(text, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
 	// TheC accessor from parent Shape
 	public void setLineTheC(NonNegativeInteger theC, int ROIIndex, int shapeIndex)
 	{
@@ -12371,7 +12943,7 @@ public class AggregateMetadata implements IMetadata
 	}
 
 	// Transform accessor from parent Shape
-	public void setLineTransform(String transform, int ROIIndex, int shapeIndex)
+	public void setLineTransform(AffineTransform transform, int ROIIndex, int shapeIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -12380,6 +12952,46 @@ public class AggregateMetadata implements IMetadata
 			{
 				MetadataStore store = (MetadataStore) o;
 				store.setLineTransform(transform, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
+	// Visible accessor from parent Shape
+	public void setLineVisible(Boolean visible, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setLineVisible(visible, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
+	public void setLineMarkerEnd(Marker markerEnd, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setLineMarkerEnd(markerEnd, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
+	public void setLineMarkerStart(Marker markerStart, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setLineMarkerStart(markerStart, ROIIndex, shapeIndex);
 			}
 		}
 	}
@@ -12470,6 +13082,7 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
+	// Ignoring ExperimenterGroup_BackReference back reference
 	// Ignoring Experimenter_BackReference back reference
 	public void setListAnnotationID(String id, int listAnnotationIndex)
 	{
@@ -12506,6 +13119,7 @@ public class AggregateMetadata implements IMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	// Ignoring WellSample_BackReference back reference
 	// Ignoring Well_BackReference back reference
 	//
@@ -12542,6 +13156,7 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
+	// Ignoring ExperimenterGroup_BackReference back reference
 	// Ignoring Experimenter_BackReference back reference
 	public void setLongAnnotationID(String id, int longAnnotationIndex)
 	{
@@ -12578,6 +13193,7 @@ public class AggregateMetadata implements IMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public void setLongAnnotationValue(Long value, int longAnnotationIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -12599,23 +13215,9 @@ public class AggregateMetadata implements IMetadata
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
-	// Description accessor from parent Shape
-	public void setMaskDescription(String description, int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setMaskDescription(description, ROIIndex, shapeIndex);
-			}
-		}
-	}
-
 	// Ignoring Ellipse of parent abstract type
-	// Fill accessor from parent Shape
-	public void setMaskFill(Integer fill, int ROIIndex, int shapeIndex)
+	// FillColor accessor from parent Shape
+	public void setMaskFillColor(Color fillColor, int ROIIndex, int shapeIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -12623,13 +13225,39 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataStore)
 			{
 				MetadataStore store = (MetadataStore) o;
-				store.setMaskFill(fill, ROIIndex, shapeIndex);
+				store.setMaskFillColor(fillColor, ROIIndex, shapeIndex);
 			}
 		}
 	}
 
-	// Ignoring FillRule of parent abstract type
-	// Ignoring FontFamily of parent abstract type
+	// FillRule accessor from parent Shape
+	public void setMaskFillRule(FillRule fillRule, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setMaskFillRule(fillRule, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
+	// FontFamily accessor from parent Shape
+	public void setMaskFontFamily(FontFamily fontFamily, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setMaskFontFamily(fontFamily, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
 	// FontSize accessor from parent Shape
 	public void setMaskFontSize(NonNegativeInteger fontSize, int ROIIndex, int shapeIndex)
 	{
@@ -12644,7 +13272,20 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
-	// Ignoring FontStyle of parent abstract type
+	// FontStyle accessor from parent Shape
+	public void setMaskFontStyle(FontStyle fontStyle, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setMaskFontStyle(fontStyle, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
 	// ID accessor from parent Shape
 	public void setMaskID(String id, int ROIIndex, int shapeIndex)
 	{
@@ -12659,27 +13300,10 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
-	// Label accessor from parent Shape
-	public void setMaskLabel(String label, int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setMaskLabel(label, ROIIndex, shapeIndex);
-			}
-		}
-	}
-
+	// Ignoring Label of parent abstract type
 	// Ignoring Line of parent abstract type
-	// Ignoring LineCap of parent abstract type
-	// Ignoring MarkerEnd of parent abstract type
-	// Ignoring MarkerStart of parent abstract type
-	// Ignoring Mask of parent abstract type
-	// Name accessor from parent Shape
-	public void setMaskName(String name, int ROIIndex, int shapeIndex)
+	// LineCap accessor from parent Shape
+	public void setMaskLineCap(LineCap lineCap, int ROIIndex, int shapeIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -12687,17 +13311,32 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataStore)
 			{
 				MetadataStore store = (MetadataStore) o;
-				store.setMaskName(name, ROIIndex, shapeIndex);
+				store.setMaskLineCap(lineCap, ROIIndex, shapeIndex);
 			}
 		}
 	}
 
-	// Ignoring Path of parent abstract type
+	// Locked accessor from parent Shape
+	public void setMaskLocked(Boolean locked, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setMaskLocked(locked, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
+	// Ignoring Mask of parent abstract type
 	// Ignoring Point of parent abstract type
+	// Ignoring Polygon of parent abstract type
 	// Ignoring Polyline of parent abstract type
 	// Ignoring Rectangle of parent abstract type
-	// Stroke accessor from parent Shape
-	public void setMaskStroke(Integer stroke, int ROIIndex, int shapeIndex)
+	// StrokeColor accessor from parent Shape
+	public void setMaskStrokeColor(Color strokeColor, int ROIIndex, int shapeIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -12705,7 +13344,7 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataStore)
 			{
 				MetadataStore store = (MetadataStore) o;
-				store.setMaskStroke(stroke, ROIIndex, shapeIndex);
+				store.setMaskStrokeColor(strokeColor, ROIIndex, shapeIndex);
 			}
 		}
 	}
@@ -12738,7 +13377,20 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
-	// Ignoring Text of parent abstract type
+	// Text accessor from parent Shape
+	public void setMaskText(String text, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setMaskText(text, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
 	// TheC accessor from parent Shape
 	public void setMaskTheC(NonNegativeInteger theC, int ROIIndex, int shapeIndex)
 	{
@@ -12782,7 +13434,7 @@ public class AggregateMetadata implements IMetadata
 	}
 
 	// Transform accessor from parent Shape
-	public void setMaskTransform(String transform, int ROIIndex, int shapeIndex)
+	public void setMaskTransform(AffineTransform transform, int ROIIndex, int shapeIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -12791,6 +13443,20 @@ public class AggregateMetadata implements IMetadata
 			{
 				MetadataStore store = (MetadataStore) o;
 				store.setMaskTransform(transform, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
+	// Visible accessor from parent Shape
+	public void setMaskVisible(Boolean visible, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setMaskVisible(visible, ROIIndex, shapeIndex);
 			}
 		}
 	}
@@ -12873,6 +13539,7 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
+	// Ignoring Experiment_BackReference back reference
 	public void setMicrobeamManipulationExperimenterRef(String experimenter, int experimentIndex, int microbeamManipulationIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -13009,103 +13676,6 @@ public class AggregateMetadata implements IMetadata
 	}
 
 	//
-	// OTF property storage
-	//
-	// {u'Instrument': {u'OME': None}}
-	// Is multi path? False
-
-	// Ignoring BinaryFile element, complex property
-	// Ignoring Channel_BackReference back reference
-	public void setOTFFilterSetRef(String filterSet, int instrumentIndex, int OTFIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setOTFFilterSetRef(filterSet, instrumentIndex, OTFIndex);
-			}
-		}
-	}
-
-	public void setOTFID(String id, int instrumentIndex, int OTFIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setOTFID(id, instrumentIndex, OTFIndex);
-			}
-		}
-	}
-
-	// Ignoring ObjectiveSettings element, complex property
-	public void setOTFOpticalAxisAveraged(Boolean opticalAxisAveraged, int instrumentIndex, int OTFIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setOTFOpticalAxisAveraged(opticalAxisAveraged, instrumentIndex, OTFIndex);
-			}
-		}
-	}
-
-	public void setOTFSizeX(PositiveInteger sizeX, int instrumentIndex, int OTFIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setOTFSizeX(sizeX, instrumentIndex, OTFIndex);
-			}
-		}
-	}
-
-	public void setOTFSizeY(PositiveInteger sizeY, int instrumentIndex, int OTFIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setOTFSizeY(sizeY, instrumentIndex, OTFIndex);
-			}
-		}
-	}
-
-	public void setOTFType(PixelType type, int instrumentIndex, int OTFIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setOTFType(type, instrumentIndex, OTFIndex);
-			}
-		}
-	}
-
-	//
-	// OTFRef property storage
-	//
-	// {u'Channel': {u'Pixels': {u'Image': {u'OME': None}}}}
-	// Is multi path? False
-
-	// 1:1
-	// Is multi path? False
-	// Ignoring ID property of reference OTFRef
-
-	//
 	// Objective property storage
 	//
 	// {u'Instrument': {u'OME': None}}
@@ -13163,6 +13733,7 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
+	// Ignoring Instrument_BackReference back reference
 	public void setObjectiveIris(Boolean iris, int instrumentIndex, int objectiveIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -13270,121 +13841,10 @@ public class AggregateMetadata implements IMetadata
 	//
 	// ObjectiveSettings property storage
 	//
-	// {u'Image': {u'OME': None}, u'OTF': {u'Instrument': {u'OME': None}}}
-	// Is multi path? True
-
-	public void setImageObjectiveSettingsCorrectionCollar(Double correctionCollar, int imageIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setImageObjectiveSettingsCorrectionCollar(correctionCollar, imageIndex);
-			}
-		}
-	}
-
-	public void setOTFObjectiveSettingsCorrectionCollar(Double correctionCollar, int instrumentIndex, int OTFIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setOTFObjectiveSettingsCorrectionCollar(correctionCollar, instrumentIndex, OTFIndex);
-			}
-		}
-	}
-
-	public void setImageObjectiveSettingsID(String id, int imageIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setImageObjectiveSettingsID(id, imageIndex);
-			}
-		}
-	}
-
-	public void setOTFObjectiveSettingsID(String id, int instrumentIndex, int OTFIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setOTFObjectiveSettingsID(id, instrumentIndex, OTFIndex);
-			}
-		}
-	}
-
-	public void setImageObjectiveSettingsMedium(Medium medium, int imageIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setImageObjectiveSettingsMedium(medium, imageIndex);
-			}
-		}
-	}
-
-	public void setOTFObjectiveSettingsMedium(Medium medium, int instrumentIndex, int OTFIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setOTFObjectiveSettingsMedium(medium, instrumentIndex, OTFIndex);
-			}
-		}
-	}
-
-	public void setImageObjectiveSettingsRefractiveIndex(Double refractiveIndex, int imageIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setImageObjectiveSettingsRefractiveIndex(refractiveIndex, imageIndex);
-			}
-		}
-	}
-
-	public void setOTFObjectiveSettingsRefractiveIndex(Double refractiveIndex, int instrumentIndex, int OTFIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setOTFObjectiveSettingsRefractiveIndex(refractiveIndex, instrumentIndex, OTFIndex);
-			}
-		}
-	}
-
-	//
-	// Path property storage
-	//
-	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+	// {u'Image': {u'OME': None}}
 	// Is multi path? False
 
-	// Description accessor from parent Shape
-	public void setPathDescription(String description, int ROIIndex, int shapeIndex)
+	public void setObjectiveSettingsCorrectionCollar(Double correctionCollar, int imageIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -13392,14 +13852,12 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataStore)
 			{
 				MetadataStore store = (MetadataStore) o;
-				store.setPathDescription(description, ROIIndex, shapeIndex);
+				store.setObjectiveSettingsCorrectionCollar(correctionCollar, imageIndex);
 			}
 		}
 	}
 
-	// Ignoring Ellipse of parent abstract type
-	// Fill accessor from parent Shape
-	public void setPathFill(Integer fill, int ROIIndex, int shapeIndex)
+	public void setObjectiveSettingsID(String id, int imageIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -13407,15 +13865,12 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataStore)
 			{
 				MetadataStore store = (MetadataStore) o;
-				store.setPathFill(fill, ROIIndex, shapeIndex);
+				store.setObjectiveSettingsID(id, imageIndex);
 			}
 		}
 	}
 
-	// Ignoring FillRule of parent abstract type
-	// Ignoring FontFamily of parent abstract type
-	// FontSize accessor from parent Shape
-	public void setPathFontSize(NonNegativeInteger fontSize, int ROIIndex, int shapeIndex)
+	public void setObjectiveSettingsMedium(Medium medium, int imageIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -13423,14 +13878,13 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataStore)
 			{
 				MetadataStore store = (MetadataStore) o;
-				store.setPathFontSize(fontSize, ROIIndex, shapeIndex);
+				store.setObjectiveSettingsMedium(medium, imageIndex);
 			}
 		}
 	}
 
-	// Ignoring FontStyle of parent abstract type
-	// ID accessor from parent Shape
-	public void setPathID(String id, int ROIIndex, int shapeIndex)
+	// Ignoring ObjectiveRef back reference
+	public void setObjectiveSettingsRefractiveIndex(Double refractiveIndex, int imageIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -13438,156 +13892,7 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataStore)
 			{
 				MetadataStore store = (MetadataStore) o;
-				store.setPathID(id, ROIIndex, shapeIndex);
-			}
-		}
-	}
-
-	// Label accessor from parent Shape
-	public void setPathLabel(String label, int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setPathLabel(label, ROIIndex, shapeIndex);
-			}
-		}
-	}
-
-	// Ignoring Line of parent abstract type
-	// Ignoring LineCap of parent abstract type
-	// Ignoring MarkerEnd of parent abstract type
-	// Ignoring MarkerStart of parent abstract type
-	// Ignoring Mask of parent abstract type
-	// Name accessor from parent Shape
-	public void setPathName(String name, int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setPathName(name, ROIIndex, shapeIndex);
-			}
-		}
-	}
-
-	// Ignoring Path of parent abstract type
-	// Ignoring Point of parent abstract type
-	// Ignoring Polyline of parent abstract type
-	// Ignoring Rectangle of parent abstract type
-	// Stroke accessor from parent Shape
-	public void setPathStroke(Integer stroke, int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setPathStroke(stroke, ROIIndex, shapeIndex);
-			}
-		}
-	}
-
-	// StrokeDashArray accessor from parent Shape
-	public void setPathStrokeDashArray(String strokeDashArray, int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setPathStrokeDashArray(strokeDashArray, ROIIndex, shapeIndex);
-			}
-		}
-	}
-
-	// StrokeWidth accessor from parent Shape
-	public void setPathStrokeWidth(Double strokeWidth, int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setPathStrokeWidth(strokeWidth, ROIIndex, shapeIndex);
-			}
-		}
-	}
-
-	// Ignoring Text of parent abstract type
-	// TheC accessor from parent Shape
-	public void setPathTheC(NonNegativeInteger theC, int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setPathTheC(theC, ROIIndex, shapeIndex);
-			}
-		}
-	}
-
-	// TheT accessor from parent Shape
-	public void setPathTheT(NonNegativeInteger theT, int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setPathTheT(theT, ROIIndex, shapeIndex);
-			}
-		}
-	}
-
-	// TheZ accessor from parent Shape
-	public void setPathTheZ(NonNegativeInteger theZ, int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setPathTheZ(theZ, ROIIndex, shapeIndex);
-			}
-		}
-	}
-
-	// Transform accessor from parent Shape
-	public void setPathTransform(String transform, int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setPathTransform(transform, ROIIndex, shapeIndex);
-			}
-		}
-	}
-
-	public void setPathDefinition(String definition, int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setPathDefinition(definition, ROIIndex, shapeIndex);
+				store.setObjectiveSettingsRefractiveIndex(refractiveIndex, imageIndex);
 			}
 		}
 	}
@@ -13830,6 +14135,7 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
+	// Ignoring Pixels_BackReference back reference
 	public void setPlanePositionX(Double positionX, int imageIndex, int planeIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -13979,6 +14285,19 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
+	public void setPlateFieldIndex(NonNegativeInteger fieldIndex, int plateIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setPlateFieldIndex(fieldIndex, plateIndex);
+			}
+		}
+	}
+
 	public void setPlateID(String id, int plateIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -14032,19 +14351,7 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
-	public void setPlateScreenRef(String screen, int plateIndex, int screenRefIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setPlateScreenRef(screen, plateIndex, screenRefIndex);
-			}
-		}
-	}
-
+	// Ignoring Screen_BackReference back reference
 	public void setPlateStatus(String status, int plateIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -14117,7 +14424,7 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
-	public void setPlateAcquisitionEndTime(String endTime, int plateIndex, int plateAcquisitionIndex)
+	public void setPlateAcquisitionEndTime(Timestamp endTime, int plateIndex, int plateAcquisitionIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -14169,7 +14476,8 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
-	public void setPlateAcquisitionStartTime(String startTime, int plateIndex, int plateAcquisitionIndex)
+	// Ignoring Plate_BackReference back reference
+	public void setPlateAcquisitionStartTime(Timestamp startTime, int plateIndex, int plateAcquisitionIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -14211,23 +14519,9 @@ public class AggregateMetadata implements IMetadata
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
-	// Description accessor from parent Shape
-	public void setPointDescription(String description, int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setPointDescription(description, ROIIndex, shapeIndex);
-			}
-		}
-	}
-
 	// Ignoring Ellipse of parent abstract type
-	// Fill accessor from parent Shape
-	public void setPointFill(Integer fill, int ROIIndex, int shapeIndex)
+	// FillColor accessor from parent Shape
+	public void setPointFillColor(Color fillColor, int ROIIndex, int shapeIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -14235,13 +14529,39 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataStore)
 			{
 				MetadataStore store = (MetadataStore) o;
-				store.setPointFill(fill, ROIIndex, shapeIndex);
+				store.setPointFillColor(fillColor, ROIIndex, shapeIndex);
 			}
 		}
 	}
 
-	// Ignoring FillRule of parent abstract type
-	// Ignoring FontFamily of parent abstract type
+	// FillRule accessor from parent Shape
+	public void setPointFillRule(FillRule fillRule, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setPointFillRule(fillRule, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
+	// FontFamily accessor from parent Shape
+	public void setPointFontFamily(FontFamily fontFamily, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setPointFontFamily(fontFamily, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
 	// FontSize accessor from parent Shape
 	public void setPointFontSize(NonNegativeInteger fontSize, int ROIIndex, int shapeIndex)
 	{
@@ -14256,7 +14576,20 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
-	// Ignoring FontStyle of parent abstract type
+	// FontStyle accessor from parent Shape
+	public void setPointFontStyle(FontStyle fontStyle, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setPointFontStyle(fontStyle, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
 	// ID accessor from parent Shape
 	public void setPointID(String id, int ROIIndex, int shapeIndex)
 	{
@@ -14271,27 +14604,10 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
-	// Label accessor from parent Shape
-	public void setPointLabel(String label, int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setPointLabel(label, ROIIndex, shapeIndex);
-			}
-		}
-	}
-
+	// Ignoring Label of parent abstract type
 	// Ignoring Line of parent abstract type
-	// Ignoring LineCap of parent abstract type
-	// Ignoring MarkerEnd of parent abstract type
-	// Ignoring MarkerStart of parent abstract type
-	// Ignoring Mask of parent abstract type
-	// Name accessor from parent Shape
-	public void setPointName(String name, int ROIIndex, int shapeIndex)
+	// LineCap accessor from parent Shape
+	public void setPointLineCap(LineCap lineCap, int ROIIndex, int shapeIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -14299,17 +14615,32 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataStore)
 			{
 				MetadataStore store = (MetadataStore) o;
-				store.setPointName(name, ROIIndex, shapeIndex);
+				store.setPointLineCap(lineCap, ROIIndex, shapeIndex);
 			}
 		}
 	}
 
-	// Ignoring Path of parent abstract type
+	// Locked accessor from parent Shape
+	public void setPointLocked(Boolean locked, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setPointLocked(locked, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
+	// Ignoring Mask of parent abstract type
 	// Ignoring Point of parent abstract type
+	// Ignoring Polygon of parent abstract type
 	// Ignoring Polyline of parent abstract type
 	// Ignoring Rectangle of parent abstract type
-	// Stroke accessor from parent Shape
-	public void setPointStroke(Integer stroke, int ROIIndex, int shapeIndex)
+	// StrokeColor accessor from parent Shape
+	public void setPointStrokeColor(Color strokeColor, int ROIIndex, int shapeIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -14317,7 +14648,7 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataStore)
 			{
 				MetadataStore store = (MetadataStore) o;
-				store.setPointStroke(stroke, ROIIndex, shapeIndex);
+				store.setPointStrokeColor(strokeColor, ROIIndex, shapeIndex);
 			}
 		}
 	}
@@ -14350,7 +14681,20 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
-	// Ignoring Text of parent abstract type
+	// Text accessor from parent Shape
+	public void setPointText(String text, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setPointText(text, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
 	// TheC accessor from parent Shape
 	public void setPointTheC(NonNegativeInteger theC, int ROIIndex, int shapeIndex)
 	{
@@ -14394,7 +14738,7 @@ public class AggregateMetadata implements IMetadata
 	}
 
 	// Transform accessor from parent Shape
-	public void setPointTransform(String transform, int ROIIndex, int shapeIndex)
+	public void setPointTransform(AffineTransform transform, int ROIIndex, int shapeIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -14403,6 +14747,20 @@ public class AggregateMetadata implements IMetadata
 			{
 				MetadataStore store = (MetadataStore) o;
 				store.setPointTransform(transform, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
+	// Visible accessor from parent Shape
+	public void setPointVisible(Boolean visible, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setPointVisible(visible, ROIIndex, shapeIndex);
 			}
 		}
 	}
@@ -14434,28 +14792,279 @@ public class AggregateMetadata implements IMetadata
 	}
 
 	//
+	// Polygon property storage
+	//
+	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
+	// Is multi path? False
+
+	// Ignoring Ellipse of parent abstract type
+	// FillColor accessor from parent Shape
+	public void setPolygonFillColor(Color fillColor, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setPolygonFillColor(fillColor, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
+	// FillRule accessor from parent Shape
+	public void setPolygonFillRule(FillRule fillRule, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setPolygonFillRule(fillRule, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
+	// FontFamily accessor from parent Shape
+	public void setPolygonFontFamily(FontFamily fontFamily, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setPolygonFontFamily(fontFamily, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
+	// FontSize accessor from parent Shape
+	public void setPolygonFontSize(NonNegativeInteger fontSize, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setPolygonFontSize(fontSize, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
+	// FontStyle accessor from parent Shape
+	public void setPolygonFontStyle(FontStyle fontStyle, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setPolygonFontStyle(fontStyle, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
+	// ID accessor from parent Shape
+	public void setPolygonID(String id, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setPolygonID(id, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
+	// Ignoring Label of parent abstract type
+	// Ignoring Line of parent abstract type
+	// LineCap accessor from parent Shape
+	public void setPolygonLineCap(LineCap lineCap, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setPolygonLineCap(lineCap, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
+	// Locked accessor from parent Shape
+	public void setPolygonLocked(Boolean locked, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setPolygonLocked(locked, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
+	// Ignoring Mask of parent abstract type
+	// Ignoring Point of parent abstract type
+	// Ignoring Polygon of parent abstract type
+	// Ignoring Polyline of parent abstract type
+	// Ignoring Rectangle of parent abstract type
+	// StrokeColor accessor from parent Shape
+	public void setPolygonStrokeColor(Color strokeColor, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setPolygonStrokeColor(strokeColor, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
+	// StrokeDashArray accessor from parent Shape
+	public void setPolygonStrokeDashArray(String strokeDashArray, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setPolygonStrokeDashArray(strokeDashArray, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
+	// StrokeWidth accessor from parent Shape
+	public void setPolygonStrokeWidth(Double strokeWidth, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setPolygonStrokeWidth(strokeWidth, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
+	// Text accessor from parent Shape
+	public void setPolygonText(String text, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setPolygonText(text, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
+	// TheC accessor from parent Shape
+	public void setPolygonTheC(NonNegativeInteger theC, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setPolygonTheC(theC, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
+	// TheT accessor from parent Shape
+	public void setPolygonTheT(NonNegativeInteger theT, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setPolygonTheT(theT, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
+	// TheZ accessor from parent Shape
+	public void setPolygonTheZ(NonNegativeInteger theZ, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setPolygonTheZ(theZ, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
+	// Transform accessor from parent Shape
+	public void setPolygonTransform(AffineTransform transform, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setPolygonTransform(transform, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
+	// Visible accessor from parent Shape
+	public void setPolygonVisible(Boolean visible, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setPolygonVisible(visible, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
+	public void setPolygonPoints(String points, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setPolygonPoints(points, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
+	//
 	// Polyline property storage
 	//
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
-	// Description accessor from parent Shape
-	public void setPolylineDescription(String description, int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setPolylineDescription(description, ROIIndex, shapeIndex);
-			}
-		}
-	}
-
 	// Ignoring Ellipse of parent abstract type
-	// Fill accessor from parent Shape
-	public void setPolylineFill(Integer fill, int ROIIndex, int shapeIndex)
+	// FillColor accessor from parent Shape
+	public void setPolylineFillColor(Color fillColor, int ROIIndex, int shapeIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -14463,13 +15072,39 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataStore)
 			{
 				MetadataStore store = (MetadataStore) o;
-				store.setPolylineFill(fill, ROIIndex, shapeIndex);
+				store.setPolylineFillColor(fillColor, ROIIndex, shapeIndex);
 			}
 		}
 	}
 
-	// Ignoring FillRule of parent abstract type
-	// Ignoring FontFamily of parent abstract type
+	// FillRule accessor from parent Shape
+	public void setPolylineFillRule(FillRule fillRule, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setPolylineFillRule(fillRule, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
+	// FontFamily accessor from parent Shape
+	public void setPolylineFontFamily(FontFamily fontFamily, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setPolylineFontFamily(fontFamily, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
 	// FontSize accessor from parent Shape
 	public void setPolylineFontSize(NonNegativeInteger fontSize, int ROIIndex, int shapeIndex)
 	{
@@ -14484,7 +15119,20 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
-	// Ignoring FontStyle of parent abstract type
+	// FontStyle accessor from parent Shape
+	public void setPolylineFontStyle(FontStyle fontStyle, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setPolylineFontStyle(fontStyle, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
 	// ID accessor from parent Shape
 	public void setPolylineID(String id, int ROIIndex, int shapeIndex)
 	{
@@ -14499,27 +15147,10 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
-	// Label accessor from parent Shape
-	public void setPolylineLabel(String label, int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setPolylineLabel(label, ROIIndex, shapeIndex);
-			}
-		}
-	}
-
+	// Ignoring Label of parent abstract type
 	// Ignoring Line of parent abstract type
-	// Ignoring LineCap of parent abstract type
-	// Ignoring MarkerEnd of parent abstract type
-	// Ignoring MarkerStart of parent abstract type
-	// Ignoring Mask of parent abstract type
-	// Name accessor from parent Shape
-	public void setPolylineName(String name, int ROIIndex, int shapeIndex)
+	// LineCap accessor from parent Shape
+	public void setPolylineLineCap(LineCap lineCap, int ROIIndex, int shapeIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -14527,17 +15158,32 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataStore)
 			{
 				MetadataStore store = (MetadataStore) o;
-				store.setPolylineName(name, ROIIndex, shapeIndex);
+				store.setPolylineLineCap(lineCap, ROIIndex, shapeIndex);
 			}
 		}
 	}
 
-	// Ignoring Path of parent abstract type
+	// Locked accessor from parent Shape
+	public void setPolylineLocked(Boolean locked, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setPolylineLocked(locked, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
+	// Ignoring Mask of parent abstract type
 	// Ignoring Point of parent abstract type
+	// Ignoring Polygon of parent abstract type
 	// Ignoring Polyline of parent abstract type
 	// Ignoring Rectangle of parent abstract type
-	// Stroke accessor from parent Shape
-	public void setPolylineStroke(Integer stroke, int ROIIndex, int shapeIndex)
+	// StrokeColor accessor from parent Shape
+	public void setPolylineStrokeColor(Color strokeColor, int ROIIndex, int shapeIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -14545,7 +15191,7 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataStore)
 			{
 				MetadataStore store = (MetadataStore) o;
-				store.setPolylineStroke(stroke, ROIIndex, shapeIndex);
+				store.setPolylineStrokeColor(strokeColor, ROIIndex, shapeIndex);
 			}
 		}
 	}
@@ -14578,7 +15224,20 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
-	// Ignoring Text of parent abstract type
+	// Text accessor from parent Shape
+	public void setPolylineText(String text, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setPolylineText(text, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
 	// TheC accessor from parent Shape
 	public void setPolylineTheC(NonNegativeInteger theC, int ROIIndex, int shapeIndex)
 	{
@@ -14622,7 +15281,7 @@ public class AggregateMetadata implements IMetadata
 	}
 
 	// Transform accessor from parent Shape
-	public void setPolylineTransform(String transform, int ROIIndex, int shapeIndex)
+	public void setPolylineTransform(AffineTransform transform, int ROIIndex, int shapeIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -14635,7 +15294,8 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
-	public void setPolylineClosed(Boolean closed, int ROIIndex, int shapeIndex)
+	// Visible accessor from parent Shape
+	public void setPolylineVisible(Boolean visible, int ROIIndex, int shapeIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -14643,7 +15303,33 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataStore)
 			{
 				MetadataStore store = (MetadataStore) o;
-				store.setPolylineClosed(closed, ROIIndex, shapeIndex);
+				store.setPolylineVisible(visible, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
+	public void setPolylineMarkerEnd(Marker markerEnd, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setPolylineMarkerEnd(markerEnd, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
+	public void setPolylineMarkerStart(Marker markerStart, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setPolylineMarkerStart(markerStart, ROIIndex, shapeIndex);
 			}
 		}
 	}
@@ -14680,7 +15366,19 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
-	// Ignoring Dataset_BackReference back reference
+	public void setProjectDatasetRef(String dataset, int projectIndex, int datasetRefIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setProjectDatasetRef(dataset, projectIndex, datasetRefIndex);
+			}
+		}
+	}
+
 	public void setProjectDescription(String description, int projectIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -14694,6 +15392,19 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
+	public void setProjectExperimenterGroupRef(String experimenterGroup, int projectIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setProjectExperimenterGroupRef(experimenterGroup, projectIndex);
+			}
+		}
+	}
+
 	public void setProjectExperimenterRef(String experimenter, int projectIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -14703,19 +15414,6 @@ public class AggregateMetadata implements IMetadata
 			{
 				MetadataStore store = (MetadataStore) o;
 				store.setProjectExperimenterRef(experimenter, projectIndex);
-			}
-		}
-	}
-
-	public void setProjectGroupRef(String group, int projectIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setProjectGroupRef(group, projectIndex);
 			}
 		}
 	}
@@ -14747,16 +15445,6 @@ public class AggregateMetadata implements IMetadata
 	}
 
 	//
-	// ProjectRef property storage
-	//
-	// {u'Dataset': {u'OME': None}}
-	// Is multi path? False
-
-	// 1:1
-	// Is multi path? False
-	// Ignoring ID property of reference ProjectRef
-
-	//
 	// Pump property storage
 	//
 	// {u'Laser': {u'LightSource': {u'Instrument': {u'OME': None}}}}
@@ -14765,6 +15453,10 @@ public class AggregateMetadata implements IMetadata
 	// 1:1
 	// Is multi path? False
 	// Ignoring ID property of reference Pump
+
+	// 0:9999
+	// Is multi path? False
+	// Ignoring Laser_BackReference property of reference Pump
 
 	//
 	// ROI property storage
@@ -14921,6 +15613,7 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
+	// Ignoring Screen_BackReference back reference
 	// Ignoring Well_BackReference back reference
 	//
 	// ReagentRef property storage
@@ -14938,23 +15631,9 @@ public class AggregateMetadata implements IMetadata
 	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
 	// Is multi path? False
 
-	// Description accessor from parent Shape
-	public void setRectangleDescription(String description, int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setRectangleDescription(description, ROIIndex, shapeIndex);
-			}
-		}
-	}
-
 	// Ignoring Ellipse of parent abstract type
-	// Fill accessor from parent Shape
-	public void setRectangleFill(Integer fill, int ROIIndex, int shapeIndex)
+	// FillColor accessor from parent Shape
+	public void setRectangleFillColor(Color fillColor, int ROIIndex, int shapeIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -14962,13 +15641,39 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataStore)
 			{
 				MetadataStore store = (MetadataStore) o;
-				store.setRectangleFill(fill, ROIIndex, shapeIndex);
+				store.setRectangleFillColor(fillColor, ROIIndex, shapeIndex);
 			}
 		}
 	}
 
-	// Ignoring FillRule of parent abstract type
-	// Ignoring FontFamily of parent abstract type
+	// FillRule accessor from parent Shape
+	public void setRectangleFillRule(FillRule fillRule, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setRectangleFillRule(fillRule, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
+	// FontFamily accessor from parent Shape
+	public void setRectangleFontFamily(FontFamily fontFamily, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setRectangleFontFamily(fontFamily, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
 	// FontSize accessor from parent Shape
 	public void setRectangleFontSize(NonNegativeInteger fontSize, int ROIIndex, int shapeIndex)
 	{
@@ -14983,7 +15688,20 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
-	// Ignoring FontStyle of parent abstract type
+	// FontStyle accessor from parent Shape
+	public void setRectangleFontStyle(FontStyle fontStyle, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setRectangleFontStyle(fontStyle, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
 	// ID accessor from parent Shape
 	public void setRectangleID(String id, int ROIIndex, int shapeIndex)
 	{
@@ -14998,27 +15716,10 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
-	// Label accessor from parent Shape
-	public void setRectangleLabel(String label, int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setRectangleLabel(label, ROIIndex, shapeIndex);
-			}
-		}
-	}
-
+	// Ignoring Label of parent abstract type
 	// Ignoring Line of parent abstract type
-	// Ignoring LineCap of parent abstract type
-	// Ignoring MarkerEnd of parent abstract type
-	// Ignoring MarkerStart of parent abstract type
-	// Ignoring Mask of parent abstract type
-	// Name accessor from parent Shape
-	public void setRectangleName(String name, int ROIIndex, int shapeIndex)
+	// LineCap accessor from parent Shape
+	public void setRectangleLineCap(LineCap lineCap, int ROIIndex, int shapeIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -15026,17 +15727,32 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataStore)
 			{
 				MetadataStore store = (MetadataStore) o;
-				store.setRectangleName(name, ROIIndex, shapeIndex);
+				store.setRectangleLineCap(lineCap, ROIIndex, shapeIndex);
 			}
 		}
 	}
 
-	// Ignoring Path of parent abstract type
+	// Locked accessor from parent Shape
+	public void setRectangleLocked(Boolean locked, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setRectangleLocked(locked, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
+	// Ignoring Mask of parent abstract type
 	// Ignoring Point of parent abstract type
+	// Ignoring Polygon of parent abstract type
 	// Ignoring Polyline of parent abstract type
 	// Ignoring Rectangle of parent abstract type
-	// Stroke accessor from parent Shape
-	public void setRectangleStroke(Integer stroke, int ROIIndex, int shapeIndex)
+	// StrokeColor accessor from parent Shape
+	public void setRectangleStrokeColor(Color strokeColor, int ROIIndex, int shapeIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -15044,7 +15760,7 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataStore)
 			{
 				MetadataStore store = (MetadataStore) o;
-				store.setRectangleStroke(stroke, ROIIndex, shapeIndex);
+				store.setRectangleStrokeColor(strokeColor, ROIIndex, shapeIndex);
 			}
 		}
 	}
@@ -15077,7 +15793,20 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
-	// Ignoring Text of parent abstract type
+	// Text accessor from parent Shape
+	public void setRectangleText(String text, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setRectangleText(text, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
 	// TheC accessor from parent Shape
 	public void setRectangleTheC(NonNegativeInteger theC, int ROIIndex, int shapeIndex)
 	{
@@ -15121,7 +15850,7 @@ public class AggregateMetadata implements IMetadata
 	}
 
 	// Transform accessor from parent Shape
-	public void setRectangleTransform(String transform, int ROIIndex, int shapeIndex)
+	public void setRectangleTransform(AffineTransform transform, int ROIIndex, int shapeIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -15130,6 +15859,20 @@ public class AggregateMetadata implements IMetadata
 			{
 				MetadataStore store = (MetadataStore) o;
 				store.setRectangleTransform(transform, ROIIndex, shapeIndex);
+			}
+		}
+	}
+
+	// Visible accessor from parent Shape
+	public void setRectangleVisible(Boolean visible, int ROIIndex, int shapeIndex)
+	{
+		for (Iterator iter = delegates.iterator(); iter.hasNext();)
+		{
+			Object o = iter.next();
+			if (o instanceof MetadataStore)
+			{
+				MetadataStore store = (MetadataStore) o;
+				store.setRectangleVisible(visible, ROIIndex, shapeIndex);
 			}
 		}
 	}
@@ -15324,16 +16067,6 @@ public class AggregateMetadata implements IMetadata
 	}
 
 	//
-	// ScreenRef property storage
-	//
-	// {u'Plate': {u'OME': None}}
-	// Is multi path? False
-
-	// 1:1
-	// Is multi path? False
-	// Ignoring ID property of reference ScreenRef
-
-	//
 	// StageLabel property storage
 	//
 	// {u'Image': {u'OME': None}}
@@ -15441,6 +16174,7 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
+	// Ignoring ExperimenterGroup_BackReference back reference
 	// Ignoring Experimenter_BackReference back reference
 	public void setTagAnnotationID(String id, int tagAnnotationIndex)
 	{
@@ -15477,6 +16211,7 @@ public class AggregateMetadata implements IMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public void setTagAnnotationValue(String value, int tagAnnotationIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -15526,6 +16261,7 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
+	// Ignoring ExperimenterGroup_BackReference back reference
 	// Ignoring Experimenter_BackReference back reference
 	public void setTermAnnotationID(String id, int termAnnotationIndex)
 	{
@@ -15562,6 +16298,7 @@ public class AggregateMetadata implements IMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public void setTermAnnotationValue(String value, int termAnnotationIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -15577,247 +16314,6 @@ public class AggregateMetadata implements IMetadata
 
 	// Ignoring WellSample_BackReference back reference
 	// Ignoring Well_BackReference back reference
-	//
-	// Text property storage
-	//
-	// {u'Shape': {u'Union': {u'ROI': {u'OME': None}}}}
-	// Is multi path? False
-
-	// Description accessor from parent Shape
-	public void setTextDescription(String description, int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setTextDescription(description, ROIIndex, shapeIndex);
-			}
-		}
-	}
-
-	// Ignoring Ellipse of parent abstract type
-	// Fill accessor from parent Shape
-	public void setTextFill(Integer fill, int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setTextFill(fill, ROIIndex, shapeIndex);
-			}
-		}
-	}
-
-	// Ignoring FillRule of parent abstract type
-	// Ignoring FontFamily of parent abstract type
-	// FontSize accessor from parent Shape
-	public void setTextFontSize(NonNegativeInteger fontSize, int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setTextFontSize(fontSize, ROIIndex, shapeIndex);
-			}
-		}
-	}
-
-	// Ignoring FontStyle of parent abstract type
-	// ID accessor from parent Shape
-	public void setTextID(String id, int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setTextID(id, ROIIndex, shapeIndex);
-			}
-		}
-	}
-
-	// Label accessor from parent Shape
-	public void setTextLabel(String label, int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setTextLabel(label, ROIIndex, shapeIndex);
-			}
-		}
-	}
-
-	// Ignoring Line of parent abstract type
-	// Ignoring LineCap of parent abstract type
-	// Ignoring MarkerEnd of parent abstract type
-	// Ignoring MarkerStart of parent abstract type
-	// Ignoring Mask of parent abstract type
-	// Name accessor from parent Shape
-	public void setTextName(String name, int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setTextName(name, ROIIndex, shapeIndex);
-			}
-		}
-	}
-
-	// Ignoring Path of parent abstract type
-	// Ignoring Point of parent abstract type
-	// Ignoring Polyline of parent abstract type
-	// Ignoring Rectangle of parent abstract type
-	// Stroke accessor from parent Shape
-	public void setTextStroke(Integer stroke, int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setTextStroke(stroke, ROIIndex, shapeIndex);
-			}
-		}
-	}
-
-	// StrokeDashArray accessor from parent Shape
-	public void setTextStrokeDashArray(String strokeDashArray, int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setTextStrokeDashArray(strokeDashArray, ROIIndex, shapeIndex);
-			}
-		}
-	}
-
-	// StrokeWidth accessor from parent Shape
-	public void setTextStrokeWidth(Double strokeWidth, int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setTextStrokeWidth(strokeWidth, ROIIndex, shapeIndex);
-			}
-		}
-	}
-
-	// Ignoring Text of parent abstract type
-	// TheC accessor from parent Shape
-	public void setTextTheC(NonNegativeInteger theC, int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setTextTheC(theC, ROIIndex, shapeIndex);
-			}
-		}
-	}
-
-	// TheT accessor from parent Shape
-	public void setTextTheT(NonNegativeInteger theT, int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setTextTheT(theT, ROIIndex, shapeIndex);
-			}
-		}
-	}
-
-	// TheZ accessor from parent Shape
-	public void setTextTheZ(NonNegativeInteger theZ, int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setTextTheZ(theZ, ROIIndex, shapeIndex);
-			}
-		}
-	}
-
-	// Transform accessor from parent Shape
-	public void setTextTransform(String transform, int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setTextTransform(transform, ROIIndex, shapeIndex);
-			}
-		}
-	}
-
-	public void setTextValue(String value, int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setTextValue(value, ROIIndex, shapeIndex);
-			}
-		}
-	}
-
-	public void setTextX(Double x, int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setTextX(x, ROIIndex, shapeIndex);
-			}
-		}
-	}
-
-	public void setTextY(Double y, int ROIIndex, int shapeIndex)
-	{
-		for (Iterator iter = delegates.iterator(); iter.hasNext();)
-		{
-			Object o = iter.next();
-			if (o instanceof MetadataStore)
-			{
-				MetadataStore store = (MetadataStore) o;
-				store.setTextY(y, ROIIndex, shapeIndex);
-			}
-		}
-	}
-
 	//
 	// TiffData property storage
 	//
@@ -15876,6 +16372,7 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
+	// Ignoring Pixels_BackReference back reference
 	public void setTiffDataPlaneCount(NonNegativeInteger planeCount, int imageIndex, int tiffDataIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -15924,6 +16421,7 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
+	// Ignoring ExperimenterGroup_BackReference back reference
 	// Ignoring Experimenter_BackReference back reference
 	public void setTimestampAnnotationID(String id, int timestampAnnotationIndex)
 	{
@@ -15960,7 +16458,8 @@ public class AggregateMetadata implements IMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
-	public void setTimestampAnnotationValue(String value, int timestampAnnotationIndex)
+	// Ignoring StructuredAnnotations_BackReference back reference
+	public void setTimestampAnnotationValue(Timestamp value, int timestampAnnotationIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -16091,7 +16590,7 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
-	public void setWellColor(Integer color, int plateIndex, int wellIndex)
+	public void setWellColor(Color color, int plateIndex, int wellIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -16156,6 +16655,7 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
+	// Ignoring Plate_BackReference back reference
 	public void setWellReagentRef(String reagent, int plateIndex, int wellIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
@@ -16182,7 +16682,7 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
-	public void setWellStatus(String status, int plateIndex, int wellIndex)
+	public void setWellType(String type, int plateIndex, int wellIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -16190,7 +16690,7 @@ public class AggregateMetadata implements IMetadata
 			if (o instanceof MetadataStore)
 			{
 				MetadataStore store = (MetadataStore) o;
-				store.setWellStatus(status, plateIndex, wellIndex);
+				store.setWellType(type, plateIndex, wellIndex);
 			}
 		}
 	}
@@ -16281,7 +16781,7 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
-	public void setWellSampleTimepoint(String timepoint, int plateIndex, int wellIndex, int wellSampleIndex)
+	public void setWellSampleTimepoint(Timestamp timepoint, int plateIndex, int wellIndex, int wellSampleIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)
 		{
@@ -16294,6 +16794,7 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
+	// Ignoring Well_BackReference back reference
 	//
 	// WellSampleRef property storage
 	//
@@ -16338,6 +16839,7 @@ public class AggregateMetadata implements IMetadata
 		}
 	}
 
+	// Ignoring ExperimenterGroup_BackReference back reference
 	// Ignoring Experimenter_BackReference back reference
 	public void setXMLAnnotationID(String id, int XMLAnnotationIndex)
 	{
@@ -16374,6 +16876,7 @@ public class AggregateMetadata implements IMetadata
 	// Ignoring ROI_BackReference back reference
 	// Ignoring Reagent_BackReference back reference
 	// Ignoring Screen_BackReference back reference
+	// Ignoring StructuredAnnotations_BackReference back reference
 	public void setXMLAnnotationValue(String value, int XMLAnnotationIndex)
 	{
 		for (Iterator iter = delegates.iterator(); iter.hasNext();)

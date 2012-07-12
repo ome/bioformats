@@ -1,25 +1,27 @@
-//
-// LeicaReader.java
-//
-
 /*
-OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ * #%L
+ * OME Bio-Formats package for reading and converting biological file formats.
+ * %%
+ * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 2 of the 
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public 
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-2.0.html>.
+ * #L%
+ */
 
 package loci.formats.in;
 
@@ -42,7 +44,6 @@ import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 import loci.formats.tiff.TiffConstants;
@@ -50,7 +51,10 @@ import loci.formats.tiff.TiffParser;
 
 import ome.xml.model.enums.Correction;
 import ome.xml.model.enums.Immersion;
+import ome.xml.model.primitives.Color;
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -144,11 +148,11 @@ public class LeicaReader extends FormatReader {
   private boolean[][] cutOutPopulated;
   private boolean[][] filterRefPopulated;
 
-  private Double detectorOffset, detectorVoltage;
+  private Vector<Detector> detectors = new Vector<Detector>();
 
   private int[] tileWidth, tileHeight;
 
-  private int[][] channelColor;
+  private Color[][] channelColor;
 
   // -- Constructor --
 
@@ -315,6 +319,7 @@ public class LeicaReader extends FormatReader {
       cutInPopulated = null;
       cutOutPopulated = null;
       filterRefPopulated = null;
+      detectors.clear();
     }
   }
 
@@ -514,7 +519,7 @@ public class LeicaReader extends FormatReader {
     pinhole = new double[headerIFDs.size()];
     exposureTime = new double[headerIFDs.size()];
 
-    channelColor = new int[headerIFDs.size()][];
+    channelColor = new Color[headerIFDs.size()][];
 
     for (int i=0; i<headerIFDs.size(); i++) {
       IFD ifd = headerIFDs.get(i);
@@ -621,11 +626,10 @@ public class LeicaReader extends FormatReader {
         timestamps[i].length > 0)
       {
         firstPlane = DateTools.getTime(timestamps[i][0], DATE_FORMAT);
-        store.setImageAcquiredDate(
-          DateTools.formatDate(timestamps[i][0], DATE_FORMAT), i);
-      }
-      else {
-        MetadataTools.setDefaultCreationDate(store, id, i);
+        String date = DateTools.formatDate(timestamps[i][0], DATE_FORMAT);
+        if (date != null) {
+          store.setImageAcquisitionDate(new Timestamp(date), i);
+        }
       }
 
       store.setImageDescription(seriesDescriptions.get(i), i);
@@ -637,6 +641,7 @@ public class LeicaReader extends FormatReader {
 
       nextDetector = 0;
       nextChannel = 0;
+      detectors.clear();
 
       cutInPopulated[i] = new boolean[core[i].sizeC];
       cutOutPopulated[i] = new boolean[core[i].sizeC];
@@ -669,11 +674,23 @@ public class LeicaReader extends FormatReader {
       if (physicalSizes[i][0] > 0) {
         store.setPixelsPhysicalSizeX(new PositiveFloat(physicalSizes[i][0]), i);
       }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+          physicalSizes[i][0]);
+      }
       if (physicalSizes[i][1] > 0) {
         store.setPixelsPhysicalSizeY(new PositiveFloat(physicalSizes[i][1]), i);
       }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+          physicalSizes[i][1]);
+      }
       if (physicalSizes[i][2] > 0) {
         store.setPixelsPhysicalSizeZ(new PositiveFloat(physicalSizes[i][2]), i);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}",
+          physicalSizes[i][2]);
       }
       if ((int) physicalSizes[i][4] > 0) {
         store.setPixelsTimeIncrement(physicalSizes[i][4], i);
@@ -684,7 +701,9 @@ public class LeicaReader extends FormatReader {
           long time = DateTools.getTime(timestamps[i][j], DATE_FORMAT);
           double elapsedTime = (double) (time - firstPlane) / 1000;
           store.setPlaneDeltaT(elapsedTime, i, j);
-          store.setPlaneExposureTime(exposureTime[i], i, j);
+          if (exposureTime[i] > 0) {
+            store.setPlaneExposureTime(exposureTime[i], i, j);
+          }
         }
       }
     }
@@ -950,7 +969,8 @@ public class LeicaReader extends FormatReader {
     for (int p=1; p<tokens.length; p++) {
       String lcase = tokens[p].toLowerCase();
       if (!lcase.startsWith("ch0") && !lcase.startsWith("c0") &&
-        !lcase.startsWith("z0") && !lcase.startsWith("t0"))
+        !lcase.startsWith("z0") && !lcase.startsWith("t0") &&
+        !lcase.startsWith("y0") && !lcase.startsWith("la0"))
       {
         if (buf.length() > 0) buf.append("_");
         buf.append(tokens[p]);
@@ -1112,7 +1132,7 @@ public class LeicaReader extends FormatReader {
     addSeriesMeta("Number of LUT channels", nChannels);
     addSeriesMeta("ID of colored dimension", in.readInt());
 
-    channelColor[seriesIndex] = new int[nChannels];
+    channelColor[seriesIndex] = new Color[nChannels];
 
     for (int j=0; j<nChannels; j++) {
       String p = "LUT Channel " + j;
@@ -1123,25 +1143,25 @@ public class LeicaReader extends FormatReader {
       String lut = getString(false);
       addSeriesMeta(p + " name", lut);
 
-      channelColor[seriesIndex][j] = 0xffffff;
+      channelColor[seriesIndex][j] = new Color(255, 255, 255, 255);
 
       if (lut.equalsIgnoreCase("red")) {
-        channelColor[seriesIndex][j] = 0xff0000;
+        channelColor[seriesIndex][j] = new Color(255, 0, 0, 255);
       }
       else if (lut.equalsIgnoreCase("green")) {
-        channelColor[seriesIndex][j] = 0xff00;
+        channelColor[seriesIndex][j] = new Color(0, 255, 0, 255);
       }
       else if (lut.equalsIgnoreCase("blue")) {
-        channelColor[seriesIndex][j] = 0xff;
+        channelColor[seriesIndex][j] = new Color(0, 0, 255, 255);
       }
       else if (lut.equalsIgnoreCase("yellow")) {
-        channelColor[seriesIndex][j] = 0xffff00;
+        channelColor[seriesIndex][j] = new Color(255, 255, 0, 255);
       }
       else if (lut.equalsIgnoreCase("cyan")) {
-        channelColor[seriesIndex][j] = 0xffff;
+        channelColor[seriesIndex][j] = new Color(0, 255, 255, 255);
       }
       else if (lut.equalsIgnoreCase("magenta")) {
-        channelColor[seriesIndex][j] = 0xff00ff;
+        channelColor[seriesIndex][j] = new Color(255, 0, 255, 255);
       }
 
       in.skipBytes(8);
@@ -1223,51 +1243,42 @@ public class LeicaReader extends FormatReader {
 
       LOGGER.trace("Parsing tokens: {}", tokens);
       if (tokens[0].startsWith("CDetectionUnit")) {
-        // detector information
-
         if (tokens[1].startsWith("PMT")) {
+          // detector information
+
+          Detector detector = new Detector();
+          int lastDetector = detectors.size() - 1;
+          if (detectors.size() > 0 &&
+            detectors.get(lastDetector).id == Integer.parseInt(tokens[3]))
+          {
+            detector = detectors.get(lastDetector);
+          }
+          else {
+            detectors.add(detector);
+          }
+
+          detector.id = Integer.parseInt(tokens[3]);
+          detector.name = tokens[1];
+
           try {
             if (tokens[2].equals("VideoOffset")) {
-              detectorOffset = new Double(data);
+              detector.offset = new Double(data);
             }
             else if (tokens[2].equals("HighVoltage")) {
-              detectorVoltage = new Double(data);
-              nextDetector++;
+              detector.voltage = new Double(data);
             }
             else if (tokens[2].equals("State")) {
-              // link Detector to Image, if the detector was actually used
-              if (data.equals("Active")) {
-                store.setDetectorOffset(detectorOffset, series, nextDetector);
-                store.setDetectorVoltage(detectorVoltage, series, nextDetector);
-                store.setDetectorType(
-                  getDetectorType("PMT"), series, nextDetector);
-                String index = tokens[1].substring(tokens[1].indexOf(" ") + 1);
-                int channelIndex = -1;
-                try {
-                  channelIndex = Integer.parseInt(index) - 1;
-                }
-                catch (NumberFormatException e) { }
-                if (channelIndex >= 0) {
-                  activeChannelIndices.add(new Integer(channelIndex));
-                }
+              detector.active = data.equals("Active");
 
-                String detectorID =
-                  MetadataTools.createLSID("Detector", series, nextDetector);
-                store.setDetectorID(detectorID, series, nextDetector);
+              String index = tokens[1].substring(tokens[1].indexOf(" ") + 1);
+              detector.index = -1;
+              try {
+                detector.index = Integer.parseInt(index) - 1;
+              }
+              catch (NumberFormatException e) { }
 
-                if (nextDetector == 0) {
-                  // link every channel to the first detector in the beginning
-                  // if additional detectors are found, the links will be
-                  // overwritten
-                  for (int c=0; c<getEffectiveSizeC(); c++) {
-                    store.setDetectorSettingsID(detectorID, series, c);
-                  }
-                }
-
-                if (nextChannel < getEffectiveSizeC()) {
-                  store.setDetectorSettingsID(
-                    detectorID, series, nextChannel++);
-                }
+              if (detector.active && detector.index >= 0) {
+                activeChannelIndices.add(new Integer(detector.index));
               }
             }
           }
@@ -1333,14 +1344,23 @@ public class LeicaReader extends FormatReader {
             getCorrection(correction), series, objective);
           store.setObjectiveModel(model.toString().trim(), series, objective);
           store.setObjectiveLensNA(new Double(na), series, objective);
-          store.setObjectiveNominalMagnification(new PositiveInteger((int)
-            Double.parseDouble(mag)), series, objective);
+
+          int magnification = (int) Double.parseDouble(mag);
+          if (magnification > 0) {
+            store.setObjectiveNominalMagnification(
+              new PositiveInteger(magnification), series, objective);
+          }
+          else {
+            LOGGER.warn(
+              "Expected positive value for NominalMagnification; got {}",
+              magnification);
+          }
         }
         else if (tokens[2].equals("OrderNumber")) {
           store.setObjectiveSerialNumber(data, series, objective);
         }
         else if (tokens[2].equals("RefractionIndex")) {
-          store.setImageObjectiveSettingsRefractiveIndex(
+          store.setObjectiveSettingsRefractiveIndex(
             new Double(data), series);
         }
 
@@ -1349,7 +1369,7 @@ public class LeicaReader extends FormatReader {
           MetadataTools.createLSID("Objective", series, objective);
         store.setObjectiveID(objectiveID, series, objective);
         if (objective == 0) {
-          store.setImageObjectiveSettingsID(objectiveID, series);
+          store.setObjectiveSettingsID(objectiveID, series);
         }
       }
       else if (tokens[0].startsWith("CSpectrophotometerUnit")) {
@@ -1370,15 +1390,22 @@ public class LeicaReader extends FormatReader {
               filterRefPopulated[series][index] = true;
             }
 
-            if (tokens[3].equals("0") && !cutInPopulated[series][index]) {
-              store.setTransmittanceRangeCutIn(
+            if (wavelength > 0) {
+              if (tokens[3].equals("0") && !cutInPopulated[series][index]) {
+                store.setTransmittanceRangeCutIn(
                   new PositiveInteger(wavelength), series, channel);
-              cutInPopulated[series][index] = true;
+                cutInPopulated[series][index] = true;
+              }
+              else if (tokens[3].equals("1") && !cutOutPopulated[series][index])
+              {
+                store.setTransmittanceRangeCutOut(
+                  new PositiveInteger(wavelength), series, channel);
+                cutOutPopulated[series][index] = true;
+              }
             }
-            else if (tokens[3].equals("1") && !cutOutPopulated[series][index]) {
-              store.setTransmittanceRangeCutOut(
-                  new PositiveInteger(wavelength), series, channel);
-              cutOutPopulated[series][index] = true;
+            else {
+              LOGGER.warn("Expected positive value for CutIn/CutOut; got {}",
+                wavelength);
             }
           }
         }
@@ -1412,21 +1439,18 @@ public class LeicaReader extends FormatReader {
           }
         }
         else if (tokens[2].equals("ZPos")) {
-          for (int q=0; q<core[series].imageCount; q++) {
-            store.setPlanePositionZ(new Double(data), series, q);
-            if (q == 0) {
-              addGlobalMeta("Z position for position #" + (series + 1), data);
-            }
-          }
+          store.setStageLabelName("Position", series);
+          store.setStageLabelZ(new Double(data), series);
+          addGlobalMeta("Z position for position #" + (series + 1), data);
         }
       }
       else if (tokens[0].equals("CScanActuator") &&
         tokens[1].equals("Z Scan Actuator") && tokens[2].equals("Position"))
       {
         double pos = Double.parseDouble(data) * 1000000;
-        for (int q=0; q<core[series].imageCount; q++) {
-          store.setPlanePositionZ(pos, series, q);
-        }
+        store.setStageLabelName("Position", series);
+        store.setStageLabelZ(pos, series);
+        addGlobalMeta("Z position for position #" + (series + 1), pos);
       }
 
       if (contentID.equals("dblVoxelX")) {
@@ -1455,6 +1479,48 @@ public class LeicaReader extends FormatReader {
       addSeriesMeta("Block " + blockNum + " " + contentID, data);
     }
 
+    for (Detector detector : detectors) {
+      // link Detector to Image, if the detector was actually used
+      if (detector.active) {
+        store.setDetectorOffset(detector.offset, series, nextDetector);
+        store.setDetectorVoltage(detector.voltage, series, nextDetector);
+        store.setDetectorType(getDetectorType("PMT"), series, nextDetector);
+
+        String detectorID =
+          MetadataTools.createLSID("Detector", series, nextDetector);
+        store.setDetectorID(detectorID, series, nextDetector);
+
+        if (nextDetector == 0) {
+          // link every channel to the first detector in the beginning
+          // if additional detectors are found, the links will be
+          // overwritten
+          for (int c=0; c<getEffectiveSizeC(); c++) {
+            store.setDetectorSettingsID(detectorID, series, c);
+          }
+        }
+
+        if (nextChannel < getEffectiveSizeC()) {
+          store.setDetectorSettingsID(detectorID, series, nextChannel);
+          if (nextChannel < channelNames[series].size()) {
+            String name = (String) channelNames[series].get(nextChannel);
+            if (name == null || name.trim().equals("") || name.equals("None")) {
+              channelNames[series].setElementAt(detector.name, nextChannel);
+            }
+          }
+          else {
+            while (channelNames[series].size() < nextChannel) {
+              channelNames[series].add("");
+            }
+            channelNames[series].add(detector.name);
+          }
+          nextChannel++;
+        }
+
+        nextDetector++;
+      }
+    }
+    detectors.clear();
+
     // populate saved LogicalChannel data
 
     for (int i=0; i<getSeriesCount(); i++) {
@@ -1468,13 +1534,25 @@ public class LeicaReader extends FormatReader {
         }
         if (channel < emWaves[i].size()) {
           Integer wave = new Integer(emWaves[i].get(channel).toString());
-          store.setChannelEmissionWavelength(
-            new PositiveInteger(wave), i, channel);
+          if (wave > 0) {
+            store.setChannelEmissionWavelength(
+              new PositiveInteger(wave), i, channel);
+          }
+          else {
+            LOGGER.warn(
+              "Expected positive value for EmissionWavelength; got {}", wave);
+          }
         }
         if (channel < exWaves[i].size()) {
           Integer wave = new Integer(exWaves[i].get(channel).toString());
-          store.setChannelExcitationWavelength(
-            new PositiveInteger(wave), i, channel);
+          if (wave > 0) {
+            store.setChannelExcitationWavelength(
+              new PositiveInteger(wave), i, channel);
+          }
+          else {
+            LOGGER.warn(
+              "Expected positive value for ExcitationWavelength; got {}", wave);
+          }
         }
         if (i < pinhole.length) {
           store.setChannelPinholeSize(new Double(pinhole[i]), i, channel);
@@ -1540,6 +1618,17 @@ public class LeicaReader extends FormatReader {
     table.put(new Integer(5832782), "logical y-wide");
     table.put(new Integer(5898318), "logical z-wide");
     return table;
+  }
+
+  // -- Helper class --
+
+  class Detector {
+    public int id;
+    public int index;
+    public boolean active;
+    public Double offset;
+    public Double voltage;
+    public String name;
   }
 
 }

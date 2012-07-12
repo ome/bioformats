@@ -1,25 +1,27 @@
-//
-// ZeissZVIReader.java
-//
-
 /*
-OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ * #%L
+ * OME Bio-Formats package for reading and converting biological file formats.
+ * %%
+ * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 2 of the 
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public 
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-2.0.html>.
+ * #L%
+ */
 
 package loci.formats.in;
 
@@ -49,10 +51,11 @@ import loci.formats.codec.JPEGCodec;
 import loci.formats.codec.ZlibCodec;
 import loci.formats.meta.DummyMetadata;
 import loci.formats.meta.MetadataStore;
-import ome.xml.model.primitives.PositiveFloat;
 import loci.formats.services.POIService;
 
+import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
 
 /**
  * ZeissZVIReader is the file format reader for Zeiss ZVI files.
@@ -517,23 +520,13 @@ public class ZeissZVIReader extends FormatReader {
 
     int totalTiles = offsets.length / getImageCount();
 
-    int tileRows = realHeight / getSizeY();
-    int tileColumns = realWidth / getSizeX();
-
-    if (getSizeY() * tileRows != realHeight) tileRows++;
-    if (getSizeX() * tileColumns != realWidth) tileColumns++;
-
-    if (totalTiles <= 1) {
-      tileRows = 1;
-      tileColumns = 1;
+    if (totalTiles < 1) {
+      totalTiles = 1;
     }
 
-    if (tileRows == 0) tileRows = 1;
-    if (tileColumns == 0) tileColumns = 1;
-
-    if (tileColumns > 1 || tileRows > 1) {
+    if (totalTiles > 1) {
       CoreMetadata originalCore = core[0];
-      core = new CoreMetadata[tileRows * tileColumns];
+      core = new CoreMetadata[totalTiles];
 
       core[0] = originalCore;
     }
@@ -578,9 +571,10 @@ public class ZeissZVIReader extends FormatReader {
         firstStamp = parseTimestamp(timestamp);
         String date =
           DateTools.convertDate((long) (firstStamp / 1600), DateTools.ZVI);
-        store.setImageAcquiredDate(date, i);
+        if (date != null) {
+          store.setImageAcquisitionDate(new Timestamp(date), i);
+        }
       }
-      else MetadataTools.setDefaultCreationDate(store, getCurrentFile(), i);
     }
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
@@ -620,7 +614,7 @@ public class ZeissZVIReader extends FormatReader {
 
       for (int i=0; i<getSeriesCount(); i++) {
         store.setImageInstrumentRef(instrumentID, i);
-        store.setImageObjectiveSettingsID(objectiveID, i);
+        store.setObjectiveSettingsID(objectiveID, i);
 
         if (imageDescription != null) {
           store.setImageDescription(imageDescription, i);
@@ -632,11 +626,23 @@ public class ZeissZVIReader extends FormatReader {
         if (physicalSizeX != null && physicalSizeX > 0) {
           store.setPixelsPhysicalSizeX(new PositiveFloat(physicalSizeX), i);
         }
+        else {
+          LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+            physicalSizeX);
+        }
         if (physicalSizeY != null && physicalSizeY > 0) {
           store.setPixelsPhysicalSizeY(new PositiveFloat(physicalSizeY), i);
         }
+        else {
+          LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+            physicalSizeY);
+        }
         if (physicalSizeZ != null && physicalSizeZ > 0) {
           store.setPixelsPhysicalSizeZ(new PositiveFloat(physicalSizeZ), i);
+        }
+        else {
+          LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}",
+            physicalSizeZ);
         }
 
         long firstStamp = parseTimestamp(timestamps.get(new Integer(0)));
@@ -809,7 +815,16 @@ public class ZeissZVIReader extends FormatReader {
             {
               channelColors = new int[effectiveSizeC];
             }
-            channelColors[cIndex] = Integer.parseInt(value);
+            if (channelColors[cIndex] == 0) {
+              channelColors[cIndex] = Integer.parseInt(value);
+            }
+          }
+          else if (cIndex == effectiveSizeC && channelColors != null &&
+            channelColors[0] == 0)
+          {
+            System.arraycopy(
+              channelColors, 1, channelColors, 0, channelColors.length - 1);
+            channelColors[cIndex - 1] = Integer.parseInt(value);
           }
         }
         else if (key.startsWith("Scale Factor for X") && physicalSizeX == null)
@@ -830,6 +845,10 @@ public class ZeissZVIReader extends FormatReader {
             if (wave.intValue() > 0) {
               emWavelength.put(cIndex, new PositiveInteger(wave));
             }
+            else {
+              LOGGER.warn(
+                "Expected positive value for EmissionWavelength; got {}", wave);
+            }
           }
         }
         else if (key.startsWith("Excitation Wavelength")) {
@@ -837,6 +856,11 @@ public class ZeissZVIReader extends FormatReader {
             Integer wave = new Integer((int) Double.parseDouble(value));
             if (wave.intValue() > 0) {
               exWavelength.put(cIndex, new PositiveInteger(wave));
+            }
+            else {
+              LOGGER.warn(
+                "Expected positive value for ExcitationWavelength; got {}",
+                wave);
             }
           }
         }
@@ -867,6 +891,11 @@ public class ZeissZVIReader extends FormatReader {
             store.setObjectiveNominalMagnification(
               new PositiveInteger(magnification), 0, 0);
           }
+          else {
+            LOGGER.warn(
+              "Expected positive value for NominalMagnification; got {}",
+              magnification);
+          }
         }
         else if (key.startsWith("Objective ID")) {
           store.setObjectiveID("Objective:" + value, 0, 0);
@@ -884,8 +913,15 @@ public class ZeissZVIReader extends FormatReader {
               int mag = (int)
                 Double.parseDouble(tokens[q].substring(0, slash - q));
               String na = tokens[q].substring(slash + 1);
-              store.setObjectiveNominalMagnification(
+              if (mag > 0) {
+                store.setObjectiveNominalMagnification(
                   new PositiveInteger(mag), 0, 0);
+              }
+              else {
+                LOGGER.warn(
+                  "Expected positive value for NominalMagnification; got {}",
+                  mag);
+              }
               store.setObjectiveLensNA(new Double(na), 0, 0);
               store.setObjectiveCorrection(getCorrection(tokens[q - 1]), 0, 0);
               break;
@@ -1050,9 +1086,14 @@ public class ZeissZVIReader extends FormatReader {
           if (p < nPoints - 1) points.append(" ");
         }
 
-        store.setPolylineID(shapeID, imageNum, shapeIndex);
-        store.setPolylinePoints(points.toString(), imageNum, shapeIndex);
-        store.setPolylineClosed(roiType != CURVE, imageNum, shapeIndex);
+        if (roiType == CURVE) {
+          store.setPolylineID(shapeID, imageNum, shapeIndex);
+          store.setPolylinePoints(points.toString(), imageNum, shapeIndex);
+        }
+        else {
+          store.setPolygonID(shapeID, imageNum, shapeIndex);
+          store.setPolygonPoints(points.toString(), imageNum, shapeIndex);
+        }
         shapeIndex++;
       }
       else if (roiType == RECTANGLE || roiType == TEXT) {

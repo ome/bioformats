@@ -1,37 +1,45 @@
 /*
- * ome.xml.model.Instrument
- *
- *-----------------------------------------------------------------------------
- *
- *  Copyright (C) @year@ Open Microscopy Environment
- *      Massachusetts Institute of Technology,
- *      National Institutes of Health,
- *      University of Dundee,
- *      University of Wisconsin-Madison
- *
- *
- *
- *    This library is free software; you can redistribute it and/or
- *    modify it under the terms of the GNU Lesser General Public
- *    License as published by the Free Software Foundation; either
- *    version 2.1 of the License, or (at your option) any later version.
- *
- *    This library is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- *    Lesser General Public License for more details.
- *
- *    You should have received a copy of the GNU Lesser General Public
- *    License along with this library; if not, write to the Free Software
- *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
- *-----------------------------------------------------------------------------
+ * #%L
+ * OME-XML Java library for working with OME-XML metadata structures.
+ * %%
+ * Copyright (C) 2006 - 2012 Open Microscopy Environment:
+ *   - Massachusetts Institute of Technology
+ *   - National Institutes of Health
+ *   - University of Dundee
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ * %%
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ * 
+ * The views and conclusions contained in the software and documentation are
+ * those of the authors and should not be interpreted as representing official
+ * policies, either expressed or implied, of any organization.
+ * #L%
  */
 
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by melissa via xsd-fu on 2011-11-09 10:55:09-0500
+ * Created by callan via xsd-fu on 2012-05-18 10:08:16+0100
  *
  *-----------------------------------------------------------------------------
  */
@@ -58,7 +66,7 @@ public class Instrument extends AbstractOMEModelObject
 
 	// -- Constants --
 
-	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2011-06";
+	public static final String NAMESPACE = "http://www.openmicroscopy.org/Schemas/OME/2012-06";
 
 	/** Logger for this class. */
 	private static final Logger LOGGER =
@@ -74,28 +82,25 @@ public class Instrument extends AbstractOMEModelObject
 	private Microscope microscope;
 
 	// Property which occurs more than once
-	private List<LightSource> lightSourceList = new ArrayList<LightSource>();
+	private List<LightSource> lightSources = new ArrayList<LightSource>();
 
 	// Property which occurs more than once
-	private List<Detector> detectorList = new ArrayList<Detector>();
+	private List<Detector> detectors = new ArrayList<Detector>();
 
 	// Property which occurs more than once
-	private List<Objective> objectiveList = new ArrayList<Objective>();
+	private List<Objective> objectives = new ArrayList<Objective>();
 
 	// Property which occurs more than once
-	private List<FilterSet> filterSetList = new ArrayList<FilterSet>();
+	private List<FilterSet> filterSets = new ArrayList<FilterSet>();
 
 	// Property which occurs more than once
-	private List<Filter> filterList = new ArrayList<Filter>();
+	private List<Filter> filters = new ArrayList<Filter>();
 
 	// Property which occurs more than once
-	private List<Dichroic> dichroicList = new ArrayList<Dichroic>();
-
-	// Property which occurs more than once
-	private List<OTF> otfList = new ArrayList<OTF>();
+	private List<Dichroic> dichroics = new ArrayList<Dichroic>();
 
 	// Back reference Image_BackReference
-	private List<Image> image_BackReferenceList = new ArrayList<Image>();
+	private List<Image> images = new ArrayList<Image>();
 
 	// -- Constructors --
 
@@ -260,15 +265,6 @@ public class Instrument extends AbstractOMEModelObject
 			addDichroic(
 					new Dichroic(Dichroic_element, model));
 		}
-		// Element property OTF which is complex (has
-		// sub-elements) and occurs more than once
-		List<Element> OTF_nodeList =
-				getChildrenByTagName(element, "OTF");
-		for (Element OTF_element : OTF_nodeList)
-		{
-			addOTF(
-					new OTF(OTF_element, model));
-		}
 		// *** IGNORING *** Skipped back reference Image_BackReference
 	}
 
@@ -311,249 +307,233 @@ public class Instrument extends AbstractOMEModelObject
 	// Property which occurs more than once
 	public int sizeOfLightSourceList()
 	{
-		return lightSourceList.size();
+		return lightSources.size();
 	}
 
 	public List<LightSource> copyLightSourceList()
 	{
-		return new ArrayList<LightSource>(lightSourceList);
+		return new ArrayList<LightSource>(lightSources);
 	}
 
 	public LightSource getLightSource(int index)
 	{
-		return lightSourceList.get(index);
+		return lightSources.get(index);
 	}
 
 	public LightSource setLightSource(int index, LightSource lightSource)
 	{
-		return lightSourceList.set(index, lightSource);
+        lightSource.setInstrument(this);
+		return lightSources.set(index, lightSource);
 	}
 
 	public void addLightSource(LightSource lightSource)
 	{
-		lightSourceList.add(lightSource);
+        lightSource.setInstrument(this);
+		lightSources.add(lightSource);
 	}
 
 	public void removeLightSource(LightSource lightSource)
 	{
-		lightSourceList.remove(lightSource);
+		lightSources.remove(lightSource);
 	}
 
 	// Property which occurs more than once
 	public int sizeOfDetectorList()
 	{
-		return detectorList.size();
+		return detectors.size();
 	}
 
 	public List<Detector> copyDetectorList()
 	{
-		return new ArrayList<Detector>(detectorList);
+		return new ArrayList<Detector>(detectors);
 	}
 
 	public Detector getDetector(int index)
 	{
-		return detectorList.get(index);
+		return detectors.get(index);
 	}
 
 	public Detector setDetector(int index, Detector detector)
 	{
-		return detectorList.set(index, detector);
+        detector.setInstrument(this);
+		return detectors.set(index, detector);
 	}
 
 	public void addDetector(Detector detector)
 	{
-		detectorList.add(detector);
+        detector.setInstrument(this);
+		detectors.add(detector);
 	}
 
 	public void removeDetector(Detector detector)
 	{
-		detectorList.remove(detector);
+		detectors.remove(detector);
 	}
 
 	// Property which occurs more than once
 	public int sizeOfObjectiveList()
 	{
-		return objectiveList.size();
+		return objectives.size();
 	}
 
 	public List<Objective> copyObjectiveList()
 	{
-		return new ArrayList<Objective>(objectiveList);
+		return new ArrayList<Objective>(objectives);
 	}
 
 	public Objective getObjective(int index)
 	{
-		return objectiveList.get(index);
+		return objectives.get(index);
 	}
 
 	public Objective setObjective(int index, Objective objective)
 	{
-		return objectiveList.set(index, objective);
+        objective.setInstrument(this);
+		return objectives.set(index, objective);
 	}
 
 	public void addObjective(Objective objective)
 	{
-		objectiveList.add(objective);
+        objective.setInstrument(this);
+		objectives.add(objective);
 	}
 
 	public void removeObjective(Objective objective)
 	{
-		objectiveList.remove(objective);
+		objectives.remove(objective);
 	}
 
 	// Property which occurs more than once
 	public int sizeOfFilterSetList()
 	{
-		return filterSetList.size();
+		return filterSets.size();
 	}
 
 	public List<FilterSet> copyFilterSetList()
 	{
-		return new ArrayList<FilterSet>(filterSetList);
+		return new ArrayList<FilterSet>(filterSets);
 	}
 
 	public FilterSet getFilterSet(int index)
 	{
-		return filterSetList.get(index);
+		return filterSets.get(index);
 	}
 
 	public FilterSet setFilterSet(int index, FilterSet filterSet)
 	{
-		return filterSetList.set(index, filterSet);
+        filterSet.setInstrument(this);
+		return filterSets.set(index, filterSet);
 	}
 
 	public void addFilterSet(FilterSet filterSet)
 	{
-		filterSetList.add(filterSet);
+        filterSet.setInstrument(this);
+		filterSets.add(filterSet);
 	}
 
 	public void removeFilterSet(FilterSet filterSet)
 	{
-		filterSetList.remove(filterSet);
+		filterSets.remove(filterSet);
 	}
 
 	// Property which occurs more than once
 	public int sizeOfFilterList()
 	{
-		return filterList.size();
+		return filters.size();
 	}
 
 	public List<Filter> copyFilterList()
 	{
-		return new ArrayList<Filter>(filterList);
+		return new ArrayList<Filter>(filters);
 	}
 
 	public Filter getFilter(int index)
 	{
-		return filterList.get(index);
+		return filters.get(index);
 	}
 
 	public Filter setFilter(int index, Filter filter)
 	{
-		return filterList.set(index, filter);
+        filter.setInstrument(this);
+		return filters.set(index, filter);
 	}
 
 	public void addFilter(Filter filter)
 	{
-		filterList.add(filter);
+        filter.setInstrument(this);
+		filters.add(filter);
 	}
 
 	public void removeFilter(Filter filter)
 	{
-		filterList.remove(filter);
+		filters.remove(filter);
 	}
 
 	// Property which occurs more than once
 	public int sizeOfDichroicList()
 	{
-		return dichroicList.size();
+		return dichroics.size();
 	}
 
 	public List<Dichroic> copyDichroicList()
 	{
-		return new ArrayList<Dichroic>(dichroicList);
+		return new ArrayList<Dichroic>(dichroics);
 	}
 
 	public Dichroic getDichroic(int index)
 	{
-		return dichroicList.get(index);
+		return dichroics.get(index);
 	}
 
 	public Dichroic setDichroic(int index, Dichroic dichroic)
 	{
-		return dichroicList.set(index, dichroic);
+        dichroic.setInstrument(this);
+		return dichroics.set(index, dichroic);
 	}
 
 	public void addDichroic(Dichroic dichroic)
 	{
-		dichroicList.add(dichroic);
+        dichroic.setInstrument(this);
+		dichroics.add(dichroic);
 	}
 
 	public void removeDichroic(Dichroic dichroic)
 	{
-		dichroicList.remove(dichroic);
-	}
-
-	// Property which occurs more than once
-	public int sizeOfOTFList()
-	{
-		return otfList.size();
-	}
-
-	public List<OTF> copyOTFList()
-	{
-		return new ArrayList<OTF>(otfList);
-	}
-
-	public OTF getOTF(int index)
-	{
-		return otfList.get(index);
-	}
-
-	public OTF setOTF(int index, OTF otf)
-	{
-		return otfList.set(index, otf);
-	}
-
-	public void addOTF(OTF otf)
-	{
-		otfList.add(otf);
-	}
-
-	public void removeOTF(OTF otf)
-	{
-		otfList.remove(otf);
+		dichroics.remove(dichroic);
 	}
 
 	// Reference which occurs more than once
 	public int sizeOfLinkedImageList()
 	{
-		return image_BackReferenceList.size();
+		return images.size();
 	}
 
 	public List<Image> copyLinkedImageList()
 	{
-		return new ArrayList<Image>(image_BackReferenceList);
+		return new ArrayList<Image>(images);
 	}
 
 	public Image getLinkedImage(int index)
 	{
-		return image_BackReferenceList.get(index);
+		return images.get(index);
 	}
 
 	public Image setLinkedImage(int index, Image o)
 	{
-		return image_BackReferenceList.set(index, o);
+		return images.set(index, o);
 	}
 
 	public boolean linkImage(Image o)
 	{
-		return image_BackReferenceList.add(o);
+		if (!images.contains(o)) {
+			return images.add(o);
+		}
+		return false;
 	}
 
 	public boolean unlinkImage(Image o)
 	{
-		return image_BackReferenceList.remove(o);
+		return images.remove(o);
 	}
 
 	public Element asXMLElement(Document document)
@@ -582,70 +562,61 @@ public class Instrument extends AbstractOMEModelObject
 			// sub-elements)
 			Instrument_element.appendChild(microscope.asXMLElement(document));
 		}
-		if (lightSourceList != null)
+		if (lightSources != null)
 		{
 			// Element property LightSource which is complex (has
 			// sub-elements) and occurs more than once
-			for (LightSource lightSourceList_value : lightSourceList)
+			for (LightSource lightSources_value : lightSources)
 			{
-				Instrument_element.appendChild(lightSourceList_value.asXMLElement(document));
+				Instrument_element.appendChild(lightSources_value.asXMLElement(document));
 			}
 		}
-		if (detectorList != null)
+		if (detectors != null)
 		{
 			// Element property Detector which is complex (has
 			// sub-elements) and occurs more than once
-			for (Detector detectorList_value : detectorList)
+			for (Detector detectors_value : detectors)
 			{
-				Instrument_element.appendChild(detectorList_value.asXMLElement(document));
+				Instrument_element.appendChild(detectors_value.asXMLElement(document));
 			}
 		}
-		if (objectiveList != null)
+		if (objectives != null)
 		{
 			// Element property Objective which is complex (has
 			// sub-elements) and occurs more than once
-			for (Objective objectiveList_value : objectiveList)
+			for (Objective objectives_value : objectives)
 			{
-				Instrument_element.appendChild(objectiveList_value.asXMLElement(document));
+				Instrument_element.appendChild(objectives_value.asXMLElement(document));
 			}
 		}
-		if (filterSetList != null)
+		if (filterSets != null)
 		{
 			// Element property FilterSet which is complex (has
 			// sub-elements) and occurs more than once
-			for (FilterSet filterSetList_value : filterSetList)
+			for (FilterSet filterSets_value : filterSets)
 			{
-				Instrument_element.appendChild(filterSetList_value.asXMLElement(document));
+				Instrument_element.appendChild(filterSets_value.asXMLElement(document));
 			}
 		}
-		if (filterList != null)
+		if (filters != null)
 		{
 			// Element property Filter which is complex (has
 			// sub-elements) and occurs more than once
-			for (Filter filterList_value : filterList)
+			for (Filter filters_value : filters)
 			{
-				Instrument_element.appendChild(filterList_value.asXMLElement(document));
+				Instrument_element.appendChild(filters_value.asXMLElement(document));
 			}
 		}
-		if (dichroicList != null)
+		if (dichroics != null)
 		{
 			// Element property Dichroic which is complex (has
 			// sub-elements) and occurs more than once
-			for (Dichroic dichroicList_value : dichroicList)
+			for (Dichroic dichroics_value : dichroics)
 			{
-				Instrument_element.appendChild(dichroicList_value.asXMLElement(document));
+				Instrument_element.appendChild(dichroics_value.asXMLElement(document));
 			}
 		}
-		if (otfList != null)
-		{
-			// Element property OTF which is complex (has
-			// sub-elements) and occurs more than once
-			for (OTF otfList_value : otfList)
-			{
-				Instrument_element.appendChild(otfList_value.asXMLElement(document));
-			}
-		}
-		if (image_BackReferenceList != null)
+		if (images != null)
 		{
 			// *** IGNORING *** Skipped back reference Image_BackReference
 		}

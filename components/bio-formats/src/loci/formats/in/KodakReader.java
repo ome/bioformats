@@ -1,30 +1,33 @@
-//
-// KodakReader.java
-//
-
 /*
-OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ * #%L
+ * OME Bio-Formats package for reading and converting biological file formats.
+ * %%
+ * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 2 of the 
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public 
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-2.0.html>.
+ * #L%
+ */
 
 package loci.formats.in;
 
 import java.io.IOException;
 
+import loci.common.Constants;
 import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
@@ -33,6 +36,7 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 import ome.xml.model.primitives.PositiveFloat;
+import ome.xml.model.primitives.Timestamp;
 
 /**
  * KodakReader is the file format reader for Kodak Molecular Imaging .bip files.
@@ -47,6 +51,7 @@ public class KodakReader extends FormatReader {
 
   private static final String MAGIC_STRING = "DTag";
   private static final String PIXELS_STRING = "BSfD";
+  private static final String DIMENSIONS_STRING = "GBiH";
 
   private static final String DATE_FORMAT = "HH:mm:ss 'on' MM/dd/yyyy";
 
@@ -102,11 +107,14 @@ public class KodakReader extends FormatReader {
 
     core[0].littleEndian = false;
 
+    findString(DIMENSIONS_STRING);
+    in.skipBytes(DIMENSIONS_STRING.length() + 20);
+    core[0].sizeX = in.readInt();
+    core[0].sizeY = in.readInt();
+
     findString(PIXELS_STRING);
     pixelOffset = in.getFilePointer() + PIXELS_STRING.length() + 20;
 
-    core[0].sizeX = 1024;
-    core[0].sizeY = 1024;
     core[0].sizeZ = 1;
     core[0].sizeC = 1;
     core[0].sizeT = 1;
@@ -132,7 +140,9 @@ public class KodakReader extends FormatReader {
       in.read(buf, overlap, buf.length - overlap);
 
       for (int i=0; i<buf.length-overlap; i++) {
-        if (marker.equals(new String(buf, i, marker.length()))) {
+        if (marker.equals(
+          new String(buf, i, marker.length(), Constants.ENCODING)))
+        {
           in.seek(in.getFilePointer() - buf.length + i);
           return;
         }
@@ -151,6 +161,10 @@ public class KodakReader extends FormatReader {
 
     findString("Image Capture Source");
     String metadata = in.readCString();
+
+    if (metadata == null) {
+      return;
+    }
 
     String[] lines = metadata.split("\n");
 
@@ -172,7 +186,10 @@ public class KodakReader extends FormatReader {
         store.setMicroscopeModel(value, 0);
       }
       else if (key.equals("Capture Time/Date")) {
-        store.setImageAcquiredDate(DateTools.formatDate(value, DATE_FORMAT), 0);
+        String date = DateTools.formatDate(value, DATE_FORMAT);
+        if (date != null) {
+          store.setImageAcquisitionDate(new Timestamp(date), 0);
+        }
       }
       else if (key.equals("Exposure Time")) {
         Double exposure = new Double(value.substring(0, value.indexOf(" ")));
@@ -180,17 +197,33 @@ public class KodakReader extends FormatReader {
       }
       else if (key.equals("Vertical Resolution")) {
         // resolution stored in pixels per inch
-        value = value.substring(0, value.indexOf(" "));
+        if (value.indexOf(" ") > 0) {
+          value = value.substring(0, value.indexOf(" "));
+        }
         Double size = new Double(value);
-        size = 1.0 / (size * (1.0 / 25400));
-        store.setPixelsPhysicalSizeY(new PositiveFloat(size), 0);
+        if (size > 0) {
+          size = 1.0 / (size * (1.0 / 25400));
+          store.setPixelsPhysicalSizeY(new PositiveFloat(size), 0);
+        }
+        else {
+          LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+            size);
+        }
       }
       else if (key.equals("Horizontal Resolution")) {
         // resolution stored in pixels per inch
-        value = value.substring(0, value.indexOf(" "));
+        if (value.indexOf(" ") > 0) {
+          value = value.substring(0, value.indexOf(" "));
+        }
         Double size = new Double(value);
-        size = 1.0 / (size * (1.0 / 25400));
-        store.setPixelsPhysicalSizeX(new PositiveFloat(size), 0);
+        if (size > 0) {
+          size = 1.0 / (size * (1.0 / 25400));
+          store.setPixelsPhysicalSizeX(new PositiveFloat(size), 0);
+        }
+        else {
+          LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+            size);
+        }
       }
       else if (key.equals("CCD Temperature")) {
         Double temp = new Double(value.substring(0, value.indexOf(" ")));

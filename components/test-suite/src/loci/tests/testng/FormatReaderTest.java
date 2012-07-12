@@ -1,33 +1,27 @@
-//
-// FormatReaderTest.java
-//
-
 /*
-LOCI software automated test suite for TestNG. Copyright (C) 2007-@year@
-Melissa Linkert and Curtis Rueden. All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-  * Redistributions of source code must retain the above copyright
-    notice, this list of conditions and the following disclaimer.
-  * Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
-  * Neither the name of the UW-Madison LOCI nor the names of its
-    contributors may be used to endorse or promote products derived from
-    this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE UW-MADISON LOCI ``AS IS'' AND ANY
-EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS BE LIABLE FOR ANY
-DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
+ * #%L
+ * OME Bio-Formats manual and automated test suite.
+ * %%
+ * Copyright (C) 2006 - 2012 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 2 of the 
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public 
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-2.0.html>.
+ * #L%
+ */
 
 package loci.tests.testng;
 
@@ -35,8 +29,9 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.Arrays;
@@ -45,6 +40,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import loci.common.ByteArrayHandle;
+import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
@@ -575,7 +571,7 @@ public class FormatReaderTest {
         }
 
         // if CreationDate is before 1990, it's probably invalid
-        String date = retrieve.getImageAcquiredDate(i);
+        String date = retrieve.getImageAcquisitionDate(i).getValue();
         String configDate = config.getDate();
         if (date != null && !date.equals(configDate)) {
           date = date.trim();
@@ -1038,6 +1034,45 @@ public class FormatReaderTest {
   /**
    * @testng.test groups = "all fast automated"
    */
+  public void testExposureTimes() {
+    if (config == null) throw new SkipException("No config tree");
+    String testName = "ExposureTimes";
+    if (!initFile()) result(testName, false, "initFile");
+    IMetadata retrieve = (IMetadata) reader.getMetadataStore();
+
+    for (int i=0; i<reader.getSeriesCount(); i++) {
+      reader.setSeries(i);
+      config.setSeries(i);
+
+      for (int c=0; c<config.getChannelCount(); c++) {
+        if (config.hasExposureTime(c)) {
+          Double exposureTime = config.getExposureTime(c);
+
+          for (int p=0; p<reader.getImageCount(); p++) {
+            int[] zct = reader.getZCTCoords(p);
+            if (zct[1] == c) {
+              Double planeExposureTime = retrieve.getPlaneExposureTime(i, p);
+
+              if (exposureTime == null && planeExposureTime == null) {
+                continue;
+              }
+
+              if (exposureTime == null || planeExposureTime == null ||
+                !exposureTime.equals(planeExposureTime))
+              {
+                result(testName, false, "Series " + i + " plane " + p);
+              }
+            }
+          }
+        }
+      }
+    }
+    result(testName, true);
+  }
+
+  /**
+   * @testng.test groups = "all fast automated"
+   */
   public void testEmissionWavelengths() {
     if (config == null) throw new SkipException("No config tree");
     String testName = "EmissionWavelengths";
@@ -1151,6 +1186,33 @@ public class FormatReaderTest {
       {
         result(testName, false, "Series " + i + " (got '" + realName +
           "', expected '" + expectedName + "')");
+      }
+    }
+    result(testName, true);
+  }
+
+  /**
+   * @testng.test groups = "all fast automated"
+   */
+  public void testImageDescriptions() {
+    if (config == null) throw new SkipException("No config tree");
+    String testName = "ImageDescriptions";
+    if (!initFile()) result(testName, false, "initFile");
+    IMetadata retrieve = (IMetadata) reader.getMetadataStore();
+
+    for (int i=0; i<reader.getSeriesCount(); i++) {
+      config.setSeries(i);
+
+      String realDescription = retrieve.getImageDescription(i);
+      if (config.hasImageDescription()) {
+        String expectedDescription = config.getImageDescription();
+
+        if (!expectedDescription.equals(realDescription) &&
+          !(realDescription == null && expectedDescription.equals("null")))
+        {
+          result(testName, false, "Series " + i + " (got '" + realDescription +
+            "', expected '" + expectedDescription + "')");
+        }
       }
     }
     result(testName, true);
@@ -1285,7 +1347,8 @@ public class FormatReaderTest {
         IFormatReader r =
           /*config.noStitching() ? new ImageReader() :*/ new FileStitcher();
 
-        for (int i=0; i<base.length && success; i++) {
+        int maxFiles = (int) Math.min(base.length, 100);
+        for (int i=0; i<maxFiles && success; i++) {
           // .xlog files in InCell 1000/2000 files may belong to more
           // than one dataset
           if (file.toLowerCase().endsWith(".xdce") &&
@@ -1316,6 +1379,11 @@ public class FormatReaderTest {
           if (reader.getFormat().equals("Olympus APL") &&
             base[i].toLowerCase().endsWith("tif"))
           {
+            continue;
+          }
+
+          // DICOM companion files may not be detected
+          if (reader.getFormat().equals("DICOM") && !base[i].equals(file)) {
             continue;
           }
 
@@ -1365,6 +1433,14 @@ public class FormatReaderTest {
           // TIFF files in Li-Cor datasets are detected separately
           if (reader.getFormat().equals("Li-Cor L2D") &&
             !base[i].toLowerCase().endsWith("l2d"))
+          {
+            continue;
+          }
+
+          // TIFF files in Prairie datasets may be detected as OME-TIFF
+          if (reader.getFormat().equals("Prairie TIFF") &&
+            base[i].toLowerCase().endsWith(".tif") &&
+            r.getFormat().equals("OME-TIFF"))
           {
             continue;
           }
@@ -1705,6 +1781,13 @@ public class FormatReaderTest {
               continue;
             }
 
+            // DICOM reader is not expected to pick up companion files
+            if (!result && r instanceof DicomReader &&
+              readers[j] instanceof DicomReader)
+            {
+              continue;
+            }
+
             boolean expected = r == readers[j];
             if (result != expected) {
               success = false;
@@ -1737,7 +1820,6 @@ public class FormatReaderTest {
    * @testng.test groups = "config"
    */
   public void writeConfigFile() {
-    reader = new BufferedImageReader(new FileStitcher());
     setupReader();
     if (!initFile(false)) return;
     String file = reader.getCurrentFile();
@@ -1758,7 +1840,6 @@ public class FormatReaderTest {
    * @testng.test groups = "config-xml"
    */
   public void writeXML() {
-    reader = new BufferedImageReader(new FileStitcher());
     setupReader();
     if (!initFile(false)) return;
     String file = reader.getCurrentFile();
@@ -1766,7 +1847,8 @@ public class FormatReaderTest {
     try {
       Location l = new Location(file);
       File f = new File(l.getParent(), l.getName() + ".ome.xml");
-      FileWriter writer = new FileWriter(f);
+      OutputStreamWriter writer =
+        new OutputStreamWriter(new FileOutputStream(f), Constants.ENCODING);
       MetadataStore store = reader.getMetadataStore();
       MetadataRetrieve retrieve = MetadataTools.asRetrieve(store);
       String xml = MetadataTools.getOMEXML(retrieve);
@@ -1784,6 +1866,7 @@ public class FormatReaderTest {
 
   /** Sets up the current IFormatReader. */
   private void setupReader() {
+    reader = new BufferedImageReader(new FileStitcher());
     reader.setNormalized(true);
     reader.setOriginalMetadataPopulated(true);
     reader.setMetadataFiltered(true);
@@ -1814,25 +1897,7 @@ public class FormatReaderTest {
     }
 
     if (reader == null) {
-      /*
-      if (config.noStitching()) {
-        reader = new BufferedImageReader();
-      }
-      else {
-      */
-        reader = new BufferedImageReader(new FileStitcher());
-      //}
-      reader.setNormalized(true);
-      reader.setMetadataFiltered(true);
-      reader.setOriginalMetadataPopulated(true);
-      MetadataStore store = null;
-      try {
-        store = omexmlService.createOMEXMLMetadata();
-      }
-      catch (ServiceException e) {
-        LOGGER.warn("Could not parse OME-XML", e);
-      }
-      reader.setMetadataStore(store);
+      setupReader();
     }
 
     if (id.equals(reader.getCurrentFile())) return true; // already initialized
