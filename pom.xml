@@ -13,7 +13,7 @@
 
   <groupId>loci</groupId>
   <artifactId>pom-scifio</artifactId>
-  <version>4.4.0</version>
+  <version>4.4-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Bio-Formats projects</name>
