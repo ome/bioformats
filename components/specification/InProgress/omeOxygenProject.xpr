@@ -2327,6 +2327,7 @@
             <file name="test-ome-samples/sample-2010-04.ome"/>
             <file name="test-ome-samples/sample-updated.ome.xml"/>
         </folder>
+        <folder path="../Released-Schema/"/>
         <folder path="../Samples/"/>
         <folder path="../../xsd-fu/"/>
         <folder path="../Xslt/"/>

@@ -251,10 +251,10 @@
 					<xsl:choose>
 						<xsl:when test="local-name(.) = 'Email'">
 							<!-- check if a OMEName exists. -->
-							<xsl:variable name="omeName">
+							<xsl:variable name="userName">
 								<xsl:copy-of select="following-sibling::OME:OMEName"/>
 							</xsl:variable>
-							<xsl:if test="count(exsl:node-set($omeName)/*)=0">
+							<xsl:if test="count(exsl:node-set($userName)/*)=0">
 								<xsl:value-of select="."/>
 							</xsl:if>
 						</xsl:when>
@@ -262,14 +262,14 @@
 							<xsl:value-of select="."/>
 						</xsl:when>
 						<xsl:otherwise>
-							<xsl:variable name="omeName">
+							<xsl:variable name="userName">
 								<xsl:copy-of select="following-sibling::OME:OMEName"/>
 							</xsl:variable>
 							<xsl:variable name="email">
 								<xsl:copy-of select="following-sibling::OME:Email"/>
 							</xsl:variable>
 							<xsl:if
-								test="(count(exsl:node-set($omeName)/*)+count(exsl:node-set($email)/*))=0">
+								test="(count(exsl:node-set($userName)/*)+count(exsl:node-set($email)/*))=0">
 								<xsl:value-of select="."/>
 							</xsl:if>
 						</xsl:otherwise>

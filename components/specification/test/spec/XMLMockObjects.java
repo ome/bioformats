@@ -23,6 +23,7 @@
 package spec;
 
 //Java imports
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -104,7 +105,6 @@ import ome.xml.model.enums.MicrobeamManipulationType;
 import ome.xml.model.enums.MicroscopeType;
 import ome.xml.model.enums.NamingConvention;
 import ome.xml.model.enums.PixelType;
-import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.NonNegativeLong;
 import ome.xml.model.primitives.PercentFraction;
@@ -127,10 +127,9 @@ import ome.xml.model.primitives.Timestamp;
 public class XMLMockObjects 
 {
 
-    /** The default color. */
-    public static final java.awt.Color	DEFAULT_COLOR =
-            new java.awt.Color(100, 150, 200, 255);
-
+	/** The default color. */
+	public static final Color	DEFAULT_COLOR = new Color(100, 150, 200, 255);
+	
 	/** The default power of a light source. */
 	public static final Double LIGHTSOURCE_POWER = 200.0;
 
@@ -255,11 +254,10 @@ public class XMLMockObjects
 	
 	/** Points used to create Polyline and Polygon shape. */
 	public static final String POINTS = "0,0 10,10";
-
-    /** The default time. */
-    public static final Timestamp TIME =
-            Timestamp.valueOf("2006-05-04T18:13:51.0Z");
-
+	
+	/** The default time. */
+	public static final String TIME = "2006-05-04T18:13:51.0Z";
+	
 	/** The default cut-in. */
 	public static final int CUT_IN = 200;
 	
@@ -527,10 +525,12 @@ public class XMLMockObjects
 	 */
 	public LightSourceSettings createLightSourceSettings(int ref)
 	{
+		if (instrument == null) populateInstrument();
 		LightSourceSettings settings = new LightSourceSettings();
 		settings.setID("LightSource:"+ref);
 		settings.setAttenuation(new PercentFraction(1.0f));
 		settings.setWavelength(new PositiveInteger(200));
+		settings.setLightSource(instrument.copyLightSourceList().get(0));
 		return settings;
 	}
 
@@ -615,7 +615,7 @@ public class XMLMockObjects
 		settings.setRefractiveIndex(1.0);
 		return settings;
 	}
-
+	
 	/**
 	 * Creates a binary file.
 	 * 
@@ -684,12 +684,18 @@ public class XMLMockObjects
 			shape.setTheC(new NonNegativeInteger(c));
 			shape.setTheZ(new NonNegativeInteger(z));
 			shape.setTheT(new NonNegativeInteger(t));
-			AffineTransform transform = new AffineTransform();
-			shape.setTransform(transform);
-			shape.setFillColor(new Color(10));
-			shape.setStrokeColor(new Color(255));
+			//shape.setTransform(createTransform());
+			shape.setFillColor(new ome.xml.model.primitives.Color(100));
+			shape.setStrokeColor(new ome.xml.model.primitives.Color(100));
 		}
 		return shape;
+	}
+	
+	private AffineTransform createTransform()
+	{
+		AffineTransform at = new AffineTransform();
+		
+		return at;
 	}
 	
 	/** 
@@ -703,6 +709,7 @@ public class XMLMockObjects
 	public ROI createROI(int index, int z, int c, int t)
 	{
 		ROI roi = new ROI();
+		roi.setName("ROI name:"+index);
 		roi.setID("ROI:"+index);
 		int n = SHAPES.length;
 		int j = index;
@@ -847,8 +854,8 @@ public class XMLMockObjects
 				pa.setID("PlateAcquisition:"+v);
 				pa.setName("PlateAcquisition Name "+v);
 				pa.setDescription("PlateAcquisition Description "+v);
-				pa.setEndTime(TIME);
-				pa.setStartTime(TIME);
+				pa.setEndTime(new Timestamp(TIME));
+				pa.setStartTime(new Timestamp(TIME));
 				plate.addPlateAcquisition(pa);
 				pas.add(pa);
 			}
@@ -866,15 +873,16 @@ public class XMLMockObjects
 				well.setID(String.format("Well:%d_%d_%d", row, column, index));
 				well.setRow(new NonNegativeInteger(row));
 				well.setColumn(new NonNegativeInteger(column));
+				well.setType("Transfection: done");
 				well.setExternalDescription("External Description");
 				well.setExternalIdentifier("External Identifier");
-				well.setColor(new Color(255));
+				well.setColor(new ome.xml.model.primitives.Color(255));
 				if (pas.size() == 0) {
 					for (int field = 0; field < fields; field++) {
 						sample = new WellSample();
 						sample.setPositionX(0.0);
 						sample.setPositionY(1.0);
-						sample.setTimepoint(TIME);
+						sample.setTimepoint(new Timestamp(TIME));
 						sample.setID(String.format("WellSample:%d_%d_%d_%d", 
 								index, row, column, field));
 						sample.setIndex(new NonNegativeInteger(i));
@@ -896,7 +904,7 @@ public class XMLMockObjects
 							sample = new WellSample();
 							sample.setPositionX(0.0);
 							sample.setPositionY(1.0);
-							sample.setTimepoint(TIME);
+							sample.setTimepoint(new Timestamp(TIME));
 							sample.setID(String.format("WellSample:%d_%d_%d_%d_%d", 
 									index, row, column, field, v));
 							sample.setIndex(new NonNegativeInteger(i));
@@ -994,6 +1002,8 @@ public class XMLMockObjects
 				channel.setLightSourceSettings(createLightSourceSettings(j));
 				channel.setLightPath(createLightPath());
 				channel.setDetectorSettings(ds);
+				//link the channel to the OTF
+				//if (otf != null) otf.linkChannel(channel);
 				j++;
 			}
 			pixels.addChannel(channel);
@@ -1015,8 +1025,8 @@ public class XMLMockObjects
 		channel.setID("Channel:"+index);
 		channel.setAcquisitionMode(AcquisitionMode.FLUORESCENCELIFETIME);
 		int argb = DEFAULT_COLOR.getRGB();
-		int	rgba = (argb << 8) | (argb >>> (32-8));
-		channel.setColor(new Color(rgba));
+		int rgba = (argb << 8) | (argb >>> (32-8));
+		channel.setColor(new ome.xml.model.primitives.Color(rgba));
 		channel.setName("Name");
 		channel.setIlluminationType(IlluminationType.OBLIQUE);
 		channel.setPinholeSize(0.5);
@@ -1316,6 +1326,7 @@ public class XMLMockObjects
         ome.addExperiment(exp);
         MicrobeamManipulation mm = createMicrobeamManipulation(0);
         exp.addMicrobeamManipulation(mm);
+        Pixels pixels = image.getPixels();
         image.linkExperiment(exp);
         image.linkInstrument(instrument);
         ome.addImage(image);

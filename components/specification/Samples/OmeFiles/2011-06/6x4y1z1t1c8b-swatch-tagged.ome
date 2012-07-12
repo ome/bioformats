@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2011-06" xmlns:Bin="http://www.openmicroscopy.org/Schemas/BinaryFile/2011-06" xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2011-06" xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2011-06" xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2011-06" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2011-06     http://www.openmicroscopy.org/Schemas/OME/2011-06/ome.xsd">
+	<Image ID="Image:0" Name="6x6x1x8-swatch.tif">
+		<AcquiredDate>2010-02-23T12:51:30</AcquiredDate>
+		<OME:Pixels xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2011-06" DimensionOrder="XYCZT" ID="Pixels:0:0" PhysicalSizeX="10000.0" PhysicalSizeY="10000.0" Type="uint8" SizeC="1" SizeT="1" SizeX="6" SizeY="4" SizeZ="1">
+			<Bin:BinData BigEndian="false" Length="32">/wCrzur//wB5oMPi/wBIbJO3AP8ePGCF</Bin:BinData>
+		</OME:Pixels>
+		<SA:AnnotationRef ID="Annotation:1"/>
+		<SA:AnnotationRef ID="Annotation:4"/>
+	</Image>
+	<SA:StructuredAnnotations>
+		<!-- First Tag -->
+		<SA:CommentAnnotation ID="Annotation:1" Namespace="openmicroscopy.org/omero/insight/tag">
+			<SA:Value>SampleTagA</SA:Value>
+		</SA:CommentAnnotation>
+		<SA:CommentAnnotation ID="Annotation:2" Namespace="openmicroscopy.org/omero/annotation/description">
+			<SA:Value>This is the description of the sample tag A</SA:Value>
+		</SA:CommentAnnotation>
+		<SA:ListAnnotation ID="Annotation:3" Namespace="openmicroscopy.org/omero/annotation/link">
+			<SA:AnnotationRef ID="Annotation:1"/>
+			<SA:AnnotationRef ID="Annotation:2"/>
+		</SA:ListAnnotation>
+		<!-- Second Tag -->
+		<SA:CommentAnnotation ID="Annotation:4" Namespace="openmicroscopy.org/omero/insight/tag">
+			<SA:Value>SampleTagB</SA:Value>
+		</SA:CommentAnnotation>
+		<SA:CommentAnnotation ID="Annotation:5" Namespace="openmicroscopy.org/omero/annotation/description">
+			<SA:Value>This is the description of the sample tag B</SA:Value>
+		</SA:CommentAnnotation>
+		<SA:ListAnnotation ID="Annotation:6" Namespace="openmicroscopy.org/omero/annotation/link">
+			<SA:AnnotationRef ID="Annotation:4"/>
+			<SA:AnnotationRef ID="Annotation:5"/>
+		</SA:ListAnnotation>
+		<!-- A Tagset -->
+		<SA:CommentAnnotation ID="Annotation:7" Namespace="openmicroscopy.org/omero/insight/tagset">
+			<SA:Value>SampleTagset</SA:Value>
+		</SA:CommentAnnotation>
+		<SA:CommentAnnotation ID="Annotation:8" Namespace="openmicroscopy.org/omero/annotation/description">
+			<SA:Value>This is the description of the sample tagset</SA:Value>
+		</SA:CommentAnnotation>
+		<SA:ListAnnotation ID="Annotation:9" Namespace="openmicroscopy.org/omero/annotation/link">
+			<SA:AnnotationRef ID="Annotation:7"/>
+			<SA:AnnotationRef ID="Annotation:8"/>
+		</SA:ListAnnotation>
+		<SA:ListAnnotation ID="Annotation:10" Namespace="openmicroscopy.org/omero/insight/tagset/children">
+			<SA:AnnotationRef ID="Annotation:1"/>
+			<SA:AnnotationRef ID="Annotation:4"/>
+		</SA:ListAnnotation>
+	</SA:StructuredAnnotations>
+</OME>

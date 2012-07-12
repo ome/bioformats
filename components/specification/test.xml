@@ -17,5 +17,25 @@
     <dependency org="commons-logging" name="commons-logging" rev="${versions.commons-logging}"/>
     <dependency org="emma" name="emma" rev="${versions.emma}"/>
     <dependency org="emma" name="emma_ant" rev="${versions.emma}"/>
+    <!-- For Bio-Formats logging -->
+    <dependency org="slf4j" name="slf4j-api" rev="${versions.slf4j}"/>
+    <dependency org="slf4j" name="slf4j-log4j12" rev="${versions.slf4j}"/>
+    <dependency org="log4j" name="log4j" rev="${versions.log4j}"/>
+    <!-- For XML validation -->
+    <dependency org="xerces" name="xercesImpl" rev="${versions.xercesImpl}"/>
+    <dependency org="xml-apis" name="xml-apis" rev="${versions.xml-apis}"/>
+    <dependency org="xml-apis" name="xml-apis-ext" rev="${versions.xml-apis}"/>
+    <!-- Bio-Formats -->
+    <dependency org="ome" name="bio-formats" rev="${omero.version}" changing="true">
+        <artifact name="bio-formats"/>
+        <artifact name="jai_imageio"/>
+        <artifact name="loci-common"/>
+        <artifact name="mdbtools-java"/>
+        <artifact name="metakit"/>
+        <artifact name="ome-io"/>
+        <artifact name="ome-xml"/>
+        <artifact name="poi-loci"/>
+        <artifact name="scifio"/>
+    </dependency>
  </dependencies>
 </ivy-module>

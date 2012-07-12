@@ -5,8 +5,15 @@
     <import file="${import.dir}/global.xml"/>
     <import file="${import.dir}/lifecycle.xml"/>
 
+    <target name="test-compile" depends="testng-init" unless="test.skip"><!-- override -->
+        <copy todir="${testclasses.dir}">
+            <fileset dir="${basedir}/Samples"/>
+        </copy>
+        <antcall target="lifecycle.test-compile" inheritRefs="true" inheritAll="true"/>
+    </target>
+
     <target name="package" depends="generate, offline-validate-ome-xml"><!-- Skip compile -->
-        <jar destfile="${target.dir}/${ivy.module}-UNSIGNED.jar" update="true">
+        <jar destfile="${target.dir}/${ivy.module}.jar" update="true">
             <fileset dir="${basedir}" includes="Xslt/,Released-Schema/"/>
             <!-- ><fileset dir="${basedir}/Released-Schema"/>
             <fileset dir="${basedir}/Xslt"/> -->
@@ -16,8 +23,8 @@
     <target name="online-validate-ome-xml" description="Checks that all files used in the documentation are well formed using online schemas (very, very slow)">
         <xmlvalidate failonerror="false" warn="true">
             <fileset dir="${basedir}" 
-                includes="Samples/OmeFiles/**/*.ome"
-                excludes="Samples/OmeFiles/**/*metadata.ome, Samples/OmeFiles/Working/*.ome"/>
+                includes="Samples/**/*.ome"
+                excludes="Samples/compliant-sample.ome, Samples/OmeFiles/**/2008-09/*-metadata.ome, Samples/OmeFiles/Working/*.ome"/>
             <attribute name="http://xml.org/sax/features/validation" value="true"/>
             <attribute name="http://apache.org/xml/features/validation/schema"  value="true"/>
             <attribute name="http://xml.org/sax/features/namespaces" value="true"/>
@@ -27,8 +34,8 @@
     <target name="offline-validate-ome-xml" description="Checks that all files used in the documentation are well formed using local schemas (fast)">
         <schemavalidate failonerror="true" warn="true">
             <fileset dir="${basedir}" 
-                includes="Samples/OmeFiles/**/*.ome"
-                excludes="Samples/OmeFiles/**/*metadata.ome, Samples/OmeFiles/Working/*.ome"/>
+                includes="Samples/**/*.ome"
+                excludes="Samples/compliant-sample.ome, Samples/OmeFiles/**/2008-09/*-metadata.ome, Samples/OmeFiles/Working/*.ome"/>
             <!-- Standard -->
             <schema namespace="http://www.w3.org/XML/1998/namespace"
                 file="${basedir}/Released-Schema/additions/jar/xml.xsd" />

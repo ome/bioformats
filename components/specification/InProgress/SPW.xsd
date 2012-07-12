@@ -25,22 +25,22 @@
 	# Written by:  Andrew Patterson <ajpatterson@lifesci.dundee.ac.uk>
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -->
-<xsd:schema xmlns="http://www.openmicroscopy.org/Schemas/SPW/2011-06" 
-	targetNamespace="http://www.openmicroscopy.org/Schemas/SPW/2011-06" 
-	xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2011-06" 
-	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2011-06" 
-	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2011-06" 
+<xsd:schema xmlns="http://www.openmicroscopy.org/Schemas/SPW/2012-06" 
+	targetNamespace="http://www.openmicroscopy.org/Schemas/SPW/2012-06" 
+	xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2012-06" 
+	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2012-06" 
+	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2012-06" 
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
 	version="1" 
 	elementFormDefault="qualified">
-	<!-- Using the svn location for import -->
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2011-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/InProgress/ome.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2011-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/InProgress/SA.xsd"/>
+	<!-- Using the svn location for import
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2012-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/InProgress/ome.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2012-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/InProgress/SA.xsd"/>
 	
-	<!-- Using the local directory location for import
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2011-06" schemaLocation="ome.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2011-06" schemaLocation="SA.xsd"/>
-	-->
+	Using the local directory location for import -->
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/OME/2012-06" schemaLocation="ome.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2012-06" schemaLocation="SA.xsd"/>
+	<!-- -->
 
 	<xsd:annotation>
 		<xsd:documentation>
@@ -52,6 +52,7 @@
 
 	<xsd:element name="Plate"> <!-- top level definition -->
 		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>Plates</plural></xsdfu></xsd:appinfo>
 			<xsd:documentation>
 				This element identifies microtiter plates within a screen.
 				A plate can belong to more than one screen.
@@ -75,38 +76,26 @@
 						</xsd:restriction>
 					</xsd:simpleType>
 				</xsd:element>
-				<xsd:element name="ScreenRef" minOccurs="0" maxOccurs="unbounded">
-					<xsd:annotation>
-						<xsd:documentation>
-							The ScreenRef element is a reference to a Screen element.
-							Plate elements may have one or more ScreenRef elements to define the screen that a plate belongs to.
-							Plates may belong to more than one screen.
-						</xsd:documentation>
-					</xsd:annotation>
-					<xsd:complexType>
-						<xsd:complexContent>
-							<xsd:extension base="OME:Reference">
-								<xsd:attribute name="ID" use="required" type="ScreenID"/>
-							</xsd:extension>
-						</xsd:complexContent>
-					</xsd:complexType>
-				</xsd:element>
 				<xsd:element ref="Well" minOccurs="0" maxOccurs="unbounded"/>
-				<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
 				<xsd:element ref="PlateAcquisition" minOccurs="0" maxOccurs="unbounded"/>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="PlateID"/>
 			<xsd:attribute name="Name" use="optional" type="xsd:string">
 				<xsd:annotation>
 					<xsd:documentation>
-						The Name identifies the plate to the user.	
+						The Name identifies the plate to the user.
 						It is used much like the ID, and so must be 
 						unique within the document.
 						
 						If a plate name is not available when one is needed
 						it will be constructed in the following order:
 						1. If name is available use it.
-						2. If not use "Start time - End time" 
+						2. If not use "Start time - End time"
 						    (NOTE: Not a subtraction! A string representation
 						    of the two times separated by a dash.)
 						3. If these times are not available use the Plate ID.
@@ -148,7 +137,7 @@
 					<xsd:documentation>
 						This defines the X position to use for the origin of the
 						fields (individual images) taken in a well. It is used 
-						with the PositionX in the WellSample to display the fields
+						with the X in the WellSample to display the fields
 						in the correct position relative to each other. Each Well
 						in the plate has the same well origin. [units:none]
 						
@@ -162,7 +151,7 @@
 					<xsd:documentation>
 						This defines the Y position to use for the origin of the
 						fields (individual images) taken in a well. It is used 
-						with the PositionY in the WellSample to display the fields
+						with the Y in the WellSample to display the fields
 						in the correct position relative to each other. Each Well
 						in the plate has the same well origin. [units:none]
 						
@@ -182,6 +171,13 @@
 				<xsd:annotation>
 					<xsd:documentation>
 						The number of columns in the plate 
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="FieldIndex" use="optional" type="OME:NonNegativeInt">
+				<xsd:annotation>
+					<xsd:documentation>
+						The index of the WellSample to display as the default Field
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -216,12 +212,12 @@
 						
 						CAPITALsmall, each running A to Z, small first
 						e.g. Aa, Ab, Ac, ... Ax, Ay, Az, Ba, Bb, Bc, ... By, Bz, Ca, Cb, ...
-						This is in use by some plate manufactures. 
+						This is in use by some plate manufactures.
 						
 						Single letter, then double letter, then triple letter, and so on
 						e.g. A, B, C, ... X, Y, Z, AA, BB, CC, ... YY, ZZ, AAA, BBB, ...
 						This has the advantage that the first 26 are the same as the standard
-						but has a problem an the labels get wider and wider leading to user 
+						but has a problem an the labels get wider and wider leading to user
 						interface problems. 
 					</xsd:documentation>
 				</xsd:annotation>
@@ -244,6 +240,7 @@
 
 	<xsd:element name="Reagent"> <!-- top level definition -->
 		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>Reagents</plural></xsdfu></xsd:appinfo>
 			<xsd:documentation>
 				Reagent is used to describe a chemical or some other physical experimental parameter.
 			</xsd:documentation>
@@ -262,7 +259,11 @@
 						</xsd:restriction>
 					</xsd:simpleType>
 				</xsd:element>
-				<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="ReagentID"/>
 			<xsd:attribute name="Name" use="optional" type="xsd:string">
@@ -301,6 +302,7 @@
 
 	<xsd:element name="Screen"> <!-- top level definition -->
 		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>Screens</plural></xsdfu></xsd:appinfo>
 			<xsd:documentation>
 				The Screen element is a grouping for Plates.
 				The required attribute is the Screen's Name and ID - both must be unique within the document.
@@ -327,6 +329,7 @@
 				<xsd:element ref="Reagent" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element name="PlateRef" minOccurs="0" maxOccurs="unbounded">
 					<xsd:annotation>
+						<xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
 						<xsd:documentation>
 							The PlateRef element is a reference to a Plate element.
 							Screen elements may have one or more PlateRef elements to define the plates that are part of the screen.
@@ -341,7 +344,11 @@
 						</xsd:complexContent>
 					</xsd:complexType>
 				</xsd:element>
-				<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="ScreenID"/>
 			<xsd:attribute name="Name" use="optional" type="xsd:string"/>
@@ -395,6 +402,7 @@
 	
 	<xsd:element name="PlateAcquisition"> <!-- top level definition -->
 		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>PlateAcquisitions</plural></xsdfu></xsd:appinfo>
 			<xsd:documentation>
 				PlateAcquisition is used to describe a single acquisition run for a plate.
 				This object is used to record the set of images acquired in a single 
@@ -417,7 +425,11 @@
 					</xsd:simpleType>
 				</xsd:element>
 				<xsd:element ref="WellSampleRef" minOccurs="0" maxOccurs="unbounded"/>
-				<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="PlateAcquisitionID"/>
 			<xsd:attribute name="Name" use="optional" type="xsd:string"/>
@@ -456,6 +468,7 @@
 
 	<xsd:element name="Well"> <!-- top level definition -->
 		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>Wells</plural></xsdfu></xsd:appinfo>
 			<xsd:documentation>
 				A Well is a component of the Well/Plate/Screen construct to describe screening applications.
 				A Well has a number of WellSample elements that link to the Images collected in this well.
@@ -466,9 +479,17 @@
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:element ref="WellSample" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="WellSample" minOccurs="0" maxOccurs="unbounded">
+                    <xsd:annotation>
+                        <xsd:appinfo><xsdfu><ordered/></xsdfu></xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
 				<xsd:element ref="ReagentRef" minOccurs="0" maxOccurs="1"/>
-				<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="WellID"/>
 			<xsd:attribute name="Column" use="required" type="OME:NonNegativeInt">
@@ -503,20 +524,20 @@
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="Status" use="optional" type="xsd:string">
+			<xsd:attribute name="Type" use="optional" type="xsd:string">
 				<xsd:annotation>
 					<xsd:documentation>
 						A human readable identifier for the screening status. 
 						e.g. empty, positive control, negative control, control, experimental, etc.
-						This string is likely to become an enumeration in future releases.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="Color" use="optional" type="xsd:int" default="-2147483648">
+			<xsd:attribute name="Color" use="optional" type="OME:Color" default="-1">
 				<xsd:annotation>
 					<xsd:documentation>
 						A marker color used to highlight the well - encoded as RGBA
-						The default value "-2147483648" is #FFFFFFFF so solid white (it is a signed 32 bit value)
+						The default value "-1" is #FFFFFFFF so solid white (it is a signed 32 bit value)
+						NOTE: Prior to the 2012-06 schema the default value was incorrect and produced a transparent red not solid white.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -531,20 +552,26 @@
 
 	<xsd:element name="WellSample"> <!-- top level definition -->
 		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>WellSamples</plural></xsdfu></xsd:appinfo>
 			<xsd:documentation>
 				WellSample is an individual image that has been captured within a Well.
 			</xsd:documentation>
 		</xsd:annotation> 
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:element ref="ImageRef" minOccurs="0" maxOccurs="1">
+				<xsd:element ref="OME:ImageRef" minOccurs="0" maxOccurs="1">
 					<xsd:annotation>
+						<xsd:appinfo><xsdfu><injected/></xsdfu></xsd:appinfo>
 						<xsd:documentation>
 							This is the main link to the core Image element
 						</xsd:documentation>
 					</xsd:annotation>	  
 				</xsd:element>
-				<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="WellSampleID"/>
 			<xsd:attribute name="PositionX" use="optional" type="xsd:float">
@@ -590,23 +617,6 @@
 			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:WellSample:\S+)|(WellSample:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
-
-	<xsd:element name="ImageRef"> <!-- top level definition -->
-		<xsd:annotation>
-			<xsd:documentation>
-				The ImageRef element is a reference to a OME:Image element.
-				Note: at present this is only used from SPW. If it is used more 
-				widely in the future it will be moved into the main OME schema.
-			</xsd:documentation>
-		</xsd:annotation>
-		<xsd:complexType>
-			<xsd:complexContent>
-				<xsd:extension base="OME:Reference">
-					<xsd:attribute name="ID" use="required" type="OME:ImageID"/>
-				</xsd:extension>
-			</xsd:complexContent>
-		</xsd:complexType>
-	</xsd:element>
 	
 	<xsd:element name="WellSampleRef"> <!-- top level definition -->
 		<xsd:annotation>

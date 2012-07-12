@@ -3,7 +3,7 @@
 <!--
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     #
-    # Copyright (C) 2002-2011 Open Microscopy Environment
+    # Copyright (C) 2002-2012 Open Microscopy Environment
     #       Massachusetts Institute of Technology,
     #       National Institutes of Health,
     #       University of Dundee,
@@ -25,37 +25,36 @@
 	# Written by: Ilya G. Goldberg, Andrew J Patterson
 	#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -->
-<xsd:schema xmlns="http://www.openmicroscopy.org/Schemas/OME/2011-06" 
-	targetNamespace="http://www.openmicroscopy.org/Schemas/OME/2011-06" 
+<xsd:schema xmlns="http://www.openmicroscopy.org/Schemas/OME/2012-06" 
+	targetNamespace="http://www.openmicroscopy.org/Schemas/OME/2012-06" 
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
-	xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2011-06"
-	xmlns:BIN="http://www.openmicroscopy.org/Schemas/BinaryFile/2011-06" 
-	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2011-06" 
-	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2011-06" 
-	xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2011-06" 
+	xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2012-06"
+	xmlns:BIN="http://www.openmicroscopy.org/Schemas/BinaryFile/2012-06" 
+	xmlns:SPW="http://www.openmicroscopy.org/Schemas/SPW/2012-06" 
+	xmlns:SA="http://www.openmicroscopy.org/Schemas/SA/2012-06" 
+	xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2012-06" 
 	xmlns:xml="http://www.w3.org/XML/1998/namespace"
 	version="1" 
 	elementFormDefault="qualified">
-	<!-- Using the svn location for import --> 
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2011-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/InProgress/BinaryFile.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SPW/2011-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/InProgress/SPW.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2011-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/InProgress/SA.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/ROI/2011-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/InProgress/ROI.xsd"/>
-	<!-- Using the local directory location for import 
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2011-06" schemaLocation="BinaryFile.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SPW/2011-06" schemaLocation="SPW.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2011-06" schemaLocation="SA.xsd"/>
-	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/ROI/2011-06" schemaLocation="ROI.xsd"/>
-	-->
+	<!-- Using the svn location for import 
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2012-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/InProgress/BinaryFile.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SPW/2012-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/InProgress/SPW.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2012-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/InProgress/SA.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/ROI/2012-06" schemaLocation="http://git.openmicroscopy.org/src/develop/components/specification/InProgress/ROI.xsd"/>
+	Using the local directory location for import -->
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/BinaryFile/2012-06" schemaLocation="BinaryFile.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SPW/2012-06" schemaLocation="SPW.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/SA/2012-06" schemaLocation="SA.xsd"/>
+	<xsd:import namespace="http://www.openmicroscopy.org/Schemas/ROI/2012-06" schemaLocation="ROI.xsd"/>
+	<!-- -->
 	
 	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd"/>
 
 	<xsd:annotation>
 		<xsd:documentation>
 			Open Microscopy Environment
-			OME XML Schema April 2011
+			OME XML Schema June 2012
 			Author:  Ilya G. Goldberg, Andrew J Patterson
-			Copyright (C) 2002-2011 Open Microscopy Environment
 		</xsd:documentation>
 	</xsd:annotation>
 
@@ -89,7 +88,7 @@
 					<xsd:element ref="SPW:Plate" minOccurs="0" maxOccurs="unbounded"/>
 					<xsd:element ref="SPW:Screen" minOccurs="0" maxOccurs="unbounded"/>
 					<xsd:element ref="Experimenter" minOccurs="0" maxOccurs="unbounded"/>
-					<xsd:element ref="Group" minOccurs="0" maxOccurs="unbounded"/>
+					<xsd:element ref="ExperimenterGroup" minOccurs="0" maxOccurs="unbounded"/>
 					<xsd:element ref="Instrument" minOccurs="0" maxOccurs="unbounded"/>
 					<xsd:element ref="Image" minOccurs="0" maxOccurs="unbounded"/>
 					<xsd:element ref="SA:StructuredAnnotations" minOccurs="0" maxOccurs="1"/>
@@ -152,7 +151,7 @@
 			</xsd:attribute>
 		</xsd:complexType>
 
-		<!-- Unique IDs and Valid References -->
+		<!-- Unique IDs -->
 		<xsd:key name="ChannelIDKey"><xsd:selector xpath="OME:Image/OME:Pixels/OME:Channel"/><xsd:field xpath="@ID"/></xsd:key>
 		<xsd:key name="DatasetIDKey"><xsd:selector xpath="OME:Dataset"/><xsd:field xpath="@ID"/></xsd:key>
 		<xsd:key name="DetectorIDKey"><xsd:selector xpath="OME:Instrument/OME:Detector"/><xsd:field xpath="@ID"/></xsd:key>
@@ -161,12 +160,11 @@
 		<xsd:key name="ExperimenterIDKey"><xsd:selector xpath="OME:Experimenter"/><xsd:field xpath="@ID"/></xsd:key>
 		<xsd:key name="FilterIDKey"><xsd:selector xpath="OME:Instrument/OME:Filter"/><xsd:field xpath="@ID"/></xsd:key>
 		<xsd:key name="FilterSetIDKey"><xsd:selector xpath="OME:Instrument/OME:FilterSet"/><xsd:field xpath="@ID"/></xsd:key>
-		<xsd:key name="GroupIDKey"><xsd:selector xpath="OME:Group"/><xsd:field xpath="@ID"/></xsd:key>
+		<xsd:key name="ExperimenterGroupIDKey"><xsd:selector xpath="OME:ExperimenterGroup"/><xsd:field xpath="@ID"/></xsd:key>
 		<xsd:key name="ImageIDKey"><xsd:selector xpath="OME:Image"/><xsd:field xpath="@ID"/></xsd:key>
 		<xsd:key name="InstrumentIDKey"><xsd:selector xpath="OME:Instrument"/><xsd:field xpath="@ID"/></xsd:key>
 		<xsd:key name="LightSourceIDKey"><xsd:selector xpath="OME:Instrument/OME:LightSource"/><xsd:field xpath="@ID"/></xsd:key>
 		<xsd:key name="MicrobeamManipulationIDKey"><xsd:selector xpath="OME:Experiment/OME:MicrobeamManipulation"/><xsd:field xpath="@ID"/></xsd:key>
-		<xsd:key name="OTFIDKey"><xsd:selector xpath="OME:Instrument/OME:OTF"/><xsd:field xpath="@ID"/></xsd:key>
 		<xsd:key name="ObjectiveIDKey"><xsd:selector xpath="OME:Instrument/OME:Objective"/><xsd:field xpath="@ID"/></xsd:key>
 		<xsd:key name="PixelsIDKey"><xsd:selector xpath="OME:Image/OME:Pixels"/><xsd:field xpath="@ID"/></xsd:key>
 		<xsd:key name="PlateIDKey"><xsd:selector xpath="SPW:Plate"/><xsd:field xpath="@ID"/></xsd:key>
@@ -178,20 +176,24 @@
 		<xsd:key name="WellSampleIDKey"><xsd:selector xpath="SPW:Plate/SPW:Well/SPW:WellSample"/><xsd:field xpath="@ID"/></xsd:key>
 		<xsd:key name="ROIIDKey"><xsd:selector xpath="ROI:ROI"/><xsd:field xpath="@ID"/></xsd:key>
 		<xsd:key name="ShapeIDKey"><xsd:selector xpath="ROI:ROI/ROI:Union/ROI:Shape"/><xsd:field xpath="@ID"/></xsd:key>
-		
+
+		<!-- Unique references -->
+		<xsd:key name="WellSampleImageRefIDKey"><xsd:selector xpath="SPW:Plate/SPW:Well/SPW:WellSample/OME:ImageRef"/><xsd:field xpath="@ID"/></xsd:key>
+
+		<!-- Valid references -->
 		<xsd:keyref name="DatasetExperimenterIDKeyRef" refer="OME:ExperimenterIDKey" ><xsd:selector xpath="OME:Dataset/OME:ExperimenterRef"/><xsd:field xpath="@ID"/></xsd:keyref>
-		<xsd:keyref name="DatasetGroupIDKeyRef" refer="OME:GroupIDKey" ><xsd:selector xpath="OME:Dataset/OME:GroupRef"/><xsd:field xpath="@ID"/></xsd:keyref>
+		<xsd:keyref name="DatasetExperimenterGroupIDKeyRef" refer="OME:ExperimenterGroupIDKey" ><xsd:selector xpath="OME:Dataset/OME:ExperimenterGroupRef"/><xsd:field xpath="@ID"/></xsd:keyref>
 		<xsd:keyref name="DatasetProjectIDKeyRef" refer="OME:ProjectIDKey" ><xsd:selector xpath="OME:Dataset/OME:ProjectRef"/><xsd:field xpath="@ID"/></xsd:keyref>
 		<xsd:keyref name="ExperimentExperimenterIDKeyRef" refer="OME:ExperimenterIDKey" ><xsd:selector xpath="OME:Experiment/OME:ExperimenterRef"/><xsd:field xpath="@ID"/></xsd:keyref>
 		<xsd:keyref name="ExperimentMicrobeamManipulationExperimenterIDKeyRef" refer="OME:ExperimenterIDKey" ><xsd:selector xpath="OME:Experiment/OME:MicrobeamManipulation/OME:ExperimenterRef"/><xsd:field xpath="@ID"/></xsd:keyref>
 		<xsd:keyref name="ExperimentMicrobeamManipulationLightSourceSettingsLightSourceIDKeyRef" refer="OME:LightSourceIDKey" ><xsd:selector xpath="OME:Experiment/OME:MicrobeamManipulation/OME:LightSourceSettings"/><xsd:field xpath="@ID"/></xsd:keyref>
-		<xsd:keyref name="ExperimenterGroupIDKeyRef" refer="OME:GroupIDKey" ><xsd:selector xpath="OME:Experimenter/OME:GroupRef"/><xsd:field xpath="@ID"/></xsd:keyref>
-		<xsd:keyref name="GroupContactExperimenterIDKeyRef" refer="OME:ExperimenterIDKey" ><xsd:selector xpath="OME:Group/OME:Contact"/><xsd:field xpath="@ID"/></xsd:keyref>
-		<xsd:keyref name="GroupLeaderExperimenterIDKeyRef" refer="OME:ExperimenterIDKey" ><xsd:selector xpath="OME:Group/OME:Leader"/><xsd:field xpath="@ID"/></xsd:keyref>
+		<xsd:keyref name="ExperimenterExperimenterGroupIDKeyRef" refer="OME:ExperimenterGroupIDKey" ><xsd:selector xpath="OME:Experimenter/OME:ExperimenterGroupRef"/><xsd:field xpath="@ID"/></xsd:keyref>
+		<xsd:keyref name="ExperimenterGroupContactExperimenterIDKeyRef" refer="OME:ExperimenterIDKey" ><xsd:selector xpath="OME:ExperimenterGroup/OME:Contact"/><xsd:field xpath="@ID"/></xsd:keyref>
+		<xsd:keyref name="ExperimenterGroupLeaderExperimenterIDKeyRef" refer="OME:ExperimenterIDKey" ><xsd:selector xpath="OME:ExperimenterGroup/OME:Leader"/><xsd:field xpath="@ID"/></xsd:keyref>
 		<xsd:keyref name="ImageDatasetIDKeyRef" refer="OME:DatasetIDKey" ><xsd:selector xpath="OME:Image/OME:DatasetRef"/><xsd:field xpath="@ID"/></xsd:keyref>
 		<xsd:keyref name="ImageExperimenterIDKeyRef" refer="OME:ExperimenterIDKey" ><xsd:selector xpath="OME:Image/OME:ExperimenterRef"/><xsd:field xpath="@ID"/></xsd:keyref>
 		<xsd:keyref name="ImageExperimentIDKeyRef" refer="OME:ExperimentIDKey" ><xsd:selector xpath="OME:Image/OME:ExperimentRef"/><xsd:field xpath="@ID"/></xsd:keyref>
-		<xsd:keyref name="ImageGroupIDKeyRef" refer="OME:GroupIDKey" ><xsd:selector xpath="OME:Image/OME:GroupRef"/><xsd:field xpath="@ID"/></xsd:keyref>
+		<xsd:keyref name="ImageExperimenterGroupIDKeyRef" refer="OME:ExperimenterGroupIDKey" ><xsd:selector xpath="OME:Image/OME:ExperimenterGroupRef"/><xsd:field xpath="@ID"/></xsd:keyref>
 		<xsd:keyref name="ImageInstrumentIDKeyRef" refer="OME:InstrumentIDKey" ><xsd:selector xpath="OME:Image/OME:InstrumentRef"/><xsd:field xpath="@ID"/></xsd:keyref>
 		<xsd:keyref name="ImageMicrobeamManipulationIDKeyRef" refer="OME:MicrobeamManipulationIDKey" ><xsd:selector xpath="OME:Image/OME:MicrobeamManipulationRef"/><xsd:field xpath="@ID"/></xsd:keyref>
 		<xsd:keyref name="ImageObjectiveSettingsObjectiveIDKeyRef" refer="OME:ObjectiveIDKey" ><xsd:selector xpath="OME:Image/OME:ObjectiveSettings"/><xsd:field xpath="@ID"/></xsd:keyref>
@@ -203,18 +205,15 @@
 		<xsd:keyref name="ImagePixelsChannelLightPathEmissionFilterIDKeyRef" refer="OME:FilterIDKey" ><xsd:selector xpath="OME:Image/OME:Pixels/OME:Channel/OME:LightPath/OME:EmissionFilterPath/OME:FilterRef"/><xsd:field xpath="@ID"/></xsd:keyref>
 		<xsd:keyref name="ImagePixelsChannelLightPathEmissionDichroicIDKeyRef" refer="OME:DichroicIDKey" ><xsd:selector xpath="OME:Image/OME:Pixels/OME:Channel/OME:LightPath/OME:EmissionFilterPath/OME:DichroicRef"/><xsd:field xpath="@ID"/></xsd:keyref>
 		<xsd:keyref name="ImagePixelsChannelLightSourceSettingsLightSourceIDKeyRef" refer="OME:LightSourceIDKey" ><xsd:selector xpath="OME:Image/OME:Pixels/OME:Channel/OME:LightSourceSettings"/><xsd:field xpath="@ID"/></xsd:keyref>
-		<xsd:keyref name="ImagePixelsChannelOTFIDKeyRef" refer="OME:OTFIDKey" ><xsd:selector xpath="OME:Image/OME:Pixels/OME:Channel/OME:OTFRef"/><xsd:field xpath="@ID"/></xsd:keyref>
 		<xsd:keyref name="InstrumentFilterSetExcitationFilterIDKeyRef" refer="OME:FilterIDKey" ><xsd:selector xpath="OME:Instrument/OME:FilterSet/OME:ExcitationFilterRef"/><xsd:field xpath="@ID"/></xsd:keyref>
 		<xsd:keyref name="InstrumentFilterSetDichroicIDKeyRef" refer="OME:DichroicIDKey" ><xsd:selector xpath="OME:Instrument/OME:FilterSet/OME:DichroicRef"/><xsd:field xpath="@ID"/></xsd:keyref>
 		<xsd:keyref name="InstrumentFilterSetEmissionFilterIDKeyRef" refer="OME:FilterIDKey" ><xsd:selector xpath="OME:Instrument/OME:FilterSet/OME:EmissionFilterRef"/><xsd:field xpath="@ID"/></xsd:keyref>
 		<xsd:keyref name="InstrumentLightSourceLaserPumpLightSourceIDKey" refer="OME:LightSourceIDKey" ><xsd:selector xpath="OME:Instrument/OME:LightSource/OME:Laser/OME:Pump"/><xsd:field xpath="@ID"/></xsd:keyref>
-		<xsd:keyref name="InstrumentOTFFilterSetIDKeyRef" refer="OME:FilterSetIDKey" ><xsd:selector xpath="OME:Instrument/OME:OTF/OME:FilterSetRef"/><xsd:field xpath="@ID"/></xsd:keyref>
-		<xsd:keyref name="InstrumentOTFObjectiveSettingsObjectiveIDKeyRef" refer="OME:ObjectiveIDKey" ><xsd:selector xpath="OME:Instrument/OME:OTF/OME:ObjectiveSettings"/><xsd:field xpath="@ID"/></xsd:keyref>
 		<xsd:keyref name="PlateScreenIDKeyRef" refer="OME:ScreenIDKey" ><xsd:selector xpath="SPW:Plate/SPW:ScreenRef"/><xsd:field xpath="@ID"/></xsd:keyref>
 		<xsd:keyref name="PlateWellReagentIDKeyRef" refer="OME:ReagentIDKey" ><xsd:selector xpath="SPW:Plate/SPW:Well/SPW:ReagentRef"/><xsd:field xpath="@ID"/></xsd:keyref>
 		<xsd:keyref name="PlateWellWellSampleImageIDKeyRef" refer="OME:ImageIDKey" ><xsd:selector xpath="SPW:Plate/SPW:Well/SPW:WellSample/SPW:ImageRef"/><xsd:field xpath="@ID"/></xsd:keyref>
 		<xsd:keyref name="ProjectExperimenterIDKeyRef" refer="OME:ExperimenterIDKey" ><xsd:selector xpath="OME:Project/OME:ExperimenterRef"/><xsd:field xpath="@ID"/></xsd:keyref>
-		<xsd:keyref name="ProjectGroupIDKeyRef" refer="OME:GroupIDKey" ><xsd:selector xpath="OME:Project/OME:GroupRef"/><xsd:field xpath="@ID"/></xsd:keyref>
+		<xsd:keyref name="ProjectExperimenterGroupIDKeyRef" refer="OME:ExperimenterGroupIDKey" ><xsd:selector xpath="OME:Project/OME:ExperimenterGroupRef"/><xsd:field xpath="@ID"/></xsd:keyref>
 		<xsd:keyref name="ScreenPlateIDKeyRef" refer="OME:PlateIDKey" ><xsd:selector xpath="SPW:Screen/SPW:PlateRef"/><xsd:field xpath="@ID"/></xsd:keyref>
 		<xsd:keyref name="ScreenScreenAcquisitionWellSampleIDKeyRef" refer="OME:WellSampleIDKey" ><xsd:selector xpath="SPW:Screen/SPW:ScreenAcquisition/SPW:WellSampleRef"/><xsd:field xpath="@ID"/></xsd:keyref>
 		<xsd:keyref name="ExperimentMicrobeamManipulationROIIDKeyRef" refer="OME:ROIIDKey" ><xsd:selector xpath="OME:Experiment/OME:MicrobeamManipulation/ROI:ROIRef"/><xsd:field xpath="@ID"/></xsd:keyref>
@@ -224,6 +223,7 @@
 	<!-- Key pixel storage elements -->
 	<xsd:element name="Image"> <!-- top level definition -->
 		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>Images</plural></xsdfu></xsd:appinfo>
 			<xsd:documentation>
 				This element describes the actual image and its meta-data.
 				The elements that are references (ending in Ref or Settings) refer to
@@ -234,18 +234,17 @@
 				guaranteed to be an invalid document. The required attributes and 
 				elements are ID and Pixels.
 				
-
-ExperimenterRef is required for all Images with well formed LSIDs.
+				ExperimenterRef is required for all Images with well formed LSIDs.
 				ImageType is a vendor-specific designation of the type of image this is.
 				Examples of ImageType include 'STK', 'SoftWorx', etc.
-				The Name attributes are in all cases the name of the element instance. In this case, the name of the image,
-				not necessarily the filename.
+				The Name attributes are in all cases the name of the element
+				instance. In this case, the name of the image, not necessarily the filename.
 				PixelSize* is in microns[um].
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:element name="AcquiredDate" minOccurs="0" maxOccurs="1" type="xsd:dateTime">
+				<xsd:element name="AcquisitionDate" minOccurs="0" maxOccurs="1" type="xsd:dateTime">
 					<xsd:annotation>
 						<xsd:documentation>
 							The acquisition date of the Image.
@@ -267,16 +266,27 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					</xsd:simpleType>
 				</xsd:element>
 				<xsd:element ref="ExperimentRef" minOccurs="0" maxOccurs="1"/>
-				<xsd:element ref="GroupRef" minOccurs="0" maxOccurs="1"/>
-				<xsd:element ref="DatasetRef" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="ExperimenterGroupRef" minOccurs="0" maxOccurs="1"/>
 				<xsd:element ref="InstrumentRef" minOccurs="0" maxOccurs="1"/>
 				<xsd:element ref="ObjectiveSettings" minOccurs="0" maxOccurs="1"/>
 				<xsd:element ref="ImagingEnvironment" minOccurs="0" maxOccurs="1"/>
 				<xsd:element ref="StageLabel" minOccurs="0" maxOccurs="1"/>
 				<xsd:element ref="Pixels" minOccurs="1" maxOccurs="1"/>
-				<xsd:element ref="ROI:ROIRef" minOccurs="0" maxOccurs="unbounded"/>
-				<xsd:element ref="MicrobeamManipulationRef" minOccurs="0" maxOccurs="unbounded"/>
-				<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="ROI:ROIRef" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element ref="MicrobeamManipulationRef" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="ImageID"/>
 			<xsd:attribute name="Name" use="optional" type="xsd:string"/>
@@ -284,7 +294,15 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 	</xsd:element>
 	<xsd:element name="Pixels"> <!-- top level definition -->
 		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>Pixels</plural></xsdfu></xsd:appinfo>
 			<xsd:documentation>
+				NOTE: Pixels is DEPRECATED, but it is still required.
+				This is just notice that the contents of Pixels will be
+				moved up to Image in the next release. This is because there
+				has only been 1 Pixels object in each Image for some time.
+				The concept of multiple Pixels sets for one Image failed to
+				take off. It is therefore redundant.
+
 				The Image will be unreadable if any of the required Pixel attributes are missing.
 				The Pixels themselves are stored within the file compressed by plane, and encoded in Base64.
 				The Pixels element must contain a list of BinData, each containing a single plane of pixels.
@@ -294,14 +312,22 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:element ref="Channel" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="Channel" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:appinfo><xsdfu><ordered/></xsdfu></xsd:appinfo>
+					</xsd:annotation>
+                </xsd:element>
 				<xsd:choice minOccurs="1" maxOccurs="1">
 					<xsd:element ref="BIN:BinData" minOccurs="1" maxOccurs="unbounded"/>
 					<xsd:element ref="TiffData" minOccurs="1" maxOccurs="unbounded"/>
 					<xsd:element ref="MetadataOnly" minOccurs="1" maxOccurs="1"/>
 				</xsd:choice>
 				<xsd:element ref="Plane" minOccurs="0" maxOccurs="unbounded"/>
-				<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="PixelsID"/>
 			<xsd:attribute name="DimensionOrder" use="required">
@@ -381,6 +407,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 	</xsd:element>
 	<xsd:element name="Plane"> <!-- top level definition -->
 		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>Planes</plural></xsdfu></xsd:appinfo>
 			<xsd:documentation>
 				The Plane object holds microscope stage and image timing data 
 				for a given channel/z-section/timepoint. 
@@ -398,7 +425,11 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					</xsd:annotation>
 					<xsd:element name="HashSHA1" type="Hex40" minOccurs="1" maxOccurs="1"/>
 				</xsd:choice>
-				<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
 			</xsd:sequence>
 			<xsd:attribute name="TheZ" use="required" type="NonNegativeInt">
 				<xsd:annotation>
@@ -463,6 +494,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 	</xsd:element>
 	<xsd:element name="Channel"> <!-- top level definition -->
 		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>Channels</plural></xsdfu></xsd:appinfo>
 			<xsd:documentation>
 				There must be one per channel in the Image, even for a single-plane image.  
 				And information about how each of them was acquired is stored in the various optional *Ref elements.  Each Logical Channel is composed of one or more
@@ -471,8 +503,6 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 				instead the output of a color camera would be treated similarly - one Logical channel with three ChannelComponents in this case.
 				The total number of ChannelComponents for a set of pixels must equal SizeC.
 				The IlluminationType attribute is a string enumeration which may be set to 'Transmitted', 'Epifluorescence', 'Oblique', or 'NonLinear'.
-				The PhotometricInterpretation attribute is used to describe how to display a multi-component channel.  This attribute may be set to:
-				'monochrome', 'RGB', 'ARGB', 'CMYK', 'HSV'.  The default for single-component channels is 'monochrome'.
 				The user interface logic for labeling a given channel for the user should use the first existing attribute in the following sequence:
 				Name -> Fluor -> EmissionWavelength -> ChannelComponent/Index.
 			</xsd:documentation>
@@ -480,10 +510,13 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 		<xsd:complexType>
 			<xsd:sequence>
 				<xsd:element ref="LightSourceSettings" minOccurs="0" maxOccurs="1"/>
-				<xsd:element ref="OTFRef" minOccurs="0" maxOccurs="1"/>
 				<xsd:element ref="DetectorSettings" minOccurs="0" maxOccurs="1"/>
 				<xsd:element ref="FilterSetRef" minOccurs="0" maxOccurs="1"/>
-				<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
 				<xsd:element ref="LightPath" minOccurs="0" maxOccurs="1"/>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="ChannelID"/>
@@ -613,11 +646,12 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
-			<xsd:attribute name="Color" use="optional" type="xsd:int" default="-2147483648">
+			<xsd:attribute name="Color" use="optional" type="Color" default="-1">
 				<xsd:annotation>
 					<xsd:documentation>
-						A color used render this channel - encoded as RGBA
-						The default value "-2147483648" is #FFFFFFFF so solid white (it is a signed 32 bit value)
+						A color used to render this channel - encoded as RGBA
+						The default value "-1" is #FFFFFFFF so solid white (it is a signed 32 bit value)
+						NOTE: Prior to the 2012-06 schema the default value was incorrect and produced a transparent red not solid white.
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -627,6 +661,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 	<!-- Other elements associated with pixel storage -->
 	<xsd:element name="MetadataOnly"> <!-- top level definition -->
 		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>MetadataOnlyMarkers</plural></xsdfu></xsd:appinfo>
 			<xsd:documentation>
 				This place holder means there is on pixel data in this file.
 			</xsd:documentation>
@@ -634,6 +669,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 	</xsd:element>
 	<xsd:element name="TiffData"> <!-- top level definition -->
 		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>TiffDataBlocks</plural></xsdfu></xsd:appinfo>
 			<xsd:documentation>
 				This described the location of the pixel data in a tiff file.
 			</xsd:documentation>
@@ -712,6 +748,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 	</xsd:element>
 	<xsd:element name="StageLabel"> <!-- top level definition -->
 		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>StageLabels</plural></xsdfu></xsd:appinfo>
 			<xsd:documentation>
 				The StageLabel is used to specify a name and position for a stage position in the microscope's reference frame.
 			</xsd:documentation>
@@ -745,6 +782,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 	<!-- Misc -->
 	<xsd:element name="MicrobeamManipulation"> <!-- top level definition -->
 		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>MicrobeamManipulations</plural></xsdfu></xsd:appinfo>
 			<xsd:documentation>
 				Defines a microbeam operation type and the region of the image it was applied to.
 				The LightSourceRef element is a reference to a LightSource specified in the Instrument element which was used for a technique other than illumination for
@@ -765,7 +803,11 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 						</xsd:restriction>
 					</xsd:simpleType>
 				</xsd:element>
-				<xsd:element ref="ROI:ROIRef" minOccurs="1" maxOccurs="unbounded"/>
+				<xsd:element ref="ROI:ROIRef" minOccurs="1" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
 				<xsd:element ref="ExperimenterRef" minOccurs="1" maxOccurs="1"/>
 				<xsd:element ref="LightSourceSettings" minOccurs="0" maxOccurs="unbounded"/>
 			</xsd:sequence>
@@ -799,19 +841,16 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 	<!-- Physical microscope elements -->
 	<xsd:element name="Instrument"> <!-- top level definition -->
 		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>Instruments</plural></xsdfu></xsd:appinfo>
 			<xsd:documentation>
 				This element describes the instrument used to capture the Image.
 				It is primarily a container for manufacturer's model and catalog 
 				numbers for the Microscope, LightSource, Detector, Objective and 
 				Filters components.
-				Additionally, one or more OTF elements may be specified, describing 
-				the optical transfer function under different conditions.
 				The Objective element contains the additional elements LensNA and Magnification.
 				The Filters element can be composed either of separate excitation, 
 				emission filters and a dichroic mirror or a single filter set. 
 				Within the Image itself, a reference is made to this one Filter element.
-				The OTF element contains an optical transfer function.
-				The same OTF can be used for all wavelengths, or there may be one per wavelength.
 				There may be multiple light sources, detectors, objectives and filters on a microscope.
 				Each of these has their own ID attribute, which can be referred to from Channel.
 				It is understood that the light path configuration can be different 
@@ -828,13 +867,13 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 				<xsd:element ref="FilterSet" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="Filter" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="Dichroic" minOccurs="0" maxOccurs="unbounded"/>
-				<xsd:element ref="OTF" minOccurs="0" maxOccurs="unbounded"/>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="InstrumentID"/>
 		</xsd:complexType>
 	</xsd:element>
 	<xsd:element name="Microscope"> <!-- top level definition -->
 		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>Microscopes</plural></xsdfu></xsd:appinfo>
 			<xsd:documentation>The microscope's manufacturer specification.</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
@@ -855,62 +894,11 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="OTF"> <!-- top level definition -->
-		<xsd:annotation>
-			<xsd:documentation>
-				NOTE: OTF is DEPRECATED as it is due to be removed. 
-				No objections were received in reply to:
-				http://lists.openmicroscopy.org.uk/pipermail/ome-devel/2011-April/001931.html
-
-				The optical transfer function. FilterSetRef refers to the set of 
-				filters used in computing the OTF.
-				This element must contain a BinData element containing the 
-				Base64-encoded OTF. These work the same way as they do for the 
-				Data element within Image.
-			</xsd:documentation>
-		</xsd:annotation>
-		<xsd:complexType>
-			<xsd:sequence>
-				<xsd:element ref="ObjectiveSettings" minOccurs="1" maxOccurs="1"/>
-				<xsd:element ref="FilterSetRef" minOccurs="0" maxOccurs="1"/>
-				<xsd:element ref="BIN:BinaryFile" minOccurs="1" maxOccurs="1"/>
-			</xsd:sequence>
-			<xsd:attribute name="ID" use="required" type="OTFID"/>
-			<xsd:attribute name="Type" use="required" type="PixelType">
-				<xsd:annotation>
-					<xsd:documentation>
-						The variable type used to specify the size of pixel the OTF is for designed for.
-					</xsd:documentation>
-				</xsd:annotation>
-			</xsd:attribute>
-			<xsd:attribute name="OpticalAxisAveraged" use="required" type="xsd:boolean">
-				<xsd:annotation>
-					<xsd:documentation>
-						The OpticalAxisAveraged is a boolean specifying whether or not 
-						optical axis averaging was done. [flag]
-					</xsd:documentation>
-				</xsd:annotation>
-			</xsd:attribute>
-			<xsd:attribute name="SizeX" use="required" type="PositiveInt">
-				<xsd:annotation>
-					<xsd:documentation>
-						The width of the OTF. [units:none]
-					</xsd:documentation>
-				</xsd:annotation>
-			</xsd:attribute>
-			<xsd:attribute name="SizeY" use="required" type="PositiveInt">
-				<xsd:annotation>
-					<xsd:documentation>
-						The height of the OTF. [units:none]
-					</xsd:documentation>
-				</xsd:annotation>
-			</xsd:attribute>
-		</xsd:complexType>
-	</xsd:element>
 
 	<!-- Image sample elements -->
 	<xsd:element name="ImagingEnvironment"> <!-- top level definition -->
 		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>ImagingEnvironments</plural></xsdfu></xsd:appinfo>
 			<xsd:documentation>
 				This describes the environment that the biological sample was in 
 				during the experiment.
@@ -953,6 +941,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 	<!-- Structure elements -->
 	<xsd:element name="Project"> <!-- top level definition -->
 		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>Projects</plural></xsdfu></xsd:appinfo>
 			<xsd:documentation>
 				The Project ID is required.
 				Datasets can be grouped into projects using a many-to-many relationship.
@@ -975,17 +964,27 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					</xsd:simpleType>
 				</xsd:element>
 				<xsd:element ref="ExperimenterRef" minOccurs="0" maxOccurs="1"/>
-				<xsd:element ref="GroupRef" minOccurs="0" maxOccurs="1"/>
-				<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="ExperimenterGroupRef" minOccurs="0" maxOccurs="1"/>
+				<xsd:element ref="DatasetRef" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
 			</xsd:sequence>
 			<xsd:attribute name="Name" use="optional" type="xsd:string"/>
 			<xsd:attribute name="ID" use="required" type="ProjectID"/>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="Group"> <!-- top level definition -->
+	<xsd:element name="ExperimenterGroup"> <!-- top level definition -->
 		<xsd:annotation>
+            <xsd:appinfo><xsdfu><plural>ExperimenterGroups</plural><global/></xsdfu></xsd:appinfo>
 			<xsd:documentation>
-				The Group ID is required.
+				The ExperimenterGroupID is required.
 				Contact information should be specified for the leader of the group and a contact person.
 				The Leader and/or Contact are themselves experimenters.
 			</xsd:documentation>
@@ -1004,34 +1003,32 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 						</xsd:restriction>
 					</xsd:simpleType>
 				</xsd:element>
-				<xsd:element ref="Leader" minOccurs="0" maxOccurs="1"/>
-				<xsd:element ref="Contact" minOccurs="0" maxOccurs="1"/>
+				<xsd:element ref="ExperimenterRef" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+                        <xsd:appinfo><xsdfu><manytomany/><childordered/></xsdfu></xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element ref="Leader" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
 			</xsd:sequence>
-			<xsd:attribute name="Name" use="optional" type="xsd:string"/>
-			<xsd:attribute name="ID" use="required" type="GroupID"/>
+			<xsd:attribute name="Name" use="optional" type="xsd:string">
+				<xsd:annotation>
+                    <xsd:appinfo><xsdfu><unique/></xsdfu></xsd:appinfo>
+				</xsd:annotation>
+            </xsd:attribute>
+			<xsd:attribute name="ID" use="required" type="ExperimenterGroupID"/>
 		</xsd:complexType>
 	</xsd:element>
 	<xsd:element name="Leader"> <!-- top level definition -->
 		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>Leaders</plural></xsdfu></xsd:appinfo>
 			<xsd:documentation>
-				Contact information for a Group leader specified using a reference 
+				Contact information for a ExperimenterGroup leader specified using a reference 
 				to an Experimenter element defined elsewhere in the document.
-			</xsd:documentation>
-		</xsd:annotation>
-		<xsd:complexType>
-			<xsd:complexContent>
-				<xsd:extension base="Reference">
-					<xsd:attribute name="ID" use="required" type="ExperimenterID"/>
-				</xsd:extension>
-			</xsd:complexContent>
-		</xsd:complexType>
-	</xsd:element>
-	<xsd:element name="Contact"> <!-- top level definition -->
-		<xsd:annotation>
-			<xsd:documentation>
-				The Contact element describes the contact person for a group of 
-				experimenters - typically a project leader or lab manager.
-				This person is specified as a reference to an OME experimenter.
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
@@ -1044,14 +1041,15 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 	</xsd:element>
 	<xsd:element name="Dataset"> <!-- top level definition -->
 		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>Datasets</plural></xsdfu></xsd:appinfo>
 			<xsd:documentation>
 				An element specifying a collection of images that are always processed together.
 				Images can belong to more than one Dataset, and a Dataset may contain more than one Image.
 				Images contain one or more DatasetRef elements to specify what datasets they belong to.
 				Once a Dataset has been processed in any way, its collection of images cannot be altered.
-				The ExperimenterRef and GroupRef elements specify the person and group this Dataset belongs to.
+				The ExperimenterRef and ExperimenterGroupRef elements specify the person and group this Dataset belongs to.
 				Projects may contain one or more Datasets, and Datasets may belong to one or more Projects.
-				This relationship is specified by listing ProjectRef elements within the Dataset element.
+				This relationship is specified by listing DatasetRef elements within the Project element.
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
@@ -1069,9 +1067,17 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					</xsd:simpleType>
 				</xsd:element>
 				<xsd:element ref="ExperimenterRef" minOccurs="0" maxOccurs="1"/>
-				<xsd:element ref="GroupRef" minOccurs="0" maxOccurs="1"/>
-				<xsd:element ref="ProjectRef" minOccurs="0" maxOccurs="unbounded"/>
-				<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="ExperimenterGroupRef" minOccurs="0" maxOccurs="1"/>
+				<xsd:element ref="ImageRef" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
 			</xsd:sequence>
 			<xsd:attribute name="Name" use="optional" type="xsd:string">
 				<xsd:annotation>
@@ -1085,6 +1091,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 	</xsd:element>
 	<xsd:element name="Experiment"> <!-- top level definition -->
 		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>Experiments</plural></xsdfu></xsd:appinfo>
 			<xsd:documentation>
 				This element describes the type of experiment.  The required Type attribute must contain one or more entries from the following list:
 				FP FRET Time-lapse 4-D+ Screen Immunocytochemistry FISH Electrophysiology  Ion-Imaging Colocalization PGI/Documentation
@@ -1153,23 +1160,22 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 	</xsd:element>
 	<xsd:element name="Experimenter"> <!-- top level definition -->
 		<xsd:annotation>
+            <xsd:appinfo><xsdfu><plural>Experimenters</plural><global/></xsdfu></xsd:appinfo>
 			<xsd:documentation>
 				This element describes a person who performed an imaging experiment.
 				This person may also be a user of the OME system, in which case the UserName element contains their login name.
-				Experimenters may belong to one or more groups which are specified using one or more GroupRef elements.
+				Experimenters may belong to one or more groups which are specified using one or more ExperimenterGroupRef elements.
 			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:element ref="GroupRef" minOccurs="0" maxOccurs="unbounded"/>
-				<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="SA:AnnotationRef" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:appinfo><xsdfu><manytomany/></xsdfu></xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
 			</xsd:sequence>
 			<xsd:attribute name="ID" use="required" type="ExperimenterID"/>
-			<xsd:attribute name="DisplayName" use="required" type="xsd:string">
-				<xsd:annotation>
-					<xsd:documentation>This is the only required name field. [plain text string]</xsd:documentation>
-				</xsd:annotation>
-			</xsd:attribute>
 			<xsd:attribute name="FirstName" use="optional" type="xsd:string">
 				<xsd:annotation>
 					<xsd:documentation>First name, sometime called christian name or given name or forename. [plain text string]</xsd:documentation>
@@ -1203,6 +1209,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			</xsd:attribute>
 			<xsd:attribute name="UserName" use="optional" type="xsd:string">
 				<xsd:annotation>
+                    <xsd:appinfo><xsdfu><unique/></xsdfu></xsd:appinfo>
 					<xsd:documentation>This is the username of the experimenter (in a 'unix' or 'database' sense). [plain text string]</xsd:documentation>
 				</xsd:annotation>
 			</xsd:attribute>
@@ -1212,7 +1219,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 	<!-- Common types -->
 	<xsd:complexType name="ManufacturerSpec">
 		<xsd:annotation>
-			<xsd:appinfo>abstract</xsd:appinfo>
+			<xsd:appinfo><xsdfu><abstract/></xsdfu></xsd:appinfo>
 			<xsd:documentation>
 				This is the base from which many microscope components are extended. E.g Objective, Filter etc. 
 				Provides attributes for recording common properties of these components such as Manufacturer name, Model etc, 
@@ -1345,10 +1352,21 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			<xsd:enumeration value = "double-complex"/>
 		</xsd:restriction>
 	</xsd:simpleType>
-
+	<xsd:simpleType name="Color">
+		<xsd:annotation>
+			<xsd:documentation>
+				A simple type that identifies itself as a Color, the value is an integer between -2,147,483,648 and 2,147,483,647 (inclusive).
+				The value is a signed 32 bit encoding of RGBA so "-1" is #FFFFFFFF or solid white.
+				NOTE: Prior to the 2012-06 schema the default values were incorrect and produced a transparent red not solid white.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:int">
+		</xsd:restriction>
+	</xsd:simpleType>
 	<!-- Objective elements -->
 	<xsd:element name="Objective"> <!-- top level definition -->
 		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>Objectives</plural></xsdfu></xsd:appinfo>
 			<xsd:documentation>
 				A description of the microscope's objective lens.
 				Required elements include the lens numerical aperture, 
@@ -1454,6 +1472,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 	</xsd:element>
 	<xsd:element name="Detector"> <!-- top level definition -->
 		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>Detectors</plural></xsdfu></xsd:appinfo>
 			<xsd:documentation>
 				The type of detector used to capture the image.
 				The Detector ID can be used as a reference within the Channel element in the Image element.
@@ -1536,6 +1555,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 	<!-- Filter elements -->
 	<xsd:element name="FilterSet"> <!-- top level definition -->
 		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>FilterSets</plural></xsdfu></xsd:appinfo>
 			<xsd:documentation>Filter set manufacturer specification</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
@@ -1544,6 +1564,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					<xsd:sequence>
 						<xsd:element name="ExcitationFilterRef" type="FilterRef" minOccurs="0" maxOccurs="unbounded">
 							<xsd:annotation>
+								<xsd:appinfo><xsdfu><plural>ExcitationFilters</plural><manytomany/></xsdfu></xsd:appinfo>
 								<xsd:documentation>
 									The Filters placed in the Excitation light path.
 								</xsd:documentation>
@@ -1552,6 +1573,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 						<xsd:element ref="DichroicRef" minOccurs="0" maxOccurs="1"/>
 						<xsd:element name="EmissionFilterRef" type="FilterRef" minOccurs="0" maxOccurs="unbounded">
 							<xsd:annotation>
+								<xsd:appinfo><xsdfu><plural>EmissionFilters</plural><manytomany/></xsdfu></xsd:appinfo>
 								<xsd:documentation>
 									The Filters placed in the Emission light path.
 								</xsd:documentation>
@@ -1565,6 +1587,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 	</xsd:element>
 	<xsd:element name="Filter"> <!-- top level definition -->
 		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>Filters</plural></xsdfu></xsd:appinfo>
 			<xsd:documentation>
 				A filter is either an excitation or emission filters.
 				There should be one filter element specified per wavelength in the image.  
@@ -1609,6 +1632,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 	</xsd:element>
 	<xsd:element name="TransmittanceRange"> <!-- top level definition -->
 		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>TransmittanceRanges</plural></xsdfu></xsd:appinfo>
 			<xsd:documentation>
 				This records the range of wavelengths that are transmitted by the filter. It also records the maximum amount of light transmitted.
 			</xsd:documentation>
@@ -1654,6 +1678,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 	</xsd:element>
 	<xsd:element name="Dichroic"> <!-- top level definition -->
 		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>Dichroics</plural></xsdfu></xsd:appinfo>
 			<xsd:documentation>The dichromatic beamsplitter or dichroic mirror used for this filter combination.</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
@@ -1666,12 +1691,14 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 	</xsd:element>
 	<xsd:element name="LightPath"> <!-- top level definition -->
 		<xsd:annotation>
+            <xsd:appinfo><xsdfu><plural>LightPaths</plural></xsdfu></xsd:appinfo>
 			<xsd:documentation>A description of the light path</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:sequence>
 				<xsd:element name="ExcitationFilterRef" type="FilterRef" minOccurs="0" maxOccurs="unbounded">
 					<xsd:annotation>
+                        <xsd:appinfo><xsdfu><plural>ExcitationFilters</plural><parentordered/><manytomany/></xsdfu></xsd:appinfo>
 						<xsd:documentation>
 							The Filters placed in the Excitation light path.
 						</xsd:documentation>
@@ -1680,6 +1707,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 				<xsd:element ref="DichroicRef" minOccurs="0" maxOccurs="1"/>
 				<xsd:element name="EmissionFilterRef" type="FilterRef" minOccurs="0" maxOccurs="unbounded">
 					<xsd:annotation>
+						<xsd:appinfo><xsdfu><plural>EmissionFilters</plural><manytomany/></xsdfu></xsd:appinfo>
 						<xsd:documentation>
 							The Filters placed in the Emission light path.
 						</xsd:documentation>
@@ -1701,7 +1729,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 	<!-- Light elements -->
 	<xsd:element name="LightSource"> <!-- top level definition -->
 		<xsd:annotation>
-			<xsd:appinfo>abstract-proprietary</xsd:appinfo>
+			<xsd:appinfo><xsdfu><plural>LightSources</plural><abstractproprietary/></xsdfu></xsd:appinfo>
 			<xsd:documentation>
 				The lightsource for the instrument.  An instrument may have several light sources.
 				The type of lightsource is specified by one of the child-elements which are 'Laser', 'Filament', 'Arc' or 'LightEmittingDiode'.
@@ -1739,6 +1767,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 	</xsd:element>
 	<xsd:element name="Laser"> <!-- top level definition -->
 		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>Lasers</plural></xsdfu></xsd:appinfo>
 			<xsd:documentation>
 				Laser types are specified using two attributes - the Type and the LaserMedium.
 			</xsd:documentation>
@@ -1884,6 +1913,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 	</xsd:element>
 	<xsd:element name="Arc"> <!-- top level definition -->
 		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>Arcs</plural></xsdfu></xsd:appinfo>
 			<xsd:documentation>
 				The Arc element is used to describe various kinds of Arc lamps - Hg, Xe, HgXe.
 				The Power of the Arc is now stored in the LightSource.
@@ -1909,6 +1939,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 	</xsd:element>
 	<xsd:element name="Filament"> <!-- top level definition -->
 		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>Filaments</plural></xsdfu></xsd:appinfo>
 			<xsd:documentation>
 				The Filament element is used to describe various kinds of filament bulbs such as Incadescent or Halogen.
 				The Power of the Filament is now stored in the LightSource.
@@ -1933,6 +1964,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 	</xsd:element>
 	<xsd:element name="LightEmittingDiode"> <!-- top level definition -->
 		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>LightEmittingDiodes</plural></xsdfu></xsd:appinfo>
 			<xsd:documentation>
 				The LightEmittingDiode element is used to describe
 				various kinds of LED lamps.
@@ -1968,6 +2000,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 	</xsd:element>
 	<xsd:element name="Pump"> <!-- top level definition -->
 		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>Pumps</plural></xsdfu></xsd:appinfo>
 			<xsd:documentation>
 				The Pump element is a reference to a LightSource.  It is used within the Laser element to specify the light source for the laser's pump (if any).
 			</xsd:documentation>
@@ -1984,7 +2017,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 	<!-- References -->
 	<xsd:complexType name="Reference">
 		<xsd:annotation>
-			<xsd:appinfo>abstract</xsd:appinfo>
+			<xsd:appinfo><xsdfu><abstract/></xsdfu></xsd:appinfo>
 			<xsd:documentation>
 				Reference is an empty complex type that is contained and extended by all the *Ref elements and also the Settings Complex Type
 				Each *Ref element defines an attribute named ID of simple type *ID and no other information
@@ -1992,6 +2025,21 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			</xsd:documentation>
 		</xsd:annotation>
 	</xsd:complexType>
+	
+	<xsd:element name="ImageRef"> <!-- top level definition -->
+		<xsd:annotation>
+			<xsd:documentation>
+				The ImageRef element is a reference to a OME:Image element.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:extension base="Reference">
+					<xsd:attribute name="ID" use="required" type="ImageID"/>
+				</xsd:extension>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
 	
 	<xsd:complexType name="FilterRef" > <!-- top level definition -->
 		<xsd:complexContent>
@@ -2057,14 +2105,14 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="GroupRef"> <!-- top level definition -->
+	<xsd:element name="ExperimenterGroupRef"> <!-- top level definition -->
 		<xsd:annotation>
-			<xsd:documentation>This empty element has a reference (the Group ID attribute) to a Group defined within OME.</xsd:documentation>
+			<xsd:documentation>This empty element has a reference (the ExperimenterGroup ID attribute) to a ExperimenterGroup defined within OME.</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="Reference">
-					<xsd:attribute name="ID" use="required" type="GroupID"/>
+					<xsd:attribute name="ID" use="required" type="ExperimenterGroupID"/>
 				</xsd:extension>
 			</xsd:complexContent>
 		</xsd:complexType>
@@ -2108,20 +2156,11 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			</xsd:complexContent>
 		</xsd:complexType>
 	</xsd:element>
-	<xsd:element name="OTFRef"> <!-- top level definition -->
-		<xsd:complexType>
-			<xsd:complexContent>
-				<xsd:extension base="Reference">
-					<xsd:attribute name="ID" use="required" type="OTFID"/>
-				</xsd:extension>
-			</xsd:complexContent>
-		</xsd:complexType>
-	</xsd:element>
 
 	<!-- Settings -->
 	<xsd:complexType name="Settings">
 		<xsd:annotation>
-			<xsd:appinfo>abstract</xsd:appinfo>
+			<xsd:appinfo><xsdfu><abstract/></xsdfu></xsd:appinfo>
 			<xsd:documentation>
 				Settings is an empty complex type that is contained and extended by all the *Settings elements
 				Each *Settings element defines an attribute named ID of simple type *ID and the other information that is needed.
@@ -2134,6 +2173,9 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 		</xsd:complexContent>
 	</xsd:complexType>
 	<xsd:element name="LightSourceSettings"> <!-- top level definition -->
+		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>LightSourceSettingsCombinations</plural></xsdfu></xsd:appinfo>
+		</xsd:annotation>
 		<xsd:complexType>
 			<xsd:complexContent>
 				<xsd:extension base="Settings">
@@ -2159,6 +2201,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 	</xsd:element>
 	<xsd:element name="DetectorSettings"> <!-- top level definition -->
 		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>DetectorSettingsCombinations</plural></xsdfu></xsd:appinfo>
 			<xsd:documentation>
 				This holds the setting applied to a detector as well as a
 				reference to the detector. 
@@ -2225,6 +2268,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 	</xsd:element>
 	<xsd:element name="ObjectiveSettings"> <!-- top level definition -->
 		<xsd:annotation>
+			<xsd:appinfo><xsdfu><plural>ObjectiveSettingsCombinations</plural></xsdfu></xsd:appinfo>
 			<xsd:documentation> 
 				This holds the setting applied to an objective as well as a
 				reference to the objective. 
@@ -2238,7 +2282,7 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 					<xsd:attribute name="CorrectionCollar" use="optional" type="xsd:float">
 						<xsd:annotation>
 							<xsd:documentation>
-								The CorrectionCollar is it normal an adjustable ring on the 
+								The CorrectionCollar is normally an adjustable ring on the 
 								objective. Each has an arbitrary scale on it so the values 
 								is unit-less. [units:none]
 							</xsd:documentation>
@@ -2306,9 +2350,9 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:Experimenter:\S+)|(Experimenter:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
-	<xsd:simpleType name="GroupID">
+	<xsd:simpleType name="ExperimenterGroupID">
 		<xsd:restriction base="LSID">
-			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:Group:\S+)|(Group:\S+)"/>
+			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:ExperimenterGroup:\S+)|(ExperimenterGroup:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="ExperimentID">
@@ -2349,11 +2393,6 @@ ExperimenterRef is required for all Images with well formed LSIDs.
 	<xsd:simpleType name="FilterSetID">
 		<xsd:restriction base="LSID">
 			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:FilterSet:\S+)|(FilterSet:\S+)"/>
-		</xsd:restriction>
-	</xsd:simpleType>
-	<xsd:simpleType name="OTFID">
-		<xsd:restriction base="LSID">
-			<xsd:pattern value="(urn:lsid:([\w\-\.]+\.[\w\-\.]+)+:OTF:\S+)|(OTF:\S+)"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="DetectorID">
