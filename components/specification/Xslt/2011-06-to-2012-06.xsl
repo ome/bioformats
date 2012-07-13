@@ -452,7 +452,7 @@
 			xmlns:ROI="http://www.openmicroscopy.org/Schemas/ROI/2012-06"
 			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 			xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2012-06 
-			../../../InProgress/ome.xsd">
+			http://www.openmicroscopy.org/Schemas/OME/2012-06/ome.xsd">
 			<xsl:apply-templates/>
 		</OME>
 	</xsl:template>
