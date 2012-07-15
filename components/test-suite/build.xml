@@ -135,7 +135,7 @@ Type "ant -p" for a list of targets.
     description="run automated tests in group 'automated'">
     <testng sourcedir="${dest.dir}"
       annotations="Javadoc" groups="automated" testname="Automated tests"
-      listener="loci.tests.testng.DotTestListener"
+      listeners="loci.tests.testng.DotTestListener,loci.tests.testng.OrderingListener"
       suitename="LOCI software test suite"
       failureProperty="failedTest" useDefaultListeners="false">
       <classpath>

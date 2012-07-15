@@ -71,10 +71,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.testng.SkipException;
-import org.testng.annotations.AfterClass;
 
 /**
- * TestNG tester for Bio-Formats file format readers.
+ * TestNG tester for Bio-Formats file format jeaders.
  * Details on failed tests are written to a log file, for easier processing.
  *
  * NB: {@link loci.formats.ome} and ome-xml.jar
@@ -105,8 +104,8 @@ public class FormatReaderTest {
   /** List of files to skip. */
   private static List<String> skipFiles = new LinkedList<String>();
 
-  /** Global shared reader for use in all tests. */
-  private static BufferedImageReader reader;
+  /** Global shared jeader for use in all tests. */
+  private BufferedImageReader reader;
 
   // -- Fields --
 
@@ -144,7 +143,16 @@ public class FormatReaderTest {
 
   // -- Setup/teardown methods --
 
-  @AfterClass
+  /**
+   * @testng.before-class
+   */
+  public void setup() throws IOException {
+    initFile();
+  }
+
+  /**
+   * @testng.after-class
+   */
   public void close() throws IOException {
     reader.close();
     HashMap<String, Object> idMap = Location.getIdMap();
