@@ -70,6 +70,14 @@ for i = 1: sizeC
     metadata.setChannelSamplesPerPixel(toInt(1), 0, i-1);
 end
 
+% Here you can edit the function and pass metadata using the adequate set methods, e.g.
+% metadata.setPixelsPhysicalSizeX(ome.xml.model.primitives.PositiveFloat(java.lang.Double(.106)),0);
+%
+% For more information, see http://trac.openmicroscopy.org.uk/ome/wiki/BioFormats-Matlab
+%
+% For future versions of this function, we plan to support passing metadata as
+% parameter/key value pairs
+
 % Create ImageWriter
 writer = loci.formats.ImageWriter();
 writer.setMetadataRetrieve(metadata);
