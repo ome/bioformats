@@ -73,7 +73,7 @@ import org.slf4j.LoggerFactory;
 import org.testng.SkipException;
 
 /**
- * TestNG tester for Bio-Formats file format jeaders.
+ * TestNG tester for Bio-Formats file format readers.
  * Details on failed tests are written to a log file, for easier processing.
  *
  * NB: {@link loci.formats.ome} and ome-xml.jar

@@ -89,7 +89,7 @@ Type "ant -p" for a list of targets.
     description="run all automated tests">
     <testng sourcedir="${dest.dir}"
       annotations="Javadoc" groups="all" testname="All tests"
-      listener="loci.tests.testng.DotTestListener,loci.tests.testng.OrderingListener"
+      listeners="loci.tests.testng.DotTestListener,loci.tests.testng.OrderingListener"
       suitename="LOCI software test suite"
       failureProperty="failedTest" useDefaultListeners="false">
       <classpath>
@@ -158,7 +158,7 @@ Type "ant -p" for a list of targets.
     description="run automated tests in group 'fast'">
     <testng sourcedir="${dest.dir}"
       annotations="Javadoc" groups="fast" testname="Fast tests"
-      listener="loci.tests.testng.DotTestListener,loci.tests.testng.OrderingListener"
+      listeners="loci.tests.testng.DotTestListener,loci.tests.testng.OrderingListener"
       suitename="LOCI software test suite"
       failureProperty="failedTest">
       <classpath>
@@ -181,7 +181,7 @@ Type "ant -p" for a list of targets.
     description="run automated tests in group 'pixels'">
     <testng sourcedir="${dest.dir}"
       annotations="Javadoc" groups="pixels" testname="Pixels tests"
-      listener="loci.tests.testng.DotTestListener,loci.tests.testng.OrderingListener"
+      listeners="loci.tests.testng.DotTestListener,loci.tests.testng.OrderingListener"
       suitename="LOCI software test suite"
       failureProperty="failedTest">
       <classpath>
@@ -204,7 +204,7 @@ Type "ant -p" for a list of targets.
     description="run automated tests in group 'xml'">
     <testng sourcedir="${dest.dir}"
       annotations="Javadoc" groups="xml" testname="XML tests"
-      listener="loci.tests.testng.DotTestListener,loci.tests.testng.OrderingListener"
+      listeners="loci.tests.testng.DotTestListener,loci.tests.testng.OrderingListener"
       suitename="LOCI software test suite"
       failureProperty="failedTest">
       <classpath>
@@ -227,7 +227,7 @@ Type "ant -p" for a list of targets.
     description="run automated tests in group 'type'">
     <testng sourcedir="${dest.dir}"
       annotations="Javadoc" groups="type" testname="Type tests"
-      listener="loci.tests.testng.DotTestListener,loci.tests.testng.OrderingListener"
+      listeners="loci.tests.testng.DotTestListener,loci.tests.testng.OrderingListener"
       suitename="LOCI software test suite"
       failureProperty="failedTest">
       <classpath>
