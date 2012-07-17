@@ -1216,8 +1216,14 @@ public class FormatReaderTest {
       config.setSeries(i);
 
       String realDescription = retrieve.getImageDescription(i);
+      if (realDescription != null) {
+        realDescription = realDescription.trim();
+      }
       if (config.hasImageDescription()) {
         String expectedDescription = config.getImageDescription();
+        if (expectedDescription != null) {
+          expectedDescription = expectedDescription.trim();
+        }
 
         if (!expectedDescription.equals(realDescription) &&
           !(realDescription == null && expectedDescription.equals("null")))
