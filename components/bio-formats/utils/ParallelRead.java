@@ -24,10 +24,12 @@
  */
 
 import java.io.File;
-import loci.common.services.ServiceFactory;
+
 import loci.formats.ImageReader;
 import loci.formats.meta.IMetadata;
 import loci.formats.services.OMEXMLService;
+
+import ome.scifio.services.ServiceFactory;
 
 /**
  * Reads all files in given directory in parallel,
