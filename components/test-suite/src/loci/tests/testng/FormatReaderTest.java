@@ -141,6 +141,10 @@ public class FormatReaderTest {
     }
   }
 
+  public String getID() {
+    return id;
+  }
+
   // -- Setup/teardown methods --
 
   /**
