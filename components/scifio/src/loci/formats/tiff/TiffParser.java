@@ -41,7 +41,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Vector;
 
-import loci.common.ByteArrayHandle;
 import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
 import loci.common.Region;
@@ -526,18 +525,7 @@ public class TiffParser {
              || type == IFDType.IFD8) {
       if (count == 1) return new Long(in.readLong());
       long[] longs = new long[count];
-      if (count < 1024) {
-        for (int j=0; j<count; j++) longs[j] = in.readLong();
-      }
-      else {
-        byte[] buf = new byte[count * 8];
-        in.read(buf);
-        ByteArrayHandle tmp = new ByteArrayHandle(buf);
-        for (int j=0; j<count; j++) {
-          longs[j] = tmp.readLong();
-        }
-        tmp.close();
-      }
+      for (int j=0; j<count; j++) longs[j] = in.readLong();
       return longs;
     }
     else if (type == IFDType.RATIONAL || type == IFDType.SRATIONAL) {
