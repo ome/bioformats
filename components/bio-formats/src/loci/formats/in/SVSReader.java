@@ -69,6 +69,7 @@ public class SVSReader extends BaseTiffReader {
     super("Aperio SVS", new String[] {"svs"});
     domains = new String[] {FormatTools.HISTOLOGY_DOMAIN};
     suffixNecessary = true;
+    noSubresolutions = true;
   }
 
   // -- IFormatReader API methods --
