@@ -1,3 +1,7 @@
+4.4.1 (2012 July 20):
+* Fix a bug that prevented BigTIFF files from being read
+* Fix a bug that prevented PerkinElmer .flex files from importing into OMERO
+
 4.4.0 (2012 July 13):
 * Many, many bug fixes
 * Added support for:

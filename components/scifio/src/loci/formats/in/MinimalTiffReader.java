@@ -98,6 +98,8 @@ public class MinimalTiffReader extends FormatReader {
 
   private int lastPlane = 0;
 
+  protected boolean noSubresolutions = false;
+
   /** Number of JPEG 2000 resolution levels. */
   private Integer resolutionLevels;
 
@@ -431,7 +433,7 @@ public class MinimalTiffReader extends FormatReader {
           JPEG2000MetadataParser metadataParser =
             new JPEG2000MetadataParser(in, stripOffset + stripByteCounts[0]);
           resolutionLevels = metadataParser.getResolutionLevels();
-          if (resolutionLevels != null) {
+          if (resolutionLevels != null && !noSubresolutions) {
             if (LOGGER.isDebugEnabled()) {
               LOGGER.debug(String.format(
                   "Original resolution IFD Levels %d %dx%d Tile %dx%d",
