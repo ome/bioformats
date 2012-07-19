@@ -401,39 +401,49 @@ public class ZeissTIFFHandler extends DefaultHandler {
     else if (!nameStack.empty() && nameStack.peek().equals("Tags"))
     {
       String type = qName.substring(0,1);
-      String value = qName.substring(1);
-      int index = Integer.parseInt(value);
-
-      // A tags block should always be at least one element deep, so we should have a minimum of two elements on the stack.
-      int stackSize = nameStack.size();
-      BaseZeissReader.Context context = BaseZeissReader.Context.PLANE;
-      if (stackSize >= 2)
+      // Only process Ann, Inn and Vnn elements.  No other known
+      // elements are found in a Tags block other than Count, so
+      // ignore them.
+      if (type.equals("A") || type.equals("I") || type.equals("V"))
       {
-        if (nameStack.get(stackSize - 2).equals("ROOT"))
-          context = BaseZeissReader.Context.MAIN;
-        else if (nameStack.get(stackSize - 2).equals("Scaling"))
-          context = BaseZeissReader.Context.SCALING;
+        String value = qName.substring(1);
+        int index = Integer.parseInt(value);
+
+        // A tags block should always be at least one element deep, so we should have a minimum of two elements on the stack.
+        int stackSize = nameStack.size();
+        BaseZeissReader.Context context = BaseZeissReader.Context.PLANE;
+        if (stackSize >= 2)
+        {
+          if (nameStack.get(stackSize - 2).equals("ROOT"))
+            context = BaseZeissReader.Context.MAIN;
+          else if (nameStack.get(stackSize - 2).equals("Scaling"))
+            context = BaseZeissReader.Context.SCALING;
+        }
+
+        // This checks and copes with index mismatches if the XML is bad.
+        if (current_tag == null || current_tag.getIndex() != index)
+          current_tag = reader.new Tag(index, context);
+
+        // If the index is out of range, ignore the tag.  It will remain invalid.
+        // Note that the index counts from zero, while the total is a count.
+        if (current_tagset.found >= current_tagset.count)
+          System.out.println("Found more tags then declared");
+        if (type.equals("V")) // Set to null if empty/unset?
+          current_tag.setValue(cdata);
+        else if (type.equals("I")) // Skip if unset.
+          current_tag.setKey(Integer.parseInt(cdata));
+        else if (type.equals("A"))  // Set to 0 if unset...
+          current_tag.setCategory(Integer.parseInt(cdata));
+        else
+          System.out.println("Unknown tag: " + qName);
+        if (current_tag.valid()) {
+          current_tagset.tags.add(current_tag);
+          current_tagset.found++;
+        }
       }
-
-      // This checks and copes with index mismatches if the XML is bad.
-      if (current_tag == null || current_tag.getIndex() != index)
-        current_tag = reader.new Tag(index, context);
-
-      // If the index is out of range, ignore the tag.  It will remain invalid.
-      // Note that the index counts from zero, while the total is a count.
-      if (current_tagset.found >= current_tagset.count)
-        System.out.println("Found more tags then declared");
-      if (type.equals("V")) // Set to null if empty/unset?
-        current_tag.setValue(cdata);
-      else if (type.equals("I")) // Skip if unset.
-        current_tag.setKey(Integer.parseInt(cdata));
-      else if (type.equals("A"))  // Set to 0 if unset...
-        current_tag.setCategory(Integer.parseInt(cdata));
       else
+      {
         System.out.println("Unknown tag: " + qName);
-      if (current_tag.valid()) {
-        current_tagset.tags.add(current_tag);
-        current_tagset.found++;
       }
     }
     else
