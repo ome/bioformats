@@ -308,8 +308,7 @@ public class ITKBridgePipes {
     int bpp = FormatTools.getBytesPerPixel( reader.getPixelType() );
     int xCount = reader.getSizeX();
     int yCount = reader.getSizeY();
-    
-    //TODO: this isn't being used at all..
+
     boolean isInterleaved = reader.isInterleaved();
     boolean canDoDirect = xBegin == 0 && yBegin == 0 && xEnd == xCount-1 && yEnd == yCount-1 && rgbChannelCount == 1;
 
@@ -340,7 +339,13 @@ public class ITKBridgePipes {
                   {
                   for( int b=0; b<bpp; b++ )
                     {
-                    int index = xLen * (yLen * (rgbChannelCount * b + i) + y) + x;
+                    int index = 0;
+                    if (isInterleaved) {
+                      index = ((y * xLen + x) * rgbChannelCount + i) * bpp + b;
+                    }
+                    else {
+                      index = ((i * yLen + y) * xLen + x) * bpp + b;
+                    }
                     out.write( image[index] );
                     }
                   }
