@@ -1,3 +1,17 @@
+4.4.1 (2012 July 20):
+* Fix a bug that prevented BigTIFF files from being read
+* Fix a bug that prevented PerkinElmer .flex files from importing into OMERO
+
+4.4.0 (2012 July 13):
+* Many, many bug fixes
+* Added support for:
+  - .nd2 files from Nikon Elements version 4
+  - PerkinElmer Operetta data
+  - MJPEG-compressed AVIs
+  -  MicroManager datasets with multiple positions
+  - Zeiss CZI data
+  - IMOD data
+
 4.3.3 (2011 October 18):
 * Many bug fixes, including:
   - Speed improvements to HCImage/SimplePCI and Zeiss ZVI files

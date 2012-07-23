@@ -110,7 +110,8 @@ public class ICSWriter extends FormatWriter {
 
     int[] coords =
       FormatTools.getZCTCoords(order, sizeZ, sizeC, sizeT, planes, no);
-    int realIndex = FormatTools.getIndex(order, sizeZ, sizeC, sizeT, planes,
+    int realIndex =
+      FormatTools.getIndex(outputOrder, sizeZ, sizeC, sizeT, planes,
       coords[0], coords[1], coords[2]);
 
     int sizeX = meta.getPixelsSizeX(series).getValue().intValue();

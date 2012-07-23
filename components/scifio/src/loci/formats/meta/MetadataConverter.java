@@ -1670,11 +1670,17 @@ public final class MetadataConverter {
       }
       catch (NullPointerException e) { }
 
+      // NB: plate name is required in OMERO
       try {
         String name = src.getPlateName(i);
+        if (name == null) {
+          name = "";
+        }
         dest.setPlateName(name, i);
       }
-      catch (NullPointerException e) { }
+      catch (NullPointerException e) {
+        dest.setPlateName("", i);
+      }
 
       try {
         NamingConvention rowConvention = src.getPlateRowNamingConvention(i);
@@ -3057,11 +3063,17 @@ public final class MetadataConverter {
       }
       catch (NullPointerException e) { }
 
+      // NB: screen name is required in OMERO
       try {
         String name = src.getScreenName(i);
+        if (name == null) {
+          name = "";
+        }
         dest.setScreenName(name, i);
       }
-      catch (NullPointerException e) { }
+      catch (NullPointerException e) {
+        dest.setScreenName("", i);
+      }
 
       try {
         String protocolDescription = src.getScreenProtocolDescription(i);

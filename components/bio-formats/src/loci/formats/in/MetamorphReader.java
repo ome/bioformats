@@ -509,6 +509,8 @@ public class MetamorphReader extends BaseTiffReader {
                 // name, translate them to hyphens. (See #5922)
                 waveName = waveName.replace('/', '-');
                 waveName = waveName.replace('\\', '-');
+                waveName = waveName.replace('(', '-');
+                waveName = waveName.replace(')', '-');
                 stks[seriesNdx][pt[seriesNdx]] += waveName;
               }
             }
@@ -548,10 +550,10 @@ public class MetamorphReader extends BaseTiffReader {
       core[0].sizeX = (int) ifd.getImageWidth();
       core[0].sizeY = (int) ifd.getImageLength();
 
-      core[0].sizeZ = zc;
+      core[0].sizeZ = hasZ.size() > 0 && !hasZ.get(0) ? 1 : zc;
       core[0].sizeC = cc;
       core[0].sizeT = tc;
-      core[0].imageCount = zc * tc * cc;
+      core[0].imageCount = getSizeZ() * getSizeC() * getSizeT();
       core[0].dimensionOrder = "XYZCT";
 
       if (stks != null && stks.length > 1) {
@@ -574,14 +576,15 @@ public class MetamorphReader extends BaseTiffReader {
         if (stks.length > nstages) {
           int ns = nstages == 0 ? 1 : nstages;
           for (int j=0; j<ns; j++) {
+            int idx = j * 2 + 1;
             newCore[j * 2].sizeC = stks[j * 2].length / getSizeT();
-            newCore[j * 2 + 1].sizeC =
-              stks[j * 2 + 1].length / newCore[j * 2 + 1].sizeT;
-            newCore[j * 2 + 1].sizeZ = 1;
+            newCore[idx].sizeC = stks[idx].length / newCore[idx].sizeT;
+            newCore[idx].sizeZ =
+              hasZ.size() > 1 && hasZ.get(1) && core[0].sizeZ == 1 ? zc : 1;
             newCore[j * 2].imageCount = newCore[j * 2].sizeC *
               newCore[j * 2].sizeT * newCore[j * 2].sizeZ;
-            newCore[j * 2 + 1].imageCount =
-              newCore[j * 2 + 1].sizeC * newCore[j * 2 + 1].sizeT;
+            newCore[idx].imageCount =
+              newCore[idx].sizeC * newCore[idx].sizeT * newCore[idx].sizeZ;
           }
         }
         core = newCore;

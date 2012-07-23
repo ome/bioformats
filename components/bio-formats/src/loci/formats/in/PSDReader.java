@@ -240,6 +240,12 @@ public class PSDReader extends FormatReader {
         throw new FormatException("Vector data is not supported.");
       }
 
+      if (layerLen == 0 && layerCount == 0) {
+        in.skipBytes(2);
+        int check = in.readShort();
+        in.seek(in.getFilePointer() - (check == 0 ? 4 : 2));
+      }
+
       int[] w = new int[layerCount];
       int[] h = new int[layerCount];
       int[] c = new int[layerCount];
@@ -284,6 +290,10 @@ public class PSDReader extends FormatReader {
       }
       int len = in.readInt();
       if ((len % 4) != 0) len += 4 - (len % 4);
+      if (len > in.length() - in.getFilePointer()) {
+        in.seek(start);
+        len = 0;
+      }
       in.skipBytes(len);
 
       String s = in.readString(4);

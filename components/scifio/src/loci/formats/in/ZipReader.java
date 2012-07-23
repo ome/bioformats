@@ -37,6 +37,7 @@
 package loci.formats.in;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -60,6 +61,8 @@ public class ZipReader extends FormatReader {
   // -- Fields --
 
   private ImageReader reader;
+
+  private ArrayList<String> mappedFiles = new ArrayList<String>();
 
   // -- Constructor --
 
@@ -99,6 +102,14 @@ public class ZipReader extends FormatReader {
     super.close(fileOnly);
     if (reader != null) reader.close(fileOnly);
     if (!fileOnly) reader = null;
+    for (String name : mappedFiles) {
+      IRandomAccess handle = Location.getMappedFile(name);
+      Location.mapFile(name, null);
+      if (handle != null) {
+        handle.close();
+      }
+    }
+    mappedFiles.clear();
   }
 
   // -- Internal FormatReader API methods --
@@ -124,6 +135,7 @@ public class ZipReader extends FormatReader {
       if (ze == null) break;
       ZipHandle handle = new ZipHandle(id, ze);
       Location.mapFile(ze.getName(), handle);
+      mappedFiles.add(ze.getName());
     }
 
     ZipHandle base = new ZipHandle(id);
@@ -132,6 +144,8 @@ public class ZipReader extends FormatReader {
     metadataStore = reader.getMetadataStore();
     core = reader.getCoreMetadata();
     metadata = reader.getGlobalMetadata();
+
+    base.close();
   }
 
 }

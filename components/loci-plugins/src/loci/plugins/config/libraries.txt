@@ -243,28 +243,28 @@ notes = Required for OME-Java API to communicate with OME servers
 [OMERO Common]
 type = Java library
 class = ome.api.IPixels
-url = http://trac.openmicroscopy.org.uk/omero/wiki/MilestoneDownloads
+url = http://trac.openmicroscopy.org.uk/ome/wiki/MilestoneDownloads
 license = LGPL
 notes = Used by Bio-Formats to connect to OMERO.
 
 [OMERO Client]
 type = Java library
 class = ome.client.Session
-url = http://trac.openmicroscopy.org.uk/omero/wiki/MilestoneDownloads
+url = http://trac.openmicroscopy.org.uk/ome/wiki/MilestoneDownloads
 license = LGPL
 notes = Used by Bio-Formats to connect to OMERO.
 
 [OMERO Data Model]
 type = Java library
 class = ome.model.core.Image
-url = http://trac.openmicroscopy.org.uk/omero/wiki/MilestoneDownloads
+url = http://trac.openmicroscopy.org.uk/ome/wiki/MilestoneDownloads
 license = LGPL
 notes = Used by Bio-Formats to connect to OMERO.
 
 [OMERO Importer]
 type = Java library
 class = ome.formats.OMEROMetadataStore
-url = http://trac.openmicroscopy.org.uk/omero/wiki/MilestoneDownloads
+url = http://trac.openmicroscopy.org.uk/ome/wiki/MilestoneDownloads
 license = LGPL
 notes = Used by Bio-Formats to connect to OMERO.
 

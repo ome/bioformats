@@ -816,16 +816,23 @@ public class LIFReader extends FormatReader {
 
         if (channelColor.getValue() != -1 && nextFilter >= 0) {
           if (nextDetector - firstDetector != getSizeC() &&
-            nextDetector >= cutIns[i].size())
+            cutIns[i] != null && nextDetector >= cutIns[i].size())
           {
             while (nextFilterDetector < firstDetector) {
+              String filterID =
+                MetadataTools.createLSID("Filter", i, nextFilter);
+              store.setFilterID(filterID, i, nextFilter);
+
               nextFilterDetector++;
               nextFilter++;
             }
           }
-          while (nextFilterDetector < activeDetectors.size() &&
+          while (activeDetectors != null &&
+            nextFilterDetector < activeDetectors.size() &&
             !(Boolean) activeDetectors.get(nextFilterDetector))
           {
+            String filterID = MetadataTools.createLSID("Filter", i, nextFilter);
+            store.setFilterID(filterID, i, nextFilter);
             nextFilterDetector++;
             nextFilter++;
           }
@@ -1084,7 +1091,10 @@ public class LIFReader extends FormatReader {
           }
 
           if (multiband != null) {
-            channels.add(multiband.getAttribute("DyeName"));
+            String dye = multiband.getAttribute("DyeName");
+            if (!channels.contains(dye)) {
+              channels.add(dye);
+            }
 
             double cutIn = new Double(multiband.getAttribute("LeftWorld"));
             double cutOut = new Double(multiband.getAttribute("RightWorld"));

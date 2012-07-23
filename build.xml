@@ -266,13 +266,13 @@ OME-Java deprecated classes
 
 OMERO Client
     JAR file:  omero-client-4.2.0.jar
-    URL:       http://trac.openmicroscopy.org.uk/omero/wiki/MilestoneDownloads
+    URL:       http://trac.openmicroscopy.org.uk/ome/wiki/MilestoneDownloads
     Notes:     used by OME I/O to connect to OMERO servers
     License:   GPL
 
 OMERO Common
     JAR file:  omero-common-4.2.0.jar
-    URL:       http://trac.openmicroscopy.org.uk/omero/wiki/MilestoneDownloads
+    URL:       http://trac.openmicroscopy.org.uk/ome/wiki/MilestoneDownloads
     Notes:     used by OME I/O to connect to OMERO servers
     License:   GPL
 

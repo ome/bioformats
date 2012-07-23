@@ -747,12 +747,66 @@ public class SlidebookReader extends FormatReader {
       }
     }
 
+    // TODO: extend the name matching to include "* Timepoint *"
+    String currentName = imageNames[0];
+    Vector<CoreMetadata> realCore = new Vector<CoreMetadata>();
+    int t = 1;
+    boolean noFlattening =
+      currentName != null && currentName.equals("Untitled");
+    for (int i=1; i<getSeriesCount(); i++) {
+      if (imageNames[i] == null || !imageNames[i].equals(currentName) ||
+        noFlattening ||
+        (i == 1 && (sizeX[i - 1] != sizeX[i] || sizeY[i - 1] != sizeY[i] ||
+        sizeC[i - 1] != sizeC[i] || sizeZ[i - 1] != sizeZ[i])))
+      {
+        currentName = imageNames[i];
+        CoreMetadata nextCore = core[i - 1];
+        nextCore.sizeT = t;
+        realCore.add(nextCore);
+        if (t == 1) {
+          noFlattening = true;
+        }
+        t = 1;
+        if (i == 1) {
+          noFlattening = true;
+        }
+      }
+      else {
+        t++;
+      }
+    }
+    core[getSeriesCount() - 1].sizeT = t;
+    realCore.add(core[getSeriesCount() - 1]);
+    boolean flattened = false;
+    if (core.length != realCore.size() && !noFlattening) {
+      flattened = true;
+      core = realCore.toArray(new CoreMetadata[realCore.size()]);
+      orderedSeries.clear();
+      uniqueSeries.clear();
+      int nextIndex = 0;
+      for (int i=0; i<core.length; i++) {
+        long thisSeries = (long) i;
+        orderedSeries.add(thisSeries);
+        Vector<Integer> indexes = new Vector<Integer>();
+        indexes.add(nextIndex);
+        uniqueSeries.put(thisSeries, indexes);
+
+        long length = pixelLengths.get(nextIndex);
+        length *= core[i].sizeT;
+        pixelLengths.setElementAt(length, i);
+
+        nextIndex += core[i].sizeT;
+      }
+    }
+
     planeOffset = new long[getSeriesCount()][];
 
     boolean divByTwo = false;
+    boolean divZByTwo = false;
 
     int nextPixelIndex = 0;
     int nextBlock = 0;
+    int nextOffsetIndex = 0;
 
     for (int i=0; i<getSeriesCount(); i++) {
       setSeries(i);
@@ -814,15 +868,29 @@ public class SlidebookReader extends FormatReader {
 
       if (divByTwo) core[i].sizeX /= 2;
 
+      if (divZByTwo && core[i].sizeC > 1) {
+        core[i].sizeZ = (int) ((pixels / (core[i].sizeX * core[i].sizeY)) / 2);
+        core[i].sizeC = 2;
+      }
+
       if (getSizeC() == 0) core[i].sizeC = 1;
       if (getSizeZ() == 0) core[i].sizeZ = 1;
 
       long plane = pixels / (getSizeC() * getSizeZ());
+      if (getSizeT() > 0) {
+        plane /= getSizeT();
+      }
 
       if (getSizeX() * getSizeY() == pixels) {
         if (getSizeC() == 2 && (getSizeX() % 2 == 0) && (getSizeY() % 2 == 0)) {
-          core[i].sizeX /= 2;
-          divByTwo = true;
+          if (getSizeC() != getSizeZ()) {
+            core[i].sizeX /= 2;
+            divByTwo = true;
+          }
+          else {
+            divZByTwo = true;
+            core[i].sizeC = 1;
+          }
         }
         else {
           core[i].sizeC = 1;
@@ -847,6 +915,12 @@ public class SlidebookReader extends FormatReader {
         core[i].sizeZ = 1;
       }
       else if ((getSizeX() / 2) * (getSizeY() / 2) * getSizeZ() == pixels) {
+        core[i].sizeX /= 2;
+        core[i].sizeY /= 2;
+      }
+      else if ((getSizeX() / 2) * (getSizeY() / 2) * getSizeC() *
+        getSizeZ() * getSizeT() == pixels)
+      {
         core[i].sizeX /= 2;
         core[i].sizeY /= 2;
       }
@@ -890,6 +964,16 @@ public class SlidebookReader extends FormatReader {
                 while (getSizeX() * getSizeY() > plane) {
                   core[i].sizeX /= 2;
                   core[i].sizeY /= 2;
+                }
+                int originalX = getSizeX();
+                while (getSizeX() * getSizeY() < plane) {
+                  core[i].sizeX += originalX;
+                  core[i].sizeY = (int) (plane / getSizeX());
+                }
+                int newX = getSizeX() + originalX;
+                if (newX * (plane / newX) == plane && !flattened) {
+                  core[i].sizeX = newX;
+                  core[i].sizeY = (int) (plane / newX);
                 }
               }
               else if (!adjust) {
@@ -956,10 +1040,22 @@ public class SlidebookReader extends FormatReader {
               }
             }
             if (getSizeX() * getSizeY() == 0) {
-              pixels *= getSizeC() * getSizeZ();
-              core[i].sizeX = originalX;
-              core[i].sizeY = originalY;
-              isMontage = false;
+              if (pixels != getSizeX() * getSizeY()) {
+                pixels *= getSizeC() * getSizeZ();
+                core[i].sizeX = originalX;
+                core[i].sizeY = originalY;
+                isMontage = false;
+              }
+            }
+            if (pixels % (originalX - (originalX / 4)) == 0) {
+              int newX = originalX - (originalX / 4);
+              int newY = (int) (pixels / newX);
+              if (newX * newY == pixels) {
+                core[i].sizeX = newX;
+                core[i].sizeY = newY;
+                isMontage = true;
+                adjust = false;
+              }
             }
           }
           else if (p != getSizeZ() * getSizeC()) {
@@ -1060,8 +1156,38 @@ public class SlidebookReader extends FormatReader {
 
       long length = pixelLengths.get(pixelIndex);
       int planes = (int) (length / planeSize);
+      if (planes > core[i].imageCount) {
+        planes = core[i].imageCount;
+      }
+
       for (int p=0; p<planes; p++, nextImage++) {
-        if (nextImage < planeOffset[i].length) {
+        int[] zct = getZCTCoords(p);
+        if (flattened && zct[0] == 0 && zct[1] == 0) {
+          offset = pixelOffsets.get(nextOffsetIndex++);
+
+          if (zct[2] > 0 && planeOffset[i][nextImage - 1] % 2 != offset % 2 &&
+            (offset - planeOffset[i][nextImage - 1] > 3 * getSizeX() * getSizeY()) &&
+            diff == 0)
+          {
+            diff = 31;
+          }
+          if (diff < planeSize) {
+            offset += diff;
+          }
+          else {
+            offset += (diff % planeSize);
+          }
+
+          planeOffset[i][nextImage] = offset;
+        }
+        else if (flattened && zct[0] == 0) {
+          int idx = getIndex(0, 0, zct[2]);
+          planeOffset[i][nextImage] = planeOffset[i][idx] + zct[1] * planeSize;
+        }
+        else if (flattened) {
+          planeOffset[i][nextImage] = planeOffset[i][nextImage - 1] + planeSize;
+        }
+        else if (nextImage < planeOffset[i].length) {
           planeOffset[i][nextImage] = offset + p * planeSize;
         }
       }

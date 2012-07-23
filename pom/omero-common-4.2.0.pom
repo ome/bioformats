@@ -6,7 +6,7 @@
   <artifactId>omero-common</artifactId>
   <packaging>jar</packaging>
   <version>4.2.0</version>
-  <url>http://openmicroscopy.org/</url>
+  <url>http://www.openmicroscopy.org/</url>
 
   <licenses>
     <license>

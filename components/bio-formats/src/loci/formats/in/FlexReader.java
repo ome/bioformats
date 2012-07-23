@@ -616,10 +616,10 @@ public class FlexReader extends FormatReader {
             int index = seriesIndex + c;
             if (index < cameraRefs.size()) {
               store.setDetectorSettingsID(cameraRefs.get(index), i, c);
-            }
-            if (index < binnings.size()) {
-              store.setDetectorSettingsBinning(
-                getBinning(binnings.get(index)), i, c);
+              if (index < binnings.size()) {
+                store.setDetectorSettingsBinning(
+                  getBinning(binnings.get(index)), i, c);
+              }
             }
             if (lightSources != null && c < lightSources.size()) {
               store.setChannelLightSourceSettingsID(lightSources.get(c), i, c);
@@ -1434,9 +1434,12 @@ public class FlexReader extends FormatReader {
           objectiveRefs.add(objectiveID);
         }
         else if (qName.equals("CameraRef")) {
-          String detectorID =
-            MetadataTools.createLSID("Detector", 0, cameraIDs.indexOf(value));
-          cameraRefs.add(detectorID);
+          int cameraIndex = cameraIDs.indexOf(value);
+          if (cameraIndex >= 0) {
+            String detectorID =
+              MetadataTools.createLSID("Detector", 0, cameraIndex);
+            cameraRefs.add(detectorID);
+          }
         }
         else if (qName.equals("ImageResolutionX")) {
           double v = Double.parseDouble(value) * 1000000;

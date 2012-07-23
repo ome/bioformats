@@ -37,10 +37,10 @@
 package loci.formats.tiff;
 
 import java.lang.reflect.Array;
-import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import loci.common.DebugTools;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 
@@ -946,15 +946,7 @@ public class IFD extends HashMap<Integer, Object> {
    * probably not very efficient, and is mainly intended for debugging.
    */
   public static String getFieldName(int value) {
-    Field[] fields = IFD.class.getFields();
-    for (int i=0; i<fields.length; i++) {
-      try {
-        if (fields[i].getInt(null) == value) return fields[i].getName();
-      }
-      catch (IllegalAccessException exc) { }
-      catch (IllegalArgumentException exc) { }
-    }
-    return "" + value;
+    return DebugTools.getFieldName(IFD.class, value);
   }
 
 }
