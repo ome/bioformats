@@ -1424,6 +1424,7 @@ public class FormatReaderTest {
           if (file.toLowerCase().endsWith(".dv") &&
             base[i].toLowerCase().endsWith(".log"))
           {
+            r.close();
             continue;
           }
 
@@ -1432,12 +1433,14 @@ public class FormatReaderTest {
           // It is acceptable for the pixels file to have a different
           // used file count from the text file.
           if (reader.getFormat().equals("Hitachi")) {
+            r.close();
             continue;
           }
 
           // JPEG files that are part of a Trestle dataset can be detected
           // separately
           if (reader.getFormat().equals("Trestle")) {
+            r.close();
             continue;
           }
 
@@ -1445,6 +1448,7 @@ public class FormatReaderTest {
           if (reader.getFormat().equals("Olympus APL") &&
             base[i].toLowerCase().endsWith(".tif"))
           {
+            r.close();
             continue;
           }
 
@@ -1452,6 +1456,7 @@ public class FormatReaderTest {
           if (reader.getFormat().equals("Li-Cor L2D") &&
             !base[i].toLowerCase().endsWith("l2d"))
           {
+            r.close();
             continue;
           }
 
@@ -1460,6 +1465,7 @@ public class FormatReaderTest {
             base[i].toLowerCase().endsWith(".tif") &&
             r.getFormat().equals("OME-TIFF"))
           {
+            r.close();
             continue;
           }
 
@@ -1477,6 +1483,7 @@ public class FormatReaderTest {
           if (file.toLowerCase().endsWith(".nhdr") ||
             base[i].toLowerCase().endsWith(".nhdr"))
           {
+            r.close();
             continue;
           }
 
@@ -1522,6 +1529,12 @@ public class FormatReaderTest {
       success = false;
     }
     result(testName, success);
+    try {
+      close();
+    }
+    catch (IOException e) {
+      LOGGER.info("", e);
+    }
   }
 
   /**
