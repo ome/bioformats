@@ -252,8 +252,19 @@ public class InCellReader extends FormatReader {
   /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
-    if (imageFiles[0][0][0][0].isTiff) {
-      return tiffReader.getOptimalTileWidth();
+    for (Image[][][] well : imageFiles) {
+      for (Image[][] field : well) {
+        for (Image[] timepoint : field) {
+          for (Image img : timepoint) {
+            if (img != null) {
+              if (img.isTiff && tiffReader != null) {
+                return tiffReader.getOptimalTileWidth();
+              }
+              break;
+            }
+          }
+        }
+      }
     }
     return super.getOptimalTileWidth();
   }
@@ -261,8 +272,19 @@ public class InCellReader extends FormatReader {
   /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
-    if (imageFiles[0][0][0][0].isTiff) {
-      return tiffReader.getOptimalTileHeight();
+    for (Image[][][] well : imageFiles) {
+      for (Image[][] field : well) {
+        for (Image[] timepoint : field) {
+          for (Image img : timepoint) {
+            if (img != null) {
+              if (img.isTiff && tiffReader != null) {
+                return tiffReader.getOptimalTileHeight();
+              }
+              break;
+            }
+          }
+        }
+      }
     }
     return super.getOptimalTileHeight();
   }
