@@ -244,7 +244,7 @@ public class AVIReader extends FormatReader {
     while (in.getFilePointer() < in.length() - 8) {
       readChunk();
     }
-    LOGGER.info("Populating metadata");
+    status("Populating metadata");
 
     core[0].imageCount = offsets.size();
     core[0].sizeZ = 1;
@@ -283,7 +283,6 @@ public class AVIReader extends FormatReader {
 
     if (bmpBitsPerPixel <= 8) {
       core[0].pixelType = FormatTools.UINT8;
-      core[0].bitsPerPixel = bmpBitsPerPixel;
     }
     else if (bmpBitsPerPixel == 16) core[0].pixelType = FormatTools.UINT16;
     else if (bmpBitsPerPixel == 24 || bmpBitsPerPixel == 32) {
@@ -296,7 +295,8 @@ public class AVIReader extends FormatReader {
 
     if (bmpCompression != 0) core[0].pixelType = FormatTools.UINT8;
 
-    MetadataStore store = makeFilterMetadata();
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
     MetadataTools.populatePixels(store, this);
     MetadataTools.setDefaultCreationDate(store, id, 0);
   }
