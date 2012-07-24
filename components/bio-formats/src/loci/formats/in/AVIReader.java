@@ -34,6 +34,7 @@ import loci.formats.ImageTools;
 import loci.formats.MetadataTools;
 import loci.formats.codec.BitBuffer;
 import loci.formats.codec.CodecOptions;
+import loci.formats.codec.JPEGCodec;
 import loci.formats.codec.MSRLECodec;
 import loci.formats.codec.MSVideoCodec;
 import loci.formats.meta.FilterMetadata;
@@ -59,6 +60,7 @@ public class AVIReader extends FormatReader {
   private static final int MSRLE = 1;
   private static final int MS_VIDEO = 1296126531;
   //private static final int CINEPAK = 1684633187;
+  private static final int JPEG = 1196444237;
 
   // -- Fields --
 
@@ -68,6 +70,7 @@ public class AVIReader extends FormatReader {
   /** Number of bytes in each plane. */
   private Vector<Long> lengths;
 
+  private String listString;
   private String type = "error";
   private String fcc = "error";
   private int size = -1;
@@ -105,7 +108,7 @@ public class AVIReader extends FormatReader {
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
   public byte[][] get8BitLookupTable() {
     FormatTools.assertId(currentId, true, 1);
-    return lut;
+    return isRGB() ? null : lut;
   }
 
   /**
@@ -185,7 +188,7 @@ public class AVIReader extends FormatReader {
         in.skipBytes(x * (bmpBitsPerPixel / 8));
         in.read(buf, (i - y)*scanline, scanline);
         if (bmpBitsPerPixel == 24) {
-          for (int j=0; j<getSizeX(); j++) {
+          for (int j=0; j<w; j++) {
             byte r = buf[i*scanline + j*3 + 2];
             buf[i*scanline + j*3 + 2] = buf[i*scanline + j*3];
             buf[i*scanline + j*3] = r;
@@ -207,6 +210,7 @@ public class AVIReader extends FormatReader {
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
+      listString = null;
       offsets = null;
       lengths = null;
       type = null;
@@ -237,16 +241,138 @@ public class AVIReader extends FormatReader {
     lengths = new Vector<Long>();
     lastImageNo = -1;
 
-    String listString;
+    while (in.getFilePointer() < in.length() - 8) {
+      readChunk();
+    }
+    status("Populating metadata");
 
+    core[0].imageCount = offsets.size();
+    core[0].sizeZ = 1;
+    core[0].sizeT = getImageCount();
+    core[0].littleEndian = true;
+    core[0].interleaved = bmpBitsPerPixel != 16;
+
+    if (bmpCompression == JPEG) {
+      long fileOff = offsets.get(0).longValue();
+      in.seek(fileOff);
+      int nBytes = uncompress(0, null).length / (getSizeX() * getSizeY());
+
+      if (bmpBitsPerPixel == 16) {
+        nBytes /= 2;
+      }
+      core[0].sizeC = nBytes;
+      core[0].rgb = getSizeC() > 1;
+    }
+    else if (bmpBitsPerPixel == 32) {
+      core[0].sizeC = 4;
+      core[0].rgb = true;
+    }
+    else if (bytesPerPlane == 0 || bmpBitsPerPixel == 24) {
+      core[0].rgb = bmpBitsPerPixel > 8 || (bmpCompression != 0 && lut == null);
+      core[0].sizeC = isRGB() ? 3 : 1;
+    }
+    else {
+      core[0].sizeC = bytesPerPlane /
+        (getSizeX() * getSizeY() * (bmpBitsPerPixel / 8));
+      core[0].rgb = getSizeC() > 1;
+    }
+    core[0].dimensionOrder = isRGB() ? "XYCTZ" : "XYTCZ";
+    core[0].falseColor = false;
+    core[0].metadataComplete = true;
+    core[0].indexed = lut != null && !isRGB();
+
+    if (bmpBitsPerPixel <= 8) {
+      core[0].pixelType = FormatTools.UINT8;
+    }
+    else if (bmpBitsPerPixel == 16) core[0].pixelType = FormatTools.UINT16;
+    else if (bmpBitsPerPixel == 24 || bmpBitsPerPixel == 32) {
+      core[0].pixelType = FormatTools.UINT8;
+    }
+    else {
+      throw new FormatException(
+          "Unknown matching for pixel bit width of: " + bmpBitsPerPixel);
+    }
+
+    if (bmpCompression != 0) core[0].pixelType = FormatTools.UINT8;
+
+    MetadataStore store =
+      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
+    MetadataTools.populatePixels(store, this);
+    MetadataTools.setDefaultCreationDate(store, id, 0);
+  }
+
+  // -- Helper methods --
+
+  private byte[] uncompress(int no, byte[] buf)
+    throws FormatException, IOException
+  {
+    CodecOptions options = new CodecOptions();
+    options.width = getSizeX();
+    options.height = getSizeY();
+    options.previousImage = (lastImageNo == no - 1) ? lastImage : null;
+    options.bitsPerSample = bmpBitsPerPixel;
+    options.interleaved = isInterleaved();
+    options.littleEndian = isLittleEndian();
+
+    if (bmpCompression == MSRLE) {
+      byte[] b = new byte[(int) lengths.get(no).longValue()];
+      in.read(b);
+      MSRLECodec codec = new MSRLECodec();
+      buf = codec.decompress(b, options);
+      lastImage = buf;
+      lastImageNo = no;
+    }
+    else if (bmpCompression == MS_VIDEO) {
+      MSVideoCodec codec = new MSVideoCodec();
+      buf = codec.decompress(in, options);
+      lastImage = buf;
+      lastImageNo = no;
+    }
+    else if (bmpCompression == JPEG) {
+      JPEGCodec codec = new JPEGCodec();
+      buf = codec.decompress(in, options);
+    }
+    /*
+    else if (bmpCompression == CINEPAK) {
+      Object[] options = new Object[2];
+      options[0] = new Integer(bmpBitsPerPixel);
+      options[1] = lastImage;
+
+      CinepakCodec codec = new CinepakCodec();
+      buf = codec.decompress(b, options);
+      lastImage = buf;
+      if (no == core[0].imageCount - 1) lastImage = null;
+      return buf;
+    }
+    */
+    else {
+      throw new FormatException("Unsupported compression : " + bmpCompression);
+    }
+    return buf;
+  }
+
+  private void readChunkHeader() throws IOException {
+    readTypeAndSize();
+    fcc = in.readString(4);
+  }
+
+  private void readTypeAndSize() throws IOException {
+    type = in.readString(4);
+    size = in.readInt();
+  }
+
+  private void readChunk() throws FormatException, IOException {
     readChunkHeader();
 
     if (type.equals("RIFF")) {
-      if (!fcc.equals("AVI ")) {
+      if (!fcc.startsWith("AVI")) {
         throw new FormatException("Sorry, AVI RIFF format not found.");
       }
     }
-    else throw new FormatException("Not an AVI file");
+    else if (in.getFilePointer() == 12) {
+      throw new FormatException("Not an AVI file");
+    }
+    else return;
 
     pos = in.getFilePointer();
     long spos = pos;
@@ -375,7 +501,7 @@ public class AVIReader extends FormatReader {
                 }
 
                 if (bmpCompression != MSRLE && bmpCompression != 0 &&
-                  bmpCompression != MS_VIDEO/* && bmpCompression != CINEPAK*/)
+                  bmpCompression != MS_VIDEO && bmpCompression != JPEG)
                 {
                   throw new FormatException("Unsupported compression type " +
                     bmpCompression);
@@ -445,43 +571,50 @@ public class AVIReader extends FormatReader {
               }
 
               spos = in.getFilePointer();
-              type = in.readString(4);
-              if (type.startsWith("ix")) {
-                size = in.readInt();
-                in.skipBytes(size);
-                type = in.readString(4);
-                size = in.readInt();
-              }
-              else {
-                size = in.readInt();
-              }
+              boolean end = false;
+              while (!end) {
+                readTypeAndSize();
+                String oldType = type;
+                if (type.startsWith("ix")) {
+                  in.skipBytes(size);
+                  readTypeAndSize();
+                }
 
-              while (type.substring(2).equals("db") ||
-                type.substring(2).equals("dc") ||
-                type.substring(2).equals("wb"))
-              {
-                if (type.substring(2).equals("db") ||
-                  type.substring(2).equals("dc"))
+                String check = type.substring(2);
+                boolean foundPixels = false;
+                while (check.equals("db") || check.equals("dc") ||
+                  check.equals("wb"))
                 {
-                  if (size > 0) {
-                    offsets.add(new Long(in.getFilePointer()));
-                    lengths.add(new Long(size));
+                  foundPixels = true;
+                  if (check.startsWith("d")) {
+                    if (size > 0 || bmpCompression != 0) {
+                      offsets.add(new Long(in.getFilePointer()));
+                      lengths.add(new Long(size));
+                      in.skipBytes(size);
+                    }
+                  }
+
+                  spos = in.getFilePointer();
+                  if (spos + 8 >= in.length()) return;
+
+                  readTypeAndSize();
+                  if (type.equals("JUNK")) {
                     in.skipBytes(size);
+                    spos = in.getFilePointer();
+                    readTypeAndSize();
+                  }
+                  check = type.substring(2);
+                  if (check.equals("0d")) {
+                    in.seek(spos + 1);
+                    readTypeAndSize();
+                    check = type.substring(2);
                   }
                 }
-
-                spos = in.getFilePointer();
-
-                type = in.readString(4);
-                size = in.readInt();
-                if (type.equals("JUNK")) {
-                  in.skipBytes(size);
-                  spos = in.getFilePointer();
-                  type = in.readString(4);
-                  size = in.readInt();
+                in.seek(spos);
+                if (!oldType.startsWith("ix") && !foundPixels) {
+                  end = true;
                 }
               }
-              in.seek(spos);
             }
           }
         }
@@ -492,102 +625,19 @@ public class AVIReader extends FormatReader {
       }
       else {
         // skipping unknown block
-        type = in.readString(4);
+        readTypeAndSize();
+        if (in.getFilePointer() + 8 < in.length() && !type.equals("idx1")) {
+          readTypeAndSize();
+        }
+        else if (!type.equals("idx1")) break;
         if (in.getFilePointer() + size + 4 <= in.length()) {
           size = in.readInt();
           in.skipBytes(size);
         }
+        if (type.equals("idx1")) break;
       }
       pos = in.getFilePointer();
     }
-    status("Populating metadata");
-
-    core[0].imageCount = offsets.size();
-
-    core[0].indexed = lut != null;
-    core[0].sizeZ = 1;
-    core[0].sizeT = getImageCount();
-    core[0].littleEndian = true;
-    core[0].interleaved = bmpBitsPerPixel != 16;
-    if (bytesPerPlane == 0 || bmpBitsPerPixel == 24) {
-      core[0].rgb =
-        (bmpBitsPerPixel > 8 || (bmpCompression != 0)) && lut == null;
-      core[0].sizeC = isRGB() ? 3 : 1;
-    }
-    else {
-      core[0].sizeC = bytesPerPlane /
-        (getSizeX() * getSizeY() * (bmpBitsPerPixel / 8));
-      core[0].rgb = getSizeC() > 1;
-    }
-    core[0].dimensionOrder = getSizeC() == 3 ? "XYCTZ" : "XYTCZ";
-    core[0].falseColor = false;
-    core[0].metadataComplete = true;
-
-    if (bmpBitsPerPixel <= 8) core[0].pixelType = FormatTools.UINT8;
-    else if (bmpBitsPerPixel == 16) core[0].pixelType = FormatTools.UINT16;
-    else if (bmpBitsPerPixel == 32) core[0].pixelType = FormatTools.UINT32;
-    else if (bmpBitsPerPixel == 24) core[0].pixelType = FormatTools.UINT8;
-    else {
-      throw new FormatException(
-          "Unknown matching for pixel bit width of: " + bmpBitsPerPixel);
-    }
-
-    if (bmpCompression != 0) core[0].pixelType = FormatTools.UINT8;
-
-    MetadataStore store =
-      new FilterMetadata(getMetadataStore(), isMetadataFiltered());
-    MetadataTools.populatePixels(store, this);
-    MetadataTools.setDefaultCreationDate(store, id, 0);
-  }
-
-  // -- Helper methods --
-
-  private byte[] uncompress(int no, byte[] buf)
-    throws FormatException, IOException
-  {
-    CodecOptions options = new CodecOptions();
-    options.width = getSizeX();
-    options.height = getSizeY();
-    options.previousImage = (lastImageNo == no - 1) ? lastImage : null;
-    options.bitsPerSample = bmpBitsPerPixel;
-
-    if (bmpCompression == MSRLE) {
-      byte[] b = new byte[(int) lengths.get(no).longValue()];
-      in.read(b);
-      MSRLECodec codec = new MSRLECodec();
-      buf = codec.decompress(b, options);
-      lastImage = buf;
-      lastImageNo = no;
-    }
-    else if (bmpCompression == MS_VIDEO) {
-      MSVideoCodec codec = new MSVideoCodec();
-      buf = codec.decompress(in, options);
-      lastImage = buf;
-      lastImageNo = no;
-    }
-    /*
-    else if (bmpCompression == CINEPAK) {
-      Object[] options = new Object[2];
-      options[0] = new Integer(bmpBitsPerPixel);
-      options[1] = lastImage;
-
-      CinepakCodec codec = new CinepakCodec();
-      buf = codec.decompress(b, options);
-      lastImage = buf;
-      if (no == core[0].imageCount - 1) lastImage = null;
-      return buf;
-    }
-    */
-    else {
-      throw new FormatException("Unsupported compression : " + bmpCompression);
-    }
-    return buf;
-  }
-
-  private void readChunkHeader() throws IOException {
-    type = in.readString(4);
-    size = in.readInt();
-    fcc = in.readString(4);
   }
 
 }
