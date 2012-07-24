@@ -328,6 +328,7 @@ public class ImprovisionTiffReader extends BaseTiffReader {
     RandomAccessInputStream s = new RandomAccessInputStream(path);
     TiffParser parser = new TiffParser(s);
     String comment = parser.getComment();
+    s.close();
 
     comment = comment.replaceAll("\r\n", "\n");
     comment = comment.replaceAll("\r", "\n");
