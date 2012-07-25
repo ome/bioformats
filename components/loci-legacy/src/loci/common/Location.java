@@ -56,12 +56,11 @@ public class Location {
 
   // -- Constants --
 
-
   // -- Static fields --
 
   // -- Fields --
 
-  private ome.scifio.io.Location loc;
+  protected ome.scifio.io.Location loc;
 
   // -- Constructors --
 
@@ -84,6 +83,10 @@ public class Location {
   // Private constructor for directly wrapping ome.scifio.io.Location
   private Location(ome.scifio.io.Location location) {
     loc = location;
+  }
+  
+  // Explicit zero-param protected constructor for extending delegator classes
+  protected Location() {
   }
 
   // -- Location API methods --
