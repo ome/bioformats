@@ -1021,7 +1021,7 @@ public abstract class BaseZeissReader extends FormatReader {
    * @return an Integer.  0 if number was null.
    */
   protected static int parseInt(String number, int defaultnum) {
-    if (number != null && !number.isEmpty()) {
+    if (number != null && number.trim().length() > 0) {
       return Integer.parseInt(number);
     }
     return defaultnum;
