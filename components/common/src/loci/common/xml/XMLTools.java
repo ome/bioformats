@@ -399,8 +399,9 @@ public final class XMLTools {
       Set namespaces = new HashSet();
       Pattern pattern = Pattern.compile(" xmlns:(\\w+)");
       Matcher matcher = pattern.matcher(firstTag);
-      while (matcher.find())
+      while (matcher.find()) {
         namespaces.add(matcher.group(1));
+      }
 
       pattern = Pattern.compile("</?(\\w+):");
       matcher = pattern.matcher(xml);
@@ -412,6 +413,14 @@ public final class XMLTools {
           int end = matcher.end();
           xml = xml.substring(0, end - 1) + "_" + xml.substring(end);
         }
+      }
+
+      Pattern emptyNamespaces = Pattern.compile(" xmlns:(\\w+)=\"\"");
+      matcher = emptyNamespaces.matcher(firstTag);
+      while (matcher.find()) {
+        int start = matcher.start();
+        int end = matcher.end();
+        xml = xml.substring(0, start + 1) + xml.substring(end);
       }
     }
     return xml;
