@@ -726,9 +726,7 @@ public class DeltavisionReader extends FormatReader {
         DVExtHdrFields hdr = extHdrFields[coords[0]][coords[1]][tIndex];
 
         // plane timing
-        if (!logFound) {
-          store.setPlaneDeltaT(new Double(hdr.timeStampSeconds), series, i);
-        }
+        store.setPlaneDeltaT(new Double(hdr.timeStampSeconds), series, i);
         store.setPlaneExposureTime(new Double(hdr.expTime), series, i);
 
         // stage position
@@ -1079,20 +1077,6 @@ public class DeltavisionReader extends FormatReader {
           }
         }
         // Plane properties
-        else if (key.equals("Time Point")) {
-          int space = value.indexOf(" ");
-          if (space >= 0) value = value.substring(0, space);
-          try {
-            if (currentImage < getImageCount()) {
-              for (int series=0; series<getSeriesCount(); series++) {
-                store.setPlaneDeltaT(new Double(value), series, currentImage);
-              }
-            }
-          }
-          catch (NumberFormatException e) {
-            LOGGER.warn("Could not parse timestamp '{}'", value);
-          }
-        }
         else if (key.equals("EM filter")) {
           int cIndex = 0;
           try {
