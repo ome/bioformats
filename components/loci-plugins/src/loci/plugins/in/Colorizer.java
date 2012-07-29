@@ -326,24 +326,26 @@ public class Colorizer {
           if (store instanceof MetadataRetrieve) {
             MetadataRetrieve retrieve = (MetadataRetrieve) store;
 
-            ome.xml.model.primitives.Color metaColor =
-              retrieve.getChannelColor(reader.getSeries(), c);
-            if (metaColor != null) {
-              color = new Color(metaColor.getValue(), false);
-            }
-            else {
-              PositiveInteger wavelength =
-                retrieve.getChannelEmissionWavelength(reader.getSeries(), c);
-              if (wavelength != null) {
-                int wave = wavelength.getValue();
-                if (wave >= BLUE_MIN && wave <= BLUE_MAX) {
-                  color = Color.BLUE;
-                }
-                else if (wave >= GREEN_MIN && wave <= GREEN_MAX) {
-                  color = Color.GREEN;
-                }
-                else if (wave >= RED_MIN && wave <= RED_MAX) {
-                  color = Color.RED;
+            if (c < retrieve.getChannelCount(reader.getSeries())) {
+              ome.xml.model.primitives.Color metaColor =
+                retrieve.getChannelColor(reader.getSeries(), c);
+              if (metaColor != null) {
+                color = new Color(metaColor.getValue(), false);
+              }
+              else {
+                PositiveInteger wavelength =
+                  retrieve.getChannelEmissionWavelength(reader.getSeries(), c);
+                if (wavelength != null) {
+                  int wave = wavelength.getValue();
+                  if (wave >= BLUE_MIN && wave <= BLUE_MAX) {
+                    color = Color.BLUE;
+                  }
+                  else if (wave >= GREEN_MIN && wave <= GREEN_MAX) {
+                    color = Color.GREEN;
+                  }
+                  else if (wave >= RED_MIN && wave <= RED_MAX) {
+                    color = Color.RED;
+                  }
                 }
               }
             }
