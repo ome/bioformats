@@ -15,7 +15,6 @@ Type "ant -p" for a list of targets.
 
   <target name="compile"
     depends="compile-autogen,
-      compile-common,
       compile-formats,
       compile-jai,
       compile-loci-plugins,
@@ -35,7 +34,6 @@ Type "ant -p" for a list of targets.
   <target name="jars"
     depends="copy-jars,
       jar-autogen,
-      jar-common,
       jar-formats,
       jar-jai,
       jar-loci-plugins,
@@ -55,7 +53,6 @@ Type "ant -p" for a list of targets.
   <target name="osgi"
     depends="copy-jars,
       osgi-autogen,
-      osgi-common,
       osgi-formats,
       osgi-jai,
       osgi-loci-plugins,
@@ -84,7 +81,6 @@ Type "ant -p" for a list of targets.
   -->
   <target name="findbugs"
     depends="findbugs-autogen,
-      findbugs-common,
       findbugs-formats,
       findbugs-loci-plugins,
       findbugs-metakit,
@@ -97,7 +93,6 @@ Type "ant -p" for a list of targets.
   <target name="clean"
     depends="
       clean-autogen,
-      clean-common,
       clean-formats,
       clean-jai,
       clean-loci-plugins,
@@ -119,7 +114,6 @@ Type "ant -p" for a list of targets.
 
   <target name="test"
     depends="test-autogen,
-      test-common,
       test-formats,
       test-jai,
       test-loci-plugins,
@@ -146,9 +140,9 @@ Type "ant -p" for a list of targets.
 
   <target name="utils"
     depends="jars,
-      utils-common,
       utils-formats,
-      utils-loci-plugins"
+      utils-loci-plugins,
+      utils-scifio"
     description="compile all extra utilities"/>
 
   <target name="docs" depends="jars"
@@ -190,45 +184,6 @@ Type "ant -p" for a list of targets.
   <target name="testing-deps"
           description="performs any work necessary for testing"
           depends="copy-jars"/>
-
-  <!-- LOCI common library -->
-
-  <target name="deps-common"/>
-
-  <target name="compile-common" depends="deps-common"
-    description="compile classes for LOCI common library">
-    <ant dir="components/common" target="common.compile"/>
-  </target>
-
-  <target name="jar-common" depends="deps-common"
-    description="generate JAR file for LOCI common library">
-    <ant dir="components/common" target="common.jar"/>
-  </target>
-
-  <target name="osgi-common" depends="jar-common"
-    description="generate OSGi bundle for LOCI common library">
-    <ant dir="components/common" target="common.osgi"/>
-  </target>
-
-  <target name="findbugs-common" depends="jar-common"
-    description="run findbugs on LOCI common library">
-    <ant dir="components/common" target="common.findbugs"/>
-  </target>
-
-  <target name="clean-common"
-    description="remove build files for LOCI common library">
-    <ant dir="components/common" target="common.clean"/>
-  </target>
-
-  <target name="utils-common" depends="jar-common"
-    description="compile extra utilities for LOCI common library">
-    <ant dir="components/common" target="common.utils"/>
-  </target>
-
-  <target name="test-common" depends="jar-common, testing-deps"
-    description="compile and run tests for LOCI common library">
-    <ant dir="components/common" target="test"/>
-  </target>
 
   <!-- JAI Image I/O Tools library -->
 
@@ -473,6 +428,11 @@ Type "ant -p" for a list of targets.
       clean-ome-xml"
     description="remove build files for SCIFIO">
     <ant dir="components/scifio" target="scifio.clean"/>
+  </target>
+
+  <target name="utils-scifio" depends="jar-scifio"
+    description="compile extra utilities for SCIFIO">
+    <ant dir="components/scifio" target="scifio.utils"/>
   </target>
 
   <target name="test-scifio" depends="jar-scifio, testing-deps"

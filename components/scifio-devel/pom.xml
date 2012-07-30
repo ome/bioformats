@@ -12,9 +12,9 @@
     <relativePath>../..</relativePath>
   </parent>
 
-  <artifactId>scifio</artifactId>
+  <artifactId>scifio-devel</artifactId>
 
-  <name>SCIFIO</name>
+  <name>SCIFIO-devel</name>
   <description>SCientific Image Format Input and Output: an open source
     framework for reading and writing scientific image file formats, and
     converting metadata between standards.</description>
@@ -37,17 +37,7 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>loci-common</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
       <artifactId>lwf-stubs</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>scifio-devel</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -116,7 +106,6 @@
           <coreFile>cppwrap/core.txt</coreFile>
           <sourceDir>cppwrap</sourceDir>
           <libraries>
-            <library>${project.groupId}:loci-common:jar:${project.version}</library>
             <library>${project.groupId}:ome-xml:jar:${project.version}</library>
           </libraries>
         </configuration>
