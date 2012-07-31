@@ -536,16 +536,16 @@ public class TiffParser {
       if (count == 1) return new Long(in.readLong());
       long[] longs = new long[count];
 
-      if (equalStrips && (entry.getTag() == IFD.STRIP_OFFSETS ||
-        entry.getTag() == IFD.TILE_OFFSETS))
+      if (equalStrips && (entry.getTag() == IFD.STRIP_BYTE_COUNTS ||
+        entry.getTag() == IFD.TILE_BYTE_COUNTS))
       {
         longs[0] = in.readLong();
         for (int j=1; j<count; j++) {
           longs[j] = longs[0];
         }
       }
-      else if (equalStrips && (entry.getTag() == IFD.STRIP_BYTE_COUNTS ||
-        entry.getTag() == IFD.TILE_BYTE_COUNTS))
+      else if (equalStrips && (entry.getTag() == IFD.STRIP_OFFSETS ||
+        entry.getTag() == IFD.TILE_OFFSETS))
       {
         longs[0] = in.readLong();
         longs[1] = in.readLong();
