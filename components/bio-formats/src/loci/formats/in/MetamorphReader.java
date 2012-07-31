@@ -411,7 +411,7 @@ public class MetamorphReader extends BaseTiffReader {
         }
         else if (key.startsWith("WaveName")) {
           String waveName = value.substring(1, value.length() - 1);
-          if (waveName.equals("Both lasers")) {
+          if (waveName.equals("Both lasers") || waveName.startsWith("DUAL")) {
             bizarreMultichannelAcquisition = true;
           }
           waveNames.add(waveName);
