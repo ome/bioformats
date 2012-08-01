@@ -36,6 +36,7 @@ Type "ant -p" for a list of targets.
   <target name="jars"
     depends="copy-jars,
       jar-autogen,
+      jar-common,
       jar-formats,
       jar-jai,
       jar-loci-legacy,
@@ -102,6 +103,7 @@ Type "ant -p" for a list of targets.
     depends="
       clean-autogen,
       clean-formats,
+      clean-common,
       clean-jai,
       clean-loci-legacy,
       clean-loci-plugins,
@@ -579,6 +581,31 @@ Type "ant -p" for a list of targets.
   <target name="test-loci-legacy" depends="jar-loci-legacy"
     description="compile and run tests for Loci-Legacy ">
     <ant dir="components/loci-legacy" target="test"/>
+  </target>
+
+  <!-- LOCI common (mirrors Loci Legacy) -->
+
+  <target name="jar-common"
+    depends="jar-loci-legacy,
+             jar-scifio-devel"
+    description="generate JAR file for LOCI Common">
+    <for list="${loci-common.libraries}" param="jar" delimiter=" " trim="true">
+      <sequential>
+        <unjar src="${artifact.dir}/@{jar}" dest="${loci-common.dir}">
+          <patternset>
+            <exclude name="META-INF/**"/>
+          </patternset>
+        </unjar>
+      </sequential>
+    </for>
+    <jar jarfile="${loci-common.jar}" basedir="${loci-common.dir}"/>
+    <delete dir="${loci-common.dir}"/>
+  </target>
+
+  <target name="clean-common"
+    depends="clean-loci-legacy"
+    description="remove build files for LOCI Common">
+    <delete file="${artifact.dir}/loci-common.jar"/>
   </target>
 
   <!-- LOCI autogen -->
