@@ -1788,6 +1788,10 @@ public class FormatReaderTest {
               continue;
             }
 
+            if (!result && readers[j] instanceof MIASReader) {
+              continue;
+            }
+
             boolean expected = r == readers[j];
             if (result != expected) {
               success = false;
