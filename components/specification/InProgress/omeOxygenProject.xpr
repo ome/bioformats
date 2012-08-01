@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project version="13.1">
+<project version="14.0">
     <meta>
         <filters directoryPatterns="" filePatterns="" positiveFilePatterns="" showHiddenFiles="false"/>
         <options>
-            <serialized version="13.1" xml:space="preserve">
+            <serialized version="14.0" xml:space="preserve">
                 <map>
                     <entry>
                         <String>allow.dt.page.setting.to.override.general.settings</String>
@@ -94,25 +94,33 @@
                         <String>scenario.associations</String>
                         <scenarioAssociation-array>
                             <scenarioAssociation>
-                                <field name="name">
-                                    <String>2008-09 to 2009-09</String>
-                                </field>
-                                <field name="type">
-                                    <String>XSL</String>
-                                </field>
                                 <field name="url">
                                     <String>../Validator/Backend/samples/tiny2009-09-V1.ome</String>
                                 </field>
+                                <field name="scenarioIds">
+                                    <list>
+                                        <String>2008-09 to 2009-09</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioTypes">
+                                    <list>
+                                        <String>XSL</String>
+                                    </list>
+                                </field>
                             </scenarioAssociation>
                             <scenarioAssociation>
-                                <field name="name">
-                                    <String>TEI P5(experimental) HTML</String>
-                                </field>
-                                <field name="type">
-                                    <String>XSL</String>
-                                </field>
                                 <field name="url">
                                     <String>Markdown/custom-annotations/tmpl_custom_ann.html</String>
+                                </field>
+                                <field name="scenarioIds">
+                                    <list>
+                                        <String>TEI P5(experimental) HTML</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioTypes">
+                                    <list>
+                                        <String>XSL</String>
+                                    </list>
                                 </field>
                             </scenarioAssociation>
                         </scenarioAssociation-array>
@@ -1873,6 +1881,10 @@
                     <entry>
                         <String>scenarios.load.from.project</String>
                         <Boolean>true</Boolean>
+                    </entry>
+                    <entry>
+                        <String>validation.scenarios</String>
+                        <validationScenario-array/>
                     </entry>
                 </map>
             </serialized>

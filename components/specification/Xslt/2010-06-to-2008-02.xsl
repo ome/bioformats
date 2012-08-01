@@ -130,6 +130,21 @@
 		</xsl:choose>
 	</xsl:template>
 	
+	<!--
+	convert the value of the Color attribute of Channel to a ColorDomain
+	attribute on ChannelComponent.
+	A limited number of colours are supported, others map to w for (white).
+	-->
+	<xsl:template name="convertToColorDomain">
+		<xsl:param name="cc"/>
+		<xsl:choose>
+			<xsl:when test="contains($cc,'-16776961')">r</xsl:when>
+			<xsl:when test="contains($cc,'16711935')">g</xsl:when>
+			<xsl:when test="contains($cc,'65535')">b</xsl:when>
+			<xsl:otherwise>w</xsl:otherwise>
+		</xsl:choose>
+	</xsl:template>
+
 	<!-- Actual schema changes -->
 
 	<xsl:template match="OME:AcquiredDate">
@@ -252,6 +267,11 @@
 							<xsl:for-each select=" parent::node()">
 								<xsl:value-of select="@ID"/>
 							</xsl:for-each>
+						</xsl:attribute>
+						<xsl:attribute name="ColorDomain">
+							<xsl:call-template name="convertToColorDomain">
+								<xsl:with-param name="cc" select="@Color"/>
+							</xsl:call-template>
 						</xsl:attribute>
 						<xsl:attribute name="Index">
 							<xsl:value-of select="position()"/>

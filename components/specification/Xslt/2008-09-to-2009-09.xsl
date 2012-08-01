@@ -1577,9 +1577,9 @@
 	<xsl:template name="convertColorDomain">
 		<xsl:param name="cc"/>
 		<xsl:choose>
-			<xsl:when test="contains($cc,'red') or contains($cc,'r')">4278190335</xsl:when>
-			<xsl:when test="contains($cc,'green') or contains($cc,'g')">16711935</xsl:when>
-			<xsl:when test="contains($cc,'blue') or contains($cc,'b')">65535</xsl:when>
+			<xsl:when test="contains($cc,'r') or contains($cc,'R')">4278190335</xsl:when>
+			<xsl:when test="contains($cc,'g') or contains($cc,'G')">16711935</xsl:when>
+			<xsl:when test="contains($cc,'b') or contains($cc,'B')">65535</xsl:when>
 			<xsl:otherwise>4294967295</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
