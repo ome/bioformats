@@ -905,6 +905,7 @@ Type "ant -p" for a list of targets.
 
   <target name="tools"
     depends="copy-jars,
+      jar-common,
       jar-jai,
       jar-loci-legacy,
       jar-loci-plugins,
