@@ -544,16 +544,6 @@ public class TiffParser {
           longs[j] = longs[0];
         }
       }
-      else if (equalStrips && (entry.getTag() == IFD.STRIP_OFFSETS ||
-        entry.getTag() == IFD.TILE_OFFSETS))
-      {
-        longs[0] = in.readLong();
-        longs[1] = in.readLong();
-        long diff = longs[1] - longs[0];
-        for (int j=2; j<count; j++) {
-          longs[j] = longs[j - 1] + diff;
-        }
-      }
       else {
         for (int j=0; j<count; j++) longs[j] = in.readLong();
       }
