@@ -215,13 +215,6 @@ ImageJ
     Notes:     used by LOCI plugins for ImageJ and OME plugins for ImageJ
     License:   Public domain
 
-JAI ImageIO wrapper
-    JAR file:  clibwrapper_jiio.jar
-    URL:       https://jai-imageio.dev.java.net/
-    Notes:     used by Bio-Formats via reflection for JPEG2000 support (ND2,
-               JP2) and lossless JPEG decompression (DICOM)
-    License:   BSD
-
 JUnit
     JAR file:  junit-4.8.2.jar
     URL:       http://www.junit.org/
