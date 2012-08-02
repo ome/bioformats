@@ -128,26 +128,20 @@ public class J2KImageReaderCodecLibSpi extends ImageReaderSpi {
 	
         registered = true;
 
-        // Branch based on codecLib availability.
-        if(!PackageUtil.isCodecLibAvailable()) {
-            // Deregister provider.
-            registry.deregisterServiceProvider(this);
-        } else {
-            // Set pairwise ordering to give codecLib reader precedence.
-            Class javaReaderSPIClass = null;
-            try {
-                javaReaderSPIClass =
-                    Class.forName("com.sun.media.imageioimpl.plugins.jpeg2000.J2KImageReaderSpi");
-            } catch(Throwable t) {
-                // Ignore it.
-            }
+        // Set pairwise ordering to give codecLib reader precedence.
+        Class javaReaderSPIClass = null;
+        try {
+            javaReaderSPIClass =
+                Class.forName("com.sun.media.imageioimpl.plugins.jpeg2000.J2KImageReaderSpi");
+        } catch(Throwable t) {
+            // Ignore it.
+        }
 
-            if(javaReaderSPIClass != null) {
-                Object javaReaderSPI =
-                    registry.getServiceProviderByClass(javaReaderSPIClass);
-                if(javaReaderSPI != null) {
-                    registry.setOrdering(category, this, javaReaderSPI);
-                }
+        if(javaReaderSPIClass != null) {
+            Object javaReaderSPI =
+                registry.getServiceProviderByClass(javaReaderSPIClass);
+            if(javaReaderSPI != null) {
+                registry.setOrdering(category, this, javaReaderSPI);
             }
         }
     }

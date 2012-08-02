@@ -141,20 +141,13 @@ public class CLibJPEGImageReaderSpi extends ImageReaderSpi {
 	
         registered = true;
 
-        // Branch as a function of codecLib availability.
-        if(!PackageUtil.isCodecLibAvailable()) {
-            // Deregister provider.
-            registry.deregisterServiceProvider(this);
-        } else {
+        List list = 
+            ImageUtil.getJDKImageReaderWriterSPI(registry, "JPEG", true);
 
-	    List list = 
-		ImageUtil.getJDKImageReaderWriterSPI(registry, "JPEG", true);
-
-	    for (int i=0; i<list.size(); i++) {
-		// Set pairwise ordering to give codecLib reader precedence
-		// over Sun core J2SE reader.
-		registry.setOrdering(category, this, list.get(i));
-	    }
+        for (int i=0; i<list.size(); i++) {
+            // Set pairwise ordering to give codecLib reader precedence
+            // over Sun core J2SE reader.
+            registry.setOrdering(category, this, list.get(i));
         }
     }
 

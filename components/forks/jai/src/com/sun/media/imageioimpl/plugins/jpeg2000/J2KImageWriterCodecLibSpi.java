@@ -139,26 +139,20 @@ public class J2KImageWriterCodecLibSpi extends ImageWriterSpi {
 	
         registered = true;
 
-        // Branch based on codecLib availability.
-        if(!PackageUtil.isCodecLibAvailable()) {
-            // Deregister provider.
-            registry.deregisterServiceProvider(this);
-        } else {
-            // Set pairwise ordering to give codecLib writer precedence.
-            Class javaWriterSPIClass = null;
-            try {
-                javaWriterSPIClass =
-                    Class.forName("com.sun.media.imageioimpl.plugins.jpeg2000.J2KImageWriterSpi");
-            } catch(Throwable t) {
-                // Ignore it.
-            }
+        // Set pairwise ordering to give codecLib writer precedence.
+        Class javaWriterSPIClass = null;
+        try {
+            javaWriterSPIClass =
+                Class.forName("com.sun.media.imageioimpl.plugins.jpeg2000.J2KImageWriterSpi");
+        } catch(Throwable t) {
+            // Ignore it.
+        }
 
-            if(javaWriterSPIClass != null) {
-                Object javaWriterSPI =
-                    registry.getServiceProviderByClass(javaWriterSPIClass);
-                if(javaWriterSPI != null) {
-                    registry.setOrdering(category, this, javaWriterSPI);
-                }
+        if(javaWriterSPIClass != null) {
+            Object javaWriterSPI =
+                registry.getServiceProviderByClass(javaWriterSPIClass);
+            if(javaWriterSPI != null) {
+                registry.setOrdering(category, this, javaWriterSPI);
             }
         }
     }

@@ -140,19 +140,13 @@ public class CLibPNGImageWriterSpi extends ImageWriterSpi {
         registered = true;
 
         // Branch as a function of codecLib availability.
-        if(!PackageUtil.isCodecLibAvailable()) {
-            // Deregister provider.
-            registry.deregisterServiceProvider(this);
-        } else {
+        List list = 
+            ImageUtil.getJDKImageReaderWriterSPI(registry, "PNG", false);
 
-	    List list = 
-		ImageUtil.getJDKImageReaderWriterSPI(registry, "PNG", false);
-
-	    for (int i=0; i<list.size(); i++) {
-		// Set pairwise ordering to give codecLib writer precedence
-		// over Sun core J2SE writer.
-		registry.setOrdering(category, this, list.get(i));
-	    }
+        for (int i=0; i<list.size(); i++) {
+            // Set pairwise ordering to give codecLib writer precedence
+            // over Sun core J2SE writer.
+            registry.setOrdering(category, this, list.get(i));
         }
     }
 
