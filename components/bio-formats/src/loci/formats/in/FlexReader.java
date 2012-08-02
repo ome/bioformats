@@ -117,6 +117,7 @@ public class FlexReader extends FormatReader {
   private Vector<String> lightSourceCombinationRefs;
   private Vector<String> filterSets;
   private HashMap<String, FilterGroup> filterSetMap;
+  private HashMap<Integer, Timestamp> acquisitionDates;
 
   private Vector<String> measurementFiles;
 
@@ -237,8 +238,8 @@ public class FlexReader extends FormatReader {
     IFD ifd = file.offsets == null ?
       file.ifds.get(imageNumber) : firstFile.ifds.get(0);
 
-    RandomAccessInputStream s =
-      (wellRow == 0 && wellCol == 0 && file.field == 0) ? firstStream :
+    boolean useFirstStream = wellRow == 0 && wellCol == 0 && file.field == 0;
+    RandomAccessInputStream s = useFirstStream ? firstStream :
       new RandomAccessInputStream(getFileHandle(file.file));
 
     int nBytes = ifd.getBitsPerSample()[0] / 8;
@@ -253,6 +254,9 @@ public class FlexReader extends FormatReader {
       TiffParser tp = new TiffParser(s);
       tp.getSamples(ifd, buf, x, y, w, h);
       factor = file.factors[imageNumber];
+      if (!useFirstStream) {
+        tp.getStream().close();
+      }
     }
     else {
       int index = getImageCount() * pos[0] + no;
@@ -276,6 +280,10 @@ public class FlexReader extends FormatReader {
           DataTools.unpackBytes(q, buf, i * bpp, bpp, isLittleEndian());
         }
       }
+    }
+
+    if (!useFirstStream) {
+      s.close();
     }
 
     return buf;
@@ -309,6 +317,7 @@ public class FlexReader extends FormatReader {
       planePositionZ.clear();
       planeExposureTime.clear();
       planeDeltaT.clear();
+      acquisitionDates = null;
     }
   }
 
@@ -319,6 +328,7 @@ public class FlexReader extends FormatReader {
     super.initFile(id);
 
     measurementFiles = new Vector<String>();
+    acquisitionDates = new HashMap<Integer, Timestamp>();
 
     if (checkSuffix(id, FLEX_SUFFIX)) {
       initFlexFile(id);
@@ -328,8 +338,11 @@ public class FlexReader extends FormatReader {
     }
     else initMeaFile(id);
 
-    if ((plateCount % fieldCount) == 0) {
-      plateCount /= fieldCount;
+    if (plateCount == flexFiles.size()) {
+      plateCount /= wellCount;
+      if ((plateCount % fieldCount) == 0) {
+        plateCount /= fieldCount;
+      }
     }
   }
 
@@ -537,6 +550,10 @@ public class FlexReader extends FormatReader {
       store.setImageName("Well " + wellRow + "-" + (wellNumber[pos[1]][1] + 1) +
         "; Field #" + (pos[0] + 1), i);
 
+      if (acquisitionDates.get(i) != null) {
+        store.setImageAcquisitionDate(acquisitionDates.get(i), i);
+      }
+
       if (wellRows == 0 && wellColumns == 0) {
         well = pos[1];
         NonNegativeInteger row = new NonNegativeInteger(wellNumber[pos[1]][0]);
@@ -659,6 +676,7 @@ public class FlexReader extends FormatReader {
 
         for (int image=0; image<getImageCount(); image++) {
           int plane = i * getImageCount() + image;
+          int c = getZCTCoords(image)[1];
           if (plane < planePositionX.size()) {
             store.setPlanePositionX(planePositionX.get(plane), i, image);
           }
@@ -668,8 +686,9 @@ public class FlexReader extends FormatReader {
           if (plane < planePositionZ.size()) {
             store.setPlanePositionZ(planePositionZ.get(plane), i, image);
           }
-          if (plane < planeExposureTime.size()) {
-            store.setPlaneExposureTime(planeExposureTime.get(plane), i, image);
+          if (plane - image + c < planeExposureTime.size()) {
+            store.setPlaneExposureTime(
+              planeExposureTime.get(plane - image + c), i, image);
           }
           if (plane < planeDeltaT.size()) {
             store.setPlaneDeltaT(planeDeltaT.get(plane), i, image);
@@ -778,6 +797,7 @@ public class FlexReader extends FormatReader {
     else {
       TiffParser parser = new TiffParser(file.file);
       ifd = parser.getFirstIFD();
+      parser.getStream().close();
     }
     String xml = XMLTools.sanitizeXML(ifd.getIFDStringValue(FLEX));
 
@@ -852,7 +872,7 @@ public class FlexReader extends FormatReader {
     LOGGER.info("Populating core metadata for well row " + wellRow +
       ", column " + wellCol);
     if (getSizeC() == 0 && getSizeT() == 0) {
-      if ((fieldCount % imageNames.size()) != 0) {
+      if (fieldCount == 0 || (imageNames.size() % fieldCount) != 0) {
         fieldCount = 1;
       }
 
@@ -917,8 +937,8 @@ public class FlexReader extends FormatReader {
     core[0].littleEndian = ifd.isLittleEndian();
     core[0].pixelType = ifd.getPixelType();
 
-    if (fieldCount == 1 && plateCount * wellCount != nFiles) {
-      fieldCount = nFiles;
+    if (fieldCount == 1) {
+      fieldCount *= nFiles;
     }
 
     int seriesCount = plateCount * wellCount * fieldCount;
@@ -1272,7 +1292,7 @@ public class FlexReader extends FormatReader {
             flexFiles.add(file);
             parseFlexFile(currentWell, row, col, field, firstFile, store);
           }
-          if (currentWell != 0) s.close();
+          if (currentWell != 0 || field != 0) s.close();
           if (firstFile) firstFile = false;
         }
         currentWell++;
@@ -1304,14 +1324,14 @@ public class FlexReader extends FormatReader {
       effectiveFieldCount = 1;
     }
 
-    int[] lengths = new int[] {effectiveFieldCount, wellCount, plateCount};
+    int[] lengths = new int[] {fieldCount, wellCount, plateCount};
     int[] pos = FormatTools.rasterToPosition(lengths, fileSeries);
 
     boolean zeroWell = wellCount == 1 && effectiveFieldCount == 1;
     int row = zeroWell ? 0 : wellNumber[pos[1]][0];
     int col = zeroWell ? 0 : wellNumber[pos[1]][1];
 
-    return lookupFile(row, col, pos[0]);
+    return lookupFile(row, col, effectiveFieldCount == 1 ? 0 : pos[0]);
   }
 
   // -- Helper classes --
@@ -1401,7 +1421,7 @@ public class FlexReader extends FormatReader {
 
         if (qName.equals("DateTime")) {
           if (value != null) {
-            store.setImageAcquisitionDate(new Timestamp(value), currentSeries);
+            acquisitionDates.put(currentSeries, new Timestamp(value));
           }
         }
       }
