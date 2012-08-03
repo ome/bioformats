@@ -96,7 +96,7 @@ public class HISReader extends FormatReader {
 
       bb.skipBits(y * getSizeX() * getSizeC() * bits);
       for (int row=0; row<h; row++) {
-        int rowOffset = row * getSizeX() * getSizeC() * bpp;
+        int rowOffset = row * w * getSizeC() * bpp;
         bb.skipBits(x * getSizeC() * bits);
         for (int col=0; col<w; col++) {
           int colOffset = col * getSizeC() * bpp;
