@@ -1742,7 +1742,10 @@ public class FormatReaderTest {
               continue;
             }
 
-            if (result && r instanceof HitachiReader) {
+            if (result && ((r instanceof HitachiReader) ||
+              (readers[j] instanceof HitachiReader &&
+              r instanceof TiffDelegateReader)))
+            {
               continue;
             }
 
