@@ -96,7 +96,7 @@ public class VarianFDFReader extends FormatReader {
       in.order(isLittleEndian());
     }
     in.seek(pixelOffsets[no]);
-    readPlane(in, x, y, w, h, buf);
+    readPlane(in, x, getSizeY() - y - h, w, h, buf);
 
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
     byte[] rowBuf = new byte[w * bpp];

@@ -154,7 +154,7 @@ public class TextReader extends FormatReader {
     int q = 0;
     for (int j=0; j<h; j++) {
       final int yy = y + j;
-      for (int i=x; i<w; i++) {
+      for (int i=0; i<w; i++) {
         final int xx = x + i;
         final int index = yy * sizeX + xx;
         final int bits = Float.floatToIntBits(plane[index]);
