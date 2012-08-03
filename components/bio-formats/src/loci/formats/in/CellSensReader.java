@@ -368,8 +368,14 @@ public class CellSensReader extends FormatReader {
 
         if (s == 0 && exifs.size() > 0) {
           IFD exif = exifs.get(0);
-          core[s].sizeX = exif.getIFDIntValue(IFD.PIXEL_X_DIMENSION);
-          core[s].sizeY = exif.getIFDIntValue(IFD.PIXEL_Y_DIMENSION);
+
+          int newX = exif.getIFDIntValue(IFD.PIXEL_X_DIMENSION);
+          int newY = exif.getIFDIntValue(IFD.PIXEL_Y_DIMENSION);
+
+          if (getSizeX() > newX || getSizeY() > newY) {
+            core[s].sizeX = newX;
+            core[s].sizeY = newY;
+          }
         }
 
         setSeries(0);
