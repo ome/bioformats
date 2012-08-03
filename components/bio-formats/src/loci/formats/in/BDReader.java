@@ -509,14 +509,17 @@ public class BDReader extends FormatReader {
 
   private IniList readMetaData(String id) throws IOException {
     IniParser parser = new IniParser();
+    FileInputStream idStream = new FileInputStream(id);
     IniList exp = parser.parseINI(new BufferedReader(new InputStreamReader(
-      new FileInputStream(id), Constants.ENCODING)));
+      idStream, Constants.ENCODING)));
     IniList plate = null;
     // Read Plate File
     for (String filename : metadataFiles) {
       if (checkSuffix(filename, "plt")) {
+        FileInputStream stream = new FileInputStream(filename);
         plate = parser.parseINI(new BufferedReader(new InputStreamReader(
-          new FileInputStream(filename), Constants.ENCODING)));
+          stream, Constants.ENCODING)));
+        stream.close();
       }
       else if (filename.endsWith("RoiSummary.txt")) {
         roiFile = filename;
@@ -617,6 +620,8 @@ public class BDReader extends FormatReader {
       }
     }
 
+    idStream.close();
+
     return exp;
   }
 
@@ -648,6 +653,8 @@ public class BDReader extends FormatReader {
       exposure[c] = Double.parseDouble(numerator.get("Exposure"));
       gain[c] = Double.parseDouble(numerator.get("Gain"));
       offset[c] = Double.parseDouble(numerator.get("Offset"));
+
+      stream.close();
     }
   }
 
