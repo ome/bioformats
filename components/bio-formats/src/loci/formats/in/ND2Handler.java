@@ -164,6 +164,9 @@ public class ND2Handler extends BaseHandler {
           points[i] = Double.parseDouble(p[i]);
         }
 
+        store.setLabelX(points[0], r, 0);
+        store.setLabelY(points[1], r, 0);
+
         store.setRectangleID(MetadataTools.createLSID("Shape", r, 1), r, 1);
         store.setRectangleX(points[0], r, 1);
         store.setRectangleY(points[1], r, 1);
