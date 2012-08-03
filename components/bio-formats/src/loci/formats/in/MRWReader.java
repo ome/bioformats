@@ -67,6 +67,8 @@ public class MRWReader extends FormatReader {
 
   private float[] wbg;
 
+  private byte[] fullImage;
+
   // -- Constructor --
 
   /** Constructs a new MRW reader. */
@@ -143,7 +145,15 @@ public class MRWReader extends FormatReader {
 
     int[] colorMap = bayerPattern == 1 ? COLOR_MAP_1 : COLOR_MAP_2;
 
-    return ImageTools.interpolate(s, buf, colorMap, w, h, isLittleEndian());
+    if (fullImage == null) {
+      fullImage = new byte[FormatTools.getPlaneSize(this)];
+      fullImage = ImageTools.interpolate(s, fullImage, colorMap,
+        getSizeX(), getSizeY(), isLittleEndian());
+    }
+    RandomAccessInputStream stream = new RandomAccessInputStream(fullImage);
+    readPlane(stream, x, y, w, h, buf);
+    stream.close();
+    return buf;
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
@@ -156,6 +166,7 @@ public class MRWReader extends FormatReader {
       storageMethod = 0;
       dataSize = 0;
       wbg = null;
+      fullImage = null;
     }
   }
 

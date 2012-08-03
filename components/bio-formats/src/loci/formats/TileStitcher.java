@@ -188,7 +188,9 @@ public class TileStitcher extends ReaderWrapper {
     // it might be worth improving this in the future so that fields are
     // stitched, but plates/wells are left alone, but for now it is easy
     // enough to just ignore HCS data
-    if (meta.getPlateCount() > 0) {
+    if (meta.getPlateCount() > 1 ||
+      (meta.getPlateCount() == 1 && meta.getWellCount(0) > 1))
+    {
       tileX = 1;
       tileY = 1;
       return;

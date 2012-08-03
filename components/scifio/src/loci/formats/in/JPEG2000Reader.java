@@ -94,12 +94,17 @@ public class JPEG2000Reader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
-    final int blockLen = 8;
+    final int blockLen = 40;
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
     boolean validStart = (stream.readShort() & 0xffff) == 0xff4f;
     if (!validStart) {
       stream.skipBytes(2);
       validStart = stream.readInt() == JPEG2000BoxType.SIGNATURE.getCode();
+
+      if (validStart) {
+        stream.skipBytes(12);
+        validStart = !stream.readString(4).equals("jpx ");
+      }
     }
     stream.seek(stream.length() - 2);
     boolean validEnd = (stream.readShort() & 0xffff) == 0xffd9;
