@@ -498,7 +498,9 @@ public final class ImageConverter {
   private long convertPlane(IFormatWriter writer, int index, int startPlane)
     throws FormatException, IOException
   {
-    if (width * height >= 4096 * 4096) {
+    if (DataTools.safeMultiply64(width, height) >=
+      DataTools.safeMultiply64(4096, 4096))
+    {
       // this is a "big image", so we will attempt to convert it one tile
       // at a time
 
