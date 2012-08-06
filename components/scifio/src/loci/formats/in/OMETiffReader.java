@@ -65,6 +65,7 @@ import loci.formats.services.OMEXMLServiceImpl;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.IFDList;
 import loci.formats.tiff.PhotoInterp;
+import loci.formats.tiff.TiffIFDEntry;
 import loci.formats.tiff.TiffParser;
 
 import ome.xml.model.primitives.NonNegativeInteger;
@@ -149,12 +150,17 @@ public class OMETiffReader extends FormatReader {
   /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
   public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     TiffParser tp = new TiffParser(stream);
+    tp.setDoCaching(false);
     boolean validHeader = tp.isValidHeader();
     if (!validHeader) return false;
     // look for OME-XML in first IFD's comment
     IFD ifd = tp.getFirstIFD();
     if (ifd == null) return false;
-    String comment = ifd.getComment();
+    TiffIFDEntry description = (TiffIFDEntry) ifd.get(IFD.IMAGE_DESCRIPTION);
+    if (description == null) {
+      return false;
+    }
+    String comment = tp.getIFDValue(description).toString();
     if (comment == null || comment.trim().length() == 0) return false;
 
     comment = comment.trim();

@@ -37,6 +37,7 @@ import loci.formats.FormatTools;
 import loci.formats.meta.MetadataStore;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.PhotoInterp;
+import loci.formats.tiff.TiffIFDEntry;
 import loci.formats.tiff.TiffParser;
 
 /**
@@ -85,13 +86,20 @@ public class SVSReader extends BaseTiffReader {
       try {
         stream = new RandomAccessInputStream(name);
         TiffParser tiffParser = new TiffParser(stream);
+        tiffParser.setDoCaching(false);
         if (!tiffParser.isValidHeader()) {
           return false;
         }
-        String imageDescription = tiffParser.getComment();
-        if (imageDescription != null
-            && imageDescription.startsWith(APERIO_IMAGE_DESCRIPTION_PREFIX)) {
-          return true;
+        IFD ifd = tiffParser.getFirstIFD();
+        TiffIFDEntry description =
+          (TiffIFDEntry) ifd.get(IFD.IMAGE_DESCRIPTION);
+        if (description != null) {
+          String imageDescription =
+            tiffParser.getIFDValue(description).toString();
+          if (imageDescription != null
+              && imageDescription.startsWith(APERIO_IMAGE_DESCRIPTION_PREFIX)) {
+            return true;
+          }
         }
         return false;
       }
