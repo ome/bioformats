@@ -269,6 +269,23 @@ public abstract class StreamHandle implements IRandomAccess {
   public void writeUTF(String str) throws IOException {
     sHandle.writeUTF(str);
   }
+  
+  // -- Object Delegators --
+  
+  @Override
+  public boolean equals(Object obj) {
+    return sHandle.equals(obj);
+  }
+  
+  @Override
+  public int hashCode() {
+    return sHandle.hashCode();
+  }
+  
+  @Override
+  public String toString() {
+    return sHandle.toString();
+  }
 
   // -- Helper methods --
 

@@ -118,5 +118,21 @@ public class IniParser {
   public static BufferedReader openTextResource(String path, Class<?> c) {
     return ome.scifio.common.IniParser.openTextResource(path, c);
   }
+  
+  // -- Object delegators --
 
+  @Override
+  public boolean equals(Object obj) {
+    return parser.equals(obj);
+  }
+  
+  @Override
+  public int hashCode() {
+    return parser.hashCode();
+  }
+  
+  @Override
+  public String toString() {
+    return parser.toString();
+  }
 }

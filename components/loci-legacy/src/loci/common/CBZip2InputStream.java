@@ -113,6 +113,22 @@ public class CBZip2InputStream extends InputStream {
   public void close() throws IOException {
     cbzStream.close();
   }
+  
+  // -- Object delegators --
+  
+  @Override
+  public boolean equals(Object obj) {
+    return cbzStream.equals(obj);
+  }
 
+  @Override
+  public int hashCode() {
+    return cbzStream.hashCode();
+  }
+  
+  @Override
+  public String toString() {
+    return cbzStream.toString();
+  }
 }
 

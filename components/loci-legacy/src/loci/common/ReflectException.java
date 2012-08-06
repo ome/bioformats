@@ -49,5 +49,22 @@ public class ReflectException extends ome.scifio.common.ReflectException {
   public ReflectException(String s) { super(s); }
   public ReflectException(String s, Throwable cause) { super(s, cause); }
   public ReflectException(Throwable cause) { super(cause); }
+  
+  // -- Object delegators --
+
+  @Override
+  public boolean equals(Object obj) {
+    return super.equals(obj);
+  }
+  
+  @Override
+  public int hashCode() {
+    return super.hashCode();
+  }
+  
+  @Override
+  public String toString() {
+    return super.toString();
+  }
 }
 

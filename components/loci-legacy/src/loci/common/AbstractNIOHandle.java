@@ -115,17 +115,19 @@ public abstract class AbstractNIOHandle implements IRandomAccess {
    */
   protected abstract void setLength(long length) throws IOException;
   
-  // -- Delegators --
+  // -- Object Delegators --
   
+  @Override
   public boolean equals(Object obj) {
     return handle.equals(obj);
   }
 
-  public String toString() {
-    return handle.toString();
-  }
-  
+  @Override
   public int hashCode() {
     return handle.hashCode();
+  }
+  @Override
+  public String toString() {
+    return handle.toString();
   }
 }

@@ -129,6 +129,4 @@ public class IniTable extends HashMap<String, String> {
   public Collection<String> values() {
     return table.values();
   }
-
-
 }

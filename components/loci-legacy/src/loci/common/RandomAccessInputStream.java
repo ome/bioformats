@@ -353,4 +353,20 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
     rais.reset();
   }
 
+  // -- Object delegators --
+
+  @Override
+  public boolean equals(Object obj) {
+    return rais.equals(obj);
+  }
+  
+  @Override
+  public int hashCode() {
+    return rais.hashCode();
+  }
+  
+  @Override
+  public String toString() {
+    return rais.toString();
+  }
 }

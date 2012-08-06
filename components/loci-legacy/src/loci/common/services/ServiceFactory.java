@@ -99,4 +99,21 @@ public class ServiceFactory {
       throw (DependencyException)e;
     }
   }
+  
+  // -- Object delegators --
+
+  @Override
+  public boolean equals(Object obj) {
+    return sFactory.equals(obj);
+  }
+  
+  @Override
+  public int hashCode() {
+    return sFactory.hashCode();
+  }
+  
+  @Override
+  public String toString() {
+    return sFactory.toString();
+  }
 }

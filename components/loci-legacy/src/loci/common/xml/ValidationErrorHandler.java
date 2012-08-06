@@ -73,5 +73,22 @@ public class ValidationErrorHandler implements ErrorHandler {
   public void warning(SAXParseException e) {
     handler.warning(e);
   }
+  
+  // -- Object delegators --
+
+  @Override
+  public boolean equals(Object obj) {
+    return handler.equals(obj);
+  }
+  
+  @Override
+  public int hashCode() {
+    return handler.hashCode();
+  }
+  
+  @Override
+  public String toString() {
+    return handler.toString();
+  }
 
 }

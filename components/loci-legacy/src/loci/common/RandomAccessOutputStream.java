@@ -216,4 +216,20 @@ public class RandomAccessOutputStream extends OutputStream implements DataOutput
     raos.flush();
   }
 
+  // -- Object delegators --
+
+  @Override
+  public boolean equals(Object obj) {
+    return raos.equals(obj);
+  }
+  
+  @Override
+  public int hashCode() {
+    return raos.hashCode();
+  }
+  
+  @Override
+  public String toString() {
+    return raos.toString();
+  }
 }

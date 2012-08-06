@@ -74,4 +74,20 @@ public abstract class AbstractService implements Service {
     }
   }
 
+  // -- Object delegators --
+
+  @Override
+  public boolean equals(Object obj) {
+    return service.equals(obj);
+  }
+  
+  @Override
+  public int hashCode() {
+    return service.hashCode();
+  }
+  
+  @Override
+  public String toString() {
+    return service.toString();
+  }
 }

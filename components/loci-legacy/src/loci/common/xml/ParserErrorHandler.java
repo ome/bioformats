@@ -67,5 +67,22 @@ public class ParserErrorHandler implements ErrorHandler {
   public void warning(SAXParseException e) {
     eHandler.warning(e);
   }
+  
+  // -- Object delegators --
+
+  @Override
+  public boolean equals(Object obj) {
+    return eHandler.equals(obj);
+  }
+  
+  @Override
+  public int hashCode() {
+    return eHandler.hashCode();
+  }
+  
+  @Override
+  public String toString() {
+    return eHandler.toString();
+  }
 
 }

@@ -203,4 +203,20 @@ public class ReflectedUniverse {
     ome.scifio.common.ReflectedUniverse.main(args);
   }
 
+  // -- Object delegators --
+
+  @Override
+  public boolean equals(Object obj) {
+    return unv.equals(obj);
+  }
+  
+  @Override
+  public int hashCode() {
+    return unv.hashCode();
+  }
+  
+  @Override
+  public String toString() {
+    return unv.toString();
+  }
 }

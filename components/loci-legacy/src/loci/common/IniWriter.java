@@ -76,4 +76,20 @@ public class IniWriter {
     writer.saveINI(ini.list, path, append);
   }
 
+  // -- Object delegators --
+
+  @Override
+  public boolean equals(Object obj) {
+    return writer.equals(obj);
+  }
+  
+  @Override
+  public int hashCode() {
+    return writer.hashCode();
+  }
+  
+  @Override
+  public String toString() {
+    return writer.toString();
+  }
 }

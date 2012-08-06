@@ -102,6 +102,22 @@ public class CRC {
   public void updateCRC(int inCh) {
     crc.updateCRC(inCh);
   }
+  
+  // -- Object delegators --
 
+  @Override
+  public boolean equals(Object obj) {
+    return crc.equals(obj);
+  }
+  
+  @Override
+  public int hashCode() {
+    return crc.hashCode();
+  }
+  
+  @Override
+  public String toString() {
+    return crc.toString();
+  }
 }
 

@@ -100,9 +100,20 @@ public class DependencyException extends ome.scifio.services.DependencyException
     return (Class<? extends Service>) super.getFailureClass();
   }
 
+  // -- Object delegators --
+
   @Override
-  public String toString()
-  {
+  public boolean equals(Object obj) {
+    return super.equals(obj);
+  }
+  
+  @Override
+  public int hashCode() {
+    return super.hashCode();
+  }
+  
+  @Override
+  public String toString() {
     return super.toString();
   }
 }

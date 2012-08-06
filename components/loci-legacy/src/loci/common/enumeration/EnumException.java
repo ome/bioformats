@@ -53,4 +53,21 @@ public class EnumException extends ome.scifio.enumeration.EnumException {
   public EnumException(String s) { super(s); }
   public EnumException(String s, Throwable cause) { super(s, cause); }
   public EnumException(Throwable cause) { super(cause); }
+  
+  // -- Object delegators --
+
+  @Override
+  public boolean equals(Object obj) {
+    return super.equals(obj);
+  }
+  
+  @Override
+  public int hashCode() {
+    return super.hashCode();
+  }
+  
+  @Override
+  public String toString() {
+    return super.toString();
+  }
 }
