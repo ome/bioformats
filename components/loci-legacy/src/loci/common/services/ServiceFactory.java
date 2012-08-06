@@ -89,7 +89,7 @@ public class ServiceFactory {
    * @throws DependencyException If there is an error instantiating the
    * service instance requested.
    */
-  public <T extends ome.scifio.services.Service> T getInstance(Class<T> type)
+  public <T extends Service> T getInstance(Class<T> type)
     throws DependencyException
   {
     try {
