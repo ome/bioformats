@@ -550,7 +550,7 @@ Type "ant -p" for a list of targets.
   <!-- Loci-Legacy  -->
 
   <target name="deps-loci-legacy"
-    depends="jar-scifio"/>
+    depends="jar-scifio-devel"/>
 
   <target name="compile-loci-legacy" depends="deps-loci-legacy"
     description="compile classes for Loci-Legacy ">
@@ -573,7 +573,7 @@ Type "ant -p" for a list of targets.
   </target>
 
   <target name="clean-loci-legacy"
-    depends="clean-scifio"
+    depends="clean-scifio-devel"
     description="remove build files for Loci-Legacy ">
     <ant dir="components/loci-legacy" target="loci-legacy.clean"/>
   </target>
