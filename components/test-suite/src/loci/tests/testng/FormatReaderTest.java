@@ -1050,7 +1050,7 @@ public class FormatReaderTest {
 
           for (int p=0; p<reader.getImageCount(); p++) {
             int[] zct = reader.getZCTCoords(p);
-            if (zct[1] == c) {
+            if (zct[1] == c && p < retrieve.getPlaneCount(i)) {
               Double planeExposureTime = retrieve.getPlaneExposureTime(i, p);
 
               if (exposureTime == null && planeExposureTime == null) {
@@ -1490,18 +1490,19 @@ public class FormatReaderTest {
     String format = config.getReader();
     if (format.equals("OMETiffReader") || format.equals("OMEXMLReader")) {
       result(testName, true);
-      return;
     }
-    boolean success = true;
-    try {
-      MetadataStore store = reader.getMetadataStore();
-      MetadataRetrieve retrieve = omexmlService.asRetrieve(store);
-      String xml = omexmlService.getOMEXML(retrieve);
-      success = xml != null && omexmlService.validateOMEXML(xml);
-    }
-    catch (Throwable t) {
-      LOGGER.info("", t);
-      success = false;
+    else {
+      boolean success = true;
+      try {
+        MetadataStore store = reader.getMetadataStore();
+        MetadataRetrieve retrieve = omexmlService.asRetrieve(store);
+        String xml = omexmlService.getOMEXML(retrieve);
+        success = xml != null && omexmlService.validateOMEXML(xml);
+      }
+      catch (Throwable t) {
+        LOGGER.info("", t);
+        success = false;
+      }
     }
     result(testName, success);
   }
