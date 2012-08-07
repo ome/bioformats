@@ -542,6 +542,13 @@ public class TiffParser {
         longs = new long[1];
         longs[0] = in.readLong();
       }
+      else if (equalStrips && (entry.getTag() == IFD.STRIP_OFFSETS ||
+        entry.getTag() == IFD.TILE_OFFSETS))
+      {
+        OnDemandLongArray offsets = new OnDemandLongArray(in);
+        offsets.setSize(count);
+        return offsets;
+      }
       else {
         longs = new long[count];
         for (int j=0; j<count; j++) longs[j] = in.readLong();
@@ -628,7 +635,6 @@ public class TiffParser {
     int pixel = ifd.getBytesPerSample()[0];
     int effectiveChannels = planarConfig == 2 ? 1 : samplesPerPixel;
 
-    long[] stripOffsets = ifd.getStripOffsets();
     long[] stripByteCounts = ifd.getStripByteCounts();
     long[] rowsPerStrip = ifd.getRowsPerStrip();
 
@@ -642,19 +648,31 @@ public class TiffParser {
     {
       stripByteCounts[countIndex] *= pixel;
     }
+
+    long stripOffset = 0;
+    long nStrips = 0;
+
+    if (ifd.getOnDemandStripOffsets() != null) {
+      OnDemandLongArray stripOffsets = ifd.getOnDemandStripOffsets();
+      stripOffset = stripOffsets.get(offsetIndex);
+      nStrips = stripOffsets.size();
+    }
+    else {
+      long[] stripOffsets = ifd.getStripOffsets();
+      stripOffset = stripOffsets[offsetIndex];
+      nStrips = stripOffsets.length;
+    }
+
     int size = (int) (tileWidth * tileLength * pixel * effectiveChannels);
 
     if (buf == null) buf = new byte[size];
-    if (stripByteCounts[countIndex] == 0 ||
-      stripOffsets[offsetIndex] >= in.length())
-    {
+    if (stripByteCounts[countIndex] == 0 || stripOffset >= in.length()) {
       return buf;
     }
     byte[] tile = new byte[(int) stripByteCounts[countIndex]];
 
-    LOGGER.debug("Reading tile Length {} Offset {}",
-        tile.length, stripOffsets[offsetIndex]);
-    in.seek(stripOffsets[offsetIndex]);
+    LOGGER.debug("Reading tile Length {} Offset {}", tile.length, stripOffset);
+    in.seek(stripOffset);
     in.read(tile);
 
     codecOptions.maxBytes = (int) Math.max(size, tile.length);
@@ -670,7 +688,7 @@ public class TiffParser {
     unpackBytes(buf, 0, tile, ifd);
 
     if (planarConfig == 2 && !ifd.isTiled() && ifd.getSamplesPerPixel() > 1) {
-      int channel = row % stripOffsets.length;
+      int channel = (int) (row % nStrips);
       if (channel < ifd.getBytesPerSample().length) {
         int realBytes = ifd.getBytesPerSample()[channel];
         if (realBytes != pixel) {

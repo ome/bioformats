@@ -346,6 +346,18 @@ public class MinimalTiffReader extends FormatReader {
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
+      if (ifds != null) {
+        for (IFD ifd : ifds) {
+          try {
+            if (ifd.getOnDemandStripOffsets() != null) {
+              ifd.getOnDemandStripOffsets().close();
+            }
+          }
+          catch (FormatException e) {
+            LOGGER.debug("", e);
+          }
+        }
+      }
       ifds = null;
       thumbnailIFDs = null;
       subResolutionIFDs = new ArrayList<IFDList>();
