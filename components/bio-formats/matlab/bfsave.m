@@ -80,6 +80,7 @@ end
 
 % Create ImageWriter
 writer = loci.formats.ImageWriter();
+writer.setWriteSequentially(true);
 writer.setMetadataRetrieve(metadata);
 writer.setId(outputPath);
 
