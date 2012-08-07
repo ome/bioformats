@@ -20,7 +20,7 @@ function bfsave(I, outputPath, varargin)
 bfCheckJavaPath();
 
 % Not using the inputParser for first argument as it copies data
-assert(isnumeric(I), 'First argument must be numeri');
+assert(isnumeric(I), 'First argument must be numeric');
 
 % Input check
 ip = inputParser;
