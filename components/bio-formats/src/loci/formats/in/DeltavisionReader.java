@@ -727,7 +727,8 @@ public class DeltavisionReader extends FormatReader {
 
         // plane timing
         store.setPlaneDeltaT(new Double(hdr.timeStampSeconds), series, i);
-        store.setPlaneExposureTime(new Double(hdr.expTime), series, i);
+        store.setPlaneExposureTime(
+          new Double(extHdrFields[0][coords[1]][0].expTime), series, i);
 
         // stage position
         if (!logFound || getSeriesCount() > 1) {
