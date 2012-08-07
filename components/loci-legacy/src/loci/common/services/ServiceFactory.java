@@ -61,7 +61,7 @@ public class ServiceFactory {
       sFactory = new ome.scifio.services.ServiceFactory();
     }
     catch (ome.scifio.services.DependencyException e) {
-      throw (DependencyException)e;
+      throw new DependencyException(e);
     }
   }
 
@@ -76,7 +76,7 @@ public class ServiceFactory {
       sFactory = new ome.scifio.services.ServiceFactory(path);
     }
     catch (ome.scifio.services.DependencyException e) {
-      throw (DependencyException)e;
+      throw new DependencyException(e);
     }
   }
   
@@ -96,7 +96,7 @@ public class ServiceFactory {
       return sFactory.getInstance(type);
     }
     catch (ome.scifio.services.DependencyException e) {
-      throw (DependencyException)e;
+      throw new DependencyException(e);
     }
   }
   

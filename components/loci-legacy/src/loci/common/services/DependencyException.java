@@ -36,6 +36,9 @@
 
 package loci.common.services;
 
+import java.io.PrintStream;
+import java.io.PrintWriter;
+
 /**
  * A legacy wrapper class for ome.scifio.services.DependencyException.
  *
@@ -45,10 +48,11 @@ package loci.common.services;
  *
  * @author Chris Allan <callan at blackcat dot ca>
  */
-public class DependencyException extends ome.scifio.services.DependencyException
+public class DependencyException extends Exception
 {
   /** Serial for this version. */
   private static final long serialVersionUID = -7836244849086491562L;
+  private ome.scifio.services.DependencyException e;
 
   /**
    * Default constructor.
@@ -56,7 +60,7 @@ public class DependencyException extends ome.scifio.services.DependencyException
    */
   public DependencyException(String message)
   {
-    super(message);
+    e = new ome.scifio.services.DependencyException(message);
   }
 
   /**
@@ -66,7 +70,7 @@ public class DependencyException extends ome.scifio.services.DependencyException
    */
   public DependencyException(String message, Class<? extends Service> klass)
   {
-    super(message, klass);
+    e = new ome.scifio.services.DependencyException(message, klass);
   }
 
   /**
@@ -78,7 +82,7 @@ public class DependencyException extends ome.scifio.services.DependencyException
   public DependencyException(String message, Class<? extends Service> klass,
       Throwable cause)
   {
-    super(message, klass, cause);
+    e = new ome.scifio.services.DependencyException(message, klass, cause);
   }
 
   /**
@@ -87,7 +91,15 @@ public class DependencyException extends ome.scifio.services.DependencyException
    */
   public DependencyException(Throwable cause)
   {
-    super(cause);
+    e = new ome.scifio.services.DependencyException(cause);
+  }
+  
+  /**
+   * Direct wrapping constructor 
+   * @param ex
+   */
+  public DependencyException(ome.scifio.services.DependencyException ex) {
+    e = ex;
   }
 
   /**
@@ -97,23 +109,63 @@ public class DependencyException extends ome.scifio.services.DependencyException
   @SuppressWarnings("unchecked")
   public Class<? extends Service> getFailureClass()
   {
-    return (Class<? extends Service>) super.getFailureClass();
+    return (Class<? extends Service>) e.getFailureClass();
   }
 
-  // -- Object delegators --
+  // -- Delegators --
 
   @Override
   public boolean equals(Object obj) {
-    return super.equals(obj);
+    return e.equals(obj);
   }
   
   @Override
   public int hashCode() {
-    return super.hashCode();
+    return e.hashCode();
   }
   
   @Override
   public String toString() {
-    return super.toString();
+    return e.toString();
+  }
+
+  public Throwable fillInStackTrace() {
+    return (e == null) ? null : e.fillInStackTrace();
+  }
+
+  public Throwable getCause() {
+    return e.getCause();
+  }
+
+  public String getLocalizedMessage() {
+    return e.getLocalizedMessage();
+  }
+
+  public String getMessage() {
+    return e.getMessage();
+  }
+
+  public StackTraceElement[] getStackTrace() {
+    return e.getStackTrace();
+  }
+
+  public Throwable initCause(Throwable arg0) {
+    return e.initCause(arg0);
+  }
+
+  public void printStackTrace() {
+    e.printStackTrace();
+  }
+
+  public void printStackTrace(PrintStream arg0) {
+    e.printStackTrace(arg0);
+  }
+
+  public void printStackTrace(PrintWriter arg0) {
+    e.printStackTrace(arg0);
+  }
+
+  public void setStackTrace(StackTraceElement[] arg0) {
+    e.setStackTrace(arg0);
   }
 }
