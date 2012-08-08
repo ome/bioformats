@@ -45,7 +45,8 @@
             </run>
         </groups>
         <packages>
-            <package name="loci.common.utests"/>
+            <package name="ome.scifio.io.utests"/>
+            <package name="ome.scifio.common.utests"/>
         </packages>
     </test>
     <test name="NewByteArrayHandle">
@@ -58,7 +59,8 @@
             </run>
         </groups>
         <packages>
-            <package name="loci.common.utests"/>
+            <package name="ome.scifio.io.utests"/>
+            <package name="ome.scifio.common.utests"/>
         </packages>
     </test>
     <test name="ExistingByteArrayHandle">
@@ -70,7 +72,8 @@
             </run>
         </groups>
         <packages>
-            <package name="loci.common.utests"/>
+            <package name="ome.scifio.io.utests"/>
+            <package name="ome.scifio.common.utests"/>
         </packages>
     </test>
     <test name="BZip2Handle">
@@ -82,10 +85,11 @@
             </run>
         </groups>
         <classes>
-            <class name="loci.common.utests.ReadOnlyTest"/>
+            <class name="ome.scifio.io.utests.ReadOnlyTest"/>
         </classes>
         <packages>
-            <package name="loci.common.utests"/>
+            <package name="ome.scifio.io.utests"/>
+            <package name="ome.scifio.common.utests"/>
         </packages>
     </test>
     <test name="GZipHandle">
@@ -97,10 +101,11 @@
             </run>
         </groups>
         <classes>
-            <class name="loci.common.utests.ReadOnlyTest"/>
+            <class name="ome.scifio.io.utests.ReadOnlyTest"/>
         </classes>
         <packages>
-            <package name="loci.common.utests"/>
+            <package name="ome.scifio.io.utests"/>
+            <package name="ome.scifio.common.utests"/>
         </packages>
     </test>
     <test name="NIOFileHandle">
@@ -112,7 +117,8 @@
             </run>
         </groups>
         <packages>
-            <package name="loci.common.utests"/>
+            <package name="ome.scifio.io.utests"/>
+            <package name="ome.scifio.common.utests"/>
         </packages>
     </test>
     <test name="URLHandle">
@@ -124,10 +130,11 @@
             </run>
         </groups>
         <classes>
-            <class name="loci.common.utests.ReadOnlyTest"/>
+            <class name="ome.scifio.io.utests.ReadOnlyTest"/>
         </classes>
         <packages>
-            <package name="loci.common.utests"/>
+            <package name="ome.scifio.io.utests"/>
+            <package name="ome.scifio.common.utests"/>
         </packages>
     </test>
     <test name="ZipHandle">
@@ -139,80 +146,81 @@
             </run>
         </groups>
         <classes>
-            <class name="loci.common.utests.ReadOnlyTest"/>
+            <class name="ome.scifio.io.utests.ReadOnlyTest"/>
         </classes>
         <packages>
-            <package name="loci.common.utests"/>
+            <package name="ome.scifio.io.utests"/>
+            <package name="ome.scifio.common.utests"/>
         </packages>
     </test>
     <test name="TypeDetection">
         <classes>
-            <class name="loci.common.utests.TypeDetectionTest"/>
+            <class name="ome.scifio.io.utests.TypeDetectionTest"/>
         </classes>
     </test>
     <test name="Location">
         <classes>
-            <class name="loci.common.utests.LocationTest"/>
+            <class name="ome.scifio.io.utests.LocationTest"/>
         </classes>
     </test>
     <!-- TODO : uncomment this once we have a better way of testing URLs
     <test name="URLHandleTest">
         <classes>
-          <class name="loci.common.utests.URLHandleTest"/>
+          <class name="ome.scifio.io.utests.URLHandleTest"/>
         </classes>
     </test>
     -->
     <test name="RandomAccessInputStream">
       <parameter name="provider" value="ByteArrayHandle"/>
       <classes>
-        <class name="loci.common.utests.RandomAccessInputStreamTest"/>
+        <class name="ome.scifio.io.utests.RandomAccessInputStreamTest"/>
       </classes>
     </test>
     <test name="RandomAccessInputStream">
       <parameter name="provider" value="BZip2Handle"/>
       <classes>
-        <class name="loci.common.utests.RandomAccessInputStreamTest"/>
+        <class name="ome.scifio.io.utests.RandomAccessInputStreamTest"/>
       </classes>
     </test>
     <test name="RandomAccessInputStream">
       <parameter name="provider" value="ExistingByteArrayHandle"/>
       <classes>
-        <class name="loci.common.utests.RandomAccessInputStreamTest"/>
+        <class name="ome.scifio.io.utests.RandomAccessInputStreamTest"/>
       </classes>
     </test>
     <test name="RandomAccessInputStream">
       <parameter name="provider" value="GZipHandle"/>
       <classes>
-        <class name="loci.common.utests.RandomAccessInputStreamTest"/>
+        <class name="ome.scifio.io.utests.RandomAccessInputStreamTest"/>
       </classes>
     </test>
     <test name="RandomAccessInputStream">
       <parameter name="provider" value="NIOFileHandle"/>
       <classes>
-        <class name="loci.common.utests.RandomAccessInputStreamTest"/>
+        <class name="ome.scifio.io.utests.RandomAccessInputStreamTest"/>
       </classes>
     </test>
     <test name="RandomAccessInputStream">
       <parameter name="provider" value="URLHandle"/>
       <classes>
-        <class name="loci.common.utests.RandomAccessInputStreamTest"/>
+        <class name="ome.scifio.io.utests.RandomAccessInputStreamTest"/>
       </classes>
     </test>
     <test name="RandomAccessInputStream">
       <parameter name="provider" value="ZipHandle"/>
       <classes>
-        <class name="loci.common.utests.RandomAccessInputStreamTest"/>
+        <class name="ome.scifio.io.utests.RandomAccessInputStreamTest"/>
       </classes>
     </test>
     <test name="DataTools">
       <classes>
-        <class name="loci.common.utests.DataToolsTest"/>
+        <class name="ome.scifio.common.utests.DataToolsTest"/>
       </classes>
     </test>
     <!--
     <test name="Encoding">
       <classes>
-        <class name="loci.common.utests.EncodingTest"/>
+        <class name="ome.scifio.io.utests.EncodingTest"/>
       </classes>
     </test>
     -->
