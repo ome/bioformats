@@ -80,7 +80,7 @@ public class Location {
   }
 
   public Location(Location parent, String child) {
-    this(parent.getAbsolutePath(), child);
+    loc = new ome.scifio.io.Location(parent.getAbsolutePath(), child);
   }
   
   // Private constructor for directly wrapping ome.scifio.io.Location
@@ -449,6 +449,8 @@ public class Location {
    */
   public Location[] listFiles() {
     ome.scifio.io.Location[] locs = loc.listFiles();
+    if(locs == null) return null;
+    
     Location[] files = new Location[locs.length];
     
     for(int i = 0; i < locs.length; i++) {
