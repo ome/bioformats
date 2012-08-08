@@ -9,7 +9,7 @@ Type "ant -p" for a list of targets.
 
 <project>
   <property file="${root.dir}/ant/java.properties"/>
-  <import file="${root.dir}/ant/common.xml"/>
+  <import file="${root.dir}/ant/legacy.xml"/>
 
   <taskdef name="testng" classpath="${testng.jar}"
     classname="org.testng.TestNGAntTask"/>

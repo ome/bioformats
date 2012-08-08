@@ -1,5 +1,5 @@
 <!--
-common.xml
+legacy.xml
 
 Ant build file for logic common to every component.
 All component build files inherit from this build file.
@@ -9,7 +9,7 @@ Type "ant -p" for a list of targets.
 
 <project>
   <import file="${root.dir}/ant/global.xml"/>
-  <property file="${root.dir}/ant/common.properties"/>
+  <property file="${root.dir}/ant/legacy.properties"/>
 
   <!-- Main build targets -->
 
