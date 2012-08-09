@@ -91,11 +91,17 @@ public class SVSReader extends BaseTiffReader {
           return false;
         }
         IFD ifd = tiffParser.getFirstIFD();
-        TiffIFDEntry description =
-          (TiffIFDEntry) ifd.get(IFD.IMAGE_DESCRIPTION);
+        Object description = ifd.get(IFD.IMAGE_DESCRIPTION);
         if (description != null) {
-          String imageDescription =
-            tiffParser.getIFDValue(description).toString();
+          String imageDescription = null;
+
+          if (description instanceof TiffIFDEntry) {
+            imageDescription =
+              tiffParser.getIFDValue((TiffIFDEntry) description).toString();
+          }
+          else if (description instanceof String) {
+            imageDescription = (String) description;
+          }
           if (imageDescription != null
               && imageDescription.startsWith(APERIO_IMAGE_DESCRIPTION_PREFIX)) {
             return true;
@@ -197,9 +203,13 @@ public class SVSReader extends BaseTiffReader {
 
     pixelSize = new float[core.length];
     comments = new String[core.length];
+
+    for (int i=0; i<core.length; i++) {
+      core[i] = new CoreMetadata();
+    }
+
     for (int i=0; i<core.length; i++) {
       setSeries(i);
-      core[i] = new CoreMetadata();
       tiffParser.fillInIFD(ifds.get(i));
 
       if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
@@ -229,6 +239,10 @@ public class SVSReader extends BaseTiffReader {
     // repopulate core metadata
 
     for (int s=0; s<core.length; s++) {
+      if (s == 0 && !hasFlattenedResolutions() && getSeriesCount() > 2) {
+        core[s].resolutionCount = getSeriesCount() - 2;
+      }
+
       IFD ifd = ifds.get(s);
       PhotoInterp p = ifd.getPhotometricInterpretation();
       int samples = ifd.getSamplesPerPixel();

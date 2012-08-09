@@ -156,11 +156,17 @@ public class OMETiffReader extends FormatReader {
     // look for OME-XML in first IFD's comment
     IFD ifd = tp.getFirstIFD();
     if (ifd == null) return false;
-    TiffIFDEntry description = (TiffIFDEntry) ifd.get(IFD.IMAGE_DESCRIPTION);
+    Object description = ifd.get(IFD.IMAGE_DESCRIPTION);
     if (description == null) {
       return false;
     }
-    String comment = tp.getIFDValue(description).toString();
+    String comment = null;
+    if (description instanceof TiffIFDEntry) {
+      comment = tp.getIFDValue((TiffIFDEntry) description).toString();
+    }
+    else if (description instanceof String) {
+      comment = (String) description;
+    }
     if (comment == null || comment.trim().length() == 0) return false;
 
     comment = comment.trim();

@@ -357,7 +357,14 @@ public class CellSensReader extends FormatReader {
 
     for (int s=0; s<core.length; s++) {
       core[s] = new CoreMetadata();
+    }
+
+    for (int s=0; s<core.length; s++) {
       tileMap[s] = new HashMap<TileCoordinate, Integer>();
+
+      if (s == 0 && !hasFlattenedResolutions()) {
+        core[s].resolutionCount = files.size() - 1;
+      }
 
       if (s < files.size() - 1) {
         setSeries(s);

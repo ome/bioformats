@@ -541,6 +541,9 @@ public class MinimalTiffReader extends FormatReader {
       IFDList ifds = subResolutionIFDs.get(0);
       CoreMetadata[] newCore = new CoreMetadata[ifds.size() + 1];
       newCore[0] = core[0];
+      if (!hasFlattenedResolutions()) {
+        newCore[0].resolutionCount = newCore.length;
+      }
       int i = 1;
       for (IFD ifd : ifds) {
         newCore[i] = new CoreMetadata(this, 0);

@@ -157,6 +157,13 @@ public abstract class DelegateReader extends FormatReader {
     legacyReader.setGroupFiles(group);
   }
 
+  /* @see IFormatReader#setFlattenedResolutions(boolean) */
+  public void setFlattenedResolutions(boolean flattened) {
+    super.setFlattenedResolutions(flattened);
+    nativeReader.setFlattenedResolutions(flattened);
+    legacyReader.setFlattenedResolutions(flattened);
+  }
+
   /* @see IFormatReader#setMetadataFiltered(boolean) */
   public void setMetadataFiltered(boolean filter) {
     super.setMetadataFiltered(filter);
