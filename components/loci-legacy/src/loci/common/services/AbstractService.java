@@ -36,9 +36,8 @@
 
 package loci.common.services;
 
+
 /**
- * A legacy delegator class for ome.scifio.services.AbstractService
- * 
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/services/AbstractService.java">Trac</a>,
  * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/common/src/loci/common/services/AbstractService.java;hb=HEAD">Gitweb</a></dd></dl>
@@ -47,10 +46,6 @@ package loci.common.services;
  */
 public abstract class AbstractService implements Service {
 
-  // -- Fields --
-  
-  protected ome.scifio.services.AbstractService service;
-  
   /**
    * Checks a given class dependency at runtime to ensure that a given class
    * will be available. This method is expected to be called at least once by
@@ -63,20 +58,4 @@ public abstract class AbstractService implements Service {
     klass.getName();
   }
 
-  // -- Object delegators --
-
-  @Override
-  public boolean equals(Object obj) {
-    return service.equals(obj);
-  }
-  
-  @Override
-  public int hashCode() {
-    return service.hashCode();
-  }
-  
-  @Override
-  public String toString() {
-    return service.toString();
-  }
 }

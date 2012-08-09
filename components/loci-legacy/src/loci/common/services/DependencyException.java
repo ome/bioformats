@@ -36,11 +36,9 @@
 
 package loci.common.services;
 
-import java.io.PrintStream;
-import java.io.PrintWriter;
-
 /**
- * A legacy wrapper class for ome.scifio.services.DependencyException.
+ * Exception thrown when there is an object instantiation error or error
+ * processing dependencies.
  *
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/services/DependencyException.java">Trac</a>,
@@ -52,7 +50,9 @@ public class DependencyException extends Exception
 {
   /** Serial for this version. */
   private static final long serialVersionUID = -7836244849086491562L;
-  private ome.scifio.services.DependencyException e;
+  
+  /** The class that was used in a failed instantiation. */
+  private Class<? extends Service> failureClass;
 
   /**
    * Default constructor.
@@ -60,7 +60,7 @@ public class DependencyException extends Exception
    */
   public DependencyException(String message)
   {
-    e = new ome.scifio.services.DependencyException(message);
+    super(message);
   }
 
   /**
@@ -70,7 +70,8 @@ public class DependencyException extends Exception
    */
   public DependencyException(String message, Class<? extends Service> klass)
   {
-    e = new ome.scifio.services.DependencyException(message, klass);
+    super(message);
+    this.failureClass = klass;
   }
 
   /**
@@ -82,7 +83,8 @@ public class DependencyException extends Exception
   public DependencyException(String message, Class<? extends Service> klass,
       Throwable cause)
   {
-    e = new ome.scifio.services.DependencyException(message, klass, cause);
+    super(message, cause);
+    this.failureClass = klass;
   }
 
   /**
@@ -91,81 +93,25 @@ public class DependencyException extends Exception
    */
   public DependencyException(Throwable cause)
   {
-    e = new ome.scifio.services.DependencyException(cause);
-  }
-  
-  /**
-   * Direct wrapping constructor 
-   * @param ex
-   */
-  public DependencyException(ome.scifio.services.DependencyException ex) {
-    e = ex;
+    super(cause);
   }
 
   /**
    * Returns the class that was used during a failed instantiation.
    * @return See above.
    */
-  @SuppressWarnings("unchecked")
   public Class<? extends Service> getFailureClass()
   {
-    return (Class<? extends Service>) e.getFailureClass();
+    return failureClass;
   }
-
-  // -- Delegators --
 
   @Override
-  public boolean equals(Object obj) {
-    return e.equals(obj);
-  }
-  
-  @Override
-  public int hashCode() {
-    return e.hashCode();
-  }
-  
-  @Override
-  public String toString() {
-    return e.toString();
-  }
-
-  public Throwable fillInStackTrace() {
-    return (e == null) ? null : e.fillInStackTrace();
-  }
-
-  public Throwable getCause() {
-    return e.getCause();
-  }
-
-  public String getLocalizedMessage() {
-    return e.getLocalizedMessage();
-  }
-
-  public String getMessage() {
-    return e.getMessage();
-  }
-
-  public StackTraceElement[] getStackTrace() {
-    return e.getStackTrace();
-  }
-
-  public Throwable initCause(Throwable arg0) {
-    return e.initCause(arg0);
-  }
-
-  public void printStackTrace() {
-    e.printStackTrace();
-  }
-
-  public void printStackTrace(PrintStream arg0) {
-    e.printStackTrace(arg0);
-  }
-
-  public void printStackTrace(PrintWriter arg0) {
-    e.printStackTrace(arg0);
-  }
-
-  public void setStackTrace(StackTraceElement[] arg0) {
-    e.setStackTrace(arg0);
+  public String toString()
+  {
+    if (failureClass == null)
+    {
+      return getMessage();
+    }
+    return getMessage() + " for " + failureClass;
   }
 }
