@@ -147,7 +147,7 @@ public class TestTools {
   public static boolean canFitInMemory(long bufferSize) {
     Runtime r = Runtime.getRuntime();
     long mem = r.freeMemory() / 2;
-    return bufferSize < mem;
+    return bufferSize < mem && bufferSize <= Integer.MAX_VALUE;
   }
 
   /** Gets the quantity of used memory, in MB. */

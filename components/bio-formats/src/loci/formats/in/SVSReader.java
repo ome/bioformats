@@ -196,6 +196,9 @@ public class SVSReader extends BaseTiffReader {
 
       if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
         String comment = ifds.get(i).getComment();
+        if (comment == null) {
+          continue;
+        }
         String[] lines = comment.split("\n");
         String[] tokens;
         String key, value;

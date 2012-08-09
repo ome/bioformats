@@ -130,6 +130,8 @@ public class MetamorphReader extends BaseTiffReader {
 
   private boolean[] firstSeriesChannels;
 
+  private boolean bizarreMultichannelAcquisition = false;
+
   // -- Constructor --
 
   /** Constructs a new Metamorph reader. */
@@ -242,6 +244,10 @@ public class MetamorphReader extends BaseTiffReader {
 
     int[] coords = FormatTools.getZCTCoords(this, no % getSizeZ());
     int ndx = no / getSizeZ();
+    if (bizarreMultichannelAcquisition) {
+      int[] pos = getZCTCoords(no);
+      ndx = getIndex(pos[0], 0, pos[2]) / getSizeZ();
+    }
     if (stks[series].length == 1) ndx = 0;
     String file = stks[series][ndx];
     if (file == null) return buf;
@@ -252,7 +258,15 @@ public class MetamorphReader extends BaseTiffReader {
         new DefaultMetadataOptions(MetadataLevel.MINIMUM));
     stkReaders[series][ndx].setId(file);
     int plane = stks[series].length == 1 ? no : coords[0];
-    stkReaders[series][ndx].openBytes(plane, buf, x, y, w, h);
+
+    if (bizarreMultichannelAcquisition) {
+      int realX = getZCTCoords(no)[1] == 0 ? x : x + getSizeX();
+      stkReaders[series][ndx].openBytes(plane, buf, realX, y, w, h);
+    }
+    else {
+      stkReaders[series][ndx].openBytes(plane, buf, x, y, w, h);
+    }
+
     if (plane == stkReaders[series][ndx].getImageCount() - 1) {
       stkReaders[series][ndx].close();
     }
@@ -291,6 +305,7 @@ public class MetamorphReader extends BaseTiffReader {
       validZ = false;
       stkReaders = null;
       gain = null;
+      bizarreMultichannelAcquisition = false;
     }
   }
 
@@ -395,7 +410,11 @@ public class MetamorphReader extends BaseTiffReader {
           hasZ.add(new Boolean(value.toLowerCase()));
         }
         else if (key.startsWith("WaveName")) {
-          waveNames.add(value.substring(1, value.length() - 1));
+          String waveName = value.substring(1, value.length() - 1);
+          if (waveName.equals("Both lasers") || waveName.startsWith("DUAL")) {
+            bizarreMultichannelAcquisition = true;
+          }
+          waveNames.add(waveName);
         }
         else if (key.startsWith("Stage")) {
           stageNames.add(value);
@@ -427,6 +446,9 @@ public class MetamorphReader extends BaseTiffReader {
       if (t != null) tc = Integer.parseInt(t);
 
       if (cc == 0) cc = 1;
+      if (cc == 1 && bizarreMultichannelAcquisition) {
+        cc = 2;
+      }
 
       int numFiles = cc * tc;
       if (nstages > 0) numFiles *= nstages;
@@ -549,6 +571,10 @@ public class MetamorphReader extends BaseTiffReader {
       s.close();
       core[0].sizeX = (int) ifd.getImageWidth();
       core[0].sizeY = (int) ifd.getImageLength();
+
+      if (bizarreMultichannelAcquisition) {
+        core[0].sizeX /= 2;
+      }
 
       core[0].sizeZ = hasZ.size() > 0 && !hasZ.get(0) ? 1 : zc;
       core[0].sizeC = cc;

@@ -258,7 +258,13 @@ public class FormatReaderTest {
         int c = reader.getRGBChannelCount();
         int bytes = FormatTools.getBytesPerPixel(reader.getPixelType());
 
-        int expected = x * y * c * bytes;
+        int expected = -1;
+        try {
+          expected = DataTools.safeMultiply32(x, y, c, bytes);
+        }
+        catch (IllegalArgumentException e) {
+          continue;
+        }
 
         if (!TestTools.canFitInMemory(expected) || expected < 0) {
           continue;
@@ -1062,7 +1068,7 @@ public class FormatReaderTest {
 
           for (int p=0; p<reader.getImageCount(); p++) {
             int[] zct = reader.getZCTCoords(p);
-            if (zct[1] == c) {
+            if (zct[1] == c && p < retrieve.getPlaneCount(i)) {
               Double planeExposureTime = retrieve.getPlaneExposureTime(i, p);
 
               if (exposureTime == null && planeExposureTime == null) {
@@ -1515,20 +1521,21 @@ public class FormatReaderTest {
     String format = config.getReader();
     if (format.equals("OMETiffReader") || format.equals("OMEXMLReader")) {
       result(testName, true);
-      return;
     }
-    boolean success = true;
-    try {
-      MetadataStore store = reader.getMetadataStore();
-      MetadataRetrieve retrieve = omexmlService.asRetrieve(store);
-      String xml = omexmlService.getOMEXML(retrieve);
-      success = xml != null && omexmlService.validateOMEXML(xml);
+    else {
+      boolean success = true;
+      try {
+        MetadataStore store = reader.getMetadataStore();
+        MetadataRetrieve retrieve = omexmlService.asRetrieve(store);
+        String xml = omexmlService.getOMEXML(retrieve);
+        success = xml != null && omexmlService.validateOMEXML(xml);
+      }
+      catch (Throwable t) {
+        LOGGER.info("", t);
+        success = false;
+      }
+      result(testName, success);
     }
-    catch (Throwable t) {
-      LOGGER.info("", t);
-      success = false;
-    }
-    result(testName, success);
     try {
       close();
     }
@@ -1552,7 +1559,16 @@ public class FormatReaderTest {
         reader.setSeries(i);
         config.setSeries(i);
 
-        long planeSize = FormatTools.getPlaneSize(reader);
+        long planeSize = -1;
+        try {
+          planeSize = DataTools.safeMultiply32(reader.getSizeX(),
+            reader.getSizeY(), reader.getRGBChannelCount(),
+            FormatTools.getBytesPerPixel(reader.getPixelType()));
+        }
+        catch (IllegalArgumentException e) {
+          continue;
+        }
+
         if (planeSize < 0 || !TestTools.canFitInMemory(planeSize)) {
           continue;
         }
@@ -1773,7 +1789,10 @@ public class FormatReaderTest {
               continue;
             }
 
-            if (result && r instanceof HitachiReader) {
+            if (result && ((r instanceof HitachiReader) ||
+              (readers[j] instanceof HitachiReader &&
+              r instanceof TiffDelegateReader)))
+            {
               continue;
             }
 

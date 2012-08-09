@@ -114,7 +114,11 @@ public class LZWCodec extends BaseCodec {
     if (input == null || input.length == 0) return input;
 
     // Output buffer (see class comments for justification of size).
-    byte[] output = new byte[(input.length * 141) / 100 + 3];
+    long bufferSize = ((long) input.length * 141) / 100 + 3;
+    if (bufferSize > Integer.MAX_VALUE) {
+      throw new FormatException("Output buffer is greater than 2 GB");
+    }
+    byte[] output = new byte[(int) bufferSize];
 
     // Current size of output buffer (and position to write next byte).
     int outSize = 0;
