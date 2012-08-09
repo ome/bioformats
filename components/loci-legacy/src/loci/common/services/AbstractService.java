@@ -36,10 +36,6 @@
 
 package loci.common.services;
 
-import java.lang.reflect.InvocationTargetException;
-
-import loci.utils.ProtectedMethodInvoker;
-
 /**
  * A legacy delegator class for ome.scifio.services.AbstractService
  * 
@@ -54,7 +50,6 @@ public abstract class AbstractService implements Service {
   // -- Fields --
   
   protected ome.scifio.services.AbstractService service;
-  private ProtectedMethodInvoker pmi = new ProtectedMethodInvoker();
   
   /**
    * Checks a given class dependency at runtime to ensure that a given class
@@ -63,15 +58,9 @@ public abstract class AbstractService implements Service {
    * @param klass A class that this service depends upon.
    */
   protected void checkClassDependency(Class<? extends Object> klass) {
-    Class<?>[] c = new Class<?>[] {klass.getClass()};
-    Object[] o = new Object[] {klass};
-    
-    try {
-      pmi.invokeProtected(service, "checkClassDependency", c, o);
-    }
-    catch (InvocationTargetException e) {
-      throw new IllegalStateException(e);
-    }
+    // Just need *something* here to trigger a ClassNotFoundException if the
+    // class isn't on the classpath.
+    klass.getName();
   }
 
   // -- Object delegators --

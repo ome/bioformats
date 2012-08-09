@@ -37,8 +37,6 @@
 package loci.common;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import loci.utils.ProtectedMethodInvoker;
 
 /**
  * A legacy delegator to ome.scifio.io.AbstractNIOHandle.
@@ -64,8 +62,6 @@ public abstract class AbstractNIOHandle implements IRandomAccess {
 
   protected ome.scifio.io.AbstractNIOHandle handle;
   
-  private ProtectedMethodInvoker pmi = new ProtectedMethodInvoker();
-
   // -- Constructors --
 
   // -- AbstractNIOHandle methods --
@@ -76,14 +72,9 @@ public abstract class AbstractNIOHandle implements IRandomAccess {
    * @throws IllegalArgumentException If an illegal mode is passed.
    */
   protected void validateMode(String mode) {
-    Class<?>[] c = new Class<?>[] {mode.getClass()};
-    Object[] o = new Object[] {mode};
-    
-    try {
-      pmi.invokeProtected(handle, "validateMode", c, o);
-    }
-    catch (InvocationTargetException e) {
-      throw new IllegalStateException(e);
+    if (!(mode.equals("r") || mode.equals("rw"))) {
+      throw new IllegalArgumentException(
+        String.format("%s mode not in supported modes ('r', 'rw')", mode));
     }
   }
 
@@ -96,16 +87,11 @@ public abstract class AbstractNIOHandle implements IRandomAccess {
    * @throws IOException If there is an error changing the handle's length.
    */
   protected boolean validateLength(int writeLength) throws IOException {
-    Class<?>[] c = new Class<?>[] {int.class};
-    Object[] o = new Object[] {writeLength};
-    
-    try {
-      return (Boolean)pmi.invokeProtected(handle, "validateLength", c, o);
+    if (getFilePointer() + writeLength > length()) {
+      setLength(getFilePointer() + writeLength);
+      return false;
     }
-    catch (InvocationTargetException e) {
-      pmi.unwrapException(e, IOException.class);
-      throw new IllegalStateException(e);
-    }
+    return true;
   }
 
   /**
