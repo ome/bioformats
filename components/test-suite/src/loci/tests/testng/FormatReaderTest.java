@@ -246,7 +246,13 @@ public class FormatReaderTest {
         int c = reader.getRGBChannelCount();
         int bytes = FormatTools.getBytesPerPixel(reader.getPixelType());
 
-        int expected = x * y * c * bytes;
+        int expected = -1;
+        try {
+          expected = DataTools.safeMultiply32(x, y, c, bytes);
+        }
+        catch (IllegalArgumentException e) {
+          continue;
+        }
 
         if (!TestTools.canFitInMemory(expected) || expected < 0) {
           continue;
@@ -1503,8 +1509,8 @@ public class FormatReaderTest {
         LOGGER.info("", t);
         success = false;
       }
+      result(testName, success);
     }
-    result(testName, success);
   }
 
   /**
@@ -1522,7 +1528,16 @@ public class FormatReaderTest {
         reader.setSeries(i);
         config.setSeries(i);
 
-        long planeSize = FormatTools.getPlaneSize(reader);
+        long planeSize = -1;
+        try {
+          planeSize = DataTools.safeMultiply32(reader.getSizeX(),
+            reader.getSizeY(), reader.getRGBChannelCount(),
+            FormatTools.getBytesPerPixel(reader.getPixelType()));
+        }
+        catch (IllegalArgumentException e) {
+          continue;
+        }
+
         if (planeSize < 0 || !TestTools.canFitInMemory(planeSize)) {
           continue;
         }
