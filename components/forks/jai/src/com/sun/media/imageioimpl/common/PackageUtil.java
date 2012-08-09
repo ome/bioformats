@@ -82,14 +82,8 @@ package com.sun.media.imageioimpl.common;
 
 import java.security.AccessController;
 import java.security.PrivilegedAction;
-import com.sun.medialib.codec.jiio.Util;
 
 public class PackageUtil {
-    /**
-     * Flag indicating whether codecLib is available.
-     */
-    private static boolean isCodecLibAvailable = false;
-
     /**
      * Implementation version derived from Manifest.
      */
@@ -109,16 +103,6 @@ public class PackageUtil {
      * Set static flags.
      */
     static {
-        // Set codecLib flag.
-        try {
-            // Check for codecLib availability.
-            isCodecLibAvailable = Util.isCodecLibAvailable();
-        } catch(Throwable e) {
-            // A Throwable is equivalent to unavailable. Throwable is used
-            // in case an Error rather than an Exception is thrown.
-            isCodecLibAvailable = false;
-        }
-
         // Set version and vendor strings.
         try {
             Class thisClass =
@@ -133,32 +117,6 @@ public class PackageUtil {
       // HACK
       if (vendor == null) vendor = "";
       if (version == null) version = "";
-    }
-
-    /**
-     * Returns a <code>boolean</code> indicating whether codecLib is available.
-     */
-    public static final boolean isCodecLibAvailable() {
-        // Retrieve value of system property here to allow this to be
-        // modified dynamically.
-        Boolean result = (Boolean)
-            AccessController.doPrivileged(new PrivilegedAction() {
-                    public Object run() {
-                        String property = null;
-                        try {
-                            property =
-                                System.getProperty("com.sun.media.imageio.disableCodecLib");
-                        } catch(SecurityException se) {
-                            // Do nothing: leave 'property' null.
-                        }
-                        return (property != null &&
-                                property.equalsIgnoreCase("true")) ?
-                            Boolean.TRUE : Boolean.FALSE;
-                    }
-                });
-        boolean isCodecLibDisabled = result.booleanValue();
-
-        return isCodecLibAvailable && !isCodecLibDisabled;
     }
 
     /**

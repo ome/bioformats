@@ -248,9 +248,13 @@ public abstract class DelegateReader extends FormatReader {
       catch (FormatException e) { exc = e; }
       catch (IOException e) { exc = e; }
       if (exc != null) {
+        nativeReaderInitialized = false;
         LOGGER.debug("", exc);
         legacyReader.setId(id);
         legacyReaderInitialized = true;
+      }
+      if (legacyReaderInitialized) {
+        nativeReaderInitialized = false;
       }
     }
     if (nativeReaderInitialized) {
