@@ -166,6 +166,18 @@ public class CellSensReader extends FormatReader {
     return usedFiles;
   }
 
+  /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
+  public int getOptimalTileWidth() {
+    FormatTools.assertId(currentId, true, 1);
+    return tileX[getSeries()];
+  }
+
+  /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
+  public int getOptimalTileHeight() {
+    FormatTools.assertId(currentId, true, 1);
+    return tileX[getSeries()];
+  }
+
   /* @see loci.formats.IFormatHandler#openThumbBytes(int) */
   public byte[] openThumbBytes(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
@@ -368,8 +380,14 @@ public class CellSensReader extends FormatReader {
 
         if (s == 0 && exifs.size() > 0) {
           IFD exif = exifs.get(0);
-          core[s].sizeX = exif.getIFDIntValue(IFD.PIXEL_X_DIMENSION);
-          core[s].sizeY = exif.getIFDIntValue(IFD.PIXEL_Y_DIMENSION);
+
+          int newX = exif.getIFDIntValue(IFD.PIXEL_X_DIMENSION);
+          int newY = exif.getIFDIntValue(IFD.PIXEL_Y_DIMENSION);
+
+          if (getSizeX() > newX || getSizeY() > newY) {
+            core[s].sizeX = newX;
+            core[s].sizeY = newY;
+          }
         }
 
         setSeries(0);

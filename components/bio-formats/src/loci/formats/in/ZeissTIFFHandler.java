@@ -38,6 +38,9 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.Stack;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -51,6 +54,11 @@ import org.xml.sax.helpers.DefaultHandler;
  * @author Roger Leigh <r.leigh at dundee.ac.uk>
  */
 public class ZeissTIFFHandler extends DefaultHandler {
+
+  // -- Constants --
+
+  private static final Logger LOGGER =
+    LoggerFactory.getLogger(ZeissTIFFHandler.class);
 
   // -- Fields --
 
@@ -144,7 +152,7 @@ public class ZeissTIFFHandler extends DefaultHandler {
         current_shape = null;
       }
       else
-        System.out.println("Parse error: tag found out of place: " + qName);
+        LOGGER.info("Parse error: tag found out of place: {}", qName);
     }
     else if (qName.equals("Scaling")) {
       // Scaling metadata.  __Version, Key, Category, Factor_n,
@@ -159,7 +167,7 @@ public class ZeissTIFFHandler extends DefaultHandler {
         if (current_scaling.key == null)
           current_scaling.key = cdata;
         else
-          System.out.println("Key already set");
+          LOGGER.debug("Key already set");
       }
     }
     else if (qName.equals("Category")) {
@@ -167,7 +175,7 @@ public class ZeissTIFFHandler extends DefaultHandler {
         if (current_scaling.category == null)
           current_scaling.category = Integer.parseInt(cdata);
         else
-          System.out.println("Category already set");
+          LOGGER.debug("Category already set");
       }
     }
     else if (qName.startsWith("Factor_")) {
@@ -305,7 +313,7 @@ public class ZeissTIFFHandler extends DefaultHandler {
         // We only have examples of packed structures of 156 bytes.
         int isize = DataTools.bytesToInt(raw, 0, true);
         if (raw.length < isize)
-          System.out.println("ShapeAttributes length ("+raw.length+") is less than internal size ("+isize+")!  Trying to continue...");
+          LOGGER.info("ShapeAttributes length ({}) is less than internal size ({})!  Trying to continue...", raw.length, isize);
         int type = DataTools.bytesToInt(raw, 4, true);
         // Annotation feature type.
         current_shape.type = FeatureType.get(type);
@@ -372,7 +380,7 @@ public class ZeissTIFFHandler extends DefaultHandler {
       else if (nameStack.peek().equals("Shapes"))
         this.shape_count = Integer.parseInt(cdata);
       else
-        System.out.println("Parse error: tag found out of place: " + qName);
+        LOGGER.info("Parse error: tag found out of place: {}", qName);
     }
     else if (qName.equals("Key")) {
       // Inside a Layers or Itemn (Layer) or Itemm (Shape) annotation.  Determine which it is.
@@ -393,7 +401,7 @@ public class ZeissTIFFHandler extends DefaultHandler {
         }
       }
       else
-        System.out.println("Parse error: tag found out of place: " + qName);
+        LOGGER.info("Parse error: tag found out of place: {}", qName);
     }
     else if (qName.equals("Class")) {
       // AxioVision-specific CLSID?  Ignore.
@@ -427,7 +435,7 @@ public class ZeissTIFFHandler extends DefaultHandler {
         // If the index is out of range, ignore the tag.  It will remain invalid.
         // Note that the index counts from zero, while the total is a count.
         if (current_tagset.found >= current_tagset.count)
-          System.out.println("Found more tags then declared");
+          LOGGER.info("Found more tags then declared");
         if (type.equals("V")) // Set to null if empty/unset?
           current_tag.setValue(cdata);
         else if (type.equals("I")) // Skip if unset.
@@ -435,7 +443,7 @@ public class ZeissTIFFHandler extends DefaultHandler {
         else if (type.equals("A"))  // Set to 0 if unset...
           current_tag.setCategory(Integer.parseInt(cdata));
         else
-          System.out.println("Unknown tag: " + qName);
+          LOGGER.info("Unknown tag: {}", qName);
         if (current_tag.valid()) {
           current_tagset.tags.add(current_tag);
           current_tagset.found++;
@@ -443,7 +451,7 @@ public class ZeissTIFFHandler extends DefaultHandler {
       }
       else
       {
-        System.out.println("Unknown tag: " + qName);
+        LOGGER.info("Unknown tag: {}", qName);
       }
     }
     else
@@ -454,7 +462,7 @@ public class ZeissTIFFHandler extends DefaultHandler {
       // And, additionally, that the tag-based filename prefix
       // matches an existing file on disc.
       if (!planeNames.contains(qName))
-        System.out.println("Unknown tag: " + qName);
+        LOGGER.info("Unknown tag: {}", qName);
     }
     cdata = "";
 
@@ -492,7 +500,7 @@ public class ZeissTIFFHandler extends DefaultHandler {
       else if (nameStack.peek().equals("Shapes"))
         current_shape = reader.new Shape();
       else
-        System.out.println("Parse error: tag found out of place: " + qName);
+        LOGGER.info("Parse error: tag found out of place: {}", qName);
     }
     else if (qName.equals("Class")) {
       // AxioVision-specific CLSID.  Ignore.

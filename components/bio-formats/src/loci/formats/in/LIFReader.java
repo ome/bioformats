@@ -617,10 +617,12 @@ public class LIFReader extends FormatReader {
         }
 
         boolean noNames = true;
-        for (String name : channelNames[i]) {
-          if (name != null && !name.equals("")) {
-            noNames = false;
-            break;
+        if (channelNames[i] != null) {
+          for (String name : channelNames[i]) {
+            if (name != null && !name.equals("")) {
+              noNames = false;
+              break;
+            }
           }
         }
 
@@ -1076,7 +1078,9 @@ public class LIFReader extends FormatReader {
           String c = detector.getAttribute("Channel");
           int channel = c == null ? 0 : Integer.parseInt(c);
 
-          detectorModels[image].add(detectorIndexes[image].get(channel));
+          if (detectorIndexes[image] != null && detectorModels[image] != null) {
+            detectorModels[image].add(detectorIndexes[image].get(channel));
+          }
 
           Element multiband = null;
 
@@ -1121,24 +1125,30 @@ public class LIFReader extends FormatReader {
             }
 
             if (nextChannel < getEffectiveSizeC()) {
-              gains[image][nextChannel] = gain;
-              detectorOffsets[image][nextChannel] = offset;
+              if (gains[image] != null) {
+                gains[image][nextChannel] = gain;
+              }
+              if (detectorOffsets[image] != null) {
+                detectorOffsets[image][nextChannel] = offset;
+              }
             }
 
             nextChannel++;
           }
         }
 
-        if (active) {
+        if (active && activeDetector[image] != null) {
           activeDetector[image].add(active);
         }
       }
     }
 
-    for (int i=0; i<getEffectiveSizeC(); i++) {
-      int index = i + channels.size() - getEffectiveSizeC();
-      if (index >= 0 && index < channels.size()) {
-        channelNames[image][i] = channels.get(index);
+    if (channels != null && channelNames[image] != null) {
+      for (int i=0; i<getEffectiveSizeC(); i++) {
+        int index = i + channels.size() - getEffectiveSizeC();
+        if (index >= 0 && index < channels.size()) {
+          channelNames[image][i] = channels.get(index);
+        }
       }
     }
   }

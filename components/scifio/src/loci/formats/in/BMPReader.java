@@ -136,7 +136,15 @@ public class BMPReader extends FormatReader {
     planeSize += pad * h;
     if (planeSize + in.getFilePointer() > in.length()) {
       planeSize -= (pad * h);
-      pad = 0;
+
+      // sometimes we have RGB images with a single padding byte
+      if (planeSize + getSizeY() + in.getFilePointer() <= in.length()) {
+        pad = 1;
+        planeSize += h;
+      }
+      else {
+        pad = 0;
+      }
     }
 
     in.skipBytes(rowsToSkip * pad);

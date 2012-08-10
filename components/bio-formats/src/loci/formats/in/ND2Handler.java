@@ -107,16 +107,20 @@ public class ND2Handler extends BaseHandler {
   private int nXFields = 0, nYFields = 0;
 
   private boolean populateXY = true;
+  private int nImages = 0;
+
+  private boolean validLoopState = false;
 
   // -- Constructor --
 
-  public ND2Handler(CoreMetadata[] core) {
-    this(core, true);
+  public ND2Handler(CoreMetadata[] core, int nImages) {
+    this(core, true, nImages);
   }
 
-  public ND2Handler(CoreMetadata[] core, boolean populateXY) {
+  public ND2Handler(CoreMetadata[] core, boolean populateXY, int nImages) {
     super();
     this.populateXY = populateXY;
+    this.nImages = nImages;
     this.core = core;
     if (this.core.length > 1) {
       fieldIndex = 2;
@@ -159,6 +163,9 @@ public class ND2Handler extends BaseHandler {
         for (int i=0; i<p.length; i++) {
           points[i] = Double.parseDouble(p[i]);
         }
+
+        store.setLabelX(points[0], r, 0);
+        store.setLabelY(points[1], r, 0);
 
         store.setRectangleID(MetadataTools.createLSID("Shape", r, 1), r, 1);
         store.setRectangleX(points[0], r, 1);
@@ -397,6 +404,11 @@ public class ND2Handler extends BaseHandler {
         core[0].sizeY += Integer.parseInt(value);
       }
     }
+    else if ("LoopState".equals(prevElement) && value != null) {
+      if (!validLoopState) {
+        validLoopState = !value.equals("529");
+      }
+    }
     else if ("LoopSize".equals(prevElement) && value != null) {
       int v = Integer.parseInt(value);
 
@@ -430,6 +442,14 @@ public class ND2Handler extends BaseHandler {
     else if (qName.equals("FramesAfter")) {
       if (core.length == 1) {
         core[0].sizeZ *= Integer.parseInt(value);
+
+        if (core[0].sizeT * core[0].sizeZ > nImages &&
+          core[0].sizeT <= nImages && validLoopState &&
+          core[0].sizeT != core[0].sizeZ)
+        {
+          core[0].sizeZ = core[0].sizeT;
+          core[0].sizeT = 1;
+        }
       }
     }
     else if (qName.equals("TimeBefore")) {

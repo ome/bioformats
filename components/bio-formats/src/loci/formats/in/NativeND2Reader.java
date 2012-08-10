@@ -345,6 +345,8 @@ public class NativeND2Reader extends FormatReader {
       ByteArrayHandle xml = new ByteArrayHandle();
       StringBuffer name = new StringBuffer();
 
+      int extraZDataCount = 0;
+
       // search for blocks
       byte[] sigBytes = {-38, -50, -66, 10}; // 0xDACEBE0A
       while (in.getFilePointer() < in.length() - 1 && in.getFilePointer() >= 0)
@@ -458,7 +460,7 @@ public class NativeND2Reader extends FormatReader {
           }
 
           try {
-             ND2Handler handler = new ND2Handler(core);
+             ND2Handler handler = new ND2Handler(core, imageOffsets.size());
              XMLTools.parseXML(xmlString, handler);
              core = handler.getCoreMetadata();
              if (backupHandler == null ||
@@ -531,7 +533,8 @@ public class NativeND2Reader extends FormatReader {
                 }
 
                 try {
-                  ND2Handler handler = new ND2Handler(core);
+                  ND2Handler handler =
+                    new ND2Handler(core, imageOffsets.size());
                   XMLTools.parseXML(xmlString, handler);
                   core = handler.getCoreMetadata();
                   if (backupHandler == null) {
@@ -658,6 +661,7 @@ public class NativeND2Reader extends FormatReader {
           else if (blockType.startsWith("CustomData|Z")) {
             int nDoubles = (lenOne + lenTwo) / 8;
             zOffset = fp + 8 * (nDoubles - imageOffsets.size());
+            extraZDataCount++;
           }
           else if (blockType.startsWith("CustomData|X")) {
             int nDoubles = (lenOne + lenTwo) / 8;
@@ -683,7 +687,8 @@ public class NativeND2Reader extends FormatReader {
 
       core[0].dimensionOrder = "";
 
-      ND2Handler handler = new ND2Handler(core, getSizeX() == 0);
+      ND2Handler handler =
+        new ND2Handler(core, getSizeX() == 0, imageOffsets.size());
       XMLTools.parseXML(xmlString, handler);
 
       channelColors = handler.getChannelColors();
@@ -737,6 +742,11 @@ public class NativeND2Reader extends FormatReader {
         for (int i=0; i<getSeriesCount(); i++) {
           core[i].sizeC = 1;
         }
+      }
+
+      if (extraZDataCount > 1 && getSizeZ() == 1 && getSeriesCount() > 1) {
+        core[0].sizeZ = getSeriesCount();
+        core = new CoreMetadata[] {core[0]};
       }
 
       // make sure the channel count is reasonable
@@ -1220,7 +1230,7 @@ public class NativeND2Reader extends FormatReader {
       core[0].dimensionOrder = "";
 
       String xml = sb.substring(offset, len - offset);
-      handler = new ND2Handler(core);
+      handler = new ND2Handler(core, vs.size());
       try {
         XMLTools.parseXML(XMLTools.sanitizeXML(xml), handler);
       }
