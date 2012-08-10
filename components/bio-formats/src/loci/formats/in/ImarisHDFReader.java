@@ -253,11 +253,15 @@ public class ImarisHDFReader extends FormatReader {
       CoreMetadata oldCore = core[0];
       core = new CoreMetadata[seriesCount];
       core[0] = oldCore;
-      for (int i=1; i<getSeriesCount(); i++) {
+      for (int i=1; i<seriesCount; i++) {
         core[i] = new CoreMetadata();
       }
 
-      for (int i=1; i<getSeriesCount(); i++) {
+      if (!hasFlattenedResolutions()) {
+        core[0].resolutionCount = seriesCount;
+      }
+
+      for (int i=1; i<seriesCount; i++) {
         String groupPath =
           "/DataSet/ResolutionLevel_" + i + "/TimePoint_0/Channel_0";
         core[i].sizeX =

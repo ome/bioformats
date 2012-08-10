@@ -616,6 +616,17 @@ public class FormatReaderTest {
   /**
    * @testng.test groups = "all fast automated"
    */
+  public void testSeriesCount() {
+    if (config == null) throw new SkipException("No config tree");
+    String testName = "SeriesCount";
+    if (!initFile()) result(testName, false, "initFile");
+
+    result(testName, reader.getSeriesCount() == config.getSeriesCount());
+  }
+
+  /**
+   * @testng.test groups = "all fast automated"
+   */
   public void testSizeX() {
     if (config == null) throw new SkipException("No config tree");
     String testName = "SizeX";

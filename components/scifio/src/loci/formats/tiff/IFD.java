@@ -36,6 +36,7 @@
 
 package loci.formats.tiff;
 
+import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -725,7 +726,22 @@ public class IFD extends HashMap<Integer, Object> {
    */
   public long[] getStripOffsets() throws FormatException {
     int tag = isTiled() ? TILE_OFFSETS : STRIP_OFFSETS;
-    long[] offsets = getIFDLongArray(tag);
+    long[] offsets = null;
+    OnDemandLongArray compressedOffsets = getOnDemandStripOffsets();
+    if (compressedOffsets != null) {
+      offsets = new long[(int) compressedOffsets.size()];
+      try {
+        for (int q=0; q<offsets.length; q++) {
+          offsets[q] = compressedOffsets.get(q);
+        }
+      }
+      catch (IOException e) {
+        throw new FormatException("Failed to retrieve offset", e);
+      }
+    }
+    else {
+      offsets = getIFDLongArray(tag);
+    }
     if (isTiled() && offsets == null) {
       offsets = getIFDLongArray(STRIP_OFFSETS);
     }
@@ -746,6 +762,16 @@ public class IFD extends HashMap<Integer, Object> {
         ") does not match expected " + "number of strips (" + numStrips + ")");
     }
     return offsets;
+  }
+
+  public OnDemandLongArray getOnDemandStripOffsets() throws FormatException
+  {
+    int tag = isTiled() ? TILE_OFFSETS : STRIP_OFFSETS;
+    Object offsets = getIFDValue(tag);
+    if (offsets instanceof OnDemandLongArray) {
+      return (OnDemandLongArray) offsets;
+    }
+    return null;
   }
 
   /**

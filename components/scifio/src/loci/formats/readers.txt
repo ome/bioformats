@@ -126,6 +126,7 @@ loci.formats.in.NDPIReader            # ndpi
 
 # TIFF-based readers with slow isThisType
 loci.formats.in.OMETiffReader         # tif
+loci.formats.in.PyramidTiffReader     # tif, tiff
 loci.formats.in.MIASReader            # tif
 loci.formats.in.TCSReader             # xml, tif
 loci.formats.in.LeicaReader           # lei, tif
