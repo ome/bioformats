@@ -4,9 +4,9 @@
       ID="Image:0" Name="6x6x1x8-swatch.tif">
       <CreationDate>2010-02-23T12:51:30</CreationDate>
       <LogicalChannel ID="LogicalChannel:0" SamplesPerPixel="3" >
-         <ChannelComponent Index="0" Pixels="Pixels:0:0"/>
-         <ChannelComponent Index="1" Pixels="Pixels:0:0"/>
-         <ChannelComponent Index="2" Pixels="Pixels:0:0"/>
+         <ChannelComponent Index="0" Pixels="Pixels:0:0" ColorDomain="r"/>
+         <ChannelComponent Index="1" Pixels="Pixels:0:0" ColorDomain="g"/>
+         <ChannelComponent Index="2" Pixels="Pixels:0:0" ColorDomain="b"/>
       </LogicalChannel>
       <Pixels BigEndian="false" DimensionOrder="XYCZT" ID="Pixels:0:0" 
          PhysicalSizeX="10000.0" PhysicalSizeY="10000.0" PhysicalSizeZ="0.0" 
