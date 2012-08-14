@@ -584,7 +584,11 @@ public class TiffParser {
   /** Convenience method for obtaining a stream's first ImageDescription. */
   public String getComment() throws IOException {
     IFD firstIFD = getFirstIFD();
-    return firstIFD == null ? null : firstIFD.getComment();
+    if (firstIFD == null) {
+      return null;
+    }
+    fillInIFD(firstIFD);
+    return firstIFD.getComment();
   }
 
   // -- TiffParser methods - image reading --
