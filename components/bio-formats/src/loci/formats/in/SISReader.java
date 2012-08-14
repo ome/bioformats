@@ -152,10 +152,10 @@ public class SISReader extends BaseTiffReader {
     }
 
     short check = in.readShort();
-    while (check != 7 && check != 8) {
+    while (check != 7 && check != 8 && check != 10) {
       check = in.readShort();
 
-      if (check == 0x700 || check == 0x800) {
+      if (check == 0x700 || check == 0x800 || check == 0xa00) {
         in.skipBytes(1);
         break;
       }
