@@ -389,54 +389,42 @@ public class NativeND2Reader extends FormatReader {
         int skip = len - 12 - lenOne * 2;
         if (skip <= 0) skip += lenOne * 2;
 
-        
-        
-  // Image calibration for newer nd2 files
-      
-        if (blockType.endsWith("Calibra"))
-        {
-        	long veryStart = in.getFilePointer();
-        	   in.skipBytes(12); // ImageCalibra|tionLV
-                      
-        	  long endFP = in.getFilePointer() + lenOne + lenTwo - 24;
-               while (in.read() == 0);
- 
-               while (in.getFilePointer() < endFP) {
-            	   
-                 int nameLen = in.read();
-                 
-                 if (nameLen == 0) {
-                   in.seek(in.getFilePointer() - 3);
-                   nameLen = in.read();
-                 }
-                 
-                 if (nameLen < 0) 
-                   break;
-                 
-                 // Get data
-                 String attributeName =  DataTools.stripString(in.readString(nameLen * 2));
-                 double valueOrLength = in.readDouble();
-                 
-                 
-                 if (attributeName.equals("dCalibration"))
-                 {
-	                	 if ( valueOrLength > 0) {
-	                          	 addGlobalMeta(attributeName, valueOrLength);
-	                          	 trueSizeX = valueOrLength;
-	                	 }
-                	 
-                    break;  // Done with calibration
-                 }
-                 
-                 
-              
-               } // while
-       
-           in.seek(veryStart); // For old nd2 files
-        } // elseif
-        
-        
-        if (blockType.startsWith("ImageDataSeq")) { 
+        // Image calibration for newer nd2 files
+
+        if (blockType.endsWith("Calibra")) {
+          long veryStart = in.getFilePointer();
+          in.skipBytes(12); // ImageCalibra|tionLV
+
+          long endFP = in.getFilePointer() + lenOne + lenTwo - 24;
+          while (in.read() == 0);
+
+          while (in.getFilePointer() < endFP) {
+            int nameLen = in.read();
+            if (nameLen == 0) {
+              in.seek(in.getFilePointer() - 3);
+              nameLen = in.read();
+            }
+            if (nameLen < 0) {
+              break;
+            }
+
+            // Get data
+            String attributeName =
+              DataTools.stripString(in.readString(nameLen * 2));
+            double valueOrLength = in.readDouble();
+
+            if (attributeName.equals("dCalibration")) {
+              if (valueOrLength > 0) {
+                addGlobalMeta(attributeName, valueOrLength);
+                trueSizeX = valueOrLength;
+              }
+              break;  // Done with calibration
+            }
+          }
+          in.seek(veryStart); // For old nd2 files
+        }
+
+        if (blockType.startsWith("ImageDataSeq")) {
           imageOffsets.add(new Long(fp));
           imageLengths.add(new int[] {lenOne, lenTwo});
           char b = (char) in.readByte();
@@ -462,6 +450,7 @@ public class NativeND2Reader extends FormatReader {
           try {
              ND2Handler handler = new ND2Handler(core, imageOffsets.size());
              XMLTools.parseXML(xmlString, handler);
+             xmlString = null;
              core = handler.getCoreMetadata();
              if (backupHandler == null ||
                backupHandler.getChannelNames().size() == 0)
@@ -536,6 +525,7 @@ public class NativeND2Reader extends FormatReader {
                   ND2Handler handler =
                     new ND2Handler(core, imageOffsets.size());
                   XMLTools.parseXML(xmlString, handler);
+                  xmlString = null;
                   core = handler.getCoreMetadata();
                   if (backupHandler == null) {
                     backupHandler = handler;
@@ -681,6 +671,7 @@ public class NativeND2Reader extends FormatReader {
 
       String xmlString =
         new String(xml.getBytes(), 0, (int) xml.length(), Constants.ENCODING);
+      xml = null;
       xmlString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><ND2>" +
         xmlString + "</ND2>";
       xmlString = XMLTools.sanitizeXML(xmlString);
@@ -690,6 +681,7 @@ public class NativeND2Reader extends FormatReader {
       ND2Handler handler =
         new ND2Handler(core, getSizeX() == 0, imageOffsets.size());
       XMLTools.parseXML(xmlString, handler);
+      xmlString = null;
 
       channelColors = handler.getChannelColors();
       if (!isLossless) {
@@ -1210,6 +1202,7 @@ public class NativeND2Reader extends FormatReader {
           sb.append(s);
         }
       }
+      s = null;
 
       sb.append("</NIKON>");
 
@@ -1230,9 +1223,11 @@ public class NativeND2Reader extends FormatReader {
       core[0].dimensionOrder = "";
 
       String xml = sb.substring(offset, len - offset);
+      sb = null;
       handler = new ND2Handler(core, vs.size());
       try {
-        XMLTools.parseXML(XMLTools.sanitizeXML(xml), handler);
+        xml = XMLTools.sanitizeXML(xml);
+        XMLTools.parseXML(xml, handler);
       }
       catch (IOException e) { }
       xml = null;
