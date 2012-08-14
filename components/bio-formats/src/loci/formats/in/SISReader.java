@@ -146,15 +146,32 @@ public class SISReader extends BaseTiffReader {
       in.skipBytes(1);
     }
 
-    while (in.readShort() != 8);
+    short check = in.readShort();
+    while (check != 7 && check != 8 && check != 10) {
+      check = in.readShort();
+
+      if (check == 0x700 || check == 0x800 || check == 0xa00) {
+        in.skipBytes(1);
+        break;
+      }
+    }
     in.skipBytes(4);
 
-    in.seek(in.readInt());
+    long pos = in.readInt() & 0xffffffffL;
+    if (pos >= in.length()) {
+      return;
+    }
+    in.seek(pos);
 
     in.skipBytes(12);
 
     physicalSizeX = in.readDouble();
     physicalSizeY = in.readDouble();
+
+    if (physicalSizeX != physicalSizeY) {
+      physicalSizeX = physicalSizeY;
+      physicalSizeY = in.readDouble();
+    }
 
     in.skipBytes(8);
 
@@ -162,8 +179,18 @@ public class SISReader extends BaseTiffReader {
     int cameraNameLength = in.readShort();
     channelName = in.readCString();
 
+    if (channelName.length() > 128) {
+      channelName = "";
+    }
+
     int length = (int) Math.min(cameraNameLength, channelName.length());
-    cameraName = channelName.substring(0, length);
+    if (length > 0) {
+      cameraName = channelName.substring(0, length);
+    }
+
+    // these are no longer valid
+    getGlobalMetadata().remove("XResolution");
+    getGlobalMetadata().remove("YResolution");
 
     addGlobalMeta("Nanometers per pixel (X)", physicalSizeX);
     addGlobalMeta("Nanometers per pixel (Y)", physicalSizeY);
