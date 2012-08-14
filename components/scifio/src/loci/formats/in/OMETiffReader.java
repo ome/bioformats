@@ -345,9 +345,8 @@ public class OMETiffReader extends FormatReader {
       service.removeChannels(meta, i, sizeC);
     }
 
-    // TODO
-    //Hashtable originalMetadata = meta.getOriginalMetadata();
-    //if (originalMetadata != null) metadata = originalMetadata;
+    Hashtable originalMetadata = service.getOriginalMetadata(meta);
+    if (originalMetadata != null) metadata = originalMetadata;
 
     LOGGER.trace(xml);
 
