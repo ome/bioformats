@@ -102,6 +102,14 @@
   <build>
     <plugins>
       <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <suiteXmlFiles>
+            <suiteXmlFile>test/loci/formats/utests/testng.xml</suiteXmlFile>
+          </suiteXmlFiles>
+        </configuration>
+      </plugin>
+      <plugin>
         <groupId>loci.maven.plugins</groupId>
         <artifactId>cppwrap-maven-plugin</artifactId>
         <version>1.1.0</version>
