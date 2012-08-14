@@ -38,6 +38,7 @@ import org.xml.sax.helpers.DefaultHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ome.xml.model.enums.IlluminationType;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
@@ -287,6 +288,8 @@ public class LeicaSCNReader extends BaseTiffReader {
     HashMap<String,Integer> objectiveIDs = new HashMap<String,Integer>();
     int objectiveidno = 0;
 
+    String channelID = MetadataTools.createLSID("Channel", 0);
+
     for (int s=0; s<getSeriesCount(); s++) {
       LeicaSCNHandler.ImageCollection c = handler.collectionMap.get(s);
       LeicaSCNHandler.Image i = handler.imageMap.get(s);
@@ -305,33 +308,42 @@ public class LeicaSCNReader extends BaseTiffReader {
         store.setPixelsPhysicalSizeZ(new PositiveFloat(sizeZ), s);
 
       if (instruments.get(i.devModel) == null) {
-	  String instrumentID = MetadataTools.createLSID("Instrument", instrumentidno);
-	  instruments.put(i.devModel, instrumentID);
-	  instrumentIDs.put(i.devModel, new Integer(instrumentidno));
-	  store.setInstrumentID(instrumentID, instrumentidno);
-	  instrumentidno++;
+        String instrumentID = MetadataTools.createLSID("Instrument", instrumentidno);
+        instruments.put(i.devModel, instrumentID);
+        instrumentIDs.put(i.devModel, new Integer(instrumentidno));
+        store.setInstrumentID(instrumentID, instrumentidno);
+        instrumentidno++;
       }
 
       if (objectives.get(i.devModel+":"+i.objMag) == null) {
-	  String objectiveID = MetadataTools.createLSID("Objective", instrumentIDs.get(i.devModel), objectiveidno);
-	  objectives.put(i.devModel+":"+i.objMag, objectiveID);
-	  objectiveIDs.put(i.devModel+":"+i.objMag, new Integer(objectiveidno));
-	  store.setObjectiveID(objectiveID, instrumentIDs.get(i.devModel), objectiveidno);
-	  objectiveidno++;
+        int inst = instrumentIDs.get(i.devModel);
+        String objectiveID = MetadataTools.createLSID("Objective", inst, objectiveidno);
+        objectives.put(i.devModel+":"+i.objMag, objectiveID);
+        objectiveIDs.put(i.devModel+":"+i.objMag, new Integer(objectiveidno));
+        store.setObjectiveID(objectiveID, inst, objectiveidno);
+
+        // TODO: Current OME model only allows nominal magnification to be specified as an integer.
+        Double mag = Double.parseDouble(i.objMag);
+        store.setObjectiveNominalMagnification(new PositiveInteger((int) Math.round(mag)), inst, objectiveidno);
+        store.setObjectiveCalibratedMagnification(mag, inst, objectiveidno);
+        store.setObjectiveLensNA(new Double(i.illumNA), inst, objectiveidno);
+        objectiveidno++;
       }
 
       store.setImageInstrumentRef(instruments.get(i.devModel), s);
       store.setObjectiveSettingsID(objectives.get(i.devModel+":"+i.objMag), s);
+      store.setChannelID(channelID, s, 0);
+      // TODO: Only "brightfield has been seen in example files
+      if (i.illumSource.equals("brightfield")) {
+        store.setChannelIlluminationType(IlluminationType.TRANSMITTED, s, 0);
+      } else {
+        store.setChannelIlluminationType(IlluminationType.OTHER, s, 0);
+        System.out.println("Unknown illumination source " + i.illumSource + "; please report this");
+      }
 
       for (int q=0; q<core[series].imageCount; q++) {
         store.setPlanePositionX(offsetX, s, q);
         store.setPlanePositionY(offsetY, s, q);
-
-	// TODO: Current OME model only allows nominal magnification to be specified as an integer.
-	Double mag = Double.parseDouble(i.objMag);
-	store.setObjectiveNominalMagnification(new PositiveInteger((int) Math.round(mag)), s, q);
-	store.setObjectiveCalibratedMagnification(mag, s, q);
-	store.setObjectiveLensNA(new Double(i.illumNA), s, q);
       }
 
       store.setImageName(i.name + " (R" + (s-i.imageNumStart) + ")", s);
@@ -356,7 +368,6 @@ public class LeicaSCNReader extends BaseTiffReader {
       addGlobalMeta("scanSettings.objectiveSettings.objective for image #" + s, i.objMag);
       addGlobalMeta("scanSettings.illuminationSettings.numericalAperture for image #" + s, i.illumNA);
       addGlobalMeta("scanSettings.illuminationSettings.illuminationSource for image #" + s, i.illumSource);
-
     }
   }
 
