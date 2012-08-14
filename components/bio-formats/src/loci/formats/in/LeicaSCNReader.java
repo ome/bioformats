@@ -29,6 +29,7 @@ import java.io.IOException;
 
 import java.util.Stack;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -38,9 +39,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ome.xml.model.primitives.PositiveFloat;
+import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.Timestamp;
+
+import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
 import loci.common.xml.XMLTools;
 import loci.formats.CoreMetadata;
+import loci.formats.MetadataTools;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.meta.MetadataStore;
@@ -274,6 +280,13 @@ public class LeicaSCNReader extends BaseTiffReader {
 
     MetadataStore store = makeFilterMetadata();
 
+    HashMap<String,String> instruments = new HashMap<String,String>();
+    HashMap<String,Integer> instrumentIDs = new HashMap<String,Integer>();
+    int instrumentidno = 0;
+    HashMap<String,String> objectives = new HashMap<String,String>();
+    HashMap<String,Integer> objectiveIDs = new HashMap<String,Integer>();
+    int objectiveidno = 0;
+
     for (int s=0; s<getSeriesCount(); s++) {
       LeicaSCNHandler.ImageCollection c = handler.collectionMap.get(s);
       LeicaSCNHandler.Image i = handler.imageMap.get(s);
@@ -290,19 +303,47 @@ public class LeicaSCNReader extends BaseTiffReader {
       if (sizeZ > 0) // awful hack to cope with PositiveFloat
         store.setPixelsPhysicalSizeZ(new PositiveFloat(sizeZ), s);
 
+      if (instruments.get(i.devModel) == null) {
+	  String instrumentID = MetadataTools.createLSID("Instrument", instrumentidno);
+	  instruments.put(i.devModel, instrumentID);
+	  instrumentIDs.put(i.devModel, new Integer(instrumentidno));
+	  store.setInstrumentID(instrumentID, instrumentidno);
+	  instrumentidno++;
+      }
+
+      if (objectives.get(i.devModel+":"+i.objMag) == null) {
+	  String objectiveID = MetadataTools.createLSID("Objective", instrumentIDs.get(i.devModel), objectiveidno);
+	  objectives.put(i.devModel+":"+i.objMag, objectiveID);
+	  objectiveIDs.put(i.devModel+":"+i.objMag, new Integer(objectiveidno));
+	  store.setObjectiveID(objectiveID, instrumentIDs.get(i.devModel), objectiveidno);
+	  objectiveidno++;
+      }
+
+      store.setImageInstrumentRef(instruments.get(i.devModel), s);
+      store.setObjectiveSettingsID(objectives.get(i.devModel+":"+i.objMag), s);
+
       for (int q=0; q<core[series].imageCount; q++) {
         store.setPlanePositionX(offsetX, s, q);
         store.setPlanePositionY(offsetY, s, q);
+
+	// TODO: Current OME model only allows nominal magnification to be specified as an integer.
+	Double mag = Double.parseDouble(i.objMag);
+	store.setObjectiveNominalMagnification(new PositiveInteger((int) Math.round(mag)), s, q);
+	store.setObjectiveCalibratedMagnification(mag, s, q);
+	store.setObjectiveLensNA(new Double(i.illumNA), s, q);
       }
 
       store.setImageName(i.name + " (R" + (s-i.imageNumStart) + ")", s);
       store.setImageDescription("Collection " + c.name, s);
+
+      store.setImageAcquisitionDate(new Timestamp(i.creationDate), s);
 
       // Original metadata...
       addGlobalMeta("collection.name", c.name);
       addGlobalMeta("collection.uuid", c.uuid);
       addGlobalMeta("collection.barcode", c.barcode);
       addGlobalMeta("collection.ocr", c.ocr);
+      addGlobalMeta("creationDate", i.creationDate);
 
       addGlobalMeta("device.model for image #" + s, i.devModel);
       addGlobalMeta("device.version for image #" + s, i.devVersion);
