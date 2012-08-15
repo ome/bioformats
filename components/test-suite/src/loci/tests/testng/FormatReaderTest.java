@@ -1922,7 +1922,7 @@ public class FormatReaderTest {
   private void setupReader() {
     reader = new BufferedImageReader(new FileStitcher());
     reader.setNormalized(true);
-    reader.setOriginalMetadataPopulated(true);
+    reader.setOriginalMetadataPopulated(false);
     reader.setMetadataFiltered(true);
     MetadataStore store = null;
     try {
