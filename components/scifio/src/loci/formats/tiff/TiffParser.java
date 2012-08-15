@@ -680,6 +680,8 @@ public class TiffParser {
     in.read(tile);
 
     codecOptions.maxBytes = (int) Math.max(size, tile.length);
+    codecOptions.ycbcr =
+      ifd.getPhotometricInterpretation() == PhotoInterp.Y_CB_CR;
 
     if (jpegTable != null) {
       byte[] q = new byte[jpegTable.length + tile.length - 4];
