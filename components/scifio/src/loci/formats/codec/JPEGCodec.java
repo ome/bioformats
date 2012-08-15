@@ -45,6 +45,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
 import loci.formats.gui.AWTImageTools;
@@ -126,6 +127,29 @@ public class JPEGCodec extends BaseCodec {
     if (options == null) options = CodecOptions.getDefaultOptions();
 
     byte[][] buf = AWTImageTools.getPixelBytes(b, options.littleEndian);
+
+    // correct for YCbCr encoding, if necessary
+    if (options.ycbcr && buf.length == 3) {
+      int nBytes = buf[0].length / (b.getWidth() * b.getHeight());
+      int mask = (int) (Math.pow(2, nBytes * 8) - 1);
+      for (int i=0; i<buf[0].length; i+=nBytes) {
+        int y = DataTools.bytesToInt(buf[0], i, nBytes, options.littleEndian);
+        int cb = DataTools.bytesToInt(buf[1], i, nBytes, options.littleEndian);
+        int cr = DataTools.bytesToInt(buf[2], i, nBytes, options.littleEndian);
+
+        cb = (int) Math.max(0, cb - 128);
+        cr = (int) Math.max(0, cr - 128);
+
+        int red = (int) (y + 1.402 * cr) & mask;
+        int green = (int) (y - 0.34414 * cb - 0.71414 * cr) & mask;
+        int blue = (int) (y + 1.772 * cb) & mask;
+
+        DataTools.unpackBytes(red, buf[0], i, nBytes, options.littleEndian);
+        DataTools.unpackBytes(green, buf[1], i, nBytes, options.littleEndian);
+        DataTools.unpackBytes(blue, buf[2], i, nBytes, options.littleEndian);
+      }
+    }
+
     byte[] rtn = new byte[buf.length * buf[0].length];
     if (buf.length == 1) rtn = buf[0];
     else {

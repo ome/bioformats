@@ -120,6 +120,11 @@ public class CodecOptions {
    */
   public double quality;
 
+  /**
+   * Whether or not the decompressed data will be stored as YCbCr.
+   */
+  public boolean ycbcr;
+
   // -- Constructors --
 
   /** Construct a new CodecOptions. */
@@ -144,6 +149,7 @@ public class CodecOptions {
       this.tileHeight = options.tileHeight;
       this.tileGridXOffset = options.tileGridXOffset;
       this.tileGridYOffset = options.tileGridYOffset;
+      this.ycbcr = ycbcr;
     }
   }
 
@@ -155,6 +161,7 @@ public class CodecOptions {
     options.littleEndian = false;
     options.interleaved = false;
     options.lossless = true;
+    options.ycbcr = false;
     return options;
   }
 
