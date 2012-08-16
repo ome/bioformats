@@ -84,7 +84,9 @@ public class SISReader extends BaseTiffReader {
     TiffParser tp = new TiffParser(stream);
     IFD ifd = tp.getFirstIFD();
     if (ifd == null) return false;
-    return ifd.get(SIS_TAG) != null;
+    String software = ifd.getIFDTextValue(IFD.SOFTWARE);
+    return ifd.get(SIS_TAG) != null &&
+      (software == null || software.startsWith("analySIS"));
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
@@ -155,7 +157,7 @@ public class SISReader extends BaseTiffReader {
     while (check != 7 && check != 8) {
       check = in.readShort();
 
-      if (check == 0x700 || check == 0x800) {
+      if (check == 0x700 || check == 0x800 || check == 0xa00) {
         in.skipBytes(1);
         break;
       }
