@@ -1041,6 +1041,8 @@ public abstract class BaseZeissReader extends FormatReader {
     catch (NumberFormatException exc) {
       if (s != null) {
         stamp = DateTools.getTime(s, "M/d/y h:mm:ss aa");
+        stamp += DateTools.ZVI_EPOCH;
+        stamp *= 1600;
       }
     }
     return stamp;
