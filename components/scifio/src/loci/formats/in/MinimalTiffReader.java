@@ -94,6 +94,8 @@ public class MinimalTiffReader extends FormatReader {
 
   protected TiffParser tiffParser;
 
+  protected boolean equalStrips = false;
+
   protected boolean use64Bit = false;
 
   private int lastPlane = 0;
@@ -344,6 +346,18 @@ public class MinimalTiffReader extends FormatReader {
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
+      if (ifds != null) {
+        for (IFD ifd : ifds) {
+          try {
+            if (ifd.getOnDemandStripOffsets() != null) {
+              ifd.getOnDemandStripOffsets().close();
+            }
+          }
+          catch (FormatException e) {
+            LOGGER.debug("", e);
+          }
+        }
+      }
       ifds = null;
       thumbnailIFDs = null;
       subResolutionIFDs = new ArrayList<IFDList>();
@@ -419,6 +433,7 @@ public class MinimalTiffReader extends FormatReader {
 
     core[0].imageCount = ifds.size();
 
+    tiffParser.setAssumeEqualStrips(equalStrips);
     for (IFD ifd : ifds) {
       tiffParser.fillInIFD(ifd);
       if (ifd.getCompression() == TiffCompression.JPEG_2000
@@ -526,6 +541,9 @@ public class MinimalTiffReader extends FormatReader {
       IFDList ifds = subResolutionIFDs.get(0);
       CoreMetadata[] newCore = new CoreMetadata[ifds.size() + 1];
       newCore[0] = core[0];
+      if (!hasFlattenedResolutions()) {
+        newCore[0].resolutionCount = newCore.length;
+      }
       int i = 1;
       for (IFD ifd : ifds) {
         newCore[i] = new CoreMetadata(this, 0);

@@ -142,6 +142,12 @@ public abstract class FormatReader extends FormatHandler
   /** Core metadata values. */
   protected CoreMetadata[] core;
 
+  /** The number of the current resolution. */
+  protected int resolution = 0;
+
+  /** Whether or not resolutions are flattened. */
+  protected boolean flattenedResolutions = true;
+
   /**
    * Whether the file extension matching one of the reader's suffixes
    * is necessary to identify the file as an instance of this format.
@@ -351,7 +357,7 @@ public abstract class FormatReader extends FormatHandler
 
   /** Adds an entry to the metadata table for the current series. */
   protected void addSeriesMeta(String key, Object value) {
-    addMeta(key, value, core[series].seriesMetadata);
+    addMeta(key, value, core[getCoreIndex()].seriesMetadata);
   }
 
   /** Adds an entry to the metadata table for the current series. */
@@ -396,7 +402,7 @@ public abstract class FormatReader extends FormatHandler
 
   /** Gets an entry from the metadata table for the current series. */
   protected Object getSeriesMeta(String key) {
-    return core[series].seriesMetadata.get(key);
+    return core[getCoreIndex()].seriesMetadata.get(key);
   }
 
   /** Reads a raw plane from disk. */
@@ -563,59 +569,59 @@ public abstract class FormatReader extends FormatHandler
   /* @see IFormatReader#getImageCount() */
   public int getImageCount() {
     FormatTools.assertId(currentId, true, 1);
-    return core[series].imageCount;
+    return core[getCoreIndex()].imageCount;
   }
 
   /* @see IFormatReader#isRGB() */
   public boolean isRGB() {
     FormatTools.assertId(currentId, true, 1);
-    return core[series].rgb;
+    return core[getCoreIndex()].rgb;
   }
 
   /* @see IFormatReader#getSizeX() */
   public int getSizeX() {
     FormatTools.assertId(currentId, true, 1);
-    return core[series].sizeX;
+    return core[getCoreIndex()].sizeX;
   }
 
   /* @see IFormatReader#getSizeY() */
   public int getSizeY() {
     FormatTools.assertId(currentId, true, 1);
-    return core[series].sizeY;
+    return core[getCoreIndex()].sizeY;
   }
 
   /* @see IFormatReader#getSizeZ() */
   public int getSizeZ() {
     FormatTools.assertId(currentId, true, 1);
-    return core[series].sizeZ;
+    return core[getCoreIndex()].sizeZ;
   }
 
   /* @see IFormatReader#getSizeC() */
   public int getSizeC() {
     FormatTools.assertId(currentId, true, 1);
-    return core[series].sizeC;
+    return core[getCoreIndex()].sizeC;
   }
 
   /* @see IFormatReader#getSizeT() */
   public int getSizeT() {
     FormatTools.assertId(currentId, true, 1);
-    return core[series].sizeT;
+    return core[getCoreIndex()].sizeT;
   }
 
   /* @see IFormatReader#getPixelType() */
   public int getPixelType() {
     FormatTools.assertId(currentId, true, 1);
-    return core[series].pixelType;
+    return core[getCoreIndex()].pixelType;
   }
 
   /* @see IFormatReader#getBitsPerPixel() */
   public int getBitsPerPixel() {
     FormatTools.assertId(currentId, true, 1);
-    if (core[series].bitsPerPixel == 0) {
-      core[series].bitsPerPixel =
+    if (core[getCoreIndex()].bitsPerPixel == 0) {
+      core[getCoreIndex()].bitsPerPixel =
         FormatTools.getBytesPerPixel(getPixelType()) * 8;
     }
-    return core[series].bitsPerPixel;
+    return core[getCoreIndex()].bitsPerPixel;
   }
 
   /* @see IFormatReader#getEffectiveSizeC() */
@@ -636,13 +642,13 @@ public abstract class FormatReader extends FormatHandler
   /* @see IFormatReader#isIndexed() */
   public boolean isIndexed() {
     FormatTools.assertId(currentId, true, 1);
-    return core[series].indexed;
+    return core[getCoreIndex()].indexed;
   }
 
   /* @see IFormatReader#isFalseColor() */
   public boolean isFalseColor() {
     FormatTools.assertId(currentId, true, 1);
-    return core[series].falseColor;
+    return core[getCoreIndex()].falseColor;
   }
 
   /* @see IFormatReader#get8BitLookupTable() */
@@ -658,21 +664,25 @@ public abstract class FormatReader extends FormatHandler
   /* @see IFormatReader#getChannelDimLengths() */
   public int[] getChannelDimLengths() {
     FormatTools.assertId(currentId, true, 1);
-    if (core[series].cLengths == null) return new int[] {core[series].sizeC};
-    return core[series].cLengths;
+    if (core[getCoreIndex()].cLengths == null) {
+      return new int[] {core[getCoreIndex()].sizeC};
+     }
+    return core[getCoreIndex()].cLengths;
   }
 
   /* @see IFormatReader#getChannelDimTypes() */
   public String[] getChannelDimTypes() {
     FormatTools.assertId(currentId, true, 1);
-    if (core[series].cTypes == null) return new String[] {FormatTools.CHANNEL};
-    return core[series].cTypes;
+    if (core[getCoreIndex()].cTypes == null) {
+      return new String[] {FormatTools.CHANNEL};
+    }
+    return core[getCoreIndex()].cTypes;
   }
 
   /* @see IFormatReader#getThumbSizeX() */
   public int getThumbSizeX() {
     FormatTools.assertId(currentId, true, 1);
-    if (core[series].thumbSizeX == 0) {
+    if (core[getCoreIndex()].thumbSizeX == 0) {
       int sx = getSizeX();
       int sy = getSizeY();
       int thumbSizeX = 0;
@@ -681,13 +691,13 @@ public abstract class FormatReader extends FormatHandler
       if (thumbSizeX == 0) thumbSizeX = 1;
       return thumbSizeX;
     }
-    return core[series].thumbSizeX;
+    return core[getCoreIndex()].thumbSizeX;
   }
 
   /* @see IFormatReader#getThumbSizeY() */
   public int getThumbSizeY() {
     FormatTools.assertId(currentId, true, 1);
-    if (core[series].thumbSizeY == 0) {
+    if (core[getCoreIndex()].thumbSizeY == 0) {
       int sx = getSizeX();
       int sy = getSizeY();
       int thumbSizeY = 1;
@@ -696,31 +706,31 @@ public abstract class FormatReader extends FormatHandler
       if (thumbSizeY == 0) thumbSizeY = 1;
       return thumbSizeY;
     }
-    return core[series].thumbSizeY;
+    return core[getCoreIndex()].thumbSizeY;
   }
 
   /* @see IFormatReader.isLittleEndian() */
   public boolean isLittleEndian() {
     FormatTools.assertId(currentId, true, 1);
-    return core[series].littleEndian;
+    return core[getCoreIndex()].littleEndian;
   }
 
   /* @see IFormatReader#getDimensionOrder() */
   public String getDimensionOrder() {
     FormatTools.assertId(currentId, true, 1);
-    return core[series].dimensionOrder;
+    return core[getCoreIndex()].dimensionOrder;
   }
 
   /* @see IFormatReader#isOrderCertain() */
   public boolean isOrderCertain() {
     FormatTools.assertId(currentId, true, 1);
-    return core[series].orderCertain;
+    return core[getCoreIndex()].orderCertain;
   }
 
   /* @see IFormatReader#isThumbnailSeries() */
   public boolean isThumbnailSeries() {
     FormatTools.assertId(currentId, true, 1);
-    return core[series].thumbnail;
+    return core[getCoreIndex()].thumbnail;
   }
 
   /* @see IFormatReader#isInterleaved() */
@@ -731,7 +741,7 @@ public abstract class FormatReader extends FormatHandler
   /* @see IFormatReader#isInterleaved(int) */
   public boolean isInterleaved(int subC) {
     FormatTools.assertId(currentId, true, 1);
-    return core[series].interleaved;
+    return core[getCoreIndex()].interleaved;
   }
 
   /* @see IFormatReader#openBytes(int) */
@@ -791,13 +801,22 @@ public abstract class FormatReader extends FormatHandler
     if (!fileOnly) {
       in = null;
       currentId = null;
+      resolution = 0;
     }
   }
 
   /* @see IFormatReader#getSeriesCount() */
   public int getSeriesCount() {
     FormatTools.assertId(currentId, true, 1);
-    return core.length;
+    if (hasFlattenedResolutions()) {
+      return core.length;
+    }
+    int count = 0;
+    for (int i=0; i<core.length;) {
+      i += core[i].resolutionCount;
+      count++;
+    }
+    return count;
   }
 
   /* @see IFormatReader#setSeries(int) */
@@ -834,7 +853,7 @@ public abstract class FormatReader extends FormatHandler
   /* @see IFormatReader#isMetadataComplete() */
   public boolean isMetadataComplete() {
     FormatTools.assertId(currentId, true, 1);
-    return core[series].metadataComplete;
+    return core[getCoreIndex()].metadataComplete;
   }
 
   /* @see IFormatReader#setNormalized(boolean) */
@@ -977,7 +996,7 @@ public abstract class FormatReader extends FormatHandler
   /* @see IFormatReader#getSeriesMetadata() */
   public Hashtable<String, Object> getSeriesMetadata() {
     FormatTools.assertId(currentId, true, 1);
-    return core[series].seriesMetadata;
+    return core[getCoreIndex()].seriesMetadata;
   }
 
   /** @deprecated */
@@ -1088,6 +1107,49 @@ public abstract class FormatReader extends FormatHandler
      int bpp = FormatTools.getBytesPerPixel(getPixelType());
      int maxHeight = (1024 * 1024) / (getSizeX() * getRGBChannelCount() * bpp);
      return (int) Math.min(maxHeight, getSizeY());
+  }
+
+  // -- Sub-resolution API methods --
+
+  /* @see IFormatReader#getResolutionCount() */
+  public int getResolutionCount() {
+    FormatTools.assertId(currentId, true, 1);
+    return core[getSeries()].resolutionCount;
+  }
+
+  /* @see IFormatReader#setResolution(int) */
+  public void setResolution(int no) {
+    if (no < 0 || no >= getResolutionCount()) {
+      throw new IllegalArgumentException("Invalid resolution: " + no);
+    }
+    resolution = no;
+  }
+
+  /* @see IFormatReader#getResolution() */
+  public int getResolution() {
+    return resolution;
+  }
+
+  /* @see IFormatReader#hasFlattenedResolutions */
+  public boolean hasFlattenedResolutions() {
+    return flattenedResolutions;
+  }
+
+  /* @see IFormatReader#setFlattenedResolutions(boolean) */
+  public void setFlattenedResolutions(boolean flattened) {
+    FormatTools.assertId(currentId, false, 1);
+    flattenedResolutions = flattened;
+  }
+
+  protected int getCoreIndex() {
+    if (hasFlattenedResolutions()) {
+        return getSeries();
+    }
+    int index = 0;
+    for (int i=0; i<getSeries(); i++) {
+      index += core[index].resolutionCount;
+    }
+    return index + resolution;
   }
 
   // -- IFormatHandler API methods --
