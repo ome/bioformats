@@ -141,30 +141,27 @@ public class LeicaSCNReader extends BaseTiffReader {
    */
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
       throws FormatException, IOException
-      {
-    if (getSeriesCount() == 1) {
-      return super.openBytes(no, buf, x, y, w, h);
+    {
+      FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
+      tiffParser.getSamples(ifds.get(handler.IFDMap.get(series)), buf, x, y, w, h);
+      return buf;
     }
-    FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
-    tiffParser.getSamples(ifds.get(handler.IFDMap.get(series)), buf, x, y, w, h);
-    return buf;
-      }
 
   /* @see loci.formats.IFormatReader#openThumbBytes(int) */
   public byte[] openThumbBytes(int no) throws FormatException, IOException {
-    if (getSeriesCount() == 1 || getSeries() >= getSeriesCount() - 2) {
-      return super.openThumbBytes(no);
-    }
+    LeicaSCNHandler.ImageCollection c = handler.collectionMap.get(no);
+    LeicaSCNHandler.Image i = handler.imageMap.get(no);
 
-    int smallestSeries = getSeriesCount() - 3;
-    if (smallestSeries >= 0) {
-      int thisSeries = getSeries();
-      setSeries(smallestSeries);
-      byte[] thumb = FormatTools.openThumbBytes(this, no);
-      setSeries(thisSeries);
-      return thumb;
-    }
-    return super.openThumbBytes(no);
+    int series = i.imageNumStart + i.imageThumbnail;
+
+    System.out.println("THUMB: " + no + " -> " + series);
+
+    int thisSeries = getSeries();
+    setSeries(series);
+    byte[] thumb = FormatTools.openThumbBytes(this, no);
+    setSeries(thisSeries);
+
+    return thumb;
   }
 
   /* @see loci.formats.IFormatReader#close(boolean) */
@@ -239,7 +236,7 @@ public class LeicaSCNReader extends BaseTiffReader {
     core[s].interleaved = false;
     core[s].falseColor = false;
     core[s].dimensionOrder = i.pixels.dataOrder;
-    core[s].thumbnail = s != 0;
+    core[s].thumbnail = (i.imageThumbnail == r);
   }
 
   /* @see loci.formats.BaseTiffReader#initStandardMetadata() */
@@ -562,6 +559,10 @@ class LeicaSCNHandler extends DefaultHandler {
       currentImage.pixels.dimSizeX[z][c][r] = sizeX;
       currentImage.pixels.dimSizeY[z][c][r] = sizeY;
       currentImage.pixels.dimIFD[z][c][r] = ifd;
+      if (r == 0 || currentImage.thumbSizeX > sizeX) {
+	  currentImage.thumbSizeX = sizeX;
+	  currentImage.imageThumbnail = r;
+      }
       IFDMap.add(ifd);
       collectionMap.add(currentCollection);
       imageMap.add(currentImage);
@@ -625,6 +626,8 @@ class LeicaSCNHandler extends DefaultHandler {
   {
     int imageNumStart; // first image number
     int imageNumEnd;   // last image number (subresolutions)
+    int imageThumbnail; // image for thumbnailing
+    long thumbSizeX;
 
     String name;
     String uuid;
