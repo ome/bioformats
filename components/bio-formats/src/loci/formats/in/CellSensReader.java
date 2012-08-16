@@ -169,13 +169,33 @@ public class CellSensReader extends FormatReader {
   /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
-    return tileX[getSeries()];
+    if (getSeries() < getSeriesCount() - ifds.size()) {
+      return tileX[getSeries()];
+    }
+    int ifdIndex = getSeries() - (usedFiles.length - 1);
+    try {
+      return (int) ifds.get(ifdIndex).getTileWidth();
+    }
+    catch (FormatException e) {
+      LOGGER.debug("Could not retrieve tile width", e);
+    }
+    return super.getOptimalTileWidth();
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
-    return tileX[getSeries()];
+    if (getSeries() < getSeriesCount() - ifds.size()) {
+      return tileY[getSeries()];
+    }
+    int ifdIndex = getSeries() - (usedFiles.length - 1);
+    try {
+      return (int) ifds.get(ifdIndex).getTileLength();
+    }
+    catch (FormatException e) {
+      LOGGER.debug("Could not retrieve tile height", e);
+    }
+    return super.getOptimalTileHeight();
   }
 
   /* @see loci.formats.IFormatHandler#openThumbBytes(int) */
