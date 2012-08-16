@@ -67,7 +67,14 @@ public class BZip2Handle extends StreamHandle {
    * @throws HandleException if the given file is not a BZip2 file.
    */
   public BZip2Handle(String file) throws IOException {
-    sHandle = new ome.scifio.io.BZip2Handle(file);
+    try {
+      sHandle = new ome.scifio.io.BZip2Handle(file);
+    } catch (IOException e) {
+      if (e instanceof ome.scifio.io.HandleException)
+        throw (HandleException)e;
+      
+      throw e;
+    }
   }
 
   // -- BZip2Handle API methods --
