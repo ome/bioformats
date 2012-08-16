@@ -39,6 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ome.xml.model.enums.IlluminationType;
+import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
@@ -342,6 +343,11 @@ public class LeicaSCNReader extends BaseTiffReader {
       }
 
       for (int q=0; q<core[series].imageCount; q++) {
+	  int[] dims = FormatTools.getZCTCoords(core[s].dimensionOrder, core[s].sizeZ, core[s].imageCount/(core[s].sizeZ * core[s].sizeT), core[s].sizeT, core[s].imageCount, q);
+
+	store.setPlaneTheZ(new NonNegativeInteger(dims[0]), s, q);
+	store.setPlaneTheC(new NonNegativeInteger(dims[1]), s, q);
+	store.setPlaneTheT(new NonNegativeInteger(dims[2]), s, q);
         store.setPlanePositionX(offsetX, s, q);
         store.setPlanePositionY(offsetY, s, q);
       }
