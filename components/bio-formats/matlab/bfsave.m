@@ -20,7 +20,7 @@ function bfsave(I, outputPath, varargin)
 bfCheckJavaPath();
 
 % Not using the inputParser for first argument as it copies data
-assert(isnumeric(I), 'First argument must be numeri');
+assert(isnumeric(I), 'First argument must be numeric');
 
 % Input check
 ip = inputParser;
@@ -80,6 +80,7 @@ end
 
 % Create ImageWriter
 writer = loci.formats.ImageWriter();
+writer.setWriteSequentially(true);
 writer.setMetadataRetrieve(metadata);
 writer.setId(outputPath);
 

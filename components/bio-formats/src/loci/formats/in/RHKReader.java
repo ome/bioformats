@@ -73,7 +73,11 @@ public class RHKReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
     in.seek(pixelOffset);
-    readPlane(in, x, y, w, h, buf);
+
+    int realX = invertX ? getSizeX() - x - w : x;
+    int realY = invertY ? getSizeY() - y - h : y;
+
+    readPlane(in, realX, realY, w, h, buf);
 
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
     if (invertY) {

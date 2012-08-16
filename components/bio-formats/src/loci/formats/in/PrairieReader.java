@@ -104,6 +104,8 @@ public class PrairieReader extends FormatReader {
   private Vector<Double> positionZ = new Vector<Double>();
   private Vector<String> channels = new Vector<String>();
 
+  private boolean invertX, invertY;
+
   private Hashtable<String, Double> relativeTimes =
     new Hashtable<String, Double>();
 
@@ -596,9 +598,9 @@ public class PrairieReader extends FormatReader {
         else if (key.equals("laserPower_0")) laserPower = value;
         else if (key.equals("positionCurrent_XAxis")) {
           try {
-            positionX.add(new Double(value));
-            addGlobalMeta("X position for position #" + positionX.size(),
-              value);
+            Double xPos = new Double(value);
+            positionX.add(invertX ? -xPos : xPos);
+            addGlobalMeta("X position for position #" + positionX.size(), xPos);
           }
           catch (NumberFormatException e) {
             positionX.add(Double.NaN);
@@ -606,9 +608,9 @@ public class PrairieReader extends FormatReader {
         }
         else if (key.equals("positionCurrent_YAxis")) {
           try {
-            positionY.add(new Double(value));
-            addGlobalMeta("Y position for position #" + positionY.size(),
-              value);
+            Double yPos = new Double(value);
+            positionY.add(invertY ? -yPos : yPos);
+            addGlobalMeta("Y position for position #" + positionY.size(), yPos);
           }
           catch (NumberFormatException e) {
             positionY.add(Double.NaN);
@@ -616,9 +618,9 @@ public class PrairieReader extends FormatReader {
         }
         else if (key.equals("positionCurrent_ZAxis")) {
           try {
-            positionZ.add(new Double(value));
-            addGlobalMeta("Z position for position #" + positionZ.size(),
-              value);
+            Double zPos = new Double(value);
+            positionZ.add(zPos);
+            addGlobalMeta("Z position for position #" + positionZ.size(), zPos);
           }
           catch (NumberFormatException e) {
             positionZ.add(Double.NaN);
@@ -632,6 +634,26 @@ public class PrairieReader extends FormatReader {
         }
         else if (key.equals("bitDepth")) {
           core[0].bitsPerPixel = Integer.parseInt(value);
+        }
+        else if (key.equals("xYStageXPositionIncreasesLeftToRight")) {
+          invertX = value.equals("True");
+          if (invertX) {
+            // invert already-parsed X positions
+            for (int i=0; i<positionX.size(); i++) {
+              Double xPos = positionX.get(i);
+              if (xPos != null && !xPos.isNaN()) positionX.set(i, -xPos);
+            }
+          }
+        }
+        else if (key.equals("xYStageYPositionIncreasesBottomToTop")) {
+          invertY = value.equals("True");
+          if (invertY) {
+            // invert already-parsed Y positions
+            for (int i=0; i<positionY.size(); i++) {
+              Double yPos = positionY.get(i);
+              if (yPos != null && !yPos.isNaN()) positionY.set(i, -yPos);
+            }
+          }
         }
       }
       else if (qName.equals("PVTSeriesElementWait")) {

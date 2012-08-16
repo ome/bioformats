@@ -499,6 +499,23 @@ public interface IFormatReader extends IFormatHandler, IMetadataConfigurable {
   /** Returns the optimal sub-image height for use with openBytes. */
   int getOptimalTileHeight();
 
+  // -- Sub-resolution API methods --
+
+  /** Return the number of resolutions for the current series. */
+  int getResolutionCount();
+
+  /** Set the resolution level. */
+  void setResolution(int resolution);
+
+  /** Get the current resolution level. */
+  int getResolution();
+
+  /** Return whether or not resolution flattening is enabled. */
+  boolean hasFlattenedResolutions();
+
+  /** Set whether or not to flatten resolutions into individual series. */
+  void setFlattenedResolutions(boolean flatten);
+
   // -- Deprecated methods --
 
   /**

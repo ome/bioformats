@@ -157,10 +157,8 @@ public class Calibrator {
     }
     if (tiCount == 0) return Double.NaN;
 
-    // divide by 1000, as the DeltaT values are stored in milliseconds
-    // but the expected units are seconds
-
-    return (float) (tiTotal / tiCount) / 1000f;
+    // DeltaT is stored in seconds, and the expected units are seconds
+    return (float) (tiTotal / tiCount);
   }
 
 }

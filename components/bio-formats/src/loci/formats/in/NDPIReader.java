@@ -273,9 +273,13 @@ public class NDPIReader extends BaseTiffReader {
     }
 
     for (int s=0; s<core.length; s++) {
-      setSeries(s);
       core[s] = new CoreMetadata();
+      if (s == 0 && !hasFlattenedResolutions()) {
+        core[s].resolutionCount = pyramidHeight;
+      }
+    }
 
+    for (int s=0; s<core.length; s++) {
       IFD ifd = ifds.get(getIFDIndex(s, 0));
       PhotoInterp p = ifd.getPhotometricInterpretation();
       int samples = ifd.getSamplesPerPixel();
@@ -289,16 +293,15 @@ public class NDPIReader extends BaseTiffReader {
       core[s].littleEndian = ifd.isLittleEndian();
       core[s].indexed = p == PhotoInterp.RGB_PALETTE &&
         (get8BitLookupTable() != null || get16BitLookupTable() != null);
-      core[s].imageCount = getSizeZ() * getSizeT();
+      core[s].imageCount = core[s].sizeZ * core[s].sizeT;
       core[s].pixelType = ifd.getPixelType();
       core[s].metadataComplete = true;
-      core[s].interleaved = getSizeX() > MAX_SIZE || getSizeY() > MAX_SIZE;
+      core[s].interleaved =
+        core[s].sizeX > MAX_SIZE || core[s].sizeY > MAX_SIZE;
       core[s].falseColor = false;
       core[s].dimensionOrder = "XYCZT";
       core[s].thumbnail = s != 0;
     }
-
-    setSeries(0);
   }
 
   /* @see loci.formats.BaseTiffReader#initMetadataStore() */

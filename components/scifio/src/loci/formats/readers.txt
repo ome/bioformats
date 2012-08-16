@@ -126,6 +126,7 @@ loci.formats.in.NDPIReader            # ndpi
 
 # TIFF-based readers with slow isThisType
 loci.formats.in.OMETiffReader         # tif
+loci.formats.in.PyramidTiffReader     # tif, tiff
 loci.formats.in.MIASReader            # tif
 loci.formats.in.TCSReader             # xml, tif
 loci.formats.in.LeicaReader           # lei, tif
@@ -144,6 +145,7 @@ loci.formats.in.NikonElementsTiffReader # tif
 loci.formats.in.TrestleReader         # tif
 loci.formats.in.SISReader             # tif
 loci.formats.in.DNGReader             # cr2, crw, jpg, thm, wav, tif?
+loci.formats.in.ZeissTIFFReader # tif
 
 # standard TIFF reader must go last (it accepts any TIFF)
 loci.formats.in.TiffDelegateReader    # tif, tiff
