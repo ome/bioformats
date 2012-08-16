@@ -143,7 +143,7 @@ public class LeicaSCNReader extends BaseTiffReader {
       throws FormatException, IOException
     {
       FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
-      tiffParser.getSamples(ifds.get(handler.IFDMap.get(series)), buf, x, y, w, h);
+      tiffParser.getSamples(ifds.get(handler.IFDMap.get(getSeries())), buf, x, y, w, h);
       return buf;
     }
 
@@ -154,7 +154,6 @@ public class LeicaSCNReader extends BaseTiffReader {
     LeicaSCNHandler.Image i = handler.imageMap.get(s);
 
     int thumbseries = i.imageNumStart + i.imageThumbnail;
-
     int thisSeries = getSeries();
     setSeries(thumbseries);
     byte[] thumb = FormatTools.openThumbBytes(this, no);
@@ -337,7 +336,7 @@ public class LeicaSCNReader extends BaseTiffReader {
         System.out.println("Unknown illumination source " + i.illumSource + "; please report this");
       }
 
-      for (int q=0; q<core[series].imageCount; q++) {
+      for (int q=0; q<core[s].imageCount; q++) {
 	  int[] dims = FormatTools.getZCTCoords(core[s].dimensionOrder, core[s].sizeZ, core[s].imageCount/(core[s].sizeZ * core[s].sizeT), core[s].sizeT, core[s].imageCount, q);
 
 	store.setPlaneTheZ(new NonNegativeInteger(dims[0]), s, q);
