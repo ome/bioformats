@@ -289,8 +289,6 @@ public class LeicaSCNReader extends BaseTiffReader {
     HashMap<String,Integer> objectiveIDs = new HashMap<String,Integer>();
     int objectiveidno = 0;
 
-    String channelID = MetadataTools.createLSID("Channel", 0);
-
     for (int s=0; s<getSeriesCount(); s++) {
       LeicaSCNHandler.ImageCollection c = handler.collectionMap.get(s);
       LeicaSCNHandler.Image i = handler.imageMap.get(s);
@@ -333,6 +331,7 @@ public class LeicaSCNReader extends BaseTiffReader {
 
       store.setImageInstrumentRef(instruments.get(i.devModel), s);
       store.setObjectiveSettingsID(objectives.get(i.devModel+":"+i.objMag), s);
+      String channelID = MetadataTools.createLSID("Channel", s);
       store.setChannelID(channelID, s, 0);
       // TODO: Only "brightfield has been seen in example files
       if (i.illumSource.equals("brightfield")) {
