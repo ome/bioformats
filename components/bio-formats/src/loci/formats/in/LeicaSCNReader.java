@@ -155,8 +155,6 @@ public class LeicaSCNReader extends BaseTiffReader {
 
     int thumbseries = i.imageNumStart + i.imageThumbnail;
 
-    System.out.println("THUMB: " + no + " -> " + thumbseries);
-
     int thisSeries = getSeries();
     setSeries(thumbseries);
     byte[] thumb = FormatTools.openThumbBytes(this, no);
