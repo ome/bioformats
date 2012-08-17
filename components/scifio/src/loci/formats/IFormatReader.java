@@ -501,6 +501,9 @@ public interface IFormatReader extends IFormatHandler, IMetadataConfigurable {
 
   // -- Sub-resolution API methods --
 
+  /** Return the index into CoreMetadata of the current resolution/series. */
+  int getCoreIndex();
+
   /** Return the number of resolutions for the current series. */
   int getResolutionCount();
 

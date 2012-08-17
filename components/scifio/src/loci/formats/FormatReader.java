@@ -1141,9 +1141,9 @@ public abstract class FormatReader extends FormatHandler
     flattenedResolutions = flattened;
   }
 
-  protected int getCoreIndex() {
+  public int getCoreIndex() {
     if (hasFlattenedResolutions()) {
-        return getSeries();
+      return getSeries();
     }
     int index = 0;
     for (int i=0; i<getSeries(); i++) {
