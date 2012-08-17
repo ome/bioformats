@@ -1558,6 +1558,70 @@ public class FormatReaderTest {
   /**
    * @testng.test groups = "all pixels automated"
    */
+  public void testUnflattenedPixelsHashes() {
+    if (config == null) throw new SkipException("No config tree");
+    String testName = "testUnflattenedPixelsHashes";
+    if (!initFile()) result(testName, false, "initFile");
+
+    boolean success = true;
+    String msg = null;
+    try {
+      IFormatReader resolutionReader =
+        new BufferedImageReader(new FileStitcher());
+      resolutionReader.setFlattenedResolutions(false);
+      resolutionReader.setNormalized(true);
+      resolutionReader.setOriginalMetadataPopulated(false);
+      resolutionReader.setMetadataFiltered(true);
+      resolutionReader.setId(id);
+
+      // check the MD5 of the first plane in each resolution
+      for (int i=0; i<resolutionReader.getSeriesCount() && success; i++) {
+        resolutionReader.setSeries(i);
+
+        for (int r=0; r<resolutionReader.getResolutionCount(); r++) {
+          resolutionReader.setResolution(r);
+          config.setSeries(resolutionReader.getCoreIndex());
+
+          long planeSize = -1;
+          try {
+            planeSize = DataTools.safeMultiply32(resolutionReader.getSizeX(),
+              resolutionReader.getSizeY(),
+              resolutionReader.getRGBChannelCount(),
+              FormatTools.getBytesPerPixel(resolutionReader.getPixelType()));
+          }
+          catch (IllegalArgumentException e) {
+            continue;
+          }
+
+          if (planeSize < 0 || !TestTools.canFitInMemory(planeSize)) {
+            continue;
+          }
+
+          String md5 = TestTools.md5(resolutionReader.openBytes(0));
+          String expected1 = config.getMD5();
+          String expected2 = config.getAlternateMD5();
+
+          if (expected1 == null && expected2 == null) {
+            continue;
+          }
+          if (!md5.equals(expected1) && !md5.equals(expected2)) {
+            success = false;
+            msg = "series " + i + ", resolution " + r;
+          }
+        }
+      }
+      resolutionReader.close();
+    }
+    catch (Throwable t) {
+      LOGGER.info("", t);
+      success = false;
+    }
+    result(testName, success, msg);
+  }
+
+  /**
+   * @testng.test groups = "all pixels automated"
+   */
   public void testPixelsHashes() {
     if (config == null) throw new SkipException("No config tree");
     String testName = "testPixelsHashes";
