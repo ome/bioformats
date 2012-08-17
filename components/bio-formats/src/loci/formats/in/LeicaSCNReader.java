@@ -136,13 +136,13 @@ public class LeicaSCNReader extends BaseTiffReader {
   }
 
   private int imageIFD(int no) {
-    int s = getSeries();
+    int s = getCoreIndex();
     LeicaSCNHandler.Image i = handler.imageMap.get(s);
 
     int[] dims = FormatTools.getZCTCoords(core[s].dimensionOrder, core[s].sizeZ, core[s].imageCount/(core[s].sizeZ * core[s].sizeT), core[s].sizeT, core[s].imageCount, no);
     int dz = dims[0];
     int dc = dims[1];
-    int dr = getSeries() - i.imageNumStart;
+    int dr = getCoreIndex() - i.imageNumStart;
     int ifd = i.pixels.dimIFD[dz][dc][dr];
 
     return ifd;
@@ -164,11 +164,11 @@ public class LeicaSCNReader extends BaseTiffReader {
 
   /* @see loci.formats.IFormatReader#openThumbBytes(int) */
   public byte[] openThumbBytes(int no) throws FormatException, IOException {
-    int s = getSeries();
+    int s = getCoreIndex();
     LeicaSCNHandler.Image i = handler.imageMap.get(s);
 
     int thumbseries = i.imageNumStart + i.imageThumbnail;
-    int thisSeries = getSeries();
+    int thisSeries = getCoreIndex();
     setSeries(thumbseries);
     byte[] thumb = FormatTools.openThumbBytes(this, no);
     setSeries(thisSeries);
@@ -276,12 +276,10 @@ public class LeicaSCNReader extends BaseTiffReader {
     ifds = tiffParser.getIFDs();
 
     for (int i=0; i<core.length; i++) {
-      setSeries(i);
       core[i] = new CoreMetadata();
       tiffParser.fillInIFD(ifds.get(handler.IFDMap.get(i)));
       initCoreMetadata(i);
     }
-
     setSeries(0);
   }
 
