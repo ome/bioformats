@@ -44,7 +44,6 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.Timestamp;
 
-import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
 import loci.common.xml.XMLTools;
 import loci.formats.CoreMetadata;
@@ -136,19 +135,18 @@ public class LeicaSCNReader extends BaseTiffReader {
     return isThisType;
   }
 
-    private int imageIFD(int no) {
-      int s = getSeries();
-      LeicaSCNHandler.ImageCollection c = handler.collectionMap.get(s);
-      LeicaSCNHandler.Image i = handler.imageMap.get(s);
+  private int imageIFD(int no) {
+    int s = getSeries();
+    LeicaSCNHandler.Image i = handler.imageMap.get(s);
 
-      int[] dims = FormatTools.getZCTCoords(core[s].dimensionOrder, core[s].sizeZ, core[s].imageCount/(core[s].sizeZ * core[s].sizeT), core[s].sizeT, core[s].imageCount, no);
-      int dz = dims[0];
-      int dc = dims[1];
-      int dr = getSeries() - i.imageNumStart;
-      int ifd = i.pixels.dimIFD[dz][dc][dr];
+    int[] dims = FormatTools.getZCTCoords(core[s].dimensionOrder, core[s].sizeZ, core[s].imageCount/(core[s].sizeZ * core[s].sizeT), core[s].sizeT, core[s].imageCount, no);
+    int dz = dims[0];
+    int dc = dims[1];
+    int dr = getSeries() - i.imageNumStart;
+    int ifd = i.pixels.dimIFD[dz][dc][dr];
 
-      return ifd;
-    }
+    return ifd;
+  }
 
 
   /**
@@ -156,18 +154,17 @@ public class LeicaSCNReader extends BaseTiffReader {
    */
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
       throws FormatException, IOException
-    {
-      int ifd = imageIFD(no);
+      {
+    int ifd = imageIFD(no);
 
-      FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
-      tiffParser.getSamples(ifds.get(ifd), buf, x, y, w, h);
-      return buf;
-    }
+    FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
+    tiffParser.getSamples(ifds.get(ifd), buf, x, y, w, h);
+    return buf;
+      }
 
   /* @see loci.formats.IFormatReader#openThumbBytes(int) */
   public byte[] openThumbBytes(int no) throws FormatException, IOException {
     int s = getSeries();
-    LeicaSCNHandler.ImageCollection c = handler.collectionMap.get(s);
     LeicaSCNHandler.Image i = handler.imageMap.get(s);
 
     int thumbseries = i.imageNumStart + i.imageThumbnail;
@@ -354,11 +351,11 @@ public class LeicaSCNReader extends BaseTiffReader {
       }
 
       for (int q=0; q<core[s].imageCount; q++) {
-	  int[] dims = FormatTools.getZCTCoords(core[s].dimensionOrder, core[s].sizeZ, core[s].imageCount/(core[s].sizeZ * core[s].sizeT), core[s].sizeT, core[s].imageCount, q);
+        int[] dims = FormatTools.getZCTCoords(core[s].dimensionOrder, core[s].sizeZ, core[s].imageCount/(core[s].sizeZ * core[s].sizeT), core[s].sizeT, core[s].imageCount, q);
 
-	store.setPlaneTheZ(new NonNegativeInteger(dims[0]), s, q);
-	store.setPlaneTheC(new NonNegativeInteger(dims[1]), s, q);
-	store.setPlaneTheT(new NonNegativeInteger(dims[2]), s, q);
+        store.setPlaneTheZ(new NonNegativeInteger(dims[0]), s, q);
+        store.setPlaneTheC(new NonNegativeInteger(dims[1]), s, q);
+        store.setPlaneTheT(new NonNegativeInteger(dims[2]), s, q);
         store.setPlanePositionX(offsetX, s, q);
         store.setPlanePositionY(offsetY, s, q);
       }
@@ -575,8 +572,8 @@ class LeicaSCNHandler extends DefaultHandler {
       currentImage.pixels.dimSizeY[z][c][r] = sizeY;
       currentImage.pixels.dimIFD[z][c][r] = ifd;
       if (r == 0 || currentImage.thumbSizeX > sizeX) {
-	  currentImage.thumbSizeX = sizeX;
-	  currentImage.imageThumbnail = r;
+        currentImage.thumbSizeX = sizeX;
+        currentImage.imageThumbnail = r;
       }
       IFDMap.add(ifd);
       collectionMap.add(currentCollection);
