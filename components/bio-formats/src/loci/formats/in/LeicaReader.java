@@ -28,6 +28,7 @@ package loci.formats.in;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -357,7 +358,7 @@ public class LeicaReader extends FormatReader {
         r.setMetadataStore(getMetadataStore());
         r.setId(id);
 
-        core = r.getCoreMetadata();
+        core = new ArrayList<CoreMetadata>(r.getCoreMetadata());
         metadataStore = r.getMetadataStore();
 
         Hashtable globalMetadata = r.getGlobalMetadata();
@@ -392,7 +393,7 @@ public class LeicaReader extends FormatReader {
 
     byte[] fourBytes = new byte[4];
     in.read(fourBytes);
-    core[0].littleEndian = (fourBytes[0] == TiffConstants.LITTLE &&
+    core.get(0).littleEndian = (fourBytes[0] == TiffConstants.LITTLE &&
       fourBytes[1] == TiffConstants.LITTLE &&
       fourBytes[2] == TiffConstants.LITTLE &&
       fourBytes[3] == TiffConstants.LITTLE);
@@ -435,9 +436,10 @@ public class LeicaReader extends FormatReader {
     tileWidth = new int[numSeries];
     tileHeight = new int[numSeries];
 
-    core = new CoreMetadata[numSeries];
+    core.clear();
+    core.ensureCapacity(numSeries);
     for (int i=0; i<numSeries; i++) {
-      core[i] = new CoreMetadata();
+      core.add(new CoreMetadata());
     }
 
     files = new Vector[numSeries];
@@ -459,7 +461,7 @@ public class LeicaReader extends FormatReader {
 
     LOGGER.info("Parsing metadata blocks");
 
-    core[0].littleEndian = !isLittleEndian();
+    core.get(0).littleEndian = !isLittleEndian();
 
     int seriesIndex = 0;
     int invalidCount = 0;
@@ -483,20 +485,24 @@ public class LeicaReader extends FormatReader {
 
     int[] count = new int[getSeriesCount()];
     for (int i=0; i<getSeriesCount(); i++) {
-      count[i] = core[i].imageCount;
+      count[i] = core.get(i).imageCount;
     }
 
     Vector[] tempFiles = files;
     IFDList tempIFDs = headerIFDs;
-    core = new CoreMetadata[numSeries];
+    core = new ArrayList<CoreMetadata>(numSeries);
     files = new Vector[numSeries];
     headerIFDs = new IFDList();
     int index = 0;
 
+    core.clear();
+    core.ensureCapacity(numSeries);
+
     for (int i=0; i<numSeries; i++) {
-      core[i] = new CoreMetadata();
+      CoreMetadata ms = new CoreMetadata();
+      core.add(ms);
       while (!valid[index]) index++;
-      core[i].imageCount = count[index];
+      ms.imageCount = count[index];
       files[i] = tempFiles[index];
       Object[] sorted = files[i].toArray();
       Arrays.sort(sorted);
@@ -523,8 +529,9 @@ public class LeicaReader extends FormatReader {
 
     for (int i=0; i<headerIFDs.size(); i++) {
       IFD ifd = headerIFDs.get(i);
+      CoreMetadata ms = core.get(i);
 
-      core[i].littleEndian = isLittleEndian();
+      ms.littleEndian = isLittleEndian();
       setSeries(i);
       Integer[] keys = ifd.keySet().toArray(new Integer[ifd.size()]);
       Arrays.sort(keys);
@@ -560,19 +567,19 @@ public class LeicaReader extends FormatReader {
         }
       }
 
-      core[i].orderCertain = true;
-      core[i].littleEndian = isLittleEndian();
-      core[i].falseColor = true;
-      core[i].metadataComplete = true;
-      core[i].interleaved = false;
+      ms.orderCertain = true;
+      ms.littleEndian = isLittleEndian();
+      ms.falseColor = true;
+      ms.metadataComplete = true;
+      ms.interleaved = false;
 
       String filename = (String) files[i].get(0);
 
       if (checkSuffix(filename, TiffReader.TIFF_SUFFIXES)) {
         tiff.setId(filename);
 
-        core[i].sizeX = tiff.getSizeX();
-        core[i].sizeY = tiff.getSizeY();
+        ms.sizeX = tiff.getSizeX();
+        ms.sizeY = tiff.getSizeY();
         tileWidth[i] = tiff.getOptimalTileWidth();
         tileHeight[i] = tiff.getOptimalTileHeight();
       }
@@ -580,32 +587,33 @@ public class LeicaReader extends FormatReader {
 
     for (int i=0; i<numSeries; i++) {
       setSeries(i);
-      if (getSizeZ() == 0) core[i].sizeZ = 1;
-      if (getSizeT() == 0) core[i].sizeT = 1;
-      if (getSizeC() == 0) core[i].sizeC = 1;
-      if (getImageCount() == 0) core[i].imageCount = 1;
+      CoreMetadata ms = core.get(i);
+      if (getSizeZ() == 0) ms.sizeZ = 1;
+      if (getSizeT() == 0) ms.sizeT = 1;
+      if (getSizeC() == 0) ms.sizeC = 1;
+      if (getImageCount() == 0) ms.imageCount = 1;
       if (getImageCount() == 1 && getSizeZ() * getSizeT() > 1) {
-        core[i].sizeZ = 1;
-        core[i].sizeT = 1;
+        ms.sizeZ = 1;
+        ms.sizeT = 1;
       }
       if (getSizeY() == 1 || getSizeY() == getSizeZ() ||
         getSizeY() == getSizeT())
       {
         // XZ or XT scan
         if (getSizeZ() > 1 && getImageCount() == getSizeC() * getSizeT()) {
-          core[i].sizeY = getSizeZ();
-          core[i].sizeZ = 1;
+          ms.sizeY = getSizeZ();
+          ms.sizeZ = 1;
         }
         else if (getSizeT() > 1 && getImageCount() == getSizeC() * getSizeZ()) {
-          core[i].sizeY = getSizeT();
-          core[i].sizeT = 1;
+          ms.sizeY = getSizeT();
+          ms.sizeT = 1;
         }
       }
-      if (isRGB()) core[i].indexed = false;
+      if (isRGB()) ms.indexed = false;
 
-      core[i].dimensionOrder =
+      ms.dimensionOrder =
         MetadataTools.makeSaneDimensionOrder(getDimensionOrder());
-      core[i].littleEndian = realLittleEndian;
+      ms.littleEndian = realLittleEndian;
     }
 
     MetadataStore store = makeFilterMetadata();
@@ -619,6 +627,7 @@ public class LeicaReader extends FormatReader {
     if (metadataLevel == MetadataLevel.MINIMUM) return;
 
     for (int i=0; i<numSeries; i++) {
+      CoreMetadata ms = core.get(i);
       IFD ifd = headerIFDs.get(i);
       long firstPlane = 0;
 
@@ -643,9 +652,9 @@ public class LeicaReader extends FormatReader {
       nextChannel = 0;
       detectors.clear();
 
-      cutInPopulated[i] = new boolean[core[i].sizeC];
-      cutOutPopulated[i] = new boolean[core[i].sizeC];
-      filterRefPopulated[i] = new boolean[core[i].sizeC];
+      cutInPopulated[i] = new boolean[ms.sizeC];
+      cutOutPopulated[i] = new boolean[ms.sizeC];
+      filterRefPopulated[i] = new boolean[ms.sizeC];
 
       Integer[] keys = ifd.keySet().toArray(new Integer[ifd.size()]);
       Arrays.sort(keys);
@@ -696,7 +705,7 @@ public class LeicaReader extends FormatReader {
         store.setPixelsTimeIncrement(physicalSizes[i][4], i);
       }
 
-      for (int j=0; j<core[i].imageCount; j++) {
+      for (int j=0; j<ms.imageCount; j++) {
         if (timestamps[i] != null && j < timestamps[i].length) {
           long time = DateTools.getTime(timestamps[i][j], DATE_FORMAT);
           double elapsedTime = (double) (time - firstPlane) / 1000;
@@ -819,12 +828,13 @@ public class LeicaReader extends FormatReader {
       in.order(isLittleEndian());
     }
 
-    core[seriesIndex].sizeX = in.readInt();
-    core[seriesIndex].sizeY = in.readInt();
+    CoreMetadata ms = core.get(seriesIndex);
+    ms.sizeX = in.readInt();
+    ms.sizeY = in.readInt();
     in.skipBytes(4);
     int samplesPerPixel = in.readInt();
-    core[seriesIndex].rgb = samplesPerPixel > 1;
-    core[seriesIndex].sizeC = samplesPerPixel;
+    ms.rgb = samplesPerPixel > 1;
+    ms.sizeC = samplesPerPixel;
 
     File dirFile = new File(currentId).getAbsoluteFile();
     String[] listing = null;
@@ -925,8 +935,8 @@ public class LeicaReader extends FormatReader {
     else files[seriesIndex] = f;
     if (files[seriesIndex] == null) valid[seriesIndex] = false;
     else {
-      core[seriesIndex].imageCount = files[seriesIndex].size();
-      maxPlanes = (int) Math.max(maxPlanes, core[seriesIndex].imageCount);
+      ms.imageCount = files[seriesIndex].size();
+      maxPlanes = (int) Math.max(maxPlanes, ms.imageCount);
     }
   }
 
@@ -938,7 +948,7 @@ public class LeicaReader extends FormatReader {
     int extLen = in.readInt();
     if (extLen > fileLength) {
       in.seek(8);
-      core[0].littleEndian = !isLittleEndian();
+      core.get(0).littleEndian = !isLittleEndian();
       in.order(isLittleEndian());
       fileLength = in.readInt();
       extLen = in.readInt();
@@ -948,9 +958,10 @@ public class LeicaReader extends FormatReader {
   }
 
   private void parseImageTag(int seriesIndex) throws IOException {
-    core[seriesIndex].imageCount = in.readInt();
-    core[seriesIndex].sizeX = in.readInt();
-    core[seriesIndex].sizeY = in.readInt();
+    CoreMetadata ms = core.get(seriesIndex);
+    ms.imageCount = in.readInt();
+    ms.sizeX = in.readInt();
+    ms.sizeY = in.readInt();
 
     addSeriesMeta("Number of images", getImageCount());
     addSeriesMeta("Image width", getSizeX());
@@ -982,25 +993,26 @@ public class LeicaReader extends FormatReader {
   private void parseDimensionTag(int seriesIndex)
     throws FormatException, IOException
   {
+    CoreMetadata ms = core.get(seriesIndex);
     addSeriesMeta("Voxel Version", in.readInt());
-    core[seriesIndex].rgb = in.readInt() == 20;
+    ms.rgb = in.readInt() == 20;
     addSeriesMeta("VoxelType", isRGB() ? "RGB" : "gray");
 
     int bpp = in.readInt();
     addSeriesMeta("Bytes per pixel", bpp);
 
     if (bpp % 3 == 0) {
-      core[seriesIndex].sizeC = 3;
-      core[seriesIndex].rgb = true;
+      ms.sizeC = 3;
+      ms.rgb = true;
       bpp /= 3;
     }
-    core[seriesIndex].pixelType =
+    ms.pixelType =
       FormatTools.pixelTypeFromBytes(bpp, false, false);
 
-    core[seriesIndex].dimensionOrder = "XY";
+    ms.dimensionOrder = "XY";
 
     int resolution = in.readInt();
-    core[seriesIndex].bitsPerPixel = resolution;
+    ms.bitsPerPixel = resolution;
     addSeriesMeta("Real world resolution", resolution);
     addSeriesMeta("Maximum voxel intensity", getString(true));
     addSeriesMeta("Minimum voxel intensity", getString(true));
@@ -1027,32 +1039,32 @@ public class LeicaReader extends FormatReader {
       }
 
       if (dimType.equals("x")) {
-        core[seriesIndex].sizeX = size;
+        ms.sizeX = size;
         physicalSizes[seriesIndex][0] = physical;
       }
       else if (dimType.equals("y")) {
-        core[seriesIndex].sizeY = size;
+        ms.sizeY = size;
         physicalSizes[seriesIndex][1] = physical;
       }
       else if (dimType.equals("channel")) {
-        if (getSizeC() == 0) core[seriesIndex].sizeC = 1;
-        core[seriesIndex].sizeC *= size;
+        if (getSizeC() == 0) ms.sizeC = 1;
+        ms.sizeC *= size;
         if (getDimensionOrder().indexOf("C") == -1) {
-          core[seriesIndex].dimensionOrder += "C";
+          ms.dimensionOrder += "C";
         }
         physicalSizes[seriesIndex][3] = physical;
       }
       else if (dimType.equals("z")) {
-        core[seriesIndex].sizeZ = size;
+        ms.sizeZ = size;
         if (getDimensionOrder().indexOf("Z") == -1) {
-          core[seriesIndex].dimensionOrder += "Z";
+          ms.dimensionOrder += "Z";
         }
         physicalSizes[seriesIndex][2] = physical;
       }
       else {
-        core[seriesIndex].sizeT = size;
+        ms.sizeT = size;
         if (getDimensionOrder().indexOf("T") == -1) {
-          core[seriesIndex].dimensionOrder += "T";
+          ms.dimensionOrder += "T";
         }
         physicalSizes[seriesIndex][4] = physical;
       }
@@ -1128,7 +1140,7 @@ public class LeicaReader extends FormatReader {
 
   private void parseLUT(int seriesIndex) throws IOException {
     int nChannels = in.readInt();
-    if (nChannels > 0) core[seriesIndex].indexed = true;
+    if (nChannels > 0) core.get(seriesIndex).indexed = true;
     addSeriesMeta("Number of LUT channels", nChannels);
     addSeriesMeta("ID of colored dimension", in.readInt());
 
@@ -1384,7 +1396,8 @@ public class LeicaReader extends FormatReader {
           store.setFilterID(filterID, series, channel);
 
           int index = activeChannelIndices.indexOf(new Integer(channel));
-          if (index >= 0 && index < core[series].sizeC) {
+          CoreMetadata ms = core.get(series);
+          if (index >= 0 && index < ms.sizeC) {
             if (!filterRefPopulated[series][index]) {
               store.setLightPathEmissionFilterRef(filterID, series, index, 0);
               filterRefPopulated[series][index] = true;
@@ -1421,9 +1434,10 @@ public class LeicaReader extends FormatReader {
         }
       }
       else if (tokens[0].startsWith("CXYZStage")) {
+        CoreMetadata ms = core.get(series);
         // NB: there is only one stage position specified for each series
         if (tokens[2].equals("XPos")) {
-          for (int q=0; q<core[series].imageCount; q++) {
+          for (int q=0; q<ms.imageCount; q++) {
             store.setPlanePositionX(new Double(data), series, q);
             if (q == 0) {
               addGlobalMeta("X position for position #" + (series + 1), data);
@@ -1431,7 +1445,7 @@ public class LeicaReader extends FormatReader {
           }
         }
         else if (tokens[2].equals("YPos")) {
-          for (int q=0; q<core[series].imageCount; q++) {
+          for (int q=0; q<ms.imageCount; q++) {
             store.setPlanePositionY(new Double(data), series, q);
             if (q == 0) {
               addGlobalMeta("Y position for position #" + (series + 1), data);

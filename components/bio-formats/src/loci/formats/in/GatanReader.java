@@ -30,6 +30,7 @@ import java.util.Vector;
 
 import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -147,10 +148,11 @@ public class GatanReader extends FormatReader {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
     pixelOffset = 0;
+    CoreMetadata m = core.get(0);
 
     LOGGER.info("Verifying Gatan format");
 
-    core[0].littleEndian = false;
+    m.littleEndian = false;
     pixelSizes = new Vector<Double>();
 
     in.order(isLittleEndian());
@@ -165,7 +167,7 @@ public class GatanReader extends FormatReader {
 
     in.skipBytes(4);
     skipPadding();
-    core[0].littleEndian = in.readInt() != 1;
+    m.littleEndian = in.readInt() != 1;
     in.order(isLittleEndian());
 
     // TagGroup instance
@@ -174,7 +176,7 @@ public class GatanReader extends FormatReader {
     skipPadding();
     int numTags = in.readInt();
     if (numTags > in.length()) {
-      core[0].littleEndian = !isLittleEndian();
+      m.littleEndian = !isLittleEndian();
       in.order(isLittleEndian());
       adjustEndianness = false;
     }
@@ -184,24 +186,24 @@ public class GatanReader extends FormatReader {
 
     LOGGER.info("Populating metadata");
 
-    core[0].littleEndian = true;
+    m.littleEndian = true;
 
     if (getSizeX() == 0 || getSizeY() == 0) {
       throw new FormatException("Dimensions information not found");
     }
     int bytes = numPixelBytes / (getSizeX() * getSizeY());
 
-    core[0].pixelType = FormatTools.pixelTypeFromBytes(bytes, signed, false);
-    core[0].sizeZ = 1;
-    core[0].sizeC = 1;
-    core[0].sizeT = 1;
-    core[0].dimensionOrder = "XYZTC";
-    core[0].imageCount = 1;
-    core[0].rgb = false;
-    core[0].interleaved = false;
-    core[0].metadataComplete = true;
-    core[0].indexed = false;
-    core[0].falseColor = false;
+    m.pixelType = FormatTools.pixelTypeFromBytes(bytes, signed, false);
+    m.sizeZ = 1;
+    m.sizeC = 1;
+    m.sizeT = 1;
+    m.dimensionOrder = "XYZTC";
+    m.imageCount = 1;
+    m.rgb = false;
+    m.interleaved = false;
+    m.metadataComplete = true;
+    m.indexed = false;
+    m.falseColor = false;
 
     // The metadata store we're working with.
     MetadataStore store = makeFilterMetadata();
@@ -297,8 +299,8 @@ public class GatanReader extends FormatReader {
         if (n == 1) {
           if ("Dimensions".equals(parent) && labelString.length() == 0) {
             if (adjustEndianness) in.order(!in.isLittleEndian());
-            if (i == 0) core[0].sizeX = in.readInt();
-            else if (i == 1) core[0].sizeY = in.readInt();
+            if (i == 0) core.get(0).sizeX = in.readInt();
+            else if (i == 1) core.get(0).sizeY = in.readInt();
             if (adjustEndianness) in.order(!in.isLittleEndian());
           }
           else value = String.valueOf(readValue(dataType));

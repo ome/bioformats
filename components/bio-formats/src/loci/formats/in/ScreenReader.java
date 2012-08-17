@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Vector;
 
 import loci.common.Location;
@@ -301,17 +302,17 @@ public class ScreenReader extends FormatReader {
       throw new FormatException(se);
     }
 
-    Vector<CoreMetadata> coreMetadata = new Vector<CoreMetadata>();
     int lastCount = 0;
-
     int[] seriesCounts = new int[files.length];
+    core.clear();
+
     for (int well=0; well<files.length; well++) {
       readers[well] = new ImageReader(validReaders);
       readers[well].setMetadataStore(omexmlMeta);
       readers[well].setId(files[well]);
-      CoreMetadata[] core = readers[well].getCoreMetadata();
-      for (int field=0; field<core.length; field++) {
-        coreMetadata.add(core[field]);
+      List<CoreMetadata> wcore = readers[well].getCoreMetadata();
+      for (CoreMetadata cw : wcore) {
+        core.add(cw);
       }
       seriesCounts[well] = readers[well].getSeriesCount();
       lastCount = seriesCounts[well];
@@ -323,11 +324,10 @@ public class ScreenReader extends FormatReader {
 
       plateMaps[rowIndex][colIndex] = true;
     }
-    core = coreMetadata.toArray(new CoreMetadata[coreMetadata.size()]);
 
     OME root = (OME) omexmlMeta.getRoot();
     Image img = root.getImage(0);
-    for (int i=lastCount; i<core.length; i++) {
+    for (int i=lastCount; i<core.size(); i++) {
       root.addImage(img);
     }
     ((OMEXMLMetadataImpl) omexmlMeta).resolveReferences();

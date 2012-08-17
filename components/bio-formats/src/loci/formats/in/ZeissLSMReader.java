@@ -423,9 +423,14 @@ public class ZeissLSMReader extends FormatReader {
     }
     lsmFilenames = validFiles.toArray(new String[validFiles.size()]);
 
-    core = new CoreMetadata[seriesCount];
+    core.clear();
+    core.ensureCapacity(seriesCount);
+    for (int c=0; c<seriesCount; c++) {
+      CoreMetadata ms = new CoreMetadata();
+        core.add(ms);
+    }
     ifdsList = new Vector<IFDList>();
-    ifdsList.setSize(core.length);
+    ifdsList.setSize(seriesCount);
 
     int realSeries = 0;
     for (int i=0; i<lsmFilenames.length; i++) {
@@ -441,8 +446,8 @@ public class ZeissLSMReader extends FormatReader {
       int offset = 0;
       Object zeissTag = null;
       for (int s=0; s<count; s++, realSeries++) {
-        core[realSeries] = new CoreMetadata();
-        core[realSeries].littleEndian = littleEndian;
+        CoreMetadata ms = core.get(realSeries);
+        ms.littleEndian = littleEndian;
 
         IFDList ifds = new IFDList();
         while (ifds.size() < ifdsPerSeries) {
@@ -527,7 +532,8 @@ public class ZeissLSMReader extends FormatReader {
     }
 
     for (int i=0; i<getSeriesCount(); i++) {
-      core[i].imageCount = core[i].sizeZ * core[i].sizeC * core[i].sizeT;
+      CoreMetadata ms = core.get(i);
+      ms.imageCount = ms.sizeZ * ms.sizeC * ms.sizeT;
     }
 
     MetadataTools.populatePixels(store, this, true);
@@ -624,7 +630,7 @@ public class ZeissLSMReader extends FormatReader {
       LOGGER.warn("Invalid Zeiss LSM file. Tag {} not found.", ZEISS_ID);
       TiffReader reader = new TiffReader();
       reader.setId(getLSMFileFromSeries(getSeries()));
-      core[getSeries()] = reader.getCoreMetadata()[0];
+      core.set(getSeries(), reader.getCoreMetadata().get(0));
       reader.close();
       return null;
     }
@@ -652,15 +658,16 @@ public class ZeissLSMReader extends FormatReader {
     PhotoInterp photo = ifd.getPhotometricInterpretation();
     int samples = ifd.getSamplesPerPixel();
 
-    core[series].sizeX = (int) ifd.getImageWidth();
-    core[series].sizeY = (int) ifd.getImageLength();
-    core[series].rgb = samples > 1 || photo == PhotoInterp.RGB;
-    core[series].interleaved = false;
-    core[series].sizeC = isRGB() ? samples : 1;
-    core[series].pixelType = ifd.getPixelType();
-    core[series].imageCount = ifds.size();
-    core[series].sizeZ = getImageCount();
-    core[series].sizeT = 1;
+    CoreMetadata ms = core.get(series);
+    ms.sizeX = (int) ifd.getImageWidth();
+    ms.sizeY = (int) ifd.getImageLength();
+    ms.rgb = samples > 1 || photo == PhotoInterp.RGB;
+    ms.interleaved = false;
+    ms.sizeC = isRGB() ? samples : 1;
+    ms.pixelType = ifd.getPixelType();
+    ms.imageCount = ifds.size();
+    ms.sizeZ = getImageCount();
+    ms.sizeT = 1;
 
     LOGGER.info("Reading LSM metadata for series #{}", series);
 
@@ -694,9 +701,9 @@ public class ZeissLSMReader extends FormatReader {
 
     ras.seek(16);
 
-    core[series].sizeZ = ras.readInt();
+    ms.sizeZ = ras.readInt();
     ras.skipBytes(4);
-    core[series].sizeT = ras.readInt();
+    ms.sizeT = ras.readInt();
 
     int dataType = ras.readInt();
     switch (dataType) {
@@ -747,93 +754,93 @@ public class ZeissLSMReader extends FormatReader {
     switch (scanType) {
       case 0:
         addSeriesMeta("ScanType", "x-y-z scan");
-        core[series].dimensionOrder = "XYZCT";
+        ms.dimensionOrder = "XYZCT";
         break;
       case 1:
         addSeriesMeta("ScanType", "z scan (x-z plane)");
-        core[series].dimensionOrder = "XYZCT";
+        ms.dimensionOrder = "XYZCT";
         break;
       case 2:
         addSeriesMeta("ScanType", "line scan");
-        core[series].dimensionOrder = "XYZCT";
+        ms.dimensionOrder = "XYZCT";
         break;
       case 3:
         addSeriesMeta("ScanType", "time series x-y");
-        core[series].dimensionOrder = "XYTCZ";
+        ms.dimensionOrder = "XYTCZ";
         break;
       case 4:
         addSeriesMeta("ScanType", "time series x-z");
-        core[series].dimensionOrder = "XYZTC";
+        ms.dimensionOrder = "XYZTC";
         break;
       case 5:
         addSeriesMeta("ScanType", "time series 'Mean of ROIs'");
-        core[series].dimensionOrder = "XYTCZ";
+        ms.dimensionOrder = "XYTCZ";
         break;
       case 6:
         addSeriesMeta("ScanType", "time series x-y-z");
-        core[series].dimensionOrder = "XYZTC";
+        ms.dimensionOrder = "XYZTC";
         break;
       case 7:
         addSeriesMeta("ScanType", "spline scan");
-        core[series].dimensionOrder = "XYCTZ";
+        ms.dimensionOrder = "XYCTZ";
         break;
       case 8:
         addSeriesMeta("ScanType", "spline scan x-z");
-        core[series].dimensionOrder = "XYCZT";
+        ms.dimensionOrder = "XYCZT";
         break;
       case 9:
         addSeriesMeta("ScanType", "time series spline plane x-z");
-        core[series].dimensionOrder = "XYTCZ";
+        ms.dimensionOrder = "XYTCZ";
         break;
       case 10:
         addSeriesMeta("ScanType", "point mode");
-        core[series].dimensionOrder = "XYZCT";
+        ms.dimensionOrder = "XYZCT";
         break;
       default:
         addSeriesMeta("ScanType", "x-y-z scan");
-        core[series].dimensionOrder = "XYZCT";
+        ms.dimensionOrder = "XYZCT";
     }
 
-    core[series].indexed = lut != null && lut[series] != null;
+    ms.indexed = lut != null && lut[series] != null;
     if (isIndexed()) {
-      core[series].rgb = false;
+      ms.rgb = false;
     }
-    if (getSizeC() == 0) core[series].sizeC = 1;
+    if (getSizeC() == 0) ms.sizeC = 1;
 
     if (isRGB()) {
       // shuffle C to front of order string
-      core[series].dimensionOrder = getDimensionOrder().replaceAll("C", "");
-      core[series].dimensionOrder = getDimensionOrder().replaceAll("XY", "XYC");
+      ms.dimensionOrder = getDimensionOrder().replaceAll("C", "");
+      ms.dimensionOrder = getDimensionOrder().replaceAll("XY", "XYC");
     }
 
     if (getEffectiveSizeC() == 0) {
-      core[series].imageCount = getSizeZ() * getSizeT();
+      ms.imageCount = getSizeZ() * getSizeT();
     }
     else {
-      core[series].imageCount = getSizeZ() * getSizeT() * getEffectiveSizeC();
+      ms.imageCount = getSizeZ() * getSizeT() * getEffectiveSizeC();
     }
 
     if (getImageCount() != ifds.size()) {
       int diff = getImageCount() - ifds.size();
-      core[series].imageCount = ifds.size();
+      ms.imageCount = ifds.size();
       if (diff % getSizeZ() == 0) {
-        core[series].sizeT -= (diff / getSizeZ());
+        ms.sizeT -= (diff / getSizeZ());
       }
       else if (diff % getSizeT() == 0) {
-        core[series].sizeZ -= (diff / getSizeT());
+        ms.sizeZ -= (diff / getSizeT());
       }
       else if (getSizeZ() > 1) {
-        core[series].sizeZ = ifds.size();
-        core[series].sizeT = 1;
+        ms.sizeZ = ifds.size();
+        ms.sizeT = 1;
       }
       else if (getSizeT() > 1) {
-        core[series].sizeT = ifds.size();
-        core[series].sizeZ = 1;
+        ms.sizeT = ifds.size();
+        ms.sizeZ = 1;
       }
     }
 
-    if (getSizeZ() == 0) core[series].sizeZ = getImageCount();
-    if (getSizeT() == 0) core[series].sizeT = getImageCount() / getSizeZ();
+    if (getSizeZ() == 0) ms.sizeZ = getImageCount();
+    if (getSizeT() == 0) ms.sizeT = getImageCount() / getSizeZ();
 
     long channelColorsOffset = 0;
     long timeStampOffset = 0;
@@ -911,8 +918,8 @@ public class ZeissLSMReader extends FormatReader {
 
     if (getSizeC() > 1) {
       if (!splitPlanes) splitPlanes = isRGB();
-      core[series].rgb = false;
-      if (splitPlanes) core[series].imageCount *= getSizeC();
+      ms.rgb = false;
+      if (splitPlanes) ms.imageCount *= getSizeC();
     }
 
     for (int c=0; c<getEffectiveSizeC(); c++) {
@@ -1009,7 +1016,7 @@ public class ZeissLSMReader extends FormatReader {
         if (colorsOffset > 0) {
           in.seek(channelColorsOffset + colorsOffset);
           lut[getSeries()] = new byte[getSizeC() * 3][256];
-          core[getSeries()].indexed = true;
+          core.get(getSeries()).indexed = true;
           for (int i=0; i<getSizeC(); i++) {
             int color = in.readInt();
 
@@ -1227,7 +1234,7 @@ public class ZeissLSMReader extends FormatReader {
 
       int stampIndex = 0;
       for (int i=0; i<series; i++) {
-        stampIndex += core[i].sizeT;
+        stampIndex += core.get(i).sizeT;
       }
 
       double firstStamp = 0;
@@ -2253,7 +2260,7 @@ public class ZeissLSMReader extends FormatReader {
             blockData.get(key));
 
           if (METADATA_KEYS.get(key).equals("Bits Per Sample")) {
-            core[getSeries()].bitsPerPixel =
+            core.get(getSeries()).bitsPerPixel =
               Integer.parseInt(blockData.get(key).toString());
           }
           else if (METADATA_KEYS.get(key).equals("User")) {

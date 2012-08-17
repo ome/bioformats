@@ -335,28 +335,30 @@ public class FakeReader extends FormatReader {
 
     // populate core metadata
     int effSizeC = sizeC / rgb;
-    core = new CoreMetadata[seriesCount];
+    core.clear();
+    core.ensureCapacity(seriesCount);
     for (int s=0; s<seriesCount; s++) {
-      core[s] = new CoreMetadata();
-      core[s].sizeX = sizeX;
-      core[s].sizeY = sizeY;
-      core[s].sizeZ = sizeZ;
-      core[s].sizeC = sizeC;
-      core[s].sizeT = sizeT;
-      core[s].thumbSizeX = thumbSizeX;
-      core[s].thumbSizeY = thumbSizeY;
-      core[s].pixelType = pixelType;
-      core[s].bitsPerPixel = bitsPerPixel;
-      core[s].imageCount = sizeZ * effSizeC * sizeT;
-      core[s].rgb = rgb > 1;
-      core[s].dimensionOrder = dimOrder;
-      core[s].orderCertain = orderCertain;
-      core[s].littleEndian = little;
-      core[s].interleaved = interleaved;
-      core[s].indexed = indexed;
-      core[s].falseColor = falseColor;
-      core[s].metadataComplete = metadataComplete;
-      core[s].thumbnail = thumbnail;
+      CoreMetadata ms = new CoreMetadata();
+      core.add(ms);
+      ms.sizeX = sizeX;
+      ms.sizeY = sizeY;
+      ms.sizeZ = sizeZ;
+      ms.sizeC = sizeC;
+      ms.sizeT = sizeT;
+      ms.thumbSizeX = thumbSizeX;
+      ms.thumbSizeY = thumbSizeY;
+      ms.pixelType = pixelType;
+      ms.bitsPerPixel = bitsPerPixel;
+      ms.imageCount = sizeZ * effSizeC * sizeT;
+      ms.rgb = rgb > 1;
+      ms.dimensionOrder = dimOrder;
+      ms.orderCertain = orderCertain;
+      ms.littleEndian = little;
+      ms.interleaved = interleaved;
+      ms.indexed = indexed;
+      ms.falseColor = falseColor;
+      ms.metadataComplete = metadataComplete;
+      ms.thumbnail = thumbnail;
     }
 
     // populate OME metadata
@@ -405,7 +407,7 @@ public class FakeReader extends FormatReader {
 
   /** Creates a mapping between indices and color values. */
   private void createIndexMap(int num) {
-    int sizeC = core[0].sizeC;
+    int sizeC = core.get(0).sizeC;
 
     // create random mapping from indices to values
     indexToValue = new int[sizeC][num];

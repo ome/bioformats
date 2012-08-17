@@ -29,6 +29,7 @@ import java.io.IOException;
 
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
@@ -98,19 +99,21 @@ public class LIMReader extends FormatReader {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
 
-    core[0].littleEndian = true;
+    CoreMetadata m = core.get(0);
+
+    m.littleEndian = true;
     in.order(isLittleEndian());
 
-    core[0].sizeX = in.readShort() & 0x7fff;
-    core[0].sizeY = in.readShort();
+    m.sizeX = in.readShort() & 0x7fff;
+    m.sizeY = in.readShort();
     int bits = in.readShort();
 
     while (bits % 8 != 0) bits++;
     if ((bits % 3) == 0) {
-      core[0].sizeC = 3;
+      m.sizeC = 3;
       bits /= 3;
     }
-    core[0].pixelType = FormatTools.pixelTypeFromBytes(bits / 8, false, false);
+    m.pixelType = FormatTools.pixelTypeFromBytes(bits / 8, false, false);
 
     isCompressed = in.readShort() != 0;
     addGlobalMeta("Is compressed", isCompressed);
@@ -119,16 +122,16 @@ public class LIMReader extends FormatReader {
         "Compressed LIM files not supported.");
     }
 
-    core[0].imageCount = 1;
-    core[0].sizeZ = 1;
-    core[0].sizeT = 1;
-    if (getSizeC() == 0) core[0].sizeC = 1;
-    core[0].rgb = getSizeC() > 1;
-    core[0].dimensionOrder = "XYZCT";
-    core[0].indexed = false;
-    core[0].falseColor = false;
-    core[0].interleaved = true;
-    core[0].metadataComplete = true;
+    m.imageCount = 1;
+    m.sizeZ = 1;
+    m.sizeT = 1;
+    if (getSizeC() == 0) m.sizeC = 1;
+    m.rgb = getSizeC() > 1;
+    m.dimensionOrder = "XYZCT";
+    m.indexed = false;
+    m.falseColor = false;
+    m.interleaved = true;
+    m.metadataComplete = true;
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);

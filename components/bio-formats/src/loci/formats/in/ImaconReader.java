@@ -116,29 +116,31 @@ public class ImaconReader extends BaseTiffReader {
 
     ifds = tiffParser.getIFDs();
 
-    core = new CoreMetadata[ifds.size()];
-    for (int i=0; i<core.length; i++) {
-      core[i] = new CoreMetadata();
-      core[i].imageCount = 1;
+    core.clear();
+    core.ensureCapacity(ifds.size());
+    for (int i=0; i<ifds.size(); i++) {
+      CoreMetadata ms = new CoreMetadata();
+      core.add(ms);
+      ms.imageCount = 1;
       IFD ifd = ifds.get(i);
       ifd.remove(PIXELS_TAG);
       tiffParser.fillInIFD(ifd);
 
       PhotoInterp photo = ifd.getPhotometricInterpretation();
       int samples = ifd.getSamplesPerPixel();
-      core[i].rgb = samples > 1 || photo == PhotoInterp.RGB ||
+      ms.rgb = samples > 1 || photo == PhotoInterp.RGB ||
         photo == PhotoInterp.CFA_ARRAY;
       if (photo == PhotoInterp.CFA_ARRAY) samples = 3;
 
-      core[i].sizeX = (int) ifd.getImageWidth();
-      core[i].sizeY = (int) ifd.getImageLength();
-      core[i].sizeZ = 1;
-      core[i].sizeC = isRGB() ? samples : 1;
-      core[i].sizeT = 1;
-      core[i].pixelType = ifd.getPixelType();
-      core[i].indexed = photo == PhotoInterp.RGB_PALETTE;
-      core[i].dimensionOrder = "XYCZT";
-      core[i].interleaved = false;
+      ms.sizeX = (int) ifd.getImageWidth();
+      ms.sizeY = (int) ifd.getImageLength();
+      ms.sizeZ = 1;
+      ms.sizeC = isRGB() ? samples : 1;
+      ms.sizeT = 1;
+      ms.pixelType = ifd.getPixelType();
+      ms.indexed = photo == PhotoInterp.RGB_PALETTE;
+      ms.dimensionOrder = "XYCZT";
+      ms.interleaved = false;
     }
 
     IFD firstIFD = ifds.get(0);

@@ -273,11 +273,13 @@ public class TillVisionReader extends FormatReader {
         LOGGER.debug("Images are {}embedded", embeddedImages ? "" : "not ");
 
         if (embeddedImages) {
-          core = new CoreMetadata[nFound];
+          core.clear();
+          core.ensureCapacity(nFound);
           embeddedOffset = new long[nFound];
 
-          for (int i=0; i<core.length; i++) {
-            core[i] = new CoreMetadata();
+          for (int i=0; i<nFound; i++) {
+            CoreMetadata ms = new CoreMetadata();
+            core.add(ms);
 
             s.seek(cimages[i]);
 
@@ -299,13 +301,13 @@ public class TillVisionReader extends FormatReader {
 
             s.skipBytes(20);
 
-            core[i].sizeX = s.readInt();
-            core[i].sizeY = s.readInt();
-            core[i].sizeZ = s.readInt();
-            core[i].sizeC = s.readInt();
-            core[i].sizeT = s.readInt();
+            ms.sizeX = s.readInt();
+            ms.sizeY = s.readInt();
+            ms.sizeZ = s.readInt();
+            ms.sizeC = s.readInt();
+            ms.sizeT = s.readInt();
 
-            core[i].pixelType = convertPixelType(s.readInt());
+            ms.pixelType = convertPixelType(s.readInt());
             if (specialCImage) {
               embeddedOffset[i] = s.getFilePointer() + 27;
             }
@@ -406,7 +408,6 @@ public class TillVisionReader extends FormatReader {
       if (nImages == 0) {
         throw new FormatException("No images found.");
       }
-      core = new CoreMetadata[nImages];
 
       // look for appropriate pixels files
 
@@ -443,15 +444,19 @@ public class TillVisionReader extends FormatReader {
 
     Arrays.sort(pixelsFile);
 
-    pixelsFiles = new String[core.length];
-    infFiles = new String[core.length];
+    pixelsFiles = new String[nImages];
+    infFiles = new String[nImages];
 
     Object[] metadataKeys = tmpSeriesMetadata.keySet().toArray();
     IniParser parser = new IniParser();
 
-    for (int i=0; i<core.length; i++) {
+    core.clear();
+    core.ensureCapacity(nImages);
+
+    for (int i=0; i<nImages; i++) {
+      CoreMetadata ms = new CoreMetadata();
       if (!embeddedImages) {
-        core[i] = new CoreMetadata();
+        core.add(ms);
         setSeries(i);
 
         // make sure that pixels file exists
@@ -487,31 +492,31 @@ public class TillVisionReader extends FormatReader {
         reader.close();
         IniTable infoTable = data.getTable("Info");
 
-        core[i].sizeX = Integer.parseInt(infoTable.get("Width"));
-        core[i].sizeY = Integer.parseInt(infoTable.get("Height"));
-        core[i].sizeC = Integer.parseInt(infoTable.get("Bands"));
-        core[i].sizeZ = Integer.parseInt(infoTable.get("Slices"));
-        core[i].sizeT = Integer.parseInt(infoTable.get("Frames"));
+        ms.sizeX = Integer.parseInt(infoTable.get("Width"));
+        ms.sizeY = Integer.parseInt(infoTable.get("Height"));
+        ms.sizeC = Integer.parseInt(infoTable.get("Bands"));
+        ms.sizeZ = Integer.parseInt(infoTable.get("Slices"));
+        ms.sizeT = Integer.parseInt(infoTable.get("Frames"));
         int dataType = Integer.parseInt(infoTable.get("Datatype"));
-        core[i].pixelType = convertPixelType(dataType);
+        ms.pixelType = convertPixelType(dataType);
 
         if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
           HashMap<String, String> iniMap = data.flattenIntoHashMap();
-          core[i].seriesMetadata.putAll(iniMap);
+          ms.seriesMetadata.putAll(iniMap);
         }
       }
 
-      core[i].imageCount = core[i].sizeZ * core[i].sizeC * core[i].sizeT;
-      core[i].rgb = false;
-      core[i].littleEndian = true;
-      core[i].dimensionOrder = "XYCZT";
+      ms.imageCount = ms.sizeZ * ms.sizeC * ms.sizeT;
+      ms.rgb = false;
+      ms.littleEndian = true;
+      ms.dimensionOrder = "XYCZT";
 
-      core[i].seriesMetadata = new Hashtable();
+      ms.seriesMetadata = new Hashtable();
       for (Object key : metadataKeys) {
         String keyName = key.toString();
         if (keyName.startsWith("Series " + i + " ")) {
           keyName = keyName.replaceAll("Series " + i + " ", "");
-          core[i].seriesMetadata.put(keyName, tmpSeriesMetadata.get(key));
+          ms.seriesMetadata.put(keyName, tmpSeriesMetadata.get(key));
         }
       }
     }
@@ -543,7 +548,7 @@ public class TillVisionReader extends FormatReader {
       for (int i=0; i<getSeriesCount(); i++) {
         // populate PlaneTiming data
 
-        for (int q=0; q<core[i].imageCount; q++) {
+        for (int q=0; q<core.get(i).imageCount; q++) {
           store.setPlaneExposureTime(exposureTimes.get(i), i, q);
         }
 

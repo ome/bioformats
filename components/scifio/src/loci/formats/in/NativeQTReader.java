@@ -42,6 +42,7 @@ import java.util.Vector;
 
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -292,22 +293,24 @@ public class NativeQTReader extends FormatReader {
 
     parse(0, 0, in.length());
 
-    core[0].imageCount = offsets.size();
+    CoreMetadata m = core.get(0);
+
+    m.imageCount = offsets.size();
     if (chunkSizes.size() < getImageCount() && chunkSizes.size() > 0) {
-      core[0].imageCount = chunkSizes.size();
+      m.imageCount = chunkSizes.size();
     }
 
     LOGGER.info("Populating metadata");
 
     int bytes = (bitsPerPixel / 8) % 4;
-    core[0].pixelType = bytes == 2 ? FormatTools.UINT16 : FormatTools.UINT8;
+    m.pixelType = bytes == 2 ? FormatTools.UINT16 : FormatTools.UINT8;
 
-    core[0].sizeZ = 1;
-    core[0].dimensionOrder = "XYCZT";
-    core[0].littleEndian = false;
-    core[0].metadataComplete = true;
-    core[0].indexed = false;
-    core[0].falseColor = false;
+    m.sizeZ = 1;
+    m.dimensionOrder = "XYCZT";
+    m.littleEndian = false;
+    m.metadataComplete = true;
+    m.indexed = false;
+    m.falseColor = false;
 
     // this handles the case where the data and resource forks have been
     // separated
@@ -332,7 +335,7 @@ public class NativeQTReader extends FormatReader {
 
         stripHeader();
         parse(0, 0, in.length());
-        core[0].imageCount = offsets.size();
+        m.imageCount = offsets.size();
       }
       else {
         LOGGER.debug("\tAbsent: {}", f);
@@ -345,7 +348,7 @@ public class NativeQTReader extends FormatReader {
           in = new RandomAccessInputStream(f.getAbsolutePath());
           stripHeader();
           parse(0, in.getFilePointer(), in.length());
-          core[0].imageCount = offsets.size();
+          m.imageCount = offsets.size();
         }
         else {
           LOGGER.debug("\tAbsent: {}", f);
@@ -356,7 +359,7 @@ public class NativeQTReader extends FormatReader {
             in = new RandomAccessInputStream(f.getAbsolutePath());
             stripHeader();
             parse(0, in.getFilePointer(), in.length());
-            core[0].imageCount = offsets.size();
+            m.imageCount = offsets.size();
           }
           else {
             LOGGER.debug("\tAbsent: {}", f);
@@ -371,10 +374,10 @@ public class NativeQTReader extends FormatReader {
       in = new RandomAccessInputStream(currentId);
     }
 
-    core[0].rgb = bitsPerPixel < 40;
-    core[0].sizeC = isRGB() ? 3 : 1;
-    core[0].interleaved = isRGB();
-    core[0].sizeT = getImageCount();
+    m.rgb = bitsPerPixel < 40;
+    m.sizeC = isRGB() ? 3 : 1;
+    m.interleaved = isRGB();
+    m.sizeT = getImageCount();
 
     // The metadata store we're working with.
     MetadataStore store = makeFilterMetadata();
@@ -445,8 +448,8 @@ public class NativeQTReader extends FormatReader {
           // TODO : adapt to use the value of flip
           flip = matrix[0][0] == 0 && matrix[1][0] != 0;
 
-          if (getSizeX() == 0) core[0].sizeX = in.readInt();
-          if (getSizeY() == 0) core[0].sizeY = in.readInt();
+          if (getSizeX() == 0) core.get(0).sizeX = in.readInt();
+          if (getSizeY() == 0) core.get(0).sizeY = in.readInt();
         }
         else if (atomType.equals("cmov")) {
           in.skipBytes(8);
@@ -539,7 +542,7 @@ public class NativeQTReader extends FormatReader {
           // found the number of planes
           in.skipBytes(4);
           rawSize = in.readInt();
-          core[0].imageCount = in.readInt();
+          core.get(0).imageCount = in.readInt();
 
           if (rawSize == 0) {
             in.seek(in.getFilePointer() - 4);

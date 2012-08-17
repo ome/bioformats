@@ -28,6 +28,7 @@ package loci.formats.in;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Vector;
 
 import loci.common.ByteArrayHandle;
 import loci.common.Location;
@@ -179,7 +180,7 @@ public class CellSensReader extends FormatReader {
   /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
-    if (getCoreIndex() < core.length - ifds.size()) {
+    if (getCoreIndex() < core.size() - ifds.size()) {
       return tileX[getCoreIndex()];
     }
     int ifdIndex = getCoreIndex() - (usedFiles.length - 1);
@@ -195,7 +196,7 @@ public class CellSensReader extends FormatReader {
   /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
-    if (getCoreIndex() < core.length - ifds.size()) {
+    if (getCoreIndex() < core.size() - ifds.size()) {
       return tileY[getCoreIndex()];
     }
     int ifdIndex = getCoreIndex() - (usedFiles.length - 1);
@@ -217,7 +218,7 @@ public class CellSensReader extends FormatReader {
       FormatTools.getBytesPerPixel(getPixelType()) * getRGBChannelCount();
 
     if (getCoreIndex() >= usedFiles.length - 1 ||
-      usedFiles.length >= core.length)
+      usedFiles.length >= core.size())
     {
       return super.openThumbBytes(no);
     }
@@ -239,7 +240,7 @@ public class CellSensReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    if (getCoreIndex() < core.length - ifds.size()) {
+    if (getCoreIndex() < core.size() - ifds.size()) {
       int tileRows = rows[getCoreIndex()];
       int tileCols = cols[getCoreIndex()];
 
@@ -383,37 +384,40 @@ public class CellSensReader extends FormatReader {
     files.add(file.getAbsolutePath());
     usedFiles = files.toArray(new String[files.size()]);
 
-    core = new CoreMetadata[files.size() - 1 + ifds.size()];
+    int seriesCount = files.size() - 1 + ifds.size();
+    core.clear();
+    core.ensureCapacity(seriesCount);
 
     tileOffsets = new Long[files.size() - 1][];
     rows = new int[files.size() - 1];
     cols = new int[files.size() - 1];
-    nDimensions = new int[core.length];
+    nDimensions = new int[seriesCount];
 
     IFDList exifs = parser.getExifIFDs();
 
-    compressionType = new int[core.length];
-    tileX = new int[core.length];
-    tileY = new int[core.length];
-    tileMap = new HashMap[core.length];
+    compressionType = new int[seriesCount];
+    tileX = new int[seriesCount];
+    tileY = new int[seriesCount];
+    tileMap = new HashMap[seriesCount];
 
-    for (int s=0; s<core.length; s++) {
-      core[s] = new CoreMetadata();
+    for (int s=0; s<seriesCount; s++) {
+      core.add(new CoreMetadata());
     }
 
-    for (int s=0; s<core.length; s++) {
+    for (int s=0; s<core.size(); s++) {
       tileMap[s] = new HashMap<TileCoordinate, Integer>();
 
+      CoreMetadata ms = core.get(s);
       if (s == 0 && !hasFlattenedResolutions()) {
-        core[s].resolutionCount = ifds.size() + (files.size() == 1 ? 0 : 1);
+        ms.resolutionCount = ifds.size() + (files.size() == 1 ? 0 : 1);
       }
 
       if (s < files.size() - 1) {
         setSeries(s);
         parseETSFile(files.get(s), s);
 
-        core[s].littleEndian = compressionType[s] == RAW;
-        core[s].interleaved = core[s].rgb;
+        ms.littleEndian = compressionType[s] == RAW;
+        ms.interleaved = ms.rgb;
 
         if (s == 0 && exifs.size() > 0) {
           IFD exif = exifs.get(0);
@@ -422,8 +426,8 @@ public class CellSensReader extends FormatReader {
           int newY = exif.getIFDIntValue(IFD.PIXEL_Y_DIMENSION);
 
           if (getSizeX() > newX || getSizeY() > newY) {
-            core[s].sizeX = newX;
-            core[s].sizeY = newY;
+            ms.sizeX = newX;
+            ms.sizeY = newY;
           }
         }
 
@@ -433,23 +437,23 @@ public class CellSensReader extends FormatReader {
         IFD ifd = ifds.get(s - files.size() + 1);
         PhotoInterp p = ifd.getPhotometricInterpretation();
         int samples = ifd.getSamplesPerPixel();
-        core[s].rgb = samples > 1 || p == PhotoInterp.RGB;
-        core[s].sizeX = (int) ifd.getImageWidth();
-        core[s].sizeY = (int) ifd.getImageLength();
-        core[s].sizeZ = 1;
-        core[s].sizeT = 1;
-        core[s].sizeC = core[s].rgb ? samples : 1;
-        core[s].littleEndian = ifd.isLittleEndian();
-        core[s].indexed = p == PhotoInterp.RGB_PALETTE &&
+        ms.rgb = samples > 1 || p == PhotoInterp.RGB;
+        ms.sizeX = (int) ifd.getImageWidth();
+        ms.sizeY = (int) ifd.getImageLength();
+        ms.sizeZ = 1;
+        ms.sizeT = 1;
+        ms.sizeC = ms.rgb ? samples : 1;
+        ms.littleEndian = ifd.isLittleEndian();
+        ms.indexed = p == PhotoInterp.RGB_PALETTE &&
           (get8BitLookupTable() != null || get16BitLookupTable() != null);
-        core[s].imageCount = 1;
-        core[s].pixelType = ifd.getPixelType();
-        core[s].interleaved = false;
-        core[s].falseColor = false;
-        core[s].thumbnail = s != 0;
+        ms.imageCount = 1;
+        ms.pixelType = ifd.getPixelType();
+        ms.interleaved = false;
+        ms.falseColor = false;
+        ms.thumbnail = s != 0;
       }
-      core[s].metadataComplete = true;
-      core[s].dimensionOrder = "XYCZT";
+      ms.metadataComplete = true;
+      ms.dimensionOrder = "XYCZT";
     }
     vsi.close();
 
@@ -562,6 +566,8 @@ public class CellSensReader extends FormatReader {
     RandomAccessInputStream etsFile = new RandomAccessInputStream(file);
     etsFile.order(true);
 
+    CoreMetadata ms = core.get(s);
+
     // read the volume header
     String magic = etsFile.readString(4).trim();
     if (!magic.equals("SIS")) {
@@ -589,7 +595,7 @@ public class CellSensReader extends FormatReader {
     etsFile.skipBytes(4); // extra version number
 
     int pixelType = etsFile.readInt();
-    core[s].sizeC = etsFile.readInt();
+    ms.sizeC = etsFile.readInt();
     int colorspace = etsFile.readInt();
     compressionType[s] = etsFile.readInt();
     int compressionQuality = etsFile.readInt();
@@ -597,7 +603,7 @@ public class CellSensReader extends FormatReader {
     tileY[s] = etsFile.readInt();
     int tileZ = etsFile.readInt();
 
-    core[s].rgb = core[s].sizeC > 1;
+    ms.rgb = ms.sizeC > 1;
 
     // read the used chunks
 
@@ -691,28 +697,28 @@ public class CellSensReader extends FormatReader {
     }
 
     if (maxX > 1) {
-      core[s].sizeX = tileX[s] * (maxX + 1);
+      ms.sizeX = tileX[s] * (maxX + 1);
     }
     else {
-      core[s].sizeX = tileX[s];
+      ms.sizeX = tileX[s];
     }
     if (maxY > 1) {
-      core[s].sizeY = tileY[s] * (maxY + 1);
+      ms.sizeY = tileY[s] * (maxY + 1);
     }
     else {
-      core[s].sizeY = tileY[s];
+      ms.sizeY = tileY[s];
     }
-    core[s].sizeZ = maxZ + 1;
+    ms.sizeZ = maxZ + 1;
     if (maxC > 0) {
-      core[s].sizeC *= (maxC + 1);
+      ms.sizeC *= (maxC + 1);
     }
-    core[s].sizeT = maxT + 1;
-    if (core[s].sizeZ == 0) {
-      core[s].sizeZ = 1;
+    ms.sizeT = maxT + 1;
+    if (ms.sizeZ == 0) {
+      ms.sizeZ = 1;
     }
-    core[s].imageCount = core[s].sizeZ * core[s].sizeT;
+    ms.imageCount = ms.sizeZ * ms.sizeT;
     if (maxC > 0) {
-      core[s].imageCount *= (maxC + 1);
+      ms.imageCount *= (maxC + 1);
     }
 
     if (maxY > 1) {
@@ -732,7 +738,7 @@ public class CellSensReader extends FormatReader {
       tileMap[s].put(tmpTiles.get(i), i);
     }
 
-    core[s].pixelType = convertPixelType(pixelType);
+    ms.pixelType = convertPixelType(pixelType);
     etsFile.close();
   }
 

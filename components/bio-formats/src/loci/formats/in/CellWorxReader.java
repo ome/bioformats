@@ -348,25 +348,28 @@ public class CellWorxReader extends FormatReader {
       }
     }
 
-    core = new CoreMetadata[fieldCount * wellCount];
+    int seriesCount = fieldCount * wellCount;
+    core.clear();
+    core.ensureCapacity(seriesCount);
 
     String file = getFile(0, 0);
     IFormatReader pnl = getReader(file);
 
-    for (int i=0; i<core.length; i++) {
+    for (int i=0; i<seriesCount; i++) {
+      CoreMetadata ms = new CoreMetadata();
+      core.add(ms);
       setSeries(i);
-      core[i] = new CoreMetadata();
-      core[i].littleEndian = pnl.isLittleEndian();
-      core[i].sizeX = pnl.getSizeX();
-      core[i].sizeY = pnl.getSizeY();
-      core[i].pixelType = pnl.getPixelType();
-      core[i].sizeZ = 1;
-      core[i].sizeT = nTimepoints;
-      core[i].sizeC = wavelengths.length;
-      core[i].imageCount = getSizeZ() * getSizeC() * getSizeT();
-      core[i].dimensionOrder = "XYCZT";
-      core[i].rgb = false;
-      core[i].interleaved = pnl.isInterleaved();
+      ms.littleEndian = pnl.isLittleEndian();
+      ms.sizeX = pnl.getSizeX();
+      ms.sizeY = pnl.getSizeY();
+      ms.pixelType = pnl.getPixelType();
+      ms.sizeZ = 1;
+      ms.sizeT = nTimepoints;
+      ms.sizeC = wavelengths.length;
+      ms.imageCount = getSizeZ() * getSizeC() * getSizeT();
+      ms.dimensionOrder = "XYCZT";
+      ms.rgb = false;
+      ms.interleaved = pnl.isInterleaved();
     }
 
     OMEXMLMetadata readerMetadata = (OMEXMLMetadata) pnl.getMetadataStore();
@@ -376,7 +379,7 @@ public class CellWorxReader extends FormatReader {
 
     OME convertRoot = new OME();
     convertRoot.addInstrument(instrument);
-    for (int i=0; i<core.length/images.size(); i++) {
+    for (int i=0; i<core.size()/images.size(); i++) {
       for (Image img : images) {
         convertRoot.addImage(img);
       }
@@ -396,7 +399,7 @@ public class CellWorxReader extends FormatReader {
 
     store.setPlateID(plateID, 0);
     store.setPlateName(plate.getName(), 0);
-    for (int i=0; i<core.length; i++) {
+    for (int i=0; i<core.size(); i++) {
       store.setImageID(MetadataTools.createLSID("Image", i), i);
     }
 
@@ -454,7 +457,7 @@ public class CellWorxReader extends FormatReader {
       for (int well=0; well<wellCount; well++) {
         parseWellLogFile(well, store);
       }
-      for (int i=0; i<core.length; i++) {
+      for (int i=0; i<core.size(); i++) {
         for (int c=0; c<getSizeC(); c++) {
           if (c < wavelengths.length) {
             store.setChannelName(wavelengths[c], i, c);

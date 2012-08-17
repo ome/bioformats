@@ -31,6 +31,7 @@ import ome.xml.model.primitives.Timestamp;
 
 import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -128,17 +129,19 @@ public class OpenlabRawReader extends FormatReader {
 
     LOGGER.info("Populating metadata");
 
+    CoreMetadata m = core.get(0);
+
     int version = in.readInt();
 
-    core[0].imageCount = in.readInt();
+    m.imageCount = in.readInt();
     offsets = new int[getImageCount()];
     offsets[0] = 12;
 
     in.skipBytes(8);
-    core[0].sizeX = in.readInt();
-    core[0].sizeY = in.readInt();
+    m.sizeX = in.readInt();
+    m.sizeY = in.readInt();
     in.skipBytes(1);
-    core[0].sizeC = in.read();
+    m.sizeC = in.read();
     bytesPerPixel = in.read();
     in.skipBytes(1);
 
@@ -155,34 +158,34 @@ public class OpenlabRawReader extends FormatReader {
     int len = in.read() & 0xff;
     String imageName = in.readString(len - 1).trim();
 
-    if (getSizeC() <= 1) core[0].sizeC = 1;
-    else core[0].sizeC = 3;
+    if (getSizeC() <= 1) m.sizeC = 1;
+    else m.sizeC = 3;
 
     int plane = getSizeX() * getSizeY() * bytesPerPixel;
     for (int i=1; i<getImageCount(); i++) {
       offsets[i] = offsets[i - 1] + HEADER_SIZE + plane;
     }
 
-    core[0].sizeZ = getImageCount();
-    core[0].sizeT = 1;
-    core[0].rgb = getSizeC() > 1;
-    core[0].dimensionOrder = isRGB() ? "XYCZT" : "XYZTC";
-    core[0].interleaved = false;
-    core[0].littleEndian = false;
-    core[0].metadataComplete = true;
-    core[0].indexed = false;
-    core[0].falseColor = false;
+    m.sizeZ = getImageCount();
+    m.sizeT = 1;
+    m.rgb = getSizeC() > 1;
+    m.dimensionOrder = isRGB() ? "XYCZT" : "XYZTC";
+    m.interleaved = false;
+    m.littleEndian = false;
+    m.metadataComplete = true;
+    m.indexed = false;
+    m.falseColor = false;
 
     switch (bytesPerPixel) {
       case 1:
       case 3:
-        core[0].pixelType = FormatTools.UINT8;
+        m.pixelType = FormatTools.UINT8;
         break;
       case 2:
-        core[0].pixelType = FormatTools.UINT16;
+        m.pixelType = FormatTools.UINT16;
         break;
       default:
-        core[0].pixelType = FormatTools.FLOAT;
+        m.pixelType = FormatTools.FLOAT;
     }
 
     addGlobalMeta("Width", getSizeX());

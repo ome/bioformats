@@ -486,11 +486,14 @@ public class OpenlabReader extends FormatReader {
     Vector<Integer> tmpOffsets = new Vector<Integer>();
     Vector<String> names = new Vector<String>();
 
-    core = new CoreMetadata[nSeries];
+    core.clear();
+    core.ensureCapacity(nSeries);
 
     for (int i=0; i<nSeries; i++) {
+      CoreMetadata ms = new CoreMetadata();
+      core.add(ms);
+
       setSeries(i);
-      core[i] = new CoreMetadata();
 
       for (int q=0; q<planes.length; q++) {
         if (planes[q] != null && planes[q].series == i) {
@@ -511,68 +514,70 @@ public class OpenlabReader extends FormatReader {
 
     for (int i=0; i<nSeries; i++) {
       setSeries(i);
-      core[i].indexed = false;
-      core[i].sizeX = planes[planeOffsets[i][0]].width;
-      core[i].sizeY = planes[planeOffsets[i][0]].height;
-      core[i].imageCount = planeOffsets[i].length;
-      core[i].sizeC = 1;
+      CoreMetadata ms = core.get(i);
+
+      ms.indexed = false;
+      ms.sizeX = planes[planeOffsets[i][0]].width;
+      ms.sizeY = planes[planeOffsets[i][0]].height;
+      ms.imageCount = planeOffsets[i].length;
+      ms.sizeC = 1;
 
       switch (planes[planeOffsets[i][0]].volumeType) {
         case MAC_1_BIT:
         case MAC_4_GREYS:
         case MAC_256_GREYS:
-          core[i].pixelType = FormatTools.UINT8;
-          core[i].indexed = planes[planeOffsets[i][0]].pict;
+          ms.pixelType = FormatTools.UINT8;
+          ms.indexed = planes[planeOffsets[i][0]].pict;
           break;
         case MAC_256_COLORS:
-          core[i].pixelType = FormatTools.UINT8;
-          core[i].indexed = true;
+          ms.pixelType = FormatTools.UINT8;
+          ms.indexed = true;
           break;
         case MAC_16_COLORS:
         case MAC_16_BIT_COLOR:
         case MAC_24_BIT_COLOR:
-          core[i].pixelType = FormatTools.UINT8;
-          core[i].sizeC = 3;
+          ms.pixelType = FormatTools.UINT8;
+          ms.sizeC = 3;
           break;
         case DEEP_GREY_9:
-          core[i].bitsPerPixel = 9;
+          ms.bitsPerPixel = 9;
           break;
         case DEEP_GREY_10:
-          core[i].bitsPerPixel = 10;
+          ms.bitsPerPixel = 10;
           break;
         case DEEP_GREY_11:
-          core[i].bitsPerPixel = 11;
+          ms.bitsPerPixel = 11;
           break;
         case DEEP_GREY_12:
-          core[i].bitsPerPixel = 12;
+          ms.bitsPerPixel = 12;
           break;
         case DEEP_GREY_13:
-          core[i].bitsPerPixel = 13;
+          ms.bitsPerPixel = 13;
           break;
         case DEEP_GREY_14:
-          core[i].bitsPerPixel = 14;
+          ms.bitsPerPixel = 14;
           break;
         case DEEP_GREY_15:
-          core[i].bitsPerPixel = 15;
+          ms.bitsPerPixel = 15;
           break;
         case MAC_16_GREYS:
         case DEEP_GREY_16:
-          core[i].pixelType = FormatTools.UINT16;
+          ms.pixelType = FormatTools.UINT16;
           break;
         default:
           throw new FormatException("Unsupported plane type: " +
             planes[planeOffsets[i][0]].volumeType);
       }
 
-      if (getBitsPerPixel() > 8) core[i].pixelType = FormatTools.UINT16;
-      core[i].rgb = getSizeC() > 1;
-      core[i].interleaved = isRGB() && version == 5;
-      core[i].sizeT = 1;
-      core[i].sizeZ = getImageCount();
-      core[i].dimensionOrder = "XYCZT";
-      core[i].littleEndian = false;
-      core[i].falseColor = false;
-      core[i].metadataComplete = true;
+      if (getBitsPerPixel() > 8) ms.pixelType = FormatTools.UINT16;
+      ms.rgb = getSizeC() > 1;
+      ms.interleaved = isRGB() && version == 5;
+      ms.sizeT = 1;
+      ms.sizeZ = getImageCount();
+      ms.dimensionOrder = "XYCZT";
+      ms.littleEndian = false;
+      ms.falseColor = false;
+      ms.metadataComplete = true;
     }
 
     int seriesCount = getSeriesCount();
@@ -729,7 +734,9 @@ public class OpenlabReader extends FormatReader {
     Vector<String> uniqueT = new Vector<String>();
     String[] axes = new String[] {"Z", "C", "T"};
 
-    core[s].dimensionOrder = "XY";
+    CoreMetadata m = core.get(s);
+
+    m.dimensionOrder = "XY";
     for (PlaneInfo plane : planes) {
       if (plane == null || plane.series != s) continue;
 
@@ -772,7 +779,7 @@ public class OpenlabReader extends FormatReader {
           uniqueZ.add(zSection);
         }
 
-        core[s].dimensionOrder = "XYCTZ";
+        m.dimensionOrder = "XYCTZ";
         plane.wavelength = uniqueC.indexOf(plane.channelName);
         plane.timepoint = 0;
         plane.zPosition = uniqueZ.indexOf(zSection);
@@ -799,9 +806,9 @@ public class OpenlabReader extends FormatReader {
             if (!unique.contains(i)) {
               unique.add(i);
               if (unique.size() > 1 &&
-                core[s].dimensionOrder.indexOf(axis) == -1)
+                m.dimensionOrder.indexOf(axis) == -1)
               {
-                core[s].dimensionOrder += axis;
+                m.dimensionOrder += axis;
               }
             }
           }
@@ -810,39 +817,43 @@ public class OpenlabReader extends FormatReader {
     }
 
     if (specialPlateNames) {
-      core[s].sizeC *= uniqueC.size();
-      core[s].sizeT = uniqueT.size();
-      if (core[s].sizeT == 0) core[s].sizeT = 1;
-      core[s].sizeZ = uniqueZ.size();
-      if (core[s].sizeZ == 0) core[s].sizeZ = 1;
-      core[s].imageCount = core[s].sizeC * core[s].sizeZ * core[s].sizeT;
-      if (uniqueF.size() > core.length) {
-        CoreMetadata currentSeries = core[s];
-        core = new CoreMetadata[uniqueF.size()];
-        for (int i=0; i<core.length; i++) {
-          core[i] = currentSeries;
+      m.sizeC *= uniqueC.size();
+      m.sizeT = uniqueT.size();
+      if (m.sizeT == 0) m.sizeT = 1;
+      m.sizeZ = uniqueZ.size();
+      if (m.sizeZ == 0) m.sizeZ = 1;
+      m.imageCount = m.sizeC * m.sizeZ * m.sizeT;
+      if (uniqueF.size() > core.size()) {
+        CoreMetadata currentSeries = core.get(s);
+        int seriesCount = uniqueF.size();
+        core.clear();
+        core.ensureCapacity(seriesCount);
+        for (int i=0; i<seriesCount; i++) {
+          core.add(currentSeries);
         }
       }
       return;
     }
 
-    if (core[s].rgb && uniqueC.size() <= 1) {
-      core[s].dimensionOrder = core[s].dimensionOrder.replaceAll("C", "");
-      core[s].dimensionOrder = "XYC" + core[s].dimensionOrder.substring(2);
+    m = core.get(s); // Just in case the resize changed it
+
+    if (m.rgb && uniqueC.size() <= 1) {
+      m.dimensionOrder = m.dimensionOrder.replaceAll("C", "");
+      m.dimensionOrder = "XYC" + m.dimensionOrder.substring(2);
     }
 
     for (String axis : axes) {
-      if (core[s].dimensionOrder.indexOf(axis) == -1) {
-        core[s].dimensionOrder += axis;
+      if (m.dimensionOrder.indexOf(axis) == -1) {
+        m.dimensionOrder += axis;
       }
     }
     if (uniqueC.size() > 1) {
-      core[s].sizeC *= uniqueC.size();
-      core[s].sizeZ /= uniqueC.size();
+      m.sizeC *= uniqueC.size();
+      m.sizeZ /= uniqueC.size();
     }
     if (uniqueT.size() > 1) {
-      core[s].sizeT = uniqueT.size();
-      core[s].sizeZ /= core[s].sizeT;
+      m.sizeT = uniqueT.size();
+      m.sizeZ /= m.sizeT;
     }
 
     int newCount = getSizeZ() * getSizeT();
@@ -850,13 +861,13 @@ public class OpenlabReader extends FormatReader {
 
     if (newCount < getImageCount()) {
       char firstAxis = getDimensionOrder().charAt(2);
-      if (firstAxis == 'Z') core[s].sizeZ++;
-      else if (firstAxis == 'C' && !isRGB()) core[s].sizeC++;
-      else core[s].sizeT++;
-      core[s].imageCount = getSizeZ() * getSizeT();
-      if (!isRGB()) core[s].imageCount *= getSizeC();
+      if (firstAxis == 'Z') m.sizeZ++;
+      else if (firstAxis == 'C' && !isRGB()) m.sizeC++;
+      else m.sizeT++;
+      m.imageCount = getSizeZ() * getSizeT();
+      if (!isRGB()) m.imageCount *= getSizeC();
     }
-    else if (newCount > getImageCount()) core[s].imageCount = newCount;
+    else if (newCount > getImageCount()) m.imageCount = newCount;
   }
 
   private PlaneInfo getPlane(int[] zct) {

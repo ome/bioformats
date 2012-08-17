@@ -218,7 +218,8 @@ public class BrukerReader extends FormatReader {
       }
     }
 
-    core = new CoreMetadata[pixelsFiles.size()];
+    core.clear();
+    core.ensureCapacity(pixelsFiles.size());
 
     String[] imageNames = new String[pixelsFiles.size()];
     String[] timestamps = new String[pixelsFiles.size()];
@@ -226,9 +227,10 @@ public class BrukerReader extends FormatReader {
     String[] users = new String[pixelsFiles.size()];
 
     for (int series=0; series<pixelsFiles.size(); series++) {
-      setSeries(series);
+      CoreMetadata ms = new CoreMetadata();
+      core.add(ms);
 
-      core[series] = new CoreMetadata();
+      setSeries(series);
 
       String acqData = DataTools.readFile(acqpFiles.get(series));
       String[] lines = acqData.split("\n");
@@ -269,7 +271,7 @@ public class BrukerReader extends FormatReader {
             bits = Integer.parseInt(value.substring(1, value.lastIndexOf("_")));
           }
           else if (key.equals("##$BYTORDA")) {
-            core[series].littleEndian = value.toLowerCase().equals("little");
+            ms.littleEndian = value.toLowerCase().equals("little");
           }
           else if (key.equals("##$ACQ_size")) {
             sizes = value.split(" ");
@@ -334,29 +336,29 @@ public class BrukerReader extends FormatReader {
 
       if (sizes.length == 2) {
         if (ni == 1) {
-          core[series].sizeY = ys;
-          core[series].sizeZ = nr;
+          ms.sizeY = ys;
+          ms.sizeZ = nr;
         }
         else {
-          core[series].sizeY = ys;
-          core[series].sizeZ = ni;
+          ms.sizeY = ys;
+          ms.sizeZ = ni;
         }
       }
       else if (sizes.length == 3) {
-        core[series].sizeY = ni * ys;
-        core[series].sizeZ = nr * zs;
+        ms.sizeY = ni * ys;
+        ms.sizeZ = nr * zs;
       }
 
-      core[series].sizeX = td;
+      ms.sizeX = td;
 
-      core[series].sizeZ /= ns;
-      core[series].sizeT = ns * nr;
-      core[series].sizeC = 1;
-      core[series].imageCount = getSizeZ() * getSizeC() * getSizeT();
-      core[series].dimensionOrder = "XYCTZ";
-      core[series].rgb = false;
-      core[series].interleaved = false;
-      core[series].pixelType =
+      ms.sizeZ /= ns;
+      ms.sizeT = ns * nr;
+      ms.sizeC = 1;
+      ms.imageCount = getSizeZ() * getSizeC() * getSizeT();
+      ms.dimensionOrder = "XYCTZ";
+      ms.rgb = false;
+      ms.interleaved = false;
+      ms.pixelType =
         FormatTools.pixelTypeFromBytes(bits / 8, signed, isFloat);
     }
 

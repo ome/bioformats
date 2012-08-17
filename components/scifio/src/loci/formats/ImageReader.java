@@ -509,7 +509,7 @@ public class ImageReader implements IFormatReader {
   }
 
   /* @see IFormatReader#getCoreMetadata() */
-  public CoreMetadata[] getCoreMetadata() {
+  public List<CoreMetadata> getCoreMetadata() {
     return getReader().getCoreMetadata();
   }
 

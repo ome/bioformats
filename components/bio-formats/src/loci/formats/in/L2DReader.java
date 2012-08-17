@@ -26,6 +26,7 @@
 package loci.formats.in;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Vector;
 
@@ -204,7 +205,9 @@ public class L2DReader extends FormatReader {
       TiffReader r = new TiffReader();
       r.setMetadataStore(getMetadataStore());
       r.setId(id);
-      core = r.getCoreMetadata();
+      // TODO: Is this assignment redundant?  We unconditionally
+      // replace it below.
+      core = new ArrayList<CoreMetadata>(r.getCoreMetadata());
       metadataStore = r.getMetadataStore();
 
       Hashtable globalMetadata = r.getGlobalMetadata();
@@ -235,7 +238,7 @@ public class L2DReader extends FormatReader {
     tiffs = new String[scans.length][];
     metadataFiles = new Vector[scans.length];
 
-    core = new CoreMetadata[scans.length];
+    core = new ArrayList<CoreMetadata>(scans.length);
 
     String[] comments = new String[scans.length];
     String[] wavelengths = new String[scans.length];
@@ -245,9 +248,13 @@ public class L2DReader extends FormatReader {
     tileWidth = new int[scans.length];
     tileHeight = new int[scans.length];
 
+    core.clear();
+    core.ensureCapacity(scans.length);
+
     for (int i=0; i<scans.length; i++) {
+      CoreMetadata ms = new CoreMetadata();
+      core.add(ms);
       setSeries(i);
-      core[i] = new CoreMetadata();
       metadataFiles[i] = new Vector();
       String scanName = scans[i] + ".scn";
       Location scanDir = new Location(parent, scans[i]);
@@ -297,20 +304,21 @@ public class L2DReader extends FormatReader {
     MetadataStore store = makeFilterMetadata();
 
     for (int i=0; i<getSeriesCount(); i++) {
-      core[i].imageCount = tiffs[i].length;
-      core[i].sizeC = tiffs[i].length;
-      core[i].sizeT = 1;
-      core[i].sizeZ = 1;
-      core[i].dimensionOrder = "XYCZT";
+      CoreMetadata ms = core.get(i);
+      ms.imageCount = tiffs[i].length;
+      ms.sizeC = tiffs[i].length;
+      ms.sizeT = 1;
+      ms.sizeZ = 1;
+      ms.dimensionOrder = "XYCZT";
 
       reader.setId(tiffs[i][0]);
-      core[i].sizeX = reader.getSizeX();
-      core[i].sizeY = reader.getSizeY();
-      core[i].sizeC *= reader.getSizeC();
-      core[i].rgb = reader.isRGB();
-      core[i].indexed = reader.isIndexed();
-      core[i].littleEndian = reader.isLittleEndian();
-      core[i].pixelType = reader.getPixelType();
+      ms.sizeX = reader.getSizeX();
+      ms.sizeY = reader.getSizeY();
+      ms.sizeC *= reader.getSizeC();
+      ms.rgb = reader.isRGB();
+      ms.indexed = reader.isIndexed();
+      ms.littleEndian = reader.isLittleEndian();
+      ms.pixelType = reader.getPixelType();
       tileWidth[i] = reader.getOptimalTileWidth();
       tileHeight[i] = reader.getOptimalTileHeight();
     }

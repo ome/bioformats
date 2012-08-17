@@ -31,6 +31,7 @@ import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
 import loci.common.xml.BaseHandler;
 import loci.common.xml.XMLTools;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -178,51 +179,54 @@ public class IvisionReader extends FormatReader {
     int fileFormat = in.read();
     int dataType = in.read();
 
-    core[0].sizeC = 1;
+
+    CoreMetadata m = core.get(0);
+
+    m.sizeC = 1;
     switch (dataType) {
       case 0:
-        core[0].pixelType = FormatTools.UINT8;
+        m.pixelType = FormatTools.UINT8;
         break;
       case 1:
-        core[0].pixelType = FormatTools.INT16;
+        m.pixelType = FormatTools.INT16;
         break;
       case 2:
-        core[0].pixelType = FormatTools.INT32;
+        m.pixelType = FormatTools.INT32;
         break;
       case 3:
-        core[0].pixelType = FormatTools.FLOAT;
+        m.pixelType = FormatTools.FLOAT;
         break;
       case 4:
-        core[0].pixelType = FormatTools.UINT8;
-        core[0].sizeC = 3;
+        m.pixelType = FormatTools.UINT8;
+        m.sizeC = 3;
         color16 = true;
         break;
       case 5:
-        core[0].pixelType = FormatTools.UINT8;
-        core[0].sizeC = 3;
+        m.pixelType = FormatTools.UINT8;
+        m.sizeC = 3;
         hasPaddingByte = true;
         break;
       case 6:
-        core[0].pixelType = FormatTools.UINT16;
+        m.pixelType = FormatTools.UINT16;
         break;
       case 7:
-        core[0].pixelType = FormatTools.FLOAT;
+        m.pixelType = FormatTools.FLOAT;
         squareRoot = true;
         break;
       case 8:
-        core[0].pixelType = FormatTools.UINT16;
-        core[0].sizeC = 3;
+        m.pixelType = FormatTools.UINT16;
+        m.sizeC = 3;
         break;
     }
 
-    core[0].sizeX = in.readInt();
-    core[0].sizeY = in.readInt();
+    m.sizeX = in.readInt();
+    m.sizeY = in.readInt();
     in.skipBytes(6);
 
-    core[0].sizeZ = in.readShort();
+    m.sizeZ = in.readShort();
     in.skipBytes(50);
 
-    core[0].sizeT = 1;
+    m.sizeT = 1;
 
     if (getSizeX() > 1 && getSizeY() > 1) {
       lut = new byte[2048];
@@ -255,12 +259,12 @@ public class IvisionReader extends FormatReader {
     }
 
     LOGGER.info("Populating core metadata");
-    core[0].rgb = getSizeC() > 1;
-    core[0].dimensionOrder = "XYCZT";
-    core[0].littleEndian = false;
-    core[0].interleaved = true;
-    core[0].indexed = false;
-    core[0].imageCount = getSizeZ() * getSizeT();
+    m.rgb = getSizeC() > 1;
+    m.dimensionOrder = "XYCZT";
+    m.littleEndian = false;
+    m.interleaved = true;
+    m.indexed = false;
+    m.imageCount = getSizeZ() * getSizeT();
 
     LOGGER.info("Populating MetadataStore");
     MetadataStore store = makeFilterMetadata();

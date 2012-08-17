@@ -39,7 +39,9 @@ package loci.formats;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Set;
 
 import loci.common.RandomAccessInputStream;
@@ -424,7 +426,7 @@ public abstract class ReaderWrapper implements IFormatReader {
     return reader.getSeriesMetadata();
   }
 
-  public CoreMetadata[] getCoreMetadata() {
+  public List<CoreMetadata> getCoreMetadata() {
     //return reader.getCoreMetadata();
 
     // NB: Be sure all CoreMetadata values are returned correctly,
@@ -615,7 +617,7 @@ public abstract class ReaderWrapper implements IFormatReader {
 
   /** Creates a copy of the core metadata instantiated using the provided CoreMetadata type, 
    * matching the state of the given reader. */
-  protected <T extends CoreMetadata> T[] copyCoreMetadata(Class<T> c, IFormatReader r) {
+  protected <T extends CoreMetadata> List<CoreMetadata> copyCoreMetadata(Class<T> c, IFormatReader r) {
     int count = 0;
     int currentSeries = r.getSeries();
 
@@ -626,10 +628,9 @@ public abstract class ReaderWrapper implements IFormatReader {
 
     r.setSeries(currentSeries);
 
-    @SuppressWarnings("unchecked")
-    T[] core = (T[])Array.newInstance(c, count);
-    
-    for (int s=0; s<core.length; s++) {
+    ArrayList<CoreMetadata> core = new ArrayList<CoreMetadata>();
+    core.ensureCapacity(count);
+    for (int s=0; s<count; s++) {
       T meta = null;
       
       try {
@@ -641,7 +642,8 @@ public abstract class ReaderWrapper implements IFormatReader {
       }
       
       meta.copy(r, s);
-      core[s] = meta;
+
+      core.add(meta);
     }
     return core;
   }

@@ -176,10 +176,11 @@ public class CellomicsReader extends FormatReader {
       files = new String[] {id};
     }
 
-    core = new CoreMetadata[files.length];
+    core.clear();
+    core.ensureCapacity(files.length);
 
-    for (int i=0; i<core.length; i++) {
-      core[i] = new CoreMetadata();
+    for (int i=0; i<files.length; i++) {
+      core.add(new CoreMetadata());
     }
 
     in = getDecompressedStream(id);
@@ -226,15 +227,16 @@ public class CellomicsReader extends FormatReader {
     LOGGER.info("Populating core metadata");
 
     for (int i=0; i<getSeriesCount(); i++) {
-      core[i].sizeX = x;
-      core[i].sizeY = y;
-      core[i].sizeZ = nPlanes;
-      core[i].sizeT = 1;
-      core[i].sizeC = 1;
-      core[i].imageCount = getSizeZ();
-      core[i].littleEndian = true;
-      core[i].dimensionOrder = "XYCZT";
-      core[i].pixelType =
+      CoreMetadata ms = core.get(i);
+      ms.sizeX = x;
+      ms.sizeY = y;
+      ms.sizeZ = nPlanes;
+      ms.sizeT = 1;
+      ms.sizeC = 1;
+      ms.imageCount = getSizeZ();
+      ms.littleEndian = true;
+      ms.dimensionOrder = "XYCZT";
+      ms.pixelType =
         FormatTools.pixelTypeFromBytes(nBits / 8, false, false);
     }
 

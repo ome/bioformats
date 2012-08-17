@@ -169,6 +169,7 @@ public class VisitechReader extends FormatReader {
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
+    CoreMetadata ms0 = core.get(0);
 
     // first, make sure we have the HTML file
 
@@ -210,23 +211,23 @@ public class VisitechReader extends FormatReader {
           value = token.substring(ndx + 1).trim();
 
           if (key.equals("Number of steps")) {
-            core[0].sizeZ = Integer.parseInt(value);
+            ms0.sizeZ = Integer.parseInt(value);
           }
           else if (key.equals("Image bit depth")) {
             int bits = Integer.parseInt(value);
             while ((bits % 8) != 0) bits++;
             bits /= 8;
-            core[0].pixelType =
+            ms0.pixelType =
               FormatTools.pixelTypeFromBytes(bits, false, false);
           }
           else if (key.equals("Image dimensions")) {
             int n = value.indexOf(",");
-            core[0].sizeX = Integer.parseInt(value.substring(1, n).trim());
-            core[0].sizeY = Integer.parseInt(value.substring(n + 1,
+            ms0.sizeX = Integer.parseInt(value.substring(1, n).trim());
+            ms0.sizeY = Integer.parseInt(value.substring(n + 1,
               value.length() - 1).trim());
           }
           else if (key.startsWith("Channel Selection")) {
-            core[0].sizeC++;
+            ms0.sizeC++;
           }
           else if (key.startsWith("Microscope XY")) {
             numSeries++;
@@ -235,14 +236,14 @@ public class VisitechReader extends FormatReader {
         }
 
         if (token.indexOf("pixels") != -1) {
-          core[0].sizeC++;
-          core[0].imageCount +=
+          ms0.sizeC++;
+          ms0.imageCount +=
             Integer.parseInt(token.substring(0, token.indexOf(" ")));
         }
         else if (token.startsWith("Time Series")) {
           int idx = token.indexOf(";") + 1;
           String ss = token.substring(idx, token.indexOf(" ", idx)).trim();
-          core[0].sizeT = Integer.parseInt(ss);
+          ms0.sizeT = Integer.parseInt(ss);
         }
       }
       else if (token.indexOf("Document created") != -1) {
@@ -253,12 +254,12 @@ public class VisitechReader extends FormatReader {
 
     if (numSeries == 0) {
       numSeries = estimatedSeriesCount;
-      core[0].sizeC *= estimatedSizeC;
+      ms0.sizeC *= estimatedSizeC;
     }
-    if (getSizeC() == 0) core[0].sizeC = estimatedSizeC;
+    if (getSizeC() == 0) ms0.sizeC = estimatedSizeC;
 
-    if (getSizeC() == 0) core[0].sizeC = 1;
-    if (getSizeZ() == 0) core[0].sizeZ = 1;
+    if (getSizeC() == 0) ms0.sizeC = 1;
+    if (getSizeZ() == 0) ms0.sizeZ = 1;
 
     // find pixels files - we think there is one channel per file
 
@@ -277,21 +278,21 @@ public class VisitechReader extends FormatReader {
       if (p.exists()) files.add(p.getAbsolutePath());
       else {
         if (numSeries > 1) {
-          core[0].sizeC -= (getSizeC() / numSeries);
+          ms0.sizeC -= (getSizeC() / numSeries);
           numSeries--;
         }
-        else if (getSizeC() > 1) core[0].sizeC--;
+        else if (getSizeC() > 1) ms0.sizeC--;
       }
     }
     files.add(currentId);
 
     if (getSizeT() == 0) {
-      core[0].sizeT = getImageCount() / (getSizeZ() * getSizeC());
-      if (getSizeT() == 0) core[0].sizeT = 1;
+      ms0.sizeT = getImageCount() / (getSizeZ() * getSizeC());
+      if (getSizeT() == 0) ms0.sizeT = 1;
     }
 
     if (getImageCount() == 0) {
-      core[0].imageCount = getSizeZ() * getSizeC() * getSizeT();
+      ms0.imageCount = getSizeZ() * getSizeC() * getSizeT();
     }
     if (numSeries > 1) {
       int x = getSizeX();
@@ -301,27 +302,30 @@ public class VisitechReader extends FormatReader {
       int t = getSizeT();
       int count = z * c * t;
       int ptype = getPixelType();
-      core = new CoreMetadata[numSeries];
+      core.clear();
+      core.ensureCapacity(numSeries);
       for (int i=0; i<numSeries; i++) {
-        core[i] = new CoreMetadata();
-        core[i].sizeX = x;
-        core[i].sizeY = y;
-        core[i].sizeZ = z;
-        core[i].sizeC = c;
-        core[i].sizeT = t;
-        core[i].imageCount = count;
-        core[i].pixelType = ptype;
+        CoreMetadata ms = new CoreMetadata();
+        core.add(ms);
+        ms.sizeX = x;
+        ms.sizeY = y;
+        ms.sizeZ = z;
+        ms.sizeC = c;
+        ms.sizeT = t;
+        ms.imageCount = count;
+        ms.pixelType = ptype;
       }
     }
 
     for (int i=0; i<getSeriesCount(); i++) {
-      core[i].rgb = false;
-      core[i].dimensionOrder = "XYZTC";
-      core[i].interleaved = false;
-      core[i].littleEndian = true;
-      core[i].indexed = false;
-      core[i].falseColor = false;
-      core[i].metadataComplete = true;
+      CoreMetadata ms = core.get(i);
+      ms.rgb = false;
+      ms.dimensionOrder = "XYZTC";
+      ms.interleaved = false;
+      ms.littleEndian = true;
+      ms.indexed = false;
+      ms.falseColor = false;
+      ms.metadataComplete = true;
     }
 
     pixelOffsets = new long[files.size() - 1];

@@ -185,9 +185,11 @@ public class HamamatsuVMSReader extends FormatReader {
     }
 
     jpeg = new TileJPEGReader[3];
-    core = new CoreMetadata[3];
 
-    for (int i=0; i<core.length; i++) {
+    int seriesCount = 3;
+    core.ensureCapacity(seriesCount);
+
+    for (int i=0; i<seriesCount; i++) {
       String file = null;
       switch (i) {
         case 0:
@@ -203,8 +205,8 @@ public class HamamatsuVMSReader extends FormatReader {
 
       jpeg[i] = new TileJPEGReader();
       jpeg[i].setId(file);
-      core[i] = jpeg[i].getCoreMetadata()[0];
-      core[i].thumbnail = i > 0;
+      core.set(i, jpeg[i].getCoreMetadata().get(0));
+      core.get(i).thumbnail = i > 0;
     }
 
     MetadataStore store = makeFilterMetadata();
@@ -219,35 +221,35 @@ public class HamamatsuVMSReader extends FormatReader {
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
       if (physicalWidth > 0) {
         store.setPixelsPhysicalSizeX(
-          new PositiveFloat(physicalWidth / core[0].sizeX), 0);
+          new PositiveFloat(physicalWidth / core.get(0).sizeX), 0);
       }
       else {
         LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
-          physicalWidth / core[0].sizeX);
+          physicalWidth / core.get(0).sizeX);
       }
       if (physicalHeight > 0) {
         store.setPixelsPhysicalSizeY(
-          new PositiveFloat(physicalHeight / core[0].sizeY), 0);
+          new PositiveFloat(physicalHeight / core.get(0).sizeY), 0);
       }
       else {
         LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
-          physicalHeight / core[0].sizeY);
+          physicalHeight / core.get(0).sizeY);
       }
       if (macroWidth > 0) {
         store.setPixelsPhysicalSizeX(
-          new PositiveFloat(macroWidth / core[1].sizeX), 1);
+          new PositiveFloat(macroWidth / core.get(1).sizeX), 1);
       }
       else {
         LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
-          macroWidth / core[1].sizeX);
+          macroWidth / core.get(1).sizeX);
       }
       if (macroHeight > 0) {
         store.setPixelsPhysicalSizeY(
-          new PositiveFloat(macroHeight / core[1].sizeY), 1);
+          new PositiveFloat(macroHeight / core.get(1).sizeY), 1);
       }
       else {
         LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
-          macroHeight / core[1].sizeY);
+          macroHeight / core.get(1).sizeY);
       }
 
       String instrumentID = MetadataTools.createLSID("Instrument", 0);

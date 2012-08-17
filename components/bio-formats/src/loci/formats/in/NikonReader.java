@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
 
 import loci.common.Constants;
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.ImageTools;
@@ -303,22 +304,24 @@ public class NikonReader extends BaseTiffReader {
     // the actual image data is stored in IFDs referenced by the SubIFD tag
     // in the 'real' IFD
 
-    core[0].imageCount = ifds.size();
+    CoreMetadata m = core.get(0);
+
+    m.imageCount = ifds.size();
 
     IFD firstIFD = ifds.get(0);
     PhotoInterp photo = firstIFD.getPhotometricInterpretation();
     int samples = firstIFD.getSamplesPerPixel();
-    core[0].rgb = samples > 1 || photo == PhotoInterp.RGB ||
+    m.rgb = samples > 1 || photo == PhotoInterp.RGB ||
       photo == PhotoInterp.CFA_ARRAY;
     if (photo == PhotoInterp.CFA_ARRAY) samples = 3;
 
-    core[0].sizeX = (int) firstIFD.getImageWidth();
-    core[0].sizeY = (int) firstIFD.getImageLength();
-    core[0].sizeZ = 1;
-    core[0].sizeC = isRGB() ? samples : 1;
-    core[0].sizeT = ifds.size();
-    core[0].pixelType = firstIFD.getPixelType();
-    core[0].indexed = false;
+    m.sizeX = (int) firstIFD.getImageWidth();
+    m.sizeY = (int) firstIFD.getImageLength();
+    m.sizeZ = 1;
+    m.sizeC = isRGB() ? samples : 1;
+    m.sizeT = ifds.size();
+    m.pixelType = firstIFD.getPixelType();
+    m.indexed = false;
 
     // now look for the EXIF IFD pointer
 
@@ -438,10 +441,12 @@ public class NikonReader extends BaseTiffReader {
     }
     ifds.set(0, original);
 
-    core[0].imageCount = 1;
-    core[0].sizeT = 1;
+    CoreMetadata m = core.get(0);
+
+    m.imageCount = 1;
+    m.sizeT = 1;
     if (ifds.get(0).getSamplesPerPixel() == 1) {
-      core[0].interleaved = true;
+      m.interleaved = true;
     }
 
     MetadataStore store = makeFilterMetadata();

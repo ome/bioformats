@@ -28,6 +28,7 @@ package loci.formats.in;
 import java.io.IOException;
 
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
@@ -119,6 +120,8 @@ public class FEIReader extends FormatReader {
     in = new RandomAccessInputStream(id);
     in.order(true);
 
+    CoreMetadata m = core.get(0);
+
     LOGGER.info("Reading file header");
 
     if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
@@ -137,23 +140,23 @@ public class FEIReader extends FormatReader {
     }
 
     in.seek(514);
-    core[0].sizeX = in.readShort() - INVALID_PIXELS;
-    core[0].sizeY = in.readShort();
+    m.sizeX = in.readShort() - INVALID_PIXELS;
+    m.sizeY = in.readShort();
     in.skipBytes(4);
     headerSize = in.readShort();
 
     // always one grayscale plane per file
 
-    core[0].sizeZ = 1;
-    core[0].sizeC = 1;
-    core[0].sizeT = 1;
-    core[0].imageCount = 1;
-    core[0].littleEndian = true;
-    core[0].pixelType = FormatTools.UINT8;
-    core[0].rgb = false;
-    core[0].indexed = false;
-    core[0].interleaved = false;
-    core[0].dimensionOrder = "XYCZT";
+    m.sizeZ = 1;
+    m.sizeC = 1;
+    m.sizeT = 1;
+    m.imageCount = 1;
+    m.littleEndian = true;
+    m.pixelType = FormatTools.UINT8;
+    m.rgb = false;
+    m.indexed = false;
+    m.interleaved = false;
+    m.dimensionOrder = "XYCZT";
 
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);

@@ -249,36 +249,37 @@ public class ImarisHDFReader extends FormatReader {
 
     parseAttributes();
 
+    CoreMetadata ms0 = core.get(0);
+
     if (seriesCount > 1) {
-      CoreMetadata oldCore = core[0];
-      core = new CoreMetadata[seriesCount];
-      core[0] = oldCore;
+      core.ensureCapacity(seriesCount);
       for (int i=1; i<seriesCount; i++) {
-        core[i] = new CoreMetadata();
+        core.add(new CoreMetadata());
       }
 
       if (!hasFlattenedResolutions()) {
-        core[0].resolutionCount = seriesCount;
+        ms0.resolutionCount = seriesCount;
       }
 
       for (int i=1; i<seriesCount; i++) {
+        CoreMetadata ms = core.get(i);
         String groupPath =
           "/DataSet/ResolutionLevel_" + i + "/TimePoint_0/Channel_0";
-        core[i].sizeX =
+        ms.sizeX =
           Integer.parseInt(netcdf.getAttributeValue(groupPath + "/ImageSizeX"));
-        core[i].sizeY =
+        ms.sizeY =
           Integer.parseInt(netcdf.getAttributeValue(groupPath + "/ImageSizeY"));
-        core[i].sizeZ =
+        ms.sizeZ =
           Integer.parseInt(netcdf.getAttributeValue(groupPath + "/ImageSizeZ"));
-        core[i].imageCount = core[i].sizeZ * getSizeC() * getSizeT();
-        core[i].sizeC = getSizeC();
-        core[i].sizeT = getSizeT();
-        core[i].thumbnail = true;
+        ms.imageCount = ms.sizeZ * getSizeC() * getSizeT();
+        ms.sizeC = getSizeC();
+        ms.sizeT = getSizeT();
+        ms.thumbnail = true;
       }
     }
-    core[0].imageCount = getSizeZ() * getSizeC() * getSizeT();
-    core[0].thumbnail = false;
-    core[0].dimensionOrder = "XYZCT";
+    ms0.imageCount = getSizeZ() * getSizeC() * getSizeT();
+    ms0.thumbnail = false;
+    ms0.dimensionOrder = "XYZCT";
 
     // determine pixel type - this isn't stored in the metadata, so we need
     // to check the pixels themselves
@@ -295,16 +296,17 @@ public class ImarisHDFReader extends FormatReader {
       throw new FormatException("Unknown pixel type: " + pix);
     }
 
-    for (int i=0; i<core.length; i++) {
-      core[i].pixelType = type;
-      core[i].dimensionOrder = "XYZCT";
-      core[i].rgb = false;
-      core[i].thumbSizeX = 128;
-      core[i].thumbSizeY = 128;
-      core[i].orderCertain = true;
-      core[i].littleEndian = true;
-      core[i].interleaved = false;
-      core[i].indexed = colors.size() >= getSizeC();
+    for (int i=0; i<core.size(); i++) {
+      CoreMetadata ms = core.get(i);
+      ms.pixelType = type;
+      ms.dimensionOrder = "XYZCT";
+      ms.rgb = false;
+      ms.thumbSizeX = 128;
+      ms.thumbSizeY = 128;
+      ms.orderCertain = true;
+      ms.littleEndian = true;
+      ms.interleaved = false;
+      ms.indexed = colors.size() >= getSizeC();
     }
 
     MetadataStore store = makeFilterMetadata();
@@ -441,6 +443,8 @@ public class ImarisHDFReader extends FormatReader {
 
   private void parseAttributes() {
     Vector<String> attributes = netcdf.getAttributeList();
+    CoreMetadata ms0 = core.get(0);
+
     for (String attr : attributes) {
       String name = attr.substring(attr.lastIndexOf("/") + 1);
       String value = netcdf.getAttributeValue(attr);
@@ -449,7 +453,7 @@ public class ImarisHDFReader extends FormatReader {
 
       if (name.equals("X") || name.equals("ImageSizeX")) {
         try {
-          core[0].sizeX = Integer.parseInt(value);
+          ms0.sizeX = Integer.parseInt(value);
         }
         catch (NumberFormatException e) {
           LOGGER.trace("Failed to parse '" + name + "'", e);
@@ -457,7 +461,7 @@ public class ImarisHDFReader extends FormatReader {
       }
       else if (name.equals("Y") || name.equals("ImageSizeY")) {
         try {
-          core[0].sizeY = Integer.parseInt(value);
+          ms0.sizeY = Integer.parseInt(value);
         }
         catch (NumberFormatException e) {
           LOGGER.trace("Failed to parse '" + name + "'", e);
@@ -465,14 +469,14 @@ public class ImarisHDFReader extends FormatReader {
       }
       else if (name.equals("Z") || name.equals("ImageSizeZ")) {
         try {
-          core[0].sizeZ = Integer.parseInt(value);
+          ms0.sizeZ = Integer.parseInt(value);
         }
         catch (NumberFormatException e) {
           LOGGER.trace("Failed to parse '" + name + "'", e);
         }
       }
       else if (name.equals("FileTimePoints")) {
-        core[0].sizeT = Integer.parseInt(value);
+        ms0.sizeT = Integer.parseInt(value);
       }
       else if (name.equals("RecordingEntrySampleSpacing")) {
         pixelSizeX = Double.parseDouble(value);
@@ -508,7 +512,7 @@ public class ImarisHDFReader extends FormatReader {
         int underscore = attr.indexOf("_") + 1;
         int cIndex = Integer.parseInt(attr.substring(underscore,
           attr.indexOf("/", underscore)));
-        if (cIndex == getSizeC()) core[0].sizeC++;
+        if (cIndex == getSizeC()) ms0.sizeC++;
 
         if (name.equals("Gain")) gain.add(value);
         else if (name.equals("LSMEmissionWavelength")) emWave.add(value);

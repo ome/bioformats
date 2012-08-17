@@ -213,32 +213,35 @@ public class MNGReader extends BIFormatReader {
       throw new FormatException("Pixel data not found.");
     }
 
-    core = new CoreMetadata[keys.length];
+    int seriesCount = keys.length;
+    core.clear();
+    core.ensureCapacity(seriesCount);
 
     seriesInfo.clear();
-    for (int i=0; i<keys.length; i++) {
-      core[i] = new CoreMetadata();
+    for (int i=0; i<seriesCount; i++) {
+      CoreMetadata ms = new CoreMetadata();
+      core.add(ms);
       String[] tokens = keys[i].split("-");
-      core[i].sizeX = Integer.parseInt(tokens[0]);
-      core[i].sizeY = Integer.parseInt(tokens[1]);
-      core[i].sizeC = Integer.parseInt(tokens[2]);
-      core[i].pixelType = Integer.parseInt(tokens[3]);
-      core[i].rgb = core[i].sizeC > 1;
-      core[i].sizeZ = 1;
-      core[i].dimensionOrder = "XYCZT";
-      core[i].interleaved = false;
-      core[i].metadataComplete = true;
-      core[i].indexed = false;
-      core[i].littleEndian = false;
-      core[i].falseColor = false;
+      ms.sizeX = Integer.parseInt(tokens[0]);
+      ms.sizeY = Integer.parseInt(tokens[1]);
+      ms.sizeC = Integer.parseInt(tokens[2]);
+      ms.pixelType = Integer.parseInt(tokens[3]);
+      ms.rgb = ms.sizeC > 1;
+      ms.sizeZ = 1;
+      ms.dimensionOrder = "XYCZT";
+      ms.interleaved = false;
+      ms.metadataComplete = true;
+      ms.indexed = false;
+      ms.littleEndian = false;
+      ms.falseColor = false;
 
       SeriesInfo inf = new SeriesInfo();
       inf.offsets = seriesOffsets.get(keys[i]);
       inf.lengths = seriesLengths.get(keys[i]);
       seriesInfo.add(inf);
 
-      core[i].imageCount = inf.offsets.size();
-      core[i].sizeT = core[i].imageCount;
+      ms.imageCount = inf.offsets.size();
+      ms.sizeT = ms.imageCount;
     }
 
     MetadataStore store = makeFilterMetadata();

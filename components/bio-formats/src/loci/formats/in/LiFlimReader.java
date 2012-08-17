@@ -368,47 +368,52 @@ public class LiFlimReader extends FormatReader {
     seriesCount = sizeP * sizeF;
     backgroundSeriesCount = p * f;
 
+    int realSeriesCount = core.size();
     if (backgroundDatatype != null) {
-      core = new CoreMetadata[seriesCount + backgroundSeriesCount];
+      realSeriesCount = seriesCount + backgroundSeriesCount;
     }
     else if (seriesCount > 1) {
-      core = new CoreMetadata[seriesCount];
+      realSeriesCount = seriesCount;
     }
-    for (int i=0; i<getSeriesCount(); i++) {
-      core[i] = new CoreMetadata();
+    core.clear();
+    core.ensureCapacity(realSeriesCount);
+    for (int i=0; i<realSeriesCount; i++) {
+      core.add(new CoreMetadata());
     }
 
     // populate core metadata
     for (int i=0; i<seriesCount; i++) {
-      core[i].sizeX = Integer.parseInt(xLen);
-      core[i].sizeY = Integer.parseInt(yLen);
-      core[i].sizeZ = Integer.parseInt(zLen);
-      core[i].sizeC = Integer.parseInt(channels);
-      core[i].sizeT = Integer.parseInt(timestamps);
-      core[i].imageCount = getSizeZ() * getSizeT();
-      core[i].rgb = getSizeC() > 1;
-      core[i].indexed = false;
-      core[i].dimensionOrder = "XYCZT";
-      core[i].pixelType = getPixelTypeFromString(datatype);
-      core[i].littleEndian = true;
-      core[i].interleaved = true;
-      core[i].falseColor = false;
+      CoreMetadata ms = core.get(i);
+      ms.sizeX = Integer.parseInt(xLen);
+      ms.sizeY = Integer.parseInt(yLen);
+      ms.sizeZ = Integer.parseInt(zLen);
+      ms.sizeC = Integer.parseInt(channels);
+      ms.sizeT = Integer.parseInt(timestamps);
+      ms.imageCount = getSizeZ() * getSizeT();
+      ms.rgb = getSizeC() > 1;
+      ms.indexed = false;
+      ms.dimensionOrder = "XYCZT";
+      ms.pixelType = getPixelTypeFromString(datatype);
+      ms.littleEndian = true;
+      ms.interleaved = true;
+      ms.falseColor = false;
     }
 
-    for (int i=seriesCount; i<core.length; i++) {
-      core[i].sizeX = Integer.parseInt(backgroundX);
-      core[i].sizeY = Integer.parseInt(backgroundY);
-      core[i].sizeZ = Integer.parseInt(backgroundZ);
-      core[i].sizeC = Integer.parseInt(backgroundC);
-      core[i].sizeT = Integer.parseInt(backgroundT);
-      core[i].imageCount = core[i].sizeZ * core[i].sizeT;
-      core[i].rgb = core[i].sizeC > 1;
-      core[i].indexed = false;
-      core[i].dimensionOrder = "XYCZT";
-      core[i].pixelType = getPixelTypeFromString(backgroundDatatype);
-      core[i].littleEndian = true;
-      core[i].interleaved = true;
-      core[i].falseColor = false;
+    for (int i=seriesCount; i<core.size(); i++) {
+      CoreMetadata ms = core.get(i);
+      ms.sizeX = Integer.parseInt(backgroundX);
+      ms.sizeY = Integer.parseInt(backgroundY);
+      ms.sizeZ = Integer.parseInt(backgroundZ);
+      ms.sizeC = Integer.parseInt(backgroundC);
+      ms.sizeT = Integer.parseInt(backgroundT);
+      ms.imageCount = ms.sizeZ * ms.sizeT;
+      ms.rgb = ms.sizeC > 1;
+      ms.indexed = false;
+      ms.dimensionOrder = "XYCZT";
+      ms.pixelType = getPixelTypeFromString(backgroundDatatype);
+      ms.littleEndian = true;
+      ms.interleaved = true;
+      ms.falseColor = false;
     }
   }
 

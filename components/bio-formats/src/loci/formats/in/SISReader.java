@@ -34,6 +34,7 @@ import loci.common.IniList;
 import loci.common.IniParser;
 import loci.common.IniTable;
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
@@ -108,6 +109,7 @@ public class SISReader extends BaseTiffReader {
     super.initStandardMetadata();
 
     IFD ifd = ifds.get(0);
+    CoreMetadata m = core.get(0);
 
     String iniMetadata = ifd.getIFDTextValue(SIS_INI_TAG);
     if (iniMetadata != null) {
@@ -121,9 +123,9 @@ public class SISReader extends BaseTiffReader {
       int t = Integer.parseInt(dimensions.get("Time"));
 
       if (z * c * t == ifds.size()) {
-        core[0].sizeZ = z;
-        core[0].sizeT = t;
-        core[0].sizeC *= c;
+        m.sizeZ = z;
+        m.sizeT = t;
+        m.sizeC *= c;
       }
 
       // TODO : parse more metadata from the INI tables

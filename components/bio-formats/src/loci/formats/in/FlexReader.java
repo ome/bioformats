@@ -850,13 +850,13 @@ public class FlexReader extends FormatReader {
 
     // determine pixel type
     if (file.factors[max] > 256) {
-      core[0].pixelType = FormatTools.UINT32;
+      core.get(0).pixelType = FormatTools.UINT32;
     }
     else if (file.factors[max] > 1) {
-      core[0].pixelType = FormatTools.UINT16;
+      core.get(0).pixelType = FormatTools.UINT16;
     }
-    for (int i=1; i<core.length; i++) {
-      core[i].pixelType = getPixelType();
+    for (int i=1; i<core.size(); i++) {
+      core.get(i).pixelType = getPixelType();
     }
 
     if (!firstFile) {
@@ -871,6 +871,7 @@ public class FlexReader extends FormatReader {
   {
     LOGGER.info("Populating core metadata for well row " + wellRow +
       ", column " + wellCol);
+    CoreMetadata m = core.get(0);
     if (getSizeC() == 0 && getSizeT() == 0) {
       if (fieldCount == 0 || (imageNames.size() % fieldCount) != 0) {
         fieldCount = 1;
@@ -890,18 +891,18 @@ public class FlexReader extends FormatReader {
         if (!uniqueChannels.contains(channel)) uniqueChannels.add(channel);
       }
       if (fieldCount == 0) fieldCount = 1;
-      core[0].sizeC = (int) Math.max(uniqueChannels.size(), 1);
-      if (getSizeZ() == 0) core[0].sizeZ = 1;
-      core[0].sizeT =
+      m.sizeC = (int) Math.max(uniqueChannels.size(), 1);
+      if (getSizeZ() == 0) m.sizeZ = 1;
+      m.sizeT =
         imageNames.size() / (fieldCount * getSizeC() * getSizeZ());
     }
 
     if (getSizeC() == 0) {
-      core[0].sizeC = (int) Math.max(channelNames.length, 1);
+      m.sizeC = (int) Math.max(channelNames.length, 1);
     }
 
-    if (getSizeZ() == 0) core[0].sizeZ = 1;
-    if (getSizeT() == 0) core[0].sizeT = 1;
+    if (getSizeZ() == 0) m.sizeZ = 1;
+    if (getSizeT() == 0) m.sizeT = 1;
     if (plateCount == 0) plateCount = 1;
     if (wellCount == 0) wellCount = 1;
     if (fieldCount == 0) fieldCount = 1;
@@ -916,26 +917,26 @@ public class FlexReader extends FormatReader {
       nPlanes = file.offsets.length;
     }
 
-    core[0].imageCount = getSizeZ() * getSizeC() * getSizeT();
+    m.imageCount = getSizeZ() * getSizeC() * getSizeT();
     if (getImageCount() * fieldCount != nPlanes) {
-      core[0].imageCount = nPlanes / fieldCount;
-      core[0].sizeZ = 1;
-      core[0].sizeT = nPlanes / fieldCount;
+      m.imageCount = nPlanes / fieldCount;
+      m.sizeZ = 1;
+      m.sizeT = nPlanes / fieldCount;
       if (getSizeT() % getSizeC() == 0) {
-        core[0].sizeT /= getSizeC();
+        m.sizeT /= getSizeC();
       }
       else {
-        core[0].sizeC = 1;
+        m.sizeC = 1;
       }
     }
-    core[0].sizeX = (int) ifd.getImageWidth();
-    core[0].sizeY = (int) ifd.getImageLength();
-    core[0].dimensionOrder = "XYCZT";
-    core[0].rgb = false;
-    core[0].interleaved = false;
-    core[0].indexed = false;
-    core[0].littleEndian = ifd.isLittleEndian();
-    core[0].pixelType = ifd.getPixelType();
+    m.sizeX = (int) ifd.getImageWidth();
+    m.sizeY = (int) ifd.getImageLength();
+    m.dimensionOrder = "XYCZT";
+    m.rgb = false;
+    m.interleaved = false;
+    m.indexed = false;
+    m.littleEndian = ifd.isLittleEndian();
+    m.pixelType = ifd.getPixelType();
 
     if (fieldCount == 1) {
       fieldCount *= nFiles;
@@ -943,9 +944,11 @@ public class FlexReader extends FormatReader {
 
     int seriesCount = plateCount * wellCount * fieldCount;
     if (seriesCount > 1) {
-      CoreMetadata oldCore = core[0];
-      core = new CoreMetadata[seriesCount];
-      Arrays.fill(core, oldCore);
+      core.clear();
+      core.ensureCapacity(seriesCount);
+      for (int i = 1; i < seriesCount; i++) {
+        core.add(m);
+      }
     }
   }
 
@@ -1634,7 +1637,7 @@ public class FlexReader extends FormatReader {
       else if (qName.equals("Plane")) {
         parentQName = qName;
         int planeNo = Integer.parseInt(attributes.getValue("No"));
-        if (planeNo > getSizeZ() && populateCore) core[0].sizeZ++;
+        if (planeNo > getSizeZ() && populateCore) core.get(0).sizeZ++;
       }
       else if (qName.equals("WellShape")) {
         parentQName = qName;

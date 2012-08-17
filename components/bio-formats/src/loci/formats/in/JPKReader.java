@@ -82,32 +82,35 @@ public class JPKReader extends BaseTiffReader {
 
     ifds = tiffParser.getIFDs();
 
-    core = new CoreMetadata[ifds.size() > 1 ? 2 : 1];
-
     // repopulate core metadata
 
-    for (int s=0; s<core.length; s++) {
-      core[s] = new CoreMetadata();
+    int seriesCount = ifds.size() > 1 ? 2 : 1;
+    core.clear();
+    core.ensureCapacity(seriesCount);
+
+    for (int s=0; s<seriesCount; s++) {
+      CoreMetadata ms = new CoreMetadata();
+      core.add(ms);
       IFD ifd = ifds.get(s);
       tiffParser.fillInIFD(ifd);
       PhotoInterp p = ifd.getPhotometricInterpretation();
       int samples = ifd.getSamplesPerPixel();
-      core[s].rgb = samples > 1 || p == PhotoInterp.RGB;
+      ms.rgb = samples > 1 || p == PhotoInterp.RGB;
 
-      core[s].sizeX = (int) ifd.getImageWidth();
-      core[s].sizeY = (int) ifd.getImageLength();
-      core[s].sizeZ = 1;
-      core[s].sizeT = s == 0 ? 1 : ifds.size() - 1;
-      core[s].sizeC = core[s].rgb ? samples : 1;
-      core[s].littleEndian = ifd.isLittleEndian();
-      core[s].indexed = p == PhotoInterp.RGB_PALETTE &&
+      ms.sizeX = (int) ifd.getImageWidth();
+      ms.sizeY = (int) ifd.getImageLength();
+      ms.sizeZ = 1;
+      ms.sizeT = s == 0 ? 1 : ifds.size() - 1;
+      ms.sizeC = ms.rgb ? samples : 1;
+      ms.littleEndian = ifd.isLittleEndian();
+      ms.indexed = p == PhotoInterp.RGB_PALETTE &&
         (get8BitLookupTable() != null || get16BitLookupTable() != null);
-      core[s].imageCount = s == 0 ? 1 : ifds.size() - 1;
-      core[s].pixelType = ifd.getPixelType();
-      core[s].metadataComplete = true;
-      core[s].interleaved = false;
-      core[s].falseColor = false;
-      core[s].dimensionOrder = "XYCZT";
+      ms.imageCount = s == 0 ? 1 : ifds.size() - 1;
+      ms.pixelType = ifd.getPixelType();
+      ms.metadataComplete = true;
+      ms.interleaved = false;
+      ms.falseColor = false;
+      ms.dimensionOrder = "XYCZT";
 
       if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
         setSeries(s);

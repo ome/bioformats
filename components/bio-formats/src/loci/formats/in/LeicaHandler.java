@@ -26,6 +26,7 @@
 package loci.formats.in;
 
 import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Stack;
 import java.util.StringTokenizer;
@@ -107,7 +108,7 @@ public class LeicaHandler extends BaseHandler {
   private boolean linkedInstruments = false;
   private int detectorChannel = 0;
 
-  private Vector<CoreMetadata> core;
+  private ArrayList<CoreMetadata> core;
 
   private boolean canParse = true;
   private long firstStamp = 0;
@@ -129,7 +130,7 @@ public class LeicaHandler extends BaseHandler {
     globalMetadata = new Hashtable();
     lutNames = new Vector<String>();
     this.store = store;
-    core = new Vector<CoreMetadata>();
+    core = new ArrayList<CoreMetadata>();
     detectorIndices = new Vector<Integer>();
     xPos = new Vector<Double>();
     yPos = new Vector<Double>();
@@ -140,7 +141,7 @@ public class LeicaHandler extends BaseHandler {
 
   // -- LeicaHandler API methods --
 
-  public Vector<CoreMetadata> getCoreMetadata() { return core; }
+  public ArrayList<CoreMetadata> getCoreMetadata() { return core; }
 
   public Hashtable getGlobalMetadata() { return globalMetadata; }
 
@@ -197,7 +198,7 @@ public class LeicaHandler extends BaseHandler {
           }
         }
 
-        core.setElementAt(coreMeta, numDatasets);
+        core.set(numDatasets, coreMeta);
       }
 
       if (level != MetadataLevel.MINIMUM) {
@@ -1004,7 +1005,7 @@ public class LeicaHandler extends BaseHandler {
 
     CoreMetadata coreMeta = core.get(series);
     coreMeta.seriesMetadata = h;
-    core.setElementAt(coreMeta, series);
+    core.set(series, coreMeta);
   }
 
   // -- Helper class --

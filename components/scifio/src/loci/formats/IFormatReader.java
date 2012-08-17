@@ -38,6 +38,7 @@ package loci.formats;
 
 import java.io.IOException;
 import java.util.Hashtable;
+import java.util.List;
 
 import loci.common.RandomAccessInputStream;
 import loci.formats.meta.MetadataStore;
@@ -439,7 +440,7 @@ public interface IFormatReader extends IFormatHandler, IMetadataConfigurable {
   Hashtable<String, Object> getSeriesMetadata();
 
   /** Obtains the core metadata values for the current file. */
-  CoreMetadata[] getCoreMetadata();
+  List<CoreMetadata> getCoreMetadata();
 
   /**
    * Specifies whether ugly metadata (entries with unprintable characters,

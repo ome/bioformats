@@ -44,6 +44,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
@@ -110,30 +111,31 @@ public abstract class ImageIOReader extends BIFormatReader {
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
+    CoreMetadata m = core.get(0);
 
     LOGGER.info("Populating metadata");
-    core[0].imageCount = 1;
+    m.imageCount = 1;
     RandomAccessInputStream ras = new RandomAccessInputStream(currentId);
     DataInputStream dis = new DataInputStream(ras);
     img = ImageIO.read(dis);
     dis.close();
     if (img == null) throw new FormatException("Invalid image stream");
 
-    core[0].sizeX = img.getWidth();
-    core[0].sizeY = img.getHeight();
+    m.sizeX = img.getWidth();
+    m.sizeY = img.getHeight();
 
-    core[0].rgb = img.getRaster().getNumBands() > 1;
+    m.rgb = img.getRaster().getNumBands() > 1;
 
-    core[0].sizeZ = 1;
-    core[0].sizeC = isRGB() ? 3 : 1;
-    core[0].sizeT = 1;
-    core[0].dimensionOrder = "XYCZT";
-    core[0].pixelType = AWTImageTools.getPixelType(img);
-    core[0].interleaved = false;
-    core[0].littleEndian = false;
-    core[0].metadataComplete = true;
-    core[0].indexed = false;
-    core[0].falseColor = false;
+    m.sizeZ = 1;
+    m.sizeC = isRGB() ? 3 : 1;
+    m.sizeT = 1;
+    m.dimensionOrder = "XYCZT";
+    m.pixelType = AWTImageTools.getPixelType(img);
+    m.interleaved = false;
+    m.littleEndian = false;
+    m.metadataComplete = true;
+    m.indexed = false;
+    m.falseColor = false;
 
     // populate the metadata store
     MetadataStore store = makeFilterMetadata();

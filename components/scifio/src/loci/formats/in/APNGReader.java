@@ -50,6 +50,7 @@ import javax.imageio.ImageIO;
 
 import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
+import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
@@ -229,6 +230,7 @@ public class APNGReader extends BIFormatReader {
   protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
+    CoreMetadata m = core.get(0);
 
     // check that this is a valid PNG file
     byte[] signature = new byte[8];
@@ -262,7 +264,7 @@ public class APNGReader extends BIFormatReader {
 
       if (type.equals("acTL")) {
         // APNG-specific chunk
-        core[0].imageCount = in.readInt();
+        m.imageCount = in.readInt();
         int loop = in.readInt();
         addGlobalMeta("Loop count", loop);
       }
@@ -282,25 +284,25 @@ public class APNGReader extends BIFormatReader {
       }
     }
 
-    if (core[0].imageCount == 0) core[0].imageCount = 1;
-    core[0].sizeZ = 1;
-    core[0].sizeT = getImageCount();
+    if (m.imageCount == 0) m.imageCount = 1;
+    m.sizeZ = 1;
+    m.sizeT = getImageCount();
 
-    core[0].dimensionOrder = "XYCTZ";
-    core[0].interleaved = false;
+    m.dimensionOrder = "XYCTZ";
+    m.interleaved = false;
 
     RandomAccessInputStream ras = new RandomAccessInputStream(currentId);
     DataInputStream dis = new DataInputStream(ras);
     BufferedImage img = ImageIO.read(dis);
     dis.close();
 
-    core[0].sizeX = img.getWidth();
-    core[0].sizeY = img.getHeight();
-    core[0].rgb = img.getRaster().getNumBands() > 1;
-    core[0].sizeC = img.getRaster().getNumBands();
-    core[0].pixelType = AWTImageTools.getPixelType(img);
-    core[0].indexed = img.getColorModel() instanceof IndexColorModel;
-    core[0].falseColor = false;
+    m.sizeX = img.getWidth();
+    m.sizeY = img.getHeight();
+    m.rgb = img.getRaster().getNumBands() > 1;
+    m.sizeC = img.getRaster().getNumBands();
+    m.pixelType = AWTImageTools.getPixelType(img);
+    m.indexed = img.getColorModel() instanceof IndexColorModel;
+    m.falseColor = false;
 
     if (isIndexed()) {
       lut = new byte[3][256];
