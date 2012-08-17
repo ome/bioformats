@@ -136,14 +136,31 @@ public class LeicaSCNReader extends BaseTiffReader {
     return isThisType;
   }
 
+    private int imageIFD(int no) {
+      int s = getSeries();
+      LeicaSCNHandler.ImageCollection c = handler.collectionMap.get(s);
+      LeicaSCNHandler.Image i = handler.imageMap.get(s);
+
+      int[] dims = FormatTools.getZCTCoords(core[s].dimensionOrder, core[s].sizeZ, core[s].imageCount/(core[s].sizeZ * core[s].sizeT), core[s].sizeT, core[s].imageCount, no);
+      int dz = dims[0];
+      int dc = dims[1];
+      int dr = getSeries() - i.imageNumStart;
+      int ifd = i.pixels.dimIFD[dz][dc][dr];
+
+      return ifd;
+    }
+
+
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
       throws FormatException, IOException
     {
+      int ifd = imageIFD(no);
+
       FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
-      tiffParser.getSamples(ifds.get(handler.IFDMap.get(getSeries())), buf, x, y, w, h);
+      tiffParser.getSamples(ifds.get(ifd), buf, x, y, w, h);
       return buf;
     }
 
@@ -174,7 +191,7 @@ public class LeicaSCNReader extends BaseTiffReader {
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
     try {
-      return (int) ifds.get(handler.IFDMap.get(getSeries())).getTileWidth();
+      return (int) ifds.get(imageIFD(0)).getTileWidth();
     }
     catch (FormatException e) {
       LOGGER.debug("", e);
@@ -186,7 +203,7 @@ public class LeicaSCNReader extends BaseTiffReader {
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
     try {
-      return (int) ifds.get(handler.IFDMap.get(getSeries())).getTileLength();
+      return (int) ifds.get(imageIFD(0)).getTileLength();
     }
     catch (FormatException e) {
       LOGGER.debug("", e);
@@ -205,7 +222,7 @@ public class LeicaSCNReader extends BaseTiffReader {
 
     // repopulate core metadata
     IFD ifd = ifds.get(handler.IFDMap.get(s));
-    PhotoInterp p = ifd.getPhotometricInterpretation();
+    PhotoInterp pi = ifd.getPhotometricInterpretation();
     int samples = ifd.getSamplesPerPixel();
     int r = s-i.imageNumStart; // subresolution
 
@@ -213,7 +230,7 @@ public class LeicaSCNReader extends BaseTiffReader {
       core[s].resolutionCount = i.pixels.sizeR;
     }
 
-    core[s].rgb = samples > 1 || p == PhotoInterp.RGB;
+    core[s].rgb = samples > 1 || pi == PhotoInterp.RGB;
     core[s].sizeX = (int) i.pixels.dimSizeX[0][0][r];
     core[s].sizeY = (int) i.pixels.dimSizeY[0][0][r];
     core[s].sizeZ = (int) i.pixels.sizeZ;
@@ -226,7 +243,7 @@ public class LeicaSCNReader extends BaseTiffReader {
 
     core[s].orderCertain = true;
     core[s].littleEndian = ifd.isLittleEndian();
-    core[s].indexed = (p == PhotoInterp.RGB_PALETTE &&
+    core[s].indexed = (pi == PhotoInterp.RGB_PALETTE &&
         (get8BitLookupTable() != null || get16BitLookupTable() != null));
     core[s].imageCount = i.pixels.sizeZ * i.pixels.sizeC;
     core[s].pixelType = ifd.getPixelType();
@@ -390,7 +407,7 @@ class LeicaSCNHandler extends DefaultHandler {
   public ArrayList<LeicaSCNHandler.ImageCollection> collections;
   public LeicaSCNHandler.ImageCollection currentCollection;
   public LeicaSCNHandler.Image currentImage;
-  public int imageIndex;
+  public int seriesIndex;
   public ArrayList<Integer> IFDMap = new ArrayList<Integer>();
   public ArrayList<ImageCollection> collectionMap = new ArrayList<ImageCollection>();
   public ArrayList<Image> imageMap = new ArrayList<Image>();
@@ -432,9 +449,9 @@ class LeicaSCNHandler extends DefaultHandler {
       currentCollection = null;
     }
     else if (qName.equals("image")) {
-      currentImage.imageNumStart = imageIndex;
-      imageIndex += currentImage.pixels.sizeR;
-      currentImage.imageNumEnd = imageIndex - 1;
+      currentImage.imageNumStart = seriesIndex;
+      seriesIndex += currentImage.pixels.sizeR;
+      currentImage.imageNumEnd = seriesIndex - 1;
       currentImage = null;
     }
     else if (qName.equals("creationDate")) {
@@ -494,7 +511,7 @@ class LeicaSCNHandler extends DefaultHandler {
       }
       valid = true;
       collections = new ArrayList<LeicaSCNHandler.ImageCollection>();
-      imageIndex = 0;
+      seriesIndex = 0;
     }
 
     if (valid == false)
@@ -589,7 +606,7 @@ class LeicaSCNHandler extends DefaultHandler {
   // -- Helper classes and functions --
 
   int count() {
-    return imageIndex;
+    return seriesIndex;
   }
 
   public class ImageCollection
@@ -689,7 +706,7 @@ class LeicaSCNHandler extends DefaultHandler {
     int lastIFD;
     long dimSizeX[][][]; // X size for [ZCR]
     long dimSizeY[][][]; // Y size for [ZCR]
-    long dimIFD[][][];   // Corresponding IFD for [ZCR]
+    int dimIFD[][][];   // Corresponding IFD for [ZCR]
 
     Pixels(Attributes attrs) {
       String s;
@@ -723,7 +740,7 @@ class LeicaSCNHandler extends DefaultHandler {
       // Set up storage all dimensions.
       dimSizeX = new long[sizeZ][sizeC][sizeR];
       dimSizeY = new long[sizeZ][sizeC][sizeR];
-      dimIFD = new long[sizeZ][sizeC][sizeR];
+      dimIFD = new int[sizeZ][sizeC][sizeR];
     }
   }
 
