@@ -133,26 +133,31 @@ public class SVSReader extends BaseTiffReader {
   public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
     throws FormatException, IOException
   {
-    if (getSeriesCount() == 1) {
+    if (core.length == 1) {
       return super.openBytes(no, buf, x, y, w, h);
     }
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
-    tiffParser.getSamples(ifds.get(series), buf, x, y, w, h);
+    tiffParser.getSamples(ifds.get(getCoreIndex()), buf, x, y, w, h);
     return buf;
   }
 
   /* @see loci.formats.IFormatReader#openThumbBytes(int) */
   public byte[] openThumbBytes(int no) throws FormatException, IOException {
-    if (getSeriesCount() == 1 || getSeries() >= getSeriesCount() - 2) {
+    if (core.length == 1 || getSeries() >= getSeriesCount() - 2) {
       return super.openThumbBytes(no);
     }
 
     int smallestSeries = getSeriesCount() - 3;
     if (smallestSeries >= 0) {
       int thisSeries = getSeries();
+      int resolution = getResolution();
       setSeries(smallestSeries);
+      if (!hasFlattenedResolutions()) {
+        setResolution(1);
+      }
       byte[] thumb = FormatTools.openThumbBytes(this, no);
       setSeries(thisSeries);
+      setResolution(resolution);
       return thumb;
     }
     return super.openThumbBytes(no);
@@ -171,7 +176,7 @@ public class SVSReader extends BaseTiffReader {
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
     try {
-      return (int) ifds.get(getSeries()).getTileWidth();
+      return (int) ifds.get(getCoreIndex()).getTileWidth();
     }
     catch (FormatException e) {
       LOGGER.debug("", e);
@@ -183,7 +188,7 @@ public class SVSReader extends BaseTiffReader {
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
     try {
-      return (int) ifds.get(getSeries()).getTileLength();
+      return (int) ifds.get(getCoreIndex()).getTileLength();
     }
     catch (FormatException e) {
       LOGGER.debug("", e);
