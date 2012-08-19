@@ -602,8 +602,10 @@ public abstract class ReaderWrapper implements IFormatReader {
 
   /** Creates a copy of the core metadata matching to the given reader state. */
   protected CoreMetadata[] copyCoreMetadata(IFormatReader r) {
-    CoreMetadata[] core = new CoreMetadata[r.getSeriesCount()];
-    for (int s=0; s<core.length; s++) core[s] = new CoreMetadata(r, s);
+    CoreMetadata[] core = new CoreMetadata[r.getCoreMetadata().length];
+    for (int s=0; s<core.length; s++) {
+      core[s] = new CoreMetadata(r, s);
+    }
     return core;
   }
 
