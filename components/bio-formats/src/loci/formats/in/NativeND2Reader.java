@@ -417,7 +417,6 @@ public class NativeND2Reader extends FormatReader {
         if (skip <= 0) skip += lenOne * 2;
         // Image calibration for newer nd2 files
 
-    
         
         if (blockType.endsWith("Calibra")) {
           long veryStart = in.getFilePointer();
@@ -1774,7 +1773,6 @@ private void populateMetadataStore(ND2Handler handler) throws FormatException
     readPlane(s, x, y, w, h, scanlinePad, buf);
     s.close();
   }
-  
   
 
 }
