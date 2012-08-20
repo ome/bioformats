@@ -289,8 +289,9 @@ public abstract class BaseZeissReader extends FormatReader {
       if (timestamps.size() > 0) {
         String timestamp = timestamps.get(new Integer(0));
         firstStamp = parseTimestamp(timestamp);
-        String date =
-            DateTools.convertDate((long) (firstStamp / 1600), DateTools.ZVI);
+        int format = timestamps.size() == 1 ? DateTools.ALT_ZVI :
+          DateTools.ZVI;
+        String date = DateTools.convertDate((long) (firstStamp / 1600), format);
         if (date != null) {
           store.setImageAcquisitionDate(new Timestamp(date), i);
         }
@@ -992,10 +993,8 @@ public abstract class BaseZeissReader extends FormatReader {
           imageDescription = value;
         }
         else if (key.startsWith("Acquisition Date")) {
-          if (timepoint > 0) {
-            timestamps.put(new Integer(timepoint - 1), value);
-            addGlobalMeta("Timestamp " + timepoint, value);
-          }
+          timestamps.put(new Integer(Math.max(0, timepoint - 1)), value);
+          addGlobalMeta("Timestamp " + timepoint, value);
           timepoint++;
         }
       }
