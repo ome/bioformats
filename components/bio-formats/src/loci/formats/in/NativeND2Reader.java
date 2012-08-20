@@ -335,8 +335,6 @@ public class NativeND2Reader extends FormatReader {
       in.order(true);
 
       // assemble offsets to each block
-      
-    
 
       ArrayList<String> imageNames = new ArrayList<String>();
       ArrayList<Long> imageOffsets = new ArrayList<Long>();
@@ -380,17 +378,17 @@ public class NativeND2Reader extends FormatReader {
         
        /**********************************************************************************************************************************************/
         
-        Long helper = in.getFilePointer(); 					// Remember starting position
+        Long helper = in.getFilePointer(); 			// Remember starting position
      
-        int nameLength = in.readInt();   					// Length of the block name
-        Long dataLength = in.readLong(); 					// Length of the data
-        String nameAtri = in.readString(nameLength).trim(); // Read the name
-        Long stop = helper + (dataLength + nameLength); 	// Where this block ends
+        int nameLength  = in.readInt();   			// Length of the block name
+        Long dataLength = in.readLong(); 			// Length of the data
+        String nameAtri = in.readString(nameLength).trim(); 	// Read the name
+        Long stop 	= helper + (dataLength + nameLength); 	// Where this block ends
         
         
         boolean seq = false; // Only 1 MetadataSeq is needed   
         	
-       // Send to iteration (we are interested only in xxxxLV - LV = light variant
+       // Send to iteration (we are interested only in xxxxLV - LV = light variant)
        if (  nameAtri.contains("MetadataLV") || nameAtri.contains("CalibrationLV") || (nameAtri.contains("MetadataSeqLV")&&!seq))
         iterateIn(in, stop);
        
@@ -415,8 +413,8 @@ public class NativeND2Reader extends FormatReader {
 
         int skip = len - 12 - lenOne * 2;
         if (skip <= 0) skip += lenOne * 2;
+        
         // Image calibration for newer nd2 files
-
         
         if (blockType.endsWith("Calibra")) {
           long veryStart = in.getFilePointer();
@@ -1106,7 +1104,6 @@ public class NativeND2Reader extends FormatReader {
           }
         }
       }
-
       
       populateMetadataStore(handler);
       return;
@@ -1365,106 +1362,104 @@ public class NativeND2Reader extends FormatReader {
 	  
 	  try{
 		  
-			  	while (in.getFilePointer() < stop)
-				{
+		while (in.getFilePointer() < stop)
+		{
 				
-		      	 int type 	 = in.read();  				 // @See switch
-		  		 int letters = in.read(); 				 // Letters in the Atribut name
-		      	 String name = in.readString(letters*2); // Atribut name
+		  int type 	 = in.read();  			// @See switch
+		  int letters 	 = in.read(); 		 	// Letters in the Atribut name
+		  String name 	 = in.readString(letters*2); 	// Atribut name
 		     	
-		      	 int numberOfItems; // Number of items in level (see level)
-		      	 Long off ;			// Offset to index (see level)
+		  int numberOfItems; // Number of items in level (see level)
+		  Long off ;			// Offset to index (see level)
 		  		   	
-		      	switch (type)
-		      	{
+		  switch (type)
+		  {
 		
-		      	   // Bool //
-			      	case (1): 
-			      		value = in.readBoolean();
-			      		break;
+		    	// Bool //
+			case (1): 
+			  value = in.readBoolean();
+			  break;
 			      		
-			      // int32 //		
-			      	case (2):
-			      		value = in.readInt();
-			      		break;
+			// int32 //		
+			case (2):
+			  value = in.readInt();
+			  break;
 			      
-			      // unsigned int32 //		
-			      	case (3):
-			      		value = in.readInt();
-			      		break;
+			// unsigned int32 //		
+			case (3):
+			 value = in.readInt();
+			 break;
 			      		
-			      // int64 //		
-			      	case (4):
-			      		value = in.readLong();
-			      		break;
+			// int64 //		
+			case (4):
+			  value = in.readLong();
+			  break;
 			      		
-			     // unsigned int64 // 		
-			      	case (5):
-			      		value = in.readLong();
-			      		break;
+			// unsigned int64 // 		
+			case (5):
+			  value = in.readLong();
+			  break;
 			     
-			     // double // 		
-			      	case (6):
-			      		value = in.readDouble();
-			      		break;
+			// double // 		
+			case (6):
+			  value = in.readDouble();
+			  break;
 			      		
-			    // VoidPinter //   		
-			      	case (7): 
-			      		value = in.readLong();
-			      		break;
+			// VoidPinter //   		
+			case (7): 
+			  value = in.readLong();
+			  break;
 			      		
-			   // String //
-			      	case (8):      	
-			      		//in.read(); // size of string
-			      		value = in.readCString(); 
-			      		break;
+			// String //
+			case (8):      	
+			  //in.read(); // size of string
+			  value = in.readCString(); 
+			  break;
 			   
-			   // ByteArray //
-			      	case (9):       		 
-			      		byte[] data = new byte[(int)in.readLong()];
-			      		in.read(data);
-			      		value = data.toString(); // todo
-			      		break;
+			// ByteArray //
+			case (9):       		 
+			  byte[] data = new byte[(int)in.readLong()];
+			  in.read(data);
+			  value = data.toString(); // todo
+			  break;
 			  
-			   // Deprecated //
-			      	case (10): 
+			// Deprecated //
+			case (10): 
 			      		
-			      		/* ***** Its like LEVEL but offset is pointing absolutely not relatively ***** */
-						numberOfItems = in.readInt(); 							  // number of level atributes  	
-			      		off  = in.readLong() - in.getFilePointer()-4-2-letters*2; // offset to index (absolut number - current position - numberOfItems(4B) - type (1B) - nameLength (1B) - name
-			       		value = "LEVEL";
+			  /* ***** Its like LEVEL but offset is pointing absolutely not relatively ***** */
+			  numberOfItems = in.readInt(); 							  // number of level atributes  	
+			  off  = in.readLong() - in.getFilePointer()-4-2-letters*2; // offset to index (absolut number - current position - numberOfItems(4B) - type (1B) - nameLength (1B) - name
+			  value = "LEVEL";
 			       		
-			       		// Iterate
-			       		iterateIn(in,off + in.getFilePointer() ); // Last 4 bytes in level is some kind of point table   
+			 // Iterate
+			 iterateIn(in,off + in.getFilePointer() ); // Last 4 bytes in level is some kind of point table   
 			       		
-			       		in.seek(off + in.getFilePointer());
-			       		in.skipBytes(numberOfItems*8);
-			      		value = in.readLong();
-			      		break;
+			 in.seek(off + in.getFilePointer());
+			 in.skipBytes(numberOfItems*8);
+			 value = in.readLong();
+			 break;
 			  
-			    // LEVEL //    		
-			      	case (11):        
+			 // LEVEL //    		
+			 case (11):        
 			      		
-						numberOfItems = in.readInt(); // number of level attributes  	
-			      		off  = in.readLong(); 		  // offset to index
-			       		value = "LEVEL";
+			numberOfItems = in.readInt(); // number of level attributes  	
+			off  = in.readLong(); 	      // offset to index
+			value = "LEVEL";
 			       		
-			       		// Iterate
-			       		iterateIn(in,off + in.getFilePointer() ); // Last 4 bytes in level is some kind of point table   
+			// Iterate
+			iterateIn(in,off + in.getFilePointer() ); // Last 4 bytes in level is some kind of point table   
 			       		
-			       		in.seek(off + in.getFilePointer());
-			       		/* ***** Index is pointer. NumberofItemes*8B ***** */
-			       		in.skipBytes(numberOfItems*8);
-			      	break;
+			in.seek(off + in.getFilePointer());
+			/* ***** Index is pointer. NumberofItemes*8B ***** */
+			in.skipBytes(numberOfItems*8);
+			break;
 			      		
-			      	  default: // Shall not happen :-)
-			      		  continue;
+			default: // Shall not happen :-)
+			  continue;
 		      	}
 		      	
 		      	if (type != 11 && type != 10) 		// if not level add global meta
 		           	addGlobalMeta(name, value);
-		      	
-		      	
 	      	
 	      }
 		  																
@@ -1472,7 +1467,6 @@ public class NativeND2Reader extends FormatReader {
 	
 	  }
 	  catch (Exception e) {/*e.printStackTrace();*/}
-	  
 	 
 	  
 }
