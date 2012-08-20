@@ -94,14 +94,14 @@ public class NDPIReader extends BaseTiffReader {
       return buf;
     }
     else if (getSizeX() <= MAX_SIZE && getSizeY() <= MAX_SIZE) {
-      int ifdIndex = getIFDIndex(getSeries(), no);
+      int ifdIndex = getIFDIndex(getCoreIndex(), no);
       in = new RandomAccessInputStream(currentId);
       tiffParser = new TiffParser(in);
       tiffParser.setUse64BitOffsets(true);
       return tiffParser.getSamples(ifds.get(ifdIndex), buf, x, y, w, h);
     }
 
-    if (initializedSeries != getSeries() || initializedPlane != no) {
+    if (initializedSeries != getCoreIndex() || initializedPlane != no) {
       if (x == 0 && y == 0 && w == getOptimalTileWidth() &&
         h == getOptimalTileHeight())
       {
@@ -112,7 +112,7 @@ public class NDPIReader extends BaseTiffReader {
         // it looks like we'll only read one tile
         setupService(y, h, no);
       }
-      initializedSeries = getSeries();
+      initializedSeries = getCoreIndex();
       initializedPlane = no;
     }
     else if (decoder.getScanline(y) == null) {
@@ -140,7 +140,7 @@ public class NDPIReader extends BaseTiffReader {
     FormatTools.assertId(currentId, true, 1);
 
     int currentSeries = getSeries();
-    if (currentSeries >= pyramidHeight) {
+    if (getCoreIndex() >= pyramidHeight) {
       return super.openThumbBytes(no);
     }
 
@@ -148,7 +148,12 @@ public class NDPIReader extends BaseTiffReader {
     int thumbY = getThumbSizeY();
     int rgbCount = getRGBChannelCount();
 
-    setSeries(pyramidHeight - 1);
+    if (hasFlattenedResolutions()) {
+      setSeries(pyramidHeight - 1);
+    }
+    else {
+      setResolution(pyramidHeight - 1);
+    }
 
     byte[] thumb = null;
 
@@ -157,6 +162,7 @@ public class NDPIReader extends BaseTiffReader {
     {
       thumb = FormatTools.openThumbBytes(this, no);
       setSeries(currentSeries);
+      setResolution(0);
     }
     else {
       // find the smallest series with the same aspect ratio
@@ -349,7 +355,7 @@ public class NDPIReader extends BaseTiffReader {
   {
     decoder.close();
 
-    IFD ifd = ifds.get(getIFDIndex(getSeries(), z));
+    IFD ifd = ifds.get(getIFDIndex(getCoreIndex(), z));
 
     long offset = ifd.getStripOffsets()[0];
     int byteCount = (int) ifd.getStripByteCounts()[0];
