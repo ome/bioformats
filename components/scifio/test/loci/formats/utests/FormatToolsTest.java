@@ -92,7 +92,7 @@ public class FormatToolsTest {
   @Test
   public void testDefaultMinMaxUint32() {
     long[] lim = FormatTools.defaultMinMax(FormatTools.UINT32);
-    assertEquals(lim[0], -128);
+    assertEquals(lim[0], 0);
     assertEquals(lim[1], 4294967295L);
   }
 
