@@ -1045,4 +1045,43 @@ public final class FormatTools {
     output.close();
   }
 
+  public static long[] defaultMinMax(int pixelType) {
+    long min = 0 , max = 0;
+
+    switch (pixelType) {
+    case INT8:
+      min = Byte.MIN_VALUE;
+      max = Byte.MAX_VALUE;
+      break;
+    case INT16:
+      min = Short.MIN_VALUE;
+      max = Short.MAX_VALUE;
+      break;
+    case INT32:
+      min = Integer.MIN_VALUE;
+      max = Integer.MAX_VALUE;
+      break;
+    case UINT8:
+      min = 0;
+      max=(long) Math.pow(2, 8)-1;
+      break;
+    case UINT16:
+      min = 0;
+      max=(long) Math.pow(2, 16)-1;
+      break;
+    case UINT32:
+      min = 0;
+      max=(long) Math.pow(2, 32)-1;
+      break;
+    case FLOAT:
+    case DOUBLE:
+      throw new IllegalArgumentException("Float and Double do not have a default min/max");
+    default:
+      throw new IllegalArgumentException("Invalid pixel type");
+    }
+
+    long[] values = {min, max};
+    return values;
+  }
+
 }
