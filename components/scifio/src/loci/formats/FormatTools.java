@@ -1045,6 +1045,17 @@ public final class FormatTools {
     output.close();
   }
 
+  /**
+   * Get the default range for the specified pixel type.  Note that
+   * this is not necessarily the minimum and maximum value which may
+   * be stored, but the minimum and maximum which should be used for
+   * rendering.
+   *
+   * @param pixelType the pixel type.
+   * @returns an array containing the min and max as elements 0 and 1,
+   * respectively.
+   * @throws IOException if the pixel type is floating point or invalid.
+   */
   public static long[] defaultMinMax(int pixelType) {
     long min = 0 , max = 0;
 
