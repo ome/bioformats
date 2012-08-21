@@ -105,4 +105,10 @@
           <class name="loci.formats.utests.EightBitLosslessJPEG2000Test"/>
         </classes>
     </test>
+    <test name="FormatToolsTest">
+      <groups/>
+      <classes>
+        <class name="loci.formats.utests.FormatToolsTest"/>
+      </classes>
+    </test>
 </suite>
