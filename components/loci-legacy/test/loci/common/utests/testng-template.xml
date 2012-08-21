@@ -162,6 +162,11 @@
         </classes>
     </test>
     -->
+    <test name="LegacyAdapter">
+      <classes>
+        <class name="loci.legacy.utests.LegacyAdapterTest"/>
+      </classes>
+    </test>
     <test name="RandomAccessInputStream">
       <parameter name="provider" value="ByteArrayHandle"/>
       <classes>
