@@ -813,7 +813,12 @@ public abstract class FormatReader extends FormatHandler
     }
     int count = 0;
     for (int i=0; i<core.length;) {
-      i += core[i].resolutionCount;
+      if (core[i] != null) {
+        i += core[i].resolutionCount;
+      }
+      else {
+        i++;
+      }
       count++;
     }
     return count;
