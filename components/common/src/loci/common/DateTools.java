@@ -62,14 +62,12 @@ public final class DateTools {
   public static final int COBOL = 1;  // January 1, 1601
   public static final int MICROSOFT = 2; // December 30, 1899
   public static final int ZVI = 3;
-  public static final int ALT_ZVI = 4;
 
   /** Milliseconds until UNIX epoch. */
   public static final long UNIX_EPOCH = 0;
   public static final long COBOL_EPOCH = 11644473600000L;
   public static final long MICROSOFT_EPOCH = 2209143600000L;
   public static final long ZVI_EPOCH = 2921084975759000L;
-  public static final long ALT_ZVI_EPOCH = 2921084299161000L;
 
   /** ISO 8601 date format string. */
   public static final String ISO8601_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
@@ -126,9 +124,6 @@ public final class DateTools {
         break;
       case ZVI:
         ms -= ZVI_EPOCH;
-        break;
-      case ALT_ZVI:
-        ms -= ALT_ZVI_EPOCH;
         break;
     }
 
