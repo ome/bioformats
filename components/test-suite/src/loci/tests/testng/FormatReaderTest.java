@@ -1578,7 +1578,7 @@ public class FormatReaderTest {
       for (int i=0; i<resolutionReader.getSeriesCount() && success; i++) {
         resolutionReader.setSeries(i);
 
-        for (int r=0; r<resolutionReader.getResolutionCount(); r++) {
+        for (int r=0; r<resolutionReader.getResolutionCount() && success; r++) {
           resolutionReader.setResolution(r);
           config.setSeries(resolutionReader.getCoreIndex());
 
@@ -1730,7 +1730,7 @@ public class FormatReaderTest {
       for (int i=0; i<resolutionReader.getSeriesCount() && success; i++) {
         resolutionReader.setSeries(i);
 
-        for (int r=0; r<resolutionReader.getResolutionCount(); r++) {
+        for (int r=0; r<resolutionReader.getResolutionCount() && success; r++) {
           resolutionReader.setResolution(r);
           config.setSeries(resolutionReader.getCoreIndex());
 
@@ -1747,7 +1747,9 @@ public class FormatReaderTest {
           try {
             md5 = TestTools.md5(resolutionReader.openBytes(0, 0, 0, w, h));
           }
-          catch (Exception e) { }
+          catch (Exception e) {
+            LOGGER.warn("", e);
+          }
 
           if (md5 == null && expected1 == null && expected2 == null) {
             success = true;

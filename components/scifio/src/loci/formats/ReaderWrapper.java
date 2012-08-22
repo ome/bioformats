@@ -428,7 +428,7 @@ public abstract class ReaderWrapper implements IFormatReader {
 
     // NB: Be sure all CoreMetadata values are returned correctly,
     // regardless of any method overrides.
-    return copyCoreMetadata(this);
+    return copyCoreMetadata(reader);
   }
 
   public void setMetadataFiltered(boolean filter) {
