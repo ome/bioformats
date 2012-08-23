@@ -137,7 +137,8 @@ public class SVSReader extends BaseTiffReader {
       return super.openBytes(no, buf, x, y, w, h);
     }
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
-    tiffParser.getSamples(ifds.get(series), buf, x, y, w, h);
+    int ifd = getIFDIndex(getCoreIndex());
+    tiffParser.getSamples(ifds.get(ifd), buf, x, y, w, h);
     return buf;
   }
 
@@ -171,7 +172,8 @@ public class SVSReader extends BaseTiffReader {
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
     try {
-      return (int) ifds.get(getSeries()).getTileWidth();
+      int ifd = getIFDIndex(getCoreIndex());
+      return (int) ifds.get(ifd).getTileWidth();
     }
     catch (FormatException e) {
       LOGGER.debug("", e);
@@ -183,7 +185,8 @@ public class SVSReader extends BaseTiffReader {
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
     try {
-      return (int) ifds.get(getSeries()).getTileLength();
+      int ifd = getIFDIndex(getCoreIndex());
+      return (int) ifds.get(ifd).getTileLength();
     }
     catch (FormatException e) {
       LOGGER.debug("", e);
@@ -210,10 +213,11 @@ public class SVSReader extends BaseTiffReader {
 
     for (int i=0; i<core.length; i++) {
       setSeries(i);
-      tiffParser.fillInIFD(ifds.get(i));
+      int index = getIFDIndex(i);
+      tiffParser.fillInIFD(ifds.get(index));
 
       if (getMetadataOptions().getMetadataLevel() != MetadataLevel.MINIMUM) {
-        String comment = ifds.get(i).getComment();
+        String comment = ifds.get(index).getComment();
         if (comment == null) {
           continue;
         }
@@ -246,7 +250,7 @@ public class SVSReader extends BaseTiffReader {
         core[s].resolutionCount = getSeriesCount() - 2;
       }
 
-      IFD ifd = ifds.get(s);
+      IFD ifd = ifds.get(getIFDIndex(s));
       PhotoInterp p = ifd.getPhotometricInterpretation();
       int samples = ifd.getSamplesPerPixel();
       core[s].rgb = samples > 1 || p == PhotoInterp.RGB;
@@ -279,6 +283,14 @@ public class SVSReader extends BaseTiffReader {
       store.setImageName("Series " + (i + 1), i);
       store.setImageDescription(comments[i], i);
     }
+  }
+
+  private int getIFDIndex(int coreIndex) {
+    int index = coreIndex;
+    if (coreIndex > 0 && coreIndex < core.length - 2) {
+      index = core.length - 2 - coreIndex;
+    }
+    return index;
   }
 
 }
