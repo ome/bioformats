@@ -190,14 +190,29 @@ public class ImarisHDFReader extends FormatReader {
       if (value == null) continue;
       value = value.trim();
 
-      if (name.equals("X")) {
-        core[0].sizeX = Integer.parseInt(value);
+      if (name.equals("X") || name.equals("ImageSizeX")) {
+        try {
+          core[0].sizeX = Integer.parseInt(value);
+        }
+        catch (NumberFormatException e) {
+          traceDebug(e);
+        }
       }
-      else if (name.equals("Y")) {
-        core[0].sizeY = Integer.parseInt(value);
+      else if (name.equals("Y") || name.equals("ImageSizeY")) {
+        try {
+          core[0].sizeY = Integer.parseInt(value);
+        }
+        catch (NumberFormatException e) {
+          traceDebug(e);
+        }
       }
-      else if (name.equals("Z")) {
-        core[0].sizeZ = Integer.parseInt(value);
+      else if (name.equals("Z") || name.equals("ImageSizeZ")) {
+        try {
+          core[0].sizeZ = Integer.parseInt(value);
+        }
+        catch (NumberFormatException e) {
+          traceDebug(e);
+        }
       }
       else if (name.equals("FileTimePoints")) {
         core[0].sizeT = Integer.parseInt(value);
