@@ -92,6 +92,7 @@ public class ScanrReader extends FormatReader {
   private String[] tiffs;
   private MinimalTiffReader reader;
 
+  private boolean foundPositions = false;
   private double[] fieldPositionX;
   private double[] fieldPositionY;
   private Vector<Double> exposures = new Vector<Double>();
@@ -358,7 +359,11 @@ public class ScanrReader extends FormatReader {
     int nSlices = getSizeZ() == 0 ? 1 : getSizeZ();
     int nTimepoints = getSizeT();
     int nWells = wellCount;
-    int nPos = fieldRows * fieldColumns;
+    int nPos = 0;
+    if (foundPositions)
+        nPos = fieldPositionX.length;
+    else
+        nPos = fieldRows * fieldColumns;
     if (nPos == 0) nPos = 1;
 
     // get list of TIFF files
@@ -555,7 +560,11 @@ public class ScanrReader extends FormatReader {
     String plateAcqID = MetadataTools.createLSID("PlateAcquisition", 0, 0);
     store.setPlateAcquisitionID(plateAcqID, 0, 0);
 
-    int nFields = fieldRows * fieldColumns;
+    int nFields = 0;
+    if (foundPositions)
+        nFields = fieldPositionX.length;
+    else
+        nFields = fieldRows * fieldColumns;
 
     if (nFields > 0) {
       store.setPlateAcquisitionMaximumFieldCount(
@@ -653,7 +662,6 @@ public class ScanrReader extends FormatReader {
     private String wellIndex;
 
     private boolean validChannel = false;
-    private boolean foundPositions = false;
     private boolean foundPlateLayout = false;
     private int nextXPos = 0;
     private int nextYPos = 0;
