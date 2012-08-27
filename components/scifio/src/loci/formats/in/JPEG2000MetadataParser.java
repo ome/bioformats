@@ -37,6 +37,7 @@
 package loci.formats.in;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -106,6 +107,9 @@ public class JPEG2000MetadataParser {
   /** Color lookup table stored in the file. */
   private int[][] lut;
 
+  /** List of comments stored in the file.*/
+  private ArrayList<String> comments;
+
   // -- Constructor --
 
   /**
@@ -117,6 +121,7 @@ public class JPEG2000MetadataParser {
     throws IOException {
     this.in = in;
     this.maximumReadOffset = in.length();
+    comments = new ArrayList<String>();
     parseBoxes();
   }
 
@@ -146,6 +151,11 @@ public class JPEG2000MetadataParser {
   /** Retrieves the offset to the first contiguous codestream. */
   public long getCodestreamOffset() {
     return codestreamOffset;
+  }
+
+  /** Retrieves the list of comments stored in the file. */
+  public ArrayList<String> getComments() {
+    return comments;
   }
 
   /**
@@ -344,6 +354,11 @@ public class JPEG2000MetadataParser {
                 resolutionLevels, in.getFilePointer());
             break;
           }
+          case COM:
+            in.skipBytes(2);
+            String comment = in.readString(segmentLength - 4);
+            comments.add(comment);
+            break;
         }
       }
       // Exit or seek to the next metadata box
