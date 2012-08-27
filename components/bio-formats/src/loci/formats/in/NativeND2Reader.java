@@ -529,7 +529,7 @@ public class NativeND2Reader extends FormatReader {
               value = value.trim();
 
               if (key.equals("- Step")) {
-                trueSizeZ = Double.parseDouble(value);
+                trueSizeZ = Double.parseDouble(DataTools.sanitizeDouble(value));
               }
 
               addGlobalMeta(key, value);
