@@ -105,6 +105,8 @@ public class NativeND2Reader extends FormatReader {
   private ND2Handler backupHandler;
 
   private double trueSizeX = 0;
+  private double trueSizeY = 0;
+  private double trueSizeZ = 0;
 
   // -- Constructor --
 
@@ -313,6 +315,8 @@ public class NativeND2Reader extends FormatReader {
       nXFields = 0;
       backupHandler = null;
       trueSizeX = 0;
+      trueSizeY = 0;
+      trueSizeZ = 0;
     }
   }
 
@@ -441,7 +445,12 @@ public class NativeND2Reader extends FormatReader {
             if (attributeName.equals("dCalibration")) {
               if (valueOrLength > 0) {
                 addGlobalMeta(attributeName, valueOrLength);
-                trueSizeX = valueOrLength;
+                if (trueSizeX == 0) {
+                  trueSizeX = valueOrLength;
+                }
+                else if (trueSizeY == 0) {
+                  trueSizeY = valueOrLength;
+                }
               }
               break;  // Done with calibration
             }
@@ -463,9 +472,11 @@ public class NativeND2Reader extends FormatReader {
         else if (blockType.startsWith("ImageText")) {
           in.skipBytes(6);
           while (in.read() == 0);
-          in.seek(in.getFilePointer() - 1);
+          long startFP = in.getFilePointer();
+          in.seek(startFP - 1);
 
-          String xmlString = XMLTools.sanitizeXML(in.readString(lenTwo));
+          String xmlString = DataTools.stripString(in.readString(lenTwo));
+          xmlString = XMLTools.sanitizeXML(xmlString);
           int start = xmlString.indexOf("<");
           int end = xmlString.lastIndexOf(">");
           if (start >= 0 && end >= 0) {
@@ -473,24 +484,57 @@ public class NativeND2Reader extends FormatReader {
           }
 
           try {
-             ND2Handler handler = new ND2Handler(core, imageOffsets.size());
-             XMLTools.parseXML(xmlString, handler);
-             xmlString = null;
-             core = handler.getCoreMetadata();
-             if (backupHandler == null ||
-               backupHandler.getChannelNames().size() == 0)
-             {
-               backupHandler = handler;
-             }
+            ND2Handler handler = new ND2Handler(core, imageOffsets.size());
+            XMLTools.parseXML(xmlString, handler);
+            xmlString = null;
+            core = handler.getCoreMetadata();
+            if (backupHandler == null ||
+              backupHandler.getChannelNames().size() == 0)
+            {
+              backupHandler = handler;
+            }
 
-             Hashtable<String, Object> globalMetadata = handler.getMetadata();
-             for (String key : globalMetadata.keySet()) {
-               addGlobalMeta(key, globalMetadata.get(key));
-             }
-           }
-           catch (IOException e) {
-             LOGGER.debug("Could not parse XML", e);
-           }
+            Hashtable<String, Object> globalMetadata = handler.getMetadata();
+            for (String key : globalMetadata.keySet()) {
+              addGlobalMeta(key, globalMetadata.get(key));
+            }
+          }
+          catch (IOException e) {
+            LOGGER.debug("Could not parse XML", e);
+
+            String[] lines = xmlString.split(" ");
+            for (int i=0; i<lines.length; i++) {
+              String key = lines[i++];
+              while (!key.endsWith(":") && key.indexOf("_") < 0) {
+                key += " " + lines[i++];
+                if (i >= lines.length) {
+                  break;
+                }
+              }
+
+              if (i >= lines.length) {
+                break;
+              }
+
+              String value = lines[i++];
+              while (lines[i].trim().length() > 0) {
+                value += " " + lines[i++];
+                if (i >= lines.length) {
+                  break;
+                }
+              }
+
+              key = key.trim();
+              key = key.substring(0, key.length() - 1);
+              value = value.trim();
+
+              if (key.equals("- Step")) {
+                trueSizeZ = Double.parseDouble(value);
+              }
+
+              addGlobalMeta(key, value);
+            }
+          }
         }
         else if (blockType.startsWith("Image") ||
           blockType.startsWith("CustomDataVa"))
@@ -1525,10 +1569,10 @@ private void populateMetadataStore(ND2Handler handler) throws FormatException
         double sizeX = handler.getPixelSizeX();
         double sizeY = handler.getPixelSizeY();
         double sizeZ = handler.getPixelSizeZ();
-        
-        if (trueSizeX > 0)
+
+        if (trueSizeX > 0) {
         	store.setPixelsPhysicalSizeX(new PositiveFloat(trueSizeX), i);
-        
+        }
         else if (sizeX > 0) {
           store.setPixelsPhysicalSizeX(new PositiveFloat(sizeX), i);
         }
@@ -1536,14 +1580,20 @@ private void populateMetadataStore(ND2Handler handler) throws FormatException
           LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
             sizeX);
         }
-        if (sizeY > 0) {
+        if (trueSizeY > 0) {
+          store.setPixelsPhysicalSizeY(new PositiveFloat(trueSizeY), i);
+        }
+        else if (sizeY > 0) {
           store.setPixelsPhysicalSizeY(new PositiveFloat(sizeY), i);
         }
         else {
           LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
             sizeY);
         }
-        if (sizeZ > 0) {
+        if (trueSizeZ > 0) {
+          store.setPixelsPhysicalSizeZ(new PositiveFloat(trueSizeZ), i);
+        }
+        else if (sizeZ > 0) {
           store.setPixelsPhysicalSizeZ(new PositiveFloat(sizeZ), i);
         }
         else {
@@ -1552,7 +1602,7 @@ private void populateMetadataStore(ND2Handler handler) throws FormatException
         }
       }
     }
-     
+
     // populate PlaneTiming and StagePosition data
     ArrayList<Double> exposureTime = null;
     if (handler != null) handler.getExposureTimes();
