@@ -916,7 +916,7 @@ public class FormatReaderTest {
       Double size = realSize == null ? null : realSize.getValue();
 
       if (!(expectedSize == null && realSize == null) &&
-        !expectedSize.equals(size))
+        (expectedSize == null || !expectedSize.equals(size)))
       {
         result(testName, false, "Series " + i);
       }
@@ -943,7 +943,7 @@ public class FormatReaderTest {
       Double size = realSize == null ? null : realSize.getValue();
 
       if (!(expectedSize == null && realSize == null) &&
-        !expectedSize.equals(size))
+        (expectedSize == null || !expectedSize.equals(size)))
       {
         result(testName, false, "Series " + i);
       }
@@ -971,7 +971,7 @@ public class FormatReaderTest {
       Double size = realSize == null ? null : realSize.getValue();
 
       if (!(expectedSize == null && realSize == null) &&
-        !expectedSize.equals(size))
+        (expectedSize == null || !expectedSize.equals(size)))
       {
         result(testName, false, "Series " + i);
       }
