@@ -265,7 +265,7 @@ public class LeicaSCNReader extends BaseTiffReader {
         XMLTools.parseXML(imageDescription, handler);
       }
       catch (Exception se) {
-        throw new IOException(se);
+        throw new FormatException("Failed to parse XML", se);
       }
     }
 
