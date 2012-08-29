@@ -204,7 +204,7 @@ latex_elements = {
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
   ('index', 'Bio-Formats.tex', u'Bio-Formats Documentation',
-   u'Open Microscopy Environment', 'manual'),
+   u'The Open Microscopy Environment', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -234,7 +234,7 @@ latex_documents = [
 # (source start file, name, description, authors, manual section).
 man_pages = [
     ('index', 'bio-formats', u'Bio-Formats Documentation',
-     [u'Open Microscopy Environment'], 1)
+     [u'The Open Microscopy Environment'], 1)
 ]
 
 # If true, show URL addresses after external links.
@@ -248,7 +248,7 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
   ('index', 'Bio-Formats', u'Bio-Formats Documentation',
-   u'Open Microscopy Environment', 'Bio-Formats', 'One line description of project.',
+   u'The Open Microscopy Environment', 'Bio-Formats', 'One line description of project.',
    'Miscellaneous'),
 ]
 
