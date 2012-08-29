@@ -70,15 +70,8 @@ The main developer documentation page is here:
 Some of the more useful pieces of documentation are:
 
 -  :jenkins:`Javadocs <job/BIOFORMATS-trunk/javadoc/>`
--  `Short examples of exporting images using
-   Bio-Formats <http://trac.openmicroscopy.org.uk/ome/wiki/BioFormats-Export>`_
 -  `More thorough examples of exporting images and
    metadata <http://git.openmicroscopy.org/?p=bioformats.git;a=tree;f=components/bio-formats/doc/export;hb=HEAD>`_
--  `Examples of using Bio-Formats within
-   MATLAB <http://trac.openmicroscopy.org.uk/ome/wiki/BioFormats-Matlab>`_
--  `Explanation of Bio-Formats' mechanism for interfacing with
-   third-party
-   libraries <http://trac.openmicroscopy.org.uk/ome/wiki/BioFormats-Service>`_
 
 
 ************
