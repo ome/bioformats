@@ -2,18 +2,34 @@
 Bio-Formats Documentation
 #########################
 
+
 *This documentation is a work in progress and many aspects of Bio-Formats are
 not yet covered. More documentation about the project and this package
 can be found on the :wiki:`OME wiki <>`.*
 
-Bio-Formats is a Java library for reading and writing data in life
-sciences image file formats. It is developed by the `Open Microscopy
-Environment <http://openmicroscopy.org>`_ (particularly `UW-Madison
-LOCI <http://loci.wisc.edu>`_ and `Glencoe
-Software <http://www.glencoesoftware.com>`_). Bio-Formats is released
-under the `GNU General Public License
-(GPL) <http://www.gnu.org/copyleft/gpl.html>`_; commercial licenses are
-available from `Glencoe Software <http://www.glencoesoftware.com>`_.
+
+Bio-Formats is a standalone Java library for reading and writing
+microscopy file formats, written by the Open Microscopy Environment
+consortium. It is capable of parsing both pixels and metadata for more
+than 120 file formats, as well as writing to several formats. It also
+includes standardized metadata conversion to OME-XML and OME-TIFF.
+
+Full details, including the very impressive list of supported file
+formats, are available at the `LOCI website
+<http://loci.wisc.edu/software/bio-formats>`_.
+
+The primary goal of Bio-Formats is to facilitate the exchange of
+microscopy data between both different software packages and different
+organizations, by converting proprietary microscopy data into the `OME
+data model standard </site/support/file-formats>`_. See our `recent
+article <http://jcb.rupress.org/content/189/5/777.abstract>`_ on
+biological image formats and the `Bio-Formats statement of
+purpose <http://www.loci.wisc.edu/bio-formats/about>`_ for more
+information.
+
+Bio-Formats is released under the `GNU General Public License (GPL)
+<http://www.gnu.org/copyleft/gpl.html>`_; commercial licenses are available
+from `Glencoe Software <http://www.glencoesoftware.com>`_.
 
 For general information about Bio-Formats and its features, please see
 `http://loci.wisc.edu/software/bio-formats/ <http://loci.wisc.edu/software/bio-formats/>`_.
@@ -22,17 +38,31 @@ A list of supported file formats is available at
 A list of applications that use Bio-Formats is available at
 `http://loci.wisc.edu/bio-formats/applications <http://loci.wisc.edu/bio-formats/applications>`_.
 
+
 ************
 Installation
 ************
 
 Installation is usually as simple as downloading one of the files from
-`http://loci.wisc.edu/bio-formats/downloads <http://loci.wisc.edu/bio-formats/downloads>`_
-(typically loci\_tools.jar) and placing it in an appropriate directory.
-Specific installation instructions depend upon the application you are
-using; please see the page for your application, as listed at
-`http://loci.wisc.edu/bio-formats/applications <http://loci.wisc.edu/bio-formats/applications>`_.
+`http://loci.wisc.edu/bio-formats/downloads <http://loci.wisc.edu/bio-formats/downloads>`_:
 
+- either the complete Bio-Formats bundle with supporting libraries is
+  available as `loci\_tools.jar
+  <http://loci.wisc.edu/software/loci_tools.jar>`_, or
+   
+- the Bio-Formats standalone library is available as `bio-formats.jar
+  <http://loci.wisc.edu/software/bio-formats.jar>`_
+
+
+and placing it in an appropriate directory. Specific installation instructions
+depend upon the application you are using; please see the page for your
+application, as listed at `http://loci.wisc.edu/bio-formats/applications
+<http://loci.wisc.edu/bio-formats/applications>`_.
+
+See the `Bio-Formats Download page
+<http://www.loci.wisc.edu/bio-formats/downloads>`_ for the most
+up-to-date version of Bio-Formats including daily and trunk builds and
+source code repository information.
 
 
 ******************
