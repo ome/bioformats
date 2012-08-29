@@ -2,9 +2,104 @@
 Bio-Formats Documentation
 #########################
 
-This documentation is a work in progress and many aspects of Bio-Formats are
+*This documentation is a work in progress and many aspects of Bio-Formats are
 not yet covered. More documentation about the project and this package
-can be found on the :wiki:`OME wiki <>`.
+can be found on the :wiki:`OME wiki <>`.*
+
+Bio-Formats is a Java library for reading and writing data in life
+sciences image file formats. It is developed by the `Open Microscopy
+Environment <http://openmicroscopy.org>`_ (particularly `UW-Madison
+LOCI <http://loci.wisc.edu>`_ and `Glencoe
+Software <http://www.glencoesoftware.com>`_). Bio-Formats is released
+under the `GNU General Public License
+(GPL) <http://www.gnu.org/copyleft/gpl.html>`_; commercial licenses are
+available from `Glencoe Software <http://www.glencoesoftware.com>`_.
+
+For general information about Bio-Formats and its features, please see
+`http://loci.wisc.edu/software/bio-formats/ <http://loci.wisc.edu/software/bio-formats/>`_.
+A list of supported file formats is available at
+`http://loci.wisc.edu/bio-formats/formats <http://loci.wisc.edu/bio-formats/formats>`_.
+A list of applications that use Bio-Formats is available at
+`http://loci.wisc.edu/bio-formats/applications <http://loci.wisc.edu/bio-formats/applications>`_.
+
+************
+Installation
+************
+
+Installation is usually as simple as downloading one of the files from
+`http://loci.wisc.edu/bio-formats/downloads <http://loci.wisc.edu/bio-formats/downloads>`_
+(typically loci\_tools.jar) and placing it in an appropriate directory.
+Specific installation instructions depend upon the application you are
+using; please see the page for your application, as listed at
+`http://loci.wisc.edu/bio-formats/applications <http://loci.wisc.edu/bio-formats/applications>`_.
+
+
+
+******************
+User Documentation
+******************
+
+For information about what extensions to choose to import files, see
+
+.. toctree::
+    :maxdepth: 1
+    :titlesonly:
+
+    dataset-structure-table
+
+
+***********************
+Developer documentation
+***********************
+
+
+.. toctree::
+    :maxdepth: 1
+    :titlesonly:
+
+    commit-testing
+    export
+    matlab
+    service
+    testing-notes
+
+
+The main developer documentation page is here:
+`http://loci.wisc.edu/bio-formats/bio-formats-java-library <http://loci.wisc.edu/bio-formats/bio-formats-java-library>`_
+
+Some of the more useful pieces of documentation are:
+
+-  :jenkins:`Javadocs <job/BIOFORMATS-trunk/javadoc/>`
+-  `Short examples of exporting images using
+   Bio-Formats <http://trac.openmicroscopy.org.uk/ome/wiki/BioFormats-Export>`_
+-  `More thorough examples of exporting images and
+   metadata <http://git.openmicroscopy.org/?p=bioformats.git;a=tree;f=components/bio-formats/doc/export;hb=HEAD>`_
+-  `Examples of using Bio-Formats within
+   MATLAB <http://trac.openmicroscopy.org.uk/ome/wiki/BioFormats-Matlab>`_
+-  `Explanation of Bio-Formats' mechanism for interfacing with
+   third-party
+   libraries <http://trac.openmicroscopy.org.uk/ome/wiki/BioFormats-Service>`_
+
+
+************
+Getting help
+************
+
+.. toctree::
+    :maxdepth: 1
+    :titlesonly:
+
+    troubleshooting
+
+If you have any questions about installing, using, or developing against
+Bio-Formats, we would be happy to help - just send an email to one of
+the `mailing lists <http://loci.wisc.edu/software/mailing-lists>`_ and
+we will do our best answer your questions.
+
+You may also wish to check the `OME
+FAQ <http://openmicroscopy.org/site/support/faq>`_ and the `LOCI
+FAQ <http://www.loci.wisc.edu/faq>`_, in case your question is answered
+there.
 
 
 ****************
