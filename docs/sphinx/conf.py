@@ -24,8 +24,8 @@ import sys, os
 #needs_sphinx = '1.0'
 
 # Add any Sphinx extension module names here, as strings. They can be extensions
-# coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
-extensions = []
+# coming with Sphinx (named 'sphinx.ext.*') or your custom ones.)
+extensions = ['sphinx.ext.extlinks']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -40,15 +40,15 @@ source_suffix = '.txt'
 master_doc = 'index'
 
 # General information about the project.
-project = u'Bio-Formats'
-copyright = u'2012, Open Microscopy Environment'
+project = u'OMERO'
+copyright = u'2000-2012, The Open Microscopy Environment'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
 # built documents.
 #
 # The short X.Y version.
-version = '4.4.3'
+version = '4.4'
 # The full version, including alpha/beta/rc tags.
 release = '4.4.3'
 
@@ -86,12 +86,32 @@ pygments_style = 'sphinx'
 # A list of ignored prefixes for module index sorting.
 #modindex_common_prefix = []
 
+extlinks = {
+    'wiki' : ('http://trac.openmicroscopy.org.uk/ome/wiki/'+ '%s', ''),
+    'ticket' : ('http://trac.openmicroscopy.org.uk/ome/ticket/'+ '%s', '#'),
+    'snapshot' : ('http://cvs.openmicroscopy.org.uk/snapshots/'+ '%s', ''),
+    'plone' : ('http://www.openmicroscopy.org/site/'+ '%s', ''),
+    'oo' : ('http://www.openmicroscopy.org/' + '%s', ''),
+    'doi' : ('http://dx.doi.org/' + '%s', ''),
+    'source' : ('https://github.com/openmicroscopy/openmicroscopy/blob/develop/' + '%s', ''),
+    'javadoc' : ('http://hudson.openmicroscopy.org.uk/job/OMERO/javadoc/' + '%s', ''),
+    'jenkins' : ('http://hudson.openmicroscopy.org.uk/' + '%s', ''),
+    'mailinglist' : ('http://lists.openmicroscopy.org.uk/mailman/listinfo/' + '%s', ''),
+    'forum' : ('http://www.openmicroscopy.org/community/' + '%s', '')
+    }
+
+rst_epilog = """
+.. _Hibernate: http://www.hibernate.org
+.. _ZeroC: http://www.zeroc.com
+.. _Ice: http://www.zeroc.com
+
+"""
 
 # -- Options for HTML output ---------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'default'
+html_theme = 'sphinxdoc'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -99,7 +119,7 @@ html_theme = 'default'
 #html_theme_options = {}
 
 # Add any paths that contain custom themes here, relative to this directory.
-#html_theme_path = []
+html_theme_path = ['themes']
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
@@ -240,3 +260,10 @@ texinfo_documents = [
 
 # How to display URL addresses: 'footnote', 'no', or 'inline'.
 #texinfo_show_urls = 'footnote'
+
+# -- Options for the linkcheck builder ----------------------------------------
+
+# Regular expressions that match URIs that should not be checked when doing a linkcheck build
+linkcheck_ignore = [r'http://localhost:\d+/', 'http://localhost/', 'http://www.hibernate.org',
+        r'^https?://www\.openmicroscopy\.org/site/team/.*', r'.*[.]?example\.com/.*', r'.*\.host.*',
+        r'.*serverName.*']

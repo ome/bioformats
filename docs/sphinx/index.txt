@@ -1,22 +1,121 @@
-.. Bio-Formats documentation master file, created by
-   sphinx-quickstart on Wed Aug 29 15:42:49 2012.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+###################
+OMERO Documentation
+###################
 
-Welcome to Bio-Formats's documentation!
-=======================================
+This documentation is a work in progress and many aspects of OMERO are
+not yet covered. More documentation about the project and this package
+can be found on the :wiki:`OME wiki <>`.
 
-Contents:
+
+************
+Introduction
+************
 
 .. toctree::
-   :maxdepth: 2
+    :maxdepth: 1
+    :titlesonly:
+
+    users/overview
+    community/resources
+    future
 
 
+**********
+Quickstart
+**********
+.. toctree::
+    :maxdepth: 1
+    :titlesonly:
 
-Indices and tables
-==================
+    users/virtual-appliance
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
 
+************
+Client Usage
+************
+
+.. toctree::
+    :maxdepth: 2
+    :titlesonly:
+
+    users/clients-index
+
+
+Client Tutorials
+=======================
+
+.. toctree::
+    :maxdepth: 2
+
+    client-tutorials/insight/index
+    client-tutorials/importer/index
+    client-tutorials/editor/index
+
+
+*****************
+Server Background
+*****************
+
+.. toctree::
+    :maxdepth: 2
+    :titlesonly:
+
+    sysadmins/server-overview
+    users/system-requirements
+    users/limitations
+    gettingstarted/index
+
+
+*******************
+Server Installation
+*******************
+
+.. toctree::
+    :maxdepth: 2
+    :titlesonly:
+
+    sysadmins/unix/index
+    sysadmins/windows/index
+    sysadmins/install-web
+    sysadmins/troubleshooting
+    sysadmins/server-security
+    sysadmins/omeromovie
+
+
+******************
+Server Maintenance
+******************
+
+.. toctree::
+    :maxdepth: 2
+    :titlesonly:
+
+    sysadmins/server-backup-and-restore
+    sysadmins/server-upgrade
+    sysadmins/server-legacy-upgrade
+
+
+***************
+Advanced topics
+***************
+
+.. toctree::
+    :maxdepth: 2
+    :titlesonly:
+
+    users/server-permissions
+    sysadmins/server-advanced-configuration
+    sysadmins/server-fs
+    sysadmins/server-ldap
+
+
+****************
+Online Resources
+****************
+
+.. toctree::
+
+    Downloads <https://www.openmicroscopy.org/site/support/omero4/downloads>
+    Features <https://www.openmicroscopy.org/site/products/feature-list>
+    Screenshots <https://www.openmicroscopy.org/site/support/omero4/screenshots>
+    Security Vulnerabilities <https://www.openmicroscopy.org/site/support/omero4/secvuln>
