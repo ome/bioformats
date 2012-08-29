@@ -93,7 +93,7 @@ extlinks = {
     'plone' : ('http://www.openmicroscopy.org/site/'+ '%s', ''),
     'oo' : ('http://www.openmicroscopy.org/' + '%s', ''),
     'doi' : ('http://dx.doi.org/' + '%s', ''),
-    'source' : ('https://github.com/openmicroscopy/openmicroscopy/blob/develop/' + '%s', ''),
+    'source' : ('https://github.com/openmicroscopy/bioformats/blob/develop/' + '%s', ''),
     'javadoc' : ('http://hudson.openmicroscopy.org.uk/job/OMERO/javadoc/' + '%s', ''),
     'jenkins' : ('http://hudson.openmicroscopy.org.uk/' + '%s', ''),
     'mailinglist' : ('http://lists.openmicroscopy.org.uk/mailman/listinfo/' + '%s', ''),
@@ -264,6 +264,4 @@ texinfo_documents = [
 # -- Options for the linkcheck builder ----------------------------------------
 
 # Regular expressions that match URIs that should not be checked when doing a linkcheck build
-linkcheck_ignore = [r'http://localhost:\d+/', 'http://localhost/', 'http://www.hibernate.org',
-        r'^https?://www\.openmicroscopy\.org/site/team/.*', r'.*[.]?example\.com/.*', r'.*\.host.*',
-        r'.*serverName.*']
+linkcheck_ignore = []
