@@ -3,23 +3,23 @@ Various enhancements to the data-driven tests
 
 In roughly priority order:
 
--  `#4127 </ome/ticket/4127>`_ migrate (back) to JUnit
--  `#4143 </ome/ticket/4143>`_ consider changing config file format
--  `#539 </ome/ticket/539>`_ skip tests when setId fails
--  `#4142 </ome/ticket/4142>`_ allow files to be mapped into memory
--  `#4146 </ome/ticket/4146>`_ add Hudson jobs to run data-driven tests
--  `#4139 </ome/ticket/4139>`_ test for leaking file handles
--  `#4141 </ome/ticket/4141>`_ consistent type checking
--  `#4144 </ome/ticket/4144>`_ non-core metadata consistency
--  `#4138 </ome/ticket/4138>`_ MD5 test for sub-images
--  `#4140 </ome/ticket/4140>`_ reading planes in a random order
--  `#4145 </ome/ticket/4145>`_ alternate MD5 hash
+-  :ticket:`4127`
+-  :ticket:`4143` consider changing config file format
+-  :ticket:`539` skip tests when setId fails
+-  :ticket:`4142` allow files to be mapped into memory
+-  :ticket:`4146` add Hudson jobs to run data-driven tests
+-  :ticket:`4139` test for leaking file handles
+-  :ticket:`4141` consistent type checking
+-  :ticket:`4144` non-core metadata consistency
+-  :ticket:`4138` MD5 test for sub-images
+-  :ticket:`4140` reading planes in a random order
+-  :ticket:`4145` alternate MD5 hash
 
 Public test data
 ----------------
 
 Most of the data-driven tests would benefit from having a comprehensive
-set of public sample data (see also `#4086 </ome/ticket/4086>`_).
+set of public sample data (see also :ticket:`4086`).
 
 Formats for which we already have public sample data:
 
