@@ -40,7 +40,7 @@ source_suffix = '.txt'
 master_doc = 'index'
 
 # General information about the project.
-project = u'OMERO'
+project = u'Bio-Formats'
 copyright = u'2000-2012, The Open Microscopy Environment'
 
 # The version info for the project you're documenting, acts as replacement for
