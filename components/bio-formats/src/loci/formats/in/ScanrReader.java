@@ -212,6 +212,7 @@ public class ScanrReader extends FormatReader {
       fieldPositionY = null;
       exposures.clear();
       deltaT = null;
+      foundPositions = false;
     }
   }
 
@@ -225,9 +226,15 @@ public class ScanrReader extends FormatReader {
 
     int index = getSeries() * getImageCount() + no;
     if (index < tiffs.length && tiffs[index] != null) {
-      reader.setId(tiffs[index]);
-      reader.openBytes(0, buf, x, y, w, h);
-      reader.close();
+      try {
+        reader.setId(tiffs[index]);
+        reader.openBytes(0, buf, x, y, w, h);
+        reader.close();
+      }
+      catch (FormatException e) {
+        reader.close();
+        return buf;
+      }
 
       // mask out the sign bit
       ByteArrayHandle pixels = new ByteArrayHandle(buf);
@@ -354,7 +361,8 @@ public class ScanrReader extends FormatReader {
       }
     }
 
-    int nChannels = getSizeC() == 0 ? channelNames.size() : getSizeC();
+    int nChannels = getSizeC() == 0 ? channelNames.size() :
+      (int) Math.min(channelNames.size(), getSizeC());
     if (nChannels == 0) nChannels = 1;
     int nSlices = getSizeZ() == 0 ? 1 : getSizeZ();
     int nTimepoints = getSizeT();
@@ -440,8 +448,10 @@ public class ScanrReader extends FormatReader {
         return col1.compareTo(col2);
       }
     });
+
     int realPosCount = 0;
     for (int well=0; well<nWells; well++) {
+      int missingWellFiles = 0;
       int wellIndex = wellNumbers.get(well);
       String wellPos = getBlock(wellIndex, "W");
       int originalIndex = next;
@@ -470,6 +480,9 @@ public class ScanrReader extends FormatReader {
                   break;
                 }
               }
+              if (next == originalIndex) {
+                missingWellFiles++;
+              }
             }
           }
         }
@@ -478,7 +491,9 @@ public class ScanrReader extends FormatReader {
       if (next == originalIndex && well < keys.length) {
         wellLabels.remove(keys[well]);
       }
-      if (next == originalIndex) {
+      if (next == originalIndex &&
+        missingWellFiles == nSlices * nTimepoints * nChannels * nPos)
+      {
         wellNumbers.remove(well);
       }
     }
@@ -718,7 +733,9 @@ public class ScanrReader extends FormatReader {
           deltaT = Integer.parseInt(value) / 1000.0;
         }
         else if (key.equals("name") && validChannel) {
-          channelNames.add(value);
+          if (!channelNames.contains(value)) {
+            channelNames.add(value);
+          }
         }
         else if (key.equals("plate name")) {
           plateName = value;
@@ -770,13 +787,13 @@ public class ScanrReader extends FormatReader {
       Attributes attributes)
     {
       this.qName = qName;
-      if (qName.equals("Array")) {
+      if (qName.equals("Array") || qName.equals("Cluster")) {
         validChannel = true;
       }
     }
 
     public void endElement(String uri, String localName, String qName) {
-      if (qName.equals("Array")) {
+      if (qName.equals("Array") || qName.equals("Cluster")) {
         validChannel = false;
       }
     }
