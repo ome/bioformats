@@ -165,10 +165,10 @@ IFormatWriter for each file, like this:
 Known issues
 ------------
 
--  `#4128 </ome/ticket/4128>`_
--  `#4129 </ome/ticket/4129>`_
--  `#4130 </ome/ticket/4130>`_
--  `#4131 </ome/ticket/4131>`_
--  `#4132 </ome/ticket/4132>`_
--  `#4133 </ome/ticket/4133>`_
--  `#4134 </ome/ticket/4134>`_
+-  :ticket:`4128`
+-  :ticket:`4129`
+-  :ticket:`4130`
+-  :ticket:`4131`
+-  :ticket:`4132`
+-  :ticket:`4133`
+-  :ticket:`4134`

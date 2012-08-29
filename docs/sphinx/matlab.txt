@@ -218,4 +218,4 @@ constructed like so:
       plane = zeros(1, 64 * 64, 'uint8');
 
 In the near future, we will have a script for saving files similar to
-bfopen.m; see ticket `#4112 </ome/ticket/4112>`_ for details.
+bfopen.m; see :ticket:`4112` for details.
