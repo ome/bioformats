@@ -1,5 +1,5 @@
 Using Bio-Formats in Matlab
-=============-=============
+===========================
 
 This section assumes that you have installed the bfopen.m script and
 loci\_tools.jar, as instructed
@@ -170,7 +170,7 @@ To access physical voxel and stack sizes of the data:
       voxelSizeZ = omeMeta.getPixelsPhysicalSizeZ(0).getValue(); % in µm
 
 Saving files
-============
+------------
 
 First, make sure that you have loci\_tools.jar installed in your MATLAB
 work folder.
