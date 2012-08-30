@@ -283,8 +283,8 @@ public class MinimalTiffReader extends FormatReader {
     if ((firstIFD.getCompression() == TiffCompression.JPEG_2000
         || firstIFD.getCompression() == TiffCompression.JPEG_2000_LOSSY)
         && resolutionLevels != null) {
-      if (series > 0) {
-        ifd = subResolutionIFDs.get(no).get(series - 1);
+      if (getCoreIndex() > 0) {
+        ifd = subResolutionIFDs.get(no).get(getCoreIndex() - 1);
       }
       setResolutionLevel(ifd);
     }
@@ -550,6 +550,7 @@ public class MinimalTiffReader extends FormatReader {
         newCore[i].sizeX = (int) ifd.getImageWidth();
         newCore[i].sizeY = (int) ifd.getImageLength();
         newCore[i].thumbnail = true;
+        newCore[i].resolutionCount = 1;
         i++;
       }
       core = newCore;
@@ -566,7 +567,7 @@ public class MinimalTiffReader extends FormatReader {
    * IFD if <code>currentSeries > 0</code>.
    */
   protected void setResolutionLevel(IFD ifd) {
-    j2kCodecOptions.resolution = Math.abs(series - resolutionLevels);
+    j2kCodecOptions.resolution = Math.abs(getCoreIndex() - resolutionLevels);
     LOGGER.debug("Using JPEG 2000 resolution level {}",
         j2kCodecOptions.resolution);
     tiffParser.setCodecOptions(j2kCodecOptions);

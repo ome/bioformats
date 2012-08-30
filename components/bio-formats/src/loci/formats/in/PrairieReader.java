@@ -86,7 +86,6 @@ public class PrairieReader extends FormatReader {
 
   /** Names of the associated XML files */
   private String xmlFile, cfgFile;
-  private boolean readXML = false, readCFG = false;
 
   private Vector<String> f, gains, offsets;
   private double pixelSizeX, pixelSizeY;
@@ -247,8 +246,6 @@ public class PrairieReader extends FormatReader {
       xmlFile = cfgFile = null;
       tiff = null;
       files = null;
-      readXML = false;
-      readCFG = false;
       f = gains = offsets = null;
       pixelSizeX = pixelSizeY = 0;
       date = laserPower = null;
@@ -272,194 +269,22 @@ public class PrairieReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
-    if (metadata == null) metadata = new Hashtable();
-    if (core == null) core = new CoreMetadata[] {new CoreMetadata()};
-    if (tiff == null) {
-      tiff = new TiffReader();
+    super.initFile(id);
+
+    tiff = new TiffReader();
+    f = new Vector<String>();
+    gains = new Vector<String>();
+    offsets = new Vector<String>();
+
+    if (checkSuffix(id, XML_SUFFIX)) {
+      xmlFile = id;
+      initXML();
+      findAndParseCFG();
     }
-
-    if (checkSuffix(id, PRAIRIE_SUFFIXES)) {
-      // we have been given the XML file that lists TIFF files (best case)
-
-      if (checkSuffix(id, XML_SUFFIX)) {
-        LOGGER.info("Parsing XML");
-        super.initFile(id);
-        xmlFile = id;
-        readXML = true;
-      }
-      else if (checkSuffix(id, CFG_SUFFIX)) {
-        LOGGER.info("Parsing CFG");
-        cfgFile = id;
-        readCFG = true;
-        currentId = id;
-      }
-
-      f = new Vector<String>();
-      gains = new Vector<String>();
-      offsets = new Vector<String>();
-
-      String xml = XMLTools.sanitizeXML(DataTools.readFile(id)).trim();
-
-      if (checkSuffix(id, XML_SUFFIX)) {
-        core[0].imageCount = 0;
-      }
-
-      DefaultHandler handler = new PrairieHandler();
-      XMLTools.parseXML(xml, handler);
-
-      boolean minimumMetadata =
-        getMetadataOptions().getMetadataLevel() == MetadataLevel.MINIMUM;
-      MetadataStore store = makeFilterMetadata();
-
-      if (checkSuffix(id, XML_SUFFIX)) {
-        core[0].sizeT = getImageCount() / (getSizeZ() * getSizeC());
-
-        if (timeSeries && getSizeT() == 1 && getSizeZ() > 1) {
-          core[0].sizeT = getSizeZ();
-          core[0].sizeZ = 1;
-        }
-
-        files = new String[f.size()];
-        f.copyInto(files);
-        if (tiff == null) {
-          tiff = new TiffReader();
-        }
-        tiff.setId(files[0]);
-
-        LOGGER.info("Populating metadata");
-
-        if (getSizeZ() == 0) core[0].sizeZ = 1;
-        if (getSizeT() == 0) core[0].sizeT = 1;
-
-        core[0].dimensionOrder = "XYCZT";
-        core[0].pixelType = FormatTools.UINT16;
-        core[0].rgb = false;
-        core[0].interleaved = false;
-        core[0].littleEndian = tiff.isLittleEndian();
-        core[0].indexed = tiff.isIndexed();
-        core[0].falseColor = false;
-
-        MetadataTools.populatePixels(store, this, !minimumMetadata);
-
-        if (date != null) {
-          date = DateTools.formatDate(date, "MM/dd/yyyy h:mm:ss a");
-          if (date != null) store.setImageAcquisitionDate(
-              new Timestamp(date), 0);
-        }
-
-        if (!minimumMetadata) {
-          // link Instrument and Image
-          String instrumentID = MetadataTools.createLSID("Instrument", 0);
-          store.setInstrumentID(instrumentID, 0);
-          store.setImageInstrumentRef(instrumentID, 0);
-
-          if (pixelSizeX > 0) {
-            store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSizeX), 0);
-          }
-          else {
-            LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
-              pixelSizeX);
-          }
-          if (pixelSizeY > 0) {
-            store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSizeY), 0);
-          }
-          else {
-            LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
-              pixelSizeY);
-          }
-          for (int i=0; i<getSizeC(); i++) {
-            String gain = i < gains.size() ? gains.get(i) : null;
-            String offset = i < offsets.size() ? offsets.get(i) : null;
-
-            if (offset != null) {
-              try {
-                store.setDetectorSettingsOffset(new Double(offset), 0, i);
-              }
-              catch (NumberFormatException e) { }
-            }
-            if (gain != null) {
-              try {
-                store.setDetectorSettingsGain(new Double(gain), 0, i);
-              }
-              catch (NumberFormatException e) { }
-            }
-
-            // link DetectorSettings to an actual Detector
-            String detectorID = MetadataTools.createLSID("Detector", 0, i);
-            store.setDetectorID(detectorID, 0, i);
-            store.setDetectorSettingsID(detectorID, 0, i);
-            store.setDetectorType(getDetectorType("Other"), 0, i);
-            store.setDetectorZoom(zoom, 0, i);
-
-            if (i < channels.size()) {
-              store.setChannelName(channels.get(i), 0, i);
-            }
-          }
-
-          for (int i=0; i<getImageCount(); i++) {
-            int[] zct = getZCTCoords(i);
-            int index = FormatTools.getIndex(getDimensionOrder(), getSizeZ(),
-              1, getSizeT(), getImageCount() / getSizeC(), zct[0], 0, zct[2]);
-
-            double xPos = positionX.get(index);
-            double yPos = positionY.get(index);
-            double zPos = positionZ.get(index);
-            if (!Double.isNaN(xPos)) store.setPlanePositionX(xPos, 0, i);
-            if (!Double.isNaN(yPos)) store.setPlanePositionY(yPos, 0, i);
-            if (!Double.isNaN(zPos)) store.setPlanePositionZ(zPos, 0, i);
-
-            store.setPlaneDeltaT(
-              relativeTimes.get(String.valueOf(i + 1)), 0, i);
-          }
-
-          if (microscopeModel != null) {
-            store.setMicroscopeModel(microscopeModel, 0);
-          }
-
-          String objective = MetadataTools.createLSID("Objective", 0, 0);
-          store.setObjectiveID(objective, 0, 0);
-          store.setObjectiveSettingsID(objective, 0);
-
-          if (magnification != null) {
-            store.setObjectiveNominalMagnification(magnification, 0, 0);
-          }
-          store.setObjectiveManufacturer(objectiveManufacturer, 0, 0);
-          store.setObjectiveImmersion(getImmersion(immersion), 0, 0);
-          store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
-          store.setObjectiveLensNA(lensNA, 0, 0);
-
-          if (laserPower != null) {
-            String laser = MetadataTools.createLSID("LightSource", 0 ,0);
-            store.setLaserID(laser, 0, 0);
-            try {
-              store.setLaserPower(new Double(laserPower), 0, 0);
-            }
-            catch (NumberFormatException e) { }
-          }
-        }
-      }
-      else if (checkSuffix(id, CFG_SUFFIX)) {
-        store.setPixelsTimeIncrement(waitTime, 0);
-      }
-
-      if (!readXML || !readCFG) {
-        File file = new File(id).getAbsoluteFile();
-        File parent = file.getParentFile();
-        String[] listing = file.exists() ? parent.list() :
-          Location.getIdMap().keySet().toArray(new String[0]);
-        for (String name : listing) {
-          if ((!readXML && checkSuffix(name, XML_SUFFIX)) ||
-            (readXML && checkSuffix(name, CFG_SUFFIX)))
-          {
-            String dir = "";
-            if (file.exists()) {
-              dir = parent.getPath();
-              if (!dir.endsWith(File.separator)) dir += File.separator;
-            }
-            initFile(dir + name);
-          }
-        }
-      }
+    else if (checkSuffix(id, CFG_SUFFIX)) {
+      cfgFile = id;
+      initCFG();
+      findAndParseXML();
     }
     else {
       // we have been given a TIFF file - reinitialize with the proper XML file
@@ -489,8 +314,190 @@ public class PrairieReader extends FormatReader {
         }
       }
     }
-    if (currentId == null) currentId = id;
+    currentId = xmlFile;
+
+    populateMetadataStore();
   }
+
+  // -- Helper methods --
+
+  private void populateMetadataStore() throws FormatException {
+    LOGGER.info("Populating OME metadata");
+
+    boolean minimumMetadata =
+      getMetadataOptions().getMetadataLevel() == MetadataLevel.MINIMUM;
+    MetadataStore store = makeFilterMetadata();
+    MetadataTools.populatePixels(store, this, !minimumMetadata);
+
+    if (date != null) {
+      date = DateTools.formatDate(date, "MM/dd/yyyy h:mm:ss a");
+    }
+    if (date != null) store.setImageAcquisitionDate(new Timestamp(date), 0);
+
+    if (!minimumMetadata) {
+      // link Instrument and Image
+      String instrumentID = MetadataTools.createLSID("Instrument", 0);
+      store.setInstrumentID(instrumentID, 0);
+      store.setImageInstrumentRef(instrumentID, 0);
+
+      if (pixelSizeX > 0) {
+        store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSizeX), 0);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeX; got {}",
+          pixelSizeX);
+      }
+      if (pixelSizeY > 0) {
+        store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSizeY), 0);
+      }
+      else {
+        LOGGER.warn("Expected positive value for PhysicalSizeY; got {}",
+          pixelSizeY);
+      }
+
+      store.setPixelsTimeIncrement(waitTime, 0);
+
+      for (int i=0; i<getSizeC(); i++) {
+        String gain = i < gains.size() ? gains.get(i) : null;
+        String offset = i < offsets.size() ? offsets.get(i) : null;
+
+        if (offset != null) {
+          try {
+            store.setDetectorSettingsOffset(new Double(offset), 0, i);
+          }
+          catch (NumberFormatException e) { }
+        }
+        if (gain != null) {
+          try {
+            store.setDetectorSettingsGain(new Double(gain), 0, i);
+          }
+          catch (NumberFormatException e) { }
+        }
+
+        // link DetectorSettings to an actual Detector
+        String detectorID = MetadataTools.createLSID("Detector", 0, i);
+        store.setDetectorID(detectorID, 0, i);
+        store.setDetectorSettingsID(detectorID, 0, i);
+        store.setDetectorType(getDetectorType("Other"), 0, i);
+        store.setDetectorZoom(zoom, 0, i);
+
+        if (i < channels.size()) {
+          store.setChannelName(channels.get(i), 0, i);
+        }
+      }
+
+      for (int i=0; i<getImageCount(); i++) {
+        int[] zct = getZCTCoords(i);
+        int index = FormatTools.getIndex(getDimensionOrder(), getSizeZ(),
+          1, getSizeT(), getImageCount() / getSizeC(), zct[0], 0, zct[2]);
+
+        double xPos = positionX.get(index);
+        double yPos = positionY.get(index);
+        double zPos = positionZ.get(index);
+        if (!Double.isNaN(xPos)) store.setPlanePositionX(xPos, 0, i);
+        if (!Double.isNaN(yPos)) store.setPlanePositionY(yPos, 0, i);
+        if (!Double.isNaN(zPos)) store.setPlanePositionZ(zPos, 0, i);
+
+        store.setPlaneDeltaT(relativeTimes.get(String.valueOf(i + 1)), 0, i);
+      }
+
+      if (microscopeModel != null) {
+        store.setMicroscopeModel(microscopeModel, 0);
+      }
+
+      String objective = MetadataTools.createLSID("Objective", 0, 0);
+      store.setObjectiveID(objective, 0, 0);
+      store.setObjectiveSettingsID(objective, 0);
+
+      if (magnification != null) {
+        store.setObjectiveNominalMagnification(magnification, 0, 0);
+      }
+      store.setObjectiveManufacturer(objectiveManufacturer, 0, 0);
+      store.setObjectiveImmersion(getImmersion(immersion), 0, 0);
+      store.setObjectiveCorrection(getCorrection("Other"), 0, 0);
+      store.setObjectiveLensNA(lensNA, 0, 0);
+
+      if (laserPower != null) {
+        String laser = MetadataTools.createLSID("LightSource", 0 ,0);
+        store.setLaserID(laser, 0, 0);
+        try {
+          store.setLaserPower(new Double(laserPower), 0, 0);
+        }
+        catch (NumberFormatException e) { }
+      }
+    }
+  }
+
+  private void initXML() throws FormatException, IOException {
+    LOGGER.info("Parsing XML file");
+
+    String xml = XMLTools.sanitizeXML(DataTools.readFile(xmlFile)).trim();
+
+    DefaultHandler handler = new PrairieHandler();
+    XMLTools.parseXML(xml, handler);
+
+    core[0].sizeT = getImageCount() / (getSizeZ() * getSizeC());
+
+    if (timeSeries && getSizeT() == 1 && getSizeZ() > 1) {
+      core[0].sizeT = getSizeZ();
+      core[0].sizeZ = 1;
+    }
+
+    files = new String[f.size()];
+    f.copyInto(files);
+    tiff.setId(files[0]);
+
+    LOGGER.info("Populating metadata");
+
+    if (getSizeZ() == 0) core[0].sizeZ = 1;
+    if (getSizeT() == 0) core[0].sizeT = 1;
+
+    core[0].dimensionOrder = "XYCZT";
+    core[0].pixelType = FormatTools.UINT16;
+    core[0].rgb = false;
+    core[0].interleaved = false;
+    core[0].littleEndian = tiff.isLittleEndian();
+    core[0].indexed = tiff.isIndexed();
+    core[0].falseColor = false;
+  }
+
+  private void initCFG() throws FormatException, IOException {
+    LOGGER.info("Parsing CFG file");
+
+    String xml = XMLTools.sanitizeXML(DataTools.readFile(cfgFile)).trim();
+
+    DefaultHandler handler = new PrairieHandler();
+    XMLTools.parseXML(xml, handler);
+  }
+
+  private String find(String[] suffix) {
+    File file = new File(currentId).getAbsoluteFile();
+    File parent = file.getParentFile();
+    String[] listing = file.exists() ? parent.list() :
+      Location.getIdMap().keySet().toArray(new String[0]);
+    for (String name : listing) {
+      if (checkSuffix(name, suffix)) {
+        String dir = "";
+        if (file.exists()) {
+          dir = parent.getPath();
+          if (!dir.endsWith(File.separator)) dir += File.separator;
+        }
+        return dir + name;
+      }
+    }
+    return null;
+  }
+
+  private void findAndParseCFG() throws FormatException, IOException {
+    cfgFile = find(CFG_SUFFIX);
+    initCFG();
+  }
+
+  private void findAndParseXML() throws FormatException, IOException {
+    xmlFile = find(XML_SUFFIX);
+    initXML();
+  }
+
 
   // -- Helper classes --
 
