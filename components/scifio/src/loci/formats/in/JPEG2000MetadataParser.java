@@ -137,6 +137,7 @@ public class JPEG2000MetadataParser {
     throws IOException {
     this.in = in;
     this.maximumReadOffset = maximumReadOffset;
+    comments = new ArrayList<String>();
     boolean isLittleEndian = in.isLittleEndian();
     try {
       // Parse boxes may need to change the endianness of the input stream so
