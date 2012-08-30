@@ -428,7 +428,7 @@ public abstract class ReaderWrapper implements IFormatReader {
 
     // NB: Be sure all CoreMetadata values are returned correctly,
     // regardless of any method overrides.
-    return copyCoreMetadata(reader);
+    return copyCoreMetadata(this);
   }
 
   public void setMetadataFiltered(boolean filter) {
@@ -602,7 +602,7 @@ public abstract class ReaderWrapper implements IFormatReader {
 
   /** Creates a copy of the core metadata matching to the given reader state. */
   protected CoreMetadata[] copyCoreMetadata(IFormatReader r) {
-    CoreMetadata[] core = new CoreMetadata[r.getCoreMetadata().length];
+    CoreMetadata[] core = new CoreMetadata[r.getSeriesCount()];
     for (int s=0; s<core.length; s++) {
       core[s] = new CoreMetadata(r, s);
     }
