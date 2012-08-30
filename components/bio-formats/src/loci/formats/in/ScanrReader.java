@@ -180,7 +180,9 @@ public class ScanrReader extends FormatReader {
       int offset = getSeries() * getImageCount();
       for (int i=0; i<getImageCount(); i++) {
         if (offset + i < tiffs.length && tiffs[offset + i] != null) {
-          files.add(tiffs[offset + i]);
+          if (isThisType(tiffs[offset + i])) {
+            files.add(tiffs[offset + i]);
+          }
         }
       }
     }
