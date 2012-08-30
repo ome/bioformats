@@ -157,32 +157,30 @@ public class CoreMetadata {
   }
 
   public CoreMetadata(IFormatReader r, int seriesNo) {
-    int series = r.getSeries();
-    r.setSeries(seriesNo);
-    sizeX = r.getSizeX();
-    sizeY = r.getSizeY();
-    sizeZ = r.getSizeZ();
-    sizeC = r.getSizeC();
-    sizeT = r.getSizeT();
-    thumbSizeX = r.getThumbSizeX();
-    thumbSizeY = r.getThumbSizeY();
-    pixelType = r.getPixelType();
-    bitsPerPixel = r.getBitsPerPixel();
-    imageCount = r.getImageCount();
-    cLengths = r.getChannelDimLengths();
-    cTypes = r.getChannelDimTypes();
-    dimensionOrder = r.getDimensionOrder();
-    orderCertain = r.isOrderCertain();
-    rgb = r.isRGB();
-    littleEndian = r.isLittleEndian();
-    interleaved = r.isInterleaved();
-    indexed = r.isIndexed();
-    falseColor = r.isFalseColor();
-    metadataComplete = r.isMetadataComplete();
-    seriesMetadata = r.getSeriesMetadata();
-    thumbnail = r.isThumbnailSeries();
-    resolutionCount = r.getResolutionCount();
-    r.setSeries(series);
+    CoreMetadata original = r.getCoreMetadata()[seriesNo];
+    sizeX = original.sizeX;
+    sizeY = original.sizeY;
+    sizeZ = original.sizeZ;
+    sizeC = original.sizeC;
+    sizeT = original.sizeT;
+    thumbSizeX = original.thumbSizeX;
+    thumbSizeY = original.thumbSizeY;
+    pixelType = original.pixelType;
+    bitsPerPixel = original.bitsPerPixel;
+    imageCount = original.imageCount;
+    cLengths = original.cLengths;
+    cTypes = original.cTypes;
+    dimensionOrder = original.dimensionOrder;
+    orderCertain = original.orderCertain;
+    rgb = original.rgb;
+    littleEndian = original.littleEndian;
+    interleaved = original.interleaved;
+    indexed = original.indexed;
+    falseColor = original.falseColor;
+    metadataComplete = original.metadataComplete;
+    seriesMetadata = original.seriesMetadata;
+    thumbnail = original.thumbnail;
+    resolutionCount = original.resolutionCount;
   }
 
   // -- Object methods --

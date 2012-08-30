@@ -100,8 +100,6 @@ public class TiffParser {
   /** Codec options to be used when decoding compressed pixel data. */
   private CodecOptions codecOptions = CodecOptions.getDefaultOptions();
 
-  private HashMap<IFD, byte[]> cachedPixels = new HashMap<IFD, byte[]>();
-
   // -- Constructors --
 
   /** Constructs a new TIFF parser from the given file name. */
@@ -855,11 +853,7 @@ public class TiffParser {
     int bufferSize = (int) tileWidth * (int) tileLength *
       bufferSizeSamplesPerPixel * bpp;
 
-    boolean usableCachedBuffer = true;
-    if (cachedTileBuffer == null || cachedTileBuffer.length != bufferSize) {
-      cachedTileBuffer = new byte[bufferSize];
-      usableCachedBuffer = false;
-    }
+    cachedTileBuffer = new byte[bufferSize];
 
     Region tileBounds = new Region(0, 0, (int) tileWidth, (int) tileLength);
 
@@ -874,16 +868,7 @@ public class TiffParser {
 
         if (!imageBounds.intersects(tileBounds)) continue;
 
-        if (!cachedPixels.containsKey(ifd)) {
-          getTile(ifd, cachedTileBuffer, row, col);
-          if (numTileRows * numTileCols == 1) {
-            cachedPixels.clear();
-            cachedPixels.put(ifd, cachedTileBuffer);
-          }
-        }
-        else {
-          cachedTileBuffer = cachedPixels.get(ifd);
-        }
+        getTile(ifd, cachedTileBuffer, row, col);
 
         // adjust tile bounds, if necessary
 

@@ -163,7 +163,7 @@ public class JPEG2000Reader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    if (lastSeries == getSeries() && lastSeriesPlane != null) {
+    if (lastSeries == getCoreIndex() && lastSeriesPlane != null) {
       RandomAccessInputStream s = new RandomAccessInputStream(lastSeriesPlane);
       readPlane(s, x, y, w, h, buf);
       s.close();
@@ -174,10 +174,10 @@ public class JPEG2000Reader extends FormatReader {
     options.interleaved = isInterleaved();
     options.littleEndian = isLittleEndian();
     if (resolutionLevels != null) {
-      options.resolution = Math.abs(series - resolutionLevels);
+      options.resolution = Math.abs(getCoreIndex() - resolutionLevels);
     }
-    else if (getSeriesCount() > 1) {
-      options.resolution = series;
+    else if (core.length > 1) {
+      options.resolution = getCoreIndex();
     }
 
     in.seek(pixelsOffset);
@@ -185,7 +185,7 @@ public class JPEG2000Reader extends FormatReader {
     RandomAccessInputStream s = new RandomAccessInputStream(lastSeriesPlane);
     readPlane(s, x, y, w, h, buf);
     s.close();
-    lastSeries = getSeries();
+    lastSeries = getCoreIndex();
     return buf;
   }
 
