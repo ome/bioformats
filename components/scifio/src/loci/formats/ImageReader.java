@@ -658,6 +658,11 @@ public class ImageReader implements IFormatReader {
     return getReader().getOptimalTileHeight();
   }
 
+  /* @see IFormatReader#getCoreIndex() */
+  public int getCoreIndex() {
+    return getReader().getCoreIndex();
+  }
+
   /* @see IFormatReader#getResolutionCount() */
   public int getResolutionCount() {
     return getReader().getResolutionCount();

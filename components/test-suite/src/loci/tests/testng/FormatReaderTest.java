@@ -1558,6 +1558,70 @@ public class FormatReaderTest {
   /**
    * @testng.test groups = "all pixels automated"
    */
+  public void testUnflattenedPixelsHashes() {
+    if (config == null) throw new SkipException("No config tree");
+    String testName = "testUnflattenedPixelsHashes";
+    if (!initFile()) result(testName, false, "initFile");
+
+    boolean success = true;
+    String msg = null;
+    try {
+      IFormatReader resolutionReader =
+        new BufferedImageReader(new FileStitcher());
+      resolutionReader.setFlattenedResolutions(false);
+      resolutionReader.setNormalized(true);
+      resolutionReader.setOriginalMetadataPopulated(false);
+      resolutionReader.setMetadataFiltered(true);
+      resolutionReader.setId(id);
+
+      // check the MD5 of the first plane in each resolution
+      for (int i=0; i<resolutionReader.getSeriesCount() && success; i++) {
+        resolutionReader.setSeries(i);
+
+        for (int r=0; r<resolutionReader.getResolutionCount() && success; r++) {
+          resolutionReader.setResolution(r);
+          config.setSeries(resolutionReader.getCoreIndex());
+
+          long planeSize = -1;
+          try {
+            planeSize = DataTools.safeMultiply32(resolutionReader.getSizeX(),
+              resolutionReader.getSizeY(),
+              resolutionReader.getRGBChannelCount(),
+              FormatTools.getBytesPerPixel(resolutionReader.getPixelType()));
+          }
+          catch (IllegalArgumentException e) {
+            continue;
+          }
+
+          if (planeSize < 0 || !TestTools.canFitInMemory(planeSize)) {
+            continue;
+          }
+
+          String md5 = TestTools.md5(resolutionReader.openBytes(0));
+          String expected1 = config.getMD5();
+          String expected2 = config.getAlternateMD5();
+
+          if (expected1 == null && expected2 == null) {
+            continue;
+          }
+          if (!md5.equals(expected1) && !md5.equals(expected2)) {
+            success = false;
+            msg = "series " + i + ", resolution " + r;
+          }
+        }
+      }
+      resolutionReader.close();
+    }
+    catch (Throwable t) {
+      LOGGER.info("", t);
+      success = false;
+    }
+    result(testName, success, msg);
+  }
+
+  /**
+   * @testng.test groups = "all pixels automated"
+   */
   public void testPixelsHashes() {
     if (config == null) throw new SkipException("No config tree");
     String testName = "testPixelsHashes";
@@ -1642,6 +1706,70 @@ public class FormatReaderTest {
     result(testName, success, msg);
   }
   */
+
+  /**
+   * @testng.test groups = "all pixels automated"
+   */
+  public void testUnflattenedSubimagePixelsHashes() {
+    if (config == null) throw new SkipException("No config tree");
+    String testName = "testUnflattenedSubimagePixelsHashes";
+    if (!initFile()) result(testName, false, "initFile");
+
+    boolean success = true;
+    String msg = null;
+    try {
+      IFormatReader resolutionReader =
+        new BufferedImageReader(new FileStitcher());
+      resolutionReader.setFlattenedResolutions(false);
+      resolutionReader.setNormalized(true);
+      resolutionReader.setOriginalMetadataPopulated(false);
+      resolutionReader.setMetadataFiltered(true);
+      resolutionReader.setId(id);
+
+      // check the MD5 of the first plane in each resolution
+      for (int i=0; i<resolutionReader.getSeriesCount() && success; i++) {
+        resolutionReader.setSeries(i);
+
+        for (int r=0; r<resolutionReader.getResolutionCount() && success; r++) {
+          resolutionReader.setResolution(r);
+          config.setSeries(resolutionReader.getCoreIndex());
+
+          int w = (int) Math.min(Configuration.TILE_SIZE,
+            resolutionReader.getSizeX());
+          int h = (int) Math.min(Configuration.TILE_SIZE,
+            resolutionReader.getSizeY());
+
+          String expected1 = config.getTileMD5();
+          String expected2 = config.getTileAlternateMD5();
+
+          String md5 = null;
+
+          try {
+            md5 = TestTools.md5(resolutionReader.openBytes(0, 0, 0, w, h));
+          }
+          catch (Exception e) {
+            LOGGER.warn("", e);
+          }
+
+          if (md5 == null && expected1 == null && expected2 == null) {
+            success = true;
+          }
+          else if (!md5.equals(expected1) && !md5.equals(expected2) &&
+            (expected1 != null || expected2 != null))
+          {
+            success = false;
+            msg = "series " + i + ", resolution " + r;
+          }
+        }
+      }
+      resolutionReader.close();
+    }
+    catch (Throwable t) {
+      LOGGER.info("", t);
+      success = false;
+    }
+    result(testName, success, msg);
+  }
 
   /**
    * @testng.test groups = "all pixels automated"

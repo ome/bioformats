@@ -813,7 +813,12 @@ public abstract class FormatReader extends FormatHandler
     }
     int count = 0;
     for (int i=0; i<core.length;) {
-      i += core[i].resolutionCount;
+      if (core[i] != null) {
+        i += core[i].resolutionCount;
+      }
+      else {
+        i++;
+      }
       count++;
     }
     return count;
@@ -1114,7 +1119,13 @@ public abstract class FormatReader extends FormatHandler
   /* @see IFormatReader#getResolutionCount() */
   public int getResolutionCount() {
     FormatTools.assertId(currentId, true, 1);
-    return core[getSeries()].resolutionCount;
+
+    int index = 0;
+    for (int i=0; i<getSeries(); i++) {
+      index += core[index].resolutionCount;
+    }
+
+    return core[index].resolutionCount;
   }
 
   /* @see IFormatReader#setResolution(int) */
@@ -1141,9 +1152,9 @@ public abstract class FormatReader extends FormatHandler
     flattenedResolutions = flattened;
   }
 
-  protected int getCoreIndex() {
+  public int getCoreIndex() {
     if (hasFlattenedResolutions()) {
-        return getSeries();
+      return getSeries();
     }
     int index = 0;
     for (int i=0; i<getSeries(); i++) {
