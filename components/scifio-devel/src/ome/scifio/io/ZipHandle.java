@@ -156,14 +156,12 @@ public class ZipHandle extends StreamHandle {
 
   /* @see IRandomAccess#close() */
   public void close() throws IOException {
-    if (!Location.getIdMap().containsValue(this)) {
-      super.close();
-      zip = null;
-      entry = null;
-      if (in != null) in.close();
-      in = null;
-      entryCount = 0;
-    }
+    super.close();
+    zip = null;
+    entry = null;
+    if (in != null) in.close();
+    in = null;
+    entryCount = 0;
   }
 
   // -- StreamHandle API methods --
