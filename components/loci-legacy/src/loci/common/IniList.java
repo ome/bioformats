@@ -68,18 +68,18 @@ public class IniList extends ArrayList<IniTable> {
   // -- Delegators --
 
   public boolean add(IniTable arg0) {
-    return list.add(arg0.table);
+    return list.add(arg0.getTable());
   }
 
   public void add(int arg0, IniTable arg1) {
-    list.add(arg0, arg1.table);
+    list.add(arg0, arg1.getTable());
   }
 
   public boolean addAll(Collection<? extends IniTable> arg0) {
     Iterator<? extends IniTable> iter = arg0.iterator();
     
     while(iter.hasNext())
-      list.add(iter.next().table);
+      list.add(iter.next().getTable());
     
     return arg0.size() > 0;
   }
@@ -88,7 +88,7 @@ public class IniList extends ArrayList<IniTable> {
     Iterator<? extends IniTable> iter = arg1.iterator();
     
     while(iter.hasNext())
-      list.add(arg0, iter.next().table);
+      list.add(arg0, iter.next().getTable());
     
     return arg1.size() > 0;
   }
@@ -166,7 +166,7 @@ public class IniList extends ArrayList<IniTable> {
   }
 
   public IniTable set(int arg0, IniTable arg1) {
-    return convertTable(list.set(arg0, arg1.table));
+    return convertTable(list.set(arg0, arg1.getTable()));
   }
 
   public int size() {
@@ -210,7 +210,7 @@ public class IniList extends ArrayList<IniTable> {
   
   private IniTable convertTable(ome.scifio.common.IniTable table) {
     IniTable t = new IniTable();
-    t.table = table;
+    t.setTable(table);
     return t;
   }
   

@@ -57,12 +57,28 @@ public class IniTable extends HashMap<String, String> {
 
   // -- Fields --
   
-  public ome.scifio.common.IniTable table = new ome.scifio.common.IniTable();
+  private ome.scifio.common.IniTable table;
   
   // -- Constants --
   
   /** Key to use for storing header value (in brackets). */
   public static final String HEADER_KEY = ome.scifio.common.IniTable.HEADER_KEY;
+  
+  // -- Constructor --
+  
+  public IniTable() {
+    table = new ome.scifio.common.IniTable();
+  }
+  
+  // -- Accessors --
+
+  public ome.scifio.common.IniTable getTable() {
+    return table;
+  }
+
+  public void setTable(ome.scifio.common.IniTable table) {
+    this.table = table;
+  }
   
   // -- Delegators --
 
