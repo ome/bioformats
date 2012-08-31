@@ -209,6 +209,8 @@ public class IniList extends ArrayList<IniTable> {
   // -- Helper methods --
   
   private IniTable convertTable(ome.scifio.common.IniTable table) {
+    if (table == null) return null;
+    
     IniTable t = new IniTable();
     t.setTable(table);
     return t;
