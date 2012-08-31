@@ -226,6 +226,18 @@ public class Location {
   {
     return (IRandomAccess) ome.scifio.io.Location.getHandle(id, writable, allowArchiveHandles);
   }
+  
+  /**
+   * Checks that the given id points at a valid data stream.
+   * 
+   * @param id
+   *          The id string to validate.
+   * @throws IOException
+   *           if the id is not valid.
+   */
+  public static void checkValidId(String id) throws IOException {
+    ome.scifio.io.Location.checkValidId(id);
+  }
 
   /**
    * Return a list of all of the files in this directory.  If 'noHiddenFiles' is

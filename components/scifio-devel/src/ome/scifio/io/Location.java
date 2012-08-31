@@ -46,7 +46,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
-
 import ome.scifio.common.Constants;
 
 import org.slf4j.Logger;
@@ -312,6 +311,26 @@ public class Location {
     }
     LOGGER.trace("Location.getHandle: {} -> {}", id, handle);
     return handle;
+  }
+
+  /**
+   * Checks that the given id points at a valid data stream.
+   * 
+   * @param id
+   *          The id string to validate.
+   * @throws IOException
+   *           if the id is not valid.
+   */
+  public static void checkValidId(String id) throws IOException {
+    if (getMappedFile(id) != null) {
+      // NB: The id maps directly to an IRandomAccess handle, so is valid. Do
+      // not destroy an existing mapped IRandomAccess handle by closing it.
+      return;
+    }
+    // NB: Try to actually open a handle to make sure it is valid. Close it
+    // afterward so we don't leave it dangling. The process of doing this will
+    // throw IOException if something goes wrong.
+    Location.getHandle(id).close();
   }
 
   /**
