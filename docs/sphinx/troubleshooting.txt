@@ -1,40 +1,6 @@
 Troubleshooting
 ===============
 
-`|OME| <http://trac.openmicroscopy.org.uk/ome>`_
-
--  `Wiki <http://trac.openmicroscopy.org.uk/ome/wiki>`_
--  `Timeline <http://trac.openmicroscopy.org.uk/ome/timeline>`_
--  `Roadmap <http://trac.openmicroscopy.org.uk/ome/roadmap>`_
--  `Browse Source <http://trac.openmicroscopy.org.uk/ome/browser>`_
--  `View Tickets <http://trac.openmicroscopy.org.uk/ome/report>`_
--  `Search <http://trac.openmicroscopy.org.uk/ome/search>`_
-
--  `Login <http://trac.openmicroscopy.org.uk/ome/login>`_
--  `Help/Guide <http://trac.openmicroscopy.org.uk/ome/agilo-help>`_
--  `About Trac <http://trac.openmicroscopy.org.uk/ome/about>`_
--  `Preferences <http://trac.openmicroscopy.org.uk/ome/prefs>`_
--  `agile42 <http://www.agile42.com/>`_
-
-Tickets
-
-Wiki
-
-Context Navigation
-------------------
-
--  `Start Page <http://trac.openmicroscopy.org.uk/ome/wiki/WikiStart>`_
--  `Index <http://trac.openmicroscopy.org.uk/ome/wiki/TitleIndex>`_
--  `History <http://trac.openmicroscopy.org.uk/ome/wiki/BioFormats-Troubleshooting?action=history>`_
-
---------------
-
-`Last
-modified <http://trac.openmicroscopy.org.uk/ome/wiki/BioFormats-Troubleshooting?action=diff&version=3>`_
-`3
-weeks <http://trac.openmicroscopy.org.uk/ome/timeline?from=2012-07-12T15%3A42%3A10%2B01%3A00&precision=second>`_
-ago
-
 This page is aimed at anyone who is responsible for supporting
 Bio-Formats, but may also be useful for advanced users looking to
 troubleshoot their own problems. Eventually, it might be best to move

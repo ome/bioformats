@@ -1,20 +1,3 @@
-Various enhancements to the data-driven tests
----------------------------------------------
-
-In roughly priority order:
-
--  :ticket:`4127`
--  :ticket:`4143` consider changing config file format
--  :ticket:`539` skip tests when setId fails
--  :ticket:`4142` allow files to be mapped into memory
--  :ticket:`4146` add Hudson jobs to run data-driven tests
--  :ticket:`4139` test for leaking file handles
--  :ticket:`4141` consistent type checking
--  :ticket:`4144` non-core metadata consistency
--  :ticket:`4138` MD5 test for sub-images
--  :ticket:`4140` reading planes in a random order
--  :ticket:`4145` alternate MD5 hash
-
 Public test data
 ----------------
 
