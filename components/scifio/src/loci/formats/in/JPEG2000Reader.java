@@ -37,6 +37,7 @@
 package loci.formats.in;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -239,6 +240,21 @@ public class JPEG2000Reader extends FormatReader {
         newCore[i].thumbnail = true;
       }
       core = newCore;
+    }
+
+    ArrayList<String> comments = metadataParser.getComments();
+    for (int i=0; i<comments.size(); i++) {
+      String comment = comments.get(i);
+      int equal = comment.indexOf("=");
+      if (equal >= 0) {
+        String key = comment.substring(0, equal);
+        String value = comment.substring(equal + 1);
+
+        addGlobalMeta(key, value);
+      }
+      else {
+        addGlobalMeta("Comment #" + (i + 1), comment);
+      }
     }
 
     MetadataStore store = makeFilterMetadata();
