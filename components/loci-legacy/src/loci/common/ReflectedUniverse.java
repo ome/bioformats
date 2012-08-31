@@ -122,7 +122,7 @@ public class ReflectedUniverse {
       return unv.exec(command);
     }
     catch (ome.scifio.common.ReflectException e) {
-      throw (ReflectException)e;
+      throw new ReflectException(e.getCause());
     }
   }
 
