@@ -47,6 +47,7 @@ import loci.formats.codec.JPEG2000Codec;
 import loci.formats.codec.ZlibCodec;
 import loci.formats.meta.MetadataStore;
 
+import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 
@@ -107,6 +108,9 @@ public class NativeND2Reader extends FormatReader {
   private double trueSizeX = 0;
   private double trueSizeY = 0;
   private double trueSizeZ = 0;
+
+  private ArrayList<String> textChannelNames = new ArrayList<String>();
+  private ArrayList<Integer> textEmissionWavelengths = new ArrayList<Integer>();
 
   // -- Constructor --
 
@@ -317,6 +321,8 @@ public class NativeND2Reader extends FormatReader {
       trueSizeX = 0;
       trueSizeY = 0;
       trueSizeZ = 0;
+      textChannelNames.clear();
+      textEmissionWavelengths.clear();
     }
   }
 
@@ -399,7 +405,7 @@ public class NativeND2Reader extends FormatReader {
 
         // Only 1 MetadataSeq is needed
         // (others should be same, and time is saved elsewhere)
-        if (nameAtri.contains("MetadataSeqLV")) {
+        if (nameAttri.contains("MetadataSeqLV")) {
           seq = true;
         }
 
@@ -532,8 +538,34 @@ public class NativeND2Reader extends FormatReader {
               if (key.equals("- Step")) {
                 trueSizeZ = Double.parseDouble(DataTools.sanitizeDouble(value));
               }
+              else if (key.equals("Name")) {
+                textChannelNames.add(value);
+              }
+              else if (key.startsWith("Line:")) {
+                if (value.endsWith("Active")) {
+                  int first = key.lastIndexOf(":") + 1;
+                  int last = key.lastIndexOf(";");
+                  textEmissionWavelengths.add(
+                    new Integer(key.substring(first, last)) + 20);
+                }
+              }
 
-              addGlobalMeta(key, value);
+              if (metadata.containsKey(key)) {
+                Object oldValue = metadata.get(key);
+                metadata.put(key + " #1", oldValue);
+                metadata.put(key + " #2", value);
+                metadata.remove(key);
+              }
+              else if (metadata.containsKey(key + " #1")) {
+                int index = 1;
+                while (metadata.containsKey(key + " #" + index)) {
+                  index++;
+                }
+                metadata.put(key + " #" + index, value);
+              }
+              else {
+                metadata.put(key, value);
+              }
             }
           }
         }
@@ -1481,12 +1513,12 @@ public class NativeND2Reader extends FormatReader {
         }
 
         if (type != 11 && type != 10) {    // if not level add global meta
-          addGlobalMeta(name, value);
+          addGlobalMeta(DataTools.stripString(name), value);
         }
       }
     }
     catch (Exception e) {
-      Logger.debug("", e);
+      LOGGER.debug("", e);
     }
   }
 
@@ -1513,6 +1545,9 @@ public class NativeND2Reader extends FormatReader {
       channelNames = handler.getChannelNames();
       if (channelNames.size() == 0 && backupHandler != null) {
         channelNames = backupHandler.getChannelNames();
+      }
+      else if (channelNames.size() == 0) {
+        channelNames = textChannelNames;
       }
       for (int i=0; i<getSeriesCount(); i++) {
         for (int c=0; c<getEffectiveSizeC(); c++) {
@@ -1685,16 +1720,20 @@ public class NativeND2Reader extends FormatReader {
           store.setChannelAcquisitionMode(
             getAcquisitionMode(modality.get(index)), i, c);
         }
-        if (index < emWave.size()) {
-          if (emWave.get(index) > 0) {
-            store.setChannelEmissionWavelength(
-              new PositiveInteger(emWave.get(index)), i, c);
+        if (index < emWave.size() || index < textEmissionWavelengths.size()) {
+          Integer value = index < emWave.size() ? emWave.get(index) :
+            textEmissionWavelengths.get(index);
+          if (value > 0) {
+            store.setChannelEmissionWavelength(new PositiveInteger(value), i, c);
           }
           else {
             LOGGER.warn(
               "Expected positive value for EmissionWavelength; got {}",
               emWave.get(index));
           }
+        }
+        else if (emWave.size() > 0 || textEmissionWavelengths.size() > 0) {
+          store.setChannelColor(new Color(255, 255, 255, 255), i, c);
         }
         if (index < exWave.size()) {
           if (exWave.get(index) > 0) {
