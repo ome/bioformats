@@ -139,7 +139,7 @@ public class DimensionSwapper extends ReaderWrapper {
     dims[oldC] = getSizeC();
     dims[oldT] = getSizeT();
 
-    int series = getSeries();
+    int series = getCoreIndex();
 
     core[series].sizeX = dims[newX];
     core[series].sizeY = dims[newY];

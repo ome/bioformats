@@ -504,13 +504,26 @@ public interface IFormatReader extends IFormatHandler, IMetadataConfigurable {
   /** Return the index into CoreMetadata of the current resolution/series. */
   int getCoreIndex();
 
-  /** Return the number of resolutions for the current series. */
+  /**
+   * Return the number of resolutions for the current series.
+   *
+   * Resolutions are stored in descending order, so the largest resolution is
+   * first and the smallest resolution is last.
+   */
   int getResolutionCount();
 
-  /** Set the resolution level. */
+  /**
+   * Set the resolution level.
+   *
+   * @see getResolutionCount()
+   */
   void setResolution(int resolution);
 
-  /** Get the current resolution level. */
+  /**
+   * Get the current resolution level.
+   *
+   * @see getResolutionCount()
+   */
   int getResolution();
 
   /** Return whether or not resolution flattening is enabled. */

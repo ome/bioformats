@@ -908,11 +908,15 @@ public abstract class BaseZeissReader extends FormatReader {
         else if (key.startsWith("User Name")) {
           String[] username = value.split(" ");
           if (username.length >= 2) {
+            String id = MetadataTools.createLSID("Experimenter", 0);
+            store.setExperimenterID(id, 0);
             store.setExperimenterFirstName(username[0], 0);
             store.setExperimenterLastName(username[username.length - 1], 0);
           }
         }
         else if (key.equals("User company")) {
+          String id = MetadataTools.createLSID("Experimenter", 0);
+          store.setExperimenterID(id, 0);
           store.setExperimenterInstitution(value, 0);
         }
         else if (key.startsWith("Objective Magnification")) {
