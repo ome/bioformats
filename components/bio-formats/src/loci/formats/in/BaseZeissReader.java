@@ -1047,13 +1047,18 @@ public abstract class BaseZeissReader extends FormatReader {
       stamp = Long.parseLong(s);
     }
     catch (NumberFormatException exc) {
-      if (s != null) {
-        stamp = DateTools.getTime(s, "M/d/y h:mm:ss aa");
-        if (stamp < 0) {
-          stamp = DateTools.getTime(s, "d/M/y H:mm:ss");
+      try {
+        stamp = Double.doubleToLongBits(Double.parseDouble(s));
+      }
+      catch (Exception e) {
+        if (s != null) {
+          stamp = DateTools.getTime(s, "M/d/y h:mm:ss aa");
+          if (stamp < 0) {
+            stamp = DateTools.getTime(s, "d/M/y H:mm:ss");
+          }
+          stamp += DateTools.ZVI_EPOCH;
+          stamp *= 1600;
         }
-        stamp += DateTools.ZVI_EPOCH;
-        stamp *= 1600;
       }
     }
     return stamp;
