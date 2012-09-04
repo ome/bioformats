@@ -58,7 +58,7 @@ public class Region extends ome.scifio.common.Region {
   // -- Wrapper API --
   
   public Region intersection(Region r) {
-    return (Region) super.intersection(r);
+    return convertRegion(super.intersection(r));
   }
   
   // -- Object delegators --
@@ -76,6 +76,29 @@ public class Region extends ome.scifio.common.Region {
   @Override
   public String toString() {
     return super.toString();
+  }
+  
+  // -- Helper Methods --
+  
+  /*
+   * ---HACK---
+   * Returns a loci.common Region based on the provided
+   *  {@link ome.scifio.common.Region}.
+   *  
+   *  This is necessary because loci.common.Region has to directly
+   *  extend ome.scifio.common.Region, because of the public field
+   *  contract that was established in this class.
+   *  
+   *  Extension was not sufficient for full backwards compatibility,
+   *  as ome.scifio.common.Region#intersection always returns an
+   *  ome.scifio.common.Region which can not be safely cast to a loci.common
+   *  Region.
+   *  
+   *  Thus this method constructs a loci.common Region assuming the base
+   *  ome.scifio.common.Region was provided.
+   */
+  private Region convertRegion(ome.scifio.common.Region r) {
+    return new Region(r.x, r.y, r.width, r.height);
   }
 
 }
