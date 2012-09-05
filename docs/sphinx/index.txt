@@ -21,10 +21,10 @@ formats, are available at the `LOCI website
 The primary goal of Bio-Formats is to facilitate the exchange of
 microscopy data between both different software packages and different
 organizations, by converting proprietary microscopy data into the `OME
-data model standard </site/support/file-formats>`_. See our `recent
+data model standard <http://www.openmicroscopy.org/site/support/file-formats>`_. See our `recent
 article <http://jcb.rupress.org/content/189/5/777.abstract>`_ on
 biological image formats and the `Bio-Formats statement of
-purpose <http://www.loci.wisc.edu/bio-formats/about>`_ for more
+purpose <http://loci.wisc.edu/bio-formats/about>`_ for more
 information.
 
 Bio-Formats is released under the `GNU General Public License (GPL)
@@ -48,10 +48,10 @@ Installation is usually as simple as downloading one of the files from
 
 - either the complete Bio-Formats bundle with supporting libraries is
   available as `loci\_tools.jar
-  <http://loci.wisc.edu/software/loci_tools.jar>`_, or
+  <http://loci.wisc.edu/files/software/loci_tools.jar>`_, or
    
 - the Bio-Formats standalone library is available as `bio-formats.jar
-  <http://loci.wisc.edu/software/bio-formats.jar>`_
+  <http://loci.wisc.edu/files/software/bio-formats.jar>`_
 
 
 and placing it in an appropriate directory. Specific installation instructions
@@ -60,7 +60,7 @@ application, as listed at `http://loci.wisc.edu/bio-formats/applications
 <http://loci.wisc.edu/bio-formats/applications>`_.
 
 See the `Bio-Formats Download page
-<http://www.loci.wisc.edu/bio-formats/downloads>`_ for the most
+<http://loci.wisc.edu/bio-formats/downloads>`_ for the most
 up-to-date version of Bio-Formats including daily and trunk builds and
 source code repository information.
 
@@ -120,8 +120,8 @@ the `mailing lists <http://loci.wisc.edu/software/mailing-lists>`_ and
 we will do our best answer your questions.
 
 You may also wish to check the `OME
-FAQ <http://openmicroscopy.org/site/support/faq>`_ and the `LOCI
-FAQ <http://www.loci.wisc.edu/faq>`_, in case your question is answered
+FAQ <http://www.openmicroscopy.org/site/support/faq>`_ and the `LOCI
+FAQ <http://loci.wisc.edu/faq>`_, in case your question is answered
 there.
 
 
