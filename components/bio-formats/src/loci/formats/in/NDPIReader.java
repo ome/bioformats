@@ -29,11 +29,14 @@ import java.io.IOException;
 
 import loci.common.DateTools;
 import loci.common.RandomAccessInputStream;
+import loci.common.services.ServiceException;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.codec.JPEGTileDecoder;
 import loci.formats.meta.MetadataStore;
+import loci.formats.services.JPEGTurboService;
+import loci.formats.services.JPEGTurboServiceImpl;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.PhotoInterp;
 import loci.formats.tiff.TiffParser;
@@ -101,36 +104,27 @@ public class NDPIReader extends BaseTiffReader {
       return tiffParser.getSamples(ifds.get(ifdIndex), buf, x, y, w, h);
     }
 
-    if (initializedSeries != getCoreIndex() || initializedPlane != no) {
-      if (x == 0 && y == 0 && w == getOptimalTileWidth() &&
-        h == getOptimalTileHeight())
-      {
-        // it looks like we'll be reading lots of tiles
-        setupService(0, 0, no);
-      }
-      else {
-        // it looks like we'll only read one tile
-        setupService(y, h, no);
-      }
-      initializedSeries = getCoreIndex();
-      initializedPlane = no;
-    }
-    else if (decoder.getScanline(y) == null) {
-      setupService(y, h, no);
-    }
+    IFD ifd = ifds.get(getIFDIndex(getCoreIndex(), no));
 
-    int c = getRGBChannelCount();
-    int bytes = FormatTools.getBytesPerPixel(getPixelType());
-    int row = w * c * bytes;
-
-    for (int yy=y; yy<y + h; yy++) {
-      byte[] scanline = decoder.getScanline(yy);
-      if (scanline != null) {
-        int copy = (int) Math.min(row, buf.length - (yy - y) * row - 1);
-        if (copy < 0) break;
-        System.arraycopy(scanline, x * c * bytes, buf, (yy - y) * row, copy);
-      }
+    long offset = ifd.getStripOffsets()[0];
+    int byteCount = (int) ifd.getStripByteCounts()[0];
+    if (in != null) {
+      in.close();
     }
+    in = new RandomAccessInputStream(currentId);
+    in.seek(offset);
+    in.setLength(offset + byteCount);
+
+    JPEGTurboService service = new JPEGTurboServiceImpl();
+    try {
+      service.initialize(in, getSizeX(), getSizeY());
+    }
+    catch (ServiceException e) {
+      throw new FormatException(e);
+    }
+    byte[] tile = service.getTile(x, y, w, h);
+
+    System.arraycopy(tile, 0, buf, 0, tile.length);
 
     return buf;
   }
@@ -221,8 +215,6 @@ public class NDPIReader extends BaseTiffReader {
   /* @see loci.formats.BaseTiffReader#initStandardMetadata() */
   protected void initStandardMetadata() throws FormatException, IOException {
     super.initStandardMetadata();
-
-    decoder = new JPEGTileDecoder();
 
     ifds = tiffParser.getIFDs();
 
@@ -349,25 +341,6 @@ public class NDPIReader extends BaseTiffReader {
   }
 
   // -- Helper methods --
-
-  private void setupService(int y, int h, int z)
-    throws FormatException, IOException
-  {
-    decoder.close();
-
-    IFD ifd = ifds.get(getIFDIndex(getCoreIndex(), z));
-
-    long offset = ifd.getStripOffsets()[0];
-    int byteCount = (int) ifd.getStripByteCounts()[0];
-    if (in != null) {
-      in.close();
-    }
-    in = new RandomAccessInputStream(currentId);
-    in.seek(offset);
-    in.setLength(offset + byteCount);
-
-    decoder.initialize(in, y, h, getSizeX());
-  }
 
   private int getIFDIndex(int seriesIndex, int zIndex) {
     if (seriesIndex < pyramidHeight) {
