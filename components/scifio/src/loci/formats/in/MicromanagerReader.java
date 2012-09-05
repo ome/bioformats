@@ -201,12 +201,30 @@ public class MicromanagerReader extends FormatReader {
   /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
+    if (tiffReader.getCurrentFile() == null) {
+      try {
+        String file = positions.get(getSeries()).getFile(0);
+        tiffReader.setId(file);
+      }
+      catch (Exception e) {
+        LOGGER.debug("", e);
+      }
+    }
     return tiffReader.getOptimalTileWidth();
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
+    if (tiffReader.getCurrentFile() == null) {
+      try {
+        String file = positions.get(getSeries()).getFile(0);
+        tiffReader.setId(file);
+      }
+      catch (Exception e) {
+        LOGGER.debug("", e);
+      }
+    }
     return tiffReader.getOptimalTileWidth();
   }
 
