@@ -2,7 +2,7 @@ Testing individual commits (internal developers)
 ================================================
 
 At the bottom of many commit messages in
-`http://github.com/openmicroscopy/bioformats <http://github.com/openmicroscopy/bioformats>`_,
+`https://github.com/openmicroscopy/bioformats <https://github.com/openmicroscopy/bioformats>`_,
 you will find a few lines similar to this:
 
 ::

@@ -25,7 +25,7 @@ General tips
       list <http://lists.openmicroscopy.org.uk/pipermail/ome-users>`_
       (not searchable)
    -  `ImageJ mailing list (for ImageJ/Fiji
-      issues) <http://imagej.588099.n2.nabble.com/>`_
+      issues) <http://imagej.1557.n6.nabble.com/>`_
 
 -  Make sure to ask for a \_specific\_ error message or description of
    the unexpected behavior, if one is not provided ("it does not work"

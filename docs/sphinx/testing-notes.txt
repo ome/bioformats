@@ -26,7 +26,7 @@ A '\*' indicates that we could generate more public data in this format.
 -  Khoros
    (`http://netghost.narod.ru/gff/sample/images/viff/index.htm <http://netghost.narod.ru/gff/sample/images/viff/index.htm>`_)
 -  MNG
-   (`http://prdownloads.sourceforge.net/libmng/MNGsuite-20030305.zip?download <http://prdownloads.sourceforge.net/libmng/MNGsuite-20030305.zip?download>`_)
+   (`Download <http://sourceforge.net/projects/libmng/files/libmng-testsuites/Release-20030305/MNGsuite-20030305.zip/download?use_mirror=freefr&download=>`_)
    (\*)
 
 Formats for which we can definitely generate public sample data:

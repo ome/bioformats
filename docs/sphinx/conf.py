@@ -284,4 +284,4 @@ texinfo_documents = [
 # -- Options for the linkcheck builder ----------------------------------------
 
 # Regular expressions that match URIs that should not be checked when doing a linkcheck build
-linkcheck_ignore = []
+linkcheck_ignore = ['http://www.openmicroscopy.org/site/support/faq']
