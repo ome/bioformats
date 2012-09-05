@@ -184,7 +184,7 @@ public final class XMLTools {
     final char[] c = s.toCharArray();
     for (int i=0; i<s.length(); i++) {
       if (Character.isISOControl(c[i]) ||
-        !Character.isDefined(c[i]) || c[i] > '~')
+        !Character.isDefined(c[i]))
       {
         c[i] = ' ';
       }
