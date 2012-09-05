@@ -281,6 +281,12 @@ TestNG
     Notes:     testing framework used for LOCI software automated test suite
     License:   Apache
 
+libjpeg-turbo
+    JAR file:  turbojpeg.jar
+    URL:       http://sourceforge.net/projects/libjpeg-turbo
+    Notes:     used to read large JPEG and .ndpi images
+    License:   BSD
+
 Apache Velocity
     JAR file:  velocity-1.6.3-dep.jar
     URL:       http://velocity.apache.org/
