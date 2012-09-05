@@ -1250,17 +1250,6 @@ public class ZeissCZIReader extends FormatReader {
       }
       NodeList allGrandchildren = elementses.item(0).getChildNodes();
 
-      if (allGrandchildren.getLength() > 0) {
-        String roiID = MetadataTools.createLSID("ROI", i);
-        store.setROIID(roiID, i);
-        store.setROIName(layer.getAttribute("Name"), i);
-        store.setROIDescription(getFirstNodeValue(layer, "Usage"), i);
-
-        for (int series=0; series<getSeriesCount(); series++) {
-          store.setImageROIRef(roiID, series, i);
-        }
-      }
-
       int shape = 0;
 
       NodeList lines = getGrandchildren(layer, "Elements", "Line");
@@ -1374,11 +1363,22 @@ public class ZeissCZIReader extends FormatReader {
       shape = populateRectangles(textBoxes, i, shape);
       NodeList text = getGrandchildren(layer, "Elements", "Text");
       shape = populateRectangles(text, i, shape);
+
+      if (shape > 0) {
+        String roiID = MetadataTools.createLSID("ROI", i);
+        store.setROIID(roiID, i);
+        store.setROIName(layer.getAttribute("Name"), i);
+        store.setROIDescription(getFirstNodeValue(layer, "Usage"), i);
+
+        for (int series=0; series<getSeriesCount(); series++) {
+          store.setImageROIRef(roiID, series, i);
+        }
+      }
     }
   }
 
   private int populateRectangles(NodeList rectangles, int roi, int shape) {
-    for (int s=0; s<rectangles.getLength(); s++, shape++) {
+    for (int s=0; s<rectangles.getLength(); s++) {
       Element rectangle = (Element) rectangles.item(s);
 
       Element geometry = getFirstNode(rectangle, "Geometry");
@@ -1405,6 +1405,7 @@ public class ZeissCZIReader extends FormatReader {
         if (label != null) {
           store.setRectangleText(label, roi, shape);
         }
+        shape++;
       }
     }
     return shape;
