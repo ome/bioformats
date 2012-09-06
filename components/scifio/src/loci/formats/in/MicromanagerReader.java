@@ -202,13 +202,7 @@ public class MicromanagerReader extends FormatReader {
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
     if (tiffReader.getCurrentFile() == null) {
-      try {
-        String file = positions.get(getSeries()).getFile(0);
-        tiffReader.setId(file);
-      }
-      catch (Exception e) {
-        LOGGER.debug("", e);
-      }
+      setupReader();
     }
     return tiffReader.getOptimalTileWidth();
   }
@@ -217,15 +211,9 @@ public class MicromanagerReader extends FormatReader {
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
     if (tiffReader.getCurrentFile() == null) {
-      try {
-        String file = positions.get(getSeries()).getFile(0);
-        tiffReader.setId(file);
-      }
-      catch (Exception e) {
-        LOGGER.debug("", e);
-      }
+      setupReader();
     }
-    return tiffReader.getOptimalTileWidth();
+    return tiffReader.getOptimalTileHeight();
   }
 
   // -- Internal FormatReader API methods --
@@ -736,6 +724,17 @@ public class MicromanagerReader extends FormatReader {
 
     DefaultHandler handler = new MicromanagerHandler();
     XMLTools.parseXML(xmlData, handler);
+  }
+
+  /** Initialize the TIFF reader with the first file in the current series. */
+  private void setupReader() {
+    try {
+      String file = positions.get(getSeries()).getFile(0);
+      tiffReader.setId(file);
+    }
+    catch (Exception e) {
+      LOGGER.debug("", e);
+    }
   }
 
   // -- Helper classes --
