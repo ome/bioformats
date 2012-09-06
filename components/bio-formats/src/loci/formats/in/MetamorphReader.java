@@ -360,6 +360,7 @@ public class MetamorphReader extends BaseTiffReader {
       }
       Location parent = stk.getParentFile();
       String[] list = parent.list(true);
+      int matchingChars = 0;
       for (String f : list) {
         if (checkSuffix(f, ND_SUFFIX)) {
           String prefix = f.substring(0, f.lastIndexOf("."));
@@ -367,9 +368,24 @@ public class MetamorphReader extends BaseTiffReader {
             prefix = prefix.substring(0, prefix.indexOf("_") + 1);
           }
           if (stkName.startsWith(prefix) || prefix.equals(stkPrefix)) {
-            ndfile = new Location(parent, f).getAbsoluteFile();
-            if (prefix.equals(stkPrefix)) {
-              break;
+            int charCount = 0;
+            for (int i=0; i<f.length(); i++) {
+              if (i >= stkName.length()) {
+                break;
+              }
+              if (f.charAt(i) == stkName.charAt(i)) {
+                charCount++;
+              }
+              else {
+                break;
+              }
+            }
+
+            if (charCount > matchingChars || (charCount == matchingChars &&
+              f.charAt(charCount) == '.'))
+            {
+              ndfile = new Location(parent, f).getAbsoluteFile();
+              matchingChars = charCount;
             }
           }
         }
@@ -499,6 +515,7 @@ public class MetamorphReader extends BaseTiffReader {
 
       // build list of STK files
 
+      boolean anyZ = hasZ.contains(Boolean.TRUE);
       int[] pt = new int[seriesCount];
       for (int i=0; i<tc; i++) {
         int ns = nstages == 0 ? 1 : nstages;
@@ -510,7 +527,7 @@ public class MetamorphReader extends BaseTiffReader {
             if ((seriesCount != 1 && !validZ) ||
               (nstages == 0 && ((!validZ && cc > 1) || seriesCount > 1)))
             {
-              if (j > 0 && seriesNdx < seriesCount - 1) {
+              if (anyZ && j > 0 && seriesNdx < seriesCount - 1) {
                 seriesNdx++;
               }
             }

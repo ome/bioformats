@@ -316,7 +316,7 @@ public class Colorizer {
         luts[c] = new LUT((IndexColorModel) cm[c], 0, 255);
       }
       else {
-        Color color = Color.WHITE;
+        Color color = null;
         if (colorize) {
           // rather than always assuming that the first channel is red, the
           // second green, etc. we will take into account the channel color
@@ -351,7 +351,7 @@ public class Colorizer {
             }
           }
 
-          if (color.equals(Color.WHITE)) {
+          if (color == null) {
             color = options.getDefaultCustomColor(c);
           }
         }

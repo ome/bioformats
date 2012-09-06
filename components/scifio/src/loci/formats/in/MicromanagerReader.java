@@ -201,13 +201,19 @@ public class MicromanagerReader extends FormatReader {
   /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
   public int getOptimalTileWidth() {
     FormatTools.assertId(currentId, true, 1);
+    if (tiffReader.getCurrentFile() == null) {
+      setupReader();
+    }
     return tiffReader.getOptimalTileWidth();
   }
 
   /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
-    return tiffReader.getOptimalTileWidth();
+    if (tiffReader.getCurrentFile() == null) {
+      setupReader();
+    }
+    return tiffReader.getOptimalTileHeight();
   }
 
   // -- Internal FormatReader API methods --
@@ -259,6 +265,10 @@ public class MicromanagerReader extends FormatReader {
     }
     setSeries(0);
 
+    populateMetadata();
+  }
+
+  private void populateMetadata() throws FormatException, IOException {
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this, true);
 
@@ -348,29 +358,83 @@ public class MicromanagerReader extends FormatReader {
     }
   }
 
+  public void populateMetadataStore(String[] jsonData)
+    throws FormatException, IOException
+  {
+    FormatTools.assertId(currentId, false, 1);
+    currentId = "in-memory-json";
+    core = new CoreMetadata[jsonData.length];
+    positions = new Vector<Position>();
+    for (int pos=0; pos<jsonData.length; pos++) {
+      core[pos] = new CoreMetadata();
+      Position p = new Position();
+      p.metadataFile = "Position #" + (pos + 1);
+      positions.add(p);
+      setSeries(pos);
+      parsePosition(jsonData[pos], pos);
+    }
+    setSeries(0);
+    populateMetadata();
+  }
+
   // -- Helper methods --
 
   private void parsePosition(int posIndex) throws IOException, FormatException {
     Position p = positions.get(posIndex);
-
-    // usually a small file, so we can afford to read it into memory
-
     String s = DataTools.readFile(p.metadataFile);
+    parsePosition(s, posIndex);
+
+    buildTIFFList(posIndex);
+  }
+
+  private void buildTIFFList(int posIndex) throws FormatException {
+    Position p = positions.get(posIndex);
     String parent = new Location(p.metadataFile).getParent();
 
     LOGGER.info("Finding image file names");
 
     // find the name of a TIFF file
-    String baseTiff = null;
     p.tiffs = new Vector<String>();
-    int pos = 0;
-    while (true) {
-      pos = s.indexOf("FileName", pos);
-      if (pos == -1 || pos >= s.length()) break;
-      String name = s.substring(s.indexOf(":", pos), s.indexOf(",", pos));
-      baseTiff = parent + File.separator + name.substring(3, name.length() - 1);
-      pos++;
+
+    // build list of TIFF files
+
+    buildTIFFList(posIndex, parent + File.separator + p.baseTiff);
+
+    if (p.tiffs.size() == 0) {
+      Vector<String> uniqueZ = new Vector<String>();
+      Vector<String> uniqueC = new Vector<String>();
+      Vector<String> uniqueT = new Vector<String>();
+
+      Location dir =
+        new Location(p.metadataFile).getAbsoluteFile().getParentFile();
+      String[] files = dir.list(true);
+      Arrays.sort(files);
+      for (String f : files) {
+        if (checkSuffix(f, "tif") || checkSuffix(f, "tiff")) {
+          String[] blocks = f.split("_");
+          if (!uniqueT.contains(blocks[1])) uniqueT.add(blocks[1]);
+          if (!uniqueC.contains(blocks[2])) uniqueC.add(blocks[2]);
+          if (!uniqueZ.contains(blocks[3])) uniqueZ.add(blocks[3]);
+
+          p.tiffs.add(new Location(dir, f).getAbsolutePath());
+        }
+      }
+
+      core[posIndex].sizeZ = uniqueZ.size();
+      core[posIndex].sizeC = uniqueC.size();
+      core[posIndex].sizeT = uniqueT.size();
+
+      if (p.tiffs.size() == 0) {
+        throw new FormatException("Could not find TIFF files.");
+      }
     }
+  }
+
+  private void parsePosition(String jsonData, int posIndex)
+    throws IOException, FormatException
+  {
+    Position p = positions.get(posIndex);
+    String parent = new Location(p.metadataFile).getParent();
 
     // now parse the rest of the metadata
 
@@ -391,7 +455,7 @@ public class MicromanagerReader extends FormatReader {
     Vector<Double> stamps = new Vector<Double>();
     p.voltage = new Vector<Double>();
 
-    StringTokenizer st = new StringTokenizer(s, "\n");
+    StringTokenizer st = new StringTokenizer(jsonData, "\n");
     int[] slice = new int[3];
     while (st.hasMoreTokens()) {
       String token = st.nextToken().trim();
@@ -460,6 +524,29 @@ public class MicromanagerReader extends FormatReader {
         }
         else if (key.equals("FileName")) {
           p.fileNameMap.put(new Index(slice), value);
+          if (p.baseTiff == null) {
+            p.baseTiff = value;
+          }
+        }
+        else if (key.equals("Width")) {
+          core[posIndex].sizeX = Integer.parseInt(value);
+        }
+        else if (key.equals("Height")) {
+          core[posIndex].sizeY = Integer.parseInt(value);
+        }
+        else if (key.equals("IJType")) {
+          int type = Integer.parseInt(value);
+
+          switch (type) {
+            case 0:
+              core[posIndex].pixelType = FormatTools.UINT8;
+              break;
+            case 1:
+              core[posIndex].pixelType = FormatTools.UINT16;
+              break;
+            default:
+              throw new FormatException("Unknown type: " + type);
+          }
         }
       }
 
@@ -538,6 +625,12 @@ public class MicromanagerReader extends FormatReader {
           else if (key.startsWith("DAC-") && key.endsWith("-Volts")) {
             p.voltage.add(new Double(value));
           }
+          else if (key.equals("FileName")) {
+            p.fileNameMap.put(new Index(slice), value);
+            if (p.baseTiff == null) {
+              p.baseTiff = value;
+            }
+          }
 
           token = st.nextToken().trim();
         }
@@ -554,51 +647,13 @@ public class MicromanagerReader extends FormatReader {
       parseXMLFile();
     }
 
-    // build list of TIFF files
-
-    buildTIFFList(posIndex, baseTiff);
-
-    if (p.tiffs.size() == 0) {
-      Vector<String> uniqueZ = new Vector<String>();
-      Vector<String> uniqueC = new Vector<String>();
-      Vector<String> uniqueT = new Vector<String>();
-
-      Location dir =
-        new Location(p.metadataFile).getAbsoluteFile().getParentFile();
-      String[] files = dir.list(true);
-      Arrays.sort(files);
-      for (String f : files) {
-        if (checkSuffix(f, "tif") || checkSuffix(f, "tiff")) {
-          String[] blocks = f.split("_");
-          if (!uniqueT.contains(blocks[1])) uniqueT.add(blocks[1]);
-          if (!uniqueC.contains(blocks[2])) uniqueC.add(blocks[2]);
-          if (!uniqueZ.contains(blocks[3])) uniqueZ.add(blocks[3]);
-
-          p.tiffs.add(new Location(dir, f).getAbsolutePath());
-        }
-      }
-
-      core[posIndex].sizeZ = uniqueZ.size();
-      core[posIndex].sizeC = uniqueC.size();
-      core[posIndex].sizeT = uniqueT.size();
-
-      if (p.tiffs.size() == 0) {
-        throw new FormatException("Could not find TIFF files.");
-      }
-    }
-
-    tiffReader.setId(p.tiffs.get(0));
-
     if (getSizeZ() == 0) core[posIndex].sizeZ = 1;
-    if (getSizeT() == 0) core[posIndex].sizeT = p.tiffs.size() / getSizeC();
+    if (getSizeT() == 0) core[posIndex].sizeT = 1;
 
-    core[posIndex].sizeX = tiffReader.getSizeX();
-    core[posIndex].sizeY = tiffReader.getSizeY();
     core[posIndex].dimensionOrder = "XYZCT";
-    core[posIndex].pixelType = tiffReader.getPixelType();
-    core[posIndex].rgb = tiffReader.isRGB();
     core[posIndex].interleaved = false;
-    core[posIndex].littleEndian = tiffReader.isLittleEndian();
+    core[posIndex].rgb = false;
+    core[posIndex].littleEndian = false;
     core[posIndex].imageCount = getSizeZ() * getSizeC() * getSizeT();
     core[posIndex].indexed = false;
     core[posIndex].falseColor = false;
@@ -671,6 +726,17 @@ public class MicromanagerReader extends FormatReader {
     XMLTools.parseXML(xmlData, handler);
   }
 
+  /** Initialize the TIFF reader with the first file in the current series. */
+  private void setupReader() {
+    try {
+      String file = positions.get(getSeries()).getFile(0);
+      tiffReader.setId(file);
+    }
+    catch (Exception e) {
+      LOGGER.debug("", e);
+    }
+  }
+
   // -- Helper classes --
 
   /** SAX handler for parsing Acqusition.xml. */
@@ -688,6 +754,7 @@ public class MicromanagerReader extends FormatReader {
   }
 
   class Position {
+    public String baseTiff;
     public Vector<String> tiffs;
     public HashMap<Index, String> fileNameMap = new HashMap<Index, String>();
 
@@ -713,9 +780,11 @@ public class MicromanagerReader extends FormatReader {
         if (key.z == zct[0] && key.c == zct[1] && key.t == zct[2]) {
           String file = fileNameMap.get(key);
 
-          for (String tiff : tiffs) {
-            if (tiff.endsWith(File.separator + file)) {
-              return tiff;
+          if (tiffs != null) {
+            for (String tiff : tiffs) {
+              if (tiff.endsWith(File.separator + file)) {
+                return tiff;
+              }
             }
           }
         }

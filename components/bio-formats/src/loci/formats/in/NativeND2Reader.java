@@ -47,6 +47,7 @@ import loci.formats.codec.JPEG2000Codec;
 import loci.formats.codec.ZlibCodec;
 import loci.formats.meta.MetadataStore;
 
+import ome.xml.model.primitives.Color;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
 
@@ -107,6 +108,9 @@ public class NativeND2Reader extends FormatReader {
   private double trueSizeX = 0;
   private double trueSizeY = 0;
   private double trueSizeZ = 0;
+
+  private ArrayList<String> textChannelNames = new ArrayList<String>();
+  private ArrayList<Integer> textEmissionWavelengths = new ArrayList<Integer>();
 
   // -- Constructor --
 
@@ -317,6 +321,8 @@ public class NativeND2Reader extends FormatReader {
       trueSizeX = 0;
       trueSizeY = 0;
       trueSizeZ = 0;
+      textChannelNames.clear();
+      textEmissionWavelengths.clear();
     }
   }
 
@@ -379,31 +385,32 @@ public class NativeND2Reader extends FormatReader {
 
         if (in.getFilePointer() > in.length() - 24) break;
 
-        
-       /**********************************************************************************************************************************************/
-        
-        Long helper = in.getFilePointer(); 			// Remember starting position
-     
-        int nameLength  = in.readInt();   			// Length of the block name
-        Long dataLength = in.readLong(); 			// Length of the data
-        String nameAtri = in.readString(nameLength).trim(); 	// Read the name
-        Long stop 	= helper + (dataLength + nameLength); 	// Where this block ends
-        
-        
-        boolean seq = false; // Only 1 MetadataSeq is needed   
-        	
-       // Send to iteration (we are interested only in xxxxLV - LV = light variant)
-       if (  nameAtri.contains("MetadataLV") || nameAtri.contains("CalibrationLV") || (nameAtri.contains("MetadataSeqLV")&&!seq))
-        iterateIn(in, stop);
-       
-       // Only 1 MetadataSeq is needed (others should be same, and time is saved elsewhere)
-       if (nameAtri.contains("MetadataSeqLV"))
-           seq = true;
-        
-       
-       in.seek(helper);  // Return to starting position
-      
-        /*******************************************************************************************************************************************/
+        Long helper = in.getFilePointer();       // Remember starting position
+
+        int nameLength = in.readInt();         // Length of the block name
+        Long dataLength = in.readLong();       // Length of the data
+        String nameAttri = in.readString(nameLength).trim();  // Read the name
+        Long stop = helper + (dataLength + nameLength); // Where this block ends
+
+        boolean seq = false; // Only 1 MetadataSeq is needed
+
+        // Send to iteration
+        // (we are interested only in xxxxLV - LV = light variant)
+        if (nameAttri.contains("MetadataLV") ||
+          nameAttri.contains("CalibrationLV") ||
+          (nameAttri.contains("MetadataSeqLV") && !seq))
+        {
+          iterateIn(in, stop);
+        }
+
+        // Only 1 MetadataSeq is needed
+        // (others should be same, and time is saved elsewhere)
+        if (nameAttri.contains("MetadataSeqLV")) {
+          seq = true;
+        }
+
+        in.seek(helper);  // Return to starting position
+
         int lenOne = in.readInt();
         int lenTwo = in.readInt();
         int len = lenOne + lenTwo;
@@ -417,9 +424,9 @@ public class NativeND2Reader extends FormatReader {
 
         int skip = len - 12 - lenOne * 2;
         if (skip <= 0) skip += lenOne * 2;
-        
+
         // Image calibration for newer nd2 files
-        
+
         if (blockType.endsWith("Calibra")) {
           long veryStart = in.getFilePointer();
           in.skipBytes(12); // ImageCalibra|tionLV
@@ -531,8 +538,34 @@ public class NativeND2Reader extends FormatReader {
               if (key.equals("- Step")) {
                 trueSizeZ = Double.parseDouble(DataTools.sanitizeDouble(value));
               }
+              else if (key.equals("Name")) {
+                textChannelNames.add(value);
+              }
+              else if (key.startsWith("Line:")) {
+                if (value.endsWith("Active")) {
+                  int first = key.lastIndexOf(":") + 1;
+                  int last = key.lastIndexOf(";");
+                  textEmissionWavelengths.add(
+                    new Integer(key.substring(first, last)) + 20);
+                }
+              }
 
-              addGlobalMeta(key, value);
+              if (metadata.containsKey(key)) {
+                Object oldValue = metadata.get(key);
+                metadata.put(key + " #1", oldValue);
+                metadata.put(key + " #2", value);
+                metadata.remove(key);
+              }
+              else if (metadata.containsKey(key + " #1")) {
+                int index = 1;
+                while (metadata.containsKey(key + " #" + index)) {
+                  index++;
+                }
+                metadata.put(key + " #" + index, value);
+              }
+              else {
+                metadata.put(key, value);
+              }
             }
           }
         }
@@ -1148,7 +1181,7 @@ public class NativeND2Reader extends FormatReader {
           }
         }
       }
-      
+
       populateMetadataStore(handler);
       return;
     }
@@ -1396,126 +1429,100 @@ public class NativeND2Reader extends FormatReader {
 
   /**
    * Function for iterating through ND2 metaAttributes
-   * @param in 	 stream of bytes from file
-   * @param stop position where to stop 
+   * @param in    stream of bytes from file
+   * @param stop position where to stop
    */
-  private void iterateIn(RandomAccessInputStream in,Long stop)
-{
-	  
-	  Object value; // We don't know if attribute will be int, double, string.... 
-	  
-	  try{
-		  
-		while (in.getFilePointer() < stop)
-		{
-				
-		  int type 	 = in.read();  			// @See switch
-		  int letters 	 = in.read(); 		 	// Letters in the Atribut name
-		  String name 	 = in.readString(letters*2); 	// Atribut name
-		     	
-		  int numberOfItems; // Number of items in level (see level)
-		  Long off ;			// Offset to index (see level)
-		  		   	
-		  switch (type)
-		  {
-		
-		    	// Bool //
-			case (1): 
-			  value = in.readBoolean();
-			  break;
-			      		
-			// int32 //		
-			case (2):
-			  value = in.readInt();
-			  break;
-			      
-			// unsigned int32 //		
-			case (3):
-			 value = in.readInt();
-			 break;
-			      		
-			// int64 //		
-			case (4):
-			  value = in.readLong();
-			  break;
-			      		
-			// unsigned int64 // 		
-			case (5):
-			  value = in.readLong();
-			  break;
-			     
-			// double // 		
-			case (6):
-			  value = in.readDouble();
-			  break;
-			      		
-			// VoidPinter //   		
-			case (7): 
-			  value = in.readLong();
-			  break;
-			      		
-			// String //
-			case (8):      	
-			  //in.read(); // size of string
-			  value = in.readCString(); 
-			  break;
-			   
-			// ByteArray //
-			case (9):       		 
-			  byte[] data = new byte[(int)in.readLong()];
-			  in.read(data);
-			  value = data.toString(); // todo
-			  break;
-			  
-			// Deprecated //
-			case (10): 
-			      		
-			  /* ***** Its like LEVEL but offset is pointing absolutely not relatively ***** */
-			  numberOfItems = in.readInt(); 							  // number of level atributes  	
-			  off  = in.readLong() - in.getFilePointer()-4-2-letters*2; // offset to index (absolut number - current position - numberOfItems(4B) - type (1B) - nameLength (1B) - name
-			  value = "LEVEL";
-			       		
-			 // Iterate
-			 iterateIn(in,off + in.getFilePointer() ); // Last 4 bytes in level is some kind of point table   
-			       		
-			 in.seek(off + in.getFilePointer());
-			 in.skipBytes(numberOfItems*8);
-			 value = in.readLong();
-			 break;
-			  
-			 // LEVEL //    		
-			 case (11):        
-			      		
-			numberOfItems = in.readInt(); // number of level attributes  	
-			off  = in.readLong(); 	      // offset to index
-			value = "LEVEL";
-			       		
-			// Iterate
-			iterateIn(in,off + in.getFilePointer() ); // Last 4 bytes in level is some kind of point table   
-			       		
-			in.seek(off + in.getFilePointer());
-			/* ***** Index is pointer. NumberofItemes*8B ***** */
-			in.skipBytes(numberOfItems*8);
-			break;
-			      		
-			default: // Shall not happen :-)
-			  continue;
-		      	}
-		      	
-		      	if (type != 11 && type != 10) 		// if not level add global meta
-		           	addGlobalMeta(name, value);
-	      	
-	      }
-		  																
-	  
-	
-	  }
-	  catch (Exception e) {/*e.printStackTrace();*/}
-	 
-	  
-}
+  private void iterateIn(RandomAccessInputStream in, Long stop) {
+    Object value; // We don't know if attribute will be int, double, string....
 
-private void populateMetadataStore(ND2Handler handler) throws FormatException
+    try {
+      while (in.getFilePointer() < stop) {
+        int type = in.read();        // @See switch
+        int letters = in.read();        // Letters in the Attribute name
+        String name = in.readString(letters*2);   // Attribute name
+
+        int numberOfItems; // Number of items in level (see level)
+        Long off;           // Offset to index (see level)
+
+        switch (type) {
+          case (1):  // bool
+            value = in.readBoolean();
+            break;
+          case (2): // int32
+            value = in.readInt();
+            break;
+          case (3): // unsigned int32
+            value = in.readInt();
+            break;
+          case (4): // int64
+            value = in.readLong();
+            break;
+          case (5): // unsigned int64
+            value = in.readLong();
+            break;
+          case (6): // double
+            value = in.readDouble();
+            break;
+          case (7): // VoidPointer
+            value = in.readLong();
+            break;
+          case (8): // String
+            //in.read(); // size of string
+            value = in.readCString();
+            break;
+          case (9): // ByteArray
+            byte[] data = new byte[(int) in.readLong()];
+            in.read(data);
+            value = data.toString(); // todo
+            break;
+          case (10): // deprecated
+            // Its like LEVEL but offset is pointing absolutely not relatively
+
+            numberOfItems = in.readInt();   // number of level atributes
+
+            // offset to index (absolute number - current position -
+            //   numberOfItems(4B) - type (1B) - nameLength (1B) - name
+            off = in.readLong() - in.getFilePointer() - 4 - 2 - letters * 2;
+            value = "LEVEL";
+
+            // Iterate
+            iterateIn(in, off + in.getFilePointer());
+
+            // Last 4 bytes in level is some kind of point table
+
+            in.seek(off + in.getFilePointer());
+            in.skipBytes(numberOfItems * 8);
+            value = in.readLong();
+            break;
+          case (11): // level
+            numberOfItems = in.readInt(); // number of level attributes
+            off = in.readLong();         // offset to index
+            value = "LEVEL";
+
+            // Iterate
+            iterateIn(in, off + in.getFilePointer());
+
+            // Last 4 bytes in level is some kind of point table
+
+            in.seek(off + in.getFilePointer());
+            /* ***** Index is pointer. NumberofItemes*8B ***** */
+            in.skipBytes(numberOfItems * 8);
+            break;
+          default: // Shall not happen :-)
+            continue;
+        }
+
+        if (type != 11 && type != 10) {    // if not level add global meta
+          addGlobalMeta(DataTools.stripString(name), value);
+        }
+      }
+    }
+    catch (Exception e) {
+      LOGGER.debug("", e);
+    }
+  }
+
+  private void populateMetadataStore(ND2Handler handler) throws FormatException
   {
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this, true);
@@ -1538,6 +1545,9 @@ private void populateMetadataStore(ND2Handler handler) throws FormatException
       channelNames = handler.getChannelNames();
       if (channelNames.size() == 0 && backupHandler != null) {
         channelNames = backupHandler.getChannelNames();
+      }
+      else if (channelNames.size() == 0) {
+        channelNames = textChannelNames;
       }
       for (int i=0; i<getSeriesCount(); i++) {
         for (int c=0; c<getEffectiveSizeC(); c++) {
@@ -1571,7 +1581,7 @@ private void populateMetadataStore(ND2Handler handler) throws FormatException
         double sizeZ = handler.getPixelSizeZ();
 
         if (trueSizeX > 0) {
-        	store.setPixelsPhysicalSizeX(new PositiveFloat(trueSizeX), i);
+          store.setPixelsPhysicalSizeX(new PositiveFloat(trueSizeX), i);
         }
         else if (sizeX > 0) {
           store.setPixelsPhysicalSizeX(new PositiveFloat(sizeX), i);
@@ -1710,16 +1720,20 @@ private void populateMetadataStore(ND2Handler handler) throws FormatException
           store.setChannelAcquisitionMode(
             getAcquisitionMode(modality.get(index)), i, c);
         }
-        if (index < emWave.size()) {
-          if (emWave.get(index) > 0) {
-            store.setChannelEmissionWavelength(
-              new PositiveInteger(emWave.get(index)), i, c);
+        if (index < emWave.size() || index < textEmissionWavelengths.size()) {
+          Integer value = index < emWave.size() ? emWave.get(index) :
+            textEmissionWavelengths.get(index);
+          if (value > 0) {
+            store.setChannelEmissionWavelength(new PositiveInteger(value), i, c);
           }
           else {
             LOGGER.warn(
               "Expected positive value for EmissionWavelength; got {}",
               emWave.get(index));
           }
+        }
+        else if (emWave.size() > 0 || textEmissionWavelengths.size() > 0) {
+          store.setChannelColor(new Color(255, 255, 255, 255), i, c);
         }
         if (index < exWave.size()) {
           if (exWave.get(index) > 0) {
@@ -1817,6 +1831,5 @@ private void populateMetadataStore(ND2Handler handler) throws FormatException
     readPlane(s, x, y, w, h, scanlinePad, buf);
     s.close();
   }
-  
 
 }
