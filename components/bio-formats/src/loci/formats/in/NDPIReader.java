@@ -69,6 +69,8 @@ public class NDPIReader extends BaseTiffReader {
   private int sizeZ = 1;
   private int pyramidHeight = 1;
 
+  private JPEGTurboService service = new JPEGTurboServiceImpl();
+
   // -- Constructor --
 
   /** Constructs a new NDPI reader. */
@@ -104,28 +106,29 @@ public class NDPIReader extends BaseTiffReader {
       return tiffParser.getSamples(ifds.get(ifdIndex), buf, x, y, w, h);
     }
 
-    IFD ifd = ifds.get(getIFDIndex(getCoreIndex(), no));
+    if (initializedSeries != getCoreIndex() || initializedPlane != no) {
+      IFD ifd = ifds.get(getIFDIndex(getCoreIndex(), no));
 
-    long offset = ifd.getStripOffsets()[0];
-    int byteCount = (int) ifd.getStripByteCounts()[0];
-    if (in != null) {
-      in.close();
+      long offset = ifd.getStripOffsets()[0];
+      int byteCount = (int) ifd.getStripByteCounts()[0];
+      if (in != null) {
+        in.close();
+      }
+      in = new RandomAccessInputStream(currentId);
+      in.seek(offset);
+      in.setLength(offset + byteCount);
+
+      try {
+        service.initialize(in, getSizeX(), getSizeY());
+      }
+      catch (ServiceException e) {
+        throw new FormatException(e);
+      }
+
+      initializedSeries = getCoreIndex();
+      initializedPlane = no;
     }
-    in = new RandomAccessInputStream(currentId);
-    in.seek(offset);
-    in.setLength(offset + byteCount);
-
-    JPEGTurboService service = new JPEGTurboServiceImpl();
-    try {
-      service.initialize(in, getSizeX(), getSizeY());
-    }
-    catch (ServiceException e) {
-      throw new FormatException(e);
-    }
-    byte[] tile = service.getTile(x, y, w, h);
-
-    System.arraycopy(tile, 0, buf, 0, tile.length);
-
+    service.getTile(buf, x, y, w, h);
     return buf;
   }
 
@@ -192,12 +195,16 @@ public class NDPIReader extends BaseTiffReader {
     }
   }
 
+  /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
+  public int getOptimalTileWidth() {
+    FormatTools.assertId(currentId, true, 1);
+    return 2048;
+  }
+
   /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
   public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
-    int bpp = FormatTools.getBytesPerPixel(getPixelType());
-    int maxHeight = (1024 * 1024) / (getSizeX() * getRGBChannelCount() * bpp);
-    return (int) Math.min(maxHeight, getSizeY());
+    return 2048;
   }
 
   // -- Internal FormatReader API methods --

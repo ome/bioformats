@@ -55,8 +55,11 @@ public interface JPEGTurboService extends Service {
   void initialize(RandomAccessInputStream jpeg, int width, int height)
     throws ServiceException, IOException;
 
-  byte[] getTile(int xCoordinate, int yCoordinate, int width, int height)
+  byte[] getTile(byte[] buf, int xCoordinate, int yCoordinate, int width,
+    int height)
     throws IOException;
+
+  byte[] getTile(int xTile, int yTile) throws IOException;
 
   void close() throws IOException;
 

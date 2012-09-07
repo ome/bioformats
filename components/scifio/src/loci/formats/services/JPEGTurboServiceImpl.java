@@ -42,6 +42,7 @@ import java.util.ArrayList;
 import loci.common.ByteArrayHandle;
 import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
+import loci.common.Region;
 import loci.common.services.DependencyException;
 import loci.common.services.Service;
 import loci.common.services.ServiceException;
@@ -77,11 +78,17 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
   private long offset;
   private RandomAccessInputStream in;
 
-  private int restartInterval;
+  private int restartInterval = 1;
   private long sos;
   private long imageDimensions;
 
+  private int tileDim;
+  private int xTiles;
+  private int yTiles;
+
   private ArrayList<Long> restartMarkers = new ArrayList<Long>();
+
+  private byte[] header;
 
   // -- JPEGTurboService API methods --
 
@@ -114,62 +121,131 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
       }
       else if (marker >= RST0 && marker <= RST7) {
         restartMarkers.add(in.getFilePointer() - 2);
+        in.skipBytes(restartInterval * 2);
       }
 
       if (end < in.length() && !inImage) {
         in.seek(end);
       }
-
-      if (inImage) {
+      else if (inImage) {
         in.seek(in.getFilePointer() - 3);
       }
       marker = in.readShort() & 0xffff;
     }
 
-    in.seek(offset);
+    tileDim = restartInterval * 8;
+
+    xTiles = imageWidth / tileDim;
+    yTiles = imageHeight / tileDim;
+
+    if (xTiles * tileDim != imageWidth) {
+      xTiles++;
+    }
+    if (yTiles * tileDim != imageHeight) {
+      yTiles++;
+    }
   }
 
-  public byte[] getTile(int xCoordinate, int yCoordinate, int width, int height)
+  public byte[] getTile(byte[] buf, int xCoordinate, int yCoordinate,
+    int width, int height)
     throws IOException
   {
-    int tileDim = restartInterval * 8;
+    Region image = new Region(xCoordinate, yCoordinate, width, height);
 
-    ByteArrayHandle out = new ByteArrayHandle();
+    int bufX = 0;
+    int bufY = 0;
 
-    out.write(getFixedHeader());
+    int outputRowLen = width * 3;
 
-    int restartCounter = 0;
+    Region intersection = null;
+    Region tileBoundary = new Region(0, 0, 0, 0);
+    byte[] tile = null;
+    for (int row=0; row<yTiles; row++) {
+      tileBoundary.height = row < yTiles - 1 ? tileDim : imageHeight % tileDim;
+      tileBoundary.y = row * tileDim;
+      for (int col=0; col<xTiles; col++) {
+        tileBoundary.x = col * tileDim;
+        tileBoundary.width = col < xTiles - 1 ? tileDim : imageWidth % tileDim;
+        if (tileBoundary.intersects(image)) {
+          intersection = image.intersection(tileBoundary);
+          tile = getTile(col, row);
 
-    int xTiles = imageWidth / tileDim;
+          int rowLen =
+            3 * (int) Math.min(tileBoundary.width, intersection.width);
+          int outputOffset = bufY * outputRowLen + bufX;
+          int intersectionX = 0;
 
-    int tileX = xCoordinate / tileDim; // TODO
-    int tileY = yCoordinate / tileDim; // TODO
+          if (tileBoundary.x < image.x) {
+            intersectionX = image.x - tileBoundary.x;
+          }
 
+          for (int trow=0; trow<intersection.height; trow++) {
+            int realRow = trow + intersection.y - tileBoundary.y;
+            int inputOffset =
+              3 * (realRow * tileBoundary.width + intersectionX);
+            System.arraycopy(tile, inputOffset, buf, outputOffset, rowLen);
+            outputOffset += outputRowLen;
+          }
+          bufX += rowLen;
+        }
+      }
+      if (intersection != null) {
+        bufX = 0;
+        bufY += intersection.height;
+      }
+      if (bufY >= height) {
+        break;
+      }
+    }
+
+    return buf;
+  }
+
+  public byte[] getTile(int tileX, int tileY) throws IOException {
+    if (header == null) {
+      header = getFixedHeader();
+    }
+
+    int dataLength = header.length + 2;
+
+    int start = tileX + (tileY * xTiles * restartInterval);
     for (int row=0; row<restartInterval; row++) {
-      int start = (xTiles * row) + tileX;
-      int end = (xTiles * row) + tileX + (tileY * xTiles * restartInterval) + 1;
+      int end = start + 1;
 
       if (end < restartMarkers.size()) {
         long startOffset = restartMarkers.get(start);
         long endOffset = restartMarkers.get(end);
 
-        byte[] data = new byte[(int) (endOffset - startOffset)];
-        in.seek(startOffset);
-        in.read(data);
-
-        data[data.length - 2] = (byte) 0xff;
-        restartCounter %= 8;
-        data[data.length - 1] = (byte) (0xd0 + restartCounter);
-        restartCounter++;
-
-        out.write(data);
+        dataLength += (int) (endOffset - startOffset);
       }
+      start += xTiles;
     }
 
-    out.writeShort(EOI);
+    byte[] data = new byte[dataLength];
 
-    byte[] tile = out.getBytes();
-    out.close();
+    int offset = 0;
+    System.arraycopy(header, 0, data, offset, header.length);
+    offset += header.length;
+
+    start = tileX + (tileY * xTiles * restartInterval);
+    for (int row=0; row<restartInterval; row++) {
+      int end = start + 1;
+
+      if (end < restartMarkers.size()) {
+        long startOffset = restartMarkers.get(start);
+        long endOffset = restartMarkers.get(end);
+
+        in.seek(startOffset);
+        in.read(data, offset, (int) (endOffset - startOffset - 2));
+        offset += (int) (endOffset - startOffset - 2);
+
+        DataTools.unpackBytes(0xffd0 + (row % 8), data, offset, 2, false);
+        offset += 2;
+      }
+      start += xTiles;
+    }
+
+    DataTools.unpackBytes(EOI, data, offset, 2, false);
 
     // and here we actually decompress it...
 
@@ -177,10 +253,12 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
       int pixelType = TJ.PF_RGB;
       int pixelSize = TJ.getPixelSize(pixelType);
 
-      TJDecompressor decoder = new TJDecompressor();
-      decoder.setJPEGImage(tile, tile.length);
-      return decoder.decompress(width, width * pixelSize,
-        height, pixelType, pixelType);
+      TJDecompressor decoder = new TJDecompressor(data);
+      byte[] decompressed = decoder.decompress(tileDim, tileDim * pixelSize,
+        tileDim, pixelType, pixelType);
+      data = null;
+      decoder.close();
+      return decompressed;
     }
     catch (Exception e) {
       throw new IOException(e);
@@ -193,6 +271,7 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
     in = null;
     offset = 0;
     restartMarkers.clear();
+    restartInterval = 1;
   }
 
   // -- Helper methods --
@@ -202,8 +281,6 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
 
     byte[] header = new byte[(int) (sos - offset)];
     in.read(header);
-
-    int tileDim = restartInterval * 8;
 
     int index = (int) (imageDimensions - offset);
     DataTools.unpackBytes(tileDim, header, index, 2, false);
