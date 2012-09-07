@@ -77,10 +77,46 @@ public class NDPIReader extends BaseTiffReader {
   public NDPIReader() {
     super("Hamamatsu NDPI", new String[] {"ndpi"});
     domains = new String[] {FormatTools.HISTOLOGY_DOMAIN};
-    suffixNecessary = true;
+    suffixNecessary = false;
   }
 
   // -- IFormatReader API methods --
+
+  /* (non-Javadoc)
+   * @see loci.formats.FormatReader#isThisType(java.lang.String, boolean)
+   */
+  @Override
+  public boolean isThisType(String name, boolean open) {
+    boolean isThisType = super.isThisType(name, open);
+    if (!isThisType && open) {
+      RandomAccessInputStream stream = null;
+      try {
+        stream = new RandomAccessInputStream(name);
+        TiffParser tiffParser = new TiffParser(stream);
+        tiffParser.setDoCaching(false);
+        if (!tiffParser.isValidHeader()) {
+          return false;
+        }
+        IFD ifd = tiffParser.getFirstIFD();
+        return ifd.containsKey(THUMB_TAG_1);
+      }
+      catch (IOException e) {
+        LOGGER.debug("I/O exception during isThisType() evaluation.", e);
+        return false;
+      }
+      finally {
+        try {
+          if (stream != null) {
+            stream.close();
+          }
+        }
+        catch (IOException e) {
+          LOGGER.debug("I/O exception during stream closure.", e);
+        }
+      }
+    }
+    return isThisType;
+  }
 
   /** @see loci.formats.IFormatReader#fileGroupOption(String) */
   public int fileGroupOption(String id) throws FormatException, IOException {
