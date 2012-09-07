@@ -97,8 +97,15 @@ public class UpgradeChecker {
   /** Name of the OME tools JAR. */
   public static final String OME_TOOLS = "ome_tools.jar";
 
+  /** Names of the individual JARs. */
+  public static final String[] INDIVIDUAL_JARS = new String[] {
+    "bio-formats.jar", "jai_imageio.jar", "loci-common.jar",
+    "mdbtools-java.jar", "metakit.jar", "ome-io.jar", "ome-xml.jar",
+    "poi-loci.jar", "scifio.jar"
+  };
+
   /** Version number of the latest stable release. */
-  public static final String STABLE_VERSION = "4.3.3";
+  public static final String STABLE_VERSION = "4.4.2";
 
   /** Location of the OME registry. */
   public static final String REGISTRY = "http://upgrade.openmicroscopy.org.uk";
@@ -257,6 +264,28 @@ public class UpgradeChecker {
       LOGGER.warn("Failed to compare version numbers", e);
     }
     return false;
+  }
+
+  /**
+   * Download and install all of the individual JAR files into the given
+   * directory.
+   *
+   * @param urlDir the location from which to download the JAR files
+   * @param downloadDir the directory into which to save the JAR files
+   * @return true if installation was successfull
+   *
+   * @see install(String, String)
+   */
+  public boolean installIndividualJars(String urlDir, String downloadDir) {
+    boolean overallSuccess = true;
+    for (String jar : INDIVIDUAL_JARS) {
+      boolean success = install(urlDir + File.separator + jar,
+        downloadDir + File.separator + jar);
+      if (overallSuccess) {
+        success = overallSuccess;
+      }
+    }
+    return overallSuccess;
   }
 
   /**

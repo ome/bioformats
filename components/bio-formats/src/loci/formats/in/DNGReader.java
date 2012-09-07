@@ -136,7 +136,7 @@ public class DNGReader extends BaseTiffReader {
       tiffParser.getSamples(ifds.get(0), b, x, y, w, h);
 
       for (int i=0; i<b.length; i++) {
-        int c = i % 3;
+        int c = isInterleaved() ? i % 3 : i / (b.length / 3);
         short v = (short) (b[i] & 0xff);
 
         v = adjustForWhiteBalance(v, c);

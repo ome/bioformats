@@ -289,8 +289,9 @@ public abstract class BaseZeissReader extends FormatReader {
       if (timestamps.size() > 0) {
         String timestamp = timestamps.get(new Integer(0));
         firstStamp = parseTimestamp(timestamp);
-        String date =
-            DateTools.convertDate((long) (firstStamp / 1600), DateTools.ZVI);
+        firstStamp /= 1600;
+        int epoch = timestamps.size() == 1 ? DateTools.ALT_ZVI : DateTools.ZVI;
+        String date = DateTools.convertDate(firstStamp, epoch);
         if (date != null) {
           store.setImageAcquisitionDate(new Timestamp(date), i);
         }
@@ -1000,6 +1001,9 @@ public abstract class BaseZeissReader extends FormatReader {
             timestamps.put(new Integer(timepoint - 1), value);
             addGlobalMeta("Timestamp " + timepoint, value);
           }
+          else {
+            timestamps.put(new Integer(timepoint), value);
+          }
           timepoint++;
         }
       }
@@ -1043,13 +1047,18 @@ public abstract class BaseZeissReader extends FormatReader {
       stamp = Long.parseLong(s);
     }
     catch (NumberFormatException exc) {
-      if (s != null) {
-        stamp = DateTools.getTime(s, "M/d/y h:mm:ss aa");
-        if (stamp < 0) {
-          stamp = DateTools.getTime(s, "d/M/y H:mm:ss");
+      try {
+        stamp = Double.doubleToLongBits(Double.parseDouble(s));
+      }
+      catch (Exception e) {
+        if (s != null) {
+          stamp = DateTools.getTime(s, "M/d/y h:mm:ss aa");
+          if (stamp < 0) {
+            stamp = DateTools.getTime(s, "d/M/y H:mm:ss");
+          }
+          stamp += DateTools.ZVI_EPOCH;
+          stamp *= 1600;
         }
-        stamp += DateTools.ZVI_EPOCH;
-        stamp *= 1600;
       }
     }
     return stamp;
