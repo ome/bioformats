@@ -113,7 +113,7 @@ Complete with basic formating, like new lines.</Description>
 			</ROI:Shape>
 			<ROI:Shape ID="Shape:4" FillRule="EvenOdd" FontStyle="Normal" FontFamily="serif"
 				FontSize="1" LineCap="Butt" StrokeDashArray="10 10" StrokeWidth="1" TheC="1"
-				TheT="1" TheZ="1" Fill="1" Stroke="1" Label="Hello">
+				TheT="0" TheZ="0" Fill="1" Stroke="1" Label="Hello">
 				<ROI:Text X="1" Y="1">
 					<ROI:Value>Hello</ROI:Value>
 				</ROI:Text>

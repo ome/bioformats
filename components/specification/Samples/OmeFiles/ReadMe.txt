@@ -17,3 +17,7 @@ x size, y size, z depth, t timepoints, c channels, and b bitdepth
 A file ending in .ome is the OME-XML version
 A file ending in .ome-v-Match.ome.tiff is the OME-TIFF version that matches the OME-XML version (normally a hand made example)
 A file ending in .ome-v2010-06.ome.tiff is the OME-TIFF version that has been updated to the 2010-06 schema by the Bio-Formats bfconvert tool.
+
+
+Other files:
+The files called one-of-everthing*.xml are not real data and are only a test for an XML parser. The contain one of every element and attribute but the data values are random.

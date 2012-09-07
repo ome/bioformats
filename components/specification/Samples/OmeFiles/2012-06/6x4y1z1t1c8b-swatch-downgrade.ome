@@ -153,7 +153,7 @@ Complete with basic formating, like new lines.</OME:Description>
 			</ROI:Shape>
 			<ROI:Shape ID="Shape:4" FillRule="EvenOdd" FontStyle="Normal" FontFamily="serif"
 				Text="Hello" FillColor="1" FontSize="1" LineCap="Butt" StrokeColor="1"
-				StrokeDashArray="10 10" StrokeWidth="1" TheC="1" TheT="1" TheZ="1" Visible="true">
+				StrokeDashArray="10 10" StrokeWidth="1" TheC="1" TheT="0" TheZ="0" Visible="true">
 				<ROI:Label X="1" Y="1"/>
 			</ROI:Shape>
 			<ROI:Shape ID="Shape:5" StrokeWidth="2" StrokeColor="1">
