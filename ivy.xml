@@ -24,5 +24,6 @@
     <dependency org="bf-deps" name="bufr" rev="1.1.00"/>
     <dependency org="bf-deps" name="grib" rev="5.1.03"/>
     <dependency org="bf-deps" name="netcdf" rev="4.0"/>
+    <dependency org="bf-deps" name="turbojpeg" rev="1.2.1"/>
   </dependencies>
 </ivy-module>

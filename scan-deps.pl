@@ -499,7 +499,7 @@ ZZ
 my %turbojpeg = (
   NAME    => "libjpeg-turbo",
   TITLE   => "libjpeg-turbo",
-  JAR     => "turbojpeg.jar",
+  JAR     => "turbojpeg-1.2.1.jar",
   PACKAGE => "org.libjpegturbo.turbojpeg",
   URL     => "http://sourceforge.net/projects/libjpeg-turbo",
   NOTES   => "used to read large JPEG and .ndpi images",
