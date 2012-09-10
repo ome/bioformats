@@ -20,4 +20,4 @@ A file ending in .ome-v2010-06.ome.tiff is the OME-TIFF version that has been up
 
 
 Other files:
-The files called one-of-everthing*.xml are not real data and are only a test for an XML parser. The contain one of every element and attribute but the data values are random.
+The files called one-of-everything*.xml are not real data and are only a test for an XML parser. They contain one of every possible element and attribute, but have simple random data values.
