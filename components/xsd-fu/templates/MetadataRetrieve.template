@@ -129,6 +129,26 @@ public interface MetadataRetrieve {
 
 	int getPixelsBinDataCount(int imageIndex);
 
+  int getBooleanAnnotationAnnotationCount(int booleanAnnotationIndex);
+
+  int getCommentAnnotationAnnotationCount(int commentAnnotationIndex);
+
+  int getDoubleAnnotationAnnotationCount(int doubleAnnotationIndex);
+
+  int getFileAnnotationAnnotationCount(int fileAnnotationIndex);
+
+  int getListAnnotationAnnotationCount(int listAnnotationIndex);
+
+  int getLongAnnotationAnnotationCount(int longAnnotationIndex);
+
+  int getTagAnnotationAnnotationCount(int tagAnnotationIndex);
+
+  int getTermAnnotationAnnotationCount(int termAnnotationIndex);
+
+  int getTimestampAnnotationAnnotationCount(int timestampAnnotationIndex);
+
+  int getXMLAnnotationAnnotationCount(int xmlAnnotationIndex);
+
 	String getLightSourceType(int instrumentIndex, int lightSourceIndex);
 
 	// -- Entity counting (code generated definitions) --

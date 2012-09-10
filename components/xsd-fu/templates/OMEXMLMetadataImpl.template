@@ -328,6 +328,47 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 		return root.getImage(imageIndex).getPixels().sizeOfBinDataList();
 	}
 
+  public int getBooleanAnnotationAnnotationCount(int booleanAnnotationIndex) {
+    return root.getStructuredAnnotations().getBooleanAnnotation(booleanAnnotationIndex).sizeOfLinkedAnnotationList();
+  }
+
+  public int getCommentAnnotationAnnotationCount(int commentAnnotationIndex) {
+    return root.getStructuredAnnotations().getCommentAnnotation(commentAnnotationIndex).sizeOfLinkedAnnotationList();
+  }
+
+  public int getDoubleAnnotationAnnotationCount(int doubleAnnotationIndex) {
+    return root.getStructuredAnnotations().getDoubleAnnotation(doubleAnnotationIndex).sizeOfLinkedAnnotationList();
+  }
+
+  public int getFileAnnotationAnnotationCount(int fileAnnotationIndex) {
+    return root.getStructuredAnnotations().getFileAnnotation(fileAnnotationIndex).sizeOfLinkedAnnotationList();
+  }
+
+  public int getListAnnotationAnnotationCount(int listAnnotationIndex) {
+    return root.getStructuredAnnotations().getListAnnotation(listAnnotationIndex).sizeOfLinkedAnnotationList();
+  }
+
+  public int getLongAnnotationAnnotationCount(int longAnnotationIndex) {
+    return root.getStructuredAnnotations().getLongAnnotation(longAnnotationIndex).sizeOfLinkedAnnotationList();
+  }
+
+  public int getTagAnnotationAnnotationCount(int tagAnnotationIndex) {
+    return root.getStructuredAnnotations().getTagAnnotation(tagAnnotationIndex).sizeOfLinkedAnnotationList();
+  }
+
+  public int getTermAnnotationAnnotationCount(int termAnnotationIndex) {
+    return root.getStructuredAnnotations().getTermAnnotation(termAnnotationIndex).sizeOfLinkedAnnotationList();
+  }
+
+  public int getTimestampAnnotationAnnotationCount(int timestampAnnotationIndex)
+  {
+    return root.getStructuredAnnotations().getTimestampAnnotation(timestampAnnotationIndex).sizeOfLinkedAnnotationList();
+  }
+
+  public int getXMLAnnotationAnnotationCount(int xmlAnnotationIndex) {
+    return root.getStructuredAnnotations().getXMLAnnotation(xmlAnnotationIndex).sizeOfLinkedAnnotationList();
+  }
+
 	public String getLightSourceType(int instrumentIndex, int lightSourceIndex)
 	{
 		LightSource o = root.getInstrument(instrumentIndex).getLightSource(lightSourceIndex);
