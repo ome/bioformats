@@ -217,5 +217,7 @@ constructed like so:
 
       plane = zeros(1, 64 * 64, 'uint8');
 
-In the near future, we will have a script for saving files similar to
-bfopen.m; see :ticket:`4112` for details.
+There is also a script that can save MATLAB arrays to supported formats:
+
+`https://github.com/openmicroscopy/bioformats/blob/develop/components/bio-formats/matlab/bfsave.m
+<https://github.com/openmicroscopy/bioformats/blob/develop/components/bio-formats/matlab/bfsave.m>`_
