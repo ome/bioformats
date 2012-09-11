@@ -237,12 +237,12 @@ public class OMEXMLWriter extends FormatWriter {
       Attributes attributes)
     {
       StringBuffer toAppend = new StringBuffer("\n<");
-      toAppend.append(qName);
+      toAppend.append(XMLTools.escapeXML(qName));
       for (int i=0; i<attributes.getLength(); i++) {
         toAppend.append(" ");
-        toAppend.append(attributes.getQName(i));
+        toAppend.append(XMLTools.escapeXML(attributes.getQName(i)));
         toAppend.append("=\"");
-        toAppend.append(attributes.getValue(i));
+        toAppend.append(XMLTools.escapeXML(attributes.getValue(i)));
         toAppend.append("\"");
       }
       toAppend.append(">");
