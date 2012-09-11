@@ -98,6 +98,8 @@ Type "ant -p" for a list of targets.
       </classpath>
       <classfileset file="${classes.dir}/${reader-test.class}"/>
       <sysproperty key="testng.toplevel-config" value="${testng.toplevel-config}"/>
+      <sysproperty key="testng.directory-prefix" value="${testng.directory-prefix}"/>
+      <sysproperty key="testng.directory-list" value="${testng.directory-list}"/>
       <sysproperty key="testng.filename" value="${testng.filename}"/>
       <sysproperty key="testng.directory" value="${testng.directory}"/>
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
@@ -121,6 +123,8 @@ Type "ant -p" for a list of targets.
       </classpath>
       <classfileset file="${classes.dir}/${reader-test.class}"/>
       <sysproperty key="testng.toplevel-config" value="${testng.toplevel-config}"/>
+      <sysproperty key="testng.directory-prefix" value="${testng.directory-prefix}"/>
+      <sysproperty key="testng.directory-list" value="${testng.directory-list}"/>
       <sysproperty key="testng.filename" value="${testng.filename}"/>
       <sysproperty key="testng.directory" value="${testng.directory}"/>
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
@@ -144,6 +148,8 @@ Type "ant -p" for a list of targets.
       </classpath>
       <classfileset file="${classes.dir}/${reader-test.class}"/>
       <sysproperty key="testng.toplevel-config" value="${testng.toplevel-config}"/>
+      <sysproperty key="testng.directory-prefix" value="${testng.directory-prefix}"/>
+      <sysproperty key="testng.directory-list" value="${testng.directory-list}"/>
       <sysproperty key="testng.filename" value="${testng.filename}"/>
       <sysproperty key="testng.directory" value="${testng.directory}"/>
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
@@ -167,6 +173,8 @@ Type "ant -p" for a list of targets.
       </classpath>
       <classfileset file="${classes.dir}/${reader-test.class}"/>
       <sysproperty key="testng.toplevel-config" value="${testng.toplevel-config}"/>
+      <sysproperty key="testng.directory-prefix" value="${testng.directory-prefix}"/>
+      <sysproperty key="testng.directory-list" value="${testng.directory-list}"/>
       <sysproperty key="testng.filename" value="${testng.filename}"/>
       <sysproperty key="testng.directory" value="${testng.directory}"/>
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
@@ -190,6 +198,8 @@ Type "ant -p" for a list of targets.
       </classpath>
       <classfileset file="${classes.dir}/${reader-test.class}"/>
       <sysproperty key="testng.toplevel-config" value="${testng.toplevel-config}"/>
+      <sysproperty key="testng.directory-prefix" value="${testng.directory-prefix}"/>
+      <sysproperty key="testng.directory-list" value="${testng.directory-list}"/>
       <sysproperty key="testng.filename" value="${testng.filename}"/>
       <sysproperty key="testng.directory" value="${testng.directory}"/>
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
@@ -213,6 +223,8 @@ Type "ant -p" for a list of targets.
       </classpath>
       <classfileset file="${classes.dir}/${reader-test.class}"/>
       <sysproperty key="testng.toplevel-config" value="${testng.toplevel-config}"/>
+      <sysproperty key="testng.directory-prefix" value="${testng.directory-prefix}"/>
+      <sysproperty key="testng.directory-list" value="${testng.directory-list}"/>
       <sysproperty key="testng.filename" value="${testng.filename}"/>
       <sysproperty key="testng.directory" value="${testng.directory}"/>
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
@@ -236,6 +248,8 @@ Type "ant -p" for a list of targets.
       </classpath>
       <classfileset file="${classes.dir}/${reader-test.class}"/>
       <sysproperty key="testng.toplevel-config" value="${testng.toplevel-config}"/>
+      <sysproperty key="testng.directory-prefix" value="${testng.directory-prefix}"/>
+      <sysproperty key="testng.directory-list" value="${testng.directory-list}"/>
       <sysproperty key="testng.filename" value="${testng.filename}"/>
       <sysproperty key="testng.directory" value="${testng.directory}"/>
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>
@@ -259,6 +273,8 @@ Type "ant -p" for a list of targets.
       </classpath>
       <classfileset file="${classes.dir}/${reader-test.class}"/>
       <sysproperty key="testng.toplevel-config" value="${testng.toplevel-config}"/>
+      <sysproperty key="testng.directory-prefix" value="${testng.directory-prefix}"/>
+      <sysproperty key="testng.directory-list" value="${testng.directory-list}"/>
       <sysproperty key="testng.filename" value="${testng.filename}"/>
       <sysproperty key="testng.directory" value="${testng.directory}"/>
       <sysproperty key="testng.multiplier" value="${testng.multiplier}"/>

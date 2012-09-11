@@ -26,7 +26,10 @@
 package loci.tests.testng;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Vector;
+
+import loci.common.DataTools;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,10 +72,23 @@ public class FormatReaderTestFactory {
     }
 
     String baseDir = null;
+    String[] validSubdirs = null;
     if (filename == null) {
       // parse base directory
       final String baseDirProp = "testng.directory";
       baseDir = System.getProperty(baseDirProp);
+
+      if (baseDir == null || baseDir.equals("${" + baseDirProp + "}")) {
+        baseDir = System.getProperty("testng.directory-prefix");
+        String dirList = System.getProperty("testng.directory-list");
+        try {
+          validSubdirs = DataTools.readFile(dirList).split("\n");
+        }
+        catch (IOException e) {
+          LOGGER.debug("", e);
+        }
+      }
+
       File baseDirFile = new File(baseDir);
       if (!baseDirFile.isDirectory()) {
         LOGGER.info("Directory: {}", baseDir);
@@ -129,7 +145,7 @@ public class FormatReaderTestFactory {
       long start = System.currentTimeMillis();
       try {
         TestTools.getFiles(baseDir, files, FormatReaderTest.configTree,
-          configFile);
+          configFile, validSubdirs);
       }
       catch (Exception e) {
         LOGGER.info("Failed to retrieve complete list of files", e);
