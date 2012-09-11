@@ -6,8 +6,7 @@
 		<OME:Pixels xmlns:OME="http://www.openmicroscopy.org/Schemas/OME/2012-06" DimensionOrder="XYCZT" ID="Pixels:0:0" PhysicalSizeX="10000.0" PhysicalSizeY="10000.0" Type="uint8" SizeC="1" SizeT="1" SizeX="6" SizeY="4" SizeZ="1">
 			<Bin:BinData BigEndian="false" Length="32">/wCrzur//wB5oMPi/wBIbJO3AP8ePGCF</Bin:BinData>
 		</OME:Pixels>
-		<SA:AnnotationRef ID="Annotation:1"/>
-		<SA:AnnotationRef ID="Annotation:2"/>
+		<SA:AnnotationRef ID="Annotation:3"/>
 	</Image>
 	<SA:StructuredAnnotations>
 		<!-- First Tag -->
