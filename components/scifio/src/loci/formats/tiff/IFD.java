@@ -811,7 +811,8 @@ public class IFD extends HashMap<Integer, Object> {
 
     long[] counts = new long[byteCounts.length];
 
-    if (getCompression() == TiffCompression.LZW) {
+    if (getCompression() == TiffCompression.LZW && !containsKey(ROWS_PER_STRIP))
+    {
       for (int i=0; i<byteCounts.length; i++) {
         counts[i] = byteCounts[i] * 2;
       }
