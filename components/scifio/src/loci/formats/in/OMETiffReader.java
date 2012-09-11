@@ -794,7 +794,9 @@ public class OMETiffReader extends FormatReader {
 
     if (getImageCount() == 1) {
       core[0].sizeZ = 1;
-      core[0].sizeC = 1;
+      if (!core[0].rgb) {
+        core[0].sizeC = 1;
+      }
       core[0].sizeT = 1;
     }
 
