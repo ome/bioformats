@@ -68,6 +68,8 @@ public abstract class AbstractLegacyAdapter<L, M> implements LegacyAdapter<L, M>
 
   /* @see LegacyAdapter#getModern(L) */
   public M getModern(L legacy) {
+    if (legacy == null) return null;
+    
     // unwrap if able
     if (legacy instanceof Wrapper) {
       // object is wrapped
@@ -93,6 +95,8 @@ public abstract class AbstractLegacyAdapter<L, M> implements LegacyAdapter<L, M>
 
   /* @see LegacyAdapter#getLegacy(M) */
   public L getLegacy(M modern) {
+    if (modern == null) return null;
+    
     // unwrap if able
     if (modern instanceof Wrapper) {
       // object is wrapped
