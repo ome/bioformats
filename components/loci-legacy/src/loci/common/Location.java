@@ -42,6 +42,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 
+import loci.common.adapter.IRandomAccessAdapter;
+import loci.legacy.adapter.AdapterTools;
+
 // HACK: for scan-deps.pl: The following packages are not actually "optional":
 // optional org.apache.log4j, optional org.slf4j.impl
 
@@ -161,7 +164,7 @@ public class Location {
 
   /** Maps the given id to the given IRandomAccess object. */
   public static void mapFile(String id, IRandomAccess ira) {
-    ome.scifio.io.Location.mapFile(id, ira);
+    ome.scifio.io.Location.mapFile(id, AdapterTools.getAdapter(IRandomAccessAdapter.class).getModern(ira));
   }
 
   /**
