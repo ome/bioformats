@@ -70,6 +70,11 @@ public class StatusEvent {
   public StatusEvent(int progress, int maximum, String message, boolean warn) {
     event = new ome.scifio.common.StatusEvent(progress, maximum, message, warn);
   }
+  
+  /** Constructs a loci.common.StatusEvent from an ome.scifio.common.StatusEvent */
+  public StatusEvent(ome.scifio.common.StatusEvent e) {
+    this.event = e;
+  }
 
   // -- StatusEvent API methods --
 
@@ -98,6 +103,12 @@ public class StatusEvent {
   @Override
   public String toString() {
     return event.toString();
+  }
+  
+  // -- Delegate Getter-
+  
+  public ome.scifio.common.StatusEvent getEvent() {
+    return event;
   }
 
 }

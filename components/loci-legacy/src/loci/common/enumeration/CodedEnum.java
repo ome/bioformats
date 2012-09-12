@@ -43,6 +43,12 @@ package loci.common.enumeration;
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/enumeration/CodedEnum.java">Trac</a>,
  * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/common/src/loci/common/enumeration/CodedEnum.java;hb=HEAD">Gitweb</a></dd></dl>
  */
-public interface CodedEnum extends ome.scifio.enumeration.CodedEnum {
-
+public interface CodedEnum {
+  
+  /**
+   * Retrieves the integer "code" for this enumeration. It is expected that the
+   * code be unique across the enumerated type.
+   * @return See above.
+   */
+  public int getCode();
 }

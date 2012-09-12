@@ -45,7 +45,7 @@ package loci.common;
  *
  * @author Curtis Rueden ctrueden at wisc.edu
  */
-public interface StatusReporter extends ome.scifio.common.StatusReporter {
+public interface StatusReporter {
 
   void addStatusListener(StatusListener l);
   void removeStatusListener(StatusListener l);
