@@ -106,6 +106,11 @@ pygments_style = 'sphinx'
 # A list of ignored prefixes for module index sorting.
 #modindex_common_prefix = []
 
+if "OMERODOC_URI" in os.environ:
+    omerodoc_uri = os.environ.get('OMERODOC_URI')
+else:
+    omerodoc_uri = 'http://www.openmicroscopy.org/site/support/omero4/'
+
 extlinks = {
     'wiki' : ('http://trac.openmicroscopy.org.uk/ome/wiki/'+ '%s', ''),
     'ticket' : ('http://trac.openmicroscopy.org.uk/ome/ticket/'+ '%s', '#'),
@@ -118,7 +123,7 @@ extlinks = {
     'jenkins' : ('http://hudson.openmicroscopy.org.uk/' + '%s', ''),
     'mailinglist' : ('http://lists.openmicroscopy.org.uk/mailman/listinfo/' + '%s', ''),
     'forum' : ('http://www.openmicroscopy.org/community/' + '%s', ''),
-    'omerodoc': ('http://www.openmicroscopy.org/site/support/omero4-staging/' + '%s', '')
+    'omerodoc': (omerodoc_uri + '%s', '')
     }
 
 rst_epilog = """
