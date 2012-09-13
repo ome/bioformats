@@ -182,7 +182,8 @@ public class Location {
 
   /** Gets the random access handle for the given id. */
   public static IRandomAccess getMappedFile(String id) {
-    return (IRandomAccess) ome.scifio.io.Location.getMappedFile(id);
+    return AdapterTools.getAdapter(IRandomAccessAdapter.class).getLegacy(
+        ome.scifio.io.Location.getMappedFile(id));
   }
 
   /** Return the id mapping. */
@@ -204,7 +205,8 @@ public class Location {
    * @see IRandomAccess
    */
   public static IRandomAccess getHandle(String id) throws IOException {
-    return (IRandomAccess) ome.scifio.io.Location.getHandle(id);
+    return AdapterTools.getAdapter(IRandomAccessAdapter.class).getLegacy(
+        ome.scifio.io.Location.getHandle(id));
   }
 
   /**
@@ -214,7 +216,8 @@ public class Location {
   public static IRandomAccess getHandle(String id, boolean writable)
     throws IOException
   {
-    return (IRandomAccess) ome.scifio.io.Location.getHandle(id, writable, true);
+    return AdapterTools.getAdapter(IRandomAccessAdapter.class).getLegacy(
+        ome.scifio.io.Location.getHandle(id, writable, true));
   }
 
   /**
@@ -224,7 +227,8 @@ public class Location {
   public static IRandomAccess getHandle(String id, boolean writable,
     boolean allowArchiveHandles) throws IOException
   {
-    return (IRandomAccess) ome.scifio.io.Location.getHandle(id, writable, allowArchiveHandles);
+    return AdapterTools.getAdapter(IRandomAccessAdapter.class).getLegacy(
+        ome.scifio.io.Location.getHandle(id, writable, allowArchiveHandles));
   }
   
   /**
