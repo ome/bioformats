@@ -257,7 +257,7 @@ Type "ant -p" for a list of targets.
 
   <target name="test-jai" depends="jar-jai"
     description="compile and run tests for JAI Image I/O Tools library">
-    <ant dir="components/forks/jai" target="jai.test"/>
+    <ant dir="components/forks/jai" target="test"/>
   </target>
 
   <!-- Apache POI Java library -->
@@ -293,7 +293,7 @@ Type "ant -p" for a list of targets.
 
   <target name="test-poi-loci" depends="jar-poi-loci"
     description="compile and run tests for Apache POI library">
-    <ant dir="components/forks/poi" target="poi-loci.test"/>
+    <ant dir="components/forks/poi" target="test"/>
   </target>
 
   <!-- MDB Tools Java library -->
@@ -327,7 +327,7 @@ Type "ant -p" for a list of targets.
 
   <target name="test-mdbtools" depends="jar-mdbtools"
     description="compile and run tests for MDB Tools Java library">
-    <ant dir="components/forks/mdbtools" target="mdbtools.test"/>
+    <ant dir="components/forks/mdbtools" target="test"/>
   </target>
 
   <!-- Metakit library -->
@@ -363,7 +363,7 @@ Type "ant -p" for a list of targets.
 
   <target name="test-metakit" depends="jar-metakit"
     description="compile and run tests for Metakit Java library">
-    <ant dir="components/metakit" target="metakit.test"/>
+    <ant dir="components/metakit" target="test"/>
   </target>
 
   <!-- OME-XML Java library -->
@@ -397,7 +397,7 @@ Type "ant -p" for a list of targets.
 
   <target name="test-ome-xml" depends="jar-ome-xml"
     description="compile and run tests for OME-XML Java library">
-    <ant dir="components/ome-xml" target="ome-xml.test"/>
+    <ant dir="components/ome-xml" target="test"/>
   </target>
 
   <!-- LWF stubs -->
@@ -431,7 +431,7 @@ Type "ant -p" for a list of targets.
 
   <target name="test-lwf-stubs" depends="jar-lwf-stubs"
     description="compile and run tests for LWF stubs">
-    <ant dir="components/stubs/lwf-stubs" target="lwf-stubs.test"/>
+    <ant dir="components/stubs/lwf-stubs" target="test"/>
   </target>
 
   <!-- SCIFIO -->
@@ -562,7 +562,7 @@ Type "ant -p" for a list of targets.
 
   <target name="test-autogen" depends="jar-autogen"
     description="compile and run tests for LOCI autogen">
-    <ant dir="components/autogen" target="autogen.test"/>
+    <ant dir="components/autogen" target="test"/>
   </target>
 
   <!-- LOCI Plugins for ImageJ -->
@@ -609,7 +609,7 @@ Type "ant -p" for a list of targets.
 
   <target name="test-loci-plugins" depends="jar-loci-plugins"
     description="compile and run tests for LOCI Plugins for ImageJ">
-    <ant dir="components/loci-plugins" target="loci-plugins.test"/>
+    <ant dir="components/loci-plugins" target="test"/>
   </target>
 
   <!-- OME I/O -->
@@ -691,7 +691,7 @@ Type "ant -p" for a list of targets.
 
   <target name="test-ome-plugins" depends="jar-ome-plugins"
     description="compile and run tests for OME Plugins for ImageJ">
-    <ant dir="components/ome-plugins" target="ome-plugins.test"/>
+    <ant dir="components/ome-plugins" target="test"/>
   </target>
 
   <!-- LOCI testing framework -->
@@ -735,7 +735,7 @@ Type "ant -p" for a list of targets.
 
   <target name="test-tests" depends="jar-tests"
     description="compile and run tests for LOCI testing framework">
-    <ant dir="components/test-suite" target="tests.test"/>
+    <ant dir="components/test-suite" target="test"/>
   </target>
 
   <!-- OME Notes -->
@@ -773,7 +773,7 @@ Type "ant -p" for a list of targets.
 
   <target name="test-ome-notes" depends="jar-ome-notes"
     description="compile and run tests for OME Notes">
-    <ant dir="components/legacy/ome-notes" target="ome-notes.test"/>
+    <ant dir="components/legacy/ome-notes" target="test"/>
   </target>
 
   <!-- OME Metadata Editor -->
@@ -813,7 +813,7 @@ Type "ant -p" for a list of targets.
 
   <target name="test-ome-editor" depends="jar-ome-editor"
     description="compile and run tests for OME Metadata Editor">
-    <ant dir="components/legacy/ome-editor" target="ome-editor.test"/>
+    <ant dir="components/legacy/ome-editor" target="test"/>
   </target>
 
   <!-- Tool collections -->
