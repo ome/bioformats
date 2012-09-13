@@ -194,6 +194,36 @@ public final class XMLTools {
     return new String(c);
   }
 
+  /** Escape special characters. */
+  public static String escapeXML(String s) {
+    StringBuffer sb = new StringBuffer();
+
+    for (int i=0; i<s.length(); i++) {
+      char c = s.charAt(i);
+
+      if (c == '<') {
+        sb.append("&lt;");
+      }
+      else if (c == '>') {
+        sb.append("&gt;");
+      }
+      else if (c == '&') {
+        sb.append("&amp;");
+      }
+      else if (c == '\"') {
+        sb.append("&quot;");
+      }
+      else if (c == '\'') {
+        sb.append("&apos;");
+      }
+      else {
+        sb.append(c);
+      }
+    }
+
+    return sb.toString();
+  }
+
   /** Indents XML to be more readable. */
   public static String indentXML(String xml) {
     return indentXML(xml, 3, false);
