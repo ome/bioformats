@@ -817,7 +817,7 @@ public class NativeND2Reader extends FormatReader {
       }
 
       int planeCount = core.length * getSizeZ() * getSizeT();
-      if (planeCount < imageOffsets.size() &&
+      if (planeCount < imageOffsets.size() && planeCount > 0 &&
         (imageOffsets.size() % (planeCount / core.length)) == 0)
       {
         int seriesCount = imageOffsets.size() / (planeCount / core.length);
