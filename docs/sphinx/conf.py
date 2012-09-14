@@ -53,7 +53,9 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Bio-Formats'
-copyright = u'2000-2012, The Open Microscopy Environment'
+title = project +u' Documentation'
+author = u'The Open Microscopy Environment'
+copyright = u'2000-2012, ' + author
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -106,6 +108,11 @@ pygments_style = 'sphinx'
 # A list of ignored prefixes for module index sorting.
 #modindex_common_prefix = []
 
+if "OMERODOC_URI" in os.environ:
+    omerodoc_uri = os.environ.get('OMERODOC_URI')
+else:
+    omerodoc_uri = 'http://www.openmicroscopy.org/site/support/omero4/'
+
 extlinks = {
     'wiki' : ('http://trac.openmicroscopy.org.uk/ome/wiki/'+ '%s', ''),
     'ticket' : ('http://trac.openmicroscopy.org.uk/ome/ticket/'+ '%s', '#'),
@@ -117,7 +124,8 @@ extlinks = {
     'javadoc' : ('http://hudson.openmicroscopy.org.uk/job/OMERO/javadoc/' + '%s', ''),
     'jenkins' : ('http://hudson.openmicroscopy.org.uk/' + '%s', ''),
     'mailinglist' : ('http://lists.openmicroscopy.org.uk/mailman/listinfo/' + '%s', ''),
-    'forum' : ('http://www.openmicroscopy.org/community/' + '%s', '')
+    'forum' : ('http://www.openmicroscopy.org/community/' + '%s', ''),
+    'omerodoc': (omerodoc_uri + '%s', '')
     }
 
 rst_epilog = """
@@ -222,9 +230,9 @@ latex_elements = {
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
+target = project + '-' + release + '.tex'
 latex_documents = [
-  ('index', 'Bio-Formats.tex', u'Bio-Formats Documentation',
-   u'The Open Microscopy Environment', 'manual'),
+  (master_doc, target, title, author, 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -253,8 +261,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'bio-formats', u'Bio-Formats Documentation',
-     [u'The Open Microscopy Environment'], 1)
+    (master_doc, 'OMERO', title, author, 1)
 ]
 
 # If true, show URL addresses after external links.
@@ -267,9 +274,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'Bio-Formats', u'Bio-Formats Documentation',
-   u'The Open Microscopy Environment', 'Bio-Formats', 'One line description of project.',
-   'Miscellaneous'),
+  (master_doc, project, title, author, 'omedocs', 'One line description of project.',
+     'Miscellaneous'),
 ]
 
 # Documents to append as an appendix to all manuals.
