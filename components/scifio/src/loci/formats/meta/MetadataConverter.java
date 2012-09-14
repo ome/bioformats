@@ -130,6 +130,19 @@ public final class MetadataConverter {
         dest.setBooleanAnnotationValue(value, i);
       }
       catch (NullPointerException e) { }
+
+      int annotationRefCount = 0;
+      try {
+        annotationRefCount = src.getBooleanAnnotationAnnotationCount(i);
+      }
+      catch (NullPointerException e) { }
+      for (int a=0; a<annotationRefCount; a++) {
+        try {
+          String id = src.getBooleanAnnotationAnnotationRef(i, a);
+          dest.setBooleanAnnotationAnnotationRef(id, i, a);
+        }
+        catch (NullPointerException e) { }
+      }
     }
   }
 
@@ -167,6 +180,19 @@ public final class MetadataConverter {
         dest.setCommentAnnotationValue(value, i);
       }
       catch (NullPointerException e) { }
+
+      int annotationRefCount = 0;
+      try {
+        annotationRefCount = src.getCommentAnnotationAnnotationCount(i);
+      }
+      catch (NullPointerException e) { }
+      for (int a=0; a<annotationRefCount; a++) {
+        try {
+          String id = src.getCommentAnnotationAnnotationRef(i, a);
+          dest.setCommentAnnotationAnnotationRef(id, i, a);
+        }
+        catch (NullPointerException e) { }
+      }
     }
   }
 
@@ -270,6 +296,19 @@ public final class MetadataConverter {
         dest.setDoubleAnnotationValue(value, i);
       }
       catch (NullPointerException e) { }
+
+      int annotationRefCount = 0;
+      try {
+        annotationRefCount = src.getDoubleAnnotationAnnotationCount(i);
+      }
+      catch (NullPointerException e) { }
+      for (int a=0; a<annotationRefCount; a++) {
+        try {
+          String id = src.getDoubleAnnotationAnnotationRef(i, a);
+          dest.setDoubleAnnotationAnnotationRef(id, i, a);
+        }
+        catch (NullPointerException e) { }
+      }
     }
   }
 
@@ -564,6 +603,19 @@ public final class MetadataConverter {
         dest.setBinaryFileSize(fileSize, i);
       }
       catch (NullPointerException e) { }
+
+      int annotationRefCount = 0;
+      try {
+        annotationRefCount = src.getFileAnnotationAnnotationCount(i);
+      }
+      catch (NullPointerException e) { }
+      for (int a=0; a<annotationRefCount; a++) {
+        try {
+          String id = src.getFileAnnotationAnnotationRef(i, a);
+          dest.setFileAnnotationAnnotationRef(id, i, a);
+        }
+        catch (NullPointerException e) { }
+      }
     }
   }
 
@@ -1585,6 +1637,19 @@ public final class MetadataConverter {
         dest.setListAnnotationNamespace(namespace, i);
       }
       catch (NullPointerException e) { }
+
+      int annotationRefCount = 0;
+      try {
+        annotationRefCount = src.getListAnnotationAnnotationCount(i);
+      }
+      catch (NullPointerException e) { }
+      for (int a=0; a<annotationRefCount; a++) {
+        try {
+          String id = src.getListAnnotationAnnotationRef(i, a);
+          dest.setListAnnotationAnnotationRef(id, i, a);
+        }
+        catch (NullPointerException e) { }
+      }
     }
   }
 
@@ -1622,6 +1687,19 @@ public final class MetadataConverter {
         dest.setLongAnnotationValue(value, i);
       }
       catch (NullPointerException e) { }
+
+      int annotationRefCount = 0;
+      try {
+        annotationRefCount = src.getLongAnnotationAnnotationCount(i);
+      }
+      catch (NullPointerException e) { }
+      for (int a=0; a<annotationRefCount; a++) {
+        try {
+          String id = src.getLongAnnotationAnnotationRef(i, a);
+          dest.setLongAnnotationAnnotationRef(id, i, a);
+        }
+        catch (NullPointerException e) { }
+      }
     }
   }
 
@@ -3213,6 +3291,19 @@ public final class MetadataConverter {
         dest.setTagAnnotationValue(value, i);
       }
       catch (NullPointerException e) { }
+
+      int annotationRefCount = 0;
+      try {
+        annotationRefCount = src.getTagAnnotationAnnotationCount(i);
+      }
+      catch (NullPointerException e) { }
+      for (int a=0; a<annotationRefCount; a++) {
+        try {
+          String id = src.getTagAnnotationAnnotationRef(i, a);
+          dest.setTagAnnotationAnnotationRef(id, i, a);
+        }
+        catch (NullPointerException e) { }
+      }
     }
   }
 
@@ -3250,6 +3341,19 @@ public final class MetadataConverter {
         dest.setTermAnnotationValue(value, i);
       }
       catch (NullPointerException e) { }
+
+      int annotationRefCount = 0;
+      try {
+        annotationRefCount = src.getTermAnnotationAnnotationCount(i);
+      }
+      catch (NullPointerException e) { }
+      for (int a=0; a<annotationRefCount; a++) {
+        try {
+          String id = src.getTermAnnotationAnnotationRef(i, a);
+          dest.setTermAnnotationAnnotationRef(id, i, a);
+        }
+        catch (NullPointerException e) { }
+      }
     }
   }
 
@@ -3287,6 +3391,19 @@ public final class MetadataConverter {
         dest.setTimestampAnnotationValue(value, i);
       }
       catch (NullPointerException e) { }
+
+      int annotationRefCount = 0;
+      try {
+        annotationRefCount = src.getTimestampAnnotationAnnotationCount(i);
+      }
+      catch (NullPointerException e) { }
+      for (int a=0; a<annotationRefCount; a++) {
+        try {
+          String id = src.getTimestampAnnotationAnnotationRef(i, a);
+          dest.setTimestampAnnotationAnnotationRef(id, i, a);
+        }
+        catch (NullPointerException e) { }
+      }
     }
   }
 
@@ -3324,6 +3441,19 @@ public final class MetadataConverter {
         dest.setXMLAnnotationValue(value, i);
       }
       catch (NullPointerException e) { }
+
+      int annotationRefCount = 0;
+      try {
+        annotationRefCount = src.getXMLAnnotationAnnotationCount(i);
+      }
+      catch (NullPointerException e) { }
+      for (int a=0; a<annotationRefCount; a++) {
+        try {
+          String id = src.getXMLAnnotationAnnotationRef(i, a);
+          dest.setXMLAnnotationAnnotationRef(id, i, a);
+        }
+        catch (NullPointerException e) { }
+      }
     }
   }
 

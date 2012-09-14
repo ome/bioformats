@@ -232,12 +232,12 @@ public class TileStitcher extends ReaderWrapper {
     ArrayList<Double> uniqueY = new ArrayList<Double>();
 
     boolean equalZs = true;
-    Double firstZ = meta.getPlanePositionZ(0, reader.getImageCount() - 1);
+    Double firstZ = meta.getPlanePositionZ(0, meta.getPlaneCount(0) - 1);
 
     for (int i=0; i<reader.getSeriesCount(); i++) {
       TileCoordinate coord = new TileCoordinate();
-      coord.x = meta.getPlanePositionX(i, reader.getImageCount() - 1);
-      coord.y = meta.getPlanePositionY(i, reader.getImageCount() - 1);
+      coord.x = meta.getPlanePositionX(i, meta.getPlaneCount(i) - 1);
+      coord.y = meta.getPlanePositionY(i, meta.getPlaneCount(i) - 1);
 
       tiles.add(coord);
 
@@ -248,7 +248,7 @@ public class TileStitcher extends ReaderWrapper {
         uniqueY.add(coord.y);
       }
 
-      Double zPos = meta.getPlanePositionZ(i, reader.getImageCount() - 1);
+      Double zPos = meta.getPlanePositionZ(i, meta.getPlaneCount(i) - 1);
 
       if (firstZ == null) {
         if (zPos != null) {
