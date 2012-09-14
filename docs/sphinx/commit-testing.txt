@@ -16,8 +16,7 @@ files likely to be affected by that commit. If you want to run these
 tests, you will need to do the following:
 
 Clone bioformats.git and checkout the appropriate branch (by following
-the directions on the
-`WorkingWithOmero/UsingGit </ome/wiki/WorkingWithOmero/UsingGit>`_
+the directions on the :omerodoc:`Git usage <developers/Development/UsingGit.html>`
 page). Run this command to build all of the JAR files:
 
 ::
