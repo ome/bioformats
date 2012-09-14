@@ -78,14 +78,16 @@ public class PerkinElmerReader extends FormatReader {
   /** Helper reader. */
   protected MinimalTiffReader tiff;
 
-  /** TIFF files to open. */
-  protected String[] files;
+  /** List of files to open. */
+  protected PixelsFile[] files;
 
   /** Flag indicating that the image data is in TIFF format. */
   private boolean isTiff = true;
 
   /** List of all files to open */
   private Vector<String> allFiles;
+
+  private int extCount;
 
   private String details, sliceSpace;
 
@@ -192,14 +194,20 @@ public class PerkinElmerReader extends FormatReader {
     throws FormatException, IOException
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
+
+    String file = getFile(no);
+    int index = getFileIndex(no);
+
     if (isTiff) {
-      tiff.setId(files[no / getSizeC()]);
-      return tiff.openBytes(0, buf, x, y, w, h);
+      tiff.setId(file);
+      return tiff.openBytes(index, buf, x, y, w, h);
     }
 
-    RandomAccessInputStream ras = new RandomAccessInputStream(files[no]);
-    ras.seek(6);
-    readPlane(ras, x, y, w, h, buf);
+    RandomAccessInputStream ras = new RandomAccessInputStream(file);
+    if (6 + index * FormatTools.getPlaneSize(this) <= ras.length()) {
+      ras.seek(6 + index * FormatTools.getPlaneSize(this));
+      readPlane(ras, x, y, w, h, buf);
+    }
     ras.close();
     return buf;
   }
@@ -310,8 +318,7 @@ public class PerkinElmerReader extends FormatReader {
     String timFile = null, csvFile = null, zpoFile = null;
     String htmFile = null;
 
-    int filesPt = 0;
-    files = new String[ls.length];
+    Vector<PixelsFile> tempFiles = new Vector<PixelsFile>();
 
     int dot = id.lastIndexOf(".");
     String check = dot < 0 ? id : id.substring(0, dot);
@@ -320,6 +327,8 @@ public class PerkinElmerReader extends FormatReader {
     // locate appropriate .tim, .csv, .zpo, .htm and .tif files
 
     String prefix = null;
+
+    Arrays.sort(ls);
 
     for (int i=0; i<ls.length; i++) {
       // make sure that the file has a name similar to the name of the
@@ -344,78 +353,75 @@ public class PerkinElmerReader extends FormatReader {
         if (zpoFile == null && checkSuffix(ls[i], ZPO_SUFFIX)) zpoFile = ls[i];
         if (htmFile == null && checkSuffix(ls[i], HTM_SUFFIX)) htmFile = ls[i];
 
-        if (checkSuffix(ls[i], TiffReader.TIFF_SUFFIXES)) {
-          files[filesPt++] = workingDirPath + ls[i];
-        }
+        dot = ls[i].lastIndexOf(".");
 
-        try {
-          String ext = ls[i].substring(ls[i].lastIndexOf(".") + 1);
-          Integer.parseInt(ext, 16);
-          isTiff = false;
-          files[filesPt++] = workingDirPath + ls[i];
+        PixelsFile f = new PixelsFile();
+        f.path = workingDirPath + ls[i];
+
+        if (checkSuffix(ls[i], TiffReader.TIFF_SUFFIXES)) {
+          if (ls[i].charAt(dot - 4) == '_') {
+            f.firstIndex = Integer.parseInt(ls[i].substring(dot - 3, dot));
+          }
+          else {
+            f.firstIndex = -1;
+          }
+
+          if (ls[i].charAt(dot - 9) == '_') {
+            f.extIndex = Integer.parseInt(ls[i].substring(dot - 8, dot - 4));
+          }
+          else {
+            f.firstIndex = i;
+            f.extIndex = 0;
+          }
+
+          tempFiles.add(f);
         }
-        catch (NumberFormatException exc) {
-          LOGGER.debug("Failed to parse file extension", exc);
+        else {
+          try {
+            if (ls[i].charAt(dot - 4) == '_') {
+              f.firstIndex = Integer.parseInt(ls[i].substring(dot - 3, dot));
+            }
+            else {
+              f.firstIndex = -1;
+            }
+
+            String ext = ls[i].substring(dot + 1);
+            f.extIndex = Integer.parseInt(ext, 16);
+            isTiff = false;
+
+            tempFiles.add(f);
+          }
+          catch (NumberFormatException exc) {
+            LOGGER.debug("Failed to parse file extension", exc);
+          }
         }
       }
     }
 
-    // re-order the files
-
-    String[] tempFiles = files;
-    files = new String[filesPt];
+    files = tempFiles.toArray(new PixelsFile[tempFiles.size()]);
 
     // determine the number of different extensions we have
 
     LOGGER.info("Finding image files");
 
-    Vector<String> foundExts = new Vector<String>();
-    for (int i=0; i<filesPt; i++) {
-      String ext = tempFiles[i].substring(tempFiles[i].lastIndexOf(".") + 1);
-      if (!foundExts.contains(ext)) {
-        foundExts.add(ext);
+    Vector<Integer> foundExts = new Vector<Integer>();
+    for (PixelsFile f : files) {
+      if (!foundExts.contains(f.extIndex)) {
+        foundExts.add(f.extIndex);
       }
     }
-    int extCount = foundExts.size();
+    extCount = foundExts.size();
     foundExts = null;
 
-    Vector<String> extSet = new Vector<String>();
-    for (int i=0; i<filesPt; i+=extCount) {
-      for (int j=0; j<extCount; j++) {
-        String file = tempFiles[i + j];
-        if (extSet.size() == 0) extSet.add(file);
-        else {
-          if (file == null) continue;
-          String ext = file.substring(file.lastIndexOf(".") + 1);
-          int extNum = Integer.parseInt(ext, 16);
+    core[0].imageCount = 0;
+    for (PixelsFile f : files) {
+      allFiles.add(f.path);
 
-          int insert = -1;
-          int pos = 0;
-          while (insert == -1 && pos < extSet.size()) {
-            String posString = extSet.get(pos);
-            posString = posString.substring(posString.lastIndexOf(".") + 1);
-            int posNum = Integer.parseInt(posString, 16);
-
-            if (extNum < posNum) insert = pos;
-            pos++;
-          }
-          if (insert == -1) extSet.add(tempFiles[i + j]);
-          else extSet.add(insert, tempFiles[i + j]);
-        }
+      core[0].imageCount++;
+      if (f.firstIndex < 0 && files.length > extCount) {
+        core[0].imageCount += ((files.length - 1) / (extCount - 1)) - 1;
       }
-
-      int length = (int) Math.min(extCount, extSet.size());
-      for (int j=0; j<length; j++) {
-        files[i + j] = extSet.get(j);
-      }
-      extSet.clear();
     }
-
-    allFiles.addAll(Arrays.asList(files));
-
-    sortFiles();
-
-    core[0].imageCount = files.length;
 
     tiff = new MinimalTiffReader();
 
@@ -530,11 +536,11 @@ public class PerkinElmerReader extends FormatReader {
     }
 
     if (isTiff) {
-      tiff.setId(files[0]);
+      tiff.setId(getFile(0));
       core[0].pixelType = tiff.getPixelType();
     }
     else {
-      RandomAccessInputStream tmp = new RandomAccessInputStream(files[0]);
+      RandomAccessInputStream tmp = new RandomAccessInputStream(getFile(0));
       int bpp = (int) (tmp.length() - 6) / (getSizeX() * getSizeY());
       tmp.close();
       if (bpp % 3 == 0) bpp /= 3;
@@ -544,7 +550,7 @@ public class PerkinElmerReader extends FormatReader {
     if (getSizeZ() <= 0) core[0].sizeZ = 1;
     if (getSizeC() <= 0) core[0].sizeC = 1;
 
-    if (getSizeT() <= 0) {
+    if (getSizeT() <= 0 || getImageCount() % (getSizeZ() * getSizeC()) == 0) {
       core[0].sizeT = getImageCount() / (getSizeZ() * getSizeC());
     }
     else {
@@ -555,9 +561,6 @@ public class PerkinElmerReader extends FormatReader {
       }
     }
 
-    // throw away files, if necessary
-    removeExtraFiles();
-
     core[0].dimensionOrder = "XYCTZ";
     core[0].rgb = isTiff ? tiff.isRGB() : false;
     core[0].interleaved = false;
@@ -565,6 +568,14 @@ public class PerkinElmerReader extends FormatReader {
     core[0].metadataComplete = true;
     core[0].indexed = isTiff ? tiff.isIndexed() : false;
     core[0].falseColor = false;
+
+    if (getImageCount() != getSizeZ() * getSizeC() * getSizeT()) {
+      core[0].imageCount = getSizeZ() * getSizeC() * getSizeT();
+    }
+
+    if (!isTiff) {
+      extCount = getSizeT() * getSizeC();
+    }
 
     // Populate metadata store
 
@@ -658,6 +669,47 @@ public class PerkinElmerReader extends FormatReader {
 
   // -- Helper methods --
 
+  private PixelsFile lookupFile(int no) {
+    int minExtIndex = Integer.MAX_VALUE;
+    int minFirstIndex = Integer.MAX_VALUE;
+    for (PixelsFile f : files) {
+      if (f.extIndex < minExtIndex) {
+        minExtIndex = f.extIndex;
+      }
+      if (f.firstIndex >= 0 && f.firstIndex < minFirstIndex) {
+        minFirstIndex = f.firstIndex;
+      }
+    }
+
+    for (int ext=minExtIndex; ext<=extCount+minExtIndex; ext++) {
+      for (PixelsFile f : files) {
+        if (f.extIndex == ext) {
+          if (f.firstIndex < 0) {
+            if ((no % extCount) == ext - minExtIndex) {
+              return f;
+            }
+          }
+          else if (no ==
+            (f.firstIndex - minFirstIndex) * extCount + ext - minExtIndex)
+          {
+            return f;
+          }
+        }
+      }
+    }
+    return null;
+  }
+
+  private String getFile(int no) {
+    PixelsFile f = lookupFile(no);
+    return f.path;
+  }
+
+  private int getFileIndex(int no) {
+    PixelsFile f = lookupFile(no);
+    return f.firstIndex >= 0 ? 0 : no / extCount;
+  }
+
   private void parseKeyValue(String key, String value) {
     if (key == null || value == null) return;
     addGlobalMeta(key, value);
@@ -705,72 +757,6 @@ public class PerkinElmerReader extends FormatReader {
     Location f = new Location(workingDirPath, file);
     if (!workingDirPath.equals("")) allFiles.add(f.getAbsolutePath());
     else allFiles.add(file);
-  }
-
-  private void sortFiles() {
-   if (isTiff) Arrays.sort(files);
-    else {
-      Comparator<String> c = new Comparator<String>() {
-        public int compare(String s1, String s2) {
-          String prefix1 = s1, prefix2 = s2, suffix1 = s1, suffix2 = s2;
-          if (s1.indexOf(".") != -1) {
-            prefix1 = s1.substring(0, s1.lastIndexOf("."));
-            suffix1 = s1.substring(s1.lastIndexOf(".") + 1);
-          }
-          if (s2.indexOf(".") != -1) {
-            prefix2 = s2.substring(0, s2.lastIndexOf("."));
-            suffix2 = s2.substring(s2.lastIndexOf(".") + 1);
-          }
-          int cmp = prefix1.compareTo(prefix2);
-          if (cmp != 0) return cmp;
-          return Integer.parseInt(suffix1, 16) - Integer.parseInt(suffix2, 16);
-        }
-      };
-      Arrays.sort(files, c);
-    }
-  }
-
-  private void removeExtraFiles() {
-    int calcCount = getSizeZ() * getEffectiveSizeC() * getSizeT();
-    if (files.length > getImageCount() || getImageCount() != calcCount) {
-      LOGGER.info("Removing extraneous files");
-      String[] tmpFiles = files;
-      int imageCount = (int) Math.min(getImageCount(), calcCount);
-      files = new String[imageCount];
-
-      Hashtable<String, Integer> zSections = new Hashtable<String, Integer>();
-      for (int i=0; i<tmpFiles.length; i++) {
-        int underscore = tmpFiles[i].lastIndexOf("_");
-        int dotIndex = tmpFiles[i].lastIndexOf(".");
-        String z = tmpFiles[i].substring(underscore + 1, dotIndex);
-        if (zSections.get(z) == null) zSections.put(z, new Integer(1));
-        else {
-          int count = zSections.get(z).intValue() + 1;
-          zSections.put(z, new Integer(count));
-        }
-      }
-
-      int nextFile = 0;
-      int oldFile = 0;
-      Arrays.sort(tmpFiles, new PEComparator());
-      String[] keys = zSections.keySet().toArray(new String[0]);
-      Arrays.sort(keys);
-      for (String key : keys) {
-        int oldCount = zSections.get(key).intValue();
-        if (oldCount == 1 && !key.replaceAll("\\d", "").equals("")) {
-          oldFile += oldCount;
-          continue;
-        }
-        int sizeC = isTiff ? tiff.getEffectiveSizeC() : getSizeC();
-        int nPlanes = sizeC * getSizeT();
-        int count = (int) Math.min(oldCount, nPlanes);
-        System.arraycopy(tmpFiles, oldFile, files, nextFile, count);
-        nextFile += count;
-        oldFile += count;
-        if (count < oldCount) oldFile += (oldCount - count);
-      }
-      core[0].imageCount = getSizeZ() * getEffectiveSizeC() * getSizeT();
-    }
   }
 
   private void parseTimFile(String timFile) throws IOException {
@@ -854,39 +840,10 @@ public class PerkinElmerReader extends FormatReader {
 
   // -- Helper class --
 
-  class PEComparator implements Comparator<String> {
-    public int compare(String s1, String s2) {
-      if (s1.equals(s2)) return 0;
-
-      int underscore1 = (int) Math.max(s1.lastIndexOf("_"), 0);
-      int underscore2 = (int) Math.max(s2.lastIndexOf("_"), 0);
-      int dot1 = (int) Math.max(s1.lastIndexOf("."), 0);
-      int dot2 = (int) Math.max(s2.lastIndexOf("."), 0);
-
-      String prefix1 = s1.substring(0, underscore1);
-      String prefix2 = s2.substring(0, underscore2);
-
-      if (!prefix1.equals(prefix2)) return prefix1.compareTo(prefix2);
-
-      try {
-        int z1 = Integer.parseInt(s1.substring(underscore1 + 1, dot1));
-        int z2 = Integer.parseInt(s2.substring(underscore2 + 1, dot2));
-
-        if (z1 < z2) return -1;
-        if (z2 < z1) return 1;
-      }
-      catch (NumberFormatException e) { }
-
-      try {
-        int ext1 = Integer.parseInt(s1.substring(dot1 + 1), 16);
-        int ext2 = Integer.parseInt(s2.substring(dot2 + 1), 16);
-
-        if (ext1 < ext2) return -1;
-        if (ext1 > ext2) return 1;
-      }
-      catch (NumberFormatException e) { }
-      return 0;
-    }
+  class PixelsFile {
+    public int firstIndex;
+    public int extIndex;
+    public String path;
   }
 
 }
