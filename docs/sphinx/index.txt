@@ -116,7 +116,7 @@ Getting help
 
 If you have any questions about installing, using, or developing against
 Bio-Formats, we would be happy to help - just send an email to one of
-the `mailing lists <http://loci.wisc.edu/software/mailing-lists>`_ and
+the `mailing lists <http://www.openmicroscopy.org/site/community/mailing-lists>`_ and
 we will do our best answer your questions.
 
 You may also wish to check the `OME
