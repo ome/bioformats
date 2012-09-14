@@ -53,10 +53,9 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Bio-Formats'
-title = u'Bio-Formats Documentation'
+title = project +u' Documentation'
 author = u'The Open Microscopy Environment'
 copyright = u'2000-2012, ' + author
-target = 'BFdocs'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -231,8 +230,9 @@ latex_elements = {
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
+target = project + '-' + release + '.tex'
 latex_documents = [
-  (master_doc, target + '.tex', title, author, 'manual'),
+  (master_doc, target, title, author, 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -274,7 +274,7 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  (master_doc, target, title, author, 'omedocs', 'One line description of project.',
+  (master_doc, project, title, author, 'omedocs', 'One line description of project.',
      'Miscellaneous'),
 ]
 
