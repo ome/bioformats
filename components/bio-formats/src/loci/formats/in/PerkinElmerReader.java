@@ -573,7 +573,7 @@ public class PerkinElmerReader extends FormatReader {
       core[0].imageCount = getSizeZ() * getSizeC() * getSizeT();
     }
 
-    if (!isTiff) {
+    if (!isTiff && extCount > getSizeT()) {
       extCount = getSizeT() * getSizeC();
     }
 
