@@ -204,7 +204,7 @@ public class PerkinElmerReader extends FormatReader {
     }
 
     RandomAccessInputStream ras = new RandomAccessInputStream(file);
-    if (6 + index * FormatTools.getPlaneSize(this) <= ras.length()) {
+    if (6 + index * FormatTools.getPlaneSize(this) < ras.length()) {
       ras.seek(6 + index * FormatTools.getPlaneSize(this));
       readPlane(ras, x, y, w, h, buf);
     }
