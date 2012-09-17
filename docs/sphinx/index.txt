@@ -2,12 +2,6 @@
 Bio-Formats Documentation
 #########################
 
-
-*This documentation is a work in progress and many aspects of Bio-Formats are
-not yet covered. More documentation about the project and this package
-can be found on the :wiki:`OME wiki <>`.*
-
-
 Bio-Formats is a standalone Java library for reading and writing
 microscopy file formats, written by the Open Microscopy Environment
 consortium. It is capable of parsing both pixels and metadata for more
@@ -133,3 +127,13 @@ Online Resources
 
     Downloads <https://www.openmicroscopy.org/site/support/bio-formats/bio-formats-downloads>
     Features <https://www.openmicroscopy.org/site/products/feature-list>
+
+
+This documentation is a work in progress and many aspects of Bio-Formats are 
+not yet covered. The source code is hosted on Github. To propose changes and 
+fix errors, go to the `Bio-Formats repository`_, fork it, edit the file 
+contents under `docs/sphinx` and propose your file changes to the OME team 
+using `Pull Requests`_.
+
+.. _Bio-Formats repository: https://github.com/openmicroscopy/bioformats
+.. _Pull Requests: https://help.github.com/articles/using-pull-requests
