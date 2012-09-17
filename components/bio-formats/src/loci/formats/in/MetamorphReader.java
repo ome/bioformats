@@ -796,6 +796,25 @@ public class MetamorphReader extends BaseTiffReader {
           exposureTimes.add(exposureTime);
         }
       }
+      else if (exposureTimes.size() < getSizeC()) {
+        for (int c=1; c<getSizeC(); c++) {
+          MetamorphHandler channelHandler = new MetamorphHandler();
+
+          String channelComment = getComment(i, c);
+          if (channelComment != null &&
+            channelComment.startsWith("<MetaData>"))
+          {
+            try {
+              XMLTools.parseXML(XMLTools.sanitizeXML(channelComment),
+                channelHandler);
+            }
+            catch (IOException e) { }
+          }
+
+          Vector<Double> channelExpTime = channelHandler.getExposures();
+          exposureTimes.add(channelExpTime.get(0));
+        }
+      }
 
       int lastFile = -1;
       IFDList lastIFDs = null;
@@ -832,7 +851,6 @@ public class MetamorphReader extends BaseTiffReader {
               XMLTools.parseXML(comment, handler);
             }
             timestamps = handler.getTimestamps();
-            exposureTimes = handler.getExposures();
             Vector<Double> zPositions = handler.getZPositions();
             if (zPositions != null && zPositions.size() > 0) {
               xmlZPosition = zPositions.get(0);
@@ -852,6 +870,10 @@ public class MetamorphReader extends BaseTiffReader {
           long delta = internalStamps[p] - internalStamps[0];
           deltaT = new Double(delta / 1000.0);
           if (coords[2] < exposureTimes.size()) index = coords[2];
+        }
+
+        if (index == 0 && p > 0 && exposureTimes.size() > 0) {
+          index = p % exposureTimes.size();
         }
 
         if (index < exposureTimes.size()) {
@@ -1212,8 +1234,12 @@ public class MetamorphReader extends BaseTiffReader {
    * given series.
    */
   private String getFirstComment(int i) throws IOException {
-    if (stks != null && stks[i][0] != null) {
-      RandomAccessInputStream stream = new RandomAccessInputStream(stks[i][0]);
+    return getComment(i, 0);
+  }
+
+  private String getComment(int i, int no) throws IOException {
+    if (stks != null && stks[i][no] != null) {
+      RandomAccessInputStream stream = new RandomAccessInputStream(stks[i][no]);
       TiffParser tp = new TiffParser(stream);
       String comment = tp.getComment();
       stream.close();
