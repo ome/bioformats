@@ -27,6 +27,7 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.File;
 import java.io.IOException;
+import java.text.DecimalFormatSymbols;
 
 import javax.xml.parsers.SAXParserFactory;
 
@@ -535,6 +536,34 @@ public final class DataTools {
    */
   public static double bytesToDouble(short[] bytes, boolean little) {
     return bytesToDouble(bytes, 0, 8, little);
+  }
+
+  /** Translates the given byte array into a String of hexadecimal digits. */
+  public static String bytesToHex(byte[] b) {
+    StringBuffer sb = new StringBuffer();
+    for (int i=0; i<b.length; i++) {
+      String a = Integer.toHexString(b[i] & 0xff);
+      if (a.length() == 1) sb.append("0");
+      sb.append(a);
+    }
+    return sb.toString();
+  }
+
+  /** Normalize the decimal separator for the user's locale. */
+  public static String sanitizeDouble(String value) {
+    value = value.replaceAll("[^0-9,\\.]", "");
+    char separator = new DecimalFormatSymbols().getDecimalSeparator();
+    if (value.indexOf(separator) == -1) {
+      char usedSeparator = separator == '.' ? ',' : '.';
+      value = value.replace(usedSeparator, separator);
+      try {
+        Double.parseDouble(value);
+      }
+      catch (Exception e) {
+        value = value.replace(separator, usedSeparator);
+      }
+    }
+    return value;
   }
 
   // -- Word decoding - primitive types to bytes --
