@@ -1,3 +1,6 @@
+Dataset structure table
+=======================
+
 This table shows the extension of the file that you should choose if you want
 to open/import a dataset in a particular format.
 
@@ -315,7 +318,7 @@ to open/import a dataset in a particular format.
 Flex Support
 ------------
 
-OMERO.importer supports importing analysized Flex files from an Opera
+OMERO.importer supports importing analyzed Flex files from an Opera
 system.
 
 Basic configuration is done via the ``importer.ini``. Once the user has
