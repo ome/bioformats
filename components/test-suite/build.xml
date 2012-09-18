@@ -58,7 +58,7 @@ Type "ant -p" for a list of targets.
       failureProperty="failedTest">
       <classpath>
         <pathelement location="${classes.dir}"/>
-        <pathelement path="${component.classpath}"/>
+        <pathelement path="${component.runtime-cp}"/>
       </classpath>
       <classfileset file="${classes.dir}/loci/tests/testng/CompressDecompressTest.class"/>
     </testng>
@@ -74,7 +74,7 @@ Type "ant -p" for a list of targets.
       failureProperty="failedTest">
       <classpath>
         <pathelement location="${classes.dir}"/>
-        <pathelement path="${component.classpath}"/>
+        <pathelement path="${component.runtime-cp}"/>
       </classpath>
       <classfileset file="${classes.dir}/${writer-test.class}"/>
       <sysproperty key="testng.filename" value="${testng.filename}"/>
@@ -94,7 +94,7 @@ Type "ant -p" for a list of targets.
       failureProperty="failedTest" useDefaultListeners="false">
       <classpath>
         <pathelement location="${classes.dir}"/>
-        <pathelement path="${component.classpath}"/>
+        <pathelement path="${component.runtime-cp}"/>
       </classpath>
       <classfileset file="${classes.dir}/${reader-test.class}"/>
       <sysproperty key="testng.toplevel-config" value="${testng.toplevel-config}"/>
@@ -119,7 +119,7 @@ Type "ant -p" for a list of targets.
       failureProperty="failedTest">
       <classpath>
         <pathelement location="${classes.dir}"/>
-        <pathelement path="${component.classpath}"/>
+        <pathelement path="${component.runtime-cp}"/>
       </classpath>
       <classfileset file="${classes.dir}/${reader-test.class}"/>
       <sysproperty key="testng.toplevel-config" value="${testng.toplevel-config}"/>
@@ -144,7 +144,7 @@ Type "ant -p" for a list of targets.
       failureProperty="failedTest" useDefaultListeners="false">
       <classpath>
         <pathelement location="${classes.dir}"/>
-        <pathelement path="${component.classpath}"/>
+        <pathelement path="${component.runtime-cp}"/>
       </classpath>
       <classfileset file="${classes.dir}/${reader-test.class}"/>
       <sysproperty key="testng.toplevel-config" value="${testng.toplevel-config}"/>
@@ -169,7 +169,7 @@ Type "ant -p" for a list of targets.
       failureProperty="failedTest">
       <classpath>
         <pathelement location="${classes.dir}"/>
-        <pathelement path="${component.classpath}"/>
+        <pathelement path="${component.runtime-cp}"/>
       </classpath>
       <classfileset file="${classes.dir}/${reader-test.class}"/>
       <sysproperty key="testng.toplevel-config" value="${testng.toplevel-config}"/>
@@ -194,7 +194,7 @@ Type "ant -p" for a list of targets.
       failureProperty="failedTest">
       <classpath>
         <pathelement location="${classes.dir}"/>
-        <pathelement path="${component.classpath}"/>
+        <pathelement path="${component.runtime-cp}"/>
       </classpath>
       <classfileset file="${classes.dir}/${reader-test.class}"/>
       <sysproperty key="testng.toplevel-config" value="${testng.toplevel-config}"/>
@@ -219,7 +219,7 @@ Type "ant -p" for a list of targets.
       failureProperty="failedTest">
       <classpath>
         <pathelement location="${classes.dir}"/>
-        <pathelement path="${component.classpath}"/>
+        <pathelement path="${component.runtime-cp}"/>
       </classpath>
       <classfileset file="${classes.dir}/${reader-test.class}"/>
       <sysproperty key="testng.toplevel-config" value="${testng.toplevel-config}"/>
@@ -244,7 +244,7 @@ Type "ant -p" for a list of targets.
       failureProperty="failedTest">
       <classpath>
         <pathelement location="${classes.dir}"/>
-        <pathelement path="${component.classpath}"/>
+        <pathelement path="${component.runtime-cp}"/>
       </classpath>
       <classfileset file="${classes.dir}/${reader-test.class}"/>
       <sysproperty key="testng.toplevel-config" value="${testng.toplevel-config}"/>
@@ -269,7 +269,7 @@ Type "ant -p" for a list of targets.
       failureProperty="failedTest">
       <classpath>
         <pathelement location="${classes.dir}"/>
-        <pathelement path="${component.classpath}"/>
+        <pathelement path="${component.runtime-cp}"/>
       </classpath>
       <classfileset file="${classes.dir}/${reader-test.class}"/>
       <sysproperty key="testng.toplevel-config" value="${testng.toplevel-config}"/>
