@@ -1,25 +1,27 @@
-//
-// ND2Handler.java
-//
-
 /*
-OME Bio-Formats package for reading and converting biological file formats.
-Copyright (C) 2005-@year@ UW-Madison LOCI and Glencoe Software, Inc.
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ * #%L
+ * OME Bio-Formats package for reading and converting biological file formats.
+ * %%
+ * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 2 of the 
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public 
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-2.0.html>.
+ * #L%
+ */
 
 package loci.formats.in;
 
@@ -41,8 +43,8 @@ import org.xml.sax.helpers.DefaultHandler;
  * DefaultHandler implementation for handling XML produced by Nikon Elements.
  *
  * <dl><dt><b>Source code:</b></dt>
- * <dd><a href="http://loci.wisc.edu/trac/java/browser/trunk/components/bio-formats/src/loci/formats/in/ND2Handler.java">Trac</a>,
- * <a href="http://loci.wisc.edu/svn/java/trunk/components/bio-formats/src/loci/formats/in/ND2Handler.java">SVN</a></dd></dl>
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/ND2Handler.java">Trac</a>,
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/bio-formats/src/loci/formats/in/ND2Handler.java;hb=HEAD">Gitweb</a></dd></dl>
  */
 public class ND2Handler extends DefaultHandler {
 
@@ -64,26 +66,26 @@ public class ND2Handler extends DefaultHandler {
   private ArrayList<Long> ts = new ArrayList<Long>();
 
   private int numSeries = 0;
-  private double pixelSizeX, pixelSizeY, pixelSizeZ;
+  private float pixelSizeX, pixelSizeY, pixelSizeZ;
 
-  private Double pinholeSize, voltage, mag, na;
+  private Float pinholeSize, voltage, mag, na;
   private String objectiveModel, immersion, correction;
-  private Double refractiveIndex;
+  private Float refractiveIndex;
   private ArrayList<String> channelNames = new ArrayList<String>();
   private ArrayList<String> modality = new ArrayList<String>();
   private ArrayList<String> binning = new ArrayList<String>();
-  private ArrayList<Double> speed = new ArrayList<Double>();
-  private ArrayList<Double> gain = new ArrayList<Double>();
-  private ArrayList<Double> temperature = new ArrayList<Double>();
-  private ArrayList<Double> exposureTime = new ArrayList<Double>();
+  private ArrayList<Float> speed = new ArrayList<Float>();
+  private ArrayList<Float> gain = new ArrayList<Float>();
+  private ArrayList<Float> temperature = new ArrayList<Float>();
+  private ArrayList<Float> exposureTime = new ArrayList<Float>();
   private ArrayList<Integer> exWave = new ArrayList<Integer>();
   private ArrayList<Integer> emWave = new ArrayList<Integer>();
   private ArrayList<Integer> power = new ArrayList<Integer>();
   private ArrayList<Hashtable<String, String>> rois =
     new ArrayList<Hashtable<String, String>>();
-  private ArrayList<Double> posX = new ArrayList<Double>();
-  private ArrayList<Double> posY = new ArrayList<Double>();
-  private ArrayList<Double> posZ = new ArrayList<Double>();
+  private ArrayList<Float> posX = new ArrayList<Float>();
+  private ArrayList<Float> posY = new ArrayList<Float>();
+  private ArrayList<Float> posZ = new ArrayList<Float>();
   private ArrayList<String> posNames = new ArrayList<String>();
 
   private String cameraModel;
@@ -95,14 +97,34 @@ public class ND2Handler extends DefaultHandler {
   private Hashtable<String, Integer> realColors =
     new Hashtable<String, Integer>();
 
+  private int nXFields = 0, nYFields = 0;
+
+  private boolean populateXY = true;
+  private int nImages = 0;
+
+  private boolean validLoopState = false;
+
   // -- Constructor --
 
-  public ND2Handler(CoreMetadata[] core) {
+  public ND2Handler(CoreMetadata[] core, int nImages) {
+    this(core, true, nImages);
+  }
+
+  public ND2Handler(CoreMetadata[] core, boolean populateXY, int nImages) {
     super();
+    this.populateXY = populateXY;
+    this.nImages = nImages;
     this.core = core;
+    if (this.core.length > 1) {
+      fieldIndex = 2;
+    }
   }
 
   // -- ND2Handler API methods --
+
+  public int getXFields() {
+    return nXFields;
+  }
 
   public CoreMetadata[] getCoreMetadata() {
     return core;
@@ -114,7 +136,10 @@ public class ND2Handler extends DefaultHandler {
       String type = roi.get("ROIType");
 
       if (type.equals("Text")) {
-        store.setROIID(MetadataTools.createLSID("ROI", 0, r), 0, r);
+        String roiID = MetadataTools.createLSID("ROI", 0, r);
+        store.setROIID(roiID, 0, r);
+
+        int fontSize = Integer.parseInt(roi.get("fHeight"));
 
         String rectangle = roi.get("rectangle");
         String[] p = rectangle.split(",");
@@ -123,14 +148,19 @@ public class ND2Handler extends DefaultHandler {
           points[i] = Double.parseDouble(p[i]);
         }
 
-        store.setRectID(MetadataTools.createLSID("Shape", 0, r, 1), 0, r, 1);
-        store.setRectX(p[0], 0, r, 1);
-        store.setRectY(p[1], 0, r, 1);
-        store.setRectWidth(String.valueOf(points[2] - points[0]), 0, r, 1);
-        store.setRectHeight(String.valueOf(points[3] - points[1]), 0, r, 1);
+        store.setRectID(MetadataTools.createLSID("Shape", 0, r, 0), 0, r, 0);
+        store.setShapeStrokeWidth(
+          (int) Float.parseFloat(roi.get("line-width")), 0, r, 0);
+        store.setShapeFontSize(fontSize, 0, r, 0);
+        store.setShapeText(roi.get("eval-text"), 0, r, 0);
+        store.setRectX(p[0], 0, r, 0);
+        store.setRectY(p[1], 0, r, 0);
+        store.setRectWidth(String.valueOf(points[2] - points[0]), 0, r, 0);
+        store.setRectHeight(String.valueOf(points[3] - points[1]), 0, r, 0);
       }
       else if (type.equals("HorizontalLine") || type.equals("VerticalLine")) {
-        store.setROIID(MetadataTools.createLSID("ROI", 0, r), 0, r);
+        String roiID = MetadataTools.createLSID("ROI", 0, r);
+        store.setROIID(roiID, 0, r);
 
         String segments = roi.get("segments");
         segments = segments.replaceAll("\\[\\]", "");
@@ -143,8 +173,7 @@ public class ND2Handler extends DefaultHandler {
           if (i < points.length - 1) sb.append(" ");
         }
 
-        store.setPolylineID(
-          MetadataTools.createLSID("Shape", 0, r, 0), 0, r, 0);
+        store.setPolylineID(MetadataTools.createLSID("Shape", 0, r, 0), 0, r, 0);
         store.setPolylinePoints(sb.toString(), 0, r, 0);
       }
     }
@@ -174,31 +203,31 @@ public class ND2Handler extends DefaultHandler {
     return ts;
   }
 
-  public double getPixelSizeX() {
+  public float getPixelSizeX() {
     return pixelSizeX;
   }
 
-  public double getPixelSizeY() {
+  public float getPixelSizeY() {
     return pixelSizeY;
   }
 
-  public double getPixelSizeZ() {
+  public float getPixelSizeZ() {
     return pixelSizeZ;
   }
 
-  public Double getPinholeSize() {
+  public Float getPinholeSize() {
     return pinholeSize;
   }
 
-  public Double getVoltage() {
+  public Float getVoltage() {
     return voltage;
   }
 
-  public Double getMagnification() {
+  public Float getMagnification() {
     return mag;
   }
 
-  public Double getNumericalAperture() {
+  public Float getNumericalAperture() {
     return na;
   }
 
@@ -214,7 +243,7 @@ public class ND2Handler extends DefaultHandler {
     return correction;
   }
 
-  public Double getRefractiveIndex() {
+  public Float getRefractiveIndex() {
     return refractiveIndex;
   }
 
@@ -230,19 +259,19 @@ public class ND2Handler extends DefaultHandler {
     return binning;
   }
 
-  public ArrayList<Double> getSpeeds() {
+  public ArrayList<Float> getSpeeds() {
     return speed;
   }
 
-  public ArrayList<Double> getGains() {
+  public ArrayList<Float> getGains() {
     return gain;
   }
 
-  public ArrayList<Double> getTemperatures() {
+  public ArrayList<Float> getTemperatures() {
     return temperature;
   }
 
-  public ArrayList<Double> getExposureTimes() {
+  public ArrayList<Float> getExposureTimes() {
     return exposureTime;
   }
 
@@ -262,15 +291,15 @@ public class ND2Handler extends DefaultHandler {
     return rois;
   }
 
-  public ArrayList<Double> getXPositions() {
+  public ArrayList<Float> getXPositions() {
     return posX;
   }
 
-  public ArrayList<Double> getYPositions() {
+  public ArrayList<Float> getYPositions() {
     return posY;
   }
 
-  public ArrayList<Double> getZPositions() {
+  public ArrayList<Float> getZPositions() {
     return posZ;
   }
 
@@ -306,15 +335,44 @@ public class ND2Handler extends DefaultHandler {
   public void startElement(String uri, String localName, String qName,
     Attributes attributes)
   {
-    if ("CLxListVariant".equals(attributes.getValue("runtype"))) {
+    String runtype = attributes.getValue("runtype");
+    if ("CLxListVariant".equals(runtype) || "RLxIRect".equals(runtype)) {
       prevElement = qName;
     }
 
     String value = attributes.getValue("value");
+
     if (qName.equals("uiWidth")) {
-      core[0].sizeX = Integer.parseInt(value);
+      int x = Integer.parseInt(value);
+      if (x != 0 && populateXY) {
+        core[0].sizeX = x;
+      }
     }
-    else if ("rectSensorUser".equals(prevElement)) {
+    else if (qName.equals("uiCamPxlCountX")) {
+      if (core[0].sizeX == 0 && populateXY) {
+        try {
+          core[0].sizeX = Integer.parseInt(value);
+        }
+        catch (NumberFormatException e) { }
+      }
+    }
+    else if (qName.equals("uiCamPxlCountY")) {
+      if (core[0].sizeY == 0 && populateXY) {
+        try {
+          core[0].sizeY = Integer.parseInt(value);
+        }
+        catch (NumberFormatException e) { }
+      }
+    }
+    else if (qName.equals("iXFields")) {
+      int fields = Integer.parseInt(value);
+      nXFields += fields;
+    }
+    else if (qName.equals("iYFields")) {
+      int fields = Integer.parseInt(value);
+      nYFields += fields;
+    }
+    else if ("rectSensorUser".equals(prevElement) && populateXY) {
       if (qName.equals("left") && core[0].sizeX == 0) {
         core[0].sizeX = -1 * Integer.parseInt(value);
       }
@@ -328,29 +386,53 @@ public class ND2Handler extends DefaultHandler {
         core[0].sizeY += Integer.parseInt(value);
       }
     }
-    /*
+    else if ("LoopState".equals(prevElement) && value != null) {
+      if (!validLoopState) {
+        validLoopState = !value.equals("529");
+      }
+    }
     else if ("LoopSize".equals(prevElement) && value != null) {
+      int v = Integer.parseInt(value);
+
       if (core[0].sizeT == 0) {
-        core[0].sizeT = Integer.parseInt(value);
+        core[0].sizeT = v;
+      }
+      else if (qName.equals("no_name") && v > 0 && core.length == 1) {
+        CoreMetadata previous = core[0];
+        core = new CoreMetadata[v];
+        for (int q=0; q<v; q++) {
+          core[q] = previous;
+        }
+        fieldIndex = 2;
       }
       else if (core[0].sizeZ == 0) {
-        core[0].sizeZ = Integer.parseInt(value);
+        core[0].sizeZ = v;
       }
-      core[0].dimensionOrder = "CTZ";
+      core[0].dimensionOrder = "CZT";
     }
-    */
     else if ("pPosName".equals(prevElement) && value != null) {
       posNames.add(value);
     }
-    /*
     else if (qName.equals("FramesBefore")) {
       if (core[0].sizeZ == 0) {
         core[0].sizeZ = 1;
       }
-      core[0].sizeZ *= Integer.parseInt(value);
+      if (core.length == 1) {
+        core[0].sizeZ *= Integer.parseInt(value);
+      }
     }
     else if (qName.equals("FramesAfter")) {
-      core[0].sizeZ *= Integer.parseInt(value);
+      if (core.length == 1) {
+        core[0].sizeZ *= Integer.parseInt(value);
+
+        if (core[0].sizeT * core[0].sizeZ > nImages &&
+          core[0].sizeT <= nImages && validLoopState &&
+          core[0].sizeT != core[0].sizeZ)
+        {
+          core[0].sizeZ = core[0].sizeT;
+          core[0].sizeT = 1;
+        }
+      }
     }
     else if (qName.equals("TimeBefore")) {
       if (core[0].sizeT == 0) {
@@ -361,59 +443,86 @@ public class ND2Handler extends DefaultHandler {
     else if (qName.equals("TimeAfter")) {
       core[0].sizeT *= Integer.parseInt(value);
     }
-    */
+    else if (qName.equals("uiMaxDst")) {
+      int maxPixelValue = Integer.parseInt(value) + 1;
+      int bits = 0;
+      while (maxPixelValue > 0) {
+        maxPixelValue /= 2;
+        bits++;
+      }
+      if (core[0].pixelType == 0) {
+        switch (bits / 8) {
+          case 1:
+            core[0].pixelType = FormatTools.UINT8;
+            break;
+          case 2:
+            core[0].pixelType = FormatTools.UINT16;
+            break;
+          case 4:
+            core[0].pixelType = FormatTools.UINT32;
+            break;
+        }
+      }
+    }
     else if (qName.equals("uiWidthBytes") || qName.equals("uiBpcInMemory")) {
       int div = qName.equals("uiWidthBytes") ? core[0].sizeX : 8;
-      int bytes = Integer.parseInt(value) / div;
+      if (div > 0) {
+        int bytes = Integer.parseInt(value) / div;
 
-      switch (bytes) {
-        case 1:
-          core[0].pixelType = FormatTools.UINT8;
-          break;
-        case 2:
-          core[0].pixelType = FormatTools.UINT16;
-          break;
-        case 4:
-          core[0].pixelType = FormatTools.UINT32;
-          break;
+        switch (bytes) {
+          case 1:
+            core[0].pixelType = FormatTools.UINT8;
+            break;
+          case 2:
+            core[0].pixelType = FormatTools.UINT16;
+            break;
+          case 4:
+            core[0].pixelType = FormatTools.UINT32;
+            break;
+        }
+        parseKeyAndValue(qName, value, prevRuntype);
       }
-      parseKeyAndValue(qName, value, prevRuntype);
     }
     else if ("dPosX".equals(prevElement) && qName.startsWith("item_")) {
-      posX.add(new Double(DataTools.sanitizeDouble(value)));
+      posX.add(new Float(DataTools.sanitizeDouble(value)));
       metadata.put("X position for position #" + posX.size(), value);
     }
     else if ("dPosY".equals(prevElement) && qName.startsWith("item_")) {
-      posY.add(new Double(DataTools.sanitizeDouble(value)));
+      posY.add(new Float(DataTools.sanitizeDouble(value)));
       metadata.put("Y position for position #" + posY.size(), value);
     }
     else if ("dPosZ".equals(prevElement) && qName.startsWith("item_")) {
-      posZ.add(new Double(DataTools.sanitizeDouble(value)));
+      posZ.add(new Float(DataTools.sanitizeDouble(value)));
       metadata.put("Z position for position #" + posZ.size(), value);
     }
     else if (qName.startsWith("item_")) {
       int v = Integer.parseInt(qName.substring(qName.indexOf("_") + 1));
       if (v == numSeries) {
-        fieldIndex = core[0].dimensionOrder.length();
+        fieldIndex = 2;
+        //fieldIndex = core[0].dimensionOrder.length();
         numSeries++;
       }
       else if (v < numSeries && fieldIndex < core[0].dimensionOrder.length()) {
-        fieldIndex = core[0].dimensionOrder.length();
+        fieldIndex = 2;
+        //fieldIndex = core[0].dimensionOrder.length();
       }
     }
     else if (qName.equals("uiCompCount")) {
       int v = Integer.parseInt(value);
       core[0].sizeC = (int) Math.max(core[0].sizeC, v);
     }
-    else if (qName.equals("uiHeight")) {
-      core[0].sizeY = Integer.parseInt(value);
+    else if (qName.equals("uiHeight") && populateXY) {
+      int y = Integer.parseInt(value);
+      if (y != 0) {
+        core[0].sizeY = y;
+      }
     }
     else if (qName.startsWith("TextInfo")) {
       parseKeyAndValue(qName, attributes.getValue("Text"), prevRuntype);
       parseKeyAndValue(qName, value, prevRuntype);
     }
     else if (qName.equals("dCompressionParam")) {
-      isLossless = Integer.parseInt(value) > 0;
+      isLossless = Double.parseDouble(value) > 0;
       parseKeyAndValue(qName, value, prevRuntype);
     }
     else if (qName.equals("CalibrationSeq") || qName.equals("MetadataSeq")) {
@@ -430,7 +539,7 @@ public class ND2Handler extends DefaultHandler {
       rois.add(roi);
     }
     else if (qName.equals("dPinholeRadius")) {
-      pinholeSize = new Double(DataTools.sanitizeDouble(value));
+      pinholeSize = new Float(DataTools.sanitizeDouble(value));
       metadata.put("Pinhole size", value);
     }
     else if (qName.endsWith("ChannelColor")) {
@@ -444,19 +553,30 @@ public class ND2Handler extends DefaultHandler {
     }
     else if (qName.equals("uiSequenceCount")) {
       int imageCount = Integer.parseInt(value);
-      if (core.length > 0) imageCount /= core.length;
+      if (core.length > 0) {
+        int newCount = imageCount / core.length;
+        if (newCount * core.length == imageCount) {
+          imageCount = newCount;
+        }
+      }
       if (core[0].sizeZ * core[0].sizeT != imageCount &&
         core[0].sizeZ * core[0].sizeC * core[0].sizeT != imageCount)
       {
-        if (core[0].sizeZ > 1) {
+        if (core[0].sizeZ > 1 && core[0].sizeT <= 1) {
           core[0].sizeZ = imageCount;
           core[0].sizeT = 1;
+          core[0].imageCount = imageCount;
         }
-        else if (core[0].sizeT > 1) {
+        else if (core[0].sizeT > 1 && core[0].sizeZ <= 1) {
           core[0].sizeT = imageCount;
           core[0].sizeZ = 1;
+          core[0].imageCount = imageCount;
         }
-        core[0].imageCount = imageCount;
+        else if (imageCount == 0) {
+          core[0].sizeT = 0;
+          core[0].sizeZ = 0;
+          core[0].imageCount = 0;
+        }
       }
       metadata.put(qName, value);
     }
@@ -479,6 +599,13 @@ public class ND2Handler extends DefaultHandler {
       if (chName == null) chName = name;
       realColors.put(chName, colors.get(name));
     }
+
+    if (nXFields > 0 && nXFields < 10 && nYFields > 0 && nYFields < 10 &&
+      populateXY)
+    {
+      core[0].sizeX *= nXFields;
+      core[0].sizeY *= nYFields;
+    }
   }
 
   // -- Helper methods --
@@ -487,29 +614,29 @@ public class ND2Handler extends DefaultHandler {
     if (key == null || value == null) return;
     metadata.put(key, value);
     if (key.endsWith("dCalibration")) {
-      pixelSizeX = Double.parseDouble(DataTools.sanitizeDouble(value));
+      pixelSizeX = Float.parseFloat(DataTools.sanitizeDouble(value));
       pixelSizeY = pixelSizeX;
     }
     else if (key.endsWith("dZStep")) {
-      pixelSizeZ = Double.parseDouble(DataTools.sanitizeDouble(value));
+      pixelSizeZ = Float.parseFloat(DataTools.sanitizeDouble(value));
     }
     else if (key.endsWith("Gain")) {
       value = DataTools.sanitizeDouble(value);
       if (!value.equals("")) {
-        gain.add(new Double(value));
+        gain.add(new Float(value));
       }
     }
     else if (key.endsWith("dLampVoltage")) {
-      voltage = new Double(DataTools.sanitizeDouble(value));
+      voltage = new Float(DataTools.sanitizeDouble(value));
     }
     else if (key.endsWith("dObjectiveMag") && mag == null) {
-      mag = new Double(DataTools.sanitizeDouble(value));
+      mag = new Float(DataTools.sanitizeDouble(value));
     }
     else if (key.endsWith("dObjectiveNA")) {
-      na = new Double(DataTools.sanitizeDouble(value));
+      na = new Float(DataTools.sanitizeDouble(value));
     }
     else if (key.endsWith("dRefractIndex1")) {
-      refractiveIndex = new Double(DataTools.sanitizeDouble(value));
+      refractiveIndex = new Float(DataTools.sanitizeDouble(value));
     }
     else if (key.equals("sObjective") || key.equals("wsObjectiveName") ||
       key.equals("sOptics"))
@@ -531,7 +658,7 @@ public class ND2Handler extends DefaultHandler {
         String m = tokens[magIndex].substring(0, tokens[magIndex].indexOf("x"));
         m = DataTools.sanitizeDouble(m);
         if (m.length() > 0) {
-          mag = new Double(m);
+          mag = new Float(m);
         }
       }
       if (magIndex + 1 < tokens.length) immersion = tokens[magIndex + 1];
@@ -567,6 +694,13 @@ public class ND2Handler extends DefaultHandler {
             }
           }
         }
+        else if (runtype.endsWith("XYPosLoop") && core.length == 1) {
+          CoreMetadata oldCore = core[0];
+          core = new CoreMetadata[Integer.parseInt(value)];
+          for (int i=0; i<core.length; i++) {
+            core[i] = oldCore;
+          }
+        }
       }
     }
     else if (key.equals("VirtualComponents")) {
@@ -579,7 +713,10 @@ public class ND2Handler extends DefaultHandler {
     }
     else if (key.startsWith("TextInfoItem") || key.endsWith("TextInfoItem")) {
       metadata.remove(key);
-      value = value.replaceAll("&#x000d;&#x000a;", "\n");
+      value = value.replaceAll("&#x000d;", "");
+      value = value.replaceAll("#x000d;", "");
+      value = value.replaceAll("&#x000a;", "\n");
+      value = value.replaceAll("#x000a;", "\n");
       String[] tokens = value.split("\n");
       for (String t : tokens) {
         t = t.trim();
@@ -655,25 +792,25 @@ public class ND2Handler extends DefaultHandler {
             else if (v[0].equals("Readout Speed")) {
               int last = v[1].lastIndexOf(" ");
               if (last != -1) v[1] = v[1].substring(0, last);
-              speed.add(new Double(DataTools.sanitizeDouble(v[1])));
+              speed.add(new Float(DataTools.sanitizeDouble(v[1])));
             }
             else if (v[0].equals("Temperature")) {
               String temp = v[1].replaceAll("[\\D&&[^-.]]", "");
-              temperature.add(new Double(DataTools.sanitizeDouble(temp)));
+              temperature.add(new Float(DataTools.sanitizeDouble(temp)));
             }
             else if (v[0].equals("Exposure")) {
               String[] s = v[1].trim().split(" ");
               try {
-                double time =
-                  Double.parseDouble(DataTools.sanitizeDouble(s[0]));
+                float time =
+                  Float.parseFloat(DataTools.sanitizeDouble(s[0]));
                 // TODO: check for other units
                 if (s[1].equals("ms")) time /= 1000;
-                exposureTime.add(new Double(time));
+                exposureTime.add(new Float(time));
               }
               catch (NumberFormatException e) { }
             }
             else if (v[0].equals("{Pinhole Size}")) {
-              pinholeSize = new Double(DataTools.sanitizeDouble(v[1]));
+              pinholeSize = new Float(DataTools.sanitizeDouble(v[1]));
               metadata.put("Pinhole size", v[1]);
             }
           }
@@ -681,7 +818,7 @@ public class ND2Handler extends DefaultHandler {
             int space = v[0].indexOf(" ", v[0].indexOf("Step") + 1);
             int last = v[0].indexOf(" ", space + 1);
             if (last == -1) last = v[0].length();
-            pixelSizeZ = Double.parseDouble(
+            pixelSizeZ = Float.parseFloat(
               DataTools.sanitizeDouble(v[0].substring(space, last)));
           }
           else if (v[0].equals("Line")) {
@@ -708,6 +845,9 @@ public class ND2Handler extends DefaultHandler {
             v[0] = v[0].replace('}', ' ');
             metadata.put(v[0].trim(), v[1]);
           }
+          else if (v.length == 1) {
+            metadata.put(key, v[0]);
+          }
         }
       }
     }
@@ -715,7 +855,7 @@ public class ND2Handler extends DefaultHandler {
       cameraModel = value;
     }
     else if (key.equals("ExposureTime")) {
-      exposureTime.add(new Double(value) / 1000d);
+      exposureTime.add(new Float(value) / 1000f);
     }
     else if (key.equals("sDate")) {
       date = DateTools.formatDate(value, DATE_FORMAT);
