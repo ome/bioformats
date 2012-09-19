@@ -7,14 +7,14 @@
 # JAR libraries must be in the same directory as this
 # command line script for the command to function.
 
-# If you are a developer working from source and have
-# the LOCI classes in your CLASSPATH, you can set the
-# LOCI_DEVEL environment variable to use them instead.
+# If your CLASSPATH already includes the needed classes,
+# you can set the SCIFIO_DEVEL environment variable to
+# disable the required JAR library checks.
 
 PROG=loci.formats.tools.PrintDomains
 DIR=`dirname "$0"`
 
-if [ $LOCI_DEVEL ]
+if [ -n "$SCIFIO_DEVEL" ]
 then
   java $PROG "$@"
 elif [ -e "$DIR/loci_tools.jar" ] || [ -e "$DIR/bio-formats.jar" ]

@@ -7,9 +7,9 @@ rem Required JARs: loci_tools.jar
 rem JAR libraries must be in the same directory as this
 rem command line script for the command to function.
 
-rem If you are a developer working from source and have
-rem the LOCI classes in your CLASSPATH, you can set the
-rem LOCI_DEVEL environment variable to use them instead.
+rem If your CLASSPATH already includes the needed classes,
+rem you can set the SCIFIO_DEVEL environment variable to
+rem disable the required JAR library checks.
 
 set PROG=loci.formats.tools.XMLValidate
 set DIR=%~dp0
@@ -25,7 +25,7 @@ rem If you are behind a proxy server, the host name and port must be set here.
 set PROXY_HOST=
 set PROXY_PORT=
 
-if "%LOCI_DEVEL%" == "" (
+if "%SCIFIO_DEVEL%" == "" (
   rem Developer environment variable unset; look for proper libraries
   if exist "%DIR%loci_tools.jar" goto found
   if exist "%DIR%bio-formats.jar" goto found
