@@ -7,3 +7,9 @@
 
 # Set the amount of RAM available to the command line tools.
 JFLAGS="-Xmx512m"
+
+# If you are behind a proxy server, the host name and port must be set.
+#PROXY_HOST=
+#PROXY_PORT=
+
+JFLAGS="$JFLAGS -Dhttp.proxyHost=$PROXY_HOST -Dhttp.proxyPort=$PROXY_PORT"

@@ -17,11 +17,6 @@ call "%DIR%\config.bat"
 
 set PROG=loci.formats.tools.XMLValidate
 
-rem If you are behind a proxy server, the host name and port must be set here.
-
-set PROXY_HOST=
-set PROXY_PORT=
-
 if "%SCIFIO_DEVEL%" == "" (
   rem Developer environment variable unset; look for proper libraries
   if exist "%DIR%\loci_tools.jar" goto found
@@ -29,13 +24,13 @@ if "%SCIFIO_DEVEL%" == "" (
   goto missing
 ) else (
   rem Developer environment variable set; try to launch
-  java %JFLAGS% -Dhttp.proxyHost=%PROXY_HOST% -Dhttp.proxyPort=%PROXY_PORT% %PROG% %*
+  java %JFLAGS% %PROG% %*
   goto end
 )
 
 :found
 rem Library found; try to launch
-java %JFLAGS% -Dhttp.proxyHost=%PROXY_HOST% -Dhttp.proxyPort=%PROXY_PORT% -cp "%DIR%";"%DIR%\bio-formats.jar";"%DIR%\loci_tools.jar" %PROG% %*
+java %JFLAGS% -cp "%DIR%";"%DIR%\bio-formats.jar";"%DIR%\loci_tools.jar" %PROG% %*
 goto end
 
 :missing
