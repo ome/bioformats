@@ -10,18 +10,4 @@
 DIR=`dirname "$0"`
 source "$DIR/config.sh"
 
-PROG=loci.formats.ome.OMEWriter
-
-if [ -n "$SCIFIO_DEVEL" ]
-then
-  java $JFLAGS $PROG "$@"
-elif [ -e "$DIR/loci_tools.jar" ] || [ -e "$DIR/bio-formats.jar" ]
-then
-  java $JFLAGS -cp "$DIR":"$DIR/bio-formats.jar":"$DIR/loci_tools.jar" $PROG "$@"
-else
-  echo "Required JAR libraries not found. Please download:"
-  echo "  loci_tools.jar"
-  echo "from:"
-  echo "  http://www.loci.wisc.edu/bio-formats/downloads"
-  echo "and place in the same directory as the command line tools."
-fi
+PROG=loci.formats.ome.OMEWriter "$DIR/launch.sh" "$@"
