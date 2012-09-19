@@ -9,26 +9,15 @@
 # command line script for the command to function.
 
 DIR=`dirname "$0"`
+
 source "$DIR/config.sh"
 
-PROG=loci.ome.editor.MetadataEditor
-
-if [ -n "$SCIFIO_DEVEL" ]
+if [ -z "$SCIFIO_DEVEL" ] && \
+  ([ ! -e "$DIR/ome-editor.jar" ] || \
+  [ ! -e "$DIR/ome-java.jar" ] || \
+  [ ! -e "$DIR/ome-java-deprecated.jar" ])
 then
-  java $JFLAGS $PROG "$@"
-elif \
-  ([ -e "$DIR/loci_tools.jar" ] || [ -e "$DIR/bio-formats.jar" ]) && \
-  [ -e "$DIR/ome-editor.jar" ] && \
-  [ -e "$DIR/ome-java.jar" ] && \
-  [ -e "$DIR/ome-java-deprecated.jar" ]
-then
-  java $JFLAGS -cp "$DIR":"$DIR/bio-formats.jar":"$DIR/loci_tools.jar":"$DIR/ome-editor.jar":"$DIR/ome-java.jar":"$DIR/ome-java-deprecated.jar" $PROG "$@"
-else
   echo "Required JAR libraries not found. Please download:"
-  echo "  loci_tools.jar"
-  echo "from:"
-  echo "  http://www.loci.wisc.edu/bio-formats/downloads"
-  echo "as well as the OME Metadata Notebook JARs from:"
   echo "  http://www.loci.wisc.edu/software/daily/ome-editor.jar"
   echo "  http://www.loci.wisc.edu/software/daily/ome-java.jar"
   echo "  http://www.loci.wisc.edu/software/daily/ome-java-deprecated.jar"
@@ -36,4 +25,6 @@ else
   echo ""
   echo "Please note that the OME Metadata Notebook is legacy software that "
   echo "has been discontinued. Use at your own risk."
+else
+  PROG=loci.ome.editor.MetadataEditor CPAUX="$DIR/ome-editor.jar:$DIR/ome-java.jar:$DIR/ome-java-deprecated.jar" "$DIR/launch.sh" "$@"
 fi

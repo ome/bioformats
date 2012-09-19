@@ -32,7 +32,7 @@ elif [ -e "$DIR/loci_tools.jar" ] || [ -e "$DIR/bio-formats.jar" ]
 then
   # Developer environment variable unset; add JAR libraries to classpath.
   java $JFLAGS \
-    -cp "$DIR":"$DIR/bio-formats.jar":"$DIR/loci_tools.jar" $PROG "$@"
+    -cp "$DIR:$DIR/bio-formats.jar:$DIR/loci_tools.jar:$CPAUX" $PROG "$@"
 else
   # Libraries not found; issue an error.
   echo "Required JAR libraries not found. Please download:"

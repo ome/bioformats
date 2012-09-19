@@ -8,27 +8,19 @@
 # command line script for the command to function.
 
 DIR=`dirname "$0"`
+
 source "$DIR/config.sh"
 
 PROG=loci.ome.notes.Notes
 
-if [ -n "$SCIFIO_DEVEL" ]
+if [ -z "$SCIFIO_DEVEL" ] && [ ! -e "$DIR/ome-notes.jar" ]
 then
-  java $JFLAGS $PROG "$@"
-elif \
-  ([ -e "$DIR/loci_tools.jar" ] || [ -e "$DIR/bio-formats.jar" ]) && \
-  [ -e "$DIR/ome-notes.jar" ]
-then
-  java $JFLAGS -cp "$DIR":"$DIR/bio-formats.jar":"$DIR/loci_tools.jar":"$DIR/ome-notes.jar" $PROG "$@"
-else
   echo "Required JAR libraries not found. Please download:"
-  echo "  loci_tools.jar"
-  echo "from:"
-  echo "  http://www.loci.wisc.edu/bio-formats/downloads"
-  echo "as well as the OME Notes JAR from:"
   echo "  http://www.loci.wisc.edu/software/daily/ome-notes.jar"
   echo "and place in the same directory as the command line tools."
   echo ""
   echo "Please note that OME Notes is legacy software that "
   echo "has been discontinued. Use at your own risk."
+else
+  PROG=loci.ome.notes.Notes CPAUX="$DIR/ome-notes.jar" "$DIR/launch.sh" "$@"
 fi

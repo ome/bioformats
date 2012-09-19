@@ -36,7 +36,7 @@ if "%SCIFIO_DEVEL%" == "" (
 
 :found
 rem Library found; add JAR libraries to classpath and launch.
-java %JFLAGS% -cp "%DIR%";"%DIR%\bio-formats.jar";"%DIR%\loci_tools.jar" %PROG% %*
+java %JFLAGS% -cp "%DIR%";"%DIR%\bio-formats.jar";"%DIR%\loci_tools.jar";%CPAUX% %PROG% %*
 goto end
 
 :missing
@@ -48,3 +48,4 @@ echo and place in the same directory as the command line tools.
 
 :end
 set PROG=
+set CPAUX=

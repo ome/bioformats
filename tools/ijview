@@ -9,25 +9,16 @@
 # command line script for the command to function.
 
 DIR=`dirname "$0"`
+
 source "$DIR/config.sh"
 
-PROG=loci.plugins.in.Importer
-
-if [ -n "$SCIFIO_DEVEL" ]
+if [ -z "$SCIFIO_DEVEL" ] && [ ! -e "$DIR/ij.jar" ]
 then
-  java $JFLAGS $PROG "$@"
-elif [ -e "$DIR/ij.jar" ] && \
-  ([ -e "$DIR/loci_tools.jar" ] || [ -e "$DIR/loci_plugins.jar" ])
-then
-  java $JFLAGS -cp "$DIR":"$DIR/loci_plugins.jar":"$DIR/loci_tools.jar":"$DIR/ij.jar" $PROG "$@"
-else
   echo "Required JAR libraries not found. Please download:"
-  echo "  loci_tools.jar"
-  echo "from:"
-  echo "  http://www.loci.wisc.edu/bio-formats/downloads"
-  echo "and:"
   echo "  ij.jar"
   echo "from:"
-  echo "  http://rsb.info.nih.gov/ij/upgrade/"
+  echo "  http://imagej.nih.gov/ij/upgrade/"
   echo "and place in the same directory as the command line tools."
+else
+  PROG=loci.plugins.in.Importer CPAUX="$DIR/ij.jar" "$DIR/launch.sh" "$@"
 fi
