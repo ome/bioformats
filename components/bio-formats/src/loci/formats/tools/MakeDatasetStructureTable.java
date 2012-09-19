@@ -218,6 +218,7 @@ public class MakeDatasetStructureTable {
     int lineCount =
       (int) Math.max(extensionLines.size(), descriptionLines.size());
     for (int i=1; i<lineCount; i++) {
+      out.println(LINE_SEPARATOR);
       out.print("|");
       out.print(format.replaceAll(".", " "));
       out.print("| ");
