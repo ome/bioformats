@@ -82,9 +82,11 @@ start writing planes:
       for (int series=0; series<reader.getSeriesCount(); series++) {
         reader.setSeries(series);
         writer.setSeries(series);
-        
+
         // determine how many tiles are in each image plane
-        // for simplicity, we'll assume that the image width and height are multiples of 1024
+        // for simplicity, we'll assume that the image width and height are
+        // multiples of 1024
+
         int tileRows = reader.getSizeY() / tileHeight;
         int tileColumns = reader.getSizeX() / tileWidth;
 
@@ -92,10 +94,15 @@ start writing planes:
           for (int row=0; row<tileRows; row++) {
             for (int col=0; col<tileColumns; col++) {
               // open a tile - in addition to the image index, we need to specify
-              // the (x, y) coordinate of the upper left corner of the tile, along with the
-              // width and height of the tile
-              byte[] tile = reader.openBytes(image, col * tileWidth, row * tileHeight, tileWidth, tileHeight);
-              writer.saveBytes(image, tile, col * tileWidth, row * tileHeight, tileWidth, tileHeight);
+              // the (x, y) coordinate of the upper left corner of the tile,
+              // along with the width and height of the tile
+
+              int xCoordinate = col * tileWidth;
+              int yCoordinate = row * tileHeight;
+              byte[] tile =
+                reader.openBytes(image, xCoordinate, yCoordinate, tileWidth, tileHeight);
+              writer.saveBytes(
+                image, tile, xCoordinate, yCoordinate, tileWidth, tileHeight);
             }
           }
         }
@@ -125,7 +132,8 @@ single IFormatWriter, like so:
       // replace this with your own filename definitions
       // in this example, we're going to write half of the planes to one file
       // and half of the planes to another file
-      String[] outputFiles = new String[] {"/path/to/file/1.tiff", "/path/to/file/2.tiff"};
+      String[] outputFiles =
+        new String[] {"/path/to/file/1.tiff", "/path/to/file/2.tiff"};
       writer.setId(outputFiles[0]);
 
       int planesPerFile = reader.getImageCount() / outputFiles.length;

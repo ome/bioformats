@@ -189,15 +189,23 @@ timepoints) to a file:
       metadata.setPixelsBinDataBigEndian(java.lang.Boolean.TRUE, 0, 0);
       metadata.setPixelsDimensionOrder(ome.xml.model.enums.DimensionOrder.XYZCT, 0);
       metadata.setPixelsType(ome.xml.model.enums.PixelType.UINT8, 0);
-      metadata.setPixelsSizeX(ome.xml.model.primitives.PositiveInteger(java.lang.Integer(64)), 0);
-      metadata.setPixelsSizeY(ome.xml.model.primitives.PositiveInteger(java.lang.Integer(64)), 0);
-      metadata.setPixelsSizeZ(ome.xml.model.primitives.PositiveInteger(java.lang.Integer(1)), 0);
-      metadata.setPixelsSizeC(ome.xml.model.primitives.PositiveInteger(java.lang.Integer(2)), 0);
-      metadata.setPixelsSizeT(ome.xml.model.primitives.PositiveInteger(java.lang.Integer(2)), 0);
+
+      imageWidth = ome.xml.model.primitives.PositiveInteger(java.lang.Integer(64))
+      imageHeight = ome.xml.model.primitives.PositiveInteger(java.lang.Integer(64))
+      numZSections = ome.xml.model.primitives.PositiveInteger(java.lang.Integer(1))
+      numChannels = ome.xml.model.primitives.PositiveInteger(java.lang.Integer(2))
+      numTimepoints = ome.xml.model.primitives.PositiveInteger(java.lang.Integer(2))
+      samplesPerPixel = ome.xml.model.primitives.PositiveInteger(java.lang.Integer(1))
+
+      metadata.setPixelsSizeX(imageWidth, 0);
+      metadata.setPixelsSizeY(imageHeight, 0);
+      metadata.setPixelsSizeZ(numZSections, 0);
+      metadata.setPixelsSizeC(numChannels, 0);
+      metadata.setPixelsSizeT(numTimepoints, 0);
       metadata.setChannelID('Channel:0:0', 0, 0);
-      metadata.setChannelSamplesPerPixel(ome.xml.model.primitives.PositiveInteger(java.lang.Integer(1)), 0, 0);   
+      metadata.setChannelSamplesPerPixel(samplesPerPixel, 0, 0);
       metadata.setChannelID('Channel:0:1', 0, 1);
-      metadata.setChannelSamplesPerPixel(ome.xml.model.primitives.PositiveInteger(java.lang.Integer(1)), 0, 1);
+      metadata.setChannelSamplesPerPixel(samplesPerPixel, 0, 1);
 
       writer.setMetadataRetrieve(metadata);
       writer.setId("my-file.ome.tiff");
@@ -219,5 +227,4 @@ constructed like so:
 
 There is also a script that can save MATLAB arrays to supported formats:
 
-`https://github.com/openmicroscopy/bioformats/blob/develop/components/bio-formats/matlab/bfsave.m
-<https://github.com/openmicroscopy/bioformats/blob/develop/components/bio-formats/matlab/bfsave.m>`_
+`bfsave.m <https://github.com/openmicroscopy/bioformats/blob/develop/components/bio-formats/matlab/bfsave.m>`_
