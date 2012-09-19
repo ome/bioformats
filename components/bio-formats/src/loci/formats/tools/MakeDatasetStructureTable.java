@@ -49,9 +49,9 @@ import loci.formats.ImageReader;
  */
 public class MakeDatasetStructureTable {
 
-  private static final int MAX_LENGTH = 90;
+  private static final int MAX_LENGTH = 100;
 
-  private static final String LINE_SEPARATOR = "+-------------------------------+--------------------------+----------------------------+";
+  private static final String LINE_SEPARATOR = "+-------------------------------+----------------------------------+------------------------------+";
 
   private PrintStream out;
 
@@ -70,11 +70,11 @@ public class MakeDatasetStructureTable {
     nameWidth = nameHeader.length() - 1;
     out.print(nameHeader);
 
-    String extensionHeader = "| **File to choose**       ";
+    String extensionHeader = "| **File to choose**               ";
     extensionWidth = extensionHeader.length();
     out.print(extensionHeader);
 
-    out.println("| **Structure of files**     |");
+    out.println("| **Structure of files**       |");
     out.println(LINE_SEPARATOR.replaceAll("-", "="));
   }
 
@@ -145,10 +145,10 @@ public class MakeDatasetStructureTable {
     // determine if we need to wrap the middle column onto multiple lines
 
     ArrayList<String> extensionLines = new ArrayList<String>();
-    if (extension.length() > extensionWidth - 2) {
+    if (extension.length() > extensionWidth) {
       while (extension.length() > 0) {
-        if (extension.length() > extensionWidth - 2) {
-          int lastSpace = extension.lastIndexOf(" ", extensionWidth - 2);
+        if (extension.length() > extensionWidth) {
+          int lastSpace = extension.lastIndexOf(" ", extensionWidth - 1);
 
           String ext = extension.substring(0, lastSpace);
           while (ext.length() < extensionWidth - 2) {
@@ -174,7 +174,7 @@ public class MakeDatasetStructureTable {
 
     // determine if we need to wrap the last column onto multiple lines
 
-    int lineLength = format.length() + extensionLines.get(0).length() + 8;
+    int lineLength = format.length() + extensionLines.get(0).length() + 6;
 
     ArrayList<String> descriptionLines = new ArrayList<String>();
     if (lineLength + description.length() > MAX_LENGTH) {
