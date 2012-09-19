@@ -173,9 +173,9 @@ IFormatWriter for each file, like this:
 Known issues
 ------------
 
--  :ticket:`4128`
--  :ticket:`4129`
--  :ticket:`4130`
--  :ticket:`4131`
--  :ticket:`4132`
--  :ticket:`4133`
+-  :ticket:`4128` (AVI writer does not support saving tiles)
+-  :ticket:`4129` (APNG writer does not support saving tiles)
+-  :ticket:`4130` (Java writer does not support saving tiles)
+-  :ticket:`4131` (JPEG-2000 writer does not support saving tiles)
+-  :ticket:`4132` (JPEG writer does not support saving tiles)
+-  :ticket:`4133` (OME-XML writer does not support saving tiles)
