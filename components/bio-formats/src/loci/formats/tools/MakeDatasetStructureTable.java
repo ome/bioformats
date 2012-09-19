@@ -142,39 +142,9 @@ public class MakeDatasetStructureTable {
       extension += " ";
     }
 
-    // determine if we need to wrap the middle column onto multiple lines
-
-    ArrayList<String> extensionLines = new ArrayList<String>();
-    if (extension.length() > extensionWidth) {
-      while (extension.length() > 0) {
-        if (extension.length() > extensionWidth) {
-          int lastSpace = extension.lastIndexOf(" ", extensionWidth - 1);
-
-          String ext = extension.substring(0, lastSpace);
-          while (ext.length() < extensionWidth - 2) {
-            ext += " ";
-          }
-
-          extensionLines.add(ext);
-          extension = extension.substring(lastSpace + 1);
-        }
-        else {
-          while (extension.length() < extensionWidth - 2) {
-            extension += " ";
-          }
-
-          extensionLines.add(extension);
-          extension = "";
-        }
-      }
-    }
-    else {
-      extensionLines.add(extension);
-    }
-
     // determine if we need to wrap the last column onto multiple lines
 
-    int lineLength = format.length() + extensionLines.get(0).length() + 6;
+    int lineLength = format.length() + extension.length() + 6;
 
     ArrayList<String> descriptionLines = new ArrayList<String>();
     if (lineLength + description.length() > MAX_LENGTH) {
@@ -182,7 +152,7 @@ public class MakeDatasetStructureTable {
 
       while (description.length() > 0) {
         if (description.length() > maxDescriptionLength) {
-          int lastSpace = description.lastIndexOf(" ", maxDescriptionLength - 1);
+          int lastSpace = description.lastIndexOf(" ", maxDescriptionLength);
           boolean addHyphen = false;
           if (lastSpace < 0) {
             lastSpace = maxDescriptionLength - 1;
@@ -202,40 +172,21 @@ public class MakeDatasetStructureTable {
       descriptionLines.add(description);
     }
 
-    int numSpaces = MAX_LENGTH - format.length() - extensionLines.get(0).length() - 7;
-
     out.print("|");
     out.print(format);
     out.print("| ");
-    out.print(extensionLines.get(0));
+    out.print(extension);
     out.print("| ");
     out.print(descriptionLines.get(0));
-    for (int i=0; i<numSpaces-descriptionLines.get(0).length(); i++) {
-      out.print(" ");
-    }
     out.println("|");
 
-    int lineCount =
-      (int) Math.max(extensionLines.size(), descriptionLines.size());
-    for (int i=1; i<lineCount; i++) {
+    for (int i=1; i<descriptionLines.size(); i++) {
       out.print("|");
       out.print(format.replaceAll(".", " "));
       out.print("| ");
-      if (i < extensionLines.size()) {
-        out.print(extensionLines.get(i));
-      }
-      else {
-        out.print(extensionLines.get(0).replaceAll(".", " "));
-      }
+      out.print(extension.replaceAll(".", " "));
       out.print("| ");
-      int len = 0;
-      if (i < descriptionLines.size()) {
-        out.print(descriptionLines.get(i));
-        len = descriptionLines.get(i).length();
-      }
-      for (int q=0; q<numSpaces-len; q++) {
-        out.print(" ");
-      }
+      out.print(descriptionLines.get(i));
       out.println("|");
     }
 
