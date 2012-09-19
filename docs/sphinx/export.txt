@@ -171,4 +171,3 @@ Known issues
 -  :ticket:`4131`
 -  :ticket:`4132`
 -  :ticket:`4133`
--  :ticket:`4134`

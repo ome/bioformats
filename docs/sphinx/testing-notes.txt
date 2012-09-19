@@ -13,7 +13,7 @@ A '\*' indicates that we could generate more public data in this format.
 -  IPLab
 -  BMP (\*)
 -  Image-Pro SEQ
--  QuickTime? (\*)
+-  QuickTime (\*)
 -  Bio-Rad PIC
 -  Image-Pro Workspace
 -  Fluoview/ABD TIFF (\*)
@@ -74,7 +74,7 @@ sample data:
 -  EPS
 -  Alicona AL3D
 -  Visitech
--  InCell?
+-  InCell
 -  L2D
 -  FEI
 -  NAF
@@ -86,7 +86,7 @@ sample data:
 -  Hamamatsu HIS
 -  WA-TOP
 -  Seiko
--  TopoMetrix?
+-  TopoMetrix
 -  UBM
 -  Quesant
 -  RHK
@@ -116,7 +116,7 @@ sample data:
 
 Formats for which we definitely cannot generate public sample data:
 
--  TillVision?
+-  TillVision
 -  Olympus CellR/APL
 -  Slidebook
 -  Cellomics
