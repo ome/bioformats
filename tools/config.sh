@@ -22,3 +22,8 @@ fi
 #PROXY_PORT=
 
 JFLAGS="$JFLAGS -Dhttp.proxyHost=$PROXY_HOST -Dhttp.proxyPort=$PROXY_PORT"
+
+# If your CLASSPATH already includes the needed classes,
+# you can set the SCIFIO_DEVEL environment variable to
+# disable the required JAR library checks.
+#SCIFIO_DEVEL=1

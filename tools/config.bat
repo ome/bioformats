@@ -22,3 +22,8 @@ set PROXY_HOST=
 set PROXY_PORT=
 
 set JFLAGS=%JFLAGS% -Dhttp.proxyHost=%PROXY_HOST% -Dhttp.proxyPort=%PROXY_PORT%
+
+rem If your CLASSPATH already includes the needed classes,
+rem you can set the SCIFIO_DEVEL environment variable to
+rem disable the required JAR library checks.
+rem SCIFIO_DEVEL=1

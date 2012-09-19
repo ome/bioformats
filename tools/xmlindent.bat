@@ -7,10 +7,6 @@ rem Required JARs: loci_tools.jar
 rem JAR libraries must be in the same directory as this
 rem command line script for the command to function.
 
-rem If your CLASSPATH already includes the needed classes,
-rem you can set the SCIFIO_DEVEL environment variable to
-rem disable the required JAR library checks.
-
 set DIR=%~dp0
 if "%DIR:~-1%" == "\" set DIR=%DIR:~0,-1%
 call "%DIR%\config.bat"

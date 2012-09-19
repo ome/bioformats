@@ -8,10 +8,6 @@
 # JAR libraries must be in the same directory as this
 # command line script for the command to function.
 
-# If your CLASSPATH already includes the needed classes,
-# you can set the SCIFIO_DEVEL environment variable to
-# disable the required JAR library checks.
-
 DIR=`dirname "$0"`
 source "$DIR/config.sh"
 
