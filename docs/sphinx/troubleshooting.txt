@@ -69,7 +69,7 @@ Tips for ImageJ/Fiji
    of loci\_tools.jar in their ImageJ plugins folder, or has a copy of
    loci\_tools.jar and a copy of bio-formats.jar. It is often difficult
    to determine for sure that this is the problem - the only error
-   message that pretty much guarantees it is a "NoSuchMethodException?".
+   message that pretty much guarantees it is a "NoSuchMethodException".
    If the user maintains that they downloaded the latest version and
    whatever error message/odd behavior they are seeing looks like it was
    fixed already, then it is worth suggesting that they remove all
