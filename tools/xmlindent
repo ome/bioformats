@@ -11,8 +11,10 @@
 # you can set the SCIFIO_DEVEL environment variable to
 # disable the required JAR library checks.
 
-PROG=loci.formats.tools.XMLIndent
 DIR=`dirname "$0"`
+source "$DIR/config.sh"
+
+PROG=loci.formats.tools.XMLIndent
 
 if [ -n "$SCIFIO_DEVEL" ]
 then

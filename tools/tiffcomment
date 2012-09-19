@@ -12,8 +12,10 @@
 # you can set the SCIFIO_DEVEL environment variable to
 # disable the required JAR library checks.
 
-PROG=loci.formats.tools.TiffComment
 DIR=`dirname "$0"`
+source "$DIR/config.sh"
+
+PROG=loci.formats.tools.TiffComment
 
 if [ -n "$SCIFIO_DEVEL" ]
 then

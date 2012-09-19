@@ -12,20 +12,17 @@ rem If your CLASSPATH already includes the needed classes,
 rem you can set the SCIFIO_DEVEL environment variable to
 rem disable the required JAR library checks.
 
-set PROG=loci.plugins.in.Importer
 set DIR=%~dp0
-if "%DIR:~1%" == ":\" (
-  set DIR1=%DIR%
-) else (
-  rem Remove trailing backslash
-  set DIR1=%DIR:~0,-1%
-)
+if "%DIR:~-1%" == "\" set DIR=%DIR:~0,-1%
+call "%DIR%\config.bat"
+
+set PROG=loci.plugins.in.Importer
 
 if "%SCIFIO_DEVEL%" == "" (
   rem Developer environment variable unset; look for proper libraries
-  if not exist "%DIR%ij.jar" goto missing
-  if exist "%DIR%loci_tools.jar" goto found
-  if exist "%DIR%bio-formats.jar" goto found
+  if not exist "%DIR%\ij.jar" goto missing
+  if exist "%DIR%\loci_tools.jar" goto found
+  if exist "%DIR%\bio-formats.jar" goto found
   goto missing
 ) else (
   rem Developer environment variable set; try to launch
@@ -35,7 +32,7 @@ if "%SCIFIO_DEVEL%" == "" (
 
 :found
 rem Library found; try to launch
-java -mx512m -cp "%DIR1%";"%DIR%bio-formats.jar";"%DIR%loci_tools.jar";"%DIR%ij.jar" %PROG% %*
+java -mx512m -cp "%DIR%";"%DIR%\bio-formats.jar";"%DIR%\loci_tools.jar";"%DIR%\ij.jar" %PROG% %*
 goto end
 
 :missing

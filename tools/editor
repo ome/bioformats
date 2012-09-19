@@ -12,8 +12,10 @@
 # you can set the SCIFIO_DEVEL environment variable to
 # disable the required JAR library checks.
 
-PROG=loci.ome.editor.MetadataEditor
 DIR=`dirname "$0"`
+source "$DIR/config.sh"
+
+PROG=loci.ome.editor.MetadataEditor
 
 if [ -n "$SCIFIO_DEVEL" ]
 then

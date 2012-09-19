@@ -11,8 +11,10 @@
 # you can set the SCIFIO_DEVEL environment variable to
 # disable the required JAR library checks.
 
-PROG=loci.formats.tools.XMLValidate
 DIR=`dirname "$0"`
+source "$DIR/config.sh"
+
+PROG=loci.formats.tools.XMLValidate
 
 # If you are behind a proxy server, the host name and port must be set here.
 PROXY_HOST=
