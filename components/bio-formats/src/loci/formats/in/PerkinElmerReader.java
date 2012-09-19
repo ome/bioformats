@@ -359,14 +359,18 @@ public class PerkinElmerReader extends FormatReader {
         f.path = workingDirPath + ls[i];
 
         if (checkSuffix(ls[i], TiffReader.TIFF_SUFFIXES)) {
-          if (ls[i].charAt(dot - 4) == '_') {
+          if (dot - 4 >= 0 && dot - 4 < ls[i].length() &&
+            ls[i].charAt(dot - 4) == '_')
+          {
             f.firstIndex = Integer.parseInt(ls[i].substring(dot - 3, dot));
           }
           else {
             f.firstIndex = -1;
           }
 
-          if (ls[i].charAt(dot - 9) == '_') {
+          if (dot - 9 >= 0 && dot - 9 < ls[i].length() &&
+            ls[i].charAt(dot - 9) == '_')
+          {
             f.extIndex = Integer.parseInt(ls[i].substring(dot - 8, dot - 4));
           }
           else {
@@ -378,14 +382,17 @@ public class PerkinElmerReader extends FormatReader {
         }
         else {
           try {
-            if (ls[i].charAt(dot - 4) == '_') {
+            if (dot - 4 >= 0 && dot - 4 < ls[i].length() &&
+              ls[i].charAt(dot - 4) == '_')
+            {
               f.firstIndex = Integer.parseInt(ls[i].substring(dot - 3, dot));
             }
             else {
               f.firstIndex = -1;
             }
 
-            String ext = ls[i].substring(dot + 1);
+            String ext =
+              dot + 1 < ls[i].length() ? ls[i].substring(dot + 1) : "";
             f.extIndex = Integer.parseInt(ext, 16);
             isTiff = false;
 
