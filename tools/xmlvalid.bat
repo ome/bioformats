@@ -29,13 +29,13 @@ if "%SCIFIO_DEVEL%" == "" (
   goto missing
 ) else (
   rem Developer environment variable set; try to launch
-  java -mx512m -Dhttp.proxyHost=%PROXY_HOST% -Dhttp.proxyPort=%PROXY_PORT% %PROG% %*
+  java %JFLAGS% -Dhttp.proxyHost=%PROXY_HOST% -Dhttp.proxyPort=%PROXY_PORT% %PROG% %*
   goto end
 )
 
 :found
 rem Library found; try to launch
-java -mx512m -Dhttp.proxyHost=%PROXY_HOST% -Dhttp.proxyPort=%PROXY_PORT% -cp "%DIR%";"%DIR%\bio-formats.jar";"%DIR%\loci_tools.jar" %PROG% %*
+java %JFLAGS% -Dhttp.proxyHost=%PROXY_HOST% -Dhttp.proxyPort=%PROXY_PORT% -cp "%DIR%";"%DIR%\bio-formats.jar";"%DIR%\loci_tools.jar" %PROG% %*
 goto end
 
 :missing

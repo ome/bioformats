@@ -19,10 +19,10 @@ PROG=loci.formats.tools.ImageInfo
 
 if [ -n "$SCIFIO_DEVEL" ]
 then
-  java -mx512m $PROG "$@"
+  java $JFLAGS $PROG "$@"
 elif [ -e "$DIR/loci_tools.jar" ] || [ -e "$DIR/bio-formats.jar" ]
 then
-  java -mx512m -cp "$DIR":"$DIR/bio-formats.jar":"$DIR/loci_tools.jar" $PROG "$@"
+  java $JFLAGS -cp "$DIR":"$DIR/bio-formats.jar":"$DIR/loci_tools.jar" $PROG "$@"
 else
   echo "Required JAR libraries not found. Please download:"
   echo "  loci_tools.jar"

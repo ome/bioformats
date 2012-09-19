@@ -19,11 +19,11 @@ PROG=loci.plugins.in.Importer
 
 if [ -n "$SCIFIO_DEVEL" ]
 then
-  java -mx512m $PROG "$@"
+  java $JFLAGS $PROG "$@"
 elif [ -e "$DIR/ij.jar" ] && \
   ([ -e "$DIR/loci_tools.jar" ] || [ -e "$DIR/loci_plugins.jar" ])
 then
-  java -mx512m -cp "$DIR":"$DIR/loci_plugins.jar":"$DIR/loci_tools.jar":"$DIR/ij.jar" $PROG "$@"
+  java $JFLAGS -cp "$DIR":"$DIR/loci_plugins.jar":"$DIR/loci_tools.jar":"$DIR/ij.jar" $PROG "$@"
 else
   echo "Required JAR libraries not found. Please download:"
   echo "  loci_tools.jar"

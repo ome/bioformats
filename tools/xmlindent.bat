@@ -24,13 +24,13 @@ if "%SCIFIO_DEVEL%" == "" (
   goto missing
 ) else (
   rem Developer environment variable set; try to launch
-  java -mx512m %PROG% %*
+  java %JFLAGS% %PROG% %*
   goto end
 )
 
 :found
 rem Library found; try to launch
-java -mx512m -cp "%DIR%";"%DIR%\bio-formats.jar";"%DIR%\loci_tools.jar" %PROG% %*
+java %JFLAGS% -cp "%DIR%";"%DIR%\bio-formats.jar";"%DIR%\loci_tools.jar" %PROG% %*
 goto end
 
 :missing

@@ -18,10 +18,10 @@ PROG=loci.formats.tools.ImageConverter
 
 if [ -n "$SCIFIO_DEVEL" ]
 then
-  java -mx512m $PROG "$@"
+  java $JFLAGS $PROG "$@"
 elif [ -e "$DIR/loci_tools.jar" ] || [ -e "$DIR/bio-formats.jar" ]
 then
-  java -mx512m \
+  java $JFLAGS \
     -cp "$DIR":"$DIR/bio-formats.jar":"$DIR/loci_tools.jar" $PROG "$@"
 else
   echo "Required JAR libraries not found. Please download:"
