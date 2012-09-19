@@ -796,7 +796,7 @@ public class MetamorphReader extends BaseTiffReader {
           exposureTimes.add(exposureTime);
         }
       }
-      else if (exposureTimes.size() < getSizeC()) {
+      else if (exposureTimes.size() == 1 && exposureTimes.size() < getSizeC()) {
         for (int c=1; c<getSizeC(); c++) {
           MetamorphHandler channelHandler = new MetamorphHandler();
 
