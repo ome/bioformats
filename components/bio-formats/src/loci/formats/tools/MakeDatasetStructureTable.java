@@ -27,7 +27,6 @@ package loci.formats.tools;
 
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 
@@ -49,9 +48,7 @@ import loci.formats.ImageReader;
  */
 public class MakeDatasetStructureTable {
 
-  private static final int MAX_LENGTH = 100;
-
-  private static final String LINE_SEPARATOR = "+-------------------------------+----------------------------------+------------------------------+";
+  private static final String LINE_SEPARATOR = "+-----------------------------------------+------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+";
 
   private PrintStream out;
 
@@ -66,15 +63,15 @@ public class MakeDatasetStructureTable {
     out.println();
     out.println(LINE_SEPARATOR);
 
-    String nameHeader = "| **Format name**               ";
-    nameWidth = nameHeader.length() - 1;
+    String nameHeader = "| **Format name**                         ";
+    nameWidth = nameHeader.length() - 2;
     out.print(nameHeader);
 
-    String extensionHeader = "| **File to choose**               ";
-    extensionWidth = extensionHeader.length();
+    String extensionHeader = "| **File to choose**                 ";
+    extensionWidth = extensionHeader.length() - 2;
     out.print(extensionHeader);
 
-    out.println("| **Structure of files**       |");
+    out.println("| **Structure of files**                                                                                                                                                                          |");
     out.println(LINE_SEPARATOR.replaceAll("-", "="));
   }
 
@@ -142,54 +139,13 @@ public class MakeDatasetStructureTable {
       extension += " ";
     }
 
-    // determine if we need to wrap the last column onto multiple lines
-
-    int lineLength = format.length() + extension.length() + 6;
-
-    ArrayList<String> descriptionLines = new ArrayList<String>();
-    if (lineLength + description.length() > MAX_LENGTH) {
-      int maxDescriptionLength = MAX_LENGTH - lineLength;
-
-      while (description.length() > 0) {
-        if (description.length() > maxDescriptionLength) {
-          int lastSpace = description.lastIndexOf(" ", maxDescriptionLength);
-          boolean addHyphen = false;
-          if (lastSpace < 0) {
-            lastSpace = maxDescriptionLength - 1;
-            addHyphen = true;
-          }
-          descriptionLines.add(
-            description.substring(0, lastSpace) + (addHyphen ? "-" : ""));
-          description = description.substring(lastSpace + (addHyphen ? 0 : 1));
-        }
-        else {
-          descriptionLines.add(description);
-          description = "";
-        }
-      }
-    }
-    else {
-      descriptionLines.add(description);
-    }
-
     out.print("|");
     out.print(format);
-    out.print("| ");
+    out.print("|  ");
     out.print(extension);
-    out.print("| ");
-    out.print(descriptionLines.get(0));
+    out.print("|  ");
+    out.print(description);
     out.println("|");
-
-    for (int i=1; i<descriptionLines.size(); i++) {
-      out.print("|");
-      out.print(format.replaceAll(".", " "));
-      out.print("| ");
-      out.print(extension.replaceAll(".", " "));
-      out.print("| ");
-      out.print(descriptionLines.get(i));
-      out.println("|");
-    }
-
     out.println(LINE_SEPARATOR);
   }
 
