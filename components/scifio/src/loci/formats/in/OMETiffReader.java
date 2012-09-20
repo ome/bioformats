@@ -203,6 +203,7 @@ public class OMETiffReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#get8BitLookupTable() */
   public byte[][] get8BitLookupTable() throws FormatException, IOException {
+    int series = getSeries();
     if (info[series][lastPlane] == null ||
       info[series][lastPlane].reader == null ||
       info[series][lastPlane].id == null)
@@ -215,6 +216,7 @@ public class OMETiffReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#get16BitLookupTable() */
   public short[][] get16BitLookupTable() throws FormatException, IOException {
+    int series = getSeries();
     if (info[series][lastPlane] == null ||
       info[series][lastPlane].reader == null ||
       info[series][lastPlane].id == null)
@@ -232,6 +234,7 @@ public class OMETiffReader extends FormatReader {
     throws FormatException, IOException
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
+    int series = getSeries();
     lastPlane = no;
     int i = info[series][no].ifd;
     MinimalTiffReader r = (MinimalTiffReader) info[series][no].reader;
@@ -255,6 +258,7 @@ public class OMETiffReader extends FormatReader {
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
   public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
+    int series = getSeries();
     if (noPixels) return null;
     Vector<String> usedFiles = new Vector<String>();
     for (int i=0; i<info[series].length; i++) {

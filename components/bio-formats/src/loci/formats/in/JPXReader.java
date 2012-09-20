@@ -160,10 +160,10 @@ public class JPXReader extends FormatReader {
     options.interleaved = isInterleaved();
     options.littleEndian = isLittleEndian();
     if (resolutionLevels != null) {
-      options.resolution = Math.abs(series - resolutionLevels);
+      options.resolution = Math.abs(getSeries() - resolutionLevels);
     }
     else if (getSeriesCount() > 1) {
-      options.resolution = series;
+      options.resolution = getSeries();
     }
 
     in.seek(pixelOffsets.get(no));

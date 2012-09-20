@@ -137,7 +137,7 @@ public abstract class FormatReader extends FormatHandler
   protected Hashtable<String, Object> metadata;
 
   /** The number of the current series. */
-  protected int series = 0;
+  protected int coreIndex = 0;
 
   /** Core metadata values. */
   protected CoreMetadata[] core;
@@ -225,7 +225,7 @@ public abstract class FormatReader extends FormatHandler
       }
     }
 
-    series = 0;
+    coreIndex = 0;
     close();
     currentId = id;
     metadata = new Hashtable<String, Object>();
@@ -808,33 +808,17 @@ public abstract class FormatReader extends FormatHandler
   /* @see IFormatReader#getSeriesCount() */
   public int getSeriesCount() {
     FormatTools.assertId(currentId, true, 1);
-    if (hasFlattenedResolutions()) {
-      return core.length;
-    }
-    int count = 0;
-    for (int i=0; i<core.length;) {
-      if (core[i] != null) {
-        i += core[i].resolutionCount;
-      }
-      else {
-        i++;
-      }
-      count++;
-    }
-    return count;
+    return toSeries(core.length - 1) + 1;
   }
 
   /* @see IFormatReader#setSeries(int) */
   public void setSeries(int no) {
-    if (no < 0 || no >= getSeriesCount()) {
-      throw new IllegalArgumentException("Invalid series: " + no);
-    }
-    series = no;
+    coreIndex = toCoreIndex(no);
   }
 
   /* @see IFormatReader#getSeries() */
   public int getSeries() {
-    return series;
+    return toSeries(coreIndex);
   }
 
   /* @see IFormatReader#setGroupFiles(boolean) */
@@ -1116,16 +1100,59 @@ public abstract class FormatReader extends FormatHandler
 
   // -- Sub-resolution API methods --
 
+  protected int toCoreIndex(int series)
+  {
+    if (hasFlattenedResolutions()) {
+      if (series < 0 || series >= core.length) {
+        throw new IllegalArgumentException("Invalid series: " + series);
+      }
+      return series;
+    }
+
+    int index = 0;
+    for (int i = 0; i < series && index < core.length; i++) {
+      if (core[i] != null)
+	index += core[index].resolutionCount;
+      else
+	throw new IllegalArgumentException("Invalid series (null core["+i+"]: " + series);
+    }
+
+    if (index < 0 || index >= core.length) {
+      throw new IllegalArgumentException("Invalid series: " + series + "  index="+index);
+    }
+
+    return index;
+  }
+
+  protected int toSeries(int index)
+  {
+    if (index < 0 || index >= core.length) {
+      throw new IllegalArgumentException("Invalid index: " + index);
+    }
+
+    if (hasFlattenedResolutions()) {
+      return index;
+    }
+
+    // Convert from non-flattened coreIndex to flattened series
+    int series = 0;
+    for (int i=0; i<index;) {
+      if (core[i] != null) {
+	  int nextSeries = i + core[i].resolutionCount;
+	  if (index < nextSeries)
+	      break;
+	  i = nextSeries;
+      }
+      series++;
+    }
+    return series;
+  }
+
   /* @see IFormatReader#getResolutionCount() */
   public int getResolutionCount() {
     FormatTools.assertId(currentId, true, 1);
 
-    int index = 0;
-    for (int i=0; i<getSeries(); i++) {
-      index += core[index].resolutionCount;
-    }
-
-    return core[index].resolutionCount;
+    return core[toCoreIndex(getSeries())].resolutionCount;
   }
 
   /* @see IFormatReader#setResolution(int) */
@@ -1153,16 +1180,16 @@ public abstract class FormatReader extends FormatHandler
   }
 
   public int getCoreIndex() {
-    if (hasFlattenedResolutions()) {
-      return getSeries();
-    }
-    int index = 0;
-    for (int i=0; i<getSeries(); i++) {
-      index += core[index].resolutionCount;
-    }
-    return index + resolution;
+    return coreIndex;
   }
 
+  /* @see IFormatHandler#setCoreIndex(int) */
+  public void setCoreIndex(int no) {
+    if (no < 0 || no >= core.length) {
+      throw new IllegalArgumentException("Invalid series: " + no);
+    }
+    coreIndex = no;
+  }
   // -- IFormatHandler API methods --
 
   /* @see IFormatHandler#isThisType(String) */

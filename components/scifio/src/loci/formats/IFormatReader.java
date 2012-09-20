@@ -504,6 +504,13 @@ public interface IFormatReader extends IFormatHandler, IMetadataConfigurable {
   /** Return the index into CoreMetadata of the current resolution/series. */
   int getCoreIndex();
 
+  /** Set the current resolution/series (ignores subresolutions).
+   *
+   * Equivalent to setSeries, but with flattened resolutions always
+   * set to false.
+   */
+  void setCoreIndex(int no);
+
   /**
    * Return the number of resolutions for the current series.
    *

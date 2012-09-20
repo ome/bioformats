@@ -663,6 +663,11 @@ public class ImageReader implements IFormatReader {
     return getReader().getCoreIndex();
   }
 
+  /* @see IFormatReader#setCoreIndex(int) */
+  public void setCoreIndex(int no) {
+    getReader().setCoreIndex(no);
+  }
+
   /* @see IFormatReader#getResolutionCount() */
   public int getResolutionCount() {
     return getReader().getResolutionCount();

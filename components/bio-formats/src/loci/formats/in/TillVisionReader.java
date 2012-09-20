@@ -129,7 +129,7 @@ public class TillVisionReader extends FormatReader {
       readPlane(in, x, y, w, h, buf);
     }
     else {
-      pixelsStream = new RandomAccessInputStream(pixelsFiles[series]);
+      pixelsStream = new RandomAccessInputStream(pixelsFiles[getSeries()]);
       if ((no + 1) * plane <= pixelsStream.length()) {
         pixelsStream.seek(no * plane);
         readPlane(pixelsStream, x, y, w, h, buf);
