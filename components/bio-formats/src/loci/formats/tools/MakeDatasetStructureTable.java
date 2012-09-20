@@ -48,31 +48,31 @@ import loci.formats.ImageReader;
  */
 public class MakeDatasetStructureTable {
 
-  private static final String LINE_SEPARATOR = "+-----------------------------------------+------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+";
-
   private PrintStream out;
-
-  private int nameWidth = 0;
-  private int extensionWidth = 0;
 
   /** Write the table header. */
   private void printHeader() {
+    out.println(".. Please don't even think about editing this file directly.");
+    out.println(".. It is generated using the 'gen-structure-table' Ant");
+    out.println(".. target in components/bio-formats, which uses");
+    out.println(".. loci.formats.tools.MakeDatasetStructureTable, so please");
+    out.println(".. update that instead.");
+    out.println();
+    out.println("Dataset Structure Table");
+    out.println("=======================");
+    out.println();
     out.print("This table shows the extension of the file that you should ");
     out.println("choose if you want");
     out.println("to open/import a dataset in a particular format.");
     out.println();
-    out.println(LINE_SEPARATOR);
-
-    String nameHeader = "| **Format name**                         ";
-    nameWidth = nameHeader.length() - 2;
-    out.print(nameHeader);
-
-    String extensionHeader = "| **File to choose**                 ";
-    extensionWidth = extensionHeader.length() - 2;
-    out.print(extensionHeader);
-
-    out.println("| **Structure of files**                                                                                                                                                                          |");
-    out.println(LINE_SEPARATOR.replaceAll("-", "="));
+    out.println(".. tabularcolumns:: |p{4cm}|p{3cm}|p{8cm}|");
+    out.println();
+    out.println(".. list-table::");
+    out.println("   :header-rows: 1");
+    out.println();
+    out.println("   * - Format name");
+    out.println("     - File to choose");
+    out.println("     - Structure of files");
   }
 
   /** Write the table footer. */
@@ -81,7 +81,7 @@ public class MakeDatasetStructureTable {
     out.println("Flex Support");
     out.println("------------");
     out.println();
-    out.println("OMERO.importer supports importing analysized Flex files from an Opera");
+    out.println("OMERO.importer supports importing analyzed Flex files from an Opera");
     out.println("system.");
     out.println();
     out.println("Basic configuration is done via the ``importer.ini``. Once the user has");
@@ -132,21 +132,9 @@ public class MakeDatasetStructureTable {
     String extension = sb.toString();
     String description = reader.getDatasetStructureDescription();
 
-    while (format.length() < nameWidth) {
-      format += " ";
-    }
-    while (extension.length() < extensionWidth - 2) {
-      extension += " ";
-    }
-
-    out.print("|");
-    out.print(format);
-    out.print("|  ");
-    out.print(extension);
-    out.print("|  ");
-    out.print(description);
-    out.println("|");
-    out.println(LINE_SEPARATOR);
+    out.println("   * - " + format);
+    out.println("     - " + extension);
+    out.println("     - " + description);
   }
 
   /** Write the table to the file specified using setOutputFile(String[]) */

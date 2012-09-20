@@ -43,7 +43,7 @@ Installation is usually as simple as downloading one of the files from
 - either the complete Bio-Formats bundle with supporting libraries is
   available as `loci\_tools.jar
   <http://loci.wisc.edu/files/software/loci_tools.jar>`_, or
-   
+
 - the Bio-Formats standalone library is available as `bio-formats.jar
   <http://loci.wisc.edu/files/software/bio-formats.jar>`_
 
@@ -129,10 +129,10 @@ Online Resources
     Features <https://www.openmicroscopy.org/site/products/feature-list>
 
 
-This documentation is a work in progress and many aspects of Bio-Formats are 
-not yet covered. The source code is hosted on Github. To propose changes and 
-fix errors, go to the `Bio-Formats repository`_, fork it, edit the file 
-contents under `docs/sphinx` and propose your file changes to the OME team 
+This documentation is a work in progress and many aspects of Bio-Formats are
+not yet covered. The source code is hosted on Github. To propose changes and
+fix errors, go to the `Bio-Formats repository`_, fork it, edit the file
+contents under `docs/sphinx` and propose your file changes to the OME team
 using `Pull Requests`_.
 
 .. _Bio-Formats repository: https://github.com/openmicroscopy/bioformats
