@@ -246,7 +246,7 @@ public class ImportProcess implements StatusReporter {
   /** Valid only after {@link ImportStep#READER}. */
   public String getIdName() {
     assertStep(ImportStep.READER);
-    return getImageReader().getCurrentFile();
+    return options.isLocal() ? idName : getImageReader().getCurrentFile();
   }
   /** Valid only after {@link ImportStep#READER}. */
   public Location getIdLocation() {
