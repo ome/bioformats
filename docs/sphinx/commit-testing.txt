@@ -84,9 +84,10 @@ Each of the dots represents a single passed test; a '-' is a skipped
 test, and an 'F' is a failed test. This is mostly just for your
 amusement if you happen to be staring at the console while the tests
 run, as a more detailed report is logged to
-loci-software-test-$DATE.log.
+loci-software-test-$DATE.log (where "$DATE" is the date on which the tests
+started in "yyyy-MM-dd_hh-mm-ss" format).
 
 If Ant reports that the build was successful, then there is nothing that
-you need to do. Otherwise, it's helpful if you can provide the command,
+you need to do. Otherwise, it is helpful if you can provide the command,
 branch name, number of failures at the bottom of the Ant output, and the
 loci-software-test-\*.log file.

@@ -31,7 +31,7 @@ many other implementations in many languages.
 An added benefit is the potential code reuse possibilities as a result
 of decoupling of dependency and usage in Bio-Formats readers.
 Implementations of the initial Bio-Formats services were completed as
-part of BioFormatsCleanup? and tickets :ticket:`463` and :ticket:`464`.
+part of BioFormatsCleanup and tickets :ticket:`463` and :ticket:`464`.
 
 Writing a Service
 -----------------
