@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# omeul: a command-line client-side import tool for OME
+# omeul: a command-line client-side import tool for the OME Perl server
 
-# Required JARs: loci_tools.jar
+# Required JARs: loci_tools.jar, ome_tools.jar
 
 # JAR libraries must be in the same directory as this
 # command line script for the command to function.
@@ -10,4 +10,16 @@
 DIR=`dirname "$0"`
 source "$DIR/config.sh"
 
-PROG=loci.formats.ome.OMEWriter "$DIR/launch.sh" "$@"
+if [ -z "$SCIFIO_DEVEL" ] && \
+  ([ ! -e "$DIR/ome_tools.jar" ] && [ ! -e "$DIR/ome-io.jar" ])
+then
+  echo "Required JAR libraries not found. Please download:"
+  echo "  ome_tools.jar"
+  echo "from:"
+  echo "  http://www.loci.wisc.edu/bio-formats/downloads"
+  echo ""
+  echo "Please note that omeul is legacy software that "
+  echo "has been discontinued. Use at your own risk."
+else
+  PROG=loci.formats.ome.OMEWriter CPAUX="$DIR/ome_tools.jar" "$DIR/launch.sh" "$@"
+fi
