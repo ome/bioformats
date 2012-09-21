@@ -73,7 +73,7 @@ For information about what extensions to choose to import files, see
 
 
 ***********************
-Developer documentation
+Developer Documentation
 ***********************
 
 
@@ -99,7 +99,7 @@ Some of the more useful pieces of documentation are:
 
 
 ************
-Getting help
+Getting Help
 ************
 
 .. toctree::
