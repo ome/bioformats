@@ -1,4 +1,4 @@
-Bio-Formats Service and Dependency Infrastructure
+Bio-Formats service and dependency infrastructure
 =================================================
 
 Description
@@ -15,7 +15,7 @@ inversion <http://en.wikipedia.org/wiki/Dependency_inversion_principle>`_
 or `component based
 design <http://en.wikipedia.org/wiki/Component-based_software_engineering>`_.
 
-It was decided to, at this point, forgo the usage of potentially more
+It was decided, at this point, to forgo the usage of potentially more
 powerful but also more complicated solutions such as:
 
 -  Spring
@@ -33,7 +33,7 @@ of decoupling of dependency and usage in Bio-Formats readers.
 Implementations of the initial Bio-Formats services were completed as
 part of BioFormatsCleanup and tickets :ticket:`463` and :ticket:`464`.
 
-Writing a Service
+Writing a service
 -----------------
 
 -  **Interface** -- The basic form of a service is an interface which
@@ -116,7 +116,7 @@ Writing a Service
        loci.common.services.OMENotesService=loci.ome.notes.services.OMENotesServiceImpl
        ...
 
-Using a Service
+Using a service
 ---------------
 
 ::
