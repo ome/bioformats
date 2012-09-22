@@ -135,7 +135,7 @@ public class GatanDM2Reader extends FormatReader {
       }
 
       int strlen = in.readShort();
-      if (strlen == 0) {
+      if (strlen == 0 || strlen > 255) {
         in.skipBytes(35);
         strlen = in.readShort();
       }
@@ -146,20 +146,25 @@ public class GatanDM2Reader extends FormatReader {
       int block = in.readInt();
       if (block == 5) {
         in.skipBytes(33);
-        while (in.readShort() == 0) {
-          in.skipBytes(33);
+        if (in.readShort() == 0) {
+          in.skipBytes(4);
         }
-        in.seek(in.getFilePointer() - 2);
-        continue;
+        else {
+          in.seek(in.getFilePointer() - 2);
+          continue;
+        }
       }
       int len = in.readInt();
       if (len + in.getFilePointer() >= in.length()) break;
       String type = in.readString(len);
-      in.skipBytes(4);
+      int extra = in.readInt() - 2;
       int count = in.readInt();
 
       if (type.equals("TEXT")) {
         value.append(in.readString(count));
+        if (block == 5) {
+          in.skipBytes(37);
+        }
       }
       else if (type.equals("long")) {
         count /= 8;
@@ -182,7 +187,17 @@ public class GatanDM2Reader extends FormatReader {
           if (i < count - 1) value.append(", ");
         }
       }
+      else if (type.equals("sing")) {
+        count /= 4;
+        for (int i=0; i<count; i++) {
+          value.append(in.readFloat());
+          if (i < count - 1) value.append(", ");
+        }
+      }
       else {
+        if (count < 0 || count + in.getFilePointer() > in.length()) {
+          break;
+        }
         in.skipBytes(count);
       }
 
