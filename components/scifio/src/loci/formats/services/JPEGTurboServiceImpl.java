@@ -128,6 +128,12 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
           restartMarkers.add(sos);
         }
         else {
+          long diff = sos - restartMarkers.get(0);
+          for (int i=0; i<restartMarkers.size(); i++) {
+            long original = restartMarkers.get(i);
+            original += diff;
+            restartMarkers.set(i, original);
+          }
           break;
         }
       }
