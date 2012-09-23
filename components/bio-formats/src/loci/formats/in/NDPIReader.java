@@ -56,7 +56,7 @@ public class NDPIReader extends BaseTiffReader {
   // -- Constants --
 
   private static final int MAX_SIZE = 8192;
-  private static final int THUMB_TAG_1 = 65426;
+  private static final int MARKER_TAG = 65426;
   private static final int THUMB_TAG_2 = 65439;
   private static final int METADATA_TAG = 65449;
 
@@ -98,7 +98,7 @@ public class NDPIReader extends BaseTiffReader {
           return false;
         }
         IFD ifd = tiffParser.getFirstIFD();
-        return ifd.containsKey(THUMB_TAG_1);
+        return ifd.containsKey(MARKER_TAG);
       }
       catch (IOException e) {
         LOGGER.debug("I/O exception during isThisType() evaluation.", e);
@@ -155,6 +155,11 @@ public class NDPIReader extends BaseTiffReader {
       in.setLength(offset + byteCount);
 
       try {
+        long[] markers = ifd.getIFDLongArray(MARKER_TAG);
+        for (int i=0; i<markers.length; i++) {
+          markers[i] += 108;
+        }
+        service.setRestartMarkers(markers);
         service.initialize(in, getSizeX(), getSizeY());
       }
       catch (ServiceException e) {
@@ -299,7 +304,6 @@ public class NDPIReader extends BaseTiffReader {
 
     for (int i=0; i<ifds.size(); i++) {
       IFD ifd = ifds.get(i);
-      ifd.remove(THUMB_TAG_1);
       ifd.remove(THUMB_TAG_2);
       ifds.set(i, ifd);
       tiffParser.fillInIFD(ifds.get(i));

@@ -92,6 +92,13 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
 
   // -- JPEGTurboService API methods --
 
+  public void setRestartMarkers(long[] markers) {
+    restartMarkers.clear();
+    for (long marker : markers) {
+      restartMarkers.add(marker);
+    }
+  }
+
   public void initialize(RandomAccessInputStream jpeg, int width, int height)
     throws ServiceException, IOException
   {
@@ -117,7 +124,12 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
       else if (marker == SOS) {
         sos = end;
         inImage = true;
-        restartMarkers.add(sos);
+        if (restartMarkers.size() == 0) {
+          restartMarkers.add(sos);
+        }
+        else {
+          break;
+        }
       }
       else if (marker >= RST0 && marker <= RST7) {
         restartMarkers.add(in.getFilePointer() - 2);
