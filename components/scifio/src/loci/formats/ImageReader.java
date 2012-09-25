@@ -658,6 +658,38 @@ public class ImageReader implements IFormatReader {
     return getReader().getOptimalTileHeight();
   }
 
+  /* @see IFormatReader#getCoreIndex() */
+  public int getCoreIndex() {
+    return getReader().getCoreIndex();
+  }
+
+  /* @see IFormatReader#getResolutionCount() */
+  public int getResolutionCount() {
+    return getReader().getResolutionCount();
+  }
+
+  /* @see IFormatReader#setResolution(int) */
+  public void setResolution(int no) {
+    getReader().setResolution(no);
+  }
+
+  /* @see IFormatReader#getResolution() */
+  public int getResolution() {
+    return getReader().getResolution();
+  }
+
+  /* @see IFormatReader#hasFlattenedResolutions() */
+  public boolean hasFlattenedResolutions() {
+    return getReader().hasFlattenedResolutions();
+  }
+
+  /* @see IFormatReader#setFlattenedResolutions(boolean) */
+  public void setFlattenedResolutions(boolean flattened) {
+    for (IFormatReader reader : readers) {
+      reader.setFlattenedResolutions(flattened);
+    }
+  }
+
   // -- IFormatHandler API methods --
 
   /* @see IFormatHandler#isThisType(String) */

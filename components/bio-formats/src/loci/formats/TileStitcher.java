@@ -188,7 +188,9 @@ public class TileStitcher extends ReaderWrapper {
     // it might be worth improving this in the future so that fields are
     // stitched, but plates/wells are left alone, but for now it is easy
     // enough to just ignore HCS data
-    if (meta.getPlateCount() > 0) {
+    if (meta.getPlateCount() > 1 ||
+      (meta.getPlateCount() == 1 && meta.getWellCount(0) > 1))
+    {
       tileX = 1;
       tileY = 1;
       return;
@@ -230,12 +232,12 @@ public class TileStitcher extends ReaderWrapper {
     ArrayList<Double> uniqueY = new ArrayList<Double>();
 
     boolean equalZs = true;
-    Double firstZ = meta.getPlanePositionZ(0, reader.getImageCount() - 1);
+    Double firstZ = meta.getPlanePositionZ(0, meta.getPlaneCount(0) - 1);
 
     for (int i=0; i<reader.getSeriesCount(); i++) {
       TileCoordinate coord = new TileCoordinate();
-      coord.x = meta.getPlanePositionX(i, reader.getImageCount() - 1);
-      coord.y = meta.getPlanePositionY(i, reader.getImageCount() - 1);
+      coord.x = meta.getPlanePositionX(i, meta.getPlaneCount(i) - 1);
+      coord.y = meta.getPlanePositionY(i, meta.getPlaneCount(i) - 1);
 
       tiles.add(coord);
 
@@ -246,7 +248,7 @@ public class TileStitcher extends ReaderWrapper {
         uniqueY.add(coord.y);
       }
 
-      Double zPos = meta.getPlanePositionZ(i, reader.getImageCount() - 1);
+      Double zPos = meta.getPlanePositionZ(i, meta.getPlaneCount(i) - 1);
 
       if (firstZ == null) {
         if (zPos != null) {

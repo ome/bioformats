@@ -198,7 +198,7 @@ public class IMODReader extends FormatReader {
 
     for (int obj=0; obj<nObjects; obj++) {
       String objt = in.readString(4);
-      while (!objt.equals("OBJT")) {
+      while (!objt.equals("OBJT") && in.getFilePointer() < in.length()) {
         String prefix = "Object #" + obj + " ";
         if (objt.equals("IMAT")) {
           addGlobalMeta(prefix + "ambient", in.read());
@@ -216,6 +216,11 @@ public class IMODReader extends FormatReader {
         }
         objt = in.readString(4);
       }
+
+      if (!objt.equals("OBJT")) {
+        break;
+      }
+
       String objName = in.readString(64);
       in.skipBytes(64); // unused
 
@@ -266,6 +271,16 @@ public class IMODReader extends FormatReader {
         int timeIndex = in.readInt();
         int surface = in.readInt();
 
+        if (nPoints > in.length() || nPoints < 0) {
+          while (!"CONT".equals(in.readString(4))) {
+            in.seek(in.getFilePointer() - 8);
+          }
+          nPoints = in.readInt();
+          contourFlags = in.readInt();
+          timeIndex = in.readInt();
+          surface = in.readInt();
+        }
+
         points[obj][contour] = new float[nPoints][3];
 
         for (int p=0; p<nPoints; p++) {
@@ -298,8 +313,10 @@ public class IMODReader extends FormatReader {
                 new Double(points[obj][contour][i][0]), obj, nextShape);
               store.setPointY(
                 new Double(points[obj][contour][i][1]), obj, nextShape);
-              store.setPointTheZ(new NonNegativeInteger(
-                (int) points[obj][contour][i][2]), obj, nextShape);
+              if (points[obj][contour][i][2] >= 0) {
+                store.setPointTheZ(new NonNegativeInteger(
+                  (int) points[obj][contour][i][2]), obj, nextShape);
+              }
 
               nextShape++;
             }
@@ -332,7 +349,7 @@ public class IMODReader extends FormatReader {
                 store.setPolygonStrokeDashArray("5", obj, nextShape);
               }
 
-              if (nPoints > 0) {
+              if (nPoints > 0 && points[obj][contour][0][2] >= 0) {
                 store.setPolygonTheZ(new NonNegativeInteger(
                   (int) points[obj][contour][0][2]), obj, nextShape);
               }
@@ -348,7 +365,7 @@ public class IMODReader extends FormatReader {
                 store.setPolylineStrokeDashArray("5", obj, nextShape);
               }
 
-              if (nPoints > 0) {
+              if (nPoints > 0 && points[obj][contour][0][2] >= 0) {
                 store.setPolylineTheZ(new NonNegativeInteger(
                   (int) points[obj][contour][0][2]), obj, nextShape);
               }

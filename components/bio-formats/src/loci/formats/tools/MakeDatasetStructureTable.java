@@ -33,7 +33,6 @@ import java.util.Comparator;
 import loci.common.Constants;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
-import loci.formats.in.ZeissCZIReader;
 
 /**
  * Utility class for generating a table containing the dataset structure for
@@ -51,26 +50,64 @@ public class MakeDatasetStructureTable {
 
   private PrintStream out;
 
-  private int nameWidth = 0;
-  private int extensionWidth = 0;
-
   /** Write the table header. */
   private void printHeader() {
+    out.println(".. Please don't even think about editing this file directly.");
+    out.println(".. It is generated using the 'gen-structure-table' Ant");
+    out.println(".. target in components/bio-formats, which uses");
+    out.println(".. loci.formats.tools.MakeDatasetStructureTable, so please");
+    out.println(".. update that instead.");
+    out.println();
+    out.println("Dataset Structure Table");
+    out.println("=======================");
+    out.println();
     out.print("This table shows the extension of the file that you should ");
     out.println("choose if you want");
     out.println("to open/import a dataset in a particular format.");
     out.println();
+    out.println(".. tabularcolumns:: |p{4cm}|p{3cm}|p{8cm}|");
     out.println();
+    out.println(".. list-table::");
+    out.println("   :header-rows: 1");
+    out.println();
+    out.println("   * - Format name");
+    out.println("     - File to choose");
+    out.println("     - Structure of files");
+  }
 
-    String nameHeader = "||= '''Format name'''                   =";
-    nameWidth = nameHeader.length() - 2;
-    out.print(nameHeader);
-
-    String extensionHeader = "||=  '''File to choose'''             =";
-    extensionWidth = extensionHeader.length() - 2;
-    out.print(extensionHeader);
-
-    out.println("||=  '''Structure of files'''                         =||");
+  /** Write the table footer. */
+  private void printFooter() {
+    out.println();
+    out.println("Flex Support");
+    out.println("------------");
+    out.println();
+    out.println("OMERO.importer supports importing analyzed Flex files from an Opera");
+    out.println("system.");
+    out.println();
+    out.println("Basic configuration is done via the ``importer.ini``. Once the user has");
+    out.println("run the Importer once, this file will be in the following location:");
+    out.println();
+    out.println("-  ``C:\\Documents and Settings\\<username>\\omero\\importer.ini``");
+    out.println();
+    out.println("The user will need to modify or add the ``[FlexReaderServerMaps]``");
+    out.println("section of the INI file as follows:");
+    out.println();
+    out.println("::");
+    out.println();
+    out.println("    ...");
+    out.println("    [FlexReaderServerMaps]");
+    out.println("    CIA-1 = \\\\\\\\hostname1\\\\mount;\\\\\\\\archivehost1\\\\mount");
+    out.println("    CIA-2 = \\\\\\\\hostname2\\\\mount;\\\\\\\\archivehost2\\\\mount");
+    out.println();
+    out.println("where the *key* of the INI file line is the value of the \"Host\" tag in");
+    out.println("the ``.mea`` measurement XML file (here: ``<Host name=\"CIA-1\">``) and");
+    out.println("the value is a semicolon-separated list of *escaped* UNC path names to");
+    out.println("the Opera workstations where the Flex files reside.");
+    out.println();
+    out.println("Once this resolution has been encoded in the configuration file **and**");
+    out.println("you have restarted the importer, you will be able to select the ``.mea``");
+    out.println("measurement XML file from the Importer user interface as the import");
+    out.println("target.");
   }
 
   /** Write a line containing all of the columns for the specified reader. */
@@ -95,20 +132,9 @@ public class MakeDatasetStructureTable {
     String extension = sb.toString();
     String description = reader.getDatasetStructureDescription();
 
-    while (format.length() < nameWidth) {
-      format += " ";
-    }
-    while (extension.length() < extensionWidth - 2) {
-      extension += " ";
-    }
-
-    out.print("||");
-    out.print(format);
-    out.print("||  ");
-    out.print(extension);
-    out.print("||  ");
-    out.print(description);
-    out.println();
+    out.println("   * - " + format);
+    out.println("     - " + extension);
+    out.println("     - " + description);
   }
 
   /** Write the table to the file specified using setOutputFile(String[]) */
@@ -130,10 +156,10 @@ public class MakeDatasetStructureTable {
     printHeader();
 
     for (IFormatReader reader : allReaders) {
-      if (!(reader instanceof ZeissCZIReader)) {
-        printFormatEntry(reader);
-      }
+      printFormatEntry(reader);
     }
+
+    printFooter();
   }
 
   /**

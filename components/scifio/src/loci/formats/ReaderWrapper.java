@@ -483,6 +483,30 @@ public abstract class ReaderWrapper implements IFormatReader {
     return reader.getOptimalTileHeight();
   }
 
+  public int getCoreIndex() {
+    return reader.getCoreIndex();
+  }
+
+  public int getResolutionCount() {
+    return reader.getResolutionCount();
+  }
+
+  public void setResolution(int no) {
+    reader.setResolution(no);
+  }
+
+  public int getResolution() {
+    return reader.getResolution();
+  }
+
+  public boolean hasFlattenedResolutions() {
+    return reader.hasFlattenedResolutions();
+  }
+
+  public void setFlattenedResolutions(boolean flattened) {
+    reader.setFlattenedResolutions(flattened);
+  }
+
   // -- IFormatHandler API methods --
 
   public boolean isThisType(String name) {
@@ -578,8 +602,20 @@ public abstract class ReaderWrapper implements IFormatReader {
 
   /** Creates a copy of the core metadata matching to the given reader state. */
   protected CoreMetadata[] copyCoreMetadata(IFormatReader r) {
-    CoreMetadata[] core = new CoreMetadata[r.getSeriesCount()];
-    for (int s=0; s<core.length; s++) core[s] = new CoreMetadata(r, s);
+    int count = 0;
+    int currentSeries = r.getSeries();
+
+    for (int i=0; i<r.getSeriesCount(); i++) {
+      r.setSeries(i);
+      count += r.getResolutionCount();
+    }
+
+    r.setSeries(currentSeries);
+
+    CoreMetadata[] core = new CoreMetadata[count];
+    for (int s=0; s<core.length; s++) {
+      core[s] = new CoreMetadata(r, s);
+    }
     return core;
   }
 

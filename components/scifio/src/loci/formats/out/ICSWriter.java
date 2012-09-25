@@ -173,6 +173,7 @@ public class ICSWriter extends FormatWriter {
     if (checkSuffix(currentId, "ids")) {
       String metadataFile = currentId.substring(0, currentId.lastIndexOf("."));
       metadataFile += ".ics";
+      out.close();
       out = new RandomAccessOutputStream(metadataFile);
     }
 

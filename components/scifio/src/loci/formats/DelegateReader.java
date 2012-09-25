@@ -126,6 +126,13 @@ public abstract class DelegateReader extends FormatReader {
     if (legacyReaderInitialized) legacyReader.setSeries(no);
   }
 
+  /* @see IFormatReader#setResolution(int) */
+  public void setResolution(int resolution) {
+    super.setResolution(resolution);
+    if (nativeReaderInitialized) nativeReader.setResolution(resolution);
+    if (legacyReaderInitialized) legacyReader.setResolution(resolution);
+  }
+
   /* @see IFormatReader#setNormalized(boolean) */
   public void setNormalized(boolean normalize) {
     super.setNormalized(normalize);
@@ -155,6 +162,13 @@ public abstract class DelegateReader extends FormatReader {
     super.setGroupFiles(group);
     nativeReader.setGroupFiles(group);
     legacyReader.setGroupFiles(group);
+  }
+
+  /* @see IFormatReader#setFlattenedResolutions(boolean) */
+  public void setFlattenedResolutions(boolean flattened) {
+    super.setFlattenedResolutions(flattened);
+    nativeReader.setFlattenedResolutions(flattened);
+    legacyReader.setFlattenedResolutions(flattened);
   }
 
   /* @see IFormatReader#setMetadataFiltered(boolean) */
@@ -248,9 +262,13 @@ public abstract class DelegateReader extends FormatReader {
       catch (FormatException e) { exc = e; }
       catch (IOException e) { exc = e; }
       if (exc != null) {
+        nativeReaderInitialized = false;
         LOGGER.debug("", exc);
         legacyReader.setId(id);
         legacyReaderInitialized = true;
+      }
+      if (legacyReaderInitialized) {
+        nativeReaderInitialized = false;
       }
     }
     if (nativeReaderInitialized) {

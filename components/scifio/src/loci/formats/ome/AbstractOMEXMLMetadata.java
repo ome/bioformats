@@ -73,8 +73,7 @@ public abstract class AbstractOMEXMLMetadata implements OMEXMLMetadata {
 
   /** OME-XML schema location. */
   public static final String SCHEMA =
-    //"http://www.openmicroscopy.org/Schemas/OME/2012-06/ome.xsd";
-    "https://raw.github.com/openmicroscopy/openmicroscopy/schema-2012-06/components/specification/InProgress/ome.xsd";
+    "http://www.openmicroscopy.org/Schemas/OME/2012-06/ome.xsd";
 
   // -- Fields --
 

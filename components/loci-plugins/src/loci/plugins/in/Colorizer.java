@@ -47,9 +47,13 @@ import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.ImageReader;
 import loci.formats.MinMaxCalculator;
+import loci.formats.meta.MetadataRetrieve;
+import loci.formats.meta.MetadataStore;
 import loci.plugins.BF;
 import loci.plugins.util.ImageProcessorReader;
 import loci.plugins.util.VirtualImagePlus;
+
+import ome.xml.model.primitives.PositiveInteger;
 
 /**
  * Logic for colorizing images.
@@ -62,6 +66,15 @@ import loci.plugins.util.VirtualImagePlus;
  * @author Curtis Rueden ctrueden at wisc.edu
  */
 public class Colorizer {
+
+  // -- Constants --
+
+  private static final int BLUE_MIN = 400;
+  private static final int BLUE_MAX = 500;
+  private static final int GREEN_MIN = 501;
+  private static final int GREEN_MAX = 559;
+  private static final int RED_MIN = 560;
+  private static final int RED_MAX = 700;
 
   // -- Fields --
 
@@ -303,7 +316,45 @@ public class Colorizer {
         luts[c] = new LUT((IndexColorModel) cm[c], 0, 255);
       }
       else {
-        Color color = colorize ? options.getDefaultCustomColor(c) : Color.white;
+        Color color = null;
+        if (colorize) {
+          // rather than always assuming that the first channel is red, the
+          // second green, etc. we will take into account the channel color
+          // metadata and the acquisition wavelength
+          ImageReader reader = process.getImageReader();
+          MetadataStore store = reader.getMetadataStore();
+          if (store instanceof MetadataRetrieve) {
+            MetadataRetrieve retrieve = (MetadataRetrieve) store;
+
+            if (c < retrieve.getChannelCount(reader.getSeries())) {
+              ome.xml.model.primitives.Color metaColor =
+                retrieve.getChannelColor(reader.getSeries(), c);
+              if (metaColor != null) {
+                color = new Color(metaColor.getValue(), false);
+              }
+              else {
+                PositiveInteger wavelength =
+                  retrieve.getChannelEmissionWavelength(reader.getSeries(), c);
+                if (wavelength != null) {
+                  int wave = wavelength.getValue();
+                  if (wave >= BLUE_MIN && wave <= BLUE_MAX) {
+                    color = Color.BLUE;
+                  }
+                  else if (wave >= GREEN_MIN && wave <= GREEN_MAX) {
+                    color = Color.GREEN;
+                  }
+                  else if (wave >= RED_MIN && wave <= RED_MAX) {
+                    color = Color.RED;
+                  }
+                }
+              }
+            }
+          }
+
+          if (color == null) {
+            color = options.getDefaultCustomColor(c);
+          }
+        }
         luts[c] = makeLUT(color);
       }
     }

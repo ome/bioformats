@@ -184,7 +184,7 @@ public final class XMLTools {
     final char[] c = s.toCharArray();
     for (int i=0; i<s.length(); i++) {
       if (Character.isISOControl(c[i]) ||
-        !Character.isDefined(c[i]) || c[i] > '~')
+        !Character.isDefined(c[i]))
       {
         c[i] = ' ';
       }
@@ -192,6 +192,36 @@ public final class XMLTools {
       if (i > 0 && c[i - 1] == '&' && c[i] == '#') c[i - 1] = ' ';
     }
     return new String(c);
+  }
+
+  /** Escape special characters. */
+  public static String escapeXML(String s) {
+    StringBuffer sb = new StringBuffer();
+
+    for (int i=0; i<s.length(); i++) {
+      char c = s.charAt(i);
+
+      if (c == '<') {
+        sb.append("&lt;");
+      }
+      else if (c == '>') {
+        sb.append("&gt;");
+      }
+      else if (c == '&') {
+        sb.append("&amp;");
+      }
+      else if (c == '\"') {
+        sb.append("&quot;");
+      }
+      else if (c == '\'') {
+        sb.append("&apos;");
+      }
+      else {
+        sb.append(c);
+      }
+    }
+
+    return sb.toString();
   }
 
   /** Indents XML to be more readable. */
@@ -399,8 +429,9 @@ public final class XMLTools {
       Set namespaces = new HashSet();
       Pattern pattern = Pattern.compile(" xmlns:(\\w+)");
       Matcher matcher = pattern.matcher(firstTag);
-      while (matcher.find())
+      while (matcher.find()) {
         namespaces.add(matcher.group(1));
+      }
 
       pattern = Pattern.compile("</?(\\w+):");
       matcher = pattern.matcher(xml);
@@ -412,6 +443,14 @@ public final class XMLTools {
           int end = matcher.end();
           xml = xml.substring(0, end - 1) + "_" + xml.substring(end);
         }
+      }
+
+      Pattern emptyNamespaces = Pattern.compile(" xmlns:(\\w+)=\"\"");
+      matcher = emptyNamespaces.matcher(firstTag);
+      while (matcher.find()) {
+        int start = matcher.start();
+        int end = matcher.end();
+        xml = xml.substring(0, start + 1) + xml.substring(end);
       }
     }
     return xml;

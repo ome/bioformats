@@ -449,13 +449,13 @@ public abstract class BaseTiffReader extends MinimalTiffReader {
       double pixX = firstIFD.getXResolution();
       double pixY = firstIFD.getYResolution();
 
-      if (pixX > 0) {
+      if (pixX > 0 && pixX < Double.POSITIVE_INFINITY) {
         store.setPixelsPhysicalSizeX(new PositiveFloat(pixX), 0);
       }
       else {
         LOGGER.warn("Expected positive value for PhysicalSizeX; got {}", pixX);
       }
-      if (pixY > 0) {
+      if (pixY > 0 && pixX < Double.POSITIVE_INFINITY) {
         store.setPixelsPhysicalSizeY(new PositiveFloat(pixY), 0);
       }
       else {

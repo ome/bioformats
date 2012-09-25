@@ -96,8 +96,6 @@ import java.util.Locale;
 
 import com.sun.media.imageioimpl.common.PackageUtil;
 
-import com.sun.medialib.codec.jiio.Util;
-
 public class J2KImageWriterSpi extends ImageWriterSpi {
     private static String [] readerSpiNames =
         {"com.sun.media.imageioimpl.plugins.jpeg2000.J2KImageReaderSpi"};

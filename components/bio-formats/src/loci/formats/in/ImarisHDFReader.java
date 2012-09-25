@@ -253,11 +253,15 @@ public class ImarisHDFReader extends FormatReader {
       CoreMetadata oldCore = core[0];
       core = new CoreMetadata[seriesCount];
       core[0] = oldCore;
-      for (int i=1; i<getSeriesCount(); i++) {
+      for (int i=1; i<seriesCount; i++) {
         core[i] = new CoreMetadata();
       }
 
-      for (int i=1; i<getSeriesCount(); i++) {
+      if (!hasFlattenedResolutions()) {
+        core[0].resolutionCount = seriesCount;
+      }
+
+      for (int i=1; i<seriesCount; i++) {
         String groupPath =
           "/DataSet/ResolutionLevel_" + i + "/TimePoint_0/Channel_0";
         core[i].sizeX =
@@ -291,7 +295,7 @@ public class ImarisHDFReader extends FormatReader {
       throw new FormatException("Unknown pixel type: " + pix);
     }
 
-    for (int i=0; i<getSeriesCount(); i++) {
+    for (int i=0; i<core.length; i++) {
       core[i].pixelType = type;
       core[i].dimensionOrder = "XYZCT";
       core[i].rgb = false;
@@ -317,10 +321,11 @@ public class ImarisHDFReader extends FormatReader {
 
     int cIndex = 0;
     for (int s=0; s<getSeriesCount(); s++) {
+      setSeries(s);
       double px = pixelSizeX, py = pixelSizeY, pz = pixelSizeZ;
-      if (px == 1) px = (maxX - minX) / core[s].sizeX;
-      if (py == 1) py = (maxY - minY) / core[s].sizeY;
-      if (pz == 1) pz = (maxZ - minZ) / core[s].sizeZ;
+      if (px == 1) px = (maxX - minX) / getSizeX();
+      if (py == 1) py = (maxY - minY) / getSizeY();
+      if (pz == 1) pz = (maxZ - minZ) / getSizeZ();
 
       if (px > 0) {
         store.setPixelsPhysicalSizeX(new PositiveFloat(px), s);
@@ -341,7 +346,7 @@ public class ImarisHDFReader extends FormatReader {
         LOGGER.warn("Expected positive value for PhysicalSizeZ; got {}", pz);
       }
 
-      for (int i=0; i<core[s].sizeC; i++, cIndex++) {
+      for (int i=0; i<getSizeC(); i++, cIndex++) {
         Float gainValue = null;
         Integer pinholeValue = null, emWaveValue = null, exWaveValue;
 
@@ -404,6 +409,7 @@ public class ImarisHDFReader extends FormatReader {
         }
       }
     }
+    setSeries(0);
   }
 
   // -- Helper methods --
@@ -412,7 +418,7 @@ public class ImarisHDFReader extends FormatReader {
     throws FormatException
   {
     int[] zct = getZCTCoords(no);
-    String path = "/DataSet/ResolutionLevel_" + series + "/TimePoint_" +
+    String path = "/DataSet/ResolutionLevel_" + getCoreIndex() + "/TimePoint_" +
       zct[2] + "/Channel_" + zct[1] + "/Data";
     Object image = null;
 
@@ -441,14 +447,29 @@ public class ImarisHDFReader extends FormatReader {
       if (value == null) continue;
       value = value.trim();
 
-      if (name.equals("X")) {
-        core[0].sizeX = Integer.parseInt(value);
+      if (name.equals("X") || name.equals("ImageSizeX")) {
+        try {
+          core[0].sizeX = Integer.parseInt(value);
+        }
+        catch (NumberFormatException e) {
+          LOGGER.trace("Failed to parse '" + name + "'", e);
+        }
       }
-      else if (name.equals("Y")) {
-        core[0].sizeY = Integer.parseInt(value);
+      else if (name.equals("Y") || name.equals("ImageSizeY")) {
+        try {
+          core[0].sizeY = Integer.parseInt(value);
+        }
+        catch (NumberFormatException e) {
+          LOGGER.trace("Failed to parse '" + name + "'", e);
+        }
       }
-      else if (name.equals("Z")) {
-        core[0].sizeZ = Integer.parseInt(value);
+      else if (name.equals("Z") || name.equals("ImageSizeZ")) {
+        try {
+          core[0].sizeZ = Integer.parseInt(value);
+        }
+        catch (NumberFormatException e) {
+          LOGGER.trace("Failed to parse '" + name + "'", e);
+        }
       }
       else if (name.equals("FileTimePoints")) {
         core[0].sizeT = Integer.parseInt(value);

@@ -379,20 +379,6 @@ ZZ
   VERSION => "1.43o"
 );
 
-my %jiio = (
-  NAME    => "jiio",
-  TITLE   => "JAI ImageIO wrapper",
-  JAR     => "clibwrapper_jiio.jar",
-  PACKAGE => "com.sun.medialib.codec",
-  LICENSE => "BSD",
-  URL     => "https://jai-imageio.dev.java.net/",
-  NOTES   => <<ZZ,
-used by Bio-Formats via reflection for JPEG2000 support (ND2, JP2) and lossless
-JPEG decompression (DICOM)
-ZZ
-  VERSION => "1.1"
-);
-
 my %junit = (
   NAME    => "junit",
   TITLE   => "JUnit",
@@ -611,7 +597,6 @@ my @libs = (
   \%findbugs,
   \%forms,
   \%ij,
-  \%jiio,
   \%junit,
   \%log4j,
   \%netcdf,

@@ -36,6 +36,7 @@
 
 package loci.formats.tiff;
 
+import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -725,7 +726,22 @@ public class IFD extends HashMap<Integer, Object> {
    */
   public long[] getStripOffsets() throws FormatException {
     int tag = isTiled() ? TILE_OFFSETS : STRIP_OFFSETS;
-    long[] offsets = getIFDLongArray(tag);
+    long[] offsets = null;
+    OnDemandLongArray compressedOffsets = getOnDemandStripOffsets();
+    if (compressedOffsets != null) {
+      offsets = new long[(int) compressedOffsets.size()];
+      try {
+        for (int q=0; q<offsets.length; q++) {
+          offsets[q] = compressedOffsets.get(q);
+        }
+      }
+      catch (IOException e) {
+        throw new FormatException("Failed to retrieve offset", e);
+      }
+    }
+    else {
+      offsets = getIFDLongArray(tag);
+    }
     if (isTiled() && offsets == null) {
       offsets = getIFDLongArray(STRIP_OFFSETS);
     }
@@ -748,6 +764,16 @@ public class IFD extends HashMap<Integer, Object> {
     return offsets;
   }
 
+  public OnDemandLongArray getOnDemandStripOffsets() throws FormatException
+  {
+    int tag = isTiled() ? TILE_OFFSETS : STRIP_OFFSETS;
+    Object offsets = getIFDValue(tag);
+    if (offsets instanceof OnDemandLongArray) {
+      return (OnDemandLongArray) offsets;
+    }
+    return null;
+  }
+
   /**
    * Retrieves strip byte counts for the image (TIFF tag StripByteCounts) from
    * this IFD.
@@ -763,6 +789,7 @@ public class IFD extends HashMap<Integer, Object> {
     if (isTiled() && byteCounts == null) {
       byteCounts = getIFDLongArray(STRIP_BYTE_COUNTS);
     }
+    long imageLength = getImageLength();
     if (byteCounts == null) {
       // technically speaking, this shouldn't happen (since TIFF writers are
       // required to write the StripByteCounts tag), but we'll support it
@@ -774,7 +801,6 @@ public class IFD extends HashMap<Integer, Object> {
       if (offsets == null) return null;
       int bytesPerSample = getBytesPerSample()[0];
       long imageWidth = getImageWidth();
-      long imageLength = getImageLength();
       byteCounts = new long[offsets.length];
       int samples = getSamplesPerPixel();
       long imageSize = imageWidth * imageLength * bytesPerSample *
@@ -785,7 +811,10 @@ public class IFD extends HashMap<Integer, Object> {
 
     long[] counts = new long[byteCounts.length];
 
-    if (getCompression() == TiffCompression.LZW) {
+    if (getCompression() == TiffCompression.LZW &&
+      (!containsKey(ROWS_PER_STRIP) ||
+      ((imageLength % getRowsPerStrip()[0])) != 0))
+    {
       for (int i=0; i<byteCounts.length; i++) {
         counts[i] = byteCounts[i] * 2;
       }

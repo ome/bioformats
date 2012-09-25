@@ -1,0 +1,175 @@
+@import url("sphinxdoc.css");
+
+@media screen {
+/* The global section tabs. */
+#portal-globalnav {
+    padding: 0em 0em 0em 2em;
+    white-space: nowrap;
+    list-style: none;
+    margin: 0;
+    height: auto;
+    line-height: normal;
+}
+#portal-globalnav li {
+    display: inline;
+}
+#portal-globalnav li a {
+    /* The normal, unselected tabs. They are all links */
+    background-color: transparent;
+    border-color: #CFCFF0;
+    border-width: 1px;
+    border-style: solid solid none solid;
+    color: #000066;
+    height: auto;
+    margin-right: 0.5em;
+    padding: 0em 1.25em;
+    text-decoration: none;
+    text-transform: none;
+}
+#portal-globalnav li.selected a {
+    /* The selected tab. There's only one of this */
+    background-color: #EBEBFA;
+    border: 1px solid #CFCFF0;
+    border-bottom: #EBEBFA 1px solid;
+    color: #000066;
+}
+#portal-globalnav li a:hover {
+    background-color: #EBEBFA;
+    border-color: #CFCFF0;
+    border-bottom-color: #EBEBFA;
+    color: #000066;
+}
+#portal-personaltools {
+    /* Bar with personalized menu (user preferences, favorites etc) */
+    background-color: #EBEBFA;
+    border-top-color: #CFCFF0;
+    border-top-style: solid;
+    border-top-width: 1px;
+    border-bottom-color: #CFCFF0;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    line-height: 1.6em;
+    color: Black;
+    padding: 0em 3em 0em 3em;
+    margin: 0;
+    text-align: right;
+    text-transform: none;
+    list-style: none;
+}
+#portal-personaltools .portalUser {
+    background: transparent url(http://www.openmicroscopy.org/site/user.gif) center left no-repeat;
+    padding-left: 18px;
+}
+#portal-personaltools .portalNotLoggedIn {
+    /* Used on all descriptions relevant to those not logged in */
+    color: Black;
+    padding: 0;
+    background: transparent;
+    background-image: none;
+}
+#portal-personaltools li {
+    color: #000066;
+    margin-left: 1em;
+    display: inline;
+}
+#portal-personaltools li a {
+    text-decoration: none;
+    color: #000066;
+}
+#portal-personaltools .visualIconPadding {
+    padding-left: 10px;
+}
+
+/* Site-wide action menu - font size, contact, index, sitemap etc */
+#portal-siteactions {
+    background-color: transparent;
+    white-space: nowrap;
+    list-style-image: none;
+    list-style-type: none;
+    margin: 1px 0 0 0;
+    height: auto;
+    line-height: normal;
+    float: right;
+    padding: 3px 2em 3px 0;
+}
+#portal-siteactions li {
+    display: inline;
+}
+#portal-siteactions li a {
+    background-color: transparent;
+    color: #76797c;
+    height: auto;
+    padding: 0.2em;
+    margin-right: 0.2em;
+    text-decoration: none;
+    text-transform: none;
+}
+#portal-siteactions li.selected a {
+    background-color: #EBEBFA;
+    color: #000066;
+    border: 1px solid #CFCFF0;
+}
+#portal-siteactions li a:hover {
+    background-color: #EBEBFA;
+    color: #000066;
+    border: 1px solid #CFCFF0;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+	font-size: medium;
+	border-style: none;
+}
+
+#portal-top {
+    font: 74% "Lucida Grande", Verdana, Lucida, Helvetica, Arial, sans-serif;
+    background-color: white;
+    color: Black;
+    margin: 0;
+    padding: 0;
+    letter-spacing: normal;
+    line-height 100%;
+}
+
+div.document {
+	font-size: 14px;
+    line-height 150%;
+}
+
+div.related {
+	font-size: 14px;
+}
+
+#portal-top a {
+    color: #436976;
+    background-color: transparent;
+}
+
+#portal-breadcrumbs {
+    /* The path bar, including breadcrumbs and add to favorites */
+    border-bottom-color: #CFCFF0;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    padding-left: 2em;
+    padding-right: 2em;
+    text-transform: none;
+    line-height: 1.6em;
+	text-align: left;
+}
+#portal-breadcrumbs a {
+    text-decoration: none;
+}
+.breadcrumbSeparator {
+    font-size: 120%;
+}
+
+#portal-header {
+	text-align: left;
+}
+
+}
+
+@media print{
+	
+}

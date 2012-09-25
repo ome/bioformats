@@ -182,6 +182,15 @@ public interface OMEXMLService extends Service {
     Hashtable<String, Object> metadata);
 
   /**
+   * Parse any OriginalMetadata annotations from the given OME-XML metadata
+   * object and store them in a Hashtable.
+   *
+   * @param omexmlMeta An object of type
+   *   {@link loci.formats.ome.OMEXMLMetadata}.
+   */
+  public Hashtable getOriginalMetadata(OMEXMLMetadata omexmlMeta);
+
+  /**
    * Adds the specified key/value pair as a new OriginalMetadata node
    * to the given OME-XML metadata object.
    * @param omexmlMeta An object of type
