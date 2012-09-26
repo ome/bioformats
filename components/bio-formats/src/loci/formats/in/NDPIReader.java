@@ -289,7 +289,7 @@ public class NDPIReader extends BaseTiffReader {
       {
         sizeZ++;
       }
-      else if (sizeZ == 1) {
+      else if (sizeZ == 1 && i < ifds.size() - 1) {
         pyramidHeight++;
       }
     }
