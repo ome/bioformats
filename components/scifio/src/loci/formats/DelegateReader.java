@@ -126,6 +126,13 @@ public abstract class DelegateReader extends FormatReader {
     if (legacyReaderInitialized) legacyReader.setSeries(no);
   }
 
+  /* @see IFormatReader#setCoreIndex(int) */
+  public void setCoreIndex(int no) {
+    super.setCoreIndex(no);
+    if (nativeReaderInitialized) nativeReader.setCoreIndex(no);
+    if (legacyReaderInitialized) legacyReader.setCoreIndex(no);
+  }
+
   /* @see IFormatReader#setResolution(int) */
   public void setResolution(int resolution) {
     super.setResolution(resolution);

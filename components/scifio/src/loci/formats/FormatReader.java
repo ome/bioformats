@@ -1100,7 +1100,7 @@ public abstract class FormatReader extends FormatHandler
 
   // -- Sub-resolution API methods --
 
-  protected int toCoreIndex(int series)
+  public int toCoreIndex(int series)
   {
     if (hasFlattenedResolutions()) {
       if (series < 0 || series >= core.length) {
@@ -1124,7 +1124,7 @@ public abstract class FormatReader extends FormatHandler
     return index;
   }
 
-  protected int toSeries(int index)
+  public int toSeries(int index)
   {
     if (index < 0 || index >= core.length) {
       throw new IllegalArgumentException("Invalid index: " + index);

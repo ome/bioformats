@@ -491,6 +491,14 @@ public abstract class ReaderWrapper implements IFormatReader {
     reader.setCoreIndex(no);
   }
 
+  public int toCoreIndex(int series) {
+    return reader.toCoreIndex(series);
+  }
+
+  public int toSeries(int index) {
+    return reader.toSeries(index);
+  }
+
   public int getResolutionCount() {
     return reader.getResolutionCount();
   }

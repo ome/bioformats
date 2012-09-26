@@ -92,8 +92,8 @@ public class FileStitcher extends ReaderWrapper {
   /** Core metadata. */
   private CoreMetadata[] core;
 
-  /** Current series number. */
-  private int series;
+  /** The number of the current series. */
+  private int coreIndex;
 
   private boolean noStitch;
   private boolean group = true;
@@ -526,7 +526,7 @@ public class FileStitcher extends ReaderWrapper {
       sizeZ = sizeC = sizeT = null;
       lenZ = lenC = lenT = null;
       core = null;
-      series = 0;
+      coreIndex = 0;
       store = null;
     }
   }
@@ -542,13 +542,27 @@ public class FileStitcher extends ReaderWrapper {
     FormatTools.assertId(getCurrentFile(), true, 2);
     int n = reader.getSeriesCount();
     if (n > 1 || noStitch) reader.setSeries(no);
-    else series = no;
+    else coreIndex = toCoreIndex(no);
   }
 
   /* @see IFormatReader#getSeries() */
   public int getSeries() {
     FormatTools.assertId(getCurrentFile(), true, 2);
-    return reader.getSeries() > 0 ? reader.getSeries() : series;
+    return reader.getSeries() > 0 ? reader.getSeries() : toSeries(coreIndex);
+  }
+
+  /* @see IFormatReader#setCoreIndex(int) */
+  public void setCoreIndex(int no) {
+    FormatTools.assertId(getCurrentFile(), true, 2);
+    int n = reader.getSeriesCount();
+    if (n > 1 || noStitch) reader.setCoreIndex(no);
+    else coreIndex = no;
+  }
+
+  /* @see IFormatReader#getCoreIndex() */
+  public int getCoreIndex() {
+    FormatTools.assertId(getCurrentFile(), true, 2);
+    return reader.getCoreIndex() > 0 ? reader.getCoreIndex() : coreIndex;
   }
 
   /* @see IFormatReader#setGroupFiles(boolean) */
