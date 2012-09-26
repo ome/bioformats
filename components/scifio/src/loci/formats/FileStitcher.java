@@ -545,6 +545,16 @@ public class FileStitcher extends ReaderWrapper {
     else coreIndex = no; // No subresolutions
   }
 
+  /* @see IFormatReader#seriesToCoreIndex(int) */
+  public int seriesToCoreIndex(int series) {
+    return series;
+  }
+
+  /* @see IFormatReader#coreIndexToSeries(int) */
+  public int coreIndexToSeries(int index) {
+    return index;
+  }
+
   /* @see IFormatReader#getSeries() */
   public int getSeries() {
     FormatTools.assertId(getCurrentFile(), true, 2);
