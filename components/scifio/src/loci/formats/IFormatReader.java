@@ -502,10 +502,10 @@ public interface IFormatReader extends IFormatHandler, IMetadataConfigurable {
   // -- Sub-resolution API methods --
 
   /** Returns the first core index corresponding to the specified series. */
-  int toCoreIndex(int series);
+  int seriesToCoreIndex(int series);
 
   /** Returns the series corresponding to the specified core index. */
-  int toSeries(int index);
+  int coreIndexToSeries(int index);
 
   /** Return the index into CoreMetadata of the current resolution/series. */
   int getCoreIndex();

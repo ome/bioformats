@@ -808,17 +808,17 @@ public abstract class FormatReader extends FormatHandler
   /* @see IFormatReader#getSeriesCount() */
   public int getSeriesCount() {
     FormatTools.assertId(currentId, true, 1);
-    return toSeries(core.length - 1) + 1;
+    return coreIndexToSeries(core.length - 1) + 1;
   }
 
   /* @see IFormatReader#setSeries(int) */
   public void setSeries(int no) {
-    coreIndex = toCoreIndex(no);
+    coreIndex = seriesToCoreIndex(no);
   }
 
   /* @see IFormatReader#getSeries() */
   public int getSeries() {
-    return toSeries(coreIndex);
+    return coreIndexToSeries(coreIndex);
   }
 
   /* @see IFormatReader#setGroupFiles(boolean) */
@@ -1100,7 +1100,7 @@ public abstract class FormatReader extends FormatHandler
 
   // -- Sub-resolution API methods --
 
-  public int toCoreIndex(int series)
+  public int seriesToCoreIndex(int series)
   {
     if (hasFlattenedResolutions()) {
       if (series < 0 || series >= core.length) {
@@ -1124,7 +1124,7 @@ public abstract class FormatReader extends FormatHandler
     return index;
   }
 
-  public int toSeries(int index)
+  public int coreIndexToSeries(int index)
   {
     if (index < 0 || index >= core.length) {
       throw new IllegalArgumentException("Invalid index: " + index);
@@ -1152,7 +1152,7 @@ public abstract class FormatReader extends FormatHandler
   public int getResolutionCount() {
     FormatTools.assertId(currentId, true, 1);
 
-    return core[toCoreIndex(getSeries())].resolutionCount;
+    return core[seriesToCoreIndex(getSeries())].resolutionCount;
   }
 
   /* @see IFormatReader#setResolution(int) */
