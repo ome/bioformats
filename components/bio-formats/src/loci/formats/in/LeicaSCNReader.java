@@ -572,12 +572,14 @@ class LeicaSCNHandler extends DefaultHandler {
 
     if (qName.equals("scn")) {
       String ns = attributes.getValue("xmlns");
-      if (ns == null ||
-          !(ns.equals("http://www.leica-microsystems.com/scn/2010/03/10") ||
-              ns.equals("http://www.leica-microsystems.com/scn/2010/10/01")))
-      {
+      if (ns == null) {
         throw new SAXException("Invalid Leica SCN XML");
       }
+      if (!(ns.equals("http://www.leica-microsystems.com/scn/2010/03/10") ||
+          ns.equals("http://www.leica-microsystems.com/scn/2010/10/01"))) {
+        System.out.println("Unknown Leica SCN XML schema: " + ns + "; this file may not be read correctly");
+      }
+
       valid = true;
       collections = new ArrayList<LeicaSCNHandler.ImageCollection>();
       seriesIndex = 0;
