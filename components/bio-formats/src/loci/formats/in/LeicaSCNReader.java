@@ -369,7 +369,7 @@ public class LeicaSCNReader extends BaseTiffReader {
         store.setChannelIlluminationType(IlluminationType.TRANSMITTED, s, 0);
       } else {
         store.setChannelIlluminationType(IlluminationType.OTHER, s, 0);
-        System.out.println("Unknown illumination source " + i.illumSource + "; please report this");
+        LOGGER.info("Unknown illumination source " + i.illumSource + "; please report this");
       }
 
       for (int q=0; q<core[s].imageCount; q++) {
@@ -419,6 +419,11 @@ public class LeicaSCNReader extends BaseTiffReader {
  * @author Roger Leigh <r.leigh at dundee.ac.uk>
  */
 class LeicaSCNHandler extends DefaultHandler {
+
+  // -- Constants --
+  /** Logger for this class. */
+  private static final Logger LOGGER =
+      LoggerFactory.getLogger(LeicaSCNReader.class);
 
   // -- Fields --
   boolean valid = false;
@@ -548,7 +553,7 @@ class LeicaSCNHandler extends DefaultHandler {
       currentImage.illumSource = cdata;
     } else {
       // Other or unknown tag; will be handled by endElement.
-      System.out.println("Unknown tag: " + qName);
+      LOGGER.info("Unknown tag: " + qName);
     }
     cdata = null;
 
@@ -577,7 +582,7 @@ class LeicaSCNHandler extends DefaultHandler {
       }
       if (!(ns.equals("http://www.leica-microsystems.com/scn/2010/03/10") ||
           ns.equals("http://www.leica-microsystems.com/scn/2010/10/01"))) {
-        System.out.println("Unknown Leica SCN XML schema: " + ns + "; this file may not be read correctly");
+        LOGGER.warn("Unknown Leica SCN XML schema: " + ns + "; this file may not be read correctly: please report this");
       }
 
       valid = true;
