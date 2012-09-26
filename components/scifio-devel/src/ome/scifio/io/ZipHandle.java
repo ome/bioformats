@@ -64,7 +64,7 @@ public class ZipHandle extends StreamHandle {
 
   private RandomAccessInputStream in;
   private ZipInputStream zip;
-  private ZipEntry entry;
+  private String entryName;
   private int entryCount;
 
   // -- Constructor --
@@ -75,7 +75,7 @@ public class ZipHandle extends StreamHandle {
 
     in = openStream(file);
     zip = new ZipInputStream(in);
-    entry = null;
+    entryName = null;
     entryCount = 0;
 
     // strip off .zip extension and directory prefix
@@ -89,10 +89,10 @@ public class ZipHandle extends StreamHandle {
     while (true) {
       ZipEntry ze = zip.getNextEntry();
       if (ze == null) break;
-      if (entry == null) entry = ze;
+      if (entryName == null) entryName = ze.getName();
       if (!matchFound && ze.getName().startsWith(innerFile)) {
         // found entry with matching name
-        entry = ze;
+        entryName = ze.getName();
         matchFound = true;
       }
       entryCount++;
@@ -114,7 +114,7 @@ public class ZipHandle extends StreamHandle {
 
     in = openStream(file);
     zip = new ZipInputStream(in);
-    this.entry = entry;
+    entryName = entry.getName();
     entryCount = 1;
 
     seekToEntry();
@@ -139,7 +139,7 @@ public class ZipHandle extends StreamHandle {
 
   /** Get the name of the backing Zip entry. */
   public String getEntryName() {
-    return entry.getName();
+    return entryName;
   }
 
   /** Returns the DataInputStream corresponding to the backing Zip entry. */
@@ -158,7 +158,7 @@ public class ZipHandle extends StreamHandle {
   public void close() throws IOException {
     super.close();
     zip = null;
-    entry = null;
+    entryName = null;
     if (in != null) in.close();
     in = null;
     entryCount = 0;
@@ -175,16 +175,16 @@ public class ZipHandle extends StreamHandle {
     }
     if (zip != null) zip.close();
     zip = new ZipInputStream(in);
-    if (entry != null) seekToEntry();
+    if (entryName != null) seekToEntry();
     stream = new DataInputStream(new BufferedInputStream(
-      zip, RandomAccessInputStream.MAX_OVERHEAD * 10));
-    stream.mark(RandomAccessInputStream.MAX_OVERHEAD * 10);
+      zip, RandomAccessInputStream.MAX_OVERHEAD));
+    stream.mark(RandomAccessInputStream.MAX_OVERHEAD);
   }
 
   // -- Helper methods --
 
   private void seekToEntry() throws IOException {
-    while (!entry.getName().equals(zip.getNextEntry().getName()));
+    while (!entryName.equals(zip.getNextEntry().getName()));
   }
 
   private void populateLength() throws IOException {
