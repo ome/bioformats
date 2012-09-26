@@ -545,20 +545,24 @@ public class FileStitcher extends ReaderWrapper {
     else coreIndex = no; // No subresolutions
   }
 
+  /* @see IFormatReader#getSeries() */
+  public int getSeries() {
+    FormatTools.assertId(getCurrentFile(), true, 2);
+    return reader.getSeries() > 0 ? reader.getSeries() : coreIndex; // No subresolutions
+  }
+
   /* @see IFormatReader#seriesToCoreIndex(int) */
   public int seriesToCoreIndex(int series) {
+    int n = reader.getSeriesCount();
+    if (n > 1 || noStitch) return reader.seriesToCoreIndex(series);
     return series;
   }
 
   /* @see IFormatReader#coreIndexToSeries(int) */
   public int coreIndexToSeries(int index) {
+    int n = reader.getSeriesCount();
+    if (n > 1 || noStitch) return reader.coreIndexToSeries(index);
     return index;
-  }
-
-  /* @see IFormatReader#getSeries() */
-  public int getSeries() {
-    FormatTools.assertId(getCurrentFile(), true, 2);
-    return reader.getSeries() > 0 ? reader.getSeries() : coreIndex; // No subresolutions
   }
 
   /* @see IFormatReader#setCoreIndex(int) */
