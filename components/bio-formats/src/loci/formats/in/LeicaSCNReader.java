@@ -444,9 +444,6 @@ class LeicaSCNHandler extends DefaultHandler {
   // not supported (and not present in the Zeiss TIFF format).
   public String cdata = new String();
 
-
-  //public ArrayList<Plane> planes = new ArrayList<Plane>();
-
   // -- ZeissTIFFHandler API methods --
 
   LeicaSCNHandler() {
