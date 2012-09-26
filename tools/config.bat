@@ -12,8 +12,8 @@ rem Set the NO_UPDATE_CHECK flag to skip the update check.
 rem set NO_UPDATE_CHECK=1
 
 rem If you are behind a proxy server, the host name and port must be set.
-set PROXY_HOST=
-set PROXY_PORT=
+rem set PROXY_HOST=
+rem set PROXY_PORT=
 
 rem If your CLASSPATH already includes the needed classes,
 rem you can set the SCIFIO_DEVEL environment variable to
