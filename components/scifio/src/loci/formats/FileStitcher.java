@@ -542,13 +542,13 @@ public class FileStitcher extends ReaderWrapper {
     FormatTools.assertId(getCurrentFile(), true, 2);
     int n = reader.getSeriesCount();
     if (n > 1 || noStitch) reader.setSeries(no);
-    else coreIndex = seriesToCoreIndex(no);
+    else coreIndex = no; // No subresolutions
   }
 
   /* @see IFormatReader#getSeries() */
   public int getSeries() {
     FormatTools.assertId(getCurrentFile(), true, 2);
-    return reader.getSeries() > 0 ? reader.getSeries() : coreIndexToSeries(coreIndex);
+    return reader.getSeries() > 0 ? reader.getSeries() : coreIndex; // No subresolutions
   }
 
   /* @see IFormatReader#setCoreIndex(int) */
