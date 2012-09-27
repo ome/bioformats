@@ -14,6 +14,14 @@ then
   exit 1
 fi
 
+# Set the max heap size.
+if [ -z "$SCIFIO_MAX_MEM" ]
+then
+  # Set a reasonable default max heap size.
+  SCIFIO_MAX_MEM="512m"
+fi
+JFLAGS="$JFLAGS -Xmx$SCIFIO_MAX_MEM"
+
 # Skip the update check if the NO_UPDATE_CHECK flag is set.
 if [ -n "$NO_UPDATE_CHECK" ]
 then

@@ -6,7 +6,8 @@ rem Running this command directly has no effect,
 rem but you can tweak the settings to your liking.
 
 rem Set the amount of RAM available to the command line tools.
-set JFLAGS=-Xmx512m
+rem Use "m" suffix for megabytes, "g" for gigabytes; e.g., 2g = 2GB.
+rem set SCIFIO_MAX_MEM=1g
 
 rem Set the NO_UPDATE_CHECK flag to skip the update check.
 rem set NO_UPDATE_CHECK=1

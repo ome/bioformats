@@ -14,6 +14,13 @@ if "%PROG%" == "" (
   goto end
 )
 
+rem Set the max heap size.
+if "%SCIFIO_MAX_MEM%" == "" (
+  rem Set a reasonable default max heap size.
+  set SCIFIO_MAX_MEM=512m
+)
+set JFLAGS=%JFLAGS% -Xmx%SCIFIO_MAX_MEM%
+
 rem Skip the update check if the NO_UPDATE_CHECK flag is set.
 if not "%NO_UPDATE_CHECK%" == "" (
   set JFLAGS=%JFLAGS% -Dbioformats_can_do_upgrade_check=false
