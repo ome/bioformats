@@ -227,6 +227,12 @@ Apache log4j
     Notes:     required by SLF4J implementation
     License:   Apache
 
+Native library loader
+    JAR file:  native-lib-loader-2.0-SNAPSHOT.jar
+    URL:       http://github.com/scijava/native-lib-loader
+    Notes:     required for loading native libraries
+    License:   BSD
+
 NetCDF
     JAR file:  netcdf-4.0.jar
     URL:       http://www.unidata.ucar.edu/software/netcdf-java/

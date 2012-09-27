@@ -50,6 +50,8 @@ import loci.common.services.ServiceException;
 import org.libjpegturbo.turbojpeg.TJ;
 import org.libjpegturbo.turbojpeg.TJDecompressor;
 
+import org.scijava.nativelib.NativeLibraryUtil;
+
 /**
  * <dl><dt><b>Source code:</b></dt>
  * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/services/JPEGTurboServiceImpl.java">Trac</a>,
@@ -268,6 +270,16 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
     // and here we actually decompress it...
 
     try {
+      boolean success = NativeLibraryUtil.loadNativeLibrary(TJ.class, "jpeg");
+
+      if (success) {
+        success = NativeLibraryUtil.loadNativeLibrary(TJ.class, "turbojpeg");
+      }
+
+      if (!success) {
+        throw new Exception("Failed to load native library");
+      }
+
       int pixelType = TJ.PF_RGB;
       int pixelSize = TJ.getPixelSize(pixelType);
 

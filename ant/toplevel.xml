@@ -838,7 +838,9 @@ Type "ant -p" for a list of targets.
       <sequential>
         <unjar src="${artifact.dir}/@{jar}" dest="${loci-tools.dir}">
           <patternset>
-            <exclude name="META-INF/**"/>
+            <exclude name="META-INF/*"/>
+            <exclude name="META-INF/maven/**"/>
+            <exclude name="META-INF/services/**"/>
           </patternset>
         </unjar>
       </sequential>
@@ -861,7 +863,9 @@ Type "ant -p" for a list of targets.
       <sequential>
         <unjar src="${artifact.dir}/@{jar}" dest="${ome-tools.dir}">
           <patternset>
-            <exclude name="META-INF/**"/>
+            <exclude name="META-INF/*"/>
+            <exclude name="META-INF/maven/**"/>
+            <exclude name="META-INF/services/**"/>
           </patternset>
         </unjar>
       </sequential>
