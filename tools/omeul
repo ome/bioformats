@@ -21,5 +21,5 @@ then
   echo "Please note that omeul is legacy software that "
   echo "has been discontinued. Use at your own risk."
 else
-  SCIFIO_PROG=loci.formats.ome.OMEWriter SCIFIO_CP="$SCIFIO_DIR/ome_tools.jar" "$SCIFIO_DIR/launch.sh" "$@"
+  SCIFIO_PROG=loci.ome.io.OMEWriter SCIFIO_CP="$SCIFIO_DIR/ome_tools.jar" "$SCIFIO_DIR/launch.sh" "$@"
 fi

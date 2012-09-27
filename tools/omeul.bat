@@ -20,7 +20,7 @@ if "%SCIFIO_DEVEL%" == "" (
 )
 
 :found
-set SCIFIO_PROG=loci.formats.ome.OMEWriter
+set SCIFIO_PROG=loci.ome.io.OMEWriter
 set SCIFIO_CP="%SCIFIO_DIR%\ome_tools.jar";"%SCIFIO_DIR%\ome-io.jar"
 call "%SCIFIO_DIR%\launch.bat" %*
 goto end
