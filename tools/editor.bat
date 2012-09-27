@@ -24,7 +24,7 @@ if "%SCIFIO_DEVEL%" == "" (
 )
 
 set SCIFIO_PROG=loci.ome.editor.MetadataEditor
-call "%SCIFIO_DIR%\launch.bat" %*
+call "%SCIFIO_DIR%\scifio.bat" %*
 goto end
 
 :missing

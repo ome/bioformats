@@ -1,6 +1,6 @@
 @echo off
 
-rem launch.bat: the batch file that actually launches a command line tool
+rem scifio.bat: the batch file that actually launches a command line tool
 
 set SCIFIO_DIR=%~dp0
 if "%SCIFIO_DIR:~-1%" == "\" set SCIFIO_DIR=%SCIFIO_DIR:~0,-1%

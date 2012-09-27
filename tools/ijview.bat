@@ -27,6 +27,6 @@ if "%SCIFIO_DEVEL%" == "" (
 )
 
 set SCIFIO_PROG=loci.plugins.in.Importer
-call "%SCIFIO_DIR%\launch.bat" %*
+call "%SCIFIO_DIR%\scifio.bat" %*
 
 :end

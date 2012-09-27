@@ -8,4 +8,4 @@ set SCIFIO_DIR=%~dp0
 if "%SCIFIO_DIR:~-1%" == "\" set SCIFIO_DIR=%SCIFIO_DIR:~0,-1%
 
 set SCIFIO_PROG=loci.formats.tools.PrintFormatTable
-call "%SCIFIO_DIR%\launch.bat" %*
+call "%SCIFIO_DIR%\scifio.bat" %*

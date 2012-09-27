@@ -32,4 +32,4 @@ then
 fi
 
 SCIFIO_PROG=loci.ome.io.OMEWriter \
-  SCIFIO_CP="$SCIFIO_CP" "$SCIFIO_DIR/launch.sh" "$@"
+  SCIFIO_CP="$SCIFIO_CP" "$SCIFIO_DIR/scifio.sh" "$@"

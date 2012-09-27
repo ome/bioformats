@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# launch.sh: the script that actually launches a command line tool
+# scifio.sh: the script that actually launches a command line tool
 
 SCIFIO_DIR=`dirname "$0"`
 

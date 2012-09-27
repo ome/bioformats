@@ -32,6 +32,6 @@ if "%SCIFIO_DEVEL%" == "" (
 )
 
 set SCIFIO_PROG=loci.ome.io.OMEWriter
-call "%SCIFIO_DIR%\launch.bat" %*
+call "%SCIFIO_DIR%\scifio.bat" %*
 
 :end

@@ -28,4 +28,4 @@ then
 fi
 
 SCIFIO_PROG=loci.plugins.in.Importer \
-  SCIFIO_CP="$SCIFIO_CP" "$SCIFIO_DIR/launch.sh" "$@"
+  SCIFIO_CP="$SCIFIO_CP" "$SCIFIO_DIR/scifio.sh" "$@"
