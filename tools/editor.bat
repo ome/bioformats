@@ -8,9 +8,6 @@ rem that has been discontinued. Use at your own risk.
 rem Required JARs: loci_tools.jar, ome-editor.jar,
 rem                ome-java.jar, ome-java-deprecated.jar
 
-rem JAR libraries must be in the same directory as this
-rem command line script for the command to function.
-
 set SCIFIO_DIR=%~dp0
 if "%SCIFIO_DIR:~-1%" == "\" set SCIFIO_DIR=%SCIFIO_DIR:~0,-1%
 
