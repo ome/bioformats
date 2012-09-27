@@ -33,23 +33,25 @@ rem Run the command!
 if not "%SCIFIO_DEVEL%" == "" (
   rem Developer environment variable set; launch with existing classpath.
   java %SCIFIO_FLAGS% %SCIFIO_PROG% %*
-) else (
-  rem Developer environment variable unset; add JAR libraries to classpath.
-  if exist "%SCIFIO_JAR_DIR%\bio-formats.jar" (
-    set SCIFIO_CP=%SCIFIO_CP%;"%SCIFIO_JAR_DIR%\bio-formats.jar"
-  ) else if exist "%SCIFIO_JAR_DIR%\loci_tools.jar" (
-    set SCIFIO_CP=%SCIFIO_CP%;"%SCIFIO_JAR_DIR%\loci_tools.jar"
-  ) else (
-    rem Libraries not found; issue an error.
-    echo Required JAR libraries not found. Please download:
-    echo   loci_tools.jar
-    echo from:
-    echo   http://www.loci.wisc.edu/bio-formats/downloads
-    echo and place in the same directory as the command line tools.
-    goto end
-  )
-  java %SCIFIO_FLAGS% -cp "%SCIFIO_DIR%";%SCIFIO_CP% %SCIFIO_PROG% %*
+  goto end
 )
+
+rem Developer environment variable unset; add JAR libraries to classpath.
+if exist "%SCIFIO_JAR_DIR%\bio-formats.jar" (
+  set SCIFIO_CP=%SCIFIO_CP%;"%SCIFIO_JAR_DIR%\bio-formats.jar"
+) else if exist "%SCIFIO_JAR_DIR%\loci_tools.jar" (
+  set SCIFIO_CP=%SCIFIO_CP%;"%SCIFIO_JAR_DIR%\loci_tools.jar"
+) else (
+  rem Libraries not found; issue an error.
+  echo Required JAR libraries not found. Please download:
+  echo   loci_tools.jar
+  echo from:
+  echo   http://www.loci.wisc.edu/bio-formats/downloads
+  echo and place in the same directory as the command line tools.
+  goto end
+)
+
+java %SCIFIO_FLAGS% -cp "%SCIFIO_DIR%";%SCIFIO_CP% %SCIFIO_PROG% %*
 
 :end
 rem Unset temporary SCIFIO environment variables.
