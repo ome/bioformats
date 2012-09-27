@@ -11,8 +11,6 @@ SCIFIO_DIR=`dirname "$0"`
 
 source "$SCIFIO_DIR/config.sh"
 
-SCIFIO_PROG=loci.ome.notes.Notes
-
 if [ -z "$SCIFIO_DEVEL" ] && [ ! -e "$SCIFIO_DIR/ome-notes.jar" ]
 then
   echo "Required JAR libraries not found. Please download:"
