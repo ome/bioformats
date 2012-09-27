@@ -92,6 +92,13 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
 
   private byte[] header;
 
+  // -- Constructor --
+
+  public JPEGTurboServiceImpl() {
+    NativeLibraryUtil.loadNativeLibrary(TJ.class, "jpeg");
+    NativeLibraryUtil.loadNativeLibrary(TJ.class, "turbojpeg");
+  }
+
   // -- JPEGTurboService API methods --
 
   public void setRestartMarkers(long[] markers) {
@@ -270,16 +277,6 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
     // and here we actually decompress it...
 
     try {
-      boolean success = NativeLibraryUtil.loadNativeLibrary(TJ.class, "jpeg");
-
-      if (success) {
-        success = NativeLibraryUtil.loadNativeLibrary(TJ.class, "turbojpeg");
-      }
-
-      if (!success) {
-        throw new Exception("Failed to load native library");
-      }
-
       int pixelType = TJ.PF_RGB;
       int pixelSize = TJ.getPixelSize(pixelType);
 
