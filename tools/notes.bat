@@ -16,8 +16,7 @@ if "%SCIFIO_DEVEL%" == "" (
   rem Developer environment variable unset; add JAR libraries to classpath.
   if exist "%SCIFIO_JAR_DIR%\ome-notes.jar" (
     set SCIFIO_CP="%SCIFIO_JAR_DIR%\ome-notes.jar"
-  )
-  else (
+  ) else (
     rem Libraries not found; issue an error.
     echo Required JAR libraries not found. Please download:
     echo   http://www.loci.wisc.edu/software/daily/ome-notes.jar

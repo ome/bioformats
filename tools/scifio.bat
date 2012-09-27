@@ -33,16 +33,13 @@ rem Run the command!
 if not "%SCIFIO_DEVEL%" == "" (
   rem Developer environment variable set; launch with existing classpath.
   java %SCIFIO_FLAGS% %SCIFIO_PROG% %*
-)
-else (
+) else (
   rem Developer environment variable unset; add JAR libraries to classpath.
   if exist "%SCIFIO_JAR_DIR%\bio-formats.jar" (
     set SCIFIO_CP=%SCIFIO_CP%;"%SCIFIO_JAR_DIR%\bio-formats.jar"
-  )
-  else if exist "%SCIFIO_JAR_DIR%\loci_tools.jar" (
+  ) else if exist "%SCIFIO_JAR_DIR%\loci_tools.jar" (
     set SCIFIO_CP=%SCIFIO_CP%;"%SCIFIO_JAR_DIR%\loci_tools.jar"
-  )
-  else (
+  ) else (
     rem Libraries not found; issue an error.
     echo Required JAR libraries not found. Please download:
     echo   loci_tools.jar

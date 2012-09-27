@@ -16,11 +16,9 @@ if "%SCIFIO_DEVEL%" == "" (
   rem Developer environment variable unset; add JAR libraries to classpath.
   if exist "%SCIFIO_JAR_DIR%\ome-io.jar" (
     set SCIFIO_CP="%SCIFIO_JAR_DIR%\ome-io.jar"
-  )
-  else if exist "%SCIFIO_JAR_DIR%\ome_tools.jar" (
+  ) else if exist "%SCIFIO_JAR_DIR%\ome_tools.jar" (
     set SCIFIO_CP="%SCIFIO_JAR_DIR%\ome_tools.jar"
-  )
-  else (
+  ) else (
     rem Libraries not found; issue an error.
     echo Required JAR libraries not found. Please download:
     echo   ome_tools.jar

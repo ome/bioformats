@@ -14,8 +14,7 @@ if "%SCIFIO_DEVEL%" == "" (
   rem Developer environment variable unset; add JAR libraries to classpath.
   if exist "%SCIFIO_JAR_DIR%\ij.jar" (
     set SCIFIO_CP="%SCIFIO_JAR_DIR%\ij.jar"
-  )
-  else (
+  ) else (
     rem Libraries not found; issue an error.
     echo Required JAR libraries not found. Please download:
     echo   ij.jar
@@ -26,8 +25,7 @@ if "%SCIFIO_DEVEL%" == "" (
   )
   if exist "%SCIFIO_JAR_DIR%\loci_plugins.jar" (
     set SCIFIO_CP=%SCIFIO_CP%;"%SCIFIO_JAR_DIR%\loci_plugins.jar"
-  )
-  else if not exist "%SCIFIO_JAR_DIR%\loci_tools.jar" (
+  ) else if not exist "%SCIFIO_JAR_DIR%\loci_tools.jar" (
     rem Libraries not found; issue an error.
     echo Required JAR libraries not found. Please download:
     echo   loci_tools.jar
