@@ -20,3 +20,18 @@
 # you can set the SCIFIO_DEVEL environment variable to
 # disable the required JAR library checks.
 #SCIFIO_DEVEL=1
+
+# Set the directory containing the JAR libraries.
+if [ -z "$SCIFIO_JAR_DIR" ]
+then
+  if [ -d "$SCIFIO_DIR/../artifacts" ]
+  then
+    # Scripts reside in a git working copy.
+    # Look for JARs in the artifacts directory.
+    SCIFIO_JAR_DIR="$SCIFIO_DIR/../artifacts"
+  else
+    # Scripts reside in a standalone distribution.
+    # Look for JARs in the same directory as the scripts.
+    SCIFIO_JAR_DIR="$SCIFIO_DIR"
+  fi
+fi

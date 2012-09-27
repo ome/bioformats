@@ -20,3 +20,16 @@ rem If your CLASSPATH already includes the needed classes,
 rem you can set the SCIFIO_DEVEL environment variable to
 rem disable the required JAR library checks.
 rem set SCIFIO_DEVEL=1
+
+rem Set the directory containing the JAR libraries.
+if "%SCIFIO_JAR_DIR%" == "" (
+  if exist "%SCIFIO_DIR%\..\artifacts" (
+    rem Batch files reside in a git working copy.
+    rem Look for JARs in the artifacts directory.
+    set SCIFIO_JAR_DIR=%SCIFIO_DIR%\..\artifacts
+  ) else (
+    rem Batch files reside in a standalone distribution.
+    rem Look for JARs in the same directory as the batch files.
+    set SCIFIO_JAR_DIR=%SCIFIO_DIR%
+  )
+)

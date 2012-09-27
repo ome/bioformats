@@ -30,28 +30,29 @@ rem Use any available proxy settings.
 set SCIFIO_FLAGS=%SCIFIO_FLAGS% -Dhttp.proxyHost=%PROXY_HOST% -Dhttp.proxyPort=%PROXY_PORT%
 
 rem Run the command!
-if "%SCIFIO_DEVEL%" == "" (
-  rem Developer environment variable unset; look for proper libraries.
-  if exist "%SCIFIO_DIR%\loci_tools.jar" goto found
-  if exist "%SCIFIO_DIR%\bio-formats.jar" goto found
-  goto missing
-) else (
+if not "%SCIFIO_DEVEL%" == "" (
   rem Developer environment variable set; launch with existing classpath.
   java %SCIFIO_FLAGS% %SCIFIO_PROG% %*
-  goto end
 )
-
-:found
-rem Library found; add JAR libraries to classpath and launch.
-java %SCIFIO_FLAGS% -cp "%SCIFIO_DIR%";"%SCIFIO_DIR%\bio-formats.jar";"%SCIFIO_DIR%\loci_tools.jar";%SCIFIO_CP% %SCIFIO_PROG% %*
-goto end
-
-:missing
-echo Required JAR libraries not found. Please download:
-echo   loci_tools.jar
-echo from:
-echo   http://www.loci.wisc.edu/bio-formats/downloads
-echo and place in the same directory as the command line tools.
+else (
+  rem Developer environment variable unset; add JAR libraries to classpath.
+  if exist "%SCIFIO_JAR_DIR%\bio-formats.jar" (
+    set SCIFIO_CP=%SCIFIO_CP%;"%SCIFIO_JAR_DIR%\bio-formats.jar"
+  )
+  else if exist "%SCIFIO_JAR_DIR%\loci_tools.jar" (
+    set SCIFIO_CP=%SCIFIO_CP%;"%SCIFIO_JAR_DIR%\loci_tools.jar"
+  )
+  else (
+    rem Libraries not found; issue an error.
+    echo Required JAR libraries not found. Please download:
+    echo   loci_tools.jar
+    echo from:
+    echo   http://www.loci.wisc.edu/bio-formats/downloads
+    echo and place in the same directory as the command line tools.
+    goto end
+  )
+  java %SCIFIO_FLAGS% -cp "%SCIFIO_DIR%";%SCIFIO_CP% %SCIFIO_PROG% %*
+)
 
 :end
 rem Unset temporary SCIFIO environment variables.

@@ -36,16 +36,22 @@ if [ -n "$SCIFIO_DEVEL" ]
 then
   # Developer environment variable set; launch with existing classpath.
   java $SCIFIO_FLAGS $SCIFIO_PROG "$@"
-elif [ -e "$SCIFIO_DIR/loci_tools.jar" ] || [ -e "$SCIFIO_DIR/bio-formats.jar" ]
-then
-  # Developer environment variable unset; add JAR libraries to classpath.
-  java $SCIFIO_FLAGS \
-    -cp "$SCIFIO_DIR:$SCIFIO_DIR/bio-formats.jar:$SCIFIO_DIR/loci_tools.jar:$SCIFIO_CP" $SCIFIO_PROG "$@"
 else
-  # Libraries not found; issue an error.
-  echo "Required JAR libraries not found. Please download:"
-  echo "  loci_tools.jar"
-  echo "from:"
-  echo "  http://www.loci.wisc.edu/bio-formats/downloads"
-  echo "and place in the same directory as the command line tools."
+  # Developer environment variable unset; add JAR libraries to classpath.
+  if [ -e "$SCIFIO_JAR_DIR/bio-formats.jar" ]
+  then
+    SCIFIO_CP="$SCIFIO_JAR_DIR/bio-formats.jar:$SCIFIO_CP"
+  elif [ -e "$SCIFIO_JAR_DIR/loci_tools.jar" ]
+  then
+    SCIFIO_CP="$SCIFIO_JAR_DIR/loci_tools.jar:$SCIFIO_CP"
+  else
+    # Libraries not found; issue an error.
+    echo "Required JAR libraries not found. Please download:"
+    echo "  loci_tools.jar"
+    echo "from:"
+    echo "  http://www.loci.wisc.edu/bio-formats/downloads"
+    echo "and place in the same directory as the command line tools."
+    exit 2
+  fi
+  java $SCIFIO_FLAGS -cp "$SCIFIO_DIR:$SCIFIO_CP" $SCIFIO_PROG "$@"
 fi
