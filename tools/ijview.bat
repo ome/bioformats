@@ -24,6 +24,18 @@ if "%SCIFIO_DEVEL%" == "" (
     echo and place in the same directory as the command line tools.
     goto end
   )
+  if exist "%SCIFIO_JAR_DIR%\loci_plugins.jar" (
+    set SCIFIO_CP=%SCIFIO_CP%;"%SCIFIO_JAR_DIR%\loci_plugins.jar"
+  )
+  else if not exist "%SCIFIO_JAR_DIR%\loci_tools.jar" (
+    rem Libraries not found; issue an error.
+    echo Required JAR libraries not found. Please download:
+    echo   loci_tools.jar
+    echo from:
+    echo   http://www.loci.wisc.edu/bio-formats/downloads
+    echo and place in the same directory as the command line tools.
+    goto end
+  )
 )
 
 set SCIFIO_PROG=loci.plugins.in.Importer
