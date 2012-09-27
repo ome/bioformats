@@ -55,7 +55,7 @@ public class NDPIReader extends BaseTiffReader {
 
   // -- Constants --
 
-  private static final int MAX_SIZE = 8192;
+  private static final int MAX_SIZE = 2048;
   private static final int MARKER_TAG = 65426;
   private static final int THUMB_TAG_2 = 65439;
   private static final int METADATA_TAG = 65449;
