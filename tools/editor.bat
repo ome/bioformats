@@ -8,21 +8,21 @@ rem                ome-java.jar, ome-java-deprecated.jar
 rem JAR libraries must be in the same directory as this
 rem command line script for the command to function.
 
-set DIR=%~dp0
-if "%DIR:~-1%" == "\" set DIR=%DIR:~0,-1%
+set SCIFIO_DIR=%~dp0
+if "%SCIFIO_DIR:~-1%" == "\" set SCIFIO_DIR=%SCIFIO_DIR:~0,-1%
 
-call "%DIR%\config.bat"
+call "%SCIFIO_DIR%\config.bat"
 
 if "%SCIFIO_DEVEL%" == "" (
   rem Developer environment variable unset; look for proper libraries.
-  if not exist "%DIR%\ome-editor.jar" goto missing
-  if not exist "%DIR%\ome-java.jar" goto missing
-  if not exist "%DIR%\ome-java-deprecated.jar" goto missing
+  if not exist "%SCIFIO_DIR%\ome-editor.jar" goto missing
+  if not exist "%SCIFIO_DIR%\ome-java.jar" goto missing
+  if not exist "%SCIFIO_DIR%\ome-java-deprecated.jar" goto missing
 )
 
-set PROG=loci.ome.editor.MetadataEditor
-set CPAUX="%DIR%\ome-editor.jar";"%DIR%\ome-java.jar";"%DIR%\ome-java-deprecated.jar"
-call "%DIR%\launch.bat" %*
+set SCIFIO_PROG=loci.ome.editor.MetadataEditor
+set SCIFIO_CP="%SCIFIO_DIR%\ome-editor.jar";"%SCIFIO_DIR%\ome-java.jar";"%SCIFIO_DIR%\ome-java-deprecated.jar"
+call "%SCIFIO_DIR%\launch.bat" %*
 goto end
 
 :missing

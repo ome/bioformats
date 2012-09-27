@@ -8,19 +8,19 @@ rem Required JARs: loci_tools.jar, ij.jar
 rem JAR libraries must be in the same directory as this
 rem command line script for the command to function.
 
-set DIR=%~dp0
-if "%DIR:~-1%" == "\" set DIR=%DIR:~0,-1%
+set SCIFIO_DIR=%~dp0
+if "%SCIFIO_DIR:~-1%" == "\" set SCIFIO_DIR=%SCIFIO_DIR:~0,-1%
 
-call "%DIR%\config.bat"
+call "%SCIFIO_DIR%\config.bat"
 
 if "%SCIFIO_DEVEL%" == "" (
   rem Developer environment variable unset; look for proper libraries.
-  if not exist "%DIR%\ij.jar" goto missing
+  if not exist "%SCIFIO_DIR%\ij.jar" goto missing
 )
 
-set PROG=loci.plugins.in.Importer
-set CPAUX="%DIR%\ij.jar"
-call "%DIR%\launch.bat" %*
+set SCIFIO_PROG=loci.plugins.in.Importer
+set SCIFIO_CP="%SCIFIO_DIR%\ij.jar"
+call "%SCIFIO_DIR%\launch.bat" %*
 goto end
 
 :missing

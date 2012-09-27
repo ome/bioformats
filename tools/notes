@@ -7,13 +7,13 @@
 # JAR libraries must be in the same directory as this
 # command line script for the command to function.
 
-DIR=`dirname "$0"`
+SCIFIO_DIR=`dirname "$0"`
 
-source "$DIR/config.sh"
+source "$SCIFIO_DIR/config.sh"
 
-PROG=loci.ome.notes.Notes
+SCIFIO_PROG=loci.ome.notes.Notes
 
-if [ -z "$SCIFIO_DEVEL" ] && [ ! -e "$DIR/ome-notes.jar" ]
+if [ -z "$SCIFIO_DEVEL" ] && [ ! -e "$SCIFIO_DIR/ome-notes.jar" ]
 then
   echo "Required JAR libraries not found. Please download:"
   echo "  http://www.loci.wisc.edu/software/daily/ome-notes.jar"
@@ -22,5 +22,5 @@ then
   echo "Please note that OME Notes is legacy software that "
   echo "has been discontinued. Use at your own risk."
 else
-  PROG=loci.ome.notes.Notes CPAUX="$DIR/ome-notes.jar" "$DIR/launch.sh" "$@"
+  SCIFIO_PROG=loci.ome.notes.Notes SCIFIO_CP="$SCIFIO_DIR/ome-notes.jar" "$SCIFIO_DIR/launch.sh" "$@"
 fi

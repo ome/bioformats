@@ -2,15 +2,15 @@
 
 # launch.sh: the script that actually launches a command line tool
 
-DIR=`dirname "$0"`
+SCIFIO_DIR=`dirname "$0"`
 
 # Include the master configuration file.
-source "$DIR/config.sh"
+source "$SCIFIO_DIR/config.sh"
 
 # Check that a command to run was specified.
-if [ -z "$PROG" ]
+if [ -z "$SCIFIO_PROG" ]
 then
-  echo The command to launch must be set in the PROG environment variable.
+  echo The command to launch must be set in the SCIFIO_PROG environment variable.
   exit 1
 fi
 
@@ -20,27 +20,27 @@ then
   # Set a reasonable default max heap size.
   SCIFIO_MAX_MEM="512m"
 fi
-JFLAGS="$JFLAGS -Xmx$SCIFIO_MAX_MEM"
+SCIFIO_FLAGS="-Xmx$SCIFIO_MAX_MEM"
 
 # Skip the update check if the NO_UPDATE_CHECK flag is set.
 if [ -n "$NO_UPDATE_CHECK" ]
 then
-  JFLAGS="$JFLAGS -Dbioformats_can_do_upgrade_check=false"
+  SCIFIO_FLAGS="$SCIFIO_FLAGS -Dbioformats_can_do_upgrade_check=false"
 fi
 
 # Use any available proxy settings.
-JFLAGS="$JFLAGS -Dhttp.proxyHost=$PROXY_HOST -Dhttp.proxyPort=$PROXY_PORT"
+SCIFIO_FLAGS="$SCIFIO_FLAGS -Dhttp.proxyHost=$PROXY_HOST -Dhttp.proxyPort=$PROXY_PORT"
 
 # Run the command!
 if [ -n "$SCIFIO_DEVEL" ]
 then
   # Developer environment variable set; launch with existing classpath.
-  java $JFLAGS $PROG "$@"
-elif [ -e "$DIR/loci_tools.jar" ] || [ -e "$DIR/bio-formats.jar" ]
+  java $SCIFIO_FLAGS $SCIFIO_PROG "$@"
+elif [ -e "$SCIFIO_DIR/loci_tools.jar" ] || [ -e "$SCIFIO_DIR/bio-formats.jar" ]
 then
   # Developer environment variable unset; add JAR libraries to classpath.
-  java $JFLAGS \
-    -cp "$DIR:$DIR/bio-formats.jar:$DIR/loci_tools.jar:$CPAUX" $PROG "$@"
+  java $SCIFIO_FLAGS \
+    -cp "$SCIFIO_DIR:$SCIFIO_DIR/bio-formats.jar:$SCIFIO_DIR/loci_tools.jar:$SCIFIO_CP" $SCIFIO_PROG "$@"
 else
   # Libraries not found; issue an error.
   echo "Required JAR libraries not found. Please download:"

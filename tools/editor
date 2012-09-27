@@ -8,14 +8,14 @@
 # JAR libraries must be in the same directory as this
 # command line script for the command to function.
 
-DIR=`dirname "$0"`
+SCIFIO_DIR=`dirname "$0"`
 
-source "$DIR/config.sh"
+source "$SCIFIO_DIR/config.sh"
 
 if [ -z "$SCIFIO_DEVEL" ] && \
-  ([ ! -e "$DIR/ome-editor.jar" ] || \
-  [ ! -e "$DIR/ome-java.jar" ] || \
-  [ ! -e "$DIR/ome-java-deprecated.jar" ])
+  ([ ! -e "$SCIFIO_DIR/ome-editor.jar" ] || \
+  [ ! -e "$SCIFIO_DIR/ome-java.jar" ] || \
+  [ ! -e "$SCIFIO_DIR/ome-java-deprecated.jar" ])
 then
   echo "Required JAR libraries not found. Please download:"
   echo "  http://www.loci.wisc.edu/software/daily/ome-editor.jar"
@@ -26,5 +26,5 @@ then
   echo "Please note that the OME Metadata Notebook is legacy software that "
   echo "has been discontinued. Use at your own risk."
 else
-  PROG=loci.ome.editor.MetadataEditor CPAUX="$DIR/ome-editor.jar:$DIR/ome-java.jar:$DIR/ome-java-deprecated.jar" "$DIR/launch.sh" "$@"
+  SCIFIO_PROG=loci.ome.editor.MetadataEditor SCIFIO_CP="$SCIFIO_DIR/ome-editor.jar:$SCIFIO_DIR/ome-java.jar:$SCIFIO_DIR/ome-java-deprecated.jar" "$SCIFIO_DIR/launch.sh" "$@"
 fi

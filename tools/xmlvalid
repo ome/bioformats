@@ -7,6 +7,6 @@
 # JAR libraries must be in the same directory as this
 # command line script for the command to function.
 
-DIR=`dirname "$0"`
+SCIFIO_DIR=`dirname "$0"`
 
-PROG=loci.formats.tools.XMLValidate "$DIR/launch.sh" "$@"
+SCIFIO_PROG=loci.formats.tools.XMLValidate "$SCIFIO_DIR/launch.sh" "$@"

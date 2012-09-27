@@ -7,22 +7,22 @@ rem Required JARs: loci_tools.jar, ome_tools.jar
 rem JAR libraries must be in the same directory as this
 rem command line script for the command to function.
 
-set DIR=%~dp0
-if "%DIR:~-1%" == "\" set DIR=%DIR:~0,-1%
+set SCIFIO_DIR=%~dp0
+if "%SCIFIO_DIR:~-1%" == "\" set SCIFIO_DIR=%SCIFIO_DIR:~0,-1%
 
-call "%DIR%\config.bat"
+call "%SCIFIO_DIR%\config.bat"
 
 if "%SCIFIO_DEVEL%" == "" (
   rem Developer environment variable unset; look for proper libraries.
-  if exist "%DIR%\ome_tools.jar" goto found
-  if exist "%DIR%\ome-io.jar" goto found
+  if exist "%SCIFIO_DIR%\ome_tools.jar" goto found
+  if exist "%SCIFIO_DIR%\ome-io.jar" goto found
   goto missing
 )
 
 :found
-set PROG=loci.formats.ome.OMEWriter
-set CPAUX="%DIR%\ome_tools.jar";"%DIR%\ome-io.jar"
-call "%DIR%\launch.bat" %*
+set SCIFIO_PROG=loci.formats.ome.OMEWriter
+set SCIFIO_CP="%SCIFIO_DIR%\ome_tools.jar";"%SCIFIO_DIR%\ome-io.jar"
+call "%SCIFIO_DIR%\launch.bat" %*
 goto end
 
 :missing
