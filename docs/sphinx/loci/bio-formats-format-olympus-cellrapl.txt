@@ -1,0 +1,72 @@
+Olympus CellR/APL
+=================
+
+--------------
+
+Extensions: 
+
+.apl, .mtb, .tnb, .tif, .obsep
+
+Owner: 
+
+`Olympus <http://www.olympus.com/>`_
+
+Support
+
+Export: 
+
+.. figure:: /files/loci/images/crystal-no.png
+   :align: center
+   :alt:
+
+Supported Metadata Fields: 
+
+`APL Reader <http://dev.loci.wisc.edu/trac/software/wiki/APLReader>`_
+
+We currently have: 
+
+-  A few CellR datasets
+
+We'd like to have: 
+
+-  More CellR datasets
+-  A CellR specification document
+
+Ratings
+
+Pixels: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Metadata: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Openness: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Presence: 
+
+.. figure:: /files/loci/images/crystal-1.png
+   :align: center
+   :alt: 1 - Poor
+
+Utility: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Additional Information
+
+Source Code: 
+
+`APL
+Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/APLReader.java>`_

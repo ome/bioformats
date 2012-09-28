@@ -1,0 +1,34 @@
+Text
+====
+
+--------------
+
+Extensions: 
+
+.txt
+
+Support
+
+Export: 
+
+.. figure:: /files/loci/images/crystal-no.png
+   :align: center
+   :alt:
+
+Ratings
+
+Pixels: 
+
+.. figure:: /files/loci/images/crystal-3.png
+   :align: center
+   :alt: 3 - Good
+
+Additional Information
+
+Source Code: 
+
+`TextReader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/TextReader.java>`_
+
+Notes: 
+
+Reads tabular pixel data produced by a variety of software.

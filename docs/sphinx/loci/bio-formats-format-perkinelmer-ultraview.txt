@@ -1,0 +1,86 @@
+PerkinElmer UltraView
+=====================
+
+--------------
+
+Extensions: 
+
+.tif, .2, .3, .4, ...
+
+Owner: 
+
+`PerkinElmer <http://www.perkinelmer.com/>`_
+
+Support
+
+Export: 
+
+.. figure:: /files/loci/images/crystal-no.png
+   :align: center
+   :alt:
+
+Supported Metadata Fields: 
+
+`PerkinElmer
+Reader <http://dev.loci.wisc.edu/trac/software/wiki/PerkinElmerReader>`_
+
+We currently have: 
+
+-  Several PerkinElmer datasets
+-  Some `Bio-Formats developer
+   notes <http://dev.loci.wisc.edu/svn/software/trunk/components/bio-formats/doc/perkin-elmer.html>`_
+   for PerkinElmer
+
+Ratings
+
+Pixels: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Metadata: 
+
+.. figure:: /files/loci/images/crystal-3.png
+   :align: center
+   :alt: 3 - Good
+
+Openness: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Presence: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Utility: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Additional Information
+
+Source Code: 
+
+`PerkinElmer
+Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/PerkinElmerReader.java>`_
+
+Notes: 
+
+Other associated extensions include: .tim, .zpo, .csv, .htm, .cfg, .ano,
+.rec
+
+Commercial applications that support this format include:
+
+-  `Bitplane Imaris <http://bitplane.com/>`_
+-  `Image-Pro Plus <http://www.mediacy.com/>`_
+
+See Also: 
+
+`PerkinElmer UltraView system
+overview <http://las.perkinelmer.com/content/livecellimaging/ultraview.asp>`_

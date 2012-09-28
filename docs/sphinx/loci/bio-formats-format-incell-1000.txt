@@ -1,0 +1,73 @@
+InCell 1000
+===========
+
+--------------
+
+Extensions: 
+
+.xdce, .tif
+
+Developer: 
+
+`GE <http://gelifesciences.com/>`_
+
+Support
+
+Export: 
+
+.. figure:: /files/loci/images/crystal-no.png
+   :align: center
+   :alt:
+
+Supported Metadata Fields: 
+
+`InCell
+Reader <http://dev.loci.wisc.edu/trac/software/wiki/InCellReader>`_
+
+We currently have: 
+
+-  A few InCell 1000 datasets
+
+We'd like to have: 
+
+-  An InCell 1000 specification document
+-  More InCell 1000 datasets
+
+Ratings
+
+Pixels: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Metadata: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Openness: 
+
+.. figure:: /files/loci/images/crystal-3.png
+   :align: center
+   :alt: 3 - Good
+
+Presence: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Utility: 
+
+.. figure:: /files/loci/images/crystal-3.png
+   :align: center
+   :alt: 3 - Good
+
+Additional Information
+
+Source Code: 
+
+`InCell
+Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/InCellReader.java>`_

@@ -1,0 +1,77 @@
+WA-TOP
+======
+
+--------------
+
+Extensions: 
+
+.wat
+
+Developer: 
+
+WA Technology
+
+Owner: 
+
+`Oxford Instruments <http://www.oxinst.com>`_
+
+Support
+
+Export: 
+
+.. figure:: /files/loci/images/crystal-no.png
+   :align: center
+   :alt:
+
+Supported Metadata Fields: 
+
+`WATOPReader <http://dev.loci.wisc.edu/trac/software/wiki/WATOPReader>`_
+
+We currently have: 
+
+- Pascal code that can read WA-TOP files (from ImageSXM)
+- a few WA-TOP files
+
+We'd like to have: 
+
+- a WA-TOP file format specification document
+
+- more WA-TOP files
+
+Ratings
+
+Pixels: 
+
+.. figure:: /files/loci/images/crystal-3.png
+   :align: center
+   :alt: 3 - Good
+
+Metadata: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Openness: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Presence: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Utility: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Additional Information
+
+Source Code: 
+
+`WATOPReader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/WATOPReader.java>`_

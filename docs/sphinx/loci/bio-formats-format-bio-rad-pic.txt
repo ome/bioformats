@@ -1,0 +1,90 @@
+Bio-Rad PIC
+===========
+
+--------------
+
+Extensions: 
+
+.pic, .raw, .xml
+
+Developer: 
+
+Bio-Rad
+
+Owner: 
+
+`Carl Zeiss, Inc. <http://www.zeiss.com/>`_
+
+Support
+
+Export: 
+
+.. figure:: /files/loci/images/crystal-no.png
+   :align: center
+   :alt:
+
+Supported Metadata Fields: 
+
+`Bio-Rad
+Reader <http://dev.loci.wisc.edu/trac/software/wiki/BioRadReader>`_
+
+Freely Available Software: 
+
+`Bio-Rad PIC reader plugin for
+ImageJ <http://rsb.info.nih.gov/ij/plugins/biorad.html>`_
+
+We currently have: 
+
+-  a PIC specification document (v4.5, in PDF)
+-  an older PIC specification document (v4.2, from 1996 Dec 16, in DOC)
+-  a large number of PIC datasets
+-  the ability to produce new datasets
+
+Ratings
+
+Pixels: 
+
+.. figure:: /files/loci/images/crystal-5.png
+   :align: center
+   :alt: 5 - Outstanding
+
+Metadata: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Openness: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Presence: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Utility: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Additional Information
+
+Source Code: 
+
+`Bio-Rad
+Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/BioRadReader.java>`_
+
+Notes: 
+
+Commercial applications that support this format include:
+
+-  `Bitplane Imaris <http://bitplane.com/>`_
+-  `SVI Huygens <http://svi.nl/>`_
+
+**Please note that while we have specification documents for this
+format, we are not able to distribute them to third parties.**

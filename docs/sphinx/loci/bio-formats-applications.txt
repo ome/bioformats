@@ -1,0 +1,79 @@
+Applications
+============
+
+Many software packages can use Bio-Formats to read and write microscopy
+formats:
+
+Libraries and scripting
+
+`Command line tools </bio-formats/command-line-tools>`_
+
+`FARSIGHT </bio-formats/farsight>`_
+
+`i3dcore </bio-formats/i3dcore>`_
+
+`ImgLib </bio-formats/imglib>`_
+
+`ITK </bio-formats/itk>`_
+
+ 
+
+`Qu for MATLAB </bio-formats/qu-matlab>`_
+
+`Subimager </bio-formats/subimager>`_
+
+ 
+
+Numerical data processing
+
+`IDL </bio-formats/idl>`_
+
+`KNIME </bio-formats/knime>`_
+
+ 
+
+`MATLAB </bio-formats/matlab>`_
+
+`VisAD </bio-formats/visad>`_
+
+ 
+
+Visualization and analysis
+
+`Bitplane Imaris </bio-formats/bitplane-imaris>`_
+
+`CellProfiler </bio-formats/cellprofiler>`_
+
+`Comstat2 </bio-formats/comstat2>`_
+
+`Endrov </bio-formats/endrov>`_
+
+`Fiji </bio-formats/fiji>`_
+
+`FocalPoint </bio-formats/focalpoint>`_
+
+`Graphic Converter </bio-formats/graphic-converter>`_
+
+`Icy <bio-formats/icy>`_
+
+`ImageJ </bio-formats/imagej>`_
+
+`Iqm </bio-formats/iqm>`_
+
+`Macnification </bio-formats/macnification>`_
+
+`MIPAV </bio-formats/mipav>`_
+
+`V3D </bio-formats/v3d>`_
+
+`VisBio </bio-formats/visbio>`_
+
+`XuvTools </bio-formats/xuvtools>`_
+
+Image servers
+
+`BISQUE </bio-formats/bisque>`_
+
+`OME server </bio-formats/ome-server>`_
+
+`OMERO </bio-formats/omero>`_

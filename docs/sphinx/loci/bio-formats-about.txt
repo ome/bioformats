@@ -1,0 +1,147 @@
+About
+=====
+
+The primary goal of Bio-Formats is to facilitate the exchange of
+microscopy data between both different software packages and different
+organizations. It accomplishes this goal by converting proprietary
+microscopy data into an open standard called the `OME data
+model <http://genomebiology.com/2005/6/5/R47>`_, particularly into the
+`OME-TIFF <http://ome-xml.org/wiki/OmeTiff>`_ file format.
+
+We believe the standardization of microscopy metadata to a common
+structure is of vital importance to the community. See **The benefits of
+standardization** below for a detailed rationale, or **A brief overview
+of metadata** further down for more information on how Bio-Formats
+processes metadata.
+
+The benefits of standardization
+-------------------------------
+
+The adoption of standards in the microscopy community—and within
+computing in general—is of massive benefit to both individual scientists
+and commercial and academic organizations. A brief `article on the
+benefits of
+standardization <http://www.thinkstandards.net/benefits.html>`_ from
+`thinkstandards.net <http://www.thinkstandards.net/>`_ provides an
+excellent summary:
+
+    An extensive study initiated by DIN (German Standards Institute) and
+    the German Federal Ministry of Economic Affairs and Technology in
+    1997 was completed in May 2000. The study provides detailed insight
+    into the economic benefits for standards—to businesses and to the
+    economy. Highlights of the study include:
+
+    -  Standards contribute more to economic growth than patents and
+       licenses
+    -  Standards play a strategic significance to companies
+    -  Companies that participate actively in standards work have a head
+       start on their competitors in adapting to market demands
+    -  Research risks and development costs are reduced for companies
+       contributing to the standardization process
+    -  Business that are actively involved in standards work more
+       frequently reap short and long term benefits with regard to costs
+       and competitive status than those who do not participate
+    -  Participating in standards development enables one to anticipate
+       technology standardization thereby facilitating one's products
+       progress simultaneously with technology
+    -  Leaders in technology should become more involved in standards
+    -  Standards are a positive stimulus for innovation
+    -  Standards are internationally respected
+
+You can read more about DIN's study in their online article, `Success
+with
+Standards <http://www.din.de/sbe/success_through_standardization>`_. In
+particular, DIN's `Frequently Asked
+Questions <http://www.din.de/cmd?level=tpl-rubrik&menuid=47566&cmsareaid=47566&menurubricid=55343&cmsrubid=55343&languageid=en#>`_
+page addresses some important questions:
+
+-  `What are the economic benefits of
+   standardization? <http://www.din.de/cmd?level=tpl-rubrik&menuid=47566&cmsareaid=47566&menurubricid=55343&cmsrubid=55343&languageid=en#Economic%20benefits>`_
+-  `How do standards help
+   businesses? <http://www.din.de/cmd?level=tpl-rubrik&menuid=47566&cmsareaid=47566&menurubricid=55343&cmsrubid=55343&languageid=en#How%20standards%20help%20businesses>`_
+-  `How do standards help
+   consumers? <http://www.din.de/cmd?level=tpl-rubrik&menuid=47566&cmsareaid=47566&menurubricid=55343&cmsrubid=55343&languageid=en#How%20standards%20help%20consumers>`_
+-  `Do standards get in the way of
+   innovation? <http://www.din.de/cmd?level=tpl-rubrik&menuid=47566&cmsareaid=47566&menurubricid=55343&cmsrubid=55343&languageid=en#Get%20in%20way%20of%20Innovation>`_
+
+You can also read DIN's full publication, `Economic Benefits of
+Standardization <http://www.din.de/sixcms_upload/media/2896/economic_benefits_standardization.pdf>`_,
+in PDF format.
+
+Many other articles have been published by various organizations
+documenting the advantages of standardization:
+
+-  IBM: `Standards and
+   reuse <http://www.ibm.com/developerworks/rational/library/2277.html>`_
+-  Dell: `Standardization: The Secret to ITT
+   Leverage <http://www.dell.com/downloads/global/solutions/idc_standard.pdf>`_
+   (PDF)
+-  BSI Group: `What are the benefits of
+   standards? <http://www.bsigroup.com/en/Standards-and-Publications/About-standards/What-are-the-benefits-of-standards/>`_
+-  ASTM International: `The Economic Benefits of
+   Standardization <http://www.astm.org/BIZLINK/BusLinkA01/DIN.html>`_
+-  Nah Soo Hoe's FOSS book on Open Standards: `Importance and Benefits
+   of Open
+   Standards <http://en.wikibooks.org/wiki/FOSS_Open_Standards/Importance_and_Benefits_of_Open_Standards>`_
+
+A brief overview of metadata
+----------------------------
+
+Pixels in microscopy are almost always very straightforward, stored on
+evenly spaced rectangular grids. It is the metadata—details about the
+acquisition, experiment, user, and other information—that can be
+complex. Using the OME data model enables applications to support a
+single metadata format, rather than the multitude of proprietary formats
+in the wild today. In addition, those that directly leverage the
+Bio-Formats library can transparently support dozens of proprietary
+formats with no extra effort per format.
+
+Every file format has a distinct set of metadata, stored differently.
+Bio-Formats processes and converts each format's metadata structures
+into a standard form called the `OME data
+model <http://genomebiology.com/2005/6/5/R47>`_, according to the
+`OME-XML <http://ome-xml.org/>`_ specification. We have defined an open
+exchange format called `OME-TIFF <http://ome-xml.org/wiki/OmeTiff>`_
+that stores its metadata as OME-XML. Any software package that supports
+OME-TIFF is also compatible with the dozens of formats listed on the
+Bio-Formats page, because you can use Bio-Formats to convert your files
+to OME-TIFF format.
+
+To facilitate support of OME-XML, we have created a `library in
+Java <http://ome-xml.org/wiki/OmeXmlJava>`_ for reading and writing
+OME-XML metadata.
+
+There are three types of metadata in Bio-Formats, which we call core
+metadata, original metadata, and OME metadata.
+
+#. "Core metadata" only includes those things necessary to understand
+   the basic structure of the pixels: image resolution; number of focal
+   planes, time points, channels, and other dimensional axes; byte
+   order; dimension order; color arrangement (RGB, indexed color or
+   separate channels); and thumbnail resolution.
+#. "Original metadata" corresponds to information specific to a
+   particular file format. These fields are key/value pairs in the
+   original format, with no guarantee of cross-format naming consistency
+   or compatibility. Nomenclature often differs between formats, as each
+   vendor is free to use their own terminology.
+#. "OME metadata" is information from #1 and #2 converted by Bio-Formats
+   into the OME data model. **Performing this conversion is the primary
+   purpose of Bio-Formats.** Bio-Formats uses its ability to convert
+   proprietary metadata into OME-XML as part of its integration with the
+   OME and OMERO servers— essentially, they are able to populate their
+   databases in a structured way because Bio-Formats sorts the metadata
+   into the proper places. This conversion is nowhere near complete or
+   bug free, but we are constantly working to improve it. We would
+   greatly appreciate any and all input from users concerning missing or
+   improperly converted metadata fields.
+
+We are working on a "Bio-Formats metadata guide" document detailing
+these three kinds of metadata and how the Bio-Formats metadata API
+works. Although it is far from complete, with many unwritten sections,
+you can find a `draft in the Git
+repository <http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/doc/metadata-guide.txt>`_.
+
+We have tried to provide a lot of developer documentation on this site
+regarding how to use the Bio-Formats library, and link it all in a
+cohesive way from the Bio-Formats page. If you find that anything is
+missing or unclear, please do not hesitate to contact us.

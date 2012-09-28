@@ -1,0 +1,83 @@
+Improvision TIFF
+================
+
+--------------
+
+Extensions: 
+
+.tif
+
+Developer: 
+
+`Improvision <http://www.improvision.com/>`_
+
+Owner: 
+
+`PerkinElmer <http://www.perkinelmer.com/>`_
+
+Support
+
+Export: 
+
+.. figure:: /files/loci/images/crystal-no.png
+   :align: center
+   :alt:
+
+Supported Metadata Fields: 
+
+`Improvision TIFF
+Reader <http://dev.loci.wisc.edu/trac/software/wiki/ImprovisionTiffReader>`_
+
+We currently have: 
+
+-  an Improvision TIFF specification document
+-  a few Improvision TIFF datasets
+
+Ratings
+
+Pixels: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Metadata: 
+
+.. figure:: /files/loci/images/crystal-5.png
+   :align: center
+   :alt: 5 - Outstanding
+
+Openness: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Presence: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Utility: 
+
+.. figure:: /files/loci/images/crystal-3.png
+   :align: center
+   :alt: 3 - Good
+
+Additional Information
+
+Source Code: 
+
+`Improvision TIFF
+Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/ImprovisionTiffReader.java>`_
+
+Notes: 
+
+**Please note that while we have specification documents for this
+format, we are not able to distribute them to third parties.**
+
+See Also: 
+
+`Openlab software
+overview <http://www.improvision.com/products/openlab/>`_

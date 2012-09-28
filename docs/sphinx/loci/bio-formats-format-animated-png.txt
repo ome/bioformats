@@ -1,0 +1,80 @@
+Animated PNG
+============
+
+--------------
+
+Extensions: 
+
+.png
+
+Developer: 
+
+`The Animated PNG Project <http://www.animatedpng.com/>`_
+
+Support
+
+Export: 
+
+.. figure:: /files/loci/images/crystal-yes.png
+   :align: center
+   :alt:
+
+Supported Metadata Fields: 
+
+`APNGReader <http://dev.loci.wisc.edu/trac/software/wiki/APNGReader>`_
+
+Freely Available Software: 
+
+`Firefox 3 <http://www.mozilla.com/firefox>`_
+
+Freely Available Software: 
+
+`Opera 9.5 <http://www.opera.com/download>`_
+
+Freely Available Software: 
+
+`KSquirrel <http://ksquirrel.sourceforge.net/download.php>`_
+
+We currently have: 
+
+-  `a specification
+   document <http://wiki.mozilla.org/APNG_Specification>`_
+-  several APNG files
+
+Ratings
+
+Pixels: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Metadata: 
+
+.. figure:: /files/loci/images/crystal-5.png
+   :align: center
+   :alt: 5 - Outstanding
+
+Openness: 
+
+.. figure:: /files/loci/images/crystal-5.png
+   :align: center
+   :alt: 5 - Outstanding
+
+Presence: 
+
+.. figure:: /files/loci/images/crystal-3.png
+   :align: center
+   :alt: 3 - Good
+
+Utility: 
+
+.. figure:: /files/loci/images/crystal-1.png
+   :align: center
+   :alt: 1 - Poor
+
+Additional Information
+
+Source Code: 
+
+`APNGReader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/APNGReader.java>`_

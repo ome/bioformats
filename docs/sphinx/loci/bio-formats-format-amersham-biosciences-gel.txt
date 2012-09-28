@@ -1,0 +1,85 @@
+Amersham Biosciences Gel
+========================
+
+--------------
+
+Extensions: 
+
+.gel
+
+Developer: 
+
+Molecular Dynamics
+
+Owner: 
+
+`GE Healthcare Life Sciences <http://www.gelifesciences.com/>`_
+
+Support
+
+Export: 
+
+.. figure:: /files/loci/images/crystal-no.png
+   :align: center
+   :alt:
+
+Supported Metadata Fields: 
+
+`GelReader <http://dev.loci.wisc.edu/trac/software/wiki/GelReader>`_
+
+Sample Datasets: 
+
+`SampleImages.zip <http://strc.herts.ac.uk/bio/BioArray/gelimages/SampleImages.zip>`_
+
+We currently have: 
+
+-  a GEL specification document (Revision 2, from 2001 Mar 15, in PDF)
+-  a few GEL datasets
+
+Ratings
+
+Pixels: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Metadata: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Openness: 
+
+.. figure:: /files/loci/images/crystal-3.png
+   :align: center
+   :alt: 3 - Good
+
+Presence: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Utility: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Additional Information
+
+Source Code: 
+
+`GelReader.java <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/GelReader.java>`_
+
+Notes: 
+
+**Please note that while we have specification documents for this
+format, we are not able to distribute them to third parties.**
+
+See Also: 
+
+`GEL Technical
+Overview <http://www.awaresystems.be/imaging/tiff/tifftags/docs/gel.html>`_

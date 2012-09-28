@@ -1,0 +1,89 @@
+GIF (Graphics Interchange Format)
+=================================
+
+--------------
+
+Extensions: 
+
+.gif
+
+Developer: 
+
+`CompuServe <http://www.compuserve.com/>`_
+
+Owner: 
+
+`Unisys <http://www.unisys.com/>`_
+
+Support
+
+Export: 
+
+.. figure:: /files/loci/images/crystal-no.png
+   :align: center
+   :alt:
+
+Supported Metadata Fields: 
+
+`GIF Reader <http://dev.loci.wisc.edu/trac/software/wiki/GIFReader>`_
+
+Freely Available Software: 
+
+`Animated GIF Reader plugin for
+ImageJ <http://rsb.info.nih.gov/ij/plugins/agr.html>`_
+
+Freely Available Software: 
+
+`GIF Stack Writer plugin for
+ImageJ <http://rsb.info.nih.gov/ij/plugins/gif-stack-writer.html>`_
+
+Sample Datasets: 
+
+`GIF Animations <http://www.gifanimations.com/>`_
+
+We currently have: 
+
+-  A `GIF specification
+   document <http://tronche.com/computer-graphics/gif/>`_ (Version 89a,
+   from 1990, in HTML)
+-  Numerous GIF datasets
+-  The ability to produce new datasets
+
+Ratings
+
+Pixels: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Metadata: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Openness: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Presence: 
+
+.. figure:: /files/loci/images/crystal-5.png
+   :align: center
+   :alt: 5 - Outstanding
+
+Utility: 
+
+.. figure:: /files/loci/images/crystal-1.png
+   :align: center
+   :alt: 1 - Poor
+
+Additional Information
+
+Source Code: 
+
+`GIF
+Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/GIFReader.java>`_

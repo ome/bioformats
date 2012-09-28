@@ -1,0 +1,80 @@
+LIM (Laboratory Imaging/Nikon)
+==============================
+
+--------------
+
+Extensions: 
+
+.lim
+
+Owner: 
+
+`Laboratory Imaging <http://www.lim.cz/>`_
+
+Support
+
+Export: 
+
+.. figure:: /files/loci/images/crystal-no.png
+   :align: center
+   :alt:
+
+Supported Metadata Fields: 
+
+`LIM Reader <http://dev.loci.wisc.edu/trac/software/wiki/LIMReader>`_
+
+We currently have: 
+
+-  Several LIM files
+-  The ability to produce more LIM files
+
+We'd like to have: 
+
+-  A LIM specification document
+
+Ratings
+
+Pixels: 
+
+.. figure:: /files/loci/images/crystal-3.png
+   :align: center
+   :alt: 3 - Good
+
+Metadata: 
+
+.. figure:: /files/loci/images/crystal-1.png
+   :align: center
+   :alt: 1 - Poor
+
+Openness: 
+
+.. figure:: /files/loci/images/crystal-1.png
+   :align: center
+   :alt: 1 - Poor
+
+Presence: 
+
+.. figure:: /files/loci/images/crystal-1.png
+   :align: center
+   :alt: 1 - Poor
+
+Utility: 
+
+.. figure:: /files/loci/images/crystal-1.png
+   :align: center
+   :alt: 1 - Poor
+
+Additional Information
+
+Source Code: 
+
+`LIM
+Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/LIMReader.java>`_
+
+Notes: 
+
+Bio-Formats supports only uncompressed LIM.
+
+Commercial applications that support LIM include:
+
+-  `NIS Elements <http://www.nis-elements.com/>`_

@@ -1,0 +1,44 @@
+embryo2
+=======
+
+--------------
+
+`|image0| <files/loci/images/software/embryo2.jpg>`_
+
+Sample Data
+
+Format: 
+
+Openlab LIFF
+
+Dimensions (pixels): 
+
+672 x 512
+
+File size: 
+
+59,092,227 bytes
+
+33 time points
+
+3 channels
+
+Download: 
+
+`embryo2.zip <http://www.loci.wisc.edu/files/software/data/embryo2.zip>`_
+
+Contributor
+
+Contributed by: 
+
+Kevin O'Connell
+
+Department: 
+
+`NIDDK <http://www2.niddk.nih.gov/>`_
+
+Institution: 
+
+`National Institutes of Health <http://www.nih.gov/>`_
+
+.. |image0| image:: files/loci/imagecache/thumbnail/images/software/embryo2.jpg

@@ -1,0 +1,86 @@
+Alicona 3D
+==========
+
+--------------
+
+Extensions: 
+
+.al3d
+
+Owner: 
+
+`Alicona Imaging <http://www.alicona.com/>`_
+
+Support
+
+Export: 
+
+.. figure:: /files/loci/images/crystal-no.png
+   :align: center
+   :alt:
+
+Officially Supported Versions: 
+
+1.0
+
+Supported Metadata Fields: 
+
+`Alicona
+Reader <http://dev.loci.wisc.edu/trac/software/wiki/AliconaReader>`_
+
+We currently have: 
+
+-  an `AL3D specification
+   document <http://www.alicona.com/upload/pdf/AL3DFormat.pdf>`_ (v1.0,
+   from 2003, in PDF)
+-  only one AL3D dataset
+
+We'd like to have: 
+
+-  more AL3D datasets (Z series, T series, 16-bit)
+
+Ratings
+
+Pixels: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Metadata: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Openness: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Presence: 
+
+.. figure:: /files/loci/images/crystal-1.png
+   :align: center
+   :alt: 1 - Poor
+
+Utility: 
+
+.. figure:: /files/loci/images/crystal-3.png
+   :align: center
+   :alt: 3 - Good
+
+Additional Information
+
+Source Code: 
+
+`Alicona
+Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/AliconaReader.java>`_
+
+Notes: 
+
+Known deficiencies:
+
+-  Support for 16-bit AL3D images is present, but has never been tested.
+-  Texture data is currently ignored.

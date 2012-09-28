@@ -1,0 +1,43 @@
+qdna1
+=====
+
+--------------
+
+`|image0| <files/loci/images/software/qdna1.jpg>`_
+
+Sample Data
+
+Format: 
+
+Image Cytometry Standard
+
+Dimensions (pixels): 
+
+256 x 256
+
+File size: 
+
+42,831 bytes
+
+8 bits per sample
+
+Download: 
+
+`qdna1.zip <http://www.loci.wisc.edu/files/software/data/qdna1.zip>`_
+
+Contributor
+
+Contributed by: 
+
+`Nico Stuurman <http://valelab.ucsf.edu/people/p-stuurman.htm>`_
+
+Department: 
+
+`Vale Laboratory <http://valelab.ucsf.edu/>`_
+
+Institution: 
+
+`University of California-San Diego <http://www.ucsf.edu/>`_
+
+
+.. |image0| image:: files/loci/imagecache/thumbnail/images/software/qdna1.jpg

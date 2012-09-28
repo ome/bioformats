@@ -1,0 +1,84 @@
+JPEG 2000
+=========
+
+--------------
+
+Extensions: 
+
+.jp2
+
+Developer: 
+
+`Independent JPEG Group <http://www.ijg.org/>`_
+
+Support
+
+Export: 
+
+.. figure:: /files/loci/images/crystal-yes.png
+   :align: center
+   :alt:
+
+Supported Metadata Fields: 
+
+`JPEG2000Reader <http://dev.loci.wisc.edu/trac/software/wiki/JPEG2000Reader>`_
+
+Freely Available Software: 
+
+`JJ2000 (JPEG2000 library for Java) <http://jj2000.epfl.ch/>`_
+
+We currently have: 
+
+-  A `JPEG 2000 specification
+   document <http://www.jpeg.org/jpeg2000/CDs15444.html>`_ (final draft,
+   from 2000, in PDF)
+-  A few JP2 datasets
+
+Ratings
+
+Pixels: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Metadata: 
+
+.. figure:: /files/loci/images/crystal-1.png
+   :align: center
+   :alt: 1 - Poor
+
+Openness: 
+
+.. figure:: /files/loci/images/crystal-5.png
+   :align: center
+   :alt: 5 - Outstanding
+
+Presence: 
+
+.. figure:: /files/loci/images/crystal-3.png
+   :align: center
+   :alt: 3 - Good
+
+Utility: 
+
+.. figure:: /files/loci/images/crystal-1.png
+   :align: center
+   :alt: 1 - Poor
+
+Additional Information
+
+Source Code: 
+
+`JPEG2000Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/JPEG2000Reader.java>`_
+
+Source Code: 
+
+`JPEG2000Writer <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/out/JPEG2000Writer.java>`_
+
+Notes: 
+
+-  Bio-Formats uses the `JAI Image I/O
+   Tools <https://jai-imageio.dev.java.net/>`_ library to read JP2
+   files.
+-  JPEG stands for "Joint Photographic Experts Group."

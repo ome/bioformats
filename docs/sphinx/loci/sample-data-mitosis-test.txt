@@ -1,0 +1,34 @@
+mitosis-test
+============
+
+--------------
+
+`|image0| <files/loci/images/software/mitosis-test.jpg>`_
+
+Sample Data
+
+Format: 
+
+Image-Pro workspace
+
+Dimensions (pixels): 
+
+256 x 256
+
+File size: 
+
+12,642,856 bytes
+
+8 bits per sample
+
+7 time points
+
+24 focal planes
+
+2 channels
+
+Download: 
+
+`mitosis-test.zip <http://www.loci.wisc.edu/files/software/data/mitosis-test.zip>`_
+
+.. |image0| image:: files/loci/imagecache/thumbnail/images/software/mitosis-test.jpg

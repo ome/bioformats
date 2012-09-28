@@ -1,0 +1,86 @@
+OME-XML
+=======
+
+--------------
+
+Extensions: 
+
+.ome
+
+Developer: 
+
+`Open Microscopy Environment <http://www.openmicroscopy.org/>`_
+
+Support
+
+Export: 
+
+.. figure:: /files/loci/images/crystal-yes.png
+   :align: center
+   :alt:
+
+Officially Supported Versions: 
+
+2003FC, 2007-06, 2008-02, 2008-09, 2009-09, 2010-04, 2010-06
+
+Supported Metadata Fields: 
+
+`OME-XML
+Reader <http://dev.loci.wisc.edu/trac/software/wiki/OMEXMLReader>`_
+
+We currently have: 
+
+-  `OME-XML specification
+   documents <http://www.openmicroscopy.org/api/xml/>`_ (FC, from 2004,
+   in XSD and HTML)
+-  Several OME-XML datasets
+
+Ratings
+
+Pixels: 
+
+.. figure:: /files/loci/images/crystal-5.png
+   :align: center
+   :alt: 5 - Outstanding
+
+Metadata: 
+
+.. figure:: /files/loci/images/crystal-5.png
+   :align: center
+   :alt: 5 - Outstanding
+
+Openness: 
+
+.. figure:: /files/loci/images/crystal-5.png
+   :align: center
+   :alt: 5 - Outstanding
+
+Presence: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Utility: 
+
+.. figure:: /files/loci/images/crystal-5.png
+   :align: center
+   :alt: 5 - Outstanding
+
+Additional Information
+
+Source Code: 
+
+`OME-XML
+Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/OMEXMLReader.java>`_
+
+Notes: 
+
+Bio-Formats uses the `OME-XML Java
+library <http://www.loci.wisc.edu/ome/ome-xml-java.html>`_ to read
+OME-XML files.
+
+Commercial applications that support OME-XML include:
+
+-  `Bitplane Imaris <http://bitplane.com/>`_
+-  `SVI Huygens <http://svi.nl/>`_

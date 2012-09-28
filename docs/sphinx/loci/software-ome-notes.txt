@@ -1,0 +1,39 @@
+OME Notes
+=========
+
+--------------
+
+Overview
+
+Work on OME Notes has ceased in favor of the
+`OMERO.editor <http://www.openmicroscopy.org/site/support/omero4/clients/editor>`_
+project.
+
+Download
+
+Language: 
+
+Java
+
+Latest Version: 
+
+4.1.0 (2009 October 21)
+
+Download: 
+
+`loci\_tools.jar <http://www.loci.wisc.edu/software/loci_tools.jar>`_
+
+Instructions: 
+
+#. Save to disk
+#. Double-click to launch
+
+More Information
+
+Trac Path: 
+
+`components/legacy/ome-notes <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/legacy/ome-notes/>`_
+
+SVN Path: 
+
+`components/legacy/ome-notes <http://dev.loci.wisc.edu/svn/software/trunk/components/legacy/ome-notes/>`_
