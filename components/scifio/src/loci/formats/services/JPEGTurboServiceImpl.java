@@ -99,7 +99,6 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
   // -- Constructor --
 
   public JPEGTurboServiceImpl() {
-    NativeLibraryUtil.loadNativeLibrary(TJ.class, "jpeg");
     NativeLibraryUtil.loadNativeLibrary(TJ.class, "turbojpeg");
   }
 
