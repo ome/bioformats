@@ -26,7 +26,7 @@ Type "ant -p" for a list of targets.
   <!-- Main build targets -->
 
   <target name="compile" depends="copy-source" description="compile classes">
-    <javac debug="true" includeantruntime="false"
+    <javac debug="true" includeantruntime="false" fork="true"
       deprecation="${component.deprecation}"
       source="${component.java-version}"
       target="${component.java-version}"
@@ -39,7 +39,7 @@ Type "ant -p" for a list of targets.
 
   <target name="compile-tests" depends="compile, copy-test-source"
     description="compile test classes" if="doTests">
-    <javac debug="true" includeantruntime="false"
+    <javac debug="true" includeantruntime="false" fork="true"
       deprecation="${component.deprecation}"
       source="${component.java-version}"
       target="${component.java-version}"
@@ -172,7 +172,7 @@ your FindBugs installation's lib directory. E.g.:
     <delete>
       <fileset dir="${utils.dir}" includes="*.class"/>
     </delete>
-    <javac debug="true" includeantruntime="false"
+    <javac debug="true" includeantruntime="false" fork="true"
       deprecation="true" source="1.5" target="1.5"
       srcdir="${utils.dir}" includes="*.java"
       classpath="${component.classpath}:${artifact.dir}/${component.jar}">
