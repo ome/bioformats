@@ -1,0 +1,79 @@
+IMAGIC
+======
+
+--------------
+
+Extensions: 
+
+.hed, .img
+
+Developer: 
+
+`Image Science <http://www.imagescience.de>`_
+
+Support
+
+Export: 
+
+.. figure:: /files/loci/images/crystal-no.png
+   :align: center
+   :alt: 
+
+Supported Metadata Fields: 
+
+`ImagicReader <http://dev.loci.wisc.edu/trac/software/wiki/ImagicReader>`_
+
+Freely Available Software: 
+
+`em2em <http://www.imagescience.de/em2em/index.htm>`_
+
+We currently have: 
+
+-  One example dataset
+-  Official file format documentation
+
+We'd like to have: 
+
+-  More example files
+
+Ratings
+
+Pixels: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Metadata: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Openness: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Presence: 
+
+.. figure:: /files/loci/images/crystal-3.png
+   :align: center
+   :alt: 3 - Good
+
+Utility: 
+
+.. figure:: /files/loci/images/crystal-3.png
+   :align: center
+   :alt: 3 - Good
+
+Additional Information
+
+Source Code: 
+
+`ImagicReader <http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/ImagicReader.java>`_
+
+See Also: 
+
+`IMAGIC specification <http://www.imagescience.de/formats/index.htm>`_

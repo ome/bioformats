@@ -1,0 +1,71 @@
+Canon DNG
+=========
+
+--------------
+
+Extensions: 
+
+.cr2, .crw
+
+Developer: 
+
+`Canon <http://canon.com>`_
+
+Support
+
+Export: 
+
+.. figure:: /files/loci/images/crystal-no.png
+   :align: center
+   :alt: 
+
+Freely Available Software: 
+
+`IrfanView <http://www.irfanview.com/>`_
+
+We currently have: 
+
+-  A few example datasets
+
+We'd like to have: 
+
+-  An official specification document
+
+Ratings
+
+Pixels: 
+
+.. figure:: /files/loci/images/crystal-3.png
+   :align: center
+   :alt: 3 - Good
+
+Metadata: 
+
+.. figure:: /files/loci/images/crystal-3.png
+   :align: center
+   :alt: 3 - Good
+
+Openness: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Presence: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Utility: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Additional Information
+
+Source Code: 
+
+`DNGReader <http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/DNGReader.java>`_
+

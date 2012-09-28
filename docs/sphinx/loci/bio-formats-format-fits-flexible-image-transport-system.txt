@@ -1,0 +1,77 @@
+FITS (Flexible Image Transport System)
+======================================
+
+--------------
+
+Extensions: 
+
+.fits
+
+Developer: 
+
+`National Radio Astronomy Observatory <http://www.nrao.edu/>`_
+
+Support
+
+Export: 
+
+.. figure:: /files/loci/images/crystal-no.png
+   :align: center
+   :alt: 
+
+Supported Metadata Fields: 
+
+`FITS Reader <http://dev.loci.wisc.edu/trac/software/wiki/FitsReader>`_
+
+We currently have: 
+
+-  A `FITS specification
+   document <http://archive.stsci.edu/fits/fits_standard/>`_ (NOST
+   100-2.0, from 1999 Mar 29, in HTML)
+-  Several FITS datasets
+
+Ratings
+
+Pixels: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Metadata: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Openness: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Presence: 
+
+.. figure:: /files/loci/images/crystal-3.png
+   :align: center
+   :alt: 3 - Good
+
+Utility: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Additional Information
+
+Source Code: 
+
+`FitsReader.java <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/FitsReader.java>`_
+
+See Also: 
+
+`MAST:FITS homepage <http://archive.stsci.edu/fits/>`_
+
+See Also: 
+
+`FITS Support Office <http://fits.gsfc.nasa.gov/>`_

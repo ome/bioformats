@@ -1,0 +1,71 @@
+SimplePCI & HCImage TIFF
+========================
+
+--------------
+
+Extensions: 
+
+.tiff
+
+Developer: 
+
+`Hamamatsu <http://www.cimaging.net/products/simplepci/>`_
+
+Support
+
+Export: 
+
+.. figure:: /files/loci/images/crystal-no.png
+   :align: center
+   :alt: 
+
+Supported Metadata Fields: 
+
+`SimplePCI TIFF
+Reader <http://dev.loci.wisc.edu/trac/java/wiki/SimplePCITiffReader>`_
+
+We currently have: 
+
+-  A few SimplePCI TIFF datasets
+
+We'd like to have: 
+
+-  More SimplePCI TIFF datasets
+
+Ratings
+
+Pixels: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Metadata: 
+
+.. figure:: /files/loci/images/crystal-3.png
+   :align: center
+   :alt: 3 - Good
+
+Openness: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Presence: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Utility: 
+
+.. figure:: /files/loci/images/crystal-3.png
+   :align: center
+   :alt: 3 - Good
+
+Additional Information
+
+Source Code: 
+
+`SimplePCITiffReader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/SimplePCITiffReader.java>`_

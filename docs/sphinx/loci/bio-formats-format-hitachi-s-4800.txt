@@ -1,0 +1,62 @@
+Hitachi S-4800
+==============
+
+--------------
+
+Extensions: 
+
+.txt, .tif, .bmp, .jpg
+
+Developer: 
+
+`Hitachi <http://www.hitachi-hta.com/products/electron-microscopes-and-focused-ion-beam/field-emission-sem/s-4800-uhr-fe-sem>`_
+
+Support
+
+Export: 
+
+.. figure:: /files/loci/images/crystal-no.png
+   :align: center
+   :alt: 
+
+We currently have: 
+
+-  Several Hitachi S-4800 datasets
+
+Ratings
+
+Pixels: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Metadata: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Openness: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Presence: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Utility: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Additional Information
+
+Source Code: 
+
+`HitachiReader <http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/HitachiReader.java>`_

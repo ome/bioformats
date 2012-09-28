@@ -1,0 +1,75 @@
+Bio-Rad Gel
+===========
+
+--------------
+
+Extensions: 
+
+.1sc
+
+Owner: 
+
+`Bio-Rad <http://www.bio-rad.com>`_
+
+Support
+
+Export: 
+
+.. figure:: /files/loci/images/crystal-no.png
+   :align: center
+   :alt: 
+
+Supported Metadata Fields: 
+
+`BioRadGelReader <http://dev.loci.wisc.edu/trac/software/wiki/BioRadGelReader>`_
+
+We currently have: 
+
+- software that can read Bio-Rad Gel files
+
+- several Bio-Rad Gel files
+
+We'd like to have: 
+
+- a Bio-Rad Gel specification
+
+- more Bio-Rad Gel files
+
+Ratings
+
+Pixels: 
+
+.. figure:: /files/loci/images/crystal-3.png
+   :align: center
+   :alt: 3 - Good
+
+Metadata: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Openness: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Presence: 
+
+.. figure:: /files/loci/images/crystal-1.png
+   :align: center
+   :alt: 1 - Poor
+
+Utility: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Additional Information
+
+Source Code: 
+
+`BioRadGelReader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/BioRadGelReader.java>`_
+

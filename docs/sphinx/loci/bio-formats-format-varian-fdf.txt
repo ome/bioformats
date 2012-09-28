@@ -1,0 +1,72 @@
+Varian FDF
+==========
+
+--------------
+
+Extensions: 
+
+.fdf
+
+Developer: 
+
+`Varian, Inc. <http://www.varianinc.com>`_
+
+Support
+
+Export: 
+
+.. figure:: /files/loci/images/crystal-no.png
+   :align: center
+   :alt: 
+
+Supported Metadata Fields: 
+
+`VarianFDF
+Reader <http://dev.loci.wisc.edu/trac/java/wiki/VarianFDFReader>`_
+
+We currently have: 
+
+-  A few Varian FDF datasets
+
+We'd like to have: 
+
+-  An FDF specification document
+-  More Varian FDF datasets
+
+Ratings
+
+Pixels: 
+
+.. figure:: /files/loci/images/crystal-3.png
+   :align: center
+   :alt: 3 - Good
+
+Metadata: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Openness: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Presence: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Utility: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Additional Information
+
+Source Code: 
+
+`VarianFDFReader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/VarianFDFReader.java>`_

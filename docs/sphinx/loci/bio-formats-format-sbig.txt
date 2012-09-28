@@ -1,0 +1,69 @@
+SBIG
+====
+
+--------------
+
+Owner: 
+
+`Santa Barbara Instrument Group (SBIG) <http://www.sbig.com>`_
+
+Support
+
+Export: 
+
+.. figure:: /files/loci/images/crystal-no.png
+   :align: center
+   :alt: 
+
+Supported Metadata Fields: 
+
+`SBIGReader <http://dev.loci.wisc.edu/trac/software/wiki/SBIGReader>`_
+
+We currently have: 
+
+- an `official SBIG specification
+document <http://sbig.com/pdffiles/file.format.pdf>`_
+
+- a few SBIG files
+
+We'd like to have: 
+
+- more SBIG files
+
+Ratings
+
+Pixels: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Metadata: 
+
+.. figure:: /files/loci/images/crystal-3.png
+   :align: center
+   :alt: 3 - Good
+
+Openness: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Presence: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Utility: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Additional Information
+
+Source Code: 
+
+`SBIGReader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/SBIGReader.java>`_

@@ -1,0 +1,98 @@
+3i SlideBook
+============
+
+--------------
+
+Extensions: 
+
+.sld
+
+Developer: 
+
+`Intelligent Imaging Innovations <http://www.intelligent-imaging.com/>`_
+
+Owner: 
+
+`Intelligent Imaging Innovations <http://www.intelligent-imaging.com>`_
+
+Support
+
+Export: 
+
+.. figure:: /files/loci/images/crystal-no.png
+   :align: center
+   :alt: 
+
+Officially Supported Versions: 
+
+4.1, 4.2
+
+Supported Metadata Fields: 
+
+`Slidebook
+Reader <http://dev.loci.wisc.edu/trac/java/wiki/SlidebookReader>`_
+
+We currently have: 
+
+-  Numerous SlideBook datasets
+-  Some `Bio-Formats developer
+   notes <http://dev.loci.wisc.edu/svn/software/trunk/components/bio-formats/doc/slidebook.html>`_
+   for SlideBook
+
+We'd like to have: 
+
+-  A SlideBook specification document
+-  More SlideBook datasets (preferably acquired with the most recent
+   SlideBook software)
+
+Ratings
+
+Pixels: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Metadata: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Openness: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Presence: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Utility: 
+
+.. figure:: /files/loci/images/crystal-1.png
+   :align: center
+   :alt: 1 - Poor
+
+Additional Information
+
+Source Code: 
+
+`Slidebook
+Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/SlidebookReader.java>`_
+
+Notes: 
+
+We strongly encourage users to export their .sld files to OME-TIFF using
+the Slidebook software.  Bio-Formats is not likely to support the full
+range of metadata that is included in .sld files, and so exporting to
+OME-TIFF from Slidebook is the best way to ensure that all metadata is
+preserved.
+
+See Also: 
+
+`Slidebook software
+overview <http://www.intelligent-imaging.com/slidebook/overview.php>`_

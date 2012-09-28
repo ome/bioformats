@@ -1,0 +1,47 @@
+Kidney TFI
+==========
+
+--------------
+
+`|image0| <files/loci/images/software/kidney_TFl.jpg>`_
+
+Sample Data
+
+Format: 
+
+Windows Bitmap
+
+Dimensions (pixels): 
+
+384 x 384
+
+File size: 
+
+2,083,265 bytes
+
+8 bits per sample
+
+9 focal planes
+
+3 channels
+
+Download: 
+
+`kidney\_TFl.zip <http://www.loci.wisc.edu/files/software/data/kidney_TFl.zip>`_
+
+Contributor
+
+Contributed by: 
+
+`Dennis Fan <http://web.eng.fiu.edu/dfan/>`_
+
+Department: 
+
+`Department of Mechanical and Materials
+Engineering <http://www.eng.fiu.edu/mme/>`_
+
+Institution: 
+
+`Florida International University <http://www.fiu.edu/>`_
+
+.. |image0| image:: files/loci/imagecache/thumbnail/images/software/kidney_TFl.jpg

@@ -1,0 +1,74 @@
+RHK
+===
+
+--------------
+
+Extensions: 
+
+.sm2, .sm3
+
+Owner: 
+
+`RHK Techologies <http://www.rhk-tech.com>`_
+
+Support
+
+Export: 
+
+.. figure:: /files/loci/images/crystal-no.png
+   :align: center
+   :alt: 
+
+Supported Metadata Fields: 
+
+`RHKReader <http://dev.loci.wisc.edu/trac/software/wiki/RHKReader>`_
+
+We currently have: 
+
+- Pascal code that can read RHK files (from ImageSXM)
+
+- a few RHK files
+
+We'd like to have: 
+
+- an RHK file format specification document
+
+- more RHK files
+
+Ratings
+
+Pixels: 
+
+.. figure:: /files/loci/images/crystal-3.png
+   :align: center
+   :alt: 3 - Good
+
+Metadata: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Openness: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Presence: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Utility: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Additional Information
+
+Source Code: 
+
+`RHKReader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/RHKReader.java>`_

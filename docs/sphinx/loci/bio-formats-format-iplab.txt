@@ -1,0 +1,96 @@
+IPLab
+=====
+
+--------------
+
+Extensions: 
+
+.ipl
+
+Developer: 
+
+`Scanalytics <http://scanalytics.com/>`_
+
+Owner: 
+
+`BD Biosystems <http://www.bdbiosciences.com/>`_
+
+Support
+
+Export: 
+
+.. figure:: /files/loci/images/crystal-no.png
+   :align: center
+   :alt: 
+
+Supported Metadata Fields: 
+
+`IPLab
+Reader <http://dev.loci.wisc.edu/trac/software/wiki/IPLabReader>`_
+
+Freely Available Software: 
+
+`IPLab Reader plugin for
+ImageJ <http://rsb.info.nih.gov/ij/plugins/iplab-reader.html>`_
+
+We currently have: 
+
+-  An IPLab specification document (v3.6.5, from 2004 Dec 1 in PDF)
+-  Several IPLab datasets
+
+We'd like to have: 
+
+-  More IPLab datasets (32-bit integer or floating point data)
+
+Ratings
+
+Pixels: 
+
+.. figure:: /files/loci/images/crystal-5.png
+   :align: center
+   :alt: 5 - Outstanding
+
+Metadata: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Openness: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Presence: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Utility: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Additional Information
+
+Source Code: 
+
+`IPLab
+Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/IPLabReader.java>`_
+
+Notes: 
+
+Commercial applications that support IPLab include:
+
+-  `Bitplane Imaris <http://bitplane.com/>`_
+-  `SVI Huygens <http://svi.nl/>`_
+
+**Please note that while we have specification documents for this
+format, we are not able to distribute them to third parties.**
+
+See Also: 
+
+`IPLab software review <http://scanalytics.com/product/iplab/>`_

@@ -1,0 +1,71 @@
+Perkin Elmer Densitometer
+=========================
+
+--------------
+
+Extensions: 
+
+.pds
+
+Developer: 
+
+`Perkin Elmer <http://www.perkinelmer.com>`_
+
+Support
+
+Export: 
+
+.. figure:: /files/loci/images/crystal-no.png
+   :align: center
+   :alt: 
+
+Supported Metadata Fields: 
+
+`PDS Reader <http://dev.loci.wisc.edu/trac/java/wiki/PDSReader>`_
+
+We currently have: 
+
+-  A few PDS datasets
+
+We'd like to have: 
+
+-  A PDS specification document
+-  More PDS datasets
+
+Ratings
+
+Pixels: 
+
+.. figure:: /files/loci/images/crystal-3.png
+   :align: center
+   :alt: 3 - Good
+
+Metadata: 
+
+.. figure:: /files/loci/images/crystal-3.png
+   :align: center
+   :alt: 3 - Good
+
+Openness: 
+
+.. figure:: /files/loci/images/crystal-3.png
+   :align: center
+   :alt: 3 - Good
+
+Presence: 
+
+.. figure:: /files/loci/images/crystal-1.png
+   :align: center
+   :alt: 1 - Poor
+
+Utility: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Additional Information
+
+Source Code: 
+
+`PDSReader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/PDSReader.java>`_

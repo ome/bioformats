@@ -1,0 +1,82 @@
+MetaMorph Stack (STK)
+=====================
+
+--------------
+
+Extensions: 
+
+.stk, .nd
+
+Support
+
+Export: 
+
+.. figure:: /files/loci/images/crystal-no.png
+   :align: center
+   :alt: 
+
+Supported Metadata Fields: 
+
+`Metamorph
+Reader <http://dev.loci.wisc.edu/trac/software/wiki/MetamorphReader>`_
+
+We currently have: 
+
+-  An STK specification document (from 2006 Nov 21, in DOC)
+-  An older STK specification document (from 2005 Mar 25, in DOC)
+-  An ND specification document (from 2002 Jan 24, in PDF)
+-  A large number of STK datasets
+
+Ratings
+
+Pixels: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Metadata: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Openness: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Presence: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Utility: 
+
+.. figure:: /files/loci/images/crystal-3.png
+   :align: center
+   :alt: 3 - Good
+
+Additional Information
+
+Source Code: 
+
+`Metamorph
+Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/MetamorphReader.java>`_
+
+Notes: 
+
+Commercial applications that support STK include:
+
+-  `Bitplane Imaris <http://bitplane.com/>`_
+-  `SVI Huygens <http://svi.nl/>`_
+-  `DIMIN <http://dimin.net/>`_
+
+**Please note that while we have specification documents for this
+format, we are not able to distribute them to third parties.**
+
+See Also: 
+
+`Metamorph imaging system overview <http://metamorph.com/>`_

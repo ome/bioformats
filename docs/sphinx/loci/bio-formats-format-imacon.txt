@@ -1,0 +1,70 @@
+Imacon
+======
+
+--------------
+
+Extensions: 
+
+.fff
+
+Owner: 
+
+`Hasselblad <http://www.hasselbladusa.com/>`_
+
+Support
+
+Export: 
+
+.. figure:: /files/loci/images/crystal-no.png
+   :align: center
+   :alt: 
+
+Supported Metadata Fields: 
+
+`ImaconReader <http://dev.loci.wisc.edu/trac/software/wiki/ImaconReader>`_
+
+We currently have: 
+
+- one Imacon file
+
+We'd like to have: 
+
+- more Imacon files
+
+Ratings
+
+Pixels: 
+
+.. figure:: /files/loci/images/crystal-1.png
+   :align: center
+   :alt: 1 - Poor
+
+Metadata: 
+
+.. figure:: /files/loci/images/crystal-3.png
+   :align: center
+   :alt: 3 - Good
+
+Openness: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Presence: 
+
+.. figure:: /files/loci/images/crystal-1.png
+   :align: center
+   :alt: 1 - Poor
+
+Utility: 
+
+.. figure:: /files/loci/images/crystal-3.png
+   :align: center
+   :alt: 3 - Good
+
+Additional Information
+
+Source Code: 
+
+`ImaconReader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/ImaconReader.java>`_

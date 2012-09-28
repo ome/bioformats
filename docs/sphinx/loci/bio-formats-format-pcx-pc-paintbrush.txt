@@ -1,0 +1,73 @@
+PCX (PC Paintbrush)
+===================
+
+--------------
+
+Extensions: 
+
+.pcx
+
+Developer: 
+
+ZSoft Corporation
+
+Support
+
+Export: 
+
+.. figure:: /files/loci/images/crystal-no.png
+   :align: center
+   :alt: 
+
+Supported Metadata Fields: 
+
+`PCX Reader <http://dev.loci.wisc.edu/trac/software/wiki/PCXReader>`_
+
+We currently have: 
+
+-  Several .pcx files
+-  The ability to generate additional .pcx files
+
+Ratings
+
+Pixels: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Metadata: 
+
+.. figure:: /files/loci/images/crystal-1.png
+   :align: center
+   :alt: 1 - Poor
+
+Openness: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Presence: 
+
+.. figure:: /files/loci/images/crystal-1.png
+   :align: center
+   :alt: 1 - Poor
+
+Utility: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Additional Information
+
+Source Code: 
+
+`PCX
+Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/PCXReader.java>`_
+
+Notes: 
+
+Commercial applications that support PCX include `Zeiss LSM Image
+Browser <http://www.zeiss.de/C12567BE00472A5C/EmbedTitelIntern/LSMImageBrowser/$File/INST_IB.EXE>`_.

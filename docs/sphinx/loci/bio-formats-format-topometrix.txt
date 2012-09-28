@@ -1,0 +1,74 @@
+Topometrix
+==========
+
+--------------
+
+Extensions: 
+
+.tfr, .ffr, .zfr, .zfp, .2fl
+
+Owner: 
+
+`TopoMetrix (now Veeco) <http://www.veeco.com/>`_
+
+Support
+
+Export: 
+
+.. figure:: /files/loci/images/crystal-no.png
+   :align: center
+   :alt: 
+
+Supported Metadata Fields: 
+
+`TopometrixReader <http://dev.loci.wisc.edu/trac/software/wiki/TopometrixReader>`_
+
+We currently have: 
+
+- Pascal code that reads Topometrix files (from ImageSXM)
+
+- a few Topometrix files
+
+We'd like to have: 
+
+- a Topometrix file format specification document
+
+- more Topometrix files
+
+Ratings
+
+Pixels: 
+
+.. figure:: /files/loci/images/crystal-3.png
+   :align: center
+   :alt: 3 - Good
+
+Metadata: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Openness: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Presence: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Utility: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Additional Information
+
+Source Code: 
+
+`TopometrixReader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/TopometrixReader.java>`_

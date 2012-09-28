@@ -1,0 +1,68 @@
+Trestle
+=======
+
+--------------
+
+Extensions: 
+
+.tif, .sld, .jpg
+
+Support
+
+Export: 
+
+.. figure:: /files/loci/images/crystal-no.png
+   :align: center
+   :alt: 
+
+Supported Metadata Fields: 
+
+`TrestleReader <http://dev.loci.wisc.edu/trac/software/wiki/TrestleReader>`_
+
+Sample Datasets: 
+
+`OpenSlide <http://openslide.cs.cmu.edu/download/openslide-testdata/Trestle/>`_
+
+We currently have: 
+
+-  A few example datasets
+-  Developer documentation from the OpenSlide project:
+   http://openslide.org/Trestle%20format/
+
+Ratings
+
+Pixels: 
+
+.. figure:: /files/loci/images/crystal-3.png
+   :align: center
+   :alt: 3 - Good
+
+Metadata: 
+
+.. figure:: /files/loci/images/crystal-3.png
+   :align: center
+   :alt: 3 - Good
+
+Openness: 
+
+.. figure:: /files/loci/images/crystal-3.png
+   :align: center
+   :alt: 3 - Good
+
+Presence: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Utility: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Additional Information
+
+Source Code: 
+
+`TrestleReader <http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/TrestleReader.java>`_

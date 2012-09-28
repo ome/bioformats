@@ -1,0 +1,77 @@
+ImagePro Sequence
+=================
+
+--------------
+
+Extensions: 
+
+.seq
+
+Owner: 
+
+`Media Cybernetics <http://www.mediacy.com/>`_
+
+Support
+
+Export: 
+
+.. figure:: /files/loci/images/crystal-no.png
+   :align: center
+   :alt: 
+
+Supported Metadata Fields: 
+
+`SEQ Reader <http://dev.loci.wisc.edu/trac/software/wiki/SEQReader>`_
+
+We currently have: 
+
+-  The `Image-Pro Plus <http://www.mediacy.com/index.aspx?page=IPP>`_
+   software
+-  A few SEQ datasets
+-  The ability to produce more datasets
+-  Some `Bio-Formats developer
+   notes <http://dev.loci.wisc.edu/svn/software/trunk/components/bio-formats/doc/seq.html>`_
+   for SEQ
+
+We'd like to have: 
+
+-  An SEQ specification document
+
+Ratings
+
+Pixels: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Metadata: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Openness: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Presence: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Utility: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Additional Information
+
+Source Code: 
+
+`SEQ
+Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/SEQReader.java>`_

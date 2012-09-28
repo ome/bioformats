@@ -1,0 +1,86 @@
+ImagePro Workspace
+==================
+
+--------------
+
+Extensions: 
+
+.ipw
+
+Owner: 
+
+`Media Cybernetics <http://www.mediacy.com/>`_
+
+Support
+
+Export: 
+
+.. figure:: /files/loci/images/crystal-no.png
+   :align: center
+   :alt: 
+
+Supported Metadata Fields: 
+
+`IPW Reader <http://dev.loci.wisc.edu/trac/software/wiki/IPWReader>`_
+
+We currently have: 
+
+-  The `Image-Pro Plus <http://www.mediacy.com/index.aspx?page=IPP>`_
+   software
+-  A few IPW datasets
+-  The ability to produce more datasets
+-  Some `Bio-Formats developer
+   notes <http://dev.loci.wisc.edu/svn/software/trunk/components/bio-formats/doc/ipw.html>`_
+   for IPW
+
+We'd like to have: 
+
+-  an IPW specification document
+-  more IPW datasets:
+
+   -  multiple datasets in one file
+   -  2+ GB files
+
+Ratings
+
+Pixels: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Metadata: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Openness: 
+
+.. figure:: /files/loci/images/crystal-1.png
+   :align: center
+   :alt: 1 - Poor
+
+Presence: 
+
+.. figure:: /files/loci/images/crystal-1.png
+   :align: center
+   :alt: 1 - Poor
+
+Utility: 
+
+.. figure:: /files/loci/images/crystal-1.png
+   :align: center
+   :alt: 1 - Poor
+
+Additional Information
+
+Source Code: 
+
+`IPW
+Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/IPWReader.java>`_
+
+Notes: 
+
+Bio-Formats uses a modified version of the `Apache Jakarta
+POI <http://jakarta.apache.org/poi/>`_ library to read IPW files.

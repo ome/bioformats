@@ -1,0 +1,68 @@
+Targa
+=====
+
+--------------
+
+Extensions: 
+
+.tga
+
+Developer: 
+
+`Truevision <http://www.truevision.com>`_
+
+Support
+
+Export: 
+
+.. figure:: /files/loci/images/crystal-no.png
+   :align: center
+   :alt: 
+
+Supported Metadata Fields: 
+
+`TargaReader <http://dev.loci.wisc.edu/trac/software/wiki/TargaReader>`_
+
+We currently have: 
+
+- a Targa specification document
+
+- a few Targa files
+
+Ratings
+
+Pixels: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Metadata: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Openness: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Presence: 
+
+.. figure:: /files/loci/images/crystal-3.png
+   :align: center
+   :alt: 3 - Good
+
+Utility: 
+
+.. figure:: /files/loci/images/crystal-1.png
+   :align: center
+   :alt: 1 - Poor
+
+Additional Information
+
+Source Code: 
+
+`TargaReader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/TargaReader.java>`_

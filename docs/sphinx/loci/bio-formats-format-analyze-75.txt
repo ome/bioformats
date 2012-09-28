@@ -1,0 +1,71 @@
+Analyze 7.5
+===========
+
+--------------
+
+Extensions: 
+
+.img, .hdr
+
+Developer: 
+
+`Mayo Foundation Biomedical Imaging
+Resource <http://www.mayo.edu/bir/>`_
+
+Support
+
+Export: 
+
+.. figure:: /files/loci/images/crystal-no.png
+   :align: center
+   :alt: 
+
+Supported Metadata Fields: 
+
+`Analyze
+Reader <http://dev.loci.wisc.edu/trac/software/wiki/AnalyzeReader>`_
+
+We currently have: 
+
+-  `an Analyze 7.5 specification
+   document <http://www.mayo.edu/bir/PDF/ANALYZE75.pdf>`_
+-  several Analyze 7.5 datasets
+
+Ratings
+
+Pixels: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Metadata: 
+
+.. figure:: /files/loci/images/crystal-3.png
+   :align: center
+   :alt: 3 - Good
+
+Openness: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Presence: 
+
+.. figure:: /files/loci/images/crystal-3.png
+   :align: center
+   :alt: 3 - Good
+
+Utility: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Additional Information
+
+Source Code: 
+
+`AnalyzeReader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/AnalyzeReader.java>`_
+

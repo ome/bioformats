@@ -1,0 +1,94 @@
+Gatan Digital Micrograph
+========================
+
+--------------
+
+Extensions: 
+
+.dm3
+
+Owner: 
+
+`Gatan <http://www.gatan.com/>`_
+
+Support
+
+Export: 
+
+.. figure:: /files/loci/images/crystal-no.png
+   :align: center
+   :alt: 
+
+Officially Supported Versions: 
+
+3
+
+Supported Metadata Fields: 
+
+`Gatan
+Reader <http://dev.loci.wisc.edu/trac/software/wiki/GatanReader>`_
+
+Freely Available Software: 
+
+`DM3 Reader plugin for
+ImageJ <http://rsb.info.nih.gov/ij/plugins/DM3_Reader.html>`_
+
+Freely Available Software: 
+
+`EMAN <http://blake.bcm.edu/EMAN/>`_
+
+We currently have: 
+
+-  Gatan's ImageReader2003 code (from 2003, in C++)
+-  Numerous DM3 datasets
+-  Some `Bio-Formats developer
+   notes <http://dev.loci.wisc.edu/svn/software/trunk/components/bio-formats/doc/gatan.html>`_
+   for DM3
+
+We'd like to have: 
+
+-  A DM3 specification document
+
+Ratings
+
+Pixels: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Metadata: 
+
+.. figure:: /files/loci/images/crystal-3.png
+   :align: center
+   :alt: 3 - Good
+
+Openness: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Presence: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Utility: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Additional Information
+
+Source Code: 
+
+`Gatan
+Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/GatanReader.java>`_
+
+Notes: 
+
+Commercial applications that support .dm3 include
+`Datasqueeze <http://www.datasqueezesoftware.com/>`_.

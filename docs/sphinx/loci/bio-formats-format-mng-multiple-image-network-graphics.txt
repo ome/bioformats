@@ -1,0 +1,86 @@
+MNG (Multiple-image Network Graphics)
+=====================================
+
+--------------
+
+Extensions: 
+
+.mng
+
+Developer: 
+
+`MNG Development Group <http://www.libpng.org/pub/mng/mngnews.html>`_
+
+Support
+
+Export: 
+
+.. figure:: /files/loci/images/crystal-no.png
+   :align: center
+   :alt: 
+
+Supported Metadata Fields: 
+
+`MNG Reader <http://dev.loci.wisc.edu/trac/software/wiki/MNGReader>`_
+
+Freely Available Software: 
+
+`libmng (MNG reference library) <http://www.libmng.com/>`_
+
+Sample Datasets: 
+
+`MNG sample files <http://libmng.com/MNGsuite/index.html>`_
+
+We currently have: 
+
+-  The
+   `libmng-testsuites <http://downloads.sourceforge.net/libmng/MNGsuite-20030305.zip>`_
+   package (from 2003 Mar 05, in C)
+-  A large number of MNG datasets
+
+Ratings
+
+Pixels: 
+
+.. figure:: /files/loci/images/crystal-3.png
+   :align: center
+   :alt: 3 - Good
+
+Metadata: 
+
+.. figure:: /files/loci/images/crystal-3.png
+   :align: center
+   :alt: 3 - Good
+
+Openness: 
+
+.. figure:: /files/loci/images/crystal-5.png
+   :align: center
+   :alt: 5 - Outstanding
+
+Presence: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Utility: 
+
+.. figure:: /files/loci/images/crystal-1.png
+   :align: center
+   :alt: 1 - Poor
+
+Additional Information
+
+Source Code: 
+
+`MNG
+Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/MNGReader.java>`_
+
+See Also: 
+
+`MNG homepage <http://www.libpng.org/pub/mng/>`_
+
+See Also: 
+
+`MNG specification <http://www.libpng.org/pub/mng/spec>`_

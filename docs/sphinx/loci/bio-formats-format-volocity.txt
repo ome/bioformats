@@ -1,0 +1,81 @@
+Volocity
+========
+
+--------------
+
+Extensions: 
+
+.mvd2
+
+Developer: 
+
+`PerkinElmer <http://www.perkinelmer.com/pages/020/cellularimaging/products/volocity.xhtml>`_
+
+Support
+
+Export: 
+
+.. figure:: /files/loci/images/crystal-no.png
+   :align: center
+   :alt: 
+
+Supported Metadata Fields: 
+
+`VolocityReader <http://dev.loci.wisc.edu/trac/software/wiki/VolocityReader>`_
+
+Sample Datasets: 
+
+`Volocity
+Demo <http://www.perkinelmer.com/pages/020/cellularimaging/products/volocitydemo.xhtml>`_
+
+We currently have: 
+
+-  Several example Volocity datasets
+
+We'd like to have: 
+
+-  Additional Volocity datasets
+-  Official documentation
+
+Ratings
+
+Pixels: 
+
+.. figure:: /files/loci/images/crystal-3.png
+   :align: center
+   :alt: 3 - Good
+
+Metadata: 
+
+.. figure:: /files/loci/images/crystal-3.png
+   :align: center
+   :alt: 3 - Good
+
+Openness: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Presence: 
+
+.. figure:: /files/loci/images/crystal-1.png
+   :align: center
+   :alt: 1 - Poor
+
+Utility: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Additional Information
+
+Source Code: 
+
+`VolocityReader <http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/VolocityReader.java>`_
+
+Notes: 
+
+.mvd2 files are Metakit database files.  See http://equi4.com/metakit/
+for more information on the Metakit file format.

@@ -1,0 +1,82 @@
+Andor Bio-Imaging Division (ABD) TIFF
+=====================================
+
+--------------
+
+Extensions: 
+
+.tif
+
+Developer: 
+
+Andor Bioimaging Department
+
+Owner: 
+
+`Andor Technology <http://www.andor.com/>`_
+
+Support
+
+Export: 
+
+.. figure:: /files/loci/images/crystal-no.png
+   :align: center
+   :alt: 
+
+Supported Metadata Fields: 
+
+`FluoviewReader (not a
+typo) <http://dev.loci.wisc.edu/trac/software/wiki/FluoviewReader>`_
+
+We currently have: 
+
+-  an ABD-TIFF specification document (from 2005 Nov, in PDF)
+-  three ABD-TIFF datasets
+
+Ratings
+
+Pixels: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Metadata: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Openness: 
+
+.. figure:: /files/loci/images/crystal-3.png
+   :align: center
+   :alt: 3 - Good
+
+Presence: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Utility: 
+
+.. figure:: /files/loci/images/crystal-3.png
+   :align: center
+   :alt: 3 - Good
+
+Additional Information
+
+Source Code: 
+
+`FluoviewReader (not a
+typo) <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/FluoviewReader.java>`_
+
+Notes: 
+
+With a few minor exceptions, the ABD-TIFF format is identical to the
+Fluoview TIFF format.
+
+**Please note that while we have specification documents for this
+format, we are not able to distribute them to third parties.**
+

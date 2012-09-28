@@ -1,0 +1,70 @@
+Nikon Elements TIFF
+===================
+
+--------------
+
+Extensions: 
+
+.tiff
+
+Developer: 
+
+`Nikon <http://www.nikon.com>`_
+
+Support
+
+Export: 
+
+.. figure:: /files/loci/images/crystal-no.png
+   :align: center
+   :alt: 
+
+Supported Metadata Fields: 
+
+`NikonElementsTiffReader <http://dev.loci.wisc.edu/trac/java/wiki/NikonElementsTiffReader>`_
+
+We currently have: 
+
+-  A few Nikon Elements TIFF files
+
+We'd like to have: 
+
+-  More Nikon Elements TIFF files
+
+Ratings
+
+Pixels: 
+
+.. figure:: /files/loci/images/crystal-3.png
+   :align: center
+   :alt: 3 - Good
+
+Metadata: 
+
+.. figure:: /files/loci/images/crystal-3.png
+   :align: center
+   :alt: 3 - Good
+
+Openness: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Presence: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Utility: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Additional Information
+
+Source Code: 
+
+`NikonElementsTiffReader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/NikonElementsTiffReader.java>`_

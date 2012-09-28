@@ -1,0 +1,84 @@
+Evotec/PerkinElmer Opera Flex
+=============================
+
+--------------
+
+Extensions: 
+
+.flex
+
+Developer: 
+
+`Evotec Technologies <http://www.evotec-technologies.com/>`_
+
+Support
+
+Export: 
+
+.. figure:: /files/loci/images/crystal-no.png
+   :align: center
+   :alt: 
+
+Supported Metadata Fields: 
+
+`Flex Reader <http://dev.loci.wisc.edu/trac/software/wiki/FlexReader>`_
+
+We currently have: 
+
+-  A few Flex datasets
+
+We'd like to have: 
+
+-  A freely redistributable LuraWave LWF decoder
+
+Ratings
+
+Pixels: 
+
+.. figure:: /files/loci/images/crystal-5.png
+   :align: center
+   :alt: 5 - Outstanding
+
+Metadata: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Openness: 
+
+.. figure:: /files/loci/images/crystal-1.png
+   :align: center
+   :alt: 1 - Poor
+
+Presence: 
+
+.. figure:: /files/loci/images/crystal-1.png
+   :align: center
+   :alt: 1 - Poor
+
+Utility: 
+
+.. figure:: /files/loci/images/crystal-1.png
+   :align: center
+   :alt: 1 - Poor
+
+Additional Information
+
+Source Code: 
+
+`FlexReader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/FlexReader.java>`_
+
+Source Code: 
+
+`LuraWaveCodec <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/codec/LuraWaveCodec.java>`_
+
+Notes: 
+
+-  The LuraWave LWF decoder library (e.g., lwf\_jsdk2.6.jar) with
+   license code is required to decode wavelet-compressed Flex files.
+
+See Also: 
+
+`LuraTech (developers of the proprietary LuraWave LWF compression used
+for Flex image planes) <http://www.luratech.com/>`_

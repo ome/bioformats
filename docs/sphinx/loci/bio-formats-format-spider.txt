@@ -1,0 +1,77 @@
+SPIDER
+======
+
+--------------
+
+Extensions: 
+
+.spi, .stk
+
+Developer: 
+
+`Wadsworth
+Center <http://www.wadsworth.org/spider_doc/spider/docs/spider.html>`_
+
+Support
+
+Export: 
+
+.. figure:: /files/loci/images/crystal-no.png
+   :align: center
+   :alt: 
+
+Supported Metadata Fields: 
+
+`SpiderReader <http://dev.loci.wisc.edu/trac/software/wiki/SpiderReader>`_
+
+Freely Available Software: 
+
+`SPIDER <http://www.wadsworth.org/spider_doc/spider/docs/spider.html>`_
+
+We currently have: 
+
+-  A few example datasets
+-  Official file format documentation
+
+Ratings
+
+Pixels: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Metadata: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Openness: 
+
+.. figure:: /files/loci/images/crystal-5.png
+   :align: center
+   :alt: 5 - Outstanding
+
+Presence: 
+
+.. figure:: /files/loci/images/crystal-3.png
+   :align: center
+   :alt: 3 - Good
+
+Utility: 
+
+.. figure:: /files/loci/images/crystal-3.png
+   :align: center
+   :alt: 3 - Good
+
+Additional Information
+
+Source Code: 
+
+`SpiderReader <http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/SpiderReader.java>`_
+
+See Also: 
+
+`Official
+documentation <http://www.wadsworth.org/spider_doc/spider/docs/image_doc.html>`_

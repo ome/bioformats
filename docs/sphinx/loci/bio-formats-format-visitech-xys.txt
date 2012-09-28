@@ -1,0 +1,72 @@
+VisiTech XYS
+============
+
+--------------
+
+Extensions: 
+
+.xys, .html
+
+Developer: 
+
+`VisiTech International <http://www.visitech.co.uk/>`_
+
+Support
+
+Export: 
+
+.. figure:: /files/loci/images/crystal-no.png
+   :align: center
+   :alt: 
+
+Supported Metadata Fields: 
+
+`VisiTech
+Reader <http://dev.loci.wisc.edu/trac/software/wiki/VisitechReader>`_
+
+We currently have: 
+
+-  Several VisiTech datasets
+
+We'd like to have: 
+
+-  A VisiTech XYS specification document
+
+Ratings
+
+Pixels: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Metadata: 
+
+.. figure:: /files/loci/images/crystal-3.png
+   :align: center
+   :alt: 3 - Good
+
+Openness: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Presence: 
+
+.. figure:: /files/loci/images/crystal-1.png
+   :align: center
+   :alt: 1 - Poor
+
+Utility: 
+
+.. figure:: /files/loci/images/crystal-3.png
+   :align: center
+   :alt: 3 - Good
+
+Additional Information
+
+Source Code: 
+
+`VisiTech
+Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/VisitechReader.java>`_

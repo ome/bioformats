@@ -1,0 +1,40 @@
+NESb
+====
+
+--------------
+
+`|image0| <files/loci/images/software/NESb.jpg>`_
+
+Sample Data
+
+Format: 
+
+TIFF
+
+Dimensions (pixels): 
+
+1024 x 1024
+
+File size: 
+
+22,463,680 bytes
+
+8 bits per sample
+
+10 time points
+
+9 focal planes
+
+Download: 
+
+`NESb.zip <http://www.loci.wisc.edu/files/software/data/NESb.zip>`_
+
+Contributor
+
+Contributed by: 
+
+Josh Bembenek
+
+
+
+.. |image0| image:: files/loci/imagecache/thumbnail/images/software/NESb.jpg

@@ -1,0 +1,76 @@
+InCell 3000
+===========
+
+--------------
+
+Extensions: 
+
+.frm
+
+Developer: 
+
+`GE <http://gelifesciences.com/>`_
+
+Support
+
+Export: 
+
+.. figure:: /files/loci/images/crystal-no.png
+   :align: center
+   :alt: 
+
+Supported Metadata Fields: 
+
+`InCell3000Reader <http://dev.loci.wisc.edu/trac/software/wiki/InCell3000Reader>`_
+
+Sample Datasets: 
+
+`Broad Bioimage Benchmark
+Collection <http://www.broadinstitute.org/bbbc/sbs_bioimage_cnt.html>`_
+
+We currently have: 
+
+-  A few example images files
+
+We'd like to have: 
+
+-  At least one example metadata file
+-  An official specification document
+
+Ratings
+
+Pixels: 
+
+.. figure:: /files/loci/images/crystal-3.png
+   :align: center
+   :alt: 3 - Good
+
+Metadata: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Openness: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Presence: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Utility: 
+
+.. figure:: /files/loci/images/crystal-1.png
+   :align: center
+   :alt: 1 - Poor
+
+Additional Information
+
+Source Code: 
+
+`InCell3000Reader <http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/InCell3000Reader.java>`_

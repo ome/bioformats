@@ -1,0 +1,77 @@
+SimplePCI & HCImage
+===================
+
+--------------
+
+Extensions: 
+
+.cxd
+
+Developer: 
+
+`Compix <http://www.cimaging.net/>`_
+
+Support
+
+Export: 
+
+.. figure:: /files/loci/images/crystal-no.png
+   :align: center
+   :alt: 
+
+Supported Metadata Fields: 
+
+`PCI Reader <http://dev.loci.wisc.edu/trac/software/wiki/PCIReader>`_
+
+We currently have: 
+
+-  Several SimplePCI files
+
+Ratings
+
+Pixels: 
+
+.. figure:: /files/loci/images/crystal-5.png
+   :align: center
+   :alt: 5 - Outstanding
+
+Metadata: 
+
+.. figure:: /files/loci/images/crystal-3.png
+   :align: center
+   :alt: 3 - Good
+
+Openness: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Presence: 
+
+.. figure:: /files/loci/images/crystal-1.png
+   :align: center
+   :alt: 1 - Poor
+
+Utility: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Additional Information
+
+Source Code: 
+
+`PCI
+Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/PCIReader.java>`_
+
+Notes: 
+
+Bio-Formats uses a modified version of the `Apache Jakarta
+POI <http://jakarta.apache.org/poi/>`_ library to read CXD files.
+
+See Also: 
+
+`SimplePCI software
+overview <http://www.cimaging.net/products/simplepci/>`_

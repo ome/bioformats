@@ -1,0 +1,46 @@
+Fiji plugins
+============
+
+--------------
+
+Overview
+
+LOCI provides several ImageJ plugins using our Fiji update site:
+
+    ``http://dev.loci.wisc.edu/fiji/``
+
+See `How to follow a 3rd party update
+site <http://fiji.sc/wiki/index.php/How_to_follow_a_3rd_party_update_site>`_
+on the Fiji web site for instructions, including screenshots.
+
+Download
+
+Language: 
+
+Java
+
+Instructions: 
+
+For convenience, here are the instructions in detail:
+
+#. Download and install `Fiji <http://fiji.sc/>`_, if you haven't done
+   so.
+#. Choose Help > Update Fiji from the menu.
+#. Perform any needed updates. Restart Fiji, then run Update Fiji again.
+   Repeat until "Your Fiji is up to date!"
+#. Click Advanced Mode.
+#. Click Manage Update Sites.
+#. Click Add.
+#. For Name, specify: LOCI
+#. For URL, specify: http://dev.loci.wisc.edu/fiji/
+#. Click OK.
+#. Click Close.
+#. You will see new items (e.g., "plugins/LOCI/misc\_plugins...") with
+   status "Install it"
+#. Click Apply Changes.
+#. When prompted, restart Fiji.
+#. The plugins will now be available via the menus (e.g., "Stitch
+   OME-TIFFs" in the Plugins > Stitching menu).
+
+In the future, to update to a new version, just run "Update Fiji" and it
+will update it for you.
