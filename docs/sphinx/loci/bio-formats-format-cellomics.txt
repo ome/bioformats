@@ -1,0 +1,72 @@
+Cellomics
+=========
+
+--------------
+
+Extensions: 
+
+.c01
+
+Developer: 
+
+`Thermo Fisher Scientific <http://www.thermofisher.com/>`_
+
+Support
+
+Export: 
+
+.. figure:: /files/loci/images/crystal-no.png
+   :align: center
+   :alt:
+
+Supported Metadata Fields: 
+
+`Cellomics
+Reader <http://dev.loci.wisc.edu/trac/software/wiki/CellomicsReader>`_
+
+We currently have: 
+
+-  A few Cellomics .c01 datasets
+
+We'd like to have: 
+
+-  A Cellomics .c01 specification document
+-  More Cellomics .c01 datasets
+
+Ratings
+
+Pixels: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Metadata: 
+
+.. figure:: /files/loci/images/crystal-1.png
+   :align: center
+   :alt: 1 - Poor
+
+Openness: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Presence: 
+
+.. figure:: /files/loci/images/crystal-1.png
+   :align: center
+   :alt: 1 - Poor
+
+Utility: 
+
+.. figure:: /files/loci/images/crystal-1.png
+   :align: center
+   :alt: 1 - Poor
+
+Additional Information
+
+Source Code: 
+
+`CellomicsReader.java <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/CellomicsReader.java>`_

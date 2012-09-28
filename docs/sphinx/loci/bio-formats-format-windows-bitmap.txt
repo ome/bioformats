@@ -1,0 +1,85 @@
+Windows Bitmap
+==============
+
+--------------
+
+Extensions: 
+
+.bmp
+
+Developer: 
+
+Microsoft and IBM
+
+Support
+
+Export: 
+
+.. figure:: /files/loci/images/crystal-no.png
+   :align: center
+   :alt:
+
+Supported Metadata Fields: 
+
+`BMP Reader <http://dev.loci.wisc.edu/trac/software/wiki/BMPReader>`_
+
+Freely Available Software: 
+
+`BMP Writer plugin for
+ImageJ <http://rsb.info.nih.gov/ij/plugins/bmp-writer.html>`_
+
+We currently have: 
+
+-  Several BMP datasets
+
+Ratings
+
+Pixels: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Metadata: 
+
+.. figure:: /files/loci/images/crystal-5.png
+   :align: center
+   :alt: 5 - Outstanding
+
+Openness: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Presence: 
+
+.. figure:: /files/loci/images/crystal-5.png
+   :align: center
+   :alt: 5 - Outstanding
+
+Utility: 
+
+.. figure:: /files/loci/images/crystal-1.png
+   :align: center
+   :alt: 1 - Poor
+
+Additional Information
+
+Source Code: 
+
+`BMPReader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/BMPReader.java>`_
+
+Notes: 
+
+-  Compressed BMP files are currently not supported.
+
+See Also: 
+
+`Technical
+Overview <http://www.faqs.org/faqs/graphics/fileformats-faq/part3/section-18.html>`_
+
+See Also: 
+
+`General
+Resources <http://people.sc.fsu.edu/~burkardt/data/bmp/bmp.html>`_

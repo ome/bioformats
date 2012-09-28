@@ -1,0 +1,88 @@
+PICT (Macintosh Picture)
+========================
+
+--------------
+
+Extensions: 
+
+.pict
+
+Developer: 
+
+`Apple Computer <http://www.apple.com>`_
+
+Support
+
+Export: 
+
+.. figure:: /files/loci/images/crystal-no.png
+   :align: center
+   :alt:
+
+Supported Metadata Fields: 
+
+`PICT Reader <http://dev.loci.wisc.edu/trac/software/wiki/PictReader>`_
+
+We currently have: 
+
+-  Numerous PICT datasets
+
+Ratings
+
+Pixels: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Metadata: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Openness: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Presence: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Utility: 
+
+.. figure:: /files/loci/images/crystal-1.png
+   :align: center
+   :alt: 1 - Poor
+
+Additional Information
+
+Source Code: 
+
+`PICT
+Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/PictReader.java>`_
+
+Source Code: 
+
+`Legacy PICT
+Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/LegacyPictReader.java>`_
+
+Notes: 
+
+`QuickTime for
+Java <http://www.apple.com/quicktime/download/standalone.html>`_ is
+required for reading vector files, and some compressed files.
+
+See Also: 
+
+`PICT technical
+overview <http://www.faqs.org/faqs/graphics/fileformats-faq/part3/section-107.html>`_
+
+See Also: 
+
+`Another PICT technical
+overview <http://www.prepressure.com/formats/pict/fileformat.htm>`_

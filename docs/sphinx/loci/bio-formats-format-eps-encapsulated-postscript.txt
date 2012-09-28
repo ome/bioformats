@@ -1,0 +1,83 @@
+EPS (Encapsulated PostScript)
+=============================
+
+--------------
+
+Extensions: 
+
+.eps, .epsi, .ps
+
+Developer: 
+
+`Adobe <http://www.adobe.com/>`_
+
+Support
+
+Export: 
+
+.. figure:: /files/loci/images/crystal-yes.png
+   :align: center
+   :alt:
+
+Supported Metadata Fields: 
+
+`EPS Reader <http://dev.loci.wisc.edu/trac/software/wiki/EPSReader>`_
+
+Freely Available Software: 
+
+`EPS Writer plugin for
+ImageJ <http://rsb.info.nih.gov/ij/plugins/eps-writer.html>`_
+
+We currently have: 
+
+-  A few EPS datasets
+-  The ability to produce new datasets
+
+Ratings
+
+Pixels: 
+
+.. figure:: /files/loci/images/crystal-3.png
+   :align: center
+   :alt: 3 - Good
+
+Metadata: 
+
+.. figure:: /files/loci/images/crystal-3.png
+   :align: center
+   :alt: 3 - Good
+
+Openness: 
+
+.. figure:: /files/loci/images/crystal-3.png
+   :align: center
+   :alt: 3 - Good
+
+Presence: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Utility: 
+
+.. figure:: /files/loci/images/crystal-1.png
+   :align: center
+   :alt: 1 - Poor
+
+Additional Information
+
+Source Code: 
+
+`EPS
+Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/EPSReader.java>`_
+
+Source Code: 
+
+`EPS
+Writer <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/out/EPSWriter.jav>`_
+
+Notes: 
+
+-  Bio-Formats can save individual planes as EPS.
+-  Certain types of compressed EPS files are not supported.

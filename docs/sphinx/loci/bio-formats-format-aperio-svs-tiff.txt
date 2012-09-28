@@ -1,0 +1,82 @@
+Aperio SVS TIFF
+===============
+
+--------------
+
+Extensions: 
+
+.svs
+
+Owner: 
+
+`Aperio <http://www.aperio.com/>`_
+
+Support
+
+Export: 
+
+.. figure:: /files/loci/images/crystal-no.png
+   :align: center
+   :alt:
+
+Officially Supported Versions: 
+
+8.0, 8.2, 9.0
+
+Supported Metadata Fields: 
+
+`SVSReader <http://dev.loci.wisc.edu/trac/software/wiki/SVSReader>`_
+
+We currently have: 
+
+-  several SVS datasets
+-  an SVS specification document
+-  the ability to generate additional SVS datasets
+
+Ratings
+
+Pixels: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Metadata: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Openness: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Presence: 
+
+.. figure:: /files/loci/images/crystal-3.png
+   :align: center
+   :alt: 3 - Good
+
+Utility: 
+
+.. figure:: /files/loci/images/crystal-3.png
+   :align: center
+   :alt: 3 - Good
+
+Additional Information
+
+Source Code: 
+
+`SVSReader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/SVSReader.java>`_
+
+Notes: 
+
+**Please note that while we have specification documents for this
+format, we are not able to distribute them to third parties.**
+
+See Also: 
+
+`Aperio SVS
+Reader <http://www.aperio.com/software/ImageScopeInstaller.exe>`_

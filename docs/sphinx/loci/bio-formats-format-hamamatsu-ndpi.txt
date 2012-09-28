@@ -1,0 +1,86 @@
+Hamamatsu .ndpi
+===============
+
+--------------
+
+Extensions: 
+
+.ndpi
+
+Developer: 
+
+`Hamamatsu <http://www.hamamatsu.com>`_
+
+Support
+
+Export: 
+
+.. figure:: /files/loci/images/crystal-no.png
+   :align: center
+   :alt:
+
+Supported Metadata Fields: 
+
+`NDPIReader <http://dev.loci.wisc.edu/trac/software/wiki/NDPIReader>`_
+
+Freely Available Software: 
+
+`NDP.view <http://www.olympusamerica.com/seg_section/seg_vm_downloads.asp>`_
+
+Sample Datasets: 
+
+`OpenSlide <http://openslide.cs.cmu.edu/download/openslide-testdata/Hamamatsu/>`_
+
+We currently have: 
+
+-  Many example datasets
+
+We'd like to have: 
+
+-  An official specification document
+-  A JPEG decoder that decodes images whose width or height are greater
+   than 65530
+
+Ratings
+
+Pixels: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Metadata: 
+
+.. figure:: /files/loci/images/crystal-3.png
+   :align: center
+   :alt: 3 - Good
+
+Openness: 
+
+.. figure:: /files/loci/images/crystal-3.png
+   :align: center
+   :alt: 3 - Good
+
+Presence: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Utility: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Additional Information
+
+Source Code: 
+
+`NDPIReader <http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/NDPIReader.java>`_
+
+Notes: 
+
+Small .ndpi files can be read, but there is a major issue with reading
+large files (width or height greater than 65530):
+http://trac.openmicroscopy.org.uk/ome/ticket/5092

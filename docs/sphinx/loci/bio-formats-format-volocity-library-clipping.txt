@@ -1,0 +1,72 @@
+Volocity Library Clipping
+=========================
+
+--------------
+
+Extensions: 
+
+.acff
+
+Developer: 
+
+`PerkinElmer <http://www.perkinelmer.com/pages/020/cellularimaging/products/volocity.xhtml>`_
+
+Support
+
+Export: 
+
+.. figure:: /files/loci/images/crystal-no.png
+   :align: center
+   :alt:
+
+We currently have: 
+
+-  Several Volocity library clipping datasets
+
+We'd like to have: 
+
+-  Any Volocity library clipping datasets that do not open correctly
+-  An official specification document
+
+Ratings
+
+Pixels: 
+
+.. figure:: /files/loci/images/crystal-3.png
+   :align: center
+   :alt: 3 - Good
+
+Metadata: 
+
+.. figure:: /files/loci/images/crystal-3.png
+   :align: center
+   :alt: 3 - Good
+
+Openness: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Presence: 
+
+.. figure:: /files/loci/images/crystal-1.png
+   :align: center
+   :alt: 1 - Poor
+
+Utility: 
+
+.. figure:: /files/loci/images/crystal-1.png
+   :align: center
+   :alt: 1 - Poor
+
+Additional Information
+
+Source Code: 
+
+`VolocityClippingReader <http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/VolocityClippingReader.java>`_
+
+Notes: 
+
+Note that RGB .acff files are not yet supported.  See
+`http://trac.openmicroscopy.org/ome/ticket/6413 <http://trac.openmicroscopy.org/ome/ticket/6413>`_.

@@ -1,0 +1,45 @@
+MATLAB
+======
+
+--------------
+
+`MATLAB <http://www.mathworks.com/products/matlab/>`_ is a high-level
+language and interactive environment that facilitates rapid development
+of algorithms for performing computationally intensive tasks.
+
+Calling Bio-Formats from MATLAB is fairly straightforward, since MATLAB
+has built-in interoperability with Java. We have created a simple script
+for reading image files:
+
+    `bfopen.m <http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/utils/bfopen.m?format=txt>`_
+
+We are not MATLAB experts—any comments on improving the script are
+welcome.
+
+Performance
+-----------
+
+In our tests (MATLAB R14 vs. java 1.6.0\_20), the script executes at
+approximately half the speed of our `showinf command line
+tool </bio-formats/command-line-tools>`_, due to overhead from copying
+arrays.
+
+Installation
+------------
+
+To use the script, download **bfopen.m** (above) and
+`**loci\_tools.jar** </bio-formats/downloads>`_ and place them in your
+MATLAB work directory.
+
+Upgrading
+---------
+
+To use a newer version of Bio-Formats, overwrite **loci\_tools.jar**
+with the `newer version </bio-formats/downloads>`_ and restart MATLAB.
+
+More information
+----------------
+
+For further instructions on working with Bio-Formats from MATLAB, see
+the `Bio-Formats MATLAB
+Guide <http://trac.openmicroscopy.org.uk/ome/wiki/BioFormats-Matlab>`_.

@@ -1,0 +1,98 @@
+Leica LAS AF LIF (Leica Image File Format)
+==========================================
+
+--------------
+
+Extensions: 
+
+.lif
+
+Developer: 
+
+`Leica Microsystems CMS GmbH <http://www.leica-microsystems.com/>`_
+
+Owner: 
+
+`Leica <http://www.leica.com/>`_
+
+Support
+
+Export: 
+
+.. figure:: /files/loci/images/crystal-no.png
+   :align: center
+   :alt:
+
+Officially Supported Versions: 
+
+1.0, 2.0
+
+Supported Metadata Fields: 
+
+`LIF Reader <http://dev.loci.wisc.edu/trac/software/wiki/LIFReader>`_
+
+Freely Available Software: 
+
+`Leica LAS AF
+Lite <ftp://ftp.llt.de/softlib/LAS_AF_Lite/1.7.0_build_1111/setup.exe>`_
+
+We currently have: 
+
+-  A LIF specification document (Version 2, from no later than 2007 July
+   26, in PDF)
+-  A LIF specification document (Version 1, from no later than 2006 Apr
+   3, in PDF)
+-  Numerous LIF datasets
+
+Ratings
+
+Pixels: 
+
+.. figure:: /files/loci/images/crystal-5.png
+   :align: center
+   :alt: 5 - Outstanding
+
+Metadata: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Openness: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Presence: 
+
+.. figure:: /files/loci/images/crystal-3.png
+   :align: center
+   :alt: 3 - Good
+
+Utility: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Additional Information
+
+Source Code: 
+
+`LIF
+Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/LIFReader.java>`_
+
+Notes: 
+
+-  LAS stands for "Leica Application Suite."
+-  AF stands for "Advanced Fluorescence."
+
+Commercial applications that support LIF include:
+
+-  `Bitplane Imaris <http://bitplane.com/>`_
+-  `SVI Huygens <http://svi.nl/>`_
+-  `Amira <http://www.amira.com/>`_
+
+**Please note that while we have specification documents for this
+format, we are not able to distribute them to third parties.**

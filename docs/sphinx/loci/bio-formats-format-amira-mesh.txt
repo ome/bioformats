@@ -1,0 +1,72 @@
+Amira Mesh
+==========
+
+--------------
+
+Extensions: 
+
+.am, .amiramesh, .grey, .hx, .labels
+
+Developer: 
+
+`Visage Imaging <http://www.amiravis.com/>`_
+
+Support
+
+Export: 
+
+.. figure:: /files/loci/images/crystal-no.png
+   :align: center
+   :alt:
+
+Supported Metadata Fields: 
+
+`Amira
+Reader <http://dev.loci.wisc.edu/trac/software/wiki/AmiraReader>`_
+
+We currently have: 
+
+-  a few Amira Mesh datasets
+
+We'd like to have: 
+
+-  more Amira Mesh datasets
+
+Ratings
+
+Pixels: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Metadata: 
+
+.. figure:: /files/loci/images/crystal-3.png
+   :align: center
+   :alt: 3 - Good
+
+Openness: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Presence: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Utility: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Additional Information
+
+Source Code: 
+
+`Amira
+Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/AmiraReader.java>`_

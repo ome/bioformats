@@ -1,0 +1,111 @@
+TIFF (Tagged Image File Format)
+===============================
+
+--------------
+
+Extensions: 
+
+.tif
+
+Developer: 
+
+Aldus and Microsoft
+
+Owner: 
+
+`Adobe <http://www.adobe.com>`_
+
+Support
+
+Export: 
+
+.. figure:: /files/loci/images/crystal-yes.png
+   :align: center
+   :alt:
+
+Supported Metadata Fields: 
+
+`TIFF Reader <http://dev.loci.wisc.edu/trac/software/wiki/TiffReader>`_
+
+Sample Datasets: 
+
+`LZW TIFF data
+gallery <http://marlin.life.utsa.edu/Data%20Gallery.html>`_
+
+Sample Datasets: 
+
+`Big TIFF <http://tiffcentral.com/>`_
+
+We currently have: 
+
+-  A `TIFF specification
+   document <http://partners.adobe.com/asn/developer/PDFS/TN/TIFF6.pdf>`_
+   (v6.0, from 1992 Jun 3, in PDF)
+-  A large number of TIFF datasets
+-  A few BigTIFF datasets
+
+We'd like to have: 
+
+More TIFF datasets:
+
+-  anything unusual—preferably rare/unsupported compression or
+   photometric interpretation type
+
+Ratings
+
+Pixels: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Metadata: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Openness: 
+
+.. figure:: /files/loci/images/crystal-5.png
+   :align: center
+   :alt: 5 - Outstanding
+
+Presence: 
+
+.. figure:: /files/loci/images/crystal-5.png
+   :align: center
+   :alt: 5 - Outstanding
+
+Utility: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Additional Information
+
+Source Code: 
+
+`TIFF
+Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/TiffReader.java>`_
+
+Source Code: 
+
+`TIFF
+Writer <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/out/TiffWriter.java>`_
+
+Notes: 
+
+-  Bio-Formats can also read BigTIFF files (TIFF files larger than 4
+   GB).
+-  Bio-Formats can save image stacks as TIFF or BigTIFF.
+
+See Also: 
+
+`TIFF technical overview <http://home.earthlink.net/%7Eritter/tiff/>`_
+
+See Also: 
+
+`BigTIFF technical
+overview <http://www.awaresystems.be/imaging/tiff/bigtiff.html>`_

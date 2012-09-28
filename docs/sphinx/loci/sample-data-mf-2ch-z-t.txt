@@ -1,0 +1,46 @@
+MF-2CH-Z-T
+==========
+
+--------------
+
+`|image0| <files/loci/images/software/MF-2CH-Z-T.jpg>`_
+
+Sample Data
+
+Format: 
+
+ABD TIFF
+
+Dimensions (pixels): 
+
+256 x 256
+
+File size: 
+
+16,163,765 bytes
+
+16 bits per sample
+
+5 time points
+
+4 focal planes
+
+2 channels
+
+5 fields
+
+Download: 
+
+`MF-2CH-Z-T.zip <http://www.loci.wisc.edu/files/software/data/MF-2CH-Z-T.zip>`_
+
+Contributor
+
+Contributed by: 
+
+Mark Browne
+
+Institution: 
+
+`Andor Technology <http://www.andor.com/>`_
+
+.. |image0| image:: files/loci/imagecache/thumbnail/images/software/MF-2CH-Z-T.jpg

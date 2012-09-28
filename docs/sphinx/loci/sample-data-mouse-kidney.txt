@@ -1,0 +1,54 @@
+Mouse kidney
+============
+
+--------------
+
+`|image0| <files/loci/images/software/mouse-kidney.jpg>`_
+
+Mouse kidney section from Invitrogen's `FluoCell prepared slide
+#3 <http://products.invitrogen.com/ivgn/product/F24630?CID=Search-Product>`_.
+The section is stained with Alexafluor 488 WGA, Alexafluor 568
+phalloidin and DAPI, and is imaged as two series: an XYZ stack (25
+planes), and an XZY version (46 planes) of the same zone.
+
+Sample Data
+
+Format: 
+
+Leica LIF
+
+Dimensions (pixels): 
+
+512 x 512
+
+File size: 
+
+84,788,147 bytes
+
+16 bits per sample
+
+71 focal planes
+
+4 channels
+
+Download: 
+
+`mouse-kidney.zip <http://www.loci.wisc.edu/files/software/data/mouse-kidney.zip>`_
+
+Contributor
+
+Contributed by: 
+
+Jean-Yves Tinevez & Samantha Blazquez-Vilarrubias
+
+Department: 
+
+`PFID -
+Imagopôle <http://www.pasteur.fr/ip/easysite/go/03b-00003g-0lt/imagopole>`_
+
+Institution: 
+
+`Institut
+Pasteur <http://www.pasteur.fr/ip/easysite/go/03b-00002j-000/en>`_
+
+.. |image0| image:: files/loci/imagecache/thumbnail/images/software/mouse-kidney.jpg

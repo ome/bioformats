@@ -1,0 +1,93 @@
+Improvision Openlab LIFF
+========================
+
+--------------
+
+Extensions: 
+
+.liff
+
+Developer: 
+
+`Improvision <http://www.improvision.com/>`_
+
+Owner: 
+
+`PerkinElmer <http://www.perkinelmer.com/>`_
+
+Support
+
+Export: 
+
+.. figure:: /files/loci/images/crystal-no.png
+   :align: center
+   :alt:
+
+Officially Supported Versions: 
+
+2.0, 5.0
+
+Supported Metadata Fields: 
+
+`Openlab
+Reader <http://dev.loci.wisc.edu/trac/software/wiki/OpenlabReader>`_
+
+We currently have: 
+
+-  An Openlab specification document (from 2000 Feb 8, in DOC)
+-  Improvision's XLIFFFileImporter code for reading Openlab LIFF v5
+   files (from 2006, in C++)
+-  Several Openlab datasets
+
+We'd like to have: 
+
+-  More Openlab datasets (32-bit integer data)
+
+Ratings
+
+Pixels: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Metadata: 
+
+.. figure:: /files/loci/images/crystal-3.png
+   :align: center
+   :alt: 3 - Good
+
+Openness: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Presence: 
+
+.. figure:: /files/loci/images/crystal-3.png
+   :align: center
+   :alt: 3 - Good
+
+Utility: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Additional Information
+
+Source Code: 
+
+`Openlab
+Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/OpenlabReader.java>`_
+
+Notes: 
+
+**Please note that while we have specification documents for this
+format, we are not able to distribute them to third parties.**
+
+See Also: 
+
+`Openlab software
+review <http://www.improvision.com/products/openlab/>`_

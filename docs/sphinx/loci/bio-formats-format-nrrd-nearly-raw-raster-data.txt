@@ -1,0 +1,79 @@
+NRRD (Nearly Raw Raster Data)
+=============================
+
+--------------
+
+Extensions: 
+
+.nrrd, .nhdr, .raw, .txt
+
+Developer: 
+
+`Teem developers <http://teem.sourceforge.net/>`_
+
+Support
+
+Export: 
+
+.. figure:: /files/loci/images/crystal-no.png
+   :align: center
+   :alt:
+
+Supported Metadata Fields: 
+
+`NRRD Reader <http://dev.loci.wisc.edu/trac/software/wiki/NRRDReader>`_
+
+Freely Available Software: 
+
+`nrrd (NRRD reference library) <http://teem.sourceforge.net/nrrd/>`_
+
+Sample Datasets: 
+
+`Diffusion tensor MRI
+datasets <http://www.sci.utah.edu/%7Egk/DTI-data/>`_
+
+We currently have: 
+
+-  A `nrrd specification
+   document <http://teem.sourceforge.net/nrrd/format.html>`_ (v1.9, from
+   2005 Dec 24, in HTML)
+-  A few nrrd datasets
+
+Ratings
+
+Pixels: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Metadata: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Openness: 
+
+.. figure:: /files/loci/images/crystal-5.png
+   :align: center
+   :alt: 5 - Outstanding
+
+Presence: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Utility: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Additional Information
+
+Source Code: 
+
+`NRRD
+Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/NRRDReader.java>`_

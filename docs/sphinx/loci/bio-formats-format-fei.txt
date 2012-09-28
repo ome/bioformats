@@ -1,0 +1,71 @@
+FEI
+===
+
+--------------
+
+Extensions: 
+
+.img
+
+Developer: 
+
+`FEI <http://www.fei.com/>`_
+
+Support
+
+Export: 
+
+.. figure:: /files/loci/images/crystal-no.png
+   :align: center
+   :alt:
+
+Supported Metadata Fields: 
+
+`FEI Reader <http://dev.loci.wisc.edu/trac/software/wiki/FEIReader>`_
+
+We currently have: 
+
+-  A few FEI files
+
+We'd like to have: 
+
+-  A specification document
+-  More FEI files
+
+Ratings
+
+Pixels: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Metadata: 
+
+.. figure:: /files/loci/images/crystal-1.png
+   :align: center
+   :alt: 1 - Poor
+
+Openness: 
+
+.. figure:: /files/loci/images/crystal-1.png
+   :align: center
+   :alt: 1 - Poor
+
+Presence: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Utility: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Additional Information
+
+Source Code: 
+
+`FEIReader.java <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/FEIReader.java>`_

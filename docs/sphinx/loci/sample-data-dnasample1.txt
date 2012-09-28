@@ -1,0 +1,42 @@
+dnasample1
+==========
+
+--------------
+
+`|image0| <files/loci/images/software/dnasample1.jpg>`_
+
+Sample Data
+
+Format: 
+
+Gatan DM3
+
+Dimensions (pixels): 
+
+4096 x 4096
+
+File size: 
+
+25,689,710 bytes
+
+16 bits per sample
+
+Download: 
+
+`dnasample1.zip <http://www.loci.wisc.edu/files/software/data/dnasample1.zip>`_
+
+Contributor
+
+Contributed by: 
+
+Jay Campbell
+
+Department: 
+
+`Materials Science & Engineering <http://www.engr.wisc.edu/mse/>`_
+
+Institution: 
+
+`UW-Madison College of Engineering <http://www.engr.wisc.edu/>`_
+
+.. |image0| image:: files/loci/imagecache/thumbnail/images/software/dnasample1.jpg

@@ -1,0 +1,37 @@
+Blend Final
+===========
+
+--------------
+
+`|image0| <files/loci/images/software/Blend_Final.jpg>`_
+
+Sample Data
+
+Format: 
+
+IPLab
+
+Dimensions (pixels): 
+
+650 x 515
+
+File size: 
+
+691,397 bytes
+
+8 bits per sample
+
+3 channels
+
+Download: 
+
+`Blend
+Final <http://www.loci.wisc.edu/files/software/data/Blend_Final.zip>`_
+
+Contributor
+
+Contributed by: 
+
+`Scanalytics <http://www.scanalytics.com>`_
+
+.. |image0| image:: files/loci/imagecache/thumbnail/images/software/Blend_Final.jpg

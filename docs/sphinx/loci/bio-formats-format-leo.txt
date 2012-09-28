@@ -1,0 +1,74 @@
+LEO
+===
+
+--------------
+
+Extensions: 
+
+.sxm
+
+Owner: 
+
+`Zeiss <http://www.zeiss.de>`_
+
+Support
+
+Export: 
+
+.. figure:: /files/loci/images/crystal-no.png
+   :align: center
+   :alt:
+
+Supported Metadata Fields: 
+
+`LEOReader <http://dev.loci.wisc.edu/trac/software/wiki/LEOReader>`_
+
+We currently have: 
+
+- Pascal code that can read LEO files (from ImageSXM)
+
+- a few LEO files
+
+We'd like to have: 
+
+- a LEO file format specification document
+
+- more LEO files
+
+Ratings
+
+Pixels: 
+
+.. figure:: /files/loci/images/crystal-3.png
+   :align: center
+   :alt: 3 - Good
+
+Metadata: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Openness: 
+
+.. figure:: /files/loci/images/crystal-3.png
+   :align: center
+   :alt: 3 - Good
+
+Presence: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Utility: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Additional Information
+
+Source Code: 
+
+`LEOReader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/LEOReader.java>`_

@@ -1,0 +1,72 @@
+Lambert Instruments FLIM
+========================
+
+--------------
+
+Extensions: 
+
+.fli
+
+Developer: 
+
+`Lambert Instruments <http://www.lambert-instruments.com>`_
+
+Support
+
+Export: 
+
+.. figure:: /files/loci/images/crystal-no.png
+   :align: center
+   :alt:
+
+Supported Metadata Fields: 
+
+`LiFlimReader <http://dev.loci.wisc.edu/trac/software/wiki/LiFlimReader>`_
+
+We currently have: 
+
+-  an LI-FLIM specification document
+-  several example LI-FLIM datasets
+
+Ratings
+
+Pixels: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Metadata: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Openness: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Presence: 
+
+.. figure:: /files/loci/images/crystal-2.png
+   :align: center
+   :alt: 2 - Fair
+
+Utility: 
+
+.. figure:: /files/loci/images/crystal-3.png
+   :align: center
+   :alt: 3 - Good
+
+Additional Information
+
+Source Code: 
+
+`LiFlimReader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/LiFlimReader.java>`_
+
+Notes: 
+
+**Please note that while we have specification documents for this
+format, we are not able to distribute them to third parties.**

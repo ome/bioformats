@@ -1,0 +1,92 @@
+Leica LCS LEI
+=============
+
+--------------
+
+Extensions: 
+
+.lei, .tif
+
+Developer: 
+
+`Leica Microsystems CMS GmbH <http://www.leica-microsystems.com/>`_
+
+Owner: 
+
+`Leica <http://www.leica.com/>`_
+
+Support
+
+Export: 
+
+.. figure:: /files/loci/images/crystal-no.png
+   :align: center
+   :alt:
+
+Supported Metadata Fields: 
+
+`Leica
+Reader <http://dev.loci.wisc.edu/trac/software/wiki/LeicaReader>`_
+
+Freely Available Software: 
+
+`Leica LCS Lite <ftp://ftp.llt.de/softlib/LCSLite/LCSLite2611537.exe>`_
+
+We currently have: 
+
+-  An LEI specification document (beta 2.000, from no later than 2004
+   Feb 17, in PDF)
+-  Several LEI datasets
+
+Ratings
+
+Pixels: 
+
+.. figure:: /files/loci/images/crystal-5.png
+   :align: center
+   :alt: 5 - Outstanding
+
+Metadata: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Openness: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Presence: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Utility: 
+
+.. figure:: /files/loci/images/crystal-4.png
+   :align: center
+   :alt: 4 - Very Good
+
+Additional Information
+
+Source Code: 
+
+`Leica
+Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/LeicaReader.java>`_
+
+Notes: 
+
+-  LCS stands for "Leica Confocal Software."
+-  LEI presumably stands for "Leica Experimental Information."
+
+Commercial applications that support LEI include:
+
+-  `Bitplane Imaris <http://bitplane.com/>`_
+-  `SVI Huygens <http://svi.nl/>`_
+-  `Image-Pro Plus <http://www.mediacy.com/>`_
+
+**Please note that while we have specification documents for this
+format, we are not able to distribute them to third parties.**
