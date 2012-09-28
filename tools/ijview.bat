@@ -5,6 +5,7 @@ rem             using the Bio-Formats Importer plugin
 
 rem Required JARs: loci_tools.jar, ij.jar
 
+setlocal
 set SCIFIO_DIR=%~dp0
 if "%SCIFIO_DIR:~-1%" == "\" set SCIFIO_DIR=%SCIFIO_DIR:~0,-1%
 

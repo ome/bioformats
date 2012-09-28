@@ -2,6 +2,7 @@
 
 rem scifio.bat: the batch file that actually launches a command line tool
 
+setlocal
 set SCIFIO_DIR=%~dp0
 if "%SCIFIO_DIR:~-1%" == "\" set SCIFIO_DIR=%SCIFIO_DIR:~0,-1%
 
@@ -54,8 +55,3 @@ if exist "%SCIFIO_JAR_DIR%\bio-formats.jar" (
 java %SCIFIO_FLAGS% -cp "%SCIFIO_DIR%";%SCIFIO_CP% %SCIFIO_PROG% %*
 
 :end
-rem Unset temporary SCIFIO environment variables.
-set SCIFIO_CP=
-set SCIFIO_DIR=
-set SCIFIO_FLAGS=
-set SCIFIO_PROG=
