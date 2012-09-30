@@ -13,11 +13,7 @@ ZSoft Corporation
 
 Support
 
-Export: 
-
-.. figure:: /files/loci/images/crystal-no.png
-   :align: center
-   :alt: 
+Export: |no|
 
 Supported Metadata Fields: 
 
@@ -30,35 +26,15 @@ We currently have: 
 
 Ratings
 
-Pixels: 
+Pixels: |Very Good|
 
-.. figure:: /files/loci/images/crystal-4.png
-   :align: center
-   :alt: 4 - Very Good
+Metadata: |Poor|
 
-Metadata: 
+Openness: |Fair|
 
-.. figure:: /files/loci/images/crystal-1.png
-   :align: center
-   :alt: 1 - Poor
+Presence: |Poor|
 
-Openness: 
-
-.. figure:: /files/loci/images/crystal-2.png
-   :align: center
-   :alt: 2 - Fair
-
-Presence: 
-
-.. figure:: /files/loci/images/crystal-1.png
-   :align: center
-   :alt: 1 - Poor
-
-Utility: 
-
-.. figure:: /files/loci/images/crystal-2.png
-   :align: center
-   :alt: 2 - Fair
+Utility: |Fair|
 
 Additional Information
 

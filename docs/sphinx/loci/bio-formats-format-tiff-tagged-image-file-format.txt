@@ -17,11 +17,7 @@ Owner: 
 
 Support
 
-Export: 
-
-.. figure:: /files/loci/images/crystal-yes.png
-   :align: center
-   :alt: 
+Export: |yes|
 
 Supported Metadata Fields: 
 
@@ -53,35 +49,15 @@ More TIFF datasets:
 
 Ratings
 
-Pixels: 
+Pixels: |Very Good|
 
-.. figure:: /files/loci/images/crystal-4.png
-   :align: center
-   :alt: 4 - Very Good
+Metadata: |Very Good|
 
-Metadata: 
+Openness: |Outstanding|
 
-.. figure:: /files/loci/images/crystal-4.png
-   :align: center
-   :alt: 4 - Very Good
+Presence: |Outstanding|
 
-Openness: 
-
-.. figure:: /files/loci/images/crystal-5.png
-   :align: center
-   :alt: 5 - Outstanding
-
-Presence: 
-
-.. figure:: /files/loci/images/crystal-5.png
-   :align: center
-   :alt: 5 - Outstanding
-
-Utility: 
-
-.. figure:: /files/loci/images/crystal-2.png
-   :align: center
-   :alt: 2 - Fair
+Utility: |Fair|
 
 Additional Information
 

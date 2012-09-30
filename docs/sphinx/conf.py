@@ -133,6 +133,14 @@ rst_epilog = """
 .. _ZeroC: http://www.zeroc.com
 .. _Ice: http://www.zeroc.com
 
+.. |Poor| image:: /images/crystal-1.png
+.. |Fair| image:: /images/crystal-2.png
+.. |Good| image:: /images/crystal-3.png
+.. |Very Good| image:: /images/crystal-4.png
+.. |Outstanding| image:: /images/crystal-5.png
+.. |no| image:: /images/crystal-no.png
+.. |yes| image:: /images/crystal-yes.png
+
 """
 
 # -- Options for HTML output ---------------------------------------------------

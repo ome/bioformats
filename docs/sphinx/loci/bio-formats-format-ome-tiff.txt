@@ -13,11 +13,7 @@ LOCI
 
 Support
 
-Export: 
-
-.. figure:: /files/loci/images/crystal-yes.png
-   :align: center
-   :alt: 
+Export: |yes|
 
 Officially Supported Versions: 
 
@@ -38,35 +34,15 @@ We currently have: 
 
 Ratings
 
-Pixels: 
+Pixels: |Outstanding|
 
-.. figure:: /files/loci/images/crystal-5.png
-   :align: center
-   :alt: 5 - Outstanding
+Metadata: |Outstanding|
 
-Metadata: 
+Openness: |Outstanding|
 
-.. figure:: /files/loci/images/crystal-5.png
-   :align: center
-   :alt: 5 - Outstanding
+Presence: |Fair|
 
-Openness: 
-
-.. figure:: /files/loci/images/crystal-5.png
-   :align: center
-   :alt: 5 - Outstanding
-
-Presence: 
-
-.. figure:: /files/loci/images/crystal-2.png
-   :align: center
-   :alt: 2 - Fair
-
-Utility: 
-
-.. figure:: /files/loci/images/crystal-5.png
-   :align: center
-   :alt: 5 - Outstanding
+Utility: |Outstanding|
 
 Additional Information
 

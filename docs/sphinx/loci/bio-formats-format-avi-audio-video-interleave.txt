@@ -13,11 +13,7 @@ Developer: 
 
 Support
 
-Export: 
-
-.. figure:: /files/loci/images/crystal-yes.png
-   :align: center
-   :alt: 
+Export: |yes|
 
 Supported Metadata Fields: 
 
@@ -47,35 +43,15 @@ More AVI datasets, including
 
 Ratings
 
-Pixels: 
+Pixels: |Good|
 
-.. figure:: /files/loci/images/crystal-3.png
-   :align: center
-   :alt: 3 - Good
+Metadata: |Outstanding|
 
-Metadata: 
+Openness: |Fair|
 
-.. figure:: /files/loci/images/crystal-5.png
-   :align: center
-   :alt: 5 - Outstanding
+Presence: |Outstanding|
 
-Openness: 
-
-.. figure:: /files/loci/images/crystal-2.png
-   :align: center
-   :alt: 2 - Fair
-
-Presence: 
-
-.. figure:: /files/loci/images/crystal-5.png
-   :align: center
-   :alt: 5 - Outstanding
-
-Utility: 
-
-.. figure:: /files/loci/images/crystal-1.png
-   :align: center
-   :alt: 1 - Poor
+Utility: |Poor|
 
 Additional Information
 

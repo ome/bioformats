@@ -17,11 +17,7 @@ Owner: 
 
 Support
 
-Export: 
-
-.. figure:: /files/loci/images/crystal-no.png
-   :align: center
-   :alt: 
+Export: |no|
 
 Officially Supported Versions: 
 
@@ -46,35 +42,16 @@ We currently have: 
 
 Ratings
 
-Pixels: 
+Pixels: |Outstanding|
 
-.. figure:: /files/loci/images/crystal-5.png
-   :align: center
-   :alt: 5 - Outstanding
 
-Metadata: 
+Metadata: |Very Good|
 
-.. figure:: /files/loci/images/crystal-4.png
-   :align: center
-   :alt: 4 - Very Good
+Openness: |Very Good|
 
-Openness: 
+Presence: |Good|
 
-.. figure:: /files/loci/images/crystal-4.png
-   :align: center
-   :alt: 4 - Very Good
-
-Presence: 
-
-.. figure:: /files/loci/images/crystal-3.png
-   :align: center
-   :alt: 3 - Good
-
-Utility: 
-
-.. figure:: /files/loci/images/crystal-4.png
-   :align: center
-   :alt: 4 - Very Good
+Utility: |Very Good|
 
 Additional Information
 

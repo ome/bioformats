@@ -9,11 +9,7 @@ Developer: 
 
 Support
 
-Export: 
-
-.. figure:: /files/loci/images/crystal-no.png
-   :align: center
-   :alt: 
+Export: |no|
 
 Freely Available Software: 
 
@@ -31,35 +27,15 @@ We'd like to have: 
 
 Ratings
 
-Pixels: 
+Pixels: |Good|
 
-.. figure:: /files/loci/images/crystal-3.png
-   :align: center
-   :alt: 3 - Good
+Metadata: |Very Good|
 
-Metadata: 
+Openness: |Fair|
 
-.. figure:: /files/loci/images/crystal-4.png
-   :align: center
-   :alt: 4 - Very Good
+Presence: |Good|
 
-Openness: 
-
-.. figure:: /files/loci/images/crystal-2.png
-   :align: center
-   :alt: 2 - Fair
-
-Presence: 
-
-.. figure:: /files/loci/images/crystal-3.png
-   :align: center
-   :alt: 3 - Good
-
-Utility: 
-
-.. figure:: /files/loci/images/crystal-2.png
-   :align: center
-   :alt: 2 - Fair
+Utility: |Fair|
 
 Additional Information
 
