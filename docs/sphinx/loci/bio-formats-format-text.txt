@@ -9,19 +9,11 @@ Extensions: 
 
 Support
 
-Export: 
-
-.. figure:: /files/loci/images/crystal-no.png
-   :align: center
-   :alt:
+Export: |no|
 
 Ratings
 
-Pixels: 
-
-.. figure:: /files/loci/images/crystal-3.png
-   :align: center
-   :alt: 3 - Good
+Pixels: |Good|
 
 Additional Information
 
