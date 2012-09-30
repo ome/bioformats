@@ -13,11 +13,7 @@ Developer: 
 
 Support
 
-Export: 
-
-.. figure:: /files/loci/images/crystal-no.png
-   :align: center
-   :alt:
+Export: |no|
 
 Supported Metadata Fields: 
 
@@ -39,35 +35,15 @@ We'd like to have: 
 
 Ratings
 
-Pixels: 
+Pixels: |Good|
 
-.. figure:: /files/loci/images/crystal-3.png
-   :align: center
-   :alt: 3 - Good
+Metadata: |Good|
 
-Metadata: 
+Openness: |Fair|
 
-.. figure:: /files/loci/images/crystal-3.png
-   :align: center
-   :alt: 3 - Good
+Presence: |Poor|
 
-Openness: 
-
-.. figure:: /files/loci/images/crystal-2.png
-   :align: center
-   :alt: 2 - Fair
-
-Presence: 
-
-.. figure:: /files/loci/images/crystal-1.png
-   :align: center
-   :alt: 1 - Poor
-
-Utility: 
-
-.. figure:: /files/loci/images/crystal-2.png
-   :align: center
-   :alt: 2 - Fair
+Utility: |Fair|
 
 Additional Information
 

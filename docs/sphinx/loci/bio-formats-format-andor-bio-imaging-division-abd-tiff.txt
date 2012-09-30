@@ -1,4 +1,4 @@
-Andor Bio-Imaging Division (ABD) TIFF
+|Good|Andor Bio-Imaging Division (ABD) TIFF
 =====================================
 
 --------------
@@ -17,11 +17,7 @@ Owner: 
 
 Support
 
-Export: 
-
-.. figure:: /files/loci/images/crystal-no.png
-   :align: center
-   :alt:
+Export: |no|
 
 Supported Metadata Fields: 
 
@@ -35,35 +31,15 @@ We currently have: 
 
 Ratings
 
-Pixels: 
+Pixels: |Very Good|
 
-.. figure:: /files/loci/images/crystal-4.png
-   :align: center
-   :alt: 4 - Very Good
+Metadata: |Very Good|
 
-Metadata: 
+Openness: |Good|
 
-.. figure:: /files/loci/images/crystal-4.png
-   :align: center
-   :alt: 4 - Very Good
+Presence: |Fair|
 
-Openness: 
-
-.. figure:: /files/loci/images/crystal-3.png
-   :align: center
-   :alt: 3 - Good
-
-Presence: 
-
-.. figure:: /files/loci/images/crystal-2.png
-   :align: center
-   :alt: 2 - Fair
-
-Utility: 
-
-.. figure:: /files/loci/images/crystal-3.png
-   :align: center
-   :alt: 3 - Good
+Utility: |Good|
 
 Additional Information
 
