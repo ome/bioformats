@@ -58,6 +58,152 @@ See the `Bio-Formats Download page
 up-to-date version of Bio-Formats including daily and trunk builds and
 source code repository information.
 
+******************
+Loci Documentation
+******************
+
+For information about what extensions to choose to import files, see
+
+.. toctree::
+    :maxdepth: 1
+    :titlesonly:
+
+    loci/software-bio-formats
+
+About
+=====
+
+.. toctree::
+    :maxdepth: 1
+    :titlesonly:
+
+    loci/bio-formats-about
+    loci/bio-formats-formats
+    loci/bio-formats-downloads
+    loci/bio-formats-downloads
+    loci/bio-formats-source-code
+    loci/bio-formats-license
+    loci/bio-formats-authors
+    loci/bio-formats-citations
+    loci/bio-formats-contact
+
+Using Bio-Formats
+=================
+
+Bio-Formats is a Java-based library that converts `over 115 microscopy
+formats <http://www.loci.wisc.edu/bio-formats/formats>`_ into the
+OME-XML and OME-TIFF formats. Bio-Formats can be used with numerous
+`applications <http://www.loci.wisc.edu/bio-formats/applications>`_ but
+is most commonly used with ImageJ and FIJI.
+
+The purpose of this document is to explain Bio-Formats's features and
+how to use it within ImageJ and FIJI. The sections include:
+
+.. toctree::
+    :maxdepth: 1
+    :titlesonly:
+
+    loci/bio-formats-installing-bio-formats-imagej
+    loci/bio-formats-bio-formats-features
+    loci/bio-formats-using-bio-formats-load-images
+    loci/bio-formats-managing-memory-using-bio-formats
+    loci/bio-formats-using-bio-formats-load-images
+    loci/bio-formats-bug-reporting
+    loci/bio-formats-fiji-updaters
+
+Developer Topics
+================
+
+Bio-Formats as a Java Library
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If you wish to leverage Bio-Formats within your own software, you can
+download bio-formats.jar to use it as a library. Just add
+**bio-formats.jar** to your CLASSPATH or build path. You will also need
+**loci-common.jar** for common I/O functions. :doc:`Read
+more.... </loci/bio-formats-bio-formats-java-library>`
+
+Developing Bio-Formats
+~~~~~~~~~~~~~~~~~~~~~~
+
+If you are interested in hacking on the Bio-Formats source code itself,
+you can load the source code into your favorite IDE, or develop code
+with your favorite text editor. :doc:`Read
+more.... <loci/bio-formats-developing-bio-formats>`
+
+Interfacing From Non-Java Code
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Bio-Formats is written in Java, and is easiest to use with other Java
+code. However, it is possible to call Bio-Formats from a program written
+in another language. But how to do so depends on your program's needs.
+:doc:`Read more.... <loci/bio-formats-interfacing-non-java-code>`
+
+Bio-Formats C++ Bindings
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+To make the utility of the Bio-Formats Java library accessible to
+software written in C++ (such as the Insight Toolkit) we have used the
+Jace set of libraries to create C++ proxies of the Bio-Formats classes.
+:doc:`Read more.... <loci/bio-formats-bio-formats-c-bindings>`
+
+.. toctree::
+    :maxdepth: 1
+    :titlesonly:
+    :hidden:
+
+    loci/bio-formats-bio-formats-java-library
+    loci/bio-formats-developing-bio-formats
+    loci/bio-formats-interfacing-non-java-code
+    loci/bio-formats-bio-formats-c-bindings
+
+Applications
+============
+
+.. toctree::
+    :maxdepth: 1
+    :titlesonly:
+    :hidden:
+
+    loci/bio-formats-bisque
+    loci/bio-formats-bitplane-imaris
+    loci/bio-formats-cellprofiler
+    loci/bio-formats-command-line-tools
+    loci/bio-formats-comstat2
+    loci/bio-formats-endrov
+    loci/bio-formats-farsight
+    loci/bio-formats-fiji
+    loci/bio-formats-focalpoint
+    loci/bio-formats-graphic-converter
+    loci/bio-formats-idl
+    loci/bio-formats-itk
+    loci/bio-formats-icy
+    loci/bio-formats-imagej
+    loci/bio-formats-upgrading-bio-formats-importer-imagej-latest-trunk-build
+    loci/bio-formats-iqm
+    loci/bio-formats-jar2lib
+    loci/bio-formats-matlab
+    loci/bio-formats-mipav
+    loci/bio-formats-macnification
+    loci/bio-formats-ome-server
+    loci/bio-formats-omero
+    loci/bio-formats-qu-matlab
+    loci/bio-formats-subimager
+    loci/bio-formats-v3d
+    loci/bio-formats-visad
+    loci/bio-formats-visbio
+    loci/bio-formats-xuvtools
+    loci/bio-formats-i3dcore
+    loci/bio-formats-imago
+
+SCIFIO
+======
+
+.. toctree::
+    :maxdepth: 1
+    :titlesonly:
+
+    loci/software-scifio
 
 ******************
 User Documentation
