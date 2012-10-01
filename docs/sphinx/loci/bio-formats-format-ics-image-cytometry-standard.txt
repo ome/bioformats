@@ -1,8 +1,6 @@
 ICS (Image Cytometry Standard)
 ==============================
 
---------------
-
 Extensions: 
 
 .ics, .ids

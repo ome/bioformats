@@ -1,8 +1,6 @@
 Khoros VIFF (Visualization Image File Format) Bitmap
 ====================================================
 
---------------
-
 Extensions: 
 
 .xv

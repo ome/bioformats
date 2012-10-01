@@ -1,8 +1,6 @@
 Olympus SIS TIFF
 ================
 
---------------
-
 Extensions: 
 
 .tiff

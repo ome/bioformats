@@ -1,7 +1,6 @@
 Aperio SVS TIFF
 ===============
 
---------------
 
 Extensions: 
 

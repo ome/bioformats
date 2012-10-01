@@ -1,8 +1,6 @@
 Fiji
 ====
 
---------------
-
 `Fiji <http://pacific.mpi-cbg.de/>`_ is an image processing package. It
 can be described as a distribution of `ImageJ </bio-formats/imagej>`_
 together with Java, Java 3D and a lot of plugins organized into a

@@ -1,8 +1,6 @@
 Becker & Hickl SPCImage
 =======================
 
---------------
-
 Extensions: 
 
 .sdt

@@ -1,8 +1,6 @@
 Evotec/PerkinElmer Opera Flex
 =============================
 
---------------
-
 Extensions: 
 
 .flex

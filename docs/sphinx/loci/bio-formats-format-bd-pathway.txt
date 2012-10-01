@@ -1,8 +1,6 @@
 BD Pathway
 ==========
 
---------------
-
 Extensions: 
 
 .exp, .tif

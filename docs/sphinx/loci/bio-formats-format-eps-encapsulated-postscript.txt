@@ -1,8 +1,6 @@
 EPS (Encapsulated PostScript)
 =============================
 
---------------
-
 Extensions: 
 
 .eps, .epsi, .ps

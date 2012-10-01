@@ -1,8 +1,6 @@
 Hamamatsu .ndpi
 ===============
 
---------------
-
 Extensions: 
 
 .ndpi

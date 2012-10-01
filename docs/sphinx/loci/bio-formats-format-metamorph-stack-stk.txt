@@ -1,8 +1,6 @@
 MetaMorph Stack (STK)
 =====================
 
---------------
-
 Extensions: 
 
 .stk, .nd

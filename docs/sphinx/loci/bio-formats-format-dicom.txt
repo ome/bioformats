@@ -1,8 +1,6 @@
 DICOM
 =====
 
---------------
-
 Extensions: 
 
 .dcm, .dicom

@@ -1,8 +1,6 @@
 Nikon Elements TIFF
 ===================
 
---------------
-
 Extensions: 
 
 .tiff

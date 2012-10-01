@@ -1,8 +1,6 @@
 ImagePro Workspace
 ==================
 
---------------
-
 Extensions: 
 
 .ipw

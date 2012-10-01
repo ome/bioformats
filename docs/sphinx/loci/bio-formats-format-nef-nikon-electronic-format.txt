@@ -1,8 +1,6 @@
 NEF (Nikon Electronic Format)
 =============================
 
---------------
-
 Extensions: 
 
 .nef, .tif

@@ -1,8 +1,6 @@
 Axon Raw Format
 ===============
 
---------------
-
 Extensions: 
 
 .arf

@@ -1,8 +1,6 @@
 OME-XML
 =======
 
---------------
-
 Extensions: 
 
 .ome

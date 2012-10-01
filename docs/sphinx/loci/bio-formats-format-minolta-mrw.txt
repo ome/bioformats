@@ -1,8 +1,6 @@
 Minolta MRW
 ===========
 
---------------
-
 Extensions: 
 
 .mrw
