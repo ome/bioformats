@@ -19,10 +19,10 @@ Sample Datasets: `golgi.mrc <http://bio3d.colorado.edu/imod/files/imod_data.tar
 We currently have: 
 
 -  An `MRC specification
-   document <http://ami.scripps.edu/software/mrctools/mrc_specification.php>`_
+   document <http://ami.scripps.edu/software/mrctools/mrc_specification.php>`__
    (in HTML)
 -  Another `MRC specification
-   document <http://bio3d.colorado.edu/imod/doc/mrc_format.txt>`_ (in
+   document <http://bio3d.colorado.edu/imod/doc/mrc_format.txt>`__ (in
    TXT)
 -  Only one MRC dataset
 

@@ -40,5 +40,5 @@ Additional Information
 
 Source Code: :source:`PGM Reader <components/bio-formats/src/loci/formats/in/PGMReader.java>`
 
-.. seealsos::
+.. seealso::
     `PGM technical overview <http://netpbm.sourceforge.net/doc/pgm.html>`_

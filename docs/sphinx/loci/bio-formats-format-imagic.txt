@@ -34,7 +34,7 @@ Metadata: |Very Good|
 
 Openness: |Very Good|
 
-Presence: |Good
+Presence: |Good|
 
 Utility: |Good|
 

@@ -42,4 +42,4 @@ Utility: |Fair|
 Additional Information
 ----------------------
 
-Source Code: :source:`OxfordInstrumentsReader <components/bio-formats/src/loci/formats/in/OxfordInstrumentsReader.java>`_
+Source Code: :source:`OxfordInstrumentsReader <components/bio-formats/src/loci/formats/in/OxfordInstrumentsReader.java>`

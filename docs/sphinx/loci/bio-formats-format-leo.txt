@@ -35,7 +35,7 @@ Metadata: |Fair|
 
 Openness: |Good|
 
-Presence: |Fair
+Presence: |Fair|
 
 Utility: |Fair|
 

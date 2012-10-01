@@ -39,7 +39,7 @@ Utility: |Good|
 Additional Information
 ----------------------
 
-Source Code: :source:`FluoView Reader <components/bio-formats/src/loci/formats/in/FluoviewReader.java>`_
+Source Code: :source:`FluoView Reader <components/bio-formats/src/loci/formats/in/FluoviewReader.java>`
 
 Notes: Commercial applications that support this format include:
 
