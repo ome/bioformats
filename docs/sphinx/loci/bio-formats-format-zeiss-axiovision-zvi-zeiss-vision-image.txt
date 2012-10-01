@@ -3,9 +3,9 @@ Zeiss AxioVision ZVI (Zeiss Vision Image)
 
 Extensions: .zvi
 
-Developer: `Carl Zeiss MicroImaging GmbH <http://www.zeiss.com/axiovision>`_
+Developer: `Carl Zeiss MicroImaging GmbH <http://www.zeiss.com/axiovision>`__
 
-Owner: `Carl Zeiss MicroImaging GmbH <http://www.zeiss.com/micro>`_
+Owner: `Carl Zeiss MicroImaging GmbH <http://www.zeiss.com/micro>`__
 
 Support
 -------
