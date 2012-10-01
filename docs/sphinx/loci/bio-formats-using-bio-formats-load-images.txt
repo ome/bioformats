@@ -10,8 +10,6 @@ screen.  The sections include:
 -  `Group Files with Similar Names <#GroupFiles>`_
 -  `Autoscale <#Autoscale>`_
 
- 
-
 **Opening files:**
 ------------------
 
@@ -27,20 +25,15 @@ Unless you used the LOCI Plugins Configuration dialog to open the file
 type windowlessly, you know you used Bio-Formats to open a file when you
 see a screen like this:
 
- 
-
-|Bio-Formats' Import Options Screen|\ **Bio-Formats' Import Options
-Screen**
-
- 
+.. image:: /images/ImportOptions.jpg
+    :align: center
+    :alt: Bio-Formats' Import Options Screen
 
 If you used the File > Open command and did not see the Bio-Formats
 Import Options screen, ImageJ / FIJI probably used another plugin
 instead of Bio-Formats to open the file.   If this happens and you want
 to open a file using Bio-Formats, use one of the other two methods
 instead. 
-
- 
 
 Opening Files Windowlessly
 --------------------------
@@ -76,17 +69,14 @@ you enable this windowless option, you will have to go back to the
 open a file using the regular **Bio-Formats Importer**, select your
 settings, and re-select the windowless option. 
 
- 
-
 **Group files with Similar Names**
 ----------------------------------
 
 One of the most important features of Bio-Formats is to combine multiple
 files from a data set into one coherent, multi-dimensional image.
 
-To demonstrate how to use the “Group files\ ****\ with similar
-names”\ ****\ feature, we’ll use the
-`dub <http://www.loci.wisc.edu/sample-data/dub>`_ data set available
+To demonstrate how to use the “Group files with similar
+names” feature, we’ll use the `dub <http://www.loci.wisc.edu/sample-data/dub>`_ data set available
 under LOCI’s `Sample
 Data <http://www.loci.wisc.edu/software/sample-data>`_ page.  You will
 notice that it is a large dataset: each of the 85 files shows the
@@ -100,13 +90,9 @@ image (x, y, z, and t) incorporating the 85 files. 
 
 After clicking OK, you will see a screen like this:
 
- 
-
-|File Stitching Window: You can create a multi-dimensional image using
-multiple image files.|\ **File Stitching Window:**\ You can create a
-multi-dimensional image using multiple image files.
-
- 
+.. image:: /images/FileStitching.jpg
+   :align: center
+   :alt: File Stitching Window
 
 This screen allows you to select which files within the 85-file cluster
 to use to create that 4-D image. Some information will be pre-populated
@@ -194,10 +180,9 @@ Histogram under the Analyze menu.) Here is the histogram of a one
 particular image:
 
  
-
-|Histogram|\ **Histogram**
-
- 
+.. image:: /images/Histogram.jpg
+    :align: center
+    :alt: Histogram
 
 Notice that the histogram heavily skews right.  Even though there are
 256 possible values, only 0 thorough 125 are being used. 
@@ -209,15 +194,16 @@ pure white.  The other values will be adjusted too to help show contrast
 between values that were too insignificant to see before.
 
 Here is one image Bio-Formats imported with and without using Autoscale:
-
  
+=================== ================
+|without_autoscale| |with_autoscale|
+=================== ================
 
-|Without Autoscale|\ **Without Autoscale** |With Autoscale|\ **With
-Autoscale**
+.. |without_autoscale| image:: /images/without_autoscale.jpg
+    :alt: Without autoscale
 
- 
-
- 
+.. |with_autoscale| image:: /images/with_autoscale.jpg
+    :alt: With autoscale
 
 Autoscale readjusts the image based on the highest value in the entire
 data set.  This means if the highest value in your dataset is close to
@@ -226,18 +212,4 @@ eye. 
 
 ImageJ / Fiji also has its own tools for adjusting the image, which are
 available by selecting Brightness / Contrast, which is under the Adjust
-option in the Image menu. ****
-
-**
-**
-
-.. |Bio-Formats' Import Options
-Screen| image:: files/loci/images/Import%20Options.img_assist_custom-562x300.jpg
-.. |File Stitching Window: You can create a multi-dimensional image
-using multiple image
-files.| image:: files/loci/images/File%20Stitching.img_assist_custom-609x197.jpg
-.. |Histogram| image:: files/loci/images/Histogram.jpg
-.. |Without
-Autoscale| image:: files/loci/images/without%20autoscale.img_assist_custom-330x235.jpg
-.. |With
-Autoscale| image:: files/loci/images/with%20autoscale.img_assist_custom-330x235.jpg
+option in the Image menu. 
