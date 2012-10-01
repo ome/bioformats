@@ -8,23 +8,20 @@ minutes of every Git push) for the latest bugfixes, but please be aware
 that these builds are not always thoroughly tested and should be
 considered beta quality.
 
-Version
 
-Release date
-
-Filename
-
-Size in bytes
+Version  Release date Filename  Size in bytes
 
 LOCI Tools complete bundle (for end users)
 
 Contains everything needed to read images into ImageJ using Bio-Formats.
 
+Trunk build
+
 `|image3| </bio-formats/installing-bio-formats-imagej>`_ Trunk build
 
 Continuous
 
-`loci\_tools.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-trunk/lastSuccessfulBuild/artifact/artifacts/loci_tools.jar>`_
+`loci\_tools.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-trunk/lastSuccessfulBuild/artifact/artifacts/loci_tools.jar>`__
 
  
 
@@ -32,7 +29,7 @@ Continuous
 
 Today
 
-`loci\_tools.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-daily/lastSuccessfulBuild/artifact/artifacts/loci_tools.jar>`_
+`loci\_tools.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-daily/lastSuccessfulBuild/artifact/artifacts/loci_tools.jar>`__
 
  
 
@@ -54,7 +51,7 @@ Trunk build
 
 Continuous
 
-`ome\_tools.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-trunk/lastSuccessfulBuild/artifact/artifacts/ome_tools.jar>`_
+`ome\_tools.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-trunk/lastSuccessfulBuild/artifact/artifacts/ome_tools.jar>`__
 
  
 
@@ -62,7 +59,7 @@ Daily build
 
 Today
 
-`ome\_tools.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-daily/lastSuccessfulBuild/artifact/artifacts/ome_tools.jar>`_
+`ome\_tools.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-daily/lastSuccessfulBuild/artifact/artifacts/ome_tools.jar>`__
 
  
 
@@ -70,7 +67,7 @@ Stable release
 
 2011 October 18
 
-`ome\_tools.jar </files/software/ome_tools.jar>`_
+`ome\_tools.jar </files/software/ome_tools.jar>`__
 
 10,540,859
 
@@ -80,7 +77,7 @@ Stable release
 
 2010 April 26
 
-`bftools.zip </files/software/bftools.zip>`_
+`bftools.zip </files/software/bftools.zip>`__
 
 17,357
 
@@ -198,121 +195,121 @@ Core
 
 Bio-Formats library
 
-`bio-formats.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-trunk/lastSuccessfulBuild/artifact/artifacts/bio-formats.jar>`_
+`bio-formats.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-trunk/lastSuccessfulBuild/artifact/artifacts/bio-formats.jar>`__
 
-`bio-formats.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-daily/lastSuccessfulBuild/artifact/artifacts/bio-formats.jar>`_
+`bio-formats.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-daily/lastSuccessfulBuild/artifact/artifacts/bio-formats.jar>`__
 
 `bio-formats.jar </files/software/bio-formats.jar>`_
 
 SCIFIO
 
-`scifio.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-trunk/lastSuccessfulBuild/artifact/artifacts/scifio.jar>`_
+`scifio.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-trunk/lastSuccessfulBuild/artifact/artifacts/scifio.jar>`__
 
-`scifio.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-daily/lastSuccessfulBuild/artifact/artifacts/scifio.jar>`_
+`scifio.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-daily/lastSuccessfulBuild/artifact/artifacts/scifio.jar>`__
 
 ---
 
 LOCI Common
 
-`loci-common.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-trunk/lastSuccessfulBuild/artifact/artifacts/loci-common.jar>`_
+`loci-common.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-trunk/lastSuccessfulBuild/artifact/artifacts/loci-common.jar>`__
 
-`loci-common.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-daily/lastSuccessfulBuild/artifact/artifacts/loci-common.jar>`_
+`loci-common.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-daily/lastSuccessfulBuild/artifact/artifacts/loci-common.jar>`__
 
-`loci-common.jar </files/software/loci-common.jar>`_
+`loci-common.jar </files/software/loci-common.jar>`__
 
 OME-XML Java library
 
-`ome-xml.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-trunk/lastSuccessfulBuild/artifact/artifacts/ome-xml.jar>`_
+`ome-xml.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-trunk/lastSuccessfulBuild/artifact/artifacts/ome-xml.jar>`__
 
-`ome-xml.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-daily/lastSuccessfulBuild/artifact/artifacts/ome-xml.jar>`_
+`ome-xml.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-daily/lastSuccessfulBuild/artifact/artifacts/ome-xml.jar>`__
 
-`ome-xml.jar </files/software/ome-xml.jar>`_
+`ome-xml.jar </files/software/ome-xml.jar>`__
 
 LOCI Plugins for ImageJ
 
-`loci\_plugins.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-trunk/lastSuccessfulBuild/artifact/artifacts/loci_plugins.jar>`_
+`loci\_plugins.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-trunk/lastSuccessfulBuild/artifact/artifacts/loci_plugins.jar>`__
 
-`loci\_plugins.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-daily/lastSuccessfulBuild/artifact/artifacts/loci_plugins.jar>`_
+`loci\_plugins.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-daily/lastSuccessfulBuild/artifact/artifacts/loci_plugins.jar>`__
 
-`loci\_plugins.jar <files/software/loci_plugins.jar>`_
+`loci\_plugins.jar <files/software/loci_plugins.jar>`__
 
 Metakit
 
-`metakit.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-trunk/lastSuccessfulBuild/artifact/artifacts/metakit.jar>`_
+`metakit.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-trunk/lastSuccessfulBuild/artifact/artifacts/metakit.jar>`__
 
-`metakit.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-daily/lastSuccessfulBuild/artifact/artifacts/metakit.jar>`_
+`metakit.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-daily/lastSuccessfulBuild/artifact/artifacts/metakit.jar>`__
 
-`metakit.jar <files/software/metakit.jar>`_
+`metakit.jar <files/software/metakit.jar>`__
 
 OME I/O
 
-`ome-io.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-trunk/lastSuccessfulBuild/artifact/artifacts/ome-io.jar>`_
+`ome-io.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-trunk/lastSuccessfulBuild/artifact/artifacts/ome-io.jar>`__
 
-`ome-io.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-daily/lastSuccessfulBuild/artifact/artifacts/ome-io.jar>`_
+`ome-io.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-daily/lastSuccessfulBuild/artifact/artifacts/ome-io.jar>`__
 
-`ome-io.jar <files/software/ome-io.jar>`_
+`ome-io.jar <files/software/ome-io.jar>`__
 
 OME Plugins for ImageJ
 
-`ome\_plugins.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-trunk/lastSuccessfulBuild/artifact/artifacts/ome_plugins.jar>`_
+`ome\_plugins.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-trunk/lastSuccessfulBuild/artifact/artifacts/ome_plugins.jar>`__
 
-`ome\_plugins.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-daily/lastSuccessfulBuild/artifact/artifacts/ome_plugins.jar>`_
+`ome\_plugins.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-daily/lastSuccessfulBuild/artifact/artifacts/ome_plugins.jar>`__
 
-`ome\_plugins.jar <files/software/ome_plugins.jar>`_
+`ome\_plugins.jar <files/software/ome_plugins.jar>`__
 
 LOCI testing framework
 
-`loci-testing-framework.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-trunk/lastSuccessfulBuild/artifact/artifacts/loci-testing-framework.jar>`_
+`loci-testing-framework.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-trunk/lastSuccessfulBuild/artifact/artifacts/loci-testing-framework.jar>`__
 
-`loci-testing-framework.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-daily/lastSuccessfulBuild/artifact/artifacts/loci-testing-framework.jar>`_
+`loci-testing-framework.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-daily/lastSuccessfulBuild/artifact/artifacts/loci-testing-framework.jar>`__
 
-`loci-testing-framework.jar <files/software/loci-testing-framework.jar>`_
+`loci-testing-framework.jar <files/software/loci-testing-framework.jar>`__
 
 Forks
 
 JAI Image I/O Tools
 
-`jai\_imageio.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-trunk/lastSuccessfulBuild/artifact/artifacts/jai_imageio.jar>`_
+`jai\_imageio.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-trunk/lastSuccessfulBuild/artifact/artifacts/jai_imageio.jar>`__
 
-`jai\_imageio.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-daily/lastSuccessfulBuild/artifact/artifacts/jai_imageio.jar>`_
+`jai\_imageio.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-daily/lastSuccessfulBuild/artifact/artifacts/jai_imageio.jar>`__
 
-`jai\_imageio.jar <files/software/jai_imageio.jar>`_
+`jai\_imageio.jar <files/software/jai_imageio.jar>`__
 
 MDB Tools (Java port)
 
-`mdbtools-java.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-trunk/lastSuccessfulBuild/artifact/artifacts/mdbtools-java.jar>`_
+`mdbtools-java.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-trunk/lastSuccessfulBuild/artifact/artifacts/mdbtools-java.jar>`__
 
-`mdbtools-java.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-daily/lastSuccessfulBuild/artifact/artifacts/mdbtools-java.jar>`_
+`mdbtools-java.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-daily/lastSuccessfulBuild/artifact/artifacts/mdbtools-java.jar>`__
 
-`mdbtools-java.jar <files/software/mdbtools-java.jar>`_
+`mdbtools-java.jar <files/software/mdbtools-java.jar>`__
 
 Apache Jakarta POI
 
-`poi-loci.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-trunk/lastSuccessfulBuild/artifact/artifacts/poi-loci.jar>`_
+`poi-loci.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-trunk/lastSuccessfulBuild/artifact/artifacts/poi-loci.jar>`__
 
-`poi-loci.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-daily/lastSuccessfulBuild/artifact/artifacts/poi-loci.jar>`_
+`poi-loci.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-daily/lastSuccessfulBuild/artifact/artifacts/poi-loci.jar>`__
 
-`poi-loci.jar <files/software/poi-loci.jar>`_
+`poi-loci.jar <files/software/poi-loci.jar>`__
 
 Stubs
 
 Luratech LuraWave stubs
 
-`lwf-stubs.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-trunk/lastSuccessfulBuild/artifact/artifacts/lwf-stubs.jar>`_
+`lwf-stubs.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-trunk/lastSuccessfulBuild/artifact/artifacts/lwf-stubs.jar>`__
 
-`lwf-stubs.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-daily/lastSuccessfulBuild/artifact/artifacts/lwf-stubs.jar>`_
+`lwf-stubs.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-daily/lastSuccessfulBuild/artifact/artifacts/lwf-stubs.jar>`__
 
-`lwf-stubs.jar <files/software/lwf-stubs.jar>`_
+`lwf-stubs.jar <files/software/lwf-stubs.jar>`__
 
 Legacy
 
 OME Metadata Editor
 
-`ome-editor.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-trunk/lastSuccessfulBuild/artifact/artifacts/ome-editor.jar>`_
+`ome-editor.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-trunk/lastSuccessfulBuild/artifact/artifacts/ome-editor.jar>`__
 
-`ome-editor.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-daily/lastSuccessfulBuild/artifact/artifacts/ome-editor.jar>`_
+`ome-editor.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-daily/lastSuccessfulBuild/artifact/artifacts/ome-editor.jar>`__
 
-`ome-editor.jar <files/software/ome-editor.jar>`_
+`ome-editor.jar <files/software/ome-editor.jar>`__
 
 Older releases
 --------------
