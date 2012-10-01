@@ -5,9 +5,9 @@ Installing Bio-Formats in ImageJ
 *(Since FIJI is essentially ImageJ with plugins like Bio-Formats already
 built in, people who install FIJI can skip this section.)*
 
-Once you `download <http://rsbweb.nih.gov/ij/download.html>`_ and
+Once you `download <http://rsbweb.nih.gov/ij/download.html>`__ and
 install ImageJ, you can install the Bio-Formats plugin by going to the
-Bio-Formats `download page <bio-formats/downloads>`_.  For most
+Bio-Formats `download page <bio-formats/downloads>`__.  For most
 end-users, we recommend downloading the LOCI Tools complete bundle. 
 However, you must decide which version of it you want to install. There
 are three primary versions of Bio-Formats: the trunk build, the daily
@@ -47,20 +47,18 @@ Once you decide which version you need, go to the Bio-Formats `download
 page <http://www.loci.wisc.edu/bio-formats/downloads>`_ and save the
 appropriate loci\_tools.jar to the Plugins directory within ImageJ.
 
- 
+.. figure:: /images/PluginDirectory.png
+    :align: center
+    :alt: Plugin Directory for ImageJ
 
-|Plugin Directory for ImageJ: Where in ImageJ's file structure you
-should place the file once you downloaded it.|\ **Plugin Directory for
-ImageJ:**\ Where in ImageJ's file structure you should place the file
-once you downloaded it.
-
- 
+    Plugin Directory for ImageJ: Where in ImageJ's file structure you
+    should place the file once you downloaded it.
 
 You may have to quit and restart ImageJ.  Once you restart it, you will
 find Bio-Formats in the LOCI option under the Plugins menu:
 
- 
-
-|ImageJ's Plugin Menu|\ **ImageJ's Plugin Menu**
+.. image:: /images/PluginsMenu.jpg
+    :align: center
+    :alt: ImageJ's Plugin Menu.
 
 You are now ready to start using Bio-Formats.
