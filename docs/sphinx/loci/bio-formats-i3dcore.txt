@@ -1,8 +1,6 @@
 i3dcore
 =======
 
---------------
-
 `i3dcore <http://cbia.fi.muni.cz/user_dirs/i3dlib_doc/i3dcore/index.html>`_,
 also known as the CBIA 3D image representation library, is a 3D image
 processing library developed at the `Centre for Biomedical Image

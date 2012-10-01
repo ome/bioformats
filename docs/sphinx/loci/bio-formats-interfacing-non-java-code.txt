@@ -1,8 +1,6 @@
 Interfacing From Non-Java Code
 ==============================
 
---------------
-
 Bio-Formats is written in Java, and is easiest to use with other Java
 code. However, it is possible to call Bio-Formats from a program written
 in another language. But how to do so depends on your program's needs.
@@ -13,11 +11,9 @@ below for discussion and examples of each. For further reading, check
 out `Codemesh's technology
 comparison <http://codemesh.com/technology.html>`_.
 
-Recommended **in-process solution**: `Bio-Formats C++ bindings <http://www.loci.wisc.edu/bio-formats/bio-formats-c-bindings>`_
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Recommended **in-process solution**: :doc:`bio-formats-bio-formats-c-bindings>`
 
 Recommended **inter-process solution**: `Bio-Formats Ice bindings <http://www.loci.wisc.edu/ome/formats-ice.html>`_
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 In-process approaches
 ---------------------

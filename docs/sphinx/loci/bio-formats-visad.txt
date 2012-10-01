@@ -1,8 +1,6 @@
 VisAD
 =====
 
---------------
-
 The `VisAD <http://www.ssec.wisc.edu/%7Ebillh/visad.html>`_
 visualization toolkit is a Java component library for interactive and
 collaborative visualization and analysis of numerical data. VisAD uses

@@ -1,8 +1,6 @@
 OME Server
 ==========
 
---------------
-
 `OME <http://openmicroscopy.org/site/support/legacy/ome-server>`_ is a
 set of software that interacts with a database to manage images, image
 metadata, image analysis and analysis results. The OME system is capable

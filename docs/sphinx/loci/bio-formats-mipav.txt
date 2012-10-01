@@ -1,8 +1,6 @@
 MIPAV
 =====
 
---------------
-
 The `MIPAV <http://mipav.cit.nih.gov/>`_ (Medical Image Processing,
 Analysis, and Visualization) application—developed at the `Center for
 Information Technology <http://cit.nih.gov/>`_ at the `National

@@ -1,8 +1,6 @@
 MATLAB
 ======
 
---------------
-
 `MATLAB <http://www.mathworks.com/products/matlab/>`_ is a high-level
 language and interactive environment that facilitates rapid development
 of algorithms for performing computationally intensive tasks.

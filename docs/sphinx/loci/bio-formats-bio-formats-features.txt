@@ -1,10 +1,6 @@
 Bio-Formats Features
 ====================
 
-**
-**
---
-
 When you select Bio-Formats under the Plugin menu, you will see the
 following features:
 
