@@ -1,8 +1,6 @@
 Icy
 ===
 
---------------
-
 `Icy <http://icy.bioimageanalysis.org/>`_ is an open-source image
 analysis and visualization software package that combines a
 user-friendly graphical interface with the ability to write scripts and

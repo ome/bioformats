@@ -1,8 +1,6 @@
 Subimager
 =========
 
---------------
-
 `Subimager <https://github.com/CellProfiler/subimager>`_, the SUBprocess
 IMAGE servER, is an HTTP server that uses Bio-Formats as a back-end to
 serve .TIF images. Subimager is designed to be run as a subprocess of

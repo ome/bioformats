@@ -1,8 +1,6 @@
 License
 =======
 
---------------
-
 Bio-Formats is open source software licensed under the `GNU General
 Public License <http://www.gnu.org/licenses/gpl.html>`_ (GPL).
 

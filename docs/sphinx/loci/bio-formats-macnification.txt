@@ -1,8 +1,6 @@
 Macnification
 =============
 
---------------
-
 `Macnification <http://www.macnification.com/>`_ is a Mac OS X
 application for organizing, editing, analyzing and annotating
 microscopic images, designed for ease of use. It is being developed by

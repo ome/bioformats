@@ -1,9 +1,6 @@
 Installing Bio-Formats in ImageJ
 ================================
 
---------------
-
- 
 
 *(Since FIJI is essentially ImageJ with plugins like Bio-Formats already
 built in, people who install FIJI can skip this section.)*

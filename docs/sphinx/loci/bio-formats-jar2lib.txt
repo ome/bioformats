@@ -1,8 +1,6 @@
 Jar2Lib
 =======
 
---------------
-
 The Jar2Lib project was designed as a developer tool for converting Java
 jar files to C++ libraries.  The wrapping is performed using
 `Jace <http://code.google.com/p/jace/>`_, but using the
