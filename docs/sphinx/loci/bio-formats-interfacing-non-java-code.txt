@@ -11,7 +11,7 @@ below for discussion and examples of each. For further reading, check
 out `Codemesh's technology
 comparison <http://codemesh.com/technology.html>`_.
 
-Recommended **in-process solution**: :doc:`bio-formats-bio-formats-c-bindings>`
+Recommended **in-process solution**: :doc:`bio-formats-bio-formats-c-bindings`
 
 Recommended **inter-process solution**: `Bio-Formats Ice bindings <http://www.loci.wisc.edu/ome/formats-ice.html>`_
 

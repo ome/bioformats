@@ -78,14 +78,12 @@ About
     :titlesonly:
 
     loci/bio-formats-about
-    loci/bio-formats-formats
     loci/bio-formats-downloads
     loci/bio-formats-downloads
     loci/bio-formats-source-code
     loci/bio-formats-license
     loci/bio-formats-authors
     loci/bio-formats-citations
-    loci/bio-formats-contact
 
 Using Bio-Formats
 =================
@@ -103,6 +101,7 @@ how to use it within ImageJ and FIJI. The sections include:
     :maxdepth: 1
     :titlesonly:
 
+    loci/bio-formats-using-bio-formats
     loci/bio-formats-installing-bio-formats-imagej
     loci/bio-formats-bio-formats-features
     loci/bio-formats-using-bio-formats-load-images
@@ -165,6 +164,7 @@ Applications
     :titlesonly:
     :hidden:
 
+    loci/bio-formats-applications
     loci/bio-formats-bisque
     loci/bio-formats-bitplane-imaris
     loci/bio-formats-cellprofiler
@@ -180,8 +180,10 @@ Applications
     loci/bio-formats-icy
     loci/bio-formats-imagej
     loci/bio-formats-upgrading-bio-formats-importer-imagej-latest-trunk-build
+    loci/bio-formats-imglib
     loci/bio-formats-iqm
     loci/bio-formats-jar2lib
+    loci/bio-formats-knime
     loci/bio-formats-matlab
     loci/bio-formats-mipav
     loci/bio-formats-macnification
@@ -194,7 +196,6 @@ Applications
     loci/bio-formats-visbio
     loci/bio-formats-xuvtools
     loci/bio-formats-i3dcore
-    loci/bio-formats-imago
 
 SCIFIO
 ======
