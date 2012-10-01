@@ -1,26 +1,20 @@
 Olympus FluoView TIFF
 =====================
 
-Extensions: 
+Extensions: .tif
 
-.tif
-
-Owner: 
-
-`Olympus <http://www.olympus.com/>`_
+Owner: `Olympus <http://www.olympus.com/>`_
 
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no|
 
-Supported Metadata Fields: 
+Supported Metadata Fields: `FluoView Reader <http://dev.loci.wisc.edu/trac/software/wiki/FluoviewReader>`_
 
-`FluoView
-Reader <http://dev.loci.wisc.edu/trac/software/wiki/FluoviewReader>`_
-
-Freely Available Software: 
-
-`DIMIN <http://www.dimin.net/>`_
+Freely Available Software: `DIMIN <http://www.dimin.net/>`_
 
 We currently have: 
 
@@ -30,6 +24,7 @@ We currently have: 
 -  Several FluoView datasets
 
 Ratings
+-------
 
 Pixels: |Very Good|
 
@@ -42,15 +37,11 @@ Presence: |Good|
 Utility: |Good|
 
 Additional Information
+----------------------
 
-Source Code: 
+Source Code: :source:`FluoView Reader <components/bio-formats/src/loci/formats/in/FluoviewReader.java>`_
 
-`FluoView
-Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/FluoviewReader.java>`_
-
-Notes: 
-
-Commercial applications that support this format include:
+Notes: Commercial applications that support this format include:
 
 -  `Bitplane Imaris <http://bitplane.com/>`_
 -  `SVI Huygens <http://svi.nl/>`_

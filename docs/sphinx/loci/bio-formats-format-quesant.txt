@@ -1,23 +1,18 @@
 Quesant
 =======
 
---------------
+Extensions: .afm
 
-Extensions: 
-
-.afm
-
-Developer: 
-
-`Quesant Instrument Corporation <http://www.quesant.com>`_
+Developer: `Quesant Instrument Corporation <http://www.quesant.com>`_
 
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no|
 
-Supported Metadata Fields: 
-
-`QuesantReader <http://dev.loci.wisc.edu/trac/software/wiki/QuesantReader>`_
+Supported Metadata Fields: `QuesantReader <http://dev.loci.wisc.edu/trac/software/wiki/QuesantReader>`_
 
 We currently have: 
 
@@ -32,6 +27,7 @@ We'd like to have: 
 - more Quesant files
 
 Ratings
+-------
 
 Pixels: |Good|
 
@@ -44,7 +40,6 @@ Presence: |Fair|
 Utility: |Fair|
 
 Additional Information
+----------------------
 
-Source Code: 
-
-`QuesantReader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/QuesantReader.java>`_
+Source Code: :source:`QuesantReader <components/bio-formats/src/loci/formats/in/QuesantReader.java>`

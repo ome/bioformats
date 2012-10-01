@@ -1,22 +1,18 @@
 Cellomics
 =========
 
-Extensions: 
+Extensions: .c01
 
-.c01
-
-Developer: 
-
-`Thermo Fisher Scientific <http://www.thermofisher.com/>`_
+Developer: `Thermo Fisher Scientific <http://www.thermofisher.com/>`_
 
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no|
 
-Supported Metadata Fields: 
-
-`Cellomics
-Reader <http://dev.loci.wisc.edu/trac/software/wiki/CellomicsReader>`_
+Supported Metadata Fields: `Cellomics Reader <http://dev.loci.wisc.edu/trac/software/wiki/CellomicsReader>`_
 
 We currently have: 
 
@@ -28,6 +24,7 @@ We'd like to have: 
 -  More Cellomics .c01 datasets
 
 Ratings
+-------
 
 Pixels: |Very Good|
 
@@ -40,8 +37,6 @@ Presence: |Poor|
 Utility: |Poor|
 
 Additional Information
+----------------------
 
-Source Code: 
-
-`CellomicsReader.java <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/CellomicsReader.java>`_
-
+Source Code: :source:`CellomicsReader <components/bio-formats/src/loci/formats/in/CellomicsReader.java>`

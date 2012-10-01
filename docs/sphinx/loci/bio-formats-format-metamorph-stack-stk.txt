@@ -1,18 +1,16 @@
 MetaMorph Stack (STK)
 =====================
 
-Extensions: 
-
-.stk, .nd
+Extensions:  .stk, .nd
 
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no|
 
-Supported Metadata Fields: 
-
-`Metamorph
-Reader <http://dev.loci.wisc.edu/trac/software/wiki/MetamorphReader>`_
+Supported Metadata Fields: `Metamorph Reader <http://dev.loci.wisc.edu/trac/software/wiki/MetamorphReader>`_
 
 We currently have: 
 
@@ -22,6 +20,7 @@ We currently have: 
 -  A large number of STK datasets
 
 Ratings
+-------
 
 Pixels: |Very Good|
 
@@ -34,15 +33,11 @@ Presence: |Very Good|
 Utility: |Good|
 
 Additional Information
+----------------------
 
-Source Code: 
+Source Code: :source:`Metamorph Reader <components/bio-formats/src/loci/formats/in/MetamorphReader.java>`
 
-`Metamorph
-Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/MetamorphReader.java>`_
-
-Notes: 
-
-Commercial applications that support STK include:
+Notes: Commercial applications that support STK include:
 
 -  `Bitplane Imaris <http://bitplane.com/>`_
 -  `SVI Huygens <http://svi.nl/>`_
@@ -51,6 +46,5 @@ Commercial applications that support STK include:
 **Please note that while we have specification documents for this
 format, we are not able to distribute them to third parties.**
 
-See Also: 
-
-`Metamorph imaging system overview <http://metamorph.com/>`_
+.. seealso::
+    `Metamorph imaging system overview <http://metamorph.com/>`_

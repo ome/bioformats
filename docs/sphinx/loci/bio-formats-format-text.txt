@@ -1,26 +1,23 @@
 Text
 ====
 
---------------
-
-Extensions: 
-
-.txt
+Extensions: .txt
 
 Support
+-------
+
+SCIFIO: |yes|
 
 Export: |no|
 
 Ratings
+-------
 
 Pixels: |Good|
 
 Additional Information
+----------------------
 
-Source Code: 
+Source Code: :source:`TextReader <components/bio-formats/src/loci/formats/in/TextReader.java>`
 
-`TextReader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/TextReader.java>`_
-
-Notes: 
-
-Reads tabular pixel data produced by a variety of software.
+Notes: Reads tabular pixel data produced by a variety of software.

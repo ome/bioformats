@@ -1,38 +1,28 @@
 3i SlideBook
 ============
 
---------------
+Extensions: .sld
 
-Extensions: 
+Developer:  `Intelligent Imaging Innovations`_
 
-.sld
-
-Developer: 
-
-`Intelligent Imaging Innovations <http://www.intelligent-imaging.com/>`_
-
-Owner: 
-
-`Intelligent Imaging Innovations <http://www.intelligent-imaging.com>`_
+Owner: `Intelligent Imaging Innovations`_
 
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no|
 
-Officially Supported Versions: 
+Officially Supported Versions:  4.1, 4.2
 
-4.1, 4.2
-
-Supported Metadata Fields: 
-
-`Slidebook
-Reader <http://dev.loci.wisc.edu/trac/java/wiki/SlidebookReader>`_
+Supported Metadata Fields: `Slidebook Reader <http://dev.loci.wisc.edu/trac/java/wiki/SlidebookReader>`_
 
 We currently have: 
 
 -  Numerous SlideBook datasets
--  Some `Bio-Formats developer
-   notes <http://dev.loci.wisc.edu/svn/software/trunk/components/bio-formats/doc/slidebook.html>`_
+-  Some :source:`Bio-Formats developer
+   notes <components/bio-formats/doc/slidebook.html>`
    for SlideBook
 
 We'd like to have: 
@@ -42,6 +32,7 @@ We'd like to have: 
    SlideBook software)
 
 Ratings
+-------
 
 Pixels: |Very good|
 
@@ -54,11 +45,9 @@ Presence: |Very good|
 Utility: |Poor|
 
 Additional Information
+----------------------
 
-Source Code: 
-
-`Slidebook
-Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/SlidebookReader.java>`_
+Source Code: :source:`Slidebook Reader <components/bio-formats/src/loci/formats/in/SlidebookReader.java>`
 
 Notes: 
 
@@ -68,7 +57,7 @@ range of metadata that is included in .sld files, and so exporting to
 OME-TIFF from Slidebook is the best way to ensure that all metadata is
 preserved.
 
-See Also: 
+.. seealso::
+    `Slidebook software overview <http://www.intelligent-imaging.com/slidebook/overview.php>`_
 
-`Slidebook software
-overview <http://www.intelligent-imaging.com/slidebook/overview.php>`_
+.. _Intelligent Imaging Innovations: http://www.intelligent-imaging.com/

@@ -1,15 +1,14 @@
 SM Camera
 =========
 
---------------
-
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no|
 
-Supported Metadata Fields: 
-
-`SMCameraReader <http://dev.loci.wisc.edu/trac/software/wiki/SMCameraReader>`_
+Supported Metadata Fields: `SMCameraReader <http://dev.loci.wisc.edu/trac/software/wiki/SMCameraReader>`_
 
 We currently have: 
 
@@ -24,6 +23,7 @@ We'd like to have: 
 - more SM-Camera files
 
 Ratings
+-------
 
 Pixels: |Good|
 
@@ -36,7 +36,6 @@ Presence: |Fair|
 Utility: |Fair|
 
 Additional Information
+----------------------
 
-Source Code: 
-
-`SMCameraReader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/SMCameraReader.java>`_
+Source Code: :source:`SMCameraReader <components/bio-formats/src/loci/formats/in/SMCameraReader.java>`

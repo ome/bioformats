@@ -1,26 +1,20 @@
 Olympus ScanR
 =============
 
-Extensions: 
+Extensions: .xml, .dat, .tif
 
-.xml, .dat, .tif
+Developer: `Olympus <http://www.olympus.com/>`_
 
-Developer: 
-
-`Olympus <http://www.olympus.com/>`_
-
-Owner: 
-
-`Olympus <http://www.olympus.com/>`_
+Owner: `Olympus <http://www.olympus.com/>`_
 
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no|
 
-Supported Metadata Fields: 
-
-`ScanR
-Reader <http://dev.loci.wisc.edu/trac/software/wiki/ScanrReader>`_
+Supported Metadata Fields: `ScanR Reader <http://dev.loci.wisc.edu/trac/software/wiki/ScanrReader>`_
 
 We currently have: 
 
@@ -31,6 +25,7 @@ We'd like to have: 
 -  more ScanR datasets
 
 Ratings
+-------
 
 Pixels: |Very Good|
 
@@ -43,8 +38,6 @@ Presence: |Poor|
 Utility: |Fair|
 
 Additional Information
+----------------------
 
-See Also: 
-
-`ScanR
-Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/ScanrReader.java>`_
+Source Code: :source:`ScanR Reader <components/bio-formats/src/loci/formats/in/ScanrReader.java>`

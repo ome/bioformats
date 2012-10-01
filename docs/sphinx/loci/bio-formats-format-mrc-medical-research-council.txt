@@ -1,25 +1,20 @@
 MRC (Medical Research Council)
 ==============================
 
-Extensions: 
+Extensions: .mrc
 
-.mrc
-
-Developer: 
-
-`MRC Laboratory of Molecular Biology <http://www2.mrc-lmb.cam.ac.uk/>`_
+Developer: `MRC Laboratory of Molecular Biology <http://www2.mrc-lmb.cam.ac.uk/>`_
 
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no|
 
-Supported Metadata Fields: 
+Supported Metadata Fields: `MRC Reader <http://dev.loci.wisc.edu/trac/software/wiki/MRCReader>`_
 
-`MRC Reader <http://dev.loci.wisc.edu/trac/software/wiki/MRCReader>`_
-
-Sample Datasets: 
-
-`golgi.mrc <http://bio3d.colorado.edu/imod/files/imod_data.tar.gz>`_
+Sample Datasets: `golgi.mrc <http://bio3d.colorado.edu/imod/files/imod_data.tar.gz>`_
 
 We currently have: 
 
@@ -32,6 +27,7 @@ We currently have: 
 -  Only one MRC dataset
 
 Ratings
+-------
 
 Pixels: |Outstanding|
 
@@ -44,18 +40,13 @@ Presence: |Good|
 Utility: |Good|
 
 Additional Information
+----------------------
 
-Source Code: 
+Source Code: `MRC Reader <components/bio-formats/src/loci/formats/in/MRCReader.java>`
 
-`MRC
-Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/MRCReader.java>`_
-
-Notes: 
-
-Commercial applications that support MRC include:
+Notes: Commercial applications that support MRC include:
 
 -  `Bitplane Imaris <http://bitplane.com/>`_
 
-See Also: 
-
-`MRC on Wikipedia <http://en.wikipedia.org/wiki/MRC_%28file_format%29>`_
+.. seealso::
+    `MRC on Wikipedia <http://en.wikipedia.org/wiki/MRC_%28file_format%29>`_

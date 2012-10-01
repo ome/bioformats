@@ -1,22 +1,18 @@
 IPLab-Mac
 =========
 
-Extensions: 
+Extensions: .ipm
 
-.ipm
-
-Owner: 
-
-`BioVision Technologies <http://biovis.com/>`_
+Owner: `BioVision Technologies <http://biovis.com/>`_
 
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no| 
 
-Supported Metadata Fields: 
-
-`Ivision
-Reader <http://dev.loci.wisc.edu/trac/software/wiki/IvisionReader>`_
+Supported Metadata Fields: `Ivision Reader <http://dev.loci.wisc.edu/trac/software/wiki/IvisionReader>`_
 
 We currently have: 
 
@@ -28,6 +24,7 @@ We'd like to have: 
 -  More IPLab-Mac datasets
 
 Ratings
+-------
 
 Pixels: |Very Good|
 
@@ -40,11 +37,9 @@ Presence: |Poor|
 Utility: |Fair|
 
 Additional Information
+----------------------
 
-Source Code: 
-
-`Ivision
-Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/IvisionReader.java>`_
+Source Code: :source:`Ivision Reader <components/bio-formats/src/loci/formats/in/IvisionReader.java>`
 
 Notes: 
 

@@ -1,34 +1,24 @@
 Leica LAS AF LIF (Leica Image File Format)
 ==========================================
 
-Extensions: 
+Extensions: .lif
 
-.lif
+Developer: `Leica Microsystems CMS GmbH <http://www.leica-microsystems.com/>`_
 
-Developer: 
-
-`Leica Microsystems CMS GmbH <http://www.leica-microsystems.com/>`_
-
-Owner: 
-
-`Leica <http://www.leica.com/>`_
+Owner: `Leica <http://www.leica.com/>`_
 
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no|
 
-Officially Supported Versions: 
+Officially Supported Versions: 1.0, 2.0
 
-1.0, 2.0
+Supported Metadata Fields: `LIF Reader <http://dev.loci.wisc.edu/trac/software/wiki/LIFReader>`_
 
-Supported Metadata Fields: 
-
-`LIF Reader <http://dev.loci.wisc.edu/trac/software/wiki/LIFReader>`_
-
-Freely Available Software: 
-
-`Leica LAS AF
-Lite <ftp://ftp.llt.de/softlib/LAS_AF_Lite/1.7.0_build_1111/setup.exe>`_
+Freely Available Software: `Leica LAS AF Lite <ftp://ftp.llt.de/softlib/LAS_AF_Lite/1.7.0_build_1111/setup.exe>`_
 
 We currently have: 
 
@@ -39,9 +29,9 @@ We currently have: 
 -  Numerous LIF datasets
 
 Ratings
+-------
 
 Pixels: |Outstanding|
-
 
 Metadata: |Very Good|
 
@@ -52,11 +42,9 @@ Presence: |Good|
 Utility: |Very Good|
 
 Additional Information
+----------------------
 
-Source Code: 
-
-`LIF
-Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/LIFReader.java>`_
+Source Code: :source:`LIF Reader <components/bio-formats/src/loci/formats/in/LIFReader.java>`
 
 Notes: 
 

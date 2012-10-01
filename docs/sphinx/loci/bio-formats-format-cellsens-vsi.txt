@@ -1,21 +1,18 @@
 cellSens VSI
 ============
 
-Extensions: 
+Extensions: .vsi
 
-.vsi
-
-Developer: 
-
-`Olympus <http://www.olympus.com/>`_
+Developer: `Olympus <http://www.olympus.com/>`_
 
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no|
 
-Supported Metadata Fields: 
-
-`CellSensReader <http://dev.loci.wisc.edu/trac/software/wiki/CellSensReader>`_
+Supported Metadata Fields: `CellSensReader <http://dev.loci.wisc.edu/trac/software/wiki/CellSensReader>`_
 
 We currently have: 
 
@@ -26,6 +23,7 @@ We'd like to have: 
 -  An official specification document
 
 Ratings
+-------
 
 Pixels: |Fair|
 
@@ -38,15 +36,11 @@ Presence: |Fair|
 Utility: |Fair|
 
 Additional Information
+----------------------
 
-Source Code: 
+Source Code: :source:`CellSensReader <components/bio-formats/src/loci/formats/in/CellSensReader.java>`
 
-`CellSensReader <http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/CellSensReader.java>`_
+Notes: There are a few major caveats to cellSens .vsi support:
 
-Notes: 
-
-There are a few major caveats to cellSens .vsi support:
-
--  http://trac.openmicroscopy.org.uk/ome/ticket/5114
--  http://trac.openmicroscopy.org.uk/ome/ticket/5396
-
+-  :ticket:`5114`
+-  :ticket:`5396`

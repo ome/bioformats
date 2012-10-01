@@ -1,23 +1,18 @@
 RHK
 ===
 
---------------
+Extensions: .sm2, .sm3
 
-Extensions: 
-
-.sm2, .sm3
-
-Owner: 
-
-`RHK Techologies <http://www.rhk-tech.com>`_
+Owner: `RHK Techologies <http://www.rhk-tech.com>`_
 
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no|
 
-Supported Metadata Fields: 
-
-`RHKReader <http://dev.loci.wisc.edu/trac/software/wiki/RHKReader>`_
+Supported Metadata Fields: `RHKReader <http://dev.loci.wisc.edu/trac/software/wiki/RHKReader>`_
 
 We currently have: 
 
@@ -32,6 +27,7 @@ We'd like to have: 
 - more RHK files
 
 Ratings
+-------
 
 Pixels: |Good|
 
@@ -44,7 +40,6 @@ Presence: |Fair|
 Utility: |Fair|
 
 Additional Information
+----------------------
 
-Source Code: 
-
-`RHKReader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/RHKReader.java>`_
+Source Code: :source:`RHKReader <components/bio-formats/src/loci/formats/in/RHKReader.java>`

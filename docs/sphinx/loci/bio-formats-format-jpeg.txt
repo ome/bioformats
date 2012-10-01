@@ -1,21 +1,18 @@
 JPEG
 ====
 
-Extensions: 
+Extensions: .jpg
 
-.jpg
-
-Developer: 
-
-`Independent JPEG Group <http://www.ijg.org/>`_
+Developer: `Independent JPEG Group <http://www.ijg.org/>`_
 
 Support
+-------
+
+SCIFIO: |yes|
 
 Export: |yes|
 
-Supported Metadata Fields: 
-
-`JPEG Reader <http://dev.loci.wisc.edu/trac/software/wiki/JPEGReader>`_
+Supported Metadata Fields: `JPEG Reader <http://dev.loci.wisc.edu/trac/software/wiki/JPEGReader>`_
 
 We currently have: 
 
@@ -26,6 +23,7 @@ We currently have: 
 -  The ability to produce more datasets
 
 Ratings
+-------
 
 Pixels: |Very Good|
 
@@ -38,16 +36,11 @@ Presence: |Outstanding|
 Utility: |Poor|
 
 Additional Information
+----------------------
 
-Source Code: 
+Source Code: :source:`JPEG Reader <components/bio-formats/src/loci/formats/in/JPEGReader.java>`
 
-`JPEG
-Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/JPEGReader.java>`_
-
-Source Code: 
-
-`JPEG
-Writer <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/out/JPEGWriter.java>`_
+Source Code: :source:`JPEG Writer <components/bio-formats/src/loci/formats/out/JPEGWriter.java>`
 
 Notes: 
 
@@ -57,6 +50,5 @@ Notes: 
    API to read and write JPEG files.
 -  JPEG stands for "Joint Photographic Experts Group."
 
-See Also: 
-
-`JPEG homepage <http://www.jpeg.org/jpeg/index.html>`_
+.. seealso::
+    `JPEG homepage <http://www.jpeg.org/jpeg/index.html>`_

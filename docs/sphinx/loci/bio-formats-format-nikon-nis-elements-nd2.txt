@@ -1,33 +1,25 @@
 Nikon NIS-Elements ND2
 ======================
 
-Extensions: 
+Extensions: .nd2
 
-.nd2
-
-Developer: 
-
-`Nikon USA <http://www.nikonusa.com/>`_
+Developer: `Nikon USA <http://www.nikonusa.com/>`_
 
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no|
 
-Supported Metadata Fields: 
+Supported Metadata Fields: `Native ND2 Reader <http://dev.loci.wisc.edu/trac/software/wiki/NativeND2Reader>`_
 
-`Native ND2
-Reader <http://dev.loci.wisc.edu/trac/software/wiki/NativeND2Reader>`_
-
-Freely Available Software: 
-
-`NIS-Elements Viewer from
-Nikon <http://www.nis-elements.com/resources-downloads.html>`_
+Freely Available Software: `NIS-Elements Viewer from Nikon <http://www.nis-elements.com/resources-downloads.html>`_
 
 We currently have: 
 
 -  Several ND2 datasets
--  Some `Bio-Formats developer
-   notes <http://dev.loci.wisc.edu/svn/software/trunk/components/bio-formats/doc/nd2.html>`_
+-  Some :source:`Bio-Formats developer notes <components/bio-formats/doc/nd2.html>`
    for ND2
 
 We'd like to have: 
@@ -38,6 +30,7 @@ We'd like to have: 
    -  Files acquired with most recent NIS-Elements
 
 Ratings
+-------
 
 Pixels: |Very Good|
 
@@ -50,27 +43,19 @@ Presence: |Very Good|
 Utility: |Very Good|
 
 Additional Information
+----------------------
 
-Source Code: 
+Source Code: :source:`Native ND2 Reader <components/bio-formats/src/loci/formats/in/NativeND2Reader.java>`
 
-`Native ND2
-Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/NativeND2Reader.java>`_
+Source Code: :source:`Legacy ND2 Reader <components/bio-formats/src/loci/formats/in/LegacyND2Reader.java>`
 
-Source Code: 
-
-`Legacy ND2
-Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/LegacyND2Reader.java>`_
-
-Notes: 
-
-There are two distinct versions of ND2: an old version, which uses
+Notes: There are two distinct versions of ND2: an old version, which uses
 JPEG-2000 compression, and a new version which is either uncompressed or
 Zip-compressed. We are not aware of the version number or release date
 for either format.
 
-Bio-Formats uses the `JAI Image I/O
-Tools <https://jai-imageio.dev.java.net/>`_ library to read ND2 files
-compressed with JPEG-2000.
+Bio-Formats uses the `JAI Image I/O Tools <https://jai-imageio.dev.java.net/>`_ 
+library to read ND2 files compressed with JPEG-2000.
 
 There is also an ND2 reader that uses Nikon's native libraries. To use
 it, you must be using Windows and have `Nikon's ND2 reader plugin for

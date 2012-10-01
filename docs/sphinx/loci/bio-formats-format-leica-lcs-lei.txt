@@ -1,30 +1,22 @@
 Leica LCS LEI
 =============
 
-Extensions: 
+Extensions: .lei, .tif
 
-.lei, .tif
+Developer: `Leica Microsystems CMS GmbH <http://www.leica-microsystems.com/>`_
 
-Developer: 
-
-`Leica Microsystems CMS GmbH <http://www.leica-microsystems.com/>`_
-
-Owner: 
-
-`Leica <http://www.leica.com/>`_
+Owner: `Leica <http://www.leica.com/>`_
 
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no|
 
-Supported Metadata Fields: 
+Supported Metadata Fields: `Leica Reader <http://dev.loci.wisc.edu/trac/software/wiki/LeicaReader>`_
 
-`Leica
-Reader <http://dev.loci.wisc.edu/trac/software/wiki/LeicaReader>`_
-
-Freely Available Software: 
-
-`Leica LCS Lite <ftp://ftp.llt.de/softlib/LCSLite/LCSLite2611537.exe>`_
+Freely Available Software: `Leica LCS Lite <ftp://ftp.llt.de/softlib/LCSLite/LCSLite2611537.exe>`_
 
 We currently have: 
 
@@ -33,6 +25,7 @@ We currently have: 
 -  Several LEI datasets
 
 Ratings
+-------
 
 Pixels: |Outstanding|
 
@@ -45,11 +38,9 @@ Presence: |Very Good|
 Utility: |Very Good|
 
 Additional Information
+----------------------
 
-Source Code: 
-
-`Leica
-Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/LeicaReader.java>`_
+Source Code: :source:`Leica Reader <components/bio-formats/src/loci/formats/in/LeicaReader.java>`
 
 Notes: 
 

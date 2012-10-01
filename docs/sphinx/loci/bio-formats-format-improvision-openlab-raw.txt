@@ -1,26 +1,20 @@
 Improvision Openlab Raw
 =======================
 
-Extensions: 
+Extensions: .raw
 
-.raw
+Developer: `Improvision <http://www.improvision.com/>`_
 
-Developer: 
-
-`Improvision <http://www.improvision.com/>`_
-
-Owner: 
-
-`PerkinElmer <http://www.perkinelmer.com/>`_
+Owner: `PerkinElmer <http://www.perkinelmer.com/>`_
 
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no|
 
-Supported Metadata Fields: 
-
-`Openlab Raw
-Reader <http://dev.loci.wisc.edu/trac/software/wiki/OpenlabRawReader>`_
+Supported Metadata Fields: `Openlab Raw Reader <http://dev.loci.wisc.edu/trac/software/wiki/OpenlabRawReader>`_
 
 We currently have: 
 
@@ -30,6 +24,7 @@ We currently have: 
 -  A few Openlab Raw datasets
 
 Ratings
+-------
 
 Pixels: |Outstanding|
 
@@ -42,13 +37,9 @@ Presence: |Poor|
 Utility: |Fair|
 
 Additional Information
+----------------------
 
-Source Code: 
+Source Code: :source:`Openlab Raw Reader <components/bio-formats/src/loci/formats/in/OpenlabRawReader.java>`
 
-`Openlab Raw
-Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/OpenlabRawReader.java>`_
-
-See Also: 
-
-`Openlab software
-review <http://www.improvision.com/products/openlab/>`_
+.. seealso::
+    `Openlab software review <http://www.improvision.com/products/openlab/>`_

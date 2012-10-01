@@ -1,21 +1,18 @@
 JPK
 ===
 
-Extensions: 
+Extensions: .jpk
 
-.jpk
-
-Developer: 
-
-`JPK Instruments <http://www.jpk.com>`_
+Developer: `JPK Instruments <http://www.jpk.com>`_
 
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no|
 
-Supported Metadata Fields: 
-
-`JPKReader <http://dev.loci.wisc.edu/trac/software/wiki/JPKReader>`_
+Supported Metadata Fields: `JPKReader <http://dev.loci.wisc.edu/trac/software/wiki/JPKReader>`_
 
 We currently have: 
 
@@ -30,6 +27,7 @@ We'd like to have: 
 - more JPK files
 
 Ratings
+-------
 
 Pixels: |Good|
 
@@ -42,7 +40,6 @@ Presence: |Fair|
 Utility: |Fair|
 
 Additional Information
+----------------------
 
-Source Code: 
-
-`JPKReader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/JPKReader.java>`_
+Source Code: :source:`JPKReader <components/bio-formats/src/loci/formats/in/JPKReader.java>`

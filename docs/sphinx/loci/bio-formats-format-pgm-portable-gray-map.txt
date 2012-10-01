@@ -1,27 +1,20 @@
 PGM (Portable Gray Map)
 =======================
 
---------------
+Extensions: .pgm
 
-Extensions: 
-
-.pgm
-
-Developer: 
-
-Netpbm developers
+Developer: Netpbm developers
 
 Support
+-------
+
+SCIFIO: |yes|
 
 Export: |no|
 
-Supported Metadata Fields: 
+Supported Metadata Fields: `PGM Reader <http://dev.loci.wisc.edu/trac/software/wiki/PGMReader>`_
 
-`PGM Reader <http://dev.loci.wisc.edu/trac/software/wiki/PGMReader>`_
-
-Freely Available Software: 
-
-`Netpbm graphics filter <http://netpbm.sourceforge.net/>`_
+Freely Available Software: `Netpbm graphics filter <http://netpbm.sourceforge.net/>`_
 
 We currently have: 
 
@@ -30,6 +23,7 @@ We currently have: 
    Oct 3, in HTML)
 
 Ratings
+-------
 
 Pixels: |Very Good|
 
@@ -42,12 +36,9 @@ Presence: |Good|
 Utility: |Poor|
 
 Additional Information
+----------------------
 
-Source Code: 
+Source Code: :source:`PGM Reader <components/bio-formats/src/loci/formats/in/PGMReader.java>`
 
-`PGM
-Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/PGMReader.java>`_
-
-See Also: 
-
-`PGM technical overview <http://netpbm.sourceforge.net/doc/pgm.html>`_
+.. seealsos::
+    `PGM technical overview <http://netpbm.sourceforge.net/doc/pgm.html>`_

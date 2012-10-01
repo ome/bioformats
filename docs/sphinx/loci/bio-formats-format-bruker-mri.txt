@@ -1,18 +1,16 @@
 Bruker MRI
 ==========
 
-Developer: 
-
-`Bruker <http://www.bruker.com/>`_
+Developer: `Bruker <http://www.bruker.com/>`_
 
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no|
 
-Freely Available Software: 
-
-`Bruker plugin for
-ImageJ <http://rsbweb.nih.gov/ij/plugins/bruker.html>`_
+Freely Available Software: `Bruker plugin for ImageJ <http://rsbweb.nih.gov/ij/plugins/bruker.html>`_
 
 We currently have: 
 
@@ -24,6 +22,7 @@ We'd like to have: 
 -  an official specification document
 
 Ratings
+-------
 
 Pixels: |Good|
 
@@ -36,7 +35,6 @@ Presence: |Good|
 Utility: |Fair|
 
 Additional Information
+----------------------
 
-Source Code: 
-
-`BrukerReader <http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/BrukerReader.java>`_
+Source Code: :source:`BrukerReader <components/bio-formats/src/loci/formats/in/BrukerReader.java>`

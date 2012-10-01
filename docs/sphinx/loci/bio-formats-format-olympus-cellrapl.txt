@@ -1,21 +1,18 @@
 Olympus CellR/APL
 =================
 
-Extensions: 
+Extensions: .apl, .mtb, .tnb, .tif, .obsep
 
-.apl, .mtb, .tnb, .tif, .obsep
-
-Owner: 
-
-`Olympus <http://www.olympus.com/>`_
+Owner: `Olympus <http://www.olympus.com/>`_
 
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no|
 
-Supported Metadata Fields: 
-
-`APL Reader <http://dev.loci.wisc.edu/trac/software/wiki/APLReader>`_
+Supported Metadata Fields: `APL Reader <http://dev.loci.wisc.edu/trac/software/wiki/APLReader>`_
 
 We currently have: 
 
@@ -27,6 +24,7 @@ We'd like to have: 
 -  A CellR specification document
 
 Ratings
+-------
 
 Pixels: |Very Good|
 
@@ -39,8 +37,6 @@ Presence: |Poor|
 Utility: |Fair|
 
 Additional Information
+----------------------
 
-Source Code: 
-
-`APL
-Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/APLReader.java>`_
+Source Code: :source:`APL Reader <components/bio-formats/src/loci/formats/in/APLReader.java>`

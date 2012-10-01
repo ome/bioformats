@@ -1,24 +1,18 @@
 TillPhotonics TillVision
 ========================
 
---------------
+Extensions: .vws
 
-Extensions: 
-
-.vws
-
-Developer: 
-
-`TILL Photonics <http://www.till-photonics.com/>`_
+Developer: `TILL Photonics <http://www.till-photonics.com/>`_
 
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no|
 
-Supported Metadata Fields: 
-
-`TILLVision
-Reader <http://dev.loci.wisc.edu/trac/software/wiki/TillVisionReader>`_
+Supported Metadata Fields: `TILLVision Reader <http://dev.loci.wisc.edu/trac/software/wiki/TillVisionReader>`_
 
 We currently have: 
 
@@ -29,6 +23,7 @@ We'd like to have: 
 -  A TillVision specification document
 
 Ratings
+-------
 
 Pixels: |Good|
 
@@ -41,8 +36,6 @@ Presence: |Poor|
 Utility: |Fair|
 
 Additional Information
+----------------------
 
-Source Code: 
-
-`TILLVision
-Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/TillVisionReader.java>`_
+Source Code: `TILLVision Reader <components/bio-formats/src/loci/formats/in/TillVisionReader.java>`

@@ -1,21 +1,18 @@
 Evotec/PerkinElmer Opera Flex
 =============================
 
-Extensions: 
+Extensions: .flex
 
-.flex
-
-Developer: 
-
-`Evotec Technologies <http://www.evotec-technologies.com/>`_
+Developer: `Evotec Technologies <http://www.evotec-technologies.com/>`_
 
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no|
 
-Supported Metadata Fields: 
-
-`Flex Reader <http://dev.loci.wisc.edu/trac/software/wiki/FlexReader>`_
+Supported Metadata Fields: `Flex Reader <http://dev.loci.wisc.edu/trac/software/wiki/FlexReader>`_
 
 We currently have: 
 
@@ -26,6 +23,7 @@ We'd like to have: 
 -  A freely redistributable LuraWave LWF decoder
 
 Ratings
+-------
 
 Pixels: |Outstanding|
 
@@ -38,21 +36,16 @@ Presence: |Poor|
 Utility: |Poor|
 
 Additional Information
+----------------------
 
-Source Code: 
+Source Code: :source: `FlexReader <components/bio-formats/src/loci/formats/in/FlexReader.java>`
 
-`FlexReader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/FlexReader.java>`_
-
-Source Code: 
-
-`LuraWaveCodec <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/codec/LuraWaveCodec.java>`_
+Source Code: :source:`LuraWaveCodec <components/bio-formats/src/loci/formats/codec/LuraWaveCodec.java>`
 
 Notes: 
 
 -  The LuraWave LWF decoder library (e.g., lwf\_jsdk2.6.jar) with
    license code is required to decode wavelet-compressed Flex files.
 
-See Also: 
-
-`LuraTech (developers of the proprietary LuraWave LWF compression used
-for Flex image planes) <http://www.luratech.com/>`_
+.. seealso::
+    `LuraTech (developers of the proprietary LuraWave LWF compression used for Flex image planes) <http://www.luratech.com/>`_

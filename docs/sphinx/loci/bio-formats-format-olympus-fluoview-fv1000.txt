@@ -1,31 +1,22 @@
 Olympus FluoView FV1000
 =======================
 
-Extensions: 
+Extensions: .oib, .oif
 
-.oib, .oif
-
-Owner: 
-
-`Olympus <http://www.olympus.com/>`_
+Owner: `Olympus <http://www.olympus.com/>`_
 
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no|
 
-Officially Supported Versions: 
+Officially Supported Versions: 1.0, 2.0
 
-1.0, 2.0
+Supported Metadata Fields: `FV 1000 Reader <http://dev.loci.wisc.edu/trac/software/wiki/FV1000Reader>`_
 
-Supported Metadata Fields: 
-
-`FV 1000
-Reader <http://dev.loci.wisc.edu/trac/software/wiki/FV1000Reader>`_
-
-Freely Available Software: 
-
-`FV-Viewer from
-Olympus <http://www.olympus.co.uk/microscopy/22_FluoView_FV1000__Confocal_Microscope.htm>`_
+Freely Available Software: `FV-Viewer from Olympus <http://www.olympus.co.uk/microscopy/22_FluoView_FV1000__Confocal_Microscope.htm>`_
 
 We currently have: 
 
@@ -40,6 +31,7 @@ We'd like to have: 
 -  More FV1000 version 2 datasets
 
 Ratings
+-------
 
 Pixels: |Very Good|
 
@@ -52,11 +44,9 @@ Presence: |Good|
 Utility: |Very Good|
 
 Additional Information
+----------------------
 
-Source Code: 
-
-`FV 1000
-Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/FV1000Reader.java>`_
+Source Code: :source:`FV 1000 Reader <components/bio-formats/src/loci/formats/in/FV1000Reader.java>`
 
 Notes: 
 
@@ -76,6 +66,5 @@ Commercial applications that support this format include:
 **Please note that while we have specification documents for this
 format, we are not able to distribute them to third parties.**
 
-See Also: 
-
-`Olympus FluoView Resource Center <http://www.olympusfluoview.com/>`_
+.. seealso::
+    `Olympus FluoView Resource Center <http://www.olympusfluoview.com/>`_

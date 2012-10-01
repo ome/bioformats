@@ -1,26 +1,20 @@
 OME-TIFF
 ========
 
-Extensions: 
+Extensions: .ome.tiff
 
-.ome.tiff
-
-Developer: 
-
-LOCI
+Developer: LOCI
 
 Support
+-------
+
+SCIFIO: |yes|
 
 Export: |yes|
 
-Officially Supported Versions: 
+Officially Supported Versions: 2003FC, 2007-06, 2008-02, 2008-09, 2009-09, 2010-04, 2010-06
 
-2003FC, 2007-06, 2008-02, 2008-09, 2009-09, 2010-04, 2010-06
-
-Supported Metadata Fields: 
-
-`OME-TIFF
-Reader <http://dev.loci.wisc.edu/trac/software/wiki/OMETiffReader>`_
+Supported Metadata Fields: `OME-TIFF Reader <http://dev.loci.wisc.edu/trac/software/wiki/OMETiffReader>`_
 
 We currently have: 
 
@@ -31,6 +25,7 @@ We currently have: 
 -  The ability to produce additional datasets
 
 Ratings
+-------
 
 Pixels: |Outstanding|
 
@@ -43,27 +38,18 @@ Presence: |Fair|
 Utility: |Outstanding|
 
 Additional Information
+----------------------
 
-Source Code: 
+Source Code: :source:`OME-TIFF Reader <components/bio-formats/src/loci/formats/in/OMETiffReader.java>`
 
-`OME-TIFF
-Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/OMETiffReader.java>`_
+Source Code: :source:`OME-TIFF Writer <components/bio-formats/src/loci/formats/out/OMETiffWriter.java>`
 
-Source Code: 
-
-`OME-TIFF
-Writer <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/out/OMETiffWriter.java>`_
-
-Notes: 
-
-Bio-Formats can save image stacks as OME-TIFF.
+Notes: Bio-Formats can save image stacks as OME-TIFF.
 
 Commercial applications that support OME-TIFF include:
 
 -  `Bitplane Imaris <http://bitplane.com/>`_
 -  `SVI Huygens <http://svi.nl/>`_
 
-See Also: 
-
-`OME-TIFF technical
-overview <http://www.loci.wisc.edu/ome/ome-tiff.html>`_
+.. seealso::
+    `OME-TIFF technical overview <http://www.loci.wisc.edu/ome/ome-tiff.html>`_

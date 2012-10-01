@@ -1,15 +1,14 @@
 Hitachi S-4800
 ==============
 
-Extensions: 
+Extensions: .txt, .tif, .bmp, .jpg
 
-.txt, .tif, .bmp, .jpg
-
-Developer: 
-
-`Hitachi <http://www.hitachi-hta.com/products/electron-microscopes-and-focused-ion-beam/field-emission-sem/s-4800-uhr-fe-sem>`_
+Developer: `Hitachi <http://www.hitachi-hta.com/products/electron-microscopes-and-focused-ion-beam/field-emission-sem/s-4800-uhr-fe-sem>`_
 
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no|
 
@@ -18,6 +17,7 @@ We currently have: 
 -  Several Hitachi S-4800 datasets
 
 Ratings
+-------
 
 Pixels: |Very Good|
 
@@ -30,7 +30,6 @@ Presence: |Fair|
 Utility: |Fair|
 
 Additional Information
+----------------------
 
-Source Code: 
-
-`HitachiReader <http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/HitachiReader.java>`_
+Source Code: :source:`HitachiReader <components/bio-formats/src/loci/formats/in/HitachiReader.java>`

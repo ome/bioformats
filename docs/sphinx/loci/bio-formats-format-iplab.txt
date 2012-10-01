@@ -1,31 +1,22 @@
 IPLab
 =====
 
-Extensions: 
+Extensions: .ipl
 
-.ipl
+Developer: `Scanalytics <http://scanalytics.com/>`_
 
-Developer: 
-
-`Scanalytics <http://scanalytics.com/>`_
-
-Owner: 
-
-`BD Biosystems <http://www.bdbiosciences.com/>`_
+Owner: `BD Biosystems <http://www.bdbiosciences.com/>`_
 
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no|
 
-Supported Metadata Fields: 
+Supported Metadata Fields: `IPLab Reader <http://dev.loci.wisc.edu/trac/software/wiki/IPLabReader>`_
 
-`IPLab
-Reader <http://dev.loci.wisc.edu/trac/software/wiki/IPLabReader>`_
-
-Freely Available Software: 
-
-`IPLab Reader plugin for
-ImageJ <http://rsb.info.nih.gov/ij/plugins/iplab-reader.html>`_
+Freely Available Software: `IPLab Reader plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/iplab-reader.html>`_
 
 We currently have: 
 
@@ -37,6 +28,7 @@ We'd like to have: 
 -  More IPLab datasets (32-bit integer or floating point data)
 
 Ratings
+-------
 
 Pixels: |Outstanding|
 
@@ -49,15 +41,11 @@ Presence: |Fair|
 Utility: |Fair|
 
 Additional Information
+----------------------
 
-Source Code: 
+Source Code:  :source:`IPLab Reader <components/bio-formats/src/loci/formats/in/IPLabReader.java>`
 
-`IPLab
-Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/IPLabReader.java>`_
-
-Notes: 
-
-Commercial applications that support IPLab include:
+Notes: Commercial applications that support IPLab include:
 
 -  `Bitplane Imaris <http://bitplane.com/>`_
 -  `SVI Huygens <http://svi.nl/>`_
@@ -65,6 +53,5 @@ Commercial applications that support IPLab include:
 **Please note that while we have specification documents for this
 format, we are not able to distribute them to third parties.**
 
-See Also: 
-
-`IPLab software review <http://scanalytics.com/product/iplab/>`_
+.. seealso::
+    `IPLab software review <http://scanalytics.com/product/iplab/>`_

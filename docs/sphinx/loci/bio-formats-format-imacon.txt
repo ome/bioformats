@@ -1,21 +1,18 @@
 Imacon
 ======
 
-Extensions: 
+Extensions: .fff
 
-.fff
-
-Owner: 
-
-`Hasselblad <http://www.hasselbladusa.com/>`_
+Owner: `Hasselblad <http://www.hasselbladusa.com/>`_
 
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no|
 
-Supported Metadata Fields: 
-
-`ImaconReader <http://dev.loci.wisc.edu/trac/software/wiki/ImaconReader>`_
+Supported Metadata Fields: `ImaconReader <http://dev.loci.wisc.edu/trac/software/wiki/ImaconReader>`_
 
 We currently have: 
 
@@ -26,6 +23,7 @@ We'd like to have: 
 - more Imacon files
 
 Ratings
+-------
 
 Pixels: |Poor|
 
@@ -38,7 +36,6 @@ Presence: |Poor|
 Utility: |Good|
 
 Additional Information
+----------------------
 
-Source Code: 
-
-`ImaconReader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/ImaconReader.java>`_
+Source Code: :source:`ImaconReader <components/bio-formats/src/loci/formats/in/ImaconReader.java>`

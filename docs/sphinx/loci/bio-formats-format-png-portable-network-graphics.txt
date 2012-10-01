@@ -1,27 +1,20 @@
 PNG (Portable Network Graphics)
 ===============================
 
---------------
+Extensions: .png
 
-Extensions: 
-
-.png
-
-Developer: 
-
-`PNG Development Group <http://www.libpng.org/pub/png/pngnews.html>`_
+Developer: `PNG Development Group <http://www.libpng.org/pub/png/pngnews.html>`_
 
 Support
+-------
+
+SCIFIO: |yes|
 
 Export: |yes|
 
-Supported Metadata Fields: 
+Supported Metadata Fields: `APNG Reader <http://dev.loci.wisc.edu/trac/software/wiki/APNGReader>`_
 
-`APNG Reader <http://dev.loci.wisc.edu/trac/software/wiki/APNGReader>`_
-
-Freely Available Software: 
-
-`PNG Writer plugin for
+Freely Available Software: `PNG Writer plugin for
 ImageJ <http://rsb.info.nih.gov/ij/plugins/png-writer.html>`_
 
 We currently have: 
@@ -32,6 +25,7 @@ We currently have: 
 -  Several PNG datasets
 
 Ratings
+-------
 
 Pixels: |Very Good|
 
@@ -44,11 +38,9 @@ Presence: |Outstanding|
 Utility: |Poor|
 
 Additional Information
+----------------------
 
-Source Code: 
-
-`APNG
-Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/APNGReader.java>`_
+Source Code: :source:`APNG Reader <components/bio-formats/src/loci/formats/in/APNGReader.java>`
 
 Notes: 
 
@@ -57,6 +49,5 @@ Notes: 
    I/O <http://java.sun.com/j2se/1.4.2/docs/guide/imageio/index.html>`_
    API to read and write PNG files.
 
-See Also: 
-
-`PNG technical overview <http://www.libpng.org/pub/png/>`_
+.. seealso::
+    `PNG technical overview <http://www.libpng.org/pub/png/>`_

@@ -1,32 +1,22 @@
 DeltaVision
 ===========
 
-Extensions: 
+Extensions: .dv, .r3d
 
-.dv, .r3d
-
-Owner: 
-
-`Applied Precision <http://www.api.com/>`_
+Owner: `Applied Precision <http://www.api.com/>`_
 
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no|
 
-Supported Metadata Fields: 
+Supported Metadata Fields: `DeltaVision Reader <http://dev.loci.wisc.edu/trac/software/wiki/DeltavisionReader>`_
 
-`DeltaVision
-Reader <http://dev.loci.wisc.edu/trac/software/wiki/DeltavisionReader>`_
+Freely Available Software: `DeltaVision Opener plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/track/delta.html>`_
 
-Freely Available Software: 
-
-`DeltaVision Opener plugin for
-ImageJ <http://rsb.info.nih.gov/ij/plugins/track/delta.html>`_
-
-Sample Datasets: 
-
-`Applied Vision
-Datasets <http://downloads.apllc.com/repository/sampleimages.zip>`_
+Sample Datasets: `Applied Vision Datasets <http://downloads.apllc.com/repository/sampleimages.zip>`_
 
 We currently have: 
 
@@ -34,6 +24,7 @@ We currently have: 
 -  Numerous DV datasets
 
 Ratings
+-------
 
 Pixels: |Outstanding|
 
@@ -46,14 +37,11 @@ Presence: |Good|
 Utility: |Good|
 
 Additional Information
+----------------------
 
-Source Code: 
+Source Code: :source:`DeltavisionReader <components/bio-formats/src/loci/formats/in/DeltavisionReader.java>`
 
-`DeltavisionReader.java <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/DeltavisionReader.java>`_
-
-Notes: 
-
-The Deltavision format is based on the Medical Research Council (MRC)
+Notes: The Deltavision format is based on the Medical Research Council (MRC)
 file format.
 
 Commercial applications that support DeltaVision include:
@@ -65,7 +53,5 @@ Commercial applications that support DeltaVision include:
 **Please note that while we have specification documents for this
 format, we are not able to distribute them to third parties.**
 
-See Also: 
-
-`DeltaVision system
-description <http://www.api.com/lifescience/DeltaVision.html>`_
+.. seealso::
+    `DeltaVision system description <http://www.api.com/lifescience/DeltaVision.html>`_
