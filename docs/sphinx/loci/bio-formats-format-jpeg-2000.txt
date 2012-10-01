@@ -1,25 +1,20 @@
 JPEG 2000
 =========
 
-Extensions: 
+Extensions: .jp2
 
-.jp2
-
-Developer: 
-
-`Independent JPEG Group <http://www.ijg.org/>`_
+Developer: `Independent JPEG Group <http://www.ijg.org/>`_
 
 Support
+-------
+
+SCIFIO: |yes|
 
 Export: |yes|
 
-Supported Metadata Fields: 
+Supported Metadata Fields: `JPEG2000Reader <http://dev.loci.wisc.edu/trac/software/wiki/JPEG2000Reader>`_
 
-`JPEG2000Reader <http://dev.loci.wisc.edu/trac/software/wiki/JPEG2000Reader>`_
-
-Freely Available Software: 
-
-`JJ2000 (JPEG2000 library for Java) <http://jj2000.epfl.ch/>`_
+Freely Available Software: `JJ2000 (JPEG2000 library for Java) <http://jj2000.epfl.ch/>`_
 
 We currently have: 
 
@@ -29,6 +24,7 @@ We currently have: 
 -  A few JP2 datasets
 
 Ratings
+-------
 
 Pixels: |Very Good|
 
@@ -41,14 +37,11 @@ Presence: |Good|
 Utility: |Poor|
 
 Additional Information
+----------------------
 
-Source Code: 
+Source Code: :source:`JPEG2000Reader <components/bio-formats/src/loci/formats/in/JPEG2000Reader.java>`
 
-`JPEG2000Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/JPEG2000Reader.java>`_
-
-Source Code: 
-
-`JPEG2000Writer <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/out/JPEG2000Writer.java>`_
+Source Code: :source:`JPEG2000Writer <components/bio-formats/src/loci/formats/out/JPEG2000Writer.java>`
 
 Notes: 
 

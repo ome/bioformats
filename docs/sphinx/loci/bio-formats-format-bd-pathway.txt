@@ -1,21 +1,18 @@
 BD Pathway
 ==========
 
-Extensions: 
+Extensions: .exp, .tif
 
-.exp, .tif
-
-Owner: 
-
-`BD Biosciences <http://www.bdbiosciences.com>`_
+Owner: `BD Biosciences <http://www.bdbiosciences.com>`_
 
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no|
 
-Supported Metadata Fields: 
-
-`BDReader <http://dev.loci.wisc.edu/trac/software/wiki/BDReader>`_
+Supported Metadata Fields: `BDReader <http://dev.loci.wisc.edu/trac/software/wiki/BDReader>`_
 
 We currently have: 
 
@@ -26,6 +23,7 @@ We'd like to have: 
 - more BD Pathway datasets
 
 Ratings
+-------
 
 Pixels: |Very Good|
 
@@ -38,7 +36,6 @@ Presence: |Fair|
 Utility: |Good|
 
 Additional Information
+----------------------
 
-Source Code: 
-
-`BDReader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/BDReader.java>`_
+Source Code: :source:`BDReader <components/bio-formats/src/loci/formats/in/BDReader.java>`

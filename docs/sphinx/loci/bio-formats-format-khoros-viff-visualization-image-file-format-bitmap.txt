@@ -1,41 +1,29 @@
 Khoros VIFF (Visualization Image File Format) Bitmap
 ====================================================
 
-Extensions: 
+Extensions: .xv
 
-.xv
+Developer: `Khoral <http://www.khoral.com/company/>`_
 
-Developer: 
-
-`Khoral <http://www.khoral.com/company/>`_
-
-Owner: 
-
-`AccuSoft <http://www.accusoft.com/company/>`_
+Owner: `AccuSoft <http://www.accusoft.com/company/>`_
 
 Support
+-------
 
-Export: 
+SCIFIO: |no|
 
-.. figure:: /files/loci/images/crystal-no.png
-   :align: center
-   :alt:
+Export: |no|
 
-Supported Metadata Fields: 
+Supported Metadata Fields: `Khoros Reader <http://dev.loci.wisc.edu/trac/software/wiki/KhorosReader>`_
 
-`Khoros
-Reader <http://dev.loci.wisc.edu/trac/software/wiki/KhorosReader>`_
-
-Sample Datasets: 
-
-`VIFF
-Images <http://netghost.narod.ru/gff/sample/images/viff/index.htm>`_
+Sample Datasets: `VIFF Images <http://netghost.narod.ru/gff/sample/images/viff/index.htm>`_
 
 We currently have: 
 
 -  Several VIFF datasets
 
 Ratings
+-------
 
 Pixels: |Good|
 
@@ -48,13 +36,9 @@ Presence: |Poor|
 Utility: |Poor|
 
 Additional Information
+----------------------
 
-Source Code: 
+Source Code: :source:`Khoros Reader <components/bio-formats/src/loci/formats/in/KhorosReader.java>`
 
-`Khoros
-Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/KhorosReader.java>`_
-
-See Also: 
-
-`VisiQuest software overview (formerly known as
-KhorosPro) <http://www.accusoft.com/products/visiquest/>`_
+.. seealso::
+    `VisiQuest software overview (formerly known as KhorosPro) <http://www.accusoft.com/products/visiquest/>`_

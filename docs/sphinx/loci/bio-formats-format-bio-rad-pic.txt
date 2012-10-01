@@ -1,30 +1,23 @@
 Bio-Rad PIC
 ===========
 
-Extensions: 
+Extensions: .pic, .raw, .xml
 
-.pic, .raw, .xml
+Developer: Bio-Rad
 
-Developer: 
-
-Bio-Rad
-
-Owner: 
-
-`Carl Zeiss, Inc. <http://www.zeiss.com/>`_
+Owner: `Carl Zeiss, Inc. <http://www.zeiss.com/>`_
 
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no|
 
-Supported Metadata Fields: 
-
-`Bio-Rad
+Supported Metadata Fields: `Bio-Rad
 Reader <http://dev.loci.wisc.edu/trac/software/wiki/BioRadReader>`_
 
-Freely Available Software: 
-
-`Bio-Rad PIC reader plugin for
+Freely Available Software: `Bio-Rad PIC reader plugin for
 ImageJ <http://rsb.info.nih.gov/ij/plugins/biorad.html>`_
 
 We currently have: 
@@ -35,6 +28,7 @@ We currently have: 
 -  the ability to produce new datasets
 
 Ratings
+-------
 
 Pixels: |Outstanding|
 
@@ -47,11 +41,9 @@ Presence: |Very Good|
 Utility: |Very Good|
 
 Additional Information
+----------------------
 
-Source Code: 
-
-`Bio-Rad
-Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/BioRadReader.java>`_
+Source Code: :source:`Bio-Rad Reader <components/bio-formats/src/loci/formats/in/BioRadReader.java>`
 
 Notes: 
 

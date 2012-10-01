@@ -1,39 +1,28 @@
 GIF (Graphics Interchange Format)
 =================================
 
-Extensions: 
+Extensions: .gif
 
-.gif
+Developer: `CompuServe <http://www.compuserve.com/>`_
 
-Developer: 
-
-`CompuServe <http://www.compuserve.com/>`_
-
-Owner: 
-
-`Unisys <http://www.unisys.com/>`_
+Owner: `Unisys <http://www.unisys.com/>`_
 
 Support
+-------
+
+SCIFIO: |yes|
 
 Export: |no|
 
-Supported Metadata Fields: 
+Supported Metadata Fields: `GIF Reader <http://dev.loci.wisc.edu/trac/software/wiki/GIFReader>`_
 
-`GIF Reader <http://dev.loci.wisc.edu/trac/software/wiki/GIFReader>`_
-
-Freely Available Software: 
-
-`Animated GIF Reader plugin for
+Freely Available Software: `Animated GIF Reader plugin for
 ImageJ <http://rsb.info.nih.gov/ij/plugins/agr.html>`_
 
-Freely Available Software: 
-
-`GIF Stack Writer plugin for
+Freely Available Software: `GIF Stack Writer plugin for
 ImageJ <http://rsb.info.nih.gov/ij/plugins/gif-stack-writer.html>`_
 
-Sample Datasets: 
-
-`GIF Animations <http://www.gifanimations.com/>`_
+Sample Datasets: `GIF Animations <http://www.gifanimations.com/>`_
 
 We currently have: 
 
@@ -44,6 +33,7 @@ We currently have: 
 -  The ability to produce new datasets
 
 Ratings
+-------
 
 Pixels: |Very Good|
 
@@ -56,8 +46,6 @@ Presence: |Outstanding|
 Utility: |Poor|
 
 Additional Information
+----------------------
 
-Source Code: 
-
-`GIF
-Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/GIFReader.java>`_
+Source Code: :source:`GIF Reader <components/bio-formats/src/loci/formats/in/GIFReader.java>`

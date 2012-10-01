@@ -1,28 +1,25 @@
 Nikon EZ-C1 TIFF
 ================
 
-Extensions: 
+Extensions: .tiff
 
-.tiff
-
-Developer: 
-
-`Nikon <http://www.nikon.com/>`_
+Developer: `Nikon <http://www.nikon.com/>`_
 
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no|
 
-Supported Metadata Fields: 
-
-`Nikon TIFF
-Reader <http://dev.loci.wisc.edu/trac/software/wiki/NikonTiffReader>`_
+Supported Metadata Fields: `Nikon TIFF Reader <http://dev.loci.wisc.edu/trac/software/wiki/NikonTiffReader>`_
 
 We currently have: 
 
 -  a few Nikon TIFF files
 
 Ratings
+-------
 
 Pixels: |Very Good|
 
@@ -35,8 +32,6 @@ Presence: |Poor|
 Utility: |Fair|
 
 Additional Information
+----------------------
 
-Source Code: 
-
-`Nikon TIFF
-Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/NikonTiffReader.java>`_
+Source Code: `Nikon TIFF Reader <components/bio-formats/src/loci/formats/in/NikonTiffReader.java>`

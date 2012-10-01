@@ -1,21 +1,18 @@
 LEO
 ===
 
-Extensions: 
+Extensions: .sxm
 
-.sxm
-
-Owner: 
-
-`Zeiss <http://www.zeiss.de>`_
+Owner: `Zeiss <http://www.zeiss.de>`_
 
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no|
 
-Supported Metadata Fields: 
-
-`LEOReader <http://dev.loci.wisc.edu/trac/software/wiki/LEOReader>`_
+Supported Metadata Fields:  `LEOReader <http://dev.loci.wisc.edu/trac/software/wiki/LEOReader>`_
 
 We currently have: 
 
@@ -30,6 +27,7 @@ We'd like to have: 
 - more LEO files
 
 Ratings
+-------
 
 Pixels: |Good|
 
@@ -42,7 +40,6 @@ Presence: |Fair
 Utility: |Fair|
 
 Additional Information
+----------------------
 
-Source Code: 
-
-`LEOReader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/LEOReader.java>`_
+Source Code: :source:`LEOReader <components/bio-formats/src/loci/formats/in/LEOReader.java>`

@@ -1,26 +1,20 @@
 Aperio SVS TIFF
 ===============
 
+Extensions: .svs
 
-Extensions: 
-
-.svs
-
-Owner: 
-
-`Aperio <http://www.aperio.com/>`_
+Owner: `Aperio <http://www.aperio.com/>`_
 
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no|
 
-Officially Supported Versions: 
+Officially Supported Versions: 8.0, 8.2, 9.0
 
-8.0, 8.2, 9.0
-
-Supported Metadata Fields: 
-
-`SVSReader <http://dev.loci.wisc.edu/trac/software/wiki/SVSReader>`_
+Supported Metadata Fields: `SVSReader <http://dev.loci.wisc.edu/trac/software/wiki/SVSReader>`_
 
 We currently have: 
 
@@ -29,6 +23,7 @@ We currently have: 
 -  the ability to generate additional SVS datasets
 
 Ratings
+-------
 
 Pixels: |Very Good|
 
@@ -41,17 +36,14 @@ Presence: |Good|
 Utility: |Good|
 
 Additional Information
+----------------------
 
-Source Code: 
-
-`SVSReader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/SVSReader.java>`_
+Source Code: :source:`SVSReader <components/bio-formats/src/loci/formats/in/SVSReader.java>`
 
 Notes: 
 
 **Please note that while we have specification documents for this
 format, we are not able to distribute them to third parties.**
 
-See Also: 
-
-`Aperio SVS
-Reader <http://www.aperio.com/software/ImageScopeInstaller.exe>`_
+.. seealso::
+    `Aperio SVS Reader <http://www.aperio.com/software/ImageScopeInstaller.exe>`_

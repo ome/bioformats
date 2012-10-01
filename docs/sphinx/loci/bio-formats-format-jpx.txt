@@ -1,15 +1,14 @@
 JPX
 ===
 
-Extensions: 
+Extensions: .jpx
 
-.jpx
-
-Developer: 
-
-`JPEG Committee <http://www.jpeg.org/jpeg2000/>`_
+Developer: `JPEG Committee <http://www.jpeg.org/jpeg2000/>`_
 
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no|
 
@@ -18,6 +17,7 @@ We currently have: 
 -  A few .jpx files
 
 Ratings
+-------
 
 Pixels: |Very Good|
 
@@ -30,7 +30,6 @@ Presence: |Good|
 Utility: |Fair|
 
 Additional Information
+----------------------
 
-Source Code: 
-
-`JPXReader <http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/JPXReader.java>`_
+Source Code: :source:`JPXReader <components/bio-formats/src/loci/formats/in/JPXReader.java>`

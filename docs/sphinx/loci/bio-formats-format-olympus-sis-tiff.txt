@@ -1,31 +1,25 @@
 Olympus SIS TIFF
 ================
 
-Extensions: 
+Extensions: .tiff
 
-.tiff
-
-Developer: 
-
-`Olympus <http://www.olympus-sis.com/>`_
+Developer: `Olympus <http://www.olympus-sis.com/>`_
 
 Support
+-------
 
-Export: 
+SCIFIO: |no|
 
-.. figure:: /files/loci/images/crystal-no.png
-   :align: center
-   :alt:
+Export: |no|
 
-Supported Metadata Fields: 
-
-`SISReader <http://dev.loci.wisc.edu/trac/software/wiki/SISReader>`_
+Supported Metadata Fields: `SISReader <http://dev.loci.wisc.edu/trac/software/wiki/SISReader>`_
 
 We currently have: 
 
 -  A few example SIS TIFF files
 
 Ratings
+-------
 
 Pixels: |Good|
 
@@ -38,7 +32,6 @@ Presence: |Fair|
 Utility: |Good|
 
 Additional Information
+----------------------
 
-Source Code: 
-
-`SISReader <http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/SISReader.java>`_
+Source Code: :source:`SISReader <components/bio-formats/src/loci/formats/in/SISReader.java>`

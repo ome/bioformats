@@ -1,11 +1,12 @@
 INR
 ===
 
-Extensions: 
-
-.inr
+Extensions: .inr
 
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no|
 
@@ -14,6 +15,7 @@ We currently have: 
 -  Several sample .inr datasets
 
 Ratings
+-------
 
 Pixels: |Very Good|
 
@@ -26,7 +28,6 @@ Presence: |Poor|
 Utility: |Fair|
 
 Additional Information
+----------------------
 
-Source Code: 
-
-`INRReader <http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/INRReader.java>`_
+Source Code: :source:`INRReader <components/bio-formats/src/loci/formats/in/INRReader.java>`

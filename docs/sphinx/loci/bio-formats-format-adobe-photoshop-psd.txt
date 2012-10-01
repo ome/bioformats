@@ -1,25 +1,20 @@
 Adobe Photoshop PSD
 ===================
 
-Extensions: 
+Extensions:  .psd
 
-.psd
-
-Developer: 
-
-`Adobe <http://www.adobe.com/>`_
+Developer: `Adobe <http://www.adobe.com/>`_
 
 Support
+-------
+
+SCIFIO : |no|
 
 Export: |no|
 
-Officially Supported Versions: 
+Officially Supported Versions:  1.0
 
-1.0
-
-Supported Metadata Fields: 
-
-`PSD Reader <http://dev.loci.wisc.edu/trac/software/wiki/PSDReader>`_
+Supported Metadata Fields: `PSD Reader <http://dev.loci.wisc.edu/trac/software/wiki/PSDReader>`_
 
 We currently have: 
 
@@ -31,6 +26,7 @@ We'd like to have: 
 -  more PSD files
 
 Ratings
+-------
 
 Pixels: |Good|
 
@@ -43,7 +39,6 @@ Presence: |Good|
 Utility: |Fair|
 
 Additional Information
+----------------------
 
-Source Code: 
-
-`PSDReader.java <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/PSDReader.java>`_
+Source Code:  :source:`PSDReader.java <components/bio-formats/src/loci/formats/in/PSDReader.java>`

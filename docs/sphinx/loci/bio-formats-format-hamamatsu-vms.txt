@@ -1,25 +1,20 @@
 Hamamatsu VMS
 =============
 
-Extensions: 
+Extensions: .vms
 
-.vms
-
-Developer: 
-
-`Hamamatsu <http://www.hamamatsu.com>`_
+Developer: `Hamamatsu <http://www.hamamatsu.com>`_
 
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no|
 
-Supported Metadata Fields: 
+Supported Metadata Fields: `HamamatsuVMSReader <http://dev.loci.wisc.edu/trac/software/wiki/HamamatsuVMSReader>`_
 
-`HamamatsuVMSReader <http://dev.loci.wisc.edu/trac/software/wiki/HamamatsuVMSReader>`_
-
-Sample Datasets: 
-
-`OpenSlide <http://openslide.cs.cmu.edu/download/openslide-testdata/Hamamatsu-vms/>`_
+Sample Datasets: `OpenSlide <http://openslide.cs.cmu.edu/download/openslide-testdata/Hamamatsu-vms/>`_
 
 We currently have: 
 
@@ -33,6 +28,7 @@ We'd like to have: 
 -  More example files
 
 Ratings
+-------
 
 Pixels: |Good|
 
@@ -45,7 +41,6 @@ Presence: |Fair|
 Utility: |Fair|
 
 Additional Information
+----------------------
 
-Source Code: 
-
-`HamamatsuVMSReader <http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/HamamatsuVMSReader.java>`_
+Source Code: :source:`HamamatsuVMSReader <components/bio-formats/src/loci/formats/in/HamamatsuVMSReader.java>`

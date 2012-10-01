@@ -1,35 +1,26 @@
 Bitplane Imaris
 ===============
 
-Extensions: 
+Extensions: .ims
 
-.ims
-
-Owner: 
-
-`Bitplane <http://www.bitplane.com/>`_
+Owner: `Bitplane <http://www.bitplane.com/>`_
 
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no|
 
-Officially Supported Versions: 
+Officially Supported Versions: 2.7, 3.0, 5.5
 
-2.7, 3.0, 5.5
-
-Supported Metadata Fields: 
-
-`Imaris
+Supported Metadata Fields: `Imaris
 Reader <http://dev.loci.wisc.edu/trac/software/wiki/ImarisReader>`_
 
-Supported Metadata Fields: 
-
-`Imaris TIFF
+Supported Metadata Fields: `Imaris TIFF
 Reader <http://dev.loci.wisc.edu/trac/software/wiki/ImarisTiffReader>`_
 
-Supported Metadata Fields: 
-
-`Imaris HDF
+Supported Metadata Fields: `Imaris HDF
 Reader <http://dev.loci.wisc.edu/trac/software/wiki/ImarisHDFReader>`_
 
 We currently have: 
@@ -50,6 +41,7 @@ We'd like to have: 
 -  more Imaris 3 (TIFF) datasets
 
 Ratings
+-------
 
 Pixels: |Very Good|
 
@@ -62,21 +54,13 @@ Presence: |Fair|
 Utility: |Fair|
 
 Additional Information
+----------------------
 
-Source Code: 
+Source Code: :source:`Imaris Reader <components/bio-formats/src/loci/formats/in/ImarisReader.java>`
 
-`Imaris
-Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/ImarisReader.java>`_
+Source Code: :source:`Imaris TIFF Reader <components/bio-formats/src/loci/formats/in/ImarisTiffReader.java>`
 
-Source Code: 
-
-`Imaris TIFF
-Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/ImarisTiffReader.java>`_
-
-Source Code: 
-
-`Imaris HDF
-Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/ImarisHDFReader.java>`_
+Source Code: :source: `Imaris HDF Reader <components/bio-formats/src/loci/formats/in/ImarisHDFReader.java>`
 
 Notes: 
 
@@ -89,7 +73,5 @@ There are three distinct Imaris formats:
 **Please note that while we have specification documents for this
 format, we are not able to distribute them to third parties.**
 
-See Also: 
-
-`Imaris Software
-Overview <http://www.bitplane.com/products/imaris/imaris_product.shtml>`_
+.. seealso::
+    `Imaris Software Overview <http://www.bitplane.com/products/imaris/imaris_product.shtml>`_

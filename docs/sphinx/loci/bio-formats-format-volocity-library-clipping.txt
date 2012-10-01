@@ -1,17 +1,14 @@
 Volocity Library Clipping
 =========================
 
---------------
+Extensions: .acff
 
-Extensions: 
-
-.acff
-
-Developer: 
-
-`PerkinElmer <http://www.perkinelmer.com/pages/020/cellularimaging/products/volocity.xhtml>`_
+Developer: `PerkinElmer <http://www.perkinelmer.com/pages/020/cellularimaging/products/volocity.xhtml>`_
 
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no|
 
@@ -25,6 +22,7 @@ We'd like to have: 
 -  An official specification document
 
 Ratings
+-------
 
 Pixels: |Good|
 
@@ -37,12 +35,9 @@ Presence: |Poor|
 Utility: |Poor|
 
 Additional Information
+----------------------
 
-Source Code: 
+Source Code: :source:`VolocityClippingReader <components/bio-formats/src/loci/formats/in/VolocityClippingReader.java>`
 
-`VolocityClippingReader <http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/VolocityClippingReader.java>`_
-
-Notes: 
-
-Note that RGB .acff files are not yet supported.  See
-`http://trac.openmicroscopy.org/ome/ticket/6413 <http://trac.openmicroscopy.org/ome/ticket/6413>`_.
+.. note::
+    Note that RGB .acff files are not yet supported. See :ticket:`6413`.

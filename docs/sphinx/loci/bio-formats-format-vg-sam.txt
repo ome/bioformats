@@ -1,19 +1,16 @@
 VG SAM
 ======
 
---------------
-
-Extensions: 
-
-.dti
+Extensions: .dti
 
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no|
 
-Supported Metadata Fields: 
-
-`VGSAMReader <http://dev.loci.wisc.edu/trac/software/wiki/VGSAMReader>`_
+Supported Metadata Fields: `VGSAMReader <http://dev.loci.wisc.edu/trac/software/wiki/VGSAMReader>`_
 
 We currently have: 
 
@@ -26,6 +23,7 @@ We'd like to have: 
 - more VG-SAM files
 
 Ratings
+-------
 
 Pixels: |Good|
 
@@ -38,7 +36,6 @@ Presence: |Poor|
 Utility: |Fair|
 
 Additional Information
+----------------------
 
-Source Code: 
-
-`VGSAMReader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/VGSAMReader.java>`_
+Source Code: :source:`VGSAMReader <components/bio-formats/src/loci/formats/in/VGSAMReader.java>`

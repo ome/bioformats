@@ -1,21 +1,18 @@
 Oxford Instruments
 ==================
 
-Extensions: 
+Extensions: .top
 
-.top
-
-Owner: 
-
-`Oxford Instruments <http://www.oxinst.com>`_
+Owner: `Oxford Instruments <http://www.oxinst.com>`_
 
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no|
 
-Supported Metadata Fields: 
-
-`OxfordInstrumentsReader <http://dev.loci.wisc.edu/trac/software/wiki/OxfordInstrumentsReader>`_
+Supported Metadata Fields: `OxfordInstrumentsReader <http://dev.loci.wisc.edu/trac/software/wiki/OxfordInstrumentsReader>`_
 
 We currently have: 
 
@@ -30,6 +27,7 @@ We'd like to have: 
 - more Oxford Instruments files
 
 Ratings
+-------
 
 Pixels: |Good|
 
@@ -42,7 +40,6 @@ Presence: |Fair|
 Utility: |Fair|
 
 Additional Information
+----------------------
 
-Source Code: 
-
-`OxfordInstrumentsReader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/OxfordInstrumentsReader.java>`_
+Source Code: :source:`OxfordInstrumentsReader <components/bio-formats/src/loci/formats/in/OxfordInstrumentsReader.java>`_

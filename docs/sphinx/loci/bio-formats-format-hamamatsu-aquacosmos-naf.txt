@@ -1,21 +1,18 @@
 Hamamatsu Aquacosmos NAF
 ========================
 
-Extensions: 
+Extensions: .naf
 
-.naf
-
-Developer: 
-
-`Hamamatsu <http://www.hamamatsu.com/>`_
+Developer: `Hamamatsu <http://www.hamamatsu.com/>`_
 
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no|
 
-Supported Metadata Fields: 
-
-`NAF Reader <http://dev.loci.wisc.edu/trac/software/wiki/NAFReader>`_
+Supported Metadata Fields: `NAF Reader <http://dev.loci.wisc.edu/trac/software/wiki/NAFReader>`_
 
 We currently have: 
 
@@ -27,6 +24,7 @@ We'd like to have: 
 -  More NAF files
 
 Ratings
+-------
 
 Pixels: |Good|
 
@@ -39,8 +37,6 @@ Presence: |Fair|
 Utility: |Fair|
 
 Additional Information
+----------------------
 
-Source Code: 
-
-`NAF
-Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/NAFReader.java>`_
+Source Code: :source:`NAF Reader <components/bio-formats/src/loci/formats/in/NAFReader.java>`

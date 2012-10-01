@@ -1,21 +1,18 @@
 LIM (Laboratory Imaging/Nikon)
 ==============================
 
-Extensions: 
+Extensions: .lim
 
-.lim
-
-Owner: 
-
-`Laboratory Imaging <http://www.lim.cz/>`_
+Owner: `Laboratory Imaging <http://www.lim.cz/>`_
 
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no|
 
-Supported Metadata Fields: 
-
-`LIM Reader <http://dev.loci.wisc.edu/trac/software/wiki/LIMReader>`_
+Supported Metadata Fields: `LIM Reader <http://dev.loci.wisc.edu/trac/software/wiki/LIMReader>`_
 
 We currently have: 
 
@@ -27,6 +24,7 @@ We'd like to have: 
 -  A LIM specification document
 
 Ratings
+-------
 
 Pixels: |Good|
 
@@ -39,15 +37,11 @@ Presence: |Poor|
 Utility: |Poor|
 
 Additional Information
+----------------------
 
-Source Code: 
+Source Code: :source:`LIM Reader <components/bio-formats/src/loci/formats/in/LIMReader.java>`
 
-`LIM
-Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/LIMReader.java>`_
-
-Notes: 
-
-Bio-Formats supports only uncompressed LIM.
+Notes: Bio-Formats supports only uncompressed LIM.
 
 Commercial applications that support LIM include:
 

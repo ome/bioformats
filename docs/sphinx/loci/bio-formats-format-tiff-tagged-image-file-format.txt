@@ -1,36 +1,25 @@
 TIFF (Tagged Image File Format)
 ===============================
 
---------------
+Extensions: .tif
 
-Extensions: 
+Developer: Aldus and Microsoft
 
-.tif
-
-Developer: 
-
-Aldus and Microsoft
-
-Owner: 
-
-`Adobe <http://www.adobe.com>`_
+Owner: `Adobe <http://www.adobe.com>`_
 
 Support
+-------
+
+SCIFIO: |yes|
 
 Export: |yes|
 
-Supported Metadata Fields: 
+Supported Metadata Fields: `TIFF Reader <http://dev.loci.wisc.edu/trac/software/wiki/TiffReader>`_
 
-`TIFF Reader <http://dev.loci.wisc.edu/trac/software/wiki/TiffReader>`_
-
-Sample Datasets: 
-
-`LZW TIFF data
+Sample Datasets: `LZW TIFF data
 gallery <http://marlin.life.utsa.edu/Data%20Gallery.html>`_
 
-Sample Datasets: 
-
-`Big TIFF <http://tiffcentral.com/>`_
+Sample Datasets: `Big TIFF <http://tiffcentral.com/>`_
 
 We currently have: 
 
@@ -48,6 +37,7 @@ More TIFF datasets:
    photometric interpretation type
 
 Ratings
+-------
 
 Pixels: |Very Good|
 
@@ -60,16 +50,11 @@ Presence: |Outstanding|
 Utility: |Fair|
 
 Additional Information
+----------------------
 
-Source Code: 
+Source Code: :source: `TIFF Reader <components/bio-formats/src/loci/formats/in/TiffReader.java>`
 
-`TIFF
-Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/TiffReader.java>`_
-
-Source Code: 
-
-`TIFF
-Writer <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/out/TiffWriter.java>`_
+Source Code: :source:`TIFF Writer <components/bio-formats/src/loci/formats/out/TiffWriter.java>`
 
 Notes: 
 
@@ -77,11 +62,7 @@ Notes: 
    GB).
 -  Bio-Formats can save image stacks as TIFF or BigTIFF.
 
-See Also: 
+.. seealso::
+    `TIFF technical overview <http://home.earthlink.net/%7Eritter/tiff/>`_
 
-`TIFF technical overview <http://home.earthlink.net/%7Eritter/tiff/>`_
-
-See Also: 
-
-`BigTIFF technical
-overview <http://www.awaresystems.be/imaging/tiff/bigtiff.html>`_
+    `BigTIFF technical overview <http://www.awaresystems.be/imaging/tiff/bigtiff.html>`_

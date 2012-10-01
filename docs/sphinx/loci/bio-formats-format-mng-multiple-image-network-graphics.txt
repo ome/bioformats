@@ -1,29 +1,22 @@
 MNG (Multiple-image Network Graphics)
 =====================================
 
-Extensions: 
+Extensions: .mng
 
-.mng
-
-Developer: 
-
-`MNG Development Group <http://www.libpng.org/pub/mng/mngnews.html>`_
+Developer: `MNG Development Group <http://www.libpng.org/pub/mng/mngnews.html>`_
 
 Support
+-------
+
+SCIFIO: |yes|
 
 Export: |no|
 
-Supported Metadata Fields: 
+Supported Metadata Fields: `MNG Reader <http://dev.loci.wisc.edu/trac/software/wiki/MNGReader>`_
 
-`MNG Reader <http://dev.loci.wisc.edu/trac/software/wiki/MNGReader>`_
+Freely Available Software: `libmng (MNG reference library) <http://www.libmng.com/>`_
 
-Freely Available Software: 
-
-`libmng (MNG reference library) <http://www.libmng.com/>`_
-
-Sample Datasets: 
-
-`MNG sample files <http://libmng.com/MNGsuite/index.html>`_
+Sample Datasets: `MNG sample files <http://libmng.com/MNGsuite/index.html>`_
 
 We currently have: 
 
@@ -33,6 +26,7 @@ We currently have: 
 -  A large number of MNG datasets
 
 Ratings
+-------
 
 Pixels: |Good|
 
@@ -45,16 +39,11 @@ Presence: |Fair|
 Utility: |Poor|
 
 Additional Information
+----------------------
 
-Source Code: 
+Source Code: `MNG Reader <components/bio-formats/src/loci/formats/in/MNGReader.java>`
 
-`MNG
-Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/MNGReader.java>`_
+.. seealso::
+    `MNG homepage <http://www.libpng.org/pub/mng/>`_
 
-See Also: 
-
-`MNG homepage <http://www.libpng.org/pub/mng/>`_
-
-See Also: 
-
-`MNG specification <http://www.libpng.org/pub/mng/spec>`_
+    `MNG specification <http://www.libpng.org/pub/mng/spec>`_
