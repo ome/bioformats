@@ -1,29 +1,22 @@
 Hamamatsu .ndpi
 ===============
 
-Extensions: 
+Extensions: .ndpi
 
-.ndpi
-
-Developer: 
-
-`Hamamatsu <http://www.hamamatsu.com>`_
+Developer: `Hamamatsu <http://www.hamamatsu.com>`_
 
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no|
 
-Supported Metadata Fields: 
+Supported Metadata Fields: `NDPIReader <http://dev.loci.wisc.edu/trac/software/wiki/NDPIReader>`_
 
-`NDPIReader <http://dev.loci.wisc.edu/trac/software/wiki/NDPIReader>`_
+Freely Available Software: `NDP.view <http://www.olympusamerica.com/seg_section/seg_vm_downloads.asp>`_
 
-Freely Available Software: 
-
-`NDP.view <http://www.olympusamerica.com/seg_section/seg_vm_downloads.asp>`_
-
-Sample Datasets: 
-
-`OpenSlide <http://openslide.cs.cmu.edu/download/openslide-testdata/Hamamatsu/>`_
+Sample Datasets: `OpenSlide <http://openslide.cs.cmu.edu/download/openslide-testdata/Hamamatsu/>`_
 
 We currently have: 
 
@@ -36,6 +29,7 @@ We'd like to have: 
    than 65530
 
 Ratings
+-------
 
 Pixels: |Fair|
 
@@ -48,13 +42,9 @@ Presence: |Fair|
 Utility: |Fair|
 
 Additional Information
+----------------------
 
-Source Code: 
+Source Code: :source:`NDPIReader <components/bio-formats/src/loci/formats/in/NDPIReader.java>`
 
-`NDPIReader <http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/NDPIReader.java>`_
-
-Notes: 
-
-Small .ndpi files can be read, but there is a major issue with reading
-large files (width or height greater than 65530):
-http://trac.openmicroscopy.org.uk/ome/ticket/5092
+Notes: Small .ndpi files can be read, but there is a major issue with reading
+large files (width or height greater than 65530): see :ticket:`5092`.

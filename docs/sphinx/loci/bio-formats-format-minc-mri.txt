@@ -1,31 +1,27 @@
 MINC MRI
 ========
 
-Extensions: 
+Extensions: .mnc
 
-.mnc
-
-Developer: 
-
-`Harvard University <http://www.nmr.mgh.harvard.edu/%7Erhoge/minc/>`_
+Developer: `Harvard University <http://www.nmr.mgh.harvard.edu/%7Erhoge/minc/>`_
 
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no|
 
-Supported Metadata Fields: 
+Supported Metadata Fields: `MINC Reader <http://dev.loci.wisc.edu/trac/software/wiki/MINCReader>`_
 
-`MINC Reader <http://dev.loci.wisc.edu/trac/software/wiki/MINCReader>`_
-
-Freely Available Software: 
-
-`MINC <http://www.nmr.mgh.harvard.edu/%7Erhoge/minc/>`_
+Freely Available Software: `MINC <http://www.nmr.mgh.harvard.edu/%7Erhoge/minc/>`_
 
 We currently have: 
 
 -  A few MINC files
 
 Ratings
+-------
 
 Pixels: |Very Good|
 
@@ -38,8 +34,6 @@ Presence: |Good|
 Utility: |Fair|
 
 Additional Information
+----------------------
 
-Source Code: 
-
-`MINC
-Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/MINCReader.java>`_
+Source Code: :source:`MINC Reader <components/bio-formats/src/loci/formats/in/MINCReader.java>`

@@ -1,21 +1,18 @@
 ImagePro Workspace
 ==================
 
-Extensions: 
+Extensions: .ipw
 
-.ipw
-
-Owner: 
-
-`Media Cybernetics <http://www.mediacy.com/>`_
+Owner: `Media Cybernetics <http://www.mediacy.com/>`_
 
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no|
 
-Supported Metadata Fields: 
-
-`IPW Reader <http://dev.loci.wisc.edu/trac/software/wiki/IPWReader>`_
+Supported Metadata Fields: `IPW Reader <http://dev.loci.wisc.edu/trac/software/wiki/IPWReader>`_
 
 We currently have: 
 
@@ -23,9 +20,7 @@ We currently have: 
    software
 -  A few IPW datasets
 -  The ability to produce more datasets
--  Some `Bio-Formats developer
-   notes <http://dev.loci.wisc.edu/svn/software/trunk/components/bio-formats/doc/ipw.html>`_
-   for IPW
+-  Some :source:`Bio-Formats developer notes <components/bio-formats/doc/ipw.html>` for IPW
 
 We'd like to have: 
 
@@ -36,6 +31,7 @@ We'd like to have: 
    -  2+ GB files
 
 Ratings
+-------
 
 Pixels: |Very Good|
 
@@ -48,13 +44,9 @@ Presence: |Poor|
 Utility: |Poor|
 
 Additional Information
+----------------------
 
-Source Code: 
+Source Code: :source:`IPW Reader <components/bio-formats/src/loci/formats/in/IPWReader.java>`_
 
-`IPW
-Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/IPWReader.java>`_
-
-Notes: 
-
-Bio-Formats uses a modified version of the `Apache Jakarta
+Notes: Bio-Formats uses a modified version of the `Apache Jakarta
 POI <http://jakarta.apache.org/poi/>`_ library to read IPW files.

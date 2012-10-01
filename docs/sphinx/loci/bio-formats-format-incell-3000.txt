@@ -1,25 +1,20 @@
 InCell 3000
 ===========
 
-Extensions: 
+Extensions: .frm
 
-.frm
-
-Developer: 
-
-`GE <http://gelifesciences.com/>`_
+Developer: `GE <http://gelifesciences.com/>`_
 
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no|
 
-Supported Metadata Fields: 
+Supported Metadata Fields: `InCell3000Reader <http://dev.loci.wisc.edu/trac/software/wiki/InCell3000Reader>`_
 
-`InCell3000Reader <http://dev.loci.wisc.edu/trac/software/wiki/InCell3000Reader>`_
-
-Sample Datasets: 
-
-`Broad Bioimage Benchmark
+Sample Datasets: `Broad Bioimage Benchmark
 Collection <http://www.broadinstitute.org/bbbc/sbs_bioimage_cnt.html>`_
 
 We currently have: 
@@ -32,6 +27,7 @@ We'd like to have: 
 -  An official specification document
 
 Ratings
+-------
 
 Pixels: |Good|
 
@@ -44,7 +40,6 @@ Presence: |Fair|
 Utility: |Poor|
 
 Additional Information
+----------------------
 
-Source Code: 
-
-`InCell3000Reader <http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/InCell3000Reader.java>`_
+Source Code: :source:`InCell3000Reader <components/bio-formats/src/loci/formats/in/InCell3000Reader.java>`

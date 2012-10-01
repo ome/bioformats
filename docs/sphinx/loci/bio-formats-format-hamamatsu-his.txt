@@ -1,21 +1,18 @@
 Hamamatsu HIS
 =============
 
-Extensions: 
+Extensions: .his
 
-.his
-
-Owner: 
-
-`Hamamatsu <http://www.hamamatsu.com>`_
+Owner: `Hamamatsu <http://www.hamamatsu.com>`_
 
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no|
 
-Supported Metadata Fields: 
-
-`HISReader <http://dev.loci.wisc.edu/trac/software/wiki/HISReader>`_
+Supported Metadata Fields: `HISReader <http://dev.loci.wisc.edu/trac/software/wiki/HISReader>`_
 
 We currently have: 
 
@@ -30,6 +27,7 @@ We'd like to have: 
 - more HIS files
 
 Ratings
+-------
 
 Pixels: |Good|
 
@@ -42,7 +40,6 @@ Presence: |Fair|
 Utility: |Fair|
 
 Additional Information
+----------------------
 
-Source Code: 
-
-`HISReader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/HISReader.java>`_
+Source Code: :source:`HISReader <components/bio-formats/src/loci/formats/in/HISReader.java>`

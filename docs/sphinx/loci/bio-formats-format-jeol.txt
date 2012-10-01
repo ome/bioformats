@@ -1,21 +1,18 @@
 JEOL
 ====
 
-Extensions: 
+Extensions: .dat, .img, .par
 
-.dat, .img, .par
-
-Owner: 
-
-`JEOL <http://www.jeol.com>`_
+Owner: `JEOL <http://www.jeol.com>`_
 
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no|
 
-Supported Metadata Fields: 
-
-`JEOLReader <http://dev.loci.wisc.edu/trac/software/wiki/JEOLReader>`_
+Supported Metadata Fields: `JEOLReader <http://dev.loci.wisc.edu/trac/software/wiki/JEOLReader>`_
 
 We currently have: 
 
@@ -30,39 +27,19 @@ We'd like to have: 
 - more JEOL files
 
 Ratings
+-------
 
-Pixels: 
+Pixels: |Good|
 
-.. figure:: /files/loci/images/crystal-3.png
-   :align: center
-   :alt: 3 - Good
+Metadata: |Fair|
 
-Metadata: 
+Openness: |Fair|
 
-.. figure:: /files/loci/images/crystal-2.png
-   :align: center
-   :alt: 2 - Fair
+Presence: |Fair|
 
-Openness: 
-
-.. figure:: /files/loci/images/crystal-2.png
-   :align: center
-   :alt: 2 - Fair
-
-Presence: 
-
-.. figure:: /files/loci/images/crystal-2.png
-   :align: center
-   :alt: 2 - Fair
-
-Utility: 
-
-.. figure:: /files/loci/images/crystal-2.png
-   :align: center
-   :alt: 2 - Fair
+Utility: |Fair|
 
 Additional Information
+----------------------
 
-Source Code: 
-
-`JEOLReader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/JEOLReader.java>`_
+Source Code: :source:`JEOLReader <components/bio-formats/src/loci/formats/in/JEOLReader.java>`

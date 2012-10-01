@@ -1,21 +1,18 @@
 Lambert Instruments FLIM
 ========================
 
-Extensions: 
+Extensions: .fli
 
-.fli
-
-Developer: 
-
-`Lambert Instruments <http://www.lambert-instruments.com>`_
+Developer: `Lambert Instruments <http://www.lambert-instruments.com>`_
 
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no|
 
-Supported Metadata Fields: 
-
-`LiFlimReader <http://dev.loci.wisc.edu/trac/software/wiki/LiFlimReader>`_
+Supported Metadata Fields: `LiFlimReader <http://dev.loci.wisc.edu/trac/software/wiki/LiFlimReader>`_
 
 We currently have: 
 
@@ -23,6 +20,7 @@ We currently have: 
 -  several example LI-FLIM datasets
 
 Ratings
+-------
 
 Pixels: |Very Good|
 
@@ -35,10 +33,9 @@ Presence: |Fair|
 Utility: |Good|
 
 Additional Information
+----------------------
 
-Source Code: 
-
-`LiFlimReader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/LiFlimReader.java>`_
+Source Code: :source:`LiFlimReader </components/bio-formats/src/loci/formats/in/LiFlimReader.java>`
 
 Notes: 
 

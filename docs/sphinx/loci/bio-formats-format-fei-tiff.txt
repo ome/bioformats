@@ -1,27 +1,25 @@
 FEI TIFF
 ========
 
-Extensions: 
+Extensions: .tiff
 
-.tiff
-
-Developer: 
-
-`FEI <http://www.fei.com>`_
+Developer: `FEI <http://www.fei.com>`_
 
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no|
 
-Supported Metadata Fields: 
-
-`FEITiffReader <http://dev.loci.wisc.edu/trac/java/wiki/FEITiffReader>`_
+Supported Metadata Fields: `FEITiffReader <http://dev.loci.wisc.edu/trac/java/wiki/FEITiffReader>`_
 
 We currently have: 
 
 -  A few FEI TIFF datasets
 
 Ratings
+-------
 
 Pixels: |Very Good|
 
@@ -34,7 +32,6 @@ Presence: |Fair|
 Utility: |Fair|
 
 Additional Information
+----------------------
 
-Source Code: 
-
-`FEITiffReader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/FEITiffReader.java>`_
+Source Code: :source:`FEITiffReader <components/bio-formats/src/loci/formats/in/FEITiffReader.java>`

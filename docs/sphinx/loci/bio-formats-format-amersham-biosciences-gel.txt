@@ -1,30 +1,22 @@
 Amersham Biosciences Gel
 ========================
 
+Extensions: .gel
 
-Extensions: 
+Developer: Molecular Dynamics
 
-.gel
-
-Developer: 
-
-Molecular Dynamics
-
-Owner: 
-
-`GE Healthcare Life Sciences <http://www.gelifesciences.com/>`_
+Owner: `GE Healthcare Life Sciences <http://www.gelifesciences.com/>`_
 
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no|
 
-Supported Metadata Fields: 
+Supported Metadata Fields: `GelReader <http://dev.loci.wisc.edu/trac/software/wiki/GelReader>`_
 
-`GelReader <http://dev.loci.wisc.edu/trac/software/wiki/GelReader>`_
-
-Sample Datasets: 
-
-`SampleImages.zip <http://strc.herts.ac.uk/bio/BioArray/gelimages/SampleImages.zip>`_
+Sample Datasets: `SampleImages.zip <http://strc.herts.ac.uk/bio/BioArray/gelimages/SampleImages.zip>`_
 
 We currently have: 
 
@@ -32,6 +24,7 @@ We currently have: 
 -  a few GEL datasets
 
 Ratings
+-------
 
 Pixels: |Very Good|
 
@@ -44,17 +37,14 @@ Presence: |Fair|
 Utility: |Fair|
 
 Additional Information
+----------------------
 
-Source Code: 
-
-`GelReader.java <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/GelReader.java>`_
+Source Code: :source:`GelReader.java <components/bio-formats/src/loci/formats/in/GelReader.java>`
 
 Notes: 
 
 **Please note that while we have specification documents for this
 format, we are not able to distribute them to third parties.**
 
-See Also: 
-
-`GEL Technical
-Overview <http://www.awaresystems.be/imaging/tiff/tifftags/docs/gel.html>`_
+.. seealso:: 
+    `GEL Technical Overview <http://www.awaresystems.be/imaging/tiff/tifftags/docs/gel.html>`_

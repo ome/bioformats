@@ -1,23 +1,18 @@
 Applied Precision CellWorX
 ==========================
 
+Extensions: .htd, .pnl,
 
-Extensions: 
-
-.htd, .pnl,
-
-Developer: 
-
-`Applied Precision <http://www.api.com>`_
+Developer: `Applied Precision <http://www.api.com>`_
 
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no|
 
-Supported Metadata Fields: 
-
-`CellWorX
-Reader <http://dev.loci.wisc.edu/trac/software/wiki/CellWorxReader>`_
+Supported Metadata Fields: `CellWorX Reader <http://dev.loci.wisc.edu/trac/software/wiki/CellWorxReader>`_
 
 We currently have: 
 
@@ -29,6 +24,7 @@ We'd like to have: 
 -  More CellWorX datasets
 
 Ratings
+-------
 
 Pixels: |Very Good|
 
@@ -41,7 +37,7 @@ Presence: |Fair|
 Utility: |Fair|
 
 Additional Information
+----------------------
 
-Source Code: 
+Source Code: :source:`CellWorXReader <components/bio-formats/src/loci/formats/in/CellWorxReader.java>`
 
-`CellWorXReader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/CellWorxReader.java>`_

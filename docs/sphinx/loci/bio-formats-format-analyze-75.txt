@@ -1,23 +1,18 @@
 Analyze 7.5
 ===========
 
-Extensions: 
+Extensions: .img, .hdr
 
-.img, .hdr
-
-Developer: 
-
-`Mayo Foundation Biomedical Imaging
-Resource <http://www.mayo.edu/bir/>`_
+Developer: `Mayo Foundation Biomedical Imaging Resource <http://www.mayo.edu/bir/>`_
 
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no|
 
-Supported Metadata Fields: 
-
-`Analyze
-Reader <http://dev.loci.wisc.edu/trac/software/wiki/AnalyzeReader>`_
+Supported Metadata Fields: `Analyze Reader <http://dev.loci.wisc.edu/trac/software/wiki/AnalyzeReader>`_
 
 We currently have: 
 
@@ -26,6 +21,7 @@ We currently have: 
 -  several Analyze 7.5 datasets
 
 Ratings
+-------
 
 Pixels: |Very Good|
 
@@ -38,7 +34,6 @@ Presence: |Good|
 Utility: |Fair|
 
 Additional Information
+----------------------
 
-Source Code: 
-
-`AnalyzeReader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/AnalyzeReader.java>`_
+Source Code: :source:`AnalyzeReader <components/bio-formats/src/loci/formats/in/AnalyzeReader.java>`

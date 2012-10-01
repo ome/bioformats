@@ -1,29 +1,25 @@
 PICT (Macintosh Picture)
 ========================
 
---------------
+Extensions: .pict
 
-Extensions: 
-
-.pict
-
-Developer: 
-
-`Apple Computer <http://www.apple.com>`_
+Developer: `Apple Computer <http://www.apple.com>`_
 
 Support
+-------
+
+SCIFIO: |yes|
 
 Export: |no|
 
-Supported Metadata Fields: 
-
-`PICT Reader <http://dev.loci.wisc.edu/trac/software/wiki/PictReader>`_
+Supported Metadata Fields: `PICT Reader <http://dev.loci.wisc.edu/trac/software/wiki/PictReader>`_
 
 We currently have: 
 
 -  Numerous PICT datasets
 
 Ratings
+-------
 
 Pixels: |Very Good|
 
@@ -36,29 +32,16 @@ Presence: |Very Good|
 Utility: |Poor|
 
 Additional Information
+----------------------
 
-Source Code: 
+Source Code: `PICT Reader <components/bio-formats/src/loci/formats/in/PictReader.java>`
 
-`PICT
-Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/PictReader.java>`_
+Source Code: :source:`Legacy PICT Reader <components/bio-formats/src/loci/formats/in/LegacyPictReader.java>`
 
-Source Code: 
-
-`Legacy PICT
-Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/LegacyPictReader.java>`_
-
-Notes: 
-
-`QuickTime for
-Java <http://www.apple.com/quicktime/download/standalone.html>`_ is
+Notes: `QuickTime for Java <http://www.apple.com/quicktime/download/standalone.html>`_ is
 required for reading vector files, and some compressed files.
 
-See Also: 
+.. seealso::
+    `PICT technical overview <http://www.faqs.org/faqs/graphics/fileformats-faq/part3/section-107.html>`_
 
-`PICT technical
-overview <http://www.faqs.org/faqs/graphics/fileformats-faq/part3/section-107.html>`_
-
-See Also: 
-
-`Another PICT technical
-overview <http://www.prepressure.com/formats/pict/fileformat.htm>`_
+    `Another PICT technical overview <http://www.prepressure.com/formats/pict/fileformat.htm>`_

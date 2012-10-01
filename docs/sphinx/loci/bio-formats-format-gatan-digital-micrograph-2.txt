@@ -1,25 +1,20 @@
 Gatan Digital Micrograph 2
 ==========================
 
-Extensions: 
+Extensions: .dm2
 
-.dm2
-
-Developer: 
-
-`Gatan <http://www.gatan.com>`_
+Developer: `Gatan <http://www.gatan.com>`_
 
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no|
 
-Officially Supported Versions: 
+Officially Supported Versions: 2
 
-2
-
-Supported Metadata Fields: 
-
-`GatanDM2Reader <http://dev.loci.wisc.edu/trac/software/wiki/GatanDM2Reader>`_
+Supported Metadata Fields: `GatanDM2Reader <http://dev.loci.wisc.edu/trac/software/wiki/GatanDM2Reader>`_
 
 We currently have: 
 
@@ -34,6 +29,7 @@ We'd like to have: 
 - more DM2 files
 
 Ratings
+-------
 
 Pixels: |Good|
 
@@ -46,7 +42,6 @@ Presence: |Fair|
 Utility: |Good|
 
 Additional Information
+----------------------
 
-Source Code: 
-
-`GatanDM2Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/GatanDM2Reader.java>`_
+Source Code: :source:`GatanDM2Reader <components/bio-formats/src/loci/formats/in/GatanDM2Reader.java>`

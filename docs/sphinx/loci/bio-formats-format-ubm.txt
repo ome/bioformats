@@ -1,19 +1,16 @@
 UBM
 ===
 
---------------
-
-Extensions: 
-
-.pr3
+Extensions: .pr3
 
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no|
 
-Supported Metadata Fields: 
-
-`UBMReader <http://dev.loci.wisc.edu/trac/software/wiki/UBMReader>`_
+Supported Metadata Fields: `UBMReader <http://dev.loci.wisc.edu/trac/software/wiki/UBMReader>`_
 
 We currently have: 
 
@@ -28,6 +25,7 @@ We'd like to have: 
 - more UBM files
 
 Ratings
+-------
 
 Pixels: |Good|
 
@@ -40,7 +38,6 @@ Presence: |Poor|
 Utility: |Fair|
 
 Additional Information
+----------------------
 
-Source Code: 
-
-`UBMReader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/UBMReader.java>`_
+Source Code: :source:`UBMReader <components/bio-formats/src/loci/formats/in/UBMReader.java>`

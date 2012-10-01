@@ -1,24 +1,18 @@
 Varian FDF
 ==========
 
---------------
+Extensions: .fdf
 
-Extensions: 
-
-.fdf
-
-Developer: 
-
-`Varian, Inc. <http://www.varianinc.com>`_
+Developer: `Varian, Inc. <http://www.varianinc.com>`_
 
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no|
 
-Supported Metadata Fields: 
-
-`VarianFDF
-Reader <http://dev.loci.wisc.edu/trac/java/wiki/VarianFDFReader>`_
+Supported Metadata Fields: `VarianFDF Reader <http://dev.loci.wisc.edu/trac/java/wiki/VarianFDFReader>`_
 
 We currently have: 
 
@@ -30,6 +24,7 @@ We'd like to have: 
 -  More Varian FDF datasets
 
 Ratings
+-------
 
 Pixels: |Good|
 
@@ -42,7 +37,6 @@ Presence: |Fair|
 Utility: |Fair|
 
 Additional Information
+----------------------
 
-Source Code: 
-
-`VarianFDFReader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/VarianFDFReader.java>`_
+Source Code: :source:`VarianFDFReader <components/bio-formats/src/loci/formats/in/VarianFDFReader.java>`

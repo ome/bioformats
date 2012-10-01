@@ -1,31 +1,22 @@
 NEF (Nikon Electronic Format)
 =============================
 
-Extensions: 
+Extensions: .nef, .tif
 
-.nef, .tif
-
-Developer: 
-
-`Nikon <http://www.nikon.com/>`_
+Developer: `Nikon <http://www.nikon.com/>`_
 
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no|
 
-Supported Metadata Fields: 
+Supported Metadata Fields: `Nikon Reader <http://dev.loci.wisc.edu/trac/software/wiki/NikonReader>`_
 
-`Nikon
-Reader <http://dev.loci.wisc.edu/trac/software/wiki/NikonReader>`_
+Sample Datasets: `neffile1.zip <http://www.outbackphoto.com/workshop/NEF_conversion/neffile1.zip>`_
 
-Sample Datasets: 
-
-`neffile1.zip <http://www.outbackphoto.com/workshop/NEF_conversion/neffile1.zip>`_
-
-Sample Datasets: 
-
-`Sample NEF
-images <http://www.nikondigital.org/articles/library/nikon_d2x_first_impressions.htm>`_
+Sample Datasets: `Sample NEF images <http://www.nikondigital.org/articles/library/nikon_d2x_first_impressions.htm>`_
 
 We currently have: 
 
@@ -33,6 +24,7 @@ We currently have: 
 -  Several NEF datasets
 
 Ratings
+-------
 
 Pixels: |Very Good|
 
@@ -45,18 +37,14 @@ Presence: |Poor|
 Utility: |Poor|
 
 Additional Information
+----------------------
 
-Source Code: 
-
-`Nikon
-Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/NikonReader.java>`_
+Source Code: :source:`Nikon Reader <components/bio-formats/src/loci/formats/in/NikonReader.java>`
 
 Notes: 
 
 **Please note that while we have specification documents for this
 format, we are not able to distribute them to third parties.**
 
-See Also: 
-
-`NEF
-Conversion <http://www.outbackphoto.com/workshop/NEF_conversion/nefconversion.html>`_
+.. seealso::
+    `NEF Conversion <http://www.outbackphoto.com/workshop/NEF_conversion/nefconversion.html>`_

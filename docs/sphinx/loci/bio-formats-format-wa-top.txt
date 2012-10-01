@@ -1,27 +1,20 @@
 WA-TOP
 ======
 
---------------
+Extensions: .wat
 
-Extensions: 
+Developer: WA Technology
 
-.wat
-
-Developer: 
-
-WA Technology
-
-Owner: 
-
-`Oxford Instruments <http://www.oxinst.com>`_
+Owner: `Oxford Instruments <http://www.oxinst.com>`_
 
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no|
 
-Supported Metadata Fields: 
-
-`WATOPReader <http://dev.loci.wisc.edu/trac/software/wiki/WATOPReader>`_
+Supported Metadata Fields: `WATOPReader <http://dev.loci.wisc.edu/trac/software/wiki/WATOPReader>`_
 
 We currently have: 
 
@@ -35,6 +28,7 @@ We'd like to have: 
 - more WA-TOP files
 
 Ratings
+-------
 
 Pixels: |Good|
 
@@ -47,7 +41,6 @@ Presence: |Fair|
 Utility: |Fair|
 
 Additional Information
+----------------------
 
-Source Code: 
-
-`WATOPReader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/WATOPReader.java>`_
+Source Code: :source:`WATOPReader <components/bio-formats/src/loci/formats/in/WATOPReader.java>`

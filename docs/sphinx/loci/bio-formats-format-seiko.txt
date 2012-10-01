@@ -1,23 +1,18 @@
 Seiko
 =====
 
---------------
+Extensions: .xqd, .xqf
 
-Extensions: 
-
-.xqd, .xqf
-
-Owner: 
-
-`Seiko <http://www.seiko.co.jp/en/index.php>`_
+Owner: `Seiko <http://www.seiko.co.jp/en/index.php>`_
 
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no|
 
-Supported Metadata Fields: 
-
-`SeikoReader <http://dev.loci.wisc.edu/trac/software/wiki/SeikoReader>`_
+Supported Metadata Fields: `SeikoReader <http://dev.loci.wisc.edu/trac/software/wiki/SeikoReader>`_
 
 We currently have: 
 
@@ -32,6 +27,7 @@ We'd like to have: 
 - more Seiko files
 
 Ratings
+-------
 
 Pixels: |Good|
 
@@ -44,7 +40,6 @@ Presence: |Fair|
 Utility: |Fair|
 
 Additional Information
+----------------------
 
-Source Code: 
-
-`SeikoReader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/SeikoReader.java>`_
+Source Code: :source:`SeikoReader <components/bio-formats/src/loci/formats/in/SeikoReader.java>`

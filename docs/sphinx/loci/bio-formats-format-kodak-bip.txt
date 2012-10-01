@@ -1,15 +1,14 @@
 Kodak BIP
 =========
 
-Extensions: 
+Extensions: .bip
 
-.bip
-
-Developer: 
-
-`Kodak/Carestream <http://carestream.com>`_
+Developer: `Kodak/Carestream <http://carestream.com>`_
 
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no|
 
@@ -22,6 +21,7 @@ We'd like to have: 
 -  An official specification document
 
 Ratings
+-------
 
 Pixels: Very Good|
 
@@ -34,12 +34,9 @@ Presence: |Poor|
 Utility: |Fair|
 
 Additional Information
+----------------------
 
-Source Code: 
+Source Code: :source:`KodakReader <components/bio-formats/src/loci/formats/in/KodakReader.java>`
 
-`KodakReader <http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/KodakReader.java>`_
-
-See Also: 
-
-`Information on Image Station
-systems <http://carestream.com/imageStation.html>`_
+.. seealso::
+    `Information on Image Station systems <http://carestream.com/imageStation.html>`_

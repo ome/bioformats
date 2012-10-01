@@ -1,21 +1,18 @@
 Axon Raw Format
 ===============
 
-Extensions: 
+Extensions:  .arf
 
-.arf
-
-Owner: 
-
-`INDEC BioSystems <http://www.indecbiosystems.com/>`_
+Owner:  `INDEC BioSystems <http://www.indecbiosystems.com/>`_
 
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no|
 
-Supported Metadata Fields: 
-
-`ARFReader <http://dev.loci.wisc.edu/trac/software/wiki/ARFReader>`_
+Supported Metadata Fields: `ARFReader <http://dev.loci.wisc.edu/trac/software/wiki/ARFReader>`_
 
 We currently have: 
 
@@ -28,6 +25,7 @@ We'd like to have: 
 -  more ARF datasets
 
 Ratings
+-------
 
 Pixels: |Very Good|
 
@@ -40,7 +38,6 @@ Presence: |Poor|
 Utility: |Fair|
 
 Additional Information
+----------------------
 
-Source Code: 
-
-`ARFReader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/ARFReader.java>`_
+Source Code: :source:`ARFReader <components/bio-formats/src/loci/formats/in/ARFReader.java>`

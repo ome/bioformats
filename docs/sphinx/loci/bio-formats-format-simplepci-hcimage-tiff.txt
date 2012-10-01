@@ -1,24 +1,18 @@
 SimplePCI & HCImage TIFF
 ========================
 
---------------
+Extensions: .tiff
 
-Extensions: 
-
-.tiff
-
-Developer: 
-
-`Hamamatsu <http://www.cimaging.net/products/simplepci/>`_
+Developer: `Hamamatsu <http://www.cimaging.net/products/simplepci/>`_
 
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no|
 
-Supported Metadata Fields: 
-
-`SimplePCI TIFF
-Reader <http://dev.loci.wisc.edu/trac/java/wiki/SimplePCITiffReader>`_
+Supported Metadata Fields: `SimplePCI TIFF Reader <http://dev.loci.wisc.edu/trac/java/wiki/SimplePCITiffReader>`_
 
 We currently have: 
 
@@ -29,6 +23,7 @@ We'd like to have: 
 -  More SimplePCI TIFF datasets
 
 Ratings
+-------
 
 Pixels: |Very Good|
 
@@ -41,7 +36,6 @@ Presence: |Fair|
 Utility: |Good|
 
 Additional Information
+----------------------
 
-Source Code: 
-
-`SimplePCITiffReader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/SimplePCITiffReader.java>`_
+Source Code: :source:`SimplePCITiffReader <components/bio-formats/src/loci/formats/in/SimplePCITiffReader.java>`

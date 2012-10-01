@@ -1,22 +1,18 @@
 Amira Mesh
 ==========
 
-Extensions: 
+Extensions: .am, .amiramesh, .grey, .hx, .labels
 
-.am, .amiramesh, .grey, .hx, .labels
-
-Developer: 
-
-`Visage Imaging <http://www.amiravis.com/>`_
+Developer: `Visage Imaging <http://www.amiravis.com/>`_
 
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no|
 
-Supported Metadata Fields: 
-
-`Amira
-Reader <http://dev.loci.wisc.edu/trac/software/wiki/AmiraReader>`_
+Supported Metadata Fields: `Amira Reader <http://dev.loci.wisc.edu/trac/software/wiki/AmiraReader>`_
 
 We currently have: 
 
@@ -27,6 +23,7 @@ We'd like to have: 
 -  more Amira Mesh datasets
 
 Ratings
+-------
 
 Pixels: |Very Good|
 
@@ -39,8 +36,6 @@ Presence: |Fair|
 Utility: |Fair|
 
 Additional Information
+----------------------
 
-Source Code: 
-
-`Amira
-Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/AmiraReader.java>`_
+Source Code: :source:`Amira Reader <components/bio-formats/src/loci/formats/in/AmiraReader.java>`

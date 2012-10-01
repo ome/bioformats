@@ -1,29 +1,22 @@
 NRRD (Nearly Raw Raster Data)
 =============================
 
-Extensions: 
+Extensions: .nrrd, .nhdr, .raw, .txt
 
-.nrrd, .nhdr, .raw, .txt
-
-Developer: 
-
-`Teem developers <http://teem.sourceforge.net/>`_
+Developer: `Teem developers <http://teem.sourceforge.net/>`_
 
 Support
+-------
+
+SCIFIO: |yes|
 
 Export: |no|
 
-Supported Metadata Fields: 
+Supported Metadata Fields: `NRRD Reader <http://dev.loci.wisc.edu/trac/software/wiki/NRRDReader>`_
 
-`NRRD Reader <http://dev.loci.wisc.edu/trac/software/wiki/NRRDReader>`_
+Freely Available Software: `nrrd (NRRD reference library) <http://teem.sourceforge.net/nrrd/>`_
 
-Freely Available Software: 
-
-`nrrd (NRRD reference library) <http://teem.sourceforge.net/nrrd/>`_
-
-Sample Datasets: 
-
-`Diffusion tensor MRI
+Sample Datasets: `Diffusion tensor MRI
 datasets <http://www.sci.utah.edu/%7Egk/DTI-data/>`_
 
 We currently have: 
@@ -34,6 +27,7 @@ We currently have: 
 -  A few nrrd datasets
 
 Ratings
+-------
 
 Pixels: |Very Good|
 
@@ -46,8 +40,6 @@ Presence: |Fair|
 Utility: |Very Good|
 
 Additional Information
+----------------------
 
-Source Code: 
-
-`NRRD
-Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/NRRDReader.java>`_
+Source Code: `NRRD Reader <components/bio-formats/src/loci/formats/in/NRRDReader.java>`

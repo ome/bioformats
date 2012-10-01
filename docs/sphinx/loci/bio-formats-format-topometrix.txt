@@ -1,23 +1,18 @@
 Topometrix
 ==========
 
---------------
+Extensions: .tfr, .ffr, .zfr, .zfp, .2fl
 
-Extensions: 
-
-.tfr, .ffr, .zfr, .zfp, .2fl
-
-Owner: 
-
-`TopoMetrix (now Veeco) <http://www.veeco.com/>`_
+Owner: `TopoMetrix (now Veeco) <http://www.veeco.com/>`_
 
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no|
 
-Supported Metadata Fields: 
-
-`TopometrixReader <http://dev.loci.wisc.edu/trac/software/wiki/TopometrixReader>`_
+Supported Metadata Fields: `TopometrixReader <http://dev.loci.wisc.edu/trac/software/wiki/TopometrixReader>`_
 
 We currently have: 
 
@@ -32,6 +27,7 @@ We'd like to have: 
 - more Topometrix files
 
 Ratings
+-------
 
 Pixels: |Good|
 
@@ -44,7 +40,6 @@ Presence: |Fair|
 Utility: |Fair|
 
 Additional Information
+----------------------
 
-Source Code: 
-
-`TopometrixReader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/TopometrixReader.java>`_
+Source Code: :source: `TopometrixReader <components/bio-formats/src/loci/formats/in/TopometrixReader.java>`

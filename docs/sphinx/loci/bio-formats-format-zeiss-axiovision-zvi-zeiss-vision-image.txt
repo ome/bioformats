@@ -1,37 +1,24 @@
 Zeiss AxioVision ZVI (Zeiss Vision Image)
 =========================================
 
---------------
+Extensions: .zvi
 
-Extensions: 
+Developer: `Carl Zeiss MicroImaging GmbH <http://www.zeiss.com/axiovision>`_
 
-.zvi
-
-Developer: 
-
-`Carl Zeiss MicroImaging GmbH <http://www.zeiss.com/axiovision>`_
-
-Owner: 
-
-`Carl Zeiss MicroImaging GmbH <http://www.zeiss.com/micro>`_
+Owner: `Carl Zeiss MicroImaging GmbH <http://www.zeiss.com/micro>`_
 
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no|
 
-Officially Supported Versions: 
+Officially Supported Versions: 1.0, 2.0
 
-1.0, 2.0
+Supported Metadata Fields: `Zeiss ZVI Reader <http://dev.loci.wisc.edu/trac/software/wiki/ZeissZVIReader>`_
 
-Supported Metadata Fields: 
-
-`Zeiss ZVI
-Reader <http://dev.loci.wisc.edu/trac/software/wiki/ZeissZVIReader>`_
-
-Freely Available Software: 
-
-`Zeiss Axiovision
-LE <http://www.zeiss.de/c12567be0045acf1/Contents-Frame/cbe917247da02a1cc1256e0000491172>`_
+Freely Available Software: `Zeiss Axiovision LE <http://www.zeiss.de/c12567be0045acf1/Contents-Frame/cbe917247da02a1cc1256e0000491172>`_
 
 We currently have: 
 
@@ -55,6 +42,7 @@ More ZVI datasets:
 -  2+ GB files
 
 Ratings
+-------
 
 Pixels: |Outstanding|
 
@@ -67,15 +55,11 @@ Presence: |Good|
 Utility: |Good|
 
 Additional Information
+----------------------
 
-Source Code: 
+Source Code: :source:`Zeiss ZVI Reader <components/bio-formats/src/loci/formats/in/ZeissZVIReader.java>`
 
-`Zeiss ZVI
-Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/ZeissZVIReader.java>`_
-
-Notes: 
-
-Bio-Formats uses a modified version of the `Apache Jakarta
+Notes: Bio-Formats uses a modified version of the `Apache Jakarta
 POI <http://jakarta.apache.org/poi/>`_ library to read ZVI files.
 
 Commercial applications that support ZVI include `Bitplane
@@ -84,7 +68,5 @@ Imaris <http://bitplane.com/>`_.
 **Please note that while we have specification documents for this
 format, we are not able to distribute them to third parties.**
 
-See Also: 
-
-`Axiovision software
-overview <http://www.zeiss.com/C12567BE0045ACF1/ContentsWWWIntern/668C9FDCBB18C6E2412568C10045A72E>`_
+.. seealso::
+    `Axiovision software overview <http://www.zeiss.com/C12567BE0045ACF1/ContentsWWWIntern/668C9FDCBB18C6E2412568C10045A72E>`_

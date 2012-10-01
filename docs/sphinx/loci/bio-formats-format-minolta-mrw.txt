@@ -1,27 +1,25 @@
 Minolta MRW
 ===========
 
-Extensions: 
+Extensions: .mrw
 
-.mrw
-
-Developer: 
-
-`Minolta <http://www.konicaminolta.com/>`_
+Developer: `Minolta <http://www.konicaminolta.com/>`_
 
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no|
 
-Supported Metadata Fields: 
-
-`MRW Reader <http://dev.loci.wisc.edu/trac/software/wiki/MRWReader>`_
+Supported Metadata Fields: `MRW Reader <http://dev.loci.wisc.edu/trac/software/wiki/MRWReader>`_
 
 We currently have: 
 
 -  Several .mrw files
 
 Ratings
+-------
 
 Pixels: |Very Good|
 
@@ -34,19 +32,13 @@ Presence: |Fair|
 Utility: |Fair|
 
 Additional Information
+----------------------
 
-Source Code: 
+Source Code: :source:`MRW Reader <components/bio-formats/src/loci/formats/in/MRWReader.java>`
 
-`MRW
-Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/MRWReader.java>`_
-
-Notes: 
-
-Commercial applications that support MRW include:
+Notes: Commercial applications that support MRW include:
 
 -  `dcraw <http://www.cybercom.net/%7Edcoffin/dcraw/>`_
 
-See Also: 
-
-`Description of MRW
-format <http://www.dalibor.cz/files/MRW%20File%20Format.txt>`_
+.. seealso::
+    `Description of MRW format <http://www.dalibor.cz/files/MRW%20File%20Format.txt>`_

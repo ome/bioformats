@@ -1,42 +1,30 @@
 Gatan Digital Micrograph
 ========================
 
-Extensions: 
+Extensions: .dm3
 
-.dm3
-
-Owner: 
-
-`Gatan <http://www.gatan.com/>`_
+Owner: `Gatan <http://www.gatan.com/>`_
 
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no|
 
-Officially Supported Versions: 
+Officially Supported Versions: 3
 
-3
+Supported Metadata Fields: `Gatan Reader <http://dev.loci.wisc.edu/trac/software/wiki/GatanReader>`_
 
-Supported Metadata Fields: 
+Freely Available Software: `DM3 Reader plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/DM3_Reader.html>`_
 
-`Gatan
-Reader <http://dev.loci.wisc.edu/trac/software/wiki/GatanReader>`_
-
-Freely Available Software: 
-
-`DM3 Reader plugin for
-ImageJ <http://rsb.info.nih.gov/ij/plugins/DM3_Reader.html>`_
-
-Freely Available Software: 
-
-`EMAN <http://blake.bcm.edu/EMAN/>`_
+Freely Available Software: `EMAN <http://blake.bcm.edu/EMAN/>`_
 
 We currently have: 
 
 -  Gatan's ImageReader2003 code (from 2003, in C++)
 -  Numerous DM3 datasets
--  Some `Bio-Formats developer
-   notes <http://dev.loci.wisc.edu/svn/software/trunk/components/bio-formats/doc/gatan.html>`_
+-  Some :source:`Bio-Formats developer notes<components/bio-formats/doc/gatan.html>`
    for DM3
 
 We'd like to have: 
@@ -44,6 +32,7 @@ We'd like to have: 
 -  A DM3 specification document
 
 Ratings
+-------
 
 Pixels: |Very Good|
 
@@ -56,13 +45,9 @@ Presence: |Fair|
 Utility: |Fair|
 
 Additional Information
+----------------------
 
-Source Code: 
+Source Code: :source:`Gatan Reader <components/bio-formats/src/loci/formats/in/GatanReader.java>`
 
-`Gatan
-Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/GatanReader.java>`_
-
-Notes: 
-
-Commercial applications that support .dm3 include
+Notes: Commercial applications that support .dm3 include
 `Datasqueeze <http://www.datasqueezesoftware.com/>`_.

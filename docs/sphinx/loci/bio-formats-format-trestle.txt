@@ -1,23 +1,18 @@
 Trestle
 =======
 
---------------
-
-Extensions: 
-
-.tif, .sld, .jpg
+Extensions: .tif, .sld, .jpg
 
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no|
 
-Supported Metadata Fields: 
+Supported Metadata Fields: `TrestleReader <http://dev.loci.wisc.edu/trac/software/wiki/TrestleReader>`_
 
-`TrestleReader <http://dev.loci.wisc.edu/trac/software/wiki/TrestleReader>`_
-
-Sample Datasets: 
-
-`OpenSlide <http://openslide.cs.cmu.edu/download/openslide-testdata/Trestle/>`_
+Sample Datasets: `OpenSlide <http://openslide.cs.cmu.edu/download/openslide-testdata/Trestle/>`_
 
 We currently have: 
 
@@ -26,6 +21,7 @@ We currently have: 
    http://openslide.org/Trestle%20format/
 
 Ratings
+-------
 
 Pixels: |Good|
 
@@ -38,7 +34,6 @@ Presence: |Fair|
 Utility: |Fair|
 
 Additional Information
+----------------------
 
-Source Code: 
-
-`TrestleReader <http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/TrestleReader.java>`_
+Source Code: :source:`TrestleReader <components/bio-formats/src/loci/formats/in/TrestleReader.java>`

@@ -1,26 +1,20 @@
 Improvision TIFF
 ================
 
-Extensions: 
+Extensions: .tif
 
-.tif
+Developer: `Improvision <http://www.improvision.com/>`_
 
-Developer: 
-
-`Improvision <http://www.improvision.com/>`_
-
-Owner: 
-
-`PerkinElmer <http://www.perkinelmer.com/>`_
+Owner: `PerkinElmer <http://www.perkinelmer.com/>`_
 
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no|
 
-Supported Metadata Fields: 
-
-`Improvision TIFF
-Reader <http://dev.loci.wisc.edu/trac/software/wiki/ImprovisionTiffReader>`_
+Supported Metadata Fields: `Improvision TIFF Reader <http://dev.loci.wisc.edu/trac/software/wiki/ImprovisionTiffReader>`_
 
 We currently have: 
 
@@ -28,6 +22,7 @@ We currently have: 
 -  a few Improvision TIFF datasets
 
 Ratings
+-------
 
 Pixels: |Very Good|
 
@@ -40,18 +35,14 @@ Presence: |Fair|
 Utility: |Good|
 
 Additional Information
+----------------------
 
-Source Code: 
-
-`Improvision TIFF
-Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/ImprovisionTiffReader.java>`_
+Source Code: :source:`Improvision TIFF Reader <components/bio-formats/src/loci/formats/in/ImprovisionTiffReader.java>`
 
 Notes: 
 
 **Please note that while we have specification documents for this
 format, we are not able to distribute them to third parties.**
 
-See Also: 
-
-`Openlab software
-overview <http://www.improvision.com/products/openlab/>`_
+.. seealso::
+    `Openlab software overview <http://www.improvision.com/products/openlab/>`_

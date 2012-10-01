@@ -1,34 +1,27 @@
 Windows Bitmap
 ==============
 
---------------
+Extensions: .bmp
 
-Extensions: 
-
-.bmp
-
-Developer: 
-
-Microsoft and IBM
+Developer: Microsoft and IBM
 
 Support
+-------
+
+SCIFIO: |yes|
 
 Export: |no|
 
-Supported Metadata Fields: 
+Supported Metadata Fields: `BMP Reader <http://dev.loci.wisc.edu/trac/software/wiki/BMPReader>`_
 
-`BMP Reader <http://dev.loci.wisc.edu/trac/software/wiki/BMPReader>`_
-
-Freely Available Software: 
-
-`BMP Writer plugin for
-ImageJ <http://rsb.info.nih.gov/ij/plugins/bmp-writer.html>`_
+Freely Available Software: `BMP Writer plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/bmp-writer.html>`_
 
 We currently have: 
 
 -  Several BMP datasets
 
 Ratings
+-------
 
 Pixels: |Very Good|
 
@@ -41,21 +34,15 @@ Presence: |Outstanding|
 Utility: |Poor|
 
 Additional Information
+----------------------
 
-Source Code: 
-
-`BMPReader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/BMPReader.java>`_
+Source Code: :source:`BMPReader <components/bio-formats/src/loci/formats/in/BMPReader.java>`
 
 Notes: 
 
 -  Compressed BMP files are currently not supported.
 
-See Also: 
+.. seealso::
+    `Technical Overview <http://www.faqs.org/faqs/graphics/fileformats-faq/part3/section-18.html>`_
 
-`Technical
-Overview <http://www.faqs.org/faqs/graphics/fileformats-faq/part3/section-18.html>`_
-
-See Also: 
-
-`General
-Resources <http://people.sc.fsu.edu/~burkardt/data/bmp/bmp.html>`_
+    `General Resources <http://people.sc.fsu.edu/~burkardt/data/bmp/bmp.html>`_

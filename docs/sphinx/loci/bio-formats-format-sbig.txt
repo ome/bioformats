@@ -1,19 +1,16 @@
 SBIG
 ====
 
---------------
-
-Owner: 
-
-`Santa Barbara Instrument Group (SBIG) <http://www.sbig.com>`_
+Owner: `Santa Barbara Instrument Group (SBIG) <http://www.sbig.com>`_
 
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no|
 
-Supported Metadata Fields: 
-
-`SBIGReader <http://dev.loci.wisc.edu/trac/software/wiki/SBIGReader>`_
+Supported Metadata Fields: `SBIGReader <http://dev.loci.wisc.edu/trac/software/wiki/SBIGReader>`_
 
 We currently have: 
 
@@ -27,6 +24,7 @@ We'd like to have: 
 - more SBIG files
 
 Ratings
+-------
 
 Pixels: |Very Good|
 
@@ -39,7 +37,6 @@ Presence: |Fair|
 Utility: |Fair|
 
 Additional Information
+----------------------
 
-Source Code: 
-
-`SBIGReader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/SBIGReader.java>`_
+Source Code: :source:`SBIGReader <components/bio-formats/src/loci/formats/in/SBIGReader.java>`

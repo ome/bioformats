@@ -1,26 +1,20 @@
 OME-XML
 =======
 
-Extensions: 
+Extensions: .ome
 
-.ome
-
-Developer: 
-
-`Open Microscopy Environment <http://www.openmicroscopy.org/>`_
+Developer: `Open Microscopy Environment <http://www.openmicroscopy.org/>`_
 
 Support
+-------
+
+SCIFIO: |yes|
 
 Export: |yes|
 
-Officially Supported Versions: 
+Officially Supported Versions: 2003FC, 2007-06, 2008-02, 2008-09, 2009-09, 2010-04, 2010-06
 
-2003FC, 2007-06, 2008-02, 2008-09, 2009-09, 2010-04, 2010-06
-
-Supported Metadata Fields: 
-
-`OME-XML
-Reader <http://dev.loci.wisc.edu/trac/software/wiki/OMEXMLReader>`_
+Supported Metadata Fields: `OME-XML Reader <http://dev.loci.wisc.edu/trac/software/wiki/OMEXMLReader>`_
 
 We currently have: 
 
@@ -30,6 +24,7 @@ We currently have: 
 -  Several OME-XML datasets
 
 Ratings
+-------
 
 Pixels: |Outstanding|
 
@@ -42,15 +37,11 @@ Presence: |Fair|
 Utility: |Outstanding|
 
 Additional Information
+----------------------
 
-Source Code: 
+Source Code: :source:`OME-XML Reader <components/bio-formats/src/loci/formats/in/OMEXMLReader.java>`_
 
-`OME-XML
-Reader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/OMEXMLReader.java>`_
-
-Notes: 
-
-Bio-Formats uses the `OME-XML Java
+Notes: Bio-Formats uses the `OME-XML Java
 library <http://www.loci.wisc.edu/ome/ome-xml-java.html>`_ to read
 OME-XML files.
 

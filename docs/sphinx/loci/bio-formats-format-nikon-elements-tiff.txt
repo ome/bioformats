@@ -1,21 +1,18 @@
 Nikon Elements TIFF
 ===================
 
-Extensions: 
+Extensions: .tiff
 
-.tiff
-
-Developer: 
-
-`Nikon <http://www.nikon.com>`_
+Developer: `Nikon <http://www.nikon.com>`_
 
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no|
 
-Supported Metadata Fields: 
-
-`NikonElementsTiffReader <http://dev.loci.wisc.edu/trac/java/wiki/NikonElementsTiffReader>`_
+Supported Metadata Fields: `NikonElementsTiffReader <http://dev.loci.wisc.edu/trac/java/wiki/NikonElementsTiffReader>`_
 
 We currently have: 
 
@@ -26,6 +23,7 @@ We'd like to have: 
 -  More Nikon Elements TIFF files
 
 Ratings
+-------
 
 Pixels: |Good|
 
@@ -38,7 +36,6 @@ Presence: |Fair|
 Utility: |Fair|
 
 Additional Information
+----------------------
 
-Source Code: 
-
-`NikonElementsTiffReader <http://dev.loci.wisc.edu/trac/software/browser/trunk/components/bio-formats/src/loci/formats/in/NikonElementsTiffReader.java>`_
+Source Code: :source:`NikonElementsTiffReader <components/bio-formats/src/loci/formats/in/NikonElementsTiffReader.java>`

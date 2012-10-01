@@ -1,28 +1,20 @@
 SPIDER
 ======
 
---------------
+Extensions: .spi, .stk
 
-Extensions: 
-
-.spi, .stk
-
-Developer: 
-
-`Wadsworth
-Center <http://www.wadsworth.org/spider_doc/spider/docs/spider.html>`_
+Developer: `Wadsworth Center <http://www.wadsworth.org/spider_doc/spider/docs/spider.html>`_
 
 Support
+-------
+
+SCIFIO: |no|
 
 Export: |no|
 
-Supported Metadata Fields: 
+Supported Metadata Fields: `SpiderReader <http://dev.loci.wisc.edu/trac/software/wiki/SpiderReader>`_
 
-`SpiderReader <http://dev.loci.wisc.edu/trac/software/wiki/SpiderReader>`_
-
-Freely Available Software: 
-
-`SPIDER <http://www.wadsworth.org/spider_doc/spider/docs/spider.html>`_
+Freely Available Software: `SPIDER <http://www.wadsworth.org/spider_doc/spider/docs/spider.html>`_
 
 We currently have: 
 
@@ -30,6 +22,7 @@ We currently have: 
 -  Official file format documentation
 
 Ratings
+-------
 
 Pixels: |Very Good|
 
@@ -42,12 +35,9 @@ Presence: |Good|
 Utility: |Good|
 
 Additional Information
+----------------------
 
-Source Code: 
+Source Code: :source:`SpiderReader <components/bio-formats/src/loci/formats/in/SpiderReader.java>`
 
-`SpiderReader <http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/in/SpiderReader.java>`_
-
-See Also: 
-
-`Official
-documentation <http://www.wadsworth.org/spider_doc/spider/docs/image_doc.html>`_
+.. seealso::
+    `Official documentation <http://www.wadsworth.org/spider_doc/spider/docs/image_doc.html>`_
