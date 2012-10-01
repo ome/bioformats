@@ -1,8 +1,6 @@
 Managing Memory Using Bio-Formats
 =================================
 
---------------
-
 When you are dealing with a large stack of images, you may receive a
 warning like this:
 

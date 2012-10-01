@@ -1,8 +1,6 @@
 KNIME
 =====
 
---------------
-
 `KNIME <http://knime.org/>`_ (Konstanz Information Miner) is a
 user-friendly and comprehensive open-source data integration,
 processing, analysis, and exploration platform. KNIME supports image

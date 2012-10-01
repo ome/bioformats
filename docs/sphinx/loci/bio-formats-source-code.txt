@@ -1,8 +1,6 @@
 Source code
 ===========
 
---------------
-
 If you are interested in the latest Bio-Formats source code from our
 `Git <http://git-scm.com/>`_ repository, you can access it using the
 repository path:

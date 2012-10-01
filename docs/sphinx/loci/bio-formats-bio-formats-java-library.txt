@@ -128,7 +128,7 @@ An ImageJ plugin that uses Bio-Formats to build up an image stack,
 reading image planes one by one (see also `Using Bio-Formats with
 ImageJ <bio-formats/imagej>`_).
 
-``Mass_Importer ``
+``Mass_Importer``
 
 A simple plugin for ImageJ that demonstrates how to open all image files
 in a directory using Bio-Formats, grouping files with similar names to
