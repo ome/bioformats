@@ -125,8 +125,8 @@ Online Resources
 
 .. toctree::
 
-    Downloads <https://www.openmicroscopy.org/site/support/bio-formats/bio-formats-downloads>
-    Features <https://www.openmicroscopy.org/site/products/feature-list>
+    Downloads <http://www.openmicroscopy.org/site/products/bio-formats/bio-formats-downloads>
+    Features <http://www.openmicroscopy.org/site/products/feature-list>
 
 
 This documentation is a work in progress and many aspects of Bio-Formats are
