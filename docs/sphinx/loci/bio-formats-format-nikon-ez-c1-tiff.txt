@@ -1,8 +1,6 @@
 Nikon EZ-C1 TIFF
 ================
 
---------------
-
 Extensions: 
 
 .tiff

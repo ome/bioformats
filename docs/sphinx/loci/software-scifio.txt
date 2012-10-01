@@ -1,8 +1,6 @@
 SCIFIO
 ======
 
---------------
-
 SCientific Imaging Formats Input and Output
 -------------------------------------------
 

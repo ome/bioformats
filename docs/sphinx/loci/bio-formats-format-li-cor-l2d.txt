@@ -1,8 +1,6 @@
 Li-Cor L2D
 ==========
 
---------------
-
 Extensions: 
 
 .l2d, .tif, .scn

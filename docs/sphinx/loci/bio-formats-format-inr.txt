@@ -1,8 +1,6 @@
 INR
 ===
 
---------------
-
 Extensions: 
 
 .inr

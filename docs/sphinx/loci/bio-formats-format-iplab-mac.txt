@@ -1,8 +1,6 @@
 IPLab-Mac
 =========
 
---------------
-
 Extensions: 
 
 .ipm

@@ -1,8 +1,6 @@
 Improvision Openlab LIFF
 ========================
 
---------------
-
 Extensions: 
 
 .liff

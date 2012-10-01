@@ -1,8 +1,6 @@
 Olympus FluoView FV1000
 =======================
 
---------------
-
 Extensions: 
 
 .oib, .oif

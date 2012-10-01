@@ -1,7 +1,5 @@
-|Good|Andor Bio-Imaging Division (ABD) TIFF
+Andor Bio-Imaging Division (ABD) TIFF
 =====================================
-
---------------
 
 Extensions: 
 

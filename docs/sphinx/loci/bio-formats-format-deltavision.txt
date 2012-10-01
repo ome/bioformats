@@ -1,8 +1,6 @@
 DeltaVision
 ===========
 
---------------
-
 Extensions: 
 
 .dv, .r3d

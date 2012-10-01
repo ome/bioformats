@@ -1,8 +1,6 @@
 Leica LCS LEI
 =============
 
---------------
-
 Extensions: 
 
 .lei, .tif

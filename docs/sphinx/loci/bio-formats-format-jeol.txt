@@ -1,8 +1,6 @@
 JEOL
 ====
 
---------------
-
 Extensions: 
 
 .dat, .img, .par

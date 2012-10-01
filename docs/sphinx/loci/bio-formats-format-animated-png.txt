@@ -1,8 +1,6 @@
 Animated PNG
 ============
 
---------------
-
 Extensions: 
 
 .png

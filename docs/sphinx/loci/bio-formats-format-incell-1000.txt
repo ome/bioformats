@@ -1,8 +1,6 @@
 InCell 1000
 ===========
 
---------------
-
 Extensions: 
 
 .xdce, .tif

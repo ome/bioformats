@@ -1,8 +1,6 @@
 Gatan Digital Micrograph
 ========================
 
---------------
-
 Extensions: 
 
 .dm3

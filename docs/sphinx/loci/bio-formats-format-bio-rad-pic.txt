@@ -1,8 +1,6 @@
 Bio-Rad PIC
 ===========
 
---------------
-
 Extensions: 
 
 .pic, .raw, .xml

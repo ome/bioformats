@@ -1,8 +1,6 @@
 cellSens VSI
 ============
 
---------------
-
 Extensions: 
 
 .vsi

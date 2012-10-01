@@ -1,7 +1,6 @@
 Amersham Biosciences Gel
 ========================
 
---------------
 
 Extensions: 
 

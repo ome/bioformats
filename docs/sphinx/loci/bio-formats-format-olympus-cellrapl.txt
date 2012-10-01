@@ -1,8 +1,6 @@
 Olympus CellR/APL
 =================
 
---------------
-
 Extensions: 
 
 .apl, .mtb, .tnb, .tif, .obsep

@@ -1,8 +1,6 @@
 MetaMorph 7.5 TIFF
 ==================
 
---------------
-
 Extensions: 
 
 .tiff

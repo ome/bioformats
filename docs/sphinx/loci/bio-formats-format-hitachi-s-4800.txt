@@ -1,8 +1,6 @@
 Hitachi S-4800
 ==============
 
---------------
-
 Extensions: 
 
 .txt, .tif, .bmp, .jpg

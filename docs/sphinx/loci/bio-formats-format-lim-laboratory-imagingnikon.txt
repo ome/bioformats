@@ -1,8 +1,6 @@
 LIM (Laboratory Imaging/Nikon)
 ==============================
 
---------------
-
 Extensions: 
 
 .lim

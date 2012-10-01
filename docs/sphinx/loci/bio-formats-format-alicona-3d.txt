@@ -1,8 +1,6 @@
 Alicona 3D
 ==========
 
---------------
-
 Extensions: 
 
 .al3d

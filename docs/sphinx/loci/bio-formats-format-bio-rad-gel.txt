@@ -1,8 +1,6 @@
 Bio-Rad Gel
 ===========
 
---------------
-
 Extensions: 
 
 .1sc

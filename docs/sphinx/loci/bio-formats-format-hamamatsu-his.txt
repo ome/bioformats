@@ -1,8 +1,6 @@
 Hamamatsu HIS
 =============
 
---------------
-
 Extensions: 
 
 .his

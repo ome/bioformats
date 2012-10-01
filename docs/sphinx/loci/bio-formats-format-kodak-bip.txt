@@ -1,8 +1,6 @@
 Kodak BIP
 =========
 
---------------
-
 Extensions: 
 
 .bip

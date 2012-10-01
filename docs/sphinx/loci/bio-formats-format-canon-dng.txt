@@ -1,8 +1,6 @@
 Canon DNG
 =========
 
---------------
-
 Extensions: 
 
 .cr2, .crw

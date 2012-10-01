@@ -1,8 +1,6 @@
 Adobe Photoshop PSD
 ===================
 
---------------
-
 Extensions: 
 
 .psd

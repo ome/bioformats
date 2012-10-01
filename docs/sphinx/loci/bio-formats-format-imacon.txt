@@ -1,8 +1,6 @@
 Imacon
 ======
 
---------------
-
 Extensions: 
 
 .fff
