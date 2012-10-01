@@ -15,9 +15,8 @@ page.
 Purpose
 -------
 
-****\ Bio-Formats's primary purpose is to convert proprietary microscopy
-data into an open standard called the `OME data
-model <http://genomebiology.com/2005/6/5/R47>`_, particularly into the
+Bio-Formats's primary purpose is to convert proprietary microscopy data into 
+an open standard called the `OME data model <http://genomebiology.com/2005/6/5/R47>`_, particularly into the
 `OME-TIFF <http://ome-xml.org/wiki/OmeTiff>`_ file format. See the
 :doc:`Bio-Formats statement of purpose <bio-formats-about>` for a thorough
 explanation and rationale.
@@ -122,18 +121,14 @@ license page </bio-formats/license>`_ for more information.
 Version history and roadmap
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-****\ Bio-Formats is updated whenever a significant bug fix is made, or
-whenever a new version of
-`OMERO <http://openmicroscopy.org/site/support/omero>`_ is released. The
-version number is three numbers separated by dots; e.g., 4.0.0. See the
-`what's
-new <http://dev.loci.wisc.edu/svn/software/trunk/components/bio-formats/doc/whats-new.txt>`_
+Bio-Formats is updated whenever a significant bug fix is made, or whenever a 
+new version of :omerodoc:`OMERO <>` is released. The version number is three numbers separated by dots; e.g., 4.0.0. See the `what's new <http://dev.loci.wisc.edu/svn/software/trunk/components/bio-formats/doc/whats-new.txt>`_
 list for a history of major changes in each release.
 
-The latest stable version of Bio-Formats is 4.3.3. For future
+The latest stable version of Bio-Formats is |release|. For future
 development directions, see the
-`4.4 <http://trac.openmicroscopy.org.uk/ome/query?group=status&component=Bio-Formats&milestone=OMERO-Beta4.4>`_
-and \ `5.0 <http://trac.openmicroscopy.org.uk/ome/query?group=status&component=Bio-Formats&milestone=OME-5.0>`_
+`4.4 <http://trac.openmicroscopy.org.uk/ome/query?group=status&component=Bio-Formats&milestone=OMERO-4.5>`_
+and `5.0 <http://trac.openmicroscopy.org.uk/ome/query?group=status&component=Bio-Formats&milestone=OME-5.0>`_
 roadmaps.
 
 Questions
@@ -143,8 +138,7 @@ See the
 `Bio-Formats <http://www.openmicroscopy.org/site/support/faq/bio-formats>`_,
 `File
 Formats <http://www.openmicroscopy.org/site/support/faq/file-formats>`_
-and `OME-XML and
-OME-TIFF <http://www.openmicroscopy.org/site/support/faq/ome-xml-and-ome-tiff>`_
+and `OME-XML and OME-TIFF <http://www.openmicroscopy.org/site/support/faq/ome-xml-and-ome-tiff>`_
 sections of the `OME
 FAQ <http://www.openmicroscopy.org/site/support/faq>`_ for answers to
 some common questions. Please `contact us </software/mailing-lists>`_ if
@@ -152,27 +146,15 @@ you have any questions or problems with Bio-Formats.
 
 Download
 
-Language: 
+Language: Java
 
-Java
+Latest Version:  4.4.4 (2012 September 25
 
-Latest Version: 
-
-4.3.3 (2011 October 18)
-
-Download: 
-
-`loci\_tools.jar <http://www.loci.wisc.edu/files/software/loci_tools.jar>`_
+Download: `loci_tools.jar <http://www.loci.wisc.edu/files/software/loci_tools.jar>`__
 
 More Information
 
-Trac Path: 
-
-`bioformats.git <http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/>`_
-
-SVN Path: 
-
-`bioformats.git <http://github.com/openmicroscopy/bioformats>`_
+Source Code: :source:`bioformats.git <>`
 
 Supported Formats
 -----------------
