@@ -1,8 +1,6 @@
 NRRD (Nearly Raw Raster Data)
 =============================
 
---------------
-
 Extensions: 
 
 .nrrd, .nhdr, .raw, .txt

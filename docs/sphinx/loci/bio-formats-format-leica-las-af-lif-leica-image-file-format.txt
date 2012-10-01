@@ -1,8 +1,6 @@
 Leica LAS AF LIF (Leica Image File Format)
 ==========================================
 
---------------
-
 Extensions: 
 
 .lif

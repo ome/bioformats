@@ -1,8 +1,6 @@
 Amira Mesh
 ==========
 
---------------
-
 Extensions: 
 
 .am, .amiramesh, .grey, .hx, .labels

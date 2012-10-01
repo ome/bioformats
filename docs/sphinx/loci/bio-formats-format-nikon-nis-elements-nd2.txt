@@ -1,8 +1,6 @@
 Nikon NIS-Elements ND2
 ======================
 
---------------
-
 Extensions: 
 
 .nd2

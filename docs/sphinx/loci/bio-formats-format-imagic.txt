@@ -1,8 +1,6 @@
 IMAGIC
 ======
 
---------------
-
 Extensions: 
 
 .hed, .img

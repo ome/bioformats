@@ -1,8 +1,6 @@
 Bruker MRI
 ==========
 
---------------
-
 Developer: 
 
 `Bruker <http://www.bruker.com/>`_

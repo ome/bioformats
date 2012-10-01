@@ -1,8 +1,6 @@
 Burleigh
 ========
 
---------------
-
 Extensions: 
 
 .img

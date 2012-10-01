@@ -1,8 +1,6 @@
 Analyze 7.5
 ===========
 
---------------
-
 Extensions: 
 
 .img, .hdr

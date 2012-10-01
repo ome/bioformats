@@ -1,8 +1,6 @@
 Bitplane Imaris
 ===============
 
---------------
-
 Extensions: 
 
 .ims

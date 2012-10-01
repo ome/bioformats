@@ -1,8 +1,6 @@
 JPEG
 ====
 
---------------
-
 Extensions: 
 
 .jpg

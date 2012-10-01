@@ -1,8 +1,6 @@
 AIM
 ===
 
---------------
-
 Extensions: 
 
 .aim

@@ -1,8 +1,6 @@
 FEI
 ===
 
---------------
-
 Extensions: 
 
 .img

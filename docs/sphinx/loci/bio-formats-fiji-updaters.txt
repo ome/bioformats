@@ -1,8 +1,6 @@
 FIJI Updaters
 =============
 
---------------
-
 Using FIJI's updaters
 ---------------------
 

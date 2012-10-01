@@ -1,8 +1,6 @@
 Improvision TIFF
 ================
 
---------------
-
 Extensions: 
 
 .tif

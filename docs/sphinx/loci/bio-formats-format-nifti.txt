@@ -1,8 +1,6 @@
 NIfTI
 =====
 
---------------
-
 Extensions: 
 
 .img, .hdr

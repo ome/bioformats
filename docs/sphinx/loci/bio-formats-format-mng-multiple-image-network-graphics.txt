@@ -1,8 +1,6 @@
 MNG (Multiple-image Network Graphics)
 =====================================
 
---------------
-
 Extensions: 
 
 .mng

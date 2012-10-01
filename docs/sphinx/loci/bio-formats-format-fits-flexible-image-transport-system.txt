@@ -1,8 +1,6 @@
 FITS (Flexible Image Transport System)
 ======================================
 
---------------
-
 Extensions: 
 
 .fits

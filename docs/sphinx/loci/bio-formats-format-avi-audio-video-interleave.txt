@@ -1,7 +1,6 @@
 AVI (Audio Video Interleave)
 ============================
 
---------------
 
 Extensions: 
 
