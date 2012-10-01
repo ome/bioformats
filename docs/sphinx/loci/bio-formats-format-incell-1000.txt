@@ -39,4 +39,4 @@ Utility: |Good|
 Additional Information
 ----------------------
 
-Source Code: :source:`InCell Reader <components/bio-formats/src/loci/formats/in/InCellReader.java>`_
+Source Code: :source:`InCell Reader <components/bio-formats/src/loci/formats/in/InCellReader.java>`
