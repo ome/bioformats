@@ -58,10 +58,10 @@ Compiling from source
 You can compile the Bio-Formats ITK plugin (BF-ITK) from source by
 performing the following steps:
 
-#. If you have not done so already, download and build
-   `ITK <http://itk.org/ITK/resources/software.html>`_. Note that BF-ITK
-   requires ITK 3.20.0 or newer. It should also work with the latest
-   `ITK source from Git <http://www.itk.org/Wiki/ITK/Git>`_.
+#. If you have not done so already, `download <http://itk.org/ITK/resources/software.html>`_
+   and build ITK . Note that BF-ITK requires ITK 3.20.0 or newer. It should 
+   also work with the latest `ITK source from Git <http://www.itk.org/Wiki/ITK/Git>`_.
+
 #. Clone the `Bio-Formats source
    code <http://www.loci.wisc.edu/bio-formats/source-code>`_:
 

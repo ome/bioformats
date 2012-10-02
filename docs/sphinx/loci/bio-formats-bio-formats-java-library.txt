@@ -119,8 +119,7 @@ file
 ``Simple_Read``
 
 A simple ImageJ plugin demonstrating how to use Bio-Formats to read
-files into ImageJ (see also `Using Bio-Formats with
-ImageJ <bio-formats/imagej>`_)
+files into ImageJ (see also :doc:`bio-formats-imagej`)
 
 ``Read_Image``
 
@@ -132,8 +131,7 @@ ImageJ <bio-formats/imagej>`_).
 
 A simple plugin for ImageJ that demonstrates how to open all image files
 in a directory using Bio-Formats, grouping files with similar names to
-avoiding opening the same dataset more than once (see also `Using
-Bio-Formats with ImageJ <http://www.loci.wisc.edu/bio-formats/imagej>`_)
+avoiding opening the same dataset more than once (see also :doc:`bio-formats-imagej`)
 
 `Export
 examples <http://github.com/openmicroscopy/bioformats/blob/develop/components/bio-formats/doc/export>`_
