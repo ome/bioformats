@@ -7,7 +7,9 @@ Using FIJI's updaters
 If you are using FIJI, there is a separate updater that updates multiple
 plugins, including Bio-Formats. You can find it under FIJI’s help menu.
 
-|FIJI Updater|\ **FIJI Updater** 
+.. image:: /images/FIJI_UPDATE.jpg
+    :align: center
+    :alt: FIJI Updater
 
 Updates in the FIJI updater are not always Bio-Formats’ most recent
 trunk build or stable release; they are versions that are known to

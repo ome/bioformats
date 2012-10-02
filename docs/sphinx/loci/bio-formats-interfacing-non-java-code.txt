@@ -276,7 +276,7 @@ Inter-process (messaging)
    information.
 -  See also: `SOAP <http://en.wikipedia.org/wiki/SOAP_%28protocol%29>`_
 
-`Ice <http://zeroc.com/ice.html>`_
+Ice_
 
 Inter-process (ORB)
 
@@ -284,7 +284,7 @@ Several
 
 -  Ice is high-performance middleware for cross-platform client/server
    communication.
--  `ZeroC <http://www.zeroc.com/>`_ argues that Ice is `superior to
+-  ZeroC_ argues that Ice is `superior to
    CORBA <http://www.zeroc.com/iceVsCorba.html>`_.
 -  We provide a set of `Bio-Formats Ice
    bindings <http://www.loci.wisc.edu/ome/formats-ice.html>`_.
