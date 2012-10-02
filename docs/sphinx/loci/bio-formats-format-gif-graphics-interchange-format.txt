@@ -48,4 +48,4 @@ Utility: |Poor|
 Additional Information
 ----------------------
 
-Source Code: :source:`GIF Reader <components/bio-formats/src/loci/formats/in/GIFReader.java>`
+Source Code: :source:`GIF Reader <components/scifio/src/loci/formats/in/GIFReader.java>`

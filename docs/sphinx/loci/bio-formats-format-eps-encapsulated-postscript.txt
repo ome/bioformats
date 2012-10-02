@@ -37,9 +37,9 @@ Utility: |Poor|
 Additional Information
 ----------------------
 
-Source Code: :source:`EPS Reader <components/bio-formats/src/loci/formats/in/EPSReader.java>`
+Source Code: :source:`EPS Reader <components/scifio/src/loci/formats/in/EPSReader.java>`
 
-Source Code: :source: `EPS Writer <components/bio-formats/src/loci/formats/out/EPSWriter.jav>`
+Source Code: :source:`EPS Writer <components/scifio/src/loci/formats/out/EPSWriter.java>`
 
 Notes: 
 

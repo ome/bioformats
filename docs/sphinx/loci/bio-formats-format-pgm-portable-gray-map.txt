@@ -38,7 +38,7 @@ Utility: |Poor|
 Additional Information
 ----------------------
 
-Source Code: :source:`PGM Reader <components/bio-formats/src/loci/formats/in/PGMReader.java>`
+Source Code: :source:`PGM Reader <components/scifio/src/loci/formats/in/PGMReader.java>`
 
 .. seealso::
     `PGM technical overview <http://netpbm.sourceforge.net/doc/pgm.html>`_

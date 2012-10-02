@@ -42,9 +42,9 @@ Utility: |Very Good|
 Additional Information
 ----------------------
 
-Source Code: :source:`ICS Reader <components/bio-formats/src/loci/formats/in/ICSReader.java>`
+Source Code: :source:`ICS Reader <components/scifio/src/loci/formats/in/ICSReader.java>`
 
-Source Code: :source: ICS Writer <components/bio-formats/src/loci/formats/out/ICSWriter.java>`
+Source Code: :source:`ICS Writer <components/scifio/src/loci/formats/out/ICSWriter.java>`
 
 Notes: 
 

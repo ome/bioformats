@@ -34,9 +34,7 @@ Utility: |Poor|
 Additional Information
 ----------------------
 
-Source Code: `PICT Reader <components/bio-formats/src/loci/formats/in/PictReader.java>`
-
-Source Code: :source:`Legacy PICT Reader <components/bio-formats/src/loci/formats/in/LegacyPictReader.java>`
+Source Code: :source:`PICT Reader <components/scifio/src/loci/formats/in/PictReader.java>`
 
 Notes: `QuickTime for Java <http://www.apple.com/quicktime/download/standalone.html>`_ is
 required for reading vector files, and some compressed files.

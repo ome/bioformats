@@ -2,9 +2,8 @@ Bio-Formats as a Java Library
 =============================
 
 If you wish to leverage Bio-Formats within your own software, you can
-`download
-bio-formats.jar <http://www.loci.wisc.edu/bio-formats/downloads>`_ to
-use it as a library. Just add **bio-formats.jar** to your CLASSPATH or
+`download bio-formats.jar <http://www.loci.wisc.edu/bio-formats/downloads>`_ 
+to use it as a library. Just add **bio-formats.jar** to your CLASSPATH or
 build path. You will also need **loci-common.jar** for common I/O
 functions, **ome-xml.jar** for metadata standardization, and
 **`SLF4J <http://slf4j.org/>`_** for logging. 
@@ -88,11 +87,9 @@ Commercial
 
 For additional QuickTime codecs
 
-See the list in the `LOCI Software build
-file <http://github.com/openmicroscopy/bioformats/blob/develop/build.xml>`_
+See the list in the :source:`LOCI Software build file <build.xml>`
 for a complete and up-to-date list of all optional libraries, which can
-all be `found in our Git
-repository <http://github.com/openmicroscopy/bioformats/blob/develop/jar/>`_.
+all be found in our :source:`Git repository <jar>`.
 
 Examples of usage
 
@@ -133,8 +130,7 @@ A simple plugin for ImageJ that demonstrates how to open all image files
 in a directory using Bio-Formats, grouping files with similar names to
 avoiding opening the same dataset more than once (see also :doc:`bio-formats-imagej`)
 
-`Export
-examples <http://github.com/openmicroscopy/bioformats/blob/develop/components/bio-formats/doc/export>`_
+:source:`Export examples <components/bio-formats/doc/export>`
 
 Very simple source code and narrative documentation for exporting and
 converting files.
@@ -151,27 +147,23 @@ How to access the source code from our Git repository
 
 Javadocs for Bio-Formats and other LOCI Java software
 
-`Using Bio-Formats
-Guide <http://github.com/openmicroscopy/bioformats/blob/develop/components/bio-formats/doc/using-bioformats.txt>`_
+:source:`Using Bio-Formats Guide <components/bio-formats/doc/using-bioformats.txt>`
 
 How to use Bio-Formats as a library
 
-`File Format Reader
-Guide <https://github.com/openmicroscopy/bioformats/blob/develop/components/bio-formats/doc/reader-guide.txt>`_
+:source:`File Format Reader Guide <components/bio-formats/doc/reader-guide.txt>`
 
 How to add support for a new file format
 
-`Trac
-tickets <http://trac.openmicroscopy.org.uk/ome/query?status=assigned&status=new&status=reopened&component=Bio-Formats>`_
+`Trac tickets <http://trac.openmicroscopy.org.uk/ome/query?status=assigned&status=new&status=reopened&component=Bio-Formats>`_
 
 A list of outstanding bugs
 
-`Trac
-browser <http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/>`_
+`Trac browser <http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/>`_
 
 Browse the source code and project history online
 
-`GitHub <http://github.com/openmicroscopy/bioformats/>`_
+`GitHub <https://github.com/openmicroscopy/bioformats/>`_
 
 Browse the source code and project history online
 
@@ -211,8 +203,6 @@ down" version you require. You could even build a custom
 
 For an explicit enumeration of all the optional libraries included in
 **loci\_tools.jar**, see the ``loci-tools.libraries`` variable of the
-`ant/toplevel.properties <https://github.com/openmicroscopy/bioformats/blob/develop/ant/toplevel.properties>`_
+:source:`ant/toplevel.properties <ant/toplevel.properties>`
 file of the distribution. You can also read our notes about each in the
-source distribution's Ant
-`build.xml <https://github.com/openmicroscopy/bioformats/blob/develop/build.xml#L240>`_
-script.
+source distribution's Ant :source:`build.xml <build.xml#L240>` script.

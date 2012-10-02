@@ -52,9 +52,9 @@ Utility: |Fair|
 Additional Information
 ----------------------
 
-Source Code: :source: `TIFF Reader <components/bio-formats/src/loci/formats/in/TiffReader.java>`
+Source Code: :source:`TIFF Reader <components/scifio/src/loci/formats/in/TiffReader.java>`
 
-Source Code: :source:`TIFF Writer <components/bio-formats/src/loci/formats/out/TiffWriter.java>`
+Source Code: :source:`TIFF Writer <components/scifio/src/loci/formats/out/TiffWriter.java>`
 
 Notes: 
 

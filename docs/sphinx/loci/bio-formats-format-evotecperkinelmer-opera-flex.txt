@@ -40,7 +40,7 @@ Additional Information
 
 Source Code: :source: `FlexReader <components/bio-formats/src/loci/formats/in/FlexReader.java>`
 
-Source Code: :source:`LuraWaveCodec <components/bio-formats/src/loci/formats/codec/LuraWaveCodec.java>`
+Source Code: :source:`LuraWaveCodec <components/scifio/src/loci/formats/codec/LuraWaveCodec.java>`
 
 Notes: 
 

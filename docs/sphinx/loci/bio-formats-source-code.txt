@@ -13,7 +13,7 @@ You can also browse the Bio-Formats source in two ways:
    server <http://trac.openmicroscopy.org.uk/omero/browser/bioformats.git>`_,
    which we use for project management, including tasks, milestones and
    known issues
--  `GitHub <http://github.com/openmicroscopy/bioformats>`_
+-  `GitHub <https://github.com/openmicroscopy/bioformats>`_
 
  
 

@@ -17,8 +17,7 @@ Supported Metadata Fields: `PerkinElmer Reader <http://dev.loci.wisc.edu/trac/s
 We currently have: 
 
 -  Several PerkinElmer datasets
--  Some `Bio-Formats developer
-   notes <http://dev.loci.wisc.edu/svn/software/trunk/components/bio-formats/doc/perkin-elmer.html>`_
+-  Some :source:`Bio-Formats developer notes <components/bio-formats/doc/perkin-elmer.html>`
    for PerkinElmer
 
 Ratings

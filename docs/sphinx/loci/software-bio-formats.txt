@@ -154,7 +154,7 @@ Download: `loci_tools.jar <http://www.loci.wisc.edu/files/software/loci_tools.j
 
 More Information
 
-Source Code: :source:`bioformats.git <>`
+Source Code: `bioformats.git <https://github.com/openmicroscopy/bioformats>`_
 
 Supported Formats
 -----------------

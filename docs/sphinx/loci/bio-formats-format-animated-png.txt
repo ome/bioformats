@@ -41,4 +41,4 @@ Utility: |Poor|
 Additional Information
 ----------------------
 
-Source Code: :source:`APNGReader <components/bio-formats/src/loci/formats/in/APNGReader.java>`
+Source Code: :source:`APNGReader <components/scifio/src/loci/formats/in/APNGReader.java>`
