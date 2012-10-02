@@ -36,4 +36,4 @@ Utility: |Good|
 Additional Information
 ----------------------
 
-Source Code: :source:`Micromanager Reader <components/bio-formats/src/loci/formats/in/MicromanagerReader.java>`
+Source Code: :source:`Micromanager Reader <components/scifio/src/loci/formats/in/MicromanagerReader.java>`

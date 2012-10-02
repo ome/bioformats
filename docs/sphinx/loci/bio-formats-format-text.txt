@@ -18,6 +18,6 @@ Pixels: |Good|
 Additional Information
 ----------------------
 
-Source Code: :source:`TextReader <components/bio-formats/src/loci/formats/in/TextReader.java>`
+Source Code: :source:`TextReader <components/scifio/src/loci/formats/in/TextReader.java>`
 
 Notes: Reads tabular pixel data produced by a variety of software.

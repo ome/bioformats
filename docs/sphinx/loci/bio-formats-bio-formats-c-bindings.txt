@@ -15,8 +15,8 @@ the image support of Bio-Formats.
 BF-CPP comes with some standalone examples which you can use as a
 starting point in your own project:
 
--  `showinf <http://github.com/openmicroscopy/bioformats/blob/develop/components/scifio/cppwrap/showinf.cpp>`_
--  `minimum\_writer <http://github.com/openmicroscopy/bioformats/blob/develop/components/scifio/cppwrap/minimum_writer.cpp>`_
+-  :source:`showinf <components/scifio/cppwrap/showinf.cpp>`
+-  :source:`minimum_writer <components/scifio/cppwrap/minimum_writer.cpp>`
 
 Other projects using BF-CPP include:
 
@@ -33,12 +33,10 @@ code and compile it yourself:
 
 -  Binary builds for several common platforms are available on our
    `downloads </bio-formats/downloads>`_ page.
--  See the `build
-   instructions <http://github.com/openmicroscopy/bioformats/blob/develop/components/scifio/cppwrap/readme.txt>`_
-   (`Windows <http://github.com/openmicroscopy/bioformats/blob/develop/components/scifio/cppwrap/readme-windows.txt>`_,
-   `Mac OS
-   X <http://github.com/openmicroscopy/bioformats/blob/develop/components/scifio/cppwrap/readme-macosx.txt>`_,
-   `Linux <http://github.com/openmicroscopy/bioformats/blob/develop/components/scifio/cppwrap/readme-linux.txt>`_)
+-  See the :source:`build instructions <components/scifio/cppwrap/readme.txt>`
+   (:source:`Windows </components/scifio/cppwrap/readme-windows.txt>`,
+   :source:`Mac OS X <components/scifio/cppwrap/readme-macosx.txt>`,
+   :source:`Linux <components/scifio/cppwrap/readme-linux.txt>`)
    for details on compiling from source.
 
 Either way, once you have BF-CPP in compiled form, simply include it in

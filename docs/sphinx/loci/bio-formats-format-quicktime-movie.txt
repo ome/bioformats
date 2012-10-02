@@ -47,13 +47,13 @@ Utility: |Poor|
 Additional Information
 ----------------------
 
-Source Code: :source:`Native QT Reader <components/bio-formats/src/loci/formats/in/NativeQTReader.java>`
+Source Code: :source:`Native QT Reader <components/scifio/src/loci/formats/in/NativeQTReader.java>`
 
-Source Code: :source:`QT Writer <components/bio-formats/src/loci/formats/out/QTWriter.java>`
+Source Code: :source:`QT Writer <components/scifio/src/loci/formats/out/QTWriter.java>`
 
-Source Code: :source:`Legacy QT Reader <components/bio-formats/src/loci/formats/in/LegacyQTReader.java>`
+Source Code: :source:`Legacy QT Reader <components/scifio/src/loci/formats/in/LegacyQTReader.java>`
 
-Source Code: :source:`Legacy QT Writer <components/bio-formats/src/loci/formats/out/LegacyQTWriter.java>`
+Source Code: :source:`Legacy QT Writer <components/scifio/src/loci/formats/out/LegacyQTWriter.java>`
 
 Notes: 
 

@@ -37,7 +37,7 @@ Utility: |Fair|
 Additional Information
 ----------------------
 
-Source Code: :source:`FitsReader <components/bio-formats/src/loci/formats/in/FitsReader.java>`
+Source Code: :source:`FitsReader <components/scifio/src/loci/formats/in/FitsReader.java>`
 
 .. seealso::
     `MAST:FITS homepage <http://archive.stsci.edu/fits/>`_
