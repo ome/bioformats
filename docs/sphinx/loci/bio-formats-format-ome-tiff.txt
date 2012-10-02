@@ -40,9 +40,9 @@ Utility: |Outstanding|
 Additional Information
 ----------------------
 
-Source Code: :source:`OME-TIFF Reader <components/bio-formats/src/loci/formats/in/OMETiffReader.java>`
+Source Code: :source:`OME-TIFF Reader <components/scifio/src/loci/formats/in/OMETiffReader.java>`
 
-Source Code: :source:`OME-TIFF Writer <components/bio-formats/src/loci/formats/out/OMETiffWriter.java>`
+Source Code: :source:`OME-TIFF Writer <components/scifio/src/loci/formats/out/OMETiffWriter.java>`
 
 Notes: Bio-Formats can save image stacks as OME-TIFF.
 

@@ -39,7 +39,7 @@ Utility: |Outstanding|
 Additional Information
 ----------------------
 
-Source Code: :source:`OME-XML Reader <components/bio-formats/src/loci/formats/in/OMEXMLReader.java>`
+Source Code: :source:`OME-XML Reader <components/scifio/src/loci/formats/in/OMEXMLReader.java>`
 
 Notes: Bio-Formats uses the `OME-XML Java
 library <http://www.loci.wisc.edu/ome/ome-xml-java.html>`_ to read

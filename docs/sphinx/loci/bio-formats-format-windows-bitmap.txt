@@ -36,7 +36,7 @@ Utility: |Poor|
 Additional Information
 ----------------------
 
-Source Code: :source:`BMPReader <components/bio-formats/src/loci/formats/in/BMPReader.java>`
+Source Code: :source:`BMPReader <components/scifio/src/loci/formats/in/BMPReader.java>`
 
 Notes: 
 

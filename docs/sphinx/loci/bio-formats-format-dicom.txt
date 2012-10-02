@@ -53,7 +53,7 @@ Utility: |Fair|
 Additional Information
 ----------------------
 
-Source Code: :source:`DicomReader <components/bio-formats/src/loci/formats/in/DicomReader.java>`
+Source Code: :source:`DicomReader <components/scifio/src/loci/formats/in/DicomReader.java>`
 
 Notes: 
 

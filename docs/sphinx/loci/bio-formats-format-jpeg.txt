@@ -38,9 +38,9 @@ Utility: |Poor|
 Additional Information
 ----------------------
 
-Source Code: :source:`JPEG Reader <components/bio-formats/src/loci/formats/in/JPEGReader.java>`
+Source Code: :source:`JPEG Reader <components/scifio/src/loci/formats/in/JPEGReader.java>`
 
-Source Code: :source:`JPEG Writer <components/bio-formats/src/loci/formats/out/JPEGWriter.java>`
+Source Code: :source:`JPEG Writer <components/scifio/src/loci/formats/out/JPEGWriter.java>`
 
 Notes: 
 

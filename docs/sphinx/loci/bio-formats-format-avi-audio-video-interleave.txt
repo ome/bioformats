@@ -48,9 +48,9 @@ Utility: |Poor|
 Additional Information
 ----------------------
 
-Source Code: :source:`AVI Reader <components/bio-formats/src/loci/formats/in/AVIReader.java>`
+Source Code: :source:`AVI Reader <components/scifio/src/loci/formats/in/AVIReader.java>`
 
-Source Code: :source:`AVI Writer <components/bio-formats/src/loci/formats/out/AVIWriter.java>`
+Source Code: :source:`AVI Writer <components/scifio/src/loci/formats/out/AVIWriter.java>`
 
 Notes: 
 

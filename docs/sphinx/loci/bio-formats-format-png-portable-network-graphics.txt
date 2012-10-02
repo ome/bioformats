@@ -40,7 +40,7 @@ Utility: |Poor|
 Additional Information
 ----------------------
 
-Source Code: :source:`APNG Reader <components/bio-formats/src/loci/formats/in/APNGReader.java>`
+Source Code: :source:`APNG Reader <components/scifio/src/loci/formats/in/APNGReader.java>`
 
 Notes: 
 
