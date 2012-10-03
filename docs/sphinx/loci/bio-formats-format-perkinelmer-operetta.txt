@@ -1,0 +1,41 @@
+PerkinElmer Operetta
+====================
+
+Extensions: .tiff, .xml
+
+Developer: `PerkinElmer <http://www.perkinelmer.com/>`_
+
+Support
+-------
+
+SCIFIO: |no|
+
+Export: |no|
+
+Supported Metadata Fields: `OperettaReader <http://dev.loci.wisc.edu/trac/software/wiki/OperettaReader>`_
+
+We currently have: 
+
+-  two sample datasets
+
+We'd like to have: 
+
+-  more sample datasets
+
+Ratings
+-------
+
+Pixels: |Very Good|
+
+Metadata: |Good|
+
+Openness: |Good|
+
+Presence: |Fair|
+
+Utility: |Good|
+
+Additional Information
+----------------------
+
+Source Code: :source:`OperettaReader <components/bio-formats/src/loci/formats/in/OperettaReader.java>`
