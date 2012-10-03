@@ -877,7 +877,7 @@ public class MetamorphReader extends BaseTiffReader {
         }
 
         if (index == 0 && p > 0 && exposureTimes.size() > 0) {
-          index = p % exposureTimes.size();
+          index = coords[1] % exposureTimes.size();
         }
 
         if (index < exposureTimes.size()) {
