@@ -440,6 +440,7 @@ public class ImageInfo {
     MetadataOptions metaOptions = new DefaultMetadataOptions(doMeta ?
       MetadataLevel.ALL : MetadataLevel.MINIMUM);
     reader.setMetadataOptions(metaOptions);
+    reader.setFlattenedResolutions(flat);
   }
 
   public void configureReaderPostInit() {
@@ -999,7 +1000,6 @@ public class ImageInfo {
 
     // initialize reader
     long s = System.currentTimeMillis();
-    reader.setFlattenedResolutions(flat);
     reader.setId(id);
     long e = System.currentTimeMillis();
     float sec = (e - s) / 1000f;
