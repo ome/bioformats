@@ -50,7 +50,7 @@ Additional Information
 
 Source Code: :source:`Zeiss LSM Reader <components/bio-formats/src/loci/formats/in/ZeissLSMReader.java>`
 
-Source Code: :source:`MDB Parser <components/bio-formats/src/loci/formats/in/MDBParser.java>`
+Source Code: :source:`MDB Parser <components/bio-formats/src/loci/formats/services/MDBServiceImpl.java>`
 
 Notes: Bio-Formats uses the `MDB Tools <http://mdbtools.sourceforge.net/>`_
 Java port to read MDB files.
