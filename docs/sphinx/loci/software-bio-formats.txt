@@ -39,13 +39,13 @@ Libraries and scripting
 
 `ITK </bio-formats/itk>`_
 
- 
+ 
 
 `Qu for MATLAB </bio-formats/qu-matlab>`_
 
 `Subimager </bio-formats/subimager>`_
 
- 
+ 
 
 Numerical data processing
 
@@ -53,13 +53,13 @@ Numerical data processing
 
 :doc:`KNIME <bio-formats-knime>`
 
- 
+
 
 `MATLAB </bio-formats/matlab>`_
 
 `VisAD </bio-formats/visad>`_
 
- 
+ 
 
 Visualization and analysis
 
@@ -128,7 +128,7 @@ list for a history of major changes in each release.
 The latest stable version of Bio-Formats is |release|. For future
 development directions, see the
 `4.4 <http://trac.openmicroscopy.org.uk/ome/query?group=status&component=Bio-Formats&milestone=OMERO-4.5>`_
-and `5.0 <http://trac.openmicroscopy.org.uk/ome/query?group=status&component=Bio-Formats&milestone=OME-5.0>`_
+and `5.0 <http://trac.openmicroscopy.org.uk/ome/query?group=status&component=Bio-Formats&milestone=OME-5.0>`_
 roadmaps.
 
 Questions
@@ -146,11 +146,11 @@ you have any questions or problems with Bio-Formats.
 
 Download
 
-Language: Java
+Language: Java
 
-Latest Version:  4.4.4 (2012 September 25
+Latest Version:  4.4.4 (2012 September 25
 
-Download: `loci_tools.jar <http://www.loci.wisc.edu/files/software/loci_tools.jar>`__
+Download: `loci_tools.jar <http://www.loci.wisc.edu/files/software/loci_tools.jar>`__
 
 More Information
 
@@ -1006,6 +1006,51 @@ Supported Formats
      - |Fair|
      - |Good|
      - |Fair|                                                                         
+     - |Fair|                                                                                
+     - |Fair|                                                                                             
+     - |no|
+     - |no|
+   * - :doc:`bio-formats-format-perkinelmer-operetta`
+     - .tiff, .xml
+     - |Very Good|
+     - |Good|
+     - |Good|                                                                         
+     - |Fair|                                                                                
+     - |Good|                                                                                             
+     - |no|
+     - |no|
+   * - :doc:`bio-formats-format-zeiss-czi`
+     - .czi
+     - |Outstanding|
+     - |Outstanding|
+     - |Very Good|                                                                         
+     - |Fair|                                                                                
+     - |Good|                                                                                             
+     - |no|
+     - |no|
+   * - :doc:`bio-formats-format-imod`
+     - .czi
+     - |Good|
+     - |Good|
+     - |Outstanding|                                                                         
+     - |Fair|                                                                                
+     - |Fair|                                                                                             
+     - |no|
+     - |no|
+   * - :doc:`bio-formats-format-leica-scn`
+     - .scn
+     - |Good|
+     - |Good|
+     - |Good|                                                                         
+     - |Fair|                                                                                
+     - |Good|                                                                                             
+     - |no|
+     - |no|
+   * - :doc:`bio-formats-format-zeiss-axiovision-tiff`
+     - .xml, .tiff
+     - |Very Good|
+     - |Very Good|
+     - |Good|                                                                         
      - |Fair|                                                                                
      - |Fair|                                                                                             
      - |no|
