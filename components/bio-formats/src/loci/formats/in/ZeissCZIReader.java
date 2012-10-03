@@ -768,7 +768,7 @@ public class ZeissCZIReader extends FormatReader {
 
   private void translateInformation(Element root) throws FormatException {
     NodeList informations = root.getElementsByTagName("Information");
-    if (informations.getLength() == 0) {
+    if (informations == null || informations.getLength() == 0) {
       return;
     }
 
@@ -1063,16 +1063,20 @@ public class ZeissCZIReader extends FormatReader {
           NodeList emissions = getGrandchildren(filterSet, "EmissionFilters",
             "EmissionFilterRef");
 
-          for (int ex=0; ex<excitations.getLength(); ex++) {
-            String ref = excitations.item(ex).getTextContent();
-            if (ref != null && ref.length() > 0) {
-              store.setFilterSetExcitationFilterRef(ref, 0, i, ex);
+          if (excitations != null) {
+            for (int ex=0; ex<excitations.getLength(); ex++) {
+              String ref = excitations.item(ex).getTextContent();
+              if (ref != null && ref.length() > 0) {
+                store.setFilterSetExcitationFilterRef(ref, 0, i, ex);
+              }
             }
           }
-          for (int em=0; em<emissions.getLength(); em++) {
-            String ref = emissions.item(em).getTextContent();
-            if (ref != null && ref.length() > 0) {
-              store.setFilterSetEmissionFilterRef(ref, 0, i, em);
+          if (emissions != null) {
+            for (int em=0; em<emissions.getLength(); em++) {
+              String ref = emissions.item(em).getTextContent();
+              if (ref != null && ref.length() > 0) {
+                store.setFilterSetEmissionFilterRef(ref, 0, i, em);
+              }
             }
           }
         }
@@ -1174,195 +1178,228 @@ public class ZeissCZIReader extends FormatReader {
 
   private void translateScaling(Element root) {
     NodeList scalings = root.getElementsByTagName("Scaling");
-    if (scalings.getLength() == 0) {
+    if (scalings == null || scalings.getLength() == 0) {
       return;
     }
 
     Element scaling = (Element) scalings.item(0);
     NodeList distances = getGrandchildren(scaling, "Items", "Distance");
 
-    for (int i=0; i<distances.getLength(); i++) {
-      Element distance = (Element) distances.item(i);
-      String id = distance.getAttribute("Id");
-      String originalValue = getFirstNodeValue(distance, "Value");
-      if (originalValue == null) {
-        continue;
-      }
-      Double value = new Double(originalValue) * 1000000;
-      if (value > 0) {
-        PositiveFloat size = new PositiveFloat(value);
+    if (distances != null) {
+      for (int i=0; i<distances.getLength(); i++) {
+        Element distance = (Element) distances.item(i);
+        String id = distance.getAttribute("Id");
+        String originalValue = getFirstNodeValue(distance, "Value");
+        if (originalValue == null) {
+          continue;
+        }
+        Double value = new Double(originalValue) * 1000000;
+        if (value > 0) {
+          PositiveFloat size = new PositiveFloat(value);
 
-        if (id.equals("X")) {
-          for (int series=0; series<getSeriesCount(); series++) {
-            store.setPixelsPhysicalSizeX(size, series);
+          if (id.equals("X")) {
+            for (int series=0; series<getSeriesCount(); series++) {
+              store.setPixelsPhysicalSizeX(size, series);
+            }
+          }
+          else if (id.equals("Y")) {
+            for (int series=0; series<getSeriesCount(); series++) {
+              store.setPixelsPhysicalSizeY(size, series);
+            }
+          }
+          else if (id.equals("Z")) {
+            for (int series=0; series<getSeriesCount(); series++) {
+              store.setPixelsPhysicalSizeZ(size, series);
+            }
           }
         }
-        else if (id.equals("Y")) {
-          for (int series=0; series<getSeriesCount(); series++) {
-            store.setPixelsPhysicalSizeY(size, series);
-          }
+        else {
+          LOGGER.warn(
+            "Expected positive value for PhysicalSize; got {}", value);
         }
-        else if (id.equals("Z")) {
-          for (int series=0; series<getSeriesCount(); series++) {
-            store.setPixelsPhysicalSizeZ(size, series);
-          }
-        }
-      }
-      else {
-        LOGGER.warn("Expected positive value for PhysicalSize; got {}", value);
       }
     }
   }
 
   private void translateDisplaySettings(Element root) {
     NodeList displaySettings = root.getElementsByTagName("DisplaySetting");
-    if (displaySettings.getLength() == 0) {
+    if (displaySettings == null || displaySettings.getLength() == 0) {
       return;
     }
 
     Element displaySetting = (Element) displaySettings.item(0);
     NodeList channels = getGrandchildren(displaySetting, "Channel");
 
-    for (int i=0; i<channels.getLength(); i++) {
-      Element channel = (Element) channels.item(i);
-      String color = getFirstNodeValue(channel, "Color");
-      if (color != null) {
-        channelColors.add(color);
+    if (channels != null) {
+      for (int i=0; i<channels.getLength(); i++) {
+        Element channel = (Element) channels.item(i);
+        String color = getFirstNodeValue(channel, "Color");
+        if (color != null) {
+          channelColors.add(color);
+        }
       }
     }
   }
 
   private void translateLayers(Element root) {
     NodeList layerses = root.getElementsByTagName("Layers");
-    if (layerses.getLength() == 0) {
+    if (layerses == null || layerses.getLength() == 0) {
       return;
     }
 
     Element layersNode = (Element) layerses.item(0);
     NodeList layers = layersNode.getElementsByTagName("Layer");
 
-    for (int i=0; i<layers.getLength(); i++) {
-      Element layer = (Element) layers.item(i);
+    if (layers != null) {
+      for (int i=0; i<layers.getLength(); i++) {
+        Element layer = (Element) layers.item(i);
 
-      NodeList elementses = layer.getElementsByTagName("Elements");
-      if (elementses.getLength() == 0) {
-        continue;
-      }
-      NodeList allGrandchildren = elementses.item(0).getChildNodes();
-
-      int shape = 0;
-
-      NodeList lines = getGrandchildren(layer, "Elements", "Line");
-      shape = populateLines(lines, i, shape);
-
-      NodeList arrows = getGrandchildren(layer, "Elements", "OpenArrow");
-      shape = populateLines(arrows, i, shape);
-
-      NodeList crosses = getGrandchildren(layer, "Elements", "Cross");
-      for (int s=0; s<crosses.getLength(); s++, shape+=2) {
-        Element cross = (Element) crosses.item(s);
-
-        Element geometry = getFirstNode(cross, "Geometry");
-        Element textElements = getFirstNode(cross, "TextElements");
-        Element attributes = getFirstNode(cross, "Attributes");
-
-        store.setLineID(
-          MetadataTools.createLSID("Shape", i, shape), i, shape);
-        store.setLineID(
-          MetadataTools.createLSID("Shape", i, shape + 1), i, shape + 1);
-
-        String length = getFirstNodeValue(geometry, "Length");
-        String centerX = getFirstNodeValue(geometry, "CenterX");
-        String centerY = getFirstNodeValue(geometry, "CenterY");
-
-        if (length != null) {
-          Double halfLen = new Double(length) / 2;
-          if (centerX != null) {
-            store.setLineX1(new Double(centerX) - halfLen, i, shape);
-            store.setLineX2(new Double(centerX) + halfLen, i, shape);
-
-            store.setLineX1(new Double(centerX), i, shape + 1);
-            store.setLineX2(new Double(centerX), i, shape + 1);
-          }
-          if (centerY != null) {
-            store.setLineY1(new Double(centerY), i, shape);
-            store.setLineY2(new Double(centerY), i, shape);
-
-            store.setLineY1(new Double(centerY) - halfLen, i, shape + 1);
-            store.setLineY2(new Double(centerY) + halfLen, i, shape + 1);
-          }
+        NodeList elementses = layer.getElementsByTagName("Elements");
+        if (elementses.getLength() == 0) {
+          continue;
         }
-        store.setLineText(getFirstNodeValue(textElements, "Text"), i, shape);
-        store.setLineText(getFirstNodeValue(textElements, "Text"), i, shape + 1);
+        NodeList allGrandchildren = elementses.item(0).getChildNodes();
+
+        int shape = 0;
+
+        NodeList lines = getGrandchildren(layer, "Elements", "Line");
+        shape = populateLines(lines, i, shape);
+
+        NodeList arrows = getGrandchildren(layer, "Elements", "OpenArrow");
+        shape = populateLines(arrows, i, shape);
+
+        NodeList crosses = getGrandchildren(layer, "Elements", "Cross");
+        for (int s=0; s<crosses.getLength(); s++, shape+=2) {
+          Element cross = (Element) crosses.item(s);
+
+          Element geometry = getFirstNode(cross, "Geometry");
+          Element textElements = getFirstNode(cross, "TextElements");
+          Element attributes = getFirstNode(cross, "Attributes");
+
+          store.setLineID(
+            MetadataTools.createLSID("Shape", i, shape), i, shape);
+          store.setLineID(
+            MetadataTools.createLSID("Shape", i, shape + 1), i, shape + 1);
+
+          String length = getFirstNodeValue(geometry, "Length");
+          String centerX = getFirstNodeValue(geometry, "CenterX");
+          String centerY = getFirstNodeValue(geometry, "CenterY");
+
+          if (length != null) {
+            Double halfLen = new Double(length) / 2;
+            if (centerX != null) {
+              store.setLineX1(new Double(centerX) - halfLen, i, shape);
+              store.setLineX2(new Double(centerX) + halfLen, i, shape);
+
+              store.setLineX1(new Double(centerX), i, shape + 1);
+              store.setLineX2(new Double(centerX), i, shape + 1);
+            }
+            if (centerY != null) {
+              store.setLineY1(new Double(centerY), i, shape);
+              store.setLineY2(new Double(centerY), i, shape);
+
+              store.setLineY1(new Double(centerY) - halfLen, i, shape + 1);
+              store.setLineY2(new Double(centerY) + halfLen, i, shape + 1);
+            }
+          }
+          store.setLineText(getFirstNodeValue(textElements, "Text"), i, shape);
+          store.setLineText(getFirstNodeValue(textElements, "Text"), i, shape + 1);
       }
 
       NodeList rectangles = getGrandchildren(layer, "Elements", "Rectangle");
-      shape = populateRectangles(rectangles, i, shape);
+      if (rectangles != null) {
+        shape = populateRectangles(rectangles, i, shape);
+      }
 
       NodeList ellipses = getGrandchildren(layer, "Elements", "Ellipse");
-      for (int s=0; s<ellipses.getLength(); s++, shape++) {
-        Element ellipse = (Element) ellipses.item(s);
+      if (ellipses != null) {
+        for (int s=0; s<ellipses.getLength(); s++, shape++) {
+          Element ellipse = (Element) ellipses.item(s);
 
-        Element geometry = getFirstNode(ellipse, "Geometry");
-        Element textElements = getFirstNode(ellipse, "TextElements");
-        Element attributes = getFirstNode(ellipse, "Attributes");
+          Element geometry = getFirstNode(ellipse, "Geometry");
+          Element textElements = getFirstNode(ellipse, "TextElements");
+          Element attributes = getFirstNode(ellipse, "Attributes");
 
-        store.setEllipseID(
-          MetadataTools.createLSID("Shape", i, shape), i, shape);
+          store.setEllipseID(
+            MetadataTools.createLSID("Shape", i, shape), i, shape);
 
-        String radiusX = getFirstNodeValue(geometry, "RadiusX");
-        String radiusY = getFirstNodeValue(geometry, "RadiusY");
-        String centerX = getFirstNodeValue(geometry, "CenterX");
-        String centerY = getFirstNodeValue(geometry, "CenterY");
+          String radiusX = getFirstNodeValue(geometry, "RadiusX");
+          String radiusY = getFirstNodeValue(geometry, "RadiusY");
+          String centerX = getFirstNodeValue(geometry, "CenterX");
+          String centerY = getFirstNodeValue(geometry, "CenterY");
 
-        if (radiusX != null) {
-          store.setEllipseRadiusX(new Double(radiusX), i, shape);
+          if (radiusX != null) {
+            store.setEllipseRadiusX(new Double(radiusX), i, shape);
+          }
+          if (radiusY != null) {
+            store.setEllipseRadiusY(new Double(radiusY), i, shape);
+          }
+          if (centerX != null) {
+            store.setEllipseX(new Double(centerX), i, shape);
+          }
+          if (centerY != null) {
+            store.setEllipseY(new Double(centerY), i, shape);
+          }
+          store.setEllipseText(
+            getFirstNodeValue(textElements, "Text"), i, shape);
         }
-        if (radiusY != null) {
-          store.setEllipseRadiusY(new Double(radiusY), i, shape);
-        }
-        if (centerX != null) {
-          store.setEllipseX(new Double(centerX), i, shape);
-        }
-        if (centerY != null) {
-          store.setEllipseY(new Double(centerY), i, shape);
-        }
-        store.setEllipseText(getFirstNodeValue(textElements, "Text"), i, shape);
       }
 
       // translate all of the circle ROIs
       NodeList circles = getGrandchildren(layer, "Elements", "Circle");
-      shape = populateCircles(circles, i, shape);
+      if (circles != null) {
+        shape = populateCircles(circles, i, shape);
+      }
       NodeList inOutCircles =
         getGrandchildren(layer, "Elements", "InOutCircle");
-      shape = populateCircles(inOutCircles, i, shape);
+      if (inOutCircles != null) {
+        shape = populateCircles(inOutCircles, i, shape);
+      }
       NodeList outInCircles =
         getGrandchildren(layer, "Elements", "OutInCircle");
-      shape = populateCircles(outInCircles, i, shape);
+      if (outInCircles != null) {
+        shape = populateCircles(outInCircles, i, shape);
+      }
       NodeList pointsCircles =
         getGrandchildren(layer, "Elements", "PointsCircle");
-      shape = populateCircles(pointsCircles, i, shape);
+      if (pointsCircles != null) {
+        shape = populateCircles(pointsCircles, i, shape);
+      }
 
       NodeList polygons = getGrandchildren(layer, "Elements", "Polygon");
-      shape = populatePolylines(polygons, i, shape, true);
+      if (polygons != null) {
+        shape = populatePolylines(polygons, i, shape, true);
+      }
 
       NodeList polylines = getGrandchildren(layer, "Elements", "Polyline");
-      shape = populatePolylines(polylines, i, shape, false);
+      if (polylines != null) {
+        shape = populatePolylines(polylines, i, shape, false);
+      }
 
       NodeList openPolylines =
         getGrandchildren(layer, "Elements", "OpenPolyline");
-      shape = populatePolylines(polylines, i, shape, false);
+      if (openPolylines != null) {
+        shape = populatePolylines(openPolylines, i, shape, false);
+      }
 
       NodeList closedPolylines =
         getGrandchildren(layer, "Elements", "ClosedPolyline");
-      shape = populatePolylines(polygons, i, shape, true);
+      if (closedPolylines != null) {
+        shape = populatePolylines(closedPolylines, i, shape, true);
+      }
 
       NodeList rectRoi = getGrandchildren(layer, "Elements", "RectRoi");
-      shape = populateRectangles(rectRoi, i, shape);
+      if (rectRoi != null) {
+        shape = populateRectangles(rectRoi, i, shape);
+      }
       NodeList textBoxes = getGrandchildren(layer, "Elements", "TextBox");
-      shape = populateRectangles(textBoxes, i, shape);
+      if (textBoxes != null) {
+        shape = populateRectangles(textBoxes, i, shape);
+      }
       NodeList text = getGrandchildren(layer, "Elements", "Text");
-      shape = populateRectangles(text, i, shape);
+      if (text != null) {
+        shape = populateRectangles(text, i, shape);
+      }
 
       if (shape > 0) {
         String roiID = MetadataTools.createLSID("ROI", i);
@@ -1374,6 +1411,7 @@ public class ZeissCZIReader extends FormatReader {
           store.setImageROIRef(roiID, series, i);
         }
       }
+    }
     }
   }
 
@@ -1503,7 +1541,7 @@ public class ZeissCZIReader extends FormatReader {
 
   private void translateExperiment(Element root) {
     NodeList experiments = root.getElementsByTagName("Experiment");
-    if (experiments.getLength() == 0) {
+    if (experiments == null || experiments.getLength() == 0) {
       return;
     }
 
@@ -1568,7 +1606,7 @@ public class ZeissCZIReader extends FormatReader {
       return null;
     }
     NodeList children = root.getElementsByTagName(child);
-    if (children.getLength() > 0) {
+    if (children != null && children.getLength() > 0) {
       Element childNode = (Element) children.item(0);
       return childNode.getElementsByTagName(name);
     }
@@ -1580,7 +1618,7 @@ public class ZeissCZIReader extends FormatReader {
       return null;
     }
     NodeList nodes = root.getElementsByTagName(name);
-    if (nodes.getLength() > 0) {
+    if (nodes != null && nodes.getLength() > 0) {
       return nodes.item(0).getTextContent();
     }
     return null;
@@ -1618,10 +1656,12 @@ public class ZeissCZIReader extends FormatReader {
     }
 
     NodeList children = root.getChildNodes();
-    for (int i=0; i<children.getLength(); i++) {
-      Object child = children.item(i);
-      if (child instanceof Element) {
-        populateOriginalMetadata((Element) child, nameStack, indexes);
+    if (children != null) {
+      for (int i=0; i<children.getLength(); i++) {
+        Object child = children.item(i);
+        if (child instanceof Element) {
+          populateOriginalMetadata((Element) child, nameStack, indexes);
+        }
       }
     }
 
@@ -1864,6 +1904,10 @@ public class ZeissCZIReader extends FormatReader {
 
       NodeList children = root.getChildNodes();
 
+      if (children == null) {
+        return;
+      }
+
       for (int i=0; i<children.getLength(); i++) {
         if (!(children.item(i) instanceof Element)) {
           continue;
@@ -1873,25 +1917,27 @@ public class ZeissCZIReader extends FormatReader {
         if (child.getNodeName().equals("Tags")) {
           NodeList tags = child.getChildNodes();
 
-          for (int tag=0; tag<tags.getLength(); tag++) {
-            if (!(tags.item(tag) instanceof Element)) {
-              continue;
-            }
-            Element tagNode = (Element) tags.item(tag);
-            String text = tagNode.getTextContent();
-            if (text != null) {
-              if (tagNode.getNodeName().equals("StageXPosition")) {
-                stageX = new Double(text);
+          if (tags != null) {
+            for (int tag=0; tag<tags.getLength(); tag++) {
+              if (!(tags.item(tag) instanceof Element)) {
+                continue;
               }
-              else if (tagNode.getNodeName().equals("StageYPosition")) {
-                stageY = new Double(text);
-              }
-              else if (tagNode.getNodeName().equals("AcquisitionTime")) {
-                timestamp = DateTools.getTime(
-                  text, DateTools.ISO8601_FORMAT) / 1000d;
-              }
-              else if (tagNode.getNodeName().equals("ExposureTime")) {
-                exposureTime = new Double(text);
+              Element tagNode = (Element) tags.item(tag);
+              String text = tagNode.getTextContent();
+              if (text != null) {
+                if (tagNode.getNodeName().equals("StageXPosition")) {
+                  stageX = new Double(text);
+                }
+                else if (tagNode.getNodeName().equals("StageYPosition")) {
+                  stageY = new Double(text);
+                }
+                else if (tagNode.getNodeName().equals("AcquisitionTime")) {
+                  timestamp = DateTools.getTime(
+                    text, DateTools.ISO8601_FORMAT) / 1000d;
+                }
+                else if (tagNode.getNodeName().equals("ExposureTime")) {
+                  exposureTime = new Double(text);
+                }
               }
             }
           }
