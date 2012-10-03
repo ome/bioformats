@@ -531,7 +531,9 @@ public class MetamorphReader extends BaseTiffReader {
             if ((seriesCount != 1 && !validZ) ||
               (nstages == 0 && ((!validZ && cc > 1) || seriesCount > 1)))
             {
-              if (anyZ && j > 0 && seriesNdx < seriesCount - 1) {
+              if (anyZ && j > 0 && seriesNdx < seriesCount - 1 &&
+                (!validZ || !hasZ.get(0)))
+              {
                 seriesNdx++;
               }
             }
