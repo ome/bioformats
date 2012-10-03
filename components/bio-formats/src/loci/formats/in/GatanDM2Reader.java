@@ -38,6 +38,8 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
 
+import ome.xml.model.primitives.PositiveFloat;
+
 /**
  * GatanDM2Reader is the file format reader for Gatan .dm2 files.
  *
@@ -53,6 +55,10 @@ public class GatanDM2Reader extends FormatReader {
   private static final int DM2_MAGIC_BYTES = 0x3d0000;
 
   // -- Fields --
+
+  private Double pixelSizeX;
+  private Double pixelSizeY;
+  private String pixelSizeUnits;
 
   // -- Constructor --
 
@@ -70,6 +76,16 @@ public class GatanDM2Reader extends FormatReader {
     final int blockLen = 4;
     if (!FormatTools.validStream(stream, blockLen, false)) return false;
     return stream.readInt() == DM2_MAGIC_BYTES;
+  }
+
+  /* @see loci.formats.IFormatReader#close(boolean) */
+  public void close(boolean fileOnly) throws IOException {
+    super.close(fileOnly);
+    if (!fileOnly) {
+      pixelSizeX = null;
+      pixelSizeY = null;
+      pixelSizeUnits = null;
+    }
   }
 
   /**
@@ -92,6 +108,7 @@ public class GatanDM2Reader extends FormatReader {
     id = new Location(id).getAbsolutePath();
     super.initFile(id);
     in = new RandomAccessInputStream(id);
+    in.setEncoding("ISO-8859-1");
 
     int magicBytes = in.readInt();
     if (magicBytes != DM2_MAGIC_BYTES) {
@@ -124,7 +141,7 @@ public class GatanDM2Reader extends FormatReader {
     store.setImageInstrumentRef(instrumentID, 0);
 
     String date = null, time = null, name = null;
-    in.skipBytes(FormatTools.getPlaneSize(this) + 39);
+    in.skipBytes(FormatTools.getPlaneSize(this) + 35);
 
     MetadataLevel level = getMetadataOptions().getMetadataLevel();
 
@@ -139,6 +156,11 @@ public class GatanDM2Reader extends FormatReader {
       if (strlen == 0 || strlen > 255) {
         in.skipBytes(35);
         strlen = in.readShort();
+
+        if (strlen < 0 || strlen + in.getFilePointer() >= in.length()) {
+          in.seek(in.getFilePointer() - 10);
+          strlen = in.readShort();
+        }
       }
       if (strlen < 0 || strlen + in.getFilePointer() >= in.length()) break;
       String label = in.readString(strlen);
@@ -152,6 +174,30 @@ public class GatanDM2Reader extends FormatReader {
         }
         else {
           in.seek(in.getFilePointer() - 2);
+          continue;
+        }
+      }
+      else if (block > 0xffff && block < 0x01000000) {
+        in.seek(in.getFilePointer() - 4);
+        value.append(label);
+        label = "Description";
+        addGlobalMeta(label, value.toString());
+        parseExtraTags();
+        continue;
+      }
+      else if (block >= 0x01000000) {
+        in.skipBytes(34);
+        strlen = in.readShort();
+
+        if (strlen + in.getFilePointer() >= in.length()) {
+          break;
+        }
+
+        label = in.readString(strlen);
+        block = in.readInt();
+
+        if (block == 5) {
+          in.skipBytes(33);
           continue;
         }
       }
@@ -222,8 +268,9 @@ public class GatanDM2Reader extends FormatReader {
         time = value.toString();
       }
       else if (label.equals("Binning")) {
-        store.setDetectorSettingsBinning(getBinning(value + "x" + value), 0, 0);
-        String detectorID = MetadataTools.createLSID("Detector", 0);
+        int bin = (int) Double.parseDouble(value.toString());
+        store.setDetectorSettingsBinning(getBinning(bin + "x" + bin), 0, 0);
+        String detectorID = MetadataTools.createLSID("Detector", 0, 0);
         store.setDetectorID(detectorID, 0, 0);
         store.setDetectorSettingsID(detectorID, 0, 0);
       }
@@ -255,6 +302,73 @@ public class GatanDM2Reader extends FormatReader {
     if (name != null) {
       store.setImageName(name, 0);
     }
+    if (pixelSizeX != null) {
+      store.setPixelsPhysicalSizeX(new PositiveFloat(pixelSizeX), 0);
+    }
+    if (pixelSizeY != null) {
+      store.setPixelsPhysicalSizeY(new PositiveFloat(pixelSizeY), 0);
+    }
+  }
+
+  // -- Helper methods --
+
+  private void parseExtraTags() throws IOException {
+    while (in.getFilePointer() < in.length()) {
+      int tag = in.readShort();
+      int length = in.readInt();
+      String value = "foo";
+
+      if (length == 4) {
+        value = String.valueOf(in.readFloat());
+      }
+      else if (length == 2) {
+        value = String.valueOf(in.readShort());
+      }
+      else if (length == 1) {
+        value = String.valueOf(in.read());
+      }
+      else {
+        value = in.readString(length);
+        int nullIndex = value.indexOf("\0");
+        if (nullIndex >= 0) {
+          value = value.substring(0, nullIndex);
+        }
+      }
+      value = value.trim();
+
+      String label = "Tag " + Integer.toHexString(tag);
+
+      switch (tag) {
+        case 22:
+          label = "Scale";
+          break;
+        case 31:
+          label = "Physical width";
+          pixelSizeX = new Double(value);
+          break;
+        case 32:
+          label = "Physical height";
+          pixelSizeY = new Double(value);
+          break;
+        case 37:
+          label = "Image label";
+          break;
+        case 53:
+          label = "Physical size units";
+          pixelSizeUnits = value;
+          break;
+        case 62:
+          label = "Origin";
+          break;
+      }
+
+      addGlobalMeta(label, value);
+    }
+
+    if (pixelSizeUnits != null && !pixelSizeUnits.equals("µm")) {
+      LOGGER.warn("Unsupported units: " + pixelSizeUnits);
+    }
+
   }
 
 }
