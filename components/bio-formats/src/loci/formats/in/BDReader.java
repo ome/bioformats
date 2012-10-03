@@ -70,7 +70,9 @@ public class BDReader extends FormatReader {
 
   // -- Constants --
   private static final String EXPERIMENT_FILE = "Experiment.exp";
-  private static final String[] META_EXT = {"drt", "dye", "exp", "plt", "txt"};
+  private static final String[] META_EXT =
+    {"drt", "dye", "exp", "plt", "txt", "geo", "ltp", "ffc", "afc", "mon",
+    "xyz", "mac", "bmp", "roi", "adf"};
 
   // -- Fields --
   private Vector<String> metadataFiles = new Vector<String>();
@@ -256,6 +258,16 @@ public class BDReader extends FormatReader {
           metadataFiles.add(f.getAbsolutePath());
         }
       }
+      else {
+        for (String well : f.list(true)) {
+          Location wellFile = new Location(f, well);
+          if (!wellFile.isDirectory()) {
+            if (checkSuffix(well, META_EXT)) {
+              metadataFiles.add(wellFile.getAbsolutePath());
+            }
+          }
+        }
+      }
     }
 
     // parse Experiment metadata
@@ -308,7 +320,9 @@ public class BDReader extends FormatReader {
       IniParser parser = new IniParser();
       for (String metadataFile : metadataFiles) {
         String filename = new Location(metadataFile).getName();
-        if (!checkSuffix(metadataFile, "txt")) {
+        if (!checkSuffix(metadataFile,
+          new String[] {"txt", "bmp", "adf", "roi"}))
+        {
           String data = DataTools.readFile(metadataFile);
           IniList ini =
             parser.parseINI(new BufferedReader(new StringReader(data)));
