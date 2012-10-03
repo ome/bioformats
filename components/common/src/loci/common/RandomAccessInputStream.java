@@ -85,6 +85,8 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
 
   protected long markedPos = -1;
 
+  protected String encoding = Constants.ENCODING;
+
   // -- Constructors --
 
   /**
@@ -123,6 +125,15 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
   }
 
   // -- RandomAccessInputStream API methods --
+
+  /**
+   * Sets the native encoding of the stream.
+   *
+   * @see loci.common.Constants#ENCODING
+   */
+  public void setEncoding(String encoding) {
+    this.encoding = encoding;
+  }
 
   /** Seeks to the given offset within the stream. */
   public void seek(long pos) throws IOException {
@@ -274,7 +285,7 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
       if (len > maxTermLen) maxTermLen = len;
     }
 
-    InputStreamReader in = new InputStreamReader(this, Constants.ENCODING);
+    InputStreamReader in = new InputStreamReader(this, encoding);
     char[] buf = new char[blockSize];
     long loc = 0;
     while (loc < maxLen && getFilePointer() < length() - 1) {
@@ -380,7 +391,7 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
     if (n > avail) n = avail;
     byte[] b = new byte[n];
     readFully(b);
-    return new String(b, Constants.ENCODING);
+    return new String(b, encoding);
   }
 
   /** Read eight input bytes and return a long value. */
