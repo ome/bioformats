@@ -35,6 +35,8 @@ instead of Bio-Formats to open the file.   If this happens and you want
 to open a file using Bio-Formats, use one of the other two methods
 instead. 
 
+.. _using-bio-formats-load-images#windowlessly:
+
 Opening Files Windowlessly
 --------------------------
 

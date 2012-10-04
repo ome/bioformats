@@ -7,4 +7,4 @@ JAI library and furthermore it incorporates the functionality of the
 popular ImageJ image processing software.
 
 Because iqm integrates with ImageJ, it can take advantage of the
-`Bio-Formats ImageJ plugin </bio-formats/imagej>`_ to read image data.
+:doc:`Bio-Formats ImageJ plugin <bio-formats-imagej>` to read image data.

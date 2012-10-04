@@ -11,5 +11,5 @@ Search and comparison of datasets by image data and content is
 supported. Novel semantic analyses are integrated into the system
 allowing high level semantic queries and comparison of image content.
 
-Bisque integrates with Bio-Formats by calling the `showinf command line
-tool </bio-formats/command-line-tools>`_.
+Bisque integrates with Bio-Formats by calling the
+:doc:`showinf command line tool <bio-formats-command-line-tools>`.

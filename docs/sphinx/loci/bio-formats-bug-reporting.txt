@@ -11,7 +11,7 @@ ImageJ users, select Update LOCI Plugins under the LOCI menu. Select
 Trunk Build.
 
 You can also download the newest version at Bio-Formats at
-`http://www.loci.wisc.edu/bio-formats/downloads. <downloads>`_ If you
+http://www.loci.wisc.edu/bio-formats/downloads. If you
 are not sure which version you need, select the Trunk Build under LOCI
 Tools complete bundle.
 

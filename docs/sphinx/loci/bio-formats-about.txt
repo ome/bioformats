@@ -68,5 +68,5 @@ metadata, original metadata, and OME metadata.
 
 A draft "Bio-Formats metadata guide" document detailing
 these three kinds of metadata and how the Bio-Formats metadata API
-works is available `here <http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/doc/metadata-guide.txt>`_.
+works is available :source:`here <components/bio-formats/doc/metadata-guide.txt>`.
 
