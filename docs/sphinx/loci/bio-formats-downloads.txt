@@ -4,7 +4,7 @@ Downloads
 The following table lists **Bio-Formats** packages available for
 download. To access bug fixes between stable releases, you can download
 the daily build (updated every night) or the trunk build (updated within
-minutes of every Git push) for the latest bugfixes, but please be aware
+minutes of every Git push) for the latest bug fixes, but please be aware
 that these builds are not always thoroughly tested and should be
 considered beta quality.
 
