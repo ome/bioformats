@@ -62,11 +62,14 @@ copyright = u'2000-2012, ' + author
 # built documents.
 #
 try:
-    p = popen(['git','describe'])
-    tag = p.communicate()
-    split_tag = re.split("^(v)?(.*?)(-[0-9]+)?((-)g(.*?))?$",tag[0])
-    # The full version, including alpha/beta/rc tags.
-    release = split_tag[2]
+    if "BF_RELEASE" in os.environ:
+        release = os.environ.get('BF_RELEASE')
+    else:
+        p = popen(['git','describe'])
+        tag = p.communicate()
+        split_tag = re.split("^(v)?(.*?)(-[0-9]+)?((-)g(.*?))?$",tag[0])
+        # The full version, including alpha/beta/rc tags.
+        release = split_tag[2]
     split_release =  re.split("^([0-9]\.[0-9])(\.[0-9]+)(.*?)$",release)
     # The short X.Y version.
     version = split_release[1]
