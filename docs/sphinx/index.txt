@@ -101,7 +101,6 @@ how to use it within ImageJ and FIJI. The sections include:
     :maxdepth: 1
     :titlesonly:
 
-    loci/bio-formats-using-bio-formats
     loci/bio-formats-installing-bio-formats-imagej
     loci/bio-formats-bio-formats-features
     loci/bio-formats-using-bio-formats-load-images
