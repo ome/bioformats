@@ -113,7 +113,7 @@ Developer Topics
 ================
 
 Bio-Formats as a Java Library
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------------
 
 If you wish to leverage Bio-Formats within your own software, you can
 download bio-formats.jar to use it as a library. Just add
@@ -122,7 +122,7 @@ download bio-formats.jar to use it as a library. Just add
 more.... </loci/bio-formats-bio-formats-java-library>`
 
 Developing Bio-Formats
-~~~~~~~~~~~~~~~~~~~~~~
+----------------------
 
 If you are interested in hacking on the Bio-Formats source code itself,
 you can load the source code into your favorite IDE, or develop code
@@ -130,7 +130,7 @@ with your favorite text editor. :doc:`Read
 more.... <loci/bio-formats-developing-bio-formats>`
 
 Interfacing From Non-Java Code
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+------------------------------
 
 Bio-Formats is written in Java, and is easiest to use with other Java
 code. However, it is possible to call Bio-Formats from a program written
@@ -138,7 +138,7 @@ in another language. But how to do so depends on your program's needs.
 :doc:`Read more.... <loci/bio-formats-interfacing-non-java-code>`
 
 Bio-Formats C++ Bindings
-~~~~~~~~~~~~~~~~~~~~~~~~
+------------------------
 
 To make the utility of the Bio-Formats Java library accessible to
 software written in C++ (such as the Insight Toolkit) we have used the
@@ -158,43 +158,73 @@ Jace set of libraries to create C++ proxies of the Bio-Formats classes.
 Applications
 ============
 
+Many software packages can use Bio-Formats to read and write microscopy
+formats:
+
+
+Libraries and Scripting
+-----------------------
+
 .. toctree::
     :maxdepth: 1
     :titlesonly:
-    :hidden:
 
-    loci/bio-formats-applications
-    loci/bio-formats-bisque
+    loci/bio-formats-command-line-tools
+    loci/bio-formats-farsight
+    loci/bio-formats-i3dcore
+    loci/bio-formats-imglib
+    loci/bio-formats-itk
+    loci/bio-formats-qu-matlab
+    loci/bio-formats-subimager
+
+
+Numerical Data Processing
+-------------------------
+
+.. toctree::
+    :maxdepth: 1
+    :titlesonly:
+
+    loci/bio-formats-idl
+    loci/bio-formats-knime
+    loci/bio-formats-matlab
+    loci/bio-formats-visad
+
+Visualization and analysis
+--------------------------
+
+.. toctree::
+    :maxdepth: 1
+    :titlesonly:
+
     loci/bio-formats-bitplane-imaris
     loci/bio-formats-cellprofiler
-    loci/bio-formats-command-line-tools
     loci/bio-formats-comstat2
     loci/bio-formats-endrov
-    loci/bio-formats-farsight
     loci/bio-formats-fiji
     loci/bio-formats-focalpoint
     loci/bio-formats-graphic-converter
-    loci/bio-formats-idl
-    loci/bio-formats-itk
     loci/bio-formats-icy
     loci/bio-formats-imagej
     loci/bio-formats-upgrading-bio-formats-importer-imagej-latest-trunk-build
-    loci/bio-formats-imglib
     loci/bio-formats-iqm
     loci/bio-formats-jar2lib
-    loci/bio-formats-knime
-    loci/bio-formats-matlab
     loci/bio-formats-mipav
     loci/bio-formats-macnification
-    loci/bio-formats-ome-server
-    loci/bio-formats-omero
-    loci/bio-formats-qu-matlab
-    loci/bio-formats-subimager
     loci/bio-formats-v3d
-    loci/bio-formats-visad
     loci/bio-formats-visbio
     loci/bio-formats-xuvtools
-    loci/bio-formats-i3dcore
+
+Image Servers
+-------------
+
+.. toctree::
+    :maxdepth: 1
+    :titlesonly:
+
+    loci/bio-formats-bisque
+    loci/bio-formats-ome-server
+    loci/bio-formats-omero
 
 SCIFIO
 ======
