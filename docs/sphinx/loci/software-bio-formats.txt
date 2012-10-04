@@ -9,7 +9,7 @@ sciences image file formats. It is capable of parsing both pixels and
 metadata for a large number of formats, as well as writing to several
 formats. See the table below for a complete list (click the headers to
 sort, and format names to see all information). For more information on
-the format ratings, see the `Supported Formats </bio-formats/formats>`_
+the format ratings, see the :ref:`Supported Formats <supportedformats>`
 page.
 
 Purpose
@@ -21,108 +21,27 @@ an open standard called the `OME data model <http://genomebiology.com/2005/6/5/R
 :doc:`Bio-Formats statement of purpose <bio-formats-about>` for a thorough
 explanation and rationale.
 
-For users
----------
-
-Many software packages can use Bio-Formats to read and write microscopy
-formats:
-
-Libraries and scripting
-
-`Command line tools </bio-formats/command-line-tools>`_
-
-`FARSIGHT </bio-formats/farsight>`_
-
-`i3dcore </bio-formats/i3dcore>`_
-
-`ImgLib </bio-formats/imglib>`_
-
-`ITK </bio-formats/itk>`_
-
-
-
-`Qu for MATLAB </bio-formats/qu-matlab>`_
-
-`Subimager </bio-formats/subimager>`_
-
-
-
-Numerical data processing
-
-:doc:`IDL <bio-formats-idl>`
-
-:doc:`KNIME <bio-formats-knime>`
-
-
-
-`MATLAB </bio-formats/matlab>`_
-
-`VisAD </bio-formats/visad>`_
-
-
-
-Visualization and analysis
-
-`Bitplane Imaris </bio-formats/bitplane-imaris>`_
-
-`CellProfiler </bio-formats/cellprofiler>`_
-
-`Comstat2 </bio-formats/comstat2>`_
-
-`Endrov </bio-formats/endrov>`_
-
-`Fiji </bio-formats/fiji>`_
-
-`FocalPoint </bio-formats/focalpoint>`_
-
-`Graphic Converter </bio-formats/graphic-converter>`_
-
-`Icy <bio-formats/icy>`_
-
-`ImageJ </bio-formats/imagej>`_
-
-`Iqm </bio-formats/iqm>`_
-
-`Macnification </bio-formats/macnification>`_
-
-`MIPAV </bio-formats/mipav>`_
-
-`V3D </bio-formats/v3d>`_
-
-`VisBio </bio-formats/visbio>`_
-
-`XuvTools </bio-formats/xuvtools>`_
-
-Image servers
-
-`BISQUE </bio-formats/bisque>`_
-
-`OME server </bio-formats/ome-server>`_
-
-`OMERO </bio-formats/omero>`_
-
 For developers
-~~~~~~~~~~~~~~
+--------------
 
-You can `use Bio-Formats as a
-library </bio-formats/bio-formats-java-library>`_ to easily support
+You can :doc:`use Bio-Formats as a library <bio-formats-bio-formats-java-library>` to easily support
 these formats in your software.
 
 License
-~~~~~~~
+^^^^^^^
 
 Bio-Formats is open source software licensed under the `GNU General
 Public License <http://www.gnu.org/licenses/gpl.html>`_ (GPL).
 Alternately, you can obtain a commercial license for Bio-Formats from
 our commercial partner, `Glencoe
-Software <http://www.glencoesoftware.com/>`_. See the `Bio-Formats
-license page </bio-formats/license>`_ for more information.
+Software <http://www.glencoesoftware.com/>`_. See the
+:doc:`Bio-Formats license page <bio-formats-license>` for more information.
 
 Version history and roadmap
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Bio-Formats is updated whenever a significant bug fix is made, or whenever a
-new version of :omerodoc:`OMERO <>` is released. The version number is three numbers separated by dots; e.g., 4.0.0. See the `what's new <http://dev.loci.wisc.edu/svn/software/trunk/components/bio-formats/doc/whats-new.txt>`_
+new version of :omerodoc:`OMERO <>` is released. The version number is three numbers separated by dots; e.g., 4.0.0. See the :source:`what's new <components/bio-formats/doc/whats-new.txt>`
 list for a history of major changes in each release.
 
 The latest stable version of Bio-Formats is |release|. For future
@@ -132,7 +51,7 @@ and `5.0 <http://trac.openmicroscopy.org.uk/ome/query?group=status&component=Bio
 roadmaps.
 
 Questions
-~~~~~~~~~
+^^^^^^^^^
 
 See the
 `Bio-Formats <http://www.openmicroscopy.org/site/support/faq/bio-formats>`_,
@@ -141,7 +60,7 @@ Formats <http://www.openmicroscopy.org/site/support/faq/file-formats>`_
 and `OME-XML and OME-TIFF <http://www.openmicroscopy.org/site/support/faq/ome-xml-and-ome-tiff>`_
 sections of the `OME
 FAQ <http://www.openmicroscopy.org/site/support/faq>`_ for answers to
-some common questions. Please `contact us </software/mailing-lists>`_ if
+some common questions. Please `contact us <http://loci.wisc.edu/software/mailing-lists>`_ if
 you have any questions or problems with Bio-Formats.
 
 Download
@@ -155,6 +74,8 @@ Download: `loci_tools.jar <http://www.loci.wisc.edu/files/software/loci_tools.ja
 More Information
 
 Source Code: `bioformats.git <https://github.com/openmicroscopy/bioformats>`_
+
+.. _supportedformats:
 
 Supported Formats
 -----------------

@@ -121,8 +121,7 @@ files into ImageJ (see also :doc:`bio-formats-imagej`)
 ``Read_Image``
 
 An ImageJ plugin that uses Bio-Formats to build up an image stack,
-reading image planes one by one (see also `Using Bio-Formats with
-ImageJ <bio-formats/imagej>`_).
+reading image planes one by one (see also :doc:`bio-formats-imagej`).
 
 ``Mass_Importer``
 
@@ -139,7 +138,7 @@ converting files.
 
 Other developer links
 
-`Source Code </bio-formats/source-code>`_
+:doc:`bio-formats-source-code`
 
 How to access the source code from our Git repository
 

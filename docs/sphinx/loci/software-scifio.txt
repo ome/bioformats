@@ -7,7 +7,7 @@ SCientific Imaging Formats Input and Output
 Motivation
 ----------
 
-SCIFIO is a refactoring of `Bio-Formats </software/bio-formats>`_.
+SCIFIO is a refactoring of :doc:`software-bio-formats`.
 Classic Bio-Formats uses
 `OME-XML <http://www.openmicroscopy.org/site/support/file-formats/>`_ to
 model the metadata for a given image, standardizing all supported
@@ -124,8 +124,4 @@ However, there is nothing inherently tied to dimensionality in SCIFIO.
 Thus, SCIFIO will support full N-dimensionality in data and leave any
 restrictions to the dictation of individual modules.
 
-+-----------+-----------------------------------------------------+-------------+
-| Preview   | Attachment                                          | Size        |
-+===========+=====================================================+=============+
-|           | `SCIFIOGrant.pdf <files/loci/SCIFIOGrant_0.pdf>`_   | 969.06 KB   |
-+-----------+-----------------------------------------------------+-------------+
+`SCIFIOGrant.pdf <http://loci.wisc.edu/files/loci/software/SCIFIOGrant.pdf>`_

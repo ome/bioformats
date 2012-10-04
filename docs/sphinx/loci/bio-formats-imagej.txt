@@ -10,7 +10,7 @@ formats it supports.
 Installation
 ------------
 
-`Download **loci\_tools.jar** </bio-formats/downloads>`_ and drop it
+:doc:`Download **loci\_tools.jar** <bio-formats-downloads>` and drop it
 into your **ImageJ/plugins** folder. Next time you run ImageJ, a new
 LOCI submenu with several plugins will appear in the Plugins menu,
 including the Bio-Formats Importer and Bio-Formats Exporter.
@@ -22,7 +22,7 @@ The Bio-Formats Importer plugin can display image stacks in several
 ways:
 
 -  In a standard ImageJ window (including as a hyperstack)
--  Using our `Data Browser </software/data-browser>`_ plugin (included)
+-  Using our `Data Browser <http://loci.wisc.edu/software/data-browser>`_ plugin (included)
 -  With Joachim Walter's
    `Image5D <http://rsb.info.nih.gov/ij/plugins/image5d.html>`_ plugin
    (if installed)
@@ -41,10 +41,10 @@ Fiji wiki.
 Upgrading
 ---------
 
-To upgrade, just overwrite the old **loci\_tools.jar** with the `latest
-one </bio-formats/downloads>`_.
+To upgrade, just overwrite the old **loci\_tools.jar** with the :doc:`latest
+one <bio-formats-downloads>`.
 Step-by-step upgrade instructions for Windows are available
-`here </bio-formats/upgrading-bio-formats-importer-imagej-latest-trunk-build>`_.
+:doc:`here <bio-formats-upgrading-bio-formats-importer-imagej-latest-trunk-build>`.
 You may want to download the latest version of ImageJ first, to take
 advantage of new features and bugfixes.
 As of the 4.0.0 release, you can also upgrade the Bio-Formats plugin
