@@ -313,4 +313,4 @@ C++, .NET
    solution available from `Codemesh, Inc. <http://www.codemesh.com/>`_
 
 Know a great integration solution that we missed? `Let us
-know </software/mailing-lists>`_!
+know <http://loci.wisc.edu/software/mailing-lists>`_!

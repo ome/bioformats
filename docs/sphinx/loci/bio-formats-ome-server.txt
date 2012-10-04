@@ -67,8 +67,8 @@ plans to fix this limitation.
 Upgrading
 ---------
 
-You can upgrade your OME server installation to take advantage of a `new
-Bio-Formats release </bio-formats/downloads>`_ by overwriting the old
+You can upgrade your OME server installation to take advantage of a 
+:doc:`new Bio-Formats release <bio-formats-downloads>` by overwriting the old
 **loci\_tools.jar** with the new one.
 
 Source Code
@@ -79,7 +79,7 @@ three languages, using piped system calls in both directions to
 communicate, with imported pixels written to OMEIS pixels files. The
 relevant source files are:
 
--  `OmeisImporter.java <http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/ome/OmeisImporter.java>`_
+-  :source:`OmeisImporter.java <components/scifio/src/loci/formats/ome/OmeisImporter.java>`
    – omebf Java command line tool
 -  `BioFormats.pm <http://svn.openmicroscopy.org.uk/svn/ome/trunk/src/perl2/OME/ImportEngine/BioFormats.pm>`_
    – Perl module for OME Bio-Formats importer

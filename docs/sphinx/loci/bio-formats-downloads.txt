@@ -17,7 +17,7 @@ Contains everything needed to read images into ImageJ using Bio-Formats.
 
 Trunk build
 
-`|image3| </bio-formats/installing-bio-formats-imagej>`_ Trunk build
+:doc:`|image3| <bio-formats-installing-bio-formats-imagej>` Trunk build
 
 Continuous
 
@@ -25,7 +25,7 @@ Continuous
 
  
 
-`|image4| </bio-formats/installing-bio-formats-imagej>`_ Daily build
+:doc:`|image4| <bio-formats-installing-bio-formats-imagej>` Daily build
 
 Today
 
@@ -33,12 +33,12 @@ Today
 
  
 
-`|image5| </bio-formats/installing-bio-formats-imagej>`_ 4.3.3 (stable
+:doc:`|image5| <bio-formats-installing-bio-formats-imagej>` 4.3.3 (stable
 release)
 
 2011 October 18
 
-`loci\_tools.jar </files/software/loci_tools.jar>`_
+`loci\_tools.jar <http://loci.wisc.edu/files/software/loci_tools.jar>`_
 
 9,778,060
 
@@ -67,7 +67,7 @@ Stable release
 
 2011 October 18
 
-`ome\_tools.jar </files/software/ome_tools.jar>`__
+`ome\_tools.jar <http://loci.wisc.edu/files/software/ome_tools.jar>`__
 
 10,540,859
 
@@ -77,88 +77,19 @@ Stable release
 
 2010 April 26
 
-`bftools.zip </files/software/bftools.zip>`__
+`bftools.zip <http://loci.wisc.edu/files/software/bftools.zip>`__
 
 17,357
-
-Bio-Formats C++ bindings (for use with Bio-Formats 4.2.x)
-
-32-bit Windows (debug)
-
-2011 January 18
-
-`bf-cpp-Win32.zip </files/software/bf-cpp-Win32.zip>`_
-
-12,750,085
-
-64-bit Mac
-
-2011 January 14
-
-`bf-cpp-Mac64.tar.gz </files/software/bf-cpp-Mac64.tar.gz>`_
-
-12,650,015
-
-32-bit Linux
-
-2011 January 14
-
-`bf-cpp-Linux32.tar.gz </files/software/bf-cpp-Linux32.tar.gz>`_
-
-12,691,919
-
-64-bit Linux
-
-2011 January 14
-
-`bf-cpp-Linux64.tar.gz </files/software/bf-cpp-Linux64.tar.gz>`_
-
-13,154,608
-
-Bio-Formats ITK plugin (for use with Bio-Formats 4.2.x and ITK 3.20.0)
-
-32-bit Windows (debug)
-
-2011 January 18
-
-`bf-itk-Win32.zip </files/software/bf-itk-Win32.zip>`_
-
-12,095,921
-
-64-bit Mac
-
-2011 January 14
-
-`bf-itk-Mac64.zip </files/software/bf-itk-Mac64.zip>`_
-
-12,644,198
-
-32-bit Linux
-
-2011 January 14
-
-`bf-itk-Linux32.zip </files/software/bf-itk-Linux32.zip>`_
-
-12,687,487
-
-64-bit Linux
-
-2011 January 14
-
-`bf-itk-Linux64.zip </files/software/bf-itk-Linux64.zip>`_
-
-32,272,850
 
 Bio-Formats examples
 
 Java examples of usage
 
-See the `Bio-Formats as a Java
-library </bio-formats/bio-formats-java-library>`_ page
+See the :doc:`Bio-Formats as a Java library <bio-formats-bio-formats-java-library>` page
 
 Sample ImageJ macros and plugins
 
-See the `ImageJ </bio-formats/imagej>`_ page
+See the :doc:`bio-formats-imagej` page
 
 Please note:
 
@@ -176,7 +107,7 @@ Source code
 -----------
 
 Bio-Formats is an open source project. You can access the source code
-from the `Bio-Formats git repository </bio-formats/source-code>`_.
+from the :doc:`Bio-Formats git repository <bio-formats-source-code>`.
 
 Bio-Formats component builds
 ----------------------------
@@ -199,7 +130,7 @@ Bio-Formats library
 
 `bio-formats.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-daily/lastSuccessfulBuild/artifact/artifacts/bio-formats.jar>`__
 
-`bio-formats.jar </files/software/bio-formats.jar>`_
+`bio-formats.jar <http://loci.wisc.edu/files/software/bio-formats.jar>`_
 
 SCIFIO
 
@@ -215,7 +146,7 @@ LOCI Common
 
 `loci-common.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-daily/lastSuccessfulBuild/artifact/artifacts/loci-common.jar>`__
 
-`loci-common.jar </files/software/loci-common.jar>`__
+`loci-common.jar <http://loci.wisc.edu/files/software/loci-common.jar>`__
 
 OME-XML Java library
 
@@ -223,7 +154,7 @@ OME-XML Java library
 
 `ome-xml.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-daily/lastSuccessfulBuild/artifact/artifacts/ome-xml.jar>`__
 
-`ome-xml.jar </files/software/ome-xml.jar>`__
+`ome-xml.jar <http://loci.wisc.edu/files/software/ome-xml.jar>`__
 
 LOCI Plugins for ImageJ
 
@@ -231,7 +162,7 @@ LOCI Plugins for ImageJ
 
 `loci\_plugins.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-daily/lastSuccessfulBuild/artifact/artifacts/loci_plugins.jar>`__
 
-`loci\_plugins.jar <files/software/loci_plugins.jar>`__
+`loci\_plugins.jar <http://loci.wisc.edu/files/software/loci_plugins.jar>`__
 
 Metakit
 
@@ -239,7 +170,7 @@ Metakit
 
 `metakit.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-daily/lastSuccessfulBuild/artifact/artifacts/metakit.jar>`__
 
-`metakit.jar <files/software/metakit.jar>`__
+`metakit.jar <http://loci.wisc.edu/files/software/metakit.jar>`__
 
 OME I/O
 
@@ -247,7 +178,7 @@ OME I/O
 
 `ome-io.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-daily/lastSuccessfulBuild/artifact/artifacts/ome-io.jar>`__
 
-`ome-io.jar <files/software/ome-io.jar>`__
+`ome-io.jar <http://loci.wisc.edu/files/software/ome-io.jar>`__
 
 OME Plugins for ImageJ
 
@@ -255,7 +186,7 @@ OME Plugins for ImageJ
 
 `ome\_plugins.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-daily/lastSuccessfulBuild/artifact/artifacts/ome_plugins.jar>`__
 
-`ome\_plugins.jar <files/software/ome_plugins.jar>`__
+`ome\_plugins.jar <http://loci.wisc.edu/files/software/ome_plugins.jar>`__
 
 LOCI testing framework
 
@@ -263,7 +194,7 @@ LOCI testing framework
 
 `loci-testing-framework.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-daily/lastSuccessfulBuild/artifact/artifacts/loci-testing-framework.jar>`__
 
-`loci-testing-framework.jar <files/software/loci-testing-framework.jar>`__
+`loci-testing-framework.jar <http://loci.wisc.edu/files/software/loci-testing-framework.jar>`__
 
 Forks
 
@@ -273,7 +204,7 @@ JAI Image I/O Tools
 
 `jai\_imageio.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-daily/lastSuccessfulBuild/artifact/artifacts/jai_imageio.jar>`__
 
-`jai\_imageio.jar <files/software/jai_imageio.jar>`__
+`jai\_imageio.jar <http://loci.wisc.edu/files/software/jai_imageio.jar>`__
 
 MDB Tools (Java port)
 
@@ -281,7 +212,7 @@ MDB Tools (Java port)
 
 `mdbtools-java.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-daily/lastSuccessfulBuild/artifact/artifacts/mdbtools-java.jar>`__
 
-`mdbtools-java.jar <files/software/mdbtools-java.jar>`__
+`mdbtools-java.jar <http://loci.wisc.edu/files/software/mdbtools-java.jar>`__
 
 Apache Jakarta POI
 
@@ -289,7 +220,7 @@ Apache Jakarta POI
 
 `poi-loci.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-daily/lastSuccessfulBuild/artifact/artifacts/poi-loci.jar>`__
 
-`poi-loci.jar <files/software/poi-loci.jar>`__
+`poi-loci.jar <http://loci.wisc.edu/files/software/poi-loci.jar>`__
 
 Stubs
 
@@ -299,7 +230,7 @@ Luratech LuraWave stubs
 
 `lwf-stubs.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-daily/lastSuccessfulBuild/artifact/artifacts/lwf-stubs.jar>`__
 
-`lwf-stubs.jar <files/software/lwf-stubs.jar>`__
+`lwf-stubs.jar <http://loci.wisc.edu/files/software/lwf-stubs.jar>`__
 
 Legacy
 
@@ -309,10 +240,5 @@ OME Metadata Editor
 
 `ome-editor.jar <http://hudson.openmicroscopy.org.uk/job/BIOFORMATS-daily/lastSuccessfulBuild/artifact/artifacts/ome-editor.jar>`__
 
-`ome-editor.jar <files/software/ome-editor.jar>`__
+`ome-editor.jar <http://loci.wisc.edu/files/software/ome-editor.jar>`__
 
-Older releases
---------------
-
-You can download previous releases from the `Bio-Formats
-archive </software/bio-formats/archive>`_.
