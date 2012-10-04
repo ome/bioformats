@@ -15,8 +15,8 @@ if they are available in the file.
 
 The **Bio-Formats Exporter** is a plugin for exporting data to disk. It
 can save to the open `OME-TIFF <http://www.ome-xml.org/wiki/OmeTiff>`_
-file format as well as several movie formats (e.g., QuickTime, AVI) and
-graphics formats (e.g., PNG, JPEG).
+file format, as well as several movie formats (e.g. QuickTime, AVI) and
+graphics formats (e.g. PNG, JPEG).
 
 The **Bio-Formats Remote Importer** is a plugin for importing data from
 a remote URL. It is likely to be less robust than working with files on
@@ -27,12 +27,11 @@ The **Bio-Formats Windowless Importer** is a version of the Bio-Formats
 Importer plugin that runs with the last used settings to avoid any
 additional dialogs beyond the file chooser. If you always use the same
 import settings, you may wish to use the windowless importer to save
-time. (Learn more `here <using-bio-formats-load-images#windowlessly>`_.)
+time (Learn more `here <using-bio-formats-load-images#windowlessly>`_).
 
 The **Bio-Formats Macro Extensions** plugin prints out the set of
-commands that can be used to create macro extensions.  The commands as
-well as the instructions for using them are printed to the ImageJ log
-window.
+commands that can be used to create macro extensions.  The commands and 
+the instructions for using them are printed to the ImageJ log window.
 
 The **Stack Slicer** plugin is a helper plugin used by the Bio-Formats
 Importer. It can also be used to split a stack across channels, focal

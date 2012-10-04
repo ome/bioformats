@@ -175,14 +175,14 @@ using **bio-formats.jar** rather than **loci\_tools.jar**—the latter is
 merely a bundle of **bio-formats.jar** plus all its optional
 dependencies.
 
-The **loci\_tools.jar** bundle is intended as a convenience (e.g., to
+The **loci\_tools.jar** bundle is intended as a convenience (e.g. to
 simplify installation as an ImageJ plugin), but is by no means the only
 solution for developers. We recommend using **bio-formats.jar** as a
 separate entity depending on your needs as a developer.
 
 The bundle is quite large because we have added support for several
-formats that need large helper libraries (e.g., Imaris's HDF-based
-format). However, these additional libraries are optional—Bio-Formats
+formats that need large helper libraries (e.g. Imaris's HDF-based
+format). However, these additional libraries are optional; Bio-Formats
 has been coded using reflection so that it can both compile and run
 without them.
 
