@@ -48,7 +48,7 @@ Notes: Bio-Formats can save image stacks as OME-TIFF.
 
 Commercial applications that support OME-TIFF include:
 
--  `Bitplane Imaris <http://bitplane.com/>`_
+-  `Bitplane Imaris <http://www.bitplane.com/>`_
 -  `SVI Huygens <http://svi.nl/>`_
 
 .. seealso::

@@ -46,7 +46,7 @@ Source Code: `MRC Reader <components/bio-formats/src/loci/formats/in/MRCReader.
 
 Notes: Commercial applications that support MRC include:
 
--  `Bitplane Imaris <http://bitplane.com/>`_
+-  `Bitplane Imaris <http://www.bitplane.com/>`_
 
 .. seealso::
     `MRC on Wikipedia <http://en.wikipedia.org/wiki/MRC_%28file_format%29>`_

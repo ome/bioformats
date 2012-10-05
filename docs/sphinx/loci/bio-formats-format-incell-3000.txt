@@ -15,7 +15,7 @@ Export: |no|
 Supported Metadata Fields: `InCell3000Reader <http://dev.loci.wisc.edu/trac/software/wiki/InCell3000Reader>`_
 
 Sample Datasets: `Broad Bioimage Benchmark
-Collection <http://www.broadinstitute.org/bbbc/sbs_bioimage_cnt.html>`_
+Collection <http://www.broadinstitute.org/bbbc/BBBC013/>`_
 
 We currently have: 
 

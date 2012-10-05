@@ -58,7 +58,7 @@ Java port to read MDB files.
 Commercial applications that support this format include:
 
 -  `SVI Huygens <http://www2.svi.nl/>`_
--  `Bitplane Imaris <http://bitplane.com/>`_
+-  `Bitplane Imaris <http://www.bitplane.com/>`_
 -  `Amira <http://www.amira.com/>`_
 -  `Image-Pro Plus <http://www.mediacy.com/>`_
 

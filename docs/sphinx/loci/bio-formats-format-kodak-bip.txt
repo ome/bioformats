@@ -39,4 +39,4 @@ Additional Information
 Source Code: :source:`KodakReader <components/bio-formats/src/loci/formats/in/KodakReader.java>`
 
 .. seealso::
-    `Information on Image Station systems <http://carestream.com/imageStation.html>`_
+    `Information on Image Station systems <http://carestream.com/PublicContent.aspx?langType=1033&id=448953>`_

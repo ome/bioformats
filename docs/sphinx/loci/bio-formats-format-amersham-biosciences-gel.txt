@@ -16,8 +16,6 @@ Export: |no|
 
 Supported Metadata Fields: `GelReader <http://dev.loci.wisc.edu/trac/software/wiki/GelReader>`_
 
-Sample Datasets: `SampleImages.zip <http://strc.herts.ac.uk/bio/BioArray/gelimages/SampleImages.zip>`_
-
 We currently have: 
 
 -  a GEL specification document (Revision 2, from 2001 Mar 15, in PDF)

@@ -43,7 +43,7 @@ Notes: Other associated extensions include: .tim, .zpo, .csv, .htm, .cfg,
 
 Commercial applications that support this format include:
 
--  `Bitplane Imaris <http://bitplane.com/>`_
+-  `Bitplane Imaris <http://www.bitplane.com/>`_
 -  `Image-Pro Plus <http://www.mediacy.com/>`_
 
 .. seealso::

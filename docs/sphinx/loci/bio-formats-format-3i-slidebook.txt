@@ -58,6 +58,6 @@ OME-TIFF from Slidebook is the best way to ensure that all metadata is
 preserved.
 
 .. seealso::
-    `Slidebook software overview <http://www.intelligent-imaging.com/slidebook/overview.php>`_
+    `Slidebook software overview <https://www.slidebook.com>`_
 
 .. _Intelligent Imaging Innovations: http://www.intelligent-imaging.com/

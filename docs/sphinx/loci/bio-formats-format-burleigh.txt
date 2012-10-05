@@ -3,7 +3,7 @@ Burleigh
 
 Extensions: .img
 
-Owner: `Burleigh <http://www.burleigh.com/>`_
+Owner: Burleigh Instruments
 
 Support
 -------

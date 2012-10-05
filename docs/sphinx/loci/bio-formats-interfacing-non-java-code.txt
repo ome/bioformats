@@ -158,7 +158,8 @@ C/C++
 -  Raw JNI solutions are `time-consuming and
    error-prone <http://codemesh.com/technology.html#jni>`_ to implement.
 -  We have coded `a simple
-   example <https://skyking.microscopy.wisc.edu/trac/java/browser/trunk/components/native/bf-cpp/source/showinfJNI.cpp>`_
+   example
+   <http://github.com/openmicroscopy/bioformats/tree/develop/components/bio-formats/utils/showinfJNI.cpp>`_
    for calling Bio-Formats this way.
 -  We recommend a higher level integration solution such as Jace
    instead.
@@ -258,7 +259,7 @@ Any
 
 -  You can use a sockets API directly to create a custom solution (but
    we don't recommend it).
--  `JVMLink <http://www.loci.wisc.edu/ome/jvmlink.html>`_ was our first
+-  `JVMLink <http://www.loci.wisc.edu/software/jvmlink>`_ was our first
    cut at such a solution, before we realized that we were essentially
    inventing our own middleware.
 -  We recommend using Ice or CORBA instead.
