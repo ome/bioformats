@@ -17,8 +17,7 @@ Follow these steps to install the Bio-Formats plugin for MIPAV:
 #. `Download
    **loci\_tools.jar** <http://www.loci.wisc.edu/bio-formats/downloads>`_
    and drop it into your MIPAV folder.
-#. Download the `plugin source
-   code <http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/utils/mipav/PlugInBioFormatsImporter.java?format=txt>`_
+#. Download the :source:`plugin source code <components/bio-formats/utils/mipav/PlugInBioFormatsImporter.java>`
    into your user ``mipav/plugins`` folder.
 #. From the command line, compile the plugin with:
 
@@ -36,8 +35,7 @@ Follow these steps to install the Bio-Formats plugin for MIPAV:
 #. Run MIPAV and a new "BioFormatsImporter - read image" menu item will
    appear in the Plugins > File submenu.
 
-See the `readme
-file <http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/utils/mipav/readme.txt>`_
+See the :source:`readme file <components/bio-formats/utils/mipav/readme.txt>`
 for more information.
 
 To upgrade, just overwrite the old **loci\_tools.jar** with the `latest
