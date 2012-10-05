@@ -139,6 +139,9 @@ public abstract class FormatReader extends FormatHandler
   /** The number of the current series. */
   protected int coreIndex = 0;
 
+  /** The number of the current series (non flat). */
+  protected int series = 0;
+
   /** Core metadata values. */
   protected CoreMetadata[] core;
 
@@ -226,6 +229,7 @@ public abstract class FormatReader extends FormatHandler
     }
 
     coreIndex = 0;
+    series = 0;
     close();
     currentId = id;
     metadata = new Hashtable<String, Object>();
@@ -814,11 +818,12 @@ public abstract class FormatReader extends FormatHandler
   /* @see IFormatReader#setSeries(int) */
   public void setSeries(int no) {
     coreIndex = seriesToCoreIndex(no);
+    series = no;
   }
 
   /* @see IFormatReader#getSeries() */
   public int getSeries() {
-    return coreIndexToSeries(coreIndex);
+    return series;
   }
 
   /* @see IFormatReader#setGroupFiles(boolean) */
@@ -1103,10 +1108,16 @@ public abstract class FormatReader extends FormatHandler
   public int seriesToCoreIndex(int series)
   {
     if (hasFlattenedResolutions()) {
+      // coreIndex and series are identical
       if (series < 0 || series >= core.length) {
         throw new IllegalArgumentException("Invalid series: " + series);
       }
       return series;
+    }
+
+    // Use corresponding coreIndex
+    if (this.series == series) {
+      return coreIndex;
     }
 
     int index = 0;
@@ -1131,7 +1142,13 @@ public abstract class FormatReader extends FormatHandler
     }
 
     if (hasFlattenedResolutions()) {
+      // coreIndex and series are identical
       return index;
+    }
+
+    // Use corresponding series
+    if (coreIndex == index) {
+      return series;
     }
 
     // Convert from non-flattened coreIndex to flattened series
@@ -1189,6 +1206,7 @@ public abstract class FormatReader extends FormatHandler
       throw new IllegalArgumentException("Invalid series: " + no);
     }
     coreIndex = no;
+    series = coreIndexToSeries(no);
   }
   // -- IFormatHandler API methods --
 

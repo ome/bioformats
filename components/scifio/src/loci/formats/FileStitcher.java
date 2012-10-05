@@ -95,6 +95,9 @@ public class FileStitcher extends ReaderWrapper {
   /** The number of the current series. */
   private int coreIndex;
 
+  /** The number of the current series (non flat). */
+  private int series;
+
   private boolean noStitch;
   private boolean group = true;
 
@@ -527,6 +530,7 @@ public class FileStitcher extends ReaderWrapper {
       lenZ = lenC = lenT = null;
       core = null;
       coreIndex = 0;
+      series = 0;
       store = null;
     }
   }
@@ -542,13 +546,16 @@ public class FileStitcher extends ReaderWrapper {
     FormatTools.assertId(getCurrentFile(), true, 2);
     int n = reader.getSeriesCount();
     if (n > 1 || noStitch) reader.setSeries(no);
-    else coreIndex = no; // No subresolutions
+    else {
+	coreIndex = no;
+	series = no;
+    }
   }
 
   /* @see IFormatReader#getSeries() */
   public int getSeries() {
     FormatTools.assertId(getCurrentFile(), true, 2);
-    return reader.getSeries() > 0 ? reader.getSeries() : coreIndex; // No subresolutions
+    return reader.getSeries() > 0 ? reader.getSeries() : series;
   }
 
   /* @see IFormatReader#seriesToCoreIndex(int) */
@@ -570,7 +577,10 @@ public class FileStitcher extends ReaderWrapper {
     FormatTools.assertId(getCurrentFile(), true, 2);
     int n = reader.getSeriesCount();
     if (n > 1 || noStitch) reader.setCoreIndex(no);
-    else coreIndex = no;
+    else {
+      coreIndex = no;
+      series = no;
+    }
   }
 
   /* @see IFormatReader#getCoreIndex() */
