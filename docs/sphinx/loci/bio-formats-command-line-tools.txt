@@ -16,28 +16,43 @@ and place it in the same folder.
 The zip file contains both Unix scripts and Windows batch files.
 Currently available tools include:
 
--  **showinf** – Prints information about a given image file to the
-   console, and displays the image itself in the Bio-Formats image
-   viewer.
--  **bfview** – Launches the Bio-Formats image viewer, displaying the
-   given file (if any).
--  **ijview** – Displays the given image file in ImageJ using the
-   Bio-Formats Importer plugin (requires ij.jar).
--  **bfconvert** – Converts an image file from one format to another.
-   Bio-Formats must support writing to the output file (determined by
-   extension; see the `supported formats
-   table <http://www.loci.wisc.edu/bio-formats/formats>`_).
--  **formatlist** – Displays a list of supported file formats in HTML,
-   plaintext or XML.
--  **xmlindent** – A simple XML prettifier similer to
-   ``xmllint --format`` but more robust in that it attempts to produce
-   output regardless of syntax errors in the XML.
--  **xmlvalid** – A command-line XML validation tool, useful for
-   checking an OME-XML document for compliance with the OME-XML schema.
--  **omeul** – A command-line client-side import tool for OME.
--  **tiffcomment** – Dumps the comment from the given TIFF file's first
-   IFD entry; useful for examining the OME-XML block in an OME-TIFF
-   file.
+.. glossary::
+
+    showinf
+        Prints information about a given image file to the console, and
+        displays the image itself in the Bio-Formats image viewer.
+
+    bfview
+        Launches the Bio-Formats image viewer, displaying the given file (if
+        any).
+
+    ijview
+        Displays the given image file in ImageJ using the Bio-Formats Importer
+        plugin (requires ij.jar).
+
+    bfconvert
+        Converts an image file from one format to another. Bio-Formats must
+        support writing to the output file (determined by extension; see the
+        :ref:`supportedformats`).
+
+    formatlist
+        Displays a list of supported file formats in HTML, plaintext or XML.
+
+    xmlindent
+        A simple XML prettifier similer to ``xmllint --format`` but more
+        robust in that it attempts to produce output regardless of syntax
+        errors in the XML.
+
+    xmlvalid
+        A command-line XML validation tool, useful for checking an OME-XML
+        document for compliance with the OME-XML schema.
+
+    omeul
+        A command-line client-side import tool for OME.
+
+    tiffcomment
+        Dumps the comment from the given TIFF file's first IFD entry; useful
+        for examining the OME-XML block in an OME-TIFF file.
 
 All scripts require **loci\_tools.jar** in the same directory as the
 command line tools.
