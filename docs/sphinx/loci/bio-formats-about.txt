@@ -6,7 +6,7 @@ microscopy data between different software packages and
 organizations. It achieves this by converting proprietary
 microscopy data into an open standard called the `OME data
 model <http://genomebiology.com/2005/6/5/R47>`_, particularly into the
-`OME-TIFF <http://ome-xml.org/wiki/OmeTiff>`_ file format.
+OME-TIFF_ file format.
 
 We believe the standardization of microscopy metadata to a common
 structure is of vital importance to the community. A brief `article on the
@@ -28,9 +28,8 @@ available today.
 Every file format has a distinct set of metadata, stored differently.
 Bio-Formats processes and converts each format's metadata structures
 into a standard form called the `OME data
-model <http://genomebiology.com/2005/6/5/R47>`_, according to the
-`OME-XML <http://www.openmicroscopy.org/site/support/file-formats/the-ome-xml-file>`_ specification. We have defined an open
-exchange format called `OME-TIFF <http://www.openmicroscopy.org/site/support/file-formats/ome-tiff>`_
+model <http://genomebiology.com/2005/6/5/R47>`_, according to the OME-XML_
+specification. We have defined an open exchange format called OME-TIFF_
 that stores its metadata as OME-XML. Any software package that supports
 OME-TIFF is also compatible with the dozens of formats listed on the
 Bio-Formats page, because Bio-Formats can convert your files
@@ -38,7 +37,7 @@ to OME-TIFF format.
 
 To facilitate support of OME-XML, we have created a `library in
 Java <http://www.openmicroscopy.org/site/support/file-formats/ome-xml-java-library>`_ for reading and writing
-OME-XML metadata.
+OME-XML_ metadata.
 
 There are three types of metadata in Bio-Formats, which we call core
 metadata, original metadata, and OME metadata.
@@ -69,4 +68,3 @@ metadata, original metadata, and OME metadata.
 A draft "Bio-Formats metadata guide" document detailing
 these three kinds of metadata and how the Bio-Formats metadata API
 works is available :source:`here <components/bio-formats/doc/metadata-guide.txt>`.
-

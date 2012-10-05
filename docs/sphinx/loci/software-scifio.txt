@@ -8,13 +8,11 @@ Motivation
 ----------
 
 SCIFIO is a refactoring of :doc:`software-bio-formats`.
-Classic Bio-Formats uses
-`OME-XML <http://www.openmicroscopy.org/site/support/file-formats/>`_ to
-model the metadata for a given image, standardizing all supported
-formats to this schema. This tight integration, along with the naming
-itself of Bio-Formats, discourages potential users from outside the life
-sciences (if their imaging requirements include metadata outside the
-OME-XML specification). Furthermore, the steps of processing image
+Classic Bio-Formats uses OME-XML_ to model the metadata for a given image,
+standardizing all supported formats to this schema. This tight integration,
+along with the naming itself of Bio-Formats, discourages potential users from
+outside the life sciences (if their imaging requirements include metadata
+outside the OME-XML specification). Furthermore, the steps of processing image
 formats are obfuscated by their consolidation into a single "Reader"
 class; this increases the entry barrier for 3rd party developers to add
 support for additional formats. Finally, the GPL licensing of
