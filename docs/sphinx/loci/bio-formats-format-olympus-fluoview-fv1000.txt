@@ -60,11 +60,11 @@ Notes: 
 
 Commercial applications that support this format include:
 
--  `Bitplane Imaris <http://bitplane.com/>`_
+-  `Bitplane Imaris <http://www.bitplane.com/>`_
 -  `SVI Huygens <http://svi.nl/>`_
 
 **Please note that while we have specification documents for this
 format, we are not able to distribute them to third parties.**
 
 .. seealso::
-    `Olympus FluoView Resource Center <http://www.olympusfluoview.com/>`_
+    `Olympus FluoView Resource Center <http://www.olympusfluoview.com>`_

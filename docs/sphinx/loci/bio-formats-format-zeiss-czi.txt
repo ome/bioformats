@@ -11,7 +11,7 @@ SCIFIO: |no|
 
 Export: |no|
 
-Supported Metadata Fields: `ZeissCZIReader <http://dev.loci.wisc.edu/trac/software/wiki/ZeissCZIReader>`_
+Supported Metadata Fields:
 
 Freely Available Software: `Zeiss ZEN 2011 <http://www.zeiss.de/C12567BE0045ACF1/Contents-Frame/A57B6AE510CE8FF1C12578FE002A725D>`_
 

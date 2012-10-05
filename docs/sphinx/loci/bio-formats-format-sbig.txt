@@ -14,7 +14,7 @@ Supported Metadata Fields: `SBIGReader <http://dev.loci.wisc.edu/trac/software/
 
 We currently have: 
 
-- an `official SBIG specification document <http://sbig.com/pdffiles/file.format.pdf>`_
+- an `official SBIG specification document <http://sbig.impulse.net/pdffiles/file.format.pdf>`_
 
 - a few SBIG files
 

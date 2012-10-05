@@ -12,7 +12,7 @@ version of the Bio-Formats libraries and demonstrating a general file
 structure for projects to be wrapped.
 
 The cpp-wrap project, used in
-`Wiscscan, <http://dev.loci.wisc.edu/trac/software/browser/trunk/projects/wiscscan-java>`_
+`Wiscscan, <http://dev.loci.wisc.edu/trac/internal/browser/trunk/WiscScan>`_
 also provides a practical demonstration for Jar2Lib.  Cpp-wrap takes
 advantage of the Maven plug-in infrastructure to grant users the ability
 to easy convert a Java library to C++ using Jar2Lib, without requiring

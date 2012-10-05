@@ -48,7 +48,7 @@ LGPL
 
 For Olympus CellR and Zeiss LSM metadata (mdb)
 
-`JAI Image I/O Tools <https://jai-imageio.dev.java.net/>`_ pure Java
+`JAI Image I/O Tools <http://java.net/projects/jai-imageio>`_ pure Java
 implementation, LOCI fork
 
  
@@ -157,10 +157,6 @@ How to add support for a new file format
 `Trac tickets <http://trac.openmicroscopy.org.uk/ome/query?status=assigned&status=new&status=reopened&component=Bio-Formats>`_
 
 A list of outstanding bugs
-
-`Trac browser <http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/bio-formats/src/loci/formats/>`_
-
-Browse the source code and project history online
 
 `GitHub <https://github.com/openmicroscopy/bioformats/>`_
 

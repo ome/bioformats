@@ -63,7 +63,7 @@ Notes: Bio-Formats uses a modified version of the `Apache Jakarta
 POI <http://jakarta.apache.org/poi/>`_ library to read ZVI files.
 
 Commercial applications that support ZVI include `Bitplane
-Imaris <http://bitplane.com/>`_.
+Imaris <http://www.bitplane.com/>`_.
 
 **Please note that while we have specification documents for this
 format, we are not able to distribute them to third parties.**
