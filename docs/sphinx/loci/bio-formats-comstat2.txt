@@ -9,7 +9,5 @@ Comstat2 uses the :doc:`Bio-Formats Importer plugin for
 ImageJ <bio-formats-imagej>` to read files in TIFF and Leica LIF
 formats.
 
-See Also
-
-`Comstat2 - a modern 3D image analysis environment for
-biofilms <http://www2.imm.dtu.dk/pubdb/views/publication_details.php?id=5628>`_
+.. seealso::
+    `Comstat2 - a modern 3D image analysis environment for biofilms <http://www2.imm.dtu.dk/pubdb/views/publication_details.php?id=5628>`_

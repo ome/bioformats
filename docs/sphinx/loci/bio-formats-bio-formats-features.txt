@@ -6,9 +6,10 @@ following features:
 
 The **Bio-Formats Importer** is a plugin for :doc:`loading
 images <bio-formats-using-bio-formats-load-images>` into ImageJ or
-FIJI. It can open dozens of proprietary life sciences formats and
-standardizes their acquisition metadata into a common :doc:`OME data model <bio-formats-about>`. It will also extract and set basic metadata
-values such as `spatial
+FIJI. It can over 100 of proprietary life sciences formats and
+standardizes their acquisition metadata into the common
+:doc:`OME data model <bio-formats-about>`. It will also extract and set basic 
+metadata values such as `spatial
 calibration <http://pacific.mpi-cbg.de/wiki/index.php/SpatialCalibration>`_
 if they are available in the file.
 

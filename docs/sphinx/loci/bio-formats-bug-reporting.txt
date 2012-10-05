@@ -26,7 +26,7 @@ information:
 -  **Exact error message**. Copy and paste any error messages into the
    text of your email. Alternatively, attach a screenshot of the
    relevant windows.
--  **Version information**. Indicate which release of Bio-Formats, what
+-  **Version information**. Indicate which release of Bio-Formats, which
    operating system, and which version of Java you are using.
 -  **Non-working data**. If possible, please send a non-working file.
    This helps us ensure that the problem is fixed for next release and

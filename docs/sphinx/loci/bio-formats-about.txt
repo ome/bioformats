@@ -15,8 +15,8 @@ standardization <http://www.thinkstandards.net/benefits.html>`_ from
 `thinkstandards.net <http://www.thinkstandards.net/>`_ provides an
 excellent summary. 
 
-How Bio-formats processes metadata
-----------------------------------
+Bio-formats metadata processing
+-------------------------------
 
 Pixels in microscopy are almost always very straightforward, stored on
 evenly spaced rectangular grids. It is the metadata (details about the
