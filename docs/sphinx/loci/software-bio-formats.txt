@@ -16,8 +16,8 @@ Purpose
 -------
 
 Bio-Formats's primary purpose is to convert proprietary microscopy data into 
-an open standard called the `OME data model <http://genomebiology.com/2005/6/5/R47>`_, particularly into the
-`OME-TIFF <http://ome-xml.org/wiki/OmeTiff>`_ file format. See the
+an open standard called the `OME data model <http://genomebiology.com/2005/6/5/R47>`_, particularly into the OME-TIFF_ 
+file format. See the
 :doc:`Bio-Formats statement of purpose <bio-formats-about>` for a thorough
 explanation and rationale.
 
