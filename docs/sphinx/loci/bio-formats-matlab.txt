@@ -9,7 +9,7 @@ Calling Bio-Formats from MATLAB is fairly straightforward, since MATLAB
 has built-in interoperability with Java. We have created a simple script
 for reading image files:
 
-    :source:`bfopen.m <components/bio-formats/utils/bfopen.m>`
+    :source:`bfopen.m <components/bio-formats/matlab/bfopen.m>`
 
 We are not MATLAB experts—any comments on improving the script are
 welcome.
