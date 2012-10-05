@@ -27,6 +27,5 @@ the bundled **loci\_tools.jar** with a newer version.
    -  Contents/Resources/bioformats/loci\_tools.jar
    -  Contents/Resources/lib/python2.5/bioformats/loci\_tools.jar
 
-See Also
-
-`CellProfiler web site <http://www.cellprofiler.org/>`_
+.. seealso::
+    `CellProfiler web site <http://www.cellprofiler.org/>`_

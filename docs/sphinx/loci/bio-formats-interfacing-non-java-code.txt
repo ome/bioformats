@@ -24,12 +24,11 @@ internal Java Virtual Machine (JVM) and passing data across a bridge, or
 otherwise executing the Java code within a single environment.
 
 Strengths
-
-Weaknesses
-
 #. Tight (API-level) integration
 #. Minimal performance overhead
 #. Few security considerations
+
+Weaknesses
 
 #. No shared state between processes
 #. Limited portability
@@ -81,13 +80,12 @@ this category are some form of
 
 Strengths
 
-Weaknesses
-
 #. Share state between multiple processes on multiple machines
 #. Broad portability and language support
 
-#. `Object
-   marshalling <http://en.wikipedia.org/wiki/Marshalling_%28computer_science%29>`_
+Weaknesses
+
+#. `Object marshalling <http://en.wikipedia.org/wiki/Marshalling_%28computer_science%29>`_
    incurs significant overhead
 #. Potentially vulnerable to security exploits
 

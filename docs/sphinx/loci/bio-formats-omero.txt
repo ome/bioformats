@@ -5,8 +5,7 @@ OMERO
 Java-based server-client application for microscope image data
 management, visualization, and analysis. See the `OMERO
 documentation <http://www.openmicroscopy.org/site/support/omero4>`_ for
-details. The
-`OMERO.importer <http://trac.openmicroscopy.org.uk/omero/wiki/OmeroImporter>`_
+details. The :omerodoc:`OMERO.importer <users/clients-overview.html#omero-importer>`
 client uses Bio-Formats to read image pixels and propagate metadata into
 the OMERO.server system.
 
