@@ -812,6 +812,9 @@ public abstract class FormatReader extends FormatHandler
   /* @see IFormatReader#getSeriesCount() */
   public int getSeriesCount() {
     FormatTools.assertId(currentId, true, 1);
+    if (hasFlattenedResolutions()) {
+      return core.length;
+    }
     return coreIndexToSeries(core.length - 1) + 1;
   }
 
@@ -1159,6 +1162,8 @@ public abstract class FormatReader extends FormatHandler
 	  if (index < nextSeries)
 	      break;
 	  i = nextSeries;
+      } else {
+	throw new IllegalArgumentException("Invalid coreIndex (null core["+i+"]: " + index);
       }
       series++;
     }
