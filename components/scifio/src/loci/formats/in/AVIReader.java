@@ -392,6 +392,14 @@ public class AVIReader extends FormatReader {
     options.width = getSizeX();
     options.height = getSizeY();
     options.previousImage = (lastImageNo == no - 1) ? lastImage : null;
+
+    if (options.previousImage == null) {
+      while (lastImageNo < no - 1) {
+        openBytes(lastImageNo + 1, buf);
+      }
+      options.previousImage = lastImage;
+    }
+
     options.bitsPerSample = bmpBitsPerPixel;
     options.interleaved = isInterleaved();
     options.littleEndian = isLittleEndian();
