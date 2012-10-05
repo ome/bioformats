@@ -196,15 +196,11 @@ pure white.  The other values will be adjusted too to help show contrast
 between values that were too insignificant to see before.
 
 Here is one image Bio-Formats imported with and without using Autoscale:
- 
-=================== ================
-|without_autoscale| |with_autoscale|
-=================== ================
 
-.. |without_autoscale| image:: /images/without_autoscale.jpg
+.. image:: /images/without_autoscale.jpg
     :alt: Without autoscale
 
-.. |with_autoscale| image:: /images/with_autoscale.jpg
+.. image:: /images/with_autoscale.jpg
     :alt: With autoscale
 
 Autoscale readjusts the image based on the highest value in the entire
