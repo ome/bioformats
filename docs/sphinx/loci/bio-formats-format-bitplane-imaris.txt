@@ -74,4 +74,4 @@ There are three distinct Imaris formats:
 format, we are not able to distribute them to third parties.**
 
 .. seealso::
-    `Imaris Software Overview <http://www.bitplane.com/products/imaris/imaris_product.shtml>`_
+    `Imaris Software Overview <http://www.bitplane.com/go/products/imaris>`_

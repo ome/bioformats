@@ -14,9 +14,9 @@ Export: |no|
 
 Supported Metadata Fields: `MNG Reader <http://dev.loci.wisc.edu/trac/software/wiki/MNGReader>`_
 
-Freely Available Software: `libmng (MNG reference library) <http://www.libmng.com/>`_
+Freely Available Software: `libmng (MNG reference library) <http://sourceforge.net/projects/libmng/>`_
 
-Sample Datasets: `MNG sample files <http://libmng.com/MNGsuite/index.html>`_
+Sample Datasets: `MNG sample files <http://sourceforge.net/projects/libmng/files/libmng-testsuites/MNGsuite-1.0/MNGsuite.zip/download>`_
 
 We currently have: 
 

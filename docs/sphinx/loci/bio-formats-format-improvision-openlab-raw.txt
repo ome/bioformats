@@ -19,7 +19,8 @@ Supported Metadata Fields: `Openlab Raw Reader <http://dev.loci.wisc.edu/trac/s
 We currently have: 
 
 -  An `Openlab Raw specification
-   document <http://www.improvision.com/support/tech_notes/detail.php?id=344>`_
+   document
+   <http://cellularimaging.perkinelmer.com/support/technical_notes/detail.php?id=344>`_
    (from 2004 Nov 09, in HTML)
 -  A few Openlab Raw datasets
 

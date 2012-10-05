@@ -47,5 +47,5 @@ OME-XML files.
 
 Commercial applications that support OME-XML include:
 
--  `Bitplane Imaris <http://bitplane.com/>`_
+-  `Bitplane Imaris <http://www.bitplane.com/>`_
 -  `SVI Huygens <http://svi.nl/>`_

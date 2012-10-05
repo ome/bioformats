@@ -6,4 +6,4 @@ for opening, editing, and organizing photos.  Versions 6.4.1 and later
 use Bio-Formats to open all file formats supported by Bio-Formats.
 
 .. seealso::
-    `Free demo download <http://www.lemkesoft.com/public/content/index._cGlkPTg4_.html>`_
+    `Free demo download <http://www.lemkesoft.com/xd/public/content/index._cGlkPTM0NA_.html>`_

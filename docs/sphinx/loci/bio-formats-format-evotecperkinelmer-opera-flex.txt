@@ -3,7 +3,7 @@ Evotec/PerkinElmer Opera Flex
 
 Extensions: .flex
 
-Developer: `Evotec Technologies <http://www.evotec-technologies.com/>`_
+Developer: `Evotec Technologies, now PerkinElmer <http://www.perkinelmer.com/>`_
 
 Support
 -------

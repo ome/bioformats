@@ -28,7 +28,7 @@ Sample Datasets: `Medical Image Samples from Sebastien Barre's Medical Imaging
 page <http://www.barre.nom.fr/medical/samples/>`_
 
 Sample Datasets: `DICOM sample image sets from OsiriX web
-site <http://pubimage.hcuge.ch:8080/>`_
+site <http://osirix-viewer.com/datasets/>`_
 
 We currently have: 
 

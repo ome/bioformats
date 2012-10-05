@@ -17,7 +17,7 @@ SCIFIO: |no|
 
 Export: |no|
 
-Supported Metadata Fields: `IMODReader <http://dev.loci.wisc.edu/trac/software/wiki/IMODReader>`_
+Supported Metadata Fields:
 
 Freely Available Software: `IMOD <http://bio3d.colorado.edu/imod/>`_
 

@@ -56,5 +56,5 @@ Notes: 
 
 Commercial applications that can support ICS include:
 
--  `Bitplane Imaris <http://bitplane.com/>`_
+-  `Bitplane Imaris <http://www.bitplane.com/>`_
 -  `SVI Huygens <http://svi.nl/>`_

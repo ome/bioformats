@@ -22,8 +22,6 @@ ImageJ <http://rsb.info.nih.gov/ij/plugins/agr.html>`_
 Freely Available Software: `GIF Stack Writer plugin for
 ImageJ <http://rsb.info.nih.gov/ij/plugins/gif-stack-writer.html>`_
 
-Sample Datasets: `GIF Animations <http://www.gifanimations.com/>`_
-
 We currently have: 
 
 -  A `GIF specification

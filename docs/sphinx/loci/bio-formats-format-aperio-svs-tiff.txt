@@ -46,4 +46,4 @@ Notes: 
 format, we are not able to distribute them to third parties.**
 
 .. seealso::
-    `Aperio SVS Reader <http://www.aperio.com/software/ImageScopeInstaller.exe>`_
+    `Aperio ImageScope <http://www.aperio.com/#imagescope-request>`_
