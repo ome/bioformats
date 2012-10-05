@@ -17,7 +17,7 @@ Export: |yes|
 Supported Metadata Fields: `TIFF Reader <http://dev.loci.wisc.edu/trac/software/wiki/TiffReader>`_
 
 Sample Datasets: `LZW TIFF data
-gallery <http://marlin.life.utsa.edu/Data%20Gallery.html>`_
+gallery <http://marlin.life.utsa.edu/Data_Gallery.html>`_
 
 Sample Datasets: `Big TIFF <http://tiffcentral.com/>`_
 
@@ -63,6 +63,6 @@ Notes: 
 -  Bio-Formats can save image stacks as TIFF or BigTIFF.
 
 .. seealso::
-    `TIFF technical overview <http://home.earthlink.net/%7Eritter/tiff/>`_
+    `TIFF technical overview <http://www.awaresystems.be/imaging/tiff/faq.html#q3>`_
 
     `BigTIFF technical overview <http://www.awaresystems.be/imaging/tiff/bigtiff.html>`_

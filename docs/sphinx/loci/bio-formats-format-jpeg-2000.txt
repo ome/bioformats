@@ -14,7 +14,7 @@ Export: |yes|
 
 Supported Metadata Fields: `JPEG2000Reader <http://dev.loci.wisc.edu/trac/software/wiki/JPEG2000Reader>`_
 
-Freely Available Software: `JJ2000 (JPEG2000 library for Java) <http://jj2000.epfl.ch/>`_
+Freely Available Software: `JJ2000 (JPEG2000 library for Java) <http://code.google.com/p/jj2000/>`_
 
 We currently have: 
 
@@ -46,6 +46,6 @@ Source Code: :source:`JPEG2000Writer <components/scifio/src/loci/formats/out/JP
 Notes: 
 
 -  Bio-Formats uses the `JAI Image I/O
-   Tools <https://jai-imageio.dev.java.net/>`_ library to read JP2
+   Tools <https://java.net/projects/jai-imageio>`_ library to read JP2
    files.
 -  JPEG stands for "Joint Photographic Experts Group."

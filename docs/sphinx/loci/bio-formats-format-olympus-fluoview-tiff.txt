@@ -43,7 +43,7 @@ Source Code: :source:`FluoView Reader <components/bio-formats/src/loci/formats/
 
 Notes: Commercial applications that support this format include:
 
--  `Bitplane Imaris <http://bitplane.com/>`_
+-  `Bitplane Imaris <http://www.bitplane.com/>`_
 -  `SVI Huygens <http://svi.nl/>`_
 
 **Please note that while we have specification documents for this

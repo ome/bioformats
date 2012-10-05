@@ -14,7 +14,7 @@ Export: |no|
 
 Supported Metadata Fields: `ImagicReader <http://dev.loci.wisc.edu/trac/software/wiki/ImagicReader>`_
 
-Freely Available Software: `em2em <http://www.imagescience.de/em2em/index.htm>`_
+Freely Available Software: `em2em <http://www.imagescience.de/em2em.html>`_
 
 We currently have: 
 
@@ -44,4 +44,4 @@ Additional Information
 Source Code: :source:`ImagicReader <components/bio-formats/src/loci/formats/in/ImagicReader.java>`
 
 .. seealso::
-    `IMAGIC specification <http://www.imagescience.de/formats/index.htm>`_
+    `IMAGIC specification <http://www.imagescience.de/em2em.html>`_

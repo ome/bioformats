@@ -271,7 +271,8 @@ Some of the more useful pieces of documentation are:
 
 -  :jenkins:`Javadocs <job/BIOFORMATS-trunk/javadoc/>`
 -  `More thorough examples of exporting images and
-   metadata <http://git.openmicroscopy.org/?p=bioformats.git;a=tree;f=components/bio-formats/doc/export;hb=HEAD>`_
+   metadata
+   <http://github.com/openmicroscopy/bioformats/tree/develop/components/bio-formats/doc/export>`_
 
 
 ************

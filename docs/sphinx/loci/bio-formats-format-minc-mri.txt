@@ -3,7 +3,7 @@ MINC MRI
 
 Extensions: .mnc
 
-Developer: `Harvard University <http://www.nmr.mgh.harvard.edu/%7Erhoge/minc/>`_
+Developer: `McGill University <http://www.bic.mni.mcgill.ca/ServicesSoftware/MINC>`_
 
 Support
 -------
@@ -14,7 +14,7 @@ Export: |no|
 
 Supported Metadata Fields: `MINC Reader <http://dev.loci.wisc.edu/trac/software/wiki/MINCReader>`_
 
-Freely Available Software: `MINC <http://www.nmr.mgh.harvard.edu/%7Erhoge/minc/>`_
+Freely Available Software: `MINC <http://www.bic.mni.mcgill.ca/ServicesSoftware/MINC>`_
 
 We currently have: 
 

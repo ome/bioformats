@@ -12,7 +12,7 @@ SCIFIO: |no|
 
 Export: |no|
 
-Supported Metadata Fields: `UnisokuReader <http://dev.loci.wisc.edu/trac/software/wiki/UnisokuReader.java>`_
+Supported Metadata Fields: `UnisokuReader <http://dev.loci.wisc.edu/trac/software/wiki/UnisokuReader>`_
 
 We currently have: 
 

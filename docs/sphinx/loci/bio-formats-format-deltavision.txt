@@ -16,7 +16,8 @@ Supported Metadata Fields: `DeltaVision Reader <http://dev.loci.wisc.edu/trac/s
 
 Freely Available Software: `DeltaVision Opener plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/track/delta.html>`_
 
-Sample Datasets: `Applied Vision Datasets <http://downloads.apllc.com/repository/sampleimages.zip>`_
+Sample Datasets: `Applied Vision Datasets
+<http://www.api.com/downloads/software/softworxexplorer2.0/SampleImages.zip>`_
 
 We currently have: 
 
@@ -46,7 +47,7 @@ file format.
 
 Commercial applications that support DeltaVision include:
 
--  `Bitplane Imaris <http://bitplane.com/>`_
+-  `Bitplane Imaris <http://www.bitplane.com/>`_
 -  `SVI Huygens <http://svi.nl/>`_
 -  `Image-Pro Plus <http://www.mediacy.com/>`_
 
@@ -54,4 +55,4 @@ Commercial applications that support DeltaVision include:
 format, we are not able to distribute them to third parties.**
 
 .. seealso::
-    `DeltaVision system description <http://www.api.com/lifescience/DeltaVision.html>`_
+    `DeltaVision system description <http://api.com/deltavision.asp>`_

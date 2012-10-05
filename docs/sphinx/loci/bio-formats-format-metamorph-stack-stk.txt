@@ -39,7 +39,7 @@ Source Code: :source:`Metamorph Reader <components/bio-formats/src/loci/formats
 
 Notes: Commercial applications that support STK include:
 
--  `Bitplane Imaris <http://bitplane.com/>`_
+-  `Bitplane Imaris <http://www.bitplane.com/>`_
 -  `SVI Huygens <http://svi.nl/>`_
 -  `DIMIN <http://dimin.net/>`_
 
@@ -47,4 +47,4 @@ Notes: Commercial applications that support STK include:
 format, we are not able to distribute them to third parties.**
 
 .. seealso::
-    `Metamorph imaging system overview <http://metamorph.com/>`_
+    `Metamorph imaging system overview <http://www.metamorph.com/>`_

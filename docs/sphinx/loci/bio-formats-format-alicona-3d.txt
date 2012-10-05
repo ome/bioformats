@@ -20,7 +20,8 @@ Reader <http://dev.loci.wisc.edu/trac/software/wiki/AliconaReader>`_
 We currently have: 
 
 -  an `AL3D specification
-   document <http://www.alicona.com/upload/pdf/AL3DFormat.pdf>`_ (v1.0,
+   document
+   <http://www.alicona.com/home/fileadmin/alicona/downloads/AL3DFormat.pdf>`_ (v1.0,
    from 2003, in PDF)
 -  only one AL3D dataset
 

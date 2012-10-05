@@ -49,7 +49,7 @@ Notes: 
 
 Commercial applications that support LEI include:
 
--  `Bitplane Imaris <http://bitplane.com/>`_
+-  `Bitplane Imaris <http://www.bitplane.com/>`_
 -  `SVI Huygens <http://svi.nl/>`_
 -  `Image-Pro Plus <http://www.mediacy.com/>`_
 
