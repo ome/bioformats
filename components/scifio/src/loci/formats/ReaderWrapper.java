@@ -37,6 +37,7 @@
 package loci.formats;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Hashtable;
 import java.util.Set;
@@ -428,7 +429,7 @@ public abstract class ReaderWrapper implements IFormatReader {
 
     // NB: Be sure all CoreMetadata values are returned correctly,
     // regardless of any method overrides.
-    return copyCoreMetadata(this);
+    return copyCoreMetadata(CoreMetadata.class, this);
   }
 
   public void setMetadataFiltered(boolean filter) {
@@ -600,8 +601,9 @@ public abstract class ReaderWrapper implements IFormatReader {
 
   // -- Helper methods --
 
-  /** Creates a copy of the core metadata matching to the given reader state. */
-  protected CoreMetadata[] copyCoreMetadata(IFormatReader r) {
+  /** Creates a copy of the core metadata instantiated using the provided CoreMetadata type, 
+   * matching the state of the given reader. */
+  protected <T extends CoreMetadata> T[] copyCoreMetadata(Class<T> c, IFormatReader r) {
     int count = 0;
     int currentSeries = r.getSeries();
 
@@ -612,9 +614,22 @@ public abstract class ReaderWrapper implements IFormatReader {
 
     r.setSeries(currentSeries);
 
-    CoreMetadata[] core = new CoreMetadata[count];
+    @SuppressWarnings("unchecked")
+    T[] core = (T[])Array.newInstance(c, count);
+    
     for (int s=0; s<core.length; s++) {
-      core[s] = new CoreMetadata(r, s);
+      T meta = null;
+      
+      try {
+        meta = c.newInstance();
+      } catch (InstantiationException e) {
+        throw new IllegalArgumentException("Failed to create metadata:\n" + e);
+      } catch (IllegalAccessException e) {
+        throw new IllegalArgumentException("Failed to create metadata:\n" + e);
+      }
+      
+      meta.copy(r, s);
+      core[s] = meta;
     }
     return core;
   }
