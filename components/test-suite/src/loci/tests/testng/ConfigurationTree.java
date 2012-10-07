@@ -97,6 +97,7 @@ public class ConfigurationTree {
 
     IniParser parser = new IniParser();
     parser.setCommentDelimiter(null);
+    parser.setBackslashContinuesLine(false);
     FileInputStream stream = new FileInputStream(configFile);
     IniList iniList = parser.parseINI(new BufferedReader(
       new InputStreamReader(stream, Constants.ENCODING)));
