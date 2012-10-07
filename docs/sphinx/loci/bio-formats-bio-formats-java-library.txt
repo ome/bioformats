@@ -2,14 +2,14 @@ Bio-Formats as a Java Library
 =============================
 
 If you wish to make use of Bio-Formats within your own software, you can
-`download bio-formats.jar <http://www.loci.wisc.edu/bio-formats/downloads>`_
+:doc:`download bio-formats.jar <bio-formats-downloads>`_
 to use it as a library. Just add **bio-formats.jar** to your CLASSPATH or
 build path. You will also need **loci-common.jar** for common I/O
 functions, **ome-xml.jar** for metadata standardization, and
-**`SLF4J <http://slf4j.org/>`_** for logging. 
+`**SLF4J** <http://slf4j.org/>`_ for logging. 
 
 Beyond **bio-formats.jar**, **loci-common.jar**, **ome-xml.jar**, and
-**`SLF4J <http://slf4j.org/>`_**, no additional libraries are required.
+`**SLF4J** <http://slf4j.org/>`_, no additional libraries are required.
 However, there are certain packages that if present will be utilized to
 provide additional functionality. To include one, just place it in the
 same folder.
