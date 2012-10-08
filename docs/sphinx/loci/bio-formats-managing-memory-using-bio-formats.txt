@@ -1,19 +1,17 @@
 Managing Memory Using Bio-Formats
 =================================
 
-When you are dealing with a large stack of images, you may receive a
+When dealing with a large stack of images, you may receive a
 warning like this:
 
 .. image:: /images/memory_warning.jpg
    :align: center
    :alt: Memory warning
 
-You will see a message like this when the allotted memory is less than
-what Bio-Formats needs to load all the images.  If you have a very large
-data set, you may have to
+This means the allotted memory is less than what Bio-Formats needs to 
+load all the images.  If you have a very large data set, you may have to
 
  
-
 -  View your stack with Data Browser
 -  Crop the view area
 -  Open only a subset of images
@@ -22,11 +20,11 @@ data set, you may have to
 
  
 
-If your files contain JPG or JPG-2000 images, you may see this memory
+If your files contain JPEG or JPEG-2000 images, you may see this memory
 warning even if your file size is smaller than the amount of allocated
-memory.  This is because compressed images like JPG need to be
+memory.  This is because compressed images like JPEG need to be
 decompressed into memory before being displayed and require more memory
-than what their file size suggests.  If you are having this issue, try
+than their file size suggests.  If you are having this issue, try
 utilizing one of the memory management tools below.
 
  
@@ -55,12 +53,11 @@ can read more about it on LOCI’s
 Cropping the view area
 ~~~~~~~~~~~~~~~~~~~~~~
 
-**Crop on Import**\ is useful if your images are very large and are
-interested only in one specific section of the stack you’re importing. 
+**Crop on Import** is useful if your images are very large and you are
+only interested in one specific section of the stack you’re importing. 
 If you select this feature, you will see a screen where you can enter
 the height and width (in pixels) of the part of image you want to see.
-Note that these measurements are measured from the top, left corner of
-the image.
+Note that these measurements are from the top left corner of the image.
 
 Opening only a subset of images
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

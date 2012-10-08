@@ -19,14 +19,13 @@ Warning: you will find links for downloading pre-built versions of both
 FARSIGHT and the BF-ITK plugin below. However, currently these have not
 been shown to work together on any operating system. 
 
-In summary, if you would like to use the Bio-Formats plugin with a
-FARSIGHT module, you will need to build the FARSIGHT module from source
-and should be using a Linux or Mac-based computer.
+In summary, to use the Bio-Formats plugin with a FARSIGHT module, you will 
+need to build the FARSIGHT module from source and should be using a Linux or 
+Mac-based computer.
 
-If you would like to use FARSIGHT and BF-ITK together, there are several
-tutorials you could use as a starting point that will guide you through
-the process of downloading and building the soruce code for these
-projects:
+To use FARSIGHT and BF-ITK together, there are several tutorials that will 
+guide you through the process of downloading and building the source code for 
+these projects:
 
 -  `This
    tutorial <http://www.farsight-toolkit.org/wiki/FARSIGHT_HowToBuild>`_
