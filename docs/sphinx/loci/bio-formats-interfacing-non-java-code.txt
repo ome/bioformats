@@ -173,7 +173,7 @@ C/C++
 -  The C++ proxy classes use JNI under the hood but handle most of the
    usual JNI pitfalls.
 -  We provide a set of :doc:`Bio-Formats C++
-   bindings <bio-formats-bio-formats-c-bindings>`_ using
+   bindings <bio-formats-bio-formats-c-bindings>` using
    Jace.
 
 `JunC++ion <http://codemesh.com/products/junction/>`_
