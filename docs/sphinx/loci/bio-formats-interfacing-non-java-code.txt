@@ -18,10 +18,9 @@ Recommended **inter-process solution**: `Bio-Formats Ice bindings <http://www.lo
 In-process approaches
 ---------------------
 
-With an `in-process <http://codemesh.com/in_process.html>`_ approach,
-your application directly invokes Java code, either by spawning its own
-internal Java Virtual Machine (JVM) and passing data across a bridge, or
-otherwise executing the Java code within a single environment.
+With an in-process approach, your application directly invokes Java code,
+either by spawning its own internal Java Virtual Machine (JVM) and passing data
+across a bridge, or otherwise executing the Java code within a single environment.
 
 Strengths
 #. Tight (API-level) integration
