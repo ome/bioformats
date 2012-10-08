@@ -44,7 +44,7 @@ requires you to upgrade and reproduce it, why not just use the trunk
 build to begin with?
 
 Once you decide which version you need, go to the Bio-Formats :doc:`download
-page <bio-formats-downloads>`_ and save the
+page <bio-formats-downloads>` and save the
 appropriate loci\_tools.jar to the Plugins directory within ImageJ.
 
 .. figure:: /images/PluginDirectory.png

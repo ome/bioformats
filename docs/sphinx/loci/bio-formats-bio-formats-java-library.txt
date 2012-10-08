@@ -2,7 +2,7 @@ Bio-Formats as a Java Library
 =============================
 
 If you wish to make use of Bio-Formats within your own software, you can
-:doc:`download bio-formats.jar <bio-formats-downloads>`_
+:doc:`download bio-formats.jar <bio-formats-downloads>`
 to use it as a library. Just add **bio-formats.jar** to your CLASSPATH or
 build path. You will also need **loci-common.jar** for common I/O
 functions, **ome-xml.jar** for metadata standardization, and
