@@ -1,0 +1,45 @@
+Hamamatsu HIS
+=============
+
+Extensions: .his
+
+Owner: `Hamamatsu <http://www.hamamatsu.com>`_
+
+Support
+-------
+
+SCIFIO: |no|
+
+Export: |no|
+
+Supported Metadata Fields: `HISReader <http://dev.loci.wisc.edu/trac/software/wiki/HISReader>`_
+
+We currently have: 
+
+- Pascal code that can read HIS files (from ImageSXM)
+
+- several HIS files
+
+We'd like to have: 
+
+- an HIS specification
+
+- more HIS files
+
+Ratings
+-------
+
+Pixels: |Good|
+
+Metadata: |Fair|
+
+Openness: |Fair|
+
+Presence: |Fair|
+
+Utility: |Fair|
+
+Additional Information
+----------------------
+
+Source Code: :source:`HISReader <components/bio-formats/src/loci/formats/in/HISReader.java>`

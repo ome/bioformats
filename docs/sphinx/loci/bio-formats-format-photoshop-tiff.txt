@@ -1,0 +1,39 @@
+Photoshop TIFF
+==============
+
+Extensions: .tif, .tiff
+
+Developer: `Adobe <http://www.adobe.com>`_
+
+Support
+-------
+
+SCIFIO: |no|
+
+Export: |no|
+
+Supported Metadata Fields: `PhotoshopTiffReader <http://dev.loci.wisc.edu/trac/software/wiki/PhotoshopTiffReader>`_
+
+We currently have: 
+
+- a Photoshop TIFF specification
+
+- a few Photoshop TIFF files
+
+Ratings
+-------
+
+Pixels: |Good|
+
+Metadata: |Good|
+
+Openness: |Good|
+
+Presence: |Good|
+
+Utility: |Good|
+
+Additional Information
+----------------------
+
+Source Code: :source:`PhotoshopTiffReader <components/bio-formats/src/loci/formats/in/PhotoshopTiffReader.java>`

@@ -1,0 +1,19 @@
+Jar2Lib
+=======
+
+The Jar2Lib project was designed as a developer tool for converting Java
+jar files to C++ libraries.  The wrapping is performed using
+`Jace <http://code.google.com/p/jace/>`_, but using the
+`Maven <http://maven.apache.org/>`_ build system circumvents any need
+for the user to download any extra dependencies.
+
+Jar2Lib comes bundled with BFCPP, allowing users to build the C++
+version of the Bio-Formats libraries and demonstrating a general file
+structure for projects to be wrapped.
+
+The cpp-wrap project, used in
+`Wiscscan, <http://dev.loci.wisc.edu/trac/internal/browser/trunk/WiscScan>`_
+also provides a practical demonstration for Jar2Lib.  Cpp-wrap takes
+advantage of the Maven plug-in infrastructure to grant users the ability
+to easy convert a Java library to C++ using Jar2Lib, without requiring
+any knowledge of Jar2Lib's workings or syntax.

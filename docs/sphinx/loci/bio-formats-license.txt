@@ -1,0 +1,30 @@
+License
+=======
+
+Bio-Formats is open source software licensed under the `GNU General
+Public License <http://www.gnu.org/licenses/gpl.html>`_ (GPL).
+
+As a "copyleft" license, the GPL requires that any software package
+linking to Bio-Formats, either directly or indirectly, cannot be
+distributed unless its source code is also made available under the
+terms of the GPL. In addition, it forbids distribution if your software
+package depends on any non-free software other than common operating
+system components.
+
+For more information about the GPL and related licenses, see the `GPL
+Overview on OSS Watch <http://www.oss-watch.ac.uk/resources/gpl.xml>`_
+or the `Wikipedia entry on the
+GPL <http://en.wikipedia.org/wiki/GNU_General_Public_License>`_. If you
+have questions about the Bio-Formats license, please `contact us
+<http://lists.openmicroscopy.org.uk/mailman/listinfo/ome-users/>`_.
+
+Commercial licensing
+--------------------
+
+If you prefer, you can obtain a commercial Bio-Formats license and/or
+support package from our commercial partner, `Glencoe
+Software <http://www.glencoesoftware.com/>`_. Several different
+licensing arrangements are possible. Glencoe is committed to reaching a
+licensing solution that meets your needs; please contact them at
+`bioformats@glencoesoftware.com <mailto:bioformats@glencoesoftware.com>`_
+to discuss your requirements.

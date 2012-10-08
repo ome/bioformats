@@ -1,0 +1,43 @@
+SimplePCI & HCImage
+===================
+
+Extensions: .cxd
+
+Developer: `Compix <http://www.cimaging.net/>`_
+
+Support
+-------
+
+SCIFIO: |no|
+
+Export: |no|
+
+Supported Metadata Fields: `PCI Reader <http://dev.loci.wisc.edu/trac/software/wiki/PCIReader>`_
+
+We currently have: 
+
+-  Several SimplePCI files
+
+Ratings
+-------
+
+Pixels: |Outstanding|
+
+Metadata: |Good|
+
+Openness: |Very Good|
+
+Presence: |Poor|
+
+Utility: |Fair|
+
+Additional Information
+----------------------
+
+Source Code: :source:`PCI Reader <components/bio-formats/src/loci/formats/in/PCIReader.java>`
+
+Notes: Bio-Formats uses a modified version of the `Apache Jakarta
+POI <http://jakarta.apache.org/poi/>`_ library to read CXD files.
+
+.. seealso::
+    `SimplePCI software overview <http://www.cimaging.net/simplepci.htm>`_

@@ -1,0 +1,99 @@
+ITK
+===
+
+`ITK <http://itk.org/>`_ (Insight Toolkit) is an open-source,
+cross-platform system that provides developers with an extensive suite
+of software tools for image analysis. Developed through extreme
+programming methodologies, ITK employs leading-edge algorithms for
+registering and segmenting multidimensional data.
+
+ITK provides an ImageIO plugin structure that works via discovery though
+a dependency injection scheme. This allows a program built on ITK to
+load plugins for reading and writing different image types without
+actually linking to the ImageIO libraries required for those types. Such
+encapsulation automatically grants two major boons: firstly, programs
+can be easily extended just by virtue of using ITK (developers don't
+have to specifically accommodate or anticipate what plugins may be
+used). Secondly, the architecture provides a distribution method for
+open source software, like Bio-Formats, which have licenses that might
+otherwise exclude them from being used with other software suites.
+
+The Bio-Formats ITK plugin provides an ImageIO plugin for ITK that uses
+`Bio-Formats <http://farsight-toolkit.org/wiki/Bio-Formats>`_ to read
+and write supported life sciences file formats. This plugin allows any
+program built on ITK to read any of the image types supported by
+Bio-Formats.
+
+Installation
+------------
+
+There are two main options for installing the BF-ITK plugin:
+
+-  You can download a binary distribution of BF-ITK from the
+   :doc:`Downloads <bio-formats-downloads>` page.
+-  To build BF-ITK yourself, see "Compiling from source" below.
+
+Either way, see "Usage" for details on how to run the plugin.
+
+Usage
+-----
+
+To use BF-ITK, you must set your ``ITK_AUTOLOAD_PATH`` to point to the
+folder containing the BF-ITK binaries (including the ``BioFormatsIO``
+and ``BioFormatsIOPlugin`` shared libraries, and the ``loci_tools.jar``
+Java library). For example::
+
+     export ITK_AUTOLOAD_PATH=~/bf-itk-build/dist/bf-itk
+
+Once this variable is set, ITK's ImageIO routines will automatically use
+Bio-Formats as needed to read and write supported file formats.
+
+If you built ITK with examples, you can test using various programs::
+
+     cd ~/itk-build/bin
+     ./ImageReadWrite ~/data/inputFile.ics ~/data/outputFile.mha
+
+Compiling from source
+---------------------
+
+You can compile the Bio-Formats ITK plugin (BF-ITK) from source by
+performing the following steps:
+
+#. If you have not done so already, `download <http://itk.org/ITK/resources/software.html>`_
+   and build ITK . Note that BF-ITK requires ITK 3.20.0 or newer. It should 
+   also work with the latest `ITK source from Git <http://www.itk.org/Wiki/ITK/Git>`_.
+
+#. Clone the :doc:`Bio-Formats source
+   code <bio-formats-source-code>`::
+
+        git clone git://github.com/openmicroscopy/bioformats.git
+
+#. Compile the Bio-Formats tools bundle::
+
+        cd bioformats
+        ant tools
+
+#. Configure your BF-ITK build::
+
+        mkdir ../bf-itk-build && cd ../bf-itk-build
+        ccmake ../bioformats/components/native/bf-itk-pipe
+
+   If you prefer, you can use cmake-gui rather than ccmake to configure
+   the project. If you receive a configuration error stating that the
+   location of ITK cannot be found, then set ITK\_DIR to your binary
+   build of ITK. Note that BF-ITK requires ITK 3.20.0 or newer.
+
+#. Compile BF-ITK::
+
+        make
+
+   On Windows, it should work to build with Visual Studio rather than
+   make.
+
+#. All needed libraries including ``loci_tools.jar`` will be copied to
+   ``dist/bf-itk`` inside the BF-ITK build folder. You can also package
+   everything into a single archive by running::
+
+        make package
+
+#. For instructions on running BF-ITK, see "Usage" above.

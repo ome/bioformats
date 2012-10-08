@@ -1,0 +1,39 @@
+Targa
+=====
+
+Extensions: .tga
+
+Developer: `Truevision <http://www.truevision.com>`_
+
+Support
+-------
+
+SCIFIO: |no|
+
+Export: |no|
+
+Supported Metadata Fields: `TargaReader <http://dev.loci.wisc.edu/trac/software/wiki/TargaReader>`_
+
+We currently have: 
+
+- a Targa specification document
+
+- a few Targa files
+
+Ratings
+-------
+
+Pixels: |Very Good|
+
+Metadata: |Very Good|
+
+Openness: |Very Good|
+
+Presence: |Good|
+
+Utility: |Poor|
+
+Additional Information
+----------------------
+
+Source Code: :source:`TargaReader <components/bio-formats/src/loci/formats/in/TargaReader.java>`
