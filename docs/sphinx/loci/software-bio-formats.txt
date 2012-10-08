@@ -9,7 +9,7 @@ sciences image file formats. It is capable of parsing both pixels and
 metadata for a large number of formats, as well as writing to several
 formats. See the table below for a complete list (click the format names
 to see all information). For more information on
-the format ratings, see the :doc:`Supported Formats <bio-formats-format>`
+the format ratings, see the :doc:`Supported Formats <bio-formats-formats>`
 page.
 
 Purpose
