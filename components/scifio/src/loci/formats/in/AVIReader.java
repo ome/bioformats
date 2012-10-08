@@ -393,7 +393,7 @@ public class AVIReader extends FormatReader {
     options.height = getSizeY();
     options.previousImage = (lastImageNo == no - 1) ? lastImage : null;
 
-    if (options.previousImage == null) {
+    if (options.previousImage == null && bmpCompression != JPEG) {
       while (lastImageNo < no - 1) {
         openBytes(lastImageNo + 1, buf);
       }
