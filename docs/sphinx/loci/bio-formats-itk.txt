@@ -41,16 +41,17 @@ Usage
 To use BF-ITK, you must set your ``ITK_AUTOLOAD_PATH`` to point to the
 folder containing the BF-ITK binaries (including the ``BioFormatsIO``
 and ``BioFormatsIOPlugin`` shared libraries, and the ``loci_tools.jar``
-Java library). For example:
+Java library). For example::
 
-    `` export ITK_AUTOLOAD_PATH=~/bf-itk-build/dist/bf-itk``
+     export ITK_AUTOLOAD_PATH=~/bf-itk-build/dist/bf-itk
 
 Once this variable is set, ITK's ImageIO routines will automatically use
 Bio-Formats as needed to read and write supported file formats.
 
-If you built ITK with examples, you can test using various programs:
+If you built ITK with examples, you can test using various programs::
 
-    `` cd ~/itk-build/bin ./ImageReadWrite ~/data/inputFile.ics ~/data/outputFile.mha``
+     cd ~/itk-build/bin
+     ./ImageReadWrite ~/data/inputFile.ics ~/data/outputFile.mha
 
 Compiling from source
 ---------------------
@@ -62,35 +63,37 @@ performing the following steps:
    and build ITK . Note that BF-ITK requires ITK 3.20.0 or newer. It should 
    also work with the latest `ITK source from Git <http://www.itk.org/Wiki/ITK/Git>`_.
 
-#. Clone the `Bio-Formats source
-   code <http://www.loci.wisc.edu/bio-formats/source-code>`_:
+#. Clone the :doc:`Bio-Formats source
+   code <bio-formats-source-code>`::
 
-       `` git clone git://dev.loci.wisc.edu/bio-formats.git``
+        git clone git://github.com/openmicroscopy/bioformats.git
 
-#. Compile the Bio-Formats tools bundle:
+#. Compile the Bio-Formats tools bundle::
 
-       `` cd bio-formats ant tools``
+        cd bioformats
+        ant tools
 
-#. Configure your BF-ITK build:
+#. Configure your BF-ITK build::
 
-       `` mkdir ../bf-itk-build && cd ../bf-itk-build ccmake ../bio-formats/components/native/bf-itk-pipe``
+        mkdir ../bf-itk-build && cd ../bf-itk-build
+        ccmake ../bioformats/components/native/bf-itk-pipe
 
    If you prefer, you can use cmake-gui rather than ccmake to configure
    the project. If you receive a configuration error stating that the
    location of ITK cannot be found, then set ITK\_DIR to your binary
    build of ITK. Note that BF-ITK requires ITK 3.20.0 or newer.
 
-#. Compile BF-ITK:
+#. Compile BF-ITK::
 
-       `` make``
+        make
 
    On Windows, it should work to build with Visual Studio rather than
    make.
 
 #. All needed libraries including ``loci_tools.jar`` will be copied to
    ``dist/bf-itk`` inside the BF-ITK build folder. You can also package
-   everything into a single archive by running:
+   everything into a single archive by running::
 
-       `` make package``
+        make package
 
 #. For instructions on running BF-ITK, see "Usage" above.

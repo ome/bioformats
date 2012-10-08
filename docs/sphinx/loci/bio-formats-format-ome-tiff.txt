@@ -19,7 +19,8 @@ Supported Metadata Fields: `OME-TIFF Reader <http://dev.loci.wisc.edu/trac/soft
 We currently have: 
 
 -  An `OME-TIFF specification
-   document <http://www.loci.wisc.edu/ome/ome-tiff-spec.html>`_ (from
+   document
+   <http://www.openmicroscopy.org/site/support/file-formats/ome-tiff/ome-tiff-specification>`_ (from
    2006 Oct 19, in HTML)
 -  Numerous OME-TIFF datasets
 -  The ability to produce additional datasets
@@ -52,4 +53,5 @@ Commercial applications that support OME-TIFF include:
 -  `SVI Huygens <http://svi.nl/>`_
 
 .. seealso::
-    `OME-TIFF technical overview <http://www.loci.wisc.edu/ome/ome-tiff.html>`_
+    `OME-TIFF technical overview
+    <http://www.openmicroscopy.org/site/support/file-formats/ome-tiff>`_

@@ -10,8 +10,7 @@ possible that the problem has already been addressed. For both FIJI and
 ImageJ users, select Update LOCI Plugins under the LOCI menu. Select
 Trunk Build.
 
-You can also download the newest version at Bio-Formats at
-http://www.loci.wisc.edu/bio-formats/downloads. If you
+You can also download the :doc:`newest version of Bio-Formats <bio-formats-downloads>`. If you
 are not sure which version you need, select the Trunk Build under LOCI
 Tools complete bundle.
 
@@ -46,7 +45,7 @@ information:
    versions of the format are also supported.
 
 Once you have gathered all the relevant information, send it as an
-e-mail to `bioformats@loci.wisc.edu <mailto:bioformats@loci.wisc.edu>`_.
+e-mail to the `OME Users mailing list <http://lists.openmicroscopy.org.uk/mailman/listinfo/ome-users/>`_.
 
 ***Please be patient.***\ It may be a few days until you receive a
 response, but we reply to *every* email inquiry we receive.

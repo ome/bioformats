@@ -7,9 +7,9 @@ Overview
 Bio-Formats is a standalone Java library for reading and writing life
 sciences image file formats. It is capable of parsing both pixels and
 metadata for a large number of formats, as well as writing to several
-formats. See the table below for a complete list (click the headers to
-sort, and format names to see all information). For more information on
-the format ratings, see the :ref:`Supported Formats <supportedformats>`
+formats. See the table below for a complete list (click the format names
+to see all information). For more information on
+the format ratings, see the :doc:`Supported Formats <bio-formats-formats>`
 page.
 
 Purpose
@@ -60,14 +60,14 @@ Formats <http://www.openmicroscopy.org/site/support/faq/file-formats>`_
 and `OME-XML and OME-TIFF <http://www.openmicroscopy.org/site/support/faq/ome-xml-and-ome-tiff>`_
 sections of the `OME
 FAQ <http://www.openmicroscopy.org/site/support/faq>`_ for answers to
-some common questions. Please `contact us <http://loci.wisc.edu/software/mailing-lists>`_ if
+some common questions. Please `contact us <http://www.openmicroscopy.org/site/community/mailing-lists>`_ if
 you have any questions or problems with Bio-Formats.
 
 Download
 
 Language: Java
 
-Latest Version:  4.4.4 (2012 September 25
+Latest Version:  4.4.4 (2012 September 25)
 
 Download: `loci_tools.jar <http://www.loci.wisc.edu/files/software/loci_tools.jar>`__
 
@@ -1075,15 +1075,6 @@ Supported Formats
      - |Fair|                                                                                             
      - |no|
      - |no|
-   * - :doc:`bio-formats-format-iplab-mac`
-     - .ipm
-     - |Very Good|
-     - |Good|
-     - |Very Good|                                                                         
-     - |Poor|                                                                                
-     - |Fair|                                                                                             
-     - |no|
-     - |no|
    * - :doc:`bio-formats-format-khoros-viff-visualization-image-file-format-bitmap`
      - .xv
      - |Good|
@@ -1256,4 +1247,4 @@ Supported Formats
      - |no|
      - |yes|
 
-Bio-Formats currently supports **122** formats
+Bio-Formats currently supports **127** formats

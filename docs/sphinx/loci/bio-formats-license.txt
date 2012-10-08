@@ -15,8 +15,8 @@ For more information about the GPL and related licenses, see the `GPL
 Overview on OSS Watch <http://www.oss-watch.ac.uk/resources/gpl.xml>`_
 or the `Wikipedia entry on the
 GPL <http://en.wikipedia.org/wiki/GNU_General_Public_License>`_. If you
-have questions about the Bio-Formats license, please contact us at
-`bioformats@loci.wisc.edu <mailto:bioformats@loci.wisc.edu>`_.
+have questions about the Bio-Formats license, please `contact us
+<http://lists.openmicroscopy.org.uk/mailman/listinfo/ome-users/>`_.
 
 Commercial licensing
 --------------------

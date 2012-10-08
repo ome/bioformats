@@ -172,8 +172,8 @@ C/C++
    original functionality as much as possible.
 -  The C++ proxy classes use JNI under the hood but handle most of the
    usual JNI pitfalls.
--  We provide a set of `Bio-Formats C++
-   bindings <http://www.loci.wisc.edu/ome/formats-jni.html>`_ using
+-  We provide a set of :doc:`Bio-Formats C++
+   bindings <bio-formats-bio-formats-c-bindings>` using
    Jace.
 
 `JunC++ion <http://codemesh.com/products/junction/>`_
@@ -232,7 +232,7 @@ Any
    limited.
 -  Be careful about blocking operations causing deadlock.
 -  The `OME Perl
-   server <http://www.loci.wisc.edu/ome/formats-ome.html#source>`_ uses
+   server <http://www.openmicroscopy.org/site/products/legacy/ome-server>`_ uses
    a combination of pipes and files to interface with Bio-Formats.
 
 `Files <http://en.wikipedia.org/wiki/Computer_file>`_
@@ -246,7 +246,7 @@ Any
 -  The size of the communication buffer is limited only by available
    disk space.
 -  The `OME Perl
-   server <http://www.loci.wisc.edu/ome/formats-ome.html#source>`_ uses
+   server <http://www.openmicroscopy.org/site/products/legacy/ome-server>`_ uses
    a combination of pipes and files to interface with Bio-Formats.
 
 `Sockets <http://en.wikipedia.org/wiki/Unix_domain_socket>`_
@@ -312,4 +312,4 @@ C++, .NET
    solution available from `Codemesh, Inc. <http://www.codemesh.com/>`_
 
 Know a great integration solution that we missed? `Let us
-know <http://loci.wisc.edu/software/mailing-lists>`_!
+know <http://www.openmicroscopy.org/site/community/mailing-lists>`_!

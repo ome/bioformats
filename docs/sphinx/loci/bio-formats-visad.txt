@@ -16,8 +16,8 @@ Upgrading
 ---------
 
 It should be possible to use a newer version of Bio-Formats by putting
-the `latest **loci\_tools.jar** or
-**bio-formats.jar** <http://www.loci.wisc.edu/ome/formats-download.html>`_
+the :doc:`latest **loci\_tools.jar** or
+**bio-formats.jar** <bio-formats-downloads>`
 before **visad.jar** in the class path. Alternately, you can create a
 "VisAD Lite" using the ``make lite`` command from VisAD source, and use
 the resultant **visad-lite.jar**, which is a stripped down version of

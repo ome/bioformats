@@ -1,0 +1,16 @@
+Supported Formats
+-----------------
+
+**Pixels** represents our estimation of Bio-Formats' ability to reliably extract complete and accurate pixel values from files in that format. The better this score, the more confident we are that Bio-Formats will successfully read your file without displaying an error message or displaying an erroneous image.
+
+**Metadata** is our certainty in the thoroughness and correctness of Bio-Formats' metadata extraction and conversion from files of that format into standard OME-XML. The better this score, the more confident we are that all meaningful metadata will be parsed and populated as OME-XML.
+
+**Openness** is not a direct expression of Bio-Formats' performance, but rather indicates the level of cooperation the format's controlling interest has demonstrated toward the scientific community with respect to the format. The better this score, the more tools (specification documents, source code, sample files, etc.) have been made available.
+
+**Presence** is also not directly related to Bio-Formats, but instead represents our understanding of the format's popularity, and doubles as a measure of compatibility between applications. The better this score, the more common the format and the more software packages include support for it.
+
+**Utility** is our opinion of the format's suitability for storing metadata-rich microscopy image data. The better this score, the wider the variety of information that can be effectively stored in the format.
+
+**Export** indicates whether Bio-Formats is capable of writing the format (Bio-Formats can read every format on this list).
+
+**SCIFIO** indicates whether format is supported by the :doc:`SCIFIO <software-scifio>` core library. (See the :doc:`License <bio-formats-license>` page for why this matters.)

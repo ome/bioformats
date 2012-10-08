@@ -24,6 +24,6 @@ Upgrading
 ---------
 
 To use a newer version of Bio-Formats, overwrite the requisite JAR files
-with the `newer
-version <http://www.loci.wisc.edu/bio-formats/downloads>`_ and restart
+with the :doc:`newer
+version <bio-formats-downloads>` and restart
 IDL.
