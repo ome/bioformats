@@ -4,8 +4,8 @@ FIJI Updaters
 Using FIJI's updaters
 ---------------------
 
-If you are using FIJI, there is a separate updater that updates multiple
-plugins, including Bio-Formats. You can find it under FIJI’s help menu.
+FIJI includes a separate updater that updates multiple plugins, including
+Bio-Formats. You can find it under FIJI’s help menu.
 
 .. image:: /images/FIJI_UPDATE.jpg
     :align: center
