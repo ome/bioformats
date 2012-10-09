@@ -1,0 +1,235 @@
+/*
+ * #%L
+ * OME SCIFIO package for reading and converting scientific file formats.
+ * %%
+ * Copyright (C) 2005 - 2012 Open Microscopy Environment:
+ *   - Board of Regents of the University of Wisconsin-Madison
+ *   - Glencoe Software, Inc.
+ *   - University of Dundee
+ * %%
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ * 
+ * The views and conclusions contained in the software and documentation are
+ * those of the authors and should not be interpreted as representing official
+ * policies, either expressed or implied, of any organization.
+ * #L%
+ */
+
+package loci.common;
+
+import java.io.DataOutput;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.ByteBuffer;
+
+import loci.common.adapter.IRandomAccessAdapter;
+import loci.legacy.adapter.AdapterTools;
+
+/**
+ * A legacy delegator class for ome.scifio.io.RandomAccessOutputStream
+ * 
+ * <dl><dt><b>Source code:</b></dt>
+ * <dd><a href="http://trac.openmicroscopy.org.uk/ome/browser/bioformats.git/components/common/src/loci/common/RandomAccessOutputStream.java">Trac</a>,
+ * <a href="http://git.openmicroscopy.org/?p=bioformats.git;a=blob;f=components/common/src/loci/common/RandomAccessOutputStream.java;hb=HEAD">Gitweb</a></dd></dl>
+ */
+public class RandomAccessOutputStream extends OutputStream implements DataOutput
+{
+  // -- Fields --
+
+  private ome.scifio.io.RandomAccessOutputStream raos;
+
+  // -- Constructor --
+
+  /**
+   * Constructs a random access stream around the given file.
+   * @param file Filename to open the stream for.
+   * @throws IOException If there is a problem opening the file.
+   */
+  public RandomAccessOutputStream(String file) throws IOException {
+    raos = new ome.scifio.io.RandomAccessOutputStream(file);
+  }
+
+  /**
+   * Constructs a random access stream around the given handle.
+   * @param handle Handle to open the stream for.
+   */
+  public RandomAccessOutputStream(IRandomAccess handle) {
+    raos = new ome.scifio.io.RandomAccessOutputStream(AdapterTools.getAdapter(IRandomAccessAdapter.class).getModern(handle));
+  }
+
+  // -- RandomAccessOutputStream API methods --
+
+  /** Seeks to the given offset within the stream. */
+  public void seek(long pos) throws IOException {
+    raos.seek(pos);
+  }
+
+  /** Returns the current offset within the stream. */
+  public long getFilePointer() throws IOException {
+    return raos.getFilePointer();
+  }
+
+  /** Returns the length of the file. */
+  public long length() throws IOException {
+    return raos.length();
+  }
+
+  /** Advances the current offset by the given number of bytes. */
+  public void skipBytes(int skip) throws IOException {
+    raos.skipBytes(skip);
+  }
+
+  /** Sets the endianness of the stream. */
+  public void order(boolean little) {
+    raos.order(little);
+  }
+
+  /** Gets the endianness of the stream. */
+  public boolean isLittleEndian() {
+    return raos.isLittleEndian();
+  }
+
+  /** Writes the given string followed by a newline character. */
+  public void writeLine(String s) throws IOException {
+    raos.writeLine(s);
+  }
+
+  // -- DataOutput API methods --
+
+  /* @see java.io.DataOutput#write(byte[]) */
+  public void write(byte[] b) throws IOException {
+    raos.write(b);
+  }
+
+  /* @see java.io.DataOutput#write(byte[], int, int) */
+  public void write(byte[] b, int off, int len) throws IOException {
+    raos.write(b, off, len);
+  }
+
+  /**
+   * Writes bytes to the stream from the given buffer.
+   * @param b Source buffer to read data from.
+   * @throws IOException If there is an error writing to the stream.
+   */
+  public void write(ByteBuffer b) throws IOException {
+    raos.write(b);
+  }
+
+  /**
+   * @param b Source buffer to read data from.
+   * @param off Offset within the buffer to start reading from.
+   * @param len Number of bytes to read.
+   * @throws IOException If there is an error writing to the stream.
+   */
+  public void write(ByteBuffer b, int off, int len) throws IOException {
+    raos.write(b, off, len);
+  }
+
+  /* @see java.io.DataOutput#write(int) */
+  public void write(int b) throws IOException {
+    raos.write(b);
+  }
+
+  /* @see java.io.DataOutput#writeBoolean(boolean) */
+  public void writeBoolean(boolean v) throws IOException {
+    raos.writeBoolean(v);
+  }
+
+  /* @see java.io.DataOutput#writeByte(int) */
+  public void writeByte(int v) throws IOException {
+    raos.writeByte(v);
+  }
+
+  /* @see java.io.DataOutput#writeBytes(String) */
+  public void writeBytes(String s) throws IOException {
+    raos.writeBytes(s);
+  }
+
+  /* @see java.io.DataOutput#writeChar(int) */
+  public void writeChar(int v) throws IOException {
+    raos.writeChar(v);
+  }
+
+  /* @see java.io.DataOutput#writeChars(String) */
+  public void writeChars(String s) throws IOException {
+    raos.writeChars(s);
+  }
+
+  /* @see java.io.DataOutput#writeDouble(double) */
+  public void writeDouble(double v) throws IOException {
+    raos.writeDouble(v);
+  }
+
+  /* @see java.io.DataOutput#writeFloat(float) */
+  public void writeFloat(float v) throws IOException {
+    raos.writeFloat(v);
+  }
+
+  /* @see java.io.DataOutput#writeInt(int) */
+  public void writeInt(int v) throws IOException {
+    raos.writeInt(v);
+  }
+
+  /* @see java.io.DataOutput#writeLong(long) */
+  public void writeLong(long v) throws IOException {
+    raos.writeLong(v);
+  }
+
+  /* @see java.io.DataOutput#writeShort(int) */
+  public void writeShort(int v) throws IOException {
+    raos.writeShort(v);
+  }
+
+  /* @see java.io.DataOutput#writeUTF(String) */
+  public void writeUTF(String str) throws IOException {
+    raos.writeUTF(str);
+  }
+
+  // -- OutputStream API methods --
+
+  /* @see java.io.OutputStream#close() */
+  public void close() throws IOException {
+    raos.close();
+  }
+
+  /* @see java.io.OutputStream#flush() */
+  public void flush() throws IOException { 
+    raos.flush();
+  }
+
+  // -- Object delegators --
+
+  @Override
+  public boolean equals(Object obj) {
+    return raos.equals(obj);
+  }
+  
+  @Override
+  public int hashCode() {
+    return raos.hashCode();
+  }
+  
+  @Override
+  public String toString() {
+    return raos.toString();
+  }
+}

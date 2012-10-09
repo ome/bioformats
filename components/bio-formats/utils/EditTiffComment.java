@@ -25,8 +25,10 @@
 
 import java.io.*;
 import java.util.Hashtable;
-import loci.common.RandomAccessInputStream;
+
 import loci.formats.tiff.*;
+
+import ome.scifio.io.RandomAccessInputStream;
 
 /**
  * Allows raw user TIFF comment editing for the given TIFF files.

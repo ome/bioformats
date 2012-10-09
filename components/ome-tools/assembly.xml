@@ -12,7 +12,6 @@
       <excludes>
         <exclude>imagej:ij</exclude>
         <exclude>loci:bio-formats</exclude>
-        <exclude>loci:loci-common</exclude>
         <exclude>loci:loci_plugins</exclude>
         <exclude>loci:ome-xml</exclude>
       </excludes>

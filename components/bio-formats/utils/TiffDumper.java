@@ -26,8 +26,10 @@
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.Arrays;
-import loci.common.RandomAccessInputStream;
+
 import loci.formats.tiff.*;
+
+import ome.scifio.io.RandomAccessInputStream;
 
 /**
  * Parses and outputs all IFDs for the given TIFF file(s).
