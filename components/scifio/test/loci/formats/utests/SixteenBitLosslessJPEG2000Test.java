@@ -38,9 +38,9 @@ package loci.formats.utests;
 
 import static org.testng.AssertJUnit.*;
 
-import java.io.File;
 import java.util.ArrayList;
 
+import loci.common.ByteArrayHandle;
 import loci.common.DataTools;
 import loci.common.Location;
 import loci.formats.IFormatWriter;
@@ -69,19 +69,16 @@ public class SixteenBitLosslessJPEG2000Test {
   private static final Logger LOGGER =
     LoggerFactory.getLogger(SixteenBitLosslessJPEG2000Test.class);
 
-  private ArrayList<String> files = new ArrayList<String>();
-  private byte[][] pixels = new byte[65536][];
-
-  @BeforeMethod
-  public void setUp() throws Exception {
+  @Test
+  public void testLosslessPixels() throws Exception {
+    int failureCount = 0;
     for (short v=Short.MIN_VALUE; v<Short.MAX_VALUE; v++) {
       int index = v + Short.MAX_VALUE + 1;
-      pixels[index] = DataTools.shortToBytes(v, false);
+      byte[] pixels = DataTools.shortToBytes(v, false);
 
       String file = index + ".jp2";
-      Location.mapId(
-        file, File.createTempFile("test", ".jp2").getAbsolutePath());
-      files.add(file);
+      ByteArrayHandle tmpFile = new ByteArrayHandle(1);
+      Location.mapFile(file, tmpFile);
 
       IMetadata metadata16 = MetadataTools.createOMEXMLMetadata();
       MetadataTools.populateMetadata(metadata16, 0, "foo", false, "XYCZT",
@@ -89,27 +86,31 @@ public class SixteenBitLosslessJPEG2000Test {
       IFormatWriter writer16 = new JPEG2000Writer();
       writer16.setMetadataRetrieve(metadata16);
       writer16.setId(file);
-      writer16.saveBytes(0, pixels[index]);
+      writer16.saveBytes(0, pixels);
       writer16.close();
-    }
-  }
 
-  @Test
-  public void testLosslessPixels() throws Exception {
-    int failureCount = 0;
-    for (int i=0; i<files.size(); i++) {
+      byte[] buf = tmpFile.getBytes();
+      byte[] realData = new byte[(int) tmpFile.length()];
+      System.arraycopy(buf, 0, realData, 0, realData.length);
+      tmpFile.close();
+      tmpFile = new ByteArrayHandle(realData);
+      Location.mapFile(file, tmpFile);
+
       ImageReader reader = new ImageReader();
-      reader.setId(files.get(i));
+      reader.setId(file);
       byte[] plane = reader.openBytes(0);
       for (int q=0; q<plane.length; q++) {
-        if (plane[q] != pixels[i][q]) {
+        if (plane[q] != pixels[q]) {
           LOGGER.debug("FAILED on {}",
-            DataTools.bytesToShort(pixels[i], false));
+            DataTools.bytesToShort(pixels, false));
           failureCount++;
           break;
         }
       }
       reader.close();
+      tmpFile.close();
+
+      Location.mapFile(file, null);
     }
     assertEquals(failureCount, 0);
   }

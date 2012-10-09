@@ -280,7 +280,9 @@ public class ZeissLSMReader extends FormatReader {
 
   /* @see loci.formats.IFormatReader#fileGroupOption(String) */
   public int fileGroupOption(String id) throws FormatException, IOException {
-    return FormatTools.MUST_GROUP;
+    return checkSuffix(id, MDB_SUFFIX) ||
+      !new Location(id).getName().startsWith("spim_") ? FormatTools.MUST_GROUP :
+      FormatTools.CAN_GROUP;
   }
 
   /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */

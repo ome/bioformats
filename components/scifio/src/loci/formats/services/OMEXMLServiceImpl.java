@@ -98,6 +98,9 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
   private static final Logger LOGGER =
     LoggerFactory.getLogger(OMEXMLService.class);
 
+  private static final String ORIGINAL_METADATA_NS =
+    "openmicroscopy.org/OriginalMetadata";
+
   // -- Stylesheet names --
 
   private static final String XSLT_PATH = "/loci/formats/meta/";
@@ -484,6 +487,56 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
   }
 
   /**
+   * @see OMEXMLService#getOriginalMetadata(loci.formats.ome.OMEXMLMetadata)
+   */
+  public Hashtable getOriginalMetadata(OMEXMLMetadata omexmlMeta) {
+    OME root = (OME) omexmlMeta.getRoot();
+    StructuredAnnotations annotations = root.getStructuredAnnotations();
+    if (annotations == null) {
+      return null;
+    }
+
+    Hashtable metadata = new Hashtable();
+
+    for (int i=0; i<annotations.sizeOfXMLAnnotationList(); i++) {
+      XMLAnnotation annotation = annotations.getXMLAnnotation(i);
+      String xml = annotation.getValue();
+
+      try {
+        Document annotationRoot = XMLTools.parseDOM(xml);
+        NodeList metadataNodes =
+          annotationRoot.getElementsByTagName("OriginalMetadata");
+
+        for (int meta=0; meta<metadataNodes.getLength(); meta++) {
+          Element metadataNode = (Element) metadataNodes.item(meta);
+          NodeList keys =
+            metadataNode.getElementsByTagName("Key");
+          NodeList values =
+            metadataNode.getElementsByTagName("Value");
+
+          for (int q=0; q<keys.getLength(); q++) {
+            Node key = keys.item(q);
+            Node value = values.item(q);
+
+            metadata.put(key.getTextContent(), value.getTextContent());
+          }
+        }
+      }
+      catch (ParserConfigurationException e) {
+        LOGGER.debug("Failed to parse OriginalMetadata", e);
+      }
+      catch (SAXException e) {
+        LOGGER.debug("Failed to parse OriginalMetadata", e);
+      }
+      catch (IOException e) {
+        LOGGER.debug("Failed to parse OriginalMetadata", e);
+      }
+    }
+
+    return metadata;
+  }
+
+  /**
    * @see OMEXMLService#populateOriginalMetadata(loci.formats.ome.OMEXMLMetadata, Hashtable)
    */
   public void populateOriginalMetadata(OMEXMLMetadata omexmlMeta,
@@ -802,9 +855,6 @@ public class OMEXMLServiceImpl extends AbstractService implements OMEXMLService
   // -- Helper class --
 
   class OriginalMetadataAnnotation extends XMLAnnotation {
-    private static final String ORIGINAL_METADATA_NS =
-      "openmicroscopy.org/OriginalMetadata";
-
     private String key, value;
 
     // -- OriginalMetadataAnnotation methods --

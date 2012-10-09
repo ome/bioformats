@@ -358,8 +358,8 @@ public class OMEXMLReader extends FormatReader {
         xmlBuffer.append("<");
         xmlBuffer.append(qName);
         for (int i=0; i<attributes.getLength(); i++) {
-          String key = attributes.getQName(i);
-          String value = attributes.getValue(i);
+          String key = XMLTools.escapeXML(attributes.getQName(i));
+          String value = XMLTools.escapeXML(attributes.getValue(i));
           if (key.equals("BigEndian")) {
             String endian = value.toLowerCase();
             if (!endian.equals("true") && !endian.equals("false")) {
@@ -387,8 +387,8 @@ public class OMEXMLReader extends FormatReader {
         xmlBuffer.append("<");
         xmlBuffer.append(qName);
         for (int i=0; i<attributes.getLength(); i++) {
-          String key = attributes.getQName(i);
-          String value = attributes.getValue(i);
+          String key = XMLTools.escapeXML(attributes.getQName(i));
+          String value = XMLTools.escapeXML(attributes.getValue(i));
           if (key.equals("Length")) value = "0";
           xmlBuffer.append(" ");
           xmlBuffer.append(key);

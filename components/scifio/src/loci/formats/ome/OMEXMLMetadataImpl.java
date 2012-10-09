@@ -1,43 +1,41 @@
+//
+// OMEXMLMetadataImpl.java
+//
+
 /*
- * #%L
- * OME SCIFIO package for reading and converting scientific file formats.
- * %%
- * Copyright (C) 2005 - 2012 Open Microscopy Environment:
- *   - Board of Regents of the University of Wisconsin-Madison
- *   - Glencoe Software, Inc.
- *   - University of Dundee
- * %%
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- * 
- * 1. Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- * 
- * The views and conclusions contained in the software and documentation are
- * those of the authors and should not be interpreted as representing official
- * policies, either expressed or implied, of any organization.
- * #L%
+ * loci.formats.ome.OMEXMLMetadataImpl
+ *
+ *-----------------------------------------------------------------------------
+ *
+ *  Copyright (C) 2005-@year@ Open Microscopy Environment
+ *      Massachusetts Institute of Technology,
+ *      National Institutes of Health,
+ *      University of Dundee,
+ *      University of Wisconsin-Madison
+ *
+ *
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation; either
+ *    version 2.1 of the License, or (at your option) any later version.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ *
+ *    You should have received a copy of the GNU Lesser General Public
+ *    License along with this library; if not, write to the Free Software
+ *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ *-----------------------------------------------------------------------------
  */
 
 /*-----------------------------------------------------------------------------
  *
  * THIS IS AUTOMATICALLY GENERATED CODE.  DO NOT MODIFY.
- * Created by callan via xsd-fu on 2012-05-18 10:08:20+0100
+ * Created by melissa via xsd-fu on 2012-09-10 13:40:26-0400
  *
  *-----------------------------------------------------------------------------
  */
@@ -110,6 +108,47 @@ public class OMEXMLMetadataImpl extends AbstractOMEXMLMetadata
 	{
 		return root.getImage(imageIndex).getPixels().sizeOfBinDataList();
 	}
+
+  public int getBooleanAnnotationAnnotationCount(int booleanAnnotationIndex) {
+    return root.getStructuredAnnotations().getBooleanAnnotation(booleanAnnotationIndex).sizeOfLinkedAnnotationList();
+  }
+
+  public int getCommentAnnotationAnnotationCount(int commentAnnotationIndex) {
+    return root.getStructuredAnnotations().getCommentAnnotation(commentAnnotationIndex).sizeOfLinkedAnnotationList();
+  }
+
+  public int getDoubleAnnotationAnnotationCount(int doubleAnnotationIndex) {
+    return root.getStructuredAnnotations().getDoubleAnnotation(doubleAnnotationIndex).sizeOfLinkedAnnotationList();
+  }
+
+  public int getFileAnnotationAnnotationCount(int fileAnnotationIndex) {
+    return root.getStructuredAnnotations().getFileAnnotation(fileAnnotationIndex).sizeOfLinkedAnnotationList();
+  }
+
+  public int getListAnnotationAnnotationCount(int listAnnotationIndex) {
+    return root.getStructuredAnnotations().getListAnnotation(listAnnotationIndex).sizeOfLinkedAnnotationList();
+  }
+
+  public int getLongAnnotationAnnotationCount(int longAnnotationIndex) {
+    return root.getStructuredAnnotations().getLongAnnotation(longAnnotationIndex).sizeOfLinkedAnnotationList();
+  }
+
+  public int getTagAnnotationAnnotationCount(int tagAnnotationIndex) {
+    return root.getStructuredAnnotations().getTagAnnotation(tagAnnotationIndex).sizeOfLinkedAnnotationList();
+  }
+
+  public int getTermAnnotationAnnotationCount(int termAnnotationIndex) {
+    return root.getStructuredAnnotations().getTermAnnotation(termAnnotationIndex).sizeOfLinkedAnnotationList();
+  }
+
+  public int getTimestampAnnotationAnnotationCount(int timestampAnnotationIndex)
+  {
+    return root.getStructuredAnnotations().getTimestampAnnotation(timestampAnnotationIndex).sizeOfLinkedAnnotationList();
+  }
+
+  public int getXMLAnnotationAnnotationCount(int xmlAnnotationIndex) {
+    return root.getStructuredAnnotations().getXMLAnnotation(xmlAnnotationIndex).sizeOfLinkedAnnotationList();
+  }
 
 	public String getLightSourceType(int instrumentIndex, int lightSourceIndex)
 	{

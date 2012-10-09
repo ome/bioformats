@@ -31,6 +31,8 @@ import ij.IJ;
 import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
 
+import java.io.File;
+
 import loci.formats.UpgradeChecker;
 
 /**
@@ -50,6 +52,9 @@ public class Updater implements PlugIn {
   private static final String DAILY = "Daily build";
   private static final String STABLE =
     "Stable build (" + UpgradeChecker.STABLE_VERSION + ")";
+
+  private static final boolean IS_FIJI =
+    IJ.getInstance().getTitle().equalsIgnoreCase("Fiji");
 
   // -- Fields --
 
@@ -83,7 +88,9 @@ public class Updater implements PlugIn {
     else if (release.equals(STABLE)) {
       urlPath = UpgradeChecker.STABLE_BUILD;
     }
-    urlPath += UpgradeChecker.TOOLS;
+    if (!IS_FIJI) {
+      urlPath += UpgradeChecker.TOOLS;
+    }
     install(urlPath);
   }
 
@@ -92,10 +99,31 @@ public class Updater implements PlugIn {
    */
   public static void install(String urlPath) {
     String pluginsDirectory = IJ.getDirectory("plugins");
-    String jarPath = pluginsDirectory + UpgradeChecker.TOOLS;
+    String jarPath = pluginsDirectory;
+    if (!IS_FIJI) {
+      jarPath += UpgradeChecker.TOOLS;
+    }
 
     BF.status(false, "Downloading...");
-    boolean success = new UpgradeChecker().install(urlPath, jarPath);
+    boolean success = false;
+    if (IS_FIJI) {
+      jarPath = new File(jarPath).getParent();
+
+      success = true;
+      UpgradeChecker upgrader = new UpgradeChecker();
+      for (String file : UpgradeChecker.INDIVIDUAL_JARS) {
+        BF.status(false, "Download " + file);
+        String foundFile = find(jarPath, file);
+        String url = urlPath + File.separator + file;
+        boolean localSuccess = upgrader.install(url, foundFile);
+        if (!localSuccess) {
+          success = false;
+        }
+      }
+    }
+    else {
+      success = new UpgradeChecker().install(urlPath, jarPath);
+    }
 
     BF.status(false, "");
     if (!success) {
@@ -105,6 +133,31 @@ public class Updater implements PlugIn {
       IJ.showMessage("The LOCI plugins have been downloaded.\n" +
         "Please restart ImageJ to complete the upgrade process.");
     }
+  }
+
+  // -- Helper methods --
+
+  private static String find(String dir, String filename) {
+    File dirFile = new File(dir);
+    String[] list = dirFile.list();
+    for (String f : list) {
+      File nextFile = new File(dirFile, f);
+      if (nextFile.isDirectory()) {
+        String result = find(nextFile.getAbsolutePath(), filename);
+        if (result != null) {
+          return result;
+        }
+      }
+      else {
+        int dot = filename.indexOf(".");
+        if (f.startsWith(filename.substring(0, dot)) &&
+          f.endsWith(filename.substring(dot)))
+        {
+          return nextFile.getAbsolutePath();
+        }
+      }
+    }
+    return null;
   }
 
 }

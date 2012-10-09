@@ -147,7 +147,7 @@ public class TestTools {
   public static boolean canFitInMemory(long bufferSize) {
     Runtime r = Runtime.getRuntime();
     long mem = r.freeMemory() / 2;
-    return bufferSize < mem;
+    return bufferSize < mem && bufferSize <= Integer.MAX_VALUE;
   }
 
   /** Gets the quantity of used memory, in MB. */
@@ -193,9 +193,19 @@ public class TestTools {
   public static void getFiles(String root, List files,
     final ConfigurationTree config, String toplevelConfig)
   {
+    getFiles(root, files, config, toplevelConfig, null);
+  }
+
+  /** Recursively generate a list of files to test. */
+  public static void getFiles(String root, List files,
+    final ConfigurationTree config, String toplevelConfig, String[] subdirs)
+  {
     Location f = new Location(root);
     String[] subs = f.list();
     if (subs == null) subs = new String[0];
+    if (subdirs != null) {
+      subs = subdirs;
+    }
 
     boolean isToplevel =
      toplevelConfig != null && new File(toplevelConfig).exists();

@@ -166,6 +166,38 @@ public class CellSensReader extends FormatReader {
     return usedFiles;
   }
 
+  /* @see loci.formats.IFormatReader#getOptimalTileWidth() */
+  public int getOptimalTileWidth() {
+    FormatTools.assertId(currentId, true, 1);
+    if (getCoreIndex() < core.length - ifds.size()) {
+      return tileX[getCoreIndex()];
+    }
+    int ifdIndex = getCoreIndex() - (usedFiles.length - 1);
+    try {
+      return (int) ifds.get(ifdIndex).getTileWidth();
+    }
+    catch (FormatException e) {
+      LOGGER.debug("Could not retrieve tile width", e);
+    }
+    return super.getOptimalTileWidth();
+  }
+
+  /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
+  public int getOptimalTileHeight() {
+    FormatTools.assertId(currentId, true, 1);
+    if (getCoreIndex() < core.length - ifds.size()) {
+      return tileY[getCoreIndex()];
+    }
+    int ifdIndex = getCoreIndex() - (usedFiles.length - 1);
+    try {
+      return (int) ifds.get(ifdIndex).getTileLength();
+    }
+    catch (FormatException e) {
+      LOGGER.debug("Could not retrieve tile height", e);
+    }
+    return super.getOptimalTileHeight();
+  }
+
   /* @see loci.formats.IFormatHandler#openThumbBytes(int) */
   public byte[] openThumbBytes(int no) throws FormatException, IOException {
     FormatTools.assertId(currentId, true, 1);
@@ -174,8 +206,8 @@ public class CellSensReader extends FormatReader {
     int thumbSize = getThumbSizeX() * getThumbSizeY() *
       FormatTools.getBytesPerPixel(getPixelType()) * getRGBChannelCount();
 
-    if (currentSeries >= usedFiles.length - 1 ||
-      usedFiles.length >= getSeriesCount())
+    if (getCoreIndex() >= usedFiles.length - 1 ||
+      usedFiles.length >= core.length)
     {
       return super.openThumbBytes(no);
     }
@@ -197,9 +229,9 @@ public class CellSensReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    if (getSeries() < getSeriesCount() - ifds.size()) {
-      int tileRows = rows[getSeries()];
-      int tileCols = cols[getSeries()];
+    if (getCoreIndex() < core.length - ifds.size()) {
+      int tileRows = rows[getCoreIndex()];
+      int tileCols = cols[getCoreIndex()];
 
       Region image = new Region(x, y, w, h);
       int outputRow = 0, outputCol = 0;
@@ -212,8 +244,8 @@ public class CellSensReader extends FormatReader {
 
       for (int row=0; row<tileRows; row++) {
         for (int col=0; col<tileCols; col++) {
-          int width = tileX[getSeries()];
-          int height = tileY[getSeries()];
+          int width = tileX[getCoreIndex()];
+          int height = tileY[getCoreIndex()];
           Region tile = new Region(col * width, row * height, width, height);
           if (!tile.intersects(image)) {
             continue;
@@ -250,7 +282,7 @@ public class CellSensReader extends FormatReader {
       return buf;
     }
     else {
-      int ifdIndex = getSeries() - (usedFiles.length - 1);
+      int ifdIndex = getCoreIndex() - (usedFiles.length - 1);
       return parser.getSamples(ifds.get(ifdIndex), buf, x, y, w, h);
     }
   }
@@ -357,7 +389,14 @@ public class CellSensReader extends FormatReader {
 
     for (int s=0; s<core.length; s++) {
       core[s] = new CoreMetadata();
+    }
+
+    for (int s=0; s<core.length; s++) {
       tileMap[s] = new HashMap<TileCoordinate, Integer>();
+
+      if (s == 0 && !hasFlattenedResolutions()) {
+        core[s].resolutionCount = ifds.size() + (files.size() == 1 ? 0 : 1);
+      }
 
       if (s < files.size() - 1) {
         setSeries(s);
@@ -368,8 +407,14 @@ public class CellSensReader extends FormatReader {
 
         if (s == 0 && exifs.size() > 0) {
           IFD exif = exifs.get(0);
-          core[s].sizeX = exif.getIFDIntValue(IFD.PIXEL_X_DIMENSION);
-          core[s].sizeY = exif.getIFDIntValue(IFD.PIXEL_Y_DIMENSION);
+
+          int newX = exif.getIFDIntValue(IFD.PIXEL_X_DIMENSION);
+          int newY = exif.getIFDIntValue(IFD.PIXEL_Y_DIMENSION);
+
+          if (getSizeX() > newX || getSizeY() > newY) {
+            core[s].sizeX = newX;
+            core[s].sizeY = newY;
+          }
         }
 
         setSeries(0);
@@ -407,18 +452,18 @@ public class CellSensReader extends FormatReader {
   private int getTileSize() {
     int channels = getRGBChannelCount();
     int bpp = FormatTools.getBytesPerPixel(getPixelType());
-    return bpp * channels * tileX[getSeries()] * tileY[getSeries()];
+    return bpp * channels * tileX[getCoreIndex()] * tileY[getCoreIndex()];
   }
 
   private byte[] decodeTile(int no, int row, int col)
     throws FormatException, IOException
   {
-    if (tileMap[getSeries()] == null) {
+    if (tileMap[getCoreIndex()] == null) {
       return new byte[getTileSize()];
     }
 
     int[] zct = getZCTCoords(no);
-    TileCoordinate t = new TileCoordinate(nDimensions[getSeries()]);
+    TileCoordinate t = new TileCoordinate(nDimensions[getCoreIndex()]);
     t.coordinate[0] = col;
     t.coordinate[1] = row;
 
@@ -436,14 +481,14 @@ public class CellSensReader extends FormatReader {
       }
     }
 
-    Integer index = (Integer) tileMap[getSeries()].get(t);
+    Integer index = (Integer) tileMap[getCoreIndex()].get(t);
     if (index == null) {
       return new byte[getTileSize()];
     }
 
-    Long offset = tileOffsets[getSeries()][index];
+    Long offset = tileOffsets[getCoreIndex()][index];
     RandomAccessInputStream ets =
-      new RandomAccessInputStream(usedFiles[getSeries()]);
+      new RandomAccessInputStream(usedFiles[getCoreIndex()]);
     ets.seek(offset);
 
     CodecOptions options = new CodecOptions();
@@ -451,18 +496,18 @@ public class CellSensReader extends FormatReader {
     options.littleEndian = isLittleEndian();
     int tileSize = getTileSize();
     if (tileSize == 0) {
-      tileSize = tileX[getSeries()] * tileY[getSeries()] * 10;
+      tileSize = tileX[getCoreIndex()] * tileY[getCoreIndex()] * 10;
     }
     options.maxBytes = (int) (offset + tileSize);
 
     byte[] buf = null;
-    long end = index < tileOffsets[getSeries()].length - 1 ?
-      tileOffsets[getSeries()][index + 1] : ets.length();
+    long end = index < tileOffsets[getCoreIndex()].length - 1 ?
+      tileOffsets[getCoreIndex()][index + 1] : ets.length();
 
     IFormatReader reader = null;
     String file = null;
 
-    switch (compressionType[getSeries()]) {
+    switch (compressionType[getCoreIndex()]) {
       case RAW:
         buf = new byte[tileSize];
         ets.read(buf);
