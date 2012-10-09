@@ -105,7 +105,7 @@ public class UpgradeChecker {
   };
 
   /** Version number of the latest stable release. */
-  public static final String STABLE_VERSION = "4.4.4";
+  public static final String STABLE_VERSION = "4.4.2";
 
   /** Location of the OME registry. */
   public static final String REGISTRY = "http://upgrade.openmicroscopy.org.uk";
