@@ -273,10 +273,14 @@ public class NDPIReader extends BaseTiffReader {
 
       boolean neededAdjustment = false;
       for (int j=0; j<stripOffsets.length; j++) {
+        long prevOffset = i == 0 ? 0 : ifds.get(i - 1).getStripOffsets()[0];
+        long prevByteCount =
+          i == 0 ? 0 : ifds.get(i - 1).getStripByteCounts()[0];
+
         long newOffset = stripOffsets[j] + 0x100000000L;
         if (newOffset < stream.length() && ((j > 0 &&
           (stripOffsets[j] < stripOffsets[j - 1])) ||
-          (i > 0 && stripOffsets[j] < ifds.get(i - 1).getStripOffsets()[0])))
+          (i > 0 && stripOffsets[j] < prevOffset + prevByteCount)))
         {
           stripOffsets[j] = newOffset;
           neededAdjustment = true;
@@ -290,8 +294,11 @@ public class NDPIReader extends BaseTiffReader {
 
       long[] stripByteCounts = ifds.get(i).getStripByteCounts();
       for (int j=0; j<stripByteCounts.length; j++) {
-        if (stripByteCounts[j] < 0) {
-          stripByteCounts[j] += 0x100000000L;
+        long newByteCount = stripByteCounts[j] + 0x100000000L;
+        if (stripByteCounts[j] < 0 || neededAdjustment ||
+          newByteCount + ifds.get(i).getStripOffsets()[0] < in.length())
+        {
+          stripByteCounts[j] = newByteCount;
           neededAdjustment = true;
         }
       }

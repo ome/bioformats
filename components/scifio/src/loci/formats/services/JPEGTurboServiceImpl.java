@@ -110,8 +110,10 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
 
   public void setRestartMarkers(long[] markers) {
     restartMarkers.clear();
-    for (long marker : markers) {
-      restartMarkers.add(marker);
+    if (markers != null) {
+      for (long marker : markers) {
+        restartMarkers.add(marker);
+      }
     }
   }
 
