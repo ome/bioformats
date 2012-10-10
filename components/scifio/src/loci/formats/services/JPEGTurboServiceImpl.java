@@ -302,6 +302,12 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
     offset = 0;
     restartMarkers.clear();
     restartInterval = 1;
+    sos = 0;
+    imageDimensions = 0;
+    tileDim = 0;
+    xTiles = 0;
+    yTiles = 0;
+    header = null;
   }
 
   // -- Helper methods --

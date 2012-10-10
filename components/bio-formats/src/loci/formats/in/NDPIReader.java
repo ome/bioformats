@@ -155,6 +155,7 @@ public class NDPIReader extends BaseTiffReader {
       in.setLength(offset + byteCount);
 
       try {
+        service.close();
         long[] markers = ifd.getIFDLongArray(MARKER_TAG);
         service.setRestartMarkers(markers);
         service.initialize(in, getSizeX(), getSizeY());
