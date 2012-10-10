@@ -1486,6 +1486,13 @@ public class FormatReaderTest {
             continue;
           }
 
+          if (reader.getFormat().equals("Hamamatsu NDPIS") &&
+            r.getFormat().equals("Hamamatsu NDPI"))
+          {
+            r.close();
+            continue;
+          }
+
           if (comp.length != base.length) {
             success = false;
             msg = base[i] + " (file list length was " + comp.length +
@@ -1978,6 +1985,13 @@ public class FormatReaderTest {
             }
 
             if (!result && readers[j] instanceof MIASReader) {
+              continue;
+            }
+
+            if ((readers[j] instanceof NDPISReader ||
+              r instanceof NDPISReader) &&
+              used[i].toLowerCase().endsWith(".ndpi"))
+            {
               continue;
             }
 
