@@ -1,0 +1,54 @@
+User information
+================
+
+:doc: `Information on supported formats <bio-formats-formats>`
+
+The following sections explain the features of Bio-formats and how to use 
+it within ImageJ and FIJI:
+
+:doc: `Bio-formats features <bio-formats-bio-formats-features>`
+
+:doc: `Installing Bio-formats in ImageJ <bio-formats-installing-bio-formats-imagej>`
+
+:doc: `Loading images with Bio-formats <bio-formats-using-bio-formats-load-images>`
+
+:doc: `Managing memory <bio-formats-managing-memory-using-bio-formats>`
+
+:doc: `Reporting a bug <bio-formats-bug-reporting>`
+
+
+Other applications
+------------------
+
+Many software packages can use Bio-formats to read and write microscopy formats 
+(click on the package for further details):
+
+
+Libraries and scripting
+^^^^^^^^^^^^^^^^^^^^^^^
+
+Command line tools		FARSIGHT		i3dcore
+ImgLib					ITK				Qu for MATLAB		
+Subimager
+
+
+Numerical data processing
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+IDL		KNIME		MATLAB		VisAD
+
+
+Visualization and analysis
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Bitplane Imaris		CellProfiler		Comstat2
+Endrov				Fiji				FocalPoint
+Graphic Converter	Icy		ImageJ 	Imago	Iqm
+Macnification		MIPAV		Vaa3D		VisBio
+XuvTools
+
+
+Image Servers
+^^^^^^^^^^^^^
+
+BISQUE			OME server		OMERO
