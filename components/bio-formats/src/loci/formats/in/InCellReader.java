@@ -101,7 +101,7 @@ public class InCellReader extends FormatReader {
   /** Constructs a new InCell 1000/2000 reader. */
   public InCellReader() {
     super("InCell 1000/2000",
-      new String[] {"xdce", "xml", "tiff", "tif", "xlog", "im"});
+      new String[] {"xdce", "xml", "tiff", "tif", "xlog"});
     suffixSufficient = false;
     domains = new String[] {FormatTools.HCS_DOMAIN};
     hasCompanionFiles = true;
