@@ -37,16 +37,12 @@ Importer. It can also be used to split a stack across channels, focal
 planes or time points.
 
 The **LOCI Plugins Configuration** dialog is a useful way to configure
-the behavior of each file format.
-
-The Formats tab lists supported file formats and toggles each format on
-or off, which is useful if your file is detected as the wrong format. It
-also toggles whether each format bypasses the importer options dialog
-through the "Windowless" checkbox. You can also configure any specific
-option for each format.
-
-The Libraries tab provides a list of available helper libraries used by
-Bio-Formats.
+the behavior of each file format. The Formats tab lists supported file 
+formats and toggles each format on or off, which is useful if your file 
+is detected as the wrong format. It also toggles whether each format 
+bypasses the importer options dialog through the "Windowless" checkbox. 
+You can also configure any specific option for each format. The Libraries 
+tab provides a list of available helper libraries used by Bio-Formats.
 
 The **LOCI Plugins Shortcut Window** opens a small window with a
 quick-launch button for each LOCI plugin. Dragging and dropping files
