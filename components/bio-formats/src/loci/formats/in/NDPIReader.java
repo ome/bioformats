@@ -134,7 +134,7 @@ public class NDPIReader extends BaseTiffReader {
     if (x == 0 && y == 0 && w == 1 && h == 1) {
       return buf;
     }
-    else if (getSizeX() <= MAX_SIZE && getSizeY() <= MAX_SIZE) {
+    else if (getSizeX() <= MAX_SIZE || getSizeY() <= MAX_SIZE) {
       int ifdIndex = getIFDIndex(getCoreIndex(), no);
       in = new RandomAccessInputStream(currentId);
       tiffParser = new TiffParser(in);
@@ -146,7 +146,7 @@ public class NDPIReader extends BaseTiffReader {
       IFD ifd = ifds.get(getIFDIndex(getCoreIndex(), no));
 
       long offset = ifd.getStripOffsets()[0];
-      int byteCount = (int) ifd.getStripByteCounts()[0];
+      long byteCount = ifd.getStripByteCounts()[0];
       if (in != null) {
         in.close();
       }
@@ -157,7 +157,9 @@ public class NDPIReader extends BaseTiffReader {
       try {
         service.close();
         long[] markers = ifd.getIFDLongArray(MARKER_TAG);
-        service.setRestartMarkers(markers);
+        if (markers != null) {
+          service.setRestartMarkers(markers);
+        }
         service.initialize(in, getSizeX(), getSizeY());
       }
       catch (ServiceException e) {
@@ -272,13 +274,30 @@ public class NDPIReader extends BaseTiffReader {
       boolean neededAdjustment = false;
       for (int j=0; j<stripOffsets.length; j++) {
         long newOffset = stripOffsets[j] + 0x100000000L;
-        if (newOffset < stream.length()) {
+        if (newOffset < stream.length() && ((j > 0 &&
+          (stripOffsets[j] < stripOffsets[j - 1])) ||
+          (i > 0 && stripOffsets[j] < ifds.get(i - 1).getStripOffsets()[0])))
+        {
           stripOffsets[j] = newOffset;
           neededAdjustment = true;
         }
       }
       if (neededAdjustment) {
         ifds.get(i).putIFDValue(IFD.STRIP_OFFSETS, stripOffsets);
+      }
+
+      neededAdjustment = false;
+
+      long[] stripByteCounts = ifds.get(i).getStripByteCounts();
+      for (int j=0; j<stripByteCounts.length; j++) {
+        if (stripByteCounts[j] < 0) {
+          stripByteCounts[j] += 0x100000000L;
+          neededAdjustment = true;
+        }
+      }
+
+      if (neededAdjustment) {
+        ifds.get(i).putIFDValue(IFD.STRIP_BYTE_COUNTS, stripByteCounts);
       }
     }
     stream.close();
@@ -340,7 +359,7 @@ public class NDPIReader extends BaseTiffReader {
       core[s].pixelType = ifd.getPixelType();
       core[s].metadataComplete = true;
       core[s].interleaved =
-        core[s].sizeX > MAX_SIZE || core[s].sizeY > MAX_SIZE;
+        core[s].sizeX > MAX_SIZE && core[s].sizeY > MAX_SIZE;
       core[s].falseColor = false;
       core[s].dimensionOrder = "XYCZT";
       core[s].thumbnail = s != 0;
