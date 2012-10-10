@@ -78,7 +78,7 @@ About
     :titlesonly:
 
     loci/bio-formats-about
-    loci/bio-formats-downloads
+    loci/bio-formats-formats
     loci/bio-formats-downloads
     loci/bio-formats-source-code
     loci/bio-formats-license
@@ -89,7 +89,7 @@ Using Bio-Formats
 =================
 
 Bio-Formats is a Java-based library that converts
-:ref:`over 115 microscopy formats <supportedformats>` into the
+:doc:`over 115 microscopy formats <loci/bio-formats-formats>` into the
 OME-XML and OME-TIFF formats. Bio-Formats can be used with numerous
 :ref:`applications <bfapplications>` but
 is most commonly used with ImageJ and FIJI.
