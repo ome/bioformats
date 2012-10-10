@@ -38,6 +38,8 @@ package loci.formats.services;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import loci.common.ByteArrayHandle;
 import loci.common.DataTools;
@@ -99,6 +101,8 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
   // -- Constructor --
 
   public JPEGTurboServiceImpl() {
+    Logger logger = Logger.getLogger("org.scijava.nativelib.NativeLibraryUtil");
+    logger.setLevel(Level.SEVERE);
     NativeLibraryUtil.loadNativeLibrary(TJ.class, "turbojpeg");
   }
 
