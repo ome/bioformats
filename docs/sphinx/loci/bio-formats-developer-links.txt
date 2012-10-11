@@ -1,2 +1,72 @@
-Developer links
-===============
+***********************
+Developer Documentation
+***********************
+
+
+.. toctree::
+    :maxdepth: 1
+    :titlesonly:
+
+    commit-testing
+    export
+    matlab
+    service
+    testing-notes
+
+
+The main developer documentation page is here:
+`http://loci.wisc.edu/bio-formats/bio-formats-java-library <http://loci.wisc.edu/bio-formats/bio-formats-java-library>`_
+
+Some of the more useful pieces of documentation are:
+
+-  :jenkins:`Javadocs <job/BIOFORMATS-trunk/javadoc/>`
+-  `More thorough examples of exporting images and
+   metadata
+   <http://github.com/openmicroscopy/bioformats/tree/develop/components/bio-formats/doc/export>`_
+
+
+Bio-Formats as a Java Library
+=============================
+
+If you wish to make use of Bio-Formats within your own software, you can
+download bio-formats.jar to use it as a library. Just add
+**bio-formats.jar** to your CLASSPATH or build path. You will also need
+**loci-common.jar** for common I/O functions. :doc:`Read
+more.... </loci/bio-formats-bio-formats-java-library>`
+
+
+Developing Bio-Formats
+======================
+
+If you are interested in hacking on the Bio-Formats source code itself,
+you can load the source code into your favorite IDE, or develop code
+with your favorite text editor. :doc:`Read
+more.... <loci/bio-formats-developing-bio-formats>`
+
+Interfacing From Non-Java Code
+------------------------------
+
+Bio-Formats is written in Java, and is easiest to use with other Java
+code. However, it is possible to call Bio-Formats from a program written
+in another language. But how to do so depends on your program's needs.
+:doc:`Read more.... <loci/bio-formats-interfacing-non-java-code>`
+
+Bio-Formats C++ Bindings
+------------------------
+
+To make the utility of the Bio-Formats Java library accessible to
+software written in C++ (such as the Insight Toolkit) we have used the
+Jace set of libraries to create C++ proxies of the Bio-Formats classes.
+:doc:`Read more.... <loci/bio-formats-bio-formats-c-bindings>`
+
+.. toctree::
+    :maxdepth: 1
+    :titlesonly:
+    :hidden:
+
+    loci/bio-formats-bio-formats-java-library
+    loci/bio-formats-developing-bio-formats
+    loci/bio-formats-interfacing-non-java-code
+    loci/bio-formats-bio-formats-c-bindings
+
+.. _bfapplications:
