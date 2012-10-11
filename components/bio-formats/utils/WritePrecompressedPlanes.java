@@ -25,6 +25,8 @@
 
 import java.io.IOException;
 
+import loci.common.RandomAccessInputStream;
+import loci.common.RandomAccessOutputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatTools;
 import loci.formats.ImageReader;
@@ -33,9 +35,6 @@ import loci.formats.meta.IMetadata;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffCompression;
 import loci.formats.tiff.TiffSaver;
-
-import ome.scifio.io.RandomAccessInputStream;
-import ome.scifio.io.RandomAccessOutputStream;
 
 import ome.xml.model.primitives.PositiveInteger;
 

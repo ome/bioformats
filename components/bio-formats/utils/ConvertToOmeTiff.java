@@ -23,12 +23,11 @@
  * #L%
  */
 
+import loci.common.services.ServiceFactory;
 import loci.formats.ImageReader;
 import loci.formats.meta.IMetadata;
 import loci.formats.services.OMEXMLService;
 import loci.formats.out.OMETiffWriter;
-
-import ome.scifio.services.ServiceFactory;
 
 /**
  * Converts the given files to OME-TIFF format.

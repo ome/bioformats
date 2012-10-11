@@ -24,16 +24,14 @@
  */
 
 import java.io.*;
-
+import loci.common.ByteArrayHandle;
+import loci.common.Location;
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceException;
+import loci.common.services.ServiceFactory;
 import loci.formats.*;
 import loci.formats.meta.IMetadata;
 import loci.formats.services.OMEXMLService;
-
-import ome.scifio.io.ByteArrayHandle;
-import ome.scifio.io.Location;
-import ome.scifio.services.DependencyException;
-import ome.scifio.services.ServiceException;
-import ome.scifio.services.ServiceFactory;
 
 /**
  * Tests the Bio-Formats I/O logic to and from byte arrays in memory.
