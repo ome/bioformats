@@ -22,7 +22,7 @@ Installation
     bio-formats-downloads
 
 Installation is usually as simple as downloading one of the files from
-`the Bio-formats downloads page <bio-formats-downloads>`:
+:doc:`the Bio-formats downloads page <bio-formats-downloads>`:
 
 - either the complete Bio-Formats bundle with supporting libraries is
   available as `loci\_tools.jar
