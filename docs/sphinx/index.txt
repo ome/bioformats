@@ -307,7 +307,6 @@ Online Resources
     Downloads <https://www.openmicroscopy.org/site/products/bio-formats/bio-formats-downloads>
     Features <https://www.openmicroscopy.org/site/products/feature-list>
 
-
 This documentation is a work in progress and many aspects of Bio-Formats are
 not yet covered. The source code is hosted on Github. To propose changes and
 fix errors, go to the `Bio-Formats repository`_, fork it, edit the file
