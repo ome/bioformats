@@ -13,7 +13,7 @@ Supported Formats
 
 **Export** indicates whether Bio-Formats is capable of writing the format (Bio-Formats can read every format on this list).
 
-**SCIFIO** indicates whether format is supported by the :doc:`SCIFIO <software-scifio>` core library (See the license section on the :doc:`Bio-formats documentation <sphinx/index>` page for why this matters).
+**SCIFIO** indicates whether format is supported by the :doc:`SCIFIO <software-scifio>` core library (See the license section on the :doc:`Bio-formats documentation </index>` page for why this matters).
 
 .. toctree::
     :maxdepth: 1

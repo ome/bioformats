@@ -30,6 +30,8 @@ Bio-formats processes metadata and the rationale behind the project.
 
     loci/bio-formats-users
     loci/bio-formats-developer-links
+    loci/bio-formats-about
+    troubleshooting
 
 
 Authors
@@ -102,6 +104,7 @@ to discuss your requirements.
 Questions
 =========
 
+
 See the
 `Bio-Formats <http://www.openmicroscopy.org/site/support/faq/bio-formats>`_,
 `File Formats <http://www.openmicroscopy.org/site/support/faq/file-formats>`_
@@ -110,6 +113,8 @@ sections of the `OME FAQ <http://www.openmicroscopy.org/site/support/faq>`_ for 
 some common questions. Please `contact us <http://www.openmicroscopy.org/site/community/mailing-lists>`__ if
 you have any questions or problems with Bio-Formats.
 
+Also see `Troubleshooting <troubleshooting>` for general tips if you are more confident to tackle
+issues yourself.
 
 
 Version history and roadmap

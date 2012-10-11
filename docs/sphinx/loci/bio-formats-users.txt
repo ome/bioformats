@@ -2,11 +2,23 @@
 User information
 ****************
 
+.. toctree::
+    :maxdepth: 1
+    :Hidden:
+
+    bio-formats-formats
+	
 :doc: `Information on supported formats <bio-formats-formats>`
 
 
 Installation
 ============
+
+.. toctree::
+    :maxdepth: 1
+    :hidden:
+
+    bio-formats-downloads
 
 Installation is usually as simple as downloading one of the files from
 `the Bio-formats downloads page <bio-formats-downloads>`:
@@ -35,7 +47,7 @@ it within ImageJ and FIJI:
     :maxdepth: 1
     :titlesonly:
 
-	bio-formats-bio-formats-features
+    bio-formats-bio-formats-features
     bio-formats-installing-bio-formats-imagej
     bio-formats-using-bio-formats-load-images
     bio-formats-managing-memory-using-bio-formats

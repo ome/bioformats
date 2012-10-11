@@ -12,6 +12,7 @@ Developer Documentation
     /matlab
     /service
     /testing-notes
+    bio-formats-source-code
 
 
 The main developer documentation page is here:
