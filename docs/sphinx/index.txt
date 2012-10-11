@@ -81,9 +81,6 @@ About
     loci/bio-formats-formats
     loci/bio-formats-downloads
     loci/bio-formats-source-code
-    loci/bio-formats-license
-    loci/bio-formats-authors
-    loci/bio-formats-citations
 
 Using Bio-Formats
 =================
