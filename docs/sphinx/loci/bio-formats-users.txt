@@ -130,5 +130,5 @@ For information about what extensions to choose to import files, see
     :maxdepth: 1
     :titlesonly:
 
-    sphinx/dataset-structure-table
+    /dataset-structure-table
 

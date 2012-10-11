@@ -7,11 +7,11 @@ Developer Documentation
     :maxdepth: 1
     :titlesonly:
 
-    commit-testing
-    export
-    matlab
-    service
-    testing-notes
+    /commit-testing
+    /export
+    /matlab
+    /service
+    /testing-notes
 
 
 The main developer documentation page is here:
