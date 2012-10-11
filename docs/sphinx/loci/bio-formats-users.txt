@@ -35,12 +35,12 @@ it within ImageJ and FIJI:
     :maxdepth: 1
     :titlesonly:
 
-	loci/bio-formats-bio-formats-features
-    loci/bio-formats-installing-bio-formats-imagej
-    loci/bio-formats-using-bio-formats-load-images
-    loci/bio-formats-managing-memory-using-bio-formats
-    loci/bio-formats-using-bio-formats-load-images
-    loci/bio-formats-bug-reporting
+	bio-formats-bio-formats-features
+    bio-formats-installing-bio-formats-imagej
+    bio-formats-using-bio-formats-load-images
+    bio-formats-managing-memory-using-bio-formats
+    bio-formats-using-bio-formats-load-images
+    bio-formats-bug-reporting
 
 
 
@@ -58,13 +58,13 @@ Libraries and Scripting
     :maxdepth: 1
     :titlesonly:
 
-    loci/bio-formats-command-line-tools
-    loci/bio-formats-farsight
-    loci/bio-formats-i3dcore
-    loci/bio-formats-imglib
-    loci/bio-formats-itk
-    loci/bio-formats-qu-matlab
-    loci/bio-formats-subimager
+    bio-formats-command-line-tools
+    bio-formats-farsight
+    bio-formats-i3dcore
+    bio-formats-imglib
+    bio-formats-itk
+    bio-formats-qu-matlab
+    bio-formats-subimager
 
 
 Numerical Data Processing
@@ -74,10 +74,10 @@ Numerical Data Processing
     :maxdepth: 1
     :titlesonly:
 
-    loci/bio-formats-idl
-    loci/bio-formats-knime
-    loci/bio-formats-matlab
-    loci/bio-formats-visad
+    bio-formats-idl
+    bio-formats-knime
+    bio-formats-matlab
+    bio-formats-visad
 
 Visualization and analysis
 --------------------------
@@ -86,23 +86,23 @@ Visualization and analysis
     :maxdepth: 1
     :titlesonly:
 
-    loci/bio-formats-bitplane-imaris
-    loci/bio-formats-cellprofiler
-    loci/bio-formats-comstat2
-    loci/bio-formats-endrov
-    loci/bio-formats-fiji
-    loci/bio-formats-focalpoint
-    loci/bio-formats-graphic-converter
-    loci/bio-formats-icy
-    loci/bio-formats-imagej
-    loci/bio-formats-upgrading-bio-formats-importer-imagej-latest-trunk-build
-    loci/bio-formats-iqm
-    loci/bio-formats-jar2lib
-    loci/bio-formats-mipav
-    loci/bio-formats-macnification
-    loci/bio-formats-v3d
-    loci/bio-formats-visbio
-    loci/bio-formats-xuvtools
+    bio-formats-bitplane-imaris
+    bio-formats-cellprofiler
+    bio-formats-comstat2
+    bio-formats-endrov
+    bio-formats-fiji
+    bio-formats-focalpoint
+    bio-formats-graphic-converter
+    bio-formats-icy
+    bio-formats-imagej
+    bio-formats-upgrading-bio-formats-importer-imagej-latest-trunk-build
+    bio-formats-iqm
+    bio-formats-jar2lib
+    bio-formats-mipav
+    bio-formats-macnification
+    bio-formats-v3d
+    bio-formats-visbio
+    bio-formats-xuvtools
 
 Image Servers
 -------------
@@ -111,9 +111,9 @@ Image Servers
     :maxdepth: 1
     :titlesonly:
 
-    loci/bio-formats-bisque
-    loci/bio-formats-ome-server
-    loci/bio-formats-omero
+    bio-formats-bisque
+    bio-formats-ome-server
+    bio-formats-omero
 
 SCIFIO
 ======
@@ -122,7 +122,7 @@ SCIFIO
     :maxdepth: 1
     :titlesonly:
 
-    loci/software-scifio
+    software-scifio
 
 For information about what extensions to choose to import files, see
 
@@ -130,5 +130,5 @@ For information about what extensions to choose to import files, see
     :maxdepth: 1
     :titlesonly:
 
-    dataset-structure-table
+    sphinx/dataset-structure-table
 

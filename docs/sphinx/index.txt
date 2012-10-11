@@ -5,31 +5,31 @@ Bio-Formats Documentation
 Bio-Formats is a standalone Java library for reading and writing life
 sciences image file formats. It is capable of parsing both pixels and
 metadata for a large number of formats, as well as writing to several
-formats. See the :doc:`Supported Formats <bio-formats-formats>`
+formats. See the :doc:`Supported Formats <loci/bio-formats-formats>`
 page for a complete list and information on the level of support
 (click the format names to see all information).
 
 Bio-Formats's primary purpose is to convert proprietary microscopy data into
 an open standard called the `OME data model <http://genomebiology.com/2005/6/5/R47>`_, 
 particularly into the OME-TIFF_file format. See 
-:doc:`the Goal of Bio-Formats <bio-formats-about>` for more information about how
+:doc:`the Goal of Bio-Formats <loci/bio-formats-about>` for more information about how
 Bio-formats processes metadata and the rationale behind the project.
 
 
-:doc:`User information <bio-formats-users>`
--------------------------------------------
+:doc:`User information <loci/bio-formats-users>`
+------------------------------------------------
 
 
-:doc:`Developer documentation <bio-formats-developer-links>`
-------------------------------------------------------------
+:doc:`Developer documentation <loci/bio-formats-developer-links>`
+-----------------------------------------------------------------
 
 
 .. toctree::
     :maxdepth: 1
     :hidden:
 
-    bio-formats-users
-    bio-formats-developer-links
+    loci/bio-formats-users
+    loci/bio-formats-developer-links
 
 
 Authors
@@ -43,15 +43,14 @@ The library is written by Melissa Linkert, Curtis Rueden, Chris Allan and
 Brian Loranger with past contributions from Eric Kjellman. Other contributors
 include Eric Albert, Jonathan Armond, Simon Blanchoud, Ghislain Bonamy, Michel
 Boudinot, Jean-Marie Burel, Thomas Caswell, Tony Collins, Dmitry Fedorov, Zack
-	Galbreath, Shawn Garbett, Bram Gerritsen, Aivar Grislis, John Hansen, Volker
-	Hartmann, Mark Hiner, Sebastien Huart, Greg Jefferis, Lee Kamentsky, Mikhail
-	Kovtun, Gaëtan Lehmann, Chris Lesiak, Cris Luengo, Josh Moore, Rubén Muñoz,
-	Martin Offterdinger, Jim Paris, Nick Perry, Ville Rantanen, Wayne Rasband,
-	Johannes Schindelin and Brett Shoelson.
+Galbreath, Shawn Garbett, Bram Gerritsen, Aivar Grislis, John Hansen, Volker
+Hartmann, Mark Hiner, Sebastien Huart, Greg Jefferis, Lee Kamentsky, Mikhail
+Kovtun, Gaëtan Lehmann, Chris Lesiak, Cris Luengo, Josh Moore, Rubén Muñoz,
+Martin Offterdinger, Jim Paris, Nick Perry, Ville Rantanen, Wayne Rasband,
+Johannes Schindelin and Brett Shoelson.
 
-	You can read more about the `OME development
-	team <https://www.openmicroscopy.org/site/about/development-teams>`_ on
-	the OME web site.
+You can read more about the `OME development team <https://www.openmicroscopy.org/site/about/development-teams>`_ on
+the OME web site.
 
 
 Citations
