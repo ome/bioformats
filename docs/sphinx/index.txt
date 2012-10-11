@@ -36,8 +36,11 @@ Bio-formats processes metadata and the rationale behind the project.
 
 
 
+About Bio-formats
+=================
+
 Authors
-=======
+-------
 
 Bio-Formats is `OME software <http://www.openmicroscopy.org/>`_
 developed by **UW-Madison LOCI** and `Glencoe Software <http://www.glencoesoftware.com/>`_.
@@ -58,7 +61,7 @@ the OME web site.
 
 
 Citations
-=========
+---------
 
 To cite Bio-Formats in your publication, you can use the following
 `reference <http://jcb.rupress.org/content/189/5/777>`_:
@@ -72,7 +75,7 @@ information on citing OME tools.
 
 
 License
-=======
+-------
 
 Bio-Formats is open source software licensed under the `GNU General
 Public License <http://www.gnu.org/licenses/gpl.html>`_ (GPL).
@@ -92,7 +95,7 @@ have questions about the Bio-Formats license, please `contact us
 <http://lists.openmicroscopy.org.uk/mailman/listinfo/ome-users/>`__.
 
 Commercial licensing
---------------------
+^^^^^^^^^^^^^^^^^^^^
 
 If you prefer, you can obtain a commercial Bio-Formats license and/or
 support package from our commercial partner, `Glencoe
@@ -103,8 +106,8 @@ licensing solution that meets your needs; please contact them at
 to discuss your requirements.
 
 
-Questions
-=========
+Help and questions
+------------------
 
 
 See the
@@ -120,7 +123,7 @@ issues yourself.
 
 
 Version history and roadmap
-===========================
+---------------------------
 
 Bio-Formats is updated whenever a significant bug fix is made, or whenever a
 new version of :omerodoc:`OMERO <>` is released. The version number is three numbers separated by dots; e.g., 4.0.0. See the :source:`what's new <components/bio-formats/doc/whats-new.txt>`
