@@ -24,15 +24,13 @@
  */
 
 import java.io.IOException;
-
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceException;
+import loci.common.services.ServiceFactory;
 import loci.formats.FormatException;
 import loci.formats.ImageReader;
 import loci.formats.meta.IMetadata;
 import loci.formats.services.OMEXMLService;
-
-import ome.scifio.services.DependencyException;
-import ome.scifio.services.ServiceException;
-import ome.scifio.services.ServiceFactory;
 
 /**
  * Extracts and prints out the OME-XML for a given file.

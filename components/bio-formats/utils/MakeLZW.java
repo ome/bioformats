@@ -23,12 +23,11 @@
  * #L%
  */
 
+import loci.common.services.ServiceFactory;
 import loci.formats.ImageReader;
 import loci.formats.meta.IMetadata;
 import loci.formats.out.TiffWriter;
 import loci.formats.services.OMEXMLService;
-
-import ome.scifio.services.ServiceFactory;
 
 /**
  * Converts the given image file to an LZW-compressed TIFF.

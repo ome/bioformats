@@ -23,11 +23,10 @@
  * #L%
  */
 
+import loci.common.services.ServiceFactory;
 import loci.formats.ImageReader;
 import loci.formats.meta.IMetadata;
 import loci.formats.services.OMEXMLService;
-
-import ome.scifio.services.ServiceFactory;
 
 /**
  * Edits the given file's image name (but does not save back to disk).

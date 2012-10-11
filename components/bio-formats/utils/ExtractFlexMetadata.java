@@ -26,11 +26,10 @@
 import java.io.File;
 import java.io.FileWriter;
 
+import loci.common.RandomAccessInputStream;
 import loci.formats.in.FlexReader;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
-
-import ome.scifio.io.RandomAccessInputStream;
 
 /**
  * Convenience method to extract the metadata from
