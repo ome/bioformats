@@ -17,11 +17,11 @@ Bio-formats processes metadata and the rationale behind the project.
 
 
 :doc:`User information <loci/bio-formats-users>`
-------------------------------------------------
+================================================
 
 
 :doc:`Developer documentation <loci/bio-formats-developer-links>`
------------------------------------------------------------------
+=================================================================
 
 
 .. toctree::
@@ -32,6 +32,8 @@ Bio-formats processes metadata and the rationale behind the project.
     loci/bio-formats-developer-links
     loci/bio-formats-about
     troubleshooting
+
+
 
 
 Authors
@@ -113,7 +115,7 @@ sections of the `OME FAQ <http://www.openmicroscopy.org/site/support/faq>`_ for 
 some common questions. Please `contact us <http://www.openmicroscopy.org/site/community/mailing-lists>`__ if
 you have any questions or problems with Bio-Formats.
 
-Also see `Troubleshooting <troubleshooting>` for general tips if you are more confident to tackle
+Also see :doc:`Troubleshooting <troubleshooting>` for general tips if you are more confident to tackle
 issues yourself.
 
 
