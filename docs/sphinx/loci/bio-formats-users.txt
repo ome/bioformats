@@ -1,54 +1,134 @@
+****************
 User information
-================
+****************
 
 :doc: `Information on supported formats <bio-formats-formats>`
+
+
+Installation
+============
+
+Installation is usually as simple as downloading one of the files from
+`the Bio-formats downloads page <bio-formats-downloads>`:
+
+- either the complete Bio-Formats bundle with supporting libraries is
+  available as `loci\_tools.jar
+  <http://loci.wisc.edu/files/software/loci_tools.jar>`_, or
+
+- the Bio-Formats standalone library is available as `bio-formats.jar
+  <http://loci.wisc.edu/files/software/bio-formats.jar>`_
+
+
+and placing it in an appropriate directory. Specific installation instructions
+depend upon the application you are using - see below.
+
+
+
+Using Bio-formats with ImageJ and FIJI
+======================================
 
 The following sections explain the features of Bio-formats and how to use 
 it within ImageJ and FIJI:
 
-:doc: `Bio-formats features <bio-formats-bio-formats-features>`
 
-:doc: `Installing Bio-formats in ImageJ <bio-formats-installing-bio-formats-imagej>`
+.. toctree::
+    :maxdepth: 1
+    :titlesonly:
 
-:doc: `Loading images with Bio-formats <bio-formats-using-bio-formats-load-images>`
+	loci/bio-formats-bio-formats-features
+    loci/bio-formats-installing-bio-formats-imagej
+    loci/bio-formats-using-bio-formats-load-images
+    loci/bio-formats-managing-memory-using-bio-formats
+    loci/bio-formats-using-bio-formats-load-images
+    loci/bio-formats-bug-reporting
 
-:doc: `Managing memory <bio-formats-managing-memory-using-bio-formats>`
-
-:doc: `Reporting a bug <bio-formats-bug-reporting>`
 
 
 Other applications
-------------------
+==================
 
 Many software packages can use Bio-formats to read and write microscopy formats 
 (click on the package for further details):
 
 
-Libraries and scripting
-^^^^^^^^^^^^^^^^^^^^^^^
+Libraries and Scripting
+-----------------------
 
-Command line tools		FARSIGHT		i3dcore
-ImgLib					ITK				Qu for MATLAB		
-Subimager
+.. toctree::
+    :maxdepth: 1
+    :titlesonly:
+
+    loci/bio-formats-command-line-tools
+    loci/bio-formats-farsight
+    loci/bio-formats-i3dcore
+    loci/bio-formats-imglib
+    loci/bio-formats-itk
+    loci/bio-formats-qu-matlab
+    loci/bio-formats-subimager
 
 
-Numerical data processing
-^^^^^^^^^^^^^^^^^^^^^^^^^
+Numerical Data Processing
+-------------------------
 
-IDL		KNIME		MATLAB		VisAD
+.. toctree::
+    :maxdepth: 1
+    :titlesonly:
 
+    loci/bio-formats-idl
+    loci/bio-formats-knime
+    loci/bio-formats-matlab
+    loci/bio-formats-visad
 
 Visualization and analysis
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+--------------------------
 
-Bitplane Imaris		CellProfiler		Comstat2
-Endrov				Fiji				FocalPoint
-Graphic Converter	Icy		ImageJ 	Imago	Iqm
-Macnification		MIPAV		Vaa3D		VisBio
-XuvTools
+.. toctree::
+    :maxdepth: 1
+    :titlesonly:
 
+    loci/bio-formats-bitplane-imaris
+    loci/bio-formats-cellprofiler
+    loci/bio-formats-comstat2
+    loci/bio-formats-endrov
+    loci/bio-formats-fiji
+    loci/bio-formats-focalpoint
+    loci/bio-formats-graphic-converter
+    loci/bio-formats-icy
+    loci/bio-formats-imagej
+    loci/bio-formats-upgrading-bio-formats-importer-imagej-latest-trunk-build
+    loci/bio-formats-iqm
+    loci/bio-formats-jar2lib
+    loci/bio-formats-mipav
+    loci/bio-formats-macnification
+    loci/bio-formats-v3d
+    loci/bio-formats-visbio
+    loci/bio-formats-xuvtools
 
 Image Servers
-^^^^^^^^^^^^^
+-------------
 
-BISQUE			OME server		OMERO
+.. toctree::
+    :maxdepth: 1
+    :titlesonly:
+
+    loci/bio-formats-bisque
+    loci/bio-formats-ome-server
+    loci/bio-formats-omero
+
+SCIFIO
+======
+
+.. toctree::
+    :maxdepth: 1
+    :titlesonly:
+
+    loci/software-scifio
+
+For information about what extensions to choose to import files, see
+
+.. toctree::
+    :maxdepth: 1
+    :titlesonly:
+
+    dataset-structure-table
+

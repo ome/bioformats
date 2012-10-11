@@ -19,3 +19,10 @@ Fiji" command from the Help menu. By default, Fiji even automatically
 checks for updates every time it is launched, so you will always be
 notified when new versions of Bio-Formats (or any other bundled plugin)
 are available.
+
+Updates in the FIJI updater are not always Bio-Formats’ most recent
+trunk build or stable release; they are versions that are known to
+remain compatible with other plugins that depend upon Bio-Formats. You
+should use the FIJI updater if you use other plugins that might use
+Bio-Formats.  However, if you encounter a bug within Bio-Formats, use
+Bio-Formats’ own updater to see if the latest trunk build fixes it.

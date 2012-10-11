@@ -2,314 +2,128 @@
 Bio-Formats Documentation
 #########################
 
-Bio-Formats is a standalone Java library for reading and writing
-microscopy file formats, written by the Open Microscopy Environment
-consortium. It is capable of parsing both pixels and metadata for more
-than 120 file formats, as well as writing to several formats. It also
-includes standardized metadata conversion to OME-XML and OME-TIFF.
+Bio-Formats is a standalone Java library for reading and writing life
+sciences image file formats. It is capable of parsing both pixels and
+metadata for a large number of formats, as well as writing to several
+formats. See the :doc:`Supported Formats <bio-formats-formats>`
+page for a complete list and information on the level of support
+(click the format names to see all information).
 
-Full details, including the very impressive list of supported file
-formats, are available at the `LOCI website
-<http://loci.wisc.edu/software/bio-formats>`_.
-
-The primary goal of Bio-Formats is to facilitate the exchange of
-microscopy data between both different software packages and different
-organizations, by converting proprietary microscopy data into the `OME
-data model standard <http://www.openmicroscopy.org/site/support/file-formats>`_. See our `recent
-article <http://jcb.rupress.org/content/189/5/777.abstract>`_ on
-biological image formats and the `Bio-Formats statement of
-purpose <http://loci.wisc.edu/bio-formats/about>`_ for more
-information.
-
-Bio-Formats is released under the `GNU General Public License (GPL)
-<http://www.gnu.org/copyleft/gpl.html>`_; commercial licenses are available
-from `Glencoe Software <http://www.glencoesoftware.com>`_.
-
-For general information about Bio-Formats and its features, please see
-`http://loci.wisc.edu/software/bio-formats/ <http://loci.wisc.edu/software/bio-formats/>`_.
-A list of supported file formats is available at
-`http://loci.wisc.edu/bio-formats/formats <http://loci.wisc.edu/bio-formats/formats>`_.
-A list of applications that use Bio-Formats is available at
-`http://loci.wisc.edu/bio-formats/applications <http://loci.wisc.edu/bio-formats/applications>`_.
+Bio-Formats's primary purpose is to convert proprietary microscopy data into
+an open standard called the `OME data model <http://genomebiology.com/2005/6/5/R47>`_, 
+particularly into the OME-TIFF_file format. See 
+:doc:`the Goal of Bio-Formats <bio-formats-about>` for more information about how
+Bio-formats processes metadata and the rationale behind the project.
 
 
-************
-Installation
-************
-
-Installation is usually as simple as downloading one of the files from
-`http://loci.wisc.edu/bio-formats/downloads <http://loci.wisc.edu/bio-formats/downloads>`_:
-
-- either the complete Bio-Formats bundle with supporting libraries is
-  available as `loci\_tools.jar
-  <http://loci.wisc.edu/files/software/loci_tools.jar>`_, or
-
-- the Bio-Formats standalone library is available as `bio-formats.jar
-  <http://loci.wisc.edu/files/software/bio-formats.jar>`_
+:doc:`User information <bio-formats-users>`
+-------------------------------------------
 
 
-and placing it in an appropriate directory. Specific installation instructions
-depend upon the application you are using; please see the page for your
-application, as listed at `http://loci.wisc.edu/bio-formats/applications
-<http://loci.wisc.edu/bio-formats/applications>`_.
+:doc:`Developer documentation <bio-formats-developer-links>`
+------------------------------------------------------------
 
-See the `Bio-Formats Download page
-<http://loci.wisc.edu/bio-formats/downloads>`_ for the most
-up-to-date version of Bio-Formats including daily and trunk builds and
-source code repository information.
-
-******************
-Loci Documentation
-******************
-
-For information about which extensions to choose to import files, see
 
 .. toctree::
     :maxdepth: 1
-    :titlesonly:
-
-    loci/software-bio-formats
-
-About
-=====
-
-.. toctree::
-    :maxdepth: 1
-    :titlesonly:
-
-    loci/bio-formats-about
-    loci/bio-formats-formats
-    loci/bio-formats-downloads
-    loci/bio-formats-source-code
-
-Using Bio-Formats
-=================
-
-Bio-Formats is a Java-based library that converts
-:doc:`over 115 microscopy formats <loci/bio-formats-formats>` into the
-OME-XML and OME-TIFF formats. Bio-Formats can be used with numerous
-:ref:`applications <bfapplications>` but
-is most commonly used with ImageJ and FIJI.
-
-The purpose of this document is to explain Bio-Formats's features and
-how to use it within ImageJ and FIJI. The sections include:
-
-.. toctree::
-    :maxdepth: 1
-    :titlesonly:
-
-    loci/bio-formats-installing-bio-formats-imagej
-    loci/bio-formats-bio-formats-features
-    loci/bio-formats-using-bio-formats-load-images
-    loci/bio-formats-managing-memory-using-bio-formats
-    loci/bio-formats-using-bio-formats-load-images
-    loci/bio-formats-bug-reporting
-    loci/bio-formats-fiji-updaters
-
-Developer Topics
-================
-
-Bio-Formats as a Java Library
------------------------------
-
-If you wish to make use of Bio-Formats within your own software, you can
-download bio-formats.jar to use it as a library. Just add
-**bio-formats.jar** to your CLASSPATH or build path. You will also need
-**loci-common.jar** for common I/O functions. :doc:`Read
-more.... </loci/bio-formats-bio-formats-java-library>`
-
-Developing Bio-Formats
-----------------------
-
-If you are interested in hacking on the Bio-Formats source code itself,
-you can load the source code into your favorite IDE, or develop code
-with your favorite text editor. :doc:`Read
-more.... <loci/bio-formats-developing-bio-formats>`
-
-Interfacing From Non-Java Code
-------------------------------
-
-Bio-Formats is written in Java, and is easiest to use with other Java
-code. However, it is possible to call Bio-Formats from a program written
-in another language. But how to do so depends on your program's needs.
-:doc:`Read more.... <loci/bio-formats-interfacing-non-java-code>`
-
-Bio-Formats C++ Bindings
-------------------------
-
-To make the utility of the Bio-Formats Java library accessible to
-software written in C++ (such as the Insight Toolkit) we have used the
-Jace set of libraries to create C++ proxies of the Bio-Formats classes.
-:doc:`Read more.... <loci/bio-formats-bio-formats-c-bindings>`
-
-.. toctree::
-    :maxdepth: 1
-    :titlesonly:
     :hidden:
 
-    loci/bio-formats-bio-formats-java-library
-    loci/bio-formats-developing-bio-formats
-    loci/bio-formats-interfacing-non-java-code
-    loci/bio-formats-bio-formats-c-bindings
-
-.. _bfapplications:
-
-Applications
-============
-
-Many software packages can use Bio-Formats to read and write microscopy
-formats:
+    bio-formats-users
+    bio-formats-developer-links
 
 
-Libraries and Scripting
------------------------
+Authors
+=======
 
-.. toctree::
-    :maxdepth: 1
-    :titlesonly:
+Bio-Formats is `OME software <http://www.openmicroscopy.org/>`_
+developed by **UW-Madison LOCI** and `Glencoe Software <http://www.glencoesoftware.com/>`_.
 
-    loci/bio-formats-command-line-tools
-    loci/bio-formats-farsight
-    loci/bio-formats-i3dcore
-    loci/bio-formats-imglib
-    loci/bio-formats-itk
-    loci/bio-formats-qu-matlab
-    loci/bio-formats-subimager
+	
+The library is written by Melissa Linkert, Curtis Rueden, Chris Allan and
+Brian Loranger with past contributions from Eric Kjellman. Other contributors
+include Eric Albert, Jonathan Armond, Simon Blanchoud, Ghislain Bonamy, Michel
+Boudinot, Jean-Marie Burel, Thomas Caswell, Tony Collins, Dmitry Fedorov, Zack
+	Galbreath, Shawn Garbett, Bram Gerritsen, Aivar Grislis, John Hansen, Volker
+	Hartmann, Mark Hiner, Sebastien Huart, Greg Jefferis, Lee Kamentsky, Mikhail
+	Kovtun, Gaëtan Lehmann, Chris Lesiak, Cris Luengo, Josh Moore, Rubén Muñoz,
+	Martin Offterdinger, Jim Paris, Nick Perry, Ville Rantanen, Wayne Rasband,
+	Johannes Schindelin and Brett Shoelson.
 
-
-Numerical Data Processing
--------------------------
-
-.. toctree::
-    :maxdepth: 1
-    :titlesonly:
-
-    loci/bio-formats-idl
-    loci/bio-formats-knime
-    loci/bio-formats-matlab
-    loci/bio-formats-visad
-
-Visualization and analysis
---------------------------
-
-.. toctree::
-    :maxdepth: 1
-    :titlesonly:
-
-    loci/bio-formats-bitplane-imaris
-    loci/bio-formats-cellprofiler
-    loci/bio-formats-comstat2
-    loci/bio-formats-endrov
-    loci/bio-formats-fiji
-    loci/bio-formats-focalpoint
-    loci/bio-formats-graphic-converter
-    loci/bio-formats-icy
-    loci/bio-formats-imagej
-    loci/bio-formats-upgrading-bio-formats-importer-imagej-latest-trunk-build
-    loci/bio-formats-iqm
-    loci/bio-formats-jar2lib
-    loci/bio-formats-mipav
-    loci/bio-formats-macnification
-    loci/bio-formats-v3d
-    loci/bio-formats-visbio
-    loci/bio-formats-xuvtools
-
-Image Servers
--------------
-
-.. toctree::
-    :maxdepth: 1
-    :titlesonly:
-
-    loci/bio-formats-bisque
-    loci/bio-formats-ome-server
-    loci/bio-formats-omero
-
-SCIFIO
-======
-
-.. toctree::
-    :maxdepth: 1
-    :titlesonly:
-
-    loci/software-scifio
-
-******************
-User Documentation
-******************
-
-For information about what extensions to choose to import files, see
-
-.. toctree::
-    :maxdepth: 1
-    :titlesonly:
-
-    dataset-structure-table
+	You can read more about the `OME development
+	team <https://www.openmicroscopy.org/site/about/development-teams>`_ on
+	the OME web site.
 
 
-***********************
-Developer Documentation
-***********************
+Citations
+=========
+
+To cite Bio-Formats in your publication, you can use the following
+`reference <http://jcb.rupress.org/content/189/5/777>`_:
+
+	    Linkert et al. 2010. Metadata matters: access to image data in the
+	    real world. J Cell Biol. 189:777-782. PMID: 20513764
+
+See `this page <http://www.ome-xml.org/wiki/CitingOME>`_ for more
+information on citing OME tools.
 
 
-.. toctree::
-    :maxdepth: 1
-    :titlesonly:
 
-    commit-testing
-    export
-    matlab
-    service
-    testing-notes
+License
+=======
 
+Bio-Formats is open source software licensed under the `GNU General
+Public License <http://www.gnu.org/licenses/gpl.html>`_ (GPL).
 
-The main developer documentation page is here:
-`http://loci.wisc.edu/bio-formats/bio-formats-java-library <http://loci.wisc.edu/bio-formats/bio-formats-java-library>`_
+As a "copyleft" license, the GPL requires that any software package
+linking to Bio-Formats, either directly or indirectly, cannot be
+distributed unless its source code is also made available under the
+terms of the GPL. In addition, it forbids distribution if your software
+package depends on any non-free software other than common operating
+system components.
 
-Some of the more useful pieces of documentation are:
+For more information about the GPL and related licenses, see the `GPL
+Overview on OSS Watch <http://www.oss-watch.ac.uk/resources/gpl.xml>`_
+or the `Wikipedia entry on the
+GPL <http://en.wikipedia.org/wiki/GNU_General_Public_License>`_. If you
+have questions about the Bio-Formats license, please `contact us
+<http://lists.openmicroscopy.org.uk/mailman/listinfo/ome-users/>`__.
 
--  :jenkins:`Javadocs <job/BIOFORMATS-trunk/javadoc/>`
--  `More thorough examples of exporting images and
-   metadata
-   <http://github.com/openmicroscopy/bioformats/tree/develop/components/bio-formats/doc/export>`_
+Commercial licensing
+--------------------
 
-
-************
-Getting Help
-************
-
-.. toctree::
-    :maxdepth: 1
-    :titlesonly:
-
-    troubleshooting
-
-If you have any questions about installing, using, or developing against
-Bio-Formats, we would be happy to help - just send an email to one of
-the `mailing lists <http://www.openmicroscopy.org/site/community/mailing-lists>`_ and
-we will do our best answer your questions.
-
-You may also wish to check the `OME
-FAQ <http://www.openmicroscopy.org/site/support/faq>`_ and the `LOCI
-FAQ <http://loci.wisc.edu/faq>`_, in case your question is answered
-there.
+If you prefer, you can obtain a commercial Bio-Formats license and/or
+support package from our commercial partner, `Glencoe
+Software <http://www.glencoesoftware.com/>`_. Several different
+licensing arrangements are possible. Glencoe is committed to reaching a
+licensing solution that meets your needs; please contact them at
+`bioformats@glencoesoftware.com <mailto:bioformats@glencoesoftware.com>`_
+to discuss your requirements.
 
 
-****************
-Online Resources
-****************
+Questions
+=========
 
-.. toctree::
+See the
+`Bio-Formats <http://www.openmicroscopy.org/site/support/faq/bio-formats>`_,
+`File Formats <http://www.openmicroscopy.org/site/support/faq/file-formats>`_
+and `OME-XML and OME-TIFF <http://www.openmicroscopy.org/site/support/faq/ome-xml-and-ome-tiff>`_
+sections of the `OME FAQ <http://www.openmicroscopy.org/site/support/faq>`_ for answers to
+some common questions. Please `contact us <http://www.openmicroscopy.org/site/community/mailing-lists>`__ if
+you have any questions or problems with Bio-Formats.
 
-    Downloads <http://www.openmicroscopy.org/site/products/bio-formats/bio-formats-downloads>
-    Features <http://www.openmicroscopy.org/site/products/feature-list>
 
 
-This documentation is a work in progress and many aspects of Bio-Formats are
-not yet covered. The source code is hosted on Github. To propose changes and
-fix errors, go to the `Bio-Formats repository`_, fork it, edit the file
-contents under `docs/sphinx` and propose your file changes to the OME team
-using `Pull Requests`_.
+Version history and roadmap
+===========================
 
-.. _Bio-Formats repository: https://github.com/openmicroscopy/bioformats
-.. _Pull Requests: https://help.github.com/articles/using-pull-requests
+Bio-Formats is updated whenever a significant bug fix is made, or whenever a
+new version of :omerodoc:`OMERO <>` is released. The version number is three numbers separated by dots; e.g., 4.0.0. See the :source:`what's new <components/bio-formats/doc/whats-new.txt>`
+list for a history of major changes in each release.
+
+The latest stable version of Bio-Formats is |release|. For future
+development directions, see the
+`4.5 <http://trac.openmicroscopy.org.uk/ome/query?group=status&component=Bio-Formats&milestone=OMERO-4.5>`_
+and `5.0 <http://trac.openmicroscopy.org.uk/ome/query?group=status&component=Bio-Formats&milestone=OME-5.0>`_
+roadmaps.
+
+
