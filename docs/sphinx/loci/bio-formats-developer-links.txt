@@ -43,7 +43,7 @@ Examples
    <http://github.com/openmicroscopy/bioformats/tree/develop/components/bio-formats/doc/export>`_
 
 
-Interfacing From Non-Java Code
+Interfacing from Non-Java Code
 ==============================
 
 

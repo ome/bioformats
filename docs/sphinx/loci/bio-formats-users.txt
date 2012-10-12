@@ -8,7 +8,12 @@ User information
 
     bio-formats-formats
 	
-- :doc:`Information on supported formats <bio-formats-formats>`
+Supported formats
+=================
+	
+See :doc:`information on supported formats <bio-formats-formats>`
+for details on what formats are supported and the level of that
+support.
 
 
 
