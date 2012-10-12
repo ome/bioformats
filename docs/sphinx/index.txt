@@ -15,15 +15,9 @@ particularly into the OME-TIFF_file format. See
 :doc:`the Goal of Bio-Formats <loci/bio-formats-about>` for more information about how
 Bio-formats processes metadata and the rationale behind the project.
 
-
-:doc:`User information <loci/bio-formats-users>`
-================================================
-
-
-:doc:`Developer documentation <loci/bio-formats-developer-links>`
-=================================================================
-
-
+    - :doc:`User information <loci/bio-formats-users>`
+    - :doc:`Developer documentation <loci/bio-formats-developer-links>`
+   
 .. toctree::
     :maxdepth: 1
     :hidden:
@@ -32,78 +26,6 @@ Bio-formats processes metadata and the rationale behind the project.
     loci/bio-formats-developer-links
     loci/bio-formats-about
     troubleshooting
-
-
-
-
-About Bio-formats
-=================
-
-Authors
--------
-
-Bio-Formats is `OME software <http://www.openmicroscopy.org/>`_
-developed by **UW-Madison LOCI** and `Glencoe Software <http://www.glencoesoftware.com/>`_.
-
-	
-The library is written by Melissa Linkert, Curtis Rueden, Chris Allan and
-Brian Loranger with past contributions from Eric Kjellman. Other contributors
-include Eric Albert, Jonathan Armond, Simon Blanchoud, Ghislain Bonamy, Michel
-Boudinot, Jean-Marie Burel, Thomas Caswell, Tony Collins, Dmitry Fedorov, Zack
-Galbreath, Shawn Garbett, Bram Gerritsen, Aivar Grislis, John Hansen, Volker
-Hartmann, Mark Hiner, Sebastien Huart, Greg Jefferis, Lee Kamentsky, Mikhail
-Kovtun, Gaëtan Lehmann, Chris Lesiak, Cris Luengo, Josh Moore, Rubén Muñoz,
-Martin Offterdinger, Jim Paris, Nick Perry, Ville Rantanen, Wayne Rasband,
-Johannes Schindelin and Brett Shoelson.
-
-You can read more about the `OME development team <https://www.openmicroscopy.org/site/about/development-teams>`_ on
-the OME web site.
-
-
-Citations
----------
-
-To cite Bio-Formats in your publication, you can use the following
-`reference <http://jcb.rupress.org/content/189/5/777>`_:
-
-	    Linkert et al. 2010. Metadata matters: access to image data in the
-	    real world. J Cell Biol. 189:777-782. PMID: 20513764
-
-See `this page <http://www.ome-xml.org/wiki/CitingOME>`_ for more
-information on citing OME tools.
-
-
-
-License
--------
-
-Bio-Formats is open source software licensed under the `GNU General
-Public License <http://www.gnu.org/licenses/gpl.html>`_ (GPL).
-
-As a "copyleft" license, the GPL requires that any software package
-linking to Bio-Formats, either directly or indirectly, cannot be
-distributed unless its source code is also made available under the
-terms of the GPL. In addition, it forbids distribution if your software
-package depends on any non-free software other than common operating
-system components.
-
-For more information about the GPL and related licenses, see the `GPL
-Overview on OSS Watch <http://www.oss-watch.ac.uk/resources/gpl.xml>`_
-or the `Wikipedia entry on the
-GPL <http://en.wikipedia.org/wiki/GNU_General_Public_License>`_. If you
-have questions about the Bio-Formats license, please `contact us
-<http://lists.openmicroscopy.org.uk/mailman/listinfo/ome-users/>`__.
-
-Commercial licensing
-^^^^^^^^^^^^^^^^^^^^
-
-If you prefer, you can obtain a commercial Bio-Formats license and/or
-support package from our commercial partner, `Glencoe
-Software <http://www.glencoesoftware.com/>`_. Several different
-licensing arrangements are possible. Glencoe is committed to reaching a
-licensing solution that meets your needs; please contact them at
-`bioformats@glencoesoftware.com <mailto:bioformats@glencoesoftware.com>`_
-to discuss your requirements.
 
 
 Help and questions
