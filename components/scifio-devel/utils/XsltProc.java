@@ -41,7 +41,7 @@ import javax.xml.transform.Templates;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import ome.scifio.common.xml.XMLTools;
+import ome.scifio.xml.XMLTools;
 
 /**
  * Transforms an XML document according to the given stylesheet,

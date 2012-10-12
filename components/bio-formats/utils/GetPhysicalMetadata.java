@@ -25,14 +25,13 @@
 
 import java.util.Arrays;
 
+import loci.common.DateTools;
+import loci.common.services.ServiceFactory;
 import loci.formats.FormatReader;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 import loci.formats.meta.IMetadata;
 import loci.formats.services.OMEXMLService;
-
-import ome.scifio.common.DateTools;
-import ome.scifio.services.ServiceFactory;
 
 import ome.xml.model.primitives.PositiveFloat;
 

@@ -25,15 +25,14 @@
 
 import java.io.IOException;
 
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceException;
+import loci.common.services.ServiceFactory;
 import loci.formats.FormatException;
 import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 import loci.formats.meta.IMetadata;
 import loci.formats.services.OMEXMLService;
-
-import ome.scifio.services.DependencyException;
-import ome.scifio.services.ServiceException;
-import ome.scifio.services.ServiceFactory;
 
 /**
  * Uses Bio-Formats to extract lens numerical aperture

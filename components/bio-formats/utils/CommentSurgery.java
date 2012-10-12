@@ -23,10 +23,9 @@
  * #L%
  */
 
+import loci.common.RandomAccessInputStream;
 import loci.formats.tiff.TiffParser;
 import loci.formats.tiff.TiffSaver;
-
-import ome.scifio.io.RandomAccessInputStream;
 
 /**
  * Performs "surgery" on a TIFF ImageDescription comment, particularly the

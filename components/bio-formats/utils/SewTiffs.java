@@ -23,6 +23,9 @@
  * #L%
  */
 
+import loci.common.Location;
+import loci.common.RandomAccessInputStream;
+import loci.common.services.ServiceFactory;
 import loci.formats.FilePattern;
 import loci.formats.in.TiffReader;
 import loci.formats.meta.IMetadata;
@@ -30,10 +33,6 @@ import loci.formats.out.TiffWriter;
 import loci.formats.services.OMEXMLService;
 import loci.formats.tiff.IFD;
 import loci.formats.tiff.TiffParser;
-
-import ome.scifio.io.Location;
-import ome.scifio.io.RandomAccessInputStream;
-import ome.scifio.services.ServiceFactory;
 
 /**
  * Stitches the first plane from a collection of TIFFs into a single file.

@@ -23,11 +23,10 @@
  * #L%
  */
 
+import loci.common.services.ServiceFactory;
 import loci.formats.*;
 import loci.formats.meta.IMetadata;
 import loci.formats.services.OMEXMLService;
-
-import ome.scifio.services.ServiceFactory;
 
 import ome.xml.model.enums.DimensionOrder;
 import ome.xml.model.enums.EnumerationException;
