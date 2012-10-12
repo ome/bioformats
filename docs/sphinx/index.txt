@@ -15,8 +15,13 @@ particularly into the OME-TIFF_file format. See
 :doc:`the Goal of Bio-Formats <loci/bio-formats-about>` for more information about how
 Bio-formats processes metadata and the rationale behind the project.
 
-    - :doc:`User information <loci/bio-formats-users>`
-    - :doc:`Developer documentation <loci/bio-formats-developer-links>`
+
+:doc:`User information <loci/bio-formats-users>`
+------------------------------------------------
+
+
+:doc:`Developer documentation <loci/bio-formats-developer-links>`
+-----------------------------------------------------------------
    
 .. toctree::
     :maxdepth: 1
