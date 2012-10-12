@@ -1,5 +1,5 @@
-Bio-Formats Features
-====================
+Bio-Formats features in ImageJ and FIJI
+=======================================
 
 When you select Bio-Formats under the Plugin menu, you will see the
 following features:

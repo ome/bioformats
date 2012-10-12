@@ -1,7 +1,7 @@
 Developing Bio-Formats
 ======================
 
-If you are interested in hacking on the Bio-Formats source code itself,
+If you are interested in working on the Bio-Formats source code itself,
 you can load it into your favorite IDE, or develop with your favorite
 text editor.
 

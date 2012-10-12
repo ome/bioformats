@@ -8,8 +8,8 @@ User information
 
     bio-formats-formats
 	
-:doc:`Information on supported formats <bio-formats-formats>`
-=============================================================
+- :doc:`Information on supported formats <bio-formats-formats>`
+
 
 
 Installation
