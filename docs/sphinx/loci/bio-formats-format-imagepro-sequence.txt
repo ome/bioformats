@@ -1,0 +1,46 @@
+ImagePro Sequence
+=================
+
+Extensions: .seq
+
+Owner: `Media Cybernetics <http://www.mediacy.com/>`_
+
+Support
+-------
+
+SCIFIO: |no|
+
+Export: |no|
+
+Supported Metadata Fields: `SEQ Reader <http://dev.loci.wisc.edu/trac/software/wiki/SEQReader>`_
+
+We currently have: 
+
+-  The `Image-Pro Plus <http://www.mediacy.com/index.aspx?page=IPP>`_
+   software
+-  A few SEQ datasets
+-  The ability to produce more datasets
+-  Some :source:`Bio-Formats developer notes <components/bio-formats/doc/seq.html>`
+   for SEQ
+
+We'd like to have: 
+
+-  An SEQ specification document
+
+Ratings
+-------
+
+Pixels: |Very Good|
+
+Metadata: |Very Good|
+
+Openness: |Fair|
+
+Presence: |Fair|
+
+Utility: |Fair|
+
+Additional Information
+----------------------
+
+Source Code: :source:`SEQ Reader <components/bio-formats/src/loci/formats/in/SEQReader.java>`

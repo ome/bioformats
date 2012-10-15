@@ -1,0 +1,47 @@
+Quesant
+=======
+
+Extensions: .afm
+
+Developer: Quesant Instrument Corporation
+
+Owner: `KLA-Tencor Corporation <http://www.kla-tencor.com/surface-profilometry-and-metrology.html>`_
+
+Support
+-------
+
+SCIFIO: |no|
+
+Export: |no|
+
+Supported Metadata Fields: `QuesantReader <http://dev.loci.wisc.edu/trac/software/wiki/QuesantReader>`_
+
+We currently have: 
+
+- Pascal code that can read Quesant files (from ImageSXM)
+
+- several Quesant files
+
+We'd like to have: 
+
+- a Quesant specification
+
+- more Quesant files
+
+Ratings
+-------
+
+Pixels: |Good|
+
+Metadata: |Fair|
+
+Openness: |Fair|
+
+Presence: |Fair|
+
+Utility: |Fair|
+
+Additional Information
+----------------------
+
+Source Code: :source:`QuesantReader <components/bio-formats/src/loci/formats/in/QuesantReader.java>`

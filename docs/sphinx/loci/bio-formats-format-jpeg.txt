@@ -1,0 +1,54 @@
+JPEG
+====
+
+Extensions: .jpg
+
+Developer: `Independent JPEG Group <http://www.ijg.org/>`_
+
+Support
+-------
+
+SCIFIO: |yes|
+
+Export: |yes|
+
+Supported Metadata Fields: `JPEG Reader <http://dev.loci.wisc.edu/trac/software/wiki/JPEGReader>`_
+
+We currently have: 
+
+-  A\ `JPEG specification
+   document <http://www.w3.org/Graphics/JPEG/jfif3.pdf>`_ (v1.02, from
+   1992 Sep 1, in PDF)
+-  Numerous JPEG datasets
+-  The ability to produce more datasets
+
+Ratings
+-------
+
+Pixels: |Very Good|
+
+Metadata: |Fair|
+
+Openness: |Outstanding|
+
+Presence: |Outstanding|
+
+Utility: |Poor|
+
+Additional Information
+----------------------
+
+Source Code: :source:`JPEG Reader <components/scifio/src/loci/formats/in/JPEGReader.java>`
+
+Source Code: :source:`JPEG Writer <components/scifio/src/loci/formats/out/JPEGWriter.java>`
+
+Notes: 
+
+-  Bio-Formats can save individual planes as JPEG.
+-  Bio-Formats uses the `Java Image
+   I/O <http://java.sun.com/j2se/1.4.2/docs/guide/imageio/index.html>`_
+   API to read and write JPEG files.
+-  JPEG stands for "Joint Photographic Experts Group."
+
+.. seealso::
+    `JPEG homepage <http://www.jpeg.org/jpeg/index.html>`_

@@ -1,0 +1,40 @@
+NIfTI
+=====
+
+Extensions: .img, .hdr
+
+Developer: `National Institutes of Health <http://www.nih.gov/>`_
+
+Support
+-------
+
+SCIFIO: |no|
+
+Export: |no|
+
+Supported Metadata Fields: `NIfTI Reader <http://dev.loci.wisc.edu/trac/software/wiki/NiftiReader>`_
+
+Sample Datasets: `Official test data <http://nifti.nimh.nih.gov/nifti-1/data>`_
+
+We currently have: 
+
+-  `NIfTI specification documents <http://nifti.nimh.nih.gov/nifti-1/>`_
+-  Several NIfTI datasets
+
+Ratings
+-------
+
+Pixels: |Very Good|
+
+Metadata: |Good|
+
+Openness: |Very Good|
+
+Presence: |Good|
+
+Utility: |Fair|
+
+Additional Information
+----------------------
+
+Source Code: :source:`NIfTI Reader <components/bio-formats/src/loci/formats/in/NiftiReader.java>`

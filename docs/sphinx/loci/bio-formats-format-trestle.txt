@@ -1,0 +1,39 @@
+Trestle
+=======
+
+Extensions: .tif, .sld, .jpg
+
+Support
+-------
+
+SCIFIO: |no|
+
+Export: |no|
+
+Supported Metadata Fields: `TrestleReader <http://dev.loci.wisc.edu/trac/software/wiki/TrestleReader>`_
+
+Sample Datasets: `OpenSlide <http://openslide.cs.cmu.edu/download/openslide-testdata/Trestle/>`_
+
+We currently have: 
+
+-  A few example datasets
+-  Developer documentation from the OpenSlide project:
+   http://openslide.org/Trestle%20format/
+
+Ratings
+-------
+
+Pixels: |Good|
+
+Metadata: |Good|
+
+Openness: |Good|
+
+Presence: |Fair|
+
+Utility: |Fair|
+
+Additional Information
+----------------------
+
+Source Code: :source:`TrestleReader <components/bio-formats/src/loci/formats/in/TrestleReader.java>`

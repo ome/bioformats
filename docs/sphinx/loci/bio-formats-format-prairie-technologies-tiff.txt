@@ -1,0 +1,37 @@
+Prairie Technologies TIFF
+=========================
+
+Extensions: .tif, .xml, .cfg
+
+Developer: `Prairie Technologies <http://www.prairie-technologies.com/>`_
+
+Support
+-------
+
+SCIFIO: |no|
+
+Export: |no|
+
+Supported Metadata Fields: `Prairie Reader <http://dev.loci.wisc.edu/trac/software/wiki/PrairieReader>`_
+
+We currently have: 
+
+-  Several Prairie datasets
+
+Ratings
+-------
+
+Pixels: |Very Good|
+
+Metadata: |Good|
+
+Openness: |Good|
+
+Presence: |Fair|
+
+Utility: |Good|
+
+Additional Information
+----------------------
+
+Source Code: :source:`Prairie Reader <components/bio-formats/src/loci/formats/in/PrairieReader.java>`
