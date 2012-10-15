@@ -22,8 +22,8 @@ particularly into the OME-TIFF_file format.
 
 
 
-Help and questions
-------------------
+Help
+----
 
 
 See the
@@ -41,8 +41,8 @@ you have any questions or problems with Bio-Formats.
     troubleshooting
 
 
-Version history and roadmap
----------------------------
+Version History
+---------------
 
 Bio-Formats is updated whenever a significant bug fix is made, or whenever a
 new version of :omerodoc:`OMERO <>` is released. The version number is three numbers separated by dots; e.g., 4.0.0. See the :source:`what's new <components/bio-formats/doc/whats-new.txt>`
