@@ -41,7 +41,7 @@ Supported Formats
     SCIFIO 
         This indicates whether format is supported by the 
         :doc:`SCIFIO <software-scifio>` core library (See the license section 
-        on the :doc:`Bio-formats documentation </index>` page for why this 
+        on the :doc:`Bio-Formats documentation </index>` page for why this 
         matters).
 
 .. tabularcolumns:: |p{6cm}|p{3.75cm}|p{.75cm}|p{.75cm}|p{.75cm}|p{.75cm}|p{.75cm}|p{.75cm}|p{.75cm}|

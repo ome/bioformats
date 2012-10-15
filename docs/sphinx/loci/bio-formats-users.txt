@@ -1,5 +1,5 @@
 ****************
-User information
+User Information
 ****************
 
 
@@ -13,7 +13,7 @@ Installation
     bio-formats-downloads
 
 Installation is usually as simple as downloading one of the files from
-:doc:`the Bio-formats downloads page <bio-formats-downloads>`:
+:doc:`the Bio-Formats downloads page <bio-formats-downloads>`:
 
 - either the complete Bio-Formats bundle with supporting libraries is
   available as `loci\_tools.jar
@@ -28,10 +28,10 @@ depend upon the application you are using - see below.
 
 
 
-Using Bio-formats with ImageJ and FIJI
+Using Bio-Formats with ImageJ and FIJI
 ======================================
 
-The following sections explain the features of Bio-formats and how to use 
+The following sections explain the features of Bio-Formats and how to use 
 it within ImageJ and FIJI:
 
 
@@ -51,7 +51,7 @@ it within ImageJ and FIJI:
 Other applications
 ==================
 
-Many software packages can use Bio-formats to read and write microscopy formats 
+Many software packages can use Bio-Formats to read and write microscopy formats 
 (click on the package for further details):
 
 
