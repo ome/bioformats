@@ -5,27 +5,18 @@ Bio-Formats Documentation
 Bio-Formats is a standalone Java library for reading and writing life
 sciences image file formats. It is capable of parsing both pixels and
 metadata for a large number of formats, as well as writing to several
-formats. See the :doc:`Supported Formats <loci/bio-formats-formats>`
-page for a complete list and information on the level of support
-(click the format names to see all information).
+formats. 
 
 Bio-Formats's primary purpose is to convert proprietary microscopy data into
 an open standard called the `OME data model <http://genomebiology.com/2005/6/5/R47>`_, 
-particularly into the OME-TIFF_file format. See 
-:doc:`the Goal of Bio-Formats <loci/bio-formats-about>` for more information about how
-Bio-formats processes metadata and the rationale behind the project.
+particularly into the OME-TIFF_file format. 
 
-.. toctree::
-    :maxdepth: 1
-    :hidden:
-
-    loci/bio-formats-about
-    loci/bio-formats-formats
-    
 .. toctree::
     :maxdepth: 1
     :titlesonly:
-
+ 
+    loci/bio-formats-about
+    loci/bio-formats-formats
     loci/bio-formats-users
     loci/bio-formats-developer-links
 
@@ -43,14 +34,12 @@ sections of the `OME FAQ <http://www.openmicroscopy.org/site/support/faq>`_ for 
 some common questions. Please `contact us <http://www.openmicroscopy.org/site/community/mailing-lists>`__ if
 you have any questions or problems with Bio-Formats.
 
-Also see :doc:`Troubleshooting <troubleshooting>` for general tips if you are more confident to tackle
-issues yourself.
-
 .. toctree::
     :maxdepth: 1
-    :hidden:
+    :titlesonly:
 
     troubleshooting
+
 
 Version history and roadmap
 ---------------------------
