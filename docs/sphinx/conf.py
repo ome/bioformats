@@ -113,6 +113,12 @@ if "OMERODOC_URI" in os.environ:
 else:
     omerodoc_uri = 'http://www.openmicroscopy.org/site/support/omero4/'
 
+
+if "SOURCE_BRANCH" in os.environ:
+    source_branch = os.environ.get('SOURCE_BRANCH')
+else:
+    source_branch = 'develop'
+
 extlinks = {
     'wiki' : ('http://trac.openmicroscopy.org.uk/ome/wiki/'+ '%s', ''),
     'ticket' : ('http://trac.openmicroscopy.org.uk/ome/ticket/'+ '%s', '#'),
@@ -120,7 +126,7 @@ extlinks = {
     'plone' : ('http://www.openmicroscopy.org/site/'+ '%s', ''),
     'oo' : ('http://www.openmicroscopy.org/' + '%s', ''),
     'doi' : ('http://dx.doi.org/' + '%s', ''),
-    'source' : ('https://github.com/openmicroscopy/bioformats/blob/develop/' + '%s', ''),
+    'source' : ('https://github.com/openmicroscopy/bioformats/blob/' + source_branch + '/' + '%s', ''),
     'javadoc' : ('http://hudson.openmicroscopy.org.uk/job/OMERO/javadoc/' + '%s', ''),
     'jenkins' : ('http://hudson.openmicroscopy.org.uk/' + '%s', ''),
     'mailinglist' : ('http://lists.openmicroscopy.org.uk/mailman/listinfo/' + '%s', ''),
