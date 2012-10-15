@@ -44,13 +44,6 @@ Supported Formats
         on the :doc:`Bio-formats documentation </index>` page for why this 
         matters).
 
-.. toctree::
-    :maxdepth: 1
-    :glob:
-    :hidden:
-
-    bio-formats-format*
-
 .. tabularcolumns:: |p{6cm}|p{3.75cm}|p{.75cm}|p{.75cm}|p{.75cm}|p{.75cm}|p{.75cm}|p{.75cm}|p{.75cm}|
 
 .. list-table::
@@ -1212,3 +1205,11 @@ Supported Formats
      - |yes|
 
 Bio-Formats currently supports **127** formats
+
+
+.. toctree::
+    :maxdepth: 1
+    :glob:
+    :hidden:
+
+    bio-formats-format*
