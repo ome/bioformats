@@ -90,7 +90,7 @@ more.... <bio-formats-developing-bio-formats>`
     /commit-testing
     /testing-notes
 
-See `open Trac tickets for Bio-formats <https://trac.openmicroscopy.org.uk/ome/report/44>` for information on work currently planned or in progress .
+See `open Trac tickets for Bio-Formats <https://trac.openmicroscopy.org.uk/ome/report/44>` for information on work currently planned or in progress .
 
 
 
