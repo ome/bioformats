@@ -2,20 +2,6 @@
 User information
 ****************
 
-.. toctree::
-    :maxdepth: 1
-    :Hidden:
-
-    bio-formats-formats
-	
-Supported formats
-=================
-	
-See :doc:`information on supported formats <bio-formats-formats>`
-for details on what formats are supported and the level of that
-support.
-
-
 
 Installation
 ============
@@ -150,3 +136,8 @@ For information about what extensions to choose to import files, see
 
     /dataset-structure-table
 
+.. toctree::
+    :maxdepth: 1
+    :hidden:
+
+    bio-formats-formats
