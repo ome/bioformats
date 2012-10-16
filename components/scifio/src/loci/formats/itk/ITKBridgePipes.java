@@ -448,8 +448,10 @@ public class ITKBridgePipes {
 		  }
 	  }
 	  
-	  in.close();
-	  writer.close();
+	  if(in != null)
+	    in.close();
+	  if(writer != null)
+	    writer.close();
 	  return true;
   }
 
