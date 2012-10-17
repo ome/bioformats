@@ -1,40 +1,51 @@
 Analyze 7.5
-===========
+===============================================================================
 
-Extensions: .img, .hdr
+Extensions: .img, .hdr
 
-Developer: `Mayo Foundation Biomedical Imaging Resource <http://www.mayo.edu/bir>`_
+Developer: `Mayo Foundation Biomedical Imaging Resource <http://www.mayo.edu/bir>`_
+
 
 Support
 -------
 
 SCIFIO: |no|
 
-Export: |no|
+Export: |no|
 
-Supported Metadata Fields: `Analyze Reader <http://dev.loci.wisc.edu/trac/software/wiki/AnalyzeReader>`_
+Officially Supported Versions: $versions
 
-We currently have: 
+Supported Metadata Fields:
 
--  `an Analyze 7.5 specification
-   document
-   <http://analyzedirect.com/support/10.0Documents/Analyze_Resource_01.pdf>`_
--  several Analyze 7.5 datasets
+
+
+We currently have:
+
+- `an Analyze 7.5 specification document <http://analyzedirect.com/support/10.0Documents/Analyze_Resource_01.pdf>`_
+- several Analyze 7.5 datasets
+
+We would like to have:
+
+- more Amira Mesh datasets
 
 Ratings
 -------
 
-Pixels: |Very Good|
+Pixels: |Very good|
 
-Metadata: |Good|
+Metadata: |Good|
 
-Openness: |Very Good|
+Openness: |Very good|
 
-Presence: |Good|
+Presence: |Good|
 
-Utility: |Fair|
+Utility: |Fair|
 
 Additional Information
 ----------------------
 
-Source Code: :source:`AnalyzeReader <components/bio-formats/src/loci/formats/in/AnalyzeReader.java>`
+Source Code: :source:`AnalyzeReader.java <components/bio-formats/src/loci/formats/in/AnalyzeReader.java >`
+
+Notes:
+
+

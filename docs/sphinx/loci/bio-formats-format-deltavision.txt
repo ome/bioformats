@@ -1,58 +1,70 @@
 DeltaVision
-===========
+===============================================================================
 
-Extensions: .dv, .r3d
+Extensions: .dv, .r3d
 
-Owner: `Applied Precision <http://www.api.com/>`_
+
+Owner: `Applied Precision <http://www.api.com/>`_
 
 Support
 -------
 
 SCIFIO: |no|
 
-Export: |no|
+Export: |no|
 
-Supported Metadata Fields: `DeltaVision Reader <http://dev.loci.wisc.edu/trac/software/wiki/DeltavisionReader>`_
+Officially Supported Versions: $versions
 
-Freely Available Software: `DeltaVision Opener plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/track/delta.html>`_
+Supported Metadata Fields:
 
-Sample Datasets: `Applied Vision Datasets
-<http://www.api.com/downloads/software/softworxexplorer2.0/SampleImages.zip>`_
+Freely Available Software:
 
-We currently have: 
+- `DeltaVision Opener plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/track/delta.html>`_
 
--  A DV specification document (v2.10 or newer, in HTML)
--  Numerous DV datasets
+Sample Datasets:
+
+- `Applied Precision Datasets <http://www.api.com/downloads/software/softworxexplorer2.0/SampleImages.zip>`_
+
+We currently have:
+
+- a DV specification document (v2.10 or newer, in HTML)
+- numerous DV datasets
+
+We would like to have:
+
+- an official specification document
 
 Ratings
 -------
 
-Pixels: |Outstanding|
+Pixels: |Outstanding|
 
-Metadata: |Outstanding|
+Metadata: |Good|
 
-Openness: |Good|
+Openness: |Good|
 
-Presence: |Good|
+Presence: |Good|
 
-Utility: |Good|
+Utility: |Good|
 
 Additional Information
 ----------------------
 
-Source Code: :source:`DeltavisionReader <components/bio-formats/src/loci/formats/in/DeltavisionReader.java>`
+Source Code: :source:`DeltavisionReader.java <components/bio-formats/src/loci/formats/in/DeltavisionReader.java >`
 
-Notes: The Deltavision format is based on the Medical Research Council (MRC)
-file format.
-
-Commercial applications that support DeltaVision include:
-
--  `Bitplane Imaris <http://www.bitplane.com/>`_
--  `SVI Huygens <http://svi.nl/>`_
--  `Image-Pro Plus <http://www.mediacy.com/>`_
+Notes:
 
 **Please note that while we have specification documents for this
 format, we are not able to distribute them to third parties.**
 
+The Deltavision format is based on the Medical Research Council (MRC)
+file format.
+
+Commercial applications that support DeltaVision include:
+
+#. `Bitplane Imaris <http://www.bitplane.com/>`_
+#. `SVI Huygens <http://svi.nl/>`_
+#. `Image-Pro Plus <http://www.mediacy.com/>`_
+
 .. seealso::
-    `DeltaVision system description <http://api.com/deltavision.asp>`_
+`DeltaVision system description <http://api.com/deltavision.asp>`_

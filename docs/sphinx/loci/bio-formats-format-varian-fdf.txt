@@ -1,42 +1,57 @@
 Varian FDF
-==========
+===============================================================================
 
-Extensions: .fdf
+Extensions: .fdf
 
-Developer: `Varian, Inc. <http://www.varianinc.com>`_
+Developer: `Varian, Inc. <http://www.varianinc.com>`_
+
 
 Support
 -------
 
 SCIFIO: |no|
 
-Export: |no|
+Export: |no|
 
-Supported Metadata Fields: `VarianFDF Reader <http://dev.loci.wisc.edu/trac/java/wiki/VarianFDFReader>`_
+Officially Supported Versions: $versions
 
-We currently have: 
+Supported Metadata Fields:
 
--  A few Varian FDF datasets
+Freely Available Software:
 
-We'd like to have: 
+- `SPIDER <http://www.wadsworth.org/spider_doc/spider/docs/spider.html>`_
 
--  An FDF specification document
--  More Varian FDF datasets
+Sample Datasets:
+
+- `OpenSlide <http://openslide.cs.cmu.edu/download/openslide-testdata/Trestle/>`_
+
+We currently have:
+
+- a few Varian FDF datasets
+
+We would like to have:
+
+- an official specification document
+- more Varian FDF datasets
 
 Ratings
 -------
 
-Pixels: |Good|
+Pixels: |Good|
 
-Metadata: |Fair|
+Metadata: |Fair|
 
-Openness: |Fair|
+Openness: |Fair|
 
-Presence: |Fair|
+Presence: |Fair|
 
-Utility: |Fair|
+Utility: |Fair|
 
 Additional Information
 ----------------------
 
-Source Code: :source:`VarianFDFReader <components/bio-formats/src/loci/formats/in/VarianFDFReader.java>`
+Source Code: :source:`VarianFDFReader.java <components/bio-formats/src/loci/formats/in/VarianFDFReader.java >`
+
+Notes:
+
+

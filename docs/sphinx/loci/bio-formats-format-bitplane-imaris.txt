@@ -1,77 +1,63 @@
 Bitplane Imaris
-===============
+===============================================================================
 
-Extensions: .ims
+Extensions: .ims
 
-Owner: `Bitplane <http://www.bitplane.com/>`_
+
+Owner: `Bitplane <http://www.bitplane.com/>`_
 
 Support
 -------
 
 SCIFIO: |no|
 
-Export: |no|
+Export: |no|
 
-Officially Supported Versions: 2.7, 3.0, 5.5
+Officially Supported Versions: 2.7, 3.0, 5.5
 
-Supported Metadata Fields: `Imaris
-Reader <http://dev.loci.wisc.edu/trac/software/wiki/ImarisReader>`_
+Supported Metadata Fields:
 
-Supported Metadata Fields: `Imaris TIFF
-Reader <http://dev.loci.wisc.edu/trac/software/wiki/ImarisTiffReader>`_
+Freely Available Software:
 
-Supported Metadata Fields: `Imaris HDF
-Reader <http://dev.loci.wisc.edu/trac/software/wiki/ImarisHDFReader>`_
+- `Bio-Rad PIC reader plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/biorad.html>`_
 
-We currently have: 
 
--  an `Imaris (RAW) specification
-   document <http://flash.bitplane.com/support/faqs/faqsview.cfm?inCat=6&inQuestionID=104>`_
-   (from no later than 1997 Nov 11, in HTML)
--  an Imaris 5.5 (HDF) specification document
--  Bitplane's bfFileReaderImaris3N code (from no later than 2005, in
-   C++)
--  several older Imaris (RAW) datasets
--  only one Imaris 3 (TIFF) dataset
--  several Imaris 5.5 (HDF) datasets
+We currently have:
 
-We'd like to have: 
+- an `Imaris (RAW) specification document <http://flash.bitplane.com/support/faqs/faqsview.cfm?inCat=6&inQuestionID=104>`_ (from no later than 1997 November 11, in HTML)
+- an Imaris 5.5 (HDF) specification document
+- Bitplane's bfFileReaderImaris3N code (from no later than 2005, in C++)
+- several older Imaris (RAW) datasets
+- one Imaris 3 (TIFF) dataset
+- several Imaris 5.5 (HDF) datasets
 
--  an Imaris 3 (TIFF) specification document
--  more Imaris 3 (TIFF) datasets
+We would like to have:
+
+- an Imaris 3 (TIFF) specification document
+- more Imaris 3 (TIFF) datasets
 
 Ratings
 -------
 
-Pixels: |Very Good|
+Pixels: |Very good|
 
-Metadata: |Very Good|
+Metadata: |Very good|
 
-Openness: |Good|
+Openness: |Good|
 
-Presence: |Fair|
+Presence: |Fair|
 
-Utility: |Fair|
+Utility: |Fair|
 
 Additional Information
 ----------------------
 
-Source Code: :source:`Imaris Reader <components/bio-formats/src/loci/formats/in/ImarisReader.java>`
+Source Code: :source:`ImarisReader, ImarisTiffReader, ImarisHDFReader.java <components/bio-formats/src/loci/formats/in/ImarisReader, ImarisTiffReader, ImarisHDFReader.java >`
 
-Source Code: :source:`Imaris TIFF Reader <components/bio-formats/src/loci/formats/in/ImarisTiffReader.java>`
+Notes:
 
-Source Code: :source: `Imaris HDF Reader <components/bio-formats/src/loci/formats/in/ImarisHDFReader.java>`
-
-Notes: 
 
 There are three distinct Imaris formats:
-
 #. the old binary format (introduced in Imaris version 2.7)
 #. Imaris 3, a TIFF variant (introduced in Imaris version 3.0)
 #. Imaris 5.5, an HDF variant (introduced in Imaris version 5.5)
-
-**Please note that while we have specification documents for this
-format, we are not able to distribute them to third parties.**
-
-.. seealso::
-    `Imaris Software Overview <http://www.bitplane.com/go/products/imaris>`_

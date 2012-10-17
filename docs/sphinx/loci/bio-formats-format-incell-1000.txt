@@ -1,42 +1,57 @@
 InCell 1000
-===========
+===============================================================================
 
-Extensions: .xdce, .tif
+Extensions: .xdce, .tif
 
-Developer: `GE <http://gelifesciences.com/>`_
+Developer: `GE <http://gelifesciences.com/>`_
+
 
 Support
 -------
 
 SCIFIO: |no|
 
-Export: |no|
+Export: |no|
 
-Supported Metadata Fields: `InCell Reader <http://dev.loci.wisc.edu/trac/software/wiki/InCellReader>`_
+Officially Supported Versions: $versions
 
-We currently have: 
+Supported Metadata Fields:
 
--  A few InCell 1000 datasets
+Freely Available Software:
 
-We'd like to have: 
+- `IMOD <http://bio3d.colorado.edu/imod/>`_
 
--  An InCell 1000 specification document
--  More InCell 1000 datasets
+Sample Datasets:
+
+- `OpenSlide <http://openslide.cs.cmu.edu/download/openslide-testdata/Hamamatsu-vms/>`_
+
+We currently have:
+
+- a few InCell 1000 datasets
+
+We would like to have:
+
+- an InCell 1000 specification document
+- more InCell 1000 datasets
 
 Ratings
 -------
 
-Pixels: |Very Good|
+Pixels: |Very good|
 
-Metadata: |Very Good|
+Metadata: |Very good|
 
-Openness: |Good|
+Openness: |Good|
 
-Presence: |Fair|
+Presence: |Fair|
 
-Utility: |Good|
+Utility: |Good|
 
 Additional Information
 ----------------------
 
-Source Code: :source:`InCell Reader <components/bio-formats/src/loci/formats/in/InCellReader.java>`
+Source Code: :source:`InCellReader.java <components/bio-formats/src/loci/formats/in/InCellReader.java >`
+
+Notes:
+
+

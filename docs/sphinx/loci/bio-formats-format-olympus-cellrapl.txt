@@ -1,42 +1,57 @@
 Olympus CellR/APL
-=================
+===============================================================================
 
-Extensions: .apl, .mtb, .tnb, .tif, .obsep
+Extensions: .apl, .mtb, .tnb, .tif, .obsep
 
-Owner: `Olympus <http://www.olympus.com/>`_
+
+Owner: `Olympus <http://www.olympus.com/>`_
 
 Support
 -------
 
 SCIFIO: |no|
 
-Export: |no|
+Export: |no|
 
-Supported Metadata Fields: `APL Reader <http://dev.loci.wisc.edu/trac/software/wiki/APLReader>`_
+Officially Supported Versions: $versions
 
-We currently have: 
+Supported Metadata Fields:
 
--  A few CellR datasets
+Freely Available Software:
 
-We'd like to have: 
+- `nrrd (NRRD reference library) <http://teem.sourceforge.net/nrrd/>`_
 
--  More CellR datasets
--  A CellR specification document
+Sample Datasets:
+
+- `Diffusion tensor MRI datasets <http://www.sci.utah.edu/%7Egk/DTI-data/>`_
+
+We currently have:
+
+- a few CellR datasets
+
+We would like to have:
+
+- more Cellr datasets
+- an official specification document
 
 Ratings
 -------
 
-Pixels: |Very Good|
+Pixels: |Very good|
 
-Metadata: |Fair|
+Metadata: |Fair|
 
-Openness: |Fair|
+Openness: |Fair|
 
-Presence: |Poor|
+Presence: |Poor|
 
-Utility: |Fair|
+Utility: |Fair|
 
 Additional Information
 ----------------------
 
-Source Code: :source:`APL Reader <components/bio-formats/src/loci/formats/in/APLReader.java>`
+Source Code: :source:`APLReader.java <components/bio-formats/src/loci/formats/in/APLReader.java >`
+
+Notes:
+
+

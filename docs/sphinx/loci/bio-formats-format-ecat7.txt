@@ -1,42 +1,61 @@
 ECAT7
-=====
+===============================================================================
 
-Extensions: .v
+Extensions: .v
 
-Developer: `Siemens <http://www.siemens.com>`_
+Developer: `Siemens <http://www.siemens.com>`_
+
 
 Support
 -------
 
 SCIFIO: |no|
 
-Export: |no|
+Export: |no|
 
-Supported Metadata Fields: `Ecat7 Reader <http://dev.loci.wisc.edu/trac/java/wiki/Ecat7Reader>`_
+Officially Supported Versions: $versions
 
-We currently have: 
+Supported Metadata Fields:
 
--  A few ECAT7 files
+Freely Available Software:
 
-We'd like to have: 
+- `OsiriX Medical Imaging Software <http://www.osirix-viewer.com/>`_
+- `ezDICOM <http://www.sph.sc.edu/comd/rorden/ezdicom.html>`_
+- `Chris Rorden's list of free DICOM readers <http://www.sph.sc.edu/comd/rorden/dicom.html#links>`_
 
--  An ECAT7 specification document
--  More ECAT7 files
+Sample Datasets:
+
+- `MRI Chest from FreeVol-3D web site <http://members.tripod.com/%7Eclunis_immensus/free3d/hk-40.zip>`_
+- `Medical Image Samples from Sebastien Barre's Medical Imaging page <http://www.barre.nom.fr/medical/samples/>`_
+- `DICOM sample image sets from OsiriX web site <http://osirix-viewer.com/datasets/>`_
+
+We currently have:
+
+- a few ECAT7 files
+
+We would like to have:
+
+- an ECAT7 specification document
+- more ECAT7 files
 
 Ratings
 -------
 
-Pixels: |Good|
+Pixels: |Good|
 
-Metadata: |Good|
+Metadata: |Good|
 
-Openness: |Fair|
+Openness: |Fair|
 
-Presence: |Fair|
+Presence: |Fair|
 
-Utility: |Fair|
+Utility: |Fair|
 
 Additional Information
 ----------------------
 
-Source Code: :source:`Ecat7Reader <components/bio-formats/src/loci/formats/in/Ecat7Reader.java>`
+Source Code: :source:`Ecat7Reader.java <components/bio-formats/src/loci/formats/in/Ecat7Reader.java >`
+
+Notes:
+
+

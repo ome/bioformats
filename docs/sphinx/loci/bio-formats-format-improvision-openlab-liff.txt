@@ -1,56 +1,63 @@
 Improvision Openlab LIFF
-========================
+===============================================================================
 
-Extensions: .liff
+Extensions: .liff
 
-Developer: `Improvision <http://www.improvision.com/>`_
+Developer: `Improvision <http://www.improvision.com/>`_
 
-Owner: `PerkinElmer <http://www.perkinelmer.com/>`_
+Owner: `PerkinElmer <http://www.perkinelmer.com/>`_
 
 Support
 -------
 
 SCIFIO: |no|
 
-Export: |no|
+Export: |no|
 
-Officially Supported Versions: 2.0, 5.0
+Officially Supported Versions: 2.0, 5.0
 
-Supported Metadata Fields: `Openlab Reader <http://dev.loci.wisc.edu/trac/software/wiki/OpenlabReader>`_
+Supported Metadata Fields:
 
-We currently have: 
+Freely Available Software:
 
--  An Openlab specification document (from 2000 Feb 8, in DOC)
--  Improvision's XLIFFFileImporter code for reading Openlab LIFF v5
-   files (from 2006, in C++)
--  Several Openlab datasets
+- `IMOD <http://bio3d.colorado.edu/imod/>`_
 
-We'd like to have: 
+Sample Datasets:
 
--  More Openlab datasets (32-bit integer data)
+- `OpenSlide <http://openslide.cs.cmu.edu/download/openslide-testdata/Hamamatsu-vms/>`_
+
+We currently have:
+
+- an Openlab specification document (from 2000 February 8, in DOC)
+- Improvision's XLIFFFileImporter code for reading Openlab LIFF v5 files (from 2006, in C++)
+- several Openlab datasets
+
+We would like to have:
+
+- more Openlab datasets (preferably with 32-bit integer data)
 
 Ratings
 -------
 
-Pixels: |Very Good|
+Pixels: |Very good|
 
-Metadata: |Good|
+Metadata: |Good|
 
-Openness: |Very Good|
+Openness: |Very good|
 
-Presence: |Good|
+Presence: |Good|
 
-Utility: |Fair|
+Utility: |Fair|
 
 Additional Information
 ----------------------
 
-Source Code: :source:`Openlab Reader <components/bio-formats/src/loci/formats/in/OpenlabReader.java>`
+Source Code: :source:`OpenlabReader.java <components/bio-formats/src/loci/formats/in/OpenlabReader.java >`
 
-Notes: 
+Notes:
 
 **Please note that while we have specification documents for this
 format, we are not able to distribute them to third parties.**
 
 .. seealso::
-    `Openlab software review <http://www.improvision.com/products/openlab/>`_
+`Openlab software review <http://www.improvision.com/products/openlab/>`_

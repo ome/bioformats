@@ -1,43 +1,58 @@
 SPIDER
-======
+===============================================================================
 
-Extensions: .spi, .stk
+Extensions: .spi, .stk
 
-Developer: `Wadsworth Center <http://www.wadsworth.org/spider_doc/spider/docs/spider.html>`_
+Developer: `Wadsworth Center <http://www.wadsworth.org/spider_doc/spider/docs/spider.html>`_
+
 
 Support
 -------
 
 SCIFIO: |no|
 
-Export: |no|
+Export: |no|
 
-Supported Metadata Fields: `SpiderReader <http://dev.loci.wisc.edu/trac/software/wiki/SpiderReader>`_
+Officially Supported Versions: $versions
 
-Freely Available Software: `SPIDER <http://www.wadsworth.org/spider_doc/spider/docs/spider.html>`_
+Supported Metadata Fields:
 
-We currently have: 
+Freely Available Software:
 
--  A few example datasets
--  Official file format documentation
+- `SPIDER <http://www.wadsworth.org/spider_doc/spider/docs/spider.html>`_
+
+Sample Datasets:
+
+- `Diffusion tensor MRI datasets <http://www.sci.utah.edu/%7Egk/DTI-data/>`_
+
+We currently have:
+
+- a few example datasets
+- `official file format documentation <http://www.wadsworth.org/spider_doc/spider/docs/image_doc.html>`_
+
+We would like to have:
+
+- an official specification document
+- more SM-Camera files
 
 Ratings
 -------
 
-Pixels: |Very Good|
+Pixels: |Very good|
 
-Metadata: |Very Good|
+Metadata: |Very good|
 
-Openness: |Outstanding|
+Openness: |Outstanding|
 
-Presence: |Good|
+Presence: |Good|
 
-Utility: |Good|
+Utility: |Good|
 
 Additional Information
 ----------------------
 
-Source Code: :source:`SpiderReader <components/bio-formats/src/loci/formats/in/SpiderReader.java>`
+Source Code: :source:`SpiderReader.java <components/bio-formats/src/loci/formats/in/SpiderReader.java >`
 
-.. seealso::
-    `Official documentation <http://www.wadsworth.org/spider_doc/spider/docs/image_doc.html>`_
+Notes:
+
+

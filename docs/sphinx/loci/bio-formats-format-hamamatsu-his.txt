@@ -1,45 +1,61 @@
 Hamamatsu HIS
-=============
+===============================================================================
 
-Extensions: .his
+Extensions: .his
 
-Owner: `Hamamatsu <http://www.hamamatsu.com>`_
+
+Owner: `Hamamatsu <http://www.hamamatsu.com>`_
 
 Support
 -------
 
 SCIFIO: |no|
 
-Export: |no|
+Export: |no|
 
-Supported Metadata Fields: `HISReader <http://dev.loci.wisc.edu/trac/software/wiki/HISReader>`_
+Officially Supported Versions: $versions
 
-We currently have: 
+Supported Metadata Fields:
+
+Freely Available Software:
+
+- `Animated GIF Reader plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/agr.html>`_
+- `GIF Stack Writer plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/gif-stack-writer.html>`_
+
+Sample Datasets:
+
+- `MRI Chest from FreeVol-3D web site <http://members.tripod.com/%7Eclunis_immensus/free3d/hk-40.zip>`_
+- `Medical Image Samples from Sebastien Barre's Medical Imaging page <http://www.barre.nom.fr/medical/samples/>`_
+- `DICOM sample image sets from OsiriX web site <http://osirix-viewer.com/datasets/>`_
+
+We currently have:
 
 - Pascal code that can read HIS files (from ImageSXM)
-
 - several HIS files
 
-We'd like to have: 
+We would like to have:
 
 - an HIS specification
-
 - more HIS files
 
 Ratings
 -------
 
-Pixels: |Good|
+Pixels: |Good|
 
-Metadata: |Fair|
+Metadata: |Fair|
 
-Openness: |Fair|
+Openness: |Fair|
 
-Presence: |Fair|
+Presence: |Fair|
 
-Utility: |Fair|
+Utility: |Fair|
 
 Additional Information
 ----------------------
 
-Source Code: :source:`HISReader <components/bio-formats/src/loci/formats/in/HISReader.java>`
+Source Code: :source:`HISReader.java <components/bio-formats/src/loci/formats/in/HISReader.java >`
+
+Notes:
+
+

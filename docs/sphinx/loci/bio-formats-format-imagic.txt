@@ -1,47 +1,59 @@
 IMAGIC
-======
+===============================================================================
 
-Extensions: .hed, .img
+Extensions: .hed, .img
 
-Developer: `Image Science <http://www.imagescience.de>`_
+Developer: `Image Science <http://www.imagescience.de>`_
+
 
 Support
 -------
 
 SCIFIO: |no|
 
-Export: |no|
+Export: |no|
 
-Supported Metadata Fields: `ImagicReader <http://dev.loci.wisc.edu/trac/software/wiki/ImagicReader>`_
+Officially Supported Versions: $versions
 
-Freely Available Software: `em2em <http://www.imagescience.de/em2em.html>`_
+Supported Metadata Fields:
 
-We currently have: 
+Freely Available Software:
 
--  One example dataset
--  Official file format documentation
+- `em2em <http://www.imagescience.de/em2em.html>`_
 
-We'd like to have: 
+Sample Datasets:
 
--  More example files
+- `OpenSlide <http://openslide.cs.cmu.edu/download/openslide-testdata/Hamamatsu-vms/>`_
+
+We currently have:
+
+- one example dataset
+- official file format documentation
+
+We would like to have:
+
+- more example datasets
 
 Ratings
 -------
 
-Pixels: |Very Good|
+Pixels: |Very good|
 
-Metadata: |Very Good|
+Metadata: |Very good|
 
-Openness: |Very Good|
+Openness: |Very good|
 
-Presence: |Good|
+Presence: |Good|
 
-Utility: |Good|
+Utility: |Good|
 
 Additional Information
 ----------------------
 
-Source Code: :source:`ImagicReader <components/bio-formats/src/loci/formats/in/ImagicReader.java>`
+Source Code: :source:`ImagicReader.java <components/bio-formats/src/loci/formats/in/ImagicReader.java >`
+
+Notes:
+
 
 .. seealso::
-    `IMAGIC specification <http://www.imagescience.de/em2em.html>`_
+`IMAGIC specification <http://www.imagescience.de/em2em.html>`_
