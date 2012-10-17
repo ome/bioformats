@@ -1,49 +1,60 @@
 MNG (Multiple-image Network Graphics)
-=====================================
+===============================================================================
 
-Extensions: .mng
+Extensions: .mng
 
-Developer: `MNG Development Group <http://www.libpng.org/pub/mng/mngnews.html>`_
+Developer: `MNG Development Group <http://www.libpng.org/pub/mng/mngnews.html>`_
+
 
 Support
 -------
 
 SCIFIO: |yes|
 
-Export: |no|
+Export: |no|
 
-Supported Metadata Fields: `MNG Reader <http://dev.loci.wisc.edu/trac/software/wiki/MNGReader>`_
+Officially Supported Versions: $versions
 
-Freely Available Software: `libmng (MNG reference library) <http://sourceforge.net/projects/libmng/>`_
+Supported Metadata Fields:
 
-Sample Datasets: `MNG sample files <http://sourceforge.net/projects/libmng/files/libmng-testsuites/MNGsuite-1.0/MNGsuite.zip/download>`_
+Freely Available Software:
 
-We currently have: 
+- `libmng (MNG reference library) <http://sourceforge.net/projects/libmng/>`_
 
--  The
-   `libmng-testsuites <http://downloads.sourceforge.net/libmng/MNGsuite-20030305.zip>`_
-   package (from 2003 Mar 05, in C)
--  A large number of MNG datasets
+Sample Datasets:
+
+- `MNG sample files <http://sourceforge.net/projects/libmng/files/libmng-testsuites/MNGsuite-1.0/MNGsuite.zip/download>`_
+
+We currently have:
+
+- the `libmng-testsuites <http://downloads.sourceforge.net/libmng/MNGsuite-20030305.zip>`_ package (from 2003 March 05, in C)
+- a large number of MNG datasets
+
+We would like to have:
+
+- an official specification document
 
 Ratings
 -------
 
-Pixels: |Good|
+Pixels: |Good|
 
-Metadata: |Good|
+Metadata: |Good|
 
-Openness: |Outstanding|
+Openness: |Outstanding|
 
-Presence: |Fair|
+Presence: |Fair|
 
-Utility: |Poor|
+Utility: |Poor|
 
 Additional Information
 ----------------------
 
-Source Code: `MNG Reader <components/bio-formats/src/loci/formats/in/MNGReader.java>`
+Source Code: :source:`MNGReader.java <components/scifio/src/loci/formats/in/MNGReader.java >`
+
+Notes:
+
 
 .. seealso::
-    `MNG homepage <http://www.libpng.org/pub/mng/>`_
-
-    `MNG specification <http://www.libpng.org/pub/mng/spec>`_
+`MNG homepage <http://www.libpng.org/pub/mng/>`_
+`MNG specification <http://www.libpng.org/pub/mng/spec>`_

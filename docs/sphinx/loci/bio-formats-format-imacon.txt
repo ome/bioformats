@@ -1,41 +1,58 @@
 Imacon
-======
+===============================================================================
 
-Extensions: .fff
+Extensions: .fff
 
-Owner: `Hasselblad <http://www.hasselbladusa.com/>`_
+
+Owner: `Hasselblad <http://www.hasselbladusa.com/>`_
 
 Support
 -------
 
 SCIFIO: |no|
 
-Export: |no|
+Export: |no|
 
-Supported Metadata Fields: `ImaconReader <http://dev.loci.wisc.edu/trac/software/wiki/ImaconReader>`_
+Officially Supported Versions: $versions
 
-We currently have: 
+Supported Metadata Fields:
+
+Freely Available Software:
+
+- `Libics (ICS reference library) <http://libics.sourceforge.net/>`_
+- `ICS Opener plugin for ImageJ <http://valelab.ucsf.edu/%7Enico/IJplugins/Ics_Opener.html>`_
+- `IrfanView <http://www.irfanview.com/>`_
+
+Sample Datasets:
+
+- `OpenSlide <http://openslide.cs.cmu.edu/download/openslide-testdata/Hamamatsu-vms/>`_
+
+We currently have:
 
 - one Imacon file
 
-We'd like to have: 
+We would like to have:
 
 - more Imacon files
 
 Ratings
 -------
 
-Pixels: |Poor|
+Pixels: |Poor|
 
-Metadata: |Good|
+Metadata: |Good|
 
-Openness: |Fair|
+Openness: |Fair|
 
-Presence: |Poor|
+Presence: |Poor|
 
-Utility: |Good|
+Utility: |Good|
 
 Additional Information
 ----------------------
 
-Source Code: :source:`ImaconReader <components/bio-formats/src/loci/formats/in/ImaconReader.java>`
+Source Code: :source:`ImaconReader.java <components/bio-formats/src/loci/formats/in/ImaconReader.java >`
+
+Notes:
+
+

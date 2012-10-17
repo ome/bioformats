@@ -1,39 +1,56 @@
 MINC MRI
-========
+===============================================================================
 
-Extensions: .mnc
+Extensions: .mnc
 
-Developer: `McGill University <http://www.bic.mni.mcgill.ca/ServicesSoftware/MINC>`_
+Developer: `McGill University <http://www.bic.mni.mcgill.ca/ServicesSoftware/MINC>`_
+
 
 Support
 -------
 
 SCIFIO: |no|
 
-Export: |no|
+Export: |no|
 
-Supported Metadata Fields: `MINC Reader <http://dev.loci.wisc.edu/trac/software/wiki/MINCReader>`_
+Officially Supported Versions: $versions
 
-Freely Available Software: `MINC <http://www.bic.mni.mcgill.ca/ServicesSoftware/MINC>`_
+Supported Metadata Fields:
 
-We currently have: 
+Freely Available Software:
 
--  A few MINC files
+- `MINC <http://www.bic.mni.mcgill.ca/ServicesSoftware/MINC>`_
+
+Sample Datasets:
+
+- `VIFF Images <http://netghost.narod.ru/gff/sample/images/viff/index.htm>`_
+
+We currently have:
+
+- a few MINC files
+
+We would like to have:
+
+- an official specification document
 
 Ratings
 -------
 
-Pixels: |Very Good|
+Pixels: |Very good|
 
-Metadata: |Good|
+Metadata: |Good|
 
-Openness: |Good|
+Openness: |Good|
 
-Presence: |Good|
+Presence: |Good|
 
-Utility: |Fair|
+Utility: |Fair|
 
 Additional Information
 ----------------------
 
-Source Code: :source:`MINC Reader <components/bio-formats/src/loci/formats/in/MINCReader.java>`
+Source Code: :source:`MINCReader.java <components/bio-formats/src/loci/formats/in/MINCReader.java >`
+
+Notes:
+
+

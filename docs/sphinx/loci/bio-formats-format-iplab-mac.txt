@@ -1,9 +1,10 @@
 IPLab-Mac
-=========
+===============================================================================
 
-Extensions: .ipm
+Extensions: .ipm
 
-Owner: `BioVision Technologies <http://biovis.com/>`_
+
+Owner: `BioVision Technologies <http://biovis.com/>`_
 
 Support
 -------
@@ -12,36 +13,47 @@ SCIFIO: |no|
 
 Export: |no|
 
-Supported Metadata Fields: `Ivision Reader <http://dev.loci.wisc.edu/trac/software/wiki/IvisionReader>`_
+Officially Supported Versions: $versions
 
-We currently have: 
+Supported Metadata Fields:
 
--  A few IPLab-Mac datasets
--  A specification document
+Freely Available Software:
 
-We'd like to have: 
+- `IMOD <http://bio3d.colorado.edu/imod/>`_
 
--  More IPLab-Mac datasets
+Sample Datasets:
+
+- `Broad Bioimage Benchmark Collection <http://www.broadinstitute.org/bbbc/BBBC013/>`_
+
+We currently have:
+
+- a few IPLab-Mac datasets
+- a specification document
+
+We would like to have:
+
+- more IPLab-Mac datasets
 
 Ratings
 -------
 
-Pixels: |Very Good|
+Pixels: |Very good|
 
-Metadata: |Good|
+Metadata: |Good|
 
-Openness: |Very Good|
+Openness: |Very good|
 
-Presence: |Poor|
+Presence: |Poor|
 
-Utility: |Fair|
+Utility: |Fair|
 
 Additional Information
 ----------------------
 
-Source Code: :source:`Ivision Reader <components/bio-formats/src/loci/formats/in/IvisionReader.java>`
+Source Code: :source:`IvisionReader.java <components/bio-formats/src/loci/formats/in/IvisionReader.java >`
 
-Notes: 
+Notes:
 
 **Please note that while we have specification documents for this
 format, we are not able to distribute them to third parties.**
+

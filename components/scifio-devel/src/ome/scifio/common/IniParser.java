@@ -202,9 +202,15 @@ public class IniParser {
 
       // backslash signifies data continues to next line
       boolean slash = slashContinues && line.endsWith("\\");
-      if (slash) line = line.substring(0, line.length() - 1).trim() + " ";
+      boolean blockText = slashContinues && line.endsWith("\\n");
+      if (blockText) {
+        line = line.substring(0, line.length() - 2).trim() + "\n";
+      }
+      else if (slash) {
+        line = line.substring(0, line.length() - 1).trim() + " ";
+      }
       sb.append(line);
-      if (!slash) break;
+      if (!slash && !blockText) break;
     }
     return no;
   }

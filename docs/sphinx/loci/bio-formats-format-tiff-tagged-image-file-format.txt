@@ -1,68 +1,68 @@
 TIFF (Tagged Image File Format)
-===============================
+===============================================================================
 
-Extensions: .tif
+Extensions: .tif
 
-Developer: Aldus and Microsoft
+Developer: Aldus and Microsoft
 
-Owner: `Adobe <http://www.adobe.com>`_
+Owner: `Adobe <http://www.adobe.com>`_
 
 Support
 -------
 
 SCIFIO: |yes|
 
-Export: |yes|
+Export: |yes|
 
-Supported Metadata Fields: `TIFF Reader <http://dev.loci.wisc.edu/trac/software/wiki/TiffReader>`_
+Officially Supported Versions: $versions
 
-Sample Datasets: `LZW TIFF data
-gallery <http://marlin.life.utsa.edu/Data_Gallery.html>`_
+Supported Metadata Fields:
 
-Sample Datasets: `Big TIFF <http://tiffcentral.com/>`_
+Freely Available Software:
 
-We currently have: 
+- `SPIDER <http://www.wadsworth.org/spider_doc/spider/docs/spider.html>`_
 
--  A `TIFF specification
-   document <http://partners.adobe.com/asn/developer/PDFS/TN/TIFF6.pdf>`_
-   (v6.0, from 1992 Jun 3, in PDF)
--  A large number of TIFF datasets
--  A few BigTIFF datasets
+Sample Datasets:
 
-We'd like to have: 
+- `LZW TIFF data gallery <http://marlin.life.utsa.edu/Data_Gallery.html>`_
+- `Big TIFF <http://tiffcentral.com/>`_
 
-More TIFF datasets:
+We currently have:
 
--  anything unusual—preferably rare/unsupported compression or
-   photometric interpretation type
+- a `TIFF specification document <http://partners.adobe.com/asn/developer/PDFS/TN/TIFF6.pdf>`_ (v6.0, from 1992 June 3, in PDF)
+- many TIFF datasets
+- a few BigTIFF datasets
+
+We would like to have:
+
+- an official specification document
+- more SM-Camera files
 
 Ratings
 -------
 
-Pixels: |Very Good|
+Pixels: |Very good|
 
-Metadata: |Very Good|
+Metadata: |Very good|
 
-Openness: |Outstanding|
+Openness: |Outstanding|
 
-Presence: |Outstanding|
+Presence: |Outstanding|
 
-Utility: |Fair|
+Utility: |Fair|
 
 Additional Information
 ----------------------
 
-Source Code: :source:`TIFF Reader <components/scifio/src/loci/formats/in/TiffReader.java>`
+Source Code: :source:`TiffReader.java <components/scifio/src/loci/formats/in/TiffReader.java >`
+Source Code: :source:`TiffWriter.java <components/scifio/src/loci/formats/out/TiffWriter.java >`
 
-Source Code: :source:`TIFF Writer <components/scifio/src/loci/formats/out/TiffWriter.java>`
+Notes:
 
-Notes: 
 
--  Bio-Formats can also read BigTIFF files (TIFF files larger than 4
-   GB).
--  Bio-Formats can save image stacks as TIFF or BigTIFF.
+Bio-Formats can also read BigTIFF files (TIFF files larger than 4 GB).
+Bio-Formats can save image stacks as TIFF or BigTIFF.
 
 .. seealso::
-    `TIFF technical overview <http://www.awaresystems.be/imaging/tiff/faq.html#q3>`_
-
-    `BigTIFF technical overview <http://www.awaresystems.be/imaging/tiff/bigtiff.html>`_
+`TIFF technical overview <http://www.awaresystems.be/imaging/tiff/faq.html#q3>`_
+`BigTIFF technical overview <http://www.awaresystems.be/imaging/tiff/bigtiff.html>`_

@@ -1,68 +1,67 @@
 AVI (Audio Video Interleave)
-============================
+===============================================================================
 
-Extensions: .avi
+Extensions: .avi
 
-Developer: `Microsoft <http://www.microsoft.com/>`_
+Developer: `Microsoft <http://www.microsoft.com/>`_
+
 
 Support
 -------
 
 SCIFIO: |yes|
 
-Export: |yes|
+Export: |yes|
 
-Supported Metadata Fields:  `AVIReader <http://dev.loci.wisc.edu/trac/software/wiki/AVIReader>`_
+Officially Supported Versions: $versions
 
-Freely Available Software: `AVI Reader plugin for
-ImageJ <http://rsb.info.nih.gov/ij/plugins/avi-reader.html>`_
+Supported Metadata Fields:
 
-Freely Available Software: `AVI Writer plugin for
-ImageJ <http://rsb.info.nih.gov/ij/plugins/avi.html>`_
+Freely Available Software:
 
-We currently have: 
+- `AVI Reader plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/avi-reader.html>`_
+- `AVI Writer plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/avi.html>`_
 
--  several AVI datasets
 
-We'd like to have: 
+We currently have:
 
-More AVI datasets, including
+- several AVI datasets
 
--  files with audio tracks and/or multiple video tracks
--  files compressed with a common, unsupported codec
--  2+ GB files
+We would like to have:
+
+- more AVI datasets, including:
+- #. files with audio tracks and/or multiple video tracks
+- #. files compressed with a common unsupported codec
+- #. 2+ GB files
 
 Ratings
 -------
 
-Pixels: |Good|
+Pixels: |Good|
 
-Metadata: |Outstanding|
+Metadata: |Outstanding|
 
-Openness: |Fair|
+Openness: |Fair|
 
-Presence: |Outstanding|
+Presence: |Outstanding|
 
-Utility: |Poor|
+Utility: |Poor|
 
 Additional Information
 ----------------------
 
-Source Code: :source:`AVI Reader <components/scifio/src/loci/formats/in/AVIReader.java>`
+Source Code: :source:`AVIReader.java <components/scifio/src/loci/formats/in/AVIReader.java >`
 
-Source Code: :source:`AVI Writer <components/scifio/src/loci/formats/out/AVIWriter.java>`
+Notes:
 
-Notes: 
 
--  Bio-Formats can save image stacks as AVI (uncompressed).
--  The following codecs are supported for reading:
-
-   #. Microsoft Run-Length Encoding (MSRLE)
-   #. Microsoft Video (MSV1)
-   #. Raw (uncompressed)
-   #. JPEG
+Bio-Formats can save image stacks as AVI (uncompressed).
+The following codecs are supported for reading:
+#. Microsoft Run-Length Encoding (MSRLE)
+#. Microsoft Video (MSV1)
+#. Raw (uncompressed)
+#. JPEG
 
 .. seealso::
-    `AVI RIFF File Reference <http://msdn2.microsoft.com/en-us/library/ms779636.aspx>`_
-
-    `AVI on Wikipedia <http://en.wikipedia.org/wiki/Audio_Video_Interleave>`_
+`AVI RIFF File Reference <http://msdn2.microsoft.com/en-us/library/ms779636.aspx>`_
+`AVI on Wikipedia <http://en.wikipedia.org/wiki/Audio_Video_Interleave>`_

@@ -1,0 +1,2266 @@
+[3i SlideBook]
+extensions = .sld
+owner = `Intelligent Imaging Innovations`_
+developer = `Intelligent Imaging Innovations`_
+scifio = no
+export = no
+versions = 4.1, 4.2
+weHave = Numerous SlideBook datasets \n
+Some :source:`Bio-Formats developer notes <components/bio-formats/doc/slidebook.html>` for SlideBook
+weWant = A SlideBook specification document \n
+More SlideBook datasets (preferably acquired with the most recent SlideBook software)
+pixelsRating = Very good
+metadataRating = Fair
+opennessRating = Fair
+presenceRating = Very good
+utilityRating = Poor
+reader = SlidebookReader.java
+notes = We strongly encourage users to export their .sld files to OME-TIFF \n
+using the SlideBook software.  Bio-Formats is not likely to support the full \n
+range of metadata that is included in .sld files, and so exporting to \n
+OME-TIFF from SlideBook is the best way to ensure that all metadata is \n
+preserved. \n
+\n
+.. seealso:: \n
+  `Slidebook software overview <https://www.slidebook.com>`_ \n
+\n
+.. _Intelligent Imaging Innovations: http://www.intelligent-imaging.com/
+
+[Adobe Photoshop PSD]
+extensions = .psd
+developer = `Adobe <http://www.adobe.com/>`_
+scifio = no
+export = no
+versions = 1.0
+weHave = a PSD specification document (v3.0.4, 16 July 1995) \n
+a few PSD files
+weWant = more PSD files
+pixelsRating = Good
+metadataRating = Good
+opennessRating = Good
+presenceRating = Good
+utilityRating = Fair
+reader = PSDReader.java
+
+[AIM]
+extensions = .aim
+developer = `SCANCO Medical AG <http://www.scanco.ch>`_
+scifio = no
+export = no
+weHave = one .aim file
+weWant = an .aim specification document \n
+more .aim files
+pixelsRating = Good
+metadataRating = Very good
+opennessRating = Fair
+presenceRating = Poor
+utilityRating = Fair
+reader = AIMReader.java
+
+[Alicona 3D]
+extensions = .al3d
+owner = `Alicona Imaging <http://www.alicona.com/>`_
+scifio = no
+export = no
+versions = 1.0
+weHave = an `AL3D specification document <http://www.alicona.com/home/fileadmin/alicona/downloads/AL3DFormat.pdf>`_ (v1.0, from 2003, in PDF) \n
+a few AL3D datasets
+weWant = more AL3D datasets (Z series, T series, 16-bit)
+pixelsRating = Very good
+metadataRating = Very good
+opennessRating = Very good
+presenceRating = Poor
+utilityRating = Good
+reader = AliconaReader.java
+notes = Known deficiencies: \n
+\n
+- Support for 16-bit AL3D images is present, but has never been tested. \n
+- Texture data is currently ignored.
+
+[Amersham Biosciences Gel]
+extensions = .gel
+owner = `GE Healthcare Life Sciences <http://www.gelifesciences.com/>`_
+developer = Molecular Dynamics
+scifio = no
+export = no
+weHave = a GEL specification document (Revision 2, from 2001 Mar 15, in PDF) \n
+a few GEL datasets
+pixelsRating = Very good
+metadataRating = Very good
+opennessRating = Good
+presenceRating = Fair
+utilityRating = Fair
+reader = GELReader.java
+privateSpecification = true
+notes = .. seealso:: \n
+  `GEL Technical Overview <http://www.awaresystems.be/imaging/tiff/tifftags/docs/gel.html>`_
+
+[Amira Mesh]
+extensions = .am, .amiramesh, .grey, .hx, .labels
+developer = `Visage Imaging <http://www.amiravis.com/>`_
+scifio = no
+export = no
+weHave = a few Amira Mesh datasets
+weWant = more Amira Mesh datasets
+pixelsRating = Very good
+metadataRating = Good
+opennessRating = Fair
+presenceRating = Fair
+utilityRating = Fair
+reader = AmiraReader.java
+
+[Analyze 7.5]
+extensions = .img, .hdr
+developer = `Mayo Foundation Biomedical Imaging Resource <http://www.mayo.edu/bir>`_
+scifio = no
+export = no
+weHave = `an Analyze 7.5 specification document <http://analyzedirect.com/support/10.0Documents/Analyze_Resource_01.pdf>`_ \n
+several Analyze 7.5 datasets
+pixelsRating = Very good
+metadataRating = Good
+opennessRating = Very good
+presenceRating = Good
+utilityRating = Fair
+reader = AnalyzeReader.java
+
+[Andor Bio-Imaging Division (ABD) TIFF]
+extensions = .tif
+owner = `Andor Technology <http://www.andor.com/>`_
+developer = Andor Bioimaging Department
+scifio = no
+export = no
+weHave = an ABD-TIFF specification document (from 2005 November, in PDF) \n
+a few ABD-TIFF datasets
+pixelsRating = Very good
+metadataRating = Very good
+opennessRating = Good
+presenceRating = Fair
+utilityRating = Good
+privateSpecification = true
+reader = FluoviewReader.java
+notes = With a few minor exceptions, the ABD-TIFF format is identical to the \n
+Fluoview TIFF format.
+
+[Animated PNG]
+extensions = .png
+developer = `The Animated PNG Project <http://www.animatedpng.com/>`_
+scifio = yes
+export = yes
+software = `Firefox 3+ <http://www.mozilla.com/firefox>`_ \n
+`Opera 9.5+ <http://www.opera.com/download>`_ \n
+`KSquirrel <http://ksquirrel.sourceforge.net/download.php>`_
+weHave = `a specification document <http://wiki.mozilla.org/APNG_Specification>`_ \n
+several APNG files
+pixelsRating = Very good
+metadataRating = Outstanding
+opennessRating = Outstanding
+presenceRating = Good
+utilityRating = Poor
+reader = APNGReader.java
+
+[Aperio SVS TIFF]
+extensions = .svs
+owner = `Aperio <http://www.aperio.com/>`_
+scifio = no
+export = no
+versions = 8.0, 8.2, 9.0
+weHave = many SVS datasets \n
+an SVS specification document \n
+the ability to generate additional SVS datasets
+pixelsRating = Very good
+metadataRating = Very good
+opennessRating = Very good
+presenceRating = Good
+utilityRating = Good
+privateSpecification = true
+reader = SVSReader.java
+notes = .. seealso:: \n
+  `Aperio ImageScope <http://www.aperio.com/#imagescope-request>`_
+
+[Applied Precision CellWorX]
+extensions = .htd, .pnl
+developer = `Applied Precision <http://www.api.com>`_
+scifio = no
+export = no
+weHave = a few CellWorX datasets
+weWant = a CellWorX specification document \n
+more CellWorX datasets
+pixelsRating = Very good
+metadataRating = Good
+opennessRating = Good
+presenceRating = Fair
+utilityRating = Fair
+reader = CellWorxReader.java
+
+[AVI (Audio Video Interleave)]
+extensions = .avi
+developer = `Microsoft <http://www.microsoft.com/>`_
+scifio = yes
+export = yes
+software = `AVI Reader plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/avi-reader.html>`_ \n
+`AVI Writer plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/avi.html>`_
+weHave = several AVI datasets
+weWant = more AVI datasets, including: \n
+  #. files with audio tracks and/or multiple video tracks \n
+  #. files compressed with a common unsupported codec \n
+  #. 2+ GB files
+pixelsRating = Good
+metadataRating = Outstanding
+opennessRating = Fair
+presenceRating = Outstanding
+utilityRating = Poor
+reader = AVIReader.java
+notes = Bio-Formats can save image stacks as AVI (uncompressed). \n
+The following codecs are supported for reading: \n
+  #. Microsoft Run-Length Encoding (MSRLE) \n
+  #. Microsoft Video (MSV1) \n
+  #. Raw (uncompressed) \n
+  #. JPEG \n
+\n
+.. seealso:: \n
+  `AVI RIFF File Reference <http://msdn2.microsoft.com/en-us/library/ms779636.aspx>`_ \n
+  `AVI on Wikipedia <http://en.wikipedia.org/wiki/Audio_Video_Interleave>`_
+
+[Axon Raw Format]
+extensions = .arf
+owner = `INDEC BioSystems <http://www.indecbiosystems.com/>`_
+scifio = no
+export = no
+weHave = one ARF dataset \n
+a `specification document <http://www.indecbiosystems.com/imagingworkbench/ApplicationNotes/IWAppNote11-ARF_File_Format.pdf>`_
+weWant = more ARF datasets
+pixelsRating = Very good
+metadataRating = Fair
+opennessRating = Very good
+presenceRating = Poor
+utilityRating = Fair
+reader = ARFReader.java
+
+[BD Pathway]
+extensions = .exp, .tif
+owner = `BD Biosciences <http://www.bdbiosciences.com>`_
+scifio = no
+export = no
+weHave = a few BD Pathway datasets
+weWant = more BD Pathway datasets
+pixelsRating = Very good
+metadataRating = Very good
+opennessRating = Good
+presenceRating = Fair
+utilityRating = Good
+reader = BDReader.java
+
+[Becker & Hickl SPCImage]
+extensions = .sdt
+owner = `Becker-Hickl <http://www.becker-hickl.de/>`_
+scifio = no
+export = no
+weHave = an SDT specification document (from 2008 April, in PDF) \n
+an SDT specification document (from 2006 June, in PDF) \n
+Becker & Hickl's `SPCImage <http://www.becker-hickl.de/software/tcspc/softwaretcspcspecial.htm>`_ software \n
+a large number of SDT datasets \n
+the ability to produce new datasets
+pixelsRating = Very good
+metadataRating = Very good
+opennessRating = Good
+presenceRating = Poor
+utilityRating = Fair
+privateSpecification = true
+reader = SDTReader.java
+
+[Bio-Rad Gel]
+extensions = .1sc
+owner = `Bio-Rad <http://www.bio-rad.com>`_
+scifio = no
+export = no
+weHave = software that can read Bio-Rad Gel files \n
+several Bio-Rad Gel files
+weWant = a Bio-Rad Gel specification \n
+more Bio-Rad Gel files
+pixelsRating = Good
+metadataRating = Fair
+opennessRating = Fair
+presenceRating = Poor
+utilityRating = Fair
+reader = BioRadGelReader.java
+
+[Bio-Rad PIC]
+extensions = .pic, .raw, .xml
+owner = `Carl Zeiss, Inc. <http://www.zeiss.com/>`_
+developer = Bio-Rad
+scifio = no
+export = no
+software = `Bio-Rad PIC reader plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/biorad.html>`_
+weHave = a PIC specification document (v4.5, in PDF) \n
+an older PIC specification document (v4.2, from 1996 December 16, in DOC) \n
+a large number of PIC datasets \n
+the ability to produce new datasets
+pixelsRating = Outstanding
+metadataRating = Very good
+opennessRating = Very good
+presenceRating = Very good
+utilityRating =  Very good
+privateSpecification = true
+reader = BioRadReader.java
+notes = Commercial applications that support this format include: \n
+  #. `Bitplane Imaris <http://www.bitplane.com/>`_ \n
+  #. `SVI Huygens <http://svi.nl/>`_
+
+[Bitplane Imaris]
+extensions = .ims
+owner = `Bitplane <http://www.bitplane.com/>`_
+scifio = no
+export = no
+versions = 2.7, 3.0, 5.5
+weHave = an `Imaris (RAW) specification document <http://flash.bitplane.com/support/faqs/faqsview.cfm?inCat=6&inQuestionID=104>`_ (from no later than 1997 November 11, in HTML) \n
+an Imaris 5.5 (HDF) specification document \n
+Bitplane's bfFileReaderImaris3N code (from no later than 2005, in C++) \n
+several older Imaris (RAW) datasets \n
+one Imaris 3 (TIFF) dataset \n
+several Imaris 5.5 (HDF) datasets
+weWant = an Imaris 3 (TIFF) specification document \n
+more Imaris 3 (TIFF) datasets
+pixelsRating = Very good
+metadataRating = Very good
+opennessRating = Good
+presenceRating = Fair
+utilityRating = Fair
+reader = ImarisReader, ImarisTiffReader, ImarisHDFReader.java
+notes = There are three distinct Imaris formats: \n
+  #. the old binary format (introduced in Imaris version 2.7) \n
+  #. Imaris 3, a TIFF variant (introduced in Imaris version 3.0) \n
+  #. Imaris 5.5, an HDF variant (introduced in Imaris version 5.5)
+
+[Bruker MRI]
+developer = `Bruker <http://www.bruker.com/>`_
+scifio = no
+export = no
+software = `Bruker plugin for ImageJ <http://rsbweb.nih.gov/ij/plugins/bruker.html>`_
+weHave = a few Bruker MRI datasets
+weWant = an official specification document
+pixelsRating = Good
+metadataRating = Very good
+opennessRating = Fair
+presenceRating = Good
+utilityRating = Fair
+reader = BrukerReader.java
+
+[Burleigh]
+extensions = .img
+owner = Burleigh Instruments
+scifio = no
+export = no
+weHave = Pascal code that can read Burleigh files (from ImageSXM) \n
+a few Burleigh files
+weWant = a Burleigh file format specification \n
+more Burleigh files
+pixelsRating = Good
+metadataRating = Fair
+opennessRating = Fair
+presenceRating = Fair
+utilityRating = Fair
+reader = BurleighReader.java
+
+[Canon DNG]
+extensions = .cr2, .crw
+developer = `Canon <http://canon.com>`_
+scifio = no
+export = no
+software = `IrfanView <http://www.irfanview.com/>`_
+weHave = a few example datasets
+weWant = an official specification document
+pixelsRating = Good
+metadataRating = Good
+opennessRating = Fair
+presenceRating = Fair
+utilityRating = Fair
+reader = DNGReader.java
+
+[Micro-Manager]
+extensions = .tif, .txt, .xml
+developer = `Vale Lab <http://valelab.ucsf.edu/>`_
+scifio = yes
+export = no
+software = `Micro-Manager <http://micro-manager.org/>`_
+weHave = many Micro-manager datasets
+pixelsRating = Outstanding
+metadataRating = Very good
+opennessRating = Outstanding
+presenceRating = Fair
+utilityRating = Good
+reader = MicromanagerReader.java
+
+[Cellomics]
+extensions = .c01
+developer = `Thermo Fisher Scientific <http://www.thermofisher.com/>`_
+scifio = no
+export = no
+weHave = a few Cellomics .c01 datasets
+weWant = a Cellomics .c01 specification document \n
+more Cellomics .c01 datasets
+pixelsRating = Very good
+metadataRating = Poor
+opennessRating = Fair
+presenceRating = Poor
+utilityRating = Poor
+reader = CellomicsReader.java
+
+[cellSens VSI]
+extensions = .vsi
+developer = `Olympus <http://www.olympus.com/>`_
+scifio = no
+export = no
+weHave = a few example datasets
+weWant = an official specification document
+pixelsRating = Fair
+metadataRating = Good
+opennessRating = Fair
+presenceRating = Fair
+utilityRating = Fair
+reader = CellSensReader.java
+
+[DeltaVision]
+extensions = .dv, .r3d
+owner = `Applied Precision <http://www.api.com/>`_
+scifio = no
+export = no
+software = `DeltaVision Opener plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/track/delta.html>`_
+samples = `Applied Precision Datasets <http://www.api.com/downloads/software/softworxexplorer2.0/SampleImages.zip>`_
+weHave = a DV specification document (v2.10 or newer, in HTML) \n
+numerous DV datasets
+pixelsRating = Outstanding
+metadataRating = Good
+opennessRating = Good
+presenceRating = Good
+utilityRating = Good
+reader = DeltavisionReader.java
+privateSpecification = true
+notes = The Deltavision format is based on the Medical Research Council (MRC) \n
+file format. \n
+\n
+Commercial applications that support DeltaVision include: \n
+\n
+  #. `Bitplane Imaris <http://www.bitplane.com/>`_ \n
+  #. `SVI Huygens <http://svi.nl/>`_ \n
+  #. `Image-Pro Plus <http://www.mediacy.com/>`_ \n
+\n
+.. seealso:: \n
+  `DeltaVision system description <http://api.com/deltavision.asp>`_
+
+[DICOM]
+extensions = .dcm, .dicom
+developer = `National Electrical Manufacturers Association <http://www.nema.org/>`_
+scifio = yes
+export = no
+software = `OsiriX Medical Imaging Software <http://www.osirix-viewer.com/>`_ \n
+`ezDICOM <http://www.sph.sc.edu/comd/rorden/ezdicom.html>`_ \n
+`Chris Rorden's list of free DICOM readers <http://www.sph.sc.edu/comd/rorden/dicom.html#links>`_
+samples = `MRI Chest from FreeVol-3D web site <http://members.tripod.com/%7Eclunis_immensus/free3d/hk-40.zip>`_ \n
+`Medical Image Samples from Sebastien Barre's Medical Imaging page <http://www.barre.nom.fr/medical/samples/>`_ \n
+`DICOM sample image sets from OsiriX web site <http://osirix-viewer.com/datasets/>`_
+weHave = `DICOM specification documents <http://medical.nema.org/dicom/2007/>`_ (PS 3 - 2007, from 2006 December 28, in DOC and PDF) \n
+numerous DICOM datasets
+pixelsRating = Very good
+metadataRating = Very good
+opennessRating = Very good
+presenceRating = Good
+utilityRating = Fair
+reader = DicomReader.java
+notes = - DICOM stands for "Digital Imaging and Communication in Medicine". \n
+- Bio-Formats supports both compressed and uncompressed DICOM files. \n
+\n
+.. seealso:: \n
+  `DICOM homepage <http://medical.nema.org/>`_
+
+[ECAT7]
+extensions = .v
+developer = `Siemens <http://www.siemens.com>`_
+scifio = no
+export = no
+weHave = a few ECAT7 files
+weWant = an ECAT7 specification document \n
+more ECAT7 files
+pixelsRating = Good
+metadataRating = Good
+opennessRating = Fair
+presenceRating = Fair
+utilityRating = Fair
+reader = Ecat7Reader.java
+
+[EPS (Encapsulated PostScript)]
+extensions = .eps, .epsi, .ps
+developer = `Adobe <http://www.adobe.com/>`_
+scifio = yes
+export = yes
+software = `EPS Writer plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/eps-writer.html>`_
+weHave = a few EPS datasets \n
+the ability to produce new datasets
+pixelsRating = Good
+metadataRating = Good
+opennessRating = Good
+presenceRating = Very good
+utilityRating = Poor
+reader = EPSReader.java
+writer = EPSWriter.java
+notes = Bio-Formats can save individual planes as EPS. \n
+Certain types of compressed EPS files are not supported.
+
+[Evotec/PerkinElmer Opera Flex]
+extensions = .flex, .mea, .res
+developer = `Evotec Technologies, now PerkinElmer <http://www.perkinelmer.com/>`_
+scifio = no
+export = no
+weHave = many Flex datasets
+weWant = a freely redistributable LuraWave LWF decoder
+pixelsRating = Outstanding
+metadataRating = Very good
+opennessRating = Poor
+presenceRating = Poor
+utilityRating = Poor
+reader = FlexReader.java
+notes = The LuraWave LWF decoder library (i.e. luwf\_jsdk2.6.jar) with \n
+  license code is required to decode wavelet-compressed Flex files. \n
+\n
+.. seealso::\n
+  `LuraTech (developers of the proprietary LuraWave LWF compression used for Flex image planes) <http://www.luratech.com/>`_
+
+[FEI TIFF]
+extensions = .tiff
+developer = `FEI <http://www.fei.com>`_
+scifio = no
+export = no
+weHave = a few FEI TIFF datasets
+pixelsRating = Very good
+metadataRating = Good
+opennessRating = Good
+presenceRating = Fair
+utilityRating = Fair
+reader = FEITiffReader.java
+
+[FEI]
+extensions = .img
+developer = `FEI <http://www.fei.com/>`_
+scifio = no
+export = no
+weHave = a few FEI files
+weWant = a specification document \n
+more FEI files
+pixelsRating = Fair
+metadataRating = Poor
+opennessRating = Poor
+presenceRating = Fair
+utilityRating = Fair
+reader = FEIReader.java
+
+[FITS (Flexible Image Transport System)]
+extensions = .fits
+developer = `National Radio Astronomy Observatory <http://www.nrao.edu/>`_
+scifio = yes
+export = no
+weHave = a `FITS specification document <http://archive.stsci.edu/fits/fits_standard/>`_ (NOST 100-2.0, from 1999 March 29, in HTML) \n
+several FITS datasets
+pixelsRating = Very good
+metadataRating = Fair
+opennessRating = Very good
+presenceRating = Good
+utilityRating = Fair
+reader = FitsReader.java
+notes = ..seealso:: \n
+  `MAST:FITS homepage <http://archive.stsci.edu/fits/>`_ \n
+  `FITS Support Office <http://fits.gsfc.nasa.gov/>`_
+
+[Gatan Digital Micrograph 2]
+extensions = .dm2
+developer = `Gatan <http://www.gatan.com>`_
+scifio = no
+export = no
+versions = 2
+weHave = Pascal code that can read DM2 files (from ImageSXM) \n
+a few DM2 files
+weWant = an official DM2 specification document \n
+more DM2 files
+pixelsRating = Good
+metadataRating = Fair
+opennessRating = Fair
+presenceRating = Fair
+utilityRating = Good
+reader = GatanDM2Reader.java
+
+[Gatan Digital Micrograph]
+extensions = .dm3
+owner = `Gatan <http://www.gatan.com/>`_
+scifio = no
+export = no
+versions = 3
+software = `DM3 Reader plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/DM3_Reader.html>`_ \n
+`EMAN <http://blake.bcm.edu/EMAN/>`_
+weHave = Gatan's ImageReader2003 code (from 2003, in C++) \n
+numerous DM3 datasets \n
+some :source:`Bio-Formats developer notes <components/bio-formats/doc/gatan.html>` for DM3
+weWant = a DM3 specification document
+pixelsRating = Very good
+metadataRating = Good
+opennessRating = Fair
+presenceRating = Fair
+utilityRating = Fair
+reader = GatanReader.java
+notes = Commercial applications that support .dm3 files include `Datasqueeze <http://www.datasqueezesoftware.com/>`_.
+
+[GIF (Graphics Interchange Format)]
+extensions = .gif
+owner = `Unisys <http://www.unisys.com/>`_
+developer = `CompuServe <http://www.compuserve.com/>`_
+scifio = yes
+export = no
+software = `Animated GIF Reader plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/agr.html>`_ \n
+`GIF Stack Writer plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/gif-stack-writer.html>`_
+weHave = a `GIF specification document <http;//tronche.com/computer-graphics/gif/>`_ (Version 89a, from 1990, in HTML) \n
+numerous GIF datasets \n
+the ability to produce new datasets
+pixelsRating = Very good
+metadataRating = Very good
+opennessRating = Fair
+presenceRating = Outstanding
+utilityRating = Poor
+reader = GIFReader.java
+
+[Hamamatsu Aquacosmos NAF]
+extensions = .naf
+developer = `Hamamatsu <http://www.hamamatsu.com/>`_
+scifio = no
+export = no
+weHave = a few NAF files
+weWant = a specification document \n
+more NAF files
+pixelsRating = Good
+metadataRating = Fair
+opennessRating = Poor
+presenceRating = Fair
+utilityRating = Fair
+reader = NAFReader.java
+
+[Hamamatsu HIS]
+extensions = .his
+owner = `Hamamatsu <http://www.hamamatsu.com>`_
+scifio = no
+export = no
+weHave = Pascal code that can read HIS files (from ImageSXM) \n
+several HIS files
+weWant = an HIS specification \n
+more HIS files
+pixelsRating = Good
+metadataRating = Fair
+opennessRating = Fair
+presenceRating = Fair
+utilityRating = Fair
+reader = HISReader.java
+
+[Hamamatsu ndpi]
+extensions = .ndpi
+developer = `Hamamatsu <http://www.hamamatsu.com>`_
+scifio = no
+export = no
+software = `NDP.view <http://www.olympusamerica.com/seg_section/seg_vm_downloads.asp>`_
+samples = `OpenSlide <http://openslide.cs.cmu.edu/download/openslide-testdata/Hamamatsu/>`_
+weHave = many example datasets
+weWant = an official specification document
+pixelsRating = Fair
+metadataRating = Good
+opennessRating = Good
+presenceRating = Fair
+utilityRating = Fair
+reader = NDPIReader.java
+
+[Hamamatsu VMS]
+extensions = .vms
+developer = `Hamamatsu <http://www.hamamatsu.com>`_
+scifio = no
+export = no
+samples = `OpenSlide <http://openslide.cs.cmu.edu/download/openslide-testdata/Hamamatsu-vms/>`_
+weHave = a few example datasets \n
+`developer documentation from the OpenSlide project <http://openslide.org/Hamamatsu%20format/>`_
+weWant = an official specification document \n
+more example datasets
+pixelsRating = Good
+metadataRating = Good
+opennessRating = Fair
+presenceRating = Fair
+utilityRating = Fair
+reader = HamamatsuVMSReader.java
+
+[Hitachi S-4800]
+extensions = .txt, .tif, .bmp, .jpg
+developer = `Hitachi <http://www.hitachi-hta.com/sites/default/files/technotes/Hitachi_4800_STEM.pdf>`_
+scifio = no
+export = no
+weHave = several Hitachi S-4800 datasets
+pixelsRating = Very good
+metadataRating = Very good
+opennessRating = Very good
+presenceRating = Fair
+utilityRating = Fair
+reader = HitachiReader.java
+
+[ICS (Image Cytometry Standard)]
+extensions = .ics, .ids
+developer = P. Dean et al.
+scifio = yes
+export = yes
+versions = 1.0, 2.0
+software = `Libics (ICS reference library) <http://libics.sourceforge.net/>`_ \n
+`ICS Opener plugin for ImageJ <http://valelab.ucsf.edu/%7Enico/IJplugins/Ics_Opener.html>`_ \n
+`IrfanView <http://www.irfanview.com/>`_
+weHave = numerous ICS datasets
+pixelsRating = Outstanding
+metadataRating = Very good
+opennessRating = Outstanding
+presenceRating = Very good
+utilityRating = Very good
+reader = ICSReader.java
+writer = ICSWriter.java
+notes = ICS version 1.0 datasets have two files - an .ics file that contains \n
+all of the metadata in plain-text format, and an .ids file that \n
+contains all of the pixel data. \n
+ICS version 2.0 datasets are a single .ics file that contains both \n
+pixels and metadata. \n
+\n
+Commercial applications that can support ICS include: \n
+\n
+- `Bitplane Imaris <http://www.bitplane.com/>`_ \n
+- `SVI Huygens <http://svi.nl/>`_
+
+[Imacon]
+extensions = .fff
+owner = `Hasselblad <http://www.hasselbladusa.com/>`_
+scifio = no
+export = no
+weHave = one Imacon file
+weWant = more Imacon files
+pixelsRating = Poor
+metadataRating = Good
+opennessRating = Fair
+presenceRating = Poor
+utilityRating = Good
+reader = ImaconReader.java
+
+[ImagePro Sequence]
+extensions = .seq
+owner = `Media Cybernetics <http://www.mediacy.com/>`_
+scifio = no
+export = no
+weHave = the `Image-Pro Plus <http://www.mediacy.com/index.aspx?page=IPP>`_ software \n
+a few SEQ datasets \n
+the ability to produce more datasets \n
+some :source:`Bio-Formats developer notes <components/bio-formats/doc/seq.html>` for SEQ
+weWant = an official SEQ specification document
+pixelsRating = Very good
+metadataRating = Very good
+opennessRating = Fair
+presenceRating = Fair
+utilityRating = Fair
+reader = SEQReader.java
+
+[ImagePro Workspace]
+extensions = .ipw
+owner = `Media Cybernetics <http://www.mediacy.com/>`_
+scifio = no
+export = no
+weHave = the `Image-Pro Plus <http://www.mediacy.com/index.aspx?page=IPP>`_ software \n
+a few IPW datasets \n
+the ability to produce more datasets \n
+some :source:`Bio-Formats developer notes <components/bio-formats/doc/ipw.html>` for IPW
+weWant = an official IPW specification document \n
+more IPW datasets: \n
+  #. multiple datasets in one file \n
+  #. 2+ GB files
+pixelsRating = Very good
+metadataRating = Very good
+opennessRating = Poor
+presenceRating = Poor
+utilityRating = Poor
+reader = IPWReader.java
+notes = Bio-Formats uses a modified version of the `Apache Jakarta \n
+POI <http://jakarta.apache.org/poi/>`_ library to read IPW files.
+
+[IMAGIC]
+extensions = .hed, .img
+developer = `Image Science <http://www.imagescience.de>`_
+scifio = no
+export = no
+software = `em2em <http://www.imagescience.de/em2em.html>`_
+weHave = one example dataset \n
+official file format documentation
+weWant = more example datasets
+pixelsRating = Very good
+metadataRating = Very good
+opennessRating = Very good
+presenceRating = Good
+utilityRating = Good
+reader = ImagicReader.java
+notes = .. seealso:: \n
+  `IMAGIC specification <http://www.imagescience.de/em2em.html>`_
+
+[IMOD]
+extensions = .mod
+owner = `Boulder Laboratory for 3-Dimensional Electron Microscopy of Cells <http://bio3d.colorado.edu>`_
+developer = `Boulder Laboratory for 3-Dimensional Electron Microscopy of Cells <http://bio3d.colorado.edu>`_
+scifio = no
+export = no
+software = `IMOD <http://bio3d.colorado.edu/imod/>`_
+weHave = a few sample datasets \n
+`official documentation <http://bio3d.colorado.edu/imod/doc/binspec.html>`_
+pixelsRating = Good
+metadataRating = Good
+opennessRating = Outstanding
+presenceRating = Fair
+utilityRating = Fair
+reader = IMODReader.java
+
+[Improvision Openlab LIFF]
+extensions = .liff
+owner = `PerkinElmer <http://www.perkinelmer.com/>`_
+developer = `Improvision <http://www.improvision.com/>`_
+scifio = no
+export = no
+versions = 2.0, 5.0
+weHave = an Openlab specification document (from 2000 February 8, in DOC) \n
+Improvision's XLIFFFileImporter code for reading Openlab LIFF v5 files (from 2006, in C++) \n
+several Openlab datasets
+weWant = more Openlab datasets (preferably with 32-bit integer data)
+pixelsRating = Very good
+metadataRating = Good
+opennessRating = Very good
+presenceRating = Good
+utilityRating = Fair
+privateSpecification = true
+reader = OpenlabReader.java
+notes = .. seealso:: \n
+  `Openlab software review <http://www.improvision.com/products/openlab/>`_
+
+[Improvision Openlab Raw]
+extensions = .raw
+owner = `PerkinElmer <http://www.perkinelmer.com/>`_
+developer = `Improvision <http://www.improvision.com/>`_
+scifio = no
+export = no
+weHave = an `Openlab Raw specification document
+<http://cellularimaging.perkinelmer.com/support/technical_notes/detail.php?id=344>`_ (from 2004 November 09, in HTML) \n
+a few Openlab Raw datasets
+pixelsRating = Outstanding
+metadataRating = Very good
+opennessRating = Very good
+presenceRating = Poor
+utilityRating = Fair
+reader = OpenlabRawReader.java
+notes = .. seealso:: \n
+  `Openlab software review <http://www.improvision.com/products/openlab/>`_
+
+[Improvision TIFF]
+extensions = .tif
+owner = `PerkinElmer <http://www.perkinelmer.com/>`_
+developer = `Improvision <http://www.improvision.com/>`_
+scifio = no
+export = no
+weHave = an Improvision TIFF specification document \n
+a few Improvision TIFF datasets
+pixelsRating = Very good
+metadataRating = Outstanding
+opennessRating = Very good
+presenceRating = Fair
+utilityRating = Good
+privateSpecification = true
+reader = ImprovisionTiffReader.java
+notes = .. seealso:: \n
+  `Openlab software overview <http://www.improvision.com/products/openlab/>`_
+
+[InCell 1000]
+extensions = .xdce, .tif
+developer = `GE <http://gelifesciences.com/>`_
+scifio = no
+export = no
+weHave = a few InCell 1000 datasets
+weWant = an InCell 1000 specification document \n
+more InCell 1000 datasets
+pixelsRating = Very good
+metadataRating = Very good
+opennessRating = Good
+presenceRating = Fair
+utilityRating = Good
+reader = InCellReader.java
+
+[InCell 3000]
+extensions = .frm
+developer = `GE <http://gelifesciences.com/>`_
+scifio = no
+export = no
+samples = `Broad Bioimage Benchmark Collection <http://www.broadinstitute.org/bbbc/BBBC013/>`_
+weHave = a few example datasets
+weWant = an official specification document
+pixelsRating = Good
+metadataRating = Fair
+opennessRating = Fair
+presenceRating = Fair
+utilityRating = Poor
+reader = InCell3000Reader.java
+
+[INR]
+extensions = .inr
+scifio = no
+export = no
+weHave = several sample .inr datasets
+pixelsRating = Very good
+metadataRating = Good
+opennessRating = Fair
+presenceRating = Poor
+utilityRating = Fair
+reader = INRReader.java
+
+[IPLab-Mac]
+extensions = .ipm
+owner = `BioVision Technologies <http://biovis.com/>`_
+scifio = no
+export = no
+weHave = a few IPLab-Mac datasets \n
+a specification document
+weWant = more IPLab-Mac datasets
+pixelsRating = Very good
+metadataRating = Good
+opennessRating = Very good
+presenceRating = Poor
+utilityRating = Fair
+privateSpecification = true
+reader = IvisionReader.java
+
+[IPLab]
+extensions = .ipl
+owner = was `BD Biosystems <http://www.bdbiosciences.com/>`_, now `BioVision Technologies <http://www.biovis.com/iplab.htm>`_
+developer = Scanalytics
+scifio = no
+export = no
+software = `IPLab Reader plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/iplab-reader.html>`_
+weHave = an IPLab specification document (v3.6.5, from 2004 December 1, in PDF) \n
+several IPLab datasets
+weWant = more IPLab datasets (preferably with 32-bit integer or floating point data)
+pixelsRating = Outstanding
+metadataRating = Very good
+opennessRating = Very good
+presenceRating = Fair
+utilityRating = Fair
+privateSpecification = true
+reader = IPLabReader.java
+notes = Commercial applications that support IPLab include: \n
+\n
+- `Bitplane Imaris <http://www.bitplane.com/>`_ \n
+- `SVI Huygens <http://svi.nl/>`_ \n
+\n
+.. seealso:: \n
+  `IPLab software review <http://www.biovis.com/iplab.htm>`_
+
+[JEOL]
+extensions = .dat, .img, .par
+owner = `JEOL <http://www.jeol.com>`_
+scifio = no
+export = no
+weHave = Pascal code that reads JEOL files (from ImageSXM) \n
+a few JEOL files
+weWant = an official specification document \n
+more JEOL files
+pixelsRating = Good
+metadataRating = Fair
+opennessRating = Fair
+presenceRating = Fair
+utilityRating = Fair
+reader = JEOLReader.java
+
+[JPEG 2000]
+extensions = .jp2
+developer = `Independent JPEG Group <http://www.ijg.org/>`_
+scifio = yes
+export = yes
+software = `JJ2000 (JPEG 2000 library for Java) <http://code.google.com/p/jj2000/>`_
+weHave = a `JPEG 2000 specification document <http://www.jpeg.org/jpeg2000/CDs15444.html>`_ (final draft, from 2000, in PDF) \n
+a few .jp2 files
+pixelsRating = Very good
+metadataRating = Poor
+opennessRating = Outstanding
+presenceRating = Good
+utilityRating = Poor
+reader = JPEG2000Reader.java
+writer = JPEG2000Writer.java
+notes = Bio-Formats uses the `JAI Image I/O Tools <https://java.net/projects/jai-imageio>`_ library to read JP2 files. \n
+JPEG stands for "Joint Photographic Experts Group".
+
+[JPEG]
+extensions = .jpg
+developer = `Independent JPEG Group <http://www.ijg.org/>`_
+scifio = yes
+export = yes
+weHave = a `JPEG specification document <http://www.w3.org/Graphics/JPEG/jfif3.pdf>`_ (v1.04, from 1992 September 1, in PDF) \n
+numerous JPEG datasets \n
+the ability to produce more datasets
+pixelsRating = Very good
+metadataRating = Fair
+opennessRating = Outstanding
+presenceRating = Outstanding
+utilityRating = Poor
+reader = JPEGReader.java
+writer = JPEGWriter.java
+notes = Bio-Formats can save individual planes as JPEG. \n
+Bio-Formats uses the `Java Image I/O <http://java.sun.com/j2se/1.4.2/docs/guide/imageio/index.html>`_ API to read and write JPEG files. \n
+JPEG stands for "Joint Photographic Experts Group". \n
+\n
+.. seealso:: \n
+  `JPEG homepage <http://www.jpeg.org/jpeg/index.html>`_
+
+[JPK]
+extensions = .jpk
+developer = `JPK Instruments <http://www.jpk.com>`_
+scifio = no
+export = no
+weHave = Pascal code that can read JPK files (from ImageSXM) \n
+a few JPK files
+weWant = an official specification document \n
+more JPK files
+pixelsRating = Good
+metadataRating = Fair
+opennessRating = Fair
+presenceRating = Fair
+utilityRating = Fair
+reader = JPKReader.java
+
+[JPX]
+extensions = .jpx
+developer = `JPEG Committee <http://www.jpeg.org/jpeg2000/>`_
+scifio = no
+export = no
+weHave = a few .jpx files
+pixelsRating = Very good
+metadataRating = Very good
+opennessRating = Outstanding
+presenceRating = Good
+utilityRating = Fair
+reader = JPXReader.java
+
+[Khoros VIFF (Visualization Image File Format) Bitmap]
+extensions = .xv
+owner = `AccuSoft <http://www.accusoft.com/company/>`_
+developer = `Khoral <http://www.khoral.com/company/>`_
+scifio = no
+export = no
+samples = `VIFF Images <http://netghost.narod.ru/gff/sample/images/viff/index.htm>`_
+weHave = several VIFF datasets
+pixelsRating = Good
+metadataRating = Fair
+opennessRating = Poor
+presenceRating = Poor
+utilityRating = Poor
+reader = KhorosReader.java
+notes = .. seealso:: \n
+  `VisiQuest software overview (formerly known as KhorosPro) <http://www.accusoft.com/products/visiquest/>`_
+
+[Kodak BIP]
+extensions = .bip
+developer = `Kodak/Carestream <http://carestream.com>`_
+scifio = no
+export = no
+weHave = a few .bip datasets
+weWant = an official specification document
+pixelsRating = Very good
+metadataRating = Good
+opennessRating = Fair
+presenceRating = Poor
+utilityRating = Fair
+reader = KodakReader.java
+notes = .. seealso:: \n
+  `Information on Image Station systems <http://carestream.com/PublicContent.aspx?langType=1033&id=448953>`_
+
+[Lambert Instruments FLIM]
+extensions = .fli
+developer = `Lambert Instruments <http://www.lambert-instruments.com>`_
+scifio = no
+export = no
+weHave = an LI-FLIM specification document \n
+several example LI-FLIM datasets
+pixelsRating = Very good
+metadataRating = Very good
+opennessRating = Very good
+presenceRating = Fair
+utilityRating = Good
+privateSpecification = true
+reader = LiFlimReader.java
+
+[Leica LAS AF LIF (Leica Image File Format)]
+extensions = .lif
+owner = `Leica <http://www.leica.com/>`_
+developer = `Leica Microsystems CMS GmbH <http://www.leica-microsystems.com/>`_
+scifio = no
+export = no
+versions = 1.0, 2.0
+software = `Leica LAS AF Lite <ftp://ftp.llt.de/softlib/LAS_AF_Lite/1.7.0_build_1111/setup.exe>`_
+weHave = a LIF specification document (version 2, from no later than 2007 July 26, in PDF) \n
+a LIF specification document (version 1, from no later than 206 April 3, in PDF) \n
+numerous LIF datasets
+pixelsRating = Outstanding
+metadataRating = Very good
+opennessRating = Very good
+presenceRating = Good
+utilityRating = Very good
+privateSpecification = true
+reader = LIFReader.java
+notes = LAS stands for "Leica Application Suite". \n
+AF stands for "Advanced Fluorescence". \n
+\n
+Commercial applications that support LIF include: \n
+\n
+- `Bitplane Imaris <http://www.bitplane.com/>`_ \n
+- `SVI Huygens <http://svi.nl/>`_ \n
+- `Amira <http://www.amira.com/>`_
+
+[Leica LCS LEI]
+extensions = .lei, .tif
+owner = `Leica <http://www.leica.com/>`_
+developer = `Leica Microsystems CMS GmbH <http://www.leica-microsystems.com/>`_
+scifio = no
+export = no
+software = `Leica LCS Lite <ftp://ftp.llt.de/softlib/LCSLite/LCSLite2611537.exe>`_
+weHave = an LEI specification document (beta 2.000, from no later than 2004 February 17, in PDF) \n
+many LEI datasets
+pixelsRating = Outstanding
+metadataRating = Very good
+opennessRating = Very good
+presenceRating = Very good
+utilityRating = Very good
+privateSpecification = true
+reader = LeicaReader.java
+notes = LCS stands for "Leica Confocal Software". \n
+LEI presumably stands for "Leica Experimental Information". \n
+\n
+Commercial applications that support LEI include: \n
+\n
+- `Bitplane Imaris <http://www.bitplane.com/>`_ \n
+- `SVI Huygens <http://svi.nl/>`_ \n
+- `Image-Pro Plus <http://www.mediacy.com/>`_
+
+[Leica SCN]
+extensions = .scn
+developer = `Leica Microsystems <http://www.leica-microsystems.com/>`_
+scifio = no
+export = no
+versions = 2012-03-10
+weHave = a few sample datasets
+weWant = an official specification document \n
+sample datasets that cannot be opened
+pixelsRating = Good
+metadataRating = Good
+opennessRating = Good
+presenceRating = Fair
+utilityRating = Good
+reader = LeicaSCNReader.java
+
+[LEO]
+extensions = .sxm
+owner = `Zeiss <http://www.zeiss.de>`_
+scifio = no
+export = no
+weHave = Pascal code that can read LEO files (from ImageSXM) \n
+a few LEO files
+weWant = an official specification document \n
+more LEO files
+pixelsRating = Good
+metadataRating = Fair
+opennessRating = Good
+presenceRating = Fair
+utilityRating = Fair
+reader = LEOReader.java
+
+[Li-Cor L2D]
+extensions = .l2d, .tif, .scn
+owner = `LiCor Biosciences <http://www.licor.com/>`_
+scifio = no
+export = no
+weHave = a few L2D datasets
+weWant = an official specification document \n
+more L2D datasets
+pixelsRating = Very good
+metadataRating = Fair
+opennessRating = Good
+presenceRating = Good
+utilityRating = Good
+reader = L2DReader.java
+notes = L2D datasets cannot be imported into OME using server-side import. \n
+They can, however, be imported from ImageJ, or using the omeul utility.
+
+[LIM (Laboratory Imaging/Nikon)]
+extensions = .lim
+owner = `Laboratory Imaging <http://www.lim.cz/>`_
+scifio = no
+export = no
+weHave = several LIM files \n
+the ability to produce more LIM files
+weWant = an official specification document
+pixelsRating = Good
+metadataRating = Poor
+opennessRating = Poor
+presenceRating = Poor
+utilityRating = Poor
+reader = LIMReader.java
+notes = Bio-Formats only supports uncompressed LIM files. \n
+\n
+Commercial applications that support LIM include: \n
+\n
+- `NIS Elements <http://www.nis-elements.com/>`_
+
+[MetaMorph 7.5 TIFF]
+extensions = .tiff
+owner = `Molecular Devices <http://www.moleculardevices.com/>`_
+scifio = no
+export = no
+weHave = a few Metamorph 7.5 TIFF datasets
+pixelsRating = Very good
+metadataRating = Very good
+opennessRating = Very good
+presenceRating = Fair
+utilityRating = Good
+reader = MetamorphTiffReader.java
+
+[MetaMorph Stack (STK)]
+extensions = .stk, .nd
+owner = `Molecular Devices <http://www.moleculardevices.com/>`_
+scifio = no
+export = no
+weHave = an STK specification document (from 2006 November 21, in DOC) \n
+an older STK specification document (from 2005 March 25, in DOC) \n
+an ND specification document (from 2002 January 24, in PDF) \n
+a large number of datasets
+pixelsRating = Very good
+metadataRating = Very good
+opennessRating = Very good
+presenceRating = Very good
+utilityRating = Good
+privateSpecification = true
+reader = MetamorphReader.java
+notes = Commercial applications that support STK include: \n
+\n
+- `Bitplane Imaris <http://www.bitplane.com/>`_ \n
+- `SVI Huygens <http://svi.nl/>`_ \n
+- `DIMIN <http://dimin.net/>`_ \n
+\n
+.. seealso:: \n
+  `Metamorph imaging system overview <http://www.metamorph.com/>`_
+
+[MIAS (Maia Scientific)]
+extensions = .tif
+developer = `Maia Scientific <http://www.maia-scientific.com/>`_
+scifio = no
+export = no
+weHave = several MIAS datasets
+pixelsRating = Very good
+metadataRating = Poor
+opennessRating = Fair
+presenceRating = Poor
+utilityRating = Poor
+reader = MIASReader.java
+
+[MINC MRI]
+extensions = .mnc
+developer = `McGill University <http://www.bic.mni.mcgill.ca/ServicesSoftware/MINC>`_
+scifio = no
+export = no
+software = `MINC <http://www.bic.mni.mcgill.ca/ServicesSoftware/MINC>`_
+weHave = a few MINC files
+pixelsRating = Very good
+metadataRating = Good
+opennessRating = Good
+presenceRating = Good
+utilityRating = Fair
+reader = MINCReader.java
+
+[Minolta MRW]
+extensions = .mrw
+developer = `Minolta <http://www.konicaminolta.com/>`_
+scifio = no
+export = no
+software = `dcraw <http://www.cybercom.net/%7Edcoffin/dcraw/>`_
+weHave = several .mrw files
+pixelsRating = Very good
+metadataRating = Good
+opennessRating = Fair
+presenceRating = Fair
+utilityRating = Fair
+reader = MRWReader.java
+notes = .. seealso:: \n
+  `Description of MRW format <http://www.dalibor.cz/files/MRW%20File%20Format.txt>`_
+
+[MNG (Multiple-image Network Graphics)]
+extensions = .mng
+developer = `MNG Development Group <http://www.libpng.org/pub/mng/mngnews.html>`_
+scifio = yes
+export = no
+software = `libmng (MNG reference library) <http://sourceforge.net/projects/libmng/>`_
+samples = `MNG sample files <http://sourceforge.net/projects/libmng/files/libmng-testsuites/MNGsuite-1.0/MNGsuite.zip/download>`_
+weHave = the `libmng-testsuites <http://downloads.sourceforge.net/libmng/MNGsuite-20030305.zip>`_ package (from 2003 March 05, in C) \n
+a large number of MNG datasets
+pixelsRating = Good
+metadataRating = Good
+opennessRating = Outstanding
+presenceRating = Fair
+utilityRating = Poor
+reader = MNGReader.java
+notes = .. seealso:: \n
+  `MNG homepage <http://www.libpng.org/pub/mng/>`_  \n
+  `MNG specification <http://www.libpng.org/pub/mng/spec>`_
+
+[Molecular Imaging]
+extensions = .stp
+owner = `Molecular Imaging <http://www.molecularimagingcorp.com>`_
+scifio = no
+export = no
+weHave = Pascal code that reads Molecular Imaging files (from ImageSXM) \n
+a few Molecular Imaging files
+weWant = an official specification document \n
+more Molecular Imaging files
+pixelsRating = Good
+metadataRating = Fair
+opennessRating = Fair
+presenceRating = Fair
+utilityRating = Fair
+reader = MolecularImagingReader.java
+
+[MRC (Medical Research Council)]
+extensions = .mrc
+developer = `MRC Laboratory of Molecular Biology <http://www2.mrc-lmb.cam.ac.uk/>`_
+scifio = no
+export = no
+samples = `golgi.mrc <http://bio3d.colorado.edu/imod/files/imod_data.tar.gz>`_
+weHave = an `MRC specification document <http://ami.scripps.edu/software/mrctools/mrc_specification.php>`_ (in HTML) \n
+another `MRC specification document <http://bio3d.colorado.edu/imod/doc/mrc_format.txt>`_ (in TXT) \n
+a few MRC datasets
+pixelsRating = Outstanding
+metadataRating = Very good
+opennessRating = Very good
+presenceRating = Good
+utilityRating = Good
+reader = MRCReader.java
+notes = Commercial applications that support MRC include: \n
+\n
+- `Bitplane Imaris <http://www.bitplane.com/>`_ \n
+\n
+.. seealso:: \n
+  `MRC on Wikipedia <http://en.wikipedia.org/wiki/MRC_%28file_format%29>`_
+
+[NEF (Nikon Electronic Format)]
+extensions = .nef, .tif
+developer = `Nikon <http://www.nikon.com/>`_
+scifio = no
+export = no
+samples = `neffile1.zip <http://www.outbackphoto.com/workshop/NEF_conversion/neffile1.zip>`_ \n
+`Sample NEF images <http://www.nikondigital.org/articles/library/nikon_d2x_first_impressions.htm>`_
+weHave = a NEF specification document (v0.1, from 2003, in PDF) \n
+several NEF datasets
+pixelsRating = Very good
+metadataRating = Very good
+opennessRating = Poor
+presenceRating = Poor
+utilityRating = Poor
+privateSpecification = true
+reader = NikonReader.java
+notes = .. seealso:: \n
+  `NEF Conversion <http://www.outbackphoto.com/workshop/NEF_conversion/nefconversion.html>`_
+
+[NIfTI]
+extensions = .img, .hdr
+developer = `National Institutes of Health <http://www.nih.gov/>`_
+scifio = no
+export = no
+samples = `Official test data <http://nifti.nimh.nih.gov/nifti-1/data>`_
+weHave = `NIfTI specification documents <http://nifti.nimh.nih.gov/nifti-1/>`_ \n
+several NIfTI datasets
+pixelsRating = Very good
+metadataRating = Good
+opennessRating = Very good
+presenceRating = Good
+utilityRating = Fair
+reader = NiftiReader.java
+
+[Nikon Elements TIFF]
+extensions = .tiff
+developer = `Nikon <http://www.nikon.com>`_
+scifio = no
+export = no
+weHave = a few Nikon Elements TIFF files
+weWant = more Nikon Elements TIFF files
+pixelsRating = Good
+metadataRating = Good
+opennessRating = Fair
+presenceRating = Fair
+utilityRating = Fair
+reader = NikonElementsTiffReader.java
+
+[Nikon EZ-C1 TIFF]
+extensions = .tiff
+developer = `Nikon <http://www.nikon.com/>`_
+scifio = no
+export = no
+weHave = a few Nikon EZ-C1 TIFF files
+pixelsRating = Very good
+metadataRating = Very good
+opennessRating = Good
+presenceRating = Poor
+utilityRating = Fair
+reader = NikonTiffReader.java
+
+[Nikon NIS-Elements ND2]
+extensions = .nd2
+developer = `Nikon USA <http://www.nikonusa.com/>`_
+scifio = no
+export = no
+software = `NIS-Elements Viewer from Nikon <http://www.nis-elements.com/resources-downloads.html>`_
+weHave = many ND2 datasets \n
+some :source:`Bio-Formats developer notes <components/bio-formats/doc/nd2.html>` for ND2
+weWant = an official specification document
+pixelsRating = Very good
+metadataRating = Very good
+opennessRating = Fair
+presenceRating = Very good
+utilityRating = Very good
+reader = NativeND2Reader.java
+notes = There are two distinct versions of ND2: an old version, which uses \n
+JPEG-2000 compression, and a new version which is either uncompressed or \n
+Zip-compressed.  We are not aware of the version number or release date \n
+for either format. \n
+\n
+Bio-Formats uses the `JAI Image I/O Tools <http://java.net/projects/jai-imageio>`_ \n
+library to read ND2 files compressed with JPEG-2000. \n
+\n
+There is also an ND2 reader that uses Nikon's native libraries.  To use \n
+it, you must be using Windows and have `Nikon's ND2 reader plugin for ImageJ \n
+<http://rsb.info.nih.gov/ij/plugins/nd2-reader.html>`_ installed. \n
+Additionally, you will need to download `LegacyND2Reader.dll \n
+<https://github.com/openmicroscopy/bioformats/raw/develop/lib/LegacyND2Reader.dll>`_ \n
+and place it in your ImageJ plugin folder.
+
+[NRRD (Nearly Raw Raster Data)]
+extensions = .nrrd, .nhdr, .raw, .txt
+developer = `Teem developers <http://teem.sourceforge.net/>`_
+scifio = yes
+export = no
+software = `nrrd (NRRD reference library) <http://teem.sourceforge.net/nrrd/>`_
+samples = `Diffusion tensor MRI datasets <http://www.sci.utah.edu/%7Egk/DTI-data/>`_
+weHave = an `nrrd specification document <http://teem.sourceforge.net/nrrd/format.html>`_ (v1.9, from 2005 December 24, in HTML) \n
+a few nrrd datasets
+pixelsRating = Very good
+metadataRating = Very good
+opennessRating = Outstanding
+presenceRating = Fair
+utilityRating = Very good
+reader = NRRDReader.java
+
+[Olympus CellR/APL]
+extensions = .apl, .mtb, .tnb, .tif, .obsep
+owner = `Olympus <http://www.olympus.com/>`_
+scifio = no
+export = no
+weHave = a few CellR datasets
+weWant = more Cellr datasets \n
+an official specification document
+pixelsRating = Very good
+metadataRating = Fair
+opennessRating = Fair
+presenceRating = Poor
+utilityRating = Fair
+reader = APLReader.java
+
+[Olympus FluoView FV1000]
+extensions = .oib, .oif
+owner = `Olympus <http://www.olympus.com/>`_
+scifio = no
+export = no
+versions = 1.0, 2.0
+software = `FV-Viewer from Olympus <http://www.olympus.co.uk/microscopy/22_FluoView_FV1000__Confocal_Microscope.htm>`_
+weHave = an OIF specification document (v2.0.0.0, from 2008, in PDF) \n
+an FV1000 specification document (v1.0.0.0, from 2004 June 22, in PDF) \n
+older FV1000 specification documents (draft, in DOC and XLS) \n
+many FV1000 datasets
+weWant = more OIB datasets (especially 2+ GB files) \n
+more FV1000 version 2 datasets
+pixelsRating = Very good
+metadataRating = Very good
+opennessRating = Good
+presenceRating = Good
+utilityRating = Very good
+privateSpecification = true
+reader = FV1000Reader.java
+notes = Bio-Formats uses a modified version of the `Apache Jakarta POI \n
+<http://jakarta.apache.org/poi/>`_ library to read OIB files. \n
+OIF stands for "Original Imaging Format". \n
+OIB stands for "Olympus Image Binary". \n
+OIF is a multi-file format that includes an .oif file and a directory of \n
+.tif, .roi, .pty, .lut, and .bmp files. \n
+OIB is a single file format. \n
+\n
+Commercial applications that support this format include: \n
+\n
+- `Bitplane Imaris <http://www.bitplane.com/>`_ \n
+- `SVI Huygens <http://svi.nl/>`_ \n
+\n
+.. seealso:: \n
+  `Olympus FluoView Resource Center <http://www.olympusfluoview.com>`_
+
+[Olympus FluoView TIFF]
+extensions = .tif
+owner = `Olympus <http://www.olympus.com/>`_
+scifio = no
+export = no
+software = `DIMIN <http://www.dimin.net/>`_
+weHave = a FluoView specification document (from 2002 November 14, in DOC) \n
+Olympus' FluoView Image File Reference Suite (from 2002 March 1, in DOC) \n
+several FluoView datasets
+pixelsRating = Very good
+metadataRating = Very good
+opennessRating = Very good
+presenceRating = Good
+utilityRating = Good
+privateSpecification = true
+reader = FluoviewReader.java
+notes = Commercial applications that support this format include: \n
+\n
+- `Bitplane Imaris <http://www.bitplane.com/>`_ \n
+- `SVI Huygens <http://svi.nl/>`_
+
+[Olympus ScanR]
+extensions = .xml, .dat, .tif
+owner = `Olympus <http://www.olympus.com/>`_
+developer = `Olympus <http://www.olympus.com/>`_
+scifio = no
+export = no
+weHave = several ScanR datasets
+pixelsRating = Very good
+metadataRating = Good
+opennessRating = Good
+presenceRating = Poor
+utilityRating = Fair
+reader = ScanrReader.java
+
+[Olympus SIS TIFF]
+extensions = .tiff
+developer = `Olympus <http://www.olympus-sis.com/>`_
+scifio = no
+export = no
+weHave = a few example SIS TIFF files
+pixelsRating = Good
+metadataRating = Good
+opennessRating = Good
+presenceRating = Fair
+utilityRating = Good
+reader = SISReader.java
+
+[OME-TIFF]
+extensions = .ome.tiff
+developer = `Open Microscopy Environment <http://www.openmicroscopy.org/>`_
+scifio = yes
+export = yes
+versions = 2003FC, 2007-06, 2008-02, 2008-09, 2009-09, 2010-04, 2010-06, 2011-06, 2012-06
+weHave = an `OME-TIFF specification document <http://www.openmicroscopy.org/site/support/file-formats/ome-tiff/ome-tiff-specification>`_ (from 2006 October 19, in HTML) \n
+many OME-TIFF datasets \n
+the ability to produce additional datasets
+pixelsRating = Outstanding
+metadataRating = Outstanding
+opennessRating = Outstanding
+presenceRating = Fair
+utilityRating = Outstanding
+reader = OMETiffReader.java
+writer = OMETiffWriter.java
+notes = Bio-Formats can save image stacks as OME-TIFF. \n
+\n
+Commercial applications that support OME-TIFF include: \n
+\n
+- `Bitplane Imaris <http://www.bitplane.com/>`_ \n
+- `SVI Huygens <http://svi.nl/>`_ \n
+\n
+.. seealso:: \n
+  `OME-TIFF technical overview <http://www.openmicroscopy.org/site/support/file-formats/ome-tiff>`_
+
+[OME-XML]
+extensions = .ome
+developer = `Open Microscopy Environment <http://www.openmicroscopy.org/>`_
+scifio = yes
+export = yes
+versions = 2003FC, 2007-06, 2008-02, 2008-09, 2009-09, 2010-04, 2010-06, 2011-06, 2012-06
+weHave = `OME-XML specification documents <http://www.openmicroscopy.org/Schemas/>`_ \n
+many OME-XML datasets \n
+the ability to produce more datasets
+pixelsRating = Outstanding
+metadataRating = Outstanding
+opennessRating = Outstanding
+presenceRating = Fair
+utilityRating = Outstanding
+reader = OMEXMLReader.java
+writer = OMEXMLWriter.java
+notes = Bio-Formats uses the `OME-XML Java library <http://www.openmicroscopy.org/site/support/file-formats/ome-xml-java-library>`_ \n
+to read OME-XML files. \n
+\n
+Commercial applications that support OME-XML include: \n
+\n
+- `Bitplane Imaris <http://www.bitplane.com/>`_ \n
+- `SVI Huygens <http://svi.nl/>`_
+
+[Oxford Instruments]
+extensions = .top
+owner = `Oxford Instruments <http://www.oxinst.com>`_
+scifio = no
+export = no
+weHave = Pascal code that can read Oxford Instruments files (from ImageSXM) \n
+a few Oxford Instruments files
+weWant = an official specification document \n
+more Oxford Instruments files
+pixelsRating = Good
+metadataRating = Fair
+opennessRating = Fair
+presenceRating = Fair
+utilityRating = Fair
+reader = OxfordInstrumentsReader.java
+
+[PCX (PC Paintbrush)]
+extensions = .pcx
+developer = ZSoft Corporation
+scifio = yes
+export = no
+weHave = several .pcx files \n
+the ability to generate additional .pcx filse
+pixelsRating = Very good
+metadataRating = Poor
+opennessRating = Fair
+presenceRating = Poor
+utilityRating = Fair
+reader = PCXReader.java
+notes = Commercial applications that support PCX include `Zeiss LSM Image Browser <http://www.zeiss.de/C12567BE00472A5C/EmbedTitelIntern/LSMImageBrowser/$File/INST_IB.EXE>`_.
+
+[Perkin Elmer Densitometer]
+extensions = .pds
+developer = `Perkin Elmer <http://www.perkinelmer.com>`_
+scifio = no
+export = no
+weHave = a few PDS datasets
+weWant = an official specification document \n
+more PDS datasets
+pixelsRating = Good
+metadataRating = Good
+opennessRating = Good
+presenceRating = Poor
+utilityRating = Fair
+reader = PDSReader.java
+
+[PerkinElmer Operetta]
+extensions = .tiff, .xml
+developer = `PerkinElmer <http://www.perkinelmer.com/>`_
+scifio = no
+export = no
+weHave = a few sample datasets
+weWant = an official specification document \n
+more sample datasets
+pixelsRating = Very good
+metadataRating = Good
+opennessRating = Good
+presenceRating = Fair
+utilityRating = Good
+reader = OperettaReader.java
+
+[PerkinElmer UltraView]
+extensions = .tif, .2, .3, .4, ...
+owner = `PerkinElmer <http://www.perkinelmer.com/>`_
+scifio = no
+export = no
+weHave = several UltraView datasets \n
+some :source:`Bio-Formats developer notes <components/bio-formats/doc/perkin-elmer.html>` for UltraView
+pixelsRating = Very good
+metadataRating = Good
+opennessRating = Fair
+presenceRating = Fair
+utilityRating = Fair
+reader = PerkinElmerReader.java
+notes = Other associated extensions include: .tim, .zpo, .csv, .htm, \n
+.cfg, .ano, .rec \n
+\n
+Commercial applications that support this format incldue: \n
+\n
+- `Bitplane Imaris <http://www.bitplane.com/>`_ \n
+- `Image-Pro Plus <http://www.mediacy.com/>`_ \n
+\n
+.. seealso:: \n
+  `PerkinElmer UltraView system overview <http://las.perkinelmer.com/content/livecellimaging/ultraview.asp>`_
+
+[PGM (Portable Gray Map)]
+extensions = .pgm
+developer = Netpbm developers
+scifio = yes
+export = no
+software = `Netpbm graphics filter <http://netpbm.sourceforge.net/>`_
+weHave = a `PGM specification document <http://netpbm.sourceforge.net/doc/pgm.html>`_ (from 2003 October 3, in HTML) \n
+a few PGM files
+pixelsRating = Very good
+metadataRating = Good
+opennessRating = Outstanding
+presenceRating = Good
+utilityRating = Poor
+reader = PGMReader.java
+
+[Photoshop TIFF]
+extensions = .tif, .tiff
+developer = `Adobe <http://www.adobe.com>`_
+scifio = no
+export = no
+weHave = a Photoshop TIFF specification document \n
+a few Photoshop TIFF files
+pixelsRating = Good
+metadataRating = Good
+opennessRating = Good
+presenceRating = Good
+utilityRating = Good
+reader = PhotoshopTiffReader.java
+
+[PICT (Macintosh Picture)]
+extensions = .pict
+developer = `Apple Computer <http://www.apple.com>`_
+scifio = yes
+export = no
+weHave = many PICT datasets
+pixelsRating = Very good
+metadataRating = Fair
+opennessRating = Fair
+presenceRating = Very good
+utilityRating = Poor
+reader = PictReader.java
+notes = `QuickTime for Java \n
+<http://www.apple.com/quicktime/download/standalone.html>`_ is required \n
+for reading vector files and some compressed files. \n
+\n
+.. seealso:: \n
+  `PICT technical overview <http://www.faqs.org/faqs/graphics/fileformats-faq/part3/section-107.html>`_ \n
+  `Another PICT technical overview <http://www.prepressure.com/formats/pict/fileformat.htm>`_
+
+[PNG (Portable Network Graphics)]
+extensions = .png
+developer = `PNG Development Group <http://www.libpng.org/pub/png/pngnews.html>`_
+scifio = yes
+export = yes
+software = `PNG Writer plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/png-writer.html>`_
+weHave = a `PNG specification document <http://www.libpng.org/pub/png/spec/iso/>`_ (W3C/ISO/IEC version, from 2003 November 10, in HTML) \n
+several PNG datasets
+pixelsRating = Very good
+metadataRating = Good
+opennessRating = Outstanding
+presenceRating = Outstanding
+utilityRating = Poor
+reader = APNGReader.java
+notes = Bio-Formats uses the `Java Image I/O <http://java.sun.com/j2se/1.4.2/docs/guide/imageio/index.html>`_  \n
+API to read and write PNG files. \n
+\n
+.. seealso:: \n
+  `PNG technical overview <http://www.libpng.org/pub/png/>`_
+
+[Prairie Technologies TIFF]
+extensions = .tif, .xml, .cfg
+developer = `Prairie Technologies <http://www.prairie-technologies.com/>`_
+scifio = no
+export = no
+weHave = many Prairie datasets
+pixelsRating = Very good
+metadataRating = Good
+opennessRating = Good
+presenceRating = Fair
+utilityRating = Good
+reader = PrairieReader.java
+
+[Quesant]
+extensions = .afm
+owner = `KLA-Tencor Corporation <http://www.kla-tencor.com/surface-profilometry-and-metrology.html>`_
+developer = Quesant Instrument Corporation
+scifio = no
+export = no
+weHave = Pascal code that can read Quesant files (from ImageSXM) \n
+several Quesant files
+weWant = an official specification document \n
+more Quesant files
+pixelsRating = Good
+metadataRating = Fair
+opennessRating = Fair
+presenceRating = Fair
+utilityRating = Fair
+reader = QuesantReader.java
+
+[QuickTime Movie]
+extensions = .mov
+owner = `Apple Computer <http://www.apple.com/>`_
+scifio = yes
+export = yes
+software = `QuickTime Player <http://www.apple.com/quicktime/download/>`_
+weHave = a `QuickTime specification document <http://developer.apple.com/documentation/Quicktime/QTFF/>`_ (from 2001 March 1, in HTML) \n
+several QuickTime datasets \n
+the ability to produce more datasets
+weWant = more QuickTime datasets, including: \n
+  #. files compressed with a common, unsupported codec \n
+  #. files with audio tracks and/or multiple video tracks
+pixelsRating = Good
+metadataRating = Very good
+opennessRating = Fair
+presenceRating = Outstanding
+utilityRating = Poor
+reader = NativeQTReader.java
+writer = QTWriter.java
+notes = Bio-Formats has two modes of operation for QuickTime: \n
+\n
+  #. QTJava mode requires `QuickTime <http://www.apple.com/quicktime/download/>`_ to be \n
+  installed. \n
+  #. Native mode works on systems with no QuickTime (e.g. Linux). \n
+\n
+Bio-Formats can save image stacks as QuickTime movies. \n
+The following table shows supported codecs: \n
+\n
+====== ================================== =================== ============ \n
+Codec  Description                        Native              QTJava \n
+====== ================================== =================== ============ \n
+raw    Full Frames (Uncompressed)         read & write        read & write \n
+iraw   Intel YUV Uncompressed             read only           read & write \n
+rle    Animation (run length encoded RGB) read only           read & write \n
+jpeg   Still Image JPEG DIB               read only           read only \n
+rpza   Apple Video 16 bit "road pizza"    read only (partial) read only \n
+mjpb   Motion JPEG codec                  read only           read only \n
+cvid   Cinepak                             -                  read & write \n
+svq1   Sorenson Video                      -                  read & write \n
+svq3   Sorenson Video 3                    -                  read & write \n
+mp4v   MPEG-4                              -                  read & write \n
+h263   H.263                               -                  read & write \n
+====== ================================== =================== ============ \n
+\n
+.. seealso:: \n
+    `QuickTime software overview <http://www.apple.com/quicktime/>`_
+
+[RHK]
+extensions = .sm2, .sm3
+owner = `RHK Technologies <http://www.rhk-tech.com>`_
+scifio = no
+export = no
+weHave = Pascal code that can read RHK files (from ImageSXM) \n
+a few RHK files
+weWant = an official specification document \n
+more RHK files
+pixelsRating = Good
+metadataRating = Fair
+opennessRating = Fair
+presenceRating = Fair
+utilityRating = Fair
+reader = RHKReader.java
+
+[SBIG]
+owner = `Santa Barbara Instrument Group (SBIG) <http://www.sbig.com>`_
+scifio = no
+export = no
+weHave = an `official SBIG specification document <http://sbig.impulse.net/pdffiles/file.format.pf>`_ \n
+a few SBIG files
+weWant = more SBIG files
+pixelsRating = Very good
+metadataRating = Good
+opennessRating = Very good
+presenceRating = Fair
+utilityRating = Fair
+reader = SBIGReader.java
+
+[Seiko]
+extensions = .xqd, .xqf
+owner = `Seiko <http://www.seiko.co.jp/en/index.php>`_
+scifio = no
+export = no
+weHave = Pascal code that can read Seiko files (from ImageSXM) \n
+a few Seiko files
+weWant = an official specification document \n
+more Seiko files
+pixelsRating = Good
+metadataRating = Fair
+opennessRating = Fair
+presenceRating = Fair
+utilityRating = Fair
+reader = SeikoReader.java
+
+[SimplePCI & HCImage TIFF]
+extensions = .tiff
+developer = `Hamamatsu <http://www.cimaging.net/simplepci.htm>`_
+scifio = no
+export = no
+weHave = a few SimplePCI TIFF datasets
+weWant = more SimplePCI TIFF datasets
+pixelsRating = Very good
+metadataRating = Good
+opennessRating = Very good
+presenceRating = Fair
+utilityRating = Good
+reader = SimplePCITiffReader.java
+
+[SimplePCI & HCImage]
+extensions = .cxd
+developer = `Compix <http://www.cimaging.net/>`_
+scifio = no
+export = no
+weHave = several SimplePCI files
+pixelsRating = Outstanding
+metadataRating = Good
+opennessRating = Very good
+presenceRating = Poor
+utilityRating = Fair
+reader = PCIReader.java
+notes = Bio-Formats uses a modified version of the `Apache Jakarta \n
+POI library <http://jakarta.apache.org/poi/>`_ to read CXD files. \n
+\n
+.. seealso:: \n
+  `SimplePCI software overview <http://www.cimaging.net/simplepci.htm>`_
+
+[SM Camera]
+scifio = no
+export = no
+weHave = Pascal code that can read SM-Camera files (from ImageSXM) \n
+a few SM-Camera files
+weWant = an official specification document \n
+more SM-Camera files
+pixelsRating = Good
+metadataRating = Fair
+opennessRating = Fair
+presenceRating = Fair
+utilityRating = Fair
+reader = SMCameraReader.java
+
+[SPIDER]
+extensions = .spi, .stk
+developer = `Wadsworth Center <http://www.wadsworth.org/spider_doc/spider/docs/spider.html>`_
+scifio = no
+export = no
+software = `SPIDER <http://www.wadsworth.org/spider_doc/spider/docs/spider.html>`_
+weHave = a few example datasets \n
+`official file format documentation <http://www.wadsworth.org/spider_doc/spider/docs/image_doc.html>`_
+pixelsRating = Very good
+metadataRating = Very good
+opennessRating = Outstanding
+presenceRating = Good
+utilityRating = Good
+reader = SpiderReader.java
+
+[Targa]
+extensions = .tga
+developer = `Truevision <http://www.truevision.com>`_
+scifio = no
+export = no
+weHave = a Targa specification document \n
+a few Targa files
+pixelsRating = Very good
+metadataRating = Very good
+opennessRating = Very good
+presenceRating = Good
+utilityRating = Poor
+reader = TargaReader.java
+
+[Text]
+extensions = .txt
+scifio = yes
+export = no
+pixelsRating = Good
+reader = TextReader.java
+notes = Reads tabular pixel data produced by a variety of software.
+
+[TIFF (Tagged Image File Format)]
+extensions = .tif
+owner = `Adobe <http://www.adobe.com>`_
+developer = Aldus and Microsoft
+scifio = yes
+export = yes
+samples = `LZW TIFF data gallery <http://marlin.life.utsa.edu/Data_Gallery.html>`_ \n
+`Big TIFF <http://tiffcentral.com/>`_
+weHave = a `TIFF specification document <http://partners.adobe.com/asn/developer/PDFS/TN/TIFF6.pdf>`_ (v6.0, from 1992 June 3, in PDF) \n
+many TIFF datasets \n
+a few BigTIFF datasets
+pixelsRating = Very good
+metadataRating = Very good
+opennessRating = Outstanding
+presenceRating = Outstanding
+utilityRating = Fair
+reader = TiffReader.java
+writer = TiffWriter.java
+notes = Bio-Formats can also read BigTIFF files (TIFF files larger than 4 GB). \n
+Bio-Formats can save image stacks as TIFF or BigTIFF. \n
+\n
+.. seealso:: \n
+  `TIFF technical overview <http://www.awaresystems.be/imaging/tiff/faq.html#q3>`_ \n
+  `BigTIFF technical overview <http://www.awaresystems.be/imaging/tiff/bigtiff.html>`_
+
+[TillPhotonics TillVision]
+extensions = .vws
+developer = `TILL Photonics <http://www.till-photonics.com/>`_
+scifio = no
+export = no
+weHave = several TillVision datasets
+weWant = an official specification document
+pixelsRating = Good
+metadataRating = Fair
+opennessRating = Poor
+presenceRating = Poor
+utilityRating = Fair
+reader = TillVisionReader.java
+
+[Topometrix]
+extensions = .tfr, .ffr, .zfr, .zfp, .2fl
+owner = `TopoMetrix (now Veeco) <http://www.veeco.com/>`_
+scifio = no
+export = no
+weHave = Pascal code that reads Topometrix files (from ImageSXM) \n
+a few Topometrix files
+weWant = an official specification document \n
+more Topometrix files
+pixelsRating = Good
+metadataRating = Fair
+opennessRating = Fair
+presenceRating = Fair
+utilityRating = Fair
+reader = TopometrixReader.java
+
+[Trestle]
+extensions = .tif, .sld, .jpg
+scifio = no
+export = no
+samples = `OpenSlide <http://openslide.cs.cmu.edu/download/openslide-testdata/Trestle/>`_
+weHave = a few example datasets \n
+`developer documentation from the OpenSlide project <http://openslide.org/Trestle%20format/>`_
+pixelsRating = Good
+metadataRating = Good
+opennessRating = Good
+presenceRating = Fair
+utilityRating = Fair
+reader = TrestleReader.java
+
+[UBM]
+extensions = .pr3
+scifio = no
+export = no
+weHave = Pascal code that can read UBM files (from ImageSXM) \n
+one UBM file
+weWant = an official specification document \n
+more UBM files
+pixelsRating = Good
+metadataRating = Fair
+opennessRating = Fair
+presenceRating = Poor
+utilityRating = Fair
+reader = UBMReader.java
+
+[Unisoku]
+extensions = .dat, .hdr
+owner = `Unisoku <http://www.unisoku.com>`_
+scifio = no
+export = no
+weHave = Pascal code that can read Unisoku files (from ImageSXM) \n
+a few Unisoku files
+weWant = an official specification document \n
+more Unisoku files
+pixelsRating = Good
+metadataRating = Fair
+opennessRating = Fair
+presenceRating = Fair
+utilityRating = Fair
+reader = UnisokuReader.java
+
+[Varian FDF]
+extensions = .fdf
+developer = `Varian, Inc. <http://www.varianinc.com>`_
+scifio = no
+export = no
+weHave = a few Varian FDF datasets
+weWant = an official specification document \n
+more Varian FDF datasets
+pixelsRating = Good
+metadataRating = Fair
+opennessRating = Fair
+presenceRating = Fair
+utilityRating = Fair
+reader = VarianFDFReader.java
+
+[VG SAM]
+extensions = .dti
+scifio = no
+export = no
+weHave = a few VG-SAM files
+weWant = an official specification document \n
+more VG-SAM files
+pixelsRating = Good
+metadataRating = Fair
+opennessRating = Fair
+presenceRating = Poor
+utilityRating = Fair
+reader = VGSAMReader.java
+
+[VisiTech XYS]
+extensions = .xys, .html
+developer = `VisiTech International <http://www.visitech.co.uk/>`_
+scifio = no
+export = no
+weHave = several VisiTech datasets
+weWant = an official specification document
+pixelsRating = Very good
+metadataRating = Good
+opennessRating = Fair
+presenceRating = Poor
+utilityRating = Good
+reader = VisitechReader.java
+
+[Volocity Library Clipping]
+extensions = .acff
+developer = `PerkinElmer <http://www.perkinelmer.com/pages/020/cellularimaging/products/volocity.xhtml>`_
+scifio = no
+export = no
+weHave = several Volocity library clipping datasets
+weWant = any datasets that do not open correctly \n
+an official specification document
+pixelsRating = Good
+metadataRating = Good
+opennessRating = Fair
+presenceRating = Poor
+utilityRating = Poor
+reader = VolocityClippingReader.java
+notes = RGB .acff files are not yet supported.  See :ticket:`6413`.
+
+[Volocity]
+extensions = .mvd2
+developer = `PerkinElmer <http://www.perkinelmer.com/pages/020/cellularimaging/products/volocity.xhtml>`_
+scifio = no
+export = no
+samples = `Volocity Demo <http://www.perkinelmer.com/pages/020/cellularimaging/products/volocitydemo.xhtml>`_
+weHave = many example Volocity datasets
+weWant = an official specification document \n
+any Volocity datasets that do not open correctly
+pixelsRating = Good
+metadataRating = Good
+opennessRating = Fair
+presenceRating = Poor
+utilityRating = Fair
+reader = VolocityReader.java
+notes = .mvd2 files are `Metakit database files <http://equi4.com/metakit/>`_.
+
+[WA-TOP]
+extensions = .wat
+owner = `Oxford Instruments <http://www.oxinst.com>`_
+developer = WA Technology
+scifio = no
+export = no
+weHave = Pascal code that can read WA-TOP files (from ImageSXM) \n
+a few WA-TOP files
+weWant = an official specification document \n
+more WA-TOP files
+pixelsRating = Good
+metadataRating = Fair
+opennessRating = Fair
+presenceRating = Fair
+utilityRating = Fair
+reader = WATOPReader.java
+
+[Windows Bitmap]
+extensions = .bmp
+developer = Microsoft and IBM
+scifio = yes
+export = no
+software = `BMP Writer plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/bmp-writer.html`_
+weHave = many BMP datasets
+pixelsRating = Very good
+metadataRating = Outstanding
+opennessRating = Fair
+presenceRating = Outstanding
+utilityRating = Poor
+reader = BMPReader.java
+notes = Compressed BMP files are currently not supported. \n
+\n
+.. seealso:: \n
+  `Technical Overview <http://www.faqs.org/faqs/graphics/fileformats-faq/part3/section-18.html>`_ \n
+  `General Resources <http://people.sc.fsu.edu/~burkardt/data/bmp/bmp.html>`_
+
+[Zeiss AxioVision TIFF]
+extensions = .xml, .tiff
+owner = `Carl Zeiss MicroImaging GmbH <http://www.zeiss.com/micro>`_
+developer = `Carl Zeiss MicroImaging GmbH <http://www.zeiss.com/micro>`_
+scifio = no
+export = no
+software = `Zeiss ZEN Lite <http://microscopy.zeiss.com/microscopy/en_de/downloads/zen.html>`_
+weHave = many example datasets
+weWant = an official specification document
+pixelsRating = Very good
+metadataRating = Very good
+opennessRating = Good
+presenceRating = Fair
+utilityRating = Fair
+reader = ZeissTIFFReader.java
+
+[Zeiss AxioVision ZVI (Zeiss Vision Image)]
+extensions = .zvi
+owner = `Carl Zeiss MicroImaging GmbH <http://www.zeiss.com/micro>`_
+developer = `Carl Zeiss MicroImaging GmbH <http://www.zeiss.com/axiovision>`_
+scifio = no
+export = no
+versions = 1.0, 2.0
+software = `Zeiss Axiovision LE <http://www.zeiss.de/c12567be0045acf1/Contents-Frame/cbe917247da02a1cc1256e0000491172>`_
+weHave = a ZVI specification docuemnt (v2.0.5, from 2010 August, in PDF) \n
+an older ZVI specification document (v2.0.2, from 2006 August 23, in PDF) \n
+an older ZVI specification document (v2.0.1, from 2005 April 21, in PDF) \n
+an older ZVI specification document (v1.0.26.01.01, from 2001 January 29, in DOC) \n
+Zeiss' ZvImageReader code (v1.0, from 2001 January 25, in C++) \n
+many ZVI datasets
+pixelsRating = Outstanding
+metadataRating = Very good
+opennessRating = Very good
+presenceRating = Good
+utilityRating = Good
+privateSpecification = true
+reader = ZeissZVIReader.java
+notes = Bio-Formats uses a modified version of the `Apache Jakarta POI library <http://jakarta.apache.org/poi/>`_ to read ZVI files. \n
+\n
+Commercial applications that support ZVI include `Bitplane Imaris <http://www.bitplane.com/>`_. \n
+\n
+.. seealso:: \n
+  `Axiovision software overview <http://www.zeiss.com/C12567BE0045ACF1/ContentsWWWIntern/668C9FDCBB18C6E2412568C10045A72E>`_
+
+[Zeiss CZI]
+extensions = .czi
+developer = `Carl Zeiss MicroImaging GmbH <http://www.zeiss.com/micro>`_
+scifio = no
+export = no
+software = `Zeiss ZEN 2011 <http://www.zeiss.de/C12567BE0045ACF1/Contents-Frame/A57B6AE510CE8FF1C12578FE002A725D>`_
+weHave = many example datasets \n
+official specification documents
+pixelsRating = Outstanding
+metadataRating = Outstanding
+opennessRating = Very good
+presenceRating = Fair
+utilityRating = Good
+privateSpecification = true
+reader = ZeissCZIReader.java
+
+[Zeiss LSM (Laser Scanning Microscope) 510]
+extensions = .lsm, .mdb
+owner = `Carl Zeiss MicroImaging GmbH <http://www.zeiss.com/micro>`_
+scifio = no
+export = no
+software = `Zeiss LSM Image Browser <http://www.zeiss.de/C12567BE00472A5C/EmbedTitelIntern/LSMImageBrowser/$File/INST_IB.EXE>`_ \n
+`LSM Toolbox plugin for ImageJ <http://imagejdocu.tudor.lu/Members/ppirrotte/lsmtoolbox>`_ \n
+`LSM Reader plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/lsm-reader.html>`_ \n
+`DIMIN <http://www.dimin.net/>`_
+weHave = LSM specification v3.2, from 2003 March 12, in PDF \n
+LSM specification v5.5, from 2009 November 23, in PDF \n
+LSM specification v6.0, from 2010 September 28, in PDF \n
+many LSM datasets
+pixelsRating = Outstanding
+metadataRating = Very good
+opennessRating = Good
+presenceRating = Very good
+utilityRating = Good
+privateSpecification = true
+reader = ZeissLSMReader.java
+notes = Bio-Formats uses the `MDB Tools Java port <http://mdbtools.sourceforge.net/>`_ \n
+\n
+Commercial applications that support this format include: \n
+\n
+- `SVI Huygens <http://www2.svi.nl/>`_ \n
+- `Bitplane Imaris <http://www.bitplane.com/>`_ \n
+- `Amira <http://www.amira.com/>`_ \n
+- `Image-Pro Plus <http://www.mediacy.com/>`_

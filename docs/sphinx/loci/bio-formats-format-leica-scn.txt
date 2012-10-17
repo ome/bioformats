@@ -1,42 +1,57 @@
 Leica SCN
-=========
+===============================================================================
 
-Extensions: .scn
+Extensions: .scn
 
-Developer: `Leica Microsystems <http://www.leica-microsystems.com/>`_
+Developer: `Leica Microsystems <http://www.leica-microsystems.com/>`_
+
 
 Support
 -------
 
-SCIFIO: |no|
+SCIFIO: |no|
 
-Export: |no|
+Export: |no|
 
-Officially Supported Versions: 2012-03-10
+Officially Supported Versions: 2012-03-10
 
-We currently have: 
+Supported Metadata Fields:
 
--  a few sample datasets
+Freely Available Software:
 
-We'd like to have: 
+- `Leica LCS Lite <ftp://ftp.llt.de/softlib/LCSLite/LCSLite2611537.exe>`_
 
--  an official specification document
--  sample datasets that cannot be opened
+Sample Datasets:
+
+- `VIFF Images <http://netghost.narod.ru/gff/sample/images/viff/index.htm>`_
+
+We currently have:
+
+- a few sample datasets
+
+We would like to have:
+
+- an official specification document
+- sample datasets that cannot be opened
 
 Ratings
 -------
 
-Pixels: |Good|
+Pixels: |Good|
 
-Metadata: |Good|
+Metadata: |Good|
 
-Openness: |Good|
+Openness: |Good|
 
-Presence: |Fair|
+Presence: |Fair|
 
-Utility: |Good|
+Utility: |Good|
 
 Additional Information
 ----------------------
 
-Source Code: :source:`LeicaSCNReader <components/bio-formats/src/loci/formats/in/LeicaSCNReader.java>`
+Source Code: :source:`LeicaSCNReader.java <components/bio-formats/src/loci/formats/in/LeicaSCNReader.java >`
+
+Notes:
+
+

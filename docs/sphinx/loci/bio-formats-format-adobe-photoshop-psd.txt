@@ -1,44 +1,51 @@
 Adobe Photoshop PSD
-===================
+===============================================================================
 
-Extensions:  .psd
+Extensions: .psd
 
-Developer: `Adobe <http://www.adobe.com/>`_
+Developer: `Adobe <http://www.adobe.com/>`_
+
 
 Support
 -------
 
-SCIFIO : |no|
+SCIFIO: |no|
 
-Export: |no|
+Export: |no|
 
-Officially Supported Versions:  1.0
+Officially Supported Versions: 1.0
 
-Supported Metadata Fields: `PSD Reader <http://dev.loci.wisc.edu/trac/software/wiki/PSDReader>`_
+Supported Metadata Fields:
 
-We currently have: 
 
--  a PSD specification document (v3.0.4, 16 July 1995)
--  a few PSD files
 
-We'd like to have: 
+We currently have:
 
--  more PSD files
+- a PSD specification document (v3.0.4, 16 July 1995)
+- a few PSD files
+
+We would like to have:
+
+- more PSD files
 
 Ratings
 -------
 
-Pixels: |Good|
+Pixels: |Good|
 
-Metadata: |Good|
+Metadata: |Good|
 
-Openness: |Good|
+Openness: |Good|
 
-Presence: |Good|
+Presence: |Good|
 
-Utility: |Fair|
+Utility: |Fair|
 
 Additional Information
 ----------------------
 
-Source Code:  :source:`PSDReader.java <components/bio-formats/src/loci/formats/in/PSDReader.java>`
+Source Code: :source:`PSDReader.java <components/bio-formats/src/loci/formats/in/PSDReader.java >`
+
+Notes:
+
+

@@ -1,41 +1,54 @@
 BD Pathway
-==========
+===============================================================================
 
-Extensions: .exp, .tif
+Extensions: .exp, .tif
 
-Owner: `BD Biosciences <http://www.bdbiosciences.com>`_
+
+Owner: `BD Biosciences <http://www.bdbiosciences.com>`_
 
 Support
 -------
 
 SCIFIO: |no|
 
-Export: |no|
+Export: |no|
 
-Supported Metadata Fields: `BDReader <http://dev.loci.wisc.edu/trac/software/wiki/BDReader>`_
+Officially Supported Versions: $versions
 
-We currently have: 
+Supported Metadata Fields:
+
+Freely Available Software:
+
+- `AVI Reader plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/avi-reader.html>`_
+- `AVI Writer plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/avi.html>`_
+
+
+We currently have:
 
 - a few BD Pathway datasets
 
-We'd like to have: 
+We would like to have:
 
 - more BD Pathway datasets
 
 Ratings
 -------
 
-Pixels: |Very Good|
+Pixels: |Very good|
 
-Metadata: |Very Good|
+Metadata: |Very good|
 
-Openness: |Good|
+Openness: |Good|
 
-Presence: |Fair|
+Presence: |Fair|
 
-Utility: |Good|
+Utility: |Good|
 
 Additional Information
 ----------------------
 
-Source Code: :source:`BDReader <components/bio-formats/src/loci/formats/in/BDReader.java>`
+Source Code: :source:`BDReader.java <components/bio-formats/src/loci/formats/in/BDReader.java >`
+
+Notes:
+
+

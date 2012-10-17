@@ -1,45 +1,56 @@
 InCell 3000
-===========
+===============================================================================
 
-Extensions: .frm
+Extensions: .frm
 
-Developer: `GE <http://gelifesciences.com/>`_
+Developer: `GE <http://gelifesciences.com/>`_
+
 
 Support
 -------
 
 SCIFIO: |no|
 
-Export: |no|
+Export: |no|
 
-Supported Metadata Fields: `InCell3000Reader <http://dev.loci.wisc.edu/trac/software/wiki/InCell3000Reader>`_
+Officially Supported Versions: $versions
 
-Sample Datasets: `Broad Bioimage Benchmark
-Collection <http://www.broadinstitute.org/bbbc/BBBC013/>`_
+Supported Metadata Fields:
 
-We currently have: 
+Freely Available Software:
 
--  A few example images files
+- `IMOD <http://bio3d.colorado.edu/imod/>`_
 
-We'd like to have: 
+Sample Datasets:
 
--  At least one example metadata file
--  An official specification document
+- `Broad Bioimage Benchmark Collection <http://www.broadinstitute.org/bbbc/BBBC013/>`_
+
+We currently have:
+
+- a few example datasets
+
+We would like to have:
+
+- an official specification document
 
 Ratings
 -------
 
-Pixels: |Good|
+Pixels: |Good|
 
-Metadata: |Fair|
+Metadata: |Fair|
 
-Openness: |Fair|
+Openness: |Fair|
 
-Presence: |Fair|
+Presence: |Fair|
 
-Utility: |Poor|
+Utility: |Poor|
 
 Additional Information
 ----------------------
 
-Source Code: :source:`InCell3000Reader <components/bio-formats/src/loci/formats/in/InCell3000Reader.java>`
+Source Code: :source:`InCell3000Reader.java <components/bio-formats/src/loci/formats/in/InCell3000Reader.java >`
+
+Notes:
+
+

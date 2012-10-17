@@ -1,43 +1,61 @@
 SimplePCI & HCImage
-===================
+===============================================================================
 
-Extensions: .cxd
+Extensions: .cxd
 
-Developer: `Compix <http://www.cimaging.net/>`_
+Developer: `Compix <http://www.cimaging.net/>`_
+
 
 Support
 -------
 
 SCIFIO: |no|
 
-Export: |no|
+Export: |no|
 
-Supported Metadata Fields: `PCI Reader <http://dev.loci.wisc.edu/trac/software/wiki/PCIReader>`_
+Officially Supported Versions: $versions
 
-We currently have: 
+Supported Metadata Fields:
 
--  Several SimplePCI files
+Freely Available Software:
+
+- `QuickTime Player <http://www.apple.com/quicktime/download/>`_
+
+Sample Datasets:
+
+- `Diffusion tensor MRI datasets <http://www.sci.utah.edu/%7Egk/DTI-data/>`_
+
+We currently have:
+
+- several SimplePCI files
+
+We would like to have:
+
+- more SimplePCI TIFF datasets
 
 Ratings
 -------
 
-Pixels: |Outstanding|
+Pixels: |Outstanding|
 
-Metadata: |Good|
+Metadata: |Good|
 
-Openness: |Very Good|
+Openness: |Very good|
 
-Presence: |Poor|
+Presence: |Poor|
 
-Utility: |Fair|
+Utility: |Fair|
 
 Additional Information
 ----------------------
 
-Source Code: :source:`PCI Reader <components/bio-formats/src/loci/formats/in/PCIReader.java>`
+Source Code: :source:`PCIReader.java <components/bio-formats/src/loci/formats/in/PCIReader.java >`
 
-Notes: Bio-Formats uses a modified version of the `Apache Jakarta
-POI <http://jakarta.apache.org/poi/>`_ library to read CXD files.
+Notes:
+
+
+Bio-Formats uses a modified version of the `Apache Jakarta
+POI library <http://jakarta.apache.org/poi/>`_ to read CXD files.
 
 .. seealso::
-    `SimplePCI software overview <http://www.cimaging.net/simplepci.htm>`_
+`SimplePCI software overview <http://www.cimaging.net/simplepci.htm>`_

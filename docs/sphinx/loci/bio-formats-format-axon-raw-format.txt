@@ -1,43 +1,55 @@
 Axon Raw Format
-===============
+===============================================================================
 
-Extensions:  .arf
+Extensions: .arf
 
-Owner:  `INDEC BioSystems <http://www.indecbiosystems.com/>`_
+
+Owner: `INDEC BioSystems <http://www.indecbiosystems.com/>`_
 
 Support
 -------
 
 SCIFIO: |no|
 
-Export: |no|
+Export: |no|
 
-Supported Metadata Fields: `ARFReader <http://dev.loci.wisc.edu/trac/software/wiki/ARFReader>`_
+Officially Supported Versions: $versions
 
-We currently have: 
+Supported Metadata Fields:
 
--  one ARF dataset
--  a `specification
-   document <http://www.indecbiosystems.com/imagingworkbench/ApplicationNotes/IWAppNote11-ARF_File_Format.pdf>`_
+Freely Available Software:
 
-We'd like to have: 
+- `AVI Reader plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/avi-reader.html>`_
+- `AVI Writer plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/avi.html>`_
 
--  more ARF datasets
+
+We currently have:
+
+- one ARF dataset
+- a `specification document <http://www.indecbiosystems.com/imagingworkbench/ApplicationNotes/IWAppNote11-ARF_File_Format.pdf>`_
+
+We would like to have:
+
+- more ARF datasets
 
 Ratings
 -------
 
-Pixels: |Very Good|
+Pixels: |Very good|
 
-Metadata: |Fair|
+Metadata: |Fair|
 
-Openness: |Very Good|
+Openness: |Very good|
 
-Presence: |Poor|
+Presence: |Poor|
 
-Utility: |Fair|
+Utility: |Fair|
 
 Additional Information
 ----------------------
 
-Source Code: :source:`ARFReader <components/bio-formats/src/loci/formats/in/ARFReader.java>`
+Source Code: :source:`ARFReader.java <components/bio-formats/src/loci/formats/in/ARFReader.java >`
+
+Notes:
+
+
