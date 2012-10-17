@@ -55,6 +55,7 @@ public class FormatPageAutogen {
   // -- Constants --
 
   private static final String TEMPLATE = "doc/FormatPage.vm";
+  private static final String TABLE_TEMPLATE = "doc/FormatTable.vm";
 
   // -- Fields --
 
@@ -72,7 +73,7 @@ public class FormatPageAutogen {
 
   // -- API Methods --
 
-  public void write() throws Exception {
+  public void writeFormatPages() throws Exception {
     File doc = new File("../../docs/sphinx/loci/");
     if (!doc.exists()) {
       boolean success = doc.mkdir();
@@ -130,28 +131,56 @@ public class FormatPageAutogen {
         context.put("notes", notes);
       }
 
-      String filename = format.replaceAll("/", "");
-      filename = filename.replaceAll("\\(", "");
-      filename = filename.replaceAll("\\)", "");
-      filename = filename.replaceAll("\\.", "");
-      filename = filename.replaceAll("& ", "");
-      filename = filename.replaceAll(" ", "-");
-      filename = "bio-formats-format-" + filename;
-      filename = filename.toLowerCase();
-
+      String filename = getPageName(format);
       VelocityTools.processTemplate(engine, context, TEMPLATE,
         "../../docs/sphinx/loci/" + filename + ".txt");
     }
   }
 
+  public void writeFormatTable() throws Exception {
+    File doc = new File("../../docs/sphinx/loci/");
+    if (!doc.exists()) {
+      boolean success = doc.mkdir();
+      if (!success) {
+        throw new IOException("Could not create " + doc.getAbsolutePath());
+      }
+    }
+
+    VelocityEngine engine = VelocityTools.createEngine();
+    VelocityContext context = VelocityTools.createContext();
+
+    for (IniTable table : data) {
+      table.put("pagename", getPageName(table.get(IniTable.HEADER_KEY)));
+    }
+
+    context.put("formats", data);
+    context.put("count", data.size());
+
+    VelocityTools.processTemplate(engine, context, TABLE_TEMPLATE,
+      "../../docs/sphinx/loci/bio-formats-formats.txt");
+  }
+
   // -- Helper methods --
 
+  private String getPageName(String format) {
+    String filename = format.replaceAll("/", "");
+    filename = filename.replaceAll("\\(", "");
+    filename = filename.replaceAll("\\)", "");
+    filename = filename.replaceAll("\\.", "");
+    filename = filename.replaceAll("& ", "");
+    filename = filename.replaceAll(" ", "-");
+    filename = "bio-formats-format-" + filename;
+    filename = filename.toLowerCase();
+
+    return filename;
+  }
 
   // -- Main method --
 
   public static void main(String[] args) throws Exception {
     FormatPageAutogen autogen = new FormatPageAutogen(args[0]);
-    autogen.write();
+    autogen.writeFormatPages();
+    autogen.writeFormatTable();
   }
 
 }

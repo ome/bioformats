@@ -1,0 +1,93 @@
+Supported Formats
+-----------------
+
+.. glossary::
+    Pixels
+        Our estimation of Bio-Formats' ability to reliably extract complete 
+        and accurate pixel values from files in that format. The better this 
+        score, the more confident we are that Bio-Formats will successfully 
+        read your file without displaying an error message or displaying an 
+        erroneous image.
+
+    Metadata
+        Our certainty in the thoroughness and correctness of Bio-Formats'   
+        metadata extraction and conversion from files of that format into 
+        standard OME-XML. The better this score, the more confident we are 
+        that all meaningful metadata will be parsed and populated as OME-XML.
+
+    Openness
+        This is not a direct expression of Bio-Formats' performance, but 
+        rather indicates the level of cooperation the format's controlling 
+        interest has demonstrated toward the scientific community with respect 
+        to the format. The better this score, the more tools (specification 
+        documents, source code, sample files, etc.) have been made available.
+
+    Presence
+        This is also not directly related to Bio-Formats, but instead 
+        represents our understanding of the format's popularity, and is also 
+        as a measure of compatibility between applications. The better this 
+        score, the more common the format and the more software packages 
+        include support for it.
+
+    Utility
+        Our opinion of the format's suitability for storing metadata-rich   
+        microscopy image data. The better this score, the wider the variety of 
+        information that can be effectively stored in the format.
+
+    Export
+        This indicates whether Bio-Formats is capable of writing the format 
+        (Bio-Formats can read every format on this list).
+
+    SCIFIO 
+        This indicates whether format is supported by the 
+        :doc:`SCIFIO <software-scifio>` core library (See the license section 
+        on the :doc:`Bio-Formats documentation </index>` page for why this 
+        matters).
+
+.. tabularcolumns:: |p{6cm}|p{3.75cm}|p{.75cm}|p{.75cm}|p{.75cm}|p{.75cm}|p{.75cm}|p{.75cm}|p{.75cm}|
+
+.. list-table::
+   :header-rows: 1
+   :widths: 40, 25, 5, 5, 5, 5, 5, 5, 5
+
+   *
+     - Format
+     - Extensions
+     - :term:`Pixels`
+     - :term:`Metadata`
+     - :term:`Openness`
+     - :term:`Presence`
+     - :term:`Utility`
+     - :term:`Export`
+     - :term:`SCIFIO`
+
+#foreach ($format in $formats)
+#set ($pagename = $format.get("pagename"))
+#set ($extensions = $format.get("extensions"))
+#set ($pixels = $format.get("pixelsRating"))
+#set ($metadata = $format.get("metadataRating"))
+#set ($openness = $format.get("opennessRating"))
+#set ($presence = $format.get("presenceRating"))
+#set ($utility = $format.get("utilityRating"))
+#set ($export = $format.get("export"))
+#set ($scifio = $format.get("scifio"))
+   * - :doc:`$pagename `
+     - $extensions 
+     - |$pixels |
+     - |$metadata |
+     - |$openness |
+     - |$presence |
+     - |$utility |
+     - |$export |
+     - |$scifio |
+#end
+
+Bio-Formats currently supports **$count** formats
+
+
+.. toctree::
+    :maxdepth: 1
+    :glob:
+    :hidden:
+
+    bio-formats-format*
