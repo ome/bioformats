@@ -1085,8 +1085,13 @@ public final class FormatTools {
       max=(long) Math.pow(2, 32)-1;
       break;
     case FLOAT:
+      min = (long) Float.MIN_VALUE;
+      max = (long) Float.MAX_VALUE;
+      break;
     case DOUBLE:
-      throw new IllegalArgumentException("Float and Double do not have a default min/max");
+      min = (long) Double.MIN_VALUE;
+      max = (long) Double.MAX_VALUE;
+      break;
     default:
       throw new IllegalArgumentException("Invalid pixel type");
     }
