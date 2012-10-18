@@ -61,7 +61,7 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
   // -- Fields --
 
   private ome.scifio.io.RandomAccessInputStream rais;
-  
+
   // -- Constructors --
 
   /**
@@ -93,6 +93,15 @@ public class RandomAccessInputStream extends InputStream implements DataInput {
   }
 
   // -- RandomAccessInputStream API methods --
+
+  /**
+   * Sets the native encoding of the stream.
+   *
+   * @see loci.common.Constants#ENCODING
+   */
+  public void setEncoding(String encoding) {
+    rais.setEncoding(encoding);
+  }
 
   /** Seeks to the given offset within the stream. */
   public void seek(long pos) throws IOException {
