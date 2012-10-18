@@ -62,7 +62,6 @@ public class NDPIReader extends BaseTiffReader {
 
   // -- Fields --
 
-  private JPEGTileDecoder decoder;
   private int initializedSeries = -1;
   private int initializedPlane = -1;
 
@@ -225,10 +224,7 @@ public class NDPIReader extends BaseTiffReader {
   public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
-      if (decoder != null) {
-        decoder.close();
-      }
-      decoder = null;
+      service.close();
       initializedSeries = -1;
       initializedPlane = -1;
       sizeZ = 1;
