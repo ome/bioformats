@@ -1,0 +1,37 @@
+MIAS (Maia Scientific)
+======================
+
+Extensions: .tif
+
+Developer: `Maia Scientific <http://www.maia-scientific.com/>`_
+
+Support
+-------
+
+SCIFIO: |no|
+
+Export: |no|
+
+Supported Metadata Fields: `MIAS Reader <http://dev.loci.wisc.edu/trac/software/wiki/MIASReader>`_
+
+We currently have: 
+
+-  several MIAS datasets
+
+Ratings
+-------
+
+Pixels: |Very Good|
+
+Metadata: |Poor|
+
+Openness: |Fair|
+
+Presence: |Poor|
+
+Utility: |Poor|
+
+Additional Information
+----------------------
+
+Source Code: :source:`MIAS Reader <components/bio-formats/src/loci/formats/in/MIASReader.java>`

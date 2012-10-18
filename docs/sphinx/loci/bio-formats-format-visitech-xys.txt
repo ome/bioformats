@@ -1,0 +1,41 @@
+VisiTech XYS
+============
+
+Extensions: .xys, .html
+
+Developer: `VisiTech International <http://www.visitech.co.uk/>`_
+
+Support
+-------
+
+SCIFIO: |no|
+
+Export: |no|
+
+Supported Metadata Fields: `VisiTech Reader <http://dev.loci.wisc.edu/trac/software/wiki/VisitechReader>`_
+
+We currently have: 
+
+-  Several VisiTech datasets
+
+We'd like to have: 
+
+-  A VisiTech XYS specification document
+
+Ratings
+-------
+
+Pixels: |Very Good|
+
+Metadata: |Good|
+
+Openness: |Fair|
+
+Presence: |Poor|
+
+Utility: |Good|
+
+Additional Information
+----------------------
+
+Source Code: :source:`VisiTech Reader <components/bio-formats/src/loci/formats/in/VisitechReader.java>`

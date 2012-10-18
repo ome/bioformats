@@ -1,0 +1,41 @@
+TillPhotonics TillVision
+========================
+
+Extensions: .vws
+
+Developer: `TILL Photonics <http://www.till-photonics.com/>`_
+
+Support
+-------
+
+SCIFIO: |no|
+
+Export: |no|
+
+Supported Metadata Fields: `TILLVision Reader <http://dev.loci.wisc.edu/trac/software/wiki/TillVisionReader>`_
+
+We currently have: 
+
+-  Several TillVision datasets
+
+We'd like to have: 
+
+-  A TillVision specification document
+
+Ratings
+-------
+
+Pixels: |Good|
+
+Metadata: |Fair|
+
+Openness: |Poor|
+
+Presence: |Poor|
+
+Utility: |Fair|
+
+Additional Information
+----------------------
+
+Source Code: `TILLVision Reader <components/bio-formats/src/loci/formats/in/TillVisionReader.java>`

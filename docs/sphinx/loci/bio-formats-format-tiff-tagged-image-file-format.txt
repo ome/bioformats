@@ -1,0 +1,68 @@
+TIFF (Tagged Image File Format)
+===============================
+
+Extensions: .tif
+
+Developer: Aldus and Microsoft
+
+Owner: `Adobe <http://www.adobe.com>`_
+
+Support
+-------
+
+SCIFIO: |yes|
+
+Export: |yes|
+
+Supported Metadata Fields: `TIFF Reader <http://dev.loci.wisc.edu/trac/software/wiki/TiffReader>`_
+
+Sample Datasets: `LZW TIFF data
+gallery <http://marlin.life.utsa.edu/Data_Gallery.html>`_
+
+Sample Datasets: `Big TIFF <http://tiffcentral.com/>`_
+
+We currently have: 
+
+-  A `TIFF specification
+   document <http://partners.adobe.com/asn/developer/PDFS/TN/TIFF6.pdf>`_
+   (v6.0, from 1992 Jun 3, in PDF)
+-  A large number of TIFF datasets
+-  A few BigTIFF datasets
+
+We'd like to have: 
+
+More TIFF datasets:
+
+-  anything unusual—preferably rare/unsupported compression or
+   photometric interpretation type
+
+Ratings
+-------
+
+Pixels: |Very Good|
+
+Metadata: |Very Good|
+
+Openness: |Outstanding|
+
+Presence: |Outstanding|
+
+Utility: |Fair|
+
+Additional Information
+----------------------
+
+Source Code: :source:`TIFF Reader <components/scifio/src/loci/formats/in/TiffReader.java>`
+
+Source Code: :source:`TIFF Writer <components/scifio/src/loci/formats/out/TiffWriter.java>`
+
+Notes: 
+
+-  Bio-Formats can also read BigTIFF files (TIFF files larger than 4
+   GB).
+-  Bio-Formats can save image stacks as TIFF or BigTIFF.
+
+.. seealso::
+    `TIFF technical overview <http://www.awaresystems.be/imaging/tiff/faq.html#q3>`_
+
+    `BigTIFF technical overview <http://www.awaresystems.be/imaging/tiff/bigtiff.html>`_

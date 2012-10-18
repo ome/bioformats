@@ -1,0 +1,41 @@
+Canon DNG
+=========
+
+Extensions: .cr2, .crw
+
+Developer: `Canon <http://canon.com>`_
+
+Support
+-------
+
+SCIFIO: |no|
+
+Export: |no|
+
+Freely Available Software: `IrfanView <http://www.irfanview.com/>`_
+
+We currently have: 
+
+-  A few example datasets
+
+We'd like to have: 
+
+-  An official specification document
+
+Ratings
+-------
+
+Pixels: |Good|
+
+Metadata: |Good|
+
+Openness: |Fair|
+
+Presence: |Fair|
+
+Utility: |Fair|
+
+Additional Information
+----------------------
+
+Source Code: :source:`DNGReader <components/bio-formats/src/loci/formats/in/DNGReader.java>`
