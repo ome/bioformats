@@ -1,0 +1,41 @@
+MetaMorph 7.5 TIFF
+==================
+
+Extensions: .tiff
+
+Owner: `Molecular Devices <http://www.moleculardevices.com/>`_
+
+Support
+-------
+
+SCIFIO: |no|
+
+Export: |no|
+
+Supported Metadata Fields: `Metamorph TIFF Reader <http://dev.loci.wisc.edu/trac/software/wiki/MetamorphTiffReader>`_
+
+We currently have: 
+
+-  One Metamorph 7.5 TIFF dataset
+
+We'd like to have: 
+
+-  More Metamorph 7.5 TIFF datasets
+
+Ratings
+-------
+
+Pixels: |Very Good|
+
+Metadata: |Very Good|
+
+Openness: |Very Good|
+
+Presence: |Fair|
+
+Utility: |Good|
+
+Additional Information
+----------------------
+
+Source Code: :source:`Metamorph TIFF Reader <components/bio-formats/src/loci/formats/in/MetamorphTiffReader.java>`

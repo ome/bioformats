@@ -1,0 +1,14 @@
+ImgLib
+======
+
+`ImgLib2 <http://imglib2.net/>`_ (see also the `ImgLib Fiji
+page <http://pacific.mpi-cbg.de/wiki/index.php/Imglib>`_) is a
+multidimensional image processing library. It provides a general
+mechanism for writing image analysis algorithms, without writing case
+logic for `bit depth <http://en.wikipedia.org/wiki/Color_depth>`_, or
+worrying about the source of the pixel data (arrays in memory, files on
+disk, etc.).
+
+ImgLib provides an
+`ImgOpener <http://pacific.mpi-cbg.de/cgi-bin/gitweb.cgi?p=imglib.git;a=blob;f=imglib2/io/src/main/java/net/imglib2/io/ImgOpener.java;hb=HEAD>`_
+utility class for reading data using Bio-Formats.

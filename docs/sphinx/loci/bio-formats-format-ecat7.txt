@@ -1,0 +1,42 @@
+ECAT7
+=====
+
+Extensions: .v
+
+Developer: `Siemens <http://www.siemens.com>`_
+
+Support
+-------
+
+SCIFIO: |no|
+
+Export: |no|
+
+Supported Metadata Fields: `Ecat7 Reader <http://dev.loci.wisc.edu/trac/java/wiki/Ecat7Reader>`_
+
+We currently have: 
+
+-  A few ECAT7 files
+
+We'd like to have: 
+
+-  An ECAT7 specification document
+-  More ECAT7 files
+
+Ratings
+-------
+
+Pixels: |Good|
+
+Metadata: |Good|
+
+Openness: |Fair|
+
+Presence: |Fair|
+
+Utility: |Fair|
+
+Additional Information
+----------------------
+
+Source Code: :source:`Ecat7Reader <components/bio-formats/src/loci/formats/in/Ecat7Reader.java>`

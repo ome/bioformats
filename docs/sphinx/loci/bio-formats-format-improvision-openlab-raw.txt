@@ -1,0 +1,46 @@
+Improvision Openlab Raw
+=======================
+
+Extensions: .raw
+
+Developer: `Improvision <http://www.improvision.com/>`_
+
+Owner: `PerkinElmer <http://www.perkinelmer.com/>`_
+
+Support
+-------
+
+SCIFIO: |no|
+
+Export: |no|
+
+Supported Metadata Fields: `Openlab Raw Reader <http://dev.loci.wisc.edu/trac/software/wiki/OpenlabRawReader>`_
+
+We currently have: 
+
+-  An `Openlab Raw specification
+   document
+   <http://cellularimaging.perkinelmer.com/support/technical_notes/detail.php?id=344>`_
+   (from 2004 Nov 09, in HTML)
+-  A few Openlab Raw datasets
+
+Ratings
+-------
+
+Pixels: |Outstanding|
+
+Metadata: |Very Good|
+
+Openness: |Very Good|
+
+Presence: |Poor|
+
+Utility: |Fair|
+
+Additional Information
+----------------------
+
+Source Code: :source:`Openlab Raw Reader <components/bio-formats/src/loci/formats/in/OpenlabRawReader.java>`
+
+.. seealso::
+    `Openlab software review <http://www.improvision.com/products/openlab/>`_

@@ -1,0 +1,45 @@
+FITS (Flexible Image Transport System)
+======================================
+
+Extensions: .fits
+
+Developer: `National Radio Astronomy Observatory <http://www.nrao.edu/>`_
+
+Support
+-------
+
+SCIFIO: |yes|
+
+Export: |no|
+
+Supported Metadata Fields: `FITS Reader <http://dev.loci.wisc.edu/trac/software/wiki/FitsReader>`_
+
+We currently have: 
+
+-  A `FITS specification
+   document <http://archive.stsci.edu/fits/fits_standard/>`_ (NOST
+   100-2.0, from 1999 Mar 29, in HTML)
+-  Several FITS datasets
+
+Ratings
+-------
+
+Pixels: |Very Good|
+
+Metadata: |Fair|
+
+Openness: |Very Good|
+
+Presence: |Good|
+
+Utility: |Fair|
+
+Additional Information
+----------------------
+
+Source Code: :source:`FitsReader <components/scifio/src/loci/formats/in/FitsReader.java>`
+
+.. seealso::
+    `MAST:FITS homepage <http://archive.stsci.edu/fits/>`_
+
+    `FITS Support Office <http://fits.gsfc.nasa.gov/>`_
