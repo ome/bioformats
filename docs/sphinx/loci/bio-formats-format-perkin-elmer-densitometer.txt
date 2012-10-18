@@ -1,0 +1,42 @@
+Perkin Elmer Densitometer
+=========================
+
+Extensions: .pds
+
+Developer: `Perkin Elmer <http://www.perkinelmer.com>`_
+
+Support
+-------
+
+SCIFIO: |no|
+
+Export: |no|
+
+Supported Metadata Fields: `PDS Reader <http://dev.loci.wisc.edu/trac/java/wiki/PDSReader>`_
+
+We currently have: 
+
+-  A few PDS datasets
+
+We'd like to have: 
+
+-  A PDS specification document
+-  More PDS datasets
+
+Ratings
+-------
+
+Pixels: |Good|
+
+Metadata: |Good|
+
+Openness: |Good|
+
+Presence: |Poor|
+
+Utility: |Fair|
+
+Additional Information
+----------------------
+
+Source Code: :source:`PDSReader <components/bio-formats/src/loci/formats/in/PDSReader.java>`

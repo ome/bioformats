@@ -1,0 +1,41 @@
+Amira Mesh
+==========
+
+Extensions: .am, .amiramesh, .grey, .hx, .labels
+
+Developer: `Visage Imaging <http://www.amiravis.com/>`_
+
+Support
+-------
+
+SCIFIO: |no|
+
+Export: |no|
+
+Supported Metadata Fields: `Amira Reader <http://dev.loci.wisc.edu/trac/software/wiki/AmiraReader>`_
+
+We currently have: 
+
+-  a few Amira Mesh datasets
+
+We'd like to have: 
+
+-  more Amira Mesh datasets
+
+Ratings
+-------
+
+Pixels: |Very Good|
+
+Metadata: |Good|
+
+Openness: |Fair|
+
+Presence: |Fair|
+
+Utility: |Fair|
+
+Additional Information
+----------------------
+
+Source Code: :source:`Amira Reader <components/bio-formats/src/loci/formats/in/AmiraReader.java>`

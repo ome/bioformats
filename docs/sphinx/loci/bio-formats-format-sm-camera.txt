@@ -1,0 +1,41 @@
+SM Camera
+=========
+
+Support
+-------
+
+SCIFIO: |no|
+
+Export: |no|
+
+Supported Metadata Fields: `SMCameraReader <http://dev.loci.wisc.edu/trac/software/wiki/SMCameraReader>`_
+
+We currently have: 
+
+- Pascal code that can read SM-Camera files (from ImageSXM)
+
+- a few SM-Camera files
+
+We'd like to have: 
+
+- an SM-Camera file format specification document
+
+- more SM-Camera files
+
+Ratings
+-------
+
+Pixels: |Good|
+
+Metadata: |Fair|
+
+Openness: |Fair|
+
+Presence: |Fair|
+
+Utility: |Fair|
+
+Additional Information
+----------------------
+
+Source Code: :source:`SMCameraReader <components/bio-formats/src/loci/formats/in/SMCameraReader.java>`

@@ -1,0 +1,56 @@
+Bio-Rad PIC
+===========
+
+Extensions: .pic, .raw, .xml
+
+Developer: Bio-Rad
+
+Owner: `Carl Zeiss, Inc. <http://www.zeiss.com/>`_
+
+Support
+-------
+
+SCIFIO: |no|
+
+Export: |no|
+
+Supported Metadata Fields: `Bio-Rad
+Reader <http://dev.loci.wisc.edu/trac/software/wiki/BioRadReader>`_
+
+Freely Available Software: `Bio-Rad PIC reader plugin for
+ImageJ <http://rsb.info.nih.gov/ij/plugins/biorad.html>`_
+
+We currently have: 
+
+-  a PIC specification document (v4.5, in PDF)
+-  an older PIC specification document (v4.2, from 1996 Dec 16, in DOC)
+-  a large number of PIC datasets
+-  the ability to produce new datasets
+
+Ratings
+-------
+
+Pixels: |Outstanding|
+
+Metadata: |Very Good|
+
+Openness: |Very Good|
+
+Presence: |Very Good|
+
+Utility: |Very Good|
+
+Additional Information
+----------------------
+
+Source Code: :source:`Bio-Rad Reader <components/bio-formats/src/loci/formats/in/BioRadReader.java>`
+
+Notes: 
+
+Commercial applications that support this format include:
+
+-  `Bitplane Imaris <http://www.bitplane.com/>`_
+-  `SVI Huygens <http://svi.nl/>`_
+
+**Please note that while we have specification documents for this
+format, we are not able to distribute them to third parties.**

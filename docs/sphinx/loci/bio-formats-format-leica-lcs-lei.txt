@@ -1,0 +1,57 @@
+Leica LCS LEI
+=============
+
+Extensions: .lei, .tif
+
+Developer: `Leica Microsystems CMS GmbH <http://www.leica-microsystems.com/>`_
+
+Owner: `Leica <http://www.leica.com/>`_
+
+Support
+-------
+
+SCIFIO: |no|
+
+Export: |no|
+
+Supported Metadata Fields: `Leica Reader <http://dev.loci.wisc.edu/trac/software/wiki/LeicaReader>`_
+
+Freely Available Software: `Leica LCS Lite <ftp://ftp.llt.de/softlib/LCSLite/LCSLite2611537.exe>`_
+
+We currently have: 
+
+-  An LEI specification document (beta 2.000, from no later than 2004
+   Feb 17, in PDF)
+-  Several LEI datasets
+
+Ratings
+-------
+
+Pixels: |Outstanding|
+
+Metadata: |Very Good|
+
+Openness: |Very Good|
+
+Presence: |Very Good|
+
+Utility: |Very Good|
+
+Additional Information
+----------------------
+
+Source Code: :source:`Leica Reader <components/bio-formats/src/loci/formats/in/LeicaReader.java>`
+
+Notes: 
+
+-  LCS stands for "Leica Confocal Software."
+-  LEI presumably stands for "Leica Experimental Information."
+
+Commercial applications that support LEI include:
+
+-  `Bitplane Imaris <http://www.bitplane.com/>`_
+-  `SVI Huygens <http://svi.nl/>`_
+-  `Image-Pro Plus <http://www.mediacy.com/>`_
+
+**Please note that while we have specification documents for this
+format, we are not able to distribute them to third parties.**
