@@ -1,0 +1,33 @@
+INR
+===
+
+Extensions: .inr
+
+Support
+-------
+
+SCIFIO: |no|
+
+Export: |no|
+
+We currently have: 
+
+-  Several sample .inr datasets
+
+Ratings
+-------
+
+Pixels: |Very Good|
+
+Metadata: |Good|
+
+Openness: |Fair|
+
+Presence: |Poor|
+
+Utility: |Fair|
+
+Additional Information
+----------------------
+
+Source Code: :source:`INRReader <components/bio-formats/src/loci/formats/in/INRReader.java>`

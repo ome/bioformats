@@ -1,0 +1,42 @@
+InCell 1000
+===========
+
+Extensions: .xdce, .tif
+
+Developer: `GE <http://gelifesciences.com/>`_
+
+Support
+-------
+
+SCIFIO: |no|
+
+Export: |no|
+
+Supported Metadata Fields: `InCell Reader <http://dev.loci.wisc.edu/trac/software/wiki/InCellReader>`_
+
+We currently have: 
+
+-  A few InCell 1000 datasets
+
+We'd like to have: 
+
+-  An InCell 1000 specification document
+-  More InCell 1000 datasets
+
+Ratings
+-------
+
+Pixels: |Very Good|
+
+Metadata: |Very Good|
+
+Openness: |Good|
+
+Presence: |Fair|
+
+Utility: |Good|
+
+Additional Information
+----------------------
+
+Source Code: :source:`InCell Reader <components/bio-formats/src/loci/formats/in/InCellReader.java>`

@@ -1,0 +1,41 @@
+Imacon
+======
+
+Extensions: .fff
+
+Owner: `Hasselblad <http://www.hasselbladusa.com/>`_
+
+Support
+-------
+
+SCIFIO: |no|
+
+Export: |no|
+
+Supported Metadata Fields: `ImaconReader <http://dev.loci.wisc.edu/trac/software/wiki/ImaconReader>`_
+
+We currently have: 
+
+- one Imacon file
+
+We'd like to have: 
+
+- more Imacon files
+
+Ratings
+-------
+
+Pixels: |Poor|
+
+Metadata: |Good|
+
+Openness: |Fair|
+
+Presence: |Poor|
+
+Utility: |Good|
+
+Additional Information
+----------------------
+
+Source Code: :source:`ImaconReader <components/bio-formats/src/loci/formats/in/ImaconReader.java>`
