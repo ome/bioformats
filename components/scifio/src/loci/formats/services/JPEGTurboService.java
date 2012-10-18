@@ -52,6 +52,8 @@ import loci.common.services.ServiceException;
  */
 public interface JPEGTurboService extends Service {
 
+  long[] getRestartMarkers();
+
   void setRestartMarkers(long[] markers);
 
   void initialize(RandomAccessInputStream jpeg, int width, int height)

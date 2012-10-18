@@ -117,6 +117,14 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
     }
   }
 
+  public long[] getRestartMarkers() {
+    long[] markers = new long[restartMarkers.size()];
+    for (int i=0; i<markers.length; i++) {
+      markers[i] = restartMarkers.get(i);
+    }
+    return markers;
+  }
+
   public void initialize(RandomAccessInputStream jpeg, int width, int height)
     throws ServiceException, IOException
   {
@@ -129,7 +137,7 @@ public class JPEGTurboServiceImpl implements JPEGTurboService {
     int marker = in.readShort() & 0xffff;
 
     boolean inImage = false;
-    while (marker != EOI && in.getFilePointer() < in.length()) {
+    while (marker != EOI && in.getFilePointer() + 2 < in.length()) {
       int length = in.readShort() & 0xffff;
       long end = in.getFilePointer() + length - 2;
 

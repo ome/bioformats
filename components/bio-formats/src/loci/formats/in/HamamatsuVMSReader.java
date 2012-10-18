@@ -30,6 +30,7 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import loci.common.Constants;
 import loci.common.IniList;
@@ -37,12 +38,15 @@ import loci.common.IniParser;
 import loci.common.IniTable;
 import loci.common.Location;
 import loci.common.RandomAccessInputStream;
+import loci.common.services.ServiceException;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
 import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.meta.MetadataStore;
+import loci.formats.services.JPEGTurboService;
+import loci.formats.services.JPEGTurboServiceImpl;
 
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.PositiveInteger;
@@ -60,13 +64,18 @@ public class HamamatsuVMSReader extends FormatReader {
 
   // -- Constants --
 
+  private static final int MAX_SIZE = 2048;
+
   // -- Fields --
 
   private ArrayList<String> files = new ArrayList<String>();
 
   private String[][][] tileFiles;
+  private String[] jpeg;
 
-  private TileJPEGReader[] jpeg;
+  private JPEGTurboService service = new JPEGTurboServiceImpl();
+  private HashMap<String, long[]> restartMarkers =
+    new HashMap<String, long[]>();
 
   // -- Constructor --
 
@@ -88,7 +97,7 @@ public class HamamatsuVMSReader extends FormatReader {
     }
 
     ArrayList<String> f = new ArrayList<String>();
-    f.add(jpeg[getSeries()].getCurrentFile());
+    f.add(jpeg[getSeries()]);
     f.addAll(files);
     return f.toArray(new String[f.size()]);
   }
@@ -101,7 +110,33 @@ public class HamamatsuVMSReader extends FormatReader {
   {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
 
-    jpeg[getSeries()].openBytes(no, buf, x, y, w, h);
+    String file = jpeg[getCoreIndex()];
+
+    if (getSizeX() <= MAX_SIZE || getSizeY() <= MAX_SIZE) {
+      JPEGReader reader = new JPEGReader();
+      reader.setId(file);
+      reader.openBytes(0, buf, x, y, w, h);
+      reader.close();
+      return buf;
+    }
+
+    RandomAccessInputStream s = new RandomAccessInputStream(file);
+    try {
+      if (restartMarkers.containsKey(file)) {
+        service.setRestartMarkers(restartMarkers.get(file));
+      }
+      service.initialize(s, getSizeX(), getSizeY());
+      restartMarkers.put(file, service.getRestartMarkers());
+
+      service.getTile(buf, x, y, w, h);
+    }
+    catch (ServiceException e) {
+      throw new FormatException(e);
+    }
+    finally {
+      s.close();
+    }
+
     return buf;
   }
 
@@ -111,14 +146,9 @@ public class HamamatsuVMSReader extends FormatReader {
     if (!fileOnly) {
       tileFiles = null;
       files.clear();
-      if (jpeg != null) {
-        for (TileJPEGReader j : jpeg) {
-          if (j != null) {
-            j.close();
-          }
-        }
-        jpeg = null;
-      }
+      service.close();
+      jpeg = null;
+      restartMarkers.clear();
     }
   }
 
@@ -184,7 +214,7 @@ public class HamamatsuVMSReader extends FormatReader {
       macroFile = new Location(dir, macroFile).getAbsolutePath();
     }
 
-    jpeg = new TileJPEGReader[3];
+    jpeg = new String[3];
     core = new CoreMetadata[3];
 
     for (int i=0; i<core.length; i++) {
@@ -201,10 +231,14 @@ public class HamamatsuVMSReader extends FormatReader {
           break;
       }
 
-      jpeg[i] = new TileJPEGReader();
-      jpeg[i].setId(file);
-      core[i] = jpeg[i].getCoreMetadata()[0];
+      jpeg[i] = file;
+      TileJPEGReader reader = new TileJPEGReader();
+      reader.setId(file);
+      core[i] = reader.getCoreMetadata()[0];
+      reader.close();
       core[i].thumbnail = i > 0;
+      core[i].interleaved =
+        core[i].sizeX > MAX_SIZE && core[i].sizeY > MAX_SIZE;
     }
 
     MetadataStore store = makeFilterMetadata();
