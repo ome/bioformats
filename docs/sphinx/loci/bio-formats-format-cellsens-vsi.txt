@@ -1,0 +1,46 @@
+cellSens VSI
+============
+
+Extensions: .vsi
+
+Developer: `Olympus <http://www.olympus.com/>`_
+
+Support
+-------
+
+SCIFIO: |no|
+
+Export: |no|
+
+Supported Metadata Fields: `CellSensReader <http://dev.loci.wisc.edu/trac/software/wiki/CellSensReader>`_
+
+We currently have: 
+
+-  A few example datasets
+
+We'd like to have: 
+
+-  An official specification document
+
+Ratings
+-------
+
+Pixels: |Fair|
+
+Metadata: |Good|
+
+Openness: |Fair|
+
+Presence: |Fair|
+
+Utility: |Fair|
+
+Additional Information
+----------------------
+
+Source Code: :source:`CellSensReader <components/bio-formats/src/loci/formats/in/CellSensReader.java>`
+
+Notes: There are a few major caveats to cellSens .vsi support:
+
+-  :ticket:`5114`
+-  :ticket:`5396`

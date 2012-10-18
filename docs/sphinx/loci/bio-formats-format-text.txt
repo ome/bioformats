@@ -1,0 +1,23 @@
+Text
+====
+
+Extensions: .txt
+
+Support
+-------
+
+SCIFIO: |yes|
+
+Export: |no|
+
+Ratings
+-------
+
+Pixels: |Good|
+
+Additional Information
+----------------------
+
+Source Code: :source:`TextReader <components/scifio/src/loci/formats/in/TextReader.java>`
+
+Notes: Reads tabular pixel data produced by a variety of software.

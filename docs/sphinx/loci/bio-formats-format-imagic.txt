@@ -1,0 +1,47 @@
+IMAGIC
+======
+
+Extensions: .hed, .img
+
+Developer: `Image Science <http://www.imagescience.de>`_
+
+Support
+-------
+
+SCIFIO: |no|
+
+Export: |no|
+
+Supported Metadata Fields: `ImagicReader <http://dev.loci.wisc.edu/trac/software/wiki/ImagicReader>`_
+
+Freely Available Software: `em2em <http://www.imagescience.de/em2em.html>`_
+
+We currently have: 
+
+-  One example dataset
+-  Official file format documentation
+
+We'd like to have: 
+
+-  More example files
+
+Ratings
+-------
+
+Pixels: |Very Good|
+
+Metadata: |Very Good|
+
+Openness: |Very Good|
+
+Presence: |Good|
+
+Utility: |Good|
+
+Additional Information
+----------------------
+
+Source Code: :source:`ImagicReader <components/bio-formats/src/loci/formats/in/ImagicReader.java>`
+
+.. seealso::
+    `IMAGIC specification <http://www.imagescience.de/em2em.html>`_

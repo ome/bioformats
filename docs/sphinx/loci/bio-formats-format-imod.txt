@@ -1,0 +1,46 @@
+IMOD
+====
+
+Extensions: .mod
+
+Developer: |bio3d|
+
+Owner: |bio3d|
+
+.. |bio3d| replace:: `Boulder Laboratory for 3-Dimensional Electron Microscopy of Cells`_
+.. _Boulder Laboratory for 3-Dimensional Electron Microscopy of Cells: http://bio3d.colorado.edu/
+
+Support
+-------
+
+SCIFIO: |no|
+
+Export: |no|
+
+Supported Metadata Fields:
+
+Freely Available Software: `IMOD <http://bio3d.colorado.edu/imod/>`_
+
+We currently have: 
+
+-  a few sample datasets
+-  official documentation:
+   `http://bio3d.colorado.edu/imod/doc/binspec.html <http://bio3d.colorado.edu/imod/doc/binspec.html>`_
+
+Ratings
+-------
+
+Pixels: |Good|
+
+Metadata: |Good|
+
+Openness: |Outstanding|
+
+Presence: |Fair|
+
+Utility: |Fair|
+
+Additional Information
+----------------------
+
+Source Code: :source:`IMODReader <components/bio-formats/src/loci/formats/in/IMODReader.java>`

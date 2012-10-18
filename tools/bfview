@@ -2,14 +2,8 @@
 
 # bfview: a script for displaying an image file in the image viewer
 
-# Required JARs: loci_tools.jar
+SCIFIO_DIR=`dirname "$0"`
 
-# JAR libraries must be in the same directory as this
-# command line script for the command to function.
+echo "The 'bfview' command is deprecated. Please use 'showinf' instead."
 
-# If you are a developer working from source and have
-# the LOCI classes in your CLASSPATH, you can set the
-# LOCI_DEVEL environment variable to use them instead.
-
-echo "The 'bfview' command is now deprecated.  Please use the 'showinf' command instead."
-showinf "$@"
+"$SCIFIO_DIR/showinf" "$@"

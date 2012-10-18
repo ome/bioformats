@@ -1,0 +1,42 @@
+FEI
+===
+
+Extensions: .img
+
+Developer: `FEI <http://www.fei.com/>`_
+
+Support
+-------
+
+SCIFIO: |no|
+
+Export: |no|
+
+Supported Metadata Fields: `FEI Reader <http://dev.loci.wisc.edu/trac/software/wiki/FEIReader>`_
+
+We currently have: 
+
+-  A few FEI files
+
+We'd like to have: 
+
+-  A specification document
+-  More FEI files
+
+Ratings
+-------
+
+Pixels: |Fair|
+
+Metadata: |Poor|
+
+Openness: |Poor|
+
+Presence: |Fair|
+
+Utility: |Fair|
+
+Additional Information
+----------------------
+
+Source Code: :source:`FEIReader <components/bio-formats/src/loci/formats/in/FEIReader.java>`

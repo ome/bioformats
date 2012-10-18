@@ -1,0 +1,50 @@
+PerkinElmer UltraView
+=====================
+
+Extensions: .tif, .2, .3, .4, ...
+
+Owner: `PerkinElmer <http://www.perkinelmer.com/>`_
+
+Support
+-------
+
+SCIFIO: |no|
+
+Export: |no|
+
+Supported Metadata Fields: `PerkinElmer Reader <http://dev.loci.wisc.edu/trac/software/wiki/PerkinElmerReader>`_
+
+We currently have: 
+
+-  Several PerkinElmer datasets
+-  Some :source:`Bio-Formats developer notes <components/bio-formats/doc/perkin-elmer.html>`
+   for PerkinElmer
+
+Ratings
+-------
+
+Pixels: |Very Good|
+
+Metadata: |Good|
+
+Openness: |Fair|
+
+Presence: |Fair|
+
+Utility: |Fair|
+
+Additional Information
+----------------------
+
+Source Code: :source:`PerkinElmer Reader <components/bio-formats/src/loci/formats/in/PerkinElmerReader.java>`
+
+Notes: Other associated extensions include: .tim, .zpo, .csv, .htm, .cfg,
+.ano, .rec
+
+Commercial applications that support this format include:
+
+-  `Bitplane Imaris <http://www.bitplane.com/>`_
+-  `Image-Pro Plus <http://www.mediacy.com/>`_
+
+.. seealso::
+    `PerkinElmer UltraView system overview <http://las.perkinelmer.com/content/livecellimaging/ultraview.asp>`_

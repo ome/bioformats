@@ -1,0 +1,39 @@
+Micro-Manager
+=============
+
+Extensions: .tif, .txt
+
+Developer: `Vale Lab <http://valelab.ucsf.edu/>`_
+
+Support
+-------
+
+SCIFIO: |yes|
+
+Export: |no|
+
+Supported Metadata Fields: `Micromanager Reader <http://dev.loci.wisc.edu/trac/software/wiki/MicromanagerReader>`_
+
+Freely Available Software: `μManager <http://micro-manager.org/>`_
+
+We currently have: 
+
+-  A few μmanager datasets
+
+Ratings
+-------
+
+Pixels: |Outstanding|
+
+Metadata: |Very Good|
+
+Openness: |Outstanding|
+
+Presence: |Fair|
+
+Utility: |Good|
+
+Additional Information
+----------------------
+
+Source Code: :source:`Micromanager Reader <components/scifio/src/loci/formats/in/MicromanagerReader.java>`

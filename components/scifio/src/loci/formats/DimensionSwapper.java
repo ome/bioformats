@@ -61,8 +61,8 @@ public class DimensionSwapper extends ReaderWrapper {
 
   // -- Fields --
 
-  /** Core metadata associated with this dimension swapper. */
-  private CoreMetadata[] core;
+  /** Input/output order-aware metadata associated with this dimension swapper. */
+  private SwappableMetadata[] core;
 
   // -- Constructors --
 
@@ -71,8 +71,6 @@ public class DimensionSwapper extends ReaderWrapper {
 
   /** Constructs a DimensionSwapper with the given reader. */
   public DimensionSwapper(IFormatReader r) { super(r); }
-
-  private String[] outputOrder;
 
   // -- DimensionSwapper API methods --
 
@@ -91,7 +89,7 @@ public class DimensionSwapper extends ReaderWrapper {
 
     if (order == null) throw new IllegalArgumentException("order is null");
 
-    String oldOrder = getDimensionOrder();
+    String oldOrder = getInputOrder();
     if (order.equals(oldOrder)) return;
 
     if (order.length() != 5) {
@@ -146,11 +144,8 @@ public class DimensionSwapper extends ReaderWrapper {
     core[series].sizeZ = dims[newZ];
     core[series].sizeC = dims[newC];
     core[series].sizeT = dims[newT];
-    //core.currentOrder[series] = order;
-    if (outputOrder[series] == null) {
-      outputOrder[series] = core[series].dimensionOrder;
-    }
-    core[series].dimensionOrder = order;
+
+    core[series].inputOrder = order;
 
     if (oldC != newC) {
       // C was overridden; clear the sub-C dimensional metadata
@@ -174,12 +169,12 @@ public class DimensionSwapper extends ReaderWrapper {
    */
   public void setOutputOrder(String outputOrder) {
     FormatTools.assertId(getCurrentFile(), true, 2);
-    this.outputOrder[getCoreIndex()] = outputOrder;
+    core[getCoreIndex()].dimensionOrder = outputOrder;
   }
 
   public String getInputOrder() {
     FormatTools.assertId(getCurrentFile(), true, 2);
-    return core[getCoreIndex()].dimensionOrder;
+    return core[getCoreIndex()].inputOrder;
   }
 
   // -- IFormatReader API methods --
@@ -231,9 +226,7 @@ public class DimensionSwapper extends ReaderWrapper {
   /* @see IFormatReader#getDimensionOrder() */
   public String getDimensionOrder() {
     FormatTools.assertId(getCurrentFile(), true, 2);
-    String outOrder = outputOrder[getCoreIndex()];
-    if (outOrder != null) return outOrder;
-    return getInputOrder();
+    return core[getCoreIndex()].dimensionOrder;
   }
 
   /* @see IFormatReader#openBytes(int) */
@@ -290,19 +283,17 @@ public class DimensionSwapper extends ReaderWrapper {
   public void setId(String id) throws FormatException, IOException {
     String oldFile = getCurrentFile();
     super.setId(id);
-    if (!id.equals(oldFile) || outputOrder == null ||
-      outputOrder.length != reader.getCoreMetadata().length)
+    if (!id.equals(oldFile) || core == null ||
+      core.length != reader.getSeriesCount())
     {
-      outputOrder = new String[reader.getCoreMetadata().length];
-
       // NB: Create our own copy of the CoreMetadata,
       // which we can manipulate safely.
-      core = copyCoreMetadata(reader);
+      core = copyCoreMetadata(SwappableMetadata.class, reader);
     }
   }
 
   // -- Helper methods --
-
+  
   protected int reorder(int no) {
     if (getInputOrder() == null) return no;
     return FormatTools.getReorderedIndex(getInputOrder(), getDimensionOrder(),

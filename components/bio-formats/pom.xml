@@ -8,7 +8,7 @@
   <parent>
     <groupId>loci</groupId>
     <artifactId>pom-scifio</artifactId>
-    <version>4.4-SNAPSHOT</version>
+    <version>4.5-SNAPSHOT</version>
     <relativePath>../..</relativePath>
   </parent>
 
@@ -30,7 +30,7 @@
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>loci-common</artifactId>
+      <artifactId>loci-legacy</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -59,9 +59,9 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>essi-unidata</groupId>
-      <artifactId>netcdf-java</artifactId>
-      <version>4.0.41</version>
+      <groupId>edu.ucar</groupId>
+      <artifactId>netcdf</artifactId>
+      <version>4.0.03</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>

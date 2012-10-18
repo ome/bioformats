@@ -1,0 +1,47 @@
+EPS (Encapsulated PostScript)
+=============================
+
+Extensions: .eps, .epsi, .ps
+
+Developer: `Adobe <http://www.adobe.com/>`_
+
+Support
+-------
+
+SCIFIO: |yes|
+
+Export: |yes|
+
+Supported Metadata Fields: `EPS Reader <http://dev.loci.wisc.edu/trac/software/wiki/EPSReader>`_
+
+Freely Available Software: `EPS Writer plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/eps-writer.html>`_
+
+We currently have: 
+
+-  A few EPS datasets
+-  The ability to produce new datasets
+
+Ratings
+-------
+
+Pixels: |Good|
+
+Metadata: |Good|
+
+Openness: |Good|
+
+Presence: |Very Good|
+
+Utility: |Poor|
+
+Additional Information
+----------------------
+
+Source Code: :source:`EPS Reader <components/scifio/src/loci/formats/in/EPSReader.java>`
+
+Source Code: :source:`EPS Writer <components/scifio/src/loci/formats/out/EPSWriter.java>`
+
+Notes: 
+
+-  Bio-Formats can save individual planes as EPS.
+-  Certain types of compressed EPS files are not supported.

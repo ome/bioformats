@@ -1,0 +1,42 @@
+AIM
+===
+
+Extensions:  .aim
+
+Developer: `SCANCO Medical AG <http://www.scanco.ch>`_
+
+Support
+-------
+
+SCIFIO: |no|
+
+Export: |no|
+
+Supported Metadata Fields:  `AIMReader <http://dev.loci.wisc.edu/trac/software/wiki/AIMReader>`_
+
+We currently have: 
+
+-  one .aim file
+
+We'd like to have: 
+
+-  an .aim specification document
+-  more .aim files
+
+Ratings
+-------
+
+Pixels: |Good|
+
+Metadata: |Very good|
+
+Openness: |Fair|
+
+Presence: |Poor|
+
+Utility: |Fair|
+
+Additional Information
+----------------------
+
+Source Code: :source:`AIMReader <components/bio-formats/src/loci/formats/in/AIMReader.java>`
