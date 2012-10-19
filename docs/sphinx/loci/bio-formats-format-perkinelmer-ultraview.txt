@@ -27,12 +27,12 @@ Sample Datasets:
 
 We currently have:
 
-- several UltraView datasets
+- several UltraView datasets 
 - some :source:`Bio-Formats developer notes <components/bio-formats/doc/perkin-elmer.html>` for UltraView
 
 We would like to have:
 
-- an official specification document
+- an official specification document 
 - more sample datasets
 
 Ratings
@@ -56,13 +56,13 @@ Source Code: :source:`PerkinElmerReader.java <components/bio-formats/src/loci/fo
 Notes:
 
 
-Other associated extensions include: .tim, .zpo, .csv, .htm,
-.cfg, .ano, .rec
+Other associated extensions include: .tim, .zpo, .csv, .htm, 
+.cfg, .ano, .rec 
 
-Commercial applications that support this format incldue:
+Commercial applications that support this format incldue: 
 
-- `Bitplane Imaris <http://www.bitplane.com/>`_
-- `Image-Pro Plus <http://www.mediacy.com/>`_
+- `Bitplane Imaris <http://www.bitplane.com/>`_ 
+- `Image-Pro Plus <http://www.mediacy.com/>`_ 
 
-.. seealso::
-`PerkinElmer UltraView system overview <http://las.perkinelmer.com/content/livecellimaging/ultraview.asp>`_
+.. seealso:: 
+  `PerkinElmer UltraView system overview <http://las.perkinelmer.com/content/livecellimaging/ultraview.asp>`_

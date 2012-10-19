@@ -24,12 +24,12 @@ Freely Available Software:
 
 We currently have:
 
-- Pascal code that can read Burleigh files (from ImageSXM)
+- Pascal code that can read Burleigh files (from ImageSXM) 
 - a few Burleigh files
 
 We would like to have:
 
-- a Burleigh file format specification
+- a Burleigh file format specification 
 - more Burleigh files
 
 Ratings

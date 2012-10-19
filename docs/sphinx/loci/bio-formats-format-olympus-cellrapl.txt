@@ -31,7 +31,7 @@ We currently have:
 
 We would like to have:
 
-- more Cellr datasets
+- more Cellr datasets 
 - an official specification document
 
 Ratings

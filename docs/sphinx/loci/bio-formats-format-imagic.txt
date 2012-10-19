@@ -27,7 +27,7 @@ Sample Datasets:
 
 We currently have:
 
-- one example dataset
+- one example dataset 
 - official file format documentation
 
 We would like to have:
@@ -55,5 +55,5 @@ Source Code: :source:`ImagicReader.java <components/bio-formats/src/loci/formats
 Notes:
 
 
-.. seealso::
-`IMAGIC specification <http://www.imagescience.de/em2em.html>`_
+.. seealso:: 
+  `IMAGIC specification <http://www.imagescience.de/em2em.html>`_

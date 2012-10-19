@@ -23,7 +23,7 @@ Freely Available Software:
 
 Sample Datasets:
 
-- `LZW TIFF data gallery <http://marlin.life.utsa.edu/Data_Gallery.html>`_
+- `LZW TIFF data gallery <http://marlin.life.utsa.edu/Data_Gallery.html>`_ 
 - `Big TIFF <http://tiffcentral.com/>`_
 
 We currently have:

@@ -27,12 +27,12 @@ Sample Datasets:
 
 We currently have:
 
-- several .pcx files
+- several .pcx files 
 - the ability to generate additional .pcx filse
 
 We would like to have:
 
-- an official specification document
+- an official specification document 
 - more Oxford Instruments files
 
 Ratings

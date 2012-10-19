@@ -28,7 +28,7 @@ We currently have:
 
 We would like to have:
 
-- a Cellomics .c01 specification document
+- a Cellomics .c01 specification document 
 - more Cellomics .c01 datasets
 
 Ratings

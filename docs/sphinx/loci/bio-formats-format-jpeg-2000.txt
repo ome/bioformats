@@ -27,12 +27,12 @@ Sample Datasets:
 
 We currently have:
 
-- a `JPEG 2000 specification document <http://www.jpeg.org/jpeg2000/CDs15444.html>`_ (final draft, from 2000, in PDF)
+- a `JPEG 2000 specification document <http://www.jpeg.org/jpeg2000/CDs15444.html>`_ (final draft, from 2000, in PDF) 
 - a few .jp2 files
 
 We would like to have:
 
-- an official specification document
+- an official specification document 
 - more JEOL files
 
 Ratings
@@ -57,5 +57,5 @@ Source Code: :source:`JPEG2000Writer.java <components/scifio/src/loci/formats/ou
 Notes:
 
 
-Bio-Formats uses the `JAI Image I/O Tools <https://java.net/projects/jai-imageio>`_ library to read JP2 files.
+Bio-Formats uses the `JAI Image I/O Tools <https://java.net/projects/jai-imageio>`_ library to read JP2 files. 
 JPEG stands for "Joint Photographic Experts Group".

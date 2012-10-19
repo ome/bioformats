@@ -27,12 +27,12 @@ Sample Datasets:
 
 We currently have:
 
-- a Photoshop TIFF specification document
+- a Photoshop TIFF specification document 
 - a few Photoshop TIFF files
 
 We would like to have:
 
-- an official specification document
+- an official specification document 
 - more sample datasets
 
 Ratings

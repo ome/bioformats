@@ -19,8 +19,8 @@ Supported Metadata Fields:
 
 Freely Available Software:
 
-- `Libics (ICS reference library) <http://libics.sourceforge.net/>`_
-- `ICS Opener plugin for ImageJ <http://valelab.ucsf.edu/%7Enico/IJplugins/Ics_Opener.html>`_
+- `Libics (ICS reference library) <http://libics.sourceforge.net/>`_ 
+- `ICS Opener plugin for ImageJ <http://valelab.ucsf.edu/%7Enico/IJplugins/Ics_Opener.html>`_ 
 - `IrfanView <http://www.irfanview.com/>`_
 
 Sample Datasets:
@@ -29,9 +29,9 @@ Sample Datasets:
 
 We currently have:
 
-- the `Image-Pro Plus <http://www.mediacy.com/index.aspx?page=IPP>`_ software
-- a few SEQ datasets
-- the ability to produce more datasets
+- the `Image-Pro Plus <http://www.mediacy.com/index.aspx?page=IPP>`_ software 
+- a few SEQ datasets 
+- the ability to produce more datasets 
 - some :source:`Bio-Formats developer notes <components/bio-formats/doc/seq.html>` for SEQ
 
 We would like to have:

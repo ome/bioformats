@@ -54,5 +54,5 @@ Source Code: :source:`KodakReader.java <components/bio-formats/src/loci/formats/
 Notes:
 
 
-.. seealso::
-`Information on Image Station systems <http://carestream.com/PublicContent.aspx?langType=1033&id=448953>`_
+.. seealso:: 
+  `Information on Image Station systems <http://carestream.com/PublicContent.aspx?langType=1033&id=448953>`_

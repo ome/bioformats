@@ -28,7 +28,7 @@ Sample Datasets:
 
 We currently have:
 
-- an LEI specification document (beta 2.000, from no later than 2004 February 17, in PDF)
+- an LEI specification document (beta 2.000, from no later than 2004 February 17, in PDF) 
 - many LEI datasets
 
 We would like to have:
@@ -58,11 +58,11 @@ Notes:
 **Please note that while we have specification documents for this
 format, we are not able to distribute them to third parties.**
 
-LCS stands for "Leica Confocal Software".
-LEI presumably stands for "Leica Experimental Information".
+LCS stands for "Leica Confocal Software". 
+LEI presumably stands for "Leica Experimental Information". 
 
-Commercial applications that support LEI include:
+Commercial applications that support LEI include: 
 
-- `Bitplane Imaris <http://www.bitplane.com/>`_
-- `SVI Huygens <http://svi.nl/>`_
+- `Bitplane Imaris <http://www.bitplane.com/>`_ 
+- `SVI Huygens <http://svi.nl/>`_ 
 - `Image-Pro Plus <http://www.mediacy.com/>`_

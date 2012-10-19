@@ -25,7 +25,7 @@ We currently have:
 
 We would like to have:
 
-- an .aim specification document
+- an .aim specification document 
 - more .aim files
 
 Ratings

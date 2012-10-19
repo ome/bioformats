@@ -19,19 +19,19 @@ Supported Metadata Fields:
 
 Freely Available Software:
 
-- `OsiriX Medical Imaging Software <http://www.osirix-viewer.com/>`_
-- `ezDICOM <http://www.sph.sc.edu/comd/rorden/ezdicom.html>`_
+- `OsiriX Medical Imaging Software <http://www.osirix-viewer.com/>`_ 
+- `ezDICOM <http://www.sph.sc.edu/comd/rorden/ezdicom.html>`_ 
 - `Chris Rorden's list of free DICOM readers <http://www.sph.sc.edu/comd/rorden/dicom.html#links>`_
 
 Sample Datasets:
 
-- `MRI Chest from FreeVol-3D web site <http://members.tripod.com/%7Eclunis_immensus/free3d/hk-40.zip>`_
-- `Medical Image Samples from Sebastien Barre's Medical Imaging page <http://www.barre.nom.fr/medical/samples/>`_
+- `MRI Chest from FreeVol-3D web site <http://members.tripod.com/%7Eclunis_immensus/free3d/hk-40.zip>`_ 
+- `Medical Image Samples from Sebastien Barre's Medical Imaging page <http://www.barre.nom.fr/medical/samples/>`_ 
 - `DICOM sample image sets from OsiriX web site <http://osirix-viewer.com/datasets/>`_
 
 We currently have:
 
-- `DICOM specification documents <http://medical.nema.org/dicom/2007/>`_ (PS 3 - 2007, from 2006 December 28, in DOC and PDF)
+- `DICOM specification documents <http://medical.nema.org/dicom/2007/>`_ (PS 3 - 2007, from 2006 December 28, in DOC and PDF) 
 - numerous DICOM datasets
 
 We would like to have:
@@ -59,8 +59,8 @@ Source Code: :source:`DicomReader.java <components/scifio/src/loci/formats/in/Di
 Notes:
 
 
-- DICOM stands for "Digital Imaging and Communication in Medicine".
-- Bio-Formats supports both compressed and uncompressed DICOM files.
+- DICOM stands for "Digital Imaging and Communication in Medicine". 
+- Bio-Formats supports both compressed and uncompressed DICOM files. 
 
-.. seealso::
-`DICOM homepage <http://medical.nema.org/>`_
+.. seealso:: 
+  `DICOM homepage <http://medical.nema.org/>`_

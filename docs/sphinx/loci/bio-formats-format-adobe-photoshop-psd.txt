@@ -21,7 +21,7 @@ Supported Metadata Fields:
 
 We currently have:
 
-- a PSD specification document (v3.0.4, 16 July 1995)
+- a PSD specification document (v3.0.4, 16 July 1995) 
 - a few PSD files
 
 We would like to have:

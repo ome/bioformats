@@ -54,8 +54,8 @@ Source Code: :source:`PCIReader.java <components/bio-formats/src/loci/formats/in
 Notes:
 
 
-Bio-Formats uses a modified version of the `Apache Jakarta
-POI library <http://jakarta.apache.org/poi/>`_ to read CXD files.
+Bio-Formats uses a modified version of the `Apache Jakarta 
+POI library <http://jakarta.apache.org/poi/>`_ to read CXD files. 
 
-.. seealso::
-`SimplePCI software overview <http://www.cimaging.net/simplepci.htm>`_
+.. seealso:: 
+  `SimplePCI software overview <http://www.cimaging.net/simplepci.htm>`_

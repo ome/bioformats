@@ -19,18 +19,18 @@ Supported Metadata Fields:
 
 Freely Available Software:
 
-- `AVI Reader plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/avi-reader.html>`_
+- `AVI Reader plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/avi-reader.html>`_ 
 - `AVI Writer plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/avi.html>`_
 
 
 We currently have:
 
-- software that can read Bio-Rad Gel files
+- software that can read Bio-Rad Gel files 
 - several Bio-Rad Gel files
 
 We would like to have:
 
-- a Bio-Rad Gel specification
+- a Bio-Rad Gel specification 
 - more Bio-Rad Gel files
 
 Ratings

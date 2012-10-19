@@ -210,8 +210,8 @@ opennessRating = Fair
 presenceRating = Outstanding
 utilityRating = Poor
 reader = AVIReader.java
-notes = Bio-Formats can save image stacks as AVI (uncompressed). \n
-The following codecs are supported for reading: \n
+notes = - Bio-Formats can save image stacks as AVI (uncompressed). \n
+- The following codecs are supported for reading: \n
   #. Microsoft Run-Length Encoding (MSRLE) \n
   #. Microsoft Video (MSV1) \n
   #. Raw (uncompressed) \n
@@ -302,7 +302,7 @@ presenceRating = Very good
 utilityRating =  Very good
 privateSpecification = true
 reader = BioRadReader.java
-notes = Commercial applications that support this format include: \n
+notes = - Commercial applications that support this format include: \n
   #. `Bitplane Imaris <http://www.bitplane.com/>`_ \n
   #. `SVI Huygens <http://svi.nl/>`_
 
@@ -326,7 +326,7 @@ opennessRating = Good
 presenceRating = Fair
 utilityRating = Fair
 reader = ImarisReader, ImarisTiffReader, ImarisHDFReader.java
-notes = There are three distinct Imaris formats: \n
+notes = - There are three distinct Imaris formats: \n
   #. the old binary format (introduced in Imaris version 2.7) \n
   #. Imaris 3, a TIFF variant (introduced in Imaris version 3.0) \n
   #. Imaris 5.5, an HDF variant (introduced in Imaris version 5.5)
@@ -435,10 +435,8 @@ presenceRating = Good
 utilityRating = Good
 reader = DeltavisionReader.java
 privateSpecification = true
-notes = The Deltavision format is based on the Medical Research Council (MRC) \n
-file format. \n
-\n
-Commercial applications that support DeltaVision include: \n
+notes = - The Deltavision format is based on the Medical Research Council (MRC) file format. \n
+- Commercial applications that support DeltaVision include: \n
 \n
   #. `Bitplane Imaris <http://www.bitplane.com/>`_ \n
   #. `SVI Huygens <http://svi.nl/>`_ \n
@@ -502,8 +500,8 @@ presenceRating = Very good
 utilityRating = Poor
 reader = EPSReader.java
 writer = EPSWriter.java
-notes = Bio-Formats can save individual planes as EPS. \n
-Certain types of compressed EPS files are not supported.
+notes = - Bio-Formats can save individual planes as EPS. \n
+- Certain types of compressed EPS files are not supported.
 
 [Evotec/PerkinElmer Opera Flex]
 extensions = .flex, .mea, .res
@@ -519,7 +517,7 @@ presenceRating = Poor
 utilityRating = Poor
 reader = FlexReader.java
 notes = The LuraWave LWF decoder library (i.e. luwf\_jsdk2.6.jar) with \n
-  license code is required to decode wavelet-compressed Flex files. \n
+license code is required to decode wavelet-compressed Flex files. \n
 \n
 .. seealso::\n
   `LuraTech (developers of the proprietary LuraWave LWF compression used for Flex image planes) <http://www.luratech.com/>`_
@@ -718,11 +716,11 @@ presenceRating = Very good
 utilityRating = Very good
 reader = ICSReader.java
 writer = ICSWriter.java
-notes = ICS version 1.0 datasets have two files - an .ics file that contains \n
-all of the metadata in plain-text format, and an .ids file that \n
-contains all of the pixel data. \n
-ICS version 2.0 datasets are a single .ics file that contains both \n
-pixels and metadata. \n
+notes = - ICS version 1.0 datasets have two files - an .ics file that contains \n
+  all of the metadata in plain-text format, and an .ids file that \n
+  contains all of the pixel data. \n
+- ICS version 2.0 datasets are a single .ics file that contains both \n
+  pixels and metadata. \n
 \n
 Commercial applications that can support ICS include: \n
 \n
@@ -843,8 +841,7 @@ owner = `PerkinElmer <http://www.perkinelmer.com/>`_
 developer = `Improvision <http://www.improvision.com/>`_
 scifio = no
 export = no
-weHave = an `Openlab Raw specification document
-<http://cellularimaging.perkinelmer.com/support/technical_notes/detail.php?id=344>`_ (from 2004 November 09, in HTML) \n
+weHave = an `Openlab Raw specification document <http://cellularimaging.perkinelmer.com/support/technical_notes/detail.php?id=344>`_ (from 2004 November 09, in HTML) \n
 a few Openlab Raw datasets
 pixelsRating = Outstanding
 metadataRating = Very good
@@ -1333,7 +1330,7 @@ scifio = no
 export = no
 samples = `golgi.mrc <http://bio3d.colorado.edu/imod/files/imod_data.tar.gz>`_
 weHave = an `MRC specification document <http://ami.scripps.edu/software/mrctools/mrc_specification.php>`_ (in HTML) \n
-another `MRC specification document <http://bio3d.colorado.edu/imod/doc/mrc_format.txt>`_ (in TXT) \n
+`another MRC specification document <http://bio3d.colorado.edu/imod/doc/mrc_format.txt>`_ (in TXT) \n
 a few MRC datasets
 pixelsRating = Outstanding
 metadataRating = Very good
@@ -1961,6 +1958,10 @@ extensions = .txt
 scifio = yes
 export = no
 pixelsRating = Good
+metadataRating =
+opennessRating =
+presenceRating =
+utilityRating =
 reader = TextReader.java
 notes = Reads tabular pixel data produced by a variety of software.
 
@@ -2162,7 +2163,7 @@ extensions = .bmp
 developer = Microsoft and IBM
 scifio = yes
 export = no
-software = `BMP Writer plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/bmp-writer.html`_
+software = `BMP Writer plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/bmp-writer.html>`_
 weHave = many BMP datasets
 pixelsRating = Very good
 metadataRating = Outstanding
@@ -2195,7 +2196,7 @@ reader = ZeissTIFFReader.java
 [Zeiss AxioVision ZVI (Zeiss Vision Image)]
 extensions = .zvi
 owner = `Carl Zeiss MicroImaging GmbH <http://www.zeiss.com/micro>`_
-developer = `Carl Zeiss MicroImaging GmbH <http://www.zeiss.com/axiovision>`_
+developer = `Carl Zeiss MicroImaging GmbH (AxioVision) <http://www.zeiss.com/axiovision>`_
 scifio = no
 export = no
 versions = 1.0, 2.0

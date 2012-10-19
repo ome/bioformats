@@ -22,7 +22,7 @@ Supported Metadata Fields:
 
 We currently have:
 
-- a GEL specification document (Revision 2, from 2001 Mar 15, in PDF)
+- a GEL specification document (Revision 2, from 2001 Mar 15, in PDF) 
 - a few GEL datasets
 
 We would like to have:
@@ -52,5 +52,5 @@ Notes:
 **Please note that while we have specification documents for this
 format, we are not able to distribute them to third parties.**
 
-.. seealso::
-`GEL Technical Overview <http://www.awaresystems.be/imaging/tiff/tifftags/docs/gel.html>`_
+.. seealso:: 
+  `GEL Technical Overview <http://www.awaresystems.be/imaging/tiff/tifftags/docs/gel.html>`_

@@ -19,8 +19,8 @@ Supported Metadata Fields:
 
 Freely Available Software:
 
-- `Libics (ICS reference library) <http://libics.sourceforge.net/>`_
-- `ICS Opener plugin for ImageJ <http://valelab.ucsf.edu/%7Enico/IJplugins/Ics_Opener.html>`_
+- `Libics (ICS reference library) <http://libics.sourceforge.net/>`_ 
+- `ICS Opener plugin for ImageJ <http://valelab.ucsf.edu/%7Enico/IJplugins/Ics_Opener.html>`_ 
 - `IrfanView <http://www.irfanview.com/>`_
 
 Sample Datasets:

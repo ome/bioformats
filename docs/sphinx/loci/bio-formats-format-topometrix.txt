@@ -23,17 +23,17 @@ Freely Available Software:
 
 Sample Datasets:
 
-- `LZW TIFF data gallery <http://marlin.life.utsa.edu/Data_Gallery.html>`_
+- `LZW TIFF data gallery <http://marlin.life.utsa.edu/Data_Gallery.html>`_ 
 - `Big TIFF <http://tiffcentral.com/>`_
 
 We currently have:
 
-- Pascal code that reads Topometrix files (from ImageSXM)
+- Pascal code that reads Topometrix files (from ImageSXM) 
 - a few Topometrix files
 
 We would like to have:
 
-- an official specification document
+- an official specification document 
 - more Topometrix files
 
 Ratings

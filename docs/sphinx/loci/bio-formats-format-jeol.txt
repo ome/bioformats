@@ -27,12 +27,12 @@ Sample Datasets:
 
 We currently have:
 
-- Pascal code that reads JEOL files (from ImageSXM)
+- Pascal code that reads JEOL files (from ImageSXM) 
 - a few JEOL files
 
 We would like to have:
 
-- an official specification document
+- an official specification document 
 - more JEOL files
 
 Ratings

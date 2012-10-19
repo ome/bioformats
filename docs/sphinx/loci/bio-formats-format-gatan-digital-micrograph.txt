@@ -19,19 +19,19 @@ Supported Metadata Fields:
 
 Freely Available Software:
 
-- `DM3 Reader plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/DM3_Reader.html>`_
+- `DM3 Reader plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/DM3_Reader.html>`_ 
 - `EMAN <http://blake.bcm.edu/EMAN/>`_
 
 Sample Datasets:
 
-- `MRI Chest from FreeVol-3D web site <http://members.tripod.com/%7Eclunis_immensus/free3d/hk-40.zip>`_
-- `Medical Image Samples from Sebastien Barre's Medical Imaging page <http://www.barre.nom.fr/medical/samples/>`_
+- `MRI Chest from FreeVol-3D web site <http://members.tripod.com/%7Eclunis_immensus/free3d/hk-40.zip>`_ 
+- `Medical Image Samples from Sebastien Barre's Medical Imaging page <http://www.barre.nom.fr/medical/samples/>`_ 
 - `DICOM sample image sets from OsiriX web site <http://osirix-viewer.com/datasets/>`_
 
 We currently have:
 
-- Gatan's ImageReader2003 code (from 2003, in C++)
-- numerous DM3 datasets
+- Gatan's ImageReader2003 code (from 2003, in C++) 
+- numerous DM3 datasets 
 - some :source:`Bio-Formats developer notes <components/bio-formats/doc/gatan.html>` for DM3
 
 We would like to have:

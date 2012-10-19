@@ -27,12 +27,12 @@ Sample Datasets:
 
 We currently have:
 
-- a `PNG specification document <http://www.libpng.org/pub/png/spec/iso/>`_ (W3C/ISO/IEC version, from 2003 November 10, in HTML)
+- a `PNG specification document <http://www.libpng.org/pub/png/spec/iso/>`_ (W3C/ISO/IEC version, from 2003 November 10, in HTML) 
 - several PNG datasets
 
 We would like to have:
 
-- an official specification document
+- an official specification document 
 - more sample datasets
 
 Ratings
@@ -56,8 +56,8 @@ Source Code: :source:`APNGReader.java <components/scifio/src/loci/formats/in/APN
 Notes:
 
 
-Bio-Formats uses the `Java Image I/O <http://java.sun.com/j2se/1.4.2/docs/guide/imageio/index.html>`_
-API to read and write PNG files.
+Bio-Formats uses the `Java Image I/O <http://java.sun.com/j2se/1.4.2/docs/guide/imageio/index.html>`_  
+API to read and write PNG files. 
 
-.. seealso::
-`PNG technical overview <http://www.libpng.org/pub/png/>`_
+.. seealso:: 
+  `PNG technical overview <http://www.libpng.org/pub/png/>`_

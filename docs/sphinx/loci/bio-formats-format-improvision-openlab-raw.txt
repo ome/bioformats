@@ -28,7 +28,8 @@ Sample Datasets:
 
 We currently have:
 
-- an `Openlab Raw specification document
+- an `Openlab Raw specification document <http://cellularimaging.perkinelmer.com/support/technical_notes/detail.php?id=344>`_ (from 2004 November 09, in HTML) 
+- a few Openlab Raw datasets
 
 We would like to have:
 
@@ -55,5 +56,5 @@ Source Code: :source:`OpenlabRawReader.java <components/bio-formats/src/loci/for
 Notes:
 
 
-.. seealso::
-`Openlab software review <http://www.improvision.com/products/openlab/>`_
+.. seealso:: 
+  `Openlab software review <http://www.improvision.com/products/openlab/>`_
