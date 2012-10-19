@@ -31,7 +31,7 @@ Sample Datasets:
 
 We currently have:
 
-- a `GIF specification document <http;//tronche.com/computer-graphics/gif/>`_ (Version 89a, from 1990, in HTML) 
+- a `GIF specification document <http://tronche.com/computer-graphics/gif/>`_ (Version 89a, from 1990, in HTML) 
 - numerous GIF datasets 
 - the ability to produce new datasets
 
