@@ -612,7 +612,7 @@ scifio = yes
 export = no
 software = `Animated GIF Reader plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/agr.html>`_ \n
 `GIF Stack Writer plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/gif-stack-writer.html>`_
-weHave = a `GIF specification document <http;//tronche.com/computer-graphics/gif/>`_ (Version 89a, from 1990, in HTML) \n
+weHave = a `GIF specification document <http://tronche.com/computer-graphics/gif/>`_ (Version 89a, from 1990, in HTML) \n
 numerous GIF datasets \n
 the ability to produce new datasets
 pixelsRating = Very good
