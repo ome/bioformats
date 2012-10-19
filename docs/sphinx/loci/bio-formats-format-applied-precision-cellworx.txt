@@ -19,8 +19,8 @@ Supported Metadata Fields:
 
 Freely Available Software:
 
-- `Firefox 3+ <http://www.mozilla.com/firefox>`_
-- `Opera 9.5+ <http://www.opera.com/download>`_
+- `Firefox 3+ <http://www.mozilla.com/firefox>`_ 
+- `Opera 9.5+ <http://www.opera.com/download>`_ 
 - `KSquirrel <http://ksquirrel.sourceforge.net/download.php>`_
 
 
@@ -30,7 +30,7 @@ We currently have:
 
 We would like to have:
 
-- a CellWorX specification document
+- a CellWorX specification document 
 - more CellWorX datasets
 
 Ratings

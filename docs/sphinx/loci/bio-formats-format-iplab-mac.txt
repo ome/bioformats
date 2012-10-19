@@ -27,7 +27,7 @@ Sample Datasets:
 
 We currently have:
 
-- a few IPLab-Mac datasets
+- a few IPLab-Mac datasets 
 - a specification document
 
 We would like to have:

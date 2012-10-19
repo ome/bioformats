@@ -27,7 +27,7 @@ Sample Datasets:
 
 We currently have:
 
-- the `libmng-testsuites <http://downloads.sourceforge.net/libmng/MNGsuite-20030305.zip>`_ package (from 2003 March 05, in C)
+- the `libmng-testsuites <http://downloads.sourceforge.net/libmng/MNGsuite-20030305.zip>`_ package (from 2003 March 05, in C) 
 - a large number of MNG datasets
 
 We would like to have:
@@ -55,6 +55,6 @@ Source Code: :source:`MNGReader.java <components/scifio/src/loci/formats/in/MNGR
 Notes:
 
 
-.. seealso::
-`MNG homepage <http://www.libpng.org/pub/mng/>`_
-`MNG specification <http://www.libpng.org/pub/mng/spec>`_
+.. seealso:: 
+  `MNG homepage <http://www.libpng.org/pub/mng/>`_  
+  `MNG specification <http://www.libpng.org/pub/mng/spec>`_

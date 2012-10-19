@@ -27,7 +27,7 @@ Sample Datasets:
 
 We currently have:
 
-- several LIM files
+- several LIM files 
 - the ability to produce more LIM files
 
 We would like to have:
@@ -55,8 +55,8 @@ Source Code: :source:`LIMReader.java <components/bio-formats/src/loci/formats/in
 Notes:
 
 
-Bio-Formats only supports uncompressed LIM files.
+Bio-Formats only supports uncompressed LIM files. 
 
-Commercial applications that support LIM include:
+Commercial applications that support LIM include: 
 
 - `NIS Elements <http://www.nis-elements.com/>`_

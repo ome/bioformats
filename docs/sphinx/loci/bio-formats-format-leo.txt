@@ -27,12 +27,12 @@ Sample Datasets:
 
 We currently have:
 
-- Pascal code that can read LEO files (from ImageSXM)
+- Pascal code that can read LEO files (from ImageSXM) 
 - a few LEO files
 
 We would like to have:
 
-- an official specification document
+- an official specification document 
 - more LEO files
 
 Ratings

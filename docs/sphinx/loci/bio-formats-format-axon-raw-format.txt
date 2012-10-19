@@ -19,13 +19,13 @@ Supported Metadata Fields:
 
 Freely Available Software:
 
-- `AVI Reader plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/avi-reader.html>`_
+- `AVI Reader plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/avi-reader.html>`_ 
 - `AVI Writer plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/avi.html>`_
 
 
 We currently have:
 
-- one ARF dataset
+- one ARF dataset 
 - a `specification document <http://www.indecbiosystems.com/imagingworkbench/ApplicationNotes/IWAppNote11-ARF_File_Format.pdf>`_
 
 We would like to have:

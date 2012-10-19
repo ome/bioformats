@@ -19,8 +19,8 @@ Supported Metadata Fields:
 
 Freely Available Software:
 
-- `Libics (ICS reference library) <http://libics.sourceforge.net/>`_
-- `ICS Opener plugin for ImageJ <http://valelab.ucsf.edu/%7Enico/IJplugins/Ics_Opener.html>`_
+- `Libics (ICS reference library) <http://libics.sourceforge.net/>`_ 
+- `ICS Opener plugin for ImageJ <http://valelab.ucsf.edu/%7Enico/IJplugins/Ics_Opener.html>`_ 
 - `IrfanView <http://www.irfanview.com/>`_
 
 Sample Datasets:
@@ -33,7 +33,7 @@ We currently have:
 
 We would like to have:
 
-- an official specification document
+- an official specification document 
 - more example datasets
 
 Ratings
@@ -58,13 +58,13 @@ Source Code: :source:`ICSWriter.java <components/scifio/src/loci/formats/out/ICS
 Notes:
 
 
-ICS version 1.0 datasets have two files - an .ics file that contains
-all of the metadata in plain-text format, and an .ids file that
-contains all of the pixel data.
-ICS version 2.0 datasets are a single .ics file that contains both
-pixels and metadata.
+- ICS version 1.0 datasets have two files - an .ics file that contains 
+  all of the metadata in plain-text format, and an .ids file that 
+  contains all of the pixel data. 
+- ICS version 2.0 datasets are a single .ics file that contains both 
+  pixels and metadata. 
 
-Commercial applications that can support ICS include:
+Commercial applications that can support ICS include: 
 
-- `Bitplane Imaris <http://www.bitplane.com/>`_
+- `Bitplane Imaris <http://www.bitplane.com/>`_ 
 - `SVI Huygens <http://svi.nl/>`_

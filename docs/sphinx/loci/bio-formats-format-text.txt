@@ -26,12 +26,12 @@ Sample Datasets:
 
 We currently have:
 
-- a Targa specification document
+- a Targa specification document 
 - a few Targa files
 
 We would like to have:
 
-- an official specification document
+- an official specification document 
 - more SM-Camera files
 
 Ratings
@@ -39,13 +39,13 @@ Ratings
 
 Pixels: |Good|
 
-Metadata: |$metadataRating|
+Metadata: ||
 
-Openness: |$opennessRating|
+Openness: ||
 
-Presence: |$presenceRating|
+Presence: ||
 
-Utility: |$utilityRating|
+Utility: ||
 
 Additional Information
 ----------------------

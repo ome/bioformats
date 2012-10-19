@@ -19,16 +19,16 @@ Supported Metadata Fields:
 
 Freely Available Software:
 
-- `AVI Reader plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/avi-reader.html>`_
+- `AVI Reader plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/avi-reader.html>`_ 
 - `AVI Writer plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/avi.html>`_
 
 
 We currently have:
 
-- an SDT specification document (from 2008 April, in PDF)
-- an SDT specification document (from 2006 June, in PDF)
-- Becker & Hickl's `SPCImage <http://www.becker-hickl.de/software/tcspc/softwaretcspcspecial.htm>`_ software
-- a large number of SDT datasets
+- an SDT specification document (from 2008 April, in PDF) 
+- an SDT specification document (from 2006 June, in PDF) 
+- Becker & Hickl's `SPCImage <http://www.becker-hickl.de/software/tcspc/softwaretcspcspecial.htm>`_ software 
+- a large number of SDT datasets 
 - the ability to produce new datasets
 
 We would like to have:

@@ -27,12 +27,12 @@ Sample Datasets:
 
 We currently have:
 
-- a few example datasets
+- a few example datasets 
 - `official file format documentation <http://www.wadsworth.org/spider_doc/spider/docs/image_doc.html>`_
 
 We would like to have:
 
-- an official specification document
+- an official specification document 
 - more SM-Camera files
 
 Ratings

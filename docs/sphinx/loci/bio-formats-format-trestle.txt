@@ -26,12 +26,12 @@ Sample Datasets:
 
 We currently have:
 
-- a few example datasets
+- a few example datasets 
 - `developer documentation from the OpenSlide project <http://openslide.org/Trestle%20format/>`_
 
 We would like to have:
 
-- an official specification document
+- an official specification document 
 - more Topometrix files
 
 Ratings

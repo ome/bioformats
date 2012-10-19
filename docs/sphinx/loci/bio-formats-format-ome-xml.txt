@@ -27,13 +27,13 @@ Sample Datasets:
 
 We currently have:
 
-- `OME-XML specification documents <http://www.openmicroscopy.org/Schemas/>`_
-- many OME-XML datasets
+- `OME-XML specification documents <http://www.openmicroscopy.org/Schemas/>`_ 
+- many OME-XML datasets 
 - the ability to produce more datasets
 
 We would like to have:
 
-- more OIB datasets (especially 2+ GB files)
+- more OIB datasets (especially 2+ GB files) 
 - more FV1000 version 2 datasets
 
 Ratings
@@ -58,10 +58,10 @@ Source Code: :source:`OMEXMLWriter.java <components/scifio/src/loci/formats/out/
 Notes:
 
 
-Bio-Formats uses the `OME-XML Java library <http://www.openmicroscopy.org/site/support/file-formats/ome-xml-java-library>`_
-to read OME-XML files.
+Bio-Formats uses the `OME-XML Java library <http://www.openmicroscopy.org/site/support/file-formats/ome-xml-java-library>`_ 
+to read OME-XML files. 
 
-Commercial applications that support OME-XML include:
+Commercial applications that support OME-XML include: 
 
-- `Bitplane Imaris <http://www.bitplane.com/>`_
+- `Bitplane Imaris <http://www.bitplane.com/>`_ 
 - `SVI Huygens <http://svi.nl/>`_

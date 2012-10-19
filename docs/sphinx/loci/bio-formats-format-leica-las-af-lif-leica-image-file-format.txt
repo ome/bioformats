@@ -28,8 +28,8 @@ Sample Datasets:
 
 We currently have:
 
-- a LIF specification document (version 2, from no later than 2007 July 26, in PDF)
-- a LIF specification document (version 1, from no later than 206 April 3, in PDF)
+- a LIF specification document (version 2, from no later than 2007 July 26, in PDF) 
+- a LIF specification document (version 1, from no later than 206 April 3, in PDF) 
 - numerous LIF datasets
 
 We would like to have:
@@ -59,11 +59,11 @@ Notes:
 **Please note that while we have specification documents for this
 format, we are not able to distribute them to third parties.**
 
-LAS stands for "Leica Application Suite".
-AF stands for "Advanced Fluorescence".
+LAS stands for "Leica Application Suite". 
+AF stands for "Advanced Fluorescence". 
 
-Commercial applications that support LIF include:
+Commercial applications that support LIF include: 
 
-- `Bitplane Imaris <http://www.bitplane.com/>`_
-- `SVI Huygens <http://svi.nl/>`_
+- `Bitplane Imaris <http://www.bitplane.com/>`_ 
+- `SVI Huygens <http://svi.nl/>`_ 
 - `Amira <http://www.amira.com/>`_

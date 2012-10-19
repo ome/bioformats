@@ -54,5 +54,5 @@ Source Code: :source:`MRWReader.java <components/bio-formats/src/loci/formats/in
 Notes:
 
 
-.. seealso::
-`Description of MRW format <http://www.dalibor.cz/files/MRW%20File%20Format.txt>`_
+.. seealso:: 
+  `Description of MRW format <http://www.dalibor.cz/files/MRW%20File%20Format.txt>`_

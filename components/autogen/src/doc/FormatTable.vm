@@ -71,15 +71,15 @@ Supported Formats
 #set ($utility = $format.get("utilityRating"))
 #set ($export = $format.get("export"))
 #set ($scifio = $format.get("scifio"))
-   * - :doc:`$pagename `
-     - $extensions 
-     - |$pixels |
-     - |$metadata |
-     - |$openness |
-     - |$presence |
-     - |$utility |
-     - |$export |
-     - |$scifio |
+   * - :doc:`$pagename`
+     - $extensions
+     - |$pixels|
+     - |$metadata|
+     - |$openness|
+     - |$presence|
+     - |$utility|
+     - |$export|
+     - |$scifio|
 #end
 
 Bio-Formats currently supports **$count** formats

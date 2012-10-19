@@ -31,7 +31,7 @@ We currently have:
 
 We would like to have:
 
-- an InCell 1000 specification document
+- an InCell 1000 specification document 
 - more InCell 1000 datasets
 
 Ratings

@@ -32,7 +32,7 @@ We currently have:
 
 We would like to have:
 
-- an official specification document
+- an official specification document 
 - more JPK files
 
 Ratings
@@ -56,5 +56,5 @@ Source Code: :source:`KhorosReader.java <components/bio-formats/src/loci/formats
 Notes:
 
 
-.. seealso::
-`VisiQuest software overview (formerly known as KhorosPro) <http://www.accusoft.com/products/visiquest/>`_
+.. seealso:: 
+  `VisiQuest software overview (formerly known as KhorosPro) <http://www.accusoft.com/products/visiquest/>`_

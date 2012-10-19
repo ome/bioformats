@@ -21,7 +21,7 @@ Supported Metadata Fields:
 
 We currently have:
 
-- an `AL3D specification document <http://www.alicona.com/home/fileadmin/alicona/downloads/AL3DFormat.pdf>`_ (v1.0, from 2003, in PDF)
+- an `AL3D specification document <http://www.alicona.com/home/fileadmin/alicona/downloads/AL3DFormat.pdf>`_ (v1.0, from 2003, in PDF) 
 - a few AL3D datasets
 
 We would like to have:
@@ -49,7 +49,7 @@ Source Code: :source:`AliconaReader.java <components/bio-formats/src/loci/format
 Notes:
 
 
-Known deficiencies:
+Known deficiencies: 
 
-- Support for 16-bit AL3D images is present, but has never been tested.
+- Support for 16-bit AL3D images is present, but has never been tested. 
 - Texture data is currently ignored.

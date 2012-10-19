@@ -27,12 +27,12 @@ Sample Datasets:
 
 We currently have:
 
-- Pascal code that can read Unisoku files (from ImageSXM)
+- Pascal code that can read Unisoku files (from ImageSXM) 
 - a few Unisoku files
 
 We would like to have:
 
-- an official specification document
+- an official specification document 
 - more Unisoku files
 
 Ratings

@@ -27,7 +27,7 @@ Sample Datasets:
 
 We currently have:
 
-- a DV specification document (v2.10 or newer, in HTML)
+- a DV specification document (v2.10 or newer, in HTML) 
 - numerous DV datasets
 
 We would like to have:
@@ -57,14 +57,12 @@ Notes:
 **Please note that while we have specification documents for this
 format, we are not able to distribute them to third parties.**
 
-The Deltavision format is based on the Medical Research Council (MRC)
-file format.
+- The Deltavision format is based on the Medical Research Council (MRC) file format. 
+- Commercial applications that support DeltaVision include: 
 
-Commercial applications that support DeltaVision include:
+  #. `Bitplane Imaris <http://www.bitplane.com/>`_ 
+  #. `SVI Huygens <http://svi.nl/>`_ 
+  #. `Image-Pro Plus <http://www.mediacy.com/>`_ 
 
-#. `Bitplane Imaris <http://www.bitplane.com/>`_
-#. `SVI Huygens <http://svi.nl/>`_
-#. `Image-Pro Plus <http://www.mediacy.com/>`_
-
-.. seealso::
-`DeltaVision system description <http://api.com/deltavision.asp>`_
+.. seealso:: 
+  `DeltaVision system description <http://api.com/deltavision.asp>`_

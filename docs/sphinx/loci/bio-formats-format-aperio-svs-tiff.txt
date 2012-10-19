@@ -19,15 +19,15 @@ Supported Metadata Fields:
 
 Freely Available Software:
 
-- `Firefox 3+ <http://www.mozilla.com/firefox>`_
-- `Opera 9.5+ <http://www.opera.com/download>`_
+- `Firefox 3+ <http://www.mozilla.com/firefox>`_ 
+- `Opera 9.5+ <http://www.opera.com/download>`_ 
 - `KSquirrel <http://ksquirrel.sourceforge.net/download.php>`_
 
 
 We currently have:
 
-- many SVS datasets
-- an SVS specification document
+- many SVS datasets 
+- an SVS specification document 
 - the ability to generate additional SVS datasets
 
 We would like to have:
@@ -57,5 +57,5 @@ Notes:
 **Please note that while we have specification documents for this
 format, we are not able to distribute them to third parties.**
 
-.. seealso::
-`Aperio ImageScope <http://www.aperio.com/#imagescope-request>`_
+.. seealso:: 
+  `Aperio ImageScope <http://www.aperio.com/#imagescope-request>`_

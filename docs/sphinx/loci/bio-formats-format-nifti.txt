@@ -27,12 +27,12 @@ Sample Datasets:
 
 We currently have:
 
-- `NIfTI specification documents <http://nifti.nimh.nih.gov/nifti-1/>`_
+- `NIfTI specification documents <http://nifti.nimh.nih.gov/nifti-1/>`_ 
 - several NIfTI datasets
 
 We would like to have:
 
-- an official specification document
+- an official specification document 
 - more Molecular Imaging files
 
 Ratings

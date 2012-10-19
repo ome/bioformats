@@ -28,7 +28,7 @@ Sample Datasets:
 
 We currently have:
 
-- a few sample datasets
+- a few sample datasets 
 - `official documentation <http://bio3d.colorado.edu/imod/doc/binspec.html>`_
 
 We would like to have:

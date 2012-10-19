@@ -21,7 +21,7 @@ Supported Metadata Fields:
 
 We currently have:
 
-- `an Analyze 7.5 specification document <http://analyzedirect.com/support/10.0Documents/Analyze_Resource_01.pdf>`_
+- `an Analyze 7.5 specification document <http://analyzedirect.com/support/10.0Documents/Analyze_Resource_01.pdf>`_ 
 - several Analyze 7.5 datasets
 
 We would like to have:

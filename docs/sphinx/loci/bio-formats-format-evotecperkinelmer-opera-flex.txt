@@ -23,8 +23,8 @@ Freely Available Software:
 
 Sample Datasets:
 
-- `MRI Chest from FreeVol-3D web site <http://members.tripod.com/%7Eclunis_immensus/free3d/hk-40.zip>`_
-- `Medical Image Samples from Sebastien Barre's Medical Imaging page <http://www.barre.nom.fr/medical/samples/>`_
+- `MRI Chest from FreeVol-3D web site <http://members.tripod.com/%7Eclunis_immensus/free3d/hk-40.zip>`_ 
+- `Medical Image Samples from Sebastien Barre's Medical Imaging page <http://www.barre.nom.fr/medical/samples/>`_ 
 - `DICOM sample image sets from OsiriX web site <http://osirix-viewer.com/datasets/>`_
 
 We currently have:
@@ -56,8 +56,8 @@ Source Code: :source:`FlexReader.java <components/bio-formats/src/loci/formats/i
 Notes:
 
 
-The LuraWave LWF decoder library (i.e. luwf\_jsdk2.6.jar) with
-license code is required to decode wavelet-compressed Flex files.
+The LuraWave LWF decoder library (i.e. luwf\_jsdk2.6.jar) with 
+license code is required to decode wavelet-compressed Flex files. 
 
 .. seealso::
-`LuraTech (developers of the proprietary LuraWave LWF compression used for Flex image planes) <http://www.luratech.com/>`_
+  `LuraTech (developers of the proprietary LuraWave LWF compression used for Flex image planes) <http://www.luratech.com/>`_

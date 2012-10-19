@@ -31,7 +31,7 @@ We currently have:
 
 We would like to have:
 
-- an official specification document
+- an official specification document 
 - more L2D datasets
 
 Ratings
@@ -55,5 +55,5 @@ Source Code: :source:`L2DReader.java <components/bio-formats/src/loci/formats/in
 Notes:
 
 
-L2D datasets cannot be imported into OME using server-side import.
+L2D datasets cannot be imported into OME using server-side import. 
 They can, however, be imported from ImageJ, or using the omeul utility.

@@ -26,12 +26,12 @@ Sample Datasets:
 
 We currently have:
 
-- Pascal code that can read UBM files (from ImageSXM)
+- Pascal code that can read UBM files (from ImageSXM) 
 - one UBM file
 
 We would like to have:
 
-- an official specification document
+- an official specification document 
 - more UBM files
 
 Ratings

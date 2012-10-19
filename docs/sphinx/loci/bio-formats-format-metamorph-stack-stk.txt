@@ -27,9 +27,9 @@ Sample Datasets:
 
 We currently have:
 
-- an STK specification document (from 2006 November 21, in DOC)
-- an older STK specification document (from 2005 March 25, in DOC)
-- an ND specification document (from 2002 January 24, in PDF)
+- an STK specification document (from 2006 November 21, in DOC) 
+- an older STK specification document (from 2005 March 25, in DOC) 
+- an ND specification document (from 2002 January 24, in PDF) 
 - a large number of datasets
 
 We would like to have:
@@ -59,11 +59,11 @@ Notes:
 **Please note that while we have specification documents for this
 format, we are not able to distribute them to third parties.**
 
-Commercial applications that support STK include:
+Commercial applications that support STK include: 
 
-- `Bitplane Imaris <http://www.bitplane.com/>`_
-- `SVI Huygens <http://svi.nl/>`_
-- `DIMIN <http://dimin.net/>`_
+- `Bitplane Imaris <http://www.bitplane.com/>`_ 
+- `SVI Huygens <http://svi.nl/>`_ 
+- `DIMIN <http://dimin.net/>`_ 
 
-.. seealso::
-`Metamorph imaging system overview <http://www.metamorph.com/>`_
+.. seealso:: 
+  `Metamorph imaging system overview <http://www.metamorph.com/>`_

@@ -22,7 +22,7 @@ Supported Metadata Fields:
 
 We currently have:
 
-- an ABD-TIFF specification document (from 2005 November, in PDF)
+- an ABD-TIFF specification document (from 2005 November, in PDF) 
 - a few ABD-TIFF datasets
 
 We would like to have:
@@ -52,5 +52,5 @@ Notes:
 **Please note that while we have specification documents for this
 format, we are not able to distribute them to third parties.**
 
-With a few minor exceptions, the ABD-TIFF format is identical to the
+With a few minor exceptions, the ABD-TIFF format is identical to the 
 Fluoview TIFF format.

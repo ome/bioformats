@@ -28,7 +28,7 @@ Sample Datasets:
 
 We currently have:
 
-- an Improvision TIFF specification document
+- an Improvision TIFF specification document 
 - a few Improvision TIFF datasets
 
 We would like to have:
@@ -58,5 +58,5 @@ Notes:
 **Please note that while we have specification documents for this
 format, we are not able to distribute them to third parties.**
 
-.. seealso::
-`Openlab software overview <http://www.improvision.com/products/openlab/>`_
+.. seealso:: 
+  `Openlab software overview <http://www.improvision.com/products/openlab/>`_
