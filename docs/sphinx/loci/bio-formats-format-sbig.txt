@@ -27,7 +27,7 @@ Sample Datasets:
 
 We currently have:
 
-- an `official SBIG specification document <http://sbig.impulse.net/pdffiles/file.format.pf>`_ 
+- an `official SBIG specification document <http://sbig.impulse.net/pdffiles/file.format.pdf>`_ 
 - a few SBIG files
 
 We would like to have:

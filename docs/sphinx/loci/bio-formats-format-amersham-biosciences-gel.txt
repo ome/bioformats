@@ -45,7 +45,7 @@ Utility: |Fair|
 Additional Information
 ----------------------
 
-Source Code: :source:`GELReader.java <components/bio-formats/src/loci/formats/in/GELReader.java >`
+Source Code: :source:`GelReader.java <components/bio-formats/src/loci/formats/in/GelReader.java >`
 
 Notes:
 

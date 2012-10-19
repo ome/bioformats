@@ -90,7 +90,7 @@ metadataRating = Very good
 opennessRating = Good
 presenceRating = Fair
 utilityRating = Fair
-reader = GELReader.java
+reader = GelReader.java
 privateSpecification = true
 notes = .. seealso:: \n
   `GEL Technical Overview <http://www.awaresystems.be/imaging/tiff/tifftags/docs/gel.html>`_
@@ -1852,7 +1852,7 @@ reader = RHKReader.java
 owner = `Santa Barbara Instrument Group (SBIG) <http://www.sbig.com>`_
 scifio = no
 export = no
-weHave = an `official SBIG specification document <http://sbig.impulse.net/pdffiles/file.format.pf>`_ \n
+weHave = an `official SBIG specification document <http://sbig.impulse.net/pdffiles/file.format.pdf>`_ \n
 a few SBIG files
 weWant = more SBIG files
 pixelsRating = Very good
