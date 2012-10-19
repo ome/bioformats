@@ -643,18 +643,20 @@ void BioFormatsImageIO::ReadImageInformation()
 
 void BioFormatsImageIO::Read(void* pData)
 {
-  
   itkDebugMacro("BioFormatsImageIO::Read");
   const ImageIORegion & region = this->GetIORegion();
 
   CreateJavaProcess();
 
-  
+  itkDebugMacro("BioFormatsImageIO::Read region: ");
+
+
   // send the command to the java process
   std::string command = "read\t";
   command += m_FileName;
   for( unsigned int d=0; d<region.GetImageDimension(); d++ )
     {
+    itkDebugMacro("region index: " << region.GetIndex(d) << "; region size: " << region.GetSize(d));
     command += "\t";
     command += toString(region.GetIndex(d));
     command += "\t";
@@ -798,8 +800,8 @@ void BioFormatsImageIO::Write(const void * buffer )
   command += "\t";
 
   for(int i = 0; i < regionDim; i++){
-    itkDebugMacro("Dimension " << i << ": " << m_Dimensions[i]);
-    command += toString(m_Dimensions[i]);
+    itkDebugMacro("Dimension " << i << ": " << region.GetSize(i));
+    command += toString(region.GetSize(i));
     command += "\t";
   }
 
@@ -821,11 +823,11 @@ void BioFormatsImageIO::Write(const void * buffer )
     command += "\t";
   }
 
-  itkDebugMacro("Pixel Type: " << m_PixelType);
-  command += toString(m_PixelType);
+  itkDebugMacro("Pixel Type: " << itkToBFPixelType(GetComponentType()));
+  command += toString(itkToBFPixelType(GetComponentType()));
   command += "\t";
 
-  int rgbChannelCount = m_NumberOfComponents;
+  int rgbChannelCount = GetNumberOfComponents();
 
   itkDebugMacro("RGB Channels: " << rgbChannelCount);
   command += toString(rgbChannelCount);
