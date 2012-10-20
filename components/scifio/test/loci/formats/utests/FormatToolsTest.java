@@ -96,14 +96,16 @@ public class FormatToolsTest {
     assertEquals(lim[1], 4294967295L);
   }
 
-  @Test(expectedExceptions={IllegalArgumentException.class})
   public void testDefaultMinMaxFloat() throws IllegalArgumentException {
     long[] lim = FormatTools.defaultMinMax(FormatTools.FLOAT);
+    assertEquals(lim[0], -2147483648);
+    assertEquals(lim[1], 2147483647);
   }
 
-  @Test(expectedExceptions={IllegalArgumentException.class})
   public void testDefaultMinMaxDouble() throws IllegalArgumentException {
     long[] lim = FormatTools.defaultMinMax(FormatTools.DOUBLE);
+    assertEquals(lim[0], -9223372036854775808L);
+    assertEquals(lim[1], 9223372036854775807L);
   }
 
   @Test(expectedExceptions={IllegalArgumentException.class})
