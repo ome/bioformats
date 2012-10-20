@@ -298,7 +298,11 @@ public class FormatReaderTest {
     boolean success = true;
     String msg = null;
     try {
-      for (int i=0; i<reader.getSeriesCount() && success; i++) {
+      int seriesCount = reader.getSeriesCount();
+      if (reader.getDomains()[0].equals(FormatTools.HCS_DOMAIN)) {
+        seriesCount = 1;
+      }
+      for (int i=0; i<seriesCount && success; i++) {
         reader.setSeries(i);
 
         int x = reader.getThumbSizeX();
