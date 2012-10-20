@@ -299,7 +299,7 @@ public class FormatReaderTest {
     String msg = null;
     try {
       int seriesCount = reader.getSeriesCount();
-      if (reader.getDomains()[0].equals(FormatTools.HCS_DOMAIN)) {
+      if (DataTools.indexOf(reader.getDomains(), FormatTools.HCS_DOMAIN) >= 0) {
         seriesCount = 1;
       }
       for (int i=0; i<seriesCount && success; i++) {
