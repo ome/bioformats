@@ -1428,6 +1428,13 @@ public class FormatReaderTest {
             continue;
           }
 
+          if (reader.getFormat().equals("BD Pathway") &&
+            (base[i].endsWith(".adf") || base[i].endsWith(".txt")) ||
+            base[i].endsWith(".roi"))
+          {
+            continue;
+          }
+
           r.setId(base[i]);
 
           String[] comp = r.getUsedFiles();
@@ -1489,6 +1496,11 @@ public class FormatReaderTest {
             r.getFormat().equals("OME-TIFF"))
           {
             r.close();
+            continue;
+          }
+
+          if (base[i].endsWith(".bmp") && reader.getFormat().equals("BD Pathway"))
+          {
             continue;
           }
 
@@ -1938,6 +1950,18 @@ public class FormatReaderTest {
               (readers[j] instanceof HitachiReader &&
               (r instanceof TiffDelegateReader || r instanceof JPEGReader ||
               r instanceof BMPReader))))
+            {
+              continue;
+            }
+
+            if (result && r instanceof BDReader && readers[j] instanceof BMPReader)
+            {
+              continue;
+            }
+
+            if (!result && readers[j] instanceof BDReader &&
+              (used[i].endsWith(".bmp") || used[i].endsWith(".adf") ||
+              used[i].endsWith(".txt") || used[i].endsWith(".roi")))
             {
               continue;
             }
