@@ -39,12 +39,11 @@ package loci.formats.itk;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Iterator;
+import java.util.Map.Entry;
 import java.util.Set;
-import java.util.Map;
 import java.util.HashMap;
 
 import loci.formats.FormatException;
@@ -54,8 +53,6 @@ import loci.formats.IFormatWriter;
 import loci.formats.ImageReader;
 import loci.formats.ImageWriter;
 import loci.formats.MetadataTools;
-import loci.formats.in.DefaultMetadataOptions;
-import loci.formats.in.MetadataLevel;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataStore;
 
@@ -77,8 +74,6 @@ import ome.xml.model.enums.EnumerationException;
  * @author Curtis Rueden
  */
 public class ITKBridgePipes {
-
-  private static final String HASH_PREFIX = "hash:";
 
   private IFormatReader reader = null;
   private IFormatWriter writer = null;
@@ -257,20 +252,20 @@ public class ITKBridgePipes {
     sendData("RGBChannelCount", String.valueOf(reader.getRGBChannelCount()));
 
     // spacing
-    // Note: ITK spacing is mm.  Bio-Formats uses um.
-    sendData("PixelsPhysicalSizeX", String.valueOf((meta.getPixelsPhysicalSizeX(0)==null? 1.0: meta.getPixelsPhysicalSizeX(0).getValue() / 1000f)));
-    sendData("PixelsPhysicalSizeY", String.valueOf((meta.getPixelsPhysicalSizeY(0)==null? 1.0: meta.getPixelsPhysicalSizeY(0).getValue() / 1000f)));
-    sendData("PixelsPhysicalSizeZ", String.valueOf((meta.getPixelsPhysicalSizeZ(0)==null? 1.0: meta.getPixelsPhysicalSizeZ(0).getValue() / 1000f)));
-    sendData("PixelsPhysicalSizeT", String.valueOf((meta.getPixelsTimeIncrement(0)==null? 1.0: meta.getPixelsTimeIncrement(0) / 1000)));
+    // Note: ITK X,Y,Z spacing is mm.  Bio-Formats uses um.
+    sendData("PixelsPhysicalSizeX", String.valueOf(((meta.getPixelsPhysicalSizeX(0)==null? 1.0: meta.getPixelsPhysicalSizeX(0).getValue()) / 1000f)));
+    sendData("PixelsPhysicalSizeY", String.valueOf(((meta.getPixelsPhysicalSizeY(0)==null? 1.0: meta.getPixelsPhysicalSizeY(0).getValue()) / 1000f)));
+    sendData("PixelsPhysicalSizeZ", String.valueOf(((meta.getPixelsPhysicalSizeZ(0)==null? 1.0: meta.getPixelsPhysicalSizeZ(0).getValue()) / 1000f)));
+    sendData("PixelsPhysicalSizeT", String.valueOf((meta.getPixelsTimeIncrement(0)==null? 1.0: meta.getPixelsTimeIncrement(0))));
     sendData("PixelsPhysicalSizeC", String.valueOf(1.0));
 
     HashMap<String, Object> metadata = new HashMap<String, Object>();
     metadata.putAll( reader.getGlobalMetadata() );
     metadata.putAll( reader.getSeriesMetadata() );
-    Set entries = metadata.entrySet();
-    Iterator it = entries.iterator();
+    Set<Entry<String, Object>> entries = metadata.entrySet();
+    Iterator<Entry<String,Object>> it = entries.iterator();
     while (it.hasNext()) {
-      Map.Entry entry = (Map.Entry) it.next();
+      Entry<String, Object> entry = it.next();
 
       String key = (String)entry.getKey();
       String value = entry.getValue().toString();
@@ -417,16 +412,13 @@ public class ITKBridgePipes {
 	  System.out.print(bytesPerPlane + "\n" + fileName + "\n" + cStart + "\n" + cCount + "\n" + tStart + "\n" + tCount + "\n" + zStart + "\n" + zCount + "\n\n");
 	  System.out.flush();
 
-	  String line;
 	  int no = 0;
 	  for(int c=cStart; c<cStart+cCount; c++) {
 		  for(int t=tStart; t<tStart+tCount; t++) {
 			  for(int z=zStart; z<zStart+zCount; z++) {
 				  
-				  line = "";
 				  int bytesRead = 0;
 
-				  String test = "";
 				  byte[] buf = new byte[bytesPerPlane]; 
 				  BufferedInputStream linein = new BufferedInputStream(System.in);
 				  
