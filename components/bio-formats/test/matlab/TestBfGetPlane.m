@@ -9,6 +9,10 @@ classdef TestBfGetPlane < TestCase
         reader
         sizeX
         sizeY
+        x
+        y
+        w
+        h
     end
     
     methods
@@ -83,5 +87,41 @@ classdef TestBfGetPlane < TestCase
             assertEqual(size(I), [self.sizeY, self.sizeX]);
         end
         
+        % Tile tests
+        function testFullTile(self)
+            self.reader.setId('sqtile-test&pixelType=int8.fake')
+            self.x = 1;
+            self.y = 1;
+            self.w = self.reader.getSizeX();
+            self.h = self.reader.getSizeY();
+            self.checkTile()
+        end
+        
+        function testSquareTile(self)
+            self.reader.setId('sqtile-test&pixelType=int8.fake')
+            self.x = 10;
+            self.y = 10;
+            self.w = 20;
+            self.h = 20;
+            self.checkTile()
+        end
+        
+        function testRectangularTile(self)
+            self.reader.setId('recttile-test&pixelType=int8.fake')
+            self.x = 20;
+            self.y = 10;
+            self.w = 40;
+            self.h = 20;
+            self.checkTile();
+        end
+        
+        function checkTile(self)
+            I = bfGetPlane(self.reader, 1);
+            I2 = bfGetPlane(self.reader, 1, self.x, self.y, self.w, self.h);
+
+            assertEqual(I2, I(self.y : self.y + self.h - 1,...
+                self.x : self.x + self.w - 1));
+        end
     end
+    
 end
