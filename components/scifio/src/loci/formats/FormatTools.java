@@ -1069,6 +1069,8 @@ public final class FormatTools {
       max = Short.MAX_VALUE;
       break;
     case INT32:
+    case FLOAT:
+    case DOUBLE:
       min = Integer.MIN_VALUE;
       max = Integer.MAX_VALUE;
       break;
@@ -1083,14 +1085,6 @@ public final class FormatTools {
     case UINT32:
       min = 0;
       max=(long) Math.pow(2, 32)-1;
-      break;
-    case FLOAT:
-      min = (long) Float.MIN_VALUE;
-      max = (long) Float.MAX_VALUE;
-      break;
-    case DOUBLE:
-      min = (long) Double.MIN_VALUE;
-      max = (long) Double.MAX_VALUE;
       break;
     default:
       throw new IllegalArgumentException("Invalid pixel type");
