@@ -45,11 +45,11 @@
   <!-- NB: for parent project -->
   <repositories>
     <repository>
-      <id>imagej.releases</id>
+      <id>loci.releases</id>
       <url>http://maven.imagej.net/content/repositories/releases</url>
     </repository>
     <repository>
-      <id>imagej.snapshots</id>
+      <id>loci.snapshots</id>
       <url>http://maven.imagej.net/content/repositories/snapshots</url>
     </repository>
   </repositories>
