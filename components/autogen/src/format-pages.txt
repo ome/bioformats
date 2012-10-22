@@ -1958,10 +1958,10 @@ extensions = .txt
 scifio = yes
 export = no
 pixelsRating = Good
-metadataRating =
-opennessRating =
-presenceRating =
-utilityRating =
+metadataRating = Poor
+opennessRating = Fair
+presenceRating = Fair
+utilityRating = Poor
 reader = TextReader.java
 notes = Reads tabular pixel data produced by a variety of software.
 

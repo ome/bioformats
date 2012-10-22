@@ -1045,10 +1045,10 @@ Supported Formats
    * - :doc:`bio-formats-format-text`
      - .txt
      - |Good|
-     - ||
-     - ||
-     - ||
-     - ||
+     - |Poor|
+     - |Fair|
+     - |Fair|
+     - |Poor|
      - |no|
      - |yes|
    * - :doc:`bio-formats-format-tiff-tagged-image-file-format`
