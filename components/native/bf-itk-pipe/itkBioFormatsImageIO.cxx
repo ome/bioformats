@@ -792,8 +792,15 @@ void BioFormatsImageIO::Write(const void * buffer )
   itkDebugMacro("File name: " << m_FileName);
   command += m_FileName;
   command += "\t";
-  itkDebugMacro("Byte Order: " << GetByteOrderAsString(m_ByteOrder) << " " << m_ByteOrder);
-  command += toString(m_ByteOrder);
+  itkDebugMacro("Byte Order: " << GetByteOrderAsString(GetByteOrder()));
+  switch(GetByteOrder()) {
+    case BigEndian:
+      command += toString(1);
+      break;
+    case LittleEndian:
+    default:
+      command += toString(0);
+  }
   command += "\t";
   itkDebugMacro("Region dimensions: " << regionDim);
   command += toString(regionDim);
