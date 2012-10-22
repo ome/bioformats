@@ -1073,6 +1073,10 @@ public class FormatReaderTest {
       reader.setSeries(i);
       config.setSeries(i);
 
+      if (reader.getImageCount() != retrieve.getPlaneCount(i)) {
+        continue;
+      }
+
       for (int c=0; c<config.getChannelCount(); c++) {
         if (config.hasExposureTime(c)) {
           Double exposureTime = config.getExposureTime(c);
@@ -1089,7 +1093,9 @@ public class FormatReaderTest {
               if (exposureTime == null || planeExposureTime == null ||
                 !exposureTime.equals(planeExposureTime))
               {
-                result(testName, false, "Series " + i + " plane " + p);
+                result(testName, false, "Series " + i + " plane " + p +
+                  " channel " + c + " (got " + planeExposureTime +
+                  ", expected " + exposureTime + ")");
               }
             }
           }
@@ -1422,6 +1428,13 @@ public class FormatReaderTest {
             continue;
           }
 
+          if (reader.getFormat().equals("BD Pathway") &&
+            (base[i].endsWith(".adf") || base[i].endsWith(".txt")) ||
+            base[i].endsWith(".roi"))
+          {
+            continue;
+          }
+
           r.setId(base[i]);
 
           String[] comp = r.getUsedFiles();
@@ -1483,6 +1496,11 @@ public class FormatReaderTest {
             r.getFormat().equals("OME-TIFF"))
           {
             r.close();
+            continue;
+          }
+
+          if (base[i].endsWith(".bmp") && reader.getFormat().equals("BD Pathway"))
+          {
             continue;
           }
 
@@ -1930,7 +1948,20 @@ public class FormatReaderTest {
 
             if (result && ((r instanceof HitachiReader) ||
               (readers[j] instanceof HitachiReader &&
-              r instanceof TiffDelegateReader)))
+              (r instanceof TiffDelegateReader || r instanceof JPEGReader ||
+              r instanceof BMPReader))))
+            {
+              continue;
+            }
+
+            if (result && r instanceof BDReader && readers[j] instanceof BMPReader)
+            {
+              continue;
+            }
+
+            if (!result && readers[j] instanceof BDReader &&
+              (used[i].endsWith(".bmp") || used[i].endsWith(".adf") ||
+              used[i].endsWith(".txt") || used[i].endsWith(".roi")))
             {
               continue;
             }

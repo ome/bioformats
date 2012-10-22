@@ -182,7 +182,17 @@ public class MainDialog extends ImporterDialog
 
   /** Handles toggling of mutually exclusive options. */
   public void itemStateChanged(ItemEvent e) {
-    verifyOptions(e.getSource());
+    Object src = e.getSource();
+    verifyOptions(src);
+    if (src == stackFormatChoice) {
+      if (ImporterOptions.VIEW_STANDARD.equals(e.getItem().toString())) {
+        infoPane.setText("<html><font color=\"red\">Warning!</font>"
+          + "<i>Standard ImageJ</i> is deprecated; "
+          + "please use <i>Hyperstack</i> instead.</html>");
+      } else {
+        infoPane.setText("<html>" + infoTable.get(src));
+      }
+    }
   }
 
   // -- MouseListener methods --

@@ -291,7 +291,7 @@ public class CellomicsReader extends FormatReader {
           MetadataTools.createLSID("WellSample", 0, wellIndex, fieldIndex);
         store.setWellSampleID(wellSampleID, 0, wellIndex, fieldIndex);
         store.setWellSampleIndex(
-          new NonNegativeInteger(fieldIndex), 0, wellIndex, fieldIndex);
+          new NonNegativeInteger(i), 0, wellIndex, fieldIndex);
 
         store.setWellSampleImageRef(imageID, 0, wellIndex, fieldIndex);
       }
