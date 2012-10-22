@@ -210,36 +210,7 @@ public class ITKBridgePipes {
     // component type
     // set ITK component type
     int pixelType = reader.getPixelType();
-    int itkComponentType;
-    switch (pixelType) {
-      case FormatTools.UINT8:
-        itkComponentType = 1;
-        break;
-      case FormatTools.INT8:
-        itkComponentType = 2;
-        break;
-      case FormatTools.UINT16:
-        itkComponentType = 3;
-        break;
-      case FormatTools.INT16:
-        itkComponentType = 4;
-        break;
-      case FormatTools.UINT32:
-        itkComponentType = 5;
-        break;
-      case FormatTools.INT32:
-        itkComponentType = 6;
-        break;
-      case FormatTools.FLOAT:
-        itkComponentType = 9;
-        break;
-      case FormatTools.DOUBLE:
-        itkComponentType = 10;
-        break;
-      default:
-        itkComponentType = 0;
-    }
-    sendData("PixelType", String.valueOf(itkComponentType));
+    sendData("PixelType", String.valueOf(pixelType));
 
     // x, y, z, t, c
     sendData("SizeX", String.valueOf(reader.getSizeX()));
