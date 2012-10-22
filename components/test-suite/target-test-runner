@@ -59,6 +59,7 @@ Runs a test on a given set of targets.
 Options:
   -f            Reads targets from a file ("-" reads from STDIN)
   -t            Number of parallel threads for TestNG to use (default 2)
+  -m            Memory-map files whenever possible
   --hudson      Prepares the TestNG XML for use by Hudson
 
 Examples:
@@ -68,7 +69,7 @@ Examples:
 Report bugs to ome-devel@lists.openmicroscopy.org.uk""" % (error, cmd, cmd, cmd)
     sys.exit(2)
 
-def create_testng_xml_file(test_class, targets, revision, hudson, thread_count):
+def create_testng_xml_file(test_class, targets, revision, hudson, thread_count, in_memory):
     """Creates a temporary file with TestNG XML content for each target."""
     root = Element("suite")
     root.set("name", "targets")
@@ -90,6 +91,11 @@ def create_testng_xml_file(test_class, targets, revision, hudson, thread_count):
         parameter = Element("parameter")
         parameter.set("name", "id")
         parameter.set("value", target)
+
+        inMemoryParameter = Element("parameter")
+        inMemoryParameter.set("name", "inMemory")
+        inMemoryParameter.set("value", str(in_memory))
+
         # Add our exclusion group to the test for this target
         groups = Element("groups")
         run = Element("run")
@@ -102,6 +108,7 @@ def create_testng_xml_file(test_class, targets, revision, hudson, thread_count):
         test.set("name", test_name)
         test.set("annotations", "JDK")
         test.append(parameter)
+        test.append(inMemoryParameter)
         test.append(groups)
         test.append(klasses)
         root.append(test)
@@ -117,7 +124,7 @@ def create_testng_xml_file(test_class, targets, revision, hudson, thread_count):
 
 if __name__ == '__main__':
     try:
-        options, args = getopt(sys.argv[1:], "f:t:", ['hudson'])
+        options, args = getopt(sys.argv[1:], "mf:t:", ['hudson'])
     except GetoptError, (msg, opt):
         usage(msg)
 
@@ -125,6 +132,7 @@ if __name__ == '__main__':
     hudson = False
     thread_count = 1
     test_class = None
+    in_memory = False
     for option, argument in options:
         if option == "-f":
             if argument == "-":
@@ -136,6 +144,8 @@ if __name__ == '__main__':
             thread_count = int(argument)
         if option == "--hudson":
             hudson = True
+        if option == "-m":
+            in_memory = True
 
     try:
         test_class = args[0]
@@ -164,7 +174,7 @@ if __name__ == '__main__':
         pass
 
     xml_file = create_testng_xml_file(test_class, targets, revision,
-                                      hudson, thread_count)
+                                      hudson, thread_count, in_memory)
     l4j_props = 'log4j-target-test-runner.properties'
     l4j_props = os.path.join(os.path.dirname(__file__), l4j_props)
     l4j_props = os.path.abspath(l4j_props)
