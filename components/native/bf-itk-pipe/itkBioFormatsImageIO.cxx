@@ -587,8 +587,8 @@ void BioFormatsImageIO::ReadImageInformation()
     {
     itkExceptionMacro("Unknown pixel type: "<< i);
     }
-  itkDebugMacro("Setting PixelType: " << i);
-  SetComponentType( (itk::ImageIOBase::IOComponentType)i );
+  itkDebugMacro("Setting ComponentType: " << i);
+  SetComponentType( bfToTIKComponentType(i) );
 
   // x, y, z, t, c
   i = GetTypedMetaData<long>(dict, "SizeX");
