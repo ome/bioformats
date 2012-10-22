@@ -48,6 +48,7 @@
 #define __itkBioFormatsImageIO_h
 
 // ITK includes
+#include "itkImageIOBase.h"
 #include "itkStreamingImageIOBase.h"
 #include "itkBioFormatsIOWin32Header.h"
 #include <sstream>
@@ -103,6 +104,8 @@ protected:
   virtual SizeType GetHeaderSize() const { return 0; }
 
 private:
+  typedef itk::ImageIOBase::IOComponentType ITKComponent;
+
   char ** toCArray( std::vector< std::string > & args )
   {
     char **argv = new char *[args.size() + 1];
@@ -114,7 +117,53 @@ private:
     argv[args.size()] = NULL;
     return argv;
   }
-  
+
+  ITKComponent bfToTIKComponentType( int pixelType ) {
+    switch ( pixelType ) {
+      case 0:
+        return CHAR;
+      case 1:
+        return UCHAR;
+      case 2:
+        return INT;
+      case 3:
+        return UINT;
+      case 4:
+        return LONG;
+      case 5:
+         return ULONG;
+      case 6:
+        return FLOAT;
+      default:
+        return DOUBLE;
+    }
+  }
+
+  int itkToBFPixelType( ITKComponent cmp )
+  {
+    switch ( cmp )
+    {
+    case CHAR:
+      return 0;
+    case UCHAR:
+      return 1;
+    case SHORT:
+    case INT:
+      return 2;
+    case USHORT:
+    case UINT:
+      return 3;
+    case LONG:
+      return 4;
+    case ULONG:
+      return 5;
+    case FLOAT:
+      return 6;
+    default:
+      return 7;
+    }
+  }
+
   std::vector< std::string >   m_Args;
   char **                      m_Argv;
   itksysProcess_Pipe_Handle    m_Pipe[2];
