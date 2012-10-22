@@ -1387,6 +1387,11 @@ public class FormatReaderTest {
           /*config.noStitching() ? new ImageReader() :*/ new FileStitcher();
 
         int maxFiles = (int) Math.min(base.length, 100);
+
+        if (DataTools.indexOf(reader.getDomains(), FormatTools.HCS_DOMAIN) >= 0) {
+          maxFiles = (int) Math.min(maxFiles, 10);
+        }
+
         for (int i=0; i<maxFiles && success; i++) {
           // .xlog files in InCell 1000/2000 files may belong to more
           // than one dataset
