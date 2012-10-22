@@ -135,11 +135,11 @@ including the Download from OME and Upload to OME plugins.</projectName>
   <repositories>
     <repository>
       <id>loci.releases</id>
-      <url>http://dev.loci.wisc.edu/maven2/releases</url>
+      <url>http://maven.imagej.net/content/repositories/releases</url>
     </repository>
     <repository>
       <id>loci.snapshots</id>
-      <url>http://dev.loci.wisc.edu/maven2/snapshots</url>
+      <url>http://maven.imagej.net/content/repositories/snapshots</url>
     </repository>
   </repositories>
 
