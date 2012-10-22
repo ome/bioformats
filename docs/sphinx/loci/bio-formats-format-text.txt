@@ -39,13 +39,13 @@ Ratings
 
 Pixels: |Good|
 
-Metadata: ||
+Metadata: |Poor|
 
-Openness: ||
+Openness: |Fair|
 
-Presence: ||
+Presence: |Fair|
 
-Utility: ||
+Utility: |Poor|
 
 Additional Information
 ----------------------
