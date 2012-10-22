@@ -2124,7 +2124,7 @@ public class FormatReaderTest {
     LOGGER.info("Initializing {}: ", id);
     try {
       boolean reallyInMemory = false;
-      if (inMemory) {
+      if (inMemory && reader.isSingleFile(id)) {
         HashMap<String, Object> idMap = Location.getIdMap();
         idMap.clear();
         Location.setIdMap(idMap);
