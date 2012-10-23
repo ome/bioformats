@@ -1,4 +1,4 @@
-function I = bfGetPlane(r, iPlane)
+function I = bfGetPlane(r, iPlane, varargin)
 % Get the plane data from a dataset reader using bioformats tools
 % 
 % SYNOPSIS I = bfGetPlane(r, iPlane)
@@ -7,6 +7,18 @@ function I = bfGetPlane(r, iPlane)
 %    r - the reader object (e.g. the output bfGetReader)
 %
 %    iPlane - a scalar giving the index of the plane to be retrieved.
+%
+%    x - (Optional) A scalar giving the x-coordinate of the tile origin.
+%    Default: 1
+%
+%    y - (Optional) A scalar giving the y-coordinate of the tile origin.
+%    Default: 1
+%
+%    w - (Optional) A scalar giving the width of the tile. 
+%    Default: r.getSizeX()
+%
+%    h - (Optional) A scalar giving the height of the tile.
+%    Default: r.getSizeY()
 %
 % Output
 %
@@ -18,15 +30,22 @@ function I = bfGetPlane(r, iPlane)
 ip = inputParser;
 ip.addRequired('r', @(x) isa(x, 'loci.formats.ReaderWrapper'));
 ip.addRequired('iPlane', @isscalar);
-ip.parse(r, iPlane);
+
+% Define optional arguments to retrieve tile.
+% No check is perform on this argument as they should already be checked in
+% openBytes()
+ip.addOptional('x', 1, @isscalar);
+ip.addOptional('y', 1, @isscalar);
+ip.addOptional('w', r.getSizeX(), @isscalar);
+ip.addOptional('h', r.getSizeY(), @isscalar);
+ip.parse(r, iPlane, varargin{:});
 
 % check MATLAB version, since typecast function requires MATLAB 7.1+
 canTypecast = versionCheck(version, 7, 1);
 bioFormatsVersion = char(loci.formats.FormatTools.VERSION);
 isBioFormatsTrunk = versionCheck(bioFormatsVersion, 5, 0);
 
-width = r.getSizeX();
-height = r.getSizeY();
+% Get pixel type
 pixelType = r.getPixelType();
 bpp = loci.formats.FormatTools.getBytesPerPixel(pixelType);
 fp = loci.formats.FormatTools.isFloatingPoint(pixelType);
@@ -34,7 +53,8 @@ sgn = loci.formats.FormatTools.isSigned(pixelType);
 bppMax = power(2, bpp * 8);
 little = r.isLittleEndian();
 
-plane = r.openBytes(iPlane - 1);
+plane = r.openBytes(iPlane - 1, ip.Results.x - 1, ip.Results.y - 1, ...
+    ip.Results.w, ip.Results.h);
     
 % convert byte array to MATLAB image
 if isBioFormatsTrunk && (sgn || ~canTypecast)
@@ -91,7 +111,7 @@ end
 
 if isvector(arr)
     % convert results from vector to matrix
-    shape = [width height];
+    shape = [ip.Results.w ip.Results.h];
     I = reshape(arr, shape)';
 end
 
