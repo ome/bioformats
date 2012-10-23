@@ -39,12 +39,11 @@ it within ImageJ and FIJI:
     :maxdepth: 1
     :titlesonly:
 
-    bio-formats-bio-formats-features
-    bio-formats-installing-bio-formats-imagej
-    bio-formats-using-bio-formats-load-images
-    bio-formats-managing-memory-using-bio-formats
-    bio-formats-using-bio-formats-load-images
-    bio-formats-bug-reporting
+    features
+    installing-bf-imagej
+    load-images
+    managing-memory
+    bug-reporting
 
 
 
@@ -67,7 +66,7 @@ Libraries and Scripting
     bio-formats-i3dcore
     bio-formats-imglib
     bio-formats-itk
-    bio-formats-qu-matlab
+    qu-matlab
     bio-formats-subimager
 
 
@@ -80,8 +79,8 @@ Numerical Data Processing
 
     bio-formats-idl
     bio-formats-knime
-    bio-formats-matlab
-    bio-formats-visad
+    matlab
+    visad
 
 Visualization and analysis
 --------------------------
@@ -99,14 +98,14 @@ Visualization and analysis
     bio-formats-graphic-converter
     bio-formats-icy
     bio-formats-imagej
-    bio-formats-upgrading-bio-formats-importer-imagej-latest-trunk-build
+    upgrading-importer-imagej
     bio-formats-iqm
     bio-formats-jar2lib
-    bio-formats-mipav
-    bio-formats-macnification
-    bio-formats-v3d
-    bio-formats-visbio
-    bio-formats-xuvtools
+    mipav
+    macnification
+    v3d
+    visbio
+    xuvtools
 
 Image Servers
 -------------
@@ -116,8 +115,8 @@ Image Servers
     :titlesonly:
 
     bio-formats-bisque
-    bio-formats-ome-server
-    bio-formats-omero
+    ome-server
+    omero
 
 SCIFIO
 ======
@@ -126,7 +125,7 @@ SCIFIO
     :maxdepth: 1
     :titlesonly:
 
-    software-scifio
+    scifio
 
 For information about what extensions to choose to import files, see
 

@@ -17,7 +17,7 @@ particularly into the OME-TIFF_file format.
  
     loci/bio-formats-about
     loci/bio-formats-formats
-    loci/bio-formats-users
+    users/bio-formats-user-info
     loci/bio-formats-developer-links
 
 
