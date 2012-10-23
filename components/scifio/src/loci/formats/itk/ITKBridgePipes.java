@@ -366,8 +366,10 @@ public class ITKBridgePipes {
     meta.setPixelsTimeIncrement(new Double(pSizeT), 0);
 
 
-	  meta.setChannelID("Channel:0:0", 0, 0);
-	  meta.setChannelSamplesPerPixel(new PositiveInteger(new Integer(rgbCCount)), 0, 0);
+    for(int i = 0; i < rgbCCount; i++) {
+      meta.setChannelID("Channel:0:" + i, 0, i);
+      meta.setChannelSamplesPerPixel(new PositiveInteger(new Integer(1)), 0, i);
+    }
 	  
 	  writer = new ImageWriter();
 	  writer.setMetadataRetrieve(meta);
