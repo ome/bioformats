@@ -251,7 +251,11 @@ public class CellomicsReader extends FormatReader {
     int realRows = wellRows;
     int realCols = wellColumns;
 
-    if (realRows <= 8 && realCols <= 12) {
+    if (files.length == 1) {
+      realRows = 1;
+      realCols = 1;
+    }
+    else if (realRows <= 8 && realCols <= 12) {
       realRows = 8;
       realCols = 12;
     }
