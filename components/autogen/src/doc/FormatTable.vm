@@ -1,11 +1,11 @@
 Supported Formats
 -----------------
 
-.. tabularcolumns:: |p{6cm}|p{3.75cm}|p{.75cm}|p{.75cm}|p{.75cm}|p{.75cm}|p{.75cm}|p{.75cm}|p{.75cm}|
+.. tabularcolumns:: |p{3cm}|p{2cm}|c|c|c|c|c|c|c|
 
 .. list-table::
    :header-rows: 1
-   :widths: 40, 25, 5, 5, 5, 5, 5, 5, 5
+   :widths: 30, 20, 10, 10, 10, 10, 10, 10, 10
 
    *
      - Format

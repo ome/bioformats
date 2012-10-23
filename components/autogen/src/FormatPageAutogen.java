@@ -28,6 +28,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Hashtable;
 
@@ -153,8 +155,18 @@ public class FormatPageAutogen {
       table.put("pagename", getPageName(table.get(IniTable.HEADER_KEY)));
     }
 
-    context.put("formats", data);
-    context.put("count", data.size());
+    IniTable[] sortedTable = data.toArray(new IniTable[data.size()]);
+    Arrays.sort(sortedTable, new Comparator<IniTable>() {
+      public int compare(IniTable t1, IniTable t2) {
+        String page1 = t1.get("pagename");
+        String page2 = t2.get("pagename");
+
+        return page1.compareTo(page2);
+      }
+    });
+
+    context.put("formats", sortedTable);
+    context.put("count", sortedTable.length);
 
     VelocityTools.processTemplate(engine, context, TABLE_TEMPLATE,
       "../../docs/sphinx/loci/bio-formats-formats.txt");
