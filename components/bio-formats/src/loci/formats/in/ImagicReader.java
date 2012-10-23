@@ -28,6 +28,7 @@ package loci.formats.in;
 import java.io.IOException;
 
 import loci.common.DateTools;
+import loci.common.Location;
 import loci.common.RandomAccessInputStream;
 import loci.formats.FormatException;
 import loci.formats.FormatReader;
@@ -47,18 +48,57 @@ public class ImagicReader extends FormatReader {
 
   // -- Fields --
 
+  private String pixels;
   private RandomAccessInputStream pixelsFile;
 
   // -- Constructor --
 
   /** Constructs a new IMAGIC reader. */
   public ImagicReader() {
-    super("IMAGIC", "hed");
+    super("IMAGIC", new String[] {"hed", "img"});
     domains = new String[] {FormatTools.EM_DOMAIN};
     datasetDescription = "One .hed file plus one similarly-named .img file";
+    suffixSufficient = false;
   }
 
   // -- IFormatReader API methods --
+
+  /* @see loci.formats.IFormatReader#isThisType(String, boolean) */
+  public boolean isThisType(String name, boolean open) {
+    if (checkSuffix(name, "hed")) {
+      return true;
+    }
+
+    if (!checkSuffix(name, "img") || !open) {
+      return false;
+    }
+
+    int lastDot = name.lastIndexOf(".");
+    if (lastDot < 0) {
+      return false;
+    }
+    String headerName = name.substring(0, lastDot);
+    return new Location(headerName + ".hed").exists();
+  }
+
+  /* @see loci.formats.IFormatReder#isSinglefile(String) */
+  public boolean isSingleFile(String id) throws FormatException, IOException {
+    return false;
+  }
+
+  /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
+  public String[] getSeriesUsedFiles(boolean noPixels) {
+    FormatTools.assertId(currentId, true, 1);
+    if (noPixels) {
+      return new String[] {currentId};
+    }
+    return new String[] {currentId, pixels};
+  }
+
+  /* @see loci.formats.IFormatReader#fileGroupOption(String) */
+  public int fileGroupOption(String id) throws FormatException, IOException {
+    return FormatTools.MUST_GROUP;
+  }
 
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
@@ -81,6 +121,7 @@ public class ImagicReader extends FormatReader {
         pixelsFile.close();
       }
       pixelsFile = null;
+      pixels = null;
     }
   }
 
@@ -88,10 +129,14 @@ public class ImagicReader extends FormatReader {
 
   /* @see loci.formats.FormatReader#initFile(String) */
   protected void initFile(String id) throws FormatException, IOException {
+    if (!checkSuffix(id, "hed")) {
+      id = id.substring(0, id.lastIndexOf(".")) + ".hed";
+    }
+
     super.initFile(id);
     in = new RandomAccessInputStream(id);
 
-    String pixels = id.substring(0, id.lastIndexOf(".")) + ".img";
+    pixels = id.substring(0, id.lastIndexOf(".")) + ".img";
     pixelsFile = new RandomAccessInputStream(pixels);
 
     core[0].littleEndian = true;
