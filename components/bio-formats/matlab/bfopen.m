@@ -1,10 +1,29 @@
-function [result] = bfopen(id)
-% A script for opening microscopy images in MATLAB using Bio-Formats.
+function [result] = bfopen(id, varargin)
+% Open microscopy images using Bio-Formats.
 %
-% The function returns a list of image series; i.e., a cell array of cell
-% arrays of (matrix, label) pairs, with each matrix representing a single
-% image plane, and each inner list of matrices representing an image
-% series. See below for examples of usage.
+% SYNOPSIS r = bfopen(id)
+%          r = bfopen(id, x, y, w, h)
+%
+% Input
+%    r - the reader object (e.g. the output bfGetReader)
+%
+%    x - (Optional) A scalar giving the x-origin of the tile.
+%    Default: 1
+%
+%    y - (Optional) A scalar giving the y-origin of the tile.
+%    Default: 1
+%
+%    w - (Optional) A scalar giving the width of the tile. 
+%    Set to the width of the plane by default.
+%
+%    h - (Optional) A scalar giving the height of the tile.
+%    Set to the height of the plane by default.
+%
+% Output
+%
+%    result - a cell array of cell arrays of (matrix, label) pairs, 
+%    with each matrix representing a single image plane, and each inner 
+%    list of matrices representing an image series.
 %
 % Portions of this code were adapted from:
 % http://www.mathworks.com/support/solutions/en/data/1-2WPAYR/
@@ -72,6 +91,19 @@ loci.common.DebugTools.enableLogging('INFO');
 % Get the channel filler
 r = bfGetReader(id, stitchFiles);
 
+% Test plane size
+if nargin >=4
+    planeSize = loci.formats.FormatTools.getPlaneSize(r, varargin{3}, varargin{4});
+else
+    planeSize = loci.formats.FormatTools.getPlaneSize(r);
+end
+
+if planeSize/(1024)^3 >= 2,
+    error(['Image plane too large. Only 2GB of data can be extracted '...
+        'at one time. You can workaround the problem by opening '...
+        'the plane in tiles.']);
+end
+
 numSeries = r.getSeriesCount();
 result = cell(numSeries, 2);
 for s = 1:numSeries
@@ -88,7 +120,7 @@ for s = 1:numSeries
             fprintf('\n    ');
         end
         fprintf('.');
-        arr = bfGetPlane(r, i);
+        arr = bfGetPlane(r, i, varargin{:});
 
         % retrieve color map data
         if bpp == 1
