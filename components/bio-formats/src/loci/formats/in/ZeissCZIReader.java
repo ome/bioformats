@@ -1591,19 +1591,30 @@ public class ZeissCZIReader extends FormatReader {
   {
     String name = root.getNodeName();
     nameStack.push(name);
+
+    StringBuffer key = new StringBuffer();
+    for (String k : nameStack) {
+      key.append(k);
+      key.append(" ");
+    }
+
     if (root.getChildNodes().getLength() == 1) {
       String value = root.getTextContent();
-      StringBuffer key = new StringBuffer();
-      for (String k : nameStack) {
-        key.append(k);
-        key.append(" ");
-      }
       if (value != null && key.length() > 0) {
         Integer i = indexes.get(key.toString());
         String storedKey = key.toString() + (i == null ? 0 : i);
         indexes.put(key.toString(), i == null ? 1 : i + 1);
         addGlobalMeta(storedKey, value);
       }
+    }
+    NamedNodeMap attributes = root.getAttributes();
+    for (int i=0; i<attributes.getLength(); i++) {
+      Node attr = attributes.item(i);
+
+      String attrName = attr.getNodeName();
+      String attrValue = attr.getNodeValue();
+
+      addGlobalMeta(key + attrName, attrValue);
     }
 
     NodeList children = root.getChildNodes();
