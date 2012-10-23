@@ -1,6 +1,46 @@
 Supported Formats
 -----------------
 
+.. tabularcolumns:: |p{6cm}|p{3.75cm}|p{.75cm}|p{.75cm}|p{.75cm}|p{.75cm}|p{.75cm}|p{.75cm}|p{.75cm}|
+
+.. list-table::
+   :header-rows: 1
+   :widths: 40, 25, 5, 5, 5, 5, 5, 5, 5
+
+   *
+     - Format
+     - Extensions
+     - :term:`Pixels`
+     - :term:`Metadata`
+     - :term:`Openness`
+     - :term:`Presence`
+     - :term:`Utility`
+     - :term:`Export`
+     - :term:`SCIFIO`
+
+#foreach ($format in $formats)
+#set ($pagename = $format.get("pagename"))
+#set ($extensions = $format.get("extensions"))
+#set ($pixels = $format.get("pixelsRating"))
+#set ($metadata = $format.get("metadataRating"))
+#set ($openness = $format.get("opennessRating"))
+#set ($presence = $format.get("presenceRating"))
+#set ($utility = $format.get("utilityRating"))
+#set ($export = $format.get("export"))
+#set ($scifio = $format.get("scifio"))
+   * - :doc:`$pagename`
+     - $extensions
+     - |$pixels|
+     - |$metadata|
+     - |$openness|
+     - |$presence|
+     - |$utility|
+     - |$export|
+     - |$scifio|
+#end
+
+Bio-Formats currently supports **$count** formats
+
 .. glossary::
     Pixels
         Our estimation of Bio-Formats' ability to reliably extract complete 
@@ -43,47 +83,6 @@ Supported Formats
         :doc:`SCIFIO <software-scifio>` core library (See the license section 
         on the :doc:`Bio-Formats documentation </index>` page for why this 
         matters).
-
-.. tabularcolumns:: |p{6cm}|p{3.75cm}|p{.75cm}|p{.75cm}|p{.75cm}|p{.75cm}|p{.75cm}|p{.75cm}|p{.75cm}|
-
-.. list-table::
-   :header-rows: 1
-   :widths: 40, 25, 5, 5, 5, 5, 5, 5, 5
-
-   *
-     - Format
-     - Extensions
-     - :term:`Pixels`
-     - :term:`Metadata`
-     - :term:`Openness`
-     - :term:`Presence`
-     - :term:`Utility`
-     - :term:`Export`
-     - :term:`SCIFIO`
-
-#foreach ($format in $formats)
-#set ($pagename = $format.get("pagename"))
-#set ($extensions = $format.get("extensions"))
-#set ($pixels = $format.get("pixelsRating"))
-#set ($metadata = $format.get("metadataRating"))
-#set ($openness = $format.get("opennessRating"))
-#set ($presence = $format.get("presenceRating"))
-#set ($utility = $format.get("utilityRating"))
-#set ($export = $format.get("export"))
-#set ($scifio = $format.get("scifio"))
-   * - :doc:`$pagename`
-     - $extensions
-     - |$pixels|
-     - |$metadata|
-     - |$openness|
-     - |$presence|
-     - |$utility|
-     - |$export|
-     - |$scifio|
-#end
-
-Bio-Formats currently supports **$count** formats
-
 
 .. toctree::
     :maxdepth: 1
