@@ -339,7 +339,7 @@ public class ITKBridgePipes {
 	  meta.createRoot();
 	  meta.setImageID("Image:0", 0);
 	  meta.setPixelsID("Pixels:0", 0);
-	  meta.setPixelsDimensionOrder(DimensionOrder.XYZCT, 0);
+	  meta.setPixelsDimensionOrder(DimensionOrder.XYZTC, 0);
 
 	  try {
 		  meta.setPixelsType(PixelType.fromString(FormatTools.getPixelTypeString(pixelType)), 0);
