@@ -476,9 +476,8 @@ public class AmiraReader extends FormatReader {
       if (maxOffsetIndex < no) {
         in.seek(offsets[maxOffsetIndex]);
         while (maxOffsetIndex < no) {
-          currentNo = no;
-          read(buf, planeSize);
-          offsets[++maxOffsetIndex] = lastCodeOffset;
+          read(currentNo, buf);
+          currentNo++;
         }
       }
       else {

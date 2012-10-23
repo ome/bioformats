@@ -544,11 +544,17 @@ public class MinimalTiffReader extends FormatReader {
       if (!hasFlattenedResolutions()) {
         newCore[0].resolutionCount = newCore.length;
       }
+
+      newCore[0].sizeT = 1;
+      newCore[0].imageCount = 1;
+
       int i = 1;
       for (IFD ifd : ifds) {
         newCore[i] = new CoreMetadata(this, 0);
         newCore[i].sizeX = (int) ifd.getImageWidth();
         newCore[i].sizeY = (int) ifd.getImageLength();
+        newCore[i].sizeT = 1;
+        newCore[i].imageCount = 1;
         newCore[i].thumbnail = true;
         newCore[i].resolutionCount = 1;
         i++;
