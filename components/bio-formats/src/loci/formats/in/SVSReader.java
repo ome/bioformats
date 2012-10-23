@@ -91,6 +91,9 @@ public class SVSReader extends BaseTiffReader {
           return false;
         }
         IFD ifd = tiffParser.getFirstIFD();
+        if (ifd == null) {
+          return false;
+        }
         Object description = ifd.get(IFD.IMAGE_DESCRIPTION);
         if (description != null) {
           String imageDescription = null;

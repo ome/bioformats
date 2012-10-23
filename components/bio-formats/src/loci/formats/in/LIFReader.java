@@ -810,9 +810,6 @@ public class LIFReader extends FormatReader {
               exWaves[i][c]);
           }
         }
-        if (expTimes[i] != null) {
-          store.setPlaneExposureTime(expTimes[i][c], i, c);
-        }
 
         Color channelColor = getChannelColor(realChannel[i][c]);
         store.setChannelColor(channelColor, i, c);
@@ -860,6 +857,11 @@ public class LIFReader extends FormatReader {
             timestamp = timestamps[i][0];
           }
           store.setPlaneDeltaT(timestamp, i, image);
+        }
+
+        if (expTimes[i] != null) {
+          int c = getZCTCoords(image)[1];
+          store.setPlaneExposureTime(expTimes[i][c], i, image);
         }
       }
 

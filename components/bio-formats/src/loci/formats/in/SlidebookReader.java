@@ -31,6 +31,7 @@ import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import loci.common.Constants;
 import loci.common.DataTools;
 import loci.common.RandomAccessInputStream;
 import loci.formats.CoreMetadata;
@@ -1352,7 +1353,7 @@ public class SlidebookReader extends FormatReader {
    * See also: http://en.wikipedia.org/wiki/(%CE%B5,_%CE%B4)-definition_of_limit
    */
   private boolean isGreaterThanEpsilon(double v) {
-    return v - 0.000001 > 0;
+    return v - Constants.EPSILON > 0;
   }
 
 }
