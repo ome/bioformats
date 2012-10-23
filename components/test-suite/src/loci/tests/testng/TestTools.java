@@ -404,7 +404,8 @@ public class TestTools {
       stream.close();
       FileInputStream fis = new FileInputStream(id);
       FileChannel channel = fis.getChannel();
-      ByteBuffer buf = channel.map(FileChannel.MapMode.READ_ONLY, 0, length);
+      ByteBuffer buf =
+        channel.map(FileChannel.MapMode.READ_ONLY, 0, channel.size());
       ByteArrayHandle handle = new ByteArrayHandle(buf);
       Location.mapFile(id, handle);
       fis.close();
