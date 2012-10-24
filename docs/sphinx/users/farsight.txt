@@ -4,7 +4,7 @@ FARSIGHT
 `FARSIGHT <http://www.farsight-toolkit.org/wiki/Main_Page>`_ is a
 collection of modules for image analysis created by LOCI's collaborators
 at the `Rensselaer Polytechnic Institute <http://www.rpi.edu/>`_. These
-open-source modules are built on the :doc:`bio-formats-itk` libraries and thus
+open-source modules are built on the :doc:`itk` libraries and thus
 can take advantage of LOCI's BF-ITK plugin for processing normally unsupported
 image types.
 
@@ -30,7 +30,7 @@ these projects:
 -  `This
    tutorial <http://www.farsight-toolkit.org/wiki/FARSIGHT_HowToBuild>`_
    will guide you through building FARSIGHT exclusively. Once FARSIGHT
-   is built, you can follow the instructions on our :doc:`bio-formats-itk`
+   is built, you can follow the instructions on our :doc:`itk`
    page to download and install a pre-built version of BFTIK.
 -  `The tutorials on this
    page <http://www.farsight-toolkit.org/wiki/FARSIGHT_Tutorials/Building_Software/Bio-Formats>`_

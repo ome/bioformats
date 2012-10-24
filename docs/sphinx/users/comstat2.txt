@@ -6,7 +6,7 @@ of biofilm images in 3D. It is the Master's project of `Martin
 Vorregaard <http://www.comstat.dk/>`_.
 
 Comstat2 uses the :doc:`Bio-Formats Importer plugin for
-ImageJ <bio-formats-imagej>` to read files in TIFF and Leica LIF
+ImageJ <imagej>` to read files in TIFF and Leica LIF
 formats.
 
 .. seealso::

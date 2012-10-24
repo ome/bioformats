@@ -44,7 +44,7 @@ Upgrading
 To upgrade, just overwrite the old **loci\_tools.jar** with the :doc:`latest
 one <bio-formats-downloads>`.
 Step-by-step upgrade instructions for Windows are available
-:doc:`here <bio-formats-upgrading-bio-formats-importer-imagej-latest-trunk-build>`.
+:doc:`here <upgrading-importer-imagej>`.
 You may want to download the latest version of ImageJ first, to take
 advantage of new features and bugfixes.
 As of the 4.0.0 release, you can also upgrade the Bio-Formats plugin
