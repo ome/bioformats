@@ -25,7 +25,7 @@ SCIFIO will define the core components of flexible image format support.
 OME-XML will become one type of metadata, which Bio-Formats will still
 use to standardize the metadata of a wide variety of image formats. Thus
 Bio-Formats will become an extension to SCIFIO, but the underlying
-structure wlil allow any number of such extensions to coexist. Dynamic
+structure will allow any number of such extensions to coexist. Dynamic
 discovery mechanisms will allow these modules to be used as needed, as
 long as the underlying program incorporates the SCIFIO core. Further,
 the SCIFIO core will include support only for the open source formats

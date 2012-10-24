@@ -15,9 +15,9 @@ particularly into the OME-TIFF_file format.
     :maxdepth: 1
     :titlesonly:
  
-    loci/bio-formats-about
+    users/bio-formats-about
     loci/bio-formats-formats
-    users/bio-formats-user-info
+    users/user-info
     loci/bio-formats-developer-links
 
 

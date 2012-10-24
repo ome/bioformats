@@ -5,7 +5,7 @@ When you select Bio-Formats under the Plugin menu, you will see the
 following features:
 
 The **Bio-Formats Importer** is a plugin for :doc:`loading
-images <bio-formats-using-bio-formats-load-images>` into ImageJ or
+images <load-images>` into ImageJ or
 FIJI. It can over 100 of proprietary life sciences formats and
 standardizes their acquisition metadata into the common
 :doc:`OME data model <bio-formats-about>`. It will also extract and set basic
@@ -26,7 +26,7 @@ The **Bio-Formats Windowless Importer** is a version of the Bio-Formats
 Importer plugin that runs with the last used settings to avoid any
 additional dialogs beyond the file chooser. If you always use the same
 import settings, you may wish to use the windowless importer to save
-time (Learn more :ref:`here <using-bio-formats-load-images#windowlessly>`).
+time (Learn more :ref:`here <load-images#windowlessly>`).
 
 The **Bio-Formats Macro Extensions** plugin prints out the set of
 commands that can be used to create macro extensions.  The commands and
@@ -51,4 +51,4 @@ Importer** plugin.
 
 The **Update LOCI Plugins** command will check for LOCI Plugins updates.
 We recommend you update to the newest Trunk build as soon as you think
-you may have :doc:`discovered a bug. <bio-formats-bug-reporting>`
+you may have :doc:`discovered a bug. <bug-reporting>`
