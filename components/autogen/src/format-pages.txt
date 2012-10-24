@@ -1678,7 +1678,7 @@ reader = PerkinElmerReader.java
 notes = Other associated extensions include: .tim, .zpo, .csv, .htm, \n
 .cfg, .ano, .rec \n
 \n
-Commercial applications that support this format incldue: \n
+Commercial applications that support this format include: \n
 \n
 - `Bitplane Imaris <http://www.bitplane.com/>`_ \n
 - `Image-Pro Plus <http://www.mediacy.com/>`_ \n
@@ -2201,7 +2201,7 @@ scifio = no
 export = no
 versions = 1.0, 2.0
 software = `Zeiss Axiovision LE <http://www.zeiss.de/c12567be0045acf1/Contents-Frame/cbe917247da02a1cc1256e0000491172>`_
-weHave = a ZVI specification docuemnt (v2.0.5, from 2010 August, in PDF) \n
+weHave = a ZVI specification document (v2.0.5, from 2010 August, in PDF) \n
 an older ZVI specification document (v2.0.2, from 2006 August 23, in PDF) \n
 an older ZVI specification document (v2.0.1, from 2005 April 21, in PDF) \n
 an older ZVI specification document (v1.0.26.01.01, from 2001 January 29, in DOC) \n

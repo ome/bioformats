@@ -59,7 +59,7 @@ Notes:
 Other associated extensions include: .tim, .zpo, .csv, .htm, 
 .cfg, .ano, .rec 
 
-Commercial applications that support this format incldue: 
+Commercial applications that support this format include: 
 
 - `Bitplane Imaris <http://www.bitplane.com/>`_ 
 - `Image-Pro Plus <http://www.mediacy.com/>`_ 
