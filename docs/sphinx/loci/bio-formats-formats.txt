@@ -207,15 +207,6 @@ Supported Formats
      - |Fair|
      - |no|
      - |no|
-   * - :doc:`bio-formats-format-micro-manager`
-     - .tif, .txt, .xml
-     - |Outstanding|
-     - |Very good|
-     - |Outstanding|
-     - |Fair|
-     - |Good|
-     - |no|
-     - |yes|
    * - :doc:`bio-formats-format-cellomics`
      - .c01
      - |Very good|
@@ -279,20 +270,20 @@ Supported Formats
      - |Poor|
      - |no|
      - |no|
-   * - :doc:`bio-formats-format-fei-tiff`
-     - .tiff
-     - |Very good|
-     - |Good|
-     - |Good|
-     - |Fair|
-     - |Fair|
-     - |no|
-     - |no|
    * - :doc:`bio-formats-format-fei`
      - .img
      - |Fair|
      - |Poor|
      - |Poor|
+     - |Fair|
+     - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`bio-formats-format-fei-tiff`
+     - .tiff
+     - |Very good|
+     - |Good|
+     - |Good|
      - |Fair|
      - |Fair|
      - |no|
@@ -306,15 +297,6 @@ Supported Formats
      - |Fair|
      - |no|
      - |yes|
-   * - :doc:`bio-formats-format-gatan-digital-micrograph-2`
-     - .dm2
-     - |Good|
-     - |Fair|
-     - |Fair|
-     - |Fair|
-     - |Good|
-     - |no|
-     - |no|
    * - :doc:`bio-formats-format-gatan-digital-micrograph`
      - .dm3
      - |Very good|
@@ -322,6 +304,15 @@ Supported Formats
      - |Fair|
      - |Fair|
      - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`bio-formats-format-gatan-digital-micrograph-2`
+     - .dm2
+     - |Good|
+     - |Fair|
+     - |Fair|
+     - |Fair|
+     - |Good|
      - |no|
      - |no|
    * - :doc:`bio-formats-format-gif-graphics-interchange-format`
@@ -486,21 +477,21 @@ Supported Formats
      - |Fair|
      - |no|
      - |no|
-   * - :doc:`bio-formats-format-iplab-mac`
-     - .ipm
-     - |Very good|
-     - |Good|
-     - |Very good|
-     - |Poor|
-     - |Fair|
-     - |no|
-     - |no|
    * - :doc:`bio-formats-format-iplab`
      - .ipl
      - |Outstanding|
      - |Very good|
      - |Very good|
      - |Fair|
+     - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`bio-formats-format-iplab-mac`
+     - .ipm
+     - |Very good|
+     - |Good|
+     - |Very good|
+     - |Poor|
      - |Fair|
      - |no|
      - |no|
@@ -513,21 +504,21 @@ Supported Formats
      - |Fair|
      - |no|
      - |no|
-   * - :doc:`bio-formats-format-jpeg-2000`
-     - .jp2
-     - |Very good|
-     - |Poor|
-     - |Outstanding|
-     - |Good|
-     - |Poor|
-     - |yes|
-     - |yes|
    * - :doc:`bio-formats-format-jpeg`
      - .jpg
      - |Very good|
      - |Fair|
      - |Outstanding|
      - |Outstanding|
+     - |Poor|
+     - |yes|
+     - |yes|
+   * - :doc:`bio-formats-format-jpeg-2000`
+     - .jp2
+     - |Very good|
+     - |Poor|
+     - |Outstanding|
+     - |Good|
      - |Poor|
      - |yes|
      - |yes|
@@ -657,6 +648,15 @@ Supported Formats
      - |Poor|
      - |no|
      - |no|
+   * - :doc:`bio-formats-format-micro-manager`
+     - .tif, .txt, .xml
+     - |Outstanding|
+     - |Very good|
+     - |Outstanding|
+     - |Fair|
+     - |Good|
+     - |no|
+     - |yes|
    * - :doc:`bio-formats-format-minc-mri`
      - .mnc
      - |Very good|
@@ -954,15 +954,6 @@ Supported Formats
      - |Fair|
      - |no|
      - |no|
-   * - :doc:`bio-formats-format-simplepci-hcimage-tiff`
-     - .tiff
-     - |Very good|
-     - |Good|
-     - |Very good|
-     - |Fair|
-     - |Good|
-     - |no|
-     - |no|
    * - :doc:`bio-formats-format-simplepci-hcimage`
      - .cxd
      - |Outstanding|
@@ -972,8 +963,17 @@ Supported Formats
      - |Fair|
      - |no|
      - |no|
+   * - :doc:`bio-formats-format-simplepci-hcimage-tiff`
+     - .tiff
+     - |Very good|
+     - |Good|
+     - |Very good|
+     - |Fair|
+     - |Good|
+     - |no|
+     - |no|
    * - :doc:`bio-formats-format-sm-camera`
-     - .cxd
+     - .tiff
      - |Good|
      - |Fair|
      - |Fair|
@@ -1089,15 +1089,6 @@ Supported Formats
      - |Good|
      - |no|
      - |no|
-   * - :doc:`bio-formats-format-volocity-library-clipping`
-     - .acff
-     - |Good|
-     - |Good|
-     - |Fair|
-     - |Poor|
-     - |Poor|
-     - |no|
-     - |no|
    * - :doc:`bio-formats-format-volocity`
      - .mvd2
      - |Good|
@@ -1105,6 +1096,15 @@ Supported Formats
      - |Fair|
      - |Poor|
      - |Fair|
+     - |no|
+     - |no|
+   * - :doc:`bio-formats-format-volocity-library-clipping`
+     - .acff
+     - |Good|
+     - |Good|
+     - |Fair|
+     - |Poor|
+     - |Poor|
      - |no|
      - |no|
    * - :doc:`bio-formats-format-wa-top`

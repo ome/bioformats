@@ -28,7 +28,7 @@ Sample Datasets:
 
 We currently have:
 
-- a ZVI specification docuemnt (v2.0.5, from 2010 August, in PDF) 
+- a ZVI specification document (v2.0.5, from 2010 August, in PDF) 
 - an older ZVI specification document (v2.0.2, from 2006 August 23, in PDF) 
 - an older ZVI specification document (v2.0.1, from 2005 April 21, in PDF) 
 - an older ZVI specification document (v1.0.26.01.01, from 2001 January 29, in DOC) 

@@ -151,11 +151,13 @@ public class FormatPageAutogen {
     VelocityEngine engine = VelocityTools.createEngine();
     VelocityContext context = VelocityTools.createContext();
 
-    for (IniTable table : data) {
+    IniTable[] sortedTable = new IniTable[data.size()];
+    for (int i=0; i<data.size(); i++) {
+      IniTable table = data.get(i);
       table.put("pagename", getPageName(table.get(IniTable.HEADER_KEY)));
+      sortedTable[i] = table;
     }
 
-    IniTable[] sortedTable = data.toArray(new IniTable[data.size()]);
     Arrays.sort(sortedTable, new Comparator<IniTable>() {
       public int compare(IniTable t1, IniTable t2) {
         String page1 = t1.get("pagename");
