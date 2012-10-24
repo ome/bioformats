@@ -284,6 +284,11 @@ public class CellomicsReader extends FormatReader {
       int row = wellRow.toUpperCase().charAt(0) - 'A';
       int col = Integer.parseInt(wellColumn) - 1;
 
+      if (files.length == 1) {
+        row = 0;
+        col = 0;
+      }
+
       String imageID = MetadataTools.createLSID("Image", i);
       store.setImageID(imageID, i);
       if (row < realRows && col < realCols) {
