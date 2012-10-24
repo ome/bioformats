@@ -105,6 +105,9 @@ protected:
 
 private:
   typedef itk::ImageIOBase::IOComponentType ITKComponent;
+  typedef itk::MetaDataDictionary ITKMeta;
+
+  ITKMeta itkMeta;
 
   char ** toCArray( std::vector< std::string > & args )
   {

@@ -550,6 +550,11 @@ void BioFormatsImageIO::ReadImageInformation()
 #endif
 	
     }
+
+  // save the dicitonary
+
+  itkMeta = dict;
+
   // set the values needed by the reader
   std::string s;
   bool b;
@@ -870,6 +875,65 @@ void BioFormatsImageIO::Write(const void * buffer )
       command += toString(1);
       command += "\t";
     }
+  }
+
+  // build lut if necessary
+
+  MetaDataDictionary & dict = itkMeta;
+
+  bool useLut = GetTypedMetaData<bool>(dict, "UseLUT");
+
+  itkDebugMacro("useLUT = " << useLut);
+
+  if (useLut) {
+    command += toString(1);
+    command += "\t";
+    itkDebugMacro(""<<command);
+    int LUTBits = GetTypedMetaData<int>(dict, "LUTBits");
+    command += toString(LUTBits);
+    command += "\t";
+    itkDebugMacro(""<<command);
+    int LUTLength = GetTypedMetaData<int>(dict, "LUTLength");
+    command += toString(LUTLength);
+    command += "\t";
+    itkDebugMacro(""<<command);
+
+
+    itkDebugMacro("Found a LUT of length: " << LUTLength);
+    itkDebugMacro("Found a LUT of bits: " << LUTBits);
+
+    for(int i = 0; i < LUTLength; i++) {
+      if(LUTBits == 8) {
+        int rValue = GetTypedMetaData<int>(dict, "LUTR" + toString(i));
+        command += toString(rValue);
+        command += "\t";
+        int gValue = GetTypedMetaData<int>(dict, "LUTG" + toString(i));
+        command += toString(gValue);
+        command += "\t";
+        int bValue = GetTypedMetaData<int>(dict, "LUTB" + toString(i));
+        command += toString(bValue);
+        command += "\t";
+        itkDebugMacro("Retrieval " << i << " r,g,b values = " << rValue << "," << gValue << "," << bValue);
+      }
+      else {
+        short rValue = GetTypedMetaData<short>(dict, "LUTR" + toString(i));
+        command += toString(rValue);
+        command += "\t";
+        short gValue = GetTypedMetaData<short>(dict, "LUTG" + toString(i));
+        command += toString(gValue);
+        command += "\t";
+        short bValue = GetTypedMetaData<short>(dict, "LUTB" + toString(i));
+        command += toString(bValue);
+        command += "\t";
+        itkDebugMacro("Retrieval " << i << " r,g,b values = " << rValue << "," << gValue << "," << bValue);
+        command += "\t";
+      }
+    }
+
+  }
+  else {
+    command += toString(0);
+    command += "\t";
   }
 
   command += "\n";
