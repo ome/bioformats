@@ -1,64 +1,66 @@
 DICOM
-=====
+===============================================================================
 
-Extensions: .dcm, .dicom
+Extensions: .dcm, .dicom
 
-Developer: `National Electrical Manufacturers Association <http://www.nema.org/>`_
+Developer: `National Electrical Manufacturers Association <http://www.nema.org/>`_
+
 
 Support
 -------
 
 SCIFIO: |yes|
 
-Export: |no|
+Export: |no|
 
-Supported Metadata Fields: `DICOM Reader <http://dev.loci.wisc.edu/trac/software/wiki/DicomReader>`_
+Officially Supported Versions: $versions
 
-Freely Available Software:  `OsiriX Medical Imaging Software <http://www.osirix-viewer.com/>`_
+Supported Metadata Fields:
 
-Freely Available Software: `ezDICOM <http://www.sph.sc.edu/comd/rorden/ezdicom.html>`_
+Freely Available Software:
 
-Freely Available Software: `Chris Rorden's list of free DICOM
-readers <http://www.sph.sc.edu/comd/rorden/dicom.html#links>`_
+- `OsiriX Medical Imaging Software <http://www.osirix-viewer.com/>`_ 
+- `ezDICOM <http://www.sph.sc.edu/comd/rorden/ezdicom.html>`_ 
+- `Chris Rorden's list of free DICOM readers <http://www.sph.sc.edu/comd/rorden/dicom.html#links>`_
 
-Sample Datasets:  `MRI Chest from FreeVol-3D web
-site <http://members.tripod.com/%7Eclunis_immensus/free3d/hk-40.zip>`_
+Sample Datasets:
 
-Sample Datasets: `Medical Image Samples from Sebastien Barre's Medical Imaging
-page <http://www.barre.nom.fr/medical/samples/>`_
+- `MRI Chest from FreeVol-3D web site <http://members.tripod.com/%7Eclunis_immensus/free3d/hk-40.zip>`_ 
+- `Medical Image Samples from Sebastien Barre's Medical Imaging page <http://www.barre.nom.fr/medical/samples/>`_ 
+- `DICOM sample image sets from OsiriX web site <http://osirix-viewer.com/datasets/>`_
 
-Sample Datasets: `DICOM sample image sets from OsiriX web
-site <http://osirix-viewer.com/datasets/>`_
+We currently have:
 
-We currently have: 
+- `DICOM specification documents <http://medical.nema.org/dicom/2007/>`_ (PS 3 - 2007, from 2006 December 28, in DOC and PDF) 
+- numerous DICOM datasets
 
--  `DICOM specification
-   documents <http://medical.nema.org/dicom/2007/>`_ (PS 3 - 2007, from
-   2006 Dec 28, in DOC and PDF)
--  Numerous DICOM datasets
+We would like to have:
+
+- an official specification document
 
 Ratings
 -------
 
-Pixels: |Very Good|
+Pixels: |Very good|
 
-Metadata: |Very Good|
+Metadata: |Very good|
 
-Openness: |Very Good|
+Openness: |Very good|
 
-Presence: |Good|
+Presence: |Good|
 
-Utility: |Fair|
+Utility: |Fair|
 
 Additional Information
 ----------------------
 
-Source Code: :source:`DicomReader <components/scifio/src/loci/formats/in/DicomReader.java>`
+Source Code: :source:`DicomReader.java <components/scifio/src/loci/formats/in/DicomReader.java >`
 
-Notes: 
+Notes:
 
--  DICOM stands for "Digital Imaging and Communication in Medicine."
--  Bio-Formats supports both compressed and uncompressed DICOM.
 
-.. seealso::
-    `DICOM hompage <http://medical.nema.org/>`_
+- DICOM stands for "Digital Imaging and Communication in Medicine". 
+- Bio-Formats supports both compressed and uncompressed DICOM files. 
+
+.. seealso:: 
+  `DICOM homepage <http://medical.nema.org/>`_

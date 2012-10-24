@@ -1,36 +1,57 @@
 Hitachi S-4800
-==============
+===============================================================================
 
-Extensions: .txt, .tif, .bmp, .jpg
+Extensions: .txt, .tif, .bmp, .jpg
 
-Developer: `Hitachi
-<http://www.hitachi-hta.com/sites/default/files/technotes/Hitachi_4800_STEM.pdf>`_
+Developer: `Hitachi <http://www.hitachi-hta.com/sites/default/files/technotes/Hitachi_4800_STEM.pdf>`_
+
 
 Support
 -------
 
 SCIFIO: |no|
 
-Export: |no|
+Export: |no|
 
-We currently have: 
+Officially Supported Versions: $versions
 
--  Several Hitachi S-4800 datasets
+Supported Metadata Fields:
+
+Freely Available Software:
+
+- `NDP.view <http://www.olympusamerica.com/seg_section/seg_vm_downloads.asp>`_
+
+Sample Datasets:
+
+- `OpenSlide <http://openslide.cs.cmu.edu/download/openslide-testdata/Hamamatsu-vms/>`_
+
+We currently have:
+
+- several Hitachi S-4800 datasets
+
+We would like to have:
+
+- an official specification document 
+- more example datasets
 
 Ratings
 -------
 
-Pixels: |Very Good|
+Pixels: |Very good|
 
-Metadata: |Very Good|
+Metadata: |Very good|
 
-Openness: |Very Good|
+Openness: |Very good|
 
-Presence: |Fair|
+Presence: |Fair|
 
-Utility: |Fair|
+Utility: |Fair|
 
 Additional Information
 ----------------------
 
-Source Code: :source:`HitachiReader <components/bio-formats/src/loci/formats/in/HitachiReader.java>`
+Source Code: :source:`HitachiReader.java <components/bio-formats/src/loci/formats/in/HitachiReader.java >`
+
+Notes:
+
+

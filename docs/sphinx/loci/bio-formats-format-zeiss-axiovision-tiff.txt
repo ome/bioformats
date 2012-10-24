@@ -1,38 +1,57 @@
 Zeiss AxioVision TIFF
-=====================
+===============================================================================
 
-Extensions: .xml, .tiff
+Extensions: .xml, .tiff
 
-Developer:  `Carl Zeiss MicroImaging GmbH <http://www.zeiss.com/micro>`_
+Developer: `Carl Zeiss MicroImaging GmbH <http://www.zeiss.com/micro>`_
 
-Owner: `Carl Zeiss MicroImaging GmbH <http://www.zeiss.com/micro>`_
+Owner: `Carl Zeiss MicroImaging GmbH <http://www.zeiss.com/micro>`_
 
 Support
 -------
 
-SCIFIO: |no|
+SCIFIO: |no|
 
-Export: |no|
+Export: |no|
 
-Freely Available Software: `Zeiss ZEN Lite <http://microscopy.zeiss.com/microscopy/en_de/downloads/zen.html>`_
+Officially Supported Versions: $versions
 
-We currently have: 
+Supported Metadata Fields:
 
--  many example datasets
+Freely Available Software:
 
-We'd like to have: 
+- `Zeiss ZEN Lite <http://microscopy.zeiss.com/microscopy/en_de/downloads/zen.html>`_
 
--  an official specification document
+Sample Datasets:
+
+- `Volocity Demo <http://www.perkinelmer.com/pages/020/cellularimaging/products/volocitydemo.xhtml>`_
+
+We currently have:
+
+- many example datasets
+
+We would like to have:
+
+- an official specification document
 
 Ratings
 -------
 
-Pixels: |Very Good|
+Pixels: |Very good|
 
-Metadata: |Very Good|
+Metadata: |Very good|
 
-Openness: |Good|
+Openness: |Good|
 
-Presence: |Fair|
+Presence: |Fair|
 
-Utility: |Fair|
+Utility: |Fair|
+
+Additional Information
+----------------------
+
+Source Code: :source:`ZeissTIFFReader.java <components/bio-formats/src/loci/formats/in/ZeissTIFFReader.java >`
+
+Notes:
+
+

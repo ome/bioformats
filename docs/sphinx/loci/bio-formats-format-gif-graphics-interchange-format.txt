@@ -1,49 +1,62 @@
 GIF (Graphics Interchange Format)
-=================================
+===============================================================================
 
-Extensions: .gif
+Extensions: .gif
 
-Developer: `CompuServe <http://www.compuserve.com/>`_
+Developer: `CompuServe <http://www.compuserve.com/>`_
 
-Owner: `Unisys <http://www.unisys.com/>`_
+Owner: `Unisys <http://www.unisys.com/>`_
 
 Support
 -------
 
 SCIFIO: |yes|
 
-Export: |no|
+Export: |no|
 
-Supported Metadata Fields: `GIF Reader <http://dev.loci.wisc.edu/trac/software/wiki/GIFReader>`_
+Officially Supported Versions: $versions
 
-Freely Available Software: `Animated GIF Reader plugin for
-ImageJ <http://rsb.info.nih.gov/ij/plugins/agr.html>`_
+Supported Metadata Fields:
 
-Freely Available Software: `GIF Stack Writer plugin for
-ImageJ <http://rsb.info.nih.gov/ij/plugins/gif-stack-writer.html>`_
+Freely Available Software:
 
-We currently have: 
+- `Animated GIF Reader plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/agr.html>`_ 
+- `GIF Stack Writer plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/gif-stack-writer.html>`_
 
--  A `GIF specification
-   document <http://tronche.com/computer-graphics/gif/>`_ (Version 89a,
-   from 1990, in HTML)
--  Numerous GIF datasets
--  The ability to produce new datasets
+Sample Datasets:
+
+- `MRI Chest from FreeVol-3D web site <http://members.tripod.com/%7Eclunis_immensus/free3d/hk-40.zip>`_ 
+- `Medical Image Samples from Sebastien Barre's Medical Imaging page <http://www.barre.nom.fr/medical/samples/>`_ 
+- `DICOM sample image sets from OsiriX web site <http://osirix-viewer.com/datasets/>`_
+
+We currently have:
+
+- a `GIF specification document <http://tronche.com/computer-graphics/gif/>`_ (Version 89a, from 1990, in HTML) 
+- numerous GIF datasets 
+- the ability to produce new datasets
+
+We would like to have:
+
+- a DM3 specification document
 
 Ratings
 -------
 
-Pixels: |Very Good|
+Pixels: |Very good|
 
-Metadata: |Very Good|
+Metadata: |Very good|
 
-Openness: |Fair|
+Openness: |Fair|
 
-Presence: |Outstanding|
+Presence: |Outstanding|
 
-Utility: |Poor|
+Utility: |Poor|
 
 Additional Information
 ----------------------
 
-Source Code: :source:`GIF Reader <components/scifio/src/loci/formats/in/GIFReader.java>`
+Source Code: :source:`GIFReader.java <components/scifio/src/loci/formats/in/GIFReader.java >`
+
+Notes:
+
+

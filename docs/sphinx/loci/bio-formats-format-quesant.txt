@@ -1,9 +1,9 @@
 Quesant
-=======
+===============================================================================
 
-Extensions: .afm
+Extensions: .afm
 
-Developer: Quesant Instrument Corporation
+Developer: Quesant Instrument Corporation
 
 Owner: `KLA-Tencor Corporation <http://www.kla-tencor.com/surface-profilometry-and-metrology.html>`_
 
@@ -12,36 +12,48 @@ Support
 
 SCIFIO: |no|
 
-Export: |no|
+Export: |no|
 
-Supported Metadata Fields: `QuesantReader <http://dev.loci.wisc.edu/trac/software/wiki/QuesantReader>`_
+Officially Supported Versions: $versions
 
-We currently have: 
+Supported Metadata Fields:
 
-- Pascal code that can read Quesant files (from ImageSXM)
+Freely Available Software:
 
+- `PNG Writer plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/png-writer.html>`_
+
+Sample Datasets:
+
+- `Diffusion tensor MRI datasets <http://www.sci.utah.edu/%7Egk/DTI-data/>`_
+
+We currently have:
+
+- Pascal code that can read Quesant files (from ImageSXM) 
 - several Quesant files
 
-We'd like to have: 
+We would like to have:
 
-- a Quesant specification
-
+- an official specification document 
 - more Quesant files
 
 Ratings
 -------
 
-Pixels: |Good|
+Pixels: |Good|
 
-Metadata: |Fair|
+Metadata: |Fair|
 
-Openness: |Fair|
+Openness: |Fair|
 
-Presence: |Fair|
+Presence: |Fair|
 
-Utility: |Fair|
+Utility: |Fair|
 
 Additional Information
 ----------------------
 
-Source Code: :source:`QuesantReader <components/bio-formats/src/loci/formats/in/QuesantReader.java>`
+Source Code: :source:`QuesantReader.java <components/bio-formats/src/loci/formats/in/QuesantReader.java >`
+
+Notes:
+
+

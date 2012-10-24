@@ -1,47 +1,63 @@
 EPS (Encapsulated PostScript)
-=============================
+===============================================================================
 
-Extensions: .eps, .epsi, .ps
+Extensions: .eps, .epsi, .ps
 
-Developer: `Adobe <http://www.adobe.com/>`_
+Developer: `Adobe <http://www.adobe.com/>`_
+
 
 Support
 -------
 
 SCIFIO: |yes|
 
-Export: |yes|
+Export: |yes|
 
-Supported Metadata Fields: `EPS Reader <http://dev.loci.wisc.edu/trac/software/wiki/EPSReader>`_
+Officially Supported Versions: $versions
 
-Freely Available Software: `EPS Writer plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/eps-writer.html>`_
+Supported Metadata Fields:
 
-We currently have: 
+Freely Available Software:
 
--  A few EPS datasets
--  The ability to produce new datasets
+- `EPS Writer plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/eps-writer.html>`_
+
+Sample Datasets:
+
+- `MRI Chest from FreeVol-3D web site <http://members.tripod.com/%7Eclunis_immensus/free3d/hk-40.zip>`_ 
+- `Medical Image Samples from Sebastien Barre's Medical Imaging page <http://www.barre.nom.fr/medical/samples/>`_ 
+- `DICOM sample image sets from OsiriX web site <http://osirix-viewer.com/datasets/>`_
+
+We currently have:
+
+- a few EPS datasets 
+- the ability to produce new datasets
+
+We would like to have:
+
+- an ECAT7 specification document 
+- more ECAT7 files
 
 Ratings
 -------
 
-Pixels: |Good|
+Pixels: |Good|
 
-Metadata: |Good|
+Metadata: |Good|
 
-Openness: |Good|
+Openness: |Good|
 
-Presence: |Very Good|
+Presence: |Very good|
 
-Utility: |Poor|
+Utility: |Poor|
 
 Additional Information
 ----------------------
 
-Source Code: :source:`EPS Reader <components/scifio/src/loci/formats/in/EPSReader.java>`
+Source Code: :source:`EPSReader.java <components/scifio/src/loci/formats/in/EPSReader.java >`
+Source Code: :source:`EPSWriter.java <components/scifio/src/loci/formats/out/EPSWriter.java >`
 
-Source Code: :source:`EPS Writer <components/scifio/src/loci/formats/out/EPSWriter.java>`
+Notes:
 
-Notes: 
 
--  Bio-Formats can save individual planes as EPS.
--  Certain types of compressed EPS files are not supported.
+- Bio-Formats can save individual planes as EPS. 
+- Certain types of compressed EPS files are not supported.

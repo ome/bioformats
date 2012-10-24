@@ -1,56 +1,55 @@
 Alicona 3D
-==========
+===============================================================================
 
-Extensions:  .al3d
+Extensions: .al3d
 
-Owner:  `Alicona Imaging <http://www.alicona.com/>`_
+
+Owner: `Alicona Imaging <http://www.alicona.com/>`_
 
 Support
 -------
 
 SCIFIO: |no|
 
-Export: |no|
+Export: |no|
 
-Officially Supported Versions:  1.0
+Officially Supported Versions: 1.0
 
-Supported Metadata Fields: `Alicona
-Reader <http://dev.loci.wisc.edu/trac/software/wiki/AliconaReader>`_
+Supported Metadata Fields:
 
-We currently have: 
 
--  an `AL3D specification
-   document
-   <http://www.alicona.com/home/fileadmin/alicona/downloads/AL3DFormat.pdf>`_ (v1.0,
-   from 2003, in PDF)
--  only one AL3D dataset
 
-We'd like to have: 
+We currently have:
 
--  more AL3D datasets (Z series, T series, 16-bit)
+- an `AL3D specification document <http://www.alicona.com/home/fileadmin/alicona/downloads/AL3DFormat.pdf>`_ (v1.0, from 2003, in PDF) 
+- a few AL3D datasets
+
+We would like to have:
+
+- more AL3D datasets (Z series, T series, 16-bit)
 
 Ratings
 -------
 
-Pixels: |Very Good|
+Pixels: |Very good|
 
-Metadata: |Very Good|
+Metadata: |Very good|
 
-Openness: |Very Good|
+Openness: |Very good|
 
-Presence: |Poor|
+Presence: |Poor|
 
-Utility: |Good|
+Utility: |Good|
 
 Additional Information
 ----------------------
 
-Source Code: :source:`Alicona
-Reader <components/bio-formats/src/loci/formats/in/AliconaReader.java>`
+Source Code: :source:`AliconaReader.java <components/bio-formats/src/loci/formats/in/AliconaReader.java >`
 
-Notes: 
+Notes:
 
-Known deficiencies:
 
--  Support for 16-bit AL3D images is present, but has never been tested.
--  Texture data is currently ignored.
+Known deficiencies: 
+
+- Support for 16-bit AL3D images is present, but has never been tested. 
+- Texture data is currently ignored.

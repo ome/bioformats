@@ -1,37 +1,56 @@
 Nikon EZ-C1 TIFF
-================
+===============================================================================
 
-Extensions: .tiff
+Extensions: .tiff
 
-Developer: `Nikon <http://www.nikon.com/>`_
+Developer: `Nikon <http://www.nikon.com/>`_
+
 
 Support
 -------
 
 SCIFIO: |no|
 
-Export: |no|
+Export: |no|
 
-Supported Metadata Fields: `Nikon TIFF Reader <http://dev.loci.wisc.edu/trac/software/wiki/NikonTiffReader>`_
+Officially Supported Versions: $versions
 
-We currently have: 
+Supported Metadata Fields:
 
--  a few Nikon TIFF files
+Freely Available Software:
+
+- `libmng (MNG reference library) <http://sourceforge.net/projects/libmng/>`_
+
+Sample Datasets:
+
+- `Official test data <http://nifti.nimh.nih.gov/nifti-1/data>`_
+
+We currently have:
+
+- a few Nikon EZ-C1 TIFF files
+
+We would like to have:
+
+- more Nikon Elements TIFF files
 
 Ratings
 -------
 
-Pixels: |Very Good|
+Pixels: |Very good|
 
-Metadata: |Very Good|
+Metadata: |Very good|
 
-Openness: |Good|
+Openness: |Good|
 
-Presence: |Poor|
+Presence: |Poor|
 
-Utility: |Fair|
+Utility: |Fair|
 
 Additional Information
 ----------------------
 
-Source Code: `Nikon TIFF Reader <components/bio-formats/src/loci/formats/in/NikonTiffReader.java>`
+Source Code: :source:`NikonTiffReader.java <components/bio-formats/src/loci/formats/in/NikonTiffReader.java >`
+
+Notes:
+
+

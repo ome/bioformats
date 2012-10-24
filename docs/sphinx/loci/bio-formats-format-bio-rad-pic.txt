@@ -1,56 +1,63 @@
 Bio-Rad PIC
-===========
+===============================================================================
 
-Extensions: .pic, .raw, .xml
+Extensions: .pic, .raw, .xml
 
-Developer: Bio-Rad
+Developer: Bio-Rad
 
-Owner: `Carl Zeiss, Inc. <http://www.zeiss.com/>`_
+Owner: `Carl Zeiss, Inc. <http://www.zeiss.com/>`_
 
 Support
 -------
 
 SCIFIO: |no|
 
-Export: |no|
+Export: |no|
 
-Supported Metadata Fields: `Bio-Rad
-Reader <http://dev.loci.wisc.edu/trac/software/wiki/BioRadReader>`_
+Officially Supported Versions: $versions
 
-Freely Available Software: `Bio-Rad PIC reader plugin for
-ImageJ <http://rsb.info.nih.gov/ij/plugins/biorad.html>`_
+Supported Metadata Fields:
 
-We currently have: 
+Freely Available Software:
 
--  a PIC specification document (v4.5, in PDF)
--  an older PIC specification document (v4.2, from 1996 Dec 16, in DOC)
--  a large number of PIC datasets
--  the ability to produce new datasets
+- `Bio-Rad PIC reader plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/biorad.html>`_
+
+
+We currently have:
+
+- a PIC specification document (v4.5, in PDF) 
+- an older PIC specification document (v4.2, from 1996 December 16, in DOC) 
+- a large number of PIC datasets 
+- the ability to produce new datasets
+
+We would like to have:
+
+- a Bio-Rad Gel specification 
+- more Bio-Rad Gel files
 
 Ratings
 -------
 
-Pixels: |Outstanding|
+Pixels: |Outstanding|
 
-Metadata: |Very Good|
+Metadata: |Very good|
 
-Openness: |Very Good|
+Openness: |Very good|
 
-Presence: |Very Good|
+Presence: |Very good|
 
-Utility: |Very Good|
+Utility: |Very good|
 
 Additional Information
 ----------------------
 
-Source Code: :source:`Bio-Rad Reader <components/bio-formats/src/loci/formats/in/BioRadReader.java>`
+Source Code: :source:`BioRadReader.java <components/bio-formats/src/loci/formats/in/BioRadReader.java >`
 
-Notes: 
-
-Commercial applications that support this format include:
-
--  `Bitplane Imaris <http://www.bitplane.com/>`_
--  `SVI Huygens <http://svi.nl/>`_
+Notes:
 
 **Please note that while we have specification documents for this
 format, we are not able to distribute them to third parties.**
+
+- Commercial applications that support this format include: 
+  #. `Bitplane Imaris <http://www.bitplane.com/>`_ 
+  #. `SVI Huygens <http://svi.nl/>`_

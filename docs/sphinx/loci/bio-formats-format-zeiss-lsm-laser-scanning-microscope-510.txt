@@ -1,66 +1,72 @@
 Zeiss LSM (Laser Scanning Microscope) 510
-=========================================
+===============================================================================
 
-Extensions: .lsm, .mdb
+Extensions: .lsm, .mdb
 
-Owner: `Carl Zeiss MicroImaging GmbH <http://www.zeiss.com/micro>`_
+
+Owner: `Carl Zeiss MicroImaging GmbH <http://www.zeiss.com/micro>`_
 
 Support
 -------
 
 SCIFIO: |no|
 
-Export: |no|
+Export: |no|
 
-Supported Metadata Fields: `Zeiss LSM Reader <http://dev.loci.wisc.edu/trac/software/wiki/ZeissLSMReader>`_
+Officially Supported Versions: $versions
 
-Freely Available Software: `Zeiss LSM Image Browser <http://www.zeiss.de/C12567BE00472A5C/EmbedTitelIntern/LSMImageBrowser/$File/INST_IB.EXE>`_
+Supported Metadata Fields:
 
-Freely Available Software: `LSM Toolbox plugin for ImageJ <http://imagejdocu.tudor.lu/Members/ppirrotte/lsmtoolbox>`_
+Freely Available Software:
 
-Freely Available Software: `LSM Reader plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/lsm-reader.html>`_
+- `Zeiss LSM Image Browser <http://www.zeiss.de/C12567BE00472A5C/EmbedTitelIntern/LSMImageBrowser/$File/INST_IB.EXE>`_ 
+- `LSM Toolbox plugin for ImageJ <http://imagejdocu.tudor.lu/Members/ppirrotte/lsmtoolbox>`_ 
+- `LSM Reader plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/lsm-reader.html>`_ 
+- `DIMIN <http://www.dimin.net/>`_
 
-Freely Available Software: `DIMIN <http://www.dimin.net/>`_
+Sample Datasets:
 
-We currently have: 
+- `Volocity Demo <http://www.perkinelmer.com/pages/020/cellularimaging/products/volocitydemo.xhtml>`_
 
--  Several LSM specification documents:
+We currently have:
 
-   -  v3.2, from 2003 March 12, in PDF)
-   -  v5.5, from 2009 November 23, in PDF
-   -  v6.0, from 2010 September 28, in PDF
+- LSM specification v3.2, from 2003 March 12, in PDF 
+- LSM specification v5.5, from 2009 November 23, in PDF 
+- LSM specification v6.0, from 2010 September 28, in PDF 
+- many LSM datasets
 
--  Numerous LSM datasets
+We would like to have:
+
+- an official specification document
 
 Ratings
 -------
 
-Pixels: |Outstanding|
+Pixels: |Outstanding|
 
-Metadata: |Very Good|
+Metadata: |Very good|
 
-Openness: |Good|
+Openness: |Good|
 
-Presence: |Very Good|
+Presence: |Very good|
 
-Utility: |Good|
+Utility: |Good|
 
 Additional Information
 ----------------------
 
-Source Code: :source:`Zeiss LSM Reader <components/bio-formats/src/loci/formats/in/ZeissLSMReader.java>`
+Source Code: :source:`ZeissLSMReader.java <components/bio-formats/src/loci/formats/in/ZeissLSMReader.java >`
 
-Source Code: :source:`MDB Parser <components/bio-formats/src/loci/formats/services/MDBServiceImpl.java>`
-
-Notes: Bio-Formats uses the `MDB Tools <http://mdbtools.sourceforge.net/>`_
-Java port to read MDB files.
-
-Commercial applications that support this format include:
-
--  `SVI Huygens <http://www2.svi.nl/>`_
--  `Bitplane Imaris <http://www.bitplane.com/>`_
--  `Amira <http://www.amira.com/>`_
--  `Image-Pro Plus <http://www.mediacy.com/>`_
+Notes:
 
 **Please note that while we have specification documents for this
 format, we are not able to distribute them to third parties.**
+
+Bio-Formats uses the `MDB Tools Java port <http://mdbtools.sourceforge.net/>`_ 
+
+Commercial applications that support this format include: 
+
+- `SVI Huygens <http://www2.svi.nl/>`_ 
+- `Bitplane Imaris <http://www.bitplane.com/>`_ 
+- `Amira <http://www.amira.com/>`_ 
+- `Image-Pro Plus <http://www.mediacy.com/>`_
