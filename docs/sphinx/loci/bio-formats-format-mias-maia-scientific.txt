@@ -1,37 +1,56 @@
 MIAS (Maia Scientific)
-======================
+===============================================================================
 
-Extensions: .tif
+Extensions: .tif
 
-Developer: `Maia Scientific <http://www.maia-scientific.com/>`_
+Developer: `Maia Scientific <http://www.maia-scientific.com/>`_
+
 
 Support
 -------
 
 SCIFIO: |no|
 
-Export: |no|
+Export: |no|
 
-Supported Metadata Fields: `MIAS Reader <http://dev.loci.wisc.edu/trac/software/wiki/MIASReader>`_
+Officially Supported Versions: $versions
 
-We currently have: 
+Supported Metadata Fields:
 
--  several MIAS datasets
+Freely Available Software:
+
+- `Leica LCS Lite <ftp://ftp.llt.de/softlib/LCSLite/LCSLite2611537.exe>`_
+
+Sample Datasets:
+
+- `VIFF Images <http://netghost.narod.ru/gff/sample/images/viff/index.htm>`_
+
+We currently have:
+
+- several MIAS datasets
+
+We would like to have:
+
+- an official specification document
 
 Ratings
 -------
 
-Pixels: |Very Good|
+Pixels: |Very good|
 
-Metadata: |Poor|
+Metadata: |Poor|
 
-Openness: |Fair|
+Openness: |Fair|
 
-Presence: |Poor|
+Presence: |Poor|
 
-Utility: |Poor|
+Utility: |Poor|
 
 Additional Information
 ----------------------
 
-Source Code: :source:`MIAS Reader <components/bio-formats/src/loci/formats/in/MIASReader.java>`
+Source Code: :source:`MIASReader.java <components/bio-formats/src/loci/formats/in/MIASReader.java >`
+
+Notes:
+
+

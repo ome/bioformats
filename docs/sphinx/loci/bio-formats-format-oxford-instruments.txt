@@ -1,45 +1,58 @@
 Oxford Instruments
-==================
+===============================================================================
 
-Extensions: .top
+Extensions: .top
 
-Owner: `Oxford Instruments <http://www.oxinst.com>`_
+
+Owner: `Oxford Instruments <http://www.oxinst.com>`_
 
 Support
 -------
 
 SCIFIO: |no|
 
-Export: |no|
+Export: |no|
 
-Supported Metadata Fields: `OxfordInstrumentsReader <http://dev.loci.wisc.edu/trac/software/wiki/OxfordInstrumentsReader>`_
+Officially Supported Versions: $versions
 
-We currently have: 
+Supported Metadata Fields:
 
-- Pascal code that can read Oxford Instruments files (from ImageSXM)
+Freely Available Software:
 
+- `DIMIN <http://www.dimin.net/>`_
+
+Sample Datasets:
+
+- `Diffusion tensor MRI datasets <http://www.sci.utah.edu/%7Egk/DTI-data/>`_
+
+We currently have:
+
+- Pascal code that can read Oxford Instruments files (from ImageSXM) 
 - a few Oxford Instruments files
 
-We'd like to have: 
+We would like to have:
 
-- an Oxford Instruments file format specification
-
+- an official specification document 
 - more Oxford Instruments files
 
 Ratings
 -------
 
-Pixels: |Good|
+Pixels: |Good|
 
-Metadata: |Fair|
+Metadata: |Fair|
 
-Openness: |Fair|
+Openness: |Fair|
 
-Presence: |Fair|
+Presence: |Fair|
 
-Utility: |Fair|
+Utility: |Fair|
 
 Additional Information
 ----------------------
 
-Source Code: :source:`OxfordInstrumentsReader <components/bio-formats/src/loci/formats/in/OxfordInstrumentsReader.java>`
+Source Code: :source:`OxfordInstrumentsReader.java <components/bio-formats/src/loci/formats/in/OxfordInstrumentsReader.java >`
+
+Notes:
+
+

@@ -1,46 +1,60 @@
 Improvision Openlab Raw
-=======================
+===============================================================================
 
-Extensions: .raw
+Extensions: .raw
 
-Developer: `Improvision <http://www.improvision.com/>`_
+Developer: `Improvision <http://www.improvision.com/>`_
 
-Owner: `PerkinElmer <http://www.perkinelmer.com/>`_
+Owner: `PerkinElmer <http://www.perkinelmer.com/>`_
 
 Support
 -------
 
 SCIFIO: |no|
 
-Export: |no|
+Export: |no|
 
-Supported Metadata Fields: `Openlab Raw Reader <http://dev.loci.wisc.edu/trac/software/wiki/OpenlabRawReader>`_
+Officially Supported Versions: $versions
 
-We currently have: 
+Supported Metadata Fields:
 
--  An `Openlab Raw specification
-   document
-   <http://cellularimaging.perkinelmer.com/support/technical_notes/detail.php?id=344>`_
-   (from 2004 Nov 09, in HTML)
--  A few Openlab Raw datasets
+Freely Available Software:
+
+- `IMOD <http://bio3d.colorado.edu/imod/>`_
+
+Sample Datasets:
+
+- `OpenSlide <http://openslide.cs.cmu.edu/download/openslide-testdata/Hamamatsu-vms/>`_
+
+We currently have:
+
+- an `Openlab Raw specification document <http://cellularimaging.perkinelmer.com/support/technical_notes/detail.php?id=344>`_ (from 2004 November 09, in HTML) 
+- a few Openlab Raw datasets
+
+We would like to have:
+
+- more Openlab datasets (preferably with 32-bit integer data)
 
 Ratings
 -------
 
-Pixels: |Outstanding|
+Pixels: |Outstanding|
 
-Metadata: |Very Good|
+Metadata: |Very good|
 
-Openness: |Very Good|
+Openness: |Very good|
 
-Presence: |Poor|
+Presence: |Poor|
 
-Utility: |Fair|
+Utility: |Fair|
 
 Additional Information
 ----------------------
 
-Source Code: :source:`Openlab Raw Reader <components/bio-formats/src/loci/formats/in/OpenlabRawReader.java>`
+Source Code: :source:`OpenlabRawReader.java <components/bio-formats/src/loci/formats/in/OpenlabRawReader.java >`
 
-.. seealso::
-    `Openlab software review <http://www.improvision.com/products/openlab/>`_
+Notes:
+
+
+.. seealso:: 
+  `Openlab software review <http://www.improvision.com/products/openlab/>`_

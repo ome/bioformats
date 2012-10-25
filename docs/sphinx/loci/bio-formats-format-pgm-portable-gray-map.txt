@@ -1,44 +1,58 @@
 PGM (Portable Gray Map)
-=======================
+===============================================================================
 
-Extensions: .pgm
+Extensions: .pgm
 
-Developer: Netpbm developers
+Developer: Netpbm developers
+
 
 Support
 -------
 
 SCIFIO: |yes|
 
-Export: |no|
+Export: |no|
 
-Supported Metadata Fields: `PGM Reader <http://dev.loci.wisc.edu/trac/software/wiki/PGMReader>`_
+Officially Supported Versions: $versions
 
-Freely Available Software: `Netpbm graphics filter <http://netpbm.sourceforge.net/>`_
+Supported Metadata Fields:
 
-We currently have: 
+Freely Available Software:
 
--  A `PGM specification
-   document <http://netpbm.sourceforge.net/doc/pgm.html>`_ (from 2003
-   Oct 3, in HTML)
+- `Netpbm graphics filter <http://netpbm.sourceforge.net/>`_
+
+Sample Datasets:
+
+- `Diffusion tensor MRI datasets <http://www.sci.utah.edu/%7Egk/DTI-data/>`_
+
+We currently have:
+
+- a `PGM specification document <http://netpbm.sourceforge.net/doc/pgm.html>`_ (from 2003 October 3, in HTML) 
+- a few PGM files
+
+We would like to have:
+
+- an official specification document 
+- more sample datasets
 
 Ratings
 -------
 
-Pixels: |Very Good|
+Pixels: |Very good|
 
-Metadata: |Good|
+Metadata: |Good|
 
-Openness: |Outstanding|
+Openness: |Outstanding|
 
-Presence: |Good|
+Presence: |Good|
 
-Utility: |Poor|
+Utility: |Poor|
 
 Additional Information
 ----------------------
 
-Source Code: :source:`PGM Reader <components/scifio/src/loci/formats/in/PGMReader.java>`
+Source Code: :source:`PGMReader.java <components/scifio/src/loci/formats/in/PGMReader.java >`
 
-.. seealso::
-    `PGM technical overview <http://netpbm.sourceforge.net/doc/pgm.html>`_
+Notes:
+
+

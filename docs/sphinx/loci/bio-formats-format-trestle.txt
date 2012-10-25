@@ -1,39 +1,57 @@
 Trestle
-=======
+===============================================================================
 
-Extensions: .tif, .sld, .jpg
+Extensions: .tif, .sld, .jpg
+
+
 
 Support
 -------
 
 SCIFIO: |no|
 
-Export: |no|
+Export: |no|
 
-Supported Metadata Fields: `TrestleReader <http://dev.loci.wisc.edu/trac/software/wiki/TrestleReader>`_
+Officially Supported Versions: $versions
 
-Sample Datasets: `OpenSlide <http://openslide.cs.cmu.edu/download/openslide-testdata/Trestle/>`_
+Supported Metadata Fields:
 
-We currently have: 
+Freely Available Software:
 
--  A few example datasets
--  Developer documentation from the OpenSlide project:
-   http://openslide.org/Trestle%20format/
+- `SPIDER <http://www.wadsworth.org/spider_doc/spider/docs/spider.html>`_
+
+Sample Datasets:
+
+- `OpenSlide <http://openslide.cs.cmu.edu/download/openslide-testdata/Trestle/>`_
+
+We currently have:
+
+- a few example datasets 
+- `developer documentation from the OpenSlide project <http://openslide.org/Trestle%20format/>`_
+
+We would like to have:
+
+- an official specification document 
+- more Topometrix files
 
 Ratings
 -------
 
-Pixels: |Good|
+Pixels: |Good|
 
-Metadata: |Good|
+Metadata: |Good|
 
-Openness: |Good|
+Openness: |Good|
 
-Presence: |Fair|
+Presence: |Fair|
 
-Utility: |Fair|
+Utility: |Fair|
 
 Additional Information
 ----------------------
 
-Source Code: :source:`TrestleReader <components/bio-formats/src/loci/formats/in/TrestleReader.java>`
+Source Code: :source:`TrestleReader.java <components/bio-formats/src/loci/formats/in/TrestleReader.java >`
+
+Notes:
+
+

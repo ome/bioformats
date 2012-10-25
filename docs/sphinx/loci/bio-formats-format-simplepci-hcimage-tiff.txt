@@ -1,41 +1,56 @@
 SimplePCI & HCImage TIFF
-========================
+===============================================================================
 
-Extensions: .tiff
+Extensions: .tiff
 
-Developer: `Hamamatsu <http://www.cimaging.net/simplepci.htm>`_
+Developer: `Hamamatsu <http://www.cimaging.net/simplepci.htm>`_
+
 
 Support
 -------
 
 SCIFIO: |no|
 
-Export: |no|
+Export: |no|
 
-Supported Metadata Fields: `SimplePCI TIFF Reader <http://dev.loci.wisc.edu/trac/java/wiki/SimplePCITiffReader>`_
+Officially Supported Versions: $versions
 
-We currently have: 
+Supported Metadata Fields:
 
--  A few SimplePCI TIFF datasets
+Freely Available Software:
 
-We'd like to have: 
+- `QuickTime Player <http://www.apple.com/quicktime/download/>`_
 
--  More SimplePCI TIFF datasets
+Sample Datasets:
+
+- `Diffusion tensor MRI datasets <http://www.sci.utah.edu/%7Egk/DTI-data/>`_
+
+We currently have:
+
+- a few SimplePCI TIFF datasets
+
+We would like to have:
+
+- more SimplePCI TIFF datasets
 
 Ratings
 -------
 
-Pixels: |Very Good|
+Pixels: |Very good|
 
-Metadata: |Good|
+Metadata: |Good|
 
-Openness: |Very Good|
+Openness: |Very good|
 
-Presence: |Fair|
+Presence: |Fair|
 
-Utility: |Good|
+Utility: |Good|
 
 Additional Information
 ----------------------
 
-Source Code: :source:`SimplePCITiffReader <components/bio-formats/src/loci/formats/in/SimplePCITiffReader.java>`
+Source Code: :source:`SimplePCITiffReader.java <components/bio-formats/src/loci/formats/in/SimplePCITiffReader.java >`
+
+Notes:
+
+

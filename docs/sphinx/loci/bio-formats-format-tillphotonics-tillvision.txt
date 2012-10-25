@@ -1,41 +1,57 @@
 TillPhotonics TillVision
-========================
+===============================================================================
 
-Extensions: .vws
+Extensions: .vws
 
-Developer: `TILL Photonics <http://www.till-photonics.com/>`_
+Developer: `TILL Photonics <http://www.till-photonics.com/>`_
+
 
 Support
 -------
 
 SCIFIO: |no|
 
-Export: |no|
+Export: |no|
 
-Supported Metadata Fields: `TILLVision Reader <http://dev.loci.wisc.edu/trac/software/wiki/TillVisionReader>`_
+Officially Supported Versions: $versions
 
-We currently have: 
+Supported Metadata Fields:
 
--  Several TillVision datasets
+Freely Available Software:
 
-We'd like to have: 
+- `SPIDER <http://www.wadsworth.org/spider_doc/spider/docs/spider.html>`_
 
--  A TillVision specification document
+Sample Datasets:
+
+- `LZW TIFF data gallery <http://marlin.life.utsa.edu/Data_Gallery.html>`_ 
+- `Big TIFF <http://tiffcentral.com/>`_
+
+We currently have:
+
+- several TillVision datasets
+
+We would like to have:
+
+- an official specification document
 
 Ratings
 -------
 
-Pixels: |Good|
+Pixels: |Good|
 
-Metadata: |Fair|
+Metadata: |Fair|
 
-Openness: |Poor|
+Openness: |Poor|
 
-Presence: |Poor|
+Presence: |Poor|
 
-Utility: |Fair|
+Utility: |Fair|
 
 Additional Information
 ----------------------
 
-Source Code: `TILLVision Reader <components/bio-formats/src/loci/formats/in/TillVisionReader.java>`
+Source Code: :source:`TillVisionReader.java <components/bio-formats/src/loci/formats/in/TillVisionReader.java >`
+
+Notes:
+
+

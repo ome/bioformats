@@ -1,48 +1,62 @@
 Windows Bitmap
-==============
+===============================================================================
 
-Extensions: .bmp
+Extensions: .bmp
 
-Developer: Microsoft and IBM
+Developer: Microsoft and IBM
+
 
 Support
 -------
 
 SCIFIO: |yes|
 
-Export: |no|
+Export: |no|
 
-Supported Metadata Fields: `BMP Reader <http://dev.loci.wisc.edu/trac/software/wiki/BMPReader>`_
+Officially Supported Versions: $versions
 
-Freely Available Software: `BMP Writer plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/bmp-writer.html>`_
+Supported Metadata Fields:
 
-We currently have: 
+Freely Available Software:
 
--  Several BMP datasets
+- `BMP Writer plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/bmp-writer.html>`_
+
+Sample Datasets:
+
+- `Volocity Demo <http://www.perkinelmer.com/pages/020/cellularimaging/products/volocitydemo.xhtml>`_
+
+We currently have:
+
+- many BMP datasets
+
+We would like to have:
+
+- an official specification document 
+- more WA-TOP files
 
 Ratings
 -------
 
-Pixels: |Very Good|
+Pixels: |Very good|
 
-Metadata: |Outstanding|
+Metadata: |Outstanding|
 
-Openness: |Fair|
+Openness: |Fair|
 
-Presence: |Outstanding|
+Presence: |Outstanding|
 
-Utility: |Poor|
+Utility: |Poor|
 
 Additional Information
 ----------------------
 
-Source Code: :source:`BMPReader <components/scifio/src/loci/formats/in/BMPReader.java>`
+Source Code: :source:`BMPReader.java <components/scifio/src/loci/formats/in/BMPReader.java >`
 
-Notes: 
+Notes:
 
--  Compressed BMP files are currently not supported.
 
-.. seealso::
-    `Technical Overview <http://www.faqs.org/faqs/graphics/fileformats-faq/part3/section-18.html>`_
+Compressed BMP files are currently not supported. 
 
-    `General Resources <http://people.sc.fsu.edu/~burkardt/data/bmp/bmp.html>`_
+.. seealso:: 
+  `Technical Overview <http://www.faqs.org/faqs/graphics/fileformats-faq/part3/section-18.html>`_ 
+  `General Resources <http://people.sc.fsu.edu/~burkardt/data/bmp/bmp.html>`_

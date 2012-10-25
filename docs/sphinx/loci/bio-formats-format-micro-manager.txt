@@ -1,15 +1,15 @@
-cellSens VSI
+Micro-Manager
 ===============================================================================
 
-Extensions: .vsi
+Extensions: .tif, .txt, .xml
 
-Developer: `Olympus <http://www.olympus.com/>`_
+Developer: `Vale Lab <http://valelab.ucsf.edu/>`_
 
 
 Support
 -------
 
-SCIFIO: |no|
+SCIFIO: |yes|
 
 Export: |no|
 
@@ -24,7 +24,7 @@ Freely Available Software:
 
 We currently have:
 
-- a few example datasets
+- many Micro-manager datasets
 
 We would like to have:
 
@@ -33,20 +33,20 @@ We would like to have:
 Ratings
 -------
 
-Pixels: |Fair|
+Pixels: |Outstanding|
 
-Metadata: |Good|
+Metadata: |Very good|
 
-Openness: |Fair|
+Openness: |Outstanding|
 
 Presence: |Fair|
 
-Utility: |Fair|
+Utility: |Good|
 
 Additional Information
 ----------------------
 
-Source Code: :source:`CellSensReader.java <components/bio-formats/src/loci/formats/in/CellSensReader.java >`
+Source Code: :source:`MicromanagerReader.java <components/scifio/src/loci/formats/in/MicromanagerReader.java >`
 
 Notes:
 

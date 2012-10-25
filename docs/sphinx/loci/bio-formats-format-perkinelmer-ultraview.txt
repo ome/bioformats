@@ -1,50 +1,68 @@
 PerkinElmer UltraView
-=====================
+===============================================================================
 
-Extensions: .tif, .2, .3, .4, ...
+Extensions: .tif, .2, .3, .4, ...
 
-Owner: `PerkinElmer <http://www.perkinelmer.com/>`_
+
+Owner: `PerkinElmer <http://www.perkinelmer.com/>`_
 
 Support
 -------
 
 SCIFIO: |no|
 
-Export: |no|
+Export: |no|
 
-Supported Metadata Fields: `PerkinElmer Reader <http://dev.loci.wisc.edu/trac/software/wiki/PerkinElmerReader>`_
+Officially Supported Versions: $versions
 
-We currently have: 
+Supported Metadata Fields:
 
--  Several PerkinElmer datasets
--  Some :source:`Bio-Formats developer notes <components/bio-formats/doc/perkin-elmer.html>`
-   for PerkinElmer
+Freely Available Software:
+
+- `DIMIN <http://www.dimin.net/>`_
+
+Sample Datasets:
+
+- `Diffusion tensor MRI datasets <http://www.sci.utah.edu/%7Egk/DTI-data/>`_
+
+We currently have:
+
+- several UltraView datasets 
+- some :source:`Bio-Formats developer notes <components/bio-formats/doc/perkin-elmer.html>` for UltraView
+
+We would like to have:
+
+- an official specification document 
+- more sample datasets
 
 Ratings
 -------
 
-Pixels: |Very Good|
+Pixels: |Very good|
 
-Metadata: |Good|
+Metadata: |Good|
 
-Openness: |Fair|
+Openness: |Fair|
 
-Presence: |Fair|
+Presence: |Fair|
 
-Utility: |Fair|
+Utility: |Fair|
 
 Additional Information
 ----------------------
 
-Source Code: :source:`PerkinElmer Reader <components/bio-formats/src/loci/formats/in/PerkinElmerReader.java>`
+Source Code: :source:`PerkinElmerReader.java <components/bio-formats/src/loci/formats/in/PerkinElmerReader.java >`
 
-Notes: Other associated extensions include: .tim, .zpo, .csv, .htm, .cfg,
-.ano, .rec
+Notes:
 
-Commercial applications that support this format include:
 
--  `Bitplane Imaris <http://www.bitplane.com/>`_
--  `Image-Pro Plus <http://www.mediacy.com/>`_
+Other associated extensions include: .tim, .zpo, .csv, .htm, 
+.cfg, .ano, .rec 
 
-.. seealso::
-    `PerkinElmer UltraView system overview <http://las.perkinelmer.com/content/livecellimaging/ultraview.asp>`_
+Commercial applications that support this format include: 
+
+- `Bitplane Imaris <http://www.bitplane.com/>`_ 
+- `Image-Pro Plus <http://www.mediacy.com/>`_ 
+
+.. seealso:: 
+  `PerkinElmer UltraView system overview <http://las.perkinelmer.com/content/livecellimaging/ultraview.asp>`_

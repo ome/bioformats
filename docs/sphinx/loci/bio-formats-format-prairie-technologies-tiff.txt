@@ -1,37 +1,57 @@
 Prairie Technologies TIFF
-=========================
+===============================================================================
 
-Extensions: .tif, .xml, .cfg
+Extensions: .tif, .xml, .cfg
 
-Developer: `Prairie Technologies <http://www.prairie-technologies.com/>`_
+Developer: `Prairie Technologies <http://www.prairie-technologies.com/>`_
+
 
 Support
 -------
 
 SCIFIO: |no|
 
-Export: |no|
+Export: |no|
 
-Supported Metadata Fields: `Prairie Reader <http://dev.loci.wisc.edu/trac/software/wiki/PrairieReader>`_
+Officially Supported Versions: $versions
 
-We currently have: 
+Supported Metadata Fields:
 
--  Several Prairie datasets
+Freely Available Software:
+
+- `PNG Writer plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/png-writer.html>`_
+
+Sample Datasets:
+
+- `Diffusion tensor MRI datasets <http://www.sci.utah.edu/%7Egk/DTI-data/>`_
+
+We currently have:
+
+- many Prairie datasets
+
+We would like to have:
+
+- an official specification document 
+- more sample datasets
 
 Ratings
 -------
 
-Pixels: |Very Good|
+Pixels: |Very good|
 
-Metadata: |Good|
+Metadata: |Good|
 
-Openness: |Good|
+Openness: |Good|
 
-Presence: |Fair|
+Presence: |Fair|
 
-Utility: |Good|
+Utility: |Good|
 
 Additional Information
 ----------------------
 
-Source Code: :source:`Prairie Reader <components/bio-formats/src/loci/formats/in/PrairieReader.java>`
+Source Code: :source:`PrairieReader.java <components/bio-formats/src/loci/formats/in/PrairieReader.java >`
+
+Notes:
+
+

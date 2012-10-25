@@ -1,45 +1,58 @@
 Seiko
-=====
+===============================================================================
 
-Extensions: .xqd, .xqf
+Extensions: .xqd, .xqf
 
-Owner: `Seiko <http://www.seiko.co.jp/en/index.php>`_
+
+Owner: `Seiko <http://www.seiko.co.jp/en/index.php>`_
 
 Support
 -------
 
 SCIFIO: |no|
 
-Export: |no|
+Export: |no|
 
-Supported Metadata Fields: `SeikoReader <http://dev.loci.wisc.edu/trac/software/wiki/SeikoReader>`_
+Officially Supported Versions: $versions
 
-We currently have: 
+Supported Metadata Fields:
 
-- Pascal code that can read Seiko files (from ImageSXM)
+Freely Available Software:
 
+- `QuickTime Player <http://www.apple.com/quicktime/download/>`_
+
+Sample Datasets:
+
+- `Diffusion tensor MRI datasets <http://www.sci.utah.edu/%7Egk/DTI-data/>`_
+
+We currently have:
+
+- Pascal code that can read Seiko files (from ImageSXM) 
 - a few Seiko files
 
-We'd like to have: 
+We would like to have:
 
-- a Seiko file format specification document
-
+- an official specification document 
 - more Seiko files
 
 Ratings
 -------
 
-Pixels: |Good|
+Pixels: |Good|
 
-Metadata: |Fair|
+Metadata: |Fair|
 
-Openness: |Fair|
+Openness: |Fair|
 
-Presence: |Fair|
+Presence: |Fair|
 
-Utility: |Fair|
+Utility: |Fair|
 
 Additional Information
 ----------------------
 
-Source Code: :source:`SeikoReader <components/bio-formats/src/loci/formats/in/SeikoReader.java>`
+Source Code: :source:`SeikoReader.java <components/bio-formats/src/loci/formats/in/SeikoReader.java >`
+
+Notes:
+
+

@@ -1,46 +1,58 @@
 IMOD
-====
+===============================================================================
 
-Extensions: .mod
+Extensions: .mod
 
-Developer: |bio3d|
+Developer: `Boulder Laboratory for 3-Dimensional Electron Microscopy of Cells <http://bio3d.colorado.edu>`_
 
-Owner: |bio3d|
-
-.. |bio3d| replace:: `Boulder Laboratory for 3-Dimensional Electron Microscopy of Cells`_
-.. _Boulder Laboratory for 3-Dimensional Electron Microscopy of Cells: http://bio3d.colorado.edu/
+Owner: `Boulder Laboratory for 3-Dimensional Electron Microscopy of Cells <http://bio3d.colorado.edu>`_
 
 Support
 -------
 
-SCIFIO: |no|
+SCIFIO: |no|
 
-Export: |no|
+Export: |no|
+
+Officially Supported Versions: $versions
 
 Supported Metadata Fields:
 
-Freely Available Software: `IMOD <http://bio3d.colorado.edu/imod/>`_
+Freely Available Software:
 
-We currently have: 
+- `IMOD <http://bio3d.colorado.edu/imod/>`_
 
--  a few sample datasets
--  official documentation:
-   `http://bio3d.colorado.edu/imod/doc/binspec.html <http://bio3d.colorado.edu/imod/doc/binspec.html>`_
+Sample Datasets:
+
+- `OpenSlide <http://openslide.cs.cmu.edu/download/openslide-testdata/Hamamatsu-vms/>`_
+
+We currently have:
+
+- a few sample datasets 
+- `official documentation <http://bio3d.colorado.edu/imod/doc/binspec.html>`_
+
+We would like to have:
+
+- more example datasets
 
 Ratings
 -------
 
-Pixels: |Good|
+Pixels: |Good|
 
-Metadata: |Good|
+Metadata: |Good|
 
-Openness: |Outstanding|
+Openness: |Outstanding|
 
-Presence: |Fair|
+Presence: |Fair|
 
-Utility: |Fair|
+Utility: |Fair|
 
 Additional Information
 ----------------------
 
-Source Code: :source:`IMODReader <components/bio-formats/src/loci/formats/in/IMODReader.java>`
+Source Code: :source:`IMODReader.java <components/bio-formats/src/loci/formats/in/IMODReader.java >`
+
+Notes:
+
+

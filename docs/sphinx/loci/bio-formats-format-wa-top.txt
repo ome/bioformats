@@ -1,46 +1,59 @@
 WA-TOP
-======
+===============================================================================
 
-Extensions: .wat
+Extensions: .wat
 
-Developer: WA Technology
+Developer: WA Technology
 
-Owner: `Oxford Instruments <http://www.oxinst.com>`_
+Owner: `Oxford Instruments <http://www.oxinst.com>`_
 
 Support
 -------
 
 SCIFIO: |no|
 
-Export: |no|
+Export: |no|
 
-Supported Metadata Fields: `WATOPReader <http://dev.loci.wisc.edu/trac/software/wiki/WATOPReader>`_
+Officially Supported Versions: $versions
 
-We currently have: 
+Supported Metadata Fields:
 
-- Pascal code that can read WA-TOP files (from ImageSXM)
+Freely Available Software:
+
+- `SPIDER <http://www.wadsworth.org/spider_doc/spider/docs/spider.html>`_
+
+Sample Datasets:
+
+- `Volocity Demo <http://www.perkinelmer.com/pages/020/cellularimaging/products/volocitydemo.xhtml>`_
+
+We currently have:
+
+- Pascal code that can read WA-TOP files (from ImageSXM) 
 - a few WA-TOP files
 
-We'd like to have: 
+We would like to have:
 
-- a WA-TOP file format specification document
-
+- an official specification document 
 - more WA-TOP files
 
 Ratings
 -------
 
-Pixels: |Good|
+Pixels: |Good|
 
-Metadata: |Fair|
+Metadata: |Fair|
 
-Openness: |Fair|
+Openness: |Fair|
 
-Presence: |Fair|
+Presence: |Fair|
 
-Utility: |Fair|
+Utility: |Fair|
 
 Additional Information
 ----------------------
 
-Source Code: :source:`WATOPReader <components/bio-formats/src/loci/formats/in/WATOPReader.java>`
+Source Code: :source:`WATOPReader.java <components/bio-formats/src/loci/formats/in/WATOPReader.java >`
+
+Notes:
+
+
