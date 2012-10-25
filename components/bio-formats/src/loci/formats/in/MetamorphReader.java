@@ -828,6 +828,8 @@ public class MetamorphReader extends BaseTiffReader {
       long[] lastOffsets = null;
 
       double distance = zStart;
+      TiffParser tp = null;
+      RandomAccessInputStream stream = null;
 
       for (int p=0; p<getImageCount(); p++) {
         int[] coords = getZCTCoords(p);
@@ -840,26 +842,45 @@ public class MetamorphReader extends BaseTiffReader {
           String file = stks == null ? currentId : stks[i][fileIndex];
           if (file != null) {
             if (fileIndex != lastFile) {
-              RandomAccessInputStream stream =
-                new RandomAccessInputStream(file);
-              TiffParser tp = new TiffParser(stream);
+              if (stream != null) {
+                stream.close();
+              }
+              stream = new RandomAccessInputStream(file);
+              tp = new TiffParser(stream);
+              tp.setDoCaching(false);
               tp.checkHeader();
               lastFile = fileIndex;
               lastIFDs = tp.getIFDs();
-              stream.close();
             }
 
             lastIFD = lastIFDs.get(p % lastIFDs.size());
-            comment = lastIFD.getComment();
+            TiffIFDEntry commentEntry =
+              (TiffIFDEntry) lastIFD.get(IFD.IMAGE_DESCRIPTION);
+            comment = tp.getIFDValue(commentEntry).toString();
             if (comment != null) comment = comment.trim();
-            handler = new MetamorphHandler(getSeriesMetadata());
             if (comment != null && comment.startsWith("<MetaData>")) {
-              XMLTools.parseXML(comment, handler);
-            }
-            timestamps = handler.getTimestamps();
-            Vector<Double> zPositions = handler.getZPositions();
-            if (zPositions != null && zPositions.size() > 0) {
-              xmlZPosition = zPositions.get(0);
+              String[] lines = comment.split("\n");
+
+              timestamps = new Vector<String>();
+
+              for (String line : lines) {
+                line = line.trim();
+                if (line.startsWith("<prop")) {
+                  int firstQuote = line.indexOf("\"") + 1;
+                  int lastQuote = line.lastIndexOf("\"");
+                  String key =
+                    line.substring(firstQuote, line.indexOf("\"", firstQuote));
+                  String value = line.substring(
+                    line.lastIndexOf("\"", lastQuote - 1) + 1, lastQuote);
+
+                  if (key.equals("z-position")) {
+                    xmlZPosition = new Double(value);
+                  }
+                  else if (key.equals("acquisition-time-local")) {
+                    timestamps.add(value);
+                  }
+                }
+              }
             }
           }
         }
@@ -906,6 +927,8 @@ public class MetamorphReader extends BaseTiffReader {
           store.setPlanePositionZ(xmlZPosition, i, p);
         }
       }
+
+      stream.close();
     }
     setSeries(0);
   }
