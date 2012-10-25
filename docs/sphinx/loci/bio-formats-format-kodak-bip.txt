@@ -1,42 +1,58 @@
 Kodak BIP
-=========
+===============================================================================
 
-Extensions: .bip
+Extensions: .bip
 
-Developer: `Kodak/Carestream <http://carestream.com>`_
+Developer: `Kodak/Carestream <http://carestream.com>`_
+
 
 Support
 -------
 
 SCIFIO: |no|
 
-Export: |no|
+Export: |no|
 
-We currently have: 
+Officially Supported Versions: $versions
 
--  A few .bip datasets
+Supported Metadata Fields:
 
-We'd like to have: 
+Freely Available Software:
 
--  An official specification document
+- `JJ2000 (JPEG 2000 library for Java) <http://code.google.com/p/jj2000/>`_
+
+Sample Datasets:
+
+- `VIFF Images <http://netghost.narod.ru/gff/sample/images/viff/index.htm>`_
+
+We currently have:
+
+- a few .bip datasets
+
+We would like to have:
+
+- an official specification document
 
 Ratings
 -------
 
-Pixels: Very Good|
+Pixels: |Very good|
 
-Metadata: |Good|
+Metadata: |Good|
 
-Openness: |Fair|
+Openness: |Fair|
 
-Presence: |Poor|
+Presence: |Poor|
 
-Utility: |Fair|
+Utility: |Fair|
 
 Additional Information
 ----------------------
 
-Source Code: :source:`KodakReader <components/bio-formats/src/loci/formats/in/KodakReader.java>`
+Source Code: :source:`KodakReader.java <components/bio-formats/src/loci/formats/in/KodakReader.java >`
 
-.. seealso::
-    `Information on Image Station systems <http://carestream.com/PublicContent.aspx?langType=1033&id=448953>`_
+Notes:
+
+
+.. seealso:: 
+  `Information on Image Station systems <http://carestream.com/PublicContent.aspx?langType=1033&id=448953>`_

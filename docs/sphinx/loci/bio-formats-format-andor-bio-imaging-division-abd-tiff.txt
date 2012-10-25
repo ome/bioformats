@@ -1,48 +1,56 @@
 Andor Bio-Imaging Division (ABD) TIFF
-=====================================
+===============================================================================
 
-Extensions: .tif
+Extensions: .tif
 
-Developer: Andor Bioimaging Department
+Developer: Andor Bioimaging Department
 
-Owner: `Andor Technology <http://www.andor.com/>`_
+Owner: `Andor Technology <http://www.andor.com/>`_
 
 Support
 -------
 
 SCIFIO: |no|
 
-Export: |no|
+Export: |no|
 
-Supported Metadata Fields: `FluoviewReader <http://dev.loci.wisc.edu/trac/software/wiki/FluoviewReader>`_
+Officially Supported Versions: $versions
 
-We currently have: 
+Supported Metadata Fields:
 
--  an ABD-TIFF specification document (from 2005 Nov, in PDF)
--  three ABD-TIFF datasets
+
+
+We currently have:
+
+- an ABD-TIFF specification document (from 2005 November, in PDF) 
+- a few ABD-TIFF datasets
+
+We would like to have:
+
+- more Amira Mesh datasets
 
 Ratings
 -------
 
-Pixels: |Very Good|
+Pixels: |Very good|
 
-Metadata: |Very Good|
+Metadata: |Very good|
 
-Openness: |Good|
+Openness: |Good|
 
-Presence: |Fair|
+Presence: |Fair|
 
-Utility: |Good|
+Utility: |Good|
 
 Additional Information
 ----------------------
 
-Source Code: :source:`FluoviewReader <components/bio-formats/src/loci/formats/in/FluoviewReader.java>`
+Source Code: :source:`FluoviewReader.java <components/bio-formats/src/loci/formats/in/FluoviewReader.java >`
 
-Notes: 
-
-With a few minor exceptions, the ABD-TIFF format is identical to the
-Fluoview TIFF format.
+Notes:
 
 **Please note that while we have specification documents for this
 format, we are not able to distribute them to third parties.**
+
+With a few minor exceptions, the ABD-TIFF format is identical to the 
+Fluoview TIFF format.

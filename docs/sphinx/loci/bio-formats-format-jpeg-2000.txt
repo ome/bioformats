@@ -1,51 +1,61 @@
 JPEG 2000
-=========
+===============================================================================
 
-Extensions: .jp2
+Extensions: .jp2
 
-Developer: `Independent JPEG Group <http://www.ijg.org/>`_
+Developer: `Independent JPEG Group <http://www.ijg.org/>`_
+
 
 Support
 -------
 
 SCIFIO: |yes|
 
-Export: |yes|
+Export: |yes|
 
-Supported Metadata Fields: `JPEG2000Reader <http://dev.loci.wisc.edu/trac/software/wiki/JPEG2000Reader>`_
+Officially Supported Versions: $versions
 
-Freely Available Software: `JJ2000 (JPEG2000 library for Java) <http://code.google.com/p/jj2000/>`_
+Supported Metadata Fields:
 
-We currently have: 
+Freely Available Software:
 
--  A `JPEG 2000 specification
-   document <http://www.jpeg.org/jpeg2000/CDs15444.html>`_ (final draft,
-   from 2000, in PDF)
--  A few JP2 datasets
+- `JJ2000 (JPEG 2000 library for Java) <http://code.google.com/p/jj2000/>`_
+
+Sample Datasets:
+
+- `Broad Bioimage Benchmark Collection <http://www.broadinstitute.org/bbbc/BBBC013/>`_
+
+We currently have:
+
+- a `JPEG 2000 specification document <http://www.jpeg.org/jpeg2000/CDs15444.html>`_ (final draft, from 2000, in PDF) 
+- a few .jp2 files
+
+We would like to have:
+
+- an official specification document 
+- more JEOL files
 
 Ratings
 -------
 
-Pixels: |Very Good|
+Pixels: |Very good|
 
-Metadata: |Poor|
+Metadata: |Poor|
 
-Openness:  |Outstanding|
+Openness: |Outstanding|
 
-Presence: |Good|
+Presence: |Good|
 
-Utility: |Poor|
+Utility: |Poor|
 
 Additional Information
 ----------------------
 
-Source Code: :source:`JPEG2000Reader <components/scifio/src/loci/formats/in/JPEG2000Reader.java>`
+Source Code: :source:`JPEG2000Reader.java <components/scifio/src/loci/formats/in/JPEG2000Reader.java >`
+Source Code: :source:`JPEG2000Writer.java <components/scifio/src/loci/formats/out/JPEG2000Writer.java >`
 
-Source Code: :source:`JPEG2000Writer <components/scifio/src/loci/formats/out/JPEG2000Writer.java>`
+Notes:
 
-Notes: 
 
--  Bio-Formats uses the `JAI Image I/O
-   Tools <https://java.net/projects/jai-imageio>`_ library to read JP2
-   files.
--  JPEG stands for "Joint Photographic Experts Group."
+Bio-Formats uses the `JAI Image I/O Tools <https://java.net/projects/jai-imageio>`_ library to read JP2 files. 
+JPEG stands for "Joint Photographic Experts Group".

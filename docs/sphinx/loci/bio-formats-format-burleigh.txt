@@ -1,45 +1,55 @@
 Burleigh
-========
+===============================================================================
 
-Extensions: .img
+Extensions: .img
 
-Owner: Burleigh Instruments
+
+Owner: Burleigh Instruments
 
 Support
 -------
 
 SCIFIO: |no|
 
-Export: |no|
+Export: |no|
 
-Supported Metadata Fields: `BurleighReader <http://dev.loci.wisc.edu/trac/software/wiki/BurleighReader>`_
+Officially Supported Versions: $versions
 
-We currently have: 
+Supported Metadata Fields:
 
-- Pascal code that can read Burleigh files (from ImageSXM)
+Freely Available Software:
 
+- `Bruker plugin for ImageJ <http://rsbweb.nih.gov/ij/plugins/bruker.html>`_
+
+
+We currently have:
+
+- Pascal code that can read Burleigh files (from ImageSXM) 
 - a few Burleigh files
 
-We'd like to have: 
+We would like to have:
 
-- a Burleigh file format specification
-
+- a Burleigh file format specification 
 - more Burleigh files
 
 Ratings
 -------
 
-Pixels: |Good|
+Pixels: |Good|
 
-Metadata: |Fair|
+Metadata: |Fair|
 
-Openness: |Fair|
+Openness: |Fair|
 
-Presence: |Fair|
+Presence: |Fair|
 
-Utility: |Fair|
+Utility: |Fair|
 
 Additional Information
 ----------------------
 
-Source Code: :source:`BurleighReader <components/bio-formats/src/loci/formats/in/BurleighReader.java>`
+Source Code: :source:`BurleighReader.java <components/bio-formats/src/loci/formats/in/BurleighReader.java >`
+
+Notes:
+
+

@@ -1,46 +1,58 @@
 Hamamatsu VMS
-=============
+===============================================================================
 
-Extensions: .vms
+Extensions: .vms
 
-Developer: `Hamamatsu <http://www.hamamatsu.com>`_
+Developer: `Hamamatsu <http://www.hamamatsu.com>`_
+
 
 Support
 -------
 
 SCIFIO: |no|
 
-Export: |no|
+Export: |no|
 
-Supported Metadata Fields: `HamamatsuVMSReader <http://dev.loci.wisc.edu/trac/software/wiki/HamamatsuVMSReader>`_
+Officially Supported Versions: $versions
 
-Sample Datasets: `OpenSlide <http://openslide.cs.cmu.edu/download/openslide-testdata/Hamamatsu-vms/>`_
+Supported Metadata Fields:
 
-We currently have: 
+Freely Available Software:
 
--  A few example datasets
--  Developer documentation from the OpenSlide project:
-   http://openslide.org/Hamamatsu%20format/
+- `NDP.view <http://www.olympusamerica.com/seg_section/seg_vm_downloads.asp>`_
 
-We'd like to have: 
+Sample Datasets:
 
--  Official documentation
--  More example files
+- `OpenSlide <http://openslide.cs.cmu.edu/download/openslide-testdata/Hamamatsu-vms/>`_
+
+We currently have:
+
+- a few example datasets 
+- `developer documentation from the OpenSlide project <http://openslide.org/Hamamatsu%20format/>`_
+
+We would like to have:
+
+- an official specification document 
+- more example datasets
 
 Ratings
 -------
 
-Pixels: |Good|
+Pixels: |Good|
 
-Metadata: |Good|
+Metadata: |Good|
 
-Openness: |Fair|
+Openness: |Fair|
 
-Presence: |Fair|
+Presence: |Fair|
 
-Utility: |Fair|
+Utility: |Fair|
 
 Additional Information
 ----------------------
 
-Source Code: :source:`HamamatsuVMSReader <components/bio-formats/src/loci/formats/in/HamamatsuVMSReader.java>`
+Source Code: :source:`HamamatsuVMSReader.java <components/bio-formats/src/loci/formats/in/HamamatsuVMSReader.java >`
+
+Notes:
+
+

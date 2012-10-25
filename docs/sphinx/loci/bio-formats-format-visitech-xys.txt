@@ -1,41 +1,56 @@
 VisiTech XYS
-============
+===============================================================================
 
-Extensions: .xys, .html
+Extensions: .xys, .html
 
-Developer: `VisiTech International <http://www.visitech.co.uk/>`_
+Developer: `VisiTech International <http://www.visitech.co.uk/>`_
+
 
 Support
 -------
 
 SCIFIO: |no|
 
-Export: |no|
+Export: |no|
 
-Supported Metadata Fields: `VisiTech Reader <http://dev.loci.wisc.edu/trac/software/wiki/VisitechReader>`_
+Officially Supported Versions: $versions
 
-We currently have: 
+Supported Metadata Fields:
 
--  Several VisiTech datasets
+Freely Available Software:
 
-We'd like to have: 
+- `SPIDER <http://www.wadsworth.org/spider_doc/spider/docs/spider.html>`_
 
--  A VisiTech XYS specification document
+Sample Datasets:
+
+- `OpenSlide <http://openslide.cs.cmu.edu/download/openslide-testdata/Trestle/>`_
+
+We currently have:
+
+- several VisiTech datasets
+
+We would like to have:
+
+- an official specification document
 
 Ratings
 -------
 
-Pixels: |Very Good|
+Pixels: |Very good|
 
-Metadata: |Good|
+Metadata: |Good|
 
-Openness: |Fair|
+Openness: |Fair|
 
-Presence: |Poor|
+Presence: |Poor|
 
-Utility: |Good|
+Utility: |Good|
 
 Additional Information
 ----------------------
 
-Source Code: :source:`VisiTech Reader <components/bio-formats/src/loci/formats/in/VisitechReader.java>`
+Source Code: :source:`VisitechReader.java <components/bio-formats/src/loci/formats/in/VisitechReader.java >`
+
+Notes:
+
+

@@ -1,50 +1,65 @@
 Olympus FluoView TIFF
-=====================
+===============================================================================
 
-Extensions: .tif
+Extensions: .tif
 
-Owner: `Olympus <http://www.olympus.com/>`_
+
+Owner: `Olympus <http://www.olympus.com/>`_
 
 Support
 -------
 
 SCIFIO: |no|
 
-Export: |no|
+Export: |no|
 
-Supported Metadata Fields: `FluoView Reader <http://dev.loci.wisc.edu/trac/software/wiki/FluoviewReader>`_
+Officially Supported Versions: $versions
 
-Freely Available Software: `DIMIN <http://www.dimin.net/>`_
+Supported Metadata Fields:
 
-We currently have: 
+Freely Available Software:
 
--  A FluoView specification document (from 2002 Nov 14, in DOC)
--  Olympus's FluoView Image File Reference Suite (from 2002 Mar 1, in
-   DOC)
--  Several FluoView datasets
+- `DIMIN <http://www.dimin.net/>`_
+
+Sample Datasets:
+
+- `Diffusion tensor MRI datasets <http://www.sci.utah.edu/%7Egk/DTI-data/>`_
+
+We currently have:
+
+- a FluoView specification document (from 2002 November 14, in DOC) 
+- Olympus' FluoView Image File Reference Suite (from 2002 March 1, in DOC) 
+- several FluoView datasets
+
+We would like to have:
+
+- more OIB datasets (especially 2+ GB files) 
+- more FV1000 version 2 datasets
 
 Ratings
 -------
 
-Pixels: |Very Good|
+Pixels: |Very good|
 
-Metadata: |Very Good|
+Metadata: |Very good|
 
-Openness: |Very Good|
+Openness: |Very good|
 
-Presence: |Good|
+Presence: |Good|
 
-Utility: |Good|
+Utility: |Good|
 
 Additional Information
 ----------------------
 
-Source Code: :source:`FluoView Reader <components/bio-formats/src/loci/formats/in/FluoviewReader.java>`
+Source Code: :source:`FluoviewReader.java <components/bio-formats/src/loci/formats/in/FluoviewReader.java >`
 
-Notes: Commercial applications that support this format include:
-
--  `Bitplane Imaris <http://www.bitplane.com/>`_
--  `SVI Huygens <http://svi.nl/>`_
+Notes:
 
 **Please note that while we have specification documents for this
 format, we are not able to distribute them to third parties.**
+
+Commercial applications that support this format include: 
+
+- `Bitplane Imaris <http://www.bitplane.com/>`_ 
+- `SVI Huygens <http://svi.nl/>`_

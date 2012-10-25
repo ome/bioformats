@@ -1,53 +1,62 @@
 Gatan Digital Micrograph
-========================
+===============================================================================
 
-Extensions: .dm3
+Extensions: .dm3
 
-Owner: `Gatan <http://www.gatan.com/>`_
+
+Owner: `Gatan <http://www.gatan.com/>`_
 
 Support
 -------
 
 SCIFIO: |no|
 
-Export: |no|
+Export: |no|
 
-Officially Supported Versions: 3
+Officially Supported Versions: 3
 
-Supported Metadata Fields: `Gatan Reader <http://dev.loci.wisc.edu/trac/software/wiki/GatanReader>`_
+Supported Metadata Fields:
 
-Freely Available Software: `DM3 Reader plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/DM3_Reader.html>`_
+Freely Available Software:
 
-Freely Available Software: `EMAN <http://blake.bcm.edu/EMAN/>`_
+- `DM3 Reader plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/DM3_Reader.html>`_ 
+- `EMAN <http://blake.bcm.edu/EMAN/>`_
 
-We currently have: 
+Sample Datasets:
 
--  Gatan's ImageReader2003 code (from 2003, in C++)
--  Numerous DM3 datasets
--  Some :source:`Bio-Formats developer notes<components/bio-formats/doc/gatan.html>`
-   for DM3
+- `MRI Chest from FreeVol-3D web site <http://members.tripod.com/%7Eclunis_immensus/free3d/hk-40.zip>`_ 
+- `Medical Image Samples from Sebastien Barre's Medical Imaging page <http://www.barre.nom.fr/medical/samples/>`_ 
+- `DICOM sample image sets from OsiriX web site <http://osirix-viewer.com/datasets/>`_
 
-We'd like to have: 
+We currently have:
 
--  A DM3 specification document
+- Gatan's ImageReader2003 code (from 2003, in C++) 
+- numerous DM3 datasets 
+- some :source:`Bio-Formats developer notes <components/bio-formats/doc/gatan.html>` for DM3
+
+We would like to have:
+
+- a DM3 specification document
 
 Ratings
 -------
 
-Pixels: |Very Good|
+Pixels: |Very good|
 
-Metadata: |Good|
+Metadata: |Good|
 
-Openness: |Fair|
+Openness: |Fair|
 
-Presence: |Fair|
+Presence: |Fair|
 
-Utility: |Fair|
+Utility: |Fair|
 
 Additional Information
 ----------------------
 
-Source Code: :source:`Gatan Reader <components/bio-formats/src/loci/formats/in/GatanReader.java>`
+Source Code: :source:`GatanReader.java <components/bio-formats/src/loci/formats/in/GatanReader.java >`
 
-Notes: Commercial applications that support .dm3 include
-`Datasqueeze <http://www.datasqueezesoftware.com/>`_.
+Notes:
+
+
+Commercial applications that support .dm3 files include `Datasqueeze <http://www.datasqueezesoftware.com/>`_.
