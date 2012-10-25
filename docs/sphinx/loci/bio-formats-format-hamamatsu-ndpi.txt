@@ -1,50 +1,56 @@
-Hamamatsu .ndpi
-===============
+Hamamatsu ndpi
+===============================================================================
 
-Extensions: .ndpi
+Extensions: .ndpi
 
-Developer: `Hamamatsu <http://www.hamamatsu.com>`_
+Developer: `Hamamatsu <http://www.hamamatsu.com>`_
+
 
 Support
 -------
 
 SCIFIO: |no|
 
-Export: |no|
+Export: |no|
 
-Supported Metadata Fields: `NDPIReader <http://dev.loci.wisc.edu/trac/software/wiki/NDPIReader>`_
+Officially Supported Versions: $versions
 
-Freely Available Software: `NDP.view <http://www.olympusamerica.com/seg_section/seg_vm_downloads.asp>`_
+Supported Metadata Fields:
 
-Sample Datasets: `OpenSlide <http://openslide.cs.cmu.edu/download/openslide-testdata/Hamamatsu/>`_
+Freely Available Software:
 
-We currently have: 
+- `NDP.view <http://www.olympusamerica.com/seg_section/seg_vm_downloads.asp>`_
 
--  Many example datasets
+Sample Datasets:
 
-We'd like to have: 
+- `OpenSlide <http://openslide.cs.cmu.edu/download/openslide-testdata/Hamamatsu/>`_
 
--  An official specification document
--  A JPEG decoder that decodes images whose width or height are greater
-   than 65530
+We currently have:
+
+- many example datasets
+
+We would like to have:
+
+- an official specification document
 
 Ratings
 -------
 
-Pixels: |Fair|
+Pixels: |Fair|
 
-Metadata: |Good|
+Metadata: |Good|
 
-Openness: |Good|
+Openness: |Good|
 
-Presence: |Fair|
+Presence: |Fair|
 
-Utility: |Fair|
+Utility: |Fair|
 
 Additional Information
 ----------------------
 
-Source Code: :source:`NDPIReader <components/bio-formats/src/loci/formats/in/NDPIReader.java>`
+Source Code: :source:`NDPIReader.java <components/bio-formats/src/loci/formats/in/NDPIReader.java >`
 
-Notes: Small .ndpi files can be read, but there is a major issue with reading
-large files (width or height greater than 65530): see :ticket:`5092`.
+Notes:
+
+

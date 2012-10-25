@@ -186,6 +186,7 @@ public class IniParser {
   private int readLine(BufferedReader in, StringBuffer sb) throws IOException {
     int no = 0;
     sb.setLength(0);
+    boolean blockText = false;
     while (true) {
       String line = in.readLine();
       if (line == null) break;
@@ -198,13 +199,22 @@ public class IniParser {
       }
 
       // kill whitespace
-      line = line.trim();
+      if (!blockText) {
+        line = line.trim();
+      }
 
       // backslash signifies data continues to next line
-      boolean slash = slashContinues && line.endsWith("\\");
-      if (slash) line = line.substring(0, line.length() - 1).trim() + " ";
+      boolean slash = slashContinues && line.trim().endsWith("\\");
+      blockText = slashContinues && line.trim().endsWith("\\n");
+
+      if (blockText) {
+        line = line.substring(0, line.length() - 2) + "\n";
+      }
+      else if (slash) {
+        line = line.substring(0, line.length() - 1).trim() + " ";
+      }
       sb.append(line);
-      if (!slash) break;
+      if (!slash && !blockText) break;
     }
     return no;
   }

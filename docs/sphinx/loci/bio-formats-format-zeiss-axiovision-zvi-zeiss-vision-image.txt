@@ -1,72 +1,70 @@
 Zeiss AxioVision ZVI (Zeiss Vision Image)
-=========================================
+===============================================================================
 
-Extensions: .zvi
+Extensions: .zvi
 
-Developer: `Carl Zeiss MicroImaging GmbH <http://www.zeiss.com/axiovision>`__
+Developer: `Carl Zeiss MicroImaging GmbH (AxioVision) <http://www.zeiss.com/axiovision>`_
 
-Owner: `Carl Zeiss MicroImaging GmbH <http://www.zeiss.com/micro>`__
+Owner: `Carl Zeiss MicroImaging GmbH <http://www.zeiss.com/micro>`_
 
 Support
 -------
 
 SCIFIO: |no|
 
-Export: |no|
+Export: |no|
 
-Officially Supported Versions: 1.0, 2.0
+Officially Supported Versions: 1.0, 2.0
 
-Supported Metadata Fields: `Zeiss ZVI Reader <http://dev.loci.wisc.edu/trac/software/wiki/ZeissZVIReader>`_
+Supported Metadata Fields:
 
-Freely Available Software: `Zeiss Axiovision LE <http://www.zeiss.de/c12567be0045acf1/Contents-Frame/cbe917247da02a1cc1256e0000491172>`_
+Freely Available Software:
 
-We currently have: 
+- `Zeiss Axiovision LE <http://www.zeiss.de/c12567be0045acf1/Contents-Frame/cbe917247da02a1cc1256e0000491172>`_
 
--  A ZVI specification document (v2.0.5, from 2010 August, in PDF)
--  An older ZVI specification document (v2.0.2, from 2006 Aug 23, in
-   PDF)
--  An older ZVI specification document (v2.0.1, from 2005 Apr 21, in
-   PDF)
--  An older ZVI specification document (v1.0.26.01.01, from 2001 Jan 29,
-   in DOC)
--  Zeiss's ZvImageRead code (v1.0, from 2001 Jan 25, in C++)
--  Numerous ZVI datasets
+Sample Datasets:
 
-We'd like to have: 
+- `Volocity Demo <http://www.perkinelmer.com/pages/020/cellularimaging/products/volocitydemo.xhtml>`_
 
-More ZVI datasets:
+We currently have:
 
--  with JPEG-compressed image planes
--  with lossless compression
--  tiled
--  2+ GB files
+- a ZVI specification document (v2.0.5, from 2010 August, in PDF) 
+- an older ZVI specification document (v2.0.2, from 2006 August 23, in PDF) 
+- an older ZVI specification document (v2.0.1, from 2005 April 21, in PDF) 
+- an older ZVI specification document (v1.0.26.01.01, from 2001 January 29, in DOC) 
+- Zeiss' ZvImageReader code (v1.0, from 2001 January 25, in C++) 
+- many ZVI datasets
+
+We would like to have:
+
+- an official specification document
 
 Ratings
 -------
 
-Pixels: |Outstanding|
+Pixels: |Outstanding|
 
-Metadata: |Very Good|
+Metadata: |Very good|
 
-Openness: |Very Good|
+Openness: |Very good|
 
-Presence: |Good|
+Presence: |Good|
 
-Utility: |Good|
+Utility: |Good|
 
 Additional Information
 ----------------------
 
-Source Code: :source:`Zeiss ZVI Reader <components/bio-formats/src/loci/formats/in/ZeissZVIReader.java>`
+Source Code: :source:`ZeissZVIReader.java <components/bio-formats/src/loci/formats/in/ZeissZVIReader.java >`
 
-Notes: Bio-Formats uses a modified version of the `Apache Jakarta
-POI <http://jakarta.apache.org/poi/>`_ library to read ZVI files.
-
-Commercial applications that support ZVI include `Bitplane
-Imaris <http://www.bitplane.com/>`_.
+Notes:
 
 **Please note that while we have specification documents for this
 format, we are not able to distribute them to third parties.**
 
-.. seealso::
-    `Axiovision software overview <http://www.zeiss.com/C12567BE0045ACF1/ContentsWWWIntern/668C9FDCBB18C6E2412568C10045A72E>`_
+Bio-Formats uses a modified version of the `Apache Jakarta POI library <http://jakarta.apache.org/poi/>`_ to read ZVI files. 
+
+Commercial applications that support ZVI include `Bitplane Imaris <http://www.bitplane.com/>`_. 
+
+.. seealso:: 
+  `Axiovision software overview <http://www.zeiss.com/C12567BE0045ACF1/ContentsWWWIntern/668C9FDCBB18C6E2412568C10045A72E>`_

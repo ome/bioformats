@@ -1,42 +1,54 @@
 Cellomics
-=========
+===============================================================================
 
-Extensions: .c01
+Extensions: .c01
 
-Developer: `Thermo Fisher Scientific <http://www.thermofisher.com/>`_
+Developer: `Thermo Fisher Scientific <http://www.thermofisher.com/>`_
+
 
 Support
 -------
 
 SCIFIO: |no|
 
-Export: |no|
+Export: |no|
 
-Supported Metadata Fields: `Cellomics Reader <http://dev.loci.wisc.edu/trac/software/wiki/CellomicsReader>`_
+Officially Supported Versions: $versions
 
-We currently have: 
+Supported Metadata Fields:
 
--  A few Cellomics .c01 datasets
+Freely Available Software:
 
-We'd like to have: 
+- `Micro-Manager <http://micro-manager.org/>`_
 
--  A Cellomics .c01 specification document
--  More Cellomics .c01 datasets
+
+We currently have:
+
+- a few Cellomics .c01 datasets
+
+We would like to have:
+
+- a Cellomics .c01 specification document 
+- more Cellomics .c01 datasets
 
 Ratings
 -------
 
-Pixels: |Very Good|
+Pixels: |Very good|
 
-Metadata: |Poor|
+Metadata: |Poor|
 
-Openness: |Fair|
+Openness: |Fair|
 
-Presence: |Poor|
+Presence: |Poor|
 
-Utility: |Poor|
+Utility: |Poor|
 
 Additional Information
 ----------------------
 
-Source Code: :source:`CellomicsReader <components/bio-formats/src/loci/formats/in/CellomicsReader.java>`
+Source Code: :source:`CellomicsReader.java <components/bio-formats/src/loci/formats/in/CellomicsReader.java >`
+
+Notes:
+
+

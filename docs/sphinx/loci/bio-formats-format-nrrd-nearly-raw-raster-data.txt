@@ -1,45 +1,57 @@
 NRRD (Nearly Raw Raster Data)
-=============================
+===============================================================================
 
-Extensions: .nrrd, .nhdr, .raw, .txt
+Extensions: .nrrd, .nhdr, .raw, .txt
 
-Developer: `Teem developers <http://teem.sourceforge.net/>`_
+Developer: `Teem developers <http://teem.sourceforge.net/>`_
+
 
 Support
 -------
 
 SCIFIO: |yes|
 
-Export: |no|
+Export: |no|
 
-Supported Metadata Fields: `NRRD Reader <http://dev.loci.wisc.edu/trac/software/wiki/NRRDReader>`_
+Officially Supported Versions: $versions
 
-Freely Available Software: `nrrd (NRRD reference library) <http://teem.sourceforge.net/nrrd/>`_
+Supported Metadata Fields:
 
-Sample Datasets: `Diffusion tensor MRI
-datasets <http://www.sci.utah.edu/%7Egk/DTI-data/>`_
+Freely Available Software:
 
-We currently have: 
+- `nrrd (NRRD reference library) <http://teem.sourceforge.net/nrrd/>`_
 
--  A `nrrd specification
-   document <http://teem.sourceforge.net/nrrd/format.html>`_ (v1.9, from
-   2005 Dec 24, in HTML)
--  A few nrrd datasets
+Sample Datasets:
+
+- `Diffusion tensor MRI datasets <http://www.sci.utah.edu/%7Egk/DTI-data/>`_
+
+We currently have:
+
+- an `nrrd specification document <http://teem.sourceforge.net/nrrd/format.html>`_ (v1.9, from 2005 December 24, in HTML) 
+- a few nrrd datasets
+
+We would like to have:
+
+- an official specification document
 
 Ratings
 -------
 
-Pixels: |Very Good|
+Pixels: |Very good|
 
-Metadata: |Very Good|
+Metadata: |Very good|
 
-Openness: |Outstanding|
+Openness: |Outstanding|
 
-Presence: |Fair|
+Presence: |Fair|
 
-Utility: |Very Good|
+Utility: |Very good|
 
 Additional Information
 ----------------------
 
-Source Code: `NRRD Reader <components/bio-formats/src/loci/formats/in/NRRDReader.java>`
+Source Code: :source:`NRRDReader.java <components/scifio/src/loci/formats/in/NRRDReader.java >`
+
+Notes:
+
+

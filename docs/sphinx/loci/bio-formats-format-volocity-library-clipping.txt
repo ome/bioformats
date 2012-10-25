@@ -1,43 +1,58 @@
 Volocity Library Clipping
-=========================
+===============================================================================
 
-Extensions: .acff
+Extensions: .acff
 
-Developer: `PerkinElmer <http://www.perkinelmer.com/pages/020/cellularimaging/products/volocity.xhtml>`_
+Developer: `PerkinElmer <http://www.perkinelmer.com/pages/020/cellularimaging/products/volocity.xhtml>`_
+
 
 Support
 -------
 
 SCIFIO: |no|
 
-Export: |no|
+Export: |no|
 
-We currently have: 
+Officially Supported Versions: $versions
 
--  Several Volocity library clipping datasets
+Supported Metadata Fields:
 
-We'd like to have: 
+Freely Available Software:
 
--  Any Volocity library clipping datasets that do not open correctly
--  An official specification document
+- `SPIDER <http://www.wadsworth.org/spider_doc/spider/docs/spider.html>`_
+
+Sample Datasets:
+
+- `OpenSlide <http://openslide.cs.cmu.edu/download/openslide-testdata/Trestle/>`_
+
+We currently have:
+
+- several Volocity library clipping datasets
+
+We would like to have:
+
+- any datasets that do not open correctly 
+- an official specification document
 
 Ratings
 -------
 
-Pixels: |Good|
+Pixels: |Good|
 
-Metadata: |Good|
+Metadata: |Good|
 
-Openness: |Fair|
+Openness: |Fair|
 
-Presence: |Poor|
+Presence: |Poor|
 
-Utility: |Poor|
+Utility: |Poor|
 
 Additional Information
 ----------------------
 
-Source Code: :source:`VolocityClippingReader <components/bio-formats/src/loci/formats/in/VolocityClippingReader.java>`
+Source Code: :source:`VolocityClippingReader.java <components/bio-formats/src/loci/formats/in/VolocityClippingReader.java >`
 
-.. note::
-    Note that RGB .acff files are not yet supported. See :ticket:`6413`.
+Notes:
+
+
+RGB .acff files are not yet supported.  See :ticket:`6413`.

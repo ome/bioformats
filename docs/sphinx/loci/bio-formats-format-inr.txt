@@ -1,33 +1,55 @@
 INR
-===
+===============================================================================
 
-Extensions: .inr
+Extensions: .inr
+
+
 
 Support
 -------
 
 SCIFIO: |no|
 
-Export: |no|
+Export: |no|
 
-We currently have: 
+Officially Supported Versions: $versions
 
--  Several sample .inr datasets
+Supported Metadata Fields:
+
+Freely Available Software:
+
+- `IMOD <http://bio3d.colorado.edu/imod/>`_
+
+Sample Datasets:
+
+- `Broad Bioimage Benchmark Collection <http://www.broadinstitute.org/bbbc/BBBC013/>`_
+
+We currently have:
+
+- several sample .inr datasets
+
+We would like to have:
+
+- an official specification document
 
 Ratings
 -------
 
-Pixels: |Very Good|
+Pixels: |Very good|
 
-Metadata: |Good|
+Metadata: |Good|
 
-Openness: |Fair|
+Openness: |Fair|
 
-Presence: |Poor|
+Presence: |Poor|
 
-Utility: |Fair|
+Utility: |Fair|
 
 Additional Information
 ----------------------
 
-Source Code: :source:`INRReader <components/bio-formats/src/loci/formats/in/INRReader.java>`
+Source Code: :source:`INRReader.java <components/bio-formats/src/loci/formats/in/INRReader.java >`
+
+Notes:
+
+

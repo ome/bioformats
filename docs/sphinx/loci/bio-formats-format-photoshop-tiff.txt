@@ -1,39 +1,58 @@
 Photoshop TIFF
-==============
+===============================================================================
 
-Extensions: .tif, .tiff
+Extensions: .tif, .tiff
 
-Developer: `Adobe <http://www.adobe.com>`_
+Developer: `Adobe <http://www.adobe.com>`_
+
 
 Support
 -------
 
 SCIFIO: |no|
 
-Export: |no|
+Export: |no|
 
-Supported Metadata Fields: `PhotoshopTiffReader <http://dev.loci.wisc.edu/trac/software/wiki/PhotoshopTiffReader>`_
+Officially Supported Versions: $versions
 
-We currently have: 
+Supported Metadata Fields:
 
-- a Photoshop TIFF specification
+Freely Available Software:
 
+- `Netpbm graphics filter <http://netpbm.sourceforge.net/>`_
+
+Sample Datasets:
+
+- `Diffusion tensor MRI datasets <http://www.sci.utah.edu/%7Egk/DTI-data/>`_
+
+We currently have:
+
+- a Photoshop TIFF specification document 
 - a few Photoshop TIFF files
+
+We would like to have:
+
+- an official specification document 
+- more sample datasets
 
 Ratings
 -------
 
-Pixels: |Good|
+Pixels: |Good|
 
-Metadata: |Good|
+Metadata: |Good|
 
-Openness: |Good|
+Openness: |Good|
 
-Presence: |Good|
+Presence: |Good|
 
-Utility: |Good|
+Utility: |Good|
 
 Additional Information
 ----------------------
 
-Source Code: :source:`PhotoshopTiffReader <components/bio-formats/src/loci/formats/in/PhotoshopTiffReader.java>`
+Source Code: :source:`PhotoshopTiffReader.java <components/bio-formats/src/loci/formats/in/PhotoshopTiffReader.java >`
+
+Notes:
+
+

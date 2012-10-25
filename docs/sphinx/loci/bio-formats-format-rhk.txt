@@ -1,45 +1,58 @@
 RHK
-===
+===============================================================================
 
-Extensions: .sm2, .sm3
+Extensions: .sm2, .sm3
 
-Owner: `RHK Techologies <http://www.rhk-tech.com>`_
+
+Owner: `RHK Technologies <http://www.rhk-tech.com>`_
 
 Support
 -------
 
 SCIFIO: |no|
 
-Export: |no|
+Export: |no|
 
-Supported Metadata Fields: `RHKReader <http://dev.loci.wisc.edu/trac/software/wiki/RHKReader>`_
+Officially Supported Versions: $versions
 
-We currently have: 
+Supported Metadata Fields:
 
-- Pascal code that can read RHK files (from ImageSXM)
+Freely Available Software:
 
+- `QuickTime Player <http://www.apple.com/quicktime/download/>`_
+
+Sample Datasets:
+
+- `Diffusion tensor MRI datasets <http://www.sci.utah.edu/%7Egk/DTI-data/>`_
+
+We currently have:
+
+- Pascal code that can read RHK files (from ImageSXM) 
 - a few RHK files
 
-We'd like to have: 
+We would like to have:
 
-- an RHK file format specification document
-
+- an official specification document 
 - more RHK files
 
 Ratings
 -------
 
-Pixels: |Good|
+Pixels: |Good|
 
-Metadata: |Fair|
+Metadata: |Fair|
 
-Openness: |Fair|
+Openness: |Fair|
 
-Presence: |Fair|
+Presence: |Fair|
 
-Utility: |Fair|
+Utility: |Fair|
 
 Additional Information
 ----------------------
 
-Source Code: :source:`RHKReader <components/bio-formats/src/loci/formats/in/RHKReader.java>`
+Source Code: :source:`RHKReader.java <components/bio-formats/src/loci/formats/in/RHKReader.java >`
+
+Notes:
+
+

@@ -1,57 +1,68 @@
 Leica LCS LEI
-=============
+===============================================================================
 
-Extensions: .lei, .tif
+Extensions: .lei, .tif
 
-Developer: `Leica Microsystems CMS GmbH <http://www.leica-microsystems.com/>`_
+Developer: `Leica Microsystems CMS GmbH <http://www.leica-microsystems.com/>`_
 
-Owner: `Leica <http://www.leica.com/>`_
+Owner: `Leica <http://www.leica.com/>`_
 
 Support
 -------
 
 SCIFIO: |no|
 
-Export: |no|
+Export: |no|
 
-Supported Metadata Fields: `Leica Reader <http://dev.loci.wisc.edu/trac/software/wiki/LeicaReader>`_
+Officially Supported Versions: $versions
 
-Freely Available Software: `Leica LCS Lite <ftp://ftp.llt.de/softlib/LCSLite/LCSLite2611537.exe>`_
+Supported Metadata Fields:
 
-We currently have: 
+Freely Available Software:
 
--  An LEI specification document (beta 2.000, from no later than 2004
-   Feb 17, in PDF)
--  Several LEI datasets
+- `Leica LCS Lite <ftp://ftp.llt.de/softlib/LCSLite/LCSLite2611537.exe>`_
+
+Sample Datasets:
+
+- `VIFF Images <http://netghost.narod.ru/gff/sample/images/viff/index.htm>`_
+
+We currently have:
+
+- an LEI specification document (beta 2.000, from no later than 2004 February 17, in PDF) 
+- many LEI datasets
+
+We would like to have:
+
+- an official specification document
 
 Ratings
 -------
 
-Pixels: |Outstanding|
+Pixels: |Outstanding|
 
-Metadata: |Very Good|
+Metadata: |Very good|
 
-Openness: |Very Good|
+Openness: |Very good|
 
-Presence: |Very Good|
+Presence: |Very good|
 
-Utility: |Very Good|
+Utility: |Very good|
 
 Additional Information
 ----------------------
 
-Source Code: :source:`Leica Reader <components/bio-formats/src/loci/formats/in/LeicaReader.java>`
+Source Code: :source:`LeicaReader.java <components/bio-formats/src/loci/formats/in/LeicaReader.java >`
 
-Notes: 
-
--  LCS stands for "Leica Confocal Software."
--  LEI presumably stands for "Leica Experimental Information."
-
-Commercial applications that support LEI include:
-
--  `Bitplane Imaris <http://www.bitplane.com/>`_
--  `SVI Huygens <http://svi.nl/>`_
--  `Image-Pro Plus <http://www.mediacy.com/>`_
+Notes:
 
 **Please note that while we have specification documents for this
 format, we are not able to distribute them to third parties.**
+
+LCS stands for "Leica Confocal Software". 
+LEI presumably stands for "Leica Experimental Information". 
+
+Commercial applications that support LEI include: 
+
+- `Bitplane Imaris <http://www.bitplane.com/>`_ 
+- `SVI Huygens <http://svi.nl/>`_ 
+- `Image-Pro Plus <http://www.mediacy.com/>`_

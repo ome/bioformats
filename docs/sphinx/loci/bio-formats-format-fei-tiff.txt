@@ -1,37 +1,58 @@
 FEI TIFF
-========
+===============================================================================
 
-Extensions: .tiff
+Extensions: .tiff
 
-Developer: `FEI <http://www.fei.com>`_
+Developer: `FEI <http://www.fei.com>`_
+
 
 Support
 -------
 
 SCIFIO: |no|
 
-Export: |no|
+Export: |no|
 
-Supported Metadata Fields: `FEITiffReader <http://dev.loci.wisc.edu/trac/java/wiki/FEITiffReader>`_
+Officially Supported Versions: $versions
 
-We currently have: 
+Supported Metadata Fields:
 
--  A few FEI TIFF datasets
+Freely Available Software:
+
+- `EPS Writer plugin for ImageJ <http://rsb.info.nih.gov/ij/plugins/eps-writer.html>`_
+
+Sample Datasets:
+
+- `MRI Chest from FreeVol-3D web site <http://members.tripod.com/%7Eclunis_immensus/free3d/hk-40.zip>`_ 
+- `Medical Image Samples from Sebastien Barre's Medical Imaging page <http://www.barre.nom.fr/medical/samples/>`_ 
+- `DICOM sample image sets from OsiriX web site <http://osirix-viewer.com/datasets/>`_
+
+We currently have:
+
+- a few FEI TIFF datasets
+
+We would like to have:
+
+- a freely redistributable LuraWave LWF decoder
 
 Ratings
 -------
 
-Pixels: |Very Good|
+Pixels: |Very good|
 
-Metadata: |Good|
+Metadata: |Good|
 
-Openness: |Good|
+Openness: |Good|
 
-Presence: |Fair|
+Presence: |Fair|
 
-Utility: |Fair|
+Utility: |Fair|
 
 Additional Information
 ----------------------
 
-Source Code: :source:`FEITiffReader <components/bio-formats/src/loci/formats/in/FEITiffReader.java>`
+Source Code: :source:`FEITiffReader.java <components/bio-formats/src/loci/formats/in/FEITiffReader.java >`
+
+Notes:
+
+

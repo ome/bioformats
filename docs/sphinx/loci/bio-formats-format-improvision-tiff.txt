@@ -1,48 +1,62 @@
 Improvision TIFF
-================
+===============================================================================
 
-Extensions: .tif
+Extensions: .tif
 
-Developer: `Improvision <http://www.improvision.com/>`_
+Developer: `Improvision <http://www.improvision.com/>`_
 
-Owner: `PerkinElmer <http://www.perkinelmer.com/>`_
+Owner: `PerkinElmer <http://www.perkinelmer.com/>`_
 
 Support
 -------
 
 SCIFIO: |no|
 
-Export: |no|
+Export: |no|
 
-Supported Metadata Fields: `Improvision TIFF Reader <http://dev.loci.wisc.edu/trac/software/wiki/ImprovisionTiffReader>`_
+Officially Supported Versions: $versions
 
-We currently have: 
+Supported Metadata Fields:
 
--  an Improvision TIFF specification document
--  a few Improvision TIFF datasets
+Freely Available Software:
+
+- `IMOD <http://bio3d.colorado.edu/imod/>`_
+
+Sample Datasets:
+
+- `OpenSlide <http://openslide.cs.cmu.edu/download/openslide-testdata/Hamamatsu-vms/>`_
+
+We currently have:
+
+- an Improvision TIFF specification document 
+- a few Improvision TIFF datasets
+
+We would like to have:
+
+- more Openlab datasets (preferably with 32-bit integer data)
 
 Ratings
 -------
 
-Pixels: |Very Good|
+Pixels: |Very good|
 
-Metadata: |Outstanding|
+Metadata: |Outstanding|
 
-Openness: |Very Good|
+Openness: |Very good|
 
-Presence: |Fair|
+Presence: |Fair|
 
-Utility: |Good|
+Utility: |Good|
 
 Additional Information
 ----------------------
 
-Source Code: :source:`Improvision TIFF Reader <components/bio-formats/src/loci/formats/in/ImprovisionTiffReader.java>`
+Source Code: :source:`ImprovisionTiffReader.java <components/bio-formats/src/loci/formats/in/ImprovisionTiffReader.java >`
 
-Notes: 
+Notes:
 
 **Please note that while we have specification documents for this
 format, we are not able to distribute them to third parties.**
 
-.. seealso::
-    `Openlab software overview <http://www.improvision.com/products/openlab/>`_
+.. seealso:: 
+  `Openlab software overview <http://www.improvision.com/products/openlab/>`_
