@@ -174,8 +174,10 @@ public class MSVideoCodec extends BaseCodec {
                 short flag = y < 2 ? b : a;
                 int shift = 4 - 4*(y % 2) + x;
                 int cmp = 1 << shift;
-                if ((flag & cmp) == cmp) shorts[ndx] = colorA;
-                else shorts[ndx] = colorB;
+                if (ndx < shorts.length) {
+                  if ((flag & cmp) == cmp) shorts[ndx] = colorA;
+                  else shorts[ndx] = colorB;
+                }
               }
             }
           }
@@ -224,13 +226,27 @@ public class MSVideoCodec extends BaseCodec {
             else bytes[ndx] = colorB;
           }
         }
+
+        row += 4;
+        if (row >= options.width) {
+          row = 0;
+          column += 4;
+        }
       }
       else {
         for (int y=0; y<4; y++) {
           for (int x=0; x<4; x++) {
             int ndx = options.width*(column + y) + row + x;
-            if (options.bitsPerSample == 8) bytes[ndx] = (byte) (a & 0xff);
-            else shorts[ndx] = (short) (((b << 8) | a) & 0xffff);
+            if (options.bitsPerSample == 8) {
+              if (ndx < bytes.length) {
+                bytes[ndx] = (byte) (a & 0xff);
+              }
+            }
+            else {
+              if (ndx < shorts.length) {
+                shorts[ndx] = (short) (((b << 8) | a) & 0xffff);
+              }
+            }
           }
         }
         row += 4;

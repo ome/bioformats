@@ -375,6 +375,14 @@ public class AVIReader extends FormatReader {
 
     if (bmpCompression != 0) core[0].pixelType = FormatTools.UINT8;
 
+    int effectiveWidth = (int) (bmpScanLineSize / (bmpBitsPerPixel / 8));
+    if (effectiveWidth == 0) {
+      effectiveWidth = getSizeX();
+    }
+    if (effectiveWidth < getSizeX()) {
+      core[0].sizeX = effectiveWidth;
+    }
+
     MetadataStore store = makeFilterMetadata();
     MetadataTools.populatePixels(store, this);
   }
