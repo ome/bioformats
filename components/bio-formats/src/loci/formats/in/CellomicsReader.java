@@ -251,7 +251,11 @@ public class CellomicsReader extends FormatReader {
     int realRows = wellRows;
     int realCols = wellColumns;
 
-    if (realRows <= 8 && realCols <= 12) {
+    if (files.length == 1) {
+      realRows = 1;
+      realCols = 1;
+    }
+    else if (realRows <= 8 && realCols <= 12) {
       realRows = 8;
       realCols = 12;
     }
@@ -263,6 +267,13 @@ public class CellomicsReader extends FormatReader {
     for (int row=0; row<realRows; row++) {
       for (int col=0; col<realCols; col++) {
         int well = row * realCols + col;
+
+        if (files.length == 1) {
+          String wellRow = getWellRow(files[0]);
+          String wellColumn = getWellColumn(files[0]);
+          row = wellRow.toUpperCase().charAt(0) - 'A';
+          col = Integer.parseInt(wellColumn) - 1;
+        }
 
         store.setWellID(MetadataTools.createLSID("Well", 0, well), 0, well);
         store.setWellRow(new NonNegativeInteger(row), 0, well);
@@ -279,6 +290,11 @@ public class CellomicsReader extends FormatReader {
 
       int row = wellRow.toUpperCase().charAt(0) - 'A';
       int col = Integer.parseInt(wellColumn) - 1;
+
+      if (files.length == 1) {
+        row = 0;
+        col = 0;
+      }
 
       String imageID = MetadataTools.createLSID("Image", i);
       store.setImageID(imageID, i);
