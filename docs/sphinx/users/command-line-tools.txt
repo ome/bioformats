@@ -33,7 +33,7 @@ Currently available tools include:
     bfconvert
         Converts an image file from one format to another. Bio-Formats must
         support writing to the output file (determined by extension; see the
-        :doc:`/formats/supported-formats`).
+        :doc:`/supported-formats`).
 
     formatlist
         Displays a list of supported file formats in HTML, plaintext or XML.
