@@ -268,6 +268,13 @@ public class CellomicsReader extends FormatReader {
       for (int col=0; col<realCols; col++) {
         int well = row * realCols + col;
 
+        if (files.length == 1) {
+          String wellRow = getWellRow(files[0]);
+          String wellColumn = getWellColumn(files[0]);
+          row = wellRow.toUpperCase().charAt(0) - 'A';
+          col = Integer.parseInt(wellColumn) - 1;
+        }
+
         store.setWellID(MetadataTools.createLSID("Well", 0, well), 0, well);
         store.setWellRow(new NonNegativeInteger(row), 0, well);
         store.setWellColumn(new NonNegativeInteger(col), 0, well);
