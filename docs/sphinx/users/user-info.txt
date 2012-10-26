@@ -135,8 +135,4 @@ For information about what extensions to choose to import files, see
 
     /dataset-structure-table
 
-.. toctree::
-    :maxdepth: 1
-    :hidden:
 
-    /supported-formats
