@@ -766,6 +766,11 @@ public class MetamorphReader extends BaseTiffReader {
         if (handler.getReadOutRate() != 0) {
           store.setDetectorSettingsReadOutRate(handler.getReadOutRate(), i, c);
         }
+
+        if (gain == null) {
+          gain = handler.getGain();
+        }
+
         if (gain != null) {
           store.setDetectorSettingsGain(gain, i, c);
         }
@@ -866,7 +871,9 @@ public class MetamorphReader extends BaseTiffReader {
             lastIFD = lastIFDs.get(p % lastIFDs.size());
             TiffIFDEntry commentEntry =
               (TiffIFDEntry) lastIFD.get(IFD.IMAGE_DESCRIPTION);
-            comment = tp.getIFDValue(commentEntry).toString();
+            if (commentEntry != null) {
+              comment = tp.getIFDValue(commentEntry).toString();
+            }
             if (comment != null) comment = comment.trim();
             if (comment != null && comment.startsWith("<MetaData>")) {
               String[] lines = comment.split("\n");
@@ -923,8 +930,14 @@ public class MetamorphReader extends BaseTiffReader {
         if (stageX != null && p < stageX.length) {
           store.setPlanePositionX(stageX[p], i, p);
         }
+        else if (positionX != null) {
+          store.setPlanePositionX(positionX, i, p);
+        }
         if (stageY != null && p < stageY.length) {
           store.setPlanePositionY(stageY[p], i, p);
+        }
+        else if (positionY != null) {
+          store.setPlanePositionY(positionY, i, p);
         }
         if (zDistances != null && p < zDistances.length) {
           if (p > 0) {
@@ -938,7 +951,9 @@ public class MetamorphReader extends BaseTiffReader {
         }
       }
 
-      stream.close();
+      if (stream != null) {
+        stream.close();
+      }
     }
     setSeries(0);
   }
