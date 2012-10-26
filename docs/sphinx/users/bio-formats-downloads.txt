@@ -85,7 +85,7 @@ Bio-Formats examples
 
 Java examples of usage
 
-See the :doc:`Bio-Formats as a Java library <developers/java-library>` page
+See the :doc:`Bio-Formats as a Java library </developers/java-library>` page
 
 Sample ImageJ macros and plugins
 
@@ -107,7 +107,7 @@ Source code
 -----------
 
 Bio-Formats is an open source project. You can access the source code
-from the :doc:`Bio-Formats git repository <developers/source-code>`.
+from the :doc:`Bio-Formats git repository </developers/source-code>`.
 
 Bio-Formats component builds
 ----------------------------

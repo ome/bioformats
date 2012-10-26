@@ -23,5 +23,5 @@ and putting it into the ``libs`` folder of the EV distribution,
 overwriting the old file.
 
 You could also include some :doc:`optional
-libraries <developers/java-library>`, to add
+libraries </developers/java-library>`, to add
 support for additional formats, if desired.
