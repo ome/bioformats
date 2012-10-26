@@ -64,7 +64,7 @@ performing the following steps:
    also work with the latest `ITK source from Git <http://www.itk.org/Wiki/ITK/Git>`_.
 
 #. Clone the :doc:`Bio-Formats source
-   code <developers/source-code>`::
+   code </developers/source-code>`::
 
         git clone git://github.com/openmicroscopy/bioformats.git
 

@@ -16,9 +16,9 @@ particularly into the OME-TIFF_file format.
     :titlesonly:
  
     users/bio-formats-about
-    loci/bio-formats-formats
+    formats/supported-formats
     users/user-info
-    loci/bio-formats-developer-links
+    developers/developer-links
 
 
 

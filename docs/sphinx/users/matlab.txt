@@ -39,4 +39,4 @@ More information
 ----------------
 
 For further instructions on working with Bio-Formats from MATLAB, see
-the :doc:`Bio-Formats MATLAB Guide </matlab>`.
+the :doc:`Bio-Formats MATLAB Guide </developers/matlab-dev>`.

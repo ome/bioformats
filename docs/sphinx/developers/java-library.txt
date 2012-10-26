@@ -2,7 +2,7 @@ Bio-Formats as a Java Library
 =============================
 
 If you wish to make use of Bio-Formats within your own software, you can
-:doc:`download bio-formats.jar <users/bio-formats-downloads>`
+:doc:`download bio-formats.jar </users/bio-formats-downloads>`
 to use it as a library. Just add **bio-formats.jar** to your CLASSPATH or
 build path. You will also need **loci-common.jar** for common I/O
 functions, **ome-xml.jar** for metadata standardization, and
@@ -116,18 +116,18 @@ file
 ``Simple_Read``
 
 A simple ImageJ plugin demonstrating how to use Bio-Formats to read
-files into ImageJ (see also :doc:`imagej`)
+files into ImageJ (see also :doc:`/users/imagej`)
 
 ``Read_Image``
 
 An ImageJ plugin that uses Bio-Formats to build up an image stack,
-reading image planes one by one (see also :doc:`imagej`).
+reading image planes one by one (see also :doc:`/users/imagej`).
 
 ``Mass_Importer``
 
 A simple plugin for ImageJ that demonstrates how to open all image files
 in a directory using Bio-Formats, grouping files with similar names to
-avoiding opening the same dataset more than once (see also :doc:`imagej`)
+avoiding opening the same dataset more than once (see also :doc:`/users/imagej`)
 
 :source:`Export examples <components/bio-formats/doc/export>`
 

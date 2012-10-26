@@ -19,7 +19,7 @@ Other projects using BF-CPP include:
 
 -  `WiscScan <http://loci.wisc.edu/software/wiscscan>`_ which uses BF-CPP
    to write OME-TIFF_ files.
--  :doc:`xuvtools` which uses an adapted version of BF-CPP
+-  :doc:`/users/xuvtools` which uses an adapted version of BF-CPP
    called
    `BlitzBioFormats <http://www.xuvtools.org/devel:libblitzbioformats>`_.
 
@@ -27,7 +27,7 @@ You can use BF-CPP from a pre-compiled binary, or you can generate the
 code and compile it yourself:
 
 -  Binary builds for several common platforms are available on our
-   :doc:`downloads <users/bio-formats-downloads>` page.
+   :doc:`downloads </users/bio-formats-downloads>` page.
 -  See the :source:`build instructions <components/scifio/cppwrap/readme.txt>`
    (:source:`Windows </components/scifio/cppwrap/readme-windows.txt>`,
    :source:`Mac OS X <components/scifio/cppwrap/readme-macosx.txt>`,

@@ -33,7 +33,7 @@ Currently available tools include:
     bfconvert
         Converts an image file from one format to another. Bio-Formats must
         support writing to the output file (determined by extension; see the
-        :doc:`/loci/bio-formats-formats`).
+        :doc:`/formats/supported-formats`).
 
     formatlist
         Displays a list of supported file formats in HTML, plaintext or XML.
@@ -68,7 +68,7 @@ Using the tools directly from source
 ------------------------------------
 
 If you have :doc:`checked out the source from our Git
-repository <developers/source-code>`
+repository </developers/source-code>`
 you already have the command line tools in the ``tools`` directory. You
 can configure the scripts to use your source tree instead of
 **loci\_tools.jar** in the same directory by following these steps:
