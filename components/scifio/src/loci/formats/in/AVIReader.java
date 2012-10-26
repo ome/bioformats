@@ -400,6 +400,9 @@ public class AVIReader extends FormatReader {
       options.previousImage = lastImage;
     }
 
+    long fileOff = offsets.get(no).longValue();
+    in.seek(fileOff);
+
     options.bitsPerSample = bmpBitsPerPixel;
     options.interleaved = isInterleaved();
     options.littleEndian = isLittleEndian();
