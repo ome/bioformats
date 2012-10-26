@@ -413,12 +413,18 @@ public class MetamorphReader extends BaseTiffReader {
       boolean globalDoZ = true;
       boolean doTimelapse = false;
 
+      StringBuilder currentValue = new StringBuilder();
+      String key = "";
+
       for (String line : lines) {
         int comma = line.indexOf(",");
-        if (comma <= 0) continue;
-        String key = line.substring(1, comma - 1).trim();
-        String value = line.substring(comma + 1).trim();
+        if (comma <= 0) {
+          currentValue.append("\n");
+          currentValue.append(line);
+          continue;
+        }
 
+        String value = currentValue.toString();
         addGlobalMeta(key, value);
         if (key.equals("NZSteps")) z = value;
         else if (key.equals("DoTimelapse")) {
@@ -457,6 +463,10 @@ public class MetamorphReader extends BaseTiffReader {
         else if (key.equals("DoZSeries")) {
           globalDoZ = new Boolean(value.toLowerCase());
         }
+
+        key = line.substring(1, comma - 1).trim();
+        currentValue.delete(0, currentValue.length());
+        currentValue.append(line.substring(comma + 1).trim());
       }
 
       // figure out how many files we need
