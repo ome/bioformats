@@ -139,4 +139,4 @@ For information about what extensions to choose to import files, see
     :maxdepth: 1
     :hidden:
 
-    /formats/supported-formats
+    /supported-formats
