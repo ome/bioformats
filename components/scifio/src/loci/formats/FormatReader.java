@@ -1128,6 +1128,10 @@ public abstract class FormatReader extends FormatHandler
     return core[index].resolutionCount;
   }
 
+  public int[] getResolutionOrder() {
+    return FormatTools.getResolutionOrder(this);
+  }
+
   /* @see IFormatReader#setResolution(int) */
   public void setResolution(int no) {
     if (no < 0 || no >= getResolutionCount()) {
