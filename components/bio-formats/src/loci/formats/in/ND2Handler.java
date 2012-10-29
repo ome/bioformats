@@ -860,6 +860,9 @@ public class ND2Handler extends DefaultHandler {
     else if (key.equals("sDate")) {
       date = DateTools.formatDate(value, DATE_FORMAT);
     }
+    else if (key.equals("Name")) {
+      channelNames.add(value);
+    }
   }
 
 }
