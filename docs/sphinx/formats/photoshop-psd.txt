@@ -1,3 +1,6 @@
+.. index:: Adobe Photoshop PSD
+.. index:: .psd
+
 Adobe Photoshop PSD
 ===============================================================================
 

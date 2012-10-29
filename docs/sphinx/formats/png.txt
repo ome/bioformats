@@ -1,3 +1,6 @@
+.. index:: PNG (Portable Network Graphics)
+.. index:: .png
+
 PNG (Portable Network Graphics)
 ===============================================================================
 

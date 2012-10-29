@@ -1,3 +1,6 @@
+.. index:: LIM (Laboratory Imaging/Nikon)
+.. index:: .lim
+
 LIM (Laboratory Imaging/Nikon)
 ===============================================================================
 

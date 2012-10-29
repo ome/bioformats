@@ -1,3 +1,6 @@
+.. index:: Olympus FluoView FV1000
+.. index:: .oib, .oif
+
 Olympus FluoView FV1000
 ===============================================================================
 

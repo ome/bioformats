@@ -1,3 +1,6 @@
+.. index:: AVI (Audio Video Interleave)
+.. index:: .avi
+
 AVI (Audio Video Interleave)
 ===============================================================================
 

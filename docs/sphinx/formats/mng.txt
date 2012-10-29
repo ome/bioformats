@@ -1,3 +1,6 @@
+.. index:: MNG (Multiple-image Network Graphics)
+.. index:: .mng
+
 MNG (Multiple-image Network Graphics)
 ===============================================================================
 

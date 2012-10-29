@@ -1,3 +1,6 @@
+.. index:: PICT (Macintosh Picture)
+.. index:: .pict
+
 PICT (Macintosh Picture)
 ===============================================================================
 

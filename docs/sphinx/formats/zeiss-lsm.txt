@@ -1,3 +1,6 @@
+.. index:: Zeiss LSM (Laser Scanning Microscope) 510/710
+.. index:: .lsm, .mdb
+
 Zeiss LSM (Laser Scanning Microscope) 510/710
 ===============================================================================
 

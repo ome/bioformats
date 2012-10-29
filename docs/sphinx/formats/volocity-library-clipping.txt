@@ -1,3 +1,6 @@
+.. index:: Volocity Library Clipping
+.. index:: .acff
+
 Volocity Library Clipping
 ===============================================================================
 

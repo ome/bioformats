@@ -1,3 +1,6 @@
+.. index:: Improvision Openlab LIFF
+.. index:: .liff
+
 Improvision Openlab LIFF
 ===============================================================================
 

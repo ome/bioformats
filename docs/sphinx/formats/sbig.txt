@@ -1,7 +1,10 @@
+.. index:: SBIG
+.. index:: .sm2, .sm3
+
 SBIG
 ===============================================================================
 
-Extensions: $extensions
+Extensions: .sm2, .sm3
 
 
 Owner: `Santa Barbara Instrument Group (SBIG) <http://www.sbig.com>`_

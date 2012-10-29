@@ -1,3 +1,6 @@
+.. index:: NEF (Nikon Electronic Format)
+.. index:: .nef, .tif
+
 NEF (Nikon Electronic Format)
 ===============================================================================
 

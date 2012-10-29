@@ -1,3 +1,6 @@
+.. index:: MetaMorph Stack (STK)
+.. index:: .stk, .nd
+
 MetaMorph Stack (STK)
 ===============================================================================
 

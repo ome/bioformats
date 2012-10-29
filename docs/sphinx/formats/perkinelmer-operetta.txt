@@ -1,3 +1,6 @@
+.. index:: PerkinElmer Operetta
+.. index:: .tiff, .xml
+
 PerkinElmer Operetta
 ===============================================================================
 

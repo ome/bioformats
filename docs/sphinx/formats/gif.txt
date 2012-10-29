@@ -1,3 +1,6 @@
+.. index:: GIF (Graphics Interchange Format)
+.. index:: .gif
+
 GIF (Graphics Interchange Format)
 ===============================================================================
 

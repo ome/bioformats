@@ -1,3 +1,6 @@
+.. index:: Amersham Biosciences Gel
+.. index:: .gel
+
 Amersham Biosciences Gel
 ===============================================================================
 

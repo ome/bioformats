@@ -1,3 +1,6 @@
+.. index:: MIAS (Maia Scientific)
+.. index:: .tif
+
 MIAS (Maia Scientific)
 ===============================================================================
 

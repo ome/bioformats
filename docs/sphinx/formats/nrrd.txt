@@ -1,3 +1,6 @@
+.. index:: NRRD (Nearly Raw Raster Data)
+.. index:: .nrrd, .nhdr, .raw, .txt
+
 NRRD (Nearly Raw Raster Data)
 ===============================================================================
 
