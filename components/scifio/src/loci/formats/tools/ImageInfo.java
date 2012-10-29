@@ -549,6 +549,10 @@ public class ImageInfo {
       LOGGER.info("\tResolutions = {}", resolutions);
       LOGGER.info("\tResolutionOrder = {}", resOrder);
 
+      for (int i = 0; i < resolutions; i++) {
+          reader.setResolution(i);
+          LOGGER.info("\t\tsizeX[{}] = {}", i, reader.getSizeX());
+      }
       LOGGER.info("\tImage count = {}", imageCount);
       LOGGER.info("\tRGB = {} ({}) {}", new Object[] {rgb, rgbChanCount,
         merge ? "(merged)" : separate ? "(separated)" : ""});
